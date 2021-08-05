@@ -1,6 +1,6 @@
 import CONFIG from "../config.js";
 import Nakama from "../nakama.js";
-import Phaser from "phaser";
+//import Phaser from "phaser";
 
 export default class MainMenu extends Phaser.Scene {
   constructor() {
@@ -8,7 +8,7 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   create() {
-    Nakama.authenticate();
+    //Nakama.authenticate();
 
     this.add
       .text(CONFIG.WIDTH / 2, 75, "Welcome to", {

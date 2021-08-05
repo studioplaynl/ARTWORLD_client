@@ -37,7 +37,7 @@ async function register() {
 const app = new App({
 	target: document.body,
 	props: {
-		name: 'poophead',
+		name: '',
 		client: client
 	}
 });

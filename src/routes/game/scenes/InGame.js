@@ -1,6 +1,6 @@
 import CONFIG from "../config.js";
 import Nakama from "../nakama.js";
-import Phaser from "phaser";
+
 
 
 export default class InGame extends Phaser.Scene {

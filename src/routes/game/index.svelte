@@ -1,15 +1,9 @@
-<svelte:head>
-	<title>Welcome</title>
-</svelte:head>
-
-<h1>Hello and welcome to my site!</h1>
-
 <script>
   import MainMenu from "./scenes/MainMenu";
   import Matchmaking from "./scenes/Matchmaking";
   import InGame from "./scenes/InGame";
   import Location2Scene from "./scenes/Location2Scene";
-  import Phaser from "phaser";
+  //import Phaser from "phaser";
 
   import CONFIG from "./config";
 
@@ -35,4 +29,5 @@
 
 <main>
   <div id="phaser-id" />
+  
 </main>

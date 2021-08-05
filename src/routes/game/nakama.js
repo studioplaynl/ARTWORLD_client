@@ -82,32 +82,8 @@ class Nakama {
     //function sendMatchState(matchId, opCode, data, presences)
 
     this.ticket = await this.socket.addMatchmaker(query, minCount, maxCount);
-    //console.log(this.ticket) //ticket is made, but match is made on server, and will result in matchID
-
-    // this.socket.onmatchmakermatched = (matched) => {
-    //   this.match = matched;
-    //   // MatchmakerMatched {
-    //   //ticket: string;
-    //   //match_id: string; //undefined!!
-    //   //token: string;
-    //   //users: MatchmakerUser[];
-    //   //self: MatchmakerUser;}
-    //   //
-    //   this.gameStarted = true;
-    //   console.log("gameStarted: " + this.gameStarted);
-    //   this.matchID = matched.users[0].presence.session_id;
-
-    //   console.log("matched.users[0].presence.session_id: ")
-    //   console.log(matched.users[0].presence.session_id)
-
-    //   this.allConnectedUsers = matched.users;
-    //   this.makeOpponentsArray();
-    // }
+    
   }
-
-  // Ping() {
-  //   this.socket.sendMatchState(this.matchID, opCode, data, presence);
-  // }
 
   async nakamaListener(){
     this.socket.onmatchdata = (result) => {

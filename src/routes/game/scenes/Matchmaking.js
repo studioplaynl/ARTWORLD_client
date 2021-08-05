@@ -1,5 +1,5 @@
 import CONFIG from "../config"
-import Phaser from "phaser";
+//import Phaser from "phaser";
 
 export default class Matchmaking extends Phaser.Scene {
     constructor() {
@@ -7,7 +7,7 @@ export default class Matchmaking extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet("spinner", "assets/loader-spritesheet.png", {
+        this.load.spritesheet("spinner", "./assets/loader-spritesheet.png", {
             frameWidth: 200,
             frameHeight: 200,
             endFrame: 40,

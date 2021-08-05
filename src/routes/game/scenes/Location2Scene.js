@@ -1,6 +1,6 @@
 import CONFIG from "../config";
 // import Nakama from "../nakama"
-import Phaser from "phaser";
+//import Phaser from "phaser";
 
 export default class Location2Scene extends Phaser.Scene {
   constructor() {
@@ -10,9 +10,9 @@ export default class Location2Scene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("paper", "assets/paper.jpg");
-    this.load.image("star", "assets/star.png");
-    this.load.image("bomb", "assets/bomb.png");
+    this.load.image("paper", "./assets/paper.jpg");
+    this.load.image("star", "./assets/star.png");
+    this.load.image("bomb", "./assets//bomb.png");
   }
 
   create() {
