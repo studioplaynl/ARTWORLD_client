@@ -21,12 +21,15 @@
   let DropdownMenu = () => {
     document.getElementById("DropdownMenu").classList.toggle("show");
   };
+
+
+
 </script>
 
 <nav>
   <div class="nav">
     <div class="left">
-      <a href="/#/">Home</a>
+      <a href="/#/game">Home</a>
       <a href="/#/profile">Profile</a>
       <a href="/#/upload">upload</a>
       <a href="/#/match">match</a>
@@ -53,7 +56,7 @@
 
 <Router
   routes={{
-    "/": home,
+    "/game": home,
     "/register": register,
     "/login": login,
     "/profile": profile,
@@ -62,6 +65,7 @@
     "/uploadAvatar": UploadAvatar,
   }}
 />
+
 
 <style>
   .dropdown {

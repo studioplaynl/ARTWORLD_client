@@ -1,7 +1,7 @@
 <script>
    	import {client} from "../nakama.svelte"
     import {Session} from "../store.js"
-
+    import axios from 'axios'
     let avatar_url =""
    async function getAccount() {
         const account = await client.getAccount($Session);
@@ -11,26 +11,53 @@
 
     let promise = getAccount();
     
-    const url = "http://localhost:4000/uploadAvatar"
+    let url = "http://localhost:4000/uploadAvatar"
     
     async function sendAvatar(data) {
+
+
+        const payload = {"test": "test"};
+        const rpcid = "upload_file";
+        const fileurl = await client.rpc($Session, rpcid, payload);
+        url = fileurl.payload.url
+        console.log(url)
 
         //create form data      
         var data = new FormData();
         var imagedata = document.querySelector('input[type="file"]').files[0];
-        data.append("avatar", imagedata);
-        data.append("userId", $Session.user_id);
+        data.append("file", imagedata);
+        //data.append("userId", $Session.user_id);
         console.log($Session.user_id)
         const entries = [...data.entries()];
         console.log(entries);
-
+/*
         var opts = {
           'mode':'no-cors',
           method: 'POST',
-          body: data
+          body: data,
+          headers: {
+            'Access-Control-Allow-Origin': '*'
+          }
         }
         fetch(url, opts)
+*/
 
+await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "multipart/form-data"
+    },
+    body: imagedata
+  })
+
+
+/*
+axios.put(url, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+})
+*/
     }
 
     

@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@heroiclabs/nakama-js": "^2.1.7",
+    "axios": "^0.21.1",
     "firebase": "^8.8.0",
     "phaser": "^3.55.2",
     "sirv-cli": "^1.0.0",
