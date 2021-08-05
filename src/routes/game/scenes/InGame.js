@@ -1,7 +1,6 @@
 import CONFIG from "../config.js";
 import Nakama from "../nakama.js";
-
-
+import Chat from "./Chat.js"
 
 export default class InGame extends Phaser.Scene {
   constructor() {
@@ -36,7 +35,10 @@ export default class InGame extends Phaser.Scene {
         fontFamily: "Arial",
         fontSize: "36px",
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setInteractive(); //make clickable
+
+    this.headerText.on("pointerup", () => Chat.chat() ); //on mouseup of clickable text
 
     this.matchIdText = this.add
       .text(this.headerText.x, this.headerText.y + 22, "", {
@@ -86,7 +88,7 @@ export default class InGame extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    Nakama.nakamaListener();
+    //Nakama.nakamaListener();
   }
 
   createRemotePlayer() {
@@ -113,41 +115,40 @@ export default class InGame extends Phaser.Scene {
   nakamaListener() {
     Nakama.socket.onmatchdata = (result) => {
       console.info("Received match data: %o", result);
-    //   switch (result.op_code) {
-    //     case 1:
-    //       this.gameStarted = true;
-    //     console.log("onmatchdata result op_code 1")
-    //       //Player.listConnectedOpponents()
-          
-    //       break;
+      //   switch (result.op_code) {
+      //     case 1:
+      //       this.gameStarted = true;
+      //     console.log("onmatchdata result op_code 1")
+      //       //Player.listConnectedOpponents()
 
-    //     case 2:
-    //       console.log(result.data);
-    //       this.headerText.setText("Game has started.2");
-    //       //this.updateBoard(result.data.board)
-    //       //this.updatePlayerTurn()
-          
-    //       break;
-    //     case 3:
-    //       this.headerText.setText("Game has ended.3");
-    //       console.log("receive opponent")
-    //       console.log(result.data);
+      //       break;
 
-    //       break;
-    //     case 4:
-    //       //this.headerText.setText("Game has ended.3");
-    //       // this.endGame(result.data)
+      //     case 2:
+      //       console.log(result.data);
+      //       this.headerText.setText("Game has started.2");
+      //       //this.updateBoard(result.data.board)
+      //       //this.updatePlayerTurn()
 
-    //       console.log("receive opponent")
-    //       console.log(result.data);
-    //       break;
-    //   }
-    }//onmatchdata
+      //       break;
+      //     case 3:
+      //       this.headerText.setText("Game has ended.3");
+      //       console.log("receive opponent")
+      //       console.log(result.data);
 
+      //       break;
+      //     case 4:
+      //       //this.headerText.setText("Game has ended.3");
+      //       // this.endGame(result.data)
+
+      //       console.log("receive opponent")
+      //       console.log(result.data);
+      //       break;
+      //   }
+    }; //onmatchdata
 
     Nakama.socket.onerror = (err) => {
-      console.log('err: ' + err)
-    }
+      console.log("err: " + err);
+    };
 
     Nakama.socket.onmatchmakermatched = (matched) => {
       Nakama.match = matched;
@@ -162,25 +163,23 @@ export default class InGame extends Phaser.Scene {
       console.log("gameStarted: " + Nakama.gameStarted);
       Nakama.matchID = matched.users[0].presence.session_id;
 
-      console.log("matched.users[0].presence.session_id: ")
-      console.log(matched.users[0].presence.session_id)
+      console.log("matched.users[0].presence.session_id: ");
+      console.log(matched.users[0].presence.session_id);
 
       Nakama.allConnectedUsers = matched.users;
       Nakama.makeOpponentsArray();
-    }
-
+    };
 
     Nakama.socket.onstreamdata = (result) => {
-      console.log("receive opponent")
+      console.log("receive opponent");
       console.log(result.data);
-    }//onstreamdata
+    }; //onstreamdata
 
     Nakama.socket.onchannelmessage = (channelMessage) => {
       console.info("Received chat message:", channelMessage);
-    }//Nakama.socket.onchannelmessage
+    }; //Nakama.socket.onchannelmessage
     //await Nakama.socket.joinChat(Nakama.channelId, 1, Nakama.persistence, Nakama.hidden)
-    console.log("succesfully joined channel: ")
-
+    console.log("succesfully joined channel: ");
   }
 
   enterLocation2Scene(player) {
@@ -194,7 +193,6 @@ export default class InGame extends Phaser.Scene {
       this.player.setVelocityX(-160);
       //this.headerText.setText("setVelocityX(-160)");
       Nakama.socket.sendMatchState(Nakama.matchID, 2, "", null);
-      
     } else if (this.cursors.right.isDown) {
       this.player.setVelocityX(160);
       Nakama.makeMove(this.player.x, this.player.y);
