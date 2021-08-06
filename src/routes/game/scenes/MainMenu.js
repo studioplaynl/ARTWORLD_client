@@ -10,13 +10,13 @@ export default class MainMenu extends Phaser.Scene {
   create() {
 
 
-    console.log("Session: ");
+    //console.log("Session: ");
     manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
-    console.log(manageSession.sessionStored);
+    //console.log(manageSession.sessionStored);
 
     console.log(manageSession.sessionStored.user_id);
-
     console.log(manageSession.sessionStored.username);
+    
     manageSession.user_id = manageSession.sessionStored.user_id
     manageSession.username = manageSession.sessionStored.username
     

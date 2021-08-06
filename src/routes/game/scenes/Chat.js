@@ -20,36 +20,38 @@ class Chat {
     const createStatus = true;
 
     //const socket = client.createSocket(useSSL, verboseLogging);
-    let session = ""; // obtained by authentication.
+    this.session = ""; // obtained by authentication.
 
-    session = await client.socket.connect(manageSession.sessionStored, createStatus);
+    this.session = await this.socket.connect(manageSession.sessionStored, createStatus);
 
-    console.log(session);
+    // console.log("this.session: ")
+    // console.log(this.session);
 
-    client.socket.onchannelmessage = (channelMessage) => {
+    this.socket.onchannelmessage = (channelMessage) => {
       console.info("Received chat message:", channelMessage.content.message);
     };
 
-    client.socket.onstreamdata = (streamdata) => {
+    this.socket.onstreamdata = (streamdata) => {
       console.info("Received stream data:", streamdata);
     };
 
-    const channelId = "TESTT";
+    const channelId = "TEST";
     const persistence = false;
     const hidden = false;
 
-    let response = await socket.joinChat(channelId, 1, persistence, hidden);
+    let response = await this.socket.joinChat(channelId, 1, persistence, hidden);
     console.info("Successfully joined channel:", response.room_name);
 
-    const messageAck = await socket.writeChatMessage(response.id, {
+    const messageAck = await this.socket.writeChatMessage(response.id, {
       message: "Pineapple doesn't belong on a pizza!",
     });
     console.info("Successfully sent chat message:", messageAck);
 
     //on join
-    this.joined = await client.socket.rpc("join");
-    console.log(this.socket);
+    this.joined = await this.socket.rpc("join");
+    //console.log(this.socket);
     console.log(this.joined);
+
     //stream
     this.socket.onstreamdata = (streamdata) => {
       console.info("Received stream data:", streamdata);
@@ -67,7 +69,7 @@ class Chat {
       // });
     };
 
-    console.log("test");
+    console.log("send test ");
     var opCode = 1;
     var data = '{ "move": {"dir": "left", "steps": 4} }';
     this.socket.rpc("move_position", data);

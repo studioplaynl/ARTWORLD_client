@@ -41,7 +41,7 @@ export default class InGame extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive(); //make clickable
 
-    this.headerText.on("pointerup", () => { console.log('pointerover'); Chat.chat(); console.log('pointerover');}); //on mouseup of clickable text
+    this.headerText.on("pointerup", () => {  Chat.chat(); }); //on mouseup of clickable text
 
     this.matchIdText = this.add
       .text(this.headerText.x, this.headerText.y + 26, "userID: " + this.playerIdText, {
