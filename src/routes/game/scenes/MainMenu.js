@@ -36,7 +36,7 @@ export default class MainMenu extends Phaser.Scene {
       .setOrigin(0.5);
 
     playBtn.on("pointerdown", () => {
-      Nakama.findMatch();
+      //Nakama.findMatch();
       this.scene.start("InGame");
     });
 
@@ -50,8 +50,5 @@ export default class MainMenu extends Phaser.Scene {
       playBtnText.setScale(1);
     });
 
-    // setTimeout(Nakama.findMatch(), 1200)
-
-    // setTimeout(this.scene.start("InGame"), 1500)
   } //create
 }
