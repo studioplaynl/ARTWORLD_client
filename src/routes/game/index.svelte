@@ -18,7 +18,7 @@ const config = {
 	domCreateContainer: false,
 	width: CONFIG.WIDTH,
 	height: CONFIG.HEIGHT,
-	//backgroundColor: "#FF4C4C",
+	backgroundColor: "#FF4C4C",
 	physics: {
 	  default: "arcade",
 	  arcade: {

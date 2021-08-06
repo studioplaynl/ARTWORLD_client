@@ -5,46 +5,55 @@
     let avatar_url =""
    async function getAccount() {
         const account = await client.getAccount($Session);
-        avatar_url = account.user.avatar_url
+        url = account.user.avatar_url
+        //console.log(avatar_url)
+        getAvatar(url).then((url) => avatar_url = url)
         console.log(avatar_url)
     }
 
     let promise = getAccount();
     
-    const url = "http://localhost:4000/uploadAvatar"
+    let url = ""
+    
     async function sendAvatar(data) {
 
-        //create form data      
         var data = new FormData();
         var imagedata = document.querySelector('input[type="file"]').files[0];
-        data.append("avatar", imagedata);
-        data.append("userId", $Session.user_id);
+        data.append("file", imagedata);
+
+        const payload = {"type": "avatar", "filename": imagedata.name};
+        const rpcid = "upload_file";
+        const fileurl = await client.rpc($Session, rpcid, payload);
+        url = fileurl.payload.url
+        console.log(url)
+
+        //create form data      
+        
+        //data.append("userId", $Session.user_id);
         console.log($Session.user_id)
         const entries = [...data.entries()];
         console.log(entries);
 
-        var opts = {
-          //'mode':'no-cors',
-          method: 'POST',
-          body: data
-        }
-        let path = {}
-       fetch(url, opts)  
-       .then(response => {
-          if (response.ok) {
-            response.json().then(json => {
-              path = json.path
-              console.log(path)
-              client.updateAccount($Session, {
-                  avatar_url: json.path,
-                });
-            });
-          }
-        });
-        //await client.updateAccount($Session, {
-        //  avatar_url: json.path,
-        //});
+        await fetch(url, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "multipart/form-data"
+            },
+            body: imagedata
+          })
 
+        await client.updateAccount($Session, {
+            avatar_url: fileurl.payload.location,
+        });
+    }
+
+    async function getAvatar(avatar_url) {
+      const payload = {"url": avatar_url};
+        const rpcid = "download_file";
+        const fileurl = await client.rpc($Session, rpcid, payload);
+        url = fileurl.payload.url
+        console.log(url)
+        return url
     }
 
     
