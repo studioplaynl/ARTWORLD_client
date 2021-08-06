@@ -31,7 +31,7 @@ class Chat {
       console.info("Received stream data:", streamdata);
     };
 
-    const channelId = "TESTT";
+    const channelId = "TEST";
     const persistence = false;
     const hidden = false;
 

@@ -19,15 +19,7 @@ export default class MainMenu extends Phaser.Scene {
     console.log("Session: ");
     console.log(JSON.parse(localStorage.getItem("Session")));
 
-    console.log("Profile: ");
-    console.log(storeSession.account);
 
-
-    console.log("Session: ");
-    console.log(Session);
-
-    console.log("Profile: ");
-    console.log(Profile);
 
     this.add
       .text(CONFIG.WIDTH / 2, 75, "Welcome to", {
