@@ -20,7 +20,7 @@ export default class MainMenu extends Phaser.Scene {
     console.log(JSON.parse(localStorage.getItem("Session")));
 
     console.log("Profile: ");
-    console.log(storeSession.account);
+    console.log(JSON.parse(localStorage.getItem("Account")));
 
 
     console.log("Session: ");
