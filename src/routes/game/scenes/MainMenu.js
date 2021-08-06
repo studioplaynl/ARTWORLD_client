@@ -1,6 +1,8 @@
 import CONFIG from "../config.js";
 import Nakama from "../nakama.js";
 //import Phaser from "phaser";
+import { client } from "../../../nakama.svelte";
+import { Session, Profile, logout, storeSession } from "../../../store.js";
 
 export default class MainMenu extends Phaser.Scene {
   constructor() {
@@ -9,6 +11,21 @@ export default class MainMenu extends Phaser.Scene {
 
   create() {
     //Nakama.authenticate();
+    console.log("client: ");
+    console.log(client);
+
+    console.log("Session: ");
+    console.log(storeSession.session);
+
+    console.log("Profile: ");
+    console.log(storeSession.account);
+
+
+    console.log("Session: ");
+    console.log(Session);
+
+    console.log("Profile: ");
+    console.log(Profile);
 
     this.add
       .text(CONFIG.WIDTH / 2, 75, "Welcome to", {
@@ -49,6 +66,5 @@ export default class MainMenu extends Phaser.Scene {
       playBtn.setScale(1);
       playBtnText.setScale(1);
     });
-
   } //create
 }
