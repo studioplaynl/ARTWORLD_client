@@ -43,6 +43,16 @@ export async function getAccount(session) {
 
 export const logout = () => { Session.set(null) ;Profile.set(null);}
 
+export async function checkLogin(session) {
+    if(session != null){
+    client.getAccount(session)
+    .then(() => console.log('user still loged in'))
+    .catch((err) => {
+            logout()
+    })
+    }
+}
+
 
 
 export class storeSession {
@@ -64,3 +74,5 @@ export class storeSession {
 }
 
 } //storeSession
+
+
