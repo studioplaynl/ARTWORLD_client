@@ -1,5 +1,6 @@
 <script>
   import Router from "svelte-spa-router";
+  import {wrap} from 'svelte-spa-router/wrap'
   import home from "./routes/game/index.svelte";
   import register from "./routes/auth/register.svelte";
   import login from "./routes/auth/login.svelte";
@@ -35,7 +36,7 @@
 <nav>
   <div class="nav">
     <div class="left">
-      <a href="/#/game">Home</a>
+      <a href="/#/">Home</a>
       <a href="/#/upload">upload</a>
       <a href="/#/match">match</a>
     </div>
@@ -62,13 +63,91 @@
 
 <Router
   routes={{
-    "/game": home,
-    "/register": register,
+    "/": wrap({
+        component: home,
+        conditions: [
+            (detail) => {
+				if($Session != null) return true;
+				else {
+					window.location.href = "/#/login"
+					return false;
+				}
+			}
+        ]
+    }),
+    "/register": wrap({
+        component: register,
+        conditions: [
+            (detail) => {
+				if($Session != null) return true;
+				else {
+					window.location.href = "/#/login"
+					return false;
+				}
+			}
+        ]
+    }),
     "/login": login,
-    "/profile": profile,
-    "/upload": upload,
-    "/match": match,
-    "/uploadAvatar": UploadAvatar,
+    "/profile": wrap({
+        component: profile,
+        conditions: [
+            (detail) => {
+				if($Session != null) return true;
+				else {
+					window.location.href = "/#/login"
+					return false;
+				}
+			}
+        ]
+    }),
+    "/upload": wrap({
+        component: upload,
+        conditions: [
+            (detail) => {
+				if($Session != null) return true;
+				else {
+					window.location.href = "/#/login"
+					return false;
+				}
+			}
+        ]
+    }),
+    "/match": wrap({
+        component: match,
+        conditions: [
+            (detail) => {
+				if($Session != null) return true;
+				else {
+					window.location.href = "/#/login"
+					return false;
+				}
+			}
+        ]
+    }),
+    "/uploadAvatar": wrap({
+        component: UploadAvatar,
+        conditions: [
+            (detail) => {
+				if($Session != null) return true;
+				else {
+					window.location.href = "/#/login"
+					return false;
+				}
+			}
+        ]
+    }),
+	'/lucky': wrap({
+        component: home,
+        conditions: [
+            (detail) => {
+				if($Session != null) return true;
+				else {
+					window.location.href = "/#/login"
+					return false;
+				}
+			}
+        ]
+    })
   }}
 />
 

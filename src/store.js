@@ -3,7 +3,6 @@ import {client} from "./nakama.svelte"
 
 let storedSession = localStorage.getItem("Session")
 export const Session = writable(storedSession ? JSON.parse(storedSession) : null);
-
 Session.subscribe((value) => {
     if (value) localStorage.setItem('Session', JSON.stringify(value));
     else localStorage.removeItem('Session'); // for logout
@@ -21,12 +20,15 @@ Profile.subscribe((value) => {
 
 export async function login(email, password) {
     const create = false;
-    const session = await client.authenticateEmail(email, password, create)
-    console.log(session)
-    localStorage.nakamaAuthToken = session.token;
-    Session.set(session);
-    console.info("Authenticated successfully. User id:", session.user_id);
-    getAccount(session)
+    client.authenticateEmail(email, password, create)
+    .then((response)=> {
+        const session = response
+        console.log(session)
+        Session.set(session);
+        getAccount(session)
+        window.location.href = "/#/"
+    })
+    .catch((err) => {return err})
     
     
 }
@@ -51,30 +53,11 @@ export async function checkLogin(session) {
     .then(() => console.log('user still loged in'))
     .catch((err) => {
             logout()
+            window.location.href = "/#/login"
     })
     }
 }
 
 
-
-export class storeSession {
-  constructor(storeSession) {
-    this.session;
-    this.account;
-    this.profile;
-  }
-
-  async  getAccount(session) {
-    this.profile = {}
-    this.account = await client.getAccount(session);
-
-    profile.user = account.user.username
-    profile.avatar_url = account.user.avatar_url
-    profile.meta = JSON.parse(account.user.metadata)
- 
-    Profile.set(profile)
-}
-
-} //storeSession
 
 
