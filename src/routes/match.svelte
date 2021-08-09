@@ -1,6 +1,7 @@
 <script>
     import {client} from "../nakama.svelte"
     import { Session, Profile, logout} from "../store.js"
+    
     const useSSL = false;
     const verboseLogging = false;
     const socket = client.createSocket(useSSL, verboseLogging);
