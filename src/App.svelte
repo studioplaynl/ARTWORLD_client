@@ -8,6 +8,8 @@
   import match from "./routes/match.svelte";
   import { Session, Profile, logout } from "./store.js";
   import UploadAvatar from "./routes/uploadAvatar.svelte";
+  import { onMount } from 'svelte';
+  import { checkLogin } from './store';
 
 
 
@@ -22,6 +24,10 @@
     document.getElementById("DropdownMenu").classList.toggle("show");
   };
 
+  onMount(async () => {
+    checkLogin($Session)
+});
+
 
 
 </script>
@@ -30,7 +36,6 @@
   <div class="nav">
     <div class="left">
       <a href="/#/game">Home</a>
-      <a href="/#/profile">Profile</a>
       <a href="/#/upload">upload</a>
       <a href="/#/match">match</a>
     </div>
@@ -48,6 +53,7 @@
       {#if $Session == null}
         <a href="/#/login">Login</a>
       {:else}
+		<a href="/#/profile">{$Session.username}</a>
         <a on:click={logout} href="/">Logout</a>
       {/if}
     </div>
