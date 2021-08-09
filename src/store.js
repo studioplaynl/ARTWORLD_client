@@ -42,7 +42,6 @@ export async function getAccount(session) {
 
 
 export const logout = () => { Session.set(null) ;Profile.set(null);}
-<<<<<<< HEAD
 
 export async function checkLogin(session) {
     if(session != null){
@@ -56,26 +55,3 @@ export async function checkLogin(session) {
 
 
 
-export class storeSession {
-  constructor(storeSession) {
-    this.session;
-    this.account;
-    this.profile;
-  }
-
-  async  getAccount(session) {
-    this.profile = {}
-    this.account = await client.getAccount(session);
-
-    profile.user = account.user.username
-    profile.avatar_url = account.user.avatar_url
-    profile.meta = JSON.parse(account.user.metadata)
- 
-    Profile.set(profile)
-}
-
-} //storeSession
-
-
-=======
->>>>>>> 5d76660eee316e31cd970632c7a2da3a72a80bca
