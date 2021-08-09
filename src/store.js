@@ -21,12 +21,14 @@ Profile.subscribe((value) => {
 
 export async function login(email, password) {
     const create = false;
-    const session = await client.authenticateEmail(email, password, create);
+    const session = await client.authenticateEmail(email, password, create)
     console.log(session)
     localStorage.nakamaAuthToken = session.token;
     Session.set(session);
     console.info("Authenticated successfully. User id:", session.user_id);
-    let promise = getAccount(session);
+    getAccount(session)
+    
+    
 }
 
 export async function getAccount(session) {
@@ -52,6 +54,4 @@ export async function checkLogin(session) {
     })
     }
 }
-
-
 
