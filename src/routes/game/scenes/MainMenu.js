@@ -1,9 +1,5 @@
 import CONFIG from "../config.js";
-import Nakama from "../nakama.js";
-//import Phaser from "phaser";
-import { client } from "../../../nakama.svelte";
-import { Session, Profile, logout, storeSession } from "../../../store.js";
-
+import manageSession from "./manageSession.js";
 
 
 export default class MainMenu extends Phaser.Scene {
@@ -12,22 +8,18 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   create() {
-    //Nakama.authenticate();
-    console.log("client: ");
-    console.log(client);
-
-    console.log("Session: ");
-    console.log(JSON.parse(localStorage.getItem("Session")));
-
-    console.log("Profile: ");
-    console.log(JSON.parse(localStorage.getItem("Account")));
 
 
-    console.log("Session: ");
-    console.log(Session);
+    //console.log("Session: ");
+    manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
+    //console.log(manageSession.sessionStored);
 
-    console.log("Profile: ");
-    console.log(Profile);
+    console.log(manageSession.sessionStored.user_id);
+    console.log(manageSession.sessionStored.username);
+    
+    manageSession.user_id = manageSession.sessionStored.user_id
+    manageSession.username = manageSession.sessionStored.username
+    
 
     this.add
       .text(CONFIG.WIDTH / 2, 75, "Welcome to", {
@@ -55,7 +47,6 @@ export default class MainMenu extends Phaser.Scene {
       .setOrigin(0.5);
 
     playBtn.on("pointerdown", () => {
-      //Nakama.findMatch();
       this.scene.start("InGame");
     });
 
@@ -68,5 +59,6 @@ export default class MainMenu extends Phaser.Scene {
       playBtn.setScale(1);
       playBtnText.setScale(1);
     });
+
   } //create
 }

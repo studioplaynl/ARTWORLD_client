@@ -55,7 +55,7 @@
     }
     let promise = chat();
 
-    function onclick() {
+export   function onclick() {
         console.log('test')
         var opCode = 1;
         var data = '{ "move": {"dir": "left", "steps": 4} }';
@@ -63,6 +63,7 @@
 
     }
 
+    export let ChatClick = onclick()
 
     
 </script>

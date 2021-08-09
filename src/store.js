@@ -42,6 +42,7 @@ export async function getAccount(session) {
 
 
 export const logout = () => { Session.set(null) ;Profile.set(null);}
+<<<<<<< HEAD
 
 export async function checkLogin(session) {
     if(session != null){
@@ -76,3 +77,5 @@ export class storeSession {
 } //storeSession
 
 
+=======
+>>>>>>> 5d76660eee316e31cd970632c7a2da3a72a80bca
