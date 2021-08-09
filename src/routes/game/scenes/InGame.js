@@ -28,7 +28,7 @@ export default class InGame extends Phaser.Scene {
 
   create() {
     this.playerIdText = manageSession.user_id;
-
+    Chat.createSocket();
     this.add
       .image(this.game.config.width / 2, this.game.config.height / 2, "sky")
       .setScale(1.4);
@@ -41,7 +41,7 @@ export default class InGame extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive(); //make clickable
 
-    this.headerText.on("pointerup", () => {  Chat.chat(); }); //on mouseup of clickable text
+    this.headerText.on("pointerup", () => {     Chat.sendChatMessage(); }); //on mouseup of clickable text
 
     this.matchIdText = this.add
       .text(this.headerText.x, this.headerText.y + 26, "userID: " + this.playerIdText, {
@@ -49,13 +49,18 @@ export default class InGame extends Phaser.Scene {
         fontSize: "11px",
       })
       .setOrigin(0.5);
+      
+
 
     this.playerIdText = this.add
       .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
         fontFamily: "Arial",
         fontSize: "11px",
       })
-      .setOrigin(0.5);
+      .setOrigin(0.5)
+      .setInteractive(); //make clickable
+
+      this.playerIdText.on("pointerup", () => {Chat.createSocket(); });
 
     this.opponentsIdText = this.add
       .text(this.headerText.x, this.playerIdText.y + 14, "opponentsID", {
@@ -125,6 +130,8 @@ export default class InGame extends Phaser.Scene {
   update() {
     if (this.cursors.left.isDown) {
       this.player.setVelocityX(-160);
+      Chat.sendChatMessage(this.player.x, this.player.y)
+      //Chat.chat();
       //this.headerText.setText("setVelocityX(-160)");
       //Nakama.socket.sendMatchState(Nakama.matchID, 2, "", null);
     } else if (this.cursors.right.isDown) {

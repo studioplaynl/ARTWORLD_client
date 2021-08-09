@@ -1,4 +1,4 @@
-import {client} from "../../../nakama.svelte"
+import { client } from "../../../nakama.svelte";
 //import { Session, Profile, logout } from "../../../store.js";
 import manageSession from "./manageSession.js";
 
@@ -8,38 +8,77 @@ class Chat {
     this.session;
     this.socket;
     this.joined;
+    this.useSSL = false;
+    this.verboseLogging = false;
   }
 
-  async chat() {
-    const useSSL = false;
-    const verboseLogging = false;
-    this.socket = client.createSocket(useSSL, verboseLogging);
-    console.log("socket created with client")
-    //var match_ID = "";
+  async createSocket() {
+    this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
+    console.log("socket created with client");
 
     const createStatus = true;
 
     //const socket = client.createSocket(useSSL, verboseLogging);
     this.session = ""; // obtained by authentication.
 
-    this.session = await this.socket.connect(manageSession.sessionStored, createStatus);
+    this.session = await this.socket.connect(
+      manageSession.sessionStored,
+      createStatus
+    );
 
-    // console.log("this.session: ")
-    // console.log(this.session);
+    //on join
+    this.joined = await this.socket.rpc("join");
+    //console.log(this.socket);
+    console.log(this.joined);
 
+    //stream
+    this.socket.onstreamdata = (streamdata) => {
+      // console.info("Received stream data object:", streamdata); 
+      console.info("Streamdata.stream:", streamdata.stream); 
+
+      console.info("Received stream data object.data:", streamdata.data);
+      // let parsedData = JSON.parse(JSON.stringify(streamdata.data))
+      let parsedData = JSON.parse(streamdata.data)
+
+      console.info("Received stream data object.data.posX:", parsedData.posX); 
+      console.info("Received stream data object.data.user_id:", parsedData.user_id); //user_id
+      
+
+    };
+    this.socket.onstreampresence = (streampresence) => {
+      console.log(
+        "Received presence event for stream: %o",
+        streampresence.joins
+      );
+      // streampresence.joins.forEach((join) => {
+      //   console.log("New user joined: %o", join.user_id);
+      // });
+      // streampresence.leaves.forEach((leave) => {
+      //   console.log("User left: %o", leave.user_id);
+      // });
+    };
+  }
+
+  async chat() {
     this.socket.onchannelmessage = (channelMessage) => {
       console.info("Received chat message:", channelMessage.content.message);
     };
 
     this.socket.onstreamdata = (streamdata) => {
-      console.info("Received stream data:", streamdata);
+      // const parsedData = JSON.parse(streamdata)
+      console.info("Received stream data:", streamdata);     
     };
 
     const channelId = "TEST";
     const persistence = false;
     const hidden = false;
 
-    let response = await this.socket.joinChat(channelId, 1, persistence, hidden);
+    let response = await this.socket.joinChat(
+      channelId,
+      1,
+      persistence,
+      hidden
+    );
     console.info("Successfully joined channel:", response.room_name);
 
     const messageAck = await this.socket.writeChatMessage(response.id, {
@@ -71,20 +110,18 @@ class Chat {
 
     console.log("send test ");
     var opCode = 1;
-    var data = '{ "move": {"dir": "left", "steps": 4} }';
+    var data = {"dir": "left", "steps": 4};
     this.socket.rpc("move_position", data);
-
   }
 
-  sendChatMessage() {
+  sendChatMessage(posX, posY) {
     console.log("test");
     var opCode = 1;
-    var data = '{ "move": {"dir": "left", "steps": 4} }';
-    this.socket.rpc("move_position", data);
-  }
+    // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working 
+    const data = '{"user_id":"' + manageSession.user_id + '", "posX":' + posX + ', "posY":' + posY + '}'; 
 
-  testConsole(){
-    console.log("test");
+    // const data = '{"dir": "left", "steps": 4 }'; //working example
+    this.socket.rpc("move_position", data);
   }
 }
 
