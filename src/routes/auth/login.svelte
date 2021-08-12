@@ -2,7 +2,7 @@
     import {Session, login} from "../../store.js"
 
     console.log($Session)
-	let email = "linjoe_is@Live.nl"
+	let email = "user1@lindseyschaap.nl"
 	let password = 'somesupersecretpassword'
 
 

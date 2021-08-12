@@ -57,10 +57,3 @@ export async function checkLogin(session) {
     })
     }
 }
-
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 76871a945856ee70261ac6ae0a584d3a8255a693

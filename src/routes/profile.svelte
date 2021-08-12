@@ -14,11 +14,22 @@
     let meta = JSON.parse(account.user.metadata);
     role = meta.role;
     azs = meta.azs || null;
-    avatar_url = account.user.avatar_url;
+    let url = account.user.avatar_url
+    getAvatar(url).then((url) => avatar_url = url)
     console.info(account.user);
   }
 
   let promise = getAccount();
+
+  async function getAvatar(avatar_url) {
+      const payload = {"url": avatar_url};
+        const rpcid = "download_file";
+        const fileurl = await client.rpc($Session, rpcid, payload);
+        let url = fileurl.payload.url
+        console.log(url)
+        return url
+    }
+
 </script>
 
 <main>
