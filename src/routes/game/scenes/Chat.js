@@ -1,14 +1,6 @@
-import { couldStartTrivia } from "typescript";
 import { client } from "../../../nakama.svelte";
 //import { Session, Profile, logout } from "../../../store.js";
 import manageSession from "./manageSession.js";
-
-
-// this.NetworkPlayer[0] = this.add.image(
-//   this.game.config.width / 3,
-//   this.game.config.height / 4,
-//   "NetworkPlayer"
-// );
 
 class Chat {
   constructor() {
@@ -18,8 +10,6 @@ class Chat {
     this.joined;
     this.useSSL = false;
     this.verboseLogging = false;
-    this.parsedData;
-    this.currentUsers;
   }
 
   async createSocket() {
@@ -41,33 +31,20 @@ class Chat {
     //console.log(this.socket);
     console.log(this.joined);
 
-    //current users rpc
-    // this.currentUsers = await manageSession.client.rpc(this.session, "current_users", "");
-    // console.log(current_users);
-
-    console.log("manageSession.client")
-    console.log(manageSession.client)
-
     //stream
     this.socket.onstreamdata = (streamdata) => {
-      // console.info("Received stream data object:", streamdata);
-      console.info("Streamdata.stream:", streamdata.stream);
+      // console.info("Received stream data object:", streamdata); 
+      console.info("Streamdata.stream:", streamdata.stream); 
 
       console.info("Received stream data object.data:", streamdata.data);
       // let parsedData = JSON.parse(JSON.stringify(streamdata.data))
-      this.parsedData = JSON.parse(streamdata.data);
+      let parsedData = JSON.parse(streamdata.data)
 
-      console.info(
-        "Received stream data object.data.posX:",
-        this.parsedData.posX
-      );
-      console.info(
-        "Received stream data object.data.user_id:",
-        this.parsedData.user_id
-      ); //user_id
+      console.info("Received stream data object.data.posX:", parsedData.posX); 
+      console.info("Received stream data object.data.user_id:", parsedData.user_id); //user_id
+      
 
     };
-
     this.socket.onstreampresence = (streampresence) => {
       console.log(
         "Received presence event for stream: %o",
@@ -89,7 +66,7 @@ class Chat {
 
     this.socket.onstreamdata = (streamdata) => {
       // const parsedData = JSON.parse(streamdata)
-      console.info("Received stream data:", streamdata);
+      console.info("Received stream data:", streamdata);     
     };
 
     const channelId = "TEST";
@@ -133,22 +110,15 @@ class Chat {
 
     console.log("send test ");
     var opCode = 1;
-    var data = { dir: "left", steps: 4 };
+    var data = {"dir": "left", "steps": 4};
     this.socket.rpc("move_position", data);
   }
 
   sendChatMessage(posX, posY) {
     console.log("test");
     var opCode = 1;
-    // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
-    const data =
-      '{"user_id":"' +
-      manageSession.user_id +
-      '", "posX":' +
-      posX +
-      ', "posY":' +
-      posY +
-      "}";
+    // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working 
+    const data = '{"user_id":"' + manageSession.user_id + '", "posX":' + posX + ', "posY":' + posY + '}'; 
 
     // const data = '{"dir": "left", "steps": 4 }'; //working example
     this.socket.rpc("move_position", data);
