@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import {client} from "./nakama.svelte"
+import manageSession from "./routes/game/scenes/manageSession"
 
 let storedSession = localStorage.getItem("Session")
 export const Session = writable(storedSession ? JSON.parse(storedSession) : null);
@@ -22,6 +23,11 @@ export async function login(email, password) {
     const create = false;
     client.authenticateEmail(email, password, create)
     .then((response)=> {
+      manageSession.client = client;
+	console.log("manageSession client stored")
+	console.log(manageSession.client)
+
+  
         const session = response
         console.log(session)
         Session.set(session);
@@ -56,4 +62,12 @@ export async function checkLogin(session) {
             window.location.href = "/#/login"
     })
     }
+<<<<<<< HEAD
 }
+=======
+}
+
+
+
+
+>>>>>>> 20e0868f270402591abaa46c5505138f063b10c8

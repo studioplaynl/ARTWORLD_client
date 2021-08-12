@@ -5,4 +5,9 @@ const CONFIG = {
     HEIGHT: 736
 }
 
+// const CONFIG = {
+//     WIDTH: window.innerWidth,
+//     HEIGHT: window.innerHeight
+// }
+
 export default CONFIG

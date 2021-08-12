@@ -29,7 +29,7 @@ class Nakama {
   }
 
   async authenticate() {
-    this.client = new Client("defaultkey", "192.168.0.133", "7350");
+    this.client = new Client("defaultkey", "192.168.0.121", "7350");
     this.client.ssl = false;
 
     let deviceId = localStorage.getItem("deviceId");
