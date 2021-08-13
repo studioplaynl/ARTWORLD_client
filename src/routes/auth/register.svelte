@@ -12,7 +12,7 @@
 	async function register() {
 		const create = true;
 		console.log("azc: " + azc)
-		const newUser = await client.authenticateEmail(email, password, create, username,{"userId": $Session.user_id, "azc": azc, "role": rol});
+		const newUser = await client.authenticateEmail(email, password, create, username,{"userId": $Session.user_id, "azc": azc, "rol": rol});
 		console.log(newUser)
 		alert('New user created' + newUser.user_id)
 		//localStorage.nakamaAuthToken = session.token;

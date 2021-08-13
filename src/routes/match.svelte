@@ -42,6 +42,9 @@
         .then((rec) => {
             let payload = JSON.parse(rec.payload)
             console.log(payload)
+            payload.forEach((user) => {
+                console.log(user.avatar_url)
+            }) 
         })
 
         //stream
