@@ -3,7 +3,7 @@
 	let username = "linjoe3"
 	let password = 'somesupersecretpassword'
 	let passwordCheck = 'somesupersecretpassword'
-	let rol = 'speler'
+	let role = 'speler'
 	let azc = ''
     import {Session} from "../../store.js"
 	import {client} from "../../nakama.svelte"
@@ -12,7 +12,12 @@
 	async function register() {
 		const create = true;
 		console.log("azc: " + azc)
-		const newUser = await client.authenticateEmail(email, password, create, username,{"userId": $Session.user_id, "azc": azc, "rol": rol});
+		let data = {"userId": $Session.user_id, "azc": azc, "role": role}
+		console.log(client)
+		var token = client.configuration.bearerToken
+		client.configuration.bearerToken = null
+		const newUser = await client.authenticateEmail(email, password, create, username, data);
+		client.configuration.bearerToken = token
 		console.log(newUser)
 		alert('New user created' + newUser.user_id)
 		//localStorage.nakamaAuthToken = session.token;
@@ -22,7 +27,7 @@
 
 
 
-
+11
 	//let promise = login();
 
 	function handleClick() {
@@ -57,7 +62,7 @@
 		  <hr>
 
 		  <label for="Role"><b>Rol</b></label>
-		  <select name="Role" bind:value={rol} required>
+		  <select name="Role" bind:value={role} required>
 			<option value="speler">Speler</option>
 			<option value="kunstenaar">Kunstenaar</option>
 			<option value="moderator">Moderator</option>

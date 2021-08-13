@@ -4,8 +4,8 @@ import {userId, Session} from "store.js"
 
 
 
-var client = new Client("WeEatChildrenForBreakfast", "192.168.0.133", "7350");
-client.ssl = false;
+//var client = new Client("WeEatChildrenForBreakfast", "192.168.0.133", "7350");
+//client.ssl = false;
 
 /*
 async function login() {

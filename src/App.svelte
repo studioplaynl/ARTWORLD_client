@@ -79,6 +79,7 @@
         component: register,
         conditions: [
             (detail) => {
+				return true
 				if($Session != null) return true;
 				else {
 					window.location.href = "/#/login"
