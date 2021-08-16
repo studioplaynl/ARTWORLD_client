@@ -202,19 +202,19 @@ export default class InGame extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
-      //manageSession.sendChatMessage(this.player.x, this.player.y);
+      manageSession.sendChatMessage(this.player.x, this.player.y);
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
-      //manageSession.sendChatMessage(this.player.x, this.player.y);
+      manageSession.sendChatMessage(this.player.x, this.player.y);
     }
 
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
-      //manageSession.sendChatMessage(this.player.x, this.player.y);
+      manageSession.sendChatMessage(this.player.x, this.player.y);
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
-      //manageSession.sendChatMessage(this.player.x, this.player.y);
+      manageSession.sendChatMessage(this.player.x, this.player.y);
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal

@@ -17,7 +17,6 @@ class manageSession {
     this.match;
     this.matchID;
     this.deviceID;
-    this.userID;
 
     this.createNetworkPlayers = false;
     this.allConnectedUsers = [];
@@ -32,13 +31,10 @@ class manageSession {
   }
 
   async createSocket() {
-    console.log("test");
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
     console.log("socket created with client");
 
     const createStatus = true;
-
-    //const socket = client.createSocket(useSSL, verboseLogging);
     this.session = ""; // obtained by authentication.
 
     this.session = await this.socket.connect(this.sessionStored, createStatus);
@@ -97,6 +93,9 @@ class manageSession {
       //   console.log("User left: %o", leave.user_id);
       // });
     }; //end onstreampresence
+
+    // const data = { dir: "left", steps: 4 };
+    // this.socket.rpc("move_position", data);
   } //end test
 
   async chat() {
@@ -155,7 +154,7 @@ class manageSession {
   } // chat
 
   sendChatMessage(posX, posY) {
-    console.log("test");
+    console.log("sendChatMessage");
     var opCode = 1;
     // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
     const data =
@@ -168,7 +167,7 @@ class manageSession {
       "}";
 
     // const data = '{"dir": "left", "steps": 4 }'; //working example
-    this.socket.rpc("move_position", data);
+    this.socket.rpc("move_position", "", data);
   } //end sendChatMessage
 } //end class
 
