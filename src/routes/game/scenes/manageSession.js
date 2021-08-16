@@ -18,11 +18,8 @@ class manageSession {
     this.matchID;
     this.deviceID;
     this.userID;
-    this.connectedOpponents = [];
-    this.connectedOpponent;
 
     this.createNetworkPlayers = false;
-
     this.allConnectedUsers = [];
     this.stillConnectedOpponent;
     this.ticket;
@@ -51,10 +48,15 @@ class manageSession {
     await this.socket.rpc("joingo", "home").then((rec) => {
       let payload = JSON.parse(rec.payload);
       console.log(payload);
-      payload.forEach((user) => {
-        console.log(user.avatar_url);
+
+      payload.forEach((user, i) => {
+        //console.log(user.user_id);
+        this.allConnectedUsers[i] = user.user_id;
+        console.log(this.allConnectedUsers[i]);
       });
+      this.createNetworkPlayers = true;
     });
+
     //stream
     this.socket.onstreamdata = (streamdata) => {
       // console.info("Received stream data object:", streamdata);
@@ -70,6 +72,7 @@ class manageSession {
         parsedData.user_id
       ); //user_id
     };
+
     this.socket.onstreampresence = (streampresence) => {
       console.log(
         "Received presence event for stream: %o",
@@ -79,9 +82,12 @@ class manageSession {
       this.socket.rpc("joingo", "home").then((rec) => {
         let payload = JSON.parse(rec.payload);
         console.log(payload);
-        payload.forEach((user) => {
-          console.log(user.avatar_url);
+        payload.forEach((user, i) => {
+          //console.log(user.user_id);
+          this.allConnectedUsers[i] = user.user_id;
+          console.log(this.allConnectedUsers[i]);
         });
+        this.createNetworkPlayers = true;
       });
 
       // streampresence.joins.forEach((join) => {

@@ -136,7 +136,7 @@ export default class InGame extends Phaser.Scene {
       .image(spawnPoint.x, spawnPoint.y, "star")
       .setDepth(5);
 
-      //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
+    //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
     /////////  end PLAYER //////////////////////////////////////////////////////////////////////////////////////////////
 
     //////// PLAYER VS WORLD //////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +153,6 @@ export default class InGame extends Phaser.Scene {
     //   this
     // );
 
-
     // Watch the player and worldLayer for collisions, for the duration of the scene:
     this.physics.add.collider(this.player, worldLayer);
     //////// end PLAYER VS WORLD //////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,22 +163,26 @@ export default class InGame extends Phaser.Scene {
   createRemotePlayer() {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
-    for (let i = 0; i < manageSession.connectedOpponents.length; i++) {
-      this.NetworkPlayer[0] = this.add.image(
-        this.game.config.width / 3,
-        this.game.config.height / 4,
-        "NetworkPlayer"
-      );
-    }
-    console.log(
-      "manageSession.connectedOpponents.length: " + manageSession.connectedOpponents.length
-    );
-    console.log("manageSession.connectedOpponents: " + manageSession.connectedOpponents[0]);
-
     console.log("make networkplayer...");
+    for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+      if (manageSession.allConnectedUsers[i] != manageSession.user_id) {
+        console.log("created network user:")
 
+        console.log(manageSession.allConnectedUsers[i])
+        
+        this.NetworkPlayer[0] = this.add.image(
+          this.player.x - 40,
+          this.player.y - 40,
+          "NetworkPlayer"
+        );
+      }
+    }
+  
     manageSession.createNetworkPlayers = false;
-    console.log("manageSession.createNetworkPlayers: " + manageSession.createNetworkPlayers);
+    console.log(
+      "manageSession.createNetworkPlayers: " +
+        manageSession.createNetworkPlayers
+    );
   } //createRemotePlayer
 
   enterLocation2Scene(player) {
@@ -192,29 +195,31 @@ export default class InGame extends Phaser.Scene {
     //////// PLAYER SPEED CONTROL  //////////////////////////////////////////////////////////////////////////////////////////////
     const speed = 175;
     const prevVelocity = this.player.body.velocity.clone();
-  
+
     // Stop any previous movement from the last frame
     this.player.body.setVelocity(0);
-  
+
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
+      //manageSession.sendChatMessage(this.player.x, this.player.y);
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
+      //manageSession.sendChatMessage(this.player.x, this.player.y);
     }
-  
+
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
+      //manageSession.sendChatMessage(this.player.x, this.player.y);
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
+      //manageSession.sendChatMessage(this.player.x, this.player.y);
     }
-  
+
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     this.player.body.velocity.normalize().scale(speed);
     //////// end PLAYER SPEED CONTROL  //////////////////////////////////////////////////////////////////////////////////////////////
-  
-
 
     // if (this.cursors.left.isDown) {
     //   this.player.setVelocityX(-160);
@@ -243,12 +248,13 @@ export default class InGame extends Phaser.Scene {
       this.matchIdText.setText("matchID: " + manageSession.matchID);
       this.playerIdText.setText("userID: " + manageSession.userID);
 
-      this.opponentsIdText.setText("opponent: " + manageSession.connectedOpponents[0]);
+      this.opponentsIdText.setText(
+        "opponent: " + manageSession.connectedOpponents[0]
+      );
     }
 
     if (manageSession.createNetworkPlayers) {
       this.createRemotePlayer();
-      console.log("Go createNetworkPlayers");
       // manageSession.createNetworkPlayers = false
       // console.log(manageSession.createNetworkPlayers)
     }
