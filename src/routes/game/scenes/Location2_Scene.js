@@ -4,7 +4,7 @@ import CONFIG from "../config";
 
 export default class Location2Scene extends Phaser.Scene {
   constructor() {
-    super("Location2Scene");
+    super("Location2_Scene");
     this.headerText;
     this.phaser = this;
   }

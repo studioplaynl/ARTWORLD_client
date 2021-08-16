@@ -47,7 +47,7 @@ export default class MainMenu extends Phaser.Scene {
       .setOrigin(0.5);
 
     playBtn.on("pointerdown", () => {
-      this.scene.start("InGame");
+      this.scene.start("AZC1_Scene");
     });
 
     playBtn.on("pointerover", () => {

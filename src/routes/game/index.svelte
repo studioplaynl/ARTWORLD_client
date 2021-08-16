@@ -2,9 +2,9 @@
 //phaser
 import { onMount } from 'svelte';
 import MainMenu from "./scenes/MainMenu";
-import Matchmaking from "./scenes/Matchmaking";
-import InGame from "./scenes/InGame";
-import Location2Scene from "./scenes/Location2Scene";
+
+import AZC1_Scene from "./scenes/AZC1_Scene";
+import Location2_Scene from "./scenes/Location2_Scene";
 //import Phaser from "phaser";
 
 import CONFIG from "./config";
@@ -26,7 +26,7 @@ const config = {
 		debug: false,
 	  },
 	},
-	scene: [MainMenu, Matchmaking, InGame, Location2Scene],
+	scene: [MainMenu, AZC1_Scene, Location2_Scene],
   };
   
   new Phaser.Game(config);
