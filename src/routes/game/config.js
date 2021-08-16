@@ -1,8 +1,9 @@
 import Phaser from "phaser";
 
 const CONFIG = {
-    WIDTH: 800,
-    HEIGHT: 600
+    WIDTH: window.innerWidth,
+    HEIGHT: window.innerHeight
+
 }
 
 export default CONFIG
