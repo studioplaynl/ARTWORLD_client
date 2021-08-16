@@ -1,5 +1,4 @@
 import CONFIG from "../config.js";
-import Socket from "./Socket";
 import manageSession from "./manageSession";
 
 export default class InGame extends Phaser.Scene {
@@ -36,7 +35,8 @@ export default class InGame extends Phaser.Scene {
   create() {
     /////////  SOCKET //////////////////////////////////////////////////////////////////////////////////////////////
     this.playerIdText = manageSession.user_id;
-    Socket.createSocket();
+    //manageSession.createSocket();
+    manageSession.createSocket();
     ///////// end SOCKET //////////////////////////////////////////////////////////////////////////////////////////
 
     /////////  TEXT //////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ export default class InGame extends Phaser.Scene {
       .setDepth(30);
 
     this.headerText.on("pointerup", () => {
-      Socket.sendChatMessage();
+      manageSession.sendChatMessage();
     }); //on mouseup of clickable text
 
     this.matchIdText = this.add
@@ -79,7 +79,7 @@ export default class InGame extends Phaser.Scene {
       .setDepth(30);
 
     this.playerIdText.on("pointerup", () => {
-      Socket.createSocket();
+      manageSession.createSocket();
     });
 
     this.opponentsIdText = this.add
@@ -162,9 +162,9 @@ export default class InGame extends Phaser.Scene {
   }
 
   createRemotePlayer() {
-    //Socket.connectedOpponents //list of the opponents
+    //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
-    for (let i = 0; i < Socket.connectedOpponents.length; i++) {
+    for (let i = 0; i < manageSession.connectedOpponents.length; i++) {
       this.NetworkPlayer[0] = this.add.image(
         this.game.config.width / 3,
         this.game.config.height / 4,
@@ -172,14 +172,14 @@ export default class InGame extends Phaser.Scene {
       );
     }
     console.log(
-      "Socket.connectedOpponents.length: " + Socket.connectedOpponents.length
+      "manageSession.connectedOpponents.length: " + manageSession.connectedOpponents.length
     );
-    console.log("Socket.connectedOpponents: " + Socket.connectedOpponents[0]);
+    console.log("manageSession.connectedOpponents: " + manageSession.connectedOpponents[0]);
 
     console.log("make networkplayer...");
 
-    Socket.createNetworkPlayers = false;
-    console.log("Socket.createNetworkPlayers: " + Socket.createNetworkPlayers);
+    manageSession.createNetworkPlayers = false;
+    console.log("manageSession.createNetworkPlayers: " + manageSession.createNetworkPlayers);
   } //createRemotePlayer
 
   enterLocation2Scene(player) {
@@ -218,39 +218,39 @@ export default class InGame extends Phaser.Scene {
 
     // if (this.cursors.left.isDown) {
     //   this.player.setVelocityX(-160);
-    //   Socket.sendChatMessage(this.player.x, this.player.y);
-    //   //Socket.chat();
+    //   manageSession.sendChatMessage(this.player.x, this.player.y);
+    //   //manageSession.chat();
     //   //this.headerText.setText("setVelocityX(-160)");
-    //   //Socket.socket.sendMatchState(Socket.matchID, 2, "", null);
+    //   //manageSession.socket.sendMatchState(manageSession.matchID, 2, "", null);
     // } else if (this.cursors.right.isDown) {
     //   this.player.setVelocityX(160);
-    //   //Socket.makeMove(this.player.x, this.player.y);
+    //   //manageSession.makeMove(this.player.x, this.player.y);
     // } else if (this.cursors.up.isDown) {
     //   this.player.setVelocityY(-160);
-    //   //Socket.makeMove(this.player.x, this.player.y);
+    //   //manageSession.makeMove(this.player.x, this.player.y);
     // } else if (this.cursors.down.isDown) {
     //   this.player.setVelocityY(160);
-    //   //Socket.makeMove(this.player.x, this.player.y);
+    //   //manageSession.makeMove(this.player.x, this.player.y);
     // } else {
     //   this.player.setVelocityX(0);
     //   this.player.setVelocityY(0);
     // }
 
-    this.playerIdText.setText(Socket.userID);
+    this.playerIdText.setText(manageSession.userID);
 
-    if (Socket.gameStarted) {
+    if (manageSession.gameStarted) {
       this.headerText.setText("Game has started");
-      this.matchIdText.setText("matchID: " + Socket.matchID);
-      this.playerIdText.setText("userID: " + Socket.userID);
+      this.matchIdText.setText("matchID: " + manageSession.matchID);
+      this.playerIdText.setText("userID: " + manageSession.userID);
 
-      this.opponentsIdText.setText("opponent: " + Socket.connectedOpponents[0]);
+      this.opponentsIdText.setText("opponent: " + manageSession.connectedOpponents[0]);
     }
 
-    if (Socket.createNetworkPlayers) {
+    if (manageSession.createNetworkPlayers) {
       this.createRemotePlayer();
       console.log("Go createNetworkPlayers");
-      // Socket.createNetworkPlayers = false
-      // console.log(Socket.createNetworkPlayers)
+      // manageSession.createNetworkPlayers = false
+      // console.log(manageSession.createNetworkPlayers)
     }
   } //update
 } //class

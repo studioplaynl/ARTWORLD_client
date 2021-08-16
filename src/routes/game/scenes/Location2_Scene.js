@@ -1,5 +1,4 @@
 import CONFIG from "../config";
-// import Nakama from "../nakama"
 //import Phaser from "phaser";
 
 export default class Location2Scene extends Phaser.Scene {
