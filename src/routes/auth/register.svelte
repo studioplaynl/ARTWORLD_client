@@ -7,7 +7,7 @@
 	let azc = ''
     import {Session} from "../../session.js"
 	import {client} from "../../nakama.svelte"
-
+	import { _ } from 'svelte-i18n'
 
 	async function register() {
 		const create = true;
@@ -20,15 +20,7 @@
 		client.configuration.bearerToken = token
 		console.log(newUser)
 		alert('New user created' + newUser.user_id)
-		//localStorage.nakamaAuthToken = session.token;
-		//console.info("Authenticated successfully. User id:", session.user_id);
 	}
-
-
-
-
-11
-	//let promise = login();
 
 	function handleClick() {
 		promise = register();
@@ -45,32 +37,33 @@
 	<div class="registerForm">
 	<form on:submit|preventDefault={onSubmit}>
 		<div class="container">
-		  <h1>Registreer een nieuwe gebruiker</h1>
-		  <p>Please fill in this form to create an account.</p>
+		  <h1>{$_('register.title')}</h1>
+
 		  <hr>
-		  <label for="username"><b>Username</b></label>
+		  <label for="username"><b>{$_('register.username')}</b></label>
 		  <input type="text" placeholder="Enter Username" name="username" id="username" bind:value={username} required>
 	  	  
-		  <label for="email"><b>Email</b></label>
+		  <label for="email"><b>{$_('register.email')}</b></label>
 		  <input type="text" placeholder="Enter Email" name="email" id="email" bind:value={email} required>
 	  
-		  <label for="psw"><b>Password</b></label>
+		  <label for="psw"><b>{$_('register.password')}</b></label>
 		  <input type="password" placeholder="Enter Password" name="psw" id="psw" bind:value={password} required>
 	  
-		  <label for="psw-repeat"><b>Repeat Password</b></label>
+		  <label for="psw-repeat"><b>{$_('register.repeatPassword')}</b></label>
 		  <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" bind:value={passwordCheck} required>
 		  <hr>
 
-		  <label for="Role"><b>Rol</b></label>
+		  <label for="Role"><b>{$_('register.role')}</b></label>
 		  <select name="Role" bind:value={role} required>
-			<option value="speler">Speler</option>
-			<option value="kunstenaar">Kunstenaar</option>
-			<option value="moderator">Moderator</option>
-			<option value="admin">Admin</option>
+			<option value="speler">{$_('role.player')}</option>
+			<option value="kunstenaar">{$_('role.artist')}</option>
+			<option value="moderator">{$_('role.moderator')}</option>
+			<option value="admin">{$_('role.admin')}</option>
 		  </select>
 
-		  <label for="AZC"><b>AZC Locatie</b></label>
+		  <label for="AZC"><b>{$_('register.location')}</b></label>
 		  <select name="AZC" bind:value={azc} required>
+			<option value="null">{$_('register.none')}</option>
 			<option value="Amersfoort">Amersfoort</option>
 			<option value="Almelo">Almelo</option>
 			<option value="Almere">Almere</option>
@@ -100,9 +93,6 @@
 			<option value="Utrecht">Utrecht</option>
 	      </select>
 
-	  		  
-
-		  <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
 		  <button type="submit" class="registerbtn">Register</button>
 		</div>
 	  </form>

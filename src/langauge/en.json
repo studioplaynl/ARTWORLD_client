@@ -1,0 +1,34 @@
+{
+  "nav": {
+      "game": "Game",
+      "upload": "upload",
+      "match": "Match",
+      "login": "Log in",
+      "logout": "Log out",
+      "admin": {
+          "createUser": "Create user",
+          "createGroup": "Create group"
+      }
+  },
+  "login": {
+      "title": "Login",
+      "login": "Login"
+  },
+  "register": {
+      "title": "Register a new user",
+      "username": "Username",
+      "email": "Email adress",
+      "password": "Password",
+      "repeatPassword": "Repeat password",
+      "role": "Role",
+      "location": "AZC location",
+      "register": "Register",
+      "none": "none"
+  },
+  "role": {
+      "admin": "Admin",
+      "artist": "Artist",
+      "moderator": "Moderator",
+      "player": "Player"
+  }
+}

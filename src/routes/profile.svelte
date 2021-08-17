@@ -1,6 +1,7 @@
 <script>
   import { Session } from "../session.js";
   import { client } from "../nakama.svelte";
+  import { _ } from 'svelte-i18n'
   console.log($Session);
   let user = "",
     role = "",
@@ -37,9 +38,9 @@
     <div class="flex-item-left">
       <img id="avatar" src={avatar_url} /><br />
       <a href="/#/uploadAvatar/">Create</a>
-      <p>username: {user}</p>
-      <p>role: {role}</p>
-      <p>locatie: {azs}</p>
+      <p>{$_('register.username')}: {user}</p>
+      <p>{$_('register.role')}: {$_('role.' + role)}</p>
+      <p>{$_('register.location')}: {azs}</p>
       <a href="/#/">edit</a>
     </div>
     <div class="flex-item-right">

@@ -1,5 +1,7 @@
 <script>
     import {Session, login} from "../../session.js"
+	import { _ } from 'svelte-i18n'
+
 
     console.log($Session)
 	let email = "user1@lindseyschaap.nl"
@@ -16,18 +18,17 @@
 <main>
 	<form on:submit|preventDefault={onSubmit}>
 		<div class="container">
-		  <h1>Login</h1>
+		  <h1>{$_('login.title')}</h1>
 		  <p>Please fill in this form to create an account.</p>
 		  <hr>
 
-		  <label for="email"><b>Email</b></label>
+		  <label for="email"><b>{$_('register.email')}</b></label>
 		  <input type="text" placeholder="Enter Email" name="email" id="email" bind:value={email} required>
 	  
-		  <label for="psw"><b>Password</b></label>
+		  <label for="psw"><b>{$_('register.password')}</b></label>
 		  <input type="password" placeholder="Enter Password" name="psw" id="psw" bind:value={password} required>
 	  
-		  <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
-		  <button type="submit" class="registerbtn">Login</button>
+		  <button type="submit" class="registerbtn">{$_('login.login')}</button>
 		</div>
 	
 	  </form>

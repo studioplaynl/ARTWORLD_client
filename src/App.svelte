@@ -2,7 +2,7 @@
   import Router from "svelte-spa-router";
   import {wrap} from 'svelte-spa-router/wrap'
   import home from "./routes/game/index.svelte";
-  import register from "./routes/auth/register.svelte";
+  import registerPage from "./routes/auth/register.svelte";
   import login from "./routes/auth/login.svelte";
   import profile from "./routes/profile.svelte";
   import upload from "./routes/upload.svelte";
@@ -11,6 +11,19 @@
   import UploadAvatar from "./routes/uploadAvatar.svelte";
   import { onMount } from 'svelte';
   import { checkLogin } from './session';
+  import { locale, locales, getLocaleFromNavigator, init, addMessages, _ } from 'svelte-i18n'
+
+  import en from './langauge/en.json';
+  import nl from './langauge/nl.json';
+
+  addMessages('nl', nl);
+  addMessages('en', en);
+
+
+  init({
+  fallbackLocale: 'nl',
+  //initialLocale: getLocaleFromNavigator(),
+  });
 
 
 
@@ -20,7 +33,6 @@
   } else {
     role = $Profile.meta.role;
   }
-  //console.log($Profile.meta.role)
   let DropdownMenu = () => {
     document.getElementById("DropdownMenu").classList.toggle("show");
   };
@@ -29,6 +41,13 @@
     checkLogin($Session)
 });
 
+let isLogedIn = (detail) => {
+				if($Session != null) return true;
+				else {
+					window.location.href = "/#/login"
+					return false;
+				}
+			}
 
 
 </script>
@@ -36,27 +55,32 @@
 <nav>
   <div class="nav">
     <div class="left">
-      <a href="/#/">Home</a>
-      <a href="/#/upload">upload</a>
-      <a href="/#/match">match</a>
+      <a href="/#/">{$_('nav.game')}</a>
+      <a href="/#/upload">{$_('nav.upload')}</a>
+      <a href="/#/match">{$_('nav.match')}</a>
     </div>
     <div class="right">
-      {#if role == "admin"}
+      {#if !!$Profile && $Profile.meta.role == "admin"}
         <div on:click={DropdownMenu} class="dropdown">
-          <a>Admin</a>
+          <a>{$_('role.admin')}</a>
           <div id="DropdownMenu" class="dropdown-content">
-            <a href="/#/register">Create new user</a>
-            <a href="/#/group">Create new group</a>
+            <a href="/#/register">{$_('nav.admin.createUser')}</a>
+            <a href="/#/group">{$_('nav.admin.createGroup')}</a>
           </div>
         </div>
       {/if}
 
       {#if $Session == null}
-        <a href="/#/login">Login</a>
+        <a href="/#/login">{$_('nav.login')}</a>
       {:else}
 		<a href="/#/profile">{$Session.username}</a>
-        <a on:click={logout} href="/">Logout</a>
+        <a on:click={logout} href="/">{$_('nav.logout')}</a>
       {/if}
+	  <select bind:value={$locale}>
+		{#each $locales as locale}
+		  <option value={locale}>{locale}</option>
+		{/each}
+	  </select>
     </div>
   </div>
 </nav>
@@ -76,15 +100,10 @@
         ]
     }),
     "/register": wrap({
-        component: register,
+        component: registerPage,
         conditions: [
             (detail) => {
-				return true
-				if($Session != null) return true;
-				else {
-					window.location.href = "/#/login"
-					return false;
-				}
+				return isLogedIn(detail)
 			}
         ]
     }),
@@ -93,11 +112,7 @@
         component: profile,
         conditions: [
             (detail) => {
-				if($Session != null) return true;
-				else {
-					window.location.href = "/#/login"
-					return false;
-				}
+				return isLogedIn(detail)
 			}
         ]
     }),
@@ -105,11 +120,7 @@
         component: upload,
         conditions: [
             (detail) => {
-				if($Session != null) return true;
-				else {
-					window.location.href = "/#/login"
-					return false;
-				}
+				return isLogedIn(detail)
 			}
         ]
     }),
@@ -117,11 +128,7 @@
         component: match,
         conditions: [
             (detail) => {
-				if($Session != null) return true;
-				else {
-					window.location.href = "/#/login"
-					return false;
-				}
+				return isLogedIn(detail)
 			}
         ]
     }),
@@ -129,26 +136,11 @@
         component: UploadAvatar,
         conditions: [
             (detail) => {
-				if($Session != null) return true;
-				else {
-					window.location.href = "/#/login"
-					return false;
-				}
+				return isLogedIn(detail)
 			}
         ]
     }),
-	'/lucky': wrap({
-        component: home,
-        conditions: [
-            (detail) => {
-				if($Session != null) return true;
-				else {
-					window.location.href = "/#/login"
-					return false;
-				}
-			}
-        ]
-    })
+
   }}
 />
 

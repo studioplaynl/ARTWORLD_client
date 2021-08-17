@@ -1,0 +1,34 @@
+{
+    "nav": {
+        "game": "Spel",
+        "upload": "upload",
+        "match": "Match",
+        "login": "inloggen",
+        "logout": "uitloggen",
+        "admin": {
+            "createUser": "nieuwe gebruiker",
+            "createGroup": "nieuwe groep"
+        }
+    },
+    "login": {
+        "title": "Login",
+        "login": "login"
+    },
+    "register": {
+        "title": "Registreer een nieuwe gebruiker",
+        "username": "Gebruikersnaam",
+        "email": "Email adres",
+        "password": "Wachtwoord",
+        "repeatPassword": "Herhaal wachtwoord",
+        "role": "Rol",
+        "location": "AZC locatie",
+        "register": "Register",
+        "none": "Geen"
+    },
+    "role": {
+        "admin": "Admin",
+        "artist": "Kunstenaar",
+        "moderator": "Moderator",
+        "player": "Speler"
+    }
+  }
