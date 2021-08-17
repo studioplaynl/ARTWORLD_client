@@ -1,3 +1,4 @@
+import { parse } from "uuid";
 import { client } from "../../nakama.svelte";
 
 class manageSession {
@@ -19,6 +20,7 @@ class manageSession {
     this.deviceID;
 
     this.createNetworkPlayers = false;
+    this.updateNetworkPlayers = false;
     this.allConnectedUsers = [];
     this.stillConnectedOpponent;
     this.ticket;
@@ -46,7 +48,8 @@ class manageSession {
 
       payload.forEach((user, i) => {
         //console.log(user.user_id);
-        this.allConnectedUsers[i] = user.user_id;
+        // this.allConnectedUsers[i] = user.user_id;
+        this.allConnectedUsers[i] = user;
         console.log(this.allConnectedUsers[i]);
       });
       this.createNetworkPlayers = true;
@@ -55,17 +58,25 @@ class manageSession {
     //stream
     this.socket.onstreamdata = (streamdata) => {
       // console.info("Received stream data object:", streamdata);
-      console.info("Streamdata.stream:", streamdata.stream);
+      //console.info("Streamdata.stream:", streamdata.stream);
 
-      console.info("Received stream data object.data:", streamdata.data);
-      // let parsedData = JSON.parse(JSON.stringify(streamdata.data))
-      let parsedData = JSON.parse(streamdata.data);
+      //console.info("Received stream data object.data:", streamdata.data);
+      //const parsedData = JSON.parse(JSON.stringify(streamdata.data))
+      const parsedData = JSON.parse(streamdata.data);
 
-      console.info("Received stream data object.data.posX:", parsedData.posX);
-      console.info(
-        "Received stream data object.data.user_id:",
-        parsedData.user_id
-      ); //user_id
+      //console.info("Received stream data object.data.posX:", parsedData.posX);
+      for (let i = 0; i < this.allConnectedUsers.length; i++) {
+        if (parsedData.user_id == this.allConnectedUsers[i].user_id) {
+          this.allConnectedUsers[i].posX = parsedData.posX;
+          this.allConnectedUsers[i].posY = parsedData.posY;
+          this.updateNetworkPlayers = true;
+        }
+      }
+
+      // console.info(
+      //   "Received stream data object.data.user_id:",
+      //   parsedData.user_id
+      // ); //user_id
     };
 
     this.socket.onstreampresence = (streampresence) => {
@@ -79,80 +90,32 @@ class manageSession {
         console.log(payload);
         payload.forEach((user, i) => {
           //console.log(user.user_id);
-          this.allConnectedUsers[i] = user.user_id;
+          this.allConnectedUsers[i] = user;
           console.log(this.allConnectedUsers[i]);
         });
         this.createNetworkPlayers = true;
       });
 
-      // streampresence.joins.forEach((join) => {
-      //   console.log("New user joined: %o", join.user_id);
-      // });
-      // streampresence.leaves.forEach((leave) => {
-      //   console.log("User left: %o", leave.user_id);
-      // });
+      streampresence.joins.forEach((join) => {
+        console.log("New user joined: %o", join.user_id);
+      });
+      streampresence.leaves.forEach((leave) => {
+        console.log("User left: %o", leave.user_id);
+      });
     }; //end onstreampresence
+  } //end createSocket
 
-    // const data = { dir: "left", steps: 4 };
-    // this.socket.rpc("move_position", data);
-  } //end test
+  sendMoveMessage(posX, posY) {
+    //console.log("sendPositionMessage: ");
+    var opCode = 1;
+    // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
+    // const data = '{"dir": "left", "steps": 4 }'; //working example
 
-  async chat(posX, posY) {
-    const data =
-    '{message: "user_id:"' +
-    this.user_id +
-    '", posX:' +
-    posX +
-    ', posY:' +
-    posY +
-    "', }";
+    const data = `{"user_id" : "${this.user_id}", "posX": "${posX}", "posY" : "${posY}", "location": "home"}`;
 
-    const data2 = {message: 'user_id:"b5b11afb-6e43-4977-bc97-dfe1fc6effe9", posX: 100, posY: 50 ', }
-
-    this.socket.onchannelmessage = (channelMessage) => {
-      console.info("Received chat message:", channelMessage.content.message);
-    };
-
-    this.socket.onstreamdata = (streamdata) => {
-      // const parsedData = JSON.parse(streamdata)
-      console.info("Received stream data:", streamdata);
-    };
-
-    const channelId = "movement";
-    const persistence = false;
-    const hidden = false;
-
-    let response = await this.socket.joinChat(
-      channelId,
-      1,
-      persistence,
-      hidden
-    );
-    console.info("Successfully joined channel:", response.room_name);
-
-    const messageAck = await this.socket.writeChatMessage(response.id, data);
-    console.info("Successfully sent chat message:", messageAck);
-
-
-
-    //stream
-    this.socket.onstreamdata = (streamdata) => {
-      console.info("Received stream data:", streamdata);
-    };
-    this.socket.onstreampresence = (streampresence) => {
-      console.log(
-        "Received presence event for stream: %o",
-        streampresence.joins
-      );
-      // streampresence.joins.forEach((join) => {
-      //   console.log("New user joined: %o", join.user_id);
-      // });
-      // streampresence.leaves.forEach((leave) => {
-      //   console.log("User left: %o", leave.user_id);
-      // });
-    };
-
-  } // chat
+    //console.log(data)
+    this.socket.rpc("move_position", data);
+  } //end sendChatMessage
 
   async chatExample() {
     // var onlineUsers = [];
@@ -170,7 +133,12 @@ class manageSession {
     const hidden = false;
 
     // 1 = Room, 2 = Direct Message, 3 = Group
-    const response = await this.socket.joinChat(roomname, 1, persistence, hidden);
+    const response = await this.socket.joinChat(
+      roomname,
+      1,
+      persistence,
+      hidden
+    );
 
     // // Setup initial online user list.
     // onlineUsers.concat(response.channel.presences);
@@ -178,29 +146,7 @@ class manageSession {
     // onlineUsers = onlineUsers.filter((user) => {
     //   return user != channel.self;
     // });
-  }
-
-  
-  sendChatMessage(posX, posY) {
-    console.log("sendChatMessage");
-    var opCode = 1;
-    // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
-    // const data =
-    //   '{"user_id":"' +
-    //   this.user_id +
-    //   '", "posX":' +
-    //   posX +
-    //   ', "posY":' +
-    //   posY +
-    //   " }";
-
-
-    const data = `{"user_id" : "${this.user_id}", "posX": "${posX}", "posY" : "${posY}", "location": "home"}`
-
-    // const data = '{"dir": "left", "steps": 4 }'; //working example
-    console.log(data)
-    this.socket.rpc("move_position", data);
-  } //end sendChatMessage
+  } //end chatExample
 } //end class
 
 export default new manageSession();
