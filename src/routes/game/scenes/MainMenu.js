@@ -1,5 +1,5 @@
 import CONFIG from "../config.js";
-import manageSession from "./manageSession.js";
+import manageSession from "../manageSession.js";
 
 
 export default class MainMenu extends Phaser.Scene {

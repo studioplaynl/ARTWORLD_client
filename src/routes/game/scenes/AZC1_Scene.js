@@ -1,5 +1,5 @@
 import CONFIG from "../config.js";
-import manageSession from "./manageSession";
+import manageSession from "../manageSession";
 
 export default class InGame extends Phaser.Scene {
   constructor() {
@@ -165,7 +165,7 @@ export default class InGame extends Phaser.Scene {
     //for each of the opponents, attach a png,
     console.log("make networkplayer...");
     for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-      if (manageSession.allConnectedUsers[i] != manageSession.user_id) {
+      if (manageSession.allConnectedUsers[i].user_id != manageSession.user_id) {
         console.log("created network user:")
 
         console.log(manageSession.allConnectedUsers[i])
@@ -202,44 +202,24 @@ export default class InGame extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
-      manageSession.sendChatMessage(this.player.x, this.player.y);
+      manageSession.sendMoveMessage(this.player.x, this.player.y);
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
-      manageSession.sendChatMessage(this.player.x, this.player.y);
+      manageSession.sendMoveMessage(this.player.x, this.player.y);
     }
 
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
-      manageSession.sendChatMessage(this.player.x, this.player.y);
+      manageSession.sendMoveMessage(this.player.x, this.player.y);
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
-      manageSession.sendChatMessage(this.player.x, this.player.y);
+      manageSession.sendMoveMessage(this.player.x, this.player.y);
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     this.player.body.velocity.normalize().scale(speed);
     //////// end PLAYER SPEED CONTROL  //////////////////////////////////////////////////////////////////////////////////////////////
-
-    // if (this.cursors.left.isDown) {
-    //   this.player.setVelocityX(-160);
-    //   manageSession.sendChatMessage(this.player.x, this.player.y);
-    //   //manageSession.chat();
-    //   //this.headerText.setText("setVelocityX(-160)");
-    //   //manageSession.socket.sendMatchState(manageSession.matchID, 2, "", null);
-    // } else if (this.cursors.right.isDown) {
-    //   this.player.setVelocityX(160);
-    //   //manageSession.makeMove(this.player.x, this.player.y);
-    // } else if (this.cursors.up.isDown) {
-    //   this.player.setVelocityY(-160);
-    //   //manageSession.makeMove(this.player.x, this.player.y);
-    // } else if (this.cursors.down.isDown) {
-    //   this.player.setVelocityY(160);
-    //   //manageSession.makeMove(this.player.x, this.player.y);
-    // } else {
-    //   this.player.setVelocityX(0);
-    //   this.player.setVelocityY(0);
-    // }
 
     this.playerIdText.setText(manageSession.userID);
 
@@ -257,6 +237,19 @@ export default class InGame extends Phaser.Scene {
       this.createRemotePlayer();
       // manageSession.createNetworkPlayers = false
       // console.log(manageSession.createNetworkPlayers)
+    }
+
+    if (manageSession.updateNetworkPlayers){
+      for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+        if (manageSession.allConnectedUsers[i].user_id != manageSession.user_id) {
+  
+          
+          this.NetworkPlayer[0].x = manageSession.allConnectedUsers[i].posX;
+          this.NetworkPlayer[0].y = manageSession.allConnectedUsers[i].posY;
+
+        }
+      }
+      manageSession.updateNetworkPlayers = false;
     }
   } //update
 } //class
