@@ -1,6 +1,6 @@
 <script>
    	import {client} from "../nakama.svelte"
-    import {Session} from "../store.js"
+    import {Session} from "../session.js"
     import axios from 'axios'
     let avatar_url =""
    async function getAccount() {
@@ -11,7 +11,7 @@
 
     let promise = getAccount();
     
-    let url = "http://localhost:4000/uploadAvatar"
+    let url = ""
     
     async function sendAvatar(data) {
 
@@ -30,34 +30,14 @@
         console.log($Session.user_id)
         const entries = [...data.entries()];
         console.log(entries);
-/*
-        var opts = {
-          'mode':'no-cors',
-          method: 'POST',
-          body: data,
-          headers: {
-            'Access-Control-Allow-Origin': '*'
-          }
-        }
-        fetch(url, opts)
-*/
 
-await fetch(url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "multipart/form-data"
-    },
-    body: imagedata
-  })
-
-
-/*
-axios.put(url, data, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-})
-*/
+        await fetch(url, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "multipart/form-data"
+            },
+            body: imagedata
+          })
     }
 
     

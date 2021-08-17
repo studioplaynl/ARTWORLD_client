@@ -1,5 +1,5 @@
 <script>
-  import { Session } from "../store.js";
+  import { Session } from "../session.js";
   import { client } from "../nakama.svelte";
   console.log($Session);
   let user = "",

@@ -1,6 +1,6 @@
 <script>
    	import {client} from "../nakama.svelte"
-    import {Session} from "../store.js"
+    import {Session} from "../session.js"
 
     let avatar_url =""
    async function getAccount() {

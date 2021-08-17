@@ -5,7 +5,7 @@
 	let passwordCheck = 'somesupersecretpassword'
 	let role = 'speler'
 	let azc = ''
-    import {Session} from "../../store.js"
+    import {Session} from "../../session.js"
 	import {client} from "../../nakama.svelte"
 
 

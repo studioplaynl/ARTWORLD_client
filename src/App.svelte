@@ -7,10 +7,10 @@
   import profile from "./routes/profile.svelte";
   import upload from "./routes/upload.svelte";
   import match from "./routes/match.svelte";
-  import { Session, Profile, logout } from "./store.js";
+  import { Session, Profile, logout } from "./session.js";
   import UploadAvatar from "./routes/uploadAvatar.svelte";
   import { onMount } from 'svelte';
-  import { checkLogin } from './store';
+  import { checkLogin } from './session';
 
 
 

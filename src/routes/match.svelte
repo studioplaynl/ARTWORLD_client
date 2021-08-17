@@ -1,6 +1,6 @@
 <script>
     import {client} from "../nakama.svelte"
-    import { Session, Profile, logout} from "../store.js"
+    import { Session, Profile, logout} from "../session.js"
     
     const useSSL = false;
     const verboseLogging = false;

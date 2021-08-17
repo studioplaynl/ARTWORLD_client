@@ -1,5 +1,5 @@
 <script>
-    import {Session, login} from "../../store.js"
+    import {Session, login} from "../../session.js"
 
     console.log($Session)
 	let email = "user1@lindseyschaap.nl"
