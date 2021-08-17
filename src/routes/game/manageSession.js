@@ -1,4 +1,4 @@
-import { client } from "../../../nakama.svelte";
+import { client } from "../../nakama.svelte";
 
 class manageSession {
   constructor() {

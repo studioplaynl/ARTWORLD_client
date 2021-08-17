@@ -1,5 +1,5 @@
 import CONFIG from "../config.js";
-import manageSession from "./manageSession";
+import manageSession from "../manageSession";
 
 export default class InGame extends Phaser.Scene {
   constructor() {
