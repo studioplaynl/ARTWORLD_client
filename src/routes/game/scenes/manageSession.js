@@ -40,7 +40,6 @@ class manageSession {
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
-
     await this.socket.rpc("joingo", "home").then((rec) => {
       let payload = JSON.parse(rec.payload);
       console.log(payload);
@@ -98,7 +97,18 @@ class manageSession {
     // this.socket.rpc("move_position", data);
   } //end test
 
-  async chat() {
+  async chat(posX, posY) {
+    const data =
+    '{message: "user_id:"' +
+    this.user_id +
+    '", posX:' +
+    posX +
+    ', posY:' +
+    posY +
+    "', }";
+
+    const data2 = {message: 'user_id:"b5b11afb-6e43-4977-bc97-dfe1fc6effe9", posX: 100, posY: 50 ', }
+
     this.socket.onchannelmessage = (channelMessage) => {
       console.info("Received chat message:", channelMessage.content.message);
     };
@@ -108,7 +118,7 @@ class manageSession {
       console.info("Received stream data:", streamdata);
     };
 
-    const channelId = "TEST";
+    const channelId = "movement";
     const persistence = false;
     const hidden = false;
 
@@ -120,15 +130,10 @@ class manageSession {
     );
     console.info("Successfully joined channel:", response.room_name);
 
-    const messageAck = await this.socket.writeChatMessage(response.id, {
-      message: "Pineapple doesn't belong on a pizza!",
-    });
+    const messageAck = await this.socket.writeChatMessage(response.id, data);
     console.info("Successfully sent chat message:", messageAck);
 
-    //on join
-    this.joined = await this.socket.rpc("join");
-    //console.log(this.socket);
-    console.log(this.joined);
+
 
     //stream
     this.socket.onstreamdata = (streamdata) => {
@@ -147,27 +152,54 @@ class manageSession {
       // });
     };
 
-    console.log("send test ");
-    var opCode = 1;
-    var data = { dir: "left", steps: 4 };
-    this.socket.rpc("move_position", data);
   } // chat
 
+  async chatExample() {
+    // var onlineUsers = [];
+    // this.socket.onchannelpresence = (presences) => {
+    //   // Remove all users who left.
+    //   onlineUsers = onlineUsers.filter((user) => {
+    //     return !presences.leave.includes(user);
+    //   });
+    //   // Add all users who joined.
+    //   onlineUsers.concat(presences.join);
+    // };
+
+    const roomname = "PizzaFans";
+    const persistence = true;
+    const hidden = false;
+
+    // 1 = Room, 2 = Direct Message, 3 = Group
+    const response = await this.socket.joinChat(roomname, 1, persistence, hidden);
+
+    // // Setup initial online user list.
+    // onlineUsers.concat(response.channel.presences);
+    // // Remove your own user from list.
+    // onlineUsers = onlineUsers.filter((user) => {
+    //   return user != channel.self;
+    // });
+  }
+
+  
   sendChatMessage(posX, posY) {
     console.log("sendChatMessage");
     var opCode = 1;
     // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
-    const data =
-      '{"user_id":"' +
-      this.user_id +
-      '", "posX":' +
-      posX +
-      ', "posY":' +
-      posY +
-      "}";
+    // const data =
+    //   '{"user_id":"' +
+    //   this.user_id +
+    //   '", "posX":' +
+    //   posX +
+    //   ', "posY":' +
+    //   posY +
+    //   " }";
+
+
+    const data = `{"user_id" : "${this.user_id}", "posX": "${posX}", "posY" : "${posY}", "location": "home"}`
 
     // const data = '{"dir": "left", "steps": 4 }'; //working example
-    this.socket.rpc("move_position", "", data);
+    console.log(data)
+    this.socket.rpc("move_position", data);
   } //end sendChatMessage
 } //end class
 

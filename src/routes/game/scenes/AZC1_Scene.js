@@ -51,7 +51,7 @@ export default class InGame extends Phaser.Scene {
       .setDepth(30);
 
     this.headerText.on("pointerup", () => {
-      manageSession.sendChatMessage();
+      manageSession.chat();
     }); //on mouseup of clickable text
 
     this.matchIdText = this.add
@@ -79,7 +79,7 @@ export default class InGame extends Phaser.Scene {
       .setDepth(30);
 
     this.playerIdText.on("pointerup", () => {
-      manageSession.createSocket();
+      manageSession.chatExample();
     });
 
     this.opponentsIdText = this.add
