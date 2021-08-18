@@ -47,7 +47,7 @@ class manageSession {
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
-    /////////  GET ARRAY of online Users //////////////////////////////////////////////////////////////////////////////////////////
+    /////////  GET ARRAY of online Users //////////////////////////////////////////////////////////////////////////////////////////////
     await this.getArrayOfOnlineUsers();
     /////////  end GET ARRAY of online Users //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -99,9 +99,21 @@ class manageSession {
           console.log(i);
           //console.log(this.allConnectedUsers[i]);
         }
-        const newArr = this.allConnectedUsers.filter((a) => a);
+
+        let newArr = this.allConnectedUsers.filter((a) => a); //filter out empty places in the array, make the array correct
         this.allConnectedUsers = newArr;
 
+        // filter out duplicates from server array
+        newArr = this.allConnectedUsers.reduce((acc, current) => {const x = acc.find(item => item.user_id === current.user_id);
+        if (!x){
+          return acc.concat([current]);}
+          else {
+            return acc;
+          }
+        }, []);
+
+        this.allConnectedUsers= newArr
+        
         console.log(this.allConnectedUsers);
         //this.allConnectedUsers[i] = user;
         //console.log(this.allConnectedUsers[i]);

@@ -23,7 +23,7 @@ export default class InGame extends Phaser.Scene {
     this.load.image("bomb", "./assets/bomb.png");
     this.load.image("NetworkPlayer", "./assets/pieceYellow_border05.png");
 
-    ///////// TILEMAP //////////////////////////////////////////////////////////////////////////////////////////
+    ///////// TILEMAP //////////////////////////////////////////////////////////////////////////////////////////////
     this.load.image(
       "tiles",
       "./assets/tilesets/tuxmon-sample-32px-extruded.png"
@@ -41,9 +41,9 @@ export default class InGame extends Phaser.Scene {
     this.playerIdText = manageSession.user_id;
     //manageSession.createSocket();
     manageSession.createSocket();
-    ///////// end SOCKET //////////////////////////////////////////////////////////////////////////////////////////
+    ///////// end SOCKET ///////////////////////////////////////////////////////////////////////////////////////////
 
-    /////////  TEXT //////////////////////////////////////////////////////////////////////////////////////////////
+    /////////  TEXT ////////////////////////////////////////////////////////////////////////////////////////////////
     this.headerText = this.add
       .text(CONFIG.WIDTH / 2, 20, "Waiting for game to start", {
         fontFamily: "Arial",
@@ -169,17 +169,15 @@ export default class InGame extends Phaser.Scene {
   createRemotePlayer() {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
+
     console.log("make networkplayer...");
     for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-      if (manageSession.allConnectedUsers[i].user_id != manageSession.user_id) {
         console.log("created network user:");
 
         console.log(manageSession.allConnectedUsers[i]);
 
-        this.NetworkPlayer[0] = this.add
-          .image(this.player.x - 40, this.player.y - 40, "NetworkPlayer")
-          .setDepth(100);
-      }
+        this.NetworkPlayer[i] = this.add.image(this.player.x - 40, this.player.y - 40, "NetworkPlayer").setDepth(100);
+      
     }
 
     manageSession.createNetworkPlayers = false;
@@ -271,12 +269,10 @@ export default class InGame extends Phaser.Scene {
 
     if (manageSession.updateNetworkPlayers) {
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        if (
-          manageSession.allConnectedUsers[i].user_id != manageSession.user_id
-        ) {
-          this.NetworkPlayer[0].x = manageSession.allConnectedUsers[i].posX;
-          this.NetworkPlayer[0].y = manageSession.allConnectedUsers[i].posY;
-        }
+      
+          this.NetworkPlayer[i].x = manageSession.allConnectedUsers[i].posX;
+          this.NetworkPlayer[i].y = manageSession.allConnectedUsers[i].posY;
+        
       }
       manageSession.updateNetworkPlayers = false;
     }
