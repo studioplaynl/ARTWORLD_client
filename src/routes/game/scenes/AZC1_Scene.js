@@ -33,6 +33,10 @@ export default class InGame extends Phaser.Scene {
   }
 
   create() {
+    //timers
+    manageSession.updateMovementTimer = 0;
+    manageSession.updateMovementInterval = 30; //20 fps
+
     /////////  SOCKET //////////////////////////////////////////////////////////////////////////////////////////////
     this.playerIdText = manageSession.user_id;
     //manageSession.createSocket();
@@ -166,10 +170,10 @@ export default class InGame extends Phaser.Scene {
     console.log("make networkplayer...");
     for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
       if (manageSession.allConnectedUsers[i].user_id != manageSession.user_id) {
-        console.log("created network user:")
+        console.log("created network user:");
 
-        console.log(manageSession.allConnectedUsers[i])
-        
+        console.log(manageSession.allConnectedUsers[i]);
+
         this.NetworkPlayer[0] = this.add.image(
           this.player.x - 40,
           this.player.y - 40,
@@ -177,7 +181,7 @@ export default class InGame extends Phaser.Scene {
         );
       }
     }
-  
+
     manageSession.createNetworkPlayers = false;
     console.log(
       "manageSession.createNetworkPlayers: " +
@@ -192,6 +196,12 @@ export default class InGame extends Phaser.Scene {
   }
 
   update(time, delta) {
+    //////// UPDATE TIMER      //////////////////////////////////////////////////////////////////////////////////////////////
+    manageSession.updateMovementTimer += delta;
+    // console.log(time) //running time in millisec
+    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
+    //////// end UPDATE TIMER  //////////////////////////////////////////////////////////////////////////////////////////////
+
     //////// PLAYER SPEED CONTROL  //////////////////////////////////////////////////////////////////////////////////////////////
     const speed = 175;
     const prevVelocity = this.player.body.velocity.clone();
@@ -202,19 +212,31 @@ export default class InGame extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
-      manageSession.sendMoveMessage(this.player.x, this.player.y);
+      if (manageSession.updateMovementTimer > manageSession.updateMovementInterval) {
+        manageSession.sendMoveMessage(this.player.x, this.player.y);
+        manageSession.updateMovementTimer = 0;
+      }
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
-      manageSession.sendMoveMessage(this.player.x, this.player.y);
+      if (manageSession.updateMovementTimer > manageSession.updateMovementInterval) {
+        manageSession.sendMoveMessage(this.player.x, this.player.y);
+        manageSession.updateMovementTimer = 0;
+      }
     }
 
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
-      manageSession.sendMoveMessage(this.player.x, this.player.y);
+      if (manageSession.updateMovementTimer > manageSession.updateMovementInterval) {
+        manageSession.sendMoveMessage(this.player.x, this.player.y);
+        manageSession.updateMovementTimer = 0;
+      }
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
-      manageSession.sendMoveMessage(this.player.x, this.player.y);
+      if (manageSession.updateMovementTimer > manageSession.updateMovementInterval) {
+        manageSession.sendMoveMessage(this.player.x, this.player.y);
+        manageSession.updateMovementTimer = 0;
+      }
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal
@@ -239,14 +261,13 @@ export default class InGame extends Phaser.Scene {
       // console.log(manageSession.createNetworkPlayers)
     }
 
-    if (manageSession.updateNetworkPlayers){
+    if (manageSession.updateNetworkPlayers) {
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        if (manageSession.allConnectedUsers[i].user_id != manageSession.user_id) {
-  
-          
+        if (
+          manageSession.allConnectedUsers[i].user_id != manageSession.user_id
+        ) {
           this.NetworkPlayer[0].x = manageSession.allConnectedUsers[i].posX;
           this.NetworkPlayer[0].y = manageSession.allConnectedUsers[i].posY;
-
         }
       }
       manageSession.updateNetworkPlayers = false;

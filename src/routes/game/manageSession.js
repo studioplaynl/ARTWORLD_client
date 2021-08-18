@@ -1,3 +1,4 @@
+import { getTimeFormatter } from "svelte-i18n";
 import { parse } from "uuid";
 import { client } from "../../nakama.svelte";
 
@@ -80,12 +81,7 @@ class manageSession {
     };
 
     this.socket.onstreampresence = (streampresence) => {
-      console.log(
-        "Received presence event for stream: %o",
-        streampresence.joins
-      );
-
-      this.socket.rpc("joingo", "home").then((rec) => {
+       this.socket.rpc("joingo", "home").then((rec) => {
         let payload = JSON.parse(rec.payload);
         console.log(payload);
         payload.forEach((user, i) => {
@@ -96,12 +92,13 @@ class manageSession {
         this.createNetworkPlayers = true;
       });
 
-      streampresence.joins.forEach((join) => {
-        console.log("New user joined: %o", join.user_id);
-      });
-      streampresence.leaves.forEach((leave) => {
-        console.log("User left: %o", leave.user_id);
-      });
+      // streampresence.joins.forEach((join) => {
+      //   console.log("New user joined: %o", join.user_id);
+      // });
+      // streampresence.leaves.forEach((leave) => {
+      //   console.log("User left: %o", leave.user_id);
+      // });
+
     }; //end onstreampresence
   } //end createSocket
 
@@ -147,6 +144,7 @@ class manageSession {
     //   return user != channel.self;
     // });
   } //end chatExample
+
 } //end class
 
 export default new manageSession();
