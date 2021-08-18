@@ -31,6 +31,10 @@ class manageSession {
     this.channelId = "pineapple-pizza-lovers-room";
     this.persistence = false;
     this.hidden = false;
+
+    //timers
+    this.updateMovementTimer = 0;
+    this.updateMovementInterval = 30; //20 fps
   }
 
   async createSocket() {
@@ -43,18 +47,9 @@ class manageSession {
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
-    await this.socket.rpc("joingo", "home").then((rec) => {
-      let payload = JSON.parse(rec.payload);
-      console.log(payload);
-
-      payload.forEach((user, i) => {
-        //console.log(user.user_id);
-        // this.allConnectedUsers[i] = user.user_id;
-        this.allConnectedUsers[i] = user;
-        console.log(this.allConnectedUsers[i]);
-      });
-      this.createNetworkPlayers = true;
-    });
+    /////////  GET ARRAY of online Users //////////////////////////////////////////////////////////////////////////////////////////
+    await this.getArrayOfOnlineUsers();
+    /////////  end GET ARRAY of online Users //////////////////////////////////////////////////////////////////////////////////////////
 
     //stream
     this.socket.onstreamdata = (streamdata) => {
@@ -81,26 +76,40 @@ class manageSession {
     };
 
     this.socket.onstreampresence = (streampresence) => {
-       this.socket.rpc("joingo", "home").then((rec) => {
-        let payload = JSON.parse(rec.payload);
-        console.log(payload);
-        payload.forEach((user, i) => {
-          //console.log(user.user_id);
-          this.allConnectedUsers[i] = user;
-          console.log(this.allConnectedUsers[i]);
-        });
-        this.createNetworkPlayers = true;
-      });
-
+      this.getArrayOfOnlineUsers();
+      
       // streampresence.joins.forEach((join) => {
       //   console.log("New user joined: %o", join.user_id);
       // });
       // streampresence.leaves.forEach((leave) => {
       //   console.log("User left: %o", leave.user_id);
       // });
-
     }; //end onstreampresence
   } //end createSocket
+
+  getArrayOfOnlineUsers() {
+    this.socket.rpc("joingo", "home").then((rec) => {
+      let payload = JSON.parse(rec.payload);
+      //console.log(payload);
+
+      payload.forEach((user, i) => {
+        if (user.user_id != this.user_id) {
+          //console.log(user.user_id);
+          this.allConnectedUsers[i] = user;
+          console.log(i);
+          //console.log(this.allConnectedUsers[i]);
+        }
+        const newArr = this.allConnectedUsers.filter((a) => a);
+        this.allConnectedUsers = newArr;
+
+        console.log(this.allConnectedUsers);
+        //this.allConnectedUsers[i] = user;
+        //console.log(this.allConnectedUsers[i]);
+      });
+      this.createNetworkPlayers = true;
+      console.log(this.createNetworkPlayers);
+    });
+  }
 
   sendMoveMessage(posX, posY) {
     //console.log("sendPositionMessage: ");
@@ -144,7 +153,6 @@ class manageSession {
     //   return user != channel.self;
     // });
   } //end chatExample
-
 } //end class
 
 export default new manageSession();

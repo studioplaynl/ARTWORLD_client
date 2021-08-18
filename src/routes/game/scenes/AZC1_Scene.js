@@ -138,7 +138,7 @@ export default class InGame extends Phaser.Scene {
     /////////  PLAYER //////////////////////////////////////////////////////////////////////////////////////////////
     this.player = this.physics.add
       .image(spawnPoint.x, spawnPoint.y, "star")
-      .setDepth(5);
+      .setDepth(101);
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
     /////////  end PLAYER //////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +158,9 @@ export default class InGame extends Phaser.Scene {
     // );
 
     // Watch the player and worldLayer for collisions, for the duration of the scene:
-    this.physics.add.collider(this.player, worldLayer);
+    //-->off
+    //this.physics.add.collider(this.player, worldLayer);
+    //<--off
     //////// end PLAYER VS WORLD //////////////////////////////////////////////////////////////////////////////////////////////
 
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -174,11 +176,9 @@ export default class InGame extends Phaser.Scene {
 
         console.log(manageSession.allConnectedUsers[i]);
 
-        this.NetworkPlayer[0] = this.add.image(
-          this.player.x - 40,
-          this.player.y - 40,
-          "NetworkPlayer"
-        );
+        this.NetworkPlayer[0] = this.add
+          .image(this.player.x - 40, this.player.y - 40, "NetworkPlayer")
+          .setDepth(100);
       }
     }
 
@@ -212,13 +212,17 @@ export default class InGame extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
-      if (manageSession.updateMovementTimer > manageSession.updateMovementInterval) {
+      if (
+        manageSession.updateMovementTimer > manageSession.updateMovementInterval
+      ) {
         manageSession.sendMoveMessage(this.player.x, this.player.y);
         manageSession.updateMovementTimer = 0;
       }
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
-      if (manageSession.updateMovementTimer > manageSession.updateMovementInterval) {
+      if (
+        manageSession.updateMovementTimer > manageSession.updateMovementInterval
+      ) {
         manageSession.sendMoveMessage(this.player.x, this.player.y);
         manageSession.updateMovementTimer = 0;
       }
@@ -227,13 +231,17 @@ export default class InGame extends Phaser.Scene {
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
-      if (manageSession.updateMovementTimer > manageSession.updateMovementInterval) {
+      if (
+        manageSession.updateMovementTimer > manageSession.updateMovementInterval
+      ) {
         manageSession.sendMoveMessage(this.player.x, this.player.y);
         manageSession.updateMovementTimer = 0;
       }
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
-      if (manageSession.updateMovementTimer > manageSession.updateMovementInterval) {
+      if (
+        manageSession.updateMovementTimer > manageSession.updateMovementInterval
+      ) {
         manageSession.sendMoveMessage(this.player.x, this.player.y);
         manageSession.updateMovementTimer = 0;
       }
