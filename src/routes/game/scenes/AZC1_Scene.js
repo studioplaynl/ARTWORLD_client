@@ -20,6 +20,11 @@ export default class InGame extends Phaser.Scene {
   preload() {
     this.load.image("sky", "./assets/sky.png");
     this.load.image("star", "./assets/star.png");
+    this.load.spritesheet(
+      "avatar1",
+      "./assets/spritesheets/cloud_breathing.png",
+      { frameWidth: 68, frameHeight: 68 }
+    );
     this.load.image("bomb", "./assets/bomb.png");
     this.load.image("NetworkPlayer", "./assets/pieceYellow_border05.png");
 
@@ -35,7 +40,7 @@ export default class InGame extends Phaser.Scene {
   create() {
     //timers
     manageSession.updateMovementTimer = 0;
-    manageSession.updateMovementInterval = 30; //20 fps
+    manageSession.updateMovementInterval = 26; //1000 / frames =  millisec
 
     /////////  SOCKET //////////////////////////////////////////////////////////////////////////////////////////////
     this.playerIdText = manageSession.user_id;
@@ -136,8 +141,20 @@ export default class InGame extends Phaser.Scene {
     ///////// end TILEMAP //////////////////////////////////////////////////////////////////////////////////////////
 
     /////////  PLAYER //////////////////////////////////////////////////////////////////////////////////////////////
+    // const animationSetup = {
+    //   key: "playerAnimation",
+    //   frames: this.anims.generateFrameNumbers("move", {
+    //     start: 0,
+    //     end: 9,
+    //     first: 0,
+    //   }),
+    //   frameRate: 15,
+    //   repeat: -1,
+    // };
+    // this.anims.create(animationSetup);
+
     this.player = this.physics.add
-      .image(spawnPoint.x, spawnPoint.y, "star")
+      .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
       .setDepth(101);
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
@@ -169,15 +186,19 @@ export default class InGame extends Phaser.Scene {
   createRemotePlayer() {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
-
+    // this.NetworkPlayer = []
+    // this.NetworkPlayer = manageSession.allConnectedUsers;
     console.log("make networkplayer...");
     for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        console.log("created network user:");
+      console.log("created network user:");
 
-        console.log(manageSession.allConnectedUsers[i]);
+      console.log(manageSession.allConnectedUsers[i]);
 
-        this.NetworkPlayer[i] = this.add.image(this.player.x - 40, this.player.y - 40, "NetworkPlayer").setDepth(100);
-      
+      this.NetworkPlayer[i] = this.add
+        .image(this.player.x - 40, this.player.y - 40, "NetworkPlayer")
+        .setDepth(100);
+      console.log(this.NetworkPlayer.length);
+      console.log(this.NetworkPlayer);
     }
 
     manageSession.createNetworkPlayers = false;
@@ -269,10 +290,8 @@ export default class InGame extends Phaser.Scene {
 
     if (manageSession.updateNetworkPlayers) {
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-      
-          this.NetworkPlayer[i].x = manageSession.allConnectedUsers[i].posX;
-          this.NetworkPlayer[i].y = manageSession.allConnectedUsers[i].posY;
-        
+        this.NetworkPlayer[i].x = manageSession.allConnectedUsers[i].posX;
+        this.NetworkPlayer[i].y = manageSession.allConnectedUsers[i].posY;
       }
       manageSession.updateNetworkPlayers = false;
     }
