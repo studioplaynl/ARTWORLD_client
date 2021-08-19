@@ -163,16 +163,9 @@ export default class InGame extends Phaser.Scene {
 
     //  Our player animations, turning, walking left and walking right.
     this.anims.create({
-      key: "left",
+      key: "moving",
       frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: "right",
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 8, end: 0 }),
-      frameRate: 10,
+      frameRate: 20,
       repeat: -1,
     });
 
@@ -253,8 +246,6 @@ export default class InGame extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
-      this.player.anims.play("left", true);
-
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -263,8 +254,6 @@ export default class InGame extends Phaser.Scene {
       }
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
-      this.player.anims.play("right", true);
-
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -276,7 +265,6 @@ export default class InGame extends Phaser.Scene {
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
-      this.player.anims.play("left", true);
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -285,7 +273,6 @@ export default class InGame extends Phaser.Scene {
       }
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
-      this.player.anims.play("right", true);
 
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
@@ -296,13 +283,14 @@ export default class InGame extends Phaser.Scene {
     }
 
     if (
-      !this.cursors.up.isDown &&
-      !this.cursors.down.isDown &&
-      !this.cursors.left.isDown &&
-      !this.cursors.right.isDown
+      this.cursors.up.isDown ||
+      this.cursors.down.isDown ||
+      this.cursors.left.isDown ||
+      this.cursors.right.isDown
     ) {
-      this.player.anims.play("stop", true);
-    }
+      this.player.anims.play("moving", true);
+    } else {
+      this.player.anims.play("stop", true); }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     this.player.body.velocity.normalize().scale(speed);
