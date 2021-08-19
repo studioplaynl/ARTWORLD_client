@@ -18,6 +18,7 @@ export default class InGame extends Phaser.Scene {
   }
 
   preload() {
+    ///////// IMAGES //////////////////////////////////////////////////////////////////////////////////////////////
     this.load.image("sky", "./assets/sky.png");
     this.load.image("star", "./assets/star.png");
     this.load.spritesheet(
@@ -27,6 +28,7 @@ export default class InGame extends Phaser.Scene {
     );
     this.load.image("bomb", "./assets/bomb.png");
     this.load.image("NetworkPlayer", "./assets/pieceYellow_border05.png");
+    ///////// end IMAGES //////////////////////////////////////////////////////////////////////////////////////////////
 
     ///////// TILEMAP //////////////////////////////////////////////////////////////////////////////////////////////
     this.load.image(
@@ -158,6 +160,26 @@ export default class InGame extends Phaser.Scene {
       .setDepth(101);
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
+
+    //  Our player animations, turning, walking left and walking right.
+    this.anims.create({
+      key: "left",
+      frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "right",
+      frames: this.anims.generateFrameNumbers("avatar1", { start: 8, end: 0 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "stop",
+      frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
+    });
     /////////  end PLAYER //////////////////////////////////////////////////////////////////////////////////////////////
 
     //////// PLAYER VS WORLD //////////////////////////////////////////////////////////////////////////////////////////////
@@ -231,6 +253,8 @@ export default class InGame extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
+      this.player.anims.play("left", true);
+
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -239,17 +263,20 @@ export default class InGame extends Phaser.Scene {
       }
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
+      this.player.anims.play("right", true);
+
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
         manageSession.sendMoveMessage(this.player.x, this.player.y);
         manageSession.updateMovementTimer = 0;
       }
-    }
+    } 
 
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
+      this.player.anims.play("left", true);
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -258,12 +285,23 @@ export default class InGame extends Phaser.Scene {
       }
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
+      this.player.anims.play("right", true);
+
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
         manageSession.sendMoveMessage(this.player.x, this.player.y);
         manageSession.updateMovementTimer = 0;
       }
+    }
+
+    if (
+      !this.cursors.up.isDown &&
+      !this.cursors.down.isDown &&
+      !this.cursors.left.isDown &&
+      !this.cursors.right.isDown
+    ) {
+      this.player.anims.play("stop", true);
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal
