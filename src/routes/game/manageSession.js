@@ -77,7 +77,7 @@ class manageSession {
 
     this.socket.onstreampresence = (streampresence) => {
       this.getArrayOfOnlineUsers();
-      
+
       // streampresence.joins.forEach((join) => {
       //   console.log("New user joined: %o", join.user_id);
       // });
@@ -88,38 +88,38 @@ class manageSession {
   } //end createSocket
 
   getArrayOfOnlineUsers() {
-    this.socket.rpc("joingo", "home").then((rec) => {
+    this.socket.rpc("join", "home").then((rec) => {
       let payload = JSON.parse(rec.payload);
       //console.log(payload);
-
-      payload.forEach((user, i) => {
-        if (user.user_id != this.user_id) {
-          //console.log(user.user_id);
-          this.allConnectedUsers[i] = user;
-          console.log(i);
-          //console.log(this.allConnectedUsers[i]);
-        }
-
-        let newArr = this.allConnectedUsers.filter((a) => a); //filter out empty places in the array, make the array correct
-        this.allConnectedUsers = newArr;
-
-        // filter out duplicates from server array
-        newArr = this.allConnectedUsers.reduce((acc, current) => {const x = acc.find(item => item.user_id === current.user_id);
-        if (!x){
-          return acc.concat([current]);}
-          else {
-            return acc;
+      if (payload != null) {
+        payload.forEach((user, i) => {
+          if (user.user_id != this.user_id) {
+            this.allConnectedUsers[i] = user;            
           }
-        }, []);
+          let newArr = this.allConnectedUsers.filter((a) => a); //filter out empty places in the array, make the array correct
+          this.allConnectedUsers = newArr;
+          // // filter out duplicates from server array
+          // newArr = this.allConnectedUsers.reduce((acc, current) => {const x = acc.find(item => item.user_id === current.user_id);
+          // if (!x){
+          //   return acc.concat([current]);}
+          //   else {
+          //     return acc;
+          //   }
+          // }, []);
 
-        this.allConnectedUsers= newArr
-        
-        console.log(this.allConnectedUsers);
-        //this.allConnectedUsers[i] = user;
-        //console.log(this.allConnectedUsers[i]);
-      });
-      this.createNetworkPlayers = true;
-      console.log(this.createNetworkPlayers);
+          // this.allConnectedUsers= newArr
+          if (this.allConnectedUsers.length == 0) {
+            this.createNetworkPlayers = false;
+            console.log(this.createNetworkPlayers);
+            return;
+          } else {
+            console.log("this.allConnectedUsers: ");
+            console.log(this.allConnectedUsers);
+            this.createNetworkPlayers = true;
+            console.log(this.createNetworkPlayers);
+          }
+        });
+      } 
     });
   }
 

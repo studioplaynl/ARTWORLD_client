@@ -1,7 +1,7 @@
 import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 
-export default class InGame extends Phaser.Scene {
+export default class AZC1_Scene extends Phaser.Scene {
   constructor() {
     super("AZC1_Scene");
     this.headerText;
@@ -14,6 +14,7 @@ export default class InGame extends Phaser.Scene {
     this.phaser = this;
     // this.playerPos;
     this.NetworkPlayer = [];
+    this.avatarName = [];
     this.cursors;
   }
 
@@ -201,8 +202,7 @@ export default class InGame extends Phaser.Scene {
   createRemotePlayer() {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
-    // this.NetworkPlayer = []
-    // this.NetworkPlayer = manageSession.allConnectedUsers;
+
     console.log("make networkplayer...");
     for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
       console.log("created network user:");
@@ -214,13 +214,50 @@ export default class InGame extends Phaser.Scene {
         .setDepth(100);
       console.log(this.NetworkPlayer.length);
       console.log(this.NetworkPlayer);
-    }
 
-    manageSession.createNetworkPlayers = false;
-    console.log(
-      "manageSession.createNetworkPlayers: " +
-        manageSession.createNetworkPlayers
-    );
+    //https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/
+
+    // console.log("make networkplayer");
+    // for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+    //   console.log("created network user:");
+
+    //   console.log(manageSession.allConnectedUsers[i]);
+    //   console.log(manageSession.allConnectedUsers[i].avatar_url);
+
+    //   // this.avatarName[i] = "NetworkPlayer" + i;
+    //   this.avatarName[i] = "NetworkPlayer" + i;
+
+    //   console.log(this.avatarName[i]);
+
+    //   // if (manageSession.allConnectedUsers[i].avatar_url === "") {
+    //   const avatar_url =
+    //     'https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/b9ae6807-1ce1-4b71-a8a3-f5958be4d340/orangeship.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210819%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210819T124015Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=bb38a60a2603cf269cfdf86c2f5b82f43ac55afe27f21e48bdd1dd90e4a98947';
+    //   // }
+
+    //   this.load.image(
+    //     this.avatarName[i],
+    //     avatar_url
+    //   );
+    // }
+
+    // this.load.start(); // THIS!
+
+    // if (this.load.hasLoaded) {
+    //   for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+    //     this.NetworkPlayer[i] = this.add
+    //       .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
+    //       .setDepth(100);
+
+    //     console.log(this.NetworkPlayer.length);
+    //     console.log(this.NetworkPlayer);
+    //   }
+
+    //   manageSession.createNetworkPlayers = false;
+    //   console.log(
+    //     "manageSession.createNetworkPlayers: " +
+    //       manageSession.createNetworkPlayers
+    //   );
+    }
   } //createRemotePlayer
 
   enterLocation2Scene(player) {
@@ -260,7 +297,7 @@ export default class InGame extends Phaser.Scene {
         manageSession.sendMoveMessage(this.player.x, this.player.y);
         manageSession.updateMovementTimer = 0;
       }
-    } 
+    }
 
     // Vertical movement
     if (this.cursors.up.isDown) {
@@ -290,7 +327,8 @@ export default class InGame extends Phaser.Scene {
     ) {
       this.player.anims.play("moving", true);
     } else {
-      this.player.anims.play("stop", true); }
+      this.player.anims.play("stop", true);
+    }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     this.player.body.velocity.normalize().scale(speed);
