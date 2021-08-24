@@ -1,3 +1,4 @@
+import { getTimeFormatter } from "svelte-i18n";
 import { parse } from "uuid";
 import { client } from "../../nakama.svelte";
 
@@ -30,6 +31,10 @@ class manageSession {
     this.channelId = "pineapple-pizza-lovers-room";
     this.persistence = false;
     this.hidden = false;
+
+    //timers
+    this.updateMovementTimer = 0;
+    this.updateMovementInterval = 30; //20 fps
   }
 
   async createSocket() {
@@ -42,18 +47,9 @@ class manageSession {
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
-    await this.socket.rpc("joingo", "home").then((rec) => {
-      let payload = JSON.parse(rec.payload);
-      console.log(payload);
-
-      payload.forEach((user, i) => {
-        //console.log(user.user_id);
-        // this.allConnectedUsers[i] = user.user_id;
-        this.allConnectedUsers[i] = user;
-        console.log(this.allConnectedUsers[i]);
-      });
-      this.createNetworkPlayers = true;
-    });
+    /////////  GET ARRAY of online Users //////////////////////////////////////////////////////////////////////////////////////////////
+    await this.getArrayOfOnlineUsers();
+    /////////  end GET ARRAY of online Users //////////////////////////////////////////////////////////////////////////////////////////
 
     //stream
     this.socket.onstreamdata = (streamdata) => {
@@ -80,30 +76,52 @@ class manageSession {
     };
 
     this.socket.onstreampresence = (streampresence) => {
-      console.log(
-        "Received presence event for stream: %o",
-        streampresence.joins
-      );
+      this.getArrayOfOnlineUsers();
 
-      this.socket.rpc("joingo", "home").then((rec) => {
-        let payload = JSON.parse(rec.payload);
-        console.log(payload);
-        payload.forEach((user, i) => {
-          //console.log(user.user_id);
-          this.allConnectedUsers[i] = user;
-          console.log(this.allConnectedUsers[i]);
-        });
-        this.createNetworkPlayers = true;
-      });
-
-      streampresence.joins.forEach((join) => {
-        console.log("New user joined: %o", join.user_id);
-      });
-      streampresence.leaves.forEach((leave) => {
-        console.log("User left: %o", leave.user_id);
-      });
+      // streampresence.joins.forEach((join) => {
+      //   console.log("New user joined: %o", join.user_id);
+      // });
+      // streampresence.leaves.forEach((leave) => {
+      //   console.log("User left: %o", leave.user_id);
+      // });
     }; //end onstreampresence
   } //end createSocket
+
+  getArrayOfOnlineUsers() {
+    this.socket.rpc("join", "home").then((rec) => {
+      let payload = JSON.parse(rec.payload);
+      //console.log(payload);
+      if (payload != null) {
+        payload.forEach((user, i) => {
+          if (user.user_id != this.user_id) {
+            this.allConnectedUsers[i] = user;            
+          }
+          let newArr = this.allConnectedUsers.filter((a) => a); //filter out empty places in the array, make the array correct
+          this.allConnectedUsers = newArr;
+          // // filter out duplicates from server array
+          // newArr = this.allConnectedUsers.reduce((acc, current) => {const x = acc.find(item => item.user_id === current.user_id);
+          // if (!x){
+          //   return acc.concat([current]);}
+          //   else {
+          //     return acc;
+          //   }
+          // }, []);
+
+          // this.allConnectedUsers= newArr
+          if (this.allConnectedUsers.length == 0) {
+            this.createNetworkPlayers = false;
+            console.log(this.createNetworkPlayers);
+            return;
+          } else {
+            console.log("this.allConnectedUsers: ");
+            console.log(this.allConnectedUsers);
+            this.createNetworkPlayers = true;
+            console.log(this.createNetworkPlayers);
+          }
+        });
+      } 
+    });
+  }
 
   sendMoveMessage(posX, posY) {
     //console.log("sendPositionMessage: ");
