@@ -1,6 +1,10 @@
 import CONFIG from "../config.js";
 import manageSession from "../manageSession.js";
 
+import { locale } from 'svelte-i18n'
+import nl from './../../../langauge/nl.json'
+import en from './../../../langauge/en.json'
+
 
 export default class MainMenu extends Phaser.Scene {
   constructor() {
@@ -21,8 +25,12 @@ export default class MainMenu extends Phaser.Scene {
     manageSession.username = manageSession.sessionStored.username
     
 
+    locale.subscribe(value => {
+      console.log("current lang="+value)
+    });
+    
     this.add
-      .text(CONFIG.WIDTH / 2, 75, "Welcome to", {
+      .text(CONFIG.WIDTH / 2, 75, "welcome to", {
         fontFamily: "Arial",
         fontSize: "24px",
       })

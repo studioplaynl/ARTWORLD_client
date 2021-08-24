@@ -1,3 +1,4 @@
+import { fix_position } from "svelte/internal";
 import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 
@@ -16,6 +17,9 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.NetworkPlayer = [];
     this.avatarName = [];
     this.cursors;
+    this.pointer;
+    this.isClicking = false;
+    this.arrowDown = false;
   }
 
   preload() {
@@ -160,6 +164,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
       .setDepth(101);
 
+    this.player.setData("clickMovingStopped", true)
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
     //  Our player animations, turning, walking left and walking right.
@@ -196,7 +201,10 @@ export default class AZC1_Scene extends Phaser.Scene {
     //<--off
     //////// end PLAYER VS WORLD //////////////////////////////////////////////////////////////////////////////////////////////
 
+    //////// INPUT //////////////////////////////////////////////////////////////////////////////////////////////
     this.cursors = this.input.keyboard.createCursorKeys();
+    //this.pointer = this.input.activePointer;
+    //////// end INPUT //////////////////////////////////////////////////////////////////////////////////////////////
   }
 
   createRemotePlayer() {
@@ -215,48 +223,48 @@ export default class AZC1_Scene extends Phaser.Scene {
       console.log(this.NetworkPlayer.length);
       console.log(this.NetworkPlayer);
 
-    //https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/
+      //https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/
 
-    // console.log("make networkplayer");
-    // for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-    //   console.log("created network user:");
+      // console.log("make networkplayer");
+      // for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+      //   console.log("created network user:");
 
-    //   console.log(manageSession.allConnectedUsers[i]);
-    //   console.log(manageSession.allConnectedUsers[i].avatar_url);
+      //   console.log(manageSession.allConnectedUsers[i]);
+      //   console.log(manageSession.allConnectedUsers[i].avatar_url);
 
-    //   // this.avatarName[i] = "NetworkPlayer" + i;
-    //   this.avatarName[i] = "NetworkPlayer" + i;
+      //   // this.avatarName[i] = "NetworkPlayer" + i;
+      //   this.avatarName[i] = "NetworkPlayer" + i;
 
-    //   console.log(this.avatarName[i]);
+      //   console.log(this.avatarName[i]);
 
-    //   // if (manageSession.allConnectedUsers[i].avatar_url === "") {
-    //   const avatar_url =
-    //     'https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/b9ae6807-1ce1-4b71-a8a3-f5958be4d340/orangeship.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210819%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210819T124015Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=bb38a60a2603cf269cfdf86c2f5b82f43ac55afe27f21e48bdd1dd90e4a98947';
-    //   // }
+      //   // if (manageSession.allConnectedUsers[i].avatar_url === "") {
+      //   const avatar_url =
+      //     'https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/b9ae6807-1ce1-4b71-a8a3-f5958be4d340/orangeship.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210819%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210819T124015Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=bb38a60a2603cf269cfdf86c2f5b82f43ac55afe27f21e48bdd1dd90e4a98947';
+      //   // }
 
-    //   this.load.image(
-    //     this.avatarName[i],
-    //     avatar_url
-    //   );
-    // }
+      //   this.load.image(
+      //     this.avatarName[i],
+      //     avatar_url
+      //   );
+      // }
 
-    // this.load.start(); // THIS!
+      // this.load.start(); // THIS!
 
-    // if (this.load.hasLoaded) {
-    //   for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-    //     this.NetworkPlayer[i] = this.add
-    //       .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
-    //       .setDepth(100);
+      // if (this.load.hasLoaded) {
+      //   for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+      //     this.NetworkPlayer[i] = this.add
+      //       .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
+      //       .setDepth(100);
 
-    //     console.log(this.NetworkPlayer.length);
-    //     console.log(this.NetworkPlayer);
-    //   }
+      //     console.log(this.NetworkPlayer.length);
+      //     console.log(this.NetworkPlayer);
+      //   }
 
-    //   manageSession.createNetworkPlayers = false;
-    //   console.log(
-    //     "manageSession.createNetworkPlayers: " +
-    //       manageSession.createNetworkPlayers
-    //   );
+      //   manageSession.createNetworkPlayers = false;
+      //   console.log(
+      //     "manageSession.createNetworkPlayers: " +
+      //       manageSession.createNetworkPlayers
+      //   );
     }
   } //createRemotePlayer
 
@@ -283,6 +291,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
+      // this.arrowDown = true;
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -291,6 +300,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       }
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
+      // this.arrowDown = true
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -302,6 +312,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
+      // this.arrowDown = true
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -310,7 +321,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       }
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
-
+      // this.arrowDown = true
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -326,8 +337,52 @@ export default class AZC1_Scene extends Phaser.Scene {
       this.cursors.right.isDown
     ) {
       this.player.anims.play("moving", true);
+      this.arrowDown = true
     } else {
       this.player.anims.play("stop", true);
+      this.arrowDown = false
+    }
+
+    if (!this.input.activePointer.isDown && this.isClicking == true) {
+      // this.player.x = this.input.activePointer.position.x;
+      // this.player.y = this.input.activePointer.position.y;
+      this.player.setData("posX", this.input.activePointer.position.x)
+      this.player.setData("posY", this.input.activePointer.position.y)
+      this.player.setData("clickMovingStopped", false)
+      this.isClicking = false;
+      // this.player.setData("isMoving", true)
+      // console.log("this.isClicking")
+      // console.log(this.isClicking)
+    } else if (this.input.activePointer.isDown && this.isClicking == false) {
+      this.isClicking = true;
+      // console.log("this.isClicking")
+      // console.log(this.isClicking)
+    }
+
+    if (!this.arrowDown && this.player.getData("clickMovingStopped") == false) {
+      
+      if (Math.abs(this.player.x - this.player.getData("posX")) <= 4) {
+        this.player.x = this.player.getData("posX")
+        this.player.setData("clickMovingStopped", true)
+      } else if (this.player.x < this.player.getData("posX")) {
+        // this.player.x += 5;
+        this.player.body.setVelocityX(speed);
+      } else if (this.player.x > this.player.getData("posX")) {
+        // this.player.x -= 5;
+        this.player.body.setVelocityX(-speed);
+      }
+    }
+
+
+    if (!this.arrowDown && this.player.getData("clickMovingStopped") == false) {
+      if (Math.abs(this.player.y - this.player.getData("posY")) <= 4) {
+        this.player.y = this.player.getData("posY")
+        this.player.setData("clickMovingStopped", true)
+        } else if (this.player.y < this.player.getData("posY")) {
+          this.player.body.setVelocityY(speed);
+        } else if (this.player.y > this.player.getData("posY")) {
+          this.player.body.setVelocityY(-speed);
+      }
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal
