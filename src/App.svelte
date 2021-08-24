@@ -19,7 +19,7 @@
   addMessages('nl', nl);
   addMessages('en', en);
 
-
+  console.log(process.env)
   init({
   fallbackLocale: 'nl',
   //initialLocale: getLocaleFromNavigator(),

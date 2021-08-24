@@ -2,7 +2,7 @@
     import {client} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     
-    const useSSL = false;
+    const useSSL = true;
     const verboseLogging = false;
     const socket = client.createSocket(useSSL, verboseLogging);
     let match_ID = "";
@@ -38,12 +38,14 @@
 */      
         //own join
        // var joined = await socket.rpc('join')
-        await socket.rpc("joingo", "home")
+        await socket.rpc("join", "home")
         .then((rec) => {
             let payload = JSON.parse(rec.payload)
             console.log(payload)
+            //AllUsers = payload
             payload.forEach((user) => {
                 console.log(user.avatar_url)
+                AllUsers.push(user.user_id)
             }) 
         })
 

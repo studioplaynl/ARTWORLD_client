@@ -30,5 +30,11 @@
         "artist": "Kunstenaar",
         "moderator": "Moderator",
         "player": "Speler"
-    }
+    },
+    "game": {
+        "mainmenu": {
+            "welcomeTo": "Welkom in"
+        }
+    },
+    "test": "hey this works"
   }
