@@ -19,6 +19,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.cursors;
     this.pointer;
     this.isClicking = false;
+    this.arrowDown = false;
   }
 
   preload() {
@@ -163,6 +164,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
       .setDepth(101);
 
+    this.player.setData("clickMovingStopped", true)
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
     //  Our player animations, turning, walking left and walking right.
@@ -289,6 +291,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
+      // this.arrowDown = true;
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -297,6 +300,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       }
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
+      // this.arrowDown = true
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -308,6 +312,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
+      // this.arrowDown = true
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -316,7 +321,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       }
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
-
+      // this.arrowDown = true
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
@@ -332,8 +337,10 @@ export default class AZC1_Scene extends Phaser.Scene {
       this.cursors.right.isDown
     ) {
       this.player.anims.play("moving", true);
+      this.arrowDown = true
     } else {
       this.player.anims.play("stop", true);
+      this.arrowDown = false
     }
 
     if (!this.input.activePointer.isDown && this.isClicking == true) {
@@ -341,7 +348,9 @@ export default class AZC1_Scene extends Phaser.Scene {
       // this.player.y = this.input.activePointer.position.y;
       this.player.setData("posX", this.input.activePointer.position.x)
       this.player.setData("posY", this.input.activePointer.position.y)
+      this.player.setData("clickMovingStopped", false)
       this.isClicking = false;
+      // this.player.setData("isMoving", true)
       // console.log("this.isClicking")
       // console.log(this.isClicking)
     } else if (this.input.activePointer.isDown && this.isClicking == false) {
@@ -350,21 +359,32 @@ export default class AZC1_Scene extends Phaser.Scene {
       // console.log(this.isClicking)
     }
 
-    if(Math.abs(this.player.x - this.player.getData("posX")) <= 10){
-      this.player.x = this.player.getData("posX")
-    } else if (this.player.x < this.player.getData("posX")) {
-      this.player.x += 5
-    } else if (this.player.x > this.player.getData("posX")) {
-      this.player.x -= 5
+    if (!this.arrowDown && this.player.getData("clickMovingStopped") == false) {
+      
+      if (Math.abs(this.player.x - this.player.getData("posX")) <= 4) {
+        this.player.x = this.player.getData("posX")
+        this.player.setData("clickMovingStopped", true)
+      } else if (this.player.x < this.player.getData("posX")) {
+        // this.player.x += 5;
+        this.player.body.setVelocityX(speed);
+      } else if (this.player.x > this.player.getData("posX")) {
+        // this.player.x -= 5;
+        this.player.body.setVelocityX(-speed);
+      }
     }
 
-    if(Math.abs(this.player.y - this.player.getData("posY")) <= 10){
-      this.player.y = this.player.getData("posY")
-    } else if (this.player.y < this.player.getData("posY")) {
-      this.player.y += 5
-    } else if (this.player.y > this.player.getData("posY")) {
-      this.player.y -= 5
+
+    if (!this.arrowDown && this.player.getData("clickMovingStopped") == false) {
+      if (Math.abs(this.player.y - this.player.getData("posY")) <= 4) {
+        this.player.y = this.player.getData("posY")
+        this.player.setData("clickMovingStopped", true)
+        } else if (this.player.y < this.player.getData("posY")) {
+          this.player.body.setVelocityY(speed);
+        } else if (this.player.y > this.player.getData("posY")) {
+          this.player.body.setVelocityY(-speed);
+      }
     }
+
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     this.player.body.velocity.normalize().scale(speed);
     //////// end PLAYER SPEED CONTROL  //////////////////////////////////////////////////////////////////////////////////////////////
