@@ -19,7 +19,6 @@
   addMessages('nl', nl);
   addMessages('en', en);
 
-
   init({
   fallbackLocale: 'nl',
   //initialLocale: getLocaleFromNavigator(),

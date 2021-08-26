@@ -9,6 +9,8 @@
 	import {client} from "../../nakama.svelte"
 	import { _ } from 'svelte-i18n'
 
+	console.log($_ /*_("game.mainmenu.welcomeTo")*/)
+
 	async function register() {
 		const create = true;
 		console.log("azc: " + azc)

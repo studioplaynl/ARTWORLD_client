@@ -54,6 +54,7 @@ export async function checkLogin(session) {
     .catch((err) => {
             logout()
             window.location.href = "/#/login"
+            history.go(0)
     })
     }
 }
