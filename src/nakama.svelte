@@ -3,6 +3,7 @@
 
   //	export const client = new Client("WeEatChildrenForBreakfast", "192.168.0.133", "7350");
   //export const client = new Client("WeEatChildrenForBreakfast", "192.168.0.121", "7350");
+  //"nakama.toekomst.school"
   export const client = new Client(
     "WeEatChildrenForBreakfast",
     "195.169.146.45",

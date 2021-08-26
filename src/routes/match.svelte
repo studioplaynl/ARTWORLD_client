@@ -2,7 +2,7 @@
     import {client} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     
-    const useSSL = false;
+    const useSSL = true;
     const verboseLogging = false;
     const socket = client.createSocket(useSSL, verboseLogging);
     let match_ID = "";

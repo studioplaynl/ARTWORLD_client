@@ -13,7 +13,7 @@ class manageSession {
     this.socket;
 
     this.joined;
-    this.useSSL = false;
+    this.useSSL = true;
     this.verboseLogging = false;
 
     this.match;

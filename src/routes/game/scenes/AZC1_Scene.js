@@ -20,6 +20,12 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.pointer;
     this.isClicking = false;
     this.arrowDown = false;
+    this.gameCam
+
+    //pointer location example
+    // this.source // = player
+    this.target = new Phaser.Math.Vector2();
+    this.distance
   }
 
   preload() {
@@ -57,7 +63,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     /////////  TEXT ////////////////////////////////////////////////////////////////////////////////////////////////
     this.headerText = this.add
-      .text(CONFIG.WIDTH / 2, 20, "Waiting for game to start", {
+      .text(CONFIG.WIDTH / 2, 20, "", {
         fontFamily: "Arial",
         fontSize: "36px",
       })
@@ -92,14 +98,15 @@ export default class AZC1_Scene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive() //make clickable
       .setScrollFactor(0) //fixed on screen
-      .setDepth(30);
+      .setDepth(30)
+      .setShadow(1, 1, '#000000', 2);
 
     this.playerIdText.on("pointerup", () => {
       manageSession.chatExample();
     });
 
     this.opponentsIdText = this.add
-      .text(this.headerText.x, this.playerIdText.y + 14, "opponentsID", {
+      .text(this.headerText.x, this.playerIdText.y + 14, "", {
         fontFamily: "Arial",
         fontSize: "11px",
       })
@@ -182,9 +189,9 @@ export default class AZC1_Scene extends Phaser.Scene {
     /////////  end PLAYER //////////////////////////////////////////////////////////////////////////////////////////////
 
     //////// PLAYER VS WORLD //////////////////////////////////////////////////////////////////////////////////////////////
-    const camera = this.cameras.main;
-    camera.startFollow(this.player);
-    camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    this.gameCam = this.cameras.main;
+    this.gameCam.startFollow(this.player);
+    this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
     // this.player.setCollideWorldBounds(true);
     // this.physics.add.collider(
@@ -344,50 +351,72 @@ export default class AZC1_Scene extends Phaser.Scene {
     }
 
     if (!this.input.activePointer.isDown && this.isClicking == true) {
-      // this.player.x = this.input.activePointer.position.x;
-      // this.player.y = this.input.activePointer.position.y;
-      this.player.setData("posX", this.input.activePointer.position.x)
-      this.player.setData("posY", this.input.activePointer.position.y)
-      this.player.setData("clickMovingStopped", false)
+
+      this.player.setData("posX", this.input.activePointer.worldX)
+      this.player.setData("posY", this.input.activePointer.worldY)
+      console.log('this.player.getData("posX")')
+      console.log(this.player.getData("posX"))
+      console.log('this.player.getData("posX")')
+      console.log(this.player.getData("posY"))
+      
+      // this.player.setData("clickMovingStopped", false)
+      // this.target.x = this.input.activePointer.worldX
+      // this.target.y = this.input.activePointer.worldY
+      // this.physics.moveToObject(this.player, this.target, 200);
       this.isClicking = false;
       // this.player.setData("isMoving", true)
       // console.log("this.isClicking")
       // console.log(this.isClicking)
     } else if (this.input.activePointer.isDown && this.isClicking == false) {
       this.isClicking = true;
-      // console.log("this.isClicking")
-      // console.log(this.isClicking)
     }
 
-    if (!this.arrowDown && this.player.getData("clickMovingStopped") == false) {
-      
+    // this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+
+
+    //  4 is our distance tolerance, i.e. how close the source can get to the target
+    //  before it is considered as being there. The faster it moves, the more tolerance is required.
+
+    // if (this.distance < 4) {
+    //   this.player.body.reset(this.target.x, this.target.y);
+     
+    // }
+
+    if (!this.arrowDown) {
+
       if (Math.abs(this.player.x - this.player.getData("posX")) <= 4) {
         this.player.x = this.player.getData("posX")
-        this.player.setData("clickMovingStopped", true)
+        // this.gameCam.pan(this.player.x, this.player.y, 2000)
+        // this.player.setData("clickMovingStopped", true)
       } else if (this.player.x < this.player.getData("posX")) {
-        // this.player.x += 5;
-        this.player.body.setVelocityX(speed);
+        this.player.x += 5;
+        // this.player.body.setVelocityX(speed);
       } else if (this.player.x > this.player.getData("posX")) {
-        // this.player.x -= 5;
-        this.player.body.setVelocityX(-speed);
+        this.player.x -= 5;
+        // this.player.body.setVelocityX(-speed);
       }
     }
 
 
-    if (!this.arrowDown && this.player.getData("clickMovingStopped") == false) {
+    if (!this.arrowDown) {
       if (Math.abs(this.player.y - this.player.getData("posY")) <= 4) {
         this.player.y = this.player.getData("posY")
-        this.player.setData("clickMovingStopped", true)
-        } else if (this.player.y < this.player.getData("posY")) {
-          this.player.body.setVelocityY(speed);
-        } else if (this.player.y > this.player.getData("posY")) {
-          this.player.body.setVelocityY(-speed);
+        // this.gameCam.pan(this.player.x, this.player.y, 2000)
+
+        // this.player.setData("clickMovingStopped", true)
+      } else if (this.player.y < this.player.getData("posY")) {
+        // this.player.body.setVelocityY(speed);
+        this.player.y += 5;
+      } else if (this.player.y > this.player.getData("posY")) {
+        // this.player.body.setVelocityY(-speed);
+        this.player.y -= 5;
       }
     }
 
-    // Normalize and scale the velocity so that player can't move faster along a diagonal
+    // // Normalize and scale the velocity so that player can't move faster along a diagonal
     this.player.body.velocity.normalize().scale(speed);
     //////// end PLAYER SPEED CONTROL  //////////////////////////////////////////////////////////////////////////////////////////////
+
 
     this.playerIdText.setText(manageSession.userID);
 
