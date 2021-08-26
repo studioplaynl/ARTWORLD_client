@@ -1,14 +1,8 @@
 <script>
     import {client} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
-<<<<<<< HEAD
     
-    const useSSL = true;
-=======
-    //import { writable } from "svelte/store";
-
     const useSSL = false;
->>>>>>> b81da92475a1569907a608672a4f85c28e2fec5c
     const verboseLogging = false;
     const socket = client.createSocket(useSSL, verboseLogging);
     let match_ID = "";
@@ -113,23 +107,22 @@ export async function leave() {
                 console.log("left")
             })
 }
-    
+
 </script>
 
 <main>
     <h1>test</h1>
-    <p>Status: </p>
+    <p>Status:</p>
     <a on:click={join}>join</a>
     <a on:click={leave}>leave</a>
     <a on:click={onclick}>move</a>
     <a on:click={getUsers}>get Users</a>
-    <h1> Your avatar: </h1>
+    <h1>Your avatar:</h1>
     <p>{$Profile.user}</p>
-    <h1> Other players: </h1>
+    <h1>Other players:</h1>
     {#each AllUsers as user}
         <p>{user.name}</p>
-        <img src={user.avatar_url} height="100px">
+        <img src={user.avatar_url} height="100px" />
         <p>position: {user.posX} x {user.posY}</p>
     {/each}
-
 </main>
