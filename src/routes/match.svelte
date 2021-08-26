@@ -1,113 +1,105 @@
 <script>
-    import {client} from "../nakama.svelte"
-    import { Session, Profile, logout} from "../session.js"
-    
+    import { client } from "../nakama.svelte";
+    import { Session, Profile, logout } from "../session.js";
+
     const useSSL = false;
     const verboseLogging = false;
     const socket = client.createSocket(useSSL, verboseLogging);
     let match_ID = "";
-    let AllUsers =[]
-    let payload = []
-    
-    async function chat() {
+    let AllUsers = [];
+    let payload = [];
 
+    async function chat() {
         const createStatus = true;
-        console.log($Profile)
+        console.log($Profile);
         //const socket = client.createSocket(useSSL, verboseLogging);
         let session = ""; // obtained by authentication.
-    
+
         session = await socket.connect($Session, createStatus);
 
         //own join
-       // var joined = await socket.rpc('join')
-
-
-       
+        // var joined = await socket.rpc('join')
 
         //stream
         socket.onstreamdata = (streamdata) => {
             console.info("Received stream data:", streamdata);
-            let data = JSON.parse(streamdata.data)
-            for(const user of AllUsers) {
-                    if(user.user_id == data.user_id){
-                        console.log("test")
-                        user.posX = data.posX
-                        user.posY = data.posY
-                    }
+            let data = JSON.parse(streamdata.data);
+            for (const user of AllUsers) {
+                if (user.user_id == data.user_id) {
+                    console.log("test");
+                    user.posX = data.posX;
+                    user.posY = data.posY;
                 }
-            console.log(AllUsers)
+            }
+            console.log(AllUsers);
             var newPos = AllUsers;
-            AllUsers = newPos
+            AllUsers = newPos;
         };
         socket.onstreampresence = (streampresence) => {
-        console.log("Received presence event for stream: %o", streampresence);
-        
-        console.log("leaves:" + streampresence.leaves)
-        if(!!streampresence.leaves){
-            streampresence.leaves.forEach((leave) => {
-                console.log("User left: %o", leave.username);
-                AllUsers = AllUsers.filter(function(item) {
-                    return item.name !== leave.username;
-                })
-            });
-        }
-        if(!!streampresence.joins) {
-            streampresence.joins.forEach((join) => {
-                getUsers()
-            })
-        }   
-        console.log("all user:")
-        console.log(AllUsers)
+            console.log(
+                "Received presence event for stream: %o",
+                streampresence
+            );
+
+            console.log("leaves:" + streampresence.leaves);
+            if (!!streampresence.leaves) {
+                streampresence.leaves.forEach((leave) => {
+                    console.log("User left: %o", leave.username);
+                    AllUsers = AllUsers.filter(function (item) {
+                        return item.name !== leave.username;
+                    });
+                });
+            }
+            if (!!streampresence.joins) {
+                streampresence.joins.forEach((join) => {
+                    getUsers();
+                });
+            }
+            console.log("all user:");
+            console.log(AllUsers);
         };
 
-
-
-
-
         // current user array
-
-
-
     }
     let promise = chat();
 
-export   function onclick() {
-        console.log('test')
+    export function onclick() {
+        console.log("test");
         var opCode = 1;
-        var data = '{ "posX": "'+Math.random()*100+'", "posY": "'+Math.random()*100 +'", "location": "home" }';
-        socket.rpc('move_position', data)
-        .then((rec) => {
-                data = JSON.parse(rec.payload) || []
-                console.log("sent pos:")
-                console.log(data)
-            })
+        var data =
+            '{ "posX": "' +
+            Math.random() * 100 +
+            '", "posY": "' +
+            Math.random() * 100 +
+            '", "location": "home" }';
+        socket.rpc("move_position", data).then((rec) => {
+            data = JSON.parse(rec.payload) || [];
+            console.log("sent pos:");
+            console.log(data);
+        });
     }
 
-export async function join() {
-     await socket.rpc("join", "home")
-            .then((rec) => {
-                AllUsers = JSON.parse(rec.payload) || []
-                console.log("join users:")
-                console.log(AllUsers)
-            })
-}
+    export async function join() {
+        await socket.rpc("join", "home").then((rec) => {
+            AllUsers = JSON.parse(rec.payload) || [];
+            console.log("join users:");
+            console.log(AllUsers);
+        });
+    }
 
-export async function getUsers() {
-     await socket.rpc("get_users", "home")
-            .then((rec) => {
-                AllUsers = JSON.parse(rec.payload) || []
-                console.log("all current users in home:")
-                console.log(AllUsers)
-            })
-}
+    export async function getUsers() {
+        await socket.rpc("get_users", "home").then((rec) => {
+            AllUsers = JSON.parse(rec.payload) || [];
+            console.log("all current users in home:");
+            console.log(AllUsers);
+        });
+    }
 
-export async function leave() {
-    await socket.rpc("leave", "home")
-            .then((rec) => {
-                console.log("left")
-            })
-}
-
+    export async function leave() {
+        await socket.rpc("leave", "home").then((rec) => {
+            console.log("left");
+        });
+    }
 </script>
 
 <main>

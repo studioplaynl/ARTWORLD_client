@@ -1,4 +1,3 @@
-import { fix_position } from "svelte/internal";
 import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 
@@ -29,7 +28,7 @@ export default class AZC1_Scene extends Phaser.Scene {
   }
 
   preload() {
-    ///////// IMAGES //////////////////////////////////////////////////////////////////////////////////////////////
+    //....... IMAGES ......................................................................
     this.load.image("sky", "./assets/sky.png");
     this.load.image("star", "./assets/star.png");
     this.load.spritesheet(
@@ -39,15 +38,15 @@ export default class AZC1_Scene extends Phaser.Scene {
     );
     this.load.image("bomb", "./assets/bomb.png");
     this.load.image("NetworkPlayer", "./assets/pieceYellow_border05.png");
-    ///////// end IMAGES //////////////////////////////////////////////////////////////////////////////////////////////
+    //....... end IMAGES ......................................................................
 
-    ///////// TILEMAP //////////////////////////////////////////////////////////////////////////////////////////////
+    //....... TILEMAP .........................................................................
     this.load.image(
       "tiles",
       "./assets/tilesets/tuxmon-sample-32px-extruded.png"
     );
     this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
-    ///////// end TILEMAP //////////////////////////////////////////////////////////////////////////////////////////
+    //....... end TILEMAP ......................................................................
   }
 
   create() {
@@ -55,13 +54,13 @@ export default class AZC1_Scene extends Phaser.Scene {
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 26; //1000 / frames =  millisec
 
-    /////////  SOCKET //////////////////////////////////////////////////////////////////////////////////////////////
+    //.......  SOCKET ..........................................................................
     this.playerIdText = manageSession.user_id;
     //manageSession.createSocket();
     manageSession.createSocket();
-    ///////// end SOCKET ///////////////////////////////////////////////////////////////////////////////////////////
+    //....... end SOCKET .......................................................................
 
-    /////////  TEXT ////////////////////////////////////////////////////////////////////////////////////////////////
+    //.......  TEXT ............................................................................
     this.headerText = this.add
       .text(CONFIG.WIDTH / 2, 20, "", {
         fontFamily: "Arial",
@@ -113,9 +112,9 @@ export default class AZC1_Scene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScrollFactor(0) //fixed on screen
       .setDepth(30);
-    /////////  end TEXT //////////////////////////////////////////////////////////////////////////////////////////////
+    //.......  end TEXT .......................................................................
 
-    /////////  LOCATIONS //////////////////////////////////////////////////////////////////////////////////////////////
+    //.......  LOCATIONS ......................................................................
     // this.location2 = this.physics.add.staticGroup();
     // this.location2
     //   .create(
@@ -125,9 +124,9 @@ export default class AZC1_Scene extends Phaser.Scene {
     //   )
     //   .setScale(3)
     //   .refreshBody();
-    /////////  end LOCATIONS //////////////////////////////////////////////////////////////////////////////////////////////
+    //.......  end LOCATIONS ......................................................................
 
-    ///////// TILEMAP //////////////////////////////////////////////////////////////////////////////////////////
+    //....... TILEMAP .............................................................................
     const map = this.make.tilemap({ key: "map" });
 
     // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
@@ -152,9 +151,9 @@ export default class AZC1_Scene extends Phaser.Scene {
       "Objects",
       (obj) => obj.name === "Spawn Point"
     );
-    ///////// end TILEMAP //////////////////////////////////////////////////////////////////////////////////////////
+    //....... end TILEMAP ......................................................................
 
-    /////////  PLAYER //////////////////////////////////////////////////////////////////////////////////////////////
+    //.......  PLAYER ..........................................................................
     // const animationSetup = {
     //   key: "playerAnimation",
     //   frames: this.anims.generateFrameNumbers("move", {
@@ -171,7 +170,8 @@ export default class AZC1_Scene extends Phaser.Scene {
       .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
       .setDepth(101);
 
-    this.player.setData("clickMovingStopped", true)
+    this.player.setData("isMovingByClicking", false) //check if player is moving from pointer input
+
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
     //  Our player animations, turning, walking left and walking right.
@@ -186,9 +186,9 @@ export default class AZC1_Scene extends Phaser.Scene {
       key: "stop",
       frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
     });
-    /////////  end PLAYER //////////////////////////////////////////////////////////////////////////////////////////////
+    //.......  end PLAYER .............................................................................
 
-    //////// PLAYER VS WORLD //////////////////////////////////////////////////////////////////////////////////////////////
+    //....... PLAYER VS WORLD ..........................................................................
     this.gameCam = this.cameras.main;
     this.gameCam.startFollow(this.player);
     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -206,12 +206,12 @@ export default class AZC1_Scene extends Phaser.Scene {
     //-->off
     //this.physics.add.collider(this.player, worldLayer);
     //<--off
-    //////// end PLAYER VS WORLD //////////////////////////////////////////////////////////////////////////////////////////////
+    //......... end PLAYER VS WORLD ......................................................................
 
-    //////// INPUT //////////////////////////////////////////////////////////////////////////////////////////////
+    //......... INPUT ....................................................................................
     this.cursors = this.input.keyboard.createCursorKeys();
     //this.pointer = this.input.activePointer;
-    //////// end INPUT //////////////////////////////////////////////////////////////////////////////////////////////
+    //.......... end INPUT ................................................................................
   }
 
   createRemotePlayer() {
@@ -281,14 +281,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.scene.start("Location2_Scene");
   }
 
-  update(time, delta) {
-    //////// UPDATE TIMER      //////////////////////////////////////////////////////////////////////////////////////////////
-    manageSession.updateMovementTimer += delta;
-    // console.log(time) //running time in millisec
-    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
-    //////// end UPDATE TIMER  //////////////////////////////////////////////////////////////////////////////////////////////
-
-    //////// PLAYER SPEED CONTROL  //////////////////////////////////////////////////////////////////////////////////////////////
+  playerMovingByKeyBoard() {
     const speed = 175;
     const prevVelocity = this.player.body.velocity.clone();
 
@@ -337,33 +330,55 @@ export default class AZC1_Scene extends Phaser.Scene {
       }
     }
 
+    // Normalize and scale the velocity so that player can't move faster along a diagonal
+    this.player.body.velocity.normalize().scale(speed);
+  }
+
+  update(time, delta) {
+    //.......... UPDATE TIMER      ..........................................................................
+    manageSession.updateMovementTimer += delta;
+    // console.log(time) //running time in millisec
+    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
+    //....... end UPDATE TIMER  ..............................................................................
+
+    //........ PLAYER MOVE BY KEYBOARD  .........................................................................
+    if(this.player.getData("isMovingByClicking") == false){
+      this.playerMovingByKeyBoard();
+    }
+
     if (
       this.cursors.up.isDown ||
       this.cursors.down.isDown ||
       this.cursors.left.isDown ||
       this.cursors.right.isDown
     ) {
-      this.player.anims.play("moving", true);
       this.arrowDown = true
     } else {
-      this.player.anims.play("stop", true);
       this.arrowDown = false
     }
+    //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
+    if (this.arrowDown || this.player.getData("isMovingByClicking")){
+      this.player.anims.play("moving", true);
+    } else if (!this.arrowDown || !this.player.getData("isMovingByClicking")){
+      this.player.anims.play("stop", true);
+    }
+
+    //....... MOVE BY CLICKING ......................................................................................
     if (!this.input.activePointer.isDown && this.isClicking == true) {
+      // this.player.setData("posX", this.input.activePointer.worldX)
+      // this.player.setData("posY", this.input.activePointer.worldY)
+      // console.log('this.player.getData("posX")')
+      // console.log(this.player.getData("posX"))
+      // console.log('this.player.getData("posX")')
+      // console.log(this.player.getData("posY"))
 
-      this.player.setData("posX", this.input.activePointer.worldX)
-      this.player.setData("posY", this.input.activePointer.worldY)
-      console.log('this.player.getData("posX")')
-      console.log(this.player.getData("posX"))
-      console.log('this.player.getData("posX")')
-      console.log(this.player.getData("posY"))
-      
       // this.player.setData("clickMovingStopped", false)
-      // this.target.x = this.input.activePointer.worldX
-      // this.target.y = this.input.activePointer.worldY
-      // this.physics.moveToObject(this.player, this.target, 200);
+      this.target.x = this.input.activePointer.worldX
+      this.target.y = this.input.activePointer.worldY
+      this.physics.moveToObject(this.player, this.target, 200);
       this.isClicking = false;
+      this.player.setData("isMovingByClicking", true);
       // this.player.setData("isMoving", true)
       // console.log("this.isClicking")
       // console.log(this.isClicking)
@@ -371,51 +386,48 @@ export default class AZC1_Scene extends Phaser.Scene {
       this.isClicking = true;
     }
 
-    // this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
 
 
     //  4 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    if (this.player.getData("isMovingByClicking") == true) {
+    if (this.distance < 4) {
+      this.player.body.reset(this.target.x, this.target.y);
+      this.player.setData("isMovingByClicking", false)
+    }
+  }
 
-    // if (this.distance < 4) {
-    //   this.player.body.reset(this.target.x, this.target.y);
-     
+    // if (this.isMovingByClicking) {
+    //   if (Math.abs(this.player.x - this.player.getData("posX")) <= 4) {
+    //     this.player.x = this.player.getData("posX")
+    //     this.isMovingByClicking = false
+    //     // this.player.setData("clickMovingStopped", true)
+    //   } else if (this.player.x < this.player.getData("posX")) {
+    //     this.player.x += 5;
+    //     // this.player.body.setVelocityX(speed);
+    //   } else if (this.player.x > this.player.getData("posX")) {
+    //     this.player.x -= 5;
+    //     // this.player.body.setVelocityX(-speed);
+    //   }
     // }
 
-    if (!this.arrowDown) {
 
-      if (Math.abs(this.player.x - this.player.getData("posX")) <= 4) {
-        this.player.x = this.player.getData("posX")
-        // this.gameCam.pan(this.player.x, this.player.y, 2000)
-        // this.player.setData("clickMovingStopped", true)
-      } else if (this.player.x < this.player.getData("posX")) {
-        this.player.x += 5;
-        // this.player.body.setVelocityX(speed);
-      } else if (this.player.x > this.player.getData("posX")) {
-        this.player.x -= 5;
-        // this.player.body.setVelocityX(-speed);
-      }
-    }
+    // if (this.isMovingByClicking) {
+    //   if (Math.abs(this.player.y - this.player.getData("posY")) <= 4) {
+    //     this.player.y = this.player.getData("posY")
+    //     this.isMovingByClicking = false
+    //     // this.player.setData("clickMovingStopped", true)
+    //   } else if (this.player.y < this.player.getData("posY")) {
+    //     // this.player.body.setVelocityY(speed);
+    //     this.player.y += 5;
+    //   } else if (this.player.y > this.player.getData("posY")) {
+    //     // this.player.body.setVelocityY(-speed);
+    //     this.player.y -= 5;
+    //   }
+    // }
+    //....... end MOVE BY CLICKING ......................................................................................
 
-
-    if (!this.arrowDown) {
-      if (Math.abs(this.player.y - this.player.getData("posY")) <= 4) {
-        this.player.y = this.player.getData("posY")
-        // this.gameCam.pan(this.player.x, this.player.y, 2000)
-
-        // this.player.setData("clickMovingStopped", true)
-      } else if (this.player.y < this.player.getData("posY")) {
-        // this.player.body.setVelocityY(speed);
-        this.player.y += 5;
-      } else if (this.player.y > this.player.getData("posY")) {
-        // this.player.body.setVelocityY(-speed);
-        this.player.y -= 5;
-      }
-    }
-
-    // // Normalize and scale the velocity so that player can't move faster along a diagonal
-    this.player.body.velocity.normalize().scale(speed);
-    //////// end PLAYER SPEED CONTROL  //////////////////////////////////////////////////////////////////////////////////////////////
 
 
     this.playerIdText.setText(manageSession.userID);
@@ -444,4 +456,5 @@ export default class AZC1_Scene extends Phaser.Scene {
       manageSession.updateNetworkPlayers = false;
     }
   } //update
+
 } //class
