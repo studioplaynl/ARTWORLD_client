@@ -218,60 +218,66 @@ export default class AZC1_Scene extends Phaser.Scene {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
 
-    console.log("make networkplayer...");
-    for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-      console.log("created network user:");
+    if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length != this.NetworkPlayer.length) {
+      //if user_id from allConnectedUsers 
+      console.log("make networkplayer...");
 
-      console.log(manageSession.allConnectedUsers[i]);
+      for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+        console.log("created network user:");
 
-      this.NetworkPlayer[i] = this.add
-        .image(this.player.x - 40, this.player.y - 40, "NetworkPlayer")
-        .setDepth(100);
-      console.log(this.NetworkPlayer.length);
-      console.log(this.NetworkPlayer);
+        console.log(manageSession.allConnectedUsers[i]);
 
-      //https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/
+        this.NetworkPlayer[i] = this.add
+          .image(this.player.x - 40, this.player.y - 40, "NetworkPlayer")
+          .setDepth(100);
+        console.log(this.NetworkPlayer.length);
+        console.log(this.NetworkPlayer);
 
-      // console.log("make networkplayer");
-      // for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-      //   console.log("created network user:");
+        //https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/
 
-      //   console.log(manageSession.allConnectedUsers[i]);
-      //   console.log(manageSession.allConnectedUsers[i].avatar_url);
+        // console.log("make networkplayer");
+        // for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+        //   console.log("created network user:");
 
-      //   // this.avatarName[i] = "NetworkPlayer" + i;
-      //   this.avatarName[i] = "NetworkPlayer" + i;
+        //   console.log(manageSession.allConnectedUsers[i]);
+        //   console.log(manageSession.allConnectedUsers[i].avatar_url);
 
-      //   console.log(this.avatarName[i]);
+        //   // this.avatarName[i] = "NetworkPlayer" + i;
+        //   this.avatarName[i] = "NetworkPlayer" + i;
 
-      //   // if (manageSession.allConnectedUsers[i].avatar_url === "") {
-      //   const avatar_url =
-      //     'https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/b9ae6807-1ce1-4b71-a8a3-f5958be4d340/orangeship.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210819%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210819T124015Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=bb38a60a2603cf269cfdf86c2f5b82f43ac55afe27f21e48bdd1dd90e4a98947';
-      //   // }
+        //   console.log(this.avatarName[i]);
 
-      //   this.load.image(
-      //     this.avatarName[i],
-      //     avatar_url
-      //   );
-      // }
+        //   // if (manageSession.allConnectedUsers[i].avatar_url === "") {
+        //   const avatar_url =
+        //     'https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/b9ae6807-1ce1-4b71-a8a3-f5958be4d340/orangeship.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210819%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210819T124015Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=bb38a60a2603cf269cfdf86c2f5b82f43ac55afe27f21e48bdd1dd90e4a98947';
+        //   // }
 
-      // this.load.start(); // THIS!
+        //   this.load.image(
+        //     this.avatarName[i],
+        //     avatar_url
+        //   );
+        // }
 
-      // if (this.load.hasLoaded) {
-      //   for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-      //     this.NetworkPlayer[i] = this.add
-      //       .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
-      //       .setDepth(100);
+        // this.load.start(); // THIS!
 
-      //     console.log(this.NetworkPlayer.length);
-      //     console.log(this.NetworkPlayer);
-      //   }
+        // if (this.load.hasLoaded) {
+        //   for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+        //     this.NetworkPlayer[i] = this.add
+        //       .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
+        //       .setDepth(100);
 
-      //   manageSession.createNetworkPlayers = false;
-      //   console.log(
-      //     "manageSession.createNetworkPlayers: " +
-      //       manageSession.createNetworkPlayers
-      //   );
+        //     console.log(this.NetworkPlayer.length);
+        //     console.log(this.NetworkPlayer);
+        //   }
+
+        //   manageSession.createNetworkPlayers = false;
+        //   console.log(
+        //     "manageSession.createNetworkPlayers: " +
+        //       manageSession.createNetworkPlayers
+        //   );
+      }
+    } else {
+      return
     }
   } //createRemotePlayer
 
@@ -342,7 +348,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... end UPDATE TIMER  ..............................................................................
 
     //........ PLAYER MOVE BY KEYBOARD  .........................................................................
-    if(this.player.getData("isMovingByClicking") == false){
+    if (this.player.getData("isMovingByClicking") == false) {
       this.playerMovingByKeyBoard();
     }
 
@@ -358,30 +364,19 @@ export default class AZC1_Scene extends Phaser.Scene {
     }
     //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
-    if (this.arrowDown || this.player.getData("isMovingByClicking")){
+    if (this.arrowDown || this.player.getData("isMovingByClicking")) {
       this.player.anims.play("moving", true);
-    } else if (!this.arrowDown || !this.player.getData("isMovingByClicking")){
+    } else if (!this.arrowDown || !this.player.getData("isMovingByClicking")) {
       this.player.anims.play("stop", true);
     }
 
     //....... MOVE BY CLICKING ......................................................................................
     if (!this.input.activePointer.isDown && this.isClicking == true) {
-      // this.player.setData("posX", this.input.activePointer.worldX)
-      // this.player.setData("posY", this.input.activePointer.worldY)
-      // console.log('this.player.getData("posX")')
-      // console.log(this.player.getData("posX"))
-      // console.log('this.player.getData("posX")')
-      // console.log(this.player.getData("posY"))
-
-      // this.player.setData("clickMovingStopped", false)
       this.target.x = this.input.activePointer.worldX
       this.target.y = this.input.activePointer.worldY
       this.physics.moveToObject(this.player, this.target, 200);
       this.isClicking = false;
       this.player.setData("isMovingByClicking", true);
-      // this.player.setData("isMoving", true)
-      // console.log("this.isClicking")
-      // console.log(this.isClicking)
     } else if (this.input.activePointer.isDown && this.isClicking == false) {
       this.isClicking = true;
     }
@@ -392,40 +387,18 @@ export default class AZC1_Scene extends Phaser.Scene {
     //  4 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (this.player.getData("isMovingByClicking") == true) {
-    if (this.distance < 4) {
-      this.player.body.reset(this.target.x, this.target.y);
-      this.player.setData("isMovingByClicking", false)
+      if (this.distance < 4) {
+        this.player.body.reset(this.target.x, this.target.y);
+        this.player.setData("isMovingByClicking", false)
+      } else {
+        if (
+          manageSession.updateMovementTimer > manageSession.updateMovementInterval
+        ) {
+          manageSession.sendMoveMessage(this.player.x, this.player.y);
+          manageSession.updateMovementTimer = 0;
+        }
+      }
     }
-  }
-
-    // if (this.isMovingByClicking) {
-    //   if (Math.abs(this.player.x - this.player.getData("posX")) <= 4) {
-    //     this.player.x = this.player.getData("posX")
-    //     this.isMovingByClicking = false
-    //     // this.player.setData("clickMovingStopped", true)
-    //   } else if (this.player.x < this.player.getData("posX")) {
-    //     this.player.x += 5;
-    //     // this.player.body.setVelocityX(speed);
-    //   } else if (this.player.x > this.player.getData("posX")) {
-    //     this.player.x -= 5;
-    //     // this.player.body.setVelocityX(-speed);
-    //   }
-    // }
-
-
-    // if (this.isMovingByClicking) {
-    //   if (Math.abs(this.player.y - this.player.getData("posY")) <= 4) {
-    //     this.player.y = this.player.getData("posY")
-    //     this.isMovingByClicking = false
-    //     // this.player.setData("clickMovingStopped", true)
-    //   } else if (this.player.y < this.player.getData("posY")) {
-    //     // this.player.body.setVelocityY(speed);
-    //     this.player.y += 5;
-    //   } else if (this.player.y > this.player.getData("posY")) {
-    //     // this.player.body.setVelocityY(-speed);
-    //     this.player.y -= 5;
-    //   }
-    // }
     //....... end MOVE BY CLICKING ......................................................................................
 
 
