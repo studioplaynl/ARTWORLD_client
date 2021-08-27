@@ -15,7 +15,7 @@ export default class MainMenu extends Phaser.Scene {
     this.load.image('artworld', 'assets/artworld.png')
   }
   create() {
-    //...... SESSION ..................................................................................
+    //...... SESSION .............................................................................................
     //console.log("Session: ");
     manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
     //console.log(manageSession.sessionStored);
@@ -25,32 +25,29 @@ export default class MainMenu extends Phaser.Scene {
 
     manageSession.user_id = manageSession.sessionStored.user_id
     manageSession.username = manageSession.sessionStored.username
-    //...................................................................................................
+    //.............................................................................................................
 
-    //...... PARTICLES .................................................................................
-    var textures = this.textures;
-
+    //...... PARTICLES .............................................................................................
     var particles = this.add.particles('flares');
 
     //  Create an emitter by passing in a config object directly to the Particle Manager
-
     var emitter = particles.createEmitter({
       frame: ['red', 'blue', 'green', 'yellow'],
       x: CONFIG.WIDTH /2,
       y: CONFIG.HEIGHT /2,
-      speed: 200,
+      speed: 100,
       lifespan: 3000,
       blendMode: 'ADD'
     });
-    //...................................................................................................
+    //..............................................................................................................
 
-    //...... TRANSLATION .............................................................................................
+    //...... TRANSLATION ...........................................................................................
     locale.subscribe(value => {
       console.log("current lang=" + value)
     });
-    //...................................................................................................
+    //...............................................................................................................
 
-    //...................................................................................................
+    //....... ENTER WORLD BUTTON ....................................................................................
     // this.add
     //   .text(CONFIG.WIDTH / 2, 175, "welcome to", {
     //     fontFamily: "Arial",
@@ -66,8 +63,11 @@ export default class MainMenu extends Phaser.Scene {
     //   .setOrigin(0.5);
 
     const playBtn = this.add.image(CONFIG.WIDTH /2, CONFIG.HEIGHT /2, 'artworld')
-    .setScale(0.5)
     .setInteractive({ useHandCursor: true });
+
+    const playBtnScaler = (CONFIG.WIDTH / playBtn.width)*0.86
+
+    playBtn.setScale(playBtnScaler);
 
     // const playBtn = this.add
     //   .image(CONFIG.WIDTH / 2, 275, 225, 70, 0xffca27)
@@ -85,11 +85,11 @@ export default class MainMenu extends Phaser.Scene {
     });
 
     playBtn.on("pointerover", () => {
-      playBtn.setScale(0.6);
+      playBtn.setScale(playBtnScaler * 1.1);
     });
 
     playBtn.on("pointerout", () => {
-      playBtn.setScale(0.5);
+      playBtn.setScale(playBtnScaler);
     });
 
   } //create
