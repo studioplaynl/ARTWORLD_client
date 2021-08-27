@@ -1,4 +1,4 @@
-import { client } from "../../nakama.svelte";
+import { client, SSL } from "../../nakama.svelte";
 
 class manageSession {
   constructor() {
@@ -11,7 +11,7 @@ class manageSession {
     this.socket;
 
     this.joined;
-    this.useSSL = false;
+    this.useSSL = SSL;
     this.verboseLogging = false;
 
     this.match;
@@ -37,7 +37,7 @@ class manageSession {
   }
 
   async createSocket() {
-    this.socket = await client.createSocket(SSL, this.verboseLogging);
+    this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
     console.log("socket created with client");
 
     const createStatus = true;
