@@ -10,62 +10,84 @@ export default class MainMenu extends Phaser.Scene {
   constructor() {
     super("MainMenu");
   }
-
+  preload() {
+    this.load.atlas('flares', 'assets/particles/flares.png', 'assets/particles/flares.json');
+    this.load.image('artworld', 'assets/artworld.png')
+  }
   create() {
-
-
+    //...... SESSION ..................................................................................
     //console.log("Session: ");
     manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
     //console.log(manageSession.sessionStored);
 
     console.log(manageSession.sessionStored.user_id);
     console.log(manageSession.sessionStored.username);
-    
+
     manageSession.user_id = manageSession.sessionStored.user_id
     manageSession.username = manageSession.sessionStored.username
-    
+    //...................................................................................................
 
-    locale.subscribe(value => {
-      console.log("current lang="+value)
+    //...... PARTICLES .................................................................................
+    var particles = this.add.particles('flares');
+
+    //  Create an emitter by passing in a config object directly to the Particle Manager
+
+    var emitter = particles.createEmitter({
+      frame: ['red', 'blue', 'green', 'yellow'],
+      x: 400,
+      y: 300,
+      speed: 200,
+      lifespan: 3000,
+      blendMode: 'ADD'
     });
-    
-    this.add
-      .text(CONFIG.WIDTH / 2, 75, "welcome to", {
-        fontFamily: "Arial",
-        fontSize: "24px",
-      })
-      .setOrigin(0.5);
+    //...................................................................................................
 
-    this.add
-      .text(CONFIG.WIDTH / 2, 123, "ARTWORLD", {
-        fontFamily: "Arial",
-        fontSize: "60px",
-      })
-      .setOrigin(0.5);
+    //...... TRANSLATION .............................................................................................
+    locale.subscribe(value => {
+      console.log("current lang=" + value)
+    });
+    //...................................................................................................
 
-    const playBtn = this.add
-      .rectangle(CONFIG.WIDTH / 2, 225, 225, 70, 0xffca27)
-      .setInteractive({ useHandCursor: true });
+    //...................................................................................................
+    // this.add
+    //   .text(CONFIG.WIDTH / 2, 175, "welcome to", {
+    //     fontFamily: "Arial",
+    //     fontSize: "24px",
+    //   })
+    //   .setOrigin(0.5);
 
-    const playBtnText = this.add
-      .text(CONFIG.WIDTH / 2, 225, "Begin", {
-        fontFamily: "Arial",
-        fontSize: "36px",
-      })
-      .setOrigin(0.5);
+    // this.add
+    //   .text(CONFIG.WIDTH / 2, 223, "ARTWORLD", {
+    //     fontFamily: "Arial",
+    //     fontSize: "60px",
+    //   })
+    //   .setOrigin(0.5);
+
+    const playBtn = this.add.image(CONFIG.WIDTH /2, 275, 'artworld')
+    .setScale(0.5)
+    .setInteractive({ useHandCursor: true });
+
+    // const playBtn = this.add
+    //   .image(CONFIG.WIDTH / 2, 275, 225, 70, 0xffca27)
+    //   .setInteractive({ useHandCursor: true });
+
+    // const playBtnText = this.add
+    //   .text(CONFIG.WIDTH / 2, 275, "Begin", {
+    //     fontFamily: "Arial",
+    //     fontSize: "36px",
+    //   })
+    //   .setOrigin(0.5);
 
     playBtn.on("pointerdown", () => {
       this.scene.start("AZC1_Scene");
     });
 
     playBtn.on("pointerover", () => {
-      playBtn.setScale(1.1);
-      playBtnText.setScale(1.1);
+      playBtn.setScale(0.6);
     });
 
     playBtn.on("pointerout", () => {
-      playBtn.setScale(1);
-      playBtnText.setScale(1);
+      playBtn.setScale(0.5);
     });
 
   } //create
