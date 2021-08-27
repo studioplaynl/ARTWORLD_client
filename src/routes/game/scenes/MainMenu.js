@@ -28,14 +28,16 @@ export default class MainMenu extends Phaser.Scene {
     //...................................................................................................
 
     //...... PARTICLES .................................................................................
+    var textures = this.textures;
+
     var particles = this.add.particles('flares');
 
     //  Create an emitter by passing in a config object directly to the Particle Manager
 
     var emitter = particles.createEmitter({
       frame: ['red', 'blue', 'green', 'yellow'],
-      x: 400,
-      y: 300,
+      x: CONFIG.WIDTH /2,
+      y: CONFIG.HEIGHT /2,
       speed: 200,
       lifespan: 3000,
       blendMode: 'ADD'
@@ -63,7 +65,7 @@ export default class MainMenu extends Phaser.Scene {
     //   })
     //   .setOrigin(0.5);
 
-    const playBtn = this.add.image(CONFIG.WIDTH /2, 275, 'artworld')
+    const playBtn = this.add.image(CONFIG.WIDTH /2, CONFIG.HEIGHT /2, 'artworld')
     .setScale(0.5)
     .setInteractive({ useHandCursor: true });
 
