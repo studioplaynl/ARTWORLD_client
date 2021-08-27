@@ -19,6 +19,7 @@ Profile.subscribe((value) => {
 
 
 export async function login(email, password) {
+    console.log("ssl="+client.ssl)
     const create = false;
     client.authenticateEmail(email, password, create)
     .then((response)=> {

@@ -1,15 +1,18 @@
 <script>
-    import {client} from "../nakama.svelte"
+    import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     //import { writable } from "svelte/store";
 
-    const useSSL = false;
     const verboseLogging = false;
-    const socket = client.createSocket(useSSL, verboseLogging);
+    const socket = client.createSocket(SSL, verboseLogging);
     let match_ID = "";
     let AllUsers =[]
     let payload = []
-    
+    let status = 'left'
+    let locations = ['lab',`home`, `library` ];
+    let selected;
+
+
     async function chat() {
 
         const createStatus = true;
@@ -73,11 +76,10 @@
     let promise = chat();
 
 export   function onclick() {
-        console.log('test')
         var opCode = 1;
-        var data = '{ "posX": "'+Math.random()*100+'", "posY": "'+Math.random()*100 +'", "location": "home" }';
+        var data = '{ "posX": '+Math.floor(Math.random()*100)+', "posY": '+Math.floor(Math.random()*100) +', "location": "'+ selected +'" }';
         socket.rpc('move_position', data)
-        .then((rec) => {
+        .then((rec) => {status
                 data = JSON.parse(rec.payload) || []
                 console.log("sent pos:")
                 console.log(data)
@@ -85,16 +87,18 @@ export   function onclick() {
     }
 
 export async function join() {
-     await socket.rpc("join", "home")
+     await socket.rpc("join", selected)
             .then((rec) => {
                 AllUsers = JSON.parse(rec.payload) || []
+                console.log('joined ' + selected)
                 console.log("join users:")
                 console.log(AllUsers)
+                status = "joined"
             })
 }
 
 export async function getUsers() {
-     await socket.rpc("get_users", "home")
+     await socket.rpc("get_users", selected)
             .then((rec) => {
                 AllUsers = JSON.parse(rec.payload) || []
                 console.log("all current users in home:")
@@ -103,9 +107,11 @@ export async function getUsers() {
 }
 
 export async function leave() {
-    await socket.rpc("leave", "home")
+    await socket.rpc("leave", selected)
             .then((rec) => {
                 console.log("left")
+                AllUsers = []
+                status = "left"
             })
 }
     
@@ -113,7 +119,16 @@ export async function leave() {
 
 <main>
     <h1>test</h1>
-    <p>Status: </p>
+    <p>Status: {status}</p>
+
+    <select bind:value={selected} on:change="{() => console.log(selected)}">
+		{#each locations as location}
+			<option value={location}>
+				{location}
+			</option>
+		{/each}
+	</select>
+
     <a on:click={join}>join</a>
     <a on:click={leave}>leave</a>
     <a on:click={onclick}>move</a>
