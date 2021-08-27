@@ -7,6 +7,7 @@
   import profile from "./routes/profile.svelte";
   import upload from "./routes/upload.svelte";
   import match from "./routes/match.svelte";
+  import drawing from "./routes/apps/drawing.svelte"
   import { Session, Profile, logout } from "./session.js";
   import UploadAvatar from "./routes/uploadAvatar.svelte";
   import { onMount } from 'svelte';
@@ -139,7 +140,14 @@ let isLogedIn = (detail) => {
 			}
         ]
     }),
-
+    "/drawing": wrap({
+        component: drawing,
+        conditions: [
+            (detail) => {
+				return isLogedIn(detail)
+			}
+        ]
+    }),
   }}
 />
 
