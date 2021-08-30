@@ -18,8 +18,8 @@ class manageSession {
     this.matchID;
     this.deviceID;
 
-    this.createNetworkPlayers = false;
-    this.updateNetworkPlayers = false;
+    this.createOnlinePlayers = false;
+    this.updateOnlinePlayers = false;
     this.allConnectedUsers = [];
     this.allConnectedUsersPrev = [];
     this.stillConnectedOpponent;
@@ -67,7 +67,7 @@ class manageSession {
           if (parsedData.user_id == this.allConnectedUsers[i].user_id) {
             this.allConnectedUsers[i].posX = parsedData.posX;
             this.allConnectedUsers[i].posY = parsedData.posY;
-            this.updateNetworkPlayers = true;
+            this.updateOnlinePlayers = true;
           }
         }
       }
@@ -88,7 +88,7 @@ class manageSession {
       this.getStreamUsers("home")
       streampresence.joins.forEach((join) => {
         console.log("New user joined: %o", join.user_id);
-        this.createNetworkPlayers = true;
+        this.createOnlinePlayers = true;
       });
       // streampresence.leaves.forEach((leave) => {
       //   console.log("User left: %o", leave.user_id);
@@ -105,8 +105,8 @@ class manageSession {
       if (this.allConnectedUsers != null) {
         // if (this.allConnectedUsersPrev != this.allConnectedUsers) {
         // this.allConnectedUsers = this.allConnectedUsersPrev
-        console.log("this.createNetworkPlayers = true")
-        this.createNetworkPlayers = true
+        console.log("this.createOnlinePlayers = true")
+        this.createOnlinePlayers = true
         // }
       }
     });
@@ -129,8 +129,8 @@ class manageSession {
         //     // if (this.allConnectedUsers.length > 0) {
         //     // if (this.allConnectedUsersPrev != this.allConnectedUsers) {
         //     // this.allConnectedUsers = this.allConnectedUsersPrev
-        //     console.log("this.createNetworkPlayers = true")        // }
-        //     this.createNetworkPlayers = true
+        //     console.log("this.createOnlinePlayers = true")        // }
+        //     this.createOnlinePlayers = true
         //   }
         // }
       }
@@ -159,14 +159,14 @@ class manageSession {
 
           // this.allConnectedUsers= newArr
           if (this.allConnectedUsers.length == 0) {
-            this.createNetworkPlayers = false;
-            console.log(this.createNetworkPlayers);
+            this.createOnlinePlayers = false;
+            console.log(this.createOnlinePlayers);
             return;
           } else {
             console.log("this.allConnectedUsers: ");
             console.log(this.allConnectedUsers);
-            this.createNetworkPlayers = true;
-            console.log(this.createNetworkPlayers);
+            this.createOnlinePlayers = true;
+            console.log(this.createOnlinePlayers);
           }
         });
       }

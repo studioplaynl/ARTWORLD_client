@@ -13,7 +13,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // this.turn = false;
     this.phaser = this;
     // this.playerPos;
-    this.NetworkPlayer = [];
+    this.onlinePlayers = [];
     this.avatarName = [];
     this.cursors;
     this.pointer;
@@ -40,7 +40,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       { frameWidth: 68, frameHeight: 68 }
     );
     this.load.image("bomb", "./assets/bomb.png");
-    this.load.image("NetworkPlayer", "./assets/pieceYellow_border05.png");
+    this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
@@ -72,10 +72,11 @@ export default class AZC1_Scene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive() //make clickable
       .setScrollFactor(0) //fixed on screen
+      .setShadow(3, 3, '#000000', 0)
       .setDepth(30);
 
     this.headerText.on("pointerup", () => {
-      const displaylist = this.playerGroup.getChildren()
+      const displaylist = this.onlinePlayersGroup.getChildren()
       console.log(displaylist)
     }); //on mouseup of clickable text
 
@@ -83,14 +84,16 @@ export default class AZC1_Scene extends Phaser.Scene {
       .text(
         this.headerText.x,
         this.headerText.y + 26,
-        "userID: " + this.playerIdText,
+        "user_id: " + this.playerIdText,
         {
           fontFamily: "Arial",
-          fontSize: "11px",
+          fontSize: "16px",
         }
       )
       .setOrigin(0.5)
       .setScrollFactor(0) //fixed on screen
+      .setInteractive() //make clickable
+      .setShadow(1, 1, '#000000', 0)
       .setDepth(30);
 
     this.playerIdText = this.add
@@ -99,13 +102,13 @@ export default class AZC1_Scene extends Phaser.Scene {
         fontSize: "11px",
       })
       .setOrigin(0.5)
-      .setInteractive() //make clickable
       .setScrollFactor(0) //fixed on screen
       .setDepth(30)
-      .setShadow(1, 1, '#000000', 2);
+      .setShadow(1, 1, '#000000', 0);
 
-    this.playerIdText.on("pointerup", () => {
-      manageSession.chatExample();
+    this.matchIdText.on("pointerup", () => {
+      this.onlinePlayers[0].setVisible(false); //works
+      this.onlinePlayers[0].destroy();
     });
 
     this.opponentsIdText = this.add
@@ -117,6 +120,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       .setScrollFactor(0) //fixed on screen
       .setDepth(30);
     //.......  end TEXT .......................................................................
+
 
     //.......  LOCATIONS ......................................................................
     // this.location2 = this.physics.add.staticGroup();
@@ -169,13 +173,14 @@ export default class AZC1_Scene extends Phaser.Scene {
     //   repeat: -1,
     // };
     // this.anims.create(animationSetup);
+
     this.playerGroup = this.add.group();
 
     this.player = this.physics.add
       .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
       .setDepth(101);
 
-    this.playerShadow = this.game.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, "avatar1").setDepth(100);
+    this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, "avatar1").setDepth(100);
 
     // this.playerShadow.anchor.set(0.5);
     this.playerShadow.setTint(0x000000);
@@ -183,6 +188,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
 
     this.playerGroup.add(this.player)
+    this.playerGroup.add(this.playerShadow)
 
     this.player.setData("isMovingByClicking", false) //check if player is moving from pointer input
 
@@ -203,6 +209,8 @@ export default class AZC1_Scene extends Phaser.Scene {
     //.......  end PLAYER .............................................................................
 
     //....... PLAYER VS WORLD ..........................................................................
+    this.onlinePlayersGroup = this.add.group(); //group onlinePlayers
+
     this.gameCam = this.cameras.main;
     this.gameCam.startFollow(this.player);
     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -232,32 +240,36 @@ export default class AZC1_Scene extends Phaser.Scene {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
 
-    if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length != this.NetworkPlayer.length) {
+    if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length != this.onlinePlayers.length) {
       //if user_id from allConnectedUsers 
-      console.log("make networkplayer...");
+      console.log("make onlinePlayer...");
 
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
         console.log("created network user:");
 
         console.log(manageSession.allConnectedUsers[i]);
 
-        this.NetworkPlayer[i] = this.add
-          .image(this.player.x - 40, this.player.y - 40, "NetworkPlayer")
+        this.onlinePlayers[i] = this.add
+          .image(this.player.x - 40, this.player.y - 40, "onlinePlayer")
           .setDepth(100);
-        console.log(this.NetworkPlayer.length);
-        console.log(this.NetworkPlayer);
+
+          Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]); //copy all data over from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
+
+        this.onlinePlayersGroup.add(this.onlinePlayers[i]);
+        console.log(this.onlinePlayers.length);
+        console.log(this.onlinePlayers);
 
         //https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/
 
-        // console.log("make networkplayer");
+        // console.log("make onlinePlayers");
         // for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
         //   console.log("created network user:");
 
         //   console.log(manageSession.allConnectedUsers[i]);
         //   console.log(manageSession.allConnectedUsers[i].avatar_url);
 
-        //   // this.avatarName[i] = "NetworkPlayer" + i;
-        //   this.avatarName[i] = "NetworkPlayer" + i;
+        //   // this.avatarName[i] = "onlinePlayers" + i;
+        //   this.avatarName[i] = "onlinePlayers" + i;
 
         //   console.log(this.avatarName[i]);
 
@@ -276,18 +288,18 @@ export default class AZC1_Scene extends Phaser.Scene {
 
         // if (this.load.hasLoaded) {
         //   for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        //     this.NetworkPlayer[i] = this.add
+        //     this.onlinePlayers[i] = this.add
         //       .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
         //       .setDepth(100);
 
-        //     console.log(this.NetworkPlayer.length);
-        //     console.log(this.NetworkPlayer);
+        //     console.log(this.onlinePlayers.length);
+        //     console.log(this.onlinePlayers);
         //   }
 
-        //   manageSession.createNetworkPlayers = false;
+        //   manageSession.createonlinePlayers = false;
         //   console.log(
-        //     "manageSession.createNetworkPlayers: " +
-        //       manageSession.createNetworkPlayers
+        //     "manageSession.createonlinePlayers: " +
+        //       manageSession.createonlinePlayers
         //   );
       }
     } else {
@@ -311,8 +323,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
-      this.playerShadow.x + this.playerShadowOffset
-      this.playerShadow.y + this.playerShadowOffset 
+
       // this.arrowDown = true;
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
@@ -357,6 +368,9 @@ export default class AZC1_Scene extends Phaser.Scene {
   }
 
   update(time, delta) {
+    this.playerShadow.x = this.player.x + this.playerShadowOffset
+    this.playerShadow.y = this.player.y + this.playerShadowOffset
+
     //.......... UPDATE TIMER      ..........................................................................
     manageSession.updateMovementTimer += delta;
     // console.log(time) //running time in millisec
@@ -390,7 +404,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     if (!this.input.activePointer.isDown && this.isClicking == true) {
       this.target.x = this.input.activePointer.worldX
       this.target.y = this.input.activePointer.worldY
-      this.physics.moveToObject(this.playerGroup, this.target, 200);
+      this.physics.moveToObject(this.player, this.target, 200);
       this.isClicking = false;
       this.player.setData("isMovingByClicking", true);
     } else if (this.input.activePointer.isDown && this.isClicking == false) {
@@ -404,7 +418,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (this.player.getData("isMovingByClicking") == true) {
       if (this.distance < 4) {
-        this.playerGroup.body.reset(this.target.x, this.target.y);
+        this.player.body.reset(this.target.x, this.target.y);
         this.player.setData("isMovingByClicking", false)
       } else {
         if (
@@ -421,6 +435,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     this.playerIdText.setText(manageSession.userID);
 
+
     if (manageSession.gameStarted) {
       this.headerText.setText("Game has started");
       this.matchIdText.setText("matchID: " + manageSession.matchID);
@@ -431,18 +446,18 @@ export default class AZC1_Scene extends Phaser.Scene {
       );
     }
 
-    if (manageSession.createNetworkPlayers) {
+    if (manageSession.createOnlinePlayers) {
       this.createRemotePlayer();
-      // manageSession.createNetworkPlayers = false
-      // console.log(manageSession.createNetworkPlayers)
+      // manageSession.createonlinePlayers = false
+      // console.log(manageSession.createonlinePlayers)
     }
 
-    if (manageSession.updateNetworkPlayers) {
+    if (manageSession.updateOnlinePlayers) {
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        this.NetworkPlayer[i].x = manageSession.allConnectedUsers[i].posX;
-        this.NetworkPlayer[i].y = manageSession.allConnectedUsers[i].posY;
+        this.onlinePlayers[i].x = manageSession.allConnectedUsers[i].posX;
+        this.onlinePlayers[i].y = manageSession.allConnectedUsers[i].posY;
       }
-      manageSession.updateNetworkPlayers = false;
+      manageSession.updateOnlinePlayers = false;
     }
   } //update
 
