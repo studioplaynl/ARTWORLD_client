@@ -25,6 +25,9 @@ export default class AZC1_Scene extends Phaser.Scene {
     // this.source // = player
     this.target = new Phaser.Math.Vector2();
     this.distance
+
+    //shadow
+    this.playerShadowOffset = 10;
   }
 
   preload() {
@@ -62,7 +65,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //.......  TEXT ............................................................................
     this.headerText = this.add
-      .text(CONFIG.WIDTH / 2, 20, "", {
+      .text(CONFIG.WIDTH / 2, 20, "SHOW DISPLAY LIST", {
         fontFamily: "Arial",
         fontSize: "36px",
       })
@@ -72,7 +75,8 @@ export default class AZC1_Scene extends Phaser.Scene {
       .setDepth(30);
 
     this.headerText.on("pointerup", () => {
-      manageSession.chat();
+      const displaylist = this.playerGroup.getChildren()
+      console.log(displaylist)
     }); //on mouseup of clickable text
 
     this.matchIdText = this.add
@@ -165,10 +169,20 @@ export default class AZC1_Scene extends Phaser.Scene {
     //   repeat: -1,
     // };
     // this.anims.create(animationSetup);
+    this.playerGroup = this.add.group();
 
     this.player = this.physics.add
       .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
       .setDepth(101);
+
+    this.playerShadow = this.game.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, "avatar1").setDepth(100);
+
+    // this.playerShadow.anchor.set(0.5);
+    this.playerShadow.setTint(0x000000);
+    this.playerShadow.alpha = 0.2;
+
+
+    this.playerGroup.add(this.player)
 
     this.player.setData("isMovingByClicking", false) //check if player is moving from pointer input
 
@@ -283,7 +297,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
   enterLocation2Scene(player) {
     this.physics.pause();
-    player.setTint(0xff0000);
+    this.player.setTint(0xff0000);
     this.scene.start("Location2_Scene");
   }
 
@@ -297,6 +311,8 @@ export default class AZC1_Scene extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
+      this.playerShadow.x + this.playerShadowOffset
+      this.playerShadow.y + this.playerShadowOffset 
       // this.arrowDown = true;
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
@@ -374,7 +390,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     if (!this.input.activePointer.isDown && this.isClicking == true) {
       this.target.x = this.input.activePointer.worldX
       this.target.y = this.input.activePointer.worldY
-      this.physics.moveToObject(this.player, this.target, 200);
+      this.physics.moveToObject(this.playerGroup, this.target, 200);
       this.isClicking = false;
       this.player.setData("isMovingByClicking", true);
     } else if (this.input.activePointer.isDown && this.isClicking == false) {
@@ -388,7 +404,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (this.player.getData("isMovingByClicking") == true) {
       if (this.distance < 4) {
-        this.player.body.reset(this.target.x, this.target.y);
+        this.playerGroup.body.reset(this.target.x, this.target.y);
         this.player.setData("isMovingByClicking", false)
       } else {
         if (
