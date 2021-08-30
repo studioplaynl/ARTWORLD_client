@@ -89,7 +89,6 @@ class manageSession {
       this.getStreamUsers("home")
       streampresence.joins.forEach((join) => {
         console.log("New user joined: %o", join.user_id);
-        this.createOnlinePlayers = true;
       });
       // streampresence.leaves.forEach((leave) => {
       //   console.log("User left: %o", leave.user_id);
@@ -120,9 +119,8 @@ class manageSession {
       // console.log(this.allConnectedUsers[0].user_id)
 
       console.log("get stream users:");
-      console.log(this.allConnectedUsersPrev);
       if (this.allConnectedUsers != null) {
-        console.log(this.allConnectedUsers[0].user_id)
+        this.createOnlinePlayers = true
         // for (let i = 0; i < this.allConnectedUsers.length; i++) {
         //   if (!this.allConnectedUsersPrev(this.allConnectedUsers[i].user_id)) {
 

@@ -307,7 +307,7 @@ export default class AZC1_Scene extends Phaser.Scene {
           // onlinePlayers[i] will be overwritten as a gameobject
           this.onlinePlayers[i] = this.add
             .sprite(this.player.x - 40, this.player.y - 40, this.avatarName[i])
-            .setDepth(100);
+            .setDepth(90);
 
           // console.log(" this.add.sprite: ")  
           // console.log(this.onlinePlayers[i])
