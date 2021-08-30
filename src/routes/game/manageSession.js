@@ -53,7 +53,7 @@ class manageSession {
     //stream
     this.socket.onstreamdata = (streamdata) => {
       // console.info("Received stream data object:", streamdata);
-      //console.info("Streamdata.stream:", streamdata.stream);
+      console.info("Streamdata.stream:", streamdata.stream);
 
       //console.info("Received stream data object.data:", streamdata.data);
       //const parsedData = JSON.parse(JSON.stringify(streamdata.data))
@@ -65,6 +65,7 @@ class manageSession {
       if (this.allConnectedUsers != null) {
         for (let i = 0; i < this.allConnectedUsers.length; i++) {
           if (parsedData.user_id == this.allConnectedUsers[i].user_id) {
+            console.log("streaming online data")
             this.allConnectedUsers[i].posX = parsedData.posX;
             this.allConnectedUsers[i].posY = parsedData.posY;
             this.updateOnlinePlayers = true;
