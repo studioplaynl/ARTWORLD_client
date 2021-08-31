@@ -13,7 +13,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // this.turn = false;
     this.phaser = this;
     // this.playerPos;
-    this.NetworkPlayer = [];
+    this.onlinePlayers = [];
     this.avatarName = [];
     this.cursors;
     this.pointer;
@@ -25,6 +25,9 @@ export default class AZC1_Scene extends Phaser.Scene {
     // this.source // = player
     this.target = new Phaser.Math.Vector2();
     this.distance
+
+    //shadow
+    this.playerShadowOffset = 10;
   }
 
   preload() {
@@ -37,7 +40,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       { frameWidth: 68, frameHeight: 68 }
     );
     this.load.image("bomb", "./assets/bomb.png");
-    this.load.image("NetworkPlayer", "./assets/pieceYellow_border05.png");
+    this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
@@ -60,59 +63,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     manageSession.createSocket();
     //....... end SOCKET .......................................................................
 
-    //.......  TEXT ............................................................................
-    this.headerText = this.add
-      .text(CONFIG.WIDTH / 2, 20, "", {
-        fontFamily: "Arial",
-        fontSize: "36px",
-      })
-      .setOrigin(0.5)
-      .setInteractive() //make clickable
-      .setScrollFactor(0) //fixed on screen
-      .setDepth(30);
-
-    this.headerText.on("pointerup", () => {
-      manageSession.chat();
-    }); //on mouseup of clickable text
-
-    this.matchIdText = this.add
-      .text(
-        this.headerText.x,
-        this.headerText.y + 26,
-        "userID: " + this.playerIdText,
-        {
-          fontFamily: "Arial",
-          fontSize: "11px",
-        }
-      )
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setDepth(30);
-
-    this.playerIdText = this.add
-      .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
-        fontFamily: "Arial",
-        fontSize: "11px",
-      })
-      .setOrigin(0.5)
-      .setInteractive() //make clickable
-      .setScrollFactor(0) //fixed on screen
-      .setDepth(30)
-      .setShadow(1, 1, '#000000', 2);
-
-    this.playerIdText.on("pointerup", () => {
-      manageSession.chatExample();
-    });
-
-    this.opponentsIdText = this.add
-      .text(this.headerText.x, this.playerIdText.y + 14, "", {
-        fontFamily: "Arial",
-        fontSize: "11px",
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setDepth(30);
-    //.......  end TEXT .......................................................................
+this.add.graphics()
 
     //.......  LOCATIONS ......................................................................
     // this.location2 = this.physics.add.staticGroup();
@@ -166,9 +117,21 @@ export default class AZC1_Scene extends Phaser.Scene {
     // };
     // this.anims.create(animationSetup);
 
+    this.playerGroup = this.add.group();
+
     this.player = this.physics.add
       .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
       .setDepth(101);
+
+    this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, "avatar1").setDepth(100);
+
+    // this.playerShadow.anchor.set(0.5);
+    this.playerShadow.setTint(0x000000);
+    this.playerShadow.alpha = 0.2;
+
+
+    this.playerGroup.add(this.player)
+    this.playerGroup.add(this.playerShadow)
 
     this.player.setData("isMovingByClicking", false) //check if player is moving from pointer input
 
@@ -189,6 +152,8 @@ export default class AZC1_Scene extends Phaser.Scene {
     //.......  end PLAYER .............................................................................
 
     //....... PLAYER VS WORLD ..........................................................................
+    this.onlinePlayersGroup = this.add.group(); //group onlinePlayers
+
     this.gameCam = this.cameras.main;
     this.gameCam.startFollow(this.player);
     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -212,78 +177,198 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     //this.pointer = this.input.activePointer;
     //.......... end INPUT ................................................................................
+
+    //......... DEBUG FUNCTIONS ............................................................................
+    this.debugFunctions();
+    this.createDebugText();
+    //......... end DEBUG FUNCTIONS .........................................................................
+
+  }
+
+  createDebugText() {
+    this.headerText = this.add
+      .text(CONFIG.WIDTH / 2, 20, "", {
+        fontFamily: "Arial",
+        fontSize: "36px",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(3, 3, '#000000', 0)
+      .setDepth(30);
+
+    this.matchIdText = this.add
+      .text(
+        this.headerText.x,
+        this.headerText.y + 26,
+        "user_id: " + this.playerIdText,
+        {
+          fontFamily: "Arial",
+          fontSize: "16px",
+        }
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setInteractive() //make clickable
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(30);
+
+    this.playerIdText = this.add
+      .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
+        fontFamily: "Arial",
+        fontSize: "11px",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setDepth(30)
+      .setShadow(1, 1, '#000000', 0);
+
+    this.matchIdText.on("pointerup", () => {
+      this.onlinePlayers[0].setVisible(false); //works
+      this.onlinePlayers[0].destroy();
+    });
+
+    this.opponentsIdText = this.add
+      .text(this.headerText.x, this.playerIdText.y + 14, "", {
+        fontFamily: "Arial",
+        fontSize: "11px",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setDepth(30);
+  }
+
+  debugFunctions() {
+
+    this.input.keyboard.on('keyup-A', function (event) {
+      //get online player group
+      const displaylist = this.onlinePlayersGroup.getChildren()
+      console.log(displaylist)
+    }, this);
+
+    this.input.keyboard.on('keyup-ONE', function (event) {
+
+      console.log('1 key');
+
+ manageSession.testMoveMessage()
+
+    }, this);
+
+    this.input.keyboard.on('keyup-S', function (event) {
+
+      console.log('S key');
+
+    }, this);
+    //  Receives every single key down event, regardless of type
+
+    this.input.keyboard.on('keydown', function (event) {
+
+      console.dir(event);
+
+    }, this);
   }
 
   createRemotePlayer() {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
 
-    if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length != this.NetworkPlayer.length) {
+    if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length != this.onlinePlayers.length && manageSession.createOnlinePlayers) {
+      manageSession.createOnlinePlayers = false;
+
       //if user_id from allConnectedUsers 
-      console.log("make networkplayer...");
+      console.log("make onlinePlayer...");
 
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        console.log("created network user:");
+        this.avatarName[i] = "avatar_" + manageSession.allConnectedUsers[i];
+        console.log("this.avatarName[i]: " + this.avatarName[i])
 
-        console.log(manageSession.allConnectedUsers[i]);
+        // this.onlinePlayers.push(this.avatarName[i])
+        this.onlinePlayers[i] = manageSession.allConnectedUsers[i] // fill the array with an object
+        // Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]); //copy all data over from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
 
-        this.NetworkPlayer[i] = this.add
-          .image(this.player.x - 40, this.player.y - 40, "NetworkPlayer")
-          .setDepth(100);
-        console.log(this.NetworkPlayer.length);
-        console.log(this.NetworkPlayer);
+        console.log("created onlinePlayer: ");
+        console.log(this.onlinePlayers[i]);
 
-        //https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/
+        //check if online user has avatar url, otherwise assing one
+        if (manageSession.allConnectedUsers[i].avatar_url === "") {
+          const avatar_url =
+            'https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/b9ae6807-1ce1-4b71-a8a3-f5958be4d340/orangeship.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210819%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210819T124015Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=bb38a60a2603cf269cfdf86c2f5b82f43ac55afe27f21e48bdd1dd90e4a98947';
+          // }
 
-        // console.log("make networkplayer");
-        // for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        //   console.log("created network user:");
+          manageSession.allConnectedUsers[i].avatar_url = avatar_url
 
-        //   console.log(manageSession.allConnectedUsers[i]);
-        //   console.log(manageSession.allConnectedUsers[i].avatar_url);
+          this.load.image(
+            this.avatarName[i],
+            manageSession.allConnectedUsers[i].avatar_url
+          );
+          console.log("assigned avatar url")
+        } else {
 
-        //   // this.avatarName[i] = "NetworkPlayer" + i;
-        //   this.avatarName[i] = "NetworkPlayer" + i;
+          // this.load.spritesheet(
+          //   this.avatarName[i],
+          //   manageSession.allConnectedUsers[i].avatar_url,
+          //   { frameWidth: 68, frameHeight: 68 }
+          // );
 
-        //   console.log(this.avatarName[i]);
+          this.load.image(
+            this.avatarName[i],
+            manageSession.allConnectedUsers[i].avatar_url
+          );
+        }
 
-        //   // if (manageSession.allConnectedUsers[i].avatar_url === "") {
-        //   const avatar_url =
-        //     'https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/b9ae6807-1ce1-4b71-a8a3-f5958be4d340/orangeship.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210819%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210819T124015Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=bb38a60a2603cf269cfdf86c2f5b82f43ac55afe27f21e48bdd1dd90e4a98947';
-        //   // }
+        this.load.start(); // THIS!
+        console.log("this.load.start();")
 
-        //   this.load.image(
-        //     this.avatarName[i],
-        //     avatar_url
-        //   );
-        // }
+        this.load.on('filecomplete', function () {
+          console.log(this.onlinePlayers[i] + " has loaded ")
 
-        // this.load.start(); // THIS!
+          // this.anims.create({
+          //   key: "moving_" + manageSession.allConnectedUsers[i].user_id,
+          //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 0, end: 8 }),
+          //   frameRate: 20,
+          //   repeat: -1,
+          // });
 
-        // if (this.load.hasLoaded) {
-        //   for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        //     this.NetworkPlayer[i] = this.add
-        //       .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
-        //       .setDepth(100);
+          // this.anims.create({
+          //   key: "stop_" + manageSession.allConnectedUsers[i].user_id,
+          //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
+          // });
 
-        //     console.log(this.NetworkPlayer.length);
-        //     console.log(this.NetworkPlayer);
-        //   }
+          // onlinePlayers[i] will be overwritten as a gameobject
+          this.onlinePlayers[i] = this.add
+            .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
+            .setDepth(90);
 
-        //   manageSession.createNetworkPlayers = false;
-        //   console.log(
-        //     "manageSession.createNetworkPlayers: " +
-        //       manageSession.createNetworkPlayers
-        //   );
+          // console.log(" this.add.sprite: ")  
+          // console.log(this.onlinePlayers[i])
+
+          this.onlinePlayersGroup.add(this.onlinePlayers[i]);
+
+          // console.log(" this.onlinePlayersGroup.add: ")
+          // console.log(this.onlinePlayers[i] )
+
+          Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]); //add all data from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
+
+          console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
+          console.log(this.onlinePlayers[i])
+
+
+          manageSession.allConnectedUsers[i] = this.onlinePlayers[i];
+          console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
+          console.log(manageSession.allConnectedUsers[i])
+
+        }, this);
+
+
       }
+
     } else {
       return
-    }
+    } // else
   } //createRemotePlayer
 
   enterLocation2Scene(player) {
     this.physics.pause();
-    player.setTint(0xff0000);
+    this.player.setTint(0xff0000);
     this.scene.start("Location2_Scene");
   }
 
@@ -297,6 +382,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // Horizontal movement
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-speed);
+
       // this.arrowDown = true;
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
@@ -340,14 +426,22 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.player.body.velocity.normalize().scale(speed);
   }
 
+  
+
   update(time, delta) {
+    //........... PLAYER SHADOW .............................................................................
+    this.playerShadow.x = this.player.x + this.playerShadowOffset
+    this.playerShadow.y = this.player.y + this.playerShadowOffset
+    //........... end PLAYER SHADOW .........................................................................
+
+
     //.......... UPDATE TIMER      ..........................................................................
     manageSession.updateMovementTimer += delta;
     // console.log(time) //running time in millisec
     // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     //....... end UPDATE TIMER  ..............................................................................
 
-    //........ PLAYER MOVE BY KEYBOARD  .........................................................................
+    //........ PLAYER MOVE BY KEYBOARD  ......................................................................
     if (this.player.getData("isMovingByClicking") == false) {
       this.playerMovingByKeyBoard();
     }
@@ -405,6 +499,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     this.playerIdText.setText(manageSession.userID);
 
+
     if (manageSession.gameStarted) {
       this.headerText.setText("Game has started");
       this.matchIdText.setText("matchID: " + manageSession.matchID);
@@ -415,18 +510,19 @@ export default class AZC1_Scene extends Phaser.Scene {
       );
     }
 
-    if (manageSession.createNetworkPlayers) {
+    if (manageSession.createOnlinePlayers) {
       this.createRemotePlayer();
-      // manageSession.createNetworkPlayers = false
-      // console.log(manageSession.createNetworkPlayers)
+      // manageSession.createonlinePlayers = false
+      // console.log(manageSession.createonlinePlayers)
     }
 
-    if (manageSession.updateNetworkPlayers) {
+    if (manageSession.updateOnlinePlayers) {
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        this.NetworkPlayer[i].x = manageSession.allConnectedUsers[i].posX;
-        this.NetworkPlayer[i].y = manageSession.allConnectedUsers[i].posY;
+        this.onlinePlayers[i].x = manageSession.allConnectedUsers[i].posX;
+        this.onlinePlayers[i].y = manageSession.allConnectedUsers[i].posY;
+        console.log("updating online players")
       }
-      manageSession.updateNetworkPlayers = false;
+      manageSession.updateOnlinePlayers = false;
     }
   } //update
 

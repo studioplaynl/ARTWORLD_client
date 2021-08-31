@@ -18,8 +18,8 @@ class manageSession {
     this.matchID;
     this.deviceID;
 
-    this.createNetworkPlayers = false;
-    this.updateNetworkPlayers = false;
+    this.createOnlinePlayers = false;
+    this.updateOnlinePlayers = false;
     this.allConnectedUsers = [];
     this.allConnectedUsersPrev = [];
     this.stillConnectedOpponent;
@@ -53,7 +53,7 @@ class manageSession {
     //stream
     this.socket.onstreamdata = (streamdata) => {
       // console.info("Received stream data object:", streamdata);
-      //console.info("Streamdata.stream:", streamdata.stream);
+      console.info("Streamdata.stream:", streamdata.stream);
 
       //console.info("Received stream data object.data:", streamdata.data);
       //const parsedData = JSON.parse(JSON.stringify(streamdata.data))
@@ -61,16 +61,17 @@ class manageSession {
       //OFF
       const parsedData = JSON.parse(streamdata.data);
 
-      //console.info("Received stream data object.data.posX:", parsedData.posX);
-      if (this.allConnectedUsers != null) {
-        for (let i = 0; i < this.allConnectedUsers.length; i++) {
-          if (parsedData.user_id == this.allConnectedUsers[i].user_id) {
-            this.allConnectedUsers[i].posX = parsedData.posX;
-            this.allConnectedUsers[i].posY = parsedData.posY;
-            this.updateNetworkPlayers = true;
-          }
-        }
-      }
+      // //console.info("Received stream data object.data.posX:", parsedData.posX);
+      // if (this.allConnectedUsers != null) {
+      //   for (let i = 0; i < this.allConnectedUsers.length; i++) {
+      //     if (parsedData.user_id == this.allConnectedUsers[i].user_id) {
+      //       console.log("streaming online data")
+      //       this.allConnectedUsers[i].posX = parsedData.posX;
+      //       this.allConnectedUsers[i].posY = parsedData.posY;
+      //       this.updateOnlinePlayers = true;
+      //     }
+      //   }
+      // }
 
       // console.info(
       //   "Received stream data object.data.user_id:",
@@ -88,7 +89,6 @@ class manageSession {
       this.getStreamUsers("home")
       streampresence.joins.forEach((join) => {
         console.log("New user joined: %o", join.user_id);
-        this.createNetworkPlayers = true;
       });
       // streampresence.leaves.forEach((leave) => {
       //   console.log("User left: %o", leave.user_id);
@@ -105,8 +105,8 @@ class manageSession {
       if (this.allConnectedUsers != null) {
         // if (this.allConnectedUsersPrev != this.allConnectedUsers) {
         // this.allConnectedUsers = this.allConnectedUsersPrev
-        console.log("this.createNetworkPlayers = true")
-        this.createNetworkPlayers = true
+        console.log("this.createOnlinePlayers = true")
+        this.createOnlinePlayers = true
         // }
       }
     });
@@ -119,9 +119,8 @@ class manageSession {
       // console.log(this.allConnectedUsers[0].user_id)
 
       console.log("get stream users:");
-      console.log(this.allConnectedUsersPrev);
       if (this.allConnectedUsers != null) {
-        console.log(this.allConnectedUsers[0].user_id)
+        this.createOnlinePlayers = true
         // for (let i = 0; i < this.allConnectedUsers.length; i++) {
         //   if (!this.allConnectedUsersPrev(this.allConnectedUsers[i].user_id)) {
 
@@ -129,8 +128,8 @@ class manageSession {
         //     // if (this.allConnectedUsers.length > 0) {
         //     // if (this.allConnectedUsersPrev != this.allConnectedUsers) {
         //     // this.allConnectedUsers = this.allConnectedUsersPrev
-        //     console.log("this.createNetworkPlayers = true")        // }
-        //     this.createNetworkPlayers = true
+        //     console.log("this.createOnlinePlayers = true")        // }
+        //     this.createOnlinePlayers = true
         //   }
         // }
       }
@@ -159,30 +158,53 @@ class manageSession {
 
           // this.allConnectedUsers= newArr
           if (this.allConnectedUsers.length == 0) {
-            this.createNetworkPlayers = false;
-            console.log(this.createNetworkPlayers);
+            this.createOnlinePlayers = false;
+            console.log(this.createOnlinePlayers);
             return;
           } else {
             console.log("this.allConnectedUsers: ");
             console.log(this.allConnectedUsers);
-            this.createNetworkPlayers = true;
-            console.log(this.createNetworkPlayers);
+            this.createOnlinePlayers = true;
+            console.log(this.createOnlinePlayers);
           }
         });
       }
     });
   }
 
-  sendMoveMessage(posX, posY) {
-    //console.log("sendPositionMessage: ");
+  testMoveMessage(){
+
     var opCode = 1;
-    // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
-    // const data = '{"dir": "left", "steps": 4 }'; //working example
+    var data =
+        '{ "posX": ' +
+        Math.floor(Math.random() * 100) +
+        ', "posY": ' +
+        Math.floor(Math.random() * 100) +
+        ', "location": "home" }';
+    this.socket.rpc("move_position", data).then((rec) => {
+        //status;
+        data = JSON.parse(rec.payload) || [];
+        console.log("sent pos:");
+        console.log(data);
+    });
+        
+  }
 
-    const data = `{"user_id" : "${this.user_id}", "posX": "${posX}", "posY" : "${posY}", "location": "home"}`;
+  sendMoveMessage(posX, posY) {
+    // //console.log("sendPositionMessage: ");
+    // var opCode = 1;
+    // // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
+    // // const data = '{"dir": "left", "steps": 4 }'; //working example
 
-    //console.log(data)
-    this.socket.rpc("move_position", data);
+    // // const data = `{"user_id" : "${this.user_id}", "posX": "${posX}", "posY" : "${posY}", "location": "home"}`;
+
+    // const data = `{ "posX": "${posX}", "posY" : "${posY}", "location": "home"}`;
+
+    // //console.log(data)
+    // this.socket.rpc("move_position", data);
+
+
+
   } //end sendChatMessage
 
   async chatExample() {
