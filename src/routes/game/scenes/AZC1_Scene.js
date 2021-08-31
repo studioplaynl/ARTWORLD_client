@@ -384,49 +384,36 @@ this.add.graphics()
       this.player.body.setVelocityX(-speed);
 
       // this.arrowDown = true;
-      if (
-        manageSession.updateMovementTimer > manageSession.updateMovementInterval
-      ) {
-        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-        manageSession.updateMovementTimer = 0;
-      }
+      this.sendPlayerMovement();
     } else if (this.cursors.right.isDown) {
       this.player.body.setVelocityX(speed);
       // this.arrowDown = true
-      if (
-        manageSession.updateMovementTimer > manageSession.updateMovementInterval
-      ) {
-        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-        manageSession.updateMovementTimer = 0;
-      }
+      this.sendPlayerMovement();
     }
 
     // Vertical movement
     if (this.cursors.up.isDown) {
       this.player.body.setVelocityY(-speed);
       // this.arrowDown = true
-      if (
-        manageSession.updateMovementTimer > manageSession.updateMovementInterval
-      ) {
-        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-        manageSession.updateMovementTimer = 0;
-      }
+      this.sendPlayerMovement();
     } else if (this.cursors.down.isDown) {
       this.player.body.setVelocityY(speed);
       // this.arrowDown = true
-      if (
-        manageSession.updateMovementTimer > manageSession.updateMovementInterval
-      ) {
-        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-        manageSession.updateMovementTimer = 0;
-      }
+     this.sendPlayerMovement();
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     this.player.body.velocity.normalize().scale(speed);
   }
 
-  
+  sendPlayerMovement(){
+    if (
+      manageSession.updateMovementTimer > manageSession.updateMovementInterval
+    ) {
+      manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
+      manageSession.updateMovementTimer = 0;
+    }
+  }
 
   update(time, delta) {
     //........... PLAYER SHADOW .............................................................................
@@ -485,12 +472,7 @@ this.add.graphics()
         this.player.body.reset(this.target.x, this.target.y);
         this.player.setData("isMovingByClicking", false)
       } else {
-        if (
-          manageSession.updateMovementTimer > manageSession.updateMovementInterval
-        ) {
-          manageSession.sendMoveMessage(this.player.x, this.player.y);
-          manageSession.updateMovementTimer = 0;
-        }
+        this.sendPlayerMovement();
       }
     }
     //....... end MOVE BY CLICKING ......................................................................................
