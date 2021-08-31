@@ -58,6 +58,7 @@ let isLogedIn = (detail) => {
       <a href="/#/">{$_('nav.game')}</a>
       <a href="/#/upload">{$_('nav.upload')}</a>
       <a href="/#/match">{$_('nav.match')}</a>
+      <a href="/#/drawing">{$_('nav.drawing')}</a>
     </div>
     <div class="right">
       {#if !!$Profile && $Profile.meta.role == "admin"}

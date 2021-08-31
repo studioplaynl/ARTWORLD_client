@@ -1,13 +1,17 @@
 <script>
   import { fabric } from "fabric";
   import { onMount } from 'svelte';
+  import {uploadImage} from '../../api.js';
 
   let canv;
-  let ctx
+  let canvas;
+  let json;
+  let title;
+
   onMount(() => {
     var fab = function(id){return document.getElementById(id)};
 
-var canvas = new fabric.Canvas(canv, {
+canvas = new fabric.Canvas(canv, {
   isDrawingMode: true
 });
 
@@ -42,7 +46,7 @@ if (fabric.PatternBrush) {
 
     var patternCanvas = fabric.document.createElement('canvas');
     patternCanvas.width = patternCanvas.height = 10;
-    ctx = patternCanvas.getContext('2d');
+    var ctx = patternCanvas.getContext('2d');
 
     ctx.strokeStyle = this.color;
     ctx.lineWidth = 5;
@@ -197,9 +201,28 @@ if (canvas.freeDrawingBrush) {
   });
 
   const upload = () => {
-      data = ctx.getImageData()
-      console.log(data)
+    json = JSON.stringify( canvas.toJSON()  );
+    var Image = canvas.toDataURL('jpeg');
+    var blobData = dataURItoBlob(Image);
+    var type = "drawing"
+    uploadImage(title,type,json,blobData)
   }
+
+  const download = () => {
+    canvas.loadFromJSON(json, canvas.renderAll.bind(canvas))
+  }
+
+  function dataURItoBlob(dataURI) {
+    var binary = atob(dataURI.split(',')[1]);
+    var array = [];
+    for(var i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
+}
+
+
+
 </script>
 <main>
     <canvas bind:this={canv} width="500" height="300" />
@@ -237,6 +260,9 @@ if (canvas.freeDrawingBrush) {
           <label for="drawing-shadow-offset">Shadow offset:</label>
           <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset"><br>
         </div>
+        <label for="title">Title</label>
+        <input type="text" bind:value={title} id="title"><br>
         <button on:click={upload} >upload Image</button>
+        <button on:click={download} >download Image</button>
       </div>
 </main>

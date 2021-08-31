@@ -5,6 +5,7 @@
       "match": "Match",
       "login": "Log in",
       "logout": "Log out",
+      "drawing": "draw",
       "admin": {
           "createUser": "Create user",
           "createGroup": "Create group"
