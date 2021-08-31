@@ -63,8 +63,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     manageSession.createSocket();
     //....... end SOCKET .......................................................................
 
-    this.createDebugText();
-
+this.add.graphics()
 
     //.......  LOCATIONS ......................................................................
     // this.location2 = this.physics.add.staticGroup();
@@ -178,66 +177,95 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     //this.pointer = this.input.activePointer;
     //.......... end INPUT ................................................................................
+
+    //......... DEBUG FUNCTIONS ............................................................................
+    this.debugFunctions();
+    this.createDebugText();
+    //......... end DEBUG FUNCTIONS .........................................................................
+
   }
 
   createDebugText() {
-        this.headerText = this.add
-        .text(CONFIG.WIDTH / 2, 20, "SHOW DISPLAY LIST", {
+    this.headerText = this.add
+      .text(CONFIG.WIDTH / 2, 20, "", {
+        fontFamily: "Arial",
+        fontSize: "36px",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(3, 3, '#000000', 0)
+      .setDepth(30);
+
+    this.matchIdText = this.add
+      .text(
+        this.headerText.x,
+        this.headerText.y + 26,
+        "user_id: " + this.playerIdText,
+        {
           fontFamily: "Arial",
-          fontSize: "36px",
-        })
-        .setOrigin(0.5)
-        .setInteractive() //make clickable
-        .setScrollFactor(0) //fixed on screen
-        .setShadow(3, 3, '#000000', 0)
-        .setDepth(30);
-  
-      this.headerText.on("pointerup", () => {
-        const displaylist = this.onlinePlayersGroup.getChildren()
-        console.log(displaylist)
-      }); //on mouseup of clickable text
-  
-      this.matchIdText = this.add
-        .text(
-          this.headerText.x,
-          this.headerText.y + 26,
-          "user_id: " + this.playerIdText,
-          {
-            fontFamily: "Arial",
-            fontSize: "16px",
-          }
-        )
-        .setOrigin(0.5)
-        .setScrollFactor(0) //fixed on screen
-        .setInteractive() //make clickable
-        .setShadow(1, 1, '#000000', 0)
-        .setDepth(30);
-  
-      this.playerIdText = this.add
-        .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
-          fontFamily: "Arial",
-          fontSize: "11px",
-        })
-        .setOrigin(0.5)
-        .setScrollFactor(0) //fixed on screen
-        .setDepth(30)
-        .setShadow(1, 1, '#000000', 0);
-  
-      this.matchIdText.on("pointerup", () => {
-        this.onlinePlayers[0].setVisible(false); //works
-        this.onlinePlayers[0].destroy();
-      });
-  
-      this.opponentsIdText = this.add
-        .text(this.headerText.x, this.playerIdText.y + 14, "", {
-          fontFamily: "Arial",
-          fontSize: "11px",
-        })
-        .setOrigin(0.5)
-        .setScrollFactor(0) //fixed on screen
-        .setDepth(30);
+          fontSize: "16px",
+        }
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setInteractive() //make clickable
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(30);
+
+    this.playerIdText = this.add
+      .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
+        fontFamily: "Arial",
+        fontSize: "11px",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setDepth(30)
+      .setShadow(1, 1, '#000000', 0);
+
+    this.matchIdText.on("pointerup", () => {
+      this.onlinePlayers[0].setVisible(false); //works
+      this.onlinePlayers[0].destroy();
+    });
+
+    this.opponentsIdText = this.add
+      .text(this.headerText.x, this.playerIdText.y + 14, "", {
+        fontFamily: "Arial",
+        fontSize: "11px",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setDepth(30);
   }
 
+  debugFunctions() {
+
+    this.input.keyboard.on('keyup-A', function (event) {
+      //get online player group
+      const displaylist = this.onlinePlayersGroup.getChildren()
+      console.log(displaylist)
+    }, this);
+
+    this.input.keyboard.on('keyup-ONE', function (event) {
+
+      console.log('1 key');
+
+ manageSession.testMoveMessage()
+
+    }, this);
+
+    this.input.keyboard.on('keyup-S', function (event) {
+
+      console.log('S key');
+
+    }, this);
+    //  Receives every single key down event, regardless of type
+
+    this.input.keyboard.on('keydown', function (event) {
+
+      console.dir(event);
+
+    }, this);
+  }
 
   createRemotePlayer() {
     //manageSession.connectedOpponents //list of the opponents
@@ -274,16 +302,17 @@ export default class AZC1_Scene extends Phaser.Scene {
           );
           console.log("assigned avatar url")
         } else {
-          // this.load.image(
-          //   this.avatarName[i],
-          //   manageSession.allConnectedUsers[i].avatar_url)
-          // console.log("loaded: " + manageSession.allConnectedUsers[i].avatar_url)
-          this.load.spritesheet(
-            this.avatarName[i],
-            manageSession.allConnectedUsers[i].avatar_url,
-            { frameWidth: 68, frameHeight: 68 }
-          );
 
+          // this.load.spritesheet(
+          //   this.avatarName[i],
+          //   manageSession.allConnectedUsers[i].avatar_url,
+          //   { frameWidth: 68, frameHeight: 68 }
+          // );
+
+          this.load.image(
+            this.avatarName[i],
+            manageSession.allConnectedUsers[i].avatar_url
+          );
         }
 
         this.load.start(); // THIS!
@@ -292,21 +321,21 @@ export default class AZC1_Scene extends Phaser.Scene {
         this.load.on('filecomplete', function () {
           console.log(this.onlinePlayers[i] + " has loaded ")
 
-          this.anims.create({
-            key: "moving_" + manageSession.allConnectedUsers[i].user_id,
-            frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 0, end: 8 }),
-            frameRate: 20,
-            repeat: -1,
-          });
+          // this.anims.create({
+          //   key: "moving_" + manageSession.allConnectedUsers[i].user_id,
+          //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 0, end: 8 }),
+          //   frameRate: 20,
+          //   repeat: -1,
+          // });
 
-          this.anims.create({
-            key: "stop_" + manageSession.allConnectedUsers[i].user_id,
-            frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
-          });
+          // this.anims.create({
+          //   key: "stop_" + manageSession.allConnectedUsers[i].user_id,
+          //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
+          // });
 
           // onlinePlayers[i] will be overwritten as a gameobject
           this.onlinePlayers[i] = this.add
-            .sprite(this.player.x - 40, this.player.y - 40, this.avatarName[i])
+            .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
             .setDepth(90);
 
           // console.log(" this.add.sprite: ")  
@@ -319,17 +348,17 @@ export default class AZC1_Scene extends Phaser.Scene {
 
           Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]); //add all data from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
 
-          console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")  
+          console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
           console.log(this.onlinePlayers[i])
 
-          
+
           manageSession.allConnectedUsers[i] = this.onlinePlayers[i];
-          console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")  
+          console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
           console.log(manageSession.allConnectedUsers[i])
 
         }, this);
 
-        
+
       }
 
     } else {
@@ -397,9 +426,14 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.player.body.velocity.normalize().scale(speed);
   }
 
+  
+
   update(time, delta) {
+    //........... PLAYER SHADOW .............................................................................
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
+    //........... end PLAYER SHADOW .........................................................................
+
 
     //.......... UPDATE TIMER      ..........................................................................
     manageSession.updateMovementTimer += delta;
@@ -407,7 +441,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     //....... end UPDATE TIMER  ..............................................................................
 
-    //........ PLAYER MOVE BY KEYBOARD  .........................................................................
+    //........ PLAYER MOVE BY KEYBOARD  ......................................................................
     if (this.player.getData("isMovingByClicking") == false) {
       this.playerMovingByKeyBoard();
     }

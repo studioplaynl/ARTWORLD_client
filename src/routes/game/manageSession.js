@@ -61,17 +61,17 @@ class manageSession {
       //OFF
       const parsedData = JSON.parse(streamdata.data);
 
-      //console.info("Received stream data object.data.posX:", parsedData.posX);
-      if (this.allConnectedUsers != null) {
-        for (let i = 0; i < this.allConnectedUsers.length; i++) {
-          if (parsedData.user_id == this.allConnectedUsers[i].user_id) {
-            console.log("streaming online data")
-            this.allConnectedUsers[i].posX = parsedData.posX;
-            this.allConnectedUsers[i].posY = parsedData.posY;
-            this.updateOnlinePlayers = true;
-          }
-        }
-      }
+      // //console.info("Received stream data object.data.posX:", parsedData.posX);
+      // if (this.allConnectedUsers != null) {
+      //   for (let i = 0; i < this.allConnectedUsers.length; i++) {
+      //     if (parsedData.user_id == this.allConnectedUsers[i].user_id) {
+      //       console.log("streaming online data")
+      //       this.allConnectedUsers[i].posX = parsedData.posX;
+      //       this.allConnectedUsers[i].posY = parsedData.posY;
+      //       this.updateOnlinePlayers = true;
+      //     }
+      //   }
+      // }
 
       // console.info(
       //   "Received stream data object.data.user_id:",
@@ -172,16 +172,39 @@ class manageSession {
     });
   }
 
-  sendMoveMessage(posX, posY) {
-    //console.log("sendPositionMessage: ");
+  testMoveMessage(){
+
     var opCode = 1;
-    // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
-    // const data = '{"dir": "left", "steps": 4 }'; //working example
+    var data =
+        '{ "posX": ' +
+        Math.floor(Math.random() * 100) +
+        ', "posY": ' +
+        Math.floor(Math.random() * 100) +
+        ', "location": "home" }';
+    this.socket.rpc("move_position", data).then((rec) => {
+        //status;
+        data = JSON.parse(rec.payload) || [];
+        console.log("sent pos:");
+        console.log(data);
+    });
+        
+  }
 
-    const data = `{"user_id" : "${this.user_id}", "posX": "${posX}", "posY" : "${posY}", "location": "home"}`;
+  sendMoveMessage(posX, posY) {
+    // //console.log("sendPositionMessage: ");
+    // var opCode = 1;
+    // // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
+    // // const data = '{"dir": "left", "steps": 4 }'; //working example
 
-    //console.log(data)
-    this.socket.rpc("move_position", data);
+    // // const data = `{"user_id" : "${this.user_id}", "posX": "${posX}", "posY" : "${posY}", "location": "home"}`;
+
+    // const data = `{ "posX": "${posX}", "posY" : "${posY}", "location": "home"}`;
+
+    // //console.log(data)
+    // this.socket.rpc("move_position", data);
+
+
+
   } //end sendChatMessage
 
   async chatExample() {
