@@ -50,50 +50,49 @@ class manageSession {
 
     await this.getStreamUsers("home");
 
+
     //stream
     this.socket.onstreamdata = (streamdata) => {
-      // console.info("Received stream data object:", streamdata);
-      console.info("Streamdata.stream:", streamdata.stream);
-
-      //console.info("Received stream data object.data:", streamdata.data);
-      //const parsedData = JSON.parse(JSON.stringify(streamdata.data))
-
-      //OFF
-      const parsedData = JSON.parse(streamdata.data);
-
-      // //console.info("Received stream data object.data.posX:", parsedData.posX);
-      // if (this.allConnectedUsers != null) {
-      //   for (let i = 0; i < this.allConnectedUsers.length; i++) {
-      //     if (parsedData.user_id == this.allConnectedUsers[i].user_id) {
-      //       console.log("streaming online data")
-      //       this.allConnectedUsers[i].posX = parsedData.posX;
-      //       this.allConnectedUsers[i].posY = parsedData.posY;
-      //       this.updateOnlinePlayers = true;
-      //     }
-      //   }
-      // }
-
-      // console.info(
-      //   "Received stream data object.data.user_id:",
-      //   parsedData.user_id
-      // ); //user_id
-      //OFF
+      console.info("Received stream data:", streamdata);
+      let data = JSON.parse(streamdata.data);
+      for (const user of this.allConnectedUsers) {
+        if (user.user_id == data.user_id) {
+          console.log("test");
+          user.posX = data.posX;
+          user.posY = data.posY;
+        }
+      }
+      // console.log(this.allConnectedUsers);
+      // var newPos = this.allConnectedUsers;
+      // this.allConnectedUsers = newPos;
+      this.updateOnlinePlayers = true
     };
 
+    // this.getStreamUsers("home")
 
     this.socket.onstreampresence = (streampresence) => {
-      //this.getArrayOfOnlineUsers();
-      //this.getStreamUsers("home");
-      console.log('streampresence.joins');
-      console.log(streampresence.joins);
-      this.getStreamUsers("home")
-      streampresence.joins.forEach((join) => {
-        console.log("New user joined: %o", join.user_id);
-      });
-      // streampresence.leaves.forEach((leave) => {
-      //   console.log("User left: %o", leave.user_id);
-      // });
-    }; //end onstreampresence
+      console.log(
+          "Received presence event for stream: %o",
+          streampresence
+      );
+
+      console.log("leaves:" + streampresence.leaves);
+      if (!!streampresence.leaves) {
+          streampresence.leaves.forEach((leave) => {
+              console.log("User left: %o", leave.username);
+              this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
+                  return item.name !== leave.username;
+              });
+          });
+      }
+      if (!!streampresence.joins) {
+          streampresence.joins.forEach((join) => {
+            this.getStreamUsers("home")
+          });
+      }
+      console.log("all user:");
+      console.log(this.allConnectedUsers);
+  };
 
   } //end createSocket
 
@@ -114,97 +113,48 @@ class manageSession {
 
   getStreamUsers(location) {
     this.socket.rpc("get_users", location).then((rec) => {
-      this.allConnectedUsersPrev = JSON.parse(rec.payload);
-      this.allConnectedUsers = this.allConnectedUsersPrev;
-      // console.log(this.allConnectedUsers[0].user_id)
-
-      console.log("get stream users:");
+      this.allConnectedUsers = JSON.parse(rec.payload) || []
+                console.log("all current users in home:")
+                console.log(this.allConnectedUsers)
       if (this.allConnectedUsers != null) {
+        console.log("get stream users:");
         this.createOnlinePlayers = true
-        // for (let i = 0; i < this.allConnectedUsers.length; i++) {
-        //   if (!this.allConnectedUsersPrev(this.allConnectedUsers[i].user_id)) {
-
-
-        //     // if (this.allConnectedUsers.length > 0) {
-        //     // if (this.allConnectedUsersPrev != this.allConnectedUsers) {
-        //     // this.allConnectedUsers = this.allConnectedUsersPrev
-        //     console.log("this.createOnlinePlayers = true")        // }
-        //     this.createOnlinePlayers = true
-        //   }
-        // }
       }
     });
   }
 
-  getArrayOfOnlineUsers() {
-    this.socket.rpc("get_users", "home").then((rec) => {
-      let payload = JSON.parse(rec.payload);
-      //console.log(payload);
-      if (payload != null) {
-        payload.forEach((user, i) => {
-          if (user.user_id != this.user_id) {
-            this.allConnectedUsers[i] = user;
-          }
-          let newArr = this.allConnectedUsers.filter((a) => a); //filter out empty places in the array, making the array correct
-          this.allConnectedUsers = newArr;
-          // // filter out duplicates from server array
-          // newArr = this.allConnectedUsers.reduce((acc, current) => {const x = acc.find(item => item.user_id === current.user_id);
-          // if (!x){
-          //   return acc.concat([current]);}
-          //   else {
-          //     return acc;
-          //   }
-          // }, []);
-
-          // this.allConnectedUsers= newArr
-          if (this.allConnectedUsers.length == 0) {
-            this.createOnlinePlayers = false;
-            console.log(this.createOnlinePlayers);
-            return;
-          } else {
-            console.log("this.allConnectedUsers: ");
-            console.log(this.allConnectedUsers);
-            this.createOnlinePlayers = true;
-            console.log(this.createOnlinePlayers);
-          }
-        });
-      }
-    });
-  }
-
-  testMoveMessage(){
-
+  testMoveMessage() { //works
     var opCode = 1;
     var data =
-        '{ "posX": ' +
-        Math.floor(Math.random() * 100) +
-        ', "posY": ' +
-        Math.floor(Math.random() * 100) +
-        ', "location": "home" }';
+      '{ "posX": ' +
+      Math.floor(Math.random() * 100) +
+      ', "posY": ' +
+      Math.floor(Math.random() * 100) +
+      ', "location": "home" }';
     this.socket.rpc("move_position", data).then((rec) => {
-        //status;
-        data = JSON.parse(rec.payload) || [];
-        console.log("sent pos:");
-        console.log(data);
+      //status;
+      data = JSON.parse(rec.payload) || [];
+      console.log("sent pos:");
+      console.log(data);
     });
-        
+
   }
 
   sendMoveMessage(posX, posY) {
-    // //console.log("sendPositionMessage: ");
-    // var opCode = 1;
-    // // const data = '{"posX":' + posX + ', "posY":' + posY + '}'; // working
-    // // const data = '{"dir": "left", "steps": 4 }'; //working example
+    var opCode = 1;
+    var data =
+      '{ "posX": ' +
+      posX +
+      ', "posY": ' +
+      posY +
+      ', "location": "home" }';
 
-    // // const data = `{"user_id" : "${this.user_id}", "posX": "${posX}", "posY" : "${posY}", "location": "home"}`;
-
-    // const data = `{ "posX": "${posX}", "posY" : "${posY}", "location": "home"}`;
-
-    // //console.log(data)
-    // this.socket.rpc("move_position", data);
-
-
-
+    this.socket.rpc("move_position", data).then((rec) => {
+      //status;
+      // data = JSON.parse(rec.payload) || [];
+      // console.log("sent pos:");
+      // console.log(data);
+    });
   } //end sendChatMessage
 
   async chatExample() {

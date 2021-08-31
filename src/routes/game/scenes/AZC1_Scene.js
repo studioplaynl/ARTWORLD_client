@@ -55,7 +55,7 @@ export default class AZC1_Scene extends Phaser.Scene {
   create() {
     //timers
     manageSession.updateMovementTimer = 0;
-    manageSession.updateMovementInterval = 26; //1000 / frames =  millisec
+    manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
 
     //.......  SOCKET ..........................................................................
     this.playerIdText = manageSession.user_id;
@@ -387,7 +387,7 @@ this.add.graphics()
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
-        manageSession.sendMoveMessage(this.player.x, this.player.y);
+        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
         manageSession.updateMovementTimer = 0;
       }
     } else if (this.cursors.right.isDown) {
@@ -396,7 +396,7 @@ this.add.graphics()
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
-        manageSession.sendMoveMessage(this.player.x, this.player.y);
+        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
         manageSession.updateMovementTimer = 0;
       }
     }
@@ -408,7 +408,7 @@ this.add.graphics()
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
-        manageSession.sendMoveMessage(this.player.x, this.player.y);
+        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
         manageSession.updateMovementTimer = 0;
       }
     } else if (this.cursors.down.isDown) {
@@ -417,7 +417,7 @@ this.add.graphics()
       if (
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
-        manageSession.sendMoveMessage(this.player.x, this.player.y);
+        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
         manageSession.updateMovementTimer = 0;
       }
     }
