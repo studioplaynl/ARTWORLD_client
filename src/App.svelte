@@ -5,7 +5,6 @@
   import registerPage from "./routes/auth/register.svelte";
   import login from "./routes/auth/login.svelte";
   import profile from "./routes/profile.svelte";
-  import upload from "./routes/upload.svelte";
   import match from "./routes/match.svelte";
   import drawing from "./routes/apps/drawing.svelte"
   import { Session, Profile, logout } from "./session.js";
@@ -56,7 +55,6 @@ let isLogedIn = (detail) => {
   <div class="nav">
     <div class="left">
       <a href="/#/">{$_('nav.game')}</a>
-      <a href="/#/upload">{$_('nav.upload')}</a>
       <a href="/#/match">{$_('nav.match')}</a>
       <a href="/#/drawing">{$_('nav.drawing')}</a>
     </div>
@@ -111,14 +109,6 @@ let isLogedIn = (detail) => {
     "/login": login,
     "/profile": wrap({
         component: profile,
-        conditions: [
-            (detail) => {
-				return isLogedIn(detail)
-			}
-        ]
-    }),
-    "/upload": wrap({
-        component: upload,
         conditions: [
             (detail) => {
 				return isLogedIn(detail)
