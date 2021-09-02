@@ -1,10 +1,10 @@
-import {client} from "./nakama.svelte"
-import {Session} from "./session.js"
+import { client } from "./nakama.svelte"
+import { Session } from "./session.js"
 let Sess;
 let url;
 
 Session.subscribe(value => {
-	Sess = value;
+  Sess = value;
 });
 
 export async function uploadImage(name,type,json,img, status) {
@@ -36,19 +36,19 @@ export async function uploadImage(name,type,json,img, status) {
       
 }
 
-export async function recieveImage(data){
+export async function recieveImage(data) {
 
 }
 
-export async function listImages(type,user, limit){
-    
-    const objects = await client.listStorageObjects(Sess, type, user, limit);
-    return objects.objects
+export async function listImages(type, user, limit) {
+
+  const objects = await client.listStorageObjects(Sess, type, user, limit);
+  return objects.objects
 }
 
-async function getUploadURL(type, name, filetype){
-  name = name + '.' +filetype
-  const payload = {"type": type, "filename": name};
+export async function getUploadURL(type, name, filetype) {
+  name = name + '.' + filetype
+  const payload = { "type": type, "filename": name };
   const rpcid = "upload_file";
   const fileurl = await client.rpc(Sess, rpcid, payload);
   console.log(fileurl)
