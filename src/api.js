@@ -7,41 +7,33 @@ Session.subscribe(value => {
   Sess = value;
 });
 
-export async function uploadImage(name, type, json, img) {
-  console.log(Sess)
-  console.log("name: " + name)
-  console.log(img)
+export async function uploadImage(name,type,json,img, status) {
+    console.log(Sess)
+    console.log("name: "+ name)
+    console.log(img)
 
-  var [jpegURL, jpegLocation] = await getUploadURL(type, name, "jpeg")
-  var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json")
-  var value = { "jpeg": jpegLocation, "json": jsonLocation };
-  console.log(value)
+    var [jpegURL, jpegLocation] = await getUploadURL(type, name, "jpeg")
+    var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json")
+    var value = {"jpeg": jpegLocation, "json": jsonLocation, "status": status};
+    console.log(value)
 
-  await fetch(jpegURL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "multipart/form-data"
-    },
-    body: img
-  })
-
-  await fetch(jsonURL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "multipart/form-data"
-    },
-    body: json
-  })
-
-  const object_ids = await client.writeStorageObjects(Sess, [
-    {
-      "collection": type,
-      "key": name,
-      "value": value,
-      //"version": "*"
-    }
-  ]);
-  console.info("Stored objects: %o", object_ids);
+    await fetch(jpegURL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        body: img
+      })
+    
+    await fetch(jsonURL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        body: json
+      })
+    await updateObject(type,name,value)
+      
 }
 
 export async function recieveImage(data) {
@@ -63,4 +55,18 @@ export async function getUploadURL(type, name, filetype) {
   url = fileurl.payload.url
   var locatio = fileurl.payload.location
   return [url, locatio]
+}
+
+export async function updateObject(type, name, value){
+  const object_ids = await client.writeStorageObjects(Sess, [
+    {
+      "collection": type,
+      "key": name,
+      "value": value,
+      //"version": "*"
+    }
+  ]);
+  console.info("Stored objects: %o", object_ids);
+
+
 }

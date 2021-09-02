@@ -2,12 +2,16 @@
   import { fabric } from "fabric";
   import { onMount } from 'svelte';
   import {uploadImage} from '../../api.js';
+  import { client } from "../../nakama.svelte";
+  import { Session } from "../../session.js";
 
+  export let params = {}
   let canv;
   let canvas;
   let json;
   let title;
-
+  const statussen = ["zichtbaar","verborgen"];
+  let status;
   onMount(() => {
     var fab = function(id){return document.getElementById(id)};
 
@@ -198,6 +202,10 @@ if (canvas.freeDrawingBrush) {
   });
 }
 
+
+console.log(params)
+getImage()
+
   });
 
   const upload = () => {
@@ -205,11 +213,24 @@ if (canvas.freeDrawingBrush) {
     var Image = canvas.toDataURL('jpeg');
     var blobData = dataURItoBlob(Image);
     var type = "drawing"
-    uploadImage(title,type,json,blobData)
+    uploadImage(title,type,json,blobData, status)
   }
 
-  const download = () => {
-    canvas.loadFromJSON(json, canvas.renderAll.bind(canvas))
+  const getImage = async () => {
+    if(!!params.name && !!params.user && !!params.status){
+      title = params.name.split('.')[0]
+      status = params.status
+      var jsonURL = await getDrawing(`/drawing/${params.user}/${params.name}`)
+      console.log(jsonURL)
+      fetch(jsonURL)
+      .then(res => res.json())
+      .then(json => {
+        console.log('Checkout this JSON! ', json)
+        canvas.loadFromJSON(json, canvas.renderAll.bind(canvas))
+      })  
+      .catch(err => console.log(err));
+       
+    }
   }
 
   function dataURItoBlob(dataURI) {
@@ -220,6 +241,15 @@ if (canvas.freeDrawingBrush) {
     }
     return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
 }
+
+  async function getDrawing(DrawingUrl) {
+      const payload = {"url": DrawingUrl};
+        const rpcid = "download_file";
+        const fileurl = await client.rpc($Session, rpcid, payload);
+        let url = fileurl.payload.url
+        console.log(url)
+        return url
+    }
 
 
 
@@ -262,7 +292,14 @@ if (canvas.freeDrawingBrush) {
         </div>
         <label for="title">Title</label>
         <input type="text" bind:value={title} id="title"><br>
+        <label for="title">Status</label>
+        <select bind:value={status} on:change="{() => answer = ''}">
+          {#each statussen as status}
+            <option value={status}>
+              {status}
+            </option>
+          {/each}
+        </select>
         <button on:click={upload} >upload Image</button>
-        <button on:click={download} >download Image</button>
       </div>
 </main>

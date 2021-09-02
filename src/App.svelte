@@ -131,7 +131,7 @@ let isLogedIn = (detail) => {
 			}
         ]
     }),
-    "/drawing": wrap({
+    "/drawing/:user?/:name?/:status?": wrap({
         component: drawing,
         conditions: [
             (detail) => {
