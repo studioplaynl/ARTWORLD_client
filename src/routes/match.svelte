@@ -107,6 +107,15 @@ export async function leave() {
                 status = "left"
             })
 }
+
+export async function kill() {
+    await socket.rpc("kill", selected)
+            .then((rec) => {
+                console.log("left")
+                AllUsers = []
+                status = "left"
+            })
+}
     
 </script>
 
@@ -124,6 +133,7 @@ export async function leave() {
 
     <a on:click={join}>join</a>
     <a on:click={leave}>leave</a>
+    <a on:click={kill}>kill stream</a>
     <a on:click={onclick}>move</a>
     <a on:click={getUsers}>get Users</a>
     <h1>Your avatar:</h1>
