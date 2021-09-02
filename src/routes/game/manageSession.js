@@ -21,7 +21,8 @@ class manageSession {
     this.createOnlinePlayers = false;
     this.updateOnlinePlayers = false;
     this.allConnectedUsers = [];
-    this.allConnectedUsersPrev = [];
+    this.removeConnectedUsers = [];
+    this.removeConnectedUser = false;
     this.stillConnectedOpponent;
     this.ticket;
     this.gameStarted = false;
@@ -48,16 +49,16 @@ class manageSession {
 
     await this.joinStream("home");
 
-    await this.getStreamUsers("home");
+    //await this.getStreamUsers("home");
 
 
     //stream
     this.socket.onstreamdata = (streamdata) => {
-      console.info("Received stream data:", streamdata);
+      //console.info("Received stream data:", streamdata);
       let data = JSON.parse(streamdata.data);
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
-          console.log("test");
+          //console.log("test");
           user.posX = data.posX;
           user.posY = data.posY;
         }
@@ -71,55 +72,90 @@ class manageSession {
     // this.getStreamUsers("home")
 
     this.socket.onstreampresence = (streampresence) => {
+      //streampresence is everybody that is present also SELF
+
       console.log(
-          "Received presence event for stream: %o",
-          streampresence
+        "Received presence event for stream: %o",
+        streampresence
+
       );
 
-      console.log("leaves:" + streampresence.leaves);
       if (!!streampresence.leaves) {
-          streampresence.leaves.forEach((leave) => {
-              console.log("User left: %o", leave.username);
-              this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
-                  return item.name !== leave.username;
-              });
+        console.log("leaves:" + streampresence.leaves);
+        streampresence.leaves.forEach((leave) => {
+          console.log("User left: %o", leave.username);
+          //remove leave.user_id from 
+
+          this.removeConnectedUsers.push(leave.user_id);
+          console.log(this.removeConnectedUsers)
+
+          //allConnectedUsers is updated after someone leaves
+          this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
+            return item.name !== leave.username;
           });
+        });
+        this.removeConnectedUser = true;
+        this.createOnlinePlayers = true
       }
+
       if (!!streampresence.joins) {
-          streampresence.joins.forEach((join) => {
-            this.getStreamUsers("home")
-          });
+        streampresence.joins.forEach((join) => {
+          if (join.user_id != this.user_id) {
+            console.log("some one joined")
+            // this.getStreamUsers("home")
+            console.log(join)
+
+            console.log(this.allConnectedUsers)
+
+            this.allConnectedUsers.push(join)
+            this.createOnlinePlayers = true
+          }
+
+          // update array when someone joins
+          // this.allConnectedUsers.push(leave.user_id)
+        });
+        // this.getStreamUsers("home")
       }
-      console.log("all user:");
-      console.log(this.allConnectedUsers);
-  };
+
+    };
+
 
   } //end createSocket
 
-  joinStream(location) {
-    this.socket.rpc("join", location).then((rec) => {
-      this.allConnectedUsers = JSON.parse(rec.payload);
-      console.log("join users:");
-      console.log(this.allConnectedUsers);
-      if (this.allConnectedUsers != null) {
-        // if (this.allConnectedUsersPrev != this.allConnectedUsers) {
-        // this.allConnectedUsers = this.allConnectedUsersPrev
-        console.log("this.createOnlinePlayers = true")
-        this.createOnlinePlayers = true
-        // }
-      }
-    });
+   async getAvatarUrl(avatar_url) {
+    const payload = { "url": avatar_url };
+    const rpcid = "download_file";
+    const fileurl = await client.rpc(this.session, rpcid, payload);
+    // let url = fileurl.payload.url
+    // console.log(url)
+    return fileurl
   }
+
+  joinStream(location) {
+    console.log("joinStream()")
+
+    this.socket.rpc("join", location).then((rec) => {
+
+      //the server report all users in location except self
+      this.allConnectedUsers = JSON.parse(rec.payload) || []
+      //if there are no users online, the array length == 0
+
+      console.log("join users:")
+      console.log(this.allConnectedUsers)
+      if (this.allConnectedUsers.length > 0){
+        this.createOnlinePlayers = true
+      }
+
+      //status = "joined"
+    })
+
+  }//end joinStream(location)
 
   getStreamUsers(location) {
     this.socket.rpc("get_users", location).then((rec) => {
       this.allConnectedUsers = JSON.parse(rec.payload) || []
                 console.log("all current users in home:")
                 console.log(this.allConnectedUsers)
-      if (this.allConnectedUsers != null) {
-        console.log("get stream users:");
-        this.createOnlinePlayers = true
-      }
     });
   }
 

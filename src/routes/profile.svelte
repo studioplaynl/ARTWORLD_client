@@ -67,7 +67,7 @@
 
   let promise = getAccount();
 
-  async function getAvatar(avatar_url) {
+ export async function getAvatar(avatar_url) {
       const payload = {"url": avatar_url};
         const rpcid = "download_file";
         const fileurl = await client.rpc($Session, rpcid, payload);
