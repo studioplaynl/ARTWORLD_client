@@ -89,17 +89,34 @@ button:focus {
     max-width: 30px;
   }  
 
-  .card {
-    max-width: fit-content;
-	margin: 0 auto;
+.card {
+max-width: fit-content;
+margin: 0 auto;
+}
+
+.profileTable {
+	width: fit-content;
+	max-width: 800px;
+	align-content: center;
+}
+
+.profileTable tr:nth-child(even) {
+background: lightgrey;
+}
+.profileTable {
+	text-align: center;
+}
+
+.profileTable th {
+	background-color: #04AA6D;
+	color: white;
+	padding: 5px;
   }
 
-  .profileTable {
-	  width: fit-content;
-	  max-width: 800px;
-	  align-content: center;
-  }
+.iconWidth button {
+margin: 0 auto;
+}
 
-  .iconWidth {
-	  max-width: 15px;
-  }
+.iconWidth div {
+margin: 0 auto;
+}

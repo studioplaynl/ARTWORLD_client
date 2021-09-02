@@ -1,13 +1,11 @@
 <script>
     import {updateObject} from "../../api.js"
-    import { Switch } from "attractions"
+    import { Switch, Button } from "attractions"
     export let col;
     export let row;
 
-console.info("col: ",col)
-console.info("row: ",row)
 let status = row.value.status || false;
-
+console.log(row.value.status)
 
 const change = () => {
     console.log("update "+ status)
@@ -17,9 +15,19 @@ const change = () => {
     //value = JSON.stringify(value)
     updateObject(row.collection, row.key, value)
 }
+
+const restore = () => {
+    let value = row.value
+    value.status = false
+    updateObject(row.collection, row.key, value)
+}
 </script>
 
 <main>
-    <Switch bind:value={status} on:change={change}>
+    {#if row.value.status != "trash"}
+      <Switch bind:value={status} on:change={change}>
       </Switch>
+    {:else}
+      <Button on:click={restore}> Restore </Button>
+    {/if}
 </main>

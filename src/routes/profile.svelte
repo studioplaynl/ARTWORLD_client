@@ -1,5 +1,5 @@
 <script>
-  import {listImages} from '../api.js';
+  import {listImages, getAccount} from '../api.js';
   import { Session } from "../session.js";
   import { client } from "../nakama.svelte";
   import { _ } from 'svelte-i18n'
@@ -12,8 +12,9 @@
   let user = "",
     role = "",
     avatar_url = "",
-    azs = "",
-    drawings = [];
+    azc = "",
+    drawings = [],
+    trash = [];
 
     const columns = [
       {
@@ -36,7 +37,7 @@
         title: "Datum",
         value: v => { 
           var d = new Date(v.update_time)
-          return d.getHours() + ":" + (d.getUTCMinutes()) + " " + d.getDate() + "/" + (d.getMonth()+1)
+          return d.getHours() + ":" + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + " " + (d.getDate() < 10 ? '0' : '') + d.getDate() + "/" + (d.getMonth()+1)
         },
         sortable: true,
       },
@@ -56,36 +57,32 @@
 
   ];
     
-  async function getAccount() {
-    const account = await client.getAccount($Session);
-    user = account.user.username;
-    console.info(account.user.username);
-    let meta = JSON.parse(account.user.metadata);
-    role = meta.role;
-    azs = meta.azs || null;
-    let url = account.user.avatar_url
-    getAvatar(url).then((url) => avatar_url = url)
-    console.info(account.user);
 
+
+
+  async function getUser() {
+    let useraccount = await getAccount()
+    console.log(useraccount)
+    user = useraccount.username
+    role = JSON.parse(useraccount.metadata).role
+    azc = JSON.parse(useraccount.metadata).azc
+    avatar_url = useraccount.url
+
+    
     drawings = await listImages("drawing",$Session.user_id, 10)
+    drawings.forEach((item, index) => {
+      if(item.value.status === "trash"){
+        trash.push(item)
+        delete drawings[index]
+      }
+    })
+    trash = trash;
     console.log(drawings)
+  
   }
+  let promise = getUser();
 
-  let promise = getAccount();
-
-  async function getAvatar(avatar_url) {
-      const payload = {"url": avatar_url};
-        const rpcid = "download_file";
-        const fileurl = await client.rpc($Session, rpcid, payload);
-        let url = fileurl.payload.url
-        console.log(url)
-        return url
-    }
-
-    async function updateStatus(status){
-      console.log(status)
-    }
-    updateStatus()
+  
 </script>
 
 <main>
@@ -96,13 +93,15 @@
       <a href="/#/uploadAvatar/">Create</a>
       <p>{$_('register.username')}: {user}</p>
       <p>{$_('register.role')}: {$_('role.' + role)}</p>
-      <p>{$_('register.location')}: {azs}</p>
+      <p>{$_('register.location')}: {azc}</p>
       <a href="/#/">edit</a>
       </Card>
     </div>
     <div class="flex-item-right">
       <h1>Mijn kunstwerken</h1>
       <SvelteTable columns="{columns}" rows="{drawings}" classNameTable="profileTable"></SvelteTable>
+      <h1>Prullenmand</h1>
+      <SvelteTable columns="{columns}" rows="{trash}" classNameTable="profileTable"></SvelteTable>
     </div>
   </div>
 </main>
@@ -112,6 +111,8 @@
     display: flex;
     flex-direction: row;
     width: 100vw;
+    margin: 0 auto;
+    max-width: 1100px;
   }
 
   .flex-item-left {

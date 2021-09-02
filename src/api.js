@@ -70,3 +70,20 @@ export async function updateObject(type, name, value){
 
 
 }
+
+export async function getAccount() {
+  const account = await client.getAccount(Sess);
+  let user = account.user;
+  console.log(user)
+  user.url = await getAvatar(user.avatar_url)
+  return user
+}
+
+export async function getAvatar(avatar_url) {
+  const payload = {"url": avatar_url};
+    const rpcid = "download_file";
+    const fileurl = await client.rpc(Sess, rpcid, payload);
+    let url = fileurl.payload.url
+    console.log(url)
+    return url
+}
