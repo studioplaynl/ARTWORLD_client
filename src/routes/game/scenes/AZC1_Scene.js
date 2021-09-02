@@ -289,7 +289,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       this.onlinePlayers = []
 
       if (manageSession.allConnectedUsers != null) {
-        manageSession.createOnlinePlayers = false;
+        
 
         //if user_id from allConnectedUsers 
         console.log("createOnlinePlayers...");
@@ -314,7 +314,7 @@ export default class AZC1_Scene extends Phaser.Scene {
           //check if online user has avatar url, otherwise assing one
           if (manageSession.allConnectedUsers[i].avatar_url === "") {
             const avatar_url =
-            "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/b5b11afb-6e43-4977-bc97-dfe1fc6effe9/2.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T121729Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=cbe09282e8d1f48ac69e1b95af00e91def0297849728b85ab28daee116e11d79"
+            "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/0c7378cf-8d7f-4c7a-ab2c-161444ecfd70/blueship%20%281%29.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T133835Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=caf40cbf26671cffad0d46d6e79759e07c378754ea5e17b375db1a2d4fee7bfa"
             // }
 
             manageSession.allConnectedUsers[i].avatar_url = avatar_url
@@ -332,14 +332,10 @@ export default class AZC1_Scene extends Phaser.Scene {
             //   { frameWidth: 68, frameHeight: 68 }
             // );
 
-            // const signed_url = manageSession.getAvatarUrl(manageSession.allConnectedUsers[i].avatar_url)
-            // const signed_url = getAvatar(manageSession.allConnectedUsers[i].avatar_url)
-            const signed_url = "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/b5b11afb-6e43-4977-bc97-dfe1fc6effe9/2.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T121729Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=cbe09282e8d1f48ac69e1b95af00e91def0297849728b85ab28daee116e11d79"
-
-            console.log(signed_url)
+            
             this.load.image(
               this.avatarName[i],
-              signed_url
+              manageSession.allConnectedUsers[i].avatar_url
             );
           }
 
@@ -379,15 +375,15 @@ export default class AZC1_Scene extends Phaser.Scene {
 
             Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]); //add all data from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
 
-            console.log("Signed URL: ")
-            console.log(this.onlinePlayers[i].avatar_url)
+            // console.log("Signed URL: ")
+            // console.log(this.onlinePlayers[i].avatar_url)
 
-            console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
-            console.log(this.onlinePlayers[i])
+            // console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
+            // console.log(this.onlinePlayers[i])
 
             manageSession.allConnectedUsers[i] = this.onlinePlayers[i];
-            console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
-            console.log(manageSession.allConnectedUsers[i])
+            // console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
+            // console.log(manageSession.allConnectedUsers[i])
 
             //give the onlinePlayer the last known position
             this.onlinePlayers[i].x = manageSession.allConnectedUsers[i].posX;
@@ -398,6 +394,7 @@ export default class AZC1_Scene extends Phaser.Scene {
         return
       } // else
     } //if manageSession.createOnlinePlayers = true
+    manageSession.createOnlinePlayers = false;
   } //createRemotePlayer
 
   enterLocation2Scene(player) {

@@ -47,9 +47,8 @@ class manageSession {
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
-    await this.joinStream("home");
+    await this.getStreamUsers("join", "home")
 
-    //await this.getStreamUsers("home");
 
 
     //stream
@@ -69,94 +68,84 @@ class manageSession {
       this.updateOnlinePlayers = true
     };
 
-    // this.getStreamUsers("home")
 
-    this.socket.onstreampresence = (streampresence) => {
-      //streampresence is everybody that is present also SELF
+    
+      this.socket.onstreampresence = (streampresence) => {
+        //streampresence is everybody that is present also SELF
 
-      console.log(
-        "Received presence event for stream: %o",
-        streampresence
+        console.log(
+          "Received presence event for stream: %o",
+          streampresence
 
-      );
+        );
 
-      if (!!streampresence.leaves) {
-        console.log("leaves:" + streampresence.leaves);
-        streampresence.leaves.forEach((leave) => {
-          console.log("User left: %o", leave.username);
-          //remove leave.user_id from 
+        // if (!!streampresence.leaves) {
+        //   console.log("leaves:" + streampresence.leaves);
+        //   streampresence.leaves.forEach((leave) => {
+        //     console.log("User left: %o", leave.username);
+        //     //remove leave.user_id from 
 
-          this.removeConnectedUsers.push(leave.user_id);
-          console.log(this.removeConnectedUsers)
+        //     this.removeConnectedUsers.push(leave.user_id);
+        //     console.log(this.removeConnectedUsers)
 
-          //allConnectedUsers is updated after someone leaves
-          this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
-            return item.name !== leave.username;
-          });
-        });
-        this.removeConnectedUser = true;
-        this.createOnlinePlayers = true
-      }
+        //     //allConnectedUsers is updated after someone leaves
+        //     this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
+        //       return item.name !== leave.username;
+        //     });
+        //   });
+        //   this.removeConnectedUser = true;
+        //   this.createOnlinePlayers = true
+        // }
 
-      if (!!streampresence.joins) {
-        streampresence.joins.forEach((join) => {
-          if (join.user_id != this.user_id) {
-            console.log("some one joined")
-            // this.getStreamUsers("home")
-            console.log(join)
+        // if (!!streampresence.joins) {
+        //   streampresence.joins.forEach((join) => {
+        //     if (join.user_id != this.user_id) {
+        //       console.log("some one joined")
+        //       // this.getStreamUsers("home")
+        //       console.log(join)
 
-            console.log(this.allConnectedUsers)
+        //       console.log(this.allConnectedUsers)
 
-            this.allConnectedUsers.push(join)
-            this.createOnlinePlayers = true
-          }
+        //       this.allConnectedUsers.push(join)
+        //       this.createOnlinePlayers = true
+        //     }
 
-          // update array when someone joins
-          // this.allConnectedUsers.push(leave.user_id)
-        });
-        // this.getStreamUsers("home")
-      }
-
-    };
-
-
+        //     // update array when someone joins
+        //     // this.allConnectedUsers.push(leave.user_id)
+        //   });
+        //   // this.getStreamUsers("home")
+        // }
+        this.getStreamUsers("get_users", "home")
+      };
+    
   } //end createSocket
 
-   async getAvatarUrl(avatar_url) {
-    const payload = { "url": avatar_url };
-    const rpcid = "download_file";
-    const fileurl = await client.rpc(this.session, rpcid, payload);
-    // let url = fileurl.payload.url
-    // console.log(url)
-    return fileurl
-  }
 
-  joinStream(location) {
-    console.log("joinStream()")
+  getStreamUsers(rpc_command, location) {
+    if (this.createOnlinePlayers == false) {
+      //rpc_command:
+      //"join" = join the stream, get the online users, except self
+      //"get_users" = after joined, get the online users, except self
 
-    this.socket.rpc("join", location).then((rec) => {
+      console.log(rpc_command)
 
-      //the server report all users in location except self
-      this.allConnectedUsers = JSON.parse(rec.payload) || []
-      //if there are no users online, the array length == 0
+      this.socket.rpc(rpc_command, location).then((rec) => {
 
-      console.log("join users:")
-      console.log(this.allConnectedUsers)
-      if (this.allConnectedUsers.length > 0){
-        this.createOnlinePlayers = true
-      }
+        //the server report all users in location except self
+        this.allConnectedUsers = JSON.parse(rec.payload) || []
+        //if there are no users online, the array length == 0
 
-      //status = "joined"
-    })
+        console.log("joined users:")
+        console.log(this.allConnectedUsers)
+        if (this.allConnectedUsers.length > 0 && this.createOnlinePlayers == false) {
+          this.createOnlinePlayers = true
+        } else {
+          console.log("no online users")
+        }
 
-  }//end joinStream(location)
-
-  getStreamUsers(location) {
-    this.socket.rpc("get_users", location).then((rec) => {
-      this.allConnectedUsers = JSON.parse(rec.payload) || []
-                console.log("all current users in home:")
-                console.log(this.allConnectedUsers)
-    });
+        //status = "joined"
+      })
+    }
   }
 
   testMoveMessage() { //works
