@@ -1,7 +1,7 @@
 import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 //import { getAvatar } from '../../profile.svelte';
-import { getAvatar } from '../../../api.js';
+import { getAccount } from '../../../api.js';
 
 
 export default class AZC1_Scene extends Phaser.Scene {
@@ -18,6 +18,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // this.playerPos;
     this.onlinePlayers = [];
     this.avatarName = [];
+    this.playerAvatarName = "playerAvatar";
     this.cursors;
     this.pointer;
     this.isClicking = false;
@@ -42,6 +43,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       "./assets/spritesheets/cloud_breathing.png",
       { frameWidth: 68, frameHeight: 68 }
     );
+
     this.load.image("bomb", "./assets/bomb.png");
     this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
     //....... end IMAGES ......................................................................
@@ -64,6 +66,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.playerIdText = manageSession.user_id;
     //manageSession.createSocket();
     manageSession.createSocket();
+
     //....... end SOCKET .......................................................................
 
     this.add.graphics()
@@ -120,38 +123,41 @@ export default class AZC1_Scene extends Phaser.Scene {
     // };
     // this.anims.create(animationSetup);
 
-    this.playerGroup = this.add.group();
+    //create player group
+    // this.playerGroup = this.add.group();
 
     this.player = this.physics.add
       .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
       .setDepth(101);
 
-    this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, "avatar1").setDepth(100);
-
-    // this.playerShadow.anchor.set(0.5);
-    this.playerShadow.setTint(0x000000);
-    this.playerShadow.alpha = 0.2;
 
 
-    this.playerGroup.add(this.player)
-    this.playerGroup.add(this.playerShadow)
+    // this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarName).setDepth(100);
+
+    // // this.playerShadow.anchor.set(0.5);
+    // this.playerShadow.setTint(0x000000);
+    // this.playerShadow.alpha = 0.2;
+
+
+    // this.playerGroup.add(this.player);
+    // this.playerGroup.add(this.playerShadow);
 
     this.player.setData("isMovingByClicking", false) //check if player is moving from pointer input
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
     //  Our player animations, turning, walking left and walking right.
-    this.anims.create({
-      key: "moving",
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
-      frameRate: 20,
-      repeat: -1,
-    });
+    // this.anims.create({
+    //   key: "moving",
+    //   frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
+    //   frameRate: 20,
+    //   repeat: -1,
+    // });
 
-    this.anims.create({
-      key: "stop",
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
-    });
+    // this.anims.create({
+    //   key: "stop",
+    //   frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
+    // });
     //.......  end PLAYER .............................................................................
 
     //....... PLAYER VS WORLD ..........................................................................
@@ -185,7 +191,63 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.debugFunctions();
     this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
+    manageSession.createPlayer = true;
+  } // end create
 
+  async loadAndCreatePlayerAvatar() {
+    if (manageSession.createPlayer) {
+      if (manageSession.playerObjectSelf.avater_url === "") {
+        const avatar_url =
+          "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/0c7378cf-8d7f-4c7a-ab2c-161444ecfd70/blueship%20%281%29.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T133835Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=caf40cbf26671cffad0d46d6e79759e07c378754ea5e17b375db1a2d4fee7bfa"
+        // }
+
+        manageSession.playerObjectSelf.avater_url = avatar_url
+
+        this.load.image(
+          this.playerAvatarName,
+          manageSession.playerObjectSelf.avater_url
+        );
+        console.log("assigned avatar url")
+      } else {
+
+        // this.load.spritesheet(
+        //   this.avatarName[i],
+        //   manageSession.allConnectedUsers[i].avatar_url,
+        //   { frameWidth: 68, frameHeight: 68 }
+        // );
+
+
+        this.load.image(
+          this.playerAvatarName,
+          manageSession.playerObjectSelf.avater_url
+        );
+      }
+
+      this.load.start(); // load the image in memory
+      console.log("this.load.start();");
+
+      //check if image has downloaded from the server and is in memory
+      this.load.on('filecomplete', function () {
+        console.log("player avatar has loaded ")
+        // this.anims.create({
+        //   key: "moving_" + manageSession.allConnectedUsers[i].user_id,
+        //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 0, end: 8 }),
+        //   frameRate: 20,
+        //   repeat: -1,
+        // });
+
+        // this.anims.create({
+        //   key: "stop_" + manageSession.allConnectedUsers[i].user_id,
+        //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
+        // });
+
+        // onlinePlayers[i] will be overwritten as a gameobject
+        this.player = this.physics.add
+          .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarName)
+          .setDepth(101);
+      }, this);
+    }//if(manageSession.playerCreated)
+    manageSession.createPlayer = false;
   }
 
   createDebugText() {
@@ -261,6 +323,21 @@ export default class AZC1_Scene extends Phaser.Scene {
       console.log('S key');
 
     }, this);
+
+    this.input.keyboard.on('keyup-Q', function (event) {
+
+      console.log('Q key');
+      getAccount();
+
+    }, this);
+
+    this.input.keyboard.on('keyup-W', function (event) {
+
+      console.log('W key');
+
+
+    }, this);
+
     //  Receives every single key down event, regardless of type
 
     this.input.keyboard.on('keydown', function (event) {
@@ -289,7 +366,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       this.onlinePlayers = []
 
       if (manageSession.allConnectedUsers != null) {
-        
+
 
         //if user_id from allConnectedUsers 
         console.log("createOnlinePlayers...");
@@ -314,7 +391,7 @@ export default class AZC1_Scene extends Phaser.Scene {
           //check if online user has avatar url, otherwise assing one
           if (manageSession.allConnectedUsers[i].avatar_url === "") {
             const avatar_url =
-            "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/0c7378cf-8d7f-4c7a-ab2c-161444ecfd70/blueship%20%281%29.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T133835Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=caf40cbf26671cffad0d46d6e79759e07c378754ea5e17b375db1a2d4fee7bfa"
+              "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/0c7378cf-8d7f-4c7a-ab2c-161444ecfd70/blueship%20%281%29.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T133835Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=caf40cbf26671cffad0d46d6e79759e07c378754ea5e17b375db1a2d4fee7bfa"
             // }
 
             manageSession.allConnectedUsers[i].avatar_url = avatar_url
@@ -332,7 +409,7 @@ export default class AZC1_Scene extends Phaser.Scene {
             //   { frameWidth: 68, frameHeight: 68 }
             // );
 
-            
+
             this.load.image(
               this.avatarName[i],
               manageSession.allConnectedUsers[i].avatar_url
@@ -345,8 +422,8 @@ export default class AZC1_Scene extends Phaser.Scene {
           //check if image has downloaded from the server and is in memory
           this.load.on('filecomplete', function () {
             console.log(this.onlinePlayers[i] + " has loaded ")
-            
-            
+
+
 
             // this.anims.create({
             //   key: "moving_" + manageSession.allConnectedUsers[i].user_id,
@@ -461,15 +538,16 @@ export default class AZC1_Scene extends Phaser.Scene {
     //...... ONLINE PLAYERS ................................................
     this.createOnlinePlayers();
     this.updateMovementOnlinePlayers()
+    this.loadAndCreatePlayerAvatar();
 
     if (manageSession.removeConnectedUser) {
     }
     //.......................................................................
 
-    //........... PLAYER SHADOW .............................................................................
-    this.playerShadow.x = this.player.x + this.playerShadowOffset
-    this.playerShadow.y = this.player.y + this.playerShadowOffset
-    //........... end PLAYER SHADOW .........................................................................
+    // //........... PLAYER SHADOW .............................................................................
+    // this.playerShadow.x = this.player.x + this.playerShadowOffset
+    // this.playerShadow.y = this.player.y + this.playerShadowOffset
+    // //........... end PLAYER SHADOW .........................................................................
 
 
     //.......... UPDATE TIMER      ..........................................................................
@@ -497,9 +575,9 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //....... moving ANIMATION ......................................................................................
     if (this.arrowDown || this.player.getData("isMovingByClicking")) {
-      this.player.anims.play("moving", true);
+      // this.player.anims.play("moving", true);
     } else if (!this.arrowDown || !this.player.getData("isMovingByClicking")) {
-      this.player.anims.play("stop", true);
+      // this.player.anims.play("stop", true);
     }
     //....... end moving ANIMATION .................................................................................
 

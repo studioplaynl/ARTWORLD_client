@@ -79,6 +79,7 @@ export async function getAccount() {
   return user
 }
 
+//getAvatar only works reliable via the getAccount call
 export async function getAvatar(avatar_url) {
   const payload = {"url": avatar_url};
     const rpcid = "download_file";

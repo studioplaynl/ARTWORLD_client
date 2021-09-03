@@ -57,9 +57,6 @@
 
   ];
     
-
-
-
   async function getUser() {
     let useraccount = await getAccount()
     console.log(useraccount)

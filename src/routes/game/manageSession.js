@@ -1,4 +1,7 @@
 import { client, SSL } from "../../nakama.svelte";
+import { getAccount } from '../../api.js';
+import { Color } from "fabric/fabric-impl";
+
 
 class manageSession {
   constructor() {
@@ -18,13 +21,15 @@ class manageSession {
     this.matchID;
     this.deviceID;
 
+    this.playerObjectSelf = {};
+    this.createPlayer = false;
+
     this.createOnlinePlayers = false;
     this.updateOnlinePlayers = false;
     this.allConnectedUsers = [];
-    this.removeConnectedUsers = [];
+    this.removedConnectedUsers = [];
     this.removeConnectedUser = false;
-    this.stillConnectedOpponent;
-    this.ticket;
+
     this.gameStarted = false;
 
     //chat example
@@ -46,6 +51,12 @@ class manageSession {
 
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
+
+    //get account info of Self
+    console.log("get account info of self")
+    this.avatarObjectSelf = getAccount();
+    console.log("this.avatarObjectSelf")
+    console.log(this.avatarObjectSelf)
 
     await this.getStreamUsers("join", "home")
 
@@ -69,55 +80,55 @@ class manageSession {
     };
 
 
-    
-      this.socket.onstreampresence = (streampresence) => {
-        //streampresence is everybody that is present also SELF
 
-        console.log(
-          "Received presence event for stream: %o",
-          streampresence
+    this.socket.onstreampresence = (streampresence) => {
+      //streampresence is everybody that is present also SELF
 
-        );
+      console.log(
+        "Received presence event for stream: %o",
+        streampresence
 
-        // if (!!streampresence.leaves) {
-        //   console.log("leaves:" + streampresence.leaves);
-        //   streampresence.leaves.forEach((leave) => {
-        //     console.log("User left: %o", leave.username);
-        //     //remove leave.user_id from 
+      );
 
-        //     this.removeConnectedUsers.push(leave.user_id);
-        //     console.log(this.removeConnectedUsers)
+      // if (!!streampresence.leaves) {
+      //   console.log("leaves:" + streampresence.leaves);
+      //   streampresence.leaves.forEach((leave) => {
+      //     console.log("User left: %o", leave.username);
+      //     //remove leave.user_id from 
 
-        //     //allConnectedUsers is updated after someone leaves
-        //     this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
-        //       return item.name !== leave.username;
-        //     });
-        //   });
-        //   this.removeConnectedUser = true;
-        //   this.createOnlinePlayers = true
-        // }
+      //     this.removedConnectedUsers.push(leave.user_id);
+      //     console.log(this.removedConnectedUsers)
 
-        // if (!!streampresence.joins) {
-        //   streampresence.joins.forEach((join) => {
-        //     if (join.user_id != this.user_id) {
-        //       console.log("some one joined")
-        //       // this.getStreamUsers("home")
-        //       console.log(join)
+      //     //allConnectedUsers is updated after someone leaves
+      //     this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
+      //       return item.name !== leave.username;
+      //     });
+      //   });
+      //   this.removeConnectedUser = true;
+      //   this.createOnlinePlayers = true
+      // }
 
-        //       console.log(this.allConnectedUsers)
+      // if (!!streampresence.joins) {
+      //   streampresence.joins.forEach((join) => {
+      //     if (join.user_id != this.user_id) {
+      //       console.log("some one joined")
+      //       // this.getStreamUsers("home")
+      //       console.log(join)
 
-        //       this.allConnectedUsers.push(join)
-        //       this.createOnlinePlayers = true
-        //     }
+      //       console.log(this.allConnectedUsers)
 
-        //     // update array when someone joins
-        //     // this.allConnectedUsers.push(leave.user_id)
-        //   });
-        //   // this.getStreamUsers("home")
-        // }
-        this.getStreamUsers("get_users", "home")
-      };
-    
+      //       this.allConnectedUsers.push(join)
+      //       this.createOnlinePlayers = true
+      //     }
+
+      //     // update array when someone joins
+      //     // this.allConnectedUsers.push(leave.user_id)
+      //   });
+      //   // this.getStreamUsers("home")
+      // }
+      this.getStreamUsers("get_users", "home")
+    };
+
   } //end createSocket
 
 
@@ -137,7 +148,7 @@ class manageSession {
 
         console.log("joined users:")
         console.log(this.allConnectedUsers)
-        if (this.allConnectedUsers.length > 0 && this.createOnlinePlayers == false) {
+        if (this.allConnectedUsers != null && this.allConnectedUsers.length > 0 && this.createOnlinePlayers == false) {
           this.createOnlinePlayers = true
         } else {
           console.log("no online users")
