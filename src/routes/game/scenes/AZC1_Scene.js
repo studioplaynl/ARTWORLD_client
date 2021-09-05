@@ -2,6 +2,7 @@ import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount } from '../../../api.js';
+import { compute_slots } from "svelte/internal";
 
 
 export default class AZC1_Scene extends Phaser.Scene {
@@ -32,6 +33,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //shadow
     this.playerShadowOffset = 10;
+    this.playerIsMovingByClicking = false;
   }
 
   preload() {
@@ -57,7 +59,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... end TILEMAP ......................................................................
   }
 
-  create() {
+  async create() {
     //timers
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
@@ -126,10 +128,11 @@ export default class AZC1_Scene extends Phaser.Scene {
     //create player group
     // this.playerGroup = this.add.group();
 
-    this.player = this.physics.add
-      .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
-      .setDepth(101);
-
+    // this.player = this.physics.add
+    //   .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
+    //   .setDepth(101);
+    manageSession.createPlayer = true;
+    this.loadAndCreatePlayerAvatar()
 
 
     // this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarName).setDepth(100);
@@ -141,8 +144,6 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     // this.playerGroup.add(this.player);
     // this.playerGroup.add(this.playerShadow);
-
-    this.player.setData("isMovingByClicking", false) //check if player is moving from pointer input
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
@@ -191,21 +192,22 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.debugFunctions();
     this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
-    manageSession.createPlayer = true;
   } // end create
 
   async loadAndCreatePlayerAvatar() {
     if (manageSession.createPlayer) {
-      if (manageSession.playerObjectSelf.avater_url === "") {
+      console.log("loadAndCreatePlayerAvatar")
+      if (manageSession.playerObjectSelf.url === "") {
+        console.log(manageSession.playerObjectSelf.url)
         const avatar_url =
           "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/0c7378cf-8d7f-4c7a-ab2c-161444ecfd70/blueship%20%281%29.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T133835Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=caf40cbf26671cffad0d46d6e79759e07c378754ea5e17b375db1a2d4fee7bfa"
         // }
 
-        manageSession.playerObjectSelf.avater_url = avatar_url
+        manageSession.playerObjectSelf.url = avatar_url
 
         this.load.image(
           this.playerAvatarName,
-          manageSession.playerObjectSelf.avater_url
+          manageSession.playerObjectSelf.url
         );
         console.log("assigned avatar url")
       } else {
@@ -216,10 +218,11 @@ export default class AZC1_Scene extends Phaser.Scene {
         //   { frameWidth: 68, frameHeight: 68 }
         // );
 
+        console.log(manageSession.playerObjectSelf.url)
 
         this.load.image(
           this.playerAvatarName,
-          manageSession.playerObjectSelf.avater_url
+          manageSession.playerObjectSelf.url
         );
       }
 
@@ -243,7 +246,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
         // onlinePlayers[i] will be overwritten as a gameobject
         this.player = this.physics.add
-          .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarName)
+          .sprite(100, 100, this.playerAvatarName)
           .setDepth(101);
       }, this);
     }//if(manageSession.playerCreated)
@@ -557,7 +560,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... end UPDATE TIMER  ..............................................................................
 
     //........ PLAYER MOVE BY KEYBOARD  ......................................................................
-    if (this.player.getData("isMovingByClicking") == false) {
+    if (!this.playerIsMovingByClicking) {
       this.playerMovingByKeyBoard();
     }
 
@@ -574,9 +577,9 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
     //....... moving ANIMATION ......................................................................................
-    if (this.arrowDown || this.player.getData("isMovingByClicking")) {
+    if (this.arrowDown || this.playerIsMovingByClicking) {
       // this.player.anims.play("moving", true);
-    } else if (!this.arrowDown || !this.player.getData("isMovingByClicking")) {
+    } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
       // this.player.anims.play("stop", true);
     }
     //....... end moving ANIMATION .................................................................................
@@ -587,7 +590,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       this.target.y = this.input.activePointer.worldY
       this.physics.moveToObject(this.player, this.target, 200);
       this.isClicking = false;
-      this.player.setData("isMovingByClicking", true);
+      this.playerIsMovingByClicking =  true;
     } else if (this.input.activePointer.isDown && this.isClicking == false) {
       this.isClicking = true;
     }
@@ -597,10 +600,10 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //  4 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (this.player.getData("isMovingByClicking") == true) {
+    if (this.playerIsMovingByClicking) {
       if (this.distance < 4) {
         this.player.body.reset(this.target.x, this.target.y);
-        this.player.setData("isMovingByClicking", false)
+        this.playerIsMovingByClicking =  false
       } else {
         this.sendPlayerMovement();
       }

@@ -1,5 +1,5 @@
 import { client, SSL } from "../../nakama.svelte";
-import { getAccount } from '../../api.js';
+import { user, url, getAccount } from '../../api.js';
 import { Color } from "fabric/fabric-impl";
 
 
@@ -21,7 +21,8 @@ class manageSession {
     this.matchID;
     this.deviceID;
 
-    this.playerObjectSelf = {};
+    this.AccountObject;
+    this.playerObjectSelf;
     this.createPlayer = false;
 
     this.createOnlinePlayers = false;
@@ -52,11 +53,12 @@ class manageSession {
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
-    //get account info of Self
-    console.log("get account info of self")
-    this.avatarObjectSelf = getAccount();
-    console.log("this.avatarObjectSelf")
-    console.log(this.avatarObjectSelf)
+
+    //await this.getAccountDetails()
+    this.playerObjectSelf = user;
+    console.log("this.playerObjectSelf")
+    console.log(this.playerObjectSelf)
+   
 
     await this.getStreamUsers("join", "home")
 
@@ -131,6 +133,17 @@ class manageSession {
 
   } //end createSocket
 
+  async getAccountDetails() {
+    this.AccountObject = await client.getAccount(this.session);
+    this.playerObjectSelf = this.AccountObject.user;
+    console.log(this.AccountObject.user)
+
+    const payload = { "url": this.playerObjectSelf.avatar_url };
+    const rpcid = "download_file";
+    const fileurl = await client.rpc(this.session, rpcid, payload);
+    this.playerObjectSelf.url = fileurl.payload.url
+    console.log(this.playerObjectSelf.url)
+  }
 
   getStreamUsers(rpc_command, location) {
     if (this.createOnlinePlayers == false) {
