@@ -54,13 +54,23 @@ class manageSession {
     console.log("session created with socket");
 
 
-    //await this.getAccountDetails()
-    console.log("this.playerObjectSelf")
-    await this.getAccountDetails()
-    console.log(this.playerObjectSelf)
+    // //await this.getAccountDetails()
+    // console.log("this.playerObjectSelf")
+    // await this.getAccountDetails().then((blob) => {
+    //   console.log(blob);
+    //   this.createPlayer = true;
+    // }).catch(e => console.log(e));
 
-    console.log("this.getAvatarUrl();")
-    await this.getAvatarUrl();
+
+    //await this.getAvatarUrl()
+ 
+    // console.log(this.createPlayer)
+    // console.log(this.playerObjectSelf)
+
+    // console.log("this.getAvatarUrl();")
+    // await this.getAvatarUrl().then(this.createPlayer = true)
+    // console.log(this.createPlayer)
+
 
     console.log('this.getStreamUsers("join", "home")')
     await this.getStreamUsers("join", "home")
@@ -154,7 +164,7 @@ class manageSession {
     const fileurl = await client.rpc(this.session, rpcid, payload);
     this.playerObjectSelf.url = fileurl.payload.url
     console.log(this.playerObjectSelf.url)
-    this.createPlayer = true
+
   }
 
   getStreamUsers(rpc_command, location) {

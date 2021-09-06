@@ -38,7 +38,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.playerIsMovingByClicking = false;
   }
 
-  preload() {
+  async preload() {
     //....... IMAGES ......................................................................
     this.load.image("sky", "./assets/sky.png");
     this.load.image("star", "./assets/star.png");
@@ -59,6 +59,22 @@ export default class AZC1_Scene extends Phaser.Scene {
     );
     this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
     //....... end TILEMAP ......................................................................
+
+
+    this.load.on('progress', function (value) {
+      console.log(value);
+    });
+
+    this.load.on('fileprogress', function (file) {
+      console.log(file.src);
+    });
+    this.load.on('complete', function () {
+      console.log('complete');
+    });
+
+    await manageSession.createSocket();
+
+
   }
 
   async create() {
@@ -69,7 +85,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     //.......  SOCKET ..........................................................................
     this.playerIdText = manageSession.user_id;
     //manageSession.createSocket();
-    await manageSession.createSocket();
 
     //....... end SOCKET .......................................................................
 
@@ -134,7 +149,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //   .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
     //   .setDepth(101);
 
-    await this.loadAndCreatePlayerAvatar()
+    //await this.loadAndCreatePlayerAvatar()
 
 
     // this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarName).setDepth(100);
@@ -167,7 +182,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.onlinePlayersGroup = this.add.group(); //group onlinePlayers
 
     this.gameCam = this.cameras.main;
-    this.gameCam.startFollow(this.player);
+    //this.gameCam.startFollow(this.player);
     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
     // this.player.setCollideWorldBounds(true);
@@ -253,7 +268,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       }, this);
     }//if(manageSession.playerCreated)
     manageSession.createPlayer = false;
-    console.log("manageSession.createPlayer = false;")  
+    console.log("manageSession.createPlayer = false;")
     this.createdPlayer = true;
     console.log("this.createdPlayer = true;")
   }
@@ -547,92 +562,92 @@ export default class AZC1_Scene extends Phaser.Scene {
   }
 
   update(time, delta) {
-    //...... ONLINE PLAYERS ................................................
-    this.createOnlinePlayers();
-    this.updateMovementOnlinePlayers()
-    this.loadAndCreatePlayerAvatar();
+    // //...... ONLINE PLAYERS ................................................
+    // this.createOnlinePlayers();
+    // this.updateMovementOnlinePlayers()
+    // this.loadAndCreatePlayerAvatar();
 
-    if (manageSession.removeConnectedUser) {
-    }
-    //.......................................................................
+    // if (manageSession.removeConnectedUser) {
+    // }
+    // //.......................................................................
 
-    // //........... PLAYER SHADOW .............................................................................
-    // this.playerShadow.x = this.player.x + this.playerShadowOffset
-    // this.playerShadow.y = this.player.y + this.playerShadowOffset
-    // //........... end PLAYER SHADOW .........................................................................
-
-
-    //.......... UPDATE TIMER      ..........................................................................
-    manageSession.updateMovementTimer += delta;
-    // console.log(time) //running time in millisec
-    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
-    //....... end UPDATE TIMER  ..............................................................................
-
-    //........ PLAYER MOVE BY KEYBOARD  ......................................................................
-    if (!this.playerIsMovingByClicking) {
-      this.playerMovingByKeyBoard();
-    }
-
-    if (
-      this.cursors.up.isDown ||
-      this.cursors.down.isDown ||
-      this.cursors.left.isDown ||
-      this.cursors.right.isDown
-    ) {
-      this.arrowDown = true
-    } else {
-      this.arrowDown = false
-    }
-    //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
-
-    //....... moving ANIMATION ......................................................................................
-    if (this.arrowDown || this.playerIsMovingByClicking) {
-      // this.player.anims.play("moving", true);
-    } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
-      // this.player.anims.play("stop", true);
-    }
-    //....... end moving ANIMATION .................................................................................
-
-    //....... MOVE BY CLICKING ......................................................................................
-    if (!this.input.activePointer.isDown && this.isClicking == true) {
-      this.target.x = this.input.activePointer.worldX
-      this.target.y = this.input.activePointer.worldY
-      this.physics.moveToObject(this.player, this.target, 200);
-      this.isClicking = false;
-      this.playerIsMovingByClicking = true;
-    } else if (this.input.activePointer.isDown && this.isClicking == false) {
-      this.isClicking = true;
-    }
-
-    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+    // // //........... PLAYER SHADOW .............................................................................
+    // // this.playerShadow.x = this.player.x + this.playerShadowOffset
+    // // this.playerShadow.y = this.player.y + this.playerShadowOffset
+    // // //........... end PLAYER SHADOW .........................................................................
 
 
-    //  4 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (this.playerIsMovingByClicking) {
-      if (this.distance < 4) {
-        this.player.body.reset(this.target.x, this.target.y);
-        this.playerIsMovingByClicking = false
-      } else {
-        this.sendPlayerMovement();
-      }
-    }
-    //....... end MOVE BY CLICKING ..................................................................................
+    // //.......... UPDATE TIMER      ..........................................................................
+    // manageSession.updateMovementTimer += delta;
+    // // console.log(time) //running time in millisec
+    // // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
+    // //....... end UPDATE TIMER  ..............................................................................
+
+    // //........ PLAYER MOVE BY KEYBOARD  ......................................................................
+    // if (!this.playerIsMovingByClicking) {
+    //   this.playerMovingByKeyBoard();
+    // }
+
+    // if (
+    //   this.cursors.up.isDown ||
+    //   this.cursors.down.isDown ||
+    //   this.cursors.left.isDown ||
+    //   this.cursors.right.isDown
+    // ) {
+    //   this.arrowDown = true
+    // } else {
+    //   this.arrowDown = false
+    // }
+    // //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
+
+    // //....... moving ANIMATION ......................................................................................
+    // if (this.arrowDown || this.playerIsMovingByClicking) {
+    //   // this.player.anims.play("moving", true);
+    // } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
+    //   // this.player.anims.play("stop", true);
+    // }
+    // //....... end moving ANIMATION .................................................................................
+
+    // //....... MOVE BY CLICKING ......................................................................................
+    // if (!this.input.activePointer.isDown && this.isClicking == true) {
+    //   this.target.x = this.input.activePointer.worldX
+    //   this.target.y = this.input.activePointer.worldY
+    //   this.physics.moveToObject(this.player, this.target, 200);
+    //   this.isClicking = false;
+    //   this.playerIsMovingByClicking = true;
+    // } else if (this.input.activePointer.isDown && this.isClicking == false) {
+    //   this.isClicking = true;
+    // }
+
+    // this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+
+
+    // //  4 is our distance tolerance, i.e. how close the source can get to the target
+    // //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    // if (this.playerIsMovingByClicking) {
+    //   if (this.distance < 4) {
+    //     this.player.body.reset(this.target.x, this.target.y);
+    //     this.playerIsMovingByClicking = false
+    //   } else {
+    //     this.sendPlayerMovement();
+    //   }
+    // }
+    // //....... end MOVE BY CLICKING ..................................................................................
 
 
 
-    this.playerIdText.setText(manageSession.userID);
+    // this.playerIdText.setText(manageSession.userID);
 
 
-    if (manageSession.gameStarted) {
-      this.headerText.setText("Game has started");
-      this.matchIdText.setText("matchID: " + manageSession.matchID);
-      this.playerIdText.setText("userID: " + manageSession.userID);
+    // if (manageSession.gameStarted) {
+    //   this.headerText.setText("Game has started");
+    //   this.matchIdText.setText("matchID: " + manageSession.matchID);
+    //   this.playerIdText.setText("userID: " + manageSession.userID);
 
-      this.opponentsIdText.setText(
-        "opponent: " + manageSession.connectedOpponents[0]
-      );
-    }
+    //   this.opponentsIdText.setText(
+    //     "opponent: " + manageSession.connectedOpponents[0]
+    //   );
+    // }
 
 
 

@@ -28,9 +28,9 @@ export default class MainMenu extends Phaser.Scene {
     manageSession.user_id = manageSession.sessionStored.user_id
     manageSession.username = manageSession.sessionStored.username
 
-    // //get account info of Self
-    // console.log("get account info of self")
-    // this.getAccount()
+    //get account info of Self
+    console.log("get account info of self")
+    this.getAccount()
 
 
     // manageSession.AccountObject = await client.getAccount(manageSession.session);
@@ -118,9 +118,12 @@ export default class MainMenu extends Phaser.Scene {
   } //create
 
   async getAccount() {
-    manageSession.playerObjectSelf = getAccount();
-    console.log("this.playerObjectSelf")
-    console.log(this.playerObjectSelf)
+    manageSession.playerObjectSelf = await getAccount();
+    console.log("manageSession.playerObjectSelf")
+    console.log(manageSession.playerObjectSelf)
+    manageSession.createPlayer = true
+    console.log("manageSession.createPlayer: ")
+    console.log(manageSession.createPlayer)
   }
 
   debugFunctions() {
@@ -156,7 +159,7 @@ export default class MainMenu extends Phaser.Scene {
       console.log('W key');
       manageSession.playerObjectSelf.url = url;
       console.log("this.playerObjectSelf")
-      console.log(manageSession.playerObjectSelf)
+      console.log(url)
 
     }, this);
 
