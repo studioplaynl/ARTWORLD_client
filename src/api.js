@@ -41,7 +41,6 @@ export async function recieveImage(data) {
 }
 
 export async function listImages(type, user, limit) {
-
   const objects = await client.listStorageObjects(Sess, type, user, limit);
   return objects.objects
 }
@@ -71,17 +70,35 @@ export async function updateObject(type, name, value){
 
 }
 
-export async function getAccount() {
-  const account = await client.getAccount(Sess);
-  let user = account.user;
-  console.log(user)
-  user.url = await getAvatar(user.avatar_url)
-  return user
+export async function getAccount(id) {
+  if(!!!id){
+    const account = await client.getAccount(Sess);
+    let user = account.user;
+    console.log(user)
+    user.url = await getAvatar(user.avatar_url)
+    return user
+  }else {
+    const users = await client.getUsers(Sess, [id]);
+    console.log(users)
+    let user = users.users[0]
+    console.log(user)
+    user.url = await getAvatar(user.avatar_url)
+    return user
+  }
 }
 
 export async function getAvatar(avatar_url) {
   const payload = {"url": avatar_url};
     const rpcid = "download_file";
+    const fileurl = await client.rpc(Sess, rpcid, payload);
+    let url = fileurl.payload.url
+    console.log(url)
+    return url
+}
+
+export async function deleteFile(type,file,user) {
+  const payload = {"type": type, "name": file, "user": user};
+    const rpcid = "delete_file";
     const fileurl = await client.rpc(Sess, rpcid, payload);
     let url = fileurl.payload.url
     console.log(url)
