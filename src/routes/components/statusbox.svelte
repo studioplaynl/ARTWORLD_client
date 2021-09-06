@@ -3,6 +3,7 @@
     import { Switch, Button } from "attractions"
     export let col;
     export let row;
+    export let moveToArt;
 
 let status = row.value.status || false;
 console.log(row.value.status)
@@ -20,6 +21,7 @@ const restore = () => {
     let value = row.value
     value.status = false
     updateObject(row.collection, row.key, value)
+    moveToArt(row.key)
 }
 </script>
 

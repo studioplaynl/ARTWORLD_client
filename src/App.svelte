@@ -107,7 +107,7 @@ let isLogedIn = (detail) => {
         ]
     }),
     "/login": login,
-    "/profile": wrap({
+    "/profile/:user?": wrap({
         component: profile,
         conditions: [
             (detail) => {

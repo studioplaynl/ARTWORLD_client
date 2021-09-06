@@ -1,21 +1,25 @@
 <script>
-    import {updateObject} from "../../api.js"
+    import {updateObject, deleteFile} from "../../api.js"
     import {Modal, Dialog, Button} from "attractions"
     export let col;
     export let row;
+    export let removeFromTrash;
+    export let moveToTrash;
+
     let modalOpen = false;
 
 const Trash = () => {
     console.log("update "+ status)
-    //let value = JSON.parse(row.value)
     let value = row.value
-    value.status = 'trash'
-    //value = JSON.stringify(value)
+    value.status = "trash"
     updateObject(row.collection, row.key, value)
+    moveToTrash(row.key)
 }
 
 const Delete = () => {
     modalOpen = false;
+    deleteFile(row.collection,row.key,row.user_id)
+    removeFromTrash(row.key)
     console.log("deleted")
 
 }
