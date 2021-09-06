@@ -20,16 +20,18 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.onlinePlayers = [];
     this.avatarName = [];
     this.playerAvatarName = "playerAvatar";
+    this.createdPlayer = false;
+
     this.cursors;
     this.pointer;
     this.isClicking = false;
     this.arrowDown = false;
-    this.gameCam
+    this.gameCam;
 
     //pointer location example
     // this.source // = player
     this.target = new Phaser.Math.Vector2();
-    this.distance
+    this.distance;
 
     //shadow
     this.playerShadowOffset = 10;
@@ -67,7 +69,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //.......  SOCKET ..........................................................................
     this.playerIdText = manageSession.user_id;
     //manageSession.createSocket();
-    manageSession.createSocket();
+    await manageSession.createSocket();
 
     //....... end SOCKET .......................................................................
 
@@ -131,8 +133,8 @@ export default class AZC1_Scene extends Phaser.Scene {
     // this.player = this.physics.add
     //   .sprite(spawnPoint.x, spawnPoint.y, "avatar1")
     //   .setDepth(101);
-    manageSession.createPlayer = true;
-    this.loadAndCreatePlayerAvatar()
+
+    await this.loadAndCreatePlayerAvatar()
 
 
     // this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarName).setDepth(100);
@@ -251,6 +253,9 @@ export default class AZC1_Scene extends Phaser.Scene {
       }, this);
     }//if(manageSession.playerCreated)
     manageSession.createPlayer = false;
+    console.log("manageSession.createPlayer = false;")  
+    this.createdPlayer = true;
+    console.log("this.createdPlayer = true;")
   }
 
   createDebugText() {
@@ -484,45 +489,49 @@ export default class AZC1_Scene extends Phaser.Scene {
   }
 
   playerMovingByKeyBoard() {
-    const speed = 175;
-    const prevVelocity = this.player.body.velocity.clone();
+    if (this.createdPlayer) {
+      const speed = 175;
+      const prevVelocity = this.player.body.velocity.clone();
 
-    // Stop any previous movement from the last frame
-    this.player.body.setVelocity(0);
+      // Stop any previous movement from the last frame
+      this.player.body.setVelocity(0);
 
-    // Horizontal movement
-    if (this.cursors.left.isDown) {
-      this.player.body.setVelocityX(-speed);
+      // Horizontal movement
+      if (this.cursors.left.isDown) {
+        this.player.body.setVelocityX(-speed);
 
-      // this.arrowDown = true;
-      this.sendPlayerMovement();
-    } else if (this.cursors.right.isDown) {
-      this.player.body.setVelocityX(speed);
-      // this.arrowDown = true
-      this.sendPlayerMovement();
+        // this.arrowDown = true;
+        this.sendPlayerMovement();
+      } else if (this.cursors.right.isDown) {
+        this.player.body.setVelocityX(speed);
+        // this.arrowDown = true
+        this.sendPlayerMovement();
+      }
+
+      // Vertical movement
+      if (this.cursors.up.isDown) {
+        this.player.body.setVelocityY(-speed);
+        // this.arrowDown = true
+        this.sendPlayerMovement();
+      } else if (this.cursors.down.isDown) {
+        this.player.body.setVelocityY(speed);
+        // this.arrowDown = true
+        this.sendPlayerMovement();
+      }
+
+      // Normalize and scale the velocity so that player can't move faster along a diagonal
+      this.player.body.velocity.normalize().scale(speed);
     }
-
-    // Vertical movement
-    if (this.cursors.up.isDown) {
-      this.player.body.setVelocityY(-speed);
-      // this.arrowDown = true
-      this.sendPlayerMovement();
-    } else if (this.cursors.down.isDown) {
-      this.player.body.setVelocityY(speed);
-      // this.arrowDown = true
-      this.sendPlayerMovement();
-    }
-
-    // Normalize and scale the velocity so that player can't move faster along a diagonal
-    this.player.body.velocity.normalize().scale(speed);
   }
 
   sendPlayerMovement() {
-    if (
-      manageSession.updateMovementTimer > manageSession.updateMovementInterval
-    ) {
-      manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-      manageSession.updateMovementTimer = 0;
+    if (this.createdPlayer) {
+      if (
+        manageSession.updateMovementTimer > manageSession.updateMovementInterval
+      ) {
+        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
+        manageSession.updateMovementTimer = 0;
+      }
     }
   }
 
@@ -590,7 +599,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       this.target.y = this.input.activePointer.worldY
       this.physics.moveToObject(this.player, this.target, 200);
       this.isClicking = false;
-      this.playerIsMovingByClicking =  true;
+      this.playerIsMovingByClicking = true;
     } else if (this.input.activePointer.isDown && this.isClicking == false) {
       this.isClicking = true;
     }
@@ -603,7 +612,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     if (this.playerIsMovingByClicking) {
       if (this.distance < 4) {
         this.player.body.reset(this.target.x, this.target.y);
-        this.playerIsMovingByClicking =  false
+        this.playerIsMovingByClicking = false
       } else {
         this.sendPlayerMovement();
       }

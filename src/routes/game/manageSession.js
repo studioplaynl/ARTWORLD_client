@@ -55,11 +55,14 @@ class manageSession {
 
 
     //await this.getAccountDetails()
-    this.playerObjectSelf = user;
     console.log("this.playerObjectSelf")
+    await this.getAccountDetails()
     console.log(this.playerObjectSelf)
-   
 
+    console.log("this.getAvatarUrl();")
+    await this.getAvatarUrl();
+
+    console.log('this.getStreamUsers("join", "home")')
     await this.getStreamUsers("join", "home")
 
 
@@ -143,6 +146,15 @@ class manageSession {
     const fileurl = await client.rpc(this.session, rpcid, payload);
     this.playerObjectSelf.url = fileurl.payload.url
     console.log(this.playerObjectSelf.url)
+  }
+
+  async getAvatarUrl() {
+    const payload = { "url": this.playerObjectSelf.avatar_url };
+    const rpcid = "download_file";
+    const fileurl = await client.rpc(this.session, rpcid, payload);
+    this.playerObjectSelf.url = fileurl.payload.url
+    console.log(this.playerObjectSelf.url)
+    this.createPlayer = true
   }
 
   getStreamUsers(rpc_command, location) {
