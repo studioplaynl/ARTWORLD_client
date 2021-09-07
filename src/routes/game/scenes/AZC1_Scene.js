@@ -359,13 +359,13 @@ export default class AZC1_Scene extends Phaser.Scene {
       .setDepth(300);
 
       
-      this.onlinePlayersGroupText = this.add.text(110, 110, "playersGroup[ ]", {fontFamily: "Arial", fontSize: "22px"})
+      this.onlinePlayersGroupText = this.add.text(110, 120, "playersGroup[ ]", {fontFamily: "Arial", fontSize: "22px"})
       .setOrigin(0.5)
       .setScrollFactor(0) //fixed on screen
       .setShadow(1, 1, '#000000', 0)
       .setDepth(300);
 
-      this.onlinePlayersGroupText2 = this.add.text(110, 130, "", {fontFamily: "Arial", fontSize: "22px"})
+      this.onlinePlayersGroupText2 = this.add.text(110, 140, "", {fontFamily: "Arial", fontSize: "22px"})
       .setOrigin(0.5)
       .setScrollFactor(0) //fixed on screen
       .setShadow(1, 1, '#000000', 0)
