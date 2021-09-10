@@ -20,7 +20,9 @@ export default class AZC1_Scene extends Phaser.Scene {
     // this.playerPos;
     this.onlinePlayers = [];
     this.avatarName = [];
-    this.playerAvatarName = "playerAvatar";
+    this.loadedAvatars = [];
+
+    this.playerAvatarKey = "playerAvatar";
     this.createdPlayer = false;
 
     this.cursors;
@@ -153,7 +155,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     await this.loadAndCreatePlayerAvatar()
 
 
-    // this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarName).setDepth(100);
+    // this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarKey).setDepth(100);
 
     // // this.playerShadow.anchor.set(0.5);
     // this.playerShadow.setTint(0x000000);
@@ -212,73 +214,87 @@ export default class AZC1_Scene extends Phaser.Scene {
     //......... end DEBUG FUNCTIONS .........................................................................
   } // end create
 
-  async loadAndCreatePlayerAvatar() {
+  loadAndCreatePlayerAvatar() {
     if (manageSession.createPlayer) {
       console.log("loadAndCreatePlayerAvatar")
-      if (manageSession.playerObjectSelf.url === "") {
-        console.log(manageSession.playerObjectSelf.url)
-        const avatar_url =
-          "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/0c7378cf-8d7f-4c7a-ab2c-161444ecfd70/blueship%20%281%29.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T133835Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=caf40cbf26671cffad0d46d6e79759e07c378754ea5e17b375db1a2d4fee7bfa"
-        // }
 
-        manageSession.playerObjectSelf.url = avatar_url
+      // console.log(manageSession.playerObjectSelf)
+      this.playerAvatarKey = manageSession.playerObjectSelf.id + "_" + manageSession.playerObjectSelf.create_time
+      console.log(this.playerAvatarKey)
 
-        this.load.image(
-          this.playerAvatarName,
-          manageSession.playerObjectSelf.url
-        );
-        console.log("assigned avatar url")
+      console.log(Phaser.Actions.GetFirst(this.loadedAvatars, this.playerAvatarKey))
+      // is playerAvaterKey already in loadedAvatars?
+      //no -> load the avatar and add to loadedAvatars
+      //yes -> dont load the avatar
 
-        manageSession.createPlayer = false;
-        console.log("manageSession.createPlayer = false;")
-        this.createdPlayer = true;
-        console.log("this.createdPlayer = true;")
 
-      } else {
+      if (Phaser.Actions.GetFirst(this.loadedAvatars, this.playerAvatarKey) == null) {
 
-        // this.load.spritesheet(
-        //   this.avatarName[i],
-        //   manageSession.allConnectedUsers[i].avatar_url,
-        //   { frameWidth: 68, frameHeight: 68 }
-        // );
 
-        console.log(manageSession.playerObjectSelf.url)
+        if (manageSession.playerObjectSelf.url === "") {
+          console.log(manageSession.playerObjectSelf.url)
+          const avatar_url =
+            "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/0c7378cf-8d7f-4c7a-ab2c-161444ecfd70/blueship%20%281%29.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T133835Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=caf40cbf26671cffad0d46d6e79759e07c378754ea5e17b375db1a2d4fee7bfa"
+          // }
 
-        this.load.image(
-          this.playerAvatarName,
-          manageSession.playerObjectSelf.url
-        );
+          manageSession.playerObjectSelf.url = avatar_url
+
+          this.load.image(
+            this.playerAvatarKey,
+            manageSession.playerObjectSelf.url
+          );
+          console.log("assigned avatar url")
+
+          manageSession.createPlayer = false;
+          console.log("manageSession.createPlayer = false;")
+          this.createdPlayer = true;
+          console.log("this.createdPlayer = true;")
+
+        } else {
+
+          // this.load.spritesheet(
+          //   this.avatarName[i],
+          //   manageSession.allConnectedUsers[i].avatar_url,
+          //   { frameWidth: 68, frameHeight: 68 }
+          // );
+
+          console.log(manageSession.playerObjectSelf.url)
+
+          this.load.image(
+            this.playerAvatarKey,
+            manageSession.playerObjectSelf.url
+          );
+        }
+
+        this.load.start(); // load the image in memory
+        console.log("this.load.start();");
+
+        //check if image has downloaded from the server and is in memory
+        this.load.on('filecomplete', function () {
+          console.log("player avatar has loaded ")
+          // this.anims.create({
+          //   key: "moving_" + manageSession.allConnectedUsers[i].user_id,
+          //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 0, end: 8 }),
+          //   frameRate: 20,
+          //   repeat: -1,
+          // });
+
+          // this.anims.create({
+          //   key: "stop_" + manageSession.allConnectedUsers[i].user_id,
+          //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
+          // });
+
+          // onlinePlayers[i] will be overwritten as a gameobject
+          this.player = this.physics.add
+            .sprite(100, 100, this.playerAvatarKey)
+            .setDepth(101);
+
+          manageSession.createPlayer = false;
+          console.log("manageSession.createPlayer = false;")
+          this.createdPlayer = true;
+          console.log("this.createdPlayer = true;")
+        }, this);
       }
-
-      this.load.start(); // load the image in memory
-      console.log("this.load.start();");
-
-      //check if image has downloaded from the server and is in memory
-      this.load.on('filecomplete', function () {
-        console.log("player avatar has loaded ")
-        // this.anims.create({
-        //   key: "moving_" + manageSession.allConnectedUsers[i].user_id,
-        //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 0, end: 8 }),
-        //   frameRate: 20,
-        //   repeat: -1,
-        // });
-
-        // this.anims.create({
-        //   key: "stop_" + manageSession.allConnectedUsers[i].user_id,
-        //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
-        // });
-
-        // onlinePlayers[i] will be overwritten as a gameobject
-        this.player = this.physics.add
-          .sprite(100, 100, this.playerAvatarName)
-          .setDepth(101);
-
-        manageSession.createPlayer = false;
-        console.log("manageSession.createPlayer = false;")
-        this.createdPlayer = true;
-        console.log("this.createdPlayer = true;")
-      }, this);
-
     }//if(manageSession.playerCreated)
 
   }
@@ -425,51 +441,50 @@ export default class AZC1_Scene extends Phaser.Scene {
 
       //first check if onlineplayers need to be created
       if (manageSession.createOnlinePlayers) {
-        //check if new user is already (hidden) in AZC1_Scene.onlinePlayers
-        //no     -> load the avatar_url
-              // -> add the user to AZC1_Scene.onlinePlayers 
-        //yes -> check if that avatar is newer
-            //no -> activate the avatar and update the position
-            //yes -> load the new avatar (and delete the old one from cache?)
-
-
         console.log("createOnlinePlayers...");
-
-
         for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-          console.log(manageSession.allConnectedUsers[i].posX);
-          console.log(manageSession.allConnectedUsers[i].posY);
+          //check if new user is already (hidden) in AZC1_Scene.onlinePlayers
+          //no      -> load the avatar_url
+          //  -> add the user to AZC1_Scene.onlinePlayers 
+          //yes -> check if that avatar is newer
+          //no  -> activate the avatar and update the position
+          //yes -> load the new avatar (and delete the old one from cache?)
 
-          manageSession.createOnlinePlayers = false;
-
-          //make an avatar name for the assignment of the image to the GameObject 
-          this.avatarName[i] = "avatar_" + manageSession.allConnectedUsers[i].user_id;
-          console.log("this.avatarName[i]: " + this.avatarName[i])
-
-          this.onlinePlayers[i] = manageSession.allConnectedUsers[i] // fill the array with an object
-
-          console.log("manageSession.allConnectedUsers[i].posX and posY: ");
-          console.log(manageSession.allConnectedUsers[i].posX);
-          console.log(manageSession.allConnectedUsers[i].posY);
-
-          console.log("created onlinePlayer: ");
-          console.log(this.onlinePlayers[i]);
-
-          //check if online user has avatar url, otherwise assing one
-          if (manageSession.allConnectedUsers[i].avatar_url === "") {
-            const avatar_url =
-              "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/0c7378cf-8d7f-4c7a-ab2c-161444ecfd70/blueship%20%281%29.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T133835Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=caf40cbf26671cffad0d46d6e79759e07c378754ea5e17b375db1a2d4fee7bfa"
-            // }
-
-            manageSession.allConnectedUsers[i].avatar_url = avatar_url
-
-            this.load.image(
-              this.avatarName[i],
-              manageSession.allConnectedUsers[i].avatar_url
-            );
-            console.log("assigned avatar url")
+          //returns null if no match is found
+          console.log(Phaser.Actions.GetFirst(this.onlinePlayers, manageSession.allConnectedUsers[i]))
+          if (Phaser.Actions.GetFirst(this.onlinePlayers, manageSession.allConnectedUsers[i]) == null) {
+            console.log(manageSession.allConnectedUsers[i].posX);
+            console.log(manageSession.allConnectedUsers[i].posY);
             manageSession.createOnlinePlayers = false;
-          } else {
+
+            //make an avatar name for the assignment of the image to the GameObject 
+            this.avatarName[i] = "avatar_" + manageSession.allConnectedUsers[i].user_id;
+            console.log("this.avatarName[i]: " + this.avatarName[i])
+
+            this.onlinePlayers[i] = manageSession.allConnectedUsers[i] // fill the array with an object
+
+            console.log("manageSession.allConnectedUsers[i].posX and posY: ");
+            console.log(manageSession.allConnectedUsers[i].posX);
+            console.log(manageSession.allConnectedUsers[i].posY);
+
+            console.log("created onlinePlayer: ");
+            console.log(this.onlinePlayers[i]);
+
+            // //check if online user has avatar url, otherwise assing one
+            // if (manageSession.allConnectedUsers[i].avatar_url === "") {
+            //   const avatar_url =
+            //     "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/0c7378cf-8d7f-4c7a-ab2c-161444ecfd70/blueship%20%281%29.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20210902%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210902T133835Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=caf40cbf26671cffad0d46d6e79759e07c378754ea5e17b375db1a2d4fee7bfa"
+            //   // }
+
+            //   manageSession.allConnectedUsers[i].avatar_url = avatar_url
+
+            //   this.load.image(
+            //     this.avatarName[i],
+            //     manageSession.allConnectedUsers[i].avatar_url
+            //   );
+            //   console.log("assigned avatar url")
+            //   manageSession.createOnlinePlayers = false;
+            // } else {
 
             // this.load.spritesheet(
             //   this.avatarName[i],
@@ -486,67 +501,35 @@ export default class AZC1_Scene extends Phaser.Scene {
             console.log("to load avatar url")
             console.log(manageSession.allConnectedUsers[i].avatar_url)
 
+            // }
+
+            this.load.start(); // load the image in memory
+            console.log("this.load.start();")
+
+            //check if image has downloaded from the server and is in memory
+            this.load.on('filecomplete', function () {
+              console.log(" has loaded: ")
+              console.log(this.onlinePlayers[i])
+
+              // onlinePlayers[i] will be overwritten as a gameobject
+              this.onlinePlayers[i] = this.add
+                .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
+                .setDepth(90);
+
+              Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]); //add all data from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
+              manageSession.allConnectedUsers[i] = this.onlinePlayers[i];
+
+              //give the onlinePlayer the last known position
+              this.onlinePlayersGroup.add(this.onlinePlayers[i]);
+
+              manageSession.createOnlinePlayers = false;
+
+              this.onlinePlayers[i].x = manageSession.allConnectedUsers[i].posX;
+              this.onlinePlayers[i].y = manageSession.allConnectedUsers[i].posY;
+            }, this); //on load complete
+
           }
 
-          this.load.start(); // load the image in memory
-          console.log("this.load.start();")
-
-          //check if image has downloaded from the server and is in memory
-          this.load.on('filecomplete', function () {
-            console.log(this.onlinePlayers[i] + " has loaded ")
-
-
-
-            // this.anims.create({
-            //   key: "moving_" + manageSession.allConnectedUsers[i].user_id,
-            //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 0, end: 8 }),
-            //   frameRate: 20,
-            //   repeat: -1,
-            // });
-
-            // this.anims.create({
-            //   key: "stop_" + manageSession.allConnectedUsers[i].user_id,
-            //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
-            // });
-
-            // onlinePlayers[i] will be overwritten as a gameobject
-            this.onlinePlayers[i] = this.add
-              .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
-              .setDepth(90);
-
-
-
-            //add the onlinePlayer to the onlinePlayerGroup, so they can be queried with .getChildren() if needed
-
-            // console.log(" this.onlinePlayersGroup.add: ")
-            // console.log(this.onlinePlayers[i] )
-
-            Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]); //add all data from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
-
-            // console.log("Signed URL: ")
-            // console.log(this.onlinePlayers[i].avatar_url)
-
-            // console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
-            // console.log(this.onlinePlayers[i])
-
-            manageSession.allConnectedUsers[i] = this.onlinePlayers[i];
-            // console.log(" Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]);")
-            // console.log(manageSession.allConnectedUsers[i])
-
-            //give the onlinePlayer the last known position
-            this.onlinePlayersGroup.add(this.onlinePlayers[i]);
-
-            manageSession.createOnlinePlayers = false;
-
-            this.onlinePlayers[i].x = manageSession.allConnectedUsers[i].posX;
-            this.onlinePlayers[i].y = manageSession.allConnectedUsers[i].posY;
-
-            // console.log("this.onlinePlayersGroup.getChildren(): ")
-            // console.log(this.onlinePlayersGroup.getChildren())
-
-            // console.log("this.onlinePlayers = []")
-            // console.log(this.onlinePlayers)
-          }, this); //on load complete
 
         } //for (let i = 0; i < manageSession.allConnectedUsers.length; i++)
         // } // if (manageSession.allConnectedUsers > 0)
@@ -669,38 +652,38 @@ export default class AZC1_Scene extends Phaser.Scene {
     // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     //....... end UPDATE TIMER  ..............................................................................
 
-    //........ PLAYER MOVE BY KEYBOARD  ......................................................................
+    // //........ PLAYER MOVE BY KEYBOARD  ......................................................................
     if (!this.playerIsMovingByClicking) {
       this.playerMovingByKeyBoard();
     }
 
-    if (
-      this.cursors.up.isDown ||
-      this.cursors.down.isDown ||
-      this.cursors.left.isDown ||
-      this.cursors.right.isDown
-    ) {
-      this.arrowDown = true
-    } else {
-      this.arrowDown = false
-    }
-    //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
+    // if (
+    //   this.cursors.up.isDown ||
+    //   this.cursors.down.isDown ||
+    //   this.cursors.left.isDown ||
+    //   this.cursors.right.isDown
+    // ) {
+    //   this.arrowDown = true
+    // } else {
+    //   this.arrowDown = false
+    // }
+    // //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
-    //....... moving ANIMATION ......................................................................................
-    if (this.arrowDown || this.playerIsMovingByClicking) {
-      // this.player.anims.play("moving", true);
-    } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
-      // this.player.anims.play("stop", true);
-    }
-    //....... end moving ANIMATION .................................................................................
+    // //....... moving ANIMATION ......................................................................................
+    // if (this.arrowDown || this.playerIsMovingByClicking) {
+    //   // this.player.anims.play("moving", true);
+    // } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
+    //   // this.player.anims.play("stop", true);
+    // }
+    // //....... end moving ANIMATION .................................................................................
 
-    this.playerMovingByClicking()
+    // this.playerMovingByClicking()
 
-    //this.playerIdText.setText(manageSession.userID);
-    this.allConnectedUsersText2.setText(manageSession.allConnectedUsers.length)
-    this.onlinePlayersText2.setText(this.onlinePlayers.length)
-    let onlinePlayerGroupLength = this.onlinePlayersGroup.getChildren()
-    this.onlinePlayersGroupText2.setText(onlinePlayerGroupLength.length)
+    // //this.playerIdText.setText(manageSession.userID);
+    // this.allConnectedUsersText2.setText(manageSession.allConnectedUsers.length)
+    // this.onlinePlayersText2.setText(this.onlinePlayers.length)
+    // let onlinePlayerGroupLength = this.onlinePlayersGroup.getChildren()
+    // this.onlinePlayersGroupText2.setText(onlinePlayerGroupLength.length)
 
 
   } //update
