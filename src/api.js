@@ -68,9 +68,17 @@ export async function updateObject(type, name, value) {
     }
   ]);
   console.info("Stored objects: %o", object_ids);
-
-
 }
+
+//compare 2 arrays, usage example:
+// var onlyInA = arrA.filter(compareArray(arrB));
+export function compareArray(otherArray)  {
+    return function(current){
+      return otherArray.filter(function(other){
+        return other.value == current.value && other.display == current.display
+      }).length == 0;
+    }
+  }
 
 export async function getAccount(id) {
   if(!!!id){

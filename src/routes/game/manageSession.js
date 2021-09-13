@@ -54,13 +54,23 @@ class manageSession {
     console.log("session created with socket");
 
 
-    //await this.getAccountDetails()
-    console.log("this.playerObjectSelf")
-    await this.getAccountDetails()
-    console.log(this.playerObjectSelf)
+    // //await this.getAccountDetails()
+    // console.log("this.playerObjectSelf")
+    // await this.getAccountDetails().then((blob) => {
+    //   console.log(blob);
+    //   this.createPlayer = true;
+    // }).catch(e => console.log(e));
 
-    console.log("this.getAvatarUrl();")
-    await this.getAvatarUrl();
+
+    //await this.getAvatarUrl()
+
+    // console.log(this.createPlayer)
+    // console.log(this.playerObjectSelf)
+
+    // console.log("this.getAvatarUrl();")
+    // await this.getAvatarUrl().then(this.createPlayer = true)
+    // console.log(this.createPlayer)
+
 
     console.log('this.getStreamUsers("join", "home")')
     await this.getStreamUsers("join", "home")
@@ -92,9 +102,8 @@ class manageSession {
       console.log(
         "Received presence event for stream: %o",
         streampresence
-
       );
-
+      this.getStreamUsers("get_users", "home")
       // if (!!streampresence.leaves) {
       //   console.log("leaves:" + streampresence.leaves);
       //   streampresence.leaves.forEach((leave) => {
@@ -131,9 +140,7 @@ class manageSession {
       //   });
       //   // this.getStreamUsers("home")
       // }
-      this.getStreamUsers("get_users", "home")
-    };
-
+    }; //this.socket.onstreampresence
   } //end createSocket
 
   async getAccountDetails() {
@@ -154,11 +161,11 @@ class manageSession {
     const fileurl = await client.rpc(this.session, rpcid, payload);
     this.playerObjectSelf.url = fileurl.payload.url
     console.log(this.playerObjectSelf.url)
-    this.createPlayer = true
+
   }
 
-  getStreamUsers(rpc_command, location) {
-    if (this.createOnlinePlayers == false) {
+  async getStreamUsers(rpc_command, location) {
+    if (!this.createOnlinePlayers) {
       //rpc_command:
       //"join" = join the stream, get the online users, except self
       //"get_users" = after joined, get the online users, except self
@@ -172,10 +179,12 @@ class manageSession {
         //if there are no users online, the array length == 0
 
         console.log("joined users:")
-        console.log(this.allConnectedUsers)
-        if (this.allConnectedUsers != null && this.allConnectedUsers.length > 0 && this.createOnlinePlayers == false) {
+        
+        if (this.allConnectedUsers.length > 0) {
+          console.log(this.allConnectedUsers)
           this.createOnlinePlayers = true
         } else {
+          this.createOnlinePlayers = false
           console.log("no online users")
         }
 
