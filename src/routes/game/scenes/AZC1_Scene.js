@@ -267,7 +267,7 @@ export default class AZC1_Scene extends Phaser.Scene {
             if (this.textures.exists(this.playerAvatarKey)) {
               // texture loaded so use instead of the placeholder
               this.player.setTexture(this.playerAvatarKey)
-              // this.player = this.add.image(this.player.x, this.player.y, this.playerAvatarKey)
+    
               console.log("player avatar has loaded ")
               console.log(this.playerAvatarKey)
 
@@ -535,9 +535,9 @@ export default class AZC1_Scene extends Phaser.Scene {
           //the avatar images should be added to the player names still
           //we should add a place holder first
           
-          //debug postition next tot current player
-          element.posX = this.player.x + 100
-          element.posY = this.player.y - 100
+          // //debug postition next tot current player
+          // element.posX = this.player.x + 100
+          // element.posY = this.player.y - 100
 
           element = this.add.image(element.posX, element.posY, this.playerAvatarPlaceholder)
           .setDepth(90)
