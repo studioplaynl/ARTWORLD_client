@@ -165,7 +165,7 @@ class manageSession {
   }
 
   async getStreamUsers(rpc_command, location) {
-    if (!this.createOnlinePlayers) {
+    // if (!this.createOnlinePlayers) {
       //rpc_command:
       //"join" = join the stream, get the online users, except self
       //"get_users" = after joined, get the online users, except self
@@ -183,6 +183,7 @@ class manageSession {
         if (this.allConnectedUsers.length > 0) {
           console.log(this.allConnectedUsers)
           this.createOnlinePlayers = true
+          console.log("this.createOnlinePlayers = true")
         } else {
           this.createOnlinePlayers = false
           console.log("no online users")
@@ -190,7 +191,7 @@ class manageSession {
 
         //status = "joined"
       })
-    }
+    // }
   }
 
   testMoveMessage() { //works
