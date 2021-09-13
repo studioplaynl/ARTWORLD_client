@@ -33,7 +33,7 @@
       {
         key: "title",
         title: "Title",
-        value: v => `<a href='/#/${v.value.json}/${v.value.status}'>${v.key}</a>`
+        value: v => `<a href='/#/${v.value.json.split(".")[0]}'>${v.key}</a>`
       },
       {
         key: "Datum",

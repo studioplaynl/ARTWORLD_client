@@ -43,6 +43,7 @@ export async function recieveImage(data) {
 
 export async function listImages(type, user, limit) {
   const objects = await client.listStorageObjects(Sess, type, user, limit);
+  console.log(objects)
   return objects.objects
 }
 
