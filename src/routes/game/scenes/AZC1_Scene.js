@@ -1,7 +1,7 @@
 import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 //import { getAvatar } from '../../profile.svelte';
-import { getAccount, compareArray } from '../../../api.js';
+import { getAccount } from '../../../api.js';
 
 export default class AZC1_Scene extends Phaser.Scene {
   constructor() {
@@ -494,33 +494,47 @@ export default class AZC1_Scene extends Phaser.Scene {
         //all current onlinePlayers, or an empty []
         this.onlinePlayers = this.onlinePlayersGroup.getChildren() || []
 
-        // // ..... players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
+        // ..... players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
 
-        // //check if there are players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        // let onlyInOnlinePlayers = this.onlinePlayers.filter(compareArray(manageSession.allConnectedUsers));
-        // console.log("onlyInOnlinePlayers")
-        // console.log(onlyInOnlinePlayers)
+        //check if there are players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
+        let onlyInOnlinePlayers = []
 
-        // //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        // if (onlyInOnlinePlayers.length > 0) {
-        //   //hide users
-        //   console.log("Hide user")
-        //   for (let i = 0; i < onlyInOnlinePlayers.length; i++) {
-        //     //check if the user_id is in this.onlinePlayers
-        //     const deactiveUser = Phaser.Actions.GetFirst(this.onlinePlayers, onlyInOnlinePlayers[i].user_id)
-        //     deactiveUser.active = false
-        //     deactiveUser.visible = false
-        //     console.log("deactiveUser: ")
-        //     console.log(deactiveUser)
-        //   }
-        // }
-        // // .....end  players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
+        this.onlinePlayers.forEach(player => {
+          const playerID = player.user_id
+          const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+          if (!found) onlyInOnlinePlayers.push(player)
+        })
+
+        console.log("onlyInOnlinePlayers")
+        console.log(onlyInOnlinePlayers)
+
+        //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
+        if (onlyInOnlinePlayers.length > 0) {
+          //hide users
+          console.log("Hide user")
+
+
+          for (let i = 0; i < onlyInOnlinePlayers.length; i++) {
+            //check if the user_id is in this.onlinePlayers
+
+            //get the index of user_id form onlyInOnlinePlayers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
+
+            var index = this.onlinePlayers.findIndex(function (person) {
+              return person.user_id == onlyInOnlinePlayers[i].user_id
+            });
+
+            this.onlinePlayers[index].active = false
+            this.onlinePlayers[index].visible = false
+            console.log("deactiveUser: ")
+            console.log(this.onlinePlayers[index])
+          }
+        }
+        // .....end  players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
 
         //...... LOAD NEW AVATARS ........................................................................................
         //(new) players present in .allConnectedUsers but not in this.onlinePlayers ->add them to this.onlinePlayers
 
         let newOnlinePlayers = []
-
         manageSession.allConnectedUsers.forEach(player => {
           const playerID = player.user_id
           const found = this.onlinePlayers.some(user => user.user_id === playerID)
@@ -546,13 +560,6 @@ export default class AZC1_Scene extends Phaser.Scene {
 
           console.log("loading: ")
           console.log(this.tempAvatarName)
-
-          //the avatar images should be added to the player names still
-          //we should add a place holder first
-
-          // //debug postition next tot current player
-          // element.posX = this.player.x + 100
-          // element.posY = this.player.y - 100
 
           element = this.add.image(element.posX, element.posY, this.playerAvatarPlaceholder)
             .setDepth(90)
