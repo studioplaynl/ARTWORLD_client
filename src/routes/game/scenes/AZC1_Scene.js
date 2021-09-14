@@ -2,8 +2,6 @@ import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount, compareArray } from '../../../api.js';
-import { compute_slots } from "svelte/internal";
-
 
 export default class AZC1_Scene extends Phaser.Scene {
   constructor() {
@@ -267,7 +265,7 @@ export default class AZC1_Scene extends Phaser.Scene {
             if (this.textures.exists(this.playerAvatarKey)) {
               // texture loaded so use instead of the placeholder
               this.player.setTexture(this.playerAvatarKey)
-    
+
               console.log("player avatar has loaded ")
               console.log(this.playerAvatarKey)
 
@@ -473,6 +471,14 @@ export default class AZC1_Scene extends Phaser.Scene {
     // }, this);
   }
 
+  add(arr, name) {
+    const { length } = arr;
+    const id = length + 1;
+    const found = arr.some(el => el.username === name);
+    if (!found) arr.push({ id, username: name });
+    return arr;
+  }
+
   createOnlinePlayers() {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
@@ -488,33 +494,42 @@ export default class AZC1_Scene extends Phaser.Scene {
         //all current onlinePlayers, or an empty []
         this.onlinePlayers = this.onlinePlayersGroup.getChildren() || []
 
-        // ..... players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
+        // // ..... players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
 
-        //check if there are players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        let onlyInOnlinePlayers = this.onlinePlayers.filter(compareArray(manageSession.allConnectedUsers));
-        console.log("onlyInOnlinePlayers")
-        console.log(onlyInOnlinePlayers)
+        // //check if there are players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
+        // let onlyInOnlinePlayers = this.onlinePlayers.filter(compareArray(manageSession.allConnectedUsers));
+        // console.log("onlyInOnlinePlayers")
+        // console.log(onlyInOnlinePlayers)
 
-        //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        if (onlyInOnlinePlayers.length > 0) {
-          //hide users
-          console.log("Hide user")
-          for (let i = 0; i < onlyInOnlinePlayers.length; i++) {
-            //check if the user_id is in this.onlinePlayers
-            const deactiveUser = Phaser.Actions.GetFirst(this.onlinePlayers, onlyInOnlinePlayers[i].user_id)
-            deactiveUser.active = false
-            deactiveUser.visible = false
-            console.log("deactiveUser: ")
-            console.log(deactiveUser)
-          }
-        }
-        // .....end  players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
+        // //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
+        // if (onlyInOnlinePlayers.length > 0) {
+        //   //hide users
+        //   console.log("Hide user")
+        //   for (let i = 0; i < onlyInOnlinePlayers.length; i++) {
+        //     //check if the user_id is in this.onlinePlayers
+        //     const deactiveUser = Phaser.Actions.GetFirst(this.onlinePlayers, onlyInOnlinePlayers[i].user_id)
+        //     deactiveUser.active = false
+        //     deactiveUser.visible = false
+        //     console.log("deactiveUser: ")
+        //     console.log(deactiveUser)
+        //   }
+        // }
+        // // .....end  players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
 
         //...... LOAD NEW AVATARS ........................................................................................
         //(new) players present in .allConnectedUsers but not in this.onlinePlayers ->add them to this.onlinePlayers
-        let newOnlinePlayers = manageSession.allConnectedUsers.filter(compareArray(this.onlinePlayers));
+
+        let newOnlinePlayers = []
+
+        manageSession.allConnectedUsers.forEach(player => {
+          const playerID = player.user_id
+          const found = this.onlinePlayers.some(user => user.user_id === playerID)
+          if (!found) newOnlinePlayers.push(player)
+        })
+
         console.log("newOnlinePlayers")
         console.log(newOnlinePlayers)
+
 
         //a brand new user
         newOnlinePlayers.forEach((element, i) => {
@@ -534,21 +549,21 @@ export default class AZC1_Scene extends Phaser.Scene {
 
           //the avatar images should be added to the player names still
           //we should add a place holder first
-          
+
           // //debug postition next tot current player
           // element.posX = this.player.x + 100
           // element.posY = this.player.y - 100
 
           element = this.add.image(element.posX, element.posY, this.playerAvatarPlaceholder)
-          .setDepth(90)
+            .setDepth(90)
 
-          Object.assign(element, elementCopy); //add all data from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
-   
+          Object.assign(element, elementCopy); //add all data from elementCopy element
+
           // add new player to group
           this.onlinePlayersGroup.add(element)
         })
 
-        this.onlinePlayers = this.onlinePlayersGroup.getChildren() 
+        this.onlinePlayers = this.onlinePlayersGroup.getChildren()
         console.log("all players in the group: ")
         console.log(this.onlinePlayers)
 
@@ -564,7 +579,7 @@ export default class AZC1_Scene extends Phaser.Scene {
           for (let i = 0; i < this.onlinePlayers.length; i++) {
             this.tempAvatarName = this.onlinePlayers[i].user_id + "_" + this.onlinePlayers[i].avatar_time;
             //this.onlinePlayers[i] = this.add.image(this.onlinePlayers[i].posX, this.onlinePlayers[i].posY, this.tempAvatarName)
-            
+
             console.log("player added: ")
             console.log(this.onlinePlayers[i])
 
@@ -661,9 +676,11 @@ export default class AZC1_Scene extends Phaser.Scene {
   updateMovementOnlinePlayers() {
     if (manageSession.updateOnlinePlayers) {
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        this.onlinePlayers[i].x = manageSession.allConnectedUsers[i].posX;
-        this.onlinePlayers[i].y = manageSession.allConnectedUsers[i].posY;
-        //console.log("updating online players")
+        let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
+        tempPlayer.x = manageSession.allConnectedUsers[i].posX;
+        tempPlayer.y = manageSession.allConnectedUsers[i].posY;
+
+        //   console.log("updating online players")
       }
       manageSession.updateOnlinePlayers = false;
     }
