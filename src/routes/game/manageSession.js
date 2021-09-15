@@ -104,23 +104,26 @@ class manageSession {
         streampresence
       );
       this.getStreamUsers("get_users", "home")
-      // if (!!streampresence.leaves) {
-      //   console.log("leaves:" + streampresence.leaves);
-      //   streampresence.leaves.forEach((leave) => {
-      //     console.log("User left: %o", leave.username);
-      //     //remove leave.user_id from 
+      if (!!streampresence.leaves) {
+        console.log("leaves:" + streampresence.leaves);
+        streampresence.leaves.forEach((leave) => {
+          console.log("User left: %o", leave.username);
+          //remove leave.user_id from 
 
-      //     this.removedConnectedUsers.push(leave.user_id);
-      //     console.log(this.removedConnectedUsers)
+          // this.removedConnectedUsers.push(leave.user_id);
+          // console.log(this.removedConnectedUsers)
+          console.log(this.allConnectedUsers)
+          this.createOnlinePlayers = true
+          console.log("this.createOnlinePlayers = true")
+          //allConnectedUsers is updated after someone leaves
+          // this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
+          //   return item.name !== leave.username;
+          // });
+        });
+        this.removeConnectedUser = true;
+        this.createOnlinePlayers = true
 
-      //     //allConnectedUsers is updated after someone leaves
-      //     this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
-      //       return item.name !== leave.username;
-      //     });
-      //   });
-      //   this.removeConnectedUser = true;
-      //   this.createOnlinePlayers = true
-      // }
+      }
 
       // if (!!streampresence.joins) {
       //   streampresence.joins.forEach((join) => {
@@ -185,7 +188,7 @@ class manageSession {
           this.createOnlinePlayers = true
           console.log("this.createOnlinePlayers = true")
         } else {
-          this.createOnlinePlayers = false
+          //this.createOnlinePlayers = false
           console.log("no online users")
         }
 

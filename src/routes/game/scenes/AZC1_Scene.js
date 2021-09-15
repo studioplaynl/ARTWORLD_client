@@ -517,8 +517,7 @@ export default class AZC1_Scene extends Phaser.Scene {
           for (let i = 0; i < onlyInOnlinePlayers.length; i++) {
             //check if the user_id is in this.onlinePlayers
 
-            //get the index of user_id form onlyInOnlinePlayers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
-
+            //get the index of user_id from onlyInOnlinePlayers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
             var index = this.onlinePlayers.findIndex(function (person) {
               return person.user_id == onlyInOnlinePlayers[i].user_id
             });
@@ -528,6 +527,7 @@ export default class AZC1_Scene extends Phaser.Scene {
             console.log("deactiveUser: ")
             console.log(this.onlinePlayers[index])
           }
+
         }
         // .....end  players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
 
@@ -543,7 +543,6 @@ export default class AZC1_Scene extends Phaser.Scene {
 
         console.log("newOnlinePlayers")
         console.log(newOnlinePlayers)
-
 
         //a brand new user
         newOnlinePlayers.forEach((element, i) => {
@@ -593,9 +592,46 @@ export default class AZC1_Scene extends Phaser.Scene {
             console.log("avatar key: ")
             console.log(this.tempAvatarName)
             this.onlinePlayers[i].setTexture(this.tempAvatarName)
+
+            //make all allConnectedUsers visible
+            manageSession.allConnectedUsers.forEach((e, i) => {
+              // const playerID = player.user_id
+              // const found = this.onlinePlayers.some(user => user.user_id === playerID)
+    
+              var index = this.onlinePlayers.findIndex(function (person) {
+                return person.user_id == manageSession.allConnectedUsers[i].user_id
+              });
+              this.onlinePlayers[index].active = true
+              this.onlinePlayers[index].visible = true
+              console.log("reactiveUser: ")
+              console.log(this.onlinePlayers[index])
+              // if (found) newOnlinePlayers.push(player)
+              // console.log(found)
+    
+              // player.active = true
+              // player.visible = true
+            })
           }
         })
 
+        //make all allConnectedUsers visible
+        manageSession.allConnectedUsers.forEach((e, i) => {
+          // const playerID = player.user_id
+          // const found = this.onlinePlayers.some(user => user.user_id === playerID)
+
+          var index = this.onlinePlayers.findIndex(function (person) {
+            return person.user_id == manageSession.allConnectedUsers[i].user_id
+          });
+          this.onlinePlayers[index].active = true
+          this.onlinePlayers[index].visible = true
+          console.log("reactiveUser: ")
+          console.log(this.onlinePlayers[index])
+          // if (found) newOnlinePlayers.push(player)
+          // console.log(found)
+
+          // player.active = true
+          // player.visible = true
+        })
       }//if (manageSession.createOnlinePlayers)
     }//if (manageSession.createdPlayer) 
   } //createRemotePlayer
