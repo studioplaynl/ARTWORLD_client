@@ -38,7 +38,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.distance;
 
     //shadow
-    this.playerShadowOffset = 10;
+    this.playerShadowOffset = 8;
     this.playerIsMovingByClicking = false;
   }
 
@@ -243,6 +243,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       console.log("this.textures.exists(this.playerAvatarKey): ")
       console.log(this.textures.exists(this.playerAvatarKey))
 
+      //check if url is not empty for some reason
       if (!this.textures.exists(this.playerAvatarKey)) {
         if (manageSession.playerObjectSelf.url === "") {
           console.log("avatar url is empty")
@@ -265,6 +266,15 @@ export default class AZC1_Scene extends Phaser.Scene {
             if (this.textures.exists(this.playerAvatarKey)) {
               // texture loaded so use instead of the placeholder
               this.player.setTexture(this.playerAvatarKey)
+              this.playerShadow.setTexture(this.playerAvatarKey)
+
+              //scale the player to 68px
+              const width = 68
+              this.player.displayWidth = width
+              this.player.scaleY = this.player.scaleX
+
+              this.playerShadow.displayWidth = width
+              this.playerShadow.scaleY = this.playerShadow.scaleX
 
               console.log("player avatar has loaded ")
               console.log(this.playerAvatarKey)
@@ -312,7 +322,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.matchIdText = this.add
       .text(
         this.headerText.x,
-        this.headerText.y + 26,
+        this.headerText.y ,
         "user_id: " + this.playerIdText,
         {
           fontFamily: "Arial",
@@ -325,66 +335,66 @@ export default class AZC1_Scene extends Phaser.Scene {
       .setShadow(1, 1, '#000000', 0)
       .setDepth(30);
 
-    this.playerIdText = this.add
-      .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
-        fontFamily: "Arial",
-        fontSize: "11px",
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setDepth(30)
-      .setShadow(1, 1, '#000000', 0);
+    // this.playerIdText = this.add
+    //   .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
+    //     fontFamily: "Arial",
+    //     fontSize: "11px",
+    //   })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setDepth(30)
+    //   .setShadow(1, 1, '#000000', 0);
 
     this.matchIdText.on("pointerup", () => {
       this.onlinePlayers[0].setVisible(false); //works
       this.onlinePlayers[0].destroy();
     });
 
-    this.opponentsIdText = this.add
-      .text(this.headerText.x, this.playerIdText.y + 14, "", {
-        fontFamily: "Arial",
-        fontSize: "11px",
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setDepth(30);
+    // this.opponentsIdText = this.add
+    //   .text(this.headerText.x, this.playerIdText.y + 14, "", {
+    //     fontFamily: "Arial",
+    //     fontSize: "11px",
+    //   })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setDepth(30);
 
-    this.allConnectedUsersText = this.add.text(110, 20, "onlineUsers[ ]", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.allConnectedUsersText = this.add.text(110, 20, "onlineUsers[ ]", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
-    this.allConnectedUsersText2 = this.add.text(110, 40, "", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.allConnectedUsersText2 = this.add.text(110, 40, "", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
-    this.onlinePlayersText = this.add.text(110, 70, "onlinePlayers[ ]", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.onlinePlayersText = this.add.text(110, 70, "onlinePlayers[ ]", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
-    this.onlinePlayersText2 = this.add.text(110, 90, "", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.onlinePlayersText2 = this.add.text(110, 90, "", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
 
-    this.onlinePlayersGroupText = this.add.text(110, 120, "playersGroup[ ]", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.onlinePlayersGroupText = this.add.text(110, 120, "playersGroup[ ]", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
-    this.onlinePlayersGroupText2 = this.add.text(110, 140, "", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.onlinePlayersGroupText2 = this.add.text(110, 140, "", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
   }
 
@@ -593,11 +603,15 @@ export default class AZC1_Scene extends Phaser.Scene {
             console.log(this.tempAvatarName)
             this.onlinePlayers[i].setTexture(this.tempAvatarName)
 
+            //scale the player to 68pix
+            this.onlinePlayers[i].displayWidth = 68
+            this.onlinePlayers[i].scaleY = this.onlinePlayers[i].scaleX
+
             //make all allConnectedUsers visible
             manageSession.allConnectedUsers.forEach((e, i) => {
               // const playerID = player.user_id
               // const found = this.onlinePlayers.some(user => user.user_id === playerID)
-    
+
               var index = this.onlinePlayers.findIndex(function (person) {
                 return person.user_id == manageSession.allConnectedUsers[i].user_id
               });
@@ -607,7 +621,7 @@ export default class AZC1_Scene extends Phaser.Scene {
               console.log(this.onlinePlayers[index])
               // if (found) newOnlinePlayers.push(player)
               // console.log(found)
-    
+
               // player.active = true
               // player.visible = true
             })
@@ -778,12 +792,14 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     this.playerMovingByClicking()
 
-    //this.playerIdText.setText(manageSession.userID);
-    this.allConnectedUsersText2.setText(manageSession.allConnectedUsers.length)
-    this.onlinePlayersText2.setText(this.onlinePlayers.length)
-    let onlinePlayerGroupLength = this.onlinePlayersGroup.getChildren()
-    this.onlinePlayersGroupText2.setText(onlinePlayerGroupLength.length)
 
+    // //.... debug text ..............................................................................................
+    // //this.playerIdText.setText(manageSession.userID);
+    // this.allConnectedUsersText2.setText(manageSession.allConnectedUsers.length)
+    // this.onlinePlayersText2.setText(this.onlinePlayers.length)
+    // let onlinePlayerGroupLength = this.onlinePlayersGroup.getChildren()
+    // this.onlinePlayersGroupText2.setText(onlinePlayerGroupLength.length)
+    // //.... end debug text ..............................................................................................
 
   } //update
 } //class
