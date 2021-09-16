@@ -1,7 +1,7 @@
 <script>
   import { fabric } from "fabric";
   import { location, replace } from "svelte-spa-router";
-  import { onMount, afterUpdate } from "svelte";
+  import { onMount, beforeUpdate } from "svelte";
   import { uploadImage, user, uploadAvatar } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session } from "../../session.js";
@@ -231,11 +231,11 @@
         color: drawingShadowColorEl.value,
       });
     }
-
     console.log(params);
   });
 
   const upload = () => {
+    updateFrame()
     if(appType == "drawing"){
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("jpeg");
@@ -253,6 +253,13 @@
       createAvatar();
     }
   };
+
+  const updateFrame = () => {
+    frames[currentFrame] = canvas.toJSON();
+    backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
+    frames = frames
+    backgroundFrames = backgroundFrames
+  }
 
   const getImage = async () => {
     let localStore = JSON.parse(localStorage.getItem("Drawing"))
@@ -353,8 +360,7 @@
     if (!play) {
       console.log(newFrame);
       // save frame
-      frames[currentFrame] = canvas.toJSON();
-      backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
+      updateFrame()
       // put as background of button
       //canvas.clear()
       // load frame
@@ -371,6 +377,7 @@
   };
 
   function addFrame() {
+    updateFrame()
     if (frames.length >= maxFrames) return;
     console.log("click");
     frames.push({});
@@ -427,6 +434,11 @@
    uploadAvatar(blobData)
   }
   //////////////////// avatar functies end /////////////////////////////////
+
+  //////////////////// camera functies ///////////////////////////////
+
+
+  //////////////////// camera functies end ///////////////////////////
 </script>
 
 <main>
@@ -549,6 +561,8 @@
   .canvas {
     width: 100vw;
     height: 100%;
+    border: 1px solid black;
+    margin: 5px;
   }
   .optionbar {
     background-color: rgb(204, 201, 201);
@@ -625,7 +639,7 @@
   }
 
   .savecanvas {
-    border: 2px solid black
+    display: none;
   }
 
   .icon {
