@@ -1,36 +1,46 @@
 <script>
   import { fabric } from "fabric";
-  import {location, replace} from 'svelte-spa-router'
+  import { location, replace } from "svelte-spa-router";
   import { onMount, afterUpdate } from "svelte";
-  import { uploadImage, user } from "../../api.js";
+  import { uploadImage, user, uploadAvatar } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session } from "../../session.js";
-  import NameGenerator from "../components/nameGenerator.svelte"
+  import NameGenerator from "../components/nameGenerator.svelte";
   import SaveIcon from "svelte-icons/fa/FaSave.svelte";
   import ColorIcon from "svelte-icons/md/MdBorderColor.svelte";
   import TrashIcon from "svelte-icons/fa/FaTrash.svelte";
 
   export let params = {};
   let canv;
+  let saveCanvas, savecanvas;
   let canvas;
   let json;
   let title;
-  if(!!params.name) title = params.name.split(".")[0]
+  if (!!params.name) title = params.name.split(".")[0];
   let saved = false;
   let saveToggle = false,
     colorToggle = true;
   const statussen = ["zichtbaar", "verborgen"];
   let status;
+  let appType = $location.split("/")[1];
+
   onMount(() => {
     const autosave = setInterval(() => {
-      if(!saved){
-        let data = canvas.toJSON()
-        data.name = title
-        console.log(JSON.stringify(data))
-        //localStorage.setItem('Drawing', JSON.stringify(data))
-        console.log('stored in localstorage')
+      if (!saved) {
+        let data = {};
+        data.type = appType;
+        data.name = title;
+        if(appType == "drawing"){
+          data.drawing = canvas.toJSON();
+        }
+        if(appType == "stopmotion" || appType == "avatar"){
+          data.frames = frames
+        }
+        console.log(JSON.stringify(data));
+        localStorage.setItem('Drawing', JSON.stringify(data))
+        console.log("stored in localstorage");
       }
-    }, 200000)
+    }, 20000);
 
     var fab = function (id) {
       return document.getElementById(id);
@@ -39,7 +49,11 @@
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
     });
-    
+
+    savecanvas = new fabric.Canvas(saveCanvas, {
+      isDrawingMode: false,
+    });
+
     getImage();
 
     fabric.Object.prototype.transparentCorners = false;
@@ -55,10 +69,10 @@
       clearEl = fab("clear-canvas");
 
     clearEl.onclick = function () {
-      if(window.confirm("are you sure?")){
-        canvas.clear() 
-        localStorage.setItem('Drawing', '')
-        }
+      if (window.confirm("are you sure?")) {
+        canvas.clear();
+        localStorage.setItem("Drawing", "");
+      }
     };
 
     drawingModeEl.onclick = function () {
@@ -146,7 +160,6 @@
 
         return patternCanvas;
       };
-
     }
 
     fab("drawing-mode-selector").onchange = function () {
@@ -223,36 +236,63 @@
   });
 
   const upload = () => {
-    json = JSON.stringify(canvas.toJSON());
-    var Image = canvas.toDataURL("jpeg");
-    var blobData = dataURItoBlob(Image);
-    var type = "drawing";
-    uploadImage(title, type, json, blobData, status);
-    saved = true
+    if(appType == "drawing"){
+      json = JSON.stringify(canvas.toJSON());
+      var Image = canvas.toDataURL("jpeg");
+      var blobData = dataURItoBlob(Image);
+      uploadImage(title, appType, json, blobData, status);
+      saved = true;
+    }
+    if(appType == "stopmotion"){
+      console.log('saved')
+      json = JSON.stringify(frames)
+      uploadImage(title, appType, json, '', status);
+
+    }
+    if(appType == "avatar"){
+      createAvatar();
+    }
   };
 
   const getImage = async () => {
-    let localStore = localStorage.getItem("Drawing")
-    if(!!localStore){
-      if(localStore.title == params.name){
-        canvas.loadFromJSON(localStore, canvas.renderAll.bind(canvas));
+    let localStore = JSON.parse(localStorage.getItem("Drawing"))
+    if (!!localStore) {
+      console.log(localStore)
+      console.log('store ' + localStore.name)
+      console.log('param '+params.name)
+      if (localStore.name == params.name) {
+        console.log(localStore.type)
+        if(localStore.type == "drawing"){
+          console.log('test')
+          canvas.loadFromJSON(localStore.drawing, canvas.renderAll.bind(canvas));
+        }
+        if(localStore.type == "stopmotion"){
+          frames = localStore.frames
+          canvas.loadFromJSON(localStore.frames[0], canvas.renderAll.bind(canvas));
+        }
       }
     }
     if (!!params.name && !!params.user) {
       title = params.name.split(".")[0];
       status = params.status;
-      var jsonURL = await getDrawing(`/drawing/${params.user}/${params.name}.json`);
+      var jsonURL = await getDrawing(
+        `/${appType}/${params.user}/${params.name}.json`
+      );
       console.log(jsonURL);
       fetch(jsonURL)
         .then((res) => res.json())
         .then((json) => {
           console.log("Checkout this JSON! ", json);
-          canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+          if(appType == "drawing") canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+          if(appType == "stopmotion" || appType == "avatar") {
+            frames = json
+            canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
+          }
         })
         .catch((err) => console.log(err));
-    }else{
-      replace($location + "/"+ $Session.user_id )
-    } 
+    } else {
+      replace($location + "/" + $Session.user_id);
+    }
   };
 
   function dataURItoBlob(dataURI) {
@@ -276,90 +316,128 @@
   window.addEventListener("resize", resizeCanvas, false);
 
   function resizeCanvas() {
-    canvas.setHeight(window.innerHeight);
-    canvas.setWidth(window.innerWidth);
-    canvas.renderAll();
+    if(appType == "avatar"){
+      canvas.setHeight(128);
+      canvas.setWidth(128);
+      canvas.renderAll();
+    } else {
+      canvas.setHeight(window.innerHeight);
+      canvas.setWidth(window.innerWidth);
+      canvas.renderAll();
+    }
   }
 
-
-  // stop motion functie
+  ////////////////////////// stop motion functie ////////////////////////////////////////
 
   let frames = [{}];
-  let backgroundFrames = [{}]
-  let maxFrames = 5;
+  let backgroundFrames = [{}];
+  let maxFrames = 100;
   let currentFrame = 0;
   let play = false;
 
   // Create a new instance of the Image class
-var img = new Image();
+  var img = new Image();
 
-// When the image loads, set it as background image
-img.onload = function() {
+  // When the image loads, set it as background image
+  img.onload = function () {
     var f_img = new fabric.Image(img);
     let options;
-    if(!play) options = {opacity: 0.5}
-    else options = {}
+    if (!play) options = { opacity: 0.5 };
+    else options = {};
     canvas.setBackgroundImage(f_img, canvas.renderAll.bind(canvas), options);
 
     canvas.renderAll();
-};
+  };
 
   const changeFrame = (newFrame) => {
-    if(!play){
-    console.log(newFrame)
-    // save frame
-    frames[currentFrame] = canvas.toJSON();
-    backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
-    // put as background of button
-    //canvas.clear()
-    // load frame
-    canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
-    img.src = backgroundFrames[newFrame-1]
-    // change current frame
-    currentFrame = newFrame;
-    console.log(frames)
+    if (!play) {
+      console.log(newFrame);
+      // save frame
+      frames[currentFrame] = canvas.toJSON();
+      backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
+      // put as background of button
+      //canvas.clear()
+      // load frame
+      canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
+      img.src = backgroundFrames[newFrame - 1];
+      // change current frame
+      currentFrame = newFrame;
+      console.log(frames);
     } else {
-      canvas.clear()
+      canvas.clear();
       frames[newFrame].backgroundImage = {};
       canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
     }
-  }
+  };
 
-  function addFrame(){
-    if(frames.length >= maxFrames) return
-    console.log('click')
-    frames.push({})
+  function addFrame() {
+    if (frames.length >= maxFrames) return;
+    console.log("click");
+    frames.push({});
     frames = frames;
-    changeFrame(frames.length-1);
+    changeFrame(frames.length - 1);
   }
 
-  function playFrames(){
-    if(currentFrame < frames.length-1) currentFrame++
-    else currentFrame = 0
+  function playFrames() {
+    if (currentFrame < frames.length - 1) currentFrame++;
+    else currentFrame = 0;
 
-    changeFrame(currentFrame)
+    changeFrame(currentFrame);
   }
-  let playint
+  let playint;
 
-  function setPlay(bool){
+  function setPlay(bool) {
     if (bool) {
       playint = window.setInterval(playFrames, 500);
     } else {
       window.clearInterval(playint);
     }
   }
-  
 
+  ///////////////////// stop motion functies end //////////////////////////////
+
+
+  //////////////////// avatar functies /////////////////////////////////
+
+  if(appType == "avatar"){
+    console.log('avatar')
+    maxFrames = 5;
+  }
+
+  function createAvatar() {
+    console.log('upload avatar')
+    savecanvas.setHeight(128);
+    savecanvas.setWidth(128 * frames.length);
+    savecanvas.renderAll();
+    savecanvas.clear();
+    let data = {objects: []}
+    console.log(data)
+    for(let i = 0; i < frames.length; i++){
+      frames[i].backgroundImage = {}
+      const newFrames = frames[i].objects.map((object, index) => {
+        const newObject = {...object};
+        newObject.left += 128 * i
+        console.log(newObject)
+        data.objects.push(newObject)
+      });
+    }
+   savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
+   var Image = savecanvas.toDataURL("png");
+   var blobData = dataURItoBlob(Image);
+   uploadAvatar(blobData)
+  }
+  //////////////////// avatar functies end /////////////////////////////////
 </script>
 
 <main>
   <canvas bind:this={canv} class="canvas" />
+  <canvas bind:this={saveCanvas} class="savecanvas" />
   {#if colorToggle}
     <div class="colorTab">
       <label for="drawing-line-width">Line width:</label>
-      <span class="info">30</span><input
+      <span class="info">5</span><input
         type="range"
-        value="30"
+        value="5"
         min="0"
         max="150"
         id="drawing-line-width"
@@ -415,7 +493,8 @@ img.onload = function() {
     >
     <div class="saveBox">
       <button class="icon" on:click={() => (saveToggle = !saveToggle)}
-        ><SaveIcon /></button>
+        ><SaveIcon /></button
+      >
       <div class="saveTab">
         <label for="title">Title</label>
         <NameGenerator bind:value={title} />
@@ -430,19 +509,38 @@ img.onload = function() {
         <button on:click={upload}>Save</button>
       </div>
     </div>
-    <button id="drawing-mode" class="btn btn-info">Cancel drawing mode</button> 
-    <div class="framebar">
-      {#each frames as frame, index}
-      <div id="{index}" class:selected="{currentFrame === index}" on:click="{() => changeFrame(index)}" ><div>{index+1}</div></div>
-      {/each}
-      {#if frames.length < maxFrames}
-      <div id="frameNew" on:click="{addFrame}"><div>+</div></div>
+    <button id="drawing-mode" class="btn btn-info">Cancel drawing mode</button>
+    {#if appType == "stopmotion" || appType == "avatar"}
+      <div class="framebar">
+        {#each frames as frame, index}
+          <div
+            id={index}
+            class:selected={currentFrame === index}
+            on:click={() => changeFrame(index)}
+            style="background-image: url({backgroundFrames[index]})"
+          >
+            <div>{index + 1}</div>
+          </div>
+        {/each}
+        {#if frames.length < maxFrames}
+          <div id="frameNew" on:click={addFrame}><div>+</div></div>
+        {/if}
+      </div>
+      {#if play}
+        <button
+          on:click={() => {
+            play = false;
+            setPlay(false);
+          }}>pause</button
+        >
+      {:else}
+        <button
+          on:click={() => {
+            play = true;
+            setPlay(true);
+          }}>play</button
+        >
       {/if}
-    </div>
-    {#if play}
-      <button on:click={() => {play = false; setPlay(false)}}>pause</button>
-    {:else}
-      <button on:click={() => {play = true; setPlay(true)}}>play</button>
     {/if}
   </div>
 </main>
@@ -461,32 +559,38 @@ img.onload = function() {
     padding: 10px;
   }
 
-  .framebar{
+  .framebar {
     display: block;
   }
 
   .framebar > div {
-    display:inline-block;
+    display: inline-block;
     width: 100px;
     height: 100px;
     margin: 5px;
   }
 
-  .framebar > div > div{
-    background-color:rgba(255, 255, 255, 0.2);
+  .framebar > div > div {
+    background-color: rgba(255, 255, 255, 0.2);
     height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  .framebar > div:hover{
-    cursor: pointer; 
+  .framebar > div:hover {
+    cursor: pointer;
+  }
+
+  .framebar > div {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
   }
 
   .selected {
-		border: 1px solid black;
-	}
+    border: 1px solid black;
+  }
 
   .colorTab {
     background-color: rgb(204, 201, 201);
@@ -500,7 +604,7 @@ img.onload = function() {
 
   .saveTab {
     display: none;
-  min-width: 160px;
+    min-width: 160px;
     bottom: 50px;
     z-index: 1;
   }
@@ -510,7 +614,7 @@ img.onload = function() {
     text-decoration: none;
     display: block;
   }
-  .saveBox{
+  .saveBox {
     position: relative;
     display: inline-block;
   }
@@ -518,6 +622,10 @@ img.onload = function() {
   .saveBox:hover .saveTab {
     display: block;
     color: green;
+  }
+
+  .savecanvas {
+    border: 2px solid black
   }
 
   .icon {
