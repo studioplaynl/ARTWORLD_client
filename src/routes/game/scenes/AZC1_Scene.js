@@ -25,6 +25,8 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.playerAvatarPlaceholder = "playerAvatar";
     this.playerAvatarKey = ""
     this.createdPlayer = false;
+    this.playerMovingKey = "moving";
+    this.playerStopKey = "stop";
 
     this.cursors;
     this.pointer;
@@ -61,9 +63,6 @@ export default class AZC1_Scene extends Phaser.Scene {
       "./assets/tilesets/tuxmon-sample-32px-extruded.png"
     );
     this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
-
-
-    
     //....... end TILEMAP ......................................................................
 
     // //load events
@@ -152,13 +151,13 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.playerAvatarPlaceholder = "onlinePlayer";
 
     this.player = this.physics.add
-      .image(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
+      .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
       .setDepth(101);
 
     //await this.loadAndCreatePlayerAvatar()
 
 
-    this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
+    this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
 
     // this.playerShadow.anchor.set(0.5);
     this.playerShadow.setTint(0x000000);
@@ -171,17 +170,20 @@ export default class AZC1_Scene extends Phaser.Scene {
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
     //  Our player animations, turning, walking left and walking right.
-    // this.anims.create({
-    //   key: "moving",
-    //   frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
-    //   frameRate: 20,
-    //   repeat: -1,
-    // });
+    this.playerMovingKey = "moving"
+    this.playerStopKey = "stop"
 
-    // this.anims.create({
-    //   key: "stop",
-    //   frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
-    // });
+    this.anims.create({
+      key: this.playerMovingKey,
+      frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
+      frameRate: 20,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: this.playerStopKey,
+      frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
+    });
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
@@ -259,16 +261,71 @@ export default class AZC1_Scene extends Phaser.Scene {
           console.log(" loading: manageSession.playerObjectSelf.url: ")
           console.log(manageSession.playerObjectSelf.url)
 
-          this.load.image(
+          // this.load.image(
+          //   this.playerAvatarKey,
+          //   manageSession.playerObjectSelf.url
+          // );
+
+          this.load.spritesheet(
             this.playerAvatarKey,
-            manageSession.playerObjectSelf.url
+            manageSession.playerObjectSelf.url, { frameWidth: 128, frameHeight: 128 }
           );
+
+
 
           this.load.once(Phaser.Loader.Events.COMPLETE, () => {
             console.log("loadAndCreatePlayerAvatar complete")
             if (this.textures.exists(this.playerAvatarKey)) {
+
+              const avatar = this.textures.get(this.playerAvatarKey)
+              const avatarWidth = avatar.frames.__BASE.width
+              const avatarHeight = avatar.frames.__BASE.height
+
+              const avatarFrames = Math.round(avatarWidth / avatarHeight)
+              console.log(avatarFrames)
+
+              //make an animation if the image is wider than tall
+              if (avatarFrames > 1) {
+
+                // const animationSetup = {
+                //   key: "playerAnimation",
+                //   frames: this.anims.generateFrameNumbers(this.playerAvatarKey, {
+                //     start: 0,
+                //     end: avatarFrames - 1,
+                //     first: 0,
+                //   }),
+                //   frameRate: (avatarFrames + 2) * 2,
+                //   repeat: -1,
+                // };
+
+                //works
+                this.playerMovingKey = "moving" + "_" + this.playerAvatarKey;
+                this.playerStopKey = "stop" + "_" + this.playerAvatarKey;
+
+                this.anims.create({
+                  key: this.playerMovingKey,
+                  frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: avatarFrames - 1 }),
+                  frameRate: (avatarFrames + 2) * 2,
+                  repeat: -1,
+                  yoyo: true
+                });
+
+                //works
+                this.anims.create({
+                  key: this.playerStopKey,
+                  frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: 0 }),
+                });
+
+              }
+
+              // const avatarWidth = avatar.frames.__BASE.width
+              // const avatarHeight = avatar.frames.__BASE.height
+              // const avatarFrames = Math.round(avatarWidth / avatarHeight)
+              // console.log(avatarFrames)
+
               // texture loaded so use instead of the placeholder
               this.player.setTexture(this.playerAvatarKey)
+
               this.playerShadow.setTexture(this.playerAvatarKey)
 
               //scale the player to 68px
@@ -284,8 +341,11 @@ export default class AZC1_Scene extends Phaser.Scene {
 
               this.createdPlayer = true;
               console.log("this.createdPlayer = true;")
-            }
 
+              // //.. animation for the player avatar ............................................
+
+              // //.. end animation for the player avatar ............................................
+            }// if (this.textures.exists(this.playerAvatarKey)) 
           })
         }
 
@@ -325,7 +385,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.matchIdText = this.add
       .text(
         this.headerText.x,
-        this.headerText.y ,
+        this.headerText.y,
         "user_id: " + this.playerIdText,
         {
           fontFamily: "Arial",
@@ -787,9 +847,11 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //....... moving ANIMATION ......................................................................................
     if (this.arrowDown || this.playerIsMovingByClicking) {
-      // this.player.anims.play("moving", true);
+      this.player.anims.play(this.playerMovingKey, true);
+      this.playerShadow.anims.play(this.playerMovingKey, true);
     } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
-      // this.player.anims.play("stop", true);
+      this.player.anims.play(this.playerStopKey, true);
+      this.playerShadow.anims.play(this.playerStopKey, true);
     }
     //....... end moving ANIMATION .................................................................................
 
