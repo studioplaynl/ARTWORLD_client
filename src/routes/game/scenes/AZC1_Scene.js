@@ -1,9 +1,7 @@
 import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 //import { getAvatar } from '../../profile.svelte';
-import { getAccount, compareArray } from '../../../api.js';
-import { compute_slots } from "svelte/internal";
-
+import { getAccount } from '../../../api.js';
 
 export default class AZC1_Scene extends Phaser.Scene {
   constructor() {
@@ -19,7 +17,9 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.phaser = this;
     // this.playerPos;
     this.onlinePlayers = [];
+    this.currentOnlinePlayer;
     this.avatarName = [];
+    this.tempAvatarName = ""
     this.loadedAvatars = [];
 
     this.playerAvatarPlaceholder = "playerAvatar";
@@ -38,7 +38,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.distance;
 
     //shadow
-    this.playerShadowOffset = 10;
+    this.playerShadowOffset = 8;
     this.playerIsMovingByClicking = false;
   }
 
@@ -181,12 +181,23 @@ export default class AZC1_Scene extends Phaser.Scene {
     // });
     //.......  end PLAYER .............................................................................
 
+    //....... onlinePlayers ...........................................................................
+    // add onlineplayers group
+    this.onlinePlayersGroup = this.add.group();
+
+    //....... end onlinePlayers .......................................................................
+
+
+
     //....... PLAYER VS WORLD ..........................................................................
     this.onlinePlayersGroup = this.add.group(); //group onlinePlayers
 
     this.gameCam = this.cameras.main;
-    //this.gameCam.startFollow(this.player);
+
+    //setBounds has to be set before follow, otherwise the camera doesn't follow!
     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+
+    this.gameCam.startFollow(this.player);
 
     // this.player.setCollideWorldBounds(true);
     // this.physics.add.collider(
@@ -216,10 +227,12 @@ export default class AZC1_Scene extends Phaser.Scene {
 
   loadAndCreatePlayerAvatar() {
     if (manageSession.createPlayer) {
-      console.log("loadAndCreatePlayerAvatar")
-
       manageSession.createPlayer = false;
       console.log("manageSession.createPlayer = false;")
+      this.createdPlayer = false;
+
+      console.log("loadAndCreatePlayerAvatar")
+
       // is playerAvaterKey already in loadedAvatars?
       //no -> load the avatar and add to loadedAvatars
       //yes -> dont load the avatar
@@ -227,8 +240,10 @@ export default class AZC1_Scene extends Phaser.Scene {
       this.playerAvatarKey = manageSession.playerObjectSelf.id + "_" + manageSession.playerObjectSelf.create_time
       console.log(this.playerAvatarKey)
 
+      console.log("this.textures.exists(this.playerAvatarKey): ")
       console.log(this.textures.exists(this.playerAvatarKey))
 
+      //check if url is not empty for some reason
       if (!this.textures.exists(this.playerAvatarKey)) {
         if (manageSession.playerObjectSelf.url === "") {
           console.log("avatar url is empty")
@@ -238,6 +253,7 @@ export default class AZC1_Scene extends Phaser.Scene {
           console.log("this.createdPlayer = true;")
           return
         } else {
+          console.log(" loading: manageSession.playerObjectSelf.url: ")
           console.log(manageSession.playerObjectSelf.url)
 
           this.load.image(
@@ -246,9 +262,27 @@ export default class AZC1_Scene extends Phaser.Scene {
           );
 
           this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-            // texture loaded so use instead of the placeholder
-            this.player.setTexture(this.playerAvatarKey)
-            console.log("player avatar has loaded ")
+            console.log("loadAndCreatePlayerAvatar complete")
+            if (this.textures.exists(this.playerAvatarKey)) {
+              // texture loaded so use instead of the placeholder
+              this.player.setTexture(this.playerAvatarKey)
+              this.playerShadow.setTexture(this.playerAvatarKey)
+
+              //scale the player to 68px
+              const width = 68
+              this.player.displayWidth = width
+              this.player.scaleY = this.player.scaleX
+
+              this.playerShadow.displayWidth = width
+              this.playerShadow.scaleY = this.playerShadow.scaleX
+
+              console.log("player avatar has loaded ")
+              console.log(this.playerAvatarKey)
+
+              this.createdPlayer = true;
+              console.log("this.createdPlayer = true;")
+            }
+
           })
         }
 
@@ -266,8 +300,8 @@ export default class AZC1_Scene extends Phaser.Scene {
         //   key: "stop_" + manageSession.allConnectedUsers[i].user_id,
         //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
         // });
-        this.createdPlayer = true;
-        console.log("this.createdPlayer = true;")
+
+
       }
 
     }//if(manageSession.playerCreated)
@@ -288,7 +322,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.matchIdText = this.add
       .text(
         this.headerText.x,
-        this.headerText.y + 26,
+        this.headerText.y ,
         "user_id: " + this.playerIdText,
         {
           fontFamily: "Arial",
@@ -301,66 +335,66 @@ export default class AZC1_Scene extends Phaser.Scene {
       .setShadow(1, 1, '#000000', 0)
       .setDepth(30);
 
-    this.playerIdText = this.add
-      .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
-        fontFamily: "Arial",
-        fontSize: "11px",
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setDepth(30)
-      .setShadow(1, 1, '#000000', 0);
+    // this.playerIdText = this.add
+    //   .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
+    //     fontFamily: "Arial",
+    //     fontSize: "11px",
+    //   })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setDepth(30)
+    //   .setShadow(1, 1, '#000000', 0);
 
     this.matchIdText.on("pointerup", () => {
       this.onlinePlayers[0].setVisible(false); //works
       this.onlinePlayers[0].destroy();
     });
 
-    this.opponentsIdText = this.add
-      .text(this.headerText.x, this.playerIdText.y + 14, "", {
-        fontFamily: "Arial",
-        fontSize: "11px",
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setDepth(30);
+    // this.opponentsIdText = this.add
+    //   .text(this.headerText.x, this.playerIdText.y + 14, "", {
+    //     fontFamily: "Arial",
+    //     fontSize: "11px",
+    //   })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setDepth(30);
 
-    this.allConnectedUsersText = this.add.text(110, 20, "onlineUsers[ ]", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.allConnectedUsersText = this.add.text(110, 20, "onlineUsers[ ]", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
-    this.allConnectedUsersText2 = this.add.text(110, 40, "", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.allConnectedUsersText2 = this.add.text(110, 40, "", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
-    this.onlinePlayersText = this.add.text(110, 70, "onlinePlayers[ ]", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.onlinePlayersText = this.add.text(110, 70, "onlinePlayers[ ]", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
-    this.onlinePlayersText2 = this.add.text(110, 90, "", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.onlinePlayersText2 = this.add.text(110, 90, "", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
 
-    this.onlinePlayersGroupText = this.add.text(110, 120, "playersGroup[ ]", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.onlinePlayersGroupText = this.add.text(110, 120, "playersGroup[ ]", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
-    this.onlinePlayersGroupText2 = this.add.text(110, 140, "", { fontFamily: "Arial", fontSize: "22px" })
-      .setOrigin(0.5)
-      .setScrollFactor(0) //fixed on screen
-      .setShadow(1, 1, '#000000', 0)
-      .setDepth(300);
+    // this.onlinePlayersGroupText2 = this.add.text(110, 140, "", { fontFamily: "Arial", fontSize: "22px" })
+    //   .setOrigin(0.5)
+    //   .setScrollFactor(0) //fixed on screen
+    //   .setShadow(1, 1, '#000000', 0)
+    //   .setDepth(300);
 
   }
 
@@ -375,7 +409,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
       console.log('1 key');
 
-      manageSession.testMoveMessage()
+      manageSession.getStreamUsers("get_users", "home")
 
     }, this);
 
@@ -392,6 +426,38 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     }, this);
 
+    this.input.keyboard.on('keyup-D', function (event) {
+
+      console.log('D key');
+
+      console.log('this.onlinePlayers: ')
+      console.log(this.onlinePlayers)
+
+      console.log("manageSession.allConnectedUsers: ")
+      console.log(manageSession.allConnectedUsers)
+
+      console.log("onlinePlayerGroup Children: ")
+      console.log(this.onlinePlayersGroup.getChildren())
+
+      console.log("this.player: ")
+      console.log(this.player)
+
+    }, this);
+
+    this.input.keyboard.on('keyup-F', function (event) {
+
+      console.log('F key');
+
+      console.log("manageSession.playerObjectSelf: ")
+      console.log(manageSession.playerObjectSelf)
+
+      console.log("this.createOnlinePlayers: ")
+      console.log(manageSession.createOnlinePlayers)
+
+      console.log("this.createdPlayer: ")
+      console.log(this.createdPlayer)
+    }, this);
+
     this.input.keyboard.on('keyup-Q', function (event) {
 
       console.log('Q key');
@@ -406,131 +472,182 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     }, this);
 
-    //  Receives every single key down event, regardless of type
+    // //  Receives every single key down event, regardless of type
 
-    this.input.keyboard.on('keydown', function (event) {
+    // this.input.keyboard.on('keydown', function (event) {
 
-      console.dir(event);
+    //   console.dir(event);
 
-    }, this);
+    // }, this);
+  }
+
+  add(arr, name) {
+    const { length } = arr;
+    const id = length + 1;
+    const found = arr.some(el => el.username === name);
+    if (!found) arr.push({ id, username: name });
+    return arr;
   }
 
   createOnlinePlayers() {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
 
-    //first check if onlineplayers need to be created
-    if (manageSession.createOnlinePlayers) {
-      console.log("createOnlinePlayers...");
+    //loading is broken, so I'm checking if the player avater has already loaded, after that I load onlineUsers
+    if (this.createdPlayer) {
+      //first check if onlineplayers need to be created
+      if (manageSession.createOnlinePlayers) {
+        manageSession.createOnlinePlayers = false
 
-      // ..... players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
-      //check if there are players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-      let onlyInOnlinePlayers = this.onlinePlayers.filter(compareArray(manageSession.allConnectedUsers));
-      console.log("onlyInOnlinePlayers")
-      console.log(onlyInOnlinePlayers)
+        console.log("createOnlinePlayers...");
 
-      //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-      if (onlyInOnlinePlayers.length > 0) {
-        //hide users
-        console.log("Hide user")
-      }
-      // .....end  players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
+        //all current onlinePlayers, or an empty []
+        this.onlinePlayers = this.onlinePlayersGroup.getChildren() || []
+
+        // ..... players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
+
+        //check if there are players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
+        let onlyInOnlinePlayers = []
+
+        this.onlinePlayers.forEach(player => {
+          const playerID = player.user_id
+          const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+          if (!found) onlyInOnlinePlayers.push(player)
+        })
+
+        console.log("onlyInOnlinePlayers")
+        console.log(onlyInOnlinePlayers)
+
+        //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
+        if (onlyInOnlinePlayers.length > 0) {
+          //hide users
+          console.log("Hide user")
 
 
-      for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        //check if new user is already (hidden) in AZC1_Scene.onlinePlayers
-        //no      -> load the avatar_url
-        //  -> add the user to AZC1_Scene.onlinePlayers 
-        //yes -> check if that avatar is newer
-        //no  -> activate the avatar and update the position
-        //yes -> load the new avatar (and delete the old one from cache?)
+          for (let i = 0; i < onlyInOnlinePlayers.length; i++) {
+            //check if the user_id is in this.onlinePlayers
 
-        //returns null if no match is found
-        console.log(Phaser.Actions.GetFirst(this.onlinePlayers, manageSession.allConnectedUsers[i]))
+            //get the index of user_id from onlyInOnlinePlayers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
+            var index = this.onlinePlayers.findIndex(function (person) {
+              return person.user_id == onlyInOnlinePlayers[i].user_id
+            });
 
-        if (Phaser.Actions.GetFirst(this.onlinePlayers, manageSession.allConnectedUsers[i]) == null) {
-          console.log(manageSession.allConnectedUsers[i].posX);
-          console.log(manageSession.allConnectedUsers[i].posY);
-          manageSession.createOnlinePlayers = false;
-
-          //make an avatar name for the assignment of the image to the GameObject 
-          this.avatarName[i] = manageSession.allConnectedUsers[i].user_id + "_" + manageSession.allConnectedUsers[i].avatar_time;
-          console.log("this.avatarName[i]: " + this.avatarName[i])
-
-          // add the user to the array
-          this.onlinePlayers.push(manageSession.allConnectedUsers[i])
-
-          console.log("manageSession.allConnectedUsers[i].posX and posY: ");
-          console.log(manageSession.allConnectedUsers[i].posX);
-          console.log(manageSession.allConnectedUsers[i].posY);
-
-          console.log("created onlinePlayer: ");
-          console.log(manageSession.allConnectedUsers[i]);
-
-          //check if the image is already loaded
-          if (!this.textures.exists(this.avatarName[i])) {
-
-            this.load.image(
-              this.avatarName[i],
-              manageSession.allConnectedUsers[i].avatar_url
-            );
-
-            console.log("to load avatar url")
-            console.log(manageSession.allConnectedUsers[i].avatar_url)
-
-            // }
-
-            this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-              console.log(" has loaded: ")
-              console.log(this.onlinePlayers[i])
-
-              // onlinePlayers[i] will be overwritten as a gameobject
-              this.onlinePlayers[i] = this.add
-                .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
-                .setDepth(90);
-
-              Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]); //add all data from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
-              manageSession.allConnectedUsers[i] = this.onlinePlayers[i];
-
-              //give the onlinePlayer the last known position
-              this.onlinePlayersGroup.add(this.onlinePlayers[i]);
-
-              manageSession.createOnlinePlayers = false;
-
-              this.onlinePlayers[i].x = manageSession.allConnectedUsers[i].posX;
-              this.onlinePlayers[i].y = manageSession.allConnectedUsers[i].posY;
-            })
-
-            this.load.start(); // load the image in memory
-            console.log("this.load.start();")
-
-            // //check if image has downloaded from the server and is in memory
-            // this.load.on('filecomplete', function () {
-            //   console.log(" has loaded: ")
-            //   console.log(this.onlinePlayers[i])
-
-            //   // onlinePlayers[i] will be overwritten as a gameobject
-            //   this.onlinePlayers[i] = this.add
-            //     .image(this.player.x - 40, this.player.y - 40, this.avatarName[i])
-            //     .setDepth(90);
-
-            //   Object.assign(this.onlinePlayers[i], manageSession.allConnectedUsers[i]); //add all data from manageSession.allConnectedUsers[i] to this.onlinePlayers[i]
-            //   manageSession.allConnectedUsers[i] = this.onlinePlayers[i];
-
-            //   //give the onlinePlayer the last known position
-            //   this.onlinePlayersGroup.add(this.onlinePlayers[i]);
-
-            //   manageSession.createOnlinePlayers = false;
-
-            //   this.onlinePlayers[i].x = manageSession.allConnectedUsers[i].posX;
-            //   this.onlinePlayers[i].y = manageSession.allConnectedUsers[i].posY;
-            // }, this); //on load complete
+            this.onlinePlayers[index].active = false
+            this.onlinePlayers[index].visible = false
+            console.log("deactiveUser: ")
+            console.log(this.onlinePlayers[index])
           }
-        }
-      } //for (let i = 0; i < manageSession.allConnectedUsers.length; i++)
-      // } // if (manageSession.allConnectedUsers > 0)
-    }//if (manageSession.createOnlinePlayers)
 
+        }
+        // .....end  players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
+
+        //...... LOAD NEW AVATARS ........................................................................................
+        //(new) players present in .allConnectedUsers but not in this.onlinePlayers ->add them to this.onlinePlayers
+
+        let newOnlinePlayers = []
+        manageSession.allConnectedUsers.forEach(player => {
+          const playerID = player.user_id
+          const found = this.onlinePlayers.some(user => user.user_id === playerID)
+          if (!found) newOnlinePlayers.push(player)
+        })
+
+        console.log("newOnlinePlayers")
+        console.log(newOnlinePlayers)
+
+        //a brand new user
+        newOnlinePlayers.forEach((element, i) => {
+          console.log("element: ")
+          console.log(element)
+
+          let elementCopy = element
+          console.log("elementCopy: ")
+          console.log(elementCopy)
+          //a new user
+          this.tempAvatarName = element.user_id + "_" + element.avatar_time;
+
+          this.load.image(this.tempAvatarName, element.avatar_url)
+
+          console.log("loading: ")
+          console.log(this.tempAvatarName)
+
+          element = this.add.image(element.posX, element.posY, this.playerAvatarPlaceholder)
+            .setDepth(90)
+
+          Object.assign(element, elementCopy); //add all data from elementCopy element
+
+          // add new player to group
+          this.onlinePlayersGroup.add(element)
+        })
+
+        this.onlinePlayers = this.onlinePlayersGroup.getChildren()
+        console.log("all players in the group: ")
+        console.log(this.onlinePlayers)
+
+        //added new players
+        this.load.start(); // load the image in memory
+        console.log("started loading new online avatars")
+        //.... end load new Avatars ....................................................................................
+
+
+        //when the images are loaded the new ones should be set to the players
+
+        this.load.on('filecomplete', () => {
+          for (let i = 0; i < this.onlinePlayers.length; i++) {
+            this.tempAvatarName = this.onlinePlayers[i].user_id + "_" + this.onlinePlayers[i].avatar_time;
+            //this.onlinePlayers[i] = this.add.image(this.onlinePlayers[i].posX, this.onlinePlayers[i].posY, this.tempAvatarName)
+
+            console.log("player added: ")
+            console.log(this.onlinePlayers[i])
+
+            console.log("avatar key: ")
+            console.log(this.tempAvatarName)
+            this.onlinePlayers[i].setTexture(this.tempAvatarName)
+
+            //scale the player to 68pix
+            this.onlinePlayers[i].displayWidth = 68
+            this.onlinePlayers[i].scaleY = this.onlinePlayers[i].scaleX
+
+            //make all allConnectedUsers visible
+            manageSession.allConnectedUsers.forEach((e, i) => {
+              // const playerID = player.user_id
+              // const found = this.onlinePlayers.some(user => user.user_id === playerID)
+
+              var index = this.onlinePlayers.findIndex(function (person) {
+                return person.user_id == manageSession.allConnectedUsers[i].user_id
+              });
+              this.onlinePlayers[index].active = true
+              this.onlinePlayers[index].visible = true
+              console.log("reactiveUser: ")
+              console.log(this.onlinePlayers[index])
+              // if (found) newOnlinePlayers.push(player)
+              // console.log(found)
+
+              // player.active = true
+              // player.visible = true
+            })
+          }
+        })
+
+        //make all allConnectedUsers visible
+        manageSession.allConnectedUsers.forEach((e, i) => {
+          // const playerID = player.user_id
+          // const found = this.onlinePlayers.some(user => user.user_id === playerID)
+
+          var index = this.onlinePlayers.findIndex(function (person) {
+            return person.user_id == manageSession.allConnectedUsers[i].user_id
+          });
+          this.onlinePlayers[index].active = true
+          this.onlinePlayers[index].visible = true
+          console.log("reactiveUser: ")
+          console.log(this.onlinePlayers[index])
+          // if (found) newOnlinePlayers.push(player)
+          // console.log(found)
+
+          // player.active = true
+          // player.visible = true
+        })
+      }//if (manageSession.createOnlinePlayers)
+    }//if (manageSession.createdPlayer) 
   } //createRemotePlayer
 
   enterLocation2Scene(player) {
@@ -616,9 +733,11 @@ export default class AZC1_Scene extends Phaser.Scene {
   updateMovementOnlinePlayers() {
     if (manageSession.updateOnlinePlayers) {
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        this.onlinePlayers[i].x = manageSession.allConnectedUsers[i].posX;
-        this.onlinePlayers[i].y = manageSession.allConnectedUsers[i].posY;
-        //console.log("updating online players")
+        let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
+        tempPlayer.x = manageSession.allConnectedUsers[i].posX;
+        tempPlayer.y = manageSession.allConnectedUsers[i].posY;
+
+        //   console.log("updating online players")
       }
       manageSession.updateOnlinePlayers = false;
     }
@@ -673,12 +792,14 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     this.playerMovingByClicking()
 
-    //this.playerIdText.setText(manageSession.userID);
-    this.allConnectedUsersText2.setText(manageSession.allConnectedUsers.length)
-    this.onlinePlayersText2.setText(this.onlinePlayers.length)
-    let onlinePlayerGroupLength = this.onlinePlayersGroup.getChildren()
-    this.onlinePlayersGroupText2.setText(onlinePlayerGroupLength.length)
 
+    // //.... debug text ..............................................................................................
+    // //this.playerIdText.setText(manageSession.userID);
+    // this.allConnectedUsersText2.setText(manageSession.allConnectedUsers.length)
+    // this.onlinePlayersText2.setText(this.onlinePlayers.length)
+    // let onlinePlayerGroupLength = this.onlinePlayersGroup.getChildren()
+    // this.onlinePlayersGroupText2.setText(onlinePlayerGroupLength.length)
+    // //.... end debug text ..............................................................................................
 
   } //update
 } //class
