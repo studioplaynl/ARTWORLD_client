@@ -6,6 +6,7 @@
         "login": "inloggen",
         "logout": "uitloggen",
         "drawing": "tekenen",
+        "stopmotion": "stopmotion",
         "admin": {
             "createUser": "nieuwe gebruiker",
             "createGroup": "nieuwe groep"

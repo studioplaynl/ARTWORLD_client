@@ -107,6 +107,26 @@ export async function getAvatar(avatar_url) {
     return url
 }
 
+  export async function uploadAvatar(data) {
+    var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png")
+
+    console.log(jpegURL)
+
+  await fetch(jpegURL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      body: data
+    })
+
+  await client.updateAccount(Sess, {
+      avatar_url: jpegLocation,
+  });
+
+}
+
+
 export async function deleteFile(type,file,user) {
   const payload = {"type": type, "name": file, "user": user};
     const rpcid = "delete_file";

@@ -57,6 +57,7 @@ let isLogedIn = (detail) => {
       <a href="/#/">{$_('nav.game')}</a>
       <a href="/#/match">{$_('nav.match')}</a>
       <a href="/#/drawing">{$_('nav.drawing')}</a>
+      <a href="/#/stopmotion">{$_('nav.stopmotion')}</a>
     </div>
     <div class="right">
       {#if !!$Profile && $Profile.meta.role == "admin"}
@@ -123,15 +124,23 @@ let isLogedIn = (detail) => {
 			}
         ]
     }),
-    "/uploadAvatar": wrap({
-        component: UploadAvatar,
+    "/drawing/:user?/:name?": wrap({
+        component: drawing,
         conditions: [
             (detail) => {
 				return isLogedIn(detail)
 			}
         ]
     }),
-    "/drawing/:user?/:name?/:status?": wrap({
+    "/stopmotion/:user?/:name?": wrap({
+        component: drawing,
+        conditions: [
+            (detail) => {
+				return isLogedIn(detail)
+			}
+        ]
+    }),
+    "/avatar/:user?/:name?": wrap({
         component: drawing,
         conditions: [
             (detail) => {
