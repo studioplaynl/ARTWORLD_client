@@ -248,7 +248,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       console.log("this.textures.exists(this.playerAvatarKey): ")
       console.log(this.textures.exists(this.playerAvatarKey))
 
-      //check if url is not empty for some reason
+      //check if url is not empty for some reason, returns so that previous image is kept
       if (!this.textures.exists(this.playerAvatarKey)) {
         if (manageSession.playerObjectSelf.url === "") {
           console.log("avatar url is empty")
@@ -261,17 +261,10 @@ export default class AZC1_Scene extends Phaser.Scene {
           console.log(" loading: manageSession.playerObjectSelf.url: ")
           console.log(manageSession.playerObjectSelf.url)
 
-          // this.load.image(
-          //   this.playerAvatarKey,
-          //   manageSession.playerObjectSelf.url
-          // );
-
           this.load.spritesheet(
             this.playerAvatarKey,
             manageSession.playerObjectSelf.url, { frameWidth: 128, frameHeight: 128 }
           );
-
-
 
           this.load.once(Phaser.Loader.Events.COMPLETE, () => {
             console.log("loadAndCreatePlayerAvatar complete")
@@ -286,18 +279,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
               //make an animation if the image is wider than tall
               if (avatarFrames > 1) {
-
-                // const animationSetup = {
-                //   key: "playerAnimation",
-                //   frames: this.anims.generateFrameNumbers(this.playerAvatarKey, {
-                //     start: 0,
-                //     end: avatarFrames - 1,
-                //     first: 0,
-                //   }),
-                //   frameRate: (avatarFrames + 2) * 2,
-                //   repeat: -1,
-                // };
-
+                //.. animation for the player avatar ............................................
                 //works
                 this.playerMovingKey = "moving" + "_" + this.playerAvatarKey;
                 this.playerStopKey = "stop" + "_" + this.playerAvatarKey;
@@ -316,12 +298,8 @@ export default class AZC1_Scene extends Phaser.Scene {
                   frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: 0 }),
                 });
 
+                //.. end animation for the player avatar ............................................
               }
-
-              // const avatarWidth = avatar.frames.__BASE.width
-              // const avatarHeight = avatar.frames.__BASE.height
-              // const avatarFrames = Math.round(avatarWidth / avatarHeight)
-              // console.log(avatarFrames)
 
               // texture loaded so use instead of the placeholder
               this.player.setTexture(this.playerAvatarKey)
@@ -342,28 +320,12 @@ export default class AZC1_Scene extends Phaser.Scene {
               this.createdPlayer = true;
               console.log("this.createdPlayer = true;")
 
-              // //.. animation for the player avatar ............................................
-
-              // //.. end animation for the player avatar ............................................
             }// if (this.textures.exists(this.playerAvatarKey)) 
           })
         }
 
         this.load.start(); // load the image in memory
         console.log("this.load.start();");
-
-        // this.anims.create({
-        //   key: "moving_" + manageSession.allConnectedUsers[i].user_id,
-        //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 0, end: 8 }),
-        //   frameRate: 20,
-        //   repeat: -1,
-        // });
-
-        // this.anims.create({
-        //   key: "stop_" + manageSession.allConnectedUsers[i].user_id,
-        //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
-        // });
-
 
       }
 
@@ -628,12 +590,50 @@ export default class AZC1_Scene extends Phaser.Scene {
           //a new user
           this.tempAvatarName = element.user_id + "_" + element.avatar_time;
 
-          this.load.image(this.tempAvatarName, element.avatar_url)
+          this.load.spritesheet(this.tempAvatarName, element.avatar_url, { frameWidth: 128, frameHeight: 128 })
 
           console.log("loading: ")
           console.log(this.tempAvatarName)
 
-          element = this.add.image(element.posX, element.posY, this.playerAvatarPlaceholder)
+          //.....  create animation online player ...................................................................................................
+
+          const avatar = this.tempAvatarName
+          const avatarWidth = avatar.width
+          const avatarHeight = avatar.height
+
+          const avatarFrames = Math.round(avatarWidth / avatarHeight)
+          console.log(avatarFrames)
+
+          if (avatarFrames > 1) {
+
+            // set names for the moving and stop animations
+
+            element.setData("movingKey", "moving" + "_" + this.tempAvatarName);
+            element.setData("stopKey", "stop" + "_" + this.tempAvatarName);
+
+            //create animation for moving
+            this.anims.create({
+              key: element.getData("movingKey"),
+              frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
+              frameRate: (avatarFrames + 2) * 2,
+              repeat: -1,
+              yoyo: true
+            });
+
+            //create animation for stop
+            this.anims.create({
+              key: element.getData("stopKey"),
+              frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
+            });
+
+  
+          }//if (avatarFrames > 1) {
+
+          //..... end create animation online player ...................................................................................................
+
+
+
+          element = this.add.sprite(element.posX, element.posY, this.playerAvatarPlaceholder)
             .setDepth(90)
 
           Object.assign(element, elementCopy); //add all data from elementCopy element
@@ -664,32 +664,60 @@ export default class AZC1_Scene extends Phaser.Scene {
 
             console.log("avatar key: ")
             console.log(this.tempAvatarName)
+
             this.onlinePlayers[i].setTexture(this.tempAvatarName)
 
-            //scale the player to 68pix
-            this.onlinePlayers[i].displayWidth = 68
-            this.onlinePlayers[i].scaleY = this.onlinePlayers[i].scaleX
+            const avatar = this.textures.get(this.tempAvatarName)
+            const avatarWidth = avatar.frames.__BASE.width
+            const avatarHeight = avatar.frames.__BASE.height
 
-            //make all allConnectedUsers visible
-            manageSession.allConnectedUsers.forEach((e, i) => {
-              // const playerID = player.user_id
-              // const found = this.onlinePlayers.some(user => user.user_id === playerID)
+            const avatarFrames = Math.round(avatarWidth / avatarHeight)
+            console.log(avatarFrames)
 
-              var index = this.onlinePlayers.findIndex(function (person) {
-                return person.user_id == manageSession.allConnectedUsers[i].user_id
+            if (avatarFrames > 1) {
+
+              // set names for the moving and stop animations
+
+              this.onlinePlayers[i].setData("movingKey", "moving" + "_" + this.tempAvatarName);
+              this.onlinePlayers[i].setData("stopKey", "stop" + "_" + this.tempAvatarName);
+
+              //create animation for moving
+              this.anims.create({
+                key: this.onlinePlayers[i].getData("movingKey"),
+                frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
+                frameRate: (avatarFrames + 2) * 2,
+                repeat: -1,
+                yoyo: true
               });
-              this.onlinePlayers[index].active = true
-              this.onlinePlayers[index].visible = true
-              console.log("reactiveUser: ")
-              console.log(this.onlinePlayers[index])
-              // if (found) newOnlinePlayers.push(player)
-              // console.log(found)
 
-              // player.active = true
-              // player.visible = true
-            })
-          }
-        })
+              //create animation for stop
+              this.anims.create({
+                key: this.onlinePlayers[i].getData("stopKey"),
+                frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
+              });
+
+              //make all allConnectedUsers visible
+              manageSession.allConnectedUsers.forEach((e, i) => {
+                // const playerID = player.user_id
+                // const found = this.onlinePlayers.some(user => user.user_id === playerID)
+
+                var index = this.onlinePlayers.findIndex(function (person) {
+                  return person.user_id == manageSession.allConnectedUsers[i].user_id
+                });
+                this.onlinePlayers[index].active = true
+                this.onlinePlayers[index].visible = true
+                console.log("reactiveUser: ")
+                console.log(this.onlinePlayers[index])
+                // if (found) newOnlinePlayers.push(player)
+                // console.log(found)
+
+                // player.active = true
+                // player.visible = true
+              })
+            }//if (avatarFrames > 1) {
+          }//for (let i = 0; i < this.onlinePlayers.length; i++)
+        })//this.load.on('filecomplete', () => 
+
 
         //make all allConnectedUsers visible
         manageSession.allConnectedUsers.forEach((e, i) => {
@@ -797,9 +825,15 @@ export default class AZC1_Scene extends Phaser.Scene {
     if (manageSession.updateOnlinePlayers) {
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
         let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
+
+        //get the key for the moving animation of the player, and play it
+        tempPlayer.anims.play(tempPlayer.getData("movingKey"), true);
+
         tempPlayer.x = manageSession.allConnectedUsers[i].posX;
         tempPlayer.y = manageSession.allConnectedUsers[i].posY;
 
+        //get the key for the stop animation of the player, and play it
+        tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
         //   console.log("updating online players")
       }
       manageSession.updateOnlinePlayers = false;
