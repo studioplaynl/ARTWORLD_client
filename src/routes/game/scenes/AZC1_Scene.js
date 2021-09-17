@@ -132,17 +132,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... end TILEMAP ......................................................................
 
     //.......  PLAYER ..........................................................................
-    // const animationSetup = {
-    //   key: "playerAnimation",
-    //   frames: this.anims.generateFrameNumbers("move", {
-    //     start: 0,
-    //     end: 9,
-    //     first: 0,
-    //   }),
-    //   frameRate: 15,
-    //   repeat: -1,
-    // };
-    // this.anims.create(animationSetup);
 
     //create player group
     this.playerGroup = this.add.group();
@@ -597,9 +586,9 @@ export default class AZC1_Scene extends Phaser.Scene {
 
           //.....  create animation online player ...................................................................................................
 
-          const avatar = this.tempAvatarName
-          const avatarWidth = avatar.width
-          const avatarHeight = avatar.height
+          const avatar = this.textures.get(this.tempAvatarName)
+          const avatarWidth = avatar.frames.__BASE.width
+          const avatarHeight = avatar.frames.__BASE.height
 
           const avatarFrames = Math.round(avatarWidth / avatarHeight)
           console.log(avatarFrames)
@@ -616,8 +605,8 @@ export default class AZC1_Scene extends Phaser.Scene {
               key: element.getData("movingKey"),
               frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
               frameRate: (avatarFrames + 2) * 2,
-              repeat: -1,
-              yoyo: true
+              repeat: 1,
+              // yoyo: true
             });
 
             //create animation for stop
@@ -626,7 +615,7 @@ export default class AZC1_Scene extends Phaser.Scene {
               frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
             });
 
-  
+
           }//if (avatarFrames > 1) {
 
           //..... end create animation online player ...................................................................................................
@@ -825,15 +814,20 @@ export default class AZC1_Scene extends Phaser.Scene {
     if (manageSession.updateOnlinePlayers) {
       for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
         let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
+        const movingKey = tempPlayer.getData("movingKey")
 
         //get the key for the moving animation of the player, and play it
-        tempPlayer.anims.play(tempPlayer.getData("movingKey"), true);
+        tempPlayer.anims.play(movingKey, true);
 
         tempPlayer.x = manageSession.allConnectedUsers[i].posX;
         tempPlayer.y = manageSession.allConnectedUsers[i].posY;
 
+        setTimeout(() => {
+          tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
+        }, 1000);
+
         //get the key for the stop animation of the player, and play it
-        tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
+        // tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
         //   console.log("updating online players")
       }
       manageSession.updateOnlinePlayers = false;
