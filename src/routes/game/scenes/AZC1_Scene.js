@@ -55,14 +55,37 @@ export default class AZC1_Scene extends Phaser.Scene {
     );
 
     this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
+
+    this.load.image("cube", "./assets/3d/kenney_01_color.png")
+    //this.load.obj('cube_obj', 'assets/3d/cube_color.obj');
+    this.load.obj('cube_obj', 'assets/3d/kenney_01_color.obj', 'assets/3d/kenney_01_color.mtl', true);
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
-    this.load.image(
-      "tiles",
-      "./assets/tilesets/tuxmon-sample-32px-extruded.png"
-    );
-    this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
+    //  //1
+    //   this.load.image(
+    //     "tiles",
+    //     "./assets/tilesets/tuxmon-sample-32px-extruded.png"
+    //   );
+
+    //   this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
+    //   //end 1
+
+    // // 2
+    // this.load.svg(
+    //   "tiles",
+    //   "./assets/tilesets/64x64dot.svg"
+    // );
+
+    // this.load.tilemapTiledJSON("map", "./assets/tilemaps/svg_ortho_200x200.json");
+    // // end 2
+
+    // grid with dots
+    this.load.svg(
+      "dot",
+      "./assets/tilesets/64x64dot.svg", { scale: 2 })
+    //end grid with dots
+
     //....... end TILEMAP ......................................................................
 
     // //load events
@@ -90,47 +113,166 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //....... end SOCKET .......................................................................
 
-    this.add.graphics()
+    // // GRID instead of map .....................................................................
+    // var g1 = this.add.grid(0, 0, 3200, 3200, 32, 32, 0xFFFFFF)
+    // // end GRID ................................................................................
+
 
     //.......  LOCATIONS ......................................................................
     // this.location2 = this.physics.add.staticGroup();
+
     // this.location2
     //   .create(
-    //     this.game.config.width - 100,
-    //     this.game.config.height - 200,
-    //     "bomb"
+    //     200,
+    //     200,
+    //     "cube"
     //   )
-    //   .setScale(3)
+    //   .setScale(0.2)
+    //   .setDepth(50)
     //   .refreshBody();
+
+    // this.location2
+    // .create(
+    //   this.game.config.width - 100,
+    //   this.game.config.height - 200,
+    //   "cube"
+    // )
+    // .setScale(0.5)
+    // .refreshBody();
     //.......  end LOCATIONS ......................................................................
 
     //....... TILEMAP .............................................................................
-    const map = this.make.tilemap({ key: "map" });
+    // // 2
+    // const map = this.make.tilemap({ key: "map" });
+    // // end 2
 
     // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
     // Phaser's cache (i.e. the name you used in preload)
-    const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
+    //     //1
+    //      const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
 
-    // Parameters: layer name (or index) from Tiled, tileset, x, y
-    const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
-    const worldLayer = map.createLayer("World", tileset, 0, 0);
-    const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
 
-    worldLayer.setCollisionByProperty({ collides: true });
+    //     // Parameters: layer name (or index) from Tiled, tileset, x, y
 
-    // By default, everything gets depth sorted on the screen in the order we created things. Here, we
-    // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
-    // Higher depths will sit on top of lower depth objects.
-    aboveLayer.setDepth(10);
+    //     const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
+    //     const worldLayer = map.createLayer("World", tileset, 0, 0);
+    //     const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
 
-    // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
-    // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
-    const spawnPoint = map.findObject(
-      "Objects",
-      (obj) => obj.name === "Spawn Point"
-    );
+    //     worldLayer.setCollisionByProperty({ collides: true });
+
+    //     // By default, everything gets depth sorted on the screen in the order we created things. Here, we
+    //     // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
+    //     // Higher depths will sit on top of lower depth objects.
+    //     aboveLayer.setDepth(10);
+
+    //     // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
+    //     // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
+    //     const spawnPoint = map.findObject(
+    //       "Objects",
+    //       (obj) => obj.name === "Spawn Point"
+    //     );
+    // //end 1
+
+    // //2
+    // const tileset = map.addTilesetImage("64x64dot", "tiles");
+
+    // const aboveLayer = map.createLayer("Tile Layer 1", tileset, 0, 0);
+    // aboveLayer.setDepth(10);
+    // // end 2
+
+    // const worldLayer = map.createLayer("World", tileset, 0, 0);
+    // const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
+
+    // worldLayer.setCollisionByProperty({ collides: true });
+
+    // const spawnPoint = map.findObject(
+    //   "Objects",
+    //   (obj) => obj.name === "Spawn Point"
+    // );
+    //ed
+
     //....... end TILEMAP ......................................................................
 
+    //grid test
+
+    // let group = this.add.group({ key: 'dot', repeat: 8000, setX: { x: 0, y: 0, stepX: 64 }  });
+
+    // Phaser.Actions.GridAlign(group.getChildren(), {
+    //   width: 100,
+    //   height: 200,
+    //   cellWidth: 64,
+    //   cellHeight: 64,
+    //   x: 16,
+    //   y: 16
+    // });
+
+    //end grid test
+    let circles = []
+    const graphics = this.add.graphics();
+
+    graphics.fillStyle(0xffffff);
+    graphics.fillRect(0, 0, 3000, 3000);
+
+    // var color = 0xffffff; // diff
+    const color = 0x000000; // mult
+    const alpha = 1;
+
+    // graphics.lineStyle(16, 0x000000, 1);
+    graphics.fillStyle(color, alpha);
+
+
+
+    const offset = 50
+    for (let i = 0; i < 1000; i += offset) {
+      for (let j = 0; j < 1000; j += offset) {
+        circles[i] = graphics.fillCircle(i, j, 2); // works
+      }
+    }
+
+      const mesh = this.add.mesh(200, 200, "cube");
+      mesh.addVerticesFromObj('cube_obj', 0.03);
+
+    //   mesh.addVerticesFromObj('cube_obj', 0.05);
+
+      mesh.panZ(7);
+      mesh.modelRotation.y += 0.5;
+
+      const rotateRate = 1;
+      const panRate = 1;
+      const zoomRate = 4;
+
+      this.input.on('pointermove', pointer => {
+
+        if (!pointer.isDown)
+        {
+            return;
+        }
+
+        if (!pointer.event.shiftKey)
+        {
+            mesh.modelRotation.y += pointer.velocity.x * (rotateRate / 800);
+            mesh.modelRotation.x += pointer.velocity.y * (rotateRate / 600);
+        }
+        else
+        {
+            mesh.panX(pointer.velocity.x * (panRate / 800));
+            mesh.panY(pointer.velocity.y * (panRate / 600));
+        }
+
+    });
+
+    this.input.on('wheel', (pointer, over, deltaX, deltaY, deltaZ) => {
+
+        mesh.panZ(deltaY * (zoomRate / 600));
+
+    });
+
+    // var models = [];
+    // var model;
+
+    // models.push(parseObj(this.cache.text.get('cube_obj')));
+
+    // model = models[0];
     //.......  PLAYER ..........................................................................
 
     //create player group
@@ -138,13 +280,19 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
     this.playerAvatarPlaceholder = "onlinePlayer";
+    // //1
+    // this.player = this.physics.add
+    //   .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
+    //   .setDepth(101);
+    // //end 1
 
+    //2
     this.player = this.physics.add
-      .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
+      .sprite(100, 100, this.playerAvatarPlaceholder)
       .setDepth(101);
+    //end 2
 
     //await this.loadAndCreatePlayerAvatar()
-
 
     this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
 
@@ -178,7 +326,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... onlinePlayers ...........................................................................
     // add onlineplayers group
     this.onlinePlayersGroup = this.add.group();
-
     //....... end onlinePlayers .......................................................................
 
 
@@ -189,18 +336,23 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.gameCam = this.cameras.main;
 
     //setBounds has to be set before follow, otherwise the camera doesn't follow!
-    this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
+    //     // 1 and 2
+    //     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    // // end 1 and 2
+    // grid
+    this.gameCam.setBounds(0, 0, 3200, 3200);
+    // end grid
     this.gameCam.startFollow(this.player);
 
-    // this.player.setCollideWorldBounds(true);
-    // this.physics.add.collider(
-    //   this.player,
-    //   this.location2,
-    //   this.enterLocation2_Scene,
-    //   null,
-    //   this
-    // );
+    //this.player.setCollideWorldBounds(true);
+
+    this.physics.add.collider(
+      this.player,
+      this.location2,
+      this.enterLocation2_Scene,
+      null,
+      this
+    );
 
     // Watch the player and worldLayer for collisions, for the duration of the scene:
     //-->off
@@ -296,7 +448,7 @@ export default class AZC1_Scene extends Phaser.Scene {
               this.playerShadow.setTexture(this.playerAvatarKey)
 
               //scale the player to 68px
-              const width = 68
+              const width = 128
               this.player.displayWidth = width
               this.player.scaleY = this.player.scaleX
 
@@ -360,8 +512,8 @@ export default class AZC1_Scene extends Phaser.Scene {
     //   .setShadow(1, 1, '#000000', 0);
 
     this.matchIdText.on("pointerup", () => {
-      this.onlinePlayers[0].setVisible(false); //works
-      this.onlinePlayers[0].destroy();
+      // this.onlinePlayers[0].setVisible(false); //works
+      // this.onlinePlayers[0].destroy();
     });
 
     // this.opponentsIdText = this.add
@@ -812,25 +964,28 @@ export default class AZC1_Scene extends Phaser.Scene {
 
   updateMovementOnlinePlayers() {
     if (manageSession.updateOnlinePlayers) {
-      for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
-        const movingKey = tempPlayer.getData("movingKey")
+      if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
+        for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+          let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
+          const movingKey = tempPlayer.getData("movingKey")
 
-        //get the key for the moving animation of the player, and play it
-        tempPlayer.anims.play(movingKey, true);
+          //get the key for the moving animation of the player, and play it
+          tempPlayer.anims.play(movingKey, true);
 
-        tempPlayer.x = manageSession.allConnectedUsers[i].posX;
-        tempPlayer.y = manageSession.allConnectedUsers[i].posY;
+          tempPlayer.x = manageSession.allConnectedUsers[i].posX;
+          tempPlayer.y = manageSession.allConnectedUsers[i].posY;
 
-        setTimeout(() => {
-          tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
-        }, 1000);
+          // //get the key for the stop animation of the player, and play it
+          setTimeout(() => {
+            tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
+          }, 500);
 
-        //get the key for the stop animation of the player, and play it
-        // tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
-        //   console.log("updating online players")
+          //get the key for the stop animation of the player, and play it
+          // tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
+          //   console.log("updating online players")
+        }
+        manageSession.updateOnlinePlayers = false;
       }
-      manageSession.updateOnlinePlayers = false;
     }
   }
 
