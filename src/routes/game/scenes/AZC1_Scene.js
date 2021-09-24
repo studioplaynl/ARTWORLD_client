@@ -56,9 +56,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
 
-    this.load.image("cube", "./assets/3d/kenney_01_color.png")
-    //this.load.obj('cube_obj', 'assets/3d/cube_color.obj');
-    this.load.obj('cube_obj', 'assets/3d/kenney_01_color.obj', 'assets/3d/kenney_01_color.mtl', true);
+    this.load.image("ball", "./assets/ball_grey.png")
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
@@ -80,11 +78,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // this.load.tilemapTiledJSON("map", "./assets/tilemaps/svg_ortho_200x200.json");
     // // end 2
 
-    // grid with dots
-    this.load.svg(
-      "dot",
-      "./assets/tilesets/64x64dot.svg", { scale: 2 })
-    //end grid with dots
+
 
     //....... end TILEMAP ......................................................................
 
@@ -103,6 +97,7 @@ export default class AZC1_Scene extends Phaser.Scene {
   }
 
   async create() {
+
     //timers
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
@@ -110,26 +105,24 @@ export default class AZC1_Scene extends Phaser.Scene {
     //.......  SOCKET ..........................................................................
     this.playerIdText = manageSession.user_id;
     //manageSession.createSocket();
-
     //....... end SOCKET .......................................................................
-
-    // // GRID instead of map .....................................................................
-    // var g1 = this.add.grid(0, 0, 3200, 3200, 32, 32, 0xFFFFFF)
-    // // end GRID ................................................................................
 
 
     //.......  LOCATIONS ......................................................................
-    // this.location2 = this.physics.add.staticGroup();
-
+    //this.location2 = this.physics.add.staticGroup();
+    this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.2).setDepth(50).refreshBody()
+    this.location2.setImmovable(true)
     // this.location2
     //   .create(
-    //     200,
-    //     200,
-    //     "cube"
+    //     400,
+    //     800,
+    //     "ball"
     //   )
     //   .setScale(0.2)
     //   .setDepth(50)
-    //   .refreshBody();
+    //   .refreshBody()
+
+    this.location2.body.setCircle(180, 16, 6)
 
     // this.location2
     // .create(
@@ -193,86 +186,32 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //....... end TILEMAP ......................................................................
 
-    //grid test
+    //fill in textures
+    // let background = this.add.rectangle(0, 0, 6000, 6000, 0xFFFFFF)
+    let cross = [
+      '.....',
+      '..1..',
+      '.111.',
+      '..1..',
+      '.....',
 
-    // let group = this.add.group({ key: 'dot', repeat: 8000, setX: { x: 0, y: 0, stepX: 64 }  });
+    ]
 
-    // Phaser.Actions.GridAlign(group.getChildren(), {
-    //   width: 100,
-    //   height: 200,
-    //   cellWidth: 64,
-    //   cellHeight: 64,
-    //   x: 16,
-    //   y: 16
-    // });
+    //generate the texture from the array
+    this.textures.generate('cross', { data: cross, pixelWidth: 2 });
 
-    //end grid test
-    let circles = []
-    const graphics = this.add.graphics();
-
-    graphics.fillStyle(0xffffff);
-    graphics.fillRect(0, 0, 3000, 3000);
-
-    // var color = 0xffffff; // diff
-    const color = 0x000000; // mult
-    const alpha = 1;
-
-    // graphics.lineStyle(16, 0x000000, 1);
-    graphics.fillStyle(color, alpha);
-
-
-
+    //display the texture on an image
+    const gridWidth = 4000
     const offset = 50
-    for (let i = 0; i < 1000; i += offset) {
-      for (let j = 0; j < 1000; j += offset) {
-        circles[i] = graphics.fillCircle(i, j, 2); // works
+
+    for (let i = 0; i < gridWidth; i += offset) {
+      for (let j = 0; j < gridWidth; j += offset) {
+        this.add.image(i, j, 'cross').setOrigin(0, 1);
       }
     }
 
-      const mesh = this.add.mesh(200, 200, "cube");
-      mesh.addVerticesFromObj('cube_obj', 0.03);
+    //end fill in textures
 
-    //   mesh.addVerticesFromObj('cube_obj', 0.05);
-
-      mesh.panZ(7);
-      mesh.modelRotation.y += 0.5;
-
-      const rotateRate = 1;
-      const panRate = 1;
-      const zoomRate = 4;
-
-      this.input.on('pointermove', pointer => {
-
-        if (!pointer.isDown)
-        {
-            return;
-        }
-
-        if (!pointer.event.shiftKey)
-        {
-            mesh.modelRotation.y += pointer.velocity.x * (rotateRate / 800);
-            mesh.modelRotation.x += pointer.velocity.y * (rotateRate / 600);
-        }
-        else
-        {
-            mesh.panX(pointer.velocity.x * (panRate / 800));
-            mesh.panY(pointer.velocity.y * (panRate / 600));
-        }
-
-    });
-
-    this.input.on('wheel', (pointer, over, deltaX, deltaY, deltaZ) => {
-
-        mesh.panZ(deltaY * (zoomRate / 600));
-
-    });
-
-    // var models = [];
-    // var model;
-
-    // models.push(parseObj(this.cache.text.get('cube_obj')));
-
-    // model = models[0];
     //.......  PLAYER ..........................................................................
 
     //create player group
@@ -288,7 +227,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //2
     this.player = this.physics.add
-      .sprite(100, 100, this.playerAvatarPlaceholder)
+      .sprite(0, 0, this.playerAvatarPlaceholder)
       .setDepth(101);
     //end 2
 
@@ -333,7 +272,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... PLAYER VS WORLD ..........................................................................
     this.onlinePlayersGroup = this.add.group(); //group onlinePlayers
 
-    this.gameCam = this.cameras.main;
+    this.gameCam = this.cameras.main.setBackgroundColor(0xFFFFFF);
 
     //setBounds has to be set before follow, otherwise the camera doesn't follow!
     //     // 1 and 2
@@ -346,13 +285,14 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //this.player.setCollideWorldBounds(true);
 
-    this.physics.add.collider(
+    this.physics.add.overlap(
       this.player,
       this.location2,
-      this.enterLocation2_Scene,
+      this.enterLocation2Scene,
       null,
       this
     );
+
 
     // Watch the player and worldLayer for collisions, for the duration of the scene:
     //-->off
@@ -370,6 +310,10 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
   } // end create
+
+  starOverlap() {
+    console.log("hit detected!")
+  }
 
   loadAndCreatePlayerAvatar() {
     if (manageSession.createPlayer) {
@@ -445,6 +389,8 @@ export default class AZC1_Scene extends Phaser.Scene {
               // texture loaded so use instead of the placeholder
               this.player.setTexture(this.playerAvatarKey)
 
+              
+
               this.playerShadow.setTexture(this.playerAvatarKey)
 
               //scale the player to 68px
@@ -454,6 +400,10 @@ export default class AZC1_Scene extends Phaser.Scene {
 
               this.playerShadow.displayWidth = width
               this.playerShadow.scaleY = this.playerShadow.scaleX
+
+              //set the collision body
+              const portionWidth = width/3
+              this.player.body.setCircle(portionWidth, portionWidth/4 , portionWidth/4)
 
               console.log("player avatar has loaded ")
               console.log(this.playerAvatarKey)
@@ -645,14 +595,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     //   console.dir(event);
 
     // }, this);
-  }
-
-  add(arr, name) {
-    const { length } = arr;
-    const id = length + 1;
-    const found = arr.some(el => el.username === name);
-    if (!found) arr.push({ id, username: name });
-    return arr;
   }
 
   createOnlinePlayers() {
@@ -883,6 +825,7 @@ export default class AZC1_Scene extends Phaser.Scene {
   } //createRemotePlayer
 
   enterLocation2Scene(player) {
+   
     this.physics.pause();
     this.player.setTint(0xff0000);
     this.scene.start("Location2_Scene");
