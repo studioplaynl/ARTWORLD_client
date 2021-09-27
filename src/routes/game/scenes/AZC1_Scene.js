@@ -256,6 +256,9 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     rt2.erase(rt, 0, 0)
 
+    rt2.x = 400
+    rt2.y = 600
+    
     //end fill in textures
 
     //.......  PLAYER ..........................................................................
