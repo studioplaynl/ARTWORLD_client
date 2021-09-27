@@ -249,9 +249,12 @@ export default class AZC1_Scene extends Phaser.Scene {
     rt.draw(rectangle);
     rt2.draw(rectangle);
 
-    let eraser = this.add.circle(0, 0, 80, 0x000000);
-   
-    rt.erase(eraser, 260, 160);
+    let eraser = this.add.circle(0, 0, 190, 0x000000);
+    eraser.setVisible(false);
+
+    rt.erase(eraser, 200, 200);
+
+    rt2.erase(rt, 0, 0)
 
     //end fill in textures
 
