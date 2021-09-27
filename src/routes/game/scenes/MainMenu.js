@@ -17,6 +17,7 @@ export default class MainMenu extends Phaser.Scene {
     this.load.image('artworld', 'assets/artworld.png')
   }
   async create() {
+    
     //...... SESSION .............................................................................................
     //console.log("Session: ");
     manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));

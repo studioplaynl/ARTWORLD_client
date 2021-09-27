@@ -25,6 +25,8 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.playerAvatarPlaceholder = "playerAvatar";
     this.playerAvatarKey = ""
     this.createdPlayer = false;
+    this.playerMovingKey = "moving";
+    this.playerStopKey = "stop";
 
     this.cursors;
     this.pointer;
@@ -53,17 +55,31 @@ export default class AZC1_Scene extends Phaser.Scene {
     );
 
     this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
+
+    this.load.image("ball", "./assets/ball_grey.png")
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
-    this.load.image(
-      "tiles",
-      "./assets/tilesets/tuxmon-sample-32px-extruded.png"
-    );
-    this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
+    //  //1
+    //   this.load.image(
+    //     "tiles",
+    //     "./assets/tilesets/tuxmon-sample-32px-extruded.png"
+    //   );
+
+    //   this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
+    //   //end 1
+
+    // // 2
+    // this.load.svg(
+    //   "tiles",
+    //   "./assets/tilesets/64x64dot.svg"
+    // );
+
+    // this.load.tilemapTiledJSON("map", "./assets/tilemaps/svg_ortho_200x200.json");
+    // // end 2
 
 
-    
+
     //....... end TILEMAP ......................................................................
 
     // //load events
@@ -81,6 +97,7 @@ export default class AZC1_Scene extends Phaser.Scene {
   }
 
   async create() {
+
     //timers
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
@@ -88,77 +105,135 @@ export default class AZC1_Scene extends Phaser.Scene {
     //.......  SOCKET ..........................................................................
     this.playerIdText = manageSession.user_id;
     //manageSession.createSocket();
-
     //....... end SOCKET .......................................................................
 
-    this.add.graphics()
 
     //.......  LOCATIONS ......................................................................
-    // this.location2 = this.physics.add.staticGroup();
+    //this.location2 = this.physics.add.staticGroup();
+    this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.2).setDepth(50).refreshBody()
+    this.location2.setImmovable(true)
     // this.location2
     //   .create(
-    //     this.game.config.width - 100,
-    //     this.game.config.height - 200,
-    //     "bomb"
+    //     400,
+    //     800,
+    //     "ball"
     //   )
-    //   .setScale(3)
-    //   .refreshBody();
+    //   .setScale(0.2)
+    //   .setDepth(50)
+    //   .refreshBody()
+
+    this.location2.body.setCircle(180, 16, 6)
+
+    // this.location2
+    // .create(
+    //   this.game.config.width - 100,
+    //   this.game.config.height - 200,
+    //   "cube"
+    // )
+    // .setScale(0.5)
+    // .refreshBody();
     //.......  end LOCATIONS ......................................................................
 
     //....... TILEMAP .............................................................................
-    const map = this.make.tilemap({ key: "map" });
+    // // 2
+    // const map = this.make.tilemap({ key: "map" });
+    // // end 2
 
     // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
     // Phaser's cache (i.e. the name you used in preload)
-    const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
+    //     //1
+    //      const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
 
-    // Parameters: layer name (or index) from Tiled, tileset, x, y
-    const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
-    const worldLayer = map.createLayer("World", tileset, 0, 0);
-    const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
 
-    worldLayer.setCollisionByProperty({ collides: true });
+    //     // Parameters: layer name (or index) from Tiled, tileset, x, y
 
-    // By default, everything gets depth sorted on the screen in the order we created things. Here, we
-    // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
-    // Higher depths will sit on top of lower depth objects.
-    aboveLayer.setDepth(10);
+    //     const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
+    //     const worldLayer = map.createLayer("World", tileset, 0, 0);
+    //     const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
 
-    // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
-    // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
-    const spawnPoint = map.findObject(
-      "Objects",
-      (obj) => obj.name === "Spawn Point"
-    );
+    //     worldLayer.setCollisionByProperty({ collides: true });
+
+    //     // By default, everything gets depth sorted on the screen in the order we created things. Here, we
+    //     // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
+    //     // Higher depths will sit on top of lower depth objects.
+    //     aboveLayer.setDepth(10);
+
+    //     // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
+    //     // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
+    //     const spawnPoint = map.findObject(
+    //       "Objects",
+    //       (obj) => obj.name === "Spawn Point"
+    //     );
+    // //end 1
+
+    // //2
+    // const tileset = map.addTilesetImage("64x64dot", "tiles");
+
+    // const aboveLayer = map.createLayer("Tile Layer 1", tileset, 0, 0);
+    // aboveLayer.setDepth(10);
+    // // end 2
+
+    // const worldLayer = map.createLayer("World", tileset, 0, 0);
+    // const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
+
+    // worldLayer.setCollisionByProperty({ collides: true });
+
+    // const spawnPoint = map.findObject(
+    //   "Objects",
+    //   (obj) => obj.name === "Spawn Point"
+    // );
+    //ed
+
     //....... end TILEMAP ......................................................................
 
+    //fill in textures
+    // let background = this.add.rectangle(0, 0, 6000, 6000, 0xFFFFFF)
+    let cross = [
+      '.....',
+      '..1..',
+      '.111.',
+      '..1..',
+      '.....',
+
+    ]
+
+    //generate the texture from the array
+    this.textures.generate('cross', { data: cross, pixelWidth: 2 });
+
+    //display the texture on an image
+    const gridWidth = 4000
+    const offset = 50
+
+    for (let i = 0; i < gridWidth; i += offset) {
+      for (let j = 0; j < gridWidth; j += offset) {
+        this.add.image(i, j, 'cross').setOrigin(0, 1);
+      }
+    }
+
+    //end fill in textures
+
     //.......  PLAYER ..........................................................................
-    // const animationSetup = {
-    //   key: "playerAnimation",
-    //   frames: this.anims.generateFrameNumbers("move", {
-    //     start: 0,
-    //     end: 9,
-    //     first: 0,
-    //   }),
-    //   frameRate: 15,
-    //   repeat: -1,
-    // };
-    // this.anims.create(animationSetup);
 
     //create player group
     this.playerGroup = this.add.group();
 
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
     this.playerAvatarPlaceholder = "onlinePlayer";
+    // //1
+    // this.player = this.physics.add
+    //   .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
+    //   .setDepth(101);
+    // //end 1
 
+    //2
     this.player = this.physics.add
-      .image(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
+      .sprite(0, 0, this.playerAvatarPlaceholder)
       .setDepth(101);
+    //end 2
 
     //await this.loadAndCreatePlayerAvatar()
 
-
-    this.playerShadow = this.add.image(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
+    this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
 
     // this.playerShadow.anchor.set(0.5);
     this.playerShadow.setTint(0x000000);
@@ -171,23 +246,25 @@ export default class AZC1_Scene extends Phaser.Scene {
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
     //  Our player animations, turning, walking left and walking right.
-    // this.anims.create({
-    //   key: "moving",
-    //   frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
-    //   frameRate: 20,
-    //   repeat: -1,
-    // });
+    this.playerMovingKey = "moving"
+    this.playerStopKey = "stop"
 
-    // this.anims.create({
-    //   key: "stop",
-    //   frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
-    // });
+    this.anims.create({
+      key: this.playerMovingKey,
+      frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
+      frameRate: 20,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: this.playerStopKey,
+      frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
+    });
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
     // add onlineplayers group
     this.onlinePlayersGroup = this.add.group();
-
     //....... end onlinePlayers .......................................................................
 
 
@@ -195,21 +272,27 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... PLAYER VS WORLD ..........................................................................
     this.onlinePlayersGroup = this.add.group(); //group onlinePlayers
 
-    this.gameCam = this.cameras.main;
+    this.gameCam = this.cameras.main.setBackgroundColor(0xFFFFFF);
 
     //setBounds has to be set before follow, otherwise the camera doesn't follow!
-    this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
+    //     // 1 and 2
+    //     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    // // end 1 and 2
+    // grid
+    this.gameCam.setBounds(0, 0, 3200, 3200);
+    // end grid
     this.gameCam.startFollow(this.player);
 
-    // this.player.setCollideWorldBounds(true);
-    // this.physics.add.collider(
-    //   this.player,
-    //   this.location2,
-    //   this.enterLocation2_Scene,
-    //   null,
-    //   this
-    // );
+    //this.player.setCollideWorldBounds(true);
+
+    this.physics.add.overlap(
+      this.player,
+      this.location2,
+      this.enterLocation2Scene,
+      null,
+      this
+    );
+
 
     // Watch the player and worldLayer for collisions, for the duration of the scene:
     //-->off
@@ -227,6 +310,10 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
   } // end create
+
+  starOverlap() {
+    console.log("hit detected!")
+  }
 
   loadAndCreatePlayerAvatar() {
     if (manageSession.createPlayer) {
@@ -246,7 +333,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       console.log("this.textures.exists(this.playerAvatarKey): ")
       console.log(this.textures.exists(this.playerAvatarKey))
 
-      //check if url is not empty for some reason
+      //check if url is not empty for some reason, returns so that previous image is kept
       if (!this.textures.exists(this.playerAvatarKey)) {
         if (manageSession.playerObjectSelf.url === "") {
           console.log("avatar url is empty")
@@ -259,51 +346,77 @@ export default class AZC1_Scene extends Phaser.Scene {
           console.log(" loading: manageSession.playerObjectSelf.url: ")
           console.log(manageSession.playerObjectSelf.url)
 
-          this.load.image(
+          this.load.spritesheet(
             this.playerAvatarKey,
-            manageSession.playerObjectSelf.url
+            manageSession.playerObjectSelf.url, { frameWidth: 128, frameHeight: 128 }
           );
 
           this.load.once(Phaser.Loader.Events.COMPLETE, () => {
             console.log("loadAndCreatePlayerAvatar complete")
             if (this.textures.exists(this.playerAvatarKey)) {
+
+              const avatar = this.textures.get(this.playerAvatarKey)
+              const avatarWidth = avatar.frames.__BASE.width
+              const avatarHeight = avatar.frames.__BASE.height
+
+              const avatarFrames = Math.round(avatarWidth / avatarHeight)
+              console.log(avatarFrames)
+
+              //make an animation if the image is wider than tall
+              if (avatarFrames > 1) {
+                //.. animation for the player avatar ............................................
+                //works
+                this.playerMovingKey = "moving" + "_" + this.playerAvatarKey;
+                this.playerStopKey = "stop" + "_" + this.playerAvatarKey;
+
+                this.anims.create({
+                  key: this.playerMovingKey,
+                  frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: avatarFrames - 1 }),
+                  frameRate: (avatarFrames + 2) * 2,
+                  repeat: -1,
+                  yoyo: true
+                });
+
+                //works
+                this.anims.create({
+                  key: this.playerStopKey,
+                  frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: 0 }),
+                });
+
+                //.. end animation for the player avatar ............................................
+              }
+
               // texture loaded so use instead of the placeholder
               this.player.setTexture(this.playerAvatarKey)
+
+              
+
               this.playerShadow.setTexture(this.playerAvatarKey)
 
               //scale the player to 68px
-              const width = 68
+              const width = 128
               this.player.displayWidth = width
               this.player.scaleY = this.player.scaleX
 
               this.playerShadow.displayWidth = width
               this.playerShadow.scaleY = this.playerShadow.scaleX
 
+              //set the collision body
+              const portionWidth = width/3
+              this.player.body.setCircle(portionWidth, portionWidth/4 , portionWidth/4)
+
               console.log("player avatar has loaded ")
               console.log(this.playerAvatarKey)
 
               this.createdPlayer = true;
               console.log("this.createdPlayer = true;")
-            }
 
+            }// if (this.textures.exists(this.playerAvatarKey)) 
           })
         }
 
         this.load.start(); // load the image in memory
         console.log("this.load.start();");
-
-        // this.anims.create({
-        //   key: "moving_" + manageSession.allConnectedUsers[i].user_id,
-        //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 0, end: 8 }),
-        //   frameRate: 20,
-        //   repeat: -1,
-        // });
-
-        // this.anims.create({
-        //   key: "stop_" + manageSession.allConnectedUsers[i].user_id,
-        //   frames: this.anims.generateFrameNumbers(this.avatarName[i], { start: 4, end: 4 }),
-        // });
-
 
       }
 
@@ -325,7 +438,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.matchIdText = this.add
       .text(
         this.headerText.x,
-        this.headerText.y ,
+        this.headerText.y,
         "user_id: " + this.playerIdText,
         {
           fontFamily: "Arial",
@@ -349,8 +462,8 @@ export default class AZC1_Scene extends Phaser.Scene {
     //   .setShadow(1, 1, '#000000', 0);
 
     this.matchIdText.on("pointerup", () => {
-      this.onlinePlayers[0].setVisible(false); //works
-      this.onlinePlayers[0].destroy();
+      // this.onlinePlayers[0].setVisible(false); //works
+      // this.onlinePlayers[0].destroy();
     });
 
     // this.opponentsIdText = this.add
@@ -484,14 +597,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     // }, this);
   }
 
-  add(arr, name) {
-    const { length } = arr;
-    const id = length + 1;
-    const found = arr.some(el => el.username === name);
-    if (!found) arr.push({ id, username: name });
-    return arr;
-  }
-
   createOnlinePlayers() {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
@@ -568,12 +673,50 @@ export default class AZC1_Scene extends Phaser.Scene {
           //a new user
           this.tempAvatarName = element.user_id + "_" + element.avatar_time;
 
-          this.load.image(this.tempAvatarName, element.avatar_url)
+          this.load.spritesheet(this.tempAvatarName, element.avatar_url, { frameWidth: 128, frameHeight: 128 })
 
           console.log("loading: ")
           console.log(this.tempAvatarName)
 
-          element = this.add.image(element.posX, element.posY, this.playerAvatarPlaceholder)
+          //.....  create animation online player ...................................................................................................
+
+          const avatar = this.textures.get(this.tempAvatarName)
+          const avatarWidth = avatar.frames.__BASE.width
+          const avatarHeight = avatar.frames.__BASE.height
+
+          const avatarFrames = Math.round(avatarWidth / avatarHeight)
+          console.log(avatarFrames)
+
+          if (avatarFrames > 1) {
+
+            // set names for the moving and stop animations
+
+            element.setData("movingKey", "moving" + "_" + this.tempAvatarName);
+            element.setData("stopKey", "stop" + "_" + this.tempAvatarName);
+
+            //create animation for moving
+            this.anims.create({
+              key: element.getData("movingKey"),
+              frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
+              frameRate: (avatarFrames + 2) * 2,
+              repeat: 1,
+              // yoyo: true
+            });
+
+            //create animation for stop
+            this.anims.create({
+              key: element.getData("stopKey"),
+              frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
+            });
+
+
+          }//if (avatarFrames > 1) {
+
+          //..... end create animation online player ...................................................................................................
+
+
+
+          element = this.add.sprite(element.posX, element.posY, this.playerAvatarPlaceholder)
             .setDepth(90)
 
           Object.assign(element, elementCopy); //add all data from elementCopy element
@@ -604,32 +747,60 @@ export default class AZC1_Scene extends Phaser.Scene {
 
             console.log("avatar key: ")
             console.log(this.tempAvatarName)
+
             this.onlinePlayers[i].setTexture(this.tempAvatarName)
 
-            //scale the player to 68pix
-            this.onlinePlayers[i].displayWidth = 68
-            this.onlinePlayers[i].scaleY = this.onlinePlayers[i].scaleX
+            const avatar = this.textures.get(this.tempAvatarName)
+            const avatarWidth = avatar.frames.__BASE.width
+            const avatarHeight = avatar.frames.__BASE.height
 
-            //make all allConnectedUsers visible
-            manageSession.allConnectedUsers.forEach((e, i) => {
-              // const playerID = player.user_id
-              // const found = this.onlinePlayers.some(user => user.user_id === playerID)
+            const avatarFrames = Math.round(avatarWidth / avatarHeight)
+            console.log(avatarFrames)
 
-              var index = this.onlinePlayers.findIndex(function (person) {
-                return person.user_id == manageSession.allConnectedUsers[i].user_id
+            if (avatarFrames > 1) {
+
+              // set names for the moving and stop animations
+
+              this.onlinePlayers[i].setData("movingKey", "moving" + "_" + this.tempAvatarName);
+              this.onlinePlayers[i].setData("stopKey", "stop" + "_" + this.tempAvatarName);
+
+              //create animation for moving
+              this.anims.create({
+                key: this.onlinePlayers[i].getData("movingKey"),
+                frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
+                frameRate: (avatarFrames + 2) * 2,
+                repeat: -1,
+                yoyo: true
               });
-              this.onlinePlayers[index].active = true
-              this.onlinePlayers[index].visible = true
-              console.log("reactiveUser: ")
-              console.log(this.onlinePlayers[index])
-              // if (found) newOnlinePlayers.push(player)
-              // console.log(found)
 
-              // player.active = true
-              // player.visible = true
-            })
-          }
-        })
+              //create animation for stop
+              this.anims.create({
+                key: this.onlinePlayers[i].getData("stopKey"),
+                frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
+              });
+
+              //make all allConnectedUsers visible
+              manageSession.allConnectedUsers.forEach((e, i) => {
+                // const playerID = player.user_id
+                // const found = this.onlinePlayers.some(user => user.user_id === playerID)
+
+                var index = this.onlinePlayers.findIndex(function (person) {
+                  return person.user_id == manageSession.allConnectedUsers[i].user_id
+                });
+                this.onlinePlayers[index].active = true
+                this.onlinePlayers[index].visible = true
+                console.log("reactiveUser: ")
+                console.log(this.onlinePlayers[index])
+                // if (found) newOnlinePlayers.push(player)
+                // console.log(found)
+
+                // player.active = true
+                // player.visible = true
+              })
+            }//if (avatarFrames > 1) {
+          }//for (let i = 0; i < this.onlinePlayers.length; i++)
+        })//this.load.on('filecomplete', () => 
+
 
         //make all allConnectedUsers visible
         manageSession.allConnectedUsers.forEach((e, i) => {
@@ -654,6 +825,7 @@ export default class AZC1_Scene extends Phaser.Scene {
   } //createRemotePlayer
 
   enterLocation2Scene(player) {
+   
     this.physics.pause();
     this.player.setTint(0xff0000);
     this.scene.start("Location2_Scene");
@@ -735,14 +907,28 @@ export default class AZC1_Scene extends Phaser.Scene {
 
   updateMovementOnlinePlayers() {
     if (manageSession.updateOnlinePlayers) {
-      for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-        let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
-        tempPlayer.x = manageSession.allConnectedUsers[i].posX;
-        tempPlayer.y = manageSession.allConnectedUsers[i].posY;
+      if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
+        for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
+          let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
+          const movingKey = tempPlayer.getData("movingKey")
 
-        //   console.log("updating online players")
+          //get the key for the moving animation of the player, and play it
+          tempPlayer.anims.play(movingKey, true);
+
+          tempPlayer.x = manageSession.allConnectedUsers[i].posX;
+          tempPlayer.y = manageSession.allConnectedUsers[i].posY;
+
+          // //get the key for the stop animation of the player, and play it
+          setTimeout(() => {
+            tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
+          }, 500);
+
+          //get the key for the stop animation of the player, and play it
+          // tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
+          //   console.log("updating online players")
+        }
+        manageSession.updateOnlinePlayers = false;
       }
-      manageSession.updateOnlinePlayers = false;
     }
   }
 
@@ -787,9 +973,11 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //....... moving ANIMATION ......................................................................................
     if (this.arrowDown || this.playerIsMovingByClicking) {
-      // this.player.anims.play("moving", true);
+      this.player.anims.play(this.playerMovingKey, true);
+      this.playerShadow.anims.play(this.playerMovingKey, true);
     } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
-      // this.player.anims.play("stop", true);
+      this.player.anims.play(this.playerStopKey, true);
+      this.playerShadow.anims.play(this.playerStopKey, true);
     }
     //....... end moving ANIMATION .................................................................................
 

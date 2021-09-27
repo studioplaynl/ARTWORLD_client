@@ -86,12 +86,15 @@ class manageSession {
           //console.log("test");
           user.posX = data.posX;
           user.posY = data.posY;
+
+          //this could be refined to update specific online player?
+          this.updateOnlinePlayers = true
         }
       }
       // console.log(this.allConnectedUsers);
       // var newPos = this.allConnectedUsers;
       // this.allConnectedUsers = newPos;
-      this.updateOnlinePlayers = true
+     
     };
 
 

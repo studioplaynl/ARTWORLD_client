@@ -16,7 +16,8 @@
       domCreateContainer: false,
       width: CONFIG.WIDTH,
       height: CONFIG.HEIGHT,
-      backgroundColor: "#000000",
+      // backgroundColor: "#000000",
+      // transparent: true,
       physics: {
         default: "arcade",
         arcade: {
