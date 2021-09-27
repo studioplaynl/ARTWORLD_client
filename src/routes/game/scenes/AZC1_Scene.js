@@ -188,6 +188,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //fill in textures
     // let background = this.add.rectangle(0, 0, 6000, 6000, 0xFFFFFF)
+
     let cross = [
       '.....',
       '..1..',
@@ -209,6 +210,48 @@ export default class AZC1_Scene extends Phaser.Scene {
         this.add.image(i, j, 'cross').setOrigin(0, 1);
       }
     }
+
+    let graphics = this.add.graphics();
+
+    graphics.fillStyle(0x0000ff, 1);
+
+    graphics.fillCircle(800, 300, 200);
+
+    for (let i = 0; i < 250; i += 60) {
+      graphics.lineStyle(5, 0xFF00FF, 1.0);
+      graphics.beginPath();
+      graphics.moveTo(800, 200 + i);
+      graphics.lineTo(1200, 200 + i);
+      graphics.closePath();
+      graphics.strokePath();
+    }
+
+
+    for (let i = 0; i < 250; i += 60) {
+      graphics.lineStyle(5, 0xFF00FF, 1.0);
+      graphics.beginPath();
+      graphics.moveTo(900 + i, 150);
+      graphics.lineTo(900 + i, 550);
+      graphics.closePath();
+      graphics.strokePath();
+    }
+
+  
+
+    let rectangle = this.add.graphics();
+    rectangle.setVisible(false);
+    rectangle.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
+    rectangle.fillRect(0, 0, 400, 400);
+
+    let rt = this.add.renderTexture(200, 100, 600, 600);
+    let rt2 = this.add.renderTexture(100, 600, 600, 600);
+
+    rt.draw(rectangle);
+    rt2.draw(rectangle);
+
+    let eraser = this.add.circle(0, 0, 80, 0x000000);
+   
+    rt.erase(eraser, 260, 160);
 
     //end fill in textures
 
@@ -389,7 +432,7 @@ export default class AZC1_Scene extends Phaser.Scene {
               // texture loaded so use instead of the placeholder
               this.player.setTexture(this.playerAvatarKey)
 
-              
+
 
               this.playerShadow.setTexture(this.playerAvatarKey)
 
@@ -402,8 +445,8 @@ export default class AZC1_Scene extends Phaser.Scene {
               this.playerShadow.scaleY = this.playerShadow.scaleX
 
               //set the collision body
-              const portionWidth = width/3
-              this.player.body.setCircle(portionWidth, portionWidth/4 , portionWidth/4)
+              const portionWidth = width / 3
+              this.player.body.setCircle(portionWidth, portionWidth / 4, portionWidth / 4)
 
               console.log("player avatar has loaded ")
               console.log(this.playerAvatarKey)
@@ -825,7 +868,7 @@ export default class AZC1_Scene extends Phaser.Scene {
   } //createRemotePlayer
 
   enterLocation2Scene(player) {
-   
+
     this.physics.pause();
     this.player.setTint(0xff0000);
     this.scene.start("Location2_Scene");
