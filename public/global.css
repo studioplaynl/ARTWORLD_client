@@ -120,3 +120,7 @@ margin: 0 auto;
 .iconWidth div {
 margin: 0 auto;
 }
+
+.icon > svg {
+    height: 60%;
+  }
