@@ -2,7 +2,6 @@
   //phaser
   import { onMount } from "svelte";
   import MainMenu from "./scenes/MainMenu";
-
   import AZC1_Scene from "./scenes/AZC1_Scene";
   import Location2_Scene from "./scenes/Location2_Scene";
   //import Phaser from "phaser";

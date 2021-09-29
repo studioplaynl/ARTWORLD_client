@@ -108,32 +108,248 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... end SOCKET .......................................................................
 
 
-    //.......  LOCATIONS ......................................................................
+    //this.generateTileMap()
+    this.generateBackground()
+
+    //.......  PLAYER ..........................................................................
+
+    //create player group
+    this.playerGroup = this.add.group();
+
+
+    //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
+    this.playerAvatarPlaceholder = "onlinePlayer";
+    // //1
+    // this.player = this.physics.add
+    //   .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
+    //   .setDepth(101);
+    // //end 1
+
+    //2
+    this.player = this.physics.add
+      .sprite(100, 100, this.playerAvatarPlaceholder)
+      .setDepth(101);
+
+    this.player.body.onOverlap = true;
+    //end 2
+
+    //await this.loadAndCreatePlayerAvatar()
+
+    this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
+
+    // this.playerShadow.anchor.set(0.5);
+    this.playerShadow.setTint(0x000000);
+    this.playerShadow.alpha = 0.2;
+
+
+    this.playerGroup.add(this.player);
+    this.playerGroup.add(this.playerShadow);
+
+    //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
+
+    //  Our player animations, turning, walking left and walking right.
+    this.playerMovingKey = "moving"
+    this.playerStopKey = "stop"
+
+    this.anims.create({
+      key: this.playerMovingKey,
+      frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
+      frameRate: 20,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: this.playerStopKey,
+      frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
+    });
+    //.......  end PLAYER .............................................................................
+
+    //....... onlinePlayers ...........................................................................
+    // add onlineplayers group
+    this.onlinePlayersGroup = this.add.group();
+    //....... end onlinePlayers .......................................................................
+
+
+
+    //....... PLAYER VS WORLD ..........................................................................
+    this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
+
+    //setBounds has to be set before follow, otherwise the camera doesn't follow!
+    //     // 1 and 2
+    //     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    // // end 1 and 2
+    // grid
+    this.gameCam.setBounds(0, 0, 3200, 3200);
+    // end grid
+    this.gameCam.startFollow(this.player);
+
+    //this.player.setCollideWorldBounds(true);
+
+    // Watch the player and worldLayer for collisions, for the duration of the scene:
+    //-->off
+    //this.physics.add.collider(this.player, worldLayer);
+    //<--off
+    //......... end PLAYER VS WORLD ......................................................................
+
+    //......... INPUT ....................................................................................
+    this.cursors = this.input.keyboard.createCursorKeys();
+    //.......... end INPUT ................................................................................
+
+    this.generateLocations()
+
+    this.physics.add.overlap(this.player, this.location2, this.confirmEnterLocation, null, this);
+
+    //......... DEBUG FUNCTIONS ............................................................................
+    this.debugFunctions();
+    this.createDebugText();
+    //......... end DEBUG FUNCTIONS .........................................................................
+  } // end create
+
+  generateLocations() {
     //this.location2 = this.physics.add.staticGroup();
-    this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.2).setDepth(50).refreshBody()
+    this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
+    this.location2.body.setCircle(190, 12, 12)
     this.location2.setImmovable(true)
-    // this.location2
-    //   .create(
-    //     400,
-    //     800,
-    //     "ball"
-    //   )
-    //   .setScale(0.2)
-    //   .setDepth(50)
-    //   .refreshBody()
 
-    this.location2.body.setCircle(180, 16, 6)
+    this.location2.setData("entered", false)
 
-    // this.location2
-    // .create(
-    //   this.game.config.width - 100,
-    //   this.game.config.height - 200,
-    //   "cube"
-    // )
-    // .setScale(0.5)
-    // .refreshBody();
-    //.......  end LOCATIONS ......................................................................
+    const mainWidth = 200
+    const mainHeight = 150
 
+    this.location2DialogBoxText = this.add.text(mainWidth-60, mainHeight-30, 'OK!', { fill: '#000' })
+    this.location2DialogBoxText.setInteractive() //new Phaser.Geom.Rectangle(0, 0, this.location2DialogBox.width, this.location2DialogBox.height), Phaser.Geom.Rectangle.Contains
+
+    //  Input Event listeners
+    this.location2DialogBoxText.on('pointerdown', () => { this.enterLocation2Scene() });
+    this.location2DialogBox = this.add.graphics();
+    this.location2DialogBox.fillStyle(0xfffff00, 0.4)
+    this.location2DialogBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
+      
+
+
+
+    // this.location2DialogBoxText.input.enabled = false;
+    this.location2DialogBoxContainer = this.add.container(this.location2.x-(mainWidth/2), this.location2.y-(mainHeight/2), [this.location2DialogBox, this.location2DialogBoxText]).setDepth(900)
+    
+    this.location2DialogBoxContainer.setVisible(false)
+  }
+
+  
+
+  confirmEnterLocation(player, location, show) {
+    //console.log("player over location2")
+    //var entered = this.location2.getData("entered")
+
+    if (!this.location2.getData("entered")) {
+      //start event
+      show = false
+
+      this.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], callbackScope: this, loop: false })
+
+      //show the box
+      show = true
+      this.enterLocationDialogBox(player, location, show)
+      this.location2.setData("entered", true)
+    }
+  }
+
+  enterLocationDialogBox(player, location, show) {
+    if (show) {
+
+      // this.location2DialogBoxText.input.enabled = show;
+
+      this.location2DialogBoxContainer.setVisible(show)
+     
+    } else {
+
+      // this.location2DialogBoxText.input.enabled = show;
+
+      this.location2DialogBoxContainer.setVisible(show)
+      this.location2.setData("entered", show)
+    }
+  }
+
+  enterLocation2Scene() {
+    this.physics.pause();
+    this.player.setTint(0xff0000);
+    this.scene.start("Location2_Scene");
+  }
+
+  generateBackground() {
+    //fill in textures
+    let background = this.add.rectangle(0, 0, 6000, 6000, 0xFFFFFF)
+
+    let cross = [
+      '.....',
+      '..1..',
+      '.111.',
+      '..1..',
+      '.....',
+
+    ]
+
+    //generate the texture from the array
+    this.textures.generate('cross', { data: cross, pixelWidth: 3 });
+
+    //display the texture on an image
+    const gridWidth = 4000
+    const offset = 50
+
+    for (let i = 0; i < gridWidth; i += offset) {
+      for (let j = 0; j < gridWidth; j += offset) {
+        this.add.image(i, j, 'cross').setOrigin(0, 1);
+      }
+    }
+
+    let graphics = this.add.graphics();
+
+    graphics.fillStyle(0x0000ff, 1);
+
+    graphics.fillCircle(800, 300, 200);
+
+    for (let i = 0; i < 250; i += 60) {
+      graphics.lineStyle(5, 0xFF00FF, 1.0);
+      graphics.beginPath();
+      graphics.moveTo(800, 200 + i);
+      graphics.lineTo(1200, 200 + i);
+      graphics.closePath();
+      graphics.strokePath();
+    }
+
+    for (let i = 0; i < 250; i += 60) {
+      graphics.lineStyle(5, 0xFF00FF, 1.0);
+      graphics.beginPath();
+      graphics.moveTo(900 + i, 150);
+      graphics.lineTo(900 + i, 550);
+      graphics.closePath();
+      graphics.strokePath();
+    }
+
+    let rectangle = this.add.graphics();
+    rectangle.setVisible(false);
+    rectangle.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
+    rectangle.fillRect(0, 0, 400, 400);
+
+    let rt = this.add.renderTexture(200, 100, 600, 600);
+    let rt2 = this.add.renderTexture(100, 600, 600, 600);
+
+    rt.draw(rectangle);
+    rt2.draw(rectangle);
+
+    let eraser = this.add.circle(0, 0, 190, 0x000000);
+    eraser.setVisible(false);
+
+    rt.erase(eraser, 200, 200);
+
+    rt2.erase(rt, 0, 0)
+
+    rt2.x = 400
+    rt2.y = 600
+
+    //end fill in textures
+  }
+
+  generateTileMap() {
     //....... TILEMAP .............................................................................
     // // 2
     // const map = this.make.tilemap({ key: "map" });
@@ -185,183 +401,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     //ed
 
     //....... end TILEMAP ......................................................................
-
-    //fill in textures
-    // let background = this.add.rectangle(0, 0, 6000, 6000, 0xFFFFFF)
-
-    let cross = [
-      '.....',
-      '..1..',
-      '.111.',
-      '..1..',
-      '.....',
-
-    ]
-
-    //generate the texture from the array
-    this.textures.generate('cross', { data: cross, pixelWidth: 2 });
-
-    //display the texture on an image
-    const gridWidth = 4000
-    const offset = 50
-
-    for (let i = 0; i < gridWidth; i += offset) {
-      for (let j = 0; j < gridWidth; j += offset) {
-        this.add.image(i, j, 'cross').setOrigin(0, 1);
-      }
-    }
-
-    let graphics = this.add.graphics();
-
-    graphics.fillStyle(0x0000ff, 1);
-
-    graphics.fillCircle(800, 300, 200);
-
-    for (let i = 0; i < 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
-      graphics.beginPath();
-      graphics.moveTo(800, 200 + i);
-      graphics.lineTo(1200, 200 + i);
-      graphics.closePath();
-      graphics.strokePath();
-    }
-
-
-    for (let i = 0; i < 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
-      graphics.beginPath();
-      graphics.moveTo(900 + i, 150);
-      graphics.lineTo(900 + i, 550);
-      graphics.closePath();
-      graphics.strokePath();
-    }
-
-  
-
-    let rectangle = this.add.graphics();
-    rectangle.setVisible(false);
-    rectangle.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
-    rectangle.fillRect(0, 0, 400, 400);
-
-    let rt = this.add.renderTexture(200, 100, 600, 600);
-    let rt2 = this.add.renderTexture(100, 600, 600, 600);
-
-    rt.draw(rectangle);
-    rt2.draw(rectangle);
-
-    let eraser = this.add.circle(0, 0, 190, 0x000000);
-    eraser.setVisible(false);
-
-    rt.erase(eraser, 200, 200);
-
-    rt2.erase(rt, 0, 0)
-
-    rt2.x = 400
-    rt2.y = 600
-    
-    //end fill in textures
-
-    //.......  PLAYER ..........................................................................
-
-    //create player group
-    this.playerGroup = this.add.group();
-
-    //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
-    this.playerAvatarPlaceholder = "onlinePlayer";
-    // //1
-    // this.player = this.physics.add
-    //   .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
-    //   .setDepth(101);
-    // //end 1
-
-    //2
-    this.player = this.physics.add
-      .sprite(0, 0, this.playerAvatarPlaceholder)
-      .setDepth(101);
-    //end 2
-
-    //await this.loadAndCreatePlayerAvatar()
-
-    this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
-
-    // this.playerShadow.anchor.set(0.5);
-    this.playerShadow.setTint(0x000000);
-    this.playerShadow.alpha = 0.2;
-
-
-    this.playerGroup.add(this.player);
-    this.playerGroup.add(this.playerShadow);
-
-    //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
-
-    //  Our player animations, turning, walking left and walking right.
-    this.playerMovingKey = "moving"
-    this.playerStopKey = "stop"
-
-    this.anims.create({
-      key: this.playerMovingKey,
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
-      frameRate: 20,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: this.playerStopKey,
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
-    });
-    //.......  end PLAYER .............................................................................
-
-    //....... onlinePlayers ...........................................................................
-    // add onlineplayers group
-    this.onlinePlayersGroup = this.add.group();
-    //....... end onlinePlayers .......................................................................
-
-
-
-    //....... PLAYER VS WORLD ..........................................................................
-    this.onlinePlayersGroup = this.add.group(); //group onlinePlayers
-
-    this.gameCam = this.cameras.main.setBackgroundColor(0xFFFFFF);
-
-    //setBounds has to be set before follow, otherwise the camera doesn't follow!
-    //     // 1 and 2
-    //     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    // // end 1 and 2
-    // grid
-    this.gameCam.setBounds(0, 0, 3200, 3200);
-    // end grid
-    this.gameCam.startFollow(this.player);
-
-    //this.player.setCollideWorldBounds(true);
-
-    this.physics.add.overlap(
-      this.player,
-      this.location2,
-      this.enterLocation2Scene,
-      null,
-      this
-    );
-
-
-    // Watch the player and worldLayer for collisions, for the duration of the scene:
-    //-->off
-    //this.physics.add.collider(this.player, worldLayer);
-    //<--off
-    //......... end PLAYER VS WORLD ......................................................................
-
-    //......... INPUT ....................................................................................
-    this.cursors = this.input.keyboard.createCursorKeys();
-    //this.pointer = this.input.activePointer;
-    //.......... end INPUT ................................................................................
-
-    //......... DEBUG FUNCTIONS ............................................................................
-    this.debugFunctions();
-    this.createDebugText();
-    //......... end DEBUG FUNCTIONS .........................................................................
-  } // end create
-
-  starOverlap() {
-    console.log("hit detected!")
   }
 
   loadAndCreatePlayerAvatar() {
@@ -872,13 +911,6 @@ export default class AZC1_Scene extends Phaser.Scene {
       }//if (manageSession.createOnlinePlayers)
     }//if (manageSession.createdPlayer) 
   } //createRemotePlayer
-
-  enterLocation2Scene(player) {
-
-    this.physics.pause();
-    this.player.setTint(0xff0000);
-    this.scene.start("Location2_Scene");
-  }
 
   playerMovingByKeyBoard() {
     const speed = 175;
