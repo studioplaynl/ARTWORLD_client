@@ -27,7 +27,7 @@ export async function login(email, password) {
         const session = response
         console.log(session)
         Session.set(session);
-        getAccount(session)
+        getAccount()
         window.location.href = "/#/"
     })
     .catch((err) => {return err})

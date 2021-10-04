@@ -87,6 +87,8 @@ export async function getAccount(id) {
   }
 }
 
+
+
 //getAvatar only works reliable via the getAccount call
 export async function getAvatar(avatar_url) {
   const payload = {"url": avatar_url};
