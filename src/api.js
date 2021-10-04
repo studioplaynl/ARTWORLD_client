@@ -1,5 +1,5 @@
 import { client } from "./nakama.svelte"
-import { Session } from "./session.js"
+import { Session,Profile } from "./session.js"
 let Sess;
 export let url;
 export let user; 
@@ -76,6 +76,8 @@ export async function getAccount(id) {
     let user = account.user;
     console.log(user)
     user.url = await getAvatar(user.avatar_url)
+    user.meta = JSON.parse(user.metadata)
+    Profile.set(user)
     return user
   }else {
     const users = await client.getUsers(Sess, [id]);

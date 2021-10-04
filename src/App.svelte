@@ -30,6 +30,7 @@
   if ($Profile == null) {
     role = null;
   } else {
+    console.log($Profile)
     role = $Profile.meta.role;
   }
   let DropdownMenu = () => {
