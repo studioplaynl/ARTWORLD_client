@@ -153,6 +153,23 @@ let isLogedIn = (detail) => {
 
 
 <style>
+  .nav {
+    background-color: gray;
+    height: 25px;
+    padding: 13px;
+  	margin: 0px;
+  }
+  .left {
+    float: left;
+  }
+  .right {
+    float: right;
+  }
+
+  .show {
+    display: block!important;
+  }
+
   .dropdown {
     position: relative;
     display: inline-block;

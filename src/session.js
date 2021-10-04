@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import {client} from "./nakama.svelte"
+import {getAccount} from "./api.js"
 
 let storedSession = localStorage.getItem("Session")
 export const Session = writable(storedSession ? JSON.parse(storedSession) : null);
@@ -34,16 +35,16 @@ export async function login(email, password) {
     
 }
 
-export async function getAccount(session) {
-    let profile = {}
-    const account = await client.getAccount(session);
+// export async function getAccount(session) {
+//     let profile = {}
+//     const account = await client.getAccount(session);
 
-    profile.user = account.user.username
-    profile.avatar_url = account.user.avatar_url
-    profile.meta = JSON.parse(account.user.metadata)
+//     profile.user = account.user.username
+//     profile.avatar_url = account.user.avatar_url
+//     profile.meta = JSON.parse(account.user.metadata)
  
-    Profile.set(profile)
-}
+//     Profile.set(profile)
+// }
 
 
 export const logout = () => { Session.set(null) ;Profile.set(null);}
