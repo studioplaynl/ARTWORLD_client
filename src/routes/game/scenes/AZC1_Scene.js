@@ -104,6 +104,15 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //.......  SOCKET ..........................................................................
     this.playerIdText = manageSession.user_id;
+
+    manageSession.playerObjectSelf =  JSON.parse(localStorage.getItem("profile"));
+    console.log("manageSession.playerObjectSelf")
+    console.log(manageSession.playerObjectSelf)
+    manageSession.createPlayer = true
+    console.log("manageSession.createPlayer: ")
+    console.log(manageSession.createPlayer)
+
+
     //manageSession.createSocket();
     //....... end SOCKET .......................................................................
 
@@ -217,24 +226,24 @@ export default class AZC1_Scene extends Phaser.Scene {
     const mainHeight = 150
 
     this.location2DialogBoxText = this.add.text(mainWidth-60, mainHeight-30, 'OK!', { fill: '#000' })
-    this.location2DialogBoxText.setInteractive() //new Phaser.Geom.Rectangle(0, 0, this.location2DialogBox.width, this.location2DialogBox.height), Phaser.Geom.Rectangle.Contains
+    // this.location2DialogBoxText.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains) //new Phaser.Geom.Rectangle(0, 0, this.location2DialogBox.width, this.location2DialogBox.height), Phaser.Geom.Rectangle.Contains
+    // this.location2DialogBoxText.on('pointerdown', () => { this.enterLocation2Scene() });
 
-    //  Input Event listeners
-    this.location2DialogBoxText.on('pointerdown', () => { this.enterLocation2Scene() });
     this.location2DialogBox = this.add.graphics();
     this.location2DialogBox.fillStyle(0xfffff00, 0.4)
     this.location2DialogBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
-      
+   
+    this.location2DialogBox.setVisible(false)
+    this.location2Texture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
+    this.location2Texture.draw(this.location2DialogBox);
 
+    this.location2Texture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains) //new Phaser.Geom.Rectangle(0, 0, this.location2DialogBox.width, this.location2DialogBox.height), Phaser.Geom.Rectangle.Contains
+    this.location2Texture.on('pointerdown', () => { this.enterLocation2Scene() });
 
-
-    // this.location2DialogBoxText.input.enabled = false;
-    this.location2DialogBoxContainer = this.add.container(this.location2.x-(mainWidth/2), this.location2.y-(mainHeight/2), [this.location2DialogBox, this.location2DialogBoxText]).setDepth(900)
+    this.location2DialogBoxContainer = this.add.container(this.location2.x-(mainWidth/2), this.location2.y-(mainHeight/2), [ this.location2Texture, this.location2DialogBoxText]).setDepth(900)
     
     this.location2DialogBoxContainer.setVisible(false)
   }
-
-  
 
   confirmEnterLocation(player, location, show) {
     //console.log("player over location2")

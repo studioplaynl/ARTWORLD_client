@@ -23,7 +23,7 @@ class manageSession {
 
     this.AccountObject;
     this.playerObjectSelf;
-    this.createPlayer = false;
+    this.createPlayer = true;
 
     this.createOnlinePlayers = false;
     this.updateOnlinePlayers = false;
