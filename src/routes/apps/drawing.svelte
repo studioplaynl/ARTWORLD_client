@@ -1,6 +1,6 @@
 <script>
-  import  { fabric }  from "./fabric"
-  import { Switch } from "attractions"
+  import { fabric } from "./fabric";
+  import { Switch } from "attractions";
   import { location, replace } from "svelte-spa-router";
   import { onMount, beforeUpdate } from "svelte";
   import { uploadImage, user, uploadAvatar } from "../../api.js";
@@ -15,14 +15,18 @@
   import UndoIcon from "svelte-icons/fa/FaUndoAlt.svelte";
   import RedoIcon from "svelte-icons/fa/FaRedoAlt.svelte";
   import EraseIcon from "svelte-icons/fa/FaEraser.svelte";
-  import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte"
+  import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
+  import BucketIcon from "svelte-icons/md/MdFormatColorFill.svelte";
+  import CameraIcon from "svelte-icons/fa/FaCamera.svelte";
+
   export let params = {};
-  let history = [],historyCurrent
+  let history = [],
+    historyCurrent;
   let canv;
-  let saveCanvas, savecanvas;
-  let canvas;
+  let saveCanvas, savecanvas, videoCanvas;
+  let canvas, video;
   let json;
-  let title, showBackground;
+  let title, showBackground = true;
   let current = "draw";
   if (!!params.name) title = params.name.split(".")[0];
   let saved = false;
@@ -33,6 +37,7 @@
   let appType = $location.split("/")[1];
 
   onMount(() => {
+    document.querySelector('body').setAttribute('style', 'background-color: rgb(204, 201, 201)');
     const autosave = setInterval(() => {
       if (!saved) {
         let data = {};
@@ -44,7 +49,6 @@
         if (appType == "stopmotion" || appType == "avatar") {
           data.frames = frames;
         }
-        console.log(JSON.stringify(data));
         localStorage.setItem("Drawing", JSON.stringify(data));
         console.log("stored in localstorage");
       }
@@ -57,7 +61,7 @@
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
     });
-    MouseIcon
+    MouseIcon;
     savecanvas = new fabric.Canvas(saveCanvas, {
       isDrawingMode: false,
     });
@@ -69,8 +73,9 @@
 
     var drawingModeEl = fab("drawing-mode"),
       selectModeEl = fab("select-mode"),
+      fillModeEl = fab("fill-mode"),
       drawingOptionsEl = fab("drawing-mode-options"),
-      eraseModeEl  = fab("erase-mode"),
+      eraseModeEl = fab("erase-mode"),
       drawingColorEl = fab("drawing-color"),
       drawingShadowColorEl = fab("drawing-shadow-color"),
       drawingLineWidthEl = fab("drawing-line-width"),
@@ -86,24 +91,28 @@
     };
 
     drawingModeEl.onclick = function () {
+      current = "draw";
       canvas.isDrawingMode = true;
-      changebrush()
-      current = "draw"
+      changebrush();
     };
 
     selectModeEl.onclick = function () {
-      canvas.isDrawingMode = false
-      current = 'select'
-    }
+      canvas.isDrawingMode = false;
+      current = "select";
+    };
+
+    fillModeEl.onclick = function () {
+      current = "fill";
+    };
 
     eraseModeEl.onclick = function () {
       // erase functie kapot? recompile: http://fabricjs.com/build/
       var eraseBrush = new fabric.EraserBrush(canvas);
-      canvas.freeDrawingBrush = eraseBrush
+      canvas.freeDrawingBrush = eraseBrush;
       canvas.freeDrawingBrush.width = 10;
       canvas.isDrawingMode = true;
-      current = 'erase'
-    }
+      current = "erase";
+    };
 
     if (fabric.PatternBrush) {
       var vLinePatternBrush = new fabric.PatternBrush(canvas);
@@ -181,12 +190,11 @@
       };
     }
 
-    fab("drawing-mode-selector").onchange = () => changebrush()
-    
-    
+    fab("drawing-mode-selector").onchange = () => changebrush();
+
     function changebrush() {
-      brush =  fab("drawing-mode-selector")
-      console.log(brush)
+      brush = fab("drawing-mode-selector");
+      console.log(brush);
       if (brush.value === "hline") {
         canvas.freeDrawingBrush = vLinePatternBrush;
       } else if (brush.value === "vline") {
@@ -216,7 +224,7 @@
           color: drawingShadowColorEl.value,
         });
       }
-    };
+    }
 
     drawingColorEl.onchange = function () {
       var brush = canvas.freeDrawingBrush;
@@ -256,19 +264,15 @@
       });
     }
     console.log(params);
- 
-    canvas.on('mouse:up', function(element) {
-      console.log(element)
-      setTimeout(()=> {
-        updateFrame()
-        saveHistory()
-      },200)
 
-     });
+    canvas.on("mouse:up", function (element) {
+      console.log(element);
+      setTimeout(() => {
+        updateFrame();
+        saveHistory();
+      }, 200);
+    });
   });
-
-
-
 
   const upload = () => {
     if (appType == "drawing") {
@@ -290,9 +294,12 @@
 
   const updateFrame = () => {
     frames[currentFrame] = canvas.toJSON();
-    backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
     frames = frames;
-    backgroundFrames = backgroundFrames;
+
+     backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
+     backgroundFrames = backgroundFrames;
+
+
   };
 
   const getImage = async () => {
@@ -319,28 +326,30 @@
         }
       }
     }
-    if (!!params.name && !!params.user) {
-      title = params.name.split(".")[0];
-      status = params.status;
-      var jsonURL = await getDrawing(
-        `/${appType}/${params.user}/${params.name}.json`
-      );
-      console.log(jsonURL);
-      fetch(jsonURL)
-        .then((res) => res.json())
-        .then((json) => {
-          console.log("Checkout this JSON! ", json);
-          if (appType == "drawing")
-            canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
-          if (appType == "stopmotion" || appType == "avatar") {
-            frames = json;
-            canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
-          }
-        })
-        .catch((err) => console.log(err));
-    } else {
-      replace($location + "/" + $Session.user_id);
-    }
+    if (appType != "avatar") {
+      if (!!params.name && !!params.user) {
+        title = params.name.split(".")[0];
+        status = params.status;
+        var jsonURL = await getDrawing(
+          `/${appType}/${params.user}/${params.name}.json`
+        );
+        console.log(jsonURL);
+        fetch(jsonURL)
+          .then((res) => res.json())
+          .then((json) => {
+            console.log("Checkout this JSON! ", json);
+            if (appType == "drawing")
+              canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+            if (appType == "stopmotion" || appType == "avatar") {
+              frames = json;
+              canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
+            }
+          })
+          .catch((err) => console.log(err));
+      } else {
+        replace($location + "/" + $Session.user_id);
+      }
+   }
   };
 
   function dataURItoBlob(dataURI) {
@@ -364,14 +373,23 @@
   window.addEventListener("resize", resizeCanvas, false);
 
   function resizeCanvas() {
-    if (appType == "avatar") {
-      canvas.setHeight(128);
-      canvas.setWidth(128);
-      canvas.renderAll();
+    // if (appType == "avatar") {
+    //   canvas.setHeight(128);
+    //   canvas.setWidth(128);
+    //   canvas.renderAll();
+    // } else {
+    //   canvas.setHeight(window.innerWidth);
+    //   canvas.setWidth(window.innerWidth);
+    //   canvas.renderAll();
+    //   console.log(window.innerWidth)
+    // }
+    console.log(window.innerWidth);
+    if (window.innerWidth <= 700) {
+      canvas.setHeight(window.innerWidth - 10);
+      canvas.setWidth(window.innerWidth - 10);
     } else {
       canvas.setHeight(700);
       canvas.setWidth(700);
-      canvas.renderAll();
     }
   }
 
@@ -387,15 +405,17 @@
   var img = new Image();
 
   // When the image loads, set it as background image
-  img.onload = function () {
-    var f_img = new fabric.Image(img);
-    let options;
-    if (!play) options = { opacity: 0.5 };
-    else options = {};
-    canvas.setBackgroundImage(f_img, canvas.renderAll.bind(canvas), options);
+  if(showBackground){
+    img.onload = function () {
+      var f_img = new fabric.Image(img);
+      let options;
+      if (!play) options = { opacity: 0.5 };
+      else options = {};
+      canvas.setBackgroundImage(f_img, canvas.renderAll.bind(canvas), options);
 
-    canvas.renderAll();
-  };
+      canvas.renderAll();
+    };
+  }
 
   const changeFrame = (newFrame) => {
     if (!play) {
@@ -405,12 +425,15 @@
       //canvas.clear()
       // load frame
       canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
-      img.src = backgroundFrames[newFrame - 1];
+      if(showBackground) img.src = backgroundFrames[newFrame - 1];
+      
       // change current frame
       currentFrame = newFrame;
       console.log(frames);
-    } else {
+    }
+    if(play || !showBackground) {
       canvas.clear();
+      
       frames[newFrame].backgroundImage = {};
       canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
     }
@@ -475,182 +498,384 @@
   //////////////////// avatar functies end /////////////////////////////////
 
   //////////////////// camera functies ///////////////////////////////
+  function camera() {
+    current = "camera";
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then(function (stream) {
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch(err => {
+          console.log(err)
+          alert(err)
+        })
+    }
+  }
+
+  function capturePicture() {
+    let videocanvas = new fabric.Canvas(videoCanvas, {
+      isDrawingMode: false,
+    });
+    let context = videoCanvas.getContext("2d");
+    let width = 700;
+    let heigth = 700;
+    videocanvas.setHeight(heigth);
+    videocanvas.setWidth(width);
+    context.drawImage(video, 0, 0, width, heigth);
+    var uri = videoCanvas.toDataURL("image/png");
+
+    fabric.Image.fromURL(uri, function (oImg) {
+      oImg.scale(1);
+      oImg.set({ left: 0, top: 0 });
+      canvas.add(oImg);
+    });
+    current = "draw";
+    video.stop();
+  }
 
   //////////////////// camera functies end ///////////////////////////
 
-
   //////////////////// redo/undo function ///////////////////////////
 
-  const saveHistory = () => {
-    
-  }
-
+  const saveHistory = () => {};
 
   const undo = () => {
-    let lastObject = canvas.toJSON().objects[canvas.toJSON().objects.length-1]
-    console.log(lastObject)
-    history.push(lastObject)
-    console.log(history)
-    let newFile = canvas.toJSON()
-    newFile.objects.pop()
+    let lastObject =
+      canvas.toJSON().objects[canvas.toJSON().objects.length - 1];
+    console.log(lastObject);
+    history.push(lastObject);
+    console.log(history);
+    let newFile = canvas.toJSON();
+    newFile.objects.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
-  }
+  };
 
   const redo = () => {
-    console.log("redo")
-    let newFile = canvas.toJSON()
-    newFile.objects.push(history[history.length-1])
-    history.pop()
+    console.log("redo");
+    let newFile = canvas.toJSON();
+    newFile.objects.push(history[history.length - 1]);
+    history.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
-  }
-
+  };
 
   //////////////////// redo/undo function end ///////////////////////////
-  
 
+  /////////////////// fill functie //////////////////////////////////////
+  var FloodFill = {
+    // Compare subsection of array1's values to array2's values, with an optional tolerance
+    withinTolerance: function (array1, offset, array2, tolerance) {
+      var length = array2.length,
+        start = offset + length;
+      tolerance = tolerance || 0;
+
+      // Iterate (in reverse) the items being compared in each array, checking their values are
+      // within tolerance of each other
+      while (start-- && length--) {
+        if (Math.abs(array1[start] - array2[length]) > tolerance) {
+          return false;
+        }
+      }
+
+      return true;
+    },
+
+    // The actual flood fill implementation
+    fill: function (
+      imageData,
+      getPointOffsetFn,
+      point,
+      color,
+      target,
+      tolerance,
+      width,
+      height
+    ) {
+      var directions = [
+          [1, 0],
+          [0, 1],
+          [0, -1],
+          [-1, 0],
+        ],
+        coords = [],
+        points = [point],
+        seen = {},
+        key,
+        x,
+        y,
+        offset,
+        i,
+        x2,
+        y2,
+        minX = -1,
+        maxX = -1,
+        minY = -1,
+        maxY = -1;
+
+      // Keep going while we have points to walk
+      while (!!(point = points.pop())) {
+        x = point.x;
+        y = point.y;
+        offset = getPointOffsetFn(x, y);
+
+        // Move to next point if this pixel isn't within tolerance of the color being filled
+        if (!FloodFill.withinTolerance(imageData, offset, target, tolerance)) {
+          continue;
+        }
+
+        if (x > maxX) {
+          maxX = x;
+        }
+        if (y > maxY) {
+          maxY = y;
+        }
+        if (x < minX || minX == -1) {
+          minX = x;
+        }
+        if (y < minY || minY == -1) {
+          minY = y;
+        }
+
+        // Update the pixel to the fill color and add neighbours onto stack to traverse
+        // the fill area
+        i = directions.length;
+        while (i--) {
+          // Use the same loop for setting RGBA as for checking the neighbouring pixels
+          if (i < 4) {
+            imageData[offset + i] = color[i];
+            coords[offset + i] = color[i];
+          }
+
+          // Get the new coordinate by adjusting x and y based on current step
+          x2 = x + directions[i][0];
+          y2 = y + directions[i][1];
+          key = x2 + "," + y2;
+
+          // If new coordinate is out of bounds, or we've already added it, then skip to
+          // trying the next neighbour without adding this one
+          if (x2 < 0 || y2 < 0 || x2 >= width || y2 >= height || seen[key]) {
+            continue;
+          }
+
+          // Push neighbour onto points array to be processed, and tag as seen
+          points.push({ x: x2, y: y2 });
+          seen[key] = true;
+        }
+      }
+
+      return {
+        x: minX,
+        y: minY,
+        width: maxX - minX,
+        height: maxY - minY,
+        coords: coords,
+      };
+    },
+  };
+
+  ///////////////// fill functie end ///////////////////////
+
+  function backgroundHide(){
+    if(!showBackground){
+      console.log("hidden")
+      for(let i = 0; i < frames.length; i++){
+        frames[i].backgroundImage = {}
+      }
+      canvas.loadFromJSON(frames[currentFrame], canvas.renderAll.bind(canvas));
+      frames = frames
+    }else{
+      console.log("show")
+      img.src = backgroundFrames[currentFrame - 1]
+    }
+  }
 </script>
 
 <main>
-  <div class="topbar">
-    <button class="icon" on:click="{undo}"><UndoIcon /></button>
-    <button class="icon" on:click="{redo}"><RedoIcon /></button>
-  </div>
-  <div class="canvasBox">
-    <canvas bind:this={canv} class="canvas" />
-  </div>
-  <div class="savecanvas">
-    <canvas bind:this={saveCanvas} />
-  </div>
-  <div class="frameBox">
-    {#if appType == "stopmotion" || appType == "avatar"}
-      {#if play}
-        <button
-          class="icon"
-          on:click={() => {
-            play = false;
-            setPlay(false);
-          }}><PauseIcon /></button
-        >
-      {:else}
-        <button
-          class="icon"
-          on:click={() => {
-            play = true;
-            setPlay(true);
-          }}><PlayIcon /></button
-        >
-      {/if}
-      <div class="framebar">
-        {#each frames as frame, index}
-          <div
-            id={index}
-            class:selected={currentFrame === index}
-            on:click={() => changeFrame(index)}
-            style="background-image: url({backgroundFrames[index]})"
+  <div class="box1">
+    {#if current == "camera"}
+      <video bind:this={video} autoplay />
+      <button on:click={capturePicture} class="videoButton" />
+      <div class="videocanvas hidden">
+        <canvas bind:this={videoCanvas} />
+      </div>
+    {/if}
+    <div class="topbar">
+      <button class="icon" on:click={undo}><UndoIcon /></button>
+      <button class="icon" on:click={redo}><RedoIcon /></button>
+    </div>
+    <div class="canvasBox" class:hidden={current === "camera"}>
+      <canvas bind:this={canv} class="canvas" />
+    </div>
+    <div class="savecanvas">
+      <canvas bind:this={saveCanvas} />
+    </div>
+    <div class="frameBox">
+      {#if appType == "stopmotion" || appType == "avatar"}
+        {#if play}
+          <button
+            class="icon"
+            on:click={() => {
+              play = false;
+              setPlay(false);
+            }}><PauseIcon /></button
           >
-            <div>{index + 1}</div>
-          </div>
-        {/each}
-        {#if frames.length < maxFrames}
-          <div id="frameNew" on:click={addFrame}><div>+</div></div>
+        {:else}
+          <button
+            class="icon"
+            on:click={() => {
+              play = true;
+              setPlay(true);
+            }}><PlayIcon /></button
+          >
         {/if}
-        <Switch bind:value={showBackground} on:change={redo}></Switch>
-      </div>
-    {/if}
-  </div>
-  <div class="optionbox">
-  <div class="iconbox">
-    <button id="drawing-mode" class="icon" class:currentSelected="{current === 'draw'}"><ColorIcon /></button>
-    <button class="icon" id="erase-mode" class:currentSelected="{current === 'erase'}"><EraseIcon /></button>
-    <button class="icon" id="select-mode" class:currentSelected="{current === 'select'}"><MouseIcon /></button>
-    <button id="clear-canvas" class="btn btn-info icon">
-      <TrashIcon />
-    </button>
-    <button class="icon" class:currentSelected="{current === 'saveToggle'}"  on:click={() => {saveToggle = !saveToggle; current = 'saveToggle'}}
-      ><SaveIcon /></button
-    >
-  </div>
-  
-  <div class="optionbar">
-    <div id="drawing-mode-options">
-      <select id="drawing-mode-selector">
-        <option>Pencil</option>
-        <option>Circle</option>
-        <option>Spray</option>
-        <option>Pattern</option>
-
-        <option>hline</option>
-        <option>vline</option>
-        <option>square</option>
-        <option>diamond</option>
-        <option>texture</option>
-      </select>
-    </div>
-
-    {#if colorToggle}
-      <div class="colorTab">
-        <label for="drawing-line-width">Line width:</label>
-        <span class="info">5</span><input
-          type="range"
-          value="5"
-          min="0"
-          max="150"
-          id="drawing-line-width"
-        />
-
-        <label for="drawing-color" class="icon">Line color:</label>
-        <input type="color" value="#005E7A" id="drawing-color" />
-
-        <label for="drawing-shadow-color">Shadow color:</label>
-        <input type="color" value="#005E7A" id="drawing-shadow-color" />
-
-        <label for="drawing-shadow-width">Shadow width:</label>
-        <span class="info">0</span><input
-          type="range"
-          value="0"
-          min="0"
-          max="50"
-          id="drawing-shadow-width"
-        />
-
-        <label for="drawing-shadow-offset">Shadow offset:</label>
-        <span class="info">0</span><input
-          type="range"
-          value="0"
-          min="0"
-          max="50"
-          id="drawing-shadow-offset"
-        />
-      </div>
-    {/if}
-    <div class="saveBox">
-      <div class="saveTab">
-        <label for="title">Title</label>
-        <NameGenerator bind:value={title} />
-        <label for="title">Status</label>
-        <select bind:value={status} on:change={() => (answer = "")}>
-          {#each statussen as status}
-            <option value={status}>
-              {status}
-            </option>
+        <div class="framebar">
+          {#each frames as frame, index}
+            <div
+              id={index}
+              class:selected={currentFrame === index}
+              on:click={() => changeFrame(index)}
+              style="background-image: url({backgroundFrames[index]})"
+            >
+              <div>{index + 1}</div>
+            </div>
           {/each}
-        </select>
-        <button on:click={upload}>Save</button>
+          {#if frames.length < maxFrames}
+            <div id="frameNew" on:click={addFrame}><div>+</div></div>
+          {/if}
+        </div>
+        <Switch on:change={backgroundHide} bind:value={showBackground} />
+      {/if}
+    </div>
+  </div>
+  <div class="box2">
+    <div class="optionbox">
+      <div class="iconbox">
+        <button
+          id="drawing-mode"
+          class="icon"
+          class:currentSelected={current === "draw"}><ColorIcon /></button
+        >
+        <button
+          class="icon"
+          id="erase-mode"
+          class:currentSelected={current === "erase"}><EraseIcon /></button
+        >
+        <button
+          class="icon"
+          id="fill-mode"
+          class:currentSelected={current === "fill"}><BucketIcon /></button
+        >
+        <button
+          class="icon"
+          id="select-mode"
+          class:currentSelected={current === "select"}><MouseIcon /></button
+        >
+        {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
+          <button
+            class="icon"
+            id="camera-mode"
+            class:currentSelected={current == "camera"}
+            on:click={camera}><CameraIcon /></button
+          >
+        {/if}
+        <button id="clear-canvas" class="btn btn-info icon">
+          <TrashIcon />
+        </button>
+        <button
+          class="icon"
+          class:currentSelected={current === "saveToggle"}
+          on:click={() => {
+            saveToggle = !saveToggle;
+            current = "saveToggle";
+          }}><SaveIcon /></button
+        >
+      </div>
+
+      <div class="optionbar">
+        <div id="drawing-mode-options" class:hidden={current != "draw"}>
+          <select id="drawing-mode-selector">
+            <option>Pencil</option>
+            <option>Circle</option>
+            <option>Spray</option>
+            <option>Pattern</option>
+
+            <option>hline</option>
+            <option>vline</option>
+            <option>square</option>
+            <option>diamond</option>
+            <option>texture</option>
+          </select>
+        </div>
+        <div class="colorTab" class:hidden={current != "draw"}>
+          <label for="drawing-line-width">Line width:</label>
+          <span class="info">5</span><input
+            type="range"
+            value="5"
+            min="0"
+            max="150"
+            id="drawing-line-width"
+          />
+
+          <label for="drawing-color" class="icon">Line color:</label>
+          <input type="color" value="#005E7A" id="drawing-color" />
+
+          <label for="drawing-shadow-color">Shadow color:</label>
+          <input type="color" value="#005E7A" id="drawing-shadow-color" />
+
+          <label for="drawing-shadow-width">Shadow width:</label>
+          <span class="info">0</span><input
+            type="range"
+            value="0"
+            min="0"
+            max="50"
+            id="drawing-shadow-width"
+          />
+
+          <label for="drawing-shadow-offset">Shadow offset:</label>
+          <span class="info">0</span><input
+            type="range"
+            value="0"
+            min="0"
+            max="50"
+            id="drawing-shadow-offset"
+          />
+        </div>
+        <div class="saveBox" class:hidden={current != "saveToggle"}>
+          <div class="saveTab">
+            {#if appType != "avatar" }
+            <label for="title">Title</label>
+            <NameGenerator bind:value={title} />
+            <label for="title">Status</label>
+            <select bind:value={status} on:change={() => (answer = "")}>
+              {#each statussen as status}
+                <option value={status}>
+                  {status}
+                </option>
+              {/each}
+            </select>
+            {/if}
+            <button on:click={upload}>Save</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </main>
 
 <style>
   main {
     background-color: rgb(204, 201, 201);
+    height: 100vh;
+    margin: 0 auto;
+    width: fit-content;
   }
 
   .topbar {
-    width: 700px;
+    width: 100vw;
     margin: 0px auto;
-    padding: 5px;
+    padding: 5px 0;
   }
 
   .canvas {
@@ -661,9 +886,8 @@
 
   .canvasBox {
     background-color: white;
-    width: 700px;
-    height: 700px;
     margin: 0 auto;
+    width: fit-content;
   }
 
   .framebar {
@@ -710,7 +934,6 @@
   }
 
   .saveTab {
-    display: none;
     min-width: 160px;
     bottom: 50px;
     z-index: 1;
@@ -745,7 +968,7 @@
   .optionbar {
     margin: 10px;
     align-self: flex-end;
-}
+  }
 
   .icon {
     min-width: 50px;
@@ -760,8 +983,7 @@
   }
 
   .optionbox {
-    width: 700px;
-    margin: 0 auto;
+    width: fit-content;
     display: flex;
   }
 
@@ -769,4 +991,41 @@
     background-color: green;
   }
 
+  .hidden {
+    display: none;
+  }
+
+  video {
+    width: 100vw;
+    height: 100vw;
+  }
+
+  @media only screen and (min-width: 700px) {
+    video {
+      width: 700px;
+      height: 700px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .box1 {
+    float: left;
+    }
+
+    .box2 {
+      float: left;
+    }
+
+    .topbar {
+      width: unset;
+    }
+  }
+
+  .videoButton {
+    border-radius: 50%;
+    padding: 25px;
+    margin: 0 auto;
+    background: red;
+    display: block;
+  }
 </style>
