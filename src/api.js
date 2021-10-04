@@ -76,6 +76,8 @@ export async function getAccount(id) {
     let user = account.user;
     console.log(user)
     user.url = await getAvatar(user.avatar_url)
+    localStorage.setItem('profile', JSON.stringify(user));
+
     return user
   }else {
     const users = await client.getUsers(Sess, [id]);
@@ -89,7 +91,7 @@ export async function getAccount(id) {
 
 
 
-//getAvatar only works reliable via the getAccount call
+//getAvatar only works reliably via the getAccount call
 export async function getAvatar(avatar_url) {
   const payload = {"url": avatar_url};
     const rpcid = "download_file";

@@ -30,7 +30,7 @@ export default class MainMenu extends Phaser.Scene {
     manageSession.username = manageSession.sessionStored.username
 
     //get account info of Self
-    console.log("get account info of self")
+    //console.log("get account info of self")
     //console.log(JSON.parse(localStorage.getItem("profile")))
     //this.getAccount()
 
