@@ -1,4 +1,4 @@
-import CONFIG from "../config";
+//import CONFIG from "../config";
 //import Phaser from "phaser";
 
 export default class Location2Scene extends Phaser.Scene {

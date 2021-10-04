@@ -31,7 +31,8 @@ export default class MainMenu extends Phaser.Scene {
 
     //get account info of Self
     console.log("get account info of self")
-    this.getAccount()
+    //console.log(JSON.parse(localStorage.getItem("profile")))
+    //this.getAccount()
 
 
     // manageSession.AccountObject = await client.getAccount(manageSession.session);
