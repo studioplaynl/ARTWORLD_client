@@ -76,13 +76,8 @@ export async function getAccount(id) {
     let user = account.user;
     console.log(user)
     user.url = await getAvatar(user.avatar_url)
-<<<<<<< HEAD
     user.meta = JSON.parse(user.metadata)
     Profile.set(user)
-=======
-    localStorage.setItem('profile', JSON.stringify(user));
-
->>>>>>> cf2a63346dc587fc18fe780f2185c55a3323fbe8
     return user
   }else {
     const users = await client.getUsers(Sess, [id]);

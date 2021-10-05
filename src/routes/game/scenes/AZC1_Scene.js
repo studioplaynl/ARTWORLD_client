@@ -6,12 +6,6 @@ import { getAccount } from '../../../api.js';
 export default class AZC1_Scene extends Phaser.Scene {
   constructor() {
     super("AZC1_Scene");
-    // this.headerText;
-    // this.matchIdText;
-    // this.playerIdText;
-    // this.opponentsIdText;
-    // this.oallConnectedUsersText2;
-
     this.gameStarted = false;
     // this.turn = false;
     this.phaser = this;
@@ -105,7 +99,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //.......  SOCKET ..........................................................................
     this.playerIdText = manageSession.user_id;
 
-    manageSession.playerObjectSelf =  JSON.parse(localStorage.getItem("profile"));
+    manageSession.playerObjectSelf = JSON.parse(localStorage.getItem("profile"));
     console.log("manageSession.playerObjectSelf")
     console.log(manageSession.playerObjectSelf)
     manageSession.createPlayer = true
@@ -205,12 +199,53 @@ export default class AZC1_Scene extends Phaser.Scene {
     //.......... end INPUT ................................................................................
 
     this.generateLocations()
+    
 
-    this.physics.add.overlap(this.player, this.location2, this.confirmEnterLocation, null, this);
+        //........ location3 ...................
+    // var isoTriangle = scene.add.isotriangle(x, y, width, height, reversed, fillTop, fillLeft, fillRight);
+    // isoTriangle.projection = value;
+    var t3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    //t3.setProjection(20);
+    // t3.projection = 90
+
+
+    var t2 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
+
+
+    var container = this.add.container();
+
+    var leg1 = this.add.isobox(415, 340, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
+    var leg2 = this.add.isobox(390, 350, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
+
+    var body1 = this.add.isobox(360, 288, 50, 22, 0x00b9f2, 0x016fce, 0x028fdf);
+    var body2 = this.add.isobox(400, 300, 80, 80, 0x00b9f2, 0x016fce, 0x028fdf);
+
+    var beak = this.add.isobox(430, 270, 40, 10, 0xffe31f, 0xf2a022, 0xf8d80b);
+
+    var eye = this.add.isobox(394, 255, 30, 15, 0xffffff, 0xffffff, 0xffffff).setFaces(false, true, false);
+
+    var pupil = this.add.isobox(391, 255, 15, 10, 0x000000, 0x000000, 0x000000).setFaces(false, true, false);
+
+    var wing = this.add.isobox(366, 300, 50, 10, 0x00b9f2, 0x016fce, 0x028fdf);
+
+    container.add([ leg1, leg2, body1, body2, beak, eye, pupil, wing ]);
+
+    container.x = 500;
+    container.y = 400;
+    container.setScale(1.5);
+
+    this.tweens.add({
+        targets: container,
+        y: '-=160',
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+    });
+
 
     //......... DEBUG FUNCTIONS ............................................................................
     this.debugFunctions();
-    this.createDebugText();
+   //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
   } // end create
 
@@ -225,14 +260,14 @@ export default class AZC1_Scene extends Phaser.Scene {
     const mainWidth = 200
     const mainHeight = 150
 
-    this.location2DialogBoxText = this.add.text(mainWidth-60, mainHeight-30, 'OK!', { fill: '#000' })
+    this.location2DialogBoxText = this.add.text(mainWidth - 60, mainHeight - 30, 'OK!', { fill: '#000' })
     // this.location2DialogBoxText.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains) //new Phaser.Geom.Rectangle(0, 0, this.location2DialogBox.width, this.location2DialogBox.height), Phaser.Geom.Rectangle.Contains
     // this.location2DialogBoxText.on('pointerdown', () => { this.enterLocation2Scene() });
 
     this.location2DialogBox = this.add.graphics();
     this.location2DialogBox.fillStyle(0xfffff00, 0.4)
     this.location2DialogBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
-   
+
     this.location2DialogBox.setVisible(false)
     this.location2Texture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
     this.location2Texture.draw(this.location2DialogBox);
@@ -240,9 +275,23 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.location2Texture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains) //new Phaser.Geom.Rectangle(0, 0, this.location2DialogBox.width, this.location2DialogBox.height), Phaser.Geom.Rectangle.Contains
     this.location2Texture.on('pointerdown', () => { this.enterLocation2Scene() });
 
-    this.location2DialogBoxContainer = this.add.container(this.location2.x-(mainWidth/2), this.location2.y-(mainHeight/2), [ this.location2Texture, this.location2DialogBoxText]).setDepth(900)
-    
+    this.location2DialogBoxContainer = this.add.container(this.location2.x - (mainWidth / 2), this.location2.y - (mainHeight / 2), [this.location2Texture, this.location2DialogBoxText]).setDepth(900)
+
     this.location2DialogBoxContainer.setVisible(false)
+
+    this.physics.add.overlap(this.player, this.location2, this.confirmEnterLocation, null, this);
+    // ................ end location2
+
+    //........ location3 ...................
+    // var isoTriangle = scene.add.isotriangle(x, y, width, height, reversed, fillTop, fillLeft, fillRight);
+    // isoTriangle.projection = value;
+
+    // var t3 = this.add.isotriangle(900, 900, 200, 300, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+
+    // t2.setProjection(20);
+    // t3.projection = 90
+
+
   }
 
   confirmEnterLocation(player, location, show) {
@@ -268,7 +317,7 @@ export default class AZC1_Scene extends Phaser.Scene {
       // this.location2DialogBoxText.input.enabled = show;
 
       this.location2DialogBoxContainer.setVisible(show)
-     
+
     } else {
 
       // this.location2DialogBoxText.input.enabled = show;
@@ -1072,15 +1121,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... end moving ANIMATION .................................................................................
 
     this.playerMovingByClicking()
-
-
-    // //.... debug text ..............................................................................................
-    // //this.playerIdText.setText(manageSession.userID);
-    // this.allConnectedUsersText2.setText(manageSession.allConnectedUsers.length)
-    // this.onlinePlayersText2.setText(this.onlinePlayers.length)
-    // let onlinePlayerGroupLength = this.onlinePlayersGroup.getChildren()
-    // this.onlinePlayersGroupText2.setText(onlinePlayerGroupLength.length)
-    // //.... end debug text ..............................................................................................
 
   } //update
 } //class
