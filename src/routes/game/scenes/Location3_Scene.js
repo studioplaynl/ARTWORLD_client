@@ -2,7 +2,7 @@ import CONFIG from "../config";
 
 export default class Location2Scene extends Phaser.Scene {
   constructor() {
-    super("location2_Scene");
+    super("location3_Scene");
     this.headerText;
     this.phaser = this;
   }
@@ -19,7 +19,7 @@ export default class Location2Scene extends Phaser.Scene {
       .setScale(3.2);
 
     this.headerText = this.add
-      .text(CONFIG.WIDTH / 2, 40, "Location 2", {
+      .text(CONFIG.WIDTH / 2, 40, "Location 3", {
         fontFamily: "Arial",
         fontSize: "36px",
       })
