@@ -3,8 +3,8 @@
   import { onMount } from "svelte";
   import MainMenu from "./scenes/MainMenu";
   import AZC1_Scene from "./scenes/AZC1_Scene";
-  import Location2_Scene from "./scenes/Location2_Scene";
-  //import Phaser from "phaser";
+  import location2_Scene from "./scenes/Location2_Scene";
+  import location3_Scene from "./scenes/Location3_Scene";
 
   import CONFIG from "./config";
 
@@ -21,12 +21,12 @@
         default: "arcade",
         arcade: {
           //gravity: { y: 0 },
-          debug: false,
+          debug: true,
           fixedStep: true,
           fps: 60,
         },
       },
-      scene: [MainMenu, AZC1_Scene, Location2_Scene],
+      scene: [MainMenu, AZC1_Scene, location2_Scene, location3_Scene],
     };
 
     new Phaser.Game(config);

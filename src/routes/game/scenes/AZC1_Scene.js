@@ -2,6 +2,7 @@ import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount } from '../../../api.js';
+import { compute_slots } from "svelte/internal";
 
 export default class AZC1_Scene extends Phaser.Scene {
   constructor() {
@@ -51,6 +52,14 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
 
     this.load.image("ball", "./assets/ball_grey.png")
+
+    //test backgrounds
+    // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
+    // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
+    // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
+    // this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
+    this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
+
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
@@ -114,11 +123,16 @@ export default class AZC1_Scene extends Phaser.Scene {
     //this.generateTileMap()
     this.generateBackground()
 
+    // this.add.image(0,0, "background1").setOrigin(0,0).setScale(0.5)
+    // this.add.image(0,0, "background2").setOrigin(0,0).setScale(0.8)
+    // this.add.image(0,0, "background3").setOrigin(0,0).setScale(1)
+
+    // this.add.image(0,-300, "background5").setOrigin(0,0).setScale(1)
+
     //.......  PLAYER ..........................................................................
 
     //create player group
     this.playerGroup = this.add.group();
-
 
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
     this.playerAvatarPlaceholder = "onlinePlayer";
@@ -172,8 +186,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.onlinePlayersGroup = this.add.group();
     //....... end onlinePlayers .......................................................................
 
-
-
     //....... PLAYER VS WORLD ..........................................................................
     this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
 
@@ -198,54 +210,37 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     //.......... end INPUT ................................................................................
 
+    this.locationDialogBoxContainersGroup = this.add.group();
     this.generateLocations()
-    
 
-        //........ location3 ...................
-    // var isoTriangle = scene.add.isotriangle(x, y, width, height, reversed, fillTop, fillLeft, fillRight);
-    // isoTriangle.projection = value;
-    var t3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    //t3.setProjection(20);
-    // t3.projection = 90
-
-
-    var t2 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
 
 
     var container = this.add.container();
-
     var leg1 = this.add.isobox(415, 340, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
     var leg2 = this.add.isobox(390, 350, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
-
     var body1 = this.add.isobox(360, 288, 50, 22, 0x00b9f2, 0x016fce, 0x028fdf);
     var body2 = this.add.isobox(400, 300, 80, 80, 0x00b9f2, 0x016fce, 0x028fdf);
-
     var beak = this.add.isobox(430, 270, 40, 10, 0xffe31f, 0xf2a022, 0xf8d80b);
-
     var eye = this.add.isobox(394, 255, 30, 15, 0xffffff, 0xffffff, 0xffffff).setFaces(false, true, false);
-
     var pupil = this.add.isobox(391, 255, 15, 10, 0x000000, 0x000000, 0x000000).setFaces(false, true, false);
-
     var wing = this.add.isobox(366, 300, 50, 10, 0x00b9f2, 0x016fce, 0x028fdf);
-
-    container.add([ leg1, leg2, body1, body2, beak, eye, pupil, wing ]);
-
-    container.x = 500;
+    container.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
+    container.x = 900;
     container.y = 400;
     container.setScale(1.5);
 
     this.tweens.add({
-        targets: container,
-        y: '-=160',
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut'
+      targets: container,
+      y: '-=160',
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
     });
 
 
     //......... DEBUG FUNCTIONS ............................................................................
     this.debugFunctions();
-   //this.createDebugText();
+    //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
   } // end create
 
@@ -256,18 +251,15 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.location2.setImmovable(true)
 
     this.location2.setData("entered", false)
+    this.location2.setName("location2")
 
     const mainWidth = 200
     const mainHeight = 150
 
     this.location2DialogBoxText = this.add.text(mainWidth - 60, mainHeight - 30, 'OK!', { fill: '#000' })
-    // this.location2DialogBoxText.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains) //new Phaser.Geom.Rectangle(0, 0, this.location2DialogBox.width, this.location2DialogBox.height), Phaser.Geom.Rectangle.Contains
-    // this.location2DialogBoxText.on('pointerdown', () => { this.enterLocation2Scene() });
-
     this.location2DialogBox = this.add.graphics();
     this.location2DialogBox.fillStyle(0xfffff00, 0.4)
     this.location2DialogBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
-
     this.location2DialogBox.setVisible(false)
     this.location2Texture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
     this.location2Texture.draw(this.location2DialogBox);
@@ -278,59 +270,113 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.location2DialogBoxContainer = this.add.container(this.location2.x - (mainWidth / 2), this.location2.y - (mainHeight / 2), [this.location2Texture, this.location2DialogBoxText]).setDepth(900)
 
     this.location2DialogBoxContainer.setVisible(false)
+    this.location2DialogBoxContainer.setName("location2")
+    this.locationDialogBoxContainersGroup.add(this.location2DialogBoxContainer);
 
-    this.physics.add.overlap(this.player, this.location2, this.confirmEnterLocation, null, this);
-    // ................ end location2
+    this.physics.add.overlap(this.player, this.location2, this.confirmEnterLocation, null, this)
 
     //........ location3 ...................
-    // var isoTriangle = scene.add.isotriangle(x, y, width, height, reversed, fillTop, fillLeft, fillRight);
-    // isoTriangle.projection = value;
+    this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    this.physics.add.existing(this.location3);
+    this.location3.body.setSize(this.location3.width, this.location3.height)
+    this.location3.body.setOffset(0, -(this.location3.height / 4))
+    this.location3.setData("entered", false)
+    this.location3.setName("location3")
 
-    // var t3 = this.add.isotriangle(900, 900, 200, 300, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    this.createLocationDialogbox(this.location3, 200, 150)
 
-    // t2.setProjection(20);
-    // t3.projection = 90
+    //........ location4 ...................
+    this.location4 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
+    this.physics.add.existing(this.location4);
+    this.location4.body.setSize(this.location4.width, this.location4.height * 1.4)
+    this.location4.body.setOffset(0, -(this.location4.height / 1.4))
 
 
   }
 
-  confirmEnterLocation(player, location, show) {
-    //console.log("player over location2")
-    //var entered = this.location2.getData("entered")
+  createLocationDialogbox(location, mainWidth, mainHeight) {
+    let nameText = "this." + location.name + "DialogBox"
+    console.log("nameText")
+    console.log(nameText)
 
-    if (!this.location2.getData("entered")) {
+
+    nameText = this.add.text(mainWidth - 60, mainHeight - 30, 'OK!', { fill: '#000' })
+
+    let nameBox = "this." + location.name + "DialogBox"
+
+    nameBox = this.add.graphics();
+    nameBox.fillStyle(0xfffff00, 0.4)
+    nameBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
+    nameBox.setVisible(false)
+
+    let nameTexture = "this." + location.name + "Texture"
+
+    nameTexture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
+    nameTexture.draw(nameBox);
+    nameTexture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains)
+    nameTexture.on('pointerdown', () => { this.enterLocationScene(location.name) });
+
+    let nameContainer = "this." + location.name + "DialogBoxContainer"
+
+    nameContainer = this.add.container(location.x - (mainWidth / 2), location.y - (mainHeight / 2), [nameTexture, nameText]).setDepth(900)
+    nameContainer.setVisible(false)
+    nameContainer.setName(location.name)
+
+    
+    this.locationDialogBoxContainersGroup.add(nameContainer);
+
+    this.physics.add.overlap(this.player, location, this.confirmEnterLocation, null, this)
+  }
+
+  confirmEnterLocation(player, location, show) {
+    if (!location.getData("entered")) {
       //start event
       show = false
-
       this.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], callbackScope: this, loop: false })
 
       //show the box
       show = true
       this.enterLocationDialogBox(player, location, show)
-      this.location2.setData("entered", true)
+      location.setData("entered", true)
     }
   }
 
   enterLocationDialogBox(player, location, show) {
+    let container = "this." + location.name + "DialogBoxContainer"
+    container = eval(container)
+
+    let nameContainer = location.name
+    let search = {name: location}
+
+    container = Phaser.Actions.GetFirst(this.locationDialogBoxContainersGroup.getChildren(),  {name: nameContainer} );
+
     if (show) {
 
-      // this.location2DialogBoxText.input.enabled = show;
-
-      this.location2DialogBoxContainer.setVisible(show)
-
+      container.setVisible(show)
     } else {
 
       // this.location2DialogBoxText.input.enabled = show;
-
-      this.location2DialogBoxContainer.setVisible(show)
-      this.location2.setData("entered", show)
+      container.setVisible(show)
+      location.setData("entered", show)
     }
   }
 
   enterLocation2Scene() {
     this.physics.pause();
     this.player.setTint(0xff0000);
-    this.scene.start("Location2_Scene");
+    this.scene.start("location2_Scene");
+  }
+
+  enterLocationScene(location) {
+    location = location + "_Scene"
+    console.log("location scene")
+    console.log(location)
+    console.log()
+
+
+    this.physics.pause();
+    this.player.setTint(0xff0000);
+    this.scene.start(location);
   }
 
   generateBackground() {
@@ -358,6 +404,9 @@ export default class AZC1_Scene extends Phaser.Scene {
         this.add.image(i, j, 'cross').setOrigin(0, 1);
       }
     }
+
+    // this.add.image(0, 200, "background4").setOrigin(0,0).setScale(1.3)
+    this.add.image(0, -300, "background5").setOrigin(0, 0).setScale(1)
 
     let graphics = this.add.graphics();
 

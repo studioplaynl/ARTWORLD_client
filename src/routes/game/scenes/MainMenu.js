@@ -15,9 +15,21 @@ export default class MainMenu extends Phaser.Scene {
   preload() {
     this.load.atlas('flares', 'assets/particles/flares.png', 'assets/particles/flares.json');
     this.load.image('artworld', 'assets/artworld.png')
+
+    // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
+    // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
+    // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
+    this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
+    // this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
   }
   async create() {
-    
+    // this.add.image(0,0, "background1").setOrigin(0,0).setScale(0.5)
+    // this.add.image(0,0, "background2").setOrigin(0,0).setScale(0.8)
+    // this.add.image(0,-300, "background3").setOrigin(0,0).setScale(1)
+    this.add.image(0,0, "background4").setOrigin(0,0).setScale(1.3)
+    // this.add.image(0,-300, "background5").setOrigin(0,0).setScale(1)
+
+
     //...... SESSION .............................................................................................
     //console.log("Session: ");
     manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
@@ -47,17 +59,17 @@ export default class MainMenu extends Phaser.Scene {
     //.............................................................................................................
 
     //...... PARTICLES .............................................................................................
-    var particles = this.add.particles('flares');
+    // var particles = this.add.particles('flares');
 
-    //  Create an emitter by passing in a config object directly to the Particle Manager
-    var emitter = particles.createEmitter({
-      frame: ['red', 'blue', 'green', 'yellow'],
-      x: CONFIG.WIDTH / 2,
-      y: CONFIG.HEIGHT / 2,
-      speed: 100,
-      lifespan: 3000,
-      blendMode: 'ADD'
-    });
+    // //  Create an emitter by passing in a config object directly to the Particle Manager
+    // var emitter = particles.createEmitter({
+    //   frame: ['red', 'blue', 'green', 'yellow'],
+    //   x: CONFIG.WIDTH / 2,
+    //   y: CONFIG.HEIGHT / 2,
+    //   speed: 100,
+    //   lifespan: 3000,
+    //   blendMode: 'MULTI'
+    // });
     //..............................................................................................................
 
     //...... TRANSLATION ...........................................................................................
