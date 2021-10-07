@@ -33,11 +33,10 @@
   let saveToggle = false,
     colorToggle = true;
   const statussen = ["zichtbaar", "verborgen"];
-  let status;
+  let status = "verborgen";
   let appType = $location.split("/")[1];
 
   onMount(() => {
-    document.querySelector('body').setAttribute('style', 'background-color: rgb(204, 201, 201)');
     const autosave = setInterval(() => {
       if (!saved) {
         let data = {};

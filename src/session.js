@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import {client} from "./nakama.svelte"
+import {client, SSL} from "./nakama.svelte"
 import {getAccount} from "./api.js"
 
 let storedSession = localStorage.getItem("Session")
@@ -20,7 +20,7 @@ Profile.subscribe((value) => {
 
 
 export async function login(email, password) {
-    console.log("ssl="+client.ssl)
+    console.log("ssl="+SSL)
     const create = false;
     client.authenticateEmail(email, password, create)
     .then((response)=> {
