@@ -1,6 +1,6 @@
 import { client, SSL } from "../../nakama.svelte";
-import { user, url, getAccount } from '../../api.js';
-import { Color } from "fabric/fabric-impl";
+// import { user, url, getAccount } from '../../api.js';
+// import { Color } from "fabric/fabric-impl";
 
 
 class manageSession {
@@ -33,6 +33,8 @@ class manageSession {
 
     this.gameStarted = false;
 
+    this.location = "home"
+
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";
     this.persistence = false;
@@ -53,14 +55,12 @@ class manageSession {
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
-
     // //await this.getAccountDetails()
     // console.log("this.playerObjectSelf")
     // await this.getAccountDetails().then((blob) => {
     //   console.log(blob);
     //   this.createPlayer = true;
     // }).catch(e => console.log(e));
-
 
     //await this.getAvatarUrl()
 
@@ -71,11 +71,8 @@ class manageSession {
     // await this.getAvatarUrl().then(this.createPlayer = true)
     // console.log(this.createPlayer)
 
-
-    console.log('this.getStreamUsers("join", "home")')
-    await this.getStreamUsers("join", "home")
-
-
+    console.log('this.getStreamUsers("join", this.location)')
+    await this.getStreamUsers("join", this.location)
 
     //stream
     this.socket.onstreamdata = (streamdata) => {
@@ -106,7 +103,7 @@ class manageSession {
         "Received presence event for stream: %o",
         streampresence
       );
-      this.getStreamUsers("get_users", "home")
+      this.getStreamUsers("get_users", this.location)
       if (!!streampresence.leaves) {
         console.log("leaves:" + streampresence.leaves);
         streampresence.leaves.forEach((leave) => {

@@ -121,38 +121,38 @@ export default class AZC1_Scene extends Phaser.Scene {
     //....... end SOCKET .......................................................................
 
     this.add.text(110, 20, "zoom", { fontFamily: "Arial", fontSize: "22px" })
-    .setOrigin(0)
-    .setScrollFactor(0) //fixed on screen
-    .setShadow(1, 1, '#000000', 0)
-    .setDepth(300)
+      .setOrigin(0)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(300)
 
-  this.zoomIn = this.add.text(110, 50, "IN", { fontFamily: "Arial", fontSize: "22px" })
-    .setOrigin(0)
-    .setScrollFactor(0) //fixed on screen
-    .setShadow(1, 1, '#000000', 0)
-    .setDepth(300)
-    .setInteractive()
+    this.zoomIn = this.add.text(110, 50, "IN", { fontFamily: "Arial", fontSize: "22px" })
+      .setOrigin(0)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(300)
+      .setInteractive()
 
-  this.zoomOut = this.add.text(110, 80, "OUT", { fontFamily: "Arial", fontSize: "22px" })
-    .setOrigin(0)
-    .setScrollFactor(0) //fixed on screen
-    .setShadow(1, 1, '#000000', 0)
-    .setDepth(300)
-    .setInteractive()
+    this.zoomOut = this.add.text(110, 80, "OUT", { fontFamily: "Arial", fontSize: "22px" })
+      .setOrigin(0)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(300)
+      .setInteractive()
 
-  this.zoomIn.on("pointerup", () => {
-    let currentZoom = this.scale.zoom;
-    this.scale.setZoom(currentZoom + 0.2);
-    console.log("this.scale.zoom")
-    console.log(this.scale.zoom)
-  });
+    this.zoomIn.on("pointerup", () => {
+      let currentZoom = this.scale.zoom;
+      this.scale.setZoom(currentZoom + 0.2);
+      console.log("this.scale.zoom")
+      console.log(this.scale.zoom)
+    });
 
-  this.zoomOut.on("pointerup", () => {
-    let currentZoom = this.scale.zoom;
-    this.scale.setZoom(currentZoom - 0.5);
-    console.log("this.scale.zoom")
-    console.log(this.scale.zoom)
-  });
+    this.zoomOut.on("pointerup", () => {
+      let currentZoom = this.scale.zoom;
+      this.scale.setZoom(currentZoom - 0.5);
+      console.log("this.scale.zoom")
+      console.log(this.scale.zoom)
+    });
 
     //this.generateTileMap()
     this.generateBackground()
@@ -299,7 +299,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.location3.body.setSize(this.location3.width, this.location3.height)
     this.location3.body.setOffset(0, -(this.location3.height / 4))
     //can't set ositriangle to immmovable
-   //this.location3.setImmovable(true)
+    //this.location3.setImmovable(true)
 
     // this.location3.setData("entered", false)
     // this.location3.setName("location3")
@@ -542,112 +542,115 @@ export default class AZC1_Scene extends Phaser.Scene {
   }
 
   loadAndCreatePlayerAvatar() {
-    if (manageSession.createPlayer) {
-      manageSession.createPlayer = false;
-      console.log("manageSession.createPlayer = false;")
-      this.createdPlayer = false;
+    //check if account info is loaded
+    if (manageSession.sessionStored.user_id != null) {
+      //check for createPlayer flag
+      if (manageSession.createPlayer) {
+        manageSession.createPlayer = false;
+        console.log("manageSession.createPlayer = false;")
+        this.createdPlayer = false;
 
-      console.log("loadAndCreatePlayerAvatar")
+        console.log("loadAndCreatePlayerAvatar")
 
-      // is playerAvaterKey already in loadedAvatars?
-      //no -> load the avatar and add to loadedAvatars
-      //yes -> dont load the avatar
+        // is playerAvaterKey already in loadedAvatars?
+        //no -> load the avatar and add to loadedAvatars
+        //yes -> dont load the avatar
 
-      this.playerAvatarKey = manageSession.playerObjectSelf.id + "_" + manageSession.playerObjectSelf.create_time
-      console.log(this.playerAvatarKey)
+        this.playerAvatarKey = manageSession.playerObjectSelf.id + "_" + manageSession.playerObjectSelf.create_time
+        console.log(this.playerAvatarKey)
 
-      console.log("this.textures.exists(this.playerAvatarKey): ")
-      console.log(this.textures.exists(this.playerAvatarKey))
+        console.log("this.textures.exists(this.playerAvatarKey): ")
+        console.log(this.textures.exists(this.playerAvatarKey))
 
-      //check if url is not empty for some reason, returns so that previous image is kept
-      if (!this.textures.exists(this.playerAvatarKey)) {
-        if (manageSession.playerObjectSelf.url === "") {
-          console.log("avatar url is empty")
-          manageSession.createPlayer = false;
-          console.log("manageSession.createPlayer = false;")
-          this.createdPlayer = true;
-          console.log("this.createdPlayer = true;")
-          return
-        } else {
-          console.log(" loading: manageSession.playerObjectSelf.url: ")
-          console.log(manageSession.playerObjectSelf.url)
+        //check if url is not empty for some reason, returns so that previous image is kept
+        if (!this.textures.exists(this.playerAvatarKey)) {
+          if (manageSession.playerObjectSelf.url === "") {
+            console.log("avatar url is empty")
+            manageSession.createPlayer = false;
+            console.log("manageSession.createPlayer = false;")
+            this.createdPlayer = true;
+            console.log("this.createdPlayer = true;")
+            return
+          } else {
+            console.log(" loading: manageSession.playerObjectSelf.url: ")
+            console.log(manageSession.playerObjectSelf.url)
 
-          this.load.spritesheet(
-            this.playerAvatarKey,
-            manageSession.playerObjectSelf.url, { frameWidth: 128, frameHeight: 128 }
-          );
+            this.load.spritesheet(
+              this.playerAvatarKey,
+              manageSession.playerObjectSelf.url, { frameWidth: 128, frameHeight: 128 }
+            );
 
-          this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-            console.log("loadAndCreatePlayerAvatar complete")
-            if (this.textures.exists(this.playerAvatarKey)) {
+            this.load.once(Phaser.Loader.Events.COMPLETE, () => {
+              console.log("loadAndCreatePlayerAvatar complete")
+              if (this.textures.exists(this.playerAvatarKey)) {
 
-              const avatar = this.textures.get(this.playerAvatarKey)
-              const avatarWidth = avatar.frames.__BASE.width
-              const avatarHeight = avatar.frames.__BASE.height
+                const avatar = this.textures.get(this.playerAvatarKey)
+                const avatarWidth = avatar.frames.__BASE.width
+                const avatarHeight = avatar.frames.__BASE.height
 
-              const avatarFrames = Math.round(avatarWidth / avatarHeight)
-              console.log(avatarFrames)
+                const avatarFrames = Math.round(avatarWidth / avatarHeight)
+                console.log(avatarFrames)
 
-              //make an animation if the image is wider than tall
-              if (avatarFrames > 1) {
-                //.. animation for the player avatar ............................................
-                //works
-                this.playerMovingKey = "moving" + "_" + this.playerAvatarKey;
-                this.playerStopKey = "stop" + "_" + this.playerAvatarKey;
+                //make an animation if the image is wider than tall
+                if (avatarFrames > 1) {
+                  //.. animation for the player avatar ............................................
+                  //works
+                  this.playerMovingKey = "moving" + "_" + this.playerAvatarKey;
+                  this.playerStopKey = "stop" + "_" + this.playerAvatarKey;
 
-                this.anims.create({
-                  key: this.playerMovingKey,
-                  frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: avatarFrames - 1 }),
-                  frameRate: (avatarFrames + 2) * 2,
-                  repeat: -1,
-                  yoyo: true
-                });
+                  this.anims.create({
+                    key: this.playerMovingKey,
+                    frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: avatarFrames - 1 }),
+                    frameRate: (avatarFrames + 2) * 2,
+                    repeat: -1,
+                    yoyo: true
+                  });
 
-                //works
-                this.anims.create({
-                  key: this.playerStopKey,
-                  frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: 0 }),
-                });
+                  //works
+                  this.anims.create({
+                    key: this.playerStopKey,
+                    frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: 0 }),
+                  });
 
-                //.. end animation for the player avatar ............................................
-              }
+                  //.. end animation for the player avatar ............................................
+                }
 
-              // texture loaded so use instead of the placeholder
-              this.player.setTexture(this.playerAvatarKey)
+                // texture loaded so use instead of the placeholder
+                this.player.setTexture(this.playerAvatarKey)
 
 
 
-              this.playerShadow.setTexture(this.playerAvatarKey)
+                this.playerShadow.setTexture(this.playerAvatarKey)
 
-              //scale the player to 68px
-              const width = 128
-              this.player.displayWidth = width
-              this.player.scaleY = this.player.scaleX
+                //scale the player to 68px
+                const width = 128
+                this.player.displayWidth = width
+                this.player.scaleY = this.player.scaleX
 
-              this.playerShadow.displayWidth = width
-              this.playerShadow.scaleY = this.playerShadow.scaleX
+                this.playerShadow.displayWidth = width
+                this.playerShadow.scaleY = this.playerShadow.scaleX
 
-              //set the collision body
-              const portionWidth = width / 3
-              this.player.body.setCircle(portionWidth, portionWidth / 4, portionWidth / 4)
+                //set the collision body
+                const portionWidth = width / 3
+                this.player.body.setCircle(portionWidth, portionWidth / 4, portionWidth / 4)
 
-              console.log("player avatar has loaded ")
-              console.log(this.playerAvatarKey)
+                console.log("player avatar has loaded ")
+                console.log(this.playerAvatarKey)
 
-              this.createdPlayer = true;
-              console.log("this.createdPlayer = true;")
+                this.createdPlayer = true;
+                console.log("this.createdPlayer = true;")
 
-            }// if (this.textures.exists(this.playerAvatarKey)) 
-          })
+              }// if (this.textures.exists(this.playerAvatarKey)) 
+            })
+          }
+
+          this.load.start(); // load the image in memory
+          console.log("this.load.start();");
+
         }
 
-        this.load.start(); // load the image in memory
-        console.log("this.load.start();");
-
-      }
-
-    }//if(manageSession.playerCreated)
-
+      }//if(manageSession.playerCreated)
+    }
   }
 
   createDebugText() {
@@ -827,7 +830,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     //manageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
 
-    //loading is broken, so I'm checking if the player avater has already loaded, after that I load onlineUsers
+    //TODO loading is broken, so I'm checking if the player avater has already loaded, after that I load onlineUsers
     if (this.createdPlayer) {
       //first check if onlineplayers need to be created
       if (manageSession.createOnlinePlayers) {

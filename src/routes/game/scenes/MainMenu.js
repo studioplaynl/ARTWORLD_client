@@ -7,7 +7,6 @@ import { locale } from 'svelte-i18n'
 import nl from './../../../langauge/nl.json'
 import en from './../../../langauge/en.json'
 
-
 export default class MainMenu extends Phaser.Scene {
   constructor() {
     super("MainMenu");
@@ -37,22 +36,8 @@ export default class MainMenu extends Phaser.Scene {
     this.camMain.zoom = 1;
     this.camUI = this.cameras.add(0,0, this.sys.game.canvas.width, this.sys.game.canvas.height).setName('camUI');
     this.camUI.zoom = 1;
-    // let cursors = this.input.keyboard.createCursorKeys();
 
-    // let controlConfig = {
-    //     camera: this.cameras.main,
-    //     left: cursors.left,
-    //     right: cursors.right,
-    //     up: cursors.up,
-    //     down: cursors.down,
-    //     zoomIn: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
-    //     zoomOut: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E),
-    //     acceleration: 0.06,
-    //     drag: 0.0005,
-    //     maxSpeed: 1.0
-    // };
 
-    // this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(controlConfig);
     //...... SESSION .............................................................................................
     //console.log("Session: ");
     manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
@@ -63,22 +48,6 @@ export default class MainMenu extends Phaser.Scene {
 
     manageSession.user_id = manageSession.sessionStored.user_id
     manageSession.username = manageSession.sessionStored.username
-
-    //get account info of Self
-    //console.log("get account info of self")
-    //console.log(JSON.parse(localStorage.getItem("profile")))
-    //this.getAccount()
-
-
-    // manageSession.AccountObject = await client.getAccount(manageSession.session);
-    // manageSession.playerObjectSelf = manageSession.AccountObject.user;
-    // console.log(manageSession.AccountObject.user)
-
-    // const payload = { "url": manageSession.playerObjectSelf.avatar_url };
-    // const rpcid = "download_file";
-    // const fileurl = await client.rpc(manageSession.session, rpcid, payload);
-    // manageSession.playerObjectSelf.url = fileurl.payload.url
-    // console.log(manageSession.playerObjectSelf.url)
     //.............................................................................................................
 
     //...... PARTICLES .............................................................................................
@@ -94,9 +63,6 @@ export default class MainMenu extends Phaser.Scene {
     //   blendMode: 'MULTI'
     // });
     //..............................................................................................................
-
-
-
 
     //....... ENTER WORLD BUTTON ....................................................................................
     // this.add
@@ -232,64 +198,7 @@ export default class MainMenu extends Phaser.Scene {
     //this.scale.updateBounds();
   }
 
-
-  // async getAccount() {
-  //   manageSession.playerObjectSelf = await getAccount();
-  //   console.log("manageSession.playerObjectSelf")
-  //   console.log(manageSession.playerObjectSelf)
-  //   manageSession.createPlayer = true
-  //   console.log("manageSession.createPlayer: ")
-  //   console.log(manageSession.createPlayer)
-  // }
-
-  // debugFunctions() {
-
-  //   this.input.keyboard.on('keyup-A', function (event) {
-  //     //get online player group
-
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-ONE', function (event) {
-
-  //     console.log('1 key');
-
-
-
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-S', function (event) {
-
-  //     console.log('S key');
-
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-Q', function (event) {
-
-  //     console.log('Q key');
-  //     getAccount();
-
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-W', function (event) {
-
-  //     console.log('W key');
-  //     manageSession.playerObjectSelf.url = url;
-  //     console.log("this.playerObjectSelf")
-  //     console.log(url)
-
-  //   }, this);
-
-  //   //  Receives every single key down event, regardless of type
-
-  //   this.input.keyboard.on('keydown', function (event) {
-
-  //     console.dir(event);
-
-  //   }, this);
-  // }
-
   update(time, delta) {
-    // this.controls.update(delta);
   }
 
 }

@@ -15,6 +15,9 @@
       domCreateContainer: false,
       // width: CONFIG.WIDTH,
       // height: CONFIG.HEIGHT,
+      input: {
+        windowEvents: false
+      },
       scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
