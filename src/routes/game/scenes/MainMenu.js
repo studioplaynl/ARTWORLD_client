@@ -126,7 +126,7 @@ export default class MainMenu extends Phaser.Scene {
     });
     //......... INPUT ....................................................................................
     //......... DEBUG FUNCTIONS ............................................................................
-    //this.debugFunctions();
+    //qthis.debugFunctions();
     //w this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
     //.......... end INPUT ................................................................................
@@ -151,23 +151,7 @@ export default class MainMenu extends Phaser.Scene {
 
     var cam = this.cameras.main;
 
-    gui = new dat.GUI();
-
-    var help = {
-      line1: 'Cursors to move',
-      line2: 'Q & E to zoom'
-    }
-
-    var f1 = gui.addFolder('Camera');
-    f1.add(cam, 'x').listen();
-    f1.add(cam, 'y').listen();
-    f1.add(cam, 'scrollX').listen();
-    f1.add(cam, 'scrollY').listen();
-    f1.add(cam, 'rotation').min(0).step(0.01).listen();
-    f1.add(cam, 'zoom', 0.1, 2).step(0.1).listen();
-    f1.add(help, 'line1');
-    f1.add(help, 'line2');
-    f1.open();
+   
 
 
     //on resizing the window
