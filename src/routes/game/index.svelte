@@ -10,18 +10,28 @@
 
   onMount(async () => {
     const config = {
-      parent: "phaserId",
+      //parent: "phaserId",
       type: Phaser.AUTO,
       domCreateContainer: false,
       width: CONFIG.WIDTH,
       height: CONFIG.HEIGHT,
+      scale: {
+        mode: Phaser.Scale.RESIZE,
+        parent: 'phaserId',
+        width: '100%',
+        height: '100%'
+    },
+      // scale: {
+      //           mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT ,
+      //           autoCenter: Phaser.Scale.CENTER_BOTH
+      //       },
       // backgroundColor: "#000000",
       // transparent: true,
       physics: {
         default: "arcade",
         arcade: {
           //gravity: { y: 0 },
-          debug: true,
+          debug: false,
           fixedStep: true,
           fps: 60,
         },
