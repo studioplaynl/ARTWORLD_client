@@ -13,13 +13,14 @@
       //parent: "phaserId",
       type: Phaser.AUTO,
       domCreateContainer: false,
-      width: CONFIG.WIDTH,
-      height: CONFIG.HEIGHT,
+      // width: CONFIG.WIDTH,
+      // height: CONFIG.HEIGHT,
       scale: {
         mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
         parent: 'phaserId',
-        width: '100%',
-        height: '100%'
+        width: CONFIG.WIDTH,
+        height:CONFIG.HEIGHT,
     },
       // scale: {
       //           mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT ,

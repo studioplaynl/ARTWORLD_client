@@ -24,7 +24,7 @@ export default class MainMenu extends Phaser.Scene {
   }
   async create() {
     // a tile sprite repeats background, should be done with small images
-    this.bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background4').setOrigin(0);
+    this.bg = this.add.tileSprite(0, 0, this.scale.width, this.scale.height, 'background4').setOrigin(0.5);
 
     //test different background
     // this.add.image(0,0, "background1").setOrigin(0,0).setScale(0.5)
@@ -33,8 +33,26 @@ export default class MainMenu extends Phaser.Scene {
     // this.add.image(0,0, "background4").setOrigin(0,0).setScale(1.3)
     // this.add.image(0,-300, "background5").setOrigin(0,0).setScale(1)
 
-    this.cameras.main.zoom = 1;
+    this.camMain = this.cameras.main.setSize(this.sys.game.canvas.width, this.sys.game.canvas.height).setName('camMain')
+    this.camMain.zoom = 1;
+    this.camUI = this.cameras.add(0,0, this.sys.game.canvas.width, this.sys.game.canvas.height).setName('camUI');
+    this.camUI.zoom = 1;
+    // let cursors = this.input.keyboard.createCursorKeys();
 
+    // let controlConfig = {
+    //     camera: this.cameras.main,
+    //     left: cursors.left,
+    //     right: cursors.right,
+    //     up: cursors.up,
+    //     down: cursors.down,
+    //     zoomIn: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
+    //     zoomOut: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E),
+    //     acceleration: 0.06,
+    //     drag: 0.0005,
+    //     maxSpeed: 1.0
+    // };
+
+    // this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(controlConfig);
     //...... SESSION .............................................................................................
     //console.log("Session: ");
     manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
@@ -124,57 +142,82 @@ export default class MainMenu extends Phaser.Scene {
     this.playBtn.on("pointerout", () => {
       this.playBtn.setScale(this.playBtnScaler);
     });
+
+
+    this.zoomButtons(false)
+
     //......... INPUT ....................................................................................
     //......... DEBUG FUNCTIONS ............................................................................
-    //qthis.debugFunctions();
-    //w this.createDebugText();
+    //this.debugFunctions();
+    //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
     //.......... end INPUT ................................................................................
-
-
-   this.cursors = this.input.keyboard.createCursorKeys();
-
-    var controlConfig = {
-      camera: this.cameras.main,
-      left: this.cursors.left,
-      right: this.cursors.right,
-      up: this.cursors.up,
-      down: this.cursors.down,
-      zoomIn: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
-      zoomOut: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E),
-      acceleration: 0.06,
-      drag: 0.0005,
-      maxSpeed: 1.0
-    };
-
-    this.controls = new Phaser.Cameras.Controls.SmoothedKeyControl(controlConfig);
-
-    var cam = this.cameras.main;
-
-   
 
 
     //on resizing the window
     this.scale.on('resize', this.resize, this);
 
+    this.camMain.ignore([this.zoom, this.zoomIn, this.zoomOut]);
+    this.camUI.ignore([this.playBtn, this.bg])
   } //create
 
-  resize(gameSize, baseSize, displaySize, resolution) {
+  zoomButtons(update) {
 
+    let width = this.sys.game.canvas.width
+    let height = this.sys.game.canvas.height - 60
+    if (!update) {
+      this.zoom = this.add.text(width / 10, height / 11, "zoom", { fontFamily: "Arial", fontSize: "22px" })
+        .setOrigin(0)
+        //.setScrollFactor(0) //fixed on screen
+        .setShadow(1, 1, '#000000', 0)
+        .setDepth(300)
+        .setScale(width / (width / this.camMain.zoom))
+
+      this.zoomIn = this.add.text(width / 10, (height / 11) + 50, "IN", { fontFamily: "Arial", fontSize: "22px" })
+        .setOrigin(0)
+        //.setScrollFactor(0) //fixed on screen
+        .setShadow(1, 1, '#000000', 0)
+        .setDepth(300)
+        .setInteractive()
+
+      this.zoomOut = this.add.text(width / 10, (height / 11) + 80, "OUT", { fontFamily: "Arial", fontSize: "22px" })
+        .setOrigin(0)
+        //.setScrollFactor(0) //fixed on screen
+        .setShadow(1, 1, '#000000', 0)
+        .setDepth(300)
+        .setInteractive()
+
+      this.zoomIn.on("pointerup", () => {
+        this.cameras.main.zoom += 0.2;
+        console.log("this.camMain.zoom")
+        console.log(this.camMain.zoom)
+        this.resize()
+      });
+
+      this.zoomOut.on("pointerup", () => {
+        this.camMain.zoom -= 0.2;
+        console.log("this.camMain.zoom")
+        console.log(this.camMain.zoom)
+        this.resize()
+      });
+    } else {
+      this.zoom.setPosition((width / 10) / this.camMain.zoom, (height / 10) / this.camMain.zoom).setScale(width / (width / this.camMain.zoom))
+      this.zoomIn.setPosition((width / 10) / this.camMain.zoom, (height / 10) / this.camMain.zoom + (50 / this.camMain.zoom)).setScale(width / (width / this.camMain.zoom))
+      this.zoomOut.setPosition((width / 10) / this.camMain.zoom, (height / 10) / this.camMain.zoom + (80 / this.camMain.zoom)).setScale(width / (width / this.camMain.zoom))
+    }
+  }
+  resize() {
     //console.log("resizing")
+    let width = this.sys.game.canvas.width
+    let height = this.sys.game.canvas.height - 60
 
-    var width = gameSize.width;
-    var height = gameSize.height;
+    console.log(width, height)
+    //this.camMain.resize(width, height);
 
-    // console.log(width, height)
+    this.bg.setSize(width / this.camMain.zoom, height / this.camMain.zoom).setPosition(width / 2, height / 2);
 
-    this.cameras.resize(width, height);
-
-    this.bg.setSize(width, height);
     this.playBtn.setPosition(width / 2, height / 2);
-
     this.playBtnScaler = (width / this.playBtn.width) * 0.86
-
     this.playBtn.setScale(this.playBtnScaler);
 
     this.playBtn.on("pointerover", () => {
@@ -185,8 +228,10 @@ export default class MainMenu extends Phaser.Scene {
       this.playBtn.setScale(this.playBtnScaler);
     });
 
-
+    //this.zoomButtons(true)
+    //this.scale.updateBounds();
   }
+
 
   // async getAccount() {
   //   manageSession.playerObjectSelf = await getAccount();
@@ -244,7 +289,7 @@ export default class MainMenu extends Phaser.Scene {
   // }
 
   update(time, delta) {
-    this.controls.update(delta);
+    // this.controls.update(delta);
   }
 
 }

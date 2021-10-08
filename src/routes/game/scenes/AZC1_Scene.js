@@ -120,6 +120,39 @@ export default class AZC1_Scene extends Phaser.Scene {
     //manageSession.createSocket();
     //....... end SOCKET .......................................................................
 
+    this.add.text(110, 20, "zoom", { fontFamily: "Arial", fontSize: "22px" })
+    .setOrigin(0)
+    .setScrollFactor(0) //fixed on screen
+    .setShadow(1, 1, '#000000', 0)
+    .setDepth(300)
+
+  this.zoomIn = this.add.text(110, 50, "IN", { fontFamily: "Arial", fontSize: "22px" })
+    .setOrigin(0)
+    .setScrollFactor(0) //fixed on screen
+    .setShadow(1, 1, '#000000', 0)
+    .setDepth(300)
+    .setInteractive()
+
+  this.zoomOut = this.add.text(110, 80, "OUT", { fontFamily: "Arial", fontSize: "22px" })
+    .setOrigin(0)
+    .setScrollFactor(0) //fixed on screen
+    .setShadow(1, 1, '#000000', 0)
+    .setDepth(300)
+    .setInteractive()
+
+  this.zoomIn.on("pointerup", () => {
+    let currentZoom = this.scale.zoom;
+    this.scale.setZoom(currentZoom + 0.2);
+    console.log("this.scale.zoom")
+    console.log(this.scale.zoom)
+  });
+
+  this.zoomOut.on("pointerup", () => {
+    let currentZoom = this.scale.zoom;
+    this.scale.setZoom(currentZoom - 0.5);
+    console.log("this.scale.zoom")
+    console.log(this.scale.zoom)
+  });
 
     //this.generateTileMap()
     this.generateBackground()
