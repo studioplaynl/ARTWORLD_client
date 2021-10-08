@@ -21,7 +21,8 @@
     art = [],
     drawings = [],
     stopMotion = [], 
-    trash = [];
+    trash = [],
+    CurrentUser;
 
     const columns = [
       {
@@ -55,11 +56,12 @@
         key: "Zichtbaar",
         title: "Zichtbaar",
         class: 'iconWidth',
-        renderComponent: { component: StatusComp, props: {moveToArt}}
+        renderComponent: { component: StatusComp, props: {moveToArt, isCurrentUser}}
       },
       {
-        key: "Delete",drawings: DeleteComp,
-        renderComponent: {component: DeleteComp, props: {removeFromTrash,moveToTrash}}
+        key: "Delete",
+        title: "Delete",  
+        renderComponent: {component: DeleteComp, props: {removeFromTrash,moveToTrash, isCurrentUser}}
       }
       
 
@@ -102,11 +104,17 @@ function moveToTrash(key) {
     }
   }
 
+  function isCurrentUser(){
+    console.log(CurrentUser)
+    return CurrentUser
+  }
+
   async function getUser() {
     if(!!params.user){
       id = params.user
+      CurrentUser = false;
       drawings = await listImages("drawing",params.user, 10)
-      stopMotion = await listImages("stopmotion",$Session.user_id, 10)
+      stopMotion = await listImages("stopmotion",params.user, 10)
       let useraccount = await getAccount(id)
       console.log(useraccount)
       user = useraccount.username
@@ -114,16 +122,17 @@ function moveToTrash(key) {
       azc = useraccount.metadata.azc
       avatar_url = useraccount.url
     } else {
+      CurrentUser = true;
       drawings = await listImages("drawing",$Session.user_id, 10)
       stopMotion = await listImages("stopmotion",$Session.user_id, 10)
-      let useraccount = await getAccount(id)
+      let useraccount = await getAccount()
       console.log(useraccount)
       user = useraccount.username
       role = JSON.parse(useraccount.metadata).role
       azc = JSON.parse(useraccount.metadata).azc
       avatar_url = useraccount.url
     }
-
+  
     art = [].concat(drawings)
     art = art.concat(stopMotion)
     console.log(art)

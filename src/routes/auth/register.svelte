@@ -1,6 +1,6 @@
 <script>
-	let email = "ik2@lindseyschaap.nl"
-	let username = "linjoe3"
+	let email = "@vrolijkheid.nl"
+	let username = "user"
 	let password = 'somesupersecretpassword'
 	let passwordCheck = 'somesupersecretpassword'
 	let role = 'speler'

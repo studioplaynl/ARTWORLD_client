@@ -1,8 +1,9 @@
 import { client } from "./nakama.svelte"
 import { Session,Profile } from "./session.js"
-let Sess;
+let Sess, pub;
 export let url;
 export let user; 
+
 
 Session.subscribe(value => {
   Sess = value;
@@ -15,9 +16,13 @@ export async function uploadImage(name, type, json, img, status) {
 
   var [jpegURL, jpegLocation] = await getUploadURL(type, name, "jpeg")
   var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json")
-  var value = { "jpeg": jpegLocation, "json": jsonLocation, "status": status };
-  console.log(value)
-
+  var value = { "jpeg": jpegLocation, "json": jsonLocation};
+  if(status == "zichtbaar"){
+    pub = true
+  }else{
+    pub = false
+  }
+ 
   await fetch(jpegURL, {
     method: "PUT",
     headers: {
@@ -33,8 +38,8 @@ export async function uploadImage(name, type, json, img, status) {
     },
     body: json
   })
-  await updateObject(type, name, value)
-
+  await updateObject(type, name, value,pub)
+ 
 }
 
 export async function recieveImage(data) {
@@ -58,12 +63,16 @@ export async function getUploadURL(type, name, filetype) {
   return [url, locatio]
 }
 
-export async function updateObject(type, name, value) {
+export async function updateObject(type, name, value, pub) {
+  if(pub) {
+    pub = 2
+  }else{ pub = 1;}
   const object_ids = await client.writeStorageObjects(Sess, [
     {
       "collection": type,
       "key": name,
       "value": value,
+      "permission_read": pub,
       //"version": "*"
     }
   ]);
@@ -74,9 +83,9 @@ export async function getAccount(id) {
   if(!!!id){
     const account = await client.getAccount(Sess);
     let user = account.user;
-    console.log(user)
     user.url = await getAvatar(user.avatar_url)
     user.meta = JSON.parse(user.metadata)
+    console.log(user)
     Profile.set(user)
     return user
   }else {
@@ -97,7 +106,6 @@ export async function getAvatar(avatar_url) {
     const rpcid = "download_file";
     const fileurl = await client.rpc(Sess, rpcid, payload);
     let url = fileurl.payload.url
-    console.log(url)
     return url
 }
 
