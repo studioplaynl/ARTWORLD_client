@@ -18,8 +18,11 @@ Profile.subscribe((value) => {
     })
 
 
+export const Error = writable();
+
 
 export async function login(email, password) {
+
     console.log("ssl="+SSL)
     const create = false;
     client.authenticateEmail(email, password, create)
@@ -29,9 +32,19 @@ export async function login(email, password) {
         Session.set(session);
         getAccount()
         window.location.href = "/#/"
+        return session
     })
-    .catch((err) => {return err})
-    
+    .catch((err)=> {
+        if(err.status == 404){
+            Error.update(er => er = "invalid username")
+        }
+        if(err.status == 401){
+            Error.update(er => er = "invalid password")
+        }
+        
+    })
+
+    //throw "invalid username/password"
     
 }
 
@@ -54,6 +67,7 @@ export async function checkLogin(session) {
     client.getAccount(session)
     .then(() => console.log('user still loged in'))
     .catch((err) => {
+            $Error = "User not loged in"    
             logout()
             window.location.href = "/#/login"
             history.go(0)

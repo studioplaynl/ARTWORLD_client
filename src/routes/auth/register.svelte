@@ -5,7 +5,7 @@
 	let passwordCheck = 'somesupersecretpassword'
 	let role = 'speler'
 	let azc = ''
-    import {Session} from "../../session.js"
+    import {Session, Error} from "../../session.js"
 	import {client} from "../../nakama.svelte"
 	import { _ } from 'svelte-i18n'
 
@@ -18,11 +18,13 @@
 		console.log(client)
 		var token = client.configuration.bearerToken
 		client.configuration.bearerToken = null
-		const newUser = await client.authenticateEmail(email, password, create, username, data);
+		const newUser = await client.authenticateEmail(email, password, create, username, data)
+		.catch(err => $Error = err)
 		client.configuration.bearerToken = token
 		console.log(newUser)
 		alert('New user created' + newUser.user_id)
 	}
+	
 
 	function handleClick() {
 		promise = register();

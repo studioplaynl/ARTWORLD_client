@@ -12,10 +12,11 @@
   import { onMount } from 'svelte';
   import { checkLogin } from './session';
   import { locale, locales, getLocaleFromNavigator, init, addMessages, _ } from 'svelte-i18n'
+  import Error from "./routes/components/error.svelte"
 
   import en from './langauge/en.json';
   import nl from './langauge/nl.json';
-
+  let error;
   addMessages('nl', nl);
   addMessages('en', en);
 
@@ -151,7 +152,7 @@ let isLogedIn = (detail) => {
     }),
   }}
 />
-
+<Error/>
 
 <style>
   .nav {
