@@ -5,6 +5,7 @@
   import AZC1_Scene from "./scenes/AZC1_Scene";
   import location2_Scene from "./scenes/Location2_Scene";
   import location3_Scene from "./scenes/Location3_Scene";
+  import UI_Scene from "./scenes/UI_Scene";
 
   import CONFIG from "./config";
 
@@ -40,7 +41,7 @@
           fps: 60,
         },
       },
-      scene: [MainMenu, AZC1_Scene, location2_Scene, location3_Scene],
+      scene: [MainMenu, AZC1_Scene, location2_Scene, location3_Scene, UI_Scene],
     };
 
     new Phaser.Game(config);

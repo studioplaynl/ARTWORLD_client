@@ -177,7 +177,7 @@ export default class MainMenu extends Phaser.Scene {
     let width = this.sys.game.canvas.width
     let height = this.sys.game.canvas.height - 60
 
-    console.log(width, height)
+    //console.log(width, height)
     //this.camMain.resize(width, height);
 
     this.bg.setSize(width / this.camMain.zoom, height / this.camMain.zoom).setPosition(width / 2, height / 2);
