@@ -79,7 +79,7 @@ export default class MainMenu extends Phaser.Scene {
     //   })
     //   .setOrigin(0.5);
 
-    this.playBtn = this.add.image(this.scale.width / 2, this.scale.height / 2, 'artworld')
+    this.playBtn = this.add.image(this.scale.width / 2, this.scale.height / 3, 'artworld')
       .setInteractive({ useHandCursor: true });
 
     this.playBtnScaler = (this.scale.width / this.playBtn.width) * 0.86
@@ -132,21 +132,21 @@ export default class MainMenu extends Phaser.Scene {
     let width = this.sys.game.canvas.width
     let height = this.sys.game.canvas.height - 60
     if (!update) {
-      this.zoom = this.add.text(width / 10, height / 11, "zoom", { fontFamily: "Arial", fontSize: "22px" })
+      this.zoom = this.add.text(width / 10, height / 40, "zoom", { fontFamily: "Arial", fontSize: "22px" })
         .setOrigin(0)
         //.setScrollFactor(0) //fixed on screen
         .setShadow(1, 1, '#000000', 0)
         .setDepth(300)
         .setScale(width / (width / this.camMain.zoom))
 
-      this.zoomIn = this.add.text(width / 10, (height / 11) + 50, "IN", { fontFamily: "Arial", fontSize: "22px" })
+      this.zoomIn = this.add.text((width / 10) + 80, (height / 40) , "IN", { fontFamily: "Arial", fontSize: "22px" })
         .setOrigin(0)
         //.setScrollFactor(0) //fixed on screen
         .setShadow(1, 1, '#000000', 0)
         .setDepth(300)
         .setInteractive()
 
-      this.zoomOut = this.add.text(width / 10, (height / 11) + 80, "OUT", { fontFamily: "Arial", fontSize: "22px" })
+      this.zoomOut = this.add.text((width / 10) + 160, (height / 40) , "OUT", { fontFamily: "Arial", fontSize: "22px" })
         .setOrigin(0)
         //.setScrollFactor(0) //fixed on screen
         .setShadow(1, 1, '#000000', 0)
@@ -182,7 +182,7 @@ export default class MainMenu extends Phaser.Scene {
 
     this.bg.setSize(width / this.camMain.zoom, height / this.camMain.zoom).setPosition(width / 2, height / 2);
 
-    this.playBtn.setPosition(width / 2, height / 2);
+    this.playBtn.setPosition(width / 2, height / 3);
     this.playBtnScaler = (width / this.playBtn.width) * 0.86
     this.playBtn.setScale(this.playBtnScaler);
 

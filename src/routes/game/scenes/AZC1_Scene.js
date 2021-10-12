@@ -28,7 +28,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.pointer;
     this.isClicking = false;
     this.arrowDown = false;
-    this.gameCam;
 
     //pointer location example
     // this.source // = player
@@ -178,7 +177,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //2
     this.player = this.physics.add
-      .sprite(100, 100, this.playerAvatarPlaceholder)
+      .sprite(300, 800, this.playerAvatarPlaceholder)
       .setDepth(101);
 
     this.player.body.onOverlap = true;
@@ -229,6 +228,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     // // end 1 and 2
     // grid
     this.gameCam.setBounds(0, 0, 3200, 3200);
+    this.gameCam.zoom = 1
     // end grid
     this.gameCam.startFollow(this.player);
 
