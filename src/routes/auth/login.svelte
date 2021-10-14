@@ -1,5 +1,5 @@
 <script>
-    import {Session, login} from "../../session.js"
+    import {Session, login, Error} from "../../session.js"
 	import { _ } from 'svelte-i18n'
   import {onMount} from 'svelte'
 
@@ -7,10 +7,10 @@
 	let email = "gebruiker1@devrolijkheid.nl"
 	let password = 'somesupersecretpassword'
 
+	async function onSubmit() {
+  
+		  let promise = await login(email, password)
 
-	function onSubmit() {
-
-		let promise = login(email, password);
 	}
 
   onMount(()=>{

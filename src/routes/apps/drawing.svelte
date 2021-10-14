@@ -479,21 +479,46 @@
     savecanvas.renderAll();
     savecanvas.clear();
     let data = { objects: [] };
+    let scale = (128/700)
     console.log(data);
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
         const newObject = { ...object };
+        newObject.left = newObject.left * scale
+        newObject.top = newObject.top * scale
         newObject.left += 128 * i;
+        newObject.scaleX = scale
+        newObject.scaleY = scale
         console.log(newObject);
         data.objects.push(newObject);
       });
     }
     savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
-    var Image = savecanvas.toDataURL("png");
+    savecanvas.calcOffset();
+    setTimeout(() => {
+    var Image = savecanvas.toDataURL('image/png', 0.2);
+    console.log(Image)
     var blobData = dataURItoBlob(Image);
     uploadAvatar(blobData);
+    },300)
+    
   }
+
+  /*
+  function createAvatar() {
+    console.log("upload avatar");
+    savecanvas.setHeight(128);
+    savecanvas.setWidth(128 * frames.length);
+    savecanvas.renderAll();
+    savecanvas.clear();
+    for (let i = 0; i < frames.length; i++) {
+    
+    }
+
+
+  }
+  */
   //////////////////// avatar functies end /////////////////////////////////
 
   //////////////////// camera functies ///////////////////////////////
@@ -953,9 +978,9 @@
     color: green;
   }
 
-  .savecanvas {
+  /* .savecanvas {
     display: none;
-  }
+  } */
 
   .iconbox {
     display: inline-block;
