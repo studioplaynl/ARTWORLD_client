@@ -184,8 +184,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.player.body.onOverlap = true;
     //end 2
 
-    //await this.loadAndCreatePlayerAvatar()
-
     this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
 
     // this.playerShadow.anchor.set(0.5);
@@ -1159,6 +1157,8 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.createOnlinePlayers();
     this.updateMovementOnlinePlayers()
     this.loadAndCreatePlayerAvatar();
+    //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
+
 
     // if (manageSession.removeConnectedUser) {
     // }
