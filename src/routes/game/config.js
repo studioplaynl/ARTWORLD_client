@@ -12,8 +12,6 @@ const CONFIG = {
     // WIDTH: screen.availWidth,
     // HEIGHT: screen.availHeight
 
-    
-    
 }
 
 export default CONFIG

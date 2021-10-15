@@ -1,18 +1,16 @@
 <script>
-    import {client, SSL} from "../nakama.svelte"
-    import { Session, Profile, logout} from "../session.js"
+    import { client, SSL } from "../nakama.svelte";
+    import { Session, Profile, logout } from "../session.js";
     //import { writable } from "svelte/store";
 
     const verboseLogging = false;
     const socket = client.createSocket(SSL, verboseLogging);
     let match_ID = "";
-    let AllUsers =[]
-    let payload = []
-    let status = 'left'
-    let locations = ['lab',`home`, `library` ];
+    let AllUsers = [];
+    let payload = [];
+    let status = "left";
+    let locations = ["lab", `home`, `library`];
     let selected;
-
-
 
     async function chat() {
         const createStatus = true;
@@ -68,68 +66,70 @@
     }
     let promise = chat();
 
-    export   function onclick() {
+    export function onclick() {
         var opCode = 1;
-        var data = '{ "posX": '+Math.floor(Math.random()*100)+', "posY": '+Math.floor(Math.random()*100) +', "location": "'+ selected +'" }';
-        socket.rpc('move_position', data)
-        .then((rec) => {status
-                data = JSON.parse(rec.payload) || []
-                console.log("sent pos:")
-                console.log(data)
-            })
+        var data =
+            '{ "posX": ' +
+            Math.floor(Math.random() * 100) +
+            ', "posY": ' +
+            Math.floor(Math.random() * 100) +
+            ', "location": "' +
+            selected +
+            '" }';
+        socket.rpc("move_position", data).then((rec) => {
+            status;
+            data = JSON.parse(rec.payload) || [];
+            console.log("sent pos:");
+            console.log(data);
+        });
     }
 
-export async function join() {
-     await socket.rpc("join", selected)
-            .then((rec) => {
-                AllUsers = JSON.parse(rec.payload) || []
-                console.log('joined ' + selected)
-                console.log("join users:")
-                console.log(AllUsers)
-                status = "joined"
-            })
-}
+    export async function join() {
+        await socket.rpc("join", selected).then((rec) => {
+            AllUsers = JSON.parse(rec.payload) || [];
+            console.log("joined " + selected);
+            console.log("join users:");
+            console.log(AllUsers);
+            status = "joined";
+        });
+    }
 
-export async function getUsers() {
-     await socket.rpc("get_users", selected)
-            .then((rec) => {
-                AllUsers = JSON.parse(rec.payload) || []
-                console.log("all current users in home:")
-                console.log(AllUsers)
-            })
-}
+    export async function getUsers() {
+        await socket.rpc("get_users", selected).then((rec) => {
+            AllUsers = JSON.parse(rec.payload) || [];
+            console.log("all current users in home:");
+            console.log(AllUsers);
+        });
+    }
 
-export async function leave() {
-    await socket.rpc("leave", selected)
-            .then((rec) => {
-                console.log("left")
-                AllUsers = []
-                status = "left"
-            })
-}
+    export async function leave() {
+        await socket.rpc("leave", selected).then((rec) => {
+            console.log("left");
+            AllUsers = [];
+            status = "left";
+        });
+    }
 
-export async function kill() {
-    await socket.rpc("kill", selected)
-            .then((rec) => {
-                console.log("left")
-                AllUsers = []
-                status = "left"
-            })
-}
-    
+    export async function kill() {
+        await socket.rpc("kill", selected).then((rec) => {
+            console.log("left");
+            AllUsers = [];
+            status = "left";
+        });
+    }
 </script>
 
 <main>
     <h1>test</h1>
     <p>Status: {status}</p>
 
-    <select bind:value={selected} on:change="{() => console.log(selected)}">
-		{#each locations as location}
-			<option value={location}>
-				{location}
-			</option>
-		{/each}
-	</select>
+    <select bind:value={selected} on:change={() => console.log(selected)}>
+        {#each locations as location}
+            <option value={location}>
+                {location}
+            </option>
+        {/each}
+    </select>
 
     <a on:click={join}>join</a>
     <a on:click={leave}>leave</a>

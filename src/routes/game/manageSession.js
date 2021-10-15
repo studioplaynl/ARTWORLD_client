@@ -83,6 +83,8 @@ class manageSession {
     this.socket.onstreamdata = (streamdata) => {
       //console.info("Received stream data:", streamdata);
       let data = JSON.parse(streamdata.data);
+
+      //update the position data of this.allConnectedUsers array
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
           //console.log("test");
@@ -96,7 +98,7 @@ class manageSession {
       // console.log(this.allConnectedUsers);
       // var newPos = this.allConnectedUsers;
       // this.allConnectedUsers = newPos;
-     
+
     };
 
 
@@ -151,6 +153,16 @@ class manageSession {
     }; //this.socket.onstreampresence
   } //end createSocket
 
+  // async join() {
+  //   await this.socket.rpc("join", this.location).then((rec) => {
+  //     AllUsers = JSON.parse(rec.payload) || [];
+  //     console.log("joined " + this.location);
+  //     console.log("join users:");
+  //     console.log(AllUsers);
+  //     status = "joined";
+  //   });
+  // }
+
   async getAccountDetails() {
     this.AccountObject = await client.getAccount(this.session);
     this.playerObjectSelf = this.AccountObject.user;
@@ -174,157 +186,33 @@ class manageSession {
 
   async getStreamUsers(rpc_command, location) {
     // if (!this.createOnlinePlayers) {
-      //rpc_command:
-      //"join" = join the stream, get the online users, except self
-      //"get_users" = after joined, get the online users, except self
+    //rpc_command:
+    //"join" = join the stream, get the online users, except self
+    //"get_users" = after joined, get the online users, except self
 
-      console.log(rpc_command)
+    console.log(rpc_command)
 
-      this.socket.rpc(rpc_command, location).then((rec) => {
+    this.socket.rpc(rpc_command, location).then((rec) => {
 
-        //the server report all users in location except self
-        this.allConnectedUsers = JSON.parse(rec.payload) || []
-        //if there are no users online, the array length == 0
+      //the server report all users in location except self
+      this.allConnectedUsers = JSON.parse(rec.payload) || []
+      //if there are no users online, the array length == 0
 
-        console.log("joined users:")
-        
-        if (this.allConnectedUsers.length > 0) {
-          console.log(this.allConnectedUsers)
-          this.createOnlinePlayers = true
-          console.log("this.createOnlinePlayers = true")
-        } else {
-          //this.createOnlinePlayers = false
-          console.log("no online users")
-        }
+      console.log("joined users:")
 
-        //status = "joined"
-      })
+      if (this.allConnectedUsers.length > 0) {
+        console.log(this.allConnectedUsers)
+        this.createOnlinePlayers = true
+        console.log("this.createOnlinePlayers = true")
+      } else {
+        //this.createOnlinePlayers = false
+        console.log("no online users")
+      }
+
+      //status = "joined"
+    })
     // }
   }
-
-
-  loadAndCreatePlayerAvatar(location) {
-    //check if account info is loaded
-    if (this.sessionStored.user_id != null) {
-      //check for createPlayer flag
-      if (this.createPlayer) {
-        this.createPlayer = false
-        console.log("this.createPlayer = false;")
-
-        let createdPlayer = location + ".createdPlayer"
-        createdPlayer = eval(createdPlayer)
-        createdPlayer = false;
-
-        console.log("loadAndCreatePlayerAvatar")
-
-        // is playerAvaterKey already in loadedAvatars?
-        //no -> load the avatar and add to loadedAvatars
-        //yes -> dont load the avatar
-
-        let playerAvatarKey = location +  ".playerAvatarKey"
-        playerAvatarKey = eval(playerAvatarKey)
-
-        playerAvatarKey = this.playerObjectSelf.id + "_" + this.playerObjectSelf.create_time
-        console.log(playerAvatarKey)
-
-        console.log("this.textures.exists(this.playerAvatarKey): ")
-
-        let textures = location + ".textures"
-        textures = eval(textures)
-        // console.log(this.textures.exists(this.playerAvatarKey))
-        console.log(textures.exists(playerAvatarKey))
-
-        //check if url is not empty for some reason, returns so that previous image is kept
-        if (!this.textures.exists(this.playerAvatarKey)) {
-          if (this.playerObjectSelf.url === "") {
-            console.log("avatar url is empty")
-            this.createPlayer = false;
-            console.log("this.createPlayer = false;")
-            this.createdPlayer = true;
-            console.log("this.createdPlayer = true;")
-            return
-          } else {
-            console.log(" loading: this.playerObjectSelf.url: ")
-            console.log(this.playerObjectSelf.url)
-
-            this.load.spritesheet(
-              this.playerAvatarKey,
-              this.playerObjectSelf.url, { frameWidth: 128, frameHeight: 128 }
-            );
-
-            this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-              console.log("loadAndCreatePlayerAvatar complete")
-              if (this.textures.exists(this.playerAvatarKey)) {
-
-                const avatar = this.textures.get(this.playerAvatarKey)
-                const avatarWidth = avatar.frames.__BASE.width
-                const avatarHeight = avatar.frames.__BASE.height
-
-                const avatarFrames = Math.round(avatarWidth / avatarHeight)
-                console.log(avatarFrames)
-
-                //make an animation if the image is wider than tall
-                if (avatarFrames > 1) {
-                  //.. animation for the player avatar ............................................
-                  //works
-                  this.playerMovingKey = "moving" + "_" + this.playerAvatarKey;
-                  this.playerStopKey = "stop" + "_" + this.playerAvatarKey;
-
-                  this.anims.create({
-                    key: this.playerMovingKey,
-                    frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: avatarFrames - 1 }),
-                    frameRate: (avatarFrames + 2) * 2,
-                    repeat: -1,
-                    yoyo: true
-                  });
-
-                  //works
-                  this.anims.create({
-                    key: this.playerStopKey,
-                    frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: 0 }),
-                  });
-
-                  //.. end animation for the player avatar ............................................
-                }
-
-                // texture loaded so use instead of the placeholder
-                this.player.setTexture(this.playerAvatarKey)
-
-
-
-                this.playerShadow.setTexture(this.playerAvatarKey)
-
-                //scale the player to 68px
-                const width = 128
-                this.player.displayWidth = width
-                this.player.scaleY = this.player.scaleX
-
-                this.playerShadow.displayWidth = width
-                this.playerShadow.scaleY = this.playerShadow.scaleX
-
-                //set the collision body
-                const portionWidth = width / 3
-                this.player.body.setCircle(portionWidth, portionWidth / 4, portionWidth / 4)
-
-                console.log("player avatar has loaded ")
-                console.log(this.playerAvatarKey)
-
-                this.createdPlayer = true;
-                console.log("this.createdPlayer = true;")
-
-              }// if (this.textures.exists(this.playerAvatarKey)) 
-            })
-          }
-
-          this.load.start(); // load the image in memory
-          console.log("this.load.start();");
-
-        }
-
-      }//if(this.playerCreated)
-    }
-  }
-
 
   testMoveMessage() { //works
     var opCode = 1;
