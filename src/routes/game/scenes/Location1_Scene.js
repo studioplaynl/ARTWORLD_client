@@ -100,8 +100,8 @@ export default class Location1Scene extends Phaser.Scene {
     // });
 
     //set rpc location
-    manageSession.location = "home"
-    await manageSession.createSocket();
+    // manageSession.location = "home"
+    // await manageSession.createSocket();
   }
 
   async create() {
@@ -240,10 +240,6 @@ export default class Location1Scene extends Phaser.Scene {
     console.log(this.currentZoom)
     
   } // end create
-
-  rescaleScene(){
-
-  }
 
   generateBouncingBird() {
     var container = this.add.container();
@@ -549,8 +545,9 @@ export default class Location1Scene extends Phaser.Scene {
         console.log("this.textures.exists(this.playerAvatarKey): ")
         console.log(this.textures.exists(this.playerAvatarKey))
 
-        //check if url is not empty for some reason, returns so that previous image is kept
+        //if the texture already exists attach it again to the player
         if (!this.textures.exists(this.playerAvatarKey)) {
+          //check if url is not empty for some reason, returns so that previous image is kept
           if (manageSession.playerObjectSelf.url === "") {
             console.log("avatar url is empty")
             manageSession.createPlayer = false;
@@ -571,61 +568,7 @@ export default class Location1Scene extends Phaser.Scene {
               console.log("loadAndCreatePlayerAvatar complete")
               if (this.textures.exists(this.playerAvatarKey)) {
 
-                const avatar = this.textures.get(this.playerAvatarKey)
-                const avatarWidth = avatar.frames.__BASE.width
-                const avatarHeight = avatar.frames.__BASE.height
-
-                const avatarFrames = Math.round(avatarWidth / avatarHeight)
-                console.log(avatarFrames)
-
-                //make an animation if the image is wider than tall
-                if (avatarFrames > 1) {
-                  //.. animation for the player avatar ............................................
-                  //works
-                  this.playerMovingKey = "moving" + "_" + this.playerAvatarKey;
-                  this.playerStopKey = "stop" + "_" + this.playerAvatarKey;
-
-                  this.anims.create({
-                    key: this.playerMovingKey,
-                    frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: avatarFrames - 1 }),
-                    frameRate: (avatarFrames + 2) * 2,
-                    repeat: -1,
-                    yoyo: true
-                  });
-
-                  //works
-                  this.anims.create({
-                    key: this.playerStopKey,
-                    frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: 0 }),
-                  });
-
-                  //.. end animation for the player avatar ............................................
-                }
-
-                // texture loaded so use instead of the placeholder
-                this.player.setTexture(this.playerAvatarKey)
-
-
-
-                this.playerShadow.setTexture(this.playerAvatarKey)
-
-                //scale the player to 68px
-                const width = 128
-                this.player.displayWidth = width
-                this.player.scaleY = this.player.scaleX
-
-                this.playerShadow.displayWidth = width
-                this.playerShadow.scaleY = this.playerShadow.scaleX
-
-                //set the collision body
-                const portionWidth = width / 3
-                this.player.body.setCircle(portionWidth, portionWidth / 4, portionWidth / 4)
-
-                console.log("player avatar has loaded ")
-                console.log(this.playerAvatarKey)
-
-                this.createdPlayer = true;
-                console.log("this.createdPlayer = true;")
+                this.attachtAvatarToPlayer()
 
               }// if (this.textures.exists(this.playerAvatarKey)) 
             })
@@ -634,10 +577,70 @@ export default class Location1Scene extends Phaser.Scene {
           this.load.start(); // load the image in memory
           console.log("this.load.start();");
 
+        } else {
+          this.attachtAvatarToPlayer()
         }
+
+
 
       }//if(manageSession.playerCreated)
     }
+  }
+
+  attachtAvatarToPlayer() {
+    const avatar = this.textures.get(this.playerAvatarKey)
+    const avatarWidth = avatar.frames.__BASE.width
+    const avatarHeight = avatar.frames.__BASE.height
+
+    const avatarFrames = Math.round(avatarWidth / avatarHeight)
+    console.log(avatarFrames)
+
+    //make an animation if the image is wider than tall
+    if (avatarFrames > 1) {
+      //.. animation for the player avatar ............................................
+      //works
+      this.playerMovingKey = "moving" + "_" + this.playerAvatarKey;
+      this.playerStopKey = "stop" + "_" + this.playerAvatarKey;
+
+      this.anims.create({
+        key: this.playerMovingKey,
+        frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: avatarFrames - 1 }),
+        frameRate: (avatarFrames + 2) * 2,
+        repeat: -1,
+        yoyo: true
+      });
+
+      //works
+      this.anims.create({
+        key: this.playerStopKey,
+        frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: 0 }),
+      });
+
+      //.. end animation for the player avatar ............................................
+    }
+
+    // texture loaded so use instead of the placeholder
+    this.player.setTexture(this.playerAvatarKey)
+
+    this.playerShadow.setTexture(this.playerAvatarKey)
+
+    //scale the player to 68px
+    const width = 128
+    this.player.displayWidth = width
+    this.player.scaleY = this.player.scaleX
+
+    this.playerShadow.displayWidth = width
+    this.playerShadow.scaleY = this.playerShadow.scaleX
+
+    //set the collision body
+    const portionWidth = width / 3
+    this.player.body.setCircle(portionWidth, portionWidth / 4, portionWidth / 4)
+
+    console.log("player avatar has loaded ")
+    console.log(this.playerAvatarKey)
+
+    this.createdPlayer = true;
+    console.log("this.createdPlayer = true;")
   }
 
   createDebugText() {
