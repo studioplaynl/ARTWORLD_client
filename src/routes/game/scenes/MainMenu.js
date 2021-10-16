@@ -21,7 +21,10 @@ export default class MainMenu extends Phaser.Scene {
     //this.load.image("background4", "./assets/art_styles/repetition/0affdae3101c87f72c071970623a6884.jpg")
     // this.load.image("background4", "./assets/art_styles/repetition/0ceff64b236482e515c344d254424da6.jpg")
     // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg") 
-    this.load.image("background4", "./assets/art_styles/repetition/9a9cdf2c6c7a12e4bf572f34536861d3.jpg") 
+    // this.load.image("background4", "./assets/art_styles/repetition/9a9cdf2c6c7a12e4bf572f34536861d3.jpg") 
+    this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg") 
+
+    // Received presence event for stream: 
     // this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
   }
   async create() {
