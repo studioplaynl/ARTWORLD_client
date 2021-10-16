@@ -271,27 +271,27 @@ export default class Location1Scene extends Phaser.Scene {
 
   generateLocations() {
     //this.location2 = this.physics.add.staticGroup();
-    this.location1 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
-    this.location1.body.setCircle(190, 12, 12)
-    this.location1.setImmovable(true)
+    this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
+    this.location2.body.setCircle(190, 12, 12)
+    this.location2.setImmovable(true)
 
     // this.location2.setData("entered", false)
     // this.location2.setName("location2")
-    this.createLocationDialogbox("location1", 200, 150)
+    this.createLocationDialogbox("location2", 200, 150)
 
 
     //........ location3 ...................
-    this.location2 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    this.physics.add.existing(this.location2);
-    this.location2.body.setSize(this.location2.width, this.location2.height)
-    this.location2.body.setOffset(0, -(this.location2.height / 4))
+    this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    this.physics.add.existing(this.location3);
+    this.location3.body.setSize(this.location3.width, this.location3.height)
+    this.location3.body.setOffset(0, -(this.location3.height / 4))
     //can't set ositriangle to immmovable
     //this.location3.setImmovable(true)
 
     // this.location3.setData("entered", false)
     // this.location3.setName("location3")
 
-    this.createLocationDialogbox("location2", 200, 150)
+    this.createLocationDialogbox("location3", 200, 150)
 
     //........ location4 ...................
     this.location4 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
@@ -311,7 +311,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //create variable for the text of the dialog box, set the text after
     let nameText = "this." + location.name + "DialogBox"
-    nameText = this.add.text(mainWidth - 60, mainHeight - 30, 'OK!', { fill: '#000' })
+    nameText = this.add.text(mainWidth - 60, mainHeight - 30, locationName, { fill: '#000' })
 
     //create variable to hold dialogbox graphics
     let nameBox = "this." + location.name + "DialogBox"

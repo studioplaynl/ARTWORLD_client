@@ -58,7 +58,7 @@ export default class Location2Scene extends Phaser.Scene {
   enterInGameScene(player) {
     this.physics.pause();
     player.setTint(0xff0000);
-    this.scene.start("AZC1_Scene");
+    this.scene.start("location1_Scene");
   }
 
   update() {
