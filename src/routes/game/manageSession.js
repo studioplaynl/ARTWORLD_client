@@ -31,6 +31,11 @@ class manageSession {
     this.removedConnectedUsers = [];
     this.removeConnectedUser = false;
 
+    // this.createdPlayer = false;
+    this.playerAvatarKey = ""
+    // this.playerMovingKey = "moving";
+    // this.playerStopKey = "stop";
+
     this.gameStarted = false;
 
     this.location = "home"
@@ -78,6 +83,8 @@ class manageSession {
     this.socket.onstreamdata = (streamdata) => {
       //console.info("Received stream data:", streamdata);
       let data = JSON.parse(streamdata.data);
+
+      //update the position data of this.allConnectedUsers array
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
           //console.log("test");
@@ -91,7 +98,7 @@ class manageSession {
       // console.log(this.allConnectedUsers);
       // var newPos = this.allConnectedUsers;
       // this.allConnectedUsers = newPos;
-     
+
     };
 
 
@@ -146,6 +153,16 @@ class manageSession {
     }; //this.socket.onstreampresence
   } //end createSocket
 
+  // async join() {
+  //   await this.socket.rpc("join", this.location).then((rec) => {
+  //     AllUsers = JSON.parse(rec.payload) || [];
+  //     console.log("joined " + this.location);
+  //     console.log("join users:");
+  //     console.log(AllUsers);
+  //     status = "joined";
+  //   });
+  // }
+
   async getAccountDetails() {
     this.AccountObject = await client.getAccount(this.session);
     this.playerObjectSelf = this.AccountObject.user;
@@ -169,31 +186,31 @@ class manageSession {
 
   async getStreamUsers(rpc_command, location) {
     // if (!this.createOnlinePlayers) {
-      //rpc_command:
-      //"join" = join the stream, get the online users, except self
-      //"get_users" = after joined, get the online users, except self
+    //rpc_command:
+    //"join" = join the stream, get the online users, except self
+    //"get_users" = after joined, get the online users, except self
 
-      console.log(rpc_command)
+    console.log(rpc_command)
 
-      this.socket.rpc(rpc_command, location).then((rec) => {
+    this.socket.rpc(rpc_command, location).then((rec) => {
 
-        //the server report all users in location except self
-        this.allConnectedUsers = JSON.parse(rec.payload) || []
-        //if there are no users online, the array length == 0
+      //the server report all users in location except self
+      this.allConnectedUsers = JSON.parse(rec.payload) || []
+      //if there are no users online, the array length == 0
 
-        console.log("joined users:")
-        
-        if (this.allConnectedUsers.length > 0) {
-          console.log(this.allConnectedUsers)
-          this.createOnlinePlayers = true
-          console.log("this.createOnlinePlayers = true")
-        } else {
-          //this.createOnlinePlayers = false
-          console.log("no online users")
-        }
+      console.log("joined users:")
 
-        //status = "joined"
-      })
+      if (this.allConnectedUsers.length > 0) {
+        console.log(this.allConnectedUsers)
+        this.createOnlinePlayers = true
+        console.log("this.createOnlinePlayers = true")
+      } else {
+        //this.createOnlinePlayers = false
+        console.log("no online users")
+      }
+
+      //status = "joined"
+    })
     // }
   }
 

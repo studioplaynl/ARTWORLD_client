@@ -8,34 +8,31 @@ import en from './../../../langauge/en.json'
 export default class UI_Scene extends Phaser.Scene {
   constructor() {
     super("UI_Scene");
-    this.currentZoom = 2
-
+    this.currentZoom = 1
+    this.location = "test"
   }
-
 
   preload() {
-
   }
+
   async create() {
-
-
     this.camUI = this.cameras.main.setSize(this.sys.game.canvas.width, this.sys.game.canvas.height).setName('camMain')
     this.camUI.zoom = 1;
-
-
-
     this.zoomButtons(false)
     this.scale.on('resize', this.resize, this);
-
-
   } //create
 
   zoomButtons(update) {
-
     let width = this.sys.game.canvas.width
     let height = this.sys.game.canvas.height - 60
 
     if (!update) {
+      this.locationText = this.add.text((width / 10) - 120 , height / 40, this.location, { fontFamily: "Arial", fontSize: "22px" })
+      .setOrigin(0)
+      //.setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(1000)
+
       this.zoom = this.add.text(width / 10, height / 40, "zoom", { fontFamily: "Arial", fontSize: "22px" })
         .setOrigin(0)
         //.setScrollFactor(0) //fixed on screen

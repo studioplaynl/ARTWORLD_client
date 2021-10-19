@@ -5,11 +5,10 @@ import { getAccount } from '../../../api.js';
 import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
 
-export default class AZC1_Scene extends Phaser.Scene {
+export default class Location1Scene extends Phaser.Scene {
   constructor() {
-    super("AZC1_Scene");
+    super("location1_Scene");
     this.gameStarted = false;
-    // this.turn = false;
     this.phaser = this;
     // this.playerPos;
     this.onlinePlayers = [];
@@ -99,6 +98,9 @@ export default class AZC1_Scene extends Phaser.Scene {
     // this.load.on('complete', function () {
     //   console.log('complete');
     // });
+
+    //set rpc location
+    manageSession.location = "home"
     await manageSession.createSocket();
   }
 
@@ -154,8 +156,6 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     this.player.body.onOverlap = true;
     //end 2
-
-    //await this.loadAndCreatePlayerAvatar()
 
     this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
 
@@ -232,6 +232,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
     this.currentZoom = this.UI_Scene.currentZoom
+    this.UI_Scene.location = "home"
 
     this.gameCam.zoom = this.currentZoom
 
@@ -310,7 +311,7 @@ export default class AZC1_Scene extends Phaser.Scene {
 
     //create variable for the text of the dialog box, set the text after
     let nameText = "this." + location.name + "DialogBox"
-    nameText = this.add.text(mainWidth - 60, mainHeight - 30, 'OK!', { fill: '#000' })
+    nameText = this.add.text(mainWidth - 60, mainHeight - 30, locationName, { fill: '#000' })
 
     //create variable to hold dialogbox graphics
     let nameBox = "this." + location.name + "DialogBox"
@@ -1145,6 +1146,7 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.createOnlinePlayers();
     this.updateMovementOnlinePlayers()
     this.loadAndCreatePlayerAvatar();
+    //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
     // console.log(this.currentZoom);
@@ -1157,7 +1159,6 @@ export default class AZC1_Scene extends Phaser.Scene {
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
     // //........... end PLAYER SHADOW .........................................................................
-
 
     //.......... UPDATE TIMER      ..........................................................................
     manageSession.updateMovementTimer += delta;

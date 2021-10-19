@@ -63,23 +63,6 @@ button:focus {
 	border-color: #666;
 }
 
-.nav {
-	background-color: gray;
-	height: 25px;
-	padding: 13px;
-	margin: 0px;
-}
-.left {
-	float: left;
-}
-.right {
-	float: right;
-}
-
-.show {
-	display: block!important;
-}
-
 .icon {
     stroke: currentColor;
     fill: currentColor;
@@ -109,7 +92,7 @@ background: lightgrey;
 }
 
 .profileTable th {
-	background-color: #04AA6D;
+	background-color: #8b8b8b;
 	color: white;
 	padding: 5px;
   }
@@ -125,3 +108,7 @@ margin: 0 auto;
 .icon > svg {
     height: 60%;
   }
+
+.icon {
+    color: dimgrey;
+}

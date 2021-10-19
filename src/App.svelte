@@ -25,8 +25,6 @@
   //initialLocale: getLocaleFromNavigator(),
   });
 
-
-
   let role;
   if ($Profile == null) {
     role = null;
