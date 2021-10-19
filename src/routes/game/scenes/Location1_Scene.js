@@ -968,11 +968,12 @@ export default class Location1Scene extends Phaser.Scene {
         console.log("started loading new (online) avatars")
         //.... end load new Avatars ....................................................................................
 
-
         //when the images are loaded the new ones should be set to the players
         this.load.on('filecomplete', () => {
           console.log("players added: ")
           console.log(this.newOnlinePlayers)
+
+          this.onlinePlayers = this.onlinePlayersGroup.getChildren()
 
           for (let i = 0; i < this.onlinePlayers.length; i++) {
 
@@ -980,31 +981,21 @@ export default class Location1Scene extends Phaser.Scene {
           } //for (let i = 0; i < this.onlinePlayers.length; i++)
         }) //this.load.on('filecomplete', () =>
 
-        //!make all allConnectedUsers visible NOT WORKING RIGHT: 
         console.log("manageSession.allConnectedUsers")
         console.log(manageSession.allConnectedUsers)
-        
-        manageSession.allConnectedUsers.forEach((player) => {
-          const playerID = player.user_id
-          const found = this.onlinePlayers.some(user => user.user_id === playerID)
-          if (found) {
 
-            player.active = true
-            player.visible = true
+        //this.onlinePlayers = this.onlinePlayersGroup.getChildren()
 
-            console.log("make all allConnectedUsers visible")
-            console.log(player)
-          }
+        manageSession.allConnectedUsers.forEach((player, i) => {
+          
+          var index = this.onlinePlayers.findIndex(function (player) {
+            return player.user_id == manageSession.allConnectedUsers[i].user_id
+          });
 
-          // var index = this.onlinePlayers.findIndex(function (person) {
-          //   return person.user_id == manageSession.allConnectedUsers[i].user_id
-          // });
-          // this.onlinePlayers[index].active = true
-          // this.onlinePlayers[index].visible = true
-          // console.log("make all allConnectedUsers visible")
-          // console.log(this.onlinePlayers[index])
-
-
+          this.onlinePlayers[index].active = true
+          this.onlinePlayers[index].visible = true
+          console.log("make all allConnectedUsers visible")
+          console.log(this.onlinePlayers[index])
 
           //send player position over the network for the online users to see
           //manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));

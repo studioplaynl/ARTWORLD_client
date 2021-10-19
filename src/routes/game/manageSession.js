@@ -118,6 +118,9 @@ class manageSession {
           //remove leave.user_id from 
 
           // this.removedConnectedUsers.push(leave.user_id);
+
+          //! instead of setTimeout I could also just remove user from allConnectedUsers and 
+          //! set createOnlinePlayers = true
           setTimeout(() => {
             this.getStreamUsers("get_users", this.location)
           }, 400);
