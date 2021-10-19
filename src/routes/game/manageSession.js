@@ -5,6 +5,8 @@ import { client, SSL } from "../../nakama.svelte";
 
 class manageSession {
   constructor() {
+    this.debug = true
+
     this.sessionStored;
     this.user_id;
     this.username;
@@ -29,7 +31,6 @@ class manageSession {
     this.updateOnlinePlayers = false;
     this.allConnectedUsers = [];
     this.removedConnectedUsers = [];
-    this.removeConnectedUser = false;
 
     // this.createdPlayer = false;
     this.playerAvatarKey = ""
@@ -76,7 +77,7 @@ class manageSession {
     // await this.getAvatarUrl().then(this.createPlayer = true)
     // console.log(this.createPlayer)
 
-    console.log('this.getStreamUsers("join", this.location)')
+    console.log('this.getStreamUsers("join", "' + this.location + '")')
     await this.getStreamUsers("join", this.location)
 
     //stream
@@ -127,7 +128,6 @@ class manageSession {
           //   return item.name !== leave.username;
           // });
         });
-        this.removeConnectedUser = true;
         this.createOnlinePlayers = true
 
       }
@@ -163,27 +163,6 @@ class manageSession {
   //   });
   // }
 
-  async getAccountDetails() {
-    this.AccountObject = await client.getAccount(this.session);
-    this.playerObjectSelf = this.AccountObject.user;
-    console.log(this.AccountObject.user)
-
-    const payload = { "url": this.playerObjectSelf.avatar_url };
-    const rpcid = "download_file";
-    const fileurl = await client.rpc(this.session, rpcid, payload);
-    this.playerObjectSelf.url = fileurl.payload.url
-    console.log(this.playerObjectSelf.url)
-  }
-
-  async getAvatarUrl() {
-    const payload = { "url": this.playerObjectSelf.avatar_url };
-    const rpcid = "download_file";
-    const fileurl = await client.rpc(this.session, rpcid, payload);
-    this.playerObjectSelf.url = fileurl.payload.url
-    console.log(this.playerObjectSelf.url)
-
-  }
-
   async getStreamUsers(rpc_command, location) {
     // if (!this.createOnlinePlayers) {
     //rpc_command:
@@ -195,11 +174,22 @@ class manageSession {
     this.socket.rpc(rpc_command, location).then((rec) => {
 
       //the server report all users in location except self
-      this.allConnectedUsers = JSON.parse(rec.payload) || []
-      //if there are no users online, the array length == 0
+      // this.allConnectedUsers = JSON.parse(rec.payload) || [] //time16:52
 
+      //get all online players
+      let tempConnectedUsers = JSON.parse(rec.payload) || []
+      console.log("tempConnectedUsers")
+      console.log(tempConnectedUsers)
+      //empty the array first
+      this.allConnectedUsers = []
+
+      //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
+      this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
+
+      console.log("filtered by location? this.allConnectedUsers")
+      console.log(this.allConnectedUsers)
       console.log("joined users:")
-
+      //if there are no users online, the array length == 0
       if (this.allConnectedUsers.length > 0) {
         console.log(this.allConnectedUsers)
         this.createOnlinePlayers = true
@@ -208,12 +198,12 @@ class manageSession {
         //this.createOnlinePlayers = false
         console.log("no online users")
       }
-
-      //status = "joined"
     })
-    // }
   }
 
+   async leave(selected) {
+    await socket.rpc("leave", selected)
+}
   testMoveMessage() { //works
     var opCode = 1;
     var data =
