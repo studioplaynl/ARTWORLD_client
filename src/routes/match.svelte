@@ -1,6 +1,7 @@
 <script>
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
+    import {Error} from "./../session.js"
     //import { writable } from "svelte/store";
 
     const verboseLogging = false;
@@ -116,6 +117,19 @@ export async function kill() {
                 status = "left"
             })
 }
+
+socket.ondisconnect = (event) => {
+  console.info("Disconnected from the server. Event:", event);
+  $Error = "Disconnected from the server."
+};
+
+socket.onstatuspresence = (statusPresence) => {
+  console.info("Received status presence update:", statusPresence);
+};
+socket.onstreampresence = (streamPresence) => {
+  console.info("Received stream presence update:", streamPresence);
+};
+
     
 </script>
 

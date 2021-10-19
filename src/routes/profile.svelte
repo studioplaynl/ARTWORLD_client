@@ -135,7 +135,6 @@ function moveToTrash(key) {
   
     art = [].concat(drawings)
     art = art.concat(stopMotion)
-    console.log(art)
 
     art.forEach((item, index) => {
       if(item.value.status === "trash"){
@@ -145,7 +144,6 @@ function moveToTrash(key) {
     })
     trash = trash;
 
-    console.log(art)
   
   }
   let promise = getUser();

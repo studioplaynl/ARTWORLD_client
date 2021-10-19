@@ -67,7 +67,7 @@ export async function checkLogin(session) {
     client.getAccount(session)
     .then(() => console.log('user still loged in'))
     .catch((err) => {
-            $Error = "User not loged in"    
+            Error = "User not loged in"    
             logout()
             window.location.href = "/#/login"
             history.go(0)

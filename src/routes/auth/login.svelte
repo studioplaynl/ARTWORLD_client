@@ -4,7 +4,7 @@
   import {onMount} from 'svelte'
 
     console.log($Session)
-	let email = "gebruiker1@devrolijkheid.nl"
+	let email = "user1@vrolijkheid.nl"
 	let password = 'somesupersecretpassword'
 
 	async function onSubmit() {

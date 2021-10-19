@@ -1,5 +1,5 @@
 import { client } from "./nakama.svelte"
-import { Session,Profile } from "./session.js"
+import { Session,Profile, Error } from "./session.js"
 let Sess, pub;
 export let url;
 export let user; 
@@ -66,7 +66,8 @@ export async function getUploadURL(type, name, filetype) {
 export async function updateObject(type, name, value, pub) {
   if(pub) {
     pub = 2
-  }else{ pub = 1;}
+  }
+  else{ pub = 1;}
   const object_ids = await client.writeStorageObjects(Sess, [
     {
       "collection": type,
@@ -92,8 +93,8 @@ export async function getAccount(id) {
     const users = await client.getUsers(Sess, [id]);
     console.log(users)
     let user = users.users[0]
-    console.log(user)
     user.url = await getAvatar(user.avatar_url)
+    console.log(user)
     return user
   }
 }
@@ -103,9 +104,19 @@ export async function getAccount(id) {
 //getAvatar only works reliably via the getAccount call
 export async function getAvatar(avatar_url) {
   const payload = {"url": avatar_url};
-    const rpcid = "download_file";
-    const fileurl = await client.rpc(Sess, rpcid, payload);
-    let url = fileurl.payload.url
+  let url  
+  const rpcid = "download_file";
+  await client.rpc(Sess, rpcid, payload)
+    .then((fileurl)=> {
+      url = fileurl.payload.url
+      console.log("url")
+      console.log(url)
+      return url
+    })
+    .catch(()=>{
+      console.log('fail')
+      return ''
+    })
     return url
 }
 

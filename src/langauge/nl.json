@@ -1,20 +1,20 @@
 {
     "nav": {
         "game": "Spel",
-        "upload": "upload",
+        "upload": "Upload",
         "match": "Match",
-        "login": "inloggen",
-        "logout": "uitloggen",
-        "drawing": "tekenen",
-        "stopmotion": "stopmotion",
+        "login": "Inloggen",
+        "logout": "Uitloggen",
+        "drawing": "Tekenen",
+        "stopmotion": "Stopmotion",
         "admin": {
-            "createUser": "nieuwe gebruiker",
-            "createGroup": "nieuwe groep"
+            "createUser": "Nieuwe gebruiker",
+            "createGroup": "Nieuwe groep"
         }
     },
     "login": {
         "title": "Login",
-        "login": "login"
+        "login": "Login"
     },
     "register": {
         "title": "Registreer een nieuwe gebruiker",
