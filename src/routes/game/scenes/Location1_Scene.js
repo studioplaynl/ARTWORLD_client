@@ -28,6 +28,8 @@ export default class Location1Scene extends Phaser.Scene {
     this.playerMovingKey = "moving";
     this.playerStopKey = "stop";
 
+    this.hiddenOnlineUsers
+
     this.location = "home"
 
     this.cursors;
@@ -121,18 +123,14 @@ export default class Location1Scene extends Phaser.Scene {
     this.playerIdText = manageSession.user_id;
 
     manageSession.playerObjectSelf = JSON.parse(localStorage.getItem("profile"));
-    console.log("manageSession.playerObjectSelf")
-    console.log(manageSession.playerObjectSelf)
+    // console.log("manageSession.playerObjectSelf")
+    // console.log(manageSession.playerObjectSelf)
     manageSession.createPlayer = true
     console.log("manageSession.createPlayer: ")
     console.log(manageSession.createPlayer)
 
-
-
     //manageSession.createSocket();
     //....... end SOCKET .......................................................................
-
-
 
     //this.generateTileMap()
     this.generateBackground()
@@ -149,7 +147,7 @@ export default class Location1Scene extends Phaser.Scene {
     this.playerGroup = this.add.group();
 
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
-    this.playerAvatarPlaceholder = "onlinePlayer";
+    this.playerAvatarPlaceholder = "avatar1";
     // //1
     // this.player = this.physics.add
     //   .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
@@ -169,7 +167,6 @@ export default class Location1Scene extends Phaser.Scene {
     // this.playerShadow.anchor.set(0.5);
     this.playerShadow.setTint(0x000000);
     this.playerShadow.alpha = 0.2;
-
 
     this.playerGroup.add(this.player);
     this.playerGroup.add(this.playerShadow);
@@ -226,25 +223,23 @@ export default class Location1Scene extends Phaser.Scene {
     this.locationDialogBoxContainersGroup = this.add.group();
     this.generateLocations()
 
-
     this.generateBouncingBird()
-
-
 
     //......... DEBUG FUNCTIONS ............................................................................
     this.debugFunctions();
     //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
+    //temp off
+    // this.UI_Scene = this.scene.get("UI_Scene")
+    // this.scene.launch("UI_Scene")
+    // this.currentZoom = this.UI_Scene.currentZoom
+    // this.UI_Scene.location = "home"
 
-    this.UI_Scene = this.scene.get("UI_Scene")
-    this.scene.launch("UI_Scene")
-    this.currentZoom = this.UI_Scene.currentZoom
-    this.UI_Scene.location = "home"
-
-    this.gameCam.zoom = this.currentZoom
+    // this.gameCam.zoom = this.currentZoom
 
     // console.log(this.UI_Scene)
     // console.log(this.currentZoom)
+    //end temp off
 
   } // end create
 
@@ -535,23 +530,22 @@ export default class Location1Scene extends Phaser.Scene {
       //check for createPlayer flag
       if (manageSession.createPlayer) {
         manageSession.createPlayer = false;
-        console.log("manageSession.createPlayer = false;")
+        //console.log("manageSession.createPlayer = false;")
 
         //set the location of the player to this location
         this.player.location = this.location
         this.createdPlayer = false;
 
-        console.log("loadAndCreatePlayerAvatar")
+        //console.log("loadAndCreatePlayerAvatar")
 
         // is playerAvaterKey already in loadedAvatars?
         //no -> load the avatar and add to loadedAvatars
         //yes -> dont load the avatar
 
         this.playerAvatarKey = manageSession.playerObjectSelf.id + "_" + manageSession.playerObjectSelf.create_time
-        console.log(this.playerAvatarKey)
-
-        console.log("this.textures.exists(this.playerAvatarKey): ")
-        console.log(this.textures.exists(this.playerAvatarKey))
+        // console.log(this.playerAvatarKey)
+        // console.log("this.textures.exists(this.playerAvatarKey): ")
+        // console.log(this.textures.exists(this.playerAvatarKey))
 
         //if the texture already exists attach it again to the player
         if (!this.textures.exists(this.playerAvatarKey)) {
@@ -564,8 +558,8 @@ export default class Location1Scene extends Phaser.Scene {
             console.log("this.createdPlayer = true;")
             return
           } else {
-            console.log(" loading: manageSession.playerObjectSelf.url: ")
-            console.log(manageSession.playerObjectSelf.url)
+            // console.log(" loading: manageSession.playerObjectSelf.url: ")
+            // console.log(manageSession.playerObjectSelf.url)
 
             this.load.spritesheet(
               this.playerAvatarKey,
@@ -583,7 +577,7 @@ export default class Location1Scene extends Phaser.Scene {
           }
 
           this.load.start(); // load the image in memory
-          console.log("this.load.start();");
+          //console.log("this.load.start();");
 
         } else {
           this.attachtAvatarToPlayer()
@@ -598,7 +592,7 @@ export default class Location1Scene extends Phaser.Scene {
     const avatarHeight = avatar.frames.__BASE.height
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight)
-    console.log("avatarFrames: " + avatarFrames)
+    //console.log("avatarFrames: " + avatarFrames)
 
     //make an animation if the image is wider than tall
     if (avatarFrames > 1) {
@@ -645,15 +639,15 @@ export default class Location1Scene extends Phaser.Scene {
     // this.player.x = this.player.posX
     // this.player.y = this.player.posY
 
-    console.log("player avatar has loaded ")
-    console.log("this.playerAvatarKey")
-    console.log(this.playerAvatarKey)
+    // console.log("player avatar has loaded ")
+    // console.log("this.playerAvatarKey")
+    // console.log(this.playerAvatarKey)
 
-    console.log("this.player")
+    console.log("this.player: ")
     console.log(this.player)
 
     this.createdPlayer = true;
-    console.log("this.createdPlayer = true;")
+    // console.log("this.createdPlayer = true;")
 
     //send the current player position over the network
     manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
@@ -668,9 +662,9 @@ export default class Location1Scene extends Phaser.Scene {
       .setOrigin(0.5)
       .setScrollFactor(0) //fixed on screen
       .setShadow(3, 3, '#000000', 0)
-      .setDepth(30);
+      .setDepth(1000);
 
-    this.matchIdText = this.add
+    this.add
       .text(
         this.headerText.x,
         this.headerText.y,
@@ -684,68 +678,56 @@ export default class Location1Scene extends Phaser.Scene {
       .setScrollFactor(0) //fixed on screen
       .setInteractive() //make clickable
       .setShadow(1, 1, '#000000', 0)
-      .setDepth(30);
-
-    // this.playerIdText = this.add
-    //   .text(this.headerText.x, this.matchIdText.y + 14, "playerID", {
-    //     fontFamily: "Arial",
-    //     fontSize: "11px",
-    //   })
-    //   .setOrigin(0.5)
-    //   .setScrollFactor(0) //fixed on screen
-    //   .setDepth(30)
-    //   .setShadow(1, 1, '#000000', 0);
-
-    this.matchIdText.on("pointerup", () => {
-      // this.onlinePlayers[0].setVisible(false); //works
-      // this.onlinePlayers[0].destroy();
-    });
-
-    // this.opponentsIdText = this.add
-    //   .text(this.headerText.x, this.playerIdText.y + 14, "", {
-    //     fontFamily: "Arial",
-    //     fontSize: "11px",
-    //   })
-    //   .setOrigin(0.5)
-    //   .setScrollFactor(0) //fixed on screen
-    //   .setDepth(30);
-
-    // this.allConnectedUsersText = this.add.text(110, 20, "onlineUsers[ ]", { fontFamily: "Arial", fontSize: "22px" })
-    //   .setOrigin(0.5)
-    //   .setScrollFactor(0) //fixed on screen
-    //   .setShadow(1, 1, '#000000', 0)
-    //   .setDepth(300);
-
-    // this.allConnectedUsersText2 = this.add.text(110, 40, "", { fontFamily: "Arial", fontSize: "22px" })
-    //   .setOrigin(0.5)
-    //   .setScrollFactor(0) //fixed on screen
-    //   .setShadow(1, 1, '#000000', 0)
-    //   .setDepth(300);
-
-    // this.onlinePlayersText = this.add.text(110, 70, "onlinePlayers[ ]", { fontFamily: "Arial", fontSize: "22px" })
-    //   .setOrigin(0.5)
-    //   .setScrollFactor(0) //fixed on screen
-    //   .setShadow(1, 1, '#000000', 0)
-    //   .setDepth(300);
-
-    // this.onlinePlayersText2 = this.add.text(110, 90, "", { fontFamily: "Arial", fontSize: "22px" })
-    //   .setOrigin(0.5)
-    //   .setScrollFactor(0) //fixed on screen
-    //   .setShadow(1, 1, '#000000', 0)
-    //   .setDepth(300);
+      .setDepth(1000);
 
 
-    // this.onlinePlayersGroupText = this.add.text(110, 120, "playersGroup[ ]", { fontFamily: "Arial", fontSize: "22px" })
-    //   .setOrigin(0.5)
-    //   .setScrollFactor(0) //fixed on screen
-    //   .setShadow(1, 1, '#000000', 0)
-    //   .setDepth(300);
+    this.opponentsIdText = this.add
+      .text(this.headerText.x, this.playerIdText.y + 14, "", {
+        fontFamily: "Arial",
+        fontSize: "11px",
+      })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setDepth(1000);
 
-    // this.onlinePlayersGroupText2 = this.add.text(110, 140, "", { fontFamily: "Arial", fontSize: "22px" })
-    //   .setOrigin(0.5)
-    //   .setScrollFactor(0) //fixed on screen
-    //   .setShadow(1, 1, '#000000', 0)
-    //   .setDepth(300);
+    this.allConnectedUsersText = "onlineUsers[ ]: " + JSON.parse(manageSession.allConnectedUsers)
+
+    this.add.text(110, 20, this.allConnectedUsersText, { fontFamily: "Arial", fontSize: "22px" })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(1000);
+
+    this.allConnectedUsersText2 = this.add.text(110, 40, "", { fontFamily: "Arial", fontSize: "22px" })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(1000);
+
+    this.onlinePlayersText = this.add.text(110, 70, "onlinePlayers[ ]", { fontFamily: "Arial", fontSize: "22px" })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(300);
+
+    this.onlinePlayersText2 = this.add.text(110, 90, "", { fontFamily: "Arial", fontSize: "22px" })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(1000);
+
+
+    this.onlinePlayersGroupText = this.add.text(110, 120, "playersGroup[ ]", { fontFamily: "Arial", fontSize: "22px" })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(1000);
+
+    this.onlinePlayersGroupText2 = this.add.text(110, 140, "", { fontFamily: "Arial", fontSize: "22px" })
+      .setOrigin(0.5)
+      .setScrollFactor(0) //fixed on screen
+      .setShadow(1, 1, '#000000', 0)
+      .setDepth(1000);
 
   }
 
@@ -760,7 +742,7 @@ export default class Location1Scene extends Phaser.Scene {
 
       console.log('1 key');
 
-      manageSession.getStreamUsers("get_users", "home")
+      manageSession.getStreamUsers("get_users", this.location)
 
     }, this);
 
@@ -781,6 +763,7 @@ export default class Location1Scene extends Phaser.Scene {
 
       console.log('D key');
 
+      console.log(" ")
       console.log('this.onlinePlayers: ')
       console.log(this.onlinePlayers)
 
@@ -840,7 +823,10 @@ export default class Location1Scene extends Phaser.Scene {
     if (this.createdPlayer) {
       //first check if onlineplayers need to be created
       if (manageSession.createOnlinePlayers) {
+        console.log("creating onlineplayer")
         manageSession.createOnlinePlayers = false
+
+        this.newOnlinePlayers = []
 
         if (this.debug) {
           console.log("")
@@ -853,50 +839,55 @@ export default class Location1Scene extends Phaser.Scene {
         // ..... players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
 
         //check if there are players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        let onlyInOnlinePlayers = []
+        this.hiddenOnlineUsers = []
 
         this.onlinePlayers.forEach(player => {
           const playerID = player.user_id
           const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
-          if (!found) onlyInOnlinePlayers.push(player)
+          if (!found) this.hiddenOnlineUsers.push(player)
         })
 
         if (this.debug) {
-          console.log("onlyInOnlinePlayers")
-          console.log(onlyInOnlinePlayers)
+          console.log("this.hiddenOnlineUsers")
+          console.log(this.hiddenOnlineUsers)
         }
 
-
+        //............ HIDE OFFLINE PLAYERS ..............................
         //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        if (onlyInOnlinePlayers.length > 0) {
+        if (this.hiddenOnlineUsers.length > 0) {
           //hide users
           if (this.debug) {
             console.log("")
             console.log("# Players that are not online anymore")
           }
 
-          for (let i = 0; i < onlyInOnlinePlayers.length; i++) {
+
+
+          for (let i = 0; i < this.hiddenOnlineUsers.length; i++) {
             //check if the user_id is in this.onlinePlayers
+            this.hiddenOnlineUsers[i].active = false
+            this.hiddenOnlineUsers[i].visible = false
+            console.log(this.hiddenOnlineUsers[i])
+            //get the index of user_id from this.hiddenOnlineUsers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
+            // let index = this.onlinePlayers.findIndex(function (person) {
+            //   return person.user_id == this.hiddenOnlineUsers[i].user_id
+            // });
 
-            //get the index of user_id from onlyInOnlinePlayers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
-            let index = this.onlinePlayers.findIndex(function (person) {
-              return person.user_id == onlyInOnlinePlayers[i].user_id
-            });
-
-            this.onlinePlayers[index].active = false
-            this.onlinePlayers[index].visible = false
-            if (this.debug) {
-              console.log("deactivated and hidden User: ")
-              console.log(this.onlinePlayers[index])
-              console.log("")
-            }
+            // this.onlinePlayers[index].active = false
+            // this.onlinePlayers[index].visible = false
+            // if (this.debug) {
+            //   console.log("deactivated and hidden User: ")
+            //   console.log(this.onlinePlayers[index])
+            //   console.log("")
+            // }
           }
+
         }
-        // .....end  players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
+        //......... end HIDE OFFLINE PLAYERS ..............................
 
-        //...... LOAD NEW AVATARS ........................................................................................
 
-        //(new) players present in .allConnectedUsers but not in this.onlinePlayers ->add them to this.onlinePlayers
+        //...... LOAD NEW PLAYERS ........................................................................................
+        //(new) players present in .allConnectedUsers but not in this.onlinePlayers ->load their avatar and animation
         this.newOnlinePlayers = []
         manageSession.allConnectedUsers.forEach(player => {
           const playerID = player.user_id
@@ -904,18 +895,14 @@ export default class Location1Scene extends Phaser.Scene {
           if (!found) this.newOnlinePlayers.push(player)
         })
         if (this.debug) {
-          console.log("")
+          console.log("  ")
           console.log("new Online Players")
           console.log(newOnlinePlayers)
-          console.log("")
+          console.log("  ")
         }
 
-        //load the spritesheet for the new online user
+        //load the spritesheet for the new online user //give the online player a placeholder avatar
         this.newOnlinePlayers.forEach((element, i) => {
-          if (this.debug) {
-            console.log("element: ")
-            console.log(element)
-          }
 
           let elementCopy = element
           // console.log("elementCopy: ")
@@ -923,61 +910,53 @@ export default class Location1Scene extends Phaser.Scene {
           //a new user
           this.tempAvatarName = element.user_id + "_" + element.avatar_time;
 
-          this.load.spritesheet(this.tempAvatarName, element.avatar_url, { frameWidth: 128, frameHeight: 128 })
+          //if the texture already exists attach it again to the player
+          if (!this.textures.exists(this.tempAvatarName)) {
 
-          if (this.debug) {
-            console.log("loading: ")
-            console.log(this.tempAvatarName)
-          }
+            //add it to loading queue
+            this.load.spritesheet(this.tempAvatarName, element.avatar_url, { frameWidth: 128, frameHeight: 128 })
 
-          //.....  create animation online player ...................................................................................................
-          const avatar = this.textures.get(this.tempAvatarName)
-          const avatarWidth = avatar.frames.__BASE.width
-          const avatarHeight = avatar.frames.__BASE.height
+            if (this.debug) {
+              console.log("loading: ")
+              console.log(this.tempAvatarName)
+            }
 
-          const avatarFrames = Math.round(avatarWidth / avatarHeight)
-          if (this.debug) {
-            console.log(avatarFrames)
-          }
+            console.log("give the online player a placeholder avatar first")
+            //give the online player a placeholder avatar first
+            element = this.add.sprite(element.posX, element.posY, this.playerAvatarPlaceholder)
+              .setDepth(90)
 
-          if (avatarFrames > 1) {
-
-            // set names for the moving and stop animations
-
-            element.setData("movingKey", "moving" + "_" + this.tempAvatarName);
-            element.setData("stopKey", "stop" + "_" + this.tempAvatarName);
+            element.setData("movingKey", "moving");
+            element.setData("stopKey", "stop");
 
             //create animation for moving
             this.anims.create({
               key: element.getData("movingKey"),
-              frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
-              frameRate: (avatarFrames + 2) * 2,
-              repeat: 1,
-              // yoyo: true
+              frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
+              frameRate: 20,
+              repeat: -1,
             });
 
-            //create animation for stopping
+            //create animation for stop
             this.anims.create({
               key: element.getData("stopKey"),
-              frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
+              frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
             });
 
+            Object.assign(element, elementCopy); //add all data from elementCopy to element; like prev Position, Location, UserID
+            element.x = element.posX
+            element.y = element.posY
 
-          }//if (avatarFrames > 1) {
-
-          //..... end create animation online player ...................................................................................................
-
-
-
-          element = this.add.sprite(element.posX, element.posY, this.playerAvatarPlaceholder)
-            .setDepth(90)
-
-          Object.assign(element, elementCopy); //add all data from elementCopy to element; like prev Position, Location, UserID
-
-          // add new player to group
-          this.onlinePlayersGroup.add(element)
+            // add new player to group
+            this.onlinePlayersGroup.add(element)
+          } else {
+            //! if the avatar already existed; get the player from the onlinePlayers array !
+          
+            this.attachtAvatarToOnlinePlayer(element)
+          }
         })
 
+        //update this.onlinePlayers, hidden or visible
         this.onlinePlayers = this.onlinePlayersGroup.getChildren()
         if (this.debug) {
           console.log("all players in the group, hidden or visible ")
@@ -986,7 +965,7 @@ export default class Location1Scene extends Phaser.Scene {
 
         //added new players
         this.load.start(); // load the image in memory
-        console.log("started loading new online avatars")
+        console.log("started loading new (online) avatars")
         //.... end load new Avatars ....................................................................................
 
 
@@ -996,70 +975,101 @@ export default class Location1Scene extends Phaser.Scene {
           console.log(this.newOnlinePlayers)
 
           for (let i = 0; i < this.onlinePlayers.length; i++) {
-            // ! we are going over the complete onlinePlayers list, while some are hidden??
 
-            this.tempAvatarName = this.onlinePlayers[i].user_id + "_" + this.onlinePlayers[i].avatar_time;
-            //this.onlinePlayers[i] = this.add.image(this.onlinePlayers[i].posX, this.onlinePlayers[i].posY, this.tempAvatarName)
-
-            console.log("player added: ")
-            console.log(this.onlinePlayers[i])
-
-            console.log("avatar key: ")
-            console.log(this.tempAvatarName)
-
-            this.onlinePlayers[i].setTexture(this.tempAvatarName)
-
-            const avatar = this.textures.get(this.tempAvatarName)
-            const avatarWidth = avatar.frames.__BASE.width
-            const avatarHeight = avatar.frames.__BASE.height
-
-            const avatarFrames = Math.round(avatarWidth / avatarHeight)
-            console.log(avatarFrames)
-
-            if (avatarFrames > 1) {
-
-              // set names for the moving and stop animations
-
-              this.onlinePlayers[i].setData("movingKey", "moving" + "_" + this.tempAvatarName);
-              this.onlinePlayers[i].setData("stopKey", "stop" + "_" + this.tempAvatarName);
-
-              //create animation for moving
-              this.anims.create({
-                key: this.onlinePlayers[i].getData("movingKey"),
-                frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
-                frameRate: (avatarFrames + 2) * 2,
-                repeat: -1,
-                yoyo: true
-              });
-
-              //create animation for stop
-              this.anims.create({
-                key: this.onlinePlayers[i].getData("stopKey"),
-                frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
-              });
-            } //if (avatarFrames > 1) {
+            this.attachtAvatarToOnlinePlayer(this.onlinePlayers[i])
           } //for (let i = 0; i < this.onlinePlayers.length; i++)
         }) //this.load.on('filecomplete', () =>
 
-        //make all allConnectedUsers visible
-        manageSession.allConnectedUsers.forEach((e, i) => {
-          // const playerID = player.user_id
-          // const found = this.onlinePlayers.some(user => user.user_id === playerID)
+        //!make all allConnectedUsers visible NOT WORKING RIGHT: 
+        console.log("manageSession.allConnectedUsers")
+        console.log(manageSession.allConnectedUsers)
+        
+        manageSession.allConnectedUsers.forEach((player) => {
+          const playerID = player.user_id
+          const found = this.onlinePlayers.some(user => user.user_id === playerID)
+          if (found) {
 
-          var index = this.onlinePlayers.findIndex(function (person) {
-            return person.user_id == manageSession.allConnectedUsers[i].user_id
-          });
-          this.onlinePlayers[index].active = true
-          this.onlinePlayers[index].visible = true
-          console.log("make all allConnectedUsers visible")
-          console.log(this.onlinePlayers[index])
+            player.active = true
+            player.visible = true
+
+            console.log("make all allConnectedUsers visible")
+            console.log(player)
+          }
+
+          // var index = this.onlinePlayers.findIndex(function (person) {
+          //   return person.user_id == manageSession.allConnectedUsers[i].user_id
+          // });
+          // this.onlinePlayers[index].active = true
+          // this.onlinePlayers[index].visible = true
+          // console.log("make all allConnectedUsers visible")
+          // console.log(this.onlinePlayers[index])
+
+
 
           //send player position over the network for the online users to see
-          manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
+          //manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
         })
       }//if (manageSession.createOnlinePlayers)
     }//if (manageSession.createdPlayer) 
   } //createRemotePlayer
+
+  attachtAvatarToOnlinePlayer(player) {
+    this.tempAvatarName = player.user_id + "_" + player.avatar_time;
+    //this.onlinePlayers[i] = this.add.image(this.onlinePlayers[i].posX, this.onlinePlayers[i].posY, this.tempAvatarName)
+
+    console.log("player added: ")
+    console.log(player)
+
+    //sometimes the player is not visible because the postion is 0,0
+    if (player.posX == 0 && player.posY == 0){
+      player.posX = 300
+      player.posY = 400
+    }
+
+    player.x = player.posX
+    player.y = player.posY
+    
+
+    console.log("avatar key: ")
+    console.log(this.tempAvatarName)
+
+    player.setTexture(this.tempAvatarName)
+
+    player.active = true
+    player.visible = true
+
+    const avatar = this.textures.get(this.tempAvatarName)
+    const avatarWidth = avatar.frames.__BASE.width
+    const avatarHeight = avatar.frames.__BASE.height
+
+    const avatarFrames = Math.round(avatarWidth / avatarHeight)
+    console.log(avatarFrames)
+
+    if (avatarFrames > 1) {
+
+      // set names for the moving and stop animations
+
+      player.setData("movingKey", "moving" + "_" + this.tempAvatarName);
+      player.setData("stopKey", "stop" + "_" + this.tempAvatarName);
+
+      //create animation for moving
+      this.anims.create({
+        key: player.getData("movingKey"),
+        frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
+        frameRate: (avatarFrames + 2) * 2,
+        repeat: -1,
+        yoyo: true
+      });
+
+      //create animation for stop
+      this.anims.create({
+        key: player.getData("stopKey"),
+        frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
+      });
+    } //if (avatarFrames > 1) {
+    
+    this.updateOnlinePlayers = true
+  }
 
   playerMovingByKeyBoard() {
     const speed = 175;
@@ -1171,11 +1181,9 @@ export default class Location1Scene extends Phaser.Scene {
     this.loadAndCreatePlayerAvatar();
     //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom;
-    // console.log(this.currentZoom);
+    //this.gameCam.zoom = this.UI_Scene.currentZoom; //temp off
 
-    // if (manageSession.removeConnectedUser) {
-    // }
+
     // //.......................................................................
 
     // //........... PLAYER SHADOW .............................................................................

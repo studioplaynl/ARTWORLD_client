@@ -77,7 +77,7 @@ class manageSession {
     // await this.getAvatarUrl().then(this.createPlayer = true)
     // console.log(this.createPlayer)
 
-    console.log('this.getStreamUsers("join", "' + this.location + '")')
+    
     await this.getStreamUsers("join", this.location)
 
     //stream
@@ -113,22 +113,25 @@ class manageSession {
       );
       this.getStreamUsers("get_users", this.location)
       if (!!streampresence.leaves) {
-        console.log("leaves:" + streampresence.leaves);
         streampresence.leaves.forEach((leave) => {
           console.log("User left: %o", leave.username);
           //remove leave.user_id from 
 
           // this.removedConnectedUsers.push(leave.user_id);
-          // console.log(this.removedConnectedUsers)
-          console.log(this.allConnectedUsers)
-          this.createOnlinePlayers = true
-          console.log("this.createOnlinePlayers = true")
+          setTimeout(() => {
+            this.getStreamUsers("get_users", this.location)
+          }, 400);
+
+          setTimeout(() => {
+            this.createOnlinePlayers = true
+          }, 600);
+          
+          
           //allConnectedUsers is updated after someone leaves
           // this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
           //   return item.name !== leave.username;
           // });
         });
-        this.createOnlinePlayers = true
 
       }
 
@@ -169,7 +172,7 @@ class manageSession {
     //"join" = join the stream, get the online users, except self
     //"get_users" = after joined, get the online users, except self
 
-    console.log(rpc_command)
+    console.log('this.getStreamUsers("' + rpc_command + ', "' + location + '")')
 
     this.socket.rpc(rpc_command, location).then((rec) => {
 
@@ -178,20 +181,21 @@ class manageSession {
 
       //get all online players
       let tempConnectedUsers = JSON.parse(rec.payload) || []
-      console.log("tempConnectedUsers")
-      console.log(tempConnectedUsers)
+      // console.log("tempConnectedUsers")
+      // console.log(tempConnectedUsers)
       //empty the array first
-      this.allConnectedUsers = []
+      this.allConnectedUsers = tempConnectedUsers
 
       //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
-      this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
+      //this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
 
-      console.log("filtered by location? this.allConnectedUsers")
-      console.log(this.allConnectedUsers)
-      console.log("joined users:")
+
       //if there are no users online, the array length == 0
       if (this.allConnectedUsers.length > 0) {
+        console.log("filtered by location? this.allConnectedUsers")
+        console.log("joined users:")
         console.log(this.allConnectedUsers)
+
         this.createOnlinePlayers = true
         console.log("this.createOnlinePlayers = true")
       } else {
@@ -201,9 +205,9 @@ class manageSession {
     })
   }
 
-   async leave(selected) {
+  async leave(selected) {
     await socket.rpc("leave", selected)
-}
+  }
   testMoveMessage() { //works
     var opCode = 1;
     var data =

@@ -206,6 +206,9 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   update(time, delta) {
-  }
+    if (manageSession.sessionStored.username != null){ // a way to check if the connection if working
+      this.scene.start("networkBoot_Scene");
+    }
+  } // end update
 
 }
