@@ -187,10 +187,11 @@ class manageSession {
       // console.log("tempConnectedUsers")
       // console.log(tempConnectedUsers)
       //empty the array first
-      this.allConnectedUsers = tempConnectedUsers
+      this.allConnectedUsers = []
+      //this.allConnectedUsers = tempConnectedUsers
 
       //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
-      //this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
+      this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
 
 
       //if there are no users online, the array length == 0
