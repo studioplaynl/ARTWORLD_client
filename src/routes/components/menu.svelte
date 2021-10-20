@@ -39,7 +39,7 @@
         <div class="hamburger"></div>
     </div>
     {#if MenuToggle}
-    <div class="nav">
+    <div class="nav" on:click={()=> {MenuToggle = false}}>
         <ul class="menu">
         <li><a href="/#/">{$_('nav.game')}</a></li>
         <li><a href="/#/match">{$_('nav.match')}</a></li>

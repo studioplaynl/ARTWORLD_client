@@ -843,10 +843,10 @@
           />
 
           <label for="drawing-color" class="icon">Line color:</label>
-          <input type="color" value="#005E7A" id="drawing-color" />
+          <input type="color"  id="drawing-color" />
 
           <label for="drawing-shadow-color">Shadow color:</label>
-          <input type="color" value="#005E7A" id="drawing-shadow-color" />
+          <input type="color" id="drawing-shadow-color" />
 
           <label for="drawing-shadow-width">Shadow width:</label>
           <span class="info">0</span><input
@@ -963,6 +963,10 @@
     z-index: 1;
   }
 
+  .savecanvas {
+    display: none;
+  }
+
   .saveTab > * {
     padding: 12px 16px;
     text-decoration: none;
@@ -1033,7 +1037,8 @@
     }
 
     .box1 {
-    float: left;
+      float: left;
+      width: 100vw;
     }
 
     .box2 {
