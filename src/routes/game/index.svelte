@@ -2,6 +2,9 @@
   //phaser
   import { onMount } from "svelte";
   import MainMenu from "./scenes/MainMenu";
+
+
+  import networkBoot_Scene from "./scenes/networkBoot_Scene";
   import location1_Scene from "./scenes/Location1_Scene";
   import location2_Scene from "./scenes/Location2_Scene";
   import location3_Scene from "./scenes/Location3_Scene";
@@ -41,7 +44,7 @@
           fps: 60,
         },
       },
-      scene: [MainMenu, location1_Scene, location2_Scene, location3_Scene, UI_Scene],
+      scene: [MainMenu, networkBoot_Scene, location1_Scene, location2_Scene, location3_Scene, UI_Scene],
     };
 
     new Phaser.Game(config);
