@@ -30,6 +30,7 @@
     "axios": "^0.21.1",
     "fabric": "^4.5.0",
     "firebase": "^8.8.0",
+    "i18next": "^21.3.2",
     "phaser": "^3.55.2",
     "phaser3-rex-plugins": "^1.1.61",
     "sirv-cli": "^1.0.0",

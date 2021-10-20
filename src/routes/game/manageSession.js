@@ -1,11 +1,15 @@
 import { client, SSL } from "../../nakama.svelte";
+//import { Profile, logout } from "../../session.js";
 // import { user, url, getAccount } from '../../api.js';
 // import { Color } from "fabric/fabric-impl";
 
 
 class manageSession {
   constructor() {
+    this.debug = true
+
     this.sessionStored;
+    this.userProfile
     this.user_id;
     this.username;
 
@@ -29,7 +33,6 @@ class manageSession {
     this.updateOnlinePlayers = false;
     this.allConnectedUsers = [];
     this.removedConnectedUsers = [];
-    this.removeConnectedUser = false;
 
     // this.createdPlayer = false;
     this.playerAvatarKey = ""
@@ -50,6 +53,10 @@ class manageSession {
     this.updateMovementInterval = 30; //20 fps
   }
 
+  // getProfile(){
+  //   this.userprofile = Profile
+  // }
+
   async createSocket() {
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
     console.log("socket created with client");
@@ -60,23 +67,6 @@ class manageSession {
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
-    // //await this.getAccountDetails()
-    // console.log("this.playerObjectSelf")
-    // await this.getAccountDetails().then((blob) => {
-    //   console.log(blob);
-    //   this.createPlayer = true;
-    // }).catch(e => console.log(e));
-
-    //await this.getAvatarUrl()
-
-    // console.log(this.createPlayer)
-    // console.log(this.playerObjectSelf)
-
-    // console.log("this.getAvatarUrl();")
-    // await this.getAvatarUrl().then(this.createPlayer = true)
-    // console.log(this.createPlayer)
-
-    console.log('this.getStreamUsers("join", this.location)')
     await this.getStreamUsers("join", this.location)
 
     //stream
@@ -87,7 +77,6 @@ class manageSession {
       //update the position data of this.allConnectedUsers array
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
-          //console.log("test");
           user.posX = data.posX;
           user.posY = data.posY;
 
@@ -95,13 +84,7 @@ class manageSession {
           this.updateOnlinePlayers = true
         }
       }
-      // console.log(this.allConnectedUsers);
-      // var newPos = this.allConnectedUsers;
-      // this.allConnectedUsers = newPos;
-
     };
-
-
 
     this.socket.onstreampresence = (streampresence) => {
       //streampresence is everybody that is present also SELF
@@ -112,23 +95,27 @@ class manageSession {
       );
       this.getStreamUsers("get_users", this.location)
       if (!!streampresence.leaves) {
-        console.log("leaves:" + streampresence.leaves);
         streampresence.leaves.forEach((leave) => {
           console.log("User left: %o", leave.username);
           //remove leave.user_id from 
 
           // this.removedConnectedUsers.push(leave.user_id);
-          // console.log(this.removedConnectedUsers)
-          console.log(this.allConnectedUsers)
-          this.createOnlinePlayers = true
-          console.log("this.createOnlinePlayers = true")
+
+          //! instead of setTimeout I could also just remove user from allConnectedUsers and 
+          //! set createOnlinePlayers = true
+          setTimeout(() => {
+            this.getStreamUsers("get_users", this.location)
+          }, 400);
+
+          setTimeout(() => {
+            this.createOnlinePlayers = true
+          }, 600);
+
           //allConnectedUsers is updated after someone leaves
           // this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
           //   return item.name !== leave.username;
           // });
         });
-        this.removeConnectedUser = true;
-        this.createOnlinePlayers = true
 
       }
 
@@ -145,10 +132,10 @@ class manageSession {
       //       this.createOnlinePlayers = true
       //     }
 
-      //     // update array when someone joins
-      //     // this.allConnectedUsers.push(leave.user_id)
+      // update array when someone joins
+      // this.allConnectedUsers.push(leave.user_id)
       //   });
-      //   // this.getStreamUsers("home")
+      // this.getStreamUsers("home")
       // }
     }; //this.socket.onstreampresence
   } //end createSocket
@@ -163,57 +150,45 @@ class manageSession {
   //   });
   // }
 
-  async getAccountDetails() {
-    this.AccountObject = await client.getAccount(this.session);
-    this.playerObjectSelf = this.AccountObject.user;
-    console.log(this.AccountObject.user)
-
-    const payload = { "url": this.playerObjectSelf.avatar_url };
-    const rpcid = "download_file";
-    const fileurl = await client.rpc(this.session, rpcid, payload);
-    this.playerObjectSelf.url = fileurl.payload.url
-    console.log(this.playerObjectSelf.url)
-  }
-
-  async getAvatarUrl() {
-    const payload = { "url": this.playerObjectSelf.avatar_url };
-    const rpcid = "download_file";
-    const fileurl = await client.rpc(this.session, rpcid, payload);
-    this.playerObjectSelf.url = fileurl.payload.url
-    console.log(this.playerObjectSelf.url)
-
-  }
-
   async getStreamUsers(rpc_command, location) {
     // if (!this.createOnlinePlayers) {
-    //rpc_command:
-    //"join" = join the stream, get the online users, except self
-    //"get_users" = after joined, get the online users, except self
+    //* rpc_command:
+    //* join" = join the stream, get the online users, except self
+    //* get_users" = after joined, get the online users, except self
 
-    console.log(rpc_command)
+    console.log('this.getStreamUsers("' + rpc_command + ', "' + location + '")')
 
     this.socket.rpc(rpc_command, location).then((rec) => {
+      //!the server report all users in location except self_user
 
-      //the server report all users in location except self
-      this.allConnectedUsers = JSON.parse(rec.payload) || []
+      //get all online players
+      let tempConnectedUsers = JSON.parse(rec.payload) || []
+
+      // empty the array first
+      this.allConnectedUsers = []
+      //this.allConnectedUsers = tempConnectedUsers
+
+      //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
+      this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
+
       //if there are no users online, the array length == 0
-
-      console.log("joined users:")
-
       if (this.allConnectedUsers.length > 0) {
+        console.log("filtered by location? this.allConnectedUsers")
+        console.log("joined users:")
         console.log(this.allConnectedUsers)
+
         this.createOnlinePlayers = true
         console.log("this.createOnlinePlayers = true")
       } else {
         //this.createOnlinePlayers = false
         console.log("no online users")
       }
-
-      //status = "joined"
     })
-    // }
   }
 
+  async leave(selected) {
+    await socket.rpc("leave", selected)
+  }
   testMoveMessage() { //works
     var opCode = 1;
     var data =
@@ -241,24 +216,10 @@ class manageSession {
       ', "location": "home" }';
 
     this.socket.rpc("move_position", data).then((rec) => {
-      //status;
-      // data = JSON.parse(rec.payload) || [];
-      // console.log("sent pos:");
-      // console.log(data);
     });
   } //end sendChatMessage
 
   async chatExample() {
-    // var onlineUsers = [];
-    // this.socket.onchannelpresence = (presences) => {
-    //   // Remove all users who left.
-    //   onlineUsers = onlineUsers.filter((user) => {
-    //     return !presences.leave.includes(user);
-    //   });
-    //   // Add all users who joined.
-    //   onlineUsers.concat(presences.join);
-    // };
-
     const roomname = "PizzaFans";
     const persistence = true;
     const hidden = false;
@@ -270,13 +231,6 @@ class manageSession {
       persistence,
       hidden
     );
-
-    // // Setup initial online user list.
-    // onlineUsers.concat(response.channel.presences);
-    // // Remove your own user from list.
-    // onlineUsers = onlineUsers.filter((user) => {
-    //   return user != channel.self;
-    // });
   } //end chatExample
 } //end class
 

@@ -48,18 +48,6 @@ export async function login(email, password) {
     
 }
 
-// export async function getAccount(session) {
-//     let profile = {}
-//     const account = await client.getAccount(session);
-
-//     profile.user = account.user.username
-//     profile.avatar_url = account.user.avatar_url
-//     profile.meta = JSON.parse(account.user.metadata)
- 
-//     Profile.set(profile)
-// }
-
-
 export const logout = () => { Session.set(null) ;Profile.set(null);}
 
 export async function checkLogin(session) {
