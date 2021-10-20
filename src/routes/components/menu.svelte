@@ -1,0 +1,118 @@
+<script>
+  import { onMount } from 'svelte';
+  import { checkLogin } from './../../session';
+  import { locale, locales, getLocaleFromNavigator, init, addMessages, _ } from 'svelte-i18n'
+  import profile from "./../profile.svelte";
+  import { Session, Profile, logout } from "./../../session";
+  let MenuToggle = false;
+  import en from './../../langauge/en.json';
+  import nl from './../../langauge/nl.json';
+  let error;
+  addMessages('nl', nl);
+  addMessages('en', en);
+
+  init({
+  fallbackLocale: 'nl',
+  //initialLocale: getLocaleFromNavigator(),
+  });
+
+  let role;
+  if ($Profile == null) {
+    role = null;
+  } else {
+    console.log($Profile)
+    role = $Profile.meta.role;
+  }
+  let DropdownMenu = () => {
+    document.getElementById("DropdownMenu").classList.toggle("show");
+  };
+
+  onMount(async () => {
+    checkLogin($Session)
+});
+</script>
+
+<nav>
+    <div on:click={()=> {MenuToggle = !MenuToggle}} class="icon">
+        <div class="hamburger"></div>
+        <div class="hamburger"></div>
+        <div class="hamburger"></div>
+    </div>
+    {#if MenuToggle}
+    <div class="nav">
+        <ul class="menu">
+        <li><a href="/#/">{$_('nav.game')}</a></li>
+        <li><a href="/#/match">{$_('nav.match')}</a></li>
+        <li><a href="/#/drawing">{$_('nav.drawing')}</a></li>
+        <li><a href="/#/stopmotion">{$_('nav.stopmotion')}</a></li>
+        </ul>
+        {#if !!$Profile && $Profile.meta.role == "admin"}
+          <div on:click={DropdownMenu} class="dropdown">
+            <a>{$_('role.admin')}</a>
+            <div id="DropdownMenu" class="dropdown-content">
+              <a href="/#/register">{$_('nav.admin.createUser')}</a>
+              <a href="/#/group">{$_('nav.admin.createGroup')}</a>
+            </div>
+          </div>
+        {/if}
+        {#if $Session == null}
+          <a href="/#/login">{$_('nav.login')}</a>
+        {:else}
+          <a href="/#/profile">{$Session.username}</a>
+          <a on:click={logout} href="/">{$_('nav.logout')}</a>
+        {/if}
+        <select bind:value={$locale}>
+          {#each $locales as locale}
+            <option value={locale}>{locale}</option>
+          {/each}
+        </select>
+      </div>
+    {/if}
+  </nav>
+
+  <style>
+.icon {
+    cursor: pointer;
+    padding: 10px;
+    float: right;
+    margin: 0px 20px;
+}
+.icon .hamburger {
+  width: 50px;
+  height: 5px;
+  background-color: #999;
+  margin-top: 5px;
+}
+
+ul {
+  list-style: none;
+  width: 100%;
+  padding: 0;
+}
+ul a {
+  color: #999;
+  text-decoration: none;
+}
+ul li a {
+  font-family: "Oswald", sans-serif;
+  text-align: center;
+  transition: all 0.3s ease;
+  font-size: 25px;
+}
+
+
+nav {
+    position: fixed;
+    float: right;
+    top: 0;
+    right: 0px;
+    z-index: 5;
+}
+
+.nav {
+    background-color: lightgray;
+    padding: 25px;
+}
+
+  </style>
+  
