@@ -52,8 +52,11 @@ export default class MainMenu extends Phaser.Scene {
     console.log(manageSession.sessionStored.user_id);
     console.log(manageSession.sessionStored.username);
 
-    manageSession.user_id = manageSession.sessionStored.user_id
-    manageSession.username = manageSession.sessionStored.username
+    console.log(manageSession.sessionStored);
+
+
+    // manageSession.user_id = manageSession.sessionStored.user_id
+    // manageSession.username = manageSession.sessionStored.username
     //.............................................................................................................
 
     //...... PARTICLES .............................................................................................
@@ -104,7 +107,10 @@ export default class MainMenu extends Phaser.Scene {
     //   .setOrigin(0.5);
 
     this.playBtn.on("pointerdown", () => {
-      this.scene.start("networkBoot_Scene");
+      if (manageSession.sessionStored.username != null){ // a way to check if the connection if working
+        this.scene.start("networkBoot_Scene");
+      }
+      
     });
 
     this.playBtn.on("pointerover", () => {
@@ -206,9 +212,9 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   update(time, delta) {
-    if (manageSession.sessionStored.username != null){ // a way to check if the connection if working
-      this.scene.start("networkBoot_Scene");
-    }
+    // if (manageSession.sessionStored.username != null){ // a way to check if the connection if working
+    //   this.scene.start("networkBoot_Scene");
+    // }
   } // end update
 
 }

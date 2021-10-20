@@ -61,23 +61,6 @@ class manageSession {
     this.session = await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
-    // //await this.getAccountDetails()
-    // console.log("this.playerObjectSelf")
-    // await this.getAccountDetails().then((blob) => {
-    //   console.log(blob);
-    //   this.createPlayer = true;
-    // }).catch(e => console.log(e));
-
-    //await this.getAvatarUrl()
-
-    // console.log(this.createPlayer)
-    // console.log(this.playerObjectSelf)
-
-    // console.log("this.getAvatarUrl();")
-    // await this.getAvatarUrl().then(this.createPlayer = true)
-    // console.log(this.createPlayer)
-
-    
     await this.getStreamUsers("join", this.location)
 
     //stream
@@ -88,7 +71,6 @@ class manageSession {
       //update the position data of this.allConnectedUsers array
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
-          //console.log("test");
           user.posX = data.posX;
           user.posY = data.posY;
 
@@ -96,13 +78,7 @@ class manageSession {
           this.updateOnlinePlayers = true
         }
       }
-      // console.log(this.allConnectedUsers);
-      // var newPos = this.allConnectedUsers;
-      // this.allConnectedUsers = newPos;
-
     };
-
-
 
     this.socket.onstreampresence = (streampresence) => {
       //streampresence is everybody that is present also SELF
@@ -128,8 +104,7 @@ class manageSession {
           setTimeout(() => {
             this.createOnlinePlayers = true
           }, 600);
-          
-          
+
           //allConnectedUsers is updated after someone leaves
           // this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
           //   return item.name !== leave.username;
@@ -151,10 +126,10 @@ class manageSession {
       //       this.createOnlinePlayers = true
       //     }
 
-      //     // update array when someone joins
-      //     // this.allConnectedUsers.push(leave.user_id)
+      // update array when someone joins
+      // this.allConnectedUsers.push(leave.user_id)
       //   });
-      //   // this.getStreamUsers("home")
+      // this.getStreamUsers("home")
       // }
     }; //this.socket.onstreampresence
   } //end createSocket
@@ -171,28 +146,24 @@ class manageSession {
 
   async getStreamUsers(rpc_command, location) {
     // if (!this.createOnlinePlayers) {
-    //rpc_command:
-    //"join" = join the stream, get the online users, except self
-    //"get_users" = after joined, get the online users, except self
+    //* rpc_command:
+    //* join" = join the stream, get the online users, except self
+    //* get_users" = after joined, get the online users, except self
 
     console.log('this.getStreamUsers("' + rpc_command + ', "' + location + '")')
 
     this.socket.rpc(rpc_command, location).then((rec) => {
-
-      //the server report all users in location except self
-      // this.allConnectedUsers = JSON.parse(rec.payload) || [] //time16:52
+      //!the server report all users in location except self_user
 
       //get all online players
       let tempConnectedUsers = JSON.parse(rec.payload) || []
-      // console.log("tempConnectedUsers")
-      // console.log(tempConnectedUsers)
-      //empty the array first
+
+      // empty the array first
       this.allConnectedUsers = []
       //this.allConnectedUsers = tempConnectedUsers
 
       //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
       this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
-
 
       //if there are no users online, the array length == 0
       if (this.allConnectedUsers.length > 0) {
@@ -239,24 +210,10 @@ class manageSession {
       ', "location": "home" }';
 
     this.socket.rpc("move_position", data).then((rec) => {
-      //status;
-      // data = JSON.parse(rec.payload) || [];
-      // console.log("sent pos:");
-      // console.log(data);
     });
   } //end sendChatMessage
 
   async chatExample() {
-    // var onlineUsers = [];
-    // this.socket.onchannelpresence = (presences) => {
-    //   // Remove all users who left.
-    //   onlineUsers = onlineUsers.filter((user) => {
-    //     return !presences.leave.includes(user);
-    //   });
-    //   // Add all users who joined.
-    //   onlineUsers.concat(presences.join);
-    // };
-
     const roomname = "PizzaFans";
     const persistence = true;
     const hidden = false;
@@ -268,13 +225,6 @@ class manageSession {
       persistence,
       hidden
     );
-
-    // // Setup initial online user list.
-    // onlineUsers.concat(response.channel.presences);
-    // // Remove your own user from list.
-    // onlineUsers = onlineUsers.filter((user) => {
-    //   return user != channel.self;
-    // });
   } //end chatExample
 } //end class
 

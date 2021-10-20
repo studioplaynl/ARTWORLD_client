@@ -120,7 +120,7 @@ export default class Location1Scene extends Phaser.Scene {
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
 
     //.......  SOCKET ..........................................................................
-    this.playerIdText = manageSession.user_id;
+    this.playerIdText = manageSession.sessionStored.user_id;
 
     manageSession.playerObjectSelf = JSON.parse(localStorage.getItem("profile"));
     // console.log("manageSession.playerObjectSelf")
@@ -533,7 +533,7 @@ export default class Location1Scene extends Phaser.Scene {
         //console.log("manageSession.createPlayer = false;")
 
         //set the location of the player to this location
-        this.player.location = this.location
+        
         this.createdPlayer = false;
 
         //console.log("loadAndCreatePlayerAvatar")
@@ -642,6 +642,7 @@ export default class Location1Scene extends Phaser.Scene {
     // console.log("player avatar has loaded ")
     // console.log("this.playerAvatarKey")
     // console.log(this.playerAvatarKey)
+    this.player.location = this.location
 
     console.log("this.player: ")
     console.log(this.player)
