@@ -1,7 +1,5 @@
 import CONFIG from "../config.js";
 import manageSession from "../manageSession.js";
-import { client, SSL } from "../../../nakama.svelte";
-import { url, user, getAccount } from '../../../api.js';
 
 import { locale } from 'svelte-i18n'
 import nl from './../../../langauge/nl.json'
@@ -48,6 +46,7 @@ export default class MainMenu extends Phaser.Scene {
     //console.log("Session: ");
     manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
     //console.log(manageSession.sessionStored);
+    
 
     console.log(manageSession.sessionStored.user_id);
     console.log(manageSession.sessionStored.username);
@@ -108,6 +107,7 @@ export default class MainMenu extends Phaser.Scene {
 
     this.playBtn.on("pointerdown", () => {
       if (manageSession.sessionStored.username != null){ // a way to check if the connection if working
+        console.log(manageSession.userProfile)
         this.scene.start("networkBoot_Scene");
       }
       

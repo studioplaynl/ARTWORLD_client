@@ -1,4 +1,5 @@
 import { client, SSL } from "../../nakama.svelte";
+//import { Profile, logout } from "../../session.js";
 // import { user, url, getAccount } from '../../api.js';
 // import { Color } from "fabric/fabric-impl";
 
@@ -8,6 +9,7 @@ class manageSession {
     this.debug = true
 
     this.sessionStored;
+    this.userProfile
     this.user_id;
     this.username;
 
@@ -50,6 +52,10 @@ class manageSession {
     this.updateMovementTimer = 0;
     this.updateMovementInterval = 30; //20 fps
   }
+
+  // getProfile(){
+  //   this.userprofile = Profile
+  // }
 
   async createSocket() {
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);

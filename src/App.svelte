@@ -3,6 +3,9 @@
   import {wrap} from 'svelte-spa-router/wrap'
   import home from "./routes/game/index.svelte";
   import registerPage from "./routes/auth/register.svelte";
+
+  import manageSession from "./routes/game/manageSession.js"; //push the profile to manageSession
+
   import login from "./routes/auth/login.svelte";
   import profile from "./routes/profile.svelte";
   import match from "./routes/match.svelte";
@@ -33,7 +36,7 @@ let isLogedIn = (detail) => {
         component: home,
         conditions: [
             (detail) => {
-				if($Session != null) return true;
+				if($Session != null) {manageSession.userProfile = $Profile; return true;}
 				else {
 					window.location.href = "/#/login"
 					return false;
