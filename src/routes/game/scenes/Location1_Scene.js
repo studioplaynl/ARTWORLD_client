@@ -28,7 +28,7 @@ export default class Location1Scene extends Phaser.Scene {
     this.playerMovingKey = "moving";
     this.playerStopKey = "stop";
 
-    this.hiddenOnlineUsers
+    this.offlineOnlineUsers
 
     this.location = "home"
 
@@ -229,17 +229,17 @@ export default class Location1Scene extends Phaser.Scene {
     this.debugFunctions();
     //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
-    //temp off
-    // this.UI_Scene = this.scene.get("UI_Scene")
-    // this.scene.launch("UI_Scene")
-    // this.currentZoom = this.UI_Scene.currentZoom
-    // this.UI_Scene.location = "home"
 
-    // this.gameCam.zoom = this.currentZoom
+    this.UI_Scene = this.scene.get("UI_Scene")
+    this.scene.launch("UI_Scene")
+    this.currentZoom = this.UI_Scene.currentZoom
+    this.UI_Scene.location = "home"
 
-    // console.log(this.UI_Scene)
-    // console.log(this.currentZoom)
-    //end temp off
+    this.gameCam.zoom = this.currentZoom
+
+    console.log(this.UI_Scene)
+    console.log(this.currentZoom)
+
 
   } // end create
 
@@ -533,7 +533,7 @@ export default class Location1Scene extends Phaser.Scene {
         //console.log("manageSession.createPlayer = false;")
 
         //set the location of the player to this location
-        
+
         this.createdPlayer = false;
 
         //console.log("loadAndCreatePlayerAvatar")
@@ -827,6 +827,7 @@ export default class Location1Scene extends Phaser.Scene {
         console.log("creating onlineplayer")
         manageSession.createOnlinePlayers = false
 
+        //manageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: this.newOnlinePlayers
         this.newOnlinePlayers = []
 
         if (this.debug) {
@@ -837,25 +838,23 @@ export default class Location1Scene extends Phaser.Scene {
         //all current onlinePlayers, or an empty []
         this.onlinePlayers = this.onlinePlayersGroup.getChildren() || []
 
-        // ..... players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden.....................
-
-        //check if there are players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        this.hiddenOnlineUsers = []
+        // ..... DESTROY OFFLINE PLAYERS ........................................................................................................................................................................
+        //check if there are players in this.onlinePlayers that are not in .allConnectedUsers ->  they need to be destroyed
+        this.offlineOnlineUsers = []
 
         this.onlinePlayers.forEach(player => {
           const playerID = player.user_id
           const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
-          if (!found) this.hiddenOnlineUsers.push(player)
+          if (!found) this.offlineOnlineUsers.push(player)
         })
 
         if (this.debug) {
-          console.log("this.hiddenOnlineUsers")
-          console.log(this.hiddenOnlineUsers)
+          console.log("this.offlineOnlineUsers")
+          console.log(this.offlineOnlineUsers)
         }
 
-        //............ HIDE OFFLINE PLAYERS ..............................
         //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        if (this.hiddenOnlineUsers.length > 0) {
+        if (this.offlineOnlineUsers.length > 0) {
           //hide users
           if (this.debug) {
             console.log("")
@@ -864,14 +863,14 @@ export default class Location1Scene extends Phaser.Scene {
 
 
 
-          for (let i = 0; i < this.hiddenOnlineUsers.length; i++) {
+          for (let i = 0; i < this.offlineOnlineUsers.length; i++) {
             //check if the user_id is in this.onlinePlayers
-            this.hiddenOnlineUsers[i].active = false
-            this.hiddenOnlineUsers[i].visible = false
-            console.log(this.hiddenOnlineUsers[i])
-            //get the index of user_id from this.hiddenOnlineUsers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
+            console.log(this.offlineOnlineUsers[i])
+            this.offlineOnlineUsers[i].destroy()
+
+            //get the index of user_id from this.offlineOnlineUsers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
             // let index = this.onlinePlayers.findIndex(function (person) {
-            //   return person.user_id == this.hiddenOnlineUsers[i].user_id
+            //   return person.user_id == this.offlineOnlineUsers[i].user_id
             // });
 
             // this.onlinePlayers[index].active = false
@@ -884,7 +883,7 @@ export default class Location1Scene extends Phaser.Scene {
           }
 
         }
-        //......... end HIDE OFFLINE PLAYERS ..............................
+        //......... end DESTROY OFFLINE PLAYERS ............................................................................................................................................................
 
 
         //...... LOAD NEW PLAYERS ........................................................................................
@@ -952,8 +951,8 @@ export default class Location1Scene extends Phaser.Scene {
             this.onlinePlayersGroup.add(element)
           } else {
             //! if the avatar already existed; get the player from the onlinePlayers array !
-          
-            this.attachtAvatarToOnlinePlayer(element)
+
+            //this.attachtAvatarToOnlinePlayer(element)
           }
         })
 
@@ -987,20 +986,21 @@ export default class Location1Scene extends Phaser.Scene {
 
         //this.onlinePlayers = this.onlinePlayersGroup.getChildren()
 
-        manageSession.allConnectedUsers.forEach((player, i) => {
-          
-          var index = this.onlinePlayers.findIndex(function (player) {
-            return player.user_id == manageSession.allConnectedUsers[i].user_id
-          });
+        //? not necessary
+        // manageSession.allConnectedUsers.forEach((player, i) => {
 
-          this.onlinePlayers[index].active = true
-          this.onlinePlayers[index].visible = true
-          console.log("make all allConnectedUsers visible")
-          console.log(this.onlinePlayers[index])
+        //   var index = this.onlinePlayers.findIndex(function (player) {
+        //     return player.user_id == manageSession.allConnectedUsers[i].user_id
+        //   });
 
-          //send player position over the network for the online users to see
-          //manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-        })
+        //   this.onlinePlayers[index].active = true
+        //   this.onlinePlayers[index].visible = true
+        //   console.log("make all allConnectedUsers visible")
+        //   console.log(this.onlinePlayers[index])
+        // })
+        //send player position over the network for the online users to see
+        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
+
       }//if (manageSession.createOnlinePlayers)
     }//if (manageSession.createdPlayer) 
   } //createRemotePlayer
@@ -1013,14 +1013,14 @@ export default class Location1Scene extends Phaser.Scene {
     console.log(player)
 
     //sometimes the player is not visible because the postion is 0,0
-    if (player.posX == 0 && player.posY == 0){
+    if (player.posX == 0 && player.posY == 0) {
       player.posX = 300
       player.posY = 400
     }
 
     player.x = player.posX
     player.y = player.posY
-    
+
 
     console.log("avatar key: ")
     console.log(this.tempAvatarName)
@@ -1059,7 +1059,7 @@ export default class Location1Scene extends Phaser.Scene {
         frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
       });
     } //if (avatarFrames > 1) {
-    
+
     this.updateOnlinePlayers = true
   }
 
