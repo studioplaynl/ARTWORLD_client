@@ -5,6 +5,9 @@ import { locale } from "svelte-i18n";
 
 let latestValue = null;
 export default class Location2Scene extends Scene3D {
+
+  back;
+
   constructor() {
     super("location2_Scene");
     
@@ -15,6 +18,9 @@ export default class Location2Scene extends Scene3D {
   }
 
   create() {
+    let width = this.sys.game.canvas.width;
+    let height = this.sys.game.canvas.height - 60;
+
 
     let countDisplay = 0;
     locale.subscribe((value) => {
@@ -34,12 +40,12 @@ export default class Location2Scene extends Scene3D {
 
 
     this.back = this.add
-      .text(20, 50, `${i18next.t("back")}`, {
+      .text(width / 10 - 120, height / 10, `${i18next.t("back")}`, {
         fontFamily: "Arial",
         fontSize: "22px",
       })
       .setOrigin(0)
-      .setShadow(2, 2, "#000000", 2)
+      .setShadow(1, 1, "#000000", 1)
       .setDepth(1000)
       .setInteractive();
 
