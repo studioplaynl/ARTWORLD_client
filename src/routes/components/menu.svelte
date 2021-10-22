@@ -80,8 +80,9 @@
 .icon .hamburger {
   width: 50px;
   height: 5px;
-  background-color: #999;
+  background-color: black;
   margin-top: 5px;
+  box-shadow: 0px 0px 10px white;
 }
 
 ul {

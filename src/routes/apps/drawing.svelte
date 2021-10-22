@@ -18,22 +18,32 @@
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
   import BucketIcon from "svelte-icons/md/MdFormatColorFill.svelte";
   import CameraIcon from "svelte-icons/fa/FaCamera.svelte";
+  import CopyIcon from "svelte-icons/fa/FaCopy.svelte";
+  import PasteIcon from "svelte-icons/fa/FaPaste.svelte";
 
   export let params = {};
   let history = [],
     historyCurrent;
-  let canv;
+  let canv, _clipboard;
   let saveCanvas, savecanvas, videoCanvas;
-  let canvas, video;
-  let json;
-  let title, showBackground = true;
+  let canvas,
+    video,
+    lineWidth = 5;
+  let json,
+    drawingColor = "#000000";
+  let shadowOffset = 0,
+    shadowColor = "#ffffff",
+    shadowWidth = 0;
+  let title,
+    showBackground = true;
+  let fillColor = "#f00", fillTolerance = 2;
   let current = "draw";
   if (!!params.name) title = params.name.split(".")[0];
   let saved = false;
   let saveToggle = false,
     colorToggle = true;
   const statussen = ["zichtbaar", "verborgen"];
-  let status = "verborgen";
+  let status = "zichtbaar";
   let appType = $location.split("/")[1];
 
   onMount(() => {
@@ -93,15 +103,19 @@
       current = "draw";
       canvas.isDrawingMode = true;
       changebrush();
+      console.log(drawingColor);
+      floodFill(false);
     };
 
     selectModeEl.onclick = function () {
       canvas.isDrawingMode = false;
       current = "select";
+      floodFill(false);
     };
 
     fillModeEl.onclick = function () {
       current = "fill";
+      floodFill(true);
     };
 
     eraseModeEl.onclick = function () {
@@ -111,6 +125,7 @@
       canvas.freeDrawingBrush.width = 10;
       canvas.isDrawingMode = true;
       current = "erase";
+      floodFill(false);
     };
 
     if (fabric.PatternBrush) {
@@ -121,7 +136,7 @@
         var ctx = patternCanvas.getContext("2d");
 
         ctx.strokeStyle = this.color;
-        ctx.lineWidth = 5;
+        ctx.lineWidth = lineWidth;
         ctx.beginPath();
         ctx.moveTo(0, 5);
         ctx.lineTo(10, 5);
@@ -138,7 +153,7 @@
         var ctx = patternCanvas.getContext("2d");
 
         ctx.strokeStyle = this.color;
-        ctx.lineWidth = 5;
+        ctx.lineWidth = lineWidth;
         ctx.beginPath();
         ctx.moveTo(5, 0);
         ctx.lineTo(5, 10);
@@ -295,10 +310,8 @@
     frames[currentFrame] = canvas.toJSON();
     frames = frames;
 
-     backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
-     backgroundFrames = backgroundFrames;
-
-
+    backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
+    backgroundFrames = backgroundFrames;
   };
 
   const getImage = async () => {
@@ -348,7 +361,7 @@
       } else {
         replace($location + "/" + $Session.user_id);
       }
-   }
+    }
   };
 
   function dataURItoBlob(dataURI) {
@@ -404,7 +417,7 @@
   var img = new Image();
 
   // When the image loads, set it as background image
-  if(showBackground){
+  if (showBackground) {
     img.onload = function () {
       var f_img = new fabric.Image(img);
       let options;
@@ -424,15 +437,15 @@
       //canvas.clear()
       // load frame
       canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
-      if(showBackground) img.src = backgroundFrames[newFrame - 1];
-      
+      if (showBackground) img.src = backgroundFrames[newFrame - 1];
+
       // change current frame
       currentFrame = newFrame;
       console.log(frames);
     }
-    if(play || !showBackground) {
+    if (play || !showBackground) {
       canvas.clear();
-      
+
       frames[newFrame].backgroundImage = {};
       canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
     }
@@ -463,6 +476,58 @@
     }
   }
 
+  ///////////////////// select functions /////////////////////////////////
+  function Copy() {
+    // clone what are you copying since you
+    // may want copy and paste on different moment.
+    // and you do not want the changes happened
+    // later to reflect on the copy.
+    canvas.getActiveObject().clone(function (cloned) {
+      _clipboard = cloned;
+    });
+  }
+
+  function Paste() {
+    // clone again, so you can do multiple copies.
+    _clipboard.clone(function (clonedObj) {
+      canvas.discardActiveObject();
+      clonedObj.set({
+        left: clonedObj.left + 10,
+        top: clonedObj.top + 10,
+        evented: true,
+      });
+      if (clonedObj.type === "activeSelection") {
+        // active selection needs a reference to the canvas.
+        clonedObj.canvas = canvas;
+        clonedObj.forEachObject(function (obj) {
+          canvas.add(obj);
+        });
+        // this should solve the unselectability
+        clonedObj.setCoords();
+      } else {
+        canvas.add(clonedObj);
+      }
+      _clipboard.top += 10;
+      _clipboard.left += 10;
+      canvas.setActiveObject(clonedObj);
+      canvas.requestRenderAll();
+    });
+  }
+
+  function Delete() {
+    // clone what are you copying since you
+    // may want copy and paste on different moment.
+    // and you do not want the changes happened
+    // later to reflect on the copy.
+    var curSelectedObjects = canvas.getActiveObjects();
+    canvas.discardActiveObject();
+    for (var i = 0; i < curSelectedObjects.length; i++) {
+      canvas.remove(curSelectedObjects[i]);
+    }
+  }
+
+  /////////////// select functions end //////////////////
+
   ///////////////////// stop motion functies end //////////////////////////////
 
   //////////////////// avatar functies /////////////////////////////////
@@ -479,17 +544,17 @@
     savecanvas.renderAll();
     savecanvas.clear();
     let data = { objects: [] };
-    let scale = (128/700)
+    let scale = 128 / 700;
     console.log(data);
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
         const newObject = { ...object };
-        newObject.left = newObject.left * scale
-        newObject.top = newObject.top * scale
+        newObject.left = newObject.left * scale;
+        newObject.top = newObject.top * scale;
         newObject.left += 128 * i;
-        newObject.scaleX = scale
-        newObject.scaleY = scale
+        newObject.scaleX = scale;
+        newObject.scaleY = scale;
         console.log(newObject);
         data.objects.push(newObject);
       });
@@ -497,12 +562,11 @@
     savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
     savecanvas.calcOffset();
     setTimeout(() => {
-    var Image = savecanvas.toDataURL('image/png', 0.2);
-    console.log(Image)
-    var blobData = dataURItoBlob(Image);
-    uploadAvatar(blobData);
-    },300)
-    
+      var Image = savecanvas.toDataURL("image/png", 0.2);
+      console.log(Image);
+      var blobData = dataURItoBlob(Image);
+      uploadAvatar(blobData);
+    }, 300);
   }
 
   /*
@@ -532,10 +596,10 @@
           video.srcObject = stream;
           video.play();
         })
-        .catch(err => {
-          console.log(err)
-          alert(err)
-        })
+        .catch((err) => {
+          console.log(err);
+          alert(err);
+        });
     }
   }
 
@@ -697,21 +761,135 @@
         coords: coords,
       };
     },
-  };
+  }; // End FloodFill
+
+
+
+  function hexToRgb(hex, opacity) {
+    opacity = Math.round(opacity * 255) || 255;
+    hex = hex.replace("#", "");
+    var rgb = [],
+      re = new RegExp("(.{" + hex.length / 3 + "})", "g");
+    hex.match(re).map(function (l) {
+      rgb.push(parseInt(hex.length % 2 ? l + l : l, 16));
+    });
+    return rgb.concat(opacity);
+  }
+
+  function floodFill(enable) {
+    if (!enable) {
+      canvas.off("mouse:down");
+      canvas.selection = true;
+      canvas.forEachObject(function (object) {
+        object.selectable = true;
+      });
+      return;
+    }
+
+    canvas.discardActiveObject();
+    canvas.renderAll();
+    canvas.selection = false;
+    canvas.forEachObject(function (object) {
+      object.selectable = false;
+    });
+
+    canvas.on({
+      "mouse:down": function (e) {
+          var mouseX = Math.round(e.e.layerX),
+          mouseY = Math.round(e.e.layerY),
+          //canvas = canvas.lowerCanvasEl,
+          context = canvas.getContext("2d"),
+          parsedColor = hexToRgb(fillColor),
+          imageData = context.getImageData(0, 0, canvas.width, canvas.height),
+          getPointOffset = function (x, y) {
+            return 4 * (y * imageData.width + x);
+          },
+          targetOffset = getPointOffset(mouseX, mouseY),
+          target = imageData.data.slice(targetOffset, targetOffset + 4);
+
+        if (FloodFill.withinTolerance(target, 0, parsedColor, fillTolerance)) {
+          // Trying to fill something which is (essentially) the fill color
+          console.log("Ignore... same color");
+          return;
+        }
+
+        // Perform flood fill
+        var data = FloodFill.fill(
+          imageData.data,
+          getPointOffset,
+          { x: mouseX, y: mouseY },
+          parsedColor,
+          target,
+          fillTolerance,
+          imageData.width,
+          imageData.height
+        );
+
+        if (0 == data.width || 0 == data.height) {
+          return;
+        }
+
+        var tmpCanvas = document.createElement("canvas"),
+          tmpCtx = tmpCanvas.getContext("2d");
+        tmpCanvas.width = canvas.width;
+        tmpCanvas.height = canvas.height;
+
+        var palette = tmpCtx.getImageData(
+          0,
+          0,
+          tmpCanvas.width,
+          tmpCanvas.height
+        ); // x, y, w, h
+        palette.data.set(new Uint8ClampedArray(data.coords)); // Assuming values 0..255, RGBA
+        tmpCtx.putImageData(palette, 0, 0); // Repost the data.
+        var imgData = tmpCtx.getImageData(
+          data.x,
+          data.y,
+          data.width,
+          data.height
+        ); // Get cropped image
+
+        tmpCanvas.width = data.width;
+        tmpCanvas.height = data.height;
+        tmpCtx.putImageData(imgData, 0, 0);
+
+        // Convert canvas back to image:
+        var img = new Image();
+        img.onload = function () {
+          canvas.add(
+            new fabric.Image(img, {
+              left: data.x,
+              top: data.y,
+              selectable: false,
+            })
+          );
+        };
+        img.src = tmpCanvas.toDataURL("image/png");
+
+        canvas.add(
+          new fabric.Image(tmpCanvas, {
+            left: data.x,
+            top: data.y,
+            selectable: false,
+          })
+        );
+      },
+    });
+  }
 
   ///////////////// fill functie end ///////////////////////
 
-  function backgroundHide(){
-    if(!showBackground){
-      console.log("hidden")
-      for(let i = 0; i < frames.length; i++){
-        frames[i].backgroundImage = {}
+  function backgroundHide() {
+    if (!showBackground) {
+      console.log("hidden");
+      for (let i = 0; i < frames.length; i++) {
+        frames[i].backgroundImage = {};
       }
       canvas.loadFromJSON(frames[currentFrame], canvas.renderAll.bind(canvas));
-      frames = frames
-    }else{
-      console.log("show")
-      img.src = backgroundFrames[currentFrame - 1]
+      frames = frames;
+    } else {
+      console.log("show");
+      img.src = backgroundFrames[currentFrame - 1];
     }
   }
 </script>
@@ -832,26 +1010,34 @@
             <option>texture</option>
           </select>
         </div>
+
         <div class="colorTab" class:hidden={current != "draw"}>
-          <label for="drawing-line-width">Line width:</label>
-          <span class="info">5</span><input
+          <div
+            class="lineWidth"
+            style="width:{lineWidth}px; height: {lineWidth}px; background-color: {drawingColor}; box-shadow: {shadowOffset}px {shadowOffset}px {shadowWidth}px {shadowColor};margin:  0px auto {shadowOffset}px auto;"
+          />
+          <span class="info">{lineWidth}</span><input
             type="range"
-            value="5"
             min="0"
             max="150"
             id="drawing-line-width"
+            bind:value={lineWidth}
           />
 
-          <label for="drawing-color" class="icon">Line color:</label>
-          <input type="color"  id="drawing-color" />
+          <label for="drawing-color">Line color:</label>
+          <input type="color" bind:value={drawingColor} id="drawing-color" />
 
           <label for="drawing-shadow-color">Shadow color:</label>
-          <input type="color" id="drawing-shadow-color" />
+          <input
+            type="color"
+            bind:value={shadowColor}
+            id="drawing-shadow-color"
+          />
 
           <label for="drawing-shadow-width">Shadow width:</label>
           <span class="info">0</span><input
             type="range"
-            value="0"
+            bind:value={shadowWidth}
             min="0"
             max="50"
             id="drawing-shadow-width"
@@ -860,25 +1046,55 @@
           <label for="drawing-shadow-offset">Shadow offset:</label>
           <span class="info">0</span><input
             type="range"
-            value="0"
+            bind:value={shadowOffset}
             min="0"
             max="50"
             id="drawing-shadow-offset"
           />
         </div>
+        <div class="eraseTab" class:hidden={current != "erase"}>
+          <div
+            class="lineWidth"
+            style="width:{lineWidth}px; height: {lineWidth}px; background-color: black;margin:  0px auto;"
+          />
+          <span class="info">{lineWidth}</span><input
+            type="range"
+            min="0"
+            max="150"
+            id="drawing-line-width"
+            bind:value={lineWidth}
+          />
+        </div>
+        <div class="fillTab" class:hidden={current != "fill"}>
+          <input
+            type="color"
+            bind:value={fillColor}
+            id="fill-color"
+          />
+        </div>
+        <div class="selectTab" class:hidden={current != "select"}>
+          <button on:click={Copy} class="btn btn-info icon"><CopyIcon /></button
+          >
+          <button on:click={Paste} class="btn btn-info icon"
+            ><PasteIcon /></button
+          >
+          <button on:click={Delete} class="btn btn-info icon"
+            ><TrashIcon /></button
+          >
+        </div>
         <div class="saveBox" class:hidden={current != "saveToggle"}>
           <div class="saveTab">
-            {#if appType != "avatar" }
-            <label for="title">Title</label>
-            <NameGenerator bind:value={title} />
-            <label for="title">Status</label>
-            <select bind:value={status} on:change={() => (answer = "")}>
-              {#each statussen as status}
-                <option value={status}>
-                  {status}
-                </option>
-              {/each}
-            </select>
+            {#if appType != "avatar"}
+              <label for="title">Title</label>
+              <NameGenerator bind:value={title} />
+              <label for="title">Status</label>
+              <select bind:value={status} on:change={() => (answer = "")}>
+                {#each statussen as status}
+                  <option value={status}>
+                    {status}
+                  </option>
+                {/each}
+              </select>
             {/if}
             <button on:click={upload}>Save</button>
           </div>
@@ -991,11 +1207,13 @@
     margin: 10px;
     width: 50px;
     align-self: flex-start;
+    border-right: 3px solid grey;
+    padding-right: 10px;
   }
 
   .optionbar {
     margin: 10px;
-    align-self: flex-end;
+    /* align-self: flex-end; */
   }
 
   .icon {
@@ -1005,7 +1223,8 @@
     padding: 14px;
   }
 
-  #drawing-color {
+  #drawing-color,
+  #drawing-shadow-color {
     margin: 0.4rem;
     height: 32px;
   }
@@ -1038,7 +1257,7 @@
 
     .box1 {
       float: left;
-      width: 100vw;
+      /* width: 100vw; */
     }
 
     .box2 {
@@ -1048,6 +1267,10 @@
     .topbar {
       width: unset;
     }
+
+    .optionbox {
+      margin-top: 60px;
+    }
   }
 
   .videoButton {
@@ -1056,5 +1279,9 @@
     margin: 0 auto;
     background: red;
     display: block;
+  }
+
+  .lineWidth {
+    border-radius: 50%;
   }
 </style>
