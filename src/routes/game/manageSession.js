@@ -10,7 +10,7 @@ class manageSession {
 
     this.sessionStored;
     this.userProfile
-    this.user_id;
+    this.user_id
     this.username;
 
     this.session;

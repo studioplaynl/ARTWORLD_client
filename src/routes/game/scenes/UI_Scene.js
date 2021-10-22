@@ -2,30 +2,26 @@ import CONFIG from "../config.js";
 import i18next from "i18next";
 import { locale } from "svelte-i18n";
 
+import nl from "../../../langauge/nl/ui.json";
+import en from "../../../langauge/en/ui.json";
+import ru from "../../../langauge/ru/ui.json";
+import ar from "../../../langauge/ar/ui.json";
+
 i18next.init({
   lng: "nl",
   resources: {
     en: {
-      translation: {
-        zoom: "Zoom",
-        in: "IN",
-        out: "OUT",
-      },
+      translation: en
     },
     nl: {
-      translation: {
-        zoom: "Zoom",
-        in: "IN",
-        out: "UIT",
-      },
+      translation: nl
     },
     ru: {
-      translation: {
-        zoom: "Масштаб",
-        in: "<",
-        out: "Отдалить",
-      },
+      translation: ru
     },
+    ar: {
+      translation: ar
+    }
   },
 });
 
@@ -81,6 +77,9 @@ export default class UI_Scene extends Phaser.Scene {
         .setShadow(1, 1, "#000000", 0)
         .setDepth(1000);
 
+
+
+
       this.zoom = this.add
         .text(width / 10, height / 40, `${i18next.t("zoom")}`, {
           fontFamily: "Arial",
@@ -113,7 +112,7 @@ export default class UI_Scene extends Phaser.Scene {
         .setShadow(1, 1, "#000000", 0)
         .setDepth(1000)
         .setInteractive({ useHandCursor: true });
-
+        
       this.zoomIn.on("pointerup", () => {
         this.currentZoom += 0.2;
         //this.scale.setZoom(currentZoom + 0.2);

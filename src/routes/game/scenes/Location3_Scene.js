@@ -60,18 +60,18 @@ export default class Location3Scene extends Phaser.Scene {
     // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
     // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
     // this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
-    this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
+    //this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
 
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
-    //  //1
-    //   this.load.image(
-    //     "tiles",
-    //     "./assets/tilesets/tuxmon-sample-32px-extruded.png"
-    //   );
+     //1
+      this.load.image(
+        "tiles",
+        "./assets/tilesets/tuxmon-sample-32px-extruded.png"
+      );
 
-    //   this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
+      this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
     //   //end 1
 
     // // 2
@@ -97,16 +97,16 @@ export default class Location3Scene extends Phaser.Scene {
     //   console.log('complete');
     // });
 
-    //set rpc location
-    manageSession.createPlayer = true
-    manageSession.updateOnlinePlayers = true
-    manageSession.location = "location3"
-    this.createdPlayer
+    // //set rpc location
+    // manageSession.createPlayer = true
+    // manageSession.updateOnlinePlayers = true
+    // manageSession.location = "location3"
+    // this.createdPlayer
     
-    // await manageSession.getStreamUsers("join", manageSession.location)
-    await manageSession.createSocket();
-    manageSession.createPlayer = true
-    manageSession.updateOnlinePlayers = true
+    // // await manageSession.getStreamUsers("join", manageSession.location)
+    // await manageSession.createSocket();
+    // manageSession.createPlayer = true
+    // manageSession.updateOnlinePlayers = true
   }
 
   async create() {
@@ -128,8 +128,8 @@ export default class Location3Scene extends Phaser.Scene {
     //manageSession.createSocket();
     //....... end SOCKET .......................................................................
 
-    //this.generateTileMap()
-    this.generateBackground()
+    this.generateTileMap()
+    //this.generateBackground()
 
     // this.add.image(0,0, "background1").setOrigin(0,0).setScale(0.5)
     // this.add.image(0,0, "background2").setOrigin(0,0).setScale(0.8)
@@ -195,16 +195,17 @@ export default class Location3Scene extends Phaser.Scene {
     this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
 
     //setBounds has to be set before follow, otherwise the camera doesn't follow!
-    //     // 1 and 2
-    //     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    // // end 1 and 2
+    // 1 and 2
+    //  this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    // end 1 and 2
+
     // grid
     this.gameCam.setBounds(0, 0, 3200, 3200);
     this.gameCam.zoom = 1
     // end grid
     this.gameCam.startFollow(this.player);
 
-    //this.player.setCollideWorldBounds(true);
+    this.player.setCollideWorldBounds(true);
 
     // Watch the player and worldLayer for collisions, for the duration of the scene:
     //-->off
@@ -266,35 +267,35 @@ export default class Location3Scene extends Phaser.Scene {
 
   generateLocations() {
     //this.location2 = this.physics.add.staticGroup();
-    this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
-    this.location2.body.setCircle(190, 12, 12)
-    this.location2.setImmovable(true)
+    this.location1 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
+    this.location1.body.setCircle(190, 12, 12)
+    this.location1.setImmovable(true)
 
     // this.location2.setData("entered", false)
     // this.location2.setName("location2")
-    this.createLocationDialogbox("location2", 200, 150)
+    this.createLocationDialogbox("location1", 200, 150)
 
 
-    //........ location3 ...................
-    this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    this.physics.add.existing(this.location3);
-    this.location3.body.setSize(this.location3.width, this.location3.height)
-    this.location3.body.setOffset(0, -(this.location3.height / 4))
-    //can't set ositriangle to immmovable
-    //this.location3.setImmovable(true)
+    // //........ location3 ...................
+    // this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    // this.physics.add.existing(this.location3);
+    // this.location3.body.setSize(this.location3.width, this.location3.height)
+    // this.location3.body.setOffset(0, -(this.location3.height / 4))
+    // //can't set ositriangle to immmovable
+    // //this.location3.setImmovable(true)
 
-    // this.location3.setData("entered", false)
-    // this.location3.setName("location3")
+    // // this.location3.setData("entered", false)
+    // // this.location3.setName("location3")
 
-    this.createLocationDialogbox("location3", 200, 150)
+    // this.createLocationDialogbox("location3", 200, 150)
 
-    //........ location4 ...................
-    this.location4 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
-    this.physics.add.existing(this.location4);
-    this.location4.body.setSize(this.location4.width, this.location4.height * 1.4)
-    this.location4.body.setOffset(0, -(this.location4.height / 1.4))
-    //this.location4.setImmovable(true)
-    this.createLocationDialogbox("location4", 200, 150)
+    // //........ location4 ...................
+    // this.location4 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
+    // this.physics.add.existing(this.location4);
+    // this.location4.body.setSize(this.location4.width, this.location4.height * 1.4)
+    // this.location4.body.setOffset(0, -(this.location4.height / 1.4))
+    // //this.location4.setImmovable(true)
+    // this.createLocationDialogbox("location4", 200, 150)
   }
 
   createLocationDialogbox(locationName, mainWidth, mainHeight) {
@@ -471,54 +472,54 @@ export default class Location3Scene extends Phaser.Scene {
 
   generateTileMap() {
     //....... TILEMAP .............................................................................
-    // // 2
-    // const map = this.make.tilemap({ key: "map" });
-    // // end 2
+    // 2
+    const map = this.make.tilemap({ key: "map" });
+    // end 2
 
     // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
     // Phaser's cache (i.e. the name you used in preload)
-    //     //1
-    //      const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
+        //1
+         const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
 
 
-    //     // Parameters: layer name (or index) from Tiled, tileset, x, y
+        // Parameters: layer name (or index) from Tiled, tileset, x, y
 
-    //     const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
-    //     const worldLayer = map.createLayer("World", tileset, 0, 0);
-    //     const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
+        // const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
+        // const worldLayer = map.createLayer("World", tileset, 0, 0);
+        // const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
 
-    //     worldLayer.setCollisionByProperty({ collides: true });
+        // worldLayer.setCollisionByProperty({ collides: true });
 
-    //     // By default, everything gets depth sorted on the screen in the order we created things. Here, we
-    //     // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
-    //     // Higher depths will sit on top of lower depth objects.
-    //     aboveLayer.setDepth(10);
+        // By default, everything gets depth sorted on the screen in the order we created things. Here, we
+        // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
+        // Higher depths will sit on top of lower depth objects.
+        // aboveLayer.setDepth(10);
 
-    //     // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
-    //     // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
-    //     const spawnPoint = map.findObject(
-    //       "Objects",
-    //       (obj) => obj.name === "Spawn Point"
-    //     );
-    // //end 1
+        // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
+        // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
+        // const spawnPoint = map.findObject(
+        //   "Objects",
+        //   (obj) => obj.name === "Spawn Point"
+        // );
+    //end 1
 
-    // //2
+    //2
     // const tileset = map.addTilesetImage("64x64dot", "tiles");
 
     // const aboveLayer = map.createLayer("Tile Layer 1", tileset, 0, 0);
     // aboveLayer.setDepth(10);
-    // // end 2
+    // end 2
 
-    // const worldLayer = map.createLayer("World", tileset, 0, 0);
-    // const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
+    const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
+    const worldLayer = map.createLayer("World", tileset, 0, 0);
+    const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
 
-    // worldLayer.setCollisionByProperty({ collides: true });
+    worldLayer.setCollisionByProperty({ collides: true });
 
-    // const spawnPoint = map.findObject(
-    //   "Objects",
-    //   (obj) => obj.name === "Spawn Point"
-    // );
-    //ed
+    const spawnPoint = map.findObject(
+      "Objects",
+      (obj) => obj.name === "Spawn Point"
+    );
 
     //....... end TILEMAP ......................................................................
   }
@@ -1069,7 +1070,7 @@ export default class Location3Scene extends Phaser.Scene {
       });
     } //if (avatarFrames > 1) {
     
-    this.updateOnlinePlayers = true
+    //this.updateOnlinePlayers = true
   }
 
   playerMovingByKeyBoard() {
@@ -1147,7 +1148,8 @@ export default class Location3Scene extends Phaser.Scene {
   }
 
   updateMovementOnlinePlayers() {
-    if (manageSession.updateOnlinePlayers) {
+
+    if (manageSession.updateOnlinePlayers && !manageSession.createPlayer && manageSession.createdPlayer) {
       if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
         for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
           let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
@@ -1175,12 +1177,12 @@ export default class Location3Scene extends Phaser.Scene {
 
   update(time, delta) {
     // //...... ONLINE PLAYERS ................................................
-    this.createOnlinePlayers();
-    this.updateMovementOnlinePlayers()
+    // this.createOnlinePlayers();
+    // this.updateMovementOnlinePlayers()
     this.loadAndCreatePlayerAvatar();
     //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom;
+    //this.gameCam.zoom = this.UI_Scene.currentZoom;
     // console.log(this.currentZoom);
 
     // if (manageSession.removeConnectedUser) {

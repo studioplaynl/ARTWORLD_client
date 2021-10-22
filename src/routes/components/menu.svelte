@@ -5,11 +5,16 @@
   import profile from "./../profile.svelte";
   import { Session, Profile, logout } from "./../../session";
   let MenuToggle = false;
-  import en from './../../langauge/en.json';
-  import nl from './../../langauge/nl.json';
+  import en from './../../langauge/en/en.json';
+  import nl from './../../langauge/nl/nl.json';
+  import ru from './../../langauge/ru/ru.json';
+  import ar from './../../langauge/ar/ar.json';
+
   let error;
   addMessages('nl', nl);
   addMessages('en', en);
+  addMessages('ru', ru);
+  addMessages('ar', ar);
 
   init({
   fallbackLocale: 'nl',
