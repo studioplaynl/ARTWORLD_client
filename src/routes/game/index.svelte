@@ -1,6 +1,7 @@
 <script>
   //phaser
   import { onMount } from "svelte";
+  import { enable3d, Canvas } from "@enable3d/phaser-extension";
   import MainMenu from "./scenes/MainMenu";
 
 
@@ -15,7 +16,8 @@
   onMount(async () => {
     const config = {
       //parent: "phaserId",
-      type: Phaser.AUTO,
+      type: Phaser.WEBGL,
+      transparent: true, // for 3d scene
       domCreateContainer: false,
       // width: CONFIG.WIDTH,
       // height: CONFIG.HEIGHT,
@@ -45,9 +47,11 @@
         },
       },
       scene: [MainMenu, networkBoot_Scene, location1_Scene, location2_Scene, location3_Scene, UI_Scene],
+         ...Canvas()
     };
 
-    new Phaser.Game(config);
+    // new Phaser.Game(config);
+    enable3d(() => new Phaser.Game(config));
   });
 </script>
 

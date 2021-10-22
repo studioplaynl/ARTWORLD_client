@@ -1,90 +1,47 @@
-import CONFIG from "../config";
+import { Scene3D } from "@enable3d/phaser-extension";
 
-export default class Location2Scene extends Phaser.Scene {
+export default class Location2Scene extends Scene3D {
   constructor() {
     super("location2_Scene");
-    this.headerText;
-    this.phaser = this;
   }
 
-  preload() {
-    this.load.image("paper", "./assets/paper.jpg");
-    this.load.image("star", "./assets/star.png");
-    this.load.image("bomb", "./assets//bomb.png");
+  init() {
+    this.accessThirdDimension();
   }
 
   create() {
-    this.add
-      .image(this.game.config.width / 2, this.game.config.height / 2, "paper")
-      .setScale(3.2);
+    this.third.warpSpeed("light", "orbitControls", "sky");
 
-    this.headerText = this.add
-      .text(CONFIG.WIDTH / 2, 40, "Location 2", {
-        fontFamily: "Arial",
-        fontSize: "36px",
-      })
-      .setOrigin(0.5);
-
-    this.location1 = this.physics.add.staticGroup();
-    this.location1
-      .create(
-        this.game.config.width - 100,
-        this.game.config.height - 200,
-        "star"
-      )
-      .setScale(2)
-      .refreshBody();
-
-    this.player = this.physics.add.image(
-      this.game.config.width / 2,
-      this.game.config.height / 2,
-      "bomb"
-    ).setScale(2)
-
-
-    this.player.setCollideWorldBounds(true);
-    this.physics.add.collider(
-      this.player,
-      this.location1,
-      this.enterInGameScene,
-      null,
-      this
-    );
-
-    this.cursors = this.input.keyboard.createCursorKeys();
-    //console.log("keyboard started")
-  }
-
-  enterInGameScene(player) {
-    this.physics.pause();
-    player.setTint(0xff0000);
-    this.scene.start("location1_Scene");
+    this.objects = [
+      this.third.add.box({ x: -4, y: 0, z: 0 }),
+      this.third.add.sphere({ x: -2, y: 0, z: 0, radius: 0.5 }),
+      this.third.add.sphere({
+        x: 0,
+        y: 0,
+        z: 0,
+        radius: 0.5,
+        widthSegments: 6,
+        heightSegments: 4,
+      }),
+      this.third.add.sphere(
+        { x: 2, y: 0, z: 0, radius: 0.5, phiLength: Math.PI },
+        { lambert: { side: 2 } }
+      ),
+      this.third.add.cylinder({
+        x: 4,
+        y: 0,
+        z: 0,
+        radiusTop: 0.5,
+        radiusBottom: 0.5,
+        height: 1,
+      }),
+    ];
   }
 
   update() {
-    if (this.cursors.left.isDown) {
-      this.player.setVelocityX(-160);
-      //this.headerText.setText("setVelocityX(-160)");
-      //player.anims.play('left', true);
-    } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(160);
-
-      //player.anims.play('right', true);
-    } else if (this.cursors.up.isDown) {
-      this.player.setVelocityY(-160);
-
-      //player.anims.play('right', true);
-    } else if (this.cursors.down.isDown) {
-      this.player.setVelocityY(160);
-
-      //player.anims.play('right', true);
-    } else {
-      this.player.setVelocityX(0);
-      this.player.setVelocityY(0);
-
-      //player.anims.play('turn');
-    }
-  } //update
-} //class
-
-// export default LocationSomething
+    this.objects.forEach((obj) => {
+      obj.rotation.x += 0.01;
+      obj.rotation.y += 0.01;
+    });
+  }
+}

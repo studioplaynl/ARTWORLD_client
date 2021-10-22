@@ -26,6 +26,7 @@
     "svelte-preprocess": "^4.8.0"
   },
   "dependencies": {
+    "@enable3d/phaser-extension": "^0.23.0",
     "@heroiclabs/nakama-js": "^2.1.7",
     "axios": "^0.21.1",
     "fabric": "^4.5.0",
@@ -38,6 +39,7 @@
     "svelte-icons": "^2.1.0",
     "svelte-spa-router": "^3.2.0",
     "svelte-table": "^0.1.18",
+    "three": "^0.133.1",
     "typescript": "^4.3.5",
     "uuid": "^8.3.2"
   }
