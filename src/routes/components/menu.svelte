@@ -44,7 +44,7 @@
         <div class="hamburger"></div>
     </div>
     {#if MenuToggle}
-    <div class="nav">
+    <div class="nav" on:click={()=> {MenuToggle = false}}>
         <ul class="menu">
         <li><a href="/#/">{$_('nav.game')}</a></li>
         <li><a href="/#/match">{$_('nav.match')}</a></li>
@@ -85,8 +85,9 @@
 .icon .hamburger {
   width: 50px;
   height: 5px;
-  background-color: #999;
+  background-color: black;
   margin-top: 5px;
+  box-shadow: 0px 0px 10px white;
 }
 
 ul {
