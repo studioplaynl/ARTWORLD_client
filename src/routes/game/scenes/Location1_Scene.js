@@ -71,6 +71,10 @@ export default class Location1Scene extends Phaser.Scene {
     // this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
     this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
 
+    this.load.image("art1", "./assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg")
+    this.load.image("art2", "./assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg")
+    this.load.image("art3", "./assets/art_styles/drawing_painting/doodle_dogman.png")
+
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
@@ -420,7 +424,11 @@ export default class Location1Scene extends Phaser.Scene {
     }
 
     // this.add.image(0, 200, "background4").setOrigin(0,0).setScale(1.3)
-    this.add.image(0, -300, "background5").setOrigin(0, 0).setScale(1)
+    //this.add.image(0, -300, "background5").setOrigin(0, 0).setScale(1)
+
+    this.add.image(1200, 600, "art1").setOrigin(0, 0).setScale(1)
+    this.add.image(200, 1300, "art2").setOrigin(0, 0).setScale(2)
+    this.add.image(800, 1400, "art3").setOrigin(0, 0).setScale(1.5)
 
     let graphics = this.add.graphics();
 
@@ -1173,7 +1181,7 @@ export default class Location1Scene extends Phaser.Scene {
     this.loadAndCreatePlayerAvatar();
     //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
-    //this.gameCam.zoom = this.UI_Scene.currentZoom; //temp off
+    this.gameCam.zoom = this.UI_Scene.currentZoom; 
 
 
     // //.......................................................................
