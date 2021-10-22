@@ -238,7 +238,7 @@ export default class Location1Scene extends Phaser.Scene {
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
     this.currentZoom = this.UI_Scene.currentZoom
-    this.UI_Scene.location = "home"
+    this.UI_Scene.location = this.location
 
     this.gameCam.zoom = this.currentZoom
 

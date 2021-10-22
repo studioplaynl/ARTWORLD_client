@@ -7,6 +7,7 @@ let latestValue = null;
 export default class Location2Scene extends Scene3D {
   constructor() {
     super("location2_Scene");
+    
   }
 
   init() {

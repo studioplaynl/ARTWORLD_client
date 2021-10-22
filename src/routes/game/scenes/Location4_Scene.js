@@ -2,7 +2,8 @@ import CONFIG from "../config.js";
 import manageSession from "../manageSession";
 
 //import { getAvatar } from '../../profile.svelte';
-import { getAccount } from '../../../api.js';
+import { getAccount, listImages } from '../../../api.js';
+
 import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
 
@@ -53,67 +54,29 @@ export default class Location4Scene extends Phaser.Scene {
 
   async preload() {
     //....... IMAGES ......................................................................
-    this.load.image("sky", "./assets/sky.png");
-    this.load.image("star", "./assets/star.png");
-    this.load.spritesheet(
-      "avatar1",
-      "./assets/spritesheets/cloud_breathing.png",
-      { frameWidth: 68, frameHeight: 68 }
-    );
-
-    this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
-
-    this.load.image("ball", "./assets/ball_grey.png")
+    let userID = manageSession.sessionStored.user_id
+    let drawings = await listImages("drawing", userID, 10)
 
     //test backgrounds
     // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
     // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
     // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
     // this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
-    this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
+    this.load.image("art1", "./assets/art_styles/people/04b49a9aa5f7ada5d8d96deba709c9d4.jpg")
+    this.load.image("art2", "./assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg")
+    this.load.image("art3", "./assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg")
+    this.load.image("art4", "./assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg")
 
- 
 
+    this.load.video('videoFile', 'assets/video/kunstlab_vrolijkheid.mp4', 'loadeddata', false, true);
     //....... end IMAGES ......................................................................
 
-    //....... TILEMAP .........................................................................
-    //  //1
-    //   this.load.image(
-    //     "tiles",
-    //     "./assets/tilesets/tuxmon-sample-32px-extruded.png"
-    //   );
-
-    //   this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
-    //   //end 1
-
-    // // 2
-    // this.load.svg(
-    //   "tiles",
-    //   "./assets/tilesets/64x64dot.svg"
-    // );
-
-    // this.load.tilemapTiledJSON("map", "./assets/tilemaps/svg_ortho_200x200.json");
-    // // end 2
-
-
-
-    //....... end TILEMAP ......................................................................
-
-    // //load events
-    // this.load.on('progress', function (value) {
-    //   console.log(value);
-    // });
-
-    // this.load.on('fileprogress', function (file) {
-    //   console.log(file.src);
-    // });
-    // this.load.on('complete', function () {
-    //   console.log('complete');
-    // });
 
     //set rpc location
-    // manageSession.location = "home"
+    // manageSession.location = "location4"
     // await manageSession.createSocket();
+
+    console.log(drawings)
   }
 
   async create() {
@@ -135,15 +98,7 @@ export default class Location4Scene extends Phaser.Scene {
     //manageSession.createSocket();
     //....... end SOCKET .......................................................................
 
-    //this.generateTileMap()
     this.generateBackground()
-
-    // this.add.image(0,0, "background1").setOrigin(0,0).setScale(0.5)
-    // this.add.image(0,0, "background2").setOrigin(0,0).setScale(0.8)
-    // this.add.image(0,0, "background3").setOrigin(0,0).setScale(1)
-
-    // this.add.image(0,-300, "background5").setOrigin(0,0).setScale(1)
-
     //.......  PLAYER ..........................................................................
 
     //create player group
@@ -194,17 +149,14 @@ export default class Location4Scene extends Phaser.Scene {
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
-    // add onlineplayers group
-    this.onlinePlayersGroup = this.add.group();
+
     //....... end onlinePlayers .......................................................................
 
     //....... PLAYER VS WORLD ..........................................................................
     this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
 
     //setBounds has to be set before follow, otherwise the camera doesn't follow!
-    //     // 1 and 2
-    //     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-    // // end 1 and 2
+
     // grid
     this.gameCam.setBounds(0, 0, 6200, 6200);
     this.gameCam.zoom = 1
@@ -213,10 +165,6 @@ export default class Location4Scene extends Phaser.Scene {
 
     //this.player.setCollideWorldBounds(true);
 
-    // Watch the player and worldLayer for collisions, for the duration of the scene:
-    //-->off
-    //this.physics.add.collider(this.player, worldLayer);
-    //<--off
     //......... end PLAYER VS WORLD ......................................................................
 
     //......... INPUT ....................................................................................
@@ -224,9 +172,15 @@ export default class Location4Scene extends Phaser.Scene {
     //.......... end INPUT ................................................................................
 
     this.locationDialogBoxContainersGroup = this.add.group();
+
+
     this.generateLocations()
 
-    this.generateBouncingBird()
+    this.add.image(200, 200, "art1").setOrigin(0, 0).setScale(.5)
+    this.add.image(600, 200, "art2").setOrigin(0, 0).setScale(.5)
+    this.add.image(1000, 200, "art3").setOrigin(0, 0).setScale(.5)
+    this.add.image(1400, 200, "art4").setOrigin(0, 0).setScale(.5)
+    //this.generateBouncingBird()
 
     //......... DEBUG FUNCTIONS ............................................................................
     this.debugFunctions();
@@ -236,7 +190,7 @@ export default class Location4Scene extends Phaser.Scene {
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
     this.currentZoom = this.UI_Scene.currentZoom
-    this.UI_Scene.location = "home"
+    this.UI_Scene.location = this.location
 
     this.gameCam.zoom = this.currentZoom
 
@@ -1176,7 +1130,7 @@ export default class Location4Scene extends Phaser.Scene {
     this.loadAndCreatePlayerAvatar();
     //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom; 
+    this.gameCam.zoom = this.UI_Scene.currentZoom;
 
 
     // //.......................................................................
