@@ -1,0 +1,36 @@
+{
+  "nav": {
+    "game": "اللعبة",
+    "upload": "تحميل",
+    "match": "تطابق",
+    "login": "تسجيل الدخول",
+    "logout": "خروج",
+    "drawing": "رسم",
+    "stopmotion": "حركة",
+    "admin": {
+      "createUser": "إنشاء مستخدم",
+      "createGroup": "إنشاء مجموعة"
+    }
+  },
+  "login": {
+    "title": "تسجيل الدخول",
+    "login": "تسجيل الدخول"
+  },
+  "register": {
+    "title": "تسجيل مستخدم جديد",
+    "username": "اسم المستخدم",
+    "email": "عنوان البريد الإلكتروني",
+    "password": "كلمه السر",
+    "repeatPassword": "اعد كلمة السر",
+    "role": "دور",
+    "location": "موقع المخيم",
+    "register": "يسجل",
+    "none": "لا شيئ"
+  },
+  "role": {
+    "admin": "مشرف",
+    "artist": "فنان",
+    "moderator": "سائس",
+    "speler": "لاعب"
+  }
+}
