@@ -74,6 +74,11 @@ export default class Location1Scene extends Phaser.Scene {
     this.load.image("art1", "./assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg")
     this.load.image("art2", "./assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg")
     this.load.image("art3", "./assets/art_styles/drawing_painting/doodle_dogman.png")
+
+    this.load.image("exhibit1", "./assets/art_styles/people/04b49a9aa5f7ada5d8d96deba709c9d4.jpg")
+    this.load.image("exhibit2", "./assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg")
+    this.load.image("exhibit3", "./assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg")
+    this.load.image("exhibit4", "./assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg")
     //this.load.image("art4", "./assets/art_styles/drawing_painting/87b2481918d9c9491c9b998008a2053c.jpg")
     
     //....... end IMAGES ......................................................................
