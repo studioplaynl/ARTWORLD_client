@@ -1,5 +1,9 @@
 import { Scene3D } from "@enable3d/phaser-extension";
+import i18next from "i18next";
+import { locale } from "svelte-i18n";
 
+
+let latestValue = null;
 export default class Location2Scene extends Scene3D {
   constructor() {
     super("location2_Scene");
@@ -10,6 +14,39 @@ export default class Location2Scene extends Scene3D {
   }
 
   create() {
+
+    let countDisplay = 0;
+    locale.subscribe((value) => {
+      if (countDisplay === 0) {
+        countDisplay++;
+        return;
+      }
+      if (countDisplay > 0) {
+        i18next.changeLanguage(value);
+      }
+      if (latestValue !== value) {
+        this.scene.restart();
+      }
+      latestValue = value;
+    });
+
+
+
+    this.back = this.add
+      .text(20, 50, `${i18next.t("back")}`, {
+        fontFamily: "Arial",
+        fontSize: "22px",
+      })
+      .setOrigin(0)
+      .setShadow(2, 2, "#000000", 2)
+      .setDepth(1000)
+      .setInteractive();
+
+      this.back.on("pointerup", () => {
+        this.scene.start("location1_Scene")
+      });
+
+
     this.third.warpSpeed("light", "orbitControls", "sky");
 
     this.objects = [
@@ -36,6 +73,9 @@ export default class Location2Scene extends Scene3D {
         height: 1,
       }),
     ];
+
+
+    
   }
 
   update() {
