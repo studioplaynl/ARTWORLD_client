@@ -1,13 +1,14 @@
 import CONFIG from "../config.js";
 import manageSession from "../manageSession";
+
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount } from '../../../api.js';
 import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
 
-export default class Location1Scene extends Phaser.Scene {
+export default class Location4Scene extends Phaser.Scene {
   constructor() {
-    super("location1_Scene");
+    super("location4_Scene");
 
     this.debug = false
 
@@ -30,7 +31,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     this.offlineOnlineUsers
 
-    this.location = "home"
+    this.location = "location4"
 
     this.cursors;
     this.pointer;
@@ -71,11 +72,8 @@ export default class Location1Scene extends Phaser.Scene {
     // this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
     this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
 
-    this.load.image("art1", "./assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg")
-    this.load.image("art2", "./assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg")
-    this.load.image("art3", "./assets/art_styles/drawing_painting/doodle_dogman.png")
-    //this.load.image("art4", "./assets/art_styles/drawing_painting/87b2481918d9c9491c9b998008a2053c.jpg")
-    
+ 
+
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
@@ -273,36 +271,36 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   generateLocations() {
-    //this.location2 = this.physics.add.staticGroup();
-    this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
-    this.location2.body.setCircle(190, 12, 12)
-    this.location2.setImmovable(true)
+    // //this.location2 = this.physics.add.staticGroup();
+    // this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
+    // this.location2.body.setCircle(190, 12, 12)
+    // this.location2.setImmovable(true)
 
-    // this.location2.setData("entered", false)
-    // this.location2.setName("location2")
-    this.createLocationDialogbox("location2", 200, 150)
+    // // this.location2.setData("entered", false)
+    // // this.location2.setName("location2")
+    // this.createLocationDialogbox("location2", 200, 150)
 
 
-    //........ location3 ...................
-    this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    this.physics.add.existing(this.location3);
-    this.location3.body.setSize(this.location3.width, this.location3.height)
-    this.location3.body.setOffset(0, -(this.location3.height / 4))
-    //can't set ositriangle to immmovable
-    //this.location3.setImmovable(true)
+    // //........ location3 ...................
+    // this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    // this.physics.add.existing(this.location3);
+    // this.location3.body.setSize(this.location3.width, this.location3.height)
+    // this.location3.body.setOffset(0, -(this.location3.height / 4))
+    // //can't set ositriangle to immmovable
+    // //this.location3.setImmovable(true)
 
-    // this.location3.setData("entered", false)
-    // this.location3.setName("location3")
+    // // this.location3.setData("entered", false)
+    // // this.location3.setName("location3")
 
-    this.createLocationDialogbox("location3", 200, 150)
+    // this.createLocationDialogbox("location3", 200, 150)
 
-    //........ location4 ...................
-    this.location4 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
-    this.physics.add.existing(this.location4);
-    this.location4.body.setSize(this.location4.width, this.location4.height * 1.4)
-    this.location4.body.setOffset(0, -(this.location4.height / 1.4))
+    //........ location1 ...................
+    this.location1 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
+    this.physics.add.existing(this.location1);
+    this.location1.body.setSize(this.location1.width, this.location1.height * 1.4)
+    this.location1.body.setOffset(0, -(this.location1.height / 1.4))
     //this.location4.setImmovable(true)
-    this.createLocationDialogbox("location4", 200, 150)
+    this.createLocationDialogbox("location1", 200, 150)
   }
 
   createLocationDialogbox(locationName, mainWidth, mainHeight) {
@@ -427,55 +425,50 @@ export default class Location1Scene extends Phaser.Scene {
     // this.add.image(0, 200, "background4").setOrigin(0,0).setScale(1.3)
     //this.add.image(0, -300, "background5").setOrigin(0, 0).setScale(1)
 
-    this.add.image(1200, 600, "art1").setOrigin(0, 0).setScale(1)
-    this.add.image(200, 1300, "art2").setOrigin(0, 0).setScale(2)
-    this.add.image(800, 1400, "art3").setOrigin(0, 0).setScale(1.5)
-    //this.add.image(2400, 200, "art4").setOrigin(0, 0).setScale(1)
+    // let graphics = this.add.graphics();
 
-    let graphics = this.add.graphics();
+    // graphics.fillStyle(0x0000ff, 1);
 
-    graphics.fillStyle(0x0000ff, 1);
+    // graphics.fillCircle(800, 300, 200);
 
-    graphics.fillCircle(800, 300, 200);
+    // for (let i = 0; i < 250; i += 60) {
+    //   graphics.lineStyle(5, 0xFF00FF, 1.0);
+    //   graphics.beginPath();
+    //   graphics.moveTo(800, 200 + i);
+    //   graphics.lineTo(1200, 200 + i);
+    //   graphics.closePath();
+    //   graphics.strokePath();
+    // }
 
-    for (let i = 0; i < 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
-      graphics.beginPath();
-      graphics.moveTo(800, 200 + i);
-      graphics.lineTo(1200, 200 + i);
-      graphics.closePath();
-      graphics.strokePath();
-    }
+    // for (let i = 0; i < 250; i += 60) {
+    //   graphics.lineStyle(5, 0xFF00FF, 1.0);
+    //   graphics.beginPath();
+    //   graphics.moveTo(900 + i, 150);
+    //   graphics.lineTo(900 + i, 550);
+    //   graphics.closePath();
+    //   graphics.strokePath();
+    // }
 
-    for (let i = 0; i < 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
-      graphics.beginPath();
-      graphics.moveTo(900 + i, 150);
-      graphics.lineTo(900 + i, 550);
-      graphics.closePath();
-      graphics.strokePath();
-    }
+    // let rectangle = this.add.graphics();
+    // rectangle.setVisible(false);
+    // rectangle.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
+    // rectangle.fillRect(0, 0, 400, 400);
 
-    let rectangle = this.add.graphics();
-    rectangle.setVisible(false);
-    rectangle.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
-    rectangle.fillRect(0, 0, 400, 400);
+    // let rt = this.add.renderTexture(200, 100, 600, 600);
+    // let rt2 = this.add.renderTexture(100, 600, 600, 600);
 
-    let rt = this.add.renderTexture(200, 100, 600, 600);
-    let rt2 = this.add.renderTexture(100, 600, 600, 600);
+    // rt.draw(rectangle);
+    // rt2.draw(rectangle);
 
-    rt.draw(rectangle);
-    rt2.draw(rectangle);
+    // let eraser = this.add.circle(0, 0, 190, 0x000000);
+    // eraser.setVisible(false);
 
-    let eraser = this.add.circle(0, 0, 190, 0x000000);
-    eraser.setVisible(false);
+    // rt.erase(eraser, 200, 200);
 
-    rt.erase(eraser, 200, 200);
+    // rt2.erase(rt, 0, 0)
 
-    rt2.erase(rt, 0, 0)
-
-    rt2.x = 400
-    rt2.y = 600
+    // rt2.x = 400
+    // rt2.y = 600
 
     //end fill in textures
   }
@@ -1178,8 +1171,8 @@ export default class Location1Scene extends Phaser.Scene {
 
   update(time, delta) {
     // //...... ONLINE PLAYERS ................................................
-    this.createOnlinePlayers();
-    this.updateMovementOnlinePlayers()
+    // this.createOnlinePlayers();
+    // this.updateMovementOnlinePlayers()
     this.loadAndCreatePlayerAvatar();
     //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
