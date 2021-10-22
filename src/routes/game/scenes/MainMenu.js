@@ -18,24 +18,15 @@ export default class MainMenu extends Phaser.Scene {
     // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
     //this.load.image("background4", "./assets/art_styles/repetition/0affdae3101c87f72c071970623a6884.jpg")
     // this.load.image("background4", "./assets/art_styles/repetition/0ceff64b236482e515c344d254424da6.jpg")
-<<<<<<< HEAD
-    // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg") 
-    // this.load.image("background4", "./assets/art_styles/repetition/9a9cdf2c6c7a12e4bf572f34536861d3.jpg") 
-    this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg") 
-    //this.load.image("background4", "./assets/art_styles/repetition/b9a5ab2363eef33f8ede82430fe331b3.jpg") 
-
-    // Received presence event for stream: 
-=======
     // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
     // this.load.image("background4", "./assets/art_styles/repetition/9a9cdf2c6c7a12e4bf572f34536861d3.jpg")
-    // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
-    this.load.image(
-      "background4",
-      "./assets/art_styles/repetition/b9a5ab2363eef33f8ede82430fe331b3.jpg"
-    );
+    this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
+    // this.load.image(
+    //   "background4",
+    //   "./assets/art_styles/repetition/b9a5ab2363eef33f8ede82430fe331b3.jpg"
+    // );
 
     // Received presence event for stream:
->>>>>>> 4f876d6768586cbb29ca9a09f5e19a8aa490501d
     // this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
   }
   async create() {
