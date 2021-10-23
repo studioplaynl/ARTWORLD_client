@@ -51,9 +51,14 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   async preload() {
+    //drawing on a wall
+    this.load.image('brush', 'assets/brush3.png');
+    this.load.image('brickWall', 'assets/brickwall_white.jpg');
+
     //....... IMAGES ......................................................................
     this.load.image("sky", "./assets/sky.png");
     this.load.image("star", "./assets/star.png");
+    this.load.image('ground', 'assets/platform.png');
     this.load.spritesheet(
       "avatar1",
       "./assets/spritesheets/cloud_breathing.png",
@@ -72,15 +77,18 @@ export default class Location1Scene extends Phaser.Scene {
     this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
 
     this.load.image("art1", "./assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg")
-    this.load.image("art2", "./assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg")
+    this.load.image("art2", "./assets/art_styles/drawing_painting/f7f2e083a0c70b97e459f2966bc8c3ae.jpg")
     this.load.image("art3", "./assets/art_styles/drawing_painting/doodle_dogman.png")
+    // this.load.image("art4", "./assets/art_styles/drawing_painting/87b2481918d9c9491c9b998008a2053c.jpg") // 30ties style graphic
+
+    this.load.image("art5", "./assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg")
 
     this.load.image("exhibit1", "./assets/art_styles/people/04b49a9aa5f7ada5d8d96deba709c9d4.jpg")
     this.load.image("exhibit2", "./assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg")
     this.load.image("exhibit3", "./assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg")
     this.load.image("exhibit4", "./assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg")
-    //this.load.image("art4", "./assets/art_styles/drawing_painting/87b2481918d9c9491c9b998008a2053c.jpg")
-    
+
+
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
@@ -145,11 +153,12 @@ export default class Location1Scene extends Phaser.Scene {
     //this.generateTileMap()
     this.generateBackground()
 
-    // this.add.image(0,0, "background1").setOrigin(0,0).setScale(0.5)
-    // this.add.image(0,0, "background2").setOrigin(0,0).setScale(0.8)
-    // this.add.image(0,0, "background3").setOrigin(0,0).setScale(1)
+    this.createDrawingTexture()
+    // this.add.image(0,0, "background1").setOrigin(0).setScale(0.5)
+    // this.add.image(0,0, "background2").setOrigin(0).setScale(0.8)
+    // this.add.image(0,0, "background3").setOrigin(0).setScale(1)
 
-    // this.add.image(0,-300, "background5").setOrigin(0,0).setScale(1)
+    // this.add.image(0,-300, "background5").setOrigin(0).setScale(1)
 
     //.......  PLAYER ..........................................................................
 
@@ -252,6 +261,92 @@ export default class Location1Scene extends Phaser.Scene {
 
 
   } // end create
+
+  createDrawingTexture() {
+    //....................graffiti wall....................................................................................................
+    //pos
+    const graffitiWallX = 2200
+    const graffitiWallY = 600
+    //size
+    const graffitiWallWidth = 800
+    const graffitiWallHeight = 600
+
+    // var graffitiWallContainer = this.add.container(); 
+    let rt = this.add.renderTexture(graffitiWallX, graffitiWallY, graffitiWallWidth, graffitiWallHeight).setInteractive().setDepth(1001);
+    let graffitiWall = this.add.image(graffitiWallX, graffitiWallY, 'brickWall').setOrigin(0).setDepth(1000)
+
+    graffitiWall.displayWidth = graffitiWallWidth
+    graffitiWall.displayHeight = graffitiWallHeight
+    //this.add.graphics().fillStyle(0x000000).lineStyle(1, 0xffffff).fillRect(0, 0, 1200, 600).strokeRect(0, 0, 1200, 600).setDepth(1000);
+
+    //this.add.text(136, 8, '<- draw in here\n   press SPACE to clear');
+
+    var hsv = Phaser.Display.Color.HSVColorWheel();
+
+    var i = 0;
+
+    this.input.keyboard.on('keydown_SPACE', function () {
+
+      rt.clear();
+
+    });
+
+    rt.on('pointerdown', function (pointer) {
+
+      this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
+
+    });
+
+    rt.on('pointermove', function (pointer) {
+
+      if (pointer.isDown) {
+        this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
+
+        i = Phaser.Math.Wrap(i + 1, 0, 360);
+      }
+
+    });
+
+    // graffitiWallContainer.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
+
+    // var tt = rt.saveTexture('doodle');
+
+    // var blocks = this.add.group({ key: 'doodle', repeat: 35, setScale: { x: 0.2, y: 0.1 } });
+
+    // Phaser.Actions.GridAlign(blocks.getChildren(), {
+    //     width: 7,
+    //     height: 5,
+    //     cellWidth: 128,
+    //     cellHeight: 128,
+    //     x: 128,
+    //     y: 128
+    // });
+
+    // var i = 0;
+
+    // blocks.children.iterate(function (child) {
+
+    //     this.tweens.add({
+    //         targets: child,
+    //         scaleX: 1,
+    //         scaleY: 1,
+    //         ease: 'Sine.easeInOut',
+    //         duration: 400,
+    //         delay: i * 50,
+    //         repeat: -1,
+    //         yoyo: true
+    //     });
+
+    //     i++;
+
+    //     if (i % 14 === 0)
+    //     {
+    //         i = 0;
+    //     }
+
+    // }, this);
+    
+  }
 
   generateBouncingBird() {
     var container = this.add.container();
@@ -405,38 +500,79 @@ export default class Location1Scene extends Phaser.Scene {
 
   generateBackground() {
     //fill in textures
-    let background = this.add.rectangle(0, 0, 6000, 6000, 0xFFFFFF)
 
-    let cross = [
-      '.....',
-      '..1..',
-      '.111.',
-      '..1..',
-      '.....',
+    ///*........... white background of 6000x6000 pix .............................................................
+    this.add.rectangle(0, 0, 8000, 8000, 0xFFFFFF)
 
-    ]
-
-    //generate the texture from the array
-    this.textures.generate('cross', { data: cross, pixelWidth: 3 });
-
-    //display the texture on an image
+    //*........... repeating pattern on the white background .............................................................
     const gridWidth = 4000
     const offset = 50
 
+    //......... repeating dots as pattern on white background .............................................................
+    //background dot size
+    let dotWidth = 2
+
+    //create the dot: graphics
+    let bgDot = this.add.graphics()
+    bgDot.fillStyle(0x909090);
+    bgDot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false)
+
+    //create renderTexture
+    let bgDotRendertexture = this.add.renderTexture(0, 0, dotWidth * 2, dotWidth * 2)
+
+    //draw gaphics to renderTexture
+    bgDotRendertexture.draw(bgDot)
+
+    //save the rendertexture with a key ('dot')
+    let t = bgDotRendertexture.saveTexture('dot');
+
     for (let i = 0; i < gridWidth; i += offset) {
       for (let j = 0; j < gridWidth; j += offset) {
-        this.add.image(i, j, 'cross').setOrigin(0, 1);
+        this.add.image(i, j, 'dot').setOrigin(0, 1);
       }
     }
+    //......... end repeating dots ...................................................................
 
+    //..... cross grid background .............................................................
+    // // // 1. make an array with color values
+    // // let cross = [
+    // //   '.....',
+    // //   '..1..',
+    // //   '.111.',
+    // //   '..1..',
+    // //   '.....',
+
+    // // ]
+
+    // // // 2. generate the texture from the array
+    // // this.textures.generate('cross', { data: cross, pixelWidth: 3 });
+
+    // // // 3. display the texture as an image
+    // // const gridWidth = 4000
+    // // const offset = 50
+
+    // // // 4. repeat the image in a x, y  grid
+    // // for (let i = 0; i < gridWidth; i += offset) {
+    // //   for (let j = 0; j < gridWidth; j += offset) {
+    // //     this.add.image(i, j, 'cross').setOrigin(0, 1);
+    // //   }
+    // // }
+    //..... end cross grid background .............................................................
+    //*........... end repeating pattern on the white background ........................................
+
+    //* .......... scattered art works for the demo .....................................................
     // this.add.image(0, 200, "background4").setOrigin(0,0).setScale(1.3)
     //this.add.image(0, -300, "background5").setOrigin(0, 0).setScale(1)
 
-    this.add.image(1200, 600, "art1").setOrigin(0, 0).setScale(1)
-    this.add.image(200, 1300, "art2").setOrigin(0, 0).setScale(2)
-    this.add.image(800, 1400, "art3").setOrigin(0, 0).setScale(1.5)
-    //this.add.image(2400, 200, "art4").setOrigin(0, 0).setScale(1)
+    this.add.image(1400, 600, "art1").setOrigin(0, 0).setScale(1) //stamp painting
+    //this.add.image(300, 1200, "art2").setOrigin(0, 0).setScale(1.3) //keith harring
+    this.add.image(800, 1200, "art3").setOrigin(0, 0).setScale(1.5) //dog doodle
+    //this.add.image(2400, 200, "art4").setOrigin(0, 0).setScale(1) // 30ties style graphic
+    this.add.image(300, 1200, "art5").setOrigin(0, 0).setScale(1.6) //keith harring
 
+    //* .......... end scattered art works for the demo .................................................
+
+    //*............. graphics as examples for the demo ..................................................
     let graphics = this.add.graphics();
 
     graphics.fillStyle(0x0000ff, 1);
@@ -482,7 +618,7 @@ export default class Location1Scene extends Phaser.Scene {
     rt2.x = 400
     rt2.y = 600
 
-    //end fill in textures
+    //*............. end graphics as examples for the demo .............................................
   }
 
   generateTileMap() {
@@ -1188,7 +1324,7 @@ export default class Location1Scene extends Phaser.Scene {
     this.loadAndCreatePlayerAvatar();
     //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom; 
+    this.gameCam.zoom = this.UI_Scene.currentZoom;
 
 
     // //.......................................................................

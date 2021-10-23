@@ -178,6 +178,12 @@ export default class Location4Scene extends Phaser.Scene {
     this.add.image(1000, 200, "exhibit3").setOrigin(0).setScale(.55)
     this.add.image(1400, 200, "exhibit4").setOrigin(0).setScale(.6)
 
+    let platforms = this.physics.add.staticGroup();
+
+    platforms.create(1300, 1300, 'ground').setScale(2).refreshBody()
+    platforms.create(300, 1300, 'ground').setScale(2).refreshBody()
+
+    this.physics.add.collider(this.player, platforms);
     //this.generateBouncingBird()
 
     //......... DEBUG FUNCTIONS ............................................................................
