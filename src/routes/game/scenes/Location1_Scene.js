@@ -350,6 +350,32 @@ export default class Location1Scene extends Phaser.Scene {
 
     // }, this);
 
+    const graffitiWall2X = 600
+    const graffitiWall2Y = 1050
+    //size
+    const graffitiWall2Width = 600
+    const graffitiWall2Height = 1200
+
+    // var graffitiWallContainer = this.add.container(); 
+    let rt2 = this.add.renderTexture(graffitiWall2X, graffitiWall2Y, graffitiWall2Width, graffitiWall2Height).setInteractive().setDepth(1001);
+    //let graffitiWall2 = this.add.image(graffitiWall2X, graffitiWall2Y, 'brickWall').setOrigin(0).setDepth(1000)
+
+    // graffitiWall2.displayWidth = graffitiWall2Width
+    // graffitiWall2.displayHeight = graffitiWall2Height
+        
+    rt2.on('pointerdown', function (pointer) {
+
+      this.draw('brush', pointer.worldX - graffitiWall2X - 4, pointer.worldY - graffitiWall2Y - 4, 1, 0x000000);
+
+    });
+
+    rt2.on('pointermove', function (pointer) {
+
+      if (pointer.isDown) {
+        this.draw('brush', pointer.worldX - graffitiWall2X, pointer.worldY - graffitiWall2Y, 1, 0x000000);
+      }
+
+    });
   }
 
   generateBouncingBird() {
