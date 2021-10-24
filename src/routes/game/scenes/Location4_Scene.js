@@ -57,18 +57,15 @@ export default class Location4Scene extends Phaser.Scene {
     let userID = manageSession.sessionStored.user_id
     let drawings = await listImages("drawing", userID, 10)
 
-    //test backgrounds
-    // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
-    // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
-    // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
-    // this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
-    this.load.image("art1", "./assets/art_styles/people/04b49a9aa5f7ada5d8d96deba709c9d4.jpg")
-    this.load.image("art2", "./assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg")
-    this.load.image("art3", "./assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg")
-    this.load.image("art4", "./assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg")
+    //exhibition
+    this.load.image("exhibit1", "./assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg")
+    // this.load.image("exhibit1", "./assets/art_styles/people/04b49a9aa5f7ada5d8d96deba709c9d4.jpg")
+    this.load.image("exhibit2", "./assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg")
+    this.load.image("exhibit3", "./assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg")
+    this.load.image("exhibit4", "./assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg")
+    
 
-
-    this.load.video('videoFile', 'assets/video/kunstlab_vrolijkheid.mp4', 'loadeddata', false, true);
+    //this.load.video('videoFile', './assets/video/kunstlab_vrolijkheid.mp4', 'loadeddata', false, true);
     //....... end IMAGES ......................................................................
 
 
@@ -176,10 +173,17 @@ export default class Location4Scene extends Phaser.Scene {
 
     this.generateLocations()
 
-    this.add.image(200, 200, "art1").setOrigin(0, 0).setScale(.5)
-    this.add.image(600, 200, "art2").setOrigin(0, 0).setScale(.5)
-    this.add.image(1000, 200, "art3").setOrigin(0, 0).setScale(.5)
-    this.add.image(1400, 200, "art4").setOrigin(0, 0).setScale(.5)
+    this.add.image(200, 200, "exhibit1").setOrigin(0).setScale(.53)
+    this.add.image(600, 200, "exhibit2").setOrigin(0).setScale(.45)
+    this.add.image(1000, 200, "exhibit3").setOrigin(0).setScale(.55)
+    this.add.image(1400, 200, "exhibit4").setOrigin(0).setScale(.6)
+
+    let platforms = this.physics.add.staticGroup();
+
+    platforms.create(1300, 1300, 'ground').setScale(2).refreshBody()
+    platforms.create(300, 1300, 'ground').setScale(2).refreshBody()
+
+    this.physics.add.collider(this.player, platforms);
     //this.generateBouncingBird()
 
     //......... DEBUG FUNCTIONS ............................................................................
@@ -193,11 +197,6 @@ export default class Location4Scene extends Phaser.Scene {
     this.UI_Scene.location = this.location
 
     this.gameCam.zoom = this.currentZoom
-
-    console.log(this.UI_Scene)
-    console.log(this.currentZoom)
-
-
   } // end create
 
   generateBouncingBird() {
