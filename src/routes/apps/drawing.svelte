@@ -26,6 +26,7 @@
     historyCurrent;
   let canv, _clipboard;
   let saveCanvas, savecanvas, videoCanvas;
+  let videoWidth, videoHeight;
   let canvas,
     video,
     lineWidth = 5;
@@ -397,6 +398,7 @@
     // }
     console.log(window.innerWidth);
     if (window.innerWidth <= 700) {
+      videoWidth = window.innerWidth - 10;
       canvas.setHeight(window.innerWidth - 10);
       canvas.setWidth(window.innerWidth - 10);
     } else {
@@ -607,12 +609,10 @@
     let videocanvas = new fabric.Canvas(videoCanvas, {
       isDrawingMode: false,
     });
+    videocanvas.setHeight(videoWidth/1.33);
+    videocanvas.setWidth(videoWidth);
     let context = videoCanvas.getContext("2d");
-    let width = 700;
-    let heigth = 700;
-    videocanvas.setHeight(heigth);
-    videocanvas.setWidth(width);
-    context.drawImage(video, 0, 0, width, heigth);
+    context.drawImage(video, 0, 0, videoWidth, videoWidth/1.33);
     var uri = videoCanvas.toDataURL("image/png");
 
     fabric.Image.fromURL(uri, function (oImg) {
@@ -621,7 +621,9 @@
       canvas.add(oImg);
     });
     current = "draw";
-    video.stop();
+    stream.getTracks().forEach(function(track) {
+      track.stop();
+    });
   }
 
   //////////////////// camera functies end ///////////////////////////
@@ -908,7 +910,7 @@
       <button class="icon" on:click={redo}><RedoIcon /></button>
     </div>
     <div class="canvasBox" class:hidden={current === "camera"}>
-      <canvas bind:this={canv} class="canvas" />
+      <canvas bind:this={canv} class="canvas"  />
     </div>
     <div class="savecanvas">
       <canvas bind:this={saveCanvas} />
@@ -1242,15 +1244,15 @@
     display: none;
   }
 
-  video {
+  /* video {
     width: 100vw;
     height: 100vw;
-  }
+  } */
 
   @media only screen and (min-width: 700px) {
     video {
-      width: 700px;
-      height: 700px;
+      /* width: 700px;
+      height: 700px; */
       margin: 0 auto;
       display: block;
     }

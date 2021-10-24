@@ -10,6 +10,7 @@ Session.subscribe(value => {
 });
 
 export async function uploadImage(name, type, json, img, status) {
+  Error = "Start Saving"
   console.log(Sess)
   console.log("name: " + name)
   console.log(img)
@@ -39,11 +40,11 @@ export async function uploadImage(name, type, json, img, status) {
     body: json
   })
   await updateObject(type, name, value,pub)
- 
+  Error = "Saved"
 }
 
 export async function recieveImage(data) {
-
+  
 }
 
 export async function listImages(type, user, limit) {
@@ -136,6 +137,7 @@ export async function getAvatar(avatar_url) {
   await client.updateAccount(Sess, {
       avatar_url: jpegLocation,
   });
+  Error = "Saved" 
 
 }
 
