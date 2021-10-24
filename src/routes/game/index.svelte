@@ -10,6 +10,7 @@
   import location2_Scene from "./scenes/Location2_Scene";
   import location3_Scene from "./scenes/Location3_Scene";
   import location4_Scene from "./scenes/Location4_Scene";
+  import location5_Scene from "./scenes/Location5_Scene";
 
   import UI_Scene from "./scenes/UI_Scene";
 
@@ -49,7 +50,7 @@
           fps: 60,
         },
       },
-      scene: [MainMenu, networkBoot_Scene, location1_Scene, location2_Scene, location3_Scene, location4_Scene, UI_Scene],
+      scene: [MainMenu, networkBoot_Scene, location1_Scene, location2_Scene, location3_Scene, location4_Scene, location5_Scene, UI_Scene],
          ...Canvas()
     };
 

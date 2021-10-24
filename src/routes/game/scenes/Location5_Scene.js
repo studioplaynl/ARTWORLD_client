@@ -6,9 +6,9 @@ import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
 import { Vector2 } from "three";
 
-export default class Location1Scene extends Phaser.Scene {
+export default class Location5Scene extends Phaser.Scene {
   constructor() {
-    super("location1_Scene");
+    super("location5_Scene");
 
     this.debug = false
 
@@ -56,70 +56,18 @@ export default class Location1Scene extends Phaser.Scene {
 
   async preload() {
     //drawing on a wall
-    this.load.image('brush', 'assets/brush3.png');
-    this.load.image('brickWall', 'assets/brickwall_white.jpg');
 
-    //....... IMAGES ......................................................................
-    this.load.image("sky", "./assets/sky.png");
-    this.load.image("star", "./assets/star.png");
-    this.load.image('ground', 'assets/platform.png');
 
-    this.load.image('museum', 'assets/museum.png');
-
-    this.load.spritesheet(
-      "avatar1",
-      "./assets/spritesheets/cloud_breathing.png",
-      { frameWidth: 68, frameHeight: 68 }
-    );
-
-    this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
-
-    this.load.image("ball", "./assets/ball_grey.png")
 
     //test backgrounds
-    // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
-    // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
-    // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
-    // this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
-    this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
-
-    this.load.image("art1", "./assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg")
-    this.load.image("art2", "./assets/art_styles/drawing_painting/f7f2e083a0c70b97e459f2966bc8c3ae.jpg")
-    this.load.image("art3", "./assets/art_styles/drawing_painting/doodle_dogman.png")
-    // this.load.image("art4", "./assets/art_styles/drawing_painting/87b2481918d9c9491c9b998008a2053c.jpg") // 30ties style graphic
-
-    this.load.image("art5", "./assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg")
-
-    this.load.image("exhibit1", "./assets/art_styles/people/04b49a9aa5f7ada5d8d96deba709c9d4.jpg")
-    this.load.image("exhibit2", "./assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg")
-    this.load.image("exhibit3", "./assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg")
-    this.load.image("exhibit4", "./assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg")
-
+    this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
+    this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
+    this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
+    this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
+    
 
     //....... end IMAGES ......................................................................
 
-    //....... TILEMAP .........................................................................
-    //  //1
-    //   this.load.image(
-    //     "tiles",
-    //     "./assets/tilesets/tuxmon-sample-32px-extruded.png"
-    //   );
-
-    //   this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
-    //   //end 1
-
-    // // 2
-    // this.load.svg(
-    //   "tiles",
-    //   "./assets/tilesets/64x64dot.svg"
-    // );
-
-    // this.load.tilemapTiledJSON("map", "./assets/tilemaps/svg_ortho_200x200.json");
-    // // end 2
-
-
-
-    //....... end TILEMAP ......................................................................
 
     // //load events
     // this.load.on('progress', function (value) {
@@ -159,13 +107,6 @@ export default class Location1Scene extends Phaser.Scene {
 
     //this.generateTileMap()
     this.generateBackground()
-
-    this.createDrawingTexture()
-    // this.add.image(0,0, "background1").setOrigin(0).setScale(0.5)
-    // this.add.image(0,0, "background2").setOrigin(0).setScale(0.8)
-    // this.add.image(0,0, "background3").setOrigin(0).setScale(1)
-
-    // this.add.image(0,-300, "background5").setOrigin(0).setScale(1)
 
     //.......  PLAYER ..........................................................................
 
@@ -300,8 +241,7 @@ export default class Location1Scene extends Phaser.Scene {
     });
 
     rt.on('pointerdown', function (pointer) {
-      this.graffitiDrawing = true
-      this.isClicking = true
+
       this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
 
     });
@@ -309,19 +249,12 @@ export default class Location1Scene extends Phaser.Scene {
     rt.on('pointermove', function (pointer) {
 
       if (pointer.isDown) {
-        this.graffitiDrawing = true
-        this.isClicking = true
         this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
-      }
-      if (pointer.isUp) {
-        this.graffitiDrawing = false
-      }
-    })
 
-    rt.on('pointerup', function (pointer) {
-      this.graffitiDrawing = false
-      console.log(this.graffitiDrawing)
-    })
+        i = Phaser.Math.Wrap(i + 1, 0, 360);
+      }
+
+    });
 
     // graffitiWallContainer.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
 
@@ -362,8 +295,8 @@ export default class Location1Scene extends Phaser.Scene {
 
     // }, this);
 
-    const graffitiWall2X = 600
-    const graffitiWall2Y = 1200
+    const graffitiWall2X = 1000
+    const graffitiWall2Y = 1400
     //size
     const graffitiWall2Width = 600
     const graffitiWall2Height = 1200
@@ -374,20 +307,17 @@ export default class Location1Scene extends Phaser.Scene {
 
     // graffitiWall2.displayWidth = graffitiWall2Width
     // graffitiWall2.displayHeight = graffitiWall2Height
-
+        
     rt2.on('pointerdown', function (pointer) {
       this.graffitiDrawing = true
-      this.isClicking = true
       console.log(this.graffitiDrawing)
       this.draw('brush', pointer.worldX - graffitiWall2X - 4, pointer.worldY - graffitiWall2Y - 4, 1, 0x000000);
-
+      this.graffitiDrawing = true
     });
 
     rt2.on('pointermove', function (pointer) {
       if (pointer.isDown) {
         this.graffitiDrawing = true
-        this.isClicking = true
-        console.log(this.graffitiDrawing)
         this.draw('brush', pointer.worldX - graffitiWall2X, pointer.worldY - graffitiWall2Y, 1, 0x000000);
       }
       if (pointer.isUp) {
@@ -558,179 +488,7 @@ export default class Location1Scene extends Phaser.Scene {
 
   generateBackground() {
     //fill in textures
-
-    ///*........... white background of 6000x6000 pix .............................................................
-    this.add.rectangle(0, 0, 8000, 8000, 0xFFFFFF)
-
-    //*........... repeating pattern on the white background .............................................................
-    const gridWidth = 4000
-    const offset = 50
-
-    //......... repeating dots as pattern on white background .............................................................
-    //background dot size
-    let dotWidth = 2
-
-    //create the dot: graphics
-    let bgDot = this.add.graphics()
-    bgDot.fillStyle(0x909090);
-    bgDot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false)
-
-    //create renderTexture
-    let bgDotRendertexture = this.add.renderTexture(0, 0, dotWidth * 2, dotWidth * 2)
-
-    //draw gaphics to renderTexture
-    bgDotRendertexture.draw(bgDot)
-
-    //save the rendertexture with a key ('dot')
-    let t = bgDotRendertexture.saveTexture('dot');
-
-    for (let i = 0; i < gridWidth; i += offset) {
-      for (let j = 0; j < gridWidth; j += offset) {
-        this.add.image(i, j, 'dot').setOrigin(0, 1);
-      }
-    }
-    //......... end repeating dots ...................................................................
-
-    //..... cross grid background .............................................................
-    // // // 1. make an array with color values
-    // // let cross = [
-    // //   '.....',
-    // //   '..1..',
-    // //   '.111.',
-    // //   '..1..',
-    // //   '.....',
-
-    // // ]
-
-    // // // 2. generate the texture from the array
-    // // this.textures.generate('cross', { data: cross, pixelWidth: 3 });
-
-    // // // 3. display the texture as an image
-    // // const gridWidth = 4000
-    // // const offset = 50
-
-    // // // 4. repeat the image in a x, y  grid
-    // // for (let i = 0; i < gridWidth; i += offset) {
-    // //   for (let j = 0; j < gridWidth; j += offset) {
-    // //     this.add.image(i, j, 'cross').setOrigin(0, 1);
-    // //   }
-    // // }
-    //..... end cross grid background .............................................................
-    //*........... end repeating pattern on the white background ........................................
-
-    //* .......... scattered art works for the demo .....................................................
-    // this.add.image(0, 200, "background4").setOrigin(0,0).setScale(1.3)
-    //this.add.image(0, -300, "background5").setOrigin(0, 0).setScale(1)
-
-    this.add.image(1400, 600, "art1").setOrigin(0, 0).setScale(1) //stamp painting
-    //this.add.image(300, 1200, "art2").setOrigin(0, 0).setScale(1.3) //keith harring
-    this.add.image(800, 1200, "art3").setOrigin(0, 0).setScale(1.5) //dog doodle
-    //this.add.image(2400, 200, "art4").setOrigin(0, 0).setScale(1) // 30ties style graphic
-    this.add.image(300, 1200, "art5").setOrigin(0, 0).setScale(1.6) //keith harring
-
-    //* .......... end scattered art works for the demo .................................................
-
-    //*............. graphics as examples for the demo ..................................................
-    let graphics = this.add.graphics();
-
-    graphics.fillStyle(0x0000ff, 1);
-
-    graphics.fillCircle(800, 300, 200);
-
-    for (let i = 0; i < 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
-      graphics.beginPath();
-      graphics.moveTo(800, 200 + i);
-      graphics.lineTo(1200, 200 + i);
-      graphics.closePath();
-      graphics.strokePath();
-    }
-
-    for (let i = 0; i < 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
-      graphics.beginPath();
-      graphics.moveTo(900 + i, 150);
-      graphics.lineTo(900 + i, 550);
-      graphics.closePath();
-      graphics.strokePath();
-    }
-
-    let rectangle = this.add.graphics();
-    rectangle.setVisible(false);
-    rectangle.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
-    rectangle.fillRect(0, 0, 400, 400);
-
-    let rt = this.add.renderTexture(200, 100, 600, 600);
-    let rt2 = this.add.renderTexture(100, 600, 600, 600);
-
-    rt.draw(rectangle);
-    rt2.draw(rectangle);
-
-    let eraser = this.add.circle(0, 0, 190, 0x000000);
-    eraser.setVisible(false);
-
-    rt.erase(eraser, 200, 200);
-
-    rt2.erase(rt, 0, 0)
-
-    rt2.x = 400
-    rt2.y = 600
-
-    //*............. end graphics as examples for the demo .............................................
-  }
-
-  generateTileMap() {
-    //....... TILEMAP .............................................................................
-    // // 2
-    // const map = this.make.tilemap({ key: "map" });
-    // // end 2
-
-    // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
-    // Phaser's cache (i.e. the name you used in preload)
-    //     //1
-    //      const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
-
-
-    //     // Parameters: layer name (or index) from Tiled, tileset, x, y
-
-    //     const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
-    //     const worldLayer = map.createLayer("World", tileset, 0, 0);
-    //     const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
-
-    //     worldLayer.setCollisionByProperty({ collides: true });
-
-    //     // By default, everything gets depth sorted on the screen in the order we created things. Here, we
-    //     // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
-    //     // Higher depths will sit on top of lower depth objects.
-    //     aboveLayer.setDepth(10);
-
-    //     // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
-    //     // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
-    //     const spawnPoint = map.findObject(
-    //       "Objects",
-    //       (obj) => obj.name === "Spawn Point"
-    //     );
-    // //end 1
-
-    // //2
-    // const tileset = map.addTilesetImage("64x64dot", "tiles");
-
-    // const aboveLayer = map.createLayer("Tile Layer 1", tileset, 0, 0);
-    // aboveLayer.setDepth(10);
-    // // end 2
-
-    // const worldLayer = map.createLayer("World", tileset, 0, 0);
-    // const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
-
-    // worldLayer.setCollisionByProperty({ collides: true });
-
-    // const spawnPoint = map.findObject(
-    //   "Objects",
-    //   (obj) => obj.name === "Spawn Point"
-    // );
-    //ed
-
-    //....... end TILEMAP ......................................................................
+    this.add.image(0, 0, "background2").setOrigin(0).setScale(2) //stamp painting
   }
 
   loadAndCreatePlayerAvatar() {
@@ -1334,64 +1092,55 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   playerMovingBySwiping() {
-    if (!this.graffitiDrawing) {
-      if (!this.input.activePointer.isDown && this.isClicking == true && !this.graffitiDrawing) {
-        const playerX = this.player.x
-        const playerY = this.player.y
+    if (!this.input.activePointer.isDown && this.isClicking == true) {
+      const playerX = this.player.x
+      const playerY = this.player.y
 
-        const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
-        const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
-        // console.log("swipeX:")
-        // console.log(swipeX)
-        // console.log("swipeY:")
-        // console.log(swipeY)
-        this.swipeAmount.x = swipeX
-        this.swipeAmount.y = swipeY
+      const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
+      const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
+      // console.log("swipeX:")
+      // console.log(swipeX)
+      // console.log("swipeY:")
+      // console.log(swipeY)
+      this.swipeAmount.x = swipeX
+      this.swipeAmount.y = swipeY
 
-        let moveSpeed = this.swipeAmount.length()
-        if (moveSpeed > 450) moveSpeed = 450
+      const moveSpeed = this.swipeAmount.length()
+      console.log("moveSpeed:")
+      console.log(moveSpeed)
 
-        console.log("moveSpeed:")
-        console.log(moveSpeed)
-
-        // console.log("this.swipeAmount:")
-        // console.log(this.swipeAmount.x)
-        // console.log(this.swipeAmount.y)
-        // console.log("")
-        //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
+      // console.log("this.swipeAmount:")
+      // console.log(this.swipeAmount.x)
+      // console.log(this.swipeAmount.y)
+      // console.log("")
+      //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
         this.playerIsMovingByClicking = true; // trigger moving animation
 
 
         this.target.x = playerX + swipeX
         this.target.y = playerY + swipeY
-        this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
+        this.physics.moveToObject(this.player, this.target, moveSpeed*2);
         this.isClicking = false;
+      
 
+      //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
+      //       this.swipeDirection = "up";
+      //     } else if (this.input.activePointer.upY > this.input.activePointer.downY) {
+      //       this.swipeDirection = "down";
+      //     }
 
-        //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
-        //       this.swipeDirection = "up";
-        //     } else if (this.input.activePointer.upY > this.input.activePointer.downY) {
-        //       this.swipeDirection = "down";
-        //     }
-
-      } else if (this.input.activePointer.isDown && this.isClicking == false && !this.graffitiDrawing) {
-        this.isClicking = true
-        if (this.graffitiDrawing){
-          this.isClicking = false
-        }
-        console.log("this.isClicking:")
-        console.log(this.isClicking)
-      }
-      this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
-      //  4 is our distance tolerance, i.e. how close the source can get to the target
-      //  before it is considered as being there. The faster it moves, the more tolerance is required.
-      if (this.playerIsMovingByClicking) {
-        if (this.distance < 10) {
-          this.player.body.reset(this.target.x, this.target.y);
-          this.playerIsMovingByClicking = false
-        } else {
-          this.sendPlayerMovement();
-        }
+    } else if (this.input.activePointer.isDown && this.isClicking == false) {
+      this.isClicking = true;
+    }
+    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+    //  4 is our distance tolerance, i.e. how close the source can get to the target
+    //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    if (this.playerIsMovingByClicking) {
+      if (this.distance < 10) {
+        this.player.body.reset(this.target.x, this.target.y);
+        this.playerIsMovingByClicking = false
+      } else {
+        this.sendPlayerMovement();
       }
     }
   }
@@ -1408,7 +1157,7 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   updateMovementOnlinePlayers() {
-    if (!this.createdPlayer) {
+    if (this.createdPlayer) {
       if (manageSession.updateOnlinePlayers) {
         if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
           for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
@@ -1444,6 +1193,7 @@ export default class Location1Scene extends Phaser.Scene {
     //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
+
 
     // //.......................................................................
 

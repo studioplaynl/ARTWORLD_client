@@ -98,7 +98,8 @@ export default class MainMenu extends Phaser.Scene {
 
     this.playBtn = this.add
       .image(this.scale.width / 2, this.scale.height / 3, "artworld")
-      .setInteractive({ useHandCursor: true });
+      .setInteractive({ useHandCursor: true })
+      .setVisible(false)
 
     this.playBtnScaler = (this.scale.width / this.playBtn.width) * 0.86;
 
@@ -116,11 +117,11 @@ export default class MainMenu extends Phaser.Scene {
     //   .setOrigin(0.5);
 
     this.playBtn.on("pointerdown", () => {
-      if (manageSession.sessionStored.username != null) {
+      // if (manageSession.sessionStored.username != null) {
         // a way to check if the connection if working
         console.log(manageSession.userProfile);
         this.scene.start("networkBoot_Scene");
-      }
+      // }
     });
 
     this.playBtn.on("pointerover", () => {
@@ -220,8 +221,8 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   update(time, delta) {
-    // if (manageSession.sessionStored.username != null){ // a way to check if the connection if working
-    //   this.scene.start("networkBoot_Scene");
-    // }
+    if (manageSession.sessionStored.username != null){ // a way to check if the connection if working
+      this.playBtn.setVisible(true)
+    }
   } // end update
 }
