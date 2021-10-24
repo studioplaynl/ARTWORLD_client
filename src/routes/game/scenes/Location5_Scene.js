@@ -1105,7 +1105,9 @@ export default class Location5Scene extends Phaser.Scene {
       this.swipeAmount.x = swipeX
       this.swipeAmount.y = swipeY
 
-      const moveSpeed = this.swipeAmount.length()
+      let moveSpeed = this.swipeAmount.length()
+      if (moveSpeed > 450) moveSpeed = 450
+
       console.log("moveSpeed:")
       console.log(moveSpeed)
 
@@ -1114,14 +1116,14 @@ export default class Location5Scene extends Phaser.Scene {
       // console.log(this.swipeAmount.y)
       // console.log("")
       //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
-        this.playerIsMovingByClicking = true; // trigger moving animation
+      this.playerIsMovingByClicking = true; // trigger moving animation
 
 
-        this.target.x = playerX + swipeX
-        this.target.y = playerY + swipeY
-        this.physics.moveToObject(this.player, this.target, moveSpeed*2);
-        this.isClicking = false;
-      
+      this.target.x = playerX + swipeX
+      this.target.y = playerY + swipeY
+      this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
+      this.isClicking = false;
+
 
       //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
       //       this.swipeDirection = "up";
@@ -1130,7 +1132,10 @@ export default class Location5Scene extends Phaser.Scene {
       //     }
 
     } else if (this.input.activePointer.isDown && this.isClicking == false) {
-      this.isClicking = true;
+      this.isClicking = true
+      
+      console.log("this.isClicking:")
+      console.log(this.isClicking)
     }
     this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
     //  4 is our distance tolerance, i.e. how close the source can get to the target
@@ -1143,7 +1148,7 @@ export default class Location5Scene extends Phaser.Scene {
         this.sendPlayerMovement();
       }
     }
-  }
+}
 
   sendPlayerMovement() {
     if (this.createdPlayer) {
@@ -1187,8 +1192,8 @@ export default class Location5Scene extends Phaser.Scene {
 
   update(time, delta) {
     // //...... ONLINE PLAYERS ................................................
-    this.createOnlinePlayers();
-    this.updateMovementOnlinePlayers()
+    //this.createOnlinePlayers();
+    //this.updateMovementOnlinePlayers()
     this.loadAndCreatePlayerAvatar();
     //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
