@@ -3,7 +3,7 @@
   import { onMount } from "svelte";
   import { enable3d, Canvas } from "@enable3d/phaser-extension";
   import MainMenu from "./scenes/MainMenu";
-
+  // import GesturesPlugin from 'phaser3-rex-plugins/plugins/gestures-plugin.js'; //swipe gestures
 
   import networkBoot_Scene from "./scenes/networkBoot_Scene";
   import location1_Scene from "./scenes/Location1_Scene";
@@ -26,6 +26,7 @@
       input: {
         windowEvents: false
       },
+      
       scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -55,6 +56,7 @@
     // new Phaser.Game(config);
     enable3d(() => new Phaser.Game(config));
   });
+  
 </script>
 
 <main>

@@ -4,6 +4,7 @@ import manageSession from "../manageSession";
 import { getAccount } from '../../../api.js';
 import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
+import { Vector2 } from "three";
 
 export default class Location1Scene extends Phaser.Scene {
   constructor() {
@@ -36,6 +37,8 @@ export default class Location1Scene extends Phaser.Scene {
     this.pointer;
     this.isClicking = false;
     this.arrowDown = false;
+    this.swipeDirection = "down"
+    this.swipeAmount = new Phaser.Math.Vector2(0, 0)
 
     //pointer location example
     // this.source // = player
@@ -217,11 +220,12 @@ export default class Location1Scene extends Phaser.Scene {
     //....... PLAYER VS WORLD ..........................................................................
     this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
 
-    //setBounds has to be set before follow, otherwise the camera doesn't follow!
+
     //     // 1 and 2
     //     this.gameCam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
     // // end 1 and 2
     // grid
+    //!setBounds has to be set before follow, otherwise the camera doesn't follow!
     this.gameCam.setBounds(0, 0, 6200, 6200);
     this.gameCam.zoom = 1
     // end grid
@@ -345,7 +349,7 @@ export default class Location1Scene extends Phaser.Scene {
     //     }
 
     // }, this);
-    
+
   }
 
   generateBouncingBird() {
@@ -1250,7 +1254,6 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   playerMovingByClicking() {
-
     if (!this.input.activePointer.isDown && this.isClicking == true) {
       this.target.x = this.input.activePointer.worldX
       this.target.y = this.input.activePointer.worldY
@@ -1274,7 +1277,60 @@ export default class Location1Scene extends Phaser.Scene {
         this.sendPlayerMovement();
       }
     }
+  }
 
+  playerMovingBySwiping() {
+    if (!this.input.activePointer.isDown && this.isClicking == true) {
+      const playerX = this.player.x
+      const playerY = this.player.y
+
+      const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
+      const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
+      // console.log("swipeX:")
+      // console.log(swipeX)
+      // console.log("swipeY:")
+      // console.log(swipeY)
+      this.swipeAmount.x = swipeX
+      this.swipeAmount.y = swipeY
+
+      const moveSpeed = this.swipeAmount.length()
+      console.log("moveSpeed:")
+      console.log(moveSpeed)
+
+      // console.log("this.swipeAmount:")
+      // console.log(this.swipeAmount.x)
+      // console.log(this.swipeAmount.y)
+      // console.log("")
+      //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
+        this.playerIsMovingByClicking = true; // trigger moving animation
+
+
+        this.target.x = playerX + swipeX
+        this.target.y = playerY + swipeY
+        this.physics.moveToObject(this.player, this.target, moveSpeed*2);
+        this.isClicking = false;
+      
+
+      //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
+      //       this.swipeDirection = "up";
+      //     } else if (this.input.activePointer.upY > this.input.activePointer.downY) {
+      //       this.swipeDirection = "down";
+      //     }
+
+    } else if (this.input.activePointer.isDown && this.isClicking == false) {
+      this.isClicking = true;
+    }
+    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+    //  4 is our distance tolerance, i.e. how close the source can get to the target
+    //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    if (this.playerIsMovingByClicking) {
+      if (this.distance < 10) {
+        this.player.body.reset(this.target.x, this.target.y);
+        this.playerIsMovingByClicking = false
+      } else {
+        this.sendPlayerMovement();
+      }
+    }
   }
 
   sendPlayerMovement() {
@@ -1367,7 +1423,8 @@ export default class Location1Scene extends Phaser.Scene {
     }
     //....... end moving ANIMATION .................................................................................
 
-    this.playerMovingByClicking()
+    //this.playerMovingByClicking()
+    this.playerMovingBySwiping()
 
   } //update
 } //class
