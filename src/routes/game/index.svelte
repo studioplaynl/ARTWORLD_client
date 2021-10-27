@@ -54,8 +54,7 @@
          ...Canvas()
     };
 
-    // new Phaser.Game(config);
-    enable3d(() => new Phaser.Game(config));
+    enable3d(() => new Phaser.Game(config)).withPhysics('/ammo/kripken')
   });
   
 </script>
