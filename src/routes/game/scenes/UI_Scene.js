@@ -36,7 +36,7 @@ export default class UI_Scene extends Phaser.Scene {
     this.location = "test";
   }
 
-  preload() {}
+  preload() { }
 
   async create() {
     let countDisplay = 0;
@@ -67,6 +67,7 @@ export default class UI_Scene extends Phaser.Scene {
     let height = this.sys.game.canvas.height - 60;
 
     if (!update) {
+      //text to show the location (for debugging) > will change to breadcrum UI for user
       this.locationText = this.add
         .text(width / 10 - 120, height / 40, this.location, {
           fontFamily: "Arial",
@@ -79,40 +80,27 @@ export default class UI_Scene extends Phaser.Scene {
 
 
 
-
-      this.zoom = this.add
-        .text(width / 10, height / 40, `${i18next.t("zoom")}`, {
-          fontFamily: "Arial",
-          fontSize: "22px",
-        })
+      //zoom buttons
+      this.zoom = this.add.image(width / 10 + 40, height / 45, "ui_eye")
         .setOrigin(0)
-        //.setScrollFactor(0) //fixed on screen
-        .setShadow(1, 1, "#000000", 0)
         .setDepth(1000)
-        .setScale(width / (width / this.camUI.zoom));
+        .setScale((width / (width / this.camUI.zoom)) / 8)
 
       this.zoomIn = this.add
-        .text(width / 10 + 80, height / 40, `${i18next.t("in")}`, {
-          fontFamily: "Arial",
-          fontSize: "22px",
-        })
+        .image(width / 10 + 120, height / 40, "ui_magnifier_plus")
         .setOrigin(0)
-        //.setScrollFactor(0) //fixed on screen
-        .setShadow(1, 1, "#000000", 0)
         .setDepth(1000)
-        .setInteractive({ useHandCursor: true });
+        .setScale((width / (width / this.camUI.zoom)) / 6)
+        .setInteractive({ useHandCursor: true })
 
       this.zoomOut = this.add
-        .text(width / 10 + 160, height / 40, `${i18next.t("out")}`, {
-          fontFamily: "Arial",
-          fontSize: "22px",
-        })
+        .image(width / 10, height / 40, "ui_magnifier_minus")
         .setOrigin(0)
-        //.setScrollFactor(0) //fixed on screen
-        .setShadow(1, 1, "#000000", 0)
         .setDepth(1000)
-        .setInteractive({ useHandCursor: true });
-        
+        .setScale((width / (width / this.camUI.zoom)) / 6)
+        .setInteractive({ useHandCursor: true })
+
+
       this.zoomIn.on("pointerup", () => {
         this.currentZoom += 0.2;
         //this.scale.setZoom(currentZoom + 0.2);
@@ -127,12 +115,7 @@ export default class UI_Scene extends Phaser.Scene {
         console.log(this.currentZoom);
       });
     } else {
-      this.zoom
-        .setPosition(
-          width / 10 / this.camUI.zoom,
-          height / 10 / this.camUI.zoom
-        )
-        .setScale(width / (width / this.camUI.zoom));
+
       this.zoomIn
         .setPosition(
           width / 10 / this.camUI.zoom,
@@ -155,5 +138,5 @@ export default class UI_Scene extends Phaser.Scene {
     //this.camUI.resize(width, height);
   }
 
-  update(time, delta) {}
+  update(time, delta) { }
 }

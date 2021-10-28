@@ -13,6 +13,10 @@ export default class MainMenu extends Phaser.Scene {
     );
     this.load.image("artworld", "assets/artworld.png");
 
+    this.load.image("ui_magnifier_minus", "assets/ui/circle_minus.png");
+    this.load.image("ui_magnifier_plus", "assets/ui/circle_plus.png");
+    this.load.image("ui_eye", "assets/ui/eye.png");
+    
     // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
     // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
     // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
