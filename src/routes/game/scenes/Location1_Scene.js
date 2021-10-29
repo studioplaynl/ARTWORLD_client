@@ -307,14 +307,15 @@ export default class Location1Scene extends Phaser.Scene {
       ],
 
     };
-
+    //https://codepen.io/rexrainbow/pen/Gazmyz
     var videoPanel = this.CreateMainPanel(this, 1600, 1500)
-            .layout()
-            //.drawBounds(this.add.graphics(), 0xff0000)
-            .popUp(1000)
+      .layout()
+      //.drawBounds(this.add.graphics(), 0xff0000)
+      .popUp(1000)
 
+    //feature discussion about ui plugin
     this.scrollablePanel = this.rexUI.add.scrollablePanel({
-      x: 150,
+      x: 250,
       y: 600,
       width: 400,
       // height: 220,
@@ -369,7 +370,7 @@ export default class Location1Scene extends Phaser.Scene {
 
   } // end create
 
-  CreateMainPanel  (scene, x, y) {
+  CreateMainPanel(scene, x, y) {
     // Create elements
     var background = scene.rexUI.add.roundRectangle(0, 0, 0, 0, 20, this.COLOR_DARK);
     var videoPanel = this.CreateVideoPanel(scene);
@@ -377,91 +378,91 @@ export default class Location1Scene extends Phaser.Scene {
     this.ControlVideo(controllerPanel, videoPanel);
     // Compose elemets
     var mainPanel = scene.rexUI.add.sizer({
-        orientation: 'y',
-        x: x,
-        y: y,
+      orientation: 'y',
+      x: x,
+      y: y,
     })
-        .addBackground(background)
-        .add(videoPanel, 0, 'center', { left: 20, right: 20, top: 20, bottom: 10 }, true)
-        .add(controllerPanel, 0, 'center', { left: 20, right: 20, bottom: 20 }, true)
+      .addBackground(background)
+      .add(videoPanel, 0, 'center', { left: 20, right: 20, top: 20, bottom: 10 }, true)
+      .add(controllerPanel, 0, 'center', { left: 20, right: 20, bottom: 20 }, true)
 
     return mainPanel;
-}
+  }
 
- CreateControllerPanel  (scene) {
+  CreateControllerPanel(scene) {
     return scene.rexUI.add.numberBar({
-        icon: scene.add.image(0, 0, 'play'),
-        slider: {
-            track: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, this.COLOR_PRIMARY),
-            indicator: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, this.COLOR_LIGHT),
-            input: 'click',
-        },
+      icon: scene.add.image(0, 0, 'play'),
+      slider: {
+        track: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, this.COLOR_PRIMARY),
+        indicator: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, this.COLOR_LIGHT),
+        input: 'click',
+      },
 
-        text: scene.rexUI.add.BBCodeText(0, 0, '', {
-            fixedWidth: 50, fixedHeight: 36,
-            valign: 'center', halign: 'right'
-        }),
+      text: scene.rexUI.add.BBCodeText(0, 0, '', {
+        fixedWidth: 50, fixedHeight: 36,
+        valign: 'center', halign: 'right'
+      }),
 
-        space: {
-            left: 10,
-            right: 10,
-            top: 10,
-            bottom: 10,
+      space: {
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 10,
 
-            icon: 10,
-            slider: 10,
-        },
+        icon: 10,
+        slider: 10,
+      },
 
     });
-}
+  }
 
- CreateVideoPanel  (scene) {
+  CreateVideoPanel(scene) {
     return scene.add.video(0, 0, 'test')
-        .setDisplaySize(600, 337.5)
-}
+      .setDisplaySize(600, 337.5)
+  }
 
- ControlVideo  (controller, video) {
+  ControlVideo(controller, video) {
     // Play button
     var played = false;
     var playButton = controller.getElement('icon');
     playButton
-        .setInteractive()
-        .on('pointerdown', function () {
-            var textureKey = playButton.texture.key;
-            if (textureKey === 'play') {
-                if (!played) {
-                    played = true;
-                    video.play();
-                } else {
-                    video.setPaused(false);
-                }
-            } else {
-                video.setPaused();
-            }
+      .setInteractive()
+      .on('pointerdown', function () {
+        var textureKey = playButton.texture.key;
+        if (textureKey === 'play') {
+          if (!played) {
+            played = true;
+            video.play();
+          } else {
+            video.setPaused(false);
+          }
+        } else {
+          video.setPaused();
+        }
 
-            if (video.isPlaying()) {
-                playButton.setTexture('pause');
-            } else {
-                playButton.setTexture('play');
-            }
-        });
+        if (video.isPlaying()) {
+          playButton.setTexture('pause');
+        } else {
+          playButton.setTexture('play');
+        }
+      });
 
     // Playback time
     var lastVideoProgress = undefined;
     video.scene.events.on('update', function () {
-        var currentVideoProgress = video.getProgress();
-        if (lastVideoProgress !== currentVideoProgress) {
-            lastVideoProgress = currentVideoProgress;
-            controller.value = currentVideoProgress;
-            controller.text = Math.floor(video.getCurrentTime() * 10) / 10;
-        }
+      var currentVideoProgress = video.getProgress();
+      if (lastVideoProgress !== currentVideoProgress) {
+        lastVideoProgress = currentVideoProgress;
+        controller.value = currentVideoProgress;
+        controller.text = Math.floor(video.getCurrentTime() * 10) / 10;
+      }
     })
     controller.on('valuechange', function (newValue) {
-        if (video.getProgress() !== newValue) {
-            video.seekTo(newValue);
-        }
+      if (video.getProgress() !== newValue) {
+        video.seekTo(newValue);
+      }
     });
-}
+  }
 
   createPanel(scene, data) {
     var sizer = scene.rexUI.add.sizer({
