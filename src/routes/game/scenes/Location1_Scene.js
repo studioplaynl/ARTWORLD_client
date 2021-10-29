@@ -308,7 +308,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     };
 
-    var videoPanel = this.CreateMainPanel(this, 400, 300)
+    var videoPanel = this.CreateMainPanel(this, 1600, 1500)
             .layout()
             //.drawBounds(this.add.graphics(), 0xff0000)
             .popUp(1000)
