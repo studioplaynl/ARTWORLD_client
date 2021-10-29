@@ -78,8 +78,6 @@ export default class UI_Scene extends Phaser.Scene {
         .setShadow(1, 1, "#000000", 0)
         .setDepth(1000);
 
-
-
       //zoom buttons
       this.zoom = this.add.image(width / 10 + 40, height / 45, "ui_eye")
         .setOrigin(0)

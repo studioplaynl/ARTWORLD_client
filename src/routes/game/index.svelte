@@ -4,6 +4,7 @@
   import { enable3d, Canvas } from "@enable3d/phaser-extension";
   import MainMenu from "./scenes/MainMenu";
   // import GesturesPlugin from 'phaser3-rex-plugins/plugins/gestures-plugin.js'; //swipe gestures
+  import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 
   import networkBoot_Scene from "./scenes/networkBoot_Scene";
   import location1_Scene from "./scenes/Location1_Scene";
@@ -25,15 +26,24 @@
       // width: CONFIG.WIDTH,
       // height: CONFIG.HEIGHT,
       input: {
-        windowEvents: false
+        windowEvents: false, //no input to phaser from outside the canvas, the rest of the html doc
       },
-      
+
       scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        parent: 'phaserId',
+        parent: "phaserId",
         width: CONFIG.WIDTH,
-        height:CONFIG.HEIGHT,
+        height: CONFIG.HEIGHT,
+      },
+      plugins: {
+        scene: [{
+            key: 'rexUI',
+            plugin: UIPlugin,
+            mapping: 'rexUI'
+        },
+        // ...
+        ]
     },
       // scale: {
       //           mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT ,
@@ -50,13 +60,21 @@
           fps: 60,
         },
       },
-      scene: [MainMenu, networkBoot_Scene, location1_Scene, location2_Scene, location3_Scene, location4_Scene, location5_Scene, UI_Scene],
-         ...Canvas()
+      scene: [
+        MainMenu,
+        networkBoot_Scene,
+        location1_Scene,
+        location2_Scene,
+        location3_Scene,
+        location4_Scene,
+        location5_Scene,
+        UI_Scene,
+      ],
+      ...Canvas(),
     };
 
-    enable3d(() => new Phaser.Game(config)).withPhysics('/ammo/kripken')
+    enable3d(() => new Phaser.Game(config)).withPhysics("/ammo/kripken");
   });
-  
 </script>
 
 <main>
