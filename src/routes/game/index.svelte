@@ -4,7 +4,8 @@
   import { enable3d, Canvas } from "@enable3d/phaser-extension";
   import MainMenu from "./scenes/MainMenu";
   // import GesturesPlugin from 'phaser3-rex-plugins/plugins/gestures-plugin.js'; //swipe gestures
-  import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
+  import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin.js";
+  import CircleMaskImagePlugin from 'phaser3-rex-plugins/plugins/circlemaskimage-plugin.js';
 
   import networkBoot_Scene from "./scenes/networkBoot_Scene";
   import location1_Scene from "./scenes/Location1_Scene";
@@ -37,14 +38,21 @@
         height: CONFIG.HEIGHT,
       },
       plugins: {
-        scene: [{
-            key: 'rexUI',
+        scene: [
+          {
+            key: "rexUI",
             plugin: UIPlugin,
-            mapping: 'rexUI'
+            mapping: "rexUI",
+          },
+        ],        
+        global: [{
+            key: 'rexCircleMaskImagePlugin',
+            plugin: CircleMaskImagePlugin,
+            start: true
         },
-        // ...
-        ]
-    },
+        ],
+      
+      }, //end plugins
       // scale: {
       //           mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT ,
       //           autoCenter: Phaser.Scale.CENTER_BOTH

@@ -34,9 +34,9 @@ export default class Location1Scene extends Phaser.Scene {
     this.location = "home"
 
     //.......................REX UI ............
-    this.COLOR_PRIMARY = 0x4e342e;
-    this.COLOR_LIGHT = 0x7b5e57;
-    this.COLOR_DARK = 0x260e04;
+    this.COLOR_PRIMARY = 0xff5733;
+    this.COLOR_LIGHT = 0xffffff;
+    this.COLOR_DARK = 0x000000;
     this.data
     //....................... end REX UI ......
 
@@ -307,13 +307,15 @@ export default class Location1Scene extends Phaser.Scene {
       ],
 
     };
+
     //https://codepen.io/rexrainbow/pen/Gazmyz
     var videoPanel = this.CreateMainPanel(this, 1600, 1500)
       .layout()
       //.drawBounds(this.add.graphics(), 0xff0000)
       .popUp(1000)
 
-    //feature discussion about ui plugin
+    //*feature discussion about ui plugin
+    //! https://phaser.discourse.group/t/phaser-3-rexui-plugins/384/26
     this.scrollablePanel = this.rexUI.add.scrollablePanel({
       x: 250,
       y: 600,
@@ -393,8 +395,8 @@ export default class Location1Scene extends Phaser.Scene {
     return scene.rexUI.add.numberBar({
       icon: scene.add.image(0, 0, 'play'),
       slider: {
-        track: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, this.COLOR_PRIMARY),
-        indicator: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, this.COLOR_LIGHT),
+        track: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, this.COLOR_DARK),
+        indicator: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 10, this.COLOR_PRIMARY),
         input: 'click',
       },
 
@@ -489,7 +491,7 @@ export default class Location1Scene extends Phaser.Scene {
       orientation: 'x',
       text: scene.add.text(0, 0, 'Character'),
     });
-    var picture = scene.add.image(0, 0, 'art1').setScale(0.1)
+    var picture = scene.add.rexCircleMaskImage(0, 0, 'art1').setScale(0.1)
     var header = scene.rexUI.add.label({
       orientation: 'y',
       icon: picture,
@@ -935,7 +937,7 @@ export default class Location1Scene extends Phaser.Scene {
     // this.add.image(0, 200, "background4").setOrigin(0,0).setScale(1.3)
     //this.add.image(0, -300, "background5").setOrigin(0, 0).setScale(1)
 
-    this.add.image(1400, 600, "art1").setOrigin(0, 0).setScale(1) //stamp painting
+    this.add.rexCircleMaskImage(1400, 600, "art1").setOrigin(0, 0).setScale(1) //stamp painting
     //this.add.image(300, 1200, "art2").setOrigin(0, 0).setScale(1.3) //keith harring
     this.add.image(800, 1200, "art3").setOrigin(0, 0).setScale(1.5) //dog doodle
     //this.add.image(2400, 200, "art4").setOrigin(0, 0).setScale(1) // 30ties style graphic
