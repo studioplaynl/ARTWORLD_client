@@ -27,6 +27,9 @@ export default class Location3Scene extends Phaser.Scene {
     this.pointer;
     this.isClicking = false;
     this.arrowDown = false;
+    this.swipeDirection = "down"
+    this.swipeAmount = new Phaser.Math.Vector2(0, 0)
+    this.graffitiDrawing = false
 
     //pointer location example
     // this.source // = player
@@ -65,13 +68,13 @@ export default class Location3Scene extends Phaser.Scene {
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
-     //1
-      this.load.image(
-        "tiles",
-        "./assets/tilesets/tuxmon-sample-32px-extruded.png"
-      );
+    //1
+    this.load.image(
+      "tiles",
+      "./assets/tilesets/tuxmon-sample-32px-extruded.png"
+    );
 
-      this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
+    this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
     //   //end 1
 
     // // 2
@@ -102,7 +105,7 @@ export default class Location3Scene extends Phaser.Scene {
     // manageSession.updateOnlinePlayers = true
     // manageSession.location = "location3"
     // this.createdPlayer
-    
+
     // // await manageSession.getStreamUsers("join", manageSession.location)
     // await manageSession.createSocket();
     // manageSession.createPlayer = true
@@ -234,10 +237,10 @@ export default class Location3Scene extends Phaser.Scene {
 
     console.log(this.UI_Scene)
     console.log(this.currentZoom)
-    
+
   } // end create
 
-  rescaleScene(){
+  rescaleScene() {
 
   }
 
@@ -478,29 +481,29 @@ export default class Location3Scene extends Phaser.Scene {
 
     // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
     // Phaser's cache (i.e. the name you used in preload)
-        //1
-         const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
+    //1
+    const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
 
 
-        // Parameters: layer name (or index) from Tiled, tileset, x, y
+    // Parameters: layer name (or index) from Tiled, tileset, x, y
 
-        // const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
-        // const worldLayer = map.createLayer("World", tileset, 0, 0);
-        // const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
+    // const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
+    // const worldLayer = map.createLayer("World", tileset, 0, 0);
+    // const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
 
-        // worldLayer.setCollisionByProperty({ collides: true });
+    // worldLayer.setCollisionByProperty({ collides: true });
 
-        // By default, everything gets depth sorted on the screen in the order we created things. Here, we
-        // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
-        // Higher depths will sit on top of lower depth objects.
-        // aboveLayer.setDepth(10);
+    // By default, everything gets depth sorted on the screen in the order we created things. Here, we
+    // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
+    // Higher depths will sit on top of lower depth objects.
+    // aboveLayer.setDepth(10);
 
-        // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
-        // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
-        // const spawnPoint = map.findObject(
-        //   "Objects",
-        //   (obj) => obj.name === "Spawn Point"
-        // );
+    // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
+    // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
+    // const spawnPoint = map.findObject(
+    //   "Objects",
+    //   (obj) => obj.name === "Spawn Point"
+    // );
     //end 1
 
     //2
@@ -962,7 +965,7 @@ export default class Location3Scene extends Phaser.Scene {
             this.onlinePlayersGroup.add(element)
           } else {
             //! if the avatar already existed; get the player from the onlinePlayers array !
-          
+
             this.attachtAvatarToOnlinePlayer(element)
           }
         })
@@ -998,7 +1001,7 @@ export default class Location3Scene extends Phaser.Scene {
         //this.onlinePlayers = this.onlinePlayersGroup.getChildren()
 
         manageSession.allConnectedUsers.forEach((player, i) => {
-          
+
           var index = this.onlinePlayers.findIndex(function (player) {
             return player.user_id == manageSession.allConnectedUsers[i].user_id
           });
@@ -1023,14 +1026,14 @@ export default class Location3Scene extends Phaser.Scene {
     console.log(player)
 
     //sometimes the player is not visible because the postion is 0,0
-    if (player.posX == 0 && player.posY == 0){
+    if (player.posX == 0 && player.posY == 0) {
       player.posX = 300
       player.posY = 400
     }
 
     player.x = player.posX
     player.y = player.posY
-    
+
 
     console.log("avatar key: ")
     console.log(this.tempAvatarName)
@@ -1069,7 +1072,7 @@ export default class Location3Scene extends Phaser.Scene {
         frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
       });
     } //if (avatarFrames > 1) {
-    
+
     //this.updateOnlinePlayers = true
   }
 
@@ -1175,6 +1178,65 @@ export default class Location3Scene extends Phaser.Scene {
     }
   }
 
+  playerMovingBySwiping() {
+      if (!this.input.activePointer.isDown && this.isClicking == true) {
+        const playerX = this.player.x
+        const playerY = this.player.y
+
+        const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
+        const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
+        // console.log("swipeX:")
+        // console.log(swipeX)
+        // console.log("swipeY:")
+        // console.log(swipeY)
+        this.swipeAmount.x = swipeX
+        this.swipeAmount.y = swipeY
+
+        let moveSpeed = this.swipeAmount.length()
+        if (moveSpeed > 450) moveSpeed = 450
+
+        console.log("moveSpeed:")
+        console.log(moveSpeed)
+
+        // console.log("this.swipeAmount:")
+        // console.log(this.swipeAmount.x)
+        // console.log(this.swipeAmount.y)
+        // console.log("")
+        //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
+        this.playerIsMovingByClicking = true; // trigger moving animation
+
+
+        this.target.x = playerX + swipeX
+        this.target.y = playerY + swipeY
+        this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
+        this.isClicking = false;
+
+
+        //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
+        //       this.swipeDirection = "up";
+        //     } else if (this.input.activePointer.upY > this.input.activePointer.downY) {
+        //       this.swipeDirection = "down";
+        //     }
+
+      } else if (this.input.activePointer.isDown && this.isClicking == false) {
+        this.isClicking = true
+        
+        console.log("this.isClicking:")
+        console.log(this.isClicking)
+      }
+      this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+      //  4 is our distance tolerance, i.e. how close the source can get to the target
+      //  before it is considered as being there. The faster it moves, the more tolerance is required.
+      if (this.playerIsMovingByClicking) {
+        if (this.distance < 10) {
+          this.player.body.reset(this.target.x, this.target.y);
+          this.playerIsMovingByClicking = false
+        } else {
+          this.sendPlayerMovement();
+        }
+      }
+  }
+
   update(time, delta) {
     // //...... ONLINE PLAYERS ................................................
     // this.createOnlinePlayers();
@@ -1227,7 +1289,8 @@ export default class Location3Scene extends Phaser.Scene {
     }
     //....... end moving ANIMATION .................................................................................
 
-    this.playerMovingByClicking()
+    //this.playerMovingByClicking()
+    this.playerMovingBySwiping()
 
   } //update
 } //class

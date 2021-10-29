@@ -312,6 +312,7 @@ export default class Location1Scene extends Phaser.Scene {
         this.graffitiDrawing = true
         this.isClicking = true
         this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
+        i = Phaser.Math.Wrap(i + 1, 0, 360);
       }
       if (pointer.isUp) {
         this.graffitiDrawing = false

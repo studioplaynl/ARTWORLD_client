@@ -38,6 +38,9 @@ export default class Location4Scene extends Phaser.Scene {
     this.pointer;
     this.isClicking = false;
     this.arrowDown = false;
+    this.swipeDirection = "down"
+    this.swipeAmount = new Phaser.Math.Vector2(0, 0)
+    this.graffitiDrawing = false
 
     //pointer location example
     // this.source // = player
@@ -1122,6 +1125,65 @@ export default class Location4Scene extends Phaser.Scene {
     }
   }
 
+  playerMovingBySwiping() {
+    if (!this.input.activePointer.isDown && this.isClicking == true) {
+      const playerX = this.player.x
+      const playerY = this.player.y
+
+      const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
+      const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
+      // console.log("swipeX:")
+      // console.log(swipeX)
+      // console.log("swipeY:")
+      // console.log(swipeY)
+      this.swipeAmount.x = swipeX
+      this.swipeAmount.y = swipeY
+
+      let moveSpeed = this.swipeAmount.length()
+      if (moveSpeed > 450) moveSpeed = 450
+
+      console.log("moveSpeed:")
+      console.log(moveSpeed)
+
+      // console.log("this.swipeAmount:")
+      // console.log(this.swipeAmount.x)
+      // console.log(this.swipeAmount.y)
+      // console.log("")
+      //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
+      this.playerIsMovingByClicking = true; // trigger moving animation
+
+
+      this.target.x = playerX + swipeX
+      this.target.y = playerY + swipeY
+      this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
+      this.isClicking = false;
+
+
+      //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
+      //       this.swipeDirection = "up";
+      //     } else if (this.input.activePointer.upY > this.input.activePointer.downY) {
+      //       this.swipeDirection = "down";
+      //     }
+
+    } else if (this.input.activePointer.isDown && this.isClicking == false) {
+      this.isClicking = true
+      
+      console.log("this.isClicking:")
+      console.log(this.isClicking)
+    }
+    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+    //  4 is our distance tolerance, i.e. how close the source can get to the target
+    //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    if (this.playerIsMovingByClicking) {
+      if (this.distance < 10) {
+        this.player.body.reset(this.target.x, this.target.y);
+        this.playerIsMovingByClicking = false
+      } else {
+        this.sendPlayerMovement();
+      }
+    }
+}
+
   update(time, delta) {
     // //...... ONLINE PLAYERS ................................................
     // this.createOnlinePlayers();
@@ -1172,7 +1234,8 @@ export default class Location4Scene extends Phaser.Scene {
     }
     //....... end moving ANIMATION .................................................................................
 
-    this.playerMovingByClicking()
+    //this.playerMovingByClicking()
+    this.playerMovingBySwiping()
 
   } //update
 } //class

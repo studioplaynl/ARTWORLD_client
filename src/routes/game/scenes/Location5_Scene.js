@@ -60,10 +60,10 @@ export default class Location5Scene extends Phaser.Scene {
 
 
     //test backgrounds
-    this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
-    this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
-    this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
-    this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
+    this.load.image("background1", "./assets/test_backgrounds/Scenes-Wallpaper-6.jpg")
+    // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
+    // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
+    // this.load.image("background4", "./assets/test_backgrounds/desktop512758.jpg")
     
 
     //....... end IMAGES ......................................................................
@@ -358,39 +358,39 @@ export default class Location5Scene extends Phaser.Scene {
 
   generateLocations() {
     //this.location2 = this.physics.add.staticGroup();
-    this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
-    this.location2.body.setCircle(190, 12, 12)
-    this.location2.setImmovable(true)
+    this.location1 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
+    this.location1.body.setCircle(190, 12, 12)
+    this.location1.setImmovable(true)
 
     // this.location2.setData("entered", false)
     // this.location2.setName("location2")
-    this.createLocationDialogbox("location2", 200, 150)
+    this.createLocationDialogbox("location1", 200, 150)
 
 
     //........ location3 ...................
-    this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    this.physics.add.existing(this.location3);
-    this.location3.body.setSize(this.location3.width, this.location3.height)
-    this.location3.body.setOffset(0, -(this.location3.height / 4))
-    //can't set ositriangle to immmovable
-    //this.location3.setImmovable(true)
+    // this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    // this.physics.add.existing(this.location3);
+    // this.location3.body.setSize(this.location3.width, this.location3.height)
+    // this.location3.body.setOffset(0, -(this.location3.height / 4))
+    // //can't set ositriangle to immmovable
+    // //this.location3.setImmovable(true)
 
-    // this.location3.setData("entered", false)
-    // this.location3.setName("location3")
+    // // this.location3.setData("entered", false)
+    // // this.location3.setName("location3")
 
-    this.createLocationDialogbox("location3", 200, 150)
+    // this.createLocationDialogbox("location3", 200, 150)
 
-    //........ location4 ...................
-    this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
-    this.location4.setImmovable(true)
-    this.createLocationDialogbox("location4", 200, 150)
+    // //........ location4 ...................
+    // this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
+    // this.location4.setImmovable(true)
+    // this.createLocationDialogbox("location4", 200, 150)
 
-    //........ location5 ...................
-    this.location5 = this.add.isobox(1200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
-    this.physics.add.existing(this.location5);
-    this.location5.body.setSize(this.location5.width, this.location5.height * 1.4)
-    this.location5.body.setOffset(0, -(this.location5.height / 1.4))
-    this.createLocationDialogbox("location5", 200, 150)
+    // //........ location5 ...................
+    // this.location5 = this.add.isobox(1200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
+    // this.physics.add.existing(this.location5);
+    // this.location5.body.setSize(this.location5.width, this.location5.height * 1.4)
+    // this.location5.body.setOffset(0, -(this.location5.height / 1.4))
+    // this.createLocationDialogbox("location5", 200, 150)
   }
 
   createLocationDialogbox(locationName, mainWidth, mainHeight) {
@@ -488,7 +488,7 @@ export default class Location5Scene extends Phaser.Scene {
 
   generateBackground() {
     //fill in textures
-    this.add.image(0, 0, "background2").setOrigin(0).setScale(2) //stamp painting
+    this.add.image(0, 0, "background1").setOrigin(0).setScale(1.4) //stamp painting
   }
 
   loadAndCreatePlayerAvatar() {
@@ -1105,7 +1105,9 @@ export default class Location5Scene extends Phaser.Scene {
       this.swipeAmount.x = swipeX
       this.swipeAmount.y = swipeY
 
-      const moveSpeed = this.swipeAmount.length()
+      let moveSpeed = this.swipeAmount.length()
+      if (moveSpeed > 450) moveSpeed = 450
+
       console.log("moveSpeed:")
       console.log(moveSpeed)
 
@@ -1114,14 +1116,14 @@ export default class Location5Scene extends Phaser.Scene {
       // console.log(this.swipeAmount.y)
       // console.log("")
       //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
-        this.playerIsMovingByClicking = true; // trigger moving animation
+      this.playerIsMovingByClicking = true; // trigger moving animation
 
 
-        this.target.x = playerX + swipeX
-        this.target.y = playerY + swipeY
-        this.physics.moveToObject(this.player, this.target, moveSpeed*2);
-        this.isClicking = false;
-      
+      this.target.x = playerX + swipeX
+      this.target.y = playerY + swipeY
+      this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
+      this.isClicking = false;
+
 
       //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
       //       this.swipeDirection = "up";
@@ -1130,7 +1132,10 @@ export default class Location5Scene extends Phaser.Scene {
       //     }
 
     } else if (this.input.activePointer.isDown && this.isClicking == false) {
-      this.isClicking = true;
+      this.isClicking = true
+      
+      console.log("this.isClicking:")
+      console.log(this.isClicking)
     }
     this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
     //  4 is our distance tolerance, i.e. how close the source can get to the target
@@ -1143,7 +1148,7 @@ export default class Location5Scene extends Phaser.Scene {
         this.sendPlayerMovement();
       }
     }
-  }
+}
 
   sendPlayerMovement() {
     if (this.createdPlayer) {
@@ -1187,8 +1192,8 @@ export default class Location5Scene extends Phaser.Scene {
 
   update(time, delta) {
     // //...... ONLINE PLAYERS ................................................
-    this.createOnlinePlayers();
-    this.updateMovementOnlinePlayers()
+    //this.createOnlinePlayers();
+    //this.updateMovementOnlinePlayers()
     this.loadAndCreatePlayerAvatar();
     //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
