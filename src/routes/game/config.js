@@ -2,7 +2,7 @@ import Phaser from "phaser";
 
 const CONFIG = {
     WIDTH: window.innerWidth,
-    HEIGHT: window.innerHeight - 70
+    HEIGHT: window.innerHeight
     // WIDTH: '100%',
     // HEIGHT: '100%'
     

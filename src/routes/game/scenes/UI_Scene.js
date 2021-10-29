@@ -79,7 +79,7 @@ export default class UI_Scene extends Phaser.Scene {
         .setDepth(1000);
 
       //zoom buttons
-      this.zoom = this.add.image(width / 10 + 40, height / 45, "ui_eye")
+      this.zoom = this.add.image(width / 10 + 40, height / 50, "ui_eye")
         .setOrigin(0)
         .setDepth(1000)
         .setScale((width / (width / this.camUI.zoom)) / 8)
