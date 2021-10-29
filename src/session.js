@@ -27,6 +27,7 @@ export async function login(email, password) {
     const create = false;
     client.authenticateEmail(email, password, create)
     .then((response)=> {
+        console.log(response)
         const session = response
         console.log(session)
         Session.set(session);
@@ -41,6 +42,7 @@ export async function login(email, password) {
         if(err.status == 401){
             Error.update(er => er = "invalid password")
         }
+        console.log(err)
         
     })
 
