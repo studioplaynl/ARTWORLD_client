@@ -50,7 +50,7 @@ export default class Location2Scene extends Scene3D {
       .setInteractive();
 
     this.back.on("pointerup", () => {
-      this.scene.start("location1_Scene");
+      this.scene.start("location1_Scene")
     });
 
     const { ground } = await this.third.warpSpeed();
