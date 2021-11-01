@@ -13,7 +13,6 @@ class manageSession {
     this.user_id
     this.username;
 
-    this.session;
     this.client;
     this.socket;
 
@@ -62,9 +61,8 @@ class manageSession {
     console.log("socket created with client");
 
     const createStatus = true;
-    this.session = ""; // obtained by authentication.
-
-    this.session = await this.socket.connect(this.sessionStored, createStatus);
+    
+    await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
     await this.getStreamUsers("join", this.location)

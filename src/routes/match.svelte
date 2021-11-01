@@ -16,10 +16,8 @@
     async function chat() {
         const createStatus = true;
         console.log($Profile);
-        //const socket = client.createSocket(useSSL, verboseLogging);
-        let session = ""; // obtained by authentication.
 
-        session = await socket.connect($Session, createStatus);
+        await socket.connect($Session, createStatus);
 
         //own join
         // var joined = await socket.rpc('join')
