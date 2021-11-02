@@ -1,5 +1,7 @@
 import CONFIG from "../config.js";
 import manageSession from "../manageSession.js";
+import { getAccount } from '../../../api.js';
+
 
 export default class MainMenu extends Phaser.Scene {
   constructor() {
@@ -16,7 +18,7 @@ export default class MainMenu extends Phaser.Scene {
     this.load.image("ui_magnifier_minus", "assets/ui/circle_minus.png");
     this.load.image("ui_magnifier_plus", "assets/ui/circle_plus.png");
     this.load.image("ui_eye", "assets/ui/eye.png");
-    
+
     // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
     // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
     // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
@@ -59,13 +61,15 @@ export default class MainMenu extends Phaser.Scene {
 
     //...... SESSION .............................................................................................
     //console.log("Session: ");
+
+
+
+    //console.log(bootAccount)
+
     manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
-    //console.log(manageSession.sessionStored);
-
-    console.log(manageSession.sessionStored.user_id);
-    console.log(manageSession.sessionStored.username);
-
-    console.log(manageSession.sessionStored);
+    // console.log(manageSession.sessionStored.user_id);
+    // console.log(manageSession.sessionStored.username);
+    // console.log(manageSession.sessionStored);
 
     // manageSession.user_id = manageSession.sessionStored.user_id
     // manageSession.username = manageSession.sessionStored.username
@@ -122,10 +126,10 @@ export default class MainMenu extends Phaser.Scene {
 
     this.playBtn.on("pointerdown", () => {
       // if (manageSession.sessionStored.username != null) {
-        // a way to check if the connection if working
-        console.log(manageSession.userProfile);
-        this.scene.start("networkBoot_Scene");
-        
+      // a way to check if the connection if working
+      //console.log(manageSession.userProfile);
+      this.scene.start("networkBoot_Scene");
+
       // }
     });
 
@@ -151,6 +155,24 @@ export default class MainMenu extends Phaser.Scene {
 
     // this.camMain.ignore([this.zoom, this.zoomIn, this.zoomOut]);
     // this.camUI.ignore([this.playBtn, this.bg])
+
+    let bootAccount = getAccount("", true)
+      .then(rec => {
+        manageSession.freshSession = rec
+        console.log("manageSession.freshSession")
+        console.log(manageSession.freshSession)
+        console.log(manageSession.freshSession.meta.location)
+
+        //! only set the menu button visible if the user data is downloaded!
+        manageSession.location = manageSession.freshSession.meta.location
+        this.playBtn.setVisible(true)
+
+        //manageSession.createSocket()
+
+      })
+
+
+
   } //create
 
   // zoomButtons(update) {
@@ -226,8 +248,6 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   update(time, delta) {
-    if (manageSession.sessionStored.username != null){ // a way to check if the connection if working
-      this.playBtn.setVisible(true)
-    }
+
   } // end update
 }
