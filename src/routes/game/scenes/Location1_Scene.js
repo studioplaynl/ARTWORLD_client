@@ -7,6 +7,7 @@ import { location } from "svelte-spa-router";
 import { Vector2 } from "three";
 
 export default class Location1Scene extends Phaser.Scene {
+
   constructor() {
     super("location1_Scene");
 
@@ -78,6 +79,8 @@ export default class Location1Scene extends Phaser.Scene {
     this.load.image('ground', 'assets/platform.png');
 
     this.load.image('museum', 'assets/museum.png');
+
+    this.load.image("entrance", "assets/entrance.jpg");
 
     this.load.spritesheet(
       "avatar1",
@@ -152,7 +155,7 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   async create() {
-
+    
     //timers
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
@@ -776,6 +779,11 @@ export default class Location1Scene extends Phaser.Scene {
     this.location5.body.setSize(this.location5.width, this.location5.height * 1.4)
     this.location5.body.setOffset(0, -(this.location5.height / 1.4))
     this.createLocationDialogbox("location5", 200, 150)
+
+    // location6
+    this.location6 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(100)
+    this.location6.setImmovable(true)
+    this.createLocationDialogbox("location6", 200, 150)
   }
 
   createLocationDialogbox(locationName, mainWidth, mainHeight) {
