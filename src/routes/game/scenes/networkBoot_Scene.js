@@ -11,7 +11,7 @@ export default class networkBoot_Scene extends Phaser.Scene {
   }
 
   async preload() {
-    manageSession.location = "home"
+    manageSession.location = "location1"
     await manageSession.createSocket();
   }
 

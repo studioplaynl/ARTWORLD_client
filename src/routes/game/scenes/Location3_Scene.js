@@ -17,6 +17,8 @@ export default class Location3Scene extends Phaser.Scene {
     this.tempAvatarName = ""
     this.loadedAvatars = [];
 
+    this.location = "location3"
+
     this.playerAvatarPlaceholder = "playerAvatar";
     this.playerAvatarKey = ""
     this.createdPlayer = false;
@@ -103,8 +105,9 @@ export default class Location3Scene extends Phaser.Scene {
     // //set rpc location
     // manageSession.createPlayer = true
     // manageSession.updateOnlinePlayers = true
-    // manageSession.location = "location3"
-    // this.createdPlayer
+    manageSession.location = "location3"
+    await manageSession.getStreamUsers("join", this.location)
+    // this.createdPlayer = false
 
     // // await manageSession.getStreamUsers("join", manageSession.location)
     // await manageSession.createSocket();
@@ -1239,10 +1242,9 @@ export default class Location3Scene extends Phaser.Scene {
 
   update(time, delta) {
     // //...... ONLINE PLAYERS ................................................
-    // this.createOnlinePlayers();
-    // this.updateMovementOnlinePlayers()
+    this.createOnlinePlayers();
+    this.updateMovementOnlinePlayers()
     this.loadAndCreatePlayerAvatar();
-    //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
     //this.gameCam.zoom = this.UI_Scene.currentZoom;
     // console.log(this.currentZoom);
