@@ -404,6 +404,7 @@
     } else {
       canvas.setHeight(700);
       canvas.setWidth(700);
+      videoWidth = 700
     }
   }
 
@@ -605,25 +606,23 @@
     }
   }
 
-  function capturePicture() {
-    let videocanvas = new fabric.Canvas(videoCanvas, {
+  async function capturePicture() {
+    let videocanv = new fabric.Canvas(videoCanvas, {
       isDrawingMode: false,
     });
-    videocanvas.setHeight(videoWidth/1.33);
-    videocanvas.setWidth(videoWidth);
-    let context = videoCanvas.getContext("2d");
-    context.drawImage(video, 0, 0, videoWidth, videoWidth/1.33);
+    videocanv.setHeight(videoWidth/1.33);
+    videocanv.setWidth(videoWidth);
+    let vidContext = videocanv.getContext("2d");
+    console.log(video.srcObject)
+    vidContext.drawImage(video, 0, 0, videoWidth, videoWidth/1.33);
     var uri = videoCanvas.toDataURL("image/png");
-
     fabric.Image.fromURL(uri, function (oImg) {
       oImg.scale(1);
       oImg.set({ left: 0, top: 0 });
       canvas.add(oImg);
     });
-    current = "draw";
-    // stream.getTracks().forEach(function(track) {
-    //   track.stop();
-    // });
+    video.srcObject.getTracks()[0].stop()
+    current = "select";
   }
 
   //////////////////// camera functies end ///////////////////////////
@@ -901,7 +900,7 @@
     {#if current == "camera"}
       <video bind:this={video} autoplay />
       <button on:click={capturePicture} class="videoButton" />
-      <div class="videocanvas hidden">
+      <div class="videocanvas">
         <canvas bind:this={videoCanvas} />
       </div>
     {/if}

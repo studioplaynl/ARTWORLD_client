@@ -790,6 +790,11 @@ export default class Location1Scene extends Phaser.Scene {
     this.location6 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(100)
     this.location6.setImmovable(true)
     this.createLocationDialogbox("location6", 200, 150)
+
+    // location7
+    this.location7 = this.physics.add.image(600, 800, "entrance").setScale(0.4).setDepth(100)
+    this.location7.setImmovable(true)
+    this.createLocationDialogbox("location7", 200, 150)
   }
 
   createLocationDialogbox(locationName, mainWidth, mainHeight) {
