@@ -1,15 +1,11 @@
-import {
-  enable3d,
-  Scene3D,
-  Canvas,
-  ExtendedObject3D,
-} from "@enable3d/phaser-extension";
+import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension";
 import i18next from "i18next";
 import { locale } from "svelte-i18n";
 
 let latestValue = null;
 export default class Location2Scene extends Scene3D {
   back;
+  zoomingDistance;
 
   constructor() {
     super("location2_Scene");
@@ -21,6 +17,8 @@ export default class Location2Scene extends Scene3D {
   }
 
   async create() {
+    this.scene.stop("UI_Scene");
+
     let width = this.sys.game.canvas.width;
     let height = this.sys.game.canvas.height - 60;
 
@@ -50,23 +48,46 @@ export default class Location2Scene extends Scene3D {
       .setInteractive();
 
     this.back.on("pointerup", () => {
-      this.scene.start("location1_Scene")
+      this.scene.start("location1_Scene");
     });
 
     const { ground } = await this.third.warpSpeed();
 
-    // These assets are from mixamo.com
-    // The the Idle.fbx contains the skin and the idle anims.
+    this.zoomingDistance = 30;
 
-    // this.third.physics.debug.enable()
-
-    this.third.camera.position.set(10, 10, 20);
+    this.third.camera.position.set(0, this.zoomingDistance, 0);
     this.third.camera.lookAt(0, 0, 0);
 
     this.robot = new ExtendedObject3D();
     const pos = { x: 3, y: 2, z: -7 };
 
-    this.third.physics.debug.enable();
+    this.zoomIn = this.add
+      .text(width / 10 + 80, height / 40, `${i18next.t("in")}`, {
+        fontFamily: "Arial",
+        fontSize: "24px",
+      })
+      .setOrigin(0)
+      .setShadow(1, 1, "#000000", 0)
+      .setDepth(1000)
+      .setInteractive({ useHandCursor: true });
+
+    this.zoomOut = this.add
+      .text(width / 10 + 160, height / 40, `${i18next.t("out")}`, {
+        fontFamily: "Arial",
+        fontSize: "24px",
+      })
+      .setOrigin(0)
+      .setShadow(1, 1, "#000000", 0)
+      .setDepth(1000)
+      .setInteractive({ useHandCursor: true });
+
+    this.zoomIn.on("pointerup", () => {
+      this.third.camera.position.set(0, (this.zoomingDistance -= 10), 0);
+    });
+
+    this.zoomOut.on("pointerup", () => {
+      this.third.camera.position.set(0, (this.zoomingDistance += 10), 0);
+    });
 
     const sensor = this.third.physics.add.box(
       {

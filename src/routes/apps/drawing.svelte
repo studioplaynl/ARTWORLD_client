@@ -621,9 +621,9 @@
       canvas.add(oImg);
     });
     current = "draw";
-    stream.getTracks().forEach(function(track) {
-      track.stop();
-    });
+    // stream.getTracks().forEach(function(track) {
+    //   track.stop();
+    // });
   }
 
   //////////////////// camera functies end ///////////////////////////

@@ -125,6 +125,7 @@ export default class MainMenu extends Phaser.Scene {
         // a way to check if the connection if working
         console.log(manageSession.userProfile);
         this.scene.start("networkBoot_Scene");
+        
       // }
     });
 

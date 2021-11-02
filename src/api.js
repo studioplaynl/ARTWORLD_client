@@ -81,11 +81,11 @@ export async function updateObject(type, name, value, pub) {
   console.info("Stored objects: %o", object_ids);
 }
 
-export async function getAccount(id) {
+export async function getAccount(id, avatar) {
   if(!!!id){
     const account = await client.getAccount(Sess);
     let user = account.user;
-    user.url = await getAvatar(user.avatar_url)
+    if(!!!avatar) user.url = await getAvatar(user.avatar_url)
     user.meta = JSON.parse(user.metadata)
     console.log(user)
     Profile.set(user)

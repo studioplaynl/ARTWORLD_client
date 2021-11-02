@@ -13,6 +13,7 @@
   import location3_Scene from "./scenes/Location3_Scene";
   import location4_Scene from "./scenes/Location4_Scene";
   import location5_Scene from "./scenes/Location5_Scene";
+  import location6_Scene from "./scenes/Location6_Scene";
 
   import UI_Scene from "./scenes/UI_Scene";
 
@@ -76,6 +77,7 @@
         location3_Scene,
         location4_Scene,
         location5_Scene,
+        location6_Scene,
         UI_Scene,
       ],
       ...Canvas(),

@@ -22,14 +22,11 @@ export const Error = writable();
 
 
 export async function login(email, password) {
-
-    console.log("ssl="+SSL)
     const create = false;
     client.authenticateEmail(email, password, create)
     .then((response)=> {
         console.log(response)
         const session = response
-        console.log(session)
         Session.set(session);
         getAccount()
         window.location.href = "/#/"
@@ -54,13 +51,22 @@ export const logout = () => { Session.set(null) ;Profile.set(null);}
 
 export async function checkLogin(session) {
     if(session != null){
-    client.getAccount(session)
-    .then(() => console.log('user still loged in'))
-    .catch((err) => {
-            Error = "User not loged in"    
+        if((session.expires_at + "000") > Date.now()){
+            console.log('user still loged in')
+        } else {    
             logout()
             window.location.href = "/#/login"
             history.go(0)
-    })
+            Error.update(er => er = "Please  relogin")
+        }
+
+    // client.getAccount(session)
+    // .then(() => console.log('user still loged in'))
+    // .catch((err) => {
+    //         Error = "User not loged in"    
+    //         logout()
+    //         window.location.href = "/#/login"
+    //         history.go(0)
+    // })
     }
 }
