@@ -40,7 +40,7 @@ class manageSession {
 
     this.gameStarted = false;
 
-    this.location = "home"
+    this.location = "location1"
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";
@@ -77,8 +77,12 @@ class manageSession {
         if (user.user_id == data.user_id) {
           user.posX = data.posX;
           user.posY = data.posY;
+          // console.log("user")
+          // console.log(user)
+          // console.log("data.user_id")
+          // console.log(data.user_id)
 
-          //this could be refined to update specific online player?
+          //TODO this could be refined to update specific online player?
           this.updateOnlinePlayers = true
         }
       }
@@ -157,7 +161,7 @@ class manageSession {
     console.log('this.getStreamUsers("' + rpc_command + ', "' + location + '")')
 
     this.socket.rpc(rpc_command, location).then((rec) => {
-      //!the server report all users in location except self_user
+      //!the server reports all users in location except self_user
 
       //get all online players
       let tempConnectedUsers = JSON.parse(rec.payload) || []

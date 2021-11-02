@@ -5,6 +5,7 @@ import { getAccount } from '../../../api.js';
 import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
 import { Vector2 } from "three";
+import { Session, Profile, logout, checkLogin } from "../../../session.js"
 
 export default class Location1Scene extends Phaser.Scene {
   constructor() {
@@ -16,6 +17,7 @@ export default class Location1Scene extends Phaser.Scene {
     this.phaser = this;
     // this.playerPos;
     this.onlinePlayers = [];
+
     this.newOnlinePlayers = []
 
     this.currentOnlinePlayer;
@@ -31,7 +33,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     this.offlineOnlineUsers
 
-    this.location = "home"
+    this.location = "location1"
 
     //.......................REX UI ............
     this.COLOR_PRIMARY = 0xff5733;
@@ -149,6 +151,10 @@ export default class Location1Scene extends Phaser.Scene {
     //set rpc location
     // manageSession.location = "home"
     // await manageSession.createSocket();
+
+    console.log("check if session is still valide")
+    checkLogin(manageSession.sessionStored)
+
   }
 
   async create() {
@@ -1567,6 +1573,11 @@ export default class Location1Scene extends Phaser.Scene {
 
       player.setData("movingKey", "moving" + "_" + this.tempAvatarName);
       player.setData("stopKey", "stop" + "_" + this.tempAvatarName);
+      console.log('player.getData("movingKey")')
+      console.log(player.getData("movingKey"))
+
+      console.log('player.getData("movingKey")')
+      console.log(player.getData("movingKey"))
 
       //create animation for moving
       this.anims.create({
@@ -1725,36 +1736,39 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   updateMovementOnlinePlayers() {
-    if (!this.createdPlayer) {
-      if (manageSession.updateOnlinePlayers) {
-        if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
-          for (let i = 0; i < manageSession.allConnectedUsers.length; i++) {
-            let tempPlayer = this.onlinePlayers.find(o => o.user_id === manageSession.allConnectedUsers[i].user_id) || {};
+    if (manageSession.updateOnlinePlayers) {
+      if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
+
+        manageSession.allConnectedUsers.forEach(player => {
+          // const playerID = player.user_id
+          // const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+          // if (found) {console.log(player)}
+
+          let tempPlayer = this.onlinePlayers.find(o => o.user_id === player.user_id);
+          if (typeof tempPlayer !== 'undefined') {
+
+            tempPlayer.x = player.posX;
+            tempPlayer.y = player.posY;
+
             const movingKey = tempPlayer.getData("movingKey")
 
             //get the key for the moving animation of the player, and play it
             tempPlayer.anims.play(movingKey, true);
 
-            tempPlayer.x = manageSession.allConnectedUsers[i].posX;
-            tempPlayer.y = manageSession.allConnectedUsers[i].posY;
-
-            // //get the key for the stop animation of the player, and play it
             setTimeout(() => {
               tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
             }, 500);
-
-            //get the key for the stop animation of the player, and play it
-            // tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
-            //   console.log("updating online players")
           }
-          manageSession.updateOnlinePlayers = false;
-        }
+
+        })
+
+        manageSession.updateOnlinePlayers = false;
       }
     }
   }
 
   update(time, delta) {
-    // //...... ONLINE PLAYERS ................................................
+    //...... ONLINE PLAYERS ................................................
     this.createOnlinePlayers();
     this.updateMovementOnlinePlayers()
     this.loadAndCreatePlayerAvatar();
@@ -1762,7 +1776,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
 
-    // //.......................................................................
+    //.......................................................................
 
     // //........... PLAYER SHADOW .............................................................................
     this.playerShadow.x = this.player.x + this.playerShadowOffset
