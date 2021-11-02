@@ -51,7 +51,7 @@ export default class Location2Scene extends Scene3D {
       this.scene.start("location1_Scene");
     });
 
-    const { ground } = await this.third.warpSpeed();
+    const { ground } = await this.third.warpSpeed("-orbitControls");
 
     this.zoomingDistance = 30;
 
