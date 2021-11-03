@@ -155,8 +155,13 @@ export default class Location1Scene extends Phaser.Scene {
     // manageSession.location = "home"
     // await manageSession.createSocket();
 
-    console.log("check if session is still valide")
-    checkLogin(manageSession.sessionStored)
+    //manageSession.getStreamUsers("join, "location1")
+
+    manageSession.createPlayer = true
+    manageSession.createSocket()
+
+    // console.log("check if session is still valide")
+    // checkLogin(manageSession.sessionStored)
 
   }
 
