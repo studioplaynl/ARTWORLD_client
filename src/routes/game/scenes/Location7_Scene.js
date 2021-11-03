@@ -1,9 +1,6 @@
-import { enable3d, Scene3D, Canvas, THREE } from "@enable3d/phaser-extension";
-
+import { Scene3D } from "@enable3d/phaser-extension";
 export default class Location7Scene extends Scene3D {
-  direction;
-  background;
-
+  objects;
   constructor() {
     super("location7_Scene");
   }
@@ -12,27 +9,42 @@ export default class Location7Scene extends Scene3D {
     this.accessThirdDimension();
   }
 
-  preload() {}
-
-  async create() {
-    // await this.third.warpSpeed("-orbitControls");
-    // this.third.camera.position.set(0, 30, 0);
-    // console.log(ground);
-    // ground.geometry.parameters.depthSegments = 0;
-    // // depth = 0;
-    // height = 100;
-    // width = 100;
-    // this.direction = new THREE.Vector3();
-    // Some "native" three.js code
-    // const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-    // const material = new THREE.MeshLambertMaterial({ color: 0x2194ce });
-    // const cube = new THREE.Mesh(geometry, material);
-    // cube.position.set(1, 1, 1);
-    // We set shape manually to 'box' that enable3d is aware of the shape
-    // cube.shape = "box";
-    // Add cube to the scene
-    // this.third.add.existing(cube);
+  preload() {
+    this.third.load.preload(
+      "ground",
+      "./assets/art_styles/landscape/c27971221b721283988c3be1975a4901.jpg"
+    );
   }
 
-  update() {}
+  create() {
+    // this disables 3d ground, blue sky and ability to move around the 3d world with mouse
+    this.third.warpSpeed("-ground", "-sky", "-orbitControls");
+
+    this.third.camera.position.set(0, 30, 0);
+    this.third.camera.lookAt(0, 0, 0);
+
+    this.third.load
+      .texture("ground")
+      .then((ground) => (this.third.scene.background = ground));
+
+    this.objects = [
+      // we can change Y to make a feeling of the object being higher or lower of other ones
+      this.third.add.box({ x: -10, y: 10, z: 0 }),
+      this.third.add.cylinder({
+        x: 4,
+        y: 15,
+        z: -5,
+        radiusTop: 0.5,
+        radiusBottom: 0.5,
+        height: 1,
+      }),
+    ];
+  }
+
+  update() {
+    this.objects.forEach((obj) => {
+      obj.rotation.x += 0.01;
+      obj.rotation.y += 0.01;
+    });
+  }
 }
