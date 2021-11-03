@@ -9,6 +9,7 @@ class manageSession {
     this.debug = true
 
     this.sessionStored;
+    this.freshSession
     this.userProfile
     this.user_id
     this.username;

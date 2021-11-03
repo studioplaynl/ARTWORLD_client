@@ -8,25 +8,37 @@ export default class networkBoot_Scene extends Phaser.Scene {
   constructor() {
     super("networkBoot_Scene");
     this.phaser = this;
+
+    this.launchLocation
   }
 
   async preload() {
-    manageSession.location = "location1"
-    await manageSession.createSocket();
+    this.launchLocation = manageSession.freshSession.meta.location + "_Scene"
+    console.log(this.launchLocation)
+
+    // await manageSession.createSocket()
+    //   .then(rec => {
+
+    //     console.log(rec)
+    //     this.scene.launch(this.launchLocation)
+
+
+    //   })
+
   }
 
   async create() {
 
 
-    this.scene.launch("location1_Scene")
-    
+    this.scene.launch(this.launchLocation)
 
-    
+
+
   } // end create
 
 
   update() {
-   
+
 
   } //update
 } //class

@@ -155,8 +155,13 @@ export default class Location1Scene extends Phaser.Scene {
     // manageSession.location = "home"
     // await manageSession.createSocket();
 
-    console.log("check if session is still valide")
-    checkLogin(manageSession.sessionStored)
+    //manageSession.getStreamUsers("join, "location1")
+
+    manageSession.createPlayer = true
+    manageSession.createSocket()
+
+    // console.log("check if session is still valide")
+    // checkLogin(manageSession.sessionStored)
 
   }
 
@@ -790,6 +795,11 @@ export default class Location1Scene extends Phaser.Scene {
     this.location6 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(100)
     this.location6.setImmovable(true)
     this.createLocationDialogbox("location6", 200, 150)
+
+    // location7
+    this.location7 = this.physics.add.image(600, 800, "entrance").setScale(0.4).setDepth(100)
+    this.location7.setImmovable(true)
+    this.createLocationDialogbox("location7", 200, 150)
   }
 
   createLocationDialogbox(locationName, mainWidth, mainHeight) {
