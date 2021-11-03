@@ -6,6 +6,7 @@
 
   import manageSession from "./routes/game/manageSession.js"; //push the profile to manageSession
 
+  import Users from "./routes/users.svelte";
   import login from "./routes/auth/login.svelte";
   import profile from "./routes/profile.svelte";
   import match from "./routes/match.svelte";
@@ -14,6 +15,7 @@
   import UploadAvatar from "./routes/uploadAvatar.svelte";
   import Error from "./routes/components/error.svelte"
   import Menu from "./routes/components/menu.svelte"
+  import Friends from "./routes/friends.svelte";
 
   
 
@@ -46,6 +48,22 @@ let isLogedIn = (detail) => {
     }),
     "/register": wrap({
         component: registerPage,
+        conditions: [
+            (detail) => {
+				return isLogedIn(detail)
+			}
+        ]
+    }),
+    "/users": wrap({
+        component: Users,
+        conditions: [
+            (detail) => {
+				return isLogedIn(detail)
+			}
+        ]
+    }),
+    "/friends": wrap({
+        component: Friends,
         conditions: [
             (detail) => {
 				return isLogedIn(detail)

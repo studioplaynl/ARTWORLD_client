@@ -137,7 +137,7 @@ export async function getAvatar(avatar_url) {
   await client.updateAccount(Sess, {
       avatar_url: jpegLocation,
   });
-  Error = "Saved" 
+  Error.update(er => er = "Saved")
 
 }
 
@@ -149,4 +149,34 @@ export async function deleteFile(type,file,user) {
     let url = fileurl.payload.url
     console.log(url)
     return url
+}
+
+export async function addFriend(id,usernames) {
+  if(typeof id == "string"){
+    if(!!id){
+      id = [id]
+    } else {
+      id = undefined
+    }
+  }
+  if(typeof usernames == "string"){
+    if(!!username){
+      usernames = [usernames]
+    } else {
+      usernames = undefined
+    }
+  }
+  await client.addFriends(Sess, id,usernames)
+  .then(status => {
+    Error.update(er => er = "friend added")
+  })
+  .catch(err =>{
+    console.log(err)
+    Error.update(er => er = err.status)
+  })
+}
+
+export async function ListFriends() {
+  const friends = await client.listFriends(Sess);
+  return friends;
 }

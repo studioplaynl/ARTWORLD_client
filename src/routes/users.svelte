@@ -1,7 +1,7 @@
 <script>
   import SvelteTable from "svelte-table";
-  var users = [
-  ];
+  var users = [];
+  var Onlineusers  = [];
   const columns = [
       {
         key: "Username",
@@ -11,16 +11,18 @@
       },
       {
         key: "Locatie",
-        title: "Loccatie",
+        title: "Last Locatie",
         value: v => v.meta.locatie
       },
     ]
 </script>
 
 
+<h1>Online Users</h1>
+<SvelteTable columns="{columns}" rows="{Onlineusers}" classNameTable="profileTable"></SvelteTable>
 
+<h1>Offline Users</h1>
 <SvelteTable columns="{columns}" rows="{users}" classNameTable="profileTable"></SvelteTable>
-
 
 
 <style>

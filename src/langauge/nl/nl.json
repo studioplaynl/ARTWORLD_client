@@ -7,6 +7,7 @@
         "logout": "Uitloggen",
         "drawing": "Tekenen",
         "stopmotion": "Stopmotion",
+        "friends": "Vrienden",
         "admin": {
             "createUser": "Nieuwe gebruiker",
             "createGroup": "Nieuwe groep"
