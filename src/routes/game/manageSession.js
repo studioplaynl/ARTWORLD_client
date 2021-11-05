@@ -1,3 +1,4 @@
+import { isConstructorDeclaration } from "typescript";
 import { client, SSL } from "../../nakama.svelte";
 //import { Profile, logout } from "../../session.js";
 // import { user, url, getAccount } from '../../api.js';
@@ -78,8 +79,8 @@ class manageSession {
         if (user.user_id == data.user_id) {
           user.posX = data.posX;
           user.posY = data.posY;
-          // console.log("user")
-          // console.log(user)
+          console.log("user")
+          console.log(user)
           // console.log("data.user_id")
           // console.log(data.user_id)
 
@@ -218,8 +219,10 @@ class manageSession {
       posY +
       ', "location": "home" }';
 
-    this.socket.rpc("move_position", data).then((rec) => {
-    });
+    this.socket.rpc("move_position", data)
+    // .then((rec) => {
+    //   //console.log(posX)
+    // });
   } //end sendChatMessage
 
   async chatExample() {

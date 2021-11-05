@@ -63,7 +63,7 @@
         },
       },
 
-      scene: SCENES,
+      scene: SCENES, //scenes defined in config.js
 
       ...Canvas(), //enable 3D
     };

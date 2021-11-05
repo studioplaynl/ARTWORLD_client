@@ -1,44 +1,18 @@
-import CONFIG from "../config.js";
-import manageSession from "../manageSession";
-
-import { compute_slots } from "svelte/internal";
-import { location } from "svelte-spa-router";
+import manageSession from "../manageSession"
 
 export default class networkBoot_Scene extends Phaser.Scene {
   constructor() {
-    super("networkBoot_Scene");
-    this.phaser = this;
-
-    this.launchLocation
+    super("networkBoot_Scene")
+    this.phaser = this
   }
 
   async preload() {
-    this.launchLocation = manageSession.location + "_Scene"
-    console.log(this.launchLocation)
-
-    // await manageSession.createSocket()
-    //   .then(rec => {
-
-    //     console.log(rec)
-    //     this.scene.launch(this.launchLocation)
-
-
-    //   })
-
+    manageSession.createPlayer = true
+    
+    await manageSession.createSocket()
+      .then(rec => {
+        this.scene.launch(manageSession.location)
+      })
   }
 
-  async create() {
-
-
-    this.scene.launch(this.launchLocation)
-
-
-
-  } // end create
-
-
-  update() {
-
-
-  } //update
-} //class
+}

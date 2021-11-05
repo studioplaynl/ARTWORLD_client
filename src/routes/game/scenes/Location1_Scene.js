@@ -157,8 +157,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //manageSession.getStreamUsers("join, "location1")
 
-    manageSession.createPlayer = true
-    await manageSession.createSocket()
+   
 
     // console.log("check if session is still valide")
     // checkLogin(manageSession.sessionStored)
@@ -1697,8 +1696,8 @@ export default class Location1Scene extends Phaser.Scene {
         let moveSpeed = this.swipeAmount.length()
         if (moveSpeed > 450) moveSpeed = 450
 
-        console.log("moveSpeed:")
-        console.log(moveSpeed)
+        // console.log("moveSpeed:")
+        // console.log(moveSpeed)
 
         // console.log("this.swipeAmount:")
         // console.log(this.swipeAmount.x)
@@ -1725,8 +1724,8 @@ export default class Location1Scene extends Phaser.Scene {
         if (this.graffitiDrawing) {
           this.isClicking = false
         }
-        console.log("this.isClicking:")
-        console.log(this.isClicking)
+        // console.log("this.isClicking:")
+        // console.log(this.isClicking)
       }
       this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
       //  4 is our distance tolerance, i.e. how close the source can get to the target
@@ -1748,6 +1747,7 @@ export default class Location1Scene extends Phaser.Scene {
         manageSession.updateMovementTimer > manageSession.updateMovementInterval
       ) {
         manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
+        //console.log(this.player.x)
         manageSession.updateMovementTimer = 0;
       }
       // this.scrollablePanel.x = this.player.x

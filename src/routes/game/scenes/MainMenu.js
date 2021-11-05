@@ -1,4 +1,4 @@
-import CONFIG from "../config.js";
+import { CONFIG, SCENES } from "../config.js"
 import manageSession from "../manageSession.js";
 import { getAccount } from '../../../api.js';
 
@@ -6,7 +6,10 @@ import { getAccount } from '../../../api.js';
 export default class MainMenu extends Phaser.Scene {
   constructor() {
     super("MainMenu");
+
+    this.launchLocation
   }
+
   preload() {
     this.load.atlas(
       "flares",
@@ -35,6 +38,7 @@ export default class MainMenu extends Phaser.Scene {
     // Received presence event for stream:
     // this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
   }
+  
   async create() {
     // a tile sprite repeats background, should be done with small images
     this.bg = this.add
@@ -152,25 +156,33 @@ export default class MainMenu extends Phaser.Scene {
 
     //* check if the user profile is loaded, to be able to send the player to the right location
     if (typeof (manageSession.userProfile.meta.location) != "undefined") {
-      manageSession.location = manageSession.userProfile.meta.location
-      this.playBtn.setVisible(true)
+      this.launchLocation = manageSession.userProfile.meta.location + "_Scene"
+      console.log(this.launchLocation)
+      
+      this.checkSceneExistence()
     } else {
-
       getAccount("", true)
         .then(rec => {
           manageSession.freshSession = rec
-
           //! only set the menu button visible if the user data is downloaded!
-          manageSession.location = manageSession.freshSession.meta.location
-          this.playBtn.setVisible(true)
-          //manageSession.createSocket()
+          this.launchLocation = manageSession.freshSession.meta.location
+          this.checkSceneExistence()
         })
     }
-
-
-
-
   } //create
+
+  checkSceneExistence() {
+    //check if this.launchLocation exists in SCENES
+    const locationExists = SCENES.includes(this.launchLocation)
+    //if location does not exists; launch default location
+    if (!locationExists) {
+      //set to fail-back scene
+      manageSession.location = "location1" + "_Scene"
+    } else {
+      manageSession.location = manageSession.userProfile.meta.location
+    }
+    this.playBtn.setVisible(true)
+  }
 
   // zoomButtons(update) {
 
