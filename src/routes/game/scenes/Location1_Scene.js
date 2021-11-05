@@ -1772,32 +1772,35 @@ export default class Location1Scene extends Phaser.Scene {
 
   updateMovementOnlinePlayers() {
     if (manageSession.updateOnlinePlayers) {
-      if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
+      if (!manageSession.createPlayer) {
+        // console.log("test")//!comes trough
+        if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
 
-        manageSession.allConnectedUsers.forEach(player => {
-          // const playerID = player.user_id
-          // const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
-          // if (found) {console.log(player)}
+          manageSession.allConnectedUsers.forEach(player => {
+            // const playerID = player.user_id
+            // const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+            // if (found) {console.log(player)}
 
-          let tempPlayer = this.onlinePlayers.find(o => o.user_id === player.user_id);
-          if (typeof tempPlayer !== 'undefined') {
+            let tempPlayer = this.onlinePlayers.find(o => o.user_id === player.user_id);
+            if (typeof tempPlayer !== 'undefined') {
 
-            tempPlayer.x = player.posX;
-            tempPlayer.y = player.posY;
+              tempPlayer.x = player.posX;
+              tempPlayer.y = player.posY;
 
-            const movingKey = tempPlayer.getData("movingKey")
+              const movingKey = tempPlayer.getData("movingKey")
 
-            //get the key for the moving animation of the player, and play it
-            tempPlayer.anims.play(movingKey, true);
+              //get the key for the moving animation of the player, and play it
+              tempPlayer.anims.play(movingKey, true);
 
-            setTimeout(() => {
-              tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
-            }, 500);
-          }
+              setTimeout(() => {
+                tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
+              }, 500);
+            }
 
-        })
+          })
 
-        manageSession.updateOnlinePlayers = false;
+          manageSession.updateOnlinePlayers = false;
+        }
       }
     }
   }
