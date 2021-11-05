@@ -7,7 +7,6 @@ export default class MainMenu extends Phaser.Scene {
   constructor() {
     super("MainMenu");
 
-    this.launchLocation
   }
 
   preload() {
@@ -156,16 +155,15 @@ export default class MainMenu extends Phaser.Scene {
 
     //* check if the user profile is loaded, to be able to send the player to the right location
     if (typeof (manageSession.userProfile.meta.location) != "undefined") {
-      this.launchLocation = manageSession.userProfile.meta.location + "_Scene"
-      console.log(this.launchLocation)
-      
+      manageSession.launchLocation = manageSession.userProfile.meta.location + "_Scene"
+      console.log(manageSession.launchLocation)
       this.checkSceneExistence()
     } else {
       getAccount("", true)
         .then(rec => {
           manageSession.freshSession = rec
           //! only set the menu button visible if the user data is downloaded!
-          this.launchLocation = manageSession.freshSession.meta.location
+          manageSession.launchLocation = manageSession.freshSession.meta.location + "_Scene"
           this.checkSceneExistence()
         })
     }
@@ -173,13 +171,15 @@ export default class MainMenu extends Phaser.Scene {
 
   checkSceneExistence() {
     //check if this.launchLocation exists in SCENES
-    const locationExists = SCENES.includes(this.launchLocation)
+    const locationExists = SCENES.includes(manageSession.launchLocation)
     //if location does not exists; launch default location
     if (!locationExists) {
       //set to fail-back scene
-      manageSession.location = "location1" + "_Scene"
+      manageSession.location = "location1"
+      console.log(manageSession.location)
     } else {
       manageSession.location = manageSession.userProfile.meta.location
+      console.log(manageSession.location)
     }
     this.playBtn.setVisible(true)
   }

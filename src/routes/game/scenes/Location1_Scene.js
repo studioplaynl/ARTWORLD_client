@@ -157,7 +157,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //manageSession.getStreamUsers("join, "location1")
 
-   
+
 
     // console.log("check if session is still valide")
     // checkLogin(manageSession.sessionStored)
@@ -714,18 +714,18 @@ export default class Location1Scene extends Phaser.Scene {
       if (pointer.isDown) {
         this.graffitiDrawing = true
         this.isClicking = true
-        console.log(this.graffitiDrawing)
+        //console.log(this.graffitiDrawing)
         this.draw('brush', pointer.worldX - graffitiWall2X, pointer.worldY - graffitiWall2Y, 1, 0x000000);
       }
       if (pointer.isUp) {
         this.graffitiDrawing = false
-        console.log(this.graffitiDrawing)
+        //console.log(this.graffitiDrawing)
       }
     });
 
     rt2.on('pointerup', function (pointer) {
       this.graffitiDrawing = false
-      console.log(this.graffitiDrawing)
+      //console.log(this.graffitiDrawing)
     });
   }
 
@@ -885,12 +885,22 @@ export default class Location1Scene extends Phaser.Scene {
     this.player.setTint(0xff0000)
 
     //player has to explicitly leave the stream it was in!
+    console.log("leave, this.location")
+    console.log(this.location)
     manageSession.socket.rpc("leave", this.location)
 
     this.player.location = location
     console.log("this.player.location:")
-    console.log(this.player.location)
-    this.scene.start(locationScene)
+    console.log(location)
+
+    setTimeout(() => {
+      manageSession.location = location
+      manageSession.createPlayer = true
+      manageSession.getStreamUsers("join", location)
+      this.scene.start(locationScene)
+    }, 1000)
+
+
   }
 
   generateBackground() {
@@ -1068,7 +1078,7 @@ export default class Location1Scene extends Phaser.Scene {
     //ed
 
     //....... end TILEMAP ......................................................................
-  }
+  }//generateTileMap
 
   loadAndCreatePlayerAvatar() {
     //check if account info is loaded
@@ -1133,7 +1143,7 @@ export default class Location1Scene extends Phaser.Scene {
         }
       }//if(manageSession.playerCreated)
     }
-  }
+  }//loadAndCreatePlayerAvatar
 
   attachtAvatarToPlayer() {
     const avatar = this.textures.get(this.playerAvatarKey)
@@ -1201,7 +1211,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //send the current player position over the network
     manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-  }
+  }//attachtAvatarToPlayer
 
   createDebugText() {
     this.headerText = this.add
@@ -1469,40 +1479,40 @@ export default class Location1Scene extends Phaser.Scene {
               console.log("loading: ")
               console.log(this.tempAvatarName)
             }
-
-            console.log("give the online player a placeholder avatar first")
-            //give the online player a placeholder avatar first
-            element = this.add.sprite(element.posX, element.posY, this.playerAvatarPlaceholder)
-              .setDepth(90)
-
-            element.setData("movingKey", "moving");
-            element.setData("stopKey", "stop");
-
-            //create animation for moving
-            this.anims.create({
-              key: element.getData("movingKey"),
-              frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
-              frameRate: 20,
-              repeat: -1,
-            });
-
-            //create animation for stop
-            this.anims.create({
-              key: element.getData("stopKey"),
-              frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
-            });
-
-            Object.assign(element, elementCopy); //add all data from elementCopy to element; like prev Position, Location, UserID
-            element.x = element.posX
-            element.y = element.posY
-
-            // add new player to group
-            this.onlinePlayersGroup.add(element)
-          } else {
-            //! if the avatar already existed; get the player from the onlinePlayers array !
-
-            //this.attachtAvatarToOnlinePlayer(element)
           }
+          console.log("give the online player a placeholder avatar first")
+          //give the online player a placeholder avatar first
+          element = this.add.sprite(element.posX, element.posY, this.playerAvatarPlaceholder)
+            .setDepth(90)
+
+          element.setData("movingKey", "moving");
+          element.setData("stopKey", "stop");
+
+          //create animation for moving
+          this.anims.create({
+            key: element.getData("movingKey"),
+            frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
+            frameRate: 20,
+            repeat: -1,
+          });
+
+          //create animation for stop
+          this.anims.create({
+            key: element.getData("stopKey"),
+            frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
+          });
+
+          Object.assign(element, elementCopy); //add all data from elementCopy to element; like prev Position, Location, UserID
+          element.x = element.posX
+          element.y = element.posY
+
+          // add new player to group
+          this.onlinePlayersGroup.add(element)
+          //} else {
+          //! if the avatar already existed; get the player from the onlinePlayers array !
+
+          this.attachtAvatarToOnlinePlayer(element)
+          //}
         })
 
         //update this.onlinePlayers, hidden or visible
@@ -1530,6 +1540,7 @@ export default class Location1Scene extends Phaser.Scene {
           } //for (let i = 0; i < this.onlinePlayers.length; i++)
         }) //this.load.on('filecomplete', () =>
 
+
         console.log("manageSession.allConnectedUsers")
         console.log(manageSession.allConnectedUsers)
 
@@ -1554,7 +1565,7 @@ export default class Location1Scene extends Phaser.Scene {
     }//if (manageSession.createdPlayer) 
   } //createRemotePlayer
 
-  attachtAvatarToOnlinePlayer(player) {
+  attachtAvatarToOnlinePlayer(player, preExisting) {
     this.tempAvatarName = player.user_id + "_" + player.avatar_time;
     //this.onlinePlayers[i] = this.add.image(this.onlinePlayers[i].posX, this.onlinePlayers[i].posY, this.tempAvatarName)
 
@@ -1573,8 +1584,12 @@ export default class Location1Scene extends Phaser.Scene {
 
     console.log("avatar key: ")
     console.log(this.tempAvatarName)
+    if (!preExisting) {
+      player.setTexture(this.tempAvatarName)
+    } else {
 
-    player.setTexture(this.tempAvatarName)
+    }
+
 
     player.active = true
     player.visible = true

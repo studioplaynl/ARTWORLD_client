@@ -41,7 +41,8 @@ class manageSession {
 
     this.gameStarted = false;
 
-    this.location = "location1"
+    this.location = "location1" //default
+    this.launchLocation = "location1_Scene" //default
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";
@@ -62,17 +63,19 @@ class manageSession {
     console.log("socket created with client");
 
     const createStatus = true;
-    
+
     await this.socket.connect(this.sessionStored, createStatus);
     console.log("session created with socket");
 
+    console.log("Join:")
+    console.log(this.location)
     await this.getStreamUsers("join", this.location)
 
     //stream
     this.socket.onstreamdata = (streamdata) => {
       //console.info("Received stream data:", streamdata);
       let data = JSON.parse(streamdata.data);
-
+      //console.log(data)
       //update the position data of this.allConnectedUsers array
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
@@ -192,6 +195,7 @@ class manageSession {
   async leave(selected) {
     await socket.rpc("leave", selected)
   }
+
   testMoveMessage() { //works
     var opCode = 1;
     var data =
@@ -212,16 +216,13 @@ class manageSession {
   sendMoveMessage(posX, posY) {
     var opCode = 1;
     var data =
-      '{ "posX": ' +
-      posX +
-      ', "posY": ' +
-      posY +
-      ', "location": "home" }';
+      '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }';
+     // console.log(data)
 
     this.socket.rpc("move_position", data)
-    // .then((rec) => {
-    //   //console.log(posX)
-    // });
+      // .then((rec) => {
+      //   console.log(rec)
+      // });
   } //end sendChatMessage
 
   async chatExample() {
