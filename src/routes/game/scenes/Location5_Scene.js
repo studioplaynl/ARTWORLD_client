@@ -1,4 +1,4 @@
-import CONFIG from "../config.js";
+import { CONFIG } from "../config.js";
 import manageSession from "../manageSession";
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount } from '../../../api.js';

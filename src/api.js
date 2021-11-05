@@ -1,5 +1,6 @@
 import { client } from "./nakama.svelte"
 import { Session,Profile, Error } from "./session.js"
+
 let Sess, pub;
 export let url;
 export let user; 
@@ -85,7 +86,7 @@ export async function getAccount(id, avatar) {
   if(!!!id){
     const account = await client.getAccount(Sess);
     let user = account.user;
-    if(!!!avatar) user.url = await getAvatar(user.avatar_url)
+    if(!!!avatar) user.url = await getAvatar(user.avatar_url) //!we need to get avatar.url even when there is an avatar
     user.meta = JSON.parse(user.metadata)
     console.log(user)
     Profile.set(user)

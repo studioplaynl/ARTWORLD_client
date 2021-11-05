@@ -60,19 +60,13 @@ export default class MainMenu extends Phaser.Scene {
     // this.camUI.zoom = 1;
 
     //...... SESSION .............................................................................................
-    //console.log("Session: ");
 
+    //! session needed for websocket later! needed is the token
+    //! we get the session in session.js
+    //console.log(manageSession.sessionStored)
 
+    // manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
 
-    //console.log(bootAccount)
-
-    manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
-    // console.log(manageSession.sessionStored.user_id);
-    // console.log(manageSession.sessionStored.username);
-    // console.log(manageSession.sessionStored);
-
-    // manageSession.user_id = manageSession.sessionStored.user_id
-    // manageSession.username = manageSession.sessionStored.username
     //.............................................................................................................
 
     //...... PARTICLES .............................................................................................
@@ -156,20 +150,23 @@ export default class MainMenu extends Phaser.Scene {
     // this.camMain.ignore([this.zoom, this.zoomIn, this.zoomOut]);
     // this.camUI.ignore([this.playBtn, this.bg])
 
-    let bootAccount = getAccount("", true)
-      .then(rec => {
-        manageSession.freshSession = rec
-        console.log("manageSession.freshSession")
-        console.log(manageSession.freshSession)
-        console.log(manageSession.freshSession.meta.location)
+    //* check if the user profile is loaded, to be able to send the player to the right location
+    if (typeof (manageSession.userProfile.meta.location) != "undefined") {
+      manageSession.location = manageSession.userProfile.meta.location
+      this.playBtn.setVisible(true)
+    } else {
 
-        //! only set the menu button visible if the user data is downloaded!
-        manageSession.location = manageSession.freshSession.meta.location
-        this.playBtn.setVisible(true)
+      getAccount("", true)
+        .then(rec => {
+          manageSession.freshSession = rec
 
-        //manageSession.createSocket()
+          //! only set the menu button visible if the user data is downloaded!
+          manageSession.location = manageSession.freshSession.meta.location
+          this.playBtn.setVisible(true)
+          //manageSession.createSocket()
+        })
+    }
 
-      })
 
 
 

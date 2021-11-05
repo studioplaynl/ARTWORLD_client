@@ -1,4 +1,4 @@
-import CONFIG from "../config.js";
+import { CONFIG } from "../config.js";
 import manageSession from "../manageSession";
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount } from '../../../api.js';
@@ -158,7 +158,7 @@ export default class Location1Scene extends Phaser.Scene {
     //manageSession.getStreamUsers("join, "location1")
 
     manageSession.createPlayer = true
-    manageSession.createSocket()
+    await manageSession.createSocket()
 
     // console.log("check if session is still valide")
     // checkLogin(manageSession.sessionStored)
@@ -166,15 +166,14 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   async create() {
-    
+
     //timers
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
 
     //.......  SOCKET ..........................................................................
-    this.playerIdText = manageSession.sessionStored.user_id;
+    this.playerIdText = manageSession.userProfile.id;
 
-    manageSession.playerObjectSelf = JSON.parse(localStorage.getItem("profile"));
     // console.log("manageSession.playerObjectSelf")
     // console.log(manageSession.playerObjectSelf)
     manageSession.createPlayer = true
@@ -1074,7 +1073,7 @@ export default class Location1Scene extends Phaser.Scene {
 
   loadAndCreatePlayerAvatar() {
     //check if account info is loaded
-    if (manageSession.sessionStored.user_id != null) {
+    if (manageSession.userProfile.id != null) {
       //check for createPlayer flag
       if (manageSession.createPlayer) {
         manageSession.createPlayer = false;
@@ -1090,15 +1089,17 @@ export default class Location1Scene extends Phaser.Scene {
         //no -> load the avatar and add to loadedAvatars
         //yes -> dont load the avatar
 
-        this.playerAvatarKey = manageSession.playerObjectSelf.id + "_" + manageSession.playerObjectSelf.create_time
+        this.playerAvatarKey = manageSession.userProfile.id + "_" + manageSession.userProfile.create_time
         // console.log(this.playerAvatarKey)
         // console.log("this.textures.exists(this.playerAvatarKey): ")
         // console.log(this.textures.exists(this.playerAvatarKey))
 
+        console.log(this.textures.exists(this.playerAvatarKey))
+
         //if the texture already exists attach it again to the player
         if (!this.textures.exists(this.playerAvatarKey)) {
           //check if url is not empty for some reason, returns so that previous image is kept
-          if (manageSession.playerObjectSelf.url === "") {
+          if (manageSession.userProfile.url === "") {
             console.log("avatar url is empty")
             manageSession.createPlayer = false;
             console.log("manageSession.createPlayer = false;")
@@ -1106,16 +1107,17 @@ export default class Location1Scene extends Phaser.Scene {
             console.log("this.createdPlayer = true;")
             return
           } else {
-            // console.log(" loading: manageSession.playerObjectSelf.url: ")
-            // console.log(manageSession.playerObjectSelf.url)
+            // console.log(" loading: manageSession.userProfile.url: ")
+            // console.log(manageSession.userProfile.url)
 
             this.load.spritesheet(
               this.playerAvatarKey,
-              manageSession.playerObjectSelf.url, { frameWidth: 128, frameHeight: 128 }
+              manageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 }
             );
 
             this.load.once(Phaser.Loader.Events.COMPLETE, () => {
               console.log("loadAndCreatePlayerAvatar complete")
+              console.log(manageSession.userProfile.url)
               if (this.textures.exists(this.playerAvatarKey)) {
 
                 this.attachtAvatarToPlayer()
@@ -1331,8 +1333,8 @@ export default class Location1Scene extends Phaser.Scene {
 
       console.log('F key');
 
-      console.log("manageSession.playerObjectSelf: ")
-      console.log(manageSession.playerObjectSelf)
+      console.log("manageSession.userProfile: ")
+      console.log(manageSession.userProfile)
 
       console.log("this.createOnlinePlayers: ")
       console.log(manageSession.createOnlinePlayers)
