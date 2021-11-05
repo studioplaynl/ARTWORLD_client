@@ -1,4 +1,3 @@
-import { isConstructorDeclaration } from "typescript";
 import { client, SSL } from "../../nakama.svelte";
 //import { Profile, logout } from "../../session.js";
 // import { user, url, getAccount } from '../../api.js';

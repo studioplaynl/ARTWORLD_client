@@ -1,4 +1,4 @@
-import { CONFIG, SCENES } from "../config.js"
+import { SCENES } from "../config.js"
 import manageSession from "../manageSession.js";
 import { getAccount } from '../../../api.js';
 
