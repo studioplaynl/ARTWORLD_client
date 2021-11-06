@@ -176,7 +176,8 @@ export default class MainMenu extends Phaser.Scene {
     if (!locationExists) {
       //set to fail-back scene
       manageSession.location = "location1"
-      console.log(manageSession.location)
+      manageSession.launchLocation = manageSession.location + "_Scene"
+      console.log(manageSession.launchLocation)
     } else {
       manageSession.location = manageSession.userProfile.meta.location
       console.log(manageSession.location)
