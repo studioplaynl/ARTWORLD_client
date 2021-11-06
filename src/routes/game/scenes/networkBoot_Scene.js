@@ -13,6 +13,7 @@ export default class networkBoot_Scene extends Phaser.Scene {
     
     await manageSession.createSocket()
       .then(rec => {
+        console.log(manageSession.launchLocation)
         this.scene.launch(manageSession.launchLocation)
       })
   }
