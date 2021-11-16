@@ -8,13 +8,17 @@ export default class location7_Scene extends Scene3D {
 
   objects;
 
+  message;
+
   box;
   cone;
   cylinder;
   sphere;
 
-  message;
-  messageFlag;
+  width;
+  height;
+
+  chosenScene;
 
   constructor() {
     super("location7_Scene");
@@ -72,7 +76,7 @@ export default class location7_Scene extends Scene3D {
         depth: 300,
         height: 1,
         mass: 0,
-        y: -1,
+        y: 0,
       },
       {
         phong: { color: "white" },
@@ -88,7 +92,7 @@ export default class location7_Scene extends Scene3D {
     this.avatar = new THREE.Mesh(geometry, material);
     this.avatar.material.side = THREE.DoubleSide;
     this.avatar.castShadow = true;
-    this.avatar.position.set(0, 1, 0);
+    this.avatar.position.set(0, 1.1, 0);
     this.avatar.rotation.x = Math.PI / 2;
 
     this.third.add.existing(this.avatar);
@@ -98,16 +102,16 @@ export default class location7_Scene extends Scene3D {
 
     this.avatar.body.on.collision((building, event) => {
       if (building.name === "location1") {
-        this.showMessage(building.name);
+        this.displayLocationEntrance(building.name, event);
       }
       if (building.name === "location2") {
-        this.showMessage(building.name);
+        this.displayLocationEntrance(building.name, event);
       }
       if (building.name === "location3") {
-        this.showMessage(building.name);
+        this.displayLocationEntrance(building.name, event);
       }
       if (building.name === "location4") {
-        this.showMessage(building.name);
+        this.displayLocationEntrance(building.name, event);
       }
     });
 
@@ -121,93 +125,63 @@ export default class location7_Scene extends Scene3D {
       this.third.physics.add.box({
         name: "location1",
         x: -30,
-        y: 0,
+        y: 1,
         z: -30,
-        width: 8,
+        width: 16,
         height: 5,
-        depth: 8,
+        depth: 16,
       }),
       this.third.physics.add.cone({
         name: "location2",
         x: 30,
         y: 1,
         z: -30,
-        radius: 2,
+        radius: 10,
       }),
       this.third.physics.add.cylinder({
         name: "location3",
         x: -30,
-        y: 2,
+        y: 1,
         z: 30,
-        radiusTop: 2.5,
-        radiusBottom: 2.5,
+        radiusTop: 6,
+        radiusBottom: 6,
         height: 2,
       }),
       this.third.physics.add.sphere({
         name: "location4",
         x: 30,
-        y: 2,
+        y: 1,
         z: 30,
-        radius: 2,
+        radius: 6,
       }),
-      this.third.physics.add.box(
-        {
-          x: -30,
-          y: 1,
-          z: -30,
-          width: 16,
-          height: 10,
-          depth: 16,
-        },
-        { lambert: { color: "darkblue" } }
-      ),
-      this.third.physics.add.sphere(
-        { x: 30, y: 1, z: 30, radius: 10 },
-        { lambert: { color: "green" } }
-      ),
-      this.third.physics.add.cylinder(
-        {
-          x: -30,
-          y: 1,
-          z: 30,
-          radiusTop: 8,
-          radiusBottom: 8,
-          height: 5,
-        },
-        { lambert: { color: "red" } }
-      ),
-      this.third.physics.add.cone(
-        { x: 30, y: 2, z: -30, radius: 10 },
-        { lambert: { color: "gray" } }
-      ),
     ];
 
     this.objects.forEach((object) => {
-      object.body.setCollisionFlags(4);
+      object.body.setCollisionFlags(1);
     });
 
     // zoom buttons
-    let width = this.sys.game.canvas.width;
-    let height = this.sys.game.canvas.height - 60;
+    this.width = this.sys.game.canvas.width;
+    this.height = this.sys.game.canvas.height;
 
     this.zoom = this.add
-      .image(width / 10 + 40, height / 50, "ui_magnifier")
+      .image(this.width / 10 + 40, this.height / 50 - 60, "ui_magnifier")
       .setOrigin(0)
       .setDepth(1000)
-      .setScale(width / width / 8);
+      .setScale(this.width / this.width / 8);
 
     this.zoomIn = this.add
-      .image(width / 10 + 120, height / 40, "ui_magnifier_plus")
+      .image(this.width / 10 + 120, this.height / 40 - 60, "ui_magnifier_plus")
       .setOrigin(0)
       .setDepth(1000)
-      .setScale(width / width / 6)
+      .setScale(this.width / this.width / 6)
       .setInteractive({ useHandCursor: true });
 
     this.zoomOut = this.add
-      .image(width / 10, height / 40, "ui_magnifier_minus")
+      .image(this.width / 10, this.height / 40 - 60, "ui_magnifier_minus")
       .setOrigin(0)
       .setDepth(1000)
-      .setScale(width / width / 6)
+      .setScale(this.width / this.width / 6)
       .setInteractive({ useHandCursor: true });
 
     this.zoomIn.on("pointerup", () => {
@@ -225,6 +199,23 @@ export default class location7_Scene extends Scene3D {
       down: this.input.keyboard.addKey("s"),
       right: this.input.keyboard.addKey("d"),
     };
+
+    this.message = this.add
+      .text(this.width / 2, this.height / 2, ``, {
+        fontFamily: "Arial",
+        fontSize: "22px",
+      })
+      .setOrigin(1)
+      .setShadow(1, 1, "#000", 1)
+      .setDepth(1000)
+      .setInteractive()
+      .setVisible(false);
+
+    this.message.on("pointerup", () => {
+      console.log("stopped");
+      this.scene.stop();
+      this.scene.start(`${this.chosenScene}_Scene`);
+    });
   }
 
   async addGroundPicture(image, x, z) {
@@ -234,53 +225,31 @@ export default class location7_Scene extends Scene3D {
       map: picture,
     });
     const settings = new THREE.Mesh(coords, source);
-
-    // other objects can't move this object
-    settings.geometry.attributes.position.dynamic = true;
-
     settings.material.side = THREE.DoubleSide;
     settings.receiveShadow = true;
-    settings.position.set(x, 0, z);
+    settings.position.set(x, 1, z);
     settings.rotation.x = Math.PI / 2;
     this.third.add.existing(settings);
-    this.third.physics.add.existing(settings);
+    this.third.physics.add.existing(settings, {
+      collisionFlags: 1,
+    });
   }
 
-  showMessage(sceneName) {
-    let width = this.sys.game.canvas.width;
-    let height = this.sys.game.canvas.height;
-    this.messageFlag = sceneName;
-
-    this.message = this.add
-      .text(width / 2, height / 2, `Go to ${sceneName}`, {
-        fontFamily: "Arial",
-        fontSize: "22px",
-      })
-      .setOrigin(1)
-      .setShadow(1, 1, "#000", 1)
-      .setDepth(1000)
-      .setInteractive()
-      .setVisible(true);
-
-    // go to the respective scene on click
-    this.message.on("pointerup", () => {
-      console.log(`has gone to ${sceneName}`);
-      this.scene.stop();
-      this.scene.start(`${sceneName}_Scene`);
-    });
+  displayLocationEntrance(sceneName, event) {
+    this.chosenScene = sceneName;
+    // while being inside of the building, show the entrance message
+    if (event === "start" || event === "collision") {
+      this.message.setText(`Go to ${sceneName}`).setVisible(true);
+      // go to the respective scene on click
+    }
+    // once outside of the building, hide the message
+    if (event === "end") {
+      this.message.setVisible(false);
+    }
   }
 
   update() {
     if (this.avatar && this.avatar.body) {
-      // if (
-      //   this.messageFlag == "location1" ||
-      //   this.messageFlag == "location2" ||
-      //   this.messageFlag == "location3" ||
-      //   this.messageFlag == "location4"
-      // ) {
-      //   this.message.setVisible(false);
-      // }
-
       const speed = 15;
       // stop any further movement;
       this.avatar.body.setVelocityX(0);
