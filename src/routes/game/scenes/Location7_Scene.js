@@ -225,17 +225,6 @@ export default class location7_Scene extends Scene3D {
       down: this.input.keyboard.addKey("s"),
       right: this.input.keyboard.addKey("d"),
     };
-
-    this.message = this.add
-      .text(width / 2, height / 2, "", {
-        fontFamily: "Arial",
-        fontSize: "22px",
-      })
-      .setOrigin(1)
-      .setShadow(1, 1, "#000", 1)
-      .setDepth(1000)
-      .setInteractive()
-      .setVisible(false);
   }
 
   async addGroundPicture(image, x, z) {
@@ -258,26 +247,39 @@ export default class location7_Scene extends Scene3D {
   }
 
   showMessage(sceneName) {
+    let width = this.sys.game.canvas.width;
+    let height = this.sys.game.canvas.height;
     this.messageFlag = sceneName;
-    this.message.setText(`Go to ${sceneName}`).setVisible(true);
+
+    this.message = this.add
+      .text(width / 2, height / 2, `Go to ${sceneName}`, {
+        fontFamily: "Arial",
+        fontSize: "22px",
+      })
+      .setOrigin(1)
+      .setShadow(1, 1, "#000", 1)
+      .setDepth(1000)
+      .setInteractive()
+      .setVisible(true);
+
     // go to the respective scene on click
     this.message.on("pointerup", () => {
       console.log(`has gone to ${sceneName}`);
-      // this.scene.stop();
-      // this.scene.start(`${sceneName}_Scene`);
+      this.scene.stop();
+      this.scene.start(`${sceneName}_Scene`);
     });
   }
 
   update() {
     if (this.avatar && this.avatar.body) {
-      if (
-        this.messageFlag == "location1" ||
-        this.messageFlag == "location2" ||
-        this.messageFlag == "location3" ||
-        this.messageFlag == "location4"
-      ) {
-        this.message.setVisible(false);
-      }
+      // if (
+      //   this.messageFlag == "location1" ||
+      //   this.messageFlag == "location2" ||
+      //   this.messageFlag == "location3" ||
+      //   this.messageFlag == "location4"
+      // ) {
+      //   this.message.setVisible(false);
+      // }
 
       const speed = 15;
       // stop any further movement;

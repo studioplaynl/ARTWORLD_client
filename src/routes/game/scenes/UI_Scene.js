@@ -1,4 +1,3 @@
-import CONFIG from "../config.js";
 import i18next from "i18next";
 import { locale } from "svelte-i18n";
 
@@ -11,17 +10,17 @@ i18next.init({
   lng: "nl",
   resources: {
     en: {
-      translation: en
+      translation: en,
     },
     nl: {
-      translation: nl
+      translation: nl,
     },
     ru: {
-      translation: ru
+      translation: ru,
     },
     ar: {
-      translation: ar
-    }
+      translation: ar,
+    },
   },
 });
 
@@ -36,7 +35,7 @@ export default class UI_Scene extends Phaser.Scene {
     this.location = "test";
   }
 
-  preload() { }
+  preload() {}
 
   async create() {
     let countDisplay = 0;
@@ -79,25 +78,25 @@ export default class UI_Scene extends Phaser.Scene {
         .setDepth(1000);
 
       //zoom buttons
-      this.zoom = this.add.image(width / 10 + 40, height / 50, "ui_eye")
+      this.zoom = this.add
+        .image(width / 10 + 40, height / 50, "ui_eye")
         .setOrigin(0)
         .setDepth(1000)
-        .setScale((width / (width / this.camUI.zoom)) / 8)
+        .setScale(width / (width / this.camUI.zoom) / 8);
 
       this.zoomIn = this.add
         .image(width / 10 + 120, height / 40, "ui_magnifier_plus")
         .setOrigin(0)
         .setDepth(1000)
-        .setScale((width / (width / this.camUI.zoom)) / 6)
-        .setInteractive({ useHandCursor: true })
+        .setScale(width / (width / this.camUI.zoom) / 6)
+        .setInteractive({ useHandCursor: true });
 
       this.zoomOut = this.add
         .image(width / 10, height / 40, "ui_magnifier_minus")
         .setOrigin(0)
         .setDepth(1000)
-        .setScale((width / (width / this.camUI.zoom)) / 6)
-        .setInteractive({ useHandCursor: true })
-
+        .setScale(width / (width / this.camUI.zoom) / 6)
+        .setInteractive({ useHandCursor: true });
 
       this.zoomIn.on("pointerup", () => {
         this.currentZoom += 0.2;
@@ -113,7 +112,6 @@ export default class UI_Scene extends Phaser.Scene {
         console.log(this.currentZoom);
       });
     } else {
-
       this.zoomIn
         .setPosition(
           width / 10 / this.camUI.zoom,
@@ -136,5 +134,5 @@ export default class UI_Scene extends Phaser.Scene {
     //this.camUI.resize(width, height);
   }
 
-  update(time, delta) { }
+  update(time, delta) {}
 }
