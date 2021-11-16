@@ -6,9 +6,9 @@ export default class location7_Scene extends Scene3D {
   keys;
   zooming;
 
-  objects;
+  buildings;
 
-  message;
+  entranceMessage;
 
   box;
   cone;
@@ -47,10 +47,13 @@ export default class location7_Scene extends Scene3D {
       "doodle",
       "./assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg"
     );
+    this.third.load.preload(
+      "repetition",
+      "./assets/art_styles/repetition/b17b86ac876ea7bed716fb3d0465b2f2.jpg"
+    );
   }
 
   async create() {
-    // this.third.physics.debug.enable();
     this.scene.stop("UI_Scene");
 
     // this disables 3d ground, blue sky and ability to move around the 3d world with mouse
@@ -61,10 +64,11 @@ export default class location7_Scene extends Scene3D {
     );
 
     this.zooming = 90;
-    // we want the camera to view from top
+    // view from top
     this.third.camera.position.set(0, this.zooming, 0);
     this.third.camera.lookAt(0, 0, 0);
 
+    // the main platform
     this.third.load
       .texture("ground")
       .then((ground) => (this.third.scene.background = ground));
@@ -85,7 +89,7 @@ export default class location7_Scene extends Scene3D {
 
     // adding avatar to the world
     this.avatarImage = await this.third.load.texture("avatar");
-    const geometry = new THREE.PlaneGeometry(15, 15, 1, 1);
+    const geometry = new THREE.PlaneGeometry(10, 10, 1, 1);
     const material = new THREE.MeshLambertMaterial({
       map: this.avatarImage,
     });
@@ -94,34 +98,20 @@ export default class location7_Scene extends Scene3D {
     this.avatar.castShadow = true;
     this.avatar.position.set(0, 1.1, 0);
     this.avatar.rotation.x = Math.PI / 2;
-
     this.third.add.existing(this.avatar);
     this.third.physics.add.existing(this.avatar, {
       collisionFlags: 4,
     });
 
-    this.avatar.body.on.collision((building, event) => {
-      if (building.name === "location1") {
-        this.displayLocationEntrance(building.name, event);
-      }
-      if (building.name === "location2") {
-        this.displayLocationEntrance(building.name, event);
-      }
-      if (building.name === "location3") {
-        this.displayLocationEntrance(building.name, event);
-      }
-      if (building.name === "location4") {
-        this.displayLocationEntrance(building.name, event);
-      }
-    });
-
+    // adding ground images
     this.addGroundPicture("vertical", 30, 30);
     this.addGroundPicture("cubeDots", -30, 30);
     this.addGroundPicture("egg", 30, -30);
     this.addGroundPicture("doodle", -30, -30);
+    this.addGroundPicture("repetition", 90, -30);
 
-    // inner objects
-    this.objects = [
+    // adding 3d objects as buildings
+    this.buildings = [
       this.third.physics.add.box({
         name: "location1",
         x: -30,
@@ -154,9 +144,19 @@ export default class location7_Scene extends Scene3D {
         z: 30,
         radius: 6,
       }),
+      this.third.physics.add.box({
+        name: "location5",
+        x: 90,
+        y: 1,
+        z: -30,
+        width: 16,
+        height: 5,
+        depth: 16,
+      }),
     ];
 
-    this.objects.forEach((object) => {
+    // making buildings static
+    this.buildings.forEach((object) => {
       object.body.setCollisionFlags(1);
     });
 
@@ -165,20 +165,24 @@ export default class location7_Scene extends Scene3D {
     this.height = this.sys.game.canvas.height;
 
     this.zoom = this.add
-      .image(this.width / 10 + 40, this.height / 50 - 60, "ui_magnifier")
+      .image(this.width / 10 + 40, (this.height - 60) / 50, "ui_eye")
       .setOrigin(0)
       .setDepth(1000)
       .setScale(this.width / this.width / 8);
 
     this.zoomIn = this.add
-      .image(this.width / 10 + 120, this.height / 40 - 60, "ui_magnifier_plus")
+      .image(
+        this.width / 10 + 120,
+        (this.height - 60) / 40,
+        "ui_magnifier_plus"
+      )
       .setOrigin(0)
       .setDepth(1000)
       .setScale(this.width / this.width / 6)
       .setInteractive({ useHandCursor: true });
 
     this.zoomOut = this.add
-      .image(this.width / 10, this.height / 40 - 60, "ui_magnifier_minus")
+      .image(this.width / 10, (this.height - 60) / 40, "ui_magnifier_minus")
       .setOrigin(0)
       .setDepth(1000)
       .setScale(this.width / this.width / 6)
@@ -200,7 +204,27 @@ export default class location7_Scene extends Scene3D {
       right: this.input.keyboard.addKey("d"),
     };
 
-    this.message = this.add
+    // detecting collision of the avatar with buildings and displaying a respective message
+    this.avatar.body.on.collision((building, event) => {
+      if (building.name === "location1") {
+        this.displayLocationEntrance(building.name, event);
+      }
+      if (building.name === "location2") {
+        this.displayLocationEntrance(building.name, event);
+      }
+      if (building.name === "location3") {
+        this.displayLocationEntrance(building.name, event);
+      }
+      if (building.name === "location4") {
+        this.displayLocationEntrance(building.name, event);
+      }
+      if (building.name === "location5") {
+        this.displayLocationEntrance(building.name, event);
+      }
+    });
+
+    // entrance message's visibility by default is set to false
+    this.entranceMessage = this.add
       .text(this.width / 2, this.height / 2, ``, {
         fontFamily: "Arial",
         fontSize: "22px",
@@ -211,8 +235,8 @@ export default class location7_Scene extends Scene3D {
       .setInteractive()
       .setVisible(false);
 
-    this.message.on("pointerup", () => {
-      console.log("stopped");
+    // switch to the respective location on click
+    this.entranceMessage.on("pointerup", () => {
       this.scene.stop();
       this.scene.start(`${this.chosenScene}_Scene`);
     });
@@ -239,12 +263,12 @@ export default class location7_Scene extends Scene3D {
     this.chosenScene = sceneName;
     // while being inside of the building, show the entrance message
     if (event === "start" || event === "collision") {
-      this.message.setText(`Go to ${sceneName}`).setVisible(true);
+      this.entranceMessage.setText(`Go to ${sceneName}`).setVisible(true);
       // go to the respective scene on click
     }
     // once outside of the building, hide the message
     if (event === "end") {
-      this.message.setVisible(false);
+      this.entranceMessage.setVisible(false);
     }
   }
 
