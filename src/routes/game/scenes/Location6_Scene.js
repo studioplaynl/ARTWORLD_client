@@ -31,6 +31,8 @@ export default class Location6Scene extends Phaser.Scene {
   currentLanguage;
   mainText;
 
+  back;
+
   constructor() {
     super("location6_Scene");
   }
@@ -59,6 +61,25 @@ export default class Location6Scene extends Phaser.Scene {
         fontSize: "22px",
       })
       .setShadow(1, 1, "#000000", 0);
+
+    // back button to location1
+    const width = this.sys.game.canvas.width;
+    const height = this.sys.game.canvas.height - 60;
+    
+    this.back = this.add
+      .text(width / 10 - 120, height / 10, `${i18next.t("back")}`, {
+        fontFamily: "Arial",
+        fontSize: "22px",
+      })
+      .setOrigin(0)
+      .setShadow(1, 1, "#000000", 1)
+      .setDepth(1000)
+      .setInteractive()
+      .setScrollFactor(1, 0);
+
+    this.back.on("pointerup", () => {
+      this.scene.start("location1_Scene");
+    });
   }
 
   update() {}

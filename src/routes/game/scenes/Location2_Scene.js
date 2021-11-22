@@ -19,8 +19,8 @@ export default class Location2Scene extends Scene3D {
   async create() {
     this.scene.stop("UI_Scene");
 
-    let width = this.sys.game.canvas.width;
-    let height = this.sys.game.canvas.height - 60;
+    const width = this.sys.game.canvas.width;
+    const height = this.sys.game.canvas.height - 60;
 
     let countDisplay = 0;
     locale.subscribe((value) => {

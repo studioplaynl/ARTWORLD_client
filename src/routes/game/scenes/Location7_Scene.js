@@ -1,4 +1,8 @@
 import { Scene3D, THREE } from "@enable3d/phaser-extension";
+import i18next from "i18next";
+import { locale } from "svelte-i18n";
+
+let latestValue = null;
 export default class location7_Scene extends Scene3D {
   platform;
   avatar;
@@ -10,15 +14,12 @@ export default class location7_Scene extends Scene3D {
 
   entranceMessage;
 
-  box;
-  cone;
-  cylinder;
-  sphere;
-
   width;
   height;
 
   chosenScene;
+
+  back;
 
   constructor() {
     super("location7_Scene");
@@ -239,6 +240,37 @@ export default class location7_Scene extends Scene3D {
     this.entranceMessage.on("pointerup", () => {
       this.scene.stop();
       this.scene.start(`${this.chosenScene}_Scene`);
+    });
+
+    // detecting the change of language
+    let countDisplay = 0;
+    locale.subscribe((value) => {
+      if (countDisplay === 0) {
+        countDisplay++;
+        return;
+      }
+      if (countDisplay > 0) {
+        i18next.changeLanguage(value);
+      }
+      if (latestValue !== value) {
+        this.scene.restart();
+      }
+      latestValue = value;
+    });
+
+    // back button to go to location1
+    this.back = this.add
+      .text(this.width / 10 - 120, this.height / 10, `${i18next.t("back")}`, {
+        fontFamily: "Arial",
+        fontSize: "22px",
+      })
+      .setOrigin(0)
+      .setShadow(1, 1, "#000000", 1)
+      .setDepth(1000)
+      .setInteractive();
+
+    this.back.on("pointerup", () => {
+      this.scene.switch("location1_Scene");
     });
   }
 
