@@ -3,7 +3,7 @@ import i18next from "i18next";
 import { locale } from "svelte-i18n";
 
 let latestValue = null;
-export default class location7_Scene extends Scene3D {
+export default class Location7Scene extends Scene3D {
   platform;
   avatar;
   avatarImage;
