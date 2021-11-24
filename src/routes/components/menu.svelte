@@ -44,22 +44,19 @@
         <div class="hamburger"></div>
     </div>
     {#if MenuToggle}
-    <div class="nav" on:click={()=> {MenuToggle = false}}>
-        <ul class="menu">
+    <div class="nav" >
+        <ul class="menu" on:click={()=> {MenuToggle = false}}>
         <li><a href="/#/">{$_('nav.game')}</a></li>
         <li><a href="/#/friends">{$_('nav.friends')}</a></li>
         <li><a href="/#/match">{$_('nav.match')}</a></li>
         <li><a href="/#/drawing">{$_('nav.drawing')}</a></li>
         <li><a href="/#/stopmotion">{$_('nav.stopmotion')}</a></li>
         </ul>
+        <div class="userInfo" on:click={()=> {MenuToggle = false}}>
         {#if !!$Profile && $Profile.meta.role == "admin"}
-          <div on:click={DropdownMenu} class="dropdown">
             <a>{$_('role.admin')}</a>
-            <div id="DropdownMenu" class="dropdown-content">
               <a href="/#/register">{$_('nav.admin.createUser')}</a>
               <a href="/#/group">{$_('nav.admin.createGroup')}</a>
-            </div>
-          </div>
         {/if}
         {#if $Session == null}
           <a href="/#/login">{$_('nav.login')}</a>
@@ -67,7 +64,8 @@
           <a href="/#/profile">{$Session.username}</a>
           <a on:click={logout} href="/">{$_('nav.logout')}</a>
         {/if}
-        <select bind:value={$locale}>
+        </div>
+        <select bind:value={$locale} on:click=""> 
           {#each $locales as locale}
             <option value={locale}>{locale}</option>
           {/each}
