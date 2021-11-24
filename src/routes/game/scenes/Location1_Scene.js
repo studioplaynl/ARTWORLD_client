@@ -49,7 +49,6 @@ export default class Location1Scene extends Phaser.Scene {
     this.arrowDown = false;
     this.swipeDirection = "down"
     this.swipeAmount = new Phaser.Math.Vector2(0, 0)
-    this.graffitiDrawing = false
 
     //pointer location example
     // this.source // = player
@@ -618,15 +617,14 @@ export default class Location1Scene extends Phaser.Scene {
     var hsv = Phaser.Display.Color.HSVColorWheel();
 
     var i = 0;
-
-    this.input.keyboard.on('keydown_SPACE', function () {
+    
+    this.input.keyboard.on('keydown-' + 'SPACE', function () {
 
       rt.clear();
 
     });
 
     rt.on('pointerdown', function (pointer) {
-      this.graffitiDrawing = true
       this.isClicking = true
       this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
 
@@ -635,20 +633,12 @@ export default class Location1Scene extends Phaser.Scene {
     rt.on('pointermove', function (pointer) {
 
       if (pointer.isDown) {
-        this.graffitiDrawing = true
         this.isClicking = true
         this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
         i = Phaser.Math.Wrap(i + 1, 0, 360);
       }
-      if (pointer.isUp) {
-        this.graffitiDrawing = false
-      }
     })
 
-    rt.on('pointerup', function (pointer) {
-      this.graffitiDrawing = false
-      console.log(this.graffitiDrawing)
-    })
 
     // graffitiWallContainer.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
 
@@ -689,44 +679,44 @@ export default class Location1Scene extends Phaser.Scene {
 
     // }, this);
 
-    const graffitiWall2X = 600
-    const graffitiWall2Y = 1200
-    //size
-    const graffitiWall2Width = 600
-    const graffitiWall2Height = 1200
+    // const graffitiWall2X = 600
+    // const graffitiWall2Y = 1200
+    // //size
+    // const graffitiWall2Width = 600
+    // const graffitiWall2Height = 1200
 
-    // var graffitiWallContainer = this.add.container(); 
-    let rt2 = this.add.renderTexture(graffitiWall2X, graffitiWall2Y, graffitiWall2Width, graffitiWall2Height).setInteractive().setDepth(1001);
-    //let graffitiWall2 = this.add.image(graffitiWall2X, graffitiWall2Y, 'brickWall').setOrigin(0).setDepth(1000)
+    // // var graffitiWallContainer = this.add.container(); 
+    // let rt2 = this.add.renderTexture(graffitiWall2X, graffitiWall2Y, graffitiWall2Width, graffitiWall2Height).setInteractive().setDepth(1001);
+    // //let graffitiWall2 = this.add.image(graffitiWall2X, graffitiWall2Y, 'brickWall').setOrigin(0).setDepth(1000)
 
-    // graffitiWall2.displayWidth = graffitiWall2Width
-    // graffitiWall2.displayHeight = graffitiWall2Height
+    // // graffitiWall2.displayWidth = graffitiWall2Width
+    // // graffitiWall2.displayHeight = graffitiWall2Height
 
-    rt2.on('pointerdown', function (pointer) {
-      this.graffitiDrawing = true
-      this.isClicking = true
-      console.log(this.graffitiDrawing)
-      this.draw('brush', pointer.worldX - graffitiWall2X - 4, pointer.worldY - graffitiWall2Y - 4, 1, 0x000000);
+    // rt2.on('pointerdown', function (pointer) {
+    //   this.graffitiDrawing = true
+    //   this.isClicking = true
+    //   console.log(this.graffitiDrawing)
+    //   this.draw('brush', pointer.worldX - graffitiWall2X - 4, pointer.worldY - graffitiWall2Y - 4, 1, 0x000000);
 
-    });
+    // });
 
-    rt2.on('pointermove', function (pointer) {
-      if (pointer.isDown) {
-        this.graffitiDrawing = true
-        this.isClicking = true
-        //console.log(this.graffitiDrawing)
-        this.draw('brush', pointer.worldX - graffitiWall2X, pointer.worldY - graffitiWall2Y, 1, 0x000000);
-      }
-      if (pointer.isUp) {
-        this.graffitiDrawing = false
-        //console.log(this.graffitiDrawing)
-      }
-    });
+    // rt2.on('pointermove', function (pointer) {
+    //   if (pointer.isDown) {
+    //     this.graffitiDrawing = true
+    //     this.isClicking = true
+    //     //console.log(this.graffitiDrawing)
+    //     this.draw('brush', pointer.worldX - graffitiWall2X, pointer.worldY - graffitiWall2Y, 1, 0x000000);
+    //   }
+    //   if (pointer.isUp) {
+    //     this.graffitiDrawing = false
+    //     //console.log(this.graffitiDrawing)
+    //   }
+    // });
 
-    rt2.on('pointerup', function (pointer) {
-      this.graffitiDrawing = false
-      //console.log(this.graffitiDrawing)
-    });
+    // rt2.on('pointerup', function (pointer) {
+    //   this.graffitiDrawing = false
+    //   //console.log(this.graffitiDrawing)
+    // });
   }
 
   generateBouncingBird() {
@@ -1694,64 +1684,53 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   playerMovingBySwiping() {
-    if (!this.graffitiDrawing) {
-      if (!this.input.activePointer.isDown && this.isClicking == true && !this.graffitiDrawing) {
-        const playerX = this.player.x
-        const playerY = this.player.y
+    if (this.input.activePointer.isDown && this.isClicking == false) {
+      this.isClicking = true
+    }
 
-        const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
-        const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
-        // console.log("swipeX:")
-        // console.log(swipeX)
-        // console.log("swipeY:")
-        // console.log(swipeY)
-        this.swipeAmount.x = swipeX
-        this.swipeAmount.y = swipeY
+    if (
+      (!this.input.activePointer.isDown &&
+        this.isClicking == true &&
+        this.input.activePointer.worldX < 2200 &&
+        this.input.activePointer.worldY < 600) ||
+      (this.input.activePointer.worldX > 3000 &&
+        this.input.activePointer.worldY > 1200) ||
+      (this.input.activePointer.worldX < 2200 &&
+        this.input.activePointer.worldY > 1200) ||
+      (this.input.activePointer.worldX > 3000 &&
+        this.input.activePointer.worldY < 600)
+    ) {
+      const playerX = this.player.x
+      const playerY = this.player.y
 
-        let moveSpeed = this.swipeAmount.length()
-        if (moveSpeed > 450) moveSpeed = 450
+      const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
+      const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
 
-        // console.log("moveSpeed:")
-        // console.log(moveSpeed)
+      this.swipeAmount.x = swipeX
+      this.swipeAmount.y = swipeY
 
-        // console.log("this.swipeAmount:")
-        // console.log(this.swipeAmount.x)
-        // console.log(this.swipeAmount.y)
-        // console.log("")
-        //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
-        this.playerIsMovingByClicking = true; // trigger moving animation
+      let moveSpeed = this.swipeAmount.length()
+      if (moveSpeed > 450) moveSpeed = 450
 
-
-        this.target.x = playerX + swipeX
-        this.target.y = playerY + swipeY
-        this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
-        this.isClicking = false;
+      this.playerIsMovingByClicking = true; // trigger moving animation
 
 
-        //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
-        //       this.swipeDirection = "up";
-        //     } else if (this.input.activePointer.upY > this.input.activePointer.downY) {
-        //       this.swipeDirection = "down";
-        //     }
+      this.target.x = playerX + swipeX
+      this.target.y = playerY + swipeY
+      this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
+      this.isClicking = false;
 
-      } else if (this.input.activePointer.isDown && this.isClicking == false && !this.graffitiDrawing) {
-        this.isClicking = true
-        if (this.graffitiDrawing) {
-          this.isClicking = false
-        }
-        // console.log("this.isClicking:")
-        // console.log(this.isClicking)
-      }
-      this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
-      //  4 is our distance tolerance, i.e. how close the source can get to the target
-      //  before it is considered as being there. The faster it moves, the more tolerance is required.
-      if (this.playerIsMovingByClicking) {
-        if (this.distance < 10) {
-          this.player.body.reset(this.target.x, this.target.y);
-          this.playerIsMovingByClicking = false
-        } else {
-          this.sendPlayerMovement();
-        }
+    } 
+  
+    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+    //  4 is our distance tolerance, i.e. how close the source can get to the target
+    //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    if (this.playerIsMovingByClicking) {
+      if (this.distance < 10) {
+        this.player.body.reset(this.target.x, this.target.y);
+        this.playerIsMovingByClicking = false
+      } else {
+        this.sendPlayerMovement();
       }
     }
   }

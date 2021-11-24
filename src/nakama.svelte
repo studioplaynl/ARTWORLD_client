@@ -10,7 +10,7 @@
 
   export const client = new Client(
     "RHSGvCuxJRmEf347",
-    "nakama.toekomst.school",
+    "betanakama.toekomst.school",
     "",
     SSL
   );
