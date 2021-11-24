@@ -6,6 +6,10 @@ import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
 import { Vector2 } from "three";
 
+import i18next from "i18next";
+import { locale } from "svelte-i18n";
+
+let latestValue = null;
 export default class Location5Scene extends Phaser.Scene {
   constructor() {
     super("location5_Scene");
@@ -52,6 +56,8 @@ export default class Location5Scene extends Phaser.Scene {
 
     this.currentZoom
     this.UI_Scene
+
+    this.back
   }
 
   async preload() {
@@ -208,6 +214,40 @@ export default class Location5Scene extends Phaser.Scene {
     console.log(this.UI_Scene)
     console.log(this.currentZoom)
 
+    // translation change detector
+    const width = this.sys.game.canvas.width;
+    const height = this.sys.game.canvas.height - 60;
+
+    let countDisplay = 0;
+    locale.subscribe((value) => {
+      if (countDisplay === 0) {
+        countDisplay++;
+        return;
+      }
+      if (countDisplay > 0) {
+        i18next.changeLanguage(value);
+      }
+      if (latestValue !== value) {
+        this.scene.restart();
+      }
+      latestValue = value;
+    });
+
+    // back button to location1
+    this.back = this.add
+      .text(width / 10 - 120, height / 10, `${i18next.t("back")}`, {
+        fontFamily: "Arial",
+        fontSize: "22px",
+      })
+      .setOrigin(0)
+      .setShadow(1, 1, "#000000", 1)
+      .setDepth(1000)
+      .setInteractive()
+      .setScrollFactor(1, 0);
+
+    this.back.on("pointerup", () => {
+      this.scene.start("location1_Scene");
+    });
 
   } // end create
 

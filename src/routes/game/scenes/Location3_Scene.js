@@ -4,8 +4,12 @@ import manageSession from "../manageSession";
 import { getAccount } from '../../../api.js';
 import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
+import i18next from "i18next";
+import { locale } from "svelte-i18n";
 
+let latestValue = null;
 export default class Location3Scene extends Phaser.Scene {
+
   constructor() {
     super("location3_Scene");
     this.gameStarted = false;
@@ -44,6 +48,9 @@ export default class Location3Scene extends Phaser.Scene {
 
     this.currentZoom
     this.UI_Scene
+
+    // back button
+    this.back;
   }
 
   async preload() {
@@ -236,6 +243,26 @@ export default class Location3Scene extends Phaser.Scene {
 
     console.log(this.UI_Scene)
     console.log(this.currentZoom)
+
+    // back button to go to location1
+    const width = this.sys.game.canvas.width;
+    const height = this.sys.game.canvas.height - 60;
+
+
+    this.back = this.add
+      .text(width / 10 - 120, height / 10, `${i18next.t("back")}`, {
+        fontFamily: "Arial",
+        fontSize: "22px",
+      })
+      .setOrigin(0)
+      .setShadow(1, 1, "#000000", 1)
+      .setDepth(1000)
+      .setInteractive()
+      .setScrollFactor(1, 0);
+
+    this.back.on("pointerup", () => {
+      this.scene.start("location1_Scene");
+    });
 
   } // end create
 
