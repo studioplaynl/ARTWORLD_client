@@ -6,12 +6,12 @@
 
   // export const client = new Client("RHSGvCuxJRmEf347", "192.168.0.138", "7350", SSL);
 
-  export const SSL = true;
+  export const SSL = false;
 
   export const client = new Client(
     "RHSGvCuxJRmEf347",
-    "nakama.toekomst.school",
-    "",
+    "127.0.0.1",
+    "7350",
     SSL
   );
 </script>
