@@ -13,6 +13,7 @@
   onMount(async () => {
     const config = {
       //parent: "phaserId",
+  
       type: Phaser.WEBGL,
       transparent: true, // for 3d scene
       domCreateContainer: false,
@@ -57,7 +58,7 @@
         default: "arcade",
         arcade: {
           //gravity: { y: 0 },
-          debug: false,
+          debug: true,
           fixedStep: true,
           fps: 60,
         },

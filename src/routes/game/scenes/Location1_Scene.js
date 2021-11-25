@@ -49,6 +49,7 @@ export default class Location1Scene extends Phaser.Scene {
     this.arrowDown = false;
     this.swipeDirection = "down"
     this.swipeAmount = new Phaser.Math.Vector2(0, 0)
+    this.graffitiDrawing = false
 
     //pointer location example
     // this.source // = player
@@ -625,6 +626,7 @@ export default class Location1Scene extends Phaser.Scene {
     });
 
     rt.on('pointerdown', function (pointer) {
+      this.graffitiDrawing = true
       this.isClicking = true
       this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
 
@@ -633,12 +635,17 @@ export default class Location1Scene extends Phaser.Scene {
     rt.on('pointermove', function (pointer) {
 
       if (pointer.isDown) {
+        this.graffitiDrawing = true
         this.isClicking = true
         this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
         i = Phaser.Math.Wrap(i + 1, 0, 360);
       }
     })
 
+    rt.on('pointerup', function (pointer) {
+      this.graffitiDrawing = false
+      console.log("brush is up2")
+    })
 
     // graffitiWallContainer.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
 
@@ -1684,22 +1691,27 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   playerMovingBySwiping() {
-    if (this.input.activePointer.isDown && this.isClicking == false) {
-      this.isClicking = true
-    }
-
-    if (
-      (!this.input.activePointer.isDown &&
-        this.isClicking == true &&
-        this.input.activePointer.worldX < 2200 &&
+    if ((this.input.activePointer.isDown 
+      && this.isClicking == false && 
+      this.graffitiDrawing == false && 
+      this.input.activePointer.worldX < 2200 &&
         this.input.activePointer.worldY < 600) ||
       (this.input.activePointer.worldX > 3000 &&
         this.input.activePointer.worldY > 1200) ||
       (this.input.activePointer.worldX < 2200 &&
         this.input.activePointer.worldY > 1200) ||
       (this.input.activePointer.worldX > 3000 &&
-        this.input.activePointer.worldY < 600)
+        this.input.activePointer.worldY < 600)) 
+    {
+      console.log("One")
+      this.isClicking = true
+    }
+    if (
+      !this.input.activePointer.isDown &&
+        this.isClicking == true &&
+        this.graffitiDrawing == false
     ) {
+      console.log("Two")
       const playerX = this.player.x
       const playerY = this.player.y
 
