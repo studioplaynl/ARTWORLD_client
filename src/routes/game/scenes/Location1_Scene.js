@@ -381,7 +381,17 @@ export default class Location1Scene extends Phaser.Scene {
         print.text += `${category}:${child.text}\n`;
       })
 
-
+    // identifies if the pointer is down on a graffiti wall
+    // if the condition is true, the avatar stops any movement
+    this.input.on('pointerdown', (pointer, object) => {
+      if (object[0]?.name && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
+          this.graffitiDrawing = true
+      }
+    })
+    this.input.on('pointerup', () => {
+      this.graffitiDrawing = false
+    })
+ 
   } // end create
 
   CreateMainPanel(scene, x, y) {
@@ -606,7 +616,7 @@ export default class Location1Scene extends Phaser.Scene {
     const graffitiWallHeight = 600
 
     // var graffitiWallContainer = this.add.container(); 
-    let rt = this.add.renderTexture(graffitiWallX, graffitiWallY, graffitiWallWidth, graffitiWallHeight).setInteractive().setDepth(1001);
+    let rt = this.add.renderTexture(graffitiWallX, graffitiWallY, graffitiWallWidth, graffitiWallHeight).setInteractive().setDepth(1001).setName("graffitiBrickWall");
     let graffitiWall = this.add.image(graffitiWallX, graffitiWallY, 'brickWall').setOrigin(0).setDepth(1000)
 
     graffitiWall.displayWidth = graffitiWallWidth
@@ -686,44 +696,44 @@ export default class Location1Scene extends Phaser.Scene {
 
     // }, this);
 
-    // const graffitiWall2X = 600
-    // const graffitiWall2Y = 1200
-    // //size
-    // const graffitiWall2Width = 600
-    // const graffitiWall2Height = 1200
+    const graffitiWall2X = 600
+    const graffitiWall2Y = 1200
+    //size
+    const graffitiWall2Width = 600
+    const graffitiWall2Height = 1200
 
-    // // var graffitiWallContainer = this.add.container(); 
-    // let rt2 = this.add.renderTexture(graffitiWall2X, graffitiWall2Y, graffitiWall2Width, graffitiWall2Height).setInteractive().setDepth(1001);
-    // //let graffitiWall2 = this.add.image(graffitiWall2X, graffitiWall2Y, 'brickWall').setOrigin(0).setDepth(1000)
+    // var graffitiWallContainer = this.add.container(); 
+    let rt2 = this.add.renderTexture(graffitiWall2X, graffitiWall2Y, graffitiWall2Width, graffitiWall2Height).setInteractive().setDepth(1001).setName("graffitiDotWall");
+    //let graffitiWall2 = this.add.image(graffitiWall2X, graffitiWall2Y, 'brickWall').setOrigin(0).setDepth(1000)
 
-    // // graffitiWall2.displayWidth = graffitiWall2Width
-    // // graffitiWall2.displayHeight = graffitiWall2Height
+    // graffitiWall2.displayWidth = graffitiWall2Width
+    // graffitiWall2.displayHeight = graffitiWall2Height
 
-    // rt2.on('pointerdown', function (pointer) {
-    //   this.graffitiDrawing = true
-    //   this.isClicking = true
-    //   console.log(this.graffitiDrawing)
-    //   this.draw('brush', pointer.worldX - graffitiWall2X - 4, pointer.worldY - graffitiWall2Y - 4, 1, 0x000000);
+    rt2.on('pointerdown', function (pointer) {
+      this.graffitiDrawing = true
+      this.isClicking = true
+      console.log(this.graffitiDrawing)
+      this.draw('brush', pointer.worldX - graffitiWall2X - 4, pointer.worldY - graffitiWall2Y - 4, 1, 0x000000);
 
-    // });
+    });
 
-    // rt2.on('pointermove', function (pointer) {
-    //   if (pointer.isDown) {
-    //     this.graffitiDrawing = true
-    //     this.isClicking = true
-    //     //console.log(this.graffitiDrawing)
-    //     this.draw('brush', pointer.worldX - graffitiWall2X, pointer.worldY - graffitiWall2Y, 1, 0x000000);
-    //   }
-    //   if (pointer.isUp) {
-    //     this.graffitiDrawing = false
-    //     //console.log(this.graffitiDrawing)
-    //   }
-    // });
+    rt2.on('pointermove', function (pointer) {
+      if (pointer.isDown) {
+        this.graffitiDrawing = true
+        this.isClicking = true
+        //console.log(this.graffitiDrawing)
+        this.draw('brush', pointer.worldX - graffitiWall2X, pointer.worldY - graffitiWall2Y, 1, 0x000000);
+      }
+      if (pointer.isUp) {
+        this.graffitiDrawing = false
+        //console.log(this.graffitiDrawing)
+      }
+    });
 
-    // rt2.on('pointerup', function (pointer) {
-    //   this.graffitiDrawing = false
-    //   //console.log(this.graffitiDrawing)
-    // });
+    rt2.on('pointerup', function (pointer) {
+      this.graffitiDrawing = false
+      //console.log(this.graffitiDrawing)
+    });
   }
 
   generateBouncingBird() {
@@ -1691,17 +1701,9 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   playerMovingBySwiping() {
-    if ((this.input.activePointer.isDown 
+    if (this.input.activePointer.isDown 
       && this.isClicking == false && 
-      this.graffitiDrawing == false && 
-      this.input.activePointer.worldX < 2200 &&
-        this.input.activePointer.worldY < 600) ||
-      (this.input.activePointer.worldX > 3000 &&
-        this.input.activePointer.worldY > 1200) ||
-      (this.input.activePointer.worldX < 2200 &&
-        this.input.activePointer.worldY > 1200) ||
-      (this.input.activePointer.worldX > 3000 &&
-        this.input.activePointer.worldY < 600)) 
+      this.graffitiDrawing == false)
     {
       console.log("One")
       this.isClicking = true
