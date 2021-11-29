@@ -273,107 +273,111 @@ export default class Location1Scene extends Phaser.Scene {
     console.log(this.UI_Scene)
     console.log(this.currentZoom)
 
-    //! REX UI
-    this.data = {
-      name: 'Rex',
-      skills: [
-        { name: 'A' },
-        { name: 'B' },
-        { name: 'C' },
-        { name: 'D' },
-        { name: 'E' },
-      ],
-      items: [
-        { name: 'A' },
-        { name: 'B' },
-        { name: 'C' },
-        { name: 'D' },
-        { name: 'E' },
-        { name: 'F' },
-        { name: 'G' },
-        { name: 'H' },
-        { name: 'I' },
-        { name: 'J' },
-        { name: 'K' },
-        { name: 'L' },
-        { name: 'M' },
-      ],
-
-    };
-
-    //https://codepen.io/rexrainbow/pen/Gazmyz
-    var videoPanel = this.CreateMainPanel(this, 1600, 1500)
-      .layout()
-      //.drawBounds(this.add.graphics(), 0xff0000)
-      .popUp(1000)
-
-    //*feature discussion about ui plugin
-    //! https://phaser.discourse.group/t/phaser-3-rexui-plugins/384/26
-    this.scrollablePanel = this.rexUI.add.scrollablePanel({
-      x: 250,
-      y: 600,
-      width: 400,
-      // height: 220,
-
-      scrollMode: 1,
-
-      background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, this.COLOR_PRIMARY),
-
-      panel: {
-        child: this.createPanel(this, this.data),
-
-        mask: {
-          padding: 1
-        },
-      },
-
-      // Children-interactive is registered at scrollablePanel, which is create last.
-      // Set depth of track, thum game object above scrollablePanel, otherwise slider won't receive input at all.
-      slider: {
-        track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, this.COLOR_DARK).setDepth(1),
-        thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, this.COLOR_LIGHT).setDepth(1),
-      },
-
-      space: {
-        left: 10,
-        right: 10,
-        top: 10,
-        bottom: 10,
-
-        panel: 10,
-      }
-    })
-      .layout()
-    // .drawBounds(this.add.graphics(), 0xff0000);
-
-
-    // Add children-interactive
-    // this.input.topOnly = true;
-    var panel = this.scrollablePanel.getElement('panel');
-    var print = this.add.text(0, 0, '');
-    this.rexUI.setChildrenInteractive(this.scrollablePanel, {
-      targets: [
-        panel.getByName('skills', true),
-        panel.getByName('items', true)
-      ]
-    })
-      .on('child.click', function (child) {
-        var category = child.getParentSizer().name;
-        print.text += `${category}:${child.text}\n`;
-      })
-
-    // identifies if the pointer is down on a graffiti wall
-    // if the condition is true, the avatar stops any movement
-    this.input.on('pointerdown', (pointer, object) => {
-      if (object[0]?.name && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
-        this.graffitiDrawing = true
-      }
-    })
-    this.input.on('pointerup', () => {
-      this.graffitiDrawing = false
-    })
-
+    this.exampleREXUI()
   } // end create
+
+  exampleREXUI(){
+//! REX UI
+this.data = {
+  name: 'Rex',
+  skills: [
+    { name: 'A' },
+    { name: 'B' },
+    { name: 'C' },
+    { name: 'D' },
+    { name: 'E' },
+  ],
+  items: [
+    { name: 'A' },
+    { name: 'B' },
+    { name: 'C' },
+    { name: 'D' },
+    { name: 'E' },
+    { name: 'F' },
+    { name: 'G' },
+    { name: 'H' },
+    { name: 'I' },
+    { name: 'J' },
+    { name: 'K' },
+    { name: 'L' },
+    { name: 'M' },
+  ],
+
+};
+
+//https://codepen.io/rexrainbow/pen/Gazmyz
+var videoPanel = this.CreateMainPanel(this, 1600, 1500)
+  .layout()
+  //.drawBounds(this.add.graphics(), 0xff0000)
+  .popUp(1000)
+
+//*feature discussion about ui plugin
+//! https://phaser.discourse.group/t/phaser-3-rexui-plugins/384/26
+this.scrollablePanel = this.rexUI.add.scrollablePanel({
+  x: 250,
+  y: 600,
+  width: 400,
+  // height: 220,
+
+  scrollMode: 1,
+
+  background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, this.COLOR_PRIMARY),
+
+  panel: {
+    child: this.createPanel(this, this.data),
+
+    mask: {
+      padding: 1
+    },
+  },
+
+  // Children-interactive is registered at scrollablePanel, which is create last.
+  // Set depth of track, thum game object above scrollablePanel, otherwise slider won't receive input at all.
+  slider: {
+    track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, this.COLOR_DARK).setDepth(1),
+    thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, this.COLOR_LIGHT).setDepth(1),
+  },
+
+  space: {
+    left: 10,
+    right: 10,
+    top: 10,
+    bottom: 10,
+
+    panel: 10,
+  }
+})
+  .layout()
+// .drawBounds(this.add.graphics(), 0xff0000);
+
+
+// Add children-interactive
+// this.input.topOnly = true;
+var panel = this.scrollablePanel.getElement('panel');
+var print = this.add.text(0, 0, '');
+this.rexUI.setChildrenInteractive(this.scrollablePanel, {
+  targets: [
+    panel.getByName('skills', true),
+    panel.getByName('items', true)
+  ]
+})
+  .on('child.click', function (child) {
+    var category = child.getParentSizer().name;
+    print.text += `${category}:${child.text}\n`;
+  })
+
+// identifies if the pointer is down on a graffiti wall
+// if the condition is true, the avatar stops any movement
+this.input.on('pointerdown', (pointer, object) => {
+  if (object[0]?.name && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
+    this.graffitiDrawing = true
+  }
+})
+this.input.on('pointerup', () => {
+  this.graffitiDrawing = false
+})
+
+  }
 
   CreateMainPanel(scene, x, y) {
     // Create elements
@@ -1230,6 +1234,263 @@ export default class Location1Scene extends Phaser.Scene {
     //   console.dir(event);
 
     // }, this);
+  }
+
+  createOnlinePlayers() {
+    //manageSession.connectedOpponents //list of the opponents
+    //for each of the opponents, attach a png,
+
+    //TODO loading is broken, so I'm checking if the player avater has already loaded, after that I load onlineUsers
+    if (this.createdPlayer) {
+      //first check if onlineplayers need to be created
+      if (manageSession.createOnlinePlayers) {
+        console.log("creating onlineplayer")
+        manageSession.createOnlinePlayers = false
+
+        //manageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: this.newOnlinePlayers
+        this.newOnlinePlayers = []
+
+        if (this.debug) {
+          console.log("")
+          console.log("createOnlinePlayers...");
+        }
+
+        //all current onlinePlayers, or an empty []
+        this.onlinePlayers = this.onlinePlayersGroup.getChildren() || []
+
+        // ..... DESTROY OFFLINE PLAYERS ........................................................................................................................................................................
+        //check if there are players in this.onlinePlayers that are not in .allConnectedUsers ->  they need to be destroyed
+        this.offlineOnlineUsers = []
+
+        this.onlinePlayers.forEach(player => {
+          const playerID = player.user_id
+          const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+          if (!found) this.offlineOnlineUsers.push(player)
+        })
+
+        if (this.debug) {
+          console.log("this.offlineOnlineUsers")
+          console.log(this.offlineOnlineUsers)
+        }
+
+        //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
+        if (this.offlineOnlineUsers.length > 0) {
+          //hide users
+          if (this.debug) {
+            console.log("")
+            console.log("# Players that are not online anymore")
+          }
+
+
+
+          for (let i = 0; i < this.offlineOnlineUsers.length; i++) {
+            //check if the user_id is in this.onlinePlayers
+            console.log(this.offlineOnlineUsers[i])
+            this.offlineOnlineUsers[i].destroy()
+
+            //get the index of user_id from this.offlineOnlineUsers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
+            // let index = this.onlinePlayers.findIndex(function (person) {
+            //   return person.user_id == this.offlineOnlineUsers[i].user_id
+            // });
+
+            // this.onlinePlayers[index].active = false
+            // this.onlinePlayers[index].visible = false
+            // if (this.debug) {
+            //   console.log("deactivated and hidden User: ")
+            //   console.log(this.onlinePlayers[index])
+            //   console.log("")
+            // }
+          }
+
+        }
+        //......... end DESTROY OFFLINE PLAYERS ............................................................................................................................................................
+
+
+        //...... LOAD NEW PLAYERS ........................................................................................
+        //(new) players present in .allConnectedUsers but not in this.onlinePlayers ->load their avatar and animation
+        this.newOnlinePlayers = []
+        manageSession.allConnectedUsers.forEach(player => {
+          const playerID = player.user_id
+          const found = this.onlinePlayers.some(user => user.user_id === playerID)
+          if (!found) this.newOnlinePlayers.push(player)
+        })
+        if (this.debug) {
+          console.log("  ")
+          console.log("new Online Players")
+          console.log(newOnlinePlayers)
+          console.log("  ")
+        }
+
+        //load the spritesheet for the new online user //give the online player a placeholder avatar
+        this.newOnlinePlayers.forEach((element, i) => {
+
+          let elementCopy = element
+          // console.log("elementCopy: ")
+          // console.log(elementCopy)
+          //a new user
+          this.tempAvatarName = element.user_id + "_" + element.avatar_time;
+
+          //if the texture already exists attach it again to the player
+          if (!this.textures.exists(this.tempAvatarName)) {
+
+            //add it to loading queue
+            this.load.spritesheet(this.tempAvatarName, element.avatar_url, { frameWidth: 128, frameHeight: 128 })
+
+            if (this.debug) {
+              console.log("loading: ")
+              console.log(this.tempAvatarName)
+            }
+          }
+          console.log("give the online player a placeholder avatar first")
+          //give the online player a placeholder avatar first
+          element = this.add.sprite(element.posX, element.posY, this.playerAvatarPlaceholder)
+            .setDepth(90)
+
+          element.setData("movingKey", "moving");
+          element.setData("stopKey", "stop");
+
+          //create animation for moving
+          this.anims.create({
+            key: element.getData("movingKey"),
+            frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
+            frameRate: 20,
+            repeat: -1,
+          });
+
+          //create animation for stop
+          this.anims.create({
+            key: element.getData("stopKey"),
+            frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
+          });
+
+          Object.assign(element, elementCopy); //add all data from elementCopy to element; like prev Position, Location, UserID
+          element.x = element.posX
+          element.y = element.posY
+
+          // add new player to group
+          this.onlinePlayersGroup.add(element)
+          //} else {
+          //! if the avatar already existed; get the player from the onlinePlayers array !
+
+          this.attachtAvatarToOnlinePlayer(element)
+          //}
+        })
+
+        //update this.onlinePlayers, hidden or visible
+        this.onlinePlayers = this.onlinePlayersGroup.getChildren()
+        if (this.debug) {
+          console.log("all players in the group, hidden or visible ")
+          console.log(this.onlinePlayers)
+        }
+
+        //added new players
+        this.load.start(); // load the image in memory
+        console.log("started loading new (online) avatars")
+        //.... end load new Avatars ....................................................................................
+
+        //when the images are loaded the new ones should be set to the players
+        this.load.on('filecomplete', () => {
+          console.log("players added: ")
+          console.log(this.newOnlinePlayers)
+
+          this.onlinePlayers = this.onlinePlayersGroup.getChildren()
+
+          for (let i = 0; i < this.onlinePlayers.length; i++) {
+
+            this.attachtAvatarToOnlinePlayer(this.onlinePlayers[i])
+          } //for (let i = 0; i < this.onlinePlayers.length; i++)
+        }) //this.load.on('filecomplete', () =>
+
+
+        console.log("manageSession.allConnectedUsers")
+        console.log(manageSession.allConnectedUsers)
+
+        //this.onlinePlayers = this.onlinePlayersGroup.getChildren()
+
+        //? not necessary
+        // manageSession.allConnectedUsers.forEach((player, i) => {
+
+        //   var index = this.onlinePlayers.findIndex(function (player) {
+        //     return player.user_id == manageSession.allConnectedUsers[i].user_id
+        //   });
+
+        //   this.onlinePlayers[index].active = true
+        //   this.onlinePlayers[index].visible = true
+        //   console.log("make all allConnectedUsers visible")
+        //   console.log(this.onlinePlayers[index])
+        // })
+        //send player position over the network for the online users to see
+        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
+
+      }//if (manageSession.createOnlinePlayers)
+    }//if (manageSession.createdPlayer) 
+  } //createRemotePlayer
+
+  attachtAvatarToOnlinePlayer(player, preExisting) {
+    this.tempAvatarName = player.user_id + "_" + player.avatar_time;
+    //this.onlinePlayers[i] = this.add.image(this.onlinePlayers[i].posX, this.onlinePlayers[i].posY, this.tempAvatarName)
+
+    console.log("player added: ")
+    console.log(player)
+
+    //sometimes the player is not visible because the postion is 0,0
+    if (player.posX == 0 && player.posY == 0) {
+      player.posX = 300
+      player.posY = 400
+    }
+
+    player.x = player.posX
+    player.y = player.posY
+
+
+    console.log("avatar key: ")
+    console.log(this.tempAvatarName)
+    if (!preExisting) {
+      player.setTexture(this.tempAvatarName)
+    } else {
+
+    }
+
+
+    player.active = true
+    player.visible = true
+
+    const avatar = this.textures.get(this.tempAvatarName)
+    const avatarWidth = avatar.frames.__BASE.width
+    const avatarHeight = avatar.frames.__BASE.height
+
+    const avatarFrames = Math.round(avatarWidth / avatarHeight)
+    console.log(avatarFrames)
+
+    if (avatarFrames > 1) {
+
+      // set names for the moving and stop animations
+
+      player.setData("movingKey", "moving" + "_" + this.tempAvatarName);
+      player.setData("stopKey", "stop" + "_" + this.tempAvatarName);
+      console.log('player.getData("movingKey")')
+      console.log(player.getData("movingKey"))
+
+      console.log('player.getData("movingKey")')
+      console.log(player.getData("movingKey"))
+
+      //create animation for moving
+      this.anims.create({
+        key: player.getData("movingKey"),
+        frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
+        frameRate: (avatarFrames + 2) * 2,
+        repeat: -1,
+        yoyo: true
+      });
+
+      //create animation for stop
+      this.anims.create({
+        key: player.getData("stopKey"),
+        frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
+      });
+    } //if (avatarFrames > 1) {
+
+    this.updateOnlinePlayers = true
   }
 
   playerMovingByKeyBoard() {
