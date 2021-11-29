@@ -1,5 +1,4 @@
 import manageSession from "./manageSession";
-//import Phaser from 'phaser'
 
 class playerLoadOnlineAvatar {
     constructor() { 
