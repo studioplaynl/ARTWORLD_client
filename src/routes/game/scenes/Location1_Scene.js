@@ -6,6 +6,7 @@ import playerDefault from '../playerDefault'
 import playerDefaultShadow from '../playerDefaultShadow'
 import playerLoadOnlineAvatar from '../playerLoadOnlineAvatar.js'
 import onlinePlayerLoader from '../onlinePlayer.js'
+import preloader from '../preLoader.js'
 
 export default class Location1Scene extends Phaser.Scene {
 
@@ -68,6 +69,11 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   async preload() {
+    //.... PRELOADER VISUALISER ...............................................................................................
+    preloader.Loading(this)
+    //.... end PRELOADER VISUALISER ...............................................................................................
+
+
     //TODO rex ui video player
     this.load.image('play', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/play.png');
     this.load.image('pause', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/pause.png');
@@ -142,28 +148,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //....... end TILEMAP ......................................................................
 
-    // //load events
-    // this.load.on('progress', function (value) {
-    //   console.log(value);
-    // });
 
-    // this.load.on('fileprogress', function (file) {
-    //   console.log(file.src);
-    // });
-    // this.load.on('complete', function () {
-    //   console.log('complete');
-    // });
-
-    //set rpc location
-    // manageSession.location = "home"
-    // await manageSession.createSocket();
-
-    //manageSession.getStreamUsers("join, "location1")
-
-
-
-    // console.log("check if session is still valide")
-    // checkLogin(manageSession.sessionStored)
 
   }
 
@@ -276,106 +261,106 @@ export default class Location1Scene extends Phaser.Scene {
     this.exampleREXUI()
   } // end create
 
-  exampleREXUI(){
-//! REX UI
-this.data = {
-  name: 'Rex',
-  skills: [
-    { name: 'A' },
-    { name: 'B' },
-    { name: 'C' },
-    { name: 'D' },
-    { name: 'E' },
-  ],
-  items: [
-    { name: 'A' },
-    { name: 'B' },
-    { name: 'C' },
-    { name: 'D' },
-    { name: 'E' },
-    { name: 'F' },
-    { name: 'G' },
-    { name: 'H' },
-    { name: 'I' },
-    { name: 'J' },
-    { name: 'K' },
-    { name: 'L' },
-    { name: 'M' },
-  ],
+  exampleREXUI() {
+    //! REX UI
+    this.data = {
+      name: 'Rex',
+      skills: [
+        { name: 'A' },
+        { name: 'B' },
+        { name: 'C' },
+        { name: 'D' },
+        { name: 'E' },
+      ],
+      items: [
+        { name: 'A' },
+        { name: 'B' },
+        { name: 'C' },
+        { name: 'D' },
+        { name: 'E' },
+        { name: 'F' },
+        { name: 'G' },
+        { name: 'H' },
+        { name: 'I' },
+        { name: 'J' },
+        { name: 'K' },
+        { name: 'L' },
+        { name: 'M' },
+      ],
 
-};
+    };
 
-//https://codepen.io/rexrainbow/pen/Gazmyz
-var videoPanel = this.CreateMainPanel(this, 1600, 1500)
-  .layout()
-  //.drawBounds(this.add.graphics(), 0xff0000)
-  .popUp(1000)
+    //https://codepen.io/rexrainbow/pen/Gazmyz
+    var videoPanel = this.CreateMainPanel(this, 1600, 1500)
+      .layout()
+      //.drawBounds(this.add.graphics(), 0xff0000)
+      .popUp(1000)
 
-//*feature discussion about ui plugin
-//! https://phaser.discourse.group/t/phaser-3-rexui-plugins/384/26
-this.scrollablePanel = this.rexUI.add.scrollablePanel({
-  x: 250,
-  y: 600,
-  width: 400,
-  // height: 220,
+    //*feature discussion about ui plugin
+    //! https://phaser.discourse.group/t/phaser-3-rexui-plugins/384/26
+    this.scrollablePanel = this.rexUI.add.scrollablePanel({
+      x: 250,
+      y: 600,
+      width: 400,
+      // height: 220,
 
-  scrollMode: 1,
+      scrollMode: 1,
 
-  background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, this.COLOR_PRIMARY),
+      background: this.rexUI.add.roundRectangle(0, 0, 2, 2, 10, this.COLOR_PRIMARY),
 
-  panel: {
-    child: this.createPanel(this, this.data),
+      panel: {
+        child: this.createPanel(this, this.data),
 
-    mask: {
-      padding: 1
-    },
-  },
+        mask: {
+          padding: 1
+        },
+      },
 
-  // Children-interactive is registered at scrollablePanel, which is create last.
-  // Set depth of track, thum game object above scrollablePanel, otherwise slider won't receive input at all.
-  slider: {
-    track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, this.COLOR_DARK).setDepth(1),
-    thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, this.COLOR_LIGHT).setDepth(1),
-  },
+      // Children-interactive is registered at scrollablePanel, which is create last.
+      // Set depth of track, thum game object above scrollablePanel, otherwise slider won't receive input at all.
+      slider: {
+        track: this.rexUI.add.roundRectangle(0, 0, 20, 10, 10, this.COLOR_DARK).setDepth(1),
+        thumb: this.rexUI.add.roundRectangle(0, 0, 0, 0, 13, this.COLOR_LIGHT).setDepth(1),
+      },
 
-  space: {
-    left: 10,
-    right: 10,
-    top: 10,
-    bottom: 10,
+      space: {
+        left: 10,
+        right: 10,
+        top: 10,
+        bottom: 10,
 
-    panel: 10,
-  }
-})
-  .layout()
-// .drawBounds(this.add.graphics(), 0xff0000);
+        panel: 10,
+      }
+    })
+      .layout()
+    // .drawBounds(this.add.graphics(), 0xff0000);
 
 
-// Add children-interactive
-// this.input.topOnly = true;
-var panel = this.scrollablePanel.getElement('panel');
-var print = this.add.text(0, 0, '');
-this.rexUI.setChildrenInteractive(this.scrollablePanel, {
-  targets: [
-    panel.getByName('skills', true),
-    panel.getByName('items', true)
-  ]
-})
-  .on('child.click', function (child) {
-    var category = child.getParentSizer().name;
-    print.text += `${category}:${child.text}\n`;
-  })
+    // Add children-interactive
+    // this.input.topOnly = true;
+    var panel = this.scrollablePanel.getElement('panel');
+    var print = this.add.text(0, 0, '');
+    this.rexUI.setChildrenInteractive(this.scrollablePanel, {
+      targets: [
+        panel.getByName('skills', true),
+        panel.getByName('items', true)
+      ]
+    })
+      .on('child.click', function (child) {
+        var category = child.getParentSizer().name;
+        print.text += `${category}:${child.text}\n`;
+      })
 
-// identifies if the pointer is down on a graffiti wall
-// if the condition is true, the avatar stops any movement
-this.input.on('pointerdown', (pointer, object) => {
-  if (object[0]?.name && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
-    this.graffitiDrawing = true
-  }
-})
-this.input.on('pointerup', () => {
-  this.graffitiDrawing = false
-})
+    // identifies if the pointer is down on a graffiti wall
+    // if the condition is true, the avatar stops any movement
+    this.input.on('pointerdown', (pointer, object) => {
+      if (object[0]?.name && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
+        this.graffitiDrawing = true
+      }
+    })
+    this.input.on('pointerup', () => {
+      this.graffitiDrawing = false
+    })
 
   }
 

@@ -100,16 +100,15 @@ export default class UI_Scene extends Phaser.Scene {
 
       this.zoomIn.on("pointerup", () => {
         this.currentZoom += 0.2;
-        //this.scale.setZoom(currentZoom + 0.2);
-        //console.log("this.scale.zoom")
-        console.log(this.currentZoom);
+        //console.log(this.currentZoom);
       });
 
       this.zoomOut.on("pointerup", () => {
         this.currentZoom -= 0.2;
-        // this.scale.setZoom(currentZoom - 0.5);
-        // console.log("this.scale.zoom")
-        console.log(this.currentZoom);
+        if ( this.currentZoom < 0.2 ) {
+          this.currentZoom = 0.2
+        }
+        //console.log(this.currentZoom);
       });
     } else {
       this.zoomIn

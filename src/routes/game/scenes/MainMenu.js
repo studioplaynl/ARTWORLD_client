@@ -1,6 +1,7 @@
 import { SCENES } from "../config.js"
-import manageSession from "../manageSession.js";
-import { getAccount } from '../../../api.js';
+import manageSession from "../manageSession.js"
+import { getAccount } from '../../../api.js'
+import preloader from '../preLoader.js'
 
 
 export default class MainMenu extends Phaser.Scene {
@@ -10,6 +11,12 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   preload() {
+    
+    //.... PRELOADER VISUALISER ...............................................................................................
+    preloader.Loading(this)
+    //.... end PRELOADER VISUALISER ...............................................................................................
+
+    
     this.load.atlas(
       "flares",
       "assets/particles/flares.png",
@@ -36,8 +43,9 @@ export default class MainMenu extends Phaser.Scene {
 
     // Received presence event for stream:
     // this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
+
   }
-  
+
   async create() {
     // a tile sprite repeats background, should be done with small images
     this.bg = this.add
