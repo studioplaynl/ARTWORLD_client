@@ -1,14 +1,13 @@
 import { CONFIG } from "../config.js";
 import manageSession from "../manageSession";
-//import { getAvatar } from '../../profile.svelte';
 import { getAccount } from '../../../api.js';
-import { compute_slots } from "svelte/internal";
-import { location } from "svelte-spa-router";
-import { Vector2 } from "three";
-import { Session, Profile, logout, checkLogin } from "../../../session.js"
+
+import playerDefault from '../playerDefault'
+import playerLoadOnlineAvatar from '../playerLoadOnlineAvatar.js'
+
 
 export default class Location1Scene extends Phaser.Scene {
-
+  
   constructor() {
     super("location1_Scene");
 
@@ -170,17 +169,13 @@ export default class Location1Scene extends Phaser.Scene {
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
 
-    //.......  SOCKET ..........................................................................
+    //.......  LOAD PLAYER AVATAR ..........................................................................
     this.playerIdText = manageSession.userProfile.id;
 
-    // console.log("manageSession.playerObjectSelf")
-    // console.log(manageSession.playerObjectSelf)
     manageSession.createPlayer = true
     console.log("manageSession.createPlayer: ")
     console.log(manageSession.createPlayer)
-
-    //manageSession.createSocket();
-    //....... end SOCKET .......................................................................
+    //....... end LOAD PLAYER AVATAR .......................................................................
 
     //this.generateTileMap()
     this.generateBackground()
@@ -199,32 +194,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
     this.playerAvatarPlaceholder = "avatar1";
-    // //1
-    // this.player = this.physics.add
-    //   .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
-    //   .setDepth(101);
-    // //end 1
 
-    //2
-    this.player = this.physics.add
-      .sprite(300, 800, this.playerAvatarPlaceholder)
-      .setDepth(101);
-
-    this.player.body.onOverlap = true;
-    //end 2
-
-    this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
-
-    // this.playerShadow.anchor.set(0.5);
-    this.playerShadow.setTint(0x000000);
-    this.playerShadow.alpha = 0.2;
-
-    this.playerGroup.add(this.player);
-    this.playerGroup.add(this.playerShadow);
-
-    //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
-
-    //  Our player animations, turning, walking left and walking right.
     this.playerMovingKey = "moving"
     this.playerStopKey = "stop"
 
@@ -239,6 +209,20 @@ export default class Location1Scene extends Phaser.Scene {
       key: this.playerStopKey,
       frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
     });
+
+    this.player = new playerDefault(this, 300, 800)
+    //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
+
+    //  Our player animations, turning, walking left and walking right.
+    
+
+    //! this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
+
+    //! this.playerShadow.setTint(0x000000);
+    //! this.playerShadow.alpha = 0.2;
+
+    this.playerGroup.add(this.player);
+    //! this.playerGroup.add(this.playerShadow);
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
@@ -1186,15 +1170,15 @@ export default class Location1Scene extends Phaser.Scene {
     // texture loaded so use instead of the placeholder
     this.player.setTexture(this.playerAvatarKey)
 
-    this.playerShadow.setTexture(this.playerAvatarKey)
+    //! this.playerShadow.setTexture(this.playerAvatarKey)
 
     //scale the player to 68px
     const width = 128
     this.player.displayWidth = width
     this.player.scaleY = this.player.scaleX
 
-    this.playerShadow.displayWidth = width
-    this.playerShadow.scaleY = this.playerShadow.scaleX
+    //! this.playerShadow.displayWidth = width
+    //! this.playerShadow.scaleY = this.playerShadow.scaleX
 
     //set the collision body
     const portionWidth = width / 3
@@ -1802,16 +1786,15 @@ export default class Location1Scene extends Phaser.Scene {
     //...... ONLINE PLAYERS ................................................
     this.createOnlinePlayers();
     this.updateMovementOnlinePlayers()
-    this.loadAndCreatePlayerAvatar();
-    //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
+    playerLoadOnlineAvatar.loadAvatar(this)
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
 
     //.......................................................................
 
     // //........... PLAYER SHADOW .............................................................................
-    this.playerShadow.x = this.player.x + this.playerShadowOffset
-    this.playerShadow.y = this.player.y + this.playerShadowOffset
+    //! this.playerShadow.x = this.player.x + this.playerShadowOffset
+    //! this.playerShadow.y = this.player.y + this.playerShadowOffset
     // //........... end PLAYER SHADOW .........................................................................
 
     //.......... UPDATE TIMER      ..........................................................................
@@ -1840,10 +1823,10 @@ export default class Location1Scene extends Phaser.Scene {
     //....... moving ANIMATION ......................................................................................
     if (this.arrowDown || this.playerIsMovingByClicking) {
       this.player.anims.play(this.playerMovingKey, true);
-      this.playerShadow.anims.play(this.playerMovingKey, true);
+      //! this.playerShadow.anims.play(this.playerMovingKey, true);
     } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
       this.player.anims.play(this.playerStopKey, true);
-      this.playerShadow.anims.play(this.playerStopKey, true);
+      //! this.playerShadow.anims.play(this.playerStopKey, true);
     }
     //....... end moving ANIMATION .................................................................................
 
