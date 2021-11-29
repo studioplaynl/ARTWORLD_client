@@ -1,29 +1,17 @@
 export default class playerDefault extends Phaser.Physics.Arcade.Sprite {
 
-    constructor(scene, x, y) {
+    constructor(scene, x, y, textureKey) {
         super(scene, x, y, 'defaultPlayerAvatar');
 
-        this.play('stop');
+        //load the texture that is associated with the animation key 'stop'
+        this.play('stop')
 
-        //  You can either do this:
+        //  add images and physics to the scene, displayList and updateList
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        //  Or this, the end result is the same
-        // scene.sys.displayList.add(this);
-        // scene.sys.updateList.add(this);
-        // scene.sys.arcadePhysics.world.enableBody(this, 0);
-
-        //!  Set some default physics properties
+        //  Set some default physics properties
         this.body.onOverlap = true
-        this.setDepth(101) //!works
+        this.setDepth(101)
     }
-
-    changeTexture(scene, avatarKey) {
-        this.setTexture(avatarKey)
-        this.play('stop2', true);
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
-    }
-
 }

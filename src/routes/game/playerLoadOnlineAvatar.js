@@ -144,28 +144,20 @@ class playerLoadOnlineAvatar {
         console.log(scene.playerAvatarKey)
         console.log(scene.player.texture.key)
 
-        //player.setTexture(playerAvatarKey)
         scene.player.texture = scene.playerAvatarKey
 
-        // scene.sys.displayList.add(player);
-        // scene.sys.updateList.add(player);
-        //! playerShadow.setTexture(playerAvatarKey)
-
-        // scene.add.existing(this)
-        // scene.physics.add.existing(this)
-
-        //scale the player to 68px
+        //scale the player to 64px
         const width = 64
         scene.player.displayWidth = width
         scene.player.scaleY = scene.player.scaleX
 
-        //! playerShadow.displayWidth = width
-        //! playerShadow.scaleY = playerShadow.scaleX
+        //! scene.playerShadow.displayWidth = width
+        //! scene.playerShadow.scaleY = scene.playerShadow.scaleX
 
-        //set the collision body
-        const portionWidth = width / 3
-        scene.player.body.setCircle(portionWidth, portionWidth / 4, portionWidth / 4)
-
+        //* set the collision body
+        //* setCircle(radius [, offsetX] [, offsetY])
+        // scene.player.body.setCircle(width, width, width / 2)
+        scene.player.body.setCircle(width / 1.1, width / 5, width / 5)
 
         //place the player in the last known position
         // this.player.x = this.player.posX
