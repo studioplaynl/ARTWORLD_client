@@ -192,10 +192,6 @@ export default class Location1Scene extends Phaser.Scene {
     // this.add.image(0,-300, "background5").setOrigin(0).setScale(1)
 
     //.......  PLAYER ..........................................................................
-
-    //create player group
-    this.playerGroup = this.add.group();
-
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
     this.playerAvatarPlaceholder = "avatar1";
 
@@ -204,24 +200,26 @@ export default class Location1Scene extends Phaser.Scene {
 
     this.anims.create({
       key: this.playerMovingKey,
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
+      frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
       frameRate: 20,
       repeat: -1,
     });
 
     this.anims.create({
       key: this.playerStopKey,
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
+      frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
     });
 
     //*create deafult player and playerShadow
     this.player = new playerDefault(this, 300, 800, this.playerAvatarPlaceholder)
-    this.playerShadow = new playerDefaultShadow({scene:this,x:300,y:800, texture: this.playerAvatarPlaceholder})
+    this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
-    //this.playerGroup.add(this.player);
-    //! this.playerGroup.add(this.playerShadow);
+    //create player group
+    this.playerGroup = this.add.group();
+    this.playerGroup.add(this.player);
+    this.playerGroup.add(this.playerShadow);
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
@@ -1652,7 +1650,7 @@ export default class Location1Scene extends Phaser.Scene {
     //...... ONLINE PLAYERS ................................................
     this.createOnlinePlayers();
     this.updateMovementOnlinePlayers()
-    //playerLoadOnlineAvatar.loadAvatar(this)
+    playerLoadOnlineAvatar.loadAvatar(this)
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
 

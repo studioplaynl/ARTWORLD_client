@@ -1,6 +1,6 @@
 export default class playerDefaultShadow extends Phaser.GameObjects.Sprite {
     constructor(config) {
-        super(config.scene, config.x, config.y, config.texture)
+        super(config.scene, config.texture)
 
         config.scene.add.existing(this);
 

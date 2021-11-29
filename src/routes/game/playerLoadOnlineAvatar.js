@@ -2,26 +2,7 @@ import manageSession from "./manageSession";
 //import Phaser from 'phaser'
 
 class playerLoadOnlineAvatar {
-
-    //Phaser.GameObjects.Sprite {
-
-    constructor() { //, player, playerShadow, createdPlayer, playerAvatarKey, playerMovingKey, playerStopKey
-        //super(scene)
-
-        //this.phaser = this;
-        // this.scene = scene;
-
-        // this.player = player
-        // this.playerShadow = playerShadow
-        // this.createdPlayer = createdPlayer
-        // this.playerAvatarKey = playerAvatarKey
-        // this.playerMovingKey = playerMovingKey
-        // this.playerStopKey = playerStopKey
-
-        // this.player = this.scene.player
-        // this.playerAvatarPlaceholder = scene.playerAvatarPlaceholder
-        // this.playerStopKey = scene.playerStopKey
-        //! pattern to get methods and values from the parent scene
+    constructor() { 
     }
 
     debug(scene, player) {
@@ -29,7 +10,7 @@ class playerLoadOnlineAvatar {
         console.log(player)
     }
 
-    loadAvatar(scene) { //, player, playerShadow, createdPlayer, playerAvatarKey, playerMovingKey, playerStopKey, location
+    loadAvatar(scene) { 
         //check if account info is loaded
         if (manageSession.userProfile.id != null) {
             //check for createPlayer flag
@@ -86,7 +67,7 @@ class playerLoadOnlineAvatar {
 
                             if (scene.textures.exists(scene.playerAvatarKey)) {
 
-                                this.attachAvatarToPlayer(scene) // , playerAvatarKey, playerMovingKey, playerStopKey, player, playerShadow, createdPlayer, location
+                                this.attachAvatarToPlayer(scene) 
 
                             }// if (this.textures.exists(this.playerAvatarKey)) 
                         })
@@ -96,13 +77,13 @@ class playerLoadOnlineAvatar {
                     //console.log("this.load.start();");
 
                 } else {
-                    this.attachAvatarToPlayer(scene) //, playerAvatarKey, playerMovingKey, playerStopKey, player, playerShadow, createdPlayer, location
+                    this.attachAvatarToPlayer(scene) 
                 }
             }//if(manageSession.playerCreated)
         }
     }// end loadAvatar
 
-    attachAvatarToPlayer(scene) { //, playerAvatarKey, playerMovingKey, playerStopKey, player, playerShadow, createdPlayer, location
+    attachAvatarToPlayer(scene) { 
         
         const avatar = scene.textures.get(scene.playerAvatarKey)
         console.log(avatar)
@@ -151,8 +132,8 @@ class playerLoadOnlineAvatar {
         scene.player.displayWidth = width
         scene.player.scaleY = scene.player.scaleX
 
-        //! scene.playerShadow.displayWidth = width
-        //! scene.playerShadow.scaleY = scene.playerShadow.scaleX
+        scene.playerShadow.displayWidth = width
+        scene.playerShadow.scaleY = scene.playerShadow.scaleX
 
         //* set the collision body
         //* setCircle(radius [, offsetX] [, offsetY])
