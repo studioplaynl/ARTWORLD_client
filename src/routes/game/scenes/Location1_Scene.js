@@ -1,11 +1,12 @@
 import { CONFIG } from "../config.js";
 import manageSession from "../manageSession";
-//import { getAvatar } from '../../profile.svelte';
 import { getAccount } from '../../../api.js';
-import { compute_slots } from "svelte/internal";
-import { location } from "svelte-spa-router";
-import { Vector2 } from "three";
-import { Session, Profile, logout, checkLogin } from "../../../session.js"
+
+import playerDefault from '../playerDefault'
+import playerDefaultShadow from '../playerDefaultShadow'
+import playerLoadOnlineAvatar from '../playerLoadOnlineAvatar.js'
+import onlinePlayerLoader from '../onlinePlayer.js'
+import preloader from '../preLoader.js'
 
 export default class Location1Scene extends Phaser.Scene {
 
@@ -26,6 +27,9 @@ export default class Location1Scene extends Phaser.Scene {
     this.tempAvatarName = ""
     this.loadedAvatars = [];
 
+    this.player
+    this.playerShadow
+    this.playerContainer
     this.playerAvatarPlaceholder = "playerAvatar";
     this.playerAvatarKey = ""
     this.createdPlayer = false;
@@ -65,6 +69,11 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   async preload() {
+    //.... PRELOADER VISUALISER ...............................................................................................
+    preloader.Loading(this)
+    //.... end PRELOADER VISUALISER ...............................................................................................
+
+
     //TODO rex ui video player
     this.load.image('play', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/play.png');
     this.load.image('pause', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/pause.png');
@@ -139,28 +148,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //....... end TILEMAP ......................................................................
 
-    // //load events
-    // this.load.on('progress', function (value) {
-    //   console.log(value);
-    // });
 
-    // this.load.on('fileprogress', function (file) {
-    //   console.log(file.src);
-    // });
-    // this.load.on('complete', function () {
-    //   console.log('complete');
-    // });
-
-    //set rpc location
-    // manageSession.location = "home"
-    // await manageSession.createSocket();
-
-    //manageSession.getStreamUsers("join, "location1")
-
-
-
-    // console.log("check if session is still valide")
-    // checkLogin(manageSession.sessionStored)
 
   }
 
@@ -170,17 +158,13 @@ export default class Location1Scene extends Phaser.Scene {
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
 
-    //.......  SOCKET ..........................................................................
+    //.......  LOAD PLAYER AVATAR ..........................................................................
     this.playerIdText = manageSession.userProfile.id;
 
-    // console.log("manageSession.playerObjectSelf")
-    // console.log(manageSession.playerObjectSelf)
     manageSession.createPlayer = true
     console.log("manageSession.createPlayer: ")
     console.log(manageSession.createPlayer)
-
-    //manageSession.createSocket();
-    //....... end SOCKET .......................................................................
+    //....... end LOAD PLAYER AVATAR .......................................................................
 
     //this.generateTileMap()
     this.generateBackground()
@@ -193,52 +177,34 @@ export default class Location1Scene extends Phaser.Scene {
     // this.add.image(0,-300, "background5").setOrigin(0).setScale(1)
 
     //.......  PLAYER ..........................................................................
-
-    //create player group
-    this.playerGroup = this.add.group();
-
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
     this.playerAvatarPlaceholder = "avatar1";
-    // //1
-    // this.player = this.physics.add
-    //   .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
-    //   .setDepth(101);
-    // //end 1
 
-    //2
-    this.player = this.physics.add
-      .sprite(300, 800, this.playerAvatarPlaceholder)
-      .setDepth(101);
-
-    this.player.body.onOverlap = true;
-    //end 2
-
-    this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
-
-    // this.playerShadow.anchor.set(0.5);
-    this.playerShadow.setTint(0x000000);
-    this.playerShadow.alpha = 0.2;
-
-    this.playerGroup.add(this.player);
-    this.playerGroup.add(this.playerShadow);
-
-    //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
-
-    //  Our player animations, turning, walking left and walking right.
     this.playerMovingKey = "moving"
     this.playerStopKey = "stop"
 
     this.anims.create({
       key: this.playerMovingKey,
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
+      frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
       frameRate: 20,
       repeat: -1,
     });
 
     this.anims.create({
       key: this.playerStopKey,
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
+      frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
     });
+
+    //*create deafult player and playerShadow
+    this.player = new playerDefault(this, 300, 800, this.playerAvatarPlaceholder)
+    this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+
+    //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
+
+    //create player group
+    this.playerGroup = this.add.group();
+    this.playerGroup.add(this.player);
+    this.playerGroup.add(this.playerShadow);
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
@@ -292,6 +258,22 @@ export default class Location1Scene extends Phaser.Scene {
     console.log(this.UI_Scene)
     console.log(this.currentZoom)
 
+    this.exampleREXUI()
+
+    // identifies if the pointer is down on a graffiti wall
+    // if the condition is true, the avatar stops any movement
+    this.input.on('pointerdown', (pointer, object) => {
+      if (object[0]?.name && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
+        this.graffitiDrawing = true
+      }
+    })
+    this.input.on('pointerup', () => {
+      this.graffitiDrawing = false
+    })
+    
+  } // end create
+
+  exampleREXUI() {
     //! REX UI
     this.data = {
       name: 'Rex',
@@ -381,8 +363,9 @@ export default class Location1Scene extends Phaser.Scene {
         print.text += `${category}:${child.text}\n`;
       })
 
+    
 
-  } // end create
+  }
 
   CreateMainPanel(scene, x, y) {
     // Create elements
@@ -606,7 +589,7 @@ export default class Location1Scene extends Phaser.Scene {
     const graffitiWallHeight = 600
 
     // var graffitiWallContainer = this.add.container(); 
-    let rt = this.add.renderTexture(graffitiWallX, graffitiWallY, graffitiWallWidth, graffitiWallHeight).setInteractive().setDepth(1001);
+    let rt = this.add.renderTexture(graffitiWallX, graffitiWallY, graffitiWallWidth, graffitiWallHeight).setInteractive().setDepth(1001).setName("graffitiBrickWall");
     let graffitiWall = this.add.image(graffitiWallX, graffitiWallY, 'brickWall').setOrigin(0).setDepth(1000)
 
     graffitiWall.displayWidth = graffitiWallWidth
@@ -619,7 +602,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     var i = 0;
 
-    this.input.keyboard.on('keydown_SPACE', function () {
+    this.input.keyboard.on('keydown-' + 'SPACE', function () {
 
       rt.clear();
 
@@ -640,14 +623,11 @@ export default class Location1Scene extends Phaser.Scene {
         this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
         i = Phaser.Math.Wrap(i + 1, 0, 360);
       }
-      if (pointer.isUp) {
-        this.graffitiDrawing = false
-      }
     })
 
     rt.on('pointerup', function (pointer) {
       this.graffitiDrawing = false
-      console.log(this.graffitiDrawing)
+      console.log("brush is up2")
     })
 
     // graffitiWallContainer.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
@@ -696,7 +676,7 @@ export default class Location1Scene extends Phaser.Scene {
     const graffitiWall2Height = 1200
 
     // var graffitiWallContainer = this.add.container(); 
-    let rt2 = this.add.renderTexture(graffitiWall2X, graffitiWall2Y, graffitiWall2Width, graffitiWall2Height).setInteractive().setDepth(1001);
+    let rt2 = this.add.renderTexture(graffitiWall2X, graffitiWall2Y, graffitiWall2Width, graffitiWall2Height).setInteractive().setDepth(1001).setName("graffitiDotWall");
     //let graffitiWall2 = this.add.image(graffitiWall2X, graffitiWall2Y, 'brickWall').setOrigin(0).setDepth(1000)
 
     // graffitiWall2.displayWidth = graffitiWall2Width
@@ -1080,138 +1060,7 @@ export default class Location1Scene extends Phaser.Scene {
     //....... end TILEMAP ......................................................................
   }//generateTileMap
 
-  loadAndCreatePlayerAvatar() {
-    //check if account info is loaded
-    if (manageSession.userProfile.id != null) {
-      //check for createPlayer flag
-      if (manageSession.createPlayer) {
-        manageSession.createPlayer = false;
-        //console.log("manageSession.createPlayer = false;")
 
-        //set the location of the player to this location
-
-        this.createdPlayer = false;
-
-        //console.log("loadAndCreatePlayerAvatar")
-
-        // is playerAvaterKey already in loadedAvatars?
-        //no -> load the avatar and add to loadedAvatars
-        //yes -> dont load the avatar
-
-        this.playerAvatarKey = manageSession.userProfile.id + "_" + manageSession.userProfile.create_time
-        // console.log(this.playerAvatarKey)
-        // console.log("this.textures.exists(this.playerAvatarKey): ")
-        // console.log(this.textures.exists(this.playerAvatarKey))
-
-        console.log(this.textures.exists(this.playerAvatarKey))
-
-        //if the texture already exists attach it again to the player
-        if (!this.textures.exists(this.playerAvatarKey)) {
-          //check if url is not empty for some reason, returns so that previous image is kept
-          if (manageSession.userProfile.url === "") {
-            console.log("avatar url is empty")
-            manageSession.createPlayer = false;
-            console.log("manageSession.createPlayer = false;")
-            this.createdPlayer = true;
-            console.log("this.createdPlayer = true;")
-            return
-          } else {
-            // console.log(" loading: manageSession.userProfile.url: ")
-            // console.log(manageSession.userProfile.url)
-
-            this.load.spritesheet(
-              this.playerAvatarKey,
-              manageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 }
-            );
-
-            this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-              console.log("loadAndCreatePlayerAvatar complete")
-              console.log(manageSession.userProfile.url)
-              if (this.textures.exists(this.playerAvatarKey)) {
-
-                this.attachtAvatarToPlayer()
-
-              }// if (this.textures.exists(this.playerAvatarKey)) 
-            })
-          }
-
-          this.load.start(); // load the image in memory
-          //console.log("this.load.start();");
-
-        } else {
-          this.attachtAvatarToPlayer()
-        }
-      }//if(manageSession.playerCreated)
-    }
-  }//loadAndCreatePlayerAvatar
-
-  attachtAvatarToPlayer() {
-    const avatar = this.textures.get(this.playerAvatarKey)
-    const avatarWidth = avatar.frames.__BASE.width
-    const avatarHeight = avatar.frames.__BASE.height
-
-    const avatarFrames = Math.round(avatarWidth / avatarHeight)
-    //console.log("avatarFrames: " + avatarFrames)
-
-    //make an animation if the image is wider than tall
-    if (avatarFrames > 1) {
-      //.. animation for the player avatar ............................................
-
-      this.playerMovingKey = "moving" + "_" + this.playerAvatarKey;
-      this.playerStopKey = "stop" + "_" + this.playerAvatarKey;
-
-      this.anims.create({
-        key: this.playerMovingKey,
-        frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: avatarFrames - 1 }),
-        frameRate: (avatarFrames + 2) * 2,
-        repeat: -1,
-        yoyo: true
-      });
-
-      this.anims.create({
-        key: this.playerStopKey,
-        frames: this.anims.generateFrameNumbers(this.playerAvatarKey, { start: 0, end: 0 }),
-      });
-
-      //.. end animation for the player avatar ............................................
-    }
-
-    // texture loaded so use instead of the placeholder
-    this.player.setTexture(this.playerAvatarKey)
-
-    this.playerShadow.setTexture(this.playerAvatarKey)
-
-    //scale the player to 68px
-    const width = 128
-    this.player.displayWidth = width
-    this.player.scaleY = this.player.scaleX
-
-    this.playerShadow.displayWidth = width
-    this.playerShadow.scaleY = this.playerShadow.scaleX
-
-    //set the collision body
-    const portionWidth = width / 3
-    this.player.body.setCircle(portionWidth, portionWidth / 4, portionWidth / 4)
-
-
-    //place the player in the last known position
-    // this.player.x = this.player.posX
-    // this.player.y = this.player.posY
-
-    // console.log("player avatar has loaded ")
-    // console.log("this.playerAvatarKey")
-    // console.log(this.playerAvatarKey)
-    this.player.location = this.location
-
-    console.log("this.player: ")
-    console.log(this.player)
-
-    this.createdPlayer = true;
-    // console.log("this.createdPlayer = true;")
-
-    //send the current player position over the network
-    manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-  }//attachtAvatarToPlayer
 
   createDebugText() {
     this.headerText = this.add
@@ -1664,7 +1513,6 @@ export default class Location1Scene extends Phaser.Scene {
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     this.player.body.velocity.normalize().scale(speed);
-
   }
 
   playerMovingByClicking() {
@@ -1679,8 +1527,6 @@ export default class Location1Scene extends Phaser.Scene {
     }
 
     this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
-
-
     //  4 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (this.playerIsMovingByClicking) {
@@ -1694,64 +1540,49 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   playerMovingBySwiping() {
-    if (!this.graffitiDrawing) {
-      if (!this.input.activePointer.isDown && this.isClicking == true && !this.graffitiDrawing) {
-        const playerX = this.player.x
-        const playerY = this.player.y
+    if (this.input.activePointer.isDown
+      && this.isClicking == false &&
+      this.graffitiDrawing == false) {
+      console.log("One")
+      this.isClicking = true
+    }
+    if (
+      !this.input.activePointer.isDown &&
+      this.isClicking == true &&
+      this.graffitiDrawing == false
+    ) {
+      console.log("Two")
+      const playerX = this.player.x
+      const playerY = this.player.y
 
-        const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
-        const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
-        // console.log("swipeX:")
-        // console.log(swipeX)
-        // console.log("swipeY:")
-        // console.log(swipeY)
-        this.swipeAmount.x = swipeX
-        this.swipeAmount.y = swipeY
+      const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
+      const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
 
-        let moveSpeed = this.swipeAmount.length()
-        if (moveSpeed > 450) moveSpeed = 450
+      this.swipeAmount.x = swipeX
+      this.swipeAmount.y = swipeY
 
-        // console.log("moveSpeed:")
-        // console.log(moveSpeed)
+      let moveSpeed = this.swipeAmount.length()
+      if (moveSpeed > 450) moveSpeed = 450
 
-        // console.log("this.swipeAmount:")
-        // console.log(this.swipeAmount.x)
-        // console.log(this.swipeAmount.y)
-        // console.log("")
-        //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
-        this.playerIsMovingByClicking = true; // trigger moving animation
-
-
-        this.target.x = playerX + swipeX
-        this.target.y = playerY + swipeY
-        this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
-        this.isClicking = false;
+      this.playerIsMovingByClicking = true; // trigger moving animation
 
 
-        //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
-        //       this.swipeDirection = "up";
-        //     } else if (this.input.activePointer.upY > this.input.activePointer.downY) {
-        //       this.swipeDirection = "down";
-        //     }
+      this.target.x = playerX + swipeX
+      this.target.y = playerY + swipeY
+      this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
+      this.isClicking = false;
 
-      } else if (this.input.activePointer.isDown && this.isClicking == false && !this.graffitiDrawing) {
-        this.isClicking = true
-        if (this.graffitiDrawing) {
-          this.isClicking = false
-        }
-        // console.log("this.isClicking:")
-        // console.log(this.isClicking)
-      }
-      this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
-      //  4 is our distance tolerance, i.e. how close the source can get to the target
-      //  before it is considered as being there. The faster it moves, the more tolerance is required.
-      if (this.playerIsMovingByClicking) {
-        if (this.distance < 10) {
-          this.player.body.reset(this.target.x, this.target.y);
-          this.playerIsMovingByClicking = false
-        } else {
-          this.sendPlayerMovement();
-        }
+    }
+
+    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+    //  4 is our distance tolerance, i.e. how close the source can get to the target
+    //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    if (this.playerIsMovingByClicking) {
+      if (this.distance < 10) {
+        this.player.body.reset(this.target.x, this.target.y);
+        this.playerIsMovingByClicking = false
+      } else {
+        this.sendPlayerMovement();
       }
     }
   }
@@ -1773,7 +1604,6 @@ export default class Location1Scene extends Phaser.Scene {
   updateMovementOnlinePlayers() {
     if (manageSession.updateOnlinePlayers) {
       if (!manageSession.createPlayer) {
-        // console.log("test")//!comes trough
         if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
 
           manageSession.allConnectedUsers.forEach(player => {
@@ -1807,10 +1637,10 @@ export default class Location1Scene extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    this.createOnlinePlayers();
+    // this.createOnlinePlayers()
+    onlinePlayerLoader.load(this)
     this.updateMovementOnlinePlayers()
-    this.loadAndCreatePlayerAvatar();
-    //manageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
+    playerLoadOnlineAvatar.loadAvatar(this)
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
 
@@ -1827,7 +1657,7 @@ export default class Location1Scene extends Phaser.Scene {
     // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     //....... end UPDATE TIMER  ..............................................................................
 
-    // //........ PLAYER MOVE BY KEYBOARD  ......................................................................
+    //........ PLAYER MOVE BY KEYBOARD  ......................................................................
     if (!this.playerIsMovingByClicking) {
       this.playerMovingByKeyBoard();
     }

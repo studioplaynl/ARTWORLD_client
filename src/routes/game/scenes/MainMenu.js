@@ -1,6 +1,7 @@
 import { SCENES } from "../config.js"
-import manageSession from "../manageSession.js";
-import { getAccount } from '../../../api.js';
+import manageSession from "../manageSession.js"
+import { getAccount } from '../../../api.js'
+import preloader from '../preLoader.js'
 
 
 export default class MainMenu extends Phaser.Scene {
@@ -10,34 +11,42 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   preload() {
-    this.load.atlas(
-      "flares",
-      "assets/particles/flares.png",
-      "assets/particles/flares.json"
-    );
-    this.load.image("artworld", "assets/artworld.png");
+    
+    // //.... PRELOADER VISUALISER ...............................................................................................
+    // preloader.Loading(this)
+    // //.... end PRELOADER VISUALISER ...............................................................................................
 
-    this.load.image("ui_magnifier_minus", "assets/ui/circle_minus.png");
-    this.load.image("ui_magnifier_plus", "assets/ui/circle_plus.png");
-    this.load.image("ui_eye", "assets/ui/eye.png");
 
-    // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
-    // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
-    // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
-    //this.load.image("background4", "./assets/art_styles/repetition/0affdae3101c87f72c071970623a6884.jpg")
-    // this.load.image("background4", "./assets/art_styles/repetition/0ceff64b236482e515c344d254424da6.jpg")
+    // this.load.atlas(
+    //   "flares",
+    //   "assets/particles/flares.png",
+    //   "assets/particles/flares.json"
+    // )
+
+    // this.load.image("artworld", "assets/artworld.png")
+
+    // this.load.image("ui_magnifier_minus", "assets/ui/circle_minus.png")
+    // this.load.image("ui_magnifier_plus", "assets/ui/circle_plus.png")
+    // this.load.image("ui_eye", "assets/ui/eye.png")
+
+    // // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
+    // // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
+    // // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
+    // //this.load.image("background4", "./assets/art_styles/repetition/0affdae3101c87f72c071970623a6884.jpg")
+    // // this.load.image("background4", "./assets/art_styles/repetition/0ceff64b236482e515c344d254424da6.jpg")
+    // // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
+    // // this.load.image("background4", "./assets/art_styles/repetition/9a9cdf2c6c7a12e4bf572f34536861d3.jpg")
     // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
-    // this.load.image("background4", "./assets/art_styles/repetition/9a9cdf2c6c7a12e4bf572f34536861d3.jpg")
-    this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
-    // this.load.image(
-    //   "background4",
-    //   "./assets/art_styles/repetition/b9a5ab2363eef33f8ede82430fe331b3.jpg"
-    // );
+    // // this.load.image(
+    // //   "background4",
+    // //   "./assets/art_styles/repetition/b9a5ab2363eef33f8ede82430fe331b3.jpg"
+    // // );
 
-    // Received presence event for stream:
-    // this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
+    // // Received presence event for stream:
+    // // this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
+
   }
-  
+
   async create() {
     // a tile sprite repeats background, should be done with small images
     this.bg = this.add

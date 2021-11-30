@@ -81,8 +81,11 @@ class manageSession {
         if (user.user_id == data.user_id) {
           user.posX = data.posX;
           user.posY = data.posY;
-          console.log("user")
-          console.log(user)
+
+          //! printing also when receiving movement data
+          // console.log("user")
+          // console.log(user)
+
           // console.log("data.user_id")
           // console.log(data.user_id)
 
@@ -207,8 +210,8 @@ class manageSession {
     this.socket.rpc("move_position", data).then((rec) => {
       //status;
       data = JSON.parse(rec.payload) || [];
-      console.log("sent pos:");
-      console.log(data);
+      // console.log("sent pos:");
+      // console.log(data);
     });
 
   }

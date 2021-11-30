@@ -3,7 +3,7 @@ import i18next from "i18next";
 import { locale } from "svelte-i18n";
 
 let latestValue = null;
-export default class location7_Scene extends Scene3D {
+export default class Location7Scene extends Scene3D {
   platform;
   avatar;
   avatarImage;
@@ -64,11 +64,127 @@ export default class location7_Scene extends Scene3D {
       "-orbitControls"
     );
 
+    this.addZoomingButtons();
+    this.addGroundPlatform();
+
+    // adding avatar to the world
+    this.avatarImage = await this.third.load.texture("avatar");
+    const geometry = new THREE.PlaneGeometry(10, 10, 1, 1);
+    const material = new THREE.MeshLambertMaterial({
+      map: this.avatarImage,
+    });
+    this.avatar = new THREE.Mesh(geometry, material);
+    this.avatar.material.side = THREE.DoubleSide;
+    this.avatar.castShadow = true;
+    this.avatar.position.set(0, 1.1, 0);
+    this.avatar.rotation.x = Math.PI / 2;
+    this.third.add.existing(this.avatar);
+    this.third.physics.add.existing(this.avatar, {
+      collisionFlags: 4,
+    });
+
+    // keys of keyboard that are used to move the avatar
+    this.keys = {
+      up: this.input.keyboard.addKey("w"),
+      left: this.input.keyboard.addKey("a"),
+      down: this.input.keyboard.addKey("s"),
+      right: this.input.keyboard.addKey("d"),
+    };
+
+    this.addBuildings();
+    this.addGroundPicture("vertical", 30, 30);
+    this.addGroundPicture("cubeDots", -30, 30);
+    this.addGroundPicture("egg", 30, -30);
+    this.addGroundPicture("doodle", -30, -30);
+    this.addGroundPicture("repetition", 90, -30);
+    this.addEntranceMessageToBuildings();
+    this.addBackButton();
+
+    // detecting collision of the avatar with buildings and displaying a respective message
+    await this.avatar.body.on.collision((building, event) => {
+      if (building.name === "location1") {
+        this.displayLocationEntrance(building.name, event);
+      }
+      if (building.name === "location2") {
+        this.displayLocationEntrance(building.name, event);
+      }
+      if (building.name === "location3") {
+        this.displayLocationEntrance(building.name, event);
+      }
+      if (building.name === "location4") {
+        this.displayLocationEntrance(building.name, event);
+      }
+      if (building.name === "location5") {
+        this.displayLocationEntrance(building.name, event);
+      }
+    });
+
+    // switch to the respective location on click
+    this.entranceMessage.on("pointerup", () => {
+      this.scene.stop();
+      this.scene.start(`${this.chosenScene}_Scene`);
+    });
+
+    // detecting the change of language
+    let countDisplay = 0;
+    locale.subscribe((value) => {
+      if (countDisplay === 0) {
+        countDisplay++;
+        return;
+      }
+      if (countDisplay > 0) {
+        i18next.changeLanguage(value);
+      }
+      if (latestValue !== value) {
+        this.scene.restart();
+      }
+      latestValue = value;
+    });
+  } // end of create
+
+  async addZoomingButtons() {
     this.zooming = 90;
     // view from top
     this.third.camera.position.set(0, this.zooming, 0);
     this.third.camera.lookAt(0, 0, 0);
+    // zoom buttons
+    this.width = this.sys.game.canvas.width;
+    this.height = this.sys.game.canvas.height;
 
+    this.zoom = this.add
+      .image(this.width / 10 + 40, (this.height - 60) / 50, "ui_eye")
+      .setOrigin(0)
+      .setDepth(1000)
+      .setScale(this.width / this.width / 8);
+
+    this.zoomIn = this.add
+      .image(
+        this.width / 10 + 120,
+        (this.height - 60) / 40,
+        "ui_magnifier_plus"
+      )
+      .setOrigin(0)
+      .setDepth(1000)
+      .setScale(this.width / this.width / 6)
+      .setInteractive({ useHandCursor: true });
+
+    this.zoomOut = this.add
+      .image(this.width / 10, (this.height - 60) / 40, "ui_magnifier_minus")
+      .setOrigin(0)
+      .setDepth(1000)
+      .setScale(this.width / this.width / 6)
+      .setInteractive({ useHandCursor: true });
+
+    this.zoomIn.on("pointerup", () => {
+      this.third.camera.position.set(0, (this.zooming -= 10), 0);
+    });
+
+    this.zoomOut.on("pointerup", () => {
+      this.third.camera.position.set(0, (this.zooming += 10), 0);
+    });
+  }
+
+  addGroundPlatform() {
     // the main platform
     this.third.load
       .texture("ground")
@@ -87,30 +203,9 @@ export default class location7_Scene extends Scene3D {
         phong: { color: "white" },
       }
     );
+  }
 
-    // adding avatar to the world
-    this.avatarImage = await this.third.load.texture("avatar");
-    const geometry = new THREE.PlaneGeometry(10, 10, 1, 1);
-    const material = new THREE.MeshLambertMaterial({
-      map: this.avatarImage,
-    });
-    this.avatar = new THREE.Mesh(geometry, material);
-    this.avatar.material.side = THREE.DoubleSide;
-    this.avatar.castShadow = true;
-    this.avatar.position.set(0, 1.1, 0);
-    this.avatar.rotation.x = Math.PI / 2;
-    this.third.add.existing(this.avatar);
-    this.third.physics.add.existing(this.avatar, {
-      collisionFlags: 4,
-    });
-
-    // adding ground images
-    this.addGroundPicture("vertical", 30, 30);
-    this.addGroundPicture("cubeDots", -30, 30);
-    this.addGroundPicture("egg", 30, -30);
-    this.addGroundPicture("doodle", -30, -30);
-    this.addGroundPicture("repetition", 90, -30);
-
+  addBuildings() {
     // adding 3d objects as buildings
     this.buildings = [
       this.third.physics.add.box({
@@ -160,70 +255,9 @@ export default class location7_Scene extends Scene3D {
     this.buildings.forEach((object) => {
       object.body.setCollisionFlags(1);
     });
+  }
 
-    // zoom buttons
-    this.width = this.sys.game.canvas.width;
-    this.height = this.sys.game.canvas.height;
-
-    this.zoom = this.add
-      .image(this.width / 10 + 40, (this.height - 60) / 50, "ui_eye")
-      .setOrigin(0)
-      .setDepth(1000)
-      .setScale(this.width / this.width / 8);
-
-    this.zoomIn = this.add
-      .image(
-        this.width / 10 + 120,
-        (this.height - 60) / 40,
-        "ui_magnifier_plus"
-      )
-      .setOrigin(0)
-      .setDepth(1000)
-      .setScale(this.width / this.width / 6)
-      .setInteractive({ useHandCursor: true });
-
-    this.zoomOut = this.add
-      .image(this.width / 10, (this.height - 60) / 40, "ui_magnifier_minus")
-      .setOrigin(0)
-      .setDepth(1000)
-      .setScale(this.width / this.width / 6)
-      .setInteractive({ useHandCursor: true });
-
-    this.zoomIn.on("pointerup", () => {
-      this.third.camera.position.set(0, (this.zooming -= 10), 0);
-    });
-
-    this.zoomOut.on("pointerup", () => {
-      this.third.camera.position.set(0, (this.zooming += 10), 0);
-    });
-
-    // keys of keyboard that are used to move the avatar
-    this.keys = {
-      up: this.input.keyboard.addKey("w"),
-      left: this.input.keyboard.addKey("a"),
-      down: this.input.keyboard.addKey("s"),
-      right: this.input.keyboard.addKey("d"),
-    };
-
-    // detecting collision of the avatar with buildings and displaying a respective message
-    this.avatar.body.on.collision((building, event) => {
-      if (building.name === "location1") {
-        this.displayLocationEntrance(building.name, event);
-      }
-      if (building.name === "location2") {
-        this.displayLocationEntrance(building.name, event);
-      }
-      if (building.name === "location3") {
-        this.displayLocationEntrance(building.name, event);
-      }
-      if (building.name === "location4") {
-        this.displayLocationEntrance(building.name, event);
-      }
-      if (building.name === "location5") {
-        this.displayLocationEntrance(building.name, event);
-      }
-    });
-
+  addEntranceMessageToBuildings() {
     // entrance message's visibility by default is set to false
     this.entranceMessage = this.add
       .text(this.width / 2, this.height / 2, ``, {
@@ -235,29 +269,9 @@ export default class location7_Scene extends Scene3D {
       .setDepth(1000)
       .setInteractive()
       .setVisible(false);
+  }
 
-    // switch to the respective location on click
-    this.entranceMessage.on("pointerup", () => {
-      this.scene.stop();
-      this.scene.start(`${this.chosenScene}_Scene`);
-    });
-
-    // detecting the change of language
-    let countDisplay = 0;
-    locale.subscribe((value) => {
-      if (countDisplay === 0) {
-        countDisplay++;
-        return;
-      }
-      if (countDisplay > 0) {
-        i18next.changeLanguage(value);
-      }
-      if (latestValue !== value) {
-        this.scene.restart();
-      }
-      latestValue = value;
-    });
-
+  addBackButton() {
     // back button to go to location1
     this.back = this.add
       .text(this.width / 10 - 120, this.height / 10, `${i18next.t("back")}`, {
