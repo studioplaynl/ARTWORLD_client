@@ -1,12 +1,14 @@
 <script>
-	let email = "@vrolijkheid.nl"
+	let email = ""
 	let username = "user"
 	let password = 'somesupersecretpassword'
 	let passwordCheck = 'somesupersecretpassword'
-	let role = 'speler'
+	let role = ''
 	let azc = ''
+    let meta = {}
+	let action = "registreren"
 	export let params = {}
-    import {Session, Error} from "../../session.js"
+    import {Session,Profile, Error} from "../../session.js"
 	import {getAccount} from "../../api"
 	import {client} from "../../nakama.svelte"
 	import { _ } from 'svelte-i18n'
@@ -56,10 +58,38 @@
 		console.log(newUser)
 		alert('New user created' + newUser.user_id)
 	}
+
+    async function update(){
+        if(role == "admin"){
+            meta = {azc: azc, role: role}
+        }
+        await client.updateAccount($Session, {
+            username: username,
+            email: email,
+            password: password,
+            metadata: meta
+        });
+    }
 	
 	function onSubmit() {
-		let promise = register();
+		let promise = update();
 	}
+
+	if(!!params.user){
+		getAccount(params.user)
+		.then((account) => {
+			console.log(account)
+			username = account.username
+			role = account.metadata.role
+			azc = account.metadata.azc
+		})
+
+	}else {
+        username = $Profile.username
+		role = $Profile.meta.role
+		azc = $Profile.meta.azc
+
+    }
 
 
 </script>
@@ -68,7 +98,7 @@
 	<div class="registerForm">
 	<form on:submit|preventDefault={onSubmit}>
 		<div class="container">
-		  <h1>{$_('register.title')}</h1>
+		  <h1>Update deze gebruiker</h1>
 
 		  <hr>
 		  <label for="username"><b>{$_('register.username')}</b></label>
@@ -82,7 +112,9 @@
 	  
 		  <label for="psw-repeat"><b>{$_('register.repeatPassword')}</b></label>
 		  <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" bind:value={passwordCheck} required>
-		  <hr>
+		  
+          {#if $Profile.meta.role == "admin"}
+          <hr>
 
 		  <label for="Role"><b>{$_('register.role')}</b></label>
 		  <select name="Role" bind:value={role} required>
@@ -101,8 +133,8 @@
 			{/each}
 			
 	      </select>
-
-		  <button type="submit" class="registerbtn">Register</button>
+          {/if}
+		  <button type="submit" class="registerbtn">Update</button>
 		</div>
 	  </form>
 	</div>

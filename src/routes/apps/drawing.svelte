@@ -362,6 +362,23 @@
       } else {
         replace($location + "/" + $Session.user_id);
       }
+    }else {
+      var jsonURL = await getDrawing(
+          `/avatar/${$Session.user_id}/current.json`
+        );
+        console.log(jsonURL);
+        fetch(jsonURL)
+          .then((res) => res.json())
+          .then((json) => {
+            console.log("Checkout this JSON! ", json);
+            if (appType == "drawing")
+              canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+            if (appType == "stopmotion" || appType == "avatar") {
+              frames = json;
+              canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
+            }
+          })
+          .catch((err) => console.log(err));
     }
   };
 
@@ -568,7 +585,8 @@
       var Image = savecanvas.toDataURL("image/png", 0.2);
       console.log(Image);
       var blobData = dataURItoBlob(Image);
-      uploadAvatar(blobData);
+      json = JSON.stringify(frames);
+      uploadAvatar(blobData,json);
     }, 300);
   }
 

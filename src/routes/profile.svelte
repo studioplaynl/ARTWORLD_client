@@ -163,14 +163,16 @@ function moveToTrash(key) {
       <p>{$_('register.username')}: {user}</p>
       <p>{$_('register.role')}: {$_('role.' + role)}</p>
       <p>{$_('register.location')}: {azc}</p>
-      <a href="/#/">edit</a>
+      <a href="/#/update">edit</a>
       </Card>
     </div>
     <div class="flex-item-right">
-      <h1>Mijn kunstwerken</h1>
+      <h1>kunstwerken</h1>
       <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable"></SvelteTable>
+      {#if !isCurrentUser}
       <h1>Prullenmand</h1>
       <SvelteTable columns="{columns}" rows="{trash}" classNameTable="profileTable"></SvelteTable>
+      {/if}
     </div>
   </div>
 </main>
