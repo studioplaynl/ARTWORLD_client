@@ -27,7 +27,12 @@ class preloader {
         scene.load.on('progress', function (value) {
             // console.log(value);
             progressBar.clear();
-            progressBar.fillStyle(0xffffff, 1);
+            //white
+            progressBar.fillStyle(0xffffff, 1)
+            //yellow
+            // progressBar.fillStyle(0xffff00, 1)
+            //blue
+            // progressBar.fillStyle(0x0000ff, 1)
             progressBar.fillRect(text1.x - (offsetRect * 8) + offsetRect, text1.y + (offsetRect * 1) + (offsetRect * 4), 300 * value, 30);
         });
 
