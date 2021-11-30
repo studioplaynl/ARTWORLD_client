@@ -1,4 +1,5 @@
  //* Scenes
+ import PreloadScene from "./scenes/PreloadScene";
  import MainMenu from "./scenes/MainMenu";
  import networkBoot_Scene from "./scenes/networkBoot_Scene";
  import location1_Scene from "./scenes/Location1_Scene";
@@ -25,6 +26,7 @@ export const CONFIG = {
 }
 
 export const SCENES = [
+    PreloadScene,
     MainMenu,
     networkBoot_Scene,
     location1_Scene,
