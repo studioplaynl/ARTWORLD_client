@@ -155,9 +155,6 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
 
   generateLocations() {
-
-
-
     //........ location1 ...................
     this.location1 = this.add.isotriangle(100, 600, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     this.physics.add.existing(this.location1);

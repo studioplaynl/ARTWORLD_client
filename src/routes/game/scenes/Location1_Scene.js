@@ -253,7 +253,6 @@ export default class Location1Scene extends Phaser.Scene {
     console.log(this.currentZoom)
 
     this.exampleREXUI()
-<<<<<<< HEAD
 
     // identifies if the pointer is down on a graffiti wall
     // if the condition is true, the avatar stops any movement
@@ -266,9 +265,6 @@ export default class Location1Scene extends Phaser.Scene {
       this.graffitiDrawing = false
     })
 
-=======
-    
->>>>>>> b9417b3297f6f9ee352dadf77f5419026cef8496
   } // end create
 
   exampleREXUI() {
