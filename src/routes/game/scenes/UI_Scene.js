@@ -63,12 +63,12 @@ export default class UI_Scene extends Phaser.Scene {
 
   zoomButtons(update) {
     let width = this.sys.game.canvas.width;
-    let height = this.sys.game.canvas.height - 60;
+    let height = this.sys.game.canvas.height;
 
     if (!update) {
       //text to show the location (for debugging) > will change to breadcrum UI for user
       this.locationText = this.add
-        .text(width / 10 - 120, height / 40, this.location, {
+        .text(width / 3.5, height / 40, this.location, {
           fontFamily: "Arial",
           fontSize: "22px",
         })

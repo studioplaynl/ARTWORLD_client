@@ -10,6 +10,8 @@
  import location6_Scene from "./scenes/Location6_Scene";
  import location7_Scene from "./scenes/Location7_Scene";
  import UI_Scene from "./scenes/UI_Scene";
+ import artworldAmsterdam from "./scenes/artworldAmsterdam";
+ 
 
 export const CONFIG = {
     WIDTH: window.innerWidth,
@@ -36,6 +38,7 @@ export const SCENES = [
     location5_Scene,
     location6_Scene,
     location7_Scene,
+    artworldAmsterdam,
     UI_Scene,
   ]
 

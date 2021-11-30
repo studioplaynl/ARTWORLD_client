@@ -1,4 +1,4 @@
-import manageSession from "./manageSession";
+import manageSession from "./../manageSession";
 
 class onlinePlayerLoader {
     constructor() {

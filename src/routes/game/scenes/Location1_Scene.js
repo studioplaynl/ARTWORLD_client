@@ -2,10 +2,10 @@ import { CONFIG } from "../config.js";
 import manageSession from "../manageSession";
 import { getAccount } from '../../../api.js';
 
-import playerDefault from '../playerDefault'
-import playerDefaultShadow from '../playerDefaultShadow'
-import playerLoadOnlineAvatar from '../playerLoadOnlineAvatar.js'
-import onlinePlayerLoader from '../onlinePlayer.js'
+import playerDefault from '../class/playerDefault'
+import playerDefaultShadow from '../class/playerDefaultShadow'
+import playerLoadOnlineAvatar from '../class/playerLoadOnlineAvatar.js'
+import onlinePlayerLoader from '../class/onlinePlayer.js'
 import preloader from '../preLoader.js'
 
 export default class Location1Scene extends Phaser.Scene {
@@ -73,12 +73,6 @@ export default class Location1Scene extends Phaser.Scene {
     preloader.Loading(this)
     //.... end PRELOADER VISUALISER ...............................................................................................
 
-
-    //TODO rex ui video player
-    this.load.image('play', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/play.png');
-    this.load.image('pause', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/pause.png');
-    this.load.video('test', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/video/test.mp4', 'canplaythrough', true, true);
-    //TODO................ end rex ui video player
 
     //drawing on a wall
     this.load.image('brush', 'assets/brush3.png');
@@ -270,7 +264,7 @@ export default class Location1Scene extends Phaser.Scene {
     this.input.on('pointerup', () => {
       this.graffitiDrawing = false
     })
-    
+
   } // end create
 
   exampleREXUI() {

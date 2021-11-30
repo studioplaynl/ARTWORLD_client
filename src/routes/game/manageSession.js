@@ -1,8 +1,5 @@
 import { client, SSL } from "../../nakama.svelte";
-//import { Profile, logout } from "../../session.js";
-// import { user, url, getAccount } from '../../api.js';
-// import { Color } from "fabric/fabric-impl";
-
+import { SCENES } from "./config.js"
 
 class manageSession {
   constructor() {
@@ -28,6 +25,8 @@ class manageSession {
     this.AccountObject;
     this.playerObjectSelf;
     this.createPlayer = true;
+
+    this.locationExists = false
 
     this.createOnlinePlayers = false;
     this.updateOnlinePlayers = false;
@@ -227,6 +226,24 @@ class manageSession {
       //   console.log(rec)
       // });
   } //end sendChatMessage
+
+  checkSceneExistence() {
+    //check if this.launchLocation exists in SCENES
+    const locationExists = SCENES.includes(this.launchLocation)
+    //reset existing to false
+    this.locationExists = false
+    //if location does not exists; launch default location
+    if (!locationExists) {
+      //set to fail-back scene
+      this.location = "artworldAmsterdam"
+      this.launchLocation = this.location
+      console.log(this.launchLocation)
+    } else {
+      this.location = this.userProfile.meta.location
+      console.log(this.location)
+    }
+    this.locationExists = true
+  }
 
   async chatExample() {
     const roomname = "PizzaFans";

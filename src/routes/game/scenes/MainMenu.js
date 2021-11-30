@@ -11,7 +11,7 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   preload() {
-    
+
     // //.... PRELOADER VISUALISER ...............................................................................................
     // preloader.Loading(this)
     // //.... end PRELOADER VISUALISER ...............................................................................................
@@ -166,33 +166,17 @@ export default class MainMenu extends Phaser.Scene {
     if (typeof (manageSession.userProfile.meta.location) != "undefined") {
       manageSession.launchLocation = manageSession.userProfile.meta.location + "_Scene"
       console.log(manageSession.launchLocation)
-      this.checkSceneExistence()
+      manageSession.checkSceneExistence()
     } else {
       getAccount("", true)
         .then(rec => {
           manageSession.freshSession = rec
           //! only set the menu button visible if the user data is downloaded!
           manageSession.launchLocation = manageSession.freshSession.meta.location + "_Scene"
-          this.checkSceneExistence()
+          manageSession.checkSceneExistence()
         })
     }
   } //create
-
-  checkSceneExistence() {
-    //check if this.launchLocation exists in SCENES
-    const locationExists = SCENES.includes(manageSession.launchLocation)
-    //if location does not exists; launch default location
-    if (!locationExists) {
-      //set to fail-back scene
-      manageSession.location = "location1"
-      manageSession.launchLocation = manageSession.location + "_Scene"
-      console.log(manageSession.launchLocation)
-    } else {
-      manageSession.location = manageSession.userProfile.meta.location
-      console.log(manageSession.location)
-    }
-    this.playBtn.setVisible(true)
-  }
 
   // zoomButtons(update) {
 
@@ -267,6 +251,6 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   update(time, delta) {
-
+    this.playBtn.setVisible(manageSession.locationExists)
   } // end update
 }
