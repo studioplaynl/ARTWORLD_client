@@ -253,6 +253,7 @@ export default class Location1Scene extends Phaser.Scene {
     console.log(this.currentZoom)
 
     this.exampleREXUI()
+<<<<<<< HEAD
 
     // identifies if the pointer is down on a graffiti wall
     // if the condition is true, the avatar stops any movement
@@ -265,6 +266,9 @@ export default class Location1Scene extends Phaser.Scene {
       this.graffitiDrawing = false
     })
 
+=======
+    
+>>>>>>> b9417b3297f6f9ee352dadf77f5419026cef8496
   } // end create
 
   exampleREXUI() {
@@ -1533,6 +1537,19 @@ export default class Location1Scene extends Phaser.Scene {
     }
   }
 
+  identifySurfaceOfSwiping() {
+    // identifies if the pointer is down on a graffiti wall
+    // if the condition is true, the avatar stops any movement
+    this.input.on('pointerdown', (pointer, object) => {
+      if (object[0] && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
+        this.graffitiDrawing = true;
+      }
+    })
+    this.input.on('pointerup', () => {
+      this.graffitiDrawing = false
+    })
+  }
+
   playerMovingBySwiping() {
     if (this.input.activePointer.isDown
       && this.isClicking == false &&
@@ -1680,6 +1697,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //this.playerMovingByClicking()
     this.playerMovingBySwiping()
+    this.identifySurfaceOfSwiping()
 
   } //update
 } //class

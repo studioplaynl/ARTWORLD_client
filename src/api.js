@@ -44,10 +44,6 @@ export async function uploadImage(name, type, json, img, status) {
   Error = "Saved"
 }
 
-export async function recieveImage(data) {
-  
-}
-
 export async function listImages(type, user, limit) {
   const objects = await client.listStorageObjects(Sess, type, user, limit);
   console.log(objects)
@@ -80,6 +76,13 @@ export async function updateObject(type, name, value, pub) {
     }
   ]);
   console.info("Stored objects: %o", object_ids);
+}
+
+
+export async function listObjects(type, userID, limit) {
+  if(!!!limit) limit = 100;
+  const objects = await client.listStorageObjects(session, type, userID, limit);
+  return objects
 }
 
 export async function getAccount(id, avatar) {
@@ -122,9 +125,9 @@ export async function getAvatar(avatar_url) {
     return url
 }
 
-  export async function uploadAvatar(data) {
+  export async function uploadAvatar(data,json) {
     var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png")
-
+    var [jsonURL, jsonLocation] = await getUploadURL("avatar", "current", "json")
     console.log(jpegURL)
 
   await fetch(jpegURL, {
@@ -133,6 +136,14 @@ export async function getAvatar(avatar_url) {
         "Content-Type": "multipart/form-data"
       },
       body: data
+    })
+
+    await fetch(jsonURL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "multipart/form-data"
+      },
+      body: json
     })
 
   await client.updateAccount(Sess, {
@@ -180,4 +191,12 @@ export async function addFriend(id,usernames) {
 export async function ListFriends() {
   const friends = await client.listFriends(Sess);
   return friends;
+}
+
+
+export async function ListAllUsers() {
+  const payload = {};
+  const rpcid = "get_all_users";
+  const users = await client.rpc(Sess, rpcid, payload);
+  return users.payload;
 }

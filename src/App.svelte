@@ -14,11 +14,20 @@
     import Error from "./routes/components/error.svelte";
     import Menu from "./routes/components/menu.svelte";
     import Friends from "./routes/friends.svelte";
-
+    import Admin from "./routes/admin.svelte"
+    import updatePage from "./routes/auth/update.svelte"
     let isLogedIn = (detail) => {
         if ($Session != null) return true;
         else {
             window.location.href = "/#/login";
+            return false;
+        }
+    };
+    let isAdmin = (detail) => {
+        console.log($Profile)
+        if ($Profile.meta.role == "admin") return true;
+        else {
+            window.location.href = "/#/";
             return false;
         }
     };
@@ -32,17 +41,20 @@
             component: home,
             conditions: [
                 (detail) => {
-                    if ($Session != null) {
-                        return true;
-                    } else {
-                        window.location.href = "/#/login";
-                        return false;
-                    }
+                    return isLogedIn(detail);
                 },
             ],
         }),
         "/register": wrap({
             component: registerPage,
+            conditions: [
+                (detail) => {
+                    return isAdmin(detail);
+                },
+            ],
+        }),
+        "/update/:user?": wrap ({
+            component: updatePage,
             conditions: [
                 (detail) => {
                     return isLogedIn(detail);
@@ -103,6 +115,14 @@
             conditions: [
                 (detail) => {
                     return isLogedIn(detail);
+                },
+            ],
+        }),
+        "/admin": wrap({
+            component: Admin,
+            conditions: [
+                (detail) => {
+                    return isAdmin(detail);
                 },
             ],
         }),
