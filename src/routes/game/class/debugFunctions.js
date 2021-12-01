@@ -1,4 +1,6 @@
 import manageSession from "./../manageSession";
+import { getAccount, updateObject, listObjects } from '../../../api.js'
+
 
 class debugFuntions {
     constructor(scene) {
@@ -6,6 +8,7 @@ class debugFuntions {
     }
 
     keyboard(scene) {
+
         scene.input.keyboard.on('keyup-A', function (event) {
             //get online player group
             const displaylist = scene.onlinePlayersGroup.getChildren()
@@ -78,15 +81,22 @@ class debugFuntions {
             console.log('W key');
 
 
+        }, scene)
+
+        scene.input.keyboard.on('keyup-H', function (event) {
+
+            console.log('H key');
+            console.log(listObjects("location", "", 200))
+
         }, scene);
 
-        // //  Receives every single key down event, regardless of type
+        scene.input.keyboard.on('keyup-P', function (event) {
 
-        // scene.input.keyboard.on('keydown', function (event) {
+            console.log('P key');
+            updateObject("home", "home_5264dc23-a339-40db-bb84-e0849ded4e68", '{"type": "home", "artworld": "Amsterdam", "user_id": "5264dc23-a339-40db-bb84-e0849ded4e68", "homeX": 300, "homeY": 300}', true)
 
-        //   console.dir(event);
+        }, scene);
 
-        // }, scene);
     }
 }
 

@@ -248,7 +248,6 @@ export default class Location3Scene extends Phaser.Scene {
     const width = this.sys.game.canvas.width;
     const height = this.sys.game.canvas.height - 60;
 
-
     this.back = this.add
       .text(width / 10 - 120, height / 10, `${i18next.t("back")}`, {
         fontFamily: "Arial",
