@@ -3,7 +3,6 @@
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
     import {updateObject, listObjects} from "../api"
-    //import { writable } from "svelte/store";
 
     const verboseLogging = false;
     const socket = client.createSocket(SSL, verboseLogging);
@@ -136,7 +135,7 @@ socket.onstreampresence = (streamPresence) => {
 //////////////////////// locatie ////////////////////////
 let locatie = '', posX = Math.floor(Math.random()*100), posY = Math.floor(Math.random()*100), where,name
 function addLocation() {
-    let type = where// plaats hier de soort locatie
+    let type = where// plaats hier het soort locatie
     let value = {posX:posX, posY:posY}// plaats hier alle value's die bij de locatie horen, zoals de jsonfile voor het laden van de map of de locatie van de afbeelding van hoe het huisje er uit ziet.
     let pub = true // is het publiek zichtbaar of enkel voor de gebruiker die het creert
     updateObject(type, name, value, pub)
@@ -146,7 +145,8 @@ let whereList
 let locationsList = {objects: []}
 async function getLocations() {
     let limit = 100
-    locationsList = await listObjects(whereList, $Session.id, limit) 
+    // locationsList = await listObjects(whereList, $Session.id, limit)
+    locationsList = await listObjects(whereList, null, limit) 
     console.log(locations.objects)   
 }
 
@@ -180,12 +180,15 @@ async function getLocations() {
     {/each}
 
     <h2>Locations</h2>
+    <!-- <label>where</label><input type="text" bind:value="{where}"> -->
+
     <label>where</label>
     <select bind:value="{where}">
         <option value="home">home</option>
         <option value="location">location</option>
         <option value="world">world</option>
     </select>
+    
     <label>pos X</label><input type="number" bind:value="{posX}">
     <label>pos Y</label><input type="number" bind:value="{posY}">
     <label>name</label><input type="text" bind:value="{name}">

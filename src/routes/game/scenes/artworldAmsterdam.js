@@ -11,6 +11,7 @@ import bouncingBird from "../class/bouncingBird.js"
 import background from "../class/backgroud.js"
 import debugFunctions from "../class/debugFunctions.js"
 import playerMoving from "../class/playerMoving.js"
+import translateCoordinates from "../class/translateCoordinates.js";
 
 export default class artworldAmsterdam extends Phaser.Scene {
 
@@ -98,7 +99,9 @@ export default class artworldAmsterdam extends Phaser.Scene {
     // this.playerStopKey = "stop"
 
     //*create deafult player and playerShadow
-    this.player = new playerDefault(this, 300, 800, this.playerAvatarPlaceholder)
+    //this.player = new playerDefault(this, translateCoordinates.artworldToPhaser2D(0), translateCoordinates.artworldToPhaser2D(0), this.playerAvatarPlaceholder)
+    this.player = new playerDefault(this, 300, 300, this.playerAvatarPlaceholder)
+    
     this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
     //.......  end PLAYER .............................................................................
 
@@ -123,7 +126,7 @@ export default class artworldAmsterdam extends Phaser.Scene {
     this.generateLocations()
     //.......... end locations .........................................
 
-    bouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
+    //bouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
 
     //......... DEBUG FUNCTIONS ............................................................................
     debugFunctions.keyboard(this);
@@ -139,12 +142,12 @@ export default class artworldAmsterdam extends Phaser.Scene {
     //......... end UI Scene ............................................
   }
 
-
-
   generateLocations() {
     this.locationDialogBoxContainersGroup = this.add.group();
     //........ location1 .......
-    this.location1 = this.add.isotriangle(100, 600, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    this.location1 = this.add.isotriangle(300,300, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    
+    //this.location1 = this.add.isotriangle(translateCoordinates.artworldToPhaser2D(-100), translateCoordinates.artworldToPhaser2D(100), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     this.physics.add.existing(this.location1);
     this.location1.body.setSize(this.location1.width, this.location1.height)
     this.location1.body.setOffset(0, -(this.location1.height / 4))
@@ -260,19 +263,21 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
   }
 
-  sendPlayerMovement() {
-    if (this.createdPlayer) {
-      if (
-        manageSession.updateMovementTimer > manageSession.updateMovementInterval
-      ) {
-        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-        //console.log(this.player.x)
-        manageSession.updateMovementTimer = 0;
-      }
-      // this.scrollablePanel.x = this.player.x
-      // this.scrollablePanel.y = this.player.y + 150
-    }
-  }
+  // sendPlayerMovement() {
+  //   if (this.createdPlayer) {
+  //     if (
+  //       manageSession.updateMovementTimer > manageSession.updateMovementInterval
+  //     ) {
+
+  //       //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
+  //       manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(this.player.x), translateCoordinates.Phaser2DToArtworld(this.player.y));
+  //       //console.log(this.player.x)
+  //       manageSession.updateMovementTimer = 0;
+  //     }
+  //     // this.scrollablePanel.x = this.player.x
+  //     // this.scrollablePanel.y = this.player.y + 150
+  //   }
+  // }
 
   updateMovementOnlinePlayers() {
     if (manageSession.updateOnlinePlayers) {
@@ -287,8 +292,12 @@ export default class artworldAmsterdam extends Phaser.Scene {
             let tempPlayer = this.onlinePlayers.find(o => o.user_id === player.user_id);
             if (typeof tempPlayer !== 'undefined') {
 
-              tempPlayer.x = player.posX;
-              tempPlayer.y = player.posY;
+              //translate the artworldCoordinates to Phaser coordinates
+              // tempPlayer.x = translateCoordinates.artworldToPhaser2D(player.posX)
+              // tempPlayer.y = translateCoordinates.artworldToPhaser2D(player.posY)
+
+              tempPlayer.x = player.posX
+              tempPlayer.y = player.posY
 
               const movingKey = tempPlayer.getData("movingKey")
 
@@ -297,7 +306,7 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
               setTimeout(() => {
                 tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
-              }, 500);
+              }, 250);
             }
 
           })

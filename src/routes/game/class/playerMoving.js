@@ -1,6 +1,10 @@
+import sendPlayerMovement from "./sendPlayerMovement";
+
 class playerMoving {
-    constructor(scene) {
+
+    constructor() {
     }
+
     byKeyboard(scene) {
         const speed = 175;
         const prevVelocity = scene.player.body.velocity.clone();
@@ -13,22 +17,22 @@ class playerMoving {
             scene.player.body.setVelocityX(-speed);
 
             // scene.arrowDown = true;
-            scene.sendPlayerMovement();
+            //!sendPlayerMovement.network(scene)
         } else if (scene.cursors.right.isDown) {
             scene.player.body.setVelocityX(speed);
             // scene.arrowDown = true
-            scene.sendPlayerMovement();
+            //!sendPlayerMovement.network(scene)
         }
 
         // Vertical movement
         if (scene.cursors.up.isDown) {
             scene.player.body.setVelocityY(-speed);
             // scene.arrowDown = true
-            scene.sendPlayerMovement();
+            //!sendPlayerMovement.network(scene)
         } else if (scene.cursors.down.isDown) {
             scene.player.body.setVelocityY(speed);
             // scene.arrowDown = true
-            scene.sendPlayerMovement();
+            //!sendPlayerMovement.network(scene)
         }
 
         // Normalize and scale the velocity so that player can't move faster along a diagonal
@@ -78,7 +82,7 @@ class playerMoving {
               scene.player.body.reset(scene.target.x, scene.target.y);
               scene.playerIsMovingByClicking = false
             } else {
-              scene.sendPlayerMovement();
+              //!sendPlayerMovement.network(scene)
             }
           }
     }
@@ -102,7 +106,7 @@ class playerMoving {
             scene.player.body.reset(scene.target.x, scene.target.y);
             scene.playerIsMovingByClicking = false
           } else {
-            scene.sendPlayerMovement();
+            //!sendPlayerMovement.network(scene)
           }
         }
       }
