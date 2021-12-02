@@ -1,10 +1,8 @@
 import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension";
-import i18next from "i18next";
-import { locale } from "svelte-i18n";
+import manageSession from "../manageSession"
 
-let latestValue = null;
 export default class Location2Scene extends Scene3D {
-  back;
+
   zoomingDistance;
 
   constructor() {
@@ -17,77 +15,18 @@ export default class Location2Scene extends Scene3D {
   }
 
   async create() {
+    
     this.scene.stop("UI_Scene");
-
-    const width = this.sys.game.canvas.width;
-    const height = this.sys.game.canvas.height - 60;
-
-    let countDisplay = 0;
-    locale.subscribe((value) => {
-      if (countDisplay === 0) {
-        countDisplay++;
-        return;
-      }
-      if (countDisplay > 0) {
-        i18next.changeLanguage(value);
-      }
-      if (latestValue !== value) {
-        this.scene.restart();
-      }
-      latestValue = value;
-    });
-
-    this.back = this.add
-      .text(width / 10 - 120, height / 10, `${i18next.t("back")}`, {
-        fontFamily: "Arial",
-        fontSize: "22px",
-      })
-      .setOrigin(0)
-      .setShadow(1, 1, "#000000", 1)
-      .setDepth(1000)
-      .setInteractive();
-
-    this.back.on("pointerup", () => {
-      this.scene.start("location1_Scene");
-    });
+    manageSession.currentLocation = this.scene.key;
 
     const { ground } = await this.third.warpSpeed("-orbitControls");
-
-    this.zoomingDistance = 30;
-
-    this.third.camera.position.set(0, this.zoomingDistance, 0);
-    this.third.camera.lookAt(0, 0, 0);
 
     this.robot = new ExtendedObject3D();
     const pos = { x: 3, y: 2, z: -7 };
 
-    this.zoomIn = this.add
-      .text(width / 10 + 80, height / 40, `${i18next.t("in")}`, {
-        fontFamily: "Arial",
-        fontSize: "24px",
-      })
-      .setOrigin(0)
-      .setShadow(1, 1, "#000000", 0)
-      .setDepth(1000)
-      .setInteractive({ useHandCursor: true });
+    this.addBackButton()
 
-    this.zoomOut = this.add
-      .text(width / 10 + 160, height / 40, `${i18next.t("out")}`, {
-        fontFamily: "Arial",
-        fontSize: "24px",
-      })
-      .setOrigin(0)
-      .setShadow(1, 1, "#000000", 0)
-      .setDepth(1000)
-      .setInteractive({ useHandCursor: true });
-
-    this.zoomIn.on("pointerup", () => {
-      this.third.camera.position.set(0, (this.zoomingDistance -= 10), 0);
-    });
-
-    this.zoomOut.on("pointerup", () => {
-      this.third.camera.position.set(0, (this.zoomingDistance += 10), 0);
-    });
+    this.addZoomingButtons()
 
     const sensor = this.third.physics.add.box(
       {
@@ -146,6 +85,57 @@ export default class Location2Scene extends Scene3D {
         this.robot.anims.add("Walking", object.animations[0]);
         this.robot.anims.play("Walking");
       });
+    });
+  }
+
+  addBackButton() {
+    this.backButton = this.add.image(40, 40, "back_button")
+      .setOrigin(0, 0.5)
+      .setDepth(1000)
+      .setScale(0.075)
+      .setInteractive({ useHandCursor: true });
+    
+    this.backButton.on("pointerup", () => {
+      this.scene.stop(manageSession.currentLocation)
+      this.scene.start(manageSession.previousLocation)
+    });
+  }
+
+  async addZoomingButtons() {
+    this.zooming = 90;
+    // view from top
+    this.third.camera.position.set(0, this.zooming, 0);
+    this.third.camera.lookAt(0, 0, 0);
+    // zoom buttons
+    this.width = this.sys.game.canvas.width;
+    this.height = this.sys.game.canvas.height;
+
+    this.zoomOut = this.add
+      .image(60 + 40, 40, "ui_magnifier_minus")
+      .setOrigin(0, 0.5)
+      .setDepth(1000)
+      .setScale(0.175)
+      .setInteractive({ useHandCursor: true });
+
+    this.zoom = this.add
+      .image(60 + 80, 40, "ui_eye")
+      .setOrigin(0, 0.5)
+      .setDepth(1000)
+      .setScale(0.125);
+
+    this.zoomIn = this.add
+      .image(60 + 160, 40, "ui_magnifier_plus")
+      .setOrigin(0, 0.5)
+      .setDepth(1000)
+      .setScale(0.175)
+      .setInteractive({ useHandCursor: true });
+
+    this.zoomIn.on("pointerup", () => {
+      this.third.camera.position.set(0, (this.zooming -= 10), 0);
+    });
+
+    this.zoomOut.on("pointerup", () => {
+      this.third.camera.position.set(0, (this.zooming += 10), 0);
     });
   }
 

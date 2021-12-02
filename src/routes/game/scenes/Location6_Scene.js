@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import i18next from "i18next";
 import { locale } from "svelte-i18n";
+import manageSession from "../manageSession";
 
 import nl from "../../../langauge/nl/ui.json";
 import en from "../../../langauge/en/ui.json";
@@ -31,8 +32,6 @@ export default class Location6Scene extends Phaser.Scene {
   currentLanguage;
   mainText;
 
-  back;
-
   constructor() {
     super("location6_Scene");
   }
@@ -40,6 +39,12 @@ export default class Location6Scene extends Phaser.Scene {
   preload() {}
 
   async create() {
+
+    this.scene.stop("UI_Scene");
+    manageSession.currentLocation = this.scene.key;
+    
+    this.addBackButton();
+
     let countDisplay = 0;
     locale.subscribe((value) => {
       if (countDisplay === 0) {
@@ -62,23 +67,19 @@ export default class Location6Scene extends Phaser.Scene {
       })
       .setShadow(1, 1, "#000000", 0);
 
-    // back button to location1
-    const width = this.sys.game.canvas.width;
-    const height = this.sys.game.canvas.height - 60;
     
-    this.back = this.add
-      .text(width / 10 - 120, height / 10, `${i18next.t("back")}`, {
-        fontFamily: "Arial",
-        fontSize: "22px",
-      })
-      .setOrigin(0)
-      .setShadow(1, 1, "#000000", 1)
-      .setDepth(1000)
-      .setInteractive()
-      .setScrollFactor(1, 0);
+  }
 
-    this.back.on("pointerup", () => {
-      this.scene.start("location1_Scene");
+  addBackButton() {
+    this.backButton = this.add.image(10, 10, "back_button")
+      .setOrigin(0)
+      .setDepth(1000)
+      .setScale(0.1)
+      .setInteractive({ useHandCursor: true });
+    
+    this.backButton.on("pointerup", () => {
+      this.scene.stop(manageSession.currentLocation)
+      this.scene.start(manageSession.previousLocation)
     });
   }
 

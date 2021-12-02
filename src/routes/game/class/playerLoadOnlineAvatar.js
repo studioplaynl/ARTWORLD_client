@@ -1,7 +1,8 @@
 import manageSession from "./../manageSession";
+import translateCoordinates from "./translateCoordinates";
 
 class playerLoadOnlineAvatar {
-    constructor() { 
+    constructor() {
     }
 
     debug(scene, player) {
@@ -9,7 +10,7 @@ class playerLoadOnlineAvatar {
         console.log(player)
     }
 
-    loadAvatar(scene) { 
+    loadAvatar(scene) {
         //check if account info is loaded
         if (manageSession.userProfile.id != null) {
             //check for createPlayer flag
@@ -66,7 +67,7 @@ class playerLoadOnlineAvatar {
 
                             if (scene.textures.exists(scene.playerAvatarKey)) {
 
-                                this.attachAvatarToPlayer(scene) 
+                                this.attachAvatarToPlayer(scene)
 
                             }// if (this.textures.exists(this.playerAvatarKey)) 
                         })
@@ -76,14 +77,14 @@ class playerLoadOnlineAvatar {
                     //console.log("this.load.start();");
 
                 } else {
-                    this.attachAvatarToPlayer(scene) 
+                    this.attachAvatarToPlayer(scene)
                 }
             }//if(manageSession.playerCreated)
         }
     }// end loadAvatar
 
-    attachAvatarToPlayer(scene) { 
-        
+    attachAvatarToPlayer(scene) {
+
         const avatar = scene.textures.get(scene.playerAvatarKey)
         console.log(avatar)
         const avatarWidth = avatar.frames.__BASE.width
@@ -143,9 +144,14 @@ class playerLoadOnlineAvatar {
         // this.player.x = this.player.posX
         // this.player.y = this.player.posY
 
+        // //*place the player in the center 
+        // scene.player.x = translateCoordinates.artworldToPhaser2D(scene, 0)
+        // scene.player.y = translateCoordinates.artworldToPhaser2D(scene, 0)
+        
         // console.log("player avatar has loaded ")
         // console.log("this.playerAvatarKey")
         // console.log(this.playerAvatarKey)
+
         scene.player.location = scene.location
 
         console.log("this.player: ")
@@ -155,7 +161,7 @@ class playerLoadOnlineAvatar {
         // console.log("this.createdPlayer = true;")
 
         //send the current player position over the network
-        manageSession.sendMoveMessage(Math.round(scene.player.x), Math.round(scene.player.y));
+        manageSession.sendMoveMessage(scene.player.x, scene.player.y);
 
         // scene.add.existing(this)
         // scene.physics.add.existing(this)
@@ -164,4 +170,4 @@ class playerLoadOnlineAvatar {
 
 } //end class
 
-export default new playerLoadOnlineAvatar();
+export default new playerLoadOnlineAvatar()
