@@ -1,8 +1,5 @@
 import { Scene3D, THREE } from "@enable3d/phaser-extension";
-import i18next from "i18next";
-import { locale } from "svelte-i18n";
-
-let latestValue = null;
+import manageSession from "../manageSession";
 export default class Location7Scene extends Scene3D {
   platform;
   avatar;
@@ -18,8 +15,6 @@ export default class Location7Scene extends Scene3D {
   height;
 
   chosenScene;
-
-  back;
 
   constructor() {
     super("location7_Scene");
@@ -55,7 +50,9 @@ export default class Location7Scene extends Scene3D {
   }
 
   async create() {
+
     this.scene.stop("UI_Scene");
+    manageSession.currentLocation = this.scene.key;
 
     // this disables 3d ground, blue sky and ability to move around the 3d world with mouse
     const { lights } = await this.third.warpSpeed(
@@ -65,6 +62,7 @@ export default class Location7Scene extends Scene3D {
     );
 
     this.addZoomingButtons();
+    this.addBackButton();
     this.addGroundPlatform();
 
     // adding avatar to the world
@@ -98,7 +96,6 @@ export default class Location7Scene extends Scene3D {
     this.addGroundPicture("doodle", -30, -30);
     this.addGroundPicture("repetition", 90, -30);
     this.addEntranceMessageToBuildings();
-    this.addBackButton();
 
     // detecting collision of the avatar with buildings and displaying a respective message
     await this.avatar.body.on.collision((building, event) => {
@@ -125,21 +122,6 @@ export default class Location7Scene extends Scene3D {
       this.scene.start(`${this.chosenScene}_Scene`);
     });
 
-    // detecting the change of language
-    let countDisplay = 0;
-    locale.subscribe((value) => {
-      if (countDisplay === 0) {
-        countDisplay++;
-        return;
-      }
-      if (countDisplay > 0) {
-        i18next.changeLanguage(value);
-      }
-      if (latestValue !== value) {
-        this.scene.restart();
-      }
-      latestValue = value;
-    });
   } // end of create
 
   async addZoomingButtons() {
@@ -272,19 +254,15 @@ export default class Location7Scene extends Scene3D {
   }
 
   addBackButton() {
-    // back button to go to location1
-    this.back = this.add
-      .text(this.width / 10 - 120, this.height / 10, `${i18next.t("back")}`, {
-        fontFamily: "Arial",
-        fontSize: "22px",
-      })
+    this.backButton = this.add.image(10, 10, "back_button")
       .setOrigin(0)
-      .setShadow(1, 1, "#000000", 1)
       .setDepth(1000)
-      .setInteractive();
-
-    this.back.on("pointerup", () => {
-      this.scene.switch("location1_Scene");
+      .setScale(0.1)
+      .setInteractive({ useHandCursor: true });
+    
+    this.backButton.on("pointerup", () => {
+      this.scene.stop(manageSession.currentLocation)
+      this.scene.start(manageSession.previousLocation)
     });
   }
 

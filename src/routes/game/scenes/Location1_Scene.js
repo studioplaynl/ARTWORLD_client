@@ -852,8 +852,9 @@ export default class Location1Scene extends Phaser.Scene {
     const locationScene = location + "_Scene"
     console.log("location scene")
     console.log(locationScene)
-    console.log()
 
+    // on entering another location we want to keep a record for "back button"
+    manageSession.previousLocation = this.scene.key;
 
     this.physics.pause()
     this.player.setTint(0xff0000)
