@@ -36,11 +36,11 @@ export default class artworldAmsterdam extends Phaser.Scene {
     this.player
     this.playerShadow
     this.playerContainer
-    this.playerAvatarPlaceholder = "playerAvatar"
-    this.playerAvatarKey = ""
-    this.createdPlayer = false
+    this.playerAvatarPlaceholder = "avatar1"
     this.playerMovingKey = "moving"
     this.playerStopKey = "stop"
+    this.playerAvatarKey = ""
+    this.createdPlayer = false
 
     this.offlineOnlineUsers
 
@@ -85,26 +85,21 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
     //.......  LOAD PLAYER AVATAR ..........................................................................
     manageSession.createPlayer = true
-    console.log("manageSession.createPlayer: ")
-    console.log(manageSession.createPlayer)
+    // console.log("manageSession.createPlayer: ")
+    // console.log(manageSession.createPlayer)
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF})
 
     //.......  PLAYER ..........................................................................
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
-    this.playerAvatarPlaceholder = "avatar1";
-    this.playerMovingKey = "moving"
-    this.playerStopKey = "stop"
+    // this.playerAvatarPlaceholder = "avatar1";
+    // this.playerMovingKey = "moving"
+    // this.playerStopKey = "stop"
 
     //*create deafult player and playerShadow
     this.player = new playerDefault(this, 300, 800, this.playerAvatarPlaceholder)
     this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
-
-    //create player group
-    this.playerGroup = this.add.group();
-    this.playerGroup.add(this.player);
-    this.playerGroup.add(this.playerShadow);
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
@@ -125,7 +120,6 @@ export default class artworldAmsterdam extends Phaser.Scene {
     //.......... end INPUT ................................................................................
 
     //.......... locations .........................................
-    this.locationDialogBoxContainersGroup = this.add.group();
     this.generateLocations()
     //.......... end locations .........................................
 
@@ -142,20 +136,14 @@ export default class artworldAmsterdam extends Phaser.Scene {
     this.currentZoom = this.UI_Scene.currentZoom
     this.UI_Scene.location = this.location
     this.gameCam.zoom = this.currentZoom
-    //console.log(this.UI_Scene)
-    //console.log(this.currentZoom)
     //......... end UI Scene ............................................
-
-    // temp location
-    
-
-
   }
 
 
 
   generateLocations() {
-    //........ location1 ...................
+    this.locationDialogBoxContainersGroup = this.add.group();
+    //........ location1 .......
     this.location1 = this.add.isotriangle(100, 600, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     this.physics.add.existing(this.location1);
     this.location1.body.setSize(this.location1.width, this.location1.height)
