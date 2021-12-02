@@ -78,18 +78,11 @@ export default class UI_Scene extends Phaser.Scene {
         .setShadow(1, 1, "#000000", 0)
         .setDepth(1000);
 
-      const backButtonSet ={
-        width: 60,
-        height: 80,
-        positionX: 10,
-        positionY: 10
-      }  
-
       //back button
-      this.backButton = this.add.image(backButtonSet.positionX, backButtonSet.positionY, "back_button")
-        .setOrigin(0)
+      this.backButton = this.add.image(40, 40, "back_button")
+        .setOrigin(0, 0.5)
         .setDepth(1000)
-        .setScale(0.1)
+        .setScale(0.075)
         .setInteractive({ useHandCursor: true });
       
       this.backButton.on("pointerup", () => {
@@ -99,20 +92,20 @@ export default class UI_Scene extends Phaser.Scene {
 
       //zoom buttons
       this.zoomOut = this.add
-        .image(backButtonSet.width + 40, backButtonSet.height / 2, "ui_magnifier_minus")
+        .image(60 + 40, 40, "ui_magnifier_minus")
         .setOrigin(0, 0.5)
         .setDepth(1000)
         .setScale(width / (width / this.camUI.zoom) / 6)
         .setInteractive({ useHandCursor: true });
 
       this.zoom = this.add
-        .image(backButtonSet.width + 80, backButtonSet.height / 2, "ui_eye")
+        .image(60 + 80, 40, "ui_eye")
         .setOrigin(0, 0.5)
         .setDepth(1000)
         .setScale(width / (width / this.camUI.zoom) / 8);
 
       this.zoomIn = this.add
-        .image(backButtonSet.width + 160, backButtonSet.height / 2, "ui_magnifier_plus")
+        .image(60 + 160, 40, "ui_magnifier_plus")
         .setOrigin(0, 0.5)
         .setDepth(1000)
         .setScale(width / (width / this.camUI.zoom) / 6)
