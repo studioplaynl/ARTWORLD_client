@@ -11,6 +11,7 @@ import bouncingBird from "../class/bouncingBird.js"
 import background from "../class/backgroud.js"
 import debugFunctions from "../class/debugFunctions.js"
 import playerMoving from "../class/playerMoving.js"
+import translateCoordinates from "../class/translateCoordinates.js";
 
 export default class artworldAmsterdam extends Phaser.Scene {
 
@@ -36,11 +37,11 @@ export default class artworldAmsterdam extends Phaser.Scene {
     this.player
     this.playerShadow
     this.playerContainer
-    this.playerAvatarPlaceholder = "playerAvatar"
-    this.playerAvatarKey = ""
-    this.createdPlayer = false
+    this.playerAvatarPlaceholder = "avatar1"
     this.playerMovingKey = "moving"
     this.playerStopKey = "stop"
+    this.playerAvatarKey = ""
+    this.createdPlayer = false
 
     this.offlineOnlineUsers
 
@@ -85,26 +86,23 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
     //.......  LOAD PLAYER AVATAR ..........................................................................
     manageSession.createPlayer = true
-    console.log("manageSession.createPlayer: ")
-    console.log(manageSession.createPlayer)
+    // console.log("manageSession.createPlayer: ")
+    // console.log(manageSession.createPlayer)
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF})
 
     //.......  PLAYER ..........................................................................
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
-    this.playerAvatarPlaceholder = "avatar1";
-    this.playerMovingKey = "moving"
-    this.playerStopKey = "stop"
+    // this.playerAvatarPlaceholder = "avatar1";
+    // this.playerMovingKey = "moving"
+    // this.playerStopKey = "stop"
 
     //*create deafult player and playerShadow
-    this.player = new playerDefault(this, 300, 800, this.playerAvatarPlaceholder)
+    //this.player = new playerDefault(this, translateCoordinates.artworldToPhaser2D(0), translateCoordinates.artworldToPhaser2D(0), this.playerAvatarPlaceholder)
+    this.player = new playerDefault(this, 300, 300, this.playerAvatarPlaceholder)
+    
     this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
-
-    //create player group
-    this.playerGroup = this.add.group();
-    this.playerGroup.add(this.player);
-    this.playerGroup.add(this.playerShadow);
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
@@ -125,11 +123,10 @@ export default class artworldAmsterdam extends Phaser.Scene {
     //.......... end INPUT ................................................................................
 
     //.......... locations .........................................
-    this.locationDialogBoxContainersGroup = this.add.group();
     this.generateLocations()
     //.......... end locations .........................................
 
-    bouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
+    //bouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
 
     //......... DEBUG FUNCTIONS ............................................................................
     debugFunctions.keyboard(this);
@@ -142,21 +139,15 @@ export default class artworldAmsterdam extends Phaser.Scene {
     this.currentZoom = this.UI_Scene.currentZoom
     this.UI_Scene.location = this.location
     this.gameCam.zoom = this.currentZoom
-    //console.log(this.UI_Scene)
-    //console.log(this.currentZoom)
     //......... end UI Scene ............................................
-
-    // temp location
-    
-
-
   }
 
-
-
   generateLocations() {
-    //........ location1 ...................
-    this.location1 = this.add.isotriangle(100, 600, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    this.locationDialogBoxContainersGroup = this.add.group();
+    //........ location1 .......
+    this.location1 = this.add.isotriangle(300,300, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    
+    //this.location1 = this.add.isotriangle(translateCoordinates.artworldToPhaser2D(-100), translateCoordinates.artworldToPhaser2D(100), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     this.physics.add.existing(this.location1);
     this.location1.body.setSize(this.location1.width, this.location1.height)
     this.location1.body.setOffset(0, -(this.location1.height / 4))
@@ -272,19 +263,21 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
   }
 
-  sendPlayerMovement() {
-    if (this.createdPlayer) {
-      if (
-        manageSession.updateMovementTimer > manageSession.updateMovementInterval
-      ) {
-        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-        //console.log(this.player.x)
-        manageSession.updateMovementTimer = 0;
-      }
-      // this.scrollablePanel.x = this.player.x
-      // this.scrollablePanel.y = this.player.y + 150
-    }
-  }
+  // sendPlayerMovement() {
+  //   if (this.createdPlayer) {
+  //     if (
+  //       manageSession.updateMovementTimer > manageSession.updateMovementInterval
+  //     ) {
+
+  //       //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
+  //       manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(this.player.x), translateCoordinates.Phaser2DToArtworld(this.player.y));
+  //       //console.log(this.player.x)
+  //       manageSession.updateMovementTimer = 0;
+  //     }
+  //     // this.scrollablePanel.x = this.player.x
+  //     // this.scrollablePanel.y = this.player.y + 150
+  //   }
+  // }
 
   updateMovementOnlinePlayers() {
     if (manageSession.updateOnlinePlayers) {
@@ -299,8 +292,12 @@ export default class artworldAmsterdam extends Phaser.Scene {
             let tempPlayer = this.onlinePlayers.find(o => o.user_id === player.user_id);
             if (typeof tempPlayer !== 'undefined') {
 
-              tempPlayer.x = player.posX;
-              tempPlayer.y = player.posY;
+              //translate the artworldCoordinates to Phaser coordinates
+              // tempPlayer.x = translateCoordinates.artworldToPhaser2D(player.posX)
+              // tempPlayer.y = translateCoordinates.artworldToPhaser2D(player.posY)
+
+              tempPlayer.x = player.posX
+              tempPlayer.y = player.posY
 
               const movingKey = tempPlayer.getData("movingKey")
 
@@ -309,7 +306,7 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
               setTimeout(() => {
                 tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
-              }, 500);
+              }, 250);
             }
 
           })

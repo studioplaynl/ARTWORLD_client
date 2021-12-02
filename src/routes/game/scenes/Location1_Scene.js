@@ -249,10 +249,10 @@ export default class Location1Scene extends Phaser.Scene {
 
     this.gameCam.zoom = this.currentZoom
 
-    console.log(this.UI_Scene)
+    //console.log(this.UI_Scene)
     console.log(this.currentZoom)
 
-    this.exampleREXUI()
+    //this.exampleREXUI()
 
     // identifies if the pointer is down on a graffiti wall
     // if the condition is true, the avatar stops any movement

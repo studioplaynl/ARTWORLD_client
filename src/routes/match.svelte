@@ -2,6 +2,7 @@
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
+    import {updateObject, listObjects, deleteObject} from "../api"
     //import { writable } from "svelte/store";
 
     const verboseLogging = false;
@@ -130,6 +131,26 @@ socket.onstreampresence = (streamPresence) => {
   console.info("Received stream presence update:", streamPresence);
 };
 
+
+
+//////////////////////// locatie ////////////////////////
+let locatie = '', posX = Math.floor(Math.random()*100), posY = Math.floor(Math.random()*100), where,name
+async function addLocation() {
+    let type = where// plaats hier de soort locatie
+    let value = {posX:posX, posY:posY}// plaats hier alle value's die bij de locatie horen, zoals de jsonfile voor het laden van de map of de locatie van de afbeelding van hoe het huisje er uit ziet.
+    let pub = true // is het publiek zichtbaar of enkel voor de gebruiker die het creert
+    await updateObject(type, name, value, pub)
+    getLocations()
+}
+
+let whereList
+let locationsList = {objects: []}
+async function getLocations() {
+    let limit = 100
+    locationsList = await listObjects(whereList, null, limit) 
+    console.log(locations.objects)   
+}
+
     
 </script>
 
@@ -158,4 +179,34 @@ socket.onstreampresence = (streamPresence) => {
         <img src={user.avatar_url} height="100px" />
         <p>position: {user.posX} x {user.posY}</p>
     {/each}
+
+    <h2>Locations</h2>
+    <!-- <label>where</label><input type="text" bind:value="{where}"> -->
+
+    <label>where</label>
+    <select bind:value="{where}">
+        <option value="home">home</option>
+        <option value="location">location</option>
+        <option value="world">world</option>
+    </select>
+    
+    <label>pos X</label><input type="number" bind:value="{posX}">
+    <label>pos Y</label><input type="number" bind:value="{posY}">
+    <label>name</label><input type="text" bind:value="{name}">
+
+    <button on:click="{addLocation}">creeer</button>
+
+    <h2>List of locations</h2>
+    <select bind:value="{whereList}">
+        <option value="home">home</option>
+        <option value="location">location</option>
+        <option value="world">world</option>
+    </select>
+    <button on:click="{getLocations}">Get</button>
+    {#each locationsList.objects as location}
+        <p>key:{location.key}</p>
+        <p>posX: {location.value.posX}, posY: {location.value.posY}</p>
+        <button on:click="{async ()=>{await deleteObject(location.collection,location.key);getLocations()}}">delete</button>
+    {/each}
+
 </main>
