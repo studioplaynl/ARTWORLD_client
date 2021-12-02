@@ -133,28 +133,24 @@ export default class Location7Scene extends Scene3D {
     this.width = this.sys.game.canvas.width;
     this.height = this.sys.game.canvas.height;
 
-    this.zoom = this.add
-      .image(this.width / 10 + 40, (this.height - 60) / 50, "ui_eye")
-      .setOrigin(0)
+    this.zoomOut = this.add
+      .image(60 + 40, 40, "ui_magnifier_minus")
+      .setOrigin(0, 0.5)
       .setDepth(1000)
-      .setScale(this.width / this.width / 8);
-
-    this.zoomIn = this.add
-      .image(
-        this.width / 10 + 120,
-        (this.height - 60) / 40,
-        "ui_magnifier_plus"
-      )
-      .setOrigin(0)
-      .setDepth(1000)
-      .setScale(this.width / this.width / 6)
+      .setScale(0.175)
       .setInteractive({ useHandCursor: true });
 
-    this.zoomOut = this.add
-      .image(this.width / 10, (this.height - 60) / 40, "ui_magnifier_minus")
-      .setOrigin(0)
+    this.zoom = this.add
+      .image(60 + 80, 40, "ui_eye")
+      .setOrigin(0, 0.5)
       .setDepth(1000)
-      .setScale(this.width / this.width / 6)
+      .setScale(0.125);
+
+    this.zoomIn = this.add
+      .image(60 + 160, 40, "ui_magnifier_plus")
+      .setOrigin(0, 0.5)
+      .setDepth(1000)
+      .setScale(0.175)
       .setInteractive({ useHandCursor: true });
 
     this.zoomIn.on("pointerup", () => {
@@ -254,10 +250,10 @@ export default class Location7Scene extends Scene3D {
   }
 
   addBackButton() {
-    this.backButton = this.add.image(10, 10, "back_button")
-      .setOrigin(0)
+    this.backButton = this.add.image(40, 40, "back_button")
+      .setOrigin(0, 0.5)
       .setDepth(1000)
-      .setScale(0.1)
+      .setScale(0.075)
       .setInteractive({ useHandCursor: true });
     
     this.backButton.on("pointerup", () => {

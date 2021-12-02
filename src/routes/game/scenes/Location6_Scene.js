@@ -39,6 +39,8 @@ export default class Location6Scene extends Phaser.Scene {
   preload() {}
 
   async create() {
+
+    this.scene.stop("UI_Scene");
     manageSession.currentLocation = this.scene.key;
     
     this.addBackButton();
