@@ -200,3 +200,17 @@ export async function ListAllUsers() {
   const users = await client.rpc(Sess, rpcid, payload);
   return users.payload;
 }
+
+
+export async function deleteObject(collection, key) {
+
+  await client.deleteStorageObjects(Sess, {
+    "object_ids": [{
+      "collection": collection,
+      "key": key
+    }]
+  });
+  console.info("Deleted objects.");
+  
+  return true
+}

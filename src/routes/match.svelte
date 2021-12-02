@@ -2,7 +2,7 @@
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
-    import {updateObject, listObjects} from "../api"
+    import {updateObject, listObjects, deleteObject} from "../api"
     //import { writable } from "svelte/store";
 
     const verboseLogging = false;
@@ -146,7 +146,7 @@ let whereList
 let locationsList = {objects: []}
 async function getLocations() {
     let limit = 100
-    locationsList = await listObjects(whereList, $Session.id, limit) 
+    locationsList = await listObjects(whereList, null, limit) 
     console.log(locations.objects)   
 }
 
@@ -202,6 +202,7 @@ async function getLocations() {
     {#each locationsList.objects as location}
         <p>key:{location.key}</p>
         <p>posX: {location.value.posX}, posY: {location.value.posY}</p>
+        <button on:click="{()=>{deleteObject(location.collection,location.key)}}">delete</button>
     {/each}
 
 </main>
