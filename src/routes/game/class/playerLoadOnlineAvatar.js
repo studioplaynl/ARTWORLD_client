@@ -145,8 +145,8 @@ class playerLoadOnlineAvatar {
         // this.player.y = this.player.posY
 
         // //*place the player in the center 
-        scene.player.x = translateCoordinates.artworldToPhaser2D(scene, 0)
-        scene.player.y = translateCoordinates.artworldToPhaser2D(scene, 0)
+        // scene.player.x = translateCoordinates.artworldToPhaser2D(scene, 0)
+        // scene.player.y = translateCoordinates.artworldToPhaser2D(scene, 0)
         
         // console.log("player avatar has loaded ")
         // console.log("this.playerAvatarKey")

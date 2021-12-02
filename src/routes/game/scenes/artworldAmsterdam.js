@@ -11,7 +11,8 @@ import bouncingBird from "../class/bouncingBird.js"
 import background from "../class/backgroud.js"
 import debugFunctions from "../class/debugFunctions.js"
 import playerMoving from "../class/playerMoving.js"
-import translateCoordinates from "../class/translateCoordinates.js";
+import translateCoordinates from "../class/translateCoordinates.js"
+import playersNetworkMovement from "../class/playersNetworkMovement.js"
 
 export default class artworldAmsterdam extends Phaser.Scene {
 
@@ -263,22 +264,6 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
   }
 
-  // sendPlayerMovement() {
-  //   if (this.createdPlayer) {
-  //     if (
-  //       manageSession.updateMovementTimer > manageSession.updateMovementInterval
-  //     ) {
-
-  //       //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
-  //       manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(this.player.x), translateCoordinates.Phaser2DToArtworld(this.player.y));
-  //       //console.log(this.player.x)
-  //       manageSession.updateMovementTimer = 0;
-  //     }
-  //     // this.scrollablePanel.x = this.player.x
-  //     // this.scrollablePanel.y = this.player.y + 150
-  //   }
-  // }
-
   updateMovementOnlinePlayers() {
     if (manageSession.updateOnlinePlayers) {
       if (!manageSession.createPlayer) {
@@ -321,7 +306,8 @@ export default class artworldAmsterdam extends Phaser.Scene {
     //...... ONLINE PLAYERS ................................................
     // this.createOnlinePlayers()
     onlinePlayerLoader.load(this)
-    this.updateMovementOnlinePlayers()
+    // this.updateMovementOnlinePlayers()
+    playersNetworkMovement.receive(this)
     playerLoadOnlineAvatar.loadAvatar(this)
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
