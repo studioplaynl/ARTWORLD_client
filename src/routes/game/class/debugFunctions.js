@@ -93,8 +93,6 @@ class debugFuntions {
         scene.input.keyboard.on('keyup-P', function (event) {
 
             console.log('P key');
-            updateObject("home", "home_5264dc23-a339-40db-bb84-e0849ded4e68", '{"type": "home", "artworld": "Amsterdam", "user_id": "5264dc23-a339-40db-bb84-e0849ded4e68", "homeX": 300, "homeY": 300}', true)
-
         }, scene);
 
     }
