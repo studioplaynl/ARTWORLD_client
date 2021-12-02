@@ -135,11 +135,12 @@ socket.onstreampresence = (streamPresence) => {
 
 //////////////////////// locatie ////////////////////////
 let locatie = '', posX = Math.floor(Math.random()*100), posY = Math.floor(Math.random()*100), where,name
-function addLocation() {
+async function addLocation() {
     let type = where// plaats hier de soort locatie
     let value = {posX:posX, posY:posY}// plaats hier alle value's die bij de locatie horen, zoals de jsonfile voor het laden van de map of de locatie van de afbeelding van hoe het huisje er uit ziet.
     let pub = true // is het publiek zichtbaar of enkel voor de gebruiker die het creert
-    updateObject(type, name, value, pub)
+    await updateObject(type, name, value, pub)
+    getLocations()
 }
 
 let whereList
@@ -202,7 +203,7 @@ async function getLocations() {
     {#each locationsList.objects as location}
         <p>key:{location.key}</p>
         <p>posX: {location.value.posX}, posY: {location.value.posY}</p>
-        <button on:click="{()=>{deleteObject(location.collection,location.key)}}">delete</button>
+        <button on:click="{async ()=>{await deleteObject(location.collection,location.key);getLocations()}}">delete</button>
     {/each}
 
 </main>
