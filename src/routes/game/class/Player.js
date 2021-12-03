@@ -177,17 +177,17 @@ class Player {
       scene.cursors.left.isDown ||
       scene.cursors.right.isDown
     ) {
-      scene.arrowDown = true;
+      scene.cursorKeyIsDown = true;
     } else {
-      scene.arrowDown = false;
+      scene.cursorKeyIsDown = false;
     }
   }
 
   movingAnimation(scene) {
-    if (scene.arrowDown || scene.playerIsMovingByClicking) {
+    if (scene.cursorKeyIsDown || scene.playerIsMovingByClicking) {
       scene.player.anims.play(scene.playerMovingKey, true);
       scene.playerShadow.anims.play(scene.playerMovingKey, true);
-    } else if (!scene.arrowDown || !scene.playerIsMovingByClicking) {
+    } else if (!scene.cursorKeyIsDown || !scene.playerIsMovingByClicking) {
       scene.player.anims.play(scene.playerStopKey, true);
       scene.playerShadow.anims.play(scene.playerStopKey, true);
     }
@@ -204,22 +204,22 @@ class Player {
     if (scene.cursors.left.isDown) {
       scene.player.body.setVelocityX(-speed);
 
-      // scene.arrowDown = true;
+      // scene.cursorKeyIsDown = true;
       this.sendMovement();
     } else if (scene.cursors.right.isDown) {
       scene.player.body.setVelocityX(speed);
-      // scene.arrowDown = true
+      // scene.cursorKeyIsDown = true
       // sendPlayerMovement(scene)
     }
 
     // Vertical movement
     if (scene.cursors.up.isDown) {
       scene.player.body.setVelocityY(-speed);
-      // scene.arrowDown = true
+      // scene.cursorKeyIsDown = true
       this.sendMovement();
     } else if (scene.cursors.down.isDown) {
       scene.player.body.setVelocityY(speed);
-      // scene.arrowDown = true
+      // scene.cursorKeyIsDown = true
       this.sendMovement();
     }
 
