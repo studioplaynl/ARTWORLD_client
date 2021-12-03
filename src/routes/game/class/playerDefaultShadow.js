@@ -5,7 +5,8 @@ export default class playerDefaultShadow extends Phaser.GameObjects.Sprite {
 
         config.scene.add.existing(this);
 
-        this.setTint(0x000000);
-        this.alpha = 0.2;
+        this.setTexture(config.texture)
+        this.setTint(0x000000)
+        this.alpha = 0.2
     }
 }

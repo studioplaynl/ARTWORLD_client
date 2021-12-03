@@ -5,13 +5,11 @@ import { getAccount } from '../../../api.js'
 import playerDefault from '../class/playerDefault'
 import playerDefaultShadow from '../class/playerDefaultShadow'
 import Player from '../class/Player.js'
-import onlinePlayerLoader from '../class/onlinePlayer.js'
 import preloader from '../preLoader.js'
 import bouncingBird from "../class/bouncingBird.js"
 import background from "../class/backgroud.js"
 import debugFunctions from "../class/debugFunctions.js"
 import translateCoordinates from "../class/translateCoordinates.js"
-import playersNetworkMovement from "../class/playersNetworkMovement.js"
 
 export default class artworldAmsterdam extends Phaser.Scene {
 
@@ -98,7 +96,6 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
     //.......  PLAYER ..........................................................................
     //*create deafult player and playerShadow
-    //this.player = new playerDefault(this, translateCoordinates.artworldToPhaser2D(0), translateCoordinates.artworldToPhaser2D(0), this.playerAvatarPlaceholder)
     this.player = new playerDefault(this, 300, 300, this.playerAvatarPlaceholder)
     
     this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
@@ -266,8 +263,8 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    onlinePlayerLoader.load(this)
-    playersNetworkMovement.receive(this)
+    Player.loadOnlinePlayers(this)
+    Player.receiveOnlinePlayersMovement(this)
     Player.loadOnlineAvatar(this)
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;

@@ -3,7 +3,7 @@ import manageSession from "../manageSession";
 import { getAccount } from '../../../api.js';
 
 import playerDefault from '../class/playerDefault'
-import playerDefaultShadow from '../class/playerDefaultShadow'
+import playerDefaultShadow from "../class/playerDefaultShadow.js";
 import Player from '../class/Player.js'
 import onlinePlayerLoader from '../class/onlinePlayer.js'
 import preloader from '../preLoader.js'
@@ -115,8 +115,6 @@ export default class Location1Scene extends Phaser.Scene {
     this.load.image("exhibit2", "./assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg")
     this.load.image("exhibit3", "./assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg")
     this.load.image("exhibit4", "./assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg")
-
-
     //....... end IMAGES ......................................................................
 
     //....... TILEMAP .........................................................................
@@ -137,17 +135,10 @@ export default class Location1Scene extends Phaser.Scene {
 
     // this.load.tilemapTiledJSON("map", "./assets/tilemaps/svg_ortho_200x200.json");
     // // end 2
-
-
-
     //....... end TILEMAP ......................................................................
-
-
-
   }
 
   async create() {
-
     // for back button history
     manageSession.currentLocation = this.scene.key;
 
@@ -180,7 +171,7 @@ export default class Location1Scene extends Phaser.Scene {
     //*create deafult player and playerShadow
     this.player = new playerDefault(this, 300, 800, this.playerAvatarPlaceholder)
     this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
-
+    
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
     //create player group
