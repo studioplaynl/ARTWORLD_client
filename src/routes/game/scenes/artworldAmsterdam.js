@@ -266,14 +266,11 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    // this.createOnlinePlayers()
     onlinePlayerLoader.load(this)
-    // this.updateMovementOnlinePlayers()
     playersNetworkMovement.receive(this)
     playerLoadOnlineAvatar.loadAvatar(this)
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
-
     //.......................................................................
 
     //........... PLAYER SHADOW .............................................................................
@@ -296,7 +293,19 @@ export default class artworldAmsterdam extends Phaser.Scene {
     //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
     //....... moving ANIMATION ......................................................................................
+<<<<<<< HEAD
     playerMoving.movingAnimation(this)
+=======
+    if (this.arrowDown || this.playerIsMovingByClicking) {
+      this.player.anims.play(this.playerMovingKey, true);
+      this.playerShadow.anims.play(this.playerMovingKey, true);
+    } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
+      this.player.anims.play(this.playerStopKey, true);
+      this.playerShadow.anims.play(this.playerStopKey, true);
+    }
+
+    
+>>>>>>> c7664800d3c8b312fce6e6dc670105fe65f21f96
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()

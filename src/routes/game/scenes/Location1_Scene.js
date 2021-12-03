@@ -174,21 +174,6 @@ export default class Location1Scene extends Phaser.Scene {
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
     this.playerAvatarPlaceholder = "avatar1";
 
-    this.playerMovingKey = "moving"
-    this.playerStopKey = "stop"
-
-    this.anims.create({
-      key: this.playerMovingKey,
-      frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
-      frameRate: 20,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: this.playerStopKey,
-      frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
-    });
-
     //*create deafult player and playerShadow
     this.player = new playerDefault(this, 300, 800, this.playerAvatarPlaceholder)
     this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })

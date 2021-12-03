@@ -123,10 +123,11 @@ class playerLoadOnlineAvatar {
         // texture loaded so use instead of the placeholder
         console.log("scene.playerAvatarKey")
         console.log(scene.playerAvatarKey)
-        console.log(scene.player.texture.key)
 
-        scene.player.texture = scene.playerAvatarKey
-
+        // scene.player.texture = scene.playerAvatarKey
+        scene.player.setTexture(scene.playerAvatarKey)
+        scene.playerShadow.setTexture(scene.playerAvatarKey)
+        
         //scale the player to 64px
         const width = 64
         scene.player.displayWidth = width
@@ -134,6 +135,9 @@ class playerLoadOnlineAvatar {
 
         scene.playerShadow.displayWidth = width
         scene.playerShadow.scaleY = scene.playerShadow.scaleX
+
+        console.log("scene.playerShadow")
+        console.log(scene.playerShadow)
 
         //* set the collision body
         //* setCircle(radius [, offsetX] [, offsetY])
@@ -147,7 +151,7 @@ class playerLoadOnlineAvatar {
         // //*place the player in the center 
         // scene.player.x = translateCoordinates.artworldToPhaser2D(scene, 0)
         // scene.player.y = translateCoordinates.artworldToPhaser2D(scene, 0)
-        
+
         // console.log("player avatar has loaded ")
         // console.log("this.playerAvatarKey")
         // console.log(this.playerAvatarKey)

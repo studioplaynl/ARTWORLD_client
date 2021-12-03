@@ -204,9 +204,26 @@ async function getLocations() {
     </select>
     <button on:click="{getLocations}">Get</button>
     {#each locationsList.objects as location}
+        <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
+            <p>userID: {location.user_id}</p>
         <p>key:{location.key}</p>
         <p>posX: {location.value.posX}, posY: {location.value.posY}</p>
         <button on:click="{async ()=>{await deleteObject(location.collection,location.key);getLocations()}}">delete</button>
+        </div>
     {/each}
 
 </main>
+
+
+<style>
+    .blueBack {
+        background-color: rgba(0,0,255,0.6);
+        padding: 10px;
+        border-radius: 5px;
+    }
+    .redBack {
+        background-color: rgba(255,0,0,0.6);
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
