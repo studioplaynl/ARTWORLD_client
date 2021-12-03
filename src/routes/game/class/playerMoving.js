@@ -44,7 +44,7 @@ class playerMoving {
         } else if (scene.cursors.right.isDown) {
             scene.player.body.setVelocityX(speed);
             // scene.arrowDown = true
-            sendPlayerMovement(scene)
+            // sendPlayerMovement(scene)
         }
 
         // Vertical movement
