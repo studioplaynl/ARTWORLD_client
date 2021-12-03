@@ -4,7 +4,7 @@ import { getAccount } from '../../../api.js';
 
 import playerDefault from '../class/playerDefault'
 import playerDefaultShadow from '../class/playerDefaultShadow'
-import playerLoadOnlineAvatar from '../class/playerLoadOnlineAvatar.js'
+import Player from '../class/Player.js'
 import onlinePlayerLoader from '../class/onlinePlayer.js'
 import preloader from '../preLoader.js'
 
@@ -1633,7 +1633,7 @@ export default class Location1Scene extends Phaser.Scene {
     // this.createOnlinePlayers()
     onlinePlayerLoader.load(this)
     this.updateMovementOnlinePlayers()
-    playerLoadOnlineAvatar.loadAvatar(this)
+    Player.loadOnlineAvatar(this)
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
 

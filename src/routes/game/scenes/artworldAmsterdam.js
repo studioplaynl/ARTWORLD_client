@@ -4,13 +4,12 @@ import { getAccount } from '../../../api.js'
 
 import playerDefault from '../class/playerDefault'
 import playerDefaultShadow from '../class/playerDefaultShadow'
-import playerLoadOnlineAvatar from '../class/playerLoadOnlineAvatar.js'
+import Player from '../class/Player.js'
 import onlinePlayerLoader from '../class/onlinePlayer.js'
 import preloader from '../preLoader.js'
 import bouncingBird from "../class/bouncingBird.js"
 import background from "../class/backgroud.js"
 import debugFunctions from "../class/debugFunctions.js"
-import playerMoving from "../class/playerMoving.js"
 import translateCoordinates from "../class/translateCoordinates.js"
 import playersNetworkMovement from "../class/playersNetworkMovement.js"
 
@@ -263,7 +262,7 @@ export default class artworldAmsterdam extends Phaser.Scene {
     //...... ONLINE PLAYERS ................................................
     onlinePlayerLoader.load(this)
     playersNetworkMovement.receive(this)
-    playerLoadOnlineAvatar.loadAvatar(this)
+    Player.loadOnlineAvatar(this)
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
     //.......................................................................
@@ -281,18 +280,18 @@ export default class artworldAmsterdam extends Phaser.Scene {
 
     //........ PLAYER MOVE BY KEYBOARD  ......................................................................
     if (!this.playerIsMovingByClicking) {
-      playerMoving.byKeyboard(this) //player moving with keyboard with playerMoving Class
+      Player.moveByKeyboard(this) //player moving with keyboard with playerMoving Class
     }
 
-    playerMoving.byCursor(this)
+    Player.moveByCursor(this)
     //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
     //....... moving ANIMATION ......................................................................................
-    playerMoving.movingAnimation(this)
+    Player.movingAnimation(this)
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()
-    playerMoving.bySwiping(this)
+    Player.moveBySwiping(this)
 
   } //update
 } //class
