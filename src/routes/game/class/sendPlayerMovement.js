@@ -1,4 +1,5 @@
 import manageSession from "../manageSession";
+import translateCoordinates from "./translateCoordinates";
 
 class sendPlayerMovement {
 
@@ -12,7 +13,8 @@ class sendPlayerMovement {
             ) {
 
                 //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
-                manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(scene.player.x), translateCoordinates.Phaser2DToArtworld(scene.player.y))
+                // manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(scene.player.x), translateCoordinates.Phaser2DToArtworld(scene.player.y))
+                manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(scene, scene.player.x), translateCoordinates.Phaser2DToArtworld(scene, scene.player.y))
                 //console.log(this.player.x)
                 manageSession.updateMovementTimer = 0
             }
