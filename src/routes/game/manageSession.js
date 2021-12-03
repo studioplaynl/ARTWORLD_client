@@ -222,7 +222,7 @@ class manageSession {
     var opCode = 1;
     var data =
       '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }';
-     console.log(data)
+     //console.log(data)
 
     this.socket.rpc("move_position", data)
       // .then((rec) => {

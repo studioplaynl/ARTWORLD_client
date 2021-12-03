@@ -13,8 +13,8 @@ class sendPlayerMovement {
             ) {
 
                 //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
-                // manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(scene.player.x), translateCoordinates.Phaser2DToArtworld(scene.player.y))
-                manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(scene, scene.player.x), translateCoordinates.Phaser2DToArtworld(scene, scene.player.y))
+                // manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(scene, scene.player.x), translateCoordinates.Phaser2DToArtworld(scene, scene.player.y))
+                manageSession.sendMoveMessage(scene.player.x, scene.player.y)
                 //console.log(this.player.x)
                 manageSession.updateMovementTimer = 0
             }
@@ -22,7 +22,6 @@ class sendPlayerMovement {
             // this.scrollablePanel.y = this.player.y + 150
         }
     }
-
 }
 
 export default new sendPlayerMovement()
