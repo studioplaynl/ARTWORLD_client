@@ -5,6 +5,29 @@ class playerMoving {
     constructor() {
     }
 
+    byCursor(scene) {
+      if (
+        scene.cursors.up.isDown ||
+        scene.cursors.down.isDown ||
+        scene.cursors.left.isDown ||
+        scene.cursors.right.isDown
+      ) {
+        scene.arrowDown = true
+      } else {
+        scene.arrowDown = false
+      }
+    }
+
+    movingAnimation(scene) {
+      if (scene.arrowDown || scene.playerIsMovingByClicking) {
+        scene.player.anims.play(scene.playerMovingKey, true);
+        scene.playerShadow.anims.play(scene.playerMovingKey, true);
+      } else if (!scene.arrowDown || !scene.playerIsMovingByClicking) {
+        scene.player.anims.play(scene.playerStopKey, true);
+        scene.playerShadow.anims.play(scene.playerStopKey, true);
+      }
+    }
+
     byKeyboard(scene) {
         const speed = 175;
         const prevVelocity = scene.player.body.velocity.clone();
