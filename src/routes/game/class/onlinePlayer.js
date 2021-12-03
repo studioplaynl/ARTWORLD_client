@@ -188,7 +188,7 @@ class onlinePlayerLoader {
                 //   console.log(scene.onlinePlayers[index])
                 // })
                 //send player position over the network for the online users to see
-                manageSession.sendMoveMessage(Math.round(scene.player.x), Math.round(scene.player.y));
+                manageSession.sendMoveMessage(scene.player.x, scene.player.y);
 
             }//if (manageSession.createOnlinePlayers)
         }//if (manageSession.createdPlayer) 

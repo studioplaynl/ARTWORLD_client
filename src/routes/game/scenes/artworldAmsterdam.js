@@ -94,11 +94,6 @@ export default class artworldAmsterdam extends Phaser.Scene {
     background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF})
 
     //.......  PLAYER ..........................................................................
-    //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
-    // this.playerAvatarPlaceholder = "avatar1";
-    // this.playerMovingKey = "moving"
-    // this.playerStopKey = "stop"
-
     //*create deafult player and playerShadow
     //this.player = new playerDefault(this, translateCoordinates.artworldToPhaser2D(0), translateCoordinates.artworldToPhaser2D(0), this.playerAvatarPlaceholder)
     this.player = new playerDefault(this, 300, 300, this.playerAvatarPlaceholder)
