@@ -57,7 +57,7 @@ export default class artworldAmsterdam extends Phaser.Scene {
     this.cursors
     this.pointer
     this.isClicking = false
-    this.arrowDown = false
+    this.cursorKeyIsDown = false
     this.swipeDirection = "down"
     this.swipeAmount = new Phaser.Math.Vector2(0, 0)
     this.graffitiDrawing = false
