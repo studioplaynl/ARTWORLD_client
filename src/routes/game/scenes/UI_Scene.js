@@ -85,9 +85,21 @@ export default class UI_Scene extends Phaser.Scene {
         .setScale(0.075)
         .setInteractive({ useHandCursor: true });
       
+      // if the current scene is artworld, the back button is hidden 
+      if (manageSession.currentLocation == null || manageSession.currentLocation == "artworldAmsterdam") {
+        this.backButton.destroy()
+      }
+
       this.backButton.on("pointerup", () => {
-        this.scene.stop(manageSession.currentLocation)
-        this.scene.start(manageSession.previousLocation)
+        if (manageSession.currentLocation == "location1_Scene") {
+          this.scene.stop("location1_Scene");
+          this.scene.start("artworldAmsterdam")
+          manageSession.previousLocation = "location1_Scene";
+          manageSession.currentLocation = "artworldAmsterdam";
+        } else {
+          this.scene.stop(manageSession.currentLocation)
+          this.scene.start(manageSession.previousLocation)
+        }
       });
 
       //zoom buttons
@@ -97,7 +109,7 @@ export default class UI_Scene extends Phaser.Scene {
         .setDepth(1000)
         .setScale(width / (width / this.camUI.zoom) / 6)
         .setInteractive({ useHandCursor: true });
-
+        
       this.zoom = this.add
         .image(60 + 80, 40, "ui_eye")
         .setOrigin(0, 0.5)
@@ -146,5 +158,7 @@ export default class UI_Scene extends Phaser.Scene {
     //this.camUI.resize(width, height);
   }
 
-  update(time, delta) {}
+  update(time, delta) {
+
+  }
 }

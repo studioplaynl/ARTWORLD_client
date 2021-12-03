@@ -148,6 +148,9 @@ export default class Location1Scene extends Phaser.Scene {
 
   async create() {
 
+    // for back button history
+    manageSession.currentLocation = this.scene.key;
+
     //timers
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec

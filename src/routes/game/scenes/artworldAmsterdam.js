@@ -80,6 +80,10 @@ export default class artworldAmsterdam extends Phaser.Scene {
   }
 
   async create() {
+
+    // for back button history
+    manageSession.currentLocation = this.scene.key
+
     //timers
     manageSession.updateMovementTimer = 0;
     manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
@@ -235,6 +239,8 @@ export default class artworldAmsterdam extends Phaser.Scene {
     console.log(locationScene)
     console.log()
 
+    manageSession.previousLocation = "artworldAmsterdam";
+    manageSession.currentLocation = "location1_Scene";
 
     this.physics.pause()
     this.player.setTint(0xff0000)

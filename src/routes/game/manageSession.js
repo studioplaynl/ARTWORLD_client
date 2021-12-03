@@ -43,8 +43,9 @@ class manageSession {
     this.location = "location1" //default
     this.launchLocation = "location1_Scene" //default
 
-    this.currentLocation = "artworldAmsterdam" // default
-    this.previousLocation = "artworldAmsterdam" // default
+    // for back button
+    this.currentLocation = null
+    this.previousLocation = null 
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";
