@@ -1,16 +1,9 @@
 class BouncingBird {
-  constructor(config) {
-    
-  }
+  constructor() {}
 
-  generate(config) {
-    const scene = config.scene
-    const birdX = config.birdX
-    const birdY = config.birdY
-    const birdScale = config.birdScale
+  generate(scene, birdX, birdY, birdScale) {
 
-    const worldSize = scene.worldSize
-    var container = scene.add.container();
+    const container = scene.add.container();
     const leg1 = scene.add.isobox(415, 340, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
     const leg2 = scene.add.isobox(390, 350, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
     const body1 = scene.add.isobox(360, 288, 50, 22, 0x00b9f2, 0x016fce, 0x028fdf);
@@ -32,7 +25,6 @@ class BouncingBird {
       ease: 'Sine.easeInOut'
     });
   }
-
 }
 
-export default new BouncingBird();
+export default new BouncingBird()

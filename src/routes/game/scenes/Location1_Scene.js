@@ -6,6 +6,7 @@ import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js";
 import Player from '../class/Player.js'
 import Preloader from '../Preloader.js'
+import BouncingBird from "../class/BouncingBird.js";
 
 export default class Location1Scene extends Phaser.Scene {
 
@@ -71,7 +72,6 @@ export default class Location1Scene extends Phaser.Scene {
     //.... PRELOADER VISUALISER ...............................................................................................
     Preloader.Loading(this)
     //.... end PRELOADER VISUALISER ...............................................................................................
-
 
     //drawing on a wall
     this.load.image('brush', 'assets/brush3.png');
@@ -212,7 +212,8 @@ export default class Location1Scene extends Phaser.Scene {
     this.locationDialogBoxContainersGroup = this.add.group();
     this.generateLocations()
 
-    this.generateBouncingBird()
+    // this.generateBouncingBird()
+    BouncingBird.generate(this, 900, 400, 1.5)
 
     //......... DEBUG FUNCTIONS ............................................................................
     this.debugFunctions();
@@ -231,16 +232,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //this.exampleREXUI()
 
-    // identifies if the pointer is down on a graffiti wall
-    // if the condition is true, the avatar stops any movement
-    this.input.on('pointerdown', (pointer, object) => {
-      if (object[0]?.name && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
-        this.graffitiDrawing = true
-      }
-    })
-    this.input.on('pointerup', () => {
-      this.graffitiDrawing = false
-    })
+    Player.identifySurfaceOfSwiping(this)
 
   } // end create
 
@@ -680,30 +672,6 @@ export default class Location1Scene extends Phaser.Scene {
     });
   }
 
-  generateBouncingBird() {
-    var container = this.add.container();
-    var leg1 = this.add.isobox(415, 340, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
-    var leg2 = this.add.isobox(390, 350, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
-    var body1 = this.add.isobox(360, 288, 50, 22, 0x00b9f2, 0x016fce, 0x028fdf);
-    var body2 = this.add.isobox(400, 300, 80, 80, 0x00b9f2, 0x016fce, 0x028fdf);
-    var beak = this.add.isobox(430, 270, 40, 10, 0xffe31f, 0xf2a022, 0xf8d80b);
-    var eye = this.add.isobox(394, 255, 30, 15, 0xffffff, 0xffffff, 0xffffff).setFaces(false, true, false);
-    var pupil = this.add.isobox(391, 255, 15, 10, 0x000000, 0x000000, 0x000000).setFaces(false, true, false);
-    var wing = this.add.isobox(366, 300, 50, 10, 0x00b9f2, 0x016fce, 0x028fdf);
-    container.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
-    container.x = 900;
-    container.y = 400;
-    container.setScale(1.5);
-
-    this.tweens.add({
-      targets: container,
-      y: '-=160',
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut'
-    });
-  }
-
   generateLocations() {
     //this.location2 = this.physics.add.staticGroup();
     this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
@@ -1138,19 +1106,6 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
 
-  identifySurfaceOfSwiping() {
-    // identifies if the pointer is down on a graffiti wall
-    // if the condition is true, the avatar stops any movement
-    this.input.on('pointerdown', (pointer, object) => {
-      if (object[0] && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
-        this.graffitiDrawing = true;
-      }
-    })
-    this.input.on('pointerup', () => {
-      this.graffitiDrawing = false
-    })
-  }
-
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
 
@@ -1187,7 +1142,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     //this.playerMovingByClicking()
     Player.moveBySwiping(this)
-    this.identifySurfaceOfSwiping()
+    Player.identifySurfaceOfSwiping(this)
 
   } //update
 } //class

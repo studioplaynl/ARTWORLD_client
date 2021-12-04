@@ -622,6 +622,19 @@ class Player {
       }
     }
   }
+
+  identifySurfaceOfSwiping(scene) {
+    // identifies if the pointer is down on a graffiti wall
+    // if the condition is true, the avatar stops any movement
+    scene.input.on('pointerdown', (pointer, object) => {
+      if (object[0] && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
+        scene.graffitiDrawing = true;
+      }
+    })
+    scene.input.on('pointerup', () => {
+      scene.graffitiDrawing = false
+    })
+  }
 }
 
 export default new Player();
