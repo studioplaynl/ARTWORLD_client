@@ -1,4 +1,4 @@
-export default class playerDefault extends Phaser.Physics.Arcade.Sprite {
+export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
     
     constructor(scene, x, y, textureKey) {
         super(scene, x, y, 'defaultPlayerAvatar');

@@ -1,4 +1,4 @@
-class bouncingBird {
+class BouncingBird {
   constructor(config) {
     
   }
@@ -35,4 +35,4 @@ class bouncingBird {
 
 }
 
-export default new bouncingBird();
+export default new BouncingBird();

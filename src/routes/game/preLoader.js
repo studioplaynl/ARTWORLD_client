@@ -1,4 +1,4 @@
-class preloader {
+class Preloader {
     constructor() {
     }
     Loading(scene) {
@@ -49,4 +49,4 @@ class preloader {
     }
 } //end class
 
-export default new preloader()
+export default new Preloader()

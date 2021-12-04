@@ -1,4 +1,4 @@
-import preloader from '../preLoader.js'
+import Preloader from '../Preloader.js'
 
 
 export default class PreloadScene extends Phaser.Scene {
@@ -9,7 +9,7 @@ export default class PreloadScene extends Phaser.Scene {
 
     preload() {
         //.... PRELOADER VISUALISER ...............................................................................................
-        preloader.Loading(this)
+        Preloader.Loading(this)
         //.... end PRELOADER VISUALISER ...............................................................................................
 
         //artworld logo

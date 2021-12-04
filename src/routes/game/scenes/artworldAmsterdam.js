@@ -1,17 +1,17 @@
 import { CONFIG } from "../config.js";
-import manageSession from "../manageSession"
+import ManageSession from "../ManageSession"
 import { getAccount } from '../../../api.js'
 
-import playerDefault from '../class/playerDefault'
-import playerDefaultShadow from '../class/playerDefaultShadow'
+import PlayerDefault from '../class/PlayerDefault'
+import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
 import Player from '../class/Player.js'
-import preloader from '../preLoader.js'
-import bouncingBird from "../class/bouncingBird.js"
-import background from "../class/backgroud.js"
-import debugFunctions from "../class/debugFunctions.js"
-import translateCoordinates from "../class/translateCoordinates.js"
+import Preloader from '../Preloader.js'
+import BouncingBird from "../class/BouncingBird.js"
+import Background from "../class/Background.js"
+import FunctionDebugger from "../class/FunctionDebugger.js"
+import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 
-export default class artworldAmsterdam extends Phaser.Scene {
+export default class ArtworldAmsterdam extends Phaser.Scene {
 
   constructor() {
     super("artworldAmsterdam");
@@ -74,31 +74,31 @@ export default class artworldAmsterdam extends Phaser.Scene {
   }
 
   async preload() {
-    preloader.Loading(this) //.... PRELOADER VISUALISER
+    Preloader.Loading(this) //.... PRELOADER VISUALISER
   }
 
   async create() {
 
     // for back button history
-    manageSession.currentLocation = this.scene.key
+    ManageSession.currentLocation = this.scene.key
 
     //timers
-    manageSession.updateMovementTimer = 0;
-    manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
+    ManageSession.updateMovementTimer = 0;
+    ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
 
     //.......  LOAD PLAYER AVATAR ..........................................................................
-    manageSession.createPlayer = true
-    // console.log("manageSession.createPlayer: ")
-    // console.log(manageSession.createPlayer)
+    ManageSession.createPlayer = true
+    // console.log("ManageSession.createPlayer: ")
+    // console.log(ManageSession.createPlayer)
     //....... end LOAD PLAYER AVATAR .......................................................................
 
-    background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF})
+    Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF})
 
     //.......  PLAYER ..........................................................................
     //*create deafult player and playerShadow
-    this.player = new playerDefault(this, 300, 300, this.playerAvatarPlaceholder)
+    this.player = new PlayerDefault(this, 300, 300, this.playerAvatarPlaceholder)
     
-    this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
@@ -122,10 +122,10 @@ export default class artworldAmsterdam extends Phaser.Scene {
     this.generateLocations()
     //.......... end locations .........................................
 
-    //bouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
+    //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
 
     //......... DEBUG FUNCTIONS ............................................................................
-    debugFunctions.keyboard(this);
+    FunctionDebugger.keyboard(this);
     //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
 
@@ -143,7 +143,7 @@ export default class artworldAmsterdam extends Phaser.Scene {
     //........ location1 .......
     this.location1 = this.add.isotriangle(300,300, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     
-    //this.location1 = this.add.isotriangle(translateCoordinates.artworldToPhaser2D(-100), translateCoordinates.artworldToPhaser2D(100), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    //this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(-100), CoordinatesTranslator.artworldToPhaser2D(100), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     this.physics.add.existing(this.location1);
     this.location1.body.setSize(this.location1.width, this.location1.height)
     this.location1.body.setOffset(0, -(this.location1.height / 4))
@@ -236,8 +236,8 @@ export default class artworldAmsterdam extends Phaser.Scene {
     console.log(locationScene)
     console.log()
 
-    manageSession.previousLocation = "artworldAmsterdam";
-    manageSession.currentLocation = "location1_Scene";
+    ManageSession.previousLocation = "artworldAmsterdam";
+    ManageSession.currentLocation = "location1_Scene";
 
     this.physics.pause()
     this.player.setTint(0xff0000)
@@ -245,16 +245,16 @@ export default class artworldAmsterdam extends Phaser.Scene {
     //player has to explicitly leave the stream it was in!
     console.log("leave, this.location")
     console.log(this.location)
-    manageSession.socket.rpc("leave", this.location)
+    ManageSession.socket.rpc("leave", this.location)
 
     this.player.location = location
     console.log("this.player.location:")
     console.log(location)
 
     setTimeout(() => {
-      manageSession.location = location
-      manageSession.createPlayer = true
-      manageSession.getStreamUsers("join", location)
+      ManageSession.location = location
+      ManageSession.createPlayer = true
+      ManageSession.getStreamUsers("join", location)
       this.scene.stop(this.scene.key)
       this.scene.start(locationScene)
     }, 1000)
@@ -277,7 +277,7 @@ export default class artworldAmsterdam extends Phaser.Scene {
     //........... end PLAYER SHADOW .........................................................................
 
     //.......... UPDATE TIMER      ..........................................................................
-    manageSession.updateMovementTimer += delta;
+    ManageSession.updateMovementTimer += delta;
     // console.log(time) //running time in millisec
     // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     //....... end UPDATE TIMER  ..............................................................................

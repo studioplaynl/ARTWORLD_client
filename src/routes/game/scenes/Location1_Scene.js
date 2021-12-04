@@ -1,12 +1,12 @@
 import { CONFIG } from "../config.js";
-import manageSession from "../manageSession";
+import ManageSession from "../ManageSession";
 import { getAccount } from '../../../api.js';
 
-import playerDefault from '../class/playerDefault'
-import playerDefaultShadow from "../class/playerDefaultShadow.js";
+import PlayerDefault from '../class/PlayerDefault'
+import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js";
 import Player from '../class/Player.js'
-import onlinePlayerLoader from '../class/onlinePlayer.js'
-import preloader from '../preLoader.js'
+import OnlinePlayerLoader from '../class/OnlinePlayerLoader.js'
+import Preloader from '../Preloader.js'
 
 export default class Location1Scene extends Phaser.Scene {
 
@@ -70,7 +70,7 @@ export default class Location1Scene extends Phaser.Scene {
 
   async preload() {
     //.... PRELOADER VISUALISER ...............................................................................................
-    preloader.Loading(this)
+    Preloader.Loading(this)
     //.... end PRELOADER VISUALISER ...............................................................................................
 
 
@@ -140,18 +140,18 @@ export default class Location1Scene extends Phaser.Scene {
 
   async create() {
     // for back button history
-    manageSession.currentLocation = this.scene.key;
+    ManageSession.currentLocation = this.scene.key;
 
     //timers
-    manageSession.updateMovementTimer = 0;
-    manageSession.updateMovementInterval = 60; //1000 / frames =  millisec
+    ManageSession.updateMovementTimer = 0;
+    ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
 
     //.......  LOAD PLAYER AVATAR ..........................................................................
-    this.playerIdText = manageSession.userProfile.id;
+    this.playerIdText = ManageSession.userProfile.id;
 
-    manageSession.createPlayer = true
-    console.log("manageSession.createPlayer: ")
-    console.log(manageSession.createPlayer)
+    ManageSession.createPlayer = true
+    console.log("ManageSession.createPlayer: ")
+    console.log(ManageSession.createPlayer)
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     //this.generateTileMap()
@@ -169,8 +169,8 @@ export default class Location1Scene extends Phaser.Scene {
     this.playerAvatarPlaceholder = "avatar1";
 
     //*create deafult player and playerShadow
-    this.player = new playerDefault(this, 300, 800, this.playerAvatarPlaceholder)
-    this.playerShadow = new playerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+    this.player = new PlayerDefault(this, 300, 800, this.playerAvatarPlaceholder)
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
     
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
@@ -833,7 +833,7 @@ export default class Location1Scene extends Phaser.Scene {
     console.log(locationScene)
 
     // on entering another location we want to keep a record for "back button"
-    manageSession.previousLocation = this.scene.key;
+    ManageSession.previousLocation = this.scene.key;
 
     this.physics.pause()
     this.player.setTint(0xff0000)
@@ -841,16 +841,16 @@ export default class Location1Scene extends Phaser.Scene {
     //player has to explicitly leave the stream it was in!
     console.log("leave, this.location")
     console.log(this.location)
-    manageSession.socket.rpc("leave", this.location)
+    ManageSession.socket.rpc("leave", this.location)
 
     this.player.location = location
     console.log("this.player.location:")
     console.log(location)
 
     setTimeout(() => {
-      manageSession.location = location
-      manageSession.createPlayer = true
-      manageSession.getStreamUsers("join", location)
+      ManageSession.location = location
+      ManageSession.createPlayer = true
+      ManageSession.getStreamUsers("join", location)
       this.scene.stop(this.scene.key)
       this.scene.start(locationScene)
     }, 1000)
@@ -1074,7 +1074,7 @@ export default class Location1Scene extends Phaser.Scene {
       .setScrollFactor(0) //fixed on screen
       .setDepth(1000);
 
-    this.allConnectedUsersText = "onlineUsers[ ]: " + JSON.parse(manageSession.allConnectedUsers)
+    this.allConnectedUsersText = "onlineUsers[ ]: " + JSON.parse(ManageSession.allConnectedUsers)
 
     this.add.text(110, 20, this.allConnectedUsersText, { fontFamily: "Arial", fontSize: "22px" })
       .setOrigin(0.5)
@@ -1126,7 +1126,7 @@ export default class Location1Scene extends Phaser.Scene {
 
       console.log('1 key');
 
-      manageSession.getStreamUsers("get_users", this.location)
+      ManageSession.getStreamUsers("get_users", this.location)
 
     }, this);
 
@@ -1151,8 +1151,8 @@ export default class Location1Scene extends Phaser.Scene {
       console.log('this.onlinePlayers: ')
       console.log(this.onlinePlayers)
 
-      console.log("manageSession.allConnectedUsers: ")
-      console.log(manageSession.allConnectedUsers)
+      console.log("ManageSession.allConnectedUsers: ")
+      console.log(ManageSession.allConnectedUsers)
 
       console.log("onlinePlayerGroup Children: ")
       console.log(this.onlinePlayersGroup.getChildren())
@@ -1166,11 +1166,11 @@ export default class Location1Scene extends Phaser.Scene {
 
       console.log('F key');
 
-      console.log("manageSession.userProfile: ")
-      console.log(manageSession.userProfile)
+      console.log("ManageSession.userProfile: ")
+      console.log(ManageSession.userProfile)
 
       console.log("this.createOnlinePlayers: ")
-      console.log(manageSession.createOnlinePlayers)
+      console.log(ManageSession.createOnlinePlayers)
 
       console.log("this.createdPlayer: ")
       console.log(this.createdPlayer)
@@ -1200,17 +1200,17 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   createOnlinePlayers() {
-    //manageSession.connectedOpponents //list of the opponents
+    //ManageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
 
     //TODO loading is broken, so I'm checking if the player avater has already loaded, after that I load onlineUsers
     if (this.createdPlayer) {
       //first check if onlineplayers need to be created
-      if (manageSession.createOnlinePlayers) {
+      if (ManageSession.createOnlinePlayers) {
         console.log("creating onlineplayer")
-        manageSession.createOnlinePlayers = false
+        ManageSession.createOnlinePlayers = false
 
-        //manageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: this.newOnlinePlayers
+        //ManageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: this.newOnlinePlayers
         this.newOnlinePlayers = []
 
         if (this.debug) {
@@ -1227,7 +1227,7 @@ export default class Location1Scene extends Phaser.Scene {
 
         this.onlinePlayers.forEach(player => {
           const playerID = player.user_id
-          const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+          const found = ManageSession.allConnectedUsers.some(user => user.user_id === playerID)
           if (!found) this.offlineOnlineUsers.push(player)
         })
 
@@ -1272,7 +1272,7 @@ export default class Location1Scene extends Phaser.Scene {
         //...... LOAD NEW PLAYERS ........................................................................................
         //(new) players present in .allConnectedUsers but not in this.onlinePlayers ->load their avatar and animation
         this.newOnlinePlayers = []
-        manageSession.allConnectedUsers.forEach(player => {
+        ManageSession.allConnectedUsers.forEach(player => {
           const playerID = player.user_id
           const found = this.onlinePlayers.some(user => user.user_id === playerID)
           if (!found) this.newOnlinePlayers.push(player)
@@ -1365,16 +1365,16 @@ export default class Location1Scene extends Phaser.Scene {
         }) //this.load.on('filecomplete', () =>
 
 
-        console.log("manageSession.allConnectedUsers")
-        console.log(manageSession.allConnectedUsers)
+        console.log("ManageSession.allConnectedUsers")
+        console.log(ManageSession.allConnectedUsers)
 
         //this.onlinePlayers = this.onlinePlayersGroup.getChildren()
 
         //? not necessary
-        // manageSession.allConnectedUsers.forEach((player, i) => {
+        // ManageSession.allConnectedUsers.forEach((player, i) => {
 
         //   var index = this.onlinePlayers.findIndex(function (player) {
-        //     return player.user_id == manageSession.allConnectedUsers[i].user_id
+        //     return player.user_id == ManageSession.allConnectedUsers[i].user_id
         //   });
 
         //   this.onlinePlayers[index].active = true
@@ -1383,10 +1383,10 @@ export default class Location1Scene extends Phaser.Scene {
         //   console.log(this.onlinePlayers[index])
         // })
         //send player position over the network for the online users to see
-        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
+        ManageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
 
-      }//if (manageSession.createOnlinePlayers)
-    }//if (manageSession.createdPlayer) 
+      }//if (ManageSession.createOnlinePlayers)
+    }//if (ManageSession.createdPlayer) 
   } //createRemotePlayer
 
   attachtAvatarToOnlinePlayer(player, preExisting) {
@@ -1578,11 +1578,11 @@ export default class Location1Scene extends Phaser.Scene {
   sendPlayerMovement() {
     if (this.createdPlayer) {
       if (
-        manageSession.updateMovementTimer > manageSession.updateMovementInterval
+        ManageSession.updateMovementTimer > ManageSession.updateMovementInterval
       ) {
-        manageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
+        ManageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
         //console.log(this.player.x)
-        manageSession.updateMovementTimer = 0;
+        ManageSession.updateMovementTimer = 0;
       }
       // this.scrollablePanel.x = this.player.x
       // this.scrollablePanel.y = this.player.y + 150
@@ -1590,13 +1590,13 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   updateMovementOnlinePlayers() {
-    if (manageSession.updateOnlinePlayers) {
-      if (!manageSession.createPlayer) {
-        if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
+    if (ManageSession.updateOnlinePlayers) {
+      if (!ManageSession.createPlayer) {
+        if (ManageSession.allConnectedUsers != null && ManageSession.allConnectedUsers.length > 0) {
 
-          manageSession.allConnectedUsers.forEach(player => {
+          ManageSession.allConnectedUsers.forEach(player => {
             // const playerID = player.user_id
-            // const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+            // const found = ManageSession.allConnectedUsers.some(user => user.user_id === playerID)
             // if (found) {console.log(player)}
 
             let tempPlayer = this.onlinePlayers.find(o => o.user_id === player.user_id);
@@ -1617,7 +1617,7 @@ export default class Location1Scene extends Phaser.Scene {
 
           })
 
-          manageSession.updateOnlinePlayers = false;
+          ManageSession.updateOnlinePlayers = false;
         }
       }
     }
@@ -1626,7 +1626,7 @@ export default class Location1Scene extends Phaser.Scene {
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
     // this.createOnlinePlayers()
-    onlinePlayerLoader.load(this)
+    OnlinePlayerLoader.load(this)
     this.updateMovementOnlinePlayers()
     Player.loadOnlineAvatar(this)
 
@@ -1640,7 +1640,7 @@ export default class Location1Scene extends Phaser.Scene {
     // //........... end PLAYER SHADOW .........................................................................
 
     //.......... UPDATE TIMER      ..........................................................................
-    manageSession.updateMovementTimer += delta;
+    ManageSession.updateMovementTimer += delta;
     // console.log(time) //running time in millisec
     // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     //....... end UPDATE TIMER  ..............................................................................

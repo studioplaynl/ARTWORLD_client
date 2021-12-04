@@ -1,5 +1,5 @@
 import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension";
-import manageSession from "../manageSession"
+import ManageSession from "../ManageSession"
 
 export default class Location2Scene extends Scene3D {
 
@@ -17,7 +17,7 @@ export default class Location2Scene extends Scene3D {
   async create() {
     
     this.scene.stop("UI_Scene");
-    manageSession.currentLocation = this.scene.key;
+    ManageSession.currentLocation = this.scene.key;
 
     const { ground } = await this.third.warpSpeed("-orbitControls");
 
@@ -96,8 +96,8 @@ export default class Location2Scene extends Scene3D {
       .setInteractive({ useHandCursor: true });
     
     this.backButton.on("pointerup", () => {
-      this.scene.stop(manageSession.currentLocation)
-      this.scene.start(manageSession.previousLocation)
+      this.scene.stop(ManageSession.currentLocation)
+      this.scene.start(ManageSession.previousLocation)
     });
   }
 

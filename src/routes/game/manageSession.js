@@ -1,7 +1,7 @@
 import { client, SSL } from "../../nakama.svelte";
 import { SCENES } from "./config.js"
 
-class manageSession {
+class ManageSession {
   constructor() {
     this.debug = true
 
@@ -264,4 +264,4 @@ class manageSession {
   } //end chatExample
 } //end class
 
-export default new manageSession();
+export default new ManageSession();

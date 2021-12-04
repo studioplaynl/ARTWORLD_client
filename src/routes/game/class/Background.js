@@ -1,4 +1,4 @@
-class background {
+class Background {
     constructor(config) {
     }
 
@@ -42,4 +42,4 @@ class background {
     }
 }
 
-export default new background();
+export default new Background();

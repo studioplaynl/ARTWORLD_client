@@ -1,21 +1,21 @@
-import manageSession from "./../manageSession";
+import ManageSession from "../ManageSession";
 
-class onlinePlayerLoader {
+class OnlinePlayerLoader {
     constructor() {
     }
 
     load(scene) {
-        //manageSession.connectedOpponents //list of the opponents
+        //ManageSession.connectedOpponents //list of the opponents
         //for each of the opponents, attach a png,
 
         //TODO loading is broken, so I'm checking if the player avater has already loaded, after that I load onlineUsers
         if (scene.createdPlayer) {
             //first check if onlineplayers need to be created
-            if (manageSession.createOnlinePlayers) {
+            if (ManageSession.createOnlinePlayers) {
                 console.log("creating onlineplayer")
-                manageSession.createOnlinePlayers = false
+                ManageSession.createOnlinePlayers = false
 
-                //manageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: scene.newOnlinePlayers
+                //ManageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: scene.newOnlinePlayers
                 scene.newOnlinePlayers = []
 
                 if (scene.debug) {
@@ -32,7 +32,7 @@ class onlinePlayerLoader {
 
                 scene.onlinePlayers.forEach(player => {
                     const playerID = player.user_id
-                    const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+                    const found = ManageSession.allConnectedUsers.some(user => user.user_id === playerID)
                     if (!found) scene.offlineOnlineUsers.push(player)
                 })
 
@@ -77,7 +77,7 @@ class onlinePlayerLoader {
                 //...... LOAD NEW PLAYERS ........................................................................................
                 //(new) players present in .allConnectedUsers but not in scene.onlinePlayers ->load their avatar and animation
                 scene.newOnlinePlayers = []
-                manageSession.allConnectedUsers.forEach(player => {
+                ManageSession.allConnectedUsers.forEach(player => {
                     const playerID = player.user_id
                     const found = scene.onlinePlayers.some(user => user.user_id === playerID)
                     if (!found) scene.newOnlinePlayers.push(player)
@@ -170,16 +170,16 @@ class onlinePlayerLoader {
                 }) //scene.load.on('filecomplete', () =>
 
 
-                console.log("manageSession.allConnectedUsers")
-                console.log(manageSession.allConnectedUsers)
+                console.log("ManageSession.allConnectedUsers")
+                console.log(ManageSession.allConnectedUsers)
 
                 //scene.onlinePlayers = scene.onlinePlayersGroup.getChildren()
 
                 //? not necessary
-                // manageSession.allConnectedUsers.forEach((player, i) => {
+                // ManageSession.allConnectedUsers.forEach((player, i) => {
 
                 //   var index = scene.onlinePlayers.findIndex(function (player) {
-                //     return player.user_id == manageSession.allConnectedUsers[i].user_id
+                //     return player.user_id == ManageSession.allConnectedUsers[i].user_id
                 //   });
 
                 //   scene.onlinePlayers[index].active = true
@@ -188,10 +188,10 @@ class onlinePlayerLoader {
                 //   console.log(scene.onlinePlayers[index])
                 // })
                 //send player position over the network for the online users to see
-                manageSession.sendMoveMessage(scene.player.x, scene.player.y);
+                ManageSession.sendMoveMessage(scene.player.x, scene.player.y);
 
-            }//if (manageSession.createOnlinePlayers)
-        }//if (manageSession.createdPlayer) 
+            }//if (ManageSession.createOnlinePlayers)
+        }//if (ManageSession.createdPlayer) 
     }//loader
 
     attachtAvatarToOnlinePlayer(scene, player, preExisting) {
@@ -263,4 +263,4 @@ class onlinePlayerLoader {
 
 } //end class
 
-export default new onlinePlayerLoader();
+export default new OnlinePlayerLoader();

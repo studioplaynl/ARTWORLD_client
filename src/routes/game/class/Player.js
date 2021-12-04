@@ -1,4 +1,4 @@
-import manageSession from "./../manageSession";
+import ManageSession from "../ManageSession"
 
 class Player {
   constructor() {
@@ -6,11 +6,11 @@ class Player {
 
   loadOnlineAvatar(scene) {
     //check if account info is loaded
-    if (manageSession.userProfile.id != null) {
+    if (ManageSession.userProfile.id != null) {
       //check for createPlayer flag
-      if (manageSession.createPlayer) {
-        manageSession.createPlayer = false;
-        //console.log("manageSession.createPlayer = false;")
+      if (ManageSession.createPlayer) {
+        ManageSession.createPlayer = false;
+        //console.log("ManageSession.createPlayer = false;")
 
         //set the location of the player to this location
 
@@ -23,9 +23,9 @@ class Player {
         //yes -> dont load the avatar
 
         scene.playerAvatarKey =
-          manageSession.userProfile.id +
+          ManageSession.userProfile.id +
           "_" +
-          manageSession.userProfile.create_time;
+          ManageSession.userProfile.create_time;
         //console.log(scene.playerAvatarKey);
 
         // console.log("this.textures.exists(this.playerAvatarKey): ")
@@ -42,26 +42,26 @@ class Player {
         //if the texture already exists attach it again to the player
         if (!scene.textures.exists(scene.playerAvatarKey)) {
           //check if url is not empty for some reason, returns so that previous image is kept
-          if (manageSession.userProfile.url === "") {
+          if (ManageSession.userProfile.url === "") {
             console.log("avatar url is empty");
-            manageSession.createPlayer = false;
-            console.log("manageSession.createPlayer = false;");
+            ManageSession.createPlayer = false;
+            console.log("ManageSession.createPlayer = false;");
             scene.createdPlayer = true;
             console.log("scene.createdPlayer = true;");
             return;
           } else {
-            // console.log(" loading: manageSession.userProfile.url: ")
-            // console.log(manageSession.userProfile.url)
+            // console.log(" loading: ManageSession.userProfile.url: ")
+            // console.log(ManageSession.userProfile.url)
 
             scene.load.spritesheet(
               scene.playerAvatarKey,
-              manageSession.userProfile.url,
+              ManageSession.userProfile.url,
               { frameWidth: 128, frameHeight: 128 }
             );
 
             scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
               console.log("loadAndCreatePlayerAvatar complete:");
-              console.log(manageSession.userProfile.url);
+              console.log(ManageSession.userProfile.url);
 
               if (scene.textures.exists(scene.playerAvatarKey)) {
                 this.attachAvatarToPlayer(scene);
@@ -74,7 +74,7 @@ class Player {
         } else {
           this.attachAvatarToPlayer(scene);
         }
-      } //if(manageSession.playerCreated)
+      } //if(ManageSession.playerCreated)
     }
   }
 
@@ -165,7 +165,7 @@ class Player {
     // console.log("this.createdPlayer = true;")
 
     //send the current player position over the network
-    manageSession.sendMoveMessage(scene.player.x, scene.player.y);
+    ManageSession.sendMoveMessage(scene.player.x, scene.player.y);
 
     // scene.add.existing(this)
     // scene.physics.add.existing(this)
@@ -315,13 +315,13 @@ class Player {
   sendMovement(scene) {
     if (scene.createdPlayer) {
       if (
-        manageSession.updateMovementTimer > manageSession.updateMovementInterval
+        ManageSession.updateMovementTimer > ManageSession.updateMovementInterval
       ) {
         //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
-        // manageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(scene, scene.player.x), translateCoordinates.Phaser2DToArtworld(scene, scene.player.y))
-        manageSession.sendMoveMessage(scene.player.x, scene.player.y);
+        // ManageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(scene, scene.player.x), translateCoordinates.Phaser2DToArtworld(scene, scene.player.y))
+        ManageSession.sendMoveMessage(scene.player.x, scene.player.y);
         //console.log(this.player.x)
-        manageSession.updateMovementTimer = 0;
+        ManageSession.updateMovementTimer = 0;
       }
       // this.scrollablePanel.x = this.player.x
       // this.scrollablePanel.y = this.player.y + 150
@@ -329,17 +329,17 @@ class Player {
   }
 
   loadOnlinePlayers(scene) {
-    //manageSession.connectedOpponents //list of the opponents
+    //ManageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
 
     //TODO loading is broken, so I'm checking if the player avater has already loaded, after that I load onlineUsers
     if (scene.createdPlayer) {
       //first check if onlineplayers need to be created
-      if (manageSession.createOnlinePlayers) {
+      if (ManageSession.createOnlinePlayers) {
         console.log("creating onlineplayer")
-        manageSession.createOnlinePlayers = false
+        ManageSession.createOnlinePlayers = false
 
-        //manageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: scene.newOnlinePlayers
+        //ManageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: scene.newOnlinePlayers
         scene.newOnlinePlayers = []
 
         if (scene.debug) {
@@ -356,7 +356,7 @@ class Player {
 
         scene.onlinePlayers.forEach(player => {
           const playerID = player.user_id
-          const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+          const found = ManageSession.allConnectedUsers.some(user => user.user_id === playerID)
           if (!found) scene.offlineOnlineUsers.push(player)
         })
 
@@ -401,7 +401,7 @@ class Player {
         //...... LOAD NEW PLAYERS ........................................................................................
         //(new) players present in .allConnectedUsers but not in scene.onlinePlayers ->load their avatar and animation
         scene.newOnlinePlayers = []
-        manageSession.allConnectedUsers.forEach(player => {
+        ManageSession.allConnectedUsers.forEach(player => {
           const playerID = player.user_id
           const found = scene.onlinePlayers.some(user => user.user_id === playerID)
           if (!found) scene.newOnlinePlayers.push(player)
@@ -494,16 +494,16 @@ class Player {
         }) //scene.load.on('filecomplete', () =>
 
 
-        console.log("manageSession.allConnectedUsers")
-        console.log(manageSession.allConnectedUsers)
+        console.log("ManageSession.allConnectedUsers")
+        console.log(ManageSession.allConnectedUsers)
 
         //scene.onlinePlayers = scene.onlinePlayersGroup.getChildren()
 
         //? not necessary
-        // manageSession.allConnectedUsers.forEach((player, i) => {
+        // ManageSession.allConnectedUsers.forEach((player, i) => {
 
         //   var index = scene.onlinePlayers.findIndex(function (player) {
-        //     return player.user_id == manageSession.allConnectedUsers[i].user_id
+        //     return player.user_id == ManageSession.allConnectedUsers[i].user_id
         //   });
 
         //   scene.onlinePlayers[index].active = true
@@ -512,10 +512,10 @@ class Player {
         //   console.log(scene.onlinePlayers[index])
         // })
         //send player position over the network for the online users to see
-        manageSession.sendMoveMessage(scene.player.x, scene.player.y);
+        ManageSession.sendMoveMessage(scene.player.x, scene.player.y);
 
-      }//if (manageSession.createOnlinePlayers)
-    }//if (manageSession.createdPlayer) 
+      }//if (ManageSession.createOnlinePlayers)
+    }//if (ManageSession.createdPlayer) 
   }//loader
 
   attachtAvatarToOnlinePlayer(scene, player, preExisting) {
@@ -586,13 +586,13 @@ class Player {
   }
 
   receiveOnlinePlayersMovement(scene) {
-    if (manageSession.updateOnlinePlayers) {
-      if (!manageSession.createPlayer) {
-        if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
+    if (ManageSession.updateOnlinePlayers) {
+      if (!ManageSession.createPlayer) {
+        if (ManageSession.allConnectedUsers != null && ManageSession.allConnectedUsers.length > 0) {
 
-          manageSession.allConnectedUsers.forEach(player => {
+          ManageSession.allConnectedUsers.forEach(player => {
             // const playerID = player.user_id
-            // const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+            // const found = ManageSession.allConnectedUsers.some(user => user.user_id === playerID)
             // if (found) {console.log(player)}
 
             let tempPlayer = scene.onlinePlayers.find(o => o.user_id === player.user_id);
@@ -617,7 +617,7 @@ class Player {
 
           })
 
-          manageSession.updateOnlinePlayers = false;
+          ManageSession.updateOnlinePlayers = false;
         }
       }
     }

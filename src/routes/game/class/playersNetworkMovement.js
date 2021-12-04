@@ -1,17 +1,17 @@
-import manageSession from "./../manageSession";
+import ManageSession from "../ManageSession";
 
-class playersNetworkMovement {
+class PlayersNetworkMovement {
   constructor() {
   }
 
   receive(scene) {
-    if (manageSession.updateOnlinePlayers) {
-      if (!manageSession.createPlayer) {
-        if (manageSession.allConnectedUsers != null && manageSession.allConnectedUsers.length > 0) {
+    if (ManageSession.updateOnlinePlayers) {
+      if (!ManageSession.createPlayer) {
+        if (ManageSession.allConnectedUsers != null && ManageSession.allConnectedUsers.length > 0) {
 
-          manageSession.allConnectedUsers.forEach(player => {
+          ManageSession.allConnectedUsers.forEach(player => {
             // const playerID = player.user_id
-            // const found = manageSession.allConnectedUsers.some(user => user.user_id === playerID)
+            // const found = ManageSession.allConnectedUsers.some(user => user.user_id === playerID)
             // if (found) {console.log(player)}
 
             let tempPlayer = scene.onlinePlayers.find(o => o.user_id === player.user_id);
@@ -36,7 +36,7 @@ class playersNetworkMovement {
 
           })
 
-          manageSession.updateOnlinePlayers = false;
+          ManageSession.updateOnlinePlayers = false;
         }
       }
     }
@@ -44,4 +44,4 @@ class playersNetworkMovement {
 
 }
 
-export default new playersNetworkMovement()
+export default new PlayersNetworkMovement()

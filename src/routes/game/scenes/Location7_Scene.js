@@ -1,5 +1,5 @@
 import { Scene3D, THREE } from "@enable3d/phaser-extension";
-import manageSession from "../manageSession";
+import ManageSession from "../ManageSession";
 export default class Location7Scene extends Scene3D {
   platform;
   avatar;
@@ -52,7 +52,7 @@ export default class Location7Scene extends Scene3D {
   async create() {
 
     this.scene.stop("UI_Scene");
-    manageSession.currentLocation = this.scene.key;
+    ManageSession.currentLocation = this.scene.key;
 
     // this disables 3d ground, blue sky and ability to move around the 3d world with mouse
     const { lights } = await this.third.warpSpeed(
@@ -257,8 +257,8 @@ export default class Location7Scene extends Scene3D {
       .setInteractive({ useHandCursor: true });
     
     this.backButton.on("pointerup", () => {
-      this.scene.stop(manageSession.currentLocation)
-      this.scene.start(manageSession.previousLocation)
+      this.scene.stop(ManageSession.currentLocation)
+      this.scene.start(ManageSession.previousLocation)
     });
   }
 

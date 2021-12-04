@@ -1,8 +1,8 @@
-import manageSession from "./../manageSession";
+import ManageSession from "../ManageSession";
 import { getAccount, updateObject, listObjects } from '../../../api.js'
 
 
-class debugFuntions {
+class FunctionDebugger {
     constructor(scene) {
         //scene = config.scene 
     }
@@ -19,7 +19,7 @@ class debugFuntions {
 
             console.log('1 key');
 
-            manageSession.getStreamUsers("get_users", scene.location)
+            ManageSession.getStreamUsers("get_users", scene.location)
 
         }, scene);
 
@@ -44,8 +44,8 @@ class debugFuntions {
             console.log('scene.onlinePlayers: ')
             console.log(scene.onlinePlayers)
 
-            console.log("manageSession.allConnectedUsers: ")
-            console.log(manageSession.allConnectedUsers)
+            console.log("ManageSession.allConnectedUsers: ")
+            console.log(ManageSession.allConnectedUsers)
 
             console.log("onlinePlayerGroup Children: ")
             console.log(scene.onlinePlayersGroup.getChildren())
@@ -59,11 +59,11 @@ class debugFuntions {
 
             console.log('F key');
 
-            console.log("manageSession.userProfile: ")
-            console.log(manageSession.userProfile)
+            console.log("ManageSession.userProfile: ")
+            console.log(ManageSession.userProfile)
 
             console.log("scene.createOnlinePlayers: ")
-            console.log(manageSession.createOnlinePlayers)
+            console.log(ManageSession.createOnlinePlayers)
 
             console.log("scene.createdPlayer: ")
             console.log(scene.createdPlayer)
@@ -98,4 +98,4 @@ class debugFuntions {
     }
 }
 
-export default new debugFuntions();
+export default new FunctionDebugger();

@@ -1,4 +1,4 @@
-class translateCoordinates {
+class CoordinatesTranslator {
     constructor() {
     }
 
@@ -41,4 +41,4 @@ class translateCoordinates {
     }
 }
 
-export default new translateCoordinates()
+export default new CoordinatesTranslator()

@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import { locale } from "svelte-i18n";
-import manageSession from "../manageSession";
+import ManageSession from "../ManageSession";
 
 import nl from "../../../langauge/nl/ui.json";
 import en from "../../../langauge/en/ui.json";
@@ -86,31 +86,31 @@ export default class UI_Scene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true });
       
       // if the current scene is artworld, the back button is hidden 
-      if (manageSession.currentLocation == null || manageSession.currentLocation == "artworldAmsterdam") {
+      if (ManageSession.currentLocation == null || ManageSession.currentLocation == "artworldAmsterdam") {
         this.backButton.destroy()
       }
 
       this.backButton.on("pointerup", () => {
-        if (manageSession.currentLocation == "location1_Scene") {
-          manageSession.socket.rpc("leave", "location1")
+        if (ManageSession.currentLocation == "location1_Scene") {
+          ManageSession.socket.rpc("leave", "location1")
 
           const targetScene = this.scene.get("artworldAmsterdam");
           targetScene.player.location = "artworldAmsterdam"
-          // manageSession.previousLocation = "location1_Scene";
-          // manageSession.currentLocation = "artworldAmsterdam";
+          // ManageSession.previousLocation = "location1_Scene";
+          // ManageSession.currentLocation = "artworldAmsterdam";
           setTimeout(() => {
-            manageSession.location = "artworldAmsterdam"
-            manageSession.createPlayer = true
-            manageSession.getStreamUsers("join", "artworldAmsterdam")
+            ManageSession.location = "artworldAmsterdam"
+            ManageSession.createPlayer = true
+            ManageSession.getStreamUsers("join", "artworldAmsterdam")
             // this.scene.stop("location1_Scene");
             this.scene.start("artworldAmsterdam")
           }, 500)
         } else {
-          const currentLocation = manageSession.currentLocation.split("_");
-          manageSession.socket.rpc("leave", currentLocation[0])
+          const currentLocation = ManageSession.currentLocation.split("_");
+          ManageSession.socket.rpc("leave", currentLocation[0])
 
-          const previousLocation = manageSession.previousLocation.split("_")
-          const targetScene = this.scene.get(manageSession.previousLocation)
+          const previousLocation = ManageSession.previousLocation.split("_")
+          const targetScene = this.scene.get(ManageSession.previousLocation)
           targetScene.player.location = previousLocation
 
           console.log("tarrgetSCENE", targetScene)
@@ -118,16 +118,16 @@ export default class UI_Scene extends Phaser.Scene {
           // console.log(currentLocation[0])
           // this.player.location = currentLocation[0]
           setTimeout(() => {
-            // const previousLocation = manageSession.previousLocation.split("_");
-            manageSession.location = previousLocation[0]
+            // const previousLocation = ManageSession.previousLocation.split("_");
+            ManageSession.location = previousLocation[0]
             // console.log("2. for manage session location = I'm making = previous location")
             // console.log(previousLocation[0])
-            manageSession.createPlayer = true
-            manageSession.getStreamUsers("join", previousLocation[0])
-            this.scene.stop(manageSession.currentLocation)
-            // console.log("3. Stopped current location", manageSession.currentLocation)
-            this.scene.start(manageSession.previousLocation)
-            // console.log("3. Entered current location", manageSession.previousLocation)
+            ManageSession.createPlayer = true
+            ManageSession.getStreamUsers("join", previousLocation[0])
+            this.scene.stop(ManageSession.currentLocation)
+            // console.log("3. Stopped current location", ManageSession.currentLocation)
+            this.scene.start(ManageSession.previousLocation)
+            // console.log("3. Entered current location", ManageSession.previousLocation)
           }, 500)
         }
       });

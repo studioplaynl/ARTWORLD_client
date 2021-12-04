@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import i18next from "i18next";
 import { locale } from "svelte-i18n";
-import manageSession from "../manageSession";
+import ManageSession from "../ManageSession";
 
 import nl from "../../../langauge/nl/ui.json";
 import en from "../../../langauge/en/ui.json";
@@ -41,7 +41,7 @@ export default class Location6Scene extends Phaser.Scene {
   async create() {
 
     this.scene.stop("UI_Scene");
-    manageSession.currentLocation = this.scene.key;
+    ManageSession.currentLocation = this.scene.key;
     
     this.addBackButton();
 
@@ -78,8 +78,8 @@ export default class Location6Scene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true });
     
     this.backButton.on("pointerup", () => {
-      this.scene.stop(manageSession.currentLocation)
-      this.scene.start(manageSession.previousLocation)
+      this.scene.stop(ManageSession.currentLocation)
+      this.scene.start(ManageSession.previousLocation)
     });
   }
 

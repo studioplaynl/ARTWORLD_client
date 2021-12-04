@@ -1,4 +1,4 @@
-export default class playerDefaultShadow extends Phaser.GameObjects.Sprite {
+export default class PlayerDefaultShadow extends Phaser.GameObjects.Sprite {
     
     constructor(config) {
         super(config.scene, config.texture)

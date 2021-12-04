@@ -1,6 +1,6 @@
-import manageSession from "../manageSession"
+import ManageSession from "../ManageSession"
 
-export default class networkBoot_Scene extends Phaser.Scene {
+export default class NetworkBoot_Scene extends Phaser.Scene {
   constructor() {
     super("networkBoot_Scene")
     this.phaser = this
@@ -9,12 +9,12 @@ export default class networkBoot_Scene extends Phaser.Scene {
 
   async preload() {
     
-    manageSession.createPlayer = true
+    ManageSession.createPlayer = true
     
-    await manageSession.createSocket()
+    await ManageSession.createSocket()
       .then(rec => {
-        console.log(manageSession.launchLocation)
-        this.scene.launch(manageSession.launchLocation)
+        console.log(ManageSession.launchLocation)
+        this.scene.launch(ManageSession.launchLocation)
       })
   }
 
