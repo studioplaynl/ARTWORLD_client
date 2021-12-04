@@ -7,6 +7,7 @@ import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js";
 import Player from '../class/Player.js'
 import Preloader from '../Preloader.js'
 import BouncingBird from "../class/BouncingBird.js";
+import FunctionDebugger from "../class/FunctionDebugger.js";
 
 export default class Location1Scene extends Phaser.Scene {
 
@@ -70,7 +71,7 @@ export default class Location1Scene extends Phaser.Scene {
 
   async preload() {
     //.... PRELOADER VISUALISER ...............................................................................................
-    Preloader.Loading(this)
+    Preloader.loading(this)
     //.... end PRELOADER VISUALISER ...............................................................................................
 
     //drawing on a wall
@@ -149,8 +150,6 @@ export default class Location1Scene extends Phaser.Scene {
     this.playerIdText = ManageSession.userProfile.id;
 
     ManageSession.createPlayer = true
-    console.log("ManageSession.createPlayer: ")
-    console.log(ManageSession.createPlayer)
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     this.generateBackground()
@@ -216,8 +215,9 @@ export default class Location1Scene extends Phaser.Scene {
     BouncingBird.generate(this, 900, 400, 1.5)
 
     //......... DEBUG FUNCTIONS ............................................................................
-    this.debugFunctions();
+    // this.debugFunctions();
     //this.createDebugText();
+    FunctionDebugger.keyboard()
     //......... end DEBUG FUNCTIONS .........................................................................
 
     this.UI_Scene = this.scene.get("UI_Scene")
@@ -1021,89 +1021,89 @@ export default class Location1Scene extends Phaser.Scene {
 
   }
 
-  debugFunctions() {
-    this.input.keyboard.on('keyup-A', function (event) {
-      //get online player group
-      const displaylist = this.onlinePlayersGroup.getChildren()
-      console.log(displaylist)
-    }, this);
+  // debugFunctions() {
+  //   this.input.keyboard.on('keyup-A', function (event) {
+  //     //get online player group
+  //     const displaylist = this.onlinePlayersGroup.getChildren()
+  //     console.log(displaylist)
+  //   }, this);
 
-    this.input.keyboard.on('keyup-ONE', function (event) {
+  //   this.input.keyboard.on('keyup-ONE', function (event) {
 
-      console.log('1 key');
+  //     console.log('1 key');
 
-      ManageSession.getStreamUsers("get_users", this.location)
+  //     ManageSession.getStreamUsers("get_users", this.location)
 
-    }, this);
+  //   }, this);
 
-    this.input.keyboard.on('keyup-S', function (event) {
+  //   this.input.keyboard.on('keyup-S', function (event) {
 
-      console.log('S key');
+  //     console.log('S key');
 
-      //list all images in the textureManager
-      console.log(this.textures.list)
+  //     //list all images in the textureManager
+  //     console.log(this.textures.list)
 
-      //Return an array listing the events for which the emitter has registered listeners.
-      console.log("Return an array listing the events for which the emitter has registered listeners: ")
-      console.log(this.textures.eventNames())
+  //     //Return an array listing the events for which the emitter has registered listeners.
+  //     console.log("Return an array listing the events for which the emitter has registered listeners: ")
+  //     console.log(this.textures.eventNames())
 
-    }, this);
+  //   }, this);
 
-    this.input.keyboard.on('keyup-D', function (event) {
+  //   this.input.keyboard.on('keyup-D', function (event) {
 
-      console.log('D key');
+  //     console.log('D key');
 
-      console.log(" ")
-      console.log('this.onlinePlayers: ')
-      console.log(this.onlinePlayers)
+  //     console.log(" ")
+  //     console.log('this.onlinePlayers: ')
+  //     console.log(this.onlinePlayers)
 
-      console.log("ManageSession.allConnectedUsers: ")
-      console.log(ManageSession.allConnectedUsers)
+  //     console.log("ManageSession.allConnectedUsers: ")
+  //     console.log(ManageSession.allConnectedUsers)
 
-      console.log("onlinePlayerGroup Children: ")
-      console.log(this.onlinePlayersGroup.getChildren())
+  //     console.log("onlinePlayerGroup Children: ")
+  //     console.log(this.onlinePlayersGroup.getChildren())
 
-      console.log("this.player: ")
-      console.log(this.player)
+  //     console.log("this.player: ")
+  //     console.log(this.player)
 
-    }, this);
+  //   }, this);
 
-    this.input.keyboard.on('keyup-F', function (event) {
+  //   this.input.keyboard.on('keyup-F', function (event) {
 
-      console.log('F key');
+  //     console.log('F key');
 
-      console.log("ManageSession.userProfile: ")
-      console.log(ManageSession.userProfile)
+  //     console.log("ManageSession.userProfile: ")
+  //     console.log(ManageSession.userProfile)
 
-      console.log("this.createOnlinePlayers: ")
-      console.log(ManageSession.createOnlinePlayers)
+  //     console.log("this.createOnlinePlayers: ")
+  //     console.log(ManageSession.createOnlinePlayers)
 
-      console.log("this.createdPlayer: ")
-      console.log(this.createdPlayer)
-    }, this);
+  //     console.log("this.createdPlayer: ")
+  //     console.log(this.createdPlayer)
+  //   }, this);
 
-    this.input.keyboard.on('keyup-Q', function (event) {
+  //   this.input.keyboard.on('keyup-Q', function (event) {
 
-      console.log('Q key');
-      getAccount();
+  //     console.log('Q key');
+  //     getAccount();
 
-    }, this);
+  //   }, this);
 
-    this.input.keyboard.on('keyup-W', function (event) {
+  //   this.input.keyboard.on('keyup-W', function (event) {
 
-      console.log('W key');
+  //     console.log('W key');
 
 
-    }, this);
+  //   }, this);
 
-    // //  Receives every single key down event, regardless of type
+  //   // //  Receives every single key down event, regardless of type
 
-    // this.input.keyboard.on('keydown', function (event) {
+  //   // this.input.keyboard.on('keydown', function (event) {
 
-    //   console.dir(event);
+  //   //   console.dir(event);
 
-    // }, this);
-  }
+  //   // }, this);
+  // }
 
 
   update(time, delta) {

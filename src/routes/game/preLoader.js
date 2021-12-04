@@ -1,7 +1,7 @@
 class Preloader {
     constructor() {
     }
-    Loading(scene) {
+    loading(scene) {
 
         let width = scene.sys.game.canvas.width
         let height = scene.sys.game.canvas.height
