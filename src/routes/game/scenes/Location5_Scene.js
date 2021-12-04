@@ -1,6 +1,6 @@
 import { Scene3D, THREE } from "@enable3d/phaser-extension";
 import ManageSession from "../ManageSession";
-export default class Location6Scene extends Scene3D {
+export default class Location5Scene extends Scene3D {
   platform;
   avatar;
   avatarImage;
@@ -17,7 +17,7 @@ export default class Location6Scene extends Scene3D {
   chosenScene;
 
   constructor() {
-    super("location6_Scene");
+    super("location5_Scene");
   }
 
   init() {
