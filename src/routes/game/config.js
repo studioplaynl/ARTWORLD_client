@@ -8,7 +8,6 @@
  import Location4_Scene from "./scenes/Location4_Scene";
  import Location5_Scene from "./scenes/Location5_Scene";
  import Location6_Scene from "./scenes/Location6_Scene";
- import Location7_Scene from "./scenes/Location7_Scene";
  import UI_Scene from "./scenes/UI_Scene";
  import ArtworldAmsterdam from "./scenes/ArtworldAmsterdam";
  
