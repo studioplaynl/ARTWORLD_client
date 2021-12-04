@@ -485,7 +485,13 @@ export default class Location5Scene extends Phaser.Scene {
     this.player.location = location
     console.log("this.player.location:")
     console.log(this.player.location)
-    this.scene.start(locationScene)
+
+    setTimeout(() => {
+      manageSession.location = location
+      manageSession.createPlayer = true
+      manageSession.getStreamUsers("join", location)
+      this.scene.start(locationScene)
+    }, 1000)
   }
 
   generateBackground() {

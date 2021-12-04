@@ -92,13 +92,43 @@ export default class UI_Scene extends Phaser.Scene {
 
       this.backButton.on("pointerup", () => {
         if (manageSession.currentLocation == "location1_Scene") {
-          this.scene.stop("location1_Scene");
-          this.scene.start("artworldAmsterdam")
-          manageSession.previousLocation = "location1_Scene";
-          manageSession.currentLocation = "artworldAmsterdam";
+          manageSession.socket.rpc("leave", "location1")
+
+          const targetScene = this.scene.get("artworldAmsterdam");
+          targetScene.player.location = "artworldAmsterdam"
+          // manageSession.previousLocation = "location1_Scene";
+          // manageSession.currentLocation = "artworldAmsterdam";
+          setTimeout(() => {
+            manageSession.location = "artworldAmsterdam"
+            manageSession.createPlayer = true
+            manageSession.getStreamUsers("join", "artworldAmsterdam")
+            // this.scene.stop("location1_Scene");
+            this.scene.start("artworldAmsterdam")
+          }, 500)
         } else {
-          this.scene.stop(manageSession.currentLocation)
-          this.scene.start(manageSession.previousLocation)
+          const currentLocation = manageSession.currentLocation.split("_");
+          manageSession.socket.rpc("leave", currentLocation[0])
+
+          const previousLocation = manageSession.previousLocation.split("_")
+          const targetScene = this.scene.get(manageSession.previousLocation)
+          targetScene.player.location = previousLocation
+
+          console.log("tarrgetSCENE", targetScene)
+          // console.log("1. I'm leaving now current location")
+          // console.log(currentLocation[0])
+          // this.player.location = currentLocation[0]
+          setTimeout(() => {
+            // const previousLocation = manageSession.previousLocation.split("_");
+            manageSession.location = previousLocation[0]
+            // console.log("2. for manage session location = I'm making = previous location")
+            // console.log(previousLocation[0])
+            manageSession.createPlayer = true
+            manageSession.getStreamUsers("join", previousLocation[0])
+            this.scene.stop(manageSession.currentLocation)
+            // console.log("3. Stopped current location", manageSession.currentLocation)
+            this.scene.start(manageSession.previousLocation)
+            // console.log("3. Entered current location", manageSession.previousLocation)
+          }, 500)
         }
       });
 

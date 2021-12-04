@@ -255,6 +255,7 @@ export default class artworldAmsterdam extends Phaser.Scene {
       manageSession.location = location
       manageSession.createPlayer = true
       manageSession.getStreamUsers("join", location)
+      this.scene.stop(this.scene.key)
       this.scene.start(locationScene)
     }, 1000)
 

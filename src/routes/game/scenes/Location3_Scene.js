@@ -399,6 +399,8 @@ export default class Location3Scene extends Phaser.Scene {
 
     //player has to explicitly leave the stream it was in!
     manageSession.socket.rpc("leave", this.location)
+    console.log("1. I'm leaving now current location")
+    console.log(this.location)
 
     this.player.location = location
     console.log("this.player.location:")
@@ -406,9 +408,12 @@ export default class Location3Scene extends Phaser.Scene {
 
     setTimeout(() => {
       manageSession.location = location
+      console.log("2. for manage session location = I'm making = previous location")
+      console.log(manageSession.location)
       manageSession.createPlayer = true
       manageSession.getStreamUsers("join", location)
       this.scene.start(locationScene)
+      console.log("3. Entered current location", locationScene)
     }, 1000)
   }
 
