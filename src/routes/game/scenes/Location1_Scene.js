@@ -5,7 +5,6 @@ import { getAccount } from '../../../api.js';
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js";
 import Player from '../class/Player.js'
-import OnlinePlayerLoader from '../class/OnlinePlayerLoader.js'
 import Preloader from '../Preloader.js'
 
 export default class Location1Scene extends Phaser.Scene {
@@ -154,7 +153,6 @@ export default class Location1Scene extends Phaser.Scene {
     console.log(ManageSession.createPlayer)
     //....... end LOAD PLAYER AVATAR .......................................................................
 
-    //this.generateTileMap()
     this.generateBackground()
 
     this.createDrawingTexture()
@@ -735,12 +733,12 @@ export default class Location1Scene extends Phaser.Scene {
     this.location4.setImmovable(true)
     this.createLocationDialogbox("location4", 200, 150)
 
-    //........ location5 ...................
-    this.location5 = this.add.isobox(1200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
-    this.physics.add.existing(this.location5);
-    this.location5.body.setSize(this.location5.width, this.location5.height * 1.4)
-    this.location5.body.setOffset(0, -(this.location5.height / 1.4))
-    this.createLocationDialogbox("location5", 200, 150)
+    // //........ location5 ...................
+    // this.location5 = this.add.isobox(1200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
+    // this.physics.add.existing(this.location5);
+    // this.location5.body.setSize(this.location5.width, this.location5.height * 1.4)
+    // this.location5.body.setOffset(0, -(this.location5.height / 1.4))
+    // this.createLocationDialogbox("location5", 200, 150)
 
     // location6
     this.location6 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(100)
@@ -977,62 +975,6 @@ export default class Location1Scene extends Phaser.Scene {
     //*............. end graphics as examples for the demo .............................................
   }
 
-  generateTileMap() {
-    //....... TILEMAP .............................................................................
-    // // 2
-    // const map = this.make.tilemap({ key: "map" });
-    // // end 2
-
-    // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
-    // Phaser's cache (i.e. the name you used in preload)
-    //     //1
-    //      const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
-
-
-    //     // Parameters: layer name (or index) from Tiled, tileset, x, y
-
-    //     const belowLayer = map.createLayer("Below Player", tileset, 0, 0);
-    //     const worldLayer = map.createLayer("World", tileset, 0, 0);
-    //     const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
-
-    //     worldLayer.setCollisionByProperty({ collides: true });
-
-    //     // By default, everything gets depth sorted on the screen in the order we created things. Here, we
-    //     // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
-    //     // Higher depths will sit on top of lower depth objects.
-    //     aboveLayer.setDepth(10);
-
-    //     // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
-    //     // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
-    //     const spawnPoint = map.findObject(
-    //       "Objects",
-    //       (obj) => obj.name === "Spawn Point"
-    //     );
-    // //end 1
-
-    // //2
-    // const tileset = map.addTilesetImage("64x64dot", "tiles");
-
-    // const aboveLayer = map.createLayer("Tile Layer 1", tileset, 0, 0);
-    // aboveLayer.setDepth(10);
-    // // end 2
-
-    // const worldLayer = map.createLayer("World", tileset, 0, 0);
-    // const aboveLayer = map.createLayer("Above Player", tileset, 0, 0);
-
-    // worldLayer.setCollisionByProperty({ collides: true });
-
-    // const spawnPoint = map.findObject(
-    //   "Objects",
-    //   (obj) => obj.name === "Spawn Point"
-    // );
-    //ed
-
-    //....... end TILEMAP ......................................................................
-  }//generateTileMap
-
-
-
   createDebugText() {
     this.headerText = this.add
       .text(CONFIG.WIDTH / 2, 20, "", {
@@ -1195,320 +1137,6 @@ export default class Location1Scene extends Phaser.Scene {
     // }, this);
   }
 
-  createOnlinePlayers() {
-    //ManageSession.connectedOpponents //list of the opponents
-    //for each of the opponents, attach a png,
-
-    //TODO loading is broken, so I'm checking if the player avater has already loaded, after that I load onlineUsers
-    if (this.createdPlayer) {
-      //first check if onlineplayers need to be created
-      if (ManageSession.createOnlinePlayers) {
-        console.log("creating onlineplayer")
-        ManageSession.createOnlinePlayers = false
-
-        //ManageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: this.newOnlinePlayers
-        this.newOnlinePlayers = []
-
-        if (this.debug) {
-          console.log("")
-          console.log("createOnlinePlayers...");
-        }
-
-        //all current onlinePlayers, or an empty []
-        this.onlinePlayers = this.onlinePlayersGroup.getChildren() || []
-
-        // ..... DESTROY OFFLINE PLAYERS ........................................................................................................................................................................
-        //check if there are players in this.onlinePlayers that are not in .allConnectedUsers ->  they need to be destroyed
-        this.offlineOnlineUsers = []
-
-        this.onlinePlayers.forEach(player => {
-          const playerID = player.user_id
-          const found = ManageSession.allConnectedUsers.some(user => user.user_id === playerID)
-          if (!found) this.offlineOnlineUsers.push(player)
-        })
-
-        if (this.debug) {
-          console.log("this.offlineOnlineUsers")
-          console.log(this.offlineOnlineUsers)
-        }
-
-        //players in this.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        if (this.offlineOnlineUsers.length > 0) {
-          //hide users
-          if (this.debug) {
-            console.log("")
-            console.log("# Players that are not online anymore")
-          }
-
-
-
-          for (let i = 0; i < this.offlineOnlineUsers.length; i++) {
-            //check if the user_id is in this.onlinePlayers
-            console.log(this.offlineOnlineUsers[i])
-            this.offlineOnlineUsers[i].destroy()
-
-            //get the index of user_id from this.offlineOnlineUsers[i].user_id in this.onlinePlayers and deactivate them in this.onlinePlayers
-            // let index = this.onlinePlayers.findIndex(function (person) {
-            //   return person.user_id == this.offlineOnlineUsers[i].user_id
-            // });
-
-            // this.onlinePlayers[index].active = false
-            // this.onlinePlayers[index].visible = false
-            // if (this.debug) {
-            //   console.log("deactivated and hidden User: ")
-            //   console.log(this.onlinePlayers[index])
-            //   console.log("")
-            // }
-          }
-
-        }
-        //......... end DESTROY OFFLINE PLAYERS ............................................................................................................................................................
-
-
-        //...... LOAD NEW PLAYERS ........................................................................................
-        //(new) players present in .allConnectedUsers but not in this.onlinePlayers ->load their avatar and animation
-        this.newOnlinePlayers = []
-        ManageSession.allConnectedUsers.forEach(player => {
-          const playerID = player.user_id
-          const found = this.onlinePlayers.some(user => user.user_id === playerID)
-          if (!found) this.newOnlinePlayers.push(player)
-        })
-        if (this.debug) {
-          console.log("  ")
-          console.log("new Online Players")
-          console.log(newOnlinePlayers)
-          console.log("  ")
-        }
-
-        //load the spritesheet for the new online user //give the online player a placeholder avatar
-        this.newOnlinePlayers.forEach((element, i) => {
-
-          let elementCopy = element
-          // console.log("elementCopy: ")
-          // console.log(elementCopy)
-          //a new user
-          this.tempAvatarName = element.user_id + "_" + element.avatar_time;
-
-          //if the texture already exists attach it again to the player
-          if (!this.textures.exists(this.tempAvatarName)) {
-
-            //add it to loading queue
-            this.load.spritesheet(this.tempAvatarName, element.avatar_url, { frameWidth: 128, frameHeight: 128 })
-
-            if (this.debug) {
-              console.log("loading: ")
-              console.log(this.tempAvatarName)
-            }
-          }
-          console.log("give the online player a placeholder avatar first")
-          //give the online player a placeholder avatar first
-          element = this.add.sprite(element.posX, element.posY, this.playerAvatarPlaceholder)
-            .setDepth(90)
-
-          element.setData("movingKey", "moving");
-          element.setData("stopKey", "stop");
-
-          //create animation for moving
-          this.anims.create({
-            key: element.getData("movingKey"),
-            frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
-            frameRate: 20,
-            repeat: -1,
-          });
-
-          //create animation for stop
-          this.anims.create({
-            key: element.getData("stopKey"),
-            frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
-          });
-
-          Object.assign(element, elementCopy); //add all data from elementCopy to element; like prev Position, Location, UserID
-          element.x = element.posX
-          element.y = element.posY
-
-          // add new player to group
-          this.onlinePlayersGroup.add(element)
-          //} else {
-          //! if the avatar already existed; get the player from the onlinePlayers array !
-
-          this.attachtAvatarToOnlinePlayer(element)
-          //}
-        })
-
-        //update this.onlinePlayers, hidden or visible
-        this.onlinePlayers = this.onlinePlayersGroup.getChildren()
-        if (this.debug) {
-          console.log("all players in the group, hidden or visible ")
-          console.log(this.onlinePlayers)
-        }
-
-        //added new players
-        this.load.start(); // load the image in memory
-        console.log("started loading new (online) avatars")
-        //.... end load new Avatars ....................................................................................
-
-        //when the images are loaded the new ones should be set to the players
-        this.load.on('filecomplete', () => {
-          console.log("players added: ")
-          console.log(this.newOnlinePlayers)
-
-          this.onlinePlayers = this.onlinePlayersGroup.getChildren()
-
-          for (let i = 0; i < this.onlinePlayers.length; i++) {
-
-            this.attachtAvatarToOnlinePlayer(this.onlinePlayers[i])
-          } //for (let i = 0; i < this.onlinePlayers.length; i++)
-        }) //this.load.on('filecomplete', () =>
-
-
-        console.log("ManageSession.allConnectedUsers")
-        console.log(ManageSession.allConnectedUsers)
-
-        //this.onlinePlayers = this.onlinePlayersGroup.getChildren()
-
-        //? not necessary
-        // ManageSession.allConnectedUsers.forEach((player, i) => {
-
-        //   var index = this.onlinePlayers.findIndex(function (player) {
-        //     return player.user_id == ManageSession.allConnectedUsers[i].user_id
-        //   });
-
-        //   this.onlinePlayers[index].active = true
-        //   this.onlinePlayers[index].visible = true
-        //   console.log("make all allConnectedUsers visible")
-        //   console.log(this.onlinePlayers[index])
-        // })
-        //send player position over the network for the online users to see
-        ManageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-
-      }//if (ManageSession.createOnlinePlayers)
-    }//if (ManageSession.createdPlayer) 
-  } //createRemotePlayer
-
-  attachtAvatarToOnlinePlayer(player, preExisting) {
-    this.tempAvatarName = player.user_id + "_" + player.avatar_time;
-    //this.onlinePlayers[i] = this.add.image(this.onlinePlayers[i].posX, this.onlinePlayers[i].posY, this.tempAvatarName)
-
-    console.log("player added: ")
-    console.log(player)
-
-    //sometimes the player is not visible because the postion is 0,0
-    if (player.posX == 0 && player.posY == 0) {
-      player.posX = 300
-      player.posY = 400
-    }
-
-    player.x = player.posX
-    player.y = player.posY
-
-
-    console.log("avatar key: ")
-    console.log(this.tempAvatarName)
-    if (!preExisting) {
-      player.setTexture(this.tempAvatarName)
-    } else {
-
-    }
-
-
-    player.active = true
-    player.visible = true
-
-    const avatar = this.textures.get(this.tempAvatarName)
-    const avatarWidth = avatar.frames.__BASE.width
-    const avatarHeight = avatar.frames.__BASE.height
-
-    const avatarFrames = Math.round(avatarWidth / avatarHeight)
-    console.log(avatarFrames)
-
-    if (avatarFrames > 1) {
-
-      // set names for the moving and stop animations
-
-      player.setData("movingKey", "moving" + "_" + this.tempAvatarName);
-      player.setData("stopKey", "stop" + "_" + this.tempAvatarName);
-      console.log('player.getData("movingKey")')
-      console.log(player.getData("movingKey"))
-
-      console.log('player.getData("movingKey")')
-      console.log(player.getData("movingKey"))
-
-      //create animation for moving
-      this.anims.create({
-        key: player.getData("movingKey"),
-        frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: avatarFrames - 1 }),
-        frameRate: (avatarFrames + 2) * 2,
-        repeat: -1,
-        yoyo: true
-      });
-
-      //create animation for stop
-      this.anims.create({
-        key: player.getData("stopKey"),
-        frames: this.anims.generateFrameNumbers(this.tempAvatarName, { start: 0, end: 0 }),
-      });
-    } //if (avatarFrames > 1) {
-
-    this.updateOnlinePlayers = true
-  }
-
-  playerMovingByKeyBoard() {
-    const speed = 175;
-    const prevVelocity = this.player.body.velocity.clone();
-
-    // Stop any previous movement from the last frame
-    this.player.body.setVelocity(0);
-
-    // Horizontal movement
-    if (this.cursors.left.isDown) {
-      this.player.body.setVelocityX(-speed);
-
-      // this.arrowDown = true;
-      this.sendPlayerMovement();
-    } else if (this.cursors.right.isDown) {
-      this.player.body.setVelocityX(speed);
-      // this.arrowDown = true
-      this.sendPlayerMovement();
-    }
-
-    // Vertical movement
-    if (this.cursors.up.isDown) {
-      this.player.body.setVelocityY(-speed);
-      // this.arrowDown = true
-      this.sendPlayerMovement();
-    } else if (this.cursors.down.isDown) {
-      this.player.body.setVelocityY(speed);
-      // this.arrowDown = true
-      this.sendPlayerMovement();
-    }
-
-    // Normalize and scale the velocity so that player can't move faster along a diagonal
-    this.player.body.velocity.normalize().scale(speed);
-  }
-
-  playerMovingByClicking() {
-    if (!this.input.activePointer.isDown && this.isClicking == true) {
-      this.target.x = this.input.activePointer.worldX
-      this.target.y = this.input.activePointer.worldY
-      this.physics.moveToObject(this.player, this.target, 200);
-      this.isClicking = false;
-      this.playerIsMovingByClicking = true;
-    } else if (this.input.activePointer.isDown && this.isClicking == false) {
-      this.isClicking = true;
-    }
-
-    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
-    //  4 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (this.playerIsMovingByClicking) {
-      if (this.distance < 10) {
-        this.player.body.reset(this.target.x, this.target.y);
-        this.playerIsMovingByClicking = false
-      } else {
-        this.sendPlayerMovement();
-      }
-    }
-  }
 
   identifySurfaceOfSwiping() {
     // identifies if the pointer is down on a graffiti wall
@@ -1523,107 +1151,11 @@ export default class Location1Scene extends Phaser.Scene {
     })
   }
 
-  playerMovingBySwiping() {
-    if (this.input.activePointer.isDown
-      && this.isClicking == false &&
-      this.graffitiDrawing == false) {
-      console.log("One")
-      this.isClicking = true
-    }
-    if (
-      !this.input.activePointer.isDown &&
-      this.isClicking == true &&
-      this.graffitiDrawing == false
-    ) {
-      console.log("Two")
-      const playerX = this.player.x
-      const playerY = this.player.y
-
-      const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
-      const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
-
-      this.swipeAmount.x = swipeX
-      this.swipeAmount.y = swipeY
-
-      let moveSpeed = this.swipeAmount.length()
-      if (moveSpeed > 450) moveSpeed = 450
-
-      this.playerIsMovingByClicking = true; // trigger moving animation
-
-
-      this.target.x = playerX + swipeX
-      this.target.y = playerY + swipeY
-      this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
-      this.isClicking = false;
-
-    }
-
-    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
-    //  4 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (this.playerIsMovingByClicking) {
-      if (this.distance < 10) {
-        this.player.body.reset(this.target.x, this.target.y);
-        this.playerIsMovingByClicking = false
-      } else {
-        this.sendPlayerMovement();
-      }
-    }
-  }
-
-  sendPlayerMovement() {
-    if (this.createdPlayer) {
-      if (
-        ManageSession.updateMovementTimer > ManageSession.updateMovementInterval
-      ) {
-        ManageSession.sendMoveMessage(Math.round(this.player.x), Math.round(this.player.y));
-        //console.log(this.player.x)
-        ManageSession.updateMovementTimer = 0;
-      }
-      // this.scrollablePanel.x = this.player.x
-      // this.scrollablePanel.y = this.player.y + 150
-    }
-  }
-
-  updateMovementOnlinePlayers() {
-    if (ManageSession.updateOnlinePlayers) {
-      if (!ManageSession.createPlayer) {
-        if (ManageSession.allConnectedUsers != null && ManageSession.allConnectedUsers.length > 0) {
-
-          ManageSession.allConnectedUsers.forEach(player => {
-            // const playerID = player.user_id
-            // const found = ManageSession.allConnectedUsers.some(user => user.user_id === playerID)
-            // if (found) {console.log(player)}
-
-            let tempPlayer = this.onlinePlayers.find(o => o.user_id === player.user_id);
-            if (typeof tempPlayer !== 'undefined') {
-
-              tempPlayer.x = player.posX;
-              tempPlayer.y = player.posY;
-
-              const movingKey = tempPlayer.getData("movingKey")
-
-              //get the key for the moving animation of the player, and play it
-              tempPlayer.anims.play(movingKey, true);
-
-              setTimeout(() => {
-                tempPlayer.anims.play(tempPlayer.getData("stopKey"), true);
-              }, 500);
-            }
-
-          })
-
-          ManageSession.updateOnlinePlayers = false;
-        }
-      }
-    }
-  }
-
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    // this.createOnlinePlayers()
-    OnlinePlayerLoader.load(this)
-    this.updateMovementOnlinePlayers()
+
+    Player.loadOnlinePlayers(this)
+    Player.receiveOnlinePlayersMovement(this)
     Player.loadOnlineAvatar(this)
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
@@ -1643,33 +1175,18 @@ export default class Location1Scene extends Phaser.Scene {
 
     //........ PLAYER MOVE BY KEYBOARD  ......................................................................
     if (!this.playerIsMovingByClicking) {
-      this.playerMovingByKeyBoard();
+      Player.moveByKeyboard(this)
     }
 
-    if (
-      this.cursors.up.isDown ||
-      this.cursors.down.isDown ||
-      this.cursors.left.isDown ||
-      this.cursors.right.isDown
-    ) {
-      this.arrowDown = true
-    } else {
-      this.arrowDown = false
-    }
+    Player.moveByCursor(this)
     //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
     //....... moving ANIMATION ......................................................................................
-    if (this.arrowDown || this.playerIsMovingByClicking) {
-      this.player.anims.play(this.playerMovingKey, true);
-      this.playerShadow.anims.play(this.playerMovingKey, true);
-    } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
-      this.player.anims.play(this.playerStopKey, true);
-      this.playerShadow.anims.play(this.playerStopKey, true);
-    }
+    Player.movingAnimation(this)
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()
-    this.playerMovingBySwiping()
+    Player.moveBySwiping(this)
     this.identifySurfaceOfSwiping()
 
   } //update
