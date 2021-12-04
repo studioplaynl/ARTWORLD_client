@@ -96,8 +96,24 @@ export default class Location2Scene extends Scene3D {
       .setInteractive({ useHandCursor: true });
     
     this.backButton.on("pointerup", () => {
-      this.scene.stop(ManageSession.currentLocation)
-      this.scene.start(ManageSession.previousLocation)
+      const currentLocation = ManageSession.currentLocation.split("_");
+      ManageSession.socket.rpc("leave", currentLocation[0])
+
+      const previousLocation = ManageSession.previousLocation.split("_")
+      const targetScene = this.scene.get(ManageSession.previousLocation)
+
+      targetScene.player.location = previousLocation[0]
+
+      setTimeout(() => {
+
+        ManageSession.location = previousLocation[0]
+        ManageSession.createPlayer = true
+        ManageSession.getStreamUsers("join", previousLocation[0])
+        this.scene.stop(ManageSession.currentLocation)
+
+        this.scene.start(ManageSession.previousLocation)
+
+      }, 500)
     });
   }
 

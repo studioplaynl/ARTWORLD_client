@@ -96,13 +96,12 @@ export default class UI_Scene extends Phaser.Scene {
 
           const targetScene = this.scene.get("artworldAmsterdam");
           targetScene.player.location = "artworldAmsterdam"
-          // ManageSession.previousLocation = "location1_Scene";
-          // ManageSession.currentLocation = "artworldAmsterdam";
+
           setTimeout(() => {
             ManageSession.location = "artworldAmsterdam"
             ManageSession.createPlayer = true
             ManageSession.getStreamUsers("join", "artworldAmsterdam")
-            // this.scene.stop("location1_Scene");
+            this.scene.stop("location1_Scene");
             this.scene.start("artworldAmsterdam")
           }, 500)
         } else {
@@ -111,23 +110,18 @@ export default class UI_Scene extends Phaser.Scene {
 
           const previousLocation = ManageSession.previousLocation.split("_")
           const targetScene = this.scene.get(ManageSession.previousLocation)
-          targetScene.player.location = previousLocation
 
-          console.log("tarrgetSCENE", targetScene)
-          // console.log("1. I'm leaving now current location")
-          // console.log(currentLocation[0])
-          // this.player.location = currentLocation[0]
+          targetScene.player.location = previousLocation[0]
+
           setTimeout(() => {
-            // const previousLocation = ManageSession.previousLocation.split("_");
+
             ManageSession.location = previousLocation[0]
-            // console.log("2. for manage session location = I'm making = previous location")
-            // console.log(previousLocation[0])
             ManageSession.createPlayer = true
             ManageSession.getStreamUsers("join", previousLocation[0])
             this.scene.stop(ManageSession.currentLocation)
-            // console.log("3. Stopped current location", ManageSession.currentLocation)
+
             this.scene.start(ManageSession.previousLocation)
-            // console.log("3. Entered current location", ManageSession.previousLocation)
+
           }, 500)
         }
       });
