@@ -1,3 +1,5 @@
+import ManageSession from "../ManageSession"
+
 class LocationDialogbox {
     constructor(scene) {
     }
@@ -75,7 +77,7 @@ create(scene, location, locationName, mainWidth, mainHeight) {
   }
 
   enterLocationScene(scene, location) {
-    const locationScene = location + "_Scene"
+    //const locationScene = location + "_Scene"
 
     ManageSession.previousLocation = scene.scene.key
     ManageSession.currentLocation = location
@@ -97,7 +99,7 @@ create(scene, location, locationName, mainWidth, mainHeight) {
       ManageSession.createPlayer = true
       ManageSession.getStreamUsers("join", location)
       scene.scene.stop(scene.scene.key)
-      scene.scene.start(locationScene)
+      scene.scene.start(location)
     }, 500)
 
   }
