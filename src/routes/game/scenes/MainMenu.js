@@ -134,7 +134,7 @@ export default class MainMenu extends Phaser.Scene {
       // if (ManageSession.sessionStored.username != null) {
       // a way to check if the connection if working
       //console.log(ManageSession.userProfile);
-      this.scene.start("NetworkBoot_Scene");
+      this.scene.start("NetworkBoot");
 
       // }
     });
@@ -164,7 +164,7 @@ export default class MainMenu extends Phaser.Scene {
 
     //* check if the user profile is loaded, to be able to send the player to the right location
     if (typeof (ManageSession.userProfile.meta.location) != "undefined") {
-      ManageSession.launchLocation = ManageSession.userProfile.meta.location + "_Scene"
+      ManageSession.launchLocation = ManageSession.userProfile.meta.location
       console.log(ManageSession.launchLocation)
       ManageSession.checkSceneExistence()
     } else {
@@ -172,7 +172,7 @@ export default class MainMenu extends Phaser.Scene {
         .then(rec => {
           ManageSession.freshSession = rec
           //! only set the menu button visible if the user data is downloaded!
-          ManageSession.launchLocation = ManageSession.freshSession.meta.location + "_Scene"
+          ManageSession.launchLocation = ManageSession.freshSession.meta.location
           ManageSession.checkSceneExistence()
         })
     }

@@ -154,15 +154,15 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //this.location1.setImmovable(true)
 
     // this.location1.setData("entered", false)
-    // this.location1.setName("location1")
+    // this.location1.setName("Location1")
 
     this.createLocationDialogbox(this.location1, "Location1", 200, 150)
     LocationDialogbox.create(this, this.location1, "Location1", 200, 150)
   }
 
   createLocationDialogbox(location, locationName, mainWidth, mainHeight) {
-    //let location = "this." + locationName
-    //location = eval(location)
+    // let location = "this." + locationName
+    location = eval(location)
 
     location.setData("entered", false)
     location.setName(locationName)
@@ -235,10 +235,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   enterLocationScene(location) {
-    const locationScene = location + "_Scene"
-    console.log("location scene")
-    console.log(locationScene)
-    console.log()
+
+    console.log("Location scene")
+    console.log(location)
 
     ManageSession.previousLocation = this.scene.key
     ManageSession.currentLocation = location
@@ -260,7 +259,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       ManageSession.createPlayer = true
       ManageSession.getStreamUsers("join", location)
       this.scene.stop(this.scene.key)
-      this.scene.start(locationScene)
+      this.scene.start(location)
     }, 1000)
 
   }

@@ -58,11 +58,12 @@ export default class UI_Scene extends Phaser.Scene {
       .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
       .setName("camMain");
     this.camUI.zoom = 1;
-    this.zoomButtons(false);
+    this.createNavigationButtons(false);
     this.scale.on("resize", this.resize, this);
   } //create
 
-  zoomButtons(update) {
+  // zoom buttons and back button
+  createNavigationButtons(update) {
     let width = this.sys.game.canvas.width;
     let height = this.sys.game.canvas.height;
 
@@ -91,21 +92,24 @@ export default class UI_Scene extends Phaser.Scene {
       }
 
       this.backButton.on("pointerup", () => {
-        
-        if (ManageSession.currentLocation == "location1_Scene") {
-          ManageSession.socket.rpc("leave", "location1")
+        // in case the player in the Location1 scene
+        // the back button brings the player to the ArtworldAmsterdam scene
+        if (ManageSession.currentLocation == "Location1") {
+          ManageSession.socket.rpc("leave", "Location1")
 
-          const targetScene = this.scene.get("artworldAmsterdam");
-          targetScene.player.location = "artworldAmsterdam"
+          const targetScene = this.scene.get("ArtworldAmsterdam");
+          targetScene.player.location = "ArtworldAmsterdam"
 
           setTimeout(() => {
-            ManageSession.location = "artworldAmsterdam"
+            ManageSession.location = "ArtworldAmsterdam"
             ManageSession.createPlayer = true
-            ManageSession.getStreamUsers("join", "artworldAmsterdam")
-            this.scene.stop("location1_Scene");
-            this.scene.start("artworldAmsterdam")
+            ManageSession.getStreamUsers("join", "ArtworldAmsterdam")
+            this.scene.stop("Location1");
+            this.scene.start("ArtworldAmsterdam")
           }, 500)
         } else {
+          // in all other cases the back button brings the player from the respective scene
+          // to the location1 scene
           const currentLocation = ManageSession.currentLocation.split("_");
           ManageSession.socket.rpc("leave", currentLocation[0])
 
