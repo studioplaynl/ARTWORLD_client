@@ -239,7 +239,7 @@ class ManageSession {
     //if location does not exists; launch default location
     if (!locationExists) {
       //set to fail-back scene
-      this.location = "artworldAmsterdam"
+      this.location = "ArtworldAmsterdam"
       this.launchLocation = this.location
       console.log(this.launchLocation)
     } else {

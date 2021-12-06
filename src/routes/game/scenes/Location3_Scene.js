@@ -5,7 +5,7 @@ import { getAccount } from '../../../api.js';
 import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
 import Player from "../class/Player";
-import FunctionDebugger from "../class/FunctionDebugger";
+import DebugFuntions from "../class/DebugFuntions";
 
 export default class Location3Scene extends Phaser.Scene {
 
@@ -230,7 +230,7 @@ export default class Location3Scene extends Phaser.Scene {
     //this.generateBouncingBird()
 
     //......... DEBUG FUNCTIONS ............................................................................
-    FunctionDebugger.keyboard(this)
+    DebugFuntions.keyboard(this)
     //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
 

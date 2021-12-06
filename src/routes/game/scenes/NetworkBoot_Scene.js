@@ -8,7 +8,7 @@ export default class NetworkBoot_Scene extends Phaser.Scene {
   }
 
   async preload() {
-    
+    console.log("NetworkBoot_Scene")
     ManageSession.createPlayer = true
     
     await ManageSession.createSocket()

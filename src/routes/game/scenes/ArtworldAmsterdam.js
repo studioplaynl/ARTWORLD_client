@@ -8,7 +8,7 @@ import Player from '../class/Player.js'
 import Preloader from '../Preloader.js'
 import BouncingBird from "../class/BouncingBird.js"
 import Background from "../class/Background.js"
-import FunctionDebugger from "../class/FunctionDebugger.js"
+import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
@@ -43,7 +43,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.offlineOnlineUsers
 
-    this.location = "artworldAmsterdam"
+    this.location = "ArtworldAmsterdam"
 
     //.......................REX UI ............
     this.COLOR_PRIMARY = 0xff5733
@@ -81,6 +81,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     // for back button history
     ManageSession.currentLocation = this.scene.key
+    console.log("this.scene.key")
+    console.log(this.scene.key)
 
     //timers
     ManageSession.updateMovementTimer = 0;
@@ -125,7 +127,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
 
     //......... DEBUG FUNCTIONS ............................................................................
-    FunctionDebugger.keyboard(this);
+    DebugFuntions.keyboard(this);
     //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
 
@@ -153,12 +155,12 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // this.location1.setData("entered", false)
     // this.location1.setName("location1")
 
-    this.createLocationDialogbox("location1", 200, 150)
+    this.createLocationDialogbox(this.location1, "Location1", 200, 150)
   }
 
-  createLocationDialogbox(locationName, mainWidth, mainHeight) {
-    let location = "this." + locationName
-    location = eval(location)
+  createLocationDialogbox(location, locationName, mainWidth, mainHeight) {
+    //let location = "this." + locationName
+    //location = eval(location)
 
     location.setData("entered", false)
     location.setName(locationName)

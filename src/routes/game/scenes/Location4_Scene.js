@@ -1,7 +1,7 @@
 import { CONFIG } from "../config.js";
 import ManageSession from "../ManageSession";
 import Player from "../class/Player.js";
-import FunctionDebugger from "../class/FunctionDebugger.js";
+import DebugFuntions from "../class/DebugFuntions.js";
 
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount, listImages } from '../../../api.js';
@@ -195,7 +195,7 @@ export default class Location4Scene extends Phaser.Scene {
     //this.generateBouncingBird()
 
     //......... DEBUG FUNCTIONS ............................................................................
-    FunctionDebugger.keyboard(this)
+    DebugFuntions.keyboard(this)
     //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
 

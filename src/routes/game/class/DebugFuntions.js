@@ -2,7 +2,7 @@ import ManageSession from "../ManageSession";
 import { getAccount, updateObject, listObjects } from '../../../api.js'
 
 
-class FunctionDebugger {
+class DebugFuntions {
     constructor(scene) {
         //scene = config.scene 
     }
@@ -98,4 +98,4 @@ class FunctionDebugger {
     }
 }
 
-export default new FunctionDebugger();
+export default new DebugFuntions();

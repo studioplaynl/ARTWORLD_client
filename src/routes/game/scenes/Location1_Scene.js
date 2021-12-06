@@ -7,12 +7,12 @@ import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js";
 import Player from '../class/Player.js'
 import Preloader from '../Preloader.js'
 import BouncingBird from "../class/BouncingBird.js";
-import FunctionDebugger from "../class/FunctionDebugger.js";
+import DebugFuntions from "../class/DebugFuntions.js";
 
 export default class Location1Scene extends Phaser.Scene {
 
   constructor() {
-    super("location1_Scene");
+    super("Location1_Scene");
 
     this.debug = false
 
@@ -39,7 +39,7 @@ export default class Location1Scene extends Phaser.Scene {
 
     this.offlineOnlineUsers
 
-    this.location = "location1"
+    this.location = "Location1"
 
     //.......................REX UI ............
     this.COLOR_PRIMARY = 0xff5733;
@@ -71,7 +71,7 @@ export default class Location1Scene extends Phaser.Scene {
 
   async preload() {
     //.... PRELOADER VISUALISER ...............................................................................................
-    Preloader.loading(this)
+    Preloader.Loading(this)
     //.... end PRELOADER VISUALISER ...............................................................................................
 
     //drawing on a wall
@@ -217,7 +217,7 @@ export default class Location1Scene extends Phaser.Scene {
     //......... DEBUG FUNCTIONS ............................................................................
     // this.debugFunctions();
     //this.createDebugText();
-    FunctionDebugger.keyboard()
+    DebugFuntions.keyboard(this)
     //......... end DEBUG FUNCTIONS .........................................................................
 
     this.UI_Scene = this.scene.get("UI_Scene")

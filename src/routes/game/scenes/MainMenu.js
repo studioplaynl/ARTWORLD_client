@@ -134,7 +134,7 @@ export default class MainMenu extends Phaser.Scene {
       // if (ManageSession.sessionStored.username != null) {
       // a way to check if the connection if working
       //console.log(ManageSession.userProfile);
-      this.scene.start("networkBoot_Scene");
+      this.scene.start("NetworkBoot_Scene");
 
       // }
     });
