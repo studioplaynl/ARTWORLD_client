@@ -14,7 +14,7 @@ import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 export default class ArtworldAmsterdam extends Phaser.Scene {
 
   constructor() {
-    super("artworldAmsterdam");
+    super("ArtworldAmsterdam");
 
     this.worldSize = new Phaser.Math.Vector2(3000, 3000)
 

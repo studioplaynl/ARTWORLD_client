@@ -2,7 +2,7 @@ import ManageSession from "../ManageSession"
 
 export default class NetworkBoot_Scene extends Phaser.Scene {
   constructor() {
-    super("networkBoot_Scene")
+    super("NetworkBoot_Scene")
     this.phaser = this
 
   }
