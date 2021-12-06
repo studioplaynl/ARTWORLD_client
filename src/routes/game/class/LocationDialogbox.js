@@ -101,5 +101,6 @@ create(scene, location, locationName, mainWidth, mainHeight) {
     }, 500)
 
   }
+}
 
   export default new LocationDialogbox()

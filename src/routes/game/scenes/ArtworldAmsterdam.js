@@ -157,7 +157,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // this.location1.setName("location1")
 
     this.createLocationDialogbox(this.location1, "Location1", 200, 150)
-    LocationDialogbox.create(this.location1, "Location1", 200, 150)
+    LocationDialogbox.create(this, this.location1, "Location1", 200, 150)
   }
 
   createLocationDialogbox(location, locationName, mainWidth, mainHeight) {
