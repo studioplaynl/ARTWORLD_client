@@ -87,7 +87,7 @@ export default class UI_Scene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true });
       
       // if the current scene is artworld, the back button is hidden 
-      if (ManageSession.currentLocation == null || ManageSession.currentLocation == "artworldAmsterdam") {
+      if (ManageSession.currentLocation == null || ManageSession.currentLocation == "ArtworldAmsterdam") {
         this.backButton.destroy()
       }
 
