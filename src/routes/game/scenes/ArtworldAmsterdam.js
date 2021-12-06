@@ -9,6 +9,7 @@ import Preloader from '../Preloader.js'
 import BouncingBird from "../class/BouncingBird.js"
 import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
+import LocationDialogbox from "../class/LocationDialogbox.js";
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
@@ -156,6 +157,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // this.location1.setName("location1")
 
     this.createLocationDialogbox(this.location1, "Location1", 200, 150)
+    LocationDialogbox.create(this.location1, "Location1", 200, 150)
   }
 
   createLocationDialogbox(location, locationName, mainWidth, mainHeight) {
@@ -238,8 +240,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     console.log(locationScene)
     console.log()
 
-    ManageSession.previousLocation = "artworldAmsterdam";
-    ManageSession.currentLocation = "location1_Scene";
+    ManageSession.previousLocation = this.scene.key
+    ManageSession.currentLocation = location
 
     this.physics.pause()
     this.player.setTint(0xff0000)
@@ -260,7 +262,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       this.scene.stop(this.scene.key)
       this.scene.start(locationScene)
     }, 1000)
-
 
   }
 
