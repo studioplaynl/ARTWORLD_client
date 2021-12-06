@@ -1,12 +1,12 @@
 import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension";
 import ManageSession from "../ManageSession"
 
-export default class Location2Scene extends Scene3D {
+export default class Location2 extends Scene3D {
 
   zoomingDistance;
 
   constructor() {
-    super("location2_Scene");
+    super("Location2");
     this.move = { x: 0, y: 0, z: 0 };
   }
 

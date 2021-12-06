@@ -9,9 +9,9 @@ import { getAccount, listImages } from '../../../api.js';
 import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
 
-export default class Location4Scene extends Phaser.Scene {
+export default class Location4 extends Phaser.Scene {
   constructor() {
-    super("location4_Scene");
+    super("Location4");
 
     this.debug = false
 
@@ -34,7 +34,7 @@ export default class Location4Scene extends Phaser.Scene {
 
     this.offlineOnlineUsers
 
-    this.location = "location4"
+    this.location = "Location4"
 
     this.cursors;
     this.pointer;
@@ -76,7 +76,7 @@ export default class Location4Scene extends Phaser.Scene {
 
 
     //set rpc location
-    // ManageSession.location = "location4"
+    // ManageSession.location = "Location4"
     // await ManageSession.createSocket();
 
     console.log(drawings)
@@ -239,8 +239,8 @@ export default class Location4Scene extends Phaser.Scene {
     // this.location2.setImmovable(true)
 
     // // this.location2.setData("entered", false)
-    // // this.location2.setName("location2")
-    // this.createLocationDialogbox("location2", 200, 150)
+    // // this.location2.setName("Location2")
+    // this.createLocationDialogbox("Location2", 200, 150)
 
 
     // //........ location3 ...................
@@ -252,9 +252,9 @@ export default class Location4Scene extends Phaser.Scene {
     // //this.location3.setImmovable(true)
 
     // // this.location3.setData("entered", false)
-    // // this.location3.setName("location3")
+    // // this.location3.setName("Location3")
 
-    // this.createLocationDialogbox("location3", 200, 150)
+    // this.createLocationDialogbox("Location3", 200, 150)
 
     //........ location1 ...................
     this.location1 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
@@ -262,7 +262,7 @@ export default class Location4Scene extends Phaser.Scene {
     this.location1.body.setSize(this.location1.width, this.location1.height * 1.4)
     this.location1.body.setOffset(0, -(this.location1.height / 1.4))
     //this.location4.setImmovable(true)
-    this.createLocationDialogbox("location1", 200, 150)
+    this.createLocationDialogbox("Location1", 200, 150)
   }
 
   createLocationDialogbox(locationName, mainWidth, mainHeight) {
@@ -340,22 +340,26 @@ export default class Location4Scene extends Phaser.Scene {
   }
 
   enterLocationScene(location) {
-    const locationScene = location + "_Scene"
-    console.log("location scene")
-    console.log(locationScene)
-    console.log()
-
-
     this.physics.pause()
     this.player.setTint(0xff0000)
 
     //player has to explicitly leave the stream it was in!
     ManageSession.socket.rpc("leave", this.location)
 
+    console.log(this.location)
+
     this.player.location = location
     console.log("this.player.location:")
     console.log(this.player.location)
-    this.scene.start(locationScene)
+
+    setTimeout(() => {
+      ManageSession.location = location
+
+      console.log(ManageSession.location)
+      ManageSession.createPlayer = true
+      ManageSession.getStreamUsers("join", location)
+      this.scene.start(location)
+    }, 1000)
   }
 
   generateBackground() {

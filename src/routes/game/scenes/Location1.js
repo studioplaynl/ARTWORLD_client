@@ -9,10 +9,10 @@ import Preloader from '../Preloader.js'
 import BouncingBird from "../class/BouncingBird.js";
 import DebugFuntions from "../class/DebugFuntions.js";
 
-export default class Location1Scene extends Phaser.Scene {
+export default class Location1 extends Phaser.Scene {
 
   constructor() {
-    super("Location1_Scene");
+    super("Location1");
 
     this.debug = false
 
@@ -679,8 +679,8 @@ export default class Location1Scene extends Phaser.Scene {
     this.location2.setImmovable(true)
 
     // this.location2.setData("entered", false)
-    // this.location2.setName("location2")
-    this.createLocationDialogbox("location2", 200, 150)
+    // this.location2.setName("Location2")
+    this.createLocationDialogbox("Location2", 200, 150)
 
 
     //........ location3 ...................
@@ -692,26 +692,26 @@ export default class Location1Scene extends Phaser.Scene {
     //this.location3.setImmovable(true)
 
     // this.location3.setData("entered", false)
-    // this.location3.setName("location3")
+    // this.location3.setName("Location3")
 
-    this.createLocationDialogbox("location3", 200, 150)
+    this.createLocationDialogbox("Location3", 200, 150)
 
     //........ location4 ...................
     this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
     this.location4.setImmovable(true)
-    this.createLocationDialogbox("location4", 200, 150)
+    this.createLocationDialogbox("Location4", 200, 150)
 
     // //........ location5 ...................
     // this.location5 = this.add.isobox(1200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
     // this.physics.add.existing(this.location5);
     // this.location5.body.setSize(this.location5.width, this.location5.height * 1.4)
     // this.location5.body.setOffset(0, -(this.location5.height / 1.4))
-    // this.createLocationDialogbox("location5", 200, 150)
+    // this.createLocationDialogbox("Location5", 200, 150)
 
     // location5
     this.location5 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(100)
     this.location5.setImmovable(true)
-    this.createLocationDialogbox("location5", 200, 150)
+    this.createLocationDialogbox("Location5", 200, 150)
 
   }
 
@@ -790,9 +790,6 @@ export default class Location1Scene extends Phaser.Scene {
   }
 
   enterLocationScene(location) {
-    const locationScene = location + "_Scene"
-    console.log("location scene")
-    console.log(locationScene)
 
     // on entering another location we want to keep a record for "back button"
     ManageSession.previousLocation = this.scene.key;
@@ -814,7 +811,7 @@ export default class Location1Scene extends Phaser.Scene {
       ManageSession.createPlayer = true
       ManageSession.getStreamUsers("join", location)
       this.scene.stop(this.scene.key)
-      this.scene.start(locationScene)
+      this.scene.start(location)
     }, 1000)
 
 

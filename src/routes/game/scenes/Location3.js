@@ -7,10 +7,10 @@ import { location } from "svelte-spa-router";
 import Player from "../class/Player";
 import DebugFuntions from "../class/DebugFuntions";
 
-export default class Location3Scene extends Phaser.Scene {
+export default class Location3 extends Phaser.Scene {
 
   constructor() {
-    super("location3_Scene");
+    super("Location3");
     this.gameStarted = false;
     this.phaser = this;
     // this.playerPos;
@@ -20,7 +20,7 @@ export default class Location3Scene extends Phaser.Scene {
     this.tempAvatarName = ""
     this.loadedAvatars = [];
 
-    this.location = "location3"
+    this.location = "Location3"
 
     this.playerAvatarPlaceholder = "playerAvatar";
     this.playerAvatarKey = ""
@@ -237,7 +237,7 @@ export default class Location3Scene extends Phaser.Scene {
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
     this.currentZoom = this.UI_Scene.currentZoom
-    this.UI_Scene.location = "location3"
+    this.UI_Scene.location = "Location3"
     this.gameCam.zoom = this.currentZoom
 
     console.log(this.UI_Scene)
@@ -280,8 +280,8 @@ export default class Location3Scene extends Phaser.Scene {
     this.location1.setImmovable(true)
 
     // this.location2.setData("entered", false)
-    // this.location2.setName("location2")
-    this.createLocationDialogbox("location1", 200, 150)
+    // this.location2.setName("Location2")
+    this.createLocationDialogbox("Location1", 200, 150)
 
 
     // //........ location3 ...................
@@ -293,9 +293,9 @@ export default class Location3Scene extends Phaser.Scene {
     // //this.location3.setImmovable(true)
 
     // // this.location3.setData("entered", false)
-    // // this.location3.setName("location3")
+    // // this.location3.setName("Location3")
 
-    // this.createLocationDialogbox("location3", 200, 150)
+    // this.createLocationDialogbox("Location3", 200, 150)
 
     // //........ location4 ...................
     // this.location4 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
@@ -303,7 +303,7 @@ export default class Location3Scene extends Phaser.Scene {
     // this.location4.body.setSize(this.location4.width, this.location4.height * 1.4)
     // this.location4.body.setOffset(0, -(this.location4.height / 1.4))
     // //this.location4.setImmovable(true)
-    // this.createLocationDialogbox("location4", 200, 150)
+    // this.createLocationDialogbox("Location4", 200, 150)
   }
 
   createLocationDialogbox(locationName, mainWidth, mainHeight) {
@@ -386,22 +386,17 @@ export default class Location3Scene extends Phaser.Scene {
   enterLocation2Scene() {
     this.physics.pause();
     this.player.setTint(0xff0000);
-    this.scene.start("location2_Scene");
+    this.scene.start("Location2");
   }
 
   enterLocationScene(location) {
-    const locationScene = location + "_Scene"
-    console.log("location scene")
-    console.log(locationScene)
-    console.log()
-
 
     this.physics.pause()
     this.player.setTint(0xff0000)
 
     //player has to explicitly leave the stream it was in!
     ManageSession.socket.rpc("leave", this.location)
-    console.log("1. I'm leaving now current location")
+
     console.log(this.location)
 
     this.player.location = location
@@ -410,12 +405,11 @@ export default class Location3Scene extends Phaser.Scene {
 
     setTimeout(() => {
       ManageSession.location = location
-      console.log("2. for manage session location = I'm making = previous location")
+
       console.log(ManageSession.location)
       ManageSession.createPlayer = true
       ManageSession.getStreamUsers("join", location)
-      this.scene.start(locationScene)
-      console.log("3. Entered current location", locationScene)
+      this.scene.start(location)
     }, 1000)
   }
 

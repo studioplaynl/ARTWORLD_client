@@ -17,7 +17,7 @@ export default class Location5Scene extends Scene3D {
   chosenScene;
 
   constructor() {
-    super("location5_Scene");
+    super("Location5_Scene");
   }
 
   init() {
@@ -99,19 +99,16 @@ export default class Location5Scene extends Scene3D {
 
     // detecting collision of the avatar with buildings and displaying a respective message
     await this.avatar.body.on.collision((building, event) => {
-      if (building.name === "location1") {
+      if (building.name === "Location1") {
         this.displayLocationEntrance(building.name, event);
       }
-      if (building.name === "location2") {
+      if (building.name === "Location2") {
         this.displayLocationEntrance(building.name, event);
       }
-      if (building.name === "location3") {
+      if (building.name === "Location3") {
         this.displayLocationEntrance(building.name, event);
       }
-      if (building.name === "location4") {
-        this.displayLocationEntrance(building.name, event);
-      }
-      if (building.name === "location5") {
+      if (building.name === "Location4") {
         this.displayLocationEntrance(building.name, event);
       }
     });
@@ -187,7 +184,7 @@ export default class Location5Scene extends Scene3D {
     // adding 3d objects as buildings
     this.buildings = [
       this.third.physics.add.box({
-        name: "location1",
+        name: "Location1",
         x: -30,
         y: 1,
         z: -30,
@@ -196,14 +193,14 @@ export default class Location5Scene extends Scene3D {
         depth: 16,
       }),
       this.third.physics.add.cone({
-        name: "location2",
+        name: "Location2",
         x: 30,
         y: 1,
         z: -30,
         radius: 10,
       }),
       this.third.physics.add.cylinder({
-        name: "location3",
+        name: "Location3",
         x: -30,
         y: 1,
         z: 30,
@@ -212,21 +209,12 @@ export default class Location5Scene extends Scene3D {
         height: 2,
       }),
       this.third.physics.add.sphere({
-        name: "location4",
+        name: "Location4",
         x: 30,
         y: 1,
         z: 30,
         radius: 6,
-      }),
-      this.third.physics.add.box({
-        name: "location5",
-        x: 90,
-        y: 1,
-        z: -30,
-        width: 16,
-        height: 5,
-        depth: 16,
-      }),
+      })
     ];
 
     // making buildings static
