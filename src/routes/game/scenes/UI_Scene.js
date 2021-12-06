@@ -91,6 +91,7 @@ export default class UI_Scene extends Phaser.Scene {
       }
 
       this.backButton.on("pointerup", () => {
+        
         if (ManageSession.currentLocation == "location1_Scene") {
           ManageSession.socket.rpc("leave", "location1")
 

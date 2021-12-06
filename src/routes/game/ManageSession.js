@@ -40,8 +40,8 @@ class ManageSession {
 
     this.gameStarted = false;
 
-    this.location = "location1" //default
-    this.launchLocation = "location1_Scene" //default
+    this.location = "Location1" //default
+    this.launchLocation = "Location1_Scene" //default
 
     // for back button
     this.currentLocation = null

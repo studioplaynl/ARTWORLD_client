@@ -543,7 +543,6 @@ class Player {
 
     }
 
-
     player.active = true
     player.visible = true
 
@@ -581,6 +580,11 @@ class Player {
         frames: scene.anims.generateFrameNumbers(scene.tempAvatarName, { start: 0, end: 0 }),
       });
     } //if (avatarFrames > 1) {
+
+    //scale the player to 64px
+    const width = 64;
+    player.displayWidth = width;
+    player.scaleY = scene.player.scaleX;
 
     scene.updateOnlinePlayers = true
   }
