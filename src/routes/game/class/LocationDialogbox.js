@@ -47,15 +47,11 @@ class LocationDialogbox {
         scene.locationDialogBoxContainersGroup.add(nameContainer);
 
         //call overlap between player and the location, set the callback function and scope
-        console.log("1.1")
         scene.physics.add.overlap(scene.player, location, this.confirmEnterLocation, null, this)
-        console.log("1.2")
-        //console.log(location)
     }
 
     confirmEnterLocation(scene, player, location, show) {
         location = this.locationGameObject
-        //console.log(location)
         if (!location.getData("entered")) {
             //start event
             show = false
@@ -73,7 +69,6 @@ class LocationDialogbox {
         let scene = player.scene
 
         let container = "scene." + location.name + "DialogBoxContainer"
-        //container = eval(container)
 
         // console.log(player.scene)
         // console.log(container)
