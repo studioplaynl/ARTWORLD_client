@@ -8,6 +8,7 @@ import Player from '../class/Player.js'
 import Preloader from '../Preloader.js'
 import BouncingBird from "../class/BouncingBird.js";
 import DebugFuntions from "../class/DebugFuntions.js";
+import LocationDialogbox from "../class/LocationDialogbox.js";
 
 export default class Location1 extends Phaser.Scene {
 
@@ -680,8 +681,8 @@ export default class Location1 extends Phaser.Scene {
 
     // this.location2.setData("entered", false)
     // this.location2.setName("Location2")
-    this.createLocationDialogbox("Location2", 200, 150)
-
+    //this.createLocationDialogbox("Location2", 200, 150)
+    LocationDialogbox.create(this, this.location2, "Location2", 200, 150)
 
     //........ location3 ...................
     this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
@@ -694,12 +695,15 @@ export default class Location1 extends Phaser.Scene {
     // this.location3.setData("entered", false)
     // this.location3.setName("Location3")
 
-    this.createLocationDialogbox("Location3", 200, 150)
+    // this.createLocationDialogbox("Location3", 200, 150)
+    LocationDialogbox.create(this, this.location3, "Location3", 200, 150)
 
     //........ location4 ...................
     this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
     this.location4.setImmovable(true)
-    this.createLocationDialogbox("Location4", 200, 150)
+    // this.createLocationDialogbox("Location4", 200, 150)
+    LocationDialogbox.create(this, this.location4, "Location4", 200, 150)
+
 
     // //........ location5 ...................
     // this.location5 = this.add.isobox(1200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
@@ -711,7 +715,8 @@ export default class Location1 extends Phaser.Scene {
     // location5
     this.location5 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(100)
     this.location5.setImmovable(true)
-    this.createLocationDialogbox("Location5", 200, 150)
+    // this.createLocationDialogbox("Location5", 200, 150)
+    LocationDialogbox.create(this, this.location5, "Location5", 200, 150)
 
   }
 
