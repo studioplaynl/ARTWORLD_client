@@ -1,5 +1,7 @@
 import { CONFIG } from "../config.js";
 import ManageSession from "../ManageSession";
+import Player from "../class/Player.js";
+import FunctionDebugger from "../class/FunctionDebugger.js";
 
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount, listImages } from '../../../api.js';
@@ -193,7 +195,7 @@ export default class Location4Scene extends Phaser.Scene {
     //this.generateBouncingBird()
 
     //......... DEBUG FUNCTIONS ............................................................................
-    this.debugFunctions();
+    FunctionDebugger.keyboard(this)
     //this.createDebugText();
     //......... end DEBUG FUNCTIONS .........................................................................
 
@@ -695,90 +697,6 @@ export default class Location4Scene extends Phaser.Scene {
 
   }
 
-  debugFunctions() {
-    this.input.keyboard.on('keyup-A', function (event) {
-      //get online player group
-      const displaylist = this.onlinePlayersGroup.getChildren()
-      console.log(displaylist)
-    }, this);
-
-    this.input.keyboard.on('keyup-ONE', function (event) {
-
-      console.log('1 key');
-
-      ManageSession.getStreamUsers("get_users", this.location)
-
-    }, this);
-
-    this.input.keyboard.on('keyup-S', function (event) {
-
-      console.log('S key');
-
-      //list all images in the textureManager
-      console.log(this.textures.list)
-
-      //Return an array listing the events for which the emitter has registered listeners.
-      console.log("Return an array listing the events for which the emitter has registered listeners: ")
-      console.log(this.textures.eventNames())
-
-    }, this);
-
-    this.input.keyboard.on('keyup-D', function (event) {
-
-      console.log('D key');
-
-      console.log(" ")
-      console.log('this.onlinePlayers: ')
-      console.log(this.onlinePlayers)
-
-      console.log("ManageSession.allConnectedUsers: ")
-      console.log(ManageSession.allConnectedUsers)
-
-      console.log("onlinePlayerGroup Children: ")
-      console.log(this.onlinePlayersGroup.getChildren())
-
-      console.log("this.player: ")
-      console.log(this.player)
-
-    }, this);
-
-    this.input.keyboard.on('keyup-F', function (event) {
-
-      console.log('F key');
-
-      console.log("ManageSession.playerObjectSelf: ")
-      console.log(ManageSession.playerObjectSelf)
-
-      console.log("this.createOnlinePlayers: ")
-      console.log(ManageSession.createOnlinePlayers)
-
-      console.log("this.createdPlayer: ")
-      console.log(this.createdPlayer)
-    }, this);
-
-    this.input.keyboard.on('keyup-Q', function (event) {
-
-      console.log('Q key');
-      getAccount();
-
-    }, this);
-
-    this.input.keyboard.on('keyup-W', function (event) {
-
-      console.log('W key');
-
-
-    }, this);
-
-    // //  Receives every single key down event, regardless of type
-
-    // this.input.keyboard.on('keydown', function (event) {
-
-    //   console.dir(event);
-
-    // }, this);
-  }
-
   createOnlinePlayers() {
     //ManageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
@@ -1026,41 +944,6 @@ export default class Location4Scene extends Phaser.Scene {
     this.updateOnlinePlayers = true
   }
 
-  playerMovingByKeyBoard() {
-    const speed = 175;
-    const prevVelocity = this.player.body.velocity.clone();
-
-    // Stop any previous movement from the last frame
-    this.player.body.setVelocity(0);
-
-    // Horizontal movement
-    if (this.cursors.left.isDown) {
-      this.player.body.setVelocityX(-speed);
-
-      // this.arrowDown = true;
-      this.sendPlayerMovement();
-    } else if (this.cursors.right.isDown) {
-      this.player.body.setVelocityX(speed);
-      // this.arrowDown = true
-      this.sendPlayerMovement();
-    }
-
-    // Vertical movement
-    if (this.cursors.up.isDown) {
-      this.player.body.setVelocityY(-speed);
-      // this.arrowDown = true
-      this.sendPlayerMovement();
-    } else if (this.cursors.down.isDown) {
-      this.player.body.setVelocityY(speed);
-      // this.arrowDown = true
-      this.sendPlayerMovement();
-    }
-
-    // Normalize and scale the velocity so that player can't move faster along a diagonal
-    this.player.body.velocity.normalize().scale(speed);
-
-  }
-
   playerMovingByClicking() {
 
     if (!this.input.activePointer.isDown && this.isClicking == true) {
@@ -1129,70 +1012,15 @@ export default class Location4Scene extends Phaser.Scene {
     }
   }
 
-  playerMovingBySwiping() {
-    if (!this.input.activePointer.isDown && this.isClicking == true) {
-      const playerX = this.player.x
-      const playerY = this.player.y
-
-      const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
-      const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
-      // console.log("swipeX:")
-      // console.log(swipeX)
-      // console.log("swipeY:")
-      // console.log(swipeY)
-      this.swipeAmount.x = swipeX
-      this.swipeAmount.y = swipeY
-
-      let moveSpeed = this.swipeAmount.length()
-      if (moveSpeed > 450) moveSpeed = 450
-
-      console.log("moveSpeed:")
-      console.log(moveSpeed)
-
-      // console.log("this.swipeAmount:")
-      // console.log(this.swipeAmount.x)
-      // console.log(this.swipeAmount.y)
-      // console.log("")
-      //if (Math.abs(swipeX > 10) || Math.abs(swipeY > 10)) {
-      this.playerIsMovingByClicking = true; // trigger moving animation
-
-
-      this.target.x = playerX + swipeX
-      this.target.y = playerY + swipeY
-      this.physics.moveToObject(this.player, this.target, moveSpeed * 2);
-      this.isClicking = false;
-
-
-      //     if (this.input.activePointer.upY < this.input.activePointer.downY) {
-      //       this.swipeDirection = "up";
-      //     } else if (this.input.activePointer.upY > this.input.activePointer.downY) {
-      //       this.swipeDirection = "down";
-      //     }
-
-    } else if (this.input.activePointer.isDown && this.isClicking == false) {
-      this.isClicking = true
-      
-      console.log("this.isClicking:")
-      console.log(this.isClicking)
-    }
-    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
-    //  4 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (this.playerIsMovingByClicking) {
-      if (this.distance < 10) {
-        this.player.body.reset(this.target.x, this.target.y);
-        this.playerIsMovingByClicking = false
-      } else {
-        this.sendPlayerMovement();
-      }
-    }
-}
-
   update(time, delta) {
     // //...... ONLINE PLAYERS ................................................
     // this.createOnlinePlayers();
+    // Player.loadOnlinePlayers(this)
     // this.updateMovementOnlinePlayers()
-    this.loadAndCreatePlayerAvatar();
+    // Player.receiveOnlinePlayersMovement(this)
+    // this.loadAndCreatePlayerAvatar();
+    Player.loadOnlineAvatar(this)
+
     //ManageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
@@ -1213,33 +1041,18 @@ export default class Location4Scene extends Phaser.Scene {
 
     // //........ PLAYER MOVE BY KEYBOARD  ......................................................................
     if (!this.playerIsMovingByClicking) {
-      this.playerMovingByKeyBoard();
+      Player.moveByKeyboard(this)
     }
 
-    if (
-      this.cursors.up.isDown ||
-      this.cursors.down.isDown ||
-      this.cursors.left.isDown ||
-      this.cursors.right.isDown
-    ) {
-      this.arrowDown = true
-    } else {
-      this.arrowDown = false
-    }
+    Player.moveByCursor(this)
     //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
     //....... moving ANIMATION ......................................................................................
-    if (this.arrowDown || this.playerIsMovingByClicking) {
-      this.player.anims.play(this.playerMovingKey, true);
-      this.playerShadow.anims.play(this.playerMovingKey, true);
-    } else if (!this.arrowDown || !this.playerIsMovingByClicking) {
-      this.player.anims.play(this.playerStopKey, true);
-      this.playerShadow.anims.play(this.playerStopKey, true);
-    }
+    Player.movingAnimation(this)
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()
-    this.playerMovingBySwiping()
+    Player.moveBySwiping(this)
 
   } //update
 } //class
