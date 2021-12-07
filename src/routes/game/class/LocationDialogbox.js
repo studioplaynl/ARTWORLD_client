@@ -76,7 +76,7 @@ class LocationDialogbox {
     }
 
     enterLocationDialogBox(locationObject, show) {
-        console.log(locationObject)
+        //console.log(locationObject)
         let scene = this.scene
 
         //= "scene." + locationObject.name + "DialogBoxContainer"
@@ -87,10 +87,10 @@ class LocationDialogbox {
 
         let nameContainer = locationObject.name
         //let search = { name: locationObject }
-        console.log(nameContainer)
+        //console.log(nameContainer)
 
         let container = Phaser.Actions.GetFirst(scene.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer })
-        console.log(container)
+        //console.log(container)
         // console.log(container)
 
         if (show) {
