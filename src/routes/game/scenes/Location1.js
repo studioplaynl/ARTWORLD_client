@@ -233,7 +233,7 @@ export default class Location1 extends Phaser.Scene {
 
     //this.exampleREXUI()
 
-    Player.identifySurfaceOfSwiping(this)
+    Player.identifySurfaceOfPointerInteraction(this)
 
   } // end create
 
@@ -675,6 +675,7 @@ export default class Location1 extends Phaser.Scene {
 
   generateLocations() {
     //this.location2 = this.physics.add.staticGroup();
+    // this.locationDialogBoxContainersGroup = this.add.group();
     this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
     this.location2.body.setCircle(190, 12, 12)
     this.location2.setImmovable(true)
