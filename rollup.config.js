@@ -32,12 +32,20 @@ function serve() {
 }
 
 export default {
-	input: 'src/main.js',
+	input: ['src/main.js'],
 	output: {
 		sourcemap: true,
-		format: 'iife',
-		name: 'app',
-		file: 'public/build/bundle.js'
+        format: "es",
+        name: "app",
+        dir: "public/build/",
+		manualChunks: (moduleName) => {
+			if (moduleName.includes("node_modules")) {
+				return "vendor"
+			}
+			if (moduleName.includes("src/routes/")) {
+				return "webapp"
+			}
+	   },
 	},
 	plugins: [
 		svelte({

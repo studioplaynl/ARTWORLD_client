@@ -11,7 +11,6 @@ Session.subscribe(value => {
 });
 
 export async function uploadImage(name, type, json, img, status) {
-  Error = "Start Saving"
   console.log(Sess)
   console.log("name: " + name)
   console.log(img)
@@ -41,7 +40,7 @@ export async function uploadImage(name, type, json, img, status) {
     body: json
   })
   await updateObject(type, name, value,pub)
-  Error = "Saved"
+  Error.update(er => er = "Saved")
 }
 
 export async function listImages(type, user, limit) {
