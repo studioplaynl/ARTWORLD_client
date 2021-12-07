@@ -146,7 +146,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.locationDialogBoxContainersGroup = this.add.group();
     //........ location1 .......
 
-
+//* specify 
     this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(this.worldSize.x, -200), CoordinatesTranslator.artworldToPhaser2D(this.worldSize.y, 200), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     
     //this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(-100), CoordinatesTranslator.artworldToPhaser2D(100), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
@@ -168,7 +168,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     Player.receiveOnlinePlayersMovement(this)
     Player.loadOnlineAvatar(this)
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom;
+    this.gameCam.zoom = this.UI_Scene.currentZoom
     //.......................................................................
 
     //........... PLAYER SHADOW .............................................................................
@@ -178,7 +178,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //........... end PLAYER SHADOW .........................................................................
 
     //.......... UPDATE TIMER      ..........................................................................
-    ManageSession.updateMovementTimer += delta;
+    ManageSession.updateMovementTimer += delta
     // console.log(time) //running time in millisec
     // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     //....... end UPDATE TIMER  ..............................................................................

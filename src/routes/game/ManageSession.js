@@ -46,7 +46,7 @@ class ManageSession {
 
     // for back button
     this.currentLocation = null
-    this.previousLocation = null 
+    this.previousLocation = null
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";
@@ -84,10 +84,11 @@ class ManageSession {
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
 
-          user.posX = data.posX;
-          user.posY = data.posY;
+          //? position data from online player, is converted in Player.js class receiveOnlinePlayersMovement because there the scene context is known
+          user.posX = data.posX
+          user.posY = data.posY
 
-          //! printing also when receiving movement data
+          // printing also when receiving movement data
           // console.log("user")
           // console.log(user)
 

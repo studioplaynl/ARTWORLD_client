@@ -145,13 +145,13 @@ class Player {
     // scene.player.body.setCircle(width, width, width / 2)
     scene.player.body.setCircle(width / 1.1, width / 5, width / 5);
 
-    //place the player in the last known position
+    // place the player in the last known position
     // this.player.x = this.player.posX
     // this.player.y = this.player.posY
 
-    // //*place the player in the center
-    // scene.player.x = translateCoordinates.artworldToPhaser2D(scene, 0)
-    // scene.player.y = translateCoordinates.artworldToPhaser2D(scene, 0)
+    //*place the player in the last known position 
+    // scene.player.x = translateCoordinates.artworldToPhaser2D(this.worldSize.x, this.player.posX)
+    // scene.player.y = translateCoordinates.artworldToPhaser2D(this.worldSize.y, this.player.posY)
 
     // console.log("player avatar has loaded ")
     // console.log("this.playerAvatarKey")
@@ -422,19 +422,6 @@ class Player {
             //check if the user_id is in scene.onlinePlayers
             console.log(scene.offlineOnlineUsers[i])
             scene.offlineOnlineUsers[i].destroy()
-
-            //get the index of user_id from scene.offlineOnlineUsers[i].user_id in scene.onlinePlayers and deactivate them in scene.onlinePlayers
-            // let index = scene.onlinePlayers.findIndex(function (person) {
-            //   return person.user_id == scene.offlineOnlineUsers[i].user_id
-            // });
-
-            // scene.onlinePlayers[index].active = false
-            // scene.onlinePlayers[index].visible = false
-            // if (scene.debug) {
-            //   console.log("deactivated and hidden User: ")
-            //   console.log(scene.onlinePlayers[index])
-            //   console.log("")
-            // }
           }
 
         }
@@ -478,7 +465,10 @@ class Player {
           }
           console.log("give the online player a placeholder avatar first")
           //give the online player a placeholder avatar first
-          element = scene.add.sprite(element.posX, element.posY, scene.playerAvatarPlaceholder)
+          //? convert from ARTWORLDcoordinates to Phaser2Dcoordinates
+          //! not sure if the conversion is needed here already
+          // element = scene.add.sprite(element.posX, element.posY, scene.playerAvatarPlaceholder)
+          element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D(scene.worldSize.x, element.posX), CoordinatesTranslator.artworldToPhaser2D(scene.worldSize.y, element.posY), scene.playerAvatarPlaceholder)
             .setDepth(90)
 
           element.setData("movingKey", "moving");
@@ -499,8 +489,8 @@ class Player {
           });
 
           Object.assign(element, elementCopy); //add all data from elementCopy to element; like prev Position, Location, UserID
-          element.x = element.posX
-          element.y = element.posY
+          element.x = element.posX //* is already converted from ARTWORLDcoordinates to Phaser2Dcoordinates
+          element.y = element.posY //* is already converted from ARTWORLDcoordinates to Phaser2Dcoordinates
 
           // add new player to group
           scene.onlinePlayersGroup.add(element)
@@ -555,7 +545,7 @@ class Player {
         //   console.log(scene.onlinePlayers[index])
         // })
         //send player position over the network for the online users to see
-        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
+        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)
 
       }//if (ManageSession.createOnlinePlayers)
     }//if (ManageSession.createdPlayer) 

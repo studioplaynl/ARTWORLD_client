@@ -654,7 +654,6 @@ export default class Location1 extends Phaser.Scene {
   }
 
   enterLocationScene(location) {
-
     // on entering another location we want to keep a record for "back button"
     ManageSession.previousLocation = this.scene.key;
 
@@ -677,8 +676,6 @@ export default class Location1 extends Phaser.Scene {
       this.scene.stop(this.scene.key)
       this.scene.start(location)
     }, 1000)
-
-
   }
 
   generateBackground() {
