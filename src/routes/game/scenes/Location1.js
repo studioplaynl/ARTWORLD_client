@@ -157,8 +157,8 @@ export default class Location1 extends Phaser.Scene {
     this.generateBackground()
 
     // graffiti walls
-    GraffitiWall.create(this, 2200, 600, 800, 600, "graffitiBrickWall", 'brickWall')
-    GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall")
+    GraffitiWall.create(this, 2200, 600, 800, 600, "graffitiBrickWall", 0x000000, 'brickWall')
+    GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall", 0x000000)
 
     // this.add.image(0,0, "background1").setOrigin(0).setScale(0.5)
     // this.add.image(0,0, "background2").setOrigin(0).setScale(0.8)
@@ -546,137 +546,6 @@ export default class Location1 extends Phaser.Scene {
     });
     return label;
   };
-
-
-  createDrawingTexture() {
-    //....................graffiti wall....................................................................................................
-    //pos
-    const graffitiWallX = 2200
-    const graffitiWallY = 600
-    //size
-    const graffitiWallWidth = 800
-    const graffitiWallHeight = 600
-
-    // var graffitiWallContainer = this.add.container(); 
-    let rt = this.add.renderTexture(graffitiWallX, graffitiWallY, graffitiWallWidth, graffitiWallHeight).setInteractive().setDepth(1001).setName("graffitiBrickWall");
-    let graffitiWall = this.add.image(graffitiWallX, graffitiWallY, 'brickWall').setOrigin(0).setDepth(1000)
-
-    graffitiWall.displayWidth = graffitiWallWidth
-    graffitiWall.displayHeight = graffitiWallHeight
-    //this.add.graphics().fillStyle(0x000000).lineStyle(1, 0xffffff).fillRect(0, 0, 1200, 600).strokeRect(0, 0, 1200, 600).setDepth(1000);
-
-    //this.add.text(136, 8, '<- draw in here\n   press SPACE to clear');
-
-    var hsv = Phaser.Display.Color.HSVColorWheel();
-
-    var i = 0;
-
-    this.input.keyboard.on('keydown-' + 'SPACE', function () {
-
-      rt.clear();
-
-    });
-
-    rt.on('pointerdown', function (pointer) {
-      this.graffitiDrawing = true
-      this.isClicking = true
-      this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
-
-    });
-
-    rt.on('pointermove', function (pointer) {
-
-      if (pointer.isDown) {
-        this.graffitiDrawing = true
-        this.isClicking = true
-        this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
-        i = Phaser.Math.Wrap(i + 1, 0, 360);
-      }
-    })
-
-    rt.on('pointerup', function (pointer) {
-      this.graffitiDrawing = false
-      console.log("brush is up2")
-    })
-
-    // graffitiWallContainer.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
-
-    // var tt = rt.saveTexture('doodle');
-
-    // var blocks = this.add.group({ key: 'doodle', repeat: 35, setScale: { x: 0.2, y: 0.1 } });
-
-    // Phaser.Actions.GridAlign(blocks.getChildren(), {
-    //     width: 7,
-    //     height: 5,
-    //     cellWidth: 128,
-    //     cellHeight: 128,
-    //     x: 128,
-    //     y: 128
-    // });
-
-    // var i = 0;
-
-    // blocks.children.iterate(function (child) {
-
-    //     this.tweens.add({
-    //         targets: child,
-    //         scaleX: 1,
-    //         scaleY: 1,
-    //         ease: 'Sine.easeInOut',
-    //         duration: 400,
-    //         delay: i * 50,
-    //         repeat: -1,
-    //         yoyo: true
-    //     });
-
-    //     i++;
-
-    //     if (i % 14 === 0)
-    //     {
-    //         i = 0;
-    //     }
-
-    // }, this);
-
-    const graffitiWall2X = 600
-    const graffitiWall2Y = 1200
-    //size
-    const graffitiWall2Width = 600
-    const graffitiWall2Height = 1200
-
-    // var graffitiWallContainer = this.add.container(); 
-    let rt2 = this.add.renderTexture(graffitiWall2X, graffitiWall2Y, graffitiWall2Width, graffitiWall2Height).setInteractive().setDepth(1001).setName("graffitiDotWall");
-    //let graffitiWall2 = this.add.image(graffitiWall2X, graffitiWall2Y, 'brickWall').setOrigin(0).setDepth(1000)
-
-    // graffitiWall2.displayWidth = graffitiWall2Width
-    // graffitiWall2.displayHeight = graffitiWall2Height
-
-    rt2.on('pointerdown', function (pointer) {
-      this.graffitiDrawing = true
-      this.isClicking = true
-      console.log(this.graffitiDrawing)
-      this.draw('brush', pointer.worldX - graffitiWall2X - 4, pointer.worldY - graffitiWall2Y - 4, 1, 0x000000);
-
-    });
-
-    rt2.on('pointermove', function (pointer) {
-      if (pointer.isDown) {
-        this.graffitiDrawing = true
-        this.isClicking = true
-        //console.log(this.graffitiDrawing)
-        this.draw('brush', pointer.worldX - graffitiWall2X, pointer.worldY - graffitiWall2Y, 1, 0x000000);
-      }
-      if (pointer.isUp) {
-        this.graffitiDrawing = false
-        //console.log(this.graffitiDrawing)
-      }
-    });
-
-    rt2.on('pointerup', function (pointer) {
-      this.graffitiDrawing = false
-      //console.log(this.graffitiDrawing)
-    });
-  }
 
   generateLocations() {
     this.locationDialogBoxContainersGroup = this.add.group();
