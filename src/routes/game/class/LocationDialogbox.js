@@ -1,24 +1,29 @@
 import ManageSession from "../ManageSession"
 
-// export default class LocationDialogbox extends Phaser.GameObjects.Container {
 class LocationDialogbox {
     constructor(scene) {
         this.locationGameObject
+        this.scene = scene
+        this.show = false
+        this.player
     }
 
+    create(scene, locationObject, locationName, mainWidth, mainHeight) {
 
-    create(scene, location, locationName, mainWidth, mainHeight) {
-        this.locationGameObject = location
+        this.locationGameObject = locationObject
+        this.scene = scene
+        console.log(scene)
+        this.player = scene.player
 
-        location.setData("entered", false)
-        location.setName(locationName)
+        locationObject.setData("entered", false)
+        locationObject.setName(locationName)
 
         //create variable for the text of the dialog box, set the text after
-        let nameText = "scene." + location.name + "DialogBox"
+        let nameText = "scene." + locationObject.name + "DialogBox"
         nameText = scene.add.text(mainWidth - 60, mainHeight - 30, locationName, { fill: '#000' })
 
         //create variable to hold dialogbox graphics
-        let nameBox = "scene." + location.name + "DialogBox"
+        let nameBox = "scene." + locationObject.name + "DialogBox"
 
         //background panel for dialogbox
         nameBox = scene.add.graphics();
@@ -27,64 +32,73 @@ class LocationDialogbox {
         nameBox.setVisible(false)
 
         //create variable for texture that holds the graphics and the clickable area for the dialogbox
-        let nameTexture = "scene." + location.name + "Texture"
+        let nameTexture = "scene." + locationObject.name + "Texture"
 
         nameTexture = scene.add.renderTexture(0, 0, mainWidth, mainHeight);
         nameTexture.draw(nameBox);
         nameTexture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains)
-        nameTexture.on('pointerdown', () => { this.enterLocationScene(scene, location.name) });
+        nameTexture.on('pointerdown', () => { this.enterLocationScene(scene, locationObject.name) });
 
         //create container that holds all of the dialogbox: can be moved and hidden
-        let nameContainer = "scene." + location.name + "DialogBoxContainer"
+        let nameContainer = "scene." + locationObject.name + "DialogBoxContainer"
 
-        // nameContainer = scene.add.container(location.x - (mainWidth / 2), location.y - (mainHeight / 2), [nameTexture, nameText]).setDepth(900)
-        nameContainer = scene.add.container(location.body.x + (location.body.width / 4), location.body.y + (location.body.height / 4), [nameTexture, nameText]).setDepth(900)
+        // nameContainer = scene.add.container(locationObject.x - (mainWidth / 2), locationObject.y - (mainHeight / 2), [nameTexture, nameText]).setDepth(900)
+        nameContainer = scene.add.container(locationObject.body.x + (locationObject.body.width / 4), locationObject.body.y + (locationObject.body.height / 4), [nameTexture, nameText]).setDepth(900)
 
         nameContainer.setVisible(false)
-        nameContainer.setName(location.name)
+        nameContainer.setName(locationObject.name)
 
         //add everything to the container
         scene.locationDialogBoxContainersGroup.add(nameContainer);
 
         //call overlap between player and the location, set the callback function and scope
-        scene.physics.add.overlap(scene.player, location, this.confirmEnterLocation, null, this)
+        // more info about passing arguments to callback function https://phaser.discourse.group/t/passing-argments-into-functions/4411/2
+        scene.physics.add.overlap(scene.player, locationObject, this.confirmEnterLocation, null, this)
+
     }
 
-    confirmEnterLocation(scene, player, location, show) {
-        location = this.locationGameObject
-        if (!location.getData("entered")) {
+    confirmEnterLocation(player, locationObject) {
+        //console.log(locationObject)
+        // locationObject = this.locationGameObject
+        let show
+
+        if (!locationObject.getData("entered")) {
             //start event
             show = false
             //   scene.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], callbackScope: this, loop: false })
-            setTimeout(this.enterLocationDialogBox, 2000, player, location, show)
+            setTimeout(this.enterLocationDialogBox, 2000, locationObject, show)
 
             //show the box
             show = true
-            this.enterLocationDialogBox(scene, player, location, show)
-            location.setData("entered", true)
+            this.enterLocationDialogBox(locationObject, show)
+            locationObject.setData("entered", true)
         }
     }
 
-    enterLocationDialogBox(player, location, show) {
-        let scene = player.scene
+    enterLocationDialogBox(locationObject, show) {
+        console.log(locationObject)
+        let scene = this.scene
 
-        let container = "scene." + location.name + "DialogBoxContainer"
+        //= "scene." + locationObject.name + "DialogBoxContainer"
 
+        // console.log(player)
         // console.log(player.scene)
         // console.log(container)
 
-        let nameContainer = location.name
-        let search = { name: location }
+        let nameContainer = locationObject.name
+        //let search = { name: locationObject }
+        console.log(nameContainer)
 
-        container = Phaser.Actions.GetFirst(scene.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer });
+        let container = Phaser.Actions.GetFirst(scene.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer })
+        console.log(container)
+        // console.log(container)
 
         if (show) {
-          container.setVisible(show)
+            container.setVisible(show)
         } else {
-          container.setVisible(show)
-          location.setData("entered", show)
+            container.setVisible(show)
+            locationObject.setData("entered", show)
         }
-
     }
 
     enterLocationScene(scene, location) {

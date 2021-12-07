@@ -80,7 +80,7 @@ class Player {
 
   attachAvatarToPlayer(scene) {
     const avatar = scene.textures.get(scene.playerAvatarKey);
-    console.log(avatar);
+    // console.log(avatar);
     const avatarWidth = avatar.frames.__BASE.width;
     console.log("avatarWidth");
     console.log(avatarWidth);
@@ -136,8 +136,8 @@ class Player {
     scene.playerShadow.displayWidth = width;
     scene.playerShadow.scaleY = scene.playerShadow.scaleX;
 
-    console.log("scene.playerShadow");
-    console.log(scene.playerShadow);
+    // console.log("scene.playerShadow");
+    // console.log(scene.playerShadow);
 
     //* set the collision body
     //* setCircle(radius [, offsetX] [, offsetY])
@@ -158,8 +158,8 @@ class Player {
 
     scene.player.location = scene.location;
 
-    console.log("this.player: ");
-    console.log(scene.player);
+    // console.log("this.player: ");
+    // console.log(scene.player);
 
     scene.createdPlayer = true;
     // console.log("this.createdPlayer = true;")

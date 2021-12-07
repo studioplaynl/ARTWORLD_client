@@ -168,6 +168,7 @@ export default class Location1 extends Phaser.Scene {
 
     //*create deafult player and playerShadow
     this.player = new PlayerDefault(this, 300, 800, this.playerAvatarPlaceholder)
+
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
     
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
@@ -674,49 +675,30 @@ export default class Location1 extends Phaser.Scene {
   }
 
   generateLocations() {
-    //this.location2 = this.physics.add.staticGroup();
-    // this.locationDialogBoxContainersGroup = this.add.group();
+    this.locationDialogBoxContainersGroup = this.add.group();
+
     this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
     this.location2.body.setCircle(190, 12, 12)
     this.location2.setImmovable(true)
 
-    // this.location2.setData("entered", false)
-    // this.location2.setName("Location2")
-    //this.createLocationDialogbox("Location2", 200, 150)
-    LocationDialogbox.create(this, this.location2, "Location2", 200, 150)
+    LocationDialogbox.create(this, this.location2, "Location2", 200, 150, this.player)
 
     //........ location3 ...................
     this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     this.physics.add.existing(this.location3);
     this.location3.body.setSize(this.location3.width, this.location3.height)
     this.location3.body.setOffset(0, -(this.location3.height / 4))
-    //can't set ositriangle to immmovable
-    //this.location3.setImmovable(true)
-
-    // this.location3.setData("entered", false)
-    // this.location3.setName("Location3")
-
-    // this.createLocationDialogbox("Location3", 200, 150)
+    
     LocationDialogbox.create(this, this.location3, "Location3", 200, 150)
 
     //........ location4 ...................
     this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
     this.location4.setImmovable(true)
-    // this.createLocationDialogbox("Location4", 200, 150)
     LocationDialogbox.create(this, this.location4, "Location4", 200, 150)
-
-
-    // //........ location5 ...................
-    // this.location5 = this.add.isobox(1200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
-    // this.physics.add.existing(this.location5);
-    // this.location5.body.setSize(this.location5.width, this.location5.height * 1.4)
-    // this.location5.body.setOffset(0, -(this.location5.height / 1.4))
-    // this.createLocationDialogbox("Location5", 200, 150)
 
     // location5
     this.location5 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(100)
     this.location5.setImmovable(true)
-    // this.createLocationDialogbox("Location5", 200, 150)
     LocationDialogbox.create(this, this.location5, "Location5", 200, 150)
 
   }
