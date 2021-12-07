@@ -234,7 +234,6 @@ class Player {
       scene.isClicking == false &&
       scene.graffitiDrawing == false
     ) {
-      console.log("One");
       scene.isClicking = true;
     }
     if (
@@ -242,7 +241,6 @@ class Player {
       scene.isClicking == true &&
       scene.graffitiDrawing == false
     ) {
-      console.log("Two");
       const playerX = scene.player.x;
       const playerY = scene.player.y;
 
@@ -271,6 +269,48 @@ class Player {
       scene.target.x,
       scene.target.y
     );
+
+    //  4 is our distance tolerance, i.e. how close the source can get to the target
+    //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    if (scene.playerIsMovingByClicking) {
+      if (scene.distance < 10) {
+        scene.player.body.reset(scene.target.x, scene.target.y);
+        scene.playerIsMovingByClicking = false;
+      } else {
+        this.sendMovement(scene);
+      }
+    }
+  }
+
+  moveByTapping(scene) {
+    if (scene.input.activePointer.isDown && scene.isClicking == false) {
+      scene.isClicking = true
+    }
+    if (!scene.input.activePointer.isDown && scene.isClicking == true) {
+      let lastTime = 0;
+      scene.input.on("pointerdown", () => {
+        let clickDelay = scene.time.now - lastTime;
+        lastTime = scene.time.now;
+        if (clickDelay < 350) {
+         
+          scene.target.x = scene.input.activePointer.worldX;
+          scene.target.y = scene.input.activePointer.worldY;       
+
+          scene.playerIsMovingByClicking = true; // activate moving animation
+          scene.physics.moveToObject(scene.player, scene.target, 450);
+
+          scene.isClicking = false;
+        }
+      });
+    }
+
+    scene.distance = Phaser.Math.Distance.Between(
+      scene.player.x,
+      scene.player.y,
+      scene.target.x,
+      scene.target.y
+    );
+
     //  4 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (scene.playerIsMovingByClicking) {

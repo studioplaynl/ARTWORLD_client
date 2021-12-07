@@ -1143,7 +1143,15 @@ export default class Location1 extends Phaser.Scene {
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()
-    Player.moveBySwiping(this)
+
+    // to detect if the player is clicking/tapping on one place or swiping
+    if (this.input.activePointer.downX != this.input.activePointer.upX) {
+      Player.moveBySwiping(this)
+    } else {
+      Player.moveByTapping(this)
+    }
+
+    // to detect if the player is drawing on a drawing wall
     Player.identifySurfaceOfSwiping(this)
 
   } //update
