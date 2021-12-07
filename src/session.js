@@ -1,13 +1,13 @@
 import { writable } from "svelte/store";
 import { client, SSL } from "./nakama.svelte"
 import { getAccount } from "./api.js"
-import manageSession from "./routes/game/manageSession.js"; //push the profile to manageSession
+import ManageSession from "./routes/game/ManageSession.js"; //push the profile to ManageSession
 
 let storedSession = localStorage.getItem("Session")
 export const Session = writable(storedSession ? JSON.parse(storedSession) : null);
 Session.subscribe((value) => {
     if (value) {
-        manageSession.sessionStored = value; //! push the Session with url to manageSession
+        ManageSession.sessionStored = value; //! push the Session with url to ManageSession
         localStorage.setItem('Session', JSON.stringify(value))
     }
     else localStorage.removeItem('Session'); // for logout
@@ -19,7 +19,7 @@ export const Profile = writable(profileStore ? JSON.parse(profileStore) : null);
 Profile.subscribe((value) => {
     if (value) {
         localStorage.setItem('profile', JSON.stringify(value));
-        manageSession.userProfile = value //! push the profile with url to manageSession
+        ManageSession.userProfile = value //! push the profile with url to ManageSession
         // console.log("Profile.subscribe((value)")
         // console.log(value)
     }

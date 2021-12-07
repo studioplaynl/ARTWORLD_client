@@ -80,7 +80,7 @@ export async function updateObject(type, name, value, pub) {
 
 export async function listObjects(type, userID, limit) {
   if(!!!limit) limit = 100;
-  const objects = await client.listStorageObjects(session, type, userID, limit);
+  const objects = await client.listStorageObjects(Sess, type, userID, limit);
   return objects
 }
 
@@ -198,4 +198,18 @@ export async function ListAllUsers() {
   const rpcid = "get_all_users";
   const users = await client.rpc(Sess, rpcid, payload);
   return users.payload;
+}
+
+
+export async function deleteObject(collection, key) {
+
+  await client.deleteStorageObjects(Sess, {
+    "object_ids": [{
+      "collection": collection,
+      "key": key
+    }]
+  });
+  console.info("Deleted objects.");
+  
+  return true
 }

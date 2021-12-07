@@ -1,7 +1,7 @@
 import { SCENES } from "../config.js"
-import manageSession from "../manageSession.js"
+import ManageSession from "../ManageSession.js"
 import { getAccount } from '../../../api.js'
-import preloader from '../preLoader.js'
+import Preloader from '../Preloader.js'
 
 
 export default class MainMenu extends Phaser.Scene {
@@ -11,9 +11,9 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   preload() {
-    
+
     // //.... PRELOADER VISUALISER ...............................................................................................
-    // preloader.Loading(this)
+    // Preloader.Loading(this)
     // //.... end PRELOADER VISUALISER ...............................................................................................
 
 
@@ -75,9 +75,9 @@ export default class MainMenu extends Phaser.Scene {
 
     //! session needed for websocket later! needed is the token
     //! we get the session in session.js
-    //console.log(manageSession.sessionStored)
+    //console.log(ManageSession.sessionStored)
 
-    // manageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
+    // ManageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
 
     //.............................................................................................................
 
@@ -131,10 +131,10 @@ export default class MainMenu extends Phaser.Scene {
     //   .setOrigin(0.5);
 
     this.playBtn.on("pointerdown", () => {
-      // if (manageSession.sessionStored.username != null) {
+      // if (ManageSession.sessionStored.username != null) {
       // a way to check if the connection if working
-      //console.log(manageSession.userProfile);
-      this.scene.start("networkBoot_Scene");
+      //console.log(ManageSession.userProfile);
+      this.scene.start("NetworkBoot");
 
       // }
     });
@@ -163,36 +163,20 @@ export default class MainMenu extends Phaser.Scene {
     // this.camUI.ignore([this.playBtn, this.bg])
 
     //* check if the user profile is loaded, to be able to send the player to the right location
-    if (typeof (manageSession.userProfile.meta.location) != "undefined") {
-      manageSession.launchLocation = manageSession.userProfile.meta.location + "_Scene"
-      console.log(manageSession.launchLocation)
-      this.checkSceneExistence()
+    if (typeof (ManageSession.userProfile.meta.location) != "undefined") {
+      ManageSession.launchLocation = ManageSession.userProfile.meta.location
+      console.log(ManageSession.launchLocation)
+      ManageSession.checkSceneExistence()
     } else {
       getAccount("", true)
         .then(rec => {
-          manageSession.freshSession = rec
+          ManageSession.freshSession = rec
           //! only set the menu button visible if the user data is downloaded!
-          manageSession.launchLocation = manageSession.freshSession.meta.location + "_Scene"
-          this.checkSceneExistence()
+          ManageSession.launchLocation = ManageSession.freshSession.meta.location
+          ManageSession.checkSceneExistence()
         })
     }
   } //create
-
-  checkSceneExistence() {
-    //check if this.launchLocation exists in SCENES
-    const locationExists = SCENES.includes(manageSession.launchLocation)
-    //if location does not exists; launch default location
-    if (!locationExists) {
-      //set to fail-back scene
-      manageSession.location = "location1"
-      manageSession.launchLocation = manageSession.location + "_Scene"
-      console.log(manageSession.launchLocation)
-    } else {
-      manageSession.location = manageSession.userProfile.meta.location
-      console.log(manageSession.location)
-    }
-    this.playBtn.setVisible(true)
-  }
 
   // zoomButtons(update) {
 
@@ -267,6 +251,6 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   update(time, delta) {
-
+    this.playBtn.setVisible(ManageSession.locationExists)
   } // end update
 }

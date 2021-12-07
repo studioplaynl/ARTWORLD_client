@@ -1,5 +1,6 @@
 import i18next from "i18next";
 import { locale } from "svelte-i18n";
+import ManageSession from "../ManageSession";
 
 import nl from "../../../langauge/nl/ui.json";
 import en from "../../../langauge/en/ui.json";
@@ -57,18 +58,19 @@ export default class UI_Scene extends Phaser.Scene {
       .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
       .setName("camMain");
     this.camUI.zoom = 1;
-    this.zoomButtons(false);
+    this.createNavigationButtons(false);
     this.scale.on("resize", this.resize, this);
   } //create
 
-  zoomButtons(update) {
+  // zoom buttons and back button
+  createNavigationButtons(update) {
     let width = this.sys.game.canvas.width;
-    let height = this.sys.game.canvas.height - 60;
+    let height = this.sys.game.canvas.height;
 
     if (!update) {
       //text to show the location (for debugging) > will change to breadcrum UI for user
       this.locationText = this.add
-        .text(width / 10 - 120, height / 40, this.location, {
+        .text(width / 3.5, height / 40, this.location, {
           fontFamily: "Arial",
           fontSize: "22px",
         })
@@ -77,23 +79,75 @@ export default class UI_Scene extends Phaser.Scene {
         .setShadow(1, 1, "#000000", 0)
         .setDepth(1000);
 
+      //back button
+      this.backButton = this.add.image(40, 40, "back_button")
+        .setOrigin(0, 0.5)
+        .setDepth(1000)
+        .setScale(0.075)
+        .setInteractive({ useHandCursor: true });
+      
+      // if the current scene is artworld, the back button is hidden 
+      if (ManageSession.currentLocation == null || ManageSession.currentLocation == "ArtworldAmsterdam") {
+        this.backButton.destroy()
+      }
+
+      this.backButton.on("pointerup", () => {
+        // in case the player in the Location1 scene
+        // the back button brings the player to the ArtworldAmsterdam scene
+        if (ManageSession.currentLocation == "Location1") {
+          ManageSession.socket.rpc("leave", "Location1")
+
+          const targetScene = this.scene.get("ArtworldAmsterdam");
+          targetScene.player.location = "ArtworldAmsterdam"
+
+          setTimeout(() => {
+            ManageSession.location = "ArtworldAmsterdam"
+            ManageSession.createPlayer = true
+            ManageSession.getStreamUsers("join", "ArtworldAmsterdam")
+            this.scene.stop("Location1");
+            this.scene.start("ArtworldAmsterdam")
+          }, 500)
+        } else {
+          // in all other cases the back button brings the player from the respective scene
+          // to the location1 scene
+          const currentLocation = ManageSession.currentLocation.split("_");
+          ManageSession.socket.rpc("leave", currentLocation[0])
+
+          const previousLocation = ManageSession.previousLocation.split("_")
+          const targetScene = this.scene.get(ManageSession.previousLocation)
+
+          targetScene.player.location = previousLocation[0]
+
+          setTimeout(() => {
+
+            ManageSession.location = previousLocation[0]
+            ManageSession.createPlayer = true
+            ManageSession.getStreamUsers("join", previousLocation[0])
+            this.scene.stop(ManageSession.currentLocation)
+
+            this.scene.start(ManageSession.previousLocation)
+
+          }, 500)
+        }
+      });
+
       //zoom buttons
+      this.zoomOut = this.add
+        .image(60 + 40, 40, "ui_magnifier_minus")
+        .setOrigin(0, 0.5)
+        .setDepth(1000)
+        .setScale(width / (width / this.camUI.zoom) / 6)
+        .setInteractive({ useHandCursor: true });
+        
       this.zoom = this.add
-        .image(width / 10 + 40, height / 50, "ui_eye")
-        .setOrigin(0)
+        .image(60 + 80, 40, "ui_eye")
+        .setOrigin(0, 0.5)
         .setDepth(1000)
         .setScale(width / (width / this.camUI.zoom) / 8);
 
       this.zoomIn = this.add
-        .image(width / 10 + 120, height / 40, "ui_magnifier_plus")
-        .setOrigin(0)
-        .setDepth(1000)
-        .setScale(width / (width / this.camUI.zoom) / 6)
-        .setInteractive({ useHandCursor: true });
-
-      this.zoomOut = this.add
-        .image(width / 10, height / 40, "ui_magnifier_minus")
-        .setOrigin(0)
+        .image(60 + 160, 40, "ui_magnifier_plus")
+        .setOrigin(0, 0.5)
         .setDepth(1000)
         .setScale(width / (width / this.camUI.zoom) / 6)
         .setInteractive({ useHandCursor: true });
@@ -133,5 +187,7 @@ export default class UI_Scene extends Phaser.Scene {
     //this.camUI.resize(width, height);
   }
 
-  update(time, delta) {}
+  update(time, delta) {
+
+  }
 }

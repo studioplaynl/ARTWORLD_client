@@ -1,10 +1,7 @@
 import { client, SSL } from "../../nakama.svelte";
-//import { Profile, logout } from "../../session.js";
-// import { user, url, getAccount } from '../../api.js';
-// import { Color } from "fabric/fabric-impl";
+import { SCENES } from "./config.js"
 
-
-class manageSession {
+class ManageSession {
   constructor() {
     this.debug = true
 
@@ -29,6 +26,8 @@ class manageSession {
     this.playerObjectSelf;
     this.createPlayer = true;
 
+    this.locationExists = false
+
     this.createOnlinePlayers = false;
     this.updateOnlinePlayers = false;
     this.allConnectedUsers = [];
@@ -41,8 +40,12 @@ class manageSession {
 
     this.gameStarted = false;
 
-    this.location = "location1" //default
-    this.launchLocation = "location1_Scene" //default
+    this.location = "Location1" //default
+    this.launchLocation = "Location1" //default
+
+    // for back button
+    this.currentLocation = null
+    this.previousLocation = null 
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";
@@ -220,13 +223,31 @@ class manageSession {
     var opCode = 1;
     var data =
       '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }';
-     console.log(data)
+     //console.log(data)
 
     this.socket.rpc("move_position", data)
       // .then((rec) => {
       //   console.log(rec)
       // });
   } //end sendChatMessage
+
+  checkSceneExistence() {
+    //check if this.launchLocation exists in SCENES
+    const locationExists = SCENES.includes(this.launchLocation)
+    //reset existing to false
+    this.locationExists = false
+    //if location does not exists; launch default location
+    if (!locationExists) {
+      //set to fail-back scene
+      this.location = "ArtworldAmsterdam"
+      this.launchLocation = this.location
+      console.log(this.launchLocation)
+    } else {
+      this.location = this.userProfile.meta.location
+      console.log(this.location)
+    }
+    this.locationExists = true
+  }
 
   async chatExample() {
     const roomname = "PizzaFans";
@@ -243,4 +264,4 @@ class manageSession {
   } //end chatExample
 } //end class
 
-export default new manageSession();
+export default new ManageSession();
