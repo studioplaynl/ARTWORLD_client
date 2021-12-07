@@ -10,6 +10,9 @@ class LocationDialogbox {
 
     create(scene, locationObject, locationName, mainWidth, mainHeight) {
 
+        scene.add.existing(this)
+        scene.physics.add.existing(this)
+
         this.locationGameObject = locationObject
         this.scene = scene
         console.log(scene)
@@ -77,18 +80,13 @@ class LocationDialogbox {
 
     enterLocationDialogBox(locationObject, show) {
         //console.log(locationObject)
-        let scene = this.scene
+        let scene = locationObject.scene
 
-        //= "scene." + locationObject.name + "DialogBoxContainer"
-
-        // console.log(player)
-        // console.log(player.scene)
-        // console.log(container)
-
+        scene.add.existing(this)
+        scene.physics.add.existing(this)
+    
         let nameContainer = locationObject.name
-        //let search = { name: locationObject }
-        //console.log(nameContainer)
-
+        
         let container = Phaser.Actions.GetFirst(scene.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer })
         //console.log(container)
         // console.log(container)

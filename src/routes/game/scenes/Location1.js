@@ -10,11 +10,14 @@ import BouncingBird from "../class/BouncingBird.js";
 import DebugFuntions from "../class/DebugFuntions.js";
 import LocationDialogbox from "../class/LocationDialogbox.js";
 import GraffitiWall from "../class/GraffitiWall.js";
+import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 
 export default class Location1 extends Phaser.Scene {
 
   constructor() {
     super("Location1");
+
+    this.worldSize = new Phaser.Math.Vector2(3000, 3000)
 
     this.debug = false
 
@@ -975,10 +978,11 @@ export default class Location1 extends Phaser.Scene {
 
     //.......................................................................
 
-    // //........... PLAYER SHADOW .............................................................................
+  //........... PLAYER SHADOW .............................................................................
+    // the shadow follows the player with an offset
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
-    // //........... end PLAYER SHADOW .........................................................................
+    //........... end PLAYER SHADOW .........................................................................
 
     //.......... UPDATE TIMER      ..........................................................................
     ManageSession.updateMovementTimer += delta;

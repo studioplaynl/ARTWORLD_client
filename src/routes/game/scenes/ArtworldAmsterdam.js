@@ -99,7 +99,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //.......  PLAYER ....................................................................................
     //*create deafult player and playerShadow
-    this.player = new PlayerDefault(this, 300, 300, this.playerAvatarPlaceholder)
+    // create player in center with artworldCoordinates
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2D(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2D(this.worldSize.y, 0), this.playerAvatarPlaceholder)
     
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
     //.......  end PLAYER ................................................................................
@@ -144,7 +145,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   generateLocations() {
     this.locationDialogBoxContainersGroup = this.add.group();
     //........ location1 .......
-    this.location1 = this.add.isotriangle(300,300, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+
+
+    this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(this.worldSize.x, -200), CoordinatesTranslator.artworldToPhaser2D(this.worldSize.y, 200), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     
     //this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(-100), CoordinatesTranslator.artworldToPhaser2D(100), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     this.physics.add.existing(this.location1);
@@ -169,6 +172,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //.......................................................................
 
     //........... PLAYER SHADOW .............................................................................
+    // the shadow follows the player with an offset
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................

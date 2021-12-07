@@ -1,4 +1,5 @@
 import ManageSession from "../ManageSession"
+import CoordinatesTranslator from "./CoordinatesTranslator"
 
 class Player {
   constructor() {
@@ -9,12 +10,12 @@ class Player {
     if (ManageSession.userProfile.id != null) {
       //check for createPlayer flag
       if (ManageSession.createPlayer) {
-        ManageSession.createPlayer = false;
+        ManageSession.createPlayer = false
         //console.log("ManageSession.createPlayer = false;")
 
         //set the location of the player to this location
 
-        scene.createdPlayer = false; //? WORKING ?
+        scene.createdPlayer = false
 
         //console.log("loadAndCreatePlayerAvatar")
 
@@ -35,9 +36,9 @@ class Player {
 
         console.log(scene.textures.exists(scene.playerAvatarKey));
 
-        //!
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
+        //! 
+        scene.add.existing(this)
+        scene.physics.add.existing(this)
 
         //if the texture already exists attach it again to the player
         if (!scene.textures.exists(scene.playerAvatarKey)) {
@@ -165,7 +166,7 @@ class Player {
     // console.log("this.createdPlayer = true;")
 
     //send the current player position over the network
-    ManageSession.sendMoveMessage(scene.player.x, scene.player.y);
+    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
 
     // scene.add.existing(this)
     // scene.physics.add.existing(this)
@@ -253,7 +254,7 @@ class Player {
       scene.swipeAmount.y = swipeY;
 
       let moveSpeed = scene.swipeAmount.length();
-      if (moveSpeed > 450) moveSpeed = 450;
+      if (moveSpeed > 600) moveSpeed = 600;
 
       scene.playerIsMovingByClicking = true; // trigger moving animation
 
@@ -361,8 +362,7 @@ class Player {
         ManageSession.updateMovementTimer > ManageSession.updateMovementInterval
       ) {
         //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
-        // ManageSession.sendMoveMessage(translateCoordinates.Phaser2DToArtworld(scene, scene.player.x), translateCoordinates.Phaser2DToArtworld(scene, scene.player.y))
-        ManageSession.sendMoveMessage(scene.player.x, scene.player.y);
+        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
         //console.log(this.player.x)
         ManageSession.updateMovementTimer = 0;
       }
@@ -555,7 +555,7 @@ class Player {
         //   console.log(scene.onlinePlayers[index])
         // })
         //send player position over the network for the online users to see
-        ManageSession.sendMoveMessage(scene.player.x, scene.player.y);
+        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
 
       }//if (ManageSession.createOnlinePlayers)
     }//if (ManageSession.createdPlayer) 
@@ -646,11 +646,11 @@ class Player {
             if (typeof tempPlayer !== 'undefined') {
 
               //translate the artworldCoordinates to Phaser coordinates
-              // tempPlayer.x = translateCoordinates.artworldToPhaser2D(player.posX)
-              // tempPlayer.y = translateCoordinates.artworldToPhaser2D(player.posY)
+              tempPlayer.x = CoordinatesTranslator.artworldToPhaser2D(scene.worldSize.x, player.posX)
+              tempPlayer.y = CoordinatesTranslator.artworldToPhaser2D(scene.worldSize.y, player.posY)
 
-              tempPlayer.x = player.posX
-              tempPlayer.y = player.posY
+              // tempPlayer.x = player.posX
+              // tempPlayer.y = player.posY
 
               const movingKey = tempPlayer.getData("movingKey")
 

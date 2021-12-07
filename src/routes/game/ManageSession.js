@@ -1,4 +1,5 @@
 import { client, SSL } from "../../nakama.svelte";
+import CoordinatesTranslator from "./class/CoordinatesTranslator";
 import { SCENES } from "./config.js"
 
 class ManageSession {
@@ -82,6 +83,7 @@ class ManageSession {
       //update the position data of this.allConnectedUsers array
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
+
           user.posX = data.posX;
           user.posY = data.posY;
 
@@ -219,7 +221,12 @@ class ManageSession {
 
   }
 
-  sendMoveMessage(posX, posY) {
+  sendMoveMessage(scene, posX, posY) {
+    //transpose phaser coordinates to artworld coordinates
+    //console.log(scene)
+    posX = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.x, posX)
+    posY = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.y, posY)
+
     var opCode = 1;
     var data =
       '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }';
