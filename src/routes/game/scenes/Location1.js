@@ -9,6 +9,7 @@ import Preloader from '../Preloader.js'
 import BouncingBird from "../class/BouncingBird.js";
 import DebugFuntions from "../class/DebugFuntions.js";
 import LocationDialogbox from "../class/LocationDialogbox.js";
+import GraffitiWall from "../class/GraffitiWall.js";
 
 export default class Location1 extends Phaser.Scene {
 
@@ -155,7 +156,10 @@ export default class Location1 extends Phaser.Scene {
 
     this.generateBackground()
 
-    this.createDrawingTexture()
+    // graffiti walls
+    GraffitiWall.create(this, 2200, 600, 800, 600, "graffitiBrickWall", 'brickWall')
+    GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall")
+
     // this.add.image(0,0, "background1").setOrigin(0).setScale(0.5)
     // this.add.image(0,0, "background2").setOrigin(0).setScale(0.8)
     // this.add.image(0,0, "background3").setOrigin(0).setScale(1)
