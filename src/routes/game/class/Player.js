@@ -283,15 +283,17 @@ class Player {
   }
 
   moveByTapping(scene) {
-    if (scene.input.activePointer.isDown && scene.isClicking == false) {
+    if (scene.input.activePointer.isDown && scene.isClicking == false &&
+      scene.graffitiDrawing == false) {
       scene.isClicking = true
     }
-    if (!scene.input.activePointer.isDown && scene.isClicking == true) {
+    if (!scene.input.activePointer.isDown && scene.isClicking == true &&
+      scene.graffitiDrawing == false) {
       let lastTime = 0;
       scene.input.on("pointerdown", () => {
         let clickDelay = scene.time.now - lastTime;
         lastTime = scene.time.now;
-        if (clickDelay < 350) {
+        if (clickDelay < 350 && scene.graffitiDrawing == false) {
          
           scene.target.x = scene.input.activePointer.worldX;
           scene.target.y = scene.input.activePointer.worldY;       
@@ -299,9 +301,10 @@ class Player {
           scene.playerIsMovingByClicking = true; // activate moving animation
           scene.physics.moveToObject(scene.player, scene.target, 450);
 
-          scene.isClicking = false;
+          
         }
       });
+      scene.isClicking = false;
     }
 
     scene.distance = Phaser.Math.Distance.Between(
@@ -667,7 +670,7 @@ class Player {
     }
   }
 
-  identifySurfaceOfSwiping(scene) {
+  identifySurfaceOfPointerInteraction(scene) {
     // identifies if the pointer is down on a graffiti wall
     // if the condition is true, the avatar stops any movement
     scene.input.on('pointerdown', (pointer, object) => {
