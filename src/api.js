@@ -11,7 +11,6 @@ Session.subscribe(value => {
 });
 
 export async function uploadImage(name, type, json, img, status) {
-  Error = "Start Saving"
   console.log(Sess)
   console.log("name: " + name)
   console.log(img)
@@ -41,7 +40,7 @@ export async function uploadImage(name, type, json, img, status) {
     body: json
   })
   await updateObject(type, name, value,pub)
-  Error = "Saved"
+  Error.update(er => er = "Saved")
 }
 
 export async function listImages(type, user, limit) {
@@ -104,6 +103,32 @@ export async function getAccount(id, avatar) {
   }
 }
 
+
+export async function getFullAccount(id) {
+  let payload = {};
+  if(!!id){
+    payload = {id: id};
+  }
+
+  let user  
+  const rpcid = "get_full_account";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+
+  return user.payload
+}
+
+export async function setFullAccount(id, username, password, email, metadata) {
+  let payload = {id, username, password, email, metadata};
+
+  
+  let user  
+  const rpcid = "set_full_account";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+
+  return user.payload
+}
 
 
 //getAvatar only works reliably via the getAccount call

@@ -29,7 +29,8 @@
   let videoWidth, videoHeight;
   let canvas,
     video,
-    lineWidth = 5;
+    lineWidth = 5,
+    EraselineWidth = 5;
   let json,
     drawingColor = "#000000";
   let shadowOffset = 0,
@@ -89,6 +90,7 @@
       drawingColorEl = fab("drawing-color"),
       drawingShadowColorEl = fab("drawing-shadow-color"),
       drawingLineWidthEl = fab("drawing-line-width"),
+      eraseLineWidthEl = fab("erase-line-width"),
       drawingShadowWidth = fab("drawing-shadow-width"),
       drawingShadowOffset = fab("drawing-shadow-offset"),
       clearEl = fab("clear-canvas");
@@ -123,7 +125,8 @@
       // erase functie kapot? recompile: http://fabricjs.com/build/
       var eraseBrush = new fabric.EraserBrush(canvas);
       canvas.freeDrawingBrush = eraseBrush;
-      canvas.freeDrawingBrush.width = 10;
+      canvas.freeDrawingBrush.width =
+        parseInt(eraseLineWidthEl.value, 10) || 1;
       canvas.isDrawingMode = true;
       current = "erase";
       floodFill(false);
@@ -252,6 +255,10 @@
       canvas.freeDrawingBrush.shadow.color = this.value;
     };
     drawingLineWidthEl.onchange = function () {
+      canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
+      this.previousSibling.innerHTML = this.value;
+    };
+    eraseLineWidthEl.onchange = function () {
       canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
       this.previousSibling.innerHTML = this.value;
     };
@@ -1074,14 +1081,14 @@
         <div class="eraseTab" class:hidden={current != "erase"}>
           <div
             class="lineWidth"
-            style="width:{lineWidth}px; height: {lineWidth}px; background-color: black;margin:  0px auto;"
+            style="width:{EraselineWidth}px; height: {EraselineWidth}px; background-color: black;margin:  0px auto;"
           />
-          <span class="info">{lineWidth}</span><input
+          <span class="info">{EraselineWidth}</span><input
             type="range"
             min="0"
             max="150"
-            id="drawing-line-width"
-            bind:value={lineWidth}
+            id="erase-line-width"
+            bind:value={EraselineWidth}
           />
         </div>
         <div class="fillTab" class:hidden={current != "fill"}>
