@@ -9,7 +9,7 @@
   ListAllUsers().then((list) => {
     list.shift();
     list.forEach((user) => {
-      user.meta = JSON.parse(user.meta);
+     // user.meta = JSON.parse(user.meta);
       if (!!!user.meta.azc) user.meta.azc = "Unknown";
     });
     console.log(list);

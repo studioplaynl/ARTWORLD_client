@@ -5,14 +5,41 @@
 	let passwordCheck = 'somesupersecretpassword'
 	let role = ''
 	let azc = ''
+	let id = ''
     let meta = {}
-	let action = "registreren"
 	export let params = {}
     import {Session,Profile, Error} from "../../session.js"
-	import {getAccount} from "../../api"
+	import {getFullAccount, setFullAccount} from "../../api"
 	import {client} from "../../nakama.svelte"
+	import {onMount} from "svelte"
 	import { _ } from 'svelte-i18n'
 
+	onMount(()=> {
+		if(!!params.user){
+			
+		getFullAccount(params.user)
+		.then((account) => {
+			console.log(account)
+			username = account.name
+			role = account.meta.role
+			azc = account.meta.azc
+			email = account.email 
+			id = account.user_id
+		})
+
+		}else {
+		getFullAccount()
+		.then((account) => {
+			console.log(account)
+			username = account.name
+			role = account.meta.role
+			azc = account.meta.azc
+			email = account.email 
+			id = account.user_id
+		})
+		}
+
+	})
 
 	const Locaties = [
     "Amersfoort",
@@ -43,54 +70,22 @@
     "Utrecht",
   ];
 
-	console.log($_ /*_("game.mainmenu.welcomeTo")*/)
-
-	async function register() {
-		const create = true;
-		console.log("azc: " + azc)
-		let data = {"userId": $Session.user_id, "azc": azc, "role": role}
-		console.log(client)
-		var token = client.configuration.bearerToken
-		client.configuration.bearerToken = null
-		const newUser = await client.authenticateEmail(email, password, create, username, data)
-		.catch(err => $Error = err)
-		client.configuration.bearerToken = token
-		console.log(newUser)
-		alert('New user created' + newUser.user_id)
-	}
-
     async function update(){
         if(role == "admin"){
             meta = {azc: azc, role: role}
         }
-        await client.updateAccount($Session, {
-            username: username,
-            email: email,
-            password: password,
-            metadata: meta
-        });
+
+		setFullAccount(
+			id, username, password, email, meta
+        )
+
     }
 	
 	function onSubmit() {
 		let promise = update();
 	}
 
-	if(!!params.user){
-		getAccount(params.user)
-		.then((account) => {
-			console.log(account)
-			username = account.username
-			role = account.metadata.role
-			azc = account.metadata.azc
-		})
-
-	}else {
-        username = $Profile.username
-		role = $Profile.meta.role
-		azc = $Profile.meta.azc
-
-    }
-
+	
 
 </script>
 
@@ -105,7 +100,7 @@
 		  <input type="text" placeholder="Enter Username" name="username" id="username" bind:value={username} required>
 	  	  
 		  <label for="email"><b>{$_('register.email')}</b></label>
-		  <input type="text" placeholder="Enter Email" name="email" id="email" bind:value={email} required>
+		  <input type="text" placeholder="Enter Email" name="email" id="email" bind:value={email}>
 	  
 		  <label for="psw"><b>{$_('register.password')}</b></label>
 		  <input type="password" placeholder="Enter Password" name="psw" id="psw" bind:value={password} required>

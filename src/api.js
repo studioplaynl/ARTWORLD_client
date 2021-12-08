@@ -104,6 +104,32 @@ export async function getAccount(id, avatar) {
 }
 
 
+export async function getFullAccount(id) {
+  let payload = {};
+  if(!!id){
+    payload = {id: id};
+  }
+
+  let user  
+  const rpcid = "get_full_account";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+
+  return user.payload
+}
+
+export async function setFullAccount(id, username, password, email, metadata) {
+  let payload = {id, username, password, email, metadata};
+
+  
+  let user  
+  const rpcid = "set_full_account";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+
+  return user.payload
+}
+
 
 //getAvatar only works reliably via the getAccount call
 export async function getAvatar(avatar_url) {

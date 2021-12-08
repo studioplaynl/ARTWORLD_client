@@ -163,7 +163,7 @@ function moveToTrash(key) {
       <p>{$_('register.username')}: {user}</p>
       <p>{$_('register.role')}: {$_('role.' + role)}</p>
       <p>{$_('register.location')}: {azc}</p>
-      <a href="/#/update">edit</a>
+      <!-- <a href="/#/update">edit</a> -->
       </Card>
     </div>
     <div class="flex-item-right">
