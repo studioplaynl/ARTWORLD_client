@@ -1,4 +1,5 @@
 import { client, SSL } from "../../nakama.svelte";
+import CoordinatesTranslator from "./class/CoordinatesTranslator";
 import { SCENES } from "./config.js"
 
 class ManageSession {
@@ -45,7 +46,7 @@ class ManageSession {
 
     // for back button
     this.currentLocation = null
-    this.previousLocation = null 
+    this.previousLocation = null
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";
@@ -82,10 +83,12 @@ class ManageSession {
       //update the position data of this.allConnectedUsers array
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
-          user.posX = data.posX;
-          user.posY = data.posY;
 
-          //! printing also when receiving movement data
+          //? position data from online player, is converted in Player.js class receiveOnlinePlayersMovement because there the scene context is known
+          user.posX = data.posX
+          user.posY = data.posY
+
+          // printing also when receiving movement data
           // console.log("user")
           // console.log(user)
 
@@ -219,7 +222,12 @@ class ManageSession {
 
   }
 
-  sendMoveMessage(posX, posY) {
+  sendMoveMessage(scene, posX, posY) {
+    //transpose phaser coordinates to artworld coordinates
+    //console.log(scene)
+    posX = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.x, posX)
+    posY = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.y, posY)
+
     var opCode = 1;
     var data =
       '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }';

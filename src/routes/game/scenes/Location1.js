@@ -9,11 +9,15 @@ import Preloader from '../Preloader.js'
 import BouncingBird from "../class/BouncingBird.js";
 import DebugFuntions from "../class/DebugFuntions.js";
 import LocationDialogbox from "../class/LocationDialogbox.js";
+import GraffitiWall from "../class/GraffitiWall.js";
+import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 
 export default class Location1 extends Phaser.Scene {
 
   constructor() {
     super("Location1");
+
+    this.worldSize = new Phaser.Math.Vector2(3000, 3000)
 
     this.debug = false
 
@@ -155,7 +159,10 @@ export default class Location1 extends Phaser.Scene {
 
     this.generateBackground()
 
-    this.createDrawingTexture()
+    // graffiti walls
+    GraffitiWall.create(this, 2200, 600, 800, 600, "graffitiBrickWall", 0x000000, 'brickWall')
+    GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall", 0x000000)
+
     // this.add.image(0,0, "background1").setOrigin(0).setScale(0.5)
     // this.add.image(0,0, "background2").setOrigin(0).setScale(0.8)
     // this.add.image(0,0, "background3").setOrigin(0).setScale(1)
@@ -168,6 +175,7 @@ export default class Location1 extends Phaser.Scene {
 
     //*create deafult player and playerShadow
     this.player = new PlayerDefault(this, 300, 800, this.playerAvatarPlaceholder)
+
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
     
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
@@ -542,181 +550,31 @@ export default class Location1 extends Phaser.Scene {
     return label;
   };
 
-
-  createDrawingTexture() {
-    //....................graffiti wall....................................................................................................
-    //pos
-    const graffitiWallX = 2200
-    const graffitiWallY = 600
-    //size
-    const graffitiWallWidth = 800
-    const graffitiWallHeight = 600
-
-    // var graffitiWallContainer = this.add.container(); 
-    let rt = this.add.renderTexture(graffitiWallX, graffitiWallY, graffitiWallWidth, graffitiWallHeight).setInteractive().setDepth(1001).setName("graffitiBrickWall");
-    let graffitiWall = this.add.image(graffitiWallX, graffitiWallY, 'brickWall').setOrigin(0).setDepth(1000)
-
-    graffitiWall.displayWidth = graffitiWallWidth
-    graffitiWall.displayHeight = graffitiWallHeight
-    //this.add.graphics().fillStyle(0x000000).lineStyle(1, 0xffffff).fillRect(0, 0, 1200, 600).strokeRect(0, 0, 1200, 600).setDepth(1000);
-
-    //this.add.text(136, 8, '<- draw in here\n   press SPACE to clear');
-
-    var hsv = Phaser.Display.Color.HSVColorWheel();
-
-    var i = 0;
-
-    this.input.keyboard.on('keydown-' + 'SPACE', function () {
-
-      rt.clear();
-
-    });
-
-    rt.on('pointerdown', function (pointer) {
-      this.graffitiDrawing = true
-      this.isClicking = true
-      this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
-
-    });
-
-    rt.on('pointermove', function (pointer) {
-
-      if (pointer.isDown) {
-        this.graffitiDrawing = true
-        this.isClicking = true
-        this.draw('brush', pointer.worldX - graffitiWallX, pointer.worldY - graffitiWallY, 1, hsv[i].color);
-        i = Phaser.Math.Wrap(i + 1, 0, 360);
-      }
-    })
-
-    rt.on('pointerup', function (pointer) {
-      this.graffitiDrawing = false
-      console.log("brush is up2")
-    })
-
-    // graffitiWallContainer.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
-
-    // var tt = rt.saveTexture('doodle');
-
-    // var blocks = this.add.group({ key: 'doodle', repeat: 35, setScale: { x: 0.2, y: 0.1 } });
-
-    // Phaser.Actions.GridAlign(blocks.getChildren(), {
-    //     width: 7,
-    //     height: 5,
-    //     cellWidth: 128,
-    //     cellHeight: 128,
-    //     x: 128,
-    //     y: 128
-    // });
-
-    // var i = 0;
-
-    // blocks.children.iterate(function (child) {
-
-    //     this.tweens.add({
-    //         targets: child,
-    //         scaleX: 1,
-    //         scaleY: 1,
-    //         ease: 'Sine.easeInOut',
-    //         duration: 400,
-    //         delay: i * 50,
-    //         repeat: -1,
-    //         yoyo: true
-    //     });
-
-    //     i++;
-
-    //     if (i % 14 === 0)
-    //     {
-    //         i = 0;
-    //     }
-
-    // }, this);
-
-    const graffitiWall2X = 600
-    const graffitiWall2Y = 1200
-    //size
-    const graffitiWall2Width = 600
-    const graffitiWall2Height = 1200
-
-    // var graffitiWallContainer = this.add.container(); 
-    let rt2 = this.add.renderTexture(graffitiWall2X, graffitiWall2Y, graffitiWall2Width, graffitiWall2Height).setInteractive().setDepth(1001).setName("graffitiDotWall");
-    //let graffitiWall2 = this.add.image(graffitiWall2X, graffitiWall2Y, 'brickWall').setOrigin(0).setDepth(1000)
-
-    // graffitiWall2.displayWidth = graffitiWall2Width
-    // graffitiWall2.displayHeight = graffitiWall2Height
-
-    rt2.on('pointerdown', function (pointer) {
-      this.graffitiDrawing = true
-      this.isClicking = true
-      console.log(this.graffitiDrawing)
-      this.draw('brush', pointer.worldX - graffitiWall2X - 4, pointer.worldY - graffitiWall2Y - 4, 1, 0x000000);
-
-    });
-
-    rt2.on('pointermove', function (pointer) {
-      if (pointer.isDown) {
-        this.graffitiDrawing = true
-        this.isClicking = true
-        //console.log(this.graffitiDrawing)
-        this.draw('brush', pointer.worldX - graffitiWall2X, pointer.worldY - graffitiWall2Y, 1, 0x000000);
-      }
-      if (pointer.isUp) {
-        this.graffitiDrawing = false
-        //console.log(this.graffitiDrawing)
-      }
-    });
-
-    rt2.on('pointerup', function (pointer) {
-      this.graffitiDrawing = false
-      //console.log(this.graffitiDrawing)
-    });
-  }
-
   generateLocations() {
-    //this.location2 = this.physics.add.staticGroup();
-    // this.locationDialogBoxContainersGroup = this.add.group();
+    this.locationDialogBoxContainersGroup = this.add.group();
+
     this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
     this.location2.body.setCircle(190, 12, 12)
     this.location2.setImmovable(true)
 
-    // this.location2.setData("entered", false)
-    // this.location2.setName("Location2")
-    //this.createLocationDialogbox("Location2", 200, 150)
-    LocationDialogbox.create(this, this.location2, "Location2", 200, 150)
+    LocationDialogbox.create(this, this.location2, "Location2", 200, 150, this.player)
 
     //........ location3 ...................
     this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     this.physics.add.existing(this.location3);
     this.location3.body.setSize(this.location3.width, this.location3.height)
     this.location3.body.setOffset(0, -(this.location3.height / 4))
-    //can't set ositriangle to immmovable
-    //this.location3.setImmovable(true)
-
-    // this.location3.setData("entered", false)
-    // this.location3.setName("Location3")
-
-    // this.createLocationDialogbox("Location3", 200, 150)
+    
     LocationDialogbox.create(this, this.location3, "Location3", 200, 150)
 
     //........ location4 ...................
     this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
     this.location4.setImmovable(true)
-    // this.createLocationDialogbox("Location4", 200, 150)
     LocationDialogbox.create(this, this.location4, "Location4", 200, 150)
-
-
-    // //........ location5 ...................
-    // this.location5 = this.add.isobox(1200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
-    // this.physics.add.existing(this.location5);
-    // this.location5.body.setSize(this.location5.width, this.location5.height * 1.4)
-    // this.location5.body.setOffset(0, -(this.location5.height / 1.4))
-    // this.createLocationDialogbox("Location5", 200, 150)
 
     // location5
     this.location5 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(100)
     this.location5.setImmovable(true)
-    // this.createLocationDialogbox("Location5", 200, 150)
     LocationDialogbox.create(this, this.location5, "Location5", 200, 150)
 
   }
@@ -796,7 +654,6 @@ export default class Location1 extends Phaser.Scene {
   }
 
   enterLocationScene(location) {
-
     // on entering another location we want to keep a record for "back button"
     ManageSession.previousLocation = this.scene.key;
 
@@ -819,8 +676,6 @@ export default class Location1 extends Phaser.Scene {
       this.scene.stop(this.scene.key)
       this.scene.start(location)
     }, 1000)
-
-
   }
 
   generateBackground() {
@@ -1120,10 +975,11 @@ export default class Location1 extends Phaser.Scene {
 
     //.......................................................................
 
-    // //........... PLAYER SHADOW .............................................................................
+  //........... PLAYER SHADOW .............................................................................
+    // the shadow follows the player with an offset
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
-    // //........... end PLAYER SHADOW .........................................................................
+    //........... end PLAYER SHADOW .........................................................................
 
     //.......... UPDATE TIMER      ..........................................................................
     ManageSession.updateMovementTimer += delta;
