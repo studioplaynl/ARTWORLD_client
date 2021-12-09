@@ -183,7 +183,7 @@ async function getLocations() {
     <h2>Locations</h2>
     <!-- <label>where</label><input type="text" bind:value="{where}"> -->
 
-    <label>where</label>
+    <label>type</label>
     <select bind:value="{where}">
         <option value="home">home</option>
         <option value="location">location</option>

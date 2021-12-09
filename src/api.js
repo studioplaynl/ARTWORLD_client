@@ -126,7 +126,7 @@ export async function setFullAccount(id, username, password, email, metadata) {
   const rpcid = "set_full_account";
    user = await client.rpc(Sess, rpcid, payload)
    console.log(user)
-
+   Error.update(er => er = "Saved updates")
   return user.payload
 }
 
@@ -238,4 +238,41 @@ export async function deleteObject(collection, key) {
   console.info("Deleted objects.");
   
   return true
+}
+
+
+export async function updateObjectAdmin(id, type, name, value, pub) {
+  let payload = {id,type, name, value, pub};
+
+
+  const rpcid = "create_object_admin";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+   if(user.payload.status == "succes") Error.update(er => er = "create object")
+   else Error.update(er => er = "create object failed")
+  return user.payload
+}
+
+
+export async function deleteObjectAdmin(id, type, name) {
+  let payload = {id,type, name};
+
+
+  const rpcid = "delete_object_admin";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+   if(user.payload.status == "succes") Error.update(er => er = "deleted object")
+   else Error.update(er => er = "delete object failed")
+  return user.payload
+}
+
+export async function convertImage(path,size, format) {
+  let payload = {path,size, format};
+
+
+  const rpcid = "convert_image";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+   if(user.payload.status != "succes") Error.update(er => er = "could'nt convert image")
+  return fileurl.payload.url
 }
