@@ -206,7 +206,7 @@ async function getLocations() {
     {#each locationsList.objects as location}
         <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
             <p>userID: {location.user_id}</p>
-        <p>key:{location.key}</p>
+        <p>name:{location.key}</p>
         <p>posX: {location.value.posX}, posY: {location.value.posY}</p>
         <button on:click="{async ()=>{await deleteObject(location.collection,location.key);getLocations()}}">delete</button>
         </div>

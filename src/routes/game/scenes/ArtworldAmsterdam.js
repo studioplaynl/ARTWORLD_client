@@ -147,19 +147,29 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //........ location1 .......
 
 //* specify 
-    this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(this.worldSize.x, -200), CoordinatesTranslator.artworldToPhaser2D(this.worldSize.y, 200), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    
-    //this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(-100), CoordinatesTranslator.artworldToPhaser2D(100), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(this.worldSize.x, -1008), CoordinatesTranslator.artworldToPhaser2D(this.worldSize.y, -18), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
     this.physics.add.existing(this.location1);
     this.location1.body.setSize(this.location1.width, this.location1.height)
     this.location1.body.setOffset(0, -(this.location1.height / 4))
-    //can't set ositriangle to immmovable
-    //this.location1.setImmovable(true)
+    const LocationDialogBox1 = LocationDialogbox.create(this, this.location1, "Location1", 200, 150)
 
-    // this.location1.setData("entered", false)
-    // this.location1.setName("Location1")
+    this.location2 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(this.worldSize.x, -567), CoordinatesTranslator.artworldToPhaser2D(this.worldSize.y, -282), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    this.physics.add.existing(this.location2);
+    this.location2.body.setSize(this.location2.width, this.location2.height)
+    this.location2.body.setOffset(0, -(this.location2.height / 4))
+    const LocationDialogBox2 = LocationDialogbox.create(this, this.location2, "Location2", 200, 150)
 
-    LocationDialogbox.create(this, this.location1, "Location1", 200, 150)
+    this.location3 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(this.worldSize.x, -162), CoordinatesTranslator.artworldToPhaser2D(this.worldSize.y, -486), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    this.physics.add.existing(this.location3);
+    this.location3.body.setSize(this.location3.width, this.location3.height)
+    this.location3.body.setOffset(0, -(this.location3.height / 4))
+    const LocationDialogBox3 = LocationDialogbox.create(this, this.location3, "Location3", 200, 150)
+
+    this.location4 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(this.worldSize.x, 342), CoordinatesTranslator.artworldToPhaser2D(this.worldSize.y, -525), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    this.physics.add.existing(this.location4);
+    this.location4.body.setSize(this.location4.width, this.location4.height)
+    this.location4.body.setOffset(0, -(this.location4.height / 4))
+    const LocationDialogBox4 = LocationDialogbox.create(this, this.location4, "Location4", 200, 150)
   }
 
   update(time, delta) {

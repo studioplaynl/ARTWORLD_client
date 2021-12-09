@@ -11,11 +11,12 @@ class LocationDialogbox {
     create(scene, locationObject, locationName, mainWidth, mainHeight) {
 
         scene.add.existing(this)
-        scene.physics.add.existing(this)
+        //scene.physics.add.existing(this)
 
         this.locationGameObject = locationObject
         this.scene = scene
-        console.log(scene)
+        console.log(this.scene)
+        // console.log(scene)
         this.player = scene.player
 
         locationObject.setData("entered", false)
@@ -58,6 +59,9 @@ class LocationDialogbox {
         // more info about passing arguments to callback function https://phaser.discourse.group/t/passing-argments-into-functions/4411/2
         scene.physics.add.overlap(scene.player, locationObject, this.confirmEnterLocation, null, this)
 
+
+        scene.add.existing(this)
+        scene.physics.add.existing(this)
     }
 
     confirmEnterLocation(player, locationObject) {
@@ -80,13 +84,13 @@ class LocationDialogbox {
 
     enterLocationDialogBox(locationObject, show) {
         //console.log(locationObject)
-        let scene = locationObject.scene
+        let scene = locationObject.scene || this.scene
 
         scene.add.existing(this)
-        scene.physics.add.existing(this)
-    
+        //scene.physics.add.existing(this)
+
         let nameContainer = locationObject.name
-        
+
         let container = Phaser.Actions.GetFirst(scene.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer })
         //console.log(container)
         // console.log(container)

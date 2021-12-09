@@ -63,7 +63,7 @@ export default class UI_Scene extends Phaser.Scene {
   } //create
 
   // zoom buttons and back button
-  createNavigationButtons(update) {
+  async createNavigationButtons(update) {
     let width = this.sys.game.canvas.width;
     let height = this.sys.game.canvas.height;
 
