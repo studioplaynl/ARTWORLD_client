@@ -18,8 +18,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.backButton
         this.showing = false
         this.type = config.type
+        this.color1 = config.color1
+        this.color2 = config.color2
+        this.color3 = config.color3
         this.location
-        
+
         //display width of the location image/ triangle/ isoBox
         const width = 128
 
@@ -40,7 +43,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         if (this.type === "isoTriangle") {
             console.log("isoTriangle!")
-            this.location = this.scene.add.isotriangle(0, width / 4, width, width, false, 0x8dcb0e, 0x3f8403, 0x63a505)
+            //this.location = this.scene.add.isotriangle(0, width / 4, width, width, false, 0x8dcb0e, 0x3f8403, 0x63a505)
+            this.location = this.scene.add.isotriangle(0, width / 4, width, width, false, this.color1, this.color2, this.color3)
             this.scene.physics.add.existing(this.location)
             this.location.body.setSize(this.location.width, this.location.height)
             this.location.body.setOffset(0, -(this.location.height / 4))
@@ -48,8 +52,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         if (this.type === "isoBox") {
             console.log("isoBox!")
-            this.location = this.scene.add.isobox(0, 0, width, width/1.4, 0xffe31f, 0xf2a022, 0xf8d80b);
-            this.scene.physics.add.existing(this.location);
+            // this.location = this.scene.add.isobox(0, 0, width, width / 1.4, 0xffe31f, 0xf2a022, 0xf8d80b)
+            this.location = this.scene.add.isobox(0, 0, width, width / 1.4, this.color1, this.color2, this.color3)
+            this.scene.physics.add.existing(this.location)
             this.location.body.setSize(this.location.width, this.location.height * 1.6)
             this.location.body.setOffset(0, -(this.location.height / 1.4))
         }
@@ -62,7 +67,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         // back button that appears 
         this.backButton = this.scene.add.image(0, -(width / 2) - 20,
-            this.backButtonImage).setInteractive().setVisible(false).setOrigin(0.5, 0.5).setDepth(52)
+            this.backButtonImage).setInteractive().setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
 
 
 
@@ -127,5 +132,3 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.scene.scene.start(this.locationDestination)
     }
 }
-
-//TODO choose between types of location

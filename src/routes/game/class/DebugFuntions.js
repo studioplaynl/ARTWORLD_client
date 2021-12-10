@@ -1,6 +1,6 @@
 import ManageSession from "../ManageSession";
 import { getAccount, updateObject, listObjects } from '../../../api.js'
-
+import CoordinatesTranslator from "./CoordinatesTranslator";
 
 class DebugFuntions {
     constructor(scene) {
@@ -110,12 +110,11 @@ class DebugFuntions {
 
             console.log('P key')
             console.log("Display Mouse coordinates")
-            scene.input.activePointer.isDown
-
-
-
-            this.scene.stop(ManageSession.currentlocation);
-            this.scene.start("TestCoordinates")
+            console.log("World Coordinates: ")
+            console.log(scene.input.activePointer.worldX, scene.input.activePointer.worldY)
+            console.log("artworldCoordinates: ")
+            console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.input.activePointer.worldX))
+            console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.y, scene.input.activePointer.worldY))
 
         }, scene);
 

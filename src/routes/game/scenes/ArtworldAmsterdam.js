@@ -82,8 +82,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     // for back button history
     ManageSession.currentLocation = this.scene.key
-    console.log("this.scene.key")
-    console.log(this.scene.key)
+    console.log("this.scene.key", this.scene.key)
 
     //timers
     ManageSession.updateMovementTimer = 0;
@@ -91,15 +90,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //.......  LOAD PLAYER AVATAR ..........................................................................
     ManageSession.createPlayer = true
-    // console.log("ManageSession.createPlayer: ")
-    // console.log(ManageSession.createPlayer)
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
 
     //.......  PLAYER ....................................................................................
     //*create deafult player and playerShadow
-    // create player in center with artworldCoordinates
+    //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
 
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
@@ -123,16 +120,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //.......... end INPUT ................................................................................
 
     //.......... locations ................................................................................
-    //this.generateLocations()
-    let location1Vector = new Phaser.Math.Vector2(-100, -100)
-    //console.log(location1Vector)
-    
-    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
-    //console.log(location1Vector)
-    
-    const location1 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location1", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 1", fontColor: 0x8dcb0e})
-    
-    
+    this.generateLocations()
     //.......... end locations ............................................................................
 
     //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
@@ -152,33 +140,18 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   generateLocations() {
-    this.locationDialogBoxContainersGroup = this.add.group();
-    //........ location1 .......
+    let location1Vector = new Phaser.Math.Vector2(-100, -100)
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
-    //* specify 
-    this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1008), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -18), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    this.physics.add.existing(this.location1);
-    this.location1.body.setSize(this.location1.width, this.location1.height)
-    this.location1.body.setOffset(0, -(this.location1.height / 4))
-    const LocationDialogBox1 = new LocationDialogbox(this, this.location1, "Location1", 200, 150)
+    const location1 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location1", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 1", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
 
-    this.location2 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -567), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -282), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    this.physics.add.existing(this.location2);
-    this.location2.body.setSize(this.location2.width, this.location2.height)
-    this.location2.body.setOffset(0, -(this.location2.height / 4))
-    const LocationDialogBox2 = new LocationDialogbox(this, this.location2, "Location2", 200, 150)
+    location1Vector = new Phaser.Math.Vector2(-100, 100)
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
-    this.location3 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -162), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -486), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    this.physics.add.existing(this.location3);
-    this.location3.body.setSize(this.location3.width, this.location3.height)
-    this.location3.body.setOffset(0, -(this.location3.height / 4))
-    const LocationDialogBox3 = new LocationDialogbox(this, this.location3, "Location3", 200, 150)
+    const location2 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 2", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
 
-    this.location4 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 342), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -525), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    this.physics.add.existing(this.location4);
-    this.location4.body.setSize(this.location4.width, this.location4.height)
-    this.location4.body.setOffset(0, -(this.location4.height / 4))
-    const LocationDialogBox4 = new LocationDialogbox(this, this.location4, "Location4", 200, 150)
+ 
+
   }
 
   update(time, delta) {

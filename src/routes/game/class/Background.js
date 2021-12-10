@@ -25,15 +25,16 @@ class Background {
         bgDot.fillStyle(0x909090);
         bgDot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false)
 
-        //create renderTexture
+        //create renderTexture to place the dot on
         let bgDotRendertexture = scene.add.renderTexture(0, 0, dotWidth * 2, dotWidth * 2)
 
-        //draw gaphics to renderTexture
+        //draw the dot on the renderTexture
         bgDotRendertexture.draw(bgDot)
 
-        //save the rendertexture with a key ('dot')
+        //save the rendertexture with a key ('dot'), basically making an image out of it
         let t = bgDotRendertexture.saveTexture('dot');
 
+        //repeat this created image over the background
         for (let i = 0; i < gridWidth; i += offset) {
             for (let j = 0; j < gridWidth; j += offset) {
                 scene.add.image(i, j, 'dot').setOrigin(0);

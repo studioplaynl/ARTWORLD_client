@@ -115,7 +115,7 @@ export default class TestCoordinates extends Phaser.Scene {
             gameObject.x = dragX
             gameObject.y = dragY
 
-        });
+        })
 
         //this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
         //.......  end PLAYER ................................................................................
@@ -145,7 +145,7 @@ export default class TestCoordinates extends Phaser.Scene {
         location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
         //console.log(location1Vector)
 
-        const location1 = new GenerateLocation({ scene: this, x: location1Vector.x, y: location1Vector.y, key1: "avatar1", text: "Hello!", fontColor: 0x8dcb0e })
+        const location1 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, key1: "avatar1", text: "Hello!", fontColor: 0x8dcb0e })
         //.......... end locations ............................................................................
 
         //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
@@ -163,20 +163,6 @@ export default class TestCoordinates extends Phaser.Scene {
         this.gameCam.zoom = this.currentZoom
         //......... end UI Scene ..............................................................................
         this.text1 = this.add.text(10, 10, '', { fill: '#00ff00' });
-    }
-
-    generateLocations() {
-        this.locationDialogBoxContainersGroup = this.add.group();
-        //........ location1 .......
-
-        //* specify 
-        this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1008), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -18), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-        this.physics.add.existing(this.location1);
-        this.location1.body.setSize(this.location1.width, this.location1.height)
-        this.location1.body.setOffset(0, -(this.location1.height / 4))
-        const LocationDialogBox1 = new LocationDialogbox(this, this.location1, "Location1", 200, 150)
-
-
     }
 
     update(time, delta) {
