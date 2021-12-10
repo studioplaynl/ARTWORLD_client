@@ -23,6 +23,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.color3 = config.color3
         this.location
 
+        //TODO don't make a location in a container, the depth order seems to be shared across the contianer, so we can't make the enter button appear above the player, and the location below the player
+        //TODO rewrite with out the container, just using sprite, containers are a bit more cpu intensive
+
         //display width of the location image/ triangle/ isoBox
         const width = 128
 
@@ -60,7 +63,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         }
 
         //place the description under the location image (for devving only)
-        const locationDescription = this.scene.add.text(0, width / 2 + 10, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(51)
+        const locationDescription = this.scene.add.text(0, width / 2 - 30, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(51)
 
         //align the location image and description
         //Phaser.Display.Align.In.TopCenter(this.location, locationDescription)
@@ -69,9 +72,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.backButton = this.scene.add.image(0, -(width / 2) - 20,
             this.backButtonImage).setInteractive().setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
 
-
-
         //the container is created at the this.x and this.y
+        //this.setSize(width, width)
         this.add(this.location)
         this.add(locationDescription)
         this.add(this.backButton)
@@ -104,6 +106,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
     }
+
+
 
     confirmEnterLocation(player, location) {
         this.confirmConfirm()
