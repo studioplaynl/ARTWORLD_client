@@ -88,19 +88,7 @@ export default class Location1 extends Phaser.Scene {
     this.load.image("star", "./assets/star.png");
     this.load.image('ground', 'assets/platform.png');
 
-    this.load.image('museum', 'assets/museum.png');
-
     this.load.image("entrance", "assets/entrance.jpg");
-
-    this.load.spritesheet(
-      "avatar1",
-      "./assets/spritesheets/cloud_breathing.png",
-      { frameWidth: 68, frameHeight: 68 }
-    );
-
-    this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
-
-    this.load.image("ball", "./assets/ball_grey.png")
 
     //test backgrounds
     // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
@@ -557,7 +545,7 @@ export default class Location1 extends Phaser.Scene {
     this.location2.body.setCircle(190, 12, 12)
     this.location2.setImmovable(true)
 
-    const LocationDialogBox2 = LocationDialogbox.create(this, this.location2, "Location2", 200, 150, this.player)
+    const LocationDialogBox2 = new LocationDialogbox(this, this.location2, "Location2", 200, 150, this.player)
 
     //........ location3 ...................
     this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
@@ -565,17 +553,17 @@ export default class Location1 extends Phaser.Scene {
     this.location3.body.setSize(this.location3.width, this.location3.height)
     this.location3.body.setOffset(0, -(this.location3.height / 4))
     
-    const LocationDialogBox3 = LocationDialogbox.create(this, this.location3, "Location3", 200, 150)
+    const LocationDialogBox3 = new LocationDialogbox(this, this.location3, "Location3", 200, 150)
 
     //........ location4 ...................
     this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
     this.location4.setImmovable(true)
-    const LocationDialogBox4 = LocationDialogbox.create(this, this.location4, "Location4", 200, 150)
+    const LocationDialogBox4 = new LocationDialogbox(this, this.location4, "Location4", 200, 150)
 
     // location5
-    this.location5 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(100)
+    this.location5 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(50)
     this.location5.setImmovable(true)
-    const LocationDialogBox5 = LocationDialogbox.create(this, this.location5, "Location5", 200, 150)
+    const LocationDialogBox5 = new LocationDialogbox(this, this.location5, "Location5", 200, 150)
 
   }
 

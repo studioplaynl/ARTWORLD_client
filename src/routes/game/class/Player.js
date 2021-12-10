@@ -61,8 +61,8 @@ class Player {
             );
 
             scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-              console.log("loadAndCreatePlayerAvatar complete:");
-              console.log(ManageSession.userProfile.url);
+              console.log("loadAndCreatePlayerAvatar complete");
+              //console.log(ManageSession.userProfile.url);
 
               if (scene.textures.exists(scene.playerAvatarKey)) {
                 this.attachAvatarToPlayer(scene);
@@ -83,14 +83,13 @@ class Player {
     const avatar = scene.textures.get(scene.playerAvatarKey);
     // console.log(avatar);
     const avatarWidth = avatar.frames.__BASE.width;
-    console.log("avatarWidth");
-    console.log(avatarWidth);
+    //console.log("avatarWidth: " avatarWidth);
+    
     const avatarHeight = avatar.frames.__BASE.height;
-    console.log("avatarHeight");
-    console.log(avatarHeight);
-
+    //console.log("avatarHeight: " + avatarHeight);
+    
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    console.log("avatarFrames: " + avatarFrames);
+    //console.log("avatarFrames: " + avatarFrames);
 
     //make an animation if the image is wider than tall
     if (avatarFrames > 1) {
@@ -122,8 +121,8 @@ class Player {
     }
 
     // texture loaded so use instead of the placeholder
-    console.log("scene.playerAvatarKey");
-    console.log(scene.playerAvatarKey);
+    //console.log("scene.playerAvatarKey");
+    //console.log(scene.playerAvatarKey);
 
     // scene.player.texture = scene.playerAvatarKey
     scene.player.setTexture(scene.playerAvatarKey);
@@ -150,8 +149,8 @@ class Player {
     // this.player.y = this.player.posY
 
     //*place the player in the last known position 
-    // scene.player.x = translateCoordinates.artworldToPhaser2D(this.worldSize.x, this.player.posX)
-    // scene.player.y = translateCoordinates.artworldToPhaser2D(this.worldSize.y, this.player.posY)
+    // scene.player.x = translateCoordinates.artworldToPhaser2DX(this.worldSize.x, this.player.posX)
+    // scene.player.y = translateCoordinates.artworldToPhaser2DY(this.worldSize.y, this.player.posY)
 
     // console.log("player avatar has loaded ")
     // console.log("this.playerAvatarKey")
@@ -302,7 +301,6 @@ class Player {
           scene.playerIsMovingByClicking = true; // activate moving animation
           scene.physics.moveToObject(scene.player, scene.target, 450);
 
-          
         }
       });
       scene.isClicking = false;
@@ -466,9 +464,9 @@ class Player {
           console.log("give the online player a placeholder avatar first")
           //give the online player a placeholder avatar first
           //? convert from ARTWORLDcoordinates to Phaser2Dcoordinates
-          //! not sure if the conversion is needed here already
           // element = scene.add.sprite(element.posX, element.posY, scene.playerAvatarPlaceholder)
-          element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D(scene.worldSize.x, element.posX), CoordinatesTranslator.artworldToPhaser2D(scene.worldSize.y, element.posY), scene.playerAvatarPlaceholder)
+          element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, element.posX), CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, element.posY), scene.playerAvatarPlaceholder)
+          //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
             .setDepth(90)
 
           element.setData("movingKey", "moving");
@@ -636,8 +634,10 @@ class Player {
             if (typeof tempPlayer !== 'undefined') {
 
               //translate the artworldCoordinates to Phaser coordinates
-              tempPlayer.x = CoordinatesTranslator.artworldToPhaser2D(scene.worldSize.x, player.posX)
-              tempPlayer.y = CoordinatesTranslator.artworldToPhaser2D(scene.worldSize.y, player.posY)
+              //console.log(tempPlayer.x , tempPlayer.y)
+              tempPlayer.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, player.posX)
+              tempPlayer.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, player.posY)
+              //console.log(tempPlayer.x , tempPlayer.y)
 
               // tempPlayer.x = player.posX
               // tempPlayer.y = player.posY

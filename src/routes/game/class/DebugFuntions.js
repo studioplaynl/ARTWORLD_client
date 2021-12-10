@@ -55,7 +55,7 @@ class DebugFuntions {
 
             console.log("locationDialogBoxContainersGroup children")
             console.log(scene.locationDialogBoxContainersGroup.getChildren())
-            
+
 
         }, scene);
 
@@ -94,9 +94,29 @@ class DebugFuntions {
 
         }, scene);
 
+        scene.input.keyboard.on('keyup-T', function (event) {
+
+            console.log('T key')
+            console.log("::Test Coordinates Scene::")
+
+
+
+            this.scene.stop(ManageSession.currentlocation);
+            this.scene.start("TestCoordinates")
+
+        }, scene);
+
         scene.input.keyboard.on('keyup-P', function (event) {
 
-            console.log('P key');
+            console.log('P key')
+            console.log("Display Mouse coordinates")
+            scene.input.activePointer.isDown
+
+
+
+            this.scene.stop(ManageSession.currentlocation);
+            this.scene.start("TestCoordinates")
+
         }, scene);
 
     }
