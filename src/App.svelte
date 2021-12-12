@@ -16,6 +16,7 @@
     import Friends from "./routes/friends.svelte";
     import Admin from "./routes/admin.svelte"
     import updatePage from "./routes/auth/update.svelte"
+    //import mandala from "./routes/apps/mandala.svelte"
     let isLogedIn = (detail) => {
         if ($Session != null) return true;
         else {
@@ -110,6 +111,14 @@
                 },
             ],
         }),
+        // "/mandala/:user?/:name?": wrap({
+        //     component: mandala,
+        //     conditions: [
+        //         (detail) => {
+        //             return isLogedIn(detail);
+        //         },
+        //     ],
+        // }),
         "/avatar/:user?/:name?": wrap({
             component: drawing,
             conditions: [

@@ -35,9 +35,12 @@ export default {
 	input: 'src/main.js',
 	output: {
 		sourcemap: true,
-		format: 'iife',
+		format: 'es',
 		name: 'app',
-		file: 'public/build/bundle.js'
+		dir: 'public/build',
+		//file: 'public/build/bundle.js'
+		
+		
 	},
 	plugins: [
 		svelte({
@@ -76,5 +79,7 @@ export default {
 	],
 	watch: {
 		clearScreen: false
-	}
+	},
+	experimentalCodeSplitting: true,
+	experimentalDynamicImport: true
 };

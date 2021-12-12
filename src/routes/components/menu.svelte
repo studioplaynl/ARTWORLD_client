@@ -68,6 +68,7 @@
         <li><a href="/#/match">{$_("nav.match")}</a></li>
         <li><a href="/#/drawing">{$_("nav.drawing")}</a></li>
         <li><a href="/#/stopmotion">{$_("nav.stopmotion")}</a></li>
+        <li><a href="/#/mandala">{$_("nav.mandala")}</a></li>
       </ul>
       <div
         class="userInfo"
