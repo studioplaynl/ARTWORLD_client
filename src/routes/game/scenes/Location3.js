@@ -275,13 +275,13 @@ export default class Location3 extends Phaser.Scene {
 
   generateLocations() {
     //this.location2 = this.physics.add.staticGroup();
-    this.location1 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
-    this.location1.body.setCircle(190, 12, 12)
-    this.location1.setImmovable(true)
+    // this.location1 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
+    // this.location1.body.setCircle(190, 12, 12)
+    // this.location1.setImmovable(true)
 
-    // this.location2.setData("entered", false)
-    // this.location2.setName("Location2")
-    this.createLocationDialogbox("Location1", 200, 150)
+    // // this.location2.setData("entered", false)
+    // // this.location2.setName("Location2")
+    // this.createLocationDialogbox("Location1", 200, 150)
 
 
     // //........ location3 ...................

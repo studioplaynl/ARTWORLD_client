@@ -1,6 +1,6 @@
 import { Scene3D, THREE } from "@enable3d/phaser-extension";
 import ManageSession from "../ManageSession";
-export default class Location5Scene extends Scene3D {
+export default class Location5 extends Scene3D {
   platform;
   avatar;
   avatarImage;
@@ -17,7 +17,7 @@ export default class Location5Scene extends Scene3D {
   chosenScene;
 
   constructor() {
-    super("Location5_Scene");
+    super("Location5");
   }
 
   init() {
@@ -141,7 +141,8 @@ export default class Location5Scene extends Scene3D {
       .image(60 + 80, 40, "ui_eye")
       .setOrigin(0, 0.5)
       .setDepth(1000)
-      .setScale(0.125);
+      .setScale(0.125)
+      .setInteractive({ useHandCursor: true });
 
     this.zoomIn = this.add
       .image(60 + 160, 40, "ui_magnifier_plus")
@@ -157,6 +158,10 @@ export default class Location5Scene extends Scene3D {
     this.zoomOut.on("pointerup", () => {
       this.third.camera.position.set(0, (this.zooming += 10), 0);
     });
+
+    this.zoom.on("pointerup", () => {
+      this.third.camera.position.set(0, this.zooming = 90, 0);
+    })
   }
 
   addGroundPlatform() {
@@ -244,25 +249,25 @@ export default class Location5Scene extends Scene3D {
       .setScale(0.075)
       .setInteractive({ useHandCursor: true });
     
-    this.backButton.on("pointerup", () => {
-      const currentLocation = ManageSession.currentLocation.split("_");
-      ManageSession.socket.rpc("leave", currentLocation[0])
+  this.backButton.on("pointerup", () => {
+    const currentLocation = ManageSession.currentLocation.split("_");
+    ManageSession.socket.rpc("leave", currentLocation[0])
 
-      const previousLocation = ManageSession.previousLocation.split("_")
-      const targetScene = this.scene.get(ManageSession.previousLocation)
+    const previousLocation = ManageSession.previousLocation.split("_")
+    const targetScene = this.scene.get(ManageSession.previousLocation)
 
-      targetScene.player.location = previousLocation[0]
+    targetScene.player.location = previousLocation[0]
 
-      setTimeout(() => {
+    setTimeout(() => {
 
-        ManageSession.location = previousLocation[0]
-        ManageSession.createPlayer = true
-        ManageSession.getStreamUsers("join", previousLocation[0])
-        this.scene.stop(ManageSession.currentLocation)
+      ManageSession.location = previousLocation[0]
+      ManageSession.createPlayer = true
+      ManageSession.getStreamUsers("join", previousLocation[0])
+      this.scene.stop(ManageSession.currentLocation)
 
-        this.scene.start(ManageSession.previousLocation)
+      this.scene.start(ManageSession.previousLocation)
 
-      }, 500)
+    }, 500)
     });
   }
 
