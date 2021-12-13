@@ -107,6 +107,7 @@ export default class UI_Scene extends Phaser.Scene {
             this.scene.stop("Location1");
             this.scene.start("ArtworldAmsterdam")
           }, 500)
+
         } else {
           // in all other cases the back button brings the player from the respective scene
           // to the location1 scene
@@ -128,6 +129,7 @@ export default class UI_Scene extends Phaser.Scene {
             this.scene.start(ManageSession.previousLocation)
 
           }, 500)
+          
         }
       });
 

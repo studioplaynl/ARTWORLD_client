@@ -4,7 +4,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
     constructor(config) {
 
-        super(config.scene)
+        super(config.scene, config.x, config.y)
 
         // this.scene = scene
         this.scene = config.scene
@@ -21,6 +21,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.color1 = config.color1
         this.color2 = config.color2
         this.color3 = config.color3
+        this.draggable = config.draggable
         this.location
 
         //TODO don't make a location in a container, the depth order seems to be shared across the contianer, so we can't make the enter button appear above the player, and the location below the player
@@ -78,6 +79,20 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.add(locationDescription)
         this.add(this.backButton)
 
+        this.setSize(width, width, false)
+
+        if (this.draggable) {
+            this.setInteractive()
+                .on('drag', (p, x, y) => {
+                    this.setX(p.worldX)
+                    this.setY(p.worldY)
+                })
+                .on('pointerdown', (p, x, y) => {
+                    // this._dragX = x
+                    // this._dragY = y
+                })
+        }
+
         this.backButton.on('pointerdown', () => {
 
         })
@@ -105,6 +120,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
+
+        if (this.draggable) {
+            this.scene.input.setDraggable(this, true)
+        }
     }
 
 
