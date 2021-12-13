@@ -22,6 +22,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.color2 = config.color2
         this.color3 = config.color3
         this.draggable = config.draggable
+        this.userHome = config.userHome
         this.location
 
         //TODO don't make a location in a container, the depth order seems to be shared across the contianer, so we can't make the enter button appear above the player, and the location below the player
@@ -152,6 +153,12 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         ManageSession.createPlayer = true
         ManageSession.getStreamUsers("join", this.locationDestination)
         this.scene.scene.stop(this.scene.scene.key)
-        this.scene.scene.start(this.locationDestination)
+        //check if it is a userHome, pass data to the userHome (user_id)
+        if (this.userHome) {
+            this.scene.scene.start(this.locationDestination, {user_id: this.userHome})
+            console.log("UserHome defined: ", this.userHome)
+        } else {
+            this.scene.scene.start(this.locationDestination)
+        }
     }
 }

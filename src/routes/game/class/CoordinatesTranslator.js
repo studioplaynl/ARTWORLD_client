@@ -49,7 +49,7 @@ class CoordinatesTranslator {
     //single value calculation
     Phaser2DToArtworldX(worldAxis, a) {
         // usage: ONLY X! 
-        // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
+        // pass the this.worldSize.x or worldSize.y and the coordinate you want to do the calculation on
 
         a = a - (worldAxis / 2) //* correct
 

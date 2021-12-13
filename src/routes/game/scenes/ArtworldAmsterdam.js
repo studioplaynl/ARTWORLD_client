@@ -1,6 +1,6 @@
 import { CONFIG } from "../config.js";
 import ManageSession from "../ManageSession"
-import { getAccount } from '../../../api.js'
+import { listObjects } from '../../../api.js'
 
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
@@ -42,6 +42,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.playerAvatarKey = ""
     this.createdPlayer = false
 
+    this.homes = []
+    this.homesRepreseneted = []
+    this.homesGenerate = false
+
     this.offlineOnlineUsers
 
     this.location = "ArtworldAmsterdam"
@@ -76,6 +80,14 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async preload() {
     Preloader.Loading(this) //.... PRELOADER VISUALISER
+
+    //get a list of homes from users in ArtworldAmsterdam
+    await listObjects("home", null, 100).then((rec) => {
+      this.homes = rec.objects
+      console.log(this.homes)
+      this.homesGenerate = true
+    })
+
   }
 
   async create() {
@@ -120,7 +132,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //.......... end INPUT ................................................................................
 
     //.......... locations ................................................................................
-    this.generateLocations()
+    //generating homes from online query is not possible in create, because the server query can take time
+    //this.generateLocations()
     //.......... end locations ............................................................................
 
     //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
@@ -139,16 +152,36 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //......... end UI Scene ..............................................................................
   }
 
+  generateHomes() {
+
+    //check if server query is finished, if there are homes to make
+    if (this.homes != null && this.homesGenerate) {
+      console.log("generate homes!")
+      
+      this.homes.forEach((element, index) => {
+        // console.log(element.collection)
+        // console.log(element.value.posX)
+
+        this.homesRepreseneted[index] = new GenerateLocation({ scene: this, userHome: element.user_id, draggable: false, type: "isoBox", x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX), y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY), locationDestination: "DefaultUserHome", locationText: element.user_id, locationImage: "museum", backButtonImage: "enter_button", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
+      
+      }) //end forEach
+
+      this.homesGenerate = false
+    }
+  }
+
   generateLocations() {
     let location1Vector = new Phaser.Math.Vector2(-100, -100)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
-    const location1 = new GenerateLocation({ scene: this, draggable: true, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location1", locationText: "Location 1", locationImage: "museum", backButtonImage: "enter_button",  fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
+    const location1 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location1", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 1", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
+
 
     location1Vector = new Phaser.Math.Vector2(-100, 100)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
-    const location2 = new GenerateLocation({ scene: this, draggable: true, type: "isoTriangle", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 2", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
+    const location2 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 2", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
+
   }
 
   update(time, delta) {
@@ -156,6 +189,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     Player.loadOnlinePlayers(this)
     Player.receiveOnlinePlayersMovement(this)
     Player.loadOnlineAvatar(this)
+    this.generateHomes()
 
     this.gameCam.zoom = this.UI_Scene.currentZoom
     //.......................................................................
