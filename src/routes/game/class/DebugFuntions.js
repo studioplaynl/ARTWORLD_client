@@ -1,6 +1,6 @@
 import ManageSession from "../ManageSession";
 import { getAccount, updateObject, listObjects } from '../../../api.js'
-
+import CoordinatesTranslator from "./CoordinatesTranslator";
 
 class DebugFuntions {
     constructor(scene) {
@@ -55,7 +55,7 @@ class DebugFuntions {
 
             console.log("locationDialogBoxContainersGroup children")
             console.log(scene.locationDialogBoxContainersGroup.getChildren())
-            
+
 
         }, scene);
 
@@ -94,9 +94,28 @@ class DebugFuntions {
 
         }, scene);
 
+        scene.input.keyboard.on('keyup-T', function (event) {
+
+            console.log('T key')
+            console.log("::Test Coordinates Scene::")
+
+
+
+            this.scene.stop(ManageSession.currentlocation);
+            this.scene.start("TestCoordinates")
+
+        }, scene);
+
         scene.input.keyboard.on('keyup-P', function (event) {
 
-            console.log('P key');
+            console.log('P key')
+            console.log("Display Mouse coordinates")
+            console.log("World Coordinates: ")
+            console.log(scene.input.activePointer.worldX, scene.input.activePointer.worldY)
+            console.log("artworldCoordinates: ")
+            console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.input.activePointer.worldX))
+            console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.y, scene.input.activePointer.worldY))
+
         }, scene);
 
     }

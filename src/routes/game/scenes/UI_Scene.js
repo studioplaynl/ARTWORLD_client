@@ -143,7 +143,8 @@ export default class UI_Scene extends Phaser.Scene {
         .image(60 + 80, 40, "ui_eye")
         .setOrigin(0, 0.5)
         .setDepth(1000)
-        .setScale(width / (width / this.camUI.zoom) / 8);
+        .setScale(width / (width / this.camUI.zoom) / 8)
+        .setInteractive({ useHandCursor: true });
 
       this.zoomIn = this.add
         .image(60 + 160, 40, "ui_magnifier_plus")
@@ -164,6 +165,10 @@ export default class UI_Scene extends Phaser.Scene {
         }
         //console.log(this.currentZoom);
       });
+
+      this.zoom.on("pointerup", () => {
+        this.currentZoom = 1
+      })
     } else {
       this.zoomIn
         .setPosition(

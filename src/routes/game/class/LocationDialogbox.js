@@ -1,23 +1,21 @@
 import ManageSession from "../ManageSession"
 
-class LocationDialogbox {
-    constructor(scene) {
-        this.locationGameObject
-        this.scene = scene
-        this.show = false
-        this.player
-    }
+export default class LocationDialogbox extends Phaser.GameObjects.Container{
+    constructor(scene, locationObject, locationName, mainWidth, mainHeight) {
 
-    create(scene, locationObject, locationName, mainWidth, mainHeight) {
-
-        scene.add.existing(this)
-        //scene.physics.add.existing(this)
+        super(scene)
 
         this.locationGameObject = locationObject
         this.scene = scene
+        this.show = false
+        this.locationName = locationName
+        //this.player = scene.player
+
+        // scene.add.existing(this)
+        // scene.physics.add.existing(this)
+
+        console.log("LocaionDialogBox this.scene")
         console.log(this.scene)
-        // console.log(scene)
-        this.player = scene.player
 
         locationObject.setData("entered", false)
         locationObject.setName(locationName)
@@ -44,10 +42,11 @@ class LocationDialogbox {
         nameTexture.on('pointerdown', () => { this.enterLocationScene(scene, locationObject.name) });
 
         //create container that holds all of the dialogbox: can be moved and hidden
-        let nameContainer = "scene." + locationObject.name + "DialogBoxContainer"
+        let nameContainer = "this." + locationObject.name + "DialogBoxContainer"
 
         // nameContainer = scene.add.container(locationObject.x - (mainWidth / 2), locationObject.y - (mainHeight / 2), [nameTexture, nameText]).setDepth(900)
         nameContainer = scene.add.container(locationObject.body.x + (locationObject.body.width / 4), locationObject.body.y + (locationObject.body.height / 4), [nameTexture, nameText]).setDepth(900)
+
 
         nameContainer.setVisible(false)
         nameContainer.setName(locationObject.name)
@@ -57,7 +56,7 @@ class LocationDialogbox {
 
         //call overlap between player and the location, set the callback function and scope
         // more info about passing arguments to callback function https://phaser.discourse.group/t/passing-argments-into-functions/4411/2
-        scene.physics.add.overlap(scene.player, locationObject, this.confirmEnterLocation, null, this)
+        scene.physics.add.overlap(scene.player, locationObject, this.confirmEnterLocation, null, scene)
 
 
         scene.add.existing(this)
@@ -84,9 +83,10 @@ class LocationDialogbox {
 
     enterLocationDialogBox(locationObject, show) {
         //console.log(locationObject)
-        let scene = locationObject.scene || this.scene
+        let scene = this.scene
+        //console.log(this.scene)
 
-        scene.add.existing(this)
+        //scene.add.existing(this)
         //scene.physics.add.existing(this)
 
         let nameContainer = locationObject.name
@@ -132,4 +132,4 @@ class LocationDialogbox {
     }
 }
 
-export default new LocationDialogbox()
+//export default new LocationDialogbox()

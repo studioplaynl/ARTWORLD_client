@@ -225,8 +225,11 @@ class ManageSession {
   sendMoveMessage(scene, posX, posY) {
     //transpose phaser coordinates to artworld coordinates
     //console.log(scene)
-    posX = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.x, posX)
-    posY = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.y, posY)
+
+    //console.log(posX, posY)
+    posX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, posX)
+    posY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, posY)
+    //console.log(posX, posY)
 
     var opCode = 1;
     var data =
