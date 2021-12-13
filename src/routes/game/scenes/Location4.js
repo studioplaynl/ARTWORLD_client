@@ -1,7 +1,11 @@
 import { CONFIG } from "../config.js";
 import ManageSession from "../ManageSession";
-import Player from "../class/Player.js";
+import PlayerDefault from '../class/PlayerDefault'
+import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js";
+import Player from '../class/Player.js'
 import DebugFuntions from "../class/DebugFuntions.js";
+import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
+import GenerateLocation from "../class/GenerateLocation.js";
 
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount, listImages } from '../../../api.js';
@@ -12,6 +16,8 @@ import { location } from "svelte-spa-router";
 export default class Location4 extends Phaser.Scene {
   constructor() {
     super("Location4");
+
+    this.worldSize = new Phaser.Math.Vector2(3000, 3000)
 
     this.debug = false
 
@@ -26,6 +32,9 @@ export default class Location4 extends Phaser.Scene {
     this.tempAvatarName = ""
     this.loadedAvatars = [];
 
+    this.player
+    this.playerShadow
+    this.playerContainer
     this.playerAvatarPlaceholder = "playerAvatar";
     this.playerAvatarKey = ""
     this.createdPlayer = false;
@@ -84,33 +93,40 @@ export default class Location4 extends Phaser.Scene {
 
   async create() {
     
-    ManageSession.currentLocation = this.scene.key;
+    // for back button history
+    ManageSession.locationHistory.push(this.scene.key);
 
     //timers
     ManageSession.updateMovementTimer = 0;
     ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
 
     //.......  SOCKET ..........................................................................
-    this.playerIdText = ManageSession.sessionStored.user_id;
+    this.playerIdText = ManageSession.userProfile.id;
 
-    ManageSession.playerObjectSelf = JSON.parse(localStorage.getItem("profile"));
+    // ManageSession.playerObjectSelf = JSON.parse(localStorage.getItem("profile"));
     // console.log("ManageSession.playerObjectSelf")
     // console.log(ManageSession.playerObjectSelf)
     ManageSession.createPlayer = true
-    console.log("ManageSession.createPlayer: ")
-    console.log(ManageSession.createPlayer)
+    // console.log("ManageSession.createPlayer: ")
+    // console.log(ManageSession.createPlayer)
 
     //ManageSession.createSocket();
     //....... end SOCKET .......................................................................
 
     this.generateBackground()
     //.......  PLAYER ..........................................................................
+    this.playerAvatarPlaceholder = "avatar1";
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
+
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
 
     //create player group
     this.playerGroup = this.add.group();
+    this.playerGroup.add(this.player);
+    this.playerGroup.add(this.playerShadow);
 
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
-    this.playerAvatarPlaceholder = "avatar1";
+    
     // //1
     // this.player = this.physics.add
     //   .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
@@ -118,39 +134,37 @@ export default class Location4 extends Phaser.Scene {
     // //end 1
 
     //2
-    this.player = this.physics.add
-      .sprite(300, 800, this.playerAvatarPlaceholder)
-      .setDepth(101);
-
-    this.player.body.onOverlap = true;
+    // this.player = this.physics.add
+    //   .sprite(300, 800, this.playerAvatarPlaceholder)
+    //   .setDepth(101);
+    this.onlinePlayersGroup = this.add.group();
+    // this.player.body.onOverlap = true;
     //end 2
 
-    this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
+    // this.playerShadow = this.add.sprite(this.player.x + this.playerShadowOffset, this.player.y + this.playerShadowOffset, this.playerAvatarPlaceholder).setDepth(100);
 
     // this.playerShadow.anchor.set(0.5);
-    this.playerShadow.setTint(0x000000);
-    this.playerShadow.alpha = 0.2;
+    // this.playerShadow.setTint(0x000000);
+    // this.playerShadow.alpha = 0.2;
 
-    this.playerGroup.add(this.player);
-    this.playerGroup.add(this.playerShadow);
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
     //  Our player animations, turning, walking left and walking right.
-    this.playerMovingKey = "moving"
-    this.playerStopKey = "stop"
+    // this.playerMovingKey = "moving"
+    // this.playerStopKey = "stop"
 
-    this.anims.create({
-      key: this.playerMovingKey,
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
-      frameRate: 20,
-      repeat: -1,
-    });
+    // this.anims.create({
+    //   key: this.playerMovingKey,
+    //   frames: this.anims.generateFrameNumbers("avatar1", { start: 0, end: 8 }),
+    //   frameRate: 20,
+    //   repeat: -1,
+    // });
 
-    this.anims.create({
-      key: this.playerStopKey,
-      frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
-    });
+    // this.anims.create({
+    //   key: this.playerStopKey,
+    //   frames: this.anims.generateFrameNumbers("avatar1", { start: 4, end: 4 }),
+    // });
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
@@ -163,7 +177,7 @@ export default class Location4 extends Phaser.Scene {
     //setBounds has to be set before follow, otherwise the camera doesn't follow!
 
     // grid
-    this.gameCam.setBounds(0, 0, 6200, 6200);
+    this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     this.gameCam.zoom = 1
     // end grid
     this.gameCam.startFollow(this.player);
@@ -179,7 +193,7 @@ export default class Location4 extends Phaser.Scene {
     this.locationDialogBoxContainersGroup = this.add.group();
 
 
-    this.generateLocations()
+    // this.generateLocations()
 
     this.add.image(200, 200, "exhibit1").setOrigin(0).setScale(.53)
     this.add.image(600, 200, "exhibit2").setOrigin(0).setScale(.45)
@@ -257,110 +271,110 @@ export default class Location4 extends Phaser.Scene {
     // this.createLocationDialogbox("Location3", 200, 150)
 
     //........ location1 ...................
-    this.location1 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
-    this.physics.add.existing(this.location1);
-    this.location1.body.setSize(this.location1.width, this.location1.height * 1.4)
-    this.location1.body.setOffset(0, -(this.location1.height / 1.4))
-    //this.location4.setImmovable(true)
-    this.createLocationDialogbox("Location1", 200, 150)
+    // this.location1 = this.add.isobox(200, 1200, 100, 150, 0xffe31f, 0xf2a022, 0xf8d80b);
+    // this.physics.add.existing(this.location1);
+    // this.location1.body.setSize(this.location1.width, this.location1.height * 1.4)
+    // this.location1.body.setOffset(0, -(this.location1.height / 1.4))
+    // //this.location4.setImmovable(true)
+    // this.createLocationDialogbox("Location1", 200, 150)
   }
 
-  createLocationDialogbox(locationName, mainWidth, mainHeight) {
-    let location = "this." + locationName
-    location = eval(location)
+  // createLocationDialogbox(locationName, mainWidth, mainHeight) {
+  //   let location = "this." + locationName
+  //   location = eval(location)
 
-    location.setData("entered", false)
-    location.setName(locationName)
+  //   location.setData("entered", false)
+  //   // location.setName(locationName)
 
-    //create variable for the text of the dialog box, set the text after
-    let nameText = "this." + location.name + "DialogBox"
-    nameText = this.add.text(mainWidth - 60, mainHeight - 30, locationName, { fill: '#000' })
+  //   //create variable for the text of the dialog box, set the text after
+  //   let nameText = "this." + location.name + "DialogBox"
+  //   nameText = this.add.text(mainWidth - 60, mainHeight - 30, locationName, { fill: '#000' })
 
-    //create variable to hold dialogbox graphics
-    let nameBox = "this." + location.name + "DialogBox"
+  //   //create variable to hold dialogbox graphics
+  //   let nameBox = "this." + location.name + "DialogBox"
 
-    //background panel for dialogbox
-    nameBox = this.add.graphics();
-    nameBox.fillStyle(0xfffff00, 0.4)
-    nameBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
-    nameBox.setVisible(false)
+  //   //background panel for dialogbox
+  //   nameBox = this.add.graphics();
+  //   nameBox.fillStyle(0xfffff00, 0.4)
+  //   nameBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
+  //   nameBox.setVisible(false)
 
-    //create variable for texture that holds the graphics and the clickable area for the dialogbox
-    let nameTexture = "this." + location.name + "Texture"
+  //   //create variable for texture that holds the graphics and the clickable area for the dialogbox
+  //   let nameTexture = "this." + location.name + "Texture"
 
-    nameTexture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
-    nameTexture.draw(nameBox);
-    nameTexture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains)
-    nameTexture.on('pointerdown', () => { this.enterLocationScene(location.name) });
+  //   nameTexture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
+  //   nameTexture.draw(nameBox);
+  //   nameTexture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains)
+  //   nameTexture.on('pointerdown', () => { this.enterLocationScene(location.name) });
 
-    //create container that holds all of the dialogbox: can be moved and hidden
-    let nameContainer = "this." + location.name + "DialogBoxContainer"
+  //   //create container that holds all of the dialogbox: can be moved and hidden
+  //   let nameContainer = "this." + location.name + "DialogBoxContainer"
 
-    // nameContainer = this.add.container(location.x - (mainWidth / 2), location.y - (mainHeight / 2), [nameTexture, nameText]).setDepth(900)
-    nameContainer = this.add.container(location.body.x + (location.body.width / 4), location.body.y + (location.body.height / 4), [nameTexture, nameText]).setDepth(900)
+  //   // nameContainer = this.add.container(location.x - (mainWidth / 2), location.y - (mainHeight / 2), [nameTexture, nameText]).setDepth(900)
+  //   nameContainer = this.add.container(location.body.x + (location.body.width / 4), location.body.y + (location.body.height / 4), [nameTexture, nameText]).setDepth(900)
 
-    nameContainer.setVisible(false)
-    nameContainer.setName(location.name)
+  //   nameContainer.setVisible(false)
+  //   nameContainer.setName(location.name)
 
-    //add everything to the container
-    this.locationDialogBoxContainersGroup.add(nameContainer);
+  //   //add everything to the container
+  //   this.locationDialogBoxContainersGroup.add(nameContainer);
 
-    //call overlap between player and the location, set the callback function and scope
-    this.physics.add.overlap(this.player, location, this.confirmEnterLocation, null, this)
-  }
+  //   //call overlap between player and the location, set the callback function and scope
+  //   this.physics.add.overlap(this.player, location, this.confirmEnterLocation, null, this)
+  // }
 
-  confirmEnterLocation(player, location, show) {
-    if (!location.getData("entered")) {
-      //start event
-      show = false
-      this.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], callbackScope: this, loop: false })
+  // confirmEnterLocation(player, location, show) {
+  //   if (!location.getData("entered")) {
+  //     //start event
+  //     show = false
+  //     this.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], callbackScope: this, loop: false })
 
-      //show the box
-      show = true
-      this.enterLocationDialogBox(player, location, show)
-      location.setData("entered", true)
-    }
-  }
+  //     //show the box
+  //     show = true
+  //     this.enterLocationDialogBox(player, location, show)
+  //     location.setData("entered", true)
+  //   }
+  // }
 
-  enterLocationDialogBox(player, location, show) {
-    let container = "this." + location.name + "DialogBoxContainer"
-    container = eval(container)
+  // enterLocationDialogBox(player, location, show) {
+  //   let container = "this." + location.name + "DialogBoxContainer"
+  //   container = eval(container)
 
-    let nameContainer = location.name
-    let search = { name: location }
+  //   let nameContainer = location.name
+  //   let search = { name: location }
 
-    container = Phaser.Actions.GetFirst(this.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer });
+  //   container = Phaser.Actions.GetFirst(this.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer });
 
-    if (show) {
-      container.setVisible(show)
-    } else {
-      container.setVisible(show)
-      location.setData("entered", show)
-    }
-  }
+  //   if (show) {
+  //     container.setVisible(show)
+  //   } else {
+  //     container.setVisible(show)
+  //     location.setData("entered", show)
+  //   }
+  // }
 
-  enterLocationScene(location) {
-    this.physics.pause()
-    this.player.setTint(0xff0000)
+  // enterLocationScene(location) {
+  //   this.physics.pause()
+  //   this.player.setTint(0xff0000)
 
-    //player has to explicitly leave the stream it was in!
-    ManageSession.socket.rpc("leave", this.location)
+  //   //player has to explicitly leave the stream it was in!
+  //   ManageSession.socket.rpc("leave", this.location)
 
-    console.log(this.location)
+  //   console.log(this.location)
 
-    this.player.location = location
-    console.log("this.player.location:")
-    console.log(this.player.location)
+  //   this.player.location = location
+  //   console.log("this.player.location:")
+  //   console.log(this.player.location)
 
-    setTimeout(() => {
-      ManageSession.location = location
+  //   setTimeout(() => {
+  //     ManageSession.location = location
 
-      console.log(ManageSession.location)
-      ManageSession.createPlayer = true
-      ManageSession.getStreamUsers("join", location)
-      this.scene.start(location)
-    }, 1000)
-  }
+  //     console.log(ManageSession.location)
+  //     ManageSession.createPlayer = true
+  //     ManageSession.getStreamUsers("join", location)
+  //     this.scene.start(location)
+  //   }, 1000)
+  // }
 
   generateBackground() {
     //fill in textures

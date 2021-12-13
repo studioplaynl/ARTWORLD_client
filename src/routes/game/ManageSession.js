@@ -45,8 +45,7 @@ class ManageSession {
     this.launchLocation = "Location1" //default
 
     // for back button
-    this.currentLocation = null
-    this.previousLocation = null
+    this.locationHistory = []
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";

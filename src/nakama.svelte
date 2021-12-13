@@ -1,7 +1,7 @@
 <script context="module">
   import { Client } from "@heroiclabs/nakama-js";
 
-  	// export const client = new Client("RHSGvCuxJRmEf347", "localhost", "7350");
+    // export const client = new Client("RHSGvCuxJRmEf347", "localhost", "7350");
   
     // export const SSL = false;
 
@@ -16,3 +16,4 @@
     SSL
   );
 </script>
+

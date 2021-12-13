@@ -3,8 +3,6 @@ import ManageSession from "../ManageSession"
 
 export default class Location2 extends Scene3D {
 
-  zoomingDistance;
-
   constructor() {
     super("Location2");
     this.move = { x: 0, y: 0, z: 0 };
@@ -17,7 +15,8 @@ export default class Location2 extends Scene3D {
   async create() {
     
     this.scene.stop("UI_Scene");
-    ManageSession.currentLocation = this.scene.key;
+    // for back button history
+    ManageSession.locationHistory.push(this.scene.key);
 
     const { ground } = await this.third.warpSpeed("-orbitControls");
 
@@ -96,29 +95,24 @@ export default class Location2 extends Scene3D {
       .setInteractive({ useHandCursor: true });
     
     this.backButton.on("pointerup", () => {
-      const currentLocation = ManageSession.currentLocation.split("_");
-      ManageSession.socket.rpc("leave", currentLocation[0])
-
-      const previousLocation = ManageSession.previousLocation.split("_")
-      const targetScene = this.scene.get(ManageSession.previousLocation)
-
-      targetScene.player.location = previousLocation[0]
-
+      // to leave the last added (currentLocation) scene and delete it from the array of locations
+      // to enter the previous scene (previousLocation) 
+      const currentLocation = ManageSession.locationHistory.pop();
+      const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
+      
+      ManageSession.socket.rpc("leave", currentLocation)
       setTimeout(() => {
-
-        ManageSession.location = previousLocation[0]
+        ManageSession.location = previousLocation
         ManageSession.createPlayer = true
-        ManageSession.getStreamUsers("join", previousLocation[0])
-        this.scene.stop(ManageSession.currentLocation)
-
-        this.scene.start(ManageSession.previousLocation)
-
+        ManageSession.getStreamUsers("join", previousLocation)
+        this.scene.stop(currentLocation)
+        this.scene.start(previousLocation)
       }, 500)
     });
   }
 
   async addZoomingButtons() {
-    this.zooming = 90;
+    this.zooming = 30;
     // view from top
     this.third.camera.position.set(0, this.zooming, 0);
     this.third.camera.lookAt(0, 0, 0);
@@ -137,7 +131,8 @@ export default class Location2 extends Scene3D {
       .image(60 + 80, 40, "ui_eye")
       .setOrigin(0, 0.5)
       .setDepth(1000)
-      .setScale(0.125);
+      .setScale(0.125)
+      .setInteractive({ useHandCursor: true });
 
     this.zoomIn = this.add
       .image(60 + 160, 40, "ui_magnifier_plus")
@@ -153,6 +148,10 @@ export default class Location2 extends Scene3D {
     this.zoomOut.on("pointerup", () => {
       this.third.camera.position.set(0, (this.zooming += 10), 0);
     });
+
+    this.zoom.on("pointerup", () => {
+      this.third.camera.position.set(0, this.zooming = 30, 0);
+    })
   }
 
   update() {

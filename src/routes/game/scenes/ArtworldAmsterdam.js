@@ -92,9 +92,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async create() {
 
-    // for back button history
-    ManageSession.currentLocation = this.scene.key
-    console.log("this.scene.key", this.scene.key)
+    // push this location only if it doesn't exist in the array
+    if (ManageSession.locationHistory.every(location => location != "ArtworldAmsterdam")) {
+      ManageSession.locationHistory.push(this.scene.key);
+    }
 
     //timers
     ManageSession.updateMovementTimer = 0;
@@ -133,7 +134,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //.......... locations ................................................................................
     //generating homes from online query is not possible in create, because the server query can take time
-    //this.generateLocations()
+    this.generateLocations()
     //.......... end locations ............................................................................
 
     //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
@@ -171,13 +172,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   generateLocations() {
-    let location1Vector = new Phaser.Math.Vector2(-100, -100)
+    let location1Vector = new Phaser.Math.Vector2(-400, -100)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
     const location1 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location1", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 1", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
 
 
-    location1Vector = new Phaser.Math.Vector2(-100, 100)
+    location1Vector = new Phaser.Math.Vector2(-400, 100)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
     const location2 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 2", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })

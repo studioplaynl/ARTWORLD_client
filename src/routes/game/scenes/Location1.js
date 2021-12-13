@@ -133,8 +133,14 @@ export default class Location1 extends Phaser.Scene {
   }
 
   async create() {
-    // for back button history
-    ManageSession.currentLocation = this.scene.key;
+
+    // push this location only if it doesn't exist in the array
+    if (ManageSession.locationHistory.every(location => location != "Location1")) {
+      ManageSession.locationHistory.push(this.scene.key);
+    }
+
+    
+    console.log("History of locations after I entered to location1", ManageSession.locationHistory)
 
     //timers
     ManageSession.updateMovementTimer = 0;
@@ -541,7 +547,6 @@ export default class Location1 extends Phaser.Scene {
   };
 
   generateLocations() {
-    
     let location1Vector = new Phaser.Math.Vector2(-200, 200)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
     const location2 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "ball", backButtonImage: "enter_button", locationText: "Location 2", fontColor: 0x8dcb0e })
@@ -552,7 +557,7 @@ export default class Location1 extends Phaser.Scene {
 
     location1Vector = new Phaser.Math.Vector2(200, 200)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
-    const location4 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location4", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 4", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
+    const location4 = new GenerateLocation({ scene: this, type: "isoTriangle", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location4", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 4", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
 
     location1Vector = new Phaser.Math.Vector2(200, -200)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
