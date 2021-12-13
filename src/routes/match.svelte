@@ -2,7 +2,7 @@
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
-    import {updateObject, listObjects, deleteObject} from "../api"
+    import {updateObject, listObjects, deleteObject, convertImage} from "../api"
     //import { writable } from "svelte/store";
 
     const verboseLogging = false;
@@ -151,6 +151,17 @@ async function getLocations() {
     console.log(locations.objects)   
 }
 
+////////////////////////// image converter /////////////////////////////
+
+let imgUrl = "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg"
+let imgSize = "64"
+let fileFormat = "heic"
+let url
+
+async function convert() {
+    url = await convertImage(imgUrl,imgSize,fileFormat)
+    console.log(url)
+}
     
 </script>
 
@@ -211,6 +222,16 @@ async function getLocations() {
         <button on:click="{async ()=>{await deleteObject(location.collection,location.key);getLocations()}}">delete</button>
         </div>
     {/each}
+
+    <h2>Get Converted Image</h2>
+    <labe>img url</labe>
+    <input type="text" bind:value="{imgUrl}">
+
+    <input type="text" bind:value="{imgSize}">
+    <input type="text" bind:value="{fileFormat}"> 
+    <button on:click="{convert}">Convert</button>
+
+    <img src="{url}">
 
 </main>
 

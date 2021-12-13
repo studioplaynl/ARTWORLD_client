@@ -268,11 +268,8 @@ export async function deleteObjectAdmin(id, type, name) {
 
 export async function convertImage(path,size, format) {
   let payload = {path,size, format};
-
-
   const rpcid = "convert_image";
-   user = await client.rpc(Sess, rpcid, payload)
-   console.log(user)
-   if(user.payload.status != "succes") Error.update(er => er = "could'nt convert image")
-  return fileurl.payload.url
+   let user = await client.rpc(Sess, rpcid, payload)
+   if(!!!user.payload.url) Error.update(er => er = "could'nt convert image")
+  return user.payload.url
 }
