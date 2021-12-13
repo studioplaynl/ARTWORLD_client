@@ -1,5 +1,5 @@
 <script>
-  import {listImages, getAccount} from '../api.js';
+  import {listImages, getAccount, convertImage} from '../api.js';
   import { Session } from "../session.js";
   import { client } from "../nakama.svelte";
   import { _ } from 'svelte-i18n'
@@ -37,6 +37,11 @@
           }
         },
         sortable: true,
+      },
+      {
+        key: "voorbeeld",
+        title: "voorbeeld",
+        value: v => `<img src="${v.value.url}">`
       },
       {
         key: "title",
@@ -136,12 +141,16 @@ function moveToTrash(key) {
     art = [].concat(drawings)
     art = art.concat(stopMotion)
 
-    art.forEach((item, index) => {
+    art.forEach(async (item, index) => {
       if(item.value.status === "trash"){
         trash.push(item)
         delete art[index]
       }
+      item.value.url = await convertImage(item.value.jpeg, "64")
+      console.log(item.value.url)
+      art = art;
     })
+
     trash = trash;
 
   
