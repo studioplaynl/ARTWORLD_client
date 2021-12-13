@@ -11,6 +11,7 @@ import DebugFuntions from "../class/DebugFuntions.js";
 import LocationDialogbox from "../class/LocationDialogbox.js";
 import GraffitiWall from "../class/GraffitiWall.js";
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
+import GenerateLocation from "../class/GenerateLocation.js";
 
 export default class Location1 extends Phaser.Scene {
 
@@ -162,7 +163,8 @@ export default class Location1 extends Phaser.Scene {
     this.playerAvatarPlaceholder = "avatar1";
 
     //*create deafult player and playerShadow
-    this.player = new PlayerDefault(this, 300, 800, this.playerAvatarPlaceholder)
+    // this.player = new PlayerDefault(this, 300, 800, this.playerAvatarPlaceholder)
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
 
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
     
@@ -188,7 +190,7 @@ export default class Location1 extends Phaser.Scene {
     // // end 1 and 2
     // grid
     //!setBounds has to be set before follow, otherwise the camera doesn't follow!
-    this.gameCam.setBounds(0, 0, 6200, 6200);
+    this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     this.gameCam.zoom = 1
     // end grid
     this.gameCam.startFollow(this.player);
@@ -205,7 +207,7 @@ export default class Location1 extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     //.......... end INPUT ................................................................................
 
-    this.locationDialogBoxContainersGroup = this.add.group();
+    // this.locationDialogBoxContainersGroup = this.add.group();
     this.generateLocations()
 
     // this.generateBouncingBird()
@@ -539,31 +541,46 @@ export default class Location1 extends Phaser.Scene {
   };
 
   generateLocations() {
-    this.locationDialogBoxContainersGroup = this.add.group();
+    let location1Vector = new Phaser.Math.Vector2(-200, 200)
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
+    const location2 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "ball", backButtonImage: "enter_button", locationText: "Location 2", fontColor: 0x8dcb0e })
 
-    this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
-    this.location2.body.setCircle(190, 12, 12)
-    this.location2.setImmovable(true)
+    location1Vector = new Phaser.Math.Vector2(-200, -200)
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
+    const location3 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location3", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 3", fontColor: 0x8dcb0e })
 
-    const LocationDialogBox2 = new LocationDialogbox(this, this.location2, "Location2", 200, 150, this.player)
+    location1Vector = new Phaser.Math.Vector2(200, 200)
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
+    const location4 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location4", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 4", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
 
-    //........ location3 ...................
-    this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    this.physics.add.existing(this.location3);
-    this.location3.body.setSize(this.location3.width, this.location3.height)
-    this.location3.body.setOffset(0, -(this.location3.height / 4))
+    location1Vector = new Phaser.Math.Vector2(200, -200)
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
+    const location5 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location5", locationImage: "entrance", backButtonImage: "enter_button", locationText: "Location 5", fontColor: 0x8dcb0e })
+    // this.locationDialogBoxContainersGroup = this.add.group();
+
+    // this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
+    // this.location2.body.setCircle(190, 12, 12)
+    // this.location2.setImmovable(true)
+
+    // const LocationDialogBox2 = new LocationDialogbox(this, this.location2, "Location2", 200, 150, this.player)
+
+    // //........ location3 ...................
+    // this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
+    // this.physics.add.existing(this.location3);
+    // this.location3.body.setSize(this.location3.width, this.location3.height)
+    // this.location3.body.setOffset(0, -(this.location3.height / 4))
     
-    const LocationDialogBox3 = new LocationDialogbox(this, this.location3, "Location3", 200, 150)
+    // const LocationDialogBox3 = new LocationDialogbox(this, this.location3, "Location3", 200, 150)
 
-    //........ location4 ...................
-    this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
-    this.location4.setImmovable(true)
-    const LocationDialogBox4 = new LocationDialogbox(this, this.location4, "Location4", 200, 150)
+    // //........ location4 ...................
+    // this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
+    // this.location4.setImmovable(true)
+    // const LocationDialogBox4 = new LocationDialogbox(this, this.location4, "Location4", 200, 150)
 
-    // location5
-    this.location5 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(50)
-    this.location5.setImmovable(true)
-    const LocationDialogBox5 = new LocationDialogbox(this, this.location5, "Location5", 200, 150)
+    // // location5
+    // this.location5 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(50)
+    // this.location5.setImmovable(true)
+    // const LocationDialogBox5 = new LocationDialogbox(this, this.location5, "Location5", 200, 150)
 
   }
 
