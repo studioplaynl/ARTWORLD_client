@@ -52,7 +52,8 @@ export default class Location5 extends Scene3D {
   async create() {
 
     this.scene.stop("UI_Scene");
-    ManageSession.currentLocation = this.scene.key;
+    // for back button history
+    ManageSession.locationHistory.push(this.scene.key);
 
     // this disables 3d ground, blue sky and ability to move around the 3d world with mouse
     const { lights } = await this.third.warpSpeed(
@@ -250,24 +251,19 @@ export default class Location5 extends Scene3D {
       .setInteractive({ useHandCursor: true });
     
   this.backButton.on("pointerup", () => {
-    const currentLocation = ManageSession.currentLocation.split("_");
-    ManageSession.socket.rpc("leave", currentLocation[0])
-
-    const previousLocation = ManageSession.previousLocation.split("_")
-    const targetScene = this.scene.get(ManageSession.previousLocation)
-
-    targetScene.player.location = previousLocation[0]
-
+    // to leave the last added (currentLocation) scene and delete it from the array of locations
+    // to enter the previous scene (previousLocation) 
+    const currentLocation = ManageSession.locationHistory.pop();
+    const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
+    
+    ManageSession.socket.rpc("leave", currentLocation)
     setTimeout(() => {
-
-      ManageSession.location = previousLocation[0]
+      ManageSession.location = previousLocation
       ManageSession.createPlayer = true
-      ManageSession.getStreamUsers("join", previousLocation[0])
-      this.scene.stop(ManageSession.currentLocation)
-
-      this.scene.start(ManageSession.previousLocation)
-
-    }, 500)
+      ManageSession.getStreamUsers("join", previousLocation)
+      this.scene.stop(currentLocation)
+      this.scene.start(previousLocation)
+      }, 500)
     });
   }
 

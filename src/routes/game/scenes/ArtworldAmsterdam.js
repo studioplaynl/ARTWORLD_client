@@ -80,9 +80,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async create() {
 
-    // for back button history
-    ManageSession.currentLocation = this.scene.key
-    console.log("this.scene.key", this.scene.key)
+    // push this location only if it doesn't exist in the array
+    if (ManageSession.locationHistory.every(location => location != "ArtworldAmsterdam")) {
+      ManageSession.locationHistory.push(this.scene.key);
+    }
 
     //timers
     ManageSession.updateMovementTimer = 0;

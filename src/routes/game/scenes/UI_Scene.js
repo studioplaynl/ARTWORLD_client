@@ -87,48 +87,25 @@ export default class UI_Scene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true });
       
       // if the current scene is artworld, the back button is hidden 
-      if (ManageSession.currentLocation == null || ManageSession.currentLocation == "ArtworldAmsterdam") {
+      if (ManageSession.locationHistory.length <= 1) {
         this.backButton.destroy()
       }
 
       this.backButton.on("pointerup", () => {
-        // in case the player in the Location1 scene
-        // the back button brings the player to the ArtworldAmsterdam scene
-        if (ManageSession.currentLocation == "Location1") {
-          ManageSession.socket.rpc("leave", "Location1")
 
-          const targetScene = this.scene.get("ArtworldAmsterdam");
-          targetScene.player.location = "ArtworldAmsterdam"
+        // to leave the last added (currentLocation) scene and delete it from the array of locations
+        // to enter the previous scene (previousLocation) 
+        const currentLocation = ManageSession.locationHistory.pop();
+        const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
 
-          setTimeout(() => {
-            ManageSession.location = "ArtworldAmsterdam"
-            ManageSession.createPlayer = true
-            ManageSession.getStreamUsers("join", "ArtworldAmsterdam")
-            this.scene.stop("Location1");
-            this.scene.start("ArtworldAmsterdam")
-          }, 500)
-        } else {
-          // in all other cases the back button brings the player from the respective scene
-          // to the location1 scene
-          const currentLocation = ManageSession.currentLocation.split("_");
-          ManageSession.socket.rpc("leave", currentLocation[0])
-
-          const previousLocation = ManageSession.previousLocation.split("_")
-          const targetScene = this.scene.get(ManageSession.previousLocation)
-
-          targetScene.player.location = previousLocation[0]
-
-          setTimeout(() => {
-
-            ManageSession.location = previousLocation[0]
-            ManageSession.createPlayer = true
-            ManageSession.getStreamUsers("join", previousLocation[0])
-            this.scene.stop(ManageSession.currentLocation)
-
-            this.scene.start(ManageSession.previousLocation)
-
-          }, 500)
-        }
+        ManageSession.socket.rpc("leave", currentLocation)
+        setTimeout(() => {
+          ManageSession.location = previousLocation
+          ManageSession.createPlayer = true
+          ManageSession.getStreamUsers("join", previousLocation)
+          this.scene.stop(currentLocation)
+          this.scene.start(previousLocation)
+        }, 500)
       });
 
       //zoom buttons

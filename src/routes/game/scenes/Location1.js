@@ -133,8 +133,14 @@ export default class Location1 extends Phaser.Scene {
   }
 
   async create() {
-    // for back button history
-    ManageSession.currentLocation = this.scene.key;
+
+    // push this location only if it doesn't exist in the array
+    if (ManageSession.locationHistory.every(location => location != "Location1")) {
+      ManageSession.locationHistory.push(this.scene.key);
+    }
+
+    
+    console.log("History of locations after I entered to location1", ManageSession.locationHistory)
 
     //timers
     ManageSession.updateMovementTimer = 0;
