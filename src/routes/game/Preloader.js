@@ -1,46 +1,36 @@
 class Preloader {
     constructor() {
     }
-    Loading(scene) {
+    load(scene) {
+    
+        const halfWidth = scene.sys.game.canvas.width / 2
+        const halfHeight = scene.sys.game.canvas.height / 2
 
-        let width = scene.sys.game.canvas.width
-        let height = scene.sys.game.canvas.height
-        const halfWidth = width / 2
-        const halfHeight = height / 2
-        const quaterHeight = height / 4
-        const offsetX = width / 10
-        const offsetRect = 10
+        const loadingText = scene.add.text(halfWidth, halfHeight - 150, 'LOADING ...', { font: '30px Arial' }).setOrigin(0.5, 0.5);
+        loadingText.setTint(0xff00ff, 0xffff00, 0x0000ff, 0xff0000);  
 
-        console.log("scene.sys.game.canvas.width, scene.sys.game.canvas.height:")
-        console.log(scene.sys.game.canvas.width, scene.sys.game.canvas.height)
-
-        const text1 = scene.add.text(halfWidth - offsetX, quaterHeight, 'LOADING ...', { font: '30px Arial' });
-        text1.setTint(0xff00ff, 0xffff00, 0x0000ff, 0xff0000);
-
-        let progressBox = scene.add.graphics()
-        let progressBar = scene.add.graphics()
-        
+        const progressWidth = 300
+        const progressHeight = 50
+        const padding = 10
+   
+        const progressBox = scene.add.graphics()
         progressBox.fillStyle(0xff0000, 1)
-        //fillRect x top-left y top-left width height 
-        progressBox.fillRect(text1.x - (offsetRect * 8), text1.y + (offsetRect * 4), 320, 50);
+        progressBox.fillRect(loadingText.x - (progressWidth / 2), loadingText.y + (progressHeight / 2), progressWidth, progressHeight);
 
+        const progressBar = scene.add.graphics()
         scene.load.on('progress', function (value) {
-            // console.log(value);
             progressBar.clear();
-            //white
+
             progressBar.fillStyle(0xffffff, 1)
-            //yellow
-            // progressBar.fillStyle(0xffff00, 1)
-            //blue
-            // progressBar.fillStyle(0x0000ff, 1)
-            progressBar.fillRect(text1.x - (offsetRect * 8) + offsetRect, text1.y + (offsetRect * 1) + (offsetRect * 4), 300 * value, 30);
+
+            progressBar.fillRect(loadingText.x - (progressWidth / 2 - padding), loadingText.y + (progressHeight / 2 + padding), progressWidth - padding * 2, progressHeight - padding * 2);
+        });
+       
+        scene.load.on('fileprogress', function (file) {
+        
         });
 
-        scene.load.on('fileprogress', function (file) {
-            // console.log(file.src);
-        });
         scene.load.on('complete', function () {
-            // console.log('complete');
             scene.loadingDone = true
             progressBar.destroy();
             progressBox.destroy();
