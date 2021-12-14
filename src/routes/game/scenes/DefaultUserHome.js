@@ -86,46 +86,36 @@ export default class DefaultUserHome extends Phaser.Scene {
         console.log("this.location: ", this.location)
         //console.log('init', data)
     }
+
     async preload() {
         Preloader.Loading(this) //.... PRELOADER VISUALISER
-
-        //get a list of artworks of the user
-        await listImages("drawing", this.location, 10).then((rec) => {
-
-            let userArt = rec
-            console.log(userArt)
-
-            userArt.forEach((element, index) => {
-                this.downloadArt(element, index)
-
-                //make a key
-                console.log(element.key)
-                //load the url with key
-
-            })
-            this.load.start(); // load the image in memory
-        })
 
 
     }//end preload
 
     async downloadArt(element, index) {
 
-        let imgUrl = element.value.url
-        let imgSize = "64"
+        let imgUrl = element.value.jpeg
+        console.log(imgUrl)
+        let imgSize = "512"
         let fileFormat = "png"
 
 
         this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
         console.log(this.artUrl[index])
 
-        this.load.img(
-            element.key,
+        this.load.image(
+            element.key + "_" + imgSize,
             this.artUrl[index]
         )
-        this.load.once(Phaser.Loader.Events.COMPLETE, () => {
+
+        this.load.once('complete', () => {
             console.log("loading art complete")
+            this.add.image(300,400, element.key + "_" + imgSize).setDepth(50)
         })
+
+        this.load.start() // load the image in memory
+        console.log("download started")
 
 
     }
@@ -147,7 +137,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         ManageSession.createPlayer = true
         //....... end LOAD PLAYER AVATAR .......................................................................
 
-        Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
+        //Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
 
         //.......  PLAYER ....................................................................................
         //* create deafult player and playerShadow
@@ -193,6 +183,23 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.UI_Scene.location = this.location
         this.gameCam.zoom = this.currentZoom
         //......... end UI Scene ..............................................................................
+
+        //get a list of artworks of the user
+        await listImages("drawing", this.location, 10).then((rec) => {
+
+            let userArt = rec
+            console.log(userArt)
+
+            userArt.forEach((element, index) => {
+                this.downloadArt(element, index)
+
+                //make a key
+                console.log(element.key)
+                //load the url with key
+
+            })//end userArt downloadArt
+        }) //end listImages
+
     }
 
     update(time, delta) {
