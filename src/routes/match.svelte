@@ -160,7 +160,7 @@ async function getUserLocations() {
 
 let imgUrl = "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg"
 let imgSize = "64"
-let fileFormat = "heic"
+let fileFormat = "png"
 let url
 
 async function convert() {

@@ -1,6 +1,6 @@
 import { CONFIG } from "../config.js";
 import ManageSession from "../ManageSession"
-import { listObjects, listImages } from '../../../api.js'
+import { listObjects, listImages, convertImage } from '../../../api.js'
 
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
@@ -11,6 +11,7 @@ import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
+import { element } from "svelte/internal";
 
 export default class DefaultUserHome extends Phaser.Scene {
 
@@ -44,6 +45,9 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.homes = []
         this.homesRepreseneted = []
         this.homesGenerate = false
+
+        this.allUserArt = []
+        this.artUrl = []
 
         this.offlineOnlineUsers
 
@@ -82,16 +86,38 @@ export default class DefaultUserHome extends Phaser.Scene {
         console.log("this.location: ", this.location)
         //console.log('init', data)
     }
+
     async preload() {
         Preloader.Loading(this) //.... PRELOADER VISUALISER
 
-        //get a list of artworks of the user
-         await listImages("drawing", this.location, 10).then((rec) => {
 
-            let userArt = rec
-            console.log(userArt)
-            
+    }//end preload
+
+    async downloadArt(element, index) {
+
+        let imgUrl = element.value.jpeg
+        console.log(imgUrl)
+        let imgSize = "512"
+        let fileFormat = "png"
+
+
+        this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+        console.log(this.artUrl[index])
+
+        this.load.image(
+            element.key + "_" + imgSize,
+            this.artUrl[index]
+        )
+
+        this.load.once('complete', () => {
+            console.log("loading art complete")
+            this.add.image(300,400, element.key + "_" + imgSize).setDepth(50)
         })
+
+        this.load.start() // load the image in memory
+        console.log("download started")
+
+
     }
 
     async create() {
@@ -100,10 +126,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         // for back button history
         ManageSession.locationHistory.push(this.scene.key);
-
-        // console.log(userArt)
-
-        // for back button history
         ManageSession.currentLocation = this.scene.key
         console.log("this.scene.key", this.scene.key)
 
@@ -115,7 +137,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         ManageSession.createPlayer = true
         //....... end LOAD PLAYER AVATAR .......................................................................
 
-        Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
+        //Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
 
         //.......  PLAYER ....................................................................................
         //* create deafult player and playerShadow
@@ -161,6 +183,23 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.UI_Scene.location = this.location
         this.gameCam.zoom = this.currentZoom
         //......... end UI Scene ..............................................................................
+
+        //get a list of artworks of the user
+        await listImages("drawing", this.location, 10).then((rec) => {
+
+            let userArt = rec
+            console.log(userArt)
+
+            userArt.forEach((element, index) => {
+                this.downloadArt(element, index)
+
+                //make a key
+                console.log(element.key)
+                //load the url with key
+
+            })//end userArt downloadArt
+        }) //end listImages
+
     }
 
     update(time, delta) {
