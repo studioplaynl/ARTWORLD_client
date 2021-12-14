@@ -305,9 +305,39 @@
       saved = true;
     }
     if (appType == "stopmotion") {
-      console.log("saved");
-      json = JSON.stringify(frames);
-      uploadImage(title, appType, json, "", status);
+      // console.log("saved");
+      // json = JSON.stringify(frames);
+      // var blobData = dataURItoBlob(frames);
+      // uploadImage(title, appType, json, blobData, status);
+      savecanvas.setHeight(canvas.height);
+      savecanvas.setWidth(canvas.height * frames.length);
+      savecanvas.renderAll();
+      savecanvas.clear();
+      let data = { objects: [] };
+      //let scale = 128 / 700;
+      console.log(data);
+      for (let i = 0; i < frames.length; i++) {
+        frames[i].backgroundImage = {};
+        const newFrames = frames[i].objects.map((object, index) => {
+          const newObject = { ...object };
+          newObject.left = newObject.left;
+          newObject.top = newObject.top;
+          newObject.left += canvas.height * i;
+          // newObject.scaleX = scale;
+          // newObject.scaleY = scale;
+          console.log(newObject);
+          data.objects.push(newObject);
+        });
+      }
+      savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
+      savecanvas.calcOffset();
+      setTimeout(() => {
+        var Image = savecanvas.toDataURL("image/png", 0.5);
+        console.log(Image);
+        var blobData = dataURItoBlob(Image);
+        json = JSON.stringify(frames);
+        uploadImage(title, appType, json, blobData, status);
+      }, 300);
     }
     if (appType == "avatar") {
       createAvatar();
