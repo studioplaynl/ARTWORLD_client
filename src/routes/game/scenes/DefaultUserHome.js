@@ -98,7 +98,8 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         console.log("this.location: ", this.location)
 
-        
+        // for back button history
+        ManageSession.locationHistory.push(this.scene.key);
 
         // console.log(userArt)
 
