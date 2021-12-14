@@ -299,7 +299,7 @@
   const upload = () => {
     if (appType == "drawing") {
       json = JSON.stringify(canvas.toJSON());
-      var Image = canvas.toDataURL("jpeg");
+      var Image = canvas.toDataURL("pngz");
       var blobData = dataURItoBlob(Image);
       uploadImage(title, appType, json, blobData, status);
       saved = true;
@@ -348,7 +348,7 @@
     frames[currentFrame] = canvas.toJSON();
     frames = frames;
 
-    backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
+    backgroundFrames[currentFrame] = canvas.toDataURL("png");
     backgroundFrames = backgroundFrames;
   };
 
@@ -425,7 +425,7 @@
     for (var i = 0; i < binary.length; i++) {
       array.push(binary.charCodeAt(i));
     }
-    return new Blob([new Uint8Array(array)], { type: "image/jpeg" });
+    return new Blob([new Uint8Array(array)], { type: "image/png" });
   }
 
   async function getDrawing(DrawingUrl) {
