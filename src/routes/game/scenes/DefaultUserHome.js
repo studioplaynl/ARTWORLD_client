@@ -18,7 +18,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     constructor() {
         super("DefaultUserHome");
 
-        this.worldSize = new Phaser.Math.Vector2(1000, 1000)
+        this.worldSize = new Phaser.Math.Vector2(2000, 1000)
 
         this.debug = false
 
@@ -47,6 +47,8 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.homesGenerate = false
 
         this.allUserArt = []
+        this.userArtServerList = []
+        this.userArtDisplayList = []
         this.artUrl = []
 
         this.offlineOnlineUsers
@@ -95,7 +97,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     async downloadArt(element, index) {
 
-        let imgUrl = element.value.jpeg
+        let imgUrl = element.value.url
         console.log(imgUrl)
         let imgSize = "512"
         let fileFormat = "png"
@@ -111,12 +113,15 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.load.once('complete', () => {
             console.log("loading art complete")
-            this.add.image(300,400, element.key + "_" + imgSize).setDepth(50)
+
+            const imageGameObject = this.add.image(300, 400, element.key + "_" + imgSize).setDepth(50)
+            this.userArtDisplayList.push(imageGameObject)
+            this.displayUserArt()
+
         })
 
         this.load.start() // load the image in memory
         console.log("download started")
-
 
     }
 
@@ -125,9 +130,9 @@ export default class DefaultUserHome extends Phaser.Scene {
         console.log("this.location: ", this.location)
 
         // for back button history
-        ManageSession.locationHistory.push(this.scene.key);
-        ManageSession.currentLocation = this.scene.key
-        console.log("this.scene.key", this.scene.key)
+        ManageSession.locationHistory.push(this.location);
+        ManageSession.currentLocation = this.location
+        console.log("this.scene.key", this.location)
 
         //timers
         ManageSession.updateMovementTimer = 0;
@@ -137,7 +142,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         ManageSession.createPlayer = true
         //....... end LOAD PLAYER AVATAR .......................................................................
 
-        //Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
+        Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
 
         //.......  PLAYER ....................................................................................
         //* create deafult player and playerShadow
@@ -185,23 +190,46 @@ export default class DefaultUserHome extends Phaser.Scene {
         //......... end UI Scene ..............................................................................
 
         //get a list of artworks of the user
-        await listImages("drawing", this.location, 10).then((rec) => {
+        await listImages("drawing", this.location, 100).then((rec) => {
 
-            let userArt = rec
-            console.log(userArt)
+            // userArt = array of visible art of specific type, from this array urls, keys have to be created to display the art
+            this.userArtServerList = rec
+            console.log(this.userArtServerList)
 
-            userArt.forEach((element, index) => {
-                this.downloadArt(element, index)
+            if (this.userArtServerList.length > 0) {
+                //download the art, by loading the url and setting a key
+                this.userArtServerList.forEach((element, index) => {
+                    this.downloadArt(element, index)
 
-                //make a key
-                console.log(element.key)
-                //load the url with key
-
-            })//end userArt downloadArt
+                    //make a key
+                    console.log(element.key)
+                    //load the url with key
+                })//end userArt downloadArt
+            }
         }) //end listImages
 
     }
 
+    displayUserArt() {
+        console.log("this.userArtDisplayList: ", this.userArtDisplayList)
+        //const circle = new Phaser.Geom.Circle(400, 300, 220);
+
+        //Phaser.Actions.PlaceOnCircle(this.userArtDisplayList, circle);
+        if (this.userArtDisplayList.length > 0) {
+            this.userArtDisplayList.forEach((element, index) => {
+                console.log("element.x", element.x)
+                element.x = (index * 520) + (512/2)
+            })
+            // Phaser.Actions.GridAlign(this.userArtDisplayList, {
+            //     width: this.userArtDisplayList.length,
+            //     height: 1,
+            //     cellWidth: 512,
+            //     cellHeight: 512,
+            //     x: 2048,
+            //     y: 512
+            // });
+        }
+    }
     update(time, delta) {
         //...... ONLINE PLAYERS ................................................
         //Player.loadOnlinePlayers(this)
