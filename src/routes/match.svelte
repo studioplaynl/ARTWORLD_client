@@ -2,7 +2,7 @@
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
-    import {updateObject, listObjects, deleteObject, convertImage} from "../api"
+    import {updateObject, listObjects, listAllObjects, deleteObject, convertImage} from "../api"
     //import { writable } from "svelte/store";
 
     const verboseLogging = false;
@@ -144,11 +144,16 @@ async function addLocation() {
 }
 
 let whereList
-let locationsList = {objects: []}
+let locationsList = []
 async function getLocations() {
     let limit = 100
     locationsList = await listObjects(whereList, null, limit) 
-    console.log(locations.objects)   
+    console.log(locationsList)   
+}
+
+async function getUserLocations() {
+    locationsList = await listAllObjects(whereList) 
+    console.log(locationsList)   
 }
 
 ////////////////////////// image converter /////////////////////////////
@@ -214,8 +219,10 @@ async function convert() {
         <option value="world">world</option>
     </select>
     <button on:click="{getLocations}">Get</button>
-    {#each locationsList.objects as location}
+    <button on:click="{getUserLocations}">Get with username</button>
+    {#each locationsList as location}
         <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
+            <p>username: {location.username}</p>            
             <p>userID: {location.user_id}</p>
         <p>name:{location.key}</p>
         <p>posX: {location.value.posX}, posY: {location.value.posY}</p>
