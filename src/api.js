@@ -81,7 +81,14 @@ export async function updateObject(type, name, value, pub) {
 export async function listObjects(type, userID, limit) {
   if(!!!limit) limit = 100;
   const objects = await client.listStorageObjects(Sess, type, userID, limit);
-  return objects
+  return objects.objects
+}
+
+export async function listAllObjects(type) {
+  const payload = { type };
+  const rpcid = "list_all_storage_object";
+  const objects = await client.rpc(Sess, rpcid, payload);
+  return objects.payload
 }
 
 export async function getAccount(id, avatar) {
