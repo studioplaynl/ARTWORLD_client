@@ -9,7 +9,7 @@ export default class PreloadScene extends Phaser.Scene {
 
     preload() {
         //.... PRELOADER VISUALISER ...............................................................................................
-        Preloader.loading(this)
+        Preloader.Loading(this)
         //.... end PRELOADER VISUALISER ...............................................................................................
 
         //artworld logo

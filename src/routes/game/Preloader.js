@@ -1,7 +1,7 @@
 class Preloader {
     constructor() {
     }
-    loading(scene) {
+    Loading(scene) {
     
         const halfWidth = scene.sys.game.canvas.width / 2
         const halfHeight = scene.sys.game.canvas.height / 2
