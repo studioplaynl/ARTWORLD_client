@@ -103,18 +103,31 @@ export default class DefaultUserHome extends Phaser.Scene {
                 //load the url with key
 
             })
+            this.load.start(); // load the image in memory
         })
+
+
     }//end preload
 
-    async downloadArt(element, index){
+    async downloadArt(element, index) {
 
-        let imgUrl = element.value.jpeg
+        let imgUrl = element.value.url
         let imgSize = "64"
         let fileFormat = "png"
-      
-        
+
+
         this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
-                console.log(this.artUrl)
+        console.log(this.artUrl[index])
+
+        this.load.img(
+            element.key,
+            this.artUrl[index]
+        )
+        this.load.once(Phaser.Loader.Events.COMPLETE, () => {
+            console.log("loading art complete")
+        })
+
+
     }
 
     async create() {

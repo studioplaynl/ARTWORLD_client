@@ -58,7 +58,7 @@ class Player {
               scene.playerAvatarKey,
               ManageSession.userProfile.url,
               { frameWidth: 128, frameHeight: 128 }
-            );
+            )
 
             scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
               console.log("loadAndCreatePlayerAvatar complete");
@@ -67,7 +67,7 @@ class Player {
               if (scene.textures.exists(scene.playerAvatarKey)) {
                 this.attachAvatarToPlayer(scene);
               } // if (this.textures.exists(this.playerAvatarKey))
-            });
+            })
           }
 
           scene.load.start(); // load the image in memory
