@@ -266,6 +266,14 @@ export async function deleteObjectAdmin(id, type, name) {
   return user.payload
 }
 
+//..................... image converter ................................
+// usage:
+
+// path = "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg"
+// size = "64"
+// format = "png"
+
+
 export async function convertImage(path,size, format) {
   let payload = {path,size, format};
   const rpcid = "convert_image";
