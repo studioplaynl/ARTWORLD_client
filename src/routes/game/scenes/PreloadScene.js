@@ -21,6 +21,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png")
         this.load.image("back_button", "./assets/ui/back_button.png")
         this.load.image("enter_button", "./assets/ui/enter_icon_round64x64.png")
+        this.load.image("arrow_down_32px","./assets/ui/arrow-down-32px.png")
 
         this.load.image('museum', 'assets/museum.png');
         this.load.image("ball", "./assets/ball_grey.png")
