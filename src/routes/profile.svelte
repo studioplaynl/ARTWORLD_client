@@ -41,12 +41,12 @@
       {
         key: "voorbeeld",
         title: "voorbeeld",
-        value: v => `<img src="${v.value.url}">`
+        value: v => `<img src="${v.value.previewUrl}">`
       },
       {
         key: "title",
         title: "Title",
-        value: v => `<a href='/#/${v.value.json.split(".")[0]}'>${v.key}</a>`
+        value: v => `<a href='/#/${v.url}'>${v.key}</a>`
       },
       {
         key: "Datum",
@@ -146,8 +146,10 @@ function moveToTrash(key) {
         trash.push(item)
         delete art[index]
       }
-      item.value.url = await convertImage(item.value.jpeg, "64")
-      console.log(item.value.url)
+      if(item.value.json) item.url = item.value.json.split(".")[0]
+      if(item.value.url) item.url = item.value.url.split(".")[0]
+      item.value.previewUrl = await convertImage(item.value.url, "64")
+      console.log(item.value.previewUrl)
       art = art;
     })
 

@@ -15,9 +15,9 @@ export async function uploadImage(name, type, json, img, status) {
   console.log("name: " + name)
   console.log(img)
 
-  var [jpegURL, jpegLocation] = await getUploadURL(type, name, "jpeg")
+  var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png")
   var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json")
-  var value = { "jpeg": jpegLocation, "json": jsonLocation};
+  var value = { "url": jpegLocation, "json": jsonLocation};
   if(status == "zichtbaar"){
     pub = true
   }else{
