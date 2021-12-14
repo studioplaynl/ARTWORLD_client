@@ -60,6 +60,10 @@ export default class UI_Scene extends Phaser.Scene {
     this.camUI.zoom = 1;
     this.createNavigationButtons(false);
     this.scale.on("resize", this.resize, this);
+
+    // to make the UI scene always on top of other scenes
+    this.scene.bringToTop();
+    
   } //create
 
   // zoom buttons and back button
