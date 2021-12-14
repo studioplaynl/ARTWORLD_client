@@ -10,6 +10,7 @@ import Location5 from "./scenes/Location5";
 import UI_Scene from "./scenes/UI_Scene";
 import ArtworldAmsterdam from "./scenes/ArtworldAmsterdam.js";
 import TestCoordinates from "./scenes/TestCoordinates";
+import DefaultUserHome from "./scenes/DefaultUserHome";
 
 
 export const CONFIG = {
@@ -37,7 +38,8 @@ export const SCENES = [
   Location5,
   ArtworldAmsterdam,
   UI_Scene,
-  TestCoordinates
+  TestCoordinates,
+  DefaultUserHome
 ]
 
 //export default CONFIG
