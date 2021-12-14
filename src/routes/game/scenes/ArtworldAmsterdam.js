@@ -83,7 +83,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //get a list of homes from users in ArtworldAmsterdam
     await listObjects("home", null, 100).then((rec) => {
-      this.homes = rec.objects
+      console.log("rec: ", rec)
+      this.homes = rec
       console.log(this.homes)
       this.homesGenerate = true
     })
