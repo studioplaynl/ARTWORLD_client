@@ -157,14 +157,16 @@ function moveToTrash(key) {
   }
   let promise = getUser();
 
-  
 </script>
 
 <main>
   <div class="flex-container">
     <div class="flex-item-left">
       <Card class="card">
-      <img id="avatar" src={avatar_url} /><br />
+        <div id="avatarDiv">
+          <img id="avatar" src={avatar_url} />
+        </div>
+      <br />
       {#if  !!useraccount && useraccount.online}
         <p>Currently in game</p>
       {/if}
@@ -178,7 +180,7 @@ function moveToTrash(key) {
     <div class="flex-item-right">
       <h1>kunstwerken</h1>
       <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable"></SvelteTable>
-      {#if !isCurrentUser}
+      {#if CurrentUser}
       <h1>Prullenmand</h1>
       <SvelteTable columns="{columns}" rows="{trash}" classNameTable="profileTable"></SvelteTable>
       {/if}
@@ -214,10 +216,17 @@ function moveToTrash(key) {
   }
 
   #avatar {
-    width: 50%;
-    max-width: 150px;
+    max-height: 75px;
+    position: absolute;
+    clip: rect(0px,75px,75px,0px);
   }
   
+  #avatarDiv {
+    width: 75px;
+    height: 75px;
+    position: static;
+  }
+ 
   
 
 </style>

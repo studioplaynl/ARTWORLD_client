@@ -2,10 +2,11 @@
     import {Session, login, Error} from "../../session.js"
 	import { _ } from 'svelte-i18n'
   import {onMount} from 'svelte'
+  export let params;
 
     console.log($Session)
-	let email = "user1@vrolijkheid.nl"
-	let password = 'somesupersecretpassword'
+	let email = params.user || "user1@vrolijkheid.nl"
+	let password = params.password || 'somesupersecretpassword'
 
 	async function onSubmit() {
   
@@ -14,6 +15,7 @@
 	}
 
   onMount(()=>{
+    console.log(params)
     if(!!$Session){
       window.location.href = "/#/"
     }
