@@ -20,10 +20,10 @@ class Preloader {
         const progressBar = scene.add.graphics()
         scene.load.on('progress', function (value) {
             progressBar.clear();
-
+            console.log(value)
             progressBar.fillStyle(0xffffff, 1)
 
-            progressBar.fillRect(loadingText.x - (progressWidth / 2 - padding), loadingText.y + (progressHeight / 2 + padding), progressWidth - padding * 2, progressHeight - padding * 2);
+            progressBar.fillRect(loadingText.x - (progressWidth / 2 - padding), loadingText.y + (progressHeight / 2 + padding), 280 * value, progressHeight - padding * 2);
         });
        
         scene.load.on('fileprogress', function (file) {
