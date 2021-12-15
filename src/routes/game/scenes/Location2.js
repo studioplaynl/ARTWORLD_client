@@ -1,5 +1,7 @@
 import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension";
 import ManageSession from "../ManageSession"
+import HistoryTracker from "../class/HistoryTracker";
+import TestLoader from "../class/TestLoader";
 
 export default class Location2 extends Scene3D {
 
@@ -12,11 +14,19 @@ export default class Location2 extends Scene3D {
     this.accessThirdDimension();
   }
 
+  async preload() {
+
+    // loading bar
+    TestLoader.run(this)
+  }
+
   async create() {
     
+    // 3d scenes have separate UI_scene
     this.scene.stop("UI_Scene");
-    // for back button history
-    ManageSession.locationHistory.push(this.scene.key);
+
+    // for back button
+    HistoryTracker.push(this);
 
     const { ground } = await this.third.warpSpeed("-orbitControls");
 
