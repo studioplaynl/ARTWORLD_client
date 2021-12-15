@@ -74,8 +74,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.backButton = this.scene.add.image(0, -(width / 2) - 60,
             this.backButtonImage).setInteractive().setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
 
-     
-
         this.scene.tweens.add({
             targets: this.backButton,
             y: -90,
@@ -118,13 +116,12 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.scene.player.setTint(0xff0000)
 
             //player has to explicitly leave the stream it was in!
-            console.log("leave, this.location")
-            console.log(this.scene.location)
+            console.log("leave: ", this.scene.location)
+            
             ManageSession.socket.rpc("leave", this.scene.location)
 
             this.scene.player.location = this.locationDestination
-            console.log("this.player.location:")
-            console.log(this.locationDestination)
+            console.log("this.player.location: ", this.locationDestination)
 
             this.scene.time.addEvent({ delay: 500, callback: this.switchScenes, callbackScope: this, loop: false })
         })

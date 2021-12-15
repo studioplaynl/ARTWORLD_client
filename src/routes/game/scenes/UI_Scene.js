@@ -168,7 +168,7 @@ export default class UI_Scene extends Phaser.Scene {
   resize() {
     //console.log("resizing")
     let width = this.sys.game.canvas.width;
-    let height = this.sys.game.canvas.height - 60;
+    let height = this.sys.game.canvas.height;
 
     //this.camUI.resize(width, height);
   }
