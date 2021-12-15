@@ -101,6 +101,26 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     }//end preload
 
+    createArtFrame() {
+        const frameBorderSize = 10
+        const frame = this.add.graphics()
+        // create a black square size of art + 20pix
+        frame.fillStyle(0x000000)
+        frame.fillRect(0, 0, this.artDisplaySize + (frameBorderSize * 2), this.artDisplaySize + (frameBorderSize * 2)).setVisible(false)
+        frame.fillStyle(0xffffff)
+        frame.fillRect(frameBorderSize, frameBorderSize, this.artDisplaySize, this.artDisplaySize).setVisible(false)
+        
+        //create renderTexture to place the dot on
+        let artFrameRendertexture = this.add.renderTexture(0, 0, this.artDisplaySize + (frameBorderSize * 2), this.artDisplaySize + (frameBorderSize * 2)).setVisible(false)
+
+        //draw the dot on the renderTexture
+        artFrameRendertexture.draw(frame)
+
+        //save the rendertexture with a key ('dot'), basically making an image out of it
+        artFrameRendertexture.saveTexture('artFrame_512')
+        // this.add.image(0, 0, 'artFrame_512').setVisible(false) // .setOrigin(0)
+    }
+
     async create() {
 
         // for back button
@@ -158,7 +178,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.UI_Scene.location = this.location
         this.gameCam.zoom = this.currentZoom
         //......... end UI Scene ..............................................................................
-
+        this.createArtFrame()
         //get a list of artworks of the user
         await listImages("drawing", this.location, 100).then((rec) => {
 
@@ -217,20 +237,15 @@ export default class DefaultUserHome extends Phaser.Scene {
 
             //make a container to contain the art and the frame, then 
             const artContainer = this.add.container(0, 0)
+            artContainer.add(this.add.image(0, 0, 'artFrame_512').setOrigin(0))
             artContainer.add(this.add.image(this.artDisplaySize / 2, (this.artDisplaySize / 2) + this.artOffsetBetween, element.key + "_" + imgSize))
             // const imageGameObject = this.add.image(0, 0, element.key + "_" + imgSize).setDepth(50)
             this.userArtDisplayList.push(artContainer)
             // console.log("element.x", element.x)
             //create a frame for the art
-            const frameBorderSize = 20
-            const frame = this.add.graphics()
-            // create a black square size of art + 20pix
-            frame.fillStyle(0x000000)
-            frame.fillRect(0, 0, this.artDisplaySize + (frameBorderSize * 2), this.artDisplaySize + (frameBorderSize * 2))
-            frame.fillStyle(0xffffff)
-            frame.fillRect(this.artOffsetBetween, this.artOffsetBetween, this.artDisplaySize, this.artDisplaySize)
 
-            artContainer.add(frame)
+            //    artContainer.add(this.add.image(0,0, "artFrame_512"))
+
             //move the frame to 
             // frame.x = (index * this.artDisplaySize + this.artOffsetBetween) + (this.artDisplaySize / 2)
             // frame.y = this.artDisplaySize
@@ -241,9 +256,9 @@ export default class DefaultUserHome extends Phaser.Scene {
             //element.getAll("type","Image") //this returns an array
             //element.list[0] //this returns the first child of the container
 
-            const pushUp = artContainer.getAll("type", "Image")
+            // const pushUp = artContainer.getAll("type", "Image")
             // element.list[0]
-            artContainer.bringToTop(pushUp[0])
+            // artContainer.bringToTop(pushUp[0])
 
             //we are adding to the this.userArtDisplayList dynamically, but we know we are at the last position, so we add the x position of the container accordingly 
             const index = this.userArtDisplayList.length - 1
@@ -262,8 +277,8 @@ export default class DefaultUserHome extends Phaser.Scene {
         //Phaser.Actions.PlaceOnCircle(this.userArtDisplayList, circle);
         if (this.userArtDisplayList.length > 0) {
             this.userArtDisplayList.forEach((element, index) => {
-                
-                
+
+
             })
 
         }
