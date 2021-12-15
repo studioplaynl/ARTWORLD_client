@@ -12,6 +12,7 @@ import LocationDialogbox from "../class/LocationDialogbox.js";
 import GraffitiWall from "../class/GraffitiWall.js";
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js";
+import HistoryTracker from "../class/HistoryTracker.js";
 
 export default class Location1 extends Phaser.Scene {
 
@@ -134,13 +135,8 @@ export default class Location1 extends Phaser.Scene {
 
   async create() {
 
-    // push this location only if it doesn't exist in the array
-    if (ManageSession.locationHistory.every(location => location != "Location1")) {
-      ManageSession.locationHistory.push(this.location);
-    }
-
-    
-    console.log("History of locations after I entered to location1", ManageSession.locationHistory)
+    // for back button
+    HistoryTracker.push(this);
 
     //timers
     ManageSession.updateMovementTimer = 0;

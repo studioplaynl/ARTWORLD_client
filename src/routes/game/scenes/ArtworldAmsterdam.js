@@ -11,6 +11,7 @@ import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
+import HistoryTracker from "../class/HistoryTracker.js";
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
 
@@ -92,13 +93,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   async create() {
-
-    console.log("what does it show??? Amster", this.location)
-
-    // push this location only if it doesn't exist in the array
-    if (ManageSession.locationHistory.every(location => location != "ArtworldAmsterdam")) {
-      ManageSession.locationHistory.push(this.location);
-    }
+   
+    // for back button
+    HistoryTracker.push(this);
 
     //timers
     ManageSession.updateMovementTimer = 0;

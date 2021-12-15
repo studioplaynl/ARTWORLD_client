@@ -6,6 +6,7 @@ import { compute_slots } from "svelte/internal";
 import { location } from "svelte-spa-router";
 import Player from "../class/Player";
 import DebugFuntions from "../class/DebugFuntions";
+import HistoryTracker from "../class/HistoryTracker";
 
 export default class Location3 extends Phaser.Scene {
 
@@ -120,8 +121,8 @@ export default class Location3 extends Phaser.Scene {
 
   async create() {
     
-    // for back button history
-    ManageSession.locationHistory.push(this.location);
+    // for back button
+    HistoryTracker.push(this);
 
     //timers
     ManageSession.updateMovementTimer = 0;

@@ -6,6 +6,7 @@ import Player from '../class/Player.js'
 import DebugFuntions from "../class/DebugFuntions.js";
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js";
+import HistoryTracker from "../class/HistoryTracker";
 
 //import { getAvatar } from '../../profile.svelte';
 import { getAccount, listImages } from '../../../api.js';
@@ -93,8 +94,8 @@ export default class Location4 extends Phaser.Scene {
 
   async create() {
     
-    // for back button history
-    ManageSession.locationHistory.push(this.location);
+    // for back button
+    HistoryTracker.push(this);
 
     //timers
     ManageSession.updateMovementTimer = 0;
