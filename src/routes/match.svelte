@@ -2,7 +2,7 @@
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
-    import {updateObject, listObjects, listAllObjects, deleteObject, convertImage} from "../api"
+    import {updateObjectAdmin , listObjects, listAllObjects, deleteObject, convertImage} from "../api"
     //import { writable } from "svelte/store";
 
     const verboseLogging = false;
@@ -13,6 +13,8 @@
     let status = "left";
     let locations = ["lab", `home`, `library`];
     let selected;
+    let id = $Session.id
+    console.log(id)
 
     async function chat() {
         const createStatus = true;
@@ -134,12 +136,12 @@ socket.onstreampresence = (streamPresence) => {
 
 
 //////////////////////// locatie ////////////////////////
-let locatie = '', posX = Math.floor(Math.random()*100), posY = Math.floor(Math.random()*100), where,name
-async function addLocation() {
+let locatie = '', posX = Math.floor(Math.random()*100), posY = Math.floor(Math.random()*100), where,name, value = "{posX: 123, posY: 123}"
+async function addLocation(id) {
     let type = where// plaats hier de soort locatie
-    let value = {posX:posX, posY:posY}// plaats hier alle value's die bij de locatie horen, zoals de jsonfile voor het laden van de map of de locatie van de afbeelding van hoe het huisje er uit ziet.
     let pub = true // is het publiek zichtbaar of enkel voor de gebruiker die het creert
-    await updateObject(type, name, value, pub)
+    //await updateObject(type, name, value, pub)
+    await updateObjectAdmin(id, type, name, value, pub)
     getLocations()
 }
 
@@ -154,6 +156,14 @@ async function getLocations() {
 async function getUserLocations() {
     locationsList = await listAllObjects(whereList) 
     console.log(locationsList)   
+}
+
+function renewObject(loc) {
+    console.log(loc)
+    where = loc.collection
+    name = loc.key
+    value = JSON.stringify(loc.value)
+    id = loc.user_id
 }
 
 ////////////////////////// image converter /////////////////////////////
@@ -206,8 +216,7 @@ async function convert() {
         <option value="world">world</option>
     </select>
     
-    <label>pos X</label><input type="number" bind:value="{posX}">
-    <label>pos Y</label><input type="number" bind:value="{posY}">
+    <label>value</label><textarea bind:value="{value}"></textarea>
     <label>name</label><input type="text" bind:value="{name}">
 
     <button on:click="{addLocation}">creeer</button>
@@ -225,8 +234,9 @@ async function convert() {
             <p>username: {location.username}</p>            
             <p>userID: {location.user_id}</p>
         <p>name:{location.key}</p>
-        <p>posX: {location.value.posX}, posY: {location.value.posY}</p>
+        <p>value: {JSON.stringify(location.value)}
         <button on:click="{async ()=>{await deleteObject(location.collection,location.key);getLocations()}}">delete</button>
+        <button on:click="{async ()=>{await renewObject(location);getLocations()}}">update</button>
         </div>
     {/each}
 
