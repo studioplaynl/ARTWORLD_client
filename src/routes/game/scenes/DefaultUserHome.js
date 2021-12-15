@@ -11,7 +11,6 @@ import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
-import { element } from "svelte/internal";
 
 export default class DefaultUserHome extends Phaser.Scene {
 
@@ -51,6 +50,13 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.userArtDisplayList = []
         this.artUrl = []
 
+        //sizes for the artWorks
+        this.artIconSize = 64
+        this.artPreviewSize = 128
+        this.artDisplaySize = 512
+        this.artFullSize
+        this.artOffsetBetween = 20
+
         this.offlineOnlineUsers
 
         this.location = "DefaultUserHome"
@@ -85,7 +91,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     init(data) {
         this.location = data.user_id
-        console.log("this.location: ", this.location)
         //console.log('init', data)
     }
 
@@ -95,44 +100,12 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     }//end preload
 
-    async downloadArt(element, index) {
-
-        let imgUrl = element.value.url
-        console.log(imgUrl)
-        let imgSize = "512"
-        let fileFormat = "png"
-
-
-        this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
-        console.log(this.artUrl[index])
-
-        this.load.image(
-            element.key + "_" + imgSize,
-            this.artUrl[index]
-        )
-
-        this.load.once('complete', () => {
-            console.log("loading art complete")
-
-            const imageGameObject = this.add.image(300, 400, element.key + "_" + imgSize).setDepth(50)
-            this.userArtDisplayList.push(imageGameObject)
-            this.displayUserArt()
-
-        })
-
-        this.load.start() // load the image in memory
-        console.log("download started")
-
-    }
-
     async create() {
-
-        console.log("this.location: ", this.location)
 
         // for back button history
         ManageSession.locationHistory.push(this.location);
         ManageSession.currentLocation = this.location
-        console.log("this.scene.key", this.location)
+        console.log("this.location", this.location)
 
         //timers
         ManageSession.updateMovementTimer = 0;
@@ -141,9 +114,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         //.......  LOAD PLAYER AVATAR ..........................................................................
         ManageSession.createPlayer = true
         //....... end LOAD PLAYER AVATAR .......................................................................
-
         Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
-
         //.......  PLAYER ....................................................................................
         //* create deafult player and playerShadow
         //* create player in center with artworldCoordinates
@@ -193,8 +164,25 @@ export default class DefaultUserHome extends Phaser.Scene {
         await listImages("drawing", this.location, 100).then((rec) => {
 
             // userArt = array of visible art of specific type, from this array urls, keys have to be created to display the art
+
+            //! bug from the server: 
+            //! 1: sometimes the art with stored in .objects (with a cursor: undefined above)
+            //! 2: editing artworks are not reflected, artworks dissapear
+            //* now I am testing with this.userArtserverList = rec
+
+            // if (typeof rec.objects != undefined) {
+            //     console.log("rec.objects")
+            //     this.userArtServerList = rec.objects
+            // } else {
+            //     console.log("rec")
+            //     this.userArtServerList = rec
+            // }
+
             this.userArtServerList = rec
-            console.log(this.userArtServerList)
+
+            console.log("this.userArtServerList: ", this.userArtServerList)
+            console.log("this.userArtServerList.objects: ", this.userArtServerList.objects)
+
 
             if (this.userArtServerList.length > 0) {
                 //download the art, by loading the url and setting a key
@@ -207,8 +195,38 @@ export default class DefaultUserHome extends Phaser.Scene {
                 })//end userArt downloadArt
             }
         }) //end listImages
+    }//end create
 
-    }
+    async downloadArt(element, index) {
+
+        let imgUrl = element.value.url
+        console.log(imgUrl)
+        let imgSize = "512"
+        let fileFormat = "png"
+
+        this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+        console.log(this.artUrl[index])
+
+        this.load.image(
+            element.key + "_" + imgSize,
+            this.artUrl[index]
+        )
+
+        this.load.once('complete', () => {
+            console.log("loading art complete")
+
+            //make a container to contain the art and the frame, then 
+            const artContainer = this.add.container(0,0)
+            artContainer.add(this.add.image(0, 0, element.key + "_" + imgSize))
+            // const imageGameObject = this.add.image(0, 0, element.key + "_" + imgSize).setDepth(50)
+            this.userArtDisplayList.push(artContainer)
+            this.displayUserArt()
+
+        })
+
+        this.load.start() // load the image in memory
+        console.log("download started")
+    }//end downloadArt
 
     displayUserArt() {
         console.log("this.userArtDisplayList: ", this.userArtDisplayList)
@@ -217,8 +235,20 @@ export default class DefaultUserHome extends Phaser.Scene {
         //Phaser.Actions.PlaceOnCircle(this.userArtDisplayList, circle);
         if (this.userArtDisplayList.length > 0) {
             this.userArtDisplayList.forEach((element, index) => {
-                console.log("element.x", element.x)
-                element.x = (index * 520) + (512/2)
+                // console.log("element.x", element.x)
+                //create a frame for the art
+                const frameBorderSize = 20
+                const frame = this.add.graphics()
+                // create a black square size of art + 20pix
+                frame.fillStyle(0x000000)
+                frame.fillRect(0, 0, this.artDisplaySize + frameBorderSize, this.artDisplaySize + frameBorderSize)
+                element.add(frame)
+                // frame.fillStyle(0xffffff)
+                // frame.fillRect(-this.artOffsetBetween, -this.artOffsetBetween, this.artDisplaySize, this.artDisplaySize)
+                //move the frame to 
+                // frame.x = (index * this.artDisplaySize + this.artOffsetBetween) + (this.artDisplaySize / 2)
+                // frame.y = this.artDisplaySize
+                element.x = (index * this.artDisplaySize + this.artOffsetBetween) + (this.artDisplaySize / 2)
             })
             // Phaser.Actions.GridAlign(this.userArtDisplayList, {
             //     width: this.userArtDisplayList.length,
@@ -230,6 +260,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             // });
         }
     }
+
     update(time, delta) {
         //...... ONLINE PLAYERS ................................................
         //Player.loadOnlinePlayers(this)
