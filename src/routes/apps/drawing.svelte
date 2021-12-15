@@ -25,7 +25,7 @@
   let history = [],
     historyCurrent;
   let canv, _clipboard;
-  let saveCanvas, savecanvas, videoCanvas;
+  let saveCanvas, savecanvas, videoCanvas, saving= false;
   let videoWidth, videoHeight;
   let canvas,
     video,
@@ -296,13 +296,15 @@
     });
   });
 
-  const upload = () => {
+  const upload = async () => {
+    saving = true
     if (appType == "drawing") {
       json = JSON.stringify(canvas.toJSON());
-      var Image = canvas.toDataURL("pngz");
+      var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      uploadImage(title, appType, json, blobData, status);
+      await uploadImage(title, appType, json, blobData, status);
       saved = true;
+      saving = false
     }
     if (appType == "stopmotion") {
       // console.log("saved");
@@ -329,18 +331,20 @@
           data.objects.push(newObject);
         });
       }
-      savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
-      savecanvas.calcOffset();
-      setTimeout(() => {
+      await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
+      await savecanvas.calcOffset();
+   
         var Image = savecanvas.toDataURL("image/png", 0.5);
         console.log(Image);
         var blobData = dataURItoBlob(Image);
         json = JSON.stringify(frames);
-        uploadImage(title, appType, json, blobData, status);
-      }, 300);
+        await uploadImage(title, appType, json, blobData, status);
+        saving = false
+
     }
     if (appType == "avatar") {
-      createAvatar();
+      await createAvatar();
+      saving = false
     }
   };
 
@@ -1158,6 +1162,11 @@
       </div>
     </div>
   </div>
+  {#if saving}
+    <div class="savecontainer">
+      <p class="saving">Saving<span>.</span><span>.</span><span>.</span></p>
+    </div>
+  {/if}
 </main>
 
 <style>
@@ -1340,4 +1349,88 @@
   .lineWidth {
     border-radius: 50%;
   }
+
+
+  @keyframes blink {
+    /**
+     * At the start of the animation the dot
+     * has an opacity of .2
+     */
+    0% {
+      opacity: .2;
+    }
+    /**
+     * At 20% the dot is fully visible and
+     * then fades out slowly
+     */
+    20% {
+      opacity: 1;
+    }
+    /**
+     * Until it reaches an opacity of .2 and
+     * the animation can start again
+     */
+    100% {
+      opacity: .2;
+    }
+}
+
+.saving {
+  top: 50vh;
+  left: 50vw;
+  position: fixed;
+  transform: translate(-50%,-50%);
+}
+
+.saving span {
+    /**
+     * Use the blink animation, which is defined above
+     */
+    animation-name: blink;
+    /**
+     * The animation should take 1.4 seconds
+     */
+    animation-duration: 1.4s;
+    /**
+     * It will repeat itself forever
+     */
+    animation-iteration-count: infinite;
+    /**
+     * This makes sure that the starting style (opacity: .2)
+     * of the animation is applied before the animation starts.
+     * Otherwise we would see a short flash or would have
+     * to set the default styling of the dots to the same
+     * as the animation. Same applies for the ending styles.
+     */
+    animation-fill-mode: both;
+}
+
+.saving span:nth-child(2) {
+    /**
+     * Starts the animation of the third dot
+     * with a delay of .2s, otherwise all dots
+     * would animate at the same time
+     */
+    animation-delay: .2s;
+}
+
+.saving span:nth-child(3) {
+    /**
+     * Starts the animation of the third dot
+     * with a delay of .4s, otherwise all dots
+     * would animate at the same time
+     */
+    animation-delay: .4s;
+}
+
+.savecontainer {
+    z-index: 5;
+    position: fixed;
+    left: 0;
+    top: 0;
+    font-size: 60px;
+    background: rgba(50,50,50,0.5);
+    width: 100vw;
+    height: 100vh;
+}
 </style>
