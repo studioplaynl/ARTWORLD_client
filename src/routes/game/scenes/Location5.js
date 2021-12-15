@@ -53,7 +53,7 @@ export default class Location5 extends Scene3D {
 
     this.scene.stop("UI_Scene");
     // for back button history
-    ManageSession.locationHistory.push(this.scene.key);
+    ManageSession.locationHistory.push(this.location);
 
     // this disables 3d ground, blue sky and ability to move around the 3d world with mouse
     const { lights } = await this.third.warpSpeed(

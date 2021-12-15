@@ -93,9 +93,11 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async create() {
 
+    console.log("what does it show??? Amster", this.location)
+
     // push this location only if it doesn't exist in the array
     if (ManageSession.locationHistory.every(location => location != "ArtworldAmsterdam")) {
-      ManageSession.locationHistory.push(this.scene.key);
+      ManageSession.locationHistory.push(this.location);
     }
 
     //timers

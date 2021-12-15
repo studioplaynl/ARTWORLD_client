@@ -85,11 +85,6 @@ export default class TestCoordinates extends Phaser.Scene {
 
     async create() {
 
-        // for back button history
-        ManageSession.currentLocation = this.scene.key
-        console.log("this.scene.key")
-        console.log(this.scene.key)
-
         //timers
         ManageSession.updateMovementTimer = 0;
         ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec

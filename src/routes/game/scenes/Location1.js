@@ -136,7 +136,7 @@ export default class Location1 extends Phaser.Scene {
 
     // push this location only if it doesn't exist in the array
     if (ManageSession.locationHistory.every(location => location != "Location1")) {
-      ManageSession.locationHistory.push(this.scene.key);
+      ManageSession.locationHistory.push(this.location);
     }
 
     
