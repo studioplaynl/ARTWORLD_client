@@ -71,8 +71,20 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         //Phaser.Display.Align.In.TopCenter(this.location, locationDescription)
 
         // back button that appears 
-        this.backButton = this.scene.add.image(0, -(width / 2) - 20,
+        this.backButton = this.scene.add.image(0, -(width / 2) - 60,
             this.backButtonImage).setInteractive().setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
+
+     
+
+        this.scene.tweens.add({
+            targets: this.backButton,
+            y: -90,
+            alpha: 0.0,
+            duration: 1000,
+            ease: 'Sine.easeInOut',
+            repeat: -1,
+            yoyo: true
+        })
 
         //the container is created at the this.x and this.y
         //this.setSize(width, width)
@@ -155,7 +167,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.scene.scene.stop(this.scene.scene.key)
         //check if it is a userHome, pass data to the userHome (user_id)
         if (this.userHome) {
-            this.scene.scene.start(this.locationDestination, {user_id: this.userHome})
+            this.scene.scene.start(this.locationDestination, { user_id: this.userHome })
             console.log("UserHome defined: ", this.userHome)
         } else {
             this.scene.scene.start(this.locationDestination)

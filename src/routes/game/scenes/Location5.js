@@ -1,5 +1,7 @@
 import { Scene3D, THREE } from "@enable3d/phaser-extension";
 import ManageSession from "../ManageSession";
+import HistoryTracker from "../class/HistoryTracker";
+import TestLoader from "../class/TestLoader";
 export default class Location5 extends Scene3D {
   platform;
   avatar;
@@ -25,6 +27,10 @@ export default class Location5 extends Scene3D {
   }
 
   preload() {
+
+    // loading bar
+    TestLoader.run(this) 
+
     this.third.load.preload("ground", "./assets/background_location7.jpg");
     this.third.load.preload("avatar", "./assets/paper.jpg");
     this.third.load.preload(
@@ -51,9 +57,11 @@ export default class Location5 extends Scene3D {
 
   async create() {
 
+    // 3d scenes have separate UI_scene
     this.scene.stop("UI_Scene");
-    // for back button history
-    ManageSession.locationHistory.push(this.scene.key);
+
+    // for back button
+    HistoryTracker.push(this);
 
     // this disables 3d ground, blue sky and ability to move around the 3d world with mouse
     const { lights } = await this.third.warpSpeed(

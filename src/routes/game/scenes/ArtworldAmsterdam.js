@@ -11,6 +11,7 @@ import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
+import HistoryTracker from "../class/HistoryTracker.js";
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
 
@@ -83,7 +84,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //get a list of homes from users in ArtworldAmsterdam
     await listObjects("home", null, 100).then((rec) => {
-      this.homes = rec.objects
+      console.log("rec: ", rec)
+      this.homes = rec
       console.log(this.homes)
       this.homesGenerate = true
     })
@@ -91,11 +93,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   async create() {
-
-    // push this location only if it doesn't exist in the array
-    if (ManageSession.locationHistory.every(location => location != "ArtworldAmsterdam")) {
-      ManageSession.locationHistory.push(this.scene.key);
-    }
+   
+    // for back button
+    HistoryTracker.push(this);
 
     //timers
     ManageSession.updateMovementTimer = 0;
@@ -162,8 +162,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       this.homes.forEach((element, index) => {
         // console.log(element.collection)
         // console.log(element.value.posX)
-
-        this.homesRepreseneted[index] = new GenerateLocation({ scene: this, userHome: element.user_id, draggable: false, type: "isoBox", x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX), y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY), locationDestination: "DefaultUserHome", locationText: element.user_id, locationImage: "museum", backButtonImage: "enter_button", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
+        
+        let locationDescription = element.user_id.substring(0, 7);
+        this.homesRepreseneted[index] = new GenerateLocation({ scene: this, userHome: element.user_id, draggable: false, type: "isoBox", x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX), y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY), locationDestination: "DefaultUserHome", locationText: locationDescription, locationImage: "museum", backButtonImage: "arrow_down_32px", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
       
       }) //end forEach
 
@@ -175,13 +176,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     let location1Vector = new Phaser.Math.Vector2(-400, -100)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
-    const location1 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location1", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 1", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
+    const location1 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location1", locationImage: "museum", backButtonImage: "arrow_down_32px", locationText: "Location 1", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
 
 
     location1Vector = new Phaser.Math.Vector2(-400, 100)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
-    const location2 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 2", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
+    const location2 = new GenerateLocation({ scene: this, type: "isoBox", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "museum", backButtonImage: "arrow_down_32px", locationText: "Location 2", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
 
   }
 

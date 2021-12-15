@@ -11,14 +11,13 @@ import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
-import { element } from "svelte/internal";
 
 export default class DefaultUserHome extends Phaser.Scene {
 
     constructor() {
         super("DefaultUserHome");
 
-        this.worldSize = new Phaser.Math.Vector2(1000, 1000)
+        this.worldSize = new Phaser.Math.Vector2(2000, 1000)
 
         this.debug = false
 
@@ -47,7 +46,16 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.homesGenerate = false
 
         this.allUserArt = []
+        this.userArtServerList = []
+        this.userArtDisplayList = []
         this.artUrl = []
+
+        //sizes for the artWorks
+        this.artIconSize = 64
+        this.artPreviewSize = 128
+        this.artDisplaySize = 512
+        this.artFullSize
+        this.artOffsetBetween = 20
 
         this.offlineOnlineUsers
 
@@ -83,7 +91,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     init(data) {
         this.location = data.user_id
-        console.log("this.location: ", this.location)
         //console.log('init', data)
     }
 
@@ -93,41 +100,12 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     }//end preload
 
-    async downloadArt(element, index) {
-
-        let imgUrl = element.value.jpeg
-        console.log(imgUrl)
-        let imgSize = "512"
-        let fileFormat = "png"
-
-
-        this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
-        console.log(this.artUrl[index])
-
-        this.load.image(
-            element.key + "_" + imgSize,
-            this.artUrl[index]
-        )
-
-        this.load.once('complete', () => {
-            console.log("loading art complete")
-            this.add.image(300,400, element.key + "_" + imgSize).setDepth(50)
-        })
-
-        this.load.start() // load the image in memory
-        console.log("download started")
-
-
-    }
-
     async create() {
 
-        console.log("this.location: ", this.location)
-
         // for back button history
-        ManageSession.locationHistory.push(this.scene.key);
-        ManageSession.currentLocation = this.scene.key
-        console.log("this.scene.key", this.scene.key)
+        ManageSession.locationHistory.push(this.location);
+        ManageSession.currentLocation = this.location
+        console.log("this.location", this.location)
 
         //timers
         ManageSession.updateMovementTimer = 0;
@@ -136,9 +114,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         //.......  LOAD PLAYER AVATAR ..........................................................................
         ManageSession.createPlayer = true
         //....... end LOAD PLAYER AVATAR .......................................................................
-
-        //Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
-
+        Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
         //.......  PLAYER ....................................................................................
         //* create deafult player and playerShadow
         //* create player in center with artworldCoordinates
@@ -185,21 +161,104 @@ export default class DefaultUserHome extends Phaser.Scene {
         //......... end UI Scene ..............................................................................
 
         //get a list of artworks of the user
-        await listImages("drawing", this.location, 10).then((rec) => {
+        await listImages("drawing", this.location, 100).then((rec) => {
 
-            let userArt = rec
-            console.log(userArt)
+            // userArt = array of visible art of specific type, from this array urls, keys have to be created to display the art
 
-            userArt.forEach((element, index) => {
-                this.downloadArt(element, index)
+            //! bug from the server: 
+            //! 1: sometimes the art with stored in .objects (with a cursor: undefined above)
+            //! 2: editing artworks are not reflected, artworks dissapear
+            //* now I am testing with this.userArtserverList = rec
 
-                //make a key
-                console.log(element.key)
-                //load the url with key
+            // if (typeof rec.objects != undefined) {
+            //     console.log("rec.objects")
+            //     this.userArtServerList = rec.objects
+            // } else {
+            //     console.log("rec")
+            //     this.userArtServerList = rec
+            // }
 
-            })//end userArt downloadArt
+            this.userArtServerList = rec
+
+            console.log("this.userArtServerList: ", this.userArtServerList)
+            console.log("this.userArtServerList.objects: ", this.userArtServerList.objects)
+
+
+            if (this.userArtServerList.length > 0) {
+                //download the art, by loading the url and setting a key
+                this.userArtServerList.forEach((element, index) => {
+                    this.downloadArt(element, index)
+
+                    //make a key
+                    console.log(element.key)
+                    //load the url with key
+                })//end userArt downloadArt
+            }
         }) //end listImages
+    }//end create
 
+    async downloadArt(element, index) {
+
+        let imgUrl = element.value.url
+        console.log(imgUrl)
+        let imgSize = "512"
+        let fileFormat = "png"
+
+        this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+        console.log(this.artUrl[index])
+
+        this.load.image(
+            element.key + "_" + imgSize,
+            this.artUrl[index]
+        )
+
+        this.load.once('complete', () => {
+            console.log("loading art complete")
+
+            //make a container to contain the art and the frame, then 
+            const artContainer = this.add.container(0,0)
+            artContainer.add(this.add.image(0, 0, element.key + "_" + imgSize))
+            // const imageGameObject = this.add.image(0, 0, element.key + "_" + imgSize).setDepth(50)
+            this.userArtDisplayList.push(artContainer)
+            this.displayUserArt()
+
+        })
+
+        this.load.start() // load the image in memory
+        console.log("download started")
+    }//end downloadArt
+
+    displayUserArt() {
+        console.log("this.userArtDisplayList: ", this.userArtDisplayList)
+        //const circle = new Phaser.Geom.Circle(400, 300, 220);
+
+        //Phaser.Actions.PlaceOnCircle(this.userArtDisplayList, circle);
+        if (this.userArtDisplayList.length > 0) {
+            this.userArtDisplayList.forEach((element, index) => {
+                // console.log("element.x", element.x)
+                //create a frame for the art
+                const frameBorderSize = 20
+                const frame = this.add.graphics()
+                // create a black square size of art + 20pix
+                frame.fillStyle(0x000000)
+                frame.fillRect(0, 0, this.artDisplaySize + frameBorderSize, this.artDisplaySize + frameBorderSize)
+                element.add(frame)
+                // frame.fillStyle(0xffffff)
+                // frame.fillRect(-this.artOffsetBetween, -this.artOffsetBetween, this.artDisplaySize, this.artDisplaySize)
+                //move the frame to 
+                // frame.x = (index * this.artDisplaySize + this.artOffsetBetween) + (this.artDisplaySize / 2)
+                // frame.y = this.artDisplaySize
+                element.x = (index * this.artDisplaySize + this.artOffsetBetween) + (this.artDisplaySize / 2)
+            })
+            // Phaser.Actions.GridAlign(this.userArtDisplayList, {
+            //     width: this.userArtDisplayList.length,
+            //     height: 1,
+            //     cellWidth: 512,
+            //     cellHeight: 512,
+            //     x: 2048,
+            //     y: 512
+            // });
+        }
     }
 
     update(time, delta) {
