@@ -7,6 +7,7 @@ import { location } from "svelte-spa-router";
 import Player from "../class/Player";
 import DebugFuntions from "../class/DebugFuntions";
 import HistoryTracker from "../class/HistoryTracker";
+import TestLoader from "../class/TestLoader.js"
 
 export default class Location3 extends Phaser.Scene {
 
@@ -52,6 +53,10 @@ export default class Location3 extends Phaser.Scene {
   }
 
   async preload() {
+
+    // loading bar
+    TestLoader.run(this)
+
     //....... IMAGES ......................................................................
     this.load.image("sky", "./assets/sky.png");
     this.load.image("star", "./assets/star.png");

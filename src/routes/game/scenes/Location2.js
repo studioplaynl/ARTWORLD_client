@@ -1,6 +1,7 @@
 import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension";
 import ManageSession from "../ManageSession"
 import HistoryTracker from "../class/HistoryTracker";
+import TestLoader from "../class/TestLoader";
 
 export default class Location2 extends Scene3D {
 
@@ -11,6 +12,12 @@ export default class Location2 extends Scene3D {
 
   init() {
     this.accessThirdDimension();
+  }
+
+  async preload() {
+
+    // loading bar
+    TestLoader.run(this)
   }
 
   async create() {

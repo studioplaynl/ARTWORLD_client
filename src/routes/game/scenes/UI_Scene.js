@@ -97,17 +97,17 @@ export default class UI_Scene extends Phaser.Scene {
 
       this.backButton.on("pointerup", () => {
 
-        // to leave the last added (currentLocation) scene and delete it from the array of locations
-        // to enter the previous scene (previousLocation) 
-        const currentLocation = ManageSession.locationHistory.pop();
+        // take out the current location
+        ManageSession.locationHistory.pop();
+        // get the previous scene (previousLocation) 
         const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
 
-        ManageSession.socket.rpc("leave", currentLocation)
+        ManageSession.socket.rpc("leave", this.location)
         setTimeout(() => {
           ManageSession.location = previousLocation
           ManageSession.createPlayer = true
           ManageSession.getStreamUsers("join", previousLocation)
-          this.scene.stop(currentLocation)
+          this.scene.stop(this.location)
           this.scene.start(previousLocation)
         }, 500)
       });
