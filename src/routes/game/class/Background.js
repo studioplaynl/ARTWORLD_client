@@ -31,10 +31,10 @@ class Background {
         //draw the dot on the renderTexture
         bgDotRendertexture.draw(bgDot)
 
-        //save the rendertexture with a key ('dot'), basically making an image out of it
+        //save the rendertexture with a key ('dot')
         let t = bgDotRendertexture.saveTexture('dot')
 
-        //repeat this created image over the background
+        //repeat this savend texture over the background
         for (let i = 0; i < gridWidth; i += offset) {
             for (let j = 0; j < gridWidth; j += offset) {
                 scene.add.image(i, j, 'dot').setOrigin(0)
