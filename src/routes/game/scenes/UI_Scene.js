@@ -34,9 +34,13 @@ export default class UI_Scene extends Phaser.Scene {
     super("UI_Scene");
     this.currentZoom = 1;
     this.location = "test";
+
+    //Debug Text mobile
+    this.debugText = ''
+    this.debugTextField
   }
 
-  preload() {}
+  preload() { }
 
   async create() {
     let countDisplay = 0;
@@ -61,9 +65,11 @@ export default class UI_Scene extends Phaser.Scene {
     this.createNavigationButtons(false);
     this.scale.on("resize", this.resize, this);
 
+
+
     // to make the UI scene always on top of other scenes
     this.scene.bringToTop();
-    
+
   } //create
 
   // zoom buttons and back button
@@ -83,13 +89,19 @@ export default class UI_Scene extends Phaser.Scene {
         .setShadow(1, 1, "#000000", 0)
         .setDepth(1000);
 
+      // mobile debug text field
+      this.debugTextField = this.add.text(50, 80, this.debugText, {
+        fontFamily: "Arial",
+        fontSize: "18px",
+      }).setShadow(2, 2, '#000000', 0)
+
       //back button
       this.backButton = this.add.image(40, 40, "back_button")
         .setOrigin(0, 0.5)
         .setDepth(1000)
         .setScale(0.075)
         .setInteractive({ useHandCursor: true });
-      
+
       // if the current scene is artworld, the back button is hidden 
       if (ManageSession.locationHistory.length <= 1) {
         this.backButton.destroy()
@@ -119,7 +131,7 @@ export default class UI_Scene extends Phaser.Scene {
         .setDepth(1000)
         .setScale(width / (width / this.camUI.zoom) / 6)
         .setInteractive({ useHandCursor: true });
-        
+
       this.zoom = this.add
         .image(60 + 80, 40, "ui_eye")
         .setOrigin(0, 0.5)
@@ -141,7 +153,7 @@ export default class UI_Scene extends Phaser.Scene {
 
       this.zoomOut.on("pointerup", () => {
         this.currentZoom -= 0.2;
-        if ( this.currentZoom < 0.2 ) {
+        if (this.currentZoom < 0.2) {
           this.currentZoom = 0.2
         }
         //console.log(this.currentZoom);

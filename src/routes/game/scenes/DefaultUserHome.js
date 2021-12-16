@@ -86,6 +86,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.playerShadowOffset = -8
         this.playerIsMovingByClicking = false
 
+        //UI scene
         this.currentZoom
         this.UI_Scene
     }
@@ -109,7 +110,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         frame.fillRect(0, 0, this.artDisplaySize + (frameBorderSize * 2), this.artDisplaySize + (frameBorderSize * 2)).setVisible(false)
         frame.fillStyle(0xffffff)
         frame.fillRect(frameBorderSize, frameBorderSize, this.artDisplaySize, this.artDisplaySize).setVisible(false)
-        
+
         //create renderTexture to place the dot on
         let artFrameRendertexture = this.add.renderTexture(0, 0, this.artDisplaySize + (frameBorderSize * 2), this.artDisplaySize + (frameBorderSize * 2)).setVisible(false)
 
@@ -178,8 +179,13 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.UI_Scene.location = this.location
         this.gameCam.zoom = this.currentZoom
         //......... end UI Scene ..............................................................................
+
         this.createArtFrame()
         //get a list of artworks of the user
+        this.allUserArt = []
+        this.userArtServerList = []
+        this.userArtDisplayList = []
+        this.artUrl = []
         await listImages("drawing", this.location, 100).then((rec) => {
 
             // userArt = array of visible art of specific type, from this array urls, keys have to be created to display the art
@@ -198,9 +204,16 @@ export default class DefaultUserHome extends Phaser.Scene {
             // }
 
             this.userArtServerList = rec
+            // if (rec.hasOwnProperty('objects')){
+            //     this.userArtServerList = rec.objects
+            //     console.log("*************")
+            // } else {
+            //     this.userArtServerList = rec
+            //     console.log("!!!!!!!!!!")
+            // }
 
             console.log("this.userArtServerList: ", this.userArtServerList)
-
+            
             if (this.userArtServerList.length > 0) {
                 //download the art, by loading the url and setting a key
                 this.userArtServerList.forEach((element, index) => {
@@ -212,7 +225,8 @@ export default class DefaultUserHome extends Phaser.Scene {
                 })//end userArt downloadArt
             }
         }) //end listImages
-        this.displayUserArt()
+
+        
     }//end create
 
     async downloadArt(element, index) {
@@ -224,7 +238,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
         console.log(this.artUrl[index])
-
+        
         this.load.image(
             element.key + "_" + imgSize,
             this.artUrl[index]
@@ -241,27 +255,13 @@ export default class DefaultUserHome extends Phaser.Scene {
             artContainer.add(this.add.image(this.artDisplaySize / 2, (this.artDisplaySize / 2) + this.artOffsetBetween, element.key + "_" + imgSize))
             // const imageGameObject = this.add.image(0, 0, element.key + "_" + imgSize).setDepth(50)
             this.userArtDisplayList.push(artContainer)
-            // console.log("element.x", element.x)
-            //create a frame for the art
 
-            //    artContainer.add(this.add.image(0,0, "artFrame_512"))
-
-            //move the frame to 
-            // frame.x = (index * this.artDisplaySize + this.artOffsetBetween) + (this.artDisplaySize / 2)
-            // frame.y = this.artDisplaySize
             artContainer.x = ((this.artDisplaySize * 1.4) + (this.artDisplaySize / 6))
-            //console.log(artContainer.getAll())
-
-            //both work:
-            //element.getAll("type","Image") //this returns an array
-            //element.list[0] //this returns the first child of the container
-
-            // const pushUp = artContainer.getAll("type", "Image")
-            // element.list[0]
-            // artContainer.bringToTop(pushUp[0])
 
             //we are adding to the this.userArtDisplayList dynamically, but we know we are at the last position, so we add the x position of the container accordingly 
             const index = this.userArtDisplayList.length - 1
+            console.log("index: ", index)
+
             this.userArtDisplayList[index].x = (index * (this.artDisplaySize + (this.artOffsetBetween * 3))) + (this.artOffsetBetween * 2)
             this.userArtDisplayList[index].y = (this.artOffsetBetween * 4)
         })
@@ -270,19 +270,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         console.log("download started")
     }//end downloadArt
 
-    displayUserArt() {
-        console.log("this.userArtDisplayList: ", this.userArtDisplayList)
-        //const circle = new Phaser.Geom.Circle(400, 300, 220);
 
-        //Phaser.Actions.PlaceOnCircle(this.userArtDisplayList, circle);
-        if (this.userArtDisplayList.length > 0) {
-            this.userArtDisplayList.forEach((element, index) => {
-
-
-            })
-
-        }
-    }
 
     update(time, delta) {
         //...... ONLINE PLAYERS ................................................
