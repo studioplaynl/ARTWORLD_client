@@ -21,6 +21,8 @@ const change = () => {
 }
 
 const restore = () => {
+    console.log(row.value)
+    row.value.status = ""
     let value = row.value
     let pub = false
     updateObject(row.collection, row.key, value,pub)
