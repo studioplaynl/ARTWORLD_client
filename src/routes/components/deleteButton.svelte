@@ -12,7 +12,8 @@ const Trash = () => {
     console.log("update "+ status)
     let value = row.value
     value.status = "trash"
-    updateObject(row.collection, row.key, value)
+    let pub = false
+    updateObject(row.collection, row.key, value,pub)
     moveToTrash(row.key)
 }
 
