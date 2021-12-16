@@ -33,6 +33,7 @@
             return false;
         }
     };
+    mobileConsole.init();
 </script>
 
 <Menu />
