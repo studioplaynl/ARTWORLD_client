@@ -225,8 +225,6 @@ export default class DefaultUserHome extends Phaser.Scene {
                 })//end userArt downloadArt
             }
         }) //end listImages
-
-        
     }//end create
 
     async downloadArt(element, index) {
@@ -252,7 +250,9 @@ export default class DefaultUserHome extends Phaser.Scene {
             //make a container to contain the art and the frame, then 
             const artContainer = this.add.container(0, 0)
             artContainer.add(this.add.image(0, 0, 'artFrame_512').setOrigin(0))
-            artContainer.add(this.add.image(this.artDisplaySize / 2, (this.artDisplaySize / 2) + this.artOffsetBetween, element.key + "_" + imgSize))
+            let tempImg = this.add.image(this.artDisplaySize / 2, (this.artDisplaySize / 2) + this.artOffsetBetween, element.key + "_" + imgSize)
+            artContainer.add(tempImg)
+           
             // const imageGameObject = this.add.image(0, 0, element.key + "_" + imgSize).setDepth(50)
             this.userArtDisplayList.push(artContainer)
 

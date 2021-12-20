@@ -64,6 +64,12 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.location.body.setOffset(0, -(this.location.height / 1.4))
         }
 
+        this.location.setInteractive()
+
+        this.location.on('pointerdown', () => {
+            console.log("location clicked")
+        })
+
         //place the description under the location image (for devving only)
         const locationDescription = this.scene.add.text(0, width / 2 - 30, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(51)
 
