@@ -168,7 +168,7 @@ function renewObject(loc) {
     console.log(loc)
     where = loc.collection
     name = loc.key
-    value = loc.value
+    value = JSON.stringify(loc.value)
     id = loc.user_id
 }
 

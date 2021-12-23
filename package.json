@@ -23,7 +23,7 @@
     "rollup-plugin-terser": "^7.0.0",
     "sass": "^1.39.0",
     "svelte": "^3.0.0",
-    "svelte-preprocess": "^4.8.0"
+    "svelte-preprocess": "^4.10.1"
   },
   "dependencies": {
     "@enable3d/phaser-extension": "^0.23.0",
