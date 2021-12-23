@@ -206,27 +206,34 @@ async function convert() {
         <p>position: {user.posX} x {user.posY}</p>
     {/each}
 
-    <h2>Locations</h2>
+    <h2>Create objects, eg for locations</h2>
     <!-- <label>where</label><input type="text" bind:value="{where}"> -->
 
-    <label>type</label>
+    <label>select object</label>
     <select bind:value="{where}">
         <option value="home">home</option>
         <option value="location">location</option>
         <option value="world">world</option>
+        <option value="addressbook">addressbook</option>
     </select>
+    <label>type object name</label><input type="text" bind:value="{where}">
     
     <label>value</label><textarea bind:value="{value}"></textarea>
     <label>name</label><input type="text" bind:value="{name}">
+    <label>user_id</label><input type="text" bind:value="{id}">
 
-    <button on:click="{addLocation}">creeer</button>
 
-    <h2>List of locations</h2>
+    <button on:click="{addLocation(id)}">creeer</button>
+
+    <h2>List of Objects</h2>
     <select bind:value="{whereList}">
         <option value="home">home</option>
         <option value="location">location</option>
         <option value="world">world</option>
+        <option value="addressbook">addressbook</option>
     </select>
+    <label>type object name</label><input type="text" bind:value="{whereList}">
+
     <button on:click="{getLocations}">Get</button>
     <button on:click="{getUserLocations}">Get with username</button>
     {#each locationsList as location}
