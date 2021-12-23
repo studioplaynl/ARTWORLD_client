@@ -2,7 +2,7 @@
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
-    import {updateObjectAdmin , listObjects, listAllObjects, deleteObject, convertImage} from "../api"
+    import {updateObjectAdmin, updateObject, listObjects, listAllObjects, deleteObject, convertImage} from "../api"
     import { onMount } from "svelte";
     //import { writable } from "svelte/store";
 
@@ -147,7 +147,8 @@ async function addLocation() {
     let pub = true // is het publiek zichtbaar of enkel voor de gebruiker die het creert
     //await updateObject(type, name, value, pub)
     console.log(id + type + name + value + pub)
-    await updateObjectAdmin(id, type, name, value, pub)
+    if($Profile.meta.role == "admin") await updateObjectAdmin(id, type, name, value, pub)
+    else await updateObject(type, name, value, pub)
     getLocations()
 }
 
