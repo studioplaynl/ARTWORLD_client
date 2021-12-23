@@ -3,6 +3,7 @@
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
     import {updateObjectAdmin , listObjects, listAllObjects, deleteObject, convertImage} from "../api"
+    import { onMount } from "svelte";
     //import { writable } from "svelte/store";
 
     const verboseLogging = false;
@@ -13,8 +14,12 @@
     let status = "left";
     let locations = ["lab", `home`, `library`];
     let selected;
-    let id = $Session.id
+    let id
+
+    onMount(()=>{
+    id = $Profile.id
     console.log(id)
+    })
 
     async function chat() {
         const createStatus = true;
@@ -136,11 +141,12 @@ socket.onstreampresence = (streamPresence) => {
 
 
 //////////////////////// locatie ////////////////////////
-let locatie = '', posX = Math.floor(Math.random()*100), posY = Math.floor(Math.random()*100), where,name, value = "{posX: 123, posY: 123}"
-async function addLocation(id) {
+let locatie = '', posX = Math.floor(Math.random()*100), posY = Math.floor(Math.random()*100), where,name, value = '{"posX": "123", "posY": "123"}'
+async function addLocation() {
     let type = where// plaats hier de soort locatie
     let pub = true // is het publiek zichtbaar of enkel voor de gebruiker die het creert
     //await updateObject(type, name, value, pub)
+    console.log(id + type + name + value + pub)
     await updateObjectAdmin(id, type, name, value, pub)
     getLocations()
 }
@@ -162,7 +168,7 @@ function renewObject(loc) {
     console.log(loc)
     where = loc.collection
     name = loc.key
-    value = JSON.stringify(loc.value)
+    value = loc.value
     id = loc.user_id
 }
 
@@ -218,7 +224,7 @@ async function convert() {
     </select>
     <label>type object name</label><input type="text" bind:value="{where}">
     
-    <label>value</label><textarea bind:value="{value}"></textarea>
+    <label>value (alle keys and values need to be placed within " " to not error)</label><textarea bind:value="{value}"></textarea>
     <label>name</label><input type="text" bind:value="{name}">
     <label>user_id</label><input type="text" bind:value="{id}">
 
