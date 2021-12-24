@@ -87,9 +87,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //get a list of homes from users in ArtworldAmsterdam
     await listObjects("home", null, 100).then((rec) => {
-      console.log("rec: ", rec)
+      //console.log("rec: ", rec)
       this.homes = rec
-      console.log(this.homes)
+      //console.log(this.homes)
       this.homesGenerate = true
     })
 
@@ -155,7 +155,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //  this.itemsbar.fillRoundedRect(32, 32, 300, 200, 32);
 
     //Test changing the addressbook object
-    const value = `{"user_id": "b9ae6807-1ce1-4b71-a8a3-f5958be4d340", "posX": "100", "posY": "110"}`
+    // '{ "user_id": ' + ManageSession.userProfile.id + ', "posY": ' + "100" + ', "posY": "' + "110" + '" }'
+    const value = '{"user_id": "b9ae6807-1ce1-4b71-a8a3-f5958be4d340", "posX": "500", "posY": "110"}'
 
     const type = "addressbook"
     const name = type + "_" + ManageSession.userProfile.id
@@ -163,9 +164,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     
     updateObject(type, name, value, pub)
 
-    const testUpdateAddressbook = await ManageSession.getUserAddressbook
-    console.log(testUpdateAddressbook)
-    //ManageSession.addressBook.value = value
+    
 
 
     //......... UI Scene  .................................................................................
@@ -175,7 +174,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.UI_Scene.location = this.location
     this.gameCam.zoom = this.currentZoom
     //......... end UI Scene ..............................................................................
-  }
+  }//end create
 
   createItemsBar() {
 
