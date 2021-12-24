@@ -68,7 +68,7 @@ export default class UI_Scene extends Phaser.Scene {
     const frame = this.add.graphics()
     // create a black square size of art + 20pix
     frame.fillStyle(0xffff00)
-    frame.fillRoundedRect(0+80, this.sys.game.canvas.height - 200, this.sys.game.canvas.width-180, 80, 32)
+    frame.fillRoundedRect(0+80, this.sys.game.canvas.height - 200, this.sys.game.canvas.width-80, 80, 32)
     frame.fillStyle(0xffffff)
 
     // to make the UI scene always on top of other scenes
