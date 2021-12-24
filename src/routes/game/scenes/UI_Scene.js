@@ -65,7 +65,11 @@ export default class UI_Scene extends Phaser.Scene {
     this.createNavigationButtons(false);
     this.scale.on("resize", this.resize, this);
 
-
+    const frame = this.add.graphics()
+    // create a black square size of art + 20pix
+    frame.fillStyle(0xffff00)
+    frame.fillRoundedRect(0+80, this.sys.game.canvas.height - 200, this.sys.game.canvas.width-180, 200, 32)
+    frame.fillStyle(0xffffff)
 
     // to make the UI scene always on top of other scenes
     this.scene.bringToTop();
@@ -162,6 +166,8 @@ export default class UI_Scene extends Phaser.Scene {
       this.zoom.on("pointerup", () => {
         this.currentZoom = 1
       })
+
+    
     } else {
       this.zoomIn
         .setPosition(
@@ -176,6 +182,7 @@ export default class UI_Scene extends Phaser.Scene {
         )
         .setScale(width / (width / this.camUI.zoom));
     }
+ 
   }
   resize() {
     //console.log("resizing")

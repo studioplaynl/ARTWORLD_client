@@ -1,6 +1,6 @@
 import { CONFIG } from "../config.js";
 import ManageSession from "../ManageSession"
-import { listObjects } from '../../../api.js'
+import { listObjects, updateObject, updateObjectAdmin } from '../../../api.js'
 
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
@@ -77,6 +77,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.currentZoom
     this.UI_Scene
+
+    //itemsbar
+    this.itemsbar
   }
 
   async preload() {
@@ -93,7 +96,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   async create() {
-   
+
     // for back button
     HistoryTracker.push(this);
 
@@ -143,6 +146,27 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     DebugFuntions.keyboard(this);
     //this.createDebugText();
     //......... end DEBUG FUNCTIONS .......................................................................
+    // create itemsbar
+    //  this.itemsbar = this.add.graphics();
+
+    //  this.itemsbar.fillStyle(0xffff00, 1);
+
+    //  //  32px radius on the corners
+    //  this.itemsbar.fillRoundedRect(32, 32, 300, 200, 32);
+
+    //Test changing the addressbook object
+    const value = `{"user_id": "b9ae6807-1ce1-4b71-a8a3-f5958be4d340", "posX": "100", "posY": "110"}`
+
+    const type = "addressbook"
+    const name = type + "_" + ManageSession.userProfile.id
+    const pub = 2
+    
+    updateObject(type, name, value, pub)
+
+    const testUpdateAddressbook = await ManageSession.getUserAddressbook
+    console.log(testUpdateAddressbook)
+    //ManageSession.addressBook.value = value
+
 
     //......... UI Scene  .................................................................................
     this.UI_Scene = this.scene.get("UI_Scene")
@@ -153,19 +177,22 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //......... end UI Scene ..............................................................................
   }
 
+  createItemsBar() {
+
+  }
   generateHomes() {
 
     //check if server query is finished, if there are homes to make
     if (this.homes != null && this.homesGenerate) {
       console.log("generate homes!")
-      
+
       this.homes.forEach((element, index) => {
         // console.log(element.collection)
         // console.log(element.value.posX)
-        
+
         let locationDescription = element.user_id.substring(0, 7);
         this.homesRepreseneted[index] = new GenerateLocation({ scene: this, userHome: element.user_id, draggable: false, type: "isoBox", x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX), y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY), locationDestination: "DefaultUserHome", locationText: locationDescription, locationImage: "museum", backButtonImage: "arrow_down_32px", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
-      
+
       }) //end forEach
 
       this.homesGenerate = false

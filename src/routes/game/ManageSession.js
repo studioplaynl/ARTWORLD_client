@@ -12,6 +12,10 @@ class ManageSession {
     this.user_id
     this.username;
 
+    this.itemsBar
+    this.addressbook
+    this.favorites
+
     this.client;
     this.socket;
 
@@ -251,7 +255,7 @@ class ManageSession {
       //set to fail-back scene
       this.location = "ArtworldAmsterdam"
       this.launchLocation = this.location
-      console.log(this.launchLocation)
+      //console.log(this.launchLocation)
     } else {
       this.location = this.userProfile.meta.location
       console.log(this.location)
