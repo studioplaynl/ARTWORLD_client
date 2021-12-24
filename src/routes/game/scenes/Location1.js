@@ -545,19 +545,19 @@ export default class Location1 extends Phaser.Scene {
   generateLocations() {
     let location1Vector = new Phaser.Math.Vector2(-200, 200)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
-    const location2 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "ball", backButtonImage: "enter_button", locationText: "Location 2", fontColor: 0x8dcb0e })
+    const location2 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "ball", enterButtonImage: "enter_button", locationText: "Location 2", fontColor: 0x8dcb0e })
 
     location1Vector = new Phaser.Math.Vector2(-200, -200)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
-    const location3 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location3", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 3", fontColor: 0x8dcb0e })
+    const location3 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location3", locationImage: "museum", enterButtonImage: "enter_button", locationText: "Location 3", fontColor: 0x8dcb0e })
 
     location1Vector = new Phaser.Math.Vector2(200, 200)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
-    const location4 = new GenerateLocation({ scene: this, type: "isoTriangle", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location4", locationImage: "museum", backButtonImage: "enter_button", locationText: "Location 4", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
+    const location4 = new GenerateLocation({ scene: this, type: "isoTriangle", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location4", locationImage: "museum", enterButtonImage: "enter_button", locationText: "Location 4", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
 
     location1Vector = new Phaser.Math.Vector2(200, -200)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
-    const location5 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location5", locationImage: "entrance", backButtonImage: "enter_button", locationText: "Location 5", fontColor: 0x8dcb0e })
+    const location5 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, locationDestination: "Location5", locationImage: "entrance", enterButtonImage: "enter_button", locationText: "Location 5", fontColor: 0x8dcb0e })
     // this.locationDialogBoxContainersGroup = this.add.group();
 
     // this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)

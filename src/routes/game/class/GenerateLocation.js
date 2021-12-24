@@ -11,11 +11,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.x = config.x
         this.y = config.y
         this.locationImage = config.locationImage
-        this.backButtonImage = config.backButtonImage
+        this.enterButtonImage = config.enterButtonImage
         this.locationText = config.locationText
         this.fontColor = config.fontColor
         this.locationDestination = config.locationDestination
-        this.backButton
+        this.enterButton
         this.showing = false
         this.type = config.type
         this.color1 = config.color1
@@ -77,11 +77,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         //Phaser.Display.Align.In.TopCenter(this.location, locationDescription)
 
         // back button that appears 
-        this.backButton = this.scene.add.image(0, -(width / 2) - 60,
-            this.backButtonImage).setInteractive().setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
+        this.enterButton = this.scene.add.image(0, -(width / 2) - 60,
+            this.enterButtonImage).setInteractive().setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
 
         this.scene.tweens.add({
-            targets: this.backButton,
+            targets: this.enterButton,
             y: -90,
             alpha: 0.0,
             duration: 1000,
@@ -94,7 +94,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         //this.setSize(width, width)
         this.add(this.location)
         this.add(locationDescription)
-        this.add(this.backButton)
+        this.add(this.enterButton)
 
         this.setSize(width, width, false)
 
@@ -110,11 +110,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                 })
         }
 
-        this.backButton.on('pointerdown', () => {
+        this.enterButton.on('pointerdown', () => {
 
         })
 
-        this.backButton.on('pointerup', () => {
+        this.enterButton.on('pointerup', () => {
             // on entering another location we want to keep a record for "back button"
             ManageSession.previousLocation = this.scene.key;
 
@@ -146,12 +146,12 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
     confirmEnterLocation(player, location) {
         this.confirmConfirm()
-        this.backButton.setVisible(true)
+        this.enterButton.setVisible(true)
     }
 
     hideEnterButton() {
         this.showing = false
-        this.backButton.setVisible(this.showing)
+        this.enterButton.setVisible(this.showing)
     }
 
     confirmConfirm() {
