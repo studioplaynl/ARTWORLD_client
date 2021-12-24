@@ -181,10 +181,8 @@ class Player {
     
     // scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
     scene.playerContainer = scene.add.container(0, 0);
-    scene.playerContainer.add(scene.player)
+    // scene.playerContainer.add(scene.player)
     scene.player.setInteractive({ useHandCursor: true });
-
-    console.log(scene.playerContainer)
 
     scene.player.on("pointerup", () => {
       console.log("player clicked")
@@ -217,7 +215,7 @@ class Player {
 
 
       heartTipCircle.on("pointerup", () => {
-        const artsListRectangle = scene.add.rectangle(0, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5);
+        const artsListRectangle = scene.add.rectangle(0, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000 );
         artsListRectangle.setStrokeStyle(4, 0xefc53f);
         scene.artsListContainer = scene.add.container(scene.player.getRightCenter().x + 100, scene.player.getRightCenter().y)
         scene.artsListContainer.add(artsListRectangle)
@@ -296,6 +294,13 @@ class Player {
     scene.player.body.velocity.normalize().scale(speed);
   }
 
+  actuallyMoving(scene, container, target, speed) {
+    scene.physics.moveToObject(container, target, speed);
+    scene.playerContainer.x = scene.player.x
+    scene.playerContainer.y = scene.player.y
+    // write for buttons that appear on click of the avatar
+  }
+
   moveBySwiping(scene) {
     if (
       scene.input.activePointer.isDown &&
@@ -327,7 +332,9 @@ class Player {
 
       scene.target.x = playerX + swipeX;
       scene.target.y = playerY + swipeY;
-      scene.physics.moveToObject(scene.player, scene.target, moveSpeed * 2);
+
+      // scene.physics.moveToObject(scene.player, scene.target, moveSpeed * 2);
+      this.actuallyMoving(scene, scene.player, scene.target, moveSpeed * 2) // generalized moving method
       scene.isClicking = false;
     }
 
@@ -360,6 +367,7 @@ class Player {
       let lastTime = 0;
       scene.input.on("pointerdown", () => {
         let clickDelay = scene.time.now - lastTime;
+      
         lastTime = scene.time.now;
         if (clickDelay < 350 && scene.graffitiDrawing == false) {
          
@@ -367,8 +375,8 @@ class Player {
           scene.target.y = scene.input.activePointer.worldY;       
 
           scene.playerIsMovingByClicking = true; // activate moving animation
-          scene.physics.moveToObject(scene.player, scene.target, 450);
-
+          // scene.physics.moveToObject(scene.player, scene.target, 450);
+          this.actuallyMoving(scene, scene.player, scene.target, 450) // generalized moving method
         }
       });
       scene.isClicking = false;
