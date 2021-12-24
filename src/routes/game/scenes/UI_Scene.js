@@ -66,6 +66,7 @@ export default class UI_Scene extends Phaser.Scene {
     this.scale.on("resize", this.resize, this);
 
     const frame = this.add.graphics()
+
     // create a black square size of art + 20pix
     frame.fillStyle(0xffff00)
     frame.fillRoundedRect(0+80, this.sys.game.canvas.height - 200, this.sys.game.canvas.width-80, 80, 32)
