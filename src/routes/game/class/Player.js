@@ -1,5 +1,7 @@
+import { ShapeUtils } from "three";
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
+
 
 class Player {
   constructor() {
@@ -124,6 +126,10 @@ class Player {
     //console.log("scene.playerAvatarKey");
     //console.log(scene.playerAvatarKey);
 
+    // 
+    
+
+
     // scene.player.texture = scene.playerAvatarKey
     scene.player.setTexture(scene.playerAvatarKey);
     scene.playerShadow.setTexture(scene.playerAvatarKey);
@@ -169,6 +175,68 @@ class Player {
 
     // scene.add.existing(this)
     // scene.physics.add.existing(this)
+
+
+
+    
+    // scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
+    scene.playerContainer = scene.add.container(0, 0);
+    scene.playerContainer.add(scene.player)
+    scene.player.setInteractive({ useHandCursor: true });
+
+    console.log(scene.playerContainer)
+
+    scene.player.on("pointerup", () => {
+      console.log("player clicked")
+    
+      const homeTipCircle = scene.add.circle(0, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true })  
+      const homeTip = scene.add.image(0, 0, "home").setScale(0.1)
+      homeTipCircle.setStrokeStyle(4, 0xefc53f);
+      scene.homeTipContainer = scene.add.container(scene.player.getTopCenter().x, scene.player.getTopCenter().y - 50)
+      scene.homeTipContainer.add(homeTipCircle)
+      scene.homeTipContainer.add(homeTip)
+
+      homeTipCircle.on("pointerup", () => {
+        scene.scene.stop(scene.location)
+        // is there already an object that contains username, its house id and the list of artworks(?)
+        // right now we are downloading artworks only on entrance to a house and keep that in "this.userArtServerList"(?)
+        // if we want to display a list of artworks of the selected avatar, then we need an object that contains the list of artworks(?)
+        // when we start a scene we cannot use the house's id to enter it(?)
+        scene.scene.start("DefaultUserHome") 
+      })
+
+      const heartTipCircle = scene.add.circle(0, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true })  
+      const heartTip = scene.add.image(0, 0, "heart").setScale(0.1)
+      heartTipCircle.setStrokeStyle(4, 0xefc53f);
+      scene.heartTipContainer = scene.add.container(scene.player.getRightCenter().x + 50, scene.player.getRightCenter().y)
+      scene.heartTipContainer.add(heartTipCircle)
+      scene.heartTipContainer.add(heartTip)
+
+      scene.playerContainer.add(scene.homeTipContainer)
+      scene.playerContainer.add(scene.heartTipContainer)
+
+
+      heartTipCircle.on("pointerup", () => {
+        const artsListRectangle = scene.add.rectangle(0, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5);
+        artsListRectangle.setStrokeStyle(4, 0xefc53f);
+        scene.artsListContainer = scene.add.container(scene.player.getRightCenter().x + 100, scene.player.getRightCenter().y)
+        scene.artsListContainer.add(artsListRectangle)
+        scene.playerContainer.add(scene.artsListContainer)
+      })
+    })
+
+
+
+    // scene.player.on('pointerdownoutside', () => {
+    //   console.log("outside")
+    //     scene.tooltipContainer.setVisible(false)
+    // })
+
+    console.log(scene.player)
+
+  
+
+
   } //attachAvatarToPlayer
 
   moveByCursor(scene) {
