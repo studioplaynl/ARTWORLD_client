@@ -65,14 +65,16 @@ export async function updateObject(type, name, value, pub) {
     pub = 2
   }
   else{ pub = 1;}
+  let object = {
+    "collection": type,
+    "key": name,
+    "value": JSON.parse(value),
+    "permission_read": pub,
+    //"version": "*"
+  }
+  console.log(object)
   const object_ids = await client.writeStorageObjects(Sess, [
-    {
-      "collection": type,
-      "key": name,
-      "value": value,
-      "permission_read": pub,
-      //"version": "*"
-    }
+    object
   ]);
   console.info("Stored objects: %o", object_ids);
 }
