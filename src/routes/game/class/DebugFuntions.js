@@ -7,6 +7,10 @@ class DebugFuntions {
         //scene = config.scene 
     }
 
+    testFunction(){
+        console.log("Hello!")
+    }
+
     keyboard(scene) {
 
         scene.input.keyboard.on('keyup-A', function (event) {
@@ -84,7 +88,24 @@ class DebugFuntions {
 
             console.log('W key');
 
+            listObjects("addressbook", ManageSession.userProfile.id, 10)
+        }, scene)
 
+        scene.input.keyboard.on('keyup-E', function (event) {
+            console.log('E key');
+            console.log(ManageSession.addressbook)
+            console.log(ManageSession.addressbook.value)
+        }, scene)
+
+        scene.input.keyboard.on('keyup-R', function (event) {
+            console.log('R key');
+            const value = '{"user_id": "b9ae6807-1ce1-4b71-a8a3-f5958be4d340", "posX": "100", "posY": "500"}'
+
+            const type = "addressbook"
+            const name = type + "_" + ManageSession.userProfile.id
+            const pub = 2
+            
+            updateObject(type, name, value, pub)
         }, scene)
 
         scene.input.keyboard.on('keyup-H', function (event) {

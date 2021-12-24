@@ -1,5 +1,6 @@
 import { client, SSL } from "../../nakama.svelte";
-import CoordinatesTranslator from "./class/CoordinatesTranslator";
+import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate from artworld coordinates to Phaser 2D screen coordinates
+
 import { SCENES } from "./config.js"
 
 class ManageSession {
@@ -11,6 +12,10 @@ class ManageSession {
     this.userProfile
     this.user_id
     this.username;
+
+    this.itemsBar
+    this.addressbook
+    this.favorites
 
     this.client;
     this.socket;
@@ -179,7 +184,7 @@ class ManageSession {
       let tempConnectedUsers = JSON.parse(rec.payload) || []
 
       // empty the array first
-     // this.allConnectedUsers = []
+      // this.allConnectedUsers = []
       this.allConnectedUsers = tempConnectedUsers
 
       //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
@@ -233,12 +238,12 @@ class ManageSession {
     var opCode = 1;
     var data =
       '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }';
-     //console.log(data)
+    //console.log(data)
 
     this.socket.rpc("move_position", data)
-      // .then((rec) => {
-      //   console.log(rec)
-      // });
+    // .then((rec) => {
+    //   console.log(rec)
+    // });
   } //end sendChatMessage
 
   checkSceneExistence() {
@@ -251,7 +256,7 @@ class ManageSession {
       //set to fail-back scene
       this.location = "ArtworldAmsterdam"
       this.launchLocation = this.location
-      console.log(this.launchLocation)
+      //console.log(this.launchLocation)
     } else {
       this.location = this.userProfile.meta.location
       console.log(this.location)

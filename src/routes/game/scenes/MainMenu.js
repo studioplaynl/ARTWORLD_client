@@ -1,6 +1,6 @@
 import { SCENES } from "../config.js"
 import ManageSession from "../ManageSession.js"
-import { getAccount } from '../../../api.js'
+import { getAccount, listObjects } from '../../../api.js'
 import Preloader from '../Preloader.js'
 
 
@@ -11,40 +11,6 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   preload() {
-
-    // //.... PRELOADER VISUALISER ...............................................................................................
-    // Preloader.Loading(this)
-    // //.... end PRELOADER VISUALISER ...............................................................................................
-
-
-    // this.load.atlas(
-    //   "flares",
-    //   "assets/particles/flares.png",
-    //   "assets/particles/flares.json"
-    // )
-
-    // this.load.image("artworld", "assets/artworld.png")
-
-    // this.load.image("ui_magnifier_minus", "assets/ui/circle_minus.png")
-    // this.load.image("ui_magnifier_plus", "assets/ui/circle_plus.png")
-    // this.load.image("ui_eye", "assets/ui/eye.png")
-
-    // // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
-    // // this.load.image("background2", "./assets/test_backgrounds/desktop112157.jpg")
-    // // this.load.image("background3", "./assets/test_backgrounds/desktop251515.jpg")
-    // //this.load.image("background4", "./assets/art_styles/repetition/0affdae3101c87f72c071970623a6884.jpg")
-    // // this.load.image("background4", "./assets/art_styles/repetition/0ceff64b236482e515c344d254424da6.jpg")
-    // // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
-    // // this.load.image("background4", "./assets/art_styles/repetition/9a9cdf2c6c7a12e4bf572f34536861d3.jpg")
-    // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
-    // // this.load.image(
-    // //   "background4",
-    // //   "./assets/art_styles/repetition/b9a5ab2363eef33f8ede82430fe331b3.jpg"
-    // // );
-
-    // // Received presence event for stream:
-    // // this.load.image("background5", "./assets/test_backgrounds/desktop1121573.jpg")
-
   }
 
   async create() {
@@ -59,56 +25,9 @@ export default class MainMenu extends Phaser.Scene {
       )
       .setOrigin(0);
 
-    //test different background
-    // this.add.image(0,0, "background1").setOrigin(0).setScale(0.5)
-    // this.add.image(0,0, "background2").setOrigin(0).setScale(0.8)
-    // this.add.image(0,-300, "background3").setOrigin(0).setScale(1)
-    //this.bg = this.add.image(0,0, "background4").setOrigin(0.5).setScale(1.3)
-    // this.add.image(0,-300, "background5").setOrigin(0).setScale(1)
-
-    // this.camMain = this.cameras.main.setSize(this.sys.game.canvas.width, this.sys.game.canvas.height).setName('camMain')
-    // this.camMain.zoom = 1;
-    // this.camUI = this.cameras.add(0,0, this.sys.game.canvas.width, this.sys.game.canvas.height).setName('camUI');
-    // this.camUI.zoom = 1;
-
     //...... SESSION .............................................................................................
-
     //! session needed for websocket later! needed is the token
     //! we get the session in session.js
-    //console.log(ManageSession.sessionStored)
-
-    // ManageSession.sessionStored = JSON.parse(localStorage.getItem("Session"));
-
-    //.............................................................................................................
-
-    //...... PARTICLES .............................................................................................
-    // var particles = this.add.particles('flares');
-
-    // //  Create an emitter by passing in a config object directly to the Particle Manager
-    // var emitter = particles.createEmitter({
-    //   frame: ['red', 'blue', 'green', 'yellow'],
-    //   x: CONFIG.WIDTH / 2,
-    //   y: CONFIG.HEIGHT / 2,
-    //   speed: 100,
-    //   lifespan: 3000,
-    //   blendMode: 'MULTI'
-    // });
-    //..............................................................................................................
-
-    //....... ENTER WORLD BUTTON ....................................................................................
-    // this.add
-    //   .text(CONFIG.WIDTH / 2, 175, "welcome to", {
-    //     fontFamily: "Arial",
-    //     fontSize: "24px",
-    //   })
-    //   .setOrigin(0.5);
-
-    // this.add
-    //   .text(CONFIG.WIDTH / 2, 223, "ARTWORLD", {
-    //     fontFamily: "Arial",
-    //     fontSize: "60px",
-    //   })
-    //   .setOrigin(0.5);
 
     this.playBtn = this.add
       .image(this.scale.width / 2, this.scale.height / 3, "artworld")
@@ -119,57 +38,32 @@ export default class MainMenu extends Phaser.Scene {
 
     this.playBtn.setScale(this.playBtnScaler);
 
-    // const playBtn = this.add
-    //   .image(CONFIG.WIDTH / 2, 275, 225, 70, 0xffca27)
-    //   .setInteractive({ useHandCursor: true });
-
-    // const playBtnText = this.add
-    //   .text(CONFIG.WIDTH / 2, 275, "Begin", {
-    //     fontFamily: "Arial",
-    //     fontSize: "36px",
-    //   })
-    //   .setOrigin(0.5);
-
     this.playBtn.on("pointerdown", () => {
-      // if (ManageSession.sessionStored.username != null) {
-      // a way to check if the connection if working
-      //console.log(ManageSession.userProfile);
       this.scene.start("NetworkBoot");
-
-      // }
-    });
+    })
 
     this.playBtn.on("pointerover", () => {
       this.playBtn.setScale(this.playBtnScaler * 1.1);
-    });
+    })
 
     this.playBtn.on("pointerout", () => {
       this.playBtn.setScale(this.playBtnScaler);
-    });
-
-    //this.zoomButtons(false)
-
-    //......... INPUT ....................................................................................
-    //......... DEBUG FUNCTIONS ............................................................................
-    //this.debugFunctions();
-    //this.createDebugText();
-    //......... end DEBUG FUNCTIONS .........................................................................
-    //.......... end INPUT ................................................................................
+    })
 
     //on resizing the window
     this.scale.on("resize", this.resize, this);
 
-    // this.camMain.ignore([this.zoom, this.zoomIn, this.zoomOut]);
-    // this.camUI.ignore([this.playBtn, this.bg])
-
     //* check if the user profile is loaded, to be able to send the player to the right location
     if (typeof (ManageSession.userProfile.meta.location) != "undefined") {
       ManageSession.launchLocation = ManageSession.userProfile.meta.location
-      console.log(ManageSession.launchLocation)
+      await this.getUserAddressbook()
+      //console.log(ManageSession.launchLocation)
       ManageSession.checkSceneExistence()
     } else {
       getAccount("", true)
         .then(rec => {
+          //*load user pref's like addressbook, favorites
+          this.getUserAddressbook()
           ManageSession.freshSession = rec
           //! only set the menu button visible if the user data is downloaded!
           ManageSession.launchLocation = ManageSession.freshSession.meta.location
@@ -178,59 +72,22 @@ export default class MainMenu extends Phaser.Scene {
     }
   } //create
 
-  // zoomButtons(update) {
+  async getUserAddressbook() {
+    const user_id = ManageSession.userProfile.id
+    //console.log("user_id", user_id)
 
-  //   let width = this.sys.game.canvas.width
-  //   let height = this.sys.game.canvas.height - 60
-  //   if (!update) {
-  //     this.zoom = this.add.text(width / 10, height / 40, "zoom", { fontFamily: "Arial", fontSize: "22px" })
-  //       .setOrigin(0)
-  //       //.setScrollFactor(0) //fixed on screen
-  //       .setShadow(1, 1, '#000000', 0)
-  //       .setDepth(300)
-  //       .setScale(width / (width / this.camMain.zoom))
+    await listObjects("addressbook", user_id, 10).then(rec => {
+      //addressbook is an array
+      // first we make addressbook not an array
 
-  //     this.zoomIn = this.add.text((width / 10) + 80, (height / 40) , "IN", { fontFamily: "Arial", fontSize: "22px" })
-  //       .setOrigin(0)
-  //       //.setScrollFactor(0) //fixed on screen
-  //       .setShadow(1, 1, '#000000', 0)
-  //       .setDepth(300)
-  //       .setInteractive()
-
-  //     this.zoomOut = this.add.text((width / 10) + 160, (height / 40) , "OUT", { fontFamily: "Arial", fontSize: "22px" })
-  //       .setOrigin(0)
-  //       //.setScrollFactor(0) //fixed on screen
-  //       .setShadow(1, 1, '#000000', 0)
-  //       .setDepth(300)
-  //       .setInteractive()
-
-  //     this.zoomIn.on("pointerup", () => {
-  //       this.cameras.main.zoom += 0.2;
-  //       console.log("this.camMain.zoom")
-  //       console.log(this.camMain.zoom)
-  //       this.resize()
-  //     });
-
-  //     this.zoomOut.on("pointerup", () => {
-  //       this.camMain.zoom -= 0.2;
-  //       console.log("this.camMain.zoom")
-  //       console.log(this.camMain.zoom)
-  //       this.resize()
-  //     });
-  //   } else {
-  //     this.zoom.setPosition((width / 10) / this.camMain.zoom, (height / 10) / this.camMain.zoom).setScale(width / (width / this.camMain.zoom))
-  //     this.zoomIn.setPosition((width / 10) / this.camMain.zoom, (height / 10) / this.camMain.zoom + (50 / this.camMain.zoom)).setScale(width / (width / this.camMain.zoom))
-  //     this.zoomOut.setPosition((width / 10) / this.camMain.zoom, (height / 10) / this.camMain.zoom + (80 / this.camMain.zoom)).setScale(width / (width / this.camMain.zoom))
-  //   }
-  // }
+      ManageSession.addressbook = rec[0]
+      console.log("ManageSession.addressbook", ManageSession.addressbook)
+    })
+  }
 
   resize() {
-    //console.log("resizing")
     let width = this.sys.game.canvas.width;
     let height = this.sys.game.canvas.height;
-
-    //console.log(width, height)
-    //this.camMain.resize(width, height);
 
     this.bg.setSize(width, height);
 
@@ -240,14 +97,11 @@ export default class MainMenu extends Phaser.Scene {
 
     this.playBtn.on("pointerover", () => {
       this.playBtn.setScale(this.playBtnScaler * 1.1);
-    });
+    })
 
     this.playBtn.on("pointerout", () => {
       this.playBtn.setScale(this.playBtnScaler);
-    });
-
-    //this.zoomButtons(true)
-    //this.scale.updateBounds();
+    })
   }
 
   update(time, delta) {

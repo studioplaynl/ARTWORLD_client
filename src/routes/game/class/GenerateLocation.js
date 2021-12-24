@@ -37,7 +37,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // image for the location, physical body for collision with the player
         //setOrigin(0.5) in the middle
         if (this.type === "image") {
-            console.log("image!")
+            //console.log("image!")
             this.scene.textures.exists(this.locationImage)
             this.location = this.scene.physics.add.image(0, 0, this.locationImage).setOrigin(0.5, 0.5).setDepth(50)
 
@@ -47,7 +47,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         }
 
         if (this.type === "isoTriangle") {
-            console.log("isoTriangle!")
+            //console.log("isoTriangle!")
             //this.location = this.scene.add.isotriangle(0, width / 4, width, width, false, 0x8dcb0e, 0x3f8403, 0x63a505)
             this.location = this.scene.add.isotriangle(0, width / 4, width, width, false, this.color1, this.color2, this.color3)
             this.scene.physics.add.existing(this.location)
@@ -56,7 +56,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         }
 
         if (this.type === "isoBox") {
-            console.log("isoBox!")
+            //console.log("isoBox!")
             // this.location = this.scene.add.isobox(0, 0, width, width / 1.4, 0xffe31f, 0xf2a022, 0xf8d80b)
             this.location = this.scene.add.isobox(0, 0, width, width / 1.4, this.color1, this.color2, this.color3)
             this.scene.physics.add.existing(this.location)
