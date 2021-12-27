@@ -178,27 +178,30 @@ class Player {
 
 
     scene.player.setInteractive({ useHandCursor: true });
+    // scene.playerContainer = new Phaser.Math.Vector2(0, 0)
     scene.popUpButtons = false;
     
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
     scene.physics.world.enable(scene.playerContainer)
 
+    console.log(scene.playerContainer)
+
     scene.player.on("pointerup", function() {
       if (scene.popUpButtons == false) {  
         scene.playerContainer.setVisible(true);
 
-        scene.homeButtonCircle = scene.add.circle(0, -85, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true })  
-        scene.homeButtonImage = scene.add.image(0, -85, "home").setScale(0.1)
-        scene.homeButtonCircle.setStrokeStyle(4, 0xefc53f);
-        scene.heartButtonCircle = scene.add.circle(75, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true })  
-        scene.heartButtonImage = scene.add.image(75, 0, "heart").setScale(0.1)
-        scene.heartButtonCircle.setStrokeStyle(4, 0xefc53f);
-        scene.heartButtonCircle.on("pointerup", () => {
-          const artWorkList = scene.add.rectangle(150, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000 );
+        const homeButtonCircle = scene.add.circle(0, -85, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0xefc53f)  
+        const homeButtonImage = scene.add.image(0, -85, "home").setScale(0.1)
+
+        const heartButtonCircle = scene.add.circle(75, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0xefc53f)
+        const heartButtonImage = scene.add.image(75, 0, "heart").setScale(0.1)
+
+        heartButtonCircle.on("pointerup", () => {
+          const artWorkList = scene.add.rectangle(150, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000);
           artWorkList.setStrokeStyle(4, 0xefc53f);
           scene.playerContainer.add(artWorkList)
         })
-        scene.playerContainer.add([scene.homeButtonCircle, scene.homeButtonImage, scene.heartButtonCircle, scene.heartButtonImage])
+        scene.playerContainer.add([homeButtonCircle, homeButtonImage, heartButtonCircle, heartButtonImage])
         scene.popUpButtons = true
   
         // homeButtonCircle.on("pointerup", function() {
@@ -263,20 +266,25 @@ class Player {
   }
 
   moveByKeyboard(scene) {
-    const speed = 175;
-    const prevVelocity = scene.player.body.velocity.clone();
-
+    const speed = 170;
+    const prevPlayerVelocity = scene.player.body.velocity.clone();
+    
     // Stop any previous movement from the last frame
     scene.player.body.setVelocity(0);
+    if (scene.playerContainer?.body) {
+      scene.playerContainer.body.setVelocity(0);
+    } 
 
     // Horizontal movement
     if (scene.cursors.left.isDown) {
       scene.player.body.setVelocityX(-speed);
+      scene.playerContainer.body.setVelocityX(-speed);
 
       // scene.cursorKeyIsDown = true;
       this.sendMovement(scene);
     } else if (scene.cursors.right.isDown) {
       scene.player.body.setVelocityX(speed);
+      scene.playerContainer.body.setVelocityX(speed);
       // scene.cursorKeyIsDown = true
       // sendPlayerMovement(scene)
     }
@@ -284,16 +292,22 @@ class Player {
     // Vertical movement
     if (scene.cursors.up.isDown) {
       scene.player.body.setVelocityY(-speed);
+      scene.playerContainer.body.setVelocityY(-speed);
       // scene.cursorKeyIsDown = true
       this.sendMovement(scene);
     } else if (scene.cursors.down.isDown) {
       scene.player.body.setVelocityY(speed);
+      scene.playerContainer.body.setVelocityY(speed);
       // scene.cursorKeyIsDown = true
       this.sendMovement(scene);
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     scene.player.body.velocity.normalize().scale(speed);
+    if (scene.playerContainer?.body) {
+      scene.playerContainer.body.velocity.normalize().scale(speed);
+    } 
+   
   }
 
   actuallyMoving(scene, container, target, speed) {
