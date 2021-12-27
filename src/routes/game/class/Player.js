@@ -177,62 +177,64 @@ class Player {
     // scene.physics.add.existing(this)
 
 
-
-    
-    // scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
-    scene.playerContainer = scene.add.container(0, 0);
-    // scene.playerContainer.add(scene.player)
     scene.player.setInteractive({ useHandCursor: true });
-
-    scene.player.on("pointerup", () => {
-      console.log("player clicked")
+    scene.popUpButtons = false;
     
-      const homeTipCircle = scene.add.circle(0, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true })  
-      const homeTip = scene.add.image(0, 0, "home").setScale(0.1)
-      homeTipCircle.setStrokeStyle(4, 0xefc53f);
-      scene.homeTipContainer = scene.add.container(scene.player.getTopCenter().x, scene.player.getTopCenter().y - 50)
-      scene.homeTipContainer.add(homeTipCircle)
-      scene.homeTipContainer.add(homeTip)
+    scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
+    scene.physics.world.enable(scene.playerContainer)
 
-      homeTipCircle.on("pointerup", () => {
-        scene.scene.stop(scene.location)
-        // is there already an object that contains username, its house id and the list of artworks(?)
-        // right now we are downloading artworks only on entrance to a house and keep that in "this.userArtServerList"(?)
-        // if we want to display a list of artworks of the selected avatar, then we need an object that contains the list of artworks(?)
-        // when we start a scene we cannot use the house's id to enter it(?)
-        scene.scene.start("DefaultUserHome") 
-      })
+    scene.player.on("pointerup", function() {
+      if (scene.popUpButtons == false) {  
+        scene.playerContainer.setVisible(true);
 
-      const heartTipCircle = scene.add.circle(0, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true })  
-      const heartTip = scene.add.image(0, 0, "heart").setScale(0.1)
-      heartTipCircle.setStrokeStyle(4, 0xefc53f);
-      scene.heartTipContainer = scene.add.container(scene.player.getRightCenter().x + 50, scene.player.getRightCenter().y)
-      scene.heartTipContainer.add(heartTipCircle)
-      scene.heartTipContainer.add(heartTip)
-
-      scene.playerContainer.add(scene.homeTipContainer)
-      scene.playerContainer.add(scene.heartTipContainer)
-
-
-      heartTipCircle.on("pointerup", () => {
-        const artsListRectangle = scene.add.rectangle(0, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000 );
-        artsListRectangle.setStrokeStyle(4, 0xefc53f);
-        scene.artsListContainer = scene.add.container(scene.player.getRightCenter().x + 100, scene.player.getRightCenter().y)
-        scene.artsListContainer.add(artsListRectangle)
-        scene.playerContainer.add(scene.artsListContainer)
-      })
-    })
-
-
-
-    // scene.player.on('pointerdownoutside', () => {
-    //   console.log("outside")
-    //     scene.tooltipContainer.setVisible(false)
-    // })
-
-    console.log(scene.player)
-
+        scene.homeButtonCircle = scene.add.circle(0, -85, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true })  
+        scene.homeButtonImage = scene.add.image(0, -85, "home").setScale(0.1)
+        scene.homeButtonCircle.setStrokeStyle(4, 0xefc53f);
+        scene.heartButtonCircle = scene.add.circle(75, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true })  
+        scene.heartButtonImage = scene.add.image(75, 0, "heart").setScale(0.1)
+        scene.heartButtonCircle.setStrokeStyle(4, 0xefc53f);
+        scene.heartButtonCircle.on("pointerup", () => {
+          const artWorkList = scene.add.rectangle(150, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000 );
+          artWorkList.setStrokeStyle(4, 0xefc53f);
+          scene.playerContainer.add(artWorkList)
+        })
+        scene.playerContainer.add([scene.homeButtonCircle, scene.homeButtonImage, scene.heartButtonCircle, scene.heartButtonImage])
+        scene.popUpButtons = true
   
+        // homeButtonCircle.on("pointerup", function() {
+        //   scene.scene.scene.physics.pause()
+        //   // scene.scene.stop("ArtworldAmsterdam")
+        //   ManageSession.socket.rpc("leave", "ArtworldAmsterdam")
+  
+        //   scene.scene.scene.time.addEvent({ 
+        //     delay: 500, 
+        //     callback: function() {
+        //     const destination = "5264dc23-a339-40db-bb84-e0849ded4e68";
+        //     // const destination = "DefaultUserHome";
+        //     ManageSession.createPlayer = true
+        //     ManageSession.getStreamUsers("join", destination)
+            
+        //     scene.scene.start(destination, { user_id: destination})
+          
+        //   }, callbackScope: scene, loop: false })
+  
+        //   console.log(scene.scene.scene)
+  
+  
+        //   // scene.scene.stop(scene.location)
+        //   // scene.scene.start("DefaultUserHome") 
+        // })
+  
+        
+      } else {
+        
+        scene.playerContainer.setVisible(false);
+        scene.popUpButtons = false
+      }
+
+
+    })
+ 
 
 
   } //attachAvatarToPlayer
@@ -296,9 +298,6 @@ class Player {
 
   actuallyMoving(scene, container, target, speed) {
     scene.physics.moveToObject(container, target, speed);
-    scene.playerContainer.x = scene.player.x
-    scene.playerContainer.y = scene.player.y
-    // write for buttons that appear on click of the avatar
   }
 
   moveBySwiping(scene) {
@@ -335,6 +334,7 @@ class Player {
 
       // scene.physics.moveToObject(scene.player, scene.target, moveSpeed * 2);
       this.actuallyMoving(scene, scene.player, scene.target, moveSpeed * 2) // generalized moving method
+      this.actuallyMoving(scene, scene.playerContainer, scene.target, moveSpeed * 2) // generalized moving method
       scene.isClicking = false;
     }
 
@@ -350,6 +350,7 @@ class Player {
     if (scene.playerIsMovingByClicking) {
       if (scene.distance < 10) {
         scene.player.body.reset(scene.target.x, scene.target.y);
+        scene.playerContainer.body.reset(scene.player.x, scene.player.y);
         scene.playerIsMovingByClicking = false;
       } else {
         this.sendMovement(scene);
@@ -376,7 +377,9 @@ class Player {
 
           scene.playerIsMovingByClicking = true; // activate moving animation
           // scene.physics.moveToObject(scene.player, scene.target, 450);
+          //  scene.physics.moveToObject(scene.playerContainer, scene.target, 450);
           this.actuallyMoving(scene, scene.player, scene.target, 450) // generalized moving method
+          this.actuallyMoving(scene, scene.playerContainer, scene.target, 450) // generalized moving method
         }
       });
       scene.isClicking = false;
@@ -394,6 +397,7 @@ class Player {
     if (scene.playerIsMovingByClicking) {
       if (scene.distance < 10) {
         scene.player.body.reset(scene.target.x, scene.target.y);
+        scene.playerContainer.body.reset(scene.target.x, scene.target.y);
         scene.playerIsMovingByClicking = false;
       } else {
         this.sendMovement(scene);
