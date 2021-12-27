@@ -196,16 +196,24 @@ class Player {
         const heartButtonCircle = scene.add.circle(75, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0xefc53f)
         const heartButtonImage = scene.add.image(75, 0, "heart").setScale(0.1)
 
+        let listIsVisible = true
+
+        const artWorkList = scene.add.rectangle(130, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000).setStrokeStyle(4, 0xefc53f)
+        scene.playerContainer.add(artWorkList)
+        artWorkList.setVisible(false)
+
         heartButtonCircle.on("pointerup", () => {
-          const artWorkList = scene.add.rectangle(150, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000);
-          artWorkList.setStrokeStyle(4, 0xefc53f);
-          scene.playerContainer.add(artWorkList)
+
+          artWorkList.setVisible(listIsVisible);
+          listIsVisible = !listIsVisible;
+
         })
+
         scene.playerContainer.add([homeButtonCircle, homeButtonImage, heartButtonCircle, heartButtonImage])
         scene.popUpButtons = true
   
-        // homeButtonCircle.on("pointerup", function() {
-        //   scene.scene.scene.physics.pause()
+        homeButtonCircle.on("pointerup", function() {
+          scene.scene.scene.physics.pause()
         //   // scene.scene.stop("ArtworldAmsterdam")
         //   ManageSession.socket.rpc("leave", "ArtworldAmsterdam")
   
@@ -226,16 +234,11 @@ class Player {
   
         //   // scene.scene.stop(scene.location)
         //   // scene.scene.start("DefaultUserHome") 
-        // })
-  
-        
+        })
       } else {
-        
         scene.playerContainer.setVisible(false);
         scene.popUpButtons = false
       }
-
-
     })
  
 
