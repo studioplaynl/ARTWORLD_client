@@ -113,20 +113,31 @@ export default class UI_Scene extends Phaser.Scene {
       }
 
       this.backButton.on("pointerup", () => {
-
         // take out the current location
-        const currentLocation = ManageSession.locationHistory.pop();
-        // get the previous scene (previousLocation) 
+        const currentLocationKey = ManageSession.locationHistory.pop();
+        const currentLocationScene = this.scene.get(currentLocationKey)
+        currentLocationScene.physics.pause()
+        currentLocationScene.player.setTint(0xff0000)
+
+        // get the previous scene
         const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
 
-        ManageSession.socket.rpc("leave", currentLocation)
-        setTimeout(() => {
-          ManageSession.location = previousLocation
-          ManageSession.createPlayer = true
-          ManageSession.getStreamUsers("join", previousLocation)
-          this.scene.stop(currentLocation)
-          this.scene.start(previousLocation)
-        }, 500)
+        ManageSession.socket.rpc("leave", currentLocationKey)
+
+        currentLocationScene.time.addEvent({
+          delay: 500,
+          callback: () => {
+            ManageSession.location = previousLocation;
+            ManageSession.createPlayer = true
+            ManageSession.getStreamUsers("join", previousLocation)
+            this.scene.stop(currentLocationKey)
+            this.scene.start(previousLocation)
+          }, 
+          callbackScope: this,
+          loop: false
+        })
+
+ 
       });
 
       //zoom buttons
