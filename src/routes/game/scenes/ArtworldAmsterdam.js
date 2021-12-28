@@ -36,12 +36,14 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.player
     this.playerShadow
-    this.playerContainer
     this.playerAvatarPlaceholder = "avatar1"
     this.playerMovingKey = "moving"
     this.playerStopKey = "stop"
     this.playerAvatarKey = ""
     this.createdPlayer = false
+
+    this.playerContainer
+    this.selectedPlayerID
 
     this.homes = []
     this.homesRepreseneted = []

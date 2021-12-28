@@ -186,7 +186,16 @@ class Player {
     scene.physics.world.enable(scene.playerContainer)
 
 
-    scene.player.on("pointerup", function() {
+    scene.input.on('gameobjectdown', (pointer, object) => {
+      if (object.anims) {
+        // saving the clicked avatar's id in order to enter its home
+        scene.selectedPlayerID = object.anims.currentFrame.textureKey.split("_")[0]
+        console.log("selected player id", scene.selectedPlayerID)
+      }
+    })
+
+    scene.player.on("pointerup", () => {
+
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
       if (scene.displayPopUpButtons == false) {  
         scene.playerContainer.setVisible(true);
@@ -214,25 +223,28 @@ class Player {
         scene.displayPopUpButtons = true
   
         // entering to the home of the avatar
-        homeButtonCircle.on("pointerup", function() {
+        homeButtonCircle.on("pointerup", () => {
           scene.scene.scene.physics.pause()
-        //   // scene.scene.stop("ArtworldAmsterdam")
-          ManageSession.socket.rpc("leave", "ArtworldAmsterdam")
-  
+          scene.scene.scene.player.setTint(0xff0000)
+
+          ManageSession.socket.rpc("leave", scene.scene.scene.location)
+
+          scene.scene.scene.player.location = "DefaultUserHome"
+          
           scene.scene.scene.time.addEvent({ 
             delay: 500, 
-            callback: function() {
-              // const destination = "5264dc23-a339-40db-bb84-e0849ded4e68";
-              const destination = "DefaultUserHome";
+            callback: () => {
+              ManageSession.location = "DefaultUserHome"
               ManageSession.createPlayer = true
-              ManageSession.getStreamUsers("join", destination)
-              
-              scene.scene.start(destination, { user_id: destination})
-          
+              ManageSession.getStreamUsers("join", "DefaultUserHome")
+              scene.scene.scene.scene.stop(scene.scene.scene.scene.key)
+              if (scene.scene.scene.selectedPlayerID) {
+                scene.scene.scene.scene.start("DefaultUserHome", { user_id: scene.scene.scene.selectedPlayerID })
+              } else {
+                scene.scene.scene.scene.start("DefaultUserHome")
+              }
             }, 
             callbackScope: scene, loop: false })
-  
-          console.log("current scene", scene.scene.scene)
         })
       } else {
         scene.playerContainer.setVisible(false)
