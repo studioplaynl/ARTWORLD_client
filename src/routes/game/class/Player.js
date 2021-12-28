@@ -176,18 +176,19 @@ class Player {
     // scene.add.existing(this)
     // scene.physics.add.existing(this)
 
-
+    // making the avatar interactive
     scene.player.setInteractive({ useHandCursor: true });
-    // scene.playerContainer = new Phaser.Math.Vector2(0, 0)
-    scene.popUpButtons = false;
+    // by default the pop-up buttons are hidden
+    scene.displayPopUpButtons = false;
     
+    // creating a container that holds all pop-up buttons, the coords is the same as the avatar
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
     scene.physics.world.enable(scene.playerContainer)
 
-    console.log(scene.playerContainer)
 
     scene.player.on("pointerup", function() {
-      if (scene.popUpButtons == false) {  
+      // checking if the buttons are hidden, show - if hidden, hide - if displayed
+      if (scene.displayPopUpButtons == false) {  
         scene.playerContainer.setVisible(true);
 
         const homeButtonCircle = scene.add.circle(0, -85, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0xefc53f)  
@@ -196,6 +197,7 @@ class Player {
         const heartButtonCircle = scene.add.circle(75, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0xefc53f)
         const heartButtonImage = scene.add.image(75, 0, "heart").setScale(0.1)
 
+        // for toggling the artwork list
         let listIsVisible = true
 
         const artWorkList = scene.add.rectangle(130, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000).setStrokeStyle(4, 0xefc53f)
@@ -203,46 +205,40 @@ class Player {
         artWorkList.setVisible(false)
 
         heartButtonCircle.on("pointerup", () => {
-
           artWorkList.setVisible(listIsVisible);
           listIsVisible = !listIsVisible;
-
         })
 
+        // adding all buttons to the container
         scene.playerContainer.add([homeButtonCircle, homeButtonImage, heartButtonCircle, heartButtonImage])
-        scene.popUpButtons = true
+        scene.displayPopUpButtons = true
   
+        // entering to the home of the avatar
         homeButtonCircle.on("pointerup", function() {
           scene.scene.scene.physics.pause()
         //   // scene.scene.stop("ArtworldAmsterdam")
-        //   ManageSession.socket.rpc("leave", "ArtworldAmsterdam")
+          ManageSession.socket.rpc("leave", "ArtworldAmsterdam")
   
-        //   scene.scene.scene.time.addEvent({ 
-        //     delay: 500, 
-        //     callback: function() {
-        //     const destination = "5264dc23-a339-40db-bb84-e0849ded4e68";
-        //     // const destination = "DefaultUserHome";
-        //     ManageSession.createPlayer = true
-        //     ManageSession.getStreamUsers("join", destination)
-            
-        //     scene.scene.start(destination, { user_id: destination})
+          scene.scene.scene.time.addEvent({ 
+            delay: 500, 
+            callback: function() {
+              // const destination = "5264dc23-a339-40db-bb84-e0849ded4e68";
+              const destination = "DefaultUserHome";
+              ManageSession.createPlayer = true
+              ManageSession.getStreamUsers("join", destination)
+              
+              scene.scene.start(destination, { user_id: destination})
           
-        //   }, callbackScope: scene, loop: false })
+            }, 
+            callbackScope: scene, loop: false })
   
-        //   console.log(scene.scene.scene)
-  
-  
-        //   // scene.scene.stop(scene.location)
-        //   // scene.scene.start("DefaultUserHome") 
+          console.log("current scene", scene.scene.scene)
         })
       } else {
-        scene.playerContainer.setVisible(false);
-        scene.popUpButtons = false
+        scene.playerContainer.setVisible(false)
+        scene.displayPopUpButtons = false
       }
     })
- 
-
-
   } //attachAvatarToPlayer
 
   moveByCursor(scene) {
@@ -269,10 +265,10 @@ class Player {
   }
 
   moveByKeyboard(scene) {
-    const speed = 170;
+    const speed = 175;
     const prevPlayerVelocity = scene.player.body.velocity.clone();
     
-    // Stop any previous movement from the last frame
+    // Stop any previous movement from the last frame, the avatar itself and the container that holds the pop-up buttons
     scene.player.body.setVelocity(0);
     if (scene.playerContainer?.body) {
       scene.playerContainer.body.setVelocity(0);
@@ -305,7 +301,7 @@ class Player {
       this.sendMovement(scene);
     }
 
-    // Normalize and scale the velocity so that player can't move faster along a diagonal
+    // Normalize and scale the velocity so that player can't move faster along a diagonal, the pop-up buttons are included
     scene.player.body.velocity.normalize().scale(speed);
     if (scene.playerContainer?.body) {
       scene.playerContainer.body.velocity.normalize().scale(speed);
@@ -313,7 +309,7 @@ class Player {
    
   }
 
-  actuallyMoving(scene, container, target, speed) {
+  moveObjectToTarget(scene, container, target, speed) {
     scene.physics.moveToObject(container, target, speed);
   }
 
@@ -349,9 +345,9 @@ class Player {
       scene.target.x = playerX + swipeX;
       scene.target.y = playerY + swipeY;
 
-      // scene.physics.moveToObject(scene.player, scene.target, moveSpeed * 2);
-      this.actuallyMoving(scene, scene.player, scene.target, moveSpeed * 2) // generalized moving method
-      this.actuallyMoving(scene, scene.playerContainer, scene.target, moveSpeed * 2) // generalized moving method
+      // generalized moving method
+      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2) 
+      this.moveObjectToTarget(scene, scene.playerContainer, scene.target, moveSpeed * 2)
       scene.isClicking = false;
     }
 
@@ -393,10 +389,10 @@ class Player {
           scene.target.y = scene.input.activePointer.worldY;       
 
           scene.playerIsMovingByClicking = true; // activate moving animation
-          // scene.physics.moveToObject(scene.player, scene.target, 450);
-          //  scene.physics.moveToObject(scene.playerContainer, scene.target, 450);
-          this.actuallyMoving(scene, scene.player, scene.target, 450) // generalized moving method
-          this.actuallyMoving(scene, scene.playerContainer, scene.target, 450) // generalized moving method
+
+          // generalized moving method
+          this.moveObjectToTarget(scene, scene.player, scene.target, 450) 
+          this.moveObjectToTarget(scene, scene.playerContainer, scene.target, 450) 
         }
       });
       scene.isClicking = false;
@@ -474,7 +470,7 @@ class Player {
     if (scene.createdPlayer) {
       //first check if onlineplayers need to be created
       if (ManageSession.createOnlinePlayers) {
-        console.log("creating onlineplayer")
+        // console.log("creating onlineplayer")
         ManageSession.createOnlinePlayers = false
 
         //ManageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: scene.newOnlinePlayers
