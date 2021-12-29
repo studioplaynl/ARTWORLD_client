@@ -243,34 +243,38 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBox.fillStyle(0x000000, 1)
             progressBar.fillStyle(0xFFFFFF, 1);
             
-            // it gets the first element of the processed array and gives the position for the progress bar of the respective image
-            const processedFile = this.progressOn[0]
-            progressBox.fillRect(processedFile.coordX - progressWidth / 2, y, progressWidth, progressHeight);
-            progressBar.fillRect(processedFile.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2);
-
-            // once the progress of the current image is done, it is taken out from the array
-            if (value == 1) {
-                this.progressOn.shift()
+            if (this.progressOn.length > 0) {
+                // it gets the first element of the processed array and gives the position for the progress bar of the respective image
+                const processedFile = this.progressOn[0]
+                progressBox.fillRect(processedFile.coordX - progressWidth / 2, y, progressWidth, progressHeight);
+                progressBar.fillRect(processedFile.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2);
+    
+                // once the progress of the current image is done, it is taken out from the array
+                if (value == 1) {
+                    this.progressOn.shift()
+                }
             }
         })
 
         this.load.on('filecomplete', (key) => {
-            // gets the first element of the array
-            const completedFile = this.progressComplete.shift();
-
-            // creates a container
-            const artContainer = this.add.container(0, 0)
-
-            // adds a frame to the container
-            artContainer.add(this.add.image(completedFile.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
+            if (this.progressComplete.length > 0) {
+                // gets the first element of the array
+                const completedFile = this.progressComplete.shift();
     
-            // adds the image to the container
-            const currentImage = this.add.image(completedFile.coordX, y, key)
-            artContainer.add(currentImage)
-
-            // once finished loads the next element
-            if (completedFile) {
-                this.load.image(completedFile.name);
+                // creates a container
+                const artContainer = this.add.container(0, 0)
+    
+                // adds a frame to the container
+                artContainer.add(this.add.image(completedFile.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
+        
+                // adds the image to the container
+                const currentImage = this.add.image(completedFile.coordX, y, key)
+                artContainer.add(currentImage)
+    
+                // once finished loads the next element
+                if (completedFile) {
+                    this.load.image(completedFile.name);
+                }
             }
         })
 
@@ -288,20 +292,21 @@ export default class DefaultUserHome extends Phaser.Scene {
         let fileFormat = "png"
 
         this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
-        console.log(this.artUrl[index])
+        console.log("path", this.artUrl[index])
         
         const currentImage = {
             name: element.key + "_" + imgSize,
             path: this.artUrl[index],
-            // coordX: (index + 1) * 550,
-            // coordX: 0,
             coordX: index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 550 // a different value can be given instead of 550 depending on how much of a gap we want to see between the artworks 
         }
+
+        console.log("currentImage coord", currentImage.coordX)
 
         // for tracking each file in progress
         this.progressOn.push(currentImage)
         // for tracking each file in completion
-        this.progressComplete.push(currentImage)        
+        this.progressComplete.push(currentImage)      
+        console.log(this.progressOn, this.progressComplete)  
 
         this.load.image(currentImage.name, currentImage.path)
         this.load.start() // load the image in memory
