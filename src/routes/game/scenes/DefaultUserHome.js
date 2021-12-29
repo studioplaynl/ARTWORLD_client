@@ -193,25 +193,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         // this.userArtDisplayList = []
         // this.artUrl = []
 
-        
-  
-
-        // const y = 300;
-        // no need to download images on second entrance since artworks are already in textures' list
-        // if (this.onRepeatedDisplay.length > 0) {
-        //     this.onRepeatedDisplay.forEach(element => {
-        //         // creates a container
-        //         const artContainer = this.add.container(0, 0)
-    
-        //         // adds a frame to the container
-        //         artContainer.add(this.add.image(element.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
-        
-        //         // adds the image to the container
-        //         const currentImage = this.add.image(element.coordX, y, element.name)
-        //         artContainer.add(currentImage)
-        //     })
-        // }
-
 
         await listImages("drawing", this.location, 100).then((rec) => {
 
@@ -239,7 +220,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             //     console.log("!!!!!!!!!!")
             // }
 
-            // console.log("this.userArtServerList: ", this.userArtServerList)
+            console.log("this.userArtServerList: ", this.userArtServerList)
             
             if (this.userArtServerList.length > 0) {
                 //download the art, by loading the url and setting a key
@@ -317,6 +298,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     async downloadArt(element, index) {
 
+        console.log("running 1")
         let imgUrl = element.value.url
         let imgSize = "512"
         let fileFormat = "png"
@@ -336,16 +318,16 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         // run only if the artworks have been downloaded before
         if (this.onRepeatedDisplay.some(element => element.name == currentImage.name)) {
-
+            console.log("running 2")
             // creates a container
-            const artContainer = this.add.container(0, 0)
+            const artContainer2 = this.add.container(0, 0)
 
             // adds a frame to the container
-            artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, 300, 'artFrame_512').setOrigin(0, 0.5))
+            artContainer2.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, 300, 'artFrame_512').setOrigin(0, 0.5))
 
             // adds the image to the container
             const setImage = this.add.image(currentImage.coordX, 300, currentImage.name)
-            artContainer.add(setImage)
+            artContainer2.add(setImage)
 
         }
         
