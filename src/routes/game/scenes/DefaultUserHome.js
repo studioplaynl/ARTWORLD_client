@@ -53,7 +53,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.progressOn = []
         this.progressComplete = []
-        this.infoHolder = []
+        this.onRepeatedDisplay = []
     
        
 
@@ -192,6 +192,27 @@ export default class DefaultUserHome extends Phaser.Scene {
         // this.userArtServerList = []
         // this.userArtDisplayList = []
         // this.artUrl = []
+
+        
+  
+
+        // const y = 300;
+        // no need to download images on second entrance since artworks are already in textures' list
+        // if (this.onRepeatedDisplay.length > 0) {
+        //     this.onRepeatedDisplay.forEach(element => {
+        //         // creates a container
+        //         const artContainer = this.add.container(0, 0)
+    
+        //         // adds a frame to the container
+        //         artContainer.add(this.add.image(element.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
+        
+        //         // adds the image to the container
+        //         const currentImage = this.add.image(element.coordX, y, element.name)
+        //         artContainer.add(currentImage)
+        //     })
+        // }
+
+
         await listImages("drawing", this.location, 100).then((rec) => {
 
             // userArt = array of visible art of specific type, from this array urls, keys have to be created to display the art
@@ -208,7 +229,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             //     console.log("rec")
             //     this.userArtServerList = rec
             // }
-       
+    
             this.userArtServerList = rec
             // if (rec.hasOwnProperty('objects')){
             //     this.userArtServerList = rec.objects
@@ -224,11 +245,14 @@ export default class DefaultUserHome extends Phaser.Scene {
                 //download the art, by loading the url and setting a key
                 this.userArtServerList.forEach((element, index) => {
                     this.downloadArt(element, index)
-                })//end userArt downloadArt                
+                })//end userArt downloadArt         
+               
+
             }
 
-            
+
         }) //end listImages
+
 
         const progressBox = this.add.graphics();
         const progressBar = this.add.graphics();
@@ -258,6 +282,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.load.on('filecomplete', (key) => {
             if (this.progressComplete.length > 0) {
+
                 // gets the first element of the array
                 const completedFile = this.progressComplete.shift();
     
@@ -270,6 +295,9 @@ export default class DefaultUserHome extends Phaser.Scene {
                 // adds the image to the container
                 const currentImage = this.add.image(completedFile.coordX, y, key)
                 artContainer.add(currentImage)
+
+                // this.textures.remove(completedFile.name);
+                // console.log(completedFile.name)
     
                 // once finished loads the next element
                 if (completedFile) {
@@ -282,7 +310,9 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBar.destroy();
             progressBox.destroy()
         });
-        
+   
+
+
     }//end create
 
     async downloadArt(element, index) {
@@ -292,7 +322,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         let fileFormat = "png"
 
         this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
-        console.log("path", this.artUrl[index])
         
         const currentImage = {
             name: element.key + "_" + imgSize,
@@ -300,16 +329,31 @@ export default class DefaultUserHome extends Phaser.Scene {
             coordX: index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 550 // a different value can be given instead of 550 depending on how much of a gap we want to see between the artworks 
         }
 
-        console.log("currentImage coord", currentImage.coordX)
-
         // for tracking each file in progress
         this.progressOn.push(currentImage)
         // for tracking each file in completion
-        this.progressComplete.push(currentImage)      
-        console.log(this.progressOn, this.progressComplete)  
+        this.progressComplete.push(currentImage)    
+
+        // run only if the artworks have been downloaded before
+        if (this.onRepeatedDisplay.some(element => element.name == currentImage.name)) {
+
+            // creates a container
+            const artContainer = this.add.container(0, 0)
+
+            // adds a frame to the container
+            artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, 300, 'artFrame_512').setOrigin(0, 0.5))
+
+            // adds the image to the container
+            const setImage = this.add.image(currentImage.coordX, 300, currentImage.name)
+            artContainer.add(setImage)
+
+        }
+        
+        this.onRepeatedDisplay.push(currentImage)
 
         this.load.image(currentImage.name, currentImage.path)
         this.load.start() // load the image in memory
+
     }//end downloadArt
 
 

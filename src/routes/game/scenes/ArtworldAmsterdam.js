@@ -99,6 +99,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async create() {
 
+    console.log("!!!", this.textures)
+
     // for back button
     HistoryTracker.push(this);
 
