@@ -313,112 +313,112 @@ export default class Location3 extends Phaser.Scene {
     // this.createLocationDialogbox("Location4", 200, 150)
   }
 
-  createLocationDialogbox(locationName, mainWidth, mainHeight) {
-    let location = "this." + locationName
-    location = eval(location)
+  // createLocationDialogbox(locationName, mainWidth, mainHeight) {
+  //   let location = "this." + locationName
+  //   location = eval(location)
 
-    location.setData("entered", false)
-    location.setName(locationName)
+  //   location.setData("entered", false)
+  //   location.setName(locationName)
 
-    //create variable for the text of the dialog box, set the text after
-    let nameText = "this." + location.name + "DialogBox"
-    nameText = this.add.text(mainWidth - 60, mainHeight - 30, 'OK!', { fill: '#000' })
+  //   //create variable for the text of the dialog box, set the text after
+  //   let nameText = "this." + location.name + "DialogBox"
+  //   nameText = this.add.text(mainWidth - 60, mainHeight - 30, 'OK!', { fill: '#000' })
 
-    //create variable to hold dialogbox graphics
-    let nameBox = "this." + location.name + "DialogBox"
+  //   //create variable to hold dialogbox graphics
+  //   let nameBox = "this." + location.name + "DialogBox"
 
-    //background panel for dialogbox
-    nameBox = this.add.graphics();
-    nameBox.fillStyle(0xfffff00, 0.4)
-    nameBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
-    nameBox.setVisible(false)
+  //   //background panel for dialogbox
+  //   nameBox = this.add.graphics();
+  //   nameBox.fillStyle(0xfffff00, 0.4)
+  //   nameBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
+  //   nameBox.setVisible(false)
 
-    //create variable for texture that holds the graphics and the clickable area for the dialogbox
-    let nameTexture = "this." + location.name + "Texture"
+  //   //create variable for texture that holds the graphics and the clickable area for the dialogbox
+  //   let nameTexture = "this." + location.name + "Texture"
 
-    nameTexture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
-    nameTexture.draw(nameBox);
-    nameTexture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains)
-    nameTexture.on('pointerdown', () => { this.enterLocationScene(location.name) });
+  //   nameTexture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
+  //   nameTexture.draw(nameBox);
+  //   nameTexture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains)
+  //   nameTexture.on('pointerdown', () => { this.enterLocationScene(location.name) });
 
-    //create container that holds all of the dialogbox: can be moved and hidden
-    let nameContainer = "this." + location.name + "DialogBoxContainer"
+  //   //create container that holds all of the dialogbox: can be moved and hidden
+  //   let nameContainer = "this." + location.name + "DialogBoxContainer"
 
-    // nameContainer = this.add.container(location.x - (mainWidth / 2), location.y - (mainHeight / 2), [nameTexture, nameText]).setDepth(900)
-    nameContainer = this.add.container(location.body.x + (location.body.width / 4), location.body.y + (location.body.height / 4), [nameTexture, nameText]).setDepth(900)
+  //   // nameContainer = this.add.container(location.x - (mainWidth / 2), location.y - (mainHeight / 2), [nameTexture, nameText]).setDepth(900)
+  //   nameContainer = this.add.container(location.body.x + (location.body.width / 4), location.body.y + (location.body.height / 4), [nameTexture, nameText]).setDepth(900)
 
-    nameContainer.setVisible(false)
-    nameContainer.setName(location.name)
+  //   nameContainer.setVisible(false)
+  //   nameContainer.setName(location.name)
 
-    //add everything to the container
-    this.locationDialogBoxContainersGroup.add(nameContainer);
+  //   //add everything to the container
+  //   this.locationDialogBoxContainersGroup.add(nameContainer);
 
-    //call overlap between player and the location, set the callback function and scope
-    this.physics.add.overlap(this.player, location, this.confirmEnterLocation, null, this)
-  }
+  //   //call overlap between player and the location, set the callback function and scope
+  //   this.physics.add.overlap(this.player, location, this.confirmEnterLocation, null, this)
+  // }
 
-  confirmEnterLocation(player, location, show) {
-    if (!location.getData("entered")) {
-      //start event
-      show = false
-      this.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], callbackScope: this, loop: false })
+  // confirmEnterLocation(player, location, show) {
+  //   if (!location.getData("entered")) {
+  //     //start event
+  //     show = false
+  //     this.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], callbackScope: this, loop: false })
 
-      //show the box
-      show = true
-      this.enterLocationDialogBox(player, location, show)
-      location.setData("entered", true)
-    }
-  }
+  //     //show the box
+  //     show = true
+  //     this.enterLocationDialogBox(player, location, show)
+  //     location.setData("entered", true)
+  //   }
+  // }
 
-  enterLocationDialogBox(player, location, show) {
-    let container = "this." + location.name + "DialogBoxContainer"
-    container = eval(container)
+  // enterLocationDialogBox(player, location, show) {
+  //   let container = "this." + location.name + "DialogBoxContainer"
+  //   container = eval(container)
 
-    let nameContainer = location.name
-    let search = { name: location }
+  //   let nameContainer = location.name
+  //   let search = { name: location }
 
-    container = Phaser.Actions.GetFirst(this.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer });
+  //   container = Phaser.Actions.GetFirst(this.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer });
 
-    if (show) {
+  //   if (show) {
 
-      container.setVisible(show)
-    } else {
+  //     container.setVisible(show)
+  //   } else {
 
-      // this.location2DialogBoxText.input.enabled = show;
-      container.setVisible(show)
-      location.setData("entered", show)
-    }
-  }
+  //     // this.location2DialogBoxText.input.enabled = show;
+  //     container.setVisible(show)
+  //     location.setData("entered", show)
+  //   }
+  // }
 
-  enterLocation2Scene() {
-    this.physics.pause();
-    this.player.setTint(0xff0000);
-    this.scene.start("Location2");
-  }
+  // enterLocation2Scene() {
+  //   this.physics.pause();
+  //   this.player.setTint(0xff0000);
+  //   this.scene.start("Location2");
+  // }
 
-  enterLocationScene(location) {
+  // enterLocationScene(location) {
 
-    this.physics.pause()
-    this.player.setTint(0xff0000)
+  //   this.physics.pause()
+  //   this.player.setTint(0xff0000)
 
-    //player has to explicitly leave the stream it was in!
-    ManageSession.socket.rpc("leave", this.location)
+  //   //player has to explicitly leave the stream it was in!
+  //   ManageSession.socket.rpc("leave", this.location)
 
-    console.log(this.location)
+  //   console.log(this.location)
 
-    this.player.location = location
-    console.log("this.player.location:")
-    console.log(this.player.location)
+  //   this.player.location = location
+  //   console.log("this.player.location:")
+  //   console.log(this.player.location)
 
-    setTimeout(() => {
-      ManageSession.location = location
+  //   setTimeout(() => {
+  //     ManageSession.location = location
 
-      console.log(ManageSession.location)
-      ManageSession.createPlayer = true
-      ManageSession.getStreamUsers("join", location)
-      this.scene.start(location)
-    }, 1000)
-  }
+  //     console.log(ManageSession.location)
+  //     ManageSession.createPlayer = true
+  //     ManageSession.getStreamUsers("join", location)
+  //     this.scene.start(location)
+  //   }, 1000)
+  // }
 
   generateBackground() {
     //fill in textures

@@ -225,6 +225,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             if (this.userArtServerList.length > 0) {
                 //download the art, by loading the url and setting a key
                 this.userArtServerList.forEach((element, index) => {
+                    console.log("element, current index", element.key, index)
                     this.downloadArt(element, index)
                 })//end userArt downloadArt         
                
@@ -243,14 +244,17 @@ export default class DefaultUserHome extends Phaser.Scene {
         const y = 300;
 
         this.load.on("fileprogress", (file, value) => {
+            if (this.progressOn.length > 0) { 
             progressBox.clear();
             progressBar.clear();
             progressBox.fillStyle(0x000000, 1)
             progressBar.fillStyle(0xFFFFFF, 1);
             
-            if (this.progressOn.length > 0) {
+            console.log("progress", file.key, value)
+            // if (this.progressOn.length == this.userArtServerList.length) {
                 // it gets the first element of the processed array and gives the position for the progress bar of the respective image
                 const processedFile = this.progressOn[0]
+
                 progressBox.fillRect(processedFile.coordX - progressWidth / 2, y, progressWidth, progressHeight);
                 progressBar.fillRect(processedFile.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2);
     
@@ -258,12 +262,13 @@ export default class DefaultUserHome extends Phaser.Scene {
                 if (value == 1) {
                     this.progressOn.shift()
                 }
+            // }
             }
         })
 
         this.load.on('filecomplete', (key) => {
             if (this.progressComplete.length > 0) {
-
+                 console.log("completed", key)
                 // gets the first element of the array
                 const completedFile = this.progressComplete.shift();
     
@@ -276,9 +281,6 @@ export default class DefaultUserHome extends Phaser.Scene {
                 // adds the image to the container
                 const currentImage = this.add.image(completedFile.coordX, y, key)
                 artContainer.add(currentImage)
-
-                // this.textures.remove(completedFile.name);
-                // console.log(completedFile.name)
     
                 // once finished loads the next element
                 if (completedFile) {
@@ -290,6 +292,9 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.load.once("complete", () => {
             progressBar.destroy();
             progressBox.destroy()
+            this.progressOn = []
+            this.progressComplete = []
+            console.log("once complete", this.progressOn, this.progressComplete)
         });
    
 
@@ -311,26 +316,27 @@ export default class DefaultUserHome extends Phaser.Scene {
             coordX: index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 550 // a different value can be given instead of 550 depending on how much of a gap we want to see between the artworks 
         }
 
-        // for tracking each file in progress
-        this.progressOn.push(currentImage)
-        // for tracking each file in completion
-        this.progressComplete.push(currentImage)    
 
         // run only if the artworks have been downloaded before
         if (this.onRepeatedDisplay.some(element => element.name == currentImage.name)) {
             console.log("running 2")
             // creates a container
-            const artContainer2 = this.add.container(0, 0)
+            const artContainerForFollowingRuns = this.add.container(0, 0)
 
             // adds a frame to the container
-            artContainer2.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, 300, 'artFrame_512').setOrigin(0, 0.5))
+            artContainerForFollowingRuns.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, 300, 'artFrame_512').setOrigin(0, 0.5))
 
             // adds the image to the container
             const setImage = this.add.image(currentImage.coordX, 300, currentImage.name)
-            artContainer2.add(setImage)
-
+            artContainerForFollowingRuns.add(setImage)
+        } else {
+            // for tracking each file in progress
+            this.progressOn.push(currentImage)
+            // for tracking each file in completion
+            this.progressComplete.push(currentImage)    
         }
-        
+
+
         this.onRepeatedDisplay.push(currentImage)
 
         this.load.image(currentImage.name, currentImage.path)
