@@ -245,14 +245,15 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.load.on("fileprogress", (file, value) => {
             if (this.progressOn.length > 0) { 
-            progressBox.clear();
-            progressBar.clear();
-            progressBox.fillStyle(0x000000, 1)
-            progressBar.fillStyle(0xFFFFFF, 1);
-            
-            console.log("progress", file.key, value)
-            // if (this.progressOn.length == this.userArtServerList.length) {
+                progressBox.clear();
+                progressBar.clear();
+                progressBox.fillStyle(0x000000, 1)
+                progressBar.fillStyle(0xFFFFFF, 1);
+                
+                console.log("progress", file.key, value)
+                // if (this.progressOn.length == this.userArtServerList.length) {
                 // it gets the first element of the processed array and gives the position for the progress bar of the respective image
+                 
                 const processedFile = this.progressOn[0]
 
                 progressBox.fillRect(processedFile.coordX - progressWidth / 2, y, progressWidth, progressHeight);
@@ -262,7 +263,7 @@ export default class DefaultUserHome extends Phaser.Scene {
                 if (value == 1) {
                     this.progressOn.shift()
                 }
-            // }
+                // }
             }
         })
 
@@ -284,7 +285,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     
                 // once finished loads the next element
                 if (completedFile) {
-                    this.load.image(completedFile.name);
+                    this.load.image(completedFile.key);
                 }
             }
         })
@@ -303,44 +304,44 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     async downloadArt(element, index) {
 
-        console.log("running 1")
-        let imgUrl = element.value.url
-        let imgSize = "512"
-        let fileFormat = "png"
-
-        this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+        const imgUrl = element.value.url
+        const imgSize = "512"
+        const fileFormat = "png"
+        const key = `${element.key}_${imgSize}`
+        const coordX = index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 550;
         
-        const currentImage = {
-            name: element.key + "_" + imgSize,
-            path: this.artUrl[index],
-            coordX: index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 550 // a different value can be given instead of 550 depending on how much of a gap we want to see between the artworks 
-        }
+        // if the image has already downloaded, then just use the key and add image
+        if (this.textures.exists(key)) {
 
-
-        // run only if the artworks have been downloaded before
-        if (this.onRepeatedDisplay.some(element => element.name == currentImage.name)) {
-            console.log("running 2")
             // creates a container
             const artContainerForFollowingRuns = this.add.container(0, 0)
 
             // adds a frame to the container
-            artContainerForFollowingRuns.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, 300, 'artFrame_512').setOrigin(0, 0.5))
+            artContainerForFollowingRuns.add(this.add.image(coordX - this.artDisplaySize / 2, 300, 'artFrame_512').setOrigin(0, 0.5))
 
             // adds the image to the container
-            const setImage = this.add.image(currentImage.coordX, 300, currentImage.name)
+            const setImage = this.add.image(coordX, 300, key)
             artContainerForFollowingRuns.add(setImage)
+
+        // otherwise download the image and add it
         } else {
+            
+            this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+            
+            const currentImage = {
+                key,
+                path: this.artUrl[index],
+                coordX
+            }
+
             // for tracking each file in progress
             this.progressOn.push(currentImage)
             // for tracking each file in completion
             this.progressComplete.push(currentImage)    
+        
+            this.load.image(currentImage.key, currentImage.path)
+            this.load.start() // load the image in memory
         }
-
-
-        this.onRepeatedDisplay.push(currentImage)
-
-        this.load.image(currentImage.name, currentImage.path)
-        this.load.start() // load the image in memory
 
     }//end downloadArt
 
