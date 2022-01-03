@@ -12,6 +12,7 @@ import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js";
+import ListingArtworks from "../class/ListingArtworks.js"
 
 export default class DefaultUserHome extends Phaser.Scene {
 
@@ -185,6 +186,10 @@ export default class DefaultUserHome extends Phaser.Scene {
         //......... end UI Scene ..............................................................................
 
         this.createArtFrame()
+
+        ListingArtworks.getImages(this, "512", this.artDisplaySize, 550, null, 300)
+
+
         //get a list of artworks of the user
         // this.allUserArt = []
         // this.userArtServerList = []
@@ -192,122 +197,119 @@ export default class DefaultUserHome extends Phaser.Scene {
         // this.artUrl = []
 
 
-        await listImages("drawing", this.location, 100).then((rec) => {
+        // await listImages("drawing", this.location, 100).then((rec) => {
 
-            // userArt = array of visible art of specific type, from this array urls, keys have to be created to display the art
+        //     // userArt = array of visible art of specific type, from this array urls, keys have to be created to display the art
 
-            //! bug from the server: 
-            //! 1: sometimes the art with stored in .objects (with a cursor: undefined above)
-            //! 2: editing artworks are not reflected, artworks dissapear
-            //* now I am testing with this.userArtserverList = rec
+        //     //! bug from the server: 
+        //     //! 1: sometimes the art with stored in .objects (with a cursor: undefined above)
+        //     //! 2: editing artworks are not reflected, artworks dissapear
+        //     //* now I am testing with this.userArtserverList = rec
 
-            // if (typeof rec.objects != undefined) {
-            //     console.log("rec.objects")
-            //     this.userArtServerList = rec.objects
-            // } else {
-            //     console.log("rec")
-            //     this.userArtServerList = rec
-            // }
+        //     // if (typeof rec.objects != undefined) {
+        //     //     console.log("rec.objects")
+        //     //     this.userArtServerList = rec.objects
+        //     // } else {
+        //     //     console.log("rec")
+        //     //     this.userArtServerList = rec
+        //     // }
     
-            this.userArtServerList = rec
-            // if (rec.hasOwnProperty('objects')){
-            //     this.userArtServerList = rec.objects
-            //     console.log("*************")
-            // } else {
-            //     this.userArtServerList = rec
-            //     console.log("!!!!!!!!!!")
-            // }
+        //     this.userArtServerList = rec
+        //     // if (rec.hasOwnProperty('objects')){
+        //     //     this.userArtServerList = rec.objects
+        //     //     console.log("*************")
+        //     // } else {
+        //     //     this.userArtServerList = rec
+        //     //     console.log("!!!!!!!!!!")
+        //     // }
 
-            console.log("this.userArtServerList: ", this.userArtServerList)
+        //     console.log("this.userArtServerList: ", this.userArtServerList)
             
-            if (this.userArtServerList.length > 0) {
-                //download the art, by loading the url and setting a key
-                this.userArtServerList.forEach((element, index) => {
-                    // console.log("element, current index", element.key, index)
-                    this.downloadArt(element, index)
-                })//end userArt downloadArt         
+        //     if (this.userArtServerList.length > 0) {
+        //         //download the art, by loading the url and setting a key
+        //         this.userArtServerList.forEach((element, index) => {
+        //             // console.log("element, current index", element.key, index)
+        //             this.downloadArt(element, index, 300)
+        //         })//end userArt downloadArt         
                
 
-            }
+        //     }
 
 
-        }) //end listImages
+        // }) //end listImages
 
 
-        const progressBox = this.add.graphics()
-        const progressBar = this.add.graphics()
-        const progressWidth = 300
-        const progressHeight = 50
-        const padding = 10
-        const y = 300
-
-        this.load.on("fileprogress", (file, value) => {
-            
-            progressBox.clear();
-            progressBar.clear();
-            progressBox.fillStyle(0x000000, 1)
-            progressBar.fillStyle(0xFFFFFF, 1)
-               
-            const processedFile = this.progress.find(element => element.key == file.key)
-
-            progressBox.fillRect(processedFile.coordX - progressWidth / 2, y, progressWidth, progressHeight)
-            progressBar.fillRect(processedFile.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
         
-        })
-
-        this.load.on('filecomplete', (key) => {
-              
-                const currentImage = this.progress.find(element => element.key == key)
-                
-                // adds a frame to the container
-                this.artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
-                
-                // adds the image to the container
-                const completedImage = this.add.image(currentImage.coordX, y, currentImage.key)
-                this.artContainer.add(completedImage)
-        })
-
-        this.load.once("complete", () => {
-            progressBar.destroy()
-            progressBox.destroy()
-            this.progress = []
-        });
-   
     }//end create
-
-    async downloadArt(element, index) {
-
-        const imgUrl = element.value.url
-        const imgSize = "512"
-        const fileFormat = "png"
-        const key = `${element.key}_${imgSize}`
-        const coordX = index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 550;
-        this.artContainer = this.add.container(0, 0);
+    
+    // async downloadArt(element, index, y) {
         
-        // if the image has already downloaded, then add image by using the key
-        if (this.textures.exists(key)) {
+    //     const imgUrl = element.value.url
+    //     const imgSize = "512"
+    //     const fileFormat = "png"
+    //     const key = `${element.key}_${imgSize}`
+    //     const coordX = index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 550;
+    //     this.artContainer = this.add.container(0, 0);
+        
+    //     if (this.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
             
-             // adds a frame to the container
-            this.artContainer.add(this.add.image(coordX - this.artDisplaySize / 2, 300, 'artFrame_512').setOrigin(0, 0.5))
+    //         // adds a frame to the container
+    //         this.artContainer.add(this.add.image(coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
             
-            // adds the image to the container
-            const setImage = this.add.image(coordX, 300, key)
-            this.artContainer.add(setImage)
-
-        // otherwise download the image and add it
-        } else {
+    //         // adds the image to the container
+    //         const setImage = this.add.image(coordX, y, key)
+    //         this.artContainer.add(setImage)
             
-            this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+    //     } else { // otherwise download the image and add it
             
-            // for tracking each file in progress
-            this.progress.push({key, coordX})
-
-            this.load.image(key, this.artUrl[index])
-
-            this.load.start() // load the image in memory
-        }
-
-    }//end downloadArt
+    //         this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+            
+    //         // for tracking each file in progress
+    //         this.progress.push({key, coordX})
+            
+    //         this.load.image(key, this.artUrl[index])
+            
+    //         this.load.start() // load the image in memory
+    //     }
+        
+    //     const progressBox = this.add.graphics()
+    //     const progressBar = this.add.graphics()
+    //     const progressWidth = 300
+    //     const progressHeight = 50
+    //     const padding = 10
+    
+    //     this.load.on("fileprogress", (file, value) => {
+            
+    //         progressBox.clear();
+    //         progressBar.clear();
+    //         progressBox.fillStyle(0x000000, 1)
+    //         progressBar.fillStyle(0xFFFFFF, 1)
+               
+    //         const progressedImage = this.progress.find(element => element.key == file.key)
+    
+    //         progressBox.fillRect(progressedImage.coordX - progressWidth / 2, y, progressWidth, progressHeight)
+    //         progressBar.fillRect(progressedImage.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
+        
+    //     })
+    
+    //     this.load.on('filecomplete', (key) => {
+              
+    //             const currentImage = this.progress.find(element => element.key == key)
+                
+    //             // adds a frame to the container
+    //             this.artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
+                
+    //             // adds the image to the container
+    //             const completedImage = this.add.image(currentImage.coordX, y, currentImage.key)
+    //             this.artContainer.add(completedImage)
+    //     })
+    
+    //     this.load.once("complete", () => {
+    //         progressBar.destroy()
+    //         progressBox.destroy()
+    //         this.progress = []
+    //     });
+    // }//end downloadArt
 
 
 

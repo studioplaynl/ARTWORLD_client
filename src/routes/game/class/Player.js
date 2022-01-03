@@ -1,6 +1,7 @@
 import { ShapeUtils } from "three";
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
+import { listObjects, listImages, convertImage } from '../../../api.js'
 
 
 class Player {
@@ -176,6 +177,13 @@ class Player {
     // scene.add.existing(this)
     // scene.physics.add.existing(this)
 
+    this.createPopUpButtons(scene)
+
+
+  } //attachAvatarToPlayer
+
+  createPopUpButtons(scene) {
+
     // making the avatar interactive
     scene.player.setInteractive({ useHandCursor: true });
     // by default the pop-up buttons are hidden
@@ -185,12 +193,11 @@ class Player {
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
     scene.physics.world.enable(scene.playerContainer)
 
-
+    // for entering the avatar's home
     scene.input.on('gameobjectdown', (pointer, object) => {
       if (object.anims) {
         // saving the clicked avatar's id in order to enter its home
         scene.selectedPlayerID = object.anims.currentFrame.textureKey.split("_")[0]
-        console.log("selected player id", scene.selectedPlayerID)
       }
     })
 
@@ -207,22 +214,50 @@ class Player {
         const heartButtonImage = scene.add.image(75, 0, "heart").setScale(0.1)
 
         // for toggling the artwork list
-        let listIsVisible = true
+        let listIsVisible = false
 
-        const artWorkList = scene.add.rectangle(130, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000).setStrokeStyle(4, 0xefc53f)
-        scene.playerContainer.add(artWorkList)
-        artWorkList.setVisible(false)
+        scene.artworkListContainer = scene.add.container(130, 0);
+        scene.playerContainer.add(scene.artworkListContainer)
+
+        const artworkList = scene.add.rectangle(0, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000).setStrokeStyle(4, 0xefc53f)
+        scene.artworkListContainer.add(artworkList)
+
+        artworkList.setVisible(listIsVisible)
 
         heartButtonCircle.on("pointerup", () => {
-          artWorkList.setVisible(listIsVisible);
           listIsVisible = !listIsVisible;
+          artworkList.setVisible(listIsVisible);
+
+          // await listImages("drawing", this.location, 100).then((response) => {
+          //   this.userArtServerList = response
+          //   if (this.userArtServerList.length > 0) {
+          //     this.userArtServerList.forEach((element, index) => {
+          //       (async () => {
+          //         console.log(element, index)
+          //         const imgUrl = element.value.url
+          //         const imgSize = "512"
+          //         const fileFormat = "png"
+          //         const key = `${element.key}_${imgSize}`
+          //         const coordY = index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 300;
+
+
+
+
+
+
+
+          //       })()
+          //     })
+          //   }
+          // })
+          
         })
 
         // adding all buttons to the container
         scene.playerContainer.add([homeButtonCircle, homeButtonImage, heartButtonCircle, heartButtonImage])
         scene.displayPopUpButtons = true
   
-        // entering to the home of the avatar
+        // entering the home of the avatar
         homeButtonCircle.on("pointerup", () => {
           scene.scene.scene.physics.pause()
           scene.scene.scene.player.setTint(0xff0000)
@@ -251,7 +286,7 @@ class Player {
         scene.displayPopUpButtons = false
       }
     })
-  } //attachAvatarToPlayer
+  }
 
   moveByCursor(scene) {
     if (
