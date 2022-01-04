@@ -52,6 +52,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.userArtDisplayList = []
         this.artUrl = []
 
+        // track for progress and completion of artworks
         this.progress = []
     
        
@@ -186,8 +187,9 @@ export default class DefaultUserHome extends Phaser.Scene {
         //......... end UI Scene ..............................................................................
 
         this.createArtFrame()
-
+        
         ListingArtworks.getImages(this, "512", this.artDisplaySize, 550, null, 300)
+        
 
 
         //get a list of artworks of the user

@@ -1,6 +1,7 @@
 import { ShapeUtils } from "three";
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
+import ListingArtworks from "./ListingArtworks"
 import { listObjects, listImages, convertImage } from '../../../api.js'
 
 
@@ -188,7 +189,12 @@ class Player {
     scene.player.setInteractive({ useHandCursor: true });
     // by default the pop-up buttons are hidden
     scene.displayPopUpButtons = false;
-    
+
+    // for toggling the artwork list
+    let artworkListIsVisible = false;
+    // introducing scene.artworkListContainer here, since its visibility has to be turned off, when the avatar is clicked the second time
+    scene.artworkListContainer = scene.add.container(130, 0);
+
     // creating a container that holds all pop-up buttons, the coords is the same as the avatar
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
     scene.physics.world.enable(scene.playerContainer)
@@ -196,8 +202,11 @@ class Player {
     // for entering the avatar's home
     scene.input.on('gameobjectdown', (pointer, object) => {
       if (object.anims) {
-        // saving the clicked avatar's id in order to enter its home
+        // saving the clicked avatar's id (for entering its house, for displaying its artworks, etc.)
         scene.selectedPlayerID = object.anims.currentFrame.textureKey.split("_")[0]
+
+        // on any click on avatar, the list should not be displayed
+        scene.artworkListContainer.setVisible(artworkListIsVisible);
       }
     })
 
@@ -213,43 +222,87 @@ class Player {
         const heartButtonCircle = scene.add.circle(75, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0xefc53f)
         const heartButtonImage = scene.add.image(75, 0, "heart").setScale(0.1)
 
-        // for toggling the artwork list
-        let listIsVisible = false
 
-        scene.artworkListContainer = scene.add.container(130, 0);
-        scene.playerContainer.add(scene.artworkListContainer)
+        heartButtonCircle.on("pointerup", async () => {
+                  
+          await listImages("drawing", scene.selectedPlayerID, 100).then((response) => {
+            scene.userArtServerList = response
+            if (scene.userArtServerList.length > 0) {
+              const artworkList = scene.add.rectangle(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 0x9966ff).setOrigin(0, 0).setDepth(1000).setStrokeStyle(1, 0xefc53f)
+              scene.artworkListContainer.add(artworkList)
+    
+              scene.playerContainer.add(scene.artworkListContainer)
+    
+              artworkListIsVisible = !artworkListIsVisible
+              scene.artworkListContainer.setVisible(artworkListIsVisible)
+              scene.userArtServerList.forEach(async (element, index) => {
+              
+                  const imgUrl = element.value.url
+                  const imgSize = "128"
+                  const fileFormat = "png"
+                  const key = `${element.key}_${imgSize}`
+                  
+                  const coordX = 0
+                  const coordY = index == 0 ? 0 : index * scene.artPreviewSize
+                
+                  if (scene.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
+                    
+                    // adds the image to the container
+                    const setImage = scene.add.image(coordX, coordY, key).setOrigin(0, 0.5)
+                    scene.artworkListContainer.add(setImage)
+                  } else { // otherwise download the image and add it
+                
+                    scene.artUrl[index] = await convertImage(imgUrl, "128", fileFormat)
+                    
+                    // for tracking each file in progress
+                    scene.progress.push({key, coordX, coordY})
+                    
+                    scene.load.image(key, scene.artUrl[index])
+                    
+                    scene.load.start() // load the image in memory
 
-        const artworkList = scene.add.rectangle(0, 0, 128, 500, 0x9966ff).setOrigin(0, 0.5).setDepth(1000).setStrokeStyle(4, 0xefc53f)
-        scene.artworkListContainer.add(artworkList)
+                  }
 
-        artworkList.setVisible(listIsVisible)
+                  const progressBox = scene.add.graphics()
+                  const progressBar = scene.add.graphics()
+                  scene.artworkListContainer.add([progressBox, progressBar])
+                  const progressWidth = 128
+                  const progressHeight = 25
+                  const padding = 5
+        
+                  scene.load.on("fileprogress", (file, value) => {
+                      
+                    progressBox.clear();
+                    progressBar.clear();
+                    progressBox.fillStyle(0x000000, 1)
+                    progressBar.fillStyle(0xFFFFFF, 1)
+                      
+                    const progressedImage = scene.progress.find(element => element.key == file.key)
+            
+                    progressBox.fillRect(progressedImage.coordX, progressedImage.coordY, progressWidth, progressHeight)
+                    progressBar.fillRect(progressedImage.coordX + padding, progressedImage.coordY + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
+                  
+                  })
+        
+                  scene.load.on('filecomplete', (key) => {
+                  
+                    const currentImage = scene.progress.find(element => element.key == key)
+                    
+                    // adds the image to the artworkList container
+                    const completedImage = scene.add.image(currentImage.coordX, currentImage.coordY, currentImage.key).setOrigin(0, 0.5)
+                    scene.artworkListContainer.add(completedImage)
+                  })
+              
+                  scene.load.once("complete", () => {
+                      progressBar.destroy()
+                      progressBox.destroy()
+                      scene.progress = []
+                  });
 
-        heartButtonCircle.on("pointerup", () => {
-          listIsVisible = !listIsVisible;
-          artworkList.setVisible(listIsVisible);
 
-          // await listImages("drawing", this.location, 100).then((response) => {
-          //   this.userArtServerList = response
-          //   if (this.userArtServerList.length > 0) {
-          //     this.userArtServerList.forEach((element, index) => {
-          //       (async () => {
-          //         console.log(element, index)
-          //         const imgUrl = element.value.url
-          //         const imgSize = "512"
-          //         const fileFormat = "png"
-          //         const key = `${element.key}_${imgSize}`
-          //         const coordY = index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 300;
-
-
-
-
-
-
-
-          //       })()
-          //     })
-          //   }
-          // })
+              })
+            }
+          })
           
         })
 
@@ -284,6 +337,7 @@ class Player {
       } else {
         scene.playerContainer.setVisible(false)
         scene.displayPopUpButtons = false
+        artworkListIsVisible = false
       }
     })
   }

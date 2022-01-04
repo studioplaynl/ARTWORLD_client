@@ -82,6 +82,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //itemsbar
     this.itemsbar
+
+    // size for the artWorks
+    this.artPreviewSize = 128
+
+    this.artUrl = []
+    this.userArtServerList = []
+    this.progress = []
   }
 
   async preload() {
@@ -98,8 +105,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   async create() {
-
-    console.log("!!!", this.textures)
 
     // for back button
     HistoryTracker.push(this);
