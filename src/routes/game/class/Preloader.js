@@ -6,7 +6,7 @@ class Preloader {
         const halfWidth = scene.sys.game.canvas.width / 2
         const halfHeight = scene.sys.game.canvas.height / 2
 
-        const loadingText = scene.add.text(halfWidth, halfHeight - 150, 'LOADING ...', { font: '30px Arial' }).setOrigin(0.5, 0.5);
+        const loadingText = scene.add.text(halfWidth, halfHeight - 150, '', { font: '30px Arial' }).setOrigin(0.5, 0.5);
         loadingText.setTint(0xff00ff, 0xffff00, 0x0000ff, 0xff0000);  
 
         const progressWidth = 300
@@ -19,7 +19,7 @@ class Preloader {
 
         const progressBar = scene.add.graphics()
         scene.load.on('progress', function (value) {
-            progressBar.clear();
+            progressBar.clear()
             
             progressBar.fillStyle(0xffffff, 1)
 
@@ -32,8 +32,9 @@ class Preloader {
 
         scene.load.on('complete', function () {
             scene.loadingDone = true
-            progressBar.destroy();
-            progressBox.destroy();
+            loadingText.destroy()
+            progressBar.destroy()
+            progressBox.destroy()
         });
 
     }

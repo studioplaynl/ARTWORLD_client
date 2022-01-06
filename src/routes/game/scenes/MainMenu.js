@@ -1,7 +1,7 @@
 import { SCENES } from "../config.js"
 import ManageSession from "../ManageSession.js"
 import { getAccount, listObjects } from '../../../api.js'
-import Preloader from '../Preloader.js'
+import Preloader from '../class/Preloader.js'
 
 
 export default class MainMenu extends Phaser.Scene {
