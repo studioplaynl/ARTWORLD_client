@@ -1,4 +1,4 @@
-import preloader from '../preLoader.js'
+import Preloader from '../Preloader.js'
 
 
 export default class PreloadScene extends Phaser.Scene {
@@ -9,7 +9,7 @@ export default class PreloadScene extends Phaser.Scene {
 
     preload() {
         //.... PRELOADER VISUALISER ...............................................................................................
-        preloader.Loading(this)
+        Preloader.Loading(this)
         //.... end PRELOADER VISUALISER ...............................................................................................
 
         //artworld logo
@@ -19,9 +19,15 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("ui_magnifier_plus", "assets/ui/circle_plus.png")
         this.load.image("ui_eye", "assets/ui/eye.png")
         this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png")
-        this.load.image("back_button", "./assets/back_button.png")
+        this.load.image("back_button", "./assets/ui/back_button.png")
+        this.load.image("enter_button", "./assets/ui/enter_icon_round64x64.png")
+        this.load.image("arrow_down_32px","./assets/ui/arrow-down-32px.png")
 
-
+        this.load.image('museum', './assets/museum.png');
+        this.load.image("ball", './assets/ball_grey.png')
+        this.load.image('home', './assets/home.png')
+        this.load.image('heart', './assets/heart.png')
+        
         this.load.spritesheet(
             "avatar1",
             "./assets/spritesheets/cloud_breathing.png",

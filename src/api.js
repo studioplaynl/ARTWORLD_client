@@ -11,14 +11,13 @@ Session.subscribe(value => {
 });
 
 export async function uploadImage(name, type, json, img, status) {
-  Error = "Start Saving"
   console.log(Sess)
   console.log("name: " + name)
   console.log(img)
 
-  var [jpegURL, jpegLocation] = await getUploadURL(type, name, "jpeg")
+  var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png")
   var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json")
-  var value = { "jpeg": jpegLocation, "json": jsonLocation};
+  var value = { "url": jpegLocation, "json": jsonLocation};
   if(status == "zichtbaar"){
     pub = true
   }else{
@@ -41,7 +40,7 @@ export async function uploadImage(name, type, json, img, status) {
     body: json
   })
   await updateObject(type, name, value,pub)
-  Error = "Saved"
+  Error.update(er => er = "Saved")
 }
 
 export async function listImages(type, user, limit) {
@@ -66,14 +65,16 @@ export async function updateObject(type, name, value, pub) {
     pub = 2
   }
   else{ pub = 1;}
+  let object = {
+    "collection": type,
+    "key": name,
+    "value": JSON.parse(value),
+    "permission_read": pub,
+    //"version": "*"
+  }
+  console.log(object)
   const object_ids = await client.writeStorageObjects(Sess, [
-    {
-      "collection": type,
-      "key": name,
-      "value": value,
-      "permission_read": pub,
-      //"version": "*"
-    }
+    object
   ]);
   console.info("Stored objects: %o", object_ids);
 }
@@ -82,7 +83,14 @@ export async function updateObject(type, name, value, pub) {
 export async function listObjects(type, userID, limit) {
   if(!!!limit) limit = 100;
   const objects = await client.listStorageObjects(Sess, type, userID, limit);
-  return objects
+  return objects.objects
+}
+
+export async function listAllObjects(type) {
+  const payload = { type };
+  const rpcid = "list_all_storage_object";
+  const objects = await client.rpc(Sess, rpcid, payload);
+  return objects.payload
 }
 
 export async function getAccount(id, avatar) {
@@ -104,6 +112,32 @@ export async function getAccount(id, avatar) {
   }
 }
 
+
+export async function getFullAccount(id) {
+  let payload = {};
+  if(!!id){
+    payload = {id: id};
+  }
+
+  let user  
+  const rpcid = "get_full_account";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+
+  return user.payload
+}
+
+export async function setFullAccount(id, username, password, email, metadata) {
+  let payload = {id, username, password, email, metadata};
+
+  
+  let user  
+  const rpcid = "set_full_account";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+   Error.update(er => er = "Saved updates")
+  return user.payload
+}
 
 
 //getAvatar only works reliably via the getAccount call
@@ -213,4 +247,46 @@ export async function deleteObject(collection, key) {
   console.info("Deleted objects.");
   
   return true
+}
+
+
+export async function updateObjectAdmin(id, type, name, value, pub) {
+  let payload = {id,type, name, value, pub};
+
+
+  const rpcid = "create_object_admin";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+   if(user.payload.status == "succes") Error.update(er => er = "create object")
+   else Error.update(er => er = "create object failed")
+  return user.payload
+}
+
+
+export async function deleteObjectAdmin(id, type, name) {
+  let payload = {id,type, name};
+
+
+  const rpcid = "delete_object_admin";
+   user = await client.rpc(Sess, rpcid, payload)
+   console.log(user)
+   if(user.payload.status == "succes") Error.update(er => er = "deleted object")
+   else Error.update(er => er = "delete object failed")
+  return user.payload
+}
+
+//..................... image converter ................................
+// usage:
+
+// path = "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg"
+// size = "64"
+// format = "png"
+
+
+export async function convertImage(path,size, format) {
+  let payload = {path,size, format};
+  const rpcid = "convert_image";
+   let user = await client.rpc(Sess, rpcid, payload)
+   if(!!!user.payload.url) Error.update(er => er = "could'nt convert image")
+  return user.payload.url
 }

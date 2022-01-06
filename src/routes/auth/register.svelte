@@ -5,12 +5,14 @@
 	let passwordCheck = 'somesupersecretpassword'
 	let role = 'speler'
 	let azc = ''
+	let print_div;
+	import QrCode from "svelte-qrcode"
 	export let params = {}
     import {Session, Error} from "../../session.js"
 	import {getAccount} from "../../api"
 	import {client} from "../../nakama.svelte"
 	import { _ } from 'svelte-i18n'
-
+	let QRUrl
 
 	const Locaties = [
     "Amersfoort",
@@ -62,6 +64,17 @@
 	}
 
 
+
+	function print(){
+		QRUrl = `${window.location.host}/#/login/${username}/${password} `
+		var print_area = window.open();
+		print_area.document.write(print_div.innerHTML);
+		print_area.document.close();
+		print_area.focus();
+		print_area.print();
+		print_area.close();
+	}
+
 </script>
 
 <main>
@@ -101,10 +114,17 @@
 			{/each}
 			
 	      </select>
-
-		  <button type="submit" class="registerbtn">Register</button>
+		  <button type="submit" class="registerbtn">Register</button>	  
 		</div>
 	  </form>
+	  <button on:click="{print}" class="registerbtn">print userdata</button>
+		  <div class="printarea" bind:this="{print_div}">  
+		  <QrCode value="{QRUrl}" />
+		  <h5>Username:</h5>
+		  <b>{username}</b>
+		  <h5>Password:</h5>
+		  <b>{password}</b>	
+	  </div>
 	</div>
 </main>
 
@@ -175,5 +195,9 @@ a {
 .signin {
   background-color: #f1f1f1;
   text-align: center;
+}
+
+.printarea{
+	display: none;
 }
 </style>

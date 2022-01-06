@@ -25,11 +25,12 @@
   let history = [],
     historyCurrent;
   let canv, _clipboard;
-  let saveCanvas, savecanvas, videoCanvas;
+  let saveCanvas, savecanvas, videoCanvas, saving= false;
   let videoWidth, videoHeight;
   let canvas,
     video,
-    lineWidth = 5;
+    lineWidth = 5,
+    EraselineWidth = 5;
   let json,
     drawingColor = "#000000";
   let shadowOffset = 0,
@@ -53,7 +54,7 @@
         let data = {};
         data.type = appType;
         data.name = title;
-        if (appType == "drawing") {
+        if (appType == "drawing" || appType == "house") {
           data.drawing = canvas.toJSON();
         }
         if (appType == "stopmotion" || appType == "avatar") {
@@ -89,6 +90,7 @@
       drawingColorEl = fab("drawing-color"),
       drawingShadowColorEl = fab("drawing-shadow-color"),
       drawingLineWidthEl = fab("drawing-line-width"),
+      eraseLineWidthEl = fab("erase-line-width"),
       drawingShadowWidth = fab("drawing-shadow-width"),
       drawingShadowOffset = fab("drawing-shadow-offset"),
       clearEl = fab("clear-canvas");
@@ -123,7 +125,8 @@
       // erase functie kapot? recompile: http://fabricjs.com/build/
       var eraseBrush = new fabric.EraserBrush(canvas);
       canvas.freeDrawingBrush = eraseBrush;
-      canvas.freeDrawingBrush.width = 10;
+      canvas.freeDrawingBrush.width =
+        parseInt(eraseLineWidthEl.value, 10) || 1;
       canvas.isDrawingMode = true;
       current = "erase";
       floodFill(false);
@@ -255,6 +258,10 @@
       canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
       this.previousSibling.innerHTML = this.value;
     };
+    eraseLineWidthEl.onchange = function () {
+      canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
+      this.previousSibling.innerHTML = this.value;
+    };
     drawingShadowWidth.onchange = function () {
       canvas.freeDrawingBrush.shadow.blur = parseInt(this.value, 10) || 0;
       this.previousSibling.innerHTML = this.value;
@@ -289,21 +296,63 @@
     });
   });
 
-  const upload = () => {
+  const upload = async () => {
+    saving = true
     if (appType == "drawing") {
       json = JSON.stringify(canvas.toJSON());
-      var Image = canvas.toDataURL("jpeg");
+      var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      uploadImage(title, appType, json, blobData, status);
+      await uploadImage(title, appType, json, blobData, status);
       saved = true;
+      saving = false
     }
     if (appType == "stopmotion") {
-      console.log("saved");
-      json = JSON.stringify(frames);
-      uploadImage(title, appType, json, "", status);
+      // console.log("saved");
+      // json = JSON.stringify(frames);
+      // var blobData = dataURItoBlob(frames);
+      // uploadImage(title, appType, json, blobData, status);
+      savecanvas.setHeight(canvas.height);
+      savecanvas.setWidth(canvas.height * frames.length);
+      savecanvas.renderAll();
+      savecanvas.clear();
+      let data = { objects: [] };
+      //let scale = 128 / 700;
+      console.log(data);
+      for (let i = 0; i < frames.length; i++) {
+        frames[i].backgroundImage = {};
+        const newFrames = frames[i].objects.map((object, index) => {
+          const newObject = { ...object };
+          newObject.left = newObject.left;
+          newObject.top = newObject.top;
+          newObject.left += canvas.height * i;
+          // newObject.scaleX = scale;
+          // newObject.scaleY = scale;
+          console.log(newObject);
+          data.objects.push(newObject);
+        });
+      }
+      await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
+      await savecanvas.calcOffset();
+   
+        var Image = savecanvas.toDataURL("image/png", 0.5);
+        console.log(Image);
+        var blobData = dataURItoBlob(Image);
+        json = JSON.stringify(frames);
+        await uploadImage(title, appType, json, blobData, status);
+        saving = false
+
     }
     if (appType == "avatar") {
-      createAvatar();
+      await createAvatar();
+      saving = false
+    }
+    if (appType == "house") {
+      json = JSON.stringify(canvas.toJSON());
+      var Image = canvas.toDataURL("png");
+      var blobData = dataURItoBlob(Image);
+      await uploadImage(title, appType, json, blobData, status);
+      saved = true;
+      saving = false
     }
   };
 
@@ -311,7 +360,7 @@
     frames[currentFrame] = canvas.toJSON();
     frames = frames;
 
-    backgroundFrames[currentFrame] = canvas.toDataURL("jpeg");
+    backgroundFrames[currentFrame] = canvas.toDataURL("png");
     backgroundFrames = backgroundFrames;
   };
 
@@ -339,7 +388,7 @@
         }
       }
     }
-    if (appType != "avatar") {
+    if (appType != "avatar" && appType != "house") {
       if (!!params.name && !!params.user) {
         title = params.name.split(".")[0];
         status = params.status;
@@ -388,7 +437,7 @@
     for (var i = 0; i < binary.length; i++) {
       array.push(binary.charCodeAt(i));
     }
-    return new Blob([new Uint8Array(array)], { type: "image/jpeg" });
+    return new Blob([new Uint8Array(array)], { type: "image/png" });
   }
 
   async function getDrawing(DrawingUrl) {
@@ -1074,14 +1123,14 @@
         <div class="eraseTab" class:hidden={current != "erase"}>
           <div
             class="lineWidth"
-            style="width:{lineWidth}px; height: {lineWidth}px; background-color: black;margin:  0px auto;"
+            style="width:{EraselineWidth}px; height: {EraselineWidth}px; background-color: black;margin:  0px auto;"
           />
-          <span class="info">{lineWidth}</span><input
+          <span class="info">{EraselineWidth}</span><input
             type="range"
             min="0"
             max="150"
-            id="drawing-line-width"
-            bind:value={lineWidth}
+            id="erase-line-width"
+            bind:value={EraselineWidth}
           />
         </div>
         <div class="fillTab" class:hidden={current != "fill"}>
@@ -1103,7 +1152,7 @@
         </div>
         <div class="saveBox" class:hidden={current != "saveToggle"}>
           <div class="saveTab">
-            {#if appType != "avatar"}
+            {#if appType != "avatar" && appType != "house"}
               <label for="title">Title</label>
               <NameGenerator bind:value={title} />
               <label for="title">Status</label>
@@ -1121,6 +1170,11 @@
       </div>
     </div>
   </div>
+  {#if saving}
+    <div class="savecontainer">
+      <p class="saving">Saving<span>.</span><span>.</span><span>.</span></p>
+    </div>
+  {/if}
 </main>
 
 <style>
@@ -1303,4 +1357,88 @@
   .lineWidth {
     border-radius: 50%;
   }
+
+
+  @keyframes blink {
+    /**
+     * At the start of the animation the dot
+     * has an opacity of .2
+     */
+    0% {
+      opacity: .2;
+    }
+    /**
+     * At 20% the dot is fully visible and
+     * then fades out slowly
+     */
+    20% {
+      opacity: 1;
+    }
+    /**
+     * Until it reaches an opacity of .2 and
+     * the animation can start again
+     */
+    100% {
+      opacity: .2;
+    }
+}
+
+.saving {
+  top: 50vh;
+  left: 50vw;
+  position: fixed;
+  transform: translate(-50%,-50%);
+}
+
+.saving span {
+    /**
+     * Use the blink animation, which is defined above
+     */
+    animation-name: blink;
+    /**
+     * The animation should take 1.4 seconds
+     */
+    animation-duration: 1.4s;
+    /**
+     * It will repeat itself forever
+     */
+    animation-iteration-count: infinite;
+    /**
+     * This makes sure that the starting style (opacity: .2)
+     * of the animation is applied before the animation starts.
+     * Otherwise we would see a short flash or would have
+     * to set the default styling of the dots to the same
+     * as the animation. Same applies for the ending styles.
+     */
+    animation-fill-mode: both;
+}
+
+.saving span:nth-child(2) {
+    /**
+     * Starts the animation of the third dot
+     * with a delay of .2s, otherwise all dots
+     * would animate at the same time
+     */
+    animation-delay: .2s;
+}
+
+.saving span:nth-child(3) {
+    /**
+     * Starts the animation of the third dot
+     * with a delay of .4s, otherwise all dots
+     * would animate at the same time
+     */
+    animation-delay: .4s;
+}
+
+.savecontainer {
+    z-index: 5;
+    position: fixed;
+    left: 0;
+    top: 0;
+    font-size: 60px;
+    background: rgba(50,50,50,0.5);
+    width: 100vw;
+    height: 100vh;
+}
 </style>

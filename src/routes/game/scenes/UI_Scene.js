@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import { locale } from "svelte-i18n";
-import manageSession from "../manageSession";
+import ManageSession from "../ManageSession";
 
 import nl from "../../../langauge/nl/ui.json";
 import en from "../../../langauge/en/ui.json";
@@ -34,9 +34,13 @@ export default class UI_Scene extends Phaser.Scene {
     super("UI_Scene");
     this.currentZoom = 1;
     this.location = "test";
+
+    //Debug Text mobile
+    this.debugText = ''
+    this.debugTextField
   }
 
-  preload() {}
+  preload() { }
 
   async create() {
     let countDisplay = 0;
@@ -58,11 +62,23 @@ export default class UI_Scene extends Phaser.Scene {
       .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
       .setName("camMain");
     this.camUI.zoom = 1;
-    this.zoomButtons(false);
+    this.createNavigationButtons(false);
     this.scale.on("resize", this.resize, this);
+
+    const frame = this.add.graphics()
+
+    // create a black square size of art + 20pix
+    frame.fillStyle(0xffff00)
+    frame.fillRoundedRect(0+80, this.sys.game.canvas.height - 200, this.sys.game.canvas.width-80, 80, 32)
+    frame.fillStyle(0xffffff)
+
+    // to make the UI scene always on top of other scenes
+    this.scene.bringToTop();
+
   } //create
 
-  zoomButtons(update) {
+  // zoom buttons and back button
+  async createNavigationButtons(update) {
     let width = this.sys.game.canvas.width;
     let height = this.sys.game.canvas.height;
 
@@ -78,16 +94,50 @@ export default class UI_Scene extends Phaser.Scene {
         .setShadow(1, 1, "#000000", 0)
         .setDepth(1000);
 
+      // mobile debug text field
+      this.debugTextField = this.add.text(50, 80, this.debugText, {
+        fontFamily: "Arial",
+        fontSize: "18px",
+      }).setShadow(2, 2, '#000000', 0)
+
       //back button
       this.backButton = this.add.image(40, 40, "back_button")
         .setOrigin(0, 0.5)
         .setDepth(1000)
         .setScale(0.075)
         .setInteractive({ useHandCursor: true });
-      
+
+      // if the current scene is artworld, the back button is hidden 
+      if (ManageSession.locationHistory.length <= 1) {
+        this.backButton.destroy()
+      }
+
       this.backButton.on("pointerup", () => {
-        this.scene.stop(manageSession.currentLocation)
-        this.scene.start(manageSession.previousLocation)
+        // take out the current location
+        const currentLocationKey = ManageSession.locationHistory.pop();
+        const currentLocationScene = this.scene.get(currentLocationKey)
+        currentLocationScene.physics.pause()
+        currentLocationScene.player.setTint(0xff0000)
+
+        // get the previous scene
+        const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
+
+        ManageSession.socket.rpc("leave", currentLocationKey)
+
+        currentLocationScene.time.addEvent({
+          delay: 500,
+          callback: () => {
+            ManageSession.location = previousLocation;
+            ManageSession.createPlayer = true
+            ManageSession.getStreamUsers("join", previousLocation)
+            this.scene.stop(currentLocationKey)
+            this.scene.start(previousLocation)
+          }, 
+          callbackScope: this,
+          loop: false
+        })
+
+ 
       });
 
       //zoom buttons
@@ -102,7 +152,8 @@ export default class UI_Scene extends Phaser.Scene {
         .image(60 + 80, 40, "ui_eye")
         .setOrigin(0, 0.5)
         .setDepth(1000)
-        .setScale(width / (width / this.camUI.zoom) / 8);
+        .setScale(width / (width / this.camUI.zoom) / 8)
+        .setInteractive({ useHandCursor: true });
 
       this.zoomIn = this.add
         .image(60 + 160, 40, "ui_magnifier_plus")
@@ -118,11 +169,17 @@ export default class UI_Scene extends Phaser.Scene {
 
       this.zoomOut.on("pointerup", () => {
         this.currentZoom -= 0.2;
-        if ( this.currentZoom < 0.2 ) {
+        if (this.currentZoom < 0.2) {
           this.currentZoom = 0.2
         }
         //console.log(this.currentZoom);
       });
+
+      this.zoom.on("pointerup", () => {
+        this.currentZoom = 1
+      })
+
+    
     } else {
       this.zoomIn
         .setPosition(
@@ -137,14 +194,17 @@ export default class UI_Scene extends Phaser.Scene {
         )
         .setScale(width / (width / this.camUI.zoom));
     }
+ 
   }
   resize() {
     //console.log("resizing")
     let width = this.sys.game.canvas.width;
-    let height = this.sys.game.canvas.height - 60;
+    let height = this.sys.game.canvas.height;
 
     //this.camUI.resize(width, height);
   }
 
-  update(time, delta) {}
+  update(time, delta) {
+
+  }
 }

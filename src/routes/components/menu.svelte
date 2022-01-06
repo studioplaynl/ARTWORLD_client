@@ -84,8 +84,20 @@
             }}
           >
             <li><a href="/#/admin">{$_("role.admin")}</a></li>
+            <li><a href="/#/upload">{$_("role.upload")}</a></li>
           </ul>
         {/if}
+        {#if !!$Profile && $Profile.meta.role == "moderator"}
+        <ul
+          class="menu"
+          on:click={() => {
+            MenuToggle = false;
+          }}
+        >
+          <li><a href="/#/moderator">{$_("role.moderator")}</a></li>
+          <li><a href="/#/upload">{$_("role.upload")}</a></li>
+        </ul>
+      {/if}
         {#if $Session == null}
           <a href="/#/login">{$_("nav.login")}</a>
         {:else}

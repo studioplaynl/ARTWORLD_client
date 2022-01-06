@@ -1,5 +1,5 @@
 <script>
-  import {listImages, getAccount} from '../api.js';
+  import {listImages, getAccount, convertImage} from '../api.js';
   import { Session } from "../session.js";
   import { client } from "../nakama.svelte";
   import { _ } from 'svelte-i18n'
@@ -16,6 +16,7 @@
   let user = "",
     role = "",
     avatar_url = "",
+    house_url = "",
     azc = "",
     id = null,
     art = [],
@@ -39,9 +40,14 @@
         sortable: true,
       },
       {
+        key: "voorbeeld",
+        title: "voorbeeld",
+        value: v => `<img src="${v.value.previewUrl}">`
+      },
+      {
         key: "title",
         title: "Title",
-        value: v => `<a href='/#/${v.value.json.split(".")[0]}'>${v.key}</a>`
+        value: v => `<a href='/#/${v.url}'>${v.key}</a>`
       },
       {
         key: "Datum",
@@ -136,40 +142,53 @@ function moveToTrash(key) {
     art = [].concat(drawings)
     art = art.concat(stopMotion)
 
-    art.forEach((item, index) => {
+    art.forEach(async (item, index) => {
       if(item.value.status === "trash"){
         trash.push(item)
         delete art[index]
       }
+      if(item.value.json) item.url = item.value.json.split(".")[0]
+      if(item.value.url) item.url = item.value.url.split(".")[0]
+      item.value.previewUrl = await convertImage(item.value.url, "64")
+      console.log(item.value.previewUrl)
+      art = art;
     })
+
     trash = trash;
 
   
   }
   let promise = getUser();
 
-  
 </script>
 
 <main>
   <div class="flex-container">
     <div class="flex-item-left">
       <Card class="card">
-      <img id="avatar" src={avatar_url} /><br />
+        <div id="avatarDiv">
+          <img id="house" src={house_url} />
+        </div>
+        <div id="avatarDiv">
+          <img id="avatar" src={avatar_url} />
+        </div>
+      <br />
       {#if  !!useraccount && useraccount.online}
         <p>Currently in game</p>
       {/if}
-      <a href="/#/avatar">Create</a>
+      <a href="/#/avatar">Create avatar</a>
+      <a href="/#/house">Create house</a>
+      
       <p>{$_('register.username')}: {user}</p>
       <p>{$_('register.role')}: {$_('role.' + role)}</p>
       <p>{$_('register.location')}: {azc}</p>
-      <a href="/#/update">edit</a>
+      <!-- <a href="/#/update">edit</a> -->
       </Card>
     </div>
     <div class="flex-item-right">
       <h1>kunstwerken</h1>
       <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable"></SvelteTable>
-      {#if !isCurrentUser}
+      {#if CurrentUser}
       <h1>Prullenmand</h1>
       <SvelteTable columns="{columns}" rows="{trash}" classNameTable="profileTable"></SvelteTable>
       {/if}
@@ -205,10 +224,17 @@ function moveToTrash(key) {
   }
 
   #avatar {
-    width: 50%;
-    max-width: 150px;
+    max-height: 75px;
+    position: absolute;
+    clip: rect(0px,75px,75px,0px);
   }
   
+  #avatarDiv {
+    width: 75px;
+    height: 75px;
+    position: static;
+  }
+ 
   
 
 </style>

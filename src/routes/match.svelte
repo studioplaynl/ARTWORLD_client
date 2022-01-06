@@ -2,7 +2,8 @@
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
-    import {updateObject, listObjects, deleteObject} from "../api"
+    import {updateObjectAdmin, updateObject, listObjects, listAllObjects, deleteObject, convertImage} from "../api"
+    import { onMount } from "svelte";
     //import { writable } from "svelte/store";
 
     const verboseLogging = false;
@@ -13,6 +14,12 @@
     let status = "left";
     let locations = ["lab", `home`, `library`];
     let selected;
+    let id
+
+    onMount(()=>{
+    id = $Profile.id
+    console.log(id)
+    })
 
     async function chat() {
         const createStatus = true;
@@ -134,23 +141,49 @@ socket.onstreampresence = (streamPresence) => {
 
 
 //////////////////////// locatie ////////////////////////
-let locatie = '', posX = Math.floor(Math.random()*100), posY = Math.floor(Math.random()*100), where,name
+let locatie = '', posX = Math.floor(Math.random()*100), posY = Math.floor(Math.random()*100), where,name, value = '{"posX": "123", "posY": "123"}'
 async function addLocation() {
     let type = where// plaats hier de soort locatie
-    let value = {posX:posX, posY:posY}// plaats hier alle value's die bij de locatie horen, zoals de jsonfile voor het laden van de map of de locatie van de afbeelding van hoe het huisje er uit ziet.
     let pub = true // is het publiek zichtbaar of enkel voor de gebruiker die het creert
-    await updateObject(type, name, value, pub)
+    //await updateObject(type, name, value, pub)
+    console.log(id + type + name + value + pub)
+    if($Profile.meta.role == "admin") await updateObjectAdmin(id, type, name, value, pub)
+    else await updateObject(type, name, value, pub)
     getLocations()
 }
 
 let whereList
-let locationsList = {objects: []}
+let locationsList = []
 async function getLocations() {
     let limit = 100
     locationsList = await listObjects(whereList, null, limit) 
-    console.log(locations.objects)   
+    console.log(locationsList)   
 }
 
+async function getUserLocations() {
+    locationsList = await listAllObjects(whereList) 
+    console.log(locationsList)   
+}
+
+function renewObject(loc) {
+    console.log(loc)
+    where = loc.collection
+    name = loc.key
+    value = JSON.stringify(loc.value)
+    id = loc.user_id
+}
+
+////////////////////////// image converter /////////////////////////////
+
+let imgUrl = "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg"
+let imgSize = "64"
+let fileFormat = "png"
+let url
+
+async function convert() {
+    url = await convertImage(imgUrl,imgSize,fileFormat)
+    console.log(url)
+}
     
 </script>
 
@@ -180,37 +213,56 @@ async function getLocations() {
         <p>position: {user.posX} x {user.posY}</p>
     {/each}
 
-    <h2>Locations</h2>
+    <h2>Create objects, eg for locations</h2>
     <!-- <label>where</label><input type="text" bind:value="{where}"> -->
 
-    <label>where</label>
+    <label>select object</label>
     <select bind:value="{where}">
         <option value="home">home</option>
         <option value="location">location</option>
         <option value="world">world</option>
+        <option value="addressbook">addressbook</option>
     </select>
+    <label>type object name</label><input type="text" bind:value="{where}">
     
-    <label>pos X</label><input type="number" bind:value="{posX}">
-    <label>pos Y</label><input type="number" bind:value="{posY}">
+    <label>value (alle keys and values need to be placed within " " to not error)</label><textarea bind:value="{value}"></textarea>
     <label>name</label><input type="text" bind:value="{name}">
+    <label>user_id</label><input type="text" bind:value="{id}">
 
-    <button on:click="{addLocation}">creeer</button>
 
-    <h2>List of locations</h2>
+    <button on:click="{addLocation(id)}">creeer</button>
+
+    <h2>List of Objects</h2>
     <select bind:value="{whereList}">
         <option value="home">home</option>
         <option value="location">location</option>
         <option value="world">world</option>
+        <option value="addressbook">addressbook</option>
     </select>
+    <label>type object name</label><input type="text" bind:value="{whereList}">
+
     <button on:click="{getLocations}">Get</button>
-    {#each locationsList.objects as location}
+    <button on:click="{getUserLocations}">Get with username</button>
+    {#each locationsList as location}
         <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
+            <p>username: {location.username}</p>            
             <p>userID: {location.user_id}</p>
-        <p>key:{location.key}</p>
-        <p>posX: {location.value.posX}, posY: {location.value.posY}</p>
+        <p>name:{location.key}</p>
+        <p>value: {JSON.stringify(location.value)}
         <button on:click="{async ()=>{await deleteObject(location.collection,location.key);getLocations()}}">delete</button>
+        <button on:click="{async ()=>{await renewObject(location);getLocations()}}">update</button>
         </div>
     {/each}
+
+    <h2>Get Converted Image</h2>
+    <labe>img url</labe>
+    <input type="text" bind:value="{imgUrl}">
+
+    <input type="text" bind:value="{imgSize}">
+    <input type="text" bind:value="{fileFormat}"> 
+    <button on:click="{convert}">Convert</button>
+
+    <img src="{url}">
 
 </main>
 
