@@ -5,7 +5,7 @@ import { listObjects, listImages, convertImage } from '../../../api.js'
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
 import Player from '../class/Player.js'
-import Preloader from '../Preloader.js'
+import Preloader from '../class/Preloader.js'
 import BouncingBird from "../class/BouncingBird.js"
 import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
@@ -197,50 +197,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         // this.userArtServerList = []
         // this.userArtDisplayList = []
         // this.artUrl = []
-
-
-        // await listImages("drawing", this.location, 100).then((rec) => {
-
-        //     // userArt = array of visible art of specific type, from this array urls, keys have to be created to display the art
-
-        //     //! bug from the server: 
-        //     //! 1: sometimes the art with stored in .objects (with a cursor: undefined above)
-        //     //! 2: editing artworks are not reflected, artworks dissapear
-        //     //* now I am testing with this.userArtserverList = rec
-
-        //     // if (typeof rec.objects != undefined) {
-        //     //     console.log("rec.objects")
-        //     //     this.userArtServerList = rec.objects
-        //     // } else {
-        //     //     console.log("rec")
-        //     //     this.userArtServerList = rec
-        //     // }
-    
-        //     this.userArtServerList = rec
-        //     // if (rec.hasOwnProperty('objects')){
-        //     //     this.userArtServerList = rec.objects
-        //     //     console.log("*************")
-        //     // } else {
-        //     //     this.userArtServerList = rec
-        //     //     console.log("!!!!!!!!!!")
-        //     // }
-
-        //     console.log("this.userArtServerList: ", this.userArtServerList)
-            
-        //     if (this.userArtServerList.length > 0) {
-        //         //download the art, by loading the url and setting a key
-        //         this.userArtServerList.forEach((element, index) => {
-        //             // console.log("element, current index", element.key, index)
-        //             this.downloadArt(element, index, 300)
-        //         })//end userArt downloadArt         
-               
-
-        //     }
-
-
-        // }) //end listImages
-
-
         
     }//end create
     

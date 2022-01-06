@@ -1,4 +1,4 @@
-import Preloader from '../Preloader.js'
+import Preloader from '../class/Preloader.js'
 
 
 export default class PreloadScene extends Phaser.Scene {

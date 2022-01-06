@@ -5,7 +5,7 @@ import { listObjects, updateObject, updateObjectAdmin } from '../../../api.js'
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
 import Player from '../class/Player.js'
-import Preloader from '../Preloader.js'
+import Preloader from '../class/Preloader.js'
 import BouncingBird from "../class/BouncingBird.js"
 import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
