@@ -1,13 +1,17 @@
 import { client } from "./nakama.svelte"
 import { Session,Profile, Error } from "./session.js"
 
-let Sess, pub;
+let Sess, pub, prof;
 export let url;
 export let user; 
 
 
 Session.subscribe(value => {
   Sess = value;
+});
+
+Profile.subscribe(value => {
+  prof = value;
 });
 
 export async function uploadImage(name, type, json, img, status) {
@@ -49,6 +53,41 @@ export async function listImages(type, user, limit) {
   return objects.objects
 }
 
+export async function uploadHouse(json, data){
+
+  var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png")
+  var [jsonURL, jsonLocation] = await getUploadURL("home", "current", "json")
+
+await fetch(jpegURL, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "multipart/form-data"
+    },
+    body: data
+  })
+
+  await fetch(jsonURL, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "multipart/form-data"
+    },
+    body: json
+  })
+
+
+
+  let type = "home"
+  let name = prof.meta.azc
+  let object = await getObject(type, name)
+  console.log(object.value)
+  let value =  object.value
+  value.url = jpegLocation
+  pub = true
+
+  // get object
+  await updateObject(type, name, JSON.stringify(value), pub)
+}
+
 export async function getUploadURL(type, name, filetype) {
   name = name + '.' + filetype
   const payload = { "type": type, "filename": name };
@@ -85,6 +124,23 @@ export async function listObjects(type, userID, limit) {
   const objects = await client.listStorageObjects(Sess, type, userID, limit);
   return objects.objects
 }
+
+
+
+export async function getObject(collection, type, userID) {
+  if(!!!userID) userID = Sess.user_id
+  const objects = await client.readStorageObjects(Sess, {
+    "object_ids": [{
+      "collection": collection,
+      "key": type,
+      "user_id": userID
+    }]
+  });
+    return objects.objects[0]
+}
+
+
+
 
 export async function listAllObjects(type) {
   const payload = { type };
