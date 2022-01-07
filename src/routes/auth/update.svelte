@@ -39,6 +39,7 @@
 				azc = account.meta.azc;
 				email = account.email;
 				id = account.user_id;
+				meta = account.meta;
 			});
 		} else {
 			getFullAccount().then((account) => {
@@ -82,11 +83,14 @@
 	];
 
 	async function update() {
-		if (role == "admin") {
-			meta = { azc: azc, role: role };
-		}
+		//get metadata
 
-		await setFullAccount(id, username, password, email, meta);
+		if ($Profile.meta.role == "admin") {
+			meta.azc = azc
+			meta.role = role
+		 }
+
+		 await setFullAccount(id, username, password, email, meta);
 	}
 
 	function onSubmit() {
