@@ -26,7 +26,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.location
 
         //TODO don't make a location in a container, the depth order seems to be shared across the contianer, so we can't make the enter button appear above the player, and the location below the player
-        //TODO rewrite with out the container, just using sprite, containers are a bit more cpu intensive
+        //TODO rewrite without the container, just using sprite, containers are a bit more cpu intensive also
 
         //display width of the location image/ triangle/ isoBox
         const width = 128
