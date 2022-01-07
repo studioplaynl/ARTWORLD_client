@@ -57,7 +57,7 @@ export async function uploadHouse(json, data){
 
   var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png")
   var [jsonURL, jsonLocation] = await getUploadURL("home", "current", "json")
-
+  console.log(jpegURL)
 await fetch(jpegURL, {
     method: "PUT",
     headers: {
@@ -79,8 +79,10 @@ await fetch(jpegURL, {
   let type = "home"
   let name = prof.meta.azc
   let object = await getObject(type, name)
-  console.log(object.value)
-  let value =  object.value
+  let value 
+  if(!!!object){value = {};}
+  else{value =  object.value}
+  console.log(value)
   value.url = jpegLocation
   pub = true
 
@@ -185,8 +187,8 @@ export async function getFullAccount(id) {
 
 export async function setFullAccount(id, username, password, email, metadata) {
   let payload = {id, username, password, email, metadata};
-
-  
+  console.log("metadata")
+  console.log(metadata)
   let user  
   const rpcid = "set_full_account";
    user = await client.rpc(Sess, rpcid, payload)
