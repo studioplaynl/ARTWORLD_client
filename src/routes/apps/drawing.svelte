@@ -3,7 +3,7 @@
   import { Switch } from "attractions";
   import { location, replace } from "svelte-spa-router";
   import { onMount, beforeUpdate } from "svelte";
-  import { uploadImage, user, uploadAvatar } from "../../api.js";
+  import { uploadImage, user, uploadAvatar, uploadHouse } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session } from "../../session.js";
   import NameGenerator from "../components/nameGenerator.svelte";
@@ -350,7 +350,7 @@
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      await uploadImage(title, appType, json, blobData, status);
+      await uploadHouse(json, blobData)
       saved = true;
       saving = false
     }
