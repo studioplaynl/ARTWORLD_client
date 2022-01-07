@@ -41,6 +41,10 @@ class Background {
             }
         }
     }
+
+    circle() {
+        
+    }
 }
 
 export default new Background();

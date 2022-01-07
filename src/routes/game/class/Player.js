@@ -1,4 +1,3 @@
-import { ShapeUtils } from "three";
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
 import ListingArtworks from "./ListingArtworks"
