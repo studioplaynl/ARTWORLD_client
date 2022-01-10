@@ -7,6 +7,7 @@
   // import GesturesPlugin from 'phaser3-rex-plugins/plugins/gestures-plugin.js'; //swipe gestures
   import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin.js";
   import CircleMaskImagePlugin from "phaser3-rex-plugins/plugins/circlemaskimage-plugin.js";
+  import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin.js'
 
   import { CONFIG, SCENES } from "./config";
 
@@ -44,6 +45,11 @@
             plugin: CircleMaskImagePlugin,
             start: true,
           },
+          {
+            key: 'rexScroller',
+            plugin: ScrollerPlugin,
+            start: true
+          }
         ],
       }, //end plugins
 

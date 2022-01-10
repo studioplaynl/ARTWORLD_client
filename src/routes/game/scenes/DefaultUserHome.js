@@ -12,7 +12,7 @@ import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js";
-import ListingArtworks from "../class/ListingArtworks.js"
+import ArtworkList from "../class/ArtworkList.js"
 
 export default class DefaultUserHome extends Phaser.Scene {
 
@@ -130,6 +130,16 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     async create() {
 
+
+        console.log(this.plugins)
+
+
+
+
+
+
+
+        
         // for back button
         ManageSession.locationHistory.push("DefaultUserHome")
 
@@ -140,7 +150,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         //.......  LOAD PLAYER AVATAR ..........................................................................
         ManageSession.createPlayer = true
         //....... end LOAD PLAYER AVATAR .......................................................................
-        Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
+        // Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
         //.......  PLAYER ....................................................................................
         //* create deafult player and playerShadow
         //* create player in center with artworldCoordinates
@@ -188,7 +198,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.createArtFrame()
         
-        ListingArtworks.getImages(this, "512", this.artDisplaySize, 550, null, 300)
+        ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
         
 
 
@@ -305,6 +315,8 @@ export default class DefaultUserHome extends Phaser.Scene {
         //....... end moving ANIMATION .................................................................................
 
         //this.playerMovingByClicking()
+        // to detect if the player is scrolling
+        Player.identifySurfaceOfPointerInteraction(this)
 
         // to detect if the player is clicking/tapping on one place or swiping
         if (this.input.activePointer.downX != this.input.activePointer.upX) {

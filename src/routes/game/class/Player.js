@@ -1,8 +1,6 @@
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
-import ListingArtworks from "./ListingArtworks"
 import { listObjects, listImages, convertImage } from '../../../api.js'
-
 
 class Player {
   constructor() {
@@ -857,7 +855,7 @@ class Player {
     // identifies if the pointer is down on a graffiti wall
     // if the condition is true, the avatar stops any movement
     scene.input.on('pointerdown', (pointer, object) => {
-      if (object[0] && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall") {
+      if (object[0] && object[0]?.name == "graffitiBrickWall" || object[0]?.name == "graffitiDotWall" || object[0]?.name == "scrollingBarContainer") {
         scene.graffitiDrawing = true;
       }
     })
