@@ -12,7 +12,7 @@ import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js";
-import ListingArtworks from "../class/ListingArtworks.js"
+import ArtworkList from "../class/ArtworkList.js"
 
 export default class DefaultUserHome extends Phaser.Scene {
 
@@ -188,10 +188,8 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.createArtFrame()
         
-        ListingArtworks.getImages(this, "512", this.artDisplaySize, 550, null, 300)
+        ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
         
-
-
         //get a list of artworks of the user
         // this.allUserArt = []
         // this.userArtServerList = []
@@ -305,6 +303,8 @@ export default class DefaultUserHome extends Phaser.Scene {
         //....... end moving ANIMATION .................................................................................
 
         //this.playerMovingByClicking()
+        // to detect if the player is scrolling
+        Player.identifySurfaceOfPointerInteraction(this)
 
         // to detect if the player is clicking/tapping on one place or swiping
         if (this.input.activePointer.downX != this.input.activePointer.upX) {

@@ -5,8 +5,57 @@ class ListingArtworks {
 
   async getImages(scene, imageSize, viewSize, distanceBetweenArts, x, y) {
     await listImages("drawing", scene.location, 100).then((response) => {
+
       scene.userArtServerList = response
+      
       if (scene.userArtServerList.length > 0) {
+  
+        // coords of the scrolling bar container and the container that holds artworks are the same
+        const scrollContainerX = 100 
+        const scrollContainerY = 100
+
+        const scrollContainerWidth = scene.artDisplaySize + 30 // artwork size + the frame stroke
+        const scrollContainerHeight = 1000 // for now the scrolling bar container's height is 1000
+        
+        const scrollContainer = scene.add.graphics()
+          .setPosition(scrollContainerX, scrollContainerY)
+          .fillStyle(0x0000, 1)
+          .fillRect(0, 0, scrollContainerWidth, scrollContainerHeight)
+          .setInteractive(new Phaser.Geom.Rectangle(0, 0, scrollContainerWidth, scrollContainerHeight), Phaser.Geom.Rectangle.Contains)
+          .setName("scrollingBarContainer") // the name is needed so that the avatar is not moved, when a user scrolls the artworks
+        
+        // creating a container that holds all artworks of the user
+        scene.artListContainer = scene.add.container(scrollContainerX, scrollContainerY + 20)
+
+        // the height depends on the amount of the artworks, it is needed for scrolling
+        const contentHeight = scene.userArtServerList.length * distanceBetweenArts 
+
+        // overflow: auto (makes the objects outside of the scroll container to not overflow
+        scene.artListContainer.setMask(scrollContainer.createGeometryMask())
+    
+        // where the magic calculations happen :)
+        const topBound = scrollContainerY
+        let bottomBound
+        if (contentHeight > scrollContainerHeight) {
+            // over a page
+            bottomBound = scrollContainerY - contentHeight + scrollContainerHeight;
+        } else {
+            bottomBound = scrollContainerY
+        }
+    
+        // scroller plug-in config
+        scene.scroller = scene.plugins.get('rexScroller').add(scrollContainer, {
+            bounds: [
+                topBound,
+                bottomBound,
+            ],
+            value: topBound, // initial view (current camera)
+    
+            valuechangeCallback: function (value) {
+                scene.artListContainer.y = value; // draggable vertically
+            },
+        })
+
         scene.userArtServerList.forEach((element, index) => {
             (async() => {
               const imgUrl = element.value.url
@@ -26,17 +75,15 @@ class ListingArtworks {
                 var coordY = y
               }
               
-             
-
-              scene.artContainer = scene.add.container(0, 0);
+              // scene.artContainer = scene.add.container(0, 0);
               if (scene.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
                 
                 // adds a frame to the container
-                scene.artContainer.add(scene.add.image(coordX - viewSize / 2, coordY, 'artFrame_512').setOrigin(0, 0.5))
+                scene.artListContainer.add(scene.add.image(coordX - viewSize / 2, coordY, 'artFrame_512').setOrigin(0, 0.5))
                 
                 // adds the image to the container
                 const setImage = scene.add.image(coordX, coordY, key)
-                scene.artContainer.add(setImage)
+                scene.artListContainer.add(setImage)
               } else { // otherwise download the image and add it
             
                 scene.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
@@ -75,11 +122,11 @@ class ListingArtworks {
                 const currentImage = scene.progress.find(element => element.key == key)
                 
                 // adds a frame to the container
-                scene.artContainer.add(scene.add.image(currentImage.coordX - viewSize / 2, currentImage.coordY, 'artFrame_512').setOrigin(0, 0.5))
+                scene.artListContainer.add(scene.add.image(currentImage.coordX - viewSize / 2, currentImage.coordY, 'artFrame_512').setOrigin(0, 0.5))
                 
                 // adds the image to the container
                 const completedImage = scene.add.image(currentImage.coordX, currentImage.coordY, currentImage.key)
-                scene.artContainer.add(completedImage)
+                scene.artListContainer.add(completedImage)
               })
           
               scene.load.once("complete", () => {
@@ -89,7 +136,7 @@ class ListingArtworks {
               });
 
             })()
-        })     
+        })
       }
     })
   }
