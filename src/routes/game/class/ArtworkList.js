@@ -1,6 +1,6 @@
 import { listObjects, listImages, convertImage } from '../../../api.js'
 
-class ListingArtworks {
+class ArtworkList {
   constructor() {}
 
   async getImages(scene, imageSize, viewSize, distanceBetweenArts, x, y) {
@@ -64,13 +64,13 @@ class ListingArtworks {
               const key = `${element.key}_${imgSize}`
               
               if (x == null) {
-                var coordX = index == 0 ? viewSize / 2 : (viewSize / 2) + index * distanceBetweenArts
+                var coordX = index == 0 ? viewSize / 2 + 15 : (viewSize / 2) + index * distanceBetweenArts + 15
               } else {
                 var coordX = x
               }
               
               if (y == null) {
-                var coordY = index == 0 ? viewSize / 2 : (viewSize / 2) + index * distanceBetweenArts
+                var coordY = index == 0 ? viewSize / 2 + 15 : (viewSize / 2) + index * distanceBetweenArts + 15
               } else {
                 var coordY = y
               }
@@ -142,4 +142,4 @@ class ListingArtworks {
   }
 }
 
-export default new ListingArtworks()
+export default new ArtworkList()
