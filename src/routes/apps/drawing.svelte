@@ -5,7 +5,7 @@
   import { onMount, beforeUpdate } from "svelte";
   import { uploadImage, user, uploadAvatar, uploadHouse } from "../../api.js";
   import { client } from "../../nakama.svelte";
-  import { Session } from "../../session.js";
+  import { Session, Profile } from "../../session.js";
   import NameGenerator from "../components/nameGenerator.svelte";
   import SaveIcon from "svelte-icons/fa/FaSave.svelte";
   import ColorIcon from "svelte-icons/md/MdBorderColor.svelte";
@@ -350,7 +350,9 @@
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      await uploadHouse(json, blobData)
+     // await uploadHouse(json, blobData);
+      title = $Profile.meta.azc
+      await uploadImage(title, appType, json, blobData, status);
       saved = true;
       saving = false
     }
@@ -412,17 +414,23 @@
         replace($location + "/" + $Session.user_id);
       }
     }else {
-      var jsonURL = await getDrawing(
-          `/avatar/${$Session.user_id}/current.json`
+      if(appType == "avatar"){
+        var jsonURL = await getDrawing(
+            `/avatar/${$Session.user_id}/current.json`
+          );
+      }else {
+        var jsonURL = await getDrawing(
+          `/home/${$Session.user_id}/current.json`
         );
+      }
         console.log(jsonURL);
         fetch(jsonURL)
           .then((res) => res.json())
           .then((json) => {
             console.log("Checkout this JSON! ", json);
-            if (appType == "drawing")
+            if (appType == "house")
               canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
-            if (appType == "stopmotion" || appType == "avatar") {
+            if (appType == "avatar") {
               frames = json;
               canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
             }
