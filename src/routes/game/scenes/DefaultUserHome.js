@@ -130,16 +130,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     async create() {
 
-
-        console.log(this.plugins)
-
-
-
-
-
-
-
-        
         // for back button
         ManageSession.locationHistory.push("DefaultUserHome")
 
@@ -150,7 +140,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         //.......  LOAD PLAYER AVATAR ..........................................................................
         ManageSession.createPlayer = true
         //....... end LOAD PLAYER AVATAR .......................................................................
-        // Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
+        Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
         //.......  PLAYER ....................................................................................
         //* create deafult player and playerShadow
         //* create player in center with artworldCoordinates
@@ -200,8 +190,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         
         ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
         
-
-
         //get a list of artworks of the user
         // this.allUserArt = []
         // this.userArtServerList = []
