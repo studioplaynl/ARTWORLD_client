@@ -1,5 +1,5 @@
 <script>
-  import {listImages, getAccount, convertImage} from '../api.js';
+  import {listImages, getAccount, convertImage, getObject} from '../api.js';
   import { Session } from "../session.js";
   import { client } from "../nakama.svelte";
   import { _ } from 'svelte-i18n'
@@ -127,6 +127,8 @@ function moveToTrash(key) {
       role = useraccount.metadata.role
       azc = useraccount.metadata.azc
       avatar_url = useraccount.url
+      house_url = await getObject("home", azc, params.user)
+      house_url = await convertImage(house_url.value.url,"64")
     } else {
       CurrentUser = true;
       drawings = await listImages("drawing",$Session.user_id, 10)
@@ -137,6 +139,8 @@ function moveToTrash(key) {
       role = JSON.parse(useraccount.metadata).role
       azc = JSON.parse(useraccount.metadata).azc
       avatar_url = useraccount.url
+      house_url = await getObject("home", azc, $Session.user_id)
+      house_url = await convertImage(house_url.value.url,"64")
     }
   
     art = [].concat(drawings)
@@ -167,18 +171,23 @@ function moveToTrash(key) {
     <div class="flex-item-left">
       <Card class="card">
         <div id="avatarDiv">
-          <img id="house" src={house_url} />
+          {#if !!house_url}
+          <a href="/#/house"><img id="house" src={house_url} /></a>
+          {:else}
+            <a href="/#/house/">Create house</a>
+          {/if}
         </div>
         <div id="avatarDiv">
-          <img id="avatar" src={avatar_url} />
+          {#if !!avatar_url}
+          <a href="/#/avatar"><img id="avatar" src={avatar_url} /></a>
+          {:else}
+            <a href="/#/avatar/">Create avatar</a>
+          {/if}
         </div>
       <br />
       {#if  !!useraccount && useraccount.online}
         <p>Currently in game</p>
       {/if}
-      <a href="/#/avatar">Create avatar</a>
-      <a href="/#/house">Create house</a>
-      
       <p>{$_('register.username')}: {user}</p>
       <p>{$_('register.role')}: {$_('role.' + role)}</p>
       <p>{$_('register.location')}: {azc}</p>
