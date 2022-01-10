@@ -190,7 +190,7 @@ class Player {
     // for toggling the artwork list
     let artworkListIsVisible = false;
     // introducing scene.artworkListContainer here, since its visibility has to be turned off, when the avatar is clicked the second time
-    scene.artworkListContainer = scene.add.container(130, 0);
+    scene.artworkListContainer = scene.add.container(110, 0);
 
     // creating a container that holds all pop-up buttons, the coords is the same as the avatar
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
@@ -213,19 +213,18 @@ class Player {
       if (scene.displayPopUpButtons == false) {  
         scene.playerContainer.setVisible(true);
 
-        const homeButtonCircle = scene.add.circle(0, -85, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0xefc53f)  
-        const homeButtonImage = scene.add.image(0, -85, "home").setScale(0.1)
+        const homeButtonCircle = scene.add.circle(0, -70, 25).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0x0000)  
+        const homeButtonImage = scene.add.image(0, -70, "home").setScale(0.06)
 
-        const heartButtonCircle = scene.add.circle(75, 0, 40, 0x9966ff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0xefc53f)
-        const heartButtonImage = scene.add.image(75, 0, "heart").setScale(0.1)
-
+        const heartButtonCircle = scene.add.circle(65, 0, 25).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0x0000)
+        const heartButtonImage = scene.add.image(65, 0, "heart").setScale(0.06)
 
         heartButtonCircle.on("pointerup", async () => {
                   
           await listImages("drawing", scene.selectedPlayerID, 100).then((response) => {
             scene.userArtServerList = response
             if (scene.userArtServerList.length > 0) {
-              const artworkList = scene.add.rectangle(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 0x9966ff).setOrigin(0, 0).setDepth(1000).setStrokeStyle(1, 0xefc53f)
+              const artworkList = scene.add.rectangle(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize).setOrigin(0, 0).setDepth(1000).setStrokeStyle(4, 0x0000)
               scene.artworkListContainer.add(artworkList)
     
               scene.playerContainer.add(scene.artworkListContainer)
