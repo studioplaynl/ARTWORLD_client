@@ -1061,12 +1061,19 @@
         <button id="clear-canvas" class="btn btn-info icon">
           <TrashIcon />
         </button>
+       
+       
         <button
           class="icon"
           class:currentSelected={current === "saveToggle"}
           on:click={() => {
+            if(appType == "drawing" || appType == "stopmotion"){
             saveToggle = !saveToggle;
             current = "saveToggle";
+            } else {
+              upload()
+            }
+            
           }}><SaveIcon /></button
         >
       </div>
