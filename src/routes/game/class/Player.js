@@ -224,9 +224,14 @@ class Player {
           await listImages("drawing", scene.selectedPlayerID, 100).then((response) => {
             scene.userArtServerList = response
             if (scene.userArtServerList.length > 0) {
-              const artworkList = scene.add.rectangle(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 0xffffff).setOrigin(0, 0).setDepth(1000).setStrokeStyle(3, 0x0000)
-              scene.artworkListContainer.add(artworkList)
-    
+              const artworkListGraphics = scene.add.graphics()
+              artworkListGraphics
+                .fillStyle(0xffffff)
+                .lineStyle(3, 0x0000)
+                .fillRoundedRect(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 24)
+                .strokeRoundedRect(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 24)
+              scene.artworkListContainer.add(artworkListGraphics)
+
               scene.playerContainer.add(scene.artworkListContainer)
     
               artworkListIsVisible = !artworkListIsVisible
