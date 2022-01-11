@@ -106,10 +106,13 @@ export async function updateObject(type, name, value, pub) {
     pub = 2
   }
   else{ pub = 1;}
+  if( typeof value == "string"){
+    value = JSON.parse(value)
+  }
   let object = {
     "collection": type,
     "key": name,
-    "value": JSON.parse(value),
+    "value": value,
     "permission_read": pub,
     //"version": "*"
   }
