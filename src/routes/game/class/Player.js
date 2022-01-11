@@ -183,18 +183,21 @@ class Player {
   createPopUpButtons(scene) {
 
     // making the avatar interactive
-    scene.player.setInteractive({ useHandCursor: true });
-    // by default the pop-up buttons are hidden
-    scene.displayPopUpButtons = false;
+    scene.player.setInteractive({ useHandCursor: true })
+
+    // for toggling the pop-up buttons
+    let displayPopUpButtons = false
 
     // for toggling the artwork list
-    let artworkListIsVisible = false;
-    // introducing scene.artworkListContainer here, since its visibility has to be turned off, when the avatar is clicked the second time
-    scene.artworkListContainer = scene.add.container(110, 0);
+    let displayArtworkList = false
 
-    // creating a container that holds all pop-up buttons, the coords is the same as the avatar
-    scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
+    // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
+    scene.playerContainer = scene.add.container(scene.player.x, scene.player.y)
     scene.physics.world.enable(scene.playerContainer)
+
+    // introducing scene.artworkListContainer here, since its visibility has to be turned off, when the avatar is clicked the second time
+    scene.artworkListContainer = scene.add.container(110, 0)
+    scene.playerContainer.add(scene.artworkListContainer)
 
     // for entering the avatar's home
     scene.input.on('gameobjectdown', (pointer, object) => {
@@ -203,14 +206,14 @@ class Player {
         scene.selectedPlayerID = object.anims.currentFrame.textureKey.split("_")[0]
 
         // on any click on avatar, the list should not be displayed
-        scene.artworkListContainer.setVisible(artworkListIsVisible);
+        scene.artworkListContainer.setVisible(displayArtworkList);
       }
     })
 
     scene.player.on("pointerup", () => {
 
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
-      if (scene.displayPopUpButtons == false) {  
+      if (displayPopUpButtons == false) {  
         scene.playerContainer.setVisible(true);
 
         const homeButtonCircle = scene.add.circle(0, -70, 25, 0xffffff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(3, 0x0000)  
@@ -223,19 +226,24 @@ class Player {
                   
           await listImages("drawing", scene.selectedPlayerID, 100).then((response) => {
             scene.userArtServerList = response
+
+            // if the user has any artworks, then run this piece
             if (scene.userArtServerList.length > 0) {
-              const artworkListGraphics = scene.add.graphics()
-              artworkListGraphics
+
+              // creating a rectangle box for artworks and adding it to the artworkListContainer
+              const artworkListGraphicBox = scene.add.graphics()
+              artworkListGraphicBox
                 .fillStyle(0xffffff)
                 .lineStyle(3, 0x0000)
                 .fillRoundedRect(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 24)
                 .strokeRoundedRect(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 24)
-              scene.artworkListContainer.add(artworkListGraphics)
-
-              scene.playerContainer.add(scene.artworkListContainer)
+              scene.artworkListContainer.add(artworkListGraphicBox)
     
-              artworkListIsVisible = !artworkListIsVisible
-              scene.artworkListContainer.setVisible(artworkListIsVisible)
+              // toggling true - false for artworkListContainer
+              displayArtworkList = !displayArtworkList
+              scene.artworkListContainer.setVisible(displayArtworkList)
+
+              // downloading each artwork of the user
               scene.userArtServerList.forEach(async (element, index) => {
               
                   const imgUrl = element.value.url
@@ -243,20 +251,20 @@ class Player {
                   const fileFormat = "png"
                   const key = `${element.key}_${imgSize}`
                   
-                  const coordX = 0
+                  // the X coord is 0 for all artworks and the Y coord is given dynamically 
                   const coordY = index == 0 ? 0 : index * scene.artPreviewSize
                 
                   if (scene.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
                     
                     // adds the image to the container
-                    const setImage = scene.add.image(coordX, coordY, key).setOrigin(0, 0.5)
-                    scene.artworkListContainer.add(setImage)
+                    const cashedImage = scene.add.image(0, coordY, key).setOrigin(0, 0.5)
+                    scene.artworkListContainer.add(cashedImage)
                   } else { // otherwise download the image and add it
                 
                     scene.artUrl[index] = await convertImage(imgUrl, "128", fileFormat)
                     
                     // for tracking each file in progress
-                    scene.progress.push({key, coordX, coordY})
+                    scene.progress.push({key, coordY})
                     
                     scene.load.image(key, scene.artUrl[index])
                     
@@ -280,8 +288,8 @@ class Player {
                       
                     const progressedImage = scene.progress.find(element => element.key == file.key)
             
-                    progressBox.fillRect(progressedImage.coordX, progressedImage.coordY, progressWidth, progressHeight)
-                    progressBar.fillRect(progressedImage.coordX + padding, progressedImage.coordY + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
+                    progressBox.fillRect(0, progressedImage.coordY, progressWidth, progressHeight)
+                    progressBar.fillRect(0 + padding, progressedImage.coordY + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
                   
                   })
         
@@ -290,7 +298,7 @@ class Player {
                     const currentImage = scene.progress.find(element => element.key == key)
                     
                     // adds the image to the artworkList container
-                    const completedImage = scene.add.image(currentImage.coordX, currentImage.coordY, currentImage.key).setOrigin(0, 0.5)
+                    const completedImage = scene.add.image(0, currentImage.coordY, currentImage.key).setOrigin(0, 0.5)
                     scene.artworkListContainer.add(completedImage)
                   })
               
@@ -298,9 +306,7 @@ class Player {
                       progressBar.destroy()
                       progressBox.destroy()
                       scene.progress = []
-                  });
-
-
+                  })
               })
             }
           })
@@ -309,7 +315,7 @@ class Player {
 
         // adding all buttons to the container
         scene.playerContainer.add([homeButtonCircle, homeButtonImage, heartButtonCircle, heartButtonImage])
-        scene.displayPopUpButtons = true
+        displayPopUpButtons = true
   
         // entering the home of the avatar
         homeButtonCircle.on("pointerup", () => {
@@ -337,8 +343,8 @@ class Player {
         })
       } else {
         scene.playerContainer.setVisible(false)
-        scene.displayPopUpButtons = false
-        artworkListIsVisible = false
+        displayPopUpButtons = false
+        displayArtworkList = false
       }
     })
   }
