@@ -213,18 +213,18 @@ class Player {
       if (scene.displayPopUpButtons == false) {  
         scene.playerContainer.setVisible(true);
 
-        const homeButtonCircle = scene.add.circle(0, -70, 25).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0x0000)  
-        const homeButtonImage = scene.add.image(0, -70, "home").setScale(0.06)
+        const homeButtonCircle = scene.add.circle(0, -70, 25, 0xffffff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(3, 0x0000)  
+        const homeButtonImage = scene.add.image(0, -70, "home")
 
-        const heartButtonCircle = scene.add.circle(65, 0, 25).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(4, 0x0000)
-        const heartButtonImage = scene.add.image(65, 0, "heart").setScale(0.06)
+        const heartButtonCircle = scene.add.circle(65, 0, 25, 0xffffff).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setStrokeStyle(3, 0x0000) 
+        const heartButtonImage = scene.add.image(65, 0, "heart")
 
         heartButtonCircle.on("pointerup", async () => {
                   
           await listImages("drawing", scene.selectedPlayerID, 100).then((response) => {
             scene.userArtServerList = response
             if (scene.userArtServerList.length > 0) {
-              const artworkList = scene.add.rectangle(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize).setOrigin(0, 0).setDepth(1000).setStrokeStyle(4, 0x0000)
+              const artworkList = scene.add.rectangle(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 0xffffff).setOrigin(0, 0).setDepth(1000).setStrokeStyle(3, 0x0000)
               scene.artworkListContainer.add(artworkList)
     
               scene.playerContainer.add(scene.artworkListContainer)
