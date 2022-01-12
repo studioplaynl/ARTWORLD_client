@@ -59,6 +59,13 @@
       searchValue: v => v.name,
     },
     {
+      key: "User ID",
+      title: "User ID",
+      value: (v) => v.user_id,
+      sortable: true,
+      searchValue: v => v.user_id,
+    },
+    {
       key: "Locatie",
       title: "AZC",
       value: (v) => v.meta.azc,
