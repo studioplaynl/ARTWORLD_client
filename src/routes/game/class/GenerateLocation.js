@@ -115,7 +115,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
                 })
                 .on('pointerup', (p, x, y) => {
-                    
                     console.log(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY))
                 })
         }
