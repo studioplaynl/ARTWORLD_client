@@ -20,11 +20,12 @@
   import CameraIcon from "svelte-icons/fa/FaCamera.svelte";
   import CopyIcon from "svelte-icons/fa/FaCopy.svelte";
   import PasteIcon from "svelte-icons/fa/FaPaste.svelte";
+  import ColorSelectIcon from "svelte-icons/io/IoMdColorPalette.svelte"
 
   export let params = {};
   let history = [],
     historyCurrent;
-  let canv, _clipboard;
+  let canv, _clipboard, drawingColorEl;
   let saveCanvas, savecanvas, videoCanvas, saving= false;
   let videoWidth, videoHeight;
   let canvas,
@@ -350,9 +351,10 @@
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-     // await uploadHouse(json, blobData);
-      title = $Profile.meta.azc
-      await uploadImage(title, appType, json, blobData, status);
+      await uploadHouse(json, blobData);
+      // title = $Profile.meta.azc
+      // status = true;
+      // await uploadImage(title, appType, json, blobData, status);
       saved = true;
       saving = false
     }
@@ -1095,6 +1097,13 @@
         </div>
 
         <div class="colorTab" class:hidden={current != "draw"}>
+          <div class="widthBox" on:click="{()=>{drawingColorEl.click()}}">
+            <div
+            class="lineWidth"
+            style="width:{lineWidth}px; height: {lineWidth}px; background-color: {drawingColor}; box-shadow: {shadowOffset}px {shadowOffset}px {shadowWidth}px {shadowColor};margin:  0px auto {shadowOffset}px auto;"
+          ><input type="color" bind:value={drawingColor} bind:this="{drawingColorEl}" id="drawing-color" /></div>
+          <div class="colorIcon"><ColorSelectIcon/></div>
+        </div>
           <span class="info">{lineWidth}</span><input
             type="range"
             min="0"
@@ -1102,13 +1111,7 @@
             id="drawing-line-width"
             bind:value={lineWidth}
           />
-          <label for="drawing-color">Line color:</label>
-          <input type="color" bind:value={drawingColor} id="drawing-color" />
-
-          <div
-            class="lineWidth"
-            style="width:{lineWidth}px; height: {lineWidth}px; background-color: {drawingColor}; box-shadow: {shadowOffset}px {shadowOffset}px {shadowWidth}px {shadowColor};margin:  0px auto {shadowOffset}px auto;"
-          />
+          
           <!-- <label for="drawing-shadow-color">Shadow color:</label>
           <input
             type="color"
@@ -1135,6 +1138,12 @@
           /> -->
         </div>
         <div class="eraseTab" class:hidden={current != "erase"}>
+          <div class="widthBox">
+          <div
+            class="lineWidth"
+            style="width:{EraselineWidth}px; height: {EraselineWidth}px; background-color: black;margin:  0px auto;"
+          />
+        </div>
           <span class="info">{EraselineWidth}</span><input
             type="range"
             min="0"
@@ -1142,10 +1151,8 @@
             id="erase-line-width"
             bind:value={EraselineWidth}
           />
-          <div
-            class="lineWidth"
-            style="width:{EraselineWidth}px; height: {EraselineWidth}px; background-color: black;margin:  0px auto;"
-          />
+          
+          
         </div>
         <div class="fillTab" class:hidden={current != "fill"}>
           <input
@@ -1312,8 +1319,11 @@
 
   #drawing-color,
   #drawing-shadow-color {
-    margin: 0.4rem;
-    height: 32px;
+    margin: 0px;
+    height: 0px;
+    width: 0px;
+    padding: 0px;
+    visibility: hidden;
   }
 
   .optionbox {
@@ -1370,7 +1380,16 @@
 
   .lineWidth {
     border-radius: 50%;
+    position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   }
+
+  .widthBox {
+        height: 150px;
+        position: relative;
+    }
 
 
   @keyframes blink {
@@ -1454,5 +1473,12 @@
     background: rgba(50,50,50,0.5);
     width: 100vw;
     height: 100vh;
+}
+
+.colorIcon{
+  width: 32px;
+  position: absolute;
+  right: 15%;
+  bottom: 15%;
 }
 </style>

@@ -16,11 +16,13 @@ Profile.subscribe(value => {
 
 export async function uploadImage(name, type, json, img, status) {
   console.log(Sess)
+  console.log("type: " + type)
   console.log("name: " + name)
   console.log(img)
 
   var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png")
   var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json")
+  console.log(jpegURL + jsonURL)
   var value = { "url": jpegLocation, "json": jsonLocation};
   if(status == "zichtbaar"){
     pub = true
@@ -84,6 +86,7 @@ await fetch(jpegURL, {
   else{value =  object.value}
   console.log(value)
   value.url = jpegLocation
+  value.username = prof.username
   pub = true
 
   // get object
