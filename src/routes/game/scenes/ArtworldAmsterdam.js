@@ -120,7 +120,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //Background // the order of creation is the order of drawing: first = bottom ...............................
 
-    
+
     Background.repeatingDots({
       scene: this,
       gridOffset: 50, dotWidth: 2, dotColor: 0x909090,
@@ -153,7 +153,32 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient1: 0x3a4bba,
       gradient2: 0xbb00ff
     })
-    
+
+    // sunglass_stripes
+    this.sunglasses_striped = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34), 'sunglass_stripes')
+    this.sunglasses_striped.setInteractive()
+
+    this.input.setDraggable(this.sunglasses_striped);
+
+    this.input.on('dragstart', function (pointer, gameObject) {
+
+      gameObject.setTint(0xff0000);
+
+    });
+
+    this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+
+      gameObject.x = dragX;
+      gameObject.y = dragY;
+
+    });
+
+    this.input.on('dragend', function (pointer, gameObject) {
+      gameObject.clearTint();
+      console.log(gameObject.x, gameObject.y)
+    })
+
+
 
     // End Background .........................................................................................
 
@@ -237,12 +262,12 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         // console.log(element.value.posX)
 
         let locationDescription = element.user_id.substring(0, 7);
-          this.homesRepreseneted[index] = new GenerateLocation({ scene: this, userHome: element.user_id, draggable: true, type: "isoTriangle", x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX), y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY), locationDestination: "DefaultUserHome", locationText: locationDescription, locationImage: "museum", enterButtonImage: "arrow_down_32px", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
-          
-          // console.log(element)
-          // console.log(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX))
-          // console.log(CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY))
-          
+        this.homesRepreseneted[index] = new GenerateLocation({ scene: this, userHome: element.user_id, draggable: false, type: "isoTriangle", x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX), y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY), locationDestination: "DefaultUserHome", locationText: locationDescription, locationImage: "museum", enterButtonImage: "arrow_down_32px", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
+
+        // console.log(element)
+        // console.log(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX))
+        // console.log(CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY))
+
       }) //end forEach
 
       this.homesGenerate = false
@@ -253,13 +278,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     let location1Vector = new Phaser.Math.Vector2(-701.83, -304.33)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
-    const location1 = new GenerateLocation({ scene: this, type: "isoBox", draggable: true, x: location1Vector.x, y: location1Vector.y, locationDestination: "Location1", locationImage: "museum", enterButtonImage: "arrow_down_32px", locationText: "Location 1", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
+    const location1 = new GenerateLocation({ scene: this, type: "isoBox", draggable: false, x: location1Vector.x, y: location1Vector.y, locationDestination: "Location1", locationImage: "museum", enterButtonImage: "arrow_down_32px", locationText: "Location 1", fontColor: 0x8dcb0e, color1: 0xffe31f, color2: 0xf2a022, color3: 0xf8d80b })
 
 
     location1Vector = new Phaser.Math.Vector2(-770.83, 83.33)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
 
-    const location2 = new GenerateLocation({ scene: this, type: "isoBox", draggable: true, x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "museum", enterButtonImage: "arrow_down_32px", locationText: "Location 2", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
+    const location2 = new GenerateLocation({ scene: this, type: "isoBox", draggable: false, x: location1Vector.x, y: location1Vector.y, locationDestination: "Location2", locationImage: "museum", enterButtonImage: "arrow_down_32px", locationText: "Location 2", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
 
   }
 

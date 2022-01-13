@@ -43,6 +43,7 @@ class ArtworkList {
             bottomBound = scrollContainerY
         }
     
+        // https://rexrainbow.github.io/phaser3-rex-notes/docs/site/scroller/
         // scroller plug-in config
         scene.scroller = scene.plugins.get('rexScroller').add(scrollContainer, {
             bounds: [
