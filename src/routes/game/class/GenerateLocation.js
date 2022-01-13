@@ -1,4 +1,5 @@
 import ManageSession from "../ManageSession"
+import CoordinatesTranslator from "./CoordinatesTranslator"
 
 export default class GenerateLocation extends Phaser.GameObjects.Container {
 
@@ -64,11 +65,15 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.location.body.setOffset(0, -(this.location.height / 1.4))
         }
 
-        this.location.setInteractive()
+        // can't drag the location if there is another function for pointerdown
+        // we set the location either clickable or dragable (because dragging is a edit function)
+        if (!this.draggable) {
+            this.location.setInteractive()
 
-        this.location.on('pointerdown', () => {
-            console.log("location clicked")
-        })
+            this.location.on('pointerdown', () => {
+                console.log("location clicked")
+            })
+        }
 
         //place the description under the location image (for devving only)
         const locationDescription = this.scene.add.text(0, width / 2 - 30, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(51)
@@ -105,8 +110,12 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                     this.setY(p.worldY)
                 })
                 .on('pointerdown', (p, x, y) => {
-                    // this._dragX = x
-                    // this._dragY = y
+                    //console.log('dragging')
+                    //console.log(p.worldX, p.worldY)
+
+                })
+                .on('pointerup', (p, x, y) => {
+                    console.log(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY))
                 })
         }
 
@@ -123,7 +132,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
             //player has to explicitly leave the stream it was in!
             console.log("leave: ", this.scene.location)
-            
+
             ManageSession.socket.rpc("leave", this.scene.location)
 
             this.scene.player.location = this.locationDestination

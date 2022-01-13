@@ -586,104 +586,7 @@ export default class Location1 extends Phaser.Scene {
 
   }
 
-  // createLocationDialogbox(locationName, mainWidth, mainHeight) {
-  //   let location = "this." + locationName
-  //   location = eval(location)
-
-  //   location.setData("entered", false)
-  //   location.setName(locationName)
-
-  //   //create variable for the text of the dialog box, set the text after
-  //   let nameText = "this." + location.name + "DialogBox"
-  //   nameText = this.add.text(mainWidth - 60, mainHeight - 30, locationName, { fill: '#000' })
-
-  //   //create variable to hold dialogbox graphics
-  //   let nameBox = "this." + location.name + "DialogBox"
-
-  //   //background panel for dialogbox
-  //   nameBox = this.add.graphics();
-  //   nameBox.fillStyle(0xfffff00, 0.4)
-  //   nameBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32)
-  //   nameBox.setVisible(false)
-
-  //   //create variable for texture that holds the graphics and the clickable area for the dialogbox
-  //   let nameTexture = "this." + location.name + "Texture"
-
-  //   nameTexture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
-  //   nameTexture.draw(nameBox);
-  //   nameTexture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains)
-  //   nameTexture.on('pointerdown', () => { this.enterLocationScene(location.name) });
-
-  //   //create container that holds all of the dialogbox: can be moved and hidden
-  //   let nameContainer = "this." + location.name + "DialogBoxContainer"
-
-  //   // nameContainer = this.add.container(location.x - (mainWidth / 2), location.y - (mainHeight / 2), [nameTexture, nameText]).setDepth(900)
-  //   nameContainer = this.add.container(location.body.x + (location.body.width / 4), location.body.y + (location.body.height / 4), [nameTexture, nameText]).setDepth(900)
-
-  //   nameContainer.setVisible(false)
-  //   nameContainer.setName(location.name)
-
-  //   //add everything to the container
-  //   this.locationDialogBoxContainersGroup.add(nameContainer);
-
-  //   //call overlap between player and the location, set the callback function and scope
-  //   this.physics.add.overlap(this.player, location, this.confirmEnterLocation, null, this)
-  // }
-
-  // confirmEnterLocation(player, location, show) {
-  //   if (!location.getData("entered")) {
-  //     //start event
-  //     show = false
-  //     this.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], callbackScope: this, loop: false })
-
-  //     //show the box
-  //     show = true
-  //     this.enterLocationDialogBox(player, location, show)
-  //     location.setData("entered", true)
-  //   }
-  // }
-
-  // enterLocationDialogBox(player, location, show) {
-  //   let container = "this." + location.name + "DialogBoxContainer"
-  //   container = eval(container)
-
-  //   let nameContainer = location.name
-  //   let search = { name: location }
-
-  //   container = Phaser.Actions.GetFirst(this.locationDialogBoxContainersGroup.getChildren(), { name: nameContainer });
-
-  //   if (show) {
-  //     container.setVisible(show)
-  //   } else {
-  //     container.setVisible(show)
-  //     location.setData("entered", show)
-  //   }
-  // }
-
-  // enterLocationScene(location) {
-  //   // on entering another location we want to keep a record for "back button"
-  //   ManageSession.previousLocation = this.scene.key;
-
-  //   this.physics.pause()
-  //   this.player.setTint(0xff0000)
-
-  //   //player has to explicitly leave the stream it was in!
-  //   console.log("leave, this.location")
-  //   console.log(this.location)
-  //   ManageSession.socket.rpc("leave", this.location)
-
-  //   this.player.location = location
-  //   console.log("this.player.location:")
-  //   console.log(location)
-
-  //   setTimeout(() => {
-  //     ManageSession.location = location
-  //     ManageSession.createPlayer = true
-  //     ManageSession.getStreamUsers("join", location)
-  //     this.scene.stop(this.scene.key)
-  //     this.scene.start(location)
-  //   }, 1000)
-  // }
+  
 
   generateBackground() {
     //fill in textures
@@ -719,33 +622,6 @@ export default class Location1 extends Phaser.Scene {
       }
     }
     //......... end repeating dots ...................................................................
-
-    //..... cross grid background .............................................................
-    // // // 1. make an array with color values
-    // // let cross = [
-    // //   '.....',
-    // //   '..1..',
-    // //   '.111.',
-    // //   '..1..',
-    // //   '.....',
-
-    // // ]
-
-    // // // 2. generate the texture from the array
-    // // this.textures.generate('cross', { data: cross, pixelWidth: 3 });
-
-    // // // 3. display the texture as an image
-    // // const gridWidth = 4000
-    // // const offset = 50
-
-    // // // 4. repeat the image in a x, y  grid
-    // // for (let i = 0; i < gridWidth; i += offset) {
-    // //   for (let j = 0; j < gridWidth; j += offset) {
-    // //     this.add.image(i, j, 'cross').setOrigin(0, 1);
-    // //   }
-    // // }
-    //..... end cross grid background .............................................................
-    //*........... end repeating pattern on the white background ........................................
 
     //* .......... scattered art works for the demo .....................................................
     // this.add.image(0, 200, "background4").setOrigin(0,0).setScale(1.3)
@@ -795,7 +671,7 @@ export default class Location1 extends Phaser.Scene {
     rt.draw(rectangle);
     rt2.draw(rectangle);
 
-    let eraser = this.add.circle(0, 0, 190, 0x000000);
+    let eraser = this.add.circle(0, 0, 190, 0x000000)
     eraser.setVisible(false);
 
     rt.erase(eraser, 200, 200);
