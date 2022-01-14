@@ -190,7 +190,7 @@ class Player {
     scene.physics.world.enable(scene.playerContainer);
 
     // introducing scene.artworkListContainer here, since its visibility has to be turned off, when the avatar is clicked the second time
-    scene.artworkListContainer = scene.add.container(110, 0); // it contains artworks of the player and displayed on the right side of the avatar
+    scene.artworkListContainer = scene.add.container(110, 110); // it contains artworks of the player and displayed on the right side of the avatar
     scene.playerContainer.add(scene.artworkListContainer);
 
     // for entering the avatar's home
@@ -229,18 +229,7 @@ class Player {
             async (response) => {
               scene.userArtServerList = response;
 
-              // if the user has any artworks, then run this piece
               if (scene.userArtServerList.length > 0) {
-                // creating a rectangle box for artworks and adding it to the artworkListContainer
-                // const artworkListGraphicBox = scene.add.graphics()
-                // artworkListGraphicBox
-                //   .fillStyle(0xffffff)
-                //   .lineStyle(3, 0x0000)
-                //   .fillRoundedRect(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 24)
-                //   .strokeRoundedRect(0, -scene.artPreviewSize / 2, 140, scene.userArtServerList.length * scene.artPreviewSize, 24)
-                // scene.artworkListContainer.add(artworkListGraphicBox)
-
-                // toggling true - false for artworkListContainer
                 displayArtworkList = !displayArtworkList;
                 scene.artworkListContainer.setVisible(displayArtworkList);
 
@@ -253,30 +242,14 @@ class Player {
                       const fileFormat = "png";
                       const key = `${element.key}_${imgSize}`;
 
-                      // the X coord is 0 for all artworks and the Y coord is given dynamically
-                      // const coordY = index == 0 ? 0 : index * scene.artPreviewSize
-
                       if (scene.textures.exists(key)) {
-                        // if the image has already downloaded, then add image by using the key
-
-                        console.log("1");
                         return { name: `${key}` };
-
-                        // adds the image to the container
-                        // const cashedImage = scene.add.image(0, coordY, key).setOrigin(0, 0.5)
-                        // scene.artworkListContainer.add(cashedImage)
                       } else {
-                        // otherwise download the image and add it
-                        console.log("2");
-
                         const currentImage = await convertImage(
                           imgUrl,
                           "128",
                           fileFormat
                         );
-
-                        // for tracking each file in progress
-                        // scene.progress.push({key, coordY})
 
                         scene.load.image(key, currentImage);
 
@@ -284,52 +257,16 @@ class Player {
 
                         return { name: `${key}` };
                       }
-
-                      // const progressBox = scene.add.graphics()
-                      // const progressBar = scene.add.graphics()
-                      // scene.artworkListContainer.add([progressBox, progressBar])
-                      // const progressWidth = 128
-                      // const progressHeight = 25
-                      // const padding = 5
-
-                      // scene.load.on("fileprogress", (file, value) => {
-
-                      //   progressBox.clear();
-                      //   progressBar.clear();
-                      //   progressBox.fillStyle(0x000000, 1)
-                      //   progressBar.fillStyle(0xFFFFFF, 1)
-
-                      //   const progressedImage = scene.progress.find(element => element.key == file.key)
-
-                      //   progressBox.fillRect(0, progressedImage.coordY, progressWidth, progressHeight)
-                      //   progressBar.fillRect(0 + padding, progressedImage.coordY + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
-
-                      // })
-
-                      // scene.load.on('filecomplete', (key) => {
-
-                      //   const currentImage = scene.progress.find(element => element.key == key)
-
-                      //   // adds the image to the artworkList container
-                      //   const completedImage = scene.add.image(0, currentImage.coordY, currentImage.key).setOrigin(0, 0.5)
-                      //   scene.artworkListContainer.add(completedImage)
-                      // })
-
-                      // scene.load.once("complete", () => {
-                      //     progressBar.destroy()
-                      //     progressBox.destroy()
-                      //     scene.progress = []
-                      // })
                     })
                   ),
                 };
 
                 console.log(downloadedImages);
 
-                const scrollablePanel = scene.rexUI.add
+                scene.scrollablePanel = scene.rexUI.add
                   .scrollablePanel({
-                    x: 500,
-                    y: 500,
+                    x: scene.player.x + 200,
+                    y: scene.player.y,
                     width: 200,
                     height: 200,
 
@@ -341,7 +278,7 @@ class Player {
                       2,
                       2,
                       10,
-                      0x4e342e
+                      0xffffff
                     ),
 
                     panel: {
@@ -355,7 +292,7 @@ class Player {
                         20,
                         10,
                         10,
-                        0x260e04
+                        0x000000
                       ),
                       thumb: scene.rexUI.add.roundRectangle(
                         0,
@@ -363,7 +300,7 @@ class Player {
                         0,
                         0,
                         13,
-                        0x7b5e57
+                        0xff9900
                       ),
                     },
 
@@ -379,6 +316,7 @@ class Player {
                   .layout()
                   .setName("scrollBar");
 
+                console.log("!!!!!!SCROLL", scrollablePanel);
                 scene.input.topOnly = false;
                 var labels = [];
                 labels.push(
@@ -483,7 +421,7 @@ class Player {
       .addBackground(
         scene.rexUI.add
           .roundRectangle(0, 0, 0, 0, 0, undefined)
-          .setStrokeStyle(4, 0x7b5e57, 1)
+          .setStrokeStyle(3, 0x000000, 1)
       )
       .add(
         table, // child
@@ -767,6 +705,13 @@ class Player {
         //check if there are players in scene.onlinePlayers that are not in .allConnectedUsers ->  they need to be destroyed
         scene.offlineOnlineUsers = [];
 
+        console.log("!!!!!!!!!!!!!", scene.onlinePlayers);
+
+        // scene?.onlinePlayers.forEach((sprite) => {
+        //   // sprite.input.enable = true;
+        //   // sprite.setInteractive({ useHandCursor: true });
+        // });
+
         scene.onlinePlayers.forEach((player) => {
           const playerID = player.user_id;
           const found = ManageSession.allConnectedUsers.some(
@@ -891,6 +836,7 @@ class Player {
 
         //update scene.onlinePlayers, hidden or visible
         scene.onlinePlayers = scene.onlinePlayersGroup.getChildren();
+
         if (scene.debug) {
           console.log("all players in the group, hidden or visible ");
           console.log(scene.onlinePlayers);
@@ -937,7 +883,89 @@ class Player {
   } //loader
 
   attachtAvatarToOnlinePlayer(scene, player, preExisting) {
+    player.setInteractive({ useHandCursor: true });
+
+    // for toggling the pop-up buttons
+    let displayPopUpButtons = false;
+
+    // for toggling the artwork list
+    let displayArtworkList = false;
+
+    scene.onlinePlayerContainer = scene.add.container(player.x, player.y);
+    scene.physics.world.enable(scene.onlinePlayerContainer);
+
+    scene.input.on("gameobjectdown", (pointer, object) => {
+      if (object.anims) {
+        scene.selectedPlayerID =
+          object.anims.currentFrame.textureKey.split("_")[0];
+      }
+    });
+
+    player.on("pointerup", () => {
+      console.log("111");
+      if (displayPopUpButtons == false) {
+        console.log("222");
+        scene.onlinePlayerContainer.setVisible(true);
+        const homeButtonCircle2 = scene.add
+          .circle(0, -70, 25, 0xffffff)
+          .setOrigin(0.5, 0.5)
+          .setInteractive({ useHandCursor: true })
+          .setStrokeStyle(3, 0x0000);
+        const homeButtonImage2 = scene.add.image(0, -70, "home");
+
+        const heartButtonCircle2 = scene.add
+          .circle(65, 0, 25, 0xffffff)
+          .setOrigin(0.5, 0.5)
+          .setInteractive({ useHandCursor: true })
+          .setStrokeStyle(3, 0x0000);
+        const heartButtonImage2 = scene.add.image(65, 0, "heart");
+
+        scene.onlinePlayerContainer.add([
+          homeButtonCircle2,
+          homeButtonImage2,
+          heartButtonCircle2,
+          heartButtonImage2,
+        ]);
+        displayPopUpButtons = true;
+
+        // entering the home of the avatar
+        // homeButtonCircle.on("pointerup", () => {
+        //   scene.scene.scene.physics.pause();
+        //   scene.scene.scene.player.setTint(0xff0000);
+
+        //   ManageSession.socket.rpc("leave", scene.scene.scene.location);
+
+        //   scene.scene.scene.player.location = "DefaultUserHome";
+
+        //   scene.scene.scene.time.addEvent({
+        //     delay: 500,
+        //     callback: () => {
+        //       ManageSession.location = "DefaultUserHome";
+        //       ManageSession.createPlayer = true;
+        //       ManageSession.getStreamUsers("join", "DefaultUserHome");
+        //       scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
+        //       if (scene.scene.scene.selectedPlayerID) {
+        //         scene.scene.scene.scene.start("DefaultUserHome", {
+        //           user_id: scene.scene.scene.selectedPlayerID,
+        //         });
+        //       } else {
+        //         scene.scene.scene.scene.start("DefaultUserHome");
+        //       }
+        //     },
+        //     callbackScope: scene,
+        //     loop: false,
+        //   });
+        // });
+      } else {
+        console.log("333");
+        scene.playerContainer.setVisible(false);
+        displayPopUpButtons = false;
+        displayArtworkList = false;
+      }
+    });
+
     scene.tempAvatarName = player.user_id + "_" + player.avatar_time;
+
     //scene.onlinePlayers[i] = scene.add.image(scene.onlinePlayers[i].posX, scene.onlinePlayers[i].posY, scene.tempAvatarName)
 
     console.log("player added: ");
