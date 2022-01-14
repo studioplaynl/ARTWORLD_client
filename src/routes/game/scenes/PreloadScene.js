@@ -45,7 +45,8 @@ export default class PreloadScene extends Phaser.Scene {
 
         //artworld elements
         this.load.svg('sunglass_stripes', 'assets/svg/sunglass_stripes.svg')
-
+        this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', { scale: 2.4 })
+        
     }
 
     async create() {

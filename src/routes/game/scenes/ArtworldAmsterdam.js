@@ -18,7 +18,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
     super("ArtworldAmsterdam");
 
-    this.worldSize = new Phaser.Math.Vector2(3000, 3000)
+    this.worldSize = new Phaser.Math.Vector2(6000, 6000)
 
     this.debug = false
 
@@ -156,13 +156,43 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     // sunglass_stripes
     this.sunglasses_striped = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34), 'sunglass_stripes')
-    this.sunglasses_striped.setInteractive()
+      .setInteractive({ draggable: true })
+      // .on('drag', (pointer, x, y) => {
+      //   // console.log(this.photo_camera)
+      //   this.sunglasses_striped.x = pointer.worldX
+      //   this.sunglasses_striped.y = pointer.worldY
+      // })
 
-    this.input.setDraggable(this.sunglasses_striped);
+      // .on('pointerdown', (p, x, y) => {
+      // })
+
+      // .on('pointerup', (pointer, x, y) => {
+      //   console.log(this.sunglasses_striped.x, this.sunglasses_striped.y)
+      // })
+
+    this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
+      .setInteractive({ draggable: true })
+      // this.photo_camera.flipX()
+      // .on('drag', (pointer, x, y) => {
+      //   // console.log(this.photo_camera)
+      //   this.photo_camera.x = pointer.worldX
+      //   this.photo_camera.y = pointer.worldY
+      // })
+
+      // .on('pointerdown', (p, x, y) => {
+      // })
+
+      // .on('pointerup', (pointer, x, y) => {
+      //   console.log(this.photo_camera.x, this.photo_camera.y)
+      // })
+
+    // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
+
+    // this.input.setDraggable(this.photo_camera);
 
     this.input.on('dragstart', function (pointer, gameObject) {
 
-      gameObject.setTint(0xff0000);
+      //gameObject.setTint(0xff0000);
 
     });
 
@@ -174,9 +204,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     });
 
     this.input.on('dragend', function (pointer, gameObject) {
-      gameObject.clearTint();
+      //gameObject.clearTint();
       console.log(gameObject.x, gameObject.y)
     })
+
 
 
 
