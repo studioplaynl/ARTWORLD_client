@@ -183,15 +183,12 @@ class Player {
     let displayPopUpButtons = false;
 
     // for toggling the artwork list
-    let displayArtworkList = false;
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
     scene.physics.world.enable(scene.playerContainer);
 
-    // introducing scene.artworkListContainer here, since its visibility has to be turned off, when the avatar is clicked the second time
-    scene.artworkListContainer = scene.add.container(110, 110); // it contains artworks of the player and displayed on the right side of the avatar
-    scene.playerContainer.add(scene.artworkListContainer);
+    scene.scrollablePanel = scene.add.container(0, 0);
 
     // for entering the avatar's home
     scene.input.on("gameobjectdown", (pointer, object) => {
@@ -200,8 +197,7 @@ class Player {
         scene.selectedPlayerID =
           object.anims.currentFrame.textureKey.split("_")[0];
 
-        // on any click on avatar, the list should not be displayed
-        scene.artworkListContainer.setVisible(displayArtworkList);
+        scene.scrollablePanel.setVisible(false);
       }
     });
 
@@ -230,8 +226,7 @@ class Player {
               scene.userArtServerList = response;
 
               if (scene.userArtServerList.length > 0) {
-                displayArtworkList = !displayArtworkList;
-                scene.artworkListContainer.setVisible(displayArtworkList);
+                scene.scrollablePanel.setVisible(false);
 
                 // downloading each artwork of the user
                 const downloadedImages = {
@@ -260,8 +255,6 @@ class Player {
                     })
                   ),
                 };
-
-                console.log(downloadedImages);
 
                 scene.scrollablePanel = scene.rexUI.add
                   .scrollablePanel({
@@ -316,12 +309,13 @@ class Player {
                   .layout()
                   .setName("scrollBar");
 
-                console.log("!!!!!!SCROLL", scrollablePanel);
                 scene.input.topOnly = false;
                 var labels = [];
                 labels.push(
-                  ...scrollablePanel.getElement("#artworks.items", true)
+                  ...scene.scrollablePanel.getElement("#artworks.items", true)
                 );
+
+                //  scene.physics.world.enable(scene.s)
               }
             }
           );
@@ -367,7 +361,6 @@ class Player {
       } else {
         scene.playerContainer.setVisible(false);
         displayPopUpButtons = false;
-        displayArtworkList = false;
       }
     });
   }
@@ -898,6 +891,7 @@ class Player {
       if (object.anims) {
         scene.selectedPlayerID =
           object.anims.currentFrame.textureKey.split("_")[0];
+        console.log(scene.selectedPlayerID);
       }
     });
 
