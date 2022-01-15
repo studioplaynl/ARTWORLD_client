@@ -1,5 +1,6 @@
 <script>
     import {getUploadURL, ListAllUsers, updateObjectAdmin} from "../../api.js"
+    import SaveAnimation from "../components/saveAnimation.svelte"
     let filesVar, type,name, filetype,value, pub, users = [], id;
     let  saving= false;
     async function getUsers() {

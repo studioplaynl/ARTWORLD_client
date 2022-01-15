@@ -127,7 +127,7 @@
 	<div class="registerForm">
 		<form on:submit|preventDefault={onSubmit}>
 			<div class="container">
-				<h1>Update deze gebruiker</h1>
+				<h1>{$_("update.title")}</h1>
 
 				<hr />
 				<label for="username"><b>{$_("register.username")}</b></label>
@@ -195,7 +195,7 @@
 			</div>
 		</form>
 		<div>
-			<h1>Add location</h1>
+			<h1>{$_("update.addLocation")}</h1>
 			<label>type</label>
 			<select bind:value={type}>
 				<option value="home">home</option>
@@ -214,7 +214,7 @@
 			<button on:click={addLocation}>creeer</button>
 		</div>
 		<div>
-			<h1>User's locations</h1>
+			<h1>{$_("update.userLocation")}</h1>
 			<select bind:value="{whereList}">
 				<option value="home">home</option>
 				<option value="location">location</option>
@@ -233,7 +233,7 @@
 					<p>userID: {location.user_id}</p>
 					<p>key:{location.key}</p>
 					<p>
-						posX: {location.value.posX}, posY: {location.value.posY}
+						value: {JSON.stringify(location.value)}
 					</p>
 					<button
 						on:click={async () => {
@@ -274,7 +274,7 @@
 
 	/* Full-width input fields */
 	input[type="text"],
-	input[type="password"] {
+	input[type="password"], textarea {
 		width: 100%;
 		padding: 15px;
 		margin: 5px 0 22px 0;

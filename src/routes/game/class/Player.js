@@ -180,18 +180,13 @@ class Player {
     scene.player.setInteractive({ useHandCursor: true });
 
     // for toggling the pop-up buttons
-    let displayPopUpButtons = false;
-
-    // for toggling the artwork list
-    let displayArtworkList = false;
+    scene.isPopUpButtonsDisplayed = false;
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
     scene.physics.world.enable(scene.playerContainer);
 
-    // introducing scene.artworkListContainer here, since its visibility has to be turned off, when the avatar is clicked the second time
-    scene.artworkListContainer = scene.add.container(110, 110); // it contains artworks of the player and displayed on the right side of the avatar
-    scene.playerContainer.add(scene.artworkListContainer);
+    scene.scrollablePanel = scene.add.container(0, 0);
 
     // for entering the avatar's home
     scene.input.on("gameobjectdown", (pointer, object) => {
@@ -200,38 +195,36 @@ class Player {
         scene.selectedPlayerID =
           object.anims.currentFrame.textureKey.split("_")[0];
 
-        // on any click on avatar, the list should not be displayed
-        scene.artworkListContainer.setVisible(displayArtworkList);
+        scene.scrollablePanel.setVisible(false);
       }
     });
 
     scene.player.on("pointerup", () => {
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
-      if (displayPopUpButtons == false) {
+      if (scene.isPopUpButtonsDisplayed == false) {
         scene.playerContainer.setVisible(true);
 
-        const homeButtonCircle = scene.add
+        scene.homeButtonCircle = scene.add
           .circle(0, -70, 25, 0xffffff)
           .setOrigin(0.5, 0.5)
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(3, 0x0000);
-        const homeButtonImage = scene.add.image(0, -70, "home");
+        scene.homeButtonImage = scene.add.image(0, -70, "home");
 
-        const heartButtonCircle = scene.add
+        scene.heartButtonCircle = scene.add
           .circle(65, 0, 25, 0xffffff)
           .setOrigin(0.5, 0.5)
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(3, 0x0000);
-        const heartButtonImage = scene.add.image(65, 0, "heart");
+        scene.heartButtonImage = scene.add.image(65, 0, "heart");
 
-        heartButtonCircle.on("pointerup", async () => {
+        scene.heartButtonCircle.on("pointerup", async () => {
           await listImages("drawing", scene.selectedPlayerID, 100).then(
             async (response) => {
               scene.userArtServerList = response;
 
               if (scene.userArtServerList.length > 0) {
-                displayArtworkList = !displayArtworkList;
-                scene.artworkListContainer.setVisible(displayArtworkList);
+                scene.scrollablePanel.setVisible(false);
 
                 // downloading each artwork of the user
                 const downloadedImages = {
@@ -260,8 +253,6 @@ class Player {
                     })
                   ),
                 };
-
-                console.log(downloadedImages);
 
                 scene.scrollablePanel = scene.rexUI.add
                   .scrollablePanel({
@@ -316,12 +307,13 @@ class Player {
                   .layout()
                   .setName("scrollBar");
 
-                console.log("!!!!!!SCROLL", scrollablePanel);
                 scene.input.topOnly = false;
                 var labels = [];
                 labels.push(
-                  ...scrollablePanel.getElement("#artworks.items", true)
+                  ...scene.scrollablePanel.getElement("#artworks.items", true)
                 );
+
+                //  scene.physics.world.enable(scene.s)
               }
             }
           );
@@ -329,15 +321,15 @@ class Player {
 
         // adding all buttons to the container
         scene.playerContainer.add([
-          homeButtonCircle,
-          homeButtonImage,
-          heartButtonCircle,
-          heartButtonImage,
+          scene.homeButtonCircle,
+          scene.homeButtonImage,
+          scene.heartButtonCircle,
+          scene.heartButtonImage,
         ]);
-        displayPopUpButtons = true;
+        scene.isPopUpButtonsDisplayed = true;
 
         // entering the home of the avatar
-        homeButtonCircle.on("pointerup", () => {
+        scene.homeButtonCircle.on("pointerup", () => {
           scene.scene.scene.physics.pause();
           scene.scene.scene.player.setTint(0xff0000);
 
@@ -366,8 +358,7 @@ class Player {
         });
       } else {
         scene.playerContainer.setVisible(false);
-        displayPopUpButtons = false;
-        displayArtworkList = false;
+        scene.isPopUpButtonsDisplayed = false;
       }
     });
   }
@@ -886,7 +877,7 @@ class Player {
     player.setInteractive({ useHandCursor: true });
 
     // for toggling the pop-up buttons
-    let displayPopUpButtons = false;
+    scene.isPopUpButtonsDisplayed2 = false;
 
     // for toggling the artwork list
     let displayArtworkList = false;
@@ -898,12 +889,13 @@ class Player {
       if (object.anims) {
         scene.selectedPlayerID =
           object.anims.currentFrame.textureKey.split("_")[0];
+        console.log(scene.selectedPlayerID);
       }
     });
 
     player.on("pointerup", () => {
       console.log("111");
-      if (displayPopUpButtons == false) {
+      if (scene.isPopUpButtonsDisplayed2 == false) {
         console.log("222");
         scene.onlinePlayerContainer.setVisible(true);
         const homeButtonCircle2 = scene.add
@@ -926,7 +918,7 @@ class Player {
           heartButtonCircle2,
           heartButtonImage2,
         ]);
-        displayPopUpButtons = true;
+        scene.isPopUpButtonsDisplayed2 = true;
 
         // entering the home of the avatar
         // homeButtonCircle.on("pointerup", () => {
@@ -959,7 +951,7 @@ class Player {
       } else {
         console.log("333");
         scene.playerContainer.setVisible(false);
-        displayPopUpButtons = false;
+        scene.isPopUpButtonsDisplayed2 = false;
         displayArtworkList = false;
       }
     });
@@ -1102,6 +1094,11 @@ class Player {
     scene.input.on("pointerup", () => {
       scene.graffitiDrawing = false;
     });
+  }
+
+  moveScrollablePanel(scene) {
+    scene.scrollablePanel.x = scene.player.x + 200;
+    scene.scrollablePanel.y = scene.player.y;
   }
 }
 
