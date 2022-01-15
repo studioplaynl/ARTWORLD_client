@@ -206,7 +206,26 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
 
     this.mario_star = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1079.49), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 636.67), 'mario_star').setScale(0.6)
-    // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
+    this.mario_star.setInteractive()
+    this.mario_star.on('pointerup', () => {
+      this.scene.pause();
+    var url = window.location.href + 'mariosound'
+
+    var s = window.open(url, '_parent');
+
+    if (s && s.focus)
+    {
+        s.focus();
+    }
+    else if (!s)
+    {
+        window.location.href = url;
+    }
+
+    });
+
+    // this.mario_star.setInteractive({ draggable: true })
+    // particles.setInteractive({ draggable: true })
 
     // this.input.on('dragstart', function (pointer, gameObject) {
 
@@ -221,6 +240,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //   console.log(gameObject.x, gameObject.y)
     // })
 
+    // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
 
 
 
@@ -300,6 +320,24 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   } //end create
 
   createItemsBar() {}
+
+  openMarioSound(){
+    this.scene.pause();
+    var url = window.location.href + 'mariosound'
+
+    var s = window.open(url, '_parent');
+
+    if (s && s.focus)
+    {
+        s.focus();
+    }
+    else if (!s)
+    {
+        window.location.href = url;
+    }
+
+  }
+
   generateHomes() {
     //check if server query is finished, if there are homes to make
     if (this.homes != null && this.homesGenerate) {
