@@ -313,6 +313,13 @@ export default class DefaultUserHome extends Phaser.Scene {
             Player.moveByTapping(this)
         }
 
+        if (this.scrollablePanel) {
+            Player.moveScrollablePanel(this);
+        }
+
+        if (this.playerContainer) {
+            Player.movePlayerContainer(this);
+        }
     } //update
 } //class
 

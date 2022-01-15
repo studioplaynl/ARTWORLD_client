@@ -894,7 +894,13 @@ export default class Location1 extends Phaser.Scene {
       Player.moveBySwiping(this)
     }
     
+    if (this.scrollablePanel) {
+        Player.moveScrollablePanel(this);
+    }
 
+    if (this.playerContainer) {
+        Player.movePlayerContainer(this);
+    }
 
 
   } //update
