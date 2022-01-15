@@ -1097,6 +1097,11 @@ class Player {
       scene.graffitiDrawing = false;
     });
   }
+
+  moveScrollablePanel(scene) {
+    scene.scrollablePanel.x = scene.player.x + 200;
+    scene.scrollablePanel.y = scene.player.y;
+  }
 }
 
 export default new Player();
