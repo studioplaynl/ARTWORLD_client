@@ -47,6 +47,11 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.svg('sunglass_stripes', 'assets/svg/sunglass_stripes.svg')
         this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', { scale: 2.4 })
         
+        // this.load.svg('mario_heart', 'assets/svg/mario_heart.svg')
+        // this.load.svg('mario_pipe', 'assets/svg/mario_pipe.svg')
+        this.load.svg('mario_star', 'assets/svg/mario_star.svg')
+
+        this.load.svg('music_quarter_note', 'assets/svg/music_note_quarter_note.svg')        
     }
 
     async create() {

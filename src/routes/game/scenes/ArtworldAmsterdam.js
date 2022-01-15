@@ -157,34 +157,50 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // sunglass_stripes
     this.sunglasses_striped = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34), 'sunglass_stripes')
       .setInteractive({ draggable: true })
-      // .on('drag', (pointer, x, y) => {
-      //   // console.log(this.photo_camera)
-      //   this.sunglasses_striped.x = pointer.worldX
-      //   this.sunglasses_striped.y = pointer.worldY
-      // })
+    // .on('drag', (pointer, x, y) => {
+    //   // console.log(this.photo_camera)
+    //   this.sunglasses_striped.x = pointer.worldX
+    //   this.sunglasses_striped.y = pointer.worldY
+    // })
 
-      // .on('pointerdown', (p, x, y) => {
-      // })
+    // .on('pointerdown', (p, x, y) => {
+    // })
 
-      // .on('pointerup', (pointer, x, y) => {
-      //   console.log(this.sunglasses_striped.x, this.sunglasses_striped.y)
-      // })
+    // .on('pointerup', (pointer, x, y) => {
+    //   console.log(this.sunglasses_striped.x, this.sunglasses_striped.y)
+    // })
 
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
       .setInteractive({ draggable: true })
-      // this.photo_camera.flipX()
-      // .on('drag', (pointer, x, y) => {
-      //   // console.log(this.photo_camera)
-      //   this.photo_camera.x = pointer.worldX
-      //   this.photo_camera.y = pointer.worldY
-      // })
 
-      // .on('pointerdown', (p, x, y) => {
-      // })
 
-      // .on('pointerup', (pointer, x, y) => {
-      //   console.log(this.photo_camera.x, this.photo_camera.y)
-      // })
+    // this.mario_heart = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1220.32), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 750.83), 'mario_heart').setScale(0.3)
+    //   .setInteractive({ draggable: true })
+
+    // this.music_quarter_note = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1246.15), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'music_quarter_note').setScale(0.6)
+    //   .setInteractive({ draggable: true })
+
+    //  First create a particle manager
+    //  A single manager can be responsible for multiple emitters
+    //  The manager also controls which particle texture is used by _all_ emitter
+
+    var particles = this.add.particles('music_quarter_note');
+
+    var music_emitter = particles.createEmitter({
+      x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1079.49),
+      y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 636.67),
+      lifespan: { min: 2000, max: 8000 },
+      speed: { min: 80, max: 120 },
+      angle: { min: 270, max: 360 },
+      gravityY: -50,
+      gravityX: 50,
+      scale: { start: 1, end: 0 },
+      quantity: 1,
+      frequency: 500,
+    });
+
+
+    this.mario_star = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1079.49), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 636.67), 'mario_star').setScale(0.6)
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
 
@@ -220,6 +236,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
 
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+   
     //.......  end PLAYER ................................................................................
 
     //....... onlinePlayers ..............................................................................
@@ -277,6 +294,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.UI_Scene.location = this.location
     this.gameCam.zoom = this.currentZoom
     //......... end UI Scene ..............................................................................
+    
+    this.playerShadow.startFollow(this.player);
+    //!this.playerShadow.followOffset.set(this.playerShadowOffset, this.playerShadowOffset)
   }//end create
 
   createItemsBar() {
@@ -331,8 +351,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
-    this.playerShadow.x = this.player.x + this.playerShadowOffset
-    this.playerShadow.y = this.player.y + this.playerShadowOffset
+    //! this.playerShadow.x = this.player.x + this.playerShadowOffset
+    //! this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................
 
     //.......... UPDATE TIMER      ..........................................................................
@@ -357,7 +377,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {
-      Player.moveBySwiping(this)
+      //!Player.moveBySwiping(this)
     } else {
       Player.moveByTapping(this)
     }
