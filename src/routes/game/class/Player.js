@@ -184,7 +184,7 @@ class Player {
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
-    scene.physics.world.enable(scene.playerContainer);
+    // scene.physics.world.enable(scene.playerContainer);
 
     scene.scrollablePanel = scene.add.container(0, 0);
 
@@ -229,30 +229,27 @@ class Player {
                 // downloading each artwork of the user
                 const downloadedImages = {
                   artworks: await Promise.all(
-                    scene.userArtServerList.map(async (element, index) => {
-                      const imgUrl = element.value.url;
-                      const imgSize = "128";
-                      const fileFormat = "png";
-                      const key = `${element.key}_${imgSize}`;
-
-                      if (scene.textures.exists(key)) {
-                        return { name: `${key}` };
-                      } else {
+                    scene.userArtServerList.map(async (element) => {
+                      const key = `${element.key}_128`;
+                      if (!scene.textures.exists(key)) {
                         const currentImage = await convertImage(
-                          imgUrl,
+                          element.value.url,
                           "128",
-                          fileFormat
+                          "png"
                         );
+
+                        console.log("!!!!!", key, currentImage);
 
                         scene.load.image(key, currentImage);
 
                         scene.load.start(); // load the image in memory
-
-                        return { name: `${key}` };
                       }
+                      return { name: `${key}` };
                     })
                   ),
                 };
+
+                console.log("????", downloadedImages);
 
                 scene.scrollablePanel = scene.rexUI.add
                   .scrollablePanel({
@@ -464,20 +461,20 @@ class Player {
 
     // Stop any previous movement from the last frame, the avatar itself and the container that holds the pop-up buttons
     scene.player.body.setVelocity(0);
-    if (scene.playerContainer?.body) {
-      scene.playerContainer.body.setVelocity(0);
-    }
+    // if (scene.playerContainer?.body) {
+    //   scene.playerContainer.body.setVelocity(0);
+    // }
 
     // Horizontal movement
     if (scene.cursors.left.isDown) {
       scene.player.body.setVelocityX(-speed);
-      scene.playerContainer.body.setVelocityX(-speed);
+      // scene.playerContainer.body.setVelocityX(-speed);
 
       // scene.cursorKeyIsDown = true;
       this.sendMovement(scene);
     } else if (scene.cursors.right.isDown) {
       scene.player.body.setVelocityX(speed);
-      scene.playerContainer.body.setVelocityX(speed);
+      // scene.playerContainer.body.setVelocityX(speed);
       // scene.cursorKeyIsDown = true
       // sendPlayerMovement(scene)
     }
@@ -490,16 +487,16 @@ class Player {
       this.sendMovement(scene);
     } else if (scene.cursors.down.isDown) {
       scene.player.body.setVelocityY(speed);
-      scene.playerContainer.body.setVelocityY(speed);
+      // scene.playerContainer.body.setVelocityY(speed);
       // scene.cursorKeyIsDown = true
       this.sendMovement(scene);
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal, the pop-up buttons are included
     scene.player.body.velocity.normalize().scale(speed);
-    if (scene.playerContainer?.body) {
-      scene.playerContainer.body.velocity.normalize().scale(speed);
-    }
+    // if (scene.playerContainer?.body) {
+    //   scene.playerContainer.body.velocity.normalize().scale(speed);
+    // }
   }
 
   moveObjectToTarget(scene, container, target, speed) {
@@ -540,12 +537,12 @@ class Player {
 
       // generalized moving method
       this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2);
-      this.moveObjectToTarget(
-        scene,
-        scene.playerContainer,
-        scene.target,
-        moveSpeed * 2
-      );
+      // this.moveObjectToTarget(
+      //   scene,
+      //   scene.playerContainer,
+      //   scene.target,
+      //   moveSpeed * 2
+      // );
       scene.isClicking = false;
     }
 
@@ -561,7 +558,7 @@ class Player {
     if (scene.playerIsMovingByClicking) {
       if (scene.distance < 10) {
         scene.player.body.reset(scene.target.x, scene.target.y);
-        scene.playerContainer.body.reset(scene.player.x, scene.player.y);
+        // scene.playerContainer.body.reset(scene.player.x, scene.player.y);
         scene.playerIsMovingByClicking = false;
       } else {
         this.sendMovement(scene);
@@ -595,12 +592,12 @@ class Player {
 
           // generalized moving method
           this.moveObjectToTarget(scene, scene.player, scene.target, 450);
-          this.moveObjectToTarget(
-            scene,
-            scene.playerContainer,
-            scene.target,
-            450
-          );
+          // this.moveObjectToTarget(
+          //   scene,
+          //   scene.playerContainer,
+          //   scene.target,
+          //   450
+          // );
         }
       });
       scene.isClicking = false;
@@ -618,7 +615,7 @@ class Player {
     if (scene.playerIsMovingByClicking) {
       if (scene.distance < 10) {
         scene.player.body.reset(scene.target.x, scene.target.y);
-        scene.playerContainer.body.reset(scene.target.x, scene.target.y);
+        // scene.playerContainer.body.reset(scene.target.x, scene.target.y);
         scene.playerIsMovingByClicking = false;
       } else {
         this.sendMovement(scene);
@@ -845,8 +842,11 @@ class Player {
 
           scene.onlinePlayers = scene.onlinePlayersGroup.getChildren();
 
+          console.log("!!!!", scene.onlinePlayers)
+
           for (let i = 0; i < scene.onlinePlayers.length; i++) {
             this.attachtAvatarToOnlinePlayer(scene, scene.onlinePlayers[i]);
+            this.attachPopUpButtonsToOnlinePlayer(scene, scene.onlinePlayers[i])
           } //for (let i = 0; i < scene.onlinePlayers.length; i++)
         }); //scene.load.on('filecomplete', () =>
 
@@ -873,88 +873,121 @@ class Player {
     } //if (ManageSession.createdPlayer)
   } //loader
 
+  attachPopUpButtonsToOnlinePlayer(scene, onlinePlayer) {
+
+    scene.selectedOnlinePlayer = onlinePlayer
+
+    scene.selectedOnlinePlayer.setInteractive({ useHandCursor: true })
+    
+    scene.selectedOnlinePlayerContainer = scene.add.container(CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, 0),
+      CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, 0))
+
+
+    scene.selectedOnlinePlayer.on("pointerup", () => {
+      console.log('I am clicked')
+      scene.selectedOnlinePlayerHomeButtonCircle = scene.add
+        .circle(0, -70, 25, 0xffffff)
+        .setOrigin(0.5, 0.5)
+        .setInteractive({ useHandCursor: true })
+        .setStrokeStyle(3, 0x0000);
+      scene.selectedOnlinePlayerHomeButtonImage = scene.add.image(0, -70, "home");
+
+      scene.selectedOnlinePlayerHeartButtonCircle = scene.add
+        .circle(65, 0, 25, 0xffffff)
+        .setOrigin(0.5, 0.5)
+        .setInteractive({ useHandCursor: true })
+        .setStrokeStyle(3, 0x0000);
+      scene.selectedOnlinePlayerHeartButtonImage = scene.add.image(65, 0, "heart");
+
+      scene.selectedOnlinePlayerContainer.add([scene.selectedOnlinePlayerHomeButtonCircle, scene.selectedOnlinePlayerHomeButtonImage, scene.selectedOnlinePlayerHeartButtonCircle, scene.selectedOnlinePlayerHeartButtonImage])
+
+
+    })
+
+  }
+
   attachtAvatarToOnlinePlayer(scene, player, preExisting) {
-    player.setInteractive({ useHandCursor: true });
+    // player.setInteractive({ useHandCursor: true });
 
-    // for toggling the pop-up buttons
-    scene.isPopUpButtonsDisplayed2 = false;
+    // // for toggling the pop-up buttons
+    // scene.isPopUpButtonsDisplayed2 = false;
 
-    // for toggling the artwork list
-    let displayArtworkList = false;
+    // // for toggling the artwork list
+    // let displayArtworkList = false;
 
-    scene.onlinePlayerContainer = scene.add.container(player.x, player.y);
-    scene.physics.world.enable(scene.onlinePlayerContainer);
+    // scene.onlinePlayerContainer = scene.add.container(player.x, player.y);
+    // scene.physics.world.enable(scene.onlinePlayerContainer);
 
-    scene.input.on("gameobjectdown", (pointer, object) => {
-      if (object.anims) {
-        scene.selectedPlayerID =
-          object.anims.currentFrame.textureKey.split("_")[0];
-        console.log(scene.selectedPlayerID);
-      }
-    });
+    // scene.input.on("gameobjectdown", (pointer, object) => {
+    //   if (object.anims) {
+    //     scene.selectedPlayerID =
+    //       object.anims.currentFrame.textureKey.split("_")[0];
+    //     console.log(scene.selectedPlayerID);
+    //   }
+    // });
 
-    player.on("pointerup", () => {
-      console.log("111");
-      if (scene.isPopUpButtonsDisplayed2 == false) {
-        console.log("222");
-        scene.onlinePlayerContainer.setVisible(true);
-        const homeButtonCircle2 = scene.add
-          .circle(0, -70, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(3, 0x0000);
-        const homeButtonImage2 = scene.add.image(0, -70, "home");
+    // player.on("pointerup", () => {
+    //   console.log("111");
+    //   if (scene.isPopUpButtonsDisplayed2 == false) {
+    //     console.log("222");
+    //     scene.onlinePlayerContainer.setVisible(true);
+    //     const homeButtonCircle2 = scene.add
+    //       .circle(0, -70, 25, 0xffffff)
+    //       .setOrigin(0.5, 0.5)
+    //       .setInteractive({ useHandCursor: true })
+    //       .setStrokeStyle(3, 0x0000);
+    //     const homeButtonImage2 = scene.add.image(0, -70, "home");
 
-        const heartButtonCircle2 = scene.add
-          .circle(65, 0, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(3, 0x0000);
-        const heartButtonImage2 = scene.add.image(65, 0, "heart");
+    //     const heartButtonCircle2 = scene.add
+    //       .circle(65, 0, 25, 0xffffff)
+    //       .setOrigin(0.5, 0.5)
+    //       .setInteractive({ useHandCursor: true })
+    //       .setStrokeStyle(3, 0x0000);
+    //     const heartButtonImage2 = scene.add.image(65, 0, "heart");
 
-        scene.onlinePlayerContainer.add([
-          homeButtonCircle2,
-          homeButtonImage2,
-          heartButtonCircle2,
-          heartButtonImage2,
-        ]);
-        scene.isPopUpButtonsDisplayed2 = true;
+    //     scene.onlinePlayerContainer.add([
+    //       homeButtonCircle2,
+    //       homeButtonImage2,
+    //       heartButtonCircle2,
+    //       heartButtonImage2,
+    //     ]);
+    //     scene.isPopUpButtonsDisplayed2 = true;
 
-        // entering the home of the avatar
-        // homeButtonCircle.on("pointerup", () => {
-        //   scene.scene.scene.physics.pause();
-        //   scene.scene.scene.player.setTint(0xff0000);
+    //     // entering the home of the avatar
+    //     // homeButtonCircle.on("pointerup", () => {
+    //     //   scene.scene.scene.physics.pause();
+    //     //   scene.scene.scene.player.setTint(0xff0000);
 
-        //   ManageSession.socket.rpc("leave", scene.scene.scene.location);
+    //     //   ManageSession.socket.rpc("leave", scene.scene.scene.location);
 
-        //   scene.scene.scene.player.location = "DefaultUserHome";
+    //     //   scene.scene.scene.player.location = "DefaultUserHome";
 
-        //   scene.scene.scene.time.addEvent({
-        //     delay: 500,
-        //     callback: () => {
-        //       ManageSession.location = "DefaultUserHome";
-        //       ManageSession.createPlayer = true;
-        //       ManageSession.getStreamUsers("join", "DefaultUserHome");
-        //       scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
-        //       if (scene.scene.scene.selectedPlayerID) {
-        //         scene.scene.scene.scene.start("DefaultUserHome", {
-        //           user_id: scene.scene.scene.selectedPlayerID,
-        //         });
-        //       } else {
-        //         scene.scene.scene.scene.start("DefaultUserHome");
-        //       }
-        //     },
-        //     callbackScope: scene,
-        //     loop: false,
-        //   });
-        // });
-      } else {
-        console.log("333");
-        scene.playerContainer.setVisible(false);
-        scene.isPopUpButtonsDisplayed2 = false;
-        displayArtworkList = false;
-      }
-    });
+    //     //   scene.scene.scene.time.addEvent({
+    //     //     delay: 500,
+    //     //     callback: () => {
+    //     //       ManageSession.location = "DefaultUserHome";
+    //     //       ManageSession.createPlayer = true;
+    //     //       ManageSession.getStreamUsers("join", "DefaultUserHome");
+    //     //       scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
+    //     //       if (scene.scene.scene.selectedPlayerID) {
+    //     //         scene.scene.scene.scene.start("DefaultUserHome", {
+    //     //           user_id: scene.scene.scene.selectedPlayerID,
+    //     //         });
+    //     //       } else {
+    //     //         scene.scene.scene.scene.start("DefaultUserHome");
+    //     //       }
+    //     //     },
+    //     //     callbackScope: scene,
+    //     //     loop: false,
+    //     //   });
+    //     // });
+    //   } else {
+    //     console.log("333");
+    //     scene.playerContainer.setVisible(false);
+    //     scene.isPopUpButtonsDisplayed2 = false;
+    //     displayArtworkList = false;
+    //   }
+    // });
 
     scene.tempAvatarName = player.user_id + "_" + player.avatar_time;
 
@@ -1100,6 +1133,12 @@ class Player {
     scene.scrollablePanel.x = scene.player.x + 200;
     scene.scrollablePanel.y = scene.player.y;
   }
+
+  movePlayerContainer(scene) {
+    scene.playerContainer.x = scene.player.x
+    scene.playerContainer.y = scene.player.y
+  }
 }
 
 export default new Player();
+
