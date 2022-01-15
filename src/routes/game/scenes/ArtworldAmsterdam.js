@@ -388,8 +388,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     }
 
     if (this.scrollablePanel) {
-      this.scrollablePanel.x = this.player.x + 200;
-      this.scrollablePanel.y = this.player.y;
+      Player.moveScrollablePanel(this);
     }
   } //update
 } //class
