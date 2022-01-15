@@ -192,8 +192,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     var particles = this.add.particles('music_quarter_note');
 
     var music_emitter = particles.createEmitter({
-      x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1079.49),
-      y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 636.67),
+      x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1110),
+      y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 655),
       lifespan: { min: 2000, max: 8000 },
       speed: { min: 80, max: 120 },
       angle: { min: 270, max: 360 },
@@ -207,22 +207,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.mario_star = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1079.49), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 636.67), 'mario_star').setScale(0.6)
     this.mario_star.setInteractive()
-    this.mario_star.on('pointerup', () => {
-      this.scene.pause();
-    var url = window.location.href + 'mariosound'
-
-    var s = window.open(url, '_parent');
-
-    if (s && s.focus)
-    {
-        s.focus();
-    }
-    else if (!s)
-    {
-        window.location.href = url;
-    }
-
-    });
+    this.mario_star.on('pointerup', this.openMarioSound, this)
 
     // this.mario_star.setInteractive({ draggable: true })
     // particles.setInteractive({ draggable: true })

@@ -7,10 +7,6 @@ class DebugFuntions {
         //scene = config.scene 
     }
 
-    testFunction(){
-        console.log("Hello!")
-    }
-
     keyboard(scene) {
 
         scene.input.keyboard.on('keyup-A', function (event) {
@@ -132,7 +128,7 @@ class DebugFuntions {
             console.log('P key')
             console.log("Display Mouse coordinates")
             console.log("World Coordinates: ")
-            console.log(scene.input.activePointer.worldX, scene.input.activePointer.worldY)
+            console.log(scene.input.mousePointer.worldX, scene.input.mousePointer.worldY)
             console.log("artworldCoordinates: ")
             console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.input.activePointer.worldX))
             console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.y, scene.input.activePointer.worldY))
