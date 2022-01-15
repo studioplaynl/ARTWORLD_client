@@ -89,6 +89,16 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.userArtServerList = [];
     this.progress = [];
 
+    // pop-up buttons of the user's avatar
+    this.isPopUpButtonsDisplayed;
+    this.playerContainer;
+    this.selectedPlayerID;
+
+    this.homeButtonCircle;
+    this.homeButtonImage;
+    this.heartButtonCircle;
+    this.heartButtonImage;
+
     this.scrollablePanel;
   }
 

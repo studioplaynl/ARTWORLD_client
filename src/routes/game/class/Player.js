@@ -180,9 +180,7 @@ class Player {
     scene.player.setInteractive({ useHandCursor: true });
 
     // for toggling the pop-up buttons
-    let displayPopUpButtons = false;
-
-    // for toggling the artwork list
+    scene.isPopUpButtonsDisplayed = false;
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
@@ -203,24 +201,24 @@ class Player {
 
     scene.player.on("pointerup", () => {
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
-      if (displayPopUpButtons == false) {
+      if (scene.isPopUpButtonsDisplayed == false) {
         scene.playerContainer.setVisible(true);
 
-        const homeButtonCircle = scene.add
+        scene.homeButtonCircle = scene.add
           .circle(0, -70, 25, 0xffffff)
           .setOrigin(0.5, 0.5)
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(3, 0x0000);
-        const homeButtonImage = scene.add.image(0, -70, "home");
+        scene.homeButtonImage = scene.add.image(0, -70, "home");
 
-        const heartButtonCircle = scene.add
+        scene.heartButtonCircle = scene.add
           .circle(65, 0, 25, 0xffffff)
           .setOrigin(0.5, 0.5)
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(3, 0x0000);
-        const heartButtonImage = scene.add.image(65, 0, "heart");
+        scene.heartButtonImage = scene.add.image(65, 0, "heart");
 
-        heartButtonCircle.on("pointerup", async () => {
+        scene.heartButtonCircle.on("pointerup", async () => {
           await listImages("drawing", scene.selectedPlayerID, 100).then(
             async (response) => {
               scene.userArtServerList = response;
@@ -323,15 +321,15 @@ class Player {
 
         // adding all buttons to the container
         scene.playerContainer.add([
-          homeButtonCircle,
-          homeButtonImage,
-          heartButtonCircle,
-          heartButtonImage,
+          scene.homeButtonCircle,
+          scene.homeButtonImage,
+          scene.heartButtonCircle,
+          scene.heartButtonImage,
         ]);
-        displayPopUpButtons = true;
+        scene.isPopUpButtonsDisplayed = true;
 
         // entering the home of the avatar
-        homeButtonCircle.on("pointerup", () => {
+        scene.homeButtonCircle.on("pointerup", () => {
           scene.scene.scene.physics.pause();
           scene.scene.scene.player.setTint(0xff0000);
 
@@ -360,7 +358,7 @@ class Player {
         });
       } else {
         scene.playerContainer.setVisible(false);
-        displayPopUpButtons = false;
+        scene.isPopUpButtonsDisplayed = false;
       }
     });
   }
@@ -879,7 +877,7 @@ class Player {
     player.setInteractive({ useHandCursor: true });
 
     // for toggling the pop-up buttons
-    let displayPopUpButtons = false;
+    scene.isPopUpButtonsDisplayed2 = false;
 
     // for toggling the artwork list
     let displayArtworkList = false;
@@ -897,7 +895,7 @@ class Player {
 
     player.on("pointerup", () => {
       console.log("111");
-      if (displayPopUpButtons == false) {
+      if (scene.isPopUpButtonsDisplayed2 == false) {
         console.log("222");
         scene.onlinePlayerContainer.setVisible(true);
         const homeButtonCircle2 = scene.add
@@ -920,7 +918,7 @@ class Player {
           heartButtonCircle2,
           heartButtonImage2,
         ]);
-        displayPopUpButtons = true;
+        scene.isPopUpButtonsDisplayed2 = true;
 
         // entering the home of the avatar
         // homeButtonCircle.on("pointerup", () => {
@@ -953,7 +951,7 @@ class Player {
       } else {
         console.log("333");
         scene.playerContainer.setVisible(false);
-        displayPopUpButtons = false;
+        scene.isPopUpButtonsDisplayed2 = false;
         displayArtworkList = false;
       }
     });
