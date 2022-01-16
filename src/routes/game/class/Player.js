@@ -907,8 +907,15 @@ class Player {
   }
 
   attachtAvatarToOnlinePlayer(scene, player, preExisting) {
-    // player.setInteractive({ useHandCursor: true });
+    player.setInteractive({ useHandCursor: true });
 
+
+
+    if (scene.selectedOnlinePlayer) {
+      player.on("pointerup", () => {
+        console.log("!?!?", scene.selectedOnlinePlayer)
+      })
+    }
     // // for toggling the pop-up buttons
     // scene.isPopUpButtonsDisplayed2 = false;
 
