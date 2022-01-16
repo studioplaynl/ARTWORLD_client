@@ -184,7 +184,6 @@ class Player {
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
-    // scene.physics.world.enable(scene.playerContainer);
 
     scene.scrollablePanel = scene.add.container(0, 0);
 
@@ -461,20 +460,15 @@ class Player {
 
     // Stop any previous movement from the last frame, the avatar itself and the container that holds the pop-up buttons
     scene.player.body.setVelocity(0);
-    // if (scene.playerContainer?.body) {
-    //   scene.playerContainer.body.setVelocity(0);
-    // }
 
     // Horizontal movement
     if (scene.cursors.left.isDown) {
       scene.player.body.setVelocityX(-speed);
-      // scene.playerContainer.body.setVelocityX(-speed);
 
       // scene.cursorKeyIsDown = true;
       this.sendMovement(scene);
     } else if (scene.cursors.right.isDown) {
       scene.player.body.setVelocityX(speed);
-      // scene.playerContainer.body.setVelocityX(speed);
       // scene.cursorKeyIsDown = true
       // sendPlayerMovement(scene)
     }
@@ -482,21 +476,16 @@ class Player {
     // Vertical movement
     if (scene.cursors.up.isDown) {
       scene.player.body.setVelocityY(-speed);
-      scene.playerContainer.body.setVelocityY(-speed);
       // scene.cursorKeyIsDown = true
       this.sendMovement(scene);
     } else if (scene.cursors.down.isDown) {
       scene.player.body.setVelocityY(speed);
-      // scene.playerContainer.body.setVelocityY(speed);
       // scene.cursorKeyIsDown = true
       this.sendMovement(scene);
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal, the pop-up buttons are included
     scene.player.body.velocity.normalize().scale(speed);
-    // if (scene.playerContainer?.body) {
-    //   scene.playerContainer.body.velocity.normalize().scale(speed);
-    // }
   }
 
   moveObjectToTarget(scene, container, target, speed) {
@@ -537,12 +526,6 @@ class Player {
 
       // generalized moving method
       this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2);
-      // this.moveObjectToTarget(
-      //   scene,
-      //   scene.playerContainer,
-      //   scene.target,
-      //   moveSpeed * 2
-      // );
       scene.isClicking = false;
     }
 
@@ -558,7 +541,6 @@ class Player {
     if (scene.playerIsMovingByClicking) {
       if (scene.distance < 10) {
         scene.player.body.reset(scene.target.x, scene.target.y);
-        // scene.playerContainer.body.reset(scene.player.x, scene.player.y);
         scene.playerIsMovingByClicking = false;
       } else {
         this.sendMovement(scene);
@@ -592,12 +574,6 @@ class Player {
 
           // generalized moving method
           this.moveObjectToTarget(scene, scene.player, scene.target, 450);
-          // this.moveObjectToTarget(
-          //   scene,
-          //   scene.playerContainer,
-          //   scene.target,
-          //   450
-          // );
         }
       });
       scene.isClicking = false;
@@ -615,7 +591,6 @@ class Player {
     if (scene.playerIsMovingByClicking) {
       if (scene.distance < 10) {
         scene.player.body.reset(scene.target.x, scene.target.y);
-        // scene.playerContainer.body.reset(scene.target.x, scene.target.y);
         scene.playerIsMovingByClicking = false;
       } else {
         this.sendMovement(scene);
@@ -692,8 +667,6 @@ class Player {
         // ..... DESTROY OFFLINE PLAYERS ........................................................................................................................................................................
         //check if there are players in scene.onlinePlayers that are not in .allConnectedUsers ->  they need to be destroyed
         scene.offlineOnlineUsers = [];
-
-        console.log("!!!!!!!!!!!!!", scene.onlinePlayers);
 
         // scene?.onlinePlayers.forEach((sprite) => {
         //   // sprite.input.enable = true;
@@ -842,11 +815,9 @@ class Player {
 
           scene.onlinePlayers = scene.onlinePlayersGroup.getChildren();
 
-          console.log("!!!!", scene.onlinePlayers)
-
           for (let i = 0; i < scene.onlinePlayers.length; i++) {
             this.attachtAvatarToOnlinePlayer(scene, scene.onlinePlayers[i]);
-            this.attachPopUpButtonsToOnlinePlayer(scene, scene.onlinePlayers[i])
+            this.displayAvatarDetailsWindow(scene, scene.onlinePlayers[i])
           } //for (let i = 0; i < scene.onlinePlayers.length; i++)
         }); //scene.load.on('filecomplete', () =>
 
@@ -873,49 +844,110 @@ class Player {
     } //if (ManageSession.createdPlayer)
   } //loader
 
-  attachPopUpButtonsToOnlinePlayer(scene, onlinePlayer) {
+  displayAvatarDetailsWindow(scene, onlinePlayer) {
+
 
     scene.selectedOnlinePlayer = onlinePlayer
+    // console.log("111", scene.selectedOnlinePlayer.name)
 
-    scene.selectedOnlinePlayer.setInteractive({ useHandCursor: true })
-    
-    scene.selectedOnlinePlayerContainer = scene.add.container(CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, 0),
-      CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, 0))
+    scene.selectedOnlinePlayer.setInteractive({ useHandCursor: true })  
 
 
-    scene.selectedOnlinePlayer.on("pointerup", () => {
-      console.log('I am clicked')
-      scene.selectedOnlinePlayerHomeButtonCircle = scene.add
-        .circle(0, -70, 25, 0xffffff)
+    scene.selectedOnlinePlayer.on("pointerup", () => {  
+     
+
+      if (scene.selectedOnlinePlayer != onlinePlayer) {
+        scene.selectedOnlinePlayer = onlinePlayer
+      }
+
+      console.log(scene.selectedOnlinePlayer.name)
+
+
+      scene.avatarDetailsContainer = scene.add.container(2500, 2500).setVisible(true)
+      
+      scene.avatarDetailsBox = scene.add.graphics()
+      scene.avatarDetailsContainer.add(scene.avatarDetailsBox)
+      
+      scene.avatarDetailsBox.fillStyle(0xffffff, 1).lineStyle(3, 0x000000, 1);
+      scene.avatarDetailsBox.fillRoundedRect(0, 0, 200, 250, 24).strokeRoundedRect(0, 0, 200, 250, 24);
+  
+      scene.avatarDetailsCloseButton = scene.add
+        .circle(225, -25, 25, 0xffffff)
         .setOrigin(0.5, 0.5)
         .setInteractive({ useHandCursor: true })
         .setStrokeStyle(3, 0x0000);
-      scene.selectedOnlinePlayerHomeButtonImage = scene.add.image(0, -70, "home");
+          
+      scene.avatarDetailsCloseImage = scene.add.image(225, -25, "close");
+      
+      scene.avatarDetailsHouseButton = scene.add
+      .circle(50, 50, 25, 0xffffff)
+      .setOrigin(0.5, 0.5)
+      .setInteractive({ useHandCursor: true })
+      .setStrokeStyle(2, 0x0000);
+      scene.avatarDetailsHouseImage = scene.add.image(50, 50, "home");
+      
+      scene.input.on("gameobjectdown", (pointer, object) => {
+        if (object.anims) {
+          // saving the clicked avatar's id (for entering its house, for displaying its artworks, etc.)
+          scene.avatarDetailsID =
+            object.anims.currentFrame.textureKey.split("_")[0];
+        }
+      });
 
-      scene.selectedOnlinePlayerHeartButtonCircle = scene.add
-        .circle(65, 0, 25, 0xffffff)
-        .setOrigin(0.5, 0.5)
-        .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(3, 0x0000);
-      scene.selectedOnlinePlayerHeartButtonImage = scene.add.image(65, 0, "heart");
 
-      scene.selectedOnlinePlayerContainer.add([scene.selectedOnlinePlayerHomeButtonCircle, scene.selectedOnlinePlayerHomeButtonImage, scene.selectedOnlinePlayerHeartButtonCircle, scene.selectedOnlinePlayerHeartButtonImage])
+      scene.avatarDetailsHouseButton.on("pointerup", () => {
+          scene.scene.scene.physics.pause();
+          scene.scene.scene.player.setTint(0xff0000);
+
+          ManageSession.socket.rpc("leave", scene.scene.scene.location);
+
+          scene.scene.scene.player.location = "DefaultUserHome";
+
+          scene.scene.scene.time.addEvent({
+            delay: 500,
+            callback: () => {
+              ManageSession.location = "DefaultUserHome";
+              ManageSession.createPlayer = true;
+              ManageSession.getStreamUsers("join", "DefaultUserHome");
+              scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
+              if (scene.scene.scene.avatarDetailsID) {
+                scene.scene.scene.scene.start("DefaultUserHome", {
+                  user_id: scene.scene.scene.avatarDetailsID,
+                });
+              } else {
+                scene.scene.scene.scene.start("DefaultUserHome");
+              }
+            },
+            callbackScope: scene,
+            loop: false,
+          });
+      })
 
 
+
+      
+      scene.avatarDetailsCloseButton.on("pointerup", () => {
+        scene.avatarDetailsContainer.setVisible(false)
+      })
+      
+      scene.avatarDetailsContainer.add([scene.avatarDetailsCloseButton, scene.avatarDetailsCloseImage, scene.avatarDetailsHouseButton, scene.avatarDetailsHouseImage])
     })
+
+    
+   
 
   }
 
   attachtAvatarToOnlinePlayer(scene, player, preExisting) {
-    player.setInteractive({ useHandCursor: true });
+    // player.setInteractive({ useHandCursor: true });
 
 
 
-    if (scene.selectedOnlinePlayer) {
-      player.on("pointerup", () => {
-        console.log("!?!?", scene.selectedOnlinePlayer)
-      })
-    }
+    // if (scene.selectedOnlinePlayer) {
+    //   player.on("pointerup", () => {
+    //     console.log("!?!?", scene.selectedOnlinePlayer)
+    //   })
+    // }
     // // for toggling the pop-up buttons
     // scene.isPopUpButtonsDisplayed2 = false;
 
