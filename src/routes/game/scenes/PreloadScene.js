@@ -21,7 +21,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png")
         this.load.image("back_button", "./assets/ui/back_button.png")
         this.load.image("enter_button", "./assets/ui/enter_icon_round64x64.png")
-        this.load.image("arrow_down_32px","./assets/ui/arrow-down-32px.png")
+        this.load.image("arrow_down_32px", "./assets/ui/arrow-down-32px.png")
 
         this.load.image('museum', './assets/museum.png');
         this.load.image("ball", './assets/ball_grey.png')
@@ -47,12 +47,15 @@ export default class PreloadScene extends Phaser.Scene {
         //artworld elements
         this.load.svg('sunglass_stripes', 'assets/svg/sunglass_stripes.svg')
         this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', { scale: 2.4 })
-        
+
         // this.load.svg('mario_heart', 'assets/svg/mario_heart.svg')
         // this.load.svg('mario_pipe', 'assets/svg/mario_pipe.svg')
         this.load.svg('mario_star', 'assets/svg/mario_star.svg')
 
-        this.load.svg('music_quarter_note', 'assets/svg/music_note_quarter_note.svg')        
+        this.load.svg('music_quarter_note', 'assets/svg/music_note_quarter_note.svg')
+
+        //create a hitArea for locations, as an image with key 'enterButtonHitArea', 128x128pix
+        this.createHitAreaLocations()
     }
 
     async create() {
@@ -60,20 +63,32 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.playerMovingKey = "moving"
         this.playerStopKey = "stop"
-        
+
         this.anims.create({
             key: this.playerMovingKey,
             frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
             frameRate: 20,
             repeat: -1,
-          })
-      
-          this.anims.create({
+        })
+
+        this.anims.create({
             key: this.playerStopKey,
             frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
-          })
+        })
     } //create
 
+    createHitAreaLocations() {
+        //create a hitArea for locations, as an image with key 'enterButtonHitArea', 128x128pix
+        const width = 128
+        let enterButtonHitArea = this.add.rectangle(width / 2, width / 2, width, width, 0x6666ff).setInteractive({ useHandCursor: true })
+        // .setInteractive()
+
+        let rt = this.add.renderTexture(0, 0, width, width);
+        rt.draw(enterButtonHitArea)
+        rt.saveTexture('enterButtonHitArea')
+        enterButtonHitArea.destroy()
+        rt.destroy()
+    }
 
     update(time, delta) {
         if (this.loadingDone) this.scene.start("MainMenu");

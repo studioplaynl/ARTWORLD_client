@@ -336,7 +336,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         this.homesRepreseneted[index] = new GenerateLocation({
           scene: this,
           userHome: element.user_id,
-          draggable: false,
+          draggable: true,
           type: "isoTriangle",
           x: CoordinatesTranslator.artworldToPhaser2DX(
             this.worldSize.x,
