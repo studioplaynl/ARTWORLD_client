@@ -188,84 +188,96 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.createArtFrame()
         
-        ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
+        // ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
         
-        //get a list of artworks of the user
-        // this.allUserArt = []
-        // this.userArtServerList = []
-        // this.userArtDisplayList = []
-        // this.artUrl = []
+        await listImages("drawing", this.location, 100).then((rec) => {
+            this.userArtServerList = rec
+            if (this.userArtServerList.length > 0) {
+                this.userArtServerList.forEach((element, index) => {
+                    this.downloadArt(element, index)
+                })        
+            }
+        })
+
+
+
+
+
+
+
         
     }//end create
     
-    // async downloadArt(element, index, y) {
+    async downloadArt(element, index) {
         
-    //     const imgUrl = element.value.url
-    //     const imgSize = "512"
-    //     const fileFormat = "png"
-    //     const key = `${element.key}_${imgSize}`
-    //     const coordX = index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 550;
-    //     this.artContainer = this.add.container(0, 0);
+        const imgUrl = element.value.url
+        const imgSize = "512"
+        const fileFormat = "png"
+        const key = `${element.key}_${imgSize}`
+        const coordX = index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + index * 550;
+        this.artContainer = this.add.container(0, 0);
+
+        const y = 300
         
-    //     if (this.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
+        if (this.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
             
-    //         // adds a frame to the container
-    //         this.artContainer.add(this.add.image(coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
+            // adds a frame to the container
+            this.artContainer.add(this.add.image(coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
             
-    //         // adds the image to the container
-    //         const setImage = this.add.image(coordX, y, key)
-    //         this.artContainer.add(setImage)
+            // adds the image to the container
+            const setImage = this.add.image(coordX, y, key)
+            this.artContainer.add(setImage)
             
-    //     } else { // otherwise download the image and add it
+        } else { // otherwise download the image and add it
             
-    //         this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+            this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
             
-    //         // for tracking each file in progress
-    //         this.progress.push({key, coordX})
+            // for tracking each file in progress
+            this.progress.push({key, coordX})
             
-    //         this.load.image(key, this.artUrl[index])
+            this.load.image(key, this.artUrl[index])
             
-    //         this.load.start() // load the image in memory
-    //     }
+            this.load.start() // load the image in memory
+        }
         
-    //     const progressBox = this.add.graphics()
-    //     const progressBar = this.add.graphics()
-    //     const progressWidth = 300
-    //     const progressHeight = 50
-    //     const padding = 10
+        const progressBox = this.add.graphics()
+        const progressBar = this.add.graphics()
+        const progressWidth = 300
+        const progressHeight = 50
+        const padding = 10
     
-    //     this.load.on("fileprogress", (file, value) => {
+        this.load.on("fileprogress", (file, value) => {
             
-    //         progressBox.clear();
-    //         progressBar.clear();
-    //         progressBox.fillStyle(0x000000, 1)
-    //         progressBar.fillStyle(0xFFFFFF, 1)
+            progressBox.clear();
+            progressBar.clear();
+            progressBox.fillStyle(0x000000, 1)
+            progressBar.fillStyle(0xFFFFFF, 1)
                
-    //         const progressedImage = this.progress.find(element => element.key == file.key)
+            const progressedImage = this.progress.find(element => element.key == file.key)
     
-    //         progressBox.fillRect(progressedImage.coordX - progressWidth / 2, y, progressWidth, progressHeight)
-    //         progressBar.fillRect(progressedImage.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
+            progressBox.fillRect(progressedImage.coordX - progressWidth / 2, y, progressWidth, progressHeight)
+            progressBar.fillRect(progressedImage.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
         
-    //     })
+        })
     
-    //     this.load.on('filecomplete', (key) => {
+        this.load.on('filecomplete', (key) => {
               
-    //             const currentImage = this.progress.find(element => element.key == key)
+                const currentImage = this.progress.find(element => element.key == key)
                 
-    //             // adds a frame to the container
-    //             this.artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
+                // adds a frame to the container
+                this.artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
                 
-    //             // adds the image to the container
-    //             const completedImage = this.add.image(currentImage.coordX, y, currentImage.key)
-    //             this.artContainer.add(completedImage)
-    //     })
+                // adds the image to the container
+                const completedImage = this.add.image(currentImage.coordX, y, currentImage.key)
+                this.artContainer.add(completedImage)
+        })
     
-    //     this.load.once("complete", () => {
-    //         progressBar.destroy()
-    //         progressBox.destroy()
-    //         this.progress = []
-    //     });
-    // }//end downloadArt
+        this.load.once("complete", () => {
+            progressBar.destroy()
+            progressBox.destroy()
+            this.progress = []
+        });
+    }//end downloadArt
 
 
 
