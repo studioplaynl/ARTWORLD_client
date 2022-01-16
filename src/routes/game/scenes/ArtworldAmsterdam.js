@@ -166,7 +166,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient2: 0xbb00ff,
     });
 
-    
+
     // sunglass_stripes
     this.sunglasses_striped = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564),
@@ -177,9 +177,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // this.sunglasses_striped.setInteractive({ draggable: true })
 
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
-      // .setInteractive({ draggable: true })
+    // .setInteractive({ draggable: true })
 
-      // this.mario_heart = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1220.32), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 750.83), 'mario_heart').setScale(0.3)
+    // this.mario_heart = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1220.32), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 750.83), 'mario_heart').setScale(0.3)
     //   .setInteractive({ draggable: true })
 
     // this.music_quarter_note = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1246.15), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'music_quarter_note').setScale(0.6)
@@ -189,41 +189,18 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //  A single manager can be responsible for multiple emitters
     //  The manager also controls which particle texture is used by _all_ emitter
 
-    var particles = this.add.particles('music_quarter_note');
+    this.input.on('dragstart', function (pointer, gameObject) {
 
-    var music_emitter = particles.createEmitter({
-      x: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1110),
-      y: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 655),
-      lifespan: { min: 2000, max: 8000 },
-      speed: { min: 80, max: 120 },
-      angle: { min: 270, max: 360 },
-      gravityY: -50,
-      gravityX: 50,
-      scale: { start: 1, end: 0 },
-      quantity: 1,
-      frequency: 500,
     });
 
+    this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
+      gameObject.x = dragX;
+      gameObject.y = dragY;
+    });
 
-    this.mario_star = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1079.49), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 636.67), 'mario_star').setScale(0.6)
-    this.mario_star.setInteractive()
-    this.mario_star.on('pointerup', this.openMarioSound, this)
-
-    // this.mario_star.setInteractive({ draggable: true })
-    // particles.setInteractive({ draggable: true })
-
-    // this.input.on('dragstart', function (pointer, gameObject) {
-
-    // });
-
-    // this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
-    //   gameObject.x = dragX;
-    //   gameObject.y = dragY;
-    // });
-
-    // this.input.on('dragend', function (pointer, gameObject) {
-    //   console.log(gameObject.x, gameObject.y)
-    // })
+    this.input.on('dragend', function (pointer, gameObject) {
+      console.log(gameObject.x, gameObject.y)
+    })
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
 
@@ -304,24 +281,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //......... end UI Scene ..............................................................................
   } //end create
 
-  createItemsBar() {}
-
-  openMarioSound(){
-    this.scene.pause();
-    var url = window.location.href + 'mariosound'
-
-    var s = window.open(url, '_parent');
-
-    if (s && s.focus)
-    {
-        s.focus();
-    }
-    else if (!s)
-    {
-        window.location.href = url;
-    }
-
-  }
+  createItemsBar() { }
 
   generateHomes() {
     //check if server query is finished, if there are homes to make
@@ -329,7 +289,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       console.log("generate homes!");
 
       this.homes.forEach((element, index) => {
-        // console.log(element.collection)
+        console.log(element)
         // console.log(element.value.posX)
 
         let locationDescription = element.user_id.substring(0, 7);
@@ -392,7 +352,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       location1Vector
-    );
+    )
 
     const location2 = new GenerateLocation({
       scene: this,
@@ -408,7 +368,49 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       color1: 0x8dcb0e,
       color2: 0x3f8403,
       color3: 0x63a505,
-    });
+    })
+
+    //set the particle first on 0,0 so they are below the mario_star
+    //later move them relative to the mario_star
+    var particles = this.add.particles('music_quarter_note').setDepth(300)
+
+    var music_emitter = particles.createEmitter({
+      x: 0,
+      y: 0,
+      lifespan: { min: 2000, max: 8000 },
+      speed: { min: 80, max: 120 },
+      angle: { min: 270, max: 360 },
+      gravityY: -50,
+      gravityX: 50,
+      scale: { start: 1, end: 0 },
+      quantity: 1,
+      frequency: 500,
+    })
+
+    location1Vector = new Phaser.Math.Vector2(22.81, -428.32)
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      location1Vector
+    )
+
+    this.mario_star = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: false,
+      x: location1Vector.x,
+      y: location1Vector.y,
+      internalUrl: "mariosound",
+      locationImage: "mario_star",
+      enterButtonImage: "arrow_down_32px",
+      locationText: "MarioSound",
+      fontColor: 0x8dcb0e,
+      color1: 0x8dcb0e,
+      color2: 0x3f8403,
+      color3: 0x63a505,
+    })
+    this.mario_star.setDepth(301)
+
+    music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
   }
 
   update(time, delta) {

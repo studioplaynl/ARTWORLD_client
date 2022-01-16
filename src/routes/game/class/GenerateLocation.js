@@ -25,7 +25,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.draggable = config.draggable
         this.userHome = config.userHome
         this.location
-        this.url = config.url
+        this.internalUrl = config.internalUrl
+        this.externalUrl = config.externalUrl
         this.enterButtonTween
 
         //TODO don't make a location in a container, the depth order seems to be shared across the contianer, so we can't make the enter button appear above the player, and the location below the player
@@ -87,9 +88,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         var enterButtonY = this.y - (width / 2) - 60
         var enterButtonTweenY = enterButtonY + 90
 
-        this.enterButtonHitArea = this.scene.add.image(this.x,  enterButtonY + 40, 'enterButtonHitArea').setVisible(false).setDepth(201)
+        this.enterButtonHitArea = this.scene.add.image(this.x, enterButtonY + 40, 'enterButtonHitArea').setVisible(false).setDepth(201)
         this.enterButtonHitArea.alpha = 0 // make the hitArea invisible
-    
+
         this.enterButtonHitArea.displayWidth = width / 1.4
 
         this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
@@ -113,7 +114,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.add(locationDescription)
         //this.add(this.enterButtonHitArea)
 
-         //changing the order in the container, changes the drawing order?
+        //changing the order in the container, changes the drawing order?
         // this.bringToTop(this.enterButtonHitArea)
 
         this.setSize(width, width, false)
@@ -159,21 +160,49 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         })
 
         this.enterButtonHitArea.on('pointerup', () => {
-            // on entering another location we want to keep a record for "back button"
-            ManageSession.previousLocation = this.scene.key;
+            //check when entering the location if it is an URL or scene
 
-            this.scene.physics.pause()
-            this.scene.player.setTint(0xff0000)
+            if (this.internalUrl) {
+                this.scene.scene.pause();
+                var url = window.location.href + this.internalUrl
 
-            //player has to explicitly leave the stream it was in!
-            console.log("leave: ", this.scene.location)
+                var s = window.open(url, '_parent');
 
-            ManageSession.socket.rpc("leave", this.scene.location)
+                if (s && s.focus) {
+                    s.focus();
+                }
+                else if (!s) {
+                    window.location.href = url;
+                }
+            } else if (this.externalUrl) {
+                this.scene.scene.pause();
+                var url = this.externalUrl
 
-            this.scene.player.location = this.locationDestination
-            console.log("this.player.location: ", this.locationDestination)
+                var s = window.open(url, '_parent');
 
-            this.scene.time.addEvent({ delay: 500, callback: this.switchScenes, callbackScope: this, loop: false })
+                if (s && s.focus) {
+                    s.focus();
+                }
+                else if (!s) {
+                    window.location.href = url;
+                }
+            } else {
+                // on entering another location we want to keep a record for "back button"
+                ManageSession.previousLocation = this.scene.key;
+
+                this.scene.physics.pause()
+                this.scene.player.setTint(0xff0000)
+
+                //player has to explicitly leave the stream it was in!
+                console.log("leave: ", this.scene.location)
+
+                ManageSession.socket.rpc("leave", this.scene.location)
+
+                this.scene.player.location = this.locationDestination
+                console.log("this.player.location: ", this.locationDestination)
+
+                this.scene.time.addEvent({ delay: 500, callback: this.switchScenes, callbackScope: this, loop: false })
+            }
         })
 
         this.scene.physics.add.overlap(this.scene.player, this.location, this.confirmEnterLocation, null, this)
