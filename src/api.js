@@ -16,11 +16,13 @@ Profile.subscribe(value => {
 
 export async function uploadImage(name, type, json, img, status) {
   console.log(Sess)
+  console.log("type: " + type)
   console.log("name: " + name)
   console.log(img)
 
   var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png")
   var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json")
+  console.log(jpegURL + jsonURL)
   var value = { "url": jpegLocation, "json": jsonLocation};
   if(status == "zichtbaar"){
     pub = true
@@ -84,6 +86,7 @@ await fetch(jpegURL, {
   else{value =  object.value}
   console.log(value)
   value.url = jpegLocation
+  value.username = prof.username
   pub = true
 
   // get object
@@ -106,10 +109,13 @@ export async function updateObject(type, name, value, pub) {
     pub = 2
   }
   else{ pub = 1;}
+  if( typeof value == "string"){
+    value = JSON.parse(value)
+  }
   let object = {
     "collection": type,
     "key": name,
-    "value": JSON.parse(value),
+    "value": value,
     "permission_read": pub,
     //"version": "*"
   }
@@ -201,7 +207,11 @@ export async function setFullAccount(id, username, password, email, metadata) {
 
 //getAvatar only works reliably via the getAccount call
 export async function getAvatar(avatar_url) {
-  const payload = {"url": avatar_url};
+  getFile(avatar_url)
+}
+
+export async function getFile(file_url) {
+  const payload = {"url": file_url};
   let url  
   const rpcid = "download_file";
   await client.rpc(Sess, rpcid, payload)

@@ -8,6 +8,7 @@
         "drawing": "Tekenen",
         "stopmotion": "Stopmotion",
         "friends": "Vrienden",
+        "mariosound": "MarioSound",
         "admin": {
             "createUser": "Nieuwe gebruiker",
             "createGroup": "Nieuwe groep"
@@ -27,6 +28,11 @@
         "location": "AZC locatie",
         "register": "Register",
         "none": "Geen"
+    },
+    "update": {
+        "title": "Update deze gebruiker",
+        "addLocation": "Voeg locatie toe",
+        "userLocation": "gebruikers locatie's"
     },
     "role": {
         "admin": "Admin",

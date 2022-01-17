@@ -18,6 +18,8 @@
     import updatePage from "./routes/auth/update.svelte"
     import mandala from "./routes/apps/mandala.svelte"
     import upload from "./routes/apps/upload.svelte"
+    import MarioSequencer from "./routes/apps/marioSequencer.svelte"
+    import player from "./routes/apps/player.svelte"
     let isLogedIn = (detail) => {
         if ($Session != null) return true;
         else {
@@ -122,8 +124,40 @@
                 },
             ],
         }),
+        "/mariosound/:user?/:name?": wrap({
+            component: MarioSequencer,
+            conditions: [
+                (detail) => {
+                    return isLogedIn(detail);
+                },
+            ],
+        }),
         "/avatar/:user?/:name?": wrap({
             component: drawing,
+            conditions: [
+                (detail) => {
+                    return isLogedIn(detail);
+                },
+            ],
+        }),
+        "/audio/:user?/:name?": wrap({
+            component: player,
+            conditions: [
+                (detail) => {
+                    return isLogedIn(detail);
+                },
+            ],
+        }),
+        "/video/:user?/:name?": wrap({
+            component: player,
+            conditions: [
+                (detail) => {
+                    return isLogedIn(detail);
+                },
+            ],
+        }),
+        "/picture/:user?/:name?": wrap({
+            component: player,
             conditions: [
                 (detail) => {
                     return isLogedIn(detail);

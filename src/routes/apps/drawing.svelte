@@ -20,11 +20,12 @@
   import CameraIcon from "svelte-icons/fa/FaCamera.svelte";
   import CopyIcon from "svelte-icons/fa/FaCopy.svelte";
   import PasteIcon from "svelte-icons/fa/FaPaste.svelte";
+  import ColorSelectIcon from "svelte-icons/io/IoMdColorPalette.svelte"
 
   export let params = {};
   let history = [],
     historyCurrent;
-  let canv, _clipboard;
+  let canv, _clipboard, drawingColorEl;
   let saveCanvas, savecanvas, videoCanvas, saving= false;
   let videoWidth, videoHeight;
   let canvas,
@@ -36,7 +37,7 @@
   let shadowOffset = 0,
     shadowColor = "#ffffff",
     shadowWidth = 0;
-  let title,
+  let title, answer,
     showBackground = true;
   let fillColor = "#f00", fillTolerance = 2;
   let current = "draw";
@@ -84,23 +85,23 @@
 
     var drawingModeEl = fab("drawing-mode"),
       selectModeEl = fab("select-mode"),
-      fillModeEl = fab("fill-mode"),
+      //fillModeEl = fab("fill-mode"),
       drawingOptionsEl = fab("drawing-mode-options"),
       eraseModeEl = fab("erase-mode"),
       drawingColorEl = fab("drawing-color"),
-      drawingShadowColorEl = fab("drawing-shadow-color"),
+      //drawingShadowColorEl = fab("drawing-shadow-color"),
       drawingLineWidthEl = fab("drawing-line-width"),
-      eraseLineWidthEl = fab("erase-line-width"),
-      drawingShadowWidth = fab("drawing-shadow-width"),
-      drawingShadowOffset = fab("drawing-shadow-offset"),
-      clearEl = fab("clear-canvas");
+      eraseLineWidthEl = fab("erase-line-width");
+      //drawingShadowWidth = fab("drawing-shadow-width"),
+      //drawingShadowOffset = fab("drawing-shadow-offset");
+    //   clearEl = fab("clear-canvas");
 
-    clearEl.onclick = function () {
-      if (window.confirm("are you sure?")) {
-        canvas.clear();
-        localStorage.setItem("Drawing", "");
-      }
-    };
+    // clearEl.onclick = function () {
+    //   if (window.confirm("are you sure?")) {
+    //     canvas.clear();
+    //     localStorage.setItem("Drawing", "");
+    //   }
+    // };
 
     drawingModeEl.onclick = function () {
       current = "draw";
@@ -116,10 +117,10 @@
       floodFill(false);
     };
 
-    fillModeEl.onclick = function () {
-      current = "fill";
-      floodFill(true);
-    };
+    // fillModeEl.onclick = function () {
+    //   current = "fill";
+    //   floodFill(true);
+    // };
 
     eraseModeEl.onclick = function () {
       // erase functie kapot? recompile: http://fabricjs.com/build/
@@ -234,13 +235,13 @@
           brush.source = brush.getPatternSrc.call(brush);
         }
         brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
-        brush.shadow = new fabric.Shadow({
-          blur: parseInt(drawingShadowWidth.value, 10) || 0,
-          offsetX: 0,
-          offsetY: 0,
-          affectStroke: true,
-          color: drawingShadowColorEl.value,
-        });
+        // brush.shadow = new fabric.Shadow({
+        //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
+        //   offsetX: 0,
+        //   offsetY: 0,
+        //   affectStroke: true,
+        //   color: drawingShadowColorEl.value,
+        // });
       }
     }
 
@@ -251,9 +252,9 @@
         brush.source = brush.getPatternSrc.call(brush);
       }
     };
-    drawingShadowColorEl.onchange = function () {
-      canvas.freeDrawingBrush.shadow.color = this.value;
-    };
+    // drawingShadowColorEl.onchange = function () {
+    //   canvas.freeDrawingBrush.shadow.color = this.value;
+    // };
     drawingLineWidthEl.onchange = function () {
       canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
       this.previousSibling.innerHTML = this.value;
@@ -262,28 +263,28 @@
       canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
       this.previousSibling.innerHTML = this.value;
     };
-    drawingShadowWidth.onchange = function () {
-      canvas.freeDrawingBrush.shadow.blur = parseInt(this.value, 10) || 0;
-      this.previousSibling.innerHTML = this.value;
-    };
-    drawingShadowOffset.onchange = function () {
-      canvas.freeDrawingBrush.shadow.offsetX = parseInt(this.value, 10) || 0;
-      canvas.freeDrawingBrush.shadow.offsetY = parseInt(this.value, 10) || 0;
-      this.previousSibling.innerHTML = this.value;
-    };
+    // drawingShadowWidth.onchange = function () {
+    //   canvas.freeDrawingBrush.shadow.blur = parseInt(this.value, 10) || 0;
+    //   this.previousSibling.innerHTML = this.value;
+    // };
+    // drawingShadowOffset.onchange = function () {
+    //   canvas.freeDrawingBrush.shadow.offsetX = parseInt(this.value, 10) || 0;
+    //   canvas.freeDrawingBrush.shadow.offsetY = parseInt(this.value, 10) || 0;
+    //   this.previousSibling.innerHTML = this.value;
+    // };
 
     if (canvas.freeDrawingBrush) {
       canvas.freeDrawingBrush.color = drawingColorEl.value;
       // canvas.freeDrawingBrush.source = canvas.freeDrawingBrush.getPatternSrc.call(this);
       canvas.freeDrawingBrush.width =
         parseInt(drawingLineWidthEl.value, 10) || 1;
-      canvas.freeDrawingBrush.shadow = new fabric.Shadow({
-        blur: parseInt(drawingShadowWidth.value, 10) || 0,
-        offsetX: 0,
-        offsetY: 0,
-        affectStroke: true,
-        color: drawingShadowColorEl.value,
-      });
+      // canvas.freeDrawingBrush.shadow = new fabric.Shadow({
+      //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
+      //   offsetX: 0,
+      //   offsetY: 0,
+      //   affectStroke: true,
+      //   color: drawingShadowColorEl.value,
+      // });
     }
     console.log(params);
 
@@ -350,9 +351,10 @@
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-     // await uploadHouse(json, blobData);
-      title = $Profile.meta.azc
-      await uploadImage(title, appType, json, blobData, status);
+      await uploadHouse(json, blobData);
+      // title = $Profile.meta.azc
+      // status = true;
+      // await uploadImage(title, appType, json, blobData, status);
       saved = true;
       saving = false
     }
@@ -1035,38 +1037,45 @@
           class="icon"
           class:currentSelected={current === "draw"}><ColorIcon /></button
         >
-        <button
+         <button
           class="icon"
           id="erase-mode"
           class:currentSelected={current === "erase"}><EraseIcon /></button
         >
-        <button
+        <!-- <button
           class="icon"
           id="fill-mode"
           class:currentSelected={current === "fill"}><BucketIcon /></button
-        >
+        > -->
         <button
           class="icon"
           id="select-mode"
           class:currentSelected={current === "select"}><MouseIcon /></button
         >
-        {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
+        <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
           <button
             class="icon"
             id="camera-mode"
             class:currentSelected={current == "camera"}
             on:click={camera}><CameraIcon /></button
           >
-        {/if}
-        <button id="clear-canvas" class="btn btn-info icon">
+        {/if} -->
+        <!-- <button id="clear-canvas" class="btn btn-info icon">
           <TrashIcon />
-        </button>
+        </button> -->
+       
+       
         <button
           class="icon"
           class:currentSelected={current === "saveToggle"}
           on:click={() => {
+            if(appType == "drawing" || appType == "stopmotion"){
             saveToggle = !saveToggle;
             current = "saveToggle";
+            } else {
+              upload()
+            }
+            
           }}><SaveIcon /></button
         >
       </div>
@@ -1088,10 +1097,13 @@
         </div>
 
         <div class="colorTab" class:hidden={current != "draw"}>
-          <div
+          <div class="widthBox" on:click="{()=>{drawingColorEl.click()}}">
+            <div
             class="lineWidth"
             style="width:{lineWidth}px; height: {lineWidth}px; background-color: {drawingColor}; box-shadow: {shadowOffset}px {shadowOffset}px {shadowWidth}px {shadowColor};margin:  0px auto {shadowOffset}px auto;"
-          />
+          ><input type="color" bind:value={drawingColor} bind:this="{drawingColorEl}" id="drawing-color" /></div>
+          <div class="colorIcon"><ColorSelectIcon/></div>
+        </div>
           <span class="info">{lineWidth}</span><input
             type="range"
             min="0"
@@ -1099,11 +1111,8 @@
             id="drawing-line-width"
             bind:value={lineWidth}
           />
-
-          <label for="drawing-color">Line color:</label>
-          <input type="color" bind:value={drawingColor} id="drawing-color" />
-
-          <label for="drawing-shadow-color">Shadow color:</label>
+          
+          <!-- <label for="drawing-shadow-color">Shadow color:</label>
           <input
             type="color"
             bind:value={shadowColor}
@@ -1126,13 +1135,15 @@
             min="0"
             max="50"
             id="drawing-shadow-offset"
-          />
+          /> -->
         </div>
         <div class="eraseTab" class:hidden={current != "erase"}>
+          <div class="widthBox">
           <div
             class="lineWidth"
             style="width:{EraselineWidth}px; height: {EraselineWidth}px; background-color: black;margin:  0px auto;"
           />
+        </div>
           <span class="info">{EraselineWidth}</span><input
             type="range"
             min="0"
@@ -1140,6 +1151,8 @@
             id="erase-line-width"
             bind:value={EraselineWidth}
           />
+          
+          
         </div>
         <div class="fillTab" class:hidden={current != "fill"}>
           <input
@@ -1306,8 +1319,11 @@
 
   #drawing-color,
   #drawing-shadow-color {
-    margin: 0.4rem;
-    height: 32px;
+    margin: 0px;
+    height: 0px;
+    width: 0px;
+    padding: 0px;
+    visibility: hidden;
   }
 
   .optionbox {
@@ -1364,89 +1380,27 @@
 
   .lineWidth {
     border-radius: 50%;
+    position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   }
 
-
-  @keyframes blink {
-    /**
-     * At the start of the animation the dot
-     * has an opacity of .2
-     */
-    0% {
-      opacity: .2;
+  .widthBox {
+    height: 150px;
+    position: relative;
+    border: solid 2px black;
+    border-radius: 25px;
+    padding: 10px;
     }
-    /**
-     * At 20% the dot is fully visible and
-     * then fades out slowly
-     */
-    20% {
-      opacity: 1;
-    }
-    /**
-     * Until it reaches an opacity of .2 and
-     * the animation can start again
-     */
-    100% {
-      opacity: .2;
-    }
-}
 
-.saving {
-  top: 50vh;
-  left: 50vw;
-  position: fixed;
-  transform: translate(-50%,-50%);
-}
 
-.saving span {
-    /**
-     * Use the blink animation, which is defined above
-     */
-    animation-name: blink;
-    /**
-     * The animation should take 1.4 seconds
-     */
-    animation-duration: 1.4s;
-    /**
-     * It will repeat itself forever
-     */
-    animation-iteration-count: infinite;
-    /**
-     * This makes sure that the starting style (opacity: .2)
-     * of the animation is applied before the animation starts.
-     * Otherwise we would see a short flash or would have
-     * to set the default styling of the dots to the same
-     * as the animation. Same applies for the ending styles.
-     */
-    animation-fill-mode: both;
-}
 
-.saving span:nth-child(2) {
-    /**
-     * Starts the animation of the third dot
-     * with a delay of .2s, otherwise all dots
-     * would animate at the same time
-     */
-    animation-delay: .2s;
-}
 
-.saving span:nth-child(3) {
-    /**
-     * Starts the animation of the third dot
-     * with a delay of .4s, otherwise all dots
-     * would animate at the same time
-     */
-    animation-delay: .4s;
-}
-
-.savecontainer {
-    z-index: 5;
-    position: fixed;
-    left: 0;
-    top: 0;
-    font-size: 60px;
-    background: rgba(50,50,50,0.5);
-    width: 100vw;
-    height: 100vh;
+.colorIcon{
+  width: 32px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 </style>

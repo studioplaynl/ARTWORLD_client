@@ -1,3 +1,5 @@
+import { RGBA_ASTC_10x10_Format } from "three"
+
 class Background {
     constructor(config) {
     }
@@ -32,7 +34,12 @@ class Background {
         bgDotRendertexture.draw(bgDot)
 
         //save the rendertexture with a key ('dot')
-        let t = bgDotRendertexture.saveTexture('dot')
+        bgDotRendertexture.saveTexture('dot')
+
+        // destroy the bgDot graphic and renderTexture
+        bgDot.destroy()
+        bgDotRendertexture.destroy()
+
 
         //repeat this savend texture over the background
         for (let i = 0; i < gridWidth; i += offset) {
@@ -42,8 +49,55 @@ class Background {
         }
     }
 
-    circle() {
+    circle(config) {
+        //! create renderTexture images on network boot, 
+        //! use the image KEYS in the SCENES, that way they don't need to be created each time when entering a scene
+
+        const scene = config.scene
+        const posX = config.posX
+        const posY = config.posY
+        const name = config.name
+        // const worldSize = scene.worldSize
+        const size = config.size
+        const gradient1 = config.gradient1
+        const gradient2 = config.gradient2
+
+        //create graphic: a large rectangle
+        //out of this rectangle we cut out a circle and with that frame we cut out a circle out of an other rectangle
+        let rectangle = scene.add.graphics();
+        // rectangle.setVisible(false);
+        rectangle.fillGradientStyle(gradient1, gradient1, gradient2, gradient2, 1);
+        rectangle.fillRect(0, 0, size, size);
+
+        let rt1 = scene.add.renderTexture(0, 0, size, size);
+        let rt2 = scene.add.renderTexture(0, 0, size, size);
+
+        rt1.draw(rectangle);
+        rt2.draw(rectangle);
+
+        let eraser = scene.add.circle(0, 0, size / 2, 0x000000)
+        // eraser.setVisible(false);
+
+        //erase the circle from the first rect
+        rt1.erase(eraser, size / 2, size / 2)
+
+        //erase the rect with the cutout from the second rect, creating the circle with gradient
+        rt2.erase(rt1, 0, 0)
+
+        //the center of the renderTexture has offset of (size / 2)
+        rt2.x = posX - (size / 2)
+        rt2.y = posY - (size / 2)
+
+        //save the rendertexture with a key 
+        rt2.saveTexture(name)
+        scene.add.image(posX, posY, name).setOrigin(0.5).setScale(1)
+
+        console.log(name)
         
+        rt2.destroy()
+        rt1.destroy()
+        eraser.destroy()
+        rectangle.destroy()
     }
 }
 

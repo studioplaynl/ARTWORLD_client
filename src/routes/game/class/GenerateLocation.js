@@ -1,4 +1,5 @@
 import ManageSession from "../ManageSession"
+import CoordinatesTranslator from "./CoordinatesTranslator"
 
 export default class GenerateLocation extends Phaser.GameObjects.Container {
 
@@ -24,6 +25,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.draggable = config.draggable
         this.userHome = config.userHome
         this.location
+        this.internalUrl = config.internalUrl
+        this.externalUrl = config.externalUrl
+        this.enterButtonTween
 
         //TODO don't make a location in a container, the depth order seems to be shared across the contianer, so we can't make the enter button appear above the player, and the location below the player
         //TODO rewrite without the container, just using sprite, containers are a bit more cpu intensive also
@@ -64,11 +68,15 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.location.body.setOffset(0, -(this.location.height / 1.4))
         }
 
-        this.location.setInteractive()
+        // can't drag the location if there is another function for pointerdown
+        // we set the location either clickable or dragable (because dragging is a edit function)
+        if (!this.draggable) {
+            this.location.setInteractive()
 
-        this.location.on('pointerdown', () => {
-            console.log("location clicked")
-        })
+            this.location.on('pointerdown', () => {
+                console.log("location clicked")
+            })
+        }
 
         //place the description under the location image (for devving only)
         const locationDescription = this.scene.add.text(0, width / 2 - 30, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(51)
@@ -77,12 +85,20 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         //Phaser.Display.Align.In.TopCenter(this.location, locationDescription)
 
         // back button that appears 
-        this.enterButton = this.scene.add.image(0, -(width / 2) - 60,
-            this.enterButtonImage).setInteractive().setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
+        var enterButtonY = this.y - (width / 2) - 60
+        var enterButtonTweenY = enterButtonY + 90
 
-        this.scene.tweens.add({
+        this.enterButtonHitArea = this.scene.add.image(this.x, enterButtonY + 40, 'enterButtonHitArea').setVisible(false).setDepth(201)
+        this.enterButtonHitArea.alpha = 0 // make the hitArea invisible
+
+        this.enterButtonHitArea.displayWidth = width / 1.4
+
+        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
+        //
+
+        this.enterButtonTween = this.scene.tweens.add({
             targets: this.enterButton,
-            y: -90,
+            y: enterButtonTweenY,
             alpha: 0.0,
             duration: 1000,
             ease: 'Sine.easeInOut',
@@ -90,11 +106,16 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             yoyo: true
         })
 
+        // console.log(this.enterButtonTween)
+
         //the container is created at the this.x and this.y
         //this.setSize(width, width)
         this.add(this.location)
         this.add(locationDescription)
-        this.add(this.enterButton)
+        //this.add(this.enterButtonHitArea)
+
+        //changing the order in the container, changes the drawing order?
+        // this.bringToTop(this.enterButtonHitArea)
 
         this.setSize(width, width, false)
 
@@ -103,33 +124,85 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                 .on('drag', (p, x, y) => {
                     this.setX(p.worldX)
                     this.setY(p.worldY)
+                    // The enterButton is outside the container, so that it can appear above the player
+                    // when dragging the container we have to move the enterButton aswell
+                    this.enterButton.x = this.x
+                    enterButtonY = this.y - (width / 2) - 60
+                    enterButtonTweenY = enterButtonY + 90
+                    this.enterButton.y = enterButtonY
+                    //this.enterButtonTween.restart()
+                    this.enterButtonTween.stop()
+                    this.enterButtonTween.remove()
+                    this.enterButtonTween = this.scene.tweens.add({
+                        targets: this.enterButton,
+                        y: enterButtonTweenY,
+                        alpha: 0.0,
+                        duration: 1000,
+                        ease: 'Sine.easeInOut',
+                        repeat: -1,
+                        yoyo: true
+                    })
+
                 })
                 .on('pointerdown', (p, x, y) => {
-                    // this._dragX = x
-                    // this._dragY = y
+                    //console.log('dragging')
+                    //console.log(p.worldX, p.worldY)
+
+                })
+                .on('pointerup', (p, x, y) => {
+                    console.log(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY))
+
                 })
         }
 
-        this.enterButton.on('pointerdown', () => {
+        this.enterButtonHitArea.on('pointerdown', () => {
 
         })
 
-        this.enterButton.on('pointerup', () => {
-            // on entering another location we want to keep a record for "back button"
-            ManageSession.previousLocation = this.scene.key;
+        this.enterButtonHitArea.on('pointerup', () => {
+            //check when entering the location if it is an URL or scene
 
-            this.scene.physics.pause()
-            this.scene.player.setTint(0xff0000)
+            if (this.internalUrl) {
+                this.scene.scene.pause();
+                var url = window.location.href + this.internalUrl
 
-            //player has to explicitly leave the stream it was in!
-            console.log("leave: ", this.scene.location)
-            
-            ManageSession.socket.rpc("leave", this.scene.location)
+                var s = window.open(url, '_parent');
 
-            this.scene.player.location = this.locationDestination
-            console.log("this.player.location: ", this.locationDestination)
+                if (s && s.focus) {
+                    s.focus();
+                }
+                else if (!s) {
+                    window.location.href = url;
+                }
+            } else if (this.externalUrl) {
+                this.scene.scene.pause();
+                var url = this.externalUrl
 
-            this.scene.time.addEvent({ delay: 500, callback: this.switchScenes, callbackScope: this, loop: false })
+                var s = window.open(url, '_parent');
+
+                if (s && s.focus) {
+                    s.focus();
+                }
+                else if (!s) {
+                    window.location.href = url;
+                }
+            } else {
+                // on entering another location we want to keep a record for "back button"
+                ManageSession.previousLocation = this.scene.key;
+
+                this.scene.physics.pause()
+                this.scene.player.setTint(0xff0000)
+
+                //player has to explicitly leave the stream it was in!
+                console.log("leave: ", this.scene.location)
+
+                ManageSession.socket.rpc("leave", this.scene.location)
+
+                this.scene.player.location = this.locationDestination
+                console.log("this.player.location: ", this.locationDestination)
+
+                this.scene.time.addEvent({ delay: 500, callback: this.switchScenes, callbackScope: this, loop: false })
+            }
         })
 
         this.scene.physics.add.overlap(this.scene.player, this.location, this.confirmEnterLocation, null, this)
@@ -145,16 +218,22 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
 
     confirmEnterLocation(player, location) {
-        this.confirmConfirm()
+        this.initConfirm()
         this.enterButton.setVisible(true)
+        this.enterButtonHitArea.setVisible(true)
+        // this.enterButtonHitArea.alpha = 0.0001
+        this.enterButtonHitArea.setInteractive({ useHandCursor: true })
+        this.enterButtonHitArea.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+
     }
 
     hideEnterButton() {
         this.showing = false
         this.enterButton.setVisible(this.showing)
+        this.enterButtonHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
     }
 
-    confirmConfirm() {
+    initConfirm() {
         if (this.showing) {
 
         } else {

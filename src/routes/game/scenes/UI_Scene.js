@@ -100,16 +100,19 @@ export default class UI_Scene extends Phaser.Scene {
         fontSize: "18px",
       }).setShadow(2, 2, '#000000', 0)
 
-      //back button
+      // back button
       this.backButton = this.add.image(40, 40, "back_button")
         .setOrigin(0, 0.5)
         .setDepth(1000)
-        .setScale(0.075)
         .setInteractive({ useHandCursor: true });
+
+      // back button background color white
+      this.backButtonCircle = this.add.circle(40, 40, 15, 0xffffff).setOrigin(0, 0.5)
 
       // if the current scene is artworld, the back button is hidden 
       if (ManageSession.locationHistory.length <= 1) {
         this.backButton.destroy()
+        this.backButtonCircle.destroy()
       }
 
       this.backButton.on("pointerup", () => {

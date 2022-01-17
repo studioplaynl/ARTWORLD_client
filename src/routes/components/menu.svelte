@@ -68,7 +68,7 @@
         <li><a href="/#/match">{$_("nav.match")}</a></li>
         <li><a href="/#/drawing">{$_("nav.drawing")}</a></li>
         <li><a href="/#/stopmotion">{$_("nav.stopmotion")}</a></li>
-        <li><a href="/#/mandala">{$_("nav.mandala")}</a></li>
+        <li><a href="/#/mariosound">{$_("nav.mariosound")}</a>
       </ul>
       <div
         class="userInfo"
@@ -84,7 +84,7 @@
             }}
           >
             <li><a href="/#/admin">{$_("role.admin")}</a></li>
-            <li><a href="/#/upload">{$_("role.upload")}</a></li>
+            <li><a href="/#/upload">{$_("nav.upload")}</a></li>
           </ul>
         {/if}
         {#if !!$Profile && $Profile.meta.role == "moderator"}
