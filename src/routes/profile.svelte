@@ -171,17 +171,17 @@ function moveToTrash(key) {
     <div class="flex-item-left">
       <Card class="card">
         <div id="avatarDiv">
-          {#if !!house_url}
-          <a href="/#/house"><img id="house" src={house_url} /></a>
-          {:else}
-            <a href="/#/house/">Create house</a>
-          {/if}
-        </div>
-        <div id="avatarDiv">
           {#if !!avatar_url}
           <a href="/#/avatar"><img id="avatar" src={avatar_url} /></a>
           {:else}
             <a href="/#/avatar/">Create avatar</a>
+          {/if}
+        </div>
+        <div id="avatarDiv">
+          {#if !!house_url}
+          <a href="/#/house"><img id="house" src={house_url} /></a>
+          {:else}
+            <a href="/#/house/">Create house</a>
           {/if}
         </div>
       <br />
@@ -232,7 +232,7 @@ function moveToTrash(key) {
     }
   }
 
-  #avatar {
+  #avatar, #house {
     max-height: 75px;
     position: absolute;
     clip: rect(0px,75px,75px,0px);

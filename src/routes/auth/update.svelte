@@ -105,7 +105,7 @@
 	}
 
 	let whereList, otherWhere
-	let locationsList = {objects: []}
+	let locationsList = []
 	async function getLocations() {
 		if (whereList == "other") {
 			whereList = otherWhere;
@@ -113,7 +113,7 @@
 		otherWhere
 		let limit = 100;
 		locationsList = await listObjects(whereList, id, limit);
-		console.log(locationsList.objects);
+		console.log(locationsList);
 	}
 	async function deleteObject(id, type, name) {
 		deleteObjectAdmin(id, type, name);
@@ -225,7 +225,7 @@
 				<label>other</label><input type="text" bind:value={otherWhere} />
 			{/if}
 			<button on:click={getLocations}>Get</button>
-			{#each locationsList.objects as location}
+			{#each locationsList as location}
 				<div
 					class:blueBack={location.user_id === $Session.user_id}
 					class="redBack"
@@ -244,6 +244,20 @@
 							);
 							getLocations();
 						}}>delete</button
+					>
+					<button
+						on:click={async () => {
+							// await deleteObject(
+							// 	location.user_id,
+							// 	location.collection,
+							// 	location.key 
+							// );
+							type = locations.collection
+							name = location.key 
+							value = JSON.stringify(location.value)
+
+							getLocations();
+						}}>update</button
 					>
 				</div>
 			{/each}
