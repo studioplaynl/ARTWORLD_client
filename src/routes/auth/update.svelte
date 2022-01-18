@@ -247,9 +247,16 @@
 					>
 					<button
 						on:click={async () => {
-							type =	location.collection
-							name =	location.key
+							// await deleteObject(
+							// 	location.user_id,
+							// 	location.collection,
+							// 	location.key 
+							// );
+							type = locations.collection
+							name = location.key 
 							value = JSON.stringify(location.value)
+
+							getLocations();
 						}}>update</button
 					>
 				</div>
