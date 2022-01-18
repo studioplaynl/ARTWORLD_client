@@ -190,6 +190,8 @@ export default class DefaultUserHome extends Phaser.Scene {
         
         // ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
         
+        Preloader.runSpinner(this, this.worldSize.x / 2, this.worldSize.y / 2, 400, 400)
+
         await listImages("drawing", this.location, 100).then((rec) => {
             this.userArtServerList = rec
             if (this.userArtServerList.length > 0) {
@@ -198,24 +200,6 @@ export default class DefaultUserHome extends Phaser.Scene {
                 })        
             }
         })
-
-        // on line 289 this object should be destroyed, but showing an error
-        this.artworkSpinner = Preloader.runSpinner(this, this.worldSize.x / 2, this.worldSize.y / 2, 400, 400)
-        
-        // this.spinner = this.rexSpinner.add.pie({
-        //     x: this.worldSize.x / 2,
-        //     // x: this.cameras.main.centerX / 2, 
-        //     y: this.worldSize.y / 2,
-        //     // y: this.cameras.main.centerY / 2, 
-        //     width: 400,
-        //     height: 400,
-        //     duration: 850,
-        //     color: 0x000000
-        // })
-
-        // console.log("width, height", this.sys.game.canvas)
-
-        // this.spinner.start()
         
     }//end create
     
@@ -238,6 +222,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             // adds the image to the container
             const setImage = this.add.image(coordX, y, key)
             this.artContainer.add(setImage)
+            this.spinner.destroy()
             
         } else { // otherwise download the image and add it
             
@@ -250,7 +235,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             
             this.load.start() // load the image in memory
         }
-        
+
         const progressBox = this.add.graphics()
         const progressBar = this.add.graphics()
         const progressWidth = 300
@@ -287,7 +272,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBar.destroy()
             progressBox.destroy()
             this.progress = []
-            // this.artworkSpinner.destroy()
+            this.spinner.destroy()
         });
     }//end downloadArt
 
