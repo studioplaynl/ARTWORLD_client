@@ -46,7 +46,7 @@
             if(filetype == "mp3" || filetype == "wav") return true
         }else if(type == "video"){
             if(filetype == "mpv" || filetype == "mov" || filetype == "mp4") return true 
-        }else if(type == "drawing"){
+        }else if(type == "picture"){
             if(filetype == "png" ||filetype == "jpg" ||filetype == "jpeg" ||filetype == "gif") return true
         }
         return false
@@ -63,7 +63,7 @@
         </select>
         <label>Filetype:</label>
         <select bind:value="{type}">
-            <option value="drawing">Drawing</option>
+            <option value="picture">picture</option>
             <option value="video">Video</option>
             <option value="audio">Audio</option>
         </select>
