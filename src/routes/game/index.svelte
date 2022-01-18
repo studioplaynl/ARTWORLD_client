@@ -8,6 +8,7 @@
   import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin.js";
   import CircleMaskImagePlugin from "phaser3-rex-plugins/plugins/circlemaskimage-plugin.js";
   import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin.js'
+  import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin.js'
 
   import { CONFIG, SCENES } from "./config";
 
@@ -37,6 +38,11 @@
             key: "rexUI",
             plugin: UIPlugin,
             mapping: "rexUI",
+          },
+          {
+            key: "rexSpinner",
+            plugin: SpinnerPlugin,
+            mapping: "rexSpinner",
           },
         ],
         global: [

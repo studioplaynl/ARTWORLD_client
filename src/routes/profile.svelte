@@ -27,6 +27,7 @@
     video = [],
     audio = [],
     trash = [],
+    picture = [],
     CurrentUser;
 
     const columns = [
@@ -133,6 +134,8 @@ function moveToTrash(key) {
       video = await listImages("video",params.user, 10)
       audio = await listImages("audio",params.user, 10)
       stopMotion = await listImages("stopmotion",params.user, 10)
+      picture = await listImages("picture",params.user, 10)
+
       useraccount = await getAccount(id)
       console.log(useraccount)
       user = useraccount.username
@@ -150,8 +153,9 @@ function moveToTrash(key) {
       CurrentUser = true;
       drawings = await listImages("drawing",$Session.user_id, 10)
       stopMotion = await listImages("stopmotion",$Session.user_id, 10)
-      video = await listImages("video",params.user, 10)
-      audio = await listImages("audio",params.user, 10)
+      video = await listImages("video",$Session.user_id, 10)
+      audio = await listImages("audio",$Session.user_id, 10)
+      picture = await listImages("picture",$Session.user_id, 10)
       useraccount = await getAccount()
       console.log(useraccount)
       user = useraccount.username
@@ -171,6 +175,7 @@ function moveToTrash(key) {
     art = art.concat(stopMotion)
     art = art.concat(video)
     art = art.concat(audio)
+    art = art.concat(picture)
     art.forEach(async (item, index) => {
       if(item.value.status === "trash"){
         trash.push(item)
@@ -196,17 +201,17 @@ function moveToTrash(key) {
     <div class="flex-item-left">
       <Card class="card">
         <div id="avatarDiv">
-          {#if !!house_url}
-          <a href="/#/house"><img id="house" src={house_url} /></a>
-          {:else}
-            <a href="/#/house/">Create house</a>
-          {/if}
-        </div>
-        <div id="avatarDiv">
           {#if !!avatar_url}
           <a href="/#/avatar"><img id="avatar" src={avatar_url} /></a>
           {:else}
             <a href="/#/avatar/">Create avatar</a>
+          {/if}
+        </div>
+        <div id="avatarDiv">
+          {#if !!house_url}
+          <a href="/#/house"><img id="house" src={house_url} /></a>
+          {:else}
+            <a href="/#/house/">Create house</a>
           {/if}
         </div>
       <br />
@@ -257,7 +262,7 @@ function moveToTrash(key) {
     }
   }
 
-  #avatar {
+  #avatar, #house {
     max-height: 75px;
     position: absolute;
     clip: rect(0px,75px,75px,0px);

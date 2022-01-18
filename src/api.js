@@ -130,6 +130,7 @@ export async function updateObject(type, name, value, pub) {
 export async function listObjects(type, userID, limit) {
   if(!!!limit) limit = 100;
   const objects = await client.listStorageObjects(Sess, type, userID, limit);
+  console.log(objects)
   return objects.objects
 }
 
@@ -206,7 +207,11 @@ export async function setFullAccount(id, username, password, email, metadata) {
 
 //getAvatar only works reliably via the getAccount call
 export async function getAvatar(avatar_url) {
-  const payload = {"url": avatar_url};
+  return getFile(avatar_url)
+}
+
+export async function getFile(file_url) {
+  const payload = {"url": file_url};
   let url  
   const rpcid = "download_file";
   await client.rpc(Sess, rpcid, payload)

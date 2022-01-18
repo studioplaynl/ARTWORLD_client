@@ -181,6 +181,27 @@ export default class DefaultUserHome extends Phaser.Scene {
             }
         })
 
+<<<<<<< HEAD
+=======
+        // on line 289 this object should be destroyed, but showing an error
+        this.artworkSpinner = Preloader.runSpinner(this, this.worldSize.x / 2, this.worldSize.y / 2, 400, 400)
+        
+        // this.spinner = this.rexSpinner.add.pie({
+        //     x: this.worldSize.x / 2,
+        //     // x: this.cameras.main.centerX / 2, 
+        //     y: this.worldSize.y / 2,
+        //     // y: this.cameras.main.centerY / 2, 
+        //     width: 400,
+        //     height: 400,
+        //     duration: 850,
+        //     color: 0x000000
+        // })
+
+        // console.log("width, height", this.sys.game.canvas)
+
+        // this.spinner.start()
+        
+>>>>>>> 13cf9e6d5ed5893aa8dbab3c58622ccca98c595a
     }//end create
 
     async downloadArt(element, index) {
@@ -251,6 +272,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBar.destroy()
             progressBox.destroy()
             this.progress = []
+            // this.artworkSpinner.destroy()
         });
     }//end downloadArt
 
