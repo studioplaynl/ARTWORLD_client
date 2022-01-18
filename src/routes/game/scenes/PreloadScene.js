@@ -5,6 +5,13 @@ export default class PreloadScene extends Phaser.Scene {
     constructor() {
         super("PreloadScene");
         this.loadingDone = false
+
+        //sizes for the artWorks
+        this.artIconSize = 64
+        this.artPreviewSize = 128
+        this.artDisplaySize = 512
+        this.artFullSize
+        this.artOffsetBetween = 20
     }
 
     preload() {
@@ -56,6 +63,9 @@ export default class PreloadScene extends Phaser.Scene {
 
         //create a hitArea for locations, as an image with key 'enterButtonHitArea', 128x128pix
         this.createHitAreaLocations()
+
+        //create a generic artFrame for later use wit iage key "artFrame_512"
+        this.createArtFrame()
     }
 
     async create() {
@@ -88,6 +98,29 @@ export default class PreloadScene extends Phaser.Scene {
         rt.saveTexture('enterButtonHitArea')
         enterButtonHitArea.destroy()
         rt.destroy()
+    }
+
+    createArtFrame() {
+        const frameBorderSize = 10
+        const frame = this.add.graphics()
+        // create a black square size of art + 20pix
+        frame.fillStyle(0x000000)
+        frame.fillRect(0, 0, this.artDisplaySize + (frameBorderSize * 2), this.artDisplaySize + (frameBorderSize * 2)).setVisible(false)
+        frame.fillStyle(0xffffff)
+        frame.fillRect(frameBorderSize, frameBorderSize, this.artDisplaySize, this.artDisplaySize).setVisible(false)
+
+        //create renderTexture to place the dot on
+        let artFrameRendertexture = this.add.renderTexture(0, 0, this.artDisplaySize + (frameBorderSize * 2), this.artDisplaySize + (frameBorderSize * 2)).setVisible(false)
+
+        //draw the dot on the renderTexture
+        artFrameRendertexture.draw(frame)
+
+        //save the rendertexture with a key ('dot'), basically making an image out of it
+        artFrameRendertexture.saveTexture('artFrame_512')
+        // this.add.image(0, 0, 'artFrame_512').setVisible(false) // .setOrigin(0)
+
+        frame.destroy()
+        artFrameRendertexture.destroy()
     }
 
     update(time, delta) {
