@@ -296,7 +296,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         this.homesRepreseneted[index] = new GenerateLocation({
           scene: this,
           userHome: element.user_id,
-          draggable: true,
+          draggable: false,
           type: "isoTriangle",
           x: CoordinatesTranslator.artworldToPhaser2DX(
             this.worldSize.x,
@@ -370,22 +370,22 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       color3: 0x63a505,
     })
 
-    //set the particle first on 0,0 so they are below the mario_star
-    //later move them relative to the mario_star
-    var particles = this.add.particles('music_quarter_note').setDepth(300)
+    //*set the particle first on 0,0 so they are below the mario_star
+    //*later move them relative to the mario_star
+    // var particles = this.add.particles('music_quarter_note').setDepth(300)
 
-    var music_emitter = particles.createEmitter({
-      x: 0,
-      y: 0,
-      lifespan: { min: 2000, max: 8000 },
-      speed: { min: 80, max: 120 },
-      angle: { min: 270, max: 360 },
-      gravityY: -50,
-      gravityX: 50,
-      scale: { start: 1, end: 0 },
-      quantity: 1,
-      frequency: 500,
-    })
+    // var music_emitter = particles.createEmitter({
+    //   x: 0,
+    //   y: 0,
+    //   lifespan: { min: 2000, max: 8000 },
+    //   speed: { min: 80, max: 120 },
+    //   angle: { min: 270, max: 360 },
+    //   gravityY: -50,
+    //   gravityX: 50,
+    //   scale: { start: 1, end: 0 },
+    //   quantity: 1,
+    //   frequency: 500,
+    // })
 
     location1Vector = new Phaser.Math.Vector2(22.81, -428.32)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
@@ -396,6 +396,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.mario_star = new GenerateLocation({
       scene: this,
       type: "image",
+      size: 200,
       draggable: false,
       x: location1Vector.x,
       y: location1Vector.y,
@@ -410,7 +411,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     })
     this.mario_star.setDepth(301)
 
-    music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
+    //* music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
   }
 
   update(time, delta) {

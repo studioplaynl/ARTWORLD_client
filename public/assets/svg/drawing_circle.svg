@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg89"
+   version="1.1"
+   viewBox="0 0 79.374998 79.375002"
+   height="300"
+   width="300">
+  <defs
+     id="defs83" />
+  <metadata
+     id="metadata86">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-217.62498)"
+     id="layer1">
+    <path
+       d="m 74.619891,231.83719 -3.23674,3.2378 -8.701612,-8.70162 3.237792,-3.2378 c 0.43215,-0.43215 1.13736,-0.43215 1.56951,0 l 7.13105,7.13247 c 0.43321,0.43215 0.43321,1.13735 0,1.56915 z m -6.77474,6.77616 -8.701982,-8.70162 1.74061,-1.74061 8.701972,8.70162 z m -43.905672,32.66337 2.54,2.5407 -3.41312,0.87271 z m 5.40315,1.80869 -4.67078,-4.67222 0.91757,-3.58881 7.34307,7.34272 z m 6.06636,-2.03701 -8.70056,-8.70052 30.63734,-30.63839 8.701622,8.70161 z m 41.009712,-42.57812 -7.13246,-7.13246 c -1.42275,-1.42522 -3.74156,-1.42522 -5.16431,0 l -40.110482,40.11047 c -0.16157,0.16158 -0.27693,0.36266 -0.33302,0.5835 l -3.60645,14.1061 c -0.11183,0.43575 0.0148,0.89613 0.33267,1.21391 0.32385,0.32565 0.7941,0.4432 1.21426,0.33309 l 14.10582,-3.6069 c 0.22119,-0.0557 0.42227,-0.17099 0.58349,-0.33264 l 40.110482,-40.1104 c 0,0 0,0 0.001,0 1.42134,-1.42381 1.42134,-3.74051 -0.001,-5.16467"
+       style="fill:#100f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.03527778"
+       id="path46" />
+    <circle
+       r="4.8191967"
+       style="fill:#666666;stroke-width:0.17299679"
+       cy="273.65994"
+       cx="8.4099703"
+       id="path3863-3" />
+    <circle
+       r="3.6852682"
+       style="fill:#666666;stroke-width:0.13229166"
+       cy="287.36157"
+       cx="20.221727"
+       id="path3863-3-6" />
+    <circle
+       style="stroke-width:0.26458332"
+       r="7.3705359"
+       cy="281.88095"
+       cx="14.741072"
+       id="path3863" />
+    <circle
+       r="4.5357146"
+       style="fill:#666666;stroke-width:0.1628205"
+       cy="291.04684"
+       cx="25.796875"
+       id="path3863-3-6-7" />
+  </g>
+</svg>
