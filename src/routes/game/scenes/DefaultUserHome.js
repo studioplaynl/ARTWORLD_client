@@ -113,7 +113,8 @@ export default class DefaultUserHome extends Phaser.Scene {
     async create() {
 
         // for back button
-        ManageSession.locationHistory.push("DefaultUserHome")
+        HistoryTracker.homePush(this)
+        console.log(ManageSession.locationHistory)
 
         //timers
         ManageSession.updateMovementTimer = 0;

@@ -117,13 +117,24 @@ export default class UI_Scene extends Phaser.Scene {
 
       this.backButton.on("pointerup", () => {
         // take out the current location
-        const currentLocationKey = ManageSession.locationHistory.pop();
+        let currentLocationKey = ManageSession.locationHistory.pop();
+        // check if the current location is a house, if true - reassign the value of currentLocationKey 
+        if (currentLocationKey.length == 2) {
+          currentLocationKey = currentLocationKey[0]
+        }
         const currentLocationScene = this.scene.get(currentLocationKey)
         currentLocationScene.physics.pause()
         currentLocationScene.player.setTint(0xff0000)
 
         // get the previous scene
-        const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
+        let previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
+ 
+        let homeID = null // ID is needed in case of the home switch
+        // check if the previous location is a house, if true - reassign the value of previousLocation 
+        if (previousLocation.length == 2) {
+          homeID = previousLocation[1]
+          previousLocation = previousLocation[0]
+        }
 
         ManageSession.socket.rpc("leave", currentLocationKey)
 
@@ -134,7 +145,7 @@ export default class UI_Scene extends Phaser.Scene {
             ManageSession.createPlayer = true
             ManageSession.getStreamUsers("join", previousLocation)
             this.scene.stop(currentLocationKey)
-            this.scene.start(previousLocation)
+            this.scene.start(previousLocation, { user_id: homeID })
           }, 
           callbackScope: this,
           loop: false

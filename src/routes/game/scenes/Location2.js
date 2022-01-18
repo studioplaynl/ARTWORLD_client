@@ -26,7 +26,7 @@ export default class Location2 extends Scene3D {
     this.scene.stop("UI_Scene");
 
     // for back button
-    HistoryTracker.push(this);
+    HistoryTracker.locationPush(this);
 
     const { ground } = await this.third.warpSpeed("-orbitControls");
 
