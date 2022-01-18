@@ -181,8 +181,6 @@ export default class DefaultUserHome extends Phaser.Scene {
             }
         })
 
-<<<<<<< HEAD
-=======
         // on line 289 this object should be destroyed, but showing an error
         this.artworkSpinner = Preloader.runSpinner(this, this.worldSize.x / 2, this.worldSize.y / 2, 400, 400)
         
@@ -201,7 +199,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         // this.spinner.start()
         
->>>>>>> 13cf9e6d5ed5893aa8dbab3c58622ccca98c595a
     }//end create
 
     async downloadArt(element, index) {
