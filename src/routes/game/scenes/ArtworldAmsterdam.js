@@ -284,7 +284,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   createItemsBar() { }
 
   generateHomes() {
-    //check if server query is finished, if there are homes to make
+    //check if server query is finished, then make the home from the list
     if (this.homes != null && this.homesGenerate) {
       console.log("generate homes!");
 
