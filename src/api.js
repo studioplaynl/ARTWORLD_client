@@ -207,7 +207,7 @@ export async function setFullAccount(id, username, password, email, metadata) {
 
 //getAvatar only works reliably via the getAccount call
 export async function getAvatar(avatar_url) {
-  getFile(avatar_url)
+  return getFile(avatar_url)
 }
 
 export async function getFile(file_url) {
