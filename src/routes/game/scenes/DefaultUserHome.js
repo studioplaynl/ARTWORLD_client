@@ -169,13 +169,9 @@ export default class DefaultUserHome extends Phaser.Scene {
         //......... end UI Scene ..............................................................................
 
         // ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
-<<<<<<< HEAD
         
         Preloader.runSpinner(this, this.worldSize.x / 2, this.worldSize.y / 2, 400, 400)
 
-=======
-        console.log()
->>>>>>> 8e1132d924844b9996c6d40f349385eea146a9ee
         await listImages("drawing", this.location, 100).then((rec) => {
             this.userArtServerList = rec
 
