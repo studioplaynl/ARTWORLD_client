@@ -293,7 +293,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async getAccountDetails(array, id) {
 
-
     await getAccount(id).then((rec) => {
       //add values to the homes array // username, url, 
       array['username'] = rec.username
@@ -330,7 +329,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         // parse home description
         let locationDescription = element.user_id.substring(0, 7)
 
-        this.getAccountDetails(element, element.user_id)
+        //! Get avatar of home users
+        // this.getAccountDetails(element, element.user_id)
 
         //create home
         this.homesRepreseneted[index] = new GenerateLocation({
