@@ -164,7 +164,7 @@ export async function getAccount(id, avatar) {
     let user = account.user;
     if(!!!avatar) user.url = await getAvatar(user.avatar_url) //!we need to get avatar.url even when there is an avatar
     user.meta = JSON.parse(user.metadata)
-    console.log(user)
+    //console.log(user)
     Profile.set(user)
     return user
   }else {
@@ -172,7 +172,7 @@ export async function getAccount(id, avatar) {
     console.log(users)
     let user = users.users[0]
     user.url = await getAvatar(user.avatar_url)
-    console.log(user)
+    //console.log(user)
     return user
   }
 }
@@ -199,7 +199,7 @@ export async function setFullAccount(id, username, password, email, metadata) {
   let user  
   const rpcid = "set_full_account";
    user = await client.rpc(Sess, rpcid, payload)
-   console.log(user)
+   //console.log(user)
    Error.update(er => er = "Saved updates")
   return user.payload
 }
@@ -217,8 +217,8 @@ export async function getFile(file_url) {
   await client.rpc(Sess, rpcid, payload)
     .then((fileurl)=> {
       url = fileurl.payload.url
-      console.log("url")
-      console.log(url)
+      //console.log("url")
+      //console.log(url)
       return url
     })
     .catch(()=>{

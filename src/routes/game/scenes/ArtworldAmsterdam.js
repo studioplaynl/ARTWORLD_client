@@ -1,6 +1,6 @@
 import { CONFIG } from "../config.js";
 import ManageSession from "../ManageSession";
-import { listObjects, updateObject, updateObjectAdmin } from "../../../api.js";
+import { getFullAccount, listObjects, convertImage, updateObject, updateObjectAdmin, getAccount, getAvatar } from "../../../api.js";
 
 import PlayerDefault from "../class/PlayerDefault";
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow";
@@ -108,10 +108,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //get a list of homes from users in ArtworldAmsterdam
     await listObjects("home", null, 100).then((rec) => {
       //console.log("rec: ", rec)
-      this.homes = rec;
-      console.log(this.homes);
-      this.homesGenerate = true;
-    });
+      this.homes = rec
+      console.log(this.homes)
+      this.homesGenerate = true
+    })
   }
 
   async create() {
@@ -126,8 +126,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     ManageSession.createPlayer = true;
     //....... end LOAD PLAYER AVATAR .......................................................................
 
-    //Background // the order of creation is the order of drawing: first = bottom ...............................
+    //*check if Liked list exists on server, otherwise create it
+    if (typeof listObjects("Liked", ManageSession.userProfile.id, 10) !== "undefined") {
+      updateObject("Liked", "all", '{}', 2)
+    }
 
+
+    //Background // the order of creation is the order of drawing: first = bottom ...............................
     Background.repeatingDots({
       scene: this,
       gridOffset: 50,
@@ -272,6 +277,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     // updateObject(type, name, value, pub)
 
+
+
     //......... UI Scene  .................................................................................
     this.UI_Scene = this.scene.get("UI_Scene");
     this.scene.launch("UI_Scene");
@@ -283,16 +290,48 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   createItemsBar() { }
 
-  generateHomes() {
+  async getAccountDetails(array, id) {
+
+
+    await getAccount(id).then((rec) => {
+      //add values to the homes array // username, url, 
+      array['username'] = rec.username
+      array['url'] = rec.url
+      this.convertImage(rec.url, 64, "png", array, id)
+      //download 64px icon
+      //first convert url
+      //then download with that url
+
+
+    })
+  }
+
+  async convertImage(array, url, size, format, id) {
+    await convertImage(url, size, format).then((rec) => {
+      console.log(rec)
+      // this.load.spritesheet(
+      //   id + "_avatar_64",
+      //   ManageSession.userProfile.url,
+      //   { frameWidth: 64, frameHeight: 64 }
+      // )
+    })
+  }
+
+  async generateHomes() {
     //check if server query is finished, then make the home from the list
     if (this.homes != null && this.homesGenerate) {
-      console.log("generate homes!");
+      console.log("generate homes!")
 
       this.homes.forEach((element, index) => {
-        console.log(element)
+        // console.log(element)
         // console.log(element.value.posX)
 
-        let locationDescription = element.user_id.substring(0, 7);
+        // parse home description
+        let locationDescription = element.user_id.substring(0, 7)
+
+        this.getAccountDetails(element, element.user_id)
+
+        //create home
         this.homesRepreseneted[index] = new GenerateLocation({
           scene: this,
           userHome: element.user_id,
@@ -314,7 +353,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
           color1: 0xffe31f,
           color2: 0xf2a022,
           color3: 0xf8d80b,
-        });
+        })
+
 
         // console.log(element)
         // console.log(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX))
@@ -326,7 +366,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   generateLocations() {
-    let location1Vector = new Phaser.Math.Vector2(-701.83, -304.33);
+    let location1Vector = new Phaser.Math.Vector2(-701.83, -304.33)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       location1Vector

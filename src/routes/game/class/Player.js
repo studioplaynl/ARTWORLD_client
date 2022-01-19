@@ -1,9 +1,9 @@
 import ManageSession from "../ManageSession";
 import CoordinatesTranslator from "./CoordinatesTranslator";
-import { listObjects, listImages, convertImage } from "../../../api.js";
+import { listObjects, listImages, convertImage, getFullAccount } from "../../../api.js";
 
 class Player {
-  constructor() {}
+  constructor() { }
 
   loadOnlineAvatar(scene) {
     //check if account info is loaded
@@ -706,12 +706,16 @@ class Player {
         //(new) players present in .allConnectedUsers but not in scene.onlinePlayers ->load their avatar and animation
         scene.newOnlinePlayers = [];
         ManageSession.allConnectedUsers.forEach((player) => {
-          const playerID = player.user_id;
+          const playerID = player.user_id
+
+          // see if the player already exists
           const found = scene.onlinePlayers.some(
             (user) => user.user_id === playerID
-          );
-          if (!found) scene.newOnlinePlayers.push(player);
-        });
+          )
+
+          //if player does not exist in onlinePlayers array, then it is a new player
+          if (!found) scene.newOnlinePlayers.push(player)
+        })
         if (scene.debug) {
           console.log("  ");
           console.log("new Online Players");
@@ -850,11 +854,11 @@ class Player {
     scene.selectedOnlinePlayer = onlinePlayer
     // console.log("111", scene.selectedOnlinePlayer.name)
 
-    scene.selectedOnlinePlayer.setInteractive({ useHandCursor: true })  
+    scene.selectedOnlinePlayer.setInteractive({ useHandCursor: true })
 
 
-    scene.selectedOnlinePlayer.on("pointerup", () => {  
-     
+    scene.selectedOnlinePlayer.on("pointerup", () => {
+
 
       if (scene.selectedOnlinePlayer != onlinePlayer) {
         scene.selectedOnlinePlayer = onlinePlayer
@@ -864,28 +868,28 @@ class Player {
 
 
       scene.avatarDetailsContainer = scene.add.container(2500, 2500).setVisible(true)
-      
+
       scene.avatarDetailsBox = scene.add.graphics()
       scene.avatarDetailsContainer.add(scene.avatarDetailsBox)
-      
+
       scene.avatarDetailsBox.fillStyle(0xffffff, 1).lineStyle(3, 0x000000, 1);
       scene.avatarDetailsBox.fillRoundedRect(0, 0, 200, 250, 24).strokeRoundedRect(0, 0, 200, 250, 24);
-  
+
       scene.avatarDetailsCloseButton = scene.add
         .circle(225, -25, 25, 0xffffff)
         .setOrigin(0.5, 0.5)
         .setInteractive({ useHandCursor: true })
         .setStrokeStyle(3, 0x0000);
-          
+
       scene.avatarDetailsCloseImage = scene.add.image(225, -25, "close");
-      
+
       scene.avatarDetailsHouseButton = scene.add
-      .circle(50, 50, 25, 0xffffff)
-      .setOrigin(0.5, 0.5)
-      .setInteractive({ useHandCursor: true })
-      .setStrokeStyle(2, 0x0000);
+        .circle(50, 50, 25, 0xffffff)
+        .setOrigin(0.5, 0.5)
+        .setInteractive({ useHandCursor: true })
+        .setStrokeStyle(2, 0x0000);
       scene.avatarDetailsHouseImage = scene.add.image(50, 50, "home");
-      
+
       scene.input.on("gameobjectdown", (pointer, object) => {
         if (object.anims) {
           // saving the clicked avatar's id (for entering its house, for displaying its artworks, etc.)
@@ -896,45 +900,45 @@ class Player {
 
 
       scene.avatarDetailsHouseButton.on("pointerup", () => {
-          scene.scene.scene.physics.pause();
-          scene.scene.scene.player.setTint(0xff0000);
+        scene.scene.scene.physics.pause();
+        scene.scene.scene.player.setTint(0xff0000);
 
-          ManageSession.socket.rpc("leave", scene.scene.scene.location);
+        ManageSession.socket.rpc("leave", scene.scene.scene.location);
 
-          scene.scene.scene.player.location = "DefaultUserHome";
+        scene.scene.scene.player.location = "DefaultUserHome";
 
-          scene.scene.scene.time.addEvent({
-            delay: 500,
-            callback: () => {
-              ManageSession.location = "DefaultUserHome";
-              ManageSession.createPlayer = true;
-              ManageSession.getStreamUsers("join", "DefaultUserHome");
-              scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
-              if (scene.scene.scene.avatarDetailsID) {
-                scene.scene.scene.scene.start("DefaultUserHome", {
-                  user_id: scene.scene.scene.avatarDetailsID,
-                });
-              } else {
-                scene.scene.scene.scene.start("DefaultUserHome");
-              }
-            },
-            callbackScope: scene,
-            loop: false,
-          });
+        scene.scene.scene.time.addEvent({
+          delay: 500,
+          callback: () => {
+            ManageSession.location = "DefaultUserHome";
+            ManageSession.createPlayer = true;
+            ManageSession.getStreamUsers("join", "DefaultUserHome");
+            scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
+            if (scene.scene.scene.avatarDetailsID) {
+              scene.scene.scene.scene.start("DefaultUserHome", {
+                user_id: scene.scene.scene.avatarDetailsID,
+              });
+            } else {
+              scene.scene.scene.scene.start("DefaultUserHome");
+            }
+          },
+          callbackScope: scene,
+          loop: false,
+        });
       })
 
 
 
-      
+
       scene.avatarDetailsCloseButton.on("pointerup", () => {
         scene.avatarDetailsContainer.setVisible(false)
       })
-      
+
       scene.avatarDetailsContainer.add([scene.avatarDetailsCloseButton, scene.avatarDetailsCloseImage, scene.avatarDetailsHouseButton, scene.avatarDetailsHouseImage])
     })
 
-    
-   
+
+
 
   }
 
@@ -1177,6 +1181,13 @@ class Player {
     scene.playerContainer.x = scene.player.x
     scene.playerContainer.y = scene.player.y
   }
+
+  async getAccountDetails(id) {
+    await getFullAccount(id).then((rec) => {
+      return rec
+    })
+  }
+
 }
 
 export default new Player();
