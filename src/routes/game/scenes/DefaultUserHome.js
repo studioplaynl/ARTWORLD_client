@@ -264,12 +264,22 @@ export default class DefaultUserHome extends Phaser.Scene {
             this.spinner.destroy()
             
             const artFrame = this.textures.get("artFrame_512")
-            //console.log(this.artContainer.x)
-            console.log(coordX)
-            this.artContainer.add(this.add.image(coordX, y + (artFrame.height/2), "bitmap_heart").setOrigin(1,0).setScale(0.5)) 
+            this.artContainer.add(this.add.image(coordX, y + (artFrame.height/2), "bitmap_heart").setOrigin(1,0).setScale(0.5).setInteractive().on('pointerup', this.heartButtonToggle).setData("toggle", false))
+            
+            
         });
     }//end downloadArt
     
+    heartButtonToggle(){
+        let toggle = this.getData("toggle") 
+        if (toggle) {
+            this.setTint(0xffffff)
+            this.setData("toggle", false)
+        } else {
+            this.setTint(0x000000)
+            this.setData("toggle", true)
+        }
+    }
     placeHeartButton(x, y) {
     // place the heart button
         const artFrame = this.textures.get("artFrame_512")
