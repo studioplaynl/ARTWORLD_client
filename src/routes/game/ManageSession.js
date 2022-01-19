@@ -62,7 +62,7 @@ class ManageSession {
     this.updateMovementInterval = 30; //20 fps
 
     //liked artworks list
-    this.allLiked = []
+    this.allLiked
     
   }
 

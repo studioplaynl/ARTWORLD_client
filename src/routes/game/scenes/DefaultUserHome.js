@@ -280,6 +280,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             this.setData("toggle", true)
         }
     }
+    
     placeHeartButton(x, y) {
     // place the heart button
         const artFrame = this.textures.get("artFrame_512")

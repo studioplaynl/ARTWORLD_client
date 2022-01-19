@@ -31,10 +31,15 @@ export default class NetworkBoot extends Phaser.Scene {
   async checkLikeList() {
     //*check if Liked list exists on server, otherwise create it
     Promise.all([listObjects("Liked", ManageSession.userProfile.id, 10)])
-      .then((values) => {
-        ManageSession.allLiked = values[0]
-        //console.log("!!!?!!?!?!?!?", ManageSession.allLiked)
-      })
+      .then((rec) => {
+        console.log(rec[0][0].value)
+        if (rec[0].length > 0){
+        ManageSession.allLiked = rec[0][0].value  
+        } else {
+          ManageSession.allLiked = {}
+          console.log(ManageSession.allLiked)
+        }
+      }) 
  
     // if (typeof  !== "undefined") {
     //   const myCurrent = Promise.all(JSON.parse(updateObject("Liked", "all", '{}', 2)))
