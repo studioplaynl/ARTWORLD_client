@@ -17,12 +17,12 @@ class ManageSession {
     this.addressbook
     this.favorites
 
-    this.client;
-    this.socket;
+    this.client
+    this.socket
 
-    this.joined;
-    this.useSSL = SSL;
-    this.verboseLogging = false;
+    this.joined
+    this.useSSL = SSL
+    this.verboseLogging = false
 
     this.match;
     this.matchID;
@@ -60,6 +60,10 @@ class ManageSession {
     //timers
     this.updateMovementTimer = 0;
     this.updateMovementInterval = 30; //20 fps
+
+    //liked artworks list
+    this.allLiked = []
+    
   }
 
   // getProfile(){

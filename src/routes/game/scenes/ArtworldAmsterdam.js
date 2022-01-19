@@ -127,11 +127,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     ManageSession.createPlayer = true;
     //....... end LOAD PLAYER AVATAR .......................................................................
 
-    //*check if Liked list exists on server, otherwise create it
-    if (typeof listObjects("Liked", ManageSession.userProfile.id, 10) !== "undefined") {
-      updateObject("Liked", "all", '{}', 2)
-    }
-
 
     //Background // the order of creation is the order of drawing: first = bottom ...............................
     Background.repeatingDots({

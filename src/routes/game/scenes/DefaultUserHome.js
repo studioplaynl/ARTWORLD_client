@@ -198,7 +198,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         const imgSize = this.artDisplaySize.toString()
         const fileFormat = "png"
         const key = `${element.key}_${imgSize}`
-        const coordX = index == 0 ? this.artDisplaySize / 2 : (this.artDisplaySize / 2) + (index * (this.artDisplaySize + 38))
+        const coordX = index == 0 ? this.artDisplaySize : (this.artDisplaySize) + (index * (this.artDisplaySize + 38))
         this.artContainer = this.add.container(0, 0);
 
         const y = 300
@@ -206,10 +206,10 @@ export default class DefaultUserHome extends Phaser.Scene {
         if (this.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
 
             // adds a frame to the container
-            this.artContainer.add(this.add.image(coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
+            this.artContainer.add(this.add.image(coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0.5))
 
             // adds the image to the container
-            const setImage = this.add.image(coordX, y, key)
+            const setImage = this.add.image(coordX - this.artDisplaySize / 2, y, key).setOrigin(0.5)
             this.artContainer.add(setImage)
             this.spinner.destroy()
             
@@ -250,10 +250,10 @@ export default class DefaultUserHome extends Phaser.Scene {
             const currentImage = this.progress.find(element => element.key == key)
 
             // adds a frame to the container
-            this.artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0, 0.5))
+            this.artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0.5))
 
             // adds the image to the container
-            const completedImage = this.add.image(currentImage.coordX, y, currentImage.key)
+            const completedImage = this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, currentImage.key).setOrigin(0.5)
             this.artContainer.add(completedImage)
         })
 
@@ -262,10 +262,20 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBox.destroy()
             this.progress = []
             this.spinner.destroy()
+            
+            const artFrame = this.textures.get("artFrame_512")
+            //console.log(this.artContainer.x)
+            console.log(coordX)
+            this.artContainer.add(this.add.image(coordX, y + (artFrame.height/2), "bitmap_heart").setOrigin(1,0).setScale(0.5)) 
         });
     }//end downloadArt
-
-
+    
+    placeHeartButton(x, y) {
+    // place the heart button
+        const artFrame = this.textures.get("artFrame_512")
+        x = x + artFrame.width+5
+        this.artContainer.add(this.add.image(x, y, "bitmap_heart")) 
+    }
 
     update(time, delta) {
         //...... ONLINE PLAYERS ................................................
