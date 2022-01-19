@@ -179,8 +179,14 @@ export default class DefaultUserHome extends Phaser.Scene {
             if (this.userArtServerList.length > 0) {
                 this.userArtServerList.forEach((element, index) => {
 
+
+
+
+                    
                     this.downloadArt(element, index)
                 })
+            } else {
+                this.spinner.destroy()
             }
         })
         
