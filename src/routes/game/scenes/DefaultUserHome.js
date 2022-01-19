@@ -113,7 +113,8 @@ export default class DefaultUserHome extends Phaser.Scene {
     async create() {
 
         // for back button
-        ManageSession.locationHistory.push("DefaultUserHome")
+        HistoryTracker.homePush(this)
+        console.log(ManageSession.locationHistory)
 
         //timers
         ManageSession.updateMovementTimer = 0;
@@ -178,8 +179,14 @@ export default class DefaultUserHome extends Phaser.Scene {
             if (this.userArtServerList.length > 0) {
                 this.userArtServerList.forEach((element, index) => {
 
+
+
+
+                    
                     this.downloadArt(element, index)
                 })
+            } else {
+                this.spinner.destroy()
             }
         })
         

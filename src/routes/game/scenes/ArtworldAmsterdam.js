@@ -116,7 +116,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async create() {
     // for back button
-    HistoryTracker.push(this);
+    HistoryTracker.locationPush(this);
+    console.log(ManageSession.locationHistory)
 
     //timers
     ManageSession.updateMovementTimer = 0;
