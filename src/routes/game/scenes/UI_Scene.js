@@ -120,8 +120,8 @@ export default class UI_Scene extends Phaser.Scene {
         let currentLocationKey = ManageSession.locationHistory.pop();
         // check if the current location is a home, if true - reassign the value of currentLocationKey by "DefaultUserHome"
         // note: when a player enters a house, an array with two elements: ["DefaultUserHome", "homeID"] is pushed, instead of location name only. 
-        if (currentLocationKey.length == 2) {
-          currentLocationKey = currentLocationKey[0]
+        if (currentLocationKey.locationName && currentLocationKey.homeID) {
+          currentLocationKey = currentLocationKey.locationName
         }
         const currentLocationScene = this.scene.get(currentLocationKey)
         currentLocationScene.physics.pause()
@@ -132,9 +132,9 @@ export default class UI_Scene extends Phaser.Scene {
         let homeID = null
         // check if the previous location is a house, if true - reassign the value of previousLocation 
         // and store the home's ID, since it is needed for entering a specific home
-        if (previousLocation.length == 2) {
-          homeID = previousLocation[1]
-          previousLocation = previousLocation[0]
+        if (previousLocation.locationName && previousLocation.homeID) {
+          homeID = previousLocation.homeID
+          previousLocation = previousLocation.locationName
         }
 
         ManageSession.socket.rpc("leave", currentLocationKey)
