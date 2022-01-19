@@ -3,7 +3,7 @@
   import { Switch } from "attractions";
   import { location, replace } from "svelte-spa-router";
   import { onMount, beforeUpdate } from "svelte";
-  import { uploadImage, user, uploadAvatar, uploadHouse } from "../../api.js";
+  import { uploadImage, user, uploadAvatar, uploadHouse,getObject } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session, Profile } from "../../session.js";
   import NameGenerator from "../components/nameGenerator.svelte";
@@ -21,6 +21,7 @@
   import CopyIcon from "svelte-icons/fa/FaCopy.svelte";
   import PasteIcon from "svelte-icons/fa/FaPaste.svelte";
   import ColorSelectIcon from "svelte-icons/io/IoMdColorPalette.svelte"
+import App from "../../App.svelte";
 
   export let params = {};
   let history = [],
@@ -41,14 +42,20 @@
     showBackground = true;
   let fillColor = "#f00", fillTolerance = 2;
   let current = "draw";
-  if (!!params.name) title = params.name.split(".")[0];
+  if (!!params.name) title = params.name.split("_")[1];
   let saved = false;
   let saveToggle = false,
     colorToggle = true;
   const statussen = ["zichtbaar", "verborgen"];
   let status = "zichtbaar";
   let appType = $location.split("/")[1];
-
+  let version = 0
+  if(!!params.name){
+    version = (Number(params.name.split("_")[0])+1)
+  }
+ 
+  console.log("version:" + version)
+  console.log("title: " + title)
   onMount(() => {
     const autosave = setInterval(() => {
       if (!saved) {
@@ -303,7 +310,7 @@
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      await uploadImage(title, appType, json, blobData, status);
+      await uploadImage(title, appType, json, blobData, status,version);
       saved = true;
       saving = false
     }
@@ -339,7 +346,7 @@
         console.log(Image);
         var blobData = dataURItoBlob(Image);
         json = JSON.stringify(frames);
-        await uploadImage(title, appType, json, blobData, status);
+        await uploadImage(title, appType, json, blobData, status,version);
         saving = false
 
     }
@@ -351,7 +358,7 @@
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      await uploadHouse(json, blobData);
+      await uploadHouse(json, blobData,version);
       // title = $Profile.meta.azc
       // status = true;
       // await uploadImage(title, appType, json, blobData, status);
@@ -394,7 +401,7 @@
     }
     if (appType != "avatar" && appType != "house") {
       if (!!params.name && !!params.user) {
-        title = params.name.split(".")[0];
+        //title = params.name.split(".")[0];
         status = params.status;
         var jsonURL = await getDrawing(
           `/${appType}/${params.user}/${params.name}.json`
@@ -417,12 +424,19 @@
       }
     }else {
       if(appType == "avatar"){
-        var jsonURL = await getDrawing(
-            `/avatar/${$Session.user_id}/current.json`
-          );
+        var jsonURL = await getDrawing($Profile.avatar_url.split(".")[0] + ".json");
+        version = Number($Profile.avatar_url.split("/")[2].split("_")[0])+1
+        console.log("version" + version)  
       }else {
+        let drawing = await getObject("home", $Profile.meta.azc)
+        console.log(drawing.value.url)
+        // get item
+        // extract version
+        version = Number(drawing.value.url.split("/")[2].split("_")[0]) + 1
+        console.log(version)
+        // open file
         var jsonURL = await getDrawing(
-          `/home/${$Session.user_id}/current.json`
+          drawing.value.url.split(".")[0] +`.json`
         );
       }
         console.log(jsonURL);
@@ -645,7 +659,7 @@
       console.log(Image);
       var blobData = dataURItoBlob(Image);
       json = JSON.stringify(frames);
-      uploadAvatar(blobData,json);
+      uploadAvatar(blobData,json, version);
     }, 300);
   }
 
