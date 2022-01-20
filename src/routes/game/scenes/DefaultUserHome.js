@@ -1,6 +1,6 @@
 import { CONFIG } from "../config.js";
 import ManageSession from "../ManageSession"
-import { listObjects, listImages, convertImage } from '../../../api.js'
+import { updateObject, listImages, convertImage } from '../../../api.js'
 
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
@@ -170,7 +170,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         //......... end UI Scene ..............................................................................
 
         // ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
-        
+
         Preloader.runSpinner(this, this.worldSize.x / 2, this.worldSize.y / 2, 400, 400)
 
         await listImages("drawing", this.location, 100).then((rec) => {
@@ -184,7 +184,7 @@ export default class DefaultUserHome extends Phaser.Scene {
                 this.spinner.destroy()
             }
         })
-        
+
     }//end create
 
     async downloadArt(element, index) {
@@ -206,7 +206,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             const setImage = this.add.image(coordX - this.artDisplaySize / 2, y, keyImgUrl).setOrigin(0.5)
             this.artContainer.add(setImage)
             this.spinner.destroy()
-            
+
         } else { // otherwise download the image and add it
 
             const convertedImage = await convertImage(keyImgUrl, imgSize, fileFormat)
@@ -220,6 +220,8 @@ export default class DefaultUserHome extends Phaser.Scene {
         }
 
         this.placeHeartButton(coordX, y, keyImgUrl)
+
+
 
         const progressBox = this.add.graphics()
         const progressBar = this.add.graphics()
@@ -260,17 +262,18 @@ export default class DefaultUserHome extends Phaser.Scene {
             this.spinner.destroy()
         })
     }//end downloadArt
-    
-    heartButtonToggle(imgKey, button){
+
+    heartButtonToggle(imgKey, button) {
         // console.log(button)
         // console.log(imgKey)
-        let toggle = button.getData("toggle") 
+        let toggle = button.getData("toggle")
 
         if (toggle) {
             //changing to black, not liked
             button.setTint(0xffffff)
             button.setData("toggle", false)
             ManageSession.allLiked[imgKey] = imgKey
+
             console.log("turnedRED")
         } else {
             //changing to red, liked
@@ -280,19 +283,26 @@ export default class DefaultUserHome extends Phaser.Scene {
             console.log("turnedBLACK")
             delete ManageSession.allLiked[imgKey]
         }
-         console.log(ManageSession.allLiked)
+        console.log(ManageSession.allLiked)
+
+        const type = "Liked"
+        const name = type + "_" + ManageSession.userProfile.id
+        const pub = 2
+        const value = ManageSession.allLiked
+
+        updateObject(type, name, value, pub)
     }
-    
+
     placeHeartButton(x, y, keyImg) {
         const artFrame = this.textures.get("artFrame_512")
-        let currentHeart = this.add.image(x, y + (artFrame.height/2), "bitmap_heart").setOrigin(1,0).setScale(0.5)
+        let currentHeart = this.add.image(x, y + (artFrame.height / 2), "bitmap_heart").setOrigin(1, 0).setScale(0.5)
             .setInteractive()
             .setData("toggle", false)
-            .on('pointerup', () => {this.heartButtonToggle(keyImg, currentHeart)})
-            
+            .on('pointerup', () => { this.heartButtonToggle(keyImg, currentHeart) })
+
         this.artContainer.add(currentHeart)
         // if this image's key is not inside of the array
-            // then tint the respective heart 
+        // then tint the respective heart 
         // const myObj = {
         //     a: 'drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png'
         // }
@@ -304,7 +314,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             currentHeart.setTint(0x000000)
             currentHeart.setData("toggle", true)
         }
-        
+
     }
 
     update(time, delta) {
