@@ -270,7 +270,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             //changing to black, not liked
             button.setTint(0xffffff)
             button.setData("toggle", false)
-
+            ManageSession.allLiked[imgKey] = imgKey
             console.log("turnedRED")
         } else {
             //changing to red, liked
