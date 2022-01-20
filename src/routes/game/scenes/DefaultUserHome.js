@@ -175,14 +175,9 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         await listImages("drawing", this.location, 100).then((rec) => {
             this.userArtServerList = rec
-
+            console.log("images", this.userArtServerList)
             if (this.userArtServerList.length > 0) {
                 this.userArtServerList.forEach((element, index) => {
-
-
-
-
-                    
                     this.downloadArt(element, index)
                 })
             } else {
@@ -194,36 +189,37 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     async downloadArt(element, index) {
 
-        const imgUrl = element.value.url
+        const keyImgUrl = element.value.url
         const imgSize = this.artDisplaySize.toString()
         const fileFormat = "png"
-        const key = `${element.key}_${imgSize}`
         const coordX = index == 0 ? this.artDisplaySize : (this.artDisplaySize) + (index * (this.artDisplaySize + 38))
         this.artContainer = this.add.container(0, 0);
 
-        const y = 300
+        const y = 500
 
-        if (this.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
+        if (this.textures.exists(keyImgUrl)) { // if the image has already downloaded, then add image by using the key
 
             // adds a frame to the container
             this.artContainer.add(this.add.image(coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0.5))
 
             // adds the image to the container
-            const setImage = this.add.image(coordX - this.artDisplaySize / 2, y, key).setOrigin(0.5)
+            const setImage = this.add.image(coordX - this.artDisplaySize / 2, y, keyImgUrl).setOrigin(0.5)
             this.artContainer.add(setImage)
             this.spinner.destroy()
             
         } else { // otherwise download the image and add it
 
-            this.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+            const convertedImage = await convertImage(keyImgUrl, imgSize, fileFormat)
 
             // for tracking each file in progress
-            this.progress.push({ key, coordX })
+            this.progress.push({ keyImgUrl, coordX })
 
-            this.load.image(key, this.artUrl[index])
+            this.load.image(keyImgUrl, convertedImage)
 
             this.load.start() // load the image in memory
         }
+
+        this.placeHeartButton(coordX, y, keyImgUrl)
 
         const progressBox = this.add.graphics()
         const progressBar = this.add.graphics()
@@ -238,7 +234,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBox.fillStyle(0x000000, 1)
             progressBar.fillStyle(0xFFFFFF, 1)
 
-            const progressedImage = this.progress.find(element => element.key == file.key)
+            const progressedImage = this.progress.find(element => element.keyImgUrl == file.key)
 
             progressBox.fillRect(progressedImage.coordX - progressWidth / 2, y, progressWidth, progressHeight)
             progressBar.fillRect(progressedImage.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
@@ -247,13 +243,13 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.load.on('filecomplete', (key) => {
 
-            const currentImage = this.progress.find(element => element.key == key)
+            const currentImage = this.progress.find(element => element.keyImgUrl == key)
 
             // adds a frame to the container
             this.artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0.5))
 
             // adds the image to the container
-            const completedImage = this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, currentImage.key).setOrigin(0.5)
+            const completedImage = this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, currentImage.keyImgUrl).setOrigin(0.5)
             this.artContainer.add(completedImage)
         })
 
@@ -262,11 +258,6 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBox.destroy()
             this.progress = []
             this.spinner.destroy()
-            
-            const artFrame = this.textures.get("artFrame_512")
-            this.artContainer.add(this.add.image(coordX, y + (artFrame.height/2), "bitmap_heart").setOrigin(1,0).setScale(0.5).setInteractive().on('pointerup', this.heartButtonToggle).setData("toggle", false))
-            
-            
         });
     }//end downloadArt
     
@@ -281,11 +272,27 @@ export default class DefaultUserHome extends Phaser.Scene {
         }
     }
     
-    placeHeartButton(x, y) {
-    // place the heart button
+    placeHeartButton(x, y, keyImg) {
         const artFrame = this.textures.get("artFrame_512")
-        x = x + artFrame.width+5
-        this.artContainer.add(this.add.image(x, y, "bitmap_heart")) 
+        const currentHeart = this.add.image(x, y + (artFrame.height/2), "bitmap_heart").setOrigin(1,0).setScale(0.5)
+            .setInteractive()
+            .on('pointerup', this.heartButtonToggle)
+            .setData("toggle", false)
+        this.artContainer.add(currentHeart)
+        // if this image's key is not inside of the array
+            // then tint the respective heart 
+        // const myObj = {
+        //     a: 'drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png'
+        // }
+
+        if (Object.values(ManageSession.allLiked).indexOf(keyImg) > -1) {
+            currentHeart.setTint(0xffffff)
+            currentHeart.setData("toggle", false)
+        } else {
+            currentHeart.setTint(0x000000)
+            currentHeart.setData("toggle", true)
+        }
+        
     }
 
     update(time, delta) {
