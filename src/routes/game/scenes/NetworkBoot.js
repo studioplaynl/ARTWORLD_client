@@ -40,8 +40,8 @@ export default class NetworkBoot extends Phaser.Scene {
         ManageSession.allLiked = rec[0][0].value  
         } else {
           // console.log("checkLikeList22222")
-          ManageSession.allLiked = { a: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png", 
-          b: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png"}
+          ManageSession.allLiked = { "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png": "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png", 
+          "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png": "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png"}
           // console.log(ManageSession.allLiked)
         }
       }) 

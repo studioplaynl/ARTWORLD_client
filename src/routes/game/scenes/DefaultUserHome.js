@@ -261,24 +261,35 @@ export default class DefaultUserHome extends Phaser.Scene {
         })
     }//end downloadArt
     
-    heartButtonToggle(){
-        let toggle = this.getData("toggle") 
+    heartButtonToggle(imgKey, button){
+        // console.log(button)
+        // console.log(imgKey)
+        let toggle = button.getData("toggle") 
+
         if (toggle) {
-            //black, not
-            this.setTint(0xffffff)
-            this.setData("toggle", false)
+            //changing to black, not liked
+            button.setTint(0xffffff)
+            button.setData("toggle", false)
+
+            console.log("turnedRED")
         } else {
-            this.setTint(0x000000)
-            this.setData("toggle", true)
+            //changing to red, liked
+            button.setTint(0x000000)
+            button.setData("toggle", true)
+
+            console.log("turnedBLACK")
+            delete ManageSession.allLiked[imgKey]
         }
+         console.log(ManageSession.allLiked)
     }
     
     placeHeartButton(x, y, keyImg) {
         const artFrame = this.textures.get("artFrame_512")
-        const currentHeart = this.add.image(x, y + (artFrame.height/2), "bitmap_heart").setOrigin(1,0).setScale(0.5)
+        let currentHeart = this.add.image(x, y + (artFrame.height/2), "bitmap_heart").setOrigin(1,0).setScale(0.5)
             .setInteractive()
-            .on('pointerup', this.heartButtonToggle)
             .setData("toggle", false)
+            .on('pointerup', () => {this.heartButtonToggle(keyImg, currentHeart)})
+            
         this.artContainer.add(currentHeart)
         // if this image's key is not inside of the array
             // then tint the respective heart 
