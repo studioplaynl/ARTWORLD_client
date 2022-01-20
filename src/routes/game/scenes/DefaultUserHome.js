@@ -258,12 +258,13 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBox.destroy()
             this.progress = []
             this.spinner.destroy()
-        });
+        })
     }//end downloadArt
     
     heartButtonToggle(){
         let toggle = this.getData("toggle") 
         if (toggle) {
+            //black, not
             this.setTint(0xffffff)
             this.setData("toggle", false)
         } else {
