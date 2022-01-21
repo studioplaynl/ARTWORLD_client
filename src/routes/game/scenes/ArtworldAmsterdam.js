@@ -218,12 +218,14 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
       this.playerAvatarPlaceholder
-    );
+    )
+    this.player.setDepth(200)
 
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
       texture: this.playerAvatarPlaceholder,
-    });
+    })
+    this.playerShadow.setDepth(199)
     //.......  end PLAYER ................................................................................
 
     //....... onlinePlayers ..............................................................................
@@ -286,17 +288,11 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     Player.createItemsBarOnlinePlayer(this)
     this.avatarDetailsContainer.setDepth(999)
     this.avatarDetailsContainer.iterate(element => {
-      element.setVisible(true); console.log(element)
+      element.setVisible(false)
     })
-
-
-
     // this.itemsBarOnlinePlayer.iterate(this.itemsBarOnlinePlayerCallback)// arr.forEach(element => { element.setDepth(400); console.log(element) })
   } //end create
 
-  itemsBarOnlinePlayerCallback() {
-    console.log("HELLOO!!!")
-  }
   createItemsBar() { }
 
   async getAccountDetails(array, id) {
@@ -309,8 +305,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       //download 64px icon
       //first convert url
       //then download with that url
-
-
     })
   }
 
@@ -364,7 +358,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
           color3: 0xf8d80b,
         })
 
-        this.homesRepreseneted[index].setDepth(200)
+        this.homesRepreseneted[index].setDepth(150)
         // console.log(element)
         // console.log(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX))
         // console.log(CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY))
@@ -458,7 +452,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       color2: 0x3f8403,
       color3: 0x63a505,
     })
-    this.mario_star.setDepth(301)
+    this.mario_star.setDepth(140)
 
     //* music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
   }
