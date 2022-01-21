@@ -326,26 +326,26 @@ class Player {
 
         // entering the home of the avatar
         scene.homeButtonCircle.on("pointerup", () => {
-          scene.scene.scene.physics.pause();
-          scene.scene.scene.player.setTint(0xff0000);
+          scene.physics.pause();
+          scene.player.setTint(0xff0000);
 
-          ManageSession.socket.rpc("leave", scene.scene.scene.location);
+          ManageSession.socket.rpc("leave", scene.location);
 
-          scene.scene.scene.player.location = "DefaultUserHome";
+          scene.player.location = "DefaultUserHome";
 
-          scene.scene.scene.time.addEvent({
+          scene.time.addEvent({
             delay: 500,
             callback: () => {
               ManageSession.location = "DefaultUserHome";
               ManageSession.createPlayer = true;
               ManageSession.getStreamUsers("join", "DefaultUserHome");
-              scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
-              if (scene.scene.scene.selectedPlayerID) {
-                scene.scene.scene.scene.start("DefaultUserHome", {
-                  user_id: scene.scene.scene.selectedPlayerID,
+              scene.scene.stop(scene.scene.key);
+              if (scene.selectedPlayerID) {
+                scene.scene.start("DefaultUserHome", {
+                  user_id: scene.selectedPlayerID,
                 });
               } else {
-                scene.scene.scene.scene.start("DefaultUserHome");
+                scene.scene.start("DefaultUserHome");
               }
             },
             callbackScope: scene,
