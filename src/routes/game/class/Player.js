@@ -763,7 +763,7 @@ class Player {
             //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
             .setDepth(90)
           element.setInteractive({ useHandCursor: true })
-          element.on('pointerup', () => { this.itemsbarOnlinePlayer(scene, element) })
+          element.on('pointerup', () => { this.itemsBarOnlinePlayer(scene, element) })
 
           element.setData("movingKey", "moving");
           element.setData("stopKey", "stop");
@@ -826,7 +826,7 @@ class Player {
 
             const player = scene.onlinePlayers[i]
             player.setInteractive({ useHandCursor: true })
-            player.on('pointerup', () => { this.itemsbarOnlinePlayer(scene, player) })
+            player.on('pointerup', () => { this.itemsBarOnlinePlayer(scene, player) })
 
           } //for (let i = 0; i < scene.onlinePlayers.length; i++)
         }); //scene.load.on('filecomplete', () =>
@@ -854,7 +854,7 @@ class Player {
     } //if (ManageSession.createdPlayer)
   } //loader
 
-  itemsbarOnlinePlayer(scene, onlinePlayer) {
+  itemsBarOnlinePlayer(scene, onlinePlayer) {
     scene.avatarDetailsContainer.setVisible(true)
     scene.onlinePlayerID = onlinePlayer.anims.currentFrame.textureKey.split("_")[0];
   }
@@ -900,53 +900,39 @@ class Player {
       .setStrokeStyle(2, 0x0000)
       .on("pointerup", () => {
         console.log(scene.onlinePlayerID)
+        if (scene.onlinePlayerID) {
+          scene.scene.scene.physics.pause();
+          scene.scene.scene.player.setTint(0xff0000);
 
+          ManageSession.socket.rpc("leave", scene.scene.scene.location);
 
+          scene.scene.scene.player.location = "DefaultUserHome";
 
+          scene.scene.scene.time.addEvent({
+            delay: 500,
+            callback: () => {
+              ManageSession.location = "DefaultUserHome";
+              ManageSession.createPlayer = true;
+              ManageSession.getStreamUsers("join", "DefaultUserHome");
+              scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
+              if (scene.scene.scene.onlinePlayerID) {
+                scene.scene.scene.scene.start("DefaultUserHome", {
+                  user_id: scene.scene.scene.onlinePlayerID,
+                });
+              } else {
+                scene.scene.scene.scene.start("DefaultUserHome");
+              }
+            },
+            callbackScope: scene,
+            loop: false,
+          });
+        }
       })
     scene.avatarDetailsContainer.add(scene.avatarDetailsHouseButton)
 
     scene.avatarDetailsHouseImage = scene.add.image(50, 50, "home")
     scene.avatarDetailsContainer.add(scene.avatarDetailsHouseImage)
 
-
-    // scene.avatarDetailsContainer.iterate((element) => console.log("heh", element))
-    // scene.input.on("gameobjectdown", (pointer, object) => {
-    //   if (object.anims) {
-    //     // saving the clicked avatar's id (for entering its house, for displaying its artworks, etc.)
-    //     scene.avatarDetailsID =
-    //       object.anims.currentFrame.textureKey.split("_")[0];
-    //   }
-    // });
-
-
-    // scene.avatarDetailsHouseButton.on("pointerup", () => {
-    //   scene.scene.scene.physics.pause();
-    //   scene.scene.scene.player.setTint(0xff0000);
-
-    //   ManageSession.socket.rpc("leave", scene.scene.scene.location);
-
-    //   scene.scene.scene.player.location = "DefaultUserHome";
-
-    //   scene.scene.scene.time.addEvent({
-    //     delay: 500,
-    //     callback: () => {
-    //       ManageSession.location = "DefaultUserHome";
-    //       ManageSession.createPlayer = true;
-    //       ManageSession.getStreamUsers("join", "DefaultUserHome");
-    //       scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
-    //       if (scene.scene.scene.avatarDetailsID) {
-    //         scene.scene.scene.scene.start("DefaultUserHome", {
-    //           user_id: scene.scene.scene.avatarDetailsID,
-    //         });
-    //       } else {
-    //         scene.scene.scene.scene.start("DefaultUserHome");
-    //       }
-    //     },
-    //     callbackScope: scene,
-    //     loop: false,
-    //   });
-    // })
   }
 
   attachtAvatarToOnlinePlayer(scene, player, preExisting) {
