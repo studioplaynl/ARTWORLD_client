@@ -6,6 +6,7 @@
   import SvelteTable from "svelte-table";
   import StatusComp from "./components/statusbox.svelte"
   import DeleteComp from "./components/deleteButton.svelte"
+  import NameEdit from "./components/nameEdit.svelte"
   import {Card} from "attractions"
 
   export let params = {}
@@ -58,7 +59,7 @@
       {
         key: "title",
         title: "Title",
-        value: v => `<a href='/#/${v.url}'>${v.key}</a>`
+        renderComponent: {component: NameEdit, props: {isCurrentUser}}
       },
       {
         key: "Datum",

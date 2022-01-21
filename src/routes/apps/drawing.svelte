@@ -48,10 +48,11 @@ import App from "../../App.svelte";
     colorToggle = true;
   const statussen = ["zichtbaar", "verborgen"];
   let status = "zichtbaar";
+  let displayName;
   let appType = $location.split("/")[1];
   let version = 0
   if(!!params.name){
-    version = (Number(params.name.split("_")[0])+1)
+    version = (Number(params.name.split("_")[0])+1) || 0
   }
  
   console.log("version:" + version)
@@ -310,7 +311,11 @@ import App from "../../App.svelte";
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      await uploadImage(title, appType, json, blobData, status,version);
+      if(!!!displayName){
+        displayName = title
+        title = Date.now() + "_" + title
+      }
+      await uploadImage(title, appType, json, blobData, status,version,displayName);
       saved = true;
       saving = false
     }
@@ -401,11 +406,16 @@ import App from "../../App.svelte";
     }
     if (appType != "avatar" && appType != "house") {
       if (!!params.name && !!params.user) {
+        let Object = await getObject(appType, params.name, params.user)
+        title = Object.key
+        console.log(Object)
+
         //title = params.name.split(".")[0];
-        status = params.status;
-        var jsonURL = await getDrawing(
-          `/${appType}/${params.user}/${params.name}.json`
-        );
+        displayName = Object.value.displayname
+        status = Object.status;
+        let url = Object.value.json
+        version = Number(Object.value.version) +1
+        var jsonURL = await getDrawing(url);
         console.log(jsonURL);
         fetch(jsonURL)
           .then((res) => res.json())
@@ -423,6 +433,7 @@ import App from "../../App.svelte";
         replace($location + "/" + $Session.user_id);
       }
     }else {
+      
       if(appType == "avatar"){
         var jsonURL = await getDrawing($Profile.avatar_url.split(".")[0] + ".json");
         version = Number($Profile.avatar_url.split("/")[2].split("_")[0])+1
@@ -452,7 +463,7 @@ import App from "../../App.svelte";
             }
           })
           .catch((err) => console.log(err));
-    }
+     }
   };
 
   function dataURItoBlob(dataURI) {
@@ -1083,7 +1094,8 @@ import App from "../../App.svelte";
           class="icon"
           class:currentSelected={current === "saveToggle"}
           on:click={() => {
-            if(appType == "drawing" || appType == "stopmotion"){
+            if((appType == "drawing" || appType == "stopmotion") && version == 0){
+              console.log("versoionn"+ version)
             saveToggle = !saveToggle;
             current = "saveToggle";
             } else {

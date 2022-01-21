@@ -1,3 +1,4 @@
+import { date } from "svelte-i18n";
 import { client } from "./nakama.svelte"
 import { Session,Profile, Error } from "./session.js"
 
@@ -14,16 +15,17 @@ Profile.subscribe(value => {
   prof = value;
 });
 
-export async function uploadImage(name, type, json, img, status, version) {
+export async function uploadImage(name, type, json, img, status, version, displayName) {
   console.log(Sess)
   console.log("type: " + type)
   console.log("name: " + name)
   console.log(img)
+  console.log(displayName)
 
   var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png",version)
   var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json",version)
   console.log(jpegURL + jsonURL)
-  var value = { "url": jpegLocation, "json": jsonLocation, "version": version};
+  var value = { "url": jpegLocation, "json": jsonLocation, "version": version, "displayname": displayName};
   if(status == "zichtbaar"){
     pub = true
   }else{
@@ -47,6 +49,15 @@ export async function uploadImage(name, type, json, img, status, version) {
   })
   await updateObject(type, name, value,pub)
   Error.update(er => er = "Saved")
+}
+
+export async function updateTitle(collection, key, name, userID){
+  if(!!!userID) userID = Sess.user_id
+  let Object = await getObject(collection, key, userID)
+  console.log(Object)
+  console.log("displayName: " + name)
+  Object.value.displayname = name
+  await updateObject(collection, key, Object.value,Object.permission_read)
 }
 
 export async function listImages(type, user, limit) {
@@ -136,12 +147,12 @@ export async function listObjects(type, userID, limit) {
 
 
 
-export async function getObject(collection, type, userID) {
+export async function getObject(collection, key, userID) {
   if(!!!userID) userID = Sess.user_id
   const objects = await client.readStorageObjects(Sess, {
     "object_ids": [{
       "collection": collection,
-      "key": type,
+      "key": key,
       "user_id": userID
     }]
   });
