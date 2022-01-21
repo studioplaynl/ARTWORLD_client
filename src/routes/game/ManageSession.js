@@ -7,13 +7,14 @@ class ManageSession {
   constructor() {
     this.debug = true
 
-    this.sessionStored;
+    this.sessionStored
     this.freshSession
     this.userProfile
     this.user_id
-    this.username;
+    this.username
 
     this.itemsBar
+    this.itemsBarOnlinePlayer
     this.addressbook
     this.favorites
 
@@ -63,7 +64,7 @@ class ManageSession {
 
     //liked artworks list
     this.allLiked
-    
+
   }
 
   // getProfile(){

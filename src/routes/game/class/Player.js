@@ -855,46 +855,62 @@ class Player {
   } //loader
 
   itemsbarOnlinePlayer(scene, onlinePlayer) {
+    scene.avatarDetailsContainer.setVisible(true)
+    scene.onlinePlayerID = onlinePlayer.anims.currentFrame.textureKey.split("_")[0];
+  }
 
+  createItemsBarOnlinePlayer(scene) {
     //display and populate the items bar
     //x, y
-    //scene.sys.game.canvas.width = right side of the screen, so we subtract width of the items bar to get x
+    //player.x is in the middle of the screen, we use that with an offset 
     //scene.sys.game.canvas.height = bottom of the screen, so we subtract height of the items bar to get y
 
     const itemsBarWidth = 200
     const itemsBarHeight = 250
     const zoomFactor = scene.UI_Scene.currentZoom
-    console.log(zoomFactor)
+    // console.log(zoomFactor)
     const itemsBarX = scene.player.x + (itemsBarWidth * 1.4)
-    const itemsBarY = (scene.player.y + ((scene.sys.game.canvas.height / 2) / zoomFactor)) - itemsBarHeight
+    const itemsBarY = (scene.player.y + ((scene.sys.game.canvas.height / 2) / zoomFactor)) - itemsBarHeight - 30
 
     // console.log(scene.sys.game.canvas.width, scene.sys.game.canvas.height)
     scene.avatarDetailsContainer = scene.add.container(itemsBarX, itemsBarY)
 
     scene.avatarDetailsBox = scene.add.graphics()
     scene.avatarDetailsBox.fillStyle(0xffffff, 1).lineStyle(3, 0x000000, 1)
-    scene.avatarDetailsBox.fillRoundedRect(0, 0, itemsBarWidth, itemsBarHeight, 24).strokeRoundedRect(0, 0, itemsBarWidth, itemsBarHeight, 24);
+    scene.avatarDetailsBox.fillRoundedRect(0, 0, itemsBarWidth, itemsBarHeight, 24).strokeRoundedRect(0, 0, itemsBarWidth, itemsBarHeight, 24)
     scene.avatarDetailsContainer.add(scene.avatarDetailsBox)
 
-    // scene.avatarDetailsCloseButton = scene.add
-    //   .circle(-25, -25, 25, 0xffffff)
-    //   .setOrigin(0.5, 0.5)
-    //   .setInteractive({ useHandCursor: true })
-    //   .setStrokeStyle(3, 0x0000)
+    scene.avatarDetailsCloseButton = scene.add
+      .circle(-25, -25, 25, 0xffffff)
+      .setOrigin(0.5, 0.5)
+      .setInteractive({ useHandCursor: true })
+      .setStrokeStyle(3, 0x0000)
+      .on("pointerup", () => {
+        scene.avatarDetailsContainer.setVisible(false)
+      })
+    scene.avatarDetailsContainer.add(scene.avatarDetailsCloseButton)
 
-    // scene.avatarDetailsContainer.add(scene.avatarDetailsCloseButton)
-    // scene.avatarDetailsCloseImage = scene.add.image(-25, -25, "close")
+    scene.avatarDetailsCloseImage = scene.add.image(-25, -25, "close")
+    scene.avatarDetailsContainer.add(scene.avatarDetailsCloseImage)
 
-    // scene.avatarDetailsContainer.add(scene.avatarDetailsCloseButton)
+    scene.avatarDetailsHouseButton = scene.add
+      .circle(50, 50, 25, 0xffffff)
+      .setOrigin(0.5, 0.5)
+      .setInteractive({ useHandCursor: true })
+      .setStrokeStyle(2, 0x0000)
+      .on("pointerup", () => {
+        console.log(scene.onlinePlayerID)
 
 
-    // scene.avatarDetailsHouseButton = scene.add
-    //   .circle(50, 50, 25, 0xffffff)
-    //   .setOrigin(0.5, 0.5)
-    //   .setInteractive({ useHandCursor: true })
-    //   .setStrokeStyle(2, 0x0000);
-    // scene.avatarDetailsHouseImage = scene.add.image(50, 50, "home");
 
+      })
+    scene.avatarDetailsContainer.add(scene.avatarDetailsHouseButton)
+
+    scene.avatarDetailsHouseImage = scene.add.image(50, 50, "home")
+    scene.avatarDetailsContainer.add(scene.avatarDetailsHouseImage)
+
+
+    // scene.avatarDetailsContainer.iterate((element) => console.log("heh", element))
     // scene.input.on("gameobjectdown", (pointer, object) => {
     //   if (object.anims) {
     //     // saving the clicked avatar's id (for entering its house, for displaying its artworks, etc.)
@@ -931,15 +947,6 @@ class Player {
     //     loop: false,
     //   });
     // })
-
-
-
-
-    // scene.avatarDetailsCloseButton.on("pointerup", () => {
-    //   scene.avatarDetailsContainer.setVisible(false)
-    // })
-
-    // scene.avatarDetailsContainer.add([scene.avatarDetailsCloseButton, scene.avatarDetailsCloseImage, scene.avatarDetailsHouseButton, scene.avatarDetailsHouseImage])
   }
 
   attachtAvatarToOnlinePlayer(scene, player, preExisting) {

@@ -12,6 +12,7 @@ import DebugFuntions from "../class/DebugFuntions.js";
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js";
 import GenerateLocation from "../class/GenerateLocation.js";
 import HistoryTracker from "../class/HistoryTracker.js";
+import { element } from "svelte/internal";
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
@@ -273,8 +274,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     // updateObject(type, name, value, pub)
 
-
-
     //......... UI Scene  .................................................................................
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
@@ -282,8 +281,22 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.UI_Scene.location = this.location
     this.gameCam.zoom = this.currentZoom
     //......... end UI Scene ..............................................................................
+
+    //create items bar, after UIscene, because it need currentZoom
+    Player.createItemsBarOnlinePlayer(this)
+    this.avatarDetailsContainer.setDepth(999)
+    this.avatarDetailsContainer.iterate(element => {
+      element.setVisible(true); console.log(element)
+    })
+
+
+
+    // this.itemsBarOnlinePlayer.iterate(this.itemsBarOnlinePlayerCallback)// arr.forEach(element => { element.setDepth(400); console.log(element) })
   } //end create
 
+  itemsBarOnlinePlayerCallback() {
+    console.log("HELLOO!!!")
+  }
   createItemsBar() { }
 
   async getAccountDetails(array, id) {
@@ -351,7 +364,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
           color3: 0xf8d80b,
         })
 
-
+        this.homesRepreseneted[index].setDepth(200)
         // console.log(element)
         // console.log(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX))
         // console.log(CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY))
