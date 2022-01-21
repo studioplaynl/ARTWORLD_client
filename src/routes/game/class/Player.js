@@ -824,10 +824,6 @@ class Player {
           for (let i = 0; i < scene.onlinePlayers.length; i++) {
             this.attachtAvatarToOnlinePlayer(scene, scene.onlinePlayers[i])
 
-            const player = scene.onlinePlayers[i]
-            player.setInteractive({ useHandCursor: true })
-            player.on('pointerup', () => { this.itemsBarOnlinePlayer(scene, player) })
-
           } //for (let i = 0; i < scene.onlinePlayers.length; i++)
         }); //scene.load.on('filecomplete', () =>
 
