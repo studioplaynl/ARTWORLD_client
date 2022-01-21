@@ -31,9 +31,9 @@ export default class UI_Scene extends Phaser.Scene {
   currentLanguage;
 
   constructor() {
-    super("UI_Scene");
-    this.currentZoom = 0.6;
-    this.location = "test";
+    super("UI_Scene")
+    this.currentZoom = 1
+    this.location = "test"
 
     //Debug Text mobile
     this.debugText = ''
@@ -147,12 +147,12 @@ export default class UI_Scene extends Phaser.Scene {
             ManageSession.getStreamUsers("join", previousLocation)
             this.scene.stop(currentLocationKey)
             this.scene.start(previousLocation, { user_id: homeID }) // in cases when the previous location is not a house, the second argument is ignored
-          }, 
+          },
           callbackScope: this,
           loop: false
         })
 
- 
+
       });
 
       //zoom buttons
@@ -194,7 +194,7 @@ export default class UI_Scene extends Phaser.Scene {
         this.currentZoom = 1
       })
 
-    
+
     } else {
       this.zoomIn
         .setPosition(
@@ -209,7 +209,7 @@ export default class UI_Scene extends Phaser.Scene {
         )
         .setScale(width / (width / this.camUI.zoom));
     }
- 
+
   }
   resize() {
     //console.log("resizing")

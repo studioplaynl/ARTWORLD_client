@@ -761,7 +761,9 @@ class Player {
               scene.playerAvatarPlaceholder
             )
             //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
-            .setDepth(90);
+            .setDepth(90)
+          element.setInteractive({ useHandCursor: true })
+          element.on('pointerup', () => { this.itemsbarOnlinePlayer(scene, element) })
 
           element.setData("movingKey", "moving");
           element.setData("stopKey", "stop");
@@ -791,11 +793,11 @@ class Player {
           element.y = element.posY; //* is already converted from ARTWORLDcoordinates to Phaser2Dcoordinates
 
           // add new player to group
-          scene.onlinePlayersGroup.add(element);
+          scene.onlinePlayersGroup.add(element)
           //} else {
           //! if the avatar already existed; get the player from the onlinePlayers array !
 
-          this.attachtAvatarToOnlinePlayer(scene, element);
+          this.attachtAvatarToOnlinePlayer(scene, element)
           //}
         });
 
@@ -815,18 +817,22 @@ class Player {
         //when the images are loaded the new ones should be set to the players
         scene.load.on("filecomplete", () => {
           console.log("players added: ");
-          console.log(scene.newOnlinePlayers);
+          console.log(scene.newOnlinePlayers)
 
-          scene.onlinePlayers = scene.onlinePlayersGroup.getChildren();
+          scene.onlinePlayers = scene.onlinePlayersGroup.getChildren()
 
           for (let i = 0; i < scene.onlinePlayers.length; i++) {
-            this.attachtAvatarToOnlinePlayer(scene, scene.onlinePlayers[i]);
-            this.displayAvatarDetailsWindow(scene, scene.onlinePlayers[i])
+            this.attachtAvatarToOnlinePlayer(scene, scene.onlinePlayers[i])
+
+            const player = scene.onlinePlayers[i]
+            player.setInteractive({ useHandCursor: true })
+            player.on('pointerup', () => { this.itemsbarOnlinePlayer(scene, player) })
+
           } //for (let i = 0; i < scene.onlinePlayers.length; i++)
         }); //scene.load.on('filecomplete', () =>
 
-        console.log("ManageSession.allConnectedUsers");
-        console.log(ManageSession.allConnectedUsers);
+        console.log("ManageSession.allConnectedUsers")
+        console.log(ManageSession.allConnectedUsers)
 
         //scene.onlinePlayers = scene.onlinePlayersGroup.getChildren()
 
@@ -848,205 +854,110 @@ class Player {
     } //if (ManageSession.createdPlayer)
   } //loader
 
-  displayAvatarDetailsWindow(scene, onlinePlayer) {
+  itemsbarOnlinePlayer(scene, onlinePlayer) {
+
+    //display and populate the items bar
+    //x, y
+    //scene.sys.game.canvas.width = right side of the screen, so we subtract width of the items bar to get x
+    //scene.sys.game.canvas.height = bottom of the screen, so we subtract height of the items bar to get y
+
+    const itemsBarWidth = 200
+    const itemsBarHeight = 250
+    const zoomFactor = scene.UI_Scene.currentZoom
+    console.log(zoomFactor)
+    const itemsBarX = scene.player.x + (itemsBarWidth * 1.4)
+    const itemsBarY = (scene.player.y + ((scene.sys.game.canvas.height / 2) / zoomFactor)) - itemsBarHeight
+
+    // console.log(scene.sys.game.canvas.width, scene.sys.game.canvas.height)
+    scene.avatarDetailsContainer = scene.add.container(itemsBarX, itemsBarY)
+
+    scene.avatarDetailsBox = scene.add.graphics()
+    scene.avatarDetailsBox.fillStyle(0xffffff, 1).lineStyle(3, 0x000000, 1)
+    scene.avatarDetailsBox.fillRoundedRect(0, 0, itemsBarWidth, itemsBarHeight, 24).strokeRoundedRect(0, 0, itemsBarWidth, itemsBarHeight, 24);
+    scene.avatarDetailsContainer.add(scene.avatarDetailsBox)
+
+    // scene.avatarDetailsCloseButton = scene.add
+    //   .circle(-25, -25, 25, 0xffffff)
+    //   .setOrigin(0.5, 0.5)
+    //   .setInteractive({ useHandCursor: true })
+    //   .setStrokeStyle(3, 0x0000)
+
+    // scene.avatarDetailsContainer.add(scene.avatarDetailsCloseButton)
+    // scene.avatarDetailsCloseImage = scene.add.image(-25, -25, "close")
+
+    // scene.avatarDetailsContainer.add(scene.avatarDetailsCloseButton)
 
 
-    scene.selectedOnlinePlayer = onlinePlayer
-    // console.log("111", scene.selectedOnlinePlayer.name)
-
-    scene.selectedOnlinePlayer.setInteractive({ useHandCursor: true })
-
-
-    scene.selectedOnlinePlayer.on("pointerup", () => {
-
-
-      if (scene.selectedOnlinePlayer != onlinePlayer) {
-        scene.selectedOnlinePlayer = onlinePlayer
-      }
-
-      console.log(scene.selectedOnlinePlayer.name)
-
-
-      scene.avatarDetailsContainer = scene.add.container(2500, 2500).setVisible(true)
-
-      scene.avatarDetailsBox = scene.add.graphics()
-      scene.avatarDetailsContainer.add(scene.avatarDetailsBox)
-
-      scene.avatarDetailsBox.fillStyle(0xffffff, 1).lineStyle(3, 0x000000, 1);
-      scene.avatarDetailsBox.fillRoundedRect(0, 0, 200, 250, 24).strokeRoundedRect(0, 0, 200, 250, 24);
-
-      scene.avatarDetailsCloseButton = scene.add
-        .circle(225, -25, 25, 0xffffff)
-        .setOrigin(0.5, 0.5)
-        .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(3, 0x0000);
-
-      scene.avatarDetailsCloseImage = scene.add.image(225, -25, "close");
-
-      scene.avatarDetailsHouseButton = scene.add
-        .circle(50, 50, 25, 0xffffff)
-        .setOrigin(0.5, 0.5)
-        .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(2, 0x0000);
-      scene.avatarDetailsHouseImage = scene.add.image(50, 50, "home");
-
-      scene.input.on("gameobjectdown", (pointer, object) => {
-        if (object.anims) {
-          // saving the clicked avatar's id (for entering its house, for displaying its artworks, etc.)
-          scene.avatarDetailsID =
-            object.anims.currentFrame.textureKey.split("_")[0];
-        }
-      });
-
-
-      scene.avatarDetailsHouseButton.on("pointerup", () => {
-        scene.scene.scene.physics.pause();
-        scene.scene.scene.player.setTint(0xff0000);
-
-        ManageSession.socket.rpc("leave", scene.scene.scene.location);
-
-        scene.scene.scene.player.location = "DefaultUserHome";
-
-        scene.scene.scene.time.addEvent({
-          delay: 500,
-          callback: () => {
-            ManageSession.location = "DefaultUserHome";
-            ManageSession.createPlayer = true;
-            ManageSession.getStreamUsers("join", "DefaultUserHome");
-            scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
-            if (scene.scene.scene.avatarDetailsID) {
-              scene.scene.scene.scene.start("DefaultUserHome", {
-                user_id: scene.scene.scene.avatarDetailsID,
-              });
-            } else {
-              scene.scene.scene.scene.start("DefaultUserHome");
-            }
-          },
-          callbackScope: scene,
-          loop: false,
-        });
-      })
-
-
-
-
-      scene.avatarDetailsCloseButton.on("pointerup", () => {
-        scene.avatarDetailsContainer.setVisible(false)
-      })
-
-      scene.avatarDetailsContainer.add([scene.avatarDetailsCloseButton, scene.avatarDetailsCloseImage, scene.avatarDetailsHouseButton, scene.avatarDetailsHouseImage])
-    })
-
-
-
-
-  }
-
-  attachtAvatarToOnlinePlayer(scene, player, preExisting) {
-    // player.setInteractive({ useHandCursor: true });
-
-
-
-    // if (scene.selectedOnlinePlayer) {
-    //   player.on("pointerup", () => {
-    //     console.log("!?!?", scene.selectedOnlinePlayer)
-    //   })
-    // }
-    // // for toggling the pop-up buttons
-    // scene.isPopUpButtonsDisplayed2 = false;
-
-    // // for toggling the artwork list
-    // let displayArtworkList = false;
-
-    // scene.onlinePlayerContainer = scene.add.container(player.x, player.y);
-    // scene.physics.world.enable(scene.onlinePlayerContainer);
+    // scene.avatarDetailsHouseButton = scene.add
+    //   .circle(50, 50, 25, 0xffffff)
+    //   .setOrigin(0.5, 0.5)
+    //   .setInteractive({ useHandCursor: true })
+    //   .setStrokeStyle(2, 0x0000);
+    // scene.avatarDetailsHouseImage = scene.add.image(50, 50, "home");
 
     // scene.input.on("gameobjectdown", (pointer, object) => {
     //   if (object.anims) {
-    //     scene.selectedPlayerID =
+    //     // saving the clicked avatar's id (for entering its house, for displaying its artworks, etc.)
+    //     scene.avatarDetailsID =
     //       object.anims.currentFrame.textureKey.split("_")[0];
-    //     console.log(scene.selectedPlayerID);
     //   }
     // });
 
-    // player.on("pointerup", () => {
-    //   console.log("111");
-    //   if (scene.isPopUpButtonsDisplayed2 == false) {
-    //     console.log("222");
-    //     scene.onlinePlayerContainer.setVisible(true);
-    //     const homeButtonCircle2 = scene.add
-    //       .circle(0, -70, 25, 0xffffff)
-    //       .setOrigin(0.5, 0.5)
-    //       .setInteractive({ useHandCursor: true })
-    //       .setStrokeStyle(3, 0x0000);
-    //     const homeButtonImage2 = scene.add.image(0, -70, "home");
 
-    //     const heartButtonCircle2 = scene.add
-    //       .circle(65, 0, 25, 0xffffff)
-    //       .setOrigin(0.5, 0.5)
-    //       .setInteractive({ useHandCursor: true })
-    //       .setStrokeStyle(3, 0x0000);
-    //     const heartButtonImage2 = scene.add.image(65, 0, "heart");
+    // scene.avatarDetailsHouseButton.on("pointerup", () => {
+    //   scene.scene.scene.physics.pause();
+    //   scene.scene.scene.player.setTint(0xff0000);
 
-    //     scene.onlinePlayerContainer.add([
-    //       homeButtonCircle2,
-    //       homeButtonImage2,
-    //       heartButtonCircle2,
-    //       heartButtonImage2,
-    //     ]);
-    //     scene.isPopUpButtonsDisplayed2 = true;
+    //   ManageSession.socket.rpc("leave", scene.scene.scene.location);
 
-    //     // entering the home of the avatar
-    //     // homeButtonCircle.on("pointerup", () => {
-    //     //   scene.scene.scene.physics.pause();
-    //     //   scene.scene.scene.player.setTint(0xff0000);
+    //   scene.scene.scene.player.location = "DefaultUserHome";
 
-    //     //   ManageSession.socket.rpc("leave", scene.scene.scene.location);
+    //   scene.scene.scene.time.addEvent({
+    //     delay: 500,
+    //     callback: () => {
+    //       ManageSession.location = "DefaultUserHome";
+    //       ManageSession.createPlayer = true;
+    //       ManageSession.getStreamUsers("join", "DefaultUserHome");
+    //       scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
+    //       if (scene.scene.scene.avatarDetailsID) {
+    //         scene.scene.scene.scene.start("DefaultUserHome", {
+    //           user_id: scene.scene.scene.avatarDetailsID,
+    //         });
+    //       } else {
+    //         scene.scene.scene.scene.start("DefaultUserHome");
+    //       }
+    //     },
+    //     callbackScope: scene,
+    //     loop: false,
+    //   });
+    // })
 
-    //     //   scene.scene.scene.player.location = "DefaultUserHome";
 
-    //     //   scene.scene.scene.time.addEvent({
-    //     //     delay: 500,
-    //     //     callback: () => {
-    //     //       ManageSession.location = "DefaultUserHome";
-    //     //       ManageSession.createPlayer = true;
-    //     //       ManageSession.getStreamUsers("join", "DefaultUserHome");
-    //     //       scene.scene.scene.scene.stop(scene.scene.scene.scene.key);
-    //     //       if (scene.scene.scene.selectedPlayerID) {
-    //     //         scene.scene.scene.scene.start("DefaultUserHome", {
-    //     //           user_id: scene.scene.scene.selectedPlayerID,
-    //     //         });
-    //     //       } else {
-    //     //         scene.scene.scene.scene.start("DefaultUserHome");
-    //     //       }
-    //     //     },
-    //     //     callbackScope: scene,
-    //     //     loop: false,
-    //     //   });
-    //     // });
-    //   } else {
-    //     console.log("333");
-    //     scene.playerContainer.setVisible(false);
-    //     scene.isPopUpButtonsDisplayed2 = false;
-    //     displayArtworkList = false;
-    //   }
-    // });
 
-    scene.tempAvatarName = player.user_id + "_" + player.avatar_time;
+
+    // scene.avatarDetailsCloseButton.on("pointerup", () => {
+    //   scene.avatarDetailsContainer.setVisible(false)
+    // })
+
+    // scene.avatarDetailsContainer.add([scene.avatarDetailsCloseButton, scene.avatarDetailsCloseImage, scene.avatarDetailsHouseButton, scene.avatarDetailsHouseImage])
+  }
+
+  attachtAvatarToOnlinePlayer(scene, player, preExisting) {
+    scene.tempAvatarName = player.user_id + "_" + player.avatar_time
 
     //scene.onlinePlayers[i] = scene.add.image(scene.onlinePlayers[i].posX, scene.onlinePlayers[i].posY, scene.tempAvatarName)
 
-    console.log("player added: ");
-    console.log(player);
+    console.log("player added: ")
+    console.log(player)
 
     //sometimes the player is not visible because the postion is 0,0
     if (player.posX == 0 && player.posY == 0) {
-      player.posX = 300;
-      player.posY = 400;
+      player.posX = 300
+      player.posY = 400
     }
 
-    player.x = player.posX;
-    player.y = player.posY;
+    player.x = player.posX
+    player.y = player.posY
 
     console.log("avatar key: ");
     console.log(scene.tempAvatarName);
@@ -1055,8 +966,8 @@ class Player {
     } else {
     }
 
-    player.active = true;
-    player.visible = true;
+    player.active = true
+    player.visible = true
 
     const avatar = scene.textures.get(scene.tempAvatarName);
     const avatarWidth = avatar.frames.__BASE.width;
@@ -1099,11 +1010,11 @@ class Player {
     } //if (avatarFrames > 1) {
 
     //scale the player to 64px
-    const width = 64;
-    player.displayWidth = width;
-    player.scaleY = scene.player.scaleX;
+    const width = 64
+    player.displayWidth = width
+    player.scaleY = scene.player.scaleX
 
-    scene.updateOnlinePlayers = true;
+    scene.updateOnlinePlayers = true
   }
 
   receiveOnlinePlayersMovement(scene) {
