@@ -100,7 +100,7 @@
                 },
             ],
         }),
-        "/drawing/:user?/:name?": wrap({
+        "/drawing/:user?/:name?/:version?": wrap({
             component: drawing,
             conditions: [
                 (detail) => {
@@ -108,7 +108,7 @@
                 },
             ],
         }),
-        "/stopmotion/:user?/:name?": wrap({
+        "/stopmotion/:user?/:name?/:version?": wrap({
             component: drawing,
             conditions: [
                 (detail) => {
@@ -116,7 +116,7 @@
                 },
             ],
         }),
-        "/mandala/:user?/:name?": wrap({
+        "/mandala/:user?/:name?/:version?": wrap({
             component: mandala,
             conditions: [
                 (detail) => {
@@ -132,7 +132,7 @@
                 },
             ],
         }),
-        "/avatar/:user?/:name?": wrap({
+        "/avatar/:user?/:name?/:version?": wrap({
             component: drawing,
             conditions: [
                 (detail) => {
@@ -140,7 +140,7 @@
                 },
             ],
         }),
-        "/audio/:user?/:name?": wrap({
+        "/audio/:user?/:name?/:version?": wrap({
             component: player,
             conditions: [
                 (detail) => {
@@ -148,7 +148,7 @@
                 },
             ],
         }),
-        "/video/:user?/:name?": wrap({
+        "/video/:user?/:name?/:version?": wrap({
             component: player,
             conditions: [
                 (detail) => {
@@ -156,7 +156,7 @@
                 },
             ],
         }),
-        "/picture/:user?/:name?": wrap({
+        "/picture/:user?/:name?/:version?": wrap({
             component: player,
             conditions: [
                 (detail) => {
@@ -164,7 +164,7 @@
                 },
             ],
         }),
-        "/house/:user?/:name?": wrap({
+        "/house/:user?/:name?/:version?": wrap({
             component: drawing,
             conditions: [
                 (detail) => {

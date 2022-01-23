@@ -25,7 +25,7 @@
         "password": "Wachtwoord",
         "repeatPassword": "Herhaal wachtwoord",
         "role": "Rol",
-        "location": "AZC locatie",
+        "location": "locatie",
         "register": "Register",
         "none": "Geen"
     },

@@ -1,3 +1,4 @@
+import { date } from "svelte-i18n";
 import { client } from "./nakama.svelte"
 import { Session,Profile, Error } from "./session.js"
 
@@ -14,16 +15,17 @@ Profile.subscribe(value => {
   prof = value;
 });
 
-export async function uploadImage(name, type, json, img, status) {
+export async function uploadImage(name, type, json, img, status, version, displayName) {
   console.log(Sess)
   console.log("type: " + type)
   console.log("name: " + name)
   console.log(img)
+  console.log(displayName)
 
-  var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png")
-  var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json")
+  var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png",version)
+  var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json",version)
   console.log(jpegURL + jsonURL)
-  var value = { "url": jpegLocation, "json": jsonLocation};
+  var value = { "url": jpegLocation, "json": jsonLocation, "version": version, "displayname": displayName};
   if(status == "zichtbaar"){
     pub = true
   }else{
@@ -49,16 +51,25 @@ export async function uploadImage(name, type, json, img, status) {
   Error.update(er => er = "Saved")
 }
 
+export async function updateTitle(collection, key, name, userID){
+  if(!!!userID) userID = Sess.user_id
+  let Object = await getObject(collection, key, userID)
+  console.log(Object)
+  console.log("displayName: " + name)
+  Object.value.displayname = name
+  await updateObject(collection, key, Object.value,Object.permission_read)
+}
+
 export async function listImages(type, user, limit) {
   const objects = await client.listStorageObjects(Sess, type, user, limit);
   console.log(objects)
   return objects.objects
 }
 
-export async function uploadHouse(json, data){
+export async function uploadHouse(json, data,version){
 
-  var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png")
-  var [jsonURL, jsonLocation] = await getUploadURL("home", "current", "json")
+  var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png",version)
+  var [jsonURL, jsonLocation] = await getUploadURL("home", "current", "json",version)
   console.log(jpegURL)
 await fetch(jpegURL, {
     method: "PUT",
@@ -93,8 +104,8 @@ await fetch(jpegURL, {
   await updateObject(type, name, JSON.stringify(value), pub)
 }
 
-export async function getUploadURL(type, name, filetype) {
-  name = name + '.' + filetype
+export async function getUploadURL(type, name, filetype,version) {
+  name = version + "_" + name + '.' + filetype
   const payload = { "type": type, "filename": name };
   const rpcid = "upload_file";
   const fileurl = await client.rpc(Sess, rpcid, payload);
@@ -136,12 +147,12 @@ export async function listObjects(type, userID, limit) {
 
 
 
-export async function getObject(collection, type, userID) {
+export async function getObject(collection, key, userID) {
   if(!!!userID) userID = Sess.user_id
   const objects = await client.readStorageObjects(Sess, {
     "object_ids": [{
       "collection": collection,
-      "key": type,
+      "key": key,
       "user_id": userID
     }]
   });
@@ -228,9 +239,9 @@ export async function getFile(file_url) {
     return url
 }
 
-  export async function uploadAvatar(data,json) {
-    var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png")
-    var [jsonURL, jsonLocation] = await getUploadURL("avatar", "current", "json")
+  export async function uploadAvatar(data,json,version) {
+    var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png",version)
+    var [jsonURL, jsonLocation] = await getUploadURL("avatar", "current", "json", version)
     console.log(jpegURL)
 
   await fetch(jpegURL, {
@@ -251,6 +262,7 @@ export async function getFile(file_url) {
 
   await client.updateAccount(Sess, {
       avatar_url: jpegLocation,
+      version: version,
   });
   Error.update(er => er = "Saved")
 

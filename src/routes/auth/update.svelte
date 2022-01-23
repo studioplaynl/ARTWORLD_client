@@ -3,8 +3,8 @@
 	let username = "user";
 	let password = "somesupersecretpassword";
 	let passwordCheck = "somesupersecretpassword";
-	let role = "";
-	let azc = "";
+	let role = "speler";
+	let azc = "Amsterdam";
 	let id = "";
 	let meta = {};
 	export let params = {};
@@ -35,7 +35,7 @@
 			getFullAccount(params.user).then((account) => {
 				console.log(account);
 				username = account.name;
-				role = account.meta.role;
+				role = account.meta.role || "speler";
 				azc = account.meta.azc;
 				email = account.email;
 				id = account.user_id;
@@ -45,7 +45,7 @@
 			getFullAccount().then((account) => {
 				console.log(account);
 				username = account.name;
-				role = account.meta.role;
+				role = account.meta.role || "speler";
 				azc = account.meta.azc;
 				email = account.email;
 				id = account.user_id;
@@ -89,7 +89,7 @@
 			meta.azc = azc
 			meta.role = role
 		 }
-
+		 console.log(meta)
 		 await setFullAccount(id, username, password, email, meta);
 	}
 

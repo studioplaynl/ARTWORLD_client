@@ -24,7 +24,7 @@
     "password": "Password",
     "repeatPassword": "Repeat password",
     "role": "Role",
-    "location": "AZC location",
+    "location": "location",
     "register": "Register",
     "none": "None"
   },

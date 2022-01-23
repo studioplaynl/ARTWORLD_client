@@ -4,7 +4,16 @@ import { getAccount } from "./api.js"
 import ManageSession from "./routes/game/ManageSession.js"; //push the profile to ManageSession
 
 let storedSession = localStorage.getItem("Session")
-export const Session = writable(storedSession ? JSON.parse(storedSession) : null);
+storedSession = JSON.parse(storedSession)
+
+if(!!storedSession){
+    if((storedSession.expires_at + "000") <= Date.now()){
+        window.location.replace("/#/login");  
+        storedSession = ''
+    }
+}
+
+export const Session = writable(storedSession ? storedSession : null);
 Session.subscribe((value) => {
     if (value) {
         ManageSession.sessionStored = value; //! push the Session with url to ManageSession
