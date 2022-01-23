@@ -136,14 +136,18 @@ function moveToTrash(key) {
       audio = await listImages("audio",params.user, 10)
       stopMotion = await listImages("stopmotion",params.user, 10)
       picture = await listImages("picture",params.user, 10)
-
+      console.log(drawings)
       useraccount = await getAccount(id)
       console.log(useraccount)
       user = useraccount.username
       role = useraccount.metadata.role
       azc = useraccount.metadata.azc
       avatar_url = useraccount.url
-      house_url = await getObject("home", azc, params.user)
+      try {
+        house_url = await getObject("home", azc, params.user)
+      } catch(err) {
+        console.log(err); // TypeError: failed to fetch
+      }
       console.log(house_url)
       if(typeof house_url == "object"){
         house_url = await convertImage(house_url.value.url,"64")
@@ -163,7 +167,11 @@ function moveToTrash(key) {
       role = JSON.parse(useraccount.metadata).role
       azc = JSON.parse(useraccount.metadata).azc
       avatar_url = useraccount.url
-      house_url = await getObject("home", azc, $Session.user_id)
+      try {
+        house_url = await getObject("home", azc, $Session.user_id)
+      } catch(err) {
+        console.log(err); // TypeError: failed to fetch
+      }
       console.log(house_url)
       if(typeof house_url == "object"){
         house_url = await convertImage(house_url.value.url,"64")
