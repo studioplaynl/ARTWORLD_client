@@ -198,7 +198,35 @@ class Player {
       }
     });
 
-    scene.player.on("pointerup", () => {
+    scene.player.on("pointerup", async () => {
+
+      await listImages("drawing", scene.selectedPlayerID, 100).then(
+        async (response) => {
+          scene.userArtServerList = response;
+          // downloading each artwork of the user
+          scene.downloadedImages = {
+            artworks: await Promise.all(
+              scene.userArtServerList.map(async (element) => {
+                const key = `${element.key}_128`;
+                if (!scene.textures.exists(key)) {
+                  const currentImage = await convertImage(
+                    element.value.url,
+                    "128",
+                    "png"
+                  );
+
+                  scene.load.image(key, currentImage);
+
+                  scene.load.start(); // load the image in memory
+                }
+                return { name: `${key}` };
+              })
+            ),
+          };
+        }
+
+      );
+
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
       if (scene.isPopUpButtonsDisplayed == false) {
         scene.playerContainer.setVisible(true);
@@ -218,101 +246,70 @@ class Player {
         scene.heartButtonImage = scene.add.image(65, 0, "heart");
 
         scene.heartButtonCircle.on("pointerup", async () => {
-          await listImages("drawing", scene.selectedPlayerID, 100).then(
-            async (response) => {
-              scene.userArtServerList = response;
+          if (scene.userArtServerList.length > 0) {
+            scene.scrollablePanel.setVisible(false);
 
-              if (scene.userArtServerList.length > 0) {
-                scene.scrollablePanel.setVisible(false);
+            scene.scrollablePanel = scene.rexUI.add
+              .scrollablePanel({
+                x: scene.player.x + 200,
+                y: scene.player.y,
+                width: 200,
+                height: 200,
 
-                // downloading each artwork of the user
-                const downloadedImages = {
-                  artworks: await Promise.all(
-                    scene.userArtServerList.map(async (element) => {
-                      const key = `${element.key}_128`;
-                      if (!scene.textures.exists(key)) {
-                        const currentImage = await convertImage(
-                          element.value.url,
-                          "128",
-                          "png"
-                        );
+                scrollMode: 1,
 
-                        console.log("!!!!!", key, currentImage);
+                background: scene.rexUI.add.roundRectangle(
+                  0,
+                  0,
+                  2,
+                  2,
+                  10,
+                  0xffffff
+                ),
 
-                        scene.load.image(key, currentImage);
+                panel: {
+                  child: this.createPanel(scene, scene.downloadedImages),
+                },
 
-                        scene.load.start(); // load the image in memory
-                      }
-                      return { name: `${key}` };
-                    })
+                slider: {
+                  track: scene.rexUI.add.roundRectangle(
+                    0,
+                    0,
+                    20,
+                    10,
+                    10,
+                    0x000000
                   ),
-                };
+                  thumb: scene.rexUI.add.roundRectangle(
+                    0,
+                    0,
+                    0,
+                    0,
+                    13,
+                    0xff9900
+                  ),
+                },
 
-                console.log("????", downloadedImages);
+                space: {
+                  left: 10,
+                  right: 10,
+                  top: 10,
+                  bottom: 10,
 
-                scene.scrollablePanel = scene.rexUI.add
-                  .scrollablePanel({
-                    x: scene.player.x + 200,
-                    y: scene.player.y,
-                    width: 200,
-                    height: 200,
+                  panel: 10,
+                },
+              })
+              .layout()
+              .setName("scrollBar");
 
-                    scrollMode: 1,
+            scene.input.topOnly = false;
+            var labels = [];
+            labels.push(
+              ...scene.scrollablePanel.getElement("#artworks.items", true)
+            );
 
-                    background: scene.rexUI.add.roundRectangle(
-                      0,
-                      0,
-                      2,
-                      2,
-                      10,
-                      0xffffff
-                    ),
-
-                    panel: {
-                      child: this.createPanel(scene, downloadedImages),
-                    },
-
-                    slider: {
-                      track: scene.rexUI.add.roundRectangle(
-                        0,
-                        0,
-                        20,
-                        10,
-                        10,
-                        0x000000
-                      ),
-                      thumb: scene.rexUI.add.roundRectangle(
-                        0,
-                        0,
-                        0,
-                        0,
-                        13,
-                        0xff9900
-                      ),
-                    },
-
-                    space: {
-                      left: 10,
-                      right: 10,
-                      top: 10,
-                      bottom: 10,
-
-                      panel: 10,
-                    },
-                  })
-                  .layout()
-                  .setName("scrollBar");
-
-                scene.input.topOnly = false;
-                var labels = [];
-                labels.push(
-                  ...scene.scrollablePanel.getElement("#artworks.items", true)
-                );
-
-                //  scene.physics.world.enable(scene.s)
-              }
-            }
-          );
+            //  scene.physics.world.enable(scene.s)
+          }
         });
 
         // adding all buttons to the container
@@ -360,15 +357,14 @@ class Player {
   }
 
   createPanel(scene, data) {
-    var sizer = scene.rexUI.add
-      .sizer({
-        orientation: "x",
-        // space: { item: 10 }
-      })
+    var sizer = scene.rexUI.add.sizer({
+      orientation: 'x',
+      // space: { item: 10 }
+    })
       .add(
-        this.createTable(scene, data, "artworks", 1), // child
+        this.createTable(scene, data, 'artworks', 1), // child
         { expand: true }
-      );
+      )
     return sizer;
   }
 
@@ -381,11 +377,11 @@ class Player {
 
       rowProportions: 1,
       space: { column: 10, row: 10 },
-      name: key, // Search this name to get table back
+      name: key  // Search this name to get table back
     });
 
     var item, r, c;
-    var iconSize = rows === 1 ? 80 : 40;
+    var iconSize = (rows === 1) ? 80 : 40;
     for (var i = 0, cnt = items.length; i < cnt; i++) {
       item = items[i];
       r = i % rows;
@@ -394,35 +390,31 @@ class Player {
         this.createIcon(scene, item, iconSize, iconSize),
         c,
         r,
-        "top",
+        'top',
         5, // distance between artworks
         true
       );
     }
 
-    return scene.rexUI.add
-      .sizer({
-        orientation: "x",
-        space: { left: 10, right: 10, top: 10, bottom: 10, item: 10 },
-      })
+    return scene.rexUI.add.sizer({
+      orientation: 'x',
+      space: { left: 10, right: 10, top: 10, bottom: 10, item: 10 }
+    })
       .addBackground(
-        scene.rexUI.add
-          .roundRectangle(0, 0, 0, 0, 0, undefined)
-          .setStrokeStyle(3, 0x000000, 1)
+        scene.rexUI.add.roundRectangle(0, 0, 0, 0, 0, undefined).setStrokeStyle(4, 0x000000, 1)
       )
-      .add(
-        table, // child
+      .add(table, // child
         1, // proportion
-        "center", // align
+        'center', // align
         0, // paddingConfig
         true // expand
       );
   }
 
-  createIcon(scene, item, iconWidth, iconHeight) {
+  createIcon(scene, item) {
     var label = scene.rexUI.add.label({
-      orientation: "x",
-      // icon: scene.rexUI.add.roundRectangle(0, 0, iconWidth, iconHeight, 5, 0x7b5e57),
+      orientation: 'x',
+      // icon: scene.rexUI.add.roundRectangle(0, 0, iconWidth, iconHeight, 5, COLOR_LIGHT),
       icon: scene.add.image(0, 0, item.name),
 
       // space: { icon: 3 }
