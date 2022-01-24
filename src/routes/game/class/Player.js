@@ -200,17 +200,20 @@ class Player {
 
     scene.player.on("pointerup", async () => {
 
-      await listImages("drawing", scene.selectedPlayerID, 100).then(
+      await listImages("Liked", scene.selectedPlayerID, 100).then(
         async (response) => {
-          scene.userArtServerList = response;
+          scene.currentPlayerLiked = Object.keys(response[0].value)
+          console.log(scene.currentPlayerLiked)
           // downloading each artwork of the user
           scene.downloadedImages = {
             artworks: await Promise.all(
-              scene.userArtServerList.map(async (element) => {
-                const key = `${element.key}_128`;
+              scene.currentPlayerLiked.map(async (element) => {
+                const splitKey = await element.split("/")[2].split(".")[0]
+                const key = `${splitKey}_128`;
+                console.log(element, key)
                 if (!scene.textures.exists(key)) {
                   const currentImage = await convertImage(
-                    element.value.url,
+                    element,
                     "128",
                     "png"
                   );
@@ -246,7 +249,7 @@ class Player {
         scene.heartButtonImage = scene.add.image(65, 0, "heart");
 
         scene.heartButtonCircle.on("pointerup", async () => {
-          if (scene.userArtServerList.length > 0) {
+          if (scene.currentPlayerLiked.length > 0) {
             scene.scrollablePanel.setVisible(false);
 
             scene.scrollablePanel = scene.rexUI.add
@@ -873,11 +876,9 @@ class Player {
       .setStrokeStyle(3, 0x0000)
       .on("pointerup", () => {
         scene.avatarDetailsContainer.setVisible(false)
-        if (scene.scroller) {
-          scene.scroller = scene.add.container(0, 0)
+        if (scene.scrollContainerOnlinePlayer) {
           scene.scrollContainerOnlinePlayer.destroy()
         }
-
       })
     scene.avatarDetailsCloseImage = scene.add.image(-25, -25, "close")
 
@@ -932,134 +933,136 @@ class Player {
     scene.avatarDetailsContainer.add([scene.avatarDetailsHeartButton, scene.avatarDetailsHeartImage])
 
     scene.avatarDetailsHeartButton.on("pointerup", async () => {
-      console.log("111")
-      if (scene.onlinePlayerID) {
+      if (!scene.scrollContainerOnlinePlayer) {
+        console.log("111")
+        if (scene.onlinePlayerID) {
 
-        await listImages("drawing", scene.onlinePlayerID, 100).then(
-          response => {
-            scene.onlinePlayerArtworks = response
+          await listImages("drawing", scene.onlinePlayerID, 100).then(
+            response => {
+              scene.onlinePlayerArtworks = response
 
-            console.log("???", scene.onlinePlayerArtworks)
-            // if (scene.onlinePlayerArtworks > 0) {
+              console.log("???", scene.onlinePlayerArtworks)
+              // if (scene.onlinePlayerArtworks > 0) {
 
-            // coords of the scrolling bar container and the container that holds artworks are the same
-            const scrollContainerX = itemsBarX + itemsBarWidth
-            const scrollContainerY = itemsBarY
+              // coords of the scrolling bar container and the container that holds artworks are the same
+              const scrollContainerX = itemsBarX + itemsBarWidth
+              const scrollContainerY = itemsBarY
 
-            const distanceBetweenArts = 130
+              const distanceBetweenArts = 130
 
-            const scrollContainerWidth = scene.artPreviewSize + 12
-            const scrollContainerHeight = itemsBarHeight
+              const scrollContainerWidth = scene.artPreviewSize + 12
+              const scrollContainerHeight = itemsBarHeight
 
-            scene.scrollContainerOnlinePlayer = scene.add.graphics()
-              .setPosition(scrollContainerX, scrollContainerY)
-              .fillStyle(0xffffff, 1).lineStyle(3, 0x000000, 1)
-              .fillRoundedRect(0, 0, scrollContainerWidth, scrollContainerHeight, 24).strokeRoundedRect(0, 0, scrollContainerWidth, scrollContainerHeight, 24)
-              .setInteractive(new Phaser.Geom.Rectangle(0, 0, scrollContainerWidth, scrollContainerHeight), Phaser.Geom.Rectangle.Contains)
-              .setName("onlinePlayerScrollablePanel")
+              scene.scrollContainerOnlinePlayer = scene.add.graphics()
+                .setPosition(scrollContainerX, scrollContainerY)
+                .fillStyle(0xffffff, 1).lineStyle(3, 0x000000, 1)
+                .fillRoundedRect(0, 0, scrollContainerWidth, scrollContainerHeight, 24).strokeRoundedRect(0, 0, scrollContainerWidth, scrollContainerHeight, 24)
+                .setInteractive(new Phaser.Geom.Rectangle(0, 0, scrollContainerWidth, scrollContainerHeight), Phaser.Geom.Rectangle.Contains)
+                .setName("onlinePlayerScrollablePanel")
 
-            // creating a container that holds all artworks of the user
-            scene.artListOnlinePlayerContainer = scene.add.container(scrollContainerX, scrollContainerY + 20)
+              // creating a container that holds all artworks of the user
+              scene.artListOnlinePlayerContainer = scene.add.container(scrollContainerX, scrollContainerY + 20)
 
-            // the height depends on the amount of the artworks, it is needed for scrolling
-            const contentHeight = scene.onlinePlayerArtworks.length * distanceBetweenArts
+              // the height depends on the amount of the artworks, it is needed for scrolling
+              const contentHeight = scene.onlinePlayerArtworks.length * distanceBetweenArts
 
-            // overflow: auto (makes the objects outside of the scroll container to not overflow
-            scene.artListOnlinePlayerContainer.setMask(scene.scrollContainerOnlinePlayer.createGeometryMask())
+              // overflow: auto (makes the objects outside of the scroll container to not overflow
+              scene.artListOnlinePlayerContainer.setMask(scene.scrollContainerOnlinePlayer.createGeometryMask())
 
-            // where the magic calculations happen :)
-            const topBound = scrollContainerY
-            let bottomBound
-            if (contentHeight > scrollContainerHeight) {
-              // over a page
-              bottomBound = scrollContainerY - contentHeight + scrollContainerHeight;
-            } else {
-              bottomBound = scrollContainerY
-            }
-            scene.scroller = scene.plugins.get('rexScroller').add(scene.scrollContainerOnlinePlayer, {
-              bounds: [
-                topBound,
-                bottomBound,
-              ],
-              value: topBound, // initial view (current camera)
-
-              valuechangeCallback: function (value) {
-                scene.artListOnlinePlayerContainer.y = value; // draggable vertically
-              },
-            })
-
-            console.log(scene.onlinePlayerArtworks)
-            // if (scene.onlinePlayerArtworks > 0) {
-            scene.onlinePlayerArtworks.forEach(async (element, index) => {
-
-              console.log("333")
-              const imgUrl = element.value.url
-              const imgSize = "128"
-              const fileFormat = "png"
-              const key = `${element.key}_${imgSize}`
-
-              const coordY = index == 0 ? 0 : index * distanceBetweenArts
-              const coordX = 0
-
-
-              // scene.artContainer = scene.add.container(0, 0);
-              if (scene.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
-
-
-                // adds the image to the container
-                const setImage = scene.add.image(coordX, coordY, key).setOrigin(0)
-                scene.artListOnlinePlayerContainer.add(setImage)
-              } else { // otherwise download the image and add it
-
-                scene.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
-
-                // for tracking each file in progress
-                scene.progress.push({ key, coordX, coordY })
-
-                scene.load.image(key, scene.artUrl[index])
-
-                scene.load.start() // load the image in memory
-
+              // where the magic calculations happen :)
+              const topBound = scrollContainerY
+              let bottomBound
+              if (contentHeight > scrollContainerHeight) {
+                // over a page
+                bottomBound = scrollContainerY - contentHeight + scrollContainerHeight;
+              } else {
+                bottomBound = scrollContainerY
               }
+              scene.scroller = scene.plugins.get('rexScroller').add(scene.scrollContainerOnlinePlayer, {
+                bounds: [
+                  topBound,
+                  bottomBound,
+                ],
+                value: topBound, // initial view (current camera)
 
-              const progressBox = scene.add.graphics()
-              const progressBar = scene.add.graphics()
-              const progressWidth = 300
-              const progressHeight = 50
-              const padding = 10
-
-              scene.load.on("fileprogress", (file, value) => {
-
-                progressBox.clear();
-                progressBar.clear();
-                progressBox.fillStyle(0x000000, 1)
-                progressBar.fillStyle(0xFFFFFF, 1)
-
-                const progressedImage = scene.progress.find(element => element.key == file.key)
-
-                progressBox.fillRect(progressedImage.coordX - progressWidth / 2, progressedImage.coordY, progressWidth, progressHeight)
-                progressBar.fillRect(progressedImage.coordX - progressWidth / 2 + padding, progressedImage.coordY + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
-
+                valuechangeCallback: function (value) {
+                  scene.artListOnlinePlayerContainer.y = value; // draggable vertically
+                },
               })
 
-              scene.load.on('filecomplete', (key) => {
+              console.log(scene.onlinePlayerArtworks)
+              // if (scene.onlinePlayerArtworks > 0) {
+              scene.onlinePlayerArtworks.forEach(async (element, index) => {
 
-                const currentImage = scene.progress.find(element => element.key == key)
+                console.log("333")
+                const imgUrl = element.value.url
+                const imgSize = "128"
+                const fileFormat = "png"
+                const key = `${element.key}_${imgSize}`
 
-                // adds the image to the container
-                const completedImage = scene.add.image(currentImage.coordX, currentImage.coordY, currentImage.key).setOrigin(0)
-                scene.artListOnlinePlayerContainer.add(completedImage)
+                const coordY = index == 0 ? 0 : index * distanceBetweenArts
+                const coordX = 0
+
+
+                // scene.artContainer = scene.add.container(0, 0);
+                if (scene.textures.exists(key)) { // if the image has already downloaded, then add image by using the key
+
+
+                  // adds the image to the container
+                  const setImage = scene.add.image(coordX, coordY, key).setOrigin(0)
+                  scene.artListOnlinePlayerContainer.add(setImage)
+                } else { // otherwise download the image and add it
+
+                  scene.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+
+                  // for tracking each file in progress
+                  scene.progress.push({ key, coordX, coordY })
+
+                  scene.load.image(key, scene.artUrl[index])
+
+                  scene.load.start() // load the image in memory
+
+                }
+
+                const progressBox = scene.add.graphics()
+                const progressBar = scene.add.graphics()
+                const progressWidth = 300
+                const progressHeight = 50
+                const padding = 10
+
+                scene.load.on("fileprogress", (file, value) => {
+
+                  progressBox.clear();
+                  progressBar.clear();
+                  progressBox.fillStyle(0x000000, 1)
+                  progressBar.fillStyle(0xFFFFFF, 1)
+
+                  const progressedImage = scene.progress.find(element => element.key == file.key)
+
+                  progressBox.fillRect(progressedImage.coordX - progressWidth / 2, progressedImage.coordY, progressWidth, progressHeight)
+                  progressBar.fillRect(progressedImage.coordX - progressWidth / 2 + padding, progressedImage.coordY + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
+
+                })
+
+                scene.load.on('filecomplete', (key) => {
+
+                  const currentImage = scene.progress.find(element => element.key == key)
+
+                  // adds the image to the container
+                  const completedImage = scene.add.image(currentImage.coordX, currentImage.coordY, currentImage.key).setOrigin(0)
+                  scene.artListOnlinePlayerContainer.add(completedImage)
+                })
+
+                scene.load.once("complete", () => {
+                  progressBar.destroy()
+                  progressBox.destroy()
+                  scene.progress = []
+                });
+
+
               })
-
-              scene.load.once("complete", () => {
-                progressBar.destroy()
-                progressBox.destroy()
-                scene.progress = []
-              });
-
-
             })
-          })
+        }
       }
 
 
