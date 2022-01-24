@@ -191,18 +191,18 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //  A single manager can be responsible for multiple emitters
     //  The manager also controls which particle texture is used by _all_ emitter
 
-    this.input.on('dragstart', function (pointer, gameObject) {
+    // this.input.on('dragstart', function (pointer, gameObject) {
 
-    });
+    // });
 
-    this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
-      gameObject.x = dragX;
-      gameObject.y = dragY;
-    });
+    // this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
+    //   gameObject.x = dragX;
+    //   gameObject.y = dragY;
+    // });
 
-    this.input.on('dragend', function (pointer, gameObject) {
-      console.log(gameObject.x, gameObject.y)
-    })
+    // this.input.on('dragend', function (pointer, gameObject) {
+    //   console.log(gameObject.x, gameObject.y)
+    // })
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
 
@@ -288,7 +288,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     Player.createItemsBarOnlinePlayer(this)
     this.avatarDetailsContainer.setDepth(999)
     this.avatarDetailsContainer.iterate(element => {
-      element.setVisible(false)
+      element.setVisible(true)
     })
     // this.itemsBarOnlinePlayer.iterate(this.itemsBarOnlinePlayerCallback)// arr.forEach(element => { element.setDepth(400); console.log(element) })
   } //end create
