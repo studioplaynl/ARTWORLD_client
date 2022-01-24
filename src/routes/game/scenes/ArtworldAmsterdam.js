@@ -101,6 +101,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.heartButtonImage;
 
     this.scrollablePanel;
+
+    this.progress = []
   }
 
   async preload() {
@@ -288,7 +290,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     Player.createItemsBarOnlinePlayer(this)
     this.avatarDetailsContainer.setDepth(999)
     this.avatarDetailsContainer.iterate(element => {
-      element.setVisible(false)
+      element.setVisible(true)
     })
     // this.itemsBarOnlinePlayer.iterate(this.itemsBarOnlinePlayerCallback)// arr.forEach(element => { element.setDepth(400); console.log(element) })
   } //end create
