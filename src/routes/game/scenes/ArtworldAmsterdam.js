@@ -101,6 +101,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.heartButtonImage;
 
     this.scrollablePanel;
+
+    this.progress = []
   }
 
   async preload() {
