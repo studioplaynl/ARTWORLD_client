@@ -259,7 +259,7 @@ class Player {
                 width: 200,
                 height: 200,
 
-                scrollMode: 1,
+                scrollMode: 0,
 
                 background: scene.rexUI.add.roundRectangle(
                   0,
@@ -310,8 +310,6 @@ class Player {
             labels.push(
               ...scene.scrollablePanel.getElement("#artworks.items", true)
             );
-
-            //  scene.physics.world.enable(scene.s)
           }
         });
 
@@ -361,7 +359,7 @@ class Player {
 
   createPanel(scene, data) {
     var sizer = scene.rexUI.add.sizer({
-      orientation: 'x',
+      orientation: 'y',
       // space: { item: 10 }
     })
       .add(
@@ -371,24 +369,24 @@ class Player {
     return sizer;
   }
 
-  createTable(scene, data, key, rows) {
+  createTable(scene, data, key, columns) {
     var items = data[key];
-    var columns = Math.ceil(items.length / rows);
+    var rows = Math.ceil(items.length / columns);
     var table = scene.rexUI.add.gridSizer({
       column: columns,
       row: rows,
 
-      rowProportions: 1,
+      columnProportions: 1,
       space: { column: 10, row: 10 },
       name: key  // Search this name to get table back
     });
 
     var item, r, c;
-    var iconSize = (rows === 1) ? 80 : 40;
-    for (var i = 0, cnt = items.length; i < cnt; i++) {
+    var iconSize = (columns === 1) ? 80 : 40;
+    for (var i = 0; i < items.length; i++) {
       item = items[i];
-      r = i % rows;
-      c = (i - r) / rows;
+      c = i % columns;
+      r = (i - c) / columns;
       table.add(
         this.createIcon(scene, item, iconSize, iconSize),
         c,
@@ -400,7 +398,7 @@ class Player {
     }
 
     return scene.rexUI.add.sizer({
-      orientation: 'x',
+      orientation: 'y',
       space: { left: 10, right: 10, top: 10, bottom: 10, item: 10 }
     })
       .addBackground(
@@ -416,7 +414,7 @@ class Player {
 
   createIcon(scene, item) {
     var label = scene.rexUI.add.label({
-      orientation: 'x',
+      orientation: 'y',
       // icon: scene.rexUI.add.roundRectangle(0, 0, iconWidth, iconHeight, 5, COLOR_LIGHT),
       icon: scene.add.image(0, 0, item.name),
 
