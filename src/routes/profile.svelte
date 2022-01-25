@@ -198,7 +198,6 @@ function moveToTrash(key) {
     })
 
     trash = trash;
-
   
   }
   let promise = getUser();

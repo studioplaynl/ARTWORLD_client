@@ -42,7 +42,7 @@ import App from "../../App.svelte";
     showBackground = true;
   let fillColor = "#f00", fillTolerance = 2;
   let current = "draw";
-  if (!!params.name) title = params.name.split("_")[1];
+  if (!!params.name) title = params.name;
   let saved = false;
   let saveToggle = false,
     colorToggle = true;
@@ -51,9 +51,7 @@ import App from "../../App.svelte";
   let displayName;
   let appType = $location.split("/")[1];
   let version = 0
-  if(!!params.name){
-    version = (Number(params.name.split("_")[0])+1) || 0
-  }
+
  
   console.log("version:" + version)
   console.log("title: " + title)
@@ -407,6 +405,7 @@ import App from "../../App.svelte";
     if (appType != "avatar" && appType != "house") {
       if (!!params.name && !!params.user) {
         let Object = await getObject(appType, params.name, params.user)
+        if(!!!Object) return
         title = Object.key
         console.log(Object)
 
@@ -414,7 +413,7 @@ import App from "../../App.svelte";
         displayName = Object.value.displayname
         status = Object.status;
         let url = Object.value.json
-        version = Number(Object.value.version) +1
+        version = Number(Object.value.version) +1 ||0
         var jsonURL = await getDrawing(url);
         console.log(jsonURL);
         fetch(jsonURL)
@@ -436,14 +435,14 @@ import App from "../../App.svelte";
       
       if(appType == "avatar"){
         var jsonURL = await getDrawing($Profile.avatar_url.split(".")[0] + ".json");
-        version = Number($Profile.avatar_url.split("/")[2].split("_")[0])+1
+        version = Number(drawing.value.version) + 1 || 0
         console.log("version" + version)  
       }else {
         let drawing = await getObject("home", $Profile.meta.azc)
         console.log(drawing.value.url)
         // get item
         // extract version
-        version = Number(drawing.value.url.split("/")[2].split("_")[0]) + 1
+        version = Number(drawing.value.version) + 1 || 0
         console.log(version)
         // open file
         var jsonURL = await getDrawing(

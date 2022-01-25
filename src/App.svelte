@@ -1,5 +1,6 @@
 <script>
     import Router from "svelte-spa-router";
+    import {onMount} from "svelte"
     import { wrap } from "svelte-spa-router/wrap";
     import home from "./routes/game/index.svelte";
     import registerPage from "./routes/auth/register.svelte";
@@ -20,6 +21,7 @@
     import upload from "./routes/apps/upload.svelte"
     import MarioSequencer from "./routes/apps/marioSequencer.svelte"
     import player from "./routes/apps/player.svelte"
+
     let isLogedIn = (detail) => {
         if ($Session != null) return true;
         else {
@@ -35,6 +37,7 @@
             return false;
         }
     };
+
 
     
 </script>
