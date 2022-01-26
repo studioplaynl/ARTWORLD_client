@@ -179,7 +179,7 @@ class ArtworkList {
       delete ManageSession.allLiked[imageKey]
     }
 
-    const type = "Liked"
+    const type = "liked"
     const name = type + "_" + ManageSession.userProfile.id
     const pub = 2
     const value = ManageSession.allLiked

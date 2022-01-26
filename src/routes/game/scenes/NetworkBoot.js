@@ -39,11 +39,16 @@ export default class NetworkBoot extends Phaser.Scene {
           // console.log("checkLikeList1111")
           ManageSession.allLiked = rec[0][0].value
         } else {
-          // console.log("checkLikeList22222")
           ManageSession.allLiked = {
-            "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png": "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png",
-            "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png": "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png"
+            // "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png": "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png",
+            // "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png": "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png"
           }
+
+          const type = "liked"
+          const name = type + "_" + ManageSession.userProfile.id
+          const pub = 2
+          const value = ManageSession.allLiked
+          updateObject(type, name, value, pub)
           // console.log(ManageSession.allLiked)
         }
       })

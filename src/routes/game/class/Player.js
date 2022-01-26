@@ -186,10 +186,10 @@ class Player {
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y);
 
-    scene.playerLikedPanel = scene.add.container(0, 0);
+    // scene.playerLikedPanel = scene.add.container(0, 0);
 
     scene.input.on("gameobjectdown", (pointer, object) => {
-      scene.playerLikedPanel.setVisible(false);
+      // scene.playerLikedPanel.setVisible(false);
     });
 
     scene.player.on("pointerup", async () => {
@@ -197,6 +197,7 @@ class Player {
 
       await listImages("liked", ManageSession.userProfile.id, 100).then(
         async (response) => {
+          console.log("!!!!!?", response)
           scene.currentPlayerLiked = Object.keys(response[0].value)
           console.log(scene.currentPlayerLiked)
           // downloading each artwork of the user
@@ -245,7 +246,7 @@ class Player {
 
         scene.heartButtonCircle.on("pointerup", async () => {
           if (scene.currentPlayerLiked.length > 0) {
-            scene.playerLikedPanel.setVisible(false);
+            // scene.playerLikedPanel.setVisible(false);
 
             scene.playerLikedPanel = scene.rexUI.add
               .scrollablePanel({
