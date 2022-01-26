@@ -43,7 +43,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.createdPlayer = false;
 
     this.playerContainer;
-    this.selectedPlayerID;
 
     this.homes = [];
     this.homesRepreseneted = [];
@@ -503,11 +502,11 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       Player.moveByTapping(this);
     }
 
-    if (this.scrollablePanel) {
+    if (this.playerLikedPanel) {
       Player.moveScrollablePanel(this);
     }
 
-    if (this.playerContainer) {
+    if (this.playerItemsBar) {
       Player.movePlayerContainer(this);
     }
   } //update

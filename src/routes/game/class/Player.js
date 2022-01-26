@@ -181,27 +181,21 @@ class Player {
     scene.player.setInteractive({ useHandCursor: true });
 
     // for toggling the pop-up buttons
-    scene.isPopUpButtonsDisplayed = false;
+    scene.isPlayerItemsBarDisplayed = false;
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
-    scene.playerContainer = scene.add.container(scene.player.x, scene.player.y);
+    scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y);
 
-    scene.scrollablePanel = scene.add.container(0, 0);
+    scene.playerLikedPanel = scene.add.container(0, 0);
 
-    // for entering the avatar's home
     scene.input.on("gameobjectdown", (pointer, object) => {
-      if (object.anims) {
-        // saving the clicked avatar's id (for entering its house, for displaying its artworks, etc.)
-        scene.selectedPlayerID =
-          object.anims.currentFrame.textureKey.split("_")[0];
-
-        scene.scrollablePanel.setVisible(false);
-      }
+      scene.playerLikedPanel.setVisible(false);
     });
 
     scene.player.on("pointerup", async () => {
+      console.log(ManageSession.userProfile.id)
 
-      await listImages("Liked", scene.selectedPlayerID, 100).then(
+      await listImages("liked", ManageSession.userProfile.id, 100).then(
         async (response) => {
           scene.currentPlayerLiked = Object.keys(response[0].value)
           console.log(scene.currentPlayerLiked)
@@ -232,8 +226,8 @@ class Player {
       );
 
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
-      if (scene.isPopUpButtonsDisplayed == false) {
-        scene.playerContainer.setVisible(true);
+      if (scene.isPlayerItemsBarDisplayed == false) {
+        scene.playerItemsBar.setVisible(true);
 
         scene.homeButtonCircle = scene.add
           .circle(0, -70, 25, 0xffffff)
@@ -251,9 +245,9 @@ class Player {
 
         scene.heartButtonCircle.on("pointerup", async () => {
           if (scene.currentPlayerLiked.length > 0) {
-            scene.scrollablePanel.setVisible(false);
+            scene.playerLikedPanel.setVisible(false);
 
-            scene.scrollablePanel = scene.rexUI.add
+            scene.playerLikedPanel = scene.rexUI.add
               .scrollablePanel({
                 x: scene.player.x + 200,
                 y: scene.player.y,
@@ -284,19 +278,19 @@ class Player {
             scene.input.topOnly = false;
             const labels = [];
             labels.push(
-              ...scene.scrollablePanel.getElement("#artworks.items", true)
+              ...scene.playerLikedPanel.getElement("#artworks.items", true)
             );
           }
         });
 
         // adding all buttons to the container
-        scene.playerContainer.add([
+        scene.playerItemsBar.add([
           scene.homeButtonCircle,
           scene.homeButtonImage,
           scene.heartButtonCircle,
           scene.heartButtonImage,
         ]);
-        scene.isPopUpButtonsDisplayed = true;
+        scene.isPlayerItemsBarDisplayed = true;
 
         // entering the home of the avatar
         scene.homeButtonCircle.on("pointerup", () => {
@@ -314,9 +308,9 @@ class Player {
               ManageSession.createPlayer = true;
               ManageSession.getStreamUsers("join", "DefaultUserHome");
               scene.scene.stop(scene.scene.key);
-              if (scene.selectedPlayerID) {
+              if (ManageSession.userProfile.id) {
                 scene.scene.start("DefaultUserHome", {
-                  user_id: scene.selectedPlayerID,
+                  user_id: ManageSession.userProfile.id,
                 });
               } else {
                 scene.scene.start("DefaultUserHome");
@@ -327,8 +321,8 @@ class Player {
           });
         });
       } else {
-        scene.playerContainer.setVisible(false);
-        scene.isPopUpButtonsDisplayed = false;
+        scene.playerItemsBar.setVisible(false);
+        scene.isPlayerItemsBarDisplayed = false;
       }
     });
   }
@@ -853,6 +847,7 @@ class Player {
             scene.onlinePlayerArtworks = response
             console.log("on hover show artworks", scene.onlinePlayerArtworks)
             if (scene.onlinePlayerArtworks.length > 0) {
+              let count = 0
               scene.onlinePlayerDownloadedImages = {
                 artworks: await Promise.all(
                   scene.onlinePlayerArtworks.map(async (element) => {
@@ -866,12 +861,17 @@ class Player {
                       scene.load.image(key, currentImage);
                       scene.load.start(); // load the image in memory
                     }
+                    count++
+                    console.log("IN", count)
                     return { name: `${key}` };
                   })
                 ),
               }
-              isArtworksDownloaded = true
-              console.log("isArtworksDownloaded", isArtworksDownloaded)
+              console.log("OUT", count)
+              if (count == scene.onlinePlayerArtworks.length) {
+                isArtworksDownloaded = true
+                console.log("isArtworksDownloaded", isArtworksDownloaded)
+              }
             }
           })
         }
@@ -945,13 +945,14 @@ class Player {
 
     let isArtworksDownloaded = false
 
-
     // scene.avatarDetailsHeartButton.on("pointerover", async () => {
 
     // })
 
     scene.avatarDetailsHeartButton.on("pointerup", async () => {
+      console.log("scrollBAR 111")
       if (scene.onlinePlayerID && isArtworksDownloaded && scene.onlinePlayerArtworks.length > 0) {
+        console.log("scrollBAR 222")
         scene.scrollablePanelOnlinePlayer.setVisible(false)
         scene.scrollablePanelOnlinePlayer = scene.rexUI.add
           .scrollablePanel({
@@ -1134,13 +1135,13 @@ class Player {
   }
 
   moveScrollablePanel(scene) {
-    scene.scrollablePanel.x = scene.player.x + 200;
-    scene.scrollablePanel.y = scene.player.y;
+    scene.playerLikedPanel.x = scene.player.x + 200;
+    scene.playerLikedPanel.y = scene.player.y;
   }
 
   movePlayerContainer(scene) {
-    scene.playerContainer.x = scene.player.x
-    scene.playerContainer.y = scene.player.y
+    scene.playerItemsBar.x = scene.player.x
+    scene.playerItemsBar.y = scene.player.y
   }
 
   async getAccountDetails(id) {
