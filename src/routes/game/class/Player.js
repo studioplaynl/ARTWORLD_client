@@ -842,6 +842,41 @@ class Player {
     scene.avatarDetailsBox.fillStyle(0xffffff, 1).lineStyle(3, 0x000000, 1)
     scene.avatarDetailsBox.fillRoundedRect(0, 0, itemsBarWidth, itemsBarHeight, 24).strokeRoundedRect(0, 0, itemsBarWidth, itemsBarHeight, 24)
 
+    scene.transparentBox = scene.add.rectangle(0, 0, itemsBarWidth, itemsBarHeight)
+      .setOrigin(0)
+      .setInteractive({ useHandCursor: true })
+      // we make a call to get artworks once the player hovers on the heart button
+      .on("pointerover", async () => {
+        console.log("over!")
+        if (scene.onlinePlayerID) {
+          await listImages("drawing", scene.onlinePlayerID, 100).then(async (response) => {
+            scene.onlinePlayerArtworks = response
+            console.log("on hover show artworks", scene.onlinePlayerArtworks)
+            if (scene.onlinePlayerArtworks.length > 0) {
+              scene.onlinePlayerDownloadedImages = {
+                artworks: await Promise.all(
+                  scene.onlinePlayerArtworks.map(async (element) => {
+                    const key = `${element.key}_128`;
+                    if (!scene.textures.exists(key)) {
+                      const currentImage = await convertImage(
+                        element.value.url,
+                        "128",
+                        "png"
+                      )
+                      scene.load.image(key, currentImage);
+                      scene.load.start(); // load the image in memory
+                    }
+                    return { name: `${key}` };
+                  })
+                ),
+              }
+              isArtworksDownloaded = true
+              console.log("isArtworksDownloaded", isArtworksDownloaded)
+            }
+          })
+        }
+      })
+
     scene.scrollablePanelOnlinePlayer = scene.add.container(0, 0);
 
     scene.avatarDetailsCloseButton = scene.add
@@ -895,7 +930,7 @@ class Player {
       })
 
     scene.avatarDetailsHouseImage = scene.add.image(50, 50, "home")
-    scene.avatarDetailsContainer.add([scene.avatarDetailsBox, scene.avatarDetailsCloseButton, scene.avatarDetailsCloseImage, scene.avatarDetailsHouseButton, scene.avatarDetailsHouseImage])
+    scene.avatarDetailsContainer.add([scene.avatarDetailsBox, scene.avatarDetailsCloseButton, scene.avatarDetailsCloseImage, scene.transparentBox, scene.avatarDetailsHouseButton, scene.avatarDetailsHouseImage])
 
     // ---------------------------------
     // heart button and scroll container
@@ -910,36 +945,10 @@ class Player {
 
     let isArtworksDownloaded = false
 
-    // we make a call to get artworks once the player hovers on the heart button
-    scene.avatarDetailsHeartButton.on("pointerover", async () => {
-      if (scene.onlinePlayerID) {
-        await listImages("drawing", scene.onlinePlayerID, 100).then(async (response) => {
-          scene.onlinePlayerArtworks = response
-          console.log("on hover show artworks", scene.onlinePlayerArtworks)
-          if (scene.onlinePlayerArtworks.length > 0) {
-            scene.onlinePlayerDownloadedImages = {
-              artworks: await Promise.all(
-                scene.onlinePlayerArtworks.map(async (element) => {
-                  const key = `${element.key}_128`;
-                  if (!scene.textures.exists(key)) {
-                    const currentImage = await convertImage(
-                      element.value.url,
-                      "128",
-                      "png"
-                    )
-                    scene.load.image(key, currentImage);
-                    scene.load.start(); // load the image in memory
-                  }
-                  return { name: `${key}` };
-                })
-              ),
-            }
-          }
-        })
-        isArtworksDownloaded = true
-        console.log("isArtworksDownloaded", isArtworksDownloaded)
-      }
-    })
+
+    // scene.avatarDetailsHeartButton.on("pointerover", async () => {
+
+    // })
 
     scene.avatarDetailsHeartButton.on("pointerup", async () => {
       if (scene.onlinePlayerID && isArtworksDownloaded && scene.onlinePlayerArtworks.length > 0) {
