@@ -33,7 +33,7 @@ export default class NetworkBoot extends Phaser.Scene {
     console.log("checkLikeList")
     Promise.all([listObjects("liked", ManageSession.userProfile.id, 10)])
       .then((rec) => {
-        console.log(rec)
+        console.log("????", rec)
         // console.log(rec[0].length)
         if (rec[0].length > 0) {
           // console.log("checkLikeList1111")

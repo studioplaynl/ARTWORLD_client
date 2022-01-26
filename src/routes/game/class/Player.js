@@ -195,15 +195,15 @@ class Player {
     scene.player.on("pointerup", async () => {
       console.log(ManageSession.userProfile.id)
 
-      await listImages("liked", ManageSession.userProfile.id, 100).then(
+      await listObjects("liked", ManageSession.userProfile.id, 100).then(
         async (response) => {
-          console.log("!!!!!?", response)
-          scene.currentPlayerLiked = Object.keys(response[0].value)
-          console.log(scene.currentPlayerLiked)
+          ManageSession.allLiked = Object.keys(response[0].value)
+          console.log("!!!!!?", ManageSession.allLiked)
           // downloading each artwork of the user
           scene.currentPlayerDownloadedImages = {
             artworks: await Promise.all(
-              scene.currentPlayerLiked.map(async (element) => {
+              ManageSession.allLiked.map(async (element) => {
+
                 const splitKey = await element.split("/")[2].split(".")[0]
                 const key = `${splitKey}_128`;
                 console.log(element, key)
@@ -245,7 +245,7 @@ class Player {
         scene.heartButtonImage = scene.add.image(65, 0, "heart");
 
         scene.heartButtonCircle.on("pointerup", async () => {
-          if (scene.currentPlayerLiked.length > 0) {
+          if (ManageSession.allLiked.length > 0) {
             // scene.playerLikedPanel.setVisible(false);
 
             scene.playerLikedPanel = scene.rexUI.add
