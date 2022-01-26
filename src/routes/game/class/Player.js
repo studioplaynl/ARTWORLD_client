@@ -908,10 +908,14 @@ class Player {
     scene.avatarDetailsHeartImage = scene.add.image(50, 110, "heart")
     scene.avatarDetailsContainer.add([scene.avatarDetailsHeartButton, scene.avatarDetailsHeartImage])
 
-    scene.avatarDetailsHeartButton.on("pointerup", async () => {
+    let isArtworksDownloaded = false
+
+    // we make a call to get artworks once the player hovers on the heart button
+    scene.avatarDetailsHeartButton.on("pointerover", async () => {
       if (scene.onlinePlayerID) {
         await listImages("drawing", scene.onlinePlayerID, 100).then(async (response) => {
           scene.onlinePlayerArtworks = response
+          console.log("on hover show artworks", scene.onlinePlayerArtworks)
           if (scene.onlinePlayerArtworks.length > 0) {
             scene.onlinePlayerDownloadedImages = {
               artworks: await Promise.all(
@@ -923,9 +927,7 @@ class Player {
                       "128",
                       "png"
                     )
-
                     scene.load.image(key, currentImage);
-
                     scene.load.start(); // load the image in memory
                   }
                   return { name: `${key}` };
@@ -934,7 +936,13 @@ class Player {
             }
           }
         })
+        isArtworksDownloaded = true
+        console.log("isArtworksDownloaded", isArtworksDownloaded)
+      }
+    })
 
+    scene.avatarDetailsHeartButton.on("pointerup", async () => {
+      if (scene.onlinePlayerID && isArtworksDownloaded && scene.onlinePlayerArtworks.length > 0) {
         scene.scrollablePanelOnlinePlayer.setVisible(false)
         scene.scrollablePanelOnlinePlayer = scene.rexUI.add
           .scrollablePanel({
@@ -971,6 +979,7 @@ class Player {
         )
 
       }
+      isArtworksDownloaded = false
     })
   }
 
