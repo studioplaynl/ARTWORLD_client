@@ -143,6 +143,35 @@ class ArtworkList {
     })
   }
 
+  async convertRexUIArray(scene) {
+    const allLikedArray = Object.keys(ManageSession.allLiked)
+
+    const myVar = {
+      artworks: await Promise.all(
+        allLikedArray.map(async (element) => {
+          const splitKey = element.split("/")[2].split(".")[0]
+          console.log("element", element, splitKey)
+          const key = `${splitKey}_128`;
+          console.log(element, key)
+          if (!scene.textures.exists(key)) {
+            const currentImage = await convertImage(
+              element,
+              "128",
+              "png"
+            );
+            scene.load.image(key, currentImage);
+            scene.load.start(); // load the image in memory
+          }
+          return { name: `${key}` };
+        })
+      ),
+    }
+    return myVar
+  }
+
+
+
+
   placeHeartButton(scene, x, y, keyImg) {
     const artFrame = scene.textures.get("artFrame_512")
     let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "bitmap_heart").setOrigin(1, 0).setScale(0.5)
@@ -168,6 +197,7 @@ class ArtworkList {
       //changing to black, not liked
       button.setTint(0xffffff)
       button.setData("toggle", false)
+      // updates the object locally
       ManageSession.allLiked[imageKey] = imageKey
 
       console.log("turnedRED")
@@ -175,7 +205,7 @@ class ArtworkList {
       //changing to red, liked
       button.setTint(0x000000)
       button.setData("toggle", true)
-
+      // updates the object locally
       delete ManageSession.allLiked[imageKey]
     }
 
@@ -183,7 +213,7 @@ class ArtworkList {
     const name = type + "_" + ManageSession.userProfile.id
     const pub = 2
     const value = ManageSession.allLiked
-
+    // updates the object remotely 
     updateObject(type, name, value, pub)
   }
 }

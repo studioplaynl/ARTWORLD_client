@@ -2,6 +2,7 @@ import ManageSession from "../ManageSession";
 import CoordinatesTranslator from "./CoordinatesTranslator";
 import { listObjects, listImages, convertImage, getFullAccount } from "../../../api.js";
 import HistoryTracker from "./HistoryTracker"
+import ArtworkList from "./ArtworkList";
 
 class Player {
   constructor() { }
@@ -193,36 +194,36 @@ class Player {
     });
 
     scene.player.on("pointerup", async () => {
-      console.log(ManageSession.userProfile.id)
 
-      await listObjects("liked", ManageSession.userProfile.id, 100).then(
-        async (response) => {
-          ManageSession.allLiked = Object.keys(response[0].value)
 
-          // downloading each artwork of the user
-          scene.playerLikedPanelUrls = {
-            artworks: await Promise.all(
-              ManageSession.allLiked.map(async (element) => {
-                const splitKey = await element.split("/")[2].split(".")[0]
-                const key = `${splitKey}_128`;
-                console.log(element, key)
-                if (!scene.textures.exists(key)) {
-                  const currentImage = await convertImage(
-                    element,
-                    "128",
-                    "png"
-                  );
-                  scene.load.image(key, currentImage);
-                  scene.load.start(); // load the image in memory
-                }
-                return { name: `${key}` };
-              })
-            ),
-          };
-        }
+      // in the background
+      scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
+      console.log("scene.playerLikedPanelUrls", scene.playerLikedPanelUrls)
+      // const allLikedArray = Object.keys(ManageSession.allLiked)
+      // console.log("allLikedArray", allLikedArray)
+      // scene.playerLikedPanelUrls = {
+      //   artworks: await Promise.all(
+      //     allLikedArray.map(async (element) => {
+      //       const splitKey = element.split("/")[2].split(".")[0]
+      //       console.log("element", element, splitKey)
+      //       const key = `${splitKey}_128`;
+      //       console.log(element, key)
+      //       if (!scene.textures.exists(key)) {
+      //         const currentImage = await convertImage(
+      //           element,
+      //           "128",
+      //           "png"
+      //         );
+      //         scene.load.image(key, currentImage);
+      //         scene.load.start(); // load the image in memory
+      //       }
+      //       return { name: `${key}` };
+      //     })
+      //   ),
+      // }
+      // in the background
 
-      );
-
+      console.log("scene.playerLikedPanelUrls", scene.playerLikedPanelUrls)
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
       if (scene.isPlayerItemsBarDisplayed == false) {
         scene.playerItemsBar.setVisible(true);
@@ -242,43 +243,43 @@ class Player {
         scene.playerLikedButton = scene.add.image(65, 0, "heart");
 
         scene.playerLikedButtonCircle.on("pointerup", async () => {
-          if (ManageSession.allLiked.length > 0) {
-            // scene.playerLikedPanel.setVisible(false);
+          // if (allLikedArray.length > 0) {
+          // scene.playerLikedPanel.setVisible(false);
 
-            scene.playerLikedPanel = scene.rexUI.add
-              .scrollablePanel({
-                x: scene.player.x + 200,
-                y: scene.player.y,
-                width: 200,
-                height: 200,
+          scene.playerLikedPanel = scene.rexUI.add
+            .scrollablePanel({
+              x: scene.player.x + 200,
+              y: scene.player.y,
+              width: 200,
+              height: 200,
 
-                scrollMode: 0,
+              scrollMode: 0,
 
-                background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+              background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
 
-                panel: {
-                  child: this.createPanel(scene, scene.playerLikedPanelUrls),
-                },
+              panel: {
+                child: this.createPanel(scene, scene.playerLikedPanelUrls),
+              },
 
-                slider: {
-                  track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
-                  thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
-                },
+              slider: {
+                track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+                thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+              },
 
-                space: {
-                  left: 10, right: 10, top: 10, bottom: 10, panel: 10,
-                },
+              space: {
+                left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+              },
 
-                name: "currentPlayerScrollablePanel"
-              })
-              .layout()
+              name: "currentPlayerScrollablePanel"
+            })
+            .layout()
 
-            scene.input.topOnly = false;
-            const labels = [];
-            labels.push(
-              ...scene.playerLikedPanel.getElement("#artworks.items", true)
-            );
-          }
+          scene.input.topOnly = false;
+          const labels = [];
+          labels.push(
+            ...scene.playerLikedPanel.getElement("#artworks.items", true)
+          );
+          // }
         });
 
         // adding all buttons to the container
@@ -293,31 +294,6 @@ class Player {
         // entering the home of the avatar
         scene.playerHomeButtonCircle.on("pointerup", () => {
           HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
-          // scene.physics.pause();
-          // scene.player.setTint(0xff0000);
-
-          // ManageSession.socket.rpc("leave", scene.location);
-
-          // scene.player.location = "DefaultUserHome";
-
-          // scene.time.addEvent({
-          //   delay: 500,
-          //   callback: () => {
-          //     ManageSession.location = "DefaultUserHome";
-          //     ManageSession.createPlayer = true;
-          //     ManageSession.getStreamUsers("join", "DefaultUserHome");
-          //     scene.scene.stop(scene.scene.key);
-          //     if (ManageSession.userProfile.id) {
-          //       scene.scene.start("DefaultUserHome", {
-          //         user_id: ManageSession.userProfile.id,
-          //       });
-          //     } else {
-          //       scene.scene.start("DefaultUserHome");
-          //     }
-          //   },
-          //   callbackScope: scene,
-          //   loop: false,
-          // });
         });
       } else {
         scene.playerItemsBar.setVisible(false);
