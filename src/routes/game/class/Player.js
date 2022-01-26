@@ -1,7 +1,7 @@
 import ManageSession from "../ManageSession";
 import CoordinatesTranslator from "./CoordinatesTranslator";
 import { listObjects, listImages, convertImage, getFullAccount } from "../../../api.js";
-
+import HistoryTracker from "./HistoryTracker"
 
 class Player {
   constructor() { }
@@ -173,10 +173,10 @@ class Player {
     // scene.add.existing(this)
     // scene.physics.add.existing(this)
 
-    this.createPopUpButtons(scene);
+    this.createPlayerItemsBar(scene);
   } //attachAvatarToPlayer
 
-  createPopUpButtons(scene) {
+  createPlayerItemsBar(scene) {
     // making the avatar interactive
     scene.player.setInteractive({ useHandCursor: true });
 
@@ -198,12 +198,11 @@ class Player {
       await listObjects("liked", ManageSession.userProfile.id, 100).then(
         async (response) => {
           ManageSession.allLiked = Object.keys(response[0].value)
-          console.log("!!!!!?", ManageSession.allLiked)
+
           // downloading each artwork of the user
-          scene.currentPlayerDownloadedImages = {
+          scene.playerLikedPanelUrls = {
             artworks: await Promise.all(
               ManageSession.allLiked.map(async (element) => {
-
                 const splitKey = await element.split("/")[2].split(".")[0]
                 const key = `${splitKey}_128`;
                 console.log(element, key)
@@ -213,9 +212,7 @@ class Player {
                     "128",
                     "png"
                   );
-
                   scene.load.image(key, currentImage);
-
                   scene.load.start(); // load the image in memory
                 }
                 return { name: `${key}` };
@@ -230,21 +227,21 @@ class Player {
       if (scene.isPlayerItemsBarDisplayed == false) {
         scene.playerItemsBar.setVisible(true);
 
-        scene.homeButtonCircle = scene.add
+        scene.playerHomeButtonCircle = scene.add
           .circle(0, -70, 25, 0xffffff)
           .setOrigin(0.5, 0.5)
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(3, 0x0000);
-        scene.homeButtonImage = scene.add.image(0, -70, "home");
+        scene.playerHomeButton = scene.add.image(0, -70, "home");
 
-        scene.heartButtonCircle = scene.add
+        scene.playerLikedButtonCircle = scene.add
           .circle(65, 0, 25, 0xffffff)
           .setOrigin(0.5, 0.5)
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(3, 0x0000);
-        scene.heartButtonImage = scene.add.image(65, 0, "heart");
+        scene.playerLikedButton = scene.add.image(65, 0, "heart");
 
-        scene.heartButtonCircle.on("pointerup", async () => {
+        scene.playerLikedButtonCircle.on("pointerup", async () => {
           if (ManageSession.allLiked.length > 0) {
             // scene.playerLikedPanel.setVisible(false);
 
@@ -260,7 +257,7 @@ class Player {
                 background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
 
                 panel: {
-                  child: this.createPanel(scene, scene.currentPlayerDownloadedImages),
+                  child: this.createPanel(scene, scene.playerLikedPanelUrls),
                 },
 
                 slider: {
@@ -286,40 +283,41 @@ class Player {
 
         // adding all buttons to the container
         scene.playerItemsBar.add([
-          scene.homeButtonCircle,
-          scene.homeButtonImage,
-          scene.heartButtonCircle,
-          scene.heartButtonImage,
+          scene.playerHomeButtonCircle,
+          scene.playerHomeButton,
+          scene.playerLikedButtonCircle,
+          scene.playerLikedButton,
         ]);
         scene.isPlayerItemsBarDisplayed = true;
 
         // entering the home of the avatar
-        scene.homeButtonCircle.on("pointerup", () => {
-          scene.physics.pause();
-          scene.player.setTint(0xff0000);
+        scene.playerHomeButtonCircle.on("pointerup", () => {
+          HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
+          // scene.physics.pause();
+          // scene.player.setTint(0xff0000);
 
-          ManageSession.socket.rpc("leave", scene.location);
+          // ManageSession.socket.rpc("leave", scene.location);
 
-          scene.player.location = "DefaultUserHome";
+          // scene.player.location = "DefaultUserHome";
 
-          scene.time.addEvent({
-            delay: 500,
-            callback: () => {
-              ManageSession.location = "DefaultUserHome";
-              ManageSession.createPlayer = true;
-              ManageSession.getStreamUsers("join", "DefaultUserHome");
-              scene.scene.stop(scene.scene.key);
-              if (ManageSession.userProfile.id) {
-                scene.scene.start("DefaultUserHome", {
-                  user_id: ManageSession.userProfile.id,
-                });
-              } else {
-                scene.scene.start("DefaultUserHome");
-              }
-            },
-            callbackScope: scene,
-            loop: false,
-          });
+          // scene.time.addEvent({
+          //   delay: 500,
+          //   callback: () => {
+          //     ManageSession.location = "DefaultUserHome";
+          //     ManageSession.createPlayer = true;
+          //     ManageSession.getStreamUsers("join", "DefaultUserHome");
+          //     scene.scene.stop(scene.scene.key);
+          //     if (ManageSession.userProfile.id) {
+          //       scene.scene.start("DefaultUserHome", {
+          //         user_id: ManageSession.userProfile.id,
+          //       });
+          //     } else {
+          //       scene.scene.start("DefaultUserHome");
+          //     }
+          //   },
+          //   callbackScope: scene,
+          //   loop: false,
+          // });
         });
       } else {
         scene.playerItemsBar.setVisible(false);
