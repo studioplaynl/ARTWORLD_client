@@ -145,8 +145,7 @@ class ArtworkList {
 
   async convertRexUIArray(scene) {
     const allLikedArray = Object.keys(ManageSession.allLiked)
-
-    const myVar = {
+    return {
       artworks: await Promise.all(
         allLikedArray.map(async (element) => {
           const splitKey = element.split("/")[2].split(".")[0]
@@ -166,11 +165,7 @@ class ArtworkList {
         })
       ),
     }
-    return myVar
   }
-
-
-
 
   placeHeartButton(scene, x, y, keyImg) {
     const artFrame = scene.textures.get("artFrame_512")

@@ -195,7 +195,6 @@ class Player {
 
     scene.player.on("pointerup", async () => {
 
-
       // in the background
       scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
       console.log("scene.playerLikedPanelUrls", scene.playerLikedPanelUrls)
