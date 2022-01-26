@@ -65,7 +65,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.createHitAreaLocations()
 
         //create a generic artFrame for later use wit iage key "artFrame_512"
-        this.createArtFrame()
+        this.createArtFrame('512')
+        this.createArtFrame('128')
     }
 
     async create() {
@@ -100,7 +101,7 @@ export default class PreloadScene extends Phaser.Scene {
         rt.destroy()
     }
 
-    createArtFrame() {
+    createArtFrame(postFix) {
         const frameBorderSize = 10
         const frame = this.add.graphics()
         // create a black square size of art + 20pix
@@ -116,7 +117,7 @@ export default class PreloadScene extends Phaser.Scene {
         artFrameRendertexture.draw(frame)
 
         //save the rendertexture with a key ('dot'), basically making an image out of it
-        artFrameRendertexture.saveTexture('artFrame_512')
+        artFrameRendertexture.saveTexture('artFrame_'+postFix)
         // this.add.image(0, 0, 'artFrame_512').setVisible(false) // .setOrigin(0)
 
         frame.destroy()
