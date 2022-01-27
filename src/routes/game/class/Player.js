@@ -198,29 +198,6 @@ class Player {
       // in the background
       scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
       console.log("scene.playerLikedPanelUrls", scene.playerLikedPanelUrls)
-      // const allLikedArray = Object.keys(ManageSession.allLiked)
-      // console.log("allLikedArray", allLikedArray)
-      // scene.playerLikedPanelUrls = {
-      //   artworks: await Promise.all(
-      //     allLikedArray.map(async (element) => {
-      //       const splitKey = element.split("/")[2].split(".")[0]
-      //       console.log("element", element, splitKey)
-      //       const key = `${splitKey}_128`;
-      //       console.log(element, key)
-      //       if (!scene.textures.exists(key)) {
-      //         const currentImage = await convertImage(
-      //           element,
-      //           "128",
-      //           "png"
-      //         );
-      //         scene.load.image(key, currentImage);
-      //         scene.load.start(); // load the image in memory
-      //       }
-      //       return { name: `${key}` };
-      //     })
-      //   ),
-      // }
-      // in the background
 
       console.log("scene.playerLikedPanelUrls", scene.playerLikedPanelUrls)
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
@@ -269,7 +246,7 @@ class Player {
                 left: 10, right: 10, top: 10, bottom: 10, panel: 10,
               },
 
-              name: "currentPlayerScrollablePanel"
+              name: "playerLikedPanel"
             })
             .layout()
 
