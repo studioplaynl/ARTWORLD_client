@@ -195,11 +195,6 @@ class Player {
 
     scene.player.on("pointerup", async () => {
 
-      // in the background
-      scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
-      console.log("scene.playerLikedPanelUrls", scene.playerLikedPanelUrls)
-
-      console.log("scene.playerLikedPanelUrls", scene.playerLikedPanelUrls)
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
       if (scene.isPlayerItemsBarDisplayed == false) {
         scene.playerItemsBar.setVisible(true);
@@ -219,42 +214,47 @@ class Player {
         scene.playerLikedButton = scene.add.image(65, 0, "heart");
 
         scene.playerLikedButtonCircle.on("pointerup", async () => {
+          scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
+          scene.load.once("complete", (key) => {
+            console.log("filecomplete", key)
+            scene.playerLikedPanel = scene.rexUI.add
+              .scrollablePanel({
+                x: scene.player.x + 200,
+                y: scene.player.y,
+                width: 200,
+                height: 200,
+
+                scrollMode: 0,
+
+                background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+                panel: {
+                  child: this.createPanel(scene, scene.playerLikedPanelUrls),
+                },
+
+                slider: {
+                  track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+                  thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+                },
+
+                space: {
+                  left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+                },
+
+                name: "playerLikedPanel"
+              })
+              .layout()
+
+            scene.input.topOnly = false;
+            const labels = [];
+            labels.push(
+              ...scene.playerLikedPanel.getElement("#artworks.items", true)
+            );
+          });
           // if (allLikedArray.length > 0) {
           // scene.playerLikedPanel.setVisible(false);
 
-          scene.playerLikedPanel = scene.rexUI.add
-            .scrollablePanel({
-              x: scene.player.x + 200,
-              y: scene.player.y,
-              width: 200,
-              height: 200,
 
-              scrollMode: 0,
-
-              background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
-
-              panel: {
-                child: this.createPanel(scene, scene.playerLikedPanelUrls),
-              },
-
-              slider: {
-                track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
-                thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
-              },
-
-              space: {
-                left: 10, right: 10, top: 10, bottom: 10, panel: 10,
-              },
-
-              name: "playerLikedPanel"
-            })
-            .layout()
-
-          scene.input.topOnly = false;
-          const labels = [];
-          labels.push(
-            ...scene.playerLikedPanel.getElement("#artworks.items", true)
-          );
           // }
         });
 
