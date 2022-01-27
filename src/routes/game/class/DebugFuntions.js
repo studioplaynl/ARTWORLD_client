@@ -1,6 +1,7 @@
 import ManageSession from "../ManageSession";
 import { getAccount, updateObject, listObjects } from '../../../api.js'
 import CoordinatesTranslator from "./CoordinatesTranslator";
+import ArtworkList from "./ArtworkList";
 
 class DebugFuntions {
     constructor(scene) {
@@ -100,7 +101,7 @@ class DebugFuntions {
             const type = "addressbook"
             const name = type + "_" + ManageSession.userProfile.id
             const pub = 2
-            
+
             updateObject(type, name, value, pub)
         }, scene)
 
@@ -134,6 +135,10 @@ class DebugFuntions {
             console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.y, scene.input.activePointer.worldY))
 
         }, scene);
+
+        scene.input.keyboard.on('keyup-U', async (event) => {
+            scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
+        }, scene)
 
     }
 }

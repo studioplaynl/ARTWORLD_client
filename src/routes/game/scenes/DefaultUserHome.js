@@ -234,23 +234,32 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBox.fillStyle(0x000000, 1)
             progressBar.fillStyle(0xFFFFFF, 1)
 
+            // the progress bar is displayed for each artworks loading process 
             const progressedImage = this.progress.find(element => element.imageKeyUrl == file.key)
 
-            progressBox.fillRect(progressedImage.coordX - progressWidth / 2, y, progressWidth, progressHeight)
-            progressBar.fillRect(progressedImage.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
+            // we want to run the progress bar only for artworks, 
+            // and it should not be triggered for any other loading processes
+            if (progressedImage) {
+                progressBox.fillRect(progressedImage.coordX - progressWidth / 2, y, progressWidth, progressHeight)
+                progressBar.fillRect(progressedImage.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
+            }
 
         })
 
         this.load.on('filecomplete', (key) => {
 
+            // on completion of each specific artwork
             const currentImage = this.progress.find(element => element.imageKeyUrl == key)
 
-            // adds a frame to the container
-            this.artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0.5))
+            // we don't want to trigger any other load completions 
+            if (currentImage) {
+                // adds a frame to the container
+                this.artContainer.add(this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0.5))
 
-            // adds the image to the container
-            const completedImage = this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, currentImage.imageKeyUrl).setOrigin(0.5)
-            this.artContainer.add(completedImage)
+                // adds the image to the container
+                const completedImage = this.add.image(currentImage.coordX - this.artDisplaySize / 2, y, currentImage.imageKeyUrl).setOrigin(0.5)
+                this.artContainer.add(completedImage)
+            }
         })
 
         this.load.once("complete", () => {
@@ -305,11 +314,11 @@ export default class DefaultUserHome extends Phaser.Scene {
             Player.moveByTapping(this)
         }
 
-        if (this.scrollablePanel) {
+        if (this.playerLikedPanel) {
             Player.moveScrollablePanel(this);
         }
 
-        if (this.playerContainer) {
+        if (this.playerItemsBar) {
             Player.movePlayerContainer(this);
         }
     } //update

@@ -145,25 +145,29 @@ class ArtworkList {
 
   async convertRexUIArray(scene) {
     const allLikedArray = Object.keys(ManageSession.allLiked)
+
+    const myVar = await Promise.all(
+      allLikedArray.map(async (element) => {
+        const splitKey = element.split("/")[2].split(".")[0]
+        const key = `${splitKey}_128`
+        if (!scene.textures.exists(key)) {
+          const currentImage = await convertImage(
+            element,
+            "128",
+            "png"
+          );
+          scene.load.image(key, currentImage);
+          scene.load.start(); // load the image in memory
+        }
+        return { name: `${key}` };
+      })
+    )
+
+    scene.events.emit("playerLikedPanelComplete")
+    console.log("scene.events.emit", scene.events.emit)
+
     return {
-      artworks: await Promise.all(
-        allLikedArray.map(async (element) => {
-          const splitKey = element.split("/")[2].split(".")[0]
-          console.log("element", element, splitKey)
-          const key = `${splitKey}_128`;
-          console.log(element, key)
-          if (!scene.textures.exists(key)) {
-            const currentImage = await convertImage(
-              element,
-              "128",
-              "png"
-            );
-            scene.load.image(key, currentImage);
-            scene.load.start(); // load the image in memory
-          }
-          return { name: `${key}` };
-        })
-      ),
+      artworks: myVar
     }
   }
 

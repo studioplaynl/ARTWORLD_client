@@ -215,8 +215,9 @@ class Player {
 
         scene.playerLikedButtonCircle.on("pointerup", async () => {
           scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
-          scene.load.once("complete", (key) => {
-            console.log("filecomplete", key)
+
+          scene.events.on("playerLikedPanelComplete", () => {
+            console.log("scene.events")
             scene.playerLikedPanel = scene.rexUI.add
               .scrollablePanel({
                 x: scene.player.x + 200,
