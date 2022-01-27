@@ -3,7 +3,7 @@
   import { Switch } from "attractions";
   import { location, replace } from "svelte-spa-router";
   import { onMount, beforeUpdate } from "svelte";
-  import { uploadImage, user, uploadAvatar, uploadHouse,getObject } from "../../api.js";
+  import { uploadImage, user, uploadAvatar, uploadHouse,getObject, validate } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session, Profile } from "../../session.js";
   import NameGenerator from "../components/nameGenerator.svelte";
@@ -24,6 +24,7 @@
 import App from "../../App.svelte";
 
   export let params = {};
+  let invalidTitle = false;  
   let history = [],
     historyCurrent;
   let canv, _clipboard, drawingColorEl;
@@ -1200,8 +1201,9 @@ import App from "../../App.svelte";
           <div class="saveTab">
             {#if appType != "avatar" && appType != "house"}
               <label for="title">Title</label>
-              <NameGenerator bind:value={title} />
-              <label for="title">Status</label>
+              <NameGenerator bind:value={title} bind:invalidTitle={invalidTitle} />
+
+              <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
                 {#each statussen as status}
                   <option value={status}>
@@ -1210,6 +1212,7 @@ import App from "../../App.svelte";
                 {/each}
               </select>
             {/if}
+
             <button on:click={upload}>Save</button>
           </div>
         </div>

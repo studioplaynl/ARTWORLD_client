@@ -273,10 +273,6 @@ export async function deleteFile(type,file,user) {
     const rpcid = "delete_file";
     const fileurl = await client.rpc(Sess, rpcid, payload)
     .catch((e)=> {throw e})
-    // console.log(fileurl)
-    // let url = fileurl.payload.url
-    // console.log(url)
-    // return url
 }
 
 export async function addFriend(id,usernames) {
@@ -370,4 +366,18 @@ export async function convertImage(path,size, format) {
    let user = await client.rpc(Sess, rpcid, payload)
    if(!!!user.payload.url) Error.update(er => er = "could'nt convert image")
   return user.payload.url
+}
+
+export async function validate(string,type) {
+  //Regex for Valid Characters i.e. Alphabets, Numbers and Space.
+  var regex = new RegExp(/[^A-Za-z -@0-9]/g)
+  if(type == "special") regex =/^[a-zA-Z 0-9\-.,\s]+$/g
+  if(type == "phone") regex = '';
+  if(type == "email") regex = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+
+  console.log(regex)
+  console.log(string)
+  let valid = regex.test(string)
+  console.log(valid)
+  return  valid
 }
