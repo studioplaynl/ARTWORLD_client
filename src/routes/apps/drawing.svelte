@@ -24,7 +24,7 @@
 import App from "../../App.svelte";
 
   export let params = {};
-  let invalidTitle = false;  
+  let invalidTitle = true;  
   let history = [],
     historyCurrent;
   let canv, _clipboard, drawingColorEl;
@@ -305,6 +305,7 @@ import App from "../../App.svelte";
   });
 
   const upload = async () => {
+    if(!invalidTitle) return
     saving = true
     if (appType == "drawing") {
       json = JSON.stringify(canvas.toJSON());

@@ -84,6 +84,7 @@
             }}
           >
             <li><a href="/#/admin">{$_("role.admin")}</a></li>
+            <li><a href="/#/moderator">{$_("role.moderator")}</a></li>
             <li><a href="/#/upload">{$_("nav.upload")}</a></li>
           </ul>
         {/if}

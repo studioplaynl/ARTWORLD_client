@@ -21,6 +21,7 @@
     import upload from "./routes/apps/upload.svelte"
     import MarioSequencer from "./routes/apps/marioSequencer.svelte"
     import player from "./routes/apps/player.svelte"
+    import Moderate from "./routes/moderate.svelte";
 
     let isLogedIn = (detail) => {
         if ($Session != null) return true;
@@ -32,6 +33,14 @@
     let isAdmin = (detail) => {
         console.log($Profile)
         if ($Profile.meta.role == "admin") return true;
+        else {
+            window.location.href = "/#/";
+            return false;
+        }
+    };
+    let isModerator = (detail) => {
+        console.log($Profile)
+        if ($Profile.meta.role == "moderator" || $Profile.meta.role == "admin") return true;
         else {
             window.location.href = "/#/";
             return false;
@@ -188,6 +197,14 @@
             conditions: [
                 (detail) => {
                     return isAdmin(detail);
+                },
+            ],
+        }),
+        "/moderator": wrap({
+            component: Moderate,
+            conditions: [
+                (detail) => {
+                    return isModerator(detail);
                 },
             ],
         }),

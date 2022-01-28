@@ -5,7 +5,7 @@ import { Session,Profile, Error } from "./session.js"
 let Sess, pub, prof;
 export let url;
 export let user; 
-
+let password, repeatpassword;
 
 Session.subscribe(value => {
   Sess = value;
@@ -312,6 +312,13 @@ export async function ListAllUsers() {
   return users.payload;
 }
 
+export async function ListAllArt(page,ammount) {
+  const payload = {page,ammount};
+  const rpcid = "get_all_art";
+  const users = await client.rpc(Sess, rpcid, payload);
+  return users.payload;  
+}
+
 
 export async function deleteObject(collection, key) {
 
@@ -368,16 +375,39 @@ export async function convertImage(path,size, format) {
   return user.payload.url
 }
 
-export async function validate(string,type) {
+export async function validate(string,type,input) {
   //Regex for Valid Characters i.e. Alphabets, Numbers and Space.
   var regex = new RegExp(/[^A-Za-z -@0-9]/g)
-  if(type == "special") regex =/^[a-zA-Z 0-9\-.,\s]+$/g
+  if(type == "special") regex =/^[^\W|_]+$/g
   if(type == "phone") regex = '';
   if(type == "email") regex = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+ 
+  if(type == "password") {
+    regex =/^[^]{8,15}$/g
+    password = string 
+    console.log("pass"+password)
+  } 
 
   console.log(regex)
   console.log(string)
   let valid = regex.test(string)
   console.log(valid)
+ 
+  if(type == "repeatpassword"){ 
+    repeatpassword = string
+    console.log(password)
+    console.log(repeatpassword)
+    if(repeatpassword == password) valid = true
+    else valid = false
+  }
+  console.log(input)
+  if(!!input){
+    if(valid){
+      input.path[0].style.border="0px"
+    } else{
+      input.path[0].style.border="1px solid red"
+
+    }
+  }
   return  valid
 }

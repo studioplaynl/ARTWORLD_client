@@ -14,7 +14,8 @@
 		setFullAccount,
 		updateObjectAdmin,
 		deleteObjectAdmin,
-		listObjects
+		listObjects,
+		validate
 	} from "../../api";
 	import { client } from "../../nakama.svelte";
 	import { onMount } from "svelte";
@@ -93,8 +94,12 @@
 		 await setFullAccount(id, username, password, email, meta);
 	}
 
-	function onSubmit() {
-		let promise = update();
+	async function onSubmit() {
+		if(await validate(email,"email")&&await validate(username,"special")&&await validate(password,"password")&&await validate(passwordCheck,"repeatpassword")){
+			let promise = update();
+		} else{
+			throw 'Update red fields';
+		}
 	}
 
 	async function addLocation() {
@@ -119,6 +124,19 @@
 		deleteObjectAdmin(id, type, name);
 	}
 
+	// async function isValid(string,type, input){
+	// 	let valid = await validate(string,type)
+		
+	// 	if(valid){
+	// 		input.path[0].style.border="0px"
+	// 	} else{
+	// 		input.path[0].style.border="1px solid red"
+
+	// 	}
+	// 	console.log(string,type)
+	// 	console.log(valid)
+		
+	// }
 
 
 </script>
@@ -137,6 +155,7 @@
 					name="username"
 					id="username"
 					bind:value={username}
+					on:keyup={async input => {await validate(username,"special",input)}}
 					required
 				/>
 
@@ -147,6 +166,8 @@
 					name="email"
 					id="email"
 					bind:value={email}
+					on:keyup={async (input)=> {await validate(email,"email",input)}}
+					required
 				/>
 
 				<label for="psw"><b>{$_("register.password")}</b></label>
@@ -156,6 +177,7 @@
 					name="psw"
 					id="psw"
 					bind:value={password}
+					on:keyup={ async (input)=> {await validate(password,"password",input)}}
 					required
 				/>
 
@@ -168,6 +190,7 @@
 					name="psw-repeat"
 					id="psw-repeat"
 					bind:value={passwordCheck}
+					on:keyup={async (input)=> {await validate(passwordCheck,"repeatpassword",input)}}
 					required
 				/>
 

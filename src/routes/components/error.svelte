@@ -29,9 +29,7 @@
             }
         }
         window.onerror = function onError(msg, file, line, col, error) {
-            console.log("err")
-            error = ErrorStackParser.parse(error);
-           console.log(error)
+            $Error = msg
         };
     })
 

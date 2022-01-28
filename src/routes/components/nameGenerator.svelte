@@ -2,7 +2,7 @@
 import { onMount } from 'svelte';
 import {location, replace} from 'svelte-spa-router'
 import {validate} from "../../api"
-export let invalidTitle
+export let invalidTitle = true;
 export let value
 onMount(async () => {
     let url = '/assets/woordenlijst.json';
