@@ -29,6 +29,8 @@
     "@enable3d/phaser-extension": "^0.23.0",
     "@heroiclabs/nakama-js": "^2.1.7",
     "axios": "^0.21.1",
+    "bluebird": "^3.7.2",
+    "error-stack-parser": "^2.0.6",
     "fabric": "^4.5.0",
     "i18next": "^21.3.2",
     "matter-js": "^0.17.1",

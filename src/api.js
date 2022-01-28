@@ -48,7 +48,6 @@ export async function uploadImage(name, type, json, img, status, version, displa
     body: json
   })
   await updateObject(type, name, value,pub)
-  Error.update(er => er = "Saved")
 }
 
 export async function updateTitle(collection, key, name, userID){
@@ -211,7 +210,6 @@ export async function setFullAccount(id, username, password, email, metadata) {
   const rpcid = "set_full_account";
    user = await client.rpc(Sess, rpcid, payload)
    //console.log(user)
-   Error.update(er => er = "Saved updates")
   return user.payload
 }
 
@@ -271,11 +269,10 @@ export async function getFile(file_url) {
 
 export async function deleteFile(type,file,user) {
   const payload = {"type": type, "name": file, "user": user};
+  console.log(payload)
     const rpcid = "delete_file";
-    const fileurl = await client.rpc(Sess, rpcid, payload);
-    let url = fileurl.payload.url
-    console.log(url)
-    return url
+    const fileurl = await client.rpc(Sess, rpcid, payload)
+    .catch((e)=> {throw e})
 }
 
 export async function addFriend(id,usernames) {
@@ -298,8 +295,7 @@ export async function addFriend(id,usernames) {
     Error.update(er => er = "friend added")
   })
   .catch(err =>{
-    console.log(err)
-    Error.update(er => er = err.status)
+    throw err
   })
 }
 
@@ -370,4 +366,18 @@ export async function convertImage(path,size, format) {
    let user = await client.rpc(Sess, rpcid, payload)
    if(!!!user.payload.url) Error.update(er => er = "could'nt convert image")
   return user.payload.url
+}
+
+export async function validate(string,type) {
+  //Regex for Valid Characters i.e. Alphabets, Numbers and Space.
+  var regex = new RegExp(/[^A-Za-z -@0-9]/g)
+  if(type == "special") regex =/^[a-zA-Z 0-9\-.,\s]+$/g
+  if(type == "phone") regex = '';
+  if(type == "email") regex = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)
+
+  console.log(regex)
+  console.log(string)
+  let valid = regex.test(string)
+  console.log(valid)
+  return  valid
 }
