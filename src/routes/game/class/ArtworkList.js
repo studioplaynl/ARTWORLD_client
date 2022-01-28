@@ -156,38 +156,35 @@ class ArtworkList {
     //we initialise the function/array that keeps track of progress and completion
     let tempArray = { artworks: [] }
 
-    await Promise.all(
+    allLikedArray.map(async (element) => {
+      console.log(element)
+      const splitKey = element.split("/")[2].split(".")[0]
+      //we get only the relevant part of the url for the key:
+      //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png -> geelCoral.png
 
-      allLikedArray.map(async (element) => {
-        console.log(element)
-        const splitKey = element.split("/")[2].split(".")[0]
-        //we get only the relevant part of the url for the key:
-        //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png -> geelCoral.png
+      const key = `${splitKey}_128`
 
-        const key = `${splitKey}_128`
+      //if the image is not yet loaded, we download it
+      if (!scene.textures.exists(key)) {
+        const currentImage = await convertImage(
+          element,
+          "128",
+          "png"
+        )
 
-        //if the image is not yet loaded, we download it
-        if (!scene.textures.exists(key)) {
-          const currentImage = await convertImage(
-            element,
-            "128",
-            "png"
-          )
+        scene.load.image(key, currentImage) //put the image in the queue
+        scene.load.start(); // start the queue with all the images
+        //check if the specific image has loaded
+        const fileNameCheck = `filecomplete-image-${key}`
+        //console.log(fileNameCheck)
+        scene.load.on(fileNameCheck, () => allItems = this.checkAllItemsList(scene, allItems, -1, key, tempArray))
+        //scene.load.on(fileNameCheck, () => console.log("finished loading: ", fileNameCheck)) // working
 
-          scene.load.image(key, currentImage) //put the image in the queue
-          scene.load.start(); // start the queue with all the images
-          //check if the specific image has loaded
-          const fileNameCheck = `filecomplete-image-${key}`
-          //console.log(fileNameCheck)
-          scene.load.on(fileNameCheck, () => allItems = this.checkAllItemsList(scene, allItems, -1, key, tempArray))
-          //scene.load.on(fileNameCheck, () => console.log("finished loading: ", fileNameCheck)) // working
-
-        } else {
-          //when an image was already loaded and is still in memory, it also counts:
-          allItems = this.checkAllItemsList(scene, allItems, -1, key, tempArray)
-        }
-      })
-    )
+      } else {
+        //when an image was already loaded and is still in memory, it also counts:
+        allItems = this.checkAllItemsList(scene, allItems, -1, key, tempArray)
+      }
+    })
   }
 
   checkAllItemsList(scene, allItems, subtract, key, tempArray) {
