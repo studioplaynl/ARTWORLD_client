@@ -3,7 +3,7 @@ import CoordinatesTranslator from "./CoordinatesTranslator";
 import { listObjects, listImages, convertImage, getFullAccount } from "../../../api.js";
 import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList";
-import ScrollablePanel from "./ScrollablePanel";
+import R_UI from "./R_UI";
 
 class Player {
   constructor() { }
@@ -205,7 +205,7 @@ class Player {
         background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
 
         panel: {
-          child: ScrollablePanel.createPanel(scene, scene.playerLikedPanelKeys),
+          child: R_UI.createPanel(scene, scene.playerLikedPanelKeys),
         },
 
         slider: {
@@ -256,7 +256,7 @@ class Player {
           background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
 
           panel: {
-            child: ScrollablePanel.createPanel(scene, scene.playerLikedPanelKeys),
+            child: R_UI.createPanel(scene, scene.playerLikedPanelKeys),
           },
 
           slider: {
@@ -900,7 +900,7 @@ class Player {
             background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
 
             panel: {
-              child: ScrollablePanel.createPanel(scene, scene.onlinePlayerDownloadedImages),
+              child: R_UI.createPanel(scene, scene.onlinePlayerDownloadedImages),
             },
 
             slider: {
