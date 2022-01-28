@@ -3,7 +3,7 @@
   import { Switch } from "attractions";
   import { location, replace } from "svelte-spa-router";
   import { onMount, beforeUpdate } from "svelte";
-  import { uploadImage, user, uploadAvatar, uploadHouse,getObject } from "../../api.js";
+  import { uploadImage, user, uploadAvatar, uploadHouse,getObject, validate } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session, Profile } from "../../session.js";
   import NameGenerator from "../components/nameGenerator.svelte";
@@ -24,6 +24,7 @@
 import App from "../../App.svelte";
 
   export let params = {};
+  let invalidTitle = false;  
   let history = [],
     historyCurrent;
   let canv, _clipboard, drawingColorEl;
@@ -42,7 +43,7 @@ import App from "../../App.svelte";
     showBackground = true;
   let fillColor = "#f00", fillTolerance = 2;
   let current = "draw";
-  if (!!params.name) title = params.name.split("_")[1];
+  if (!!params.name) title = params.name;
   let saved = false;
   let saveToggle = false,
     colorToggle = true;
@@ -51,9 +52,7 @@ import App from "../../App.svelte";
   let displayName;
   let appType = $location.split("/")[1];
   let version = 0
-  if(!!params.name){
-    version = (Number(params.name.split("_")[0])+1) || 0
-  }
+
  
   console.log("version:" + version)
   console.log("title: " + title)
@@ -407,6 +406,7 @@ import App from "../../App.svelte";
     if (appType != "avatar" && appType != "house") {
       if (!!params.name && !!params.user) {
         let Object = await getObject(appType, params.name, params.user)
+        if(!!!Object) return
         title = Object.key
         console.log(Object)
 
@@ -414,7 +414,7 @@ import App from "../../App.svelte";
         displayName = Object.value.displayname
         status = Object.status;
         let url = Object.value.json
-        version = Number(Object.value.version) +1
+        version = Number(Object.value.version) +1 ||0
         var jsonURL = await getDrawing(url);
         console.log(jsonURL);
         fetch(jsonURL)
@@ -436,14 +436,14 @@ import App from "../../App.svelte";
       
       if(appType == "avatar"){
         var jsonURL = await getDrawing($Profile.avatar_url.split(".")[0] + ".json");
-        version = Number($Profile.avatar_url.split("/")[2].split("_")[0])+1
+        version = Number(drawing.value.version) + 1 || 0
         console.log("version" + version)  
       }else {
         let drawing = await getObject("home", $Profile.meta.azc)
         console.log(drawing.value.url)
         // get item
         // extract version
-        version = Number(drawing.value.url.split("/")[2].split("_")[0]) + 1
+        version = Number(drawing.value.version) + 1 || 0
         console.log(version)
         // open file
         var jsonURL = await getDrawing(
@@ -1201,8 +1201,9 @@ import App from "../../App.svelte";
           <div class="saveTab">
             {#if appType != "avatar" && appType != "house"}
               <label for="title">Title</label>
-              <NameGenerator bind:value={title} />
-              <label for="title">Status</label>
+              <NameGenerator bind:value={title} bind:invalidTitle={invalidTitle} />
+
+              <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
                 {#each statussen as status}
                   <option value={status}>
@@ -1211,6 +1212,7 @@ import App from "../../App.svelte";
                 {/each}
               </select>
             {/if}
+
             <button on:click={upload}>Save</button>
           </div>
         </div>

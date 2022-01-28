@@ -1,17 +1,52 @@
 <script>
-    import {Error} from "../../session.js"
+    import {onMount} from "svelte"
+    import {Error, Session} from "../../session.js"
+
     let error
-    
+    let showMessage = false
     Error.subscribe(err => {
         error = err
         setTimeout(()=> {$Error = null},5000)
     });
 
+    onMount(() => {
+		window.onunhandledrejection = (e) => {
+            console.log(e)
+            console.log(e.reason)
 
+            console.log(typeof e.reason)
+            if(typeof e.reason == 'object'){
+                $Error = e.reason.message || e.reason.statusText
+                if(e.reason.state == "401" || e.reason.status == "401"){
+                    // relogin
+                    $Session = null
+                    window.location.href = "/#/login"
+                    location.reload();
+                }
+            }
+            else {
+                $Error = e.reason
+            }
+        }
+        window.onerror = function onError(msg, file, line, col, error) {
+            console.log("err")
+            error = ErrorStackParser.parse(error);
+           console.log(error)
+        };
+    })
 
 </script>
 
-<div id="snackbar" class:show={!!error}>{error}</div>
+<div id="snackbar" class:show={!!error}>
+    <p>Oeps... er ging iets mis</p>
+    <button on:click="{()=>{ showMessage = !showMessage}}">Show error</button>
+    <a on:click="{()=> {$Error = null}}">X</a>
+    {#if showMessage}
+    <div id="errorMessage">
+        {error}
+    </div>
+    {/if}
+</div>
 
 
 <style>
@@ -28,6 +63,9 @@
     z-index: 1; /* Add a z-index if needed */
     left: 50%; /* Center the snackbar */
     top: 60px; /* 30px from the bottom */
+    }
+
+    #errorMessage{
     }
 
     /* Show the snackbar when clicking on a button (class added with JavaScript) */

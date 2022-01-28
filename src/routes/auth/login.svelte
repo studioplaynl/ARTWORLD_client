@@ -5,8 +5,8 @@
   export let params;
 
     console.log($Session)
-	let email = params.user || "user1@vrolijkheid.nl"
-	let password = params.password || 'somesupersecretpassword'
+	let email
+	let password
 
 	async function onSubmit() {
   
@@ -15,6 +15,8 @@
 	}
 
   onMount(()=>{
+    email = params.user || "user1@vrolijkheid.nl"
+	  password = params.password || 'somesupersecretpassword'
     console.log(params)
     if(!!$Session){
       window.location.href = "/#/"
