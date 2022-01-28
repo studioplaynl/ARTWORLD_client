@@ -143,34 +143,117 @@ class ArtworkList {
     })
   }
 
-  async convertRexUIArray(scene) {
+  async convertRexUIArray1(scene) {
+    //allLikedArray is an array of art in format:
+    //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
     const allLikedArray = Object.keys(ManageSession.allLiked)
 
-    const myVar = await Promise.all(
+    //we get the number of elements we want to show
+    //we subtract when an item is loaded, if zero we are complete and update the list
+    let allItems = allLikedArray.length
+
+    scene.playerLikedPanelKeys = await Promise.all(
+
       allLikedArray.map(async (element) => {
+        console.log(element)
         const splitKey = element.split("/")[2].split(".")[0]
+        //we get only the relevant part of the url for the key:
+        //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png -> geelCoral.png
+
         const key = `${splitKey}_128`
+
+        //if the image is not yet loaded, we download it
         if (!scene.textures.exists(key)) {
           const currentImage = await convertImage(
             element,
             "128",
             "png"
-          );
-          scene.load.image(key, currentImage);
-          scene.load.start(); // load the image in memory
+          )
+
+          scene.load.image(key, currentImage) //put the image in the queue
+          scene.load.start(); // start the queue with all the images
+          //check if the specific image has loaded
+          const fileNameCheck = `filecomplete-image-${key}`
+          //console.log(fileNameCheck)
+          scene.load.on(fileNameCheck, () => allItems = this.checkAllItemsList(scene, allItems, -1))
+
+          scene.load.on(fileNameCheck, () => console.log("finished loading: ", fileNameCheck)) // working
+
+        } else {
+          allItems = this.checkAllItemsList(scene, allItems, -1)
         }
-        return { name: `${key}` };
+
+        return { name: `${key}` }
+      })
+    )
+  }
+
+  async convertRexUIArray(scene) {
+    //allLikedArray is an array of art in format:
+    //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
+    const allLikedArray = Object.keys(ManageSession.allLiked)
+
+    //we get the number of elements we want to show
+    //we subtract when an item is loaded, if zero we are complete and update the list
+    let allItems = allLikedArray.length
+
+    scene.playerLikedPanelKeys = await Promise.all(
+
+      allLikedArray.map(async (element) => {
+        console.log(element)
+        const splitKey = element.split("/")[2].split(".")[0]
+        //we get only the relevant part of the url for the key:
+        //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png -> geelCoral.png
+
+        const key = `${splitKey}_128`
+
+        //if the image is not yet loaded, we download it
+        if (!scene.textures.exists(key)) {
+          const currentImage = await convertImage(
+            element,
+            "128",
+            "png"
+          )
+
+          scene.load.image(key, currentImage) //put the image in the queue
+          scene.load.start(); // start the queue with all the images
+          //check if the specific image has loaded
+          const fileNameCheck = `filecomplete-image-${key}`
+          //console.log(fileNameCheck)
+          scene.load.on(fileNameCheck, () => allItems = this.checkAllItemsList(scene, allItems, -1))
+
+          scene.load.on(fileNameCheck, () => console.log("finished loading: ", fileNameCheck)) // working
+
+        } else {
+          allItems = this.checkAllItemsList(scene, allItems, -1)
+        }
+
+        return { name: `${key}` }
       })
     )
 
-    scene.events.emit("playerLikedPanelComplete")
-    console.log("scene.events.emit", scene.events.emit)
+    //scene.load.on('complete', () => (this.updatePlayerLikedPanelKeys(scene, tempResult)), scene) //this only completes when all images are not in memory yet, and are finished downloading
+  }
 
-    return {
-      artworks: myVar
+  checkAllItemsList(scene, allItems, subtract) {
+    console.log("subtrack: ", subtract)
+    allItems = allItems + subtract
+    console.log("allItems: ", allItems)
+    if (allItems < 1) {
+      console.log("FINISHED!")
+      console.log("scene.playerLikedPanelKeys: ", scene.playerLikedPanelKeys)
+      scene.events.emit("playerLikedPanelComplete")
+
+    } else {
+      return allItems // return the result if not completed
     }
   }
 
+  updatePlayerLikedPanelKeys(scene, tempResult) {
+    scene.playerLikedPanelKeys = { artworks: tempResult }
+    console.log(scene.playerLikedPanelKeys)
+    scene.events.emit('playerLikedPanelComplete')
+  }
   placeHeartButton(scene, x, y, keyImg) {
     const artFrame = scene.textures.get("artFrame_512")
     let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "bitmap_heart").setOrigin(1, 0).setScale(0.5)

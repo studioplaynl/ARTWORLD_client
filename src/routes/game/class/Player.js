@@ -187,11 +187,98 @@ class Player {
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y);
 
-    // scene.playerLikedPanel = scene.add.container(0, 0);
+    //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
+    scene.playerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
+    console.log(scene.playerLikedPanelKeys)
+
+
+    scene.playerLikedPanel = scene.rexUI.add
+      .scrollablePanel({
+        x: scene.player.x + 200,
+        y: scene.player.y,
+        width: 200,
+        height: 200,
+
+        scrollMode: 0,
+
+        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+        panel: {
+          child: this.createPanel(scene, scene.playerLikedPanelKeys),
+        },
+
+        slider: {
+          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+        },
+
+        space: {
+          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+        },
+
+        name: "playerLikedPanel"
+      })
+      .layout()
+
+    scene.input.topOnly = false;
+    const labels = [];
+    labels.push(
+      ...scene.playerLikedPanel.getElement("#artworks.items", true)
+    )
+    //hide the itemsPanel
+    scene.playerLikedPanel.setVisible(false)
 
     scene.input.on("gameobjectdown", (pointer, object) => {
-      // scene.playerLikedPanel.setVisible(false);
+
     });
+
+    scene.events.on("playerLikedPanelComplete", () => {
+      //console.log("scene.events")
+      console.log(scene.playerLikedPanel)
+
+      console.log(scene.playerLikedPanelKeys)
+
+      //destroy the old panel
+      scene.playerLikedPanel.destroy()
+
+      //create a new panel
+
+      scene.playerLikedPanel = scene.rexUI.add
+        .scrollablePanel({
+          x: scene.player.x + 200,
+          y: scene.player.y,
+          width: 200,
+          height: 200,
+
+          scrollMode: 0,
+
+          background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+          panel: {
+            child: this.createPanel(scene, scene.playerLikedPanelKeys),
+          },
+
+          slider: {
+            track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+            thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+          },
+
+          space: {
+            left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+          },
+
+          name: "playerLikedPanel"
+        })
+        .layout()
+
+      scene.input.topOnly = false;
+      const labels = [];
+      labels.push(
+        ...scene.playerLikedPanel.getElement("#artworks.items", true)
+      )
+
+      scene.playerLikedPanel.setVisible(true)
+    })
 
     scene.player.on("pointerup", async () => {
 
@@ -213,51 +300,10 @@ class Player {
           .setStrokeStyle(3, 0x0000);
         scene.playerLikedButton = scene.add.image(65, 0, "heart");
 
-        scene.playerLikedButtonCircle.on("pointerup", async () => {
-          scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
+        scene.playerLikedButtonCircle.on("pointerdown", async () => {
+          scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
 
-          scene.events.on("playerLikedPanelComplete", () => {
-            console.log("scene.events")
-            scene.playerLikedPanel = scene.rexUI.add
-              .scrollablePanel({
-                x: scene.player.x + 200,
-                y: scene.player.y,
-                width: 200,
-                height: 200,
-
-                scrollMode: 0,
-
-                background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
-
-                panel: {
-                  child: this.createPanel(scene, scene.playerLikedPanelUrls),
-                },
-
-                slider: {
-                  track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
-                  thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
-                },
-
-                space: {
-                  left: 10, right: 10, top: 10, bottom: 10, panel: 10,
-                },
-
-                name: "playerLikedPanel"
-              })
-              .layout()
-
-            scene.input.topOnly = false;
-            const labels = [];
-            labels.push(
-              ...scene.playerLikedPanel.getElement("#artworks.items", true)
-            );
-          });
-          // if (allLikedArray.length > 0) {
-          // scene.playerLikedPanel.setVisible(false);
-
-
-          // }
-        });
+        })
 
         // adding all buttons to the container
         scene.playerItemsBar.add([
@@ -265,7 +311,8 @@ class Player {
           scene.playerHomeButton,
           scene.playerLikedButtonCircle,
           scene.playerLikedButton,
-        ]);
+        ])
+
         scene.isPlayerItemsBarDisplayed = true;
 
         // entering the home of the avatar
@@ -273,8 +320,9 @@ class Player {
           HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
         });
       } else {
-        scene.playerItemsBar.setVisible(false);
-        scene.isPlayerItemsBarDisplayed = false;
+        scene.playerItemsBar.setVisible(false)
+        scene.playerLikedPanel.setVisible(false)
+        scene.isPlayerItemsBarDisplayed = false
       }
     });
   }
