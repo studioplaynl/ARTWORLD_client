@@ -9,9 +9,9 @@ class R_UI {
     })
       .add(
         this.createTable(scene, data, 'artworks', 1), // child
-        { expand: true }
+        { expand: true } //the black border in the Table
       )
-    return sizer;
+    return sizer
   }
 
   createTable(scene, data, key, columns) {

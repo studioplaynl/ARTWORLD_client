@@ -39,7 +39,7 @@ class Player {
 
         console.log(scene.textures.exists(scene.playerAvatarKey));
 
-        //!
+        //* attatch to existing context and physics
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
