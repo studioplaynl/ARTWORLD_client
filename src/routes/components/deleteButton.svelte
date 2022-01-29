@@ -1,5 +1,6 @@
 <script>
-    import {updateObject, deleteFile} from "../../api.js"
+    import {updateObject, deleteFile, deleteObjectAdmin} from "../../api.js"
+    import {Profile} from "../../session"
     import {Modal, Dialog, Button} from "attractions"
     export let col;
     export let row;
@@ -13,21 +14,26 @@ const Trash = () => {
     let value = row.value
     value.status = "trash"
     let pub = false
-    updateObject(row.collection, row.key, value,pub)
+    updateObject(row.collection, row.key, value,pub, row.user_id)
     moveToTrash(row.key)
 }
 
 const Delete = () => {
     modalOpen = false;
-    deleteFile(row.collection,row.key,row.user_id)
+    if($Profile.meta.role == "admin"|| $Profile.meta.role == "moderator"){
+        deleteObjectAdmin(row.user_id,row.collection,row.key)
+
+    } else {
+        deleteFile(row.collection,row.key,row.user_id)
+
+    }
     removeFromTrash(row.key)
     console.log("deleted")
 
 }
-console.log("user="+isCurrentUser)
 </script>
 <main>
-    {#if isCurrentUser()}
+    {#if isCurrentUser() || $Profile.meta.role == "admin"|| $Profile.meta.role == "moderator"}
         {#if row.value.status != "trash"}
         <Button on:click={Trash}><svg class="icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" /></svg></Button>
         {:else}

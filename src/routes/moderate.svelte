@@ -1,6 +1,6 @@
 <script>
-  import {listImages, getAccount, convertImage} from '../api.js';
-  import { Session } from "../session.js";
+  import {listImages, getAccount, convertImage, listAllObjects} from '../api.js';
+  import { Session, Profile } from "../session.js";
   import { _ } from 'svelte-i18n'
   import SvelteTable from "svelte-table";
   import StatusComp from "./components/statusbox.svelte"
@@ -71,7 +71,7 @@
         title: "Username",
         value: v => { 
           
-          return v.user_id
+          return `<a href="/#/profile/${v.user_id}">${v.username}</a>`
         },
         sortable: true,
       },
@@ -133,11 +133,11 @@ function moveToTrash(key) {
   }
 
   async function getArt() {
-    drawings = await listImages("drawing","", 10)
-    video = await listImages("video","", 10)
-    audio = await listImages("audio","", 10)
-    stopMotion = await listImages("stopmotion","", 10)
-    picture = await listImages("picture","", 10)
+    drawings = await listAllObjects("drawing")
+    video = await listAllObjects("video")
+    audio = await listAllObjects("audio")
+    stopMotion = await listAllObjects("stopmotion")
+    picture = await listAllObjects("picture")
     console.log(drawings)
     useraccount = await getAccount(id)
     console.log(useraccount)
@@ -167,10 +167,18 @@ function moveToTrash(key) {
   }
   let promise = getArt();
 </script>
-
-<h1>kunstwerken</h1>
+<div class="box">
+  <h1>kunstwerken</h1>
 <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable"></SvelteTable>
-{#if CurrentUser}
+{#if CurrentUser || $Profile.meta.role == "moderator" || $Profile.meta.role == "admin"}
 <h1>Prullenmand</h1>
 <SvelteTable columns="{columns}" rows="{trash}" classNameTable="profileTable"></SvelteTable>
 {/if}
+</div>
+
+<style>
+  .box {
+	  max-width: fit-content;
+	  margin: 0 auto;
+  }
+</style>

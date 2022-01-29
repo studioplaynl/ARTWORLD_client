@@ -53,10 +53,9 @@ export async function uploadImage(name, type, json, img, status, version, displa
 export async function updateTitle(collection, key, name, userID){
   if(!!!userID) userID = Sess.user_id
   let Object = await getObject(collection, key, userID)
-  console.log(Object)
-  console.log("displayName: " + name)
   Object.value.displayname = name
-  await updateObject(collection, key, Object.value,Object.permission_read)
+  if(prof.meta.role == "admin" ||prof.meta.role == "moderator" ) await updateObject(collection, key, Object.value,Object.permission_read, userID)
+  else await updateObject(collection, key, Object.value,Object.permission_read)
 }
 
 export async function listImages(type, user, limit) {
@@ -114,11 +113,15 @@ export async function getUploadURL(type, name, filetype,version) {
   return [url, locatio]
 }
 
-export async function updateObject(type, name, value, pub) {
+export async function updateObject(type, name, value, pub,userID) {
+  // if user is admin/moderator and userID
+  
   if(pub) {
     pub = 2
   }
-  else{ pub = 1;}
+  else{ 
+    pub = 1
+  }
   if( typeof value == "string"){
     value = JSON.parse(value)
   }
@@ -129,11 +132,17 @@ export async function updateObject(type, name, value, pub) {
     "permission_read": pub,
     //"version": "*"
   }
-  console.log(object)
+
+  if(prof.meta.role == "admin" || prof.meta.role == "moderator"){
+    console.log("working!")
+    updateObjectAdmin(userID, type, name, value, pub)
+  } else {
+  // else 
   const object_ids = await client.writeStorageObjects(Sess, [
     object
   ]);
   console.info("Stored objects: %o", object_ids);
+  }
 }
 
 
@@ -165,6 +174,7 @@ export async function listAllObjects(type) {
   const payload = { type };
   const rpcid = "list_all_storage_object";
   const objects = await client.rpc(Sess, rpcid, payload);
+
   return objects.payload
 }
 
@@ -334,16 +344,22 @@ export async function deleteObject(collection, key) {
 }
 
 
-export async function updateObjectAdmin(id, type, name, value, pub) {
+export async function updateObjectAdmin(id, type, name, value, pub) { 
+  let result
+  value = JSON.stringify(value)
   let payload = {id,type, name, value, pub};
-
+  console.log(payload)
 
   const rpcid = "create_object_admin";
-   user = await client.rpc(Sess, rpcid, payload)
-   console.log(user)
-   if(user.payload.status == "succes") Error.update(er => er = "create object")
-   else Error.update(er => er = "create object failed")
-  return user.payload
+   result = await client.rpc(Sess, rpcid, payload)
+   console.log(result)
+   if(result.payload.status == "succes"){
+
+   } // succes
+   else {
+     throw result.payload.status // error
+   }
+  return result.payload
 }
 
 
