@@ -6,7 +6,6 @@ import { SCENES } from "./config.js"
 class ManageSession {
   constructor() {
     this.debug = true
-
     this.sessionStored
     this.freshSession
     this.userProfile
