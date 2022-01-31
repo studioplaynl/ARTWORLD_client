@@ -391,7 +391,7 @@ class Player {
     scene.events.on("onlinePlayerLikedPanelComplete", () => {
       //console.log("scene.events")
       console.log(scene.onlinePlayerLikedPanel)
-      console.log(scene.onlinePlayerLikedPanelKeys)
+      console.log(scene.onlinePlayerLikedPanelKeys) //!undifined
 
       //destroy the old panel
       scene.onlinePlayerLikedPanel.destroy()

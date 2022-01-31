@@ -188,11 +188,11 @@ class ArtworkList {
   }
 
   async convertRexUIArrayOnlinePlayer(scene) {
-
+    console.log(ManageSession.allLikedOnlinePlayer)
     //allLikedArray is an array of art in format:
     //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
     const allLikedArray = Object.keys(ManageSession.allLikedOnlinePlayer)
-
+    console.log(allLikedArray)
     //we get the number of elements we want to show
     //we subtract when an item is loaded, if zero we are complete and update the list
     let allItems = allLikedArray.length
@@ -263,7 +263,7 @@ class ArtworkList {
     //console.log("allItems: ", allItems)
     if (allItems < 1) {
       //console.log("FINISHED!")
-      scene.playerLikedPanelKeys = tempArray
+      scene.onlinePlayerLikedPanelKeys = tempArray
       //console.log("scene.playerLikedPanelKeys: ", scene.playerLikedPanelKeys)
       scene.events.emit("onlinePlayerLikedPanelComplete")
 
