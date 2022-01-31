@@ -229,10 +229,7 @@ class Player {
     //hide the itemsPanel
     scene.playerLikedPanel.setVisible(false)
 
-    scene.input.on("gameobjectdown", (pointer, object) => {
-
-    });
-
+    // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
     scene.events.on("playerLikedPanelComplete", () => {
       //console.log("scene.events")
       console.log(scene.playerLikedPanel)
@@ -302,8 +299,9 @@ class Player {
         scene.playerLikedButton = scene.add.image(65, 0, "heart");
 
         scene.playerLikedButtonCircle.on("pointerdown", async () => {
+          // we display placeholder panel, and replace it with refreshed panel once server is done loading
+          scene.playerLikedPanel.setVisible(true)
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
-
         })
 
         // adding all buttons to the container
@@ -326,6 +324,156 @@ class Player {
         scene.isPlayerItemsBarDisplayed = false
       }
     });
+  }
+
+  createOnlinePlayerItemsBar(scene) {
+    // making the avatar interactive
+    //player.setInteractive({ useHandCursor: true });
+
+    // for toggling the pop-up buttons
+    scene.isOnlinePlayerItemsBarDisplayed = false;
+
+    // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
+    scene.onlinePlayerItemsBar = scene.add.container(scene.player.x, scene.player.y);
+
+    //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
+    scene.OnlinePlayerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
+    console.log(scene.OnlinePlayerLikedPanelKeys)
+
+    scene.onlinePlayerLikedPanel = scene.rexUI.add
+      .scrollablePanel({
+        x: scene.player.x + 200,
+        y: scene.player.y,
+        width: 200,
+        height: 200,
+
+        scrollMode: 0,
+
+        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+        panel: {
+          child: R_UI.createPanel(scene, scene.onlinePlayerLikedPanelKeys),
+        },
+
+        slider: {
+          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+        },
+
+        space: {
+          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+        },
+
+        name: "onlinePlayerLikedPanel"
+      })
+      .layout()
+
+    scene.input.topOnly = false;
+    const labels = [];
+    labels.push(
+      ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
+    )
+    //hide the itemsPanel
+    scene.onlinePlayerLikedPanel.setVisible(false)
+
+
+    // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
+    scene.events.on("onlinePlayerLikedPanelComplete", () => {
+      //console.log("scene.events")
+      console.log(scene.onlinePlayerLikedPanel)
+      console.log(scene.onlinePlayerLikedPanelKeys)
+
+      //destroy the old panel
+      scene.onlinePlayerLikedPanel.destroy()
+
+      //create a new panel
+
+      scene.onlinePlayerLikedPanel = scene.rexUI.add
+        .scrollablePanel({
+          //! get the clicked onlinePlayer
+          x: scene.player.x + 200,
+          y: scene.player.y,
+          width: 200,
+          height: 200,
+
+          scrollMode: 0,
+
+          background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+          panel: {
+            child: R_UI.createPanel(scene, scene.onlinePlayerLikedPanelKeys),
+          },
+
+          slider: {
+            track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+            thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+          },
+
+          space: {
+            left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+          },
+
+          name: "onlinePlayerLikedPanel"
+        })
+        .layout()
+
+      scene.input.topOnly = false;
+      const labels = [];
+      labels.push(
+        ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
+      )
+
+      scene.onlinePlayerLikedPanel.setVisible(true)
+    })
+  }
+
+  displayOnlinePlayerItemsBar(scene, player) {
+    //player.on("pointerup", async () => {
+
+      // checking if the buttons are hidden, show - if hidden, hide - if displayed
+      if (scene.isOnlinePlayerItemsBarDisplayed == false) {
+        scene.onlinePlayerItemsBar.setVisible(true);
+
+        scene.onlinePlayerHomeButtonCircle = scene.add
+          .circle(0, -70, 25, 0xffffff)
+          .setOrigin(0.5, 0.5)
+          .setInteractive({ useHandCursor: true })
+          .setStrokeStyle(3, 0x0000);
+        scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home");
+
+        scene.onlinePlayerLikedButtonCircle = scene.add
+          .circle(65, 0, 25, 0xffffff)
+          .setOrigin(0.5, 0.5)
+          .setInteractive({ useHandCursor: true })
+          .setStrokeStyle(3, 0x0000);
+        scene.onlinePlayerLikedButton = scene.add.image(65, 0, "heart");
+
+        scene.onlinePlayerLikedButtonCircle.on("pointerdown", async () => {
+          // we display placeholder panel, and replace it with refreshed panel once server is done loading
+          scene.onlinePlayerLikedPanel.setVisible(true)
+          scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene) //!convert methode to onlinePlayer
+        })
+
+        // adding all buttons to the container
+        scene.onlinePlayerItemsBar.add([
+          scene.onlinePlayerHomeButtonCircle,
+          scene.onlinePlayerHomeButton,
+          scene.onlinePlayerLikedButtonCircle,
+          scene.onlinePlayerLikedButton,
+        ])
+
+        scene.isOnlinePlayerItemsBarDisplayed = true;
+
+        // entering the home of the avatar
+        scene.onlinePlayerHomeButtonCircle.on("pointerup", () => {
+          HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
+        });
+      } else {
+        scene.onlinePlayerItemsBar.setVisible(false)
+        scene.onlinePlayerLikedPanel.setVisible(false)
+        scene.isOnlineItemsBarDisplayed = false
+      }
+    //});
   }
 
   moveByCursor(scene) {
@@ -660,7 +808,7 @@ class Player {
             //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
             .setDepth(90)
           element.setInteractive({ useHandCursor: true })
-          element.on('pointerup', () => { this.itemsBarOnlinePlayer(scene, element) })
+          element.on('pointerup', () => { this.displayOnlinePlayerItemsBar(scene, element) })
 
           element.setData("movingKey", "moving");
           element.setData("stopKey", "stop");
