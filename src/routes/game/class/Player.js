@@ -339,6 +339,7 @@ class Player {
   createOnlinePlayerItemsBar(scene) {
     // making the avatar interactive
     //player.setInteractive({ useHandCursor: true });
+    console.log("111")
 
     // for toggling the pop-up buttons
     scene.isOnlinePlayerItemsBarDisplayed = false;
@@ -389,6 +390,7 @@ class Player {
 
     // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
     scene.events.on("onlinePlayerLikedPanelComplete", () => {
+      console.log("222")
       //console.log("scene.events")
       console.log(scene.onlinePlayerLikedPanel)
       console.log(scene.onlinePlayerLikedPanelKeys) //!undifined
@@ -443,9 +445,9 @@ class Player {
     if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
       Promise.all([listObjects("liked", player.user_id, 10)]).then((rec) => {
-
+        // it checks if there was ever before a liked object created for the online player
         if (rec[0].length > 0) {
-
+          console.log("if rec", rec)
           ManageSession.allLikedOnlinePlayer = rec[0][0].value
 
           scene.onlinePlayerItemsBar.setVisible(true);
@@ -466,6 +468,15 @@ class Player {
           scene.onlinePlayerItemsBar.add([scene.onlinePlayerLikedButtonCircle, scene.onlinePlayerLikedButton])
 
           scene.isOnlinePlayerItemsBarDisplayed = true
+        } else {
+          console.log("else rec", rec)
+          ManageSession.allLikedOnlinePlayer = {}
+
+          const type = "liked"
+          const name = type + "_" + player.user_id
+          const pub = 2
+          const value = ManageSession.allLikedOnlinePlayer
+          updateObject(type, name, value, pub)
         }
 
       })
