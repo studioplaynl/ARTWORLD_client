@@ -187,6 +187,52 @@ class ArtworkList {
     })
   }
 
+  async convertRexUIArrayOnlinePlayer(scene) {
+
+    //allLikedArray is an array of art in format:
+    //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
+    const allLikedArray = Object.keys(ManageSession.allLikedOnlinePlayer)
+
+    //we get the number of elements we want to show
+    //we subtract when an item is loaded, if zero we are complete and update the list
+    let allItems = allLikedArray.length
+
+    //we initialise the function/array that keeps track of progress and completion
+    let tempArray = { artworks: [] }
+
+    allLikedArray.map(async (element) => {
+      console.log(element)
+      const splitKey = element.split("/")[2].split(".")[0]
+      //we get only the relevant part of the url for the key:
+      //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png -> geelCoral.png
+
+      const key = `${splitKey}_128`
+
+      //if the image is not yet loaded, we download it
+      if (!scene.textures.exists(key)) {
+        const currentImage = await convertImage(
+          element,
+          "128",
+          "png"
+        )
+
+        scene.load.image(key, currentImage) //put the image in the queue
+        scene.load.start(); // start the queue with all the images
+        //check if the specific image has loaded
+        const fileNameCheck = `filecomplete-image-${key}`
+        //console.log(fileNameCheck)
+        scene.load.on(fileNameCheck, () => allItems = this.checkAllItemsListOnlinePlayer(scene, allItems, -1, key, tempArray))
+        //scene.load.on(fileNameCheck, () => console.log("finished loading: ", fileNameCheck)) // working
+
+      } else {
+        //when an image was already loaded and is still in memory, it also counts:
+        allItems = this.checkAllItemsListOnlinePlayer(scene, allItems, -1, key, tempArray)
+      }
+    })
+  }
+
+
+
   checkAllItemsList(scene, allItems, subtract, key, tempArray) {
     //the tempArray is initialised in the parent method
     tempArray.artworks.push({ "name": key })
@@ -200,6 +246,26 @@ class ArtworkList {
       scene.playerLikedPanelKeys = tempArray
       //console.log("scene.playerLikedPanelKeys: ", scene.playerLikedPanelKeys)
       scene.events.emit("playerLikedPanelComplete")
+
+    } else {
+      return allItems // return the result if not completed
+    }
+  }
+
+
+  checkAllItemsListOnlinePlayer(scene, allItems, subtract, key, tempArray) {
+    //the tempArray is initialised in the parent method
+    tempArray.artworks.push({ "name": key })
+
+    //console.log(tempArray)
+
+    allItems = allItems + subtract
+    //console.log("allItems: ", allItems)
+    if (allItems < 1) {
+      //console.log("FINISHED!")
+      scene.playerLikedPanelKeys = tempArray
+      //console.log("scene.playerLikedPanelKeys: ", scene.playerLikedPanelKeys)
+      scene.events.emit("onlinePlayerLikedPanelComplete")
 
     } else {
       return allItems // return the result if not completed

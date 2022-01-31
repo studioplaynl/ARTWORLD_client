@@ -63,6 +63,7 @@ class ManageSession {
 
     //liked artworks list
     this.allLiked
+    this.allLikedOnlinePlayer
 
   }
 

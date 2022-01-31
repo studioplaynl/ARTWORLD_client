@@ -80,7 +80,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.UI_Scene;
 
     //itemsbar
-    this.itemsbar;
 
     // size for the artWorks
     this.artPreviewSize = 128;
