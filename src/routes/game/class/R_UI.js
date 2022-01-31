@@ -1,3 +1,7 @@
+// there is an error: "Layout width error: Parent=GridSizer, Child=Label"
+// in original code from RexUI "https://codepen.io/rexrainbow/pen/YMyBom?editors=0010"
+// there is a similar error appears: "Layout height error: Parent=y, Child=k"
+
 class R_UI {
 
   constructor() { }
