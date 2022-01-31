@@ -438,30 +438,17 @@ class Player {
   }
 
   async displayOnlinePlayerItemsBar(scene, player) {
-    //player.on("pointerup", async () => {
-    console.log("player.user_id", player.user_id)
 
     scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
-    console.log("scene.isOnlinePlayerItemsBarDisplayed", scene.isOnlinePlayerItemsBarDisplayed)
-    Promise.all([listObjects("liked", player.user_id, 10)]).then((rec) => {
-      console.log("rec", rec)
-      // console.log(rec[0].length)
-      if (rec[0].length > 0) {
-        // console.log("checkLikeList1111")
-        ManageSession.allLikedOnlinePlayer = rec[0][0].value
-        // console.log("rec[0][0].value", rec[0][0].value)
-        // console.log("ManageSession.allLikedOnlinePlayer", ManageSession.allLikedOnlinePlayer)
-        // player.user_id
-        // checking if the buttons are hidden, show - if hidden, hide - if displayed
-        if (scene.isOnlinePlayerItemsBarDisplayed == false) {
-          scene.onlinePlayerItemsBar.setVisible(true);
+    if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
-          scene.onlinePlayerHomeButtonCircle = scene.add
-            .circle(0, -70, 25, 0xffffff)
-            .setOrigin(0.5, 0.5)
-            .setInteractive({ useHandCursor: true })
-            .setStrokeStyle(3, 0x0000);
-          scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home");
+      Promise.all([listObjects("liked", player.user_id, 10)]).then((rec) => {
+
+        if (rec[0].length > 0) {
+
+          ManageSession.allLikedOnlinePlayer = rec[0][0].value
+
+          scene.onlinePlayerItemsBar.setVisible(true);
 
           scene.onlinePlayerLikedButtonCircle = scene.add
             .circle(65, 0, 25, 0xffffff)
@@ -476,34 +463,33 @@ class Player {
             scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert methode to onlinePlayer
           })
 
-          // adding all buttons to the container
-          scene.onlinePlayerItemsBar.add([
-            scene.onlinePlayerHomeButtonCircle,
-            scene.onlinePlayerHomeButton,
-            scene.onlinePlayerLikedButtonCircle,
-            scene.onlinePlayerLikedButton,
-          ])
+          scene.onlinePlayerItemsBar.add([scene.onlinePlayerLikedButtonCircle, scene.onlinePlayerLikedButton])
 
-          scene.isOnlinePlayerItemsBarDisplayed = true;
-
-          // entering the home of the avatar
-          scene.onlinePlayerHomeButtonCircle.on("pointerup", () => {
-            HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
-          });
-        } else {
-          scene.isOnlinePlayerItemsBarDisplayed = false
-          scene.onlinePlayerItemsBar.setVisible(false)
-          scene.onlinePlayerLikedPanel.setVisible(false)
+          scene.isOnlinePlayerItemsBarDisplayed = true
         }
-      }
+
+      })
 
 
-    })
+      scene.onlinePlayerHomeButtonCircle = scene.add
+        .circle(0, -70, 25, 0xffffff)
+        .setOrigin(0.5, 0.5)
+        .setInteractive({ useHandCursor: true })
+        .setStrokeStyle(3, 0x0000);
+      scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home")
 
+      // entering the home of the avatar
+      scene.onlinePlayerHomeButtonCircle.on("pointerup", () => {
+        HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
+      })
 
-
-
-    //});
+      // adding all buttons to the container
+      scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeButtonCircle, scene.onlinePlayerHomeButton])
+    } else {
+      scene.isOnlinePlayerItemsBarDisplayed = false
+      scene.onlinePlayerItemsBar.setVisible(false)
+      scene.onlinePlayerLikedPanel.setVisible(false)
+    }
   }
 
   moveByCursor(scene) {
