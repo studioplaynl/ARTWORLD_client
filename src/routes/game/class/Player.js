@@ -440,6 +440,9 @@ class Player {
   async displayOnlinePlayerItemsBar(scene, player) {
     //player.on("pointerup", async () => {
     console.log("player.user_id", player.user_id)
+
+    scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
+    console.log("scene.isOnlinePlayerItemsBarDisplayed", scene.isOnlinePlayerItemsBarDisplayed)
     Promise.all([listObjects("liked", player.user_id, 10)]).then((rec) => {
       console.log("rec", rec)
       // console.log(rec[0].length)
@@ -488,9 +491,9 @@ class Player {
             HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
           });
         } else {
+          scene.isOnlinePlayerItemsBarDisplayed = false
           scene.onlinePlayerItemsBar.setVisible(false)
           scene.onlinePlayerLikedPanel.setVisible(false)
-          scene.isOnlineItemsBarDisplayed = false
         }
       }
 
