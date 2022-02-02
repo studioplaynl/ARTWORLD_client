@@ -251,6 +251,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     hideEnterButton() {
         this.showing = false
         this.enterButton.setVisible(this.showing)
+        this.enterCircle.setVisible(this.showing)
         // this.enterButtonHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
     }
 
