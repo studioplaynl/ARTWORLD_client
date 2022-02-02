@@ -36,69 +36,74 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.player
     this.playerShadow
     this.playerAvatarPlaceholder = "avatar1"
-    this.playerMovingKey = "moving";
+    this.playerMovingKey = "moving"
     this.playerStopKey = "stop"
     this.playerAvatarKey = ""
     this.createdPlayer = false
 
     this.playerContainer
-    this.testImageUrl
+
+    //test Player
+    this.playerTestImageUrl
+    this.playerTestAvatarKey
+    this.playerTestMovingKey 
+    this.playerTestStopKey 
 
     this.homes = []
     this.homesRepreseneted = []
     this.homesGenerate = false
 
-    this.offlineOnlineUsers;
+    this.offlineOnlineUsers
 
-    this.location = "ArtworldAmsterdam";
+    this.location = "ArtworldAmsterdam"
 
     //.......................REX UI ............
-    this.COLOR_PRIMARY = 0xff5733;
-    this.COLOR_LIGHT = 0xffffff;
-    this.COLOR_DARK = 0x000000;
-    this.data;
+    this.COLOR_PRIMARY = 0xff5733
+    this.COLOR_LIGHT = 0xffffff
+    this.COLOR_DARK = 0x000000
+    this.data
     //....................... end REX UI ......
 
-    this.cursors;
-    this.pointer;
-    this.isClicking = false;
-    this.cursorKeyIsDown = false;
-    this.swipeDirection = "down";
-    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-    this.graffitiDrawing = false;
+    this.cursors
+    this.pointer
+    this.isClicking = false
+    this.cursorKeyIsDown = false
+    this.swipeDirection = "down"
+    this.swipeAmount = new Phaser.Math.Vector2(0, 0)
+    this.graffitiDrawing = false
 
     //pointer location example
     // this.source // = player
-    this.target = new Phaser.Math.Vector2();
-    this.distance;
+    this.target = new Phaser.Math.Vector2()
+    this.distance
 
     //shadow
-    this.playerShadowOffset = -8;
-    this.playerIsMovingByClicking = false;
+    this.playerShadowOffset = -8
+    this.playerIsMovingByClicking = false
 
-    this.currentZoom;
-    this.UI_Scene;
+    this.currentZoom
+    this.UI_Scene
 
     //itemsbar
 
     // size for the artWorks
-    this.artPreviewSize = 128;
+    this.artPreviewSize = 128
 
-    this.artUrl = [];
-    this.userArtServerList = [];
-    this.progress = [];
+    this.artUrl = []
+    this.userArtServerList = []
+    this.progress = []
 
     // pop-up buttons of the user's avatar
-    this.isPopUpButtonsDisplayed;
-    this.playerContainer;
-    this.selectedPlayerID;
+    this.isPopUpButtonsDisplayed
+    this.playerContainer
+    this.selectedPlayerID
 
-    this.homeButtonCircle;
-    this.homeButtonImage;
-    this.heartButtonCircle;
-    this.heartButtonImage;
+    this.homeButtonCircle
+    this.homeButtonImage
+    this.heartButtonCircle
+    this.heartButtonImage
 
-    this.scrollablePanel;
+    this.scrollablePanel
 
     this.progress = []
   }
@@ -225,11 +230,20 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 50),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 50),
       this.playerAvatarPlaceholder
     )
     this.player.setDepth(200)
+
+    this.playerTest = new PlayerDefault(
+      this,
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
+      this.playerAvatarPlaceholder
+    )
+    this.playerTest.setDepth(200)
+
 
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
