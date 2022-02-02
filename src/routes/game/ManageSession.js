@@ -14,7 +14,7 @@ class ManageSession {
 
     this.itemsBar
     this.itemsBarOnlinePlayer
-    this.addressbook
+    this.addressBook = []
     this.favorites
 
     this.client

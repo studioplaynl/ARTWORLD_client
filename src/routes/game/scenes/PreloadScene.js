@@ -34,8 +34,9 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image("ball", './assets/ball_grey.png')
         this.load.image('home', './assets/popup/home.png')
         this.load.image('heart', './assets/popup/heart.png')
-        this.load.image('close', './assets/popup/close.png')
-        
+        this.load.image('enter_home', './assets/popup/enter_home.png')
+        this.load.image('save_home', './assets/popup/save_home.png')
+
         this.load.spritesheet(
             "avatar1",
             "./assets/spritesheets/cloud_breathing.png",
@@ -117,7 +118,7 @@ export default class PreloadScene extends Phaser.Scene {
         artFrameRendertexture.draw(frame)
 
         //save the rendertexture with a key ('dot'), basically making an image out of it
-        artFrameRendertexture.saveTexture('artFrame_'+postFix)
+        artFrameRendertexture.saveTexture('artFrame_' + postFix)
         // this.add.image(0, 0, 'artFrame_512').setVisible(false) // .setOrigin(0)
 
         frame.destroy()
