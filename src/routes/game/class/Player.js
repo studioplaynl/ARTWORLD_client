@@ -56,35 +56,25 @@ class Player {
           } else {
             // console.log(" loading: ManageSession.userProfile.url: ")
             // console.log(ManageSession.userProfile.url)
-
             console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
-
-            convertImage(
-              ManageSession.userProfile.url,
-              "64",
-              "png"
-            ).then((rec) => {
-              console.log("rec: ", rec)
-              scene.testImageUrl = rec
-            })
 
             scene.load.spritesheet(
               scene.playerAvatarKey,
               ManageSession.userProfile.url,
               { frameWidth: 128, frameHeight: 128 }
-            )
+            ).on('filecomplete', () => { this.attachAvatarToPlayer(scene) }, scene)
 
-            scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-              console.log("loadAndCreatePlayerAvatar complete")
-              //console.log(ManageSession.userProfile.url);
+            // scene.load.once(checkLoadingComplete, () => {
+            //   console.log("loadAndCreatePlayerAvatar complete")
+            //   //console.log(ManageSession.userProfile.url);
 
-              if (scene.textures.exists(scene.playerAvatarKey)) {
-                this.attachAvatarToPlayer(scene)
-              } // if (this.textures.exists(this.playerAvatarKey))
-            })
+            //   if (scene.textures.exists(scene.playerAvatarKey)) {
+            //     this.attachAvatarToPlayer(scene)
+            //   } // if (this.textures.exists(this.playerAvatarKey))
+            // })
           }
 
-          scene.load.start(); // load the image in memory
+          scene.load.start() // load the image in memory
           //console.log("this.load.start();");
         } else {
           this.attachAvatarToPlayer(scene)
