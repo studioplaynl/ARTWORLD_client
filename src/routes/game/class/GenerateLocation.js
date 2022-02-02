@@ -81,11 +81,23 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // can't drag the location if there is another function for pointerdown
         // we set the location either clickable or dragable (because dragging is a edit function)
         if (!this.draggable) {
-            this.location.setInteractive()
+            this.location.setInteractive({ useHandCursor: true })
 
             this.location.on('pointerdown', () => {
                 console.log("location clicked")
+                if (!this.showing) {
+                    this.showing = true
+                    this.initConfirm()
+                    this.enterButton.setVisible(this.showing)
+                    this.enterCircle.setVisible(this.showing)
+                } else {
+                    this.showing = false
+                    this.enterButton.setVisible(this.showing)
+                    this.enterCircle.setVisible(this.showing)
+                }
             })
+
+
         }
 
         //place the description under the location image (for devving only)
@@ -103,7 +115,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         // this.enterButtonHitArea.displayWidth = width / 1.05
 
-        this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0xffffff).setOrigin(0.5, 0.5).setVisible(false).setStrokeStyle(4, 0x000000)
+        this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0x6666ff).setOrigin(0.5, 0.5).setVisible(false).setInteractive({ useHandCursor: true })
+        // .setStrokeStyle(2, 0x000000)
         this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setOrigin(0.5, 0.5).setDepth(200).setVisible(false)
 
 
@@ -117,18 +130,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             yoyo: true
         })
 
-        // this.enterCircleTween = this.scene.tweens.add({
-        //     targets: this.enterCircle,
-        //     alpha: 0.0,
-        //     duration: 1000,
-        //     yoyo: false,
-        //     repeat: -1,
-        //     ease: 'Sine.easeInOut'
-
-        // });
-
-        // console.log(this.enterButtonTween)
-
         //the container is created at the this.x and this.y
         //this.setSize(width, width)
         this.add(this.location)
@@ -140,41 +141,41 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         this.setSize(width, width, false)
 
-        if (this.draggable) {
-            this.setInteractive()
-                .on('drag', (p, x, y) => {
-                    this.setX(p.worldX)
-                    this.setY(p.worldY)
-                    // The enterButton is outside the container, so that it can appear above the player
-                    // when dragging the container we have to move the enterButton aswell
-                    this.enterButton.x = this.x
-                    enterButtonY = this.y - (width / 2) - 60
-                    enterButtonTweenY = enterButtonY + 90
-                    this.enterButton.y = enterButtonY
-                    //this.enterButtonTween.restart()
-                    this.enterButtonTween.stop()
-                    this.enterButtonTween.remove()
-                    this.enterButtonTween = this.scene.tweens.add({
-                        targets: this.enterButton,
-                        y: enterButtonTweenY,
-                        alpha: 0.0,
-                        duration: 1000,
-                        ease: 'Sine.easeInOut',
-                        repeat: -1,
-                        yoyo: true
-                    })
+        // if (this.draggable) {
+        //     this.setInteractive()
+        //         .on('drag', (p, x, y) => {
+        //             this.setX(p.worldX)
+        //             this.setY(p.worldY)
+        //             // The enterButton is outside the container, so that it can appear above the player
+        //             // when dragging the container we have to move the enterButton aswell
+        //             this.enterButton.x = this.x
+        //             enterButtonY = this.y - (width / 2) - 60
+        //             enterButtonTweenY = enterButtonY + 90
+        //             this.enterButton.y = enterButtonY
+        //             //this.enterButtonTween.restart()
+        //             this.enterButtonTween.stop()
+        //             this.enterButtonTween.remove()
+        //             this.enterButtonTween = this.scene.tweens.add({
+        //                 targets: this.enterButton,
+        //                 y: enterButtonTweenY,
+        //                 alpha: 0.0,
+        //                 duration: 1000,
+        //                 ease: 'Sine.easeInOut',
+        //                 repeat: -1,
+        //                 yoyo: true
+        //             })
 
-                })
-                .on('pointerdown', (p, x, y) => {
-                    //console.log('dragging')
-                    //console.log(p.worldX, p.worldY)
+        //         })
+        //         .on('pointerdown', (p, x, y) => {
+        //             //console.log('dragging')
+        //             //console.log(p.worldX, p.worldY)
 
-                })
-                .on('pointerup', (p, x, y) => {
-                    console.log(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY))
+        //         })
+        //         .on('pointerup', (p, x, y) => {
+        //             console.log(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY))
 
-                })
-        }
+        //         })
+        // }
 
         // this.enterButtonHitArea.on('pointerdown', () => {
 
@@ -231,17 +232,15 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
 
-        if (this.draggable) {
-            this.scene.input.setDraggable(this, true)
-        }
+        // if (this.draggable) {
+        //     this.scene.input.setDraggable(this, true)
+        // }
     }
 
-
-
-    confirmEnterLocation(player, location) {
+    confirmEnterLocation() {
         this.initConfirm()
         this.enterButton.setVisible(true)
-        this.enterCircle.setVisible(true).setInteractive({ useHandCursor: true })
+        this.enterCircle.setVisible(true)
         // this.enterButtonHitArea.setVisible(true)
         // this.enterButtonHitArea.setInteractive({ useHandCursor: true })
         // this.enterButtonHitArea.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
