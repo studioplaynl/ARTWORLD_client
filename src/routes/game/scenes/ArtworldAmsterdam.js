@@ -12,7 +12,6 @@ import DebugFuntions from "../class/DebugFuntions.js";
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js";
 import GenerateLocation from "../class/GenerateLocation.js";
 import HistoryTracker from "../class/HistoryTracker.js";
-import { element } from "svelte/internal";
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
