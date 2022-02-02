@@ -1,6 +1,6 @@
 import ManageSession from "../ManageSession";
 import CoordinatesTranslator from "./CoordinatesTranslator";
-import { listObjects, listImages, convertImage, getFullAccount } from "../../../api.js";
+import { listObjects, listImages, convertImage, getFullAccount, updateObject } from "../../../api.js";
 import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList";
 import R_UI from "./R_UI";
@@ -448,7 +448,6 @@ class Player {
       Promise.all([listObjects("liked", player.user_id, 10)]).then((rec) => {
         // it checks if there was ever before a liked object created for the online player
         if (rec[0].length > 0) {
-          console.log("if rec", rec)
           ManageSession.allLikedOnlinePlayer = rec[0][0].value
 
           scene.onlinePlayerItemsBar.setVisible(true);
@@ -470,7 +469,6 @@ class Player {
 
           scene.isOnlinePlayerItemsBarDisplayed = true
         } else {
-          console.log("else rec", rec)
           ManageSession.allLikedOnlinePlayer = {}
 
           const type = "liked"
@@ -482,7 +480,6 @@ class Player {
 
       })
 
-
       scene.onlinePlayerHomeButtonCircle = scene.add
         .circle(0, -70, 25, 0xffffff)
         .setOrigin(0.5, 0.5)
@@ -491,8 +488,6 @@ class Player {
       scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home")
 
 
-
-      // entering the home of the avatar
       scene.onlinePlayerHomeButtonCircle.on("pointerdown", () => {
 
         scene.onlinePlayerHomeEnterButtonCircle = scene.add
@@ -501,10 +496,10 @@ class Player {
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(2, 0x0000)
           .on("pointerdown", () => {
+            // entering the home of a player
             HistoryTracker.switchScene(scene, "DefaultUserHome", player.user_id)
           })
         scene.onlinePlayerHomeEnterButton = scene.add.image(-30, -120, "enter_home")
-
 
         scene.onlinePlayerHomeSaveCircle = scene.add
           .circle(30, -120, 25, 0xffffff)
@@ -512,8 +507,13 @@ class Player {
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(2, 0x0000)
           .on("pointerdown", () => {
-            ManageSession.addressBook.push({ playerName: player.name, playerID: player.user_id })
-            console.log(ManageSession.addressBook)
+            // saving the home of a player
+            const type = "addressbook"
+            const name = type + "_" + player.user_id
+            const pub = 2
+            const value = { playerID: player.user_id, playerName: player.name }
+            ManageSession.addressBook.push(value)
+            updateObject(type, name, value, pub)
           })
         scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
 

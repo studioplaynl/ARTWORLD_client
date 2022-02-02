@@ -17,15 +17,24 @@ export default class NetworkBoot extends Phaser.Scene {
         //console.log(ManageSession.launchLocation)
         this.scene.launch(ManageSession.launchLocation)
         this.checkLikeList()
+        this.getAddressBook()
       })
   }
 
-  async getAddressbook() {
-    // console.log("this is a function!")
-    // await listObjects("addressbook", ManageSession.userProfile.id, 10).then((rec) => {
-    //   console.log(rec)
-
-    // })
+  async getAddressBook() {
+    Promise.all([listObjects("addressbook", ManageSession.userProfile.id, 10)])
+      .then(response => {
+        if (response[0].length > 0) {
+          ManageSession.addressBook = response[0].map(element => {
+            return element.value
+          })
+          console.log("address book response", response)
+          console.log("ManageSession.addressBook", ManageSession.addressBook)
+        } else {
+          console.log("address book empty")
+          ManageSession.addressBook = []
+        }
+      })
   }
 
   async checkLikeList() {
@@ -33,7 +42,7 @@ export default class NetworkBoot extends Phaser.Scene {
     console.log("checkLikeList")
     Promise.all([listObjects("liked", ManageSession.userProfile.id, 10)])
       .then((rec) => {
-     
+
         // console.log(rec[0].length)
         if (rec[0].length > 0) {
           // console.log("checkLikeList1111")
