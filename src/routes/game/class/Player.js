@@ -13,12 +13,12 @@ class Player {
     if (ManageSession.userProfile.id != null) {
       //check for createPlayer flag
       if (ManageSession.createPlayer) {
-        ManageSession.createPlayer = false;
+        ManageSession.createPlayer = false
         //console.log("ManageSession.createPlayer = false;")
 
         //set the location of the player to this location
 
-        scene.createdPlayer = false;
+        scene.createdPlayer = false
 
         //console.log("loadAndCreatePlayerAvatar")
 
@@ -29,7 +29,7 @@ class Player {
         scene.playerAvatarKey =
           ManageSession.userProfile.id +
           "_" +
-          ManageSession.userProfile.create_time;
+          ManageSession.userProfile.create_time
         //console.log(scene.playerAvatarKey);
 
         // console.log("this.textures.exists(this.playerAvatarKey): ")
@@ -37,46 +37,57 @@ class Player {
 
         // console.log(this.cache.game.textures.list[this.playerAvatarKey])
 
-        console.log(scene.textures.exists(scene.playerAvatarKey));
+        console.log(scene.textures.exists(scene.playerAvatarKey))
 
         //* attatch to existing context and physics
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
+        scene.add.existing(this)
+        scene.physics.add.existing(this)
 
         //if the texture already exists attach it again to the player
         if (!scene.textures.exists(scene.playerAvatarKey)) {
           //check if url is not empty for some reason, returns so that previous image is kept
           if (ManageSession.userProfile.url === "") {
-            console.log("avatar url is empty");
-            ManageSession.createPlayer = false;
-            console.log("ManageSession.createPlayer = false;");
-            scene.createdPlayer = true;
-            console.log("scene.createdPlayer = true;");
-            return;
+            console.log("avatar url is empty")
+            ManageSession.createPlayer = false
+            console.log("ManageSession.createPlayer = false")
+            scene.createdPlayer = true
+            console.log("scene.createdPlayer = true")
+            return
           } else {
             // console.log(" loading: ManageSession.userProfile.url: ")
             // console.log(ManageSession.userProfile.url)
+
+            console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
+
+             convertImage(
+              ManageSession.userProfile.url,
+              "64",
+              "png"
+            ).then((rec) => {
+              console.log("rec: ", rec)
+              scene.testImageUrl = rec
+            })
 
             scene.load.spritesheet(
               scene.playerAvatarKey,
               ManageSession.userProfile.url,
               { frameWidth: 128, frameHeight: 128 }
-            );
+            )
 
             scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-              console.log("loadAndCreatePlayerAvatar complete");
+              console.log("loadAndCreatePlayerAvatar complete")
               //console.log(ManageSession.userProfile.url);
 
               if (scene.textures.exists(scene.playerAvatarKey)) {
-                this.attachAvatarToPlayer(scene);
+                this.attachAvatarToPlayer(scene)
               } // if (this.textures.exists(this.playerAvatarKey))
-            });
+            })
           }
 
           scene.load.start(); // load the image in memory
           //console.log("this.load.start();");
         } else {
-          this.attachAvatarToPlayer(scene);
+          this.attachAvatarToPlayer(scene)
         }
       } //if(ManageSession.playerCreated)
     }

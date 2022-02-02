@@ -20,33 +20,34 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.worldSize = new Phaser.Math.Vector2(6000, 6000)
 
-    this.debug = false;
+    this.debug = false
 
-    this.gameStarted = false;
-    this.phaser = this;
-    // this.playerPos;
-    this.onlinePlayers = [];
+    this.gameStarted = false
+    this.phaser = this
+    // this.playerPos
+    this.onlinePlayers = []
 
-    this.newOnlinePlayers = [];
+    this.newOnlinePlayers = []
 
-    this.currentOnlinePlayer;
+    this.currentOnlinePlayer
     this.avatarName = [];
-    this.tempAvatarName = "";
-    this.loadedAvatars = [];
+    this.tempAvatarName = ""
+    this.loadedAvatars = []
 
-    this.player;
-    this.playerShadow;
-    this.playerAvatarPlaceholder = "avatar1";
+    this.player
+    this.playerShadow
+    this.playerAvatarPlaceholder = "avatar1"
     this.playerMovingKey = "moving";
-    this.playerStopKey = "stop";
-    this.playerAvatarKey = "";
-    this.createdPlayer = false;
+    this.playerStopKey = "stop"
+    this.playerAvatarKey = ""
+    this.createdPlayer = false
 
-    this.playerContainer;
+    this.playerContainer
+    this.testImageUrl
 
-    this.homes = [];
-    this.homesRepreseneted = [];
-    this.homesGenerate = false;
+    this.homes = []
+    this.homesRepreseneted = []
+    this.homesGenerate = false
 
     this.offlineOnlineUsers;
 
