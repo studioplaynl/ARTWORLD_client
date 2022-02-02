@@ -28,6 +28,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.internalUrl = config.internalUrl
         this.externalUrl = config.externalUrl
         this.enterButtonTween
+        this.enterCircleTween
         this.size = config.size
 
         let width
@@ -94,26 +95,37 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         //Phaser.Display.Align.In.TopCenter(this.location, locationDescription)
 
         // back button that appears 
-        var enterButtonY = this.y - (width / 2) - 60
-        var enterButtonTweenY = enterButtonY + 90
+        var enterButtonY = this.y - (width / 2) - 50
+        var enterButtonTweenY = enterButtonY + 15
 
-        this.enterButtonHitArea = this.scene.add.image(this.x, enterButtonY + 40, 'enterButtonHitArea').setVisible(false).setDepth(201)
-        this.enterButtonHitArea.alpha = 0 // make the hitArea invisible
+        // this.enterButtonHitArea = this.scene.add.image(this.x, enterButtonY, 'enterButtonHitArea').setDepth(201)
+        // this.enterButtonHitArea.alpha = 0 // make the hitArea invisible
 
-        this.enterButtonHitArea.displayWidth = width / 1.4
+        // this.enterButtonHitArea.displayWidth = width / 1.05
 
-        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setVisible(false).setOrigin(0.5, 0.5).setDepth(200)
-        //
+        this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0xFFF2CC).setOrigin(0.5, 0.5).setVisible(false)
+        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setOrigin(0.5, 0.5).setDepth(200).setVisible(false)
+
 
         this.enterButtonTween = this.scene.tweens.add({
             targets: this.enterButton,
             y: enterButtonTweenY,
-            alpha: 0.0,
-            duration: 1000,
+            // alpha: 0.5,
+            duration: 500,
             ease: 'Sine.easeInOut',
             repeat: -1,
             yoyo: true
         })
+
+        // this.enterCircleTween = this.scene.tweens.add({
+        //     targets: this.enterCircle,
+        //     alpha: 0.0,
+        //     duration: 1000,
+        //     yoyo: false,
+        //     repeat: -1,
+        //     ease: 'Sine.easeInOut'
+
+        // });
 
         // console.log(this.enterButtonTween)
 
@@ -164,11 +176,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                 })
         }
 
-        this.enterButtonHitArea.on('pointerdown', () => {
+        // this.enterButtonHitArea.on('pointerdown', () => {
 
-        })
+        // })
 
-        this.enterButtonHitArea.on('pointerup', () => {
+        this.enterCircle.on('pointerup', () => {
             //check when entering the location if it is an URL or scene
 
             if (this.internalUrl) {
@@ -229,17 +241,17 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     confirmEnterLocation(player, location) {
         this.initConfirm()
         this.enterButton.setVisible(true)
-        this.enterButtonHitArea.setVisible(true)
-        // this.enterButtonHitArea.alpha = 0.0001
-        this.enterButtonHitArea.setInteractive({ useHandCursor: true })
-        this.enterButtonHitArea.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+        this.enterCircle.setVisible(true).setInteractive({ useHandCursor: true })
+        // this.enterButtonHitArea.setVisible(true)
+        // this.enterButtonHitArea.setInteractive({ useHandCursor: true })
+        // this.enterButtonHitArea.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
 
     }
 
     hideEnterButton() {
         this.showing = false
         this.enterButton.setVisible(this.showing)
-        this.enterButtonHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
+        // this.enterButtonHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
     }
 
     initConfirm() {
