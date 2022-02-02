@@ -82,22 +82,14 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // we set the location either clickable or dragable (because dragging is a edit function)
         if (!this.draggable) {
             this.location.setInteractive({ useHandCursor: true })
-
+            // on home click, we let the player to see the entrance arrow above the home
             this.location.on('pointerdown', () => {
-                console.log("location clicked")
                 if (!this.showing) {
-                    this.showing = true
                     this.initConfirm()
-                    this.enterButton.setVisible(this.showing)
-                    this.enterCircle.setVisible(this.showing)
-                } else {
-                    this.showing = false
                     this.enterButton.setVisible(this.showing)
                     this.enterCircle.setVisible(this.showing)
                 }
             })
-
-
         }
 
         //place the description under the location image (for devving only)
@@ -141,41 +133,41 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         this.setSize(width, width, false)
 
-        // if (this.draggable) {
-        //     this.setInteractive()
-        //         .on('drag', (p, x, y) => {
-        //             this.setX(p.worldX)
-        //             this.setY(p.worldY)
-        //             // The enterButton is outside the container, so that it can appear above the player
-        //             // when dragging the container we have to move the enterButton aswell
-        //             this.enterButton.x = this.x
-        //             enterButtonY = this.y - (width / 2) - 60
-        //             enterButtonTweenY = enterButtonY + 90
-        //             this.enterButton.y = enterButtonY
-        //             //this.enterButtonTween.restart()
-        //             this.enterButtonTween.stop()
-        //             this.enterButtonTween.remove()
-        //             this.enterButtonTween = this.scene.tweens.add({
-        //                 targets: this.enterButton,
-        //                 y: enterButtonTweenY,
-        //                 alpha: 0.0,
-        //                 duration: 1000,
-        //                 ease: 'Sine.easeInOut',
-        //                 repeat: -1,
-        //                 yoyo: true
-        //             })
+        if (this.draggable) {
+            this.setInteractive()
+                .on('drag', (p, x, y) => {
+                    this.setX(p.worldX)
+                    this.setY(p.worldY)
+                    // The enterButton is outside the container, so that it can appear above the player
+                    // when dragging the container we have to move the enterButton aswell
+                    this.enterButton.x = this.x
+                    enterButtonY = this.y - (width / 2) - 60
+                    enterButtonTweenY = enterButtonY + 90
+                    this.enterButton.y = enterButtonY
+                    //this.enterButtonTween.restart()
+                    this.enterButtonTween.stop()
+                    this.enterButtonTween.remove()
+                    this.enterButtonTween = this.scene.tweens.add({
+                        targets: this.enterButton,
+                        y: enterButtonTweenY,
+                        alpha: 0.0,
+                        duration: 1000,
+                        ease: 'Sine.easeInOut',
+                        repeat: -1,
+                        yoyo: true
+                    })
 
-        //         })
-        //         .on('pointerdown', (p, x, y) => {
-        //             //console.log('dragging')
-        //             //console.log(p.worldX, p.worldY)
+                })
+                .on('pointerdown', (p, x, y) => {
+                    //console.log('dragging')
+                    //console.log(p.worldX, p.worldY)
 
-        //         })
-        //         .on('pointerup', (p, x, y) => {
-        //             console.log(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY))
+                })
+                .on('pointerup', (p, x, y) => {
+                    console.log(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY))
 
-        //         })
-        // }
+                })
+        }
 
         // this.enterButtonHitArea.on('pointerdown', () => {
 
@@ -232,9 +224,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
 
-        // if (this.draggable) {
-        //     this.scene.input.setDraggable(this, true)
-        // }
+        if (this.draggable) {
+            this.scene.input.setDraggable(this, true)
+        }
     }
 
     confirmEnterLocation() {
