@@ -36,8 +36,14 @@ class DebugFuntions {
 
             Promise.all([listObjects("liked", ManageSession.userProfile.id, 10)])
                 .then((rec) => {
-                    console.log(rec[0])
+                    console.log("liked query", rec[0])
                 })
+            // ManageSession.getStreamUsers("get_users", scene.location)
+            // listObjects("addressbook", ManageSession.userProfile.id, 10)
+
+            Promise.all([listObjects("addressbook", ManageSession.userProfile.id, 10)
+            ]).then((rec) => {
+                console.log("addressbook query", rec[0])
 
         }, scene);
 
