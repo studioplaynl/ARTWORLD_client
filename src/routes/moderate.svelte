@@ -128,7 +128,6 @@ function moveToTrash(key) {
   }
 
   function isCurrentUser(){
-    console.log(CurrentUser)
     return CurrentUser
   }
 

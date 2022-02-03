@@ -1,6 +1,6 @@
 <script>
-  import {listImages, getAccount, convertImage, getObject} from '../api.js';
-  import { Session } from "../session.js";
+  import {listImages, getAccount, convertImage, getObject, listAllObjects} from '../api.js';
+  import { Session, Profile } from "../session.js";
   import { client } from "../nakama.svelte";
   import { _ } from 'svelte-i18n'
   import SvelteTable from "svelte-table";
@@ -131,11 +131,20 @@ function moveToTrash(key) {
     if(!!params.user){
       id = params.user
       CurrentUser = false;
-      drawings = await listImages("drawing",params.user, 10)
-      video = await listImages("video",params.user, 10)
-      audio = await listImages("audio",params.user, 10)
-      stopMotion = await listImages("stopmotion",params.user, 10)
-      picture = await listImages("picture",params.user, 10)
+      if($Profile.meta.role == "admin" ||$Profile.meta.role == "moderator" ){
+        drawings = await listAllObjects("drawing",params.user)
+        video = await listAllObjects("video",params.user)
+        audio = await listAllObjects("audio",params.user)
+        stopMotion = await listAllObjects("stopmotion",params.user)
+        picture = await listAllObjects("picture",params.user)
+      } else {
+        drawings = await listImages("drawing",params.user, 10)
+        video = await listImages("video",params.user, 10)
+        audio = await listImages("audio",params.user, 10)
+        stopMotion = await listImages("stopmotion",params.user, 10)
+        picture = await listImages("picture",params.user, 10)
+      }
+
       console.log(drawings)
       useraccount = await getAccount(id)
       console.log(useraccount)

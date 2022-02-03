@@ -13,21 +13,21 @@ else{status = false}
 console.log(row.permission_read)
 let currentUser = isCurrentUser()
 
-const change = () => {
+const change = async () => {
     console.log("update "+ status)
     //let value = JSON.parse(row.value)
     let value = row.value
     //value = JSON.stringify(value)
-    updateObject(row.collection, row.key, value,status, row.user_id)
+    await updateObject(row.collection, row.key, value,status, row.user_id)
 }
 
-const restore = () => {
+const restore = async () => {
     console.log(row.value)
     row.value.status = ""
     let value = row.value
     let pub = false
     //if($Profile.meta.role == "admin" || $Profile.meta.role == "moderator")
-    updateObject(row.collection, row.key, value,pub, row.userID)
+    await updateObject(row.collection, row.key, value,pub, row.user_id)
     moveToArt(row.key)
 }
 </script>

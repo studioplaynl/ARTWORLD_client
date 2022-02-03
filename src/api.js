@@ -132,7 +132,7 @@ export async function updateObject(type, name, value, pub,userID) {
     "permission_read": pub,
     //"version": "*"
   }
-
+  console.log(prof.meta.role)
   if(prof.meta.role == "admin" || prof.meta.role == "moderator"){
     console.log("working!")
     updateObjectAdmin(userID, type, name, value, pub)
@@ -170,8 +170,8 @@ export async function getObject(collection, key, userID) {
 
 
 
-export async function listAllObjects(type) {
-  const payload = { type };
+export async function listAllObjects(type, id) {
+  const payload = { type , id};
   const rpcid = "list_all_storage_object";
   const objects = await client.rpc(Sess, rpcid, payload);
 
@@ -370,8 +370,7 @@ export async function deleteObjectAdmin(id, type, name) {
   const rpcid = "delete_object_admin";
    user = await client.rpc(Sess, rpcid, payload)
    console.log(user)
-   if(user.payload.status == "succes") Error.update(er => er = "deleted object")
-   else Error.update(er => er = "delete object failed")
+   if(user.payload.status != "succes") throw user.payload.status
   return user.payload
 }
 

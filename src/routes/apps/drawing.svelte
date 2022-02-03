@@ -1133,7 +1133,7 @@ import App from "../../App.svelte";
         </div>
           <span class="info">{lineWidth}</span><input
             type="range"
-            min="0"
+            min="1"
             max="150"
             id="drawing-line-width"
             bind:value={lineWidth}
@@ -1173,7 +1173,7 @@ import App from "../../App.svelte";
         </div>
           <span class="info">{EraselineWidth}</span><input
             type="range"
-            min="0"
+            min="1"
             max="150"
             id="erase-line-width"
             bind:value={EraselineWidth}
