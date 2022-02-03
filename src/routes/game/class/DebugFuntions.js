@@ -20,7 +20,10 @@ class DebugFuntions {
 
             console.log('1 key');
 
-            ManageSession.getStreamUsers("get_users", scene.location)
+            // ManageSession.getStreamUsers("get_users", scene.location)
+            // listObjects("addressbook", ManageSession.userProfile.id, 10)
+
+            console.log(listObjects("addressbook", ManageSession.userProfile.id, 10))
 
         }, scene);
 

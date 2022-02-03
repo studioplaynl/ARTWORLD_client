@@ -14,7 +14,7 @@ class ManageSession {
 
     this.itemsBar
     this.itemsBarOnlinePlayer
-    this.addressBook = []
+    this.addressbook
     this.favorites
 
     this.client
@@ -64,6 +64,8 @@ class ManageSession {
     //liked artworks list
     this.allLiked
     this.allLikedOnlinePlayer
+
+
 
   }
 

@@ -506,13 +506,21 @@ class Player {
           .setOrigin(0.5, 0.5)
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(2, 0x0000)
-          .on("pointerdown", () => {
+          .on("pointerup", () => {
             // saving the home of a player
+            // ManageSession.addressBook[player.user_id] = player.user_id
+
+            const entry = { user_id: player.user_id }
+
+            ManageSession.addressbook.push(entry)
+
+            const addressbook = ManageSession.addressbook
+
             const type = "addressbook"
-            const name = type + "_" + player.user_id
+            const name = type + "_" + ManageSession.userProfile.id
             const pub = 2
-            const value = { playerID: player.user_id, playerName: player.name }
-            ManageSession.addressBook.push(value)
+            const value = { addressbook }
+            console.log("value Player", value)
             updateObject(type, name, value, pub)
           })
         scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
