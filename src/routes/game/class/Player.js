@@ -1,6 +1,6 @@
 import ManageSession from "../ManageSession";
 import CoordinatesTranslator from "./CoordinatesTranslator";
-import { listObjects, listImages, convertImage, getFullAccount, updateObject } from "../../../api.js";
+import { listObjects, listImages, convertImage, getFullAccount } from "../../../api.js";
 import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList";
 import R_UI from "./R_UI";
@@ -58,20 +58,9 @@ class Player {
             // console.log(ManageSession.userProfile.url)
             console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
 
-            scene.load.spritesheet(
-              scene.playerAvatarKey,
-              ManageSession.userProfile.url,
-              { frameWidth: 128, frameHeight: 128 }
-            ).on('filecomplete', () => { this.attachAvatarToPlayer(scene) }, scene)
+            scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
+            .on('filecomplete', () => {this.attachAvatarToPlayer(scene)},scene)
 
-            // scene.load.once(checkLoadingComplete, () => {
-            //   console.log("loadAndCreatePlayerAvatar complete")
-            //   //console.log(ManageSession.userProfile.url);
-
-            //   if (scene.textures.exists(scene.playerAvatarKey)) {
-            //     this.attachAvatarToPlayer(scene)
-            //   } // if (this.textures.exists(this.playerAvatarKey))
-            // })
           }
 
           scene.load.start() // load the image in memory
@@ -181,13 +170,13 @@ class Player {
 
   createPlayerItemsBar(scene) {
     // making the avatar interactive
-    scene.player.setInteractive({ useHandCursor: true });
+    scene.player.setInteractive({ useHandCursor: true })
 
     // for toggling the pop-up buttons
-    scene.isPlayerItemsBarDisplayed = false;
+    scene.isPlayerItemsBarDisplayed = false
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
-    scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y);
+    scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y)
 
     //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
     scene.playerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
@@ -334,7 +323,7 @@ class Player {
         scene.playerLikedPanel.setVisible(false)
         scene.isPlayerItemsBarDisplayed = false
       }
-    });
+    })
   }
 
   createOnlinePlayerItemsBar(scene) {
@@ -441,13 +430,14 @@ class Player {
   }
 
   async displayOnlinePlayerItemsBar(scene, player) {
+
     scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
-    // scene.isHomeButtonsDisplayed = false
     if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
       Promise.all([listObjects("liked", player.user_id, 10)]).then((rec) => {
         // it checks if there was ever before a liked object created for the online player
         if (rec[0].length > 0) {
+          console.log("if rec", rec)
           ManageSession.allLikedOnlinePlayer = rec[0][0].value
 
           scene.onlinePlayerItemsBar.setVisible(true);
@@ -469,6 +459,7 @@ class Player {
 
           scene.isOnlinePlayerItemsBarDisplayed = true
         } else {
+          console.log("else rec", rec)
           ManageSession.allLikedOnlinePlayer = {}
 
           const type = "liked"
@@ -480,6 +471,7 @@ class Player {
 
       })
 
+
       scene.onlinePlayerHomeButtonCircle = scene.add
         .circle(0, -70, 25, 0xffffff)
         .setOrigin(0.5, 0.5)
@@ -487,44 +479,15 @@ class Player {
         .setStrokeStyle(3, 0x0000);
       scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home")
 
-
-      scene.onlinePlayerHomeButtonCircle.on("pointerdown", () => {
-
-        scene.onlinePlayerHomeEnterButtonCircle = scene.add
-          .circle(-30, -120, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(2, 0x0000)
-          .on("pointerdown", () => {
-            // entering the home of a player
-            HistoryTracker.switchScene(scene, "DefaultUserHome", player.user_id)
-          })
-        scene.onlinePlayerHomeEnterButton = scene.add.image(-30, -120, "enter_home")
-
-        scene.onlinePlayerHomeSaveCircle = scene.add
-          .circle(30, -120, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(2, 0x0000)
-          .on("pointerdown", () => {
-            // saving the home of a player
-            const type = "addressbook"
-            const name = type + "_" + player.user_id
-            const pub = 2
-            const value = { playerID: player.user_id, playerName: player.name }
-            ManageSession.addressBook.push(value)
-            updateObject(type, name, value, pub)
-          })
-        scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
-
-        scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButtonCircle, scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveCircle, scene.onlinePlayerHomeSaveButton])
+      // entering the home of the avatar
+      scene.onlinePlayerHomeButtonCircle.on("pointerup", () => {
+        HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
       })
 
       // adding all buttons to the container
       scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeButtonCircle, scene.onlinePlayerHomeButton])
     } else {
       scene.isOnlinePlayerItemsBarDisplayed = false
-      // scene.isHomeButtonsDisplayed = false
       scene.onlinePlayerItemsBar.setVisible(false)
       scene.onlinePlayerLikedPanel.setVisible(false)
     }

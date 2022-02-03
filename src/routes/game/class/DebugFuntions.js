@@ -9,18 +9,35 @@ class DebugFuntions {
     }
 
     keyboard(scene) {
+        //KEYS THAT ARE TAKEN
+        // 1 A S D F Q W E R H T P U
 
         scene.input.keyboard.on('keyup-A', function (event) {
-            //get online player group
-            const displaylist = scene.onlinePlayersGroup.getChildren()
-            console.log(displaylist)
-        }, scene);
+
+            var tween = scene.tweens.add({
+                targets: scene.playerTest,
+                x: 2000,
+                paused: false,
+                duration: 2000,
+                yoyo: true,
+                repeat: -1
+            })
+
+            //this tween makes the target move to the x absolutely!
+            //onComplete:onCompleteHandler ,onCompleteParams:[custom]}
+            //https://rexrainbow.github.io/phaser3-rex-notes/docs/site/tween/
+
+        }, scene)
 
         scene.input.keyboard.on('keyup-ONE', function (event) {
 
-            console.log('1 key');
+            console.log('1 key')
+            //ManageSession.getStreamUsers("get_users", scene.location)
 
-            ManageSession.getStreamUsers("get_users", scene.location)
+            Promise.all([listObjects("liked", ManageSession.userProfile.id, 10)])
+                .then((rec) => {
+                    console.log(rec[0])
+                })
 
         }, scene);
 
@@ -39,8 +56,7 @@ class DebugFuntions {
 
         scene.input.keyboard.on('keyup-D', function (event) {
 
-            console.log('D key');
-
+            console.log('D key')
             console.log(" ")
             console.log('scene.onlinePlayers: ')
             console.log(scene.onlinePlayers)
@@ -56,7 +72,6 @@ class DebugFuntions {
 
             console.log("locationDialogBoxContainersGroup children")
             console.log(scene.locationDialogBoxContainersGroup.getChildren())
-
 
         }, scene);
 
