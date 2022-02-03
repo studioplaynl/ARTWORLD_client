@@ -44,6 +44,7 @@ class DebugFuntions {
             Promise.all([listObjects("addressbook", ManageSession.userProfile.id, 10)
             ]).then((rec) => {
                 console.log("addressbook query", rec[0])
+            })
 
         }, scene);
 

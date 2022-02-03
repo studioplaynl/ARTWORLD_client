@@ -479,12 +479,6 @@ class Player {
         .setStrokeStyle(3, 0x0000);
       scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home")
 
-<<<<<<< HEAD
-      // entering the home of the avatar
-      scene.onlinePlayerHomeButtonCircle.on("pointerup", () => {
-        HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
-=======
-
       scene.onlinePlayerHomeButtonCircle.on("pointerdown", () => {
 
         scene.onlinePlayerHomeEnterButtonCircle = scene.add
@@ -523,7 +517,6 @@ class Player {
         scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
 
         scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButtonCircle, scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveCircle, scene.onlinePlayerHomeSaveButton])
->>>>>>> e5f61915cdc9adf4b98e3c023ea1c9a7fd7ee05f
       })
 
       // adding all buttons to the container
