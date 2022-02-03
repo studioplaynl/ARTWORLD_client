@@ -21,8 +21,8 @@ const Trash = () => {
 const Delete = () => {
     modalOpen = false;
     if($Profile.meta.role == "admin"|| $Profile.meta.role == "moderator"){
+        console.log("admin")
         deleteObjectAdmin(row.user_id,row.collection,row.key)
-
     } else {
         deleteFile(row.collection,row.key,row.user_id)
 
