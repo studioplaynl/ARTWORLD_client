@@ -433,7 +433,7 @@ class Player {
     ManageSession.selectedOnlinePlayer = player
     console.log("player", player)
     console.log("playManageSession.selectedOnlinePlayerer", ManageSession.selectedOnlinePlayer)
-    
+
     scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
     if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
@@ -491,8 +491,8 @@ class Player {
           .setStrokeStyle(2, 0x0000)
           .on("pointerdown", () => {
             // entering the home of a player
-           // HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.selectedOnlinePlayer.user_id)
-           console.log("ManageSession.selectedOnlinePlayer.user_id", ManageSession.selectedOnlinePlayer.user_id)
+            HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.selectedOnlinePlayer.user_id)
+            console.log("ManageSession.selectedOnlinePlayer.user_id", ManageSession.selectedOnlinePlayer.user_id)
           })
         scene.onlinePlayerHomeEnterButton = scene.add.image(-30, -120, "enter_home")
 
@@ -505,11 +505,13 @@ class Player {
             // saving the home of a player
             // ManageSession.addressBook[player.user_id] = player.user_id
 
-            console.log("ManageSession address book before adding", ManageSession.addressbook)
+            console.log("ManageSession address book", ManageSession.addressbook)
+
+            console.log("ManageSession.addressbook.addressbook", ManageSession.addressbook.addressbook)
 
             const entry = { user_id: ManageSession.selectedOnlinePlayer.user_id }
 
-            const isExist = ManageSession.addressbook?.addressbook.some(element => element.user_id == entry.user_id)
+            const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
 
             console.log("isExist", isExist)
             if (!isExist) {
@@ -521,7 +523,7 @@ class Player {
               const name = type + "_" + ManageSession.userProfile.id
               const pub = 2
               const value = ManageSession.addressbook
-              console.log("value Player", value)
+              console.log("value ManageSession.addressbook", value)
               updateObject(type, name, value, pub)
             } else {
               console.log("this user id is already in addressbook list")

@@ -15,7 +15,7 @@ export default class NetworkBoot extends Phaser.Scene {
     await ManageSession.createSocket()
       .then(rec => {
         //console.log(ManageSession.launchLocation)
-        
+
         this.getLiked()
         this.getAddressBook()
         this.scene.launch(ManageSession.launchLocation)
@@ -25,31 +25,54 @@ export default class NetworkBoot extends Phaser.Scene {
   async getAddressBook() {
     Promise.all([listObjects("addressbook", ManageSession.userProfile.id, 10)])
       .then(response => {
+        //check if the object exists
         if (response[0].length > 0) {
-          console.log("address book response[0]", response[0])
-          console.log("ManageSession.userProfile.id", ManageSession.userProfile.id)
-        
-          let filteredResponse = response[0].filter(element => 
-             element.key == "addressbook_" + ManageSession.userProfile.id
-          )
-          
-          console.log("filteredResponse", filteredResponse)
-          ManageSession.addressbook = filteredResponse[0].value
+          //the object exists: addressbook
 
+          // check if the right object exists: addressbook_user_id
+          let filteredResponse = response[0].filter(element =>
+            element.key == "addressbook_" + ManageSession.userProfile.id
+          )
+          console.log("filteredResponse", filteredResponse)
+
+          if (filteredResponse.length > 0) {
+            //the right object exists, but check if there is data in de object, in the expected format
+            
+            if (typeof filteredResponse[0].value.addressbook != "undefined"){
+              //the addressbook is in the right format, we assign our local copy
+              ManageSession.addressbook = filteredResponse[0].value
+              console.log("ManageSession.addressbook", ManageSession.addressbook)
+            } else {
+              //when the right addressbook does not exist: make an empty one
+              //addressbook_userid.value exists but .addressbook  
+              this.makeEmptyAddressbook()
+            }
+              
+          } else {
+            //when the right addressbook does not exist: make an empty one
+            this.makeEmptyAddressbook()
+
+          }
           console.log("ManageSession.addressbook", ManageSession.addressbook)
 
         } else {
-          console.log("address book empty")
-          const addressbook = []
-          ManageSession.addressbook = { addressbook }
-          console.log(" ManageSession.addressbook empty", ManageSession.addressbook)
-          const type = "addressbook"
-          const name = type + "_" + ManageSession.userProfile.id
-          const pub = 2
-          const value = ManageSession.addressbook
-          updateObject(type, name, value, pub)
+          //the addressbook does not exist: make an empty one
+          this.makeEmptyAddressbook()
         }
       })
+  }
+
+  async makeEmptyAddressbook(){
+    console.log("create empty address book")
+    const addressbook = []
+    ManageSession.addressbook = { addressbook }
+    
+    const type = "addressbook"
+    const name = type + "_" + ManageSession.userProfile.id
+    const pub = 2
+    const value = ManageSession.addressbook
+    console.log(" ManageSession.addressbook empty", ManageSession.addressbook)
+    updateObject(type, name, value, pub)
   }
 
   async getLiked() {
