@@ -505,19 +505,19 @@ class Player {
 
             const entry = { user_id: player.user_id }
 
+
             const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
-            console.log("current user id", entry.user_id)
+
             console.log("isExist", isExist)
             if (!isExist) {
               console.log("updated")
-              ManageSession.addressbook.push(entry)
+              ManageSession.addressbook.addressbook.push(entry)
 
-              const addressbook = ManageSession.addressbook
 
               const type = "addressbook"
               const name = type + "_" + ManageSession.userProfile.id
               const pub = 2
-              const value = { addressbook }
+              const value = ManageSession.addressbook
               console.log("value Player", value)
               updateObject(type, name, value, pub)
             } else {

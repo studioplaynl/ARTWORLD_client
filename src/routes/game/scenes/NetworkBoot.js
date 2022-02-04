@@ -39,9 +39,9 @@ export default class NetworkBoot extends Phaser.Scene {
           const filteredResponse = response[0].filter(element => {
             return element.key == "addressbook_" + ManageSession.userProfile.id
           })
-          console.log("myVar", filteredResponse)
+          // console.log("myVar", filteredResponse)
 
-          ManageSession.addressbook = []
+          ManageSession.addressbook = filteredResponse[0].value
 
           console.log("ManageSession.addressbook", ManageSession.addressbook)
 
@@ -58,7 +58,9 @@ export default class NetworkBoot extends Phaser.Scene {
           // console.log("ManageSession.addressbook", ManageSession.addressbook)
         } else {
           console.log("address book empty")
-          ManageSession.addressbook = []
+          const addressbook = []
+          ManageSession.addressbook = { addressbook }
+          console.log(" ManageSession.addressbook empty", ManageSession.addressbook)
           const type = "addressbook"
           const name = type + "_" + ManageSession.userProfile.id
           const pub = 2
