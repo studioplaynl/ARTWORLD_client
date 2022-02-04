@@ -430,7 +430,10 @@ class Player {
   }
 
   async displayOnlinePlayerItemsBar(scene, player) {
-
+    ManageSession.selectedOnlinePlayer = player
+    console.log("player", player)
+    console.log("playManageSession.selectedOnlinePlayerer", ManageSession.selectedOnlinePlayer)
+    
     scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
     if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
@@ -488,7 +491,8 @@ class Player {
           .setStrokeStyle(2, 0x0000)
           .on("pointerdown", () => {
             // entering the home of a player
-            HistoryTracker.switchScene(scene, "DefaultUserHome", player.user_id)
+           // HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.selectedOnlinePlayer.user_id)
+           console.log("ManageSession.selectedOnlinePlayer.user_id", ManageSession.selectedOnlinePlayer.user_id)
           })
         scene.onlinePlayerHomeEnterButton = scene.add.image(-30, -120, "enter_home")
 
@@ -503,10 +507,9 @@ class Player {
 
             console.log("ManageSession address book before adding", ManageSession.addressbook)
 
-            const entry = { user_id: player.user_id }
+            const entry = { user_id: ManageSession.selectedOnlinePlayer.user_id }
 
-
-            const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
+            const isExist = ManageSession.addressbook?.addressbook.some(element => element.user_id == entry.user_id)
 
             console.log("isExist", isExist)
             if (!isExist) {
