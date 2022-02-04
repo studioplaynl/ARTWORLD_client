@@ -25,8 +25,8 @@ export default class NetworkBoot extends Phaser.Scene {
     Promise.all([listObjects("addressbook", ManageSession.userProfile.id, 10)])
       .then(response => {
         if (response[0].length > 0) {
-          // ManageSession.addressBook = response[0].map((element) => element.value)
-          // ManageSession.addressBook = response[0][0].value
+          // ManageSession.addressbook = response[0].map((element) => element.value)
+          // ManageSession.addressbook = response[0][0].value
           // console.log("response[0][0].value", response[0][0].value)
 
           console.log("address book response", response[0])
@@ -52,17 +52,17 @@ export default class NetworkBoot extends Phaser.Scene {
           // const type = "addressbook"
           // const name = type + "_" + ManageSession.userProfile.id
           // const pub = 2
-          // const value = ManageSession.addressBook
+          // const value = ManageSession.addressbook
           // updateObject(type, name, value, pub)
 
-          // console.log("ManageSession.addressBook", ManageSession.addressBook)
+          // console.log("ManageSession.addressbook", ManageSession.addressbook)
         } else {
           console.log("address book empty")
-          ManageSession.addressBook = {}
+          ManageSession.addressbook = []
           const type = "addressbook"
           const name = type + "_" + ManageSession.userProfile.id
           const pub = 2
-          const value = ManageSession.addressBook
+          const value = ManageSession.addressbook
           updateObject(type, name, value, pub)
           // console.log(ManageSession.allLiked)
         }
