@@ -41,7 +41,7 @@ export default class NetworkBoot extends Phaser.Scene {
           })
           console.log("myVar", filteredResponse)
 
-          ManageSession.addressbook = filteredResponse[0].value
+          ManageSession.addressbook = []
 
           console.log("ManageSession.addressbook", ManageSession.addressbook)
 

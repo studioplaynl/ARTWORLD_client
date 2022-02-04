@@ -510,7 +510,7 @@ class Player {
             console.log("isExist", isExist)
             if (!isExist) {
               console.log("updated")
-              ManageSession.addressbook.addressbook.push(entry)
+              ManageSession.addressbook.push(entry)
 
               const addressbook = ManageSession.addressbook
 
