@@ -144,7 +144,6 @@ class ArtworkList {
   }
 
   async convertRexUIArray(scene) {
-
     //allLikedArray is an array of art in format:
     //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
     const allLikedArray = Object.keys(ManageSession.allLiked)
@@ -322,5 +321,10 @@ class ArtworkList {
     updateObject(type, name, value, pub)
   }
 }
+
+//where check against MS.allLiked
+//where change MS.allLiked
+
+//we came from [] and now we have .liked[{},{}] and the objects {user_id: "user_id", art_key: "art_key"}
 
 export default new ArtworkList()

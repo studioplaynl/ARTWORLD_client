@@ -518,7 +518,6 @@ class Player {
               console.log("updated")
               ManageSession.addressbook.addressbook.push(entry)
 
-
               const type = "addressbook"
               const name = type + "_" + ManageSession.userProfile.id
               const pub = 2
@@ -528,9 +527,8 @@ class Player {
             } else {
               console.log("this user id is already in addressbook list")
             }
-
-
           })
+          
         scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
 
         scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButtonCircle, scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveCircle, scene.onlinePlayerHomeSaveButton])

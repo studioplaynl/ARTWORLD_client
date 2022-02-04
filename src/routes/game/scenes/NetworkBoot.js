@@ -16,86 +16,73 @@ export default class NetworkBoot extends Phaser.Scene {
       .then(rec => {
         //console.log(ManageSession.launchLocation)
 
-        this.getLiked()
-        this.getAddressBook()
+        this.getServerObject("liked", ManageSession.userProfile.id, 10)
+        //this.getAddressBook()
+        this.getServerObject("addressbook", ManageSession.userProfile.id, 10)
         this.scene.launch(ManageSession.launchLocation)
       })
   }
 
-  async getAddressBook() {
-    Promise.all([listObjects("addressbook", ManageSession.userProfile.id, 10)])
+  async getServerObject(collection, userID, maxItems) {
+    Promise.all([listObjects(collection, userID, maxItems)])
       .then(response => {
+        console.log("collection", collection)
+        console.log("response", response)
+
         //check if the object exists
         if (response[0].length > 0) {
           //the object exists: addressbook
 
           // check if the right object exists: addressbook_user_id
-          let filteredResponse = response[0].filter(element =>
-            element.key == "addressbook_" + ManageSession.userProfile.id
+          let filteredResponse = response[0].filter(element => {
+            console.log(collection + "_" + ManageSession.userProfile.id, typeof collection)
+            console.log("element", element)
+            return element.key == collection + "_" + ManageSession.userProfile.id
+          }
           )
           console.log("filteredResponse", filteredResponse)
 
           if (filteredResponse.length > 0) {
             //the right object exists, but check if there is data in de object, in the expected format
-            
-            if (typeof filteredResponse[0].value.addressbook != "undefined"){
+
+            if (typeof filteredResponse[0].value[collection] != "undefined") {
               //the addressbook is in the right format, we assign our local copy
-              ManageSession.addressbook = filteredResponse[0].value
-              console.log("ManageSession.addressbook", ManageSession.addressbook)
+              ManageSession[collection] = filteredResponse[0].value
+              console.log("ManageSession." + collection, ManageSession[collection])
             } else {
               //when the right addressbook does not exist: make an empty one
               //addressbook_userid.value exists but .addressbook  
-              this.makeEmptyAddressbook()
+              this.createEmptyServerObject(collection)
             }
-              
+
           } else {
             //when the right addressbook does not exist: make an empty one
-            this.makeEmptyAddressbook()
+            this.createEmptyServerObject(collection)
 
           }
-          console.log("ManageSession.addressbook", ManageSession.addressbook)
+          console.log("ManageSession." + collection, ManageSession[collection])
 
         } else {
           //the addressbook does not exist: make an empty one
-          this.makeEmptyAddressbook()
+          this.createEmptyServerObject(collection)
         }
       })
   }
 
-  async makeEmptyAddressbook(){
-    console.log("create empty address book")
-    const addressbook = []
-    ManageSession.addressbook = { addressbook }
-    
-    const type = "addressbook"
+  async createEmptyServerObject(collection) {
+    //general method of creating an array inside an object with the argument of the method
+    console.log("createEmptyServerObject")
+    console.log(collection)
+
+    ManageSession[collection] = { [collection]:[] }
+
+    const type = collection
     const name = type + "_" + ManageSession.userProfile.id
     const pub = 2
-    const value = ManageSession.addressbook
-    console.log(" ManageSession.addressbook empty", ManageSession.addressbook)
+    const value = ManageSession[collection]
+    console.log(" ManageSession. empty", ManageSession[collection])
     updateObject(type, name, value, pub)
   }
 
-  async getLiked() {
-    //*check if Liked list exists on server, otherwise create it
-    console.log("checkLikeList")
-    Promise.all([listObjects("liked", ManageSession.userProfile.id, 10)])
-      .then((rec) => {
-
-        // console.log(rec[0].length)
-        if (rec[0].length > 0) {
-          ManageSession.allLiked = rec[0][0].value
-        } else {
-          ManageSession.allLiked = {
-            // "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png": "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png",
-            // "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png": "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png"
-          }
-
-          const type = "liked"
-          const name = type + "_" + ManageSession.userProfile.id
-          const pub = 2
-          const value = ManageSession.allLiked
-          updateObject(type, name, value, pub)
-        }
-      })
-  }
+  
 }
