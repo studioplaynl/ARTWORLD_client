@@ -1,6 +1,6 @@
 import ManageSession from "../ManageSession";
 import CoordinatesTranslator from "./CoordinatesTranslator";
-import { listObjects, listImages, convertImage, getFullAccount } from "../../../api.js";
+import { listObjects, listImages, convertImage, getFullAccount, updateObject } from "../../../api.js";
 import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList";
 import R_UI from "./R_UI";
@@ -59,7 +59,7 @@ class Player {
             console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
 
             scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
-            .on('filecomplete', () => {this.attachAvatarToPlayer(scene)},scene)
+              .on('filecomplete', () => { this.attachAvatarToPlayer(scene) }, scene)
 
           }
 
@@ -501,18 +501,30 @@ class Player {
             // saving the home of a player
             // ManageSession.addressBook[player.user_id] = player.user_id
 
+            console.log("ManageSession address book before adding", ManageSession.addressbook)
+
             const entry = { user_id: player.user_id }
 
-            ManageSession.addressbook.push(entry)
+            const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
+            console.log("current user id", entry.user_id)
+            console.log("isExist", isExist)
+            if (!isExist) {
+              console.log("updated")
+              ManageSession.addressbook.addressbook.push(entry)
 
-            const addressbook = ManageSession.addressbook
+              const addressbook = ManageSession.addressbook
 
-            const type = "addressbook"
-            const name = type + "_" + ManageSession.userProfile.id
-            const pub = 2
-            const value = { addressbook }
-            console.log("value Player", value)
-            updateObject(type, name, value, pub)
+              const type = "addressbook"
+              const name = type + "_" + ManageSession.userProfile.id
+              const pub = 2
+              const value = { addressbook }
+              console.log("value Player", value)
+              updateObject(type, name, value, pub)
+            } else {
+              console.log("this user id is already in addressbook list")
+            }
+
+
           })
         scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
 
