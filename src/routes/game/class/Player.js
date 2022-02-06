@@ -528,14 +528,26 @@ class Player {
               console.log("this user id is already in addressbook list")
             }
           })
-          
+
         scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
 
         scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButtonCircle, scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveCircle, scene.onlinePlayerHomeSaveButton])
       })
 
+      scene.onlinePlayerAddressbookButtonCircle = scene.add
+        .circle(0, 70, 25, 0xffffff)
+        .setOrigin(0.5, 0.5)
+        .setInteractive({ useHandCursor: true })
+        .setStrokeStyle(3, 0x0000)
+      scene.onlinePlayerAddressbookButton = scene.add.image(0, 70, "address_book")
+
+      scene.onlinePlayerAddressbookButtonCircle.on("pointerdown", () => {
+        console.log("addressbook is clicked")
+      })
+
+
       // adding all buttons to the container
-      scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeButtonCircle, scene.onlinePlayerHomeButton])
+      scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeButtonCircle, scene.onlinePlayerHomeButton, scene.onlinePlayerAddressbookButtonCircle, scene.onlinePlayerAddressbookButton])
     } else {
       scene.isOnlinePlayerItemsBarDisplayed = false
       scene.onlinePlayerItemsBar.setVisible(false)
