@@ -5,6 +5,7 @@ import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList";
 import R_UI from "./R_UI";
 
+
 class Player {
   constructor() { }
 
@@ -542,7 +543,44 @@ class Player {
       scene.onlinePlayerAddressbookButton = scene.add.image(0, 70, "address_book")
 
       scene.onlinePlayerAddressbookButtonCircle.on("pointerdown", () => {
-        console.log("addressbook is clicked")
+        // console.log("addressbook pointerdown")
+
+        const addressbookScrollContainer = scene.add.graphics().fillStyle(0xffff00, 1)
+        addressbookScrollContainer.fillRoundedRect(scene.player.x - 16, scene.player.y + 100, 120, 200, 8)
+
+        const addressbookContainer = scene.add.container(scene.player.x - 16, scene.player.y + 100 + 20)
+
+        const fakeArray = [1, 2, 3, 4, 5, 6, 7, 8]
+
+        const height = 50
+
+        fakeArray.forEach((element, index) => {
+          const y = index * height
+
+          const image = scene.add.image(0, y, "friend").setOrigin(0)
+          addressbookContainer.add(image)
+        })
+
+        addressbookContainer.setMask(addressbookScrollContainer.createGeometryMask())
+
+        const scroller = scene.add.zone(scene.player.x - 16, scene.player.y + 100, 320, 250)
+          .setOrigin(0)
+          .setInteractive()
+          .on("pointermove", (pointer) => {
+            if (pointer.isDown) {
+              // console.log("pointermove")
+              if (pointer.isDown) {
+                addressbookContainer.y += (pointer.velocity.y / 5);
+                addressbookContainer.y = Phaser.Math.Clamp(addressbookContainer.y, fakeArray.length * height, scene.player.y + 100); // value, bottom, top
+                console.log(Phaser.Math.Clamp(addressbookContainer.y, fakeArray.length * height, scene.player.y + 100))
+              }
+            }
+          })
+
+
+
+
+
       })
 
 
