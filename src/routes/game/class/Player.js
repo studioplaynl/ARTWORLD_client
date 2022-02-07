@@ -542,13 +542,18 @@ class Player {
         .setStrokeStyle(3, 0x0000)
       scene.onlinePlayerAddressbookButton = scene.add.image(0, 70, "address_book")
 
+
       scene.onlinePlayerAddressbookButtonCircle.on("pointerdown", () => {
         // console.log("addressbook pointerdown")
+        const y = 3000 + 50
 
-        const addressbookScrollContainer = scene.add.graphics().fillStyle(0xffff00, 1)
-        addressbookScrollContainer.fillRoundedRect(scene.player.x - 16, scene.player.y + 100, 120, 200, 8)
+        const scrollContainerHeight = 200
+        const scrollContainerWidth = 200
 
-        const addressbookContainer = scene.add.container(scene.player.x - 16, scene.player.y + 100 + 20)
+        scene.addressbookScrollContainer = scene.add.graphics().fillStyle(0xffff00, 1)
+        scene.addressbookScrollContainer.fillRoundedRect(3000, y, scrollContainerWidth, scrollContainerHeight, 8)
+
+        scene.addressbookContainer = scene.add.container(3000, y + 20)
 
         const fakeArray = [1, 2, 3, 4, 5, 6, 7, 8]
 
@@ -558,28 +563,23 @@ class Player {
           const y = index * height
 
           const image = scene.add.image(0, y, "friend").setOrigin(0)
-          addressbookContainer.add(image)
+          scene.addressbookContainer.add(image)
         })
 
-        addressbookContainer.setMask(addressbookScrollContainer.createGeometryMask())
+        scene.addressbookContainer.setMask(scene.addressbookScrollContainer.createGeometryMask())
 
-        const scroller = scene.add.zone(scene.player.x - 16, scene.player.y + 100, 320, 250)
+        scene.scroller = scene.add.zone(3000, y, 320, 250)
           .setOrigin(0)
           .setInteractive()
           .on("pointermove", (pointer) => {
             if (pointer.isDown) {
               // console.log("pointermove")
               if (pointer.isDown) {
-                addressbookContainer.y += (pointer.velocity.y / 5);
-                addressbookContainer.y = Phaser.Math.Clamp(addressbookContainer.y, fakeArray.length * height, scene.player.y + 100); // value, bottom, top
-                console.log(Phaser.Math.Clamp(addressbookContainer.y, fakeArray.length * height, scene.player.y + 100))
+                scene.addressbookContainer.y += (pointer.velocity.y / 10);
+                scene.addressbookContainer.y = Phaser.Math.Clamp(scene.addressbookContainer.y, y - (fakeArray.length * height) + scrollContainerHeight, y); // value, bottom, top
               }
             }
           })
-
-
-
-
 
       })
 
