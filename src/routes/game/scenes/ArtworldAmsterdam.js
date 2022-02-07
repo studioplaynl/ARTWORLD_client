@@ -173,13 +173,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient2: 0xbb00ff,
     });
 
-    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerup', () => console.log("touched background"))
-      .on('pointerdown', () => console.log("touched background"))
-      .setVisible(false)
+    // this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff)
+    //   .setInteractive({ useHandCursor: true })
+    //   .on('pointerup', () => console.log("touched background"))
+    //   .on('pointerdown', () => console.log("touched background"))
+    //   .setVisible(false)
 
-    this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    // this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
 
 
     // sunglass_stripes
