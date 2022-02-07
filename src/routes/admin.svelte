@@ -94,6 +94,7 @@
 <div class="box">
 <h1>All Users</h1>
 <a href="/#/register"><button>Add new user</button></a>
+<a href="/#/match"><button>extra options</button></a>
 <SvelteTable columns={userColumns} rows={users} classNameTable="profileTable" />
 
 <h1>All Groeps</h1> <a href="/#/group"><button>Add new group</button></a>

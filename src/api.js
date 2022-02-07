@@ -346,7 +346,9 @@ export async function deleteObject(collection, key) {
 
 export async function updateObjectAdmin(id, type, name, value, pub) { 
   let result
-  value = JSON.stringify(value)
+  if(typeof value == "object"){
+    value = JSON.stringify(value)
+  }
   let payload = {id,type, name, value, pub};
   console.log(payload)
 

@@ -2,7 +2,7 @@
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
-    import {updateObjectAdmin, updateObject, listObjects, listAllObjects, deleteObject, convertImage} from "../api"
+    import {updateObjectAdmin, updateObject, listObjects, listAllObjects, deleteObjectAdmin, convertImage} from "../api"
     import { onMount } from "svelte";
     //import { writable } from "svelte/store";
 
@@ -249,7 +249,7 @@ async function convert() {
             <p>userID: {location.user_id}</p>
         <p>name:{location.key}</p>
         <p>value: {JSON.stringify(location.value)}
-        <button on:click="{async ()=>{await deleteObject(location.collection,location.key);getLocations()}}">delete</button>
+        <button on:click="{async ()=>{await deleteObjectAdmin(location.user_id, location.collection,location.key);getLocations()}}">delete</button>
         <button on:click="{async ()=>{await renewObject(location);getLocations()}}">update</button>
         </div>
     {/each}

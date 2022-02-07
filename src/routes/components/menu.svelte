@@ -65,7 +65,6 @@
       >
         <li><a href="/#/">{$_("nav.game")}</a></li>
         <li><a href="/#/friends">{$_("nav.friends")}</a></li>
-        <li><a href="/#/match">{$_("nav.match")}</a></li>
         <li><a href="/#/drawing">{$_("nav.drawing")}</a></li>
         <li><a href="/#/stopmotion">{$_("nav.stopmotion")}</a></li>
         <li><a href="/#/mariosound">{$_("nav.mariosound")}</a>
