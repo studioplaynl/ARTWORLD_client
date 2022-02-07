@@ -546,29 +546,30 @@ class Player {
       scene.onlinePlayerAddressbookButtonCircle.on("pointerdown", () => {
         // console.log("addressbook pointerdown")
         const y = 3000 + 50
+        const x = 3000
 
+        const scrollContainerWidth = 120
         const scrollContainerHeight = 200
-        const scrollContainerWidth = 200
 
         scene.addressbookScrollContainer = scene.add.graphics().fillStyle(0xffff00, 1)
-        scene.addressbookScrollContainer.fillRoundedRect(3000, y, scrollContainerWidth, scrollContainerHeight, 8)
+        scene.addressbookScrollContainer.fillRoundedRect(x, y, scrollContainerWidth, scrollContainerHeight, 8)
 
-        scene.addressbookContainer = scene.add.container(3000, y + 20)
+        scene.addressbookContainer = scene.add.container(x, y)
 
         const fakeArray = [1, 2, 3, 4, 5, 6, 7, 8]
 
         const height = 50
 
         fakeArray.forEach((element, index) => {
-          const y = index * height
+          const elementPosY = index * height
 
-          const image = scene.add.image(0, y, "friend").setOrigin(0)
+          const image = scene.add.image(0, elementPosY, "friend").setOrigin(0)
           scene.addressbookContainer.add(image)
         })
 
         scene.addressbookContainer.setMask(scene.addressbookScrollContainer.createGeometryMask())
 
-        scene.scroller = scene.add.zone(3000, y, 320, 250)
+        scene.scroller = scene.add.zone(x, y, scrollContainerWidth, scrollContainerHeight)
           .setOrigin(0)
           .setInteractive()
           .on("pointermove", (pointer) => {
@@ -576,7 +577,7 @@ class Player {
               // console.log("pointermove")
               if (pointer.isDown) {
                 scene.addressbookContainer.y += (pointer.velocity.y / 10);
-                scene.addressbookContainer.y = Phaser.Math.Clamp(scene.addressbookContainer.y, y - (fakeArray.length * height) + scrollContainerHeight, y); // value, bottom, top
+                scene.addressbookContainer.y = Phaser.Math.Clamp(scene.addressbookContainer.y, y - (fakeArray.length * height) + scrollContainerHeight, y); // value, bottom border, top border
               }
             }
           })
