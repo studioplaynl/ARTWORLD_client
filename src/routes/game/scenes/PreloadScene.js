@@ -38,6 +38,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('save_home', './assets/popup/save_home.png')
         this.load.image('address_book', './assets/popup/address_book.png')
         this.load.image('friend', './assets/popup/friend.png')
+        this.load.image('friend2', './assets/popup/friend2.png')
+        this.load.image('friend3', './assets/popup/friend3.png')
 
         this.load.spritesheet(
             "avatar1",

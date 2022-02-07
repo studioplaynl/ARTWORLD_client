@@ -305,12 +305,73 @@ class Player {
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
         })
 
+        scene.playerAddressbookButtonCircle = scene.add
+          .circle(0, 70, 25, 0xffffff)
+          .setOrigin(0.5, 0.5)
+          .setInteractive({ useHandCursor: true })
+          .setStrokeStyle(3, 0x0000)
+        scene.playerAddressbookButton = scene.add.image(0, 70, "address_book")
+
+
+        scene.playerAddressbookButtonCircle.on("pointerdown", () => {
+
+          const y = 3000 + 50
+          const x = 3000
+
+          const scrollContainerWidth = 120
+          const scrollContainerHeight = 200
+
+          scene.addressbookScrollContainer = scene.add.graphics().fillStyle(0xffff00, 1)
+          scene.addressbookScrollContainer.fillRoundedRect(x, y, scrollContainerWidth, scrollContainerHeight, 8)
+
+          scene.addressbookContainer = scene.add.container(x, y)
+
+          console.log("managesession", ManageSession.addressbook)
+
+          const smileyFaces = ["friend", "friend2", "friend3"]
+
+          const height = 50
+
+          ManageSession.addressbook.addressbook.forEach((element, index) => {
+
+            const elementPosY = index * height
+
+            const randomNumber = Math.floor(Math.random() * smileyFaces.length)
+
+            const currentImage = scene.add.image(0, elementPosY, smileyFaces[randomNumber])
+              .setOrigin(0)
+              .setInteractive({ useHandCursor: true })
+              .on("pointerdown", () => {
+                HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
+              })
+
+            scene.addressbookContainer.add(currentImage)
+          })
+
+          scene.addressbookContainer.setMask(scene.addressbookScrollContainer.createGeometryMask())
+
+          scene.scroller = scene.add.zone(x, y, scrollContainerWidth, scrollContainerHeight)
+            .setOrigin(0)
+            .setInteractive()
+            .on("pointermove", (pointer) => {
+              if (pointer.isDown) {
+                // console.log("pointermove")
+                if (pointer.isDown) {
+                  scene.addressbookContainer.y += (pointer.velocity.y / 10);
+                  scene.addressbookContainer.y = Phaser.Math.Clamp(scene.addressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + scrollContainerHeight, y); // value, bottom border, top border
+                }
+              }
+            })
+        })
+
         // adding all buttons to the container
         scene.playerItemsBar.add([
           scene.playerHomeButtonCircle,
           scene.playerHomeButton,
           scene.playerLikedButtonCircle,
           scene.playerLikedButton,
+          scene.playerAddressbookButtonCircle,
+          scene.playerAddressbookButton
         ])
 
         scene.isPlayerItemsBarDisplayed = true;
@@ -535,58 +596,8 @@ class Player {
         scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButtonCircle, scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveCircle, scene.onlinePlayerHomeSaveButton])
       })
 
-      scene.onlinePlayerAddressbookButtonCircle = scene.add
-        .circle(0, 70, 25, 0xffffff)
-        .setOrigin(0.5, 0.5)
-        .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(3, 0x0000)
-      scene.onlinePlayerAddressbookButton = scene.add.image(0, 70, "address_book")
-
-
-      scene.onlinePlayerAddressbookButtonCircle.on("pointerdown", () => {
-        // console.log("addressbook pointerdown")
-        const y = 3000 + 50
-        const x = 3000
-
-        const scrollContainerWidth = 120
-        const scrollContainerHeight = 200
-
-        scene.addressbookScrollContainer = scene.add.graphics().fillStyle(0xffff00, 1)
-        scene.addressbookScrollContainer.fillRoundedRect(x, y, scrollContainerWidth, scrollContainerHeight, 8)
-
-        scene.addressbookContainer = scene.add.container(x, y)
-
-        const fakeArray = [1, 2, 3, 4, 5, 6, 7, 8]
-
-        const height = 50
-
-        fakeArray.forEach((element, index) => {
-          const elementPosY = index * height
-
-          const image = scene.add.image(0, elementPosY, "friend").setOrigin(0)
-          scene.addressbookContainer.add(image)
-        })
-
-        scene.addressbookContainer.setMask(scene.addressbookScrollContainer.createGeometryMask())
-
-        scene.scroller = scene.add.zone(x, y, scrollContainerWidth, scrollContainerHeight)
-          .setOrigin(0)
-          .setInteractive()
-          .on("pointermove", (pointer) => {
-            if (pointer.isDown) {
-              // console.log("pointermove")
-              if (pointer.isDown) {
-                scene.addressbookContainer.y += (pointer.velocity.y / 10);
-                scene.addressbookContainer.y = Phaser.Math.Clamp(scene.addressbookContainer.y, y - (fakeArray.length * height) + scrollContainerHeight, y); // value, bottom border, top border
-              }
-            }
-          })
-
-      })
-
-
       // adding all buttons to the container
-      scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeButtonCircle, scene.onlinePlayerHomeButton, scene.onlinePlayerAddressbookButtonCircle, scene.onlinePlayerAddressbookButton])
+      scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeButtonCircle, scene.onlinePlayerHomeButton])
     } else {
       scene.isOnlinePlayerItemsBarDisplayed = false
       scene.onlinePlayerItemsBar.setVisible(false)
