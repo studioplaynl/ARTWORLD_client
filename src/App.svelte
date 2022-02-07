@@ -108,7 +108,7 @@
             component: match,
             conditions: [
                 (detail) => {
-                    return isLogedIn(detail);
+                    return isAdmin(detail);
                 },
             ],
         }),

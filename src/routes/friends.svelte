@@ -1,14 +1,32 @@
 <script>
     import SvelteTable from "svelte-table";
+import { each } from "svelte/internal";
     import {ListFriends, addFriend} from "../api"
     var users = [];
+    var usersRequest = [];
+    var usersPending = [];
     var ID = "";
     var Username
 
     ListFriends()
     .then( list => {
         console.log(list.friends)
-        users = list.friends
+        list.friends.forEach(user => {
+            console.log(user)
+            if(user.state === 2){
+                usersRequest.push(user)
+                usersRequest = usersRequest
+            }
+            if(user.state === 1){
+                usersPending.push(user)
+                usersPending = usersPending
+            }
+            if(user.state === 0){
+                users.push(user)
+                users = users
+            }
+        });
+        console.log(usersRequest)
     })
     
     const columns = [
@@ -39,7 +57,13 @@
 
   <h1>All friends</h1>
   <SvelteTable columns="{columns}" rows="{users}" classNameTable="profileTable"></SvelteTable>
-  
+
+  <h1>Pending friend requests</h1>
+  <SvelteTable columns="{columns}" rows="{usersPending}" classNameTable="profileTable"></SvelteTable>
+
+
+  <h1>Friend requests</h1>
+  <SvelteTable columns="{columns}" rows="{usersRequest}" classNameTable="profileTable"></SvelteTable>
   
   <style>
   

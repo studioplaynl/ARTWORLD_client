@@ -2,7 +2,7 @@
     import {client, SSL} from "../nakama.svelte"
     import { Session, Profile, logout} from "../session.js"
     import {Error} from "./../session.js"
-    import {updateObjectAdmin, updateObject, listObjects, listAllObjects, deleteObject, convertImage} from "../api"
+    import {updateObjectAdmin, listAllObjects, deleteObjectAdmin, convertImage} from "../api"
     import { onMount } from "svelte";
     //import { writable } from "svelte/store";
 
@@ -147,18 +147,13 @@ async function addLocation() {
     let pub = true // is het publiek zichtbaar of enkel voor de gebruiker die het creert
     //await updateObject(type, name, value, pub)
     console.log(id + type + name + value + pub)
-    if($Profile.meta.role == "admin") await updateObjectAdmin(id, type, name, value, pub)
-    else await updateObject(type, name, value, pub)
-    getLocations()
+    await updateObjectAdmin(id, type, name, value, pub)
+
+    getUserLocations()
 }
 
 let whereList
 let locationsList = []
-async function getLocations() {
-    let limit = 100
-    locationsList = await listObjects(whereList, null, limit) 
-    console.log(locationsList)   
-}
 
 async function getUserLocations() {
     locationsList = await listAllObjects(whereList) 
@@ -241,16 +236,15 @@ async function convert() {
     </select>
     <label>type object name</label><input type="text" bind:value="{whereList}">
 
-    <button on:click="{getLocations}">Get</button>
-    <button on:click="{getUserLocations}">Get with username</button>
+    <button on:click="{getUserLocations}">Get</button>
     {#each locationsList as location}
         <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
             <p>username: {location.username}</p>            
             <p>userID: {location.user_id}</p>
         <p>name:{location.key}</p>
         <p>value: {JSON.stringify(location.value)}
-        <button on:click="{async ()=>{await deleteObject(location.collection,location.key);getLocations()}}">delete</button>
-        <button on:click="{async ()=>{await renewObject(location);getLocations()}}">update</button>
+        <button on:click="{async ()=>{await deleteObjectAdmin(location.user_id, location.collection,location.key);getUserLocations()}}">delete</button>
+        <button on:click="{async ()=>{await renewObject(location);getUserLocations()}}">update</button>
         </div>
     {/each}
 
