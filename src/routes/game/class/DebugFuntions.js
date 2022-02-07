@@ -77,9 +77,6 @@ class DebugFuntions {
             console.log("scene.player: ")
             console.log(scene.player)
 
-            console.log("locationDialogBoxContainersGroup children")
-            console.log(scene.locationDialogBoxContainersGroup.getChildren())
-
         }, scene);
 
         scene.input.keyboard.on('keyup-F', function (event) {

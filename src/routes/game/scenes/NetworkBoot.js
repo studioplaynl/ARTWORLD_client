@@ -35,7 +35,7 @@ export default class NetworkBoot extends Phaser.Scene {
 
           // check if the right object exists: addressbook_user_id
           let filteredResponse = response[0].filter(element => {
-            console.log(collection + "_" + ManageSession.userProfile.id, typeof collection)
+            //console.log(collection + "_" + ManageSession.userProfile.id, typeof collection)
             console.log("element", element)
             return element.key == collection + "_" + ManageSession.userProfile.id
           }
@@ -43,12 +43,13 @@ export default class NetworkBoot extends Phaser.Scene {
           console.log("filteredResponse", filteredResponse)
 
           if (filteredResponse.length > 0) {
-            //the right object exists, but check if there is data in de object, in the expected format
+            //the right collection object exists, but check if there is data in de object, in the expected format
 
             if (typeof filteredResponse[0].value[collection] != "undefined") {
-              //the addressbook is in the right format, we assign our local copy
+              //the object is in the right format (object.value.object), we assign our local copy
               ManageSession[collection] = filteredResponse[0].value
               console.log("ManageSession." + collection, ManageSession[collection])
+              return
             } else {
               //when the right addressbook does not exist: make an empty one
               //addressbook_userid.value exists but .addressbook  

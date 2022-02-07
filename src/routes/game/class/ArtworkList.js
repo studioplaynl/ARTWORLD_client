@@ -146,6 +146,21 @@ class ArtworkList {
   async convertRexUIArray(scene) {
     //allLikedArray is an array of art in format:
     //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
+    //should be format: 
+    // liked: [
+    // {
+    //  user_id: "e0849c23-a339-40db-bb84-e0849ded4e68",
+    //  collection: "drawing",
+    //  key: "1642771303290_limoenWalrus",
+    //  version: 1,
+    //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png",
+    //  previewURl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/stopmotion/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png?signature=c8c1aba753e01a6f06fd321a5a01a46fc18a483bb618ca1e2478283028a077f8",
+    //  },
+    // ]
+
+    //we want to get a preview of the liked item, for the latest version
+
+
     const allLikedArray = Object.keys(ManageSession.allLiked)
 
     //we get the number of elements we want to show
@@ -276,48 +291,81 @@ class ArtworkList {
     }
   }
 
-  placeHeartButton(scene, x, y, keyImg) {
+  placeHeartButton(scene, x, y, keyImgUrl, mediaObject) {
+    //we get the imageObject passed along
+    //collection: "drawing"
+    //create_time: "2022-01-27T16:46:00Z"
+    //key: "1643301959176_cyaanConejo"
+    //permission_read: 2
+    //permission_write: 1
+    //update_time: "2022-02-02T21:14:07Z"
+    //user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
+    //value:
+    //      displayname: "cyaanConejo"
+    //      json: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
+    //      previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
+    //      status: ""
+    //      url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
+    //version: 0
+
+    console.log(mediaObject)
+    //place heartButton under the artwork, make them interactive
     const artFrame = scene.textures.get("artFrame_512")
     let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "bitmap_heart").setOrigin(1, 0).setScale(0.5)
       .setInteractive()
-      .setData("toggle", false)
-      .on('pointerup', () => { this.heartButtonToggle(keyImg, currentHeart) })
+      .setData("toggle", false) //false, not liked state
+      //.setTint(0x000000) //black, not liked color
+      .on('pointerup', () => { this.heartButtonToggle(mediaObject, currentHeart) })
 
     scene.artContainer.add(currentHeart)
 
-    if (Object.values(ManageSession.allLiked).indexOf(keyImg) > -1) {
+    //set the heartButton to either back or red depending if an artwork is present in the liked object
+    const exists = ManageSession.liked.liked.some(element => element.url == keyImgUrl)
+    if (exists) {
       currentHeart.setTint(0xffffff)
       currentHeart.setData("toggle", false)
     } else {
       currentHeart.setTint(0x000000)
       currentHeart.setData("toggle", true)
     }
+    // console.log(Object.values(ManageSession.liked))
+    // console.log(Object.values(ManageSession.liked.liked))
+
   }
 
-  heartButtonToggle(imageKey, button) {
+  heartButtonToggle(mediaObject, button) {
+
+    let parsedMediaOject = { user_id: mediaObject.user_id, collection: mediaObject.collection, key: mediaObject.key, version: mediaObject.value.version, url: mediaObject.value.url, previewURl: mediaObject.value.previewURl }
     let toggle = button.getData("toggle")
 
     if (toggle) {
-      //changing to black, not liked
+      //changing to red, liked
       button.setTint(0xffffff)
       button.setData("toggle", false)
       // updates the object locally
-      ManageSession.allLiked[imageKey] = imageKey
+      // add to the array
+      ManageSession.liked.liked.push(parsedMediaOject)
+      console.log(ManageSession.liked)
 
-      console.log("turnedRED")
+      //console.log("turnedRED")
     } else {
-      //changing to red, liked
+      //changing to black, not liked
       button.setTint(0x000000)
       button.setData("toggle", true)
       // updates the object locally
-      delete ManageSession.allLiked[imageKey]
+      //find the object in the array, by url, filter the object with the url out
+
+      ManageSession.liked.liked = ManageSession.liked.liked.filter( obj => obj.url != mediaObject.value.url)
+      // ManageSession.liked.liked.splice(deleteIndex, deleteIndex + 1)
+      console.log(ManageSession.liked.liked)
+      //delete ManageSession.allLiked[keyImgUrl]
     }
 
     const type = "liked"
     const name = type + "_" + ManageSession.userProfile.id
     const pub = 2
-    const value = ManageSession.allLiked
-    // updates the object remotely 
+    const value = ManageSession.liked
+    //  updates the object server side 
     updateObject(type, name, value, pub)
   }
 }
