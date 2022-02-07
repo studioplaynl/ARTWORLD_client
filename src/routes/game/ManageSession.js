@@ -25,27 +25,27 @@ class ManageSession {
     this.useSSL = SSL
     this.verboseLogging = false
 
-    this.match;
-    this.matchID;
-    this.deviceID;
+    this.match
+    this.matchID
+    this.deviceID
 
-    this.AccountObject;
-    this.playerObjectSelf;
-    this.createPlayer = true;
+    this.AccountObject
+    this.playerObjectSelf
+    this.createPlayer = true
 
     this.locationExists = false
 
-    this.createOnlinePlayers = false;
-    this.updateOnlinePlayers = false;
-    this.allConnectedUsers = [];
-    this.removedConnectedUsers = [];
+    this.createOnlinePlayers = false
+    this.updateOnlinePlayers = false
+    this.allConnectedUsers = []
+    this.removedConnectedUsers = []
 
-    // this.createdPlayer = false;
+    // this.createdPlayer = false
     this.playerAvatarKey = ""
-    // this.playerMovingKey = "moving";
-    // this.playerStopKey = "stop";
+    // this.playerMovingKey = "moving"
+    // this.playerStopKey = "stop"
 
-    this.gameStarted = false;
+    this.gameStarted = false
 
     this.location = "Location1" //default
     this.launchLocation = "Location1" //default
@@ -54,20 +54,13 @@ class ManageSession {
     this.locationHistory = []
 
     //chat example
-    this.channelId = "pineapple-pizza-lovers-room";
-    this.persistence = false;
-    this.hidden = false;
+    this.channelId = "pineapple-pizza-lovers-room"
+    this.persistence = false
+    this.hidden = false
 
     //timers
-    this.updateMovementTimer = 0;
-    this.updateMovementInterval = 30; //20 fps
-
-    //liked artworks list
-    this.allLiked
-    this.allLikedOnlinePlayer
-
-
-
+    this.updateMovementTimer = 0
+    this.updateMovementInterval = 30 //20 fps
   }
 
   // getProfile(){

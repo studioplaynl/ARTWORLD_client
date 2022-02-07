@@ -302,6 +302,8 @@ class Player {
         scene.playerLikedButtonCircle.on("pointerdown", async () => {
           // we display placeholder panel, and replace it with refreshed panel once server is done loading
           scene.playerLikedPanel.setVisible(true)
+
+          //the liked array is in the latest state, but we have to get the binairy data (the images)
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
         })
 
@@ -330,7 +332,6 @@ class Player {
   createOnlinePlayerItemsBar(scene) {
     // making the avatar interactive
     //player.setInteractive({ useHandCursor: true });
-    console.log("111")
 
     // for toggling the pop-up buttons
     scene.isOnlinePlayerItemsBarDisplayed = false;
