@@ -312,7 +312,7 @@ class Player {
           .setOrigin(0.5, 0.5)
           .setInteractive({ useHandCursor: true })
           .setStrokeStyle(3, 0x0000)
-        scene.playerAddressbookButton = scene.add.image(0, 70, "address_book")
+        scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
 
         scene.playerAddressbookButtonCircle.on("pointerdown", () => {
 
