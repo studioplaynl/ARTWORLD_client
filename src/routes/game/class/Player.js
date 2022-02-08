@@ -1,9 +1,9 @@
-import ManageSession from "../ManageSession";
-import CoordinatesTranslator from "./CoordinatesTranslator";
-import { listObjects, listImages, convertImage, getFullAccount, updateObject } from "../../../api.js";
+import ManageSession from "../ManageSession"
+import CoordinatesTranslator from "./CoordinatesTranslator"
+import { listObjects, listImages, convertImage, getFullAccount, updateObject, getAccount } from "../../../api.js"
 import HistoryTracker from "./HistoryTracker"
-import ArtworkList from "./ArtworkList";
-import R_UI from "./R_UI";
+import ArtworkList from "./ArtworkList"
+import R_UI from "./R_UI"
 
 
 class Player {
@@ -61,7 +61,7 @@ class Player {
             const fileNameCheck = scene.playerAvatarKey
             scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
               .on('filecomplete', (fileNameCheck) => { console.log(`file ${fileNameCheck} finished loading`); this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
-              scene.load.start() // load the image in memory
+            scene.load.start() // load the image in memory
           }
         } else {
           this.attachAvatarToPlayer(scene)
@@ -71,7 +71,7 @@ class Player {
   }
 
   attachAvatarToPlayer(scene) {
-    console.log( "scene.playerAvatarKey ", scene.playerAvatarKey)
+    console.log("scene.playerAvatarKey ", scene.playerAvatarKey)
 
     const avatar = scene.textures.get(scene.playerAvatarKey)
     // console.log(avatar)
@@ -85,7 +85,7 @@ class Player {
     //console.log("avatarFrames: " + avatarFrames)
 
     //make an animation if the image is wider than tall
-   
+
     if (avatarFrames > 1) {
       //. animation for the player avatar ......................
 
@@ -93,7 +93,7 @@ class Player {
       scene.playerStopKey = "stop" + "_" + scene.playerAvatarKey;
 
       //check if the animation already exists
-      if ( !scene.anims.exists(scene.playerMovingKey)){
+      if (!scene.anims.exists(scene.playerMovingKey)) {
         scene.anims.create({
           key: scene.playerMovingKey,
           frames: scene.anims.generateFrameNumbers(scene.playerAvatarKey, {
@@ -104,7 +104,7 @@ class Player {
           repeat: -1,
           yoyo: true,
         })
-  
+
         scene.anims.create({
           key: scene.playerStopKey,
           frames: scene.anims.generateFrameNumbers(scene.playerAvatarKey, {
@@ -115,7 +115,7 @@ class Player {
       }
     }
     //. end animation for the player avatar ......................
-  
+
     // texture loaded so use instead of the placeholder
     //console.log("scene.playerAvatarKey");
     //console.log(scene.playerAvatarKey);
@@ -145,27 +145,20 @@ class Player {
     // this.player.y = this.player.posY
 
     //*place the player in the last known position
-    // scene.player.x = translateCoordinates.artworldToPhaser2DX(this.worldSize.x, this.player.posX)
-    // scene.player.y = translateCoordinates.artworldToPhaser2DY(this.worldSize.y, this.player.posY)
+    // console.log("scene.player.x", scene.player.x)
+    // console.log("ManageSession.userProfile", ManageSession.userProfile)
+    // console.log("ManageSession.userProfile.meta.posX", ManageSession.userProfile.meta.posX)
+    // console.log("scene.player", scene.player)
+
+    // scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, ManageSession.userProfile.meta.posX)
+    // scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, ManageSession.userProfile.meta.posY)
 
     // console.log("player avatar has loaded ")
-    // console.log("this.playerAvatarKey")
-    // console.log(this.playerAvatarKey)
-
     scene.player.location = scene.location
-
-    // console.log("this.player: ");
-    // console.log(scene.player);
-
     scene.createdPlayer = true
-    // console.log("this.createdPlayer = true;")
 
     //send the current player position over the network
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)
-
-    // scene.add.existing(this)
-    // scene.physics.add.existing(this)
-
   } //attachAvatarToPlayer
 
   createPlayerItemsBar(scene) {
@@ -306,93 +299,93 @@ class Player {
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
         })
 
-        // scene.playerAddressbookButtonCircle = scene.add
-        //   .circle(0, 70, 25, 0xffffff)
-        //   .setOrigin(0.5, 0.5)
-        //   .setInteractive({ useHandCursor: true })
-        //   .setStrokeStyle(3, 0x0000)
-        // scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
+        scene.playerAddressbookButtonCircle = scene.add
+          .circle(0, 70, 25, 0xffffff)
+          .setOrigin(0.5, 0.5)
+          .setInteractive({ useHandCursor: true })
+          .setStrokeStyle(3, 0x0000)
+        scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
 
-        // scene.playerAddressbookButtonCircle.on("pointerdown", () => {
+        scene.playerAddressbookButtonCircle.on("pointerdown", () => {
 
-        // scene.events.on("playerAddressbook", () => {
+          scene.events.on("playerAddressbook", () => {
 
-        //   if (ManageSession.addressbook.addressbook.length > 0) {
-        //     const playerAddressbookWidth = 120
-        //     const playerAddressbookHeight = 200
+            if (ManageSession.addressbook.addressbook.length > 0) {
+              const playerAddressbookWidth = 120
+              const playerAddressbookHeight = 200
 
-        //     const x = scene.player.x - playerAddressbookWidth / 2
-        //     const y = scene.player.y + 110
+              const x = scene.player.x - playerAddressbookWidth / 2
+              const y = scene.player.y + 110
 
-        //     scene.playerAddressbookMask = scene.add.graphics()
-        //       .fillStyle(0xffffff, 1)
-        //       .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
-        //       .lineStyle(3, 0x000000, 1)
-        //       .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+              scene.playerAddressbookMask = scene.add.graphics()
+                .fillStyle(0xffffff, 1)
+                .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+                .lineStyle(3, 0x000000, 1)
+                .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
 
-        //     scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
+              scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
 
-        //     const smileyFaces = ["friend", "friend2", "friend3"]
+              const smileyFaces = ["friend", "friend2", "friend3"]
 
-        //     const height = 50
+              const height = 50
 
-        //     ManageSession.addressbook.addressbook.forEach((element, index) => {
+              ManageSession.addressbook.addressbook.forEach((element, index) => {
 
-        //       const y = index * height
+                const y = index * height
 
-        //       const randomNumber = Math.floor(Math.random() * smileyFaces.length)
+                const randomNumber = Math.floor(Math.random() * smileyFaces.length)
 
-        //       const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
-        //         .setOrigin(0)
-        //         .setInteractive({ useHandCursor: true })
-        //         .on("pointerdown", () => {
-        //           HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
-        //         })
+                const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
+                  .setOrigin(0)
+                  .setInteractive({ useHandCursor: true })
+                  .on("pointerdown", () => {
+                    HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
+                  })
 
-        //       const playerAddressbookButtonCircle = scene.add
-        //         .circle(70, y, 15, 0xffffff)
-        //         .setOrigin(0)
-        //         .setInteractive({ useHandCursor: true })
-        //         .setStrokeStyle(2, 0x0000)
-        //         .on("pointerdown", () => {
+                const playerAddressbookButtonCircle = scene.add
+                  .circle(70, y, 15, 0xffffff)
+                  .setOrigin(0)
+                  .setInteractive({ useHandCursor: true })
+                  .setStrokeStyle(2, 0x0000)
+                  .on("pointerdown", () => {
 
-        //           const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
-        //           ManageSession.addressbook = { addressbook: filteredArray }
+                    const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
+                    ManageSession.addressbook = { addressbook: filteredArray }
 
-        //           // update server
-        //           // const type = "addressbook"
-        //           // const name = type + "_" + ManageSession.userProfile.id
-        //           // const pub = 2
-        //           // const value = ManageSession.addressbook
+                    // update server
+                    // const type = "addressbook"
+                    // const name = type + "_" + ManageSession.userProfile.id
+                    // const pub = 2
+                    // const value = ManageSession.addressbook
 
-        //           // updateObject(type, name, value, pub)
+                    // updateObject(type, name, value, pub)
 
-        //           scene.events.emit("playerAddressbook")
-        //         })
+                    scene.events.emit("playerAddressbook")
+                  })
 
-        //       scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookButtonCircle])
-        //     })
+                scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookButtonCircle])
+              })
 
-        //     scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
+              scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
 
-        //     scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
-        //       .setOrigin(0)
-        //       .setInteractive()
-        //       .on("pointermove", (pointer) => {
-        //         if (pointer.isDown) {
-        //           // console.log("pointermove")
-        //           if (pointer.isDown) {
-        //             scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
-        //             scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, y); // value, bottom border, top border
-        //           }
-        //         }
-        //       })
-        //   }
-        // })
+              scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
+                .setOrigin(0)
+                .setInteractive()
+                .on("pointermove", (pointer) => {
+                  if (pointer.isDown) {
+                    // console.log("pointermove")
+                    if (pointer.isDown) {
+                      scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
+                      scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, y); // value, bottom border, top border
+                    }
+                  }
+                })
+            }
+          })
 
-        // scene.events.emit("playerAddressbook")
+          scene.events.emit("playerAddressbook")
 
-        // })
+        })
 
         // adding all buttons to the container
         scene.playerItemsBar.add([
@@ -400,8 +393,8 @@ class Player {
           scene.playerHomeButton,
           scene.playerLikedButtonCircle,
           scene.playerLikedButton,
-          //scene.playerAddressbookButtonCircle,
-          //scene.playerAddressbookButton
+          scene.playerAddressbookButtonCircle,
+          scene.playerAddressbookButton
         ])
 
         scene.isPlayerItemsBarDisplayed = true;
@@ -472,7 +465,6 @@ class Player {
     )
     //hide the itemsPanel
     scene.onlinePlayerLikedPanel.setVisible(false)
-
 
     // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
     scene.events.on("onlinePlayerLikedPanelComplete", () => {
@@ -850,210 +842,311 @@ class Player {
     }
   }
 
+  parseNewOnlinePlayerArray(scene) {
+    if (ManageSession.createOnlinePlayerArray.length > 0) {
+
+      ManageSession.createOnlinePlayerArray.forEach(onlinePlayer => {
+        console.log(onlinePlayer)
+
+        Promise.all([getAccount(onlinePlayer.user_id)]).then(rec => {
+          console.log("rec", rec)
+          const newOnlinePlayer = rec[0]
+          this.createOnlinePlayer(scene, newOnlinePlayer)
+        })
+
+        //new onlineplayer is removed from the newOnlinePlayer array, once we call more data on it
+        ManageSession.createOnlinePlayerArray = ManageSession.createOnlinePlayerArray.filter(obj => obj.user_id != onlinePlayer.user_id)
+        
+      })
+    }
+  }
+
+  createOnlinePlayer(scene, onlinePlayer) {
+    //create new onlinePlayer with default avatar
+    const onlinePlayerCopy = onlinePlayer
+
+    console.log("onlinePlayer", onlinePlayer)
+
+    onlinePlayer = scene.add
+      .sprite(
+        CoordinatesTranslator.artworldToPhaser2DX(
+          scene.worldSize.x,
+          onlinePlayerCopy.metadata.posX
+        ),
+        CoordinatesTranslator.artworldToPhaser2DY(
+          scene.worldSize.y,
+          onlinePlayerCopy.metadata.posY
+        ),
+        scene.playerAvatarPlaceholder
+      )
+      //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
+      .setDepth(90)
+    onlinePlayer.setInteractive({ useHandCursor: true })
+    onlinePlayer.on('pointerup', () => { this.displayOnlinePlayerItemsBar(scene, onlinePlayer) })
+
+    onlinePlayer.setData("movingKey", "moving")
+    onlinePlayer.setData("stopKey", "stop")
+
+    // //create animation for moving
+    // scene.anims.create({
+    //   key: onlinePlayer.getData("movingKey"),
+    //   frames: scene.anims.generateFrameNumbers(
+    //     scene.playerAvatarPlaceholder,
+    //     { start: 0, end: 8 }
+    //   ),
+    //   frameRate: 20,
+    //   repeat: -1,
+    // })
+
+    // //create animation for stop
+    // scene.anims.create({
+    //   key: onlinePlayer.getData("stopKey"),
+    //   frames: scene.anims.generateFrameNumbers(
+    //     scene.playerAvatarPlaceholder,
+    //     { start: 4, end: 4 }
+    //   ),
+    // })
+
+    
+    Object.assign(onlinePlayer, onlinePlayerCopy) //add all data from elementCopy to element; like prev Position, Location, UserID
+    console.log("onlinePlayer", onlinePlayer)
+    ManageSession.allConnectedUsers.push(onlinePlayer)
+    console.log("ManageSession.allConnectedUsers", ManageSession.allConnectedUsers)
+    // element.x = element.posX; //* is already converted from ARTWORLDcoordinates to Phaser2Dcoordinates
+    // element.y = element.posY; //* is already converted from ARTWORLDcoordinates to Phaser2Dcoordinates
+
+
+    //load new onlinePlayer avatar
+
+    //attach new onlinePlayer to avatar
+
+    const tempAvatarName = onlinePlayer.user_id + "_" + onlinePlayer.avatar_time
+  }
+
+  deleteOnlinePlayer(scene, onlinePlayer){
+    ManageSession.allConnectedUsers = ManageSession.allConnectedUsers.filter(obj => obj.user_id != onlinePlayer.user_id)
+    // if (ManageSession.deleteOnlinePlayerArray.length > 0) {
+
+    //   ManageSession.createOnlinePlayerArray.forEach(onlinePlayer => {
+    //     console.log(onlinePlayer)
+
+    //     Promise.all([getAccount(onlinePlayer.user_id)]).then(rec => {
+    //       console.log("rec", rec)
+    //       const newOnlinePlayer = rec[0]
+    //       this.createOnlinePlayer(scene, newOnlinePlayer)
+    //     })
+
+    //     //new onlineplayer is removed from the newOnlinePlayer array, once we call more data on it
+    //     ManageSession.createOnlinePlayerArray = ManageSession.createOnlinePlayerArray.filter(obj => obj.user_id != onlinePlayer.user_id)
+        
+    //   })
+    // }
+  }
+
   loadOnlinePlayers(scene) {
     //ManageSession.connectedOpponents //list of the opponents
     //for each of the opponents, attach a png,
 
     //TODO loading is broken, so I'm checking if the player avater has already loaded, after that I load onlineUsers
-    if (scene.createdPlayer) {
-      //first check if onlineplayers need to be created
-      if (ManageSession.createOnlinePlayers) {
-        // console.log("creating onlineplayer")
-        ManageSession.createOnlinePlayers = false;
+    // if (scene.createdPlayer) {
+    //first check if onlineplayers need to be created
+    if (ManageSession.createOnlinePlayers) {
+      // console.log("creating onlineplayer")
+      ManageSession.createOnlinePlayers = false
 
-        //ManageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: scene.newOnlinePlayers
-        scene.newOnlinePlayers = [];
+      //ManageSession.allConnnectedUsers are all the users that are in the stream, we first have to load the new arrivals: scene.newOnlinePlayers
+      scene.newOnlinePlayers = []
 
+      if (scene.debug) {
+        console.log("")
+        console.log("createOnlinePlayers...")
+      }
+
+      //all current onlinePlayers, or an empty []
+      scene.onlinePlayers = scene.onlinePlayersGroup.getChildren() || [];
+
+      // ..... DESTROY OFFLINE PLAYERS ........................................................................................................................................................................
+      //check if there are players in scene.onlinePlayers that are not in .allConnectedUsers ->  they need to be destroyed
+      scene.offlineOnlineUsers = [];
+
+      // scene?.onlinePlayers.forEach((sprite) => {
+      //   // sprite.input.enable = true;
+      //   // sprite.setInteractive({ useHandCursor: true });
+      // });
+
+      scene.onlinePlayers.forEach((player) => {
+        const playerID = player.user_id;
+        const found = ManageSession.allConnectedUsers.some(
+          (user) => user.user_id === playerID
+        );
+        if (!found) scene.offlineOnlineUsers.push(player);
+      })
+
+      if (scene.debug) {
+        console.log("scene.offlineOnlineUsers", scene.offlineOnlineUsers)
+      }
+
+      //players in scene.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
+      if (scene.offlineOnlineUsers.length > 0) {
+        //hide users
         if (scene.debug) {
-          console.log("");
-          console.log("createOnlinePlayers...");
+          console.log("")
+          console.log("# Players that are not online anymore")
         }
 
-        //all current onlinePlayers, or an empty []
-        scene.onlinePlayers = scene.onlinePlayersGroup.getChildren() || [];
-
-        // ..... DESTROY OFFLINE PLAYERS ........................................................................................................................................................................
-        //check if there are players in scene.onlinePlayers that are not in .allConnectedUsers ->  they need to be destroyed
-        scene.offlineOnlineUsers = [];
-
-        // scene?.onlinePlayers.forEach((sprite) => {
-        //   // sprite.input.enable = true;
-        //   // sprite.setInteractive({ useHandCursor: true });
-        // });
-
-        scene.onlinePlayers.forEach((player) => {
-          const playerID = player.user_id;
-          const found = ManageSession.allConnectedUsers.some(
-            (user) => user.user_id === playerID
-          );
-          if (!found) scene.offlineOnlineUsers.push(player);
-        });
-
-        if (scene.debug) {
-          console.log("scene.offlineOnlineUsers", scene.offlineOnlineUsers)
+        for (let i = 0; i < scene.offlineOnlineUsers.length; i++) {
+          //check if the user_id is in scene.onlinePlayers
+          console.log(scene.offlineOnlineUsers[i])
+          scene.offlineOnlineUsers[i].destroy()
         }
+      }
+      //......... end DESTROY OFFLINE PLAYERS ............................................................................................................................................................
 
-        //players in scene.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden
-        if (scene.offlineOnlineUsers.length > 0) {
-          //hide users
+      //...... LOAD NEW PLAYERS ........................................................................................
+      //(new) players present in .allConnectedUsers but not in scene.onlinePlayers ->load their avatar and animation
+      scene.newOnlinePlayers = []
+      ManageSession.allConnectedUsers.forEach((player) => {
+        const playerID = player.user_id
+
+        // see if the player already exists
+        const found = scene.onlinePlayers.some(
+          (user) => user.user_id === playerID
+        )
+
+        //if player does not exist in onlinePlayers array, then it is a new player
+        if (!found) scene.newOnlinePlayers.push(player)
+      })
+      if (scene.debug) {
+        console.log("  ");
+        console.log("new Online Players");
+        console.log(newOnlinePlayers);
+        console.log("  ");
+      }
+
+      //load the spritesheet for the new online user //give the online player a placeholder avatar
+      scene.newOnlinePlayers.forEach((element, i) => {
+        let elementCopy = element
+        // console.log("elementCopy: ")
+        // console.log(elementCopy)
+        //a new user
+        scene.tempAvatarName = element.user_id + "_" + element.avatar_time
+
+        //if the texture already exists attach it again to the player
+        if (!scene.textures.exists(scene.tempAvatarName)) {
+          //add it to loading queue
+          scene.load.spritesheet(scene.tempAvatarName, element.avatar_url, {
+            frameWidth: 128,
+            frameHeight: 128,
+          })
+
           if (scene.debug) {
-            console.log("");
-            console.log("# Players that are not online anymore");
-          }
-
-          for (let i = 0; i < scene.offlineOnlineUsers.length; i++) {
-            //check if the user_id is in scene.onlinePlayers
-            console.log(scene.offlineOnlineUsers[i]);
-            scene.offlineOnlineUsers[i].destroy();
+            console.log("loading: ");
+            console.log(scene.tempAvatarName);
           }
         }
-        //......... end DESTROY OFFLINE PLAYERS ............................................................................................................................................................
-
-        //...... LOAD NEW PLAYERS ........................................................................................
-        //(new) players present in .allConnectedUsers but not in scene.onlinePlayers ->load their avatar and animation
-        scene.newOnlinePlayers = [];
-        ManageSession.allConnectedUsers.forEach((player) => {
-          const playerID = player.user_id
-
-          // see if the player already exists
-          const found = scene.onlinePlayers.some(
-            (user) => user.user_id === playerID
+        console.log("give the online player a placeholder avatar first")
+        //give the online player a placeholder avatar first
+        //? convert from ARTWORLDcoordinates to Phaser2Dcoordinates
+        // element = scene.add.sprite(element.posX, element.posY, scene.playerAvatarPlaceholder)
+        element = scene.add
+          .sprite(
+            CoordinatesTranslator.artworldToPhaser2DX(
+              scene.worldSize.x,
+              element.posX
+            ),
+            CoordinatesTranslator.artworldToPhaser2DY(
+              scene.worldSize.y,
+              element.posY
+            ),
+            scene.playerAvatarPlaceholder
           )
+          //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
+          .setDepth(90)
+        element.setInteractive({ useHandCursor: true })
+        element.on('pointerup', () => { this.displayOnlinePlayerItemsBar(scene, element) })
 
-          //if player does not exist in onlinePlayers array, then it is a new player
-          if (!found) scene.newOnlinePlayers.push(player)
+        element.setData("movingKey", "moving");
+        element.setData("stopKey", "stop");
+
+        //create animation for moving
+        scene.anims.create({
+          key: element.getData("movingKey"),
+          frames: scene.anims.generateFrameNumbers(
+            scene.playerAvatarPlaceholder,
+            { start: 0, end: 8 }
+          ),
+          frameRate: 20,
+          repeat: -1,
         })
-        if (scene.debug) {
-          console.log("  ");
-          console.log("new Online Players");
-          console.log(newOnlinePlayers);
-          console.log("  ");
-        }
 
-        //load the spritesheet for the new online user //give the online player a placeholder avatar
-        scene.newOnlinePlayers.forEach((element, i) => {
-          let elementCopy = element;
-          // console.log("elementCopy: ")
-          // console.log(elementCopy)
-          //a new user
-          scene.tempAvatarName = element.user_id + "_" + element.avatar_time;
+        //create animation for stop
+        scene.anims.create({
+          key: element.getData("stopKey"),
+          frames: scene.anims.generateFrameNumbers(
+            scene.playerAvatarPlaceholder,
+            { start: 4, end: 4 }
+          ),
+        })
 
-          //if the texture already exists attach it again to the player
-          if (!scene.textures.exists(scene.tempAvatarName)) {
-            //add it to loading queue
-            scene.load.spritesheet(scene.tempAvatarName, element.avatar_url, {
-              frameWidth: 128,
-              frameHeight: 128,
-            });
+        Object.assign(element, elementCopy) //add all data from elementCopy to element; like prev Position, Location, UserID
+        element.x = element.posX; //* is already converted from ARTWORLDcoordinates to Phaser2Dcoordinates
+        element.y = element.posY; //* is already converted from ARTWORLDcoordinates to Phaser2Dcoordinates
 
-            if (scene.debug) {
-              console.log("loading: ");
-              console.log(scene.tempAvatarName);
-            }
-          }
-          console.log("give the online player a placeholder avatar first");
-          //give the online player a placeholder avatar first
-          //? convert from ARTWORLDcoordinates to Phaser2Dcoordinates
-          // element = scene.add.sprite(element.posX, element.posY, scene.playerAvatarPlaceholder)
-          element = scene.add
-            .sprite(
-              CoordinatesTranslator.artworldToPhaser2DX(
-                scene.worldSize.x,
-                element.posX
-              ),
-              CoordinatesTranslator.artworldToPhaser2DY(
-                scene.worldSize.y,
-                element.posY
-              ),
-              scene.playerAvatarPlaceholder
-            )
-            //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
-            .setDepth(90)
-          element.setInteractive({ useHandCursor: true })
-          element.on('pointerup', () => { this.displayOnlinePlayerItemsBar(scene, element) })
+        // add new player to group
+        scene.onlinePlayersGroup.add(element)
+        //} else {
+        //! if the avatar already existed; get the player from the onlinePlayers array !
 
-          element.setData("movingKey", "moving");
-          element.setData("stopKey", "stop");
+        this.attachtAvatarToOnlinePlayer(scene, element)
+        //}
+      });
 
-          //create animation for moving
-          scene.anims.create({
-            key: element.getData("movingKey"),
-            frames: scene.anims.generateFrameNumbers(
-              scene.playerAvatarPlaceholder,
-              { start: 0, end: 8 }
-            ),
-            frameRate: 20,
-            repeat: -1,
-          });
+      //update scene.onlinePlayers, hidden or visible
+      scene.onlinePlayers = scene.onlinePlayersGroup.getChildren();
 
-          //create animation for stop
-          scene.anims.create({
-            key: element.getData("stopKey"),
-            frames: scene.anims.generateFrameNumbers(
-              scene.playerAvatarPlaceholder,
-              { start: 4, end: 4 }
-            ),
-          });
+      if (scene.debug) {
+        console.log("all players in the group, hidden or visible ");
+        console.log(scene.onlinePlayers);
+      }
 
-          Object.assign(element, elementCopy); //add all data from elementCopy to element; like prev Position, Location, UserID
-          element.x = element.posX; //* is already converted from ARTWORLDcoordinates to Phaser2Dcoordinates
-          element.y = element.posY; //* is already converted from ARTWORLDcoordinates to Phaser2Dcoordinates
+      //added new players
+      scene.load.start(); // load the image in memory
+      console.log("started loading new (online) avatars");
+      //.... end load new Avatars ....................................................................................
 
-          // add new player to group
-          scene.onlinePlayersGroup.add(element)
-          //} else {
-          //! if the avatar already existed; get the player from the onlinePlayers array !
+      //when the images are loaded the new ones should be set to the players
+      scene.load.on("filecomplete", () => {
+        console.log("players added: ");
+        console.log(scene.newOnlinePlayers)
 
-          this.attachtAvatarToOnlinePlayer(scene, element)
-          //}
-        });
+        scene.onlinePlayers = scene.onlinePlayersGroup.getChildren()
 
-        //update scene.onlinePlayers, hidden or visible
-        scene.onlinePlayers = scene.onlinePlayersGroup.getChildren();
+        for (let i = 0; i < scene.onlinePlayers.length; i++) {
+          this.attachtAvatarToOnlinePlayer(scene, scene.onlinePlayers[i])
+        } //for (let i = 0; i < scene.onlinePlayers.length; i++)
+      }); //scene.load.on('filecomplete', () =>
 
-        if (scene.debug) {
-          console.log("all players in the group, hidden or visible ");
-          console.log(scene.onlinePlayers);
-        }
+      console.log("ManageSession.allConnectedUsers")
+      console.log(ManageSession.allConnectedUsers)
 
-        //added new players
-        scene.load.start(); // load the image in memory
-        console.log("started loading new (online) avatars");
-        //.... end load new Avatars ....................................................................................
+      //scene.onlinePlayers = scene.onlinePlayersGroup.getChildren()
 
-        //when the images are loaded the new ones should be set to the players
-        scene.load.on("filecomplete", () => {
-          console.log("players added: ");
-          console.log(scene.newOnlinePlayers)
+      //? not necessary
+      // ManageSession.allConnectedUsers.forEach((player, i) => {
 
-          scene.onlinePlayers = scene.onlinePlayersGroup.getChildren()
+      //   var index = scene.onlinePlayers.findIndex(function (player) {
+      //     return player.user_id == ManageSession.allConnectedUsers[i].user_id
+      //   });
 
-          for (let i = 0; i < scene.onlinePlayers.length; i++) {
-            this.attachtAvatarToOnlinePlayer(scene, scene.onlinePlayers[i])
-          } //for (let i = 0; i < scene.onlinePlayers.length; i++)
-        }); //scene.load.on('filecomplete', () =>
-
-        console.log("ManageSession.allConnectedUsers")
-        console.log(ManageSession.allConnectedUsers)
-
-        //scene.onlinePlayers = scene.onlinePlayersGroup.getChildren()
-
-        //? not necessary
-        // ManageSession.allConnectedUsers.forEach((player, i) => {
-
-        //   var index = scene.onlinePlayers.findIndex(function (player) {
-        //     return player.user_id == ManageSession.allConnectedUsers[i].user_id
-        //   });
-
-        //   scene.onlinePlayers[index].active = true
-        //   scene.onlinePlayers[index].visible = true
-        //   console.log("make all allConnectedUsers visible")
-        //   console.log(scene.onlinePlayers[index])
-        // })
-        //send player position over the network for the online users to see
-        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
-      } //if (ManageSession.createOnlinePlayers)
-    } //if (ManageSession.createdPlayer)
+      //   scene.onlinePlayers[index].active = true
+      //   scene.onlinePlayers[index].visible = true
+      //   console.log("make all allConnectedUsers visible")
+      //   console.log(scene.onlinePlayers[index])
+      // })
+      //send player position over the network for the online users to see
+      ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
+    } //if (ManageSession.createOnlinePlayers)
+    // } //if (ManageSession.createdPlayer)
   } //loader
 
   itemsBarOnlinePlayer(scene, onlinePlayer) {

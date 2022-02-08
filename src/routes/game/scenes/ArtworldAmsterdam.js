@@ -1,17 +1,17 @@
-import { CONFIG } from "../config.js";
-import ManageSession from "../ManageSession";
+import { CONFIG } from "../config.js"
+import ManageSession from "../ManageSession"
 import { getFullAccount, listObjects, convertImage, updateObject, updateObjectAdmin, getAccount, getAvatar } from "../../../api.js";
 
-import PlayerDefault from "../class/PlayerDefault";
-import PlayerDefaultShadow from "../class/PlayerDefaultShadow";
-import Player from "../class/Player.js";
-import Preloader from "../class/Preloader.js";
-import BouncingBird from "../class/BouncingBird.js";
-import Background from "../class/Background.js";
-import DebugFuntions from "../class/DebugFuntions.js";
-import CoordinatesTranslator from "../class/CoordinatesTranslator.js";
-import GenerateLocation from "../class/GenerateLocation.js";
-import HistoryTracker from "../class/HistoryTracker.js";
+import PlayerDefault from "../class/PlayerDefault"
+import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
+import Player from "../class/Player.js"
+import Preloader from "../class/Preloader.js"
+import BouncingBird from "../class/BouncingBird.js"
+import Background from "../class/Background.js"
+import DebugFuntions from "../class/DebugFuntions.js"
+import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
+import GenerateLocation from "../class/GenerateLocation.js"
+import HistoryTracker from "../class/HistoryTracker.js"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
@@ -319,8 +319,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // this.itemsBarOnlinePlayer.iterate(this.itemsBarOnlinePlayerCallback)// arr.forEach(element => { element.setDepth(400); console.log(element) })
   } //end create
 
-  createItemsBar() { }
-
   async getAccountDetails(array, id) {
 
     await getAccount(id).then((rec) => {
@@ -485,12 +483,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    Player.loadOnlinePlayers(this);
-    Player.receiveOnlinePlayersMovement(this);
-    Player.loadOnlineAvatar(this);
-    this.generateHomes();
+    //Player.loadOnlinePlayers(this)
+    Player.parseNewOnlinePlayerArray(this)
+    Player.receiveOnlinePlayersMovement(this)
+    Player.loadOnlineAvatar(this)
+    this.generateHomes()
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom;
+    this.gameCam.zoom = this.UI_Scene.currentZoom
     //.......................................................................
 
     //........... PLAYER SHADOW .............................................................................

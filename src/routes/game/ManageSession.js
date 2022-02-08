@@ -39,6 +39,7 @@ class ManageSession {
     this.updateOnlinePlayers = false
     this.allConnectedUsers = []
     this.removedConnectedUsers = []
+    this.createOnlinePlayerArray = []
 
     // this.createdPlayer = false
     this.playerAvatarKey = ""
@@ -73,26 +74,28 @@ class ManageSession {
 
     const createStatus = true;
 
-    await this.socket.connect(this.sessionStored, createStatus);
-    console.log("session created with socket");
+    await this.socket.connect(this.sessionStored, createStatus)
+    console.log("session created with socket")
 
     console.log("Join:")
     console.log(this.location)
-    await this.getStreamUsers("join", this.location)
+    await this.getStreamUsers("join", this.location) //have to join a location to get stream presence events
 
     //stream
     this.socket.onstreamdata = (streamdata) => {
-      //console.info("Received stream data:", streamdata);
-      let data = JSON.parse(streamdata.data);
+      //console.info("Received stream data:", streamdata)
+      let data = JSON.parse(streamdata.data)
       //console.log(data)
       //update the position data of this.allConnectedUsers array
+
+      //console.log(data)
       for (const user of this.allConnectedUsers) {
         if (user.user_id == data.user_id) {
 
           //? position data from online player, is converted in Player.js class receiveOnlinePlayersMovement because there the scene context is known
           user.posX = data.posX
           user.posY = data.posY
-
+          console.log("user.posX", user.posX)
           // printing also when receiving movement data
           // console.log("user")
           // console.log(user)
@@ -101,63 +104,41 @@ class ManageSession {
           // console.log(data.user_id)
 
           //TODO this could be refined to update specific online player?
-          this.updateOnlinePlayers = true
+          //this.updateOnlinePlayers = true
         }
       }
-    };
+    }
 
     this.socket.onstreampresence = (streampresence) => {
       //streampresence is everybody that is present also SELF
 
-      console.log(
-        "Received presence event for stream: %o",
-        streampresence
-      );
-      this.getStreamUsers("get_users", this.location)
       if (!!streampresence.leaves) {
         streampresence.leaves.forEach((leave) => {
-          console.log("User left: %o", leave.username);
-          //remove leave.user_id from 
+          console.log("User left: %o", leave)
 
-          // this.removedConnectedUsers.push(leave.user_id);
+          this.deleteOnlinePlayer(leave)
 
-          //! instead of setTimeout I could also just remove user from allConnectedUsers and 
-          //! set createOnlinePlayers = true
-          setTimeout(() => {
-            this.getStreamUsers("get_users", this.location)
-          }, 400);
-
-          setTimeout(() => {
-            this.createOnlinePlayers = true
-          }, 600);
-
-          //allConnectedUsers is updated after someone leaves
-          // this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
-          //   return item.name !== leave.username;
-          // });
-        });
+        })
 
       }
 
-      // if (!!streampresence.joins) {
-      //   streampresence.joins.forEach((join) => {
-      //     if (join.user_id != this.user_id) {
-      //       console.log("some one joined")
-      //       // this.getStreamUsers("home")
-      //       console.log(join)
+      if (!!streampresence.joins) {
+        streampresence.joins.forEach((join) => {
+          //filter out the player it self
+          if (join.user_id != this.userProfile.id) {
+            //console.log(this.userProfile)
+            console.log("some one joined")
+            // this.getStreamUsers("home")
+            console.log(join.username)
+            console.log(join)
+            //const tempName = join.user_id
+            this.createOnlinePlayerArray.push(join)
+          }
 
-      //       console.log(this.allConnectedUsers)
-
-      //       this.allConnectedUsers.push(join)
-      //       this.createOnlinePlayers = true
-      //     }
-
-      // update array when someone joins
-      // this.allConnectedUsers.push(leave.user_id)
-      //   });
-      // this.getStreamUsers("home")
-      // }
-    }; //this.socket.onstreampresence
+        })
+        // this.getStreamUsers("home")
+      }
+    } //this.socket.onstreampresence
   } //end createSocket
 
   // async join() {
@@ -170,6 +151,20 @@ class ManageSession {
   //   });
   // }
 
+  deleteOnlinePlayer(onlinePlayer) {
+    // console.log("onlinePlayer", onlinePlayer)
+    // console.log("this.allConnectedUsers", this.allConnectedUsers)
+    // console.log("----")
+    // let removeUser = this.allConnectedUsers.filter(obj => { console.log("obj", obj);
+    // console.log("onlinePlayer.user_id", onlinePlayer.user_id); obj.id == onlinePlayer.user_id; console.log("obj.id", obj.id);})
+    let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
+    console.log("removeUser", removeUser)
+    removeUser[0].destroy()
+    this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.user_id)
+    // console.log("----")
+    console.log("this.allConnectedUsers", this.allConnectedUsers)
+  }
+
   async getStreamUsers(rpc_command, location) {
     // if (!this.createOnlinePlayers) {
     //* rpc_command:
@@ -180,29 +175,29 @@ class ManageSession {
 
     this.socket.rpc(rpc_command, location).then((rec) => {
       //!the server reports all users in location except self_user
+      //!!! removed
+      // //get all online players
+      // this.allConnectedUsers = JSON.parse(rec.payload) || []
 
-      //get all online players
-      let tempConnectedUsers = JSON.parse(rec.payload) || []
+      // // empty the array first
+      // // this.allConnectedUsers = []
 
-      // empty the array first
-      // this.allConnectedUsers = []
-      this.allConnectedUsers = tempConnectedUsers
+      // //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
+      // //this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
 
-      //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
-      //this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
+      // //if there are no users online, the array length == 0
+      // if (this.allConnectedUsers.length > 0) {
+      //   console.log("filtered by location? this.allConnectedUsers")
+      //   console.log("joined users:")
+      //   console.log(this.allConnectedUsers)
 
-      //if there are no users online, the array length == 0
-      if (this.allConnectedUsers.length > 0) {
-        console.log("filtered by location? this.allConnectedUsers")
-        console.log("joined users:")
-        console.log(this.allConnectedUsers)
-
-        this.createOnlinePlayers = true
-        console.log("this.createOnlinePlayers = true")
-      } else {
-        //this.createOnlinePlayers = false
-        console.log("no online users")
-      }
+      //   this.createOnlinePlayers = true
+      //   console.log("this.createOnlinePlayers = true")
+      // } else {
+      //   //this.createOnlinePlayers = false
+      //   console.log("no online users")
+      // }
+      //!!! removed
     })
   }
 

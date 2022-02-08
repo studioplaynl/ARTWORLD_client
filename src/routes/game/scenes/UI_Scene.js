@@ -1,11 +1,11 @@
-import i18next from "i18next";
-import { locale } from "svelte-i18n";
-import ManageSession from "../ManageSession";
+import i18next from "i18next"
+import { locale } from "svelte-i18n"
+import ManageSession from "../ManageSession"
 
-import nl from "../../../langauge/nl/ui.json";
-import en from "../../../langauge/en/ui.json";
-import ru from "../../../langauge/ru/ui.json";
-import ar from "../../../langauge/ar/ui.json";
+import nl from "../../../langauge/nl/ui.json"
+import en from "../../../langauge/en/ui.json"
+import ru from "../../../langauge/ru/ui.json"
+import ar from "../../../langauge/ar/ui.json"
 
 i18next.init({
   lng: "nl",
@@ -23,9 +23,9 @@ i18next.init({
       translation: ar,
     },
   },
-});
+})
 
-let latestValue = null;
+let latestValue = null
 
 export default class UI_Scene extends Phaser.Scene {
   currentLanguage;
