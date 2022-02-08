@@ -326,9 +326,9 @@ class Player {
               const y = scene.player.y + 110
 
               scene.playerAddressbookMask = scene.add.graphics()
-                .fillStyle(0xffff00, 1)
+                .fillStyle(0xffffff, 1)
                 .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
-                .lineStyle(3, 0xffffff, 1)
+                .lineStyle(3, 0x000000, 1)
                 .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
 
               scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
@@ -408,8 +408,9 @@ class Player {
         scene.playerLikedPanel.setVisible(false)
         scene.isPlayerItemsBarDisplayed = false
         if (scene.playerAddressbookMask) {
-          scene.playerAddressbookMask.setVisible(false)
-          scene.playerAddressbookContainer.setVisible(false)
+          scene.playerAddressbookMask.destroy()
+          scene.playerAddressbookContainer.destroy()
+          scene.playerAddressbookZone.destroy()
         }
       }
     })
