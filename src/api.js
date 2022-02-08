@@ -247,9 +247,10 @@ export async function getFile(file_url) {
     return url
 }
 
-  export async function uploadAvatar(data,json,version) {
-    var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png",version)
-    var [jsonURL, jsonLocation] = await getUploadURL("avatar", "current", "json", version)
+  export async function uploadAvatar(data,json) {
+    prof.meta.avatarVersion = Number(prof.meta.avatarVersion || 0) + 1
+    var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png",prof.meta.avatarVersion)
+    var [jsonURL, jsonLocation] = await getUploadURL("avatar", "current", "json", prof.meta.avatarVersion)
     console.log(jpegURL)
 
   await fetch(jpegURL, {
@@ -268,12 +269,14 @@ export async function getFile(file_url) {
       body: json
     })
 
+    //get meta
+    
+    // update avatar version
+
   await client.updateAccount(Sess, {
       avatar_url: jpegLocation,
-      version: version,
+      meta: prof.meta
   });
-  Error.update(er => er = "Saved")
-
 }
 
 

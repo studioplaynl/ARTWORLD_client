@@ -1,12 +1,13 @@
 <script>
     import {onMount} from "svelte"
     import {Error, Session} from "../../session.js"
+    import ErrorIcon from "svelte-icons/md/MdErrorOutline.svelte"
 
     let error
     let showMessage = false
     Error.subscribe(err => {
         error = err
-        setTimeout(()=> {$Error = null},5000)
+        //setTimeout(()=> {$Error = null},15000)
     });
 
     onMount(() => {
@@ -36,13 +37,13 @@
 </script>
 
 <div id="snackbar" class:show={!!error}>
-    <p>Oeps... er ging iets mis</p>
+    <div class="icon"><ErrorIcon/></div>
     <button on:click="{()=>{ showMessage = !showMessage}}">Show error</button>
     <a on:click="{()=> {$Error = null}}">X</a>
     {#if showMessage}
     <div id="errorMessage">
         {error}
-    </div>
+    </div>1
     {/if}
 </div>
 
@@ -94,5 +95,11 @@
     @keyframes fadeout {
     from {top: 60px; opacity: 1;}
     to {top: 0; opacity: 0;}
+    }
+
+    .icon {
+        color: red;
+        width: 32px;
+        height: 32px;
     }
 </style>
