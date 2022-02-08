@@ -360,6 +360,14 @@ class Player {
                     const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
                     ManageSession.addressbook = { addressbook: filteredArray }
 
+                    // update server
+                    // const type = "addressbook"
+                    // const name = type + "_" + ManageSession.userProfile.id
+                    // const pub = 2
+                    // const value = ManageSession.addressbook
+
+                    // updateObject(type, name, value, pub)
+
                     scene.events.emit("playerAddressbook")
                   })
 
