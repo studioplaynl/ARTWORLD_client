@@ -44,28 +44,25 @@ class Player {
         scene.add.existing(this)
         scene.physics.add.existing(this)
 
-        //if the texture already exists attach it again to the player
+        //if the texture doesnot exists load it and attach it to the player
         if (!scene.textures.exists(scene.playerAvatarKey)) {
           //check if url is not empty for some reason, returns so that previous image is kept
           if (ManageSession.userProfile.url === "") {
             console.log("avatar url is empty")
             ManageSession.createPlayer = false
-            console.log("ManageSession.createPlayer = false")
+            console.log("ManageSession.createPlayer = ", ManageSession.createPlayer)
             scene.createdPlayer = true
-            console.log("scene.createdPlayer = true")
+            console.log("scene.createdPlayer = ", scene.createdPlayer)
             return
           } else {
             // console.log(" loading: ManageSession.userProfile.url: ")
             // console.log(ManageSession.userProfile.url)
             console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
-
+            const fileNameCheck = scene.playerAvatarKey
             scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
-              .on('filecomplete', () => { this.attachAvatarToPlayer(scene) }, scene)
-
+              .on('filecomplete', (fileNameCheck) => { console.log(`file ${fileNameCheck} finished loading`); this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
+              scene.load.start() // load the image in memory
           }
-
-          scene.load.start() // load the image in memory
-          //console.log("this.load.start();");
         } else {
           this.attachAvatarToPlayer(scene)
         }
@@ -74,63 +71,66 @@ class Player {
   }
 
   attachAvatarToPlayer(scene) {
-    const avatar = scene.textures.get(scene.playerAvatarKey);
-    // console.log(avatar);
-    const avatarWidth = avatar.frames.__BASE.width;
-    //console.log("avatarWidth: " avatarWidth);
+    console.log( "scene.playerAvatarKey ", scene.playerAvatarKey)
 
-    const avatarHeight = avatar.frames.__BASE.height;
-    //console.log("avatarHeight: " + avatarHeight);
+    const avatar = scene.textures.get(scene.playerAvatarKey)
+    // console.log(avatar)
+    const avatarWidth = avatar.frames.__BASE.width
+    //console.log("avatarWidth: " avatarWidth)
 
-    const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    //console.log("avatarFrames: " + avatarFrames);
+    const avatarHeight = avatar.frames.__BASE.height
+    //console.log("avatarHeight: " + avatarHeight)
+
+    const avatarFrames = Math.round(avatarWidth / avatarHeight)
+    //console.log("avatarFrames: " + avatarFrames)
 
     //make an animation if the image is wider than tall
+   
     if (avatarFrames > 1) {
       //. animation for the player avatar ......................
 
       scene.playerMovingKey = "moving" + "_" + scene.playerAvatarKey;
       scene.playerStopKey = "stop" + "_" + scene.playerAvatarKey;
 
-      scene.anims.create({
-        key: scene.playerMovingKey,
-        frames: scene.anims.generateFrameNumbers(scene.playerAvatarKey, {
-          start: 0,
-          end: avatarFrames - 1,
-        }),
-        frameRate: (avatarFrames + 2) * 2,
-        repeat: -1,
-        yoyo: true,
-      })
-
-      scene.anims.create({
-        key: scene.playerStopKey,
-        frames: scene.anims.generateFrameNumbers(scene.playerAvatarKey, {
-          start: 0,
-          end: 0,
-        }),
-      })
-
-      //. end animation for the player avatar ......................
+      //check if the animation already exists
+      if ( !scene.anims.exists(scene.playerMovingKey)){
+        scene.anims.create({
+          key: scene.playerMovingKey,
+          frames: scene.anims.generateFrameNumbers(scene.playerAvatarKey, {
+            start: 0,
+            end: avatarFrames - 1,
+          }),
+          frameRate: (avatarFrames + 2) * 2,
+          repeat: -1,
+          yoyo: true,
+        })
+  
+        scene.anims.create({
+          key: scene.playerStopKey,
+          frames: scene.anims.generateFrameNumbers(scene.playerAvatarKey, {
+            start: 0,
+            end: 0,
+          }),
+        })
+      }
     }
-
+    //. end animation for the player avatar ......................
+  
     // texture loaded so use instead of the placeholder
     //console.log("scene.playerAvatarKey");
     //console.log(scene.playerAvatarKey);
 
-    //
-
     // scene.player.texture = scene.playerAvatarKey
-    scene.player.setTexture(scene.playerAvatarKey);
-    scene.playerShadow.setTexture(scene.playerAvatarKey);
+    scene.player.setTexture(scene.playerAvatarKey)
+    scene.playerShadow.setTexture(scene.playerAvatarKey)
 
     //scale the player to 64px
-    const width = 64;
-    scene.player.displayWidth = width;
-    scene.player.scaleY = scene.player.scaleX;
+    const width = 64
+    scene.player.displayWidth = width
+    scene.player.scaleY = scene.player.scaleX
 
-    scene.playerShadow.displayWidth = width;
-    scene.playerShadow.scaleY = scene.playerShadow.scaleX;
+    scene.playerShadow.displayWidth = width
+    scene.playerShadow.scaleY = scene.playerShadow.scaleX
 
     // console.log("scene.playerShadow");
     // console.log(scene.playerShadow);
@@ -138,7 +138,7 @@ class Player {
     //* set the collision body
     //* setCircle(radius [, offsetX] [, offsetY])
     // scene.player.body.setCircle(width, width, width / 2)
-    scene.player.body.setCircle(width / 1.1, width / 5, width / 5);
+    scene.player.body.setCircle(width / 1.1, width / 5, width / 5)
 
     // place the player in the last known position
     // this.player.x = this.player.posX
@@ -152,21 +152,20 @@ class Player {
     // console.log("this.playerAvatarKey")
     // console.log(this.playerAvatarKey)
 
-    scene.player.location = scene.location;
+    scene.player.location = scene.location
 
     // console.log("this.player: ");
     // console.log(scene.player);
 
-    scene.createdPlayer = true;
+    scene.createdPlayer = true
     // console.log("this.createdPlayer = true;")
 
     //send the current player position over the network
-    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
+    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)
 
     // scene.add.existing(this)
     // scene.physics.add.existing(this)
 
-    this.createPlayerItemsBar(scene);
   } //attachAvatarToPlayer
 
   createPlayerItemsBar(scene) {
@@ -307,93 +306,93 @@ class Player {
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
         })
 
-        scene.playerAddressbookButtonCircle = scene.add
-          .circle(0, 70, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(3, 0x0000)
-        scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
+        // scene.playerAddressbookButtonCircle = scene.add
+        //   .circle(0, 70, 25, 0xffffff)
+        //   .setOrigin(0.5, 0.5)
+        //   .setInteractive({ useHandCursor: true })
+        //   .setStrokeStyle(3, 0x0000)
+        // scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
 
-        scene.playerAddressbookButtonCircle.on("pointerdown", () => {
+        // scene.playerAddressbookButtonCircle.on("pointerdown", () => {
 
-          scene.events.on("playerAddressbook", () => {
+        // scene.events.on("playerAddressbook", () => {
 
-            if (ManageSession.addressbook.addressbook.length > 0) {
-              const playerAddressbookWidth = 120
-              const playerAddressbookHeight = 200
+        //   if (ManageSession.addressbook.addressbook.length > 0) {
+        //     const playerAddressbookWidth = 120
+        //     const playerAddressbookHeight = 200
 
-              const x = scene.player.x - playerAddressbookWidth / 2
-              const y = scene.player.y + 110
+        //     const x = scene.player.x - playerAddressbookWidth / 2
+        //     const y = scene.player.y + 110
 
-              scene.playerAddressbookMask = scene.add.graphics()
-                .fillStyle(0xffffff, 1)
-                .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
-                .lineStyle(3, 0x000000, 1)
-                .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+        //     scene.playerAddressbookMask = scene.add.graphics()
+        //       .fillStyle(0xffffff, 1)
+        //       .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+        //       .lineStyle(3, 0x000000, 1)
+        //       .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
 
-              scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
+        //     scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
 
-              const smileyFaces = ["friend", "friend2", "friend3"]
+        //     const smileyFaces = ["friend", "friend2", "friend3"]
 
-              const height = 50
+        //     const height = 50
 
-              ManageSession.addressbook.addressbook.forEach((element, index) => {
+        //     ManageSession.addressbook.addressbook.forEach((element, index) => {
 
-                const y = index * height
+        //       const y = index * height
 
-                const randomNumber = Math.floor(Math.random() * smileyFaces.length)
+        //       const randomNumber = Math.floor(Math.random() * smileyFaces.length)
 
-                const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
-                  .setOrigin(0)
-                  .setInteractive({ useHandCursor: true })
-                  .on("pointerdown", () => {
-                    HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
-                  })
+        //       const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
+        //         .setOrigin(0)
+        //         .setInteractive({ useHandCursor: true })
+        //         .on("pointerdown", () => {
+        //           HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
+        //         })
 
-                const playerAddressbookButtonCircle = scene.add
-                  .circle(70, y, 15, 0xffffff)
-                  .setOrigin(0)
-                  .setInteractive({ useHandCursor: true })
-                  .setStrokeStyle(2, 0x0000)
-                  .on("pointerdown", () => {
+        //       const playerAddressbookButtonCircle = scene.add
+        //         .circle(70, y, 15, 0xffffff)
+        //         .setOrigin(0)
+        //         .setInteractive({ useHandCursor: true })
+        //         .setStrokeStyle(2, 0x0000)
+        //         .on("pointerdown", () => {
 
-                    const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
-                    ManageSession.addressbook = { addressbook: filteredArray }
+        //           const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
+        //           ManageSession.addressbook = { addressbook: filteredArray }
 
-                    // update server
-                    // const type = "addressbook"
-                    // const name = type + "_" + ManageSession.userProfile.id
-                    // const pub = 2
-                    // const value = ManageSession.addressbook
+        //           // update server
+        //           // const type = "addressbook"
+        //           // const name = type + "_" + ManageSession.userProfile.id
+        //           // const pub = 2
+        //           // const value = ManageSession.addressbook
 
-                    // updateObject(type, name, value, pub)
+        //           // updateObject(type, name, value, pub)
 
-                    scene.events.emit("playerAddressbook")
-                  })
+        //           scene.events.emit("playerAddressbook")
+        //         })
 
-                scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookButtonCircle])
-              })
+        //       scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookButtonCircle])
+        //     })
 
-              scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
+        //     scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
 
-              scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
-                .setOrigin(0)
-                .setInteractive()
-                .on("pointermove", (pointer) => {
-                  if (pointer.isDown) {
-                    // console.log("pointermove")
-                    if (pointer.isDown) {
-                      scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
-                      scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, y); // value, bottom border, top border
-                    }
-                  }
-                })
-            }
-          })
+        //     scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
+        //       .setOrigin(0)
+        //       .setInteractive()
+        //       .on("pointermove", (pointer) => {
+        //         if (pointer.isDown) {
+        //           // console.log("pointermove")
+        //           if (pointer.isDown) {
+        //             scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
+        //             scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, y); // value, bottom border, top border
+        //           }
+        //         }
+        //       })
+        //   }
+        // })
 
-          scene.events.emit("playerAddressbook")
+        // scene.events.emit("playerAddressbook")
 
-        })
+        // })
 
         // adding all buttons to the container
         scene.playerItemsBar.add([
@@ -401,8 +400,8 @@ class Player {
           scene.playerHomeButton,
           scene.playerLikedButtonCircle,
           scene.playerLikedButton,
-          scene.playerAddressbookButtonCircle,
-          scene.playerAddressbookButton
+          //scene.playerAddressbookButtonCircle,
+          //scene.playerAddressbookButton
         ])
 
         scene.isPlayerItemsBarDisplayed = true;
@@ -891,8 +890,7 @@ class Player {
         });
 
         if (scene.debug) {
-          console.log("scene.offlineOnlineUsers");
-          console.log(scene.offlineOnlineUsers);
+          console.log("scene.offlineOnlineUsers", scene.offlineOnlineUsers)
         }
 
         //players in scene.onlinePlayers that are not in .allConnectedUsers -> they need to be deactivated and hidden

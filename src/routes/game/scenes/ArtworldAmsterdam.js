@@ -236,6 +236,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     )
     this.player.setDepth(200)
 
+    Player.createPlayerItemsBar(this)
+
     this.playerTest = new PlayerDefault(
       this,
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
