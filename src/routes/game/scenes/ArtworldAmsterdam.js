@@ -533,7 +533,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       Player.movePlayerContainer(this)
     }
 
-    // if (this.addressbookContainer) {
+    // if (this.playerAddressbookContainer) {
+    //   console.log("addressbook is moving")
     //   Player.movePlayerAddressbook(this)
     // }
   } //update

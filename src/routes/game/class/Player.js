@@ -319,16 +319,19 @@ class Player {
           scene.events.on("playerAddressbook", () => {
 
             if (ManageSession.addressbook.addressbook.length > 0) {
-              const playerAddressbookWidth = 100
+              const playerAddressbookWidth = 120
               const playerAddressbookHeight = 200
 
               const x = scene.player.x - playerAddressbookWidth / 2
               const y = scene.player.y + 110
 
-              scene.playerAddressbookMask = scene.add.graphics().fillStyle(0xffff00, 1)
-              scene.playerAddressbookMask.fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+              scene.playerAddressbookMask = scene.add.graphics()
+                .fillStyle(0xffff00, 1)
+                .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+                .lineStyle(3, 0xffffff, 1)
+                .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
 
-              scene.playerAddressbookContainer = scene.add.container(x, y)
+              scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
 
               const smileyFaces = ["friend", "friend2", "friend3"]
 
@@ -365,7 +368,7 @@ class Player {
 
               scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
 
-              scene.addressboookZoneScroller = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
+              scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
                 .setOrigin(0)
                 .setInteractive()
                 .on("pointermove", (pointer) => {
@@ -1379,12 +1382,14 @@ class Player {
   }
 
   // movePlayerAddressbook(scene) {
-  //   scene.playerAddressbookMask.x = scene.player.x - 50
-  //   scene.playerAddressbookMask.y = scene.player.y + 110
-  //   scene.playerAddressbookContainer.x = scene.player.x - 50
-  //   scene.playerAddressbookContainer.y = scene.player.y + 110
-  //   scene.addressboookZoneScroller.x = scene.player.x - 50
-  //   scene.addressboookZoneScroller.y = scene.player.y + 110
+  //   const x = scene.player.x - 50
+  //   const y = scene.player.y + 110
+  //   scene.playerAddressbookMask.x = x
+  //   scene.playerAddressbookMask.y = y
+  //   scene.playerAddressbookContainer.x = x
+  //   scene.playerAddressbookContainer.y = y
+  //   scene.playerAddressbookZone.x = x
+  //   scene.playerAddressbookZone.y = y
   // }
 
   async getAccountDetails(id) {
