@@ -46,8 +46,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //test Player
     this.playerTestImageUrl
     this.playerTestAvatarKey
-    this.playerTestMovingKey 
-    this.playerTestStopKey 
+    this.playerTestMovingKey
+    this.playerTestStopKey
 
     this.homes = []
     this.homesRepreseneted = []
@@ -520,17 +520,21 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {
-      Player.moveBySwiping(this);
+      Player.moveBySwiping(this)
     } else {
-      Player.moveByTapping(this);
+      Player.moveByTapping(this)
     }
 
     if (this.playerLikedPanel) {
-      Player.moveScrollablePanel(this);
+      Player.moveScrollablePanel(this)
     }
 
     if (this.playerItemsBar) {
-      Player.movePlayerContainer(this);
+      Player.movePlayerContainer(this)
     }
+
+    // if (this.addressbookContainer) {
+    //   Player.movePlayerAddressbook(this)
+    // }
   } //update
 } //class
