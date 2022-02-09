@@ -14,6 +14,8 @@ class DebugFuntions {
 
         scene.input.keyboard.on('keyup-A', function (event) {
 
+            scene.playerTest.setVisible(true)
+            
             var tween = scene.tweens.add({
                 targets: scene.playerTest,
                 x: 2000,
