@@ -125,6 +125,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     HistoryTracker.locationPush(this);
     console.log(ManageSession.locationHistory)
 
+    //copy worldSize over to ManageSession, so that positionTranslation can be done there
+    ManageSession.worldSize = this.worldSize
+
     //timers
     ManageSession.updateMovementTimer = 0;
     ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec

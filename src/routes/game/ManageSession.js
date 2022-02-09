@@ -1,3 +1,4 @@
+import { Vector2 } from "three";
 import { client, SSL } from "../../nakama.svelte";
 import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate from artworld coordinates to Phaser 2D screen coordinates
 
@@ -12,6 +13,7 @@ class ManageSession {
     this.user_id
     this.username
 
+    this.worldSizeCopy // we copy the worldSize of the scene to make movement calculations
     this.itemsBar
     this.itemsBarOnlinePlayer
     this.selectedOnlinePlayer
@@ -37,9 +39,9 @@ class ManageSession {
 
     this.createOnlinePlayers = false
     this.updateOnlinePlayers = false
-    this.allConnectedUsers = []
-    this.removedConnectedUsers = []
-    this.createOnlinePlayerArray = []
+    this.allConnectedUsers = [] //players except self that are online in the same location
+    this.removedConnectedUsers = [] //players that need to be removed 
+    this.createOnlinePlayerArray = [] //players that need to be added
 
     // this.createdPlayer = false
     this.playerAvatarKey = ""
@@ -87,39 +89,40 @@ class ManageSession {
       let data = JSON.parse(streamdata.data)
       //console.log(data)
       //update the position data of this.allConnectedUsers array
-
+      //console.log(data)
       //console.log(data)
       for (const user of this.allConnectedUsers) {
-        if (user.user_id == data.user_id) {
+        //console.log("user", user)
+        if (user.id == data.user_id) {
+          // data is in the form of:
+          // location: "ArtworldAmsterdam"
+          // posX: -236.42065
+          // posY: -35.09519
+          // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
 
-          //? position data from online player, is converted in Player.js class receiveOnlinePlayersMovement because there the scene context is known
-          user.posX = data.posX
-          user.posY = data.posY
-          console.log("user.posX", user.posX)
-          // printing also when receiving movement data
-          // console.log("user")
-          // console.log(user)
+          // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement 
+          //because there the scene context is known
+          let positionVector = new Phaser.Math.Vector2(data.posX, data.posY)
+          positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, positionVector)
 
-          // console.log("data.user_id")
-          // console.log(data.user_id)
+          user.posX = positionVector.x
+          user.posY = positionVector.y
 
-          //TODO this could be refined to update specific online player?
-          //this.updateOnlinePlayers = true
+          user.x = positionVector.x
+          user.y = positionVector.y
+
+          //console.log("user.posX", user.posX)
         }
       }
     }
-
     this.socket.onstreampresence = (streampresence) => {
       //streampresence is everybody that is present also SELF
-
       if (!!streampresence.leaves) {
         streampresence.leaves.forEach((leave) => {
           console.log("User left: %o", leave)
 
           this.deleteOnlinePlayer(leave)
-
         })
-
       }
 
       if (!!streampresence.joins) {
@@ -134,7 +137,6 @@ class ManageSession {
             //const tempName = join.user_id
             this.createOnlinePlayerArray.push(join)
           }
-
         })
         // this.getStreamUsers("home")
       }
@@ -175,29 +177,12 @@ class ManageSession {
 
     this.socket.rpc(rpc_command, location).then((rec) => {
       //!the server reports all users in location except self_user
-      //!!! removed
-      // //get all online players
-      // this.allConnectedUsers = JSON.parse(rec.payload) || []
 
-      // // empty the array first
-      // // this.allConnectedUsers = []
+      //get all online players
+      this.createOnlinePlayerArray = JSON.parse(rec.payload) || []
 
-      // //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
-      // //this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
+      console.log("this.createOnlinePlayerArray", this.createOnlinePlayerArray)
 
-      // //if there are no users online, the array length == 0
-      // if (this.allConnectedUsers.length > 0) {
-      //   console.log("filtered by location? this.allConnectedUsers")
-      //   console.log("joined users:")
-      //   console.log(this.allConnectedUsers)
-
-      //   this.createOnlinePlayers = true
-      //   console.log("this.createOnlinePlayers = true")
-      // } else {
-      //   //this.createOnlinePlayers = false
-      //   console.log("no online users")
-      // }
-      //!!! removed
     })
   }
 
