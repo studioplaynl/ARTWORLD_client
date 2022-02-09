@@ -1,17 +1,17 @@
-import { CONFIG } from "../config.js";
-import ManageSession from "../ManageSession";
+import { CONFIG } from "../config.js"
+import ManageSession from "../ManageSession"
 import { getFullAccount, listObjects, convertImage, updateObject, updateObjectAdmin, getAccount, getAvatar } from "../../../api.js";
 
-import PlayerDefault from "../class/PlayerDefault";
-import PlayerDefaultShadow from "../class/PlayerDefaultShadow";
-import Player from "../class/Player.js";
-import Preloader from "../class/Preloader.js";
-import BouncingBird from "../class/BouncingBird.js";
-import Background from "../class/Background.js";
-import DebugFuntions from "../class/DebugFuntions.js";
-import CoordinatesTranslator from "../class/CoordinatesTranslator.js";
-import GenerateLocation from "../class/GenerateLocation.js";
-import HistoryTracker from "../class/HistoryTracker.js";
+import PlayerDefault from "../class/PlayerDefault"
+import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
+import Player from "../class/Player.js"
+import Preloader from "../class/Preloader.js"
+import BouncingBird from "../class/BouncingBird.js"
+import Background from "../class/Background.js"
+import DebugFuntions from "../class/DebugFuntions.js"
+import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
+import GenerateLocation from "../class/GenerateLocation.js"
+import HistoryTracker from "../class/HistoryTracker.js"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
@@ -46,8 +46,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //test Player
     this.playerTestImageUrl
     this.playerTestAvatarKey
-    this.playerTestMovingKey 
-    this.playerTestStopKey 
+    this.playerTestMovingKey
+    this.playerTestStopKey
 
     this.homes = []
     this.homesRepreseneted = []
@@ -124,6 +124,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // for back button
     HistoryTracker.locationPush(this);
     console.log(ManageSession.locationHistory)
+
+    //copy worldSize over to ManageSession, so that positionTranslation can be done there
+    ManageSession.worldSize = this.worldSize
 
     //timers
     ManageSession.updateMovementTimer = 0;
@@ -236,6 +239,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     )
     this.player.setDepth(200)
 
+    Player.createPlayerItemsBar(this)
+
     this.playerTest = new PlayerDefault(
       this,
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
@@ -316,8 +321,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // })
     // this.itemsBarOnlinePlayer.iterate(this.itemsBarOnlinePlayerCallback)// arr.forEach(element => { element.setDepth(400); console.log(element) })
   } //end create
-
-  createItemsBar() { }
 
   async getAccountDetails(array, id) {
 
@@ -483,12 +486,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    Player.loadOnlinePlayers(this);
-    Player.receiveOnlinePlayersMovement(this);
-    Player.loadOnlineAvatar(this);
-    this.generateHomes();
+    //Player.loadOnlinePlayers(this)
+    Player.parseNewOnlinePlayerArray(this)
+    Player.receiveOnlinePlayersMovement(this)
+    Player.loadOnlineAvatar(this)
+    this.generateHomes()
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom;
+    this.gameCam.zoom = this.UI_Scene.currentZoom
     //.......................................................................
 
     //........... PLAYER SHADOW .............................................................................
@@ -520,17 +524,22 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {
-      Player.moveBySwiping(this);
+      Player.moveBySwiping(this)
     } else {
-      Player.moveByTapping(this);
+      Player.moveByTapping(this)
     }
 
     if (this.playerLikedPanel) {
-      Player.moveScrollablePanel(this);
+      Player.moveScrollablePanel(this)
     }
 
     if (this.playerItemsBar) {
-      Player.movePlayerContainer(this);
+      Player.movePlayerContainer(this)
     }
+
+    // if (this.playerAddressbookContainer) {
+    //   console.log("addressbook is moving")
+    //   Player.movePlayerAddressbook(this)
+    // }
   } //update
 } //class

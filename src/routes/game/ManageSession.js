@@ -1,3 +1,4 @@
+import { Vector2 } from "three";
 import { client, SSL } from "../../nakama.svelte";
 import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate from artworld coordinates to Phaser 2D screen coordinates
 
@@ -12,6 +13,7 @@ class ManageSession {
     this.user_id
     this.username
 
+    this.worldSizeCopy // we copy the worldSize of the scene to make movement calculations
     this.itemsBar
     this.itemsBarOnlinePlayer
     this.selectedOnlinePlayer
@@ -37,8 +39,9 @@ class ManageSession {
 
     this.createOnlinePlayers = false
     this.updateOnlinePlayers = false
-    this.allConnectedUsers = []
-    this.removedConnectedUsers = []
+    this.allConnectedUsers = [] //players except self that are online in the same location
+    this.removedConnectedUsers = [] //players that need to be removed 
+    this.createOnlinePlayerArray = [] //players that need to be added
 
     // this.createdPlayer = false
     this.playerAvatarKey = ""
@@ -73,91 +76,71 @@ class ManageSession {
 
     const createStatus = true;
 
-    await this.socket.connect(this.sessionStored, createStatus);
-    console.log("session created with socket");
+    await this.socket.connect(this.sessionStored, createStatus)
+    console.log("session created with socket")
 
     console.log("Join:")
     console.log(this.location)
-    await this.getStreamUsers("join", this.location)
+    await this.getStreamUsers("join", this.location) //have to join a location to get stream presence events
 
     //stream
     this.socket.onstreamdata = (streamdata) => {
-      //console.info("Received stream data:", streamdata);
-      let data = JSON.parse(streamdata.data);
+      //console.info("Received stream data:", streamdata)
+      let data = JSON.parse(streamdata.data)
       //console.log(data)
       //update the position data of this.allConnectedUsers array
+      //console.log(data)
+      //console.log(data)
       for (const user of this.allConnectedUsers) {
-        if (user.user_id == data.user_id) {
+        //console.log("user", user)
+        if (user.id == data.user_id) {
+          // data is in the form of:
+          // location: "ArtworldAmsterdam"
+          // posX: -236.42065
+          // posY: -35.09519
+          // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
 
-          //? position data from online player, is converted in Player.js class receiveOnlinePlayersMovement because there the scene context is known
-          user.posX = data.posX
-          user.posY = data.posY
+          // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement 
+          //because there the scene context is known
+          let positionVector = new Phaser.Math.Vector2(data.posX, data.posY)
+          positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, positionVector)
 
-          // printing also when receiving movement data
-          // console.log("user")
-          // console.log(user)
+          user.posX = positionVector.x
+          user.posY = positionVector.y
 
-          // console.log("data.user_id")
-          // console.log(data.user_id)
+          user.x = positionVector.x
+          user.y = positionVector.y
 
-          //TODO this could be refined to update specific online player?
-          this.updateOnlinePlayers = true
+          //console.log("user.posX", user.posX)
         }
       }
-    };
-
+    }
     this.socket.onstreampresence = (streampresence) => {
       //streampresence is everybody that is present also SELF
-
-      console.log(
-        "Received presence event for stream: %o",
-        streampresence
-      );
-      this.getStreamUsers("get_users", this.location)
       if (!!streampresence.leaves) {
         streampresence.leaves.forEach((leave) => {
-          console.log("User left: %o", leave.username);
-          //remove leave.user_id from 
+          console.log("User left: %o", leave)
 
-          // this.removedConnectedUsers.push(leave.user_id);
-
-          //! instead of setTimeout I could also just remove user from allConnectedUsers and 
-          //! set createOnlinePlayers = true
-          setTimeout(() => {
-            this.getStreamUsers("get_users", this.location)
-          }, 400);
-
-          setTimeout(() => {
-            this.createOnlinePlayers = true
-          }, 600);
-
-          //allConnectedUsers is updated after someone leaves
-          // this.allConnectedUsers = this.allConnectedUsers.filter(function (item) {
-          //   return item.name !== leave.username;
-          // });
-        });
-
+          this.deleteOnlinePlayer(leave)
+        })
       }
 
-      // if (!!streampresence.joins) {
-      //   streampresence.joins.forEach((join) => {
-      //     if (join.user_id != this.user_id) {
-      //       console.log("some one joined")
-      //       // this.getStreamUsers("home")
-      //       console.log(join)
-
-      //       console.log(this.allConnectedUsers)
-
-      //       this.allConnectedUsers.push(join)
-      //       this.createOnlinePlayers = true
-      //     }
-
-      // update array when someone joins
-      // this.allConnectedUsers.push(leave.user_id)
-      //   });
-      // this.getStreamUsers("home")
-      // }
-    }; //this.socket.onstreampresence
+      if (!!streampresence.joins) {
+        streampresence.joins.forEach((join) => {
+          //filter out the player it self
+          if (join.user_id != this.userProfile.id) {
+            //console.log(this.userProfile)
+            console.log("some one joined")
+            // this.getStreamUsers("home")
+            console.log(join.username)
+            console.log(join)
+            //const tempName = join.user_id
+            this.createOnlinePlayerArray.push(join)
+          }
+        })
+        // this.getStreamUsers("home")
+      }
+    } //this.socket.onstreampresence
   } //end createSocket
 
   // async join() {
@@ -169,6 +152,20 @@ class ManageSession {
   //     status = "joined";
   //   });
   // }
+
+  deleteOnlinePlayer(onlinePlayer) {
+    // console.log("onlinePlayer", onlinePlayer)
+    // console.log("this.allConnectedUsers", this.allConnectedUsers)
+    // console.log("----")
+    // let removeUser = this.allConnectedUsers.filter(obj => { console.log("obj", obj);
+    // console.log("onlinePlayer.user_id", onlinePlayer.user_id); obj.id == onlinePlayer.user_id; console.log("obj.id", obj.id);})
+    let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
+    console.log("removeUser", removeUser)
+    removeUser[0].destroy()
+    this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.user_id)
+    // console.log("----")
+    console.log("this.allConnectedUsers", this.allConnectedUsers)
+  }
 
   async getStreamUsers(rpc_command, location) {
     // if (!this.createOnlinePlayers) {
@@ -182,27 +179,10 @@ class ManageSession {
       //!the server reports all users in location except self_user
 
       //get all online players
-      let tempConnectedUsers = JSON.parse(rec.payload) || []
+      this.createOnlinePlayerArray = JSON.parse(rec.payload) || []
 
-      // empty the array first
-      // this.allConnectedUsers = []
-      this.allConnectedUsers = tempConnectedUsers
+      console.log("this.createOnlinePlayerArray", this.createOnlinePlayerArray)
 
-      //filter out the onlineplayers by location, put them in the this.allConnectedUsers [] 
-      //this.allConnectedUsers = tempConnectedUsers.filter(i => this.location.includes(i.location));
-
-      //if there are no users online, the array length == 0
-      if (this.allConnectedUsers.length > 0) {
-        console.log("filtered by location? this.allConnectedUsers")
-        console.log("joined users:")
-        console.log(this.allConnectedUsers)
-
-        this.createOnlinePlayers = true
-        console.log("this.createOnlinePlayers = true")
-      } else {
-        //this.createOnlinePlayers = false
-        console.log("no online users")
-      }
     })
   }
 
