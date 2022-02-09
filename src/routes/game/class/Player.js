@@ -846,7 +846,7 @@ class Player {
     if (ManageSession.createOnlinePlayerArray.length > 0) {
 
       ManageSession.createOnlinePlayerArray.forEach(onlinePlayer => {
-        console.log("new onlinePlayer", onlinePlayer)
+        //console.log("new onlinePlayer", onlinePlayer)
 
         Promise.all([getAccount(onlinePlayer.user_id)]).then(rec => {
          // console.log("rec", rec)

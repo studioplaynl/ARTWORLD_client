@@ -272,9 +272,9 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     update(time, delta) {
         //...... ONLINE PLAYERS ................................................
-        //Player.loadOnlinePlayers(this)
-        //Player.receiveOnlinePlayersMovement(this)
-        Player.loadOnlineAvatar(this)
+        Player.loadPlayerAvatar(this)
+        Player.parseNewOnlinePlayerArray(this)
+        //.......................................................................
 
         this.gameCam.zoom = this.UI_Scene.currentZoom
         //.......................................................................

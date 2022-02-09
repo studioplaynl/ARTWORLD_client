@@ -170,7 +170,7 @@ export default class Location1 extends Phaser.Scene {
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
 
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
-    
+
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
     //create player group
@@ -328,7 +328,7 @@ export default class Location1 extends Phaser.Scene {
         print.text += `${category}:${child.text}\n`;
       })
 
-    
+
 
   }
 
@@ -572,7 +572,7 @@ export default class Location1 extends Phaser.Scene {
     // this.physics.add.existing(this.location3);
     // this.location3.body.setSize(this.location3.width, this.location3.height)
     // this.location3.body.setOffset(0, -(this.location3.height / 4))
-    
+
     // const LocationDialogBox3 = new LocationDialogbox(this, this.location3, "Location3", 200, 150)
 
     // //........ location4 ...................
@@ -587,7 +587,7 @@ export default class Location1 extends Phaser.Scene {
 
   }
 
-  
+
 
   generateBackground() {
     //fill in textures
@@ -850,16 +850,15 @@ export default class Location1 extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-
-    Player.loadOnlinePlayers(this)
-    Player.receiveOnlinePlayersMovement(this)
-    Player.loadOnlineAvatar(this)
+    Player.loadPlayerAvatar(this)
+    Player.parseNewOnlinePlayerArray(this)
+    //.......................................................................
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
 
     //.......................................................................
 
-  //........... PLAYER SHADOW .............................................................................
+    //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
@@ -894,13 +893,13 @@ export default class Location1 extends Phaser.Scene {
     } else {
       Player.moveBySwiping(this)
     }
-    
+
     if (this.scrollablePanel) {
-        Player.moveScrollablePanel(this);
+      Player.moveScrollablePanel(this);
     }
 
     if (this.playerContainer) {
-        Player.movePlayerContainer(this);
+      Player.movePlayerContainer(this);
     }
 
 

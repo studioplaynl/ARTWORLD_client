@@ -1037,13 +1037,10 @@ export default class Location4 extends Phaser.Scene {
   }
 
   update(time, delta) {
-    // //...... ONLINE PLAYERS ................................................
-    // this.createOnlinePlayers();
-    // Player.loadOnlinePlayers(this)
-    // this.updateMovementOnlinePlayers()
-    // Player.receiveOnlinePlayersMovement(this)
-    // this.loadAndCreatePlayerAvatar();
-    Player.loadOnlineAvatar(this)
+   //...... ONLINE PLAYERS ................................................
+   Player.loadPlayerAvatar(this)
+   Player.parseNewOnlinePlayerArray(this)
+   //.......................................................................
 
     //ManageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
