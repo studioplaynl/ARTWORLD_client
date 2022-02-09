@@ -146,7 +146,6 @@ input[type=text], input[type=password] {
   padding: 15px;
   margin: 5px 0 22px 0;
   display: inline-block;
-  border: none;
   background: #f1f1f1;
 }
 
@@ -160,7 +159,6 @@ select {
     padding: 15px;
     margin: 5px 0 22px 0;
     display: inline-block;
-    border: none;
     background: #f1f1f1;
 }
 
@@ -172,7 +170,8 @@ hr {
 
 /* Set a style for the submit/register button */
 .registerbtn {
-  background-color: #04AA6D;
+  background-color: #7300EB;
+  border-radius: 25px;
   color: white;
   padding: 16px 20px;
   margin: 8px 0;

@@ -309,7 +309,6 @@
 		padding: 15px;
 		margin: 5px 0 22px 0;
 		display: inline-block;
-		border: none;
 		background: #f1f1f1;
 	}
 
@@ -324,7 +323,6 @@
 		padding: 15px;
 		margin: 5px 0 22px 0;
 		display: inline-block;
-		border: none;
 		background: #f1f1f1;
 	}
 
@@ -336,7 +334,8 @@
 
 	/* Set a style for the submit/register button */
 	.registerbtn {
-		background-color: #04aa6d;
+		background-color: #7300EB;
+		border-radius: 25px;
 		color: white;
 		padding: 16px 20px;
 		margin: 8px 0;
@@ -344,11 +343,11 @@
 		cursor: pointer;
 		width: 100%;
 		opacity: 0.9;
-	}
+		}
 
-	.registerbtn:hover {
-		opacity: 1;
-	}
+		.registerbtn:hover {
+		opacity:1;
+		}
 
 	/* Add a blue text color to links */
 	a {

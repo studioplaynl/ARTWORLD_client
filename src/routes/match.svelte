@@ -34,6 +34,7 @@
         socket.onstreamdata = (streamdata) => {
             console.info("Received stream data:", streamdata);
             let data = JSON.parse(streamdata.data);
+            console.log(data)
             for (const user of AllUsers) {
                 if (user.user_id == data.user_id) {
                     console.log("test");
@@ -74,20 +75,16 @@
     let promise = chat();
 
     export function onclick() {
+        var action = "walk" //stop, too, move
         var opCode = 1;
         var data =
-            '{ "posX": ' +
-            Math.floor(Math.random() * 100) +
-            ', "posY": ' +
-            Math.floor(Math.random() * 100) +
-            ', "location": "' +
-            selected +
-            '" }';
+            `{ "action": "${action}",
+              "posX": ${Math.floor(Math.random() * 100)},
+              "posY": ${Math.floor(Math.random() * 100)},
+              "location": "${selected}"
+             }`
+        console.log(data)
         socket.rpc("move_position", data).then((rec) => {
-            status;
-            data = JSON.parse(rec.payload) || [];
-            console.log("sent pos:");
-            console.log(data);
         });
     }
 
