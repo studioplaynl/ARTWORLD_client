@@ -436,20 +436,24 @@ import App from "../../App.svelte";
     }else {
       
       if(appType == "avatar"){
-        var jsonURL = await getDrawing($Profile.avatar_url.split(".")[0] + ".json");
+        if(!!$Profile.avatar_url){
+          var jsonURL = await getDrawing($Profile.avatar_url.split(".")[0] + ".json");      
+        }
         //version = Number(drawing.value.version) + 1 || 0
         //console.log("version" + version)  
       }else {
         let drawing = await getObject("home", $Profile.meta.azc)
-        console.log(drawing.value.url)
-        // get item
-        // extract version
-        version = Number(drawing.value.version) + 1 || 0
-        console.log(version)
-        // open file
-        var jsonURL = await getDrawing(
-          drawing.value.url.split(".")[0] +`.json`
-        );
+        if(!!drawing){
+          console.log(drawing.value.url)
+          // get item
+          // extract version
+          version = Number(drawing.value.version) + 1 || 0
+          console.log(version)
+          // open file
+          var jsonURL = await getDrawing(
+            drawing.value.url.split(".")[0] +`.json`
+          );
+        }
       }
         console.log(jsonURL);
         fetch(jsonURL)

@@ -38,6 +38,7 @@ Profile.subscribe((value) => {
 
 export const Error = writable();
 
+export const Succes = writable();
 
 export async function login(email, password) {
     const create = false;
