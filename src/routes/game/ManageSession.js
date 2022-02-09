@@ -1,4 +1,3 @@
-import { Vector2 } from "three";
 import { client, SSL } from "../../nakama.svelte";
 import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate from artworld coordinates to Phaser 2D screen coordinates
 
@@ -87,13 +86,10 @@ class ManageSession {
     this.socket.onstreamdata = (streamdata) => {
       //console.info("Received stream data:", streamdata)
       let data = JSON.parse(streamdata.data)
-      //console.log(data)
-      //update the position data of this.allConnectedUsers array
-      //console.log(data)
-      //console.log(data)
-      for (const user of this.allConnectedUsers) {
-        //console.log("user", user)
-        if (user.id == data.user_id) {
+
+      for (const onlinePlayer of this.allConnectedUsers) {
+
+        if (onlinePlayer.id == data.user_id) {
           // data is in the form of:
           // location: "ArtworldAmsterdam"
           // posX: -236.42065
@@ -105,13 +101,21 @@ class ManageSession {
           let positionVector = new Phaser.Math.Vector2(data.posX, data.posY)
           positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, positionVector)
 
-          user.posX = positionVector.x
-          user.posY = positionVector.y
+          onlinePlayer.posX = positionVector.x
+          onlinePlayer.posY = positionVector.y
 
-          user.x = positionVector.x
-          user.y = positionVector.y
+          onlinePlayer.x = positionVector.x
+          onlinePlayer.y = positionVector.y
 
-          //console.log("user.posX", user.posX)
+          //play the moving animation of the onlineplayer
+          const movingKey = onlinePlayer.getData("movingKey")
+
+          //get the key for the moving animation of the player, and play it
+          onlinePlayer.anims.play(movingKey, true)
+
+          setTimeout(() => {
+            onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true)
+          }, 500)
         }
       }
     }
@@ -132,8 +136,8 @@ class ManageSession {
             //console.log(this.userProfile)
             console.log("some one joined")
             // this.getStreamUsers("home")
-            console.log(join.username)
-            console.log(join)
+            //console.log(join.username)
+            console.log("join", join)
             //const tempName = join.user_id
             this.createOnlinePlayerArray.push(join)
           }

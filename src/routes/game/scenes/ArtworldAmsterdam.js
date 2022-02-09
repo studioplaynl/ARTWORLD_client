@@ -247,7 +247,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
       this.playerAvatarPlaceholder
     )
-    this.playerTest.setDepth(200)
+    this.playerTest.setDepth(200).setVisible(false)
 
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -486,28 +486,33 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    //Player.loadOnlinePlayers(this)
+    Player.loadPlayerAvatar(this)
     Player.parseNewOnlinePlayerArray(this)
-    Player.receiveOnlinePlayersMovement(this)
-    Player.loadOnlineAvatar(this)
+    //.......................................................................
+
+    //! cleanup with promise.all in create
     this.generateHomes()
 
+    //! make more efficient with event?
     this.gameCam.zoom = this.UI_Scene.currentZoom
-    //.......................................................................
+
 
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
+    //! make more efficient with event?
     this.playerShadow.x = this.player.x + this.playerShadowOffset;
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     //........... end PLAYER SHADOW .........................................................................
 
     //.......... UPDATE TIMER      ..........................................................................
+    //! remove?
     ManageSession.updateMovementTimer += delta;
     // console.log(time) //running time in millisec
     // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     //....... end UPDATE TIMER  ..............................................................................
 
     //........ PLAYER MOVE BY KEYBOARD  ......................................................................
+    //! remove?
     if (!this.playerIsMovingByClicking) {
       Player.moveByKeyboard(this); //player moving with keyboard with playerMoving Class
     }

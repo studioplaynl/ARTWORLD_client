@@ -814,10 +814,10 @@ export default class Location3 extends Phaser.Scene {
   }
 
   update(time, delta) {
-    // //...... ONLINE PLAYERS ................................................
-    Player.loadOnlinePlayers(this)
-    Player.receiveOnlinePlayersMovement(this)
-    Player.loadOnlineAvatar(this)
+ //...... ONLINE PLAYERS ................................................
+ Player.loadPlayerAvatar(this)
+ Player.parseNewOnlinePlayerArray(this)
+ //.......................................................................
 
     //this.gameCam.zoom = this.UI_Scene.currentZoom;
     // console.log(this.currentZoom);
