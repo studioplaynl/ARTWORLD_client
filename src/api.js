@@ -1,6 +1,6 @@
 import { date } from "svelte-i18n";
 import { client } from "./nakama.svelte"
-import { Session,Profile, Error } from "./session.js"
+import { Session,Profile, Error,Succes } from "./session.js"
 
 let Sess, pub, prof;
 export let url;
@@ -47,7 +47,9 @@ export async function uploadImage(name, type, json, img, status, version, displa
     },
     body: json
   })
+  
   await updateObject(type, name, value,pub)
+  
 }
 
 export async function updateTitle(collection, key, name, userID){
@@ -100,6 +102,7 @@ await fetch(jpegURL, {
 
   // get object
   await updateObject(type, name, JSON.stringify(value), pub)
+  
 }
 
 export async function getUploadURL(type, name, filetype,version) {
@@ -135,13 +138,14 @@ export async function updateObject(type, name, value, pub,userID) {
   console.log(prof.meta.role)
   if(prof.meta.role == "admin" || prof.meta.role == "moderator"){
     console.log("working!")
-    updateObjectAdmin(userID, type, name, value, pub)
+    await updateObjectAdmin(userID, type, name, value, pub)
   } else {
   // else 
   const object_ids = await client.writeStorageObjects(Sess, [
     object
   ]);
   console.info("Stored objects: %o", object_ids);
+  Succes.update(s=>s=true)
   }
 }
 
@@ -220,6 +224,7 @@ export async function setFullAccount(id, username, password, email, metadata) {
   const rpcid = "set_full_account";
    user = await client.rpc(Sess, rpcid, payload)
    //console.log(user)
+   Succes.update(s=>s=true)
   return user.payload
 }
 
@@ -277,6 +282,7 @@ export async function getFile(file_url) {
       avatar_url: jpegLocation,
       meta: prof.meta
   });
+  Succes.update(s=>s=true)
 }
 
 
@@ -286,6 +292,7 @@ export async function deleteFile(type,file,user) {
     const rpcid = "delete_file";
     const fileurl = await client.rpc(Sess, rpcid, payload)
     .catch((e)=> {throw e})
+    Succes.update(s=>s=true)
 }
 
 export async function addFriend(id,usernames) {
@@ -305,7 +312,7 @@ export async function addFriend(id,usernames) {
   }
   await client.addFriends(Sess, id,usernames)
   .then(status => {
-    Error.update(er => er = "friend added")
+    Succes.update(s=>s=true)
   })
   .catch(err =>{
     throw err
@@ -342,7 +349,7 @@ export async function deleteObject(collection, key) {
     }]
   });
   console.info("Deleted objects.");
-  
+  Succes.update(s=>s=true)
   return true
 }
 
@@ -359,7 +366,7 @@ export async function updateObjectAdmin(id, type, name, value, pub) {
    result = await client.rpc(Sess, rpcid, payload)
    console.log(result)
    if(result.payload.status == "succes"){
-
+    Succes.update(s=>s=true)
    } // succes
    else {
      throw result.payload.status // error
@@ -376,6 +383,7 @@ export async function deleteObjectAdmin(id, type, name) {
    user = await client.rpc(Sess, rpcid, payload)
    console.log(user)
    if(user.payload.status != "succes") throw user.payload.status
+   else Succes.update(s=>s=true)
   return user.payload
 }
 
