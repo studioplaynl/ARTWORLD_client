@@ -488,8 +488,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //...... ONLINE PLAYERS ................................................
     //Player.loadOnlinePlayers(this)
     Player.parseNewOnlinePlayerArray(this)
-    Player.receiveOnlinePlayersMovement(this)
-    Player.loadOnlineAvatar(this)
+   
+    Player.loadPlayerAvatar(this)
     this.generateHomes()
 
     this.gameCam.zoom = this.UI_Scene.currentZoom
