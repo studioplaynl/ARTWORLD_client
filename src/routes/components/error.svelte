@@ -59,10 +59,6 @@
 
 </script>
 
-<button on:click="{()=>{Succes.update(s=>s=true)}}"> test save</button>
-<button on:click="{()=>{throw " testerror"}}"> test error</button>
-
-
 <div id="snackbar" class:show={succes}>
     <div class="icon green"><SuccesIcon/></div>    
 </div>

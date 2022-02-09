@@ -18,13 +18,13 @@
   import ar from "./../../langauge/ar/ar.json";
 
   let error;
-  addMessages("nl", nl);
-  addMessages("en", en);
-  addMessages("ru", ru);
-  addMessages("ar", ar);
+  addMessages("NL", nl);
+  addMessages("EN", en);
+  addMessages("RU", ru);
+  addMessages("AR", ar);
 
   init({
-    fallbackLocale: "nl",
+    fallbackLocale: "NL",
     //initialLocale: getLocaleFromNavigator(),
   });
 
@@ -69,6 +69,11 @@
         <li><a href="/#/stopmotion">{$_("nav.stopmotion")}</a></li>
         <li><a href="/#/mariosound">{$_("nav.mariosound")}</a>
       </ul>
+      <select bind:value={$locale} on:click>
+        {#each $locales as locale}
+          <option value={locale}>{locale}</option>
+        {/each}
+      </select>
       <div
         class="userInfo"
         on:click={() => {
@@ -99,17 +104,13 @@
         </ul>
       {/if}
         {#if $Session == null}
-          <a href="/#/login">{$_("nav.login")}</a>
+          <button href="/#/login">{$_("nav.login")}</button>
         {:else}
           <a href="/#/profile">{$Session.username}</a>
-          <a on:click={logout} href="/">{$_("nav.logout")}</a>
+          <button on:click={logout} href="/">{$_("nav.logout")}</button>
         {/if}
       </div>
-      <select bind:value={$locale} on:click>
-        {#each $locales as locale}
-          <option value={locale}>{locale}</option>
-        {/each}
-      </select>
+      
     </div>
   {/if}
 </nav>
@@ -119,12 +120,15 @@
     cursor: pointer;
     padding: 10px;
     float: right;
-    margin: 0px 20px;
+    margin: 10px 10px;
+    border-radius: 50%;
+    background-color: white;
   }
+
   .icon .hamburger {
-    width: 50px;
+    width: 30px;
     height: 5px;
-    background-color: black;
+    background-color: #7300eb;
     margin-top: 5px;
     box-shadow: 0px 0px 10px white;
   }
@@ -134,15 +138,21 @@
     width: 100%;
     padding: 0;
   }
-  ul a {
-    color: #999;
+  a {
+    color: #7300eb;
     text-decoration: none;
-  }
-  ul li a {
-    font-family: "Oswald", sans-serif;
-    text-align: center;
-    transition: all 0.3s ease;
     font-size: 25px;
+    font-family: "Oswald", sans-serif;
+  }
+
+  ul li a {
+    text-align: center;
+  }
+
+  select {
+    background-color: #7300EB;
+    color: white;
+    width: 100%;
   }
 
   nav {
@@ -154,7 +164,14 @@
   }
 
   .nav {
-    background-color: lightgray;
+    background-color: white;
+    box-shadow: -5px 0px #7300eb;
     padding: 25px;
+    height: 100vh;
   }
+
+  .userInfo {
+    margin-top: 20px;
+  }
+  
 </style>
