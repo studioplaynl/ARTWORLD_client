@@ -21,6 +21,13 @@ class Player {
         scene.createdPlayer = false
 
         //console.log("loadAndCreatePlayerAvatar")
+        //put the player in the server last known position
+
+        scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, ManageSession.userProfile.meta.posX)
+        scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, ManageSession.userProfile.meta.posY)
+
+        scene.player.setCollideWorldBounds(true)
+        scene.player.onWorldBounds = true
 
         // is playerAvaterKey already in loadedAvatars?
         //no -> load the avatar and add to loadedAvatars
@@ -578,7 +585,6 @@ class Player {
           space: {
             left: 10, right: 10, top: 10, bottom: 10, panel: 10,
           },
-
           name: "onlinePlayerLikedPanel"
         })
         .layout()
@@ -1052,7 +1058,7 @@ class Player {
     })
   }
 
-  
+
 
   // movePlayerAddressbook(scene) {
   //   const x = scene.player.x - 50

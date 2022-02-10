@@ -262,9 +262,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
     //!setBounds has to be set before follow, otherwise the camera doesn't follow!
-    this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
+    //this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
     this.gameCam.zoom = 1
     this.gameCam.startFollow(this.player)
+    this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
+//https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
+    this.physics.world.on('worldbounds', onWorldBounds)
+
     //......... end PLAYER VS WORLD .......................................................................
 
     //......... INPUT .....................................................................................
@@ -318,6 +322,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // })
     // this.itemsBarOnlinePlayer.iterate(this.itemsBarOnlinePlayerCallback)// arr.forEach(element => { element.setDepth(400); console.log(element) })
   } //end create
+
+  worldBoundCallBack() {
+    console.log("Bounds!")
+  }
 
   async getAccountDetails(array, id) {
 
