@@ -4,6 +4,7 @@ import { listObjects, listImages, convertImage, getFullAccount, updateObject, ge
 import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList"
 import R_UI from "./R_UI"
+import UI_Scene from "../scenes/UI_Scene"
 
 
 class Move {
@@ -87,14 +88,13 @@ class Move {
 
       // calculate distance only when playerIsMovingByClicking
       scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y)
-      if (scene.distance < 10) {
+      if (scene.distance < scene.distanceTolerance) {
         scene.player.body.reset(scene.target.x, scene.target.y)
         // send Stop command
         ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
 
         //play "stop" animation
         this.movingAnimation(scene, "stop")
-
         scene.playerIsMovingByClicking = false
       }
     }
@@ -108,19 +108,37 @@ class Move {
       const playerX = scene.player.x
       const playerY = scene.player.y
 
-      scene.swipeAmount.x = scene.input.activePointer.upX - scene.input.activePointer.downX
-      scene.swipeAmount.y = scene.input.activePointer.upY - scene.input.activePointer.downY
+      let swipeX = scene.input.activePointer.upX - scene.input.activePointer.downX
+      let swipeY = scene.input.activePointer.upY - scene.input.activePointer.downY
+
+      scene.swipeAmount.x = swipeX
+      scene.swipeAmount.y = swipeY
+
+      //we scale the travel distance to the zoomlevel
+      let zoomFactor = scene.gameCam.zoom
+      swipeX = swipeX / zoomFactor
+      swipeY = swipeY / zoomFactor
+
+      // console.log("swipeX, swipeY", swipeX, swipeY)
+
+      scene.swipeAmount.x = swipeX
+      scene.swipeAmount.y = swipeY
 
       let moveSpeed = scene.swipeAmount.length()
-      if (moveSpeed > 600) moveSpeed = 600 //! optimize
+      // console.log("moveSpeed", moveSpeed)
+
+      // we scale the arrival check (distanceTolerance) to the speed of the player
+      scene.distanceTolerance = moveSpeed / 60
+      // console.log("scene.distanceTolerance", scene.distanceTolerance)
+      // console.log("moveSpeed", moveSpeed)
 
       scene.playerIsMovingByClicking = true // trigger moving animation
 
-      scene.target.x = playerX + scene.swipeAmount.x
-      scene.target.y = playerY + scene.swipeAmount.y
+      scene.target.x = playerX + swipeX
+      scene.target.y = playerY + swipeY
 
       // generalized moving method
-      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2)
+      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed)
       scene.isClicking = false
     }
   }
@@ -143,10 +161,14 @@ class Move {
           scene.target.x = scene.input.activePointer.worldX
           scene.target.y = scene.input.activePointer.worldY
 
+          let moveSpeed = scene.target.length()
+          // we scale the arrival check (distanceTolerance) to the speed of the player
+          scene.distanceTolerance = moveSpeed / 60
+          
           scene.playerIsMovingByClicking = true // activate moving animation
 
           // generalized moving method
-          this.moveObjectToTarget(scene, scene.player, scene.target, 450) // send moveTo over network, calculate speed as function of distance
+          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed) // send moveTo over network, calculate speed as function of distance
         }
       })
       scene.isClicking = false

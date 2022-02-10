@@ -16,7 +16,7 @@ import Move from "../class/Move.js"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
-    super("ArtworldAmsterdam");
+    super("ArtworldAmsterdam")
 
     this.worldSize = new Phaser.Math.Vector2(6000, 6000)
 
@@ -30,7 +30,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.newOnlinePlayers = []
 
     this.currentOnlinePlayer
-    this.avatarName = [];
+    this.avatarName = []
     this.tempAvatarName = ""
     this.loadedAvatars = []
 
@@ -77,6 +77,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // this.source // = player
     this.target = new Phaser.Math.Vector2()
     this.distance
+    this.distanceTolerance = 9
 
     //shadow
     this.playerShadowOffset = -8
@@ -255,33 +256,33 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //....... onlinePlayers ..............................................................................
     // add onlineplayers group
-    this.onlinePlayersGroup = this.add.group();
+    this.onlinePlayersGroup = this.add.group()
     //....... end onlinePlayers ..........................................................................
 
     //....... PLAYER VS WORLD .............................................................................
-    this.gameCam = this.cameras.main; //.setBackgroundColor(0xFFFFFF);
+    this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
     //!setBounds has to be set before follow, otherwise the camera doesn't follow!
-    this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
-    this.gameCam.zoom = 1;
-    this.gameCam.startFollow(this.player);
+    this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
+    this.gameCam.zoom = 1
+    this.gameCam.startFollow(this.player)
     //......... end PLAYER VS WORLD .......................................................................
 
     //......... INPUT .....................................................................................
-    this.cursors = this.input.keyboard.createCursorKeys();
+    this.cursors = this.input.keyboard.createCursorKeys()
     //.......... end INPUT ................................................................................
 
     //.......... locations ................................................................................
     //generating homes from online query is not possible in create, because the server query can take time
     //generating homes is done in update, after a heck that everything is downloaded
 
-    this.generateLocations();
+    this.generateLocations()
     //.......... end locations ............................................................................
 
     //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
 
     //......... DEBUG FUNCTIONS ...........................................................................
-    DebugFuntions.keyboard(this);
-    //this.createDebugText();
+    DebugFuntions.keyboard(this)
+    //this.createDebugText()
     //......... end DEBUG FUNCTIONS .......................................................................
     // create itemsbar
     //  this.itemsbar = this.add.graphics();

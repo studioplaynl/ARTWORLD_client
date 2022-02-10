@@ -112,7 +112,7 @@ class ManageSession {
               paused: false,
               duration: 1000,
             })
-            
+
             const movingKey = onlinePlayer.getData("movingKey")
             onlinePlayer.anims.play(movingKey, true)
           }
@@ -132,26 +132,10 @@ class ManageSession {
             //get the key for the stop animation of the player, and play it
             onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true)
           }
-
-          // // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement 
-          // //because there the scene context is known
-          // let positionVector = new Phaser.Math.Vector2(data.posX, data.posY)
-          // positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, positionVector)
-
-          // onlinePlayer.posX = positionVector.x
-          // onlinePlayer.posY = positionVector.y
-
-          // onlinePlayer.x = positionVector.x
-          // onlinePlayer.y = positionVector.y
-
-          // //get the key for the moving animation of the player, and play it
-          // const movingKey = onlinePlayer.getData("movingKey")
-          // onlinePlayer.anims.play(movingKey, true)
-
-          // onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true)
         }
       }
     }
+    
     this.socket.onstreampresence = (streampresence) => {
       //streampresence is everybody that is present also SELF
       if (!!streampresence.leaves) {
