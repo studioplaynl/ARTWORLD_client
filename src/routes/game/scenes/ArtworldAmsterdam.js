@@ -514,11 +514,11 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //........ PLAYER MOVE BY KEYBOARD  ......................................................................
     //! remove?
-    if (!this.playerIsMovingByClicking) {
-      Move.moveByKeyboard(this); //player moving with keyboard with playerMoving Class
-    }
+    // if (!this.playerIsMovingByClicking) {
+    //   Move.moveByKeyboard(this); //player moving with keyboard with playerMoving Class
+    // }
 
-    Move.moveByCursor(this);
+    //Move.moveByCursor(this);
     //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
     //....... moving ANIMATION ......................................................................................
