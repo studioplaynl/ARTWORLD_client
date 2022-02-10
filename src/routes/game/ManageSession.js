@@ -106,15 +106,15 @@ class ManageSession {
 
             //!scale duration to distance
             const target = new Phaser.Math.Vector2(moveToX, moveToY)
-            // const duration = target.length()
-            console.log(target)
+            const duration = target.length()
+            console.log(duration)
 
             scene.tweens.add({
               targets: onlinePlayer,
               x: moveToX,
               y: moveToY,
               paused: false,
-              duration: target,
+              duration: duration,
             })
 
             const movingKey = onlinePlayer.getData("movingKey")
