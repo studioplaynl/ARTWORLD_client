@@ -86,7 +86,7 @@ class ManageSession {
     this.socket.onstreamdata = (streamdata) => {
       //console.info("Received stream data:", streamdata)
       let data = JSON.parse(streamdata.data)
-      //console.log(data)
+      console.log(data)
       for (const onlinePlayer of this.allConnectedUsers) {
 
         if (onlinePlayer.id == data.user_id) {
@@ -200,7 +200,7 @@ class ManageSession {
 
   }
 
-  sendMoveMessage(scene, posX, posY) {
+  sendMoveMessage(scene, posX, posY, action) {
     //transpose phaser coordinates to artworld coordinates
     //console.log(scene)
 
@@ -210,8 +210,6 @@ class ManageSession {
     //console.log(posX, posY)
 
     var opCode = 1
-    let action = "moveTo"
-
     var data = `{ "action": "${action}", "posX": ${posX}, "posY": ${posY}, "location": "${this.location}" }`
 
     //  '{ "action": ' + action +  '"posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }'

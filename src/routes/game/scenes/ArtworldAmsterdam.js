@@ -511,16 +511,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // console.log(time) //running time in millisec
     // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     //....... end UPDATE TIMER  ..............................................................................
-
-    //........ PLAYER MOVE BY KEYBOARD  ......................................................................
-    //! remove?
-    // if (!this.playerIsMovingByClicking) {
-    //   Move.moveByKeyboard(this); //player moving with keyboard with playerMoving Class
-    // }
-
-    //Move.moveByCursor(this);
-    //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
-
+    
     //....... moving ANIMATION ......................................................................................
     Move.movingAnimation(this);
     //....... end moving ANIMATION .................................................................................
