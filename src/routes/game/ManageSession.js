@@ -103,16 +103,18 @@ class ManageSession {
             //console.log(onlinePlayer)
             const moveToX = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, data.posX)
             const moveToY = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, data.posY)
-            // const target = new Phaser.Math.Vector2(moveToX, moveToY)
-            // const duration = target.length() / 90
-            // console.log(duration)
+
+            //!scale duration to distance
+            const target = new Phaser.Math.Vector2(moveToX, moveToY)
+            const duration = target.length() / 90
+            console.log(duration)
 
             scene.tweens.add({
               targets: onlinePlayer,
               x: moveToX,
               y: moveToY,
               paused: false,
-              duration: 900,
+              duration: 600,
             })
 
             const movingKey = onlinePlayer.getData("movingKey")
