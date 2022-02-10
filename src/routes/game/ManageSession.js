@@ -112,7 +112,9 @@ class ManageSession {
               paused: false,
               duration: 1000,
             })
-
+            
+            const movingKey = onlinePlayer.getData("movingKey")
+            onlinePlayer.anims.play(movingKey, true)
           }
 
           if (data.action == "stop") {
