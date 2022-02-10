@@ -29,6 +29,14 @@ class Player {
         scene.player.setCollideWorldBounds(true)
         scene.player.onWorldBounds = true
 
+        console.log(scene.player.body.checkCollision, "scene.player.body.checkCollision")
+        console.log(scene.player.body, "scene.player.body")
+        scene.player.body.onWorldBounds = true
+        scene.player.body.checkCollision.up = true;
+        scene.player.body.checkCollision.down = true;
+        scene.player.body.checkCollision.left = true;
+        scene.player.body.checkCollision.right = true;
+
         // is playerAvaterKey already in loadedAvatars?
         //no -> load the avatar and add to loadedAvatars
         //yes -> dont load the avatar

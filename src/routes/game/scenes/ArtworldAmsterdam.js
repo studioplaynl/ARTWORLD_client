@@ -266,8 +266,11 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.gameCam.zoom = 1
     this.gameCam.startFollow(this.player)
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
-//https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
-    this.physics.world.on('worldbounds', onWorldBounds)
+    //https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
+    this.physics.world.on('worldbounds', (obj) => {
+      console.log("working")
+      console.log("obj", obj)
+    })
 
     //......... end PLAYER VS WORLD .......................................................................
 
