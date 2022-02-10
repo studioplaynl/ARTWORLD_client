@@ -123,20 +123,15 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async create() {
     // for back button
-    HistoryTracker.locationPush(this);
+    HistoryTracker.locationPush(this)
     console.log(ManageSession.locationHistory)
 
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
-    //timers
-    ManageSession.updateMovementTimer = 0;
-    ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
-
     //.......  LOAD PLAYER AVATAR ..........................................................................
-    ManageSession.createPlayer = true;
+    ManageSession.createPlayer = true
     //....... end LOAD PLAYER AVATAR .......................................................................
-
 
     //Background // the order of creation is the order of drawing: first = bottom ...............................
     Background.repeatingDots({
@@ -145,7 +140,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       dotWidth: 2,
       dotColor: 0x909090,
       backgroundColor: 0xffffff,
-    });
+    })
 
     Background.circle({
       scene: this,
@@ -155,7 +150,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       size: 810,
       gradient1: 0x85feff,
       gradient2: 0xff01ff,
-    });
+    })
 
     Background.circle({
       scene: this,
@@ -165,7 +160,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       size: 564,
       gradient1: 0xfbff00,
       gradient2: 0x85feff,
-    });
+    })
 
     Background.circle({
       scene: this,
@@ -175,7 +170,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       size: 914,
       gradient1: 0x3a4bba,
       gradient2: 0xbb00ff,
-    });
+    })
 
     // this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff)
     //   .setInteractive({ useHandCursor: true })
@@ -505,15 +500,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................
 
-    //.......... UPDATE TIMER      ..........................................................................
-    //! remove?
-    ManageSession.updateMovementTimer += delta;
-    // console.log(time) //running time in millisec
-    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
-    //....... end UPDATE TIMER  ..............................................................................
-    
     //....... moving ANIMATION ......................................................................................
-    Move.movingAnimation(this);
+    // Move.movingAnimation(this)
+    Move.checkIfPlayerIsMoving(this)
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()

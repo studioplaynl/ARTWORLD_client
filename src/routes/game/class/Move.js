@@ -22,11 +22,13 @@ class Move {
     }
   }
 
-  movingAnimation(scene) {
-    if (scene.cursorKeyIsDown || scene.playerIsMovingByClicking) {
+  movingAnimation(scene, animation) {
+    if (animation == "moving") {
       scene.player.anims.play(scene.playerMovingKey, true)
       scene.playerShadow.anims.play(scene.playerMovingKey, true)
-    } else if (!scene.cursorKeyIsDown || !scene.playerIsMovingByClicking) {
+    }
+
+    if (animation == "stop") {
       scene.player.anims.play(scene.playerStopKey, true)
       scene.playerShadow.anims.play(scene.playerStopKey, true)
     }
@@ -71,55 +73,55 @@ class Move {
     //send over the network
     // we pass on Phaser2D coordinates to ManageSession.sendMoveMessage
     // target is a vector
-  
+
     ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")
+
+    //play "move" animation
+    this.movingAnimation(scene, "moving")
+  }
+
+  checkIfPlayerIsMoving(scene) {
+    //  10 is our distance tolerance, i.e. how close the source can get to the target
+    //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    if (scene.playerIsMovingByClicking) {
+
+      // calculate distance only when playerIsMovingByClicking
+      scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y)
+      if (scene.distance < 10) {
+        scene.player.body.reset(scene.target.x, scene.target.y)
+        // send Stop command
+        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
+
+        //play "stop" animation
+        this.movingAnimation(scene, "stop")
+
+        scene.playerIsMovingByClicking = false
+      }
     }
+  }
 
   moveBySwiping(scene) {
-    if (scene.input.activePointer.isDown && scene.isClicking == false && scene.graffitiDrawing == false ) {
+    if (scene.input.activePointer.isDown && scene.isClicking == false && scene.graffitiDrawing == false) {
       scene.isClicking = true
     }
-    if (!scene.input.activePointer.isDown && scene.isClicking == true && scene.graffitiDrawing == false ) {
+    if (!scene.input.activePointer.isDown && scene.isClicking == true && scene.graffitiDrawing == false) {
       const playerX = scene.player.x
       const playerY = scene.player.y
 
-      const swipeX =
-        scene.input.activePointer.upX - scene.input.activePointer.downX
-      const swipeY =
-        scene.input.activePointer.upY - scene.input.activePointer.downY
-
-      scene.swipeAmount.x = swipeX
-      scene.swipeAmount.y = swipeY
+      scene.swipeAmount.x = scene.input.activePointer.upX - scene.input.activePointer.downX
+      scene.swipeAmount.y = scene.input.activePointer.upY - scene.input.activePointer.downY
 
       let moveSpeed = scene.swipeAmount.length()
-      if (moveSpeed > 600) moveSpeed = 600
+      if (moveSpeed > 600) moveSpeed = 600 //! optimize
 
       scene.playerIsMovingByClicking = true // trigger moving animation
 
-      scene.target.x = playerX + swipeX
-      scene.target.y = playerY + swipeY
+      scene.target.x = playerX + scene.swipeAmount.x
+      scene.target.y = playerY + scene.swipeAmount.y
 
       // generalized moving method
       this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2)
       scene.isClicking = false
-    }
-
-    scene.distance = Phaser.Math.Distance.Between(
-      scene.player.x,
-      scene.player.y,
-      scene.target.x,
-      scene.target.y
-    );
-
-    //  4 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (scene.playerIsMovingByClicking) {
-      if (scene.distance < 10) {
-        scene.player.body.reset(scene.target.x, scene.target.y)
-        scene.playerIsMovingByClicking = false
-      } else {
-        this.sendMovement(scene)
-      }
     }
   }
 
@@ -149,27 +151,10 @@ class Move {
       })
       scene.isClicking = false
     }
-
-    //  10 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (scene.playerIsMovingByClicking) {
-
-      // calculate distance only when playerIsMovingByClicking
-      scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y)
-      if (scene.distance < 10) {
-        scene.player.body.reset(scene.target.x, scene.target.y)
-        // send Stop command
-        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
-        scene.playerIsMovingByClicking = false
-      }
-    }
   }
 
   sendMovement(scene) {
     if (scene.createdPlayer) {
-      // if (
-      //   ManageSession.updateMovementTimer > ManageSession.updateMovementInterval
-      // ) {
       //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
       //moveTo or Stop
       ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)

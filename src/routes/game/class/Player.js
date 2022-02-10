@@ -88,8 +88,8 @@ class Player {
     if (avatarFrames > 1) {
       //. animation for the player avatar ......................
 
-      scene.playerMovingKey = "moving" + "_" + scene.playerAvatarKey;
-      scene.playerStopKey = "stop" + "_" + scene.playerAvatarKey;
+      scene.playerMovingKey = "moving" + "_" + scene.playerAvatarKey
+      scene.playerStopKey = "stop" + "_" + scene.playerAvatarKey
 
       //check if the animation already exists
       if (!scene.anims.exists(scene.playerMovingKey)) {
