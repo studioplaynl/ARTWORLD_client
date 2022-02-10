@@ -86,7 +86,7 @@ class ManageSession {
     this.socket.onstreamdata = (streamdata) => {
       //console.info("Received stream data:", streamdata)
       let data = JSON.parse(streamdata.data)
-
+      //console.log(data)
       for (const onlinePlayer of this.allConnectedUsers) {
 
         if (onlinePlayer.id == data.user_id) {
@@ -95,6 +95,7 @@ class ManageSession {
           // posX: -236.42065
           // posY: -35.09519
           // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
+          // action: action
 
           // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement 
           //because there the scene context is known
@@ -147,22 +148,9 @@ class ManageSession {
     } //this.socket.onstreampresence
   } //end createSocket
 
-  // async join() {
-  //   await this.socket.rpc("join", this.location).then((rec) => {
-  //     AllUsers = JSON.parse(rec.payload) || [];
-  //     console.log("joined " + this.location);
-  //     console.log("join users:");
-  //     console.log(AllUsers);
-  //     status = "joined";
-  //   });
-  // }
-
   deleteOnlinePlayer(onlinePlayer) {
     // console.log("onlinePlayer", onlinePlayer)
     // console.log("this.allConnectedUsers", this.allConnectedUsers)
-    // console.log("----")
-    // let removeUser = this.allConnectedUsers.filter(obj => { console.log("obj", obj);
-    // console.log("onlinePlayer.user_id", onlinePlayer.user_id); obj.id == onlinePlayer.user_id; console.log("obj.id", obj.id);})
     let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
     console.log("removeUser", removeUser)
     removeUser[0].destroy()
@@ -201,7 +189,8 @@ class ManageSession {
       Math.floor(Math.random() * 100) +
       ', "posY": ' +
       Math.floor(Math.random() * 100) +
-      ', "location": "home" }';
+      ', "location": "home" }'
+
     this.socket.rpc("move_position", data).then((rec) => {
       //status;
       data = JSON.parse(rec.payload) || [];
@@ -220,9 +209,12 @@ class ManageSession {
     posY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, posY)
     //console.log(posX, posY)
 
-    var opCode = 1;
-    var data =
-      '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }';
+    var opCode = 1
+    let action = "moveTo"
+
+    var data = `{ "action": "${action}", "posX": ${posX}, "posY": ${posY}, "location": "${this.location}" }`
+
+    //  '{ "action": ' + action +  '"posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }'
     //console.log(data)
 
     this.socket.rpc("move_position", data)

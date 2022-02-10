@@ -12,6 +12,7 @@ import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js"
+import Move from "../class/Move.js"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
@@ -500,8 +501,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
     //! make more efficient with event?
-    this.playerShadow.x = this.player.x + this.playerShadowOffset;
-    this.playerShadow.y = this.player.y + this.playerShadowOffset;
+    this.playerShadow.x = this.player.x + this.playerShadowOffset
+    this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................
 
     //.......... UPDATE TIMER      ..........................................................................
@@ -514,32 +515,32 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //........ PLAYER MOVE BY KEYBOARD  ......................................................................
     //! remove?
     if (!this.playerIsMovingByClicking) {
-      Player.moveByKeyboard(this); //player moving with keyboard with playerMoving Class
+      Move.moveByKeyboard(this); //player moving with keyboard with playerMoving Class
     }
 
-    Player.moveByCursor(this);
+    Move.moveByCursor(this);
     //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
     //....... moving ANIMATION ......................................................................................
-    Player.movingAnimation(this);
+    Move.movingAnimation(this);
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()
-    Player.identifySurfaceOfPointerInteraction(this)
+    Move.identifySurfaceOfPointerInteraction(this)
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {
-      Player.moveBySwiping(this)
+      Move.moveBySwiping(this)
     } else {
-      Player.moveByTapping(this)
+      Move.moveByTapping(this)
     }
 
     if (this.playerLikedPanel) {
-      Player.moveScrollablePanel(this)
+      Move.moveScrollablePanel(this)
     }
 
     if (this.playerItemsBar) {
-      Player.movePlayerContainer(this)
+      Move.movePlayerContainer(this)
     }
 
     // if (this.playerAddressbookContainer) {
