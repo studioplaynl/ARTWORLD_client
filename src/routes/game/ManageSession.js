@@ -103,7 +103,7 @@ class ManageSession {
             //console.log(onlinePlayer)
             const moveToX = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, data.posX)
             const moveToY = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, data.posY)
-            const target = new Phaser.Math.Vector2(moveToX, moveToY)
+            // const target = new Phaser.Math.Vector2(moveToX, moveToY)
             // const duration = target.length() / 90
             // console.log(duration)
 

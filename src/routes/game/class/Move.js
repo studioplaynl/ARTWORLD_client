@@ -168,7 +168,7 @@ class Move {
           scene.playerIsMovingByClicking = true // activate moving animation
 
           // generalized moving method
-          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed) // send moveTo over network, calculate speed as function of distance
+          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed / 4) // send moveTo over network, calculate speed as function of distance
         }
       })
       scene.isClicking = false
