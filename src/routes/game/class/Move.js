@@ -126,7 +126,6 @@ class Move {
 
       let moveSpeed = scene.swipeAmount.length()
       // console.log("moveSpeed", moveSpeed)
-
       // we scale the arrival check (distanceTolerance) to the speed of the player
       scene.distanceTolerance = moveSpeed / 60
       // console.log("scene.distanceTolerance", scene.distanceTolerance)
@@ -162,6 +161,7 @@ class Move {
           scene.target.y = scene.input.activePointer.worldY
 
           let moveSpeed = scene.target.length()
+
           // we scale the arrival check (distanceTolerance) to the speed of the player
           scene.distanceTolerance = moveSpeed / 60
           
