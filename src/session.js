@@ -23,17 +23,18 @@ Session.subscribe((value) => {
 })
 
 
-let profileStore = localStorage.getItem("profile")
-export const Profile = writable(profileStore ? JSON.parse(profileStore) : null);
-Profile.subscribe((value) => {
-    if (value) {
-        localStorage.setItem('profile', JSON.stringify(value));
-        ManageSession.userProfile = value //! push the profile with url to ManageSession
-        // console.log("Profile.subscribe((value)")
-        // console.log(value)
-    }
-    else localStorage.removeItem('profile'); // for logout
-})
+// let profileStore = localStorage.getItem("profile")
+// export const Profile = writable(profileStore ? JSON.parse(profileStore) : null);
+ export const Profile = writable(null);
+// Profile.subscribe((value) => {
+//     if (value) {
+//         localStorage.setItem('profile', JSON.stringify(value));
+//         ManageSession.userProfile = value //! push the profile with url to ManageSession
+//         // console.log("Profile.subscribe((value)")
+//         // console.log(value)
+//     }
+//     else localStorage.removeItem('profile'); // for logout
+// })
 
 
 export const Error = writable();

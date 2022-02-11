@@ -48,7 +48,7 @@ export default class MainMenu extends Phaser.Scene {
     this.scale.on("resize", this.resize, this)
 
     //* check if the user profile is loaded, to be able to send the player to the right location
-    if (typeof (ManageSession.userProfile.meta.location) != "undefined") {
+    if (!!ManageSession.userProfile) {
       ManageSession.launchLocation = ManageSession.userProfile.meta.location
       
       //console.log(ManageSession.launchLocation)
@@ -56,8 +56,9 @@ export default class MainMenu extends Phaser.Scene {
     } else {
       getAccount("", true)
         .then(rec => {
+          ManageSession.userProfile = rec
           //* only set the menu button visible if the user data is downloaded!
-          ManageSession.launchLocation = ManageSession.freshSession.meta.location
+          ManageSession.launchLocation = rec.meta.location
           ManageSession.checkSceneExistence()
         })
     }
