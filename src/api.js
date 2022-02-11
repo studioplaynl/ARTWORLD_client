@@ -186,7 +186,7 @@ export async function getAccount(id, avatar) {
   if(!!!id){
     const account = await client.getAccount(Sess);
     let user = account.user;
-    if(!!!avatar) user.url = await getAvatar(user.avatar_url) //!we need to get avatar.url even when there is an avatar
+    user.url = await getAvatar(user.avatar_url)
     user.meta = JSON.parse(user.metadata)
     console.log(user)
     Profile.set(user)
