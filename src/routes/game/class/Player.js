@@ -4,6 +4,7 @@ import { listObjects, listImages, convertImage, getFullAccount, updateObject, ge
 import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList"
 import R_UI from "./R_UI"
+import Preloader from "./Preloader"
 
 class Player {
   constructor() { }
@@ -187,60 +188,62 @@ class Player {
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y)
 
-    //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
-    scene.playerLikedPanelKeys = { artworks: [{ name: 'not_found' }, { name: 'not_found' }, { name: 'not_found' }] }
-    console.log(scene.playerLikedPanelKeys)
+    // //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
+    // scene.playerLikedPanelKeys = { artworks: [{ name: 'not_found' }, { name: 'not_found' }, { name: 'not_found' }] }
+    // console.log(scene.playerLikedPanelKeys)
 
-    scene.playerLikedPanel = scene.rexUI.add
-      .scrollablePanel({
-        x: scene.player.x + 200,
-        y: scene.player.y,
-        width: 200,
-        height: 200,
+    // scene.playerLikedPanel = scene.rexUI.add
+    //   .scrollablePanel({
+    //     x: scene.player.x + 200,
+    //     y: scene.player.y,
+    //     width: 200,
+    //     height: 200,
 
-        scrollMode: 0,
+    //     scrollMode: 0,
 
-        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+    //     background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
 
-        panel: {
-          child: R_UI.createPanel(scene, scene.playerLikedPanelKeys),
-        },
+    //     panel: {
+    //       child: R_UI.createPanel(scene, scene.playerLikedPanelKeys),
+    //     },
 
-        slider: {
-          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
-          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
-        },
+    //     slider: {
+    //       track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+    //       thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+    //     },
 
-        space: {
-          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
-        },
+    //     space: {
+    //       left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+    //     },
 
-        mouseWheelScroller: {
-          focus: false,
-          speed: 0.1
-        },
+    //     mouseWheelScroller: {
+    //       focus: false,
+    //       speed: 0.1
+    //     },
 
-        name: "playerLikedPanel"
-      })
-      .layout()
+    //     name: "playerLikedPanel"
+    //   })
+    //   .layout()
 
-    scene.input.topOnly = false;
-    const labels = [];
-    labels.push(
-      ...scene.playerLikedPanel.getElement("#artworks.items", true)
-    )
-    //hide the itemsPanel
-    scene.playerLikedPanel.setVisible(false)
+    // scene.input.topOnly = false;
+    // const labels = [];
+    // labels.push(
+    //   ...scene.playerLikedPanel.getElement("#artworks.items", true)
+    // )
+    // //hide the itemsPanel
+    // scene.playerLikedPanel.setVisible(false)
 
     // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
     scene.events.on("playerLikedPanelComplete", () => {
       //console.log("scene.events")
-      console.log(scene.playerLikedPanel)
+      // console.log(scene.playerLikedPanel)
 
-      console.log(scene.playerLikedPanelKeys)
+      // console.log(scene.playerLikedPanelKeys)
 
       //destroy the old panel
-      scene.playerLikedPanel.destroy()
+      // scene.playerLikedPanel.destroy()
+
+      scene.spinner.destroy()
 
       //create a new panel
 
@@ -309,7 +312,9 @@ class Player {
 
         scene.playerLikedButtonCircle.on("pointerdown", async () => {
           // we display placeholder panel, and replace it with refreshed panel once server is done loading
-          scene.playerLikedPanel.setVisible(true)
+          // scene.playerLikedPanel.setVisible(true)
+
+          Preloader.runSpinner(scene, scene.player.x + 150, scene.player.y, 100, 100)
 
           //the liked array is in the latest state, but we have to get the binairy data (the images)
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
