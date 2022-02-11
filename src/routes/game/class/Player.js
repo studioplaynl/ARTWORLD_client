@@ -517,61 +517,24 @@ class Player {
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.onlinePlayerItemsBar = scene.add.container(0, 0)
 
-    //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
-    scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
-    console.log(scene.onlinePlayerLikedPanelKeys)
+  }
 
-    scene.onlinePlayerLikedPanel = scene.rexUI.add
-      .scrollablePanel({
-        x: scene.player.x + 200,
-        y: scene.player.y,
-        width: 200,
-        height: 200,
+  async displayOnlinePlayerItemsBar(scene, player) {
+    ManageSession.selectedOnlinePlayer = player
 
-        scrollMode: 0,
+    // giving the position for the container that holds all the buttons
+    scene.onlinePlayerItemsBar.x = ManageSession.selectedOnlinePlayer.x
+    scene.onlinePlayerItemsBar.y = ManageSession.selectedOnlinePlayer.y
 
-        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+    scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
+    if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
-        panel: {
-          child: R_UI.createPanel(scene, scene.onlinePlayerLikedPanelKeys),
-        },
-
-        slider: {
-          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
-          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
-        },
-
-        space: {
-          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
-        },
-
-        name: "onlinePlayerLikedPanel"
-      })
-      .layout()
-
-    scene.input.topOnly = false;
-    const labels = [];
-    labels.push(
-      ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
-    )
-    //hide the itemsPanel
-    scene.onlinePlayerLikedPanel.setVisible(false)
-
-    // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
-    scene.events.on("onlinePlayerLikedPanelComplete", () => {
-      console.log("222")
-      //console.log("scene.events")
-      console.log(scene.onlinePlayerLikedPanel)
-      console.log(scene.onlinePlayerLikedPanelKeys) //!undifined
-
-      //destroy the old panel
-      scene.onlinePlayerLikedPanel.destroy()
-
-      //create a new panel
+      //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
+      scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
+      console.log(scene.onlinePlayerLikedPanelKeys)
 
       scene.onlinePlayerLikedPanel = scene.rexUI.add
         .scrollablePanel({
-          //! get the clicked onlinePlayer
           x: ManageSession.selectedOnlinePlayer.x + 200,
           y: ManageSession.selectedOnlinePlayer.y,
           width: 200,
@@ -593,6 +556,7 @@ class Player {
           space: {
             left: 10, right: 10, top: 10, bottom: 10, panel: 10,
           },
+
           name: "onlinePlayerLikedPanel"
         })
         .layout()
@@ -602,23 +566,56 @@ class Player {
       labels.push(
         ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
       )
+      //hide the itemsPanel
+      scene.onlinePlayerLikedPanel.setVisible(false)
 
-      scene.onlinePlayerLikedPanel.setVisible(true)
-    })
-  }
+      // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
+      scene.events.on("onlinePlayerLikedPanelComplete", () => {
 
-  async displayOnlinePlayerItemsBar(scene, player) {
-    ManageSession.selectedOnlinePlayer = player
+        console.log(scene.onlinePlayerLikedPanel)
+        console.log(scene.onlinePlayerLikedPanelKeys) //!undefined
 
-    // giving the position for the container that holds all the buttons
-    scene.onlinePlayerItemsBar.x = ManageSession.selectedOnlinePlayer.x
-    scene.onlinePlayerItemsBar.y = ManageSession.selectedOnlinePlayer.y
+        //destroy the old panel
+        scene.onlinePlayerLikedPanel.destroy()
 
-    console.log("player", player)
-    console.log("playManageSession.selectedOnlinePlayer", ManageSession.selectedOnlinePlayer)
+        //create a new panel
 
-    scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
-    if (scene.isOnlinePlayerItemsBarDisplayed == false) {
+        scene.onlinePlayerLikedPanel = scene.rexUI.add
+          .scrollablePanel({
+            //! get the clicked onlinePlayer
+            x: ManageSession.selectedOnlinePlayer.x + 200,
+            y: ManageSession.selectedOnlinePlayer.y,
+            width: 200,
+            height: 200,
+
+            scrollMode: 0,
+
+            background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+            panel: {
+              child: R_UI.createPanel(scene, scene.onlinePlayerLikedPanelKeys),
+            },
+
+            slider: {
+              track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+              thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+            },
+
+            space: {
+              left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+            },
+            name: "onlinePlayerLikedPanel"
+          })
+          .layout()
+
+        scene.input.topOnly = false;
+        const labels = [];
+        labels.push(
+          ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
+        )
+
+        scene.onlinePlayerLikedPanel.setVisible(true)
+      })
 
       Promise.all([listObjects("liked", player.id, 10)]).then((rec) => {
         // it checks if there was ever before a liked object created for the online player
@@ -639,14 +636,13 @@ class Player {
           scene.onlinePlayerLikedButtonCircle.on("pointerdown", async () => {
             // we display placeholder panel, and replace it with refreshed panel once server is done loading
             scene.onlinePlayerLikedPanel.setVisible(true)
-            scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert methode to onlinePlayer
+            scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert method to onlinePlayer
           })
 
           scene.onlinePlayerItemsBar.add([scene.onlinePlayerLikedButtonCircle, scene.onlinePlayerLikedButton])
 
           scene.isOnlinePlayerItemsBarDisplayed = true
         } else {
-          console.log("else rec", rec)
           ManageSession.likedOnlinePlayer = {}
 
           const type = "liked"
