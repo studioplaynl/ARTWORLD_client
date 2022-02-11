@@ -162,6 +162,13 @@ class ArtworkList {
     console.log("ManageSession.allLiked", ManageSession.liked)
 
     const allLikedArray = ManageSession.liked.liked
+    // we get an array of objects, and object has the form of: 
+    // {
+    // collection: "drawing"
+    // key: "groenblauwtoekan"
+    // url: "drawing/4ced8bff-d79c-4842-b2bd-39e9d9aa597e/groenblauwtoekan.png"
+    // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
+    // }
     console.log(allLikedArray)
     //we get the number of elements we want to show
     //we subtract when an item is loaded, if zero we are complete and update the list
