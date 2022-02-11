@@ -70,6 +70,8 @@ class Move {
   }
 
   moveObjectToTarget(scene, container, target, speed) {
+    // we check if player stays in the world
+    // keep the player in the world and send the moveTo commands
     if (target.x < 0) {
       target.x = 0
     }
