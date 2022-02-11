@@ -159,9 +159,9 @@ class ArtworkList {
     // ]
 
     //we want to get a preview of the liked item, for the latest version
+    console.log("ManageSession.allLiked", ManageSession.liked)
 
-
-    const allLikedArray = Object.keys(ManageSession.allLiked)
+    const allLikedArray = ManageSession.liked.liked
     console.log(allLikedArray)
     //we get the number of elements we want to show
     //we subtract when an item is loaded, if zero we are complete and update the list
@@ -172,11 +172,13 @@ class ArtworkList {
 
     allLikedArray.map(async (element) => {
       console.log(element)
-      const splitKey = element.split("/")[2].split(".")[0]
+
+
+      // const splitKey = element.split("/")[2].split(".")[0]
       //we get only the relevant part of the url for the key:
       //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png -> geelCoral.png
 
-      const key = `${splitKey}_128`
+      const key = `${element.key}_128`
 
       //if the image is not yet loaded, we download it
       if (!scene.textures.exists(key)) {
