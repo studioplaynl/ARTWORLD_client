@@ -314,6 +314,7 @@ class Player {
           // we display placeholder panel, and replace it with refreshed panel once server is done loading
           // scene.playerLikedPanel.setVisible(true)
 
+          // display spinner while images are being downloaded
           Preloader.runSpinner(scene, scene.player.x + 150, scene.player.y, 100, 100)
 
           //the liked array is in the latest state, but we have to get the binairy data (the images)
