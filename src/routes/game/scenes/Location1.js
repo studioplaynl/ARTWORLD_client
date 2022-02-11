@@ -1,18 +1,19 @@
-import { CONFIG } from "../config.js";
-import ManageSession from "../ManageSession";
-import { getAccount } from '../../../api.js';
+import { CONFIG } from "../config.js"
+import ManageSession from "../ManageSession"
+import { getAccount } from '../../../api.js'
 
 import PlayerDefault from '../class/PlayerDefault'
-import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js";
+import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js"
 import Player from '../class/Player.js'
 import Preloader from '../class/Preloader.js'
-import BouncingBird from "../class/BouncingBird.js";
-import DebugFuntions from "../class/DebugFuntions.js";
-import LocationDialogbox from "../class/LocationDialogbox.js";
-import GraffitiWall from "../class/GraffitiWall.js";
+import BouncingBird from "../class/BouncingBird.js"
+import DebugFuntions from "../class/DebugFuntions.js"
+import LocationDialogbox from "../class/LocationDialogbox.js"
+import GraffitiWall from "../class/GraffitiWall.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
-import GenerateLocation from "../class/GenerateLocation.js";
-import HistoryTracker from "../class/HistoryTracker.js";
+import GenerateLocation from "../class/GenerateLocation.js"
+import HistoryTracker from "../class/HistoryTracker.js"
+import Move from "../class/Move.js"
 
 export default class Location1 extends Phaser.Scene {
 
@@ -234,7 +235,6 @@ export default class Location1 extends Phaser.Scene {
 
     //this.exampleREXUI()
 
-    Player.identifySurfaceOfPointerInteraction(this)
 
   } // end create
 
@@ -854,52 +854,39 @@ export default class Location1 extends Phaser.Scene {
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom;
 
-    //.......................................................................
+    //! make more efficient with event?
+    this.gameCam.zoom = this.UI_Scene.currentZoom
+
 
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
+    //! make more efficient with event?
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................
 
-    //.......... UPDATE TIMER      ..........................................................................
-    ManageSession.updateMovementTimer += delta;
-    // console.log(time) //running time in millisec
-    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
-    //....... end UPDATE TIMER  ..............................................................................
-
-    //........ PLAYER MOVE BY KEYBOARD  ......................................................................
-    if (!this.playerIsMovingByClicking) {
-      Player.moveByKeyboard(this)
-    }
-
-    Player.moveByCursor(this)
-    //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
-
     //....... moving ANIMATION ......................................................................................
-    Player.movingAnimation(this)
+    // Move.movingAnimation(this)
+    Move.checkIfPlayerIsMoving(this)
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()
-
-    // to detect if the player is drawing on a drawing wall
-    Player.identifySurfaceOfPointerInteraction(this)
+    Move.identifySurfaceOfPointerInteraction(this)
 
     // to detect if the player is clicking/tapping on one place or swiping
-    if (this.input.activePointer.downX == this.input.activePointer.upX) {
-      Player.moveByTapping(this)
+    if (this.input.activePointer.downX != this.input.activePointer.upX) {
+      Move.moveBySwiping(this)
     } else {
-      Player.moveBySwiping(this)
+      Move.moveByTapping(this)
     }
 
-    if (this.scrollablePanel) {
-      Player.moveScrollablePanel(this);
+    if (this.playerLikedPanel) {
+      Move.moveScrollablePanel(this)
     }
 
-    if (this.playerContainer) {
-      Player.movePlayerContainer(this);
+    if (this.playerItemsBar) {
+      Move.movePlayerContainer(this)
     }
 
 

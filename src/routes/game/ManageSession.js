@@ -86,7 +86,7 @@ class ManageSession {
     this.socket.onstreamdata = (streamdata) => {
       //console.info("Received stream data:", streamdata)
       let data = JSON.parse(streamdata.data)
-
+      //console.log(data)
       for (const onlinePlayer of this.allConnectedUsers) {
 
         if (onlinePlayer.id == data.user_id) {
@@ -95,30 +95,51 @@ class ManageSession {
           // posX: -236.42065
           // posY: -35.09519
           // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
+          // action: action
 
-          // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement 
-          //because there the scene context is known
-          let positionVector = new Phaser.Math.Vector2(data.posX, data.posY)
-          positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, positionVector)
+          if (data.action == "moveTo") {
+            //get the scene context from the onlinePlayer
+            const scene = onlinePlayer.scene
+            //console.log(onlinePlayer)
+            const moveToX = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, data.posX)
+            const moveToY = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, data.posY)
 
-          onlinePlayer.posX = positionVector.x
-          onlinePlayer.posY = positionVector.y
+            //!scale duration to distance
+            const target = new Phaser.Math.Vector2(moveToX, moveToY)
+            const duration = target.length() / 10
+            // console.log(duration)
 
-          onlinePlayer.x = positionVector.x
-          onlinePlayer.y = positionVector.y
+            scene.tweens.add({
+              targets: onlinePlayer,
+              x: moveToX,
+              y: moveToY,
+              paused: false,
+              duration: duration,
+            })
 
-          //play the moving animation of the onlineplayer
-          const movingKey = onlinePlayer.getData("movingKey")
+            const movingKey = onlinePlayer.getData("movingKey")
+            onlinePlayer.anims.play(movingKey, true)
+          }
 
-          //get the key for the moving animation of the player, and play it
-          onlinePlayer.anims.play(movingKey, true)
+          if (data.action == "stop") {
+            // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement 
+            //because there the scene context is known
+            let positionVector = new Phaser.Math.Vector2(data.posX, data.posY)
+            positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, positionVector)
 
-          setTimeout(() => {
+            onlinePlayer.posX = positionVector.x
+            onlinePlayer.posY = positionVector.y
+
+            onlinePlayer.x = positionVector.x
+            onlinePlayer.y = positionVector.y
+
+            //get the key for the stop animation of the player, and play it
             onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true)
-          }, 500)
+          }
         }
       }
     }
+
     this.socket.onstreampresence = (streampresence) => {
       //streampresence is everybody that is present also SELF
       if (!!streampresence.leaves) {
@@ -147,22 +168,9 @@ class ManageSession {
     } //this.socket.onstreampresence
   } //end createSocket
 
-  // async join() {
-  //   await this.socket.rpc("join", this.location).then((rec) => {
-  //     AllUsers = JSON.parse(rec.payload) || [];
-  //     console.log("joined " + this.location);
-  //     console.log("join users:");
-  //     console.log(AllUsers);
-  //     status = "joined";
-  //   });
-  // }
-
   deleteOnlinePlayer(onlinePlayer) {
     // console.log("onlinePlayer", onlinePlayer)
     // console.log("this.allConnectedUsers", this.allConnectedUsers)
-    // console.log("----")
-    // let removeUser = this.allConnectedUsers.filter(obj => { console.log("obj", obj);
-    // console.log("onlinePlayer.user_id", onlinePlayer.user_id); obj.id == onlinePlayer.user_id; console.log("obj.id", obj.id);})
     let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
     console.log("removeUser", removeUser)
     removeUser[0].destroy()
@@ -201,7 +209,8 @@ class ManageSession {
       Math.floor(Math.random() * 100) +
       ', "posY": ' +
       Math.floor(Math.random() * 100) +
-      ', "location": "home" }';
+      ', "location": "home" }'
+
     this.socket.rpc("move_position", data).then((rec) => {
       //status;
       data = JSON.parse(rec.payload) || [];
@@ -211,7 +220,7 @@ class ManageSession {
 
   }
 
-  sendMoveMessage(scene, posX, posY) {
+  sendMoveMessage(scene, posX, posY, action) {
     //transpose phaser coordinates to artworld coordinates
     //console.log(scene)
 
@@ -220,9 +229,10 @@ class ManageSession {
     posY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, posY)
     //console.log(posX, posY)
 
-    var opCode = 1;
-    var data =
-      '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }';
+    var opCode = 1
+    var data = `{ "action": "${action}", "posX": ${posX}, "posY": ${posY}, "location": "${this.location}" }`
+
+    //  '{ "action": ' + action +  '"posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }'
     //console.log(data)
 
     this.socket.rpc("move_position", data)

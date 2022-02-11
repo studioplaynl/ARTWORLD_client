@@ -1,19 +1,20 @@
-import { CONFIG } from "../config.js";
-import ManageSession from "../ManageSession";
+import { CONFIG } from "../config.js"
+import ManageSession from "../ManageSession"
 import PlayerDefault from '../class/PlayerDefault'
-import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js";
+import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js"
 import Player from '../class/Player.js'
-import DebugFuntions from "../class/DebugFuntions.js";
+import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
-import GenerateLocation from "../class/GenerateLocation.js";
-import HistoryTracker from "../class/HistoryTracker";
-import TestLoader from "../class/TestLoader.js";
+import GenerateLocation from "../class/GenerateLocation.js"
+import HistoryTracker from "../class/HistoryTracker"
+import TestLoader from "../class/TestLoader.js"
+import Move from "../class/Move.js"
 
-//import { getAvatar } from '../../profile.svelte';
-import { getAccount, listImages } from '../../../api.js';
+//import { getAvatar } from '../../profile.svelte'
+import { getAccount, listImages } from '../../../api.js'
 
-import { compute_slots } from "svelte/internal";
-import { location } from "svelte-spa-router";
+import { compute_slots } from "svelte/internal"
+import { location } from "svelte-spa-router"
 
 export default class Location4 extends Phaser.Scene {
   constructor() {
@@ -70,7 +71,7 @@ export default class Location4 extends Phaser.Scene {
   }
 
   async preload() {
-    
+
     // loading bar
     TestLoader.run(this)
 
@@ -84,7 +85,7 @@ export default class Location4 extends Phaser.Scene {
     this.load.image("exhibit2", "./assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg")
     this.load.image("exhibit3", "./assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg")
     this.load.image("exhibit4", "./assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg")
-    
+
 
     //this.load.video('videoFile', './assets/video/kunstlab_vrolijkheid.mp4', 'loadeddata', false, true);
     //....... end IMAGES ......................................................................
@@ -98,7 +99,7 @@ export default class Location4 extends Phaser.Scene {
   }
 
   async create() {
-    
+
     // for back button
     HistoryTracker.locationPush(this);
 
@@ -132,7 +133,7 @@ export default class Location4 extends Phaser.Scene {
     this.playerGroup.add(this.playerShadow);
 
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
-    
+
     // //1
     // this.player = this.physics.add
     //   .sprite(spawnPoint.x, spawnPoint.y, this.playerAvatarPlaceholder)
@@ -1037,48 +1038,42 @@ export default class Location4 extends Phaser.Scene {
   }
 
   update(time, delta) {
-   //...... ONLINE PLAYERS ................................................
-   Player.loadPlayerAvatar(this)
-   Player.parseNewOnlinePlayerArray(this)
-   //.......................................................................
+    //...... ONLINE PLAYERS ................................................
+    Player.loadPlayerAvatar(this)
+    Player.parseNewOnlinePlayerArray(this)
+    //.......................................................................
 
     //ManageSession.loadAndCreatePlayerAvatar("AZC1_Scene")
 
     this.gameCam.zoom = this.UI_Scene.currentZoom;
 
-
-    // //.......................................................................
-
-    // //........... PLAYER SHADOW .............................................................................
+    //........... PLAYER SHADOW .............................................................................
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
-    // //........... end PLAYER SHADOW .........................................................................
+    //........... end PLAYER SHADOW .........................................................................
 
-    //.......... UPDATE TIMER      ..........................................................................
-    ManageSession.updateMovementTimer += delta;
-    // console.log(time) //running time in millisec
-    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
-    //....... end UPDATE TIMER  ..............................................................................
-
-    // //........ PLAYER MOVE BY KEYBOARD  ......................................................................
-    if (!this.playerIsMovingByClicking) {
-      Player.moveByKeyboard(this)
-    }
-
-    Player.moveByCursor(this)
-    //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
     //....... moving ANIMATION ......................................................................................
-    Player.movingAnimation(this)
+    // Move.movingAnimation(this)
+    Move.checkIfPlayerIsMoving(this)
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()
-    
+    Move.identifySurfaceOfPointerInteraction(this)
+
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {
-      Player.moveBySwiping(this)
+      Move.moveBySwiping(this)
     } else {
-      Player.moveByTapping(this)
+      Move.moveByTapping(this)
+    }
+
+    if (this.playerLikedPanel) {
+      Move.moveScrollablePanel(this)
+    }
+
+    if (this.playerItemsBar) {
+      Move.movePlayerContainer(this)
     }
 
   } //update

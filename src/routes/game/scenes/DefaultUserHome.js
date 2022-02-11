@@ -13,7 +13,7 @@ import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js";
 import ArtworkList from "../class/ArtworkList.js"
-import { element } from "svelte/internal";
+import Move from "../class/Move.js"
 
 export default class DefaultUserHome extends Phaser.Scene {
 
@@ -174,8 +174,31 @@ export default class DefaultUserHome extends Phaser.Scene {
         Preloader.runSpinner(this, this.worldSize.x / 2, this.worldSize.y / 2, 400, 400)
 
         await listImages("drawing", this.location, 100).then((rec) => {
-            this.userArtServerList = rec
-            console.log("images", this.userArtServerList)
+            //this.userArtServerList is an array with objects, in the form of:
+
+            //collection: "drawing"
+            //create_time: "2022-01-27T16:46:00Z"
+            //key: "1643301959176_cyaanConejo"
+            //permission_read: 1
+            //permission_write: 1
+            //update_time: "2022-02-09T13:47:01Z"
+            //user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
+            //value:
+            //  displayname: "cyaanConejo"
+            //  json: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
+            //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
+            //  status: ""
+            //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
+            //  version: 0
+
+            //permission_read: 1 indicates hidden
+            //permission_read: 2 indicates visible
+
+            //we filter out the visible artworks
+            //filter only the visible art = "permission_read": 2
+            this.userArtServerList = rec.filter(obj => obj.permission_read == 2)
+
+            console.log("this.userArtServerList", this.userArtServerList)
             if (this.userArtServerList.length > 0) {
                 this.userArtServerList.forEach((element, index) => {
                     this.downloadArt(element, index)
@@ -285,41 +308,27 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.playerShadow.y = this.player.y + this.playerShadowOffset
         //........... end PLAYER SHADOW .........................................................................
 
-        //.......... UPDATE TIMER      ..........................................................................
-        ManageSession.updateMovementTimer += delta
-        // console.log(time) //running time in millisec
-        // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
-        //....... end UPDATE TIMER  ..............................................................................
-
-        //........ PLAYER MOVE BY KEYBOARD  ......................................................................
-        if (!this.playerIsMovingByClicking) {
-            Player.moveByKeyboard(this) //player moving with keyboard with playerMoving Class
-        }
-
-        Player.moveByCursor(this)
-        //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
-
         //....... moving ANIMATION ......................................................................................
-        Player.movingAnimation(this)
+        // Move.movingAnimation(this)
+        Move.checkIfPlayerIsMoving(this)
         //....... end moving ANIMATION .................................................................................
 
         //this.playerMovingByClicking()
-        // to detect if the player is scrolling
-        Player.identifySurfaceOfPointerInteraction(this)
+        Move.identifySurfaceOfPointerInteraction(this)
 
         // to detect if the player is clicking/tapping on one place or swiping
         if (this.input.activePointer.downX != this.input.activePointer.upX) {
-            Player.moveBySwiping(this)
+            Move.moveBySwiping(this)
         } else {
-            Player.moveByTapping(this)
+            Move.moveByTapping(this)
         }
 
         if (this.playerLikedPanel) {
-            Player.moveScrollablePanel(this);
+            Move.moveScrollablePanel(this)
         }
 
         if (this.playerItemsBar) {
-            Player.movePlayerContainer(this);
+            Move.movePlayerContainer(this)
         }
     } //update
 } //class

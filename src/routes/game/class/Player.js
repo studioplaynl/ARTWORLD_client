@@ -5,7 +5,6 @@ import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList"
 import R_UI from "./R_UI"
 
-
 class Player {
   constructor() { }
 
@@ -22,6 +21,21 @@ class Player {
         scene.createdPlayer = false
 
         //console.log("loadAndCreatePlayerAvatar")
+        //put the player in the server last known position
+
+        scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, ManageSession.userProfile.meta.posX)
+        scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, ManageSession.userProfile.meta.posY)
+
+        // scene.player.setCollideWorldBounds(true)
+        // scene.player.onWorldBounds = true
+
+        // console.log(scene.player.body.checkCollision, "scene.player.body.checkCollision")
+        // console.log(scene.player.body, "scene.player.body")
+        // scene.player.body.onWorldBounds = true
+        // scene.player.body.checkCollision.up = true
+        // scene.player.body.checkCollision.down = true
+        // scene.player.body.checkCollision.left = true
+        // scene.player.body.checkCollision.right = true
 
         // is playerAvaterKey already in loadedAvatars?
         //no -> load the avatar and add to loadedAvatars
@@ -89,8 +103,8 @@ class Player {
     if (avatarFrames > 1) {
       //. animation for the player avatar ......................
 
-      scene.playerMovingKey = "moving" + "_" + scene.playerAvatarKey;
-      scene.playerStopKey = "stop" + "_" + scene.playerAvatarKey;
+      scene.playerMovingKey = "moving" + "_" + scene.playerAvatarKey
+      scene.playerStopKey = "stop" + "_" + scene.playerAvatarKey
 
       //check if the animation already exists
       if (!scene.anims.exists(scene.playerMovingKey)) {
@@ -307,13 +321,11 @@ class Player {
         scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
 
         scene.playerAddressbookButtonCircle.on("pointerdown", () => {
-          scene.events.emit("playerAddressbook")
-        })
 
-        scene.events.on("playerAddressbook", () => {
-          console.log("events on")
+          console.log("clicked")
+          console.log("clicked addressbook", ManageSession.addressbook.addressbook)
 
-          if (ManageSession.addressbook.addressbook.length > 0) {
+          if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
             const playerAddressbookWidth = 120
             const playerAddressbookHeight = 200
 
@@ -355,13 +367,93 @@ class Player {
                   const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
                   ManageSession.addressbook = { addressbook: filteredArray }
 
-                  // update server
-                  // const type = "addressbook"
-                  // const name = type + "_" + ManageSession.userProfile.id
-                  // const pub = 2
-                  // const value = ManageSession.addressbook
+                  console.log("after deleting", ManageSession.addressbook)
 
-                  // updateObject(type, name, value, pub)
+                  // update server
+                  const type = "addressbook"
+                  const name = type + "_" + ManageSession.userProfile.id
+                  const pub = 2
+                  const value = ManageSession.addressbook
+
+                  updateObject(type, name, value, pub)
+
+                  scene.events.emit("playerAddressbook")
+                })
+
+              scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookButtonCircle])
+            })
+
+            scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
+
+            scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
+              .setOrigin(0)
+              .setInteractive()
+              .on("pointermove", (pointer) => {
+                if (pointer.isDown) {
+                  // console.log("pointermove")
+                  if (pointer.isDown) {
+                    scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
+                    scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, y); // value, bottom border, top border
+                  }
+                }
+              })
+          }
+        })
+
+        scene.events.on("playerAddressbook", () => {
+          console.log("events on")
+          console.log("events addressbook", ManageSession.addressbook.addressbook)
+          if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
+            const playerAddressbookWidth = 120
+            const playerAddressbookHeight = 200
+
+            const x = scene.player.x - playerAddressbookWidth / 2
+            const y = scene.player.y + 110
+
+            scene.playerAddressbookMask = scene.add.graphics()
+              .fillStyle(0xffffff, 1)
+              .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+              .lineStyle(3, 0x000000, 1)
+              .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+
+            scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
+
+            const smileyFaces = ["friend", "friend2", "friend3"]
+
+            const height = 50
+
+            ManageSession.addressbook.addressbook.forEach((element, index) => {
+
+              const y = index * height
+
+              const randomNumber = Math.floor(Math.random() * smileyFaces.length)
+
+              const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
+                .setOrigin(0)
+                .setInteractive({ useHandCursor: true })
+                .on("pointerdown", () => {
+                  HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
+                })
+
+              const playerAddressbookButtonCircle = scene.add
+                .circle(70, y, 15, 0xffffff)
+                .setOrigin(0)
+                .setInteractive({ useHandCursor: true })
+                .setStrokeStyle(2, 0x0000)
+                .on("pointerdown", () => {
+
+                  const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
+                  ManageSession.addressbook = { addressbook: filteredArray }
+
+                  console.log("after deleting", ManageSession.addressbook)
+
+                  // update server
+                  const type = "addressbook"
+                  const name = type + "_" + ManageSession.userProfile.id
+                  const pub = 2
+                  const value = ManageSession.addressbook
+
+                  updateObject(type, name, value, pub)
 
                   scene.events.emit("playerAddressbook")
                 })
@@ -406,7 +498,7 @@ class Player {
         scene.playerItemsBar.setVisible(false)
         scene.playerLikedPanel.setVisible(false)
         scene.isPlayerItemsBarDisplayed = false
-        if (scene.playerAddressbookMask) {
+        if (scene.playerAddressbookContainer) {
           scene.playerAddressbookMask.destroy()
           scene.playerAddressbookContainer.destroy()
           scene.playerAddressbookZone.destroy()
@@ -501,7 +593,6 @@ class Player {
           space: {
             left: 10, right: 10, top: 10, bottom: 10, panel: 10,
           },
-
           name: "onlinePlayerLikedPanel"
         })
         .layout()
@@ -578,8 +669,8 @@ class Player {
           .setStrokeStyle(2, 0x0000)
           .on("pointerdown", () => {
             // entering the home of a player
-            HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.selectedOnlinePlayer.user_id)
-            console.log("ManageSession.selectedOnlinePlayer.user_id", ManageSession.selectedOnlinePlayer.user_id)
+            HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.selectedOnlinePlayer.id)
+            console.log("ManageSession.selectedOnlinePlayer.id", ManageSession.selectedOnlinePlayer.id)
           })
         scene.onlinePlayerHomeEnterButton = scene.add.image(-30, -120, "enter_home")
 
@@ -592,11 +683,14 @@ class Player {
             // saving the home of a player
             // ManageSession.addressBook[player.user_id] = player.user_id
 
+            console.log("!!! ManageSession.selectedOnlinePlayer", ManageSession.selectedOnlinePlayer)
+
             console.log("ManageSession address book", ManageSession.addressbook)
 
-            console.log("ManageSession.addressbook.addressbook", ManageSession.addressbook.addressbook)
+            // console.log("ManageSession.addressbook.addressbook", ManageSession.addressbook.addressbook)
 
-            const entry = { user_id: ManageSession.selectedOnlinePlayer.user_id }
+
+            const entry = { user_id: ManageSession.selectedOnlinePlayer.id }
 
             const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
 
@@ -604,6 +698,8 @@ class Player {
             if (!isExist) {
               console.log("updated")
               ManageSession.addressbook.addressbook.push(entry)
+
+              console.log("ManageSession address book", ManageSession.addressbook)
 
               const type = "addressbook"
               const name = type + "_" + ManageSession.userProfile.id
@@ -627,217 +723,6 @@ class Player {
       scene.isOnlinePlayerItemsBarDisplayed = false
       scene.onlinePlayerItemsBar.setVisible(false)
       scene.onlinePlayerLikedPanel.setVisible(false)
-    }
-  }
-
-  moveByCursor(scene) {
-    if (
-      scene.cursors.up.isDown ||
-      scene.cursors.down.isDown ||
-      scene.cursors.left.isDown ||
-      scene.cursors.right.isDown
-    ) {
-      scene.cursorKeyIsDown = true;
-    } else {
-      scene.cursorKeyIsDown = false;
-    }
-  }
-
-  movingAnimation(scene) {
-    if (scene.cursorKeyIsDown || scene.playerIsMovingByClicking) {
-      scene.player.anims.play(scene.playerMovingKey, true);
-      scene.playerShadow.anims.play(scene.playerMovingKey, true);
-    } else if (!scene.cursorKeyIsDown || !scene.playerIsMovingByClicking) {
-      scene.player.anims.play(scene.playerStopKey, true);
-      scene.playerShadow.anims.play(scene.playerStopKey, true);
-    }
-  }
-
-  moveByKeyboard(scene) {
-    const speed = 175;
-    const prevPlayerVelocity = scene.player.body.velocity.clone();
-
-    // Stop any previous movement from the last frame, the avatar itself and the container that holds the pop-up buttons
-    scene.player.body.setVelocity(0);
-
-    // Horizontal movement
-    if (scene.cursors.left.isDown) {
-      scene.player.body.setVelocityX(-speed);
-
-      // scene.cursorKeyIsDown = true;
-      this.sendMovement(scene);
-    } else if (scene.cursors.right.isDown) {
-      scene.player.body.setVelocityX(speed);
-      // scene.cursorKeyIsDown = true
-      // sendPlayerMovement(scene)
-    }
-
-    // Vertical movement
-    if (scene.cursors.up.isDown) {
-      scene.player.body.setVelocityY(-speed);
-      // scene.cursorKeyIsDown = true
-      this.sendMovement(scene);
-    } else if (scene.cursors.down.isDown) {
-      scene.player.body.setVelocityY(speed);
-      // scene.cursorKeyIsDown = true
-      this.sendMovement(scene);
-    }
-
-    // Normalize and scale the velocity so that player can't move faster along a diagonal, the pop-up buttons are included
-    scene.player.body.velocity.normalize().scale(speed);
-  }
-
-  moveObjectToTarget(scene, container, target, speed) {
-    scene.physics.moveToObject(container, target, speed);
-  }
-
-  moveBySwiping(scene) {
-    if (
-      scene.input.activePointer.isDown &&
-      scene.isClicking == false &&
-      scene.graffitiDrawing == false
-    ) {
-      scene.isClicking = true;
-    }
-    if (
-      !scene.input.activePointer.isDown &&
-      scene.isClicking == true &&
-      scene.graffitiDrawing == false
-    ) {
-      const playerX = scene.player.x;
-      const playerY = scene.player.y;
-
-      const swipeX =
-        scene.input.activePointer.upX - scene.input.activePointer.downX;
-      const swipeY =
-        scene.input.activePointer.upY - scene.input.activePointer.downY;
-
-      scene.swipeAmount.x = swipeX;
-      scene.swipeAmount.y = swipeY;
-
-      let moveSpeed = scene.swipeAmount.length();
-      if (moveSpeed > 600) moveSpeed = 600;
-
-      scene.playerIsMovingByClicking = true; // trigger moving animation
-
-      scene.target.x = playerX + swipeX;
-      scene.target.y = playerY + swipeY;
-
-      // generalized moving method
-      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2);
-      scene.isClicking = false;
-    }
-
-    scene.distance = Phaser.Math.Distance.Between(
-      scene.player.x,
-      scene.player.y,
-      scene.target.x,
-      scene.target.y
-    );
-
-    //  4 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (scene.playerIsMovingByClicking) {
-      if (scene.distance < 10) {
-        scene.player.body.reset(scene.target.x, scene.target.y);
-        scene.playerIsMovingByClicking = false;
-      } else {
-        this.sendMovement(scene);
-      }
-    }
-  }
-
-  moveByTapping(scene) {
-    if (
-      scene.input.activePointer.isDown &&
-      scene.isClicking == false &&
-      scene.graffitiDrawing == false
-    ) {
-      scene.isClicking = true;
-    }
-    if (
-      !scene.input.activePointer.isDown &&
-      scene.isClicking == true &&
-      scene.graffitiDrawing == false
-    ) {
-      let lastTime = 0;
-      scene.input.on("pointerdown", () => {
-        let clickDelay = scene.time.now - lastTime;
-
-        lastTime = scene.time.now;
-        if (clickDelay < 350 && scene.graffitiDrawing == false) {
-          scene.target.x = scene.input.activePointer.worldX;
-          scene.target.y = scene.input.activePointer.worldY;
-
-          scene.playerIsMovingByClicking = true; // activate moving animation
-
-          // generalized moving method
-          this.moveObjectToTarget(scene, scene.player, scene.target, 450);
-        }
-      });
-      scene.isClicking = false;
-    }
-
-    scene.distance = Phaser.Math.Distance.Between(
-      scene.player.x,
-      scene.player.y,
-      scene.target.x,
-      scene.target.y
-    );
-
-    //  4 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (scene.playerIsMovingByClicking) {
-      if (scene.distance < 10) {
-        scene.player.body.reset(scene.target.x, scene.target.y);
-        scene.playerIsMovingByClicking = false;
-      } else {
-        this.sendMovement(scene);
-      }
-    }
-  }
-
-  moveByClicking(scene) {
-    if (!scene.input.activePointer.isDown && scene.isClicking == true) {
-      scene.target.x = scene.input.activePointer.worldX;
-      scene.target.y = scene.input.activePointer.worldY;
-      scene.physics.moveToObject(scene.player, scene.target, 200);
-      scene.isClicking = false;
-      scene.playerIsMovingByClicking = true;
-    } else if (scene.input.activePointer.isDown && scene.isClicking == false) {
-      scene.isClicking = true;
-    }
-
-    scene.distance = Phaser.Math.Distance.Between(
-      scene.player.x,
-      scene.player.y,
-      scene.target.x,
-      scene.target.y
-    );
-    //  4 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (scene.playerIsMovingByClicking) {
-      if (scene.distance < 10) {
-        scene.player.body.reset(scene.target.x, scene.target.y);
-        scene.playerIsMovingByClicking = false;
-      } else {
-        this.sendMovement();
-      }
-    }
-  }
-
-  sendMovement(scene) {
-    if (scene.createdPlayer) {
-      if (
-        ManageSession.updateMovementTimer > ManageSession.updateMovementInterval
-      ) {
-        //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
-        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
-        //console.log(this.player.x)
-        ManageSession.updateMovementTimer = 0;
-      }
-      // this.scrollablePanel.x = this.player.x
-      // this.scrollablePanel.y = this.player.y + 150
     }
   }
 
@@ -1181,33 +1066,7 @@ class Player {
     })
   }
 
-  identifySurfaceOfPointerInteraction(scene) {
-    // identifies if the pointer is down on a graffiti wall
-    // if the condition is true, the avatar stops any movement
-    scene.input.on("pointerdown", (pointer, object) => {
-      if (
-        (object[0] && object[0]?.name == "graffitiBrickWall") ||
-        object[0]?.name == "graffitiDotWall" ||
-        object[0]?.name == "currentPlayerScrollablePanel" ||
-        object[0]?.name == "onlinePlayerScrollablePanel"
-      ) {
-        scene.graffitiDrawing = true;
-      }
-    });
-    scene.input.on("pointerup", () => {
-      scene.graffitiDrawing = false;
-    });
-  }
 
-  moveScrollablePanel(scene) {
-    scene.playerLikedPanel.x = scene.player.x + 200;
-    scene.playerLikedPanel.y = scene.player.y;
-  }
-
-  movePlayerContainer(scene) {
-    scene.playerItemsBar.x = scene.player.x
-    scene.playerItemsBar.y = scene.player.y
-  }
 
   // movePlayerAddressbook(scene) {
   //   const x = scene.player.x - 50
@@ -1228,5 +1087,4 @@ class Player {
 
 }
 
-export default new Player();
-
+export default new Player()

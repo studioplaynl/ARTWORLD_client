@@ -60,10 +60,10 @@ export default class UI_Scene extends Phaser.Scene {
 
     this.camUI = this.cameras.main
       .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
-      .setName("camMain");
-    this.camUI.zoom = 1;
-    this.createNavigationButtons(false);
-    this.scale.on("resize", this.resize, this);
+      .setName("camMain")
+    this.camUI.zoom = 1
+    this.createNavigationButtons(false)
+    this.scale.on("resize", this.resize, this)
 
     // const frame = this.add.graphics()
 
@@ -178,12 +178,12 @@ export default class UI_Scene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true });
 
       this.zoomIn.on("pointerup", () => {
-        this.currentZoom += 0.2;
+        this.currentZoom += 0.2
         //console.log(this.currentZoom);
       });
 
       this.zoomOut.on("pointerup", () => {
-        this.currentZoom -= 0.2;
+        this.currentZoom -= 0.2
         if (this.currentZoom < 0.2) {
           this.currentZoom = 0.2
         }

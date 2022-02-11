@@ -12,10 +12,11 @@ import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js"
+import Move from "../class/Move.js"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
-    super("ArtworldAmsterdam");
+    super("ArtworldAmsterdam")
 
     this.worldSize = new Phaser.Math.Vector2(6000, 6000)
 
@@ -29,7 +30,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.newOnlinePlayers = []
 
     this.currentOnlinePlayer
-    this.avatarName = [];
+    this.avatarName = []
     this.tempAvatarName = ""
     this.loadedAvatars = []
 
@@ -76,6 +77,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // this.source // = player
     this.target = new Phaser.Math.Vector2()
     this.distance
+    this.distanceTolerance = 9
 
     //shadow
     this.playerShadowOffset = -8
@@ -122,20 +124,15 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async create() {
     // for back button
-    HistoryTracker.locationPush(this);
+    HistoryTracker.locationPush(this)
     console.log(ManageSession.locationHistory)
 
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
-    //timers
-    ManageSession.updateMovementTimer = 0;
-    ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
-
     //.......  LOAD PLAYER AVATAR ..........................................................................
-    ManageSession.createPlayer = true;
+    ManageSession.createPlayer = true
     //....... end LOAD PLAYER AVATAR .......................................................................
-
 
     //Background // the order of creation is the order of drawing: first = bottom ...............................
     Background.repeatingDots({
@@ -144,7 +141,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       dotWidth: 2,
       dotColor: 0x909090,
       backgroundColor: 0xffffff,
-    });
+    })
 
     Background.circle({
       scene: this,
@@ -154,7 +151,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       size: 810,
       gradient1: 0x85feff,
       gradient2: 0xff01ff,
-    });
+    })
 
     Background.circle({
       scene: this,
@@ -164,7 +161,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       size: 564,
       gradient1: 0xfbff00,
       gradient2: 0x85feff,
-    });
+    })
 
     Background.circle({
       scene: this,
@@ -174,7 +171,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       size: 914,
       gradient1: 0x3a4bba,
       gradient2: 0xbb00ff,
-    });
+    })
 
     // this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff)
     //   .setInteractive({ useHandCursor: true })
@@ -259,33 +256,40 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //....... onlinePlayers ..............................................................................
     // add onlineplayers group
-    this.onlinePlayersGroup = this.add.group();
+    this.onlinePlayersGroup = this.add.group()
     //....... end onlinePlayers ..........................................................................
 
     //....... PLAYER VS WORLD .............................................................................
-    this.gameCam = this.cameras.main; //.setBackgroundColor(0xFFFFFF);
+    this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
     //!setBounds has to be set before follow, otherwise the camera doesn't follow!
-    this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
-    this.gameCam.zoom = 1;
-    this.gameCam.startFollow(this.player);
+    //this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
+    this.gameCam.zoom = 1
+    this.gameCam.startFollow(this.player)
+    this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
+    //https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
+    this.physics.world.on('worldbounds', (obj) => {
+      console.log("working")
+      console.log("obj", obj)
+    })
+
     //......... end PLAYER VS WORLD .......................................................................
 
     //......... INPUT .....................................................................................
-    this.cursors = this.input.keyboard.createCursorKeys();
+    this.cursors = this.input.keyboard.createCursorKeys()
     //.......... end INPUT ................................................................................
 
     //.......... locations ................................................................................
     //generating homes from online query is not possible in create, because the server query can take time
     //generating homes is done in update, after a heck that everything is downloaded
 
-    this.generateLocations();
+    this.generateLocations()
     //.......... end locations ............................................................................
 
     //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
 
     //......... DEBUG FUNCTIONS ...........................................................................
-    DebugFuntions.keyboard(this);
-    //this.createDebugText();
+    DebugFuntions.keyboard(this)
+    //this.createDebugText()
     //......... end DEBUG FUNCTIONS .......................................................................
     // create itemsbar
     //  this.itemsbar = this.add.graphics();
@@ -321,6 +325,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // })
     // this.itemsBarOnlinePlayer.iterate(this.itemsBarOnlinePlayerCallback)// arr.forEach(element => { element.setDepth(400); console.log(element) })
   } //end create
+
+  worldBoundCallBack() {
+    console.log("Bounds!")
+  }
 
   async getAccountDetails(array, id) {
 
@@ -500,46 +508,31 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
     //! make more efficient with event?
-    this.playerShadow.x = this.player.x + this.playerShadowOffset;
-    this.playerShadow.y = this.player.y + this.playerShadowOffset;
+    this.playerShadow.x = this.player.x + this.playerShadowOffset
+    this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................
 
-    //.......... UPDATE TIMER      ..........................................................................
-    //! remove?
-    ManageSession.updateMovementTimer += delta;
-    // console.log(time) //running time in millisec
-    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
-    //....... end UPDATE TIMER  ..............................................................................
-
-    //........ PLAYER MOVE BY KEYBOARD  ......................................................................
-    //! remove?
-    if (!this.playerIsMovingByClicking) {
-      Player.moveByKeyboard(this); //player moving with keyboard with playerMoving Class
-    }
-
-    Player.moveByCursor(this);
-    //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
-
     //....... moving ANIMATION ......................................................................................
-    Player.movingAnimation(this);
+    // Move.movingAnimation(this)
+    Move.checkIfPlayerIsMoving(this)
     //....... end moving ANIMATION .................................................................................
 
     //this.playerMovingByClicking()
-    Player.identifySurfaceOfPointerInteraction(this)
+    Move.identifySurfaceOfPointerInteraction(this)
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {
-      Player.moveBySwiping(this)
+      Move.moveBySwiping(this)
     } else {
-      Player.moveByTapping(this)
+      Move.moveByTapping(this)
     }
 
     if (this.playerLikedPanel) {
-      Player.moveScrollablePanel(this)
+      Move.moveScrollablePanel(this)
     }
 
     if (this.playerItemsBar) {
-      Player.movePlayerContainer(this)
+      Move.movePlayerContainer(this)
     }
 
     // if (this.playerAddressbookContainer) {
