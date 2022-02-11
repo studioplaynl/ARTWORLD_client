@@ -179,6 +179,8 @@ class Player {
     // making the avatar interactive
     scene.player.setInteractive({ useHandCursor: true })
 
+    scene.player.input.hitArea.setTo(-10, -10, scene.player.width + 50, scene.player.height + 50)
+
     // for toggling the pop-up buttons
     scene.isPlayerItemsBarDisplayed = false
 
@@ -186,7 +188,7 @@ class Player {
     scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y)
 
     //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
-    scene.playerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
+    scene.playerLikedPanelKeys = { artworks: [{ name: 'not_found' }, { name: 'not_found' }, { name: 'not_found' }] }
     console.log(scene.playerLikedPanelKeys)
 
     scene.playerLikedPanel = scene.rexUI.add
@@ -530,7 +532,7 @@ class Player {
     if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
       //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
-      scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
+      scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'not_found' }, { name: 'not_found' }, { name: 'not_found' }] }
       console.log(scene.onlinePlayerLikedPanelKeys)
 
       scene.onlinePlayerLikedPanel = scene.rexUI.add
@@ -770,7 +772,12 @@ class Player {
       //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
       .setDepth(90)
     onlinePlayer.setInteractive({ useHandCursor: true })
-    onlinePlayer.on('pointerup', () => { this.displayOnlinePlayerItemsBar(scene, onlinePlayer) })
+    // hit area 
+    onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
+    onlinePlayer.on('pointerup', () => {
+      this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
+      console.log("online player width", onlinePlayer)
+    })
 
     onlinePlayer.setData("movingKey", "moving")
     onlinePlayer.setData("stopKey", "stop")
