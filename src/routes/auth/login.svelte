@@ -30,7 +30,6 @@
 	<form on:submit|preventDefault={onSubmit}>
 		<div class="container">
 		  <h1>{$_('login.title')}</h1>
-		  <p>Please fill in this form to create an account.</p>
 		  <hr>
 
 		  <label for="email"><b>{$_('register.email')}</b></label>

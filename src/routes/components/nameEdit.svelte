@@ -44,6 +44,7 @@
 
 .editIcon{
     width: 20px;
+    cursor: pointer;
 }
 
 </style>

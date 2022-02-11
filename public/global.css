@@ -6,7 +6,6 @@ html, body {
 
 body {
 	color: #333;
-	background-color: rgb(204, 201, 201);
 	margin: 0;
 	padding: 0px;
 	box-sizing: border-box;
@@ -88,18 +87,22 @@ margin: 0 auto;
 	width: fit-content;
 	max-width: 800px;
 	align-content: center;
+	border-collapse: collapse;
+	border-bottom: 2px solid #7300EB;
 }
 
-.profileTable tr:nth-child(even) {
-background: lightgrey;
-}
-.profileTable {
+
+.profileTable, .profileTable a {
 	text-align: center;
+	color: #7300EB;
 }
 
 .profileTable th {
-	background-color: #8b8b8b;
-	color: white;
+	padding: 5px;
+  }
+
+  .profileTable td {
+	border-top: 2px solid #7300EB;
 	padding: 5px;
   }
 
@@ -118,3 +121,4 @@ margin: 0 auto;
 .icon {
     color: dimgrey;
 }
+

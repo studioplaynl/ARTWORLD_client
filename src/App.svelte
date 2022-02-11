@@ -23,6 +23,10 @@
     import player from "./routes/apps/player.svelte"
     import Moderate from "./routes/moderate.svelte";
 
+    onMount(()=>{
+        document.getElementById("loader").outerHTML = "";
+    })
+
     let isLogedIn = (detail) => {
         if ($Session != null) return true;
         else {
@@ -108,7 +112,7 @@
             component: match,
             conditions: [
                 (detail) => {
-                    return isAdmin(detail);
+                    return isAdmin(detail); 
                 },
             ],
         }),
