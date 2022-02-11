@@ -144,9 +144,11 @@ class ArtworkList {
   }
 
   async convertRexUIArray(scene) {
-    //allLikedArray is an array of art in format:
-    //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
-    //should be format: 
+
+    // ? old?
+    // allLikedArray is an array of art in format:
+    // drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
+    // should be format: 
     // liked: [
     // {
     //  user_id: "e0849c23-a339-40db-bb84-e0849ded4e68",
@@ -158,11 +160,15 @@ class ArtworkList {
     //  },
     // ]
 
-    //we want to get a preview of the liked item, for the latest version
 
+    const allLikedArray = ManageSession.liked.liked // we get an array of objects, and object has the form of: 
+    // {
+    // collection: "drawing"
+    // key: "groenblauwtoekan"
+    // url: "drawing/4ced8bff-d79c-4842-b2bd-39e9d9aa597e/groenblauwtoekan.png"
+    // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
+    // }
 
-    const allLikedArray = Object.keys(ManageSession.allLiked)
-    console.log(allLikedArray)
     //we get the number of elements we want to show
     //we subtract when an item is loaded, if zero we are complete and update the list
     let allItems = allLikedArray.length
@@ -171,17 +177,13 @@ class ArtworkList {
     let tempArray = { artworks: [] }
 
     allLikedArray.map(async (element) => {
-      console.log(element)
-      const splitKey = element.split("/")[2].split(".")[0]
-      //we get only the relevant part of the url for the key:
-      //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png -> geelCoral.png
-
-      const key = `${splitKey}_128`
+      // getting the key of the artwork
+      const key = `${element.key}_128`
 
       //if the image is not yet loaded, we download it
       if (!scene.textures.exists(key)) {
         const currentImage = await convertImage(
-          element,
+          element.url,
           "128",
           "png"
         )
@@ -202,31 +204,30 @@ class ArtworkList {
   }
 
   async convertRexUIArrayOnlinePlayer(scene) {
-    console.log(ManageSession.allLikedOnlinePlayer)
-    //allLikedArray is an array of art in format:
-    //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
-    const allLikedArray = Object.keys(ManageSession.allLikedOnlinePlayer)
-    console.log(allLikedArray)
+    const allLikedArray = ManageSession.likedOnlinePlayer.liked // an array of objects, an object is in form of:
+    // {
+    // collection: "drawing"
+    // key: "groenblauwtoekan"
+    // url: "drawing/4ced8bff-d79c-4842-b2bd-39e9d9aa597e/groenblauwtoekan.png"
+    // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
+    // }
+
     //we get the number of elements we want to show
     //we subtract when an item is loaded, if zero we are complete and update the list
     let allItems = allLikedArray.length
 
-    //we initialise the function/array that keeps track of progress and completion
+    //we initialize the function/array that keeps track of progress and completion
     let tempArray = { artworks: [] }
 
     if (allItems > 0) {
       allLikedArray.map(async (element) => {
-        console.log(element)
-        const splitKey = element.split("/")[2].split(".")[0]
-        //we get only the relevant part of the url for the key:
-        //drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png -> geelCoral.png
 
-        const key = `${splitKey}_128`
+        const key = `${element.key}_128`
 
         //if the image is not yet loaded, we download it
         if (!scene.textures.exists(key)) {
           const currentImage = await convertImage(
-            element,
+            element.url,
             "128",
             "png"
           )

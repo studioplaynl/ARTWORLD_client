@@ -615,11 +615,12 @@ class Player {
     scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
     if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
-      Promise.all([listObjects("liked", player.user_id, 10)]).then((rec) => {
+      Promise.all([listObjects("liked", player.id, 10)]).then((rec) => {
         // it checks if there was ever before a liked object created for the online player
         if (rec[0].length > 0) {
           console.log("if rec", rec)
-          ManageSession.allLikedOnlinePlayer = rec[0][0].value
+          ManageSession.likedOnlinePlayer = rec[0][0].value
+          console.log("ManageSession.likedOnlinePlayer", ManageSession.likedOnlinePlayer)
 
           scene.onlinePlayerItemsBar.setVisible(true);
 
@@ -641,12 +642,12 @@ class Player {
           scene.isOnlinePlayerItemsBarDisplayed = true
         } else {
           console.log("else rec", rec)
-          ManageSession.allLikedOnlinePlayer = {}
+          ManageSession.likedOnlinePlayer = {}
 
           const type = "liked"
           const name = type + "_" + player.user_id
           const pub = 2
-          const value = ManageSession.allLikedOnlinePlayer
+          const value = ManageSession.likedOnlinePlayer
           updateObject(type, name, value, pub)
         }
 
