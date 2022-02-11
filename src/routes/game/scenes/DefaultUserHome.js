@@ -13,7 +13,7 @@ import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js";
 import ArtworkList from "../class/ArtworkList.js"
-import { element } from "svelte/internal";
+import Move from "../class/Move.js"
 
 export default class DefaultUserHome extends Phaser.Scene {
 
@@ -308,41 +308,27 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.playerShadow.y = this.player.y + this.playerShadowOffset
         //........... end PLAYER SHADOW .........................................................................
 
-        //.......... UPDATE TIMER      ..........................................................................
-        ManageSession.updateMovementTimer += delta
-        // console.log(time) //running time in millisec
-        // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
-        //....... end UPDATE TIMER  ..............................................................................
-
-        //........ PLAYER MOVE BY KEYBOARD  ......................................................................
-        if (!this.playerIsMovingByClicking) {
-            Player.moveByKeyboard(this) //player moving with keyboard with playerMoving Class
-        }
-
-        Player.moveByCursor(this)
-        //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
-
         //....... moving ANIMATION ......................................................................................
-        Player.movingAnimation(this)
+        // Move.movingAnimation(this)
+        Move.checkIfPlayerIsMoving(this)
         //....... end moving ANIMATION .................................................................................
 
         //this.playerMovingByClicking()
-        // to detect if the player is scrolling
-        Player.identifySurfaceOfPointerInteraction(this)
+        Move.identifySurfaceOfPointerInteraction(this)
 
         // to detect if the player is clicking/tapping on one place or swiping
         if (this.input.activePointer.downX != this.input.activePointer.upX) {
-            Player.moveBySwiping(this)
+            Move.moveBySwiping(this)
         } else {
-            Player.moveByTapping(this)
+            Move.moveByTapping(this)
         }
 
         if (this.playerLikedPanel) {
-            Player.moveScrollablePanel(this);
+            Move.moveScrollablePanel(this)
         }
 
         if (this.playerItemsBar) {
-            Player.movePlayerContainer(this);
+            Move.movePlayerContainer(this)
         }
     } //update
 } //class

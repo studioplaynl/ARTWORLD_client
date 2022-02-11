@@ -1,7 +1,9 @@
-import { Scene3D, THREE } from "@enable3d/phaser-extension";
-import ManageSession from "../ManageSession";
-import HistoryTracker from "../class/HistoryTracker";
-import TestLoader from "../class/TestLoader";
+import { Scene3D, THREE } from "@enable3d/phaser-extension"
+import ManageSession from "../ManageSession"
+import HistoryTracker from "../class/HistoryTracker"
+import TestLoader from "../class/TestLoader"
+import Move from "../class/Move.js"
+
 export default class Location5 extends Scene3D {
   platform;
   avatar;
