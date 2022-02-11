@@ -183,7 +183,7 @@ class ArtworkList {
       //if the image is not yet loaded, we download it
       if (!scene.textures.exists(key)) {
         const currentImage = await convertImage(
-          element,
+          element.url,
           "128",
           "png"
         )
