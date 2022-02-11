@@ -512,10 +512,10 @@ class Player {
     //player.setInteractive({ useHandCursor: true });
 
     // for toggling the pop-up buttons
-    scene.isOnlinePlayerItemsBarDisplayed = false;
+    scene.isOnlinePlayerItemsBarDisplayed = false
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
-    scene.onlinePlayerItemsBar = scene.add.container(scene.player.x, scene.player.y);
+    scene.onlinePlayerItemsBar = scene.add.container(0, 0)
 
     //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
     scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
@@ -572,8 +572,8 @@ class Player {
       scene.onlinePlayerLikedPanel = scene.rexUI.add
         .scrollablePanel({
           //! get the clicked onlinePlayer
-          x: scene.player.x + 200,
-          y: scene.player.y,
+          x: ManageSession.selectedOnlinePlayer.x + 200,
+          y: ManageSession.selectedOnlinePlayer.y,
           width: 200,
           height: 200,
 
@@ -609,6 +609,11 @@ class Player {
 
   async displayOnlinePlayerItemsBar(scene, player) {
     ManageSession.selectedOnlinePlayer = player
+
+    // giving the position for the container that holds all the buttons
+    scene.onlinePlayerItemsBar.x = ManageSession.selectedOnlinePlayer.x
+    scene.onlinePlayerItemsBar.y = ManageSession.selectedOnlinePlayer.y
+
     console.log("player", player)
     console.log("playManageSession.selectedOnlinePlayer", ManageSession.selectedOnlinePlayer)
 
@@ -1066,8 +1071,6 @@ class Player {
       isArtworksDownloaded = false
     })
   }
-
-
 
   // movePlayerAddressbook(scene) {
   //   const x = scene.player.x - 50
