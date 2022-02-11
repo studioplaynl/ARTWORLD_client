@@ -162,7 +162,7 @@ class ArtworkList {
 
 
     const allLikedArray = Object.keys(ManageSession.allLiked)
-
+    console.log(allLikedArray)
     //we get the number of elements we want to show
     //we subtract when an item is loaded, if zero we are complete and update the list
     let allItems = allLikedArray.length
@@ -355,7 +355,7 @@ class ArtworkList {
       // updates the object locally
       //find the object in the array, by url, filter the object with the url out
 
-      ManageSession.liked.liked = ManageSession.liked.liked.filter( obj => obj.url != mediaObject.value.url)
+      ManageSession.liked.liked = ManageSession.liked.liked.filter(obj => obj.url != mediaObject.value.url)
       // ManageSession.liked.liked.splice(deleteIndex, deleteIndex + 1)
       console.log(ManageSession.liked.liked)
       //delete ManageSession.allLiked[keyImgUrl]
