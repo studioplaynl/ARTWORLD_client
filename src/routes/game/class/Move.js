@@ -70,6 +70,20 @@ class Move {
   }
 
   moveObjectToTarget(scene, container, target, speed) {
+    if (target.x < 0) {
+      target.x = 0
+    }
+    if (target.x > scene.worldSize.x) {
+      target.x = scene.worldSize.x
+    }
+    if (target.y < 0) {
+      target.y = 0
+    }
+    if (target.y > scene.worldSize.y) {
+      target.x = scene.worldSize.y
+    }
+
+
     scene.physics.moveToObject(container, target, speed)
     //send over the network
     // we pass on Phaser2D coordinates to ManageSession.sendMoveMessage
@@ -164,7 +178,7 @@ class Move {
 
           // we scale the arrival check (distanceTolerance) to the speed of the player
           scene.distanceTolerance = moveSpeed / 60
-          
+
           scene.playerIsMovingByClicking = true // activate moving animation
 
           // generalized moving method
