@@ -7,14 +7,114 @@
 	<title>ArtWorld</title>
 
 	<link rel='icon' type='image/png' href='./favicon.png'>
-	<link rel="stylesheet" href="./loader-1.css">
-	<link rel='stylesheet' href='./global.css'>
-	<link rel='stylesheet' href='./build/bundle.css'>
-
-	<script defer src='./build/bundle.js'></script>
 </head>
 
 <body>
-	<div id="loader"></div>
+	<div id="loader">
+		<h1>
+			<span>A</span>
+			<span>R</span>
+			<span>T</span>
+			<span>W</span>
+			<span>O</span>
+			<span>R</span>
+			<span>L</span>
+			<span>D</span>
+		</h1>
+	</div>
 </body>
+<style>
+
+#loader h1 {
+  text-align:center;
+  width: 80vw;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  top: 45vh;
+}
+
+#loader h1 span {
+    display: inline-block;
+    -webkit-animation: bounce 15s ease-in-out infinite alternate;
+    animation: bounce 15s ease-in-out infinite alternate;
+	font-family: Arial, sans-serif;
+	font-size: 2rem;
+    width: 3rem;
+    height: 3rem;
+    line-height: 3rem;
+    background: white;
+    box-shadow: 5px 5px rgb(115 0 235);
+    color: rgb(115, 0, 235);
+    border-radius: 50%;
+    padding: 0;
+    margin: 0;
+}
+
+#loader h1 span:nth-child(2) { -webkit-animation-delay: .1s; animation-delay: .1s; }
+#loader h1 span:nth-child(3) { -webkit-animation-delay: .2s; animation-delay: .2s; }
+#loader h1 span:nth-child(4) { -webkit-animation-delay: .3s; animation-delay: .3s; }
+#loader h1 span:nth-child(5) { -webkit-animation-delay: .4s; animation-delay: .4s; }
+#loader h1 span:nth-child(6) { -webkit-animation-delay: .5s; animation-delay: .5s; }
+#loader h1 span:nth-child(7) { -webkit-animation-delay: .6s; animation-delay: .6s; }
+#loader h1 span:nth-child(8) { -webkit-animation-delay: .7s; animation-delay: .7s; }
+
+@-webkit-keyframes bounce {
+  12% {
+	box-shadow: 0px 0px rgb(115 0 235);
+  }
+  25% {
+	box-shadow: -1rem 1rem rgb(115 0 235);
+  }
+  37% {
+	box-shadow: 0px 0px rgb(115 0 235);
+  }
+  50% {
+	box-shadow: -1rem -1rem rgb(115 0 235);
+  }
+  62% {
+	box-shadow: 0px 0px rgb(115 0 235);
+  }
+  75% {
+	box-shadow: 1rem -1rem rgb(115 0 235);
+  }
+  82% {
+	box-shadow: 0px 0px rgb(115 0 235);
+  }
+  100% {
+	box-shadow: 1rem 1rem rgb(115 0 235);
+  }
+}
+
+@keyframes bounce {
+	12% {
+	box-shadow: 0px 0px rgb(115 0 235);
+  }
+  25% {
+	box-shadow: -1rem 1rem rgb(115 0 235);
+  }
+  37% {
+	box-shadow: 0px 0px rgb(115 0 235);
+  }
+  50% {
+	box-shadow: -1rem -1rem rgb(115 0 235);
+  }
+  62% {
+	box-shadow: 0px 0px rgb(115 0 235);
+  }
+  75% {
+	box-shadow: 1rem -1rem rgb(115 0 235);
+  }
+  82% {
+	box-shadow: 0px 0px rgb(115 0 235);
+  }
+  100% {
+	box-shadow: 1rem 1rem rgb(115 0 235);
+  }
+}
+</style>
+<link rel='stylesheet' href='./global.css'>
+<link rel='stylesheet' href='./build/bundle.css'>
+
+<script defer src='./build/bundle.js'></script>
 </html>

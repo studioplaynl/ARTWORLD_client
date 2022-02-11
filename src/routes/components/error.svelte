@@ -11,7 +11,7 @@
 
     function setError(err){
         error = err
-        setTimeout(()=> { if(!showMessage) error = null},3000) 
+        setTimeout(()=> { if(!showMessage) error = null},4000) 
     }
 
     Succes.subscribe((val) =>setSucces(val))
@@ -19,7 +19,7 @@
     function setSucces(val){
         if(val){
             succes = true
-            setTimeout(()=> {succes = false; $Succes = false},1000) 
+            setTimeout(()=> {succes = false; $Succes = false},1500) 
         }
     }
 
@@ -35,7 +35,7 @@
                     // relogin
                     $Session = null
                     window.location.href = "/#/login"
-                    location.reload();
+                    history.go(0)
                 }
             }
             else {
@@ -58,6 +58,7 @@
     }
 
 </script>
+
 
 <div id="snackbar" class:show={succes}>
     <div class="icon green"><SuccesIcon/></div>    
@@ -86,16 +87,28 @@
     border-radius: 2px; /* Rounded borders */
     padding: 16px; /* Padding */
     position: fixed; /* Sit on top of the screen */
-    z-index: 1; /* Add a z-index if needed */
+    z-index: 10; /* Add a z-index if needed */
     /* left: 50%; Center the snackbar
     top: 60px; 30px from the bottom */
-    right: 30px;
-    bottom: 30px;
     -webkit-transition: 0.5s all ease-in-out;
 	-moz-transition: 0.5s all ease-in-out;
 	-o-transition: 0.5s all ease-in-out;
 	transition: 0.5s all ease-in-out;
     opacity: 0;
+    pointer-events: none;
+    }
+
+    @media screen and (max-width: 600px) {
+        #snackbar {
+        right: 30px;
+        top: 30px;
+        }
+    }
+    @media screen and (min-width: 600px) {
+        #snackbar {
+        right: 30px;
+        bottom: 30px;
+        }
     }
 
 
@@ -107,13 +120,9 @@
     /* -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s; */
     /* animation: fadein 0.5s, fadeout 0.5s 2.5s; */
     opacity: 1.00;
-    
+    pointer-events: all;
     }
 
-    .close {
-        float: right;
-        color: white;
-    }
 
     /* Animations to fade the snackbar in and out */
     /* @-webkit-keyframes fadein {

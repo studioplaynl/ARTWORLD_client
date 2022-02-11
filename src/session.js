@@ -66,7 +66,7 @@ export async function login(email, password) {
 
 }
 
-export const logout = () => { Session.set(null); Profile.set(null); }
+export const logout = () => { Session.set(null); Profile.set(null); window.location.href = "/#/login";history.go(0) }
 
 export async function checkLogin(session) {
     if (session != null) {
