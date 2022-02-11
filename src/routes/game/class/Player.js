@@ -580,11 +580,13 @@ class Player {
 
         //create a new panel
 
+        console.log("scene.onlinePlayerItemsBar.x", scene.onlinePlayerItemsBar.x)
+
         scene.onlinePlayerLikedPanel = scene.rexUI.add
           .scrollablePanel({
             //! get the clicked onlinePlayer
-            x: ManageSession.selectedOnlinePlayer.x + 200,
-            y: ManageSession.selectedOnlinePlayer.y,
+            x: scene.onlinePlayerItemsBar.x + 200,
+            y: scene.onlinePlayerItemsBar.y,
             width: 200,
             height: 200,
 
@@ -620,7 +622,7 @@ class Player {
       Promise.all([listObjects("liked", player.id, 10)]).then((rec) => {
         // it checks if there was ever before a liked object created for the online player
         if (rec[0].length > 0) {
-          console.log("if rec", rec)
+
           ManageSession.likedOnlinePlayer = rec[0][0].value
           console.log("ManageSession.likedOnlinePlayer", ManageSession.likedOnlinePlayer)
 
