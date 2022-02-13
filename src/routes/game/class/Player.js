@@ -177,9 +177,11 @@ class Player {
   } //attachAvatarToPlayer
 
   createPlayerItemsBar(scene) {
+
     // making the avatar interactive
     scene.player.setInteractive({ useHandCursor: true })
 
+    // creating a hit area for a better user experience
     scene.player.input.hitArea.setTo(-10, -10, scene.player.width + 50, scene.player.height + 50)
 
     // for toggling the pop-up buttons
@@ -235,18 +237,13 @@ class Player {
 
     // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
     scene.events.on("playerLikedPanelComplete", () => {
-      //console.log("scene.events")
-      // console.log(scene.playerLikedPanel)
-
-      // console.log(scene.playerLikedPanelKeys)
+      // destroy the loading spinner
+      scene.spinner.destroy()
 
       //destroy the old panel
       // scene.playerLikedPanel.destroy()
 
-      scene.spinner.destroy()
-
       //create a new panel
-
       scene.playerLikedPanel = scene.rexUI.add
         .scrollablePanel({
           x: scene.player.x + 200,
@@ -537,7 +534,7 @@ class Player {
     scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
     if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
-      //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
+      //create playerLikedPanel with placeholderArt, so it is constructed, and we hide it afterwards
       scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'not_found' }, { name: 'not_found' }, { name: 'not_found' }] }
       console.log(scene.onlinePlayerLikedPanelKeys)
 
@@ -579,16 +576,16 @@ class Player {
 
       // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
       scene.events.on("onlinePlayerLikedPanelComplete", () => {
+        // destroy the loading spinner
+        scene.spinner.destroy()
 
-        console.log(scene.onlinePlayerLikedPanel)
-        console.log(scene.onlinePlayerLikedPanelKeys) //!undefined
+        // console.log(scene.onlinePlayerLikedPanel)
+        // console.log(scene.onlinePlayerLikedPanelKeys) //!undefined
 
-        //destroy the old panel
-        scene.onlinePlayerLikedPanel.destroy()
+        // //destroy the old panel
+        // scene.onlinePlayerLikedPanel.destroy()
 
         //create a new panel
-
-        console.log("scene.onlinePlayerItemsBar.x", scene.onlinePlayerItemsBar.x)
 
         scene.onlinePlayerLikedPanel = scene.rexUI.add
           .scrollablePanel({
@@ -645,7 +642,11 @@ class Player {
 
           scene.onlinePlayerLikedButtonCircle.on("pointerdown", async () => {
             // we display placeholder panel, and replace it with refreshed panel once server is done loading
-            scene.onlinePlayerLikedPanel.setVisible(true)
+            // scene.onlinePlayerLikedPanel.setVisible(true)
+
+            // display spinner while images are being downloaded
+            Preloader.runSpinner(scene, ManageSession.selectedOnlinePlayer.x + 150, ManageSession.selectedOnlinePlayer.y, 100, 100)
+
             scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert method to onlinePlayer
           })
 

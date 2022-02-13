@@ -161,7 +161,7 @@ class ArtworkList {
     // ]
 
 
-    const allLikedArray = ManageSession.liked.liked // we get an array of objects, and object has the form of: 
+    const allLikedArray = ManageSession.liked.liked // we get an array of objects, an object has the form of: 
     // {
     // collection: "drawing"
     // key: "groenblauwtoekan"
