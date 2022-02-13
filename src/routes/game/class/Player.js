@@ -283,7 +283,7 @@ class Player {
         ...scene.playerLikedPanel.getElement("#artworks.items", true)
       )
 
-      scene.playerLikedPanel.setVisible(true)
+      // scene.playerLikedPanel.setVisible(true)
     })
 
     scene.player.on("pointerup", async () => {
@@ -501,7 +501,9 @@ class Player {
         });
       } else {
         scene.playerItemsBar.setVisible(false)
-        scene.playerLikedPanel.setVisible(false)
+        if (scene.playerLikedPanel) {
+          scene.playerLikedPanel.setVisible(false)
+        }
         scene.isPlayerItemsBarDisplayed = false
         if (scene.playerAddressbookContainer) {
           scene.playerAddressbookMask.destroy()
