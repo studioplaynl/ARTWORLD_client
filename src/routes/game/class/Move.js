@@ -85,7 +85,6 @@ class Move {
       target.x = scene.worldSize.y
     }
 
-
     scene.physics.moveToObject(container, target, speed)
     //send over the network
     // we pass on Phaser2D coordinates to ManageSession.sendMoveMessage
@@ -100,7 +99,7 @@ class Move {
   checkIfPlayerIsMoving(scene) {
     //  10 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (scene.playerIsMovingByClicking) {
+    if (scene.isPlayerMoving) {
 
       // calculate distance only when playerIsMovingByClicking
       scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y)
@@ -111,7 +110,7 @@ class Move {
 
         //play "stop" animation
         this.movingAnimation(scene, "stop")
-        scene.playerIsMovingByClicking = false
+        scene.isPlayerMoving = false
       }
     }
   }
@@ -147,7 +146,7 @@ class Move {
       // console.log("scene.distanceTolerance", scene.distanceTolerance)
       // console.log("moveSpeed", moveSpeed)
 
-      scene.playerIsMovingByClicking = true // trigger moving animation
+      scene.isPlayerMoving = true // trigger moving animation
 
       scene.target.x = playerX + swipeX
       scene.target.y = playerY + swipeY
@@ -181,7 +180,7 @@ class Move {
           // we scale the arrival check (distanceTolerance) to the speed of the player
           scene.distanceTolerance = moveSpeed / 60
 
-          scene.playerIsMovingByClicking = true // activate moving animation
+          scene.isPlayerMoving = true // activate moving animation
 
           // generalized moving method
           this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed / 4) // send moveTo over network, calculate speed as function of distance

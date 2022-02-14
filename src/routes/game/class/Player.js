@@ -371,9 +371,7 @@ class Player {
         }
         scene.isPlayerItemsBarDisplayed = false
         if (scene.playerAddressbookContainer) {
-          scene.playerAddressbookMask.destroy()
-          scene.playerAddressbookContainer.destroy()
-          scene.playerAddressbookZone.destroy()
+          this.destroyAddressbook(scene)
         }
       }
     })
@@ -382,15 +380,9 @@ class Player {
   createAddressbook(scene) {
     // if the addressbook exists from the previous opening, destroy it, in order not to have multiple addressbook holder
     if (scene.playerAddressbookMask) {
-      scene.playerAddressbookMask.destroy()
-      scene.playerAddressbookContainer.destroy()
-      scene.playerAddressbookZone.destroy()
-      console.log("scene.playerAddressbookMask", scene.playerAddressbookMask)
+      this.destroyAddressbook(scene)
     }
 
-    console.log("clicked addressbook", ManageSession.addressbook)
-
-    // if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
     const playerAddressbookWidth = 120
     const playerAddressbookHeight = 200
 
@@ -429,17 +421,10 @@ class Player {
         .setInteractive({ useHandCursor: true })
         .setStrokeStyle(2, 0x0000)
         .on("pointerup", () => {
-          console.log("before deleting ManageSession.addressbook", ManageSession.addressbook)
 
-          // const elementPosition = ManageSession.addressbook.addressbook.findIndex(el => el.user_id == element.user_id)
-          // console.log("elementPosition", elementPosition)
-
-          // ManageSession.addressbook.addressbook.splice(elementPosition, 1)
-
+          // deleting the selected address and updating the local addressbook
           const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
           ManageSession.addressbook = { addressbook: filteredArray }
-
-          console.log("after deleting ManageSession.addressbook", ManageSession.addressbook)
 
           // update server
           const type = "addressbook"
@@ -470,9 +455,13 @@ class Player {
           }
         }
       })
-
     scene.input.topOnly = false
-    // }
+  }
+
+  destroyAddressbook(scene) {
+    scene.playerAddressbookMask.destroy()
+    scene.playerAddressbookContainer.destroy()
+    scene.playerAddressbookZone.destroy()
   }
 
   createOnlinePlayerItemsBar(scene) {
@@ -695,9 +684,7 @@ class Player {
               // hiding the addressbook after 2 seconds
               scene.time.addEvent({
                 delay: 2000, callback: () => {
-                  scene.playerAddressbookMask.destroy()
-                  scene.playerAddressbookContainer.destroy()
-                  scene.playerAddressbookZone.destroy()
+                  this.destroyAddressbook(scene)
                 }, callbackScope: scene, loop: false
               })
             } else {
@@ -1064,16 +1051,11 @@ class Player {
     })
   }
 
-  // movePlayerAddressbook(scene) {
-  //   const x = scene.player.x - 50
-  //   const y = scene.player.y + 110
-  //   scene.playerAddressbookMask.x = x
-  //   scene.playerAddressbookMask.y = y
-  //   scene.playerAddressbookContainer.x = x
-  //   scene.playerAddressbookContainer.y = y
-  //   scene.playerAddressbookZone.x = x
-  //   scene.playerAddressbookZone.y = y
-  // }
+  hidePlayerAddressbook(scene) {
+    if (scene.isPlayerMoving && scene.playerAddressbookContainer) {
+      this.destroyAddressbook(scene)
+    }
+  }
 
   async getAccountDetails(id) {
     await getFullAccount(id).then((rec) => {
