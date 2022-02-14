@@ -564,13 +564,15 @@ import App from "../../App.svelte";
     }
   };
 
-  function addFrame() {
-    updateFrame();
+  async function addFrame() {
+    await updateFrame();
     if (frames.length >= maxFrames) return;
     console.log("click");
     frames.push({});
     frames = frames;
-    changeFrame(frames.length - 1);
+    await changeFrame(frames.length - 1);
+    let framebar = document.getElementById("framebar")
+    framebar.scrollTo({ left: 0, top: framebar.scrollHeight });
   }
 
   function playFrames() {
@@ -1044,7 +1046,7 @@ import App from "../../App.svelte";
             }}><PlayIcon /></button
           >
         {/if}
-        <div class="framebar">
+        <div id="framebar">
           {#each frames as frame, index}
             <div
               id={index}
@@ -1253,49 +1255,8 @@ import App from "../../App.svelte";
     margin: 0px;
   }
 
-  .canvasBox {
-    background-color: white;
-    margin: 0 auto;
-    width: fit-content;
-  }
-
-  .framebar {
-    display: inline;
-  }
-
-  .framebar > div {
-    display: inline-block;
-    width: 100px;
-    height: 100px;
-    margin: 5px;
-  }
-
-  .frameBox {
-    margin: 0 auto;
-    width: fit-content;
-    max-width: 700px;
-  }
-
-  .framebar > div > div {
-    background-color: rgba(255, 255, 255, 0.2);
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .framebar > div:hover {
-    cursor: pointer;
-  }
-
-  .framebar > div {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-  }
-
   .selected {
-    border: 1px solid black;
+    box-shadow: -3px 3px #7300ED;
   }
 
   .colorTab {
@@ -1392,10 +1353,6 @@ import App from "../../App.svelte";
       /* width: 100vw; */
     }
 
-    .box2 {
-      float: left;
-    }
-
     .topbar {
       width: unset;
     }
@@ -1438,4 +1395,123 @@ import App from "../../App.svelte";
   right: 0;
   bottom: 0;
 }
+
+/* new css */
+.canvasBox {
+    background-color: white;
+    margin: 0 auto;
+    width: fit-content;
+    border: 2px solid #7300ed;
+
+  }
+
+
+  #framebar {
+    display: inline;
+  }
+
+  #framebar > div {
+    display: block;
+    width: 100px;
+    height: 100px;
+    margin: 5px;
+    border: 2px solid #7300EB;
+    font-size: 45px;
+  }
+
+  .frameBox {
+    margin: 0 auto;
+    width: fit-content;
+    max-width: 700px;
+    max-height: 700px;
+  }
+
+  #framebar > div > div {
+    background-color: rgba(255, 255, 255, 0.2);
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #framebar > div:hover {
+    cursor: pointer;
+  }
+
+  #framebar > div {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+
+/* PC */
+@media only screen and (min-width: 700px) {
+  .canvasBox {
+    height: 100vh;
+    float: left;
+  }
+
+  .topbar{
+    float: left;
+  }
+
+  .topbar > button {
+    display: block;
+  }
+
+  .frameBox {
+    float: left;
+  }
+
+ #framebar {
+    display: inline-block;
+    height: 600px;
+    width: 130px;
+    overflow-y: scroll;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity;
+  }
+
+  #framebar > div:last-child {
+    overflow-anchor: auto;
+  }
+
+  .box2 {
+    position: fixed;
+    left: 0;
+    top: 50vh;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+
+}
+
+/* mobile */
+@media only screen and (max-width: 700px) {
+  .canvasBox {
+    width: 100vw;
+  }
+
+
+}
+
+
+body::-webkit-scrollbar {
+  width: 12px;               /* width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background: orange;        /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: blue;    /* color of the scroll thumb */
+  border-radius: 20px;       /* roundness of the scroll thumb */
+  border: 3px solid orange;  /* creates padding around scroll thumb */
+}
+
+
+
 </style>

@@ -24,7 +24,8 @@
     import Moderate from "./routes/moderate.svelte";
 
     onMount(()=>{
-        document.getElementById("loader").outerHTML = "";
+        document.getElementById("loader").classList.add('hide');
+
     })
 
     let isLogedIn = (detail) => {

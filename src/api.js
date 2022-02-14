@@ -440,3 +440,11 @@ export async function validate(string,type,input) {
   }
   return  valid
 }
+
+export function setLoader(state){
+  if(state){
+    document.getElementById("loader").classList.remove('hide');
+  } else {
+    document.getElementById("loader").classList.add('hide');
+  }
+}

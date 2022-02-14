@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import { client, SSL } from "./nakama.svelte"
-import { getAccount } from "./api.js"
+import { getAccount, setLoader } from "./api.js"
 import ManageSession from "./routes/game/ManageSession.js"; //push the profile to ManageSession
 
 let storedSession = localStorage.getItem("Session")
@@ -43,6 +43,7 @@ export const Error = writable();
 export const Succes = writable();
 
 export async function login(email, password) {
+    setLoader(true)
     const create = false;
     client.authenticateEmail(email, password, create)
         .then((response) => {
@@ -51,6 +52,7 @@ export async function login(email, password) {
             Session.set(session);
             getAccount()
             window.location.href = "/#/"
+            setLoader(false)
             return session
         })
         .catch((err) => {
