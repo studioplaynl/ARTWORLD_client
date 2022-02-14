@@ -15,7 +15,7 @@ class DebugFuntions {
         scene.input.keyboard.on('keyup-A', function (event) {
 
             scene.playerTest.setVisible(true)
-            
+
             var tween = scene.tweens.add({
                 targets: scene.playerTest,
                 x: 2000,
@@ -54,18 +54,29 @@ class DebugFuntions {
 
             console.log('S key');
 
-            //list all images in the textureManager
-            console.log(scene.textures.list)
 
-            //Return an array listing the events for which the emitter has registered listeners.
-            console.log("Return an array listing the events for which the emitter has registered listeners: ")
-            console.log(scene.textures.eventNames())
 
         }, scene);
 
         scene.input.keyboard.on('keyup-D', function (event) {
 
             console.log('D key')
+
+            //list all images in the textureManager
+            console.log(scene.textures.list)
+
+            //Return an array listing the events for which the emitter has registered listeners.
+            console.log("Return an array listing the events for which the emitter has registered listeners: ")
+            console.log(scene.textures.eventNames())
+            
+            console.log(scene.children) //get the whole DisplayList
+
+        }, scene)
+
+
+        scene.input.keyboard.on('keyup-E', function (event) {
+
+            console.log('E key')
             console.log(" ")
             console.log('scene.onlinePlayers: ')
             console.log(scene.onlinePlayers)
@@ -79,7 +90,7 @@ class DebugFuntions {
             console.log("scene.player: ")
             console.log(scene.player)
 
-        }, scene);
+        }, scene)
 
         scene.input.keyboard.on('keyup-F', function (event) {
 
