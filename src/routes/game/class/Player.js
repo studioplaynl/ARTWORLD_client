@@ -431,6 +431,11 @@ class Player {
         .on("pointerup", () => {
           console.log("before deleting ManageSession.addressbook", ManageSession.addressbook)
 
+          // const elementPosition = ManageSession.addressbook.addressbook.findIndex(el => el.user_id == element.user_id)
+          // console.log("elementPosition", elementPosition)
+
+          // ManageSession.addressbook.addressbook.splice(elementPosition, 1)
+
           const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
           ManageSession.addressbook = { addressbook: filteredArray }
 
@@ -458,8 +463,8 @@ class Player {
       .setInteractive()
       .on("pointermove", (pointer) => {
         if (pointer.isDown) {
-          // console.log("pointermove")
-          if (pointer.isDown) {
+          // make it scrollable only when there more than 4 items in the addressbook
+          if (ManageSession.addressbook.addressbook.length > 4) {
             scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
             scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, playerAddressbookPositionY - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, playerAddressbookPositionY); // value, bottom border, top border
           }
