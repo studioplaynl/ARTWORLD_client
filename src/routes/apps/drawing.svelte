@@ -994,6 +994,7 @@ import App from "../../App.svelte";
   ///////////////// fill functie end ///////////////////////
 
   function backgroundHide() {
+    showBackground = !showBackground
     if (!showBackground) {
       console.log("hidden");
       for (let i = 0; i < frames.length; i++) {
@@ -1018,8 +1019,10 @@ import App from "../../App.svelte";
       </div>
     {/if}
     <div class="topbar">
-      <button class="icon" on:click={undo}><UndoIcon /></button>
-      <button class="icon" on:click={redo}><RedoIcon /></button>
+      <div>
+        <a on:click={undo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg"></a>
+        <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
+      </div>
     </div>
     <div class="canvasBox" class:hidden={current === "camera"}>
       <canvas bind:this={canv} class="canvas"  />
@@ -1029,23 +1032,6 @@ import App from "../../App.svelte";
     </div>
     <div class="frameBox">
       {#if appType == "stopmotion" || appType == "avatar"}
-        {#if play}
-          <button
-            class="icon"
-            on:click={() => {
-              play = false;
-              setPlay(false);
-            }}><PauseIcon /></button
-          >
-        {:else}
-          <button
-            class="icon"
-            on:click={() => {
-              play = true;
-              setPlay(true);
-            }}><PlayIcon /></button
-          >
-        {/if}
         <div id="framebar">
           {#each frames as frame, index}
             <div
@@ -1061,7 +1047,24 @@ import App from "../../App.svelte";
             <div id="frameNew" on:click={addFrame}><div>+</div></div>
           {/if}
         </div>
-        <Switch on:change={backgroundHide} bind:value={showBackground} />
+        <div>
+          {#if play}
+            <button class="icon"
+              on:click={() => {
+                play = false;
+                setPlay(false);
+              }}><PauseIcon /></button
+            >
+          {:else}
+            <a
+              on:click={() => {
+                play = true;
+                setPlay(true);
+              }}><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" ></a
+            >
+          {/if}
+          <a on:click="{backgroundHide}"><img class:unselected="{!showBackground}" src="assets/SHB/svg/AW-icon-onion.svg"></a>
+        </div>
       {/if}
     </div>
   </div>
@@ -1311,6 +1314,7 @@ import App from "../../App.svelte";
     height: 50px;
     border-radius: 50%;
     padding: 14px;
+    cursor: pointer;
   }
 
   #drawing-color,
@@ -1356,6 +1360,8 @@ import App from "../../App.svelte";
     .topbar {
       width: unset;
     }
+
+    
 
     .optionbox {
       margin-top: 60px;
@@ -1412,11 +1418,11 @@ import App from "../../App.svelte";
 
   #framebar > div {
     display: block;
-    width: 100px;
-    height: 100px;
+    width: 60px;
+    height: 60px;
     margin: 5px;
     border: 2px solid #7300EB;
-    font-size: 45px;
+    font-size: 30px;
   }
 
   .frameBox {
@@ -1428,7 +1434,7 @@ import App from "../../App.svelte";
 
   #framebar > div > div {
     background-color: rgba(255, 255, 255, 0.2);
-    height: 100px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1449,11 +1455,22 @@ import App from "../../App.svelte";
 @media only screen and (min-width: 700px) {
   .canvasBox {
     height: 100vh;
+    width: 100vh;
     float: left;
   }
 
   .topbar{
     float: left;
+    height: 100vh;
+  }
+
+  .topbar > div {
+    display: inline-grid;
+    position: relative;
+    top: 50%;
+    margin: 10px;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
   }
 
   .topbar > button {
@@ -1471,6 +1488,8 @@ import App from "../../App.svelte";
     overflow-y: scroll;
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
+    float: left;
+    margin: 5px;
   }
 
   #framebar > div:last-child {
@@ -1492,25 +1511,17 @@ import App from "../../App.svelte";
 @media only screen and (max-width: 700px) {
   .canvasBox {
     width: 100vw;
+    height: 100vh;
   }
 
 
 }
 
-
-body::-webkit-scrollbar {
-  width: 12px;               /* width of the entire scrollbar */
+.unselected{
+  filter: grayscale(1) opacity(0.5);
 }
 
-body::-webkit-scrollbar-track {
-  background: orange;        /* color of the tracking area */
-}
 
-body::-webkit-scrollbar-thumb {
-  background-color: blue;    /* color of the scroll thumb */
-  border-radius: 20px;       /* roundness of the scroll thumb */
-  border: 3px solid orange;  /* creates padding around scroll thumb */
-}
 
 
 
