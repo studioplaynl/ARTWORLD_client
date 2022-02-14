@@ -171,7 +171,16 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         // ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
 
-        Preloader.runSpinner(this, this.worldSize.x / 2, this.worldSize.y / 2, 400, 400)
+        this.artworksListSpinner = this.rexSpinner.add.pie({
+            x: this.worldSize.x / 2,
+            y: this.worldSize.y / 2,
+            width: 400,
+            height: 400,
+            duration: 850,
+            color: 0x000000
+        })
+
+        this.artworksListSpinner.start()
 
         await listImages("drawing", this.location, 100).then((rec) => {
             //this.userArtServerList is an array with objects, in the form of:
@@ -204,7 +213,7 @@ export default class DefaultUserHome extends Phaser.Scene {
                     this.downloadArt(element, index)
                 })
             } else {
-                this.spinner.destroy()
+                this.artworksListSpinner.destroy()
             }
         })
 
@@ -228,7 +237,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             // adds the image to the container
             const setImage = this.add.image(coordX - this.artDisplaySize / 2, y, imageKeyUrl).setOrigin(0.5)
             this.artContainer.add(setImage)
-            this.spinner.destroy()
+            this.artworksListSpinner.destroy()
 
         } else { // otherwise download the image and add it
 
@@ -289,7 +298,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             progressBar.destroy()
             progressBox.destroy()
             this.progress = []
-            this.spinner.destroy()
+            this.artworksListSpinner.destroy()
         })
     }//end downloadArt
 
