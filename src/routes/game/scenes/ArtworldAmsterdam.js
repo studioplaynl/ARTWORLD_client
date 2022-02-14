@@ -320,10 +320,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //create items bar for onlineplayer, after UIscene, because it need currentZoom
     Player.createOnlinePlayerItemsBar(this)
     // this.avatarDetailsContainer.setDepth(999)
-    // this.avatarDetailsContainer.iterate(element => {
-    //   element.setVisible(true)
-    // })
-    // this.itemsBarOnlinePlayer.iterate(this.itemsBarOnlinePlayerCallback)// arr.forEach(element => { element.setDepth(400); console.log(element) })
+  
   } //end create
 
   worldBoundCallBack() {
