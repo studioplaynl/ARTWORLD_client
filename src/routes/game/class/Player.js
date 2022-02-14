@@ -264,32 +264,36 @@ class Player {
     const playerAddressbookPositionX = scene.player.x - playerAddressbookWidth / 2
     const playerAddressbookPositionY = scene.player.y + 110
 
+    // adding a graphics - "the screen"
     scene.playerAddressbookMask = scene.add.graphics()
       .fillStyle(0xffffff, 1)
       .fillRoundedRect(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight, 8)
       .lineStyle(3, 0x000000, 1)
       .strokeRoundedRect(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight, 8)
 
+    // creating a container that holds all items (addresses)
     scene.playerAddressbookContainer = scene.add.container(playerAddressbookPositionX + 10, playerAddressbookPositionY + 10)
 
     const smileyFaces = ["friend", "friend2", "friend3"]
 
-    const height = 50
+    const height = 50 // distance between rows
 
     ManageSession.addressbook.addressbook.forEach((element, index) => {
-      console.log("element, index", element, index)
 
-      const y = index * height
+      const y = index * height // position of image and delete button
 
-      const randomNumber = Math.floor(Math.random() * smileyFaces.length)
+      const randomIndex = Math.floor(Math.random() * smileyFaces.length) // to get a random image as a friend's image
 
-      const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
+      // creating an image of a friend in addressbook
+      const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomIndex])
         .setOrigin(0)
         .setInteractive({ useHandCursor: true })
         .on("pointerup", () => {
+          // entering a home of a friend
           HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
         })
 
+      // creating a delete button
       const playerAddressbookDeleteButtonCircle = scene.add
         .circle(70, y, 15, 0xffffff)
         .setOrigin(0)
@@ -301,23 +305,25 @@ class Player {
           const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
           ManageSession.addressbook = { addressbook: filteredArray }
 
-          // update server
+          // updating server
           const type = "addressbook"
           const name = type + "_" + ManageSession.userProfile.id
           const pub = 2
           const value = ManageSession.addressbook
-
           updateObject(type, name, value, pub)
 
-          // recreate the addressbook
+          // recreate the addressbook after deletion
           this.createAddressbook(scene)
         })
 
+      // adding the image and delete button to playerAddressbookContainer
       scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookDeleteButtonCircle])
     })
 
+    // setting a mask
     scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
 
+    // creating a scrollable zone
     scene.playerAddressbookZone = scene.add.zone(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight)
       .setOrigin(0)
       .setInteractive()
