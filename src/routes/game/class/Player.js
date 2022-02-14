@@ -624,9 +624,7 @@ class Player {
           const value = ManageSession.likedOnlinePlayer
           updateObject(type, name, value, pub)
         }
-
       })
-
 
       scene.onlinePlayerHomeButtonCircle = scene.add
         .circle(0, -70, 25, 0xffffff)
@@ -700,10 +698,14 @@ class Player {
       // adding all buttons to the container
       scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeButtonCircle, scene.onlinePlayerHomeButton])
     } else {
-      scene.isOnlinePlayerItemsBarDisplayed = false
-      scene.onlinePlayerItemsBar.setVisible(false)
-      scene.onlinePlayerLikedPanel.setVisible(false)
+      this.hideOnlinePlayerItemsBar(scene)
     }
+  }
+
+  hideOnlinePlayerItemsBar(scene) {
+    scene.isOnlinePlayerItemsBarDisplayed = false
+    scene.onlinePlayerItemsBar.setVisible(false)
+    scene.onlinePlayerLikedPanel.setVisible(false)
   }
 
   parseNewOnlinePlayerArray(scene) {
@@ -750,6 +752,13 @@ class Player {
     onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
     onlinePlayer.on('pointerup', () => {
       this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
+      //put a timer of 30 sec to automatically close the onlinePlayerItemsbar
+      scene.time.addEvent({
+        delay: 30000, callback: () => {
+          this.hideOnlinePlayerItemsBar(scene)
+        }, callbackScope: scene, loop: false
+      })
+      
       console.log("online player width", onlinePlayer)
     })
 
@@ -868,11 +877,6 @@ class Player {
 
   deleteOnlinePlayer(scene, onlinePlayer) {
     ManageSession.allConnectedUsers = ManageSession.allConnectedUsers.filter(obj => obj.user_id != onlinePlayer.user_id)
-  }
-
-  itemsBarOnlinePlayer(scene, onlinePlayer) {
-    scene.avatarDetailsContainer.setVisible(true)
-    scene.onlinePlayerID = onlinePlayer.anims.currentFrame.textureKey.split("_")[0];
   }
 
   async createItemsBarOnlinePlayer(scene) {
