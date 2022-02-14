@@ -267,11 +267,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.gameCam.startFollow(this.player)
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
     //https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
-    this.physics.world.on('worldbounds', (obj) => {
-      console.log("working")
-      console.log("obj", obj)
-    })
-
     //......... end PLAYER VS WORLD .......................................................................
 
     //......... INPUT .....................................................................................
@@ -320,12 +315,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //create items bar for onlineplayer, after UIscene, because it need currentZoom
     Player.createOnlinePlayerItemsBar(this)
     // this.avatarDetailsContainer.setDepth(999)
-  
-  } //end create
 
-  worldBoundCallBack() {
-    console.log("Bounds!")
-  }
+  } //end create
 
   async getAccountDetails(array, id) {
 
@@ -533,7 +524,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     }
 
     if (this.playerAddressbookContainer) {
-      Player.hidePlayerAddressbook(this)
+      Player.hideAddressbook(this)
     }
 
   } //update

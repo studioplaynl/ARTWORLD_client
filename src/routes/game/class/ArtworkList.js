@@ -1,5 +1,7 @@
 import { updateObject, listImages, convertImage } from '../../../api.js'
 import ManageSession from '../ManageSession.js'
+import Player from './Player.js'
+import R_UI from "./R_UI"
 
 class ArtworkList {
   constructor() { }
@@ -247,26 +249,20 @@ class ArtworkList {
       })
     } else {
       scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }] }
-      scene.events.emit("onlinePlayerLikedPanelComplete")
+      // scene.events.emit("onlinePlayerLikedPanelComplete")
+      Player.createOnlinePlayerLikedPanel(scene)
     }
   }
 
 
 
   checkAllItemsList(scene, allItems, subtract, key, tempArray) {
-    //the tempArray is initialised in the parent method
+    //the tempArray is initialized in the parent method
     tempArray.artworks.push({ "name": key })
-
-    //console.log(tempArray)
-
     allItems = allItems + subtract
-    //console.log("allItems: ", allItems)
     if (allItems < 1) {
-      //console.log("FINISHED!")
       scene.playerLikedPanelKeys = tempArray
-      //console.log("scene.playerLikedPanelKeys: ", scene.playerLikedPanelKeys)
-      scene.events.emit("playerLikedPanelComplete")
-
+      this.createPlayerLikedPanel(scene)
     } else {
       return allItems // return the result if not completed
     }
@@ -274,22 +270,112 @@ class ArtworkList {
 
 
   checkAllItemsListOnlinePlayer(scene, allItems, subtract, key, tempArray) {
-    //the tempArray is initialised in the parent method
+    //the tempArray is initialized in the parent method
     tempArray.artworks.push({ "name": key })
 
-    //console.log(tempArray)
-
     allItems = allItems + subtract
-    //console.log("allItems: ", allItems)
     if (allItems < 1) {
-      //console.log("FINISHED!")
       scene.onlinePlayerLikedPanelKeys = tempArray
-      //console.log("scene.playerLikedPanelKeys: ", scene.playerLikedPanelKeys)
-      scene.events.emit("onlinePlayerLikedPanelComplete")
+      this.createOnlinePlayerLikedPanel(scene)
 
     } else {
       return allItems // return the result if not completed
     }
+  }
+
+  createPlayerLikedPanel(scene) {
+    // destroy the loading spinner
+    scene.playerLikedPanelSpinner.destroy()
+
+    // destroy the old panel
+    if (scene.playerLikedPanel) {
+      scene.playerLikedPanel.destroy()
+    }
+
+    //create a new panel
+    scene.playerLikedPanel = scene.rexUI.add
+      .scrollablePanel({
+        x: scene.player.x + 200,
+        y: scene.player.y,
+        width: 200,
+        height: 200,
+
+        scrollMode: 0,
+
+        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+        panel: {
+          child: R_UI.createPanel(scene, scene.playerLikedPanelKeys),
+        },
+
+        slider: {
+          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+        },
+
+        space: {
+          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+        },
+
+        mouseWheelScroller: {
+          focus: false,
+          speed: 0.1
+        },
+
+        name: "playerLikedPanel"
+      })
+      .layout()
+
+    scene.input.topOnly = false;
+    const labels = [];
+    labels.push(
+      ...scene.playerLikedPanel.getElement("#artworks.items", true)
+    )
+  }
+
+  createOnlinePlayerLikedPanel(scene) {
+    // destroy the loading spinner
+    scene.onlinePlayerLikedPanelSpinner.destroy()
+
+    // destroy the old panel
+    if (scene.onlinePlayerLikedPanel) {
+      scene.onlinePlayerLikedPanel.destroy()
+    }
+
+    // create a new panel
+    scene.onlinePlayerLikedPanel = scene.rexUI.add
+      .scrollablePanel({
+        //! get the clicked onlinePlayer
+        x: scene.onlinePlayerItemsBar.x + 200,
+        y: scene.onlinePlayerItemsBar.y,
+        width: 200,
+        height: 200,
+
+        scrollMode: 0,
+
+        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+        panel: {
+          child: R_UI.createPanel(scene, scene.onlinePlayerLikedPanelKeys),
+        },
+
+        slider: {
+          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+        },
+
+        space: {
+          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+        },
+        name: "onlinePlayerLikedPanel"
+      })
+      .layout()
+
+    scene.input.topOnly = false;
+    const labels = [];
+    labels.push(
+      ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
+    )
   }
 
   placeHeartButton(scene, x, y, keyImgUrl, mediaObject) {
