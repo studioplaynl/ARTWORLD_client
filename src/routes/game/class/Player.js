@@ -237,11 +237,15 @@ class Player {
 
     // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
     scene.events.on("playerLikedPanelComplete", () => {
+      console.log("playerLikedPanelComplete is triggered")
+
       // destroy the loading spinner
       scene.spinner.destroy()
 
       //destroy the old panel
-      // scene.playerLikedPanel.destroy()
+      if (scene.playerLikedPanel) {
+        scene.playerLikedPanel.destroy()
+      }
 
       //create a new panel
       scene.playerLikedPanel = scene.rexUI.add
@@ -584,11 +588,12 @@ class Player {
         // console.log(scene.onlinePlayerLikedPanel)
         // console.log(scene.onlinePlayerLikedPanelKeys) //!undefined
 
-        // //destroy the old panel
-        // scene.onlinePlayerLikedPanel.destroy()
+        //destroy the old panel
+        if (scene.onlinePlayerLikedPanel) {
+          scene.onlinePlayerLikedPanel.destroy()
+        }
 
         //create a new panel
-
         scene.onlinePlayerLikedPanel = scene.rexUI.add
           .scrollablePanel({
             //! get the clicked onlinePlayer
