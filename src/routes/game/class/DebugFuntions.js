@@ -1,8 +1,8 @@
-import ManageSession from "../ManageSession";
-import { getAccount, updateObject, listObjects } from '../../../api.js'
-import CoordinatesTranslator from "./CoordinatesTranslator";
-import ArtworkList from "./ArtworkList";
-import Player from "./Player";
+import ManageSession from "../ManageSession"
+import { getAccount, updateObject, listObjects, setLoader } from '../../../api.js'
+import CoordinatesTranslator from "./CoordinatesTranslator"
+import ArtworkList from "./ArtworkList"
+import Player from "./Player"
 
 class DebugFuntions {
     constructor(scene) {
@@ -53,8 +53,8 @@ class DebugFuntions {
 
         scene.input.keyboard.on('keyup-S', function (event) {
 
-            console.log('S key');
-
+            console.log('S key')
+            setLoader(true)
 
 
         }, scene);
