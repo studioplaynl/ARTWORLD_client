@@ -749,9 +749,8 @@ class Player {
 
             const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
 
-            console.log("isExist", isExist)
             if (!isExist) {
-              console.log("updated")
+              console.log("this user id has been added to the addressbook list")
               ManageSession.addressbook.addressbook.push(entry)
 
               console.log("ManageSession address book", ManageSession.addressbook)
@@ -762,21 +761,21 @@ class Player {
               const value = ManageSession.addressbook
               console.log("value ManageSession.addressbook", value)
               updateObject(type, name, value, pub)
+
+              // we want to inform the player that the item has been added to the addressbook
+              scene.events.emit("playerAddressbook")
+
+              // hiding the addressbook after 2 seconds
+              scene.time.addEvent({
+                delay: 2000, callback: () => {
+                  scene.playerAddressbookMask.destroy()
+                  scene.playerAddressbookContainer.destroy()
+                  scene.playerAddressbookZone.destroy()
+                }, callbackScope: scene, loop: false
+              })
             } else {
               console.log("this user id is already in addressbook list")
             }
-
-            // we want to inform the player that the item has been added to the addressbook
-            scene.events.emit("playerAddressbook")
-
-            // deleting the addressbook after 2 seconds
-            scene.time.addEvent({
-              delay: 2000, callback: () => {
-                scene.playerAddressbookMask.destroy()
-                scene.playerAddressbookContainer.destroy()
-                scene.playerAddressbookZone.destroy()
-              }, callbackScope: scene, loop: false
-            })
           })
 
         scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
