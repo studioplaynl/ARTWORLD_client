@@ -409,10 +409,10 @@ class Player {
               console.log("value ManageSession.addressbook", value)
               updateObject(type, name, value, pub)
 
-              // we want to inform the player that the item has been added to the addressbook
+              // informing the player that the item has been added to the addressbook by showing it
               this.createAddressbook(scene)
 
-              // hiding the addressbook after 2 seconds
+              // and hiding it after 2 seconds
               scene.time.addEvent({
                 delay: 2000, callback: () => {
                   this.destroyAddressbook(scene)
