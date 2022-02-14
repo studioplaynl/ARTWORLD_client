@@ -240,7 +240,12 @@ class Player {
       console.log("playerLikedPanelComplete is triggered")
 
       // destroy the loading spinner
-      scene.spinner.destroy()
+      // if (!!scene.playerLikedPanelSpinner) {
+      //   console.log("scene.playerLikedPanelSpinner", scene.playerLikedPanelSpinner)
+      //   scene.playerLikedPanelSpinner.destroy()
+      // }
+
+      scene.playerLikedPanelSpinner.destroy()
 
       //destroy the old panel
       if (scene.playerLikedPanel) {
@@ -316,7 +321,16 @@ class Player {
           // scene.playerLikedPanel.setVisible(true)
 
           // display spinner while images are being downloaded
-          Preloader.runSpinner(scene, scene.player.x + 150, scene.player.y, 100, 100)
+          scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
+            x: scene.player.x + 150,
+            y: scene.player.y,
+            width: 100,
+            height: 100,
+            duration: 850,
+            color: 0x000000
+          })
+
+          scene.playerLikedPanelSpinner.start()
 
           //the liked array is in the latest state, but we have to get the binairy data (the images)
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
@@ -590,7 +604,7 @@ class Player {
       // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
       scene.events.on("onlinePlayerLikedPanelComplete", () => {
         // destroy the loading spinner
-        scene.spinner.destroy()
+        scene.onlinePlayerLikedPanelSpinner.destroy()
 
         // console.log(scene.onlinePlayerLikedPanel)
         // console.log(scene.onlinePlayerLikedPanelKeys) //!undefined
@@ -659,7 +673,16 @@ class Player {
             // scene.onlinePlayerLikedPanel.setVisible(true)
 
             // display spinner while images are being downloaded
-            Preloader.runSpinner(scene, ManageSession.selectedOnlinePlayer.x + 150, ManageSession.selectedOnlinePlayer.y, 100, 100)
+            scene.onlinePlayerLikedPanelSpinner = scene.rexSpinner.add.pie({
+              x: ManageSession.selectedOnlinePlayer.x + 150,
+              y: ManageSession.selectedOnlinePlayer.y,
+              width: 100,
+              height: 100,
+              duration: 850,
+              color: 0x000000
+            })
+
+            scene.onlinePlayerLikedPanelSpinner.start()
 
             scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert method to onlinePlayer
           })
