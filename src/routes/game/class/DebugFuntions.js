@@ -2,6 +2,7 @@ import ManageSession from "../ManageSession";
 import { getAccount, updateObject, listObjects } from '../../../api.js'
 import CoordinatesTranslator from "./CoordinatesTranslator";
 import ArtworkList from "./ArtworkList";
+import Player from "./Player";
 
 class DebugFuntions {
     constructor(scene) {
@@ -68,7 +69,7 @@ class DebugFuntions {
             //Return an array listing the events for which the emitter has registered listeners.
             console.log("Return an array listing the events for which the emitter has registered listeners: ")
             console.log(scene.textures.eventNames())
-            
+
             console.log(scene.children) //get the whole DisplayList
 
         }, scene)
@@ -170,6 +171,10 @@ class DebugFuntions {
 
         scene.input.keyboard.on('keyup-U', async (event) => {
             scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
+        }, scene)
+
+        scene.input.keyboard.on('keyup-TWO', async (event) => {
+            Player.createAddressbook(scene)
         }, scene)
 
     }

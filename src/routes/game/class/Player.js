@@ -344,6 +344,7 @@ class Player {
         scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
 
         scene.playerAddressbookButtonCircle.on("pointerup", () => {
+
           this.createAddressbook(scene)
         })
 
@@ -379,6 +380,14 @@ class Player {
   }
 
   createAddressbook(scene) {
+    // if the addressbook exists from the previous opening, destroy it, in order not to have multiple addressbook holder
+    if (scene.playerAddressbookMask) {
+      scene.playerAddressbookMask.destroy()
+      scene.playerAddressbookContainer.destroy()
+      scene.playerAddressbookZone.destroy()
+      console.log("scene.playerAddressbookMask", scene.playerAddressbookMask)
+    }
+
     console.log("clicked addressbook", ManageSession.addressbook)
 
     // if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
@@ -387,13 +396,6 @@ class Player {
 
     const playerAddressbookPositionX = scene.player.x - playerAddressbookWidth / 2
     const playerAddressbookPositionY = scene.player.y + 110
-
-    // if the addressbook exists from the previous opening, destroy it, in order not to have multiple addressbook holder
-    if (scene.playerAddressbookMask) {
-      scene.playerAddressbookMask.destroy()
-      scene.playerAddressbookContainer.destroy()
-      scene.playerAddressbookZone.destroy()
-    }
 
     scene.playerAddressbookMask = scene.add.graphics()
       .fillStyle(0xffffff, 1)
@@ -463,6 +465,8 @@ class Player {
           }
         }
       })
+
+    scene.input.topOnly = false
     // }
   }
 
@@ -520,8 +524,8 @@ class Player {
         })
         .layout()
 
-      scene.input.topOnly = false;
-      const labels = [];
+      scene.input.topOnly = false
+      const labels = []
       labels.push(
         ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
       )
@@ -658,13 +662,10 @@ class Player {
           .setStrokeStyle(2, 0x0000)
           .on("pointerup", () => {
             // saving the home of a player
-            // ManageSession.addressBook[player.user_id] = player.user_id
 
-            console.log("!!! ManageSession.selectedOnlinePlayer", ManageSession.selectedOnlinePlayer)
+            console.log("ManageSession.selectedOnlinePlayer", ManageSession.selectedOnlinePlayer)
 
             console.log("ManageSession address book", ManageSession.addressbook)
-
-            // console.log("ManageSession.addressbook.addressbook", ManageSession.addressbook.addressbook)
 
             const entry = { user_id: ManageSession.selectedOnlinePlayer.id }
 
@@ -1047,8 +1048,8 @@ class Player {
           .layout()
         // .setName("onlinePlayerScrollablePanel")
 
-        scene.input.topOnly = false;
-        const labels = [];
+        scene.input.topOnly = false
+        const labels = []
         labels.push(
           ...scene.scrollablePanelOnlinePlayer.getElement("#artworks.items", true)
         )
