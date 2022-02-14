@@ -61,9 +61,6 @@ export default class Location3 extends Phaser.Scene {
 
   async preload() {
 
-    // loading bar
-    //TestLoader.run(this)
-
     //....... IMAGES ......................................................................
     this.load.image("sky", "./assets/sky.png");
     this.load.image("star", "./assets/star.png");

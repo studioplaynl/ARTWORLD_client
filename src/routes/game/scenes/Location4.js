@@ -7,7 +7,6 @@ import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker"
-import TestLoader from "../class/TestLoader.js"
 import Move from "../class/Move.js"
 
 //import { getAvatar } from '../../profile.svelte'
@@ -71,9 +70,6 @@ export default class Location4 extends Phaser.Scene {
   }
 
   async preload() {
-
-    // loading bar
-    TestLoader.run(this)
 
     //....... IMAGES ......................................................................
     let userID = ManageSession.sessionStored.user_id
