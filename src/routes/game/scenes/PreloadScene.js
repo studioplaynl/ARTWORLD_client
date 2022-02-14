@@ -72,7 +72,8 @@ export default class PreloadScene extends Phaser.Scene {
 
         //create a generic artFrame for later use wit iage key "artFrame_512"
         this.createArtFrame('512')
-        this.createArtFrame('128')
+        // this.createArtFrame('128')
+        this.createArtFrame('32')
     }
 
     async create() {

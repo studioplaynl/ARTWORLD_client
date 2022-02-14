@@ -4,6 +4,7 @@ import { listObjects, listImages, convertImage, getFullAccount, updateObject, ge
 import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList"
 import R_UI from "./R_UI"
+import Preloader from "./Preloader"
 
 class Player {
   constructor() { }
@@ -176,8 +177,12 @@ class Player {
   } //attachAvatarToPlayer
 
   createPlayerItemsBar(scene) {
+
     // making the avatar interactive
     scene.player.setInteractive({ useHandCursor: true })
+
+    // creating a hit area for a better user experience
+    scene.player.input.hitArea.setTo(-10, -10, scene.player.width + 50, scene.player.height + 50)
 
     // for toggling the pop-up buttons
     scene.isPlayerItemsBarDisplayed = false
@@ -185,63 +190,69 @@ class Player {
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
     scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y)
 
-    //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
-    scene.playerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
-    console.log(scene.playerLikedPanelKeys)
+    // //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
+    // scene.playerLikedPanelKeys = { artworks: [{ name: 'not_found' }, { name: 'not_found' }, { name: 'not_found' }] }
+    // console.log(scene.playerLikedPanelKeys)
 
-    scene.playerLikedPanel = scene.rexUI.add
-      .scrollablePanel({
-        x: scene.player.x + 200,
-        y: scene.player.y,
-        width: 200,
-        height: 200,
+    // scene.playerLikedPanel = scene.rexUI.add
+    //   .scrollablePanel({
+    //     x: scene.player.x + 200,
+    //     y: scene.player.y,
+    //     width: 200,
+    //     height: 200,
 
-        scrollMode: 0,
+    //     scrollMode: 0,
 
-        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+    //     background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
 
-        panel: {
-          child: R_UI.createPanel(scene, scene.playerLikedPanelKeys),
-        },
+    //     panel: {
+    //       child: R_UI.createPanel(scene, scene.playerLikedPanelKeys),
+    //     },
 
-        slider: {
-          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
-          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
-        },
+    //     slider: {
+    //       track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+    //       thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+    //     },
 
-        space: {
-          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
-        },
+    //     space: {
+    //       left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+    //     },
 
-        mouseWheelScroller: {
-          focus: false,
-          speed: 0.1
-        },
+    //     mouseWheelScroller: {
+    //       focus: false,
+    //       speed: 0.1
+    //     },
 
-        name: "playerLikedPanel"
-      })
-      .layout()
+    //     name: "playerLikedPanel"
+    //   })
+    //   .layout()
 
-    scene.input.topOnly = false;
-    const labels = [];
-    labels.push(
-      ...scene.playerLikedPanel.getElement("#artworks.items", true)
-    )
-    //hide the itemsPanel
-    scene.playerLikedPanel.setVisible(false)
+    // scene.input.topOnly = false;
+    // const labels = [];
+    // labels.push(
+    //   ...scene.playerLikedPanel.getElement("#artworks.items", true)
+    // )
+    // //hide the itemsPanel
+    // scene.playerLikedPanel.setVisible(false)
 
     // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
     scene.events.on("playerLikedPanelComplete", () => {
-      //console.log("scene.events")
-      console.log(scene.playerLikedPanel)
+      console.log("playerLikedPanelComplete is triggered")
 
-      console.log(scene.playerLikedPanelKeys)
+      // destroy the loading spinner
+      // if (!!scene.playerLikedPanelSpinner) {
+      //   console.log("scene.playerLikedPanelSpinner", scene.playerLikedPanelSpinner)
+      //   scene.playerLikedPanelSpinner.destroy()
+      // }
+
+      scene.playerLikedPanelSpinner.destroy()
 
       //destroy the old panel
-      scene.playerLikedPanel.destroy()
+      if (scene.playerLikedPanel) {
+        scene.playerLikedPanel.destroy()
+      }
 
       //create a new panel
-
       scene.playerLikedPanel = scene.rexUI.add
         .scrollablePanel({
           x: scene.player.x + 200,
@@ -281,7 +292,7 @@ class Player {
         ...scene.playerLikedPanel.getElement("#artworks.items", true)
       )
 
-      scene.playerLikedPanel.setVisible(true)
+      // scene.playerLikedPanel.setVisible(true)
     })
 
     scene.player.on("pointerup", async () => {
@@ -307,7 +318,19 @@ class Player {
 
         scene.playerLikedButtonCircle.on("pointerdown", async () => {
           // we display placeholder panel, and replace it with refreshed panel once server is done loading
-          scene.playerLikedPanel.setVisible(true)
+          // scene.playerLikedPanel.setVisible(true)
+
+          // display spinner while images are being downloaded
+          scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
+            x: scene.player.x + 150,
+            y: scene.player.y,
+            width: 100,
+            height: 100,
+            duration: 850,
+            color: 0x000000
+          })
+
+          scene.playerLikedPanelSpinner.start()
 
           //the liked array is in the latest state, but we have to get the binairy data (the images)
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
@@ -320,162 +343,177 @@ class Player {
           .setStrokeStyle(3, 0x0000)
         scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
 
-        scene.playerAddressbookButtonCircle.on("pointerdown", () => {
+        scene.playerAddressbookButtonCircle.on("pointerup", () => {
 
-          console.log("clicked")
-          console.log("clicked addressbook", ManageSession.addressbook.addressbook)
+          console.log("clicked addressbook", ManageSession.addressbook)
 
-          if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
-            const playerAddressbookWidth = 120
-            const playerAddressbookHeight = 200
+          // if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
+          const playerAddressbookWidth = 120
+          const playerAddressbookHeight = 200
 
-            const x = scene.player.x - playerAddressbookWidth / 2
-            const y = scene.player.y + 110
+          const x = scene.player.x - playerAddressbookWidth / 2
+          const y = scene.player.y + 110
 
-            scene.playerAddressbookMask = scene.add.graphics()
-              .fillStyle(0xffffff, 1)
-              .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
-              .lineStyle(3, 0x000000, 1)
-              .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
-
-            scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
-
-            const smileyFaces = ["friend", "friend2", "friend3"]
-
-            const height = 50
-
-            ManageSession.addressbook.addressbook.forEach((element, index) => {
-
-              const y = index * height
-
-              const randomNumber = Math.floor(Math.random() * smileyFaces.length)
-
-              const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
-                .setOrigin(0)
-                .setInteractive({ useHandCursor: true })
-                .on("pointerdown", () => {
-                  HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
-                })
-
-              const playerAddressbookButtonCircle = scene.add
-                .circle(70, y, 15, 0xffffff)
-                .setOrigin(0)
-                .setInteractive({ useHandCursor: true })
-                .setStrokeStyle(2, 0x0000)
-                .on("pointerdown", () => {
-
-                  const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
-                  ManageSession.addressbook = { addressbook: filteredArray }
-
-                  console.log("after deleting", ManageSession.addressbook)
-
-                  // update server
-                  const type = "addressbook"
-                  const name = type + "_" + ManageSession.userProfile.id
-                  const pub = 2
-                  const value = ManageSession.addressbook
-
-                  updateObject(type, name, value, pub)
-
-                  scene.events.emit("playerAddressbook")
-                })
-
-              scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookButtonCircle])
-            })
-
-            scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
-
-            scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
-              .setOrigin(0)
-              .setInteractive()
-              .on("pointermove", (pointer) => {
-                if (pointer.isDown) {
-                  // console.log("pointermove")
-                  if (pointer.isDown) {
-                    scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
-                    scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, y); // value, bottom border, top border
-                  }
-                }
-              })
+          // if the addressbook exists from the previous opening, destroy it, in order not to have multiple addressbook holder
+          if (scene.playerAddressbookMask) {
+            scene.playerAddressbookMask.destroy()
+            scene.playerAddressbookContainer.destroy()
+            scene.playerAddressbookZone.destroy()
           }
+
+          scene.playerAddressbookMask = scene.add.graphics()
+            .fillStyle(0xffffff, 1)
+            .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+            .lineStyle(3, 0x000000, 1)
+            .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+
+          scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
+
+          const smileyFaces = ["friend", "friend2", "friend3"]
+
+          const height = 50
+
+          ManageSession.addressbook.addressbook.forEach((element, index) => {
+            console.log("element, index", element, index)
+
+            const y = index * height
+
+            const randomNumber = Math.floor(Math.random() * smileyFaces.length)
+
+            scene.playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
+              .setOrigin(0)
+              .setInteractive({ useHandCursor: true })
+              .on("pointerup", () => {
+                HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
+              })
+
+            scene.playerAddressbookDeleteButtonCircle = scene.add
+              .circle(70, y, 15, 0xffffff)
+              .setOrigin(0)
+              .setInteractive({ useHandCursor: true })
+              .setStrokeStyle(2, 0x0000)
+              .setDepth(1000)
+              .on("pointerup", () => {
+                console.log("before deleting ManageSession.addressbook", ManageSession.addressbook)
+
+                const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
+                ManageSession.addressbook = { addressbook: filteredArray }
+
+                console.log("after deleting ManageSession.addressbook", ManageSession.addressbook)
+
+                // update server
+                const type = "addressbook"
+                const name = type + "_" + ManageSession.userProfile.id
+                const pub = 2
+                const value = ManageSession.addressbook
+
+                updateObject(type, name, value, pub)
+
+                scene.events.emit("playerAddressbook")
+              })
+
+            scene.playerAddressbookContainer.add([scene.playerAddressbookImage, scene.playerAddressbookDeleteButtonCircle])
+          })
+
+          scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
+
+          scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
+            .setOrigin(0)
+            .setInteractive()
+            .on("pointermove", (pointer) => {
+              if (pointer.isDown) {
+                // console.log("pointermove")
+                if (pointer.isDown) {
+                  scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
+                  scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, y); // value, bottom border, top border
+                }
+              }
+            })
+          // }
         })
 
         scene.events.on("playerAddressbook", () => {
-          console.log("events on")
-          console.log("events addressbook", ManageSession.addressbook.addressbook)
-          if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
-            const playerAddressbookWidth = 120
-            const playerAddressbookHeight = 200
+          console.log("events addressbook", ManageSession.addressbook)
+          // if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
+          const playerAddressbookWidth = 120
+          const playerAddressbookHeight = 200
 
-            const x = scene.player.x - playerAddressbookWidth / 2
-            const y = scene.player.y + 110
+          const x = scene.player.x - playerAddressbookWidth / 2
+          const y = scene.player.y + 110
 
-            scene.playerAddressbookMask = scene.add.graphics()
-              .fillStyle(0xffffff, 1)
-              .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
-              .lineStyle(3, 0x000000, 1)
-              .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
-
-            scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
-
-            const smileyFaces = ["friend", "friend2", "friend3"]
-
-            const height = 50
-
-            ManageSession.addressbook.addressbook.forEach((element, index) => {
-
-              const y = index * height
-
-              const randomNumber = Math.floor(Math.random() * smileyFaces.length)
-
-              const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
-                .setOrigin(0)
-                .setInteractive({ useHandCursor: true })
-                .on("pointerdown", () => {
-                  HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
-                })
-
-              const playerAddressbookButtonCircle = scene.add
-                .circle(70, y, 15, 0xffffff)
-                .setOrigin(0)
-                .setInteractive({ useHandCursor: true })
-                .setStrokeStyle(2, 0x0000)
-                .on("pointerdown", () => {
-
-                  const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
-                  ManageSession.addressbook = { addressbook: filteredArray }
-
-                  console.log("after deleting", ManageSession.addressbook)
-
-                  // update server
-                  const type = "addressbook"
-                  const name = type + "_" + ManageSession.userProfile.id
-                  const pub = 2
-                  const value = ManageSession.addressbook
-
-                  updateObject(type, name, value, pub)
-
-                  scene.events.emit("playerAddressbook")
-                })
-
-              scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookButtonCircle])
-            })
-
-            scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
-
-            scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
-              .setOrigin(0)
-              .setInteractive()
-              .on("pointermove", (pointer) => {
-                if (pointer.isDown) {
-                  // console.log("pointermove")
-                  if (pointer.isDown) {
-                    scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
-                    scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, y); // value, bottom border, top border
-                  }
-                }
-              })
+          if (scene.playerAddressbookMask) {
+            scene.playerAddressbookMask.destroy()
+            scene.playerAddressbookContainer.destroy()
+            scene.playerAddressbookZone.destroy()
           }
+
+          scene.playerAddressbookMask = scene.add.graphics()
+            .fillStyle(0xffffff, 1)
+            .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+            .lineStyle(3, 0x000000, 1)
+            .strokeRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
+
+          scene.playerAddressbookContainer = scene.add.container(x + 10, y + 10)
+
+          const smileyFaces = ["friend", "friend2", "friend3"]
+
+          const height = 50
+
+          ManageSession.addressbook.addressbook.forEach((element, index) => {
+
+            const y = index * height
+
+            const randomNumber = Math.floor(Math.random() * smileyFaces.length)
+
+            scene.playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
+              .setOrigin(0)
+              .setInteractive({ useHandCursor: true })
+              .on("pointerdown", () => {
+                HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
+              })
+
+            scene.playerAddressbookDeleteButtonCircle = scene.add
+              .circle(70, y, 15, 0xffffff)
+              .setOrigin(0)
+              .setInteractive({ useHandCursor: true })
+              .setStrokeStyle(2, 0x0000)
+              .on("pointerdown", () => {
+                console.log("before deleting ManageSession.addressbook", ManageSession.addressbook)
+
+                const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
+                ManageSession.addressbook = { addressbook: filteredArray }
+
+                console.log("after deleting ManageSession.addressbook", ManageSession.addressbook)
+
+                // update server
+                const type = "addressbook"
+                const name = type + "_" + ManageSession.userProfile.id
+                const pub = 2
+                const value = ManageSession.addressbook
+
+                updateObject(type, name, value, pub)
+
+                scene.events.emit("playerAddressbook")
+              })
+
+            scene.playerAddressbookContainer.add([scene.playerAddressbookImage, scene.playerAddressbookDeleteButtonCircle])
+          })
+
+          scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
+
+          scene.playerAddressbookZone = scene.add.zone(x, y, playerAddressbookWidth, playerAddressbookHeight)
+            .setOrigin(0)
+            .setInteractive()
+            .on("pointermove", (pointer) => {
+              if (pointer.isDown) {
+                // console.log("pointermove")
+                if (pointer.isDown) {
+                  scene.playerAddressbookContainer.y += (pointer.velocity.y / 10);
+                  scene.playerAddressbookContainer.y = Phaser.Math.Clamp(scene.playerAddressbookContainer.y, y - (ManageSession.addressbook.addressbook.length * height) + playerAddressbookHeight, y); // value, bottom border, top border
+                }
+              }
+            })
+          // }
         })
 
         // adding all buttons to the container
@@ -496,7 +534,9 @@ class Player {
         });
       } else {
         scene.playerItemsBar.setVisible(false)
-        scene.playerLikedPanel.setVisible(false)
+        if (scene.playerLikedPanel) {
+          scene.playerLikedPanel.setVisible(false)
+        }
         scene.isPlayerItemsBarDisplayed = false
         if (scene.playerAddressbookContainer) {
           scene.playerAddressbookMask.destroy()
@@ -512,68 +552,31 @@ class Player {
     //player.setInteractive({ useHandCursor: true });
 
     // for toggling the pop-up buttons
-    scene.isOnlinePlayerItemsBarDisplayed = false;
+    scene.isOnlinePlayerItemsBarDisplayed = false
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
-    scene.onlinePlayerItemsBar = scene.add.container(scene.player.x, scene.player.y);
+    scene.onlinePlayerItemsBar = scene.add.container(0, 0)
 
-    //create playerLikedPanel with placeholderArt, so it is contructed, and we hide it afterwards
-    scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }, { name: 'artFrame_128' }, { name: 'artFrame_128' }] }
-    console.log(scene.onlinePlayerLikedPanelKeys)
+  }
 
-    scene.onlinePlayerLikedPanel = scene.rexUI.add
-      .scrollablePanel({
-        x: scene.player.x + 200,
-        y: scene.player.y,
-        width: 200,
-        height: 200,
+  async displayOnlinePlayerItemsBar(scene, player) {
+    ManageSession.selectedOnlinePlayer = player
 
-        scrollMode: 0,
+    // giving the position for the container that holds all the buttons
+    scene.onlinePlayerItemsBar.x = ManageSession.selectedOnlinePlayer.x
+    scene.onlinePlayerItemsBar.y = ManageSession.selectedOnlinePlayer.y
 
-        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+    scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
+    if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
-        panel: {
-          child: R_UI.createPanel(scene, scene.onlinePlayerLikedPanelKeys),
-        },
-
-        slider: {
-          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
-          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
-        },
-
-        space: {
-          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
-        },
-
-        name: "onlinePlayerLikedPanel"
-      })
-      .layout()
-
-    scene.input.topOnly = false;
-    const labels = [];
-    labels.push(
-      ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
-    )
-    //hide the itemsPanel
-    scene.onlinePlayerLikedPanel.setVisible(false)
-
-    // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
-    scene.events.on("onlinePlayerLikedPanelComplete", () => {
-      console.log("222")
-      //console.log("scene.events")
-      console.log(scene.onlinePlayerLikedPanel)
-      console.log(scene.onlinePlayerLikedPanelKeys) //!undifined
-
-      //destroy the old panel
-      scene.onlinePlayerLikedPanel.destroy()
-
-      //create a new panel
+      //create playerLikedPanel with placeholderArt, so it is constructed, and we hide it afterwards
+      scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'not_found' }, { name: 'not_found' }, { name: 'not_found' }] }
+      console.log(scene.onlinePlayerLikedPanelKeys)
 
       scene.onlinePlayerLikedPanel = scene.rexUI.add
         .scrollablePanel({
-          //! get the clicked onlinePlayer
-          x: scene.player.x + 200,
-          y: scene.player.y,
+          x: ManageSession.selectedOnlinePlayer.x + 200,
+          y: ManageSession.selectedOnlinePlayer.y,
           width: 200,
           height: 200,
 
@@ -593,6 +596,7 @@ class Player {
           space: {
             left: 10, right: 10, top: 10, bottom: 10, panel: 10,
           },
+
           name: "onlinePlayerLikedPanel"
         })
         .layout()
@@ -602,23 +606,64 @@ class Player {
       labels.push(
         ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
       )
+      //hide the itemsPanel
+      scene.onlinePlayerLikedPanel.setVisible(false)
 
-      scene.onlinePlayerLikedPanel.setVisible(true)
-    })
-  }
+      // event when server is finished loading the artworks: create a new panel (updating the panel didn't work)
+      scene.events.on("onlinePlayerLikedPanelComplete", () => {
+        // destroy the loading spinner
+        scene.onlinePlayerLikedPanelSpinner.destroy()
 
-  async displayOnlinePlayerItemsBar(scene, player) {
-    ManageSession.selectedOnlinePlayer = player
-    console.log("player", player)
-    console.log("playManageSession.selectedOnlinePlayer", ManageSession.selectedOnlinePlayer)
+        // console.log(scene.onlinePlayerLikedPanel)
+        // console.log(scene.onlinePlayerLikedPanelKeys) //!undefined
 
-    scene.isOnlinePlayerItemsBarDisplayed == false ? true : false
-    if (scene.isOnlinePlayerItemsBarDisplayed == false) {
+        //destroy the old panel
+        if (scene.onlinePlayerLikedPanel) {
+          scene.onlinePlayerLikedPanel.destroy()
+        }
+
+        //create a new panel
+        scene.onlinePlayerLikedPanel = scene.rexUI.add
+          .scrollablePanel({
+            //! get the clicked onlinePlayer
+            x: scene.onlinePlayerItemsBar.x + 200,
+            y: scene.onlinePlayerItemsBar.y,
+            width: 200,
+            height: 200,
+
+            scrollMode: 0,
+
+            background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+            panel: {
+              child: R_UI.createPanel(scene, scene.onlinePlayerLikedPanelKeys),
+            },
+
+            slider: {
+              track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+              thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+            },
+
+            space: {
+              left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+            },
+            name: "onlinePlayerLikedPanel"
+          })
+          .layout()
+
+        scene.input.topOnly = false;
+        const labels = [];
+        labels.push(
+          ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
+        )
+
+        scene.onlinePlayerLikedPanel.setVisible(true)
+      })
 
       Promise.all([listObjects("liked", player.id, 10)]).then((rec) => {
         // it checks if there was ever before a liked object created for the online player
         if (rec[0].length > 0) {
-          console.log("if rec", rec)
+
           ManageSession.likedOnlinePlayer = rec[0][0].value
           console.log("ManageSession.likedOnlinePlayer", ManageSession.likedOnlinePlayer)
 
@@ -633,15 +678,27 @@ class Player {
 
           scene.onlinePlayerLikedButtonCircle.on("pointerdown", async () => {
             // we display placeholder panel, and replace it with refreshed panel once server is done loading
-            scene.onlinePlayerLikedPanel.setVisible(true)
-            scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert methode to onlinePlayer
+            // scene.onlinePlayerLikedPanel.setVisible(true)
+
+            // display spinner while images are being downloaded
+            scene.onlinePlayerLikedPanelSpinner = scene.rexSpinner.add.pie({
+              x: ManageSession.selectedOnlinePlayer.x + 150,
+              y: ManageSession.selectedOnlinePlayer.y,
+              width: 100,
+              height: 100,
+              duration: 850,
+              color: 0x000000
+            })
+
+            scene.onlinePlayerLikedPanelSpinner.start()
+
+            scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert method to onlinePlayer
           })
 
           scene.onlinePlayerItemsBar.add([scene.onlinePlayerLikedButtonCircle, scene.onlinePlayerLikedButton])
 
           scene.isOnlinePlayerItemsBarDisplayed = true
         } else {
-          console.log("else rec", rec)
           ManageSession.likedOnlinePlayer = {}
 
           const type = "liked"
@@ -690,14 +747,12 @@ class Player {
 
             // console.log("ManageSession.addressbook.addressbook", ManageSession.addressbook.addressbook)
 
-
             const entry = { user_id: ManageSession.selectedOnlinePlayer.id }
 
             const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
 
-            console.log("isExist", isExist)
             if (!isExist) {
-              console.log("updated")
+              console.log("this user id has been added to the addressbook list")
               ManageSession.addressbook.addressbook.push(entry)
 
               console.log("ManageSession address book", ManageSession.addressbook)
@@ -708,6 +763,18 @@ class Player {
               const value = ManageSession.addressbook
               console.log("value ManageSession.addressbook", value)
               updateObject(type, name, value, pub)
+
+              // we want to inform the player that the item has been added to the addressbook
+              scene.events.emit("playerAddressbook")
+
+              // hiding the addressbook after 2 seconds
+              scene.time.addEvent({
+                delay: 2000, callback: () => {
+                  scene.playerAddressbookMask.destroy()
+                  scene.playerAddressbookContainer.destroy()
+                  scene.playerAddressbookZone.destroy()
+                }, callbackScope: scene, loop: false
+              })
             } else {
               console.log("this user id is already in addressbook list")
             }
@@ -767,7 +834,12 @@ class Player {
       //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
       .setDepth(90)
     onlinePlayer.setInteractive({ useHandCursor: true })
-    onlinePlayer.on('pointerup', () => { this.displayOnlinePlayerItemsBar(scene, onlinePlayer) })
+    // hit area 
+    onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
+    onlinePlayer.on('pointerup', () => {
+      this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
+      console.log("online player width", onlinePlayer)
+    })
 
     onlinePlayer.setData("movingKey", "moving")
     onlinePlayer.setData("stopKey", "stop")
@@ -1066,8 +1138,6 @@ class Player {
       isArtworksDownloaded = false
     })
   }
-
-
 
   // movePlayerAddressbook(scene) {
   //   const x = scene.player.x - 50

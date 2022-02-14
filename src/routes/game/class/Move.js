@@ -224,13 +224,26 @@ class Move {
 
   moveScrollablePanel(scene) {
     scene.playerLikedPanel.x = scene.player.x + 200;
-    scene.playerLikedPanel.y = scene.player.y;
+    scene.playerLikedPanel.y = scene.player.y
   }
 
   movePlayerContainer(scene) {
     scene.playerItemsBar.x = scene.player.x
     scene.playerItemsBar.y = scene.player.y
   }
+
+  // we need to follow the online player's movement
+  // moveOnlinePlayerContainer(scene) {
+  //   scene.onlinePlayerItemsBar.x = ManageSession.selectedOnlinePlayer.x
+  //   scene.onlinePlayerItemsBar.y = ManageSession.selectedOnlinePlayer.y
+  // }
+
+  // moveOnlinePlayerLikedPanel(scene) {
+  //   scene.onlinePlayerLikedPanel.x = ManageSession.selectedOnlinePlayer.x + 200
+  //   scene.onlinePlayerLikedPanel.y = ManageSession.selectedOnlinePlayer.y
+  // }
+
+
 
 
 }
