@@ -38,18 +38,6 @@ class Preloader {
         });
 
     }
-    // https://rexrainbow.github.io/phaser3-rex-notes/docs/site/shape-spinner/
-    runSpinner(scene, x, y, width, height) {
-        scene.spinner = scene.rexSpinner.add.pie({
-            x,
-            y,
-            width,
-            height,
-            duration: 850,
-            color: 0x000000
-        })
-        scene.spinner.start()
-    }
 } //end class
 
 export default new Preloader()
