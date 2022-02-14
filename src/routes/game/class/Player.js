@@ -343,10 +343,9 @@ class Player {
           .setStrokeStyle(3, 0x0000)
         scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
 
-        scene.playerAddressbookButtonCircle.on("pointerdown", () => {
+        scene.playerAddressbookButtonCircle.on("pointerup", () => {
 
-          console.log("clicked")
-          console.log("clicked addressbook", ManageSession.addressbook.addressbook)
+          console.log("clicked addressbook", ManageSession.addressbook)
 
           // if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
           const playerAddressbookWidth = 120
@@ -375,29 +374,32 @@ class Player {
           const height = 50
 
           ManageSession.addressbook.addressbook.forEach((element, index) => {
+            console.log("element, index", element, index)
 
             const y = index * height
 
             const randomNumber = Math.floor(Math.random() * smileyFaces.length)
 
-            const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
+            scene.playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
               .setOrigin(0)
               .setInteractive({ useHandCursor: true })
-              .on("pointerdown", () => {
+              .on("pointerup", () => {
                 HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
               })
 
-            const playerAddressbookButtonCircle = scene.add
+            scene.playerAddressbookDeleteButtonCircle = scene.add
               .circle(70, y, 15, 0xffffff)
               .setOrigin(0)
               .setInteractive({ useHandCursor: true })
               .setStrokeStyle(2, 0x0000)
-              .on("pointerdown", () => {
+              .setDepth(1000)
+              .on("pointerup", () => {
+                console.log("before deleting ManageSession.addressbook", ManageSession.addressbook)
 
                 const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
                 ManageSession.addressbook = { addressbook: filteredArray }
 
-                console.log("after deleting", ManageSession.addressbook)
+                console.log("after deleting ManageSession.addressbook", ManageSession.addressbook)
 
                 // update server
                 const type = "addressbook"
@@ -410,7 +412,7 @@ class Player {
                 scene.events.emit("playerAddressbook")
               })
 
-            scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookButtonCircle])
+            scene.playerAddressbookContainer.add([scene.playerAddressbookImage, scene.playerAddressbookDeleteButtonCircle])
           })
 
           scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
@@ -431,8 +433,7 @@ class Player {
         })
 
         scene.events.on("playerAddressbook", () => {
-          console.log("events on")
-          console.log("events addressbook", ManageSession.addressbook.addressbook)
+          console.log("events addressbook", ManageSession.addressbook)
           // if (ManageSession.addressbook.addressbook.length > 0 && ManageSession.addressbook.addressbook[0].user_id != "undefined") {
           const playerAddressbookWidth = 120
           const playerAddressbookHeight = 200
@@ -464,24 +465,25 @@ class Player {
 
             const randomNumber = Math.floor(Math.random() * smileyFaces.length)
 
-            const playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
+            scene.playerAddressbookImage = scene.add.image(0, y, smileyFaces[randomNumber])
               .setOrigin(0)
               .setInteractive({ useHandCursor: true })
               .on("pointerdown", () => {
                 HistoryTracker.switchScene(scene, "DefaultUserHome", element.user_id)
               })
 
-            const playerAddressbookButtonCircle = scene.add
+            scene.playerAddressbookDeleteButtonCircle = scene.add
               .circle(70, y, 15, 0xffffff)
               .setOrigin(0)
               .setInteractive({ useHandCursor: true })
               .setStrokeStyle(2, 0x0000)
               .on("pointerdown", () => {
+                console.log("before deleting ManageSession.addressbook", ManageSession.addressbook)
 
                 const filteredArray = ManageSession.addressbook.addressbook.filter(el => el.user_id != element.user_id)
                 ManageSession.addressbook = { addressbook: filteredArray }
 
-                console.log("after deleting", ManageSession.addressbook)
+                console.log("after deleting ManageSession.addressbook", ManageSession.addressbook)
 
                 // update server
                 const type = "addressbook"
@@ -494,7 +496,7 @@ class Player {
                 scene.events.emit("playerAddressbook")
               })
 
-            scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookButtonCircle])
+            scene.playerAddressbookContainer.add([scene.playerAddressbookImage, scene.playerAddressbookDeleteButtonCircle])
           })
 
           scene.playerAddressbookContainer.setMask(scene.playerAddressbookMask.createGeometryMask())
