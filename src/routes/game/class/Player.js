@@ -341,6 +341,13 @@ class Player {
             const x = scene.player.x - playerAddressbookWidth / 2
             const y = scene.player.y + 110
 
+            // if the addressbook exists from the previous opening, destroy it, in order not to have multiple addressbook holder
+            if (scene.playerAddressbookMask) {
+              scene.playerAddressbookMask.destroy()
+              scene.playerAddressbookContainer.destroy()
+              scene.playerAddressbookZone.destroy()
+            }
+
             scene.playerAddressbookMask = scene.add.graphics()
               .fillStyle(0xffffff, 1)
               .fillRoundedRect(x, y, playerAddressbookWidth, playerAddressbookHeight, 8)
