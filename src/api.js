@@ -98,6 +98,7 @@ await fetch(jpegURL, {
   console.log(value)
   value.url = jpegLocation
   value.username = prof.username
+  value.version = version 
   pub = true
 
   // get object

@@ -351,7 +351,11 @@ import App from "../../App.svelte";
         console.log(Image);
         var blobData = dataURItoBlob(Image);
         json = JSON.stringify(frames);
-        await uploadImage(title, appType, json, blobData, status,version);
+        if(!!!displayName){
+          displayName = title
+          title = Date.now() + "_" + title
+        }
+        await uploadImage(title, appType, json, blobData, status,version,displayName);
         saving = false
 
     }
@@ -1233,8 +1237,6 @@ import App from "../../App.svelte";
 
 <style>
   main {
-    background-color: rgb(204, 201, 201);
-    height: 100vh;
     margin: 0 auto;
     width: fit-content;
   }
