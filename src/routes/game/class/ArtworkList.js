@@ -368,6 +368,7 @@ class ArtworkList {
       // changing to red, liked
       button.setTexture("heart")
       button.setData("toggle", false)
+      //! Update likedpanel, when open?
       // updates the object locally
       // add to the array
       ManageSession.liked.liked.push(parsedMediaOject)
@@ -375,7 +376,7 @@ class ArtworkList {
       // changing to empty, not liked
       button.setTexture("heart_empty")
       button.setData("toggle", true)
-
+      //! Update likedpanel, when open?
       // updates the object locally
       // find the object in the array, by url, filter the object with the url out
       ManageSession.liked.liked = ManageSession.liked.liked.filter(obj => obj.url != mediaObject.value.url)
