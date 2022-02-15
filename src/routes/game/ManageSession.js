@@ -101,7 +101,7 @@ class ManageSession {
 
           if (data.action == "moveTo") {
             //get the scene context from the onlinePlayer
-          
+
             const movingKey = onlinePlayer.getData("movingKey")
             onlinePlayer.anims.play(movingKey, true)
 
@@ -175,6 +175,7 @@ class ManageSession {
     // console.log("this.allConnectedUsers", this.allConnectedUsers)
     let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
     console.log("removeUser", removeUser)
+    // if (removeUser[0]) removeUser[0].destroy()
     removeUser[0].destroy()
     this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.user_id)
     // console.log("----")
