@@ -61,9 +61,6 @@ export default class Location3 extends Phaser.Scene {
 
   async preload() {
 
-    // loading bar
-    //TestLoader.run(this)
-
     //....... IMAGES ......................................................................
     this.load.image("sky", "./assets/sky.png");
     this.load.image("star", "./assets/star.png");
@@ -426,13 +423,19 @@ export default class Location3 extends Phaser.Scene {
       Move.moveByTapping(this)
     }
 
-    if (this.playerLikedPanel) {
-      Move.moveScrollablePanel(this)
-    }
-
+    // player items bar follows the position of the player 
     if (this.playerItemsBar) {
-      Move.movePlayerContainer(this)
+      Move.movePlayerItemsBar(this)
     }
 
+    // player liked panel follows the position of the player 
+    if (this.playerLikedPanel) {
+      Move.movePlayerLikedPanel(this)
+    }
+
+    // once a movement is detected the addressbook is hidden
+    if (this.playerAddressbookContainer) {
+      Player.hideAddressbook(this)
+    }
   } //update
 } //class

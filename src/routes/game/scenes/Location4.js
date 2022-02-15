@@ -7,7 +7,6 @@ import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker"
-import TestLoader from "../class/TestLoader.js"
 import Move from "../class/Move.js"
 
 //import { getAvatar } from '../../profile.svelte'
@@ -72,9 +71,6 @@ export default class Location4 extends Phaser.Scene {
 
   async preload() {
 
-    // loading bar
-    TestLoader.run(this)
-
     //....... IMAGES ......................................................................
     let userID = ManageSession.sessionStored.user_id
     let drawings = await listImages("drawing", userID, 10)
@@ -124,7 +120,7 @@ export default class Location4 extends Phaser.Scene {
     //.......  PLAYER ..........................................................................
     this.playerAvatarPlaceholder = "avatar1";
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
-
+    Player.createPlayerItemsBar(this)
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
 
     //create player group
@@ -1068,13 +1064,19 @@ export default class Location4 extends Phaser.Scene {
       Move.moveByTapping(this)
     }
 
-    if (this.playerLikedPanel) {
-      Move.moveScrollablePanel(this)
-    }
-
+    // player items bar follows the position of the player 
     if (this.playerItemsBar) {
-      Move.movePlayerContainer(this)
+      Move.movePlayerItemsBar(this)
     }
 
+    // player liked panel follows the position of the player 
+    if (this.playerLikedPanel) {
+      Move.movePlayerLikedPanel(this)
+    }
+
+    // once a movement is detected the addressbook is hidden
+    if (this.playerAddressbookContainer) {
+      Player.hideAddressbook(this)
+    }
   } //update
 } //class

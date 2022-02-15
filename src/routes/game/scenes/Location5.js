@@ -1,7 +1,6 @@
 import { Scene3D, THREE } from "@enable3d/phaser-extension"
 import ManageSession from "../ManageSession"
 import HistoryTracker from "../class/HistoryTracker"
-import TestLoader from "../class/TestLoader"
 import Move from "../class/Move.js"
 
 export default class Location5 extends Scene3D {
@@ -29,10 +28,6 @@ export default class Location5 extends Scene3D {
   }
 
   preload() {
-
-    // loading bar
-    TestLoader.run(this) 
-
     this.third.load.preload("ground", "./assets/background_location7.jpg");
     this.third.load.preload("avatar", "./assets/paper.jpg");
     this.third.load.preload(
@@ -259,20 +254,20 @@ export default class Location5 extends Scene3D {
       .setDepth(1000)
       .setScale(0.075)
       .setInteractive({ useHandCursor: true });
-    
-  this.backButton.on("pointerup", () => {
-    // to leave the last added (currentLocation) scene and delete it from the array of locations
-    // to enter the previous scene (previousLocation) 
-    const currentLocation = ManageSession.locationHistory.pop();
-    const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
-    
-    ManageSession.socket.rpc("leave", currentLocation)
-    setTimeout(() => {
-      ManageSession.location = previousLocation
-      ManageSession.createPlayer = true
-      ManageSession.getStreamUsers("join", previousLocation)
-      this.scene.stop(currentLocation)
-      this.scene.start(previousLocation)
+
+    this.backButton.on("pointerup", () => {
+      // to leave the last added (currentLocation) scene and delete it from the array of locations
+      // to enter the previous scene (previousLocation) 
+      const currentLocation = ManageSession.locationHistory.pop();
+      const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
+
+      ManageSession.socket.rpc("leave", currentLocation)
+      setTimeout(() => {
+        ManageSession.location = previousLocation
+        ManageSession.createPlayer = true
+        ManageSession.getStreamUsers("join", previousLocation)
+        this.scene.stop(currentLocation)
+        this.scene.start(previousLocation)
       }, 500)
     });
   }

@@ -125,7 +125,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   async create() {
     // for back button
     HistoryTracker.locationPush(this)
-    console.log(ManageSession.locationHistory)
 
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
@@ -189,8 +188,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       "sunglass_stripes"
     );
 
-
-
     // this.sunglasses_striped.setInteractive({ draggable: true })
 
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
@@ -226,15 +223,14 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // End Background .........................................................................................
 
     //.......  PLAYER ....................................................................................
-    //*create deafult player and playerShadow
+    //* create default player and playerShadow
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 50),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 50),
       this.playerAvatarPlaceholder
-    )
-    this.player.setDepth(200)
+    ).setDepth(201)
 
     Player.createPlayerItemsBar(this)
 
@@ -251,7 +247,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       scene: this,
       texture: this.playerAvatarPlaceholder,
     })
-    this.playerShadow.setDepth(199)
+    this.playerShadow.setDepth(200)
     //.......  end PLAYER ................................................................................
 
     //....... onlinePlayers ..............................................................................
@@ -267,11 +263,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.gameCam.startFollow(this.player)
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
     //https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
-    this.physics.world.on('worldbounds', (obj) => {
-      console.log("working")
-      console.log("obj", obj)
-    })
-
     //......... end PLAYER VS WORLD .......................................................................
 
     //......... INPUT .....................................................................................
@@ -320,12 +311,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //create items bar for onlineplayer, after UIscene, because it need currentZoom
     Player.createOnlinePlayerItemsBar(this)
     // this.avatarDetailsContainer.setDepth(999)
-  
-  } //end create
 
-  worldBoundCallBack() {
-    console.log("Bounds!")
-  }
+  } //end create
 
   async getAccountDetails(array, id) {
 
@@ -524,16 +511,19 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       Move.moveByTapping(this)
     }
 
-    if (this.playerLikedPanel) {
-      Move.moveScrollablePanel(this)
-    }
-
+    // player items bar follows the position of the player 
     if (this.playerItemsBar) {
-      Move.movePlayerContainer(this)
+      Move.movePlayerItemsBar(this)
     }
 
+    // player liked panel follows the position of the player 
+    if (this.playerLikedPanel) {
+      Move.movePlayerLikedPanel(this)
+    }
+
+    // once a movement is detected the addressbook is hidden
     if (this.playerAddressbookContainer) {
-      Player.hidePlayerAddressbook(this)
+      Player.hideAddressbook(this)
     }
 
   } //update

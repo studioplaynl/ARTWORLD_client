@@ -1,7 +1,6 @@
-import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension";
+import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension"
 import ManageSession from "../ManageSession"
-import HistoryTracker from "../class/HistoryTracker";
-import TestLoader from "../class/TestLoader";
+import HistoryTracker from "../class/HistoryTracker"
 
 export default class Location2 extends Scene3D {
 
@@ -14,14 +13,8 @@ export default class Location2 extends Scene3D {
     this.accessThirdDimension();
   }
 
-  async preload() {
-
-    // loading bar
-    TestLoader.run(this)
-  }
-
   async create() {
-    
+
     // 3d scenes have separate UI_scene
     this.scene.stop("UI_Scene");
 
@@ -103,13 +96,13 @@ export default class Location2 extends Scene3D {
       .setDepth(1000)
       .setScale(0.075)
       .setInteractive({ useHandCursor: true });
-    
+
     this.backButton.on("pointerup", () => {
       // to leave the last added (currentLocation) scene and delete it from the array of locations
       // to enter the previous scene (previousLocation) 
       const currentLocation = ManageSession.locationHistory.pop();
       const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
-      
+
       ManageSession.socket.rpc("leave", currentLocation)
       setTimeout(() => {
         ManageSession.location = previousLocation

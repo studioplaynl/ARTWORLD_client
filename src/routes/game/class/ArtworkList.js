@@ -1,5 +1,7 @@
 import { updateObject, listImages, convertImage } from '../../../api.js'
 import ManageSession from '../ManageSession.js'
+import Player from './Player.js'
+import R_UI from "./R_UI"
 
 class ArtworkList {
   constructor() { }
@@ -160,7 +162,6 @@ class ArtworkList {
     //  },
     // ]
 
-
     const allLikedArray = ManageSession.liked.liked // we get an array of objects, an object has the form of: 
     // {
     // collection: "drawing"
@@ -192,10 +193,7 @@ class ArtworkList {
         scene.load.start(); // start the queue with all the images
         //check if the specific image has loaded
         const fileNameCheck = `filecomplete-image-${key}`
-        //console.log(fileNameCheck)
-        scene.load.on(fileNameCheck, () => allItems = this.checkAllItemsList(scene, allItems, -1, key, tempArray))
-        //scene.load.on(fileNameCheck, () => console.log("finished loading: ", fileNameCheck)) // working
-
+        scene.load.on(fileNameCheck, () => allItems = this.checkAllItemsList(scene, allItems, -1, key, tempArray)) // processing each artwork
       } else {
         //when an image was already loaded and is still in memory, it also counts:
         allItems = this.checkAllItemsList(scene, allItems, -1, key, tempArray)
@@ -221,7 +219,6 @@ class ArtworkList {
 
     if (allItems > 0) {
       allLikedArray.map(async (element) => {
-
         const key = `${element.key}_128`
 
         //if the image is not yet loaded, we download it
@@ -236,10 +233,7 @@ class ArtworkList {
           scene.load.start(); // start the queue with all the images
           //check if the specific image has loaded
           const fileNameCheck = `filecomplete-image-${key}`
-          //console.log(fileNameCheck)
           scene.load.on(fileNameCheck, () => allItems = this.checkAllItemsListOnlinePlayer(scene, allItems, -1, key, tempArray))
-          //scene.load.on(fileNameCheck, () => console.log("finished loading: ", fileNameCheck)) // working
-
         } else {
           //when an image was already loaded and is still in memory, it also counts:
           allItems = this.checkAllItemsListOnlinePlayer(scene, allItems, -1, key, tempArray)
@@ -247,49 +241,82 @@ class ArtworkList {
       })
     } else {
       scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }] }
-      scene.events.emit("onlinePlayerLikedPanelComplete")
+      this.createLikedPanel(scene, scene.onlinePlayerLikedPanelSpinner, "onlinePlayerLikedPanel", scene.onlinePlayerItemsBar, scene.onlinePlayerLikedPanelKeys)
     }
   }
-
-
 
   checkAllItemsList(scene, allItems, subtract, key, tempArray) {
-    //the tempArray is initialised in the parent method
+    //the tempArray is initialized in the parent method
     tempArray.artworks.push({ "name": key })
-
-    //console.log(tempArray)
-
     allItems = allItems + subtract
-    //console.log("allItems: ", allItems)
     if (allItems < 1) {
-      //console.log("FINISHED!")
       scene.playerLikedPanelKeys = tempArray
-      //console.log("scene.playerLikedPanelKeys: ", scene.playerLikedPanelKeys)
-      scene.events.emit("playerLikedPanelComplete")
-
+      this.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
+      console.log("scene.playerLikedPanel", scene.playerLikedPanel)
     } else {
       return allItems // return the result if not completed
     }
   }
 
-
   checkAllItemsListOnlinePlayer(scene, allItems, subtract, key, tempArray) {
-    //the tempArray is initialised in the parent method
+    //the tempArray is initialized in the parent method
     tempArray.artworks.push({ "name": key })
-
-    //console.log(tempArray)
-
     allItems = allItems + subtract
-    //console.log("allItems: ", allItems)
     if (allItems < 1) {
-      //console.log("FINISHED!")
       scene.onlinePlayerLikedPanelKeys = tempArray
-      //console.log("scene.playerLikedPanelKeys: ", scene.playerLikedPanelKeys)
-      scene.events.emit("onlinePlayerLikedPanelComplete")
-
+      this.createLikedPanel(scene, scene.onlinePlayerLikedPanelSpinner, "onlinePlayerLikedPanel", scene.onlinePlayerItemsBar, scene.onlinePlayerLikedPanelKeys)
     } else {
       return allItems // return the result if not completed
     }
+  }
+
+  // universal panel for player and onlinePlayer  
+  createLikedPanel(scene, spinner, likedPanelName, currentPlayer, currentLikedPanelKeys) {
+    // destroy the loading spinner
+    spinner.destroy()
+
+    // destroy the old panel
+    if (scene[likedPanelName]) {
+      scene[likedPanelName].destroy()
+    }
+
+    // create a new panel
+    scene[likedPanelName] = scene.rexUI.add
+      .scrollablePanel({
+        x: currentPlayer.x + 200,
+        y: currentPlayer.y,
+        width: 200,
+        height: 200,
+
+        scrollMode: 0,
+
+        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
+
+        panel: {
+          child: R_UI.createPanel(scene, currentLikedPanelKeys),
+        },
+
+        slider: {
+          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
+          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
+        },
+
+        space: {
+          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
+        },
+
+        mouseWheelScroller: {
+          focus: false,
+          speed: 0.1
+        }
+      })
+      .layout()
+
+    scene.input.topOnly = false;
+    const labels = [];
+    labels.push(
+      ...scene[likedPanelName].getElement("#artworks.items", true)
+    )
   }
 
   placeHeartButton(scene, x, y, keyImgUrl, mediaObject) {
@@ -329,9 +356,6 @@ class ArtworkList {
       currentHeart.setTint(0x000000)
       currentHeart.setData("toggle", true)
     }
-    // console.log(Object.values(ManageSession.liked))
-    // console.log(Object.values(ManageSession.liked.liked))
-
   }
 
   heartButtonToggle(mediaObject, button) {
@@ -346,9 +370,6 @@ class ArtworkList {
       // updates the object locally
       // add to the array
       ManageSession.liked.liked.push(parsedMediaOject)
-      console.log(ManageSession.liked)
-
-      //console.log("turnedRED")
     } else {
       //changing to black, not liked
       button.setTint(0x000000)
@@ -358,7 +379,6 @@ class ArtworkList {
 
       ManageSession.liked.liked = ManageSession.liked.liked.filter(obj => obj.url != mediaObject.value.url)
       // ManageSession.liked.liked.splice(deleteIndex, deleteIndex + 1)
-      console.log(ManageSession.liked.liked)
       //delete ManageSession.allLiked[keyImgUrl]
     }
 
