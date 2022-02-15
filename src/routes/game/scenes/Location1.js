@@ -166,10 +166,9 @@ export default class Location1 extends Phaser.Scene {
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
     this.playerAvatarPlaceholder = "avatar1";
 
-    //*create deafult player and playerShadow
-    // this.player = new PlayerDefault(this, 300, 800, this.playerAvatarPlaceholder)
+    //*create default player and playerShadow
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
-
+    Player.createPlayerItemsBar(this)
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
@@ -881,14 +880,19 @@ export default class Location1 extends Phaser.Scene {
       Move.moveByTapping(this)
     }
 
-    if (this.playerLikedPanel) {
-      Move.moveScrollablePanel(this)
-    }
-
+    // player items bar follows the position of the player 
     if (this.playerItemsBar) {
-      Move.movePlayerContainer(this)
+      Move.movePlayerItemsBar(this)
     }
 
+    // player liked panel follows the position of the player 
+    if (this.playerLikedPanel) {
+      Move.movePlayerLikedPanel(this)
+    }
 
+    // once a movement is detected the addressbook is hidden
+    if (this.playerAddressbookContainer) {
+      Player.hideAddressbook(this)
+    }
   } //update
 } //class

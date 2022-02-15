@@ -125,16 +125,16 @@ export default class DefaultUserHome extends Phaser.Scene {
         //....... end LOAD PLAYER AVATAR .......................................................................
         Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
         //.......  PLAYER ....................................................................................
-        //* create deafult player and playerShadow
+        //* create default player and playerShadow
         //* create player in center with artworldCoordinates
         this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
-
+        Player.createPlayerItemsBar(this)
         this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
         //.......  end PLAYER ................................................................................
 
         //....... onlinePlayers ..............................................................................
         // add onlineplayers group
-        this.onlinePlayersGroup = this.add.group();
+        this.onlinePlayersGroup = this.add.group()
         //....... end onlinePlayers ..........................................................................
 
         //....... PLAYER VS WORLD .............................................................................
@@ -332,12 +332,19 @@ export default class DefaultUserHome extends Phaser.Scene {
             Move.moveByTapping(this)
         }
 
-        if (this.playerLikedPanel) {
-            Move.moveScrollablePanel(this)
+        // player items bar follows the position of the player 
+        if (this.playerItemsBar) {
+            Move.movePlayerItemsBar(this)
         }
 
-        if (this.playerItemsBar) {
-            Move.movePlayerContainer(this)
+        // player liked panel follows the position of the player 
+        if (this.playerLikedPanel) {
+            Move.movePlayerLikedPanel(this)
+        }
+
+        // once a movement is detected the addressbook is hidden
+        if (this.playerAddressbookContainer) {
+            Player.hideAddressbook(this)
         }
     } //update
 } //class
