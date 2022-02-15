@@ -139,11 +139,11 @@ function moveToTrash(key) {
         stopMotion = await listAllObjects("stopmotion",params.user)
         picture = await listAllObjects("picture",params.user)
       } else {
-        drawings = await listImages("drawing",params.user, 10)
-        video = await listImages("video",params.user, 10)
-        audio = await listImages("audio",params.user, 10)
-        stopMotion = await listImages("stopmotion",params.user, 10)
-        picture = await listImages("picture",params.user, 10)
+        drawings = await listImages("drawing",params.user, 100)
+        video = await listImages("video",params.user, 100)
+        audio = await listImages("audio",params.user, 100)
+        stopMotion = await listImages("stopmotion",params.user, 100)
+        picture = await listImages("picture",params.user, 100)
       }
 
       console.log(drawings)
@@ -166,11 +166,11 @@ function moveToTrash(key) {
       }
     } else {
       CurrentUser = true;
-      drawings = await listImages("drawing",$Session.user_id, 10)
-      stopMotion = await listImages("stopmotion",$Session.user_id, 10)
-      video = await listImages("video",$Session.user_id, 10)
-      audio = await listImages("audio",$Session.user_id, 10)
-      picture = await listImages("picture",$Session.user_id, 10)
+      drawings = await listImages("drawing",$Session.user_id, 100)
+      stopMotion = await listImages("stopmotion",$Session.user_id, 100)
+      video = await listImages("video",$Session.user_id, 100)
+      audio = await listImages("audio",$Session.user_id, 100)
+      picture = await listImages("picture",$Session.user_id, 100)
       useraccount = await getAccount()
       console.log(useraccount)
       user = useraccount.username
@@ -292,9 +292,6 @@ function moveToTrash(key) {
     position: static;
   }
 
-  button {
-    width:auto;
-  }
  
   
 
