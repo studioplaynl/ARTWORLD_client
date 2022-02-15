@@ -70,8 +70,6 @@ export default class Location3 extends Phaser.Scene {
       { frameWidth: 68, frameHeight: 68 }
     );
 
-    this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
-
     this.load.image("ball", "./assets/ball_grey.png")
 
     //test backgrounds

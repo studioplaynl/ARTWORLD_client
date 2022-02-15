@@ -340,7 +340,7 @@ class ArtworkList {
     console.log(mediaObject)
     //place heartButton under the artwork, make them interactive
     const artFrame = scene.textures.get("artFrame_512")
-    let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "bitmap_heart").setOrigin(1, 0).setScale(0.5).setDepth(101)
+    let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "heart").setOrigin(1, 0).setScale(0.5).setDepth(101)
       .setInteractive()
       .setData("toggle", false) //false, not liked state
       //.setTint(0x000000) //black, not liked color

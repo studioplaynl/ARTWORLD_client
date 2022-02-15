@@ -84,15 +84,15 @@ export default class UI_Scene extends Phaser.Scene {
 
     if (!update) {
       //text to show the location (for debugging) > will change to breadcrum UI for user
-      this.locationText = this.add
-        .text(width / 3.5, height / 40, this.location, {
-          fontFamily: "Arial",
-          fontSize: "22px",
-        })
-        .setOrigin(0)
-        //.setScrollFactor(0) //fixed on screen
-        .setShadow(1, 1, "#000000", 0)
-        .setDepth(1000);
+      // this.locationText = this.add
+      //   .text(width / 3.5, height / 40, this.location, {
+      //     fontFamily: "Arial",
+      //     fontSize: "22px",
+      //   })
+      //   .setOrigin(0)
+      //   //.setScrollFactor(0) //fixed on screen
+      //   .setShadow(1, 1, "#000000", 0)
+      //   .setDepth(1000)
 
       // mobile debug text field
       this.debugTextField = this.add.text(50, 80, this.debugText, {
@@ -104,7 +104,7 @@ export default class UI_Scene extends Phaser.Scene {
       this.backButton = this.add.image(40, 40, "back_button")
         .setOrigin(0, 0.5)
         .setDepth(1000)
-        .setInteractive({ useHandCursor: true });
+        .setInteractive({ useHandCursor: true })
 
       // back button background color white
       this.backButtonCircle = this.add.circle(40, 40, 15, 0xffffff).setOrigin(0, 0.5)
@@ -151,9 +151,7 @@ export default class UI_Scene extends Phaser.Scene {
           callbackScope: this,
           loop: false
         })
-
-
-      });
+      })
 
       //zoom buttons
       this.zoomOut = this.add
@@ -164,7 +162,7 @@ export default class UI_Scene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true });
 
       this.zoom = this.add
-        .image(60 + 80, 40, "ui_eye")
+        .image(60 + 100, 40, "ui_eye")
         .setOrigin(0, 0.5)
         .setDepth(1000)
         .setScale(width / (width / this.camUI.zoom) / 8)

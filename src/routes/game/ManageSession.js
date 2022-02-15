@@ -95,12 +95,16 @@ class ManageSession {
           // posX: -236.42065
           // posY: -35.09519
           // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
-          // action: action
+          // action: "moveTo" "stop"
+          const scene = onlinePlayer.scene
+          //console.log("onlinePlayer", onlinePlayer)
 
           if (data.action == "moveTo") {
             //get the scene context from the onlinePlayer
-            const scene = onlinePlayer.scene
-            //console.log(onlinePlayer)
+          
+            const movingKey = onlinePlayer.getData("movingKey")
+            onlinePlayer.anims.play(movingKey, true)
+
             const moveToX = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, data.posX)
             const moveToY = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, data.posY)
 
@@ -116,9 +120,7 @@ class ManageSession {
               paused: false,
               duration: duration,
             })
-
-            const movingKey = onlinePlayer.getData("movingKey")
-            onlinePlayer.anims.play(movingKey, true)
+            //console.log("target", target)
           }
 
           if (data.action == "stop") {

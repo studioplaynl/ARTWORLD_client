@@ -116,9 +116,8 @@ export default class DefaultUserHome extends Phaser.Scene {
         HistoryTracker.homePush(this)
         console.log(ManageSession.locationHistory)
 
-        //timers
-        ManageSession.updateMovementTimer = 0;
-        ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
+        //copy worldSize over to ManageSession, so that positionTranslation can be done there
+        ManageSession.worldSize = this.worldSize
 
         //.......  LOAD PLAYER AVATAR ..........................................................................
         ManageSession.createPlayer = true
@@ -136,13 +135,14 @@ export default class DefaultUserHome extends Phaser.Scene {
         // add onlineplayers group
         this.onlinePlayersGroup = this.add.group()
         //....... end onlinePlayers ..........................................................................
-
+        Player.createOnlinePlayerItemsBar(this)
         //....... PLAYER VS WORLD .............................................................................
         this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
         //!setBounds has to be set before follow, otherwise the camera doesn't follow!
-        this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
         this.gameCam.zoom = 1
-        this.gameCam.startFollow(this.player);
+        this.gameCam.startFollow(this.player)
+        this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
+
         //......... end PLAYER VS WORLD .......................................................................
 
         //......... INPUT .....................................................................................

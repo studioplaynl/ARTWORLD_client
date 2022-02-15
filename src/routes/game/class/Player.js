@@ -184,22 +184,16 @@ class Player {
         scene.playerItemsBar.setVisible(true)
 
         // creating a home button
-        scene.playerHomeButtonCircle = scene.add
-          .circle(0, -70, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(3, 0x0000);
-        scene.playerHomeButton = scene.add.image(0, -70, "home");
+        scene.playerHomeButton = scene.add.image(0, -70, "home").setInteractive({ useHandCursor: true })
+        // entering the home of the avatar
+        scene.playerHomeButton.on("pointerup", () => {
+          HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
+        })
 
         // creating a liked button
-        scene.playerLikedButtonCircle = scene.add
-          .circle(65, 0, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(3, 0x0000);
-        scene.playerLikedButton = scene.add.image(65, 0, "heart");
+        scene.playerLikedButton = scene.add.image(65, 0, "heart").setInteractive({ useHandCursor: true })
 
-        scene.playerLikedButtonCircle.on("pointerdown", async () => {
+        scene.playerLikedButton.on("pointerdown", async () => {
           // display spinner while images are being downloaded
           scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
             x: scene.player.x + 150,
@@ -215,43 +209,28 @@ class Player {
         })
 
         // creating an addressbook button
-        scene.playerAddressbookButtonCircle = scene.add
-          .circle(0, 70, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(3, 0x0000)
-        scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
+        scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook").setInteractive({ useHandCursor: true })
 
-        scene.playerAddressbookButtonCircle.on("pointerup", () => {
+
+        scene.playerAddressbookButton.on("pointerup", () => {
           this.createAddressbook(scene)
         })
 
         // adding all buttons to the container
         scene.playerItemsBar.add([
-          scene.playerHomeButtonCircle,
           scene.playerHomeButton,
-          scene.playerLikedButtonCircle,
           scene.playerLikedButton,
-          scene.playerAddressbookButtonCircle,
           scene.playerAddressbookButton
         ])
 
         scene.isPlayerItemsBarDisplayed = true;
 
-        // entering the home of the avatar
-        scene.playerHomeButtonCircle.on("pointerup", () => {
-          HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
-        });
       } else {
         scene.playerItemsBar.setVisible(false)
-        if (scene.playerLikedPanel) {
-          scene.playerLikedPanel.setVisible(false)
-        }
-        console.log("scene.playerLikedPanel", scene.playerLikedPanel)
+        if (scene.playerLikedPanel) scene.playerLikedPanel.setVisible(false)
+       // console.log("scene.playerLikedPanel", scene.playerLikedPanel)
         scene.isPlayerItemsBarDisplayed = false
-        if (scene.playerAddressbookContainer) {
-          this.destroyAddressbook(scene)
-        }
+        if (scene.playerAddressbookContainer) this.destroyAddressbook(scene)
       }
     })
   }
@@ -272,11 +251,12 @@ class Player {
     scene.playerAddressbookMask = scene.add.graphics()
       .fillStyle(0xffffff, 1)
       .fillRoundedRect(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight, 8)
-      .lineStyle(3, 0x000000, 1)
-      .strokeRoundedRect(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight, 8)
+      // .lineStyle(1, 0xffffff, 1)
+      // .strokeRoundedRect(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight, 8)
+      .setDepth(220)
 
     // creating a container that holds all items (addresses)
-    scene.playerAddressbookContainer = scene.add.container(playerAddressbookPositionX + 10, playerAddressbookPositionY + 10)
+    scene.playerAddressbookContainer = scene.add.container(playerAddressbookPositionX + 10, playerAddressbookPositionY + 10).setDepth(220)
 
     const smileyFaces = ["friend", "friend2", "friend3"]
 
@@ -298,11 +278,10 @@ class Player {
         })
 
       // creating a delete button
-      const playerAddressbookDeleteButtonCircle = scene.add
-        .circle(70, y, 15, 0xffffff)
-        .setOrigin(0)
+      const playerAddressbookDeleteButton = scene.add
+        .image(55, y, "delete")
+        .setOrigin(0, 0.25)
         .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(2, 0x0000)
         .on("pointerup", () => {
 
           // deleting the selected address and updating the local addressbook
@@ -321,7 +300,7 @@ class Player {
         })
 
       // adding the image and delete button to playerAddressbookContainer
-      scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookDeleteButtonCircle])
+      scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookDeleteButton])
     })
 
     // setting a mask
@@ -331,6 +310,7 @@ class Player {
     scene.playerAddressbookZone = scene.add.zone(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight)
       .setOrigin(0)
       .setInteractive()
+      .setDepth(220)
       .on("pointermove", (pointer) => {
         if (pointer.isDown) {
           // make it scrollable only when there more than 4 items in the addressbook
@@ -340,6 +320,7 @@ class Player {
           }
         }
       })
+
     scene.input.topOnly = false // in order to get the right clicking surface 
   }
 
@@ -377,70 +358,69 @@ class Player {
     if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
       // creating a home button for online player
-      scene.onlinePlayerHomeButtonCircle = scene.add
-        .circle(0, -70, 25, 0xffffff)
-        .setOrigin(0.5, 0.5)
-        .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(3, 0x0000);
-      scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home")
+      // scene.onlinePlayerHomeButtonCircle = scene.add
+      //   .circle(0, -70, 25, 0xffffff)
+      //   .setOrigin(0.5, 0.5)
+      //   .setStrokeStyle(3, 0x0000);
+      scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home").setInteractive({ useHandCursor: true })
 
-      scene.onlinePlayerHomeButtonCircle.on("pointerdown", () => {
+      scene.onlinePlayerHomeButton.on("pointerdown", () => {
         // creating an enter home button for online player
-        scene.onlinePlayerHomeEnterButtonCircle = scene.add
-          .circle(-30, -120, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(2, 0x0000)
+        // scene.onlinePlayerHomeEnterButton = scene.add
+        //   .circle(-30, -120, 25, 0xffffff)
+        //   .setOrigin(0.5, 0.5)
+        //   .setStrokeStyle(2, 0x0000)
+
+        scene.onlinePlayerHomeEnterButton = scene.add.image(-40, -130, "enter_home").setInteractive({ useHandCursor: true })
           .on("pointerdown", () => {
             // entering the home of the online player
             HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.selectedOnlinePlayer.id)
           })
-        scene.onlinePlayerHomeEnterButton = scene.add.image(-30, -120, "enter_home")
+
 
         // creating a save home button for online player
-        scene.onlinePlayerHomeSaveCircle = scene.add
-          .circle(30, -120, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(2, 0x0000)
-          .on("pointerup", () => {
-            // saving the home of a player
-            const entry = { user_id: ManageSession.selectedOnlinePlayer.id }
+        // scene.onlinePlayerHomeSave = scene.add
+        //   .circle(30, -120, 25, 0xffffff)
+        //   .setOrigin(0.5, 0.5)
+        //   .setStrokeStyle(2, 0x0000)
+          
+        scene.onlinePlayerHomeSaveButton = scene.add.image(40, -130, "save_home").setInteractive({ useHandCursor: true })
+        .on("pointerup", () => {
+          // saving the home of a player
+          const entry = { user_id: ManageSession.selectedOnlinePlayer.id }
 
-            // checking if the player in the addressbook 
-            const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
+          // checking if the player in the addressbook 
+          const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
 
-            if (!isExist) { // if doesn't exist, add to the addressbook
-              ManageSession.addressbook.addressbook.push(entry)
-              const type = "addressbook"
-              const name = type + "_" + ManageSession.userProfile.id
-              const pub = 2
-              const value = ManageSession.addressbook
-              console.log("value ManageSession.addressbook", value)
-              updateObject(type, name, value, pub)
+          if (!isExist) { // if doesn't exist, add to the addressbook
+            ManageSession.addressbook.addressbook.push(entry)
+            const type = "addressbook"
+            const name = type + "_" + ManageSession.userProfile.id
+            const pub = 2
+            const value = ManageSession.addressbook
+            console.log("value ManageSession.addressbook", value)
+            updateObject(type, name, value, pub)
 
-              // informing the player that the item has been added to the addressbook by showing it
-              this.createAddressbook(scene)
+            // informing the player that the item has been added to the addressbook by showing it
+            this.createAddressbook(scene)
 
-              // and hiding it after 2 seconds
-              scene.time.addEvent({
-                delay: 2000, callback: () => {
-                  this.destroyAddressbook(scene)
-                }, callbackScope: scene, loop: false
-              })
-            } else {
-              console.log("this user id is already in addressbook list")
-            }
-          })
-
-        scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
+            // and hiding it after 2 seconds
+            scene.time.addEvent({
+              delay: 2000, callback: () => {
+                this.destroyAddressbook(scene)
+              }, callbackScope: scene, loop: false
+            })
+          } else {
+            console.log("this user id is already in addressbook list")
+          }
+        })
 
         // adding home button's children: enter and save buttons to onlinePlayerItemsBar
-        scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButtonCircle, scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveCircle, scene.onlinePlayerHomeSaveButton])
+        scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveButton])
       })
 
       // adding home button to onlinePlayerItemsBar
-      scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeButtonCircle, scene.onlinePlayerHomeButton])
+      scene.onlinePlayerItemsBar.add(scene.onlinePlayerHomeButton)
 
       // making a server call to get liked images while creating a liked button
       Promise.all([listObjects("liked", player.id, 10)]).then((response) => {
@@ -495,7 +475,7 @@ class Player {
   hideOnlinePlayerItemsBar(scene) {
     scene.isOnlinePlayerItemsBarDisplayed = false
     scene.onlinePlayerItemsBar.setVisible(false)
-    scene.onlinePlayerLikedPanel.setVisible(false)
+    if (scene.onlinePlayerLikedPanel) scene.onlinePlayerLikedPanel.setVisible(false)
   }
 
   parseNewOnlinePlayerArray(scene) {
@@ -532,7 +512,7 @@ class Player {
       //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
       .setDepth(90)
     onlinePlayer.setInteractive({ useHandCursor: true })
-    // hit area 
+    // hit area of onlinePlayer
     onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
     onlinePlayer.on('pointerup', () => {
       this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
@@ -543,7 +523,7 @@ class Player {
         }, callbackScope: scene, loop: false
       })
 
-      console.log("online player width", onlinePlayer)
+      //console.log("online player width", onlinePlayer)
     })
 
     onlinePlayer.setData("movingKey", "moving")
