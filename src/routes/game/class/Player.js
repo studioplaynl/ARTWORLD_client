@@ -183,6 +183,7 @@ class Player {
       if (scene.isPlayerItemsBarDisplayed == false) {
         scene.playerItemsBar.setVisible(true);
 
+        // creating a home button
         scene.playerHomeButtonCircle = scene.add
           .circle(0, -70, 25, 0xffffff)
           .setOrigin(0.5, 0.5)
@@ -190,6 +191,7 @@ class Player {
           .setStrokeStyle(3, 0x0000);
         scene.playerHomeButton = scene.add.image(0, -70, "home");
 
+        // creating a liked button
         scene.playerLikedButtonCircle = scene.add
           .circle(65, 0, 25, 0xffffff)
           .setOrigin(0.5, 0.5)
@@ -208,10 +210,11 @@ class Player {
             color: 0x000000
           }).start()
 
-          //the liked array is in the latest state, but we have to get the binairy data (the images)
+          // downloading the images and displaying them
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
         })
 
+        // creating an addressbook button
         scene.playerAddressbookButtonCircle = scene.add
           .circle(0, 70, 25, 0xffffff)
           .setOrigin(0.5, 0.5)
