@@ -181,7 +181,7 @@ class Player {
     scene.player.on("pointerup", async () => {
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
       if (scene.isPlayerItemsBarDisplayed == false) {
-        scene.playerItemsBar.setVisible(true);
+        scene.playerItemsBar.setVisible(true)
 
         // creating a home button
         scene.playerHomeButtonCircle = scene.add
@@ -247,6 +247,7 @@ class Player {
         if (scene.playerLikedPanel) {
           scene.playerLikedPanel.setVisible(false)
         }
+        console.log("scene.playerLikedPanel", scene.playerLikedPanel)
         scene.isPlayerItemsBarDisplayed = false
         if (scene.playerAddressbookContainer) {
           this.destroyAddressbook(scene)

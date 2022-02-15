@@ -241,7 +241,7 @@ class ArtworkList {
       })
     } else {
       scene.onlinePlayerLikedPanelKeys = { artworks: [{ name: 'artFrame_128' }] }
-      Player.createOnlinePlayerLikedPanel(scene)
+      this.createLikedPanel(scene, scene.onlinePlayerLikedPanelSpinner, "onlinePlayerLikedPanel", scene.onlinePlayerItemsBar, scene.onlinePlayerLikedPanelKeys)
     }
   }
 
@@ -251,7 +251,8 @@ class ArtworkList {
     allItems = allItems + subtract
     if (allItems < 1) {
       scene.playerLikedPanelKeys = tempArray
-      this.createPlayerLikedPanel(scene)
+      this.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
+      console.log("scene.playerLikedPanel", scene.playerLikedPanel)
     } else {
       return allItems // return the result if not completed
     }
@@ -263,26 +264,27 @@ class ArtworkList {
     allItems = allItems + subtract
     if (allItems < 1) {
       scene.onlinePlayerLikedPanelKeys = tempArray
-      this.createOnlinePlayerLikedPanel(scene)
+      this.createLikedPanel(scene, scene.onlinePlayerLikedPanelSpinner, "onlinePlayerLikedPanel", scene.onlinePlayerItemsBar, scene.onlinePlayerLikedPanelKeys)
     } else {
       return allItems // return the result if not completed
     }
   }
 
-  createPlayerLikedPanel(scene) {
+  // universal panel for player and onlinePlayer  
+  createLikedPanel(scene, spinner, likedPanelName, currentPlayer, currentLikedPanelKeys) {
     // destroy the loading spinner
-    scene.playerLikedPanelSpinner.destroy()
+    spinner.destroy()
 
     // destroy the old panel
-    if (scene.playerLikedPanel) {
-      scene.playerLikedPanel.destroy()
+    if (scene[likedPanelName]) {
+      scene[likedPanelName].destroy()
     }
 
-    //create a new panel
-    scene.playerLikedPanel = scene.rexUI.add
+    // create a new panel
+    scene[likedPanelName] = scene.rexUI.add
       .scrollablePanel({
-        x: scene.player.x + 200,
-        y: scene.player.y,
+        x: currentPlayer.x + 200,
+        y: currentPlayer.y,
         width: 200,
         height: 200,
 
@@ -291,7 +293,7 @@ class ArtworkList {
         background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
 
         panel: {
-          child: R_UI.createPanel(scene, scene.playerLikedPanelKeys),
+          child: R_UI.createPanel(scene, currentLikedPanelKeys),
         },
 
         slider: {
@@ -306,61 +308,14 @@ class ArtworkList {
         mouseWheelScroller: {
           focus: false,
           speed: 0.1
-        },
-
-        name: "playerLikedPanel"
+        }
       })
       .layout()
 
     scene.input.topOnly = false;
     const labels = [];
     labels.push(
-      ...scene.playerLikedPanel.getElement("#artworks.items", true)
-    )
-  }
-
-  createOnlinePlayerLikedPanel(scene) {
-    // destroy the loading spinner
-    scene.onlinePlayerLikedPanelSpinner.destroy()
-
-    // destroy the old panel
-    if (scene.onlinePlayerLikedPanel) {
-      scene.onlinePlayerLikedPanel.destroy()
-    }
-
-    // create a new panel
-    scene.onlinePlayerLikedPanel = scene.rexUI.add
-      .scrollablePanel({
-        //! get the clicked onlinePlayer
-        x: scene.onlinePlayerItemsBar.x + 200,
-        y: scene.onlinePlayerItemsBar.y,
-        width: 200,
-        height: 200,
-
-        scrollMode: 0,
-
-        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
-
-        panel: {
-          child: R_UI.createPanel(scene, scene.onlinePlayerLikedPanelKeys),
-        },
-
-        slider: {
-          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
-          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
-        },
-
-        space: {
-          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
-        },
-        name: "onlinePlayerLikedPanel"
-      })
-      .layout()
-
-    scene.input.topOnly = false;
-    const labels = [];
-    labels.push(
-      ...scene.onlinePlayerLikedPanel.getElement("#artworks.items", true)
+      ...scene[likedPanelName].getElement("#artworks.items", true)
     )
   }
 
