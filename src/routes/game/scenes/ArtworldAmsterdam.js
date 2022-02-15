@@ -225,29 +225,18 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //.......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
-    this.player = new PlayerDefault(
-      this,
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 50),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 50),
-      this.playerAvatarPlaceholder
-    ).setDepth(201)
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 50), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 50), this.playerAvatarPlaceholder).setDepth(201)
 
     Player.createPlayerItemsBar(this)
 
-    this.playerTest = new PlayerDefault(
-      this,
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
-      this.playerAvatarPlaceholder
-    )
-    this.playerTest.setDepth(200).setVisible(false)
-
-
-    this.playerShadow = new PlayerDefaultShadow({
-      scene: this,
-      texture: this.playerAvatarPlaceholder,
-    })
-    this.playerShadow.setDepth(200)
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
+    // this.playerTest = new PlayerDefault(
+    //   this,
+    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
+    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
+    //   this.playerAvatarPlaceholder
+    // )
+    // this.playerTest.setDepth(201).setVisible(false)
     //.......  end PLAYER ................................................................................
 
     //....... onlinePlayers ..............................................................................

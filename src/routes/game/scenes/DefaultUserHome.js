@@ -127,9 +127,9 @@ export default class DefaultUserHome extends Phaser.Scene {
         //.......  PLAYER ....................................................................................
         //* create default player and playerShadow
         //* create player in center with artworldCoordinates
-        this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
+        this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder).setDepth(201)
         Player.createPlayerItemsBar(this)
-        this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+        this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
         //.......  end PLAYER ................................................................................
 
         //....... onlinePlayers ..............................................................................
@@ -225,7 +225,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         const imgSize = this.artDisplaySize.toString()
         const fileFormat = "png"
         const coordX = index == 0 ? this.artDisplaySize : (this.artDisplaySize) + (index * (this.artDisplaySize + 38))
-        this.artContainer = this.add.container(0, 0);
+        this.artContainer = this.add.container(0, 0).setDepth(100)
 
         const y = 500
 

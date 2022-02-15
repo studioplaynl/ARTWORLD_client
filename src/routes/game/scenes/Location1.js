@@ -167,9 +167,9 @@ export default class Location1 extends Phaser.Scene {
     this.playerAvatarPlaceholder = "avatar1";
 
     //*create default player and playerShadow
-    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder).setDepth(201)
     Player.createPlayerItemsBar(this)
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 

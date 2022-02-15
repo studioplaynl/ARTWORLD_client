@@ -176,7 +176,7 @@ class Player {
     scene.isPlayerItemsBarDisplayed = false
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
-    scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y)
+    scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y).setDepth(220)
 
     scene.player.on("pointerup", async () => {
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
@@ -361,7 +361,7 @@ class Player {
     scene.isOnlinePlayerItemsBarDisplayed = false
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
-    scene.onlinePlayerItemsBar = scene.add.container(0, 0)
+    scene.onlinePlayerItemsBar = scene.add.container(0, 0).setDepth(301)
   }
 
   async displayOnlinePlayerItemsBar(scene, player) {
