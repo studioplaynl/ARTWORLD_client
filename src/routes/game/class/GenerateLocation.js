@@ -203,31 +203,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                 }
             } else {
                 HistoryTracker.switchScene(this.scene, this.locationDestination, this.userHome)
-
-                // this.scene.physics.pause()
-                // this.scene.player.setTint(0xff0000)
-
-                // ManageSession.socket.rpc("leave", this.scene.location)
-
-                // this.scene.player.location = this.locationDestination
-
-                // this.scene.time.addEvent({
-                //     delay: 500,
-                //     callback: () => {
-                //         ManageSession.location = this.locationDestination
-                //         ManageSession.createPlayer = true
-                //         this.scene.scene.stop(this.scene.scene.key)
-                //         if (this.userHome) {
-                //             this.scene.scene.start(this.locationDestination, {
-                //                 user_id: this.userHome
-                //             })
-                //             console.log("UserHome defined: ", this.userHome)
-                //         } else {
-                //             this.scene.scene.start(this.locationDestination)
-                //         }
-                //         ManageSession.getStreamUsers("join", this.locationDestination)
-                //     }, callbackScope: this, loop: false
-                // })   
             }
         })
 
@@ -266,19 +241,4 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.scene.time.addEvent({ delay: 2000, callback: this.hideEnterButton, callbackScope: this, loop: false })
         }
     }
-
-    switchScenes() {
-        ManageSession.location = this.locationDestination
-        ManageSession.createPlayer = true
-        this.scene.scene.stop(this.scene.scene.key)
-        //check if it is a userHome, pass data to the userHome (user_id)
-        if (this.userHome) {
-            this.scene.scene.start(this.locationDestination, { user_id: this.userHome })
-            console.log("UserHome defined: ", this.userHome)
-        } else {
-            this.scene.scene.start(this.locationDestination)
-        }
-        ManageSession.getStreamUsers("join", this.locationDestination)
-    }
-
 }
