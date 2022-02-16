@@ -126,9 +126,26 @@ margin: 0 auto;
     color: dimgrey;
 }
 
-body {
-	scrollbar-width: thin;          /* "auto" or "thin" */
-	scrollbar-color: #7300ED lightgrey;   /* scroll thumb and track */ 
+* {
+	scrollbar-width: auto;          /* "auto" or "thin" */
+	scrollbar-color: white #7300ED;   /* scroll thumb and track */ 
+  }
+
+
+  /* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+	width: 12px;
+  }
+  
+  *::-webkit-scrollbar-track {
+	background: #7300ED;
+	border-radius: 10px;
+  }
+  
+  *::-webkit-scrollbar-thumb {
+	background-color: white;
+	border-radius: 20px;
+	border: 2px solid #7300ED;
   }
   
   

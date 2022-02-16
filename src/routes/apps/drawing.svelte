@@ -1,23 +1,13 @@
 <script>
   import { fabric } from "./fabric";
-  import { Switch } from "attractions";
   import { location, replace } from "svelte-spa-router";
   import { onMount, beforeUpdate } from "svelte";
   import { uploadImage, user, uploadAvatar, uploadHouse,getObject, validate } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session, Profile } from "../../session.js";
   import NameGenerator from "../components/nameGenerator.svelte";
-  import SaveIcon from "svelte-icons/fa/FaSave.svelte";
-  import ColorIcon from "svelte-icons/md/MdBorderColor.svelte";
   import TrashIcon from "svelte-icons/fa/FaTrash.svelte";
-  import PlayIcon from "svelte-icons/io/IoIosPlay.svelte";
-  import PauseIcon from "svelte-icons/io/IoIosPause.svelte";
-  import UndoIcon from "svelte-icons/fa/FaUndoAlt.svelte";
-  import RedoIcon from "svelte-icons/fa/FaRedoAlt.svelte";
-  import EraseIcon from "svelte-icons/fa/FaEraser.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
-  import BucketIcon from "svelte-icons/md/MdFormatColorFill.svelte";
-  import CameraIcon from "svelte-icons/fa/FaCamera.svelte";
   import CopyIcon from "svelte-icons/fa/FaCopy.svelte";
   import PasteIcon from "svelte-icons/fa/FaPaste.svelte";
   import ColorSelectIcon from "svelte-icons/io/IoMdColorPalette.svelte"
@@ -52,10 +42,15 @@ import App from "../../App.svelte";
   let displayName;
   let appType = $location.split("/")[1];
   let version = 0
-
+  let optionbox = true;
  
   console.log("version:" + version)
   console.log("title: " + title)
+
+  var fab = function (id) {
+      return document.getElementById(id);
+    };
+
   onMount(() => {
     const autosave = setInterval(() => {
       if (!saved) {
@@ -73,9 +68,7 @@ import App from "../../App.svelte";
       }
     }, 20000);
 
-    var fab = function (id) {
-      return document.getElementById(id);
-    };
+    
 
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
@@ -111,7 +104,7 @@ import App from "../../App.svelte";
     // };
 
     drawingModeEl.onclick = function () {
-      current = "draw";
+      switchOption("draw");
       canvas.isDrawingMode = true;
       changebrush();
       console.log(drawingColor);
@@ -120,7 +113,7 @@ import App from "../../App.svelte";
 
     selectModeEl.onclick = function () {
       canvas.isDrawingMode = false;
-      current = "select";
+      switchOption("select");
       floodFill(false);
     };
 
@@ -136,7 +129,7 @@ import App from "../../App.svelte";
       canvas.freeDrawingBrush.width =
         parseInt(eraseLineWidthEl.value, 10) || 1;
       canvas.isDrawingMode = true;
-      current = "erase";
+      switchOption("erase");
       floodFill(false);
     };
 
@@ -496,27 +489,47 @@ import App from "../../App.svelte";
   window.addEventListener("resize", resizeCanvas, false);
 
   function resizeCanvas() {
-    // if (appType == "avatar") {
-    //   canvas.setHeight(128);
-    //   canvas.setWidth(128);
-    //   canvas.renderAll();
-    // } else {
-    //   canvas.setHeight(window.innerWidth);
-    //   canvas.setWidth(window.innerWidth);
-    //   canvas.renderAll();
-    //   console.log(window.innerWidth)
-    // }
-    console.log(window.innerWidth);
-    if (window.innerWidth <= 700) {
-      videoWidth = window.innerWidth - 10;
-      canvas.setHeight(window.innerWidth - 10);
-      canvas.setWidth(window.innerWidth - 10);
-    } else {
-      canvas.setHeight(700);
-      canvas.setWidth(700);
-      videoWidth = 700
+    let scaleRatio
+    if (document.body.clientWidth <= 700) {
+      scaleRatio = Math.min(document.body.clientWidth/2048, document.body.clientWidth/2048);
+    } else{
+      scaleRatio = Math.min(window.innerHeight/2048, window.innerHeight/2048);
     }
+    canvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
+    canvas.setZoom(scaleRatio)
   }
+
+
+  function zoomIt(factor) {
+    canvas.setHeight(canvas.getHeight() * factor);
+    canvas.setWidth(canvas.getWidth() * factor);
+    if (canvas.backgroundImage) {
+        // Need to scale background images as well
+        var bi = canvas.backgroundImage;
+        bi.width = bi.width * factor; bi.height = bi.height * factor;
+    }
+    var objects = canvas.getObjects();
+    for (var i in objects) {
+        var scaleX = objects[i].scaleX;
+        var scaleY = objects[i].scaleY;
+        var left = objects[i].left;
+        var top = objects[i].top;
+
+        var tempScaleX = scaleX * factor;
+        var tempScaleY = scaleY * factor;
+        var tempLeft = left * factor;
+        var tempTop = top * factor;
+
+        objects[i].scaleX = tempScaleX;
+        objects[i].scaleY = tempScaleY;
+        objects[i].left = tempLeft;
+        objects[i].top = tempTop;
+
+        objects[i].setCoords();
+    }
+    canvas.renderAll();
+    canvas.calcOffset();
+    }
 
   ////////////////////////// stop motion functie ////////////////////////////////////////
 
@@ -1007,6 +1020,19 @@ import App from "../../App.svelte";
       img.src = backgroundFrames[currentFrame - 1];
     }
   }
+
+
+  function switchOption(option){
+    if(current === option){
+      optionbox = !optionbox
+    }else {
+      optionbox = false;
+      current = option;
+      
+    }
+    
+  }
+
 </script>
 
 <main>
@@ -1049,11 +1075,11 @@ import App from "../../App.svelte";
         </div>
         <div>
           {#if play}
-            <button class="icon"
+            <a
               on:click={() => {
                 play = false;
                 setPlay(false);
-              }}><PauseIcon /></button
+              }}><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" ></a
             >
           {:else}
             <a
@@ -1063,64 +1089,14 @@ import App from "../../App.svelte";
               }}><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" ></a
             >
           {/if}
-          <a on:click="{backgroundHide}"><img class:unselected="{!showBackground}" src="assets/SHB/svg/AW-icon-onion.svg"></a>
+          <a on:click="{backgroundHide}"><img class="icon" class:unselected="{!showBackground}" src="assets/SHB/svg/AW-icon-onion.svg"></a>
         </div>
       {/if}
     </div>
   </div>
   <div class="box2">
     <div class="optionbox">
-      <div class="iconbox">
-        <button
-          id="drawing-mode"
-          class="icon"
-          class:currentSelected={current === "draw"}><ColorIcon /></button
-        >
-         <button
-          class="icon"
-          id="erase-mode"
-          class:currentSelected={current === "erase"}><EraseIcon /></button
-        >
-        <!-- <button
-          class="icon"
-          id="fill-mode"
-          class:currentSelected={current === "fill"}><BucketIcon /></button
-        > -->
-        <button
-          class="icon"
-          id="select-mode"
-          class:currentSelected={current === "select"}><MouseIcon /></button
-        >
-        <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
-          <button
-            class="icon"
-            id="camera-mode"
-            class:currentSelected={current == "camera"}
-            on:click={camera}><CameraIcon /></button
-          >
-        {/if} -->
-        <!-- <button id="clear-canvas" class="btn btn-info icon">
-          <TrashIcon />
-        </button> -->
-       
-       
-        <button
-          class="icon"
-          class:currentSelected={current === "saveToggle"}
-          on:click={() => {
-            if((appType == "drawing" || appType == "stopmotion") && version == 0){
-              console.log("versoionn"+ version)
-            saveToggle = !saveToggle;
-            current = "saveToggle";
-            } else {
-              upload()
-            }
-            
-          }}><SaveIcon /></button
-        >
-      </div>
-
-      <div class="optionbar">
+      <div class="optionbar" class:hidden={optionbox}>
         <div id="drawing-mode-options" class:hidden={current != "draw"}>
           <select id="drawing-mode-selector">
             <option>Pencil</option>
@@ -1231,13 +1207,55 @@ import App from "../../App.svelte";
           </div>
         </div>
       </div>
+
+      <div class="iconbox">
+        <a
+          id="drawing-mode"
+          class:currentSelected={current === "draw"}><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" ></a
+        >
+         <a
+          id="erase-mode"
+          class:currentSelected={current === "erase"} ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" ></a
+        >
+        <!-- <button
+          class="icon"
+          id="fill-mode"
+          class:currentSelected={current === "fill"}><BucketIcon /></button
+        > -->
+        <a
+          id="select-mode"
+          class:currentSelected={current === "select"}><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" ></a
+        >
+        <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
+          <button
+            class="icon"
+            id="camera-mode"
+            class:currentSelected={current == "camera"}
+            on:click={camera}><CameraIcon /></button
+          >
+        {/if} -->
+        <!-- <button id="clear-canvas" class="btn btn-info icon">
+          <TrashIcon />
+        </button> -->
+       
+       
+        <a
+          class:currentSelected={current === "saveToggle"}
+          on:click={() => {
+            if((appType == "drawing" || appType == "stopmotion") && version == 0){
+              console.log("versoionn"+ version)
+            saveToggle = !saveToggle;
+            switchOption("saveToggle")
+            } else {
+              upload()
+            }
+            
+          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" ></a
+        >
+      </div>
+
     </div>
   </div>
-  {#if saving}
-    <div class="savecontainer">
-      <p class="saving">Saving<span>.</span><span>.</span><span>.</span></p>
-    </div>
-  {/if}
 </main>
 
 <style>
@@ -1249,7 +1267,6 @@ import App from "../../App.svelte";
   .topbar {
     width: 100vw;
     margin: 0px auto;
-    padding: 5px 0;
   }
 
   .canvas {
@@ -1296,24 +1313,49 @@ import App from "../../App.svelte";
   } */
 
   .iconbox {
-    display: inline-block;
-    margin: 10px;
     width: 50px;
-    align-self: flex-start;
-    border-right: 3px solid grey;
-    padding-right: 10px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    transition: all .5s ease-in-out;
   }
 
   .optionbar {
-    margin: 10px;
-    /* align-self: flex-end; */
+    margin-left: 10px;
+    border-right: 2px solid #7300ED;
+    height: 100vh;
+    background-color: white;
+    transition: all .5s ease-in-out;
+    width:fit-content;
+    padding: 15px;
+    transform: translateX(0%);
+    width: 220px;
+  }
+
+  .optionbar.hidden {
+    width: 0px;
+    transform: translateX(-160%);
+    display: inline;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  .optionbar.hidden > * {
+    display: none;
+  }
+
+  .optionbar > * {
+    margin: 5px auto;
   }
 
   .icon {
     min-width: 50px;
     height: 50px;
     border-radius: 50%;
-    padding: 14px;
+    padding: 5px 0px 5px 0px;
     cursor: pointer;
   }
 
@@ -1332,8 +1374,14 @@ import App from "../../App.svelte";
   }
 
   .currentSelected {
-    background-color: green;
-  }
+    box-shadow: 0px 4px #7300ED;
+    border-radius: 0% 50% 50% 0;
+    height: 60px;
+    display: block;
+    width: 49px;
+    padding: 0px;
+    background-color: white;
+}
 
   .hidden {
     display: none;
@@ -1361,11 +1409,7 @@ import App from "../../App.svelte";
       width: unset;
     }
 
-    
-
-    .optionbox {
-      margin-top: 60px;
-    }
+  
   }
 
   .videoButton {
@@ -1428,8 +1472,11 @@ import App from "../../App.svelte";
   .frameBox {
     margin: 0 auto;
     width: fit-content;
-    max-width: 700px;
-    max-height: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: 100vh;
   }
 
   #framebar > div > div {
@@ -1454,9 +1501,14 @@ import App from "../../App.svelte";
 /* PC */
 @media only screen and (min-width: 700px) {
   .canvasBox {
-    height: 100vh;
-    width: 100vh;
+    height: min-content;
+    width: min-content;
     float: left;
+    border: none;
+  }
+
+  .canvasBox > div{
+    border: 2px solid #7300ED;
   }
 
   .topbar{
@@ -1483,9 +1535,9 @@ import App from "../../App.svelte";
 
  #framebar {
     display: inline-block;
-    height: 600px;
-    width: 130px;
-    overflow-y: scroll;
+    max-height: 600px;
+    width: 100px;
+    overflow-y: auto;
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
     float: left;
@@ -1510,11 +1562,49 @@ import App from "../../App.svelte";
 /* mobile */
 @media only screen and (max-width: 700px) {
   .canvasBox {
-    width: 100vw;
-    height: 100vh;
+    border: none;
+    border-top: 2px solid #7300ed;
+    border-bottom: 2px solid #7300ed;;
   }
 
+  .optionbox {
+    width: 100vw;
+    height: min-content;
+    position: fixed;
+    bottom: 0;
+  }
 
+  .optionbar{
+    width: 100vw;
+    height: min-content;
+  }
+
+  .currentSelected{
+    display: inline;
+  }
+
+  .iconbox{
+    width: unset;
+    display: inline-block;
+    margin: 0 auto;
+    height: min-content;
+  }
+
+  .topbar{
+    width: max-content;
+    margin: 0px auto;
+    display: block;
+  }
+
+  .frameBox {
+    height: min-content;
+    width: 80vw;
+    margin-bottom: 60px;
+  }
+
+  #framebar > div {
+    display: inline-block;
+  }
 }
 
 .unselected{
