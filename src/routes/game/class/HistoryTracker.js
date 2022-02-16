@@ -6,7 +6,6 @@ class HistoryTracker {
   pushLocation(scene) {
     if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1]?.locationID != scene.location) {
       ManageSession.locationHistory.push({ locationName: scene.scene.key, locationID: scene.location })
-      console.log("ManageSession.locationHistory", ManageSession.locationHistory)
     }
   }
 
@@ -24,11 +23,8 @@ class HistoryTracker {
       delay: 500,
       callback: () => {
         ManageSession.location = goToScene
-        console.log("switchScene ManageSession.location", ManageSession.location)
         ManageSession.createPlayer = true
-        console.log("switchScene scene.scene.key", scene.scene.key)
         scene.scene.stop(scene.scene.key)
-        console.log("switchScene goToScene, { user_id: locationID }", goToScene, { user_id: locationID })
         scene.scene.start(goToScene, { user_id: locationID })
         console.log("switchScene locationID", locationID)
         ManageSession.getStreamUsers("join", locationID)

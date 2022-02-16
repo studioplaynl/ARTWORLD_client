@@ -48,7 +48,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         //display width of the location image/ triangle/ isoBox
 
-
         // the content of the container is created at 0,0
         // then the container is set at a position
 

@@ -361,7 +361,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
           color3: 0xf8d80b,
         })
 
-        this.homesRepreseneted[index].setDepth(150)
+        this.homesRepreseneted[index].setDepth(30)
         // console.log(element)
         // console.log(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX))
         // console.log(CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY))
