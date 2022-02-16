@@ -175,7 +175,7 @@ class ManageSession {
     // console.log("this.allConnectedUsers", this.allConnectedUsers)
     let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
     console.log("removeUser", removeUser)
-    if (removeUser[0]) removeUser[0].destroy()
+    if (removeUser[0]) removeUser[0].destroy() //destroy the user if it exists in the array
     // removeUser[0].destroy()
     this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.user_id)
     // console.log("----")
