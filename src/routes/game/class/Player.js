@@ -541,7 +541,7 @@ class Player {
 
     //we load the onlineplayer avatar, make a key for it
     const avatarKey = onlinePlayer.id + "_" + onlinePlayer.update_time
-    console.log("avatarKey", avatarKey)
+    //console.log("avatarKey", avatarKey)
 
     //if the texture already exists attach it again to the player
     // const preExisting = false
@@ -551,7 +551,7 @@ class Player {
       scene.load.spritesheet(avatarKey, onlinePlayer.url, {
         frameWidth: 128,
         frameHeight: 128,
-      }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { console.log(`onlinePlayer file ${avatarKey} finished loading`); this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
+      }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
       //when file is finished loading the attachToAvatar function is called
       scene.load.start() // start loading the image in memory
     } else {
@@ -583,11 +583,8 @@ class Player {
 
       onlinePlayer.setData("movingKey", "moving" + "_" + tempAvatarName)
       onlinePlayer.setData("stopKey", "stop" + "_" + tempAvatarName)
-      console.log('onlinePlayer.getData("movingKey")')
-      console.log(onlinePlayer.getData("movingKey"))
-
-      console.log('onlinePlayer.getData("movingKey")')
-      console.log(onlinePlayer.getData("movingKey"))
+      //console.log('onlinePlayer.getData("movingKey")')
+      //console.log(onlinePlayer.getData("movingKey"))
 
       //create animation for moving
       if (!scene.anims.exists(onlinePlayer.getData("movingKey"))) {

@@ -28,7 +28,7 @@ class HistoryTracker {
     scene.player.location = goToScene;
 
     scene.time.addEvent({
-      delay: 500,
+      delay: 1000,
       callback: () => {
         ManageSession.location = goToScene;
         ManageSession.createPlayer = true;

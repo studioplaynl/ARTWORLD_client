@@ -140,7 +140,7 @@ export default class UI_Scene extends Phaser.Scene {
         ManageSession.socket.rpc("leave", currentLocationKey)
 
         currentLocationScene.time.addEvent({
-          delay: 500,
+          delay: 1000,
           callback: () => {
             ManageSession.location = previousLocation;
             ManageSession.createPlayer = true
