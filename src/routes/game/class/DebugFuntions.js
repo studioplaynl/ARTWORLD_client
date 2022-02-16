@@ -11,7 +11,7 @@ class DebugFuntions {
 
     keyboard(scene) {
         //KEYS THAT ARE TAKEN
-        // 1 A S D F Q W E R H T P U
+        // 1 2 A S D F Q W E R H T P U
 
         scene.input.keyboard.on('keyup-A', function (event) {
 
@@ -49,7 +49,23 @@ class DebugFuntions {
                 console.log("addressbook query", rec[0])
             })
 
-        }, scene);
+        }, scene)
+
+        scene.input.keyboard.on('keyup-TWO', async (event) => {
+            console.log('2 key')
+
+        scene.player.anims.play(scene.playerMovingKey, true)
+        scene.playerShadow.anims.play(scene.playerMovingKey, true)
+      
+        }, scene)
+
+
+        scene.input.keyboard.on('keyup-THREE', async (event) => {
+            console.log('2 key')
+
+        scene.player.anims.play(scene.playerStopKey, true)
+        scene.playerShadow.anims.play(scene.playerStopKey, true)
+        }, scene)
 
         scene.input.keyboard.on('keyup-S', function (event) {
 
@@ -173,9 +189,7 @@ class DebugFuntions {
             scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
         }, scene)
 
-        scene.input.keyboard.on('keyup-TWO', async (event) => {
-            Player.createAddressbook(scene)
-        }, scene)
+        
 
     }
 }
