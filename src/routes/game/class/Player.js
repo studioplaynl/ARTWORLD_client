@@ -185,7 +185,7 @@ class Player {
             height: 100,
             duration: 850,
             color: 0x000000
-          }).start()
+          }).setDepth(199).start()
 
           // downloading the images and displaying them
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
@@ -211,7 +211,7 @@ class Player {
       } else {
         scene.playerItemsBar.setVisible(false)
         if (scene.playerLikedPanel) scene.playerLikedPanel.setVisible(false)
-       // console.log("scene.playerLikedPanel", scene.playerLikedPanel)
+        // console.log("scene.playerLikedPanel", scene.playerLikedPanel)
         scene.isPlayerItemsBarDisplayed = false
         if (scene.playerAddressbookContainer) this.destroyAddressbook(scene)
       }
@@ -366,37 +366,37 @@ class Player {
         //   .circle(30, -120, 25, 0xffffff)
         //   .setOrigin(0.5, 0.5)
         //   .setStrokeStyle(2, 0x0000)
-          
+
         scene.onlinePlayerHomeSaveButton = scene.add.image(40, -130, "save_home").setInteractive({ useHandCursor: true })
-        .on("pointerup", () => {
-          // saving the home of a player
-          const entry = { user_id: ManageSession.selectedOnlinePlayer.id }
+          .on("pointerup", () => {
+            // saving the home of a player
+            const entry = { user_id: ManageSession.selectedOnlinePlayer.id }
 
-          // checking if the player in the addressbook 
-          const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
+            // checking if the player in the addressbook 
+            const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
 
-          if (!isExist) { // if doesn't exist, add to the addressbook
-            ManageSession.addressbook.addressbook.push(entry)
-            const type = "addressbook"
-            const name = type + "_" + ManageSession.userProfile.id
-            const pub = 2
-            const value = ManageSession.addressbook
-            console.log("value ManageSession.addressbook", value)
-            updateObject(type, name, value, pub)
+            if (!isExist) { // if doesn't exist, add to the addressbook
+              ManageSession.addressbook.addressbook.push(entry)
+              const type = "addressbook"
+              const name = type + "_" + ManageSession.userProfile.id
+              const pub = 2
+              const value = ManageSession.addressbook
+              console.log("value ManageSession.addressbook", value)
+              updateObject(type, name, value, pub)
 
-            // informing the player that the item has been added to the addressbook by showing it
-            this.createAddressbook(scene)
+              // informing the player that the item has been added to the addressbook by showing it
+              this.createAddressbook(scene)
 
-            // and hiding it after 2 seconds
-            scene.time.addEvent({
-              delay: 2000, callback: () => {
-                this.destroyAddressbook(scene)
-              }, callbackScope: scene, loop: false
-            })
-          } else {
-            console.log("this user id is already in addressbook list")
-          }
-        })
+              // and hiding it after 2 seconds
+              scene.time.addEvent({
+                delay: 2000, callback: () => {
+                  this.destroyAddressbook(scene)
+                }, callbackScope: scene, loop: false
+              })
+            } else {
+              console.log("this user id is already in addressbook list")
+            }
+          })
 
         // adding home button's children: enter and save buttons to onlinePlayerItemsBar
         scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveButton])
@@ -430,7 +430,7 @@ class Player {
               height: 100,
               duration: 850,
               color: 0x000000
-            }).start()
+            }).setDepth(199).start()
 
             // downloading the images and displaying them
             scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert method to onlinePlayer
@@ -493,7 +493,7 @@ class Player {
         scene.playerAvatarPlaceholder
       )
       //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
-      .setDepth(90)
+      .setDepth(200)
     onlinePlayer.setInteractive({ useHandCursor: true })
     // hit area of onlinePlayer
     onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)

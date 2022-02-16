@@ -175,7 +175,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             height: 400,
             duration: 850,
             color: 0x000000
-        })
+        }).setDepth(199)
 
         this.artworksListSpinner.start()
 

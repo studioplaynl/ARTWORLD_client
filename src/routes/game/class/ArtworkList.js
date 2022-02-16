@@ -337,10 +337,9 @@ class ArtworkList {
     //      url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
     //version: 0
 
-    console.log(mediaObject)
     //place heartButton under the artwork, make them interactive
     const artFrame = scene.textures.get("artFrame_512")
-    let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "heart").setOrigin(1, 0).setScale(0.7).setDepth(101)
+    let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "heart").setOrigin(1, 0).setScale(0.7)
       .setInteractive()
       .setData("toggle", false) //false, not liked state
       .on('pointerup', () => { this.heartButtonToggle(mediaObject, currentHeart) })
