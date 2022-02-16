@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession.js"
-import { getAccount, listObjects } from '../../../api.js'
+import { getAccount, listObjects, setLoader } from '../../../api.js'
 
 export default class MainMenu extends Phaser.Scene {
   constructor() {
@@ -22,35 +22,16 @@ export default class MainMenu extends Phaser.Scene {
       )
       .setOrigin(0)
 
-    this.playBtn = this.add
-      .image(this.scale.width / 2, this.scale.height / 3, "artworld")
-      .setInteractive({ useHandCursor: true })
-      .setVisible(false)
+    setLoader(true)
 
-    this.playBtnScaler = (this.scale.width / this.playBtn.width) * 0.86
-
-    this.playBtn.setScale(this.playBtnScaler)
-
-    this.playBtn.on("pointerdown", () => {
-      console.log("MainMenu.playBtn.on(pointerdown ")
-      this.scene.start("NetworkBoot")
-    })
-
-    this.playBtn.on("pointerover", () => {
-      this.playBtn.setScale(this.playBtnScaler * 1.1)
-    })
-
-    this.playBtn.on("pointerout", () => {
-      this.playBtn.setScale(this.playBtnScaler)
-    })
-
+    
     //on resizing the window
     this.scale.on("resize", this.resize, this)
 
     //* check if the user profile is loaded, to be able to send the player to the right location
     if (!!ManageSession.userProfile) {
       ManageSession.launchLocation = ManageSession.userProfile.meta.location
-      
+
       //console.log(ManageSession.launchLocation)
       ManageSession.checkSceneExistence()
     } else {
@@ -69,21 +50,9 @@ export default class MainMenu extends Phaser.Scene {
     let height = this.sys.game.canvas.height;
 
     this.bg.setSize(width, height);
-
-    this.playBtn.setPosition(width / 2, height / 3);
-    this.playBtnScaler = (width / this.playBtn.width) * 0.86;
-    this.playBtn.setScale(this.playBtnScaler);
-
-    this.playBtn.on("pointerover", () => {
-      this.playBtn.setScale(this.playBtnScaler * 1.1);
-    })
-
-    this.playBtn.on("pointerout", () => {
-      this.playBtn.setScale(this.playBtnScaler);
-    })
   }
 
   update(time, delta) {
-    this.playBtn.setVisible(ManageSession.locationExists)
+    if (ManageSession.locationExists) this.scene.start("NetworkBoot")
   } // end update
 }
