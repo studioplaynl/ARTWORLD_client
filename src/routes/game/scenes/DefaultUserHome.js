@@ -6,12 +6,11 @@ import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
 import Player from '../class/Player.js'
 import Preloader from '../class/Preloader.js'
-import BouncingBird from "../class/BouncingBird.js"
 import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
-import GenerateLocation from "../class/GenerateLocation.js"
-import HistoryTracker from "../class/HistoryTracker.js";
+// import GenerateLocation from "../class/GenerateLocation.js"
+import HistoryTracker from "../class/HistoryTracker.js"
 import ArtworkList from "../class/ArtworkList.js"
 import Move from "../class/Move.js"
 
@@ -56,8 +55,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         // track for progress and completion of artworks
         this.progress = []
 
-
-
         //sizes for the artWorks
         this.artIconSize = 64
         this.artPreviewSize = 128
@@ -67,7 +64,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.offlineOnlineUsers
 
-        this.location = "DefaultUserHome"
+        this.location = ""
 
         //.......................REX UI ............
         this.COLOR_PRIMARY = 0xff5733
@@ -113,12 +110,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     async create() {
 
         // for back button
-        HistoryTracker.homePush(this)
-        console.log(ManageSession.locationHistory)
+        HistoryTracker.pushLocation(this)
+        console.log("ManageSession.locationHistory", ManageSession.locationHistory)
 
-        //timers
-        ManageSession.updateMovementTimer = 0;
-        ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
+        //copy worldSize over to ManageSession, so that positionTranslation can be done there
+        ManageSession.worldSize = this.worldSize
 
         //.......  LOAD PLAYER AVATAR ..........................................................................
         ManageSession.createPlayer = true
@@ -127,22 +123,23 @@ export default class DefaultUserHome extends Phaser.Scene {
         //.......  PLAYER ....................................................................................
         //* create default player and playerShadow
         //* create player in center with artworldCoordinates
-        this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
+        this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder).setDepth(201)
         Player.createPlayerItemsBar(this)
-        this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+        this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
         //.......  end PLAYER ................................................................................
 
         //....... onlinePlayers ..............................................................................
         // add onlineplayers group
         this.onlinePlayersGroup = this.add.group()
         //....... end onlinePlayers ..........................................................................
-
+        Player.createOnlinePlayerItemsBar(this)
         //....... PLAYER VS WORLD .............................................................................
         this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
         //!setBounds has to be set before follow, otherwise the camera doesn't follow!
-        this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
         this.gameCam.zoom = 1
-        this.gameCam.startFollow(this.player);
+        this.gameCam.startFollow(this.player)
+        this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
+
         //......... end PLAYER VS WORLD .......................................................................
 
         //......... INPUT .....................................................................................
@@ -178,7 +175,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             height: 400,
             duration: 850,
             color: 0x000000
-        })
+        }).setDepth(199)
 
         this.artworksListSpinner.start()
 
@@ -225,7 +222,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         const imgSize = this.artDisplaySize.toString()
         const fileFormat = "png"
         const coordX = index == 0 ? this.artDisplaySize : (this.artDisplaySize) + (index * (this.artDisplaySize + 38))
-        this.artContainer = this.add.container(0, 0);
+        this.artContainer = this.add.container(0, 0).setDepth(100)
 
         const y = 500
 

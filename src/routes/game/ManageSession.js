@@ -95,12 +95,16 @@ class ManageSession {
           // posX: -236.42065
           // posY: -35.09519
           // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
-          // action: action
+          // action: "moveTo" "stop"
+          const scene = onlinePlayer.scene
+          console.log("onlinePlayer", onlinePlayer)
 
           if (data.action == "moveTo") {
             //get the scene context from the onlinePlayer
-            const scene = onlinePlayer.scene
-            //console.log(onlinePlayer)
+
+            const movingKey = onlinePlayer.getData("movingKey")
+            onlinePlayer.anims.play(movingKey, true)
+
             const moveToX = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, data.posX)
             const moveToY = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, data.posY)
 
@@ -116,9 +120,7 @@ class ManageSession {
               paused: false,
               duration: duration,
             })
-
-            const movingKey = onlinePlayer.getData("movingKey")
-            onlinePlayer.anims.play(movingKey, true)
+            //console.log("target", target)
           }
 
           if (data.action == "stop") {
@@ -173,7 +175,8 @@ class ManageSession {
     // console.log("this.allConnectedUsers", this.allConnectedUsers)
     let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
     console.log("removeUser", removeUser)
-    removeUser[0].destroy()
+    if (removeUser[0]) removeUser[0].destroy() //destroy the user if it exists in the array
+    // removeUser[0].destroy()
     this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.user_id)
     // console.log("----")
     console.log("this.allConnectedUsers", this.allConnectedUsers)
@@ -184,7 +187,6 @@ class ManageSession {
     //* rpc_command:
     //* join" = join the stream, get the online users, except self
     //* get_users" = after joined, get the online users, except self
-
     console.log('this.getStreamUsers("' + rpc_command + ', "' + location + '")')
 
     this.socket.rpc(rpc_command, location).then((rec) => {
@@ -192,9 +194,7 @@ class ManageSession {
 
       //get all online players
       this.createOnlinePlayerArray = JSON.parse(rec.payload) || []
-
       console.log("this.createOnlinePlayerArray", this.createOnlinePlayerArray)
-
     })
   }
 
@@ -216,8 +216,7 @@ class ManageSession {
       data = JSON.parse(rec.payload) || [];
       // console.log("sent pos:");
       // console.log(data);
-    });
-
+    })
   }
 
   sendMoveMessage(scene, posX, posY, action) {
@@ -270,7 +269,7 @@ class ManageSession {
       1,
       persistence,
       hidden
-    );
+    )
   } //end chatExample
 } //end class
 

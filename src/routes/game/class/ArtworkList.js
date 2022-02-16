@@ -311,6 +311,7 @@ class ArtworkList {
         }
       })
       .layout()
+      .setDepth(301) // depends on what panel is opened first: player's or onlinePlayer's
 
     scene.input.topOnly = false;
     const labels = [];
@@ -336,13 +337,11 @@ class ArtworkList {
     //      url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
     //version: 0
 
-    console.log(mediaObject)
     //place heartButton under the artwork, make them interactive
     const artFrame = scene.textures.get("artFrame_512")
-    let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "bitmap_heart").setOrigin(1, 0).setScale(0.5)
+    let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "heart").setOrigin(1, 0).setScale(0.7)
       .setInteractive()
       .setData("toggle", false) //false, not liked state
-      //.setTint(0x000000) //black, not liked color
       .on('pointerup', () => { this.heartButtonToggle(mediaObject, currentHeart) })
 
     scene.artContainer.add(currentHeart)
@@ -350,43 +349,43 @@ class ArtworkList {
     //set the heartButton to either back or red depending if an artwork is present in the liked object
     const exists = ManageSession.liked.liked.some(element => element.url == keyImgUrl)
     if (exists) {
-      currentHeart.setTint(0xffffff)
+      // changing to red, liked
+      currentHeart.setTexture("heart")
       currentHeart.setData("toggle", false)
     } else {
-      currentHeart.setTint(0x000000)
+      // changing to black, not liked
+      currentHeart.setTexture("heart_empty")
       currentHeart.setData("toggle", true)
     }
   }
 
   heartButtonToggle(mediaObject, button) {
-
     let parsedMediaOject = { user_id: mediaObject.user_id, collection: mediaObject.collection, key: mediaObject.key, version: mediaObject.value.version, url: mediaObject.value.url, previewURl: mediaObject.value.previewURl }
     let toggle = button.getData("toggle")
 
     if (toggle) {
-      //changing to red, liked
-      button.setTint(0xffffff)
+      // changing to red, liked
+      button.setTexture("heart")
       button.setData("toggle", false)
+      //! Update likedpanel, when open?
       // updates the object locally
       // add to the array
       ManageSession.liked.liked.push(parsedMediaOject)
     } else {
-      //changing to black, not liked
-      button.setTint(0x000000)
+      // changing to empty, not liked
+      button.setTexture("heart_empty")
       button.setData("toggle", true)
+      //! Update likedpanel, when open?
       // updates the object locally
-      //find the object in the array, by url, filter the object with the url out
-
+      // find the object in the array, by url, filter the object with the url out
       ManageSession.liked.liked = ManageSession.liked.liked.filter(obj => obj.url != mediaObject.value.url)
-      // ManageSession.liked.liked.splice(deleteIndex, deleteIndex + 1)
-      //delete ManageSession.allLiked[keyImgUrl]
     }
 
     const type = "liked"
     const name = type + "_" + ManageSession.userProfile.id
     const pub = 2
     const value = ManageSession.liked
-    //  updates the object server side 
+    // updates the object server side 
     updateObject(type, name, value, pub)
   }
 }

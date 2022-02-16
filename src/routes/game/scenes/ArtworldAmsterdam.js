@@ -1,6 +1,6 @@
 import { CONFIG } from "../config.js"
 import ManageSession from "../ManageSession"
-import { getFullAccount, listObjects, convertImage, updateObject, updateObjectAdmin, getAccount, getAvatar } from "../../../api.js";
+import { getFullAccount, listObjects, convertImage, updateObject, updateObjectAdmin, getAccount, getAvatar } from "../../../api.js"
 
 import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
@@ -43,12 +43,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.createdPlayer = false
 
     this.playerContainer
-
-    //test Player
-    this.playerTestImageUrl
-    this.playerTestAvatarKey
-    this.playerTestMovingKey
-    this.playerTestStopKey
 
     this.homes = []
     this.homesRepreseneted = []
@@ -124,7 +118,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async create() {
     // for back button
-    HistoryTracker.locationPush(this)
+    HistoryTracker.pushLocation(this)
 
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
@@ -225,34 +219,23 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //.......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
-    this.player = new PlayerDefault(
-      this,
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 50),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 50),
-      this.playerAvatarPlaceholder
-    ).setDepth(201)
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 50), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 50), this.playerAvatarPlaceholder).setDepth(201)
 
     Player.createPlayerItemsBar(this)
 
-    this.playerTest = new PlayerDefault(
-      this,
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
-      this.playerAvatarPlaceholder
-    )
-    this.playerTest.setDepth(200).setVisible(false)
-
-
-    this.playerShadow = new PlayerDefaultShadow({
-      scene: this,
-      texture: this.playerAvatarPlaceholder,
-    })
-    this.playerShadow.setDepth(200)
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
+    // this.playerTest = new PlayerDefault(
+    //   this,
+    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
+    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
+    //   this.playerAvatarPlaceholder
+    // )
+    // this.playerTest.setDepth(201).setVisible(false)
     //.......  end PLAYER ................................................................................
 
     //....... onlinePlayers ..............................................................................
     // add onlineplayers group
-    this.onlinePlayersGroup = this.add.group()
+    //this.onlinePlayersGroup = this.add.group()
     //....... end onlinePlayers ..........................................................................
 
     //....... PLAYER VS WORLD .............................................................................
@@ -348,7 +331,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         // console.log(element.value.posX)
 
         // parse home description
-        let locationDescription = element.user_id.substring(0, 7)
+        // console.log("element", element)
+        let locationDescription = element.value.username
 
         //! Get avatar of home users
         // this.getAccountDetails(element, element.user_id)
@@ -370,7 +354,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
           locationDestination: "DefaultUserHome",
           locationText: locationDescription,
           locationImage: "museum",
-          enterButtonImage: "arrow_down_32px",
+          enterButtonImage: "enter_button",
           fontColor: 0x8dcb0e,
           color1: 0xffe31f,
           color2: 0xf2a022,
@@ -402,7 +386,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       y: location1Vector.y,
       locationDestination: "Location1",
       locationImage: "museum",
-      enterButtonImage: "arrow_down_32px",
+      enterButtonImage: "enter_button",
       locationText: "Location 1",
       fontColor: 0x8dcb0e,
       color1: 0xffe31f,
@@ -424,7 +408,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       y: location1Vector.y,
       locationDestination: "Location2",
       locationImage: "museum",
-      enterButtonImage: "arrow_down_32px",
+      enterButtonImage: "enter_button",
       locationText: "Location 2",
       fontColor: 0x8dcb0e,
       color1: 0x8dcb0e,
@@ -464,7 +448,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       y: location1Vector.y,
       internalUrl: "mariosound",
       locationImage: "mario_star",
-      enterButtonImage: "arrow_down_32px",
+      enterButtonImage: "enter_button",
       locationText: "MarioSound",
       fontColor: 0x8dcb0e,
       color1: 0x8dcb0e,

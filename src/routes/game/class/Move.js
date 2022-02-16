@@ -51,7 +51,6 @@ class Move {
     } else if (scene.cursors.right.isDown) {
       scene.player.body.setVelocityX(speed)
       // scene.cursorKeyIsDown = true
-      // sendPlayerMovement(scene)
     }
 
     // Vertical movement
@@ -91,9 +90,6 @@ class Move {
     // target is a vector
 
     ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")
-
-    //play "move" animation
-    this.movingAnimation(scene, "moving")
   }
 
   checkIfPlayerIsMoving(scene) {
@@ -120,6 +116,10 @@ class Move {
       scene.isClicking = true
     }
     if (!scene.input.activePointer.isDown && scene.isClicking == true && scene.graffitiDrawing == false) {
+      // play "move" animation
+      // play the animation as soon as possible so it is more visible
+      this.movingAnimation(scene, "moving")
+
       const playerX = scene.player.x
       const playerY = scene.player.y
 
@@ -171,6 +171,10 @@ class Move {
 
         lastTime = scene.time.now
         if (clickDelay < 350 && scene.graffitiDrawing == false) {
+          // play "move" animation
+          // play the animation as soon as possible so it is more visible
+          this.movingAnimation(scene, "moving")
+
           //mouse point after doubletap is target
           scene.target.x = scene.input.activePointer.worldX
           scene.target.y = scene.input.activePointer.worldY

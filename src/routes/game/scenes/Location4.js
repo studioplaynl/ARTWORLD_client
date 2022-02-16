@@ -97,7 +97,7 @@ export default class Location4 extends Phaser.Scene {
   async create() {
 
     // for back button
-    HistoryTracker.locationPush(this);
+    HistoryTracker.pushLocation(this);
 
     //timers
     ManageSession.updateMovementTimer = 0;
@@ -119,9 +119,9 @@ export default class Location4 extends Phaser.Scene {
     this.generateBackground()
     //.......  PLAYER ..........................................................................
     this.playerAvatarPlaceholder = "avatar1";
-    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder).setDepth(201)
     Player.createPlayerItemsBar(this)
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
 
     //create player group
     this.playerGroup = this.add.group();

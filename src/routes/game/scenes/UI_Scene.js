@@ -6,6 +6,7 @@ import nl from "../../../langauge/nl/ui.json"
 import en from "../../../langauge/en/ui.json"
 import ru from "../../../langauge/ru/ui.json"
 import ar from "../../../langauge/ar/ui.json"
+import HistoryTracker from "../class/HistoryTracker"
 
 i18next.init({
   lng: "nl",
@@ -84,15 +85,15 @@ export default class UI_Scene extends Phaser.Scene {
 
     if (!update) {
       //text to show the location (for debugging) > will change to breadcrum UI for user
-      this.locationText = this.add
-        .text(width / 3.5, height / 40, this.location, {
-          fontFamily: "Arial",
-          fontSize: "22px",
-        })
-        .setOrigin(0)
-        //.setScrollFactor(0) //fixed on screen
-        .setShadow(1, 1, "#000000", 0)
-        .setDepth(1000);
+      // this.locationText = this.add
+      //   .text(width / 3.5, height / 40, this.location, {
+      //     fontFamily: "Arial",
+      //     fontSize: "22px",
+      //   })
+      //   .setOrigin(0)
+      //   //.setScrollFactor(0) //fixed on screen
+      //   .setShadow(1, 1, "#000000", 0)
+      //   .setDepth(1000)
 
       // mobile debug text field
       this.debugTextField = this.add.text(50, 80, this.debugText, {
@@ -104,7 +105,7 @@ export default class UI_Scene extends Phaser.Scene {
       this.backButton = this.add.image(40, 40, "back_button")
         .setOrigin(0, 0.5)
         .setDepth(1000)
-        .setInteractive({ useHandCursor: true });
+        .setInteractive({ useHandCursor: true })
 
       // back button background color white
       this.backButtonCircle = this.add.circle(40, 40, 15, 0xffffff).setOrigin(0, 0.5)
@@ -116,44 +117,15 @@ export default class UI_Scene extends Phaser.Scene {
       }
 
       this.backButton.on("pointerup", () => {
-        // take out the current location
-        let currentLocationKey = ManageSession.locationHistory.pop();
-        // check if the current location is a home, if true - reassign the value of currentLocationKey by "DefaultUserHome"
-        // note: when a player enters a house, an object with two properties: {locationName: "DefaultUserHome", homeID: this.location} is pushed, instead of location name only. 
-        if (currentLocationKey.locationName && currentLocationKey.homeID) {
-          currentLocationKey = currentLocationKey.locationName
-        }
-        const currentLocationScene = this.scene.get(currentLocationKey)
-        currentLocationScene.physics.pause()
-        currentLocationScene.player.setTint(0xff0000)
-
-        // get the previous scene
-        let previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
-        let homeID = null
-        // check if the previous location is a house, if true - reassign the value of previousLocation 
-        // and store the home's ID, since it is needed for entering a specific home
-        if (previousLocation.locationName && previousLocation.homeID) {
-          homeID = previousLocation.homeID
-          previousLocation = previousLocation.locationName
-        }
-
-        ManageSession.socket.rpc("leave", currentLocationKey)
-
-        currentLocationScene.time.addEvent({
-          delay: 500,
-          callback: () => {
-            ManageSession.location = previousLocation;
-            ManageSession.createPlayer = true
-            ManageSession.getStreamUsers("join", previousLocation)
-            this.scene.stop(currentLocationKey)
-            this.scene.start(previousLocation, { user_id: homeID }) // in cases when the previous location is not a house, the second argument is ignored
-          },
-          callbackScope: this,
-          loop: false
-        })
-
-
-      });
+        // removing the current last scene from the history
+        const currentLocationKey = ManageSession.locationHistory.pop()
+        // and getting access to it through its key
+        const currentLocation = this.scene.get(currentLocationKey.locationName)
+        // getting access to the previous scene through locationHistory
+        const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
+        // switching scenes
+        HistoryTracker.switchScene(currentLocation, previousLocation.locationName, previousLocation.locationID)
+      })
 
       //zoom buttons
       this.zoomOut = this.add
@@ -164,7 +136,7 @@ export default class UI_Scene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true });
 
       this.zoom = this.add
-        .image(60 + 80, 40, "ui_eye")
+        .image(60 + 100, 40, "ui_eye")
         .setOrigin(0, 0.5)
         .setDepth(1000)
         .setScale(width / (width / this.camUI.zoom) / 8)

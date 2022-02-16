@@ -1,5 +1,6 @@
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
+import HistoryTracker from "./HistoryTracker"
 
 export default class GenerateLocation extends Phaser.GameObjects.Container {
 
@@ -107,9 +108,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         // this.enterButtonHitArea.displayWidth = width / 1.05
 
-        this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0x6666ff).setOrigin(0.5, 0.5).setVisible(false).setInteractive({ useHandCursor: true })
+        this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0x6666ff).setOrigin(0.5, 0.5).setVisible(false).setInteractive({ useHandCursor: true }).setDepth(500)
         // .setStrokeStyle(2, 0x000000)
-        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setOrigin(0.5, 0.5).setDepth(200).setVisible(false)
+        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setOrigin(0.5, 0.5).setDepth(200).setVisible(false).setDepth(500)
 
 
         this.enterButtonTween = this.scene.tweens.add({
@@ -201,21 +202,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                     window.location.href = url;
                 }
             } else {
-                // on entering another location we want to keep a record for "back button"
-                ManageSession.previousLocation = this.scene.key;
-
-                this.scene.physics.pause()
-                this.scene.player.setTint(0xff0000)
-
-                //player has to explicitly leave the stream it was in!
-                console.log("leave: ", this.scene.location)
-
-                ManageSession.socket.rpc("leave", this.scene.location)
-
-                this.scene.player.location = this.locationDestination
-                console.log("this.player.location: ", this.locationDestination)
-
-                this.scene.time.addEvent({ delay: 500, callback: this.switchScenes, callbackScope: this, loop: false })
+                HistoryTracker.switchScene(this.scene, this.locationDestination, this.userHome)
             }
         })
 
@@ -252,20 +239,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         } else {
             this.showing = true
             this.scene.time.addEvent({ delay: 2000, callback: this.hideEnterButton, callbackScope: this, loop: false })
-        }
-    }
-
-    switchScenes() {
-        ManageSession.location = this.locationDestination
-        ManageSession.createPlayer = true
-        ManageSession.getStreamUsers("join", this.locationDestination)
-        this.scene.scene.stop(this.scene.scene.key)
-        //check if it is a userHome, pass data to the userHome (user_id)
-        if (this.userHome) {
-            this.scene.scene.start(this.locationDestination, { user_id: this.userHome })
-            console.log("UserHome defined: ", this.userHome)
-        } else {
-            this.scene.scene.start(this.locationDestination)
         }
     }
 }

@@ -70,8 +70,6 @@ export default class Location3 extends Phaser.Scene {
       { frameWidth: 68, frameHeight: 68 }
     );
 
-    this.load.image("onlinePlayer", "./assets/pieceYellow_border05.png");
-
     this.load.image("ball", "./assets/ball_grey.png")
 
     //test backgrounds
@@ -98,7 +96,7 @@ export default class Location3 extends Phaser.Scene {
   async create() {
 
     // for back button
-    HistoryTracker.locationPush(this);
+    HistoryTracker.pushLocation(this);
 
     //timers
     ManageSession.updateMovementTimer = 0;
@@ -133,25 +131,23 @@ export default class Location3 extends Phaser.Scene {
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 50),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 50),
       this.playerAvatarPlaceholder
-    )
-    this.player.setDepth(200)
+    ).setDepth(201)
 
     Player.createPlayerItemsBar(this)
 
-    this.playerTest = new PlayerDefault(
-      this,
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
-      this.playerAvatarPlaceholder
-    )
-    this.playerTest.setDepth(200).setVisible(false)
+    // this.playerTest = new PlayerDefault(
+    //   this,
+    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
+    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
+    //   this.playerAvatarPlaceholder
+    // )
+    // this.playerTest.setDepth(200).setVisible(false)
 
 
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
       texture: this.playerAvatarPlaceholder,
-    })
-    this.playerShadow.setDepth(199)
+    }).setDepth(200)
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................

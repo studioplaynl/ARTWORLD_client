@@ -34,14 +34,8 @@ class Player {
           ManageSession.userProfile.id +
           "_" +
           ManageSession.userProfile.create_time
-        //console.log(scene.playerAvatarKey);
 
-        // console.log("this.textures.exists(this.playerAvatarKey): ")
-        // console.log(this.textures.exists(this.playerAvatarKey))
-
-        // console.log(this.cache.game.textures.list[this.playerAvatarKey])
-
-        console.log(scene.textures.exists(scene.playerAvatarKey))
+        //console.log(scene.textures.exists(scene.playerAvatarKey))
 
         //* attatch to existing context and physics
         scene.add.existing(this)
@@ -58,12 +52,10 @@ class Player {
             console.log("scene.createdPlayer = ", scene.createdPlayer)
             return
           } else {
-            // console.log(" loading: ManageSession.userProfile.url: ")
-            // console.log(ManageSession.userProfile.url)
-            console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
+            //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
             const fileNameCheck = scene.playerAvatarKey
             scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
-              .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { console.log(`file ${fileNameCheck} finished loading`); this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
+              .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
             scene.load.start() // start loading the image in memory
           }
         } else {
@@ -74,9 +66,8 @@ class Player {
   }
 
   attachAvatarToPlayer(scene) {
-    console.log("scene.playerAvatarKey ", scene.playerAvatarKey)
+    //console.log("scene.playerAvatarKey ", scene.playerAvatarKey)
 
-    // console.log(avatar)
     const avatar = scene.textures.get(scene.playerAvatarKey)
     const avatarWidth = avatar.frames.__BASE.width
     //console.log("avatarWidth: " avatarWidth)
@@ -119,11 +110,6 @@ class Player {
     }
     //. end animation for the player avatar ......................
 
-    // texture loaded so use instead of the placeholder
-    //console.log("scene.playerAvatarKey");
-    //console.log(scene.playerAvatarKey);
-
-    // scene.player.texture = scene.playerAvatarKey
     scene.player.setTexture(scene.playerAvatarKey)
     scene.playerShadow.setTexture(scene.playerAvatarKey)
 
@@ -134,9 +120,6 @@ class Player {
 
     scene.playerShadow.displayWidth = width
     scene.playerShadow.scaleY = scene.playerShadow.scaleX
-
-    // console.log("scene.playerShadow");
-    // console.log(scene.playerShadow);
 
     //* set the collision body
     //* setCircle(radius [, offsetX] [, offsetY])
@@ -176,7 +159,7 @@ class Player {
     scene.isPlayerItemsBarDisplayed = false
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
-    scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y)
+    scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y).setDepth(220)
 
     scene.player.on("pointerup", async () => {
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
@@ -184,22 +167,16 @@ class Player {
         scene.playerItemsBar.setVisible(true)
 
         // creating a home button
-        scene.playerHomeButtonCircle = scene.add
-          .circle(0, -70, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(3, 0x0000);
-        scene.playerHomeButton = scene.add.image(0, -70, "home");
+        scene.playerHomeButton = scene.add.image(0, -70, "home").setInteractive({ useHandCursor: true })
+        // entering the home of the avatar
+        scene.playerHomeButton.on("pointerup", () => {
+          HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
+        })
 
         // creating a liked button
-        scene.playerLikedButtonCircle = scene.add
-          .circle(65, 0, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(3, 0x0000);
-        scene.playerLikedButton = scene.add.image(65, 0, "heart");
+        scene.playerLikedButton = scene.add.image(65, 0, "heart").setInteractive({ useHandCursor: true })
 
-        scene.playerLikedButtonCircle.on("pointerdown", async () => {
+        scene.playerLikedButton.on("pointerdown", async () => {
           // display spinner while images are being downloaded
           scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
             x: scene.player.x + 150,
@@ -208,50 +185,35 @@ class Player {
             height: 100,
             duration: 850,
             color: 0x000000
-          }).start()
+          }).setDepth(199).start()
 
           // downloading the images and displaying them
           scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
         })
 
         // creating an addressbook button
-        scene.playerAddressbookButtonCircle = scene.add
-          .circle(0, 70, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(3, 0x0000)
-        scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook")
+        scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook").setInteractive({ useHandCursor: true })
 
-        scene.playerAddressbookButtonCircle.on("pointerup", () => {
+
+        scene.playerAddressbookButton.on("pointerup", () => {
           this.createAddressbook(scene)
         })
 
         // adding all buttons to the container
         scene.playerItemsBar.add([
-          scene.playerHomeButtonCircle,
           scene.playerHomeButton,
-          scene.playerLikedButtonCircle,
           scene.playerLikedButton,
-          scene.playerAddressbookButtonCircle,
           scene.playerAddressbookButton
         ])
 
         scene.isPlayerItemsBarDisplayed = true;
 
-        // entering the home of the avatar
-        scene.playerHomeButtonCircle.on("pointerup", () => {
-          HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
-        });
       } else {
         scene.playerItemsBar.setVisible(false)
-        if (scene.playerLikedPanel) {
-          scene.playerLikedPanel.setVisible(false)
-        }
-        console.log("scene.playerLikedPanel", scene.playerLikedPanel)
+        if (scene.playerLikedPanel) scene.playerLikedPanel.setVisible(false)
+        // console.log("scene.playerLikedPanel", scene.playerLikedPanel)
         scene.isPlayerItemsBarDisplayed = false
-        if (scene.playerAddressbookContainer) {
-          this.destroyAddressbook(scene)
-        }
+        if (scene.playerAddressbookContainer) this.destroyAddressbook(scene)
       }
     })
   }
@@ -272,11 +234,12 @@ class Player {
     scene.playerAddressbookMask = scene.add.graphics()
       .fillStyle(0xffffff, 1)
       .fillRoundedRect(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight, 8)
-      .lineStyle(3, 0x000000, 1)
-      .strokeRoundedRect(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight, 8)
+      // .lineStyle(1, 0xffffff, 1)
+      // .strokeRoundedRect(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight, 8)
+      .setDepth(220)
 
     // creating a container that holds all items (addresses)
-    scene.playerAddressbookContainer = scene.add.container(playerAddressbookPositionX + 10, playerAddressbookPositionY + 10)
+    scene.playerAddressbookContainer = scene.add.container(playerAddressbookPositionX + 10, playerAddressbookPositionY + 10).setDepth(220)
 
     const smileyFaces = ["friend", "friend2", "friend3"]
 
@@ -298,11 +261,10 @@ class Player {
         })
 
       // creating a delete button
-      const playerAddressbookDeleteButtonCircle = scene.add
-        .circle(70, y, 15, 0xffffff)
-        .setOrigin(0)
+      const playerAddressbookDeleteButton = scene.add
+        .image(55, y, "delete")
+        .setOrigin(0, 0.25)
         .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(2, 0x0000)
         .on("pointerup", () => {
 
           // deleting the selected address and updating the local addressbook
@@ -321,7 +283,7 @@ class Player {
         })
 
       // adding the image and delete button to playerAddressbookContainer
-      scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookDeleteButtonCircle])
+      scene.playerAddressbookContainer.add([playerAddressbookImage, playerAddressbookDeleteButton])
     })
 
     // setting a mask
@@ -331,6 +293,7 @@ class Player {
     scene.playerAddressbookZone = scene.add.zone(playerAddressbookPositionX, playerAddressbookPositionY, playerAddressbookWidth, playerAddressbookHeight)
       .setOrigin(0)
       .setInteractive()
+      .setDepth(220)
       .on("pointermove", (pointer) => {
         if (pointer.isDown) {
           // make it scrollable only when there more than 4 items in the addressbook
@@ -340,6 +303,7 @@ class Player {
           }
         }
       })
+
     scene.input.topOnly = false // in order to get the right clicking surface 
   }
 
@@ -361,7 +325,7 @@ class Player {
     scene.isOnlinePlayerItemsBarDisplayed = false
 
     // creating a container that holds all pop-up buttons, the coords are the same as the avatar's
-    scene.onlinePlayerItemsBar = scene.add.container(0, 0)
+    scene.onlinePlayerItemsBar = scene.add.container(0, 0).setDepth(301)
   }
 
   async displayOnlinePlayerItemsBar(scene, player) {
@@ -377,32 +341,33 @@ class Player {
     if (scene.isOnlinePlayerItemsBarDisplayed == false) {
 
       // creating a home button for online player
-      scene.onlinePlayerHomeButtonCircle = scene.add
-        .circle(0, -70, 25, 0xffffff)
-        .setOrigin(0.5, 0.5)
-        .setInteractive({ useHandCursor: true })
-        .setStrokeStyle(3, 0x0000);
-      scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home")
+      // scene.onlinePlayerHomeButtonCircle = scene.add
+      //   .circle(0, -70, 25, 0xffffff)
+      //   .setOrigin(0.5, 0.5)
+      //   .setStrokeStyle(3, 0x0000);
+      scene.onlinePlayerHomeButton = scene.add.image(0, -70, "home").setInteractive({ useHandCursor: true })
 
-      scene.onlinePlayerHomeButtonCircle.on("pointerdown", () => {
+      scene.onlinePlayerHomeButton.on("pointerdown", () => {
         // creating an enter home button for online player
-        scene.onlinePlayerHomeEnterButtonCircle = scene.add
-          .circle(-30, -120, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(2, 0x0000)
+        // scene.onlinePlayerHomeEnterButton = scene.add
+        //   .circle(-30, -120, 25, 0xffffff)
+        //   .setOrigin(0.5, 0.5)
+        //   .setStrokeStyle(2, 0x0000)
+
+        scene.onlinePlayerHomeEnterButton = scene.add.image(-40, -130, "enter_home").setInteractive({ useHandCursor: true })
           .on("pointerdown", () => {
             // entering the home of the online player
             HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.selectedOnlinePlayer.id)
           })
-        scene.onlinePlayerHomeEnterButton = scene.add.image(-30, -120, "enter_home")
+
 
         // creating a save home button for online player
-        scene.onlinePlayerHomeSaveCircle = scene.add
-          .circle(30, -120, 25, 0xffffff)
-          .setOrigin(0.5, 0.5)
-          .setInteractive({ useHandCursor: true })
-          .setStrokeStyle(2, 0x0000)
+        // scene.onlinePlayerHomeSave = scene.add
+        //   .circle(30, -120, 25, 0xffffff)
+        //   .setOrigin(0.5, 0.5)
+        //   .setStrokeStyle(2, 0x0000)
+
+        scene.onlinePlayerHomeSaveButton = scene.add.image(40, -130, "save_home").setInteractive({ useHandCursor: true })
           .on("pointerup", () => {
             // saving the home of a player
             const entry = { user_id: ManageSession.selectedOnlinePlayer.id }
@@ -433,14 +398,12 @@ class Player {
             }
           })
 
-        scene.onlinePlayerHomeSaveButton = scene.add.image(30, -120, "save_home")
-
         // adding home button's children: enter and save buttons to onlinePlayerItemsBar
-        scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButtonCircle, scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveCircle, scene.onlinePlayerHomeSaveButton])
+        scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeEnterButton, scene.onlinePlayerHomeSaveButton])
       })
 
       // adding home button to onlinePlayerItemsBar
-      scene.onlinePlayerItemsBar.add([scene.onlinePlayerHomeButtonCircle, scene.onlinePlayerHomeButton])
+      scene.onlinePlayerItemsBar.add(scene.onlinePlayerHomeButton)
 
       // making a server call to get liked images while creating a liked button
       Promise.all([listObjects("liked", player.id, 10)]).then((response) => {
@@ -467,7 +430,7 @@ class Player {
               height: 100,
               duration: 850,
               color: 0x000000
-            }).start()
+            }).setDepth(199).start()
 
             // downloading the images and displaying them
             scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert method to onlinePlayer
@@ -495,7 +458,7 @@ class Player {
   hideOnlinePlayerItemsBar(scene) {
     scene.isOnlinePlayerItemsBarDisplayed = false
     scene.onlinePlayerItemsBar.setVisible(false)
-    scene.onlinePlayerLikedPanel.setVisible(false)
+    if (scene.onlinePlayerLikedPanel) scene.onlinePlayerLikedPanel.setVisible(false)
   }
 
   parseNewOnlinePlayerArray(scene) {
@@ -530,9 +493,9 @@ class Player {
         scene.playerAvatarPlaceholder
       )
       //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
-      .setDepth(90)
+      .setDepth(200)
     onlinePlayer.setInteractive({ useHandCursor: true })
-    // hit area 
+    // hit area of onlinePlayer
     onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
     onlinePlayer.on('pointerup', () => {
       this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
@@ -543,7 +506,7 @@ class Player {
         }, callbackScope: scene, loop: false
       })
 
-      console.log("online player width", onlinePlayer)
+      //console.log("online player width", onlinePlayer)
     })
 
     onlinePlayer.setData("movingKey", "moving")
@@ -578,21 +541,21 @@ class Player {
 
     //we load the onlineplayer avatar, make a key for it
     const avatarKey = onlinePlayer.id + "_" + onlinePlayer.update_time
-    console.log("avatarKey", avatarKey)
+    //console.log("avatarKey", avatarKey)
 
     //if the texture already exists attach it again to the player
     // const preExisting = false
     if (!scene.textures.exists(avatarKey)) {
-      console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+      //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
       //add it to loading queue
       scene.load.spritesheet(avatarKey, onlinePlayer.url, {
         frameWidth: 128,
         frameHeight: 128,
-      }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { console.log(`onlinePlayer file ${avatarKey} finished loading`); this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
+      }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
       //when file is finished loading the attachToAvatar function is called
       scene.load.start() // start loading the image in memory
     } else {
-      console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+      //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
       //attach the avatar to the onlinePlayer when it is already in memory
       this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey)
     }
@@ -603,7 +566,7 @@ class Player {
   }
 
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
-    console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
+    //console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
 
     onlinePlayer.active = true
     onlinePlayer.visible = true
@@ -620,11 +583,8 @@ class Player {
 
       onlinePlayer.setData("movingKey", "moving" + "_" + tempAvatarName)
       onlinePlayer.setData("stopKey", "stop" + "_" + tempAvatarName)
-      console.log('onlinePlayer.getData("movingKey")')
-      console.log(onlinePlayer.getData("movingKey"))
-
-      console.log('onlinePlayer.getData("movingKey")')
-      console.log(onlinePlayer.getData("movingKey"))
+      //console.log('onlinePlayer.getData("movingKey")')
+      //console.log(onlinePlayer.getData("movingKey"))
 
       //create animation for moving
       if (!scene.anims.exists(onlinePlayer.getData("movingKey"))) {
