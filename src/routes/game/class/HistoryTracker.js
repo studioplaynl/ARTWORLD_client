@@ -4,18 +4,22 @@ class HistoryTracker {
   constructor() { }
 
   pushLocation(scene) {
-    if (scene.scene.key == "DefaultUserHome") { // if the player entering a house, push a house id
-      if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1].homeID != scene.location) {
-        ManageSession.locationHistory.push({ locationName: "DefaultUserHome", homeID: scene.location });
-      }
-    } else { // otherwise, push location name only
-      if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1] != scene.location) {
-        ManageSession.locationHistory.push(scene.location);
-      }
+    // if (scene.scene.key == "DefaultUserHome") { // if the player entering a house, push a house id
+    //   if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1].homeID != scene.location) {
+    //     ManageSession.locationHistory.push({ locationName: "DefaultUserHome", homeID: scene.location });
+    //   }
+    // } else { // otherwise, push location name only
+    //   if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1] != scene.location) {
+    //     ManageSession.locationHistory.push(scene.location);
+    //   }
+    // }
+
+    if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1]?.locationID != scene.location) {
+      ManageSession.locationHistory.push({ locationName: scene.scene.key, locationID: scene.location })
     }
   }
 
-  switchScene(scene, goToScene, userID) {
+  switchScene(scene, goToScene, locationID) {
     scene.physics.pause();
     scene.player.setTint(0xff0000);
 
@@ -29,14 +33,8 @@ class HistoryTracker {
         ManageSession.location = goToScene;
         ManageSession.createPlayer = true;
         scene.scene.stop(scene.scene.key);
-        if (userID) {
-          scene.scene.start(goToScene, {
-            user_id: userID,
-          });
-        } else {
-          scene.scene.start(goToScene);
-        }
-        ManageSession.getStreamUsers("join", goToScene);
+        scene.scene.start(goToScene, { user_id: locationID })
+        ManageSession.getStreamUsers("join", locationID);
       },
       callbackScope: scene,
       loop: false,

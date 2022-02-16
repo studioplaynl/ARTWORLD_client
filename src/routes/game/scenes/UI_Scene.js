@@ -120,7 +120,7 @@ export default class UI_Scene extends Phaser.Scene {
         let currentLocationKey = ManageSession.locationHistory.pop();
         // check if the current location is a home, if true - reassign the value of currentLocationKey by "DefaultUserHome"
         // note: when a player enters a house, an object with two properties: {locationName: "DefaultUserHome", homeID: this.location} is pushed, instead of location name only. 
-        if (currentLocationKey.locationName && currentLocationKey.homeID) {
+        if (currentLocationKey.locationName && currentLocationKey.locationID) {
           currentLocationKey = currentLocationKey.locationName
         }
         const currentLocationScene = this.scene.get(currentLocationKey)
@@ -129,11 +129,11 @@ export default class UI_Scene extends Phaser.Scene {
 
         // get the previous scene
         let previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
-        let homeID = null
+        let locationID = null
         // check if the previous location is a house, if true - reassign the value of previousLocation 
         // and store the home's ID, since it is needed for entering a specific home
-        if (previousLocation.locationName && previousLocation.homeID) {
-          homeID = previousLocation.homeID
+        if (previousLocation.locationName && previousLocation.locationID) {
+          locationID = previousLocation.locationID
           previousLocation = previousLocation.locationName
         }
 
@@ -144,9 +144,9 @@ export default class UI_Scene extends Phaser.Scene {
           callback: () => {
             ManageSession.location = previousLocation;
             ManageSession.createPlayer = true
-            ManageSession.getStreamUsers("join", previousLocation)
+            ManageSession.getStreamUsers("join", locationID)
             this.scene.stop(currentLocationKey)
-            this.scene.start(previousLocation, { user_id: homeID }) // in cases when the previous location is not a house, the second argument is ignored
+            this.scene.start(previousLocation, { user_id: locationID }) // in cases when the previous location is not a house, the second argument is ignored
           },
           callbackScope: this,
           loop: false
