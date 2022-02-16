@@ -124,7 +124,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async create() {
     // for back button
-    HistoryTracker.locationPush(this)
+    HistoryTracker.pushLocation(this)
 
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize

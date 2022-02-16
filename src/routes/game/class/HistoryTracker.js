@@ -3,21 +3,33 @@ import ManageSession from "../ManageSession";
 class HistoryTracker {
   constructor() { }
 
-  // for track of locations switch
-  locationPush(scene) {
-    // don't push the location to the history if it is already in the array as the last index
-    if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1] != scene.location) {
-      ManageSession.locationHistory.push(scene.location);
+  pushLocation(scene) {
+    if (scene.scene.key == "DefaultUserHome") { // if the player entering a house, push a house id
+      if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1].homeID != scene.location) {
+        ManageSession.locationHistory.push({ locationName: "DefaultUserHome", homeID: scene.location });
+      }
+    } else { // otherwise, push location name only
+      if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1] != scene.location) {
+        ManageSession.locationHistory.push(scene.location);
+      }
     }
   }
 
-  // for track of homes switch
-  homePush(scene) {
-    // don't push the home to the history if it is already in the array as the last index
-    if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1].homeID != scene.location) {
-      ManageSession.locationHistory.push({ locationName: "DefaultUserHome", homeID: scene.location });
-    }
-  }
+  // // for track of locations switch
+  // locationPush(scene) {
+  //   // don't push the location to the history if it is already in the array as the last index
+  //   if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1] != scene.location) {
+  //     ManageSession.locationHistory.push(scene.location);
+  //   }
+  // }
+
+  // // for track of homes switch
+  // homePush(scene) {
+  //   // don't push the home to the history if it is already in the array as the last index
+  //   if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1].homeID != scene.location) {
+  //     ManageSession.locationHistory.push({ locationName: "DefaultUserHome", homeID: scene.location });
+  //   }
+  // }
 
   switchScene(scene, goToScene, userID) {
     scene.physics.pause();

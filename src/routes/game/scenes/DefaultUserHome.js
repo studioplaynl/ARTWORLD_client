@@ -112,8 +112,8 @@ export default class DefaultUserHome extends Phaser.Scene {
     async create() {
 
         // for back button
-        HistoryTracker.homePush(this)
-        console.log(ManageSession.locationHistory)
+        HistoryTracker.pushLocation(this)
+        console.log("ManageSession.locationHistory", ManageSession.locationHistory)
 
         //copy worldSize over to ManageSession, so that positionTranslation can be done there
         ManageSession.worldSize = this.worldSize

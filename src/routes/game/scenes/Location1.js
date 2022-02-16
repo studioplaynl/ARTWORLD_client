@@ -137,7 +137,7 @@ export default class Location1 extends Phaser.Scene {
   async create() {
 
     // for back button
-    HistoryTracker.locationPush(this);
+    HistoryTracker.pushLocation(this);
     console.log(ManageSession.locationHistory)
 
     //timers
