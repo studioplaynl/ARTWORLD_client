@@ -15,22 +15,6 @@ class HistoryTracker {
     }
   }
 
-  // // for track of locations switch
-  // locationPush(scene) {
-  //   // don't push the location to the history if it is already in the array as the last index
-  //   if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1] != scene.location) {
-  //     ManageSession.locationHistory.push(scene.location);
-  //   }
-  // }
-
-  // // for track of homes switch
-  // homePush(scene) {
-  //   // don't push the home to the history if it is already in the array as the last index
-  //   if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1].homeID != scene.location) {
-  //     ManageSession.locationHistory.push({ locationName: "DefaultUserHome", homeID: scene.location });
-  //   }
-  // }
-
   switchScene(scene, goToScene, userID) {
     scene.physics.pause();
     scene.player.setTint(0xff0000);
@@ -44,7 +28,6 @@ class HistoryTracker {
       callback: () => {
         ManageSession.location = goToScene;
         ManageSession.createPlayer = true;
-        ManageSession.getStreamUsers("join", goToScene);
         scene.scene.stop(scene.scene.key);
         if (userID) {
           scene.scene.start(goToScene, {
@@ -53,6 +36,7 @@ class HistoryTracker {
         } else {
           scene.scene.start(goToScene);
         }
+        ManageSession.getStreamUsers("join", goToScene);
       },
       callbackScope: scene,
       loop: false,
