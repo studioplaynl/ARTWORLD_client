@@ -55,8 +55,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         // track for progress and completion of artworks
         this.progress = []
 
-
-
         //sizes for the artWorks
         this.artIconSize = 64
         this.artPreviewSize = 128
@@ -66,7 +64,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.offlineOnlineUsers
 
-        this.location = "DefaultUserHome"
+        this.location = ""
 
         //.......................REX UI ............
         this.COLOR_PRIMARY = 0xff5733
@@ -114,6 +112,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         // for back button
         HistoryTracker.homePush(this)
         console.log(ManageSession.locationHistory)
+        console.log("this.location", this.location)
 
         //copy worldSize over to ManageSession, so that positionTranslation can be done there
         ManageSession.worldSize = this.worldSize

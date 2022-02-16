@@ -15,20 +15,8 @@ class DebugFuntions {
 
         scene.input.keyboard.on('keyup-A', function (event) {
 
-            scene.playerTest.setVisible(true)
+            
 
-            var tween = scene.tweens.add({
-                targets: scene.playerTest,
-                x: 2000,
-                paused: false,
-                duration: 2000,
-                yoyo: true,
-                repeat: -1
-            })
-
-            //this tween makes the target move to the x absolutely!
-            //onComplete:onCompleteHandler ,onCompleteParams:[custom]}
-            //https://rexrainbow.github.io/phaser3-rex-notes/docs/site/tween/
 
         }, scene)
 
@@ -165,9 +153,6 @@ class DebugFuntions {
 
             console.log('T key')
             console.log("::Test Coordinates Scene::")
-
-
-
             this.scene.stop(ManageSession.currentlocation);
             this.scene.start("TestCoordinates")
 

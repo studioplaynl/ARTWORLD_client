@@ -201,9 +201,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                     window.location.href = url;
                 }
             } else {
-                // on entering another location we want to keep a record for "back button"
-                ManageSession.previousLocation = this.scene.key;
-
                 this.scene.physics.pause()
                 this.scene.player.setTint(0xff0000)
 
@@ -213,7 +210,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                 ManageSession.socket.rpc("leave", this.scene.location)
 
                 this.scene.player.location = this.locationDestination
-                console.log("this.player.location: ", this.locationDestination)
+                console.log("this.locationDestination: ", this.locationDestination)
 
                 this.scene.time.addEvent({ delay: 500, callback: this.switchScenes, callbackScope: this, loop: false })
             }

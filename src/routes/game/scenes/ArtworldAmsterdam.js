@@ -1,6 +1,6 @@
 import { CONFIG } from "../config.js"
 import ManageSession from "../ManageSession"
-import { getFullAccount, listObjects, convertImage, updateObject, updateObjectAdmin, getAccount, getAvatar } from "../../../api.js";
+import { getFullAccount, listObjects, convertImage, updateObject, updateObjectAdmin, getAccount, getAvatar } from "../../../api.js"
 
 import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
@@ -43,12 +43,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.createdPlayer = false
 
     this.playerContainer
-
-    //test Player
-    this.playerTestImageUrl
-    this.playerTestAvatarKey
-    this.playerTestMovingKey
-    this.playerTestStopKey
 
     this.homes = []
     this.homesRepreseneted = []

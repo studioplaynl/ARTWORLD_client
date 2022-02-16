@@ -175,8 +175,8 @@ class ManageSession {
     // console.log("this.allConnectedUsers", this.allConnectedUsers)
     let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
     console.log("removeUser", removeUser)
-    // if (removeUser[0]) removeUser[0].destroy()
-    removeUser[0].destroy()
+    if (removeUser[0]) removeUser[0].destroy()
+    // removeUser[0].destroy()
     this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.user_id)
     // console.log("----")
     console.log("this.allConnectedUsers", this.allConnectedUsers)
@@ -187,7 +187,6 @@ class ManageSession {
     //* rpc_command:
     //* join" = join the stream, get the online users, except self
     //* get_users" = after joined, get the online users, except self
-
     console.log('this.getStreamUsers("' + rpc_command + ', "' + location + '")')
 
     this.socket.rpc(rpc_command, location).then((rec) => {
@@ -195,9 +194,7 @@ class ManageSession {
 
       //get all online players
       this.createOnlinePlayerArray = JSON.parse(rec.payload) || []
-
       console.log("this.createOnlinePlayerArray", this.createOnlinePlayerArray)
-
     })
   }
 
@@ -219,8 +216,7 @@ class ManageSession {
       data = JSON.parse(rec.payload) || [];
       // console.log("sent pos:");
       // console.log(data);
-    });
-
+    })
   }
 
   sendMoveMessage(scene, posX, posY, action) {
@@ -273,7 +269,7 @@ class ManageSession {
       1,
       persistence,
       hidden
-    );
+    )
   } //end chatExample
 } //end class
 
