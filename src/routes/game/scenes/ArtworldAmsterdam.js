@@ -331,7 +331,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         // console.log(element.value.posX)
 
         // parse home description
-        let locationDescription = element.user_id.substring(0, 7)
+        // console.log("element", element)
+        let locationDescription = element.value.username
 
         //! Get avatar of home users
         // this.getAccountDetails(element, element.user_id)
