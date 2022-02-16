@@ -1,4 +1,4 @@
-import ManageSession from "../ManageSession";
+import ManageSession from "../ManageSession"
 
 class HistoryTracker {
   constructor() { }
@@ -11,25 +11,31 @@ class HistoryTracker {
   }
 
   switchScene(scene, goToScene, locationID) {
-    scene.physics.pause();
-    scene.player.setTint(0xff0000);
+    scene.physics.pause()
+    scene.player.setTint(0xff0000)
 
-    ManageSession.socket.rpc("leave", scene.location);
+    console.log("switchScene leave scene.location", scene.location)
+    ManageSession.socket.rpc("leave", scene.location)
 
-    scene.player.location = goToScene;
+    console.log("switchScene goToScene", goToScene)
+    scene.player.location = goToScene
 
     scene.time.addEvent({
       delay: 500,
       callback: () => {
-        ManageSession.location = goToScene;
-        ManageSession.createPlayer = true;
-        scene.scene.stop(scene.scene.key);
+        ManageSession.location = goToScene
+        console.log("switchScene ManageSession.location", ManageSession.location)
+        ManageSession.createPlayer = true
+        console.log("switchScene scene.scene.key", scene.scene.key)
+        scene.scene.stop(scene.scene.key)
+        console.log("switchScene goToScene, { user_id: locationID }", goToScene, { user_id: locationID })
         scene.scene.start(goToScene, { user_id: locationID })
-        ManageSession.getStreamUsers("join", locationID);
+        console.log("switchScene locationID", locationID)
+        ManageSession.getStreamUsers("join", locationID)
       },
       callbackScope: scene,
       loop: false,
-    });
+    })
   }
 
 }

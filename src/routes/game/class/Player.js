@@ -566,7 +566,7 @@ class Player {
   }
 
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
-    //console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
+    console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
 
     onlinePlayer.active = true
     onlinePlayer.visible = true
@@ -583,8 +583,8 @@ class Player {
 
       onlinePlayer.setData("movingKey", "moving" + "_" + tempAvatarName)
       onlinePlayer.setData("stopKey", "stop" + "_" + tempAvatarName)
-      //console.log('onlinePlayer.getData("movingKey")')
-      //console.log(onlinePlayer.getData("movingKey"))
+      console.log('onlinePlayer.getData("movingKey")')
+      console.log(onlinePlayer.getData("movingKey"))
 
       //create animation for moving
       if (!scene.anims.exists(onlinePlayer.getData("movingKey"))) {

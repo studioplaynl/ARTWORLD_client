@@ -376,7 +376,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       location1Vector
-    );
+    )
 
     const location1 = new GenerateLocation({
       scene: this,
@@ -392,7 +392,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       color1: 0xffe31f,
       color2: 0xf2a022,
       color3: 0xf8d80b,
-    });
+    })
 
     location1Vector = new Phaser.Math.Vector2(-770.83, 83.33);
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
