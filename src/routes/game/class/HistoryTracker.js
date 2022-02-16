@@ -4,18 +4,9 @@ class HistoryTracker {
   constructor() { }
 
   pushLocation(scene) {
-    // if (scene.scene.key == "DefaultUserHome") { // if the player entering a house, push a house id
-    //   if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1].homeID != scene.location) {
-    //     ManageSession.locationHistory.push({ locationName: "DefaultUserHome", homeID: scene.location });
-    //   }
-    // } else { // otherwise, push location name only
-    //   if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1] != scene.location) {
-    //     ManageSession.locationHistory.push(scene.location);
-    //   }
-    // }
-
     if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1]?.locationID != scene.location) {
       ManageSession.locationHistory.push({ locationName: scene.scene.key, locationID: scene.location })
+      console.log("ManageSession.locationHistory", ManageSession.locationHistory)
     }
   }
 
@@ -28,7 +19,7 @@ class HistoryTracker {
     scene.player.location = goToScene;
 
     scene.time.addEvent({
-      delay: 1000,
+      delay: 500,
       callback: () => {
         ManageSession.location = goToScene;
         ManageSession.createPlayer = true;

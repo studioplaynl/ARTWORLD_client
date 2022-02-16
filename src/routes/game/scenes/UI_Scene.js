@@ -6,6 +6,7 @@ import nl from "../../../langauge/nl/ui.json"
 import en from "../../../langauge/en/ui.json"
 import ru from "../../../langauge/ru/ui.json"
 import ar from "../../../langauge/ar/ui.json"
+import HistoryTracker from "../class/HistoryTracker"
 
 i18next.init({
   lng: "nl",
@@ -116,41 +117,14 @@ export default class UI_Scene extends Phaser.Scene {
       }
 
       this.backButton.on("pointerup", () => {
-        // take out the current location
-        let currentLocationKey = ManageSession.locationHistory.pop();
-        // check if the current location is a home, if true - reassign the value of currentLocationKey by "DefaultUserHome"
-        // note: when a player enters a house, an object with two properties: {locationName: "DefaultUserHome", homeID: this.location} is pushed, instead of location name only. 
-        if (currentLocationKey.locationName && currentLocationKey.locationID) {
-          currentLocationKey = currentLocationKey.locationName
-        }
-        const currentLocationScene = this.scene.get(currentLocationKey)
-        currentLocationScene.physics.pause()
-        currentLocationScene.player.setTint(0xff0000)
-
-        // get the previous scene
-        let previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
-        let locationID = null
-        // check if the previous location is a house, if true - reassign the value of previousLocation 
-        // and store the home's ID, since it is needed for entering a specific home
-        if (previousLocation.locationName && previousLocation.locationID) {
-          locationID = previousLocation.locationID
-          previousLocation = previousLocation.locationName
-        }
-
-        ManageSession.socket.rpc("leave", currentLocationKey)
-
-        currentLocationScene.time.addEvent({
-          delay: 1000,
-          callback: () => {
-            ManageSession.location = previousLocation;
-            ManageSession.createPlayer = true
-            ManageSession.getStreamUsers("join", locationID)
-            this.scene.stop(currentLocationKey)
-            this.scene.start(previousLocation, { user_id: locationID }) // in cases when the previous location is not a house, the second argument is ignored
-          },
-          callbackScope: this,
-          loop: false
-        })
+        // removing the current last scene from the history
+        const currentLocationKey = ManageSession.locationHistory.pop()
+        // and getting access to it through its key
+        const currentLocation = this.scene.get(currentLocationKey.locationName)
+        // getting access to the previous scene through locationHistory
+        const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
+        // switching scenes
+        HistoryTracker.switchScene(currentLocation, previousLocation.locationName, previousLocation.locationID)
       })
 
       //zoom buttons
