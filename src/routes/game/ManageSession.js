@@ -97,7 +97,7 @@ class ManageSession {
           // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
           // action: "moveTo" "stop"
           const scene = onlinePlayer.scene
-          //console.log("onlinePlayer", onlinePlayer)
+          console.log("onlinePlayer", onlinePlayer)
 
           if (data.action == "moveTo") {
             //get the scene context from the onlinePlayer

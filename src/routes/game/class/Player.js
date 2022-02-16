@@ -34,14 +34,8 @@ class Player {
           ManageSession.userProfile.id +
           "_" +
           ManageSession.userProfile.create_time
-        //console.log(scene.playerAvatarKey);
 
-        // console.log("this.textures.exists(this.playerAvatarKey): ")
-        // console.log(this.textures.exists(this.playerAvatarKey))
-
-        // console.log(this.cache.game.textures.list[this.playerAvatarKey])
-
-        console.log(scene.textures.exists(scene.playerAvatarKey))
+        //console.log(scene.textures.exists(scene.playerAvatarKey))
 
         //* attatch to existing context and physics
         scene.add.existing(this)
@@ -58,12 +52,10 @@ class Player {
             console.log("scene.createdPlayer = ", scene.createdPlayer)
             return
           } else {
-            // console.log(" loading: ManageSession.userProfile.url: ")
-            // console.log(ManageSession.userProfile.url)
-            console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
+            //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
             const fileNameCheck = scene.playerAvatarKey
             scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
-              .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { console.log(`file ${fileNameCheck} finished loading`); this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
+              .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
             scene.load.start() // start loading the image in memory
           }
         } else {
@@ -74,9 +66,8 @@ class Player {
   }
 
   attachAvatarToPlayer(scene) {
-    console.log("scene.playerAvatarKey ", scene.playerAvatarKey)
+    //console.log("scene.playerAvatarKey ", scene.playerAvatarKey)
 
-    // console.log(avatar)
     const avatar = scene.textures.get(scene.playerAvatarKey)
     const avatarWidth = avatar.frames.__BASE.width
     //console.log("avatarWidth: " avatarWidth)
@@ -119,11 +110,6 @@ class Player {
     }
     //. end animation for the player avatar ......................
 
-    // texture loaded so use instead of the placeholder
-    //console.log("scene.playerAvatarKey");
-    //console.log(scene.playerAvatarKey);
-
-    // scene.player.texture = scene.playerAvatarKey
     scene.player.setTexture(scene.playerAvatarKey)
     scene.playerShadow.setTexture(scene.playerAvatarKey)
 
@@ -134,9 +120,6 @@ class Player {
 
     scene.playerShadow.displayWidth = width
     scene.playerShadow.scaleY = scene.playerShadow.scaleX
-
-    // console.log("scene.playerShadow");
-    // console.log(scene.playerShadow);
 
     //* set the collision body
     //* setCircle(radius [, offsetX] [, offsetY])
@@ -563,7 +546,7 @@ class Player {
     //if the texture already exists attach it again to the player
     // const preExisting = false
     if (!scene.textures.exists(avatarKey)) {
-      console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+      //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
       //add it to loading queue
       scene.load.spritesheet(avatarKey, onlinePlayer.url, {
         frameWidth: 128,
@@ -572,7 +555,7 @@ class Player {
       //when file is finished loading the attachToAvatar function is called
       scene.load.start() // start loading the image in memory
     } else {
-      console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+      //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
       //attach the avatar to the onlinePlayer when it is already in memory
       this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey)
     }
@@ -583,7 +566,7 @@ class Player {
   }
 
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
-    console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
+    //console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
 
     onlinePlayer.active = true
     onlinePlayer.visible = true
