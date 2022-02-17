@@ -119,7 +119,9 @@ export async function getUploadURL(type, name, filetype,version) {
 
 export async function updateObject(type, name, value, pub,userID) {
   // if user is admin/moderator and userID
-  
+  if(!!!userID){
+    userID = Sess.user_id
+  }
   if(pub) {
     pub = 2
   }

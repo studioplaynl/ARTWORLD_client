@@ -12,9 +12,9 @@
 
   export let params = {}
   let useraccount
-  let drawingIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" />'
-  let stopMotionIcon = '<svg class="icon" viewBox="0 0 24 24"><path d="M13.05 9.79L10 7.5v9l3.05-2.29L16 12zm0 0L10 7.5v9l3.05-2.29L16 12zm0 0L10 7.5v9l3.05-2.29L16 12zM11 4.07V2.05c-2.01.2-3.84 1-5.32 2.21L7.1 5.69c1.11-.86 2.44-1.44 3.9-1.62zM5.69 7.1L4.26 5.68C3.05 7.16 2.25 8.99 2.05 11h2.02c.18-1.46.76-2.79 1.62-3.9zM4.07 13H2.05c.2 2.01 1 3.84 2.21 5.32l1.43-1.43c-.86-1.1-1.44-2.43-1.62-3.89zm1.61 6.74C7.16 20.95 9 21.75 11 21.95v-2.02c-1.46-.18-2.79-.76-3.9-1.62l-1.42 1.43zM22 12c0 5.16-3.92 9.42-8.95 9.95v-2.02C16.97 19.41 20 16.05 20 12s-3.03-7.41-6.95-7.93V2.05C18.08 2.58 22 6.84 22 12z" /></svg>'
-  let AudioIcon = '<svg class="icon" viewBox="0 0 24 24"><path d="M12 3v9.28c-.47-.17-.97-.28-1.5-.28C8.01 12 6 14.01 6 16.5S8.01 21 10.5 21c2.31 0 4.2-1.75 4.45-4H15V6h4V3h-7z" /></svg>'
+  let drawingIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />'
+  let stopMotionIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />'
+  let AudioIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />'
   let videoIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />'
   console.log($Session);
   let user = "",
@@ -215,9 +215,8 @@ function moveToTrash(key) {
 </script>
 
 <main>
-  <div class="flex-container">
-    <div class="flex-item-left">
-      <Card class="card">
+  <div class="container">
+    <div class="top">
         <div id="avatarDiv">
           {#if !!avatar_url}
           <a href="/#/avatar"><img id="avatar" src={avatar_url} /></a>
@@ -225,24 +224,28 @@ function moveToTrash(key) {
             <a href="/#/avatar/">Create avatar</a>
           {/if}
         </div>
-        <div id="avatarDiv">
-          {#if !!house_url}
-          <a href="/#/house"><img id="house" src={house_url} /></a>
-          {:else}
-            <a href="/#/house/">Create house</a>
-          {/if}
-        </div>
+        
       <br />
-      {#if  !!useraccount && useraccount.online}
-        <p>Currently in game</p>
-      {/if}
-      <p>{$_('register.username')}: {user}</p>
-      <p>{$_('register.role')}: {$_('role.' + role)}</p>
-      <p>{$_('register.location')}: {azc}</p>
-      <!-- <a href="/#/update">edit</a> -->
-      </Card>
+      <div class="userInfo">
+        <h1> {user}</h1>
+        {#if  !!useraccount && useraccount.online}
+          <h3>Currently in game</h3>
+        {/if}
+        
+        <h3>{$_('register.role')}: {$_('role.' + role)}</h3>
+        <h3>{$_('register.location')}: {azc}</h3>
+        <!-- <a href="/#/update">edit</a> -->
+      </div>
+
+      <div id="avatarDiv">
+        {#if !!house_url}
+        <a href="/#/house"><img id="house" src={house_url} /></a>
+        {:else}
+          <a href="/#/house/">Create house</a>
+        {/if}
+      </div>
     </div>
-    <div class="flex-item-right">
+    <div class="bottom">
       <h1>kunstwerken</h1>
       <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable"></SvelteTable>
       {#if CurrentUser}
@@ -292,6 +295,26 @@ function moveToTrash(key) {
     position: static;
   }
 
+
+  .bottom {
+    margin: 0 auto;
+    display: block;
+    width: fit-content;
+  }
+
+  .top {
+    margin: 0 auto;
+    display: flex;
+    width: max-content;
+    align-items: center;
+    min-width: 500px;
+    justify-content: space-evenly;
+    text-align: center;
+  }
+
+  .userInfo{
+    display: block;
+  }
  
   
 
