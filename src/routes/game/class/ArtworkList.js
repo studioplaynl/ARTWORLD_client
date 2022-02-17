@@ -147,21 +147,6 @@ class ArtworkList {
 
   async convertRexUIArray(scene) {
 
-    // ? old?
-    // allLikedArray is an array of art in format:
-    // drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
-    // should be format: 
-    // liked: [
-    // {
-    //  user_id: "e0849c23-a339-40db-bb84-e0849ded4e68",
-    //  collection: "drawing",
-    //  key: "1642771303290_limoenWalrus",
-    //  version: 1,
-    //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png",
-    //  previewURl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/stopmotion/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png?signature=c8c1aba753e01a6f06fd321a5a01a46fc18a483bb618ca1e2478283028a077f8",
-    //  },
-    // ]
-
     const allLikedArray = ManageSession.liked.liked // we get an array of objects, an object has the form of: 
     // {
     // collection: "drawing"

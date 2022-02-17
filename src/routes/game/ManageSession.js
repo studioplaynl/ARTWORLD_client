@@ -1,3 +1,4 @@
+import { element } from "svelte/internal"
 import { client, SSL } from "../../nakama.svelte"
 import CoordinatesTranslator from "./class/CoordinatesTranslator" // translate from artworld coordinates to Phaser 2D screen coordinates
 
@@ -48,7 +49,7 @@ class ManageSession {
     // this.playerStopKey = "stop"
 
     this.gameStarted = false
-
+    this.currentScene
     this.location = "Location1" //default
     this.launchLocation = "Location1" //default
 
@@ -86,10 +87,10 @@ class ManageSession {
     this.socket.onstreamdata = (streamdata) => {
       //console.info("Received stream data:", streamdata)
       let data = JSON.parse(streamdata.data)
-      console.log(data)
+      //console.log(data)
 
       for (const onlinePlayer of this.allConnectedUsers) {
-        console.log("onlinePlayer", onlinePlayer)
+        //console.log("onlinePlayer", onlinePlayer)
         if (onlinePlayer.scene) {
           if (onlinePlayer.id == data.user_id) {
             console.log("data.user_id", data.user_id)
@@ -152,13 +153,7 @@ class ManageSession {
       if (!!streampresence.leaves) {
         streampresence.leaves.forEach((leave) => {
           console.log("User left: %o", leave)
-
-          // this.deleteOnlinePlayer(leave)
-          //! get ServerArray
-          //! in the parse function we need to make an array of users who are not in ServerArray but still in LocalArray and destroy them
-
           this.getStreamUsers("get_users", this.location)
-
         })
       }
 
@@ -173,7 +168,6 @@ class ManageSession {
             console.log("join", join)
             //const tempName = join.user_id
             this.getStreamUsers("get_users", this.location)
-            //this.createOnlinePlayerArray.push(join)
           }
         })
         // this.getStreamUsers("home")
@@ -190,55 +184,50 @@ class ManageSession {
     this.socket.rpc(rpc_command, location).then((rec) => {
       //!the server reports all users in location except self_user
       console.log(location)
-      //get all online players
-      // check which user are not already in the allConnectedUsers array
-      
-      //! in the parse function we need to make an array of users who are not in ServerArray but still in LocalArray and destroy them
-  
-      const tempArray = JSON.parse(rec.payload) || []
+      // get all online players = serverArray
+      // create array for newUsers and create array for deleteUsers
+      const serverArray = JSON.parse(rec.payload) || []
+      console.log("serverArray", serverArray)
 
-      //put new Onlineplayer in createOnlinePlayerArray when it doesn't exist yet
-      tempArray.forEach((newPlayer) => {
-        const exists = this.allConnectedUsers.some(element => element.id == newPlayer.user_id)
+      serverArray.forEach((newPlayer) => {
+        const exists = this.allConnectedUsers.some(element => element.user_id == newPlayer.id)
         if (!exists) {
           this.createOnlinePlayerArray.push(newPlayer)
-          console.log(newPlayer)
+          console.log("newPlayer", newPlayer)
+        }
+      })
+
+      // allConnectedUsers had id, serverArray has user_id
+      this.allConnectedUsers.forEach((onlinePlayer) => {
+        const exists = serverArray.some(element => element.user_id == onlinePlayer.id)
+        if (!exists) {
+          this.deleteOnlinePlayer(onlinePlayer)
+          console.log("remove onlinePlayer", onlinePlayer)
         }
       })
     })
   }
 
   deleteOnlinePlayer(onlinePlayer) {
+    // onlinePlayer has id
+
     // console.log("onlinePlayer", onlinePlayer)
     // console.log("this.allConnectedUsers", this.allConnectedUsers)
-    let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
+
+    //destroy the user if it exists in the array
+    let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.id)
     console.log("removeUser", removeUser)
-    //! 
-    if (removeUser[0]) removeUser[0].destroy() //destroy the user if it exists in the array
-    // removeUser[0].destroy()
-    this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.user_id)
-    // console.log("----")
+
+    removeUser.forEach((element) => { element.destroy() })
+
+    // remove oldPlayer from allConnectedUsers
+    this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.id)
+
     console.log("this.allConnectedUsers", this.allConnectedUsers)
   }
+
   async leave(selected) {
     await socket.rpc("leave", selected)
-  }
-
-  testMoveMessage() { //works
-    var opCode = 1;
-    var data =
-      '{ "posX": ' +
-      Math.floor(Math.random() * 100) +
-      ', "posY": ' +
-      Math.floor(Math.random() * 100) +
-      ', "location": "home" }'
-
-    this.socket.rpc("move_position", data).then((rec) => {
-      //status;
-      data = JSON.parse(rec.payload) || [];
-      // console.log("sent pos:");
-      // console.log(data);
-    })
   }
 
   sendMoveMessage(scene, posX, posY, action) {
@@ -293,6 +282,24 @@ class ManageSession {
       hidden
     )
   } //end chatExample
+
+  testMoveMessage() { //works
+    var opCode = 1;
+    var data =
+      '{ "posX": ' +
+      Math.floor(Math.random() * 100) +
+      ', "posY": ' +
+      Math.floor(Math.random() * 100) +
+      ', "location": "home" }'
+
+    this.socket.rpc("move_position", data).then((rec) => {
+      //status;
+      data = JSON.parse(rec.payload) || [];
+      // console.log("sent pos:");
+      // console.log(data);
+    })
+  }
+
 } //end class
 
 export default new ManageSession();

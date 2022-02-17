@@ -478,6 +478,7 @@ class Player {
           const newOnlinePlayer = rec[0]
           console.log(newOnlinePlayer)
           this.createOnlinePlayer(scene, newOnlinePlayer)
+          console.log("parseNewOnlinePlayerArray scene", scene)
         })
 
         //new onlineplayer is removed from the newOnlinePlayer array, once we call more data on it
@@ -488,14 +489,14 @@ class Player {
 
   createOnlinePlayer(scene, onlinePlayer) {
     //! check if onlinePlayer exists already and has a defined scene
-    console.log(onlinePlayer)
+    //console.log(onlinePlayer)
     const exists = ManageSession.allConnectedUsers.some(element => element.id == onlinePlayer.user_id)
     //! if player exists, check if it has a defined scene
     if (!exists) {
 
       //create new onlinePlayer with default avatar
       const onlinePlayerCopy = onlinePlayer
-
+      console.log("createOnlinePlayer scene", scene)
       onlinePlayer = scene.add
         .sprite(
           CoordinatesTranslator.artworldToPhaser2DX(
