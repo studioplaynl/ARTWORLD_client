@@ -40,11 +40,13 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             width = this.size
         }
 
-        //TODO don't make a location in a container, the depth order seems to be shared across the contianer, so we can't make the enter button appear above the player, and the location below the player
+        if (typeof this.userHome === "undefined"){
+            this.userHome = this.locationDestination
+        }
+       
         //TODO rewrite without the container, just using sprite, containers are a bit more cpu intensive also
 
         //display width of the location image/ triangle/ isoBox
-
 
         // the content of the container is created at 0,0
         // then the container is set at a position
@@ -202,6 +204,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                     window.location.href = url;
                 }
             } else {
+                console.log("GenerateLocation this.scene, this.locationDestination, this.userHome", this.scene, this.locationDestination, this.userHome)
                 HistoryTracker.switchScene(this.scene, this.locationDestination, this.userHome)
             }
         })

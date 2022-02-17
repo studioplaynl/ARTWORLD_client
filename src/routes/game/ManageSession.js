@@ -87,56 +87,61 @@ class ManageSession {
       //console.info("Received stream data:", streamdata)
       let data = JSON.parse(streamdata.data)
       //console.log(data)
+
       for (const onlinePlayer of this.allConnectedUsers) {
-
-        if (onlinePlayer.id == data.user_id) {
-          // data is in the form of:
-          // location: "ArtworldAmsterdam"
-          // posX: -236.42065
-          // posY: -35.09519
-          // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
-          // action: "moveTo" "stop"
-          const scene = onlinePlayer.scene
-          console.log("onlinePlayer", onlinePlayer)
-
-          if (data.action == "moveTo") {
+        console.log("onlinePlayer", onlinePlayer)
+        if (onlinePlayer.scene) {
+          if (onlinePlayer.id == data.user_id) {
+            console.log("data.user_id", data.user_id)
+            // data is in the form of:
+            // location: "ArtworldAmsterdam"
+            // posX: -236.42065
+            // posY: -35.09519
+            // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
+            // action: "moveTo" "stop"
             //get the scene context from the onlinePlayer
+            let scene = onlinePlayer.scene
+            console.log("onlinePlayer", onlinePlayer)
+            console.log("scene", scene)
 
-            const movingKey = onlinePlayer.getData("movingKey")
-            onlinePlayer.anims.play(movingKey, true)
+            if (data.action == "moveTo") {
 
-            const moveToX = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, data.posX)
-            const moveToY = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, data.posY)
+              const movingKey = onlinePlayer.getData("movingKey")
+              onlinePlayer.anims.play(movingKey, true)
 
-            //!scale duration to distance
-            const target = new Phaser.Math.Vector2(moveToX, moveToY)
-            const duration = target.length() / 10
-            // console.log(duration)
+              const moveToX = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, data.posX)
+              const moveToY = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, data.posY)
 
-            scene.tweens.add({
-              targets: onlinePlayer,
-              x: moveToX,
-              y: moveToY,
-              paused: false,
-              duration: duration,
-            })
-            //console.log("target", target)
-          }
+              //!scale duration to distance
+              const target = new Phaser.Math.Vector2(moveToX, moveToY)
+              const duration = target.length() / 10
+              // console.log(duration)
 
-          if (data.action == "stop") {
-            // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement 
-            //because there the scene context is known
-            let positionVector = new Phaser.Math.Vector2(data.posX, data.posY)
-            positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, positionVector)
+              scene.tweens.add({
+                targets: onlinePlayer,
+                x: moveToX,
+                y: moveToY,
+                paused: false,
+                duration: duration,
+              })
+              //console.log("target", target)
+            }
 
-            onlinePlayer.posX = positionVector.x
-            onlinePlayer.posY = positionVector.y
+            if (data.action == "stop") {
+              // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement 
+              //because there the scene context is known
+              let positionVector = new Phaser.Math.Vector2(data.posX, data.posY)
+              positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(scene.worldSize, positionVector)
 
-            onlinePlayer.x = positionVector.x
-            onlinePlayer.y = positionVector.y
+              onlinePlayer.posX = positionVector.x
+              onlinePlayer.posY = positionVector.y
 
-            //get the key for the stop animation of the player, and play it
-            onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true)
+              onlinePlayer.x = positionVector.x
+              onlinePlayer.y = positionVector.y
+
+              //get the key for the stop animation of the player, and play it
+              onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true)
+            }
           }
         }
       }
@@ -175,6 +180,7 @@ class ManageSession {
     // console.log("this.allConnectedUsers", this.allConnectedUsers)
     let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
     console.log("removeUser", removeUser)
+    //! 
     if (removeUser[0]) removeUser[0].destroy() //destroy the user if it exists in the array
     // removeUser[0].destroy()
     this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.user_id)
@@ -191,7 +197,7 @@ class ManageSession {
 
     this.socket.rpc(rpc_command, location).then((rec) => {
       //!the server reports all users in location except self_user
-
+      console.log(location)
       //get all online players
       this.createOnlinePlayerArray = JSON.parse(rec.payload) || []
       console.log("this.createOnlinePlayerArray", this.createOnlinePlayerArray)

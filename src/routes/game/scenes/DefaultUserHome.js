@@ -111,7 +111,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         // for back button
         HistoryTracker.pushLocation(this)
-        console.log("ManageSession.locationHistory", ManageSession.locationHistory)
+        //console.log("ManageSession.locationHistory", ManageSession.locationHistory)
 
         //copy worldSize over to ManageSession, so that positionTranslation can be done there
         ManageSession.worldSize = this.worldSize
@@ -252,7 +252,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         const progressBox = this.add.graphics()
         const progressBar = this.add.graphics()
-        const progressWidth = 300
+        const progressWidth = 256
         const progressHeight = 50
         const padding = 10
 
@@ -269,8 +269,8 @@ export default class DefaultUserHome extends Phaser.Scene {
             // we want to run the progress bar only for artworks, 
             // and it should not be triggered for any other loading processes
             if (progressedImage) {
-                progressBox.fillRect(progressedImage.coordX - progressWidth / 2, y, progressWidth, progressHeight)
-                progressBar.fillRect(progressedImage.coordX - progressWidth / 2 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
+                progressBox.fillRect(progressedImage.coordX - progressWidth * 1.5, y, progressWidth, progressHeight)
+                progressBar.fillRect(progressedImage.coordX - progressWidth * 1.5 + padding, y + padding, (progressWidth * value) - (padding * 2), progressHeight - padding * 2)
             }
 
         })
