@@ -117,6 +117,17 @@ export default class Location4 extends Phaser.Scene {
     //....... end SOCKET .......................................................................
 
     this.generateBackground()
+    
+    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
+    .setInteractive() //{ useHandCursor: true }
+    .on('pointerup', () =>  console.log("touched background"))
+    .on('pointerdown', () => ManageSession.playerMove = true)
+    .setDepth(219)
+    .setOrigin(0)
+    .setVisible(false)
+
+  this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+
     //.......  PLAYER ..........................................................................
     this.playerAvatarPlaceholder = "avatar1";
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder).setDepth(201)

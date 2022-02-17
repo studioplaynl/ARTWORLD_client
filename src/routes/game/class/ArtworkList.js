@@ -298,8 +298,8 @@ class ArtworkList {
       .layout()
       .setDepth(301) // depends on what panel is opened first: player's or onlinePlayer's
 
-    scene.input.topOnly = false;
-    const labels = [];
+    scene.input.topOnly = false
+    const labels = []
     labels.push(
       ...scene[likedPanelName].getElement("#artworks.items", true)
     )

@@ -120,6 +120,17 @@ export default class DefaultUserHome extends Phaser.Scene {
         ManageSession.createPlayer = true
         //....... end LOAD PLAYER AVATAR .......................................................................
         Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
+
+        this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
+        .setInteractive() //{ useHandCursor: true }
+        .on('pointerup', () =>  console.log("touched background"))
+        .on('pointerdown', () => ManageSession.playerMove = true)
+        .setDepth(219)
+        .setOrigin(0)
+        .setVisible(false)
+  
+      this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+  
         //.......  PLAYER ....................................................................................
         //* create default player and playerShadow
         //* create player in center with artworldCoordinates

@@ -166,13 +166,15 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient2: 0xbb00ff,
     })
 
-    // this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff)
-    //   .setInteractive({ useHandCursor: true })
-    //   .on('pointerup', () => console.log("touched background"))
-    //   .on('pointerdown', () => console.log("touched background"))
-    //   .setVisible(false)
+    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
+      .setInteractive() //{ useHandCursor: true }
+      .on('pointerup', () =>  console.log("touched background"))
+      .on('pointerdown', () => ManageSession.playerMove = true)
+      .setDepth(219)
+      .setOrigin(0)
+      .setVisible(false)
 
-    // this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
 
 
     // sunglass_stripes
@@ -480,13 +482,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................
 
-    //....... moving ANIMATION ......................................................................................
-    // Move.movingAnimation(this)
-    Move.checkIfPlayerIsMoving(this)
-    //....... end moving ANIMATION .................................................................................
-
-    //this.playerMovingByClicking()
-    Move.identifySurfaceOfPointerInteraction(this)
+    //....... stopping PLAYER ......................................................................................
+    Move.checkIfPlayerIsMoving(this) // to stop the player when it reached its destination
+    //....... end stopping PLAYER .................................................................................
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {

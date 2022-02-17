@@ -112,10 +112,10 @@ class Move {
   }
 
   moveBySwiping(scene) {
-    if (scene.input.activePointer.isDown && scene.isClicking == false && scene.graffitiDrawing == false) {
+    if (scene.input.activePointer.isDown && scene.isClicking == false && ManageSession.playerMove) {
       scene.isClicking = true
     }
-    if (!scene.input.activePointer.isDown && scene.isClicking == true && scene.graffitiDrawing == false) {
+    if (!scene.input.activePointer.isDown && scene.isClicking == true) {
       // play "move" animation
       // play the animation as soon as possible so it is more visible
       this.movingAnimation(scene, "moving")
@@ -146,22 +146,23 @@ class Move {
       // console.log("scene.distanceTolerance", scene.distanceTolerance)
       // console.log("moveSpeed", moveSpeed)
 
-      scene.isPlayerMoving = true // trigger moving animation
+      scene.isPlayerMoving = true // to stop the player when it reached its destination
 
       scene.target.x = playerX + swipeX
       scene.target.y = playerY + swipeY
 
       // generalized moving method
       this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed)
+      ManageSession.playerMove = false
       scene.isClicking = false
     }
   }
 
   moveByTapping(scene) {
-    if (scene.input.activePointer.isDown && scene.isClicking == false && scene.graffitiDrawing == false) {
+    if (scene.input.activePointer.isDown && scene.isClicking == false && ManageSession.playerMove) {
       scene.isClicking = true
     }
-    if (!scene.input.activePointer.isDown && scene.isClicking == true && scene.graffitiDrawing == false) {
+    if (!scene.input.activePointer.isDown && scene.isClicking == true) {
       //doubletap: first time mouse up
       let lastTime = 0
       //doubletap: second time mouse down
@@ -191,6 +192,7 @@ class Move {
         }
       })
       scene.isClicking = false
+      ManageSession.playerMove = false
     }
   }
 
@@ -211,19 +213,16 @@ class Move {
     // identifies if the pointer is down on a graffiti wall
     // if the condition is true, the avatar stops any movement
     scene.input.on("pointerdown", (pointer, object) => {
-      if (
-        (object[0] && object[0]?.name == "graffitiBrickWall") ||
-        object[0]?.name == "graffitiDotWall" ||
-        object[0]?.name == "currentPlayerScrollablePanel" ||
-        object[0]?.name == "onlinePlayerScrollablePanel"
+      if ((object[0] && object[0]?.name == "graffitiBrickWall") || object[0]?.name == "graffitiDotWall" || object[0]?.name == "currentPlayerScrollablePanel" || object[0]?.name == "onlinePlayerScrollablePanel"
       ) {
         scene.graffitiDrawing = true;
       }
-    });
+    })
     scene.input.on("pointerup", () => {
       scene.graffitiDrawing = false;
-    });
+    })
   }
+
 
   movePlayerLikedPanel(scene) {
     scene.playerLikedPanel.x = scene.player.x + 200;

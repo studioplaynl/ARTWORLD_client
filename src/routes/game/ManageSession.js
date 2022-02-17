@@ -34,6 +34,7 @@ class ManageSession {
     this.AccountObject
     this.playerObjectSelf
     this.createPlayer = true
+    this.playerMove
 
     this.locationExists = false
 

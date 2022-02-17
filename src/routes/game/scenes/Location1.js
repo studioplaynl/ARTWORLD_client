@@ -151,6 +151,16 @@ export default class Location1 extends Phaser.Scene {
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     this.generateBackground()
+    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
+    .setInteractive() //{ useHandCursor: true }
+    .on('pointerup', () =>  console.log("touched background"))
+    .on('pointerdown', () => ManageSession.playerMove = true)
+    .setDepth(219)
+    .setOrigin(0)
+    .setVisible(false)
+
+  this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+
 
     // graffiti walls
     GraffitiWall.create(this, 2200, 600, 800, 600, "graffitiBrickWall", 0x000000, 'brickWall')
