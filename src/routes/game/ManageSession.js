@@ -1,5 +1,5 @@
-import { client, SSL } from "../../nakama.svelte";
-import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate from artworld coordinates to Phaser 2D screen coordinates
+import { client, SSL } from "../../nakama.svelte"
+import CoordinatesTranslator from "./class/CoordinatesTranslator" // translate from artworld coordinates to Phaser 2D screen coordinates
 
 import { SCENES } from "./config.js"
 
@@ -86,7 +86,7 @@ class ManageSession {
     this.socket.onstreamdata = (streamdata) => {
       //console.info("Received stream data:", streamdata)
       let data = JSON.parse(streamdata.data)
-      //console.log(data)
+      console.log(data)
 
       for (const onlinePlayer of this.allConnectedUsers) {
         console.log("onlinePlayer", onlinePlayer)
@@ -153,7 +153,12 @@ class ManageSession {
         streampresence.leaves.forEach((leave) => {
           console.log("User left: %o", leave)
 
-          this.deleteOnlinePlayer(leave)
+          // this.deleteOnlinePlayer(leave)
+          //! get ServerArray
+          //! in the parse function we need to make an array of users who are not in ServerArray but still in LocalArray and destroy them
+
+          this.getStreamUsers("get_users", this.location)
+
         })
       }
 
@@ -167,13 +172,41 @@ class ManageSession {
             //console.log(join.username)
             console.log("join", join)
             //const tempName = join.user_id
-            this.createOnlinePlayerArray.push(join)
+            this.getStreamUsers("get_users", this.location)
+            //this.createOnlinePlayerArray.push(join)
           }
         })
         // this.getStreamUsers("home")
       }
     } //this.socket.onstreampresence
   } //end createSocket
+
+  async getStreamUsers(rpc_command, location) {
+    //* rpc_command:
+    //* join" = join the stream, get the online users, except self
+    //* get_users" = after joined, get the online users, except self
+    console.log('this.getStreamUsers("' + rpc_command + ', "' + location + '")')
+
+    this.socket.rpc(rpc_command, location).then((rec) => {
+      //!the server reports all users in location except self_user
+      console.log(location)
+      //get all online players
+      // check which user are not already in the allConnectedUsers array
+      
+      //! in the parse function we need to make an array of users who are not in ServerArray but still in LocalArray and destroy them
+  
+      const tempArray = JSON.parse(rec.payload) || []
+
+      //put new Onlineplayer in createOnlinePlayerArray when it doesn't exist yet
+      tempArray.forEach((newPlayer) => {
+        const exists = this.allConnectedUsers.some(element => element.id == newPlayer.user_id)
+        if (!exists) {
+          this.createOnlinePlayerArray.push(newPlayer)
+          console.log(newPlayer)
+        }
+      })
+    })
+  }
 
   deleteOnlinePlayer(onlinePlayer) {
     // console.log("onlinePlayer", onlinePlayer)
@@ -187,23 +220,6 @@ class ManageSession {
     // console.log("----")
     console.log("this.allConnectedUsers", this.allConnectedUsers)
   }
-
-  async getStreamUsers(rpc_command, location) {
-    // if (!this.createOnlinePlayers) {
-    //* rpc_command:
-    //* join" = join the stream, get the online users, except self
-    //* get_users" = after joined, get the online users, except self
-    console.log('this.getStreamUsers("' + rpc_command + ', "' + location + '")')
-
-    this.socket.rpc(rpc_command, location).then((rec) => {
-      //!the server reports all users in location except self_user
-      console.log(location)
-      //get all online players
-      this.createOnlinePlayerArray = JSON.parse(rec.payload) || []
-      console.log("this.createOnlinePlayerArray", this.createOnlinePlayerArray)
-    })
-  }
-
   async leave(selected) {
     await socket.rpc("leave", selected)
   }

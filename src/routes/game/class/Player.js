@@ -467,6 +467,7 @@ class Player {
       ManageSession.createOnlinePlayerArray.forEach(onlinePlayer => {
         Promise.all([getAccount(onlinePlayer.user_id)]).then(rec => {
           const newOnlinePlayer = rec[0]
+          console.log(newOnlinePlayer)
           this.createOnlinePlayer(scene, newOnlinePlayer)
         })
 
@@ -477,92 +478,100 @@ class Player {
   }
 
   createOnlinePlayer(scene, onlinePlayer) {
-    //create new onlinePlayer with default avatar
-    const onlinePlayerCopy = onlinePlayer
+    //! check if onlinePlayer exists already and has a defined scene
+    console.log(onlinePlayer)
+    const exists = ManageSession.allConnectedUsers.some(element => element.id == onlinePlayer.user_id)
+    //! if player exists, check if it has a defined scene
+    if (!exists) {
 
-    onlinePlayer = scene.add
-      .sprite(
-        CoordinatesTranslator.artworldToPhaser2DX(
-          scene.worldSize.x,
-          onlinePlayerCopy.metadata.posX
-        ),
-        CoordinatesTranslator.artworldToPhaser2DY(
-          scene.worldSize.y,
-          onlinePlayerCopy.metadata.posY
-        ),
-        scene.playerAvatarPlaceholder
-      )
-      //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
-      .setDepth(200)
-    onlinePlayer.setInteractive({ useHandCursor: true })
-    // hit area of onlinePlayer
-    onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
-    onlinePlayer.on('pointerup', () => {
-      this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
-      //put a timer of 20 sec to automatically close the onlinePlayerItemsBar
-      scene.time.addEvent({
-        delay: 20000, callback: () => {
-          this.hideOnlinePlayerItemsBar(scene)
-        }, callbackScope: scene, loop: false
+      //create new onlinePlayer with default avatar
+      const onlinePlayerCopy = onlinePlayer
+
+      onlinePlayer = scene.add
+        .sprite(
+          CoordinatesTranslator.artworldToPhaser2DX(
+            scene.worldSize.x,
+            onlinePlayerCopy.metadata.posX
+          ),
+          CoordinatesTranslator.artworldToPhaser2DY(
+            scene.worldSize.y,
+            onlinePlayerCopy.metadata.posY
+          ),
+          scene.playerAvatarPlaceholder
+        )
+        //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
+        .setDepth(200)
+      onlinePlayer.setInteractive({ useHandCursor: true })
+      // hit area of onlinePlayer
+      onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
+      onlinePlayer.on('pointerup', () => {
+        this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
+        //put a timer of 20 sec to automatically close the onlinePlayerItemsBar
+        scene.time.addEvent({
+          delay: 20000, callback: () => {
+            this.hideOnlinePlayerItemsBar(scene)
+          }, callbackScope: scene, loop: false
+        })
+
+        //console.log("online player width", onlinePlayer)
       })
 
-      //console.log("online player width", onlinePlayer)
-    })
+      onlinePlayer.setData("movingKey", "moving")
+      onlinePlayer.setData("stopKey", "stop")
 
-    onlinePlayer.setData("movingKey", "moving")
-    onlinePlayer.setData("stopKey", "stop")
+      //create default animation for moving
+      scene.anims.create({
+        key: onlinePlayer.getData("movingKey"),
+        frames: scene.anims.generateFrameNumbers(
+          scene.playerAvatarPlaceholder,
+          { start: 0, end: 8 }
+        ),
+        frameRate: 20,
+        repeat: -1,
+      })
 
-    //create default animation for moving
-    scene.anims.create({
-      key: onlinePlayer.getData("movingKey"),
-      frames: scene.anims.generateFrameNumbers(
-        scene.playerAvatarPlaceholder,
-        { start: 0, end: 8 }
-      ),
-      frameRate: 20,
-      repeat: -1,
-    })
+      //create default animation for stop
+      scene.anims.create({
+        key: onlinePlayer.getData("stopKey"),
+        frames: scene.anims.generateFrameNumbers(
+          scene.playerAvatarPlaceholder,
+          { start: 4, end: 4 }
+        ),
+      })
 
-    //create default animation for stop
-    scene.anims.create({
-      key: onlinePlayer.getData("stopKey"),
-      frames: scene.anims.generateFrameNumbers(
-        scene.playerAvatarPlaceholder,
-        { start: 4, end: 4 }
-      ),
-    })
+      //add all data from elementCopy to element; like prev Position, Location, UserID
+      Object.assign(onlinePlayer, onlinePlayerCopy)
+      console.log("onlinePlayer", onlinePlayer)
 
-    //add all data from elementCopy to element; like prev Position, Location, UserID
-    Object.assign(onlinePlayer, onlinePlayerCopy)
-    console.log("onlinePlayer", onlinePlayer)
+      //we push the new online player to the allConnectedUsers array
+      //! check if oLP has defined scene! before pushing
+      ManageSession.allConnectedUsers.push(onlinePlayer)
 
-    //we push the new online player to the allConnectedUsers array
-    ManageSession.allConnectedUsers.push(onlinePlayer)
+      //we load the onlineplayer avatar, make a key for it
+      const avatarKey = onlinePlayer.id + "_" + onlinePlayer.update_time
+      //console.log("avatarKey", avatarKey)
 
-    //we load the onlineplayer avatar, make a key for it
-    const avatarKey = onlinePlayer.id + "_" + onlinePlayer.update_time
-    //console.log("avatarKey", avatarKey)
-
-    //if the texture already exists attach it again to the player
-    // const preExisting = false
-    if (!scene.textures.exists(avatarKey)) {
-      //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
-      //add it to loading queue
-      scene.load.spritesheet(avatarKey, onlinePlayer.url, {
-        frameWidth: 128,
-        frameHeight: 128,
-      }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
-      //when file is finished loading the attachToAvatar function is called
-      scene.load.start() // start loading the image in memory
-    } else {
-      //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
-      //attach the avatar to the onlinePlayer when it is already in memory
-      this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey)
+      //if the texture already exists attach it again to the player
+      // const preExisting = false
+      if (!scene.textures.exists(avatarKey)) {
+        //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        //add it to loading queue
+        scene.load.spritesheet(avatarKey, onlinePlayer.url, {
+          frameWidth: 128,
+          frameHeight: 128,
+        }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
+        //when file is finished loading the attachToAvatar function is called
+        scene.load.start() // start loading the image in memory
+      } else {
+        //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        //attach the avatar to the onlinePlayer when it is already in memory
+        this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey)
+      }
+      // else {
+      //   preExisting = true
+      //   this.attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName, preExisting)
+      // }
     }
-    // else {
-    //   preExisting = true
-    //   this.attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName, preExisting)
-    // }
   }
 
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
@@ -616,10 +625,6 @@ class Player {
     const width = 64
     onlinePlayer.displayWidth = width
     onlinePlayer.scaleY = onlinePlayer.scaleX
-  }
-
-  deleteOnlinePlayer(scene, onlinePlayer) {
-    ManageSession.allConnectedUsers = ManageSession.allConnectedUsers.filter(obj => obj.user_id != onlinePlayer.user_id)
   }
 
   async getAccountDetails(id) {
