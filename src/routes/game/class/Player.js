@@ -177,18 +177,23 @@ class Player {
         scene.playerLikedButton = scene.add.image(65, 0, "heart").setInteractive({ useHandCursor: true })
 
         scene.playerLikedButton.on("pointerdown", async () => {
-          // display spinner while images are being downloaded
-          scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
-            x: scene.player.x + 150,
-            y: scene.player.y,
-            width: 100,
-            height: 100,
-            duration: 850,
-            color: 0x000000
-          }).setDepth(199).start()
+          // check if there are any liked artworks
+          if (ManageSession.liked.liked.length > 0) {
+            // display spinner while images are being downloaded
+            scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
+              x: scene.player.x + 150,
+              y: scene.player.y,
+              width: 100,
+              height: 100,
+              duration: 850,
+              color: 0x000000
+            }).setDepth(199).start()
 
-          // downloading the images and displaying them
-          scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
+            // downloading the images and displaying them
+            scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
+          } else {
+            console.log("No liked artworks")
+          }
         })
 
         // creating an addressbook button
@@ -422,18 +427,22 @@ class Player {
           scene.onlinePlayerLikedButton = scene.add.image(65, 0, "heart");
 
           scene.onlinePlayerLikedButtonCircle.on("pointerdown", async () => {
-            // display spinner while images are being downloaded
-            scene.onlinePlayerLikedPanelSpinner = scene.rexSpinner.add.pie({
-              x: ManageSession.selectedOnlinePlayer.x + 150,
-              y: ManageSession.selectedOnlinePlayer.y,
-              width: 100,
-              height: 100,
-              duration: 850,
-              color: 0x000000
-            }).setDepth(199).start()
-
-            // downloading the images and displaying them
-            scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert method to onlinePlayer
+            // check if there are any liked artworks
+            if (ManageSession.likedOnlinePlayer.liked.length > 0) {
+              // display spinner while images are being downloaded
+              scene.onlinePlayerLikedPanelSpinner = scene.rexSpinner.add.pie({
+                x: ManageSession.selectedOnlinePlayer.x + 150,
+                y: ManageSession.selectedOnlinePlayer.y,
+                width: 100,
+                height: 100,
+                duration: 850,
+                color: 0x000000
+              }).setDepth(199).start()
+              // downloading the images and displaying them
+              scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene)
+            } else {
+              console.log("No liked artworks")
+            }
           })
 
           // adding the liked button to onlinePlayerItemsBar
