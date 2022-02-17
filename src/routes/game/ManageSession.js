@@ -102,8 +102,8 @@ class ManageSession {
             // action: "moveTo" "stop"
             //get the scene context from the onlinePlayer
             let scene = onlinePlayer.scene
-            console.log("onlinePlayer", onlinePlayer)
-            console.log("scene", scene)
+            //console.log("onlinePlayer", onlinePlayer)
+            //console.log("scene", scene)
 
             if (data.action == "moveTo") {
 
