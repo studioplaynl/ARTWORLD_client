@@ -488,10 +488,10 @@ class Player {
   }
 
   createOnlinePlayer(scene, onlinePlayer) {
-    //! check if onlinePlayer exists already and has a defined scene
+    // check if onlinePlayer exists already 
     //console.log(onlinePlayer)
-    const exists = ManageSession.allConnectedUsers.some(element => element.id == onlinePlayer.user_id)
-    //! if player exists, check if it has a defined scene
+    const exists = ManageSession.allConnectedUsers.some(element => element.user_id == onlinePlayer.user_id)
+    // if player exists
     if (!exists) {
 
       //create new onlinePlayer with default avatar
@@ -551,6 +551,8 @@ class Player {
 
       //add all data from elementCopy to element; like prev Position, Location, UserID
       Object.assign(onlinePlayer, onlinePlayerCopy)
+      //we copy the id over as user_id to kep data consistent across our internal logic
+      onlinePlayer["user_id"] = onlinePlayerCopy.id
       console.log("onlinePlayer", onlinePlayer)
 
       //we push the new online player to the allConnectedUsers array
@@ -558,7 +560,7 @@ class Player {
       ManageSession.allConnectedUsers.push(onlinePlayer)
 
       //we load the onlineplayer avatar, make a key for it
-      const avatarKey = onlinePlayer.id + "_" + onlinePlayer.update_time
+      const avatarKey = onlinePlayer.user_id + "_" + onlinePlayer.update_time
       //console.log("avatarKey", avatarKey)
 
       //if the texture already exists attach it again to the player

@@ -92,7 +92,7 @@ class ManageSession {
       for (const onlinePlayer of this.allConnectedUsers) {
         //console.log("onlinePlayer", onlinePlayer)
         if (onlinePlayer.scene) {
-          if (onlinePlayer.id == data.user_id) {
+          if (onlinePlayer.user_id == data.user_id) {
             console.log("data.user_id", data.user_id)
             // data is in the form of:
             // location: "ArtworldAmsterdam"
@@ -160,7 +160,7 @@ class ManageSession {
       if (!!streampresence.joins) {
         streampresence.joins.forEach((join) => {
           //filter out the player it self
-          if (join.user_id != this.userProfile.id) {
+          if (join.user_id != this.userProfile.user_id) {
             //console.log(this.userProfile)
             console.log("some one joined")
             // this.getStreamUsers("home")
@@ -190,7 +190,7 @@ class ManageSession {
       console.log("serverArray", serverArray)
 
       serverArray.forEach((newPlayer) => {
-        const exists = this.allConnectedUsers.some(element => element.user_id == newPlayer.id)
+        const exists = this.allConnectedUsers.some(element => element.user_id == newPlayer.user_id)
         if (!exists) {
           this.createOnlinePlayerArray.push(newPlayer)
           console.log("newPlayer", newPlayer)
@@ -199,7 +199,7 @@ class ManageSession {
 
       // allConnectedUsers had id, serverArray has user_id
       this.allConnectedUsers.forEach((onlinePlayer) => {
-        const exists = serverArray.some(element => element.user_id == onlinePlayer.id)
+        const exists = serverArray.some(element => element.user_id == onlinePlayer.user_id)
         if (!exists) {
           this.deleteOnlinePlayer(onlinePlayer)
           console.log("remove onlinePlayer", onlinePlayer)
@@ -215,13 +215,13 @@ class ManageSession {
     // console.log("this.allConnectedUsers", this.allConnectedUsers)
 
     //destroy the user if it exists in the array
-    let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.id)
+    let removeUser = this.allConnectedUsers.filter(obj => obj.user_id == onlinePlayer.user_id)
     console.log("removeUser", removeUser)
 
     removeUser.forEach((element) => { element.destroy() })
 
     // remove oldPlayer from allConnectedUsers
-    this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.id)
+    this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.user_id != onlinePlayer.user_id)
 
     console.log("this.allConnectedUsers", this.allConnectedUsers)
   }
