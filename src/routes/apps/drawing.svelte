@@ -317,8 +317,8 @@ import App from "../../App.svelte";
       // json = JSON.stringify(frames);
       // var blobData = dataURItoBlob(frames);
       // uploadImage(title, appType, json, blobData, status);
-      savecanvas.setHeight(canvas.height);
-      savecanvas.setWidth(canvas.height * frames.length);
+      // savecanvas.setHeight(canvas.height);
+      // savecanvas.setWidth(canvas.height * frames.length);
       savecanvas.renderAll();
       savecanvas.clear();
       let data = { objects: [] };
@@ -496,6 +496,8 @@ import App from "../../App.svelte";
       scaleRatio = Math.min(window.innerHeight/2048, window.innerHeight/2048);
     }
     canvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
+    savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
+      
     canvas.setZoom(scaleRatio)
   }
 
@@ -547,7 +549,11 @@ import App from "../../App.svelte";
     img.onload = function () {
       var f_img = new fabric.Image(img);
       let options;
-      if (!play) options = { opacity: 0.5 };
+      let scale = (2048/document.body.clientWidth)
+      if(document.body.clientWidth > 700){
+        scale = (2048/document.body.clientHeight)
+      }
+      if (!play) options = { opacity: 0.5, width: 2048, height: 2048, scaleX: scale, scaleY: scale };
       else options = {};
       canvas.setBackgroundImage(f_img, canvas.renderAll.bind(canvas), options);
 
@@ -1033,6 +1039,11 @@ import App from "../../App.svelte";
     
   }
 
+  let transition = { y: 200, duration: 500 }
+  if(window.screen.width >= 600){
+    transition = { x: 200, duration: 500 }
+  }
+
 </script>
 
 <main>
@@ -1096,7 +1107,7 @@ import App from "../../App.svelte";
   </div>
   <div class="box2">
     <div class="optionbox">
-      <div class="optionbar" class:hidden={optionbox}>
+      <div class="optionbar" class:hidden={optionbox} >
         <div id="drawing-mode-options" class:hidden={current != "draw"}>
           <select id="drawing-mode-selector">
             <option>Pencil</option>
@@ -1178,13 +1189,13 @@ import App from "../../App.svelte";
           />
         </div>
         <div class="selectTab" class:hidden={current != "select"}>
-          <button on:click={Copy} class="btn btn-info icon"><CopyIcon /></button
+          <a on:click={Copy} ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg"></a
           >
-          <button on:click={Paste} class="btn btn-info icon"
-            ><PasteIcon /></button
+          <a on:click={Paste} 
+            ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg"></a
           >
-          <button on:click={Delete} class="btn btn-info icon"
-            ><TrashIcon /></button
+          <a on:click={Delete} 
+            ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg"></a
           >
         </div>
         <div class="saveBox" class:hidden={current != "saveToggle"}>
@@ -1332,7 +1343,7 @@ import App from "../../App.svelte";
     width:fit-content;
     padding: 15px;
     transform: translateX(0%);
-    width: 220px;
+    width: 280px;
   }
 
   .optionbar.hidden {
@@ -1381,6 +1392,7 @@ import App from "../../App.svelte";
     width: 49px;
     padding: 0px;
     background-color: white;
+    margin-left: -5px;
 }
 
   .hidden {
@@ -1504,11 +1516,7 @@ import App from "../../App.svelte";
     height: min-content;
     width: min-content;
     float: left;
-    border: none;
-  }
-
-  .canvasBox > div{
-    border: 2px solid #7300ED;
+    margin: -4px;
   }
 
   .topbar{
@@ -1572,11 +1580,13 @@ import App from "../../App.svelte";
     height: min-content;
     position: fixed;
     bottom: 0;
+    display: block;
   }
 
   .optionbar{
     width: 100vw;
     height: min-content;
+    border-right: none;
   }
 
   .currentSelected{
@@ -1584,8 +1594,8 @@ import App from "../../App.svelte";
   }
 
   .iconbox{
-    width: unset;
-    display: inline-block;
+    width: max-content;
+    display: block;
     margin: 0 auto;
     height: min-content;
   }
@@ -1599,11 +1609,51 @@ import App from "../../App.svelte";
   .frameBox {
     height: min-content;
     width: 80vw;
+    align-items: normal;
+  }
+
+  #framebar {
     margin-bottom: 60px;
   }
 
   #framebar > div {
     display: inline-block;
+  }
+
+  .optionbar {
+    margin-left: 0;
+    border-top: 2px solid #7300ED;
+    height: min-content;
+    background-color: white;
+    transition: all .5s ease-in-out;
+    padding: 0px;
+    transform: translateY(0%);
+    width: 100vw;
+    display: block;
+  }
+
+  .optionbar.hidden {
+    width: 100vw;
+    transform: translateY(160%);
+    display: inline;
+    padding: 0px;
+    margin: 0px;
+  }
+  .icon {
+    min-width: 50px;
+    height: 50px;
+    width: 50px;
+    border-radius: 71%;
+    padding: 0;
+    margin: 5px;
+    cursor: pointer;
+  }
+
+  .currentSelected > img {
+    border: 2px solid #7300ed;
+  }
+  .currentSelected {
+    box-shadow: unset;
   }
 }
 
