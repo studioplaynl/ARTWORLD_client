@@ -22,9 +22,9 @@ export default class PreloadScene extends Phaser.Scene {
         //artworld logo
         this.load.image("artworld", "assets/artworld.png")
         //general UI assets
-        this.load.svg("ui_magnifier_minus", "./assets/SHB/svg/AW-icon-minus.svg", { scale: 3})
-        this.load.svg("ui_magnifier_plus", "./assets/SHB/svg/AW-icon-plus.svg", { scale: 3})
-        this.load.svg("ui_eye", "./assets/SHB/svg/AW-icon-reset.svg", { scale: 4})
+        this.load.svg("ui_magnifier_minus", "./assets/SHB/svg/AW-icon-minus.svg", { scale: 3 })
+        this.load.svg("ui_magnifier_plus", "./assets/SHB/svg/AW-icon-plus.svg", { scale: 3 })
+        this.load.svg("ui_eye", "./assets/SHB/svg/AW-icon-reset.svg", { scale: 4 })
 
         this.load.svg("back_button", "./assets/SHB/svg/AW-icon-previous.svg", { scale: 0.5 })
         this.load.svg("enter_button", "./assets/SHB/svg/AW-icon-enter.svg")
@@ -32,15 +32,15 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('museum', './assets/museum.png')
         this.load.image("ball", './assets/ball_grey.png')
 
-        this.load.svg('home', './assets/SHB/svg/AW-icon-home.svg',{ scale: 0.7})
-        this.load.svg('heart', './assets/SHB/svg/AW-icon-heart-full-red.svg',{ scale: 0.7})
-        this.load.svg('heart_empty', './assets/SHB/svg/AW-icon-heart.svg',{ scale: 0.7})
-    
-        this.load.svg('enter_home', './assets/SHB/svg/AW-icon-enter-space.svg',{ scale: 0.5})
-        this.load.svg('save_home', './assets/SHB/svg/AW-icon-save.svg',{ scale: 0.5})
-        this.load.svg('addressbook', './assets/SHB/svg/AW-icon-addressbook.svg',{ scale: 0.7})
-        this.load.svg('close', './assets/SHB/svg/AW-icon-cross.svg',{ scale: 0.6})
-        this.load.svg('delete', './assets/SHB/svg/AW-icon-trash.svg',{ scale: 0.6})
+        this.load.svg('home', './assets/SHB/svg/AW-icon-home.svg', { scale: 0.7 })
+        this.load.svg('heart', './assets/SHB/svg/AW-icon-heart-full-red.svg', { scale: 0.7 })
+        this.load.svg('heart_empty', './assets/SHB/svg/AW-icon-heart.svg', { scale: 0.7 })
+
+        this.load.svg('enter_home', './assets/SHB/svg/AW-icon-enter-space.svg', { scale: 0.5 })
+        this.load.svg('save_home', './assets/SHB/svg/AW-icon-save.svg', { scale: 0.5 })
+        this.load.svg('addressbook', './assets/SHB/svg/AW-icon-addressbook.svg', { scale: 0.7 })
+        this.load.svg('close', './assets/SHB/svg/AW-icon-cross.svg', { scale: 0.6 })
+        this.load.svg('delete', './assets/SHB/svg/AW-icon-trash.svg', { scale: 0.6 })
 
 
         this.load.image('friend', './assets/popup/friend.png')
@@ -77,7 +77,7 @@ export default class PreloadScene extends Phaser.Scene {
 
         //create a generic artFrame for later use wit iage key "artFrame_512"
         this.createArtFrame('512')
-        // this.createArtFrame('128')
+        this.createArtFrame('128')
         this.createArtFrame('32')
     }
 

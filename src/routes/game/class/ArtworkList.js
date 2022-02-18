@@ -147,21 +147,6 @@ class ArtworkList {
 
   async convertRexUIArray(scene) {
 
-    // ? old?
-    // allLikedArray is an array of art in format:
-    // drawing/5264dc23-a339-40db-bb84-e0849ded4e68/geelCoral.png
-    // should be format: 
-    // liked: [
-    // {
-    //  user_id: "e0849c23-a339-40db-bb84-e0849ded4e68",
-    //  collection: "drawing",
-    //  key: "1642771303290_limoenWalrus",
-    //  version: 1,
-    //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png",
-    //  previewURl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/stopmotion/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png?signature=c8c1aba753e01a6f06fd321a5a01a46fc18a483bb618ca1e2478283028a077f8",
-    //  },
-    // ]
-
     const allLikedArray = ManageSession.liked.liked // we get an array of objects, an object has the form of: 
     // {
     // collection: "drawing"
@@ -273,12 +258,10 @@ class ArtworkList {
   // universal panel for player and onlinePlayer  
   createLikedPanel(scene, spinner, likedPanelName, currentPlayer, currentLikedPanelKeys) {
     // destroy the loading spinner
-    spinner.destroy()
+    if (spinner) spinner.destroy()
 
     // destroy the old panel
-    if (scene[likedPanelName]) {
-      scene[likedPanelName].destroy()
-    }
+    if (scene[likedPanelName]) scene[likedPanelName].destroy()
 
     // create a new panel
     scene[likedPanelName] = scene.rexUI.add
@@ -313,8 +296,8 @@ class ArtworkList {
       .layout()
       .setDepth(301) // depends on what panel is opened first: player's or onlinePlayer's
 
-    scene.input.topOnly = false;
-    const labels = [];
+    scene.input.topOnly = true
+    const labels = []
     labels.push(
       ...scene[likedPanelName].getElement("#artworks.items", true)
     )
@@ -342,7 +325,7 @@ class ArtworkList {
     let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "heart").setOrigin(1, 0).setScale(0.7)
       .setInteractive()
       .setData("toggle", false) //false, not liked state
-      .on('pointerup', () => { this.heartButtonToggle(mediaObject, currentHeart) })
+      .on('pointerup', () => { this.heartButtonToggle(scene, mediaObject, currentHeart) })
 
     scene.artContainer.add(currentHeart)
 
@@ -359,7 +342,7 @@ class ArtworkList {
     }
   }
 
-  heartButtonToggle(mediaObject, button) {
+  async heartButtonToggle(scene, mediaObject, button) {
     let parsedMediaOject = { user_id: mediaObject.user_id, collection: mediaObject.collection, key: mediaObject.key, version: mediaObject.value.version, url: mediaObject.value.url, previewURl: mediaObject.value.previewURl }
     let toggle = button.getData("toggle")
 
@@ -367,7 +350,7 @@ class ArtworkList {
       // changing to red, liked
       button.setTexture("heart")
       button.setData("toggle", false)
-      //! Update likedpanel, when open?
+
       // updates the object locally
       // add to the array
       ManageSession.liked.liked.push(parsedMediaOject)
@@ -375,17 +358,27 @@ class ArtworkList {
       // changing to empty, not liked
       button.setTexture("heart_empty")
       button.setData("toggle", true)
-      //! Update likedpanel, when open?
+
       // updates the object locally
       // find the object in the array, by url, filter the object with the url out
       ManageSession.liked.liked = ManageSession.liked.liked.filter(obj => obj.url != mediaObject.value.url)
     }
 
+    // if the liked panel is open, show the update on a like button click
+    if (ManageSession.liked.liked.length > 0) { // in case of there are liked artworks
+      if (scene.playerLikedButtonClickedFlag) await this.convertRexUIArray(scene)
+    } else { // in case of there is none 
+      if (scene.playerLikedButtonClickedFlag) {
+        scene.playerLikedPanelKeys = { artworks: [{ "name": "artFrame_128" }] }
+        this.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
+      }
+    }
+
+    // updates the object server side 
     const type = "liked"
     const name = type + "_" + ManageSession.userProfile.id
     const pub = 2
     const value = ManageSession.liked
-    // updates the object server side 
     updateObject(type, name, value, pub)
   }
 }

@@ -1,6 +1,5 @@
-import { CONFIG } from "../config.js";
 import ManageSession from "../ManageSession"
-import { updateObject, listImages, convertImage } from '../../../api.js'
+import { listImages, convertImage } from '../../../api.js'
 
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
@@ -19,7 +18,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     constructor() {
         super("DefaultUserHome");
 
-        this.worldSize = new Phaser.Math.Vector2(2000, 1000)
+        this.worldSize = new Phaser.Math.Vector2(6000, 1000)
 
         this.debug = false
 
@@ -120,6 +119,17 @@ export default class DefaultUserHome extends Phaser.Scene {
         ManageSession.createPlayer = true
         //....... end LOAD PLAYER AVATAR .......................................................................
         Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
+
+        this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
+            .setInteractive() //{ useHandCursor: true }
+            .on('pointerup', () => console.log("touched background"))
+            .on('pointerdown', () => ManageSession.playerMove = true)
+            .setDepth(219)
+            .setOrigin(0)
+            .setVisible(false)
+
+        this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+
         //.......  PLAYER ....................................................................................
         //* create default player and playerShadow
         //* create player in center with artworldCoordinates
@@ -147,11 +157,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         //.......... end INPUT ................................................................................
 
         //.......... locations ................................................................................
-        //generating homes from online query is not possible in create, because the server query can take time
-        //this.generateLocations()
         //.......... end locations ............................................................................
-
-        //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
 
         //......... DEBUG FUNCTIONS ...........................................................................
         DebugFuntions.keyboard(this);
@@ -174,10 +180,12 @@ export default class DefaultUserHome extends Phaser.Scene {
             width: 400,
             height: 400,
             duration: 850,
-            color: 0x000000
+            color: 0xffff00
         }).setDepth(199)
 
         this.artworksListSpinner.start()
+
+        Player.loadPlayerAvatar(this)
 
         await listImages("drawing", this.location, 100).then((rec) => {
             //this.userArtServerList is an array with objects, in the form of:
@@ -206,22 +214,32 @@ export default class DefaultUserHome extends Phaser.Scene {
 
             console.log("this.userArtServerList", this.userArtServerList)
             if (this.userArtServerList.length > 0) {
-                this.userArtServerList.forEach((element, index) => {
-                    this.downloadArt(element, index)
+                this.userArtServerList.forEach((element, index, array) => {
+                    this.downloadArt(element, index, array)
                 })
+                
             } else {
                 this.artworksListSpinner.destroy()
             }
         })
-
     }//end create
 
-    async downloadArt(element, index) {
-
+    async downloadArt(element, index, array) {
+        //! we are placing the artWorks 'around' the center of the world
+        const totalArtWorks = array.length
         const imageKeyUrl = element.value.url
         const imgSize = this.artDisplaySize.toString()
         const fileFormat = "png"
-        const coordX = index == 0 ? this.artDisplaySize : (this.artDisplaySize) + (index * (this.artDisplaySize + 38))
+        // put the artworks 'around' the center, which mean take total artworks * space = total x space eg 3 * 550 = 1650
+        // we start at middleWorld.x - totalArtWidth + (artIndex * artDisplaySize) 
+   
+        const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks
+
+        console.log("totalArtWidth", totalArtWidth)
+        const middleWorldX = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0)
+        const startXArt = middleWorldX - (totalArtWidth/2)
+
+        const coordX = index == 0 ? startXArt : (startXArt) + (index * (this.artDisplaySize + 38))
         this.artContainer = this.add.container(0, 0).setDepth(100)
 
         const y = 500
@@ -291,7 +309,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             }
         })
 
-        this.load.once("complete", () => {
+        this.load.on("complete", () => {
             progressBar.destroy()
             progressBox.destroy()
             this.progress = []
@@ -301,7 +319,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     update(time, delta) {
         //...... ONLINE PLAYERS ................................................
-        Player.loadPlayerAvatar(this)
         Player.parseNewOnlinePlayerArray(this)
         //.......................................................................
 
@@ -315,12 +332,8 @@ export default class DefaultUserHome extends Phaser.Scene {
         //........... end PLAYER SHADOW .........................................................................
 
         //....... moving ANIMATION ......................................................................................
-        // Move.movingAnimation(this)
         Move.checkIfPlayerIsMoving(this)
         //....... end moving ANIMATION .................................................................................
-
-        //this.playerMovingByClicking()
-        Move.identifySurfaceOfPointerInteraction(this)
 
         // to detect if the player is clicking/tapping on one place or swiping
         if (this.input.activePointer.downX != this.input.activePointer.upX) {

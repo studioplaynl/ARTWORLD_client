@@ -12,12 +12,13 @@ class Background {
         const worldSize = config.scene.worldSize
 
         ///*........... white background of worldSize*2 width .............................................................
-        scene.add.rectangle(0, 0, worldSize.x * 2, worldSize.y * 2, config.backgroundColor)
+        scene.add.rectangle(0, 0, worldSize.x * 1.2, worldSize.y * 1.2, config.backgroundColor).setOrigin(0)
 
         //*........... repeating pattern on the white background .............................................................
         const gridWidth = worldSize.x
         const gridHeight = worldSize.y
         const offset = config.gridOffset
+        const offsetY = offset / 2
 
         // const gridWidth = 600
         // const gridHeight = 600
@@ -46,14 +47,14 @@ class Background {
         bgDotRendertexture.destroy()
 
         //repeat this saved texture over the background
-        console.log("gridWidth/offset", gridWidth / offset)
+        //console.log("gridWidth/offset", gridWidth / offset)
         for (let i = 0; i < gridWidth / offset; i++) {
-            for (let j = 0; j < gridHeight / offset; j++) {
+            for (let j = 0; j < gridHeight / offsetY; j++) {
                 //offset the odd rows by half offset
                 if (j % 2 == 0) {
-                    scene.add.image(i * offset, j * offset, 'dot').setOrigin(0)
+                    scene.add.image(i * offset, j * offsetY, 'dot').setOrigin(0)
                 } else {
-                    scene.add.image((i * offset) + (offset / 2), j * offset, 'dot').setOrigin(0)
+                    scene.add.image((i * offset) + (offset / 2), j * offsetY, 'dot').setOrigin(0)
                 }
             }
         }

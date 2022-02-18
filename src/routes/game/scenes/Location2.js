@@ -1,6 +1,5 @@
 import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension"
 import ManageSession from "../ManageSession"
-import HistoryTracker from "../class/HistoryTracker"
 
 export default class Location2 extends Scene3D {
 
@@ -16,12 +15,10 @@ export default class Location2 extends Scene3D {
   async create() {
 
     // 3d scenes have separate UI_scene
-    this.scene.stop("UI_Scene");
+    this.scene.stop("UI_Scene")
 
-    // for back button
-    HistoryTracker.locationPush(this);
-
-    const { ground } = await this.third.warpSpeed("-orbitControls");
+    // enable ground and disable 3d orbit camera control
+    const { ground } = await this.third.warpSpeed("-orbitControls")
 
     this.robot = new ExtendedObject3D();
     const pos = { x: 3, y: 2, z: -7 };
@@ -94,24 +91,43 @@ export default class Location2 extends Scene3D {
     this.backButton = this.add.image(40, 40, "back_button")
       .setOrigin(0, 0.5)
       .setDepth(1000)
-      .setScale(0.075)
-      .setInteractive({ useHandCursor: true });
+      .setInteractive({ useHandCursor: true })
 
     this.backButton.on("pointerup", () => {
-      // to leave the last added (currentLocation) scene and delete it from the array of locations
-      // to enter the previous scene (previousLocation) 
-      const currentLocation = ManageSession.locationHistory.pop();
-      const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
 
-      ManageSession.socket.rpc("leave", currentLocation)
-      setTimeout(() => {
-        ManageSession.location = previousLocation
-        ManageSession.createPlayer = true
-        ManageSession.getStreamUsers("join", previousLocation)
-        this.scene.stop(currentLocation)
-        this.scene.start(previousLocation)
-      }, 500)
-    });
+      // to cover the whole scene on leaving
+      this.platform = this.third.add.box(
+        {
+          name: "platform",
+          width: 300,
+          depth: 300,
+          height: 1,
+          mass: 0,
+          y: 4,
+        },
+        {
+          phong: { color: "white" },
+        }
+      )
+      ManageSession.socket.rpc("leave", this.scene.key)
+
+      const goToScene = "ArtworldAmsterdam"
+
+      this.time.addEvent({
+        delay: 500,
+        callback: () => {
+          ManageSession.location = goToScene
+          ManageSession.createPlayer = true
+          this.scene.stop(this.scene.key)
+          this.scene.start(goToScene)
+
+          ManageSession.location = goToScene
+          ManageSession.getStreamUsers("join", goToScene)
+        },
+        callbackScope: this,
+        loop: false,
+      })
+    })
   }
 
   async addZoomingButtons() {
@@ -131,7 +147,7 @@ export default class Location2 extends Scene3D {
       .setInteractive({ useHandCursor: true });
 
     this.zoom = this.add
-      .image(60 + 80, 40, "ui_eye")
+      .image(60 + 100, 40, "ui_eye")
       .setOrigin(0, 0.5)
       .setDepth(1000)
       .setScale(0.125)

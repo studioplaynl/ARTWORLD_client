@@ -127,10 +127,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     ManageSession.createPlayer = true
     //....... end LOAD PLAYER AVATAR .......................................................................
 
-    //Background // the order of creation is the order of drawing: first = bottom ...............................
+    Background // the order of creation is the order of drawing: first = bottom ...............................
     Background.repeatingDots({
       scene: this,
-      gridOffset: 50,
+      gridOffset: 80,
       dotWidth: 2,
       dotColor: 0x909090,
       backgroundColor: 0xffffff,
@@ -166,13 +166,15 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient2: 0xbb00ff,
     })
 
-    // this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff)
-    //   .setInteractive({ useHandCursor: true })
-    //   .on('pointerup', () => console.log("touched background"))
-    //   .on('pointerdown', () => console.log("touched background"))
-    //   .setVisible(false)
+    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
+      .setInteractive() //{ useHandCursor: true }
+      .on('pointerup', () =>  console.log("touched background"))
+      .on('pointerdown', () => ManageSession.playerMove = true)
+      .setDepth(219)
+      .setOrigin(0)
+      .setVisible(false)
 
-    // this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
 
 
     // sunglass_stripes
@@ -293,6 +295,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //create items bar for onlineplayer, after UIscene, because it need currentZoom
     Player.createOnlinePlayerItemsBar(this)
+    Player.loadPlayerAvatar(this)
     // this.avatarDetailsContainer.setDepth(999)
 
   } //end create
@@ -331,7 +334,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         // console.log(element.value.posX)
 
         // parse home description
-        // console.log("element", element)
+        console.log("element", element)
         let locationDescription = element.value.username
 
         //! Get avatar of home users
@@ -462,7 +465,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    Player.loadPlayerAvatar(this)
+   
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
@@ -480,13 +483,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................
 
-    //....... moving ANIMATION ......................................................................................
-    // Move.movingAnimation(this)
-    Move.checkIfPlayerIsMoving(this)
-    //....... end moving ANIMATION .................................................................................
-
-    //this.playerMovingByClicking()
-    Move.identifySurfaceOfPointerInteraction(this)
+    //....... stopping PLAYER ......................................................................................
+    Move.checkIfPlayerIsMoving(this) // to stop the player when it reached its destination
+    //....... end stopping PLAYER .................................................................................
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {

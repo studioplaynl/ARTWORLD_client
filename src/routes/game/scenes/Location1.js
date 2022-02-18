@@ -151,6 +151,16 @@ export default class Location1 extends Phaser.Scene {
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     this.generateBackground()
+    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
+    .setInteractive() //{ useHandCursor: true }
+    .on('pointerup', () =>  console.log("touched background"))
+    .on('pointerdown', () => ManageSession.playerMove = true)
+    .setDepth(219)
+    .setOrigin(0)
+    .setVisible(false)
+
+  this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+
 
     // graffiti walls
     GraffitiWall.create(this, 2200, 600, 800, 600, "graffitiBrickWall", 0x000000, 'brickWall')
@@ -173,15 +183,11 @@ export default class Location1 extends Phaser.Scene {
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
-    //create player group
-    this.playerGroup = this.add.group();
-    this.playerGroup.add(this.player);
-    this.playerGroup.add(this.playerShadow);
+    Player.loadPlayerAvatar(this)
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
-    // add onlineplayers group
-    this.onlinePlayersGroup = this.add.group();
+
     //....... end onlinePlayers .......................................................................
 
     //....... PLAYER VS WORLD ..........................................................................
@@ -762,101 +768,13 @@ export default class Location1 extends Phaser.Scene {
 
   }
 
-  // debugFunctions() {
-  //   this.input.keyboard.on('keyup-A', function (event) {
-  //     //get online player group
-  //     const displaylist = this.onlinePlayersGroup.getChildren()
-  //     console.log(displaylist)
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-ONE', function (event) {
-
-  //     console.log('1 key');
-
-  //     ManageSession.getStreamUsers("get_users", this.location)
-
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-S', function (event) {
-
-  //     console.log('S key');
-
-  //     //list all images in the textureManager
-  //     console.log(this.textures.list)
-
-  //     //Return an array listing the events for which the emitter has registered listeners.
-  //     console.log("Return an array listing the events for which the emitter has registered listeners: ")
-  //     console.log(this.textures.eventNames())
-
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-D', function (event) {
-
-  //     console.log('D key');
-
-  //     console.log(" ")
-  //     console.log('this.onlinePlayers: ')
-  //     console.log(this.onlinePlayers)
-
-  //     console.log("ManageSession.allConnectedUsers: ")
-  //     console.log(ManageSession.allConnectedUsers)
-
-  //     console.log("onlinePlayerGroup Children: ")
-  //     console.log(this.onlinePlayersGroup.getChildren())
-
-  //     console.log("this.player: ")
-  //     console.log(this.player)
-
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-F', function (event) {
-
-  //     console.log('F key');
-
-  //     console.log("ManageSession.userProfile: ")
-  //     console.log(ManageSession.userProfile)
-
-  //     console.log("this.createOnlinePlayers: ")
-  //     console.log(ManageSession.createOnlinePlayers)
-
-  //     console.log("this.createdPlayer: ")
-  //     console.log(this.createdPlayer)
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-Q', function (event) {
-
-  //     console.log('Q key');
-  //     getAccount();
-
-  //   }, this);
-
-  //   this.input.keyboard.on('keyup-W', function (event) {
-
-  //     console.log('W key');
-
-
-  //   }, this);
-
-  //   // //  Receives every single key down event, regardless of type
-
-  //   // this.input.keyboard.on('keydown', function (event) {
-
-  //   //   console.dir(event);
-
-  //   // }, this);
-  // }
-
-
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    Player.loadPlayerAvatar(this)
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
-
     //! make more efficient with event?
     this.gameCam.zoom = this.UI_Scene.currentZoom
-
 
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
@@ -869,9 +787,6 @@ export default class Location1 extends Phaser.Scene {
     // Move.movingAnimation(this)
     Move.checkIfPlayerIsMoving(this)
     //....... end moving ANIMATION .................................................................................
-
-    //this.playerMovingByClicking()
-    Move.identifySurfaceOfPointerInteraction(this)
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {

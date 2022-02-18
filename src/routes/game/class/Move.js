@@ -1,11 +1,5 @@
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
-import { listObjects, listImages, convertImage, getFullAccount, updateObject, getAccount } from "../../../api.js"
-import HistoryTracker from "./HistoryTracker"
-import ArtworkList from "./ArtworkList"
-import R_UI from "./R_UI"
-import UI_Scene from "../scenes/UI_Scene"
-
 
 class Move {
   constructor() { }
@@ -96,7 +90,6 @@ class Move {
     //  10 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (scene.isPlayerMoving) {
-
       // calculate distance only when playerIsMovingByClicking
       scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y)
       if (scene.distance < scene.distanceTolerance) {
@@ -112,10 +105,10 @@ class Move {
   }
 
   moveBySwiping(scene) {
-    if (scene.input.activePointer.isDown && scene.isClicking == false && scene.graffitiDrawing == false) {
+    if (scene.input.activePointer.isDown && scene.isClicking == false && ManageSession.playerMove) {
       scene.isClicking = true
     }
-    if (!scene.input.activePointer.isDown && scene.isClicking == true && scene.graffitiDrawing == false) {
+    if (!scene.input.activePointer.isDown && scene.isClicking == true) {
       // play "move" animation
       // play the animation as soon as possible so it is more visible
       this.movingAnimation(scene, "moving")
@@ -146,22 +139,25 @@ class Move {
       // console.log("scene.distanceTolerance", scene.distanceTolerance)
       // console.log("moveSpeed", moveSpeed)
 
-      scene.isPlayerMoving = true // trigger moving animation
+      scene.isPlayerMoving = true // to stop the player when it reached its destination
 
       scene.target.x = playerX + swipeX
       scene.target.y = playerY + swipeY
 
+      console.log(moveSpeed)
+
       // generalized moving method
       this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed)
+      ManageSession.playerMove = false
       scene.isClicking = false
     }
   }
 
   moveByTapping(scene) {
-    if (scene.input.activePointer.isDown && scene.isClicking == false && scene.graffitiDrawing == false) {
+    if (scene.input.activePointer.isDown && scene.isClicking == false && ManageSession.playerMove) {
       scene.isClicking = true
     }
-    if (!scene.input.activePointer.isDown && scene.isClicking == true && scene.graffitiDrawing == false) {
+    if (!scene.input.activePointer.isDown && scene.isClicking == true) {
       //doubletap: first time mouse up
       let lastTime = 0
       //doubletap: second time mouse down
@@ -171,26 +167,35 @@ class Move {
 
         lastTime = scene.time.now
         if (clickDelay < 350 && scene.graffitiDrawing == false) {
+
           // play "move" animation
           // play the animation as soon as possible so it is more visible
           this.movingAnimation(scene, "moving")
+
+          const playerX = scene.player.x 
+          const playerY = scene.player.y 
 
           //mouse point after doubletap is target
           scene.target.x = scene.input.activePointer.worldX
           scene.target.y = scene.input.activePointer.worldY
 
-          let moveSpeed = scene.target.length()
+          scene.swipeAmount.x = playerX - scene.target.x 
+          scene.swipeAmount.y = playerY - scene.target.y 
 
+          let moveSpeed = scene.swipeAmount.length() 
+          
+          console.log(moveSpeed)
           // we scale the arrival check (distanceTolerance) to the speed of the player
           scene.distanceTolerance = moveSpeed / 60
 
           scene.isPlayerMoving = true // activate moving animation
 
           // generalized moving method
-          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed / 4) // send moveTo over network, calculate speed as function of distance
+          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed) // send moveTo over network, calculate speed as function of distance
         }
       })
       scene.isClicking = false
+      ManageSession.playerMove = false
     }
   }
 
@@ -205,24 +210,6 @@ class Move {
       // this.scrollablePanel.x = this.player.x
       // this.scrollablePanel.y = this.player.y + 150
     }
-  }
-
-  identifySurfaceOfPointerInteraction(scene) {
-    // identifies if the pointer is down on a graffiti wall
-    // if the condition is true, the avatar stops any movement
-    scene.input.on("pointerdown", (pointer, object) => {
-      if (
-        (object[0] && object[0]?.name == "graffitiBrickWall") ||
-        object[0]?.name == "graffitiDotWall" ||
-        object[0]?.name == "currentPlayerScrollablePanel" ||
-        object[0]?.name == "onlinePlayerScrollablePanel"
-      ) {
-        scene.graffitiDrawing = true;
-      }
-    });
-    scene.input.on("pointerup", () => {
-      scene.graffitiDrawing = false;
-    });
   }
 
   movePlayerLikedPanel(scene) {

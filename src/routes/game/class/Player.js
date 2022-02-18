@@ -15,16 +15,7 @@ class Player {
       if (ManageSession.createPlayer) {
         ManageSession.createPlayer = false
         //console.log("ManageSession.createPlayer = false;")
-
-        //set the location of the player to this location
-
         scene.createdPlayer = false
-
-        //console.log("loadAndCreatePlayerAvatar")
-        //put the player in the server last known position
-
-        scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, ManageSession.userProfile.meta.posX)
-        scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, ManageSession.userProfile.meta.posY)
 
         // is playerAvaterKey already in loadedAvatars?
         //no -> load the avatar and add to loadedAvatars
@@ -35,37 +26,68 @@ class Player {
           "_" +
           ManageSession.userProfile.create_time
 
-        //console.log(scene.textures.exists(scene.playerAvatarKey))
-
         //* attatch to existing context and physics
         scene.add.existing(this)
         scene.physics.add.existing(this)
 
-        //if the texture doesnot exists load it and attach it to the player
-        if (!scene.textures.exists(scene.playerAvatarKey)) {
-          //check if url is not empty for some reason, returns so that previous image is kept
-          if (ManageSession.userProfile.url === "") {
-            console.log("avatar url is empty")
-            ManageSession.createPlayer = false
-            console.log("ManageSession.createPlayer = ", ManageSession.createPlayer)
-            scene.createdPlayer = true
-            console.log("scene.createdPlayer = ", scene.createdPlayer)
-            return
-          } else {
-            //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
-            const fileNameCheck = scene.playerAvatarKey
-            scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
-              .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
-            scene.load.start() // start loading the image in memory
+        // put the player in the last server known position
+        // retreive position from server
+        Promise.all([getAccount(ManageSession.userProfile.id)]).then(rec => {
+          console.log("rec[0]", rec[0])
+          //* data model:
+          // rec[0].metadata:
+          // azc: "Amsterdam"
+          // location: "5264dc23-a339-40db-bb84-e0849ded4e68"
+          // posX: -2483
+          // posY: 0
+          // role: "speler"
+          // user_id: ""
+          let lastPosX = rec[0].metadata.posX
+          let lastPosY = rec[0].metadata.posY
+          console.log("lastPosX, lastPosY, location", lastPosX, lastPosY, rec[0].metadata.location)
+
+          // chech if the player is in the same location as the last server location
+          if (rec[0].metadata.location == scene.location) {
+
+            // check if last position is outside the worldBounds for some reason, place it within in that case
+            if (lastPosX > scene.worldSize.x / 2 || lastPosX < - scene.worldSize.x / 2) lastPosX = 0
+            if (lastPosY > scene.worldSize.y / 2 || lastPosY < - scene.worldSize.y / 2) lastPosY = 0
+            console.log("lastPosX, lastPosY", lastPosX, lastPosY)
+
+            scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, lastPosX)
+            scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, lastPosY)
+          } else { // otherwise put the player in the middle of the world
+            scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, 0)
+            scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, 0)
           }
-        } else {
-          this.attachAvatarToPlayer(scene)
-        }
+
+          //if the texture doesnot exists load it and attach it to the player
+          if (!scene.textures.exists(scene.playerAvatarKey)) {
+            //check if url is not empty for some reason, returns so that previous image is kept
+            if (ManageSession.userProfile.url === "") {
+              console.log("avatar url is empty")
+              ManageSession.createPlayer = false
+              console.log("ManageSession.createPlayer = ", ManageSession.createPlayer)
+              scene.createdPlayer = true
+              console.log("scene.createdPlayer = ", scene.createdPlayer)
+              return
+            } else {
+              //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
+              const fileNameCheck = scene.playerAvatarKey
+              scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
+                .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
+              scene.load.start() // start loading the image in memory
+            }
+          } else {
+            this.attachAvatarToPlayer(scene)
+            console.log("scene.location", scene.location)
+          }
+        })
       } //if(ManageSession.playerCreated)
     }
   }
 
-  attachAvatarToPlayer(scene) {
+  async attachAvatarToPlayer(scene) {
     //console.log("scene.playerAvatarKey ", scene.playerAvatarKey)
 
     const avatar = scene.textures.get(scene.playerAvatarKey)
@@ -126,26 +148,13 @@ class Player {
     // scene.player.body.setCircle(width, width, width / 2)
     scene.player.body.setCircle(width / 1.1, width / 5, width / 5)
 
-    // place the player in the last known position
-    // this.player.x = this.player.posX
-    // this.player.y = this.player.posY
-
-    //*place the player in the last known position
-    // console.log("scene.player.x", scene.player.x)
-    // console.log("ManageSession.userProfile", ManageSession.userProfile)
-    // console.log("ManageSession.userProfile.meta.posX", ManageSession.userProfile.meta.posX)
-    // console.log("scene.player", scene.player)
-
-    // scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, ManageSession.userProfile.meta.posX)
-    // scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, ManageSession.userProfile.meta.posY)
-
     // console.log("player avatar has loaded ")
     scene.player.location = scene.location
     scene.createdPlayer = true
 
     //send the current player position over the network
-    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)
-  } //attachAvatarToPlayer
+    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
+  } // end attachAvatarToPlayer
 
   createPlayerItemsBar(scene) {
 
@@ -177,6 +186,8 @@ class Player {
         scene.playerLikedButton = scene.add.image(65, 0, "heart").setInteractive({ useHandCursor: true })
 
         scene.playerLikedButton.on("pointerdown", async () => {
+          // this flag is used for the cases when an artwork is liked/unliked and the panel gets updated immediately
+          scene.playerLikedButtonClickedFlag = true
           // display spinner while images are being downloaded
           scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
             x: scene.player.x + 150,
@@ -187,13 +198,19 @@ class Player {
             color: 0x000000
           }).setDepth(199).start()
 
-          // downloading the images and displaying them
-          scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
+          // check if there are any liked artworks
+          if (ManageSession.liked.liked.length > 0) {
+            // downloading the images and displaying them in liked panel
+            await ArtworkList.convertRexUIArray(scene)
+          } else {
+            scene.playerLikedPanelKeys = { artworks: [{ "name": "artFrame_128" }] } // placeholder when there is none liked artwork
+            // creating a liked panel with the placeholder
+            ArtworkList.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
+          }
         })
 
         // creating an addressbook button
         scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook").setInteractive({ useHandCursor: true })
-
 
         scene.playerAddressbookButton.on("pointerup", () => {
           this.createAddressbook(scene)
@@ -210,10 +227,10 @@ class Player {
 
       } else {
         scene.playerItemsBar.setVisible(false)
-        if (scene.playerLikedPanel) scene.playerLikedPanel.setVisible(false)
-        // console.log("scene.playerLikedPanel", scene.playerLikedPanel)
+        if (scene.playerLikedPanel) scene.playerLikedPanel.destroy()
         scene.isPlayerItemsBarDisplayed = false
         if (scene.playerAddressbookContainer) this.destroyAddressbook(scene)
+        if (scene.playerLikedButtonClickedFlag) scene.playerLikedButtonClickedFlag = false
       }
     })
   }
@@ -422,18 +439,22 @@ class Player {
           scene.onlinePlayerLikedButton = scene.add.image(65, 0, "heart");
 
           scene.onlinePlayerLikedButtonCircle.on("pointerdown", async () => {
-            // display spinner while images are being downloaded
-            scene.onlinePlayerLikedPanelSpinner = scene.rexSpinner.add.pie({
-              x: ManageSession.selectedOnlinePlayer.x + 150,
-              y: ManageSession.selectedOnlinePlayer.y,
-              width: 100,
-              height: 100,
-              duration: 850,
-              color: 0x000000
-            }).setDepth(199).start()
-
-            // downloading the images and displaying them
-            scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene) //!convert method to onlinePlayer
+            // check if there are any liked artworks
+            if (ManageSession.likedOnlinePlayer.liked.length > 0) {
+              // display spinner while images are being downloaded
+              scene.onlinePlayerLikedPanelSpinner = scene.rexSpinner.add.pie({
+                x: ManageSession.selectedOnlinePlayer.x + 150,
+                y: ManageSession.selectedOnlinePlayer.y,
+                width: 100,
+                height: 100,
+                duration: 850,
+                color: 0x000000
+              }).setDepth(199).start()
+              // downloading the images and displaying them
+              scene.onlinePlayerLikedPanelKeys = await ArtworkList.convertRexUIArrayOnlinePlayer(scene)
+            } else {
+              console.log("No liked artworks")
+            }
           })
 
           // adding the liked button to onlinePlayerItemsBar
@@ -467,7 +488,9 @@ class Player {
       ManageSession.createOnlinePlayerArray.forEach(onlinePlayer => {
         Promise.all([getAccount(onlinePlayer.user_id)]).then(rec => {
           const newOnlinePlayer = rec[0]
+          console.log(newOnlinePlayer)
           this.createOnlinePlayer(scene, newOnlinePlayer)
+          console.log("parseNewOnlinePlayerArray scene", scene)
         })
 
         //new onlineplayer is removed from the newOnlinePlayer array, once we call more data on it
@@ -477,92 +500,102 @@ class Player {
   }
 
   createOnlinePlayer(scene, onlinePlayer) {
-    //create new onlinePlayer with default avatar
-    const onlinePlayerCopy = onlinePlayer
+    // check if onlinePlayer exists already 
+    //console.log(onlinePlayer)
+    const exists = ManageSession.allConnectedUsers.some(element => element.user_id == onlinePlayer.user_id)
+    // if player exists
+    if (!exists) {
 
-    onlinePlayer = scene.add
-      .sprite(
-        CoordinatesTranslator.artworldToPhaser2DX(
-          scene.worldSize.x,
-          onlinePlayerCopy.metadata.posX
-        ),
-        CoordinatesTranslator.artworldToPhaser2DY(
-          scene.worldSize.y,
-          onlinePlayerCopy.metadata.posY
-        ),
-        scene.playerAvatarPlaceholder
-      )
-      //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
-      .setDepth(200)
-    onlinePlayer.setInteractive({ useHandCursor: true })
-    // hit area of onlinePlayer
-    onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
-    onlinePlayer.on('pointerup', () => {
-      this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
-      //put a timer of 20 sec to automatically close the onlinePlayerItemsBar
-      scene.time.addEvent({
-        delay: 20000, callback: () => {
-          this.hideOnlinePlayerItemsBar(scene)
-        }, callbackScope: scene, loop: false
+      //create new onlinePlayer with default avatar
+      const onlinePlayerCopy = onlinePlayer
+      console.log("createOnlinePlayer scene", scene)
+      onlinePlayer = scene.add
+        .sprite(
+          CoordinatesTranslator.artworldToPhaser2DX(
+            scene.worldSize.x,
+            onlinePlayerCopy.metadata.posX
+          ),
+          CoordinatesTranslator.artworldToPhaser2DY(
+            scene.worldSize.y,
+            onlinePlayerCopy.metadata.posY
+          ),
+          scene.playerAvatarPlaceholder
+        )
+        //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
+        .setDepth(200)
+      onlinePlayer.setInteractive({ useHandCursor: true })
+      // hit area of onlinePlayer
+      onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
+      onlinePlayer.on('pointerup', () => {
+        this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
+        //put a timer of 20 sec to automatically close the onlinePlayerItemsBar
+        scene.time.addEvent({
+          delay: 20000, callback: () => {
+            this.hideOnlinePlayerItemsBar(scene)
+          }, callbackScope: scene, loop: false
+        })
+
+        //console.log("online player width", onlinePlayer)
       })
 
-      //console.log("online player width", onlinePlayer)
-    })
+      onlinePlayer.setData("movingKey", "moving")
+      onlinePlayer.setData("stopKey", "stop")
 
-    onlinePlayer.setData("movingKey", "moving")
-    onlinePlayer.setData("stopKey", "stop")
+      //create default animation for moving
+      scene.anims.create({
+        key: onlinePlayer.getData("movingKey"),
+        frames: scene.anims.generateFrameNumbers(
+          scene.playerAvatarPlaceholder,
+          { start: 0, end: 8 }
+        ),
+        frameRate: 20,
+        repeat: -1,
+      })
 
-    //create default animation for moving
-    scene.anims.create({
-      key: onlinePlayer.getData("movingKey"),
-      frames: scene.anims.generateFrameNumbers(
-        scene.playerAvatarPlaceholder,
-        { start: 0, end: 8 }
-      ),
-      frameRate: 20,
-      repeat: -1,
-    })
+      //create default animation for stop
+      scene.anims.create({
+        key: onlinePlayer.getData("stopKey"),
+        frames: scene.anims.generateFrameNumbers(
+          scene.playerAvatarPlaceholder,
+          { start: 4, end: 4 }
+        ),
+      })
 
-    //create default animation for stop
-    scene.anims.create({
-      key: onlinePlayer.getData("stopKey"),
-      frames: scene.anims.generateFrameNumbers(
-        scene.playerAvatarPlaceholder,
-        { start: 4, end: 4 }
-      ),
-    })
+      //add all data from elementCopy to element; like prev Position, Location, UserID
+      Object.assign(onlinePlayer, onlinePlayerCopy)
+      //we copy the id over as user_id to kep data consistent across our internal logic
+      onlinePlayer["user_id"] = onlinePlayerCopy.id
+      console.log("onlinePlayer", onlinePlayer)
 
-    //add all data from elementCopy to element; like prev Position, Location, UserID
-    Object.assign(onlinePlayer, onlinePlayerCopy)
-    console.log("onlinePlayer", onlinePlayer)
+      //we push the new online player to the allConnectedUsers array
+      //! check if oLP has defined scene! before pushing
+      ManageSession.allConnectedUsers.push(onlinePlayer)
 
-    //we push the new online player to the allConnectedUsers array
-    ManageSession.allConnectedUsers.push(onlinePlayer)
+      //we load the onlineplayer avatar, make a key for it
+      const avatarKey = onlinePlayer.user_id + "_" + onlinePlayer.update_time
+      //console.log("avatarKey", avatarKey)
 
-    //we load the onlineplayer avatar, make a key for it
-    const avatarKey = onlinePlayer.id + "_" + onlinePlayer.update_time
-    //console.log("avatarKey", avatarKey)
-
-    //if the texture already exists attach it again to the player
-    // const preExisting = false
-    if (!scene.textures.exists(avatarKey)) {
-      //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
-      //add it to loading queue
-      scene.load.spritesheet(avatarKey, onlinePlayer.url, {
-        frameWidth: 128,
-        frameHeight: 128,
-      }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
-      //when file is finished loading the attachToAvatar function is called
-      scene.load.start() // start loading the image in memory
-    } else {
-      //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
-      //attach the avatar to the onlinePlayer when it is already in memory
-      this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey)
+      //if the texture already exists attach it again to the player
+      // const preExisting = false
+      if (!scene.textures.exists(avatarKey)) {
+        //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        //add it to loading queue
+        scene.load.spritesheet(avatarKey, onlinePlayer.url, {
+          frameWidth: 128,
+          frameHeight: 128,
+        }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
+        //when file is finished loading the attachToAvatar function is called
+        scene.load.start() // start loading the image in memory
+      } else {
+        //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        //attach the avatar to the onlinePlayer when it is already in memory
+        this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey)
+      }
+      // else {
+      //   preExisting = true
+      //   this.attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName, preExisting)
+      // }
     }
-    // else {
-    //   preExisting = true
-    //   this.attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName, preExisting)
-    // }
   }
 
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
@@ -616,10 +649,6 @@ class Player {
     const width = 64
     onlinePlayer.displayWidth = width
     onlinePlayer.scaleY = onlinePlayer.scaleX
-  }
-
-  deleteOnlinePlayer(scene, onlinePlayer) {
-    ManageSession.allConnectedUsers = ManageSession.allConnectedUsers.filter(obj => obj.user_id != onlinePlayer.user_id)
   }
 
   async getAccountDetails(id) {

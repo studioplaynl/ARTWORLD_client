@@ -1,5 +1,6 @@
-import { client, SSL } from "../../nakama.svelte";
-import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate from artworld coordinates to Phaser 2D screen coordinates
+import { element } from "svelte/internal"
+import { client, SSL } from "../../nakama.svelte"
+import CoordinatesTranslator from "./class/CoordinatesTranslator" // translate from artworld coordinates to Phaser 2D screen coordinates
 
 import { SCENES } from "./config.js"
 
@@ -33,6 +34,7 @@ class ManageSession {
     this.AccountObject
     this.playerObjectSelf
     this.createPlayer = true
+    this.playerMove
 
     this.locationExists = false
 
@@ -48,7 +50,7 @@ class ManageSession {
     // this.playerStopKey = "stop"
 
     this.gameStarted = false
-
+    this.currentScene
     this.location = "Location1" //default
     this.launchLocation = "Location1" //default
 
@@ -88,11 +90,12 @@ class ManageSession {
       let data = JSON.parse(streamdata.data)
       //console.log(data)
 
+      //parse the movement data for the players in our allConnectedUsers array
       for (const onlinePlayer of this.allConnectedUsers) {
-        console.log("onlinePlayer", onlinePlayer)
+        //console.log("onlinePlayer", onlinePlayer)
         if (onlinePlayer.scene) {
-          if (onlinePlayer.id == data.user_id) {
-            console.log("data.user_id", data.user_id)
+          if (onlinePlayer.user_id == data.user_id) {
+            //console.log("data.user_id", data.user_id)
             // data is in the form of:
             // location: "ArtworldAmsterdam"
             // posX: -236.42065
@@ -101,8 +104,8 @@ class ManageSession {
             // action: "moveTo" "stop"
             //get the scene context from the onlinePlayer
             let scene = onlinePlayer.scene
-            console.log("onlinePlayer", onlinePlayer)
-            console.log("scene", scene)
+            //console.log("onlinePlayer", onlinePlayer)
+            //console.log("scene", scene)
 
             if (data.action == "moveTo") {
 
@@ -152,14 +155,14 @@ class ManageSession {
       if (!!streampresence.leaves) {
         streampresence.leaves.forEach((leave) => {
           console.log("User left: %o", leave)
-
-          this.deleteOnlinePlayer(leave)
+          this.getStreamUsers("get_users", this.location)
         })
       }
 
       if (!!streampresence.joins) {
         streampresence.joins.forEach((join) => {
           //filter out the player it self
+          console.log("this.userProfile.id", this.userProfile.id)          
           if (join.user_id != this.userProfile.id) {
             //console.log(this.userProfile)
             console.log("some one joined")
@@ -167,7 +170,7 @@ class ManageSession {
             //console.log(join.username)
             console.log("join", join)
             //const tempName = join.user_id
-            this.createOnlinePlayerArray.push(join)
+            this.getStreamUsers("get_users", this.location)
           }
         })
         // this.getStreamUsers("home")
@@ -175,21 +178,7 @@ class ManageSession {
     } //this.socket.onstreampresence
   } //end createSocket
 
-  deleteOnlinePlayer(onlinePlayer) {
-    // console.log("onlinePlayer", onlinePlayer)
-    // console.log("this.allConnectedUsers", this.allConnectedUsers)
-    let removeUser = this.allConnectedUsers.filter(obj => obj.id == onlinePlayer.user_id)
-    console.log("removeUser", removeUser)
-    //! 
-    if (removeUser[0]) removeUser[0].destroy() //destroy the user if it exists in the array
-    // removeUser[0].destroy()
-    this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.id != onlinePlayer.user_id)
-    // console.log("----")
-    console.log("this.allConnectedUsers", this.allConnectedUsers)
-  }
-
   async getStreamUsers(rpc_command, location) {
-    // if (!this.createOnlinePlayers) {
     //* rpc_command:
     //* join" = join the stream, get the online users, except self
     //* get_users" = after joined, get the online users, except self
@@ -198,31 +187,50 @@ class ManageSession {
     this.socket.rpc(rpc_command, location).then((rec) => {
       //!the server reports all users in location except self_user
       console.log(location)
-      //get all online players
-      this.createOnlinePlayerArray = JSON.parse(rec.payload) || []
-      console.log("this.createOnlinePlayerArray", this.createOnlinePlayerArray)
+      // get all online players = serverArray
+      // create array for newUsers and create array for deleteUsers
+      const serverArray = JSON.parse(rec.payload) || []
+      console.log("serverArray", serverArray)
+
+      serverArray.forEach((newPlayer) => {
+        const exists = this.allConnectedUsers.some(element => element.user_id == newPlayer.user_id)
+        if (!exists) {
+          this.createOnlinePlayerArray.push(newPlayer)
+          console.log("newPlayer", newPlayer)
+        }
+      })
+
+      // allConnectedUsers had id, serverArray has user_id
+      this.allConnectedUsers.forEach((onlinePlayer) => {
+        const exists = serverArray.some(element => element.user_id == onlinePlayer.user_id)
+        if (!exists) {
+          this.deleteOnlinePlayer(onlinePlayer)
+          console.log("remove onlinePlayer", onlinePlayer)
+        }
+      })
     })
+  }
+
+  deleteOnlinePlayer(onlinePlayer) {
+    // onlinePlayer has id
+
+    // console.log("onlinePlayer", onlinePlayer)
+    // console.log("this.allConnectedUsers", this.allConnectedUsers)
+
+    //destroy the user if it exists in the array
+    let removeUser = this.allConnectedUsers.filter(obj => obj.user_id == onlinePlayer.user_id)
+    console.log("removeUser", removeUser)
+
+    removeUser.forEach((element) => { element.destroy() })
+
+    // remove oldPlayer from allConnectedUsers
+    this.allConnectedUsers = this.allConnectedUsers.filter(obj => obj.user_id != onlinePlayer.user_id)
+
+    console.log("this.allConnectedUsers", this.allConnectedUsers)
   }
 
   async leave(selected) {
     await socket.rpc("leave", selected)
-  }
-
-  testMoveMessage() { //works
-    var opCode = 1;
-    var data =
-      '{ "posX": ' +
-      Math.floor(Math.random() * 100) +
-      ', "posY": ' +
-      Math.floor(Math.random() * 100) +
-      ', "location": "home" }'
-
-    this.socket.rpc("move_position", data).then((rec) => {
-      //status;
-      data = JSON.parse(rec.payload) || [];
-      // console.log("sent pos:");
-      // console.log(data);
-    })
   }
 
   sendMoveMessage(scene, posX, posY, action) {
@@ -277,6 +285,24 @@ class ManageSession {
       hidden
     )
   } //end chatExample
+
+  testMoveMessage() { //works
+    var opCode = 1;
+    var data =
+      '{ "posX": ' +
+      Math.floor(Math.random() * 100) +
+      ', "posY": ' +
+      Math.floor(Math.random() * 100) +
+      ', "location": "home" }'
+
+    this.socket.rpc("move_position", data).then((rec) => {
+      //status;
+      data = JSON.parse(rec.payload) || [];
+      // console.log("sent pos:");
+      // console.log(data);
+    })
+  }
+
 } //end class
 
 export default new ManageSession();

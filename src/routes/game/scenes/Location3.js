@@ -113,6 +113,17 @@ export default class Location3 extends Phaser.Scene {
     //....... end SOCKET .......................................................................
 
     this.generateTileMap()
+  
+    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
+    .setInteractive() //{ useHandCursor: true }
+    .on('pointerup', () =>  console.log("touched background"))
+    .on('pointerdown', () => ManageSession.playerMove = true)
+    .setDepth(219)
+    .setOrigin(0)
+    .setVisible(false)
+
+  this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+
     //this.generateBackground()
 
     // this.add.image(0,0, "background1").setOrigin(0,0).setScale(0.5)
@@ -151,8 +162,7 @@ export default class Location3 extends Phaser.Scene {
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
-    // add onlineplayers group
-    this.onlinePlayersGroup = this.add.group();
+    Player.loadPlayerAvatar(this)
     //....... end onlinePlayers .......................................................................
 
     //....... PLAYER VS WORLD ..........................................................................
@@ -388,7 +398,6 @@ export default class Location3 extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    Player.loadPlayerAvatar(this)
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
@@ -408,9 +417,6 @@ export default class Location3 extends Phaser.Scene {
     // Move.movingAnimation(this)
     Move.checkIfPlayerIsMoving(this)
     //....... end moving ANIMATION .................................................................................
-
-    //this.playerMovingByClicking()
-    Move.identifySurfaceOfPointerInteraction(this)
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {

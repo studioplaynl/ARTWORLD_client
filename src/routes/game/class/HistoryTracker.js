@@ -27,6 +27,7 @@ class HistoryTracker {
         scene.scene.stop(scene.scene.key)
         scene.scene.start(goToScene, { user_id: locationID })
         console.log("switchScene locationID", locationID)
+        ManageSession.location = locationID
         ManageSession.getStreamUsers("join", locationID)
       },
       callbackScope: scene,

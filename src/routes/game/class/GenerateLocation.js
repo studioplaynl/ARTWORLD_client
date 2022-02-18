@@ -40,11 +40,12 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             width = this.size
         }
 
-        if (typeof this.userHome === "undefined"){
+        //if the location is not userHome we set the userHome to locationDestination, because that is used for HistoryTracker
+        if (typeof this.userHome === "undefined") {
             this.userHome = this.locationDestination
         }
-       
-        //TODO rewrite without the container, just using sprite, containers are a bit more cpu intensive also
+
+        //TODO rewrite without the container, just using sprite, containers are a bit more cpu intensive 
 
         //display width of the location image/ triangle/ isoBox
 
@@ -85,6 +86,25 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // we set the location either clickable or dragable (because dragging is a edit function)
         if (!this.draggable) {
             this.location.setInteractive({ useHandCursor: true })
+            console.log("this.location.width, this.location.height", this.location.width, this.location.height)
+            // the width and height are not the same for isobox, 
+            // we make the hitarea for 
+
+            const hitAreaWidth = this.location.width
+            const hitAreaheight = this.location.height
+            if (hitAreaWidth != hitAreaheight) {
+                //  Coordinates are relative from the top-left, so we want out hit area to be
+                //  an extra 60 pixels around the texture, so -30 from the x/y and + 60 to the texture width and height
+
+                //extend the isobox hitarea
+                this.location.input.hitArea.setTo(-hitAreaWidth / 3, -hitAreaWidth / 1.3, hitAreaWidth * 1.4, hitAreaWidth * 1.5)
+            } else {
+
+            }
+
+
+
+            console.log("this.location", this.location)
             // on home click, we let the player to see the entrance arrow above the home
             this.location.on('pointerdown', () => {
                 if (!this.showing) {
