@@ -85,6 +85,10 @@ export default class Location2 extends Scene3D {
         this.robot.anims.play("Walking");
       });
     });
+
+
+
+
   }
 
   addBackButton() {
@@ -93,8 +97,20 @@ export default class Location2 extends Scene3D {
       .setDepth(1000)
       .setInteractive({ useHandCursor: true })
 
-
     this.backButton.on("pointerup", () => {
+      this.platform = this.third.add.box(
+        {
+          name: "platform",
+          width: 300,
+          depth: 300,
+          height: 1,
+          mass: 0,
+          y: 4,
+        },
+        {
+          phong: { color: "white" },
+        }
+      )
       ManageSession.socket.rpc("leave", this.scene.key)
 
       const goToScene = "ArtworldAmsterdam"
