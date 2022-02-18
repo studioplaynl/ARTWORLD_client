@@ -258,12 +258,10 @@ class ArtworkList {
   // universal panel for player and onlinePlayer  
   createLikedPanel(scene, spinner, likedPanelName, currentPlayer, currentLikedPanelKeys) {
     // destroy the loading spinner
-    spinner.destroy()
+    if (spinner) spinner.destroy()
 
     // destroy the old panel
-    if (scene[likedPanelName]) {
-      scene[likedPanelName].destroy()
-    }
+    if (scene[likedPanelName]) scene[likedPanelName].destroy()
 
     // create a new panel
     scene[likedPanelName] = scene.rexUI.add
@@ -327,7 +325,7 @@ class ArtworkList {
     let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "heart").setOrigin(1, 0).setScale(0.7)
       .setInteractive()
       .setData("toggle", false) //false, not liked state
-      .on('pointerup', () => { this.heartButtonToggle(mediaObject, currentHeart) })
+      .on('pointerup', () => { this.heartButtonToggle(scene, mediaObject, currentHeart) })
 
     scene.artContainer.add(currentHeart)
 
@@ -344,7 +342,7 @@ class ArtworkList {
     }
   }
 
-  heartButtonToggle(mediaObject, button) {
+  async heartButtonToggle(scene, mediaObject, button) {
     let parsedMediaOject = { user_id: mediaObject.user_id, collection: mediaObject.collection, key: mediaObject.key, version: mediaObject.value.version, url: mediaObject.value.url, previewURl: mediaObject.value.previewURl }
     let toggle = button.getData("toggle")
 
@@ -352,7 +350,7 @@ class ArtworkList {
       // changing to red, liked
       button.setTexture("heart")
       button.setData("toggle", false)
-      //! Update likedpanel, when open?
+
       // updates the object locally
       // add to the array
       ManageSession.liked.liked.push(parsedMediaOject)
@@ -360,11 +358,13 @@ class ArtworkList {
       // changing to empty, not liked
       button.setTexture("heart_empty")
       button.setData("toggle", true)
-      //! Update likedpanel, when open?
+
       // updates the object locally
       // find the object in the array, by url, filter the object with the url out
       ManageSession.liked.liked = ManageSession.liked.liked.filter(obj => obj.url != mediaObject.value.url)
     }
+    // if the player's liked panel is open, we want to show the update by remaking the panel immediately
+    if (scene.playerLikedButtonClickedFlag) scene.playerLikedPanelKeys = await this.convertRexUIArray(scene)
 
     const type = "liked"
     const name = type + "_" + ManageSession.userProfile.id
