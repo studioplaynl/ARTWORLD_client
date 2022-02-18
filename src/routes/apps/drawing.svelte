@@ -1129,7 +1129,7 @@ import App from "../../App.svelte";
             class="lineWidth"
             style="width:{lineWidth}px; height: {lineWidth}px; background-color: {drawingColor}; box-shadow: {shadowOffset}px {shadowOffset}px {shadowWidth}px {shadowColor};margin:  0px auto {shadowOffset}px auto;"
           ><input type="color" bind:value={drawingColor} bind:this="{drawingColorEl}" id="drawing-color" /></div>
-          <div class="colorIcon"><ColorSelectIcon/></div>
+          <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg">
         </div>
           <span class="info">{lineWidth}</span><input
             type="range"
@@ -1257,9 +1257,8 @@ import App from "../../App.svelte";
               console.log("versoionn"+ version)
             saveToggle = !saveToggle;
             switchOption("saveToggle")
-            } else {
-              upload()
-            }
+            } 
+            upload()
             
           }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" ></a
         >
@@ -1454,8 +1453,8 @@ import App from "../../App.svelte";
 .colorIcon{
   width: 32px;
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: 5px;
+  bottom: 5px;
 }
 
 /* new css */

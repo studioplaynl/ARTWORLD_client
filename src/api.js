@@ -181,7 +181,9 @@ export async function listAllObjects(type, id) {
   const payload = { type , id};
   const rpcid = "list_all_storage_object";
   const objects = await client.rpc(Sess, rpcid, payload);
-
+  // objects.payload.forEach(object => {
+  //   object.value = JSON.parse(object.value)
+  // });
   return objects.payload
 }
 

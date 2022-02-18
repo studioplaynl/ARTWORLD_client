@@ -269,4 +269,10 @@ async function convert() {
         padding: 10px;
         border-radius: 5px;
     }
+
+    main {
+    max-width: 500px;
+    display: block;
+    margin: 0 auto;
+}
 </style>

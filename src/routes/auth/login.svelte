@@ -29,8 +29,6 @@
   <div class="registerForm">
 	<form on:submit|preventDefault={onSubmit}>
 		<div class="container">
-		  <h1>{$_('login.title')}</h1>
-		  <hr>
 
 		  <label for="email"><b>{$_('register.email')}</b></label>
 		  <input type="text" placeholder="Enter Email" name="email" id="email" bind:value={email} required>
@@ -46,11 +44,20 @@
 </main>
 
 <style>
+  main {
+    background: linear-gradient(90deg, white 29px, transparent 0%) center, linear-gradient(white 29px, transparent 0%) center, #7300ED;
+    background-size: 30px 30px;
+  }
+
 	* {box-sizing: border-box}
   .registerForm {
-	max-width: 400px;
-	margin: 0 auto;
-}
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    height: 100vh;
+  }
 
 /* Add padding to containers */
 .container {

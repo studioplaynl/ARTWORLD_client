@@ -43,12 +43,37 @@
     "Utrecht",
   ];
 
+  let houses = [
+		"portalBlauw.png",
+		"portalDonkerBlauw.png",
+		"portalGeel.png",
+		"portalGifGroen.png",
+		"portalGroen.png",
+		"portalRood.png",
+		"portalRoze.png",
+		"portalZwart.png"
+	]
+
+	let house = houses[(Math.floor(houses.length*Math.random()))]
+
+	let avatars = [
+		"avatarBlauw.png",
+		"avatarGeel.png",
+		"avatarGroen.png",
+		"avatarPaars.png",
+		"avatarRood.png",
+		"avatarRoze.png"
+	]
+
+	let avatar = avatars[(Math.floor(avatars.length*Math.random()))]
+
+
 	console.log($_ /*_("game.mainmenu.welcomeTo")*/)
 
 	async function register() {
 		const create = true;
 		console.log("azc: " + azc)
-		let data = {"userId": $Session.user_id, "azc": azc, "role": role}
+		let data = {"userId": $Session.user_id, "azc": azc, "role": role, "avatar": "/avatar/stock/" + avatar, "home": "/home/stock/" + house }
 		console.log(client)
 		var token = client.configuration.bearerToken
 		client.configuration.bearerToken = null
@@ -109,11 +134,17 @@
 		  <select name="AZC" bind:value={azc} required>
 			
 			<option value="null">{$_('register.none')}</option>
-			{#each Locaties as locatie}
+			{#each Locaties as locatie, i}
 			<option value="{locatie}">{locatie}</option>
 			{/each}
 			
 	      </select>
+		  <label for="avatar"><b>avatar</b></label>
+		  <img src="{"assets/SHB/avatar/" + avatar}">
+		  <label for="house"><b>House</b></label>
+		  <img src="{"assets/SHB/portal/" + house}">
+
+
 		  <button type="submit" class="registerbtn">Register</button>	  
 		</div>
 	  </form>
@@ -125,6 +156,7 @@
 		  <h5>Password:</h5>
 		  <b>{password}</b>	
 	  </div>
+
 	</div>
 </main>
 
@@ -154,13 +186,6 @@ input[type=text]:focus, input[type=password]:focus {
   outline: none;
 }
 
-select {
-	width: 100%;
-    padding: 15px;
-    margin: 5px 0 22px 0;
-    display: inline-block;
-    background: #f1f1f1;
-}
 
 /* Overwrite default styles of hr */
 hr {
@@ -198,5 +223,9 @@ a {
 
 .printarea{
 	display: none;
+}
+
+img {
+	width:60px;
 }
 </style>
