@@ -1,6 +1,5 @@
 import { Scene3D, ExtendedObject3D } from "@enable3d/phaser-extension"
 import ManageSession from "../ManageSession"
-import HistoryTracker from "../class/HistoryTracker"
 
 export default class Location2 extends Scene3D {
 
@@ -18,7 +17,8 @@ export default class Location2 extends Scene3D {
     // 3d scenes have separate UI_scene
     this.scene.stop("UI_Scene")
 
-    const { ground } = await this.third.warpSpeed("-orbitControls");
+    // enable ground and disable 3d orbit camera control
+    const { ground } = await this.third.warpSpeed("-orbitControls")
 
     this.robot = new ExtendedObject3D();
     const pos = { x: 3, y: 2, z: -7 };
@@ -85,10 +85,6 @@ export default class Location2 extends Scene3D {
         this.robot.anims.play("Walking");
       });
     });
-
-
-
-
   }
 
   addBackButton() {
@@ -98,6 +94,8 @@ export default class Location2 extends Scene3D {
       .setInteractive({ useHandCursor: true })
 
     this.backButton.on("pointerup", () => {
+
+      // to cover the whole scene on leaving
       this.platform = this.third.add.box(
         {
           name: "platform",
