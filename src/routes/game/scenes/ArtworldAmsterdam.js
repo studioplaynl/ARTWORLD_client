@@ -130,7 +130,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     Background // the order of creation is the order of drawing: first = bottom ...............................
     Background.repeatingDots({
       scene: this,
-      gridOffset: 50,
+      gridOffset: 80,
       dotWidth: 2,
       dotColor: 0x909090,
       backgroundColor: 0xffffff,
