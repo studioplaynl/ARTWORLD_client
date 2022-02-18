@@ -183,15 +183,11 @@ export default class Location1 extends Phaser.Scene {
 
     //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
 
-    //create player group
-    this.playerGroup = this.add.group();
-    this.playerGroup.add(this.player);
-    this.playerGroup.add(this.playerShadow);
+    Player.loadPlayerAvatar(this)
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
-    // add onlineplayers group
-    this.onlinePlayersGroup = this.add.group();
+
     //....... end onlinePlayers .......................................................................
 
     //....... PLAYER VS WORLD ..........................................................................
@@ -859,14 +855,11 @@ export default class Location1 extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    Player.loadPlayerAvatar(this)
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
-
     //! make more efficient with event?
     this.gameCam.zoom = this.UI_Scene.currentZoom
-
 
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
@@ -879,9 +872,6 @@ export default class Location1 extends Phaser.Scene {
     // Move.movingAnimation(this)
     Move.checkIfPlayerIsMoving(this)
     //....... end moving ANIMATION .................................................................................
-
-    //this.playerMovingByClicking()
-    Move.identifySurfaceOfPointerInteraction(this)
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {

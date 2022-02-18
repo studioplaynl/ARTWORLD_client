@@ -15,16 +15,7 @@ class Player {
       if (ManageSession.createPlayer) {
         ManageSession.createPlayer = false
         //console.log("ManageSession.createPlayer = false;")
-
-        //set the location of the player to this location
-
         scene.createdPlayer = false
-
-        //console.log("loadAndCreatePlayerAvatar")
-        //put the player in the server last known position
-
-        scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, ManageSession.userProfile.meta.posX)
-        scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, ManageSession.userProfile.meta.posY)
 
         // is playerAvaterKey already in loadedAvatars?
         //no -> load the avatar and add to loadedAvatars
@@ -35,37 +26,68 @@ class Player {
           "_" +
           ManageSession.userProfile.create_time
 
-        //console.log(scene.textures.exists(scene.playerAvatarKey))
-
         //* attatch to existing context and physics
         scene.add.existing(this)
         scene.physics.add.existing(this)
 
-        //if the texture doesnot exists load it and attach it to the player
-        if (!scene.textures.exists(scene.playerAvatarKey)) {
-          //check if url is not empty for some reason, returns so that previous image is kept
-          if (ManageSession.userProfile.url === "") {
-            console.log("avatar url is empty")
-            ManageSession.createPlayer = false
-            console.log("ManageSession.createPlayer = ", ManageSession.createPlayer)
-            scene.createdPlayer = true
-            console.log("scene.createdPlayer = ", scene.createdPlayer)
-            return
-          } else {
-            //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
-            const fileNameCheck = scene.playerAvatarKey
-            scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
-              .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
-            scene.load.start() // start loading the image in memory
+        // put the player in the last server known position
+        // retreive position from server
+        Promise.all([getAccount(ManageSession.userProfile.id)]).then(rec => {
+          console.log("rec[0]", rec[0])
+          //* data model:
+          // rec[0].metadata:
+          // azc: "Amsterdam"
+          // location: "5264dc23-a339-40db-bb84-e0849ded4e68"
+          // posX: -2483
+          // posY: 0
+          // role: "speler"
+          // user_id: ""
+          let lastPosX = rec[0].metadata.posX
+          let lastPosY = rec[0].metadata.posY
+          console.log("lastPosX, lastPosY, location", lastPosX, lastPosY, rec[0].metadata.location)
+
+          // chech if the player is in the same location as the last server location
+          if (rec[0].metadata.location == scene.location) {
+          
+            // check if last position is outside the worldBounds for some reason, place it within in that case
+            if (lastPosX > scene.worldSize.x / 2 || lastPosX < - scene.worldSize.x / 2) lastPosX = 0
+            if (lastPosY > scene.worldSize.y / 2 || lastPosY < - scene.worldSize.y / 2) lastPosY = 0
+            console.log("lastPosX, lastPosY", lastPosX, lastPosY)
+  
+            scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, lastPosX)
+            scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, lastPosY)
+          } else { // otherwise put the player in the middle of the world
+            scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, 0)
+            scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, 0)
           }
-        } else {
-          this.attachAvatarToPlayer(scene)
-        }
+
+          //if the texture doesnot exists load it and attach it to the player
+          if (!scene.textures.exists(scene.playerAvatarKey)) {
+            //check if url is not empty for some reason, returns so that previous image is kept
+            if (ManageSession.userProfile.url === "") {
+              console.log("avatar url is empty")
+              ManageSession.createPlayer = false
+              console.log("ManageSession.createPlayer = ", ManageSession.createPlayer)
+              scene.createdPlayer = true
+              console.log("scene.createdPlayer = ", scene.createdPlayer)
+              return
+            } else {
+              //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
+              const fileNameCheck = scene.playerAvatarKey
+              scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
+                .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
+              scene.load.start() // start loading the image in memory
+            }
+          } else {
+            this.attachAvatarToPlayer(scene)
+            console.log("scene.location", scene.location)
+          }
+        })
       } //if(ManageSession.playerCreated)
     }
   }
 
-  attachAvatarToPlayer(scene) {
+  async attachAvatarToPlayer(scene) {
     //console.log("scene.playerAvatarKey ", scene.playerAvatarKey)
 
     const avatar = scene.textures.get(scene.playerAvatarKey)
@@ -126,26 +148,13 @@ class Player {
     // scene.player.body.setCircle(width, width, width / 2)
     scene.player.body.setCircle(width / 1.1, width / 5, width / 5)
 
-    // place the player in the last known position
-    // this.player.x = this.player.posX
-    // this.player.y = this.player.posY
-
-    //*place the player in the last known position
-    // console.log("scene.player.x", scene.player.x)
-    // console.log("ManageSession.userProfile", ManageSession.userProfile)
-    // console.log("ManageSession.userProfile.meta.posX", ManageSession.userProfile.meta.posX)
-    // console.log("scene.player", scene.player)
-
-    // scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, ManageSession.userProfile.meta.posX)
-    // scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, ManageSession.userProfile.meta.posY)
-
     // console.log("player avatar has loaded ")
     scene.player.location = scene.location
     scene.createdPlayer = true
 
     //send the current player position over the network
-    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)
-  } //attachAvatarToPlayer
+    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
+  } // end attachAvatarToPlayer
 
   createPlayerItemsBar(scene) {
 

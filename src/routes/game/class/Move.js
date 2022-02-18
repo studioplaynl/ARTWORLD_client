@@ -96,7 +96,6 @@ class Move {
     //  10 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (scene.isPlayerMoving) {
-
       // calculate distance only when playerIsMovingByClicking
       scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y)
       if (scene.distance < scene.distanceTolerance) {
@@ -208,21 +207,6 @@ class Move {
       // this.scrollablePanel.y = this.player.y + 150
     }
   }
-
-  identifySurfaceOfPointerInteraction(scene) {
-    // identifies if the pointer is down on a graffiti wall
-    // if the condition is true, the avatar stops any movement
-    scene.input.on("pointerdown", (pointer, object) => {
-      if ((object[0] && object[0]?.name == "graffitiBrickWall") || object[0]?.name == "graffitiDotWall" || object[0]?.name == "currentPlayerScrollablePanel" || object[0]?.name == "onlinePlayerScrollablePanel"
-      ) {
-        scene.graffitiDrawing = true;
-      }
-    })
-    scene.input.on("pointerup", () => {
-      scene.graffitiDrawing = false;
-    })
-  }
-
 
   movePlayerLikedPanel(scene) {
     scene.playerLikedPanel.x = scene.player.x + 200;

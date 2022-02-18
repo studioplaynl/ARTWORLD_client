@@ -117,7 +117,7 @@ export default class Location4 extends Phaser.Scene {
     //....... end SOCKET .......................................................................
 
     this.generateBackground()
-    
+
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
     .setInteractive() //{ useHandCursor: true }
     .on('pointerup', () =>  console.log("touched background"))
@@ -134,10 +134,7 @@ export default class Location4 extends Phaser.Scene {
     Player.createPlayerItemsBar(this)
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
 
-    //create player group
-    this.playerGroup = this.add.group();
-    this.playerGroup.add(this.player);
-    this.playerGroup.add(this.playerShadow);
+    Player.loadPlayerAvatar(this)
 
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
 
@@ -1046,7 +1043,6 @@ export default class Location4 extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    Player.loadPlayerAvatar(this)
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
@@ -1064,9 +1060,6 @@ export default class Location4 extends Phaser.Scene {
     // Move.movingAnimation(this)
     Move.checkIfPlayerIsMoving(this)
     //....... end moving ANIMATION .................................................................................
-
-    //this.playerMovingByClicking()
-    Move.identifySurfaceOfPointerInteraction(this)
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {

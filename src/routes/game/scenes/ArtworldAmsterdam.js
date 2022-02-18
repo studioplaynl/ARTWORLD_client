@@ -127,7 +127,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     ManageSession.createPlayer = true
     //....... end LOAD PLAYER AVATAR .......................................................................
 
-    //Background // the order of creation is the order of drawing: first = bottom ...............................
+    Background // the order of creation is the order of drawing: first = bottom ...............................
     Background.repeatingDots({
       scene: this,
       gridOffset: 50,
@@ -295,6 +295,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //create items bar for onlineplayer, after UIscene, because it need currentZoom
     Player.createOnlinePlayerItemsBar(this)
+    Player.loadPlayerAvatar(this)
     // this.avatarDetailsContainer.setDepth(999)
 
   } //end create
@@ -333,7 +334,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         // console.log(element.value.posX)
 
         // parse home description
-        // console.log("element", element)
+        console.log("element", element)
         let locationDescription = element.value.username
 
         //! Get avatar of home users
@@ -464,7 +465,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-    Player.loadPlayerAvatar(this)
+   
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 

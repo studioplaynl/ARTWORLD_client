@@ -19,7 +19,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     constructor() {
         super("DefaultUserHome");
 
-        this.worldSize = new Phaser.Math.Vector2(2000, 1000)
+        this.worldSize = new Phaser.Math.Vector2(6000, 1000)
 
         this.debug = false
 
@@ -185,10 +185,12 @@ export default class DefaultUserHome extends Phaser.Scene {
             width: 400,
             height: 400,
             duration: 850,
-            color: 0x000000
+            color: 0xffff00
         }).setDepth(199)
 
         this.artworksListSpinner.start()
+
+        Player.loadPlayerAvatar(this)
 
         await listImages("drawing", this.location, 100).then((rec) => {
             //this.userArtServerList is an array with objects, in the form of:
@@ -224,6 +226,8 @@ export default class DefaultUserHome extends Phaser.Scene {
                 this.artworksListSpinner.destroy()
             }
         })
+
+        
 
     }//end create
 
@@ -312,7 +316,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     update(time, delta) {
         //...... ONLINE PLAYERS ................................................
-        Player.loadPlayerAvatar(this)
         Player.parseNewOnlinePlayerArray(this)
         //.......................................................................
 
@@ -329,9 +332,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         // Move.movingAnimation(this)
         Move.checkIfPlayerIsMoving(this)
         //....... end moving ANIMATION .................................................................................
-
-        //this.playerMovingByClicking()
-        Move.identifySurfaceOfPointerInteraction(this)
 
         // to detect if the player is clicking/tapping on one place or swiping
         if (this.input.activePointer.downX != this.input.activePointer.upX) {

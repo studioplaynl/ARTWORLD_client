@@ -58,7 +58,7 @@ class DebugFuntions {
         scene.input.keyboard.on('keyup-S', function (event) {
 
             console.log('S key')
-            setLoader(true)
+            //setLoader(true)
 
 
         }, scene);

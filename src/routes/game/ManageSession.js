@@ -90,11 +90,12 @@ class ManageSession {
       let data = JSON.parse(streamdata.data)
       //console.log(data)
 
+      //parse the movement data for the players in our allConnectedUsers array
       for (const onlinePlayer of this.allConnectedUsers) {
         //console.log("onlinePlayer", onlinePlayer)
         if (onlinePlayer.scene) {
           if (onlinePlayer.user_id == data.user_id) {
-            console.log("data.user_id", data.user_id)
+            //console.log("data.user_id", data.user_id)
             // data is in the form of:
             // location: "ArtworldAmsterdam"
             // posX: -236.42065
@@ -161,7 +162,8 @@ class ManageSession {
       if (!!streampresence.joins) {
         streampresence.joins.forEach((join) => {
           //filter out the player it self
-          if (join.user_id != this.userProfile.user_id) {
+          console.log("this.userProfile.id", this.userProfile.id)          
+          if (join.user_id != this.userProfile.id) {
             //console.log(this.userProfile)
             console.log("some one joined")
             // this.getStreamUsers("home")
