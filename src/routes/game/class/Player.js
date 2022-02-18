@@ -48,12 +48,12 @@ class Player {
 
           // chech if the player is in the same location as the last server location
           if (rec[0].metadata.location == scene.location) {
-          
+
             // check if last position is outside the worldBounds for some reason, place it within in that case
             if (lastPosX > scene.worldSize.x / 2 || lastPosX < - scene.worldSize.x / 2) lastPosX = 0
             if (lastPosY > scene.worldSize.y / 2 || lastPosY < - scene.worldSize.y / 2) lastPosY = 0
             console.log("lastPosX, lastPosY", lastPosX, lastPosY)
-  
+
             scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, lastPosX)
             scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, lastPosY)
           } else { // otherwise put the player in the middle of the world
@@ -198,6 +198,8 @@ class Player {
               color: 0x000000
             }).setDepth(199).start()
 
+            // this flag is used for the cases when an artwork is liked and the panel gets updated immediately
+            scene.playerLikedButtonClickedFlag = true
             // downloading the images and displaying them
             scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
           } else {
@@ -224,10 +226,10 @@ class Player {
 
       } else {
         scene.playerItemsBar.setVisible(false)
-        if (scene.playerLikedPanel) scene.playerLikedPanel.setVisible(false)
-        // console.log("scene.playerLikedPanel", scene.playerLikedPanel)
+        if (scene.playerLikedPanel) scene.playerLikedPanel.destroy()
         scene.isPlayerItemsBarDisplayed = false
         if (scene.playerAddressbookContainer) this.destroyAddressbook(scene)
+        if (scene.playerLikedButtonClickedFlag) scene.playerLikedButtonClickedFlag = false
       }
     })
   }
