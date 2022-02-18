@@ -186,30 +186,31 @@ class Player {
         scene.playerLikedButton = scene.add.image(65, 0, "heart").setInteractive({ useHandCursor: true })
 
         scene.playerLikedButton.on("pointerdown", async () => {
+          // this flag is used for the cases when an artwork is liked/unliked and the panel gets updated immediately
+          scene.playerLikedButtonClickedFlag = true
+          // display spinner while images are being downloaded
+          scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
+            x: scene.player.x + 150,
+            y: scene.player.y,
+            width: 100,
+            height: 100,
+            duration: 850,
+            color: 0x000000
+          }).setDepth(199).start()
+
           // check if there are any liked artworks
           if (ManageSession.liked.liked.length > 0) {
-            // display spinner while images are being downloaded
-            scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
-              x: scene.player.x + 150,
-              y: scene.player.y,
-              width: 100,
-              height: 100,
-              duration: 850,
-              color: 0x000000
-            }).setDepth(199).start()
-
-            // this flag is used for the cases when an artwork is liked and the panel gets updated immediately
-            scene.playerLikedButtonClickedFlag = true
-            // downloading the images and displaying them
-            scene.playerLikedPanelKeys = await ArtworkList.convertRexUIArray(scene)
+            // downloading the images and displaying them in liked panel
+            await ArtworkList.convertRexUIArray(scene)
           } else {
-            console.log("No liked artworks")
+            scene.playerLikedPanelKeys = { artworks: [{ "name": "artFrame_128" }] } // placeholder when there is none liked artwork
+            // creating a liked panel with the placeholder
+            ArtworkList.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
           }
         })
 
         // creating an addressbook button
         scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook").setInteractive({ useHandCursor: true })
-
 
         scene.playerAddressbookButton.on("pointerup", () => {
           this.createAddressbook(scene)

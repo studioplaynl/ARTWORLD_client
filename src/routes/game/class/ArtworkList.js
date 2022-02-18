@@ -363,14 +363,22 @@ class ArtworkList {
       // find the object in the array, by url, filter the object with the url out
       ManageSession.liked.liked = ManageSession.liked.liked.filter(obj => obj.url != mediaObject.value.url)
     }
-    // if the player's liked panel is open, we want to show the update by remaking the panel immediately
-    if (scene.playerLikedButtonClickedFlag) scene.playerLikedPanelKeys = await this.convertRexUIArray(scene)
 
+    // if the liked panel is open, show the update on a like button click
+    if (ManageSession.liked.liked.length > 0) { // in case of there are liked artworks
+      if (scene.playerLikedButtonClickedFlag) await this.convertRexUIArray(scene)
+    } else { // in case of there is none 
+      if (scene.playerLikedButtonClickedFlag) {
+        scene.playerLikedPanelKeys = { artworks: [{ "name": "artFrame_128" }] }
+        this.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
+      }
+    }
+
+    // updates the object server side 
     const type = "liked"
     const name = type + "_" + ManageSession.userProfile.id
     const pub = 2
     const value = ManageSession.liked
-    // updates the object server side 
     updateObject(type, name, value, pub)
   }
 }
