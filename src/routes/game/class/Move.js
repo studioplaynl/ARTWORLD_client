@@ -144,6 +144,8 @@ class Move {
       scene.target.x = playerX + swipeX
       scene.target.y = playerY + swipeY
 
+      console.log(moveSpeed)
+
       // generalized moving method
       this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed)
       ManageSession.playerMove = false
@@ -165,23 +167,31 @@ class Move {
 
         lastTime = scene.time.now
         if (clickDelay < 350 && scene.graffitiDrawing == false) {
+
           // play "move" animation
           // play the animation as soon as possible so it is more visible
           this.movingAnimation(scene, "moving")
+
+          const playerX = scene.player.x 
+          const playerY = scene.player.y 
 
           //mouse point after doubletap is target
           scene.target.x = scene.input.activePointer.worldX
           scene.target.y = scene.input.activePointer.worldY
 
-          let moveSpeed = scene.target.length()
+          scene.swipeAmount.x = playerX - scene.target.x 
+          scene.swipeAmount.y = playerY - scene.target.y 
 
+          let moveSpeed = scene.swipeAmount.length() 
+          
+          console.log(moveSpeed)
           // we scale the arrival check (distanceTolerance) to the speed of the player
           scene.distanceTolerance = moveSpeed / 60
 
           scene.isPlayerMoving = true // activate moving animation
 
           // generalized moving method
-          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed / 4) // send moveTo over network, calculate speed as function of distance
+          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed) // send moveTo over network, calculate speed as function of distance
         }
       })
       scene.isClicking = false
