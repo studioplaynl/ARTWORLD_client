@@ -161,6 +161,9 @@ class Player {
     // making the avatar interactive
     scene.player.setInteractive({ useHandCursor: true })
 
+    //also detect movementTouch when clicking on player: to detect swipt starting from player
+    scene.player.on('pointerdown', () => ManageSession.playerMove = true)
+
     // creating a hit area for a better user experience
     scene.player.input.hitArea.setTo(-10, -10, scene.player.width + 50, scene.player.height + 50)
 
@@ -485,6 +488,7 @@ class Player {
   parseNewOnlinePlayerArray(scene) {
     if (ManageSession.createOnlinePlayerArray.length > 0) {
 
+      //get more account info for each onlineplayer
       ManageSession.createOnlinePlayerArray.forEach(onlinePlayer => {
         Promise.all([getAccount(onlinePlayer.user_id)]).then(rec => {
           const newOnlinePlayer = rec[0]
@@ -568,7 +572,6 @@ class Player {
       console.log("onlinePlayer", onlinePlayer)
 
       //we push the new online player to the allConnectedUsers array
-      //! check if oLP has defined scene! before pushing
       ManageSession.allConnectedUsers.push(onlinePlayer)
 
       //we load the onlineplayer avatar, make a key for it

@@ -265,26 +265,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //......... DEBUG FUNCTIONS ...........................................................................
     DebugFuntions.keyboard(this)
-    //this.createDebugText()
     //......... end DEBUG FUNCTIONS .......................................................................
-    // create itemsbar
-    //  this.itemsbar = this.add.graphics();
-
-    //  this.itemsbar.fillStyle(0xffff00, 1);
-
-    //  //  32px radius on the corners
-    //  this.itemsbar.fillRoundedRect(32, 32, 300, 200, 32);
-
-    //Test changing the addressbook object
-    // '{ "user_id": ' + ManageSession.userProfile.id + ', "posY": ' + "100" + ', "posY": "' + "110" + '" }'
-    // const value = '{"user_id": "b9ae6807-1ce1-4b71-a8a3-f5958be4d340", "posX": "500", "posY": "110"}'
-
-    // const type = "addressbook"
-    // const name = type + "_" + ManageSession.userProfile.id
-    // const pub = 2
-
-    // updateObject(type, name, value, pub)
-
+ 
     //......... UI Scene  .................................................................................
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
