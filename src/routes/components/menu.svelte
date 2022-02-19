@@ -83,7 +83,7 @@
         <li><a href="/#/friends">{$_("nav.friends")}</a></li>
         <li><a href="/#/drawing">{$_("nav.drawing")}</a></li>
         <li><a href="/#/stopmotion">{$_("nav.stopmotion")}</a></li>
-        <li><a href="/#/mariosound">{$_("nav.mariosound")}</a>
+        <li><a on:click="{()=> { location.href = "/#/mariosound" ;location.reload(); }}">{$_("nav.mariosound")}</a>
       </ul>
       <select bind:value={$locale} on:click>
         {#each $locales as locale}

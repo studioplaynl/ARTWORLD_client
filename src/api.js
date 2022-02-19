@@ -402,6 +402,7 @@ export async function deleteObjectAdmin(id, type, name) {
 
 export async function convertImage(path,size, format) {
   let payload = {path,size, format};
+  if(typeof size == "number") size = String(size)
   const rpcid = "convert_image";
    let user = await client.rpc(Sess, rpcid, payload)
    if(!!!user.payload.url) Error.update(er => er = "could'nt convert image")
