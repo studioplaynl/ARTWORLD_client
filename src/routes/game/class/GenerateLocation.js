@@ -115,8 +115,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             })
         }
 
-        //place the description under the location image (for devving only)
-        const locationDescription = this.scene.add.text(0, width / 2 - 30, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(51)
+        // place the description under the location image (for devving only)
+        const locationDescription = this.scene.add.text(0, width / 2 - 30, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(52)
+        // location plate name
+        const namePlate = this.scene.add.graphics().fillStyle(0xffffff, 1).fillRoundedRect(0 - (locationDescription.width + 10) / 2, width / 2 - 52, locationDescription.width + 10 /* text's width + 10 (to have space between border and text) */, 40, 10).setDepth(51)
 
         //align the location image and description
         //Phaser.Display.Align.In.TopCenter(this.location, locationDescription)
@@ -148,6 +150,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         //the container is created at the this.x and this.y
         //this.setSize(width, width)
         this.add(this.location)
+        this.add(namePlate)
         this.add(locationDescription)
         //this.add(this.enterButtonHitArea)
 
