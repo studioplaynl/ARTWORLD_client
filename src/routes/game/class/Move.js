@@ -133,21 +133,19 @@ class Move {
       scene.swipeAmount.y = swipeY
 
       let moveSpeed = scene.swipeAmount.length()
-      // console.log("moveSpeed", moveSpeed)
+
       // we scale the arrival check (distanceTolerance) to the speed of the player
       scene.distanceTolerance = moveSpeed / 60
-      // console.log("scene.distanceTolerance", scene.distanceTolerance)
-      // console.log("moveSpeed", moveSpeed)
+
+      console.log("moveBySwiping moveSpeed", moveSpeed)
 
       scene.isPlayerMoving = true // to stop the player when it reached its destination
 
       scene.target.x = playerX + swipeX
       scene.target.y = playerY + swipeY
 
-      console.log(moveSpeed)
-
       // generalized moving method
-      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed)
+      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2)
       ManageSession.playerMove = false
       scene.isClicking = false
     }
@@ -172,26 +170,27 @@ class Move {
           // play the animation as soon as possible so it is more visible
           this.movingAnimation(scene, "moving")
 
-          const playerX = scene.player.x 
-          const playerY = scene.player.y 
+          const playerX = scene.player.x
+          const playerY = scene.player.y
 
           //mouse point after doubletap is target
           scene.target.x = scene.input.activePointer.worldX
           scene.target.y = scene.input.activePointer.worldY
 
-          scene.swipeAmount.x = playerX - scene.target.x 
-          scene.swipeAmount.y = playerY - scene.target.y 
+          scene.swipeAmount.x = playerX - scene.target.x
+          scene.swipeAmount.y = playerY - scene.target.y
 
-          let moveSpeed = scene.swipeAmount.length() 
-          
-          console.log(moveSpeed)
+          let moveSpeed = scene.swipeAmount.length()
+
+          console.log("moveByTapping moveSpeed", moveSpeed)
+
           // we scale the arrival check (distanceTolerance) to the speed of the player
           scene.distanceTolerance = moveSpeed / 60
 
           scene.isPlayerMoving = true // activate moving animation
 
           // generalized moving method
-          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed) // send moveTo over network, calculate speed as function of distance
+          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2) // send moveTo over network, calculate speed as function of distance
         }
       })
       scene.isClicking = false
