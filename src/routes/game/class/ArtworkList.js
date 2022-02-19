@@ -383,9 +383,4 @@ class ArtworkList {
   }
 }
 
-//where check against MS.allLiked
-//where change MS.allLiked
-
-//we came from [] and now we have .liked[{},{}] and the objects {user_id: "user_id", art_key: "art_key"}
-
 export default new ArtworkList()

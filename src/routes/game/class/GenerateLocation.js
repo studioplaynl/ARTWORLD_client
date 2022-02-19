@@ -57,7 +57,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         if (this.type === "image") {
             //console.log("image!")
             this.scene.textures.exists(this.locationImage)
-            this.location = this.scene.physics.add.image(0, 0, this.locationImage).setOrigin(0.5, 0.5).setDepth(50)
+            this.location = this.scene.physics.add.image(0, 0, this.locationImage).setOrigin(0.5, 0.5).setDepth(30)
 
             //set the location to a fixed size, also scales the physics body
             this.location.displayWidth = width
@@ -115,8 +115,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             })
         }
 
-        //place the description under the location image (for devving only)
-        const locationDescription = this.scene.add.text(0, width / 2 - 30, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(51)
+        // place the description under the location image (for devving only)
+        const locationDescription = this.scene.add.text(0, width / 2 - 30, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(32)
+        // location plate name
+        const namePlate = this.scene.add.graphics().fillStyle(0xffffff, 1).fillRoundedRect(0 - (locationDescription.width + 14) / 2, width / 2 - 44, locationDescription.width + 14 /* text's width + 10 (to have space between border and text) */, 27, 10).setDepth(31)
 
         //align the location image and description
         //Phaser.Display.Align.In.TopCenter(this.location, locationDescription)
@@ -132,7 +134,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0x6666ff).setOrigin(0.5, 0.5).setVisible(false).setInteractive({ useHandCursor: true }).setDepth(500)
         // .setStrokeStyle(2, 0x000000)
-        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setOrigin(0.5, 0.5).setDepth(200).setVisible(false).setDepth(500)
+        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setOrigin(0.5, 0.5).setVisible(false).setDepth(500)
 
 
         this.enterButtonTween = this.scene.tweens.add({
@@ -148,6 +150,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         //the container is created at the this.x and this.y
         //this.setSize(width, width)
         this.add(this.location)
+        this.add(namePlate)
         this.add(locationDescription)
         //this.add(this.enterButtonHitArea)
 
