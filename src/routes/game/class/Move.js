@@ -132,7 +132,7 @@ class Move {
       scene.swipeAmount.x = swipeX
       scene.swipeAmount.y = swipeY
 
-      let moveSpeed = scene.swipeAmount.length()
+      let moveSpeed = scene.swipeAmount.length() * 2
 
       // we scale the arrival check (distanceTolerance) to the speed of the player
       scene.distanceTolerance = moveSpeed / 60
@@ -145,7 +145,7 @@ class Move {
       scene.target.y = playerY + swipeY
 
       // generalized moving method
-      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2)
+      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed)
       ManageSession.playerMove = false
       scene.isClicking = false
     }
@@ -180,7 +180,7 @@ class Move {
           scene.swipeAmount.x = playerX - scene.target.x
           scene.swipeAmount.y = playerY - scene.target.y
 
-          let moveSpeed = scene.swipeAmount.length()
+          let moveSpeed = scene.swipeAmount.length() * 2
 
           console.log("moveByTapping moveSpeed", moveSpeed)
 
@@ -190,7 +190,7 @@ class Move {
           scene.isPlayerMoving = true // activate moving animation
 
           // generalized moving method
-          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed * 2) // send moveTo over network, calculate speed as function of distance
+          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed) // send moveTo over network, calculate speed as function of distance
         }
       })
       scene.isClicking = false

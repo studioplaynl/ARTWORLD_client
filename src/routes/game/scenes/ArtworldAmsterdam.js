@@ -46,7 +46,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.homes = []
     this.homesRepreseneted = []
-    this.homesGenerate = false
 
     this.offlineOnlineUsers
 
@@ -106,14 +105,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async preload() {
     Preloader.Loading(this); //.... PRELOADER VISUALISER
-
-    //get a list of homes from users in ArtworldAmsterdam
-    await listObjects("home", null, 100).then((rec) => {
-      //console.log("rec: ", rec)
-      this.homes = rec
-      console.log("this.homes", this.homes)
-      this.homesGenerate = true
-    })
   }
 
   async create() {
@@ -122,6 +113,29 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
+
+
+    //get a list of homes from users in ArtworldAmsterdam
+    Promise.all([listObjects("home", null, 100)])
+    .then((rec) => {
+      //console.log("rec: ", rec)
+      this.homes = rec[0]
+      console.log("this.homes", this.homes)
+      this.homesGenerate = true
+      this.generateHomes()
+    })
+
+    // collection: "home"
+    // create_time: "2022-01-19T16:31:43Z"
+    // key: "Amsterdam"
+    // permission_read: 2
+    // permission_write: 1
+    // update_time: "2022-01-19T16:32:27Z"
+    // user_id: "4c0003f0-3e3f-4b49-8aad-10db98f2d3dc"
+    // value:
+    // url: "home/4c0003f0-3e3f-4b49-8aad-10db98f2d3dc/3_current.png"
+    // sername: "user88"
+    // version: "0579e989a16f3e228a10d49d13dc3da6"
 
     //.......  LOAD PLAYER AVATAR ..........................................................................
     ManageSession.createPlayer = true
@@ -168,7 +182,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() //{ useHandCursor: true }
-      .on('pointerup', () =>  console.log("touched background"))
+      .on('pointerup', () => console.log("touched background"))
       .on('pointerdown', () => ManageSession.playerMove = true)
       .setDepth(219)
       .setOrigin(0)
@@ -182,7 +196,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34),
       "sunglass_stripes"
-    );
+    )
 
     // this.sunglasses_striped.setInteractive({ draggable: true })
 
@@ -242,8 +256,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
-    //!setBounds has to be set before follow, otherwise the camera doesn't follow!
-    //this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
     this.gameCam.zoom = 1
     this.gameCam.startFollow(this.player)
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
@@ -266,7 +278,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //......... DEBUG FUNCTIONS ...........................................................................
     DebugFuntions.keyboard(this)
     //......... end DEBUG FUNCTIONS .......................................................................
- 
+
     //......... UI Scene  .................................................................................
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
@@ -308,7 +320,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async generateHomes() {
     //check if server query is finished, then make the home from the list
-    if (this.homes != null && this.homesGenerate) {
+    if (this.homes != null) {
       console.log("generate homes!")
 
       this.homes.forEach((element, index) => {
@@ -319,8 +331,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         console.log("element", element)
         let locationDescription = element.value.username
 
-        //! Get avatar of home users
-        // this.getAccountDetails(element, element.user_id)
+            // value:
+    // url: "home/4c0003f0-3e3f-4b49-8aad-10db98f2d3dc/3_current.png"
 
         //create home
         this.homesRepreseneted[index] = new GenerateLocation({
@@ -447,12 +459,12 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-   
+
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
     //! cleanup with promise.all in create
-    this.generateHomes()
+    //this.generateHomes()
 
     //! make more efficient with event?
     this.gameCam.zoom = this.UI_Scene.currentZoom
