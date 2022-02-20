@@ -6,13 +6,8 @@
   import { client } from "../../nakama.svelte";
   import { Session, Profile } from "../../session.js";
   import NameGenerator from "../components/nameGenerator.svelte";
-  import TrashIcon from "svelte-icons/fa/FaTrash.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
-  import CopyIcon from "svelte-icons/fa/FaCopy.svelte";
-  import PasteIcon from "svelte-icons/fa/FaPaste.svelte";
-  import ColorSelectIcon from "svelte-icons/io/IoMdColorPalette.svelte"
-import App from "../../App.svelte";
-
+  
   export let params = {};
   let invalidTitle = true;  
   let history = [],
@@ -678,7 +673,7 @@ import App from "../../App.svelte";
     savecanvas.renderAll();
     savecanvas.clear();
     let data = { objects: [] };
-    let scale = 128 / 700;
+    let scale = 128 / 2084;
     console.log(data);
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
