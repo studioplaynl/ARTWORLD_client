@@ -668,12 +668,13 @@
 
   function createAvatar() {
     console.log("upload avatar");
-    savecanvas.setHeight(128);
-    savecanvas.setWidth(128 * frames.length);
+    let avatarSize = 64
+    savecanvas.setHeight(avatarSize);
+    savecanvas.setWidth(avatarSize * frames.length);
     savecanvas.renderAll();
     savecanvas.clear();
     let data = { objects: [] };
-    let scale = 128 / 2084;
+    let scale = avatarSize / 2084;
     console.log(data);
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
@@ -681,7 +682,7 @@
         const newObject = { ...object };
         newObject.left = newObject.left * scale;
         newObject.top = newObject.top * scale;
-        newObject.left += 128 * i;
+        newObject.left += avatarSize * i;
         newObject.scaleX = scale;
         newObject.scaleY = scale;
         console.log(newObject);
