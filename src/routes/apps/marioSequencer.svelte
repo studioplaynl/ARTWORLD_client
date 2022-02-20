@@ -2,6 +2,11 @@
 
 </script>
 
+
+<svelte:head>
+	<script src="/MarioSequencer/shared.js" ></script>
+</svelte:head>
+
 <main>
 <div id="console"
   style="position: relative; margin:0px auto; padding:0px; border:0px;">
@@ -20,7 +25,7 @@
 </select>
 <button onclick="download()">Save</button>
 </center> -->
-<script src="/MarioSequencer/shared.js"></script>
+<!-- <script src="/MarioSequencer/shared.js"></script> -->
 </main>
 
 <style>
