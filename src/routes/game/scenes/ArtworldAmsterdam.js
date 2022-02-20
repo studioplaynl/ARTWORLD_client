@@ -185,7 +185,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() //{ useHandCursor: true }
-      .on('pointerup', () => console.log("touched background"))
       .on('pointerdown', () => ManageSession.playerMove = true)
       .setDepth(219)
       .setOrigin(0)
@@ -327,14 +326,14 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         // console.log(element.value.posX)
         const homeImageKey = "homeKey_" + element.user_id
         // parse home description
-        console.log("element", element)
+        //console.log("element", element)
         let locationDescription = element.value.username
 
         // get a image url for each home
         // get converted image from AWS
         const url = element.value.url
         Promise.all([convertImage(url, "128", "png")]).then((rec) => {
-          console.log(rec[0])
+          //console.log(rec[0])
           // load all the images to phaser
           this.load.image(homeImageKey, rec[0])
             .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
