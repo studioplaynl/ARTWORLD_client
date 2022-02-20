@@ -596,8 +596,8 @@ class Player {
         //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
         //add it to loading queue
         scene.load.spritesheet(avatarKey, onlinePlayer.url, {
-          frameWidth: 128,
-          frameHeight: 128,
+          frameWidth: 64,
+          frameHeight: 64,
         }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
         //when file is finished loading the attachToAvatar function is called
         scene.load.start() // start loading the image in memory
