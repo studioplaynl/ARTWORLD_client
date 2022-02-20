@@ -63,19 +63,24 @@ class Move {
   }
 
   moveObjectToTarget(scene, container, target, speed) {
+    // moving is done in Phaser coordinates, sending movement over the network is done in ArtworldCoordinates
     // we check if player stays in the world
     // keep the player in the world and send the moveTo commands
     if (target.x < 0) {
-      target.x = 0
+      target.x = 0 + ManageSession.avatarSize
+      ManageSession.cameraShake = true
     }
     if (target.x > scene.worldSize.x) {
-      target.x = scene.worldSize.x
+      target.x = scene.worldSize.x - ManageSession.avatarSize
+      ManageSession.cameraShake = true
     }
     if (target.y < 0) {
-      target.y = 0
+      target.y = 0 + ManageSession.avatarSize
+      ManageSession.cameraShake = true
     }
     if (target.y > scene.worldSize.y) {
-      target.x = scene.worldSize.y
+      target.y = scene.worldSize.y - ManageSession.avatarSize
+      ManageSession.cameraShake = true
     }
 
     scene.physics.moveToObject(container, target, speed)
@@ -93,6 +98,20 @@ class Move {
       // calculate distance only when playerIsMovingByClicking
       scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y)
       if (scene.distance < scene.distanceTolerance) {
+        if (ManageSession.cameraShake) {
+          // camera shake when player walks into bounds of world
+          // (duration, intensity)
+          let shakeIntensity = 0.005
+          let shakeDuration = 200
+          // increase the intensity when camera is zoomed out
+          if (scene.gameCam.zoom < 1) {
+            shakeDuration = (shakeDuration * 3)
+            shakeIntensity = (shakeIntensity / scene.gameCam.zoom) * 2
+          }
+          scene.cameras.main.shake(shakeDuration, shakeIntensity)
+        }
+
+        ManageSession.cameraShake = false
         scene.player.body.reset(scene.target.x, scene.target.y)
         // send Stop command
         ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")

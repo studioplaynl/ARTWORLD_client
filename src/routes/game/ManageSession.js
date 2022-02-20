@@ -38,6 +38,9 @@ class ManageSession {
 
     this.locationExists = false
 
+    this.avatarSize = 64
+    this.cameraShake = false
+
     this.createOnlinePlayers = false
     this.updateOnlinePlayers = false
     this.allConnectedUsers = [] //players except self that are online in the same location

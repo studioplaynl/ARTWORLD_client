@@ -140,9 +140,9 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         //....... onlinePlayers ..............................................................................
         // add onlineplayers group
-        this.onlinePlayersGroup = this.add.group()
+        //this.onlinePlayersGroup = this.add.group()
         //....... end onlinePlayers ..........................................................................
-        Player.createOnlinePlayerItemsBar(this)
+        //Player.createOnlinePlayerItemsBar(this)
         //....... PLAYER VS WORLD .............................................................................
         this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
         //!setBounds has to be set before follow, otherwise the camera doesn't follow!
@@ -319,7 +319,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     update(time, delta) {
         //...... ONLINE PLAYERS ................................................
-        Player.parseNewOnlinePlayerArray(this)
+        //Player.parseNewOnlinePlayerArray(this)
         //.......................................................................
 
         this.gameCam.zoom = this.UI_Scene.currentZoom
