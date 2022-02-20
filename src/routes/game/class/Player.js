@@ -21,11 +21,6 @@ class Player {
         //no -> load the avatar and add to loadedAvatars
         //yes -> dont load the avatar
 
-        scene.playerAvatarKey =
-          ManageSession.userProfile.id +
-          "_" +
-          ManageSession.userProfile.create_time
-
         //* attatch to existing context and physics
         scene.add.existing(this)
         scene.physics.add.existing(this)
@@ -34,18 +29,27 @@ class Player {
         // retreive position from server
         Promise.all([getAccount(ManageSession.userProfile.id)]).then(rec => {
           console.log("rec[0]", rec[0])
+          //update user profile
+          ManageSession.userProfile = rec[0]
           //* data model:
-          // rec[0].metadata:
-          // azc: "Amsterdam"
-          // location: "5264dc23-a339-40db-bb84-e0849ded4e68"
-          // posX: -2483
-          // posY: 0
-          // role: "speler"
-          // user_id: ""
+          // avatar_url: "avatar/stock/avatarRood.png"
+          // url: "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/stock/avatarRood.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20220220%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20220220T131419Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f4a9c03bec8f53e0d8ea141494fe1dac7f124781b8c5d9f77794c8521454e621"
+          // username: "user11"
+          // metadata:
+          //        azc: "Amsterdam"
+          //        location: "5264dc23-a339-40db-bb84-e0849ded4e68"
+          //        posX: -2483
+          //        posY: 0
+          //        role: "speler"
+          //        user_id: ""
+
+          scene.playerAvatarKey = ManageSession.userProfile.id + "_" + ManageSession.userProfile.create_time
+
           let lastPosX = rec[0].metadata.posX
           let lastPosY = rec[0].metadata.posY
           console.log("lastPosX, lastPosY, location", lastPosX, lastPosY, rec[0].metadata.location)
 
+          // positioning player
           // chech if the player is in the same location as the last server location
           if (rec[0].metadata.location == scene.location) {
 
@@ -72,11 +76,20 @@ class Player {
               console.log("scene.createdPlayer = ", scene.createdPlayer)
               return
             } else {
+              // load the avatar
               //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
+
+              // //get the avatar_url
+              // Promise.all([convertImage(ManageSession.userProfile.avatar_url, "64", "png")]).then(rec => {
+              //   console.log(rec[0])
+              //   const convertedAvatarUrl = rec[0]
+              // })
+
               const fileNameCheck = scene.playerAvatarKey
-              scene.load.spritesheet(scene.playerAvatarKey, ManageSession.userProfile.url, { frameWidth: 128, frameHeight: 128 })
-                .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
+              scene.load.spritesheet(fileNameCheck, ManageSession.userProfile.url, { frameWidth: 64, frameHeight: 64 })
+                .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { console.log("scene.playerAvatarKey", scene.playerAvatarKey); this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
               scene.load.start() // start loading the image in memory
+             
             }
           } else {
             this.attachAvatarToPlayer(scene)
@@ -89,7 +102,6 @@ class Player {
 
   async attachAvatarToPlayer(scene) {
     //console.log("scene.playerAvatarKey ", scene.playerAvatarKey)
-
     const avatar = scene.textures.get(scene.playerAvatarKey)
     const avatarWidth = avatar.frames.__BASE.width
     //console.log("avatarWidth: " avatarWidth)
@@ -492,9 +504,9 @@ class Player {
       ManageSession.createOnlinePlayerArray.forEach(onlinePlayer => {
         Promise.all([getAccount(onlinePlayer.user_id)]).then(rec => {
           const newOnlinePlayer = rec[0]
-          console.log(newOnlinePlayer)
+          //console.log(newOnlinePlayer)
           this.createOnlinePlayer(scene, newOnlinePlayer)
-          console.log("parseNewOnlinePlayerArray scene", scene)
+          //console.log("parseNewOnlinePlayerArray scene", scene)
         })
 
         //new onlineplayer is removed from the newOnlinePlayer array, once we call more data on it
@@ -512,7 +524,7 @@ class Player {
 
       //create new onlinePlayer with default avatar
       const onlinePlayerCopy = onlinePlayer
-      console.log("createOnlinePlayer scene", scene)
+      //console.log("createOnlinePlayer scene", scene)
       onlinePlayer = scene.add
         .sprite(
           CoordinatesTranslator.artworldToPhaser2DX(
@@ -602,7 +614,7 @@ class Player {
   }
 
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
-    console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
+    //console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
 
     onlinePlayer.active = true
     onlinePlayer.visible = true
