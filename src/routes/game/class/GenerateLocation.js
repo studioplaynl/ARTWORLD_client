@@ -205,28 +205,30 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             //check when entering the location if it is an URL or scene
 
             if (this.internalUrl) {
-                this.scene.scene.pause();
+                this.scene.scene.pause()
                 var url = window.location.href + this.internalUrl
 
-                var s = window.open(url, '_parent');
-
+                var s = window.open(url, '_parent')
+                
                 if (s && s.focus) {
-                    s.focus();
+                    s.focus()
+                    window.location.reload()
                 }
                 else if (!s) {
-                    window.location.href = url;
+                    window.location.href = url
+                    window.location.reload()
                 }
             } else if (this.externalUrl) {
-                this.scene.scene.pause();
+                this.scene.scene.pause()
                 var url = this.externalUrl
 
-                var s = window.open(url, '_parent');
+                var s = window.open(url, '_parent')
 
                 if (s && s.focus) {
                     s.focus();
                 }
                 else if (!s) {
-                    window.location.href = url;
+                    window.location.href = url
                 }
             } else {
                 console.log("GenerateLocation this.scene, this.locationDestination, this.userHome", this.scene, this.locationDestination, this.userHome)
