@@ -286,7 +286,7 @@ function moveToTrash(key) {
   #avatar, #house {
     max-height: 75px;
     position: absolute;
-    clip: rect(0px,75px,75px,0px);
+    clip: rect(0px,60px,64px,0px);
   }
   
   #avatarDiv {

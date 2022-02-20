@@ -9,7 +9,7 @@
     style="position: absolute; z-index: 0; opacity:1"></canvas>
   <canvas id="layer2" class="game"
     style="position: absolute; z-index: 1;"></canvas>
-  <image id="spinner" src="image/loading_transparent_.gif" width="46px"
+  <image id="spinner" src="/MarioSequencer/image/loading_transparent_.gif" width="46px"
     style="position: absolute; top:35%; left:47%; z-index:4;" />
 </div>
 <!-- <center>
