@@ -134,9 +134,12 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         // this.enterButtonHitArea.displayWidth = width / 1.05
 
-        this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0x6666ff).setOrigin(0.5, 0.5).setVisible(false).setInteractive({ useHandCursor: true }).setDepth(500)
+        this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0x7300ED).setOrigin(0.5, 0.5).setVisible(false).setInteractive({ useHandCursor: true }).setDepth(500)
         // .setStrokeStyle(2, 0x000000)
-        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setOrigin(0.5, 0.5).setVisible(false).setDepth(500)
+        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setOrigin(0.5, 0.5)
+        .setVisible(false)
+        .setScale(0.6)
+        .setDepth(500)
 
 
         this.enterButtonTween = this.scene.tweens.add({
