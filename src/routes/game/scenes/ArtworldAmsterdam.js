@@ -117,13 +117,16 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //get a list of homes from users in ArtworldAmsterdam
     Promise.all([listObjects("home", null, 100)])
-    .then((rec) => {
-      //console.log("rec: ", rec)
-      this.homes = rec[0]
-      console.log("this.homes", this.homes)
-      this.homesGenerate = true
-      this.generateHomes()
-    })
+      .then((rec) => {
+        //console.log("rec: ", rec)
+        this.homes = rec[0]
+
+        // filter only amsterdam homes
+        this.homes = this.homes.filter((obj) => obj.key == "Amsterdam")
+
+        console.log("this.homes", this.homes)
+        this.generateHomes()
+      })
 
     // collection: "home"
     // create_time: "2022-01-19T16:31:43Z"
@@ -147,7 +150,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gridOffset: 80,
       dotWidth: 2,
       dotColor: 0x909090,
-      backgroundColor: 0xffffff,
+      backgroundColor: 0xfafafa,
     })
 
     Background.circle({
@@ -310,11 +313,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   async convertImage(array, url, size, format, id) {
     await convertImage(url, size, format).then((rec) => {
       console.log(rec)
-      // this.load.spritesheet(
-      //   id + "_avatar_64",
-      //   ManageSession.userProfile.url,
-      //   { frameWidth: 64, frameHeight: 64 }
-      // )
+
     })
   }
 
@@ -326,45 +325,51 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       this.homes.forEach((element, index) => {
         // console.log(element)
         // console.log(element.value.posX)
-
+        const homeImageKey = "homeKey_" + element.user_id
         // parse home description
         console.log("element", element)
         let locationDescription = element.value.username
 
-            // value:
-    // url: "home/4c0003f0-3e3f-4b49-8aad-10db98f2d3dc/3_current.png"
+        // get a image url for each home
+        // get converted image from AWS
+        const url = element.value.url
+        Promise.all([convertImage(url, "128", "png")]).then((rec) => {
+          console.log(rec[0])
+          // load all the images to phaser
+          this.load.image(homeImageKey, rec[0])
+            .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
 
-        //create home
-        this.homesRepreseneted[index] = new GenerateLocation({
-          scene: this,
-          userHome: element.user_id,
-          draggable: false,
-          type: "isoTriangle",
-          x: CoordinatesTranslator.artworldToPhaser2DX(
-            this.worldSize.x,
-            element.value.posX
-          ),
-          y: CoordinatesTranslator.artworldToPhaser2DY(
-            this.worldSize.y,
-            element.value.posY
-          ),
-          locationDestination: "DefaultUserHome",
-          locationText: locationDescription,
-          locationImage: "museum",
-          enterButtonImage: "enter_button",
-          fontColor: 0x8dcb0e,
-          color1: 0xffe31f,
-          color2: 0xf2a022,
-          color3: 0xf8d80b,
+              //create home
+              this.homesRepreseneted[index] = new GenerateLocation({
+                scene: this,
+                size: 140,
+                userHome: element.user_id,
+                draggable: false,
+                type: "image",
+                x: CoordinatesTranslator.artworldToPhaser2DX(
+                  this.worldSize.x,
+                  element.value.posX
+                ),
+                y: CoordinatesTranslator.artworldToPhaser2DY(
+                  this.worldSize.y,
+                  element.value.posY
+                ),
+                locationDestination: "DefaultUserHome",
+                locationText: locationDescription,
+                locationImage: homeImageKey,
+                enterButtonImage: "enter_button",
+                fontColor: 0x8dcb0e,
+                color1: 0xffe31f,
+                color2: 0xf2a022,
+                color3: 0xf8d80b,
+              })
+
+              this.homesRepreseneted[index].setDepth(30)
+            }, this)
+
+          this.load.start() // start loading the image in memory
         })
-
-        this.homesRepreseneted[index].setDepth(30)
-        // console.log(element)
-        // console.log(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, element.value.posX))
-        // console.log(CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, element.value.posY))
-      }); //end forEach
-
-      this.homesGenerate = false;
+    }) //end forEach
     }
   }
 
@@ -415,20 +420,20 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //*set the particle first on 0,0 so they are below the mario_star
     //*later move them relative to the mario_star
-    // var particles = this.add.particles('music_quarter_note').setDepth(300)
+    var particles = this.add.particles('music_quarter_note').setDepth(139)
 
-    // var music_emitter = particles.createEmitter({
-    //   x: 0,
-    //   y: 0,
-    //   lifespan: { min: 2000, max: 8000 },
-    //   speed: { min: 80, max: 120 },
-    //   angle: { min: 270, max: 360 },
-    //   gravityY: -50,
-    //   gravityX: 50,
-    //   scale: { start: 1, end: 0 },
-    //   quantity: 1,
-    //   frequency: 500,
-    // })
+    var music_emitter = particles.createEmitter({
+      x: 0,
+      y: 0,
+      lifespan: { min: 2000, max: 8000 },
+      speed: { min: 80, max: 120 },
+      angle: { min: 270, max: 360 },
+      gravityY: -50,
+      gravityX: 50,
+      scale: { start: 1, end: 0 },
+      quantity: 1,
+      frequency: 1600,
+    })
 
     location1Vector = new Phaser.Math.Vector2(22.81, -428.32)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
@@ -454,7 +459,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     })
     this.mario_star.setDepth(140)
 
-    //* music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
+    music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
   }
 
   update(time, delta) {

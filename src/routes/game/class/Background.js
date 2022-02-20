@@ -30,7 +30,7 @@ class Background {
 
         //create the dot: graphics
         let bgDot = scene.add.graphics()
-        bgDot.fillStyle(0x909090);
+        bgDot.fillStyle(config.dotColor)
         bgDot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false)
 
         //create renderTexture to place the dot on
