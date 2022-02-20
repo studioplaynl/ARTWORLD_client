@@ -322,79 +322,25 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       console.log("generate homes!")
 
       this.homes.forEach((element, index) => {
-        console.log(element)
-        // console.log(element.value.posX)
+        //console.log(element, index)
         const homeImageKey = "homeKey_" + element.user_id
-        // parse home description
-        let locationDescription = element.value.username
-
         // get a image url for each home
         // get converted image from AWS
         const url = element.value.url
 
         //check if homekey is already loaded
-        console.log("this.textures.exists(homeImageKey), homeImageKey", this.textures.exists(homeImageKey), homeImageKey)
-        
         if (this.textures.exists(homeImageKey)) {
-                //create home
-          this.homesRepreseneted[index] = new GenerateLocation({
-            scene: this,
-            size: 140,
-            userHome: element.user_id,
-            draggable: false,
-            type: "image",
-            x: CoordinatesTranslator.artworldToPhaser2DX(
-              this.worldSize.x,
-              element.value.posX
-            ),
-            y: CoordinatesTranslator.artworldToPhaser2DY(
-              this.worldSize.y,
-              element.value.posY
-            ),
-            locationDestination: "DefaultUserHome",
-            locationText: locationDescription,
-            locationImage: homeImageKey,
-            enterButtonImage: "enter_button",
-            fontColor: 0x8dcb0e,
-            color1: 0xffe31f,
-            color2: 0xf2a022,
-            color3: 0xf8d80b,
-          })
-
-          this.homesRepreseneted[index].setDepth(30)
+          //create the home
+          this.createHome(element, index)
         } else {
+          // get the image server side
           Promise.all([convertImage(url, "128", "png")]).then((rec) => {
             console.log(rec[0])
             // load all the images to phaser
             this.load.image(homeImageKey, rec[0])
               .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
-
-                //create home
-                this.homesRepreseneted[index] = new GenerateLocation({
-                  scene: this,
-                  size: 140,
-                  userHome: element.user_id,
-                  draggable: false,
-                  type: "image",
-                  x: CoordinatesTranslator.artworldToPhaser2DX(
-                    this.worldSize.x,
-                    element.value.posX
-                  ),
-                  y: CoordinatesTranslator.artworldToPhaser2DY(
-                    this.worldSize.y,
-                    element.value.posY
-                  ),
-                  locationDestination: "DefaultUserHome",
-                  locationText: locationDescription,
-                  locationImage: homeImageKey,
-                  enterButtonImage: "enter_button",
-                  fontColor: 0x8dcb0e,
-                  color1: 0xffe31f,
-                  color2: 0xf2a022,
-                  color3: 0xf8d80b,
-                })
-
-                this.homesRepreseneted[index].setDepth(30)
+                //create the home
+                this.createHome(element, index)
               }, this)
 
             this.load.start() // start loading the image in memory
@@ -403,6 +349,42 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
       }) //end forEach
     }
+  }
+
+  createHome(element, index) {
+    // home description
+    //console.log(element)
+    const locationDescription = element.value.username
+    const homeImageKey = "homeKey_" + element.user_id
+    // get a image url for each home
+    // get converted image from AWS
+    const url = element.value.url
+
+    this.homesRepreseneted[index] = new GenerateLocation({
+      scene: this,
+      size: 140,
+      userHome: element.user_id,
+      draggable: false,
+      type: "image",
+      x: CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        element.value.posX
+      ),
+      y: CoordinatesTranslator.artworldToPhaser2DY(
+        this.worldSize.y,
+        element.value.posY
+      ),
+      locationDestination: "DefaultUserHome",
+      locationText: locationDescription,
+      locationImage: homeImageKey,
+      enterButtonImage: "enter_button",
+      fontColor: 0x8dcb0e,
+      color1: 0xffe31f,
+      color2: 0xf2a022,
+      color3: 0xf8d80b,
+    })
+
+    this.homesRepreseneted[index].setDepth(30)
   }
 
   generateLocations() {
