@@ -1,13 +1,7 @@
 <script>
-<<<<<<< HEAD
-import itemsBar from "./itemsbar.js"
-
-//export let itemsbar = {}
-=======
 import {convertImage} from "../../api"
 
 export let click =  false
->>>>>>> b50cf4d31acbba0f9b41cbbadb8e88e589305d11
 
 	
 let ManageSession;
@@ -15,12 +9,6 @@ let current
 let images = []
 
 
-<<<<<<< HEAD
-function getLiked(){
-    console.log(itemsBar.liked)
-    console.log(itemsBar.addressbook)
-    console.log(itemsBar.home)
-=======
 async function getLiked(){
     if(current == "liked" ) {current = false; return};
     ManageSession = (await import('../game/ManageSession.js')).default;
@@ -34,7 +22,6 @@ async function getLiked(){
     console.log(images)
 
     current = "liked"
->>>>>>> b50cf4d31acbba0f9b41cbbadb8e88e589305d11
 }
 
 async function goHome(){
