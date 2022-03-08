@@ -8,14 +8,16 @@ storedSession = JSON.parse(storedSession)
 
 if(!!storedSession){
     if((storedSession.expires_at + "000") <= Date.now()){
+        localStorage.removeItem('profile'); // for logout
         window.location.replace("/#/login");  
-        storedSession = ''
+        
     }
 }
 
 export const Session = writable(storedSession ? storedSession : null);
 Session.subscribe((value) => {
-    if (value) {
+    if (!!value) {
+        console.log(value)
         ManageSession.sessionStored = value; //! push the Session with url to ManageSession
         localStorage.setItem('Session', JSON.stringify(value))
     }
@@ -27,7 +29,7 @@ Session.subscribe((value) => {
 let profileStore = localStorage.getItem("profile")
 export const Profile = writable(profileStore ? JSON.parse(profileStore) : null);
 Profile.subscribe((value) => {
-    if (value) {
+    if (!!value) {
         localStorage.setItem('profile', JSON.stringify(value));
         ManageSession.userProfile = value //! push the profile with url to ManageSession
         // console.log("Profile.subscribe((value)")

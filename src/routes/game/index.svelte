@@ -1,7 +1,7 @@
 <script>
   //* Svelte
   import { onMount } from "svelte";
-  
+
   //* Phaser Plugins
   import { enable3d, Canvas } from "@enable3d/phaser-extension";
   // import GesturesPlugin from 'phaser3-rex-plugins/plugins/gestures-plugin.js'; //swipe gestures
@@ -9,7 +9,7 @@
   import CircleMaskImagePlugin from "phaser3-rex-plugins/plugins/circlemaskimage-plugin.js";
   import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin.js'
   import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin.js'
-
+  import Itemsbar from "../components/itemsbar.svelte"
   import { CONFIG, SCENES } from "./config";
 
   onMount(async () => {
@@ -87,4 +87,5 @@
 
 <main>
   <div id="phaserId" />
+  <Itemsbar/>
 </main>
