@@ -108,7 +108,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   async create() {
-    ManageSession.setUrl("test",123,456)
     // for back button
     HistoryTracker.pushLocation(this)
 

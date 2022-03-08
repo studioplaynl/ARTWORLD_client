@@ -12,8 +12,6 @@
   import { CONFIG, SCENES } from "./config";
 
   onMount(async () => {
-    getUrl()
-
     const config = {
       //parent: "phaserId",
   
@@ -84,16 +82,6 @@
 
     enable3d(() => new Phaser.Game(config)).withPhysics("/ammo/kripken")
   })
-
-  function getUrl() {
-        let params = new URLSearchParams(window.location.search)
-        let posX = params.get("posX")
-        let posY = params.get("posY")
-        let location = params.get("location")
-        let object = { posX, posY, location }
-        console.log("object", object)
-        return object
-    }
 </script>
 
 <main>

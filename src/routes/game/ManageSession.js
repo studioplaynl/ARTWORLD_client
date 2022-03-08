@@ -1,7 +1,5 @@
-import { element } from "svelte/internal"
 import { client, SSL } from "../../nakama.svelte"
 import CoordinatesTranslator from "./class/CoordinatesTranslator" // translate from artworld coordinates to Phaser 2D screen coordinates
-import { itemsbar } from "../components/itemsbar.js"
 
 import { SCENES } from "./config.js"
 
@@ -73,6 +71,8 @@ class ManageSession {
   // getProfile(){
   //   this.userprofile = Profile
   // }
+
+  // .......................... URL PARSING ........................................
   getUrl() {
     let params = new URLSearchParams(window.location.search)
     let posX = params.get("posX")
@@ -83,13 +83,18 @@ class ManageSession {
     return object
   }
 
-  setUrl(location, posX, posY) {
+  setAndGoUrl(location, posX, posY) {
     let searchParams = new URLSearchParams(window.location.search)
     if (location) searchParams.set("location", location)
     if (posX) searchParams.set("posX", posX)
     if (posY) searchParams.set("posY", posY)
     window.location.search = searchParams.toString()
   }
+
+  setUrl(location, posX, posY) {
+    window.history.pushState('', 'home', '/?location=home/' + userID);
+  }
+  // .......................... end URL PARSING .....................................
 
   async createSocket() {
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
@@ -292,6 +297,23 @@ class ManageSession {
     this.locationExists = true
   }
 
+  checkIfSceneExists(location) {
+    //reset existing to false
+    this.locationExists = false
+    //check if this.launchLocation exists in SCENES
+    //const locationExists = SCENES.includes(location)
+    const locationExists = SCENES.some(el => el.name === location)
+    // console.log("SCENES", SCENES)
+    console.log("locationExists", locationExists, location)
+    if (locationExists) {
+      this.location = location
+      this.launchLocation = location
+      console.log(location)
+      this.locationExists = true
+    }
+    return locationExists
+  }
+
   async chatExample() {
     const roomname = "PizzaFans";
     const persistence = true;
@@ -325,4 +347,4 @@ class ManageSession {
 
 } //end class
 
-export default new ManageSession();
+export default new ManageSession()

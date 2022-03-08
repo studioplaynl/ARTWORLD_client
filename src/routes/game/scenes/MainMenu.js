@@ -22,25 +22,56 @@ export default class MainMenu extends Phaser.Scene {
       )
       .setOrigin(0)
 
-    setLoader(true)
+    //setLoader(true)
 
-    
+
     //on resizing the window
     this.scale.on("resize", this.resize, this)
 
     //* check if the user profile is loaded, to be able to send the player to the right location
-    if (!!ManageSession.userProfile) {
-      ManageSession.launchLocation = ManageSession.userProfile.meta.location
+    //* check if there are params in the url, to send the player to that location instead
+    let urlParams = ManageSession.getUrl()
+
+    console.log("urlParams", urlParams)
+
+    // if the location in the url exists as a scene
+    if (ManageSession.checkIfSceneExists(urlParams.location)) {
+      //ManageSession.launchLocation = urlParams.location
+      console.log("lauch urlParam scene")
+      this.scene.stop("MainMenu")
+      this.scene.start("NetworkBoot")
+    } else if (!!ManageSession.userProfile) {
+      // if there is a location in the url
+      if (ManageSession.checkIfSceneExists(ManageSession.userProfile.meta.location)) {
+        //ManageSession.launchLocation = ManageSession.userProfile.meta.location
+        console.log
+        this.scene.stop("MainMenu")
+        this.scene.start("NetworkBoot")
+         
+      } else {
+        //if the scene does not exists, launch default scene
+        ManageSession.launchLocation = "ArtworldAmsterdam"
+        this.scene.stop("MainMenu")
+        this.scene.start("NetworkBoot")
+      }
+
 
       //console.log(ManageSession.launchLocation)
-      ManageSession.checkSceneExistence()
+
     } else {
       getAccount("", true)
         .then(rec => {
           ManageSession.userProfile = rec
           //* only set the menu button visible if the user data is downloaded!
-          ManageSession.launchLocation = rec.meta.location
-          ManageSession.checkSceneExistence()
+          if (ManageSession.checkIfSceneExists(rec.meta.location)) {
+            //ManageSession.launchLocation = rec.meta.location
+            this.scene.start("NetworkBoot")
+          } else {
+            //if the scene does not exists, launch default scene
+            ManageSession.launchLocation = "ArtworldAmsterdam"
+            this.scene.stop("MainMenu")
+            this.scene.start("NetworkBoot")
+          }
         })
     }
   } //create
@@ -53,6 +84,6 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   update(time, delta) {
-    if (ManageSession.locationExists) this.scene.start("NetworkBoot")
+
   } // end update
 }

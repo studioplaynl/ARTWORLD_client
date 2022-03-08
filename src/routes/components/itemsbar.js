@@ -1,3 +1,5 @@
-// import ManageSession from "../game/ManageSession.js"
-
-export let itemsbar = {}
+class itemsBar {
+    constructor() {
+    }
+}
+    export default new itemsBar()

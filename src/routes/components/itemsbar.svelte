@@ -1,14 +1,15 @@
 <script>
-import { itemsbar } from "./itemsbar.js"
+import itemsBar from "./itemsbar.js"
 
+//export let itemsbar = {}
 
 export let click = true
 
 
 function getLiked(){
-    console.log(itemsbar.liked)
-    console.log(itemsbar.addressbook)
-    console.log(itemsbar.home)
+    console.log(itemsBar.liked)
+    console.log(itemsBar.addressbook)
+    console.log(itemsBar.home)
 }
 
 </script>
