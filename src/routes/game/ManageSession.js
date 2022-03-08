@@ -1,6 +1,7 @@
 import { element } from "svelte/internal"
 import { client, SSL } from "../../nakama.svelte"
 import CoordinatesTranslator from "./class/CoordinatesTranslator" // translate from artworld coordinates to Phaser 2D screen coordinates
+import { itemsbar } from "../components/itemsbar.js"
 
 import { SCENES } from "./config.js"
 
