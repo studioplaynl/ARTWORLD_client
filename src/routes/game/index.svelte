@@ -1,18 +1,19 @@
 <script>
   //* Svelte
-  import { onMount } from "svelte";
+  import { onMount } from "svelte"
   
   //* Phaser Plugins
-  import { enable3d, Canvas } from "@enable3d/phaser-extension";
-  // import GesturesPlugin from 'phaser3-rex-plugins/plugins/gestures-plugin.js'; //swipe gestures
-  import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin.js";
-  import CircleMaskImagePlugin from "phaser3-rex-plugins/plugins/circlemaskimage-plugin.js";
+  import { enable3d, Canvas } from "@enable3d/phaser-extension"
+  import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin.js"
+  import CircleMaskImagePlugin from "phaser3-rex-plugins/plugins/circlemaskimage-plugin.js"
   import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin.js'
   import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin.js'
 
   import { CONFIG, SCENES } from "./config";
 
   onMount(async () => {
+    getUrl()
+
     const config = {
       //parent: "phaserId",
   
@@ -79,10 +80,20 @@
       scene: SCENES, //scenes defined in config.js
 
       ...Canvas(), //enable 3D
-    };
+    }
 
-    enable3d(() => new Phaser.Game(config)).withPhysics("/ammo/kripken");
-  });
+    enable3d(() => new Phaser.Game(config)).withPhysics("/ammo/kripken")
+  })
+
+  function getUrl() {
+        let params = new URLSearchParams(window.location.search)
+        let posX = params.get("posX")
+        let posY = params.get("posY")
+        let location = params.get("location")
+        let object = { posX, posY, location }
+        console.log("object", object)
+        return object
+    }
 </script>
 
 <main>

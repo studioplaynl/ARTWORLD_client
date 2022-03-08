@@ -79,6 +79,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.createArtFrame('512')
         this.createArtFrame('128')
         this.createArtFrame('32')
+
     }
 
     async create() {

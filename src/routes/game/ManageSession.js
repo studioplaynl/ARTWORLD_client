@@ -18,7 +18,6 @@ class ManageSession {
     this.itemsBarOnlinePlayer
     this.selectedOnlinePlayer
     this.addressbook
-    this.favorites
 
     this.client
     this.socket
@@ -73,6 +72,23 @@ class ManageSession {
   // getProfile(){
   //   this.userprofile = Profile
   // }
+  getUrl() {
+    let params = new URLSearchParams(window.location.search)
+    let posX = params.get("posX")
+    let posY = params.get("posY")
+    let location = params.get("location")
+    let object = { posX, posY, location }
+    console.log("object", object)
+    return object
+  }
+
+  setUrl(location, posX, posY) {
+    let searchParams = new URLSearchParams(window.location.search)
+    if (location) searchParams.set("location", location)
+    if (posX) searchParams.set("posX", posX)
+    if (posY) searchParams.set("posY", posY)
+    window.location.search = searchParams.toString()
+  }
 
   async createSocket() {
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
@@ -165,7 +181,7 @@ class ManageSession {
       if (!!streampresence.joins) {
         streampresence.joins.forEach((join) => {
           //filter out the player it self
-          console.log("this.userProfile.id", this.userProfile.id)          
+          console.log("this.userProfile.id", this.userProfile.id)
           if (join.user_id != this.userProfile.id) {
             //console.log(this.userProfile)
             console.log("some one joined")

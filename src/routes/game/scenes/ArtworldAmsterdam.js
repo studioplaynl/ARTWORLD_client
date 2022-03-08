@@ -104,10 +104,11 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   async preload() {
-    Preloader.Loading(this); //.... PRELOADER VISUALISER
+    Preloader.Loading(this) //.... PRELOADER VISUALISER
   }
 
   async create() {
+    ManageSession.setUrl("test",123,456)
     // for back button
     HistoryTracker.pushLocation(this)
 
@@ -334,7 +335,14 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
           this.createHome(element, index)
         } else {
           // get the image server side
-          Promise.all([convertImage(url, "128", "png")]).then((rec) => {
+          Promise.all([convertImage(url, "128", "png")])
+          .catch(function(err) {
+            // log that I have an error, return the entire array;
+            console.log('A promise failed to resolve', err)
+          
+        })
+          
+          .then((rec) => {
             console.log(rec[0])
             // load all the images to phaser
             this.load.image(homeImageKey, rec[0])
