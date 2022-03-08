@@ -402,7 +402,9 @@ class Player {
         scene.onlinePlayerHomeSaveButton = scene.add.image(40, -130, "save_home").setInteractive({ useHandCursor: true })
           .on("pointerup", () => {
             // saving the home of a player
-            const entry = { user_id: ManageSession.selectedOnlinePlayer.id }
+            const entry = { user_id: ManageSession.selectedOnlinePlayer.id, user_name: ManageSession.selectedOnlinePlayer.username }
+
+            console.log(ManageSession.selectedOnlinePlayer)
 
             // checking if the player in the addressbook 
             const isExist = ManageSession.addressbook.addressbook.some(element => element.user_id == entry.user_id)
