@@ -26,12 +26,10 @@ class Player {
         scene.physics.add.existing(this)
 
         // put the player in the last server known position
-        // retreive position from server
-        Promise.all([getAccount(ManageSession.userProfile.id)]).then(rec => {
-          console.log("rec[0]", rec[0])
-          //update user profile
-          ManageSession.userProfile = rec[0]
-          //* data model:
+        // retreive position from ManageSession (there it is stored on boot)
+      
+      
+          //* data model userAccount:
           // avatar_url: "avatar/stock/avatarRood.png"
           // url: "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/stock/avatarRood.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20220220%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20220220T131419Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f4a9c03bec8f53e0d8ea141494fe1dac7f124781b8c5d9f77794c8521454e621"
           // username: "user11"
@@ -45,26 +43,22 @@ class Player {
 
           scene.playerAvatarKey = ManageSession.userProfile.id + "_" + ManageSession.userProfile.create_time
 
-          let lastPosX = rec[0].metadata.posX
-          let lastPosY = rec[0].metadata.posY
-          console.log("lastPosX, lastPosY, location", lastPosX, lastPosY, rec[0].metadata.location)
+          let lastPosX = ManageSession.playerPosX
+          let lastPosY = ManageSession.playerPosY
+          //console.log("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)
 
           // positioning player
-          // chech if the player is in the same location as the last server location
-          if (rec[0].metadata.location == scene.location) {
-
-            // check if last position is outside the worldBounds for some reason, place it within in that case
-            if (lastPosX > scene.worldSize.x / 2 || lastPosX < - scene.worldSize.x / 2) lastPosX = 0
-            if (lastPosY > scene.worldSize.y / 2 || lastPosY < - scene.worldSize.y / 2) lastPosY = 0
+ 
+            // check if last position (artworldCoordinates) is outside the worldBounds for some reason
+            // otherwise place it within worldBounds
+            // a random number between -150 and 150
+            if (lastPosX > scene.worldSize.x / 2 || lastPosX < - scene.worldSize.x / 2) lastPosX = Math.floor((Math.random() * 300) - 150)
+            if (lastPosY > scene.worldSize.y / 2 || lastPosY < - scene.worldSize.y / 2) lastPosY = Math.floor((Math.random() * 300) - 150)
             console.log("lastPosX, lastPosY", lastPosX, lastPosY)
 
             scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, lastPosX)
             scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, lastPosY)
-          } else { // otherwise put the player in the middle of the world
-            scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, 0)
-            scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, 0)
-          }
-
+         
           //if the texture doesnot exists load it and attach it to the player
           if (!scene.textures.exists(scene.playerAvatarKey)) {
             //check if url is not empty for some reason, returns so that previous image is kept
@@ -95,7 +89,7 @@ class Player {
             this.attachAvatarToPlayer(scene)
             console.log("scene.location", scene.location)
           }
-        })
+        
       } //if(ManageSession.playerCreated)
     }
   }

@@ -13,6 +13,7 @@ class ManageSession {
     this.username
 
     this.worldSizeCopy // we copy the worldSize of the scene to make movement calculations
+    this.currentScene // To give access to the scene outside of the game
     this.itemsBar
     this.itemsBarOnlinePlayer
     this.selectedOnlinePlayer
@@ -33,8 +34,9 @@ class ManageSession {
     this.playerObjectSelf
     this.createPlayer = true
     this.playerMove
+    this.playerPosX // store playerPosX, also parsed from URL, to create player
+    this.playerPosY // store playerPosY, also parsed from URL, to create player
 
-    this.locationExists = false
 
     this.avatarSize = 64
     this.cameraShake = false
@@ -57,6 +59,8 @@ class ManageSession {
 
     // for back button
     this.locationHistory = []
+    this.location // scene key to start a scene  
+    this.locationID //the user_id if the scene is a house => DefaultUserHome
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room"
@@ -79,7 +83,7 @@ class ManageSession {
     let posY = params.get("posY")
     let location = params.get("location")
     let object = { posX, posY, location }
-    console.log("object", object)
+    //console.log("object", object)
     return object
   }
 
@@ -279,38 +283,13 @@ class ManageSession {
     // });
   } //end sendChatMessage
 
-  checkSceneExistence() {
-    //check if this.launchLocation exists in SCENES
-    const locationExists = SCENES.includes(this.launchLocation)
-    //reset existing to false
-    this.locationExists = false
-    //if location does not exists; launch default location
-    if (!locationExists) {
-      //set to fail-back scene
-      this.location = "ArtworldAmsterdam"
-      this.launchLocation = this.location
-      //console.log(this.launchLocation)
-    } else {
-      this.location = this.userProfile.meta.location
-      console.log(this.location)
-    }
-    this.locationExists = true
-  }
-
   checkIfSceneExists(location) {
-    //reset existing to false
-    this.locationExists = false
     //check if this.launchLocation exists in SCENES
     //const locationExists = SCENES.includes(location)
     const locationExists = SCENES.some(el => el.name === location)
     // console.log("SCENES", SCENES)
     console.log("locationExists", locationExists, location)
-    if (locationExists) {
-      this.location = location
-      this.launchLocation = location
-      console.log(location)
-      this.locationExists = true
-    }
+
     return locationExists
   }
 
