@@ -54,7 +54,7 @@ export default class PreloadScene extends Phaser.Scene {
         )
 
         //background for mainMenu
-        this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
+        // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
 
         // rex ui video player
         this.load.image('play', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/play.png');

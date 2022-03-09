@@ -1,6 +1,5 @@
 import ManageSession from "../ManageSession"
 import ServerCall from "../class/ServerCall"
-import { setLoader } from "../../../api.js"
 
 export default class NetworkBoot extends Phaser.Scene {
   constructor() {
@@ -18,8 +17,8 @@ export default class NetworkBoot extends Phaser.Scene {
       .then(() => {
         ServerCall.getServerObject("liked", ManageSession.userProfile.id, 10)
         ServerCall.getServerObject("addressbook", ManageSession.userProfile.id, 10)
-        console.log("ManageSession.launchLocation", ManageSession.launchLocation)
-        this.scene.launch(ManageSession.launchLocation)
+        console.log("ManageSession.locationID", ManageSession.locationID)
+        this.scene.launch(ManageSession.location, { user_id: ManageSession.locationID })
       })
   }
 }
