@@ -5,6 +5,11 @@ class HistoryTracker {
 
   pushLocation(scene) {
     if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1]?.locationID != scene.location) {
+      // set ManageSession.playerPosX Y to player.x and y
+      if (!!scene.player){
+        // ManageSession.playerPosX = scene.player.x
+        // ManageSession.playerPosY = scene.player.y
+      }
       ManageSession.locationHistory.push({ locationName: scene.scene.key, locationID: scene.location })
     }
   }

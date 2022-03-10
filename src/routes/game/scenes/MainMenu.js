@@ -38,13 +38,13 @@ export default class MainMenu extends Phaser.Scene {
       this.parsePlayerPosition(urlParams.posX, urlParams.posY)
       this.parseLocation(urlParams.location)
     } else if (!!ManageSession.userProfile) { // otherwise get the location stored serverside 
-      this.parsePlayerPosition(ManageSession.userProfile.metadata.posX, ManageSession.userProfile.metadata.posY)
+      this.parsePlayerPosition(ManageSession.userProfile.meta.posX, ManageSession.userProfile.meta.posY)
       this.parseLocation(ManageSession.userProfile.meta.location)
     } else { //if the account is empty, get it 
       getAccount("", true)
         .then(rec => {
           ManageSession.userProfile = rec
-          this.parsePlayerPosition(ManageSession.userProfile.metadata.posX, ManageSession.userProfile.metadata.posY)
+          this.parsePlayerPosition(ManageSession.userProfile.meta.posX, ManageSession.userProfile.meta.posY)
           this.parseLocation(ManageSession.userProfile.meta.location)
         })
     }
