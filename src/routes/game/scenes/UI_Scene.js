@@ -119,8 +119,10 @@ export default class UI_Scene extends Phaser.Scene {
       this.backButton.on("pointerup", () => {
         // removing the current last scene from the history
         const currentLocationKey = ManageSession.locationHistory.pop()
+        console.log("currentLocationKey", currentLocationKey)
         // and getting access to it through its key
         const currentLocation = this.scene.get(currentLocationKey.locationName)
+        console.log("currentLocation", currentLocation)
         // getting access to the previous scene through locationHistory
         const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
         // switching scenes

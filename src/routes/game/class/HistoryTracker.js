@@ -4,6 +4,10 @@ class HistoryTracker {
   constructor() { }
 
   pushLocation(scene) {
+    //store the current scene in ManageSession for reference outside of Phaser (html ui)
+    ManageSession.currentScene = scene
+    console.log("ManageSession.currentScene", ManageSession.currentScene)
+
     if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1]?.locationID != scene.location) {
       // set ManageSession.playerPosX Y to player.x and y
       if (!!scene.player){
@@ -18,10 +22,10 @@ class HistoryTracker {
     scene.physics.pause()
     scene.player.setTint(0xff0000)
 
-    console.log("switchScene leave scene.location", scene.location)
+    //console.log("switchScene leave scene.location", scene.location)
     ManageSession.socket.rpc("leave", scene.location)
 
-    console.log("switchScene goToScene", goToScene)
+    //console.log("switchScene goToScene", goToScene)
     scene.player.location = goToScene
 
     scene.time.addEvent({
@@ -31,7 +35,7 @@ class HistoryTracker {
         ManageSession.createPlayer = true
         scene.scene.stop(scene.scene.key)
         scene.scene.start(goToScene, { user_id: locationID })
-        console.log("switchScene locationID", locationID)
+        //console.log("switchScene locationID", locationID)
         ManageSession.location = locationID
         ManageSession.getStreamUsers("join", locationID)
       },
