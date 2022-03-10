@@ -13,6 +13,7 @@
     import { Session, Profile, logout } from "./session.js";
     import UploadAvatar from "./routes/uploadAvatar.svelte";
     import Error from "./routes/components/error.svelte";
+    import Itemsbar from "./routes/components/itemsbar.svelte";
     import Menu from "./routes/components/menu.svelte";
     import Friends from "./routes/friends.svelte";
     import Admin from "./routes/admin.svelte"
@@ -57,7 +58,7 @@
 </script>
 
 <Menu />
-
+<Itemsbar />
 <Router
     routes={{
         "/": wrap({

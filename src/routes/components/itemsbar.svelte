@@ -1,5 +1,5 @@
 <script>
-import {convertImage} from "../../api"
+import {convertImage, getObject} from "../../api"
 
 export let click =  false
 
@@ -7,62 +7,88 @@ export let click =  false
 let ManageSession;
 let current	
 let images = []
+let house_url, avatar_url, user_name, adress_book
 
+
+async function Click(){
+    ManageSession = (await import('../game/ManageSession.js')).default;
+    avatar_url = ManageSession.userProfile.url
+    click = true;
+}
 
 async function getLiked(){
     if(current == "liked" ) {current = false; return};
-    ManageSession = (await import('../game/ManageSession.js')).default;
     images = []
+    console.log(ManageSession.liked.liked)
     ManageSession.liked.liked.forEach(async (liked) => {
-        images.push(await convertImage(liked.url,"128"))
+        images.push({ img: await convertImage(liked.url,"128"), url: liked.url.split('.')[0]})
         images = images
-        console.log(images)
         current = "liked"
     });
-    console.log(images)
-
     current = "liked"
 }
 
 async function goHome(){
+    if(current == "home" ) {current = false; return};
+    user_name = ManageSession.userProfile.username
+    house_url = await getObject("home", ManageSession.userProfile.metadata.azc, ManageSession.userProfile.id)
+    house_url = await convertImage(house_url.value.url,"64")
+    console.log(ManageSession.userProfile)
     // let HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
 
     // HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
-    window.history.pushState('', 'home', '/?location=home_' + ManageSession.userProfile.id);
+    // window.history.pushState('', 'home', '/?location=home_' + ManageSession.userProfile.id);
 
-
+    current = "home"
 }
 
 async function getAdressbook(){
     if(current == "addressbook" ) {current = false; return};
-    ManageSession = (await import('../game/ManageSession.js')).default;
-
-    console.log(ManageSession.addressbook)
+    adress_book = ManageSession.addressbook.addressbook
+    console.log(ManageSession.addressbook.addressbook)
     current = "addressbook"
 }
 
 </script>
 
 <div id="itemsButton" class:show={!click}>
-    <a on:click={()=>{click = true}}><img class="icon" src="assets/SHB/svg/AW-icon-more.svg"></a>
+    <a on:click={Click} ><img class="icon" src="assets/SHB/svg/AW-icon-more.svg"></a>
 </div>
 <div id="itemsbar" class:show={click}>
     <div id="left">
-        <a on:click={goHome}><img class="icon" src="assets/SHB/svg/AW-icon-home.svg"></a>
+        <a on:click={goHome} class="avatar"><img src="{avatar_url}"></a>
         <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook.svg"></a>
+
+        <a href="/#/drawing"><img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg"></a>
+        <a href="/#/stopmotion"><img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg"></a>
+        
         <a on:click={getLiked}><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg"></a>
     </div>
     <div id="right">
         {#if current == "liked"}
             <div>
                 {#each images as image}
-                    <img src="{image}">
+                    <a href="/#/{image.url}"><img src="{image.img}"></a>
                 {/each}
             </div>
         {/if}
         {#if current == "addressbook"}
             <div>
-
+                {#each adress_book as adress}
+                    <a href="/#/profile/{adress.user_id}">{adress.user_name}</a>
+                {/each}
+            </div>
+        {/if}
+        {#if current == "home"}
+            <div>
+                <a href="/#/avatar" class="avatar"><img src="{ManageSession.userProfile.url}"></a>
+                <p>{user_name}</p>
+                {#if !!house_url}
+                    <a href="/#/house"><img id="house" src={house_url} /></a>
+                {:else}
+                    <a href="/#/house/">Create house</a>
+                {/if}
+                <a on:click={goHome}><img class="icon" src="assets/SHB/svg/AW-icon-home.svg"></a>
             </div>
         {/if}
     </div>  
@@ -128,6 +154,11 @@ async function getAdressbook(){
         max-width: 50px;
         height: 50px;
         float: left;
+        margin-top: 5px;
+    }
+
+    #itemsButton > a > .icon {
+        margin-top: 0px;
     }
 
     #left {
@@ -155,5 +186,19 @@ async function getAdressbook(){
         flex-direction: column;
         align-items: flex-end;
         padding: 15px;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        scroll-snap-type: y proximity;
+        max-height: 80vh;
+        margin: 15px;
+    }
+    .avatar {
+        height: 50px;
+        width: 50px;
+        overflow: hidden;
+    }
+
+    .avatar > img {
+        height: 50px;
     }
 </style>

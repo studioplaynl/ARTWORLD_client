@@ -8,7 +8,6 @@
   import CircleMaskImagePlugin from "phaser3-rex-plugins/plugins/circlemaskimage-plugin.js"
   import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin.js'
   import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin.js'
-  import Itemsbar from "../components/itemsbar.svelte"
   import { CONFIG, SCENES } from "./config";
 
   onMount(async () => {
@@ -86,5 +85,4 @@
 
 <main>
   <div id="phaserId" />
-  <Itemsbar/>
 </main>
