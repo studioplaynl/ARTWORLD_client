@@ -300,10 +300,9 @@
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
       if(!!!displayName){
-        displayName = title
-        title = Date.now() + "_" + title
+        displayName = Date.now() + "_" + title
       }
-      await uploadImage(title, appType, json, blobData, status,version,displayName);
+      await uploadImage(displayName, appType, json, blobData, status,version,title);
       saved = true;
       saving = false
     }
@@ -340,10 +339,9 @@
         var blobData = dataURItoBlob(Image);
         json = JSON.stringify(frames);
         if(!!!displayName){
-          displayName = title
-          title = Date.now() + "_" + title
+          displayName = Date.now() + "_" + title
         }
-        await uploadImage(title, appType, json, blobData, status,version,displayName);
+        await uploadImage(displayName, appType, json, blobData, status,version,title);
         saving = false
 
     }
@@ -1210,7 +1208,7 @@
               </select>
             {/if}
 
-            <button on:click={upload}>Save</button>
+            <button on:click={upload}>{#if saving}Saving{:else if saved} Saved{:else}Save{/if}</button>
           </div>
         </div>
       </div>
@@ -1249,8 +1247,7 @@
         <a
           class:currentSelected={current === "saveToggle"}
           on:click={() => {
-            if((appType == "drawing" || appType == "stopmotion") && version == 0){
-              console.log("versoionn"+ version)
+            if((appType == "drawing" || appType == "stopmotion")){
             saveToggle = !saveToggle;
             switchOption("saveToggle")
             } 
