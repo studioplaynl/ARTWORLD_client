@@ -88,6 +88,10 @@ class Move {
     // we pass on Phaser2D coordinates to ManageSession.sendMoveMessage
     // target is a vector
 
+    //update url 
+    ManageSession.setUrl(ManageSession.location, CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x), CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y))
+  
+    //set movement over network
     ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")
   }
 
@@ -115,7 +119,9 @@ class Move {
         scene.player.body.reset(scene.target.x, scene.target.y)
         // send Stop command
         ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
-
+        //update url 
+        ManageSession.setUrl(ManageSession.location, CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x), CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y))
+  
         //play "stop" animation
         this.movingAnimation(scene, "stop")
         scene.isPlayerMoving = false
@@ -224,9 +230,6 @@ class Move {
       ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)
       //console.log(this.player.x)
       ManageSession.updateMovementTimer = 0
-      // }
-      // this.scrollablePanel.x = this.player.x
-      // this.scrollablePanel.y = this.player.y + 150
     }
   }
 

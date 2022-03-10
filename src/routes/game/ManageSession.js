@@ -96,7 +96,9 @@ class ManageSession {
   }
 
   setUrl(location, posX, posY) {
-    window.history.pushState('', 'home', '/?location=home/' + userID);
+    //console.log("location, posX, posY", location, posX, posY)
+    //.pushState({"html":response.html,"pageTitle":response.pageTitle},"", urlPath);
+    window.history.pushState('', 'Artworld', '/?location='+location+'&posX='+Math.round(posX)+'&posY='+Math.round(posY))
   }
   // .......................... end URL PARSING .....................................
 
