@@ -14,5 +14,6 @@
     "artworld.vrolijkheid.nl",
     "7350",
     SSL
-  );
+  )
+
 </script>

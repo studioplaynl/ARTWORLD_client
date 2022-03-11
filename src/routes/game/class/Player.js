@@ -538,6 +538,7 @@ class Player {
       // hit area of onlinePlayer
       onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50)
       onlinePlayer.on('pointerup', () => {
+        ManageSession.selectedOnlinePlayer = onlinePlayer
         this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
         //put a timer of 20 sec to automatically close the onlinePlayerItemsBar
         scene.time.addEvent({

@@ -36,7 +36,7 @@ class ManageSession {
     this.playerMove
     this.playerPosX // store playerPosX, also parsed from URL, to create player
     this.playerPosY // store playerPosY, also parsed from URL, to create player
-
+    this.selectedOnlinePlayer // pass on the clicked on OnlinePlayer
 
     this.avatarSize = 64
     this.cameraShake = false

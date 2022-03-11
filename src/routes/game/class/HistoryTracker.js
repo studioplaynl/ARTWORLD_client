@@ -6,7 +6,7 @@ class HistoryTracker {
   pushLocation(scene) {
     //store the current scene in ManageSession for reference outside of Phaser (html ui)
     ManageSession.currentScene = scene
-    console.log("ManageSession.currentScene", ManageSession.currentScene)
+    //console.log("ManageSession.currentScene", ManageSession.currentScene)
 
     if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1]?.locationID != scene.location) {
       // set ManageSession.playerPosX Y to player.x and y
