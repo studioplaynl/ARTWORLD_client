@@ -86,7 +86,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // we set the location either clickable or dragable (because dragging is a edit function)
         if (!this.draggable) {
             this.location.setInteractive({ useHandCursor: true })
-            console.log("this.location.width, this.location.height", this.location.width, this.location.height)
+            //console.log("this.location.width, this.location.height", this.location.width, this.location.height)
             // the width and height are not the same for isobox, 
             // we make the hitarea for 
 
