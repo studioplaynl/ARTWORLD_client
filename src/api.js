@@ -109,6 +109,8 @@ await fetch(jpegURL, {
 export async function getUploadURL(type, name, filetype,version) {
   name = version + "_" + name + '.' + filetype
   const payload = { "type": type, "filename": name };
+  console.log("payload")
+  console.log(payload)
   const rpcid = "upload_file";
   const fileurl = await client.rpc(Sess, rpcid, payload);
   console.log(fileurl)

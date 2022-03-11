@@ -2,7 +2,7 @@
 import {convertImage, getObject} from "../../api"
 
 export let click =  false
-
+export let currentUser = false;
 	
 let ManageSession;
 let current	
@@ -18,29 +18,43 @@ async function Click(){
 
 async function getLiked(){
     if(current == "liked" ) {current = false; return};
-    images = []
-    console.log(ManageSession.liked.liked)
-    ManageSession.liked.liked.forEach(async (liked) => {
+
+    if(currentUser){
+        images = []
+        console.log(ManageSession.liked.liked)
+        ManageSession.liked.liked.forEach(async (liked) => {
         images.push({ img: await convertImage(liked.url,"128"), url: liked.url.split('.')[0]})
         images = images
-        current = "liked"
     });
+   
+    } else {
+
+    }
+
     current = "liked"
 }
 
-async function goHome(){
+async function Profile(){
     if(current == "home" ) {current = false; return};
-    user_name = ManageSession.userProfile.username
-    house_url = await getObject("home", ManageSession.userProfile.metadata.azc, ManageSession.userProfile.id)
-    house_url = await convertImage(house_url.value.url,"64")
-    console.log(ManageSession.userProfile)
-    // let HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
-
-    // HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
-    // window.history.pushState('', 'home', '/?location=home_' + ManageSession.userProfile.id);
+    if(currentUser){
+        user_name = ManageSession.userProfile.username
+        house_url = await getObject("home", ManageSession.userProfile.meta.azc, ManageSession.userProfile.id)
+        house_url = await convertImage(house_url.value.url,"64")
+    }
 
     current = "home"
 }
+
+
+async function goHome(){
+    if(currentUser){
+    let HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
+    HistoryTracker.switchScene(ManageSession.currentScene, "DefaultUserHome", ManageSession.userProfile.id)
+    } else {
+
+    }
+}
+
 
 async function getAdressbook(){
     if(current == "addressbook" ) {current = false; return};
@@ -54,14 +68,18 @@ async function getAdressbook(){
 <div id="itemsButton" class:show={!click}>
     <a on:click={Click} ><img class="icon" src="assets/SHB/svg/AW-icon-more.svg"></a>
 </div>
+
+<!-- current user -->
 <div id="itemsbar" class:show={click}>
     <div id="left">
-        <a on:click={goHome} class="avatar"><img src="{avatar_url}"></a>
+        <a on:click={Profile} class="avatar"><img src="{avatar_url}"></a>
+
+        {#if currentUser}
         <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook.svg"></a>
 
         <a href="/#/drawing"><img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg"></a>
         <a href="/#/stopmotion"><img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg"></a>
-        
+        {/if}
         <a on:click={getLiked}><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg"></a>
     </div>
     <div id="right">
@@ -88,11 +106,12 @@ async function getAdressbook(){
                 {:else}
                     <a href="/#/house/">Create house</a>
                 {/if}
-                <a on:click={goHome}><img class="icon" src="assets/SHB/svg/AW-icon-home.svg"></a>
+                <a on:click={goHome} href="#"><img class="icon" src="assets/SHB/svg/AW-icon-home.svg"></a>
             </div>
         {/if}
     </div>  
 </div>
+
 {#if click}
     <div on:click={()=>{click = false; current = false; }} id="backdrop"/>
 {/if}  
