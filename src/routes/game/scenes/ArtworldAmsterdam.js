@@ -335,18 +335,18 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
         } else {
           // get the image server side
           Promise.all([convertImage(url, "128", "png")])
-          .then((rec) => {
-            console.log(rec[0])
-            // load all the images to phaser
-            this.load.image(homeImageKey, rec[0])
-              .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
-                //create the home
-                this.createHome(element, index, homeImageKey)
-              }, this)
+            .then((rec) => {
+              console.log(rec[0])
+              // load all the images to phaser
+              this.load.image(homeImageKey, rec[0])
+                .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
+                  //create the home
+                  this.createHome(element, index, homeImageKey)
+                }, this)
               //.on('loaderror', () => {console.log("error loading image!")}, this)
-              this.load.on('loaderror', (listener) => {this.removeFromCache(listener); console.log(Phaser.Loader.File) })
-            this.load.start() // start loading the image in memory
-          })
+              this.load.once('loaderror', (listener) => { this.removeFromCache(listener) })
+              this.load.start() // start loading the image in memory
+            })
         }
 
       }) //end forEach
@@ -360,7 +360,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // type: "image"
     // src: "https://d1p8yo0yov6nht.cloudfront.net/fit-in/128x128/filters:format(png)/home/4c0003f0-3e3f-4b49-8aad-10db98f2d3dc/3_current.png?signature=eacbe3104ea58494e314e62446fddd350b09f9867e0d568721657835e5c0aa39"
 
-    //this.textures.remove(listener.key);
+    listener.destroy()
+    // let cache = this.textures
+    // console.log("cache", cache)
+    //cache.remove(listener.key)
   }
 
   createHome(element, index, homeImageKey) {
