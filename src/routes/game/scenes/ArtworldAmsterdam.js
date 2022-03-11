@@ -42,6 +42,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.playerAvatarKey = ""
     this.createdPlayer = false
 
+    //testing
+    this.resolveLoadErrorCache = []
+
     this.playerContainer
 
     this.homes = []
@@ -334,36 +337,50 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
           this.createHome(element, index)
         } else {
           // get the image server side
-          Promise.all([convertImage(url, "128", "png")])
-            .then((rec) => {
-              console.log(rec[0])
-              // load all the images to phaser
-              this.load.image(homeImageKey, rec[0])
-                .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
-                  //create the home
-                  this.createHome(element, index, homeImageKey)
-                }, this)
-              //.on('loaderror', () => {console.log("error loading image!")}, this)
-              this.load.once('loaderror', (listener) => { this.removeFromCache(listener) })
-              this.load.start() // start loading the image in memory
-            })
+          this.getHomeImages(url, element, index, homeImageKey)
         }
 
       }) //end forEach
     }
   }
 
-  removeFromCache(listener) {
-    console.log("error loading image!", listener)
-    //listener = object
-    // key: "homeKey_4c0003f0-3e3f-4b49-8aad-10db98f2d3dc"
-    // type: "image"
-    // src: "https://d1p8yo0yov6nht.cloudfront.net/fit-in/128x128/filters:format(png)/home/4c0003f0-3e3f-4b49-8aad-10db98f2d3dc/3_current.png?signature=eacbe3104ea58494e314e62446fddd350b09f9867e0d568721657835e5c0aa39"
+  async getHomeImages(url, element, index, homeImageKey) {
+    console.log("getHomeImages")
+    await convertImage(url, "128", "png")
+      .then((rec) => {
+        //console.log("rec", rec)
+        // load all the images to phaser
+        this.load.image(homeImageKey, rec)
+          .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
+            //create the home
+            this.createHome(element, index, homeImageKey)
+          }, this)
+          .on(`loaderror`, (offendingFile) => { this.resolveLoadError(element, index, homeImageKey, offendingFile) }, this)
+        this.load.start() // start loading the image in memory
+      })
 
-    listener.destroy()
-    // let cache = this.textures
-    // console.log("cache", cache)
-    //cache.remove(listener.key)
+  }
+
+
+
+  resolveLoadError(element, index, homeImageKey, offendingFile) {
+    //console.log("element, index, homeImageKey, offendingFile", element, index, homeImageKey, offendingFile)
+    //console.log("offendingFile", offendingFile)
+    const tempKey = 'homeKey_' + element.user_id
+    if (tempKey == offendingFile.key) {
+      let cachObject = { element: element, index: index, homeImageKey: homeImageKey, offendingFile: offendingFile }
+      this.resolveLoadErrorCache.push(cachObject)
+
+      console.log("load offendingFile again", homeImageKey)
+      this.load.image(homeImageKey, './assets/ball_grey.png')
+        .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
+          //create the home
+          this.createHome(element, index, homeImageKey)
+        }, this)
+      this.load.start()
+    }
+    //Phaser.Loader.File.resetXHR()
+    //console.log("Phaser.Loader", Phaser.Loader.File)
   }
 
   createHome(element, index, homeImageKey) {

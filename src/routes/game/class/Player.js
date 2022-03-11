@@ -3,7 +3,7 @@ import CoordinatesTranslator from "./CoordinatesTranslator"
 import { listObjects, listImages, convertImage, getFullAccount, updateObject, getAccount } from "../../../api.js"
 import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList"
-import {playerClicked, onlinePlayerClicked } from "../../components/itemsbar.svelte"
+// import { playerClicked, onlinePlayerClicked } from "../../components/itemsbar.svelte"
 
 class Player {
   constructor() { }
@@ -183,7 +183,7 @@ class Player {
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
       if (scene.isPlayerItemsBarDisplayed == false) {
         //pass on data to itemsbar.svelte
-        playerClicked = true
+        // playerClicked = true
         scene.playerItemsBar.setVisible(true)
 
         // creating a home button
@@ -542,7 +542,7 @@ class Player {
       onlinePlayer.on('pointerup', () => {
         // pass on values to itemsbar.svelte
         ManageSession.selectedOnlinePlayer = onlinePlayer
-        onlinePlayerClicked = true
+        // onlinePlayerClicked = true
         this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
         //put a timer of 20 sec to automatically close the onlinePlayerItemsBar
         scene.time.addEvent({

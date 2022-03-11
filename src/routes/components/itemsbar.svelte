@@ -1,7 +1,7 @@
-<script>
+<!-- <script>
 import {convertImage, getObject} from "../../api"
 
-export let playerClicked =  false
+export let playerClicked =  false;
 export let onlinePlayerClicked = false;
 	
 let ManageSession;
@@ -69,12 +69,13 @@ async function getAdressbook(){
     <a on:click={Click} ><img class="icon" src="assets/SHB/svg/AW-icon-more.svg"></a>
 </div>
 
-<!-- current user -->
+<!-- onlinePlayerClicked -->
+<!--
 <div id="itemsbar" class:show={click}>
     <div id="left">
         <a on:click={Profile} class="avatar"><img src="{avatar_url}"></a>
 
-        {#if currentUser}
+        {#if onlinePlayerClicked}
         <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook.svg"></a>
 
         <a href="/#/drawing"><img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg"></a>
@@ -112,8 +113,8 @@ async function getAdressbook(){
     </div>  
 </div>
 
-{#if click}
-    <div on:click={()=>{click = false; current = false; }} id="backdrop"/>
+{#if playerClicked}
+    <div on:click={()=>{playerClicked = false; current = false; }} id="backdrop"/>
 {/if}  
 
 
@@ -220,4 +221,4 @@ async function getAdressbook(){
     .avatar > img {
         height: 50px;
     }
-</style>
+</style> -->
