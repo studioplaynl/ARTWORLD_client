@@ -1,8 +1,8 @@
 <script>
 import {convertImage, getObject} from "../../api"
 
-export let click =  false
-export let currentUser = false;
+export let playerClicked =  false
+export let onlinePlayerClicked = false;
 	
 let ManageSession;
 let current	
