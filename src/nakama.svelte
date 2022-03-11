@@ -11,7 +11,7 @@
 
   export const client = new Client(
     "RHSGvCuxJRmEf347",
-    "artworld.vrolijkheid.nl",
+    "193.187.129.81,
     "7350",
     SSL
   )
