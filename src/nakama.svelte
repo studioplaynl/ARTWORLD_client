@@ -11,7 +11,7 @@
 
   export const client = new Client(
     "RHSGvCuxJRmEf347",
-    "193.187.129.81,
+    "193.187.129.81",
     "7350",
     SSL
   )
