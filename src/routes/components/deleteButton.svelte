@@ -2,7 +2,7 @@
     import {updateObject, deleteFile, deleteObjectAdmin} from "../../api.js"
     import {Profile} from "../../session"
     import {Modal, Dialog, Button} from "attractions"
-    export let col;
+    // export let col;
     export let row;
     export let removeFromTrash;
     export let moveToTrash;
