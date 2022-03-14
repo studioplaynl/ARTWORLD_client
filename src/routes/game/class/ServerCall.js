@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession"
-import itemsbar from "../../components/itemsbar"
+// import itemsbar from "../../components/itemsbar"
 import { getAccount, updateObject, listObjects } from '../../../api.js'
 
 class ServerCall {

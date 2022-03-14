@@ -3,7 +3,7 @@ import CoordinatesTranslator from "./CoordinatesTranslator"
 import { listObjects, listImages, convertImage, getFullAccount, updateObject, getAccount } from "../../../api.js"
 import HistoryTracker from "./HistoryTracker"
 import ArtworkList from "./ArtworkList"
-import {playerClicked, onlinePlayerClicked } from "../../components/itemsbar.svelte"
+import itemsBar from "../../components/itemsbar.js"
 
 class Player {
   constructor() { }
@@ -180,69 +180,72 @@ class Player {
     scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y).setDepth(220)
 
     scene.player.on("pointerup", async () => {
+      itemsBar.update(itemsbar => itemsbar = {playerClicked: true, onlinePlayerClicked: false})
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
-      if (scene.isPlayerItemsBarDisplayed == false) {
-        //pass on data to itemsbar.svelte
-        playerClicked = true
-        scene.playerItemsBar.setVisible(true)
+      // if (scene.isPlayerItemsBarDisplayed == false) {
+      //   //pass on data to itemsbar.svelte
+      //  console.log(itemsBar)
+      //   itemsBar.update(itemsbar => itemsbar = {playerClicked: true, onlinePlayerClicked: false})
+ 
+      //   scene.playerItemsBar.setVisible(true)
 
-        // creating a home button
-        scene.playerHomeButton = scene.add.image(0, -70, "home").setInteractive({ useHandCursor: true })
-        // entering the home of the avatar
-        scene.playerHomeButton.on("pointerup", () => {
-          HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
-        })
+      //   // creating a home button
+      //   scene.playerHomeButton = scene.add.image(0, -70, "home").setInteractive({ useHandCursor: true })
+      //   // entering the home of the avatar
+      //   scene.playerHomeButton.on("pointerup", () => {
+      //     HistoryTracker.switchScene(scene, "DefaultUserHome", ManageSession.userProfile.id)
+      //   })
 
-        // creating a liked button
-        scene.playerLikedButton = scene.add.image(65, 0, "heart").setInteractive({ useHandCursor: true })
+      //   // creating a liked button
+      //   scene.playerLikedButton = scene.add.image(65, 0, "heart").setInteractive({ useHandCursor: true })
 
-        scene.playerLikedButton.on("pointerdown", async () => {
-          // this flag is used for the cases when an artwork is liked/unliked and the panel gets updated immediately
-          scene.playerLikedButtonClickedFlag = true
-          // display spinner while images are being downloaded
-          scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
-            x: scene.player.x + 150,
-            y: scene.player.y,
-            width: 100,
-            height: 100,
-            duration: 850,
-            color: 0x000000
-          }).setDepth(199).start()
+      //   scene.playerLikedButton.on("pointerdown", async () => {
+      //     // this flag is used for the cases when an artwork is liked/unliked and the panel gets updated immediately
+      //     scene.playerLikedButtonClickedFlag = true
+      //     // display spinner while images are being downloaded
+      //     scene.playerLikedPanelSpinner = scene.rexSpinner.add.pie({
+      //       x: scene.player.x + 150,
+      //       y: scene.player.y,
+      //       width: 100,
+      //       height: 100,
+      //       duration: 850,
+      //       color: 0x000000
+      //     }).setDepth(199).start()
 
-          // check if there are any liked artworks
-          if (ManageSession.liked.liked.length > 0) {
-            // downloading the images and displaying them in liked panel
-            await ArtworkList.convertRexUIArray(scene)
-          } else {
-            scene.playerLikedPanelKeys = { artworks: [{ "name": "artFrame_128" }] } // placeholder when there is none liked artwork
-            // creating a liked panel with the placeholder
-            ArtworkList.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
-          }
-        })
+      //     // check if there are any liked artworks
+      //     if (ManageSession.liked.liked.length > 0) {
+      //       // downloading the images and displaying them in liked panel
+      //       await ArtworkList.convertRexUIArray(scene)
+      //     } else {
+      //       scene.playerLikedPanelKeys = { artworks: [{ "name": "artFrame_128" }] } // placeholder when there is none liked artwork
+      //       // creating a liked panel with the placeholder
+      //       ArtworkList.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
+      //     }
+      //   })
 
-        // creating an addressbook button
-        scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook").setInteractive({ useHandCursor: true })
+      //   // creating an addressbook button
+      //   scene.playerAddressbookButton = scene.add.image(0, 70, "addressbook").setInteractive({ useHandCursor: true })
 
-        scene.playerAddressbookButton.on("pointerup", () => {
-          this.createAddressbook(scene)
-        })
+      //   scene.playerAddressbookButton.on("pointerup", () => {
+      //     this.createAddressbook(scene)
+      //   })
 
-        // adding all buttons to the container
-        scene.playerItemsBar.add([
-          scene.playerHomeButton,
-          scene.playerLikedButton,
-          scene.playerAddressbookButton
-        ])
+      //   // adding all buttons to the container
+      //   scene.playerItemsBar.add([
+      //     scene.playerHomeButton,
+      //     scene.playerLikedButton,
+      //     scene.playerAddressbookButton
+      //   ])
 
-        scene.isPlayerItemsBarDisplayed = true;
+      //   scene.isPlayerItemsBarDisplayed = true;
 
-      } else {
-        scene.playerItemsBar.setVisible(false)
-        if (scene.playerLikedPanel) scene.playerLikedPanel.destroy()
-        scene.isPlayerItemsBarDisplayed = false
-        if (scene.playerAddressbookContainer) this.destroyAddressbook(scene)
-        if (scene.playerLikedButtonClickedFlag) scene.playerLikedButtonClickedFlag = false
-      }
+      // } else {
+      //   scene.playerItemsBar.setVisible(false)
+      //   if (scene.playerLikedPanel) scene.playerLikedPanel.destroy()
+      //   scene.isPlayerItemsBarDisplayed = false
+      //   if (scene.playerAddressbookContainer) this.destroyAddressbook(scene)
+      //   if (scene.playerLikedButtonClickedFlag) scene.playerLikedButtonClickedFlag = false
+      // }
     })
   }
 
@@ -542,14 +545,14 @@ class Player {
       onlinePlayer.on('pointerup', () => {
         // pass on values to itemsbar.svelte
         ManageSession.selectedOnlinePlayer = onlinePlayer
-        onlinePlayerClicked = true
-        this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
-        //put a timer of 20 sec to automatically close the onlinePlayerItemsBar
-        scene.time.addEvent({
-          delay: 20000, callback: () => {
-            this.hideOnlinePlayerItemsBar(scene)
-          }, callbackScope: scene, loop: false
-        })
+        itemsBar.update(itemsbar => itemsbar = {playerClicked: false, onlinePlayerClicked: true})
+        // this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
+        // //put a timer of 20 sec to automatically close the onlinePlayerItemsBar
+        // scene.time.addEvent({
+        //   delay: 20000, callback: () => {
+        //     this.hideOnlinePlayerItemsBar(scene)
+        //   }, callbackScope: scene, loop: false
+        // })
 
         //console.log("online player width", onlinePlayer)
       })
