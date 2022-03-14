@@ -72,7 +72,6 @@ class ServerCall {
   }
 
 
-
 }
 
 export default new ServerCall()
