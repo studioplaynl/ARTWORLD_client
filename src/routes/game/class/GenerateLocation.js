@@ -1,4 +1,3 @@
-import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
 import HistoryTracker from "./HistoryTracker"
 

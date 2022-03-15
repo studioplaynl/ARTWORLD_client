@@ -1,6 +1,5 @@
-import { CONFIG } from "../config.js"
 import ManageSession from "../ManageSession"
-import { getFullAccount, listObjects, convertImage, updateObject, updateObjectAdmin, getAccount, getAvatar } from "../../../api.js"
+import { listObjects, convertImage, getAccount } from "../../../api.js"
 
 import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
@@ -13,6 +12,7 @@ import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js"
 import Move from "../class/Move.js"
+import Homes from "../class/Homes.js"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
@@ -95,7 +95,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.isPopUpButtonsDisplayed
     this.playerContainer
     this.selectedPlayerID
-
+    
     this.homeButtonCircle
     this.homeButtonImage
     this.heartButtonCircle
@@ -117,19 +117,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
-
-    //get a list of homes from users in ArtworldAmsterdam
-    Promise.all([listObjects("home", null, 100)])
-      .then((rec) => {
-        //console.log("rec: ", rec)
-        this.homes = rec[0]
-
-        // filter only amsterdam homes
-        this.homes = this.homes.filter((obj) => obj.key == "Amsterdam")
-
-        console.log("this.homes", this.homes)
-        this.generateHomes()
-      })
+    
 
     // collection: "home"
     // create_time: "2022-01-19T16:31:43Z"
@@ -187,21 +175,21 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     })
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
-      .setInteractive() //{ useHandCursor: true }
-      .on('pointerdown', () => ManageSession.playerMove = true)
-      .setDepth(219)
-      .setOrigin(0)
-      .setVisible(false)
+        .setInteractive() //{ useHandCursor: true }
+        .on('pointerdown', () => ManageSession.playerMove = true)
+        .setDepth(219)
+        .setOrigin(0)
+        .setVisible(false)
 
     this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
 
 
     // sunglass_stripes
     this.sunglasses_striped = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34),
-      "sunglass_stripes"
-    )
+          CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564),
+          CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34),
+          "sunglass_stripes"
+        )
 
     // this.sunglasses_striped.setInteractive({ draggable: true })
 
@@ -240,8 +228,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //.......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
-    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 50), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 50), this.playerAvatarPlaceholder).setDepth(201)
-
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201)
+  
     Player.createPlayerItemsBar(this)
 
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
@@ -272,9 +260,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //.......... end INPUT ................................................................................
 
     //.......... locations ................................................................................
-    //generating homes from online query is not possible in create, because the server query can take time
-    //generating homes is done in update, after a heck that everything is downloaded
-
+    Homes.getHomesFiltered("home", "Amsterdam", 100, this)
     this.generateLocations()
     //.......... end locations ............................................................................
 
@@ -285,6 +271,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //......... end DEBUG FUNCTIONS .......................................................................
 
     //......... UI Scene  .................................................................................
+    //! UI scene is never stopped, so could be launched at NetworkBoot and later never relaunched
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
     this.currentZoom = this.UI_Scene.currentZoom
@@ -298,126 +285,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // this.avatarDetailsContainer.setDepth(999)
 
   } //end create
-
-  async getAccountDetails(array, id) {
-
-    await getAccount(id).then((rec) => {
-      //add values to the homes array // username, url, 
-      array['username'] = rec.username
-      array['url'] = rec.url
-      this.convertImage(rec.url, 64, "png", array, id)
-      //download 64px icon
-      //first convert url
-      //then download with that url
-    })
-  }
-
-  async convertImage(array, url, size, format, id) {
-    await convertImage(url, size, format).then((rec) => {
-      console.log(rec)
-
-    })
-  }
-
-  async generateHomes() {
-    //check if server query is finished, then make the home from the list
-    if (this.homes != null) {
-      console.log("generate homes!")
-
-      this.homes.forEach((element, index) => {
-        //console.log(element, index)
-        const homeImageKey = "homeKey_" + element.user_id
-        // get a image url for each home
-        // get converted image from AWS
-        const url = element.value.url
-
-        //check if homekey is already loaded
-        if (this.textures.exists(homeImageKey)) {
-          //create the home
-          this.createHome(element, index)
-        } else {
-          // get the image server side
-          this.getHomeImages(url, element, index, homeImageKey)
-        }
-
-      }) //end forEach
-    }
-  }
-
-  async getHomeImages(url, element, index, homeImageKey) {
-    console.log("getHomeImages")
-    await convertImage(url, "128", "png")
-      .then((rec) => {
-        //console.log("rec", rec)
-        // load all the images to phaser
-        this.load.image(homeImageKey, rec)
-          .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
-            //create the home
-            this.createHome(element, index, homeImageKey)
-          }, this)
-          .on(`loaderror`, (offendingFile) => { this.resolveLoadError(element, index, homeImageKey, offendingFile) }, this)
-        this.load.start() // start loading the image in memory
-      })
-
-  }
-
-
-
-  resolveLoadError(element, index, homeImageKey, offendingFile) {
-    //console.log("element, index, homeImageKey, offendingFile", element, index, homeImageKey, offendingFile)
-    //console.log("offendingFile", offendingFile)
-    const tempKey = 'homeKey_' + element.user_id
-    if (tempKey == offendingFile.key) {
-      let cachObject = { element: element, index: index, homeImageKey: homeImageKey, offendingFile: offendingFile }
-      this.resolveLoadErrorCache.push(cachObject)
-
-      console.log("load offendingFile again", homeImageKey)
-      this.load.image(homeImageKey, './assets/ball_grey.png')
-        .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
-          //create the home
-          this.createHome(element, index, homeImageKey)
-        }, this)
-      this.load.start()
-    }
-    //Phaser.Loader.File.resetXHR()
-    //console.log("Phaser.Loader", Phaser.Loader.File)
-  }
-
-  createHome(element, index, homeImageKey) {
-    // home description
-    //console.log(element)
-    const locationDescription = element.value.username
-    //const homeImageKey = "homeKey_" + element.user_id
-    // get a image url for each home
-    // get converted image from AWS
-    const url = element.value.url
-
-    this.homesRepreseneted[index] = new GenerateLocation({
-      scene: this,
-      size: 140,
-      userHome: element.user_id,
-      draggable: false,
-      type: "image",
-      x: CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        element.value.posX
-      ),
-      y: CoordinatesTranslator.artworldToPhaser2DY(
-        this.worldSize.y,
-        element.value.posY
-      ),
-      locationDestination: "DefaultUserHome",
-      locationText: locationDescription,
-      locationImage: homeImageKey,
-      enterButtonImage: "enter_button",
-      fontColor: 0x8dcb0e,
-      color1: 0xffe31f,
-      color2: 0xf2a022,
-      color3: 0xf8d80b,
-    })
-
-    this.homesRepreseneted[index].setDepth(30)
-  }
 
   generateLocations() {
     let location1Vector = new Phaser.Math.Vector2(-701.83, -304.33)
@@ -510,20 +377,12 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
-
-    //! cleanup with promise.all in create
-    //this.generateHomes()
-
-    //! make more efficient with event?
     this.gameCam.zoom = this.UI_Scene.currentZoom
-
 
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
-    //! make more efficient with event?
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................
