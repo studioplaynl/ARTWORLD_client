@@ -1,6 +1,8 @@
 <script>
 import {convertImage, getObject, updateObject} from "../../api"
 import itemsBar from "./itemsbar.js"
+import ProfilePage from "../profile.svelte"
+
 
 let ManageSession;
 let current	
@@ -116,7 +118,7 @@ async function getAdressbook(){
 <div class="itemsbar" id="currentUser" class:show={$itemsBar.playerClicked}>
     <div id="left">
         <a on:click={Profile} class="avatar"><img src="{avatar_url}"></a>
-
+        <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-award.svg"></a>
         <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook.svg"></a>
 
         <a href="/#/drawing"><img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg"></a>
@@ -128,19 +130,24 @@ async function getAdressbook(){
         {#if current == "liked"}
             <div>
                 {#each images as image}
-                    <a href="/#/{image.url}"><img src="{image.img}"></a>
+                    <a href="/#/{image.url}">
+                        <!-- <img src="{image.img}" onError={(e) => e.target.style.display='none' }> -->
+                        <div id="image" style="background-image: url({image.img}); width:128px; height: 128px;"></div>
+                    </a>
                 {/each}
             </div>
         {/if}
         {#if current == "addressbook"}
             <div>
+                <a on:click="{()=>{goHome()}}">{ManageSession.userProfile.username}</a>
                 {#each adress_book as adress}
                     <a on:click="{()=>{goHome(adress.user_id)}}">{adress.user_name}</a>
                 {/each}
             </div>
         {/if}
         {#if current == "home"}
-            <div>
+            <ProfilePage/>
+            <!-- <div>
                 <p>{user_name}</p>
                 <a href="/#/avatar" class="avatar"><img src="{ManageSession.userProfile.url}"></a>
                  <div class="homeBox">
@@ -152,7 +159,7 @@ async function getAdressbook(){
                         <a href="/#/house/"><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg"></a>
                     {/if}
                  </div>
-            </div>
+            </div> -->
         {/if}
     </div>  
 </div>
@@ -168,12 +175,13 @@ async function getAdressbook(){
         {#if current == "liked"}
             <div>
                 {#each images as image}
-                    <a href="/#/{image.url}"><img src="{image.img}"></a>
+                    <a href="/#/{image.url}"><img src="{image.img}" onError={(e) => e.target.style.display='none' }/></a>
                 {/each}
             </div>
         {/if}
         
         {#if current == "home"}
+        <!-- <ProfilePage userID="{ManageSession.selectedOnlinePlayer.id}" /> -->
             <div>
                 <p>{user_name}</p>
                 <div class="homeBox">
@@ -212,19 +220,18 @@ async function getAdressbook(){
         pointer-events: none;
         max-height: 90vh;
         display: flex;
-        align-items: flex-end;
     }
 
 
     @media screen and (max-width: 600px) {
         #currentUser, #itemsButton {
-            left: 30px;
-            bottom: 30px;
+            left: 3px;
+            bottom: 3px;
         }
 
         #onlineUser{
-            right: 30px;
-            bottom: 30px;
+            right: 3px;
+            bottom: 3px;
         }
     }
     @media screen and (min-width: 600px) {
@@ -273,6 +280,8 @@ async function getAdressbook(){
         flex-direction: column;
         flex-wrap: nowrap;
         float: left;
+        margin-right: 5px;
+        justify-content: flex-end;
     }
 
     #right {
@@ -314,4 +323,4 @@ async function getAdressbook(){
     .avatar > img {
         height: 50px;
     }
-</style> -->
+</style>
