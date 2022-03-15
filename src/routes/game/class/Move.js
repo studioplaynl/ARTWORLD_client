@@ -90,7 +90,7 @@ class Move {
 
     //update url 
     ManageSession.setUrl(ManageSession.location, CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x), CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y))
-  
+
     //set movement over network
     ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")
   }
@@ -121,7 +121,10 @@ class Move {
         ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
         //update url 
         ManageSession.setUrl(ManageSession.location, CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x), CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y))
-  
+        //update last player position in manageSession for when the player is reloaded inbetween scenes
+        ManageSession.playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)
+        ManageSession.playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)
+
         //play "stop" animation
         this.movingAnimation(scene, "stop")
         scene.isPlayerMoving = false

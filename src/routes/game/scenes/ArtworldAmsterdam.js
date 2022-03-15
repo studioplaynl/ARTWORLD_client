@@ -95,7 +95,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.isPopUpButtonsDisplayed
     this.playerContainer
     this.selectedPlayerID
-
+    
     this.homeButtonCircle
     this.homeButtonImage
     this.heartButtonCircle
@@ -117,7 +117,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
-    Homes.getHomesFiltered("home", "Amsterdam", 100, this)
+    
 
     // collection: "home"
     // create_time: "2022-01-19T16:31:43Z"
@@ -229,9 +229,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201)
-    //set url param's to player pos and scene key
-    ManageSession.setUrl(this.scene.key, ManageSession.playerPosX, ManageSession.playerPosY)
-
+  
     Player.createPlayerItemsBar(this)
 
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
@@ -262,9 +260,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //.......... end INPUT ................................................................................
 
     //.......... locations ................................................................................
-    //generating homes from online query is not possible in create, because the server query can take time
-    //generating homes is done in update, after a heck that everything is downloaded
-
+    Homes.getHomesFiltered("home", "Amsterdam", 100, this)
     this.generateLocations()
     //.......... end locations ............................................................................
 
@@ -275,6 +271,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //......... end DEBUG FUNCTIONS .......................................................................
 
     //......... UI Scene  .................................................................................
+    //! UI scene is never stopped, so could be launched at NetworkBoot and later never relaunched
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
     this.currentZoom = this.UI_Scene.currentZoom
@@ -380,20 +377,12 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   update(time, delta) {
     //...... ONLINE PLAYERS ................................................
-
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
-
-    //! cleanup with promise.all in create
-    //this.generateHomes()
-
-    //! make more efficient with event?
     this.gameCam.zoom = this.UI_Scene.currentZoom
-
 
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
-    //! make more efficient with event?
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................

@@ -1,5 +1,7 @@
+import ManageSession from "../ManageSession"
+
 export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
-    
+
     constructor(scene, x, y, textureKey) {
         super(scene, x, y, 'defaultPlayerAvatar');
 
@@ -13,5 +15,8 @@ export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
         //  Set some default physics properties
         this.body.onOverlap = true
         this.setDepth(101)
+
+        //set url param's to player pos and scene key
+        ManageSession.setUrl(ManageSession.location, ManageSession.playerPosX, ManageSession.playerPosY)
     }
 }
