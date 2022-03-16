@@ -159,7 +159,10 @@ function moveToTrash(key) {
       role = useraccount.metadata.role
       azc = useraccount.metadata.azc
       avatar_url = useraccount.url
-      animateScript()
+      if(!!avatar_url){
+        animateScript()
+      }
+      
       try {
         house_url = await getObject("home", azc, params.user)
       } catch(err) {
@@ -184,6 +187,9 @@ function moveToTrash(key) {
       role = JSON.parse(useraccount.metadata).role
       azc = JSON.parse(useraccount.metadata).azc
       avatar_url = useraccount.url
+      if(!!avatar_url){
+        animateScript()
+      }
       try {
         house_url = await getObject("home", azc, $Session.user_id)
       } catch(err) {

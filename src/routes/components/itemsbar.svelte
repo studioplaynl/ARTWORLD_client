@@ -17,6 +17,9 @@ const unsubscribe = itemsBar.subscribe(async value => {
     if(value.onlinePlayerClicked){
         console.log(ManageSession.selectedOnlinePlayer)
         avatar_url = ManageSession.selectedOnlinePlayer.url
+        user_name = ManageSession.selectedOnlinePlayer.username 
+        house_url = await getObject("home", ManageSession.selectedOnlinePlayer.metadata.azc, ManageSession.selectedOnlinePlayer.id)
+        house_url = await convertImage(house_url.value.url,"50")
     }
 });
 
@@ -51,15 +54,15 @@ async function getLiked(){
 
 async function Profile(){
     if(current == "home" ) {current = false; return};
-    if($itemsBar.playerClicked){
-        user_name = ManageSession.userProfile.username
-        house_url = await getObject("home", ManageSession.userProfile.meta.azc, ManageSession.userProfile.id)
-        house_url = await convertImage(house_url.value.url,"50")
-    } else{
-        user_name = ManageSession.selectedOnlinePlayer.username 
-        house_url = await getObject("home", ManageSession.selectedOnlinePlayer.metadata.azc, ManageSession.selectedOnlinePlayer.id)
-        house_url = await convertImage(house_url.value.url,"50")
-    }
+    // if($itemsBar.playerClicked){
+        // user_name = ManageSession.userProfile.username
+        // house_url = await getObject("home", ManageSession.userProfile.meta.azc, ManageSession.userProfile.id)
+        // house_url = await convertImage(house_url.value.url,"50")
+    // } else{
+    //     user_name = ManageSession.selectedOnlinePlayer.username 
+    //     house_url = await getObject("home", ManageSession.selectedOnlinePlayer.metadata.azc, ManageSession.selectedOnlinePlayer.id)
+    //     house_url = await convertImage(house_url.value.url,"50")
+    // }
 
     current = "home"
 }
@@ -167,8 +170,9 @@ async function getAdressbook(){
 <!-- online user -->
 <div class="itemsbar" id="onlineUser" class:show={$itemsBar.onlinePlayerClicked}>
     <div id="left">
-        <a on:click={Profile} class="avatar"><img src="{avatar_url}"></a>
-
+        <p>{user_name}</p>
+        <a on:click={()=>{}} class="avatar"><img src="{avatar_url}"></a>
+        <a on:click={Profile}><img id="house" src={house_url} /></a>
         <a on:click={getLiked}><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg"></a>
     </div>
     <div id="right">
@@ -181,19 +185,11 @@ async function getAdressbook(){
         {/if}
         
         {#if current == "home"}
+                <br><br><br><br><br>
+                <a on:click={goHome}><img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg"></a>    
+                <a on:click={saveHome}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg"></a>
         <!-- <ProfilePage userID="{ManageSession.selectedOnlinePlayer.id}" /> -->
-            <div>
-                <p>{user_name}</p>
-                <div class="homeBox">
-                    {#if !!house_url}
-                        <a on:click={()=>{homeOpen = !homeOpen}}><img id="house" src={house_url} /></a>
-                    {/if}
-                    {#if homeOpen}
-                        <a on:click={goHome}><img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg"></a>    
-                        <a on:click={saveHome}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg"></a>
-                    {/if}
-                </div>
-            </div>
+        
         {/if}
     </div>  
 </div>
