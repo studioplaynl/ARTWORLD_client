@@ -8,7 +8,7 @@ import itemsBar from "../../components/itemsbar.js"
 class Player {
   constructor() { }
 
-  loadPlayerAvatar(scene) {
+  loadPlayerAvatar(scene, placePlayerX, placePlayerY) {
     //check if account info is loaded
     if (ManageSession.userProfile.id != null) {
       //check for createPlayer flag
@@ -27,69 +27,78 @@ class Player {
 
         // put the player in the last server known position
         // retreive position from ManageSession (there it is stored on boot)
-      
-      
-          //* data model userAccount:
-          // avatar_url: "avatar/stock/avatarRood.png"
-          // url: "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/stock/avatarRood.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20220220%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20220220T131419Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f4a9c03bec8f53e0d8ea141494fe1dac7f124781b8c5d9f77794c8521454e621"
-          // username: "user11"
-          // metadata:
-          //        azc: "Amsterdam"
-          //        location: "5264dc23-a339-40db-bb84-e0849ded4e68"
-          //        posX: -2483
-          //        posY: 0
-          //        role: "speler"
-          //        user_id: ""
 
-          scene.playerAvatarKey = ManageSession.userProfile.id + "_" + ManageSession.userProfile.create_time
 
-          let lastPosX = ManageSession.playerPosX
-          let lastPosY = ManageSession.playerPosY
-          //console.log("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)
+        //* data model userAccount:
+        // avatar_url: "avatar/stock/avatarRood.png"
+        // url: "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/stock/avatarRood.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20220220%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20220220T131419Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f4a9c03bec8f53e0d8ea141494fe1dac7f124781b8c5d9f77794c8521454e621"
+        // username: "user11"
+        // metadata:
+        //        azc: "Amsterdam"
+        //        location: "5264dc23-a339-40db-bb84-e0849ded4e68"
+        //        posX: -2483
+        //        posY: 0
+        //        role: "speler"
+        //        user_id: ""
 
-          // positioning player
- 
-            // check if last position (artworldCoordinates) is outside the worldBounds for some reason
-            // otherwise place it within worldBounds
-            // a random number between -150 and 150
-            if (lastPosX > scene.worldSize.x / 2 || lastPosX < - scene.worldSize.x / 2) lastPosX = Math.floor((Math.random() * 300) - 150)
-            if (lastPosY > scene.worldSize.y / 2 || lastPosY < - scene.worldSize.y / 2) lastPosY = Math.floor((Math.random() * 300) - 150)
-            console.log("lastPosX, lastPosY", lastPosX, lastPosY)
+        scene.playerAvatarKey = ManageSession.userProfile.id + "_" + ManageSession.userProfile.create_time
 
-            scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, lastPosX)
-            scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, lastPosY)
-         
-          //if the texture doesnot exists load it and attach it to the player
-          if (!scene.textures.exists(scene.playerAvatarKey)) {
-            //check if url is not empty for some reason, returns so that previous image is kept
-            if (ManageSession.userProfile.url === "") {
-              console.log("avatar url is empty")
-              ManageSession.createPlayer = false
-              console.log("ManageSession.createPlayer = ", ManageSession.createPlayer)
-              scene.createdPlayer = true
-              console.log("scene.createdPlayer = ", scene.createdPlayer)
-              return
-            } else {
-              // load the avatar
-              //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
+        let lastPosX
+        let lastPosY
+        if (!!placePlayerX) { lastPosX = placePlayerX } else {
+          lastPosX = ManageSession.playerPosX
+          console.log("lastPosX", lastPosX)
+        }
+        if (!!placePlayerY) { lastPosY = placePlayerY } else {
+          lastPosY = ManageSession.playerPosY
+          console.log("lastPosX", lastPosX)
+        }
 
-              // //get the avatar_url
-              // Promise.all([convertImage(ManageSession.userProfile.avatar_url, "64", "png")]).then(rec => {
-              //   console.log(rec[0])
-              //   const convertedAvatarUrl = rec[0]
-              // })
+        //console.log("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)
 
-              const fileNameCheck = scene.playerAvatarKey
-              scene.load.spritesheet(fileNameCheck, ManageSession.userProfile.url, { frameWidth: 64, frameHeight: 64 })
-                .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { console.log("scene.playerAvatarKey", scene.playerAvatarKey); this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
-              scene.load.start() // start loading the image in memory
-             
-            }
+        // positioning player
+
+        // check if last position (artworldCoordinates) is outside the worldBounds for some reason
+        // otherwise place it within worldBounds
+        // a random number between -150 and 150
+        if (lastPosX > scene.worldSize.x / 2 || lastPosX < - scene.worldSize.x / 2) lastPosX = Math.floor((Math.random() * 300) - 150)
+        if (lastPosY > scene.worldSize.y / 2 || lastPosY < - scene.worldSize.y / 2) lastPosY = Math.floor((Math.random() * 300) - 150)
+        console.log("lastPosX, lastPosY", lastPosX, lastPosY)
+
+        scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, lastPosX)
+        scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, lastPosY)
+
+        //if the texture doesnot exists load it and attach it to the player
+        if (!scene.textures.exists(scene.playerAvatarKey)) {
+          //check if url is not empty for some reason, returns so that previous image is kept
+          if (ManageSession.userProfile.url === "") {
+            console.log("avatar url is empty")
+            ManageSession.createPlayer = false
+            console.log("ManageSession.createPlayer = ", ManageSession.createPlayer)
+            scene.createdPlayer = true
+            console.log("scene.createdPlayer = ", scene.createdPlayer)
+            return
           } else {
-            this.attachAvatarToPlayer(scene)
-            console.log("scene.location", scene.location)
+            // load the avatar
+            //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
+
+            // //get the avatar_url
+            // Promise.all([convertImage(ManageSession.userProfile.avatar_url, "64", "png")]).then(rec => {
+            //   console.log(rec[0])
+            //   const convertedAvatarUrl = rec[0]
+            // })
+
+            const fileNameCheck = scene.playerAvatarKey
+            scene.load.spritesheet(fileNameCheck, ManageSession.userProfile.url, { frameWidth: 64, frameHeight: 64 })
+              .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { console.log("scene.playerAvatarKey", scene.playerAvatarKey); this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
+            scene.load.start() // start loading the image in memory
+
           }
-        
+        } else {
+          this.attachAvatarToPlayer(scene)
+          console.log("scene.location", scene.location)
+        }
+
       } //if(ManageSession.playerCreated)
     }
   }
@@ -180,13 +189,13 @@ class Player {
     scene.playerItemsBar = scene.add.container(scene.player.x, scene.player.y).setDepth(220)
 
     scene.player.on("pointerup", async () => {
-      itemsBar.update(itemsbar => itemsbar = {playerClicked: true, onlinePlayerClicked: false})
+      itemsBar.update(itemsbar => itemsbar = { playerClicked: true, onlinePlayerClicked: false })
       // checking if the buttons are hidden, show - if hidden, hide - if displayed
       // if (scene.isPlayerItemsBarDisplayed == false) {
       //   //pass on data to itemsbar.svelte
       //  console.log(itemsBar)
       //   itemsBar.update(itemsbar => itemsbar = {playerClicked: true, onlinePlayerClicked: false})
- 
+
       //   scene.playerItemsBar.setVisible(true)
 
       //   // creating a home button
@@ -545,7 +554,7 @@ class Player {
       onlinePlayer.on('pointerup', () => {
         // pass on values to itemsbar.svelte
         ManageSession.selectedOnlinePlayer = onlinePlayer
-        itemsBar.update(itemsbar => itemsbar = {playerClicked: false, onlinePlayerClicked: true})
+        itemsBar.update(itemsbar => itemsbar = { playerClicked: false, onlinePlayerClicked: true })
         // this.displayOnlinePlayerItemsBar(scene, onlinePlayer)
         // //put a timer of 20 sec to automatically close the onlinePlayerItemsBar
         // scene.time.addEvent({

@@ -95,7 +95,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.isPopUpButtonsDisplayed
     this.playerContainer
     this.selectedPlayerID
-    
+
     this.homeButtonCircle
     this.homeButtonImage
     this.heartButtonCircle
@@ -111,13 +111,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   async create() {
-    // for back button
-    HistoryTracker.pushLocation(this)
-
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
-    
+
 
     // collection: "home"
     // create_time: "2022-01-19T16:31:43Z"
@@ -175,21 +172,21 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     })
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
-        .setInteractive() //{ useHandCursor: true }
-        .on('pointerdown', () => ManageSession.playerMove = true)
-        .setDepth(219)
-        .setOrigin(0)
-        .setVisible(false)
+      .setInteractive() //{ useHandCursor: true }
+      .on('pointerdown', () => ManageSession.playerMove = true)
+      .setDepth(219)
+      .setOrigin(0)
+      .setVisible(false)
 
     this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
 
 
     // sunglass_stripes
     this.sunglasses_striped = this.add.image(
-          CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564),
-          CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34),
-          "sunglass_stripes"
-        )
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34),
+      "sunglass_stripes"
+    )
 
     // this.sunglasses_striped.setInteractive({ draggable: true })
 
@@ -229,10 +226,14 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201)
-  
+
     Player.createPlayerItemsBar(this)
 
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
+
+    // for back button, has to be done after player is created for the history tracking!
+    HistoryTracker.pushLocation(this)
+
     // this.playerTest = new PlayerDefault(
     //   this,
     //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),

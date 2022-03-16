@@ -9,8 +9,7 @@ class Homes {
     async getHomesFiltered(collection, filter, maxItems, scene) {
         //homes represented, to created homes in the scene
         scene.homesRepresented = []
-        
-
+        //scene.load.on(`loaderror`, (offendingFile) => { this.resolveLoadError2(offendingFile, scene) }, this)
         //get a list of all homes objects and then filter
         Promise.all([listObjects(collection, null, maxItems)])
             .then((rec) => {
@@ -60,8 +59,17 @@ class Homes {
                         this.createHome(element, index, homeImageKey, scene)
                     }, this)
                     .on(`loaderror`, (offendingFile) => { this.resolveLoadError(element, index, homeImageKey, offendingFile, scene) }, this)
-                scene.load.start() // start loading the image in memory
+                scene.load.start("thing") // start loading the image in memory
             })
+        //const temp = Phaser.Loader
+        const temp2 = Phaser.Loader.LoaderPlugin
+        //console.log("Phaser.Loader", temp)
+        console.log("Phaser.Loader.LoaderPlugin", temp2)
+    }
+
+    resolveLoadError2(offendingFile, errorType, scene) {
+        console.log("offendingFile, errorType, scene", offendingFile, errorType, scene)
+
     }
 
     resolveLoadError(element, index, homeImageKey, offendingFile, scene) {
@@ -71,7 +79,7 @@ class Homes {
         if (tempKey == offendingFile.key) {
             //   let cachObject = { element: element, index: index, homeImageKey: homeImageKey, offendingFile: offendingFile }
             //   scene.resolveLoadErrorCache.push(cachObject)
-            console.log("load offendingFile again", homeImageKey)
+            console.log("load offendingFile again", homeImageKey, offendingFile)
 
             scene.load.image(homeImageKey, './assets/ball_grey.png')
                 .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
@@ -92,7 +100,7 @@ class Homes {
         // get a image url for each home
         // get converted image from AWS
         const url = element.value.url
-       
+
         scene.homesRepresented[index] = new GenerateLocation({
             scene: scene,
             size: 140,

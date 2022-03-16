@@ -185,7 +185,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.artworksListSpinner.start()
 
-        Player.loadPlayerAvatar(this)
+        Player.loadPlayerAvatar(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0))
 
         await listImages("drawing", this.location, 100).then((rec) => {
             //this.userArtServerList is an array with objects, in the form of:
