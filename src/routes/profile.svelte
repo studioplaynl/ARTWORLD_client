@@ -7,10 +7,15 @@
   import StatusComp from "./components/statusbox.svelte"
   import DeleteComp from "./components/deleteButton.svelte"
   import NameEdit from "./components/nameEdit.svelte"
+  import { onDestroy, onMount} from 'svelte';
 
   import {Card} from "attractions"
 
   export let params = {}
+  export let userID;
+
+  
+
   let useraccount
   let drawingIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />'
   let stopMotionIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />'
@@ -30,12 +35,13 @@
     audio = [],
     trash = [],
     picture = [],
-    CurrentUser;
+    CurrentUser,
+    avatar;
 
     const columns = [
       {
         key: "Soort",
-        title: "Soort",
+        title: "",
         value: v => {
           if(v.collection == "drawing") {
             return drawingIcon
@@ -54,32 +60,32 @@
       },
       {
         key: "voorbeeld",
-        title: "voorbeeld",
+        title: "",
         value: v => `<img src="${v.value.previewUrl}">`
       },
       {
         key: "title",
-        title: "Title",
+        title: "",
         renderComponent: {component: NameEdit, props: {isCurrentUser}}
       },
-      {
-        key: "Datum",
-        title: "Datum",
-        value: v => { 
-          var d = new Date(v.update_time)
-          return d.getHours() + ":" + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + " " + (d.getDate() < 10 ? '0' : '') + d.getDate() + "/" + (d.getMonth()+1)
-        },
-        sortable: true,
-      },
+      // {
+      //   key: "Datum",
+      //   title: "",
+      //   value: v => { 
+      //     var d = new Date(v.update_time)
+      //     return d.getHours() + ":" + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + " " + (d.getDate() < 10 ? '0' : '') + d.getDate() + "/" + (d.getMonth()+1)
+      //   },
+      //   sortable: true,
+      // },
       {
         key: "Zichtbaar",
-        title: "Zichtbaar",
+        title: "",
         class: 'iconWidth',
         renderComponent: { component: StatusComp, props: {moveToArt, isCurrentUser}}
       },
       {
         key: "Delete",
-        title: "Delete",  
+        title: "",  
         renderComponent: {component: DeleteComp, props: {removeFromTrash,moveToTrash, isCurrentUser}}
       }
       
@@ -129,8 +135,8 @@ function moveToTrash(key) {
   }
 
   async function getUser() {
-    if(!!params.user){
-      id = params.user
+    if(!!params.user || !!userID){
+      id = params.user || userID
       CurrentUser = false;
       if($Profile.meta.role == "admin" ||$Profile.meta.role == "moderator" ){
         drawings = await listAllObjects("drawing",params.user)
@@ -153,6 +159,10 @@ function moveToTrash(key) {
       role = useraccount.metadata.role
       azc = useraccount.metadata.azc
       avatar_url = useraccount.url
+      if(!!avatar_url){
+        animateScript()
+      }
+      
       try {
         house_url = await getObject("home", azc, params.user)
       } catch(err) {
@@ -177,6 +187,9 @@ function moveToTrash(key) {
       role = JSON.parse(useraccount.metadata).role
       azc = JSON.parse(useraccount.metadata).azc
       avatar_url = useraccount.url
+      if(!!avatar_url){
+        animateScript()
+      }
       try {
         house_url = await getObject("home", azc, $Session.user_id)
       } catch(err) {
@@ -212,31 +225,44 @@ function moveToTrash(key) {
   }
   let promise = getUser();
 
+////////// avatar
+  var tID; //we will use this variable to clear the setInterval()
+
+    function animateScript() {
+      var    position = 256; //start position for the image slicer
+      const  interval = 250; //100 ms of interval for the setInterval()
+      tID = setInterval ( () => {
+      avatar.style.backgroundPosition = 
+      `-${position}px 0px`; 
+      //we use the ES6 template literal to insert the variable "position"
+      if (position < 1536)
+      { position = position + 256;}
+      //we increment the position by 256 each time
+      else
+      { position = 256; }
+      //reset the position to 256px, once position exceeds 1536px
+      }
+      , interval ); //end of setInterval
+    } //end of animateScript()
+
+
+	onDestroy(() => clearInterval(tID));
+/////// end avatar
 </script>
 
 <main>
   <div class="container">
+    
     <div class="top">
-        <div id="avatarDiv">
+      <h1> {user}</h1><br>
+        <div id="avatarDiv" >
           {#if !!avatar_url}
-          <a href="/#/avatar"><img id="avatar" src={avatar_url} /></a>
+          <a href="/#/avatar"><div id="avatar" bind:this={avatar} style="background: url({avatar_url}) 0px 0px;"></div></a>
+
           {:else}
             <a href="/#/avatar/">Create avatar</a>
           {/if}
         </div>
-        
-      <br />
-      <div class="userInfo">
-        <h1> {user}</h1>
-        {#if  !!useraccount && useraccount.online}
-          <h3>Currently in game</h3>
-        {/if}
-        
-        <h3>{$_('register.role')}: {$_('role.' + role)}</h3>
-        <h3>{$_('register.location')}: {azc}</h3>
-        <!-- <a href="/#/update">edit</a> -->
-      </div>
-
       <div id="avatarDiv">
         {#if !!house_url}
         <a href="/#/house"><img id="house" src={house_url} /></a>
@@ -246,10 +272,10 @@ function moveToTrash(key) {
       </div>
     </div>
     <div class="bottom">
-      <h1>kunstwerken</h1>
+
       <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable"></SvelteTable>
       {#if CurrentUser}
-      <h1>Prullenmand</h1>
+      <img class="icon" src="assets/SHB/svg/AW-icon-trashcan.svg">
       <SvelteTable columns="{columns}" rows="{trash}" classNameTable="profileTable"></SvelteTable>
       {/if}
     </div>
@@ -284,15 +310,14 @@ function moveToTrash(key) {
   }
 
   #avatar, #house {
-    max-height: 75px;
-    position: absolute;
-    clip: rect(0px,60px,64px,0px);
+    width: 64px;
+    height: 64px;
   }
   
   #avatarDiv {
     width: 75px;
     height: 75px;
-    position: static;
+    /* position: static; */
   }
 
 
@@ -307,9 +332,9 @@ function moveToTrash(key) {
     display: flex;
     width: max-content;
     align-items: center;
-    min-width: 500px;
     justify-content: space-evenly;
     text-align: center;
+    flex-direction: column;
   }
 
   .userInfo{
