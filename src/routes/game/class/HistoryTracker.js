@@ -38,9 +38,9 @@ class HistoryTracker {
     const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
 
     //set up the player position in ManageSession to place the player in last known position when it is created
-    ManageSession.playerPosX = previousLocation.playerPosX
-    ManageSession.playerPosY = previousLocation.playerPosY
-    console.log("ManageSession.playerPosX , previousLocation.playerPosX", ManageSession.playerPosX, previousLocation.playerPosX)
+    // ManageSession.playerPosX = previousLocation.playerPosX
+    // ManageSession.playerPosY = previousLocation.playerPosY
+    // console.log("ManageSession.playerPosX , previousLocation.playerPosX", ManageSession.playerPosX, previousLocation.playerPosX)
     // switching scenes
     this.switchScene(currentLocation, previousLocation.locationName, previousLocation.locationID)
   }

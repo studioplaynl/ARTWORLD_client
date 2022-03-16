@@ -133,7 +133,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         //.......  PLAYER ....................................................................................
         //* create default player and playerShadow
         //* create player in center with artworldCoordinates
-        this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder).setDepth(201)
+        this.player = new PlayerDefault(this, 0, 0, this.playerAvatarPlaceholder).setDepth(201)
         Player.createPlayerItemsBar(this)
         this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
         //.......  end PLAYER ................................................................................
@@ -185,7 +185,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         this.artworksListSpinner.start()
 
-        Player.loadPlayerAvatar(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0))
+        Player.loadPlayerAvatar(this, 0, 0)
 
         await listImages("drawing", this.location, 100).then((rec) => {
             //this.userArtServerList is an array with objects, in the form of:

@@ -217,9 +217,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // })
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
-
-
-
     // End Background .........................................................................................
 
     //.......  PLAYER ....................................................................................

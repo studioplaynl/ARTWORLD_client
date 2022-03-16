@@ -9,12 +9,16 @@ class Homes {
     async getHomesFiltered(collection, filter, maxItems, scene) {
         //homes represented, to created homes in the scene
         scene.homesRepresented = []
-        //scene.load.on(`loaderror`, (offendingFile) => { this.resolveLoadError2(offendingFile, scene) }, this)
+        const eventNames = scene.load.eventNames()
+        console.log("eventNames", eventNames)
+        const isReady = scene.load.isReady()
+        console.log("isReady", isReady)
+        const isLoading = scene.load.isLoading()
+        console.log("isLoading", isLoading)
         //get a list of all homes objects and then filter
         Promise.all([listObjects(collection, null, maxItems)])
             .then((rec) => {
                 //console.log("rec: ", rec)
-
                 scene.homes = rec[0]
 
                 // filter only amsterdam homes
@@ -42,13 +46,13 @@ class Homes {
                     // get the image server side
                     this.getHomeImages(url, element, index, homeImageKey, scene)
                 }
-
             }) //end forEach
         }
     }
 
     async getHomeImages(url, element, index, homeImageKey, scene) {
         console.log("getHomeImages")
+
         await convertImage(url, "128", "png")
             .then((rec) => {
                 //console.log("rec", rec)
@@ -58,18 +62,13 @@ class Homes {
                         //create the home
                         this.createHome(element, index, homeImageKey, scene)
                     }, this)
-                    .on(`loaderror`, (offendingFile) => { this.resolveLoadError(element, index, homeImageKey, offendingFile, scene) }, this)
-                scene.load.start("thing") // start loading the image in memory
+                .on(`loaderror`, (offendingFile) => { this.resolveLoadError(element, index, homeImageKey, offendingFile, scene) }, this)
+                scene.load.start() // start loading the image in memory
             })
-        //const temp = Phaser.Loader
-        const temp2 = Phaser.Loader.LoaderPlugin
-        //console.log("Phaser.Loader", temp)
-        console.log("Phaser.Loader.LoaderPlugin", temp2)
     }
 
-    resolveLoadError2(offendingFile, errorType, scene) {
-        console.log("offendingFile, errorType, scene", offendingFile, errorType, scene)
-
+    errorCallback(event) {
+        console.log(" errorCallback event", event)
     }
 
     resolveLoadError(element, index, homeImageKey, offendingFile, scene) {
@@ -88,8 +87,6 @@ class Homes {
                 }, this)
             scene.load.start()
         }
-        //Phaser.Loader.File.resetXHR()
-        //console.log("Phaser.Loader", Phaser.Loader.File)
     }
 
     createHome(element, index, homeImageKey, scene) {

@@ -45,12 +45,18 @@ class Player {
 
         let lastPosX
         let lastPosY
-        if (!!placePlayerX) { lastPosX = placePlayerX } else {
-          lastPosX = ManageSession.playerPosX
+        if (!!placePlayerX) { // if there is an argument to place the player on a specific position in the scene
+          lastPosX = placePlayerX 
+          console.log("placePlayerX", placePlayerX)
+        } else {
+          lastPosX = ManageSession.playerPosX //playerPos is in artworldCoordinates, will be converted later
           console.log("lastPosX", lastPosX)
         }
-        if (!!placePlayerY) { lastPosY = placePlayerY } else {
-          lastPosY = ManageSession.playerPosY
+        if (!!placePlayerY) { 
+          lastPosY = placePlayerY // if there is an argument to place the player on a specific position in the scene
+          console.log("placePlayerY", placePlayerY)
+        } else {
+          lastPosY = ManageSession.playerPosY //playerPos is in artworldCoordinates, will be converted later
           console.log("lastPosX", lastPosX)
         }
 
@@ -65,8 +71,14 @@ class Player {
         if (lastPosY > scene.worldSize.y / 2 || lastPosY < - scene.worldSize.y / 2) lastPosY = Math.floor((Math.random() * 300) - 150)
         console.log("lastPosX, lastPosY", lastPosX, lastPosY)
 
+        //place player in Phaser2D coordinates
         scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, lastPosX)
         scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, lastPosY)
+
+        //console.log("scene.player.x, scene.player.y", scene.player.x, scene.player.y)
+        //set url param's to player pos and scene key, url params are in artworldCoords lastPosX lastPosY is artworldCoords
+        ManageSession.setUrl(scene.location, lastPosX, lastPosY)
+    
 
         //if the texture doesnot exists load it and attach it to the player
         if (!scene.textures.exists(scene.playerAvatarKey)) {
