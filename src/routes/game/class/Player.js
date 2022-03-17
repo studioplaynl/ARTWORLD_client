@@ -45,19 +45,19 @@ class Player {
 
         let lastPosX
         let lastPosY
-        if (!!placePlayerX) { // if there is an argument to place the player on a specific position in the scene
+        if (typeof placePlayerY != "undefined") { // if there is an argument to place the player on a specific position in the scene
           lastPosX = placePlayerX 
           console.log("placePlayerX", placePlayerX)
         } else {
           lastPosX = ManageSession.playerPosX //playerPos is in artworldCoordinates, will be converted later
-          console.log("lastPosX", lastPosX)
+          // console.log("lastPosX", lastPosX)
         }
-        if (!!placePlayerY) { 
+        if (typeof placePlayerY != "undefined") { 
           lastPosY = placePlayerY // if there is an argument to place the player on a specific position in the scene
           console.log("placePlayerY", placePlayerY)
         } else {
           lastPosY = ManageSession.playerPosY //playerPos is in artworldCoordinates, will be converted later
-          console.log("lastPosX", lastPosX)
+          // console.log("lastPosY", lastPosY)
         }
 
         //console.log("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)

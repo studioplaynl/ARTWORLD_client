@@ -9,26 +9,31 @@ class HistoryTracker {
     ManageSession.currentScene = scene
     //console.log("ManageSession.currentScene", ManageSession.currentScene)
 
+    //the current scene does not exist yet in history
     if (ManageSession.locationHistory[ManageSession.locationHistory.length - 1]?.locationID != scene.location) {
+      console.log("store scene in history tracker")
       // set ManageSession.playerPosX Y to player.x and y
       let playerPosX
       let playerPosY
 
       if (!!scene.player) {
-        // ManageSession.playerPosX = scene.player.x
-        // ManageSession.playerPosY = scene.player.y
-        // playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)
-        // playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)
         playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)
         playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)
-        console.log("playerPosX playerPosY", playerPosX, playerPosY)
+        console.log(" ManageSession.locationHistory.push playerPosX playerPosY", playerPosX, playerPosY)
       }
       ManageSession.locationHistory.push({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
     }
   }
 
+  updatePositionCurrentScene(playerPosX, playerPosY) {
+    ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX = playerPosX
+    ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY = playerPosY
+    console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX)
+    console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY)
+  }
+
   activateBackButton(scene) {
-    // removing the current last scene from the history
+    // remove the current scene from the history
     const currentLocationKey = ManageSession.locationHistory.pop()
     // console.log("currentLocationKey", currentLocationKey)
     // and getting access to it through its key
@@ -38,9 +43,9 @@ class HistoryTracker {
     const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
 
     //set up the player position in ManageSession to place the player in last known position when it is created
-    // ManageSession.playerPosX = previousLocation.playerPosX
-    // ManageSession.playerPosY = previousLocation.playerPosY
-    // console.log("ManageSession.playerPosX , previousLocation.playerPosX", ManageSession.playerPosX, previousLocation.playerPosX)
+    ManageSession.playerPosX = previousLocation.playerPosX
+    ManageSession.playerPosY = previousLocation.playerPosY
+    console.log("ManageSession.playerPosX , ManageSession.playerPosY", ManageSession.playerPosX, ManageSession.playerPosY)
     // switching scenes
     this.switchScene(currentLocation, previousLocation.locationName, previousLocation.locationID)
   }
@@ -63,6 +68,7 @@ class HistoryTracker {
         // console.log("scene.scene.stop(scene.scene.key)", scene.scene.key)
         scene.scene.stop(scene.scene.key)
         // console.log("scene.scene.start(goToScene, { user_id: locationID })", goToScene, locationID)
+
 
         scene.scene.start(goToScene, { user_id: locationID })
         //console.log("switchScene locationID", locationID)

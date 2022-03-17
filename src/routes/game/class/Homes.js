@@ -1,20 +1,31 @@
 import { getAccount, updateObject, convertImage, listObjects } from '../../../api.js'
 import GenerateLocation from "./GenerateLocation"
 import CoordinatesTranslator from "./CoordinatesTranslator"
+import ManageSession from '../ManageSession.js'
 
 class Homes {
     constructor() {
+
+        this.resolveErrorObjectArray = []
     }
 
     async getHomesFiltered(collection, filter, maxItems, scene) {
         //homes represented, to created homes in the scene
         scene.homesRepresented = []
+
+        // when there is a loading error, the error gets thrown multiple times because I subscribe to the 'loaderror' event multiple times
         const eventNames = scene.load.eventNames()
         console.log("eventNames", eventNames)
         const isReady = scene.load.isReady()
         console.log("isReady", isReady)
         const isLoading = scene.load.isLoading()
         console.log("isLoading", isLoading)
+
+        // subscribe to loaderror event
+        scene.load.on(`loaderror`, (offendingFile) => {
+            this.resolveLoadError(offendingFile)
+        }, this)
+
         //get a list of all homes objects and then filter
         Promise.all([listObjects(collection, null, maxItems)])
             .then((rec) => {
@@ -26,6 +37,7 @@ class Homes {
                 this.generateHomes(scene)
             })
     }
+
 
     async generateHomes(scene) {
         //check if server query is finished, then make the home from the list
@@ -52,40 +64,55 @@ class Homes {
 
     async getHomeImages(url, element, index, homeImageKey, scene) {
         console.log("getHomeImages")
-
         await convertImage(url, "128", "png")
             .then((rec) => {
                 //console.log("rec", rec)
                 // load all the images to phaser
                 scene.load.image(homeImageKey, rec)
                     .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
+                        //delete from this.resolveErrorObjectArray
+                        this.resolveErrorObjectArray = this.resolveErrorObjectArray.filter((obj) => obj.imageKey !== homeImageKey)
+                       // console.log("this.resolveErrorObjectArray", this.resolveErrorObjectArray)
                         //create the home
                         this.createHome(element, index, homeImageKey, scene)
                     }, this)
-                .on(`loaderror`, (offendingFile) => { this.resolveLoadError(element, index, homeImageKey, offendingFile, scene) }, this)
+                // put the file in the loadErrorCache, incase it doesn't load
+                this.resolveErrorObjectArray.push({ loadFunction: "getHomeImage", element: element, index: index, imageKey: homeImageKey, scene: scene })
                 scene.load.start() // start loading the image in memory
             })
     }
 
-    errorCallback(event) {
-        console.log(" errorCallback event", event)
-    }
+    resolveLoadError(offendingFile) {
+        // element, index, homeImageKey, offendingFile, scene
+        this.resolveErrorObjectArray //all loading images
 
-    resolveLoadError(element, index, homeImageKey, offendingFile, scene) {
-        //console.log("element, index, homeImageKey, offendingFile", element, index, homeImageKey, offendingFile)
-        //console.log("offendingFile", offendingFile)
-        const tempKey = 'homeKey_' + element.user_id
-        if (tempKey == offendingFile.key) {
-            //   let cachObject = { element: element, index: index, homeImageKey: homeImageKey, offendingFile: offendingFile }
-            //   scene.resolveLoadErrorCache.push(cachObject)
-            console.log("load offendingFile again", homeImageKey, offendingFile)
+        let resolveErrorObject = this.resolveErrorObjectArray.find(o => o.imageKey == offendingFile.key)
 
-            scene.load.image(homeImageKey, './assets/ball_grey.png')
-                .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
-                    //create the home
-                    this.createHome(element, index, homeImageKey, scene)
-                }, this)
-            scene.load.start()
+        let loadFunction = resolveErrorObject.loadFunction
+        let element = resolveErrorObject.element
+        let index = resolveErrorObject.index
+        let imageKey = offendingFile.key
+        let scene = resolveErrorObject.scene
+
+       // console.log("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
+        switch (loadFunction) {
+            case ("getHomeImage"):
+                console.log("load offendingFile again", imageKey)
+
+                scene.load.image(imageKey, './assets/ball_grey.png')
+                    .on(`filecomplete-image-${imageKey}`, (imageKey) => {
+                        //delete from this.resolveErrorObjectArray
+                        this.resolveErrorObjectArray = this.resolveErrorObjectArray.filter((obj) => obj.imageKey !== imageKey)
+                        console.log("this.resolveErrorObjectArray", this.resolveErrorObjectArray)
+
+                        //create the home
+                        this.createHome(element, index, imageKey, scene);
+                    }, this)
+                scene.load.start()
+                break
+
+            default:
+                console.log("please state fom which function the loaderror occured!")
         }
     }
 

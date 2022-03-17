@@ -127,26 +127,45 @@ export default class MainMenu extends Phaser.Scene {
   }
 
   parsePlayerPosition(posX, posY) {
-    if (!!posX) {
+    if (typeof posX != "undefined") {
       //if it exists and isn't null
-      console.log("parsed posX:", posX)
-      ManageSession.playerPosX = parseInt(posX) //expected artworldCoordinates
+      const tempInt = parseInt(posX)
+      console.log("tempInt:", tempInt)
+      if (!Number.isNaN(tempInt)){
+        console.log("parsed posX:", posX)
+        ManageSession.playerPosX =  tempInt//expected artworldCoordinates
+      } else {
+         // a random number between -150 and 150
+      ManageSession.playerPosX = Math.floor((Math.random() * 300) - 150)
+      console.log("no known posX, created...", ManageSession.playerPosX)
+      }
+      
     } else {
       // a random number between -150 and 150
       ManageSession.playerPosX = Math.floor((Math.random() * 300) - 150)
       console.log("no known posX, created...", ManageSession.playerPosX)
     }
 
-    if (!!posY) {
+    if (typeof posY != "undefined") {
       //if it exists and isn't null
       console.log("parsed posY:", posY)
-      ManageSession.playerPosY = parseInt(posY) //expected artworldCoordinates
+      const tempInt = parseInt(posY)
+      console.log("tempInt:", tempInt)
+      if ( !Number.isNaN(tempInt) ){
+
+        ManageSession.playerPosY =  tempInt//expected artworldCoordinates
+      } else {
+         // a random number between -150 and 150
+      ManageSession.playerPosY = Math.floor((Math.random() * 300) - 150)
+      console.log("no known posY, created...", ManageSession.playerPosY)
+      }
     } else {
       // a random number between -150 and 150
       ManageSession.playerPosY = Math.floor((Math.random() * 300) - 150)
       console.log("no known posY, created...", ManageSession.playerPosY)
     }
   }
+
 
   resize() {
     let width = this.sys.game.canvas.width;

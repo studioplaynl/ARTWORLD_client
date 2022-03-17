@@ -201,6 +201,8 @@ class ManageSession {
             console.log("join", join)
             //const tempName = join.user_id
             this.getStreamUsers("get_users", this.location)
+          } else {
+            console.log("join", join)
           }
         })
         // this.getStreamUsers("home")

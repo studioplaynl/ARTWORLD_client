@@ -101,9 +101,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
             }
 
-
-
-            console.log("this.location", this.location)
+            // console.log("this.location", this.location)
             // on home click, we let the player to see the entrance arrow above the home
             this.location.on('pointerdown', () => {
                 if (!this.showing) {
