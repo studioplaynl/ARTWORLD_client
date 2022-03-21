@@ -254,21 +254,21 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     const panRate = 1
     const zoomRate = 4
 
-    this.input.on('pointermove', pointer => {
-      if (!pointer.isDown) {
-        return
-      }
-      if (!pointer.event.shiftKey) {
-        this.mesh.modelRotation.y += pointer.velocity.x * (rotateRate / this.sys.game.canvas.width)
-        //this.mesh.modelRotation.x += pointer.velocity.y * (rotateRate / this.sys.game.canvas.height)
-        console.log("this.mesh.modelPosition, this.mesh.modelRotation", this.mesh.modelPosition, this.mesh.modelRotation)
-      }
-      else {
-        //this.mesh.modelRotation.z += pointer.velocity.x * (rotateRate / this.sys.game.canvas.width)
-        this.mesh.modelRotation.x += pointer.velocity.y * (rotateRate / this.sys.game.canvas.height)
-        console.log("this.mesh.modelPosition, this.mesh.modelRotation", this.mesh.modelPosition, this.mesh.modelRotation)
-      }
-    })
+    // this.input.on('pointermove', pointer => {
+    //   if (!pointer.isDown) {
+    //     return
+    //   }
+    //   if (!pointer.event.shiftKey) {
+    //     this.mesh.modelRotation.y += pointer.velocity.x * (rotateRate / this.sys.game.canvas.width)
+    //     //this.mesh.modelRotation.x += pointer.velocity.y * (rotateRate / this.sys.game.canvas.height)
+    //     console.log("this.mesh.modelPosition, this.mesh.modelRotation", this.mesh.modelPosition, this.mesh.modelRotation)
+    //   }
+    //   else {
+    //     //this.mesh.modelRotation.z += pointer.velocity.x * (rotateRate / this.sys.game.canvas.width)
+    //     this.mesh.modelRotation.x += pointer.velocity.y * (rotateRate / this.sys.game.canvas.height)
+    //     console.log("this.mesh.modelPosition, this.mesh.modelRotation", this.mesh.modelPosition, this.mesh.modelRotation)
+    //   }
+    // })
 
     //! needed for handling object dragging
     this.input.on('dragstart', function (pointer, gameObject) {
