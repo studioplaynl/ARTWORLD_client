@@ -96,8 +96,7 @@ class ManageSession {
   }
 
   setUrl(location, posX, posY) {
-    //console.log("location, posX, posY", location, posX, posY)
-    //.pushState({"html":response.html,"pageTitle":response.pageTitle},"", urlPath);
+    //console.log(" setUrl location, posX, posY", location, posX, posY)
     window.history.pushState('', 'Artworld', '/?location='+location+'&posX='+Math.round(posX)+'&posY='+Math.round(posY))
   }
   // .......................... end URL PARSING .....................................
@@ -202,6 +201,8 @@ class ManageSession {
             console.log("join", join)
             //const tempName = join.user_id
             this.getStreamUsers("get_users", this.location)
+          } else {
+            console.log("join", join)
           }
         })
         // this.getStreamUsers("home")

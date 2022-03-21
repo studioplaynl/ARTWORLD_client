@@ -95,7 +95,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.isPopUpButtonsDisplayed
     this.playerContainer
     this.selectedPlayerID
-    
+
     this.homeButtonCircle
     this.homeButtonImage
     this.heartButtonCircle
@@ -111,13 +111,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   async create() {
-    // for back button
-    HistoryTracker.pushLocation(this)
-
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
-    
+
 
     // collection: "home"
     // create_time: "2022-01-19T16:31:43Z"
@@ -175,26 +172,35 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     })
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
-        .setInteractive() //{ useHandCursor: true }
-        .on('pointerdown', () => ManageSession.playerMove = true)
-        .setDepth(219)
-        .setOrigin(0)
-        .setVisible(false)
+      .setInteractive() //{ useHandCursor: true }
+      .on('pointerdown', () => ManageSession.playerMove = true)
+      .setDepth(219)
+      .setOrigin(0)
+      .setVisible(false)
 
     this.touchBackgroundCheck.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
 
 
     // sunglass_stripes
     this.sunglasses_striped = this.add.image(
-          CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564),
-          CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34),
-          "sunglass_stripes"
-        )
-
-    // this.sunglasses_striped.setInteractive({ draggable: true })
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34),
+      "sunglass_stripes"
+    )
+    //this.sunglasses_striped.setInteractive({ draggable: true })
 
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
-    // .setInteractive({ draggable: true })
+    //.setInteractive({ draggable: true })
+
+    this.tree_palm = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 117),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1106.33),
+      "tree_palm")
+    //.setInteractive({ draggable: true, useHandCursor: true })
+
+    this.exhibit_outdoor_big = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -416),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -120.66),
+      "exhibit_outdoor_big")
+    // .setInteractive({ draggable: true, useHandCursor: true })
 
     // this.mario_heart = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1220.32), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 750.83), 'mario_heart').setScale(0.3)
     //   .setInteractive({ draggable: true })
@@ -206,46 +212,92 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //  A single manager can be responsible for multiple emitters
     //  The manager also controls which particle texture is used by _all_ emitter
 
-    // this.input.on('dragstart', function (pointer, gameObject) {
+    const vertices = [
+      -0.11, 0.17,
 
-    // });
+      0.1, 0.05,
 
-    // this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
-    //   gameObject.x = dragX;
-    //   gameObject.y = dragY;
-    // });
+      -0.11, -0.035,
+      
+      0.1, -0.155
+    ]
 
-    // this.input.on('dragend', function (pointer, gameObject) {
-    //   console.log(gameObject.x, gameObject.y)
-    // })
+    const uvs = [
+      0, 0,
+      1, 0,
+      0, 1,
+      1, 1
+    ]
+
+    const indicies = [0, 2, 1, 2, 3, 1];
+
+    this.mesh = this.add.mesh(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -436),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -40), 'test_image_square')
+
+    this.mesh.addVertices(vertices, uvs, indicies)
+
+    //this.mesh.setPerspective(this.sys.game.canvas.width, this.sys.game.canvas.height, 60)
+    this.mesh.setOrtho((this.mesh.width / this.mesh.height), 1)
+
+    this.mesh.panZ(4) // pan is zoom level, bigger is smaller, only works with perspective projection
+    // x: 0.4154389168615932
+    // y: -0.77795430111968
+    // z: -0.43183495571265507
+
+  
+
+    // this.mesh.modelRotation.x = 0.42
+    // this.mesh.modelRotation.y = -0.77795430111968
+    // this.mesh.modelRotation.z = -0.42
+
+    const rotateRate = 1
+    const panRate = 1
+    const zoomRate = 4
+
+    this.input.on('pointermove', pointer => {
+      if (!pointer.isDown) {
+        return
+      }
+      if (!pointer.event.shiftKey) {
+        this.mesh.modelRotation.y += pointer.velocity.x * (rotateRate / this.sys.game.canvas.width)
+        //this.mesh.modelRotation.x += pointer.velocity.y * (rotateRate / this.sys.game.canvas.height)
+        console.log("this.mesh.modelPosition, this.mesh.modelRotation", this.mesh.modelPosition, this.mesh.modelRotation)
+      }
+      else {
+        //this.mesh.modelRotation.z += pointer.velocity.x * (rotateRate / this.sys.game.canvas.width)
+        this.mesh.modelRotation.x += pointer.velocity.y * (rotateRate / this.sys.game.canvas.height)
+        console.log("this.mesh.modelPosition, this.mesh.modelRotation", this.mesh.modelPosition, this.mesh.modelRotation)
+      }
+    })
+
+    //! needed for handling object dragging
+    this.input.on('dragstart', function (pointer, gameObject) {
+
+    }, this)
+
+    this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
+      gameObject.x = dragX;
+      gameObject.y = dragY;
+    }, this)
+
+    this.input.on('dragend', function (pointer, gameObject) {
+      let worldX = CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x)
+      let worldY = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y)
+      console.log(worldX, worldY)
+    }, this)
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
-
-
-
     // End Background .........................................................................................
 
     //.......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201)
-  
     Player.createPlayerItemsBar(this)
-
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
-    // this.playerTest = new PlayerDefault(
-    //   this,
-    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
-    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
-    //   this.playerAvatarPlaceholder
-    // )
-    // this.playerTest.setDepth(201).setVisible(false)
-    //.......  end PLAYER ................................................................................
 
-    //....... onlinePlayers ..............................................................................
-    // add onlineplayers group
-    //this.onlinePlayersGroup = this.add.group()
-    //....... end onlinePlayers ..........................................................................
+    // for back button, has to be done after player is created for the history tracking!
+    HistoryTracker.pushLocation(this)
 
     //....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);

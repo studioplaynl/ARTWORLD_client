@@ -65,6 +65,8 @@ export default class PreloadScene extends Phaser.Scene {
         //artworld elements
         this.load.svg('sunglass_stripes', 'assets/svg/sunglass_stripes.svg')
         this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', { scale: 2.4 })
+        this.load.svg('tree_palm', './assets/svg/tree_palm.svg')
+        this.load.svg('exhibit_outdoor_big', './assets/svg/exhibit_outdoor_big.svg')
 
         this.load.svg('bitmap_heart', 'assets/svg/mario_heart.svg')
         // this.load.svg('mario_pipe', 'assets/svg/mario_pipe.svg')
@@ -80,6 +82,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.createArtFrame('128')
         this.createArtFrame('32')
 
+        // debug test image square
+        this.load.svg('test_image_square', 'https://upload.wikimedia.org/wikipedia/commons/d/de/TestScreen_square.svg')
     }
 
     async create() {

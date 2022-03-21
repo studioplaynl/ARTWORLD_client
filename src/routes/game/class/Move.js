@@ -1,5 +1,6 @@
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
+import HistoryTracker from "./HistoryTracker"
 
 class Move {
   constructor() { }
@@ -88,8 +89,7 @@ class Move {
     // we pass on Phaser2D coordinates to ManageSession.sendMoveMessage
     // target is a vector
 
-    //update url 
-    ManageSession.setUrl(ManageSession.location, CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x), CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y))
+    this.updatePositionHistory(scene) // update the url and historyTracker
 
     //set movement over network
     ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")
@@ -119,8 +119,9 @@ class Move {
         scene.player.body.reset(scene.target.x, scene.target.y)
         // send Stop command
         ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
-        //update url 
-        ManageSession.setUrl(ManageSession.location, CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x), CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y))
+        
+        this.updatePositionHistory(scene) // update the url and historyTracker
+
         //update last player position in manageSession for when the player is reloaded inbetween scenes
         ManageSession.playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)
         ManageSession.playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)
@@ -130,6 +131,16 @@ class Move {
         scene.isPlayerMoving = false
       }
     }
+  }
+
+  updatePositionHistory(scene){
+    const passPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)
+    const passPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)
+    
+    //update url 
+    ManageSession.setUrl(scene.location, passPosX, passPosY)
+    // put the new pos in the history tracker
+    HistoryTracker.updatePositionCurrentScene(passPosX, passPosY)
   }
 
   moveBySwiping(scene) {
