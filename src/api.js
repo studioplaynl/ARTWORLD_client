@@ -52,6 +52,13 @@ export async function uploadImage(name, type, json, img, status, version, displa
   
 }
 
+export async function sessionCheck(){
+  let payload = {}
+  const rpcid = "SessionCheck";
+  const response = await client.rpc(Sess, rpcid, payload);
+  console.log(response)
+}
+
 export async function updateTitle(collection, key, name, userID){
   if(!!!userID) userID = Sess.user_id
   let Object = await getObject(collection, key, userID)

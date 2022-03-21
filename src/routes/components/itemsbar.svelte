@@ -82,6 +82,12 @@ async function goHome(id){
     }
 }
 
+async function award() {
+    console.log(ManageSession.userProfile.meta)
+    if(current == "awards" ) {current = false; return};
+    current = "awards" 
+}
+
 async function saveHome() {
      // saving the home of a player
      const entry = { user_id: ManageSession.selectedOnlinePlayer.id, user_name: ManageSession.selectedOnlinePlayer.username }
@@ -121,7 +127,7 @@ async function getAdressbook(){
 <div class="itemsbar" id="currentUser" class:show={$itemsBar.playerClicked}>
     <div id="left">
         <a on:click={Profile} class="avatar"><img src="{avatar_url}"></a>
-        <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-award.svg"></a>
+        <a on:click={award}><img class="icon" src="assets/SHB/svg/AW-icon-award.svg"></a>
         <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook.svg"></a>
 
         <a href="/#/drawing"><img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg"></a>
@@ -150,19 +156,11 @@ async function getAdressbook(){
         {/if}
         {#if current == "home"}
             <ProfilePage/>
-            <!-- <div>
-                <p>{user_name}</p>
-                <a href="/#/avatar" class="avatar"><img src="{ManageSession.userProfile.url}"></a>
-                 <div class="homeBox">
-                    {#if !!house_url}
-                    <a on:click={()=>{homeOpen = !homeOpen}}><img id="house" src={house_url} /></a>
-                    {/if}
-                    {#if homeOpen}  
-                        <a on:click={goHome}><img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg"></a>
-                        <a href="/#/house/"><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg"></a>
-                    {/if}
-                 </div>
-            </div> -->
+           
+        {/if}
+        {#if current == "awards"}
+            Total time played: {ManageSession.userProfile.meta.TotalPlayTime}
+           
         {/if}
     </div>  
 </div>
@@ -189,7 +187,6 @@ async function getAdressbook(){
                 <a on:click={goHome}><img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg"></a>    
                 <a on:click={saveHome}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg"></a>
         <!-- <ProfilePage userID="{ManageSession.selectedOnlinePlayer.id}" /> -->
-        
         {/if}
     </div>  
 </div>
