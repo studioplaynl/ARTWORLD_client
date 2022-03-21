@@ -9,8 +9,10 @@
   import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin.js'
   import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin.js'
   import { CONFIG, SCENES } from "./config";
+  import {sessionCheck} from "../../api"
 
   onMount(async () => {
+    sessionCheck()
     const config = {
       //parent: "phaserId",
   
