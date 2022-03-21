@@ -213,13 +213,13 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //  The manager also controls which particle texture is used by _all_ emitter
 
     const vertices = [
-      -0.11, 0.17,
+      -0.08, 0.154,
 
-      0.1, 0.05,
+      0.08, 0.062,
 
-      -0.11, -0.035,
+      -0.08, -0.051,
       
-      0.1, -0.155
+      0.08, -0.143
     ]
 
     const uvs = [
@@ -232,7 +232,10 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     const indicies = [0, 2, 1, 2, 3, 1];
 
     this.mesh = this.add.mesh(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -436),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -40), 'test_image_square')
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -40), 'museum')
+
+// welke plaatje laden?
+// bv van de huidige gebruiker random van een array
 
     this.mesh.addVertices(vertices, uvs, indicies)
 
