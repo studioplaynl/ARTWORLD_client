@@ -107,11 +107,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
 
     async create() {
-
-        // for back button
-        HistoryTracker.pushLocation(this)
-        //console.log("ManageSession.locationHistory", ManageSession.locationHistory)
-
         //copy worldSize over to ManageSession, so that positionTranslation can be done there
         ManageSession.worldSize = this.worldSize
 
@@ -137,6 +132,8 @@ export default class DefaultUserHome extends Phaser.Scene {
         Player.createPlayerItemsBar(this)
         this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
         //.......  end PLAYER ................................................................................
+        // for back button
+        HistoryTracker.pushLocation(this)
 
         //....... onlinePlayers ..............................................................................
         // add onlineplayers group
@@ -171,8 +168,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.UI_Scene.location = this.location
         this.gameCam.zoom = this.currentZoom
         //......... end UI Scene ..............................................................................
-
-        // ArtworkList.getImages(this, "512", this.artDisplaySize, 550, 260, null)
 
         this.artworksListSpinner = this.rexSpinner.add.pie({
             x: this.worldSize.x / 2,
@@ -217,7 +212,7 @@ export default class DefaultUserHome extends Phaser.Scene {
                 this.userArtServerList.forEach((element, index, array) => {
                     this.downloadArt(element, index, array)
                 })
-                
+
             } else {
                 this.artworksListSpinner.destroy()
             }
@@ -225,19 +220,19 @@ export default class DefaultUserHome extends Phaser.Scene {
     }//end create
 
     async downloadArt(element, index, array) {
-        //! we are placing the artWorks 'around' the center of the world
+        //! we are placing the artWorks 'around' (left and right of) the center of the world
         const totalArtWorks = array.length
         const imageKeyUrl = element.value.url
         const imgSize = this.artDisplaySize.toString()
         const fileFormat = "png"
-        // put the artworks 'around' the center, which mean take total artworks * space = total x space eg 3 * 550 = 1650
+        // put the artworks 'around' the center, which means: take total artworks * space = total x space eg 3 * 550 = 1650
         // we start at middleWorld.x - totalArtWidth + (artIndex * artDisplaySize) 
-   
+
         const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks
 
         console.log("totalArtWidth", totalArtWidth)
         const middleWorldX = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0)
-        const startXArt = middleWorldX - (totalArtWidth/2)
+        const startXArt = middleWorldX - (totalArtWidth / 2)
 
         const coordX = index == 0 ? startXArt : (startXArt) + (index * (this.artDisplaySize + 38))
         this.artContainer = this.add.container(0, 0).setDepth(100)

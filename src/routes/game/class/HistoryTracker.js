@@ -28,8 +28,8 @@ class HistoryTracker {
   updatePositionCurrentScene(playerPosX, playerPosY) {
     ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX = playerPosX
     ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY = playerPosY
-    console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX)
-    console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY)
+   // console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX)
+   // console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY)
   }
 
   activateBackButton(scene) {
