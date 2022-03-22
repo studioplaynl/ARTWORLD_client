@@ -3,7 +3,7 @@ import PreloadScene from "./scenes/PreloadScene";
 import MainMenu from "./scenes/MainMenu";
 import NetworkBoot from "./scenes/NetworkBoot.js";
 import Location1 from "./scenes/Location1";
-import Location2 from "./scenes/Location2";
+
 import Location3 from "./scenes/Location3";
 import Location4 from "./scenes/Location4";
 import Location5 from "./scenes/Location5";
@@ -32,7 +32,6 @@ export const SCENES = [
   MainMenu,
   NetworkBoot,
   Location1,
-  Location2,
   Location3,
   Location4,
   Location5,

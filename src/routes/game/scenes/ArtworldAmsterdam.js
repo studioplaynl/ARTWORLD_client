@@ -364,28 +364,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       color3: 0xf8d80b,
     })
 
-    location1Vector = new Phaser.Math.Vector2(-770.83, 83.33);
-    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      location1Vector
-    )
-
-    const location2 = new GenerateLocation({
-      scene: this,
-      type: "isoBox",
-      draggable: false,
-      x: location1Vector.x,
-      y: location1Vector.y,
-      locationDestination: "Location2",
-      locationImage: "museum",
-      enterButtonImage: "enter_button",
-      locationText: "Location 2",
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    })
-
     //*set the particle first on 0,0 so they are below the mario_star
     //*later move them relative to the mario_star
     var particles = this.add.particles('music_quarter_note').setDepth(139)
