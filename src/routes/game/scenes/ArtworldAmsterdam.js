@@ -296,7 +296,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201)
-    Player.createPlayerItemsBar(this)
+    //Player.createPlayerItemsBar(this)
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
 
     // for back button, has to be done after player is created for the history tracking!
@@ -335,7 +335,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //......... end UI Scene ..............................................................................
 
     //create items bar for onlineplayer, after UIscene, because it need currentZoom
-    Player.createOnlinePlayerItemsBar(this)
+    //Player.createOnlinePlayerItemsBar(this)
     Player.loadPlayerAvatar(this)
     // this.avatarDetailsContainer.setDepth(999)
 
