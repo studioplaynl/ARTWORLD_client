@@ -411,20 +411,6 @@ export default class Location3 extends Phaser.Scene {
     } else {
       Move.moveByTapping(this)
     }
-
-    // player items bar follows the position of the player 
-    if (this.playerItemsBar) {
-      Move.movePlayerItemsBar(this)
-    }
-
-    // player liked panel follows the position of the player 
-    if (this.playerLikedPanel) {
-      Move.movePlayerLikedPanel(this)
-    }
-
-    // once a movement is detected the addressbook is hidden
-    if (this.playerAddressbookContainer) {
-      Player.hideAddressbook(this)
-    }
+    
   } //update
 } //class

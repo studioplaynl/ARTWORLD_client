@@ -114,8 +114,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
-
-
     // collection: "home"
     // create_time: "2022-01-19T16:31:43Z"
     // key: "Amsterdam"
@@ -429,21 +427,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       Move.moveBySwiping(this)
     } else {
       Move.moveByTapping(this)
-    }
-
-    // player items bar follows the position of the player 
-    if (this.playerItemsBar) {
-      Move.movePlayerItemsBar(this)
-    }
-
-    // player liked panel follows the position of the player 
-    if (this.playerLikedPanel) {
-      Move.movePlayerLikedPanel(this)
-    }
-
-    // once a movement is detected the addressbook is hidden
-    if (this.playerAddressbookContainer) {
-      Player.hideAddressbook(this)
     }
 
   } //update

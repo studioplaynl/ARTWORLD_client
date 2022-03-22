@@ -3,7 +3,8 @@
   import { onMount } from "svelte"
 
   //* Phaser Plugins
-  import { enable3d, Canvas } from "@enable3d/phaser-extension"
+  //import { enable3d, Canvas } from "@enable3d/phaser-extension"
+  import Phaser from "phaser"
   import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin.js"
   import CircleMaskImagePlugin from "phaser3-rex-plugins/plugins/circlemaskimage-plugin.js"
   import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin.js'
@@ -18,6 +19,7 @@
   
       type: Phaser.WEBGL,
       transparent: true, // for 3d scene
+      
       domCreateContainer: false,
       // width: CONFIG.WIDTH,
       // height: CONFIG.HEIGHT,
@@ -78,10 +80,11 @@
 
       scene: SCENES, //scenes defined in config.js
 
-      ...Canvas(), //enable 3D
+      //...Canvas(), //enable 3D
     }
 
-    enable3d(() => new Phaser.Game(config)).withPhysics("/ammo/kripken")
+    //enable3d(() => new Phaser.Game(config)).withPhysics("/ammo/kripken")
+    new Phaser.Game(config)
   })
 </script>
 

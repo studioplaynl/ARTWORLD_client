@@ -163,7 +163,7 @@ export default class Location4 extends Phaser.Scene {
     this.UI_Scene.location = this.location
     this.gameCam.zoom = this.currentZoom
     //......... end UI Scene ..............................................................................
-    
+
     Player.loadPlayerAvatar(this, -1185, 692)
 
 
@@ -263,7 +263,6 @@ export default class Location4 extends Phaser.Scene {
     // rt.erase(eraser, 200, 200);
 
     // rt2.erase(rt, 0, 0)
-
     // rt2.x = 400
     // rt2.y = 600
 
