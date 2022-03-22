@@ -1,6 +1,6 @@
 <script>
   //* Svelte
-  import { onMount } from "svelte";
+  import { onMount } from "svelte"
 
   //* Phaser Plugins
   import { enable3d, Canvas } from "@enable3d/phaser-extension"

@@ -83,15 +83,15 @@ export default class Location1 extends Phaser.Scene {
     //.... end PRELOADER VISUALISER ...............................................................................................
 
     //drawing on a wall
-    this.load.image('brush', 'assets/brush3.png');
-    this.load.image('brickWall', 'assets/brickwall_white.jpg');
+    this.load.image('brush', 'assets/brush3.png')
+    this.load.image('brickWall', 'assets/brickwall_white.jpg')
 
     //....... IMAGES ......................................................................
-    this.load.image("sky", "./assets/sky.png");
-    this.load.image("star", "./assets/star.png");
-    this.load.image('ground', 'assets/platform.png');
+    this.load.image("sky", "./assets/sky.png")
+    this.load.image("star", "./assets/star.png")
+    this.load.image('ground', 'assets/platform.png')
 
-    this.load.image("entrance", "assets/entrance.jpg");
+    this.load.image("entrance", "assets/entrance.jpg")
 
     //test backgrounds
     // this.load.image("background1", "./assets/test_backgrounds/wp4676605-4k-pc-wallpapers.jpg")
@@ -136,10 +136,6 @@ export default class Location1 extends Phaser.Scene {
 
   async create() {
 
-    // for back button
-    HistoryTracker.pushLocation(this);
-    console.log(ManageSession.locationHistory)
-
     //timers
     ManageSession.updateMovementTimer = 0;
     ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
@@ -178,10 +174,10 @@ export default class Location1 extends Phaser.Scene {
 
     //*create default player and playerShadow
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder).setDepth(201)
-    Player.createPlayerItemsBar(this)
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
 
-    //this.player.setCollideWorldBounds(true); // if true the map does not work properly, needed to stay on the map
+    // for back button, has to be done after player is created for the history tracking!
+    HistoryTracker.pushLocation(this)
 
     Player.loadPlayerAvatar(this)
     //.......  end PLAYER .............................................................................
@@ -557,36 +553,7 @@ export default class Location1 extends Phaser.Scene {
     locationVector = new Phaser.Math.Vector2(200, 200)
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector)
     const location4 = new GenerateLocation({ scene: this, type: "isoTriangle", x: locationVector.x, y: locationVector.y, locationDestination: "Location4", locationImage: "museum", enterButtonImage: "enter_button", locationText: "Location 4", fontColor: 0x8dcb0e, color1: 0x8dcb0e, color2: 0x3f8403, color3: 0x63a505 })
-
-    locationVector = new Phaser.Math.Vector2(200, -200)
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector)
-    const location5 = new GenerateLocation({ scene: this, type: "image", x: locationVector.x, y: locationVector.y, locationDestination: "Location5", locationImage: "entrance", enterButtonImage: "enter_button", locationText: "Location 5", fontColor: 0x8dcb0e })
-    // this.locationDialogBoxContainersGroup = this.add.group();
-
-    // this.location2 = this.physics.add.image(400, 600, "ball").setScale(0.4).setDepth(50)
-    // this.location2.body.setCircle(190, 12, 12)
-    // this.location2.setImmovable(true)
-
-    // const LocationDialogBox2 = new LocationDialogbox(this, this.location2, "Location2", 200, 150, this.player)
-
-    // //........ location3 ...................
-    // this.location3 = this.add.isotriangle(900, 900, 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505);
-    // this.physics.add.existing(this.location3);
-    // this.location3.body.setSize(this.location3.width, this.location3.height)
-    // this.location3.body.setOffset(0, -(this.location3.height / 4))
-
-    // const LocationDialogBox3 = new LocationDialogbox(this, this.location3, "Location3", 200, 150)
-
-    // //........ location4 ...................
-    // this.location4 = this.physics.add.image(200, 1050, "museum").setScale(0.4).setDepth(50)
-    // this.location4.setImmovable(true)
-    // const LocationDialogBox4 = new LocationDialogbox(this, this.location4, "Location4", 200, 150)
-
-    // // location5
-    // this.location5 = this.physics.add.image(800, 600, "entrance").setScale(0.4).setDepth(50)
-    // this.location5.setImmovable(true)
-    // const LocationDialogBox5 = new LocationDialogbox(this, this.location5, "Location5", 200, 150)
-
+    
   }
 
 

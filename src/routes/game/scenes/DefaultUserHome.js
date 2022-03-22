@@ -127,9 +127,8 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         //.......  PLAYER ....................................................................................
         //* create default player and playerShadow
-        //* create player in center with artworldCoordinates
+        //* create player in center with Default 0 ,0 artworldCoordinates
         this.player = new PlayerDefault(this, 0, 0, this.playerAvatarPlaceholder).setDepth(201)
-        Player.createPlayerItemsBar(this)
         this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
         //.......  end PLAYER ................................................................................
         // for back button
@@ -139,7 +138,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         // add onlineplayers group
         //this.onlinePlayersGroup = this.add.group()
         //....... end onlinePlayers ..........................................................................
-        //Player.createOnlinePlayerItemsBar(this)
         //....... PLAYER VS WORLD .............................................................................
         this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
         //!setBounds has to be set before follow, otherwise the camera doesn't follow!
@@ -337,20 +335,6 @@ export default class DefaultUserHome extends Phaser.Scene {
             Move.moveByTapping(this)
         }
 
-        // player items bar follows the position of the player 
-        if (this.playerItemsBar) {
-            Move.movePlayerItemsBar(this)
-        }
-
-        // player liked panel follows the position of the player 
-        if (this.playerLikedPanel) {
-            Move.movePlayerLikedPanel(this)
-        }
-
-        // once a movement is detected the addressbook is hidden
-        if (this.playerAddressbookContainer) {
-            Player.hideAddressbook(this)
-        }
     } //update
 } //class
 

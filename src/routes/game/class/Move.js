@@ -252,9 +252,6 @@ class Move {
     scene.playerLikedPanel.y = scene.player.y
   }
 
-  movePlayerItemsBar(scene) {
-    scene.playerItemsBar.x = scene.player.x
-    scene.playerItemsBar.y = scene.player.y
-  }
+
 }
 export default new Move()

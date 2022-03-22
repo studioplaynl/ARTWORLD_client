@@ -94,10 +94,6 @@ export default class Location3 extends Phaser.Scene {
   }
 
   async create() {
-
-    // for back button
-    HistoryTracker.pushLocation(this);
-
     //timers
     ManageSession.updateMovementTimer = 0;
     ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
@@ -144,21 +140,15 @@ export default class Location3 extends Phaser.Scene {
       this.playerAvatarPlaceholder
     ).setDepth(201)
 
-    Player.createPlayerItemsBar(this)
-
-    // this.playerTest = new PlayerDefault(
-    //   this,
-    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 150),
-    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 150),
-    //   this.playerAvatarPlaceholder
-    // )
-    // this.playerTest.setDepth(200).setVisible(false)
-
-
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
       texture: this.playerAvatarPlaceholder,
     }).setDepth(200)
+    
+
+    // for back button, has to be done after player is created for the history tracking!
+    HistoryTracker.pushLocation(this)
+
     //.......  end PLAYER .............................................................................
 
     //....... onlinePlayers ...........................................................................
@@ -207,9 +197,6 @@ export default class Location3 extends Phaser.Scene {
     this.UI_Scene.location = this.location
     this.gameCam.zoom = this.currentZoom
     //......... end UI Scene ..............................................................................
-
-    //create items bar for onlineplayer, after UIscene, because it need currentZoom
-    Player.createOnlinePlayerItemsBar(this)
 
   } // end create
 
