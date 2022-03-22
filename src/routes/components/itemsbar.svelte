@@ -6,10 +6,12 @@ import ProfilePage from "../profile.svelte"
 
 let ManageSession;
 let current	
+let HistoryTracker
 let images = []
 let house_url, avatar_url, user_name, adress_book, homeOpen =false;
 
 const unsubscribe = itemsBar.subscribe(async value => {
+    HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
 	ManageSession = (await import('../game/ManageSession.js')).default;
     if(value.playerClicked){
         avatar_url = ManageSession.userProfile.url
@@ -69,8 +71,6 @@ async function Profile(){
 
 
 async function goHome(id){
-    let HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
-
     if(typeof id == "string"){
         HistoryTracker.switchScene(ManageSession.currentScene, "DefaultUserHome", id)
     }else {
@@ -109,6 +109,14 @@ async function saveHome() {
     }
 }
 
+async function goApp(App){
+    HistoryTracker.pauseSceneStartApp(ManageSession.currentScene, App)
+}
+
+async function closeApp(){
+    HistoryTracker.startSceneCloseApp(ManageSession.currentScene)
+}
+
 
 async function getAdressbook(){
     if(current == "addressbook" ) {current = false; return};
@@ -130,8 +138,8 @@ async function getAdressbook(){
         <a on:click={award}><img class="icon" src="assets/SHB/svg/AW-icon-award.svg"></a>
         <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook.svg"></a>
 
-        <a href="/#/drawing"><img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg"></a>
-        <a href="/#/stopmotion"><img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg"></a>
+        <a on:click="{()=>{goApp("drawing")}}"><img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg"></a>
+        <a on:click="{closeApp}"><img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg"></a>
 
         <a on:click={getLiked}><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg"></a>
     </div>

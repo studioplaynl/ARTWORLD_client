@@ -462,3 +462,9 @@ export function setLoader(state){
     document.getElementById("loader").classList.add('hide');
   }
 }
+
+export function setAchievment(type,name){
+  let value
+  value[name] = true
+  updateObject("achievment", type, value, true)
+}
