@@ -114,8 +114,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
-
-
     // collection: "home"
     // create_time: "2022-01-19T16:31:43Z"
     // key: "Amsterdam"
@@ -218,7 +216,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       0.08, 0.062,
 
       -0.08, -0.051,
-      
+
       0.08, -0.143
     ]
 
@@ -234,20 +232,31 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.mesh = this.add.mesh(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -436),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -40), 'museum')
 
-// welke plaatje laden?
-// bv van de huidige gebruiker random van een array
+    // welke plaatje laden?
+    // bv van de huidige gebruiker random van een array
 
     this.mesh.addVertices(vertices, uvs, indicies)
 
-    //this.mesh.setPerspective(this.sys.game.canvas.width, this.sys.game.canvas.height, 60)
-    this.mesh.setOrtho((this.mesh.width / this.mesh.height), 1)
+    this.mesh.setPerspective(this.sys.game.canvas.width, this.sys.game.canvas.height, 60)
 
-    this.mesh.panZ(4) // pan is zoom level, bigger is smaller, only works with perspective projection
+    //this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
+    // let aspectRatio = this.sys.game.canvas.width/ this.sys.game.canvas.height
+
+    let meshPanZ = (this.sys.game.canvas.height / 1000) * 2
+    //console.log("aspectRatio", aspectRatio)
+    // if (this.sys.game.canvas.height > 400 ){
+    //   meshPanZ = 1.3
+    // } else {
+    //   meshPanZ = 0.8
+    // }
+
+    console.log("meshPanZ", meshPanZ)
+    this.mesh.panZ(meshPanZ) // pan is zoom level, bigger is smaller, only works with perspective projection
     // x: 0.4154389168615932
     // y: -0.77795430111968
     // z: -0.43183495571265507
 
-  
+
 
     // this.mesh.modelRotation.x = 0.42
     // this.mesh.modelRotation.y = -0.77795430111968
@@ -326,7 +335,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //......... end DEBUG FUNCTIONS .......................................................................
 
     //......... UI Scene  .................................................................................
-    //! UI scene is never stopped, so could be launched at NetworkBoot and later never relaunched
+    //* UI scene is never stopped, so could be launched at NetworkBoot and later never relaunched
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
     this.currentZoom = this.UI_Scene.currentZoom
@@ -362,28 +371,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       color1: 0xffe31f,
       color2: 0xf2a022,
       color3: 0xf8d80b,
-    })
-
-    location1Vector = new Phaser.Math.Vector2(-770.83, 83.33);
-    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      location1Vector
-    )
-
-    const location2 = new GenerateLocation({
-      scene: this,
-      type: "isoBox",
-      draggable: false,
-      x: location1Vector.x,
-      y: location1Vector.y,
-      locationDestination: "Location2",
-      locationImage: "museum",
-      enterButtonImage: "enter_button",
-      locationText: "Location 2",
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
     })
 
     //*set the particle first on 0,0 so they are below the mario_star
@@ -451,21 +438,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       Move.moveBySwiping(this)
     } else {
       Move.moveByTapping(this)
-    }
-
-    // player items bar follows the position of the player 
-    if (this.playerItemsBar) {
-      Move.movePlayerItemsBar(this)
-    }
-
-    // player liked panel follows the position of the player 
-    if (this.playerLikedPanel) {
-      Move.movePlayerLikedPanel(this)
-    }
-
-    // once a movement is detected the addressbook is hidden
-    if (this.playerAddressbookContainer) {
-      Player.hideAddressbook(this)
     }
 
   } //update
