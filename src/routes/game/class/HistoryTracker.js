@@ -80,26 +80,24 @@ class HistoryTracker {
       loop: false,
     })
   }
-  pauseSceneStartApp(scene, App){
+  async pauseSceneStartApp(scene, app){
     scene.physics.pause()
     scene.scene.pause()
    
-    ManageSession.socket.rpc("leave", scene.location)
-
-    ManageSession.getStreamUsers("join", App)
+    await ManageSession.socket.rpc("leave", scene.location)
+    await ManageSession.socket.rpc("join", app)
+    //ManageSession.getStreamUsers("join", app)
     // open app
   }
 
-  startSceneCloseApp(scene){
+  async startSceneCloseApp(scene, app){
+    await ManageSession.socket.rpc("leave", "drawing")
     console.log(scene)
     scene.physics.resume()
     scene.scene.resume()
-
     //close app
 
-    //scene.player.location = scene
-
-    ManageSession.getStreamUsers("join", ManageSession.location)
+    await ManageSession.getStreamUsers("join", ManageSession.location)
   }
 }
 

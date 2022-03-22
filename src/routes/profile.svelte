@@ -1,6 +1,6 @@
 <script>
   import {listImages, getAccount, convertImage, getObject, listAllObjects} from '../api.js';
-  import { Session, Profile } from "../session.js";
+  import { Session, Profile, CurrentApp } from "../session.js";
   import { client } from "../nakama.svelte";
   import { _ } from 'svelte-i18n'
   import SvelteTable from "svelte-table";
@@ -245,6 +245,10 @@ function moveToTrash(key) {
       , interval ); //end of setInterval
     } //end of animateScript()
 
+    async function goApp(App){
+      $CurrentApp = App;
+    }
+
 
 	onDestroy(() => clearInterval(tID));
 /////// end avatar
@@ -257,17 +261,17 @@ function moveToTrash(key) {
       <h1> {user}</h1><br>
         <div id="avatarDiv" >
           {#if !!avatar_url}
-          <a href="/#/avatar"><div id="avatar" bind:this={avatar} style="background: url({avatar_url}) 0px 0px;"></div></a>
+          <a on:click="{()=>{goApp("avatar")}}"><div id="avatar" bind:this={avatar} style="background: url({avatar_url}) 0px 0px;"></div></a>
 
           {:else}
-            <a href="/#/avatar/">Create avatar</a>
+            <a on:click="{()=>{goApp("avatar")}}">Create avatar</a>
           {/if}
         </div>
       <div id="avatarDiv">
         {#if !!house_url}
-        <a href="/#/house"><img id="house" src={house_url} /></a>
+        <a on:click="{()=>{goApp("house")}}"><img id="house" src={house_url} /></a>
         {:else}
-          <a href="/#/house/">Create house</a>
+          <a on:click="{()=>{goApp("house")}}">Create house</a>
         {/if}
       </div>
     </div>

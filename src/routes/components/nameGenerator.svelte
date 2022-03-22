@@ -13,7 +13,7 @@ onMount(async () => {
         let dier = out.dier[Math.floor(Math.random() * out.dier.length)]
         let kleur = out.kleur[Math.floor(Math.random() * out.kleur.length)]
         value = kleur+dier
-        replace($location + "/"+ value)
+        //replace($location + "/"+ value)
         })
         .catch(err => console.log(err));
     }
