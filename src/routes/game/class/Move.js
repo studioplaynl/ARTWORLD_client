@@ -95,7 +95,9 @@ class Move {
     ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")
   }
 
-  checkIfPlayerIsMoving(scene) {
+  checkIfPlayerReachedMoveGoal(scene) {
+// function to stop the player when it reached it goal
+
     //  10 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (scene.isPlayerMoving) {

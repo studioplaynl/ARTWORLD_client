@@ -749,7 +749,7 @@ export default class Location1 extends Phaser.Scene {
 
     //....... moving ANIMATION ......................................................................................
     // Move.movingAnimation(this)
-    Move.checkIfPlayerIsMoving(this)
+    Move.checkIfPlayerReachedMoveGoal(this)
     //....... end moving ANIMATION .................................................................................
 
     // to detect if the player is clicking/tapping on one place or swiping
