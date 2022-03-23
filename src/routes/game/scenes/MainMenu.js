@@ -22,37 +22,41 @@ export default class MainMenu extends Phaser.Scene {
     //   )
     //   .setOrigin(0)
 
-    //setLoader(true)
+    this.parsePlayerLocation() // check if there is a url param, otherwise get last location serverside 
 
+  } //create
 
-    //on resizing the window
-    // this.scale.on("resize", this.resize, this)
-
+  parsePlayerLocation() {
     //* check if the user profile is loaded, to be able to send the player to the right location
     //* check if there are params in the url, to send the player to that location instead
     let urlParams = ManageSession.getUrl()
     console.log("urlParams", urlParams)
 
+    // if there is no location paramter in the url
+    if (typeof urlParams.location == "undefined") {
+      if (typeof ManageSession.userProfile == "undefined") { // get the location stored serverside 
+        this.parsePlayerPosition(ManageSession.userProfile.meta.posX, ManageSession.userProfile.meta.posY)
+        const urlParams = { posX: ManageSession.playerPosX, posY: ManageSession.playerPosY, location: ManageSession.userProfile.meta.location }
+        this.parseLocation(urlParams)
+      } else { //if the account is empty, get it 
+        getAccount("", true)
+          .then(rec => {
+            ManageSession.userProfile = rec
+            this.parsePlayerPosition(ManageSession.userProfile.meta.posX, ManageSession.userProfile.meta.posY)
+            const urlParams = { posX: ManageSession.playerPosX, posY: ManageSession.playerPosY, location: ManageSession.userProfile.meta.location }
+            this.parseLocation(urlParams)
+          })
+      }
+    } else {
+
     // if there is a location parameter in the url
-    if (!!urlParams.location) { // if there is a .location but it is invalid, the url should also not be parsed!
-      this.parseLocation(urlParams)
-    } else if (!!ManageSession.userProfile) { // otherwise get the location stored serverside 
-      this.parsePlayerPosition(ManageSession.userProfile.meta.posX, ManageSession.userProfile.meta.posY)
-      const urlParams = { posX: ManageSession.playerPosX, posY: ManageSession.playerPosY, location: ManageSession.userProfile.meta.location }
-      this.parseLocation(urlParams)
-    } else { //if the account is empty, get it 
-      getAccount("", true)
-        .then(rec => {
-          ManageSession.userProfile = rec
-          this.parsePlayerPosition(ManageSession.userProfile.meta.posX, ManageSession.userProfile.meta.posY)
-          const urlParams = { posX: ManageSession.playerPosX, posY: ManageSession.playerPosY, location: ManageSession.userProfile.meta.location }
-          this.parseLocation(urlParams)
-        })
+    this.parseLocation(urlParams)
     }
-  } //create
+
+  }
 
   parseLocation(urlParams) {
-    const locationName = urlParams.location
+    const locationName = urlParams.location || "ArtworldAmsterdam"
     console.log("urlParams, locationName", urlParams, locationName)
     // check if location is of DefaultUserHome_user_ID format
     let splitString = locationName.split('_')
@@ -131,15 +135,15 @@ export default class MainMenu extends Phaser.Scene {
       //if it exists and isn't null
       const tempInt = parseInt(posX)
       console.log("tempInt:", tempInt)
-      if (!Number.isNaN(tempInt)){
+      if (!Number.isNaN(tempInt)) {
         console.log("parsed posX:", posX)
-        ManageSession.playerPosX =  tempInt//expected artworldCoordinates
+        ManageSession.playerPosX = tempInt//expected artworldCoordinates
       } else {
-         // a random number between -150 and 150
-      ManageSession.playerPosX = Math.floor((Math.random() * 300) - 150)
-      console.log("no known posX, created...", ManageSession.playerPosX)
+        // a random number between -150 and 150
+        ManageSession.playerPosX = Math.floor((Math.random() * 300) - 150)
+        console.log("no known posX, created...", ManageSession.playerPosX)
       }
-      
+
     } else {
       // a random number between -150 and 150
       ManageSession.playerPosX = Math.floor((Math.random() * 300) - 150)
@@ -151,13 +155,13 @@ export default class MainMenu extends Phaser.Scene {
       console.log("parsed posY:", posY)
       const tempInt = parseInt(posY)
       console.log("tempInt:", tempInt)
-      if ( !Number.isNaN(tempInt) ){
+      if (!Number.isNaN(tempInt)) {
 
-        ManageSession.playerPosY =  tempInt//expected artworldCoordinates
+        ManageSession.playerPosY = tempInt//expected artworldCoordinates
       } else {
-         // a random number between -150 and 150
-      ManageSession.playerPosY = Math.floor((Math.random() * 300) - 150)
-      console.log("no known posY, created...", ManageSession.playerPosY)
+        // a random number between -150 and 150
+        ManageSession.playerPosY = Math.floor((Math.random() * 300) - 150)
+        console.log("no known posY, created...", ManageSession.playerPosY)
       }
     } else {
       // a random number between -150 and 150
