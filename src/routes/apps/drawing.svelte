@@ -35,7 +35,7 @@
   const statussen = ["zichtbaar", "verborgen"];
   let status = "zichtbaar";
   let displayName;
-  let appType = $location.split("/")[1];
+  export let appType = $location.split("/")[1];
   let version = 0
   let optionbox = true;
  
@@ -421,7 +421,7 @@
           })
           .catch((err) => console.log(err));
       } else {
-        replace($location + "/" + $Session.user_id);
+        //replace($location + "/" + $Session.user_id);
       }
     }else {
       

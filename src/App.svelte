@@ -23,6 +23,7 @@
     import MarioSequencer from "./routes/apps/marioSequencer.svelte"
     import player from "./routes/apps/player.svelte"
     import Moderate from "./routes/moderate.svelte";
+    import AppLoader from "./routes/components/appLoader.svelte"
 
     onMount(()=>{
         document.getElementById("loader").classList.add('hide');
@@ -59,6 +60,7 @@
 
 <Menu />
 <Itemsbar />
+<AppLoader />
 <Router
     routes={{
         "/": wrap({
