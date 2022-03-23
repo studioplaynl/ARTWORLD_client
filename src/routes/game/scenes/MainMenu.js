@@ -4,7 +4,7 @@ import { getAccount, listObjects, setLoader, url } from '../../../api.js'
 export default class MainMenu extends Phaser.Scene {
   constructor() {
     super("MainMenu")
-
+    this.fallBackLocation = "ArtworldAmsterdam"
   }
 
   preload() {
@@ -49,14 +49,14 @@ export default class MainMenu extends Phaser.Scene {
       }
     } else {
 
-    // if there is a location parameter in the url
-    this.parseLocation(urlParams)
+      // if there is a location parameter in the url
+      this.parseLocation(urlParams)
     }
 
   }
 
   parseLocation(urlParams) {
-    const locationName = urlParams.location || "ArtworldAmsterdam"
+    const locationName = urlParams.location || this.fallBackLocation
     console.log("urlParams, locationName", urlParams, locationName)
     // check if location is of DefaultUserHome_user_ID format
     let splitString = locationName.split('_')
@@ -72,7 +72,7 @@ export default class MainMenu extends Phaser.Scene {
         // send to default position
         this.parsePlayerPosition(null, null)
         //goto default location
-        this.prepareLaunchSceneAndSwitch("ArtworldAmsterdam", "ArtworldAmsterdam")
+        this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation)
       }
     } else {
       // if location is of _user_ID format 
@@ -83,7 +83,7 @@ export default class MainMenu extends Phaser.Scene {
           .catch((rec) => {
             console.log("error getting the home object")
             this.parsePlayerPosition(null, null)
-            this.prepareLaunchSceneAndSwitch("ArtworldAmsterdam", "ArtworldAmsterdam")
+            this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation)
           })
           .then((rec) => {
             console.log("rec: ", rec)
@@ -99,7 +99,7 @@ export default class MainMenu extends Phaser.Scene {
               // if rec is empty, user does not exists
               console.log("userID does not return home")
               this.parsePlayerPosition(null, null)
-              this.prepareLaunchSceneAndSwitch("ArtworldAmsterdam", "ArtworldAmsterdam")
+              this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation)
             }
 
           })
@@ -109,14 +109,14 @@ export default class MainMenu extends Phaser.Scene {
         if (locationName == "DefaultUserHome") {
           // send to default location
           this.parsePlayerPosition(null, null)
-          this.prepareLaunchSceneAndSwitch("ArtworldAmsterdam", "ArtworldAmsterdam")
+          this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation)
         } else if (ManageSession.checkIfSceneExists(locationName)) {
           this.parsePlayerPosition(urlParams.posX, urlParams.posY)
           this.prepareLaunchSceneAndSwitch(locationName, locationName)
         } else {
           // if the sceneName doesn't exist, send to default location
           this.parsePlayerPosition(null, null)
-          this.prepareLaunchSceneAndSwitch("ArtworldAmsterdam", "ArtworldAmsterdam")
+          this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation)
         }
       }
     }

@@ -1,9 +1,9 @@
 import ManageSession from "../ManageSession"
-// import itemsbar from "../../components/itemsbar"
 import { getAccount, updateObject, listObjects } from '../../../api.js'
 
 class ServerCall {
   constructor() { }
+  
   async getServerObject(collection, userID, maxItems) {
     Promise.all([listObjects(collection, userID, maxItems)])
       .then(response => {
@@ -58,10 +58,8 @@ class ServerCall {
 
     //pass data locally: 
     // - ManageSession
-    // - itemsBar
 
     ManageSession[collection] = { [collection]: [] }
-    itemsbar[collection] = { [collection]: [] }
 
     const type = collection
     const name = type + "_" + ManageSession.userProfile.id
