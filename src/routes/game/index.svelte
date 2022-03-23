@@ -18,7 +18,7 @@
       //parent: "phaserId",
   
       type: Phaser.WEBGL,
-      transparent: true, // for 3d scene
+      //transparent: true, // for 3d scene
       
       domCreateContainer: false,
       // width: CONFIG.WIDTH,
