@@ -134,6 +134,11 @@ function moveToTrash(key) {
     return CurrentUser
   }
 
+  onMount(()=>{
+    
+  })
+
+
   async function getUser() {
     if(!!params.user || !!userID){
       id = params.user || userID
@@ -232,6 +237,7 @@ function moveToTrash(key) {
       var    position = 256; //start position for the image slicer
       const  interval = 250; //100 ms of interval for the setInterval()
       tID = setInterval ( () => {
+        if(avatar == undefined) return clearInterval(tID)
       avatar.style.backgroundPosition = 
       `-${position}px 0px`; 
       //we use the ES6 template literal to insert the variable "position"

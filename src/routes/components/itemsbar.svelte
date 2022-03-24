@@ -2,20 +2,30 @@
 import {convertImage, getObject, updateObject} from "../../api"
 import itemsBar from "./itemsbar.js"
 import ProfilePage from "../profile.svelte"
-import {CurrentApp} from "../../session"
-
+import {CurrentApp, logout} from "../../session"
 let ManageSession;
 let current	
 let HistoryTracker
 let images = []
-let house_url, avatar_url, user_name, adress_book, homeOpen =false;
+let user_house_url, house_url, user_avatar_url, avatar_url, user_name, adress_book, homeOpen =false;
+
+
+
 
 const unsubscribe = itemsBar.subscribe(async value => {
     HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
 	ManageSession = (await import('../game/ManageSession.js')).default;
-    if(value.playerClicked){
-        avatar_url = ManageSession.userProfile.url
-    }
+    user_avatar_url = ManageSession.userProfile.url
+    if(user_house_url == undefined){
+            user_house_url = await getObject("home", ManageSession.userProfile.meta.Azc, ManageSession.userProfile.id)
+            user_house_url = await convertImage(user_house_url.value.url,"50")
+        }
+    // if(value.playerClicked){
+    //     if(user_house_url == undefined){
+    //         user_house_url = await getObject("home", ManageSession.userProfile.meta.Azc, ManageSession.userProfile.id)
+    //         user_house_url = await convertImage(user_house_url.value.url,"50")
+    //     }
+    // }
     if(value.onlinePlayerClicked){
         console.log(ManageSession.selectedOnlinePlayer)
         avatar_url = ManageSession.selectedOnlinePlayer.url
@@ -82,6 +92,13 @@ async function goHome(id){
     }
 }
 
+
+async function goScene(name){
+    if(typeof name == "string"){
+        HistoryTracker.switchScene(ManageSession.currentScene, name, name)
+    }
+}
+
 async function award() {
     console.log(ManageSession.userProfile.meta)
     if(current == "awards" ) {current = false; return};
@@ -110,7 +127,7 @@ async function saveHome() {
 }
 
 async function goApp(App){
-    HistoryTracker.pauseSceneStartApp(ManageSession.currentScene, App)
+   // HistoryTracker.pauseSceneStartApp(ManageSession.currentScene, App)
     $CurrentApp = App;
 }
 
@@ -125,13 +142,14 @@ async function getAdressbook(){
 </script>
 
 <div id="itemsButton" class:show={!$itemsBar.playerClicked}>
-    <a on:click={Click} ><img class="icon" src="assets/SHB/svg/AW-icon-more.svg"></a>
+    <a on:click={Click} class="avatar" ><img src="{user_avatar_url}"></a>
 </div>
 
 <!-- current user -->
 <div class="itemsbar" id="currentUser" class:show={$itemsBar.playerClicked}>
     <div id="left">
-        <a on:click={Profile} class="avatar"><img src="{avatar_url}"></a>
+        <a on:click={Profile} class="avatar"><img src="{user_avatar_url}"></a>
+        <a on:click="{()=>{goHome()}}" class="avatar"><img src="{user_house_url}"></a>
         <a on:click={award}><img class="icon" src="assets/SHB/svg/AW-icon-award.svg"></a>
         <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook.svg"></a>
 
@@ -139,6 +157,9 @@ async function getAdressbook(){
         <a on:click="{()=>{goApp("stopmotion")}}"><img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg"></a>
 
         <a on:click={getLiked}><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg"></a>
+
+        <span>-</span>
+        <a on:click={logout}><img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg"></a>
     </div>
     <div id="right">
         {#if current == "liked"}
@@ -153,7 +174,8 @@ async function getAdressbook(){
         {/if}
         {#if current == "addressbook"}
             <div>
-                <a on:click="{()=>{goHome()}}">{ManageSession.userProfile.username}</a>
+                
+                <a on:click="{()=>{goScene("ArtworldAmsterdam")}}">ArtWorldAmsterdam</a>
                 {#each adress_book as adress}
                     <a on:click="{()=>{goHome(adress.user_id)}}">{adress.user_name}</a>
                 {/each}
@@ -172,12 +194,6 @@ async function getAdressbook(){
 
 <!-- online user -->
 <div class="itemsbar" id="onlineUser" class:show={$itemsBar.onlinePlayerClicked}>
-    <div id="left">
-        <p>{user_name}</p>
-        <a on:click={()=>{}} class="avatar"><img src="{avatar_url}"></a>
-        <a on:click={Profile}><img id="house" src={house_url} /></a>
-        <a on:click={getLiked}><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg"></a>
-    </div>
     <div id="right">
         {#if current == "liked"}
             <div>
@@ -193,7 +209,13 @@ async function getAdressbook(){
                 <a on:click={saveHome}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg"></a>
         <!-- <ProfilePage userID="{ManageSession.selectedOnlinePlayer.id}" /> -->
         {/if}
-    </div>  
+    </div>
+    <div id="left">
+        <p>{user_name}</p>
+        <a on:click={()=>{}} class="avatar"><img src="{avatar_url}"></a>
+        <a on:click={Profile}><img id="house" src={house_url} /></a>
+        <a on:click={getLiked}><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg"></a>
+    </div>
 </div>
 
 {#if $itemsBar.playerClicked || $itemsBar.onlinePlayerClicked}
@@ -275,16 +297,18 @@ async function getAdressbook(){
 
     #left {
         display: flex;
-        flex-direction: column;
         flex-wrap: nowrap;
         float: left;
         margin-right: 5px;
-        justify-content: flex-end;
+        justify-content: flex-start;
+        flex-direction: column-reverse;
     }
 
     #right {
         float: left;
     }
+
+
 
     .homeBox {
         display: flex;

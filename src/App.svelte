@@ -24,6 +24,8 @@
     import player from "./routes/apps/player.svelte"
     import Moderate from "./routes/moderate.svelte";
     import AppLoader from "./routes/components/appLoader.svelte"
+    import TopBar from "./routes/components/topbar.svelte"
+    import TutLoader from "./routes/tutorials/tutLoader.svelte"
 
     onMount(()=>{
         document.getElementById("loader").classList.add('hide');
@@ -61,6 +63,8 @@
 <Menu />
 <Itemsbar />
 <AppLoader />
+<TopBar />
+<TutLoader />
 <Router
     routes={{
         "/": wrap({
