@@ -82,9 +82,7 @@ export default class Location1 extends Phaser.Scene {
     Preloader.Loading(this)
     //.... end PRELOADER VISUALISER ...............................................................................................
 
-    //drawing on a wall
-    this.load.image('brush', 'assets/brush3.png')
-    this.load.image('brickWall', 'assets/brickwall_white.jpg')
+    
 
     //....... IMAGES ......................................................................
     this.load.image("sky", "./assets/sky.png")
@@ -737,12 +735,10 @@ export default class Location1 extends Phaser.Scene {
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
-    //! make more efficient with event?
     this.gameCam.zoom = this.UI_Scene.currentZoom
 
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
-    //! make more efficient with event?
     this.playerShadow.x = this.player.x + this.playerShadowOffset
     this.playerShadow.y = this.player.y + this.playerShadowOffset
     //........... end PLAYER SHADOW .........................................................................
