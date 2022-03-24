@@ -6,6 +6,7 @@ import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
 import Player from "../class/Player.js"
 import Preloader from "../class/Preloader.js"
 import BouncingBird from "../class/BouncingBird.js"
+import GraffitiWall from "../class/GraffitiWall"
 import Background from "../class/Background.js"
 import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
@@ -171,6 +172,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() //{ useHandCursor: true }
+      .on('pointerup', () => console.log('touched background'))
       .on('pointerdown', () => ManageSession.playerMove = true)
       .setDepth(219)
       .setOrigin(0)
@@ -187,6 +189,21 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     )
     //this.sunglasses_striped.setInteractive({ draggable: true })
 
+    this.train = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -790), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'metro_train_grey')
+
+    this.tweens.add({
+      targets: this.train,
+      duration: 3000,
+      x: '+=2360',
+      yoyo: false,
+      repeat: -1,
+      repeatDelay: 8000,
+      //ease: 'Sine.easeInOut'
+    })
+
+   //create(scene, x, y, width, height, name, color, imageFile = null) {
+    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 400), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1000), 800, 400, "graffitiBrickWall", 0x000000, 'brickWall')
+   
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
     //.setInteractive({ draggable: true })
 
@@ -255,8 +272,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     // x: 0.4154389168615932
     // y: -0.77795430111968
     // z: -0.43183495571265507
-
-
 
     // this.mesh.modelRotation.x = 0.42
     // this.mesh.modelRotation.y = -0.77795430111968

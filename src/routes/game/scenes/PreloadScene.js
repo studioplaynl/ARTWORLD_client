@@ -31,6 +31,10 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.load.image('museum', './assets/museum.png')
         this.load.image("ball", './assets/ball_grey.png')
+        
+    //drawing on a wall
+    this.load.image('brush', 'assets/brush3.png')
+        this.load.image('brickWall', './assets/brickwall_white.jpg')
 
         this.load.svg('home', './assets/SHB/svg/AW-icon-home.svg', { scale: 0.7 })
         this.load.svg('heart', './assets/SHB/svg/AW-icon-heart-full-red.svg', { scale: 0.7 })
@@ -42,10 +46,9 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.svg('close', './assets/SHB/svg/AW-icon-cross.svg', { scale: 0.6 })
         this.load.svg('delete', './assets/SHB/svg/AW-icon-trash.svg', { scale: 0.6 })
 
-
-        this.load.image('friend', './assets/popup/friend.png')
-        this.load.image('friend2', './assets/popup/friend2.png')
-        this.load.image('friend3', './assets/popup/friend3.png')
+        // this.load.image('friend', './assets/popup/friend.png')
+        // this.load.image('friend2', './assets/popup/friend2.png')
+        // this.load.image('friend3', './assets/popup/friend3.png')
 
         this.load.spritesheet(
             "avatar1",
@@ -68,12 +71,13 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.svg('tree_palm', './assets/svg/tree_palm.svg')
         this.load.svg('exhibit_outdoor_big', './assets/svg/exhibit_outdoor_big.svg')
 
-        this.load.svg('bitmap_heart', 'assets/svg/mario_heart.svg')
+        //this.load.svg('bitmap_heart', 'assets/svg/mario_heart.svg')
         // this.load.svg('mario_pipe', 'assets/svg/mario_pipe.svg')
-        this.load.svg('mario_star', 'assets/svg/mario_star.svg')
 
+        this.load.svg('mario_star', 'assets/svg/mario_star.svg')
         this.load.svg('music_quarter_note', 'assets/svg/music_note_quarter_note.svg')
 
+        this.load.svg('metro_train_grey', 'assets/svg/metro_train_grey.svg')
         //create a hitArea for locations, as an image with key 'enterButtonHitArea', 128x128pix
         this.createHitAreaLocations()
 
