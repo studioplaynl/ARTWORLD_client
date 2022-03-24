@@ -155,8 +155,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         //.......... end locations ............................................................................
 
         //......... DEBUG FUNCTIONS ...........................................................................
-        DebugFuntions.keyboard(this);
-        //this.createDebugText();
+        DebugFuntions.keyboard(this)
         //......... end DEBUG FUNCTIONS .......................................................................
 
         //......... UI Scene  .................................................................................
@@ -215,6 +214,7 @@ export default class DefaultUserHome extends Phaser.Scene {
                 this.artworksListSpinner.destroy()
             }
         })
+
     }//end create
 
     async downloadArt(element, index, array) {
@@ -325,7 +325,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         //........... end PLAYER SHADOW .........................................................................
 
         //....... moving ANIMATION ......................................................................................
-        Move.checkIfPlayerIsMoving(this)
+        Move.checkIfPlayerReachedMoveGoal(this)
         //....... end moving ANIMATION .................................................................................
 
         // to detect if the player is clicking/tapping on one place or swiping

@@ -51,14 +51,19 @@ export default class UI_Scene extends Phaser.Scene {
         return;
       }
       if (countDisplay > 0) {
-        i18next.changeLanguage(value);
+        i18next.changeLanguage(value)
       }
       if (latestValue !== value) {
-        this.scene.restart();
+        this.scene.restart()
       }
-      latestValue = value;
-    });
+      latestValue = value
+    })
 
+  //  let displayText = `${this.sys.game.canvas.width} ${this.sys.game.canvas.height} ${window.devicePixelRatio}`
+  //  this.add.text((this.sys.game.canvas.width / 2 ) - 100, this.sys.game.canvas.height / 2, displayText, { fontSize: 16, 
+  //   backgroundColor: '#000000', 
+  //   color: '#fff' })
+  
     this.camUI = this.cameras.main
       .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
       .setName("camMain")
@@ -66,22 +71,15 @@ export default class UI_Scene extends Phaser.Scene {
     this.createNavigationButtons(false)
     this.scale.on("resize", this.resize, this)
 
-    // const frame = this.add.graphics()
-
-    // // create a black square size of art + 20pix
-    // frame.fillStyle(0xffff00)
-    // frame.fillRoundedRect(0+80, this.sys.game.canvas.height - 200, this.sys.game.canvas.width-80, 80, 32)
-    // frame.fillStyle(0xffffff)
-
     // to make the UI scene always on top of other scenes
-    this.scene.bringToTop();
+    this.scene.bringToTop()
 
   } //create
 
   // zoom buttons and back button
   async createNavigationButtons(update) {
-    let width = this.sys.game.canvas.width;
-    let height = this.sys.game.canvas.height;
+    let width = this.sys.game.canvas.width
+    let height = this.sys.game.canvas.height
 
     if (!update) {
       //text to show the location (for debugging) > will change to breadcrum UI for user
