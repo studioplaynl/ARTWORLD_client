@@ -1,5 +1,6 @@
 <script>
-    import Tap from "./gestures/tap.svelte"
+    import FirstTime from "./firstTime.svelte"
 </script>
 
-<Tap />
+
+<FirstTime />

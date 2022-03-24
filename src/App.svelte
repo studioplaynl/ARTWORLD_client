@@ -64,7 +64,6 @@
 <Itemsbar />
 <AppLoader />
 <TopBar />
-<TutLoader />
 <Router
     routes={{
         "/": wrap({
@@ -223,3 +222,4 @@
     }}
 />
 <Error />
+<TutLoader />
