@@ -59,10 +59,10 @@ export default class UI_Scene extends Phaser.Scene {
       latestValue = value
     })
 
-   let displayText = `${this.sys.game.canvas.width} ${this.sys.game.canvas.height} ${window.devicePixelRatio}`
-   this.add.text((this.sys.game.canvas.width / 2 ) - 100, this.sys.game.canvas.height / 2, displayText, { fontSize: 16, 
-    backgroundColor: '#000000', 
-    color: '#fff' })
+  //  let displayText = `${this.sys.game.canvas.width} ${this.sys.game.canvas.height} ${window.devicePixelRatio}`
+  //  this.add.text((this.sys.game.canvas.width / 2 ) - 100, this.sys.game.canvas.height / 2, displayText, { fontSize: 16, 
+  //   backgroundColor: '#000000', 
+  //   color: '#fff' })
   
     this.camUI = this.cameras.main
       .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
