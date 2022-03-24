@@ -21,9 +21,6 @@ export const CONFIG = {
   // WIDTH: window.innerWidth * window.devicePixelRatio,
   // HEIGHT: window.innerHeight * window.devicePixelRatio
 
-  // WIDTH: screen.availWidth,
-  // HEIGHT: screen.availHeight
-
 }
 
 export const SCENES = [
