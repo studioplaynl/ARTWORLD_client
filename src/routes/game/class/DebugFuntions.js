@@ -11,198 +11,159 @@ class DebugFuntions {
     }
 
     keyboard(scene) {
-
-
-        //let combo = scene.input.keyboard.createCombo(['Alt', 'Shift'])
-
+        //combo ALT SHIT E F
         scene.input.keyboard.createCombo([16, 18, 69, 70], { resetOnMatch: true })
 
-        //scene.input.keyboard.createCombo([16, 18], { resetOnMatch: true })
-
         scene.input.keyboard.on('keycombomatch', function (event) {
-            //console.log(event, 'SHIFT ALT E F pressed: edit mode')
-            
             if (ManageSession.gameEditMode) {
                 ManageSession.gameEditMode = false
                 console.log("EDIT MODE off")
+                scene.events.emit('gameEditMode', 'off')
             } else {
                 ManageSession.gameEditMode = true
                 console.log("EDIT MODE on")
+                scene.events.emit('gameEditMode', 'on')
             }
-
-            console.log("ManageSession.gameEditMode", ManageSession.gameEditMode)
-            
         })
 
+        //check all key up events
+        scene.input.keyboard.on('keyup', function (event) {
+            //only activate debug functions when in edit mode
+            if (ManageSession.gameEditMode) {
+                console.log(event)
+                this.debugKeys(scene, event.code)
+            }
+        }, this)
 
-
+        // scene.events.emit(eventName, parameter0, ...)
     }
 
-    debugKeys(scene) {
+    debugKeys(scene, code) {
+        //avoid E F -> already used for edit mode
 
+        //edit mode to activate debugKeyboard
 
-        //KEYS THAT ARE TAKEN
-        // 1 2 A S D F Q W E R H T P U
+        // code: AltLeft, KeyS, Digit1 -> always the same for alphabet and digits
+        // key: Alt, s, Shift, 1 -> always small key, also with shift, except with CAPS
+        // keyCode: 18, 83, 49
 
-        scene.input.keyboard.on('keyup-A', function (event) {
+        switch (code) {
+            case 'KeyA':
+                console.log(code)
 
-        }, scene)
+                break
 
-        scene.input.keyboard.on('keyup-ONE', function (event) {
+            case 'Digit1':
+                console.log(code)
 
-            console.log('1 key')
-            //ManageSession.getStreamUsers("get_users", scene.location)
+                Promise.all([listObjects("liked", ManageSession.userProfile.id, 10)])
+                    .then((rec) => {
+                        console.log("liked query", rec[0])
+                    })
+                // ManageSession.getStreamUsers("get_users", scene.location)
+                // listObjects("addressbook", ManageSession.userProfile.id, 10)
 
-            Promise.all([listObjects("liked", ManageSession.userProfile.id, 10)])
-                .then((rec) => {
-                    console.log("liked query", rec[0])
+                Promise.all([listObjects("addressbook", ManageSession.userProfile.id, 10)
+                ]).then((rec) => {
+                    console.log("addressbook query", rec[0])
                 })
-            // ManageSession.getStreamUsers("get_users", scene.location)
-            // listObjects("addressbook", ManageSession.userProfile.id, 10)
+                break
 
-            Promise.all([listObjects("addressbook", ManageSession.userProfile.id, 10)
-            ]).then((rec) => {
-                console.log("addressbook query", rec[0])
-            })
+            case 'Digit2':
+                console.log(code)
 
-        }, scene)
+                scene.player.anims.play(scene.playerMovingKey, true)
+                scene.playerShadow.anims.play(scene.playerMovingKey, true)
+                break
 
-        scene.input.keyboard.on('keyup-TWO', async (event) => {
-            console.log('2 key')
+            case 'KeyD':
+                console.log(code)
 
-            scene.player.anims.play(scene.playerMovingKey, true)
-            scene.playerShadow.anims.play(scene.playerMovingKey, true)
+                //list all images in the textureManager
+                console.log(scene.textures.list)
 
-        }, scene)
+                //Return an array listing the events for which the emitter has registered listeners.
+                console.log("Return an array listing the events for which the emitter has registered listeners: ")
+                console.log(scene.textures.eventNames())
 
+                console.log(scene.children) //get the whole DisplayList
 
-        scene.input.keyboard.on('keyup-THREE', async (event) => {
-            console.log('2 key')
+                break
 
-            scene.player.anims.play(scene.playerStopKey, true)
-            scene.playerShadow.anims.play(scene.playerStopKey, true)
-        }, scene)
+            case 'KeyG':
+                console.log(code)
+                console.log('scene.onlinePlayers: ')
+                console.log(scene.onlinePlayers)
 
-        scene.input.keyboard.on('keyup-S', function (event) {
+                console.log("ManageSession.allConnectedUsers: ")
+                console.log(ManageSession.allConnectedUsers)
 
-            console.log('S key')
-            //setLoader(true)
+                console.log("onlinePlayerGroup Children: ")
+                console.log(scene.onlinePlayersGroup.getChildren())
 
+                console.log("scene.player: ")
+                console.log(scene.player)
+                break
 
-        }, scene);
+            case 'KeyF':
+                console.log(code)
+                console.log("ManageSession.userProfile: ")
+                console.log(ManageSession.userProfile)
 
-        scene.input.keyboard.on('keyup-D', function (event) {
+                console.log("scene.createOnlinePlayers: ")
+                console.log(ManageSession.createOnlinePlayers)
 
-            console.log('D key')
+                console.log("scene.createdPlayer: ")
+                console.log(scene.createdPlayer)
+                break
 
-            //list all images in the textureManager
-            console.log(scene.textures.list)
+            case 'KeyF':
+                console.log(code)
+                getAccount()
+                break
 
-            //Return an array listing the events for which the emitter has registered listeners.
-            console.log("Return an array listing the events for which the emitter has registered listeners: ")
-            console.log(scene.textures.eventNames())
+            case 'KeyW':
+                console.log(code)
+                listObjects("addressbook", ManageSession.userProfile.id, 10)
+                break
 
-            console.log(scene.children) //get the whole DisplayList
+            case 'KeyH':
+                console.log(code)
+                console.log(ManageSession.addressbook)
+                console.log(ManageSession.addressbook.value)
+                break
 
-        }, scene)
+            case 'KeyR':
+                console.log(code)
+                const value = '{"user_id": "b9ae6807-1ce1-4b71-a8a3-f5958be4d340", "posX": "100", "posY": "500"}'
 
+                const type = "addressbook"
+                const name = type + "_" + ManageSession.userProfile.id
+                const pub = 2
 
-        scene.input.keyboard.on('keyup-G', function (event) {
+                updateObject(type, name, value, pub)
 
-            console.log(event)
-            console.log(" ")
-            console.log('scene.onlinePlayers: ')
-            console.log(scene.onlinePlayers)
+                break
 
-            console.log("ManageSession.allConnectedUsers: ")
-            console.log(ManageSession.allConnectedUsers)
+            case 'KeyP':
+                console.log(code)
+                console.log("Display Mouse coordinates")
+                console.log("World Coordinates: ")
+                console.log(scene.input.mousePointer.worldX, scene.input.mousePointer.worldY)
+                console.log("artworldCoordinates: ")
+                console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.input.activePointer.worldX))
+                console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.y, scene.input.activePointer.worldY))
 
-            console.log("onlinePlayerGroup Children: ")
-            console.log(scene.onlinePlayersGroup.getChildren())
+                break
 
-            console.log("scene.player: ")
-            console.log(scene.player)
+            default:
 
-        }, scene)
+                break
 
-        scene.input.keyboard.on('keyup-F', function (event) {
-
-            console.log('F key');
-
-            console.log("ManageSession.userProfile: ")
-            console.log(ManageSession.userProfile)
-
-            console.log("scene.createOnlinePlayers: ")
-            console.log(ManageSession.createOnlinePlayers)
-
-            console.log("scene.createdPlayer: ")
-            console.log(scene.createdPlayer)
-        }, scene);
-
-        scene.input.keyboard.on('keyup-Q', function (event) {
-
-            console.log('Q key');
-            getAccount();
-
-        }, scene);
-
-        scene.input.keyboard.on('keyup-W', function (event) {
-
-            console.log('W key');
-
-            listObjects("addressbook", ManageSession.userProfile.id, 10)
-        }, scene)
-
-        scene.input.keyboard.on('keyup-H', function (event) {
-            console.log('H key');
-            console.log(ManageSession.addressbook)
-            console.log(ManageSession.addressbook.value)
-        }, scene)
-
-        scene.input.keyboard.on('keyup-R', function (event) {
-            console.log('R key');
-            const value = '{"user_id": "b9ae6807-1ce1-4b71-a8a3-f5958be4d340", "posX": "100", "posY": "500"}'
-
-            const type = "addressbook"
-            const name = type + "_" + ManageSession.userProfile.id
-            const pub = 2
-
-            updateObject(type, name, value, pub)
-        }, scene)
-
-        scene.input.keyboard.on('keyup-H', function (event) {
-
-            console.log('H key');
-            console.log(listObjects("location", "", 200))
-
-        }, scene);
-
-        scene.input.keyboard.on('keyup-T', function (event) {
-
-            console.log('T key')
-            console.log("::Test Coordinates Scene::")
-            this.scene.stop(ManageSession.currentlocation);
-            this.scene.start("TestCoordinates")
-
-        }, scene);
-
-        scene.input.keyboard.on('keyup-P', function (event) {
-
-            console.log('P key')
-            console.log("Display Mouse coordinates")
-            console.log("World Coordinates: ")
-            console.log(scene.input.mousePointer.worldX, scene.input.mousePointer.worldY)
-            console.log("artworldCoordinates: ")
-            console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.input.activePointer.worldX))
-            console.log(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.y, scene.input.activePointer.worldY))
-
-        }, scene);
-
-        scene.input.keyboard.on('keyup-U', async (event) => {
-            scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
-        }, scene)
-
+        }
     }
+
+
 }
 
 export default new DebugFuntions();
