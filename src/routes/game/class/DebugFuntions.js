@@ -21,22 +21,17 @@ class DebugFuntions {
 
         scene.input.keyboard.on('keycombomatch', function (event) {
             //console.log(event, 'SHIFT ALT E F pressed: edit mode')
-            // ManageSession.gameEditMode == false ? true : false
             
             if (ManageSession.gameEditMode) {
                 ManageSession.gameEditMode = false
+                console.log("EDIT MODE off")
             } else {
                 ManageSession.gameEditMode = true
+                console.log("EDIT MODE on")
             }
 
             console.log("ManageSession.gameEditMode", ManageSession.gameEditMode)
             
-            if (ManageSession.gameEditMode) {
-                console.log("EDIT MODE on")
-            } else {
-                console.log("EDIT MODE off")
-
-            }
         })
 
 
