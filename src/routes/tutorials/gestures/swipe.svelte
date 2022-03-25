@@ -1,57 +1,57 @@
 <script>
     import anime from 'animejs';
     import {onMount} from "svelte"
-    export let posX = 100
-    export let posY = 100
-    let doubleTap = false
-    
-    let mobile =  false// /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    let posX = 0
+    let posY = 0
+    let left = 0
+    let top = 0 
+    export let element
+    export let done = false 
+    export let direction = "top" 
+
+    let mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
  
+    if(!!direction){
+            if(direction == "left") {left = -200; top = 0}
+            if(direction == "right") {left = 200; top = 0}
+            if(direction == "top") {left = 0; top = -200}
+            if(direction == "down") {left = 0; top = 200}
+    }
+
     let keyframes = [
-        {scale: 0.9},
         {scale: 1.0},
+        {scale: 1.0, translateX: left, translateY: top},
+        {scale: 1.2},
     ]
 
     let cirleKeyframes = [
-    {scale: 20},
-    {scale: 0}
+    {scale: 10},
+    {scale: 10, translateX: left/10, translateY: top/10},
+    {opacity:0}
     ]
+
     
-    if(doubleTap){
-    keyframes = [
-        {scale: 0.9},
-        {scale: 1.0},
-        {scale: 0.9},
-        {scale: 1.0},
-    ]
 
-    cirleKeyframes = [
-    {scale: 20},
-    {scale: 0},
-    {scale: 20}
-    ]
-    
-    }
 
-    onMount(()=>{
-
+    function animate(){
         anime({
-        targets: '#cursor',
-        scale: 1.2,
-        keyframes,
-        loop: true,
-        duration: 500,
-        delay: 1000,
+            targets: '#cursor, #hand',
+            scale: 1.2,
+            keyframes,
+            loop: true,
+            duration: 1500,
+            delay: 1000,
+            easing: "easeInSine",
         });
 
         anime({
-        targets: '#circle',
-        scale: 1.2,
-        keyframes: cirleKeyframes,
-        loop: true,
-        duration: 500,
-        delay: 1000,
-        easing: "easeOutQuart",
+            targets: '#circle',
+            scale: 1.2,
+            keyframes: cirleKeyframes,
+            loop: true,
+            duration: 1500,
+            delay: 1000,
+            easing: "easeInSine",
         });
 
         anime({
@@ -63,7 +63,22 @@
             delay: 500,
             easing: "easeInOutBack",
         });
+    }
+
+
+    onMount(()=>{
+        if(!!element){
+            let el = document.getElementById(element)
+            posX =  Number(el.offsetLeft) + Number(el.clientWidth) / 2;
+            posY =  Number(el.offsetTop) + Number(el.clientHeight) / 2;
+            el.addEventListener('click', event => { 
+                done = true 
+            });
+        }
+        
+        animate()
     })
+
 </script>
 
 <div id="box">
@@ -96,8 +111,10 @@
 }
 
 #box{
-  position: relative;
+  position: absolute;
   left:0;
   top: 0;
+  z-index: 150;
+  pointer-events: none;
 }
 </style>

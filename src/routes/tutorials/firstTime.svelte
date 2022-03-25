@@ -1,5 +1,6 @@
 <script>
     import Tap from "./gestures/tap.svelte"
+    import Swipe from "./gestures/swipe.svelte"
 
     let hide = true
     
@@ -15,3 +16,5 @@
 {#if !hide && !done}
 <Tap element = "itemsButton" bind:done={done}/>
 {/if}
+
+<!-- <Swipe element = "itemsButton" bind:done={done} /> -->
