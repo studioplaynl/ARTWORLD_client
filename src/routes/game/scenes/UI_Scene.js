@@ -7,6 +7,7 @@ import en from "../../../langauge/en/ui.json"
 import ru from "../../../langauge/ru/ui.json"
 import ar from "../../../langauge/ar/ui.json"
 import HistoryTracker from "../class/HistoryTracker"
+import DebugFuntions from "../class/DebugFuntions"
 
 i18next.init({
   lng: "nl",
@@ -58,6 +59,14 @@ export default class UI_Scene extends Phaser.Scene {
       }
       latestValue = value
     })
+
+    //......... INPUT .....................................................................................
+    this.input.keyboard.createCursorKeys()
+    //.......... end INPUT ................................................................................
+    //......... DEBUG FUNCTIONS ...........................................................................
+    DebugFuntions.keyboard(this)
+    //......... end DEBUG FUNCTIONS .......................................................................
+
 
   //  let displayText = `${this.sys.game.canvas.width} ${this.sys.game.canvas.height} ${window.devicePixelRatio}`
   //  this.add.text((this.sys.game.canvas.width / 2 ) - 100, this.sys.game.canvas.height / 2, displayText, { fontSize: 16, 

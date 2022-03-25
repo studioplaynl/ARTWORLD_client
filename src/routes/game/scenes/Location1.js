@@ -82,8 +82,6 @@ export default class Location1 extends Phaser.Scene {
     Preloader.Loading(this)
     //.... end PRELOADER VISUALISER ...............................................................................................
 
-    
-
     //....... IMAGES ......................................................................
     this.load.image("sky", "./assets/sky.png")
     this.load.image("star", "./assets/star.png")
@@ -158,13 +156,7 @@ export default class Location1 extends Phaser.Scene {
 
     // graffiti walls
     GraffitiWall.create(this, 2200, 600, 800, 600, "graffitiBrickWall", 0x000000, 'brickWall')
-    GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall", 0x000000)
-
-    // this.add.image(0,0, "background1").setOrigin(0).setScale(0.5)
-    // this.add.image(0,0, "background2").setOrigin(0).setScale(0.8)
-    // this.add.image(0,0, "background3").setOrigin(0).setScale(1)
-
-    // this.add.image(0,-300, "background5").setOrigin(0).setScale(1)
+    //GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall", 0x000000)
 
     //.......  PLAYER ..........................................................................
     //set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
@@ -206,21 +198,11 @@ export default class Location1 extends Phaser.Scene {
     //<--off
     //......... end PLAYER VS WORLD ......................................................................
 
-    //......... INPUT ....................................................................................
-    this.cursors = this.input.keyboard.createCursorKeys();
-    //.......... end INPUT ................................................................................
-
     // this.locationDialogBoxContainersGroup = this.add.group();
     this.generateLocations()
 
     // this.generateBouncingBird()
     BouncingBird.generate(this, 900, 400, 1.5)
-
-    //......... DEBUG FUNCTIONS ............................................................................
-    // this.debugFunctions();
-    //this.createDebugText();
-    DebugFuntions.keyboard(this)
-    //......... end DEBUG FUNCTIONS .........................................................................
 
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
@@ -233,7 +215,6 @@ export default class Location1 extends Phaser.Scene {
     console.log(this.currentZoom)
 
     //this.exampleREXUI()
-
 
   } // end create
 

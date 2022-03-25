@@ -7,16 +7,49 @@ import Player from "./Player"
 class DebugFuntions {
     constructor(scene) {
         //scene = config.scene 
+
     }
 
     keyboard(scene) {
+
+
+        //let combo = scene.input.keyboard.createCombo(['Alt', 'Shift'])
+
+        scene.input.keyboard.createCombo([16, 18, 69, 70], { resetOnMatch: true })
+
+        //scene.input.keyboard.createCombo([16, 18], { resetOnMatch: true })
+
+        scene.input.keyboard.on('keycombomatch', function (event) {
+            //console.log(event, 'SHIFT ALT E F pressed: edit mode')
+            // ManageSession.gameEditMode == false ? true : false
+            
+            if (ManageSession.gameEditMode) {
+                ManageSession.gameEditMode = false
+            } else {
+                ManageSession.gameEditMode = true
+            }
+
+            console.log("ManageSession.gameEditMode", ManageSession.gameEditMode)
+            
+            if (ManageSession.gameEditMode) {
+                console.log("EDIT MODE on")
+            } else {
+                console.log("EDIT MODE off")
+
+            }
+        })
+
+
+
+    }
+
+    debugKeys(scene) {
+
+
         //KEYS THAT ARE TAKEN
         // 1 2 A S D F Q W E R H T P U
 
         scene.input.keyboard.on('keyup-A', function (event) {
-
-            
-
 
         }, scene)
 
@@ -42,17 +75,17 @@ class DebugFuntions {
         scene.input.keyboard.on('keyup-TWO', async (event) => {
             console.log('2 key')
 
-        scene.player.anims.play(scene.playerMovingKey, true)
-        scene.playerShadow.anims.play(scene.playerMovingKey, true)
-      
+            scene.player.anims.play(scene.playerMovingKey, true)
+            scene.playerShadow.anims.play(scene.playerMovingKey, true)
+
         }, scene)
 
 
         scene.input.keyboard.on('keyup-THREE', async (event) => {
             console.log('2 key')
 
-        scene.player.anims.play(scene.playerStopKey, true)
-        scene.playerShadow.anims.play(scene.playerStopKey, true)
+            scene.player.anims.play(scene.playerStopKey, true)
+            scene.playerShadow.anims.play(scene.playerStopKey, true)
         }, scene)
 
         scene.input.keyboard.on('keyup-S', function (event) {
@@ -79,9 +112,9 @@ class DebugFuntions {
         }, scene)
 
 
-        scene.input.keyboard.on('keyup-E', function (event) {
+        scene.input.keyboard.on('keyup-G', function (event) {
 
-            console.log('E key')
+            console.log(event)
             console.log(" ")
             console.log('scene.onlinePlayers: ')
             console.log(scene.onlinePlayers)
@@ -125,8 +158,8 @@ class DebugFuntions {
             listObjects("addressbook", ManageSession.userProfile.id, 10)
         }, scene)
 
-        scene.input.keyboard.on('keyup-E', function (event) {
-            console.log('E key');
+        scene.input.keyboard.on('keyup-H', function (event) {
+            console.log('H key');
             console.log(ManageSession.addressbook)
             console.log(ManageSession.addressbook.value)
         }, scene)
@@ -173,8 +206,6 @@ class DebugFuntions {
         scene.input.keyboard.on('keyup-U', async (event) => {
             scene.playerLikedPanelUrls = await ArtworkList.convertRexUIArray(scene)
         }, scene)
-
-        
 
     }
 }

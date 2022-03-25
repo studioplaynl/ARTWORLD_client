@@ -6,8 +6,9 @@
     let left = 0
     let top = 0 
     export let element
-    export let done = false 
+    export let hide = true
     export let direction = "top" 
+    export let delay = 0 
 
     let mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
  
@@ -67,16 +68,18 @@
 
 
     onMount(()=>{
-        if(!!element){
+        setTimeout(()=>{ 
             let el = document.getElementById(element)
-            posX =  Number(el.offsetLeft) + Number(el.clientWidth) / 2;
-            posY =  Number(el.offsetTop) + Number(el.clientHeight) / 2;
-            el.addEventListener('click', event => { 
-                done = true 
-            });
-        }
-        
-        animate()
+            if(!!el){
+                posX =  Number(el.offsetLeft) + Number(el.clientWidth) / 2;
+                posY =  Number(el.offsetTop) + Number(el.clientHeight) / 2;
+                el.addEventListener('click', event => { 
+                    hide = true 
+                });
+            }
+            
+            animate()
+        }, delay)
     })
 
 </script>

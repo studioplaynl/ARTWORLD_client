@@ -12,6 +12,8 @@ class ManageSession {
     this.user_id
     this.username
 
+    this.gameEditMode = false
+
     this.worldSizeCopy // we copy the worldSize of the scene to make movement calculations
     this.currentScene // To give access to the scene outside of the game
 

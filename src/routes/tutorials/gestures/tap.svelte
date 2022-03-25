@@ -4,8 +4,10 @@
     let posX = 0
     let posY = 0
     export let element
-    export let done = false 
-    export let doubleTap = true
+    export let hide = true
+    export let doubleTap = false
+    export let delay = 0
+    export let num
 
     let mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
  
@@ -37,7 +39,7 @@
 
     function animate(){
         anime({
-        targets: '#cursor',
+        targets: '#cursor' + num ,
         scale: 1.2,
         keyframes,
         loop: true,
@@ -46,7 +48,7 @@
         });
 
         anime({
-        targets: '#circle',
+        targets: '#circle' + num,
         scale: 1.2,
         keyframes: cirleKeyframes,
         loop: true,
@@ -56,7 +58,7 @@
         });
 
         anime({
-            targets: '#box',
+            targets: '#box' + num,
             translateX: posX,
             translateY: posY,
             loop: false,
@@ -68,23 +70,31 @@
 
 
     onMount(()=>{
-        let el = document.getElementById(element)
-        posX =  Number(el.offsetLeft) + Number(el.clientWidth) / 2;
-        posY =  Number(el.offsetTop) + Number(el.clientHeight) / 2;
-        el.addEventListener('click', event => { done = true });
-        animate()
+        setTimeout(async ()=>{ 
+            let el = document.getElementById(element)
+            if(!!el){
+                posX =  Number(el.offsetLeft) + Number(el.clientWidth) / 2;
+                posY =  Number(el.offsetTop) + Number(el.clientHeight) / 2;
+                el.addEventListener('click', event => { 
+                    hide = true 
+                });
+            }
+            animate()
+        }, delay)
     })
 
 </script>
 
-<div id="box">
+
+<div id="box{num}" class="box">
         {#if mobile}
-        <img id="cursor" src="assets/svg/pointinghand.svg">
+        <img id="cursor{num}" class="cursor" src="assets/svg/pointinghand.svg">
         {:else}
-        <img id="cursor" src="assets/svg/cursor.svg">
+        <img id="cursor{num}" class="cursor"  src="assets/svg/cursor.svg">
         {/if}
-        <div id="circle" />
+        <div id="circle{num}" class="circle"  />
 </div>
+
 
 <style>
     img {
@@ -95,7 +105,7 @@
   z-index: 1;
 }
 
-#circle{
+.circle{
   background-color: rgba(100,100,100,0.4);
   position: absolute;
   left: -1px;
@@ -106,7 +116,7 @@
 /*   border: 2px solid rgba(100,100,100,0.4); */
 }
 
-#box{
+.box{
   position: absolute;
   left:0;
   top: 0;
