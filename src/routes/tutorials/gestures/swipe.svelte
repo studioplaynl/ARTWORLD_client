@@ -9,8 +9,9 @@
     export let hide = true
     export let direction = "top" 
     export let delay = 0 
+    export let num
 
-    let mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    let mobile = true ///Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
  
     if(!!direction){
             if(direction == "left") {left = -200; top = 0}
