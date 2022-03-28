@@ -150,6 +150,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient2: 0xff01ff,
     })
 
+
+    this.gradientAmsterdam1.setInteractive()
+
     Background.circle({
       scene: this,
       name: "gradientAmsterdam2",
@@ -201,9 +204,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       //ease: 'Sine.easeInOut'
     })
 
-   //create(scene, x, y, width, height, name, color, imageFile = null) {
-    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 400), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1000), 800, 400, "graffitiBrickWall", 0x000000, 'brickWall')
-   
+    //create(scene, x, y, width, height, name, color, imageFile = null) {
+    //GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 400), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1000), 800, 400, "graffitiBrickWall", 0x000000, 'brickWall')
+
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
     //.setInteractive({ draggable: true })
 
@@ -312,6 +315,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       let worldY = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y)
       console.log(worldX, worldY)
     }, this)
+    //!
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
     // End Background .........................................................................................
@@ -322,7 +326,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201)
     //Player.createPlayerItemsBar(this)
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
-
     // for back button, has to be done after player is created for the history tracking!
     HistoryTracker.pushLocation(this)
 
@@ -334,7 +337,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
     //......... end PLAYER VS WORLD .......................................................................
 
-    
+
 
     //.......... locations ................................................................................
     Homes.getHomesFiltered("home", "Amsterdam", 100, this)
@@ -428,26 +431,33 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   }
 
   update(time, delta) {
-    //...... ONLINE PLAYERS ................................................
-    Player.parseNewOnlinePlayerArray(this)
-    //.......................................................................
+
+    // zoom in and out of game
     this.gameCam.zoom = this.UI_Scene.currentZoom
 
-    //........... PLAYER SHADOW .............................................................................
-    // the shadow follows the player with an offset
-    this.playerShadow.x = this.player.x + this.playerShadowOffset
-    this.playerShadow.y = this.player.y + this.playerShadowOffset
-    //........... end PLAYER SHADOW .........................................................................
+    //don't move the player with clicking and swiping in edit mode
+    if (!ManageSession.gameEditMode) {
+      //...... ONLINE PLAYERS ................................................
+      Player.parseNewOnlinePlayerArray(this)
+      //........... PLAYER SHADOW .............................................................................
+      // the shadow follows the player with an offset
+      this.playerShadow.x = this.player.x + this.playerShadowOffset
+      this.playerShadow.y = this.player.y + this.playerShadowOffset
+      //........... end PLAYER SHADOW .........................................................................
 
-    //....... stopping PLAYER ......................................................................................
-    Move.checkIfPlayerReachedMoveGoal(this) // to stop the player when it reached its destination
-    //....... end stopping PLAYER .................................................................................
+      //....... stopping PLAYER ......................................................................................
+      Move.checkIfPlayerReachedMoveGoal(this) // to stop the player when it reached its destination
+      //....... end stopping PLAYER .................................................................................
 
-    // to detect if the player is clicking/tapping on one place or swiping
-    if (this.input.activePointer.downX != this.input.activePointer.upX) {
-      Move.moveBySwiping(this)
+      // to detect if the player is clicking/tapping on one place or swiping
+      if (this.input.activePointer.downX != this.input.activePointer.upX) {
+        Move.moveBySwiping(this)
+      } else {
+        Move.moveByTapping(this)
+      }
     } else {
-      Move.moveByTapping(this)
+      //when in edit mode
+
     }
 
   } //update

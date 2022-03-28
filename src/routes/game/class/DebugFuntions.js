@@ -30,7 +30,7 @@ class DebugFuntions {
         scene.input.keyboard.on('keyup', function (event) {
             //only activate debug functions when in edit mode
             if (ManageSession.gameEditMode) {
-                console.log(event)
+                //console.log(event)
                 this.debugKeys(scene, event.code)
             }
         }, this)
@@ -48,6 +48,30 @@ class DebugFuntions {
         // keyCode: 18, 83, 49
 
         switch (code) {
+            case ('ArrowRight'):
+                //reserverd for moving the camera in EditMode
+                ManageSession.currentScene.player.x += 50
+                ManageSession.currentScene.playerShadow.x += 50
+                break
+
+            case ('ArrowLeft'):
+                //reserverd for moving the camera in EditMode
+                ManageSession.currentScene.player.x -= 50
+                ManageSession.currentScene.playerShadow.x -= 50
+                break
+
+            case ('ArrowUp'):
+                //reserverd for moving the camera in EditMode
+                ManageSession.currentScene.player.y -= 50
+                ManageSession.currentScene.playerShadow.y -= 50
+                break
+
+            case ('ArrowDown'):
+                //reserverd for moving the camera in EditMode
+                ManageSession.currentScene.player.y += 50
+                ManageSession.currentScene.playerShadow.y += 50
+                break
+
             case 'KeyA':
                 console.log(code)
 
@@ -105,7 +129,7 @@ class DebugFuntions {
                 console.log(scene.player)
                 break
 
-            case 'KeyF':
+            case 'KeyT':
                 console.log(code)
                 console.log("ManageSession.userProfile: ")
                 console.log(ManageSession.userProfile)
@@ -117,7 +141,7 @@ class DebugFuntions {
                 console.log(scene.createdPlayer)
                 break
 
-            case 'KeyF':
+            case 'KeyY':
                 console.log(code)
                 getAccount()
                 break

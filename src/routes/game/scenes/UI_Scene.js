@@ -214,6 +214,7 @@ export default class UI_Scene extends Phaser.Scene {
 
       case 'off':
         this.gameEditModeSignGraphic.destroy()
+        this.gameEditModeSignText.destroy()
         break
 
       default:
