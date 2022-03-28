@@ -176,7 +176,7 @@ class Move {
       let moveSpeed = scene.swipeAmount.length() * 2
 
       // we scale the arrival check (distanceTolerance) to the speed of the player
-      scene.distanceTolerance = moveSpeed / 60
+      scene.distanceTolerance = moveSpeed / 30
 
       console.log("moveBySwiping moveSpeed", moveSpeed)
 
