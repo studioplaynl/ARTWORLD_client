@@ -79,11 +79,11 @@
           MenuToggle = false;
         }}
       >
-        <li><a href="/#/">{$_("nav.game")}</a></li>
+        <!-- <li><a href="/#/">{$_("nav.game")}</a></li>
         <li><a href="/#/friends">{$_("nav.friends")}</a></li>
         <li><a href="/#/drawing">{$_("nav.drawing")}</a></li>
         <li><a href="/#/stopmotion">{$_("nav.stopmotion")}</a></li>
-        <li><a href="#" on:click="{()=> { location.href = "/#/mariosound" ;location.reload(); }}">{$_("nav.mariosound")}</a>
+        <li><a href="#" on:click="{()=> { location.href = "/#/mariosound" ;location.reload(); }}">{$_("nav.mariosound")}</a> -->
       </ul>
       <select bind:value={$locale} on:click>
         {#each $locales as locale}
@@ -140,16 +140,18 @@
   </div>
   </div>
   {:else}
-  <div
-    on:click={() => {
-      MenuToggle = true;
-    }}
-    class="icon"
-  >
-    <div class="hamburger" />
-    <div class="hamburger" />
-    <div class="hamburger" />
-  </div>
+  {#if !!$Profile && ($Profile.meta.role == "admin" || $Profile.meta.role == "moderator")}    
+      <div
+        on:click={() => {
+          MenuToggle = true;
+        }}
+        class="icon"
+      >
+        <div class="hamburger" />
+        <div class="hamburger" />
+        <div class="hamburger" />
+      </div>
+    {/if}
   {/if}
 </nav>
 

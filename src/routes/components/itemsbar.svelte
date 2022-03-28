@@ -3,30 +3,27 @@ import {convertImage, getObject, updateObject} from "../../api"
 import itemsBar from "./itemsbar.js"
 import ProfilePage from "../profile.svelte"
 import {CurrentApp, logout} from "../../session"
+import {location} from "svelte-spa-router"
 let ManageSession;
 let current	
 let HistoryTracker
 let images = []
 let user_house_url, house_url, user_avatar_url, avatar_url, user_name, adress_book, homeOpen =false;
 
-
-
-
 const unsubscribe = itemsBar.subscribe(async value => {
+    console.log(value)
     HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
 	ManageSession = (await import('../game/ManageSession.js')).default;
+    if(!!!ManageSession.userProfile) return
+
     user_avatar_url = ManageSession.userProfile.url
     if(user_house_url == undefined){
-            user_house_url = await getObject("home", ManageSession.userProfile.meta.Azc, ManageSession.userProfile.id)
+            user_house_url = await getObject("home", ManageSession.userProfile.meta.azc, ManageSession.userProfile.id)
             user_house_url = await convertImage(user_house_url.value.url,"50")
         }
-    // if(value.playerClicked){
-    //     if(user_house_url == undefined){
-    //         user_house_url = await getObject("home", ManageSession.userProfile.meta.Azc, ManageSession.userProfile.id)
-    //         user_house_url = await convertImage(user_house_url.value.url,"50")
-    //     }
-    // }
-    if(value.onlinePlayerClicked){
+    //console.log(ManageSession)
+
+    if(value.onlinePlayerClicked === true){
         console.log(ManageSession.selectedOnlinePlayer)
         avatar_url = ManageSession.selectedOnlinePlayer.url
         user_name = ManageSession.selectedOnlinePlayer.username 
@@ -139,12 +136,15 @@ async function getAdressbook(){
     current = "addressbook"
 }
 
+console.log($location)
+
 </script>
 
+{#if $location != "/login"}
 <div id="itemsButton" class:show={!$itemsBar.playerClicked}>
     <a on:click={Click} class="avatar" ><img src="{user_avatar_url}"></a>
 </div>
-
+{/if }
 <!-- current user -->
 <div class="itemsbar" id="currentUser" class:show={$itemsBar.playerClicked}>
     <div id="left">
@@ -204,7 +204,7 @@ async function getAdressbook(){
         {/if}
         
         {#if current == "home"}
-                <br><br><br><br><br>
+                <br><br><br>
                 <a on:click={goHome}><img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg"></a>    
                 <a on:click={saveHome}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg"></a>
         <!-- <ProfilePage userID="{ManageSession.selectedOnlinePlayer.id}" /> -->
@@ -221,6 +221,7 @@ async function getAdressbook(){
 {#if $itemsBar.playerClicked || $itemsBar.onlinePlayerClicked}
     <div on:click={()=>{$itemsBar.playerClicked = false; $itemsBar.onlinePlayerClicked = false; current = false; }} id="backdrop"/>
 {/if}  
+
 
 
 <style>

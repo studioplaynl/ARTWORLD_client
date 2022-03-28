@@ -11,7 +11,7 @@
     export let delay = 0 
     export let num
 
-    let mobile = true ///Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    let mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
  
     if(!!direction){
             if(direction == "left") {left = -200; top = 0}
@@ -19,6 +19,9 @@
             if(direction == "top") {left = 0; top = -200}
             if(direction == "down") {left = 0; top = 200}
     }
+
+
+
 
     let keyframes = [
         {scale: 1.0},
@@ -78,8 +81,7 @@
                     hide = true 
                 });
             }
-            
-            animate()
+            if(!hide) animate()
         }, delay)
     })
 

@@ -59,7 +59,7 @@
 
 </script>
 
-
+``
 <div id="snackbar" class:show={succes}>
     <div class="icon green"><SuccesIcon/></div>    
 </div>
@@ -87,7 +87,7 @@
     border-radius: 2px; /* Rounded borders */
     padding: 16px; /* Padding */
     position: fixed; /* Sit on top of the screen */
-    z-index: 10; /* Add a z-index if needed */
+    z-index: 150; /* Add a z-index if needed */
     /* left: 50%; Center the snackbar
     top: 60px; 30px from the bottom */
     -webkit-transition: 0.5s all ease-in-out;

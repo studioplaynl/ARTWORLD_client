@@ -14,7 +14,7 @@
   export let params = {}
   export let userID;
 
-  
+  let loader = true
 
   let useraccount
   let drawingIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />'
@@ -226,7 +226,7 @@ function moveToTrash(key) {
     })
 
     trash = trash;
-  
+    loader = false
   }
   let promise = getUser();
 
@@ -260,6 +260,7 @@ function moveToTrash(key) {
 /////// end avatar
 </script>
 
+{#if !loader}
 <main>
   <div class="container">
     
@@ -291,6 +292,10 @@ function moveToTrash(key) {
     </div>
   </div>
 </main>
+{:else}
+<div class="lds-dual-ring"></div>
+{/if}
+
 
 <style>
   .flex-container {
@@ -351,6 +356,31 @@ function moveToTrash(key) {
     display: block;
   }
  
-  
+  /* loader */
+  .lds-dual-ring {
+    width: 70px;
+    height: 70px;
+    position: relative;
+    top: 40%;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 40px;
+  height: 40px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid #7300ED;
+  border-color: #7300ED transparent #7300ED transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 
 </style>
