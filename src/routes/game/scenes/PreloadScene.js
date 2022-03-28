@@ -31,9 +31,9 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.load.image('museum', './assets/museum.png')
         this.load.image("ball", './assets/ball_grey.png')
-        
-    //drawing on a wall
-    this.load.image('brush', 'assets/brush3.png')
+
+        //drawing on a wall
+        this.load.image('brush', 'assets/brush3.png')
         this.load.image('brickWall', './assets/brickwall_white.jpg')
 
         this.load.svg('home', './assets/SHB/svg/AW-icon-home.svg', { scale: 0.7 })
@@ -70,6 +70,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', { scale: 2.4 })
         this.load.svg('tree_palm', './assets/svg/tree_palm.svg')
         this.load.svg('exhibit_outdoor_big', './assets/svg/exhibit_outdoor_big.svg')
+        this.load.svg('exhibit_outdoor_small', './assets/svg/exhibit_outdoor_small.svg')
 
         //this.load.svg('bitmap_heart', 'assets/svg/mario_heart.svg')
         // this.load.svg('mario_pipe', 'assets/svg/mario_pipe.svg')
@@ -81,7 +82,7 @@ export default class PreloadScene extends Phaser.Scene {
         //create a hitArea for locations, as an image with key 'enterButtonHitArea', 128x128pix
         this.createHitAreaLocations()
 
-        //create a generic artFrame for later use wit iage key "artFrame_512"
+        //create a generic artFrame for later use wit image key eg "artFrame_512"
         this.createArtFrame('512')
         this.createArtFrame('128')
         this.createArtFrame('32')

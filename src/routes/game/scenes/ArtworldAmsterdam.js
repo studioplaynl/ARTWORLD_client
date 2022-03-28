@@ -14,6 +14,7 @@ import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js"
 import Move from "../class/Move.js"
 import Homes from "../class/Homes.js"
+import Artwork from "../class/Artwork"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
@@ -214,90 +215,19 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       "tree_palm")
     //.setInteractive({ draggable: true, useHandCursor: true })
 
-    this.exhibit_outdoor_big = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -416),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -120.66),
-      "exhibit_outdoor_big")
-    // .setInteractive({ draggable: true, useHandCursor: true })
+   Artwork.AbriBig({
+    scene: this,
+    name: "exhibit_outdoor_big1",
+    posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -427),
+    posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 11),
+    size: 564,
+   })
+   
+   this.exhibit_outdoor_big1.setInteractive({ draggable: true, useHandCursor: true })
 
-    // this.mario_heart = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1220.32), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 750.83), 'mario_heart').setScale(0.3)
-    //   .setInteractive({ draggable: true })
+   //this.exhibit_outdoor_big1_mesh.setTexture("mario_star")
 
-    // this.music_quarter_note = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1246.15), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'music_quarter_note').setScale(0.6)
-    //   .setInteractive({ draggable: true })
-
-    //  First create a particle manager
-    //  A single manager can be responsible for multiple emitters
-    //  The manager also controls which particle texture is used by _all_ emitter
-
-    const vertices = [
-      -0.08, 0.154,
-
-      0.08, 0.062,
-
-      -0.08, -0.051,
-
-      0.08, -0.143
-    ]
-
-    const uvs = [
-      0, 0,
-      1, 0,
-      0, 1,
-      1, 1
-    ]
-
-    const indicies = [0, 2, 1, 2, 3, 1];
-
-    this.mesh = this.add.mesh(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -436),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -40), 'museum')
-
-    // welke plaatje laden?
-    // bv van de huidige gebruiker random van een array
-
-    this.mesh.addVertices(vertices, uvs, indicies)
-
-    this.mesh.setPerspective(this.sys.game.canvas.width, this.sys.game.canvas.height, 60)
-
-    //this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
-    // let aspectRatio = this.sys.game.canvas.width/ this.sys.game.canvas.height
-
-    let meshPanZ = (this.sys.game.canvas.height / 1000) * 2
-    //console.log("aspectRatio", aspectRatio)
-    // if (this.sys.game.canvas.height > 400 ){
-    //   meshPanZ = 1.3
-    // } else {
-    //   meshPanZ = 0.8
-    // }
-
-    console.log("meshPanZ", meshPanZ)
-    this.mesh.panZ(meshPanZ) // pan is zoom level, bigger is smaller, only works with perspective projection
-    // x: 0.4154389168615932
-    // y: -0.77795430111968
-    // z: -0.43183495571265507
-
-    // this.mesh.modelRotation.x = 0.42
-    // this.mesh.modelRotation.y = -0.77795430111968
-    // this.mesh.modelRotation.z = -0.42
-
-    const rotateRate = 1
-    const panRate = 1
-    const zoomRate = 4
-
-    // this.input.on('pointermove', pointer => {
-    //   if (!pointer.isDown) {
-    //     return
-    //   }
-    //   if (!pointer.event.shiftKey) {
-    //     this.mesh.modelRotation.y += pointer.velocity.x * (rotateRate / this.sys.game.canvas.width)
-    //     //this.mesh.modelRotation.x += pointer.velocity.y * (rotateRate / this.sys.game.canvas.height)
-    //     console.log("this.mesh.modelPosition, this.mesh.modelRotation", this.mesh.modelPosition, this.mesh.modelRotation)
-    //   }
-    //   else {
-    //     //this.mesh.modelRotation.z += pointer.velocity.x * (rotateRate / this.sys.game.canvas.width)
-    //     this.mesh.modelRotation.x += pointer.velocity.y * (rotateRate / this.sys.game.canvas.height)
-    //     console.log("this.mesh.modelPosition, this.mesh.modelRotation", this.mesh.modelPosition, this.mesh.modelRotation)
-    //   }
-    // })
+   console.log("this.exhibit_outdoor_big1_mesh", this.exhibit_outdoor_big1_mesh)
 
     //! needed for handling object dragging
     this.input.on('dragstart', function (pointer, gameObject) {

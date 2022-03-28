@@ -1,5 +1,3 @@
-import { RGBA_ASTC_10x10_Format } from "three"
-
 class Background {
     constructor(config) {
     }
@@ -112,4 +110,4 @@ class Background {
     }
 }
 
-export default new Background();
+export default new Background()

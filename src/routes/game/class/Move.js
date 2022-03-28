@@ -226,7 +226,7 @@ class Move {
           console.log("moveByTapping moveSpeed", moveSpeed)
 
           // we scale the arrival check (distanceTolerance) to the speed of the player
-          scene.distanceTolerance = moveSpeed / 60
+          scene.distanceTolerance = moveSpeed / 30
 
           scene.isPlayerMoving = true // activate moving animation
 
