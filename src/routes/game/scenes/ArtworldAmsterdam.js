@@ -150,8 +150,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient2: 0xff01ff,
     })
 
-
-    this.gradientAmsterdam1.setInteractive()
+   // this.gradientAmsterdam1.setInteractive()
 
     Background.circle({
       scene: this,
@@ -205,7 +204,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     })
 
     //create(scene, x, y, width, height, name, color, imageFile = null) {
-    //GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 400), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1000), 800, 400, "graffitiBrickWall", 0x000000, 'brickWall')
+    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 400), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1000), 800, 400, "graffitiBrickWall", 0x000000, 'brickWall')
 
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
     //.setInteractive({ draggable: true })
