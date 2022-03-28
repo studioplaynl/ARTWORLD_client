@@ -7,6 +7,7 @@ import en from "../../../langauge/en/ui.json"
 import ru from "../../../langauge/ru/ui.json"
 import ar from "../../../langauge/ar/ui.json"
 import HistoryTracker from "../class/HistoryTracker"
+import DebugFuntions from "../class/DebugFuntions"
 
 i18next.init({
   lng: "nl",
@@ -39,6 +40,7 @@ export default class UI_Scene extends Phaser.Scene {
     //Debug Text mobile
     this.debugText = ''
     this.debugTextField
+
   }
 
   preload() { }
@@ -59,11 +61,20 @@ export default class UI_Scene extends Phaser.Scene {
       latestValue = value
     })
 
-  //  let displayText = `${this.sys.game.canvas.width} ${this.sys.game.canvas.height} ${window.devicePixelRatio}`
-  //  this.add.text((this.sys.game.canvas.width / 2 ) - 100, this.sys.game.canvas.height / 2, displayText, { fontSize: 16, 
-  //   backgroundColor: '#000000', 
-  //   color: '#fff' })
-  
+    //......... INPUT .....................................................................................
+    this.input.keyboard.createCursorKeys()
+    //.......... end INPUT ................................................................................
+    //......... DEBUG FUNCTIONS ...........................................................................
+    this.events.on('gameEditMode', this.gameEditModeSign, this)
+    DebugFuntions.keyboard(this)
+    //......... end DEBUG FUNCTIONS .......................................................................
+
+
+    //  let displayText = `${this.sys.game.canvas.width} ${this.sys.game.canvas.height} ${window.devicePixelRatio}`
+    //  this.add.text((this.sys.game.canvas.width / 2 ) - 100, this.sys.game.canvas.height / 2, displayText, { fontSize: 16, 
+    //   backgroundColor: '#000000', 
+    //   color: '#fff' })
+
     this.camUI = this.cameras.main
       .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
       .setName("camMain")
@@ -73,6 +84,7 @@ export default class UI_Scene extends Phaser.Scene {
 
     // to make the UI scene always on top of other scenes
     this.scene.bringToTop()
+
 
   } //create
 
@@ -176,10 +188,42 @@ export default class UI_Scene extends Phaser.Scene {
   }
   resize() {
     //console.log("resizing")
-    let width = this.sys.game.canvas.width;
-    let height = this.sys.game.canvas.height;
+    let width = this.sys.game.canvas.width
+    let height = this.sys.game.canvas.height
 
     //this.camUI.resize(width, height);
+  }
+
+  gameEditModeSign(arg) {
+    console.log("gameEditMode received", arg)
+    switch (arg) {
+      case 'on':
+        let width = this.sys.game.canvas.width
+        let height = this.sys.game.canvas.height
+
+
+        this.gameEditModeSignGraphic = this.add.graphics()
+        this.gameEditModeSignGraphic.fillStyle(0xff0000, 1)
+
+        //  32px radius on the corners
+        this.gameEditModeSignGraphic.fillRoundedRect(width / 2, 20, 100, 40, 8)
+
+        this.gameEditModeSignText = this.add.text(width / 2 + 50, 20 + 20, "edit mode").setOrigin(0.5)
+
+        break
+
+      case 'off':
+        this.gameEditModeSignGraphic.destroy()
+        this.gameEditModeSignText.destroy()
+        break
+
+      default:
+
+        break
+    }
+
+
+
   }
 
   update(time, delta) {

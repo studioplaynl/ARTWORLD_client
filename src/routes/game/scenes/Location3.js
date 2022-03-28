@@ -66,7 +66,7 @@ export default class Location3 extends Phaser.Scene {
     );
 
     this.load.tilemapTiledJSON("map", "./assets/tilemaps/tuxemon-town.json");
-    //   //end 1
+    //end 1
   }
 
   async create() {
@@ -124,19 +124,7 @@ export default class Location3 extends Phaser.Scene {
     //this.physics.add.collider(this.player, worldLayer);
     //<--off
     //......... end PLAYER VS WORLD ......................................................................
-
-    //......... INPUT ....................................................................................
-    this.cursors = this.input.keyboard.createCursorKeys();
-    //.......... end INPUT ................................................................................
-
-    //this.generateLocations()
-    //this.generateBouncingBird()
-
-    //......... DEBUG FUNCTIONS ............................................................................
-    DebugFuntions.keyboard(this)
-    //this.createDebugText();
-    //......... end DEBUG FUNCTIONS .........................................................................
-
+    
     //......... UI Scene  .................................................................................
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")

@@ -101,7 +101,7 @@ class Background {
 
         //save the rendertexture with a key 
         rt2.saveTexture(name)
-        scene.add.image(posX, posY, name).setOrigin(0.5).setScale(1)
+        scene[name] = scene.add.image(posX, posY, name).setOrigin(0.5).setScale(1)
 
         //console.log(name)
 
