@@ -4,50 +4,28 @@
     let award
 
     let keyframes = [
-        {
-            translateY: -240, 
+        {opacity: 1,
+            translateY: -150, 
         },
-        {rotateY: 360},
-        {translateY: 0},
+        { opacity: 1, rotateY: 360},
+        {opacity: 0 ,translateY: 0},
     ]
 
 
      achievements.subscribe(value =>{ 
         anime({
             targets: '#award',
-            scale: 1.2,
             keyframes,
-
-            display: "inline",
             loop: false,
-            duration: 1000,
-            delay: 1000,
+            duration: 1500,
+            delay: 2000,
             easing: "easeInSine",
         });
  })
-
- setTimeout(()=>{
-    console.log("award")
-
-    console.log(award)
-    award.style.left = window.innerWidth/2
-    award.style.top = window.innerHeight/2
-     console.log("done")
-    anime({
-            targets: '#award',
-            scale: 1.2,
-            // display: "inline",
-            keyframes,
-            loop: false,
-            duration: 1000,
-            delay: 1000,
-            easing: "easeInSine",
-        }); 
- },5000)
 </script>
-<!-- <div id="awardBox">
+<div id="awardBox">
     <img src="assets/SHB/svg/AW-icon-award.svg" id="award" bind:this="{award}">
-</div> -->
+</div>
 
 <style>
 
@@ -58,12 +36,14 @@
   height: 100vh;
   position: fixed;
   width: 100vw;
+  pointer-events: none;
 }
 
 img {
-  width:100px;
+  width:50px;
   position: fixed;
-  /* display: none; */
   z-index: 15;
+  opacity: 0;
+  pointer-events: none;
 }
 </style>
