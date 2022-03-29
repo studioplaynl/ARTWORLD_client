@@ -3,6 +3,7 @@
     import Swipe from "./gestures/swipe.svelte"
     import { onMount} from "svelte"
     import {tutorial} from "../../session"
+    import ManageSession from "../game/ManageSession"
     let current = 0
     let hide = []
     let sequence = []
@@ -10,10 +11,10 @@
 
     tutorial.subscribe((value) => {
     if (!!value) {
-        //localStorage.setItem('profile', JSON.stringify(value));
         sequence = value 
     }
 })
+
 
 
     $tutorial = [
@@ -23,6 +24,8 @@
     ]
     
     onMount(() => {
+        console.log(ManageSession)
+        
         document.body.addEventListener('click', ()=>{
             if(hide[current] && hide.length > current) {
             current++

@@ -1,26 +1,33 @@
 <script>
-
+import HistoryTracker from "../game/class/HistoryTracker"
+import ManageSession from "../game/ManageSession"
 let home = "ArtworldAmsterdam"
 
 async function goHome(){
-    let HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
-	let ManageSession = (await import('../game/ManageSession.js')).default;
     HistoryTracker.switchScene(ManageSession.currentScene, home, home)
 
 }
 
-function zoomIn() {
+async function goBack(){
+    console.log(ManageSession.currentScene)
+    HistoryTracker.activateBackButton(ManageSession.currentScene)
 
+}
+
+async function zoomIn() {
+    if (ManageSession.currentZoom >= 4) return
+    ManageSession.currentZoom += 0.1;
 }
 
 
 function zoomReset() {
-    
+    ManageSession.currentZoom = 1
 }
 
 
 function zoomOut() {
-    
+    if (ManageSession.currentZoom <= 0.2) return
+    ManageSession.currentZoom -= 0.1
 }
 
 
@@ -29,7 +36,7 @@ function zoomOut() {
 
 <div class="topbar">
     <a on:click="{goHome}"><img class="TopIcon" id="logo" src="assets/SHB/svg/AW-icon-logo-A.svg"></a>
-    <a on:click="{goHome}"><img class="TopIcon" id="back" src="/assets/SHB/svg/AW-icon-previous.svg"></a>
+    <a on:click="{goBack}"><img class="TopIcon" id="back" src="/assets/SHB/svg/AW-icon-previous.svg"></a>
     <a on:click="{zoomOut}"  id="zoomOut"><img class="TopIcon" src="/assets/SHB/svg/AW-icon-minus.svg"></a>
     <a on:click="{zoomReset}" id="zoomReset"><img class="TopIcon" src="assets/ui/undo-circular-arrow-svgrepo-com.svg"></a>
     <a on:click="{zoomIn}" id="zoomIn"><img class="TopIcon" src="./assets/SHB/svg/AW-icon-plus.svg"></a>

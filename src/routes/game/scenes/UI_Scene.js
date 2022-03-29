@@ -131,58 +131,58 @@ export default class UI_Scene extends Phaser.Scene {
       })
 
       //zoom buttons
-      this.zoomOut = this.add
-        .image(60 + 40, 40, "ui_magnifier_minus")
-        .setOrigin(0, 0.5)
-        .setDepth(1000)
-        .setScale(width / (width / this.camUI.zoom) / 6)
-        .setInteractive({ useHandCursor: true });
+    //   this.zoomOut = this.add
+    //     .image(60 + 40, 40, "ui_magnifier_minus")
+    //     .setOrigin(0, 0.5)
+    //     .setDepth(1000)
+    //     .setScale(width / (width / this.camUI.zoom) / 6)
+    //     .setInteractive({ useHandCursor: true });
 
-      this.zoom = this.add
-        .image(60 + 100, 40, "ui_eye")
-        .setOrigin(0, 0.5)
-        .setDepth(1000)
-        .setScale(width / (width / this.camUI.zoom) / 8)
-        .setInteractive({ useHandCursor: true });
+    //   this.zoom = this.add
+    //     .image(60 + 100, 40, "ui_eye")
+    //     .setOrigin(0, 0.5)
+    //     .setDepth(1000)
+    //     .setScale(width / (width / this.camUI.zoom) / 8)
+    //     .setInteractive({ useHandCursor: true });
 
-      this.zoomIn = this.add
-        .image(60 + 160, 40, "ui_magnifier_plus")
-        .setOrigin(0, 0.5)
-        .setDepth(1000)
-        .setScale(width / (width / this.camUI.zoom) / 6)
-        .setInteractive({ useHandCursor: true });
+    //   this.zoomIn = this.add
+    //     .image(60 + 160, 40, "ui_magnifier_plus")
+    //     .setOrigin(0, 0.5)
+    //     .setDepth(1000)
+    //     .setScale(width / (width / this.camUI.zoom) / 6)
+    //     .setInteractive({ useHandCursor: true });
 
-      this.zoomIn.on("pointerup", () => {
-        this.currentZoom += 0.2
-        //console.log(this.currentZoom);
-      });
+    //   this.zoomIn.on("pointerup", () => {
+    //     this.currentZoom += 0.2
+    //     //console.log(this.currentZoom);
+    //   });
 
-      this.zoomOut.on("pointerup", () => {
-        this.currentZoom -= 0.2
-        if (this.currentZoom < 0.2) {
-          this.currentZoom = 0.2
-        }
-        //console.log(this.currentZoom);
-      });
+    //   this.zoomOut.on("pointerup", () => {
+    //     this.currentZoom -= 0.2
+    //     if (this.currentZoom < 0.2) {
+    //       this.currentZoom = 0.2
+    //     }
+    //     //console.log(this.currentZoom);
+    //   });
 
-      this.zoom.on("pointerup", () => {
-        this.currentZoom = 1
-      })
+    //   this.zoom.on("pointerup", () => {
+    //     this.currentZoom = 1
+    //   })
 
 
-    } else {
-      this.zoomIn
-        .setPosition(
-          width / 10 / this.camUI.zoom,
-          height / 10 / this.camUI.zoom + 50 / this.camUI.zoom
-        )
-        .setScale(width / (width / this.camUI.zoom));
-      this.zoomOut
-        .setPosition(
-          width / 10 / this.camUI.zoom,
-          height / 10 / this.camUI.zoom + 80 / this.camUI.zoom
-        )
-        .setScale(width / (width / this.camUI.zoom));
+    // } else {
+    //   this.zoomIn
+    //     .setPosition(
+    //       width / 10 / this.camUI.zoom,
+    //       height / 10 / this.camUI.zoom + 50 / this.camUI.zoom
+    //     )
+    //     .setScale(width / (width / this.camUI.zoom));
+    //   this.zoomOut
+    //     .setPosition(
+    //       width / 10 / this.camUI.zoom,
+    //       height / 10 / this.camUI.zoom + 80 / this.camUI.zoom
+    //     )
+    //     .setScale(width / (width / this.camUI.zoom));
     }
 
   }
