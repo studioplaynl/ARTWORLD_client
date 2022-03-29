@@ -9,6 +9,7 @@ let firstTry = true
 
 const unsubscribe = CurrentApp.subscribe(async value => {
     if(firstTry) return firstTry = false;
+    if(value == "game") return
     if(!!$CurrentApp) await HistoryTracker.pauseSceneStartApp(ManageSession.currentScene, value)
     else await HistoryTracker.startSceneCloseApp(ManageSession.currentScene, appOpen)
     appOpen = value

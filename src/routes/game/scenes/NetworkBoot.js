@@ -1,5 +1,7 @@
 import ManageSession from "../ManageSession"
 import ServerCall from "../class/ServerCall"
+import {CurrentApp} from "../../../session"
+
 
 export default class NetworkBoot extends Phaser.Scene {
   constructor() {
@@ -15,11 +17,13 @@ export default class NetworkBoot extends Phaser.Scene {
     await ManageSession.createSocket()
       .then(() => {
         ServerCall.getServerArrayObject("achievements", ManageSession.userProfile.id, 3)
+
         ServerCall.getServerArrayObject("liked", ManageSession.userProfile.id, 100)
         ServerCall.getServerArrayObject("addressbook", ManageSession.userProfile.id, 100)
         
         console.log("ManageSession.locationID", ManageSession.locationID)
         this.scene.launch(ManageSession.location, { user_id: ManageSession.locationID })
+        CurrentApp.update(n => "game");
       })
   }
 }

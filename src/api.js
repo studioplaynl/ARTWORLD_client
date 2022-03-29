@@ -23,7 +23,7 @@ export async function uploadImage(name, type, json, img, status, version, displa
   console.log(displayName)
 
   var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png",version)
-  var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json",version)
+  if(!!json) var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json",version)
   console.log(jpegURL + jsonURL)
   var value = { "url": jpegLocation, "json": jsonLocation, "version": version, "displayname": displayName};
   if(status == "zichtbaar"){

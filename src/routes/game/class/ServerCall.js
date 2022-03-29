@@ -64,8 +64,8 @@ class ServerCall {
     const type = collection
     const name = type + "_" + ManageSession.userProfile.id
     const pub = 2
-    const value = ManageSession[collection]
-    console.log(" ManageSession. empty", ManageSession[collection])
+    const value = ManageSession[type]
+    console.log(" ManageSession. empty", ManageSession[type])
     updateObject(type, name, value, pub)
   }
 

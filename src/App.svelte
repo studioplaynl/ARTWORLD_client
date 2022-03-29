@@ -26,9 +26,10 @@
     import AppLoader from "./routes/components/appLoader.svelte"
     import TopBar from "./routes/components/topbar.svelte"
     import TutLoader from "./routes/tutorials/tutLoader.svelte"
-
+    import AchievementAnimation from "./routes/components/achievement.svelte"
     onMount(()=>{
         document.getElementById("loader").classList.add('hide');
+
     })
 
     let isLogedIn = (detail) => {
@@ -63,6 +64,7 @@
 <Itemsbar />
 <AppLoader />
 <TopBar />
+<AchievementAnimation />
 <Router
     routes={{
         "/": wrap({
@@ -220,5 +222,6 @@
         }),
     }}
 />
-<Error />
 <TutLoader />
+<Error />
+

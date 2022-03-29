@@ -75,8 +75,8 @@
         setTimeout(()=>{ 
             let el = document.getElementById(element)
             if(!!el){
-                posX =  Number(el.offsetLeft) + Number(el.clientWidth) / 2;
-                posY =  Number(el.offsetTop) + Number(el.clientHeight) / 2;
+                if(posX == 0) posX =  Number(el.offsetLeft) + Number(el.clientWidth) / 2;
+                if(posY == 0) posY =  Number(el.offsetTop) + Number(el.clientHeight) / 2;
                 el.addEventListener('click', event => { 
                     hide = true 
                 });

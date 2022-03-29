@@ -48,6 +48,18 @@ export const CurrentApp = writable();
 
 export const tutorial = writable();
 
+
+export const achievements = writable();
+achievements.subscribe((value) => {
+    if (!!value) {
+        console.log(value)
+        // ManageSession.achievements = value
+
+    }
+    
+})
+
+
 export async function login(email, password) {
     setLoader(true)
     const create = false;
