@@ -249,11 +249,5 @@ class Move {
     }
   }
 
-  movePlayerLikedPanel(scene) {
-    scene.playerLikedPanel.x = scene.player.x + 200;
-    scene.playerLikedPanel.y = scene.player.y
-  }
-
-
 }
 export default new Move()

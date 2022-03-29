@@ -11,12 +11,14 @@ class Artwork {
         const size = config.size
 
         //the container with the name of the config
-        scene[name] = scene.add.container(posX, posY)
+        scene[name] = scene.add.container()
 
         const billBoardName = name + "_billBoard"
         scene[billBoardName] = scene.add.image(0,
             0,
             "exhibit_outdoor_big")
+
+        scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height)
 
         // 1. TopLeft
         // 2. TopRight
@@ -42,8 +44,8 @@ class Artwork {
         const indicies = [0, 2, 1, 2, 3, 1];
 
         const meshName = name + "_mesh"
-        scene[meshName] = scene.add.mesh( - 20,
-             - 80, 'play')
+        scene[meshName] = scene.add.mesh(- 20,
+            - 80, 'play')
 
         // play
         // artFrame_512
@@ -72,7 +74,9 @@ class Artwork {
         // const rotateRate = 1
         // const panRate = 1
         // const zoomRate = 4
-        scene[name].add([scene[billBoardName, meshName]])
+        scene[name].add([scene[billBoardName], scene[meshName]])
+        scene[name].x = posX
+        scene[name].y = posY
     }
 
     AbriSmall1(config) {
@@ -83,9 +87,15 @@ class Artwork {
         // const worldSize = scene.worldSize
         const size = config.size
 
-        scene[name] = scene.add.image(posX,
-            posY,
+        //the container with the name of the config
+        scene[name] = scene.add.container()
+
+        const billBoardName = name + "_billBoard"
+        scene[billBoardName] = scene.add.image(0,
+            0,
             "exhibit_outdoor_small1")
+
+        scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height)
 
         // 1. TopLeft
         // 2. TopRight
@@ -111,8 +121,8 @@ class Artwork {
         const indicies = [0, 2, 1, 2, 3, 1];
 
         const meshName = name + "_mesh"
-        scene[meshName] = scene.add.mesh(posX - 20,
-            posY - 80, 'play')
+        scene[meshName] = scene.add.mesh(- 20,
+            - 80, 'play')
 
         // play
         // artFrame_512
@@ -130,6 +140,10 @@ class Artwork {
 
         // the name of the mesh is name_mesh
         scene[meshName].panZ(meshPanZ) // pan is zoom level, bigger is smaller, only works with perspective projection
+
+        scene[name].add([scene[billBoardName], scene[meshName]])
+        scene[name].x = posX
+        scene[name].y = posY
     }
 
     AbriSmall2(config) {
@@ -140,9 +154,15 @@ class Artwork {
         // const worldSize = scene.worldSize
         const size = config.size
 
-        scene[name] = scene.add.image(posX,
-            posY,
+        //the container with the name of the config
+        scene[name] = scene.add.container()
+
+        const billBoardName = name + "_billBoard"
+        scene[billBoardName] = scene.add.image(0,
+            0,
             "exhibit_outdoor_small2")
+
+        scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height)
 
         // 1. TopLeft
         // 2. TopRight
@@ -187,6 +207,11 @@ class Artwork {
 
         // the name of the mesh is name_mesh
         scene[meshName].panZ(meshPanZ) // pan is zoom level, bigger is smaller, only works with perspective projection
+
+        scene[name].add([scene[billBoardName], scene[meshName]])
+        scene[name].x = posX
+        scene[name].y = posY
+
     }
 }
 

@@ -8,6 +8,7 @@ import ru from "../../../langauge/ru/ui.json"
 import ar from "../../../langauge/ar/ui.json"
 import HistoryTracker from "../class/HistoryTracker"
 import DebugFuntions from "../class/DebugFuntions"
+import { element } from "svelte/internal"
 
 i18next.init({
   lng: "nl",
@@ -65,7 +66,9 @@ export default class UI_Scene extends Phaser.Scene {
     this.input.keyboard.createCursorKeys()
     //.......... end INPUT ................................................................................
     //......... DEBUG FUNCTIONS ...........................................................................
-    this.events.on('gameEditMode', this.gameEditModeSign, this)
+    this.events.on('gameEditMode', this.gameEditModeSign, this) // show edit mode indicator
+    this.events.on('gameEditMode', this.editElementsScene, this) // show edit mode indicator
+
     DebugFuntions.keyboard(this)
     //......... end DEBUG FUNCTIONS .......................................................................
 
@@ -79,119 +82,40 @@ export default class UI_Scene extends Phaser.Scene {
       .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
       .setName("camMain")
     this.camUI.zoom = 1
-    this.createNavigationButtons(false)
+
     this.scale.on("resize", this.resize, this)
 
     // to make the UI scene always on top of other scenes
     this.scene.bringToTop()
 
-
   } //create
 
-  // zoom buttons and back button
-  async createNavigationButtons(update) {
-    let width = this.sys.game.canvas.width
-    let height = this.sys.game.canvas.height
 
-    if (!update) {
-      //text to show the location (for debugging) > will change to breadcrum UI for user
-      // this.locationText = this.add
-      //   .text(width / 3.5, height / 40, this.location, {
-      //     fontFamily: "Arial",
-      //     fontSize: "22px",
-      //   })
-      //   .setOrigin(0)
-      //   //.setScrollFactor(0) //fixed on screen
-      //   .setShadow(1, 1, "#000000", 0)
-      //   .setDepth(1000)
-
-      // mobile debug text field
-      this.debugTextField = this.add.text(50, 80, this.debugText, {
-        fontFamily: "Arial",
-        fontSize: "18px",
-      }).setShadow(2, 2, '#000000', 0)
-
-      // back button
-      this.backButton = this.add.image(40, 40, "back_button")
-        .setOrigin(0, 0.5)
-        .setDepth(1000)
-        .setInteractive({ useHandCursor: true })
-
-      // back button background color white
-      this.backButtonCircle = this.add.circle(40, 40, 15, 0xffffff).setOrigin(0, 0.5)
-
-      // if the current scene is artworld, the back button is hidden 
-      if (ManageSession.locationHistory.length <= 1) {
-        this.backButton.destroy()
-        this.backButtonCircle.destroy()
-      }
-
-      this.backButton.on("pointerup", () => {
-        HistoryTracker.activateBackButton(this.scene)
-      })
-
-      //zoom buttons
-    //   this.zoomOut = this.add
-    //     .image(60 + 40, 40, "ui_magnifier_minus")
-    //     .setOrigin(0, 0.5)
-    //     .setDepth(1000)
-    //     .setScale(width / (width / this.camUI.zoom) / 6)
-    //     .setInteractive({ useHandCursor: true });
-
-    //   this.zoom = this.add
-    //     .image(60 + 100, 40, "ui_eye")
-    //     .setOrigin(0, 0.5)
-    //     .setDepth(1000)
-    //     .setScale(width / (width / this.camUI.zoom) / 8)
-    //     .setInteractive({ useHandCursor: true });
-
-    //   this.zoomIn = this.add
-    //     .image(60 + 160, 40, "ui_magnifier_plus")
-    //     .setOrigin(0, 0.5)
-    //     .setDepth(1000)
-    //     .setScale(width / (width / this.camUI.zoom) / 6)
-    //     .setInteractive({ useHandCursor: true });
-
-    //   this.zoomIn.on("pointerup", () => {
-    //     this.currentZoom += 0.2
-    //     //console.log(this.currentZoom);
-    //   });
-
-    //   this.zoomOut.on("pointerup", () => {
-    //     this.currentZoom -= 0.2
-    //     if (this.currentZoom < 0.2) {
-    //       this.currentZoom = 0.2
-    //     }
-    //     //console.log(this.currentZoom);
-    //   });
-
-    //   this.zoom.on("pointerup", () => {
-    //     this.currentZoom = 1
-    //   })
-
-
-    // } else {
-    //   this.zoomIn
-    //     .setPosition(
-    //       width / 10 / this.camUI.zoom,
-    //       height / 10 / this.camUI.zoom + 50 / this.camUI.zoom
-    //     )
-    //     .setScale(width / (width / this.camUI.zoom));
-    //   this.zoomOut
-    //     .setPosition(
-    //       width / 10 / this.camUI.zoom,
-    //       height / 10 / this.camUI.zoom + 80 / this.camUI.zoom
-    //     )
-    //     .setScale(width / (width / this.camUI.zoom));
-    }
-
-  }
   resize() {
     //console.log("resizing")
     let width = this.sys.game.canvas.width
     let height = this.sys.game.canvas.height
 
     //this.camUI.resize(width, height);
+  }
+  editElementsScene(arg) {
+    let scene = ManageSession.currentScene
+    switch (arg) {
+      case 'on':
+        scene.editModeElements.forEach((element) => {
+          element.setInteractive({ draggable: true })
+
+        })
+        break
+
+      case 'off':
+        scene.editModeElements.forEach((element) => {
+          element.disableInteractive()
+          console.log("element", element)
+        })
+        
+        break
+    }
   }
 
   gameEditModeSign(arg) {

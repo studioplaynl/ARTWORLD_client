@@ -101,8 +101,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     async preload() {
         Preloader.Loading(this) //.... PRELOADER VISUALISER
-        ManageSession.sceneLoadingDone = false
-
     }//end preload
 
 
@@ -203,8 +201,6 @@ export default class DefaultUserHome extends Phaser.Scene {
                 this.artworksListSpinner.destroy()
             }
         })
-
-        ManageSession.sceneLoadingDone = true
     }//end create
 
     async downloadArt(element, index, array) {

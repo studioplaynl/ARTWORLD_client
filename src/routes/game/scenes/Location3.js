@@ -57,7 +57,6 @@ export default class Location3 extends Phaser.Scene {
   }
 
   async preload() {
-    ManageSession.sceneLoadingDone = false //!
     //....... TILEMAP .........................................................................
     //1
     this.load.image(
@@ -134,8 +133,6 @@ export default class Location3 extends Phaser.Scene {
     //......... end UI Scene ..............................................................................
 
     Player.loadPlayerAvatar(this, 0, 0)
-
-    ManageSession.sceneLoadingDone = true //!
   } // end create
 
   generateTileMap() {

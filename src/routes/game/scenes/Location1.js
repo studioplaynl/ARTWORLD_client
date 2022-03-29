@@ -78,7 +78,6 @@ export default class Location1 extends Phaser.Scene {
   }
 
   async preload() {
-    ManageSession.sceneLoadingDone = false //!
     //.... PRELOADER VISUALISER ...............................................................................................
     Preloader.Loading(this)
     //.... end PRELOADER VISUALISER ...............................................................................................
@@ -216,7 +215,6 @@ export default class Location1 extends Phaser.Scene {
     console.log(this.currentZoom)
 
     //this.exampleREXUI()
-    ManageSession.sceneLoadingDone = true //!
   } // end create
 
   exampleREXUI() {
