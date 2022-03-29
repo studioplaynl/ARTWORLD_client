@@ -38,7 +38,7 @@ function zoomOut() {
     <a on:click="{goHome}"><img class="TopIcon" id="logo" src="assets/SHB/svg/AW-icon-logo-A.svg"></a>
     <a on:click="{goBack}"><img class="TopIcon" id="back" src="/assets/SHB/svg/AW-icon-previous.svg"></a>
     <a on:click="{zoomOut}"  id="zoomOut"><img class="TopIcon" src="/assets/SHB/svg/AW-icon-minus.svg"></a>
-    <a on:click="{zoomReset}" id="zoomReset"><img class="TopIcon" src="assets/ui/undo-circular-arrow-svgrepo-com.svg"></a>
+    <a on:click="{zoomReset}" id="zoomReset"><img class="TopIcon" src="assets/SHB/svg/AW-icon-reset.svg"></a>
     <a on:click="{zoomIn}" id="zoomIn"><img class="TopIcon" src="./assets/SHB/svg/AW-icon-plus.svg"></a>
 
 </div>
