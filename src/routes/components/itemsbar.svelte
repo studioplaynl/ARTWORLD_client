@@ -14,10 +14,12 @@ const unsubscribe = itemsBar.subscribe(async value => {
     console.log(value)
     HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
 	ManageSession = (await import('../game/ManageSession.js')).default;
+    console.log($location)
     if(!!!ManageSession.userProfile) return
-
-    user_avatar_url = ManageSession.userProfile.url
-    if(user_house_url == undefined){
+    if($location == "/login") return 
+        console.log(ManageSession.userProfile)
+        user_avatar_url = ManageSession.userProfile.url
+        if(user_house_url == undefined){
             user_house_url = await getObject("home", ManageSession.userProfile.meta.azc, ManageSession.userProfile.id)
             user_house_url = await convertImage(user_house_url.value.url,"50")
         }
@@ -136,7 +138,6 @@ async function getAdressbook(){
     current = "addressbook"
 }
 
-console.log($location)
 
 </script>
 

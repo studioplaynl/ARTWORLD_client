@@ -46,6 +46,8 @@ export const Succes = writable();
 
 export const CurrentApp = writable();
 
+export const tutorial = writable();
+
 export async function login(email, password) {
     setLoader(true)
     const create = false;

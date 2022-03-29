@@ -1,8 +1,8 @@
 <script>
     import anime from 'animejs';
     import {onMount} from "svelte"
-    let posX = 0
-    let posY = 0
+    export let posX = 0
+    export let posY = 0
     export let element
     export let hide = true
     export let doubleTap = false
@@ -73,8 +73,8 @@
         setTimeout(async ()=>{ 
             let el = document.getElementById(element)
             if(!!el){
-                posX =  Number(el.offsetLeft) + Number(el.clientWidth) / 2;
-                posY =  Number(el.offsetTop) + Number(el.clientHeight) / 2;
+                if(posX == 0) posX =  Number(el.offsetLeft) + Number(el.clientWidth) / 2;
+                if(posY == 0) posY =  Number(el.offsetTop) + Number(el.clientHeight) / 2;
                 el.addEventListener('click', event => { 
                     hide = true 
                 });
@@ -103,7 +103,7 @@
   left: -30px;
   top:-20px;
   z-index: 1;
-}
+  pointer-events: none;}
 
 .circle{
   background-color: rgba(100,100,100,0.4);
@@ -113,7 +113,7 @@
   width:2px;
   height: 2px;
   border-radius: 50%;
-/*   border: 2px solid rgba(100,100,100,0.4); */
+  pointer-events: none;
 }
 
 .box{

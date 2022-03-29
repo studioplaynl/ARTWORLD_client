@@ -14,7 +14,7 @@
     historyCurrent;
   let canv, _clipboard, drawingColorEl;
   let saveCanvas, savecanvas, videoCanvas, saving= false;
-  let videoWidth, videoHeight;
+  let videoWidth;
   let canvas,
     video,
     lineWidth = 5,
@@ -86,17 +86,17 @@
       drawingColorEl = fab("drawing-color"),
       //drawingShadowColorEl = fab("drawing-shadow-color"),
       drawingLineWidthEl = fab("drawing-line-width"),
-      eraseLineWidthEl = fab("erase-line-width");
+      eraseLineWidthEl = fab("erase-line-width"),
       //drawingShadowWidth = fab("drawing-shadow-width"),
       //drawingShadowOffset = fab("drawing-shadow-offset");
-    //   clearEl = fab("clear-canvas");
+      clearEl = fab("clear-canvas");
 
-    // clearEl.onclick = function () {
-    //   if (window.confirm("are you sure?")) {
-    //     canvas.clear();
-    //     localStorage.setItem("Drawing", "");
-    //   }
-    // };
+    clearEl.onclick = function () {
+      if (window.confirm("are you sure?")) {
+        canvas.clear();
+        localStorage.setItem("Drawing", "");
+      }
+    };
 
     drawingModeEl.onclick = function () {
       switchOption("draw");
@@ -1259,6 +1259,9 @@
 
     </div>
   </div>
+
+  <div id="clear-canvas"><img src="assets/ui/undo-circular-arrow-svgrepo-com.svg"></div>
+
 </main>
 
 <style>
@@ -1654,7 +1657,22 @@
 }
 
 
-
+#clear-canvas{
+    position: fixed;
+    right: 65px;
+    top: 10px;
+    z-index: 13;
+    border: 2px solid #7300ed;
+    cursor: pointer;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 51%;
+    background-color: white;
+    font-weight: bold;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+  }
 
 
 </style>

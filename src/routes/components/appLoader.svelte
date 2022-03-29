@@ -18,6 +18,12 @@ const unsubscribe = CurrentApp.subscribe(async value => {
 async function closeApp(){
     $CurrentApp = false
 }
+
+function reloadApp(){
+    let app = $CurrentApp
+    $CurrentApp = false
+    $CurrentApp = app
+}
 </script>
 {#if !!appOpen}
     <div id="close" on:click="{closeApp}">X</div>
@@ -60,6 +66,9 @@ async function closeApp(){
     height: 20px;
     text-align: center;
   }
+
+  
+  
 
 </style>
  

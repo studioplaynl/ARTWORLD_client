@@ -1,8 +1,8 @@
 <script>
     import anime from 'animejs';
     import {onMount} from "svelte"
-    let posX = 0
-    let posY = 0
+    export let posX = 0
+    export let posY = 0
     let left = 0
     let top = 0 
     export let element
