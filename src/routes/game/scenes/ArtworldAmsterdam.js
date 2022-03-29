@@ -233,7 +233,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
    })
    //this.exhibit_outdoor_big1_mesh.setTexture("mario_star")
 
-   console.log("this.exhibit_outdoor_small1", this.exhibit_outdoor_small1)
+  //  console.log("this.exhibit_outdoor_big1", this.exhibit_outdoor_big1)
+  //  this.exhibit_outdoor_big1.setInteractive({ draggable: true, useHandCursor: true })
 
     //! needed for handling object dragging
     this.input.on('dragstart', function (pointer, gameObject) {

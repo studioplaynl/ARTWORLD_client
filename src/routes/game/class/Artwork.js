@@ -10,8 +10,12 @@ class Artwork {
         // const worldSize = scene.worldSize
         const size = config.size
 
-        scene[name] = scene.add.image(posX,
-            posY,
+        //the container with the name of the config
+        scene[name] = scene.add.container(posX, posY)
+
+        const billBoardName = name + "_billBoard"
+        scene[billBoardName] = scene.add.image(0,
+            0,
             "exhibit_outdoor_big")
 
         // 1. TopLeft
@@ -38,11 +42,11 @@ class Artwork {
         const indicies = [0, 2, 1, 2, 3, 1];
 
         const meshName = name + "_mesh"
-        scene[meshName] = scene.add.mesh(posX - 20,
-            posY - 80, 'play')
+        scene[meshName] = scene.add.mesh( - 20,
+             - 80, 'play')
 
-            // play
-            // artFrame_512
+        // play
+        // artFrame_512
 
         scene[meshName].addVertices(vertices, uvs, indicies)
 
@@ -68,6 +72,7 @@ class Artwork {
         // const rotateRate = 1
         // const panRate = 1
         // const zoomRate = 4
+        scene[name].add([scene[billBoardName, meshName]])
     }
 
     AbriSmall1(config) {
@@ -109,8 +114,8 @@ class Artwork {
         scene[meshName] = scene.add.mesh(posX - 20,
             posY - 80, 'play')
 
-            // play
-            // artFrame_512
+        // play
+        // artFrame_512
 
         scene[meshName].addVertices(vertices, uvs, indicies)
 
@@ -148,9 +153,9 @@ class Artwork {
 
             0.051, -0.064,
 
-            -0.03, -0.098, 
+            -0.03, -0.098,
 
-            0.051, -0.145 
+            0.051, -0.145
         ]
 
         const uvs = [
@@ -166,8 +171,8 @@ class Artwork {
         scene[meshName] = scene.add.mesh(posX - 20,
             posY - 80, 'play')
 
-            // play
-            // artFrame_512
+        // play
+        // artFrame_512
 
         scene[meshName].addVertices(vertices, uvs, indicies)
 
