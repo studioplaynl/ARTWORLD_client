@@ -1,7 +1,7 @@
 <script>
     import {achievements} from "../../session"
     import anime from 'animejs';
-import { InterpolateLinear } from "three";
+    let award
 
     let keyframes = [
         {
@@ -10,8 +10,6 @@ import { InterpolateLinear } from "three";
         {rotateY: 360},
         {translateY: 0},
     ]
-    let left= window.innerWidth/2, 
-        top = window.innerHeight/2
 
 
      achievements.subscribe(value =>{ 
@@ -19,8 +17,7 @@ import { InterpolateLinear } from "three";
             targets: '#award',
             scale: 1.2,
             keyframes,
-            left: window.innerWidth/2, 
-            top:window.innerHeight/2,
+
             display: "inline",
             loop: false,
             duration: 1000,
@@ -30,6 +27,11 @@ import { InterpolateLinear } from "three";
  })
 
  setTimeout(()=>{
+    console.log("award")
+
+    console.log(award)
+    award.style.left = window.innerWidth/2
+    award.style.top = window.innerHeight/2
      console.log("done")
     anime({
             targets: '#award',
@@ -43,17 +45,25 @@ import { InterpolateLinear } from "three";
         }); 
  },5000)
 </script>
-
-<img src="assets/SHB/svg/AW-icon-award.svg" id="award" style="--left: {left} --top: {top}">
+<!-- <div id="awardBox">
+    <img src="assets/SHB/svg/AW-icon-award.svg" id="award" bind:this="{award}">
+</div> -->
 
 <style>
+
+#awardBox{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  position: fixed;
+  width: 100vw;
+}
 
 img {
   width:100px;
   position: fixed;
   /* display: none; */
   z-index: 15;
-  left: var(--left);
-  top: var(--top)
 }
 </style>

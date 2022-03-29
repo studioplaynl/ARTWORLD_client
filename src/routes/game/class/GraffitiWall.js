@@ -41,21 +41,23 @@ class GraffitiWall {
       }
     })
 
-    rt.on('pointerup', function (pointer) {
+    rt.on('pointerup',  function (pointer) {
       this.graffitiDrawing = false
       console.log("rt", rt)
       //console.log("ManageSession.userProfile.id", ManageSession.userProfile.id)
 
-      scene.game.renderer.snapshotArea(pointer.worldX, pointer.worldY, 128, 128, function (image) {
+      scene.game.renderer.snapshotArea(pointer.worldX, pointer.worldY, 128, 128, async function (image) {
 
         const displayName = "testRenderTexture"
-        const name = Date() + displayName
+        const name = displayName
         const type = "drawing"
         const json = ""
         const status = "zichtbaar"
         const version = 1
 console.log("imgage", image.src)
-        uploadImage(name, type, json, image.src, status, version, displayName)
+
+        var blobData = await dataURItoBlob(image.src);
+        uploadImage(name, type, json, blobData, status, version, displayName)
 
       })
     }, this)
@@ -65,5 +67,14 @@ console.log("imgage", image.src)
     scene[name].y = y
   }
 }
+
+ function dataURItoBlob(dataURI) {
+    var binary = atob(dataURI.split(",")[1]);
+    var array = [];
+    for (var i = 0; i < binary.length; i++) {
+      array.push(binary.charCodeAt(i));
+    }
+    return new Blob([new Uint8Array(array)], { type: "image/png" });
+  }
 
 export default new GraffitiWall()
