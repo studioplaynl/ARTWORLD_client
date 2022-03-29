@@ -5,8 +5,10 @@ class HistoryTracker {
   constructor() { }
 
   pushLocation(scene) {
+    console.log("this.pushLocation")
     //store the current scene in ManageSession for reference outside of Phaser (html ui)
     ManageSession.currentScene = scene
+    console.log("scene", scene)
     //console.log("ManageSession.currentScene", ManageSession.currentScene)
 
     //the current scene does not exist yet in history
@@ -35,9 +37,10 @@ class HistoryTracker {
   activateBackButton(scene) {
     // remove the current scene from the history
     const currentLocationKey = ManageSession.locationHistory.pop()
+    //console.log("currentLocationKey", currentLocationKey)
     // console.log("currentLocationKey", currentLocationKey)
     // and getting access to it through its key
-    const currentLocation = scene.get(currentLocationKey.locationName)
+    const currentLocation = ManageSession.currentScene
     // console.log("currentLocation", currentLocation)
     // getting access to the previous scene through locationHistory
     const previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
