@@ -106,6 +106,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.scrollablePanel
 
     this.progress = []
+
+    this.editModeElements = []
   }
 
   async preload() {
@@ -151,7 +153,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient2: 0xff01ff,
     })
 
-   // this.gradientAmsterdam1.setInteractive()
+    this.editModeElements.push(this.gradientAmsterdam1)
+    //this.gradientAmsterdam1.setInteractive({ draggable: true, useHandCursor: true })
 
     Background.circle({
       scene: this,
@@ -163,6 +166,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient2: 0x85feff,
     })
 
+    this.editModeElements.push(this.gradientAmsterdam2)
+
     Background.circle({
       scene: this,
       name: "gradientAmsterdam3",
@@ -172,6 +177,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient1: 0x3a4bba,
       gradient2: 0xbb00ff,
     })
+
+    this.editModeElements.push(this.gradientAmsterdam3)
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() //{ useHandCursor: true }
@@ -190,10 +197,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34),
       "sunglass_stripes"
     )
-    //this.sunglasses_striped.setInteractive({ draggable: true })
+    this.editModeElements.push(this.sunglasses_striped)
 
     this.train = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -790), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'metro_train_grey')
-
     this.tweens.add({
       targets: this.train,
       duration: 3000,
@@ -203,38 +209,39 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       repeatDelay: 8000,
       //ease: 'Sine.easeInOut'
     })
+    this.editModeElements.push(this.sunglasses_striped)
+
 
     //create(scene, x, y, width, height, name, color, imageFile = null) {
-    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 400), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1000), 800, 400, "graffitiBrickWall", 0x000000, 'brickWall')
+    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1062), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 776), 800, 400, "graffitiBrickWall", 0x000000, 'brickWall')
+    this.editModeElements.push(this.graffitiBrickWall)
 
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
-    //.setInteractive({ draggable: true })
+    this.editModeElements.push(this.photo_camera)
 
     this.tree_palm = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 117),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1106.33),
       "tree_palm")
-    //.setInteractive({ draggable: true, useHandCursor: true })
+      this.editModeElements.push(this.tree_palm)
 
-   Artwork.AbriBig({
-    scene: this,
-    name: "exhibit_outdoor_big1",
-    posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -427),
-    posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 11),
-    size: 564,
-   })
-   
+    Artwork.AbriBig({
+      scene: this,
+      name: "exhibit_outdoor_big1",
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -427),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 11),
+      size: 564,
+    })
+this.editModeElements.push(this.exhibit_outdoor_big1)
 
-   Artwork.AbriSmall2({
-    scene: this,
-    name: "exhibit_outdoor_small1",
-    posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -827),
-    posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 11),
-    size: 564,
-   })
-   //this.exhibit_outdoor_big1_mesh.setTexture("mario_star")
-
-  //  console.log("this.exhibit_outdoor_big1", this.exhibit_outdoor_big1)
-  //  this.exhibit_outdoor_big1.setInteractive({ draggable: true, useHandCursor: true })
+    Artwork.AbriSmall2({
+      scene: this,
+      name: "exhibit_outdoor_small2_1",
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -827),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 11),
+      size: 564,
+    })
+    //this.exhibit_outdoor_big1_mesh.setTexture("mario_star")
+    this.editModeElements.push(this.exhibit_outdoor_small2_1)
 
     //! needed for handling object dragging
     this.input.on('dragstart', function (pointer, gameObject) {
@@ -285,8 +292,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //......... UI Scene  .................................................................................
     //* UI scene is never stopped, so could be launched at NetworkBoot and later never relaunched
-    // this.UI_Scene = this.scene.get("UI_Scene")
-    // this.scene.launch("UI_Scene")
+    this.UI_Scene = this.scene.get("UI_Scene")
+    this.scene.launch("UI_Scene")
     // this.currentZoom = this.UI_Scene.currentZoom
     // this.UI_Scene.location = this.location
     // this.gameCam.zoom = this.currentZoom
