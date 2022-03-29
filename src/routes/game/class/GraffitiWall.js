@@ -1,8 +1,12 @@
+import { uploadImage } from "../../../api.js"
+import ManageSession from "../ManageSession"
+
 class GraffitiWall {
   constructor() {
   }
 
   create(scene, x, y, width, height, name, color, imageFile = null) {
+
     scene[name] = scene.add.container()
 
     // checking if a drawing wall has a front image
@@ -13,11 +17,11 @@ class GraffitiWall {
       scene[name].add(graffitiWall)
     }
 
-    let rt = scene.add.renderTexture(-(width/2), -(height/2), width, height).setInteractive().setDepth(199).setName(name)
+    let rt = scene.add.renderTexture(-(width / 2), -(height / 2), width, height).setInteractive().setDepth(199).setName(name)
     scene[name].add(rt)
-    scene[name].setSize(width+40, height+40)
+    scene[name].setSize(width + 40, height + 40)
 
-    
+
     scene.input.keyboard.on('keydown-' + 'SPACE', function () {
       rt.clear()
     })
@@ -26,23 +30,38 @@ class GraffitiWall {
       console.log("graffiti wall")
       this.graffitiDrawing = true
       this.isClicking = true
-      this.draw('brush', pointer.worldX - scene[name].x + (width/2), pointer.worldY - scene[name].y + (height/2), 1, color)
+      this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, color)
     })
 
     rt.on('pointermove', function (pointer) {
       if (pointer.isDown) {
         this.graffitiDrawing = true
         this.isClicking = true
-        this.draw('brush', pointer.worldX - scene[name].x + (width/2), pointer.worldY - scene[name].y + (height/2), 1, color)
+        this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, color)
       }
     })
 
     rt.on('pointerup', function (pointer) {
       this.graffitiDrawing = false
-    })
+      console.log("rt", rt)
+      //console.log("ManageSession.userProfile.id", ManageSession.userProfile.id)
+
+      scene.game.renderer.snapshotArea(pointer.worldX, pointer.worldY, 128, 128, function (image) {
+
+        const displayName = "testRenderTexture"
+        const name = Date() + displayName
+        const type = "drawing"
+        const json = ""
+        const status = "zichtbaar"
+        const version = 1
+console.log("imgage", image.src)
+        uploadImage(name, type, json, image.src, status, version, displayName)
+
+      })
+    }, this)
 
 
-    scene[name].x = x 
+    scene[name].x = x
     scene[name].y = y
   }
 }
