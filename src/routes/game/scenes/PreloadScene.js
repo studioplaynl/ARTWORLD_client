@@ -70,7 +70,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', { scale: 2.4 })
         this.load.svg('tree_palm', './assets/svg/tree_palm.svg')
         this.load.svg('exhibit_outdoor_big', './assets/svg/exhibit_outdoor_big.svg')
-        this.load.svg('exhibit_outdoor_small', './assets/svg/exhibit_outdoor_small.svg')
+        this.load.svg('exhibit_outdoor_small1', './assets/svg/exhibit_outdoor_small1.svg', { scale: 2 })
+        this.load.svg('exhibit_outdoor_small2', './assets/svg/exhibit_outdoor_small2.svg', { scale: 1 })
 
         //this.load.svg('bitmap_heart', 'assets/svg/mario_heart.svg')
         // this.load.svg('mario_pipe', 'assets/svg/mario_pipe.svg')

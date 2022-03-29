@@ -70,7 +70,7 @@ class Artwork {
         // const zoomRate = 4
     }
 
-    AbriSmall(config) {
+    AbriSmall1(config) {
         const scene = config.scene
         const posX = config.posX
         const posY = config.posY
@@ -80,7 +80,7 @@ class Artwork {
 
         scene[name] = scene.add.image(posX,
             posY,
-            "exhibit_outdoor_small")
+            "exhibit_outdoor_small1")
 
         // 1. TopLeft
         // 2. TopRight
@@ -125,17 +125,63 @@ class Artwork {
 
         // the name of the mesh is name_mesh
         scene[meshName].panZ(meshPanZ) // pan is zoom level, bigger is smaller, only works with perspective projection
-        // x: 0.4154389168615932
-        // y: -0.77795430111968
-        // z: -0.43183495571265507
+    }
 
-        // this.mesh.modelRotation.x = 0.42
-        // this.mesh.modelRotation.y = -0.77795430111968
-        // this.mesh.modelRotation.z = -0.42
+    AbriSmall2(config) {
+        const scene = config.scene
+        const posX = config.posX
+        const posY = config.posY
+        const name = config.name
+        // const worldSize = scene.worldSize
+        const size = config.size
 
-        // const rotateRate = 1
-        // const panRate = 1
-        // const zoomRate = 4
+        scene[name] = scene.add.image(posX,
+            posY,
+            "exhibit_outdoor_small2")
+
+        // 1. TopLeft
+        // 2. TopRight
+        // 3. LeftBottom
+        // 4. RightBottom
+        let vertices = [
+            -0.03, -0.017,
+
+            0.051, -0.064,
+
+            -0.03, -0.098, 
+
+            0.051, -0.145 
+        ]
+
+        const uvs = [
+            0, 0,
+            1, 0,
+            0, 1,
+            1, 1
+        ]
+
+        const indicies = [0, 2, 1, 2, 3, 1];
+
+        const meshName = name + "_mesh"
+        scene[meshName] = scene.add.mesh(posX - 20,
+            posY - 80, 'play')
+
+            // play
+            // artFrame_512
+
+        scene[meshName].addVertices(vertices, uvs, indicies)
+
+        // placing the artWork in perspective works with the perspective cam of the mesh
+        //this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
+        scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60)
+
+        // the 'zoom' is dependent on the screen size, this formula works well
+        let meshPanZ = (scene.sys.game.canvas.height / 1000) * 2
+
+        //console.log("meshPanZ", meshPanZ)
+
+        // the name of the mesh is name_mesh
+        scene[meshName].panZ(meshPanZ) // pan is zoom level, bigger is smaller, only works with perspective projection
     }
 }
 

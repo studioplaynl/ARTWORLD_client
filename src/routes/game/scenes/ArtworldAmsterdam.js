@@ -223,11 +223,17 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     size: 564,
    })
    
-   this.exhibit_outdoor_big1.setInteractive({ draggable: true, useHandCursor: true })
 
+   Artwork.AbriSmall2({
+    scene: this,
+    name: "exhibit_outdoor_small1",
+    posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -827),
+    posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 11),
+    size: 564,
+   })
    //this.exhibit_outdoor_big1_mesh.setTexture("mario_star")
 
-   console.log("this.exhibit_outdoor_big1_mesh", this.exhibit_outdoor_big1_mesh)
+   console.log("this.exhibit_outdoor_small1", this.exhibit_outdoor_small1)
 
     //! needed for handling object dragging
     this.input.on('dragstart', function (pointer, gameObject) {
