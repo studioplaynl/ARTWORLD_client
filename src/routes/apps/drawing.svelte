@@ -1260,7 +1260,7 @@
     </div>
   </div>
 
-  <div id="clear-canvas"><img src="assets/ui/undo-circular-arrow-svgrepo-com.svg"></div>
+  <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg"></div>
 
 </main>
 
