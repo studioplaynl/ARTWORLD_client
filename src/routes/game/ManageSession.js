@@ -17,7 +17,6 @@ class ManageSession {
     this.worldSizeCopy // we copy the worldSize of the scene to make movement calculations
     this.currentScene // To give access to the scene outside of the game
     this.currentZoom = 1//passing camera zoom from ui to scene
-    this.sceneLoadingDone = false //flag if scene is done loading (at end of create)
 
     this.selectedOnlinePlayer
     this.addressbook
