@@ -110,6 +110,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
   async preload() {
     Preloader.Loading(this) //.... PRELOADER VISUALISER
+    ManageSession.sceneLoadingDone = false
   }
 
   async create() {
@@ -364,6 +365,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.mario_star.setDepth(140)
 
     music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
+
+    ManageSession.sceneLoadingDone = true
   }
 
   update(time, delta) {

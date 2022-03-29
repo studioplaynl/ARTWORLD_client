@@ -80,6 +80,8 @@ export default class Location4 extends Phaser.Scene {
     this.load.image("exhibit4", "./assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg")
 
     this.load.image('ground', 'assets/platform.png')
+
+    ManageSession.sceneLoadingDone = false //!
   }
 
   async create() {
@@ -152,7 +154,7 @@ export default class Location4 extends Phaser.Scene {
 
     Player.loadPlayerAvatar(this, -1185, 692)
 
-
+    ManageSession.sceneLoadingDone = true //!
   } // end create
 
   generateBouncingBird() {
