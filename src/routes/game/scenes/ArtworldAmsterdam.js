@@ -285,11 +285,11 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     //......... UI Scene  .................................................................................
     //* UI scene is never stopped, so could be launched at NetworkBoot and later never relaunched
-    this.UI_Scene = this.scene.get("UI_Scene")
-    this.scene.launch("UI_Scene")
-    this.currentZoom = this.UI_Scene.currentZoom
-    this.UI_Scene.location = this.location
-    this.gameCam.zoom = this.currentZoom
+    // this.UI_Scene = this.scene.get("UI_Scene")
+    // this.scene.launch("UI_Scene")
+    // this.currentZoom = this.UI_Scene.currentZoom
+    // this.UI_Scene.location = this.location
+    // this.gameCam.zoom = this.currentZoom
     //......... end UI Scene ..............................................................................
 
     //create items bar for onlineplayer, after UIscene, because it need currentZoom
@@ -369,7 +369,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
   update(time, delta) {
 
     // zoom in and out of game
-    this.gameCam.zoom = this.UI_Scene.currentZoom
+    this.gameCam.zoom = ManageSession.currentZoom
 
     //don't move the player with clicking and swiping in edit mode
     if (!ManageSession.gameEditMode) {
