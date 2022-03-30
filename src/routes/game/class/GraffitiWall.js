@@ -30,36 +30,41 @@ class GraffitiWall {
       console.log("graffiti wall")
       this.graffitiDrawing = true
       this.isClicking = true
-      this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, color)
+      var hsv = Phaser.Display.Color.HSVColorWheel()
+      var i = color
+      console.log("hsv[i].color", hsv[i].color)
+      
+      this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, hsv[i].color)
     })
 
     rt.on('pointermove', function (pointer) {
       if (pointer.isDown) {
         this.graffitiDrawing = true
         this.isClicking = true
-        this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, color)
+        var hsv = Phaser.Display.Color.HSVColorWheel()
+        var i = color
+
+        this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, hsv[i].color)
       }
     })
 
-    rt.on('pointerup',  function (pointer) {
+    rt.on('pointerup', function (pointer) {
       this.graffitiDrawing = false
-      console.log("rt", rt)
-      //console.log("ManageSession.userProfile.id", ManageSession.userProfile.id)
 
-      scene.game.renderer.snapshotArea(pointer.worldX, pointer.worldY, 128, 128, async function (image) {
+      // rt.snapshot(async (image) => {
 
-        const displayName = "testRenderTexture"
-        const name = displayName
-        const type = "drawing"
-        const json = ""
-        const status = "zichtbaar"
-        const version = 1
-console.log("imgage", image.src)
+      //   const displayName = "testRenderTexture"
+      //   const name = displayName
+      //   const type = "drawing"
+      //   const json = ""
+      //   const status = "zichtbaar"
+      //   const version = 1
+      //   console.log("image", image.src)
 
-        var blobData = await dataURItoBlob(image.src);
-        uploadImage(name, type, json, blobData, status, version, displayName)
+      //   var blobData = await dataURItoBlob(image.src)
+      //   uploadImage(name, type, json, blobData, status, version, displayName)
+      // })
 
-      })
     }, this)
 
 
@@ -68,13 +73,13 @@ console.log("imgage", image.src)
   }
 }
 
- function dataURItoBlob(dataURI) {
-    var binary = atob(dataURI.split(",")[1]);
-    var array = [];
-    for (var i = 0; i < binary.length; i++) {
-      array.push(binary.charCodeAt(i));
-    }
-    return new Blob([new Uint8Array(array)], { type: "image/png" });
+function dataURItoBlob(dataURI) {
+  var binary = atob(dataURI.split(",")[1]);
+  var array = [];
+  for (var i = 0; i < binary.length; i++) {
+    array.push(binary.charCodeAt(i));
   }
+  return new Blob([new Uint8Array(array)], { type: "image/png" });
+}
 
 export default new GraffitiWall()
