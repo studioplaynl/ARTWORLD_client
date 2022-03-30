@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession"
-import { listObjects, convertImage, getAccount } from "../../../api.js"
+import { listImages, convertImage, getAccount } from "../../../api.js"
 
 import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
@@ -43,6 +43,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.playerStopKey = "stop"
     this.playerAvatarKey = ""
     this.createdPlayer = false
+
+    this.artDisplaySize = 64
+    this.artArray = []
 
     //testing
     this.resolveLoadErrorCache = []
@@ -212,8 +215,9 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.editModeElements.push(this.graffitiBrickWall)
 
     //...................................................................................................
+    // DRAW A SUN 
     //...................................................................................................
-    
+
     Background.circle({
       scene: this,
       name: "sunDrawingExample",
@@ -237,41 +241,81 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
     this.sunDrawingExample.setInteractive()
       .on('pointerup', () => {
-        
+
         this.sunDraw.setVisible(true)
         this.sunDrawCloseButton.setVisible(true)
         this.sunDrawSaveButton.setVisible(true)
       })
 
-    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1383), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1790), 400, 400, "sunDraw", 180, 'artFrame_512')
+    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1383), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1600), 400, 400, "sunDraw", 180, 'artFrame_512')
     this.editModeElements.push(this.sunDraw)
     this.sunDraw.setVisible(false)
-    this.sunDraw.setInteractive()
-      .on('pointerup', () => {
-        console.log('this.sunDraw.getByName(name);', this.sunDraw.getByName("sunDraw"))
-        
-      })
 
-      this.sunDrawCloseButton = this.add.image(this.sunDraw.x + (this.sunDraw.width/1.8), this.sunDraw.y - (this.sunDraw.width/2), 'close')
-      this.sunDrawCloseButton.setInteractive()
+    this.sunDrawCloseButton = this.add.image(this.sunDraw.x + (this.sunDraw.width / 1.8), this.sunDraw.y - (this.sunDraw.width / 2), 'close')
+    this.sunDrawCloseButton.setInteractive()
       .on('pointerup', () => {
         this.sunDraw.setVisible(false)
         this.sunDrawCloseButton.setVisible(false)
         this.sunDrawSaveButton.setVisible(false)
       })
-      this.sunDrawCloseButton.setVisible(false)
+    this.sunDrawCloseButton.setVisible(false)
 
-      this.sunDrawSaveButton = this.add.image(this.sunDrawCloseButton.x, this.sunDrawCloseButton.y + (this.sunDrawCloseButton.width*1.1), 'save')
-      this.sunDrawSaveButton.setInteractive()
+    this.sunDrawSaveButton = this.add.image(this.sunDrawCloseButton.x, this.sunDrawCloseButton.y + (this.sunDrawCloseButton.width * 1.1), 'save')
+    this.sunDrawSaveButton.setInteractive()
       .on('pointerup', () => {
         let RT = this.sunDraw.getByName("sunDraw")
         RT.saveTexture('DrawnSun')
         console.log("this.sunDrawingExample", this.sunDrawingExample)
         this.sunDrawingExample.setTexture('DrawnSun')
       })
-      this.sunDrawSaveButton.setVisible(false)
-      //.........................................................................................................................
+    this.sunDrawSaveButton.setVisible(false)
+    //.........................................................................................................................
+    // DRAW A CLOUD
+    //...................................................................................................
 
+    this.cloudDrawingExample = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1200), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2050), "drawn_cloud")
+    this.editModeElements.push(this.cloudDrawingExample)
+
+    this.tweens.add({
+      targets: this.cloudDrawingExample,
+      duration: 8000,
+      x: '-=1600',
+      //scaleY: 1.8,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    })
+
+    this.cloudDrawingExample.setInteractive()
+      .on('pointerup', () => {
+        this.cloudDraw.setVisible(true)
+        this.cloudDrawCloseButton.setVisible(true)
+        this.cloudDrawSaveButton.setVisible(true)
+      })
+
+    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1200), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1500), 600, 400, "cloudDraw", 2, 'artFrame_512')
+    this.editModeElements.push(this.cloudDraw)
+    this.cloudDraw.setVisible(false)
+
+    this.cloudDrawCloseButton = this.add.image(this.cloudDraw.x + (this.cloudDraw.width / 1.8), this.cloudDraw.y - (this.cloudDraw.width / 1.8), 'close')
+    this.cloudDrawCloseButton.setInteractive()
+      .on('pointerup', () => {
+        this.cloudDraw.setVisible(false)
+        this.cloudDrawCloseButton.setVisible(false)
+        this.cloudDrawSaveButton.setVisible(false)
+      })
+    this.cloudDrawCloseButton.setVisible(false)
+
+    this.cloudDrawSaveButton = this.add.image(this.cloudDrawCloseButton.x, this.cloudDrawCloseButton.y + (this.cloudDrawCloseButton.width * 1.1), 'save')
+    this.cloudDrawSaveButton.setInteractive()
+      .on('pointerup', () => {
+        let RT = this.cloudDraw.getByName("cloudDraw")
+        RT.saveTexture('DrawnCloud')
+        this.cloudDrawingExample.setTexture('DrawnCloud')
+      })
+    this.cloudDrawSaveButton.setVisible(false)
+
+    //...................................................................................................
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
     this.editModeElements.push(this.photo_camera)
 
@@ -283,8 +327,8 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     Artwork.AbriBig({
       scene: this,
       name: "exhibit_outdoor_big1",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -427),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 11),
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -500),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1357),
       size: 564,
     })
     this.editModeElements.push(this.exhibit_outdoor_big1)
@@ -292,11 +336,11 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     Artwork.AbriSmall2({
       scene: this,
       name: "exhibit_outdoor_small2_1",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -827),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 11),
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -777),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 39),
       size: 564,
     })
-    //this.exhibit_outdoor_big1_mesh.setTexture("mario_star")
+    //this.exhibit_outdoor_small2_1_mesh.setTexture("mario_star")
     this.editModeElements.push(this.exhibit_outdoor_small2_1)
 
     //! needed for handling object dragging
@@ -360,7 +404,94 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     Player.loadPlayerAvatar(this)
     // this.avatarDetailsContainer.setDepth(999)
 
+    // .......... loadplayers art
+    const userID = ManageSession.userProfile.id
+    await listImages("drawing", userID, 100).then((rec) => {
+      //this.userArtServerList is an array with objects, in the form of:
+
+      //collection: "drawing"
+      //create_time: "2022-01-27T16:46:00Z"
+      //key: "1643301959176_cyaanConejo"
+      //permission_read: 1
+      //permission_write: 1
+      //update_time: "2022-02-09T13:47:01Z"
+      //user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
+      //value:
+      //  displayname: "cyaanConejo"
+      //  json: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
+      //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
+      //  status: ""
+      //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
+      //  version: 0
+
+      //permission_read: 1 indicates hidden
+      //permission_read: 2 indicates visible
+
+      //we filter out the visible artworks
+      //filter only the visible art = "permission_read": 2
+      this.userArtServerList = rec.filter(obj => obj.permission_read == 2)
+
+      console.log("this.userArtServerList", this.userArtServerList)
+      if (this.userArtServerList.length > 0) {
+        this.userArtServerList.forEach((element, index, array) => {
+          this.downloadArt(element, index, array)
+        })
+
+      }
+    })
   } //end create
+
+  async downloadArt(element, index, array) {
+    //! we are placing the artWorks 'around' (left and right of) the center of the world
+    const totalArtWorks = array.length
+    const imageKeyUrl = element.value.url
+    const imgSize = this.artDisplaySize.toString()
+    const fileFormat = "png"
+    // put the artworks 'around' the center, which means: take total artworks * space = total x space eg 3 * 550 = 1650
+    // we start at middleWorld.x - totalArtWidth + (artIndex * artDisplaySize) 
+
+    const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks
+
+    const middleWorldX = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0)
+    const startXArt = middleWorldX - (totalArtWidth / 2)
+
+    if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
+
+      let random = Math.floor(Math.random() * this.artArray.length)
+      this.exhibit_outdoor_big1_mesh.setTexture(this.artArray[random])
+
+      random = Math.floor(Math.random() * this.artArray.length)
+      this.exhibit_outdoor_small2_1_mesh.setTexture(this.artArray[random])
+
+    } else { // otherwise download the image and add it
+
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, fileFormat)
+      this.load.image(imageKeyUrl, convertedImage)
+
+      this.load.start() // start the load queue to get the image in memory
+    }
+
+    this.load.on('filecomplete', (key) => {
+      // on completion of each specific artwork
+
+      // we don't want to trigger any other load completions 
+     
+        // adds a frame to the container
+        this.artArray.push(key)
+      
+    })
+
+    this.load.on("complete", () => {
+      let random = Math.floor(Math.random() * this.artArray.length)
+      this.exhibit_outdoor_big1_mesh.setTexture(this.artArray[random])
+
+      random = Math.floor(Math.random() * this.artArray.length)
+      this.exhibit_outdoor_small2_1_mesh.setTexture(this.artArray[random])
+
+    })
+  }//end downloadArt
+
+
 
   generateLocations() {
     let location1Vector = new Phaser.Math.Vector2(-701.83, -304.33)
