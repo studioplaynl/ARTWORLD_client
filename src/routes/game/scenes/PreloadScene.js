@@ -31,6 +31,7 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.load.image('museum', './assets/museum.png')
         this.load.image("ball", './assets/ball_grey.png')
+        this.load.image("drawn_cloud", './assets/drawn_cloud.png')
 
         //drawing on a wall
         this.load.image('brush', 'assets/brush3.png')

@@ -16,7 +16,7 @@ class Artwork {
         const billBoardName = name + "_billBoard"
         scene[billBoardName] = scene.add.image(0,
             0,
-            "exhibit_outdoor_big")
+            "exhibit_outdoor_big") // the image of the billBoard svg
 
         scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height)
 
@@ -160,7 +160,7 @@ class Artwork {
         const billBoardName = name + "_billBoard"
         scene[billBoardName] = scene.add.image(0,
             0,
-            "exhibit_outdoor_small2")
+            "exhibit_outdoor_small2") // the image of the billBoard svg
 
         scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height)
 
@@ -188,8 +188,8 @@ class Artwork {
         const indicies = [0, 2, 1, 2, 3, 1];
 
         const meshName = name + "_mesh"
-        scene[meshName] = scene.add.mesh(posX - 20,
-            posY - 80, 'play')
+        scene[meshName] = scene.add.mesh( - 20,
+             - 80, 'play')
 
         // play
         // artFrame_512
