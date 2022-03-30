@@ -30,48 +30,41 @@ class GraffitiWall {
       console.log("graffiti wall")
       this.graffitiDrawing = true
       this.isClicking = true
-      this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, color)
+      var hsv = Phaser.Display.Color.HSVColorWheel()
+      var i = color
+      console.log("hsv[i].color", hsv[i].color)
+      
+      this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, hsv[i].color)
     })
 
     rt.on('pointermove', function (pointer) {
       if (pointer.isDown) {
         this.graffitiDrawing = true
         this.isClicking = true
-        this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, color)
+        var hsv = Phaser.Display.Color.HSVColorWheel()
+        var i = color
+
+        this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, hsv[i].color)
       }
     })
 
     rt.on('pointerup', function (pointer) {
-      //scene = ManageSession.currentScene
-
       this.graffitiDrawing = false
-      console.log("rt", rt)
-      //console.log("ManageSession.userProfile.id", ManageSession.userProfile.id)
 
-      rt.renderer.snapshotArea(pointer.x, pointer.y, 800, 400, async function (image) {
-        console.log("image", image.src)
+      // rt.snapshot(async (image) => {
 
-        if (rt.scene.textures.exists('area')) {
-          rt.scene.textures.remove('area')
-        }
-        rt.scene.load.image('area', image)
-        let testImage = rt.scene.add.image(3000, 3000, "area")
-        //this.scene.textures.addImage('area', image)
+      //   const displayName = "testRenderTexture"
+      //   const name = displayName
+      //   const type = "drawing"
+      //   const json = ""
+      //   const status = "zichtbaar"
+      //   const version = 1
+      //   console.log("image", image.src)
 
-        console.log('area', testImage)
+      //   var blobData = await dataURItoBlob(image.src)
+      //   uploadImage(name, type, json, blobData, status, version, displayName)
+      // })
 
-        // const displayName = "testRenderTexture"
-        // const name = displayName
-        // const type = "drawing"
-        // const json = ""
-        // const status = "zichtbaar"
-        // const version = 1
-        // console.log("image", image.src)
-
-        // var blobData = await dataURItoBlob(image.src)
-        // uploadImage(name, type, json, blobData, status, version, displayName)
-
-      }, this)
     }, this)
 
 

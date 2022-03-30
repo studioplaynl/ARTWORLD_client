@@ -152,9 +152,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient1: 0x85feff,
       gradient2: 0xff01ff,
     })
-
     this.editModeElements.push(this.gradientAmsterdam1)
-    //this.gradientAmsterdam1.setInteractive({ draggable: true, useHandCursor: true })
 
     Background.circle({
       scene: this,
@@ -165,7 +163,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient1: 0xfbff00,
       gradient2: 0x85feff,
     })
-
     this.editModeElements.push(this.gradientAmsterdam2)
 
     Background.circle({
@@ -177,7 +174,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       gradient1: 0x3a4bba,
       gradient2: 0xbb00ff,
     })
-
     this.editModeElements.push(this.gradientAmsterdam3)
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
@@ -211,10 +207,70 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     })
     this.editModeElements.push(this.sunglasses_striped)
 
-
     //create(scene, x, y, width, height, name, color, imageFile = null) {
-    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1062), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 776), 800, 400, "graffitiBrickWall", 0x000000, 'brickWall')
+    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1062), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 776), 800, 400, "graffitiBrickWall", 0, 'brickWall')
     this.editModeElements.push(this.graffitiBrickWall)
+
+    //...................................................................................................
+    //...................................................................................................
+    
+    Background.circle({
+      scene: this,
+      name: "sunDrawingExample",
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1269),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2200),
+      size: 400,
+      gradient1: 0xffdf87,
+      gradient2: 0xf7f76f,
+    })
+    this.editModeElements.push(this.sunDrawingExample)
+
+    this.tweens.add({
+      targets: this.sunDrawingExample,
+      duration: 3000,
+      scaleX: 1.8,
+      scaleY: 1.8,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    })
+
+    this.sunDrawingExample.setInteractive()
+      .on('pointerup', () => {
+        
+        this.sunDraw.setVisible(true)
+        this.sunDrawCloseButton.setVisible(true)
+        this.sunDrawSaveButton.setVisible(true)
+      })
+
+    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1383), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1790), 400, 400, "sunDraw", 180, 'artFrame_512')
+    this.editModeElements.push(this.sunDraw)
+    this.sunDraw.setVisible(false)
+    this.sunDraw.setInteractive()
+      .on('pointerup', () => {
+        console.log('this.sunDraw.getByName(name);', this.sunDraw.getByName("sunDraw"))
+        
+      })
+
+      this.sunDrawCloseButton = this.add.image(this.sunDraw.x + (this.sunDraw.width/1.8), this.sunDraw.y - (this.sunDraw.width/2), 'close')
+      this.sunDrawCloseButton.setInteractive()
+      .on('pointerup', () => {
+        this.sunDraw.setVisible(false)
+        this.sunDrawCloseButton.setVisible(false)
+        this.sunDrawSaveButton.setVisible(false)
+      })
+      this.sunDrawCloseButton.setVisible(false)
+
+      this.sunDrawSaveButton = this.add.image(this.sunDrawCloseButton.x, this.sunDrawCloseButton.y + (this.sunDrawCloseButton.width*1.1), 'save')
+      this.sunDrawSaveButton.setInteractive()
+      .on('pointerup', () => {
+        let RT = this.sunDraw.getByName("sunDraw")
+        RT.saveTexture('DrawnSun')
+        console.log("this.sunDrawingExample", this.sunDrawingExample)
+        this.sunDrawingExample.setTexture('DrawnSun')
+      })
+      this.sunDrawSaveButton.setVisible(false)
+      //.........................................................................................................................
 
     this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
     this.editModeElements.push(this.photo_camera)
@@ -222,7 +278,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.tree_palm = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 117),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1106.33),
       "tree_palm")
-      this.editModeElements.push(this.tree_palm)
+    this.editModeElements.push(this.tree_palm)
 
     Artwork.AbriBig({
       scene: this,
@@ -231,7 +287,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 11),
       size: 564,
     })
-this.editModeElements.push(this.exhibit_outdoor_big1)
+    this.editModeElements.push(this.exhibit_outdoor_big1)
 
     Artwork.AbriSmall2({
       scene: this,

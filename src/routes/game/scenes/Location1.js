@@ -206,13 +206,9 @@ export default class Location1 extends Phaser.Scene {
 
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
-    this.currentZoom = this.UI_Scene.currentZoom
-    this.UI_Scene.location = this.location
-
-    this.gameCam.zoom = this.currentZoom
-
-    //console.log(this.UI_Scene)
-    console.log(this.currentZoom)
+    // this.currentZoom = this.UI_Scene.currentZoom
+    // this.UI_Scene.location = this.location
+    // this.gameCam.zoom = this.currentZoom
 
     //this.exampleREXUI()
   } // end create
@@ -715,7 +711,7 @@ export default class Location1 extends Phaser.Scene {
     Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom
+    this.gameCam.zoom = ManageSession.currentZoom
 
     //........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset

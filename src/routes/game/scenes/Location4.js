@@ -145,9 +145,6 @@ export default class Location4 extends Phaser.Scene {
     //......... UI Scene  .................................................................................
     this.UI_Scene = this.scene.get("UI_Scene")
     this.scene.launch("UI_Scene")
-    this.currentZoom = this.UI_Scene.currentZoom
-    this.UI_Scene.location = this.location
-    this.gameCam.zoom = this.currentZoom
     //......... end UI Scene ..............................................................................
 
     Player.loadPlayerAvatar(this, -1185, 692)
@@ -164,9 +161,9 @@ export default class Location4 extends Phaser.Scene {
     var pupil = this.add.isobox(391, 255, 15, 10, 0x000000, 0x000000, 0x000000).setFaces(false, true, false);
     var wing = this.add.isobox(366, 300, 50, 10, 0x00b9f2, 0x016fce, 0x028fdf);
     container.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
-    container.x = 900;
-    container.y = 400;
-    container.setScale(1.5);
+    container.x = 900
+    container.y = 400
+    container.setScale(1.5)
 
     this.tweens.add({
       targets: container,
@@ -174,7 +171,7 @@ export default class Location4 extends Phaser.Scene {
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut'
-    });
+    })
   }
 
   generateBackground() {
@@ -258,7 +255,7 @@ export default class Location4 extends Phaser.Scene {
     //Player.parseNewOnlinePlayerArray(this)
     //.......................................................................
 
-    this.gameCam.zoom = this.UI_Scene.currentZoom
+    this.gameCam.zoom = ManageSession.currentZoom
     //.......................................................................
 
     //........... PLAYER SHADOW .............................................................................
