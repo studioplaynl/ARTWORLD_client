@@ -2,7 +2,8 @@
 import {convertImage, getObject, updateObject} from "../../api"
 import itemsBar from "./itemsbar.js"
 import ProfilePage from "../profile.svelte"
-import {CurrentApp, logout} from "../../session"
+import {achievements, CurrentApp, logout} from "../../session"
+import Awards from "../awards.svelte"
 import {location} from "svelte-spa-router"
 let ManageSession;
 let current	
@@ -33,6 +34,9 @@ const unsubscribe = itemsBar.subscribe(async value => {
         house_url = await convertImage(house_url.value.url,"50")
     }
 });
+
+
+
 
 async function Click(){
     $itemsBar.playerClicked = true;
@@ -187,8 +191,8 @@ async function getAdressbook(){
            
         {/if}
         {#if current == "awards"}
-            Total time played: {ManageSession.userProfile.meta.TotalPlayTime}
-           
+            
+           <Awards/>
         {/if}
     </div>  
 </div>

@@ -40,6 +40,7 @@ export async function uploadImage(name, type, json, img, status, version, displa
     body: img
   })
 
+  if(!!json){
   await fetch(jsonURL, {
     method: "PUT",
     headers: {
@@ -47,7 +48,8 @@ export async function uploadImage(name, type, json, img, status, version, displa
     },
     body: json
   })
-  
+  }
+
   await updateObject(type, name, value,pub)
   
 }
@@ -119,6 +121,8 @@ export async function getUploadURL(type, name, filetype,version) {
   console.log("payload")
   console.log(payload)
   const rpcid = "upload_file";
+  console.log("Sess")
+  console.log(Sess)
   const fileurl = await client.rpc(Sess, rpcid, payload);
   console.log(fileurl)
   url = fileurl.payload.url

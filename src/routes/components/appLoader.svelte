@@ -53,7 +53,7 @@ function reloadApp(){
 
   #close{
     position: fixed;
-    right: 10px;
+    left: 10px;
     top: 10px;
     z-index: 13;
     border: 2px solid #7300ed;
