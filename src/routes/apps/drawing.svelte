@@ -1260,7 +1260,7 @@
     </div>
   </div>
 
-  <div id="clear-canvas"><img class="icon" src="assets/SHB/svg/AW-icon-reset.svg"></div>
+  <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg"></div>
 
 </main>
 
@@ -1659,16 +1659,16 @@
 
 #clear-canvas{
   position: fixed;
-left: 65px;
-top: 10px;
-z-index: 13;
-border: 2px solid #7300ed;
-cursor: pointer;
-padding: 0;
-margin: 0;
-border-radius: 50%;
-width: 40px;
-height: 40px;
+  left: 20px;
+  top: 75px;
+  z-index: 13;
+  border: 2px solid #7300ed;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
   }
 
   #clear-canvas > img {

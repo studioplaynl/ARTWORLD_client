@@ -12,16 +12,16 @@
     ]
 
 
-     achievements.subscribe(value =>{ 
+    achievements.subscribe(value =>{ 
         anime({
             targets: '#award',
             keyframes,
             loop: false,
             duration: 1500,
-            delay: 2000,
+            delay: 200,
             easing: "easeInSine",
         });
- })
+    })
 </script>
 <div id="awardBox">
     <img src="assets/SHB/svg/AW-icon-award.svg" id="award" bind:this="{award}">

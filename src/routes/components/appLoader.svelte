@@ -27,7 +27,7 @@ function reloadApp(){
 }
 </script>
 {#if !!appOpen}
-    <div id="close" on:click="{closeApp}">X</div>
+    <div id="close" on:click="{closeApp}"><img src="assets/SHB/svg/AW-icon-cross.svg"></div>
 
     <div class="app"
         transition:fly="{{ y: window.innerHeight, duration: 500 }}"
@@ -53,19 +53,19 @@ function reloadApp(){
 
   #close{
     position: fixed;
-    left: 10px;
-    top: 10px;
+    left: 20px;
+    top: 20px;
     z-index: 13;
     border: 2px solid #7300ed;
     cursor: pointer;
-    padding: 10px;
-    margin: 10px;
-    border-radius: 51%;
-    background-color: white;
-    font-weight: bold;
-    width: 20px;
-    height: 20px;
-    text-align: center;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+  #close > img{
+      width: 40px;
   }
 
   

@@ -2,17 +2,21 @@
 import HistoryTracker from "./game/class/HistoryTracker"
 import ManageSession from "./game/ManageSession"
 import {achievements} from "../session"
+import {saveAchievement} from "../api"
 let playTime = Math.floor(Number(ManageSession.userProfile.meta.TotalPlayTime)/10000000)
 let freeaw = false
 
 function freeAward() {
     freeaw = true
+    saveAchievement("TestAward")
 }
-
-$achievements = "free"
 
 </script>
 <div class="awards">
+    <!-- first time logged in -->
+    {#if ManageSession.achievements.achievements[0].firstLogin}
+    <img class="icon" src="assets/SHB/svg/AW-icon-award.svg">
+    {/if}
     {#if ManageSession.achievements.achievements[0].onboardMove}
     <img class="icon" src="assets/SHB/svg/AW-icon-award.svg">
     {/if}
@@ -24,5 +28,8 @@ $achievements = "free"
 
 
 <style>
-
+.awards > img {
+  display: block;
+  margin: 5px auto;
+}
 </style>

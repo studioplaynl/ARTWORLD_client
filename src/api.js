@@ -1,6 +1,7 @@
 import { date } from "svelte-i18n";
 import { client } from "./nakama.svelte"
-import { Session,Profile, Error,Succes } from "./session.js"
+import { Session,Profile, Error,Succes, achievements} from "./session.js"
+import ManageSession from "./routes/game/ManageSession.js"; //push awards to ManageSession
 
 let Sess, pub, prof;
 export let url;
@@ -467,8 +468,13 @@ export function setLoader(state){
   }
 }
 
-export function setAchievment(type,name){
-  let value
-  value[name] = true
-  updateObject("achievment", type, value, true)
+export function saveAchievement(name){
+  ManageSession.achievements.achievements[0][name] = true
+  console.log("achievment:"+ name)
+  const type = "achievements"
+  const key = type + "_" + ManageSession.userProfile.id
+  const pub = 2
+  const value = ManageSession[type]
+  updateObject(type, key, value, pub)
+  achievements.set(ManageSession.achievements.achievements)
 }

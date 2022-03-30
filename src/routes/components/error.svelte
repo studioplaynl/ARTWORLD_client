@@ -59,7 +59,6 @@
 
 </script>
 
-``
 <div id="snackbar" class:show={succes}>
     <div class="icon green"><SuccesIcon/></div>    
 </div>
