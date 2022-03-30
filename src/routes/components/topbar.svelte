@@ -9,8 +9,10 @@ async function goHome(){
 }
 
 async function goBack(){
-    console.log(ManageSession.currentScene)
-    HistoryTracker.activateBackButton(ManageSession.currentScene)
+    console.log(ManageSession.locationHistory)
+    if( ManageSession.locationHistory.length > 0){
+        HistoryTracker.activateBackButton(ManageSession.currentScene)
+    }
 
 }
 
