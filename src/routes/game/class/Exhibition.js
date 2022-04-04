@@ -1,4 +1,4 @@
-class Artwork {
+class Exhibition {
     constructor(config) {
     }
 
@@ -215,4 +215,4 @@ class Artwork {
     }
 }
 
-export default new Artwork()
+export default new Exhibition()

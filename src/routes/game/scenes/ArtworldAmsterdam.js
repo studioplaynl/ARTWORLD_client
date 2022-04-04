@@ -13,8 +13,8 @@ import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js"
 import Move from "../class/Move.js"
-import Homes from "../class/Homes.js"
-import Artwork from "../class/Artwork"
+import ServerCall from "../class/ServerCall"
+import Exhibition from "../class/Exhibition"
 
 export default class ArtworldAmsterdam extends Phaser.Scene {
   constructor() {
@@ -324,7 +324,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
       "tree_palm")
     this.editModeElements.push(this.tree_palm)
 
-    Artwork.AbriBig({
+    Exhibition.AbriBig({
       scene: this,
       name: "exhibit_outdoor_big1",
       posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -500),
@@ -333,7 +333,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     })
     this.editModeElements.push(this.exhibit_outdoor_big1)
 
-    Artwork.AbriSmall2({
+    Exhibition.AbriSmall2({
       scene: this,
       name: "exhibit_outdoor_small2_1",
       posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -777),
@@ -383,7 +383,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
 
 
     //.......... locations ................................................................................
-    Homes.getHomesFiltered("home", "Amsterdam", 100, this)
+    ServerCall.getHomesFiltered("home", "Amsterdam", 100, this)
     this.generateLocations()
     //.......... end locations ............................................................................
 

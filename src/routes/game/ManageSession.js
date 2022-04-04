@@ -18,6 +18,8 @@ class ManageSession {
     this.currentScene // To give access to the scene outside of the game
     this.currentZoom = 1//passing camera zoom from ui to scene
 
+    this.resolveErrorObjectArray = [] //handle load errors for images
+
     this.selectedOnlinePlayer
     this.addressbook
 
