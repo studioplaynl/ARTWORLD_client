@@ -10,7 +10,7 @@ async function goHome(){
 
 async function goBack(){
     console.log(ManageSession.locationHistory)
-    if( ManageSession.locationHistory.length > 0){
+    if( ManageSession.locationHistory.length > 1){
         HistoryTracker.activateBackButton(ManageSession.currentScene)
     }
 
