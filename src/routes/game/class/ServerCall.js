@@ -71,7 +71,7 @@ class ServerCall {
     updateObject(type, name, value, pub)
   }
 
-  async getServerFlatObject(collection, userID, maxItems) {
+  async getServerSingleObject(collection, userID, maxItems) {
     Promise.all([listObjects(collection, userID, maxItems)])
       .then(response => {
         //console.log("collection", collection)
@@ -118,7 +118,7 @@ class ServerCall {
       })
   }
 
-  async getServerCollectionUrls(collection, filter, maxItems, scene) {
+  async getServerCollectionUrls(collection, array, filter, maxItems, scene) {
     let gameObjectRepresentation = collection + '_gameObjectRepresentation'
     scene[gameObjectRepresentation] = []
 

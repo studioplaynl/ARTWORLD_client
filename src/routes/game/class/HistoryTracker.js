@@ -1,5 +1,6 @@
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
+import history from "../../components/historyTrackerStore"
 
 class HistoryTracker {
   constructor() { }
@@ -24,6 +25,16 @@ class HistoryTracker {
         console.log(" ManageSession.locationHistory.push playerPosX playerPosY", playerPosX, playerPosY)
       }
       ManageSession.locationHistory.push({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
+
+      if (ManageSession.locationHistory.length > 1) {
+        console.log("add to history array")
+        //history.update({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
+        history.set(ManageSession.locationHistory)
+      } else {
+        console.log("add to history for the first time")
+        history.set({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
+      }
+
     }
   }
 
