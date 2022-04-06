@@ -2,6 +2,7 @@
     import {achievements} from "../../session"
     import anime from 'animejs';
     let award
+    let lastLength = 0
 
     let keyframes = [
         {opacity: 1,
@@ -12,15 +13,19 @@
     ]
 
 
-    achievements.subscribe(value =>{ 
-        anime({
-            targets: '#award',
-            keyframes,
-            loop: false,
-            duration: 1500,
-            delay: 200,
-            easing: "easeInSine",
-        });
+    achievements.subscribe(value =>{
+        console.log("last" + lastLength)
+        if(lastLength != 0 && lastLength < value.length){
+            anime({
+                targets: '#award',
+                keyframes,
+                loop: false,
+                duration: 1500,
+                delay: 200,
+                easing: "easeInSine",
+            });
+        }
+        lastLength = value.length
     })
 </script>
 <div id="awardBox">

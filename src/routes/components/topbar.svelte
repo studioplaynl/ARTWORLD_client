@@ -60,6 +60,7 @@ function zoomOut() {
         border-radius: 50%;
         background-color: white;
     }
+    
     #logo {
         box-shadow: 5px 5px 0px #7300ed;
  

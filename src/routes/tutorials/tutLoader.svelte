@@ -4,7 +4,7 @@
     import { onMount} from "svelte"
     import {tutorial, CurrentApp, achievements} from "../../session"
     import ManageSession from "../game/ManageSession"
-    import {saveAchievement} from "../../api"
+    import {Achievements} from "../../storage"
     let current = 0
     let hide = []
     let sequence = []
@@ -20,12 +20,14 @@
 
     
     onMount(() => {
+        console.log("achievements")
+        console.log(Achievements.get())
         document.body.addEventListener('click', ()=>{
             if(hide[current] && hide.length > current) {
                 current++
                 hide[current] = false
                 if(sequence[current].type == "achievement" ) {
-                    saveAchievement(sequence[current].name)
+                    Achievements.create(sequence[current].name, "{}")
                 }
             }
         });
@@ -36,15 +38,14 @@
             if (value == "game") {
 
                 setTimeout(()=>{
-                    if(!!!ManageSession.achievements.achievements[0].firstLogin){
-                        saveAchievement("firstLogin")
+                    if(!Achievements.find("firstLogin")){
+                        Achievements.create("firstLogin", "{}")
                     }
                 },1500)
 
                 setTimeout(()=>{
-                    console.log(ManageSession.achievements.achievements[0])
 
-                    if(!!!ManageSession.achievements.achievements[0].onboardMove){
+                    if(!!!Achievements.find("onboardMove")){
                             $tutorial = [
                                 {type: "swipe", direction: "right", element: "phaserId", posX: window.innerWidth/2 , posY: window.innerHeight/2-100, delay: 500},
                                 {type: "tap", doubleTap: true, element: "phaserId", posX: window.innerWidth/2-150 , posY: window.innerHeight/2-200, delay: 1000},

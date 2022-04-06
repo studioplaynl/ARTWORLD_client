@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 import { client, SSL } from "./nakama.svelte"
 import { getAccount, setLoader } from "./api.js"
 import ManageSession from "./routes/game/ManageSession.js"; //push the profile to ManageSession
+import { validate_each_argument } from "svelte/internal";
 
 let storedSession = localStorage.getItem("Session")
 storedSession = JSON.parse(storedSession)
@@ -49,15 +50,13 @@ export const CurrentApp = writable();
 export const tutorial = writable();
 
 
-export const achievements = writable();
-achievements.subscribe((value) => {
-    if (!!value) {
-        console.log(value)
-        // ManageSession.achievements = value
 
-    }
-    
-})
+
+export const achievements = writable([]);
+
+export const liked = writable([]);
+
+export const adressbook = writable([]);
 
 
 export async function login(email, password) {

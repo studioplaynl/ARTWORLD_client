@@ -231,7 +231,7 @@ class Player {
       onlinePlayer.on('pointerup', () => {
         // pass on values to itemsbar.svelte
         ManageSession.selectedOnlinePlayer = onlinePlayer
-        itemsBar.update(itemsbar => itemsbar = { playerClicked: false, onlinePlayerClicked: true })
+        itemsBar.set({ playerClicked: false, onlinePlayerClicked: true })
       })
 
       onlinePlayer.setData("movingKey", "moving")

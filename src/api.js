@@ -2,7 +2,7 @@ import { date } from "svelte-i18n";
 import { client } from "./nakama.svelte"
 import { Session,Profile, Error,Succes, achievements} from "./session.js"
 import ManageSession from "./routes/game/ManageSession.js"; //push awards to ManageSession
-
+import { get } from 'svelte/store'
 let Sess, pub, prof;
 export let url;
 export let user; 
@@ -167,10 +167,10 @@ export async function updateObject(type, name, value, pub,userID) {
 }
 
 
-export async function listObjects(type, userID, limit) {
+export async function listObjects(type, userID, limit, page ) {
   if(!!!limit) limit = 100;
-  const objects = await client.listStorageObjects(Sess, type, userID, limit);
-  console.log(objects)
+  const objects = await client.listStorageObjects(Sess, type, userID, limit, page);
+  // console.log(objects)
   return objects.objects
 }
 
@@ -385,7 +385,7 @@ export async function updateObjectAdmin(id, type, name, value, pub) {
    result = await client.rpc(Sess, rpcid, payload)
    console.log(result)
    if(result.payload.status == "succes"){
-    Succes.update(s=>s=true)
+    Succes.set(true)
    } // succes
    else {
      throw result.payload.status // error
@@ -476,5 +476,12 @@ export function saveAchievement(name){
   const pub = 2
   const value = ManageSession[type]
   updateObject(type, key, value, pub)
-  achievements.set(ManageSession.achievements.achievements)
+  //achievements.set(ManageSession.achievements.achievements)
 }
+
+
+
+
+
+
+
