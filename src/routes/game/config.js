@@ -14,7 +14,7 @@ import DefaultUserHome from "./scenes/DefaultUserHome"
 
 export const CONFIG = {
   WIDTH: window.innerWidth,
-  HEIGHT: window.innerHeight
+  HEIGHT: window.innerHeight //HEIGHT: window.innerHeight - 22
   // WIDTH: '100%',
   // HEIGHT: '100%'
 
