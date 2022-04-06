@@ -8,7 +8,7 @@
   import NameGenerator from "../components/nameGenerator.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
   
-  export let params = {};
+  let params = $location;
   let invalidTitle = true;  
   let history = [],
     historyCurrent;
@@ -1049,12 +1049,12 @@
         <canvas bind:this={videoCanvas} />
       </div>
     {/if}
-    <div class="topbar">
+    <!-- <div class="topbar">
       <div>
         <a on:click={undo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg"></a>
         <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
       </div>
-    </div>
+    </div> -->
     <div class="canvasBox" class:hidden={current === "camera"}>
       <canvas bind:this={canv} class="canvas"  />
     </div>
@@ -1214,6 +1214,8 @@
       </div>
 
       <div class="iconbox">
+        <a on:click={undo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg"></a>
+        <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
         <a
           id="drawing-mode"
           class:currentSelected={current === "draw"}><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" ></a
@@ -1339,6 +1341,11 @@
     padding: 15px;
     transform: translateX(0%);
     width: 280px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
   }
 
   .optionbar.hidden {
@@ -1562,6 +1569,25 @@
 
 }
 
+#clear-canvas{
+  position: fixed;
+  left: 20px;
+  top: 75px;
+  z-index: 13;
+  /* border: 2px solid #7300ed; */
+  box-shadow: 5px 5px 0px #7300ed;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  }
+
+  #clear-canvas > img {
+  width: 40px;
+}
+
 /* mobile */
 @media only screen and (max-width: 700px) {
   .canvasBox {
@@ -1609,6 +1635,9 @@
 
   #framebar {
     margin-bottom: 60px;
+    overflow-y: auto;
+    max-height: 79px;
+    overflow-x: auto;
   }
 
   #framebar > div {
@@ -1650,6 +1679,11 @@
   .currentSelected {
     box-shadow: unset;
   }
+
+  #clear-canvas{
+    bottom: 75px;
+    top: unset;
+  }
 }
 
 .unselected{
@@ -1657,22 +1691,6 @@
 }
 
 
-#clear-canvas{
-  position: fixed;
-  left: 20px;
-  top: 75px;
-  z-index: 13;
-  border: 2px solid #7300ed;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  }
 
-  #clear-canvas > img {
-  width: 40px;
-}
 
 </style>

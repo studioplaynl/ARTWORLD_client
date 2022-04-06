@@ -1,5 +1,5 @@
 <script>
-    import {achievements} from "../../session"
+    import {Achievements} from "../../storage"
     import anime from 'animejs';
     let award
     let lastLength = 0
@@ -13,7 +13,7 @@
     ]
 
 
-    achievements.subscribe(value =>{
+    Achievements.subscribe(value =>{
         console.log("last" + lastLength)
         if(lastLength != 0 && lastLength < value.length){
             anime({

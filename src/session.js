@@ -49,15 +49,11 @@ export const CurrentApp = writable();
 
 export const tutorial = writable();
 
-
-
-
-export const achievements = writable([]);
-
 export const liked = writable([]);
 
 export const adressbook = writable([]);
 
+export const history = writable([])
 
 export async function login(email, password) {
     setLoader(true)

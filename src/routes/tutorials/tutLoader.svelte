@@ -2,7 +2,7 @@
     import Tap from "./gestures/tap.svelte"
     import Swipe from "./gestures/swipe.svelte"
     import { onMount} from "svelte"
-    import {tutorial, CurrentApp, achievements} from "../../session"
+    import {tutorial, CurrentApp} from "../../session"
     import ManageSession from "../game/ManageSession"
     import {Achievements} from "../../storage"
     let current = 0

@@ -67,14 +67,6 @@
 <AchievementAnimation />
 <Router
     routes={{
-        "/": wrap({
-            component: home,
-            conditions: [
-                (detail) => {
-                    return isLogedIn(detail);
-                },
-            ],
-        }),
         "/register": wrap({
             component: registerPage,
             conditions: [
@@ -124,14 +116,14 @@
                 },
             ],
         }),
-        "/drawing/:user?/:name?/:version?": wrap({
-            component: drawing,
-            conditions: [
-                (detail) => {
-                    return isLogedIn(detail);
-                },
-            ],
-        }),
+        // "/drawing/:user?/:name?/:version?": wrap({
+        //     component: drawing,
+        //     conditions: [
+        //         (detail) => {
+        //             return isLogedIn(detail);
+        //         },
+        //     ],
+        // }),
         "/stopmotion/:user?/:name?/:version?": wrap({
             component: drawing,
             conditions: [
@@ -217,6 +209,14 @@
             conditions: [
                 (detail) => {
                     return isModerator(detail);
+                },
+            ],
+        }),
+        "/:app?/:user?/:name?/:version?": wrap({
+            component: home,
+            conditions: [
+                (detail) => {
+                    return isLogedIn(detail);
                 },
             ],
         }),

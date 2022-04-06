@@ -1,7 +1,7 @@
 <script>
     import HistoryTracker from "../game/class/HistoryTracker";
     import ManageSession from "../game/ManageSession";
-    import history from "./historyTrackerStore.js";
+    import {history} from "../../session";
 
     let home = "ArtworldAmsterdam";
 
@@ -11,6 +11,7 @@
             backButtonId.style.visibility = "visible";
         }
     });
+
 
     async function goHome() {
         HistoryTracker.switchScene(ManageSession.currentScene, home, home);

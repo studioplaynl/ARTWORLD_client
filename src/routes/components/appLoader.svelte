@@ -4,15 +4,26 @@ import {CurrentApp} from "../../session"
 import { fly } from 'svelte/transition';
 import HistoryTracker from "../game/class/HistoryTracker"
 import ManageSession from "../game/ManageSession"
+import {location, push} from "svelte-spa-router"
+import {onMount} from "svelte"
+
 let appOpen = false
 let firstTry = true
+export let params
+
 
 const unsubscribe = CurrentApp.subscribe(async value => {
-    if(firstTry) return firstTry = false;
+    if(firstTry) {
+        firstTry = false;
+        let local = $location.split("/")[1]
+        if (local != "login") appOpen = $location.split("/")[1];
+        return value
+    }
     if(value == "game") return
     if(!!$CurrentApp) await HistoryTracker.pauseSceneStartApp(ManageSession.currentScene, value)
     else await HistoryTracker.startSceneCloseApp(ManageSession.currentScene, appOpen)
     appOpen = value
+    if(!!value) push("/" + value)
 });
 
 
@@ -25,6 +36,11 @@ function reloadApp(){
     $CurrentApp = false
     $CurrentApp = app
 }
+
+onMount(()=>{
+    $CurrentApp = $location.split("/")[1]
+})
+
 </script>
 {#if !!appOpen}
     <div id="close" on:click="{closeApp}"><img src="assets/SHB/svg/AW-icon-cross.svg"></div>
@@ -56,7 +72,8 @@ function reloadApp(){
     left: 20px;
     top: 20px;
     z-index: 13;
-    border: 2px solid #7300ed;
+    /* border: 2px solid #7300ed; */
+    box-shadow: 5px 5px 0px #7300ed;
     cursor: pointer;
     padding: 0;
     margin: 0;
@@ -68,6 +85,12 @@ function reloadApp(){
       width: 40px;
   }
 
+  @media only screen and (max-width: 700px) {
+    #close{
+        top: unset;
+        bottom: 20px;
+    }
+  }    
   
   
 

@@ -1,6 +1,6 @@
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
-import history from "../../components/historyTrackerStore"
+import {history} from "../../../session"
 
 class HistoryTracker {
   constructor() { }

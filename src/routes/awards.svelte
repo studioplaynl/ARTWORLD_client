@@ -1,10 +1,8 @@
 <script>
-import HistoryTracker from "./game/class/HistoryTracker"
 import {onMount} from "svelte"
 import ManageSession from "./game/ManageSession"
-import {achievements, Session} from "../session"
 import {Achievements} from "../storage"
-import { each } from "svelte/internal"
+// import { each } from "svelte/internal"
 let playTime = Math.floor(Number(ManageSession.userProfile.meta.TotalPlayTime)/10000000)
 let freeaw = false
 // })
@@ -32,7 +30,7 @@ function update(){
 </script>
 <div class="awards">
     <!-- first time logged in -->
-    {#each $achievements as  X}
+    {#each $Achievements as  X}
         <img class="icon" src="assets/SHB/svg/AW-icon-award.svg">
         <p>{X.key}</p>
     {/each}
