@@ -11,6 +11,12 @@
   import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin.js'
   import { CONFIG, SCENES } from "./config";
   import {sessionCheck} from "../../api"
+  import Itemsbar from "../components/itemsbar.svelte";
+  import AppLoader from "../components/appLoader.svelte"
+  import TopBar from "../components/topbar.svelte"
+  import AchievementAnimation from "../components/achievement.svelte"
+  import TutLoader from "../tutorials/tutLoader.svelte"
+
 
   onMount(async () => {
     sessionCheck()
@@ -88,6 +94,13 @@
   })
 </script>
 
+
+<Itemsbar />
+<AppLoader />
+<TopBar />
+<AchievementAnimation />
 <main>
   <div id="phaserId" />
 </main>
+<TutLoader/>
+

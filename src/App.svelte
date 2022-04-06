@@ -9,11 +9,10 @@
     import login from "./routes/auth/login.svelte";
     import profile from "./routes/profile.svelte";
     import match from "./routes/match.svelte";
-    import drawing from "./routes/apps/drawing.svelte";
+    // import drawing from "./routes/apps/drawing.svelte";
     import { Session, Profile, logout } from "./session.js";
-    import UploadAvatar from "./routes/uploadAvatar.svelte";
+    // import UploadAvatar from "./routes/uploadAvatar.svelte";
     import Error from "./routes/components/error.svelte";
-    import Itemsbar from "./routes/components/itemsbar.svelte";
     import Menu from "./routes/components/menu.svelte";
     import Friends from "./routes/friends.svelte";
     import Admin from "./routes/admin.svelte"
@@ -23,10 +22,7 @@
     import MarioSequencer from "./routes/apps/marioSequencer.svelte"
     import player from "./routes/apps/player.svelte"
     import Moderate from "./routes/moderate.svelte";
-    import AppLoader from "./routes/components/appLoader.svelte"
-    import TopBar from "./routes/components/topbar.svelte"
-    import TutLoader from "./routes/tutorials/tutLoader.svelte"
-    import AchievementAnimation from "./routes/components/achievement.svelte"
+
     onMount(()=>{
         document.getElementById("loader").classList.add('hide');
 
@@ -61,10 +57,7 @@
 </script>
 
 <Menu />
-<Itemsbar />
-<AppLoader />
-<TopBar />
-<AchievementAnimation />
+
 <Router
     routes={{
         "/register": wrap({
@@ -124,14 +117,14 @@
         //         },
         //     ],
         // }),
-        "/stopmotion/:user?/:name?/:version?": wrap({
-            component: drawing,
-            conditions: [
-                (detail) => {
-                    return isLogedIn(detail);
-                },
-            ],
-        }),
+        // "/stopmotion/:user?/:name?/:version?": wrap({
+        //     component: drawing,
+        //     conditions: [
+        //         (detail) => {
+        //             return isLogedIn(detail);
+        //         },
+        //     ],
+        // }),
         "/mandala/:user?/:name?/:version?": wrap({
             component: mandala,
             conditions: [
@@ -148,14 +141,14 @@
                 },
             ],
         }),
-        "/avatar/:user?/:name?/:version?": wrap({
-            component: drawing,
-            conditions: [
-                (detail) => {
-                    return isLogedIn(detail);
-                },
-            ],
-        }),
+        // "/avatar/:user?/:name?/:version?": wrap({
+        //     component: drawing,
+        //     conditions: [
+        //         (detail) => {
+        //             return isLogedIn(detail);
+        //         },
+        //     ],
+        // }),
         "/audio/:user?/:name?/:version?": wrap({
             component: player,
             conditions: [
@@ -180,14 +173,14 @@
                 },
             ],
         }),
-        "/house/:user?/:name?/:version?": wrap({
-            component: drawing,
-            conditions: [
-                (detail) => {
-                    return isLogedIn(detail);
-                },
-            ],
-        }),
+        // "/house/:user?/:name?/:version?": wrap({
+        //     component: drawing,
+        //     conditions: [
+        //         (detail) => {
+        //             return isLogedIn(detail);
+        //         },
+        //     ],
+        // }),
         "/upload/:user?/:name?": wrap({
             component: upload,
             conditions: [
@@ -222,6 +215,5 @@
         }),
     }}
 />
-<TutLoader />
 <Error />
 

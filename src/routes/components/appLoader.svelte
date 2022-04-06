@@ -26,9 +26,16 @@ const unsubscribe = CurrentApp.subscribe(async value => {
     if(!!value) push("/" + value)
 });
 
+const unsubscribe2 = location.subscribe(async ()=>{
+    appOpen = $location.split("/")[1];
+    console.log(appOpen)
+})
+
 
 async function closeApp(){
-    $CurrentApp = false
+    console.log("closeApp")
+    $CurrentApp = ""
+    appOpen = ""
 }
 
 function reloadApp(){

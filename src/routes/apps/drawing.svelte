@@ -2,13 +2,13 @@
   import { fabric } from "./fabric";
   import { location, replace } from "svelte-spa-router";
   import { onMount, beforeUpdate } from "svelte";
-  import { uploadImage, user, uploadAvatar, uploadHouse,getObject, validate } from "../../api.js";
+  import { uploadImage, user, uploadAvatar, uploadHouse,getObject, setLoader } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session, Profile } from "../../session.js";
   import NameGenerator from "../components/nameGenerator.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
   
-  let params = $location;
+  let params = {user:$location.split("/")[2],name: $location.split("/")[3] }
   let invalidTitle = true;  
   let history = [],
     historyCurrent;
@@ -47,6 +47,7 @@
     };
 
   onMount(() => {
+    setLoader(true)
     const autosave = setInterval(() => {
       if (!saved) {
         let data = {};
@@ -302,6 +303,7 @@
       if(!!!displayName){
         displayName = Date.now() + "_" + title
       }
+      replace(`${$location}/${$Session.user_id}/${displayName}`)
       await uploadImage(displayName, appType, json, blobData, status,version,title);
       saved = true;
       saving = false
@@ -371,29 +373,29 @@
   };
 
   const getImage = async () => {
-    let localStore = JSON.parse(localStorage.getItem("Drawing"));
-    if (!!localStore) {
-      console.log(localStore);
-      console.log("store " + localStore.name);
-      console.log("param " + params.name);
-      if (localStore.name == params.name) {
-        console.log(localStore.type);
-        if (localStore.type == "drawing") {
-          console.log("test");
-          canvas.loadFromJSON(
-            localStore.drawing,
-            canvas.renderAll.bind(canvas)
-          );
-        }
-        if (localStore.type == "stopmotion") {
-          frames = localStore.frames;
-          canvas.loadFromJSON(
-            localStore.frames[0],
-            canvas.renderAll.bind(canvas)
-          );
-        }
-      }
-    }
+    // let localStore = JSON.parse(localStorage.getItem("Drawing"));
+    // if (!!localStore) {
+    //   console.log(localStore);
+    //   console.log("store " + localStore.name);
+    //   console.log("param " + params.name);
+    //   if (localStore.name == params.name) {
+    //     console.log(localStore.type);
+    //     if (localStore.type == "drawing") {
+    //       console.log("test");
+    //       canvas.loadFromJSON(
+    //         localStore.drawing,
+    //         canvas.renderAll.bind(canvas)
+    //       );
+    //     }
+    //     if (localStore.type == "stopmotion") {
+    //       frames = localStore.frames;
+    //       canvas.loadFromJSON(
+    //         localStore.frames[0],
+    //         canvas.renderAll.bind(canvas)
+    //       );
+    //     }
+    //   }
+    // }
     if (appType != "avatar" && appType != "house") {
       if (!!params.name && !!params.user) {
         let Object = await getObject(appType, params.name, params.user)
@@ -459,6 +461,7 @@
           })
           .catch((err) => console.log(err));
      }
+     setLoader(false)
   };
 
   function dataURItoBlob(dataURI) {
