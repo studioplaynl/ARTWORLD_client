@@ -29,6 +29,7 @@ class HistoryTracker {
       if (ManageSession.locationHistory.length > 1) {
         console.log("add to history array")
         //history.update({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
+        // history.update((value)=>{value.push("test"); return value})
         history.set(ManageSession.locationHistory)
       } else {
         console.log("add to history for the first time")

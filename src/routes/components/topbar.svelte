@@ -5,12 +5,12 @@
 
     let home = "ArtworldAmsterdam";
 
-    history.subscribe((value) => {
-        const backButtonId = document.getElementById("back");
-        if (value.length > 1) {
-            backButtonId.style.visibility = "visible";
-        }
-    });
+    // history.subscribe((value) => {
+    //     const backButtonId = document.getElementById("back");
+    //     if (value.length > 1) {
+    //         backButtonId.style.visibility = "visible";
+    //     }
+    // });
 
 
     async function goHome() {
@@ -48,8 +48,10 @@
         /></a
     >
     <a on:click={goBack}
+
         ><img
             class="TopIcon"
+            class:showBack="{$history.length > 1}"
             id="back"
             src="/assets/SHB/svg/AW-icon-previous.svg"
         /></a
@@ -86,5 +88,9 @@
 
     #back {
         visibility: hidden;
+    }
+
+    .showBack{
+        visibility: visible !important;
     }
 </style>

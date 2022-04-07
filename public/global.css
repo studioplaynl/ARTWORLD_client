@@ -21,6 +21,10 @@ body {
 	display: none;
 }
 
+
+.show {
+	display: block;
+}
 a {
 	color: rgb(0,100,200);
 	text-decoration: none;
