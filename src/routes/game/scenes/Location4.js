@@ -65,8 +65,6 @@ export default class Location4 extends Phaser.Scene {
     this.playerIsMovingByClicking = false;
 
     this.currentZoom
-    this.UI_Scene
-
   }
 
   async preload() {
@@ -140,12 +138,6 @@ export default class Location4 extends Phaser.Scene {
 
     this.physics.add.collider(this.player, platforms);
     //this.generateBouncingBird()
-
-
-    //......... UI Scene  .................................................................................
-    this.UI_Scene = this.scene.get("UI_Scene")
-    this.scene.launch("UI_Scene")
-    //......... end UI Scene ..............................................................................
 
     Player.loadPlayerAvatar(this, -1185, 692)
   } // end create

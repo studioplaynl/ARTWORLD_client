@@ -91,7 +91,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         //UI scene
         this.currentZoom
-        this.UI_Scene
     }
 
     init(data) {
@@ -142,16 +141,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         this.gameCam.zoom = 1
         this.gameCam.startFollow(this.player)
         this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
-
         //......... end PLAYER VS WORLD .......................................................................
-
-        //......... UI Scene  .................................................................................
-        this.UI_Scene = this.scene.get("UI_Scene")
-        //this.scene.launch("UI_Scene")
-        // this.currentZoom = this.UI_Scene.currentZoom
-        // this.UI_Scene.location = this.location
-        // this.gameCam.zoom = this.currentZoom
-        //......... end UI Scene ..............................................................................
 
         this.artworksListSpinner = this.rexSpinner.add.pie({
             x: this.worldSize.x / 2,

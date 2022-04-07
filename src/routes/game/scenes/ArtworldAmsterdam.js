@@ -85,7 +85,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     this.playerIsMovingByClicking = false
 
     this.currentZoom
-    this.UI_Scene
 
     //itemsbar
 
@@ -388,16 +387,6 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //.......... end locations ............................................................................
 
     //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
-
-
-    //......... UI Scene  .................................................................................
-    //* UI scene is never stopped, so could be launched at NetworkBoot and later never relaunched
-    this.UI_Scene = this.scene.get("UI_Scene")
-    // this.scene.launch("UI_Scene")
-    // this.currentZoom = this.UI_Scene.currentZoom
-    // this.UI_Scene.location = this.location
-    // this.gameCam.zoom = this.currentZoom
-    //......... end UI Scene ..............................................................................
 
     //create items bar for onlineplayer, after UIscene, because it need currentZoom
     //Player.createOnlinePlayerItemsBar(this)
