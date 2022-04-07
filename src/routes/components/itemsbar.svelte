@@ -155,16 +155,16 @@ async function getAdressbook(){
     <div id="left">
         <a on:click={Profile} class="avatar"><img src="{user_avatar_url}"></a>
         <a on:click="{()=>{goHome()}}" class="avatar"><img src="{user_house_url}"></a>
-        <a on:click={award}><img class="icon" src="assets/SHB/svg/AW-icon-award.svg"></a>
-        <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook.svg"></a>
+        <a on:click={award}><img class="icon" src="assets/SHB/svg/AW-icon-achievement.svg"></a>
+        <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook-vert.svg"></a>
 
-        <a on:click="{()=>{goApp("drawing")}}"><img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg"></a>
-        <a on:click="{()=>{goApp("stopmotion")}}"><img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg"></a>
+        <a on:click="{()=>{goApp("drawing")}}"><img class="icon" src="assets/SHB/svg/AW-icon-drawing.svg"></a>
+        <a on:click="{()=>{goApp("stopmotion")}}"><img class="icon" src="assets/SHB/svg/AW-icon-animation.svg"></a>
 
         <a on:click={getLiked}><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg"></a>
 
         <span>-</span>
-        <a on:click={logout}><img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg"></a>
+        <a on:click={logout}><img class="icon" src="assets/SHB/svg/AW-icon-exit.svg"></a>
     </div>
     <div id="right">
         {#if current == "liked"}
