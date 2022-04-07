@@ -38,6 +38,8 @@ class ManageSession {
     this.playerObjectSelf
     this.createPlayer = true
     this.playerMove
+    this.playerClicks = 0
+    this.playerClickTime = 0
     this.playerPosX // store playerPosX, also parsed from URL, to create player
     this.playerPosY // store playerPosY, also parsed from URL, to create player
     this.selectedOnlinePlayer // pass on the clicked on OnlinePlayer

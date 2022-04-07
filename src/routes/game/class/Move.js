@@ -96,7 +96,7 @@ class Move {
   }
 
   checkIfPlayerReachedMoveGoal(scene) {
-// function to stop the player when it reached it goal
+    // function to stop the player when it reached it goal
 
     //  10 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
@@ -121,7 +121,7 @@ class Move {
         scene.player.body.reset(scene.target.x, scene.target.y)
         // send Stop command
         ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
-        
+
         this.updatePositionHistory(scene) // update the url and historyTracker
 
         //update last player position in manageSession for when the player is reloaded inbetween scenes
@@ -135,10 +135,10 @@ class Move {
     }
   }
 
-  updatePositionHistory(scene){
+  updatePositionHistory(scene) {
     const passPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)
     const passPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)
-    
+
     //update url 
     ManageSession.setUrl(scene.location, passPosX, passPosY)
     // put the new pos in the history tracker
@@ -146,7 +146,7 @@ class Move {
   }
 
   moveBySwiping(scene) {
-    if (scene.input.activePointer.isDown && scene.isClicking == false && ManageSession.playerMove) {
+    if (scene.input.activePointer.isDown && !scene.isClicking && ManageSession.playerMove) {
       scene.isClicking = true
     }
     if (!scene.input.activePointer.isDown && scene.isClicking == true) {
@@ -193,20 +193,22 @@ class Move {
   }
 
   moveByTapping(scene) {
-    if (scene.input.activePointer.isDown && scene.isClicking == false && ManageSession.playerMove) {
-      scene.isClicking = true
-    }
-    if (!scene.input.activePointer.isDown && scene.isClicking == true) {
+    if (!scene.input.activePointer.isDown && ManageSession.playerMove) {
+      
       //doubletap: first time mouse up
-      let lastTime = 0
-      //doubletap: second time mouse down
-      scene.input.on("pointerdown", () => {
-        //doubletap: second time mouse down: count time
-        let clickDelay = scene.time.now - lastTime
+      ManageSession.playerClicks = 1
 
-        lastTime = scene.time.now
-        if (clickDelay < 350 && scene.graffitiDrawing == false) {
+      ManageSession.playerClickTime = scene.time.now
+      //doubletap: second time mouse up
+      scene.input.on("pointerup", () => {
+        //doubletap: second time mouse up: count time in between clicks
+        let clickDelay = scene.time.now - ManageSession.playerClickTime
 
+        //block too many clicks
+        if (clickDelay < 350 && ManageSession.playerClicks == 1) {
+          //block too many clicks
+          ManageSession.playerClicks = 0
+          
           // play "move" animation
           // play the animation as soon as possible so it is more visible
           this.movingAnimation(scene, "moving")
