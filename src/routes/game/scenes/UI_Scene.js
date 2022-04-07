@@ -67,7 +67,7 @@ export default class UI_Scene extends Phaser.Scene {
     //.......... end INPUT ................................................................................
     //......... DEBUG FUNCTIONS ...........................................................................
     this.events.on('gameEditMode', this.gameEditModeSign, this) // show edit mode indicator
-    this.events.on('gameEditMode', this.editElementsScene, this) // show edit mode indicator
+    this.events.on('gameEditMode', this.editElementsScene, this) // make elements editable
 
     DebugFuntions.keyboard(this)
     //......... end DEBUG FUNCTIONS .......................................................................
@@ -102,18 +102,35 @@ export default class UI_Scene extends Phaser.Scene {
     let scene = ManageSession.currentScene
     switch (arg) {
       case 'on':
-        scene.editModeElements.forEach((element) => {
-          element.setInteractive({ draggable: true })
+        if (typeof scene.editElementsScene == "undefined"){
+          break
+        }
 
-        })
+        if (scene.editModeElements.length > 0){
+
+          scene.editModeElements.forEach((element) => {
+            element.setInteractive({ draggable: true })
+  
+          })
+
+        }
+
         break
 
       case 'off':
+        
+        if (typeof scene.editElementsScene == "undefined"){
+          break
+        }
+
+        if (scene.editModeElements.length > 0){
+
         scene.editModeElements.forEach((element) => {
           element.disableInteractive()
           console.log("element", element)
         })
         
+      }
         break
     }
   }
@@ -123,7 +140,7 @@ export default class UI_Scene extends Phaser.Scene {
     switch (arg) {
       case 'on':
         let width = this.sys.game.canvas.width
-        let height = this.sys.game.canvas.height
+        //let height = this.sys.game.canvas.height
 
 
         this.gameEditModeSignGraphic = this.add.graphics()
