@@ -6,7 +6,6 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
 import Player from '../class/Player.js'
 import Preloader from '../class/Preloader.js'
 import Background from "../class/Background.js"
-import DebugFuntions from "../class/DebugFuntions.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
 // import GenerateLocation from "../class/GenerateLocation.js"
 import HistoryTracker from "../class/HistoryTracker.js"

@@ -1,9 +1,7 @@
-import { CONFIG } from "../config.js"
 import ManageSession from "../ManageSession"
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js"
 import Player from '../class/Player.js'
-import DebugFuntions from "../class/DebugFuntions.js"
 import Preloader from '../class/Preloader.js'
 
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"

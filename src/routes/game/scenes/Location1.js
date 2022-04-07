@@ -7,7 +7,6 @@ import PlayerDefaultShadow from "../class/PlayerDefaultShadow.js"
 import Player from '../class/Player.js'
 import Preloader from '../class/Preloader.js'
 import BouncingBird from "../class/BouncingBird.js"
-import DebugFuntions from "../class/DebugFuntions.js"
 import LocationDialogbox from "../class/LocationDialogbox.js"
 import GraffitiWall from "../class/GraffitiWall.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
