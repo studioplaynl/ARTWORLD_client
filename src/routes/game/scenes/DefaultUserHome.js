@@ -147,7 +147,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         //......... UI Scene  .................................................................................
         this.UI_Scene = this.scene.get("UI_Scene")
-        this.scene.launch("UI_Scene")
+        //this.scene.launch("UI_Scene")
         // this.currentZoom = this.UI_Scene.currentZoom
         // this.UI_Scene.location = this.location
         // this.gameCam.zoom = this.currentZoom

@@ -67,7 +67,7 @@ export default class UI_Scene extends Phaser.Scene {
     //.......... end INPUT ................................................................................
     //......... DEBUG FUNCTIONS ...........................................................................
     this.events.on('gameEditMode', this.gameEditModeSign, this) // show edit mode indicator
-    this.events.on('gameEditMode', this.editElementsScene, this) // make elements editable
+    //this.events.on('gameEditMode', this.editElementsScene, this) // make elements editable
 
     DebugFuntions.keyboard(this)
     //......... end DEBUG FUNCTIONS .......................................................................
@@ -90,7 +90,6 @@ export default class UI_Scene extends Phaser.Scene {
 
   } //create
 
-
   resize() {
     //console.log("resizing")
     let width = this.sys.game.canvas.width
@@ -98,19 +97,20 @@ export default class UI_Scene extends Phaser.Scene {
 
     //this.camUI.resize(width, height);
   }
+
   editElementsScene(arg) {
     let scene = ManageSession.currentScene
     switch (arg) {
       case 'on':
-        if (typeof scene.editElementsScene == "undefined"){
+        if (typeof scene.editElementsScene == "undefined") {
           break
         }
 
-        if (scene.editModeElements.length > 0){
+        if (scene.editModeElements.length > 0) {
 
           scene.editModeElements.forEach((element) => {
             element.setInteractive({ draggable: true })
-  
+
           })
 
         }
@@ -118,42 +118,40 @@ export default class UI_Scene extends Phaser.Scene {
         break
 
       case 'off':
-        
-        if (typeof scene.editElementsScene == "undefined"){
+
+        if (typeof scene.editElementsScene == "undefined") {
           break
         }
 
-        if (scene.editModeElements.length > 0){
+        if (scene.editModeElements.length > 0) {
 
-        scene.editModeElements.forEach((element) => {
-          element.disableInteractive()
-          console.log("element", element)
-        })
-        
-      }
+          scene.editModeElements.forEach((element) => {
+            element.disableInteractive()
+            console.log("element", element)
+          })
+
+        }
         break
     }
   }
 
   gameEditModeSign(arg) {
-    console.log("gameEditMode received", arg)
+    const width = this.sys.game.canvas.width
+    //let height = this.sys.game.canvas.height
+    this.gameEditModeSignGraphic
+    
+
     switch (arg) {
       case 'on':
-        let width = this.sys.game.canvas.width
-        //let height = this.sys.game.canvas.height
-
-
         this.gameEditModeSignGraphic = this.add.graphics()
         this.gameEditModeSignGraphic.fillStyle(0xff0000, 1)
-
         //  32px radius on the corners
         this.gameEditModeSignGraphic.fillRoundedRect(width / 2, 20, 100, 40, 8)
-
         this.gameEditModeSignText = this.add.text(width / 2 + 50, 20 + 20, "edit mode").setOrigin(0.5)
-
         break
 
       case 'off':
+        console.log("gameEditMode received", arg)
         this.gameEditModeSignGraphic.destroy()
         this.gameEditModeSignText.destroy()
         break
@@ -162,10 +160,7 @@ export default class UI_Scene extends Phaser.Scene {
 
         break
     }
-
-
-
-  }
+  } // end gameEditModeSign
 
   update(time, delta) {
 

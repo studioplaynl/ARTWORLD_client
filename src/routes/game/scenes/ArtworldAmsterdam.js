@@ -393,7 +393,7 @@ export default class ArtworldAmsterdam extends Phaser.Scene {
     //......... UI Scene  .................................................................................
     //* UI scene is never stopped, so could be launched at NetworkBoot and later never relaunched
     this.UI_Scene = this.scene.get("UI_Scene")
-    this.scene.launch("UI_Scene")
+    // this.scene.launch("UI_Scene")
     // this.currentZoom = this.UI_Scene.currentZoom
     // this.UI_Scene.location = this.location
     // this.gameCam.zoom = this.currentZoom
