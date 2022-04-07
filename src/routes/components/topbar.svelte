@@ -3,7 +3,7 @@
     import ManageSession from "../game/ManageSession";
     import {history} from "../../session";
 
-    let home = "ArtworldAmsterdam";
+    let home = "Artworld";
 
     // history.subscribe((value) => {
     //     const backButtonId = document.getElementById("back");

@@ -4,7 +4,7 @@ import { getAccount, listObjects, setLoader, url } from '../../../api.js'
 export default class MainMenu extends Phaser.Scene {
   constructor() {
     super("MainMenu")
-    this.fallBackLocation = "ArtworldAmsterdam"
+    this.fallBackLocation = "Artworld"
   }
 
   preload() {

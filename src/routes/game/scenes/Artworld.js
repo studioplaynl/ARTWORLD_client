@@ -56,7 +56,7 @@ export default class Artworld extends Phaser.Scene {
 
     this.offlineOnlineUsers
 
-    this.location = "ArtworldAmsterdam"
+    this.location = "Artworld"
 
     //.......................REX UI ............
     this.COLOR_PRIMARY = 0xff5733

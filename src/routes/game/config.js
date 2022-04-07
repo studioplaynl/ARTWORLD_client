@@ -7,7 +7,7 @@ import Location1 from "./scenes/Location1"
 import Location3 from "./scenes/Location3"
 import Location4 from "./scenes/Location4"
 import UI_Scene from "./scenes/UI_Scene"
-import ArtworldAmsterdam from "./scenes/ArtworldAmsterdam.js"
+import Artworld from "./scenes/Artworld.js"
 import TestCoordinates from "./scenes/TestCoordinates"
 import DefaultUserHome from "./scenes/DefaultUserHome"
 
@@ -30,7 +30,7 @@ export const SCENES = [
   Location1,
   Location3,
   Location4,
-  ArtworldAmsterdam,
+  Artworld,
   UI_Scene,
   TestCoordinates,
   DefaultUserHome
