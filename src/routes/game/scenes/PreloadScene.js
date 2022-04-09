@@ -47,8 +47,10 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.svg('close', './assets/SHB/svg/AW-icon-cross.svg', { scale: 0.6 })
         this.load.svg('delete', './assets/SHB/svg/AW-icon-trash.svg', { scale: 0.6 })
         this.load.svg('save', './assets/SHB/svg/AW-icon-save.svg', { scale: 0.6 })
-        
 
+        this.load.svg('abstract1', './assets/svg/abstract1.svg')
+        this.load.svg('pencil', './assets/svg/pencil.svg', {scale: 2})
+        
         // this.load.image('friend', './assets/popup/friend.png')
         // this.load.image('friend2', './assets/popup/friend2.png')
         // this.load.image('friend3', './assets/popup/friend3.png')

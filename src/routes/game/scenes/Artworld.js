@@ -546,6 +546,14 @@ export default class Artworld extends Phaser.Scene {
     this.mario_star.setDepth(140)
 
     music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
+
+    location1Vector = new Phaser.Math.Vector2(22, 800)
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      location1Vector
+    )
+    this.pencil = this.add.image(location1Vector.x, location1Vector.y, "pencil")
+
   }
 
   update(time, delta) {
