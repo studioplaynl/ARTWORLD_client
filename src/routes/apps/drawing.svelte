@@ -4,9 +4,11 @@
   import { onMount, beforeUpdate } from "svelte";
   import { uploadImage, user, uploadAvatar, uploadHouse,getObject, setLoader } from "../../api.js";
   import { client } from "../../nakama.svelte";
-  import { Session, Profile } from "../../session.js";
+  import { Session, Profile, tutorial, } from "../../session.js";
+  import {Achievements} from "../../storage"
   import NameGenerator from "../components/nameGenerator.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
+  import Avatar from "../components/avatar.svelte"
   
   let params = {user:$location.split("/")[2],name: $location.split("/")[3] }
   let invalidTitle = true;  
@@ -715,6 +717,21 @@
 
   }
   */
+
+
+  setTimeout(()=>{
+
+  if(!!!Achievements.find("FirstAvatar")){
+          $tutorial = [
+              {type: "tap", element: "playPause", delay: 500},
+              {type: "tap", element: "drawing-mode", delay: 4000},
+              {type: "achievement", name: "FirstAvatar"}
+          ]
+      }
+  },7000)
+
+
+
   //////////////////// avatar functies end /////////////////////////////////
 
   //////////////////// camera functies ///////////////////////////////
@@ -1081,9 +1098,10 @@
             <div id="frameNew" on:click={addFrame}><div>+</div></div>
           {/if}
         </div>
-        <div>
+        <div id="frameButtons">
           {#if play}
             <a
+              id = "playPause"
               on:click={() => {
                 play = false;
                 setPlay(false);
@@ -1091,6 +1109,7 @@
             >
           {:else}
             <a
+              id = "playPause"
               on:click={() => {
                 play = true;
                 setPlay(true);
@@ -1266,6 +1285,11 @@
   </div>
 
   <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg"></div>
+  {#if appType == "avatar"}
+    <div id="avatarBox">
+      <Avatar/>
+    </div>
+  {/if}
 
 </main>
 
@@ -1494,6 +1518,7 @@
     align-items: center;
     position: relative;
     height: 100vh;
+    flex-direction: column;
   }
 
   #framebar > div > div {
@@ -1693,7 +1718,15 @@
   filter: grayscale(1) opacity(0.5);
 }
 
+#avatarBox {
+  position: fixed;
+  top: 130px;
+  left: 20px;
+}
 
+#frameButtons > a > img {
+  display: block;
+}
 
 
 </style>

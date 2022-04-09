@@ -7,6 +7,7 @@
   import StatusComp from "./components/statusbox.svelte"
   import DeleteComp from "./components/deleteButton.svelte"
   import NameEdit from "./components/nameEdit.svelte"
+  import Avatar from "./components/avatar.svelte"
   import { onDestroy, onMount} from 'svelte';
 
   import {Card} from "attractions"
@@ -266,14 +267,10 @@ function moveToTrash(key) {
     
     <div class="top">
       <h1> {user}</h1><br>
-        <div id="avatarDiv" >
-          {#if !!avatar_url}
-          <a on:click="{()=>{goApp("avatar")}}"><div id="avatar" bind:this={avatar} style="background: url({avatar_url}) 0px 0px;"></div></a>
-
-          {:else}
-            <a on:click="{()=>{goApp("avatar")}}">Create avatar</a>
-          {/if}
-        </div>
+        <!-- <div on:click="{()=>{goApp("avatar")}}"> -->
+           <Avatar/>
+        <!-- </div> -->
+       
       <div id="avatarDiv">
         {#if !!house_url}
         <a on:click="{()=>{goApp("house")}}"><img id="house" src={house_url} /></a>

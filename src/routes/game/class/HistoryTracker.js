@@ -120,13 +120,13 @@ class HistoryTracker {
   }
 
   async startSceneCloseApp(scene, app){
-    await ManageSession.socket.rpc("leave", "drawing") //hard coded?
+    await ManageSession.socket.rpc("leave", app)
+    await ManageSession.getStreamUsers("join", ManageSession.location)
+
     console.log(scene)
     scene.physics.resume()
     scene.scene.resume()
     //close app
-
-    await ManageSession.getStreamUsers("join", ManageSession.location)
   }
 }
 
