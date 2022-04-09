@@ -3,6 +3,7 @@ import { client } from "./nakama.svelte"
 import { Session,Profile, Error,Succes, achievements} from "./session.js"
 import ManageSession from "./routes/game/ManageSession.js"; //push awards to ManageSession
 import { get } from 'svelte/store'
+
 let Sess, pub, prof;
 export let url;
 export let user; 

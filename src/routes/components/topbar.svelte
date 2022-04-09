@@ -5,21 +5,13 @@
 
     let home = "Artworld";
 
-    // history.subscribe((value) => {
-    //     const backButtonId = document.getElementById("back");
-    //     if (value.length > 1) {
-    //         backButtonId.style.visibility = "visible";
-    //     }
-    // });
-
-
     async function goHome() {
         HistoryTracker.switchScene(ManageSession.currentScene, home, home);
     }
 
     async function goBack() {
-        console.log(ManageSession.locationHistory);
-        if (ManageSession.locationHistory.length > 1) {
+        console.log($history);
+        if ($history.length > 1) {
             HistoryTracker.activateBackButton(ManageSession.currentScene);
         }
     }
