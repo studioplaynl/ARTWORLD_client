@@ -120,7 +120,6 @@ export default class Location4 extends Phaser.Scene {
 
     //......... end PLAYER VS WORLD .......................................................................
 
-    this.locationDialogBoxContainersGroup = this.add.group();
 
     // this.generateLocations()
 

@@ -14,6 +14,7 @@ import HistoryTracker from "../class/HistoryTracker.js"
 import Move from "../class/Move.js"
 import ServerCall from "../class/ServerCall"
 import Exhibition from "../class/Exhibition"
+import { CurrentApp } from "../../../session"
 
 export default class Artworld extends Phaser.Scene {
   constructor() {
@@ -552,8 +553,29 @@ export default class Artworld extends Phaser.Scene {
       this.worldSize,
       location1Vector
     )
-    this.pencil = this.add.image(location1Vector.x, location1Vector.y, "pencil")
 
+    // this.pencil = this.add.image(location1Vector.x, location1Vector.y, "pencil")
+    // this.pencil.rotation = 0.12
+    // this.pencil.setInteractive()
+    // this.pencil.on('pointerup', () => CurrentApp.set("drawing"))
+
+    this.pencil = new GenerateLocation({
+      scene: this,
+      type: "image",
+      
+      draggable: false,
+      x: location1Vector.x,
+      y: location1Vector.y,
+      appUrl: "drawing",
+      locationImage: "pencil",
+      enterButtonImage: "enter_button",
+      locationText: "drawingApp",
+      fontColor: 0x8dcb0e,
+      color1: 0x8dcb0e,
+      color2: 0x3f8403,
+      color3: 0x63a505,
+    })
+    this.pencil.rotation = 0.12
   }
 
   update(time, delta) {

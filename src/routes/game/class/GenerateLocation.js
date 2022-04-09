@@ -1,6 +1,6 @@
 import CoordinatesTranslator from "./CoordinatesTranslator"
 import HistoryTracker from "./HistoryTracker"
-
+import { CurrentApp } from "../../../session"
 export default class GenerateLocation extends Phaser.GameObjects.Container {
 
     constructor(config) {
@@ -27,14 +27,17 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.location
         this.internalUrl = config.internalUrl
         this.externalUrl = config.externalUrl
+        this.appUrl = config.appUrl
         this.enterButtonTween
         this.enterCircleTween
         this.size = config.size
+        
+        
 
         let width
 
         if (typeof this.size === "undefined") {
-            width = 128
+            width = 200
         } else {
             width = this.size
         }
@@ -61,6 +64,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             //set the location to a fixed size, also scales the physics body
             this.location.displayWidth = width
             this.location.scaleY = this.location.scaleX
+            this.location.body.setSize(this.location.width, this.location.height)
         }
 
         if (this.type === "isoTriangle") {
@@ -80,6 +84,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.location.body.setSize(this.location.width, this.location.height * 1.6)
             this.location.body.setOffset(0, -(this.location.height / 1.4))
         }
+
+       
 
         // can't drag the location if there is another function for pointerdown
         // we set the location either clickable or dragable (because dragging is a edit function)
@@ -201,10 +207,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         // })
 
-        this.enterCircle.on('pointerup', () => {
+        this.enterCircle.on('pointerdown', () => {
             //check when entering the location if it is an URL or scene
 
-            if (this.internalUrl) {
+            if (typeof this.internalUrl != "undefined") {
                 console.log("internal url 1")
                 this.scene.scene.pause()
                 let baseUrl = window.location.href.split('?')[0]
@@ -223,7 +229,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                     window.location.href = url
                     //window.location.reload()
                 }
-            } else if (this.externalUrl) {
+            }
+
+             if (typeof this.externalUrl != "undefined") {
                 this.scene.scene.pause()
                 var url = this.externalUrl
 
@@ -235,10 +243,15 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                 else if (!s) {
                     window.location.href = url
                 }
-            } else {
-                console.log("GenerateLocation this.scene, this.locationDestination, this.userHome", this.scene, this.locationDestination, this.userHome)
+            } 
+            
+            if (typeof this.appUrl != "undefined"){
+                console.log("CurrentApp.set(this.appUrl)", this.appUrl)
+                CurrentApp.set(this.appUrl)
+            } 
+                //console.log("GenerateLocation this.scene, this.locationDestination, this.userHome", this.scene, this.locationDestination, this.userHome)
                 HistoryTracker.switchScene(this.scene, this.locationDestination, this.userHome)
-            }
+            
         })
 
         this.scene.physics.add.overlap(this.scene.player, this.location, this.confirmEnterLocation, null, this)
