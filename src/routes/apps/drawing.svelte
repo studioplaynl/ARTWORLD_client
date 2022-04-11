@@ -719,16 +719,16 @@
   */
 
 
-  setTimeout(()=>{
+  // setTimeout(()=>{
 
-  if(!!!Achievements.find("FirstAvatar")){
-          $tutorial = [
-              {type: "tap", element: "playPause", delay: 500},
-              {type: "tap", element: "drawing-mode", delay: 4000},
-              {type: "achievement", name: "FirstAvatar"}
-          ]
-      }
-  },7000)
+  // if(!!!Achievements.find("FirstAvatar" && appType == "avatar")){
+  //         $tutorial = [
+  //             {type: "tap", element: "playPause", delay: 500},
+  //             {type: "tap", element: "drawing-mode", delay: 4000},
+  //             {type: "achievement", name: "FirstAvatar"}
+  //         ]
+  //     }
+  // },7000)
 
 
 
