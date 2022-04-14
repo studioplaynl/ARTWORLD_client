@@ -4,12 +4,13 @@
   import { onMount, beforeUpdate } from "svelte";
   import { uploadImage, user, uploadAvatar, uploadHouse,getObject, setLoader } from "../../api.js";
   import { client } from "../../nakama.svelte";
-  import { Session, Profile, tutorial, } from "../../session.js";
+  import { Session, Profile, tutorial} from "../../session.js";
   import {Achievements} from "../../storage"
   import NameGenerator from "../components/nameGenerator.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
   import Avatar from "../components/avatar.svelte"
   
+  let scaleRatio
   let params = {user:$location.split("/")[2],name: $location.split("/")[3] }
   let invalidTitle = true;  
   let history = [],
@@ -371,6 +372,7 @@ drawingColorEl.onchange = function () {
   const upload = async () => {
     if(!invalidTitle) return
     saving = true
+    setLoader(true)
     if (appType == "drawing") {
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
@@ -382,49 +384,15 @@ drawingColorEl.onchange = function () {
       await uploadImage(displayName, appType, json, blobData, status,version,title);
       saved = true;
       saving = false
+      setLoader(false)
     }
     if (appType == "stopmotion") {
-      // console.log("saved");
-      // json = JSON.stringify(frames);
-      // var blobData = dataURItoBlob(frames);
-      // uploadImage(title, appType, json, blobData, status);
-      // savecanvas.setHeight(canvas.height);
-      // savecanvas.setWidth(canvas.height * frames.length);
-      savecanvas.renderAll();
-      savecanvas.clear();
-      let data = { objects: [] };
-      //let scale = 128 / 700;
-      console.log(data);
-      for (let i = 0; i < frames.length; i++) {
-        frames[i].backgroundImage = {};
-        const newFrames = frames[i].objects.map((object, index) => {
-          const newObject = { ...object };
-          newObject.left = newObject.left;
-          newObject.top = newObject.top;
-          newObject.left += canvas.height * i;
-          // newObject.scaleX = scale;
-          // newObject.scaleY = scale;
-          console.log(newObject);
-          data.objects.push(newObject);
-        });
-      }
-      await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
-      await savecanvas.calcOffset();
-   
-        var Image = savecanvas.toDataURL("image/png", 0.5);
-        console.log(Image);
-        var blobData = dataURItoBlob(Image);
-        json = JSON.stringify(frames);
-        if(!!!displayName){
-          displayName = Date.now() + "_" + title
-        }
-        await uploadImage(displayName, appType, json, blobData, status,version,title);
-        saving = false
-
+      await createStopmotion()
     }
     if (appType == "avatar") {
       await createAvatar();
       saving = false
+      setLoader(false)
     }
     if (appType == "house") {
       json = JSON.stringify(canvas.toJSON());
@@ -436,6 +404,8 @@ drawingColorEl.onchange = function () {
       // await uploadImage(title, appType, json, blobData, status);
       saved = true;
       saving = false
+      setLoader(false)
+
     }
   };
 
@@ -560,23 +530,24 @@ drawingColorEl.onchange = function () {
   window.addEventListener("resize", resizeCanvas, false);
 
   function resizeCanvas() {
-    let scaleRatio
-    if (document.body.clientWidth <= 700) {
+    
+    if (document.body.clientWidth <= document.body.clientHeight) {
       scaleRatio = Math.min(document.body.clientWidth/2048, document.body.clientWidth/2048);
     } else{
       scaleRatio = Math.min(window.innerHeight/2048, window.innerHeight/2048);
     }
     canvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
-    savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
+   // savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
     cursor.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
     cursor.setZoom(scaleRatio)  
     canvas.setZoom(scaleRatio)
+    //savecanvas.setZoom(scaleRatio)
   }
 
 
   function zoomIt(factor) {
-    canvas.setHeight(canvas.getHeight() * factor);
-    canvas.setWidth(canvas.getWidth() * factor);
+    // canvas.setHeight(canvas.getHeight() * factor);
+    // canvas.setWidth(canvas.getWidth() * factor);
     if (canvas.backgroundImage) {
         // Need to scale background images as well
         var bi = canvas.backgroundImage;
@@ -621,9 +592,9 @@ drawingColorEl.onchange = function () {
     img.onload = function () {
       var f_img = new fabric.Image(img);
       let options;
-      let scale = (2048/document.body.clientWidth)
-      if(document.body.clientWidth > 700){
-        scale = (2048/document.body.clientHeight)
+      let scale = (2048/document.body.clientHeight)
+      if(document.body.clientWidth <= document.body.clientHeight){
+        scale = (2048/document.body.clientWidth)
       }
       if (!play) options = { opacity: 0.5, width: 2048, height: 2048, scaleX: scale, scaleY: scale };
       else options = {};
@@ -641,11 +612,11 @@ drawingColorEl.onchange = function () {
       //canvas.clear()
       // load frame
       canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
-      if (showBackground) img.src = backgroundFrames[newFrame - 1];
+     if (showBackground) img.src = backgroundFrames[newFrame - 1];
 
       // change current frame
       currentFrame = newFrame;
-      console.log(frames);
+      frames[newFrame].backgroundImage
     }
     if (play || !showBackground) {
       canvas.clear();
@@ -763,17 +734,17 @@ drawingColorEl.onchange = function () {
     savecanvas.renderAll();
     savecanvas.clear();
     let data = { objects: [] };
-    let scale = avatarSize / 2084;
+    // let scale = avatarSize / 2084;
     console.log(data);
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
         const newObject = { ...object };
-        newObject.left = newObject.left * scale;
-        newObject.top = newObject.top * scale;
+        newObject.left = newObject.left// * scale;
+        newObject.top = newObject.top// * scale;
         newObject.left += avatarSize * i;
-        newObject.scaleX = scale;
-        newObject.scaleY = scale;
+        // newObject.scaleX = scale;
+        // newObject.scaleY = scale;
         console.log(newObject);
         data.objects.push(newObject);
       });
@@ -789,34 +760,46 @@ drawingColorEl.onchange = function () {
     }, 300);
   }
 
-  /*
-  function createAvatar() {
-    console.log("upload avatar");
-    savecanvas.setHeight(128);
-    savecanvas.setWidth(128 * frames.length);
-    savecanvas.renderAll();
-    savecanvas.clear();
-    for (let i = 0; i < frames.length; i++) {
-    
-    }
-
-
+  async function createStopmotion(){
+          // console.log("saved");
+      // json = JSON.stringify(frames);
+      // var blobData = dataURItoBlob(frames);
+      // uploadImage(title, appType, json, blobData, status);
+      let size = 2048
+      console.log(canvas.height)
+      savecanvas.setHeight(size);
+      savecanvas.setWidth(size * frames.length);
+      savecanvas.renderAll();
+      savecanvas.clear();
+      let data = { objects: [] };
+      //let scale = 128 / 700;
+      console.log(data);
+      for (let i = 0; i < frames.length; i++) {
+        frames[i].backgroundImage = {};
+        const newFrames = frames[i].objects.map((object, index) => {
+          const newObject = { ...object };
+          newObject.top = newObject.top;
+          newObject.left += size * i;
+          // newObject.scaleX = scaleRatio/2048;
+          // newObject.scaleY = scaleRatio/2048;
+          console.log(newObject);
+          data.objects.push(newObject);
+        });
+      }
+      await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
+      await savecanvas.calcOffset();
+   
+        var Image = savecanvas.toDataURL("image/png", 0.5);
+        console.log(Image);
+        var blobData = dataURItoBlob(Image);
+        json = JSON.stringify(frames);
+        if(!!!displayName){
+          displayName = Date.now() + "_" + title
+        }
+        await uploadImage(displayName, appType, json, blobData, status,version,title);
+        saving = false
+        setLoader(false)
   }
-  */
-
-
-  // setTimeout(()=>{
-
-  // if(!!!Achievements.find("FirstAvatar" && appType == "avatar")){
-  //         $tutorial = [
-  //             {type: "tap", element: "playPause", delay: 500},
-  //             {type: "tap", element: "drawing-mode", delay: 4000},
-  //             {type: "achievement", name: "FirstAvatar"}
-  //         ]
-  //     }
-  // },7000)
-
-
 
   //////////////////// avatar functies end /////////////////////////////////
 

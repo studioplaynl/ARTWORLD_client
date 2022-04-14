@@ -1,12 +1,15 @@
 <script>
 import {Profile, CurrentApp} from "../../session"
+import {convertImage} from "../../api"
 import {onDestroy, onMount} from "svelte"
 let image
 let frame = 0
 let interval
+let url
 
-onMount(()=>{
-    console.log(image)
+onMount(async ()=>{
+    
+    console.log(url)
 
     interval = setInterval(()=>{
        frame++

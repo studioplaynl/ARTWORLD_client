@@ -221,7 +221,7 @@ function moveToTrash(key) {
       }
       if(item.value.json) item.url = item.value.json.split(".")[0]
       if(item.value.url) item.url = item.value.url.split(".")[0]
-      item.value.previewUrl = await convertImage(item.value.url, "64")
+      item.value.previewUrl = await convertImage(item.value.url, "1024")
       console.log(item.value.previewUrl)
       art = art;
     })
