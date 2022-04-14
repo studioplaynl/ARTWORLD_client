@@ -14,12 +14,12 @@
   let invalidTitle = true;  
   let history = [],
     historyCurrent;
-  let canv, _clipboard, drawingColorEl;
+  let canv, _clipboard, Cursor, cursor, drawingColorEl;
   let saveCanvas, savecanvas, videoCanvas, saving= false;
   let videoWidth;
   let canvas,
     video,
-    lineWidth = 5,
+    lineWidth = 25,
     EraselineWidth = 5;
   let json,
     drawingColor = "#000000";
@@ -75,6 +75,8 @@
     savecanvas = new fabric.Canvas(saveCanvas, {
       isDrawingMode: false,
     });
+
+    cursor = new fabric.StaticCanvas(Cursor);
 
     getImage();
 
@@ -293,7 +295,78 @@
         saveHistory();
       }, 200);
     });
+
+
+      //////////////// mouse circle ////////////////////////////
+
+      //mouse cursor layer
+
+var cursorOpacity = .5;
+//create cursor and place it off screen
+var mousecursor = new fabric.Circle({ 
+  left: -100, 
+  top: -100, 
+  radius: canvas.freeDrawingBrush.width / 2, 
+  fill: "rgba(0,0,0," + cursorOpacity + ")",
+  stroke: "black",
+  originX: 'center', 
+  originY: 'center'
+});
+
+cursor.add(mousecursor);
+
+//redraw cursor on new mouse position when moved
+canvas.on('mouse:move', function (evt) {
+  var mouse = this.getPointer(evt.e);  
+  mousecursor
+    .set({
+      top: mouse.y,
+      left: mouse.x
+    })
+    .setCoords()
+    .canvas.renderAll();
+});
+
+//while brush size is changed show cursor in center of canvas
+document.getElementById("drawing-line-width").oninput = function () {
+  var size = parseInt(this.value, 10);
+  mousecursor
+    .center()
+    .set({
+      radius: size/2
+    })
+    .setCoords()
+    .canvas.renderAll();
+};
+
+
+//change drawing color
+drawingColorEl.onchange = function () {
+  console.log("color")
+  canvas.freeDrawingBrush.color = this.value;  
+  var bigint = parseInt(this.value.replace("#", ""), 16);
+  var r = (bigint >> 16) & 255;
+  var g = (bigint >> 8) & 255;
+  var b = bigint & 255;  
+//  mousecursor.fill = "rgba(" + [r,g,b,cursorOpacity].join(",") + ")"
+
+  mousecursor
+    .set({
+      fill: "rgba(" + [r,g,b,cursorOpacity].join(",") + ")"
+    })
+    .canvas.renderAll();
+};
+
+
+
+
+      //////////////// mouse circle ////////////////////////////
+
   });
+
+
+
+  
 
   const upload = async () => {
     if(!invalidTitle) return
@@ -495,7 +568,8 @@
     }
     canvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
     savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
-      
+    cursor.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
+    cursor.setZoom(scaleRatio)  
     canvas.setZoom(scaleRatio)
   }
 
@@ -580,6 +654,18 @@
       canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
     }
   };
+
+  const deleteFrame = (Frame) => {
+     for( var i = 0; i < frames.length; i++){ 
+      console.log(frames[i],Frame)
+    if ( i == Frame && i != 0) { 
+      frames.splice(i, 1);
+      currentFrame = i-1 
+    }
+
+}
+  
+  }
 
   async function addFrame() {
     await updateFrame();
@@ -1026,6 +1112,7 @@
 
   ///////////////// fill functie end ///////////////////////
 
+
   function backgroundHide() {
     showBackground = !showBackground
     if (!showBackground) {
@@ -1077,6 +1164,7 @@
     </div> -->
     <div class="canvasBox" class:hidden={current === "camera"}>
       <canvas bind:this={canv} class="canvas"  />
+      <canvas bind:this={Cursor} id="cursor"></canvas>
     </div>
     <div class="savecanvas">
       <canvas bind:this={saveCanvas} />
@@ -1085,17 +1173,26 @@
       {#if appType == "stopmotion" || appType == "avatar"}
         <div id="framebar">
           {#each frames as frame, index}
-            <div
+          <div>  
+          <div
               id={index}
               class:selected={currentFrame === index}
-              on:click={() => changeFrame(index)}
+              on:click={() => {changeFrame(index)}}
               style="background-image: url({backgroundFrames[index]})"
             >
-              <div>{index + 1}</div>
+                 <div>{index + 1}
+                
+                </div>
             </div>
+            {#if currentFrame === index && index != 0}
+                  <img class="icon frameDelete" on:click="{()=>{deleteFrame(index)}}" src="assets/SHB/svg/AW-icon-trash.svg" >
+            {/if}
+          </div>
           {/each}
           {#if frames.length < maxFrames}
+          <div>
             <div id="frameNew" on:click={addFrame}><div>+</div></div>
+          </div>
           {/if}
         </div>
         <div id="frameButtons">
@@ -1140,17 +1237,14 @@
         </div>
 
         <div class="colorTab" class:hidden={current != "draw"}>
-          <div class="widthBox" on:click="{()=>{drawingColorEl.click()}}">
-            <div
-            class="lineWidth"
-            style="width:{lineWidth}px; height: {lineWidth}px; background-color: {drawingColor}; box-shadow: {shadowOffset}px {shadowOffset}px {shadowWidth}px {shadowColor};margin:  0px auto {shadowOffset}px auto;"
-          ><input type="color" bind:value={drawingColor} bind:this="{drawingColorEl}" id="drawing-color" /></div>
+          <div class="widthBox" style="background-color: {drawingColor};" on:click="{()=>{drawingColorEl.click()}}">
+          <input type="color" bind:value={drawingColor} bind:this="{drawingColorEl}"  id="drawing-color" />
           <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg">
         </div>
           <span class="info">{lineWidth}</span><input
             type="range"
-            min="1"
-            max="150"
+            min="10"
+            max="500"
             id="drawing-line-width"
             bind:value={lineWidth}
           />
@@ -1283,7 +1377,6 @@
 
     </div>
   </div>
-
   <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg"></div>
   {#if appType == "avatar"}
     <div id="avatarBox">
@@ -1297,6 +1390,19 @@
   main {
     margin: 0 auto;
     width: fit-content;
+  }
+
+  #cursor {
+    pointer-events: none!important;
+    width: 100vw;
+    height: 100vw;
+    margin: 0px;
+
+    position: absolute;
+    user-select: none;
+    top: 0px;
+    left: 0px;
+    pointer-events: none;
   }
 
   .topbar {
@@ -1470,11 +1576,12 @@
   }
 
   .widthBox {
-    height: 150px;
+    height: 30px;
     position: relative;
     border: solid 2px black;
     border-radius: 25px;
     padding: 10px;
+    width: 30px;
     }
 
 
@@ -1493,7 +1600,7 @@
     margin: 0 auto;
     width: fit-content;
     border: 2px solid #7300ed;
-
+    position: relative;
   }
 
 
@@ -1501,13 +1608,17 @@
     display: inline;
   }
 
-  #framebar > div {
-    display: block;
+  #framebar > div > div {
+    display: inline-block;
     width: 60px;
     height: 60px;
     margin: 5px;
     border: 2px solid #7300EB;
     font-size: 30px;
+    text-align: center;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
   }
 
   .frameBox {
@@ -1521,7 +1632,7 @@
     flex-direction: column;
   }
 
-  #framebar > div > div {
+  #framebar > div > div > div {
     background-color: rgba(255, 255, 255, 0.2);
     height: 60px;
     display: flex;
@@ -1529,16 +1640,17 @@
     align-items: center;
   }
 
-  #framebar > div:hover {
+  #framebar > div > div:hover {
     cursor: pointer;
   }
 
   #framebar > div {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
+    display: block;
   }
 
+  .frameDelete {
+    position: absolute;
+  }
 
 /* PC */
 @media only screen and (min-width: 700px) {
