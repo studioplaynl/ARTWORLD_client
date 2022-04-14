@@ -1,6 +1,6 @@
 import { date } from "svelte-i18n";
 import { client } from "./nakama.svelte"
-import { Session,Profile, Error,Succes, achievements} from "./session.js"
+import { Session, Profile, Error, Succes, achievements } from "./session.js"
 import ManageSession from "./routes/game/ManageSession.js"; //push awards to ManageSession
 import { get } from 'svelte/store'
 
@@ -211,7 +211,7 @@ export async function getAccount(id, avatar) {
     console.log(user)
     Profile.set(user)
     return user
-  }else {
+  } else {
     const users = await client.getUsers(Sess, [id]);
     console.log(users)
     let user = users.users[0]
