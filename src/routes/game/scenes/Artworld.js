@@ -454,7 +454,7 @@ export default class Artworld extends Phaser.Scene {
 
     } else { // otherwise download the image and add it
 
-      const convertedImage = await convertImage(imageKeyUrl, imgSize, fileFormat)
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat)
       this.load.image(imageKeyUrl, convertedImage)
 
       this.load.start() // start the load queue to get the image in memory

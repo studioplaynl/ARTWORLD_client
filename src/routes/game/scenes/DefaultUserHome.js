@@ -258,7 +258,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         } else { // otherwise download the image and add it
 
-            const convertedImage = await convertImage(imageKeyUrl, imgSize, fileFormat)
+            const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat)
 
             // for tracking each file in progress
             this.progressStopmotion.push({ imageKeyUrl, coordX })
@@ -370,7 +370,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         } else { // otherwise download the image and add it
 
-            const convertedImage = await convertImage(imageKeyUrl, imgSize, fileFormat)
+            const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat)
 
             // for tracking each file in progress
             this.progress.push({ imageKeyUrl, coordX })

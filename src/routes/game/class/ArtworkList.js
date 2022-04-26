@@ -90,7 +90,7 @@ class ArtworkList {
               scene.artListContainer.add(setImage)
             } else { // otherwise download the image and add it
 
-              scene.artUrl[index] = await convertImage(imgUrl, imgSize, fileFormat)
+              scene.artUrl[index] = await convertImage(imgUrl, imgSize, imgSize, fileFormat)
 
               // for tracking each file in progress
               scene.progress.push({ key, coordX, coordY })
@@ -171,6 +171,7 @@ class ArtworkList {
         const currentImage = await convertImage(
           element.url,
           "128",
+          "128",
           "png"
         )
 
@@ -210,6 +211,7 @@ class ArtworkList {
         if (!scene.textures.exists(key)) {
           const currentImage = await convertImage(
             element.url,
+            "128",
             "128",
             "png"
           )

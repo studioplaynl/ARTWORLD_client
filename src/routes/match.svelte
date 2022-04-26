@@ -173,7 +173,7 @@ let fileFormat = "png"
 let url
 
 async function convert() {
-    url = await convertImage(imgUrl,imgSize,fileFormat)
+    url = await convertImage(imgUrl,imgSize,imgSize,fileFormat)
     console.log(url)
 }
 

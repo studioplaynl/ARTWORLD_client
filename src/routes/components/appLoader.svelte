@@ -51,6 +51,7 @@
 
         $CurrentApp = "";
         appOpen = "";
+        push("/")
     }
 
     function reloadApp() {

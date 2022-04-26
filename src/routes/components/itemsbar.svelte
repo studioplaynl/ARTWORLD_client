@@ -2,6 +2,7 @@
 import {convertImage, getObject, updateObject} from "../../api"
 import itemsBar from "./itemsbar.js"
 import ProfilePage from "../profile.svelte"
+import {Profile} from "../../session"
 import {CurrentApp, logout} from "../../session"
 import Awards from "../awards.svelte"
 import {location} from "svelte-spa-router"
@@ -22,7 +23,7 @@ const unsubscribe = itemsBar.subscribe(async value => {
         user_avatar_url = ManageSession.userProfile.url
         if(user_house_url == undefined){
             user_house_url = await getObject("home", ManageSession.userProfile.meta.azc, ManageSession.userProfile.id)
-            user_house_url = await convertImage(user_house_url.value.url,"50")
+            user_house_url = await convertImage(user_house_url.value.url,"50", "50")
         }
     //console.log(ManageSession)
 
@@ -31,7 +32,7 @@ const unsubscribe = itemsBar.subscribe(async value => {
         avatar_url = ManageSession.selectedOnlinePlayer.url
         user_name = ManageSession.selectedOnlinePlayer.username 
         house_url = await getObject("home", ManageSession.selectedOnlinePlayer.metadata.azc, ManageSession.selectedOnlinePlayer.id)
-        house_url = await convertImage(house_url.value.url,"50")
+        house_url = await convertImage(house_url.value.url,"50", "50")
     }
 });
 
@@ -50,7 +51,7 @@ async function getLiked(){
         images = []
         console.log(ManageSession.liked.liked)
         ManageSession.liked.liked.forEach(async (liked) => {
-        images.push({ img: await convertImage(liked.url,"128"), url: liked.url.split('.')[0]})
+        images.push({ img: await convertImage(liked.url,"128", "128"), url: liked.url.split('.')[0]})
         images = images
     });
    
@@ -59,7 +60,7 @@ async function getLiked(){
         console.log(liked.value.liked)
         images = []
         liked.value.liked.forEach(async (liked) => {
-        images.push({ img: await convertImage(liked.url,"128"), url: liked.url.split('.')[0]})
+        images.push({ img: await convertImage(liked.url,"128", "128"), url: liked.url.split('.')[0]})
         images = images
         })
     }
@@ -67,17 +68,8 @@ async function getLiked(){
     current = "liked"
 }
 
-async function Profile(){
+async function goProfile(){
     if(current == "home" ) {current = false; return};
-    // if($itemsBar.playerClicked){
-        // user_name = ManageSession.userProfile.username
-        // house_url = await getObject("home", ManageSession.userProfile.meta.azc, ManageSession.userProfile.id)
-        // house_url = await convertImage(house_url.value.url,"50")
-    // } else{
-    //     user_name = ManageSession.selectedOnlinePlayer.username 
-    //     house_url = await getObject("home", ManageSession.selectedOnlinePlayer.metadata.azc, ManageSession.selectedOnlinePlayer.id)
-    //     house_url = await convertImage(house_url.value.url,"50")
-    // }
 
     current = "home"
 }
@@ -147,13 +139,13 @@ async function getAdressbook(){
 
 {#if $location != "/login"}
 <div id="itemsButton" class:show={!$itemsBar.playerClicked}>
-    <a on:click={Click} class="avatar" ><img src="{user_avatar_url}"></a>
+    <a on:click={Click} class="avatar" ><img src="{$Profile.url}"></a>
 </div>
 {/if }
 <!-- current user -->
 <div class="itemsbar" id="currentUser" class:show={$itemsBar.playerClicked}>
     <div id="left">
-        <a on:click={Profile} class="avatar"><img src="{user_avatar_url}"></a>
+        <a on:click={goProfile} class="avatar"><img src="{$Profile.url}"></a>
         <a on:click="{()=>{goHome()}}" class="avatar"><img src="{user_house_url}"></a>
         <a on:click={award}><img class="icon" src="assets/SHB/svg/AW-icon-achievement.svg"></a>
         <a on:click={getAdressbook}><img class="icon" src="assets/SHB/svg/AW-icon-addressbook-vert.svg"></a>
@@ -313,6 +305,7 @@ async function getAdressbook(){
         float: left;
         overflow-x: hidden;
         overflow-y: auto;
+        margin: 20px 0px;
     }
 
 

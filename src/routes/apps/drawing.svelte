@@ -51,21 +51,21 @@
 
   onMount(() => {
     setLoader(true)
-    const autosave = setInterval(() => {
-      if (!saved) {
-        let data = {};
-        data.type = appType;
-        data.name = title;
-        if (appType == "drawing" || appType == "house") {
-          data.drawing = canvas.toJSON();
-        }
-        if (appType == "stopmotion" || appType == "avatar") {
-          data.frames = frames;
-        }
-        localStorage.setItem("Drawing", JSON.stringify(data));
-        console.log("stored in localstorage");
-      }
-    }, 20000);
+    // const autosave = setInterval(() => {
+    //   if (!saved) {
+    //     let data = {};
+    //     data.type = appType;
+    //     data.name = title;
+    //     if (appType == "drawing" || appType == "house") {
+    //       data.drawing = canvas.toJSON();
+    //     }
+    //     if (appType == "stopmotion" || appType == "avatar") {
+    //       data.frames = frames;
+    //     }
+    //     localStorage.setItem("Drawing", JSON.stringify(data));
+    //     console.log("stored in localstorage");
+    //   }
+    // }, 20000);
 
     
 
@@ -374,16 +374,15 @@ drawingColorEl.onchange = function () {
     saving = true
     setLoader(true)
     if (appType == "drawing") {
-      json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
       if(!!!displayName){
         displayName = Date.now() + "_" + title
       }
       replace(`${$location}/${$Session.user_id}/${displayName}`)
-      await uploadImage(displayName, appType, json, blobData, status,version,title);
-      saved = true;
-      saving = false
+      //await uploadImage(displayName, appType, blobData, status,version,title);
+      //saved = true;
+      //saving = false
       setLoader(false)
     }
     if (appType == "stopmotion") {
@@ -451,20 +450,34 @@ drawingColorEl.onchange = function () {
         //title = params.name.split(".")[0];
         displayName = Object.value.displayname
         status = Object.status;
-        let url = Object.value.json
+        let url = Object.value.url
         version = Number(Object.value.version) +1 ||0
         var jsonURL = await getDrawing(url);
         console.log(jsonURL);
         fetch(jsonURL)
-          .then((res) => res.json())
           .then((json) => {
-            console.log("Checkout this JSON! ", json);
-            if (appType == "drawing")
-              canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
-            if (appType == "stopmotion" || appType == "avatar") {
-              frames = json;
-              canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
+            console.log(json.url)
+            // console.log("Checkout this JSON! ", json);
+            if (appType == "drawing"){
+
+              let url = getDataUrl(json.url)
+              //let img = new fabric.Image(url)
+
+              //canvas.add(img);
+                // fabric.Image.fromURL(json.url, function(oImg) {
+                //   oImg.set({ left: 0, top: 0 });
+                //   oImg.scaleToHeight(2048);
+                //   oImg.scaleToWidth(2048);
+                //   console.log(oImg)
+                //   console.log(canvas)
+                //  canvas.add(oImg);
+                // });
             }
+            //   canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+            // if (appType == "stopmotion" || appType == "avatar") {
+            //   frames = json;
+            //   canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
+            // }
           })
           .catch((err) => console.log(err));
       } else {
@@ -517,6 +530,25 @@ drawingColorEl.onchange = function () {
     }
     return new Blob([new Uint8Array(array)], { type: "image/png" });
   }
+
+
+  function getDataUrl(img) {
+   // Create canvas
+      let image
+      console.log("img", img)
+      fabric.Image.fromURL(img, function(oImg) {
+        oImg.set({ left: 0, top: 0 });
+        oImg.scaleToHeight(2048);
+        oImg.scaleToWidth(2048);
+        console.log(oImg)
+        console.log(canvas)
+        canvas.add(oImg);
+        image = canvas.toDataURL('image/jpeg');
+        //canvas.remove(activeObject)
+    });
+    return image
+   
+}
 
   async function getDrawing(DrawingUrl) {
     const payload = { url: DrawingUrl };
@@ -726,37 +758,40 @@ drawingColorEl.onchange = function () {
     maxFrames = 5;
   }
 
-  function createAvatar() {
+  async function createAvatar() {
     console.log("upload avatar");
-    let avatarSize = 64
-    savecanvas.setHeight(avatarSize);
-    savecanvas.setWidth(avatarSize * frames.length);
-    savecanvas.renderAll();
-    savecanvas.clear();
-    let data = { objects: [] };
-    // let scale = avatarSize / 2084;
-    console.log(data);
-    for (let i = 0; i < frames.length; i++) {
-      frames[i].backgroundImage = {};
-      const newFrames = frames[i].objects.map((object, index) => {
-        const newObject = { ...object };
-        newObject.left = newObject.left// * scale;
-        newObject.top = newObject.top// * scale;
-        newObject.left += avatarSize * i;
-        // newObject.scaleX = scale;
-        // newObject.scaleY = scale;
-        console.log(newObject);
-        data.objects.push(newObject);
-      });
-    }
-    savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
-    savecanvas.calcOffset();
-    setTimeout(() => {
+    let size = 2048
+      console.log(canvas.height)
+      savecanvas.setHeight(size);
+      savecanvas.setWidth(size * frames.length);
+      savecanvas.renderAll();
+      savecanvas.clear();
+      let data = { objects: [] };
+      console.log(data);
+      for (let i = 0; i < frames.length; i++) {
+        frames[i].backgroundImage = {};
+        const newFrames = frames[i].objects.map((object, index) => {
+          const newObject = { ...object };
+          newObject.top = newObject.top;
+          newObject.left += size * i;
+
+          console.log(newObject);
+          data.objects.push(newObject);
+        });
+      }
+      await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
+      await savecanvas.calcOffset();
+   
+        //var Image = savecanvas.toDataURL("image/png", 0.2);
+        // console.log(Image);
+        // var blobData = dataURItoBlob(Image);
+    setTimeout(async() => {
       var Image = savecanvas.toDataURL("image/png", 0.2);
       console.log(Image);
       var blobData = dataURItoBlob(Image);
       json = JSON.stringify(frames);
-      uploadAvatar(blobData,json, version);
+      Image = await uploadAvatar(blobData,json, version);
+      Profile.update(n => {n.url = Image; return n});
     }, 300);
   }
 
@@ -792,11 +827,11 @@ drawingColorEl.onchange = function () {
         var Image = savecanvas.toDataURL("image/png", 0.5);
         console.log(Image);
         var blobData = dataURItoBlob(Image);
-        json = JSON.stringify(frames);
         if(!!!displayName){
           displayName = Date.now() + "_" + title
         }
-        await uploadImage(displayName, appType, json, blobData, status,version,title);
+        await uploadImage(displayName, appType, blobData, status,version,title);
+        //Profile.update(n => n.url = Image);
         saving = false
         setLoader(false)
   }

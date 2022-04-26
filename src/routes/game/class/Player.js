@@ -12,18 +12,19 @@ class Player {
     Profile.subscribe((value) => {
       console.log("Profile refreshed avatar")
       
-        console.log("avatar subscribed")
+        console.log(value)
         this.firstBooted = true
-        this.loadPlayerAvatar(ManageSession.currentScene)
+        this.loadPlayerAvatar(ManageSession.currentScene,undefined,undefined, value)
       
       
     })
   }
 
-  loadPlayerAvatar(scene, placePlayerX, placePlayerY) {
-   console.log("loadPlayerAvatar")
+  loadPlayerAvatar(scene, placePlayerX, placePlayerY, userprofile) {
+    if(!!!userprofile) userprofile = ManageSession.userProfile
+   console.log("loadPlayerAvatar", userprofile)
       //check if account info is loaded
-      if (ManageSession.userProfile.id != null) {
+      if (userprofile.id != null) {
         console.log("avatar 1")
         //check for createPlayer flag
         if (ManageSession.createPlayer) {
@@ -56,7 +57,7 @@ class Player {
           //        role: "speler"
           //        user_id: ""
 
-          scene.playerAvatarKey = ManageSession.userProfile.id + "_" + ManageSession.userProfile.update_time
+          scene.playerAvatarKey = userprofile.id + "_" + userprofile.update_time
           console.log("scene.playerAvatarKey avatar", scene.playerAvatarKey)
           let lastPosX
           let lastPosY
@@ -97,7 +98,7 @@ class Player {
           //if the texture doesnot exists load it and attach it to the player
           if (!scene.textures.exists(scene.playerAvatarKey)) {
             //check if url is not empty for some reason, returns so that previous image is kept
-            if (ManageSession.userProfile.url === "") {
+            if (userprofile.url === "") {
               console.log("avatar url is empty")
               ManageSession.createPlayer = false
               console.log("ManageSession.createPlayer = ", ManageSession.createPlayer)
@@ -115,13 +116,14 @@ class Player {
               // })
 
               const fileNameCheck = scene.playerAvatarKey
-              scene.load.spritesheet(fileNameCheck, ManageSession.userProfile.url, { frameWidth: 64, frameHeight: 64 })
+              scene.load.spritesheet(fileNameCheck, userprofile.url, { frameWidth: 2048, frameHeight: 2048})
                 .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { console.log("scene.playerAvatarKey", scene.playerAvatarKey); 
                 if (this.firstBooted != true) {
                 this.subscribeToProfile()
                 }
                 this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
-              scene.load.start() // start loading the image in memory
+              scene.load.restart() // start loading the image in memory
+              // this.scene.restart();
 
             }
           } else {

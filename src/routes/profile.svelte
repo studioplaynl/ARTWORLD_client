@@ -10,7 +10,6 @@
   import Avatar from "./components/avatar.svelte"
   import { onDestroy, onMount} from 'svelte';
 
-  import {Card} from "attractions"
 
   export let params = {}
   export let userID;
@@ -176,18 +175,18 @@ function moveToTrash(key) {
       }
       console.log(house_url)
       if(typeof house_url == "object"){
-        house_url = await convertImage(house_url.value.url,"64")
+        house_url = await convertImage(house_url.value.url,"64", "64")
       }else {
         house_url = ""
       }
     } else {
       CurrentUser = true;
-      drawings = await listImages("drawing",$Session.user_id, 100)
-      stopMotion = await listImages("stopmotion",$Session.user_id, 100)
-      video = await listImages("video",$Session.user_id, 100)
-      audio = await listImages("audio",$Session.user_id, 100)
-      picture = await listImages("picture",$Session.user_id, 100)
-      useraccount = await getAccount()
+      // drawings = await listImages("drawing",$Session.user_id, 100)
+      // stopMotion = await listImages("stopmotion",$Session.user_id, 100)
+      // video = await listImages("video",$Session.user_id, 100)
+      // audio = await listImages("audio",$Session.user_id, 100)
+      // picture = await listImages("picture",$Session.user_id, 100)
+      // useraccount = await getAccount()
       console.log(useraccount)
       user = useraccount.username
       role = JSON.parse(useraccount.metadata).role
@@ -203,28 +202,28 @@ function moveToTrash(key) {
       }
       console.log(house_url)
       if(typeof house_url == "object"){
-        house_url = await convertImage(house_url.value.url,"64")
+        house_url = await convertImage(house_url.value.url,"64", "64")
       } else {
         house_url = ""
       }
     }
   
-    art = [].concat(drawings)
-    art = art.concat(stopMotion)
-    art = art.concat(video)
-    art = art.concat(audio)
-    art = art.concat(picture)
-    art.forEach(async (item, index) => {
-      if(item.value.status === "trash"){
-        trash.push(item)
-        delete art[index]
-      }
-      if(item.value.json) item.url = item.value.json.split(".")[0]
-      if(item.value.url) item.url = item.value.url.split(".")[0]
-      item.value.previewUrl = await convertImage(item.value.url, "1024")
-      console.log(item.value.previewUrl)
-      art = art;
-    })
+    // art = [].concat(drawings)
+    // art = art.concat(stopMotion)
+    // art = art.concat(video)
+    // art = art.concat(audio)
+    // art = art.concat(picture)
+    // art.forEach(async (item, index) => {
+    //   if(item.value.status === "trash"){
+    //     trash.push(item)
+    //     delete art[index]
+    //   }
+    //   if(item.value.json) item.url = item.value.json.split(".")[0]
+    //   if(item.value.url) item.url = item.value.url.split(".")[0]
+    //   item.value.previewUrl = await convertImage(item.value.url, "128")
+    //   console.log(item.value.previewUrl)
+    //   art = art;
+    // })
 
     trash = trash;
     loader = false

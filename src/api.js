@@ -17,17 +17,10 @@ Profile.subscribe(value => {
   prof = value;
 });
 
-export async function uploadImage(name, type, json, img, status, version, displayName) {
-  console.log(Sess)
-  console.log("type: " + type)
-  console.log("name: " + name)
-  console.log(img)
-  console.log(displayName)
+export async function uploadImage(name, type, img, status, version, displayName) {
 
   var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png",version)
-  if(!!json) var [jsonURL, jsonLocation] = await getUploadURL(type, name, "json",version)
-  console.log(jpegURL + jsonURL)
-  var value = { "url": jpegLocation, "json": jsonLocation, "version": version, "displayname": displayName};
+  var value = { "url": jpegLocation, "version": version, "displayname": displayName};
   if(status == "zichtbaar"){
     pub = true
   }else{
@@ -41,16 +34,6 @@ export async function uploadImage(name, type, json, img, status, version, displa
     },
     body: img
   })
-
-  if(!!json){
-  await fetch(jsonURL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "multipart/form-data"
-    },
-    body: json
-  })
-  }
 
   await updateObject(type, name, value,pub)
   
@@ -275,7 +258,6 @@ export async function getFile(file_url) {
   export async function uploadAvatar(data,json) {
     prof.meta.avatarVersion = Number(prof.meta.avatarVersion || 0) + 1
     var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png",prof.meta.avatarVersion)
-    var [jsonURL, jsonLocation] = await getUploadURL("avatar", "current", "json", prof.meta.avatarVersion)
     console.log(jpegURL)
 
   await fetch(jpegURL, {
@@ -284,14 +266,6 @@ export async function getFile(file_url) {
         "Content-Type": "multipart/form-data"
       },
       body: data
-    })
-
-    await fetch(jsonURL, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "multipart/form-data"
-      },
-      body: json
     })
 
     //get meta
@@ -303,6 +277,7 @@ export async function getFile(file_url) {
       meta: prof.meta
   });
   Succes.update(s=>s=true)
+  return getFile(jpegLocation,"", "png")
 }
 
 
@@ -415,9 +390,9 @@ export async function deleteObjectAdmin(id, type, name) {
 // format = "png"
 
 
-export async function convertImage(path,size, format) {
-  let payload = {path,size, format};
+export async function convertImage(path,height,width, format) {
   if(typeof size == "number") size = String(size)
+  let payload = {path,height,width, format};
   const rpcid = "convert_image";
    let user = await client.rpc(Sess, rpcid, payload)
    if(!!!user.payload.url) Error.update(er => er = "could'nt convert image")
