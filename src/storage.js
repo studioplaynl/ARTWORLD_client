@@ -1,6 +1,5 @@
 import { Session, Profile, Error, Succes } from "./session.js"
 import { deleteObject, updateObject, listAllObjects } from "./api"
-import ManageSession from "./routes/game/ManageSession.js"; //push awards to ManageSession
 import { get } from 'svelte/store'
 import { writable } from 'svelte/store';
 
