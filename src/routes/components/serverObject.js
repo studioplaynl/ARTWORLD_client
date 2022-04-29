@@ -3,27 +3,24 @@ import { deleteObject, updateObject, listAllObjects } from "./api"
 import { get } from 'svelte/store'
 import { writable } from 'svelte/store';
 
-
-
-
-function createAchievement() {
+function handleServerObject() {
   const { subscribe, set, update } = writable([]);
 
   return {
     subscribe,
     set,
     update,
-    create: (key, value) => {
-      let ach = get(Achievements)
-      if (!!ach.find(element => element.key == key)) return
-      updateObject("achievements", key, value, true).then((value) => {
+    create: (collection, key, value) => {
+      let array = get(collection)
+      if (!!array.find(element => element.key == key)) return
+      updateObject(collection, key, value, true).then((value) => {
         let obj = { key, value }
-        ach.push(obj)
-        console.log("ach")
-        console.log(ach)
+        array.push(obj)
+        console.log("array")
+        console.log(array)
         console.log(key)
-        Achievements.set(ach)
-        return ach
+        [collection].set(array)
+        return array
       })
     },
     get: () => {
