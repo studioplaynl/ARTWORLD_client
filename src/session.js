@@ -59,11 +59,11 @@ export async function login(email, password) {
     setLoader(true)
     const create = false;
     client.authenticateEmail(email, password, create)
-        .then((response) => {
+        .then(async (response) => {
             console.log(response)
             const session = response
             Session.set(session);
-            getAccount()
+            await getAccount()
             window.location.href = "/#/"
             setLoader(false)
             return session
