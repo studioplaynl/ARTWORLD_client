@@ -2,21 +2,32 @@
   import { fabric } from "./fabric";
   import { location, replace } from "svelte-spa-router";
   import { onMount, beforeUpdate } from "svelte";
-  import { uploadImage, user, uploadAvatar, uploadHouse,getObject, setLoader, convertImage } from "../../api.js";
+  import {
+    uploadImage,
+    user,
+    uploadAvatar,
+    uploadHouse,
+    getObject,
+    setLoader,
+    convertImage,
+  } from "../../api.js";
   import { client } from "../../nakama.svelte";
-  import { Session, Profile, tutorial} from "../../session.js";
-  import {Achievements} from "../../storage"
+  import { Session, Profile, tutorial } from "../../session.js";
+  import { Achievements } from "../../storage";
   import NameGenerator from "../components/nameGenerator.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
-  import Avatar from "../components/avatar.svelte"
-  
-  let scaleRatio
-  let params = {user:$location.split("/")[2],name: $location.split("/")[3] }
-  let invalidTitle = true;  
+  import Avatar from "../components/avatar.svelte";
+
+  let scaleRatio;
+  let params = { user: $location.split("/")[2], name: $location.split("/")[3] };
+  let invalidTitle = true;
   let history = [],
     historyCurrent;
   let canv, _clipboard, Cursor, cursor, drawingColorEl;
-  let saveCanvas, savecanvas, videoCanvas, saving= false;
+  let saveCanvas,
+    savecanvas,
+    videoCanvas,
+    saving = false;
   let videoWidth;
   let canvas,
     video,
@@ -27,9 +38,11 @@
   let shadowOffset = 0,
     shadowColor = "#ffffff",
     shadowWidth = 0;
-  let title, answer,
+  let title,
+    answer,
     showBackground = true;
-  let fillColor = "#f00", fillTolerance = 2;
+  let fillColor = "#f00",
+    fillTolerance = 2;
   let current = "draw";
   if (!!params.name) title = params.name;
   let saved = false;
@@ -39,18 +52,18 @@
   let status = "zichtbaar";
   let displayName;
   export let appType = $location.split("/")[1];
-  let version = 0
+  let version = 0;
   let optionbox = true;
- 
-  console.log("version:" + version)
-  console.log("title: " + title)
+
+  console.log("version:" + version);
+  console.log("title: " + title);
 
   var fab = function (id) {
-      return document.getElementById(id);
-    };
+    return document.getElementById(id);
+  };
 
   onMount(() => {
-    setLoader(true)
+    setLoader(true);
     // const autosave = setInterval(() => {
     //   if (!saved) {
     //     let data = {};
@@ -66,8 +79,6 @@
     //     console.log("stored in localstorage");
     //   }
     // }, 20000);
-
-    
 
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
@@ -127,8 +138,7 @@
       // erase functie kapot? recompile: http://fabricjs.com/build/
       var eraseBrush = new fabric.EraserBrush(canvas);
       canvas.freeDrawingBrush = eraseBrush;
-      canvas.freeDrawingBrush.width =
-        parseInt(eraseLineWidthEl.value, 10) || 1;
+      canvas.freeDrawingBrush.width = parseInt(eraseLineWidthEl.value, 10) || 1;
       canvas.isDrawingMode = true;
       switchOption("erase");
       floodFill(false);
@@ -297,114 +307,103 @@
       }, 200);
     });
 
+    //////////////// mouse circle ////////////////////////////
 
-      //////////////// mouse circle ////////////////////////////
+    //mouse cursor layer
 
-      //mouse cursor layer
+    var cursorOpacity = 0.5;
+    //create cursor and place it off screen
+    var mousecursor = new fabric.Circle({
+      left: -100,
+      top: -100,
+      radius: canvas.freeDrawingBrush.width / 2,
+      fill: "rgba(0,0,0," + cursorOpacity + ")",
+      stroke: "black",
+      originX: "center",
+      originY: "center",
+    });
 
-var cursorOpacity = .5;
-//create cursor and place it off screen
-var mousecursor = new fabric.Circle({ 
-  left: -100, 
-  top: -100, 
-  radius: canvas.freeDrawingBrush.width / 2, 
-  fill: "rgba(0,0,0," + cursorOpacity + ")",
-  stroke: "black",
-  originX: 'center', 
-  originY: 'center'
-});
+    cursor.add(mousecursor);
 
-cursor.add(mousecursor);
+    //redraw cursor on new mouse position when moved
+    canvas.on("mouse:move", function (evt) {
+      var mouse = this.getPointer(evt.e);
+      mousecursor
+        .set({
+          top: mouse.y,
+          left: mouse.x,
+        })
+        .setCoords()
+        .canvas.renderAll();
+    });
 
-//redraw cursor on new mouse position when moved
-canvas.on('mouse:move', function (evt) {
-  var mouse = this.getPointer(evt.e);  
-  mousecursor
-    .set({
-      top: mouse.y,
-      left: mouse.x
-    })
-    .setCoords()
-    .canvas.renderAll();
-});
+    //while brush size is changed show cursor in center of canvas
+    document.getElementById("drawing-line-width").oninput = function () {
+      var size = parseInt(this.value, 10);
+      mousecursor
+        .center()
+        .set({
+          radius: size / 2,
+        })
+        .setCoords()
+        .canvas.renderAll();
+    };
 
-//while brush size is changed show cursor in center of canvas
-document.getElementById("drawing-line-width").oninput = function () {
-  var size = parseInt(this.value, 10);
-  mousecursor
-    .center()
-    .set({
-      radius: size/2
-    })
-    .setCoords()
-    .canvas.renderAll();
-};
+    //change drawing color
+    drawingColorEl.onchange = function () {
+      console.log("color");
+      canvas.freeDrawingBrush.color = this.value;
+      var bigint = parseInt(this.value.replace("#", ""), 16);
+      var r = (bigint >> 16) & 255;
+      var g = (bigint >> 8) & 255;
+      var b = bigint & 255;
+      //  mousecursor.fill = "rgba(" + [r,g,b,cursorOpacity].join(",") + ")"
 
+      mousecursor
+        .set({
+          fill: "rgba(" + [r, g, b, cursorOpacity].join(",") + ")",
+        })
+        .canvas.renderAll();
+    };
 
-//change drawing color
-drawingColorEl.onchange = function () {
-  console.log("color")
-  canvas.freeDrawingBrush.color = this.value;  
-  var bigint = parseInt(this.value.replace("#", ""), 16);
-  var r = (bigint >> 16) & 255;
-  var g = (bigint >> 8) & 255;
-  var b = bigint & 255;  
-//  mousecursor.fill = "rgba(" + [r,g,b,cursorOpacity].join(",") + ")"
-
-  mousecursor
-    .set({
-      fill: "rgba(" + [r,g,b,cursorOpacity].join(",") + ")"
-    })
-    .canvas.renderAll();
-};
-
-
-
-
-      //////////////// mouse circle ////////////////////////////
-
+    //////////////// mouse circle ////////////////////////////
   });
 
-
-
-  
-
   const upload = async () => {
-    if(!invalidTitle) return
-    saving = true
-    setLoader(true)
+    if (!invalidTitle) return;
+    saving = true;
+    setLoader(true);
     if (appType == "drawing") {
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      if(!!!displayName){
-        displayName = Date.now() + "_" + title
+      if (!!!displayName) {
+        displayName = Date.now() + "_" + title;
       }
-      replace(`${$location}/${$Session.user_id}/${displayName}`)
+      replace(`${$location}/${$Session.user_id}/${displayName}`);
       //await uploadImage(displayName, appType, blobData, status,version,title);
       //saved = true;
       //saving = false
-      setLoader(false)
+      setLoader(false);
     }
     if (appType == "stopmotion") {
-      await createStopmotion()
+      await createStopmotion();
     }
     if (appType == "avatar") {
       await createAvatar();
-      saving = false
-      setLoader(false)
+      saving = false;
+      setLoader(false);
     }
     if (appType == "house") {
       json = JSON.stringify(canvas.toJSON());
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      await uploadHouse(json, blobData,version);
+      await uploadHouse(json, blobData, version);
       // title = $Profile.meta.azc
       // status = true;
       // await uploadImage(title, appType, json, blobData, status);
       saved = true;
-      saving = false
-      setLoader(false)
-
+      saving = false;
+      setLoader(false);
     }
   };
 
@@ -417,6 +416,28 @@ drawingColorEl.onchange = function () {
   };
 
   const getImage = async () => {
+    let Object = await getObject(appType, params.name, params.user)
+    console.log("image",Object.value.url)
+    let image = await convertImage(Object.value.url);
+    // console.log("locatie", $location);
+    console.log("image", image);
+
+    if (appType == "avatar" || appType == "stopmotion") {
+    }
+    if (appType == "drawing" || appType == "house") {
+      // let url = await getDataUrl(image)
+      // console.log("url", url)
+      // let img = new fabric.Image(url)
+      // canvas.add(img);
+      fabric.Image.fromURL(image, function(oImg) {
+        oImg.set({ left: 0, top: 0 });
+        oImg.scaleToHeight(2048);
+        oImg.scaleToWidth(2048);
+        console.log(oImg)
+        console.log(canvas)
+       canvas.add(oImg);
+      });
+    }
     // let localStore = JSON.parse(localStorage.getItem("Drawing"));
     // if (!!localStore) {
     //   console.log(localStore);
@@ -440,86 +461,87 @@ drawingColorEl.onchange = function () {
     //     }
     //   }
     // }
-    if (appType != "avatar" && appType != "house") {
-      if (!!params.name && !!params.user) {
-        let Object = await getObject(appType, params.name, params.user)
-        if(!!!Object) return
-        title = Object.key
-        console.log(Object)
+    // if (appType != "avatar" && appType != "house") {
 
-        //title = params.name.split(".")[0];
-        displayName = Object.value.displayname
-        status = Object.status;
-        let url = Object.value.url
-        version = Number(Object.value.version) +1 ||0
-        var jsonURL = await getDrawing(url);
-        console.log(jsonURL);
-        fetch(jsonURL)
-          .then((json) => {
-            console.log(json.url)
-            // console.log("Checkout this JSON! ", json);
-            if (appType == "drawing"){
+    //   if (!!params.name && !!params.user) {
+    //     let Object = await getObject(appType, params.name, params.user)
+    //     if(!!!Object) return
+    //     title = Object.key
+    //     console.log(Object)
 
-              let url = getDataUrl(json.url)
-              //let img = new fabric.Image(url)
+    //     //title = params.name.split(".")[0];
+    //     displayName = Object.value.displayname
+    //     status = Object.status;
+    //     let url = Object.value.url
+    //     version = Number(Object.value.version) +1 ||0
+    //     var jsonURL = await getDrawing(url);
+    //     console.log(jsonURL);
+    //     fetch(jsonURL)
+    //       .then((json) => {
+    //         console.log(json.url)
+    //         // console.log("Checkout this JSON! ", json);
+    //         if (appType == "drawing"){
 
-              //canvas.add(img);
-                // fabric.Image.fromURL(json.url, function(oImg) {
-                //   oImg.set({ left: 0, top: 0 });
-                //   oImg.scaleToHeight(2048);
-                //   oImg.scaleToWidth(2048);
-                //   console.log(oImg)
-                //   console.log(canvas)
-                //  canvas.add(oImg);
-                // });
-            }
-            //   canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
-            // if (appType == "stopmotion" || appType == "avatar") {
-            //   frames = json;
-            //   canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
-            // }
-          })
-          .catch((err) => console.log(err));
-      } else {
-        //replace($location + "/" + $Session.user_id);
-      }
-    }else {
-      
-      if(appType == "avatar"){
-        if(!!$Profile.avatar_url){
-          var jsonURL = await getDrawing($Profile.avatar_url.split(".")[0] + ".json");      
-        }
-        //version = Number(drawing.value.version) + 1 || 0
-        //console.log("version" + version)  
-      }else {
-        let drawing = await getObject("home", $Profile.meta.azc)
-        if(!!drawing){
-          console.log(drawing.value.url)
-          // get item
-          // extract version
-          version = Number(drawing.value.version) + 1 || 0
-          console.log(version)
-          // open file
-          var jsonURL = await getDrawing(
-            drawing.value.url.split(".")[0] +`.json`
-          );
-        }
-      }
-        console.log(jsonURL);
-        fetch(jsonURL)
-          .then((res) => res.json())
-          .then((json) => {
-            console.log("Checkout this JSON! ", json);
-            if (appType == "house")
-              canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
-            if (appType == "avatar") {
-              frames = json;
-              canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
-            }
-          })
-          .catch((err) => console.log(err));
-     }
-     setLoader(false)
+    //           let url = getDataUrl(json.url)
+    //           //let img = new fabric.Image(url)
+
+    //           //canvas.add(img);
+    //             // fabric.Image.fromURL(json.url, function(oImg) {
+    //             //   oImg.set({ left: 0, top: 0 });
+    //             //   oImg.scaleToHeight(2048);
+    //             //   oImg.scaleToWidth(2048);
+    //             //   console.log(oImg)
+    //             //   console.log(canvas)
+    //             //  canvas.add(oImg);
+    //             // });
+    //         }
+    //         //   canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+    //         // if (appType == "stopmotion" || appType == "avatar") {
+    //         //   frames = json;
+    //         //   canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
+    //         // }
+    //       })
+    //       .catch((err) => console.log(err));
+    //   } else {
+    //     //replace($location + "/" + $Session.user_id);
+    //   }
+    // }else {
+
+    //   if(appType == "avatar"){
+    //     if(!!$Profile.avatar_url){
+    //       var jsonURL = await getDrawing($Profile.avatar_url.split(".")[0] + ".json");
+    //     }
+    //     //version = Number(drawing.value.version) + 1 || 0
+    //     //console.log("version" + version)
+    //   }else {
+    //     let drawing = await getObject("home", $Profile.meta.azc)
+    //     if(!!drawing){
+    //       console.log(drawing.value.url)
+    //       // get item
+    //       // extract version
+    //       version = Number(drawing.value.version) + 1 || 0
+    //       console.log(version)
+    //       // open file
+    //       var jsonURL = await getDrawing(
+    //         drawing.value.url.split(".")[0] +`.json`
+    //       );
+    //     }
+    //   }
+    //     console.log(jsonURL);
+    //     fetch(jsonURL)
+    //       .then((res) => res.json())
+    //       .then((json) => {
+    //         console.log("Checkout this JSON! ", json);
+    //         if (appType == "house")
+    //           canvas.loadFromJSON(json, canvas.renderAll.bind(canvas));
+    //         if (appType == "avatar") {
+    //           frames = json;
+    //           canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
+    //         }
+    //       })
+    //       .catch((err) => console.log(err));
+    //  }
+    setLoader(false);
   };
 
   function dataURItoBlob(dataURI) {
@@ -531,82 +553,91 @@ drawingColorEl.onchange = function () {
     return new Blob([new Uint8Array(array)], { type: "image/png" });
   }
 
+  async function getDataUrl(img) {
 
-  function getDataUrl(img) {
-   // Create canvas
-      let image
-      console.log("img", img)
-      fabric.Image.fromURL(img, function(oImg) {
-        oImg.set({ left: 0, top: 0 });
-        oImg.scaleToHeight(2048);
-        oImg.scaleToWidth(2048);
-        console.log(oImg)
-        console.log(canvas)
-        canvas.add(oImg);
-        image = canvas.toDataURL('image/jpeg');
-        //canvas.remove(activeObject)
+  //  // Set width and height
+  //  savecanvas.width = img.width;
+  //  savecanvas.height = img.height;
+  //  // Draw the image
+  //  savecanvas.drawImage(img, 0, 0);
+  //  return savecanvas.toDataURL('image/jpeg');
+
+
+
+    // Create canvas
+    let image;
+    console.log("img", img);
+    await fabric.Image.fromURL(img, function (oImg) {
+      oImg.set({ left: 0, top: 0 });
+      oImg.scaleToHeight(2048);
+      oImg.scaleToWidth(2048);
+      console.log(oImg);
+      console.log(canvas);
+      savecanvas.add(oImg);
     });
+    image = savecanvas.toDataURL("image/png");
     return image
-   
-}
-
-  async function getDrawing(DrawingUrl) {
-    const payload = { url: DrawingUrl };
-    const rpcid = "download_file";
-    const fileurl = await client.rpc($Session, rpcid, payload);
-    let url = fileurl.payload.url;
-    console.log(url);
-    return url;
   }
 
   window.addEventListener("resize", resizeCanvas, false);
 
   function resizeCanvas() {
-    
     if (document.body.clientWidth <= document.body.clientHeight) {
-      scaleRatio = Math.min(document.body.clientWidth/2048, document.body.clientWidth/2048);
-    } else{
-      scaleRatio = Math.min(window.innerHeight/2048, window.innerHeight/2048);
+      scaleRatio = Math.min(
+        document.body.clientWidth / 2048,
+        document.body.clientWidth / 2048
+      );
+    } else {
+      scaleRatio = Math.min(
+        window.innerHeight / 2048,
+        window.innerHeight / 2048
+      );
     }
-    canvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
-   // savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
-    cursor.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
-    cursor.setZoom(scaleRatio)  
-    canvas.setZoom(scaleRatio)
+    canvas.setDimensions({
+      width: 2048 * scaleRatio,
+      height: 2048 * scaleRatio,
+    });
+    // savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
+    cursor.setDimensions({
+      width: 2048 * scaleRatio,
+      height: 2048 * scaleRatio,
+    });
+    cursor.setZoom(scaleRatio);
+    canvas.setZoom(scaleRatio);
     //savecanvas.setZoom(scaleRatio)
   }
-
 
   function zoomIt(factor) {
     // canvas.setHeight(canvas.getHeight() * factor);
     // canvas.setWidth(canvas.getWidth() * factor);
     if (canvas.backgroundImage) {
-        // Need to scale background images as well
-        var bi = canvas.backgroundImage;
-        bi.width = bi.width * factor; bi.height = bi.height * factor;
+      // Need to scale background images as well
+      var bi = canvas.backgroundImage;
+      bi.width = bi.width * factor;
+      bi.height = bi.height * factor;
     }
     var objects = canvas.getObjects();
     for (var i in objects) {
-        var scaleX = objects[i].scaleX;
-        var scaleY = objects[i].scaleY;
-        var left = objects[i].left;
-        var top = objects[i].top;
+      var scaleX = objects[i].scaleX;
+      var scaleY = objects[i].scaleY;
+      var left = objects[i].left;
+      var top = objects[i].top;
 
-        var tempScaleX = scaleX * factor;
-        var tempScaleY = scaleY * factor;
-        var tempLeft = left * factor;
-        var tempTop = top * factor;
+      var tempScaleX = scaleX * factor;
+      var tempScaleY = scaleY * factor;
+      var tempLeft = left * factor;
+      var tempTop = top * factor;
 
-        objects[i].scaleX = tempScaleX;
-        objects[i].scaleY = tempScaleY;
-        objects[i].left = tempLeft;
-        objects[i].top = tempTop;
+      objects[i].scaleX = tempScaleX;
+      objects[i].scaleY = tempScaleY;
+      objects[i].left = tempLeft;
+      objects[i].top = tempTop;
 
-        objects[i].setCoords();
+      objects[i].setCoords();
     }
     canvas.renderAll();
     canvas.calcOffset();
-    }
+  }
 
   ////////////////////////// stop motion functie ////////////////////////////////////////
 
@@ -624,11 +655,18 @@ drawingColorEl.onchange = function () {
     img.onload = function () {
       var f_img = new fabric.Image(img);
       let options;
-      let scale = (2048/document.body.clientHeight)
-      if(document.body.clientWidth <= document.body.clientHeight){
-        scale = (2048/document.body.clientWidth)
+      let scale = 2048 / document.body.clientHeight;
+      if (document.body.clientWidth <= document.body.clientHeight) {
+        scale = 2048 / document.body.clientWidth;
       }
-      if (!play) options = { opacity: 0.5, width: 2048, height: 2048, scaleX: scale, scaleY: scale };
+      if (!play)
+        options = {
+          opacity: 0.5,
+          width: 2048,
+          height: 2048,
+          scaleX: scale,
+          scaleY: scale,
+        };
       else options = {};
       canvas.setBackgroundImage(f_img, canvas.renderAll.bind(canvas), options);
 
@@ -644,11 +682,11 @@ drawingColorEl.onchange = function () {
       //canvas.clear()
       // load frame
       canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
-     if (showBackground) img.src = backgroundFrames[newFrame - 1];
+      if (showBackground) img.src = backgroundFrames[newFrame - 1];
 
       // change current frame
       currentFrame = newFrame;
-      frames[newFrame].backgroundImage
+      frames[newFrame].backgroundImage;
     }
     if (play || !showBackground) {
       canvas.clear();
@@ -659,16 +697,14 @@ drawingColorEl.onchange = function () {
   };
 
   const deleteFrame = (Frame) => {
-     for( var i = 0; i < frames.length; i++){ 
-      console.log(frames[i],Frame)
-    if ( i == Frame && i != 0) { 
-      frames.splice(i, 1);
-      currentFrame = i-1 
+    for (var i = 0; i < frames.length; i++) {
+      console.log(frames[i], Frame);
+      if (i == Frame && i != 0) {
+        frames.splice(i, 1);
+        currentFrame = i - 1;
+      }
     }
-
-}
-  
-  }
+  };
 
   async function addFrame() {
     await updateFrame();
@@ -677,7 +713,7 @@ drawingColorEl.onchange = function () {
     frames.push({});
     frames = frames;
     await changeFrame(frames.length - 1);
-    let framebar = document.getElementById("framebar")
+    let framebar = document.getElementById("framebar");
     framebar.scrollTo({ left: 0, top: framebar.scrollHeight });
   }
 
@@ -758,71 +794,71 @@ drawingColorEl.onchange = function () {
   }
 
   async function createAvatar() {
-    let size = 2048
-      savecanvas.setHeight(size);
-      savecanvas.setWidth(size * frames.length);
-      savecanvas.renderAll();
-      savecanvas.clear();
-      let data = { objects: [] };
-      for (let i = 0; i < frames.length; i++) {
-        frames[i].backgroundImage = {};
-        const newFrames = frames[i].objects.map((object, index) => {
-          const newObject = { ...object };
-          newObject.top = newObject.top;
-          newObject.left += size * i;
+    let size = 2048;
+    savecanvas.setHeight(size);
+    savecanvas.setWidth(size * frames.length);
+    savecanvas.renderAll();
+    savecanvas.clear();
+    let data = { objects: [] };
+    for (let i = 0; i < frames.length; i++) {
+      frames[i].backgroundImage = {};
+      const newFrames = frames[i].objects.map((object, index) => {
+        const newObject = { ...object };
+        newObject.top = newObject.top;
+        newObject.left += size * i;
 
-          data.objects.push(newObject);
-        });
-      }
-      await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
-      await savecanvas.calcOffset();
-   
-        //var Image = savecanvas.toDataURL("image/png", 0.2);
-        // console.log(Image);
-        // var blobData = dataURItoBlob(Image);
-    setTimeout(async() => {
+        data.objects.push(newObject);
+      });
+    }
+    await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
+    await savecanvas.calcOffset();
+
+    //var Image = savecanvas.toDataURL("image/png", 0.2);
+    // console.log(Image);
+    // var blobData = dataURItoBlob(Image);
+    setTimeout(async () => {
       var Image = savecanvas.toDataURL("image/png", 0.2);
       var blobData = dataURItoBlob(Image);
       json = JSON.stringify(frames);
-      Image = await uploadAvatar(blobData,json, version);
+      Image = await uploadAvatar(blobData, json, version);
     }, 300);
   }
 
-  async function createStopmotion(){
-          // console.log("saved");
-      // json = JSON.stringify(frames);
-      // var blobData = dataURItoBlob(frames);
-      // uploadImage(title, appType, json, blobData, status);
-      let size = 2048
-      savecanvas.setHeight(size);
-      savecanvas.setWidth(size * frames.length);
-      savecanvas.renderAll();
-      savecanvas.clear();
-      let data = { objects: [] };
-      //let scale = 128 / 700;
-      for (let i = 0; i < frames.length; i++) {
-        frames[i].backgroundImage = {};
-        const newFrames = frames[i].objects.map((object, index) => {
-          const newObject = { ...object };
-          newObject.top = newObject.top;
-          newObject.left += size * i;
-          // newObject.scaleX = scaleRatio/2048;
-          // newObject.scaleY = scaleRatio/2048;
-          data.objects.push(newObject);
-        });
-      }
-      await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
-      await savecanvas.calcOffset();
-   
-        var Image = savecanvas.toDataURL("image/png", 0.5);
-        var blobData = dataURItoBlob(Image);
-        if(!!!displayName){
-          displayName = Date.now() + "_" + title
-        }
-        await uploadImage(displayName, appType, blobData, status,version,title);
-        //Profile.update(n => n.url = Image);
-        saving = false
-        setLoader(false)
+  async function createStopmotion() {
+    // console.log("saved");
+    // json = JSON.stringify(frames);
+    // var blobData = dataURItoBlob(frames);
+    // uploadImage(title, appType, json, blobData, status);
+    let size = 2048;
+    savecanvas.setHeight(size);
+    savecanvas.setWidth(size * frames.length);
+    savecanvas.renderAll();
+    savecanvas.clear();
+    let data = { objects: [] };
+    //let scale = 128 / 700;
+    for (let i = 0; i < frames.length; i++) {
+      frames[i].backgroundImage = {};
+      const newFrames = frames[i].objects.map((object, index) => {
+        const newObject = { ...object };
+        newObject.top = newObject.top;
+        newObject.left += size * i;
+        // newObject.scaleX = scaleRatio/2048;
+        // newObject.scaleY = scaleRatio/2048;
+        data.objects.push(newObject);
+      });
+    }
+    await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
+    await savecanvas.calcOffset();
+
+    var Image = savecanvas.toDataURL("image/png", 0.5);
+    var blobData = dataURItoBlob(Image);
+    if (!!!displayName) {
+      displayName = Date.now() + "_" + title;
+    }
+    await uploadImage(displayName, appType, blobData, status, version, title);
+    //Profile.update(n => n.url = Image);
+    saving = false;
+    setLoader(false);
   }
 
   //////////////////// avatar functies end /////////////////////////////////
@@ -849,17 +885,17 @@ drawingColorEl.onchange = function () {
     let videocanv = new fabric.Canvas(videoCanvas, {
       isDrawingMode: false,
     });
-    videocanv.setHeight(videoWidth/1.33);
+    videocanv.setHeight(videoWidth / 1.33);
     videocanv.setWidth(videoWidth);
     let vidContext = videocanv.getContext("2d");
-    vidContext.drawImage(video, 0, 0, videoWidth, videoWidth/1.33);
+    vidContext.drawImage(video, 0, 0, videoWidth, videoWidth / 1.33);
     var uri = videoCanvas.toDataURL("image/png");
     fabric.Image.fromURL(uri, function (oImg) {
       oImg.scale(1);
       oImg.set({ left: 0, top: 0 });
       canvas.add(oImg);
     });
-    video.srcObject.getTracks()[0].stop()
+    video.srcObject.getTracks()[0].stop();
     current = "select";
   }
 
@@ -999,8 +1035,6 @@ drawingColorEl.onchange = function () {
     },
   }; // End FloodFill
 
-
-
   function hexToRgb(hex, opacity) {
     opacity = Math.round(opacity * 255) || 255;
     hex = hex.replace("#", "");
@@ -1031,7 +1065,7 @@ drawingColorEl.onchange = function () {
 
     canvas.on({
       "mouse:down": function (e) {
-          var mouseX = Math.round(e.e.layerX),
+        var mouseX = Math.round(e.e.layerX),
           mouseY = Math.round(e.e.layerY),
           //canvas = canvas.lowerCanvasEl,
           context = canvas.getContext("2d"),
@@ -1114,9 +1148,8 @@ drawingColorEl.onchange = function () {
 
   ///////////////// fill functie end ///////////////////////
 
-
   function backgroundHide() {
-    showBackground = !showBackground
+    showBackground = !showBackground;
     if (!showBackground) {
       for (let i = 0; i < frames.length; i++) {
         frames[i].backgroundImage = {};
@@ -1128,23 +1161,19 @@ drawingColorEl.onchange = function () {
     }
   }
 
-
-  function switchOption(option){
-    if(current === option){
-      optionbox = !optionbox
-    }else {
+  function switchOption(option) {
+    if (current === option) {
+      optionbox = !optionbox;
+    } else {
       optionbox = false;
       current = option;
-      
     }
-    
   }
 
-  let transition = { y: 200, duration: 500 }
-  if(window.screen.width >= 600){
-    transition = { x: 200, duration: 500 }
+  let transition = { y: 200, duration: 500 };
+  if (window.screen.width >= 600) {
+    transition = { x: 200, duration: 500 };
   }
-
 </script>
 
 <main>
@@ -1163,8 +1192,8 @@ drawingColorEl.onchange = function () {
       </div>
     </div> -->
     <div class="canvasBox" class:hidden={current === "camera"}>
-      <canvas bind:this={canv} class="canvas"  />
-      <canvas bind:this={Cursor} id="cursor"></canvas>
+      <canvas bind:this={canv} class="canvas" />
+      <canvas bind:this={Cursor} id="cursor" />
     </div>
     <div class="savecanvas">
       <canvas bind:this={saveCanvas} />
@@ -1173,54 +1202,66 @@ drawingColorEl.onchange = function () {
       {#if appType == "stopmotion" || appType == "avatar"}
         <div id="framebar">
           {#each frames as frame, index}
-          <div>  
-          <div
-              id={index}
-              class:selected={currentFrame === index}
-              on:click={() => {changeFrame(index)}}
-              style="background-image: url({backgroundFrames[index]})"
-            >
-                 <div>{index + 1}
-                
-                </div>
+            <div>
+              <div
+                id={index}
+                class:selected={currentFrame === index}
+                on:click={() => {
+                  changeFrame(index);
+                }}
+                style="background-image: url({backgroundFrames[index]})"
+              >
+                <div>{index + 1}</div>
+              </div>
+              {#if currentFrame === index && index != 0}
+                <img
+                  class="icon frameDelete"
+                  on:click={() => {
+                    deleteFrame(index);
+                  }}
+                  src="assets/SHB/svg/AW-icon-trash.svg"
+                />
+              {/if}
             </div>
-            {#if currentFrame === index && index != 0}
-                  <img class="icon frameDelete" on:click="{()=>{deleteFrame(index)}}" src="assets/SHB/svg/AW-icon-trash.svg" >
-            {/if}
-          </div>
           {/each}
           {#if frames.length < maxFrames}
-          <div>
-            <div id="frameNew" on:click={addFrame}><div>+</div></div>
-          </div>
+            <div>
+              <div id="frameNew" on:click={addFrame}><div>+</div></div>
+            </div>
           {/if}
         </div>
         <div id="frameButtons">
           {#if play}
             <a
-              id = "playPause"
+              id="playPause"
               on:click={() => {
                 play = false;
                 setPlay(false);
-              }}><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" ></a
+              }}><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" /></a
             >
           {:else}
             <a
-              id = "playPause"
+              id="playPause"
               on:click={() => {
                 play = true;
                 setPlay(true);
-              }}><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" ></a
+              }}><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" /></a
             >
           {/if}
-          <a on:click="{backgroundHide}"><img class="icon" class:unselected="{!showBackground}" src="assets/SHB/svg/AW-icon-onion.svg"></a>
+          <a on:click={backgroundHide}
+            ><img
+              class="icon"
+              class:unselected={!showBackground}
+              src="assets/SHB/svg/AW-icon-onion.svg"
+            /></a
+          >
         </div>
       {/if}
     </div>
   </div>
   <div class="box2">
     <div class="optionbox">
-      <div class="optionbar" class:hidden={optionbox} >
+      <div class="optionbar" class:hidden={optionbox}>
         <div id="drawing-mode-options" class:hidden={current != "draw"}>
           <select id="drawing-mode-selector">
             <option>Pencil</option>
@@ -1237,10 +1278,21 @@ drawingColorEl.onchange = function () {
         </div>
 
         <div class="colorTab" class:hidden={current != "draw"}>
-          <div class="widthBox" style="background-color: {drawingColor};" on:click="{()=>{drawingColorEl.click()}}">
-          <input type="color" bind:value={drawingColor} bind:this="{drawingColorEl}"  id="drawing-color" />
-          <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg">
-        </div>
+          <div
+            class="widthBox"
+            style="background-color: {drawingColor};"
+            on:click={() => {
+              drawingColorEl.click();
+            }}
+          >
+            <input
+              type="color"
+              bind:value={drawingColor}
+              bind:this={drawingColorEl}
+              id="drawing-color"
+            />
+            <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
+          </div>
           <span class="info">{lineWidth}</span><input
             type="range"
             min="10"
@@ -1248,7 +1300,7 @@ drawingColorEl.onchange = function () {
             id="drawing-line-width"
             bind:value={lineWidth}
           />
-          
+
           <!-- <label for="drawing-shadow-color">Shadow color:</label>
           <input
             type="color"
@@ -1276,11 +1328,11 @@ drawingColorEl.onchange = function () {
         </div>
         <div class="eraseTab" class:hidden={current != "erase"}>
           <div class="widthBox">
-          <div
-            class="lineWidth"
-            style="width:{EraselineWidth}px; height: {EraselineWidth}px; background-color: black;margin:  0px auto;"
-          />
-        </div>
+            <div
+              class="lineWidth"
+              style="width:{EraselineWidth}px; height: {EraselineWidth}px; background-color: black;margin:  0px auto;"
+            />
+          </div>
           <span class="info">{EraselineWidth}</span><input
             type="range"
             min="1"
@@ -1288,31 +1340,26 @@ drawingColorEl.onchange = function () {
             id="erase-line-width"
             bind:value={EraselineWidth}
           />
-          
-          
         </div>
         <div class="fillTab" class:hidden={current != "fill"}>
-          <input
-            type="color"
-            bind:value={fillColor}
-            id="fill-color"
-          />
+          <input type="color" bind:value={fillColor} id="fill-color" />
         </div>
         <div class="selectTab" class:hidden={current != "select"}>
-          <a on:click={Copy} ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg"></a
+          <a on:click={Copy}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
           >
-          <a on:click={Paste} 
-            ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg"></a
+          <a on:click={Paste}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
           >
-          <a on:click={Delete} 
-            ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg"></a
+          <a on:click={Delete}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
           >
         </div>
         <div class="saveBox" class:hidden={current != "saveToggle"}>
           <div class="saveTab">
             {#if appType != "avatar" && appType != "house"}
               <label for="title">Title</label>
-              <NameGenerator bind:value={title} bind:invalidTitle={invalidTitle} />
+              <NameGenerator bind:value={title} bind:invalidTitle />
 
               <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
@@ -1324,30 +1371,33 @@ drawingColorEl.onchange = function () {
               </select>
             {/if}
 
-            <button on:click={upload}>{#if saving}Saving{:else if saved} Saved{:else}Save{/if}</button>
+            <button on:click={upload}
+              >{#if saving}Saving{:else if saved} Saved{:else}Save{/if}</button
+            >
           </div>
         </div>
       </div>
 
       <div class="iconbox">
-        <a on:click={undo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg"></a>
-        <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
-        <a
-          id="drawing-mode"
-          class:currentSelected={current === "draw"}><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" ></a
+        <a on:click={undo}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
         >
-         <a
-          id="erase-mode"
-          class:currentSelected={current === "erase"} ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" ></a
+        <a on:click={redo}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
+        >
+        <a id="drawing-mode" class:currentSelected={current === "draw"}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
+        >
+        <a id="erase-mode" class:currentSelected={current === "erase"}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" /></a
         >
         <!-- <button
           class="icon"
           id="fill-mode"
           class:currentSelected={current === "fill"}><BucketIcon /></button
         > -->
-        <a
-          id="select-mode"
-          class:currentSelected={current === "select"}><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" ></a
+        <a id="select-mode" class:currentSelected={current === "select"}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
         >
         <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
           <button
@@ -1360,30 +1410,26 @@ drawingColorEl.onchange = function () {
         <!-- <button id="clear-canvas" class="btn btn-info icon">
           <TrashIcon />
         </button> -->
-       
-       
+
         <a
           class:currentSelected={current === "saveToggle"}
           on:click={() => {
-            if((appType == "drawing" || appType == "stopmotion")){
-            saveToggle = !saveToggle;
-            switchOption("saveToggle")
-            } 
-            upload()
-            
-          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" ></a
+            if (appType == "drawing" || appType == "stopmotion") {
+              saveToggle = !saveToggle;
+              switchOption("saveToggle");
+            }
+            upload();
+          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
         >
       </div>
-
     </div>
   </div>
-  <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg"></div>
+  <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg" /></div>
   {#if appType == "avatar"}
     <div id="avatarBox">
-      <Avatar/>
+      <Avatar />
     </div>
   {/if}
-
 </main>
 
 <style>
@@ -1393,7 +1439,7 @@ drawingColorEl.onchange = function () {
   }
 
   #cursor {
-    pointer-events: none!important;
+    pointer-events: none !important;
     width: 100vw;
     height: 100vw;
     margin: 0px;
@@ -1417,7 +1463,7 @@ drawingColorEl.onchange = function () {
   }
 
   .selected {
-    box-shadow: -3px 3px #7300ED;
+    box-shadow: -3px 3px #7300ed;
   }
 
   .colorTab {
@@ -1461,16 +1507,16 @@ drawingColorEl.onchange = function () {
     align-items: center;
     flex-direction: column;
     flex-wrap: wrap;
-    transition: all .5s ease-in-out;
+    transition: all 0.5s ease-in-out;
   }
 
   .optionbar {
     margin-left: 10px;
-    border-right: 2px solid #7300ED;
+    border-right: 2px solid #7300ed;
     height: 100vh;
     background-color: white;
-    transition: all .5s ease-in-out;
-    width:fit-content;
+    transition: all 0.5s ease-in-out;
+    width: fit-content;
     padding: 15px;
     transform: translateX(0%);
     width: 280px;
@@ -1520,7 +1566,7 @@ drawingColorEl.onchange = function () {
   }
 
   .currentSelected {
-    box-shadow: 0px 4px #7300ED;
+    box-shadow: 0px 4px #7300ed;
     border-radius: 0% 50% 50% 0;
     height: 60px;
     display: block;
@@ -1528,7 +1574,7 @@ drawingColorEl.onchange = function () {
     padding: 0px;
     background-color: white;
     margin-left: -5px;
-}
+  }
 
   .hidden {
     display: none;
@@ -1555,8 +1601,6 @@ drawingColorEl.onchange = function () {
     .topbar {
       width: unset;
     }
-
-  
   }
 
   .videoButton {
@@ -1570,9 +1614,9 @@ drawingColorEl.onchange = function () {
   .lineWidth {
     border-radius: 50%;
     position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .widthBox {
@@ -1582,27 +1626,23 @@ drawingColorEl.onchange = function () {
     border-radius: 25px;
     padding: 10px;
     width: 30px;
-    }
+  }
 
+  .colorIcon {
+    width: 32px;
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+  }
 
-
-
-.colorIcon{
-  width: 32px;
-  position: absolute;
-  right: 5px;
-  bottom: 5px;
-}
-
-/* new css */
-.canvasBox {
+  /* new css */
+  .canvasBox {
     background-color: white;
     margin: 0 auto;
     width: fit-content;
     border: 2px solid #7300ed;
     position: relative;
   }
-
 
   #framebar {
     display: inline;
@@ -1613,7 +1653,7 @@ drawingColorEl.onchange = function () {
     width: 60px;
     height: 60px;
     margin: 5px;
-    border: 2px solid #7300EB;
+    border: 2px solid #7300eb;
     font-size: 30px;
     text-align: center;
     background-position: center;
@@ -1652,193 +1692,189 @@ drawingColorEl.onchange = function () {
     position: absolute;
   }
 
-/* PC */
-@media only screen and (min-width: 700px) {
-  .canvasBox {
-    height: min-content;
-    width: min-content;
-    float: left;
-    margin: -4px;
+  /* PC */
+  @media only screen and (min-width: 700px) {
+    .canvasBox {
+      height: min-content;
+      width: min-content;
+      float: left;
+      margin: -4px;
+    }
+
+    .topbar {
+      float: left;
+      height: 100vh;
+    }
+
+    .topbar > div {
+      display: inline-grid;
+      position: relative;
+      top: 50%;
+      margin: 10px;
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+
+    .topbar > button {
+      display: block;
+    }
+
+    .frameBox {
+      float: left;
+    }
+
+    #framebar {
+      display: inline-block;
+      max-height: 600px;
+      width: 100px;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      scroll-snap-type: y proximity;
+      float: left;
+      margin: 5px;
+    }
+
+    #framebar > div:last-child {
+      overflow-anchor: auto;
+    }
+
+    .box2 {
+      position: fixed;
+      left: 0;
+      top: 50vh;
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
   }
 
-  .topbar{
-    float: left;
-    height: 100vh;
-  }
-
-  .topbar > div {
-    display: inline-grid;
-    position: relative;
-    top: 50%;
-    margin: 10px;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-  }
-
-  .topbar > button {
-    display: block;
-  }
-
-  .frameBox {
-    float: left;
-  }
-
- #framebar {
-    display: inline-block;
-    max-height: 600px;
-    width: 100px;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity;
-    float: left;
-    margin: 5px;
-  }
-
-  #framebar > div:last-child {
-    overflow-anchor: auto;
-  }
-
-  .box2 {
+  #clear-canvas {
     position: fixed;
-    left: 0;
-    top: 50vh;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-  }
-
-
-}
-
-#clear-canvas{
-  position: fixed;
-  left: 20px;
-  top: 75px;
-  z-index: 13;
-  /* border: 2px solid #7300ed; */
-  box-shadow: 5px 5px 0px #7300ed;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+    left: 20px;
+    top: 75px;
+    z-index: 13;
+    /* border: 2px solid #7300ed; */
+    box-shadow: 5px 5px 0px #7300ed;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
   }
 
   #clear-canvas > img {
-  width: 40px;
-}
-
-/* mobile */
-@media only screen and (max-width: 700px) {
-  .canvasBox {
-    border: none;
-    border-top: 2px solid #7300ed;
-    border-bottom: 2px solid #7300ed;;
+    width: 40px;
   }
 
-  .optionbox {
-    width: 100vw;
-    height: min-content;
+  /* mobile */
+  @media only screen and (max-width: 700px) {
+    .canvasBox {
+      border: none;
+      border-top: 2px solid #7300ed;
+      border-bottom: 2px solid #7300ed;
+    }
+
+    .optionbox {
+      width: 100vw;
+      height: min-content;
+      position: fixed;
+      bottom: 0;
+      display: block;
+    }
+
+    .optionbar {
+      width: 100vw;
+      height: min-content;
+      border-right: none;
+    }
+
+    .currentSelected {
+      display: inline;
+    }
+
+    .iconbox {
+      width: max-content;
+      display: block;
+      margin: 0 auto;
+      height: min-content;
+    }
+
+    .topbar {
+      width: max-content;
+      margin: 0px auto;
+      display: block;
+    }
+
+    .frameBox {
+      height: min-content;
+      width: 80vw;
+      align-items: normal;
+    }
+
+    #framebar {
+      margin-bottom: 60px;
+      overflow-y: auto;
+      max-height: 79px;
+      overflow-x: auto;
+    }
+
+    #framebar > div {
+      display: inline-block;
+    }
+
+    .optionbar {
+      margin-left: 0;
+      border-top: 2px solid #7300ed;
+      height: min-content;
+      background-color: white;
+      transition: all 0.5s ease-in-out;
+      padding: 0px;
+      transform: translateY(0%);
+      width: 100vw;
+      display: block;
+    }
+
+    .optionbar.hidden {
+      width: 100vw;
+      transform: translateY(160%);
+      display: inline;
+      padding: 0px;
+      margin: 0px;
+    }
+    .icon {
+      min-width: 50px;
+      height: 50px;
+      width: 50px;
+      border-radius: 71%;
+      padding: 0;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .currentSelected > img {
+      border: 2px solid #7300ed;
+    }
+    .currentSelected {
+      box-shadow: unset;
+    }
+
+    #clear-canvas {
+      bottom: 75px;
+      top: unset;
+    }
+  }
+
+  .unselected {
+    filter: grayscale(1) opacity(0.5);
+  }
+
+  #avatarBox {
     position: fixed;
-    bottom: 0;
+    top: 130px;
+    left: 20px;
+  }
+
+  #frameButtons > a > img {
     display: block;
   }
-
-  .optionbar{
-    width: 100vw;
-    height: min-content;
-    border-right: none;
-  }
-
-  .currentSelected{
-    display: inline;
-  }
-
-  .iconbox{
-    width: max-content;
-    display: block;
-    margin: 0 auto;
-    height: min-content;
-  }
-
-  .topbar{
-    width: max-content;
-    margin: 0px auto;
-    display: block;
-  }
-
-  .frameBox {
-    height: min-content;
-    width: 80vw;
-    align-items: normal;
-  }
-
-  #framebar {
-    margin-bottom: 60px;
-    overflow-y: auto;
-    max-height: 79px;
-    overflow-x: auto;
-  }
-
-  #framebar > div {
-    display: inline-block;
-  }
-
-  .optionbar {
-    margin-left: 0;
-    border-top: 2px solid #7300ED;
-    height: min-content;
-    background-color: white;
-    transition: all .5s ease-in-out;
-    padding: 0px;
-    transform: translateY(0%);
-    width: 100vw;
-    display: block;
-  }
-
-  .optionbar.hidden {
-    width: 100vw;
-    transform: translateY(160%);
-    display: inline;
-    padding: 0px;
-    margin: 0px;
-  }
-  .icon {
-    min-width: 50px;
-    height: 50px;
-    width: 50px;
-    border-radius: 71%;
-    padding: 0;
-    margin: 5px;
-    cursor: pointer;
-  }
-
-  .currentSelected > img {
-    border: 2px solid #7300ed;
-  }
-  .currentSelected {
-    box-shadow: unset;
-  }
-
-  #clear-canvas{
-    bottom: 75px;
-    top: unset;
-  }
-}
-
-.unselected{
-  filter: grayscale(1) opacity(0.5);
-}
-
-#avatarBox {
-  position: fixed;
-  top: 130px;
-  left: 20px;
-}
-
-#frameButtons > a > img {
-  display: block;
-}
-
-
 </style>
