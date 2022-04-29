@@ -2,7 +2,7 @@
   import { fabric } from "./fabric";
   import { location, replace } from "svelte-spa-router";
   import { onMount, beforeUpdate } from "svelte";
-  import { uploadImage, user, uploadAvatar, uploadHouse,getObject, setLoader } from "../../api.js";
+  import { uploadImage, user, uploadAvatar, uploadHouse,getObject, setLoader, convertImage } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session, Profile, tutorial} from "../../session.js";
   import {Achievements} from "../../storage"
@@ -754,20 +754,16 @@ drawingColorEl.onchange = function () {
   //////////////////// avatar functies /////////////////////////////////
 
   if (appType == "avatar") {
-    console.log("avatar");
     maxFrames = 5;
   }
 
   async function createAvatar() {
-    console.log("upload avatar");
     let size = 2048
-      console.log(canvas.height)
       savecanvas.setHeight(size);
       savecanvas.setWidth(size * frames.length);
       savecanvas.renderAll();
       savecanvas.clear();
       let data = { objects: [] };
-      console.log(data);
       for (let i = 0; i < frames.length; i++) {
         frames[i].backgroundImage = {};
         const newFrames = frames[i].objects.map((object, index) => {
@@ -775,7 +771,6 @@ drawingColorEl.onchange = function () {
           newObject.top = newObject.top;
           newObject.left += size * i;
 
-          console.log(newObject);
           data.objects.push(newObject);
         });
       }
@@ -787,11 +782,9 @@ drawingColorEl.onchange = function () {
         // var blobData = dataURItoBlob(Image);
     setTimeout(async() => {
       var Image = savecanvas.toDataURL("image/png", 0.2);
-      console.log(Image);
       var blobData = dataURItoBlob(Image);
       json = JSON.stringify(frames);
       Image = await uploadAvatar(blobData,json, version);
-      Profile.update(n => {n.url = Image; return n});
     }, 300);
   }
 
@@ -801,14 +794,12 @@ drawingColorEl.onchange = function () {
       // var blobData = dataURItoBlob(frames);
       // uploadImage(title, appType, json, blobData, status);
       let size = 2048
-      console.log(canvas.height)
       savecanvas.setHeight(size);
       savecanvas.setWidth(size * frames.length);
       savecanvas.renderAll();
       savecanvas.clear();
       let data = { objects: [] };
       //let scale = 128 / 700;
-      console.log(data);
       for (let i = 0; i < frames.length; i++) {
         frames[i].backgroundImage = {};
         const newFrames = frames[i].objects.map((object, index) => {
@@ -817,7 +808,6 @@ drawingColorEl.onchange = function () {
           newObject.left += size * i;
           // newObject.scaleX = scaleRatio/2048;
           // newObject.scaleY = scaleRatio/2048;
-          console.log(newObject);
           data.objects.push(newObject);
         });
       }
@@ -825,7 +815,6 @@ drawingColorEl.onchange = function () {
       await savecanvas.calcOffset();
    
         var Image = savecanvas.toDataURL("image/png", 0.5);
-        console.log(Image);
         var blobData = dataURItoBlob(Image);
         if(!!!displayName){
           displayName = Date.now() + "_" + title
@@ -863,7 +852,6 @@ drawingColorEl.onchange = function () {
     videocanv.setHeight(videoWidth/1.33);
     videocanv.setWidth(videoWidth);
     let vidContext = videocanv.getContext("2d");
-    console.log(video.srcObject)
     vidContext.drawImage(video, 0, 0, videoWidth, videoWidth/1.33);
     var uri = videoCanvas.toDataURL("image/png");
     fabric.Image.fromURL(uri, function (oImg) {
@@ -884,16 +872,13 @@ drawingColorEl.onchange = function () {
   const undo = () => {
     let lastObject =
       canvas.toJSON().objects[canvas.toJSON().objects.length - 1];
-    console.log(lastObject);
     history.push(lastObject);
-    console.log(history);
     let newFile = canvas.toJSON();
     newFile.objects.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
   };
 
   const redo = () => {
-    console.log("redo");
     let newFile = canvas.toJSON();
     newFile.objects.push(history[history.length - 1]);
     history.pop();
@@ -1060,7 +1045,6 @@ drawingColorEl.onchange = function () {
 
         if (FloodFill.withinTolerance(target, 0, parsedColor, fillTolerance)) {
           // Trying to fill something which is (essentially) the fill color
-          console.log("Ignore... same color");
           return;
         }
 
@@ -1134,14 +1118,12 @@ drawingColorEl.onchange = function () {
   function backgroundHide() {
     showBackground = !showBackground
     if (!showBackground) {
-      console.log("hidden");
       for (let i = 0; i < frames.length; i++) {
         frames[i].backgroundImage = {};
       }
       canvas.loadFromJSON(frames[currentFrame], canvas.renderAll.bind(canvas));
       frames = frames;
     } else {
-      console.log("show");
       img.src = backgroundFrames[currentFrame - 1];
     }
   }

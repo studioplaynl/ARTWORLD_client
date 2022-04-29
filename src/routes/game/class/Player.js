@@ -24,11 +24,9 @@ class Player {
     if(!!!userprofile) userprofile = ManageSession.userProfile
    console.log("loadPlayerAvatar", userprofile)
       //check if account info is loaded
-      if (userprofile.id != null) {
-        console.log("avatar 1")
-        //check for createPlayer flag
-        if (ManageSession.createPlayer) {
-          console.log("avatar 1")
+      if (userprofile.id == null) return console.log("avatar 1")
+      //check for createPlayer flag
+      if (!ManageSession.createPlayer) return
           //ManageSession.createPlayer = false
           //console.log("ManageSession.createPlayer = false;")
           scene.createdPlayer = false
@@ -116,13 +114,13 @@ class Player {
               // })
 
               const fileNameCheck = scene.playerAvatarKey
-              scene.load.spritesheet(fileNameCheck, userprofile.url, { frameWidth: 2048, frameHeight: 2048})
+              scene.load.spritesheet(fileNameCheck, userprofile.url, { frameWidth: 128, frameHeight: 128})
                 .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => { console.log("scene.playerAvatarKey", scene.playerAvatarKey); 
                 if (this.firstBooted != true) {
                 this.subscribeToProfile()
                 }
                 this.attachAvatarToPlayer(scene, fileNameCheck) }, scene)
-              scene.load.restart() // start loading the image in memory
+              scene.load.start() // start loading the image in memory
               // this.scene.restart();
 
             }
@@ -132,9 +130,6 @@ class Player {
             console.log("scene.location", scene.location)
            
           }
-
-        } //if(ManageSession.playerCreated)
-      }
     
   }
 

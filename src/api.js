@@ -1,6 +1,6 @@
 import { date } from "svelte-i18n";
 import { client } from "./nakama.svelte"
-import { Session, Profile, Error, Succes, achievements } from "./session.js"
+import { Session, Profile, Error, Succes, CurrentApp } from "./session.js"
 import ManageSession from "./routes/game/ManageSession.js"; //push awards to ManageSession
 import { get } from 'svelte/store'
 
@@ -189,7 +189,7 @@ export async function getAccount(id, avatar) {
   if(!!!id){
     const account = await client.getAccount(Sess);
     let user = account.user;
-    user.url = await getAvatar(user.avatar_url)
+    user.url = await convertImage(user.avatar_url,"128","1000")
     user.meta = JSON.parse(user.metadata)
     console.log(user)
     Profile.set(user)
@@ -198,7 +198,7 @@ export async function getAccount(id, avatar) {
     const users = await client.getUsers(Sess, [id]);
     console.log(users)
     let user = users.users[0]
-    user.url = await getAvatar(user.avatar_url)
+    user.url = await convertImage(user.avatar_url,"128","1000")
     //console.log(user)
     return user
   }
@@ -256,8 +256,8 @@ export async function getFile(file_url) {
 }
 
   export async function uploadAvatar(data,json) {
-    prof.meta.avatarVersion = Number(prof.meta.avatarVersion || 0) + 1
-    var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png",prof.meta.avatarVersion)
+    let avatarVersion = Number(prof.avatar_url.split("/")[2].split("_")[0] || 0) + 1
+    var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png",avatarVersion)
     console.log(jpegURL)
 
   await fetch(jpegURL, {
@@ -274,10 +274,12 @@ export async function getFile(file_url) {
 
   await client.updateAccount(Sess, {
       avatar_url: jpegLocation,
-      meta: prof.meta
   });
+  CurrentApp.set("")
+  let Image = await convertImage(jpegLocation,"128","1000", "png")
+  Profile.update((n) => {n.url = Image; return n});
   Succes.update(s=>s=true)
-  return getFile(jpegLocation,"", "png")
+  return 
 }
 
 
@@ -390,7 +392,7 @@ export async function deleteObjectAdmin(id, type, name) {
 // format = "png"
 
 
-export async function convertImage(path,height,width, format) {
+export async function convertImage(path,height,width,format) {
   if(typeof size == "number") size = String(size)
   let payload = {path,height,width, format};
   const rpcid = "convert_image";

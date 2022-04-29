@@ -199,7 +199,7 @@ class ServerCall {
 
   async getHomeImages(url, element, index, homeImageKey, scene) {
     console.log("getHomeImages")
-    await convertImage(url, "128", "png")
+    await convertImage(url, "128", "128", "png")
       .then((rec) => {
         //console.log("rec", rec)
         // load all the images to phaser

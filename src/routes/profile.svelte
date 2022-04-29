@@ -21,7 +21,6 @@
   let stopMotionIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />'
   let AudioIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />'
   let videoIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />'
-  console.log($Session);
   let user = "",
     role = "",
     avatar_url = "",
@@ -105,7 +104,6 @@
 function moveToTrash(key) {
     for(let i = 0; i < art.length; i++){
       if(!!art[i] && art[i].key == key){
-        console.log(art[i])
         trash.push(art[i])
         delete(art[i])
         i = art.length
@@ -117,7 +115,6 @@ function moveToTrash(key) {
 
 
   function moveToArt(key) {
-    console.log(trash)
     for(let i = 0; i < trash.length; i++){
       if(!!trash[i] && trash[i].key == key){
         art.push(trash[i])
@@ -130,7 +127,6 @@ function moveToTrash(key) {
   }
 
   function isCurrentUser(){
-    console.log(CurrentUser)
     return CurrentUser
   }
 
@@ -157,12 +153,11 @@ function moveToTrash(key) {
         picture = await listImages("picture",params.user, 100)
       }
 
-      console.log(drawings)
       useraccount = await getAccount(id)
-      console.log(useraccount)
       user = useraccount.username
-      role = useraccount.metadata.role
-      azc = useraccount.metadata.azc
+      role = useraccount.meta.Role
+      azc = useraccount.meta.Azc
+      console.log("azc", azc)
       avatar_url = useraccount.url
       if(!!avatar_url){
         animateScript()
@@ -173,7 +168,6 @@ function moveToTrash(key) {
       } catch(err) {
         console.log(err); // TypeError: failed to fetch
       }
-      console.log(house_url)
       if(typeof house_url == "object"){
         house_url = await convertImage(house_url.value.url,"64", "64")
       }else {
@@ -181,16 +175,15 @@ function moveToTrash(key) {
       }
     } else {
       CurrentUser = true;
-      // drawings = await listImages("drawing",$Session.user_id, 100)
-      // stopMotion = await listImages("stopmotion",$Session.user_id, 100)
-      // video = await listImages("video",$Session.user_id, 100)
-      // audio = await listImages("audio",$Session.user_id, 100)
-      // picture = await listImages("picture",$Session.user_id, 100)
-      // useraccount = await getAccount()
-      console.log(useraccount)
+      drawings = await listImages("drawing",$Session.user_id, 100)
+      stopMotion = await listImages("stopmotion",$Session.user_id, 100)
+      video = await listImages("video",$Session.user_id, 100)
+      audio = await listImages("audio",$Session.user_id, 100)
+      picture = await listImages("picture",$Session.user_id, 100)
+      useraccount = await getAccount()
       user = useraccount.username
-      role = JSON.parse(useraccount.metadata).role
-      azc = JSON.parse(useraccount.metadata).azc
+      role = useraccount.meta.Role
+      azc =  useraccount.meta.Azc
       avatar_url = useraccount.url
       if(!!avatar_url){
         animateScript()
@@ -200,7 +193,6 @@ function moveToTrash(key) {
       } catch(err) {
         console.log(err); // TypeError: failed to fetch
       }
-      console.log(house_url)
       if(typeof house_url == "object"){
         house_url = await convertImage(house_url.value.url,"64", "64")
       } else {
@@ -208,22 +200,21 @@ function moveToTrash(key) {
       }
     }
   
-    // art = [].concat(drawings)
-    // art = art.concat(stopMotion)
-    // art = art.concat(video)
-    // art = art.concat(audio)
-    // art = art.concat(picture)
-    // art.forEach(async (item, index) => {
-    //   if(item.value.status === "trash"){
-    //     trash.push(item)
-    //     delete art[index]
-    //   }
-    //   if(item.value.json) item.url = item.value.json.split(".")[0]
-    //   if(item.value.url) item.url = item.value.url.split(".")[0]
-    //   item.value.previewUrl = await convertImage(item.value.url, "128")
-    //   console.log(item.value.previewUrl)
-    //   art = art;
-    // })
+    art = [].concat(drawings)
+    art = art.concat(stopMotion)
+    art = art.concat(video)
+    art = art.concat(audio)
+    art = art.concat(picture)
+    art.forEach(async (item, index) => {
+      if(item.value.status === "trash"){
+        trash.push(item)
+        delete art[index]
+      }
+      if(item.value.json) item.url = item.value.json.split(".")[0]
+      if(item.value.url) item.url = item.value.url.split(".")[0]
+      item.value.previewUrl = await convertImage(item.value.url, "128", "128")
+      art = art;
+    })
 
     trash = trash;
     loader = false

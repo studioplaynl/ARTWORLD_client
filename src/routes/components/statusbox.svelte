@@ -10,11 +10,9 @@
 let status = row.permission_read || false;
 if(status == 2){status = true}
 else{status = false}
-console.log(row.permission_read)
 let currentUser = isCurrentUser()
 
 const change = async () => {
-    console.log("update "+ status)
     //let value = JSON.parse(row.value)
     let value = row.value
     //value = JSON.stringify(value)
@@ -22,7 +20,6 @@ const change = async () => {
 }
 
 const restore = async () => {
-    console.log(row.value)
     row.value.status = ""
     let value = row.value
     let pub = false

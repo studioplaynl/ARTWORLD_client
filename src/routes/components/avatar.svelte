@@ -31,8 +31,9 @@ onDestroy(()=>{
 
 </script>
 
-
+  <div class="backAvatar"></div>
   <div class="avatar" on:click="{()=>{$CurrentApp = "avatar"}}"><img bind:this="{image}" src="{$Profile.url}"></div>
+  <div class="nextAvatar"></div>
 
 
 

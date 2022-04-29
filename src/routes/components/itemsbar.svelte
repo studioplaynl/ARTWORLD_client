@@ -14,15 +14,15 @@ let user_house_url, house_url, user_avatar_url, avatar_url, user_name, adress_bo
 
 const unsubscribe = itemsBar.subscribe(async value => {
     console.log(value)
-    HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
-	ManageSession = (await import('../game/ManageSession.js')).default;
+    // HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
+	// ManageSession = (await import('../game/ManageSession.js')).default;
     console.log($location)
-    if(!!!ManageSession.userProfile) return
+    if(!!!$Profile) return
     if($location == "/login") return 
-        console.log(ManageSession.userProfile)
-        user_avatar_url = ManageSession.userProfile.url
+        console.log($Profile)
+        user_avatar_url = $Profile.url
         if(user_house_url == undefined){
-            user_house_url = await getObject("home", ManageSession.userProfile.meta.azc, ManageSession.userProfile.id)
+            user_house_url = await getObject("home", $Profile.meta.azc, $Profile.id)
             user_house_url = await convertImage(user_house_url.value.url,"50", "50")
         }
     //console.log(ManageSession)
