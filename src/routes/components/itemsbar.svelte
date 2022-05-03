@@ -13,10 +13,10 @@ let images = []
 let user_house_url, house_url, user_avatar_url, avatar_url, user_name, adress_book, homeOpen =false;
 
 const unsubscribe = itemsBar.subscribe(async value => {
-    console.log(value)
+    console.log("itemsBar.subscribe value:" ,value)
     // HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
 	// ManageSession = (await import('../game/ManageSession.js')).default;
-    console.log($location)
+    console.log("$location:", $location)
     if(!!!$Profile) return
     if($location == "/login") return 
         console.log($Profile)
@@ -45,16 +45,19 @@ async function Click(){
 }
 
 async function getLiked(){
+    console.log("ManageSession.liked.liked", ManageSession.liked.liked)
     if(current == "liked" ) {current = false; return};
 
+    // when the player is clicked inGame, get all the liked items
     if($itemsBar.playerClicked){
         images = []
-        console.log(ManageSession.liked.liked)
+        console.log("ManageSession.liked.liked", ManageSession.liked.liked)
         ManageSession.liked.liked.forEach(async (liked) => {
         images.push({ img: await convertImage(liked.url,"128", "128"), url: liked.url.split('.')[0]})
         images = images
     });
    
+    //get all the "liked" objects
     } else {
         let liked = await getObject("liked", "liked_"+ManageSession.selectedOnlinePlayer.id , ManageSession.selectedOnlinePlayer.id)
         console.log(liked.value.liked)

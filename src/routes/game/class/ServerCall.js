@@ -31,7 +31,7 @@ class ServerCall {
             if (typeof filteredResponse[0].value[collection] != "undefined") {
               //the object is in the right format (object.value.object), we assign our local copy
               ManageSession[collection] = filteredResponse[0].value
-              //console.log("ManageSession." + collection, ManageSession[collection])
+              console.log("ManageSession." + collection, ManageSession[collection])
               return
             } else {
               //when the right addressbook does not exist: make an empty one

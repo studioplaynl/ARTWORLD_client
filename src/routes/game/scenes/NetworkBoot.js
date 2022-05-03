@@ -21,7 +21,7 @@ export default class NetworkBoot extends Phaser.Scene {
 
         ServerCall.getServerArrayObject("liked", ManageSession.userProfile.id, 100)
         ServerCall.getServerArrayObject("addressbook", ManageSession.userProfile.id, 100)
-        
+
         console.log("ManageSession.locationID", ManageSession.locationID)
         this.scene.launch(ManageSession.location, { user_id: ManageSession.locationID })
         CurrentApp.update(n => "game");
