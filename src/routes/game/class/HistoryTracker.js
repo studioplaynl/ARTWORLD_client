@@ -120,7 +120,7 @@ class HistoryTracker {
   }
 
   async startSceneCloseApp(scene, app){
-    if(!!!ManageSession) return
+    if(!!!ManageSession.socket) return
     await ManageSession.socket.rpc("leave", app)
     await ManageSession.getStreamUsers("join", ManageSession.location)
 
