@@ -22,7 +22,7 @@ const unsubscribe = itemsBar.subscribe(async value => {
         console.log($Profile)
         user_avatar_url = $Profile.url
         if(user_house_url == undefined){
-            user_house_url = await getObject("home", $Profile.meta.azc, $Profile.id)
+            user_house_url = await getObject("home", $Profile.meta.Azc, $Profile.id)
             user_house_url = await convertImage(user_house_url.value.url,"50", "50")
         }
     //console.log(ManageSession)

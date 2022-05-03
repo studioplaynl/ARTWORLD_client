@@ -418,25 +418,29 @@
   const getImage = async () => {
     let Object = await getObject(appType, params.name, params.user)
     console.log("image",Object.value.url)
-    let image = await convertImage(Object.value.url);
+
+
+    var img = new Image();
+    img.origin = 'anonymous';
+    img.src = await convertImage(Object.value.url);
     // console.log("locatie", $location);
-    console.log("image", image);
+    console.log("image", img);
 
     if (appType == "avatar" || appType == "stopmotion") {
     }
     if (appType == "drawing" || appType == "house") {
-      // let url = await getDataUrl(image)
-      // console.log("url", url)
+      //let url = await getDataUrl(img)
+      //console.log("url", url)
       // let img = new fabric.Image(url)
-      // canvas.add(img);
-      fabric.Image.fromURL(image, function(oImg) {
-        oImg.set({ left: 0, top: 0 });
-        oImg.scaleToHeight(2048);
-        oImg.scaleToWidth(2048);
-        console.log(oImg)
-        console.log(canvas)
-       canvas.add(oImg);
-      });
+     // canvas.add(img);
+      // fabric.Image.fromURL(img, function(oImg) {
+      //   oImg.set({ left: 0, top: 0 });
+      //   oImg.scaleToHeight(2048);
+      //   oImg.scaleToWidth(2048);
+      //   console.log(oImg)
+      //   console.log(canvas)
+      //  canvas.add(oImg);
+      // });
     }
     // let localStore = JSON.parse(localStorage.getItem("Drawing"));
     // if (!!localStore) {
