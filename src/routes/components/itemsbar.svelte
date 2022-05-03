@@ -14,8 +14,8 @@ let user_house_url, house_url, user_avatar_url, avatar_url, user_name, adress_bo
 
 const unsubscribe = itemsBar.subscribe(async value => {
     console.log(value)
-    // HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
-	// ManageSession = (await import('../game/ManageSession.js')).default;
+    HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
+	ManageSession = (await import('../game/ManageSession.js')).default;
     console.log($location)
     if(!!!$Profile) return
     if($location == "/login") return 
