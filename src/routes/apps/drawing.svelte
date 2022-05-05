@@ -379,10 +379,10 @@
       if (!!!displayName) {
         displayName = Date.now() + "_" + title;
       }
-      replace(`${$location}/${$Session.user_id}/${displayName}`);
-      //await uploadImage(displayName, appType, blobData, status,version,title);
-      //saved = true;
-      //saving = false
+      // replace(`${$location}/${$Session.user_id}/${displayName}`);
+      await uploadImage(displayName, appType, blobData, status,version,title);
+      saved = true;
+      saving = false
       setLoader(false);
     }
     if (appType == "stopmotion") {
@@ -416,31 +416,29 @@
   };
 
   const getImage = async () => {
+    if(!!!params.name) return
     let Object = await getObject(appType, params.name, params.user)
-    console.log("image",Object.value.url)
-
-
-    var img = new Image();
-    img.origin = 'anonymous';
-    img.src = await convertImage(Object.value.url);
-    // console.log("locatie", $location);
-    console.log("image", img);
+    displayName = Object.value.displayname
+    console.log("displayName",displayName)
+    let img = await convertImage(Object.value.url);
 
     if (appType == "avatar" || appType == "stopmotion") {
+      fabric.Image.fromURL(img, function(oImg) {
+        oImg.set({ left: 0, top: 0 });
+        //oImg.scaleToHeight(2048);
+        //oImg.scaleToWidth(2048);
+       canvas.add(oImg);
+      }, {crossOrigin: 'anonymous'});
     }
     if (appType == "drawing" || appType == "house") {
-      //let url = await getDataUrl(img)
-      //console.log("url", url)
-      // let img = new fabric.Image(url)
-     // canvas.add(img);
-      // fabric.Image.fromURL(img, function(oImg) {
-      //   oImg.set({ left: 0, top: 0 });
-      //   oImg.scaleToHeight(2048);
-      //   oImg.scaleToWidth(2048);
-      //   console.log(oImg)
-      //   console.log(canvas)
-      //  canvas.add(oImg);
-      // });
+      fabric.Image.fromURL(img, function(oImg) {
+        oImg.set({ left: 0, top: 0 });
+        oImg.scaleToHeight(2048);
+        oImg.scaleToWidth(2048);
+       canvas.add(oImg);
+      }, {crossOrigin: 'anonymous'});
+
+      
     }
     // let localStore = JSON.parse(localStorage.getItem("Drawing"));
     // if (!!localStore) {
@@ -821,7 +819,7 @@
     // console.log(Image);
     // var blobData = dataURItoBlob(Image);
     setTimeout(async () => {
-      var Image = savecanvas.toDataURL("image/png", 0.2);
+      var Image = savecanvas.toDataURL("image/png", 1);
       var blobData = dataURItoBlob(Image);
       json = JSON.stringify(frames);
       Image = await uploadAvatar(blobData, json, version);
