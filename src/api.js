@@ -136,7 +136,7 @@ export async function updateObject(type, name, value, pub, userID) {
     "permission_read": pub,
     //"version": "*"
   }
-  console.log(prof.meta.role)
+  console.log("prof.meta.role", prof.meta.role)
   if (prof.meta.role == "admin" || prof.meta.role == "moderator") {
     console.log("working!")
     await updateObjectAdmin(userID, type, name, value, pub)
@@ -447,14 +447,13 @@ export function setLoader(state) {
 }
 
 export function saveAchievement(name) {
-  ManageSession.achievements.achievements[0][name] = true
-  console.log("achievment:" + name)
+//  ManageSession.achievements.achievements[0][name] = true
+  console.log("achievement:" + name)
   const type = "achievements"
   const key = type + "_" + ManageSession.userProfile.id
   const pub = 2
   const value = ManageSession[type]
   updateObject(type, key, value, pub)
-  //achievements.set(ManageSession.achievements.achievements)
 }
 
 

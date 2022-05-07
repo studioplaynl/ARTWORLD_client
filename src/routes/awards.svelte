@@ -11,21 +11,21 @@ onMount(async()=>{
     Achievements.get()
 })
 
-// function freeAward() {
-//     freeaw = true
+function freeAward() {
+    freeaw = true
 
-//     Achievements.create("test achievement","{}")
+    Achievements.create("test achievement","{}")
 
-// }
+}
 
-// function remove(){
-//     Achievements.delete("test achievement")
-// }
+function remove(){
+    Achievements.delete("test achievement")
+}
 
-// function update(){
+function update(){
 
-//     Achievements.update({name: "test achievement", value: {"test": "updated"}, pub: true})
-// }
+    Achievements.update({name: "test achievement", value: {"test": "updated"}, pub: true})
+}
 
 </script>
 <div class="awards">
@@ -46,9 +46,9 @@ onMount(async()=>{
     <img class="icon" src="assets/SHB/svg/AW-icon-award.svg">
     {/if} -->
 </div>
-<!-- <button on:click="{freeAward}">test award</button>
+<button on:click="{freeAward}">test award</button>
 <button on:click="{remove}">remove test award</button>
-<button on:click="{update}">update test award</button> -->
+<button on:click="{update}">update test award</button>
 <style>
 .awards > img {
   display: block;

@@ -13,12 +13,13 @@ function createAchievement() {
     create: (key, value) => {
       let ach = get(Achievements)
       if (!!ach.find(element => element.key == key)) return
-      updateObject("achievements", key, value, true).then((value) => {
-        let obj = { key, value }
+      let obj = { key, value }
+      updateObject("achievements", key, value, true).then(() => {
+        
+        console.log("value", value)
         ach.push(obj)
-        console.log("ach")
-        console.log(ach)
-        console.log(key)
+        console.log("ach", ach)
+        console.log("key", key)
         Achievements.set(ach)
         return ach
       })
@@ -126,6 +127,7 @@ function createServerObject(objectName) {
 }
 
 export const Achievements = createAchievement()
+
 // export const Achievements = createServerObject("Achievements")
 
 // {
@@ -182,42 +184,51 @@ export const Achievements = createAchievement()
 
 // }
 
-
 function createLiked() {
   const { subscribe, set, update } = writable([])
-
   return {
+
     subscribe,
     set,
     update,
+
     create: (key, value) => {
-      let ach = get(Liked)
-      if (!!ach.find(element => element.key == key)) return
-      updateObject("liked", key, value, true).then((value) => {
-        let obj = { key, value }
-        ach.push(obj)
-        console.log("ach")
-        console.log(ach)
-        console.log(key)
-        Achievements.set(ach)
-        return ach
+      let likedArray = get(Liked) //! here we should be subscribed also: on subscription the change should take place:
+      //! deleting the missing objects (of a prev array)?
+      if (!!likedArray.find(element => element.key == key)) return
+      let obj = { key, value }
+      updateObject("liked", key, value, true).then(() => {
+        console.log("value", value)
+        
+        likedArray.push(obj)
+        console.log("likedArray", likedArray)
+        console.log("key", key)
+        console.log("value", value)
+        console.log("obj", obj)
+        Liked.set(likedArray)
+        return likedArray
       })
     },
     get: () => {
-      let ach = get(Liked)
+      let likedArray = get(Liked)
+      console.log("likedArray:1", likedArray)
       let Sess = get(Session)
-      if (!!ach && ach.length > 0) return ach
+      if (!!likedArray && likedArray.length > 0){
+        console.log("likedArray passed!")
+        return likedArray
+      } 
       else {
-        if (!!Sess) listAllObjects("liked", Sess.user_id).then((ach) => {
-          Liked.set(ach)
-          return ach
+        if (!!Sess) listAllObjects("liked", Sess.user_id).then((likedArray) => {
+          console.log("likedArray 2", likedArray)
+          Liked.set(likedArray)
+          return likedArray
         })
       }
     },
     find: (key) => {
-      let ach = get(Liked)
-      let i = ach.findIndex((element) => element.key == key)
-      if (i != -1) return ach[i].value
+      let likedArray = get(Liked)
+      let i = likedArray.findIndex((element) => element.key == key)
+      if (i != -1) return likedArray[i].value
       else return undefined
     },
     // update: (Item) =>{
@@ -243,6 +254,8 @@ function createLiked() {
 
   }
 }
+
+export const Liked = createLiked()
 
 export const addressbook = {
 
