@@ -376,13 +376,13 @@
     if (appType == "drawing") {
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
-      if (!!!displayName) {
-        displayName = Date.now() + "_" + title;
+      if (!!!title) {
+        title = Date.now() + "_" + displayName;
       }
       // replace(`${$location}/${$Session.user_id}/${displayName}`);
-      await uploadImage(displayName, appType, blobData, status,version,title);
+      await uploadImage(title, appType, blobData, status, version, displayName);
       saved = true;
-      saving = false
+      saving = false;
       setLoader(false);
     }
     if (appType == "stopmotion") {
@@ -416,29 +416,39 @@
   };
 
   const getImage = async () => {
-    if(!!!params.name) return
-    let Object = await getObject(appType, params.name, params.user)
-    displayName = Object.value.displayname
-    console.log("displayName",displayName)
+    if (!!!params.name) return setLoader(false);
+    let Object = await getObject(appType, params.name, params.user);
+    console.log("object", Object);
+    displayName = Object.value.displayname;
+    title = Object.key;
+    status = Object.status;
+    version = Object.value.version + 1;
+    console.log("displayName", displayName);
     let img = await convertImage(Object.value.url);
 
     if (appType == "avatar" || appType == "stopmotion") {
-      fabric.Image.fromURL(img, function(oImg) {
-        oImg.set({ left: 0, top: 0 });
-        //oImg.scaleToHeight(2048);
-        //oImg.scaleToWidth(2048);
-       canvas.add(oImg);
-      }, {crossOrigin: 'anonymous'});
+      fabric.Image.fromURL(
+        img,
+        function (oImg) {
+          oImg.set({ left: 0, top: 0 });
+          oImg.scaleToHeight(2048);
+          //oImg.scaleToWidth(2048);
+          canvas.add(oImg);
+        },
+        { crossOrigin: "anonymous" }
+      );
     }
     if (appType == "drawing" || appType == "house") {
-      fabric.Image.fromURL(img, function(oImg) {
-        oImg.set({ left: 0, top: 0 });
-        oImg.scaleToHeight(2048);
-        oImg.scaleToWidth(2048);
-       canvas.add(oImg);
-      }, {crossOrigin: 'anonymous'});
-
-      
+      fabric.Image.fromURL(
+        img,
+        function (oImg) {
+          oImg.set({ left: 0, top: 0 });
+          oImg.scaleToHeight(2048);
+          oImg.scaleToWidth(2048);
+          canvas.add(oImg);
+        },
+        { crossOrigin: "anonymous" }
+      );
     }
     // let localStore = JSON.parse(localStorage.getItem("Drawing"));
     // if (!!localStore) {
@@ -556,15 +566,12 @@
   }
 
   async function getDataUrl(img) {
-
-  //  // Set width and height
-  //  savecanvas.width = img.width;
-  //  savecanvas.height = img.height;
-  //  // Draw the image
-  //  savecanvas.drawImage(img, 0, 0);
-  //  return savecanvas.toDataURL('image/jpeg');
-
-
+    //  // Set width and height
+    //  savecanvas.width = img.width;
+    //  savecanvas.height = img.height;
+    //  // Draw the image
+    //  savecanvas.drawImage(img, 0, 0);
+    //  return savecanvas.toDataURL('image/jpeg');
 
     // Create canvas
     let image;
@@ -578,7 +585,7 @@
       savecanvas.add(oImg);
     });
     image = savecanvas.toDataURL("image/png");
-    return image
+    return image;
   }
 
   window.addEventListener("resize", resizeCanvas, false);
@@ -854,10 +861,10 @@
 
     var Image = savecanvas.toDataURL("image/png", 0.5);
     var blobData = dataURItoBlob(Image);
-    if (!!!displayName) {
-      displayName = Date.now() + "_" + title;
+    if (!!!title) {
+      title = Date.now() + "_" + displayName;
     }
-    await uploadImage(displayName, appType, blobData, status, version, title);
+    await uploadImage(title, appType, blobData, status, version, displayName);
     //Profile.update(n => n.url = Image);
     saving = false;
     setLoader(false);
@@ -1361,7 +1368,7 @@
           <div class="saveTab">
             {#if appType != "avatar" && appType != "house"}
               <label for="title">Title</label>
-              <NameGenerator bind:value={title} bind:invalidTitle />
+              <NameGenerator bind:value={displayName} bind:invalidTitle />
 
               <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
