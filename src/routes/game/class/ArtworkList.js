@@ -2,9 +2,24 @@ import { updateObject, listImages, convertImage } from '../../../api.js'
 import ManageSession from '../ManageSession.js'
 import Player from './Player.js'
 import R_UI from "./R_UI"
-
+import { Liked } from '../../../storage.js'
 class ArtworkList {
-  constructor() { }
+  constructor() {
+    this.heartArray = []
+    this.heartArrayLastValue = 0
+  }
+
+  subscribeToLiked() {
+    Liked.subscribe(value => {
+      this.alreadySubscribedToLiked = true
+      this.heartArray = value
+      if (this.heartArrayLastValue != this.heartArray.length) {
+         this.heartArrayLastValue = this.heartArray.length
+
+       }
+
+    })
+  }
 
   async getImages(scene, imageSize, viewSize, distanceBetweenArts, x, y) {
     await listImages("drawing", scene.location, 100).then((response) => {
@@ -232,87 +247,15 @@ class ArtworkList {
     }
   }
 
-  checkAllItemsList(scene, allItems, subtract, key, tempArray) {
-    //the tempArray is initialized in the parent method
-    tempArray.artworks.push({ "name": key })
-    allItems = allItems + subtract
-    if (allItems < 1) {
-      scene.playerLikedPanelKeys = tempArray
-      this.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
-      console.log("scene.playerLikedPanel", scene.playerLikedPanel)
-    } else {
-      return allItems // return the result if not completed
-    }
-  }
-
-  checkAllItemsListOnlinePlayer(scene, allItems, subtract, key, tempArray) {
-    //the tempArray is initialized in the parent method
-    tempArray.artworks.push({ "name": key })
-    allItems = allItems + subtract
-    if (allItems < 1) {
-      scene.onlinePlayerLikedPanelKeys = tempArray
-      this.createLikedPanel(scene, scene.onlinePlayerLikedPanelSpinner, "onlinePlayerLikedPanel", scene.onlinePlayerItemsBar, scene.onlinePlayerLikedPanelKeys)
-    } else {
-      return allItems // return the result if not completed
-    }
-  }
-
-  // universal panel for player and onlinePlayer  
-  createLikedPanel(scene, spinner, likedPanelName, currentPlayer, currentLikedPanelKeys) {
-    // destroy the loading spinner
-    if (spinner) spinner.destroy()
-
-    // destroy the old panel
-    if (scene[likedPanelName]) scene[likedPanelName].destroy()
-
-    // create a new panel
-    scene[likedPanelName] = scene.rexUI.add
-      .scrollablePanel({
-        x: currentPlayer.x + 200,
-        y: currentPlayer.y,
-        width: 200,
-        height: 200,
-
-        scrollMode: 0,
-
-        background: scene.rexUI.add.roundRectangle(0, 0, 2, 2, 10, 0xffffff),
-
-        panel: {
-          child: R_UI.createPanel(scene, currentLikedPanelKeys),
-        },
-
-        slider: {
-          track: scene.rexUI.add.roundRectangle(0, 0, 20, 10, 10, 0x000000),
-          thumb: scene.rexUI.add.roundRectangle(0, 0, 0, 0, 13, 0xff9900),
-        },
-
-        space: {
-          left: 10, right: 10, top: 10, bottom: 10, panel: 10,
-        },
-
-        mouseWheelScroller: {
-          focus: false,
-          speed: 0.1
-        }
-      })
-      .layout()
-      .setDepth(301) // depends on what panel is opened first: player's or onlinePlayer's
-
-    scene.input.topOnly = true
-    const labels = []
-    labels.push(
-      ...scene[likedPanelName].getElement("#artworks.items", true)
-    )
-  }
-
   placeHeartButton(scene, x, y, keyImgUrl, mediaObject) {
-    //we get the imageObject passed along
+    //console.log("keyImgUrl, mediaObject", keyImgUrl, mediaObject)
+    //we get the mediaObject passed along:
     //collection: "drawing"
     //create_time: "2022-01-27T16:46:00Z"
     //key: "1643301959176_cyaanConejo"
     //permission_read: 2
     //permission_write: 1
-    //update_time: "2022-02-02T21:14:07Z"
+    //update_time: "2022-02-Heart:14:07Z"
     //user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
     //value:
     //      displayname: "cyaanConejo"
@@ -322,29 +265,53 @@ class ArtworkList {
     //      url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
     //version: 0
 
+    //keyImgUrl = mediaObject.value.url
+
     //place heartButton under the artwork, make them interactive
     const artFrame = scene.textures.get("artFrame_512")
     let currentHeart = scene.add.image(x, y + (artFrame.height / 2), "heart").setOrigin(1, 0).setScale(0.7)
       .setInteractive()
-      .setData("toggle", false) //false, not liked state
+      .setData("toggle", true) //true, not liked state
       .on('pointerup', () => { this.heartButtonToggle(scene, mediaObject, currentHeart) })
 
     scene.artContainer.add(currentHeart)
 
-    //set the heartButton to either back or red depending if an artwork is present in the liked object
-    const exists = ManageSession.liked.liked.some(element => element.url == keyImgUrl)
+    //subscribe once to the Liked store
+    if (this.alreadySubscribedToLiked != true) {
+      this.subscribeToLiked()
+    }
+
+    //console.log("this.heartArray", this.heartArray)
+    const exists = this.heartArray.some(element => element.value.url == keyImgUrl)
     if (exists) {
       // changing to red, liked
       currentHeart.setTexture("heart")
       currentHeart.setData("toggle", false)
     } else {
-      // changing to black, not liked
+      // changing to blank, not liked
       currentHeart.setTexture("heart_empty")
       currentHeart.setData("toggle", true)
     }
   }
 
   async heartButtonToggle(scene, mediaObject, button) {
+    //we get the mediaObject passed along:
+    //collection: "drawing"
+    //create_time: "2022-01-27T16:46:00Z"
+    //key: "1643301959176_cyaanConejo"
+    //permission_read: 2
+    //permission_write: 1
+    //update_time: "2022-02-Heart:14:07Z"
+    //user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
+    //value:
+    //      displayname: "cyaanConejo"
+    //      json: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
+    //      previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
+    //      status: ""
+    //      url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
+    //version: 0
+
+    //button is the heart button
     let parsedMediaOject = { user_id: mediaObject.user_id, collection: mediaObject.collection, key: mediaObject.key, version: mediaObject.value.version, url: mediaObject.value.url, previewURl: mediaObject.value.previewURl }
     let toggle = button.getData("toggle")
 
@@ -355,7 +322,17 @@ class ArtworkList {
 
       // updates the object locally
       // add to the array
-      ManageSession.liked.liked.push(parsedMediaOject)
+      // //ManageSession.liked.liked.push(parsedMediaOject)
+      //create server object
+      // updates the object server side 
+      // const type = "liked"
+      // const name = mediaObject.key
+      // const pub = 2
+      // const value = parsedMediaOject
+      Liked.create(mediaObject.key, parsedMediaOject)
+
+      // updateObject(type, name, value, pub)
+
     } else {
       // changing to empty, not liked
       button.setTexture("heart_empty")
@@ -363,25 +340,17 @@ class ArtworkList {
 
       // updates the object locally
       // find the object in the array, by url, filter the object with the url out
-      ManageSession.liked.liked = ManageSession.liked.liked.filter(obj => obj.url != mediaObject.value.url)
+      // // ManageSession.liked.liked = ManageSession.liked.liked.filter(obj => obj.url != mediaObject.value.url)
+
+      Liked.delete(mediaObject.key)
     }
 
-    // if the liked panel is open, show the update on a like button click
-    if (ManageSession.liked.liked.length > 0) { // in case of there are liked artworks
-      if (scene.playerLikedButtonClickedFlag) await this.convertRexUIArray(scene)
-    } else { // in case of there is none 
-      if (scene.playerLikedButtonClickedFlag) {
-        scene.playerLikedPanelKeys = { artworks: [{ "name": "artFrame_128" }] }
-        this.createLikedPanel(scene, scene.playerLikedPanelSpinner, "playerLikedPanel", scene.player, scene.playerLikedPanelKeys)
-      }
-    }
-
-    // updates the object server side 
-    const type = "liked"
-    const name = type + "_" + ManageSession.userProfile.id
-    const pub = 2
-    const value = ManageSession.liked
-    updateObject(type, name, value, pub)
+    // // updates the object server side 
+    // const type = "liked"
+    // const name = type + "_" + ManageSession.userProfile.id
+    // const pub = 2
+    // const value = ManageSession.liked
+    // updateObject(type, name, value, pub)
   }
 }
 
