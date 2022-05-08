@@ -2,7 +2,6 @@
     import {updateObject} from "../../api.js"
     import {Profile} from "../../session"
     import { Switch, Button } from "attractions"
-    export let col;
     export let row;
     export let moveToArt;
     export let isCurrentUser;
@@ -30,7 +29,7 @@ const restore = async () => {
 </script>
 
 <main>
-    {#if currentUser || $Profile.meta.role == "admin" || $Profile.meta.role == "moderator"}
+    {#if currentUser || $Profile.meta.Role == "admin" || $Profile.meta.Role == "moderator"}
         {#if row.value.status != "trash"}
         <Switch bind:value={status} on:change={change}>
         </Switch>

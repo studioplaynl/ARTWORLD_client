@@ -173,7 +173,7 @@ function moveToTrash(key) {
 <div class="box">
   <h1>kunstwerken</h1>
 <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable"></SvelteTable>
-{#if CurrentUser || $Profile.meta.role == "moderator" || $Profile.meta.role == "admin"}
+{#if CurrentUser || $Profile.meta.Role == "moderator" || $Profile.meta.Role == "admin"}
 <h1>Prullenmand</h1>
 <SvelteTable columns="{columns}" rows="{trash}" classNameTable="profileTable"></SvelteTable>
 {/if}

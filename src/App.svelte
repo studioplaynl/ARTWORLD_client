@@ -37,7 +37,7 @@
     };
     let isAdmin = (detail) => {
         console.log($Profile)
-        if ($Profile.meta.role == "admin") return true;
+        if ($Profile.meta.Role == "admin") return true;
         else {
             window.location.href = "/#/";
             return false;
@@ -45,7 +45,7 @@
     };
     let isModerator = (detail) => {
         console.log($Profile)
-        if ($Profile.meta.role == "moderator" || $Profile.meta.role == "admin") return true;
+        if ($Profile.meta.Role == "moderator" || $Profile.meta.role == "admin") return true;
         else {
             window.location.href = "/#/";
             return false;

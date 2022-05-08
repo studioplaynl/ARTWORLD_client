@@ -2,7 +2,6 @@
     import {updateObject, deleteFile, deleteObjectAdmin} from "../../api.js"
     import {Profile} from "../../session"
     import {Modal, Dialog, Button} from "attractions"
-    export let col;
     export let row;
     export let removeFromTrash;
     export let moveToTrash;
@@ -21,7 +20,7 @@ const Trash = () => {
 
 const Delete = () => {
     modalOpen = false;
-    if($Profile.meta.role == "admin"|| $Profile.meta.role == "moderator"){
+    if($Profile.meta.Role == "admin"|| $Profile.meta.Role == "moderator"){
         console.log("admin")
         deleteObjectAdmin(row.user_id,row.collection,row.key)
     } else {
@@ -34,7 +33,7 @@ const Delete = () => {
 }
 </script>
 <main>
-    {#if isCurrentUser() || $Profile.meta.role == "admin"|| $Profile.meta.role == "moderator"}
+    {#if isCurrentUser() || $Profile.meta.Role == "admin"|| $Profile.meta.Role == "moderator"}
         {#if row.value.status != "trash"}
         <a on:click={Trash}><img class="trash" src="/assets/SHB/svg/AW-icon-trash.svg"></a>
         {:else}

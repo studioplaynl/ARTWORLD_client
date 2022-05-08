@@ -36,8 +36,8 @@
 			getFullAccount(params.user).then((account) => {
 				console.log(account);
 				username = account.name;
-				role = account.meta.role || "speler";
-				azc = account.meta.azc;
+				role = account.meta.Role || "speler";
+				azc = account.meta.Azc;
 				email = account.email;
 				id = account.user_id;
 				meta = account.meta;
@@ -46,8 +46,8 @@
 			getFullAccount().then((account) => {
 				console.log(account);
 				username = account.name;
-				role = account.meta.role || "speler";
-				azc = account.meta.azc;
+				role = account.meta.Role || "speler";
+				azc = account.meta.Azc;
 				email = account.email;
 				id = account.user_id;
 			});
@@ -86,9 +86,9 @@
 	async function update() {
 		//get metadata
 
-		if ($Profile.meta.role == "admin") {
+		if ($Profile.meta.Role == "admin") {
 			meta.azc = azc
-			meta.role = role
+			meta.Role = role
 		 }
 		 console.log(meta)
 		 await setFullAccount(id, username, password, email, meta);
@@ -194,7 +194,7 @@
 					required
 				/>
 
-				{#if $Profile.meta.role == "admin"}
+				{#if $Profile.meta.Role == "admin"}
 					<hr />
 
 					<label for="Role"><b>{$_("register.role")}</b></label>

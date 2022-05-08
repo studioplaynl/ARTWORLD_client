@@ -139,7 +139,7 @@ function moveToTrash(key) {
     if(!!params.user || !!userID){
       id = params.user || userID
       CurrentUser = false;
-      if($Profile.meta.role == "admin" ||$Profile.meta.role == "moderator" ){
+      if($Profile.meta.Role == "admin" ||$Profile.meta.Role == "moderator" ){
         drawings = await listAllObjects("drawing",params.user)
         video = await listAllObjects("video",params.user)
         audio = await listAllObjects("audio",params.user)

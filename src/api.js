@@ -50,7 +50,7 @@ export async function updateTitle(collection, key, name, userID){
   if(!!!userID) userID = Sess.user_id
   let Object = await getObject(collection, key, userID)
   Object.value.displayname = name
-  if(prof.meta.role == "admin" ||prof.meta.role == "moderator" ) await updateObject(collection, key, Object.value,Object.permission_read, userID)
+  if(prof.meta.Role == "admin" ||prof.meta.Role == "moderator" ) await updateObject(collection, key, Object.value,Object.permission_read, userID)
   else await updateObject(collection, key, Object.value,Object.permission_read)
 }
 
@@ -136,8 +136,8 @@ export async function updateObject(type, name, value, pub,userID) {
     "permission_read": pub,
     //"version": "*"
   }
-  console.log(prof.meta.role)
-  if(prof.meta.role == "admin" || prof.meta.role == "moderator"){
+  console.log(prof.meta.Role)
+  if(prof.meta.Role == "admin" || prof.meta.Role == "moderator"){
     console.log("working!")
     await updateObjectAdmin(userID, type, name, value, pub)
   } else {
