@@ -12,9 +12,8 @@
         {opacity: 0 ,translateY: 0},
     ]
 
-
     Achievements.subscribe(value =>{
-        console.log("last" + lastLength)
+        //console.log("lastLength:", lastLength)
         if(lastLength != 0 && lastLength < value.length){
             anime({
                 targets: '#award',
@@ -27,6 +26,7 @@
         }
         lastLength = value.length
     })
+
 </script>
 <div id="awardBox">
     <img src="assets/SHB/svg/AW-icon-award.svg" id="award" bind:this="{award}">

@@ -2,7 +2,6 @@ import { writable } from "svelte/store";
 import { client, SSL } from "./nakama.svelte"
 import { getAccount, setLoader } from "./api.js"
 import ManageSession from "./routes/game/ManageSession.js"; //push the profile to ManageSession
-import { validate_each_argument } from "svelte/internal";
 
 let storedSession = localStorage.getItem("Session")
 storedSession = JSON.parse(storedSession)

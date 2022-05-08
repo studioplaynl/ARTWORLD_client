@@ -9,6 +9,7 @@
   import NameEdit from "./components/nameEdit.svelte"
   import Avatar from "./components/avatar.svelte"
   import { onDestroy, onMount} from 'svelte';
+  import Stopmotion from "./components/stopmotion.svelte"
 
 
   export let params = {}
@@ -60,7 +61,7 @@
       {
         key: "voorbeeld",
         title: "",
-        value: v => `<img src="${v.value.previewUrl}">`
+        renderComponent: {component: Stopmotion, props: {}}
       },
       {
         key: "title",

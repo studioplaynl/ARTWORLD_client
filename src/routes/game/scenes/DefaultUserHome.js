@@ -193,28 +193,28 @@ export default class DefaultUserHome extends Phaser.Scene {
         })
 
         // await listImages("stopmotion", this.location, 100).then((rec) => {
-        //     //this.userArtServerList is an array with objects, in the form of:
+            //this.userArtServerList is an array with objects, in the form of:
 
-        //     //collection: "stopmotion"
-        //     //create_time: "2022-01-27T16:46:00Z"
-        //     //key: "1643301959176_cyaanConejo"
-        //     //permission_read: 1
-        //     //permission_write: 1
-        //     //update_time: "2022-02-09T13:47:01Z"
-        //     //user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
-        //     //value:
-        //     //  displayname: "cyaanConejo"
-        //     //  json: "stopmotion//5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
-        //     //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
-        //     //  status: ""
-        //     //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
-        //     //  version: 0
+            //collection: "stopmotion"
+            //create_time: "2022-01-27T16:46:00Z"
+            //key: "1643301959176_cyaanConejo"
+            //permission_read: 1
+            //permission_write: 1
+            //update_time: "2022-02-09T13:47:01Z"
+            //user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
+            //value:
+            //  displayname: "cyaanConejo"
+            //  json: "stopmotion//5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
+            //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
+            //  status: ""
+            //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
+            //  version: 0
 
-        //     //permission_read: 1 indicates hidden
-        //     //permission_read: 2 indicates visible
+            //permission_read: 1 indicates hidden
+            //permission_read: 2 indicates visible
 
-        //     //we filter out the visible artworks
-        //     //filter only the visible art = "permission_read": 2
+            //we filter out the visible artworks
+            //filter only the visible art = "permission_read": 2
         //     this.userStopmotionServerList = rec.filter(obj => obj.permission_read == 2)
 
         //     console.log("this.userStopmotionServerList", this.userStopmotionServerList)
