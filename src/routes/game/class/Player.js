@@ -6,7 +6,7 @@ import { Profile } from "../../../session"
 
 class Player {
   constructor() {
-    this.avatarSize = 128
+    this.avatarSize = 64
   }
 
   subscribeToProfile() {
