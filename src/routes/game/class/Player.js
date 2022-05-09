@@ -6,7 +6,7 @@ import { Profile } from "../../../session"
 
 class Player {
   constructor() {
-    this.avatarSize = 64
+    this.avatarSize = 128
   }
 
   subscribeToProfile() {
@@ -129,12 +129,6 @@ class Player {
 
   }
 
-  reloadDefaultAvatar(scene) {
-    scene = ManageSession.currentScene
-    scene.playerAvatarKey = "avatar1"
-    this.attachAvatarToPlayer(scene, "avatar1")
-  }
-
   async attachAvatarToPlayer(scene) {
     console.log(" attachAvatarToPlayer(scene)")
 
@@ -206,6 +200,12 @@ class Player {
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
   } // end attachAvatarToPlayer
 
+  reloadDefaultAvatar(scene) {
+    scene = ManageSession.currentScene
+    scene.playerAvatarKey = "avatar1"
+    this.attachAvatarToPlayer(scene, "avatar1")
+  }
+
   parseNewOnlinePlayerArray(scene) {
     if (ManageSession.createOnlinePlayerArray.length > 0) {
 
@@ -244,7 +244,7 @@ class Player {
             scene.worldSize.y,
             onlinePlayerCopy.metadata.posY
           ),
-          scene.playerAvatarPlaceholder
+          scene.playerAvatarPlaceholder //! change to ManageSession.playerAvatarPlaceholder
         )
         //element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
         .setDepth(200)
@@ -299,8 +299,8 @@ class Player {
         //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
         //add it to loading queue
         scene.load.spritesheet(avatarKey, onlinePlayer.url, {
-          frameWidth: 64,
-          frameHeight: 64,
+          frameWidth: this.avatarSize * 2,
+          frameHeight: this.avatarSize * 2,
         }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey) }, scene)
         //when file is finished loading the attachToAvatar function is called
         scene.load.start() // start loading the image in memory
