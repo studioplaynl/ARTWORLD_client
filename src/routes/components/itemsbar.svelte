@@ -6,7 +6,7 @@
     import { CurrentApp, logout } from "../../session";
     import Awards from "../awards.svelte";
     import { location } from "svelte-spa-router";
-    import { Liked } from "../../storage.js";
+    import { Liked, Addressbook } from "../../storage.js";
 
     let ManageSession;
     let current;
@@ -23,6 +23,9 @@
     let likedArtworks = [];
     let lastLengthArtworks = 0;
     let alreadySubscribedToLiked = false;
+
+    let addressbookList = [];
+    let alreadySubscribedToAddressbook = false;
 
     //check if player is clicked
     const unsubscribe = itemsBar.subscribe(async (value) => {
@@ -81,7 +84,6 @@
                 console.log("images, likedArtworks", images, likedArtworks);
 
                 if (likedArtworks.length > 0) {
-
                     likedArtworks.forEach(async (liked) => {
                         console.log("liked", liked);
                         console.log("liked.url", liked.value.url);
@@ -94,11 +96,25 @@
                             url: liked.value.url,
                         });
                         images = images;
-                        console.log("images", images)
+                        console.log("images", images);
                     });
                 }
             }
-            
+        });
+    }
+
+    function subscribeToAddressbook() {
+        Addressbook.get((value) => {}); // why I can't just listen to subscription?
+
+        Addressbook.subscribe((value) => {
+            alreadySubscribedToAddressbook = true;
+            if (value.length == 0) {
+                // in order to avoid the initial render error or when the object is empty
+                return;
+            } else {
+                addressbookList = value[0].value.addressbook;
+                console.log("addressbookList", addressbookList);
+            }
         });
     }
 
@@ -120,6 +136,19 @@
         }
 
         current = "liked";
+    }
+
+    async function getAdressbook() {
+        // toggle the open state of the panel "addressbook"
+        if (current == "addressbook") {
+            current = false;
+            return;
+        }
+        if (alreadySubscribedToAddressbook != true) {
+            subscribeToAddressbook();
+        }
+
+        current = "addressbook";
     }
 
     async function goProfile() {
@@ -176,23 +205,23 @@
             user_name: ManageSession.selectedOnlinePlayer.username,
         };
 
-        // checking if the player in the addressbook
-        const isExist = ManageSession.addressbook.addressbook.some(
-            (element) => element.user_id == entry.user_id
-        );
+        // // checking if the player in the addressbook
+        // const isExist = ManageSession.addressbook.addressbook.some(
+        //     (element) => element.user_id == entry.user_id
+        // );
 
-        if (!isExist) {
-            // if doesn't exist, add to the addressbook
-            ManageSession.addressbook.addressbook.push(entry);
-            const type = "addressbook";
-            const name = type + "_" + ManageSession.userProfile.id;
-            const pub = 2;
-            const value = ManageSession.addressbook;
-            console.log("value ManageSession.addressbook", value);
-            updateObject(type, name, value, pub);
-        } else {
-            console.log("this user id is already in addressbook list");
-        }
+        // if (!isExist) {
+        //     // if doesn't exist, add to the addressbook
+        //     ManageSession.addressbook.addressbook.push(entry);
+        //     const type = "addressbook";
+        //     const name = type + "_" + ManageSession.userProfile.id;
+        //     const pub = 2;
+        //     const value = ManageSession.addressbook;
+        //     console.log("value ManageSession.addressbook", value);
+        //     updateObject(type, name, value, pub);
+        // } else {
+        //     console.log("this user id is already in addressbook list");
+        // }
     }
 
     async function goApp(App) {
@@ -200,15 +229,15 @@
         $CurrentApp = App;
     }
 
-    async function getAdressbook() {
-        if (current == "addressbook") {
-            current = false;
-            return;
-        }
-        adress_book = ManageSession.addressbook.addressbook;
-        console.log(ManageSession.addressbook.addressbook);
-        current = "addressbook";
-    }
+    // async function getAdressbook() {
+    //     if (current == "addressbook") {
+    //         current = false;
+    //         return;
+    //     }
+    //     adress_book = ManageSession.addressbook.addressbook;
+    //     console.log(ManageSession.addressbook.addressbook);
+    //     current = "addressbook";
+    // }
 </script>
 
 {#if $location != "/login"}
@@ -219,6 +248,7 @@
 <!-- current user -->
 <div class="itemsbar" id="currentUser" class:show={$itemsBar.playerClicked}>
     <div id="left">
+        <!-- svelte-ignore a11y-missing-attribute -->
         <a on:click={goProfile} class="avatar"><img src={$Profile.url} /></a>
         <a
             on:click={() => {
@@ -280,16 +310,16 @@
         {/if}
         {#if current == "addressbook"}
             <div>
-                <a
+                <!-- <a
                     on:click={() => {
                         goScene("ArtworldAmsterdam");
                     }}>ArtWorldAmsterdam</a
-                >
-                {#each adress_book as adress}
+                > -->
+                {#each addressbookList as address}
                     <a
                         on:click={() => {
-                            goHome(adress.user_id);
-                        }}>{adress.user_name}</a
+                            goHome(address.user_id);
+                        }}>{address.user_name}</a
                     >
                 {/each}
             </div>
