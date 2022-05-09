@@ -137,8 +137,6 @@ class DebugFuntions {
                 console.log("scene.createOnlinePlayers: ")
                 console.log(ManageSession.createOnlinePlayers)
 
-                console.log("scene.createdPlayer: ")
-                console.log(scene.createdPlayer)
                 break
 
             case 'KeyY':

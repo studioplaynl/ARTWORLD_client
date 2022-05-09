@@ -39,6 +39,7 @@ class ManageSession {
     this.AccountObject;
     this.playerObjectSelf;
     this.createPlayer = true;
+    this.createdPlayer = false; //used for checking if we can start sending player movement data over the network
     this.playerMove;
     this.playerClicks = 0;
     this.playerClickTime = 0;
@@ -55,14 +56,13 @@ class ManageSession {
     this.removedConnectedUsers = []; //players that need to be removed
     this.createOnlinePlayerArray = []; //players that need to be added
 
-    // this.createdPlayer = false
-    this.playerAvatarKey = "";
-    // this.playerMovingKey = "moving"
-    // this.playerStopKey = "stop"
+    this.playerAvatarKey = ""
+    this.playerAvatarKeyDefault = "avatar1"
+    this.playerMovingKey = "moving"
+    this.playerStopKey = "stop"
 
     this.gameStarted = false;
     this.currentScene;
-    this.location = "Location1"; //default
     this.launchLocation = "Location1"; //default
 
     // for back button
@@ -105,10 +105,8 @@ class ManageSession {
 
   setUrl(local, posX, posY) {
     //console.log(" setUrl location, posX, posY", location, posX, posY)
-    console.log("window.location",get(location))
+    //console.log("window.location",get(location))
     window.history.pushState('', 'Artworld', '/?location='+local+'&posX='+Math.round(posX)+'&posY='+Math.round(posY) + "#" + get(location))
-  
-
   }
   // .......................... end URL PARSING .....................................
 
