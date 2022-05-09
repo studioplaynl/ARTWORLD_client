@@ -3,6 +3,7 @@ import CoordinatesTranslator from "./CoordinatesTranslator"
 import { listObjects, listImages, convertImage, getFullAccount, updateObject, getAccount } from "../../../api.js"
 import itemsBar from "../../components/itemsbar.js"
 import { Profile } from "../../../session"
+
 class Player {
   constructor() {
     this.avatarSize = 64
@@ -21,8 +22,7 @@ class Player {
   loadPlayerAvatar(scene, placePlayerX, placePlayerY, userprofile) {
     if (!!!userprofile) userprofile = ManageSession.userProfile
     console.log("loadPlayerAvatar", userprofile)
-    //check if account info is loaded
-    if (userprofile.id == null) return console.log("avatar 1")
+
     //check for createPlayer flag
     if (!ManageSession.createPlayer) return
     //ManageSession.createPlayer = false
@@ -53,6 +53,13 @@ class Player {
     //        user_id: ""
 
     scene.playerAvatarKey = userprofile.id + "_" + userprofile.update_time
+
+    //check if account info is loaded
+    if (userprofile.id == null) {
+      console.log("(userprofile.id == null)")
+      this.reloadDefaultAvatar
+    }
+
     console.log("scene.playerAvatarKey avatar", scene.playerAvatarKey)
     let lastPosX
     let lastPosY
@@ -89,43 +96,32 @@ class Player {
     //set url param's to player pos and scene key, url params are in artworldCoords lastPosX lastPosY is artworldCoords
     ManageSession.setUrl(scene.location, lastPosX, lastPosY)
 
+    //if for some reason the url of the player avatar is empty, load the default avatar
+    if (userprofile.url === "") {
+      console.log("avatar url is empty, set to default 'avatar1' ")
+      this.reloadDefaultAvatar
+    }
 
-    //if the texture doesnot exists load it and attach it to the player
+    //if the texture doesnot exists (if it is new) load it and attach it to the player
     if (!scene.textures.exists(scene.playerAvatarKey)) {
-      //check if url is not empty for some reason, returns so that previous image is kept
-      if (userprofile.url === "") {
-        console.log("avatar url is empty")
-        ManageSession.createPlayer = false
-        console.log("ManageSession.createPlayer = ", ManageSession.createPlayer)
-        scene.createdPlayer = true
-        console.log("scene.createdPlayer = ", scene.createdPlayer)
-        return
-      } else {
-        // load the avatar
-        //console.log("ManageSession.userProfile.url: ", ManageSession.userProfile.url)
+      console.log("didn't exist yet: scene.textures.exists(scene.playerAvatarKey)")
+      const fileNameCheck = scene.playerAvatarKey
 
-        // //get the avatar_url
-        // Promise.all([convertImage(userprofile.url, "64", "png")]).then(rec => {
-        //   console.log(rec[0])
-        //   const convertedAvatarUrl = rec[0]
-        // })
+      //convert the avatar url to a converted png url
 
-        const fileNameCheck = scene.playerAvatarKey
+      scene.load.spritesheet(fileNameCheck, userprofile.url, { frameWidth: this.avatarSize * 2, frameHeight: this.avatarSize * 2 })
+        .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => {
+          console.log("filecomplete-spritesheet scene.playerAvatarKey", scene.playerAvatarKey);
+          if (this.firstBooted != true) {
+            this.subscribeToProfile()
+          }
+          this.attachAvatarToPlayer(scene, fileNameCheck)
+        }, scene)
+      scene.load.start() // start loading the image in memory
 
-        //convert the avatar url to a converted png url
-
-        scene.load.spritesheet(fileNameCheck, userprofile.url, { frameWidth: this.avatarSize * 2, frameHeight: this.avatarSize * 2 })
-          .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => {
-            console.log("scene.playerAvatarKey", scene.playerAvatarKey);
-            if (this.firstBooted != true) {
-              this.subscribeToProfile()
-            }
-            this.attachAvatarToPlayer(scene, fileNameCheck)
-          }, scene)
-        scene.load.start() // start loading the image in memory
-      }
     } else {
-
+      //else reload the old (already in memory avatar)
+      console.log("existed already: scene.textures.exists(scene.playerAvatarKey)")
       this.attachAvatarToPlayer(scene)
       console.log("scene.location", scene.location)
 
@@ -133,14 +129,21 @@ class Player {
 
   }
 
+  reloadDefaultAvatar(scene) {
+    scene = ManageSession.currentScene
+    scene.playerAvatarKey = "avatar1"
+    this.attachAvatarToPlayer(scene, "avatar1")
+  }
+
   async attachAvatarToPlayer(scene) {
-    //console.log("scene.playerAvatarKey ", scene.playerAvatarKey)
+    console.log(" attachAvatarToPlayer(scene)")
+
     const avatar = scene.textures.get(scene.playerAvatarKey)
     const avatarWidth = avatar.frames.__BASE.width
-    //console.log("avatarWidth: " avatarWidth)
+    console.log("avatarWidth: ", avatarWidth)
 
     const avatarHeight = avatar.frames.__BASE.height
-    //console.log("avatarHeight: " + avatarHeight)
+    console.log("avatarHeight: ", avatarHeight)
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight)
     //console.log("avatarFrames: " + avatarFrames)
@@ -149,6 +152,7 @@ class Player {
 
     if (avatarFrames > 1) {
       //. animation for the player avatar ......................
+      console.log("avatarFrames > 1")
 
       scene.playerMovingKey = "moving" + "_" + scene.playerAvatarKey
       scene.playerStopKey = "stop" + "_" + scene.playerAvatarKey
@@ -180,6 +184,7 @@ class Player {
     scene.player.setTexture(scene.playerAvatarKey)
     scene.playerShadow.setTexture(scene.playerAvatarKey)
 
+    console.log("scene.player.setTexture(scene.playerAvatarKey) done ")
     //scale the player to this.avatarSize
     const width = this.avatarSize
     scene.player.displayWidth = width
