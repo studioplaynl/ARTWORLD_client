@@ -380,6 +380,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             this.load.start() // start the load queue to get the image in memory
         }
 
+        
         ArtworkList.placeHeartButton(this, coordX, y, imageKeyUrl, element)
 
         const progressBox = this.add.graphics()

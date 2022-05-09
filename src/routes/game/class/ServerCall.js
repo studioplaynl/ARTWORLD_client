@@ -150,7 +150,7 @@ class ServerCall {
 
     // when there is a loading error, the error gets thrown multiple times because I subscribe to the 'loaderror' event multiple times
     const eventNames = scene.load.eventNames()
-    console.log("eventNames", eventNames)
+    //console.log("eventNames", eventNames)
     const isReady = scene.load.isReady()
     console.log("isReady", isReady)
     const isLoading = scene.load.isLoading()

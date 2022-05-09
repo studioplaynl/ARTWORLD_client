@@ -63,7 +63,7 @@
     });
 
     function subscribeToLiked() {
-        console.log("subscribeToLiked");
+        //console.log("subscribeToLiked");
         Liked.subscribe((value) => {
             alreadySubscribedToLiked = true;
             console.log("subscribeToLiked value", value);

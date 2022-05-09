@@ -257,7 +257,7 @@ function createLiked() {
 
 export const Liked = createLiked()
 
-export const addressbook = {
+export const Addressbook = {
 
   create: (key, value) => {
     let ach = get(achievements)
