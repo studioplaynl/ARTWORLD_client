@@ -14,7 +14,7 @@ class Player {
       console.log("Profile refreshed avatar")
 
       console.log(value)
-      this.firstBooted = true
+      this.subscribedToProfile = true
       this.loadPlayerAvatar(ManageSession.currentScene, undefined, undefined, value)
     })
   }
@@ -112,7 +112,7 @@ class Player {
       scene.load.spritesheet(fileNameCheck, userprofile.url, { frameWidth: this.avatarSize * 2, frameHeight: this.avatarSize * 2 })
         .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => {
           console.log("filecomplete-spritesheet scene.playerAvatarKey", scene.playerAvatarKey);
-          if (this.firstBooted != true) {
+          if (this.subscribedToProfile != true) {
             this.subscribeToProfile()
           }
           this.attachAvatarToPlayer(scene, fileNameCheck)
