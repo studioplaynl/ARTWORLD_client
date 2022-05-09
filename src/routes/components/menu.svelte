@@ -34,7 +34,7 @@
     role = null;
   } else {
     console.log($Profile);
-    role = $Profile.meta.role;
+    role = $Profile.meta.Role;
   }
   let DropdownMenu = () => {
     document.getElementById("DropdownMenu").classList.toggle("show");
@@ -96,7 +96,7 @@
           MenuToggle = false;
         }}
       >
-        {#if !!$Profile && $Profile.meta.role == "admin"}
+        {#if !!$Profile && $Profile.meta.Role == "admin"}
           <ul
             class="menu"
             on:click={() => {
@@ -108,7 +108,7 @@
             <li><a href="/#/upload">{$_("nav.upload")}</a></li>
           </ul>
         {/if}
-        {#if !!$Profile && $Profile.meta.role == "moderator"}
+        {#if !!$Profile && $Profile.meta.Role == "moderator"}
         <ul
           class="menu"
           on:click={() => {
@@ -140,7 +140,7 @@
   </div>
   </div>
   {:else}
-  {#if !!$Profile && ($Profile.meta.role == "admin" || $Profile.meta.role == "moderator")}    
+  {#if !!$Profile && ($Profile.meta.Role == "admin" || $Profile.meta.Role == "moderator")}    
       <div
         on:click={() => {
           MenuToggle = true;

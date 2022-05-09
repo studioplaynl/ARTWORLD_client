@@ -18,7 +18,7 @@
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
   import Avatar from "../components/avatar.svelte";
 
-  let scaleRatio;
+  let scaleRatio, lastImg, lastWidth;
   let params = { user: $location.split("/")[2], name: $location.split("/")[3] };
   let invalidTitle = true;
   let history = [],
@@ -54,6 +54,51 @@
   export let appType = $location.split("/")[1];
   let version = 0;
   let optionbox = true;
+
+  let FrameObject = {
+    version: "4.6.0",
+    objects: [
+      {
+        type: "image",
+        version: "4.6.0",
+        originX: "left",
+        originY: "top",
+        left: -2048,
+        top: 0,
+        width: 0,
+        height: 2048,
+        fill: "rgb(0,0,0)",
+        stroke: null,
+        strokeWidth: 0,
+        strokeDashArray: null,
+        strokeLineCap: "butt",
+        strokeDashOffset: 0,
+        strokeLineJoin: "miter",
+        strokeUniform: false,
+        strokeMiterLimit: 4,
+        scaleX: 1,
+        scaleY: 1,
+        angle: 0,
+        flipX: false,
+        flipY: false,
+        opacity: 1,
+        shadow: null,
+        visible: true,
+        backgroundColor: "",
+        fillRule: "nonzero",
+        paintFirst: "fill",
+        globalCompositeOperation: "source-over",
+        skewX: 0,
+        skewY: 0,
+        erasable: true,
+        cropX: 0,
+        cropY: 0,
+        src: "",
+        crossOrigin: "anonymous",
+        filters: [],
+      },
+    ],
+  };
 
   console.log("version:" + version);
   console.log("title: " + title);
@@ -279,7 +324,7 @@
     //   this.previousSibling.innerHTML = this.value;
     // };
     // drawingShadowOffset.onchange = function () {
-    //   canvas.freeDrawingBrush.shadow.offsetX = parseInt(this.value, 10) || 0;
+    //   canvas.freeDrawingBrush.shadow.offsframes = frames;tX = parseInt(this.value, 10) || 0;
     //   canvas.freeDrawingBrush.shadow.offsetY = parseInt(this.value, 10) || 0;
     //   this.previousSibling.innerHTML = this.value;
     // };
@@ -391,14 +436,7 @@
     if (appType == "avatar") {
       await createAvatar();
       saving = false;
-      setLoader(false);
-    }
-    if (appType == "house") {
-      json = JSON.stringify(canvas.toJSON());
-      var Image = canvas.toDataURL("png");
-      var blobData = dataURItoBlob(Image);
-      await uploadHouse(json, blobData, version);
-      // title = $Profile.meta.azc
+      lastWidth;
       // status = true;
       // await uploadImage(title, appType, json, blobData, status);
       saved = true;
@@ -424,23 +462,36 @@
     status = Object.status;
     version = Object.value.version + 1;
     console.log("displayName", displayName);
-    let img = await convertImage(Object.value.url);
+    lastImg = await convertImage(Object.value.url);
 
     if (appType == "avatar" || appType == "stopmotion") {
-      fabric.Image.fromURL(
-        img,
-        function (oImg) {
-          oImg.set({ left: 0, top: 0 });
-          oImg.scaleToHeight(2048);
-          //oImg.scaleToWidth(2048);
-          canvas.add(oImg);
-        },
-        { crossOrigin: "anonymous" }
-      );
+      let frameAmount;
+      var framebuffer = new Image();
+      framebuffer.src = lastImg;
+      framebuffer.onload = function () {
+        console.log("img", this.width);
+        lastWidth = this.width;
+        frameAmount = lastWidth / 2048;
+
+        FrameObject.objects[0].src = lastImg;
+        FrameObject.objects[0].width = lastWidth;
+        frames = [];
+        for (let i = 0; i < frameAmount; i++) {
+          FrameObject.objects[0].left = i * -2048;
+          frames.push({
+            version: "4.6.0",
+            objects: [{ ...FrameObject.objects[0] }],
+          });
+        }
+        frames = frames;
+        console.log("frames", frames);
+        currentFrame = 0;
+        canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
+      };
     }
     if (appType == "drawing" || appType == "house") {
       fabric.Image.fromURL(
-        img,
+        lastImg,
         function (oImg) {
           oImg.set({ left: 0, top: 0 });
           oImg.scaleToHeight(2048);
@@ -685,7 +736,7 @@
 
   const changeFrame = (newFrame) => {
     if (!play) {
-      console.log(newFrame);
+      console.log(frames);
       // save frame
       // put as background of button
       //canvas.clear()
@@ -830,12 +881,13 @@
       var blobData = dataURItoBlob(Image);
       json = JSON.stringify(frames);
       Image = await uploadAvatar(blobData, json, version);
-    }, 300);
+    }, 5000);
   }
 
   async function createStopmotion() {
     // console.log("saved");
-    // json = JSON.stringify(frames);
+    json = JSON.stringify(frames);
+    console.log("json", json);
     // var blobData = dataURItoBlob(frames);
     // uploadImage(title, appType, json, blobData, status);
     let size = 2048;
@@ -845,9 +897,15 @@
     savecanvas.clear();
     let data = { objects: [] };
     //let scale = 128 / 700;
+    // FrameObject.objects[0].src = lastImg;
+    // FrameObject.objects[0].width = lastWidth;
+    // FrameObject.objects[0].left = 0;
+    // data.objects.push({ ...FrameObject.objects[0] });
+    
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
+        if (object.type == "image") return;
         const newObject = { ...object };
         newObject.top = newObject.top;
         newObject.left += size * i;
@@ -856,11 +914,22 @@
         data.objects.push(newObject);
       });
     }
+    console.log("data", data);
+
     await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
     await savecanvas.calcOffset();
 
-    var Image = savecanvas.toDataURL("image/png", 0.5);
-    var blobData = dataURItoBlob(Image);
+    let downloadedImg = new Image;
+    downloadedImg.crossOrigin = "Anonymous";
+    downloadedImg.src = lastImg
+    let savecontext = canvas.getContext("2d");
+
+    savecontext.drawImage(downloadedImg, 0, 0);
+    var saveImage = await savecanvas.toDataURL("image/png", 1);
+    console.log("savedImage", saveImage);
+
+    var blobData = dataURItoBlob(saveImage);
+    console.log("blobData", blobData);
     if (!!!title) {
       title = Date.now() + "_" + displayName;
     }

@@ -80,7 +80,7 @@
     {
       key: "rol",
       title: "Rol",
-      value: (v) => v.meta.role,
+      value: (v) => v.meta.Role,
       filterOptions: roles,
     },
     {

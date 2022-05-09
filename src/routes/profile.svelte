@@ -9,6 +9,7 @@
   import NameEdit from "./components/nameEdit.svelte"
   import Avatar from "./components/avatar.svelte"
   import { onDestroy, onMount} from 'svelte';
+  import Stopmotion from "./components/stopmotion.svelte"
 
 
   export let params = {}
@@ -60,7 +61,7 @@
       {
         key: "voorbeeld",
         title: "",
-        value: v => `<img src="${v.value.previewUrl}">`
+        renderComponent: {component: Stopmotion, props: {}}
       },
       {
         key: "title",
@@ -139,7 +140,7 @@ function moveToTrash(key) {
     if(!!params.user || !!userID){
       id = params.user || userID
       CurrentUser = false;
-      if($Profile.meta.role == "admin" ||$Profile.meta.role == "moderator" ){
+      if($Profile.meta.Role == "admin" ||$Profile.meta.Role == "moderator" ){
         drawings = await listAllObjects("drawing",params.user)
         video = await listAllObjects("video",params.user)
         audio = await listAllObjects("audio",params.user)
