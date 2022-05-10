@@ -56,48 +56,43 @@
   let optionbox = true;
 
   let FrameObject = {
+    type: "image",
     version: "4.6.0",
-    objects: [
-      {
-        type: "image",
-        version: "4.6.0",
-        originX: "left",
-        originY: "top",
-        left: -2048,
-        top: 0,
-        width: 0,
-        height: 2048,
-        fill: "rgb(0,0,0)",
-        stroke: null,
-        strokeWidth: 0,
-        strokeDashArray: null,
-        strokeLineCap: "butt",
-        strokeDashOffset: 0,
-        strokeLineJoin: "miter",
-        strokeUniform: false,
-        strokeMiterLimit: 4,
-        scaleX: 1,
-        scaleY: 1,
-        angle: 0,
-        flipX: false,
-        flipY: false,
-        opacity: 1,
-        shadow: null,
-        visible: true,
-        backgroundColor: "",
-        fillRule: "nonzero",
-        paintFirst: "fill",
-        globalCompositeOperation: "source-over",
-        skewX: 0,
-        skewY: 0,
-        erasable: true,
-        cropX: 0,
-        cropY: 0,
-        src: "",
-        crossOrigin: "anonymous",
-        filters: [],
-      },
-    ],
+    originX: "left",
+    originY: "top",
+    left: -2048,
+    top: 0,
+    width: 0,
+    height: 2048,
+    fill: "rgb(0,0,0)",
+    stroke: null,
+    strokeWidth: 0,
+    strokeDashArray: null,
+    strokeLineCap: "butt",
+    strokeDashOffset: 0,
+    strokeLineJoin: "miter",
+    strokeUniform: false,
+    strokeMiterLimit: 4,
+    scaleX: 1,
+    scaleY: 1,
+    angle: 0,
+    flipX: false,
+    flipY: false,
+    opacity: 1,
+    shadow: null,
+    visible: true,
+    backgroundColor: "",
+    fillRule: "nonzero",
+    paintFirst: "fill",
+    globalCompositeOperation: "source-over",
+    skewX: 0,
+    skewY: 0,
+    erasable: true,
+    cropX: 0,
+    cropY: 0,
+    src: "",
+    crossOrigin: "anonymous",
+    filters: [],
   };
 
   console.log("version:" + version);
@@ -130,9 +125,8 @@
     });
     MouseIcon;
     savecanvas = new fabric.Canvas(saveCanvas, {
-      isDrawingMode: false,
+      isDrawingMode: true,
     });
-
     cursor = new fabric.StaticCanvas(Cursor);
 
     getImage();
@@ -473,14 +467,14 @@
         lastWidth = this.width;
         frameAmount = lastWidth / 2048;
 
-        FrameObject.objects[0].src = lastImg;
-        FrameObject.objects[0].width = lastWidth;
+        FrameObject.src = lastImg;
+        FrameObject.width = lastWidth;
         frames = [];
         for (let i = 0; i < frameAmount; i++) {
-          FrameObject.objects[0].left = i * -2048;
+          FrameObject.left = i * -2048;
           frames.push({
             version: "4.6.0",
-            objects: [{ ...FrameObject.objects[0] }],
+            objects: [{ ...FrameObject }],
           });
         }
         frames = frames;
@@ -896,12 +890,7 @@
     savecanvas.renderAll();
     savecanvas.clear();
     let data = { objects: [] };
-    //let scale = 128 / 700;
-    // FrameObject.objects[0].src = lastImg;
-    // FrameObject.objects[0].width = lastWidth;
-    // FrameObject.objects[0].left = 0;
-    // data.objects.push({ ...FrameObject.objects[0] });
-    
+
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
@@ -914,29 +903,28 @@
         data.objects.push(newObject);
       });
     }
+    FrameObject.left = 0;
+    data.objects.push({ ...FrameObject });
+
     console.log("data", data);
 
-    await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
-    await savecanvas.calcOffset();
+    await savecanvas.loadFromJSON(data, async function () {
+      savecanvas.renderAll.bind(savecanvas);
+      await savecanvas.calcOffset();
 
-    let downloadedImg = new Image;
-    downloadedImg.crossOrigin = "Anonymous";
-    downloadedImg.src = lastImg
-    let savecontext = canvas.getContext("2d");
+      var saveImage = await savecanvas.toDataURL("image/png", 1);
+      console.log("savedImage", saveImage);
 
-    savecontext.drawImage(downloadedImg, 0, 0);
-    var saveImage = await savecanvas.toDataURL("image/png", 1);
-    console.log("savedImage", saveImage);
-
-    var blobData = dataURItoBlob(saveImage);
-    console.log("blobData", blobData);
-    if (!!!title) {
-      title = Date.now() + "_" + displayName;
-    }
-    await uploadImage(title, appType, blobData, status, version, displayName);
-    //Profile.update(n => n.url = Image);
-    saving = false;
-    setLoader(false);
+      var blobData = dataURItoBlob(saveImage);
+      console.log("blobData", blobData);
+      if (!!!title) {
+        title = Date.now() + "_" + displayName;
+      }
+      await uploadImage(title, appType, blobData, status, version, displayName);
+      //Profile.update(n => n.url = Image);
+      saving = false;
+      setLoader(false);
+    });
   }
 
   //////////////////// avatar functies end /////////////////////////////////
