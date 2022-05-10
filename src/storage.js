@@ -193,7 +193,7 @@ function createLiked() {
     update,
 
     create: (key, value) => {
-      let likedArray = get(Liked) 
+      let likedArray = get(Liked)
       console.log("likedArray storage", likedArray)
 
       if (!!likedArray.find(element => element.key == key)) return
@@ -261,29 +261,73 @@ export const Liked = createLiked()
 
 function createAddressbook() {
   const { subscribe, set, update } = writable([])
-
   return {
 
     subscribe,
     set,
     update,
 
-    get: () => {
-      // at the initial run the value is an empty array since "writable" is []
-      let addressbookArray = get(Addressbook) // does it refer to the same class?
+    create: (key, value) => {
+      let addressbookArray = get(Addressbook)
 
-      // holds token and user's details
-      let Sess = get(Session)
-      // console.log("Sess", Sess)
+      if (!!addressbookArray.find(element => element.key == key)) return // if it exists, don't do anything
+      let obj = { key, value }
+      updateObject("addressbook", key, value, true).then(() => {
+        console.log("value", value)
 
-      // API call to get the list of friends
-      listAllObjects("addressbook", Sess.user_id).then((addressbookArray) => {
+        addressbookArray.push(obj)
+        console.log("addressbookArray", addressbookArray)
+        console.log("key", key)
+        console.log("value", value)
+        console.log("obj", obj)
         Addressbook.set(addressbookArray)
-        // console.log("addressbookArray", addressbookArray)
         return addressbookArray
       })
-    }
+    },
   }
+
+
+
+  // const { subscribe, set, update } = writable([])
+
+  // let Sess = get(Session)
+
+  // return {
+
+  //   subscribe,
+
+  //   create: () => {
+  //     let addressbookArray = get(Addressbook)
+
+  //     let userId = Sess.user_id
+  //     console.log("userId", userId)
+  //     let userName = Sess.user_name
+
+  //     console.log("Am I running?")
+
+  //     // let obj = { userId, userName }
+
+
+  //     updateObject("addressbook", "123", "345", true)
+  //     // return addressbookArray
+  //   },
+
+  // get: () => {
+  //   // at the initial run the value is an empty array since "writable" is []
+  //   let addressbookArray = get(Addressbook) // does it refer to the same class?
+
+  //   // holds token and user's details
+  //   let Sess = get(Session)
+  //   // console.log("Sess", Sess)
+
+  //   // API call to get the list of friends
+  //   listAllObjects("addressbook", Sess.user_id).then((addressbookArray) => {
+  //     Addressbook.set(addressbookArray)
+  //     // console.log("addressbookArray", addressbookArray)
+  //     return addressbookArray
+  //   })
+  // }
+  // }
 }
 
 export const Addressbook = createAddressbook()
