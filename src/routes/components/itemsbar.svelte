@@ -104,8 +104,8 @@
     }
 
     function subscribeToAddressbook() {
-        const myKey = "testKey";
-        const myValue = { value: "testingValue" };
+        const myKey = "user_id5";
+        const myValue = { key: "different777", value: "user_name777" };
 
         Addressbook.create(myKey, myValue);
 
