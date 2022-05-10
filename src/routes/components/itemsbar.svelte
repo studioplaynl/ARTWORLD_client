@@ -2,7 +2,7 @@
     import { convertImage, getObject, updateObject } from "../../api";
     import itemsBar from "./itemsbar.js";
     import ProfilePage from "../profile.svelte";
-    import { Profile } from "../../session";
+    import { Profile, Session } from "../../session";
     import { CurrentApp, logout } from "../../session";
     import Awards from "../awards.svelte";
     import { location } from "svelte-spa-router";
@@ -104,17 +104,13 @@
     }
 
     function subscribeToAddressbook() {
-        Addressbook.get((value) => {}); // why I can't just listen to subscription?
+        const myKey = "testKey";
+        const myValue = { value: "testingValue" };
+
+        Addressbook.create(myKey, myValue);
 
         Addressbook.subscribe((value) => {
-            alreadySubscribedToAddressbook = true;
-            if (value.length == 0) {
-                // in order to avoid the initial render error or when the object is empty
-                return;
-            } else {
-                addressbookList = value[0].value.addressbook;
-                console.log("addressbookList", addressbookList);
-            }
+            console.log("addressbook subscribe running?");
         });
     }
 
