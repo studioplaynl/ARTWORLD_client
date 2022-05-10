@@ -277,8 +277,9 @@ export async function uploadAvatar(data, json) {
   });
   CurrentApp.set("")
   let Image = await convertImage(jpegLocation, "128", "1000", "png")
-  Profile.update((n) => { n.url = Image; return n });
-  Succes.update(s => s = true)
+  //Profile.update((n) => { n.url = Image; return n });
+  getAccount()
+  Succes.set(true)
   return
 }
 
@@ -289,7 +290,7 @@ export async function deleteFile(type, file, user) {
   const rpcid = "delete_file";
   const fileurl = await client.rpc(Sess, rpcid, payload)
     .catch((e) => { throw e })
-  Succes.update(s => s = true)
+    Succes.set(true)
 }
 
 export async function addFriend(id, usernames) {
