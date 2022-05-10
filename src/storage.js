@@ -193,8 +193,7 @@ function createLiked() {
     update,
 
     create: (key, value) => {
-      let likedArray = get(Liked) //! here we should be subscribed also: on subscription the change should take place:
-      //! deleting the missing objects (of a prev array)?
+      let likedArray = get(Liked) 
       console.log("likedArray storage", likedArray)
 
       if (!!likedArray.find(element => element.key == key)) return

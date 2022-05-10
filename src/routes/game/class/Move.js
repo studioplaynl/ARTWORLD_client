@@ -178,7 +178,7 @@ class Move {
       // we scale the arrival check (distanceTolerance) to the speed of the player
       scene.distanceTolerance = moveSpeed / 30
 
-      console.log("moveBySwiping moveSpeed", moveSpeed)
+      //console.log("moveBySwiping moveSpeed", moveSpeed)
 
       scene.isPlayerMoving = true // to stop the player when it reached its destination
 
@@ -225,7 +225,7 @@ class Move {
 
           let moveSpeed = scene.swipeAmount.length() * 2
 
-          console.log("moveByTapping moveSpeed", moveSpeed)
+          //console.log("moveByTapping moveSpeed", moveSpeed)
 
           // we scale the arrival check (distanceTolerance) to the speed of the player
           scene.distanceTolerance = moveSpeed / 30
