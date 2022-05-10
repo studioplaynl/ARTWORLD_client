@@ -15,7 +15,7 @@ function createAchievement() {
       if (!!ach.find(element => element.key == key)) return
       let obj = { key, value }
       updateObject("achievements", key, value, true).then(() => {
-        
+
         console.log("value", value)
         ach.push(obj)
         console.log("ach", ach)
@@ -193,13 +193,14 @@ function createLiked() {
     update,
 
     create: (key, value) => {
-      let likedArray = get(Liked) //! here we should be subscribed also: on subscription the change should take place:
-      //! deleting the missing objects (of a prev array)?
+      let likedArray = get(Liked)
+      console.log("likedArray storage", likedArray)
+
       if (!!likedArray.find(element => element.key == key)) return
       let obj = { key, value }
       updateObject("liked", key, value, true).then(() => {
         console.log("value", value)
-        
+
         likedArray.push(obj)
         console.log("likedArray", likedArray)
         console.log("key", key)
@@ -213,10 +214,10 @@ function createLiked() {
       let likedArray = get(Liked)
       console.log("likedArray:1", likedArray)
       let Sess = get(Session)
-      if (!!likedArray && likedArray.length > 0){
+      if (!!likedArray && likedArray.length > 0) {
         console.log("likedArray passed!")
         return likedArray
-      } 
+      }
       else {
         if (!!Sess) listAllObjects("liked", Sess.user_id).then((likedArray) => {
           console.log("likedArray 2", likedArray)
@@ -257,55 +258,129 @@ function createLiked() {
 
 export const Liked = createLiked()
 
-export const Addressbook = {
 
-  create: (key, value) => {
-    let ach = get(achievements)
-    if (!!ach.find(element => element.key == key)) return
-    updateObject("achievements", key, value, true).then((value) => {
+function createAddressbook() {
+  const { subscribe, set, update } = writable([])
+  return {
+
+    subscribe,
+    set,
+    update,
+
+    create: (key, value) => {
+      let addressbookArray = get(Addressbook)
+
+      if (!!addressbookArray.find(element => element.key == key)) return // if it exists, don't do anything
       let obj = { key, value }
-      achievements.update((v) => { v.push(obj); return v })
-      // return true
-    })
+      updateObject("addressbook", key, value, true).then(() => {
+        console.log("value", value)
 
-  },
-
-  update: (Item) => {
-    updateObject("achievements", Item.name, Item.value, Item.pub).then((value) => {
-      let ach = get(achievements)
-      const itemNum = ach.findIndex((element) => element.name == Item.name)
-      ach[itemNum] = Item
-      achievements.set(ach)
-      return ach
-    })
-
-  },
-
-  delete: (key) => {
-    achievements.update((value) => {
-      const itemNum = value.findIndex((element) => element.key == key)
-      if (itemNum == -1) return value
-      value.splice(itemNum, 1);
-      deleteObject("achievements", key)
-      return value
-    })
-  },
-  find: (key) => {
-    let ach = get(achievements)
-    let i = ach.findIndex((element) => element.key == key)
-    if (i != -1) return ach[i].value
-    else return undefined
-  },
-
-  get: () => {
-    let ach = get(achievements)
-    if (!!ach && ach.length > 0) return ach
-    else {
-      listAllObjects("achievements", Sess.user_id).then((ach) => {
-        achievements.set(ach)
-        return ach
+        addressbookArray.push(obj)
+        console.log("addressbookArray", addressbookArray)
+        console.log("key", key)
+        console.log("value", value)
+        console.log("obj", obj)
+        Addressbook.set(addressbookArray)
+        return addressbookArray
       })
-    }
+    },
   }
 
+
+
+  // const { subscribe, set, update } = writable([])
+
+  // let Sess = get(Session)
+
+  // return {
+
+  //   subscribe,
+
+  //   create: () => {
+  //     let addressbookArray = get(Addressbook)
+
+  //     let userId = Sess.user_id
+  //     console.log("userId", userId)
+  //     let userName = Sess.user_name
+
+  //     console.log("Am I running?")
+
+  //     // let obj = { userId, userName }
+
+
+  //     updateObject("addressbook", "123", "345", true)
+  //     // return addressbookArray
+  //   },
+
+  // get: () => {
+  //   // at the initial run the value is an empty array since "writable" is []
+  //   let addressbookArray = get(Addressbook) // does it refer to the same class?
+
+  //   // holds token and user's details
+  //   let Sess = get(Session)
+  //   // console.log("Sess", Sess)
+
+  //   // API call to get the list of friends
+  //   listAllObjects("addressbook", Sess.user_id).then((addressbookArray) => {
+  //     Addressbook.set(addressbookArray)
+  //     // console.log("addressbookArray", addressbookArray)
+  //     return addressbookArray
+  //   })
+  // }
+  // }
 }
+
+export const Addressbook = createAddressbook()
+
+// export const Addressbook = {
+
+//   create: (key, value) => {
+//     let ach = get(achievements)
+//     if (!!ach.find(element => element.key == key)) return
+//     updateObject("achievements", key, value, true).then((value) => {
+//       let obj = { key, value }
+//       achievements.update((v) => { v.push(obj); return v })
+//       // return true
+//     })
+
+//   },
+
+//   update: (Item) => {
+//     updateObject("achievements", Item.name, Item.value, Item.pub).then((value) => {
+//       let ach = get(achievements)
+//       const itemNum = ach.findIndex((element) => element.name == Item.name)
+//       ach[itemNum] = Item
+//       achievements.set(ach)
+//       return ach
+//     })
+
+//   },
+
+//   delete: (key) => {
+//     achievements.update((value) => {
+//       const itemNum = value.findIndex((element) => element.key == key)
+//       if (itemNum == -1) return value
+//       value.splice(itemNum, 1);
+//       deleteObject("achievements", key)
+//       return value
+//     })
+//   },
+//   find: (key) => {
+//     let ach = get(achievements)
+//     let i = ach.findIndex((element) => element.key == key)
+//     if (i != -1) return ach[i].value
+//     else return undefined
+//   },
+
+//   get: () => {
+//     let ach = get(achievements)
+//     if (!!ach && ach.length > 0) return ach
+//     else {
+//       listAllObjects("achievements", Sess.user_id).then((ach) => {
+//         achievements.set(ach)
+//         return ach
+//       })
+//     }
+//   }
+
+// }
