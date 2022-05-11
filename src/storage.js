@@ -284,9 +284,7 @@ function createAddressbook() {
           })
         }
       })
-
-
-    },
+    }
   }
 
   // const { subscribe, set, update } = writable([])

@@ -1,5 +1,10 @@
 <script>
-    import { convertImage, getObject, updateObject } from "../../api";
+    import {
+        convertImage,
+        getObject,
+        updateObject,
+        listAllObjects,
+    } from "../../api";
     import itemsBar from "./itemsbar.js";
     import ProfilePage from "../profile.svelte";
     import { Profile, Session } from "../../session";
@@ -7,6 +12,7 @@
     import Awards from "../awards.svelte";
     import { location } from "svelte-spa-router";
     import { Liked, Addressbook } from "../../storage.js";
+    import { get } from "svelte/store";
 
     let ManageSession;
     let current;
@@ -25,7 +31,7 @@
     let alreadySubscribedToLiked = false;
 
     let addressbookList = [];
-    let alreadySubscribedToAddressbook = false;
+    // let alreadySubscribedToAddressbook = false;
 
     //check if player is clicked
     const unsubscribe = itemsBar.subscribe(async (value) => {
@@ -135,6 +141,12 @@
     function subscribeToAddressbook() {
         Addressbook.subscribe((value) => {
             console.log("addressbook subscribe running?");
+
+            const Sess = get(Session);
+            listAllObjects("addressbook", Sess.user_id).then((response) => {
+                addressbookList = response.map((element) => element.value);
+                console.log("addressbookList", addressbookList);
+            });
         });
     }
 
@@ -164,9 +176,11 @@
             current = false;
             return;
         }
-        if (alreadySubscribedToAddressbook != true) {
-            subscribeToAddressbook();
-        }
+
+        subscribeToAddressbook();
+        // if (alreadySubscribedToAddressbook != true) {
+        //     subscribeToAddressbook();
+        // }
 
         current = "addressbook";
     }
@@ -354,7 +368,7 @@
                     <a
                         on:click={() => {
                             goHome(address.user_id);
-                        }}>{address.user_name}</a
+                        }}>{address.username}</a
                     >
                 {/each}
             </div>
