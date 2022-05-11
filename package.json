@@ -34,6 +34,7 @@
     "fabric": "^4.5.0",
     "i18next": "^21.3.2",
     "matter-js": "^0.17.1",
+    "minimist": "^1.2.6",
     "phaser": "^3.55.2",
     "phaser3-rex-plugins": "^1.1.65",
     "sirv-cli": "^1.0.0",
