@@ -269,24 +269,29 @@ function createAddressbook() {
 
     create: (key, value) => {
       let addressbookArray = get(Addressbook)
+      const Sess = get(Session)
 
-      if (!!addressbookArray.find(element => element.key == key)) return // if it exists, don't do anything
-      let obj = { key, value }
-      updateObject("addressbook", key, value, true).then(() => {
-        console.log("value", value)
-
-        addressbookArray.push(obj)
-        console.log("addressbookArray", addressbookArray)
-        console.log("key", key)
-        console.log("value", value)
-        console.log("obj", obj)
-        Addressbook.set(addressbookArray)
-        return addressbookArray
+      // making API call to check whether that online player is already in the addressbook or not
+      listAllObjects("addressbook", Sess.user_id).then((response) => {
+        console.log('response', response)
+        if (response.find(element => element.key == key)) { // if it is already added (the key exists), don't do anything
+          console.log("create: address already exists")
+          return
+        } else { // otherwise add it
+          console.log("create: address added")
+          let obj = { key, value }
+          updateObject("addressbook", key, value, true).then(() => {
+            addressbookArray.push(obj)
+            Addressbook.set(addressbookArray)
+            console.log("addressbookArray", addressbookArray)
+            return addressbookArray
+          })
+        }
       })
+
+
     },
   }
-
-
 
   // const { subscribe, set, update } = writable([])
 
