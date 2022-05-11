@@ -31,8 +31,7 @@
   let videoWidth;
   let canvas,
     video,
-    lineWidth = 25,
-    EraselineWidth = 5;
+    lineWidth = 25
   let json,
     drawingColor = "#000000";
   let shadowOffset = 0,
@@ -119,7 +118,7 @@
     //     console.log("stored in localstorage");
     //   }
     // }, 20000);
-
+    cursor = new fabric.StaticCanvas(Cursor);
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
     });
@@ -127,7 +126,7 @@
     savecanvas = new fabric.Canvas(saveCanvas, {
       isDrawingMode: true,
     });
-    cursor = new fabric.StaticCanvas(Cursor);
+    
 
     getImage();
 
@@ -142,7 +141,6 @@
       drawingColorEl = fab("drawing-color"),
       //drawingShadowColorEl = fab("drawing-shadow-color"),
       drawingLineWidthEl = fab("drawing-line-width"),
-      eraseLineWidthEl = fab("erase-line-width"),
       //drawingShadowWidth = fab("drawing-shadow-width"),
       //drawingShadowOffset = fab("drawing-shadow-offset");
       clearEl = fab("clear-canvas");
@@ -177,7 +175,7 @@
       // erase functie kapot? recompile: http://fabricjs.com/build/
       var eraseBrush = new fabric.EraserBrush(canvas);
       canvas.freeDrawingBrush = eraseBrush;
-      canvas.freeDrawingBrush.width = parseInt(eraseLineWidthEl.value, 10) || 1;
+      canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
       canvas.isDrawingMode = true;
       switchOption("erase");
       floodFill(false);
@@ -309,10 +307,7 @@
       canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
       this.previousSibling.innerHTML = this.value;
     };
-    eraseLineWidthEl.onchange = function () {
-      canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
-      this.previousSibling.innerHTML = this.value;
-    };
+
     // drawingShadowWidth.onchange = function () {
     //   canvas.freeDrawingBrush.shadow.blur = parseInt(this.value, 10) || 0;
     //   this.previousSibling.innerHTML = this.value;
@@ -366,6 +361,7 @@
 
     //redraw cursor on new mouse position when moved
     canvas.on("mouse:move", function (evt) {
+      if (current == "select") return mousecursor.set({ top: -100, left: -100, }).setCoords().canvas.renderAll();
       var mouse = this.getPointer(evt.e);
       mousecursor
         .set({
@@ -377,8 +373,12 @@
     });
 
     //while brush size is changed show cursor in center of canvas
-    document.getElementById("drawing-line-width").oninput = function () {
-      var size = parseInt(this.value, 10);
+    document.getElementById("drawing-line-width").oninput = () => {changeBrushSize()}
+    document.getElementById("erase-line-width").oninput = () => {changeBrushSize()}
+    
+    
+    function changeBrushSize() {
+      var size = parseInt(lineWidth, 10);
       mousecursor
         .center()
         .set({
@@ -772,9 +772,15 @@
     for (var i = 0; i < frames.length; i++) {
       console.log(frames[i], Frame);
       if (i == Frame) {
+        console.log("i",i)
         frames.splice(i, 1);
-        if(i != 0) currentFrame = i - 1;
-        else currentFrame = 0
+        if(i > 0) currentFrame = i - 1;
+        else setTimeout(()=>{
+          frames[0].backgroundImage = {}
+          currentFrame = 1;
+          changeFrame(0)
+        
+        },500)
       }
     }
   };
@@ -1418,15 +1424,15 @@
           <div class="widthBox">
             <div
               class="lineWidth"
-              style="width:{EraselineWidth}px; height: {EraselineWidth}px; background-color: black;margin:  0px auto;"
+              style="background-color: black;margin:  0px auto;"
             />
           </div>
-          <span class="info">{EraselineWidth}</span><input
+          <span class="info">{lineWidth}</span><input
             type="range"
-            min="1"
-            max="150"
+            min="10"
+            max="500"
             id="erase-line-width"
-            bind:value={EraselineWidth}
+            bind:value={lineWidth}
           />
         </div>
         <div class="fillTab" class:hidden={current != "fill"}>
