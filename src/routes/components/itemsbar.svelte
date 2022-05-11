@@ -53,15 +53,44 @@
         //console.log(ManageSession)
 
         if (value.onlinePlayerClicked === true) {
-            console.log(ManageSession.selectedOnlinePlayer);
+            console.log(
+                "ManageSession.selectedOnlinePlayer",
+                ManageSession.selectedOnlinePlayer
+            );
             avatar_url = ManageSession.selectedOnlinePlayer.url;
+            console.log("avatar_url", avatar_url);
             user_name = ManageSession.selectedOnlinePlayer.username;
-            house_url = await getObject(
-                "home",
-                ManageSession.selectedOnlinePlayer.metadata.azc,
+            console.log("user_name", user_name);
+            console.log(
+                "ManageSession.selectedOnlinePlayer.metadata.Azc",
+                ManageSession.selectedOnlinePlayer.metadata.Azc
+            );
+            console.log(
+                "ManageSession.selectedOnlinePlayer.id",
                 ManageSession.selectedOnlinePlayer.id
             );
+            house_url = await getObject(
+                "home",
+                ManageSession.selectedOnlinePlayer.metadata.Azc,
+                ManageSession.selectedOnlinePlayer.id
+            );
+            // getObject provides an object in the format of:
+            // collection: "home"
+            // create_time: "2021-12-13T14:37:50Z"
+            // key: "Amsterdam"
+            // permission_read: 2
+            // permission_write: 1
+            // update_time: "2022-04-25T13:59:04Z"
+            // user_id: "f42eb28f-9f4d-476c-9788-2240bac4cf48"
+            // value:
+            // // posX: 143.16
+            // // posY: -178.99
+            // // url: "home/f42eb28f-9f4d-476c-9788-2240bac4cf48/5_current.png"
+            // // username: "user33"
+            // // version: 5
+            console.log("house_url", house_url);
             house_url = await convertImage(house_url.value.url, "50", "50");
+            console.log("house_url", house_url);
         }
     });
 
@@ -104,11 +133,6 @@
     }
 
     function subscribeToAddressbook() {
-        const myKey = "user_id5";
-        const myValue = { key: "different777", value: "user_name777" };
-
-        Addressbook.create(myKey, myValue);
-
         Addressbook.subscribe((value) => {
             console.log("addressbook subscribe running?");
         });
@@ -195,11 +219,18 @@
     }
 
     async function saveHome() {
+        if (ManageSession.selectedOnlinePlayer) {
+            const userId = ManageSession.selectedOnlinePlayer.user_id;
+            const userName = ManageSession.selectedOnlinePlayer.username;
+            const value = { user_id: userId, username: userName };
+            Addressbook.create(userId, value);
+        }
+
         // saving the home of a player
-        const entry = {
-            user_id: ManageSession.selectedOnlinePlayer.id,
-            user_name: ManageSession.selectedOnlinePlayer.username,
-        };
+        // const entry = {
+        //     user_id: ManageSession.selectedOnlinePlayer.id,
+        //     user_name: ManageSession.selectedOnlinePlayer.username,
+        // };
 
         // // checking if the player in the addressbook
         // const isExist = ManageSession.addressbook.addressbook.some(
@@ -366,7 +397,7 @@
     <div id="left">
         <p>{user_name}</p>
         <a on:click={() => {}} class="avatar"><img src={avatar_url} /></a>
-        <a on:click={Profile}><img id="house" src={house_url} /></a>
+        <a on:click={saveHome}><img id="house" src={house_url} /></a>
         <a on:click={getLiked}
             ><img
                 class="icon"
