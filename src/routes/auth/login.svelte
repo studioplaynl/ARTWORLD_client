@@ -18,7 +18,8 @@
     email = params.user || "user1@vrolijkheid.nl"
 	  password = params.password || 'somesupersecretpassword'
     console.log(params)
-    if(!!$Session){
+    let currentDate = Math.floor(Date.now()/1000)
+    if(!!$Session && $Session.expires_at > currentDate){
       window.location.href = "/#/"
     }
   })
