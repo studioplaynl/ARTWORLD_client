@@ -171,6 +171,14 @@
         current = "addressbook";
     }
 
+    async function getHomeOptions() {
+        if (current == "home") {
+            current = false;
+            return;
+        }
+        current = "home";
+    }
+
     async function goProfile() {
         if (current == "home") {
             current = false;
@@ -397,7 +405,7 @@
     <div id="left">
         <p>{user_name}</p>
         <a on:click={() => {}} class="avatar"><img src={avatar_url} /></a>
-        <a on:click={saveHome}><img id="house" src={house_url} /></a>
+        <a on:click={getHomeOptions}><img id="house" src={house_url} /></a>
         <a on:click={getLiked}
             ><img
                 class="icon"
