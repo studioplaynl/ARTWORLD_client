@@ -21,7 +21,7 @@ export async function uploadImage(name, type, img, status, version, displayName)
 
   var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png", version)
   var value = { "url": jpegLocation, "version": version, "displayname": displayName };
-  if (status == "zichtbaar") {
+  if (status == "zichtbaar" || status == 2) {
     pub = true
   } else {
     pub = false
@@ -256,6 +256,7 @@ export async function getFile(file_url) {
 }
 
 export async function uploadAvatar(data, json) {
+  setLoader(true);
   let avatarVersion = Number(prof.avatar_url.split("/")[2].split("_")[0] || 0) + 1
   var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png", avatarVersion)
   console.log(jpegURL)
@@ -280,6 +281,7 @@ export async function uploadAvatar(data, json) {
   //Profile.update((n) => { n.url = Image; return n });
   getAccount()
   Succes.set(true)
+  setLoader(false);
   return
 }
 

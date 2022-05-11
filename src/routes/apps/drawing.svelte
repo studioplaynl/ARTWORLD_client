@@ -448,15 +448,24 @@
   };
 
   const getImage = async () => {
-    if (!!!params.name) return setLoader(false);
-    let Object = await getObject(appType, params.name, params.user);
-    console.log("object", Object);
-    displayName = Object.value.displayname;
-    title = Object.key;
-    status = Object.status;
-    version = Object.value.version + 1;
-    console.log("displayName", displayName);
-    lastImg = await convertImage(Object.value.url);
+    if (!!!params.name && appType == "stopmotion") return setLoader(false);
+    console.log("appType", appType)
+    if(appType == "avatar"){
+      
+      console.log("url",$Profile.avatar_url)
+      lastImg = await convertImage($Profile.avatar_url);
+    }
+    else {
+      let Object = await getObject(appType, params.name, params.user);
+      console.log("object", Object);
+      displayName = Object.value.displayname;
+      title = Object.key;
+      status = Object.permission_read;
+      version = Object.value.version + 1;
+      console.log("displayName", displayName);
+      lastImg = await convertImage(Object.value.url);
+    }
+    
 
     if (appType == "avatar" || appType == "stopmotion") {
       let frameAmount;
@@ -480,7 +489,16 @@
         frames = frames;
         console.log("frames", frames);
         currentFrame = 0;
-        canvas.loadFromJSON(frames[0], canvas.renderAll.bind(canvas));
+        canvas.loadFromJSON(frames[0], function(){
+          canvas.renderAll.bind(canvas)
+          // for (let i = 0; i < frames.length; i++) {
+          //     updateFrame()
+          //     changeFrame(i)
+            
+          // }
+          
+        });
+
       };
     }
     if (appType == "drawing" || appType == "house") {
@@ -753,9 +771,10 @@
   const deleteFrame = (Frame) => {
     for (var i = 0; i < frames.length; i++) {
       console.log(frames[i], Frame);
-      if (i == Frame && i != 0) {
+      if (i == Frame) {
         frames.splice(i, 1);
-        currentFrame = i - 1;
+        if(i != 0) currentFrame = i - 1;
+        else currentFrame = 0
       }
     }
   };
@@ -905,12 +924,12 @@
     }
     FrameObject.left = 0;
     data.objects.push({ ...FrameObject });
-
+    
     console.log("data", data);
 
-    await savecanvas.loadFromJSON(data, async function () {
+     savecanvas.loadFromJSON(data, async function () {
       savecanvas.renderAll.bind(savecanvas);
-      await savecanvas.calcOffset();
+      savecanvas.calcOffset();
 
       var saveImage = await savecanvas.toDataURL("image/png", 1);
       console.log("savedImage", saveImage);
@@ -920,10 +939,13 @@
       if (!!!title) {
         title = Date.now() + "_" + displayName;
       }
-      await uploadImage(title, appType, blobData, status, version, displayName);
+      uploadImage(title, appType, blobData, status, version, displayName)
+      .then(()=>{
+        saving = false;
+        setLoader(false);
+      })
       //Profile.update(n => n.url = Image);
-      saving = false;
-      setLoader(false);
+      
     });
   }
 
@@ -1279,7 +1301,7 @@
               >
                 <div>{index + 1}</div>
               </div>
-              {#if currentFrame === index && index != 0}
+              {#if currentFrame === index && frames.length > 1}
                 <img
                   class="icon frameDelete"
                   on:click={() => {
