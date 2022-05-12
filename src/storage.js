@@ -267,6 +267,21 @@ function createAddressbook() {
     set,
     update,
 
+    get: () => {
+      let addressbookArray = get(Addressbook)
+
+      const Sess = get(Session)
+      if (!!addressbookArray && addressbookArray.length > 0) {
+        return addressbookArray
+      } else {
+        if (!!Sess) listAllObjects("addressbook", Sess.user_id).then((addressbookArray) => {
+          console.log("storage addressbookArray", addressbookArray)
+          Addressbook.set(addressbookArray)
+          return addressbookArray
+        })
+      }
+    },
+
     create: (key, value) => {
       let addressbookArray = get(Addressbook)
       const Sess = get(Session)

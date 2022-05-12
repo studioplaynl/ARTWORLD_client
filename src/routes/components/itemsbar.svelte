@@ -140,13 +140,7 @@
 
     function subscribeToAddressbook() {
         Addressbook.subscribe((value) => {
-            console.log("addressbook subscribe running?");
-
-            const Sess = get(Session);
-            listAllObjects("addressbook", Sess.user_id).then((response) => {
-                addressbookList = response.map((element) => element.value);
-                console.log("addressbookList", addressbookList);
-            });
+            console.log("Addressbook.subscribe value", value);
         });
     }
 
@@ -404,14 +398,14 @@
 
         {#if current == "home"}
             <br /><br /><br />
+            <a on:click={saveHome}
+                ><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+            >
             <a on:click={goHome}
                 ><img
                     class="icon"
                     src="assets/SHB/svg/AW-icon-enter-space.svg"
                 /></a
-            >
-            <a on:click={saveHome}
-                ><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
             >
             <!-- <ProfilePage userID="{ManageSession.selectedOnlinePlayer.id}" /> -->
         {/if}
