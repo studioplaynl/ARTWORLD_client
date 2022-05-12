@@ -159,7 +159,6 @@
                         );
                         if (addressbookList.length == tempArray.length) {
                             tempArray.forEach(async (element) => {
-                                console.log("tempArray element", element);
                                 addressbookImages.push({
                                     name: element.value.username,
                                     id: element.user_id,
@@ -210,10 +209,6 @@
         }
 
         current = "addressbook";
-    }
-
-    function deleteAddress(homeId) {
-        homeId.remove();
     }
 
     async function getHomeOptions() {
@@ -363,29 +358,36 @@
             </div>
         {/if}
         {#if current == "addressbook"}
-            <div>
-                {#each addressbookImages as address}
-                    <!-- <div id={address.id}> -->
-                    <button
-                        on:click={() => {
-                            Addressbook.delete(address.id);
-                        }}>Delete</button
-                    >
+            <!-- <div style="display: flex; flex-direction: row"> -->
+            {#each addressbookImages as address}
+                <!-- svelte-ignore a11y-missing-attribute -->
+                <div style="display: flex; flex-direction: row">
+                    <div>
+                        <a
+                            style="margin-bottom: 20px"
+                            on:click={() => {
+                                goHome(address.id);
+                            }}
+                        >
+                            <img
+                                class="addressbook-image"
+                                src={address.url}
+                            />{address.name}
+                        </a>
+                    </div>
+
                     <!-- svelte-ignore a11y-missing-attribute -->
                     <a
-                        style="margin-bottom: 20px"
                         on:click={() => {
-                            goHome(address.id);
+                            Addressbook.delete(address.id);
                         }}
+                        ><img
+                            class="icon"
+                            src="assets/SHB/svg/AW-icon-trash.svg"
+                        /></a
                     >
-                        <img
-                            class="addressbook-image"
-                            src={address.url}
-                        />{address.name}
-                    </a>
-                    <!-- </div> -->
-                {/each}
-            </div>
+                </div>
+            {/each}
         {/if}
         {#if current == "home"}
             <ProfilePage />
