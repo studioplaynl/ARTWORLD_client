@@ -21,7 +21,7 @@
   onMount(async () => {
     interval = setInterval(() => {
       frame++;
-      if (frame == image.clientWidth / 150) {
+      if (frame >= image.clientWidth / 150) {
         frame = 0;
         image.style.left = "0px";
       } else {
