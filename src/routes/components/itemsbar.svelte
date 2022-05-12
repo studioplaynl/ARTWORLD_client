@@ -406,15 +406,16 @@
                 > -->
                 {#each addressbookImages as address}
                     <a
+                        style="margin-bottom: 20px"
                         on:click={() => {
                             goHome(address.id);
                         }}
-                        >{address.name}
+                    >
                         <img
                             style="display: block; height: 50px; width: 50px"
                             src={address.url}
-                        /></a
-                    >
+                        />{address.name}
+                    </a>
                 {/each}
             </div>
         {/if}
