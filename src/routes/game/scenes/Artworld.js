@@ -210,9 +210,9 @@ export default class Artworld extends Phaser.Scene {
     this.editModeElements.push(this.sunglasses_striped)
 
     //create(scene, x, y, width, height, name, color, imageFile = null) {
-    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1062), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 776), 800, 400, "graffitiBrickWall", 0, 'brickWall')
+    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1540), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 776), 800, 400, "graffitiBrickWall", 0, 'brickWall')
     this.editModeElements.push(this.graffitiBrickWall)
-
+    
     //...................................................................................................
     // DRAW A SUN 
     //...................................................................................................
@@ -244,6 +244,7 @@ export default class Artworld extends Phaser.Scene {
         this.sunDraw.setVisible(true)
         this.sunDrawCloseButton.setVisible(true)
         this.sunDrawSaveButton.setVisible(true)
+        this.physics.pause()
       })
 
     GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1383), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1600), 400, 400, "sunDraw", 180, 'artFrame_512')
@@ -256,6 +257,7 @@ export default class Artworld extends Phaser.Scene {
         this.sunDraw.setVisible(false)
         this.sunDrawCloseButton.setVisible(false)
         this.sunDrawSaveButton.setVisible(false)
+        this.physics.resume()
       })
     this.sunDrawCloseButton.setVisible(false)
 
@@ -479,8 +481,6 @@ export default class Artworld extends Phaser.Scene {
 
     })
   }//end downloadArt
-
-
 
   generateLocations() {
     let location1Vector = new Phaser.Math.Vector2(-701.83, -304.33)

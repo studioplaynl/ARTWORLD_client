@@ -32,8 +32,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.enterCircleTween
         this.size = config.size
         
-        
-
         let width
 
         if (typeof this.size === "undefined") {
@@ -46,8 +44,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         if (typeof this.userHome === "undefined") {
             this.userHome = this.locationDestination
         }
-
-        //TODO rewrite without the container, just using sprite, containers are a bit more cpu intensive 
 
         //display width of the location image/ triangle/ isoBox
 
@@ -118,7 +114,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             })
         }
 
-        // place the description under the location image
+        // place thethis.userHome description under the location image
         const textOffset = 120
         const textPlateOffset = textOffset + 16
         const locationDescription = this.scene.add.text(0, width / 2 - textOffset, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(32)
@@ -166,6 +162,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // this.bringToTop(this.enterButtonHitArea)
 
         this.setSize(width, width, false)
+        //set a reference for the house to be able to set it to draggable
 
         if (this.draggable) {
             this.setInteractive()
