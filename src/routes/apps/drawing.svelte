@@ -468,6 +468,10 @@
       console.log("url",$Profile.avatar_url)
       lastImg = await convertImage($Profile.avatar_url);
     }
+    if(appType == "house"){
+      let url = await getObject("home", $Profile.meta.Azc, $Profile.user_id)
+      lastImg = await convertImage(url.value.url)
+    }
     else {
       let Object = await getObject(appType, params.name, params.user);
       console.log("object", Object);
