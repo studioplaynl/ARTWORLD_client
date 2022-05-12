@@ -284,21 +284,32 @@ function createAddressbook() {
 
     create: (key, value) => {
       let addressbookArray = get(Addressbook)
-      const Sess = get(Session)
-
-      // making API call to check whether that online player is already in the addressbook or not
-      listAllObjects("addressbook", Sess.user_id).then((response) => {
-        addressbookArray = response.map(element => element.value) // assigning array of objects to addressbookArray
-        if (response.find(element => element.key == key)) { // if the address is already added (the key exists), ...
-          Addressbook.set(addressbookArray) //... set the addressbook array that is received from server
-        } else { // otherwise
-          updateObject("addressbook", key, value, true).then(() => { // update the server list of addressbook with a new address...
-            addressbookArray = [...addressbookArray, value] // ... and combine the list from the server with the address that is being added
-            Addressbook.set(addressbookArray)
-            return addressbookArray
-          })
-        }
+      console.log("storage addressbookArray", addressbookArray)
+      if (!!addressbookArray.find(element => element.key == key)) return
+      let obj = { key, value }
+      updateObject("addressbook", key, value, true).then(() => {
+        console.log("storage addressbook value", value)
+        addressbookArray.push(obj)
+        Addressbook.set(addressbookArray)
+        return addressbookArray
       })
+
+
+
+      // const Sess = get(Session)
+      // // making API call to check whether that online player is already in the addressbook or not
+      // listAllObjects("addressbook", Sess.user_id).then((response) => {
+      //   addressbookArray = response.map(element => element.value) // assigning array of objects to addressbookArray
+      //   if (response.find(element => element.key == key)) { // if the address is already added (the key exists), ...
+      //     Addressbook.set(addressbookArray) //... set the addressbook array that is received from server
+      //   } else { // otherwise
+      //     updateObject("addressbook", key, value, true).then(() => { // update the server list of addressbook with a new address...
+      //       addressbookArray = [...addressbookArray, value] // ... and combine the list from the server with the address that is being added
+      //       Addressbook.set(addressbookArray)
+      //       return addressbookArray
+      //     })
+      //   }
+      // })
     }
   }
 
