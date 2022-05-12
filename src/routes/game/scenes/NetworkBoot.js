@@ -1,7 +1,7 @@
 import ManageSession from "../ManageSession"
 import ServerCall from "../class/ServerCall"
 import { CurrentApp } from "../../../session"
-import { Liked } from "../../../storage"
+import { Addressbook, Liked } from "../../../storage"
 
 export default class NetworkBoot extends Phaser.Scene {
   constructor() {
@@ -20,6 +20,7 @@ export default class NetworkBoot extends Phaser.Scene {
 
         //get server object so that the data is Initialized
         Liked.get()
+        Addressbook.get()
 
         console.log("ManageSession.locationID", ManageSession.locationID)
         this.scene.launch(ManageSession.location, { user_id: ManageSession.locationID })

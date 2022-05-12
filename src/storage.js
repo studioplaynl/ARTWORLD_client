@@ -267,30 +267,39 @@ function createAddressbook() {
     set,
     update,
 
+    get: () => {
+      let addressbookArray = get(Addressbook)
+
+      const Sess = get(Session)
+      if (!!addressbookArray && addressbookArray.length > 0) {
+        return addressbookArray
+      } else {
+        if (!!Sess) listAllObjects("addressbook", Sess.user_id).then((addressbookArray) => {
+          console.log("storage addressbookArray", addressbookArray)
+          Addressbook.set(addressbookArray)
+          return addressbookArray
+        })
+      }
+    },
+
     create: (key, value) => {
       let addressbookArray = get(Addressbook)
       const Sess = get(Session)
 
       // making API call to check whether that online player is already in the addressbook or not
       listAllObjects("addressbook", Sess.user_id).then((response) => {
-        console.log('response', response)
-        if (response.find(element => element.key == key)) { // if it is already added (the key exists), don't do anything
-          console.log("create: address already exists")
-          return
-        } else { // otherwise add it
-          console.log("create: address added")
-          let obj = { key, value }
-          updateObject("addressbook", key, value, true).then(() => {
-            addressbookArray.push(obj)
+        addressbookArray = response.map(element => element.value) // assigning array of objects to addressbookArray
+        if (response.find(element => element.key == key)) { // if the address is already added (the key exists), ...
+          Addressbook.set(addressbookArray) //... set the addressbook array that is received from server
+        } else { // otherwise
+          updateObject("addressbook", key, value, true).then(() => { // update the server list of addressbook with a new address...
+            addressbookArray = [...addressbookArray, value] // ... and combine the list from the server with the address that is being added
             Addressbook.set(addressbookArray)
-            console.log("addressbookArray", addressbookArray)
             return addressbookArray
           })
         }
       })
-
-
-    },
+    }
   }
 
   // const { subscribe, set, update } = writable([])

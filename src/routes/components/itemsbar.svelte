@@ -1,5 +1,10 @@
 <script>
-    import { convertImage, getObject, updateObject } from "../../api";
+    import {
+        convertImage,
+        getObject,
+        updateObject,
+        listAllObjects,
+    } from "../../api";
     import itemsBar from "./itemsbar.js";
     import ProfilePage from "../profile.svelte";
     import { Profile, Session } from "../../session";
@@ -7,6 +12,7 @@
     import Awards from "../awards.svelte";
     import { location } from "svelte-spa-router";
     import { Liked, Addressbook } from "../../storage.js";
+    import { get } from "svelte/store";
 
     let ManageSession;
     let current;
@@ -25,7 +31,9 @@
     let alreadySubscribedToLiked = false;
 
     let addressbookList = [];
+    let lastLengthAddressbook = 0;
     let alreadySubscribedToAddressbook = false;
+    let addressbookImages = [];
 
     //check if player is clicked
     const unsubscribe = itemsBar.subscribe(async (value) => {
@@ -134,7 +142,40 @@
 
     function subscribeToAddressbook() {
         Addressbook.subscribe((value) => {
-            console.log("addressbook subscribe running?");
+            alreadySubscribedToAddressbook = true;
+            console.log("Addressbook.subscribe value", value);
+            console.log(
+                "lastLengthAddressbook, value.length",
+                lastLengthAddressbook,
+                value.length
+            );
+            if (lastLengthAddressbook != value.length) {
+                console.log("subscribeToAddressbook value changed");
+                lastLengthAddressbook = value.length;
+                addressbookImages = [];
+                addressbookList = value;
+                console.log(
+                    "addressbookImages, addressbookAvatars",
+                    addressbookImages,
+                    addressbookList
+                );
+                if (addressbookList.length > 0) {
+                    addressbookList.forEach(async (element) => {
+                        console.log("element", element);
+                        addressbookImages.push({
+                            name: element.value.username,
+                            id: element.value.user_id,
+                            url: await convertImage(
+                                element.value.avatar_url,
+                                "50",
+                                "50"
+                            ),
+                        });
+                        addressbookImages = addressbookImages;
+                        console.log("addressbookImages", addressbookImages);
+                    });
+                }
+            }
         });
     }
 
@@ -164,6 +205,7 @@
             current = false;
             return;
         }
+
         if (alreadySubscribedToAddressbook != true) {
             subscribeToAddressbook();
         }
@@ -230,7 +272,19 @@
         if (ManageSession.selectedOnlinePlayer) {
             const userId = ManageSession.selectedOnlinePlayer.user_id;
             const userName = ManageSession.selectedOnlinePlayer.username;
-            const value = { user_id: userId, username: userName };
+            console.log(
+                "ManageSession.selectedOnlinePlayer",
+                ManageSession.selectedOnlinePlayer
+            );
+            const avatarImage = ManageSession.selectedOnlinePlayer.avatar_url;
+            const metadata = ManageSession.selectedOnlinePlayer.metadata;
+
+            const value = {
+                user_id: userId,
+                username: userName,
+                avatar_url: avatarImage,
+                metadata,
+            };
             Addressbook.create(userId, value);
         }
 
@@ -350,11 +404,16 @@
                         goScene("ArtworldAmsterdam");
                     }}>ArtWorldAmsterdam</a
                 > -->
-                {#each addressbookList as address}
+                {#each addressbookImages as address}
                     <a
                         on:click={() => {
-                            goHome(address.user_id);
-                        }}>{address.user_name}</a
+                            goHome(address.id);
+                        }}
+                        >{address.name}
+                        <img
+                            style="display: block; height: 50px; width: 50px"
+                            src={address.url}
+                        /></a
                     >
                 {/each}
             </div>
@@ -390,14 +449,14 @@
 
         {#if current == "home"}
             <br /><br /><br />
+            <a on:click={saveHome}
+                ><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+            >
             <a on:click={goHome}
                 ><img
                     class="icon"
                     src="assets/SHB/svg/AW-icon-enter-space.svg"
                 /></a
-            >
-            <a on:click={saveHome}
-                ><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
             >
             <!-- <ProfilePage userID="{ManageSession.selectedOnlinePlayer.id}" /> -->
         {/if}
