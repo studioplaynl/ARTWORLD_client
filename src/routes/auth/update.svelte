@@ -275,7 +275,7 @@
 							// 	location.collection,
 							// 	location.key 
 							// );
-							type = locations.collection
+							type = location.collection
 							name = location.key 
 							value = JSON.stringify(location.value)
 
