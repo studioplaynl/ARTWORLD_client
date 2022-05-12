@@ -160,9 +160,7 @@ function moveToTrash(key) {
       azc = useraccount.meta.Azc
       console.log("azc", azc)
       avatar_url = useraccount.url
-      if(!!avatar_url){
-        animateScript()
-      }
+
       
       try {
         house_url = await getObject("home", azc, params.user)
@@ -186,9 +184,7 @@ function moveToTrash(key) {
       role = useraccount.meta.Role
       azc =  useraccount.meta.Azc
       avatar_url = useraccount.url
-      if(!!avatar_url){
-        animateScript()
-      }
+     
       try {
         house_url = await getObject("home", azc, $Session.user_id)
       } catch(err) {
@@ -213,7 +209,8 @@ function moveToTrash(key) {
       }
       if(item.value.json) item.url = item.value.json.split(".")[0]
       if(item.value.url) item.url = item.value.url.split(".")[0]
-      item.value.previewUrl = await convertImage(item.value.url, "128", "128")
+      item.value.previewUrl = await convertImage(item.value.url, "150", "1000", "png")
+
       art = art;
     })
 
@@ -222,34 +219,12 @@ function moveToTrash(key) {
   }
   let promise = getUser();
 
-////////// avatar
-  var tID; //we will use this variable to clear the setInterval()
 
-    function animateScript() {
-      var    position = 256; //start position for the image slicer
-      const  interval = 250; //100 ms of interval for the setInterval()
-      tID = setInterval ( () => {
-        if(avatar == undefined) return clearInterval(tID)
-      avatar.style.backgroundPosition = 
-      `-${position}px 0px`; 
-      //we use the ES6 template literal to insert the variable "position"
-      if (position < 1536)
-      { position = position + 256;}
-      //we increment the position by 256 each time
-      else
-      { position = 256; }
-      //reset the position to 256px, once position exceeds 1536px
-      }
-      , interval ); //end of setInterval
-    } //end of animateScript()
 
     async function goApp(App){
       $CurrentApp = App;
     }
 
-
-	onDestroy(() => clearInterval(tID));
-/////// end avatar
 </script>
 
 {#if !loader}

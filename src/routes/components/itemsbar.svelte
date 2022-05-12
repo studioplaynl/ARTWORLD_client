@@ -31,7 +31,9 @@
     let alreadySubscribedToLiked = false;
 
     let addressbookList = [];
-    // let alreadySubscribedToAddressbook = false;
+    let lastLengthAddressbook = 0;
+    let alreadySubscribedToAddressbook = false;
+    let addressbookImages = [];
 
     //check if player is clicked
     const unsubscribe = itemsBar.subscribe(async (value) => {
@@ -140,7 +142,39 @@
 
     function subscribeToAddressbook() {
         Addressbook.subscribe((value) => {
-            console.log("Addressbook.subscribe value", value);
+            alreadySubscribedToAddressbook = true;
+            if (lastLengthAddressbook != value.length) {
+                lastLengthAddressbook = value.length;
+                addressbookImages = [];
+                addressbookList = value;
+                if (addressbookList.length > 0) {
+                    let tempArray = [];
+                    addressbookList.forEach(async (element) => {
+                        tempArray.push(
+                            await getObject(
+                                "home",
+                                element.value.metadata.Azc,
+                                element.value.user_id
+                            )
+                        );
+                        if (addressbookList.length == tempArray.length) {
+                            tempArray.forEach(async (element) => {
+                                console.log("tempArray element", element);
+                                addressbookImages.push({
+                                    name: element.value.username,
+                                    id: element.user_id,
+                                    url: await convertImage(
+                                        element.value.url,
+                                        "50",
+                                        "50"
+                                    ),
+                                });
+                                addressbookImages = addressbookImages;
+                            });
+                        }
+                    });
+                }
+            }
         });
     }
 
@@ -171,12 +205,15 @@
             return;
         }
 
-        subscribeToAddressbook();
-        // if (alreadySubscribedToAddressbook != true) {
-        //     subscribeToAddressbook();
-        // }
+        if (alreadySubscribedToAddressbook != true) {
+            subscribeToAddressbook();
+        }
 
         current = "addressbook";
+    }
+
+    function deleteAddress(homeId) {
+        homeId.remove();
     }
 
     async function getHomeOptions() {
@@ -238,49 +275,23 @@
         if (ManageSession.selectedOnlinePlayer) {
             const userId = ManageSession.selectedOnlinePlayer.user_id;
             const userName = ManageSession.selectedOnlinePlayer.username;
-            const value = { user_id: userId, username: userName };
+            const avatarImage = ManageSession.selectedOnlinePlayer.avatar_url;
+            const metadata = ManageSession.selectedOnlinePlayer.metadata;
+
+            const value = {
+                user_id: userId,
+                username: userName,
+                avatar_url: avatarImage,
+                metadata,
+            };
             Addressbook.create(userId, value);
         }
-
-        // saving the home of a player
-        // const entry = {
-        //     user_id: ManageSession.selectedOnlinePlayer.id,
-        //     user_name: ManageSession.selectedOnlinePlayer.username,
-        // };
-
-        // // checking if the player in the addressbook
-        // const isExist = ManageSession.addressbook.addressbook.some(
-        //     (element) => element.user_id == entry.user_id
-        // );
-
-        // if (!isExist) {
-        //     // if doesn't exist, add to the addressbook
-        //     ManageSession.addressbook.addressbook.push(entry);
-        //     const type = "addressbook";
-        //     const name = type + "_" + ManageSession.userProfile.id;
-        //     const pub = 2;
-        //     const value = ManageSession.addressbook;
-        //     console.log("value ManageSession.addressbook", value);
-        //     updateObject(type, name, value, pub);
-        // } else {
-        //     console.log("this user id is already in addressbook list");
-        // }
     }
 
     async function goApp(App) {
         // HistoryTracker.pauseSceneStartApp(ManageSession.currentScene, App)
         $CurrentApp = App;
     }
-
-    // async function getAdressbook() {
-    //     if (current == "addressbook") {
-    //         current = false;
-    //         return;
-    //     }
-    //     adress_book = ManageSession.addressbook.addressbook;
-    //     console.log(ManageSession.addressbook.addressbook);
-    //     current = "addressbook";
-    // }
 </script>
 
 {#if $location != "/login"}
@@ -353,17 +364,26 @@
         {/if}
         {#if current == "addressbook"}
             <div>
-                <!-- <a
-                    on:click={() => {
-                        goScene("ArtworldAmsterdam");
-                    }}>ArtWorldAmsterdam</a
-                > -->
-                {#each addressbookList as address}
-                    <a
+                {#each addressbookImages as address}
+                    <!-- <div id={address.id}> -->
+                    <button
                         on:click={() => {
-                            goHome(address.user_id);
-                        }}>{address.username}</a
+                            Addressbook.delete(address.id);
+                        }}>Delete</button
                     >
+                    <!-- svelte-ignore a11y-missing-attribute -->
+                    <a
+                        style="margin-bottom: 20px"
+                        on:click={() => {
+                            goHome(address.id);
+                        }}
+                    >
+                        <img
+                            class="addressbook-image"
+                            src={address.url}
+                        />{address.name}
+                    </a>
+                    <!-- </div> -->
                 {/each}
             </div>
         {/if}
@@ -555,5 +575,11 @@
 
     .avatar > img {
         height: 50px;
+    }
+
+    .addressbook-image {
+        display: block;
+        height: 50px;
+        width: 50px;
     }
 </style>

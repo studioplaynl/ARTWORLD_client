@@ -412,7 +412,7 @@
     if (!invalidTitle) return;
     saving = true;
     setLoader(true);
-    if (appType == "drawing") {
+    if (appType == "drawing" || appType == "house") {
       var Image = canvas.toDataURL("png");
       var blobData = dataURItoBlob(Image);
       if (!!!title) {
@@ -439,6 +439,19 @@
     }
   };
 
+  function download(){
+    console.log("download")
+    //canvas.deactivateAll().renderAll(); 
+    saveAs(canvas.toDataURL('png'), "myIMG.png"); 
+    //window.open(canvas.toDataURL('png')); 
+    // if(appType == "drawing"){
+    //   window.open(canvas.toDataURL("png"))
+    // }
+    // if (appType == "stopmotion") {
+    //   window.open(savecanvas.toDataURL("png"))
+    // }
+  }
+
   const updateFrame = () => {
     frames[currentFrame] = canvas.toJSON();
     frames = frames;
@@ -448,12 +461,16 @@
   };
 
   const getImage = async () => {
-    if (!!!params.name && appType == "stopmotion") return setLoader(false);
+    if (!!!params.name && (appType == "stopmotion" ||  appType == "drawing" )) return setLoader(false);
     console.log("appType", appType)
     if(appType == "avatar"){
       
       console.log("url",$Profile.avatar_url)
       lastImg = await convertImage($Profile.avatar_url);
+    }
+    if(appType == "house"){
+      let url = await getObject("home", $Profile.meta.Azc, $Profile.user_id)
+      lastImg = await convertImage(url.value.url)
     }
     else {
       let Object = await getObject(appType, params.name, params.user);
@@ -502,6 +519,7 @@
       };
     }
     if (appType == "drawing" || appType == "house") {
+
       fabric.Image.fromURL(
         lastImg,
         function (oImg) {
@@ -1468,6 +1486,9 @@
             <button on:click={upload}
               >{#if saving}Saving{:else if saved} Saved{:else}Save{/if}</button
             >
+            <!-- <button on:click={download}
+              >Download</button
+            > -->
           </div>
         </div>
       </div>
