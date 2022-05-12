@@ -367,7 +367,7 @@
                         }}
                         ><img
                             class="icon"
-                            src="assets/SHB/svg/AW-icon-cross.svg"
+                            src="assets/SHB/svg/AW-icon-trash.svg"
                         /></a
                     >
                     <!-- svelte-ignore a11y-missing-attribute -->
