@@ -160,19 +160,51 @@
                     addressbookList
                 );
                 if (addressbookList.length > 0) {
+                    let tempArray = [];
                     addressbookList.forEach(async (element) => {
+                        // console.log("element", element);
+                        // addressbookImages.push({
+                        //     name: element.value.username,
+                        //     id: element.value.user_id,
+                        //     url: await convertImage(
+                        //         element.value.avatar_url,
+                        //         "50",
+                        //         "50"
+                        //     ),
+                        // });
+
                         console.log("element", element);
-                        addressbookImages.push({
-                            name: element.value.username,
-                            id: element.value.user_id,
-                            url: await convertImage(
-                                element.value.avatar_url,
-                                "50",
-                                "50"
-                            ),
-                        });
-                        addressbookImages = addressbookImages;
-                        console.log("addressbookImages", addressbookImages);
+                        tempArray.push(
+                            await getObject(
+                                "home",
+                                element.value.metadata.Azc,
+                                element.value.user_id
+                            )
+                        );
+
+                        console.log(
+                            "address length, tempArray length",
+                            addressbookList.length,
+                            tempArray.length
+                        );
+                        console.log("tempArray", tempArray);
+
+                        if (addressbookList.length == tempArray.length) {
+                            tempArray.forEach(async (element) => {
+                                console.log("tempArray element", element);
+                                addressbookImages.push({
+                                    name: element.value.username,
+                                    id: element.user_id,
+                                    url: await convertImage(
+                                        element.value.url,
+                                        "50",
+                                        "50"
+                                    ),
+                                });
+
+                                addressbookImages = addressbookImages;
+                            });
+                        }
                     });
                 }
             }
