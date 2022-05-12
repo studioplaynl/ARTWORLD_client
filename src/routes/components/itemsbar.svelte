@@ -159,7 +159,6 @@
                         );
                         if (addressbookList.length == tempArray.length) {
                             tempArray.forEach(async (element) => {
-                                console.log("tempArray element", element);
                                 addressbookImages.push({
                                     name: element.value.username,
                                     id: element.user_id,
@@ -210,10 +209,6 @@
         }
 
         current = "addressbook";
-    }
-
-    function deleteAddress(homeId) {
-        homeId.remove();
     }
 
     async function getHomeOptions() {
@@ -365,11 +360,15 @@
         {#if current == "addressbook"}
             <div>
                 {#each addressbookImages as address}
-                    <!-- <div id={address.id}> -->
-                    <button
+                    <!-- svelte-ignore a11y-missing-attribute -->
+                    <a
                         on:click={() => {
                             Addressbook.delete(address.id);
-                        }}>Delete</button
+                        }}
+                        ><img
+                            class="icon"
+                            src="assets/SHB/svg/AW-icon-cross.svg"
+                        /></a
                     >
                     <!-- svelte-ignore a11y-missing-attribute -->
                     <a
@@ -383,7 +382,6 @@
                             src={address.url}
                         />{address.name}
                     </a>
-                    <!-- </div> -->
                 {/each}
             </div>
         {/if}
