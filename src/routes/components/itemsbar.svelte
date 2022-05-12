@@ -31,7 +31,9 @@
     let alreadySubscribedToLiked = false;
 
     let addressbookList = [];
-    // let alreadySubscribedToAddressbook = false;
+    let lastLengthAddressbook = 0;
+    let alreadySubscribedToAddressbook = false;
+    let addressbookImages = [];
 
     //check if player is clicked
     const unsubscribe = itemsBar.subscribe(async (value) => {
@@ -140,7 +142,40 @@
 
     function subscribeToAddressbook() {
         Addressbook.subscribe((value) => {
+            alreadySubscribedToAddressbook = true;
             console.log("Addressbook.subscribe value", value);
+            console.log(
+                "lastLengthAddressbook, value.length",
+                lastLengthAddressbook,
+                value.length
+            );
+            if (lastLengthAddressbook != value.length) {
+                console.log("subscribeToAddressbook value changed");
+                lastLengthAddressbook = value.length;
+                addressbookImages = [];
+                addressbookList = value;
+                console.log(
+                    "addressbookImages, addressbookAvatars",
+                    addressbookImages,
+                    addressbookList
+                );
+                if (addressbookList.length > 0) {
+                    addressbookList.forEach(async (element) => {
+                        console.log("element", element);
+                        addressbookImages.push({
+                            name: element.value.username,
+                            id: element.value.user_id,
+                            url: await convertImage(
+                                element.value.avatar_url,
+                                "50",
+                                "50"
+                            ),
+                        });
+                        addressbookImages = addressbookImages;
+                        console.log("addressbookImages", addressbookImages);
+                    });
+                }
+            }
         });
     }
 
@@ -171,10 +206,9 @@
             return;
         }
 
-        subscribeToAddressbook();
-        // if (alreadySubscribedToAddressbook != true) {
-        //     subscribeToAddressbook();
-        // }
+        if (alreadySubscribedToAddressbook != true) {
+            subscribeToAddressbook();
+        }
 
         current = "addressbook";
     }
@@ -238,7 +272,19 @@
         if (ManageSession.selectedOnlinePlayer) {
             const userId = ManageSession.selectedOnlinePlayer.user_id;
             const userName = ManageSession.selectedOnlinePlayer.username;
-            const value = { user_id: userId, username: userName };
+            console.log(
+                "ManageSession.selectedOnlinePlayer",
+                ManageSession.selectedOnlinePlayer
+            );
+            const avatarImage = ManageSession.selectedOnlinePlayer.avatar_url;
+            const metadata = ManageSession.selectedOnlinePlayer.metadata;
+
+            const value = {
+                user_id: userId,
+                username: userName,
+                avatar_url: avatarImage,
+                metadata,
+            };
             Addressbook.create(userId, value);
         }
 
@@ -358,11 +404,16 @@
                         goScene("ArtworldAmsterdam");
                     }}>ArtWorldAmsterdam</a
                 > -->
-                {#each addressbookList as address}
+                {#each addressbookImages as address}
                     <a
                         on:click={() => {
-                            goHome(address.user_id);
-                        }}>{address.username}</a
+                            goHome(address.id);
+                        }}
+                        >{address.name}
+                        <img
+                            style="display: block; height: 50px; width: 50px"
+                            src={address.url}
+                        /></a
                     >
                 {/each}
             </div>
