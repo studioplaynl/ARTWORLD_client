@@ -358,8 +358,24 @@
             </div>
         {/if}
         {#if current == "addressbook"}
-            <div>
-                {#each addressbookImages as address}
+            <!-- <div style="display: flex; flex-direction: row"> -->
+            {#each addressbookImages as address}
+                <!-- svelte-ignore a11y-missing-attribute -->
+                <div style="display: flex; flex-direction: row">
+                    <div>
+                        <a
+                            style="margin-bottom: 20px"
+                            on:click={() => {
+                                goHome(address.id);
+                            }}
+                        >
+                            <img
+                                class="addressbook-image"
+                                src={address.url}
+                            />{address.name}
+                        </a>
+                    </div>
+
                     <!-- svelte-ignore a11y-missing-attribute -->
                     <a
                         on:click={() => {
@@ -370,20 +386,8 @@
                             src="assets/SHB/svg/AW-icon-trash.svg"
                         /></a
                     >
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <a
-                        style="margin-bottom: 20px"
-                        on:click={() => {
-                            goHome(address.id);
-                        }}
-                    >
-                        <img
-                            class="addressbook-image"
-                            src={address.url}
-                        />{address.name}
-                    </a>
-                {/each}
-            </div>
+                </div>
+            {/each}
         {/if}
         {#if current == "home"}
             <ProfilePage />
