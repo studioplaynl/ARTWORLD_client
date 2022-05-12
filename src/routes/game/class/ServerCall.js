@@ -189,6 +189,7 @@ class ServerCall {
         if (scene.textures.exists(homeImageKey)) {
           //create the home
           this.createHome(element, index, homeImageKey, scene)
+          
         } else {
           // get the image server side
           this.getHomeImages(url, element, index, homeImageKey, scene)
@@ -230,7 +231,7 @@ class ServerCall {
       scene: scene,
       size: 140,
       userHome: element.user_id,
-      draggable: false,
+      draggable: ManageSession.draggableHomes,
       type: "image",
       x: CoordinatesTranslator.artworldToPhaser2DX(
         scene.worldSize.x,
