@@ -337,8 +337,8 @@ export default class Artworld extends Phaser.Scene {
     Exhibition.AbriSmall2({
       scene: this,
       name: "exhibit_outdoor_small2_1",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -777),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 39),
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1014),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1149),
       size: 564,
     })
     //this.exhibit_outdoor_small2_1_mesh.setTexture("mario_star")
