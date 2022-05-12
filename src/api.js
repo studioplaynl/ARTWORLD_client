@@ -280,7 +280,7 @@ export async function uploadAvatar(data, json) {
   let Image = await convertImage(jpegLocation, "128", "1000", "png")
   //Profile.update((n) => { n.url = Image; return n });
   getAccount()
-  Succes.set(true)
+  Succes.update(s => s = true)
   setLoader(false);
   return
 }
@@ -292,7 +292,7 @@ export async function deleteFile(type, file, user) {
   const rpcid = "delete_file";
   const fileurl = await client.rpc(Sess, rpcid, payload)
     .catch((e) => { throw e })
-    Succes.set(true)
+    Succes.update(s => s = true)
 }
 
 export async function addFriend(id, usernames) {
@@ -366,7 +366,7 @@ export async function updateObjectAdmin(id, type, name, value, pub) {
   result = await client.rpc(Sess, rpcid, payload)
   console.log(result)
   if (result.payload.status == "succes") {
-    Succes.set(true)
+    Succes.update(s => s = true)
   } // succes
   else {
     throw result.payload.status // error

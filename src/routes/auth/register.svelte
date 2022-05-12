@@ -4,7 +4,7 @@
 	let password = 'somesupersecretpassword'
 	let passwordCheck = 'somesupersecretpassword'
 	let role = 'speler'
-	let azc = ''
+	let azc = "Amsterdam"
 	let print_div;
 	import QrCode from "svelte-qrcode"
 	export let params = {}
