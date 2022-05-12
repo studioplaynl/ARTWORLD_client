@@ -1486,9 +1486,9 @@
             <button on:click={upload}
               >{#if saving}Saving{:else if saved} Saved{:else}Save{/if}</button
             >
-            <button on:click={download}
+            <!-- <button on:click={download}
               >Download</button
-            >
+            > -->
           </div>
         </div>
       </div>
