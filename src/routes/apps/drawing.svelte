@@ -496,16 +496,13 @@
         "2048",
         "10000"
       ); 
-      console.log("versi",version )
 
-      console.log("url", lastImg);
     } else if (appType == "house") {
       let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
       lastImg = await convertImage(Object.value.url);
       lastValue = Object.value
       title = Object.key;
       status = Object.permission_read;
-      version = Object.value.version + 1 || 0;
     } else {
       let Object = await getObject(appType, params.name, params.user);
       console.log("object", Object);
