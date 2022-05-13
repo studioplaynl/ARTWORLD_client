@@ -492,7 +492,7 @@
     console.log("appType", appType);
     if (appType == "avatar") {
       lastImg = await convertImage(
-        $Profile.avatar_url.slice(1),
+        $Profile.avatar_url,
         "2048",
         "10000"
       );
