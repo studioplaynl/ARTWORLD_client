@@ -8,7 +8,8 @@ class GraffitiWall {
   create(scene, x, y, width, height, name, color, imageFile = null) {
 
     scene[name] = scene.add.container()
-
+    scene[name].setSize(width + 10, height + 10)
+    
     // checking if a drawing wall has a front image
     if (imageFile) {
       let graffitiWall = scene.add.image(0, 0, imageFile).setOrigin(0.5).setDepth(198)
@@ -33,7 +34,7 @@ class GraffitiWall {
       var hsv = Phaser.Display.Color.HSVColorWheel()
       var i = color
       console.log("hsv[i].color", hsv[i].color)
-      
+
       this.draw('brush', pointer.worldX - scene[name].x + (width / 2), pointer.worldY - scene[name].y + (height / 2), 1, hsv[i].color)
     })
 

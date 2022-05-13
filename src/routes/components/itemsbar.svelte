@@ -143,37 +143,13 @@
     function subscribeToAddressbook() {
         Addressbook.subscribe((value) => {
             alreadySubscribedToAddressbook = true;
-            console.log("Addressbook.subscribe value", value);
-            console.log(
-                "lastLengthAddressbook, value.length",
-                lastLengthAddressbook,
-                value.length
-            );
             if (lastLengthAddressbook != value.length) {
-                console.log("subscribeToAddressbook value changed");
                 lastLengthAddressbook = value.length;
                 addressbookImages = [];
                 addressbookList = value;
-                console.log(
-                    "addressbookImages, addressbookAvatars",
-                    addressbookImages,
-                    addressbookList
-                );
                 if (addressbookList.length > 0) {
                     let tempArray = [];
                     addressbookList.forEach(async (element) => {
-                        // console.log("element", element);
-                        // addressbookImages.push({
-                        //     name: element.value.username,
-                        //     id: element.value.user_id,
-                        //     url: await convertImage(
-                        //         element.value.avatar_url,
-                        //         "50",
-                        //         "50"
-                        //     ),
-                        // });
-
-                        console.log("element", element);
                         tempArray.push(
                             await getObject(
                                 "home",
@@ -181,17 +157,8 @@
                                 element.value.user_id
                             )
                         );
-
-                        console.log(
-                            "address length, tempArray length",
-                            addressbookList.length,
-                            tempArray.length
-                        );
-                        console.log("tempArray", tempArray);
-
                         if (addressbookList.length == tempArray.length) {
                             tempArray.forEach(async (element) => {
-                                console.log("tempArray element", element);
                                 addressbookImages.push({
                                     name: element.value.username,
                                     id: element.user_id,
@@ -201,7 +168,6 @@
                                         "50"
                                     ),
                                 });
-
                                 addressbookImages = addressbookImages;
                             });
                         }
@@ -304,10 +270,6 @@
         if (ManageSession.selectedOnlinePlayer) {
             const userId = ManageSession.selectedOnlinePlayer.user_id;
             const userName = ManageSession.selectedOnlinePlayer.username;
-            console.log(
-                "ManageSession.selectedOnlinePlayer",
-                ManageSession.selectedOnlinePlayer
-            );
             const avatarImage = ManageSession.selectedOnlinePlayer.avatar_url;
             const metadata = ManageSession.selectedOnlinePlayer.metadata;
 
@@ -319,46 +281,12 @@
             };
             Addressbook.create(userId, value);
         }
-
-        // saving the home of a player
-        // const entry = {
-        //     user_id: ManageSession.selectedOnlinePlayer.id,
-        //     user_name: ManageSession.selectedOnlinePlayer.username,
-        // };
-
-        // // checking if the player in the addressbook
-        // const isExist = ManageSession.addressbook.addressbook.some(
-        //     (element) => element.user_id == entry.user_id
-        // );
-
-        // if (!isExist) {
-        //     // if doesn't exist, add to the addressbook
-        //     ManageSession.addressbook.addressbook.push(entry);
-        //     const type = "addressbook";
-        //     const name = type + "_" + ManageSession.userProfile.id;
-        //     const pub = 2;
-        //     const value = ManageSession.addressbook;
-        //     console.log("value ManageSession.addressbook", value);
-        //     updateObject(type, name, value, pub);
-        // } else {
-        //     console.log("this user id is already in addressbook list");
-        // }
     }
 
     async function goApp(App) {
         // HistoryTracker.pauseSceneStartApp(ManageSession.currentScene, App)
         $CurrentApp = App;
     }
-
-    // async function getAdressbook() {
-    //     if (current == "addressbook") {
-    //         current = false;
-    //         return;
-    //     }
-    //     adress_book = ManageSession.addressbook.addressbook;
-    //     console.log(ManageSession.addressbook.addressbook);
-    //     current = "addressbook";
-    // }
 </script>
 
 {#if $location != "/login"}
@@ -430,26 +358,36 @@
             </div>
         {/if}
         {#if current == "addressbook"}
-            <div>
-                <!-- <a
-                    on:click={() => {
-                        goScene("ArtworldAmsterdam");
-                    }}>ArtWorldAmsterdam</a
-                > -->
-                {#each addressbookImages as address}
+            <!-- <div style="display: flex; flex-direction: row"> -->
+            {#each addressbookImages as address}
+                <!-- svelte-ignore a11y-missing-attribute -->
+                <div style="display: flex; flex-direction: row">
+                    <div>
+                        <a
+                            style="margin-bottom: 20px"
+                            on:click={() => {
+                                goHome(address.id);
+                            }}
+                        >
+                            <img
+                                class="addressbook-image"
+                                src={address.url}
+                            />{address.name}
+                        </a>
+                    </div>
+
+                    <!-- svelte-ignore a11y-missing-attribute -->
                     <a
-                        style="margin-bottom: 20px"
                         on:click={() => {
-                            goHome(address.id);
+                            Addressbook.delete(address.id);
                         }}
+                        ><img
+                            class="icon"
+                            src="assets/SHB/svg/AW-icon-trash.svg"
+                        /></a
                     >
-                        <img
-                            style="display: block; height: 50px; width: 50px"
-                            src={address.url}
-                        />{address.name}
-                    </a>
-                {/each}
-            </div>
+                </div>
+            {/each}
         {/if}
         {#if current == "home"}
             <ProfilePage />
@@ -639,5 +577,11 @@
 
     .avatar > img {
         height: 50px;
+    }
+
+    .addressbook-image {
+        display: block;
+        height: 50px;
+        width: 50px;
     }
 </style>

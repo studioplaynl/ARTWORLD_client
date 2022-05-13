@@ -61,6 +61,8 @@ class ManageSession {
     this.playerMovingKey = "moving"
     this.playerStopKey = "stop"
 
+    this.draggableHomes = false
+
     this.gameStarted = false;
     this.currentScene;
     this.launchLocation = "Location1"; //default

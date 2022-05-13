@@ -9,6 +9,7 @@ import ar from "../../../langauge/ar/ui.json"
 import HistoryTracker from "../class/HistoryTracker"
 import DebugFuntions from "../class/DebugFuntions"
 import { element } from "svelte/internal"
+import ServerCall from "../class/ServerCall"
 
 i18next.init({
   lng: "nl",
@@ -67,7 +68,7 @@ export default class UI_Scene extends Phaser.Scene {
     //.......... end INPUT ................................................................................
     //......... DEBUG FUNCTIONS ...........................................................................
     this.events.on('gameEditMode', this.gameEditModeSign, this) // show edit mode indicator
-    //this.events.on('gameEditMode', this.editElementsScene, this) // make elements editable
+    this.events.on('gameEditMode', this.editElementsScene, this) // make elements editable
 
     DebugFuntions.keyboard(this)
     //......... end DEBUG FUNCTIONS .......................................................................
@@ -100,13 +101,23 @@ export default class UI_Scene extends Phaser.Scene {
 
   editElementsScene(arg) {
     let scene = ManageSession.currentScene
+    console.log("editElementsScene arg:", arg)
+
     switch (arg) {
       case 'on':
-        if (typeof scene.editElementsScene == "undefined") {
+        if (typeof scene.editModeElements == "undefined") {
+
           break
         }
 
         if (scene.editModeElements.length > 0) {
+          console.log("set elements to draggable")
+          //console.log("scene.homesRepresented", scene.homesRepresented)
+
+          ManageSession.draggableHomes = true
+          scene.homes = []
+          scene.homesRepresented.forEach((element) => element.destroy())
+          ServerCall.getHomesFiltered("home", "Amsterdam", 100, ManageSession.currentScene)
 
           scene.editModeElements.forEach((element) => {
             element.setInteractive({ draggable: true })
@@ -119,15 +130,20 @@ export default class UI_Scene extends Phaser.Scene {
 
       case 'off':
 
-        if (typeof scene.editElementsScene == "undefined") {
+        if (typeof scene.editModeElements == "undefined") {
           break
         }
 
         if (scene.editModeElements.length > 0) {
 
+          ManageSession.draggableHomes = false
+          scene.homes = []
+          scene.homesRepresented.forEach((element) => element.destroy())
+          ServerCall.getHomesFiltered("home", "Amsterdam", 100, ManageSession.currentScene)
+
           scene.editModeElements.forEach((element) => {
             element.disableInteractive()
-            console.log("element", element)
+            //console.log("element", element)
           })
 
         }
@@ -139,7 +155,7 @@ export default class UI_Scene extends Phaser.Scene {
     const width = this.sys.game.canvas.width
     //let height = this.sys.game.canvas.height
     this.gameEditModeSignGraphic
-    
+
 
     switch (arg) {
       case 'on':
