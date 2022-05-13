@@ -248,7 +248,8 @@ export async function getFile(file_url) {
 
 export async function uploadAvatar(data, json) {
   setLoader(true);
-  let avatarVersion = Number(prof.avatar_url.split("/")[2].split("_")[0] || 0) + 1
+  let avatarVersion = Number(prof.avatar_url.split("/")[2].split("_")[0]) + 1
+  if(!!!avatarVersion) avatarVersion = 0
   var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png", avatarVersion)
   console.log(jpegURL)
 

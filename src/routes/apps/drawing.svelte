@@ -429,7 +429,7 @@
       if (appType == "house") {
         var Image = canvas.toDataURL("png");
         var blobData = dataURItoBlob(Image);
-        uploadHouse( blobData, version)
+        uploadHouse( blobData)
       }
       // replace(`${$location}/${$Session.user_id}/${displayName}`);
       await uploadImage(title, appType, blobData, status, version, displayName);
@@ -455,8 +455,8 @@
     }
     if (appType == "avatar") {
       await createAvatar();
-      saving = false;
-      lastWidth;
+      // saving = false;
+      // lastWidth;
       // status = true;
       // await uploadImage(title, appType, json, blobData, status);
       saved = true;
@@ -495,7 +495,9 @@
         $Profile.avatar_url,
         "2048",
         "10000"
-      );
+      ); 
+      console.log("versi",version )
+
       console.log("url", lastImg);
     } else if (appType == "house") {
       let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
@@ -926,16 +928,24 @@
     savecanvas.renderAll();
     savecanvas.clear();
     let data = { objects: [] };
+
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
+        if (object.type == "image") return;
         const newObject = { ...object };
         newObject.top = newObject.top;
         newObject.left += size * i;
-
+        // newObject.scaleX = scaleRatio/2048;
+        // newObject.scaleY = scaleRatio/2048;
         data.objects.push(newObject);
       });
     }
+    FrameObject.left = 0;
+    data.objects = [{ ...FrameObject }].concat(data.objects);
+
+    console.log("data", data);
+
     await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
     await savecanvas.calcOffset();
 
@@ -976,7 +986,7 @@
       });
     }
     FrameObject.left = 0;
-    data.objects.push({ ...FrameObject });
+    data.objects = [{ ...FrameObject }].concat(data.objects);
 
     console.log("data", data);
 
