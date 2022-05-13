@@ -10,6 +10,7 @@
     getObject,
     setLoader,
     convertImage,
+    updateObject,
   } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session, Profile, tutorial } from "../../session.js";
@@ -18,7 +19,7 @@
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
   import Avatar from "../components/avatar.svelte";
 
-  let scaleRatio, lastImg, lastWidth;
+  let scaleRatio, lastImg, lastValue, lastWidth;
   let params = { user: $location.split("/")[2], name: $location.split("/")[3] };
   let invalidTitle = true;
   let history = [],
@@ -31,7 +32,7 @@
   let videoWidth;
   let canvas,
     video,
-    lineWidth = 25
+    lineWidth = 25;
   let json,
     drawingColor = "#000000";
   let shadowOffset = 0,
@@ -126,7 +127,6 @@
     savecanvas = new fabric.Canvas(saveCanvas, {
       isDrawingMode: true,
     });
-    
 
     getImage();
 
@@ -175,7 +175,8 @@
       // erase functie kapot? recompile: http://fabricjs.com/build/
       var eraseBrush = new fabric.EraserBrush(canvas);
       canvas.freeDrawingBrush = eraseBrush;
-      canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+      canvas.freeDrawingBrush.width =
+        parseInt(drawingLineWidthEl.value, 10) || 1;
       canvas.isDrawingMode = true;
       switchOption("erase");
       floodFill(false);
@@ -361,7 +362,11 @@
 
     //redraw cursor on new mouse position when moved
     canvas.on("mouse:move", function (evt) {
-      if (current == "select") return mousecursor.set({ top: -100, left: -100, }).setCoords().canvas.renderAll();
+      if (current == "select")
+        return mousecursor
+          .set({ top: -100, left: -100 })
+          .setCoords()
+          .canvas.renderAll();
       var mouse = this.getPointer(evt.e);
       mousecursor
         .set({
@@ -373,10 +378,13 @@
     });
 
     //while brush size is changed show cursor in center of canvas
-    document.getElementById("drawing-line-width").oninput = () => {changeBrushSize()}
-    document.getElementById("erase-line-width").oninput = () => {changeBrushSize()}
-    
-    
+    document.getElementById("drawing-line-width").oninput = () => {
+      changeBrushSize();
+    };
+    document.getElementById("erase-line-width").oninput = () => {
+      changeBrushSize();
+    };
+
     function changeBrushSize() {
       var size = parseInt(lineWidth, 10);
       mousecursor
@@ -386,7 +394,7 @@
         })
         .setCoords()
         .canvas.renderAll();
-    };
+    }
 
     //change drawing color
     drawingColorEl.onchange = function () {
@@ -418,12 +426,30 @@
       if (!!!title) {
         title = Date.now() + "_" + displayName;
       }
+      if (appType == "house") {
+        var Image = canvas.toDataURL("png");
+        var blobData = dataURItoBlob(Image);
+        uploadHouse( blobData, version)
+      }
       // replace(`${$location}/${$Session.user_id}/${displayName}`);
       await uploadImage(title, appType, blobData, status, version, displayName);
       saved = true;
       saving = false;
       setLoader(false);
     }
+    // if(appType == "house"){
+    //   saving = true;
+    //   setLoader(true);
+
+    //   var Image = canvas.toDataURL("png");
+    //   var blobData = dataURItoBlob(Image);
+
+    //   await uploadImage(title, appType, blobData, status, version, displayName);
+    //   // updateObject(type, key, value, pub)
+    //   saved = true;
+    //   saving = false;
+    //   setLoader(false);
+    // }
     if (appType == "stopmotion") {
       await createStopmotion();
     }
@@ -439,11 +465,11 @@
     }
   };
 
-  function download(){
-    console.log("download")
-    //canvas.deactivateAll().renderAll(); 
-    saveAs(canvas.toDataURL('png'), "myIMG.png"); 
-    //window.open(canvas.toDataURL('png')); 
+  function download() {
+    console.log("download");
+    //canvas.deactivateAll().renderAll();
+    saveAs(canvas.toDataURL("png"), "myIMG.png");
+    //window.open(canvas.toDataURL('png'));
     // if(appType == "drawing"){
     //   window.open(canvas.toDataURL("png"))
     // }
@@ -461,18 +487,24 @@
   };
 
   const getImage = async () => {
-    if (!!!params.name && (appType == "stopmotion" ||  appType == "drawing" )) return setLoader(false);
-    console.log("appType", appType)
-    if(appType == "avatar"){
-      
-      console.log("url",$Profile.avatar_url)
-      lastImg = await convertImage($Profile.avatar_url);
-    }
-    if(appType == "house"){
-      let url = await getObject("home", $Profile.meta.Azc, $Profile.user_id)
-      lastImg = await convertImage(url.value.url)
-    }
-    else {
+    if (!!!params.name && (appType == "stopmotion" || appType == "drawing"))
+      return setLoader(false);
+    console.log("appType", appType);
+    if (appType == "avatar") {
+      lastImg = await convertImage(
+        $Profile.avatar_url.slice(1),
+        "2048",
+        "10000"
+      );
+      console.log("url", lastImg);
+    } else if (appType == "house") {
+      let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
+      lastImg = await convertImage(Object.value.url);
+      lastValue = Object.value
+      title = Object.key;
+      status = Object.permission_read;
+      version = Object.value.version + 1 || 0;
+    } else {
       let Object = await getObject(appType, params.name, params.user);
       console.log("object", Object);
       displayName = Object.value.displayname;
@@ -482,9 +514,9 @@
       console.log("displayName", displayName);
       lastImg = await convertImage(Object.value.url);
     }
-    
 
     if (appType == "avatar" || appType == "stopmotion") {
+      console.log("avatar");
       let frameAmount;
       var framebuffer = new Image();
       framebuffer.src = lastImg;
@@ -506,20 +538,17 @@
         frames = frames;
         console.log("frames", frames);
         currentFrame = 0;
-        canvas.loadFromJSON(frames[0], function(){
-          canvas.renderAll.bind(canvas)
+        canvas.loadFromJSON(frames[0], function () {
+          canvas.renderAll.bind(canvas);
           // for (let i = 0; i < frames.length; i++) {
           //     updateFrame()
           //     changeFrame(i)
-            
-          // }
-          
-        });
 
+          // }
+        });
       };
     }
     if (appType == "drawing" || appType == "house") {
-
       fabric.Image.fromURL(
         lastImg,
         function (oImg) {
@@ -790,15 +819,15 @@
     for (var i = 0; i < frames.length; i++) {
       console.log(frames[i], Frame);
       if (i == Frame) {
-        console.log("i",i)
+        console.log("i", i);
         frames.splice(i, 1);
-        if(i > 0) currentFrame = i - 1;
-        else setTimeout(()=>{
-          frames[0].backgroundImage = {}
-          currentFrame = 1;
-          changeFrame(0)
-        
-        },500)
+        if (i > 0) currentFrame = i - 1;
+        else
+          setTimeout(() => {
+            frames[0].backgroundImage = {};
+            currentFrame = 1;
+            changeFrame(0);
+          }, 500);
       }
     }
   };
@@ -948,10 +977,10 @@
     }
     FrameObject.left = 0;
     data.objects.push({ ...FrameObject });
-    
+
     console.log("data", data);
 
-     savecanvas.loadFromJSON(data, async function () {
+    savecanvas.loadFromJSON(data, async function () {
       savecanvas.renderAll.bind(savecanvas);
       savecanvas.calcOffset();
 
@@ -963,13 +992,13 @@
       if (!!!title) {
         title = Date.now() + "_" + displayName;
       }
-      uploadImage(title, appType, blobData, status, version, displayName)
-      .then(()=>{
-        saving = false;
-        setLoader(false);
-      })
+      uploadImage(title, appType, blobData, status, version, displayName).then(
+        () => {
+          saving = false;
+          setLoader(false);
+        }
+      );
       //Profile.update(n => n.url = Image);
-      
     });
   }
 

@@ -60,11 +60,10 @@ export async function listImages(type, user, limit) {
   return objects.objects
 }
 
-export async function uploadHouse(json, data, version) {
+export async function uploadHouse( data, version) {
 
   var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png", version)
-  var [jsonURL, jsonLocation] = await getUploadURL("home", "current", "json", version)
-  console.log(jpegURL)
+  
   await fetch(jpegURL, {
     method: "PUT",
     headers: {
@@ -72,30 +71,22 @@ export async function uploadHouse(json, data, version) {
     },
     body: data
   })
-
-  await fetch(jsonURL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "multipart/form-data"
-    },
-    body: json
-  })
-
-
+  console.log(jpegURL,data,version)
 
   let type = "home"
-  let name = prof.meta.azc
+  let name = prof.meta.Azc
   let object = await getObject(type, name)
   let value
   if (!!!object) { value = {}; }
   else { value = object.value }
-  console.log(value)
+  console.log("value",value)
   value.url = jpegLocation
   value.username = prof.username
   value.version = version
   pub = true
 
   // get object
+  console.log("value",value)
   await updateObject(type, name, JSON.stringify(value), pub)
 
 }
