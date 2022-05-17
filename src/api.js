@@ -36,7 +36,7 @@ export async function uploadImage(name, type, img, status, version, displayName)
   })
 
   await updateObject(type, name, value, pub)
-
+  return value.url
 }
 
 export async function sessionCheck() {
@@ -60,11 +60,9 @@ export async function listImages(type, user, limit) {
   return objects.objects
 }
 
-export async function uploadHouse( data, version) {
+export async function uploadHouse( data) {
 
   
-  console.log(jpegURL,data,version)
-
   let type = "home"
   let name = prof.meta.Azc
   let object = await getObject(type, name)
@@ -73,8 +71,8 @@ export async function uploadHouse( data, version) {
   else { value = object.value }
   console.log("value",value)
   value.username = prof.username
-  if(!!value.version) value.version++
-  else value.version = 0
+  if(!!!value.version) value.version = 0
+  else value.version = value.version + 1 
   pub = true
 
   var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png", value.version)
@@ -277,7 +275,7 @@ export async function uploadAvatar(data, json) {
   getAccount()
   Succes.update(s => s = true)
   setLoader(false);
-  return
+  return jpegLocation
 }
 
 

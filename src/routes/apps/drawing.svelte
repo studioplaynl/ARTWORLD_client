@@ -45,8 +45,9 @@
     fillTolerance = 2;
   let current = "draw";
   if (!!params.name) title = params.name;
-  let saved = false;
-  let saveToggle = false,
+  let saved = false,
+    saveToggle = false,
+    savedURL = "",
     colorToggle = true;
   const statussen = ["zichtbaar", "verborgen"];
   let status = "zichtbaar";
@@ -387,6 +388,7 @@
 
     function changeBrushSize() {
       var size = parseInt(lineWidth, 10);
+      canvas.freeDrawingBrush.width = size;
       mousecursor
         .center()
         .set({
@@ -420,69 +422,60 @@
     if (!invalidTitle) return;
     saving = true;
     setLoader(true);
-    if (appType == "drawing" || appType == "house") {
-      var Image = canvas.toDataURL("png");
+    if (appType == "drawing") {
+      var Image = canvas.toDataURL("image/png", 1);
       var blobData = dataURItoBlob(Image);
       if (!!!title) {
         title = Date.now() + "_" + displayName;
       }
-      if (appType == "house") {
-        var Image = canvas.toDataURL("png");
-        var blobData = dataURItoBlob(Image);
-        uploadHouse( blobData)
-      }
       // replace(`${$location}/${$Session.user_id}/${displayName}`);
-      await uploadImage(title, appType, blobData, status, version, displayName);
+      await uploadImage(
+        title,
+        appType,
+        blobData,
+        status,
+        version,
+        displayName
+      ).then((url) => {
+        savedURL = url;
+        saved = true;
+        saving = false;
+        setLoader(false);
+      });
+    }
+    if (appType == "house") {
+      var Image = canvas.toDataURL("image/png", 1);
+      var blobData = dataURItoBlob(Image);
+      uploadHouse(blobData);
       saved = true;
       saving = false;
       setLoader(false);
     }
-    // if(appType == "house"){
-    //   saving = true;
-    //   setLoader(true);
-
-    //   var Image = canvas.toDataURL("png");
-    //   var blobData = dataURItoBlob(Image);
-
-    //   await uploadImage(title, appType, blobData, status, version, displayName);
-    //   // updateObject(type, key, value, pub)
-    //   saved = true;
-    //   saving = false;
-    //   setLoader(false);
-    // }
     if (appType == "stopmotion") {
       await createStopmotion();
+      saved = true;
+      saving = false;
+      setLoader(false);
     }
     if (appType == "avatar") {
       await createAvatar();
-      // saving = false;
-      // lastWidth;
-      // status = true;
-      // await uploadImage(title, appType, json, blobData, status);
       saved = true;
       saving = false;
       setLoader(false);
     }
   };
 
-  function download() {
-    console.log("download");
-    //canvas.deactivateAll().renderAll();
-    saveAs(canvas.toDataURL("png"), "myIMG.png");
-    //window.open(canvas.toDataURL('png'));
-    // if(appType == "drawing"){
-    //   window.open(canvas.toDataURL("png"))
-    // }
-    // if (appType == "stopmotion") {
-    //   window.open(savecanvas.toDataURL("png"))
-    // }
+  async function download() {
+    console.log("download",savedURL);
+    let url = await convertImage(savedURL);
+    window.location = url;
   }
 
   const updateFrame = () => {
     frames[currentFrame] = canvas.toJSON();
     frames = frames;
 
-    backgroundFrames[currentFrame] = canvas.toDataURL("png");
+    backgroundFrames[currentFrame] = canvas.toDataURL("image/png", 1);
     backgroundFrames = backgroundFrames;
   };
 
@@ -491,16 +484,11 @@
       return setLoader(false);
     console.log("appType", appType);
     if (appType == "avatar") {
-      lastImg = await convertImage(
-        $Profile.avatar_url,
-        "2048",
-        "10000"
-      ); 
-
+      lastImg = await convertImage($Profile.avatar_url, "2048", "10000");
     } else if (appType == "house") {
       let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
       lastImg = await convertImage(Object.value.url);
-      lastValue = Object.value
+      lastValue = Object.value;
       title = Object.key;
       status = Object.permission_read;
     } else {
@@ -693,7 +681,7 @@
       console.log(canvas);
       savecanvas.add(oImg);
     });
-    image = savecanvas.toDataURL("image/png");
+    image = savecanvas.toDataURL("image/png", 1);
     return image;
   }
 
@@ -1000,7 +988,8 @@
         title = Date.now() + "_" + displayName;
       }
       uploadImage(title, appType, blobData, status, version, displayName).then(
-        () => {
+        (url) => {
+          savedURL = url;
           saving = false;
           setLoader(false);
         }
@@ -1037,7 +1026,7 @@
     videocanv.setWidth(videoWidth);
     let vidContext = videocanv.getContext("2d");
     vidContext.drawImage(video, 0, 0, videoWidth, videoWidth / 1.33);
-    var uri = videoCanvas.toDataURL("image/png");
+    var uri = videoCanvas.toDataURL("image/png", 1);
     fabric.Image.fromURL(uri, function (oImg) {
       oImg.scale(1);
       oImg.set({ left: 0, top: 0 });
@@ -1281,7 +1270,7 @@
             })
           );
         };
-        img.src = tmpCanvas.toDataURL("image/png");
+        img.src = tmpCanvas.toDataURL("image/png", 1);
 
         canvas.add(
           new fabric.Image(tmpCanvas, {
@@ -1522,9 +1511,9 @@
             <button on:click={upload}
               >{#if saving}Saving{:else if saved} Saved{:else}Save{/if}</button
             >
-            <!-- <button on:click={download}
-              >Download</button
-            > -->
+            {#if saved}
+              <button on:click={download}>Download</button>
+            {/if}
           </div>
         </div>
       </div>
