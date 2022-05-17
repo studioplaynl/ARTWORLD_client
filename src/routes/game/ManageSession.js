@@ -321,6 +321,7 @@ class ManageSession {
   } //end sendChatMessage
 
   checkIfSceneExists(location) {
+    console.log
     //check if this.launchLocation exists in SCENES
     //const locationExists = SCENES.includes(location)
     const locationExists = SCENES.some((el) => el.name === location);
