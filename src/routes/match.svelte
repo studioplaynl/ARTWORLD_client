@@ -197,8 +197,8 @@ function getUrl(){
 
     posX = params.get("posX")
     posY = params.get("posY")
-    local = params.get("location")
-    object = {posX, posY, local}
+    let local = params.get("location")
+    let object = {posX, posY, local}
     console.log(object)
     return object
 }

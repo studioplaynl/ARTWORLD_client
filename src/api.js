@@ -36,7 +36,7 @@ export async function uploadImage(name, type, img, status, version, displayName)
   })
 
   await updateObject(type, name, value, pub)
-
+  return value.url
 }
 
 export async function sessionCheck() {
@@ -60,11 +60,23 @@ export async function listImages(type, user, limit) {
   return objects.objects
 }
 
-export async function uploadHouse(json, data, version) {
+export async function uploadHouse( data) {
 
-  var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png", version)
-  var [jsonURL, jsonLocation] = await getUploadURL("home", "current", "json", version)
-  console.log(jpegURL)
+  
+  let type = "home"
+  let name = prof.meta.Azc
+  let object = await getObject(type, name)
+  let value
+  if (!!!object) { value = {}; }
+  else { value = object.value }
+  console.log("value",value)
+  value.username = prof.username
+  if(!!!value.version) value.version = 0
+  else value.version = value.version + 1 
+  pub = true
+
+  var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png", value.version)
+  
   await fetch(jpegURL, {
     method: "PUT",
     headers: {
@@ -73,29 +85,9 @@ export async function uploadHouse(json, data, version) {
     body: data
   })
 
-  await fetch(jsonURL, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "multipart/form-data"
-    },
-    body: json
-  })
-
-
-
-  let type = "home"
-  let name = prof.meta.azc
-  let object = await getObject(type, name)
-  let value
-  if (!!!object) { value = {}; }
-  else { value = object.value }
-  console.log(value)
   value.url = jpegLocation
-  value.username = prof.username
-  value.version = version
-  pub = true
-
   // get object
+  console.log("value",value)
   await updateObject(type, name, JSON.stringify(value), pub)
 
 }
@@ -257,7 +249,8 @@ export async function getFile(file_url) {
 
 export async function uploadAvatar(data, json) {
   setLoader(true);
-  let avatarVersion = Number(prof.avatar_url.split("/")[2].split("_")[0] || 0) + 1
+  let avatarVersion = Number(prof.avatar_url.split("/")[2].split("_")[0]) + 1
+  if(!!!avatarVersion) avatarVersion = 0
   var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png", avatarVersion)
   console.log(jpegURL)
 
@@ -282,7 +275,7 @@ export async function uploadAvatar(data, json) {
   getAccount()
   Succes.update(s => s = true)
   setLoader(false);
-  return
+  return jpegLocation
 }
 
 
