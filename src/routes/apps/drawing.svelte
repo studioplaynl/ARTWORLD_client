@@ -1415,21 +1415,23 @@
         </div>
 
         <div class="colorTab" class:hidden={current != "draw"}>
-          <div
+          <!-- <div
             class="widthBox"
             style="background-color: {drawingColor};"
             on:click={() => {
               drawingColorEl.click();
             }}
           >
-            <input
+            
+          </div> -->
+          <input
               type="color"
               bind:value={drawingColor}
               bind:this={drawingColorEl}
               id="drawing-color"
             />
             <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
-          </div>
+
           <span class="info">{lineWidth}</span><input
             type="range"
             min="10"
@@ -1693,11 +1695,9 @@
 
   #drawing-color,
   #drawing-shadow-color {
-    margin: 0px;
-    height: 0px;
-    width: 0px;
     padding: 0px;
-    visibility: hidden;
+    display: block;
+    margin: 20px auto;
   }
 
   .optionbox {
