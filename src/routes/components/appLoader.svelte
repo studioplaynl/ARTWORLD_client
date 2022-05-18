@@ -5,8 +5,9 @@
     import HistoryTracker from "../game/class/HistoryTracker";
     import ManageSession from "../game/ManageSession";
     import { location, push } from "svelte-spa-router";
-    import { onMount } from "svelte"; 
-    import { getAccount } from "../../api.js"; 
+    import { onMount } from "svelte";
+    import { getAccount } from "../../api.js";
+    import DrawingChallenge from "../apps/drawingChallenge.svelte";
 
     let appOpen = false;
     let firstTry = true;
@@ -51,7 +52,7 @@
 
         $CurrentApp = "";
         appOpen = "";
-        push("/")
+        push("/");
     }
 
     function reloadApp() {
@@ -73,6 +74,10 @@
     <div class="app" transition:fly={{ y: window.innerHeight, duration: 500 }}>
         {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar"}
             <DrawingApp bind:appType={appOpen} />
+        {/if}
+
+        {#if appOpen == "drawingchallenge"}
+            <DrawingChallenge bind:appType={appOpen} />
         {/if}
     </div>
 {/if}
