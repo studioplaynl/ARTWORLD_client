@@ -1,6 +1,6 @@
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
-import { listObjects, listImages, convertImage, getFullAccount, updateObject, getAccount } from "../../../api.js"
+import { listObjects, convertImage, getFullAccount, updateObject, getAccount } from "../../../api.js"
 import itemsBar from "../../components/itemsbar.js"
 import { Profile } from "../../../session"
 

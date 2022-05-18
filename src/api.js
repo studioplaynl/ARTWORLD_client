@@ -54,11 +54,6 @@ export async function updateTitle(collection, key, name, userID) {
   else await updateObject(collection, key, Object.value,Object.permission_read)
 }
 
-export async function listImages(type, user, limit) {
-  const objects = await client.listStorageObjects(Sess, type, user, limit);
-  console.log(objects)
-  return objects.objects
-}
 
 export async function uploadHouse( data) {
 

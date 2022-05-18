@@ -10,7 +10,7 @@ import HistoryTracker from "../class/HistoryTracker"
 import Move from "../class/Move.js"
 
 //import { getAvatar } from '../../profile.svelte'
-import { getAccount, listImages } from '../../../api.js'
+import { getAccount, listObjects } from '../../../api.js'
 
 
 export default class Location4 extends Phaser.Scene {

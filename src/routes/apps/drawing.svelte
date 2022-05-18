@@ -105,21 +105,21 @@
 
   onMount(() => {
     setLoader(true);
-    // const autosave = setInterval(() => {
-    //   if (!saved) {
-    //     let data = {};
-    //     data.type = appType;
-    //     data.name = title;
-    //     if (appType == "drawing" || appType == "house") {
-    //       data.drawing = canvas.toJSON();
-    //     }
-    //     if (appType == "stopmotion" || appType == "avatar") {
-    //       data.frames = frames;
-    //     }
-    //     localStorage.setItem("Drawing", JSON.stringify(data));
-    //     console.log("stored in localstorage");
-    //   }
-    // }, 20000);
+    const autosave = setInterval(() => {
+      if (!saved) {
+        let data = {};
+        data.type = appType;
+        data.name = title;
+        if (appType == "drawing" || appType == "house") {
+          data.drawing = canvas.toDataURL("image/png", 1);
+        }
+        // if (appType == "stopmotion" || appType == "avatar") {
+        //   data.frames = frames;
+        // }
+        localStorage.setItem("Drawing", JSON.stringify(data));
+        console.log("stored in localstorage");
+      }
+    }, 20000);
     cursor = new fabric.StaticCanvas(Cursor);
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
@@ -466,7 +466,7 @@
   };
 
   async function download() {
-    console.log("download",savedURL);
+    console.log("download", savedURL);
     let url = await convertImage(savedURL);
     window.location = url;
   }
@@ -480,6 +480,41 @@
   };
 
   const getImage = async () => {
+    let localStore = JSON.parse(localStorage.getItem("Drawing"));
+    if (!!localStore) {
+      console.log(localStore);
+      console.log("store " + localStore.name);
+      console.log("param " + params.name);
+      if (localStore.name == params.name) {
+        console.log(localStore.type);
+        if (localStore.type == "drawing") {
+          console.log("test");
+          // canvas.loadFromJSON(
+          //   localStore.drawing,
+          //   canvas.renderAll.bind(canvas)
+          // );
+          fabric.Image.fromURL(
+            localStore.drawing,
+            function (oImg) {
+              oImg.set({ left: 0, top: 0 });
+              oImg.scaleToHeight(2048);
+              oImg.scaleToWidth(2048);
+              canvas.add(oImg);
+            },
+            { crossOrigin: "anonymous" }
+          );
+        }
+
+        //     if (localStore.type == "stopmotion") {
+        //       frames = localStore.frames;
+        //       canvas.loadFromJSON(
+        //         localStore.frames[0],
+        //         canvas.renderAll.bind(canvas)
+        //       );
+        //     }
+      }
+    }
+
     if (!!!params.name && (appType == "stopmotion" || appType == "drawing"))
       return setLoader(false);
     console.log("appType", appType);
@@ -547,6 +582,12 @@
         { crossOrigin: "anonymous" }
       );
     }
+
+    if (!!!params.user) {
+          console.log(window.location.pathname)
+          replace("/" + appType + "/" + $Session.user_id + "/" + displayName);
+    }
+
     // let localStore = JSON.parse(localStorage.getItem("Drawing"));
     // if (!!localStore) {
     //   console.log(localStore);
@@ -1425,12 +1466,12 @@
             
           </div> -->
           <input
-              type="color"
-              bind:value={drawingColor}
-              bind:this={drawingColorEl}
-              id="drawing-color"
-            />
-            <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
+            type="color"
+            bind:value={drawingColor}
+            bind:this={drawingColorEl}
+            id="drawing-color"
+          />
+          <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
 
           <span class="info">{lineWidth}</span><input
             type="range"
