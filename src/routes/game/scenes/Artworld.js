@@ -177,6 +177,23 @@ export default class Artworld extends Phaser.Scene {
       gradient2: 0xbb00ff,
     })
     this.editModeElements.push(this.gradientAmsterdam3)
+    //............................................... homes area ................................................................................
+    //grass background for houses
+    Background.circle({
+      scene: this,
+      name: "gradientGrass1",
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1728),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -411),
+      size: 2300,
+      gradient1: 0x15d64a,
+      gradient2: 0x2b8042,
+    })
+    this.editModeElements.push(this.gradientGrass1)
+
+    // paths for the houses
+    this.createCurveWithHandles()
+
+    //............................................... end homes area ................................................................................
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() //{ useHandCursor: true }
@@ -212,7 +229,7 @@ export default class Artworld extends Phaser.Scene {
     //create(scene, x, y, width, height, name, color, imageFile = null) {
     GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1540), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 776), 800, 400, "graffitiBrickWall", 0, 'brickWall')
     this.editModeElements.push(this.graffitiBrickWall)
-    
+
     //...................................................................................................
     // DRAW A SUN 
     //...................................................................................................
@@ -270,6 +287,7 @@ export default class Artworld extends Phaser.Scene {
         this.sunDrawingExample.setTexture('DrawnSun')
       })
     this.sunDrawSaveButton.setVisible(false)
+
     //.........................................................................................................................
     // DRAW A CLOUD
     //...................................................................................................
@@ -358,6 +376,8 @@ export default class Artworld extends Phaser.Scene {
       let worldX = CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x)
       let worldY = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y)
       console.log(worldX, worldY)
+      console.log("gameObject", gameObject)
+      ManageSession.selectedHomeGameObject = gameObject
     }, this)
     //!
 
@@ -430,7 +450,58 @@ export default class Artworld extends Phaser.Scene {
 
     //   }
     // })
+    
   } //end create
+
+  createCurveWithHandles(){
+    let path = { t: 0, vec: new Phaser.Math.Vector2() };
+
+    this.curve = new Phaser.Curves.Spline([
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2535), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 375),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2154), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 246),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2203), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y,  -143),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1641 ), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -133),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1461), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 702),
+    ]);
+
+    let points = this.curve.points;
+
+    //  Create drag-handles for each point
+
+    for (var i = 0; i < points.length; i++)
+    {
+        var point = points[i];
+
+        this.handle = this.add.image(point.x, point.y, 'ball', 0).setScale(0.1).setInteractive().setDepth(40)
+
+        this.handle.setData('vector', point);
+
+        this.input.setDraggable(this.handle);
+    }
+
+    this.input.on('dragstart', function (pointer, gameObject) {
+
+
+    });
+
+    this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+
+        gameObject.data.get('vector').set(dragX, dragY);
+
+    });
+
+    this.input.on('dragend', function (pointer, gameObject) {
+
+
+    });
+
+    
+
+    this.curveGraphics = this.add.graphics();
+  }
 
   async downloadArt(element, index, array) {
     //! we are placing the artWorks 'around' (left and right of) the center of the world
@@ -466,10 +537,10 @@ export default class Artworld extends Phaser.Scene {
       // on completion of each specific artwork
 
       // we don't want to trigger any other load completions 
-     
-        // adds a frame to the container
-        this.artArray.push(key)
-      
+
+      // adds a frame to the container
+      this.artArray.push(key)
+
     })
 
     this.load.on("complete", () => {
@@ -562,7 +633,7 @@ export default class Artworld extends Phaser.Scene {
     this.pencil = new GenerateLocation({
       scene: this,
       type: "image",
-      
+
       draggable: false,
       x: location1Vector.x,
       y: location1Vector.y,
@@ -607,6 +678,13 @@ export default class Artworld extends Phaser.Scene {
       //when in edit mode
 
     }
-
+    this.updateCurveGraphics()
   } //update
+
+  updateCurveGraphics() {
+    this.curveGraphics.clear()
+    this.curveGraphics.lineStyle(60, 0xffff00, 1)
+    this.curve.draw(this.curveGraphics, 64)
+  }
+ 
 } //class
