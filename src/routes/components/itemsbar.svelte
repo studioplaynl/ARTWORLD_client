@@ -338,6 +338,16 @@
             /></a
         >
 
+        <a
+            on:click={() => {
+                goApp("drawingchallenge");
+                console.log("Drawing Challenge is clicked");
+            }}
+            class="avatar"
+        >
+            <h3>DC</h3></a
+        >
+
         <span>-</span>
         <a on:click={logout}
             ><img class="icon" src="assets/SHB/svg/AW-icon-exit.svg" /></a

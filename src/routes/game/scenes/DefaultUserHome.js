@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession"
-import { listImages, convertImage } from '../../../api.js'
+import { listObjects, convertImage } from '../../../api.js'
 
 import PlayerDefault from '../class/PlayerDefault'
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
@@ -156,7 +156,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         Player.loadPlayerAvatar(this, 0, 0)
 
-        await listImages("drawing", this.location, 100).then((rec) => {
+        await listObjects("drawing", this.location, 100).then((rec) => {
             //this.userArtServerList is an array with objects, in the form of:
 
             //collection: "drawing"
@@ -192,7 +192,7 @@ export default class DefaultUserHome extends Phaser.Scene {
             }
         })
 
-        // await listImages("stopmotion", this.location, 100).then((rec) => {
+        // await listObjects("stopmotion", this.location, 100).then((rec) => {
             //this.userArtServerList is an array with objects, in the form of:
 
             //collection: "stopmotion"

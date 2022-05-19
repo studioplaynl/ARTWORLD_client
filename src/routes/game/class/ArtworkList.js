@@ -1,4 +1,4 @@
-import { updateObject, listImages, convertImage } from '../../../api.js'
+import { updateObject, listObjects, convertImage } from '../../../api.js'
 import ManageSession from '../ManageSession.js'
 import Player from './Player.js'
 import R_UI from "./R_UI"
@@ -22,7 +22,7 @@ class ArtworkList {
   }
 
   async getImages(scene, imageSize, viewSize, distanceBetweenArts, x, y) {
-    await listImages("drawing", scene.location, 100).then((response) => {
+    await listObjects("drawing", scene.location, 100).then((response) => {
 
       scene.userArtServerList = response
 

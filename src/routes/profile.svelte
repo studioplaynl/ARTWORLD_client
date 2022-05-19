@@ -1,5 +1,5 @@
 <script>
-  import {listImages, getAccount, convertImage, getObject, listAllObjects} from '../api.js';
+  import { getAccount, convertImage, getObject, listAllObjects, listObjects} from '../api.js';
   import { Session, Profile, CurrentApp } from "../session.js";
   import { client } from "../nakama.svelte";
   import { _ } from 'svelte-i18n'
@@ -131,8 +131,7 @@ function moveToTrash(key) {
     return CurrentUser
   }
 
-  onMount(()=>{
-    
+  onMount(async ()=>{
   })
 
 
@@ -147,11 +146,11 @@ function moveToTrash(key) {
         stopMotion = await listAllObjects("stopmotion",params.user)
         picture = await listAllObjects("picture",params.user)
       } else {
-        drawings = await listImages("drawing",params.user, 100)
-        video = await listImages("video",params.user, 100)
-        audio = await listImages("audio",params.user, 100)
-        stopMotion = await listImages("stopmotion",params.user, 100)
-        picture = await listImages("picture",params.user, 100)
+        drawings = await listObjects("drawing",params.user, 100)
+        video = await listObjects("video",params.user, 100)
+        audio = await listObjects("audio",params.user, 100)
+        stopMotion = await listObjects("stopmotion",params.user, 100)
+        picture = await listObjects("picture",params.user, 100)
       }
 
       useraccount = await getAccount(id)
@@ -174,11 +173,11 @@ function moveToTrash(key) {
       }
     } else {
       CurrentUser = true;
-      drawings = await listImages("drawing",$Session.user_id, 100)
-      stopMotion = await listImages("stopmotion",$Session.user_id, 100)
-      video = await listImages("video",$Session.user_id, 100)
-      audio = await listImages("audio",$Session.user_id, 100)
-      picture = await listImages("picture",$Session.user_id, 100)
+      drawings = await listObjects("drawing",$Session.user_id, 100)
+      stopMotion = await listObjects("stopmotion",$Session.user_id, 100)
+      video = await listObjects("video",$Session.user_id, 100)
+      audio = await listObjects("audio",$Session.user_id, 100)
+      picture = await listObjects("picture",$Session.user_id, 100)
       useraccount = await getAccount()
       user = useraccount.username
       role = useraccount.meta.Role

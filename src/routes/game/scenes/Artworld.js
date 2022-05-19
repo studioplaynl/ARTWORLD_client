@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession"
-import { listImages, convertImage, getAccount } from "../../../api.js"
+import { listObjects, convertImage, getAccount } from "../../../api.js"
 
 import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
@@ -397,7 +397,7 @@ export default class Artworld extends Phaser.Scene {
 
     // .......... loadplayers art
     // const userID = ManageSession.userProfile.id
-    // await listImages("drawing", userID, 100).then((rec) => {
+    // await listObjects("drawing", userID, 100).then((rec) => {
     //   //this.userArtServerList is an array with objects, in the form of:
 
     //   //collection: "drawing"

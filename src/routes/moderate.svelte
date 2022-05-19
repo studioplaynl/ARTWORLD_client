@@ -1,5 +1,5 @@
 <script>
-  import {listImages, getAccount, convertImage, listAllObjects} from '../api.js';
+  import {getAccount, convertImage, listAllObjects} from '../api.js';
   import { Session, Profile } from "../session.js";
   import { _ } from 'svelte-i18n'
   import SvelteTable from "svelte-table";
