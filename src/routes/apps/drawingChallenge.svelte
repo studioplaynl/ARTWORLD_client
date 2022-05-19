@@ -188,15 +188,18 @@
 
 <div>
   <h1 style="text-align: center">Welcome to Drawing Challenge</h1>
-  <canvas bind:this={canv} class="canvasBox" />
+  <div class="canvas-container">
+    <canvas bind:this={canv} class="canvas-box" />
+  </div>
 </div>
 
 <style>
-  .canvasBox {
-    background-color: whitesmoke;
-    margin: 50px auto;
-    width: 50%;
-    border: 2px solid #7300ed;
-    position: relative;
+  .canvas-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .canvas-box {
+    border: 2px solid blue;
   }
 </style>
