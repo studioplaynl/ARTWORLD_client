@@ -174,30 +174,36 @@ class DebugFuntions {
                 //set this.scene to the currentScene via ManageSession
                 this.scene = ManageSession.currentScene
 
-                console.log("select a house as admin, press 's' again to cancel")
-                console.log("press 'p' to save the house server side")
+                console.log("a selected home will be saved server side")
 
                 console.log("ManageSession.selectedHomeGameObject container:", ManageSession.selectedHomeGameObject)
-                const updatedPosition = new Phaser.Math.Vector2(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, ManageSession.selectedHomeGameObject.x), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, ManageSession.selectedHomeGameObject.y))
 
-                console.log("updated position = ", updatedPosition)
-                //console.log("scene.homes", ManageSession.currentScene.homes)
-                const selectedHomeObject = this.scene.homes.find(element => element.user_id == ManageSession.selectedHomeGameObject.userHome)
-                console.log("selectedHomeObject ", selectedHomeObject)
+                //we check if the selected gameObject is a Home by looking if it has .locationDestination = "DefaultUserHome"
+                if (ManageSession.selectedHomeGameObject.locationDestination == "DefaultUserHome"){
 
-                //replace the posX and posY of the selectedHomeObject with updatedPosition
-                console.log("selectedHomeObject.value", selectedHomeObject.value)
-                selectedHomeObject.value.posX = updatedPosition.x
-                selectedHomeObject.value.posY = updatedPosition.y
-                console.log("selectedHomeObject.value replaced: ", selectedHomeObject.value)
+                    const updatedPosition = new Phaser.Math.Vector2(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, ManageSession.selectedHomeGameObject.x), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, ManageSession.selectedHomeGameObject.y))
 
-                const idObject = selectedHomeObject.user_id
-                const typeObject = selectedHomeObject.collection
-                const nameObject = selectedHomeObject.key
-                const valueObject = selectedHomeObject.value
-                const pubObject = 2
-
-                updateObjectAdmin(idObject, typeObject, nameObject, valueObject, pubObject)
+                    console.log("updated position = ", updatedPosition)
+                    //console.log("scene.homes", ManageSession.currentScene.homes)
+                    const selectedHomeObject = this.scene.homes.find(element => element.user_id == ManageSession.selectedHomeGameObject.userHome)
+                    console.log("selectedHomeObject ", selectedHomeObject)
+    
+                    //replace the posX and posY of the selectedHomeObject with updatedPosition
+                    console.log("selectedHomeObject.value", selectedHomeObject.value)
+                    selectedHomeObject.value.posX = updatedPosition.x
+                    selectedHomeObject.value.posY = updatedPosition.y
+                    console.log("selectedHomeObject.value replaced: ", selectedHomeObject.value)
+    
+                    const idObject = selectedHomeObject.user_id
+                    const typeObject = selectedHomeObject.collection
+                    const nameObject = selectedHomeObject.key
+                    const valueObject = selectedHomeObject.value
+                    const pubObject = 2
+    
+                    updateObjectAdmin(idObject, typeObject, nameObject, valueObject, pubObject)
+                } else {
+                    console.log("The selected gameObject is not a user Home")
+                }
 
                 break
 
