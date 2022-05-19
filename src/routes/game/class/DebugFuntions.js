@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession"
-import { getAccount, updateObject, listObjects, setLoader } from '../../../api.js'
+import { getAccount, updateObject, listObjects, setLoader, updateObjectAdmin } from '../../../api.js'
 import CoordinatesTranslator from "./CoordinatesTranslator"
 import ArtworkList from "./ArtworkList"
 import Player from "./Player"
@@ -155,7 +155,7 @@ class DebugFuntions {
                 console.log(ManageSession.addressbook.value)
                 break
 
-            case 'KeyR':
+            case 'KeyS':
                 console.log(code)
                 const value = '{"user_id": "b9ae6807-1ce1-4b71-a8a3-f5958be4d340", "posX": "100", "posY": "500"}'
 
@@ -167,7 +167,53 @@ class DebugFuntions {
 
                 break
 
+            case 'KeyU':
+                //! reserved for updating homes as ADMIN
+                console.log(code)
+
+                //set this.scene to the currentScene via ManageSession
+                this.scene = ManageSession.currentScene
+
+                console.log("a selected home will be saved server side")
+
+                console.log("ManageSession.selectedHomeGameObject container:", ManageSession.selectedHomeGameObject)
+
+                //we check if the selected gameObject is a Home by looking if it has .locationDestination = "DefaultUserHome"
+                if (ManageSession.selectedHomeGameObject.locationDestination == "DefaultUserHome"){
+
+                    const updatedPosition = new Phaser.Math.Vector2(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, ManageSession.selectedHomeGameObject.x), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, ManageSession.selectedHomeGameObject.y))
+
+                    console.log("updated position = ", updatedPosition)
+                    //console.log("scene.homes", ManageSession.currentScene.homes)
+                    const selectedHomeObject = this.scene.homes.find(element => element.user_id == ManageSession.selectedHomeGameObject.userHome)
+                    console.log("selectedHomeObject ", selectedHomeObject)
+    
+                    //replace the posX and posY of the selectedHomeObject with updatedPosition
+                    console.log("selectedHomeObject.value", selectedHomeObject.value)
+                    selectedHomeObject.value.posX = updatedPosition.x
+                    selectedHomeObject.value.posY = updatedPosition.y
+                    console.log("selectedHomeObject.value replaced: ", selectedHomeObject.value)
+    
+                    const idObject = selectedHomeObject.user_id
+                    const typeObject = selectedHomeObject.collection
+                    const nameObject = selectedHomeObject.key
+                    const valueObject = selectedHomeObject.value
+                    const pubObject = 2
+    
+                    updateObjectAdmin(idObject, typeObject, nameObject, valueObject, pubObject)
+                } else {
+                    console.log("The selected gameObject is not a user Home")
+                }
+
+                break
+
             case 'KeyP':
+                console.log(code)
+
+
+                break
+
+            case 'KeyI':
                 console.log(code)
                 console.log("Display Mouse coordinates")
                 console.log("World Coordinates: ")

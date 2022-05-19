@@ -34,6 +34,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         
         let width
         let namePlateExtraOffset = 0
+       
 
         if (typeof this.size === "undefined") {
             width = 200
@@ -115,11 +116,12 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         }
 
         // place thethis.userHome description under the location image
+        const namePlateMargin = 20
         const textOffset = -20 + namePlateExtraOffset
-        const textPlateOffset = textOffset + 16
+        const textPlateOffset = textOffset + namePlateMargin
         const locationDescription = this.scene.add.text(0, width / 2 - textOffset, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(32)
         // location plate name
-        const namePlate = this.scene.add.graphics().fillStyle(0xffffff, 1).fillRoundedRect(0 - (locationDescription.width + 14) / 2, width / 2 - textPlateOffset, locationDescription.width + 14 /* text's width + 10 (to have space between border and text) */, 27, 10).setDepth(31)
+        const namePlate = this.scene.add.graphics().fillStyle(0xE8E8E8, 1).fillRoundedRect(0 - (locationDescription.width + namePlateMargin) / 2, width / 2 - textPlateOffset, locationDescription.width + namePlateMargin /* text's width + 10 (to have space between border and text) */, namePlateMargin * 2, 10).setDepth(31)
 
         // back button that appears 
         var enterButtonY = this.y - (width / 2) - 50
@@ -192,7 +194,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
                 })
                 .on('pointerup', (p, x, y) => {
-                    console.log(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY))
+                    //console.log(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY))
 
                 })
         }
