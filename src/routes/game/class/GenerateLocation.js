@@ -33,6 +33,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.size = config.size
         
         let width
+        let namePlateExtraOffset = 0
 
         if (typeof this.size === "undefined") {
             width = 200
@@ -79,9 +80,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.scene.physics.add.existing(this.location)
             this.location.body.setSize(this.location.width, this.location.height * 1.6)
             this.location.body.setOffset(0, -(this.location.height / 1.4))
+            namePlateExtraOffset = 50
         }
-
-       
 
         // can't drag the location if there is another function for pointerdown
         // we set the location either clickable or dragable (because dragging is a edit function)
@@ -115,14 +115,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         }
 
         // place thethis.userHome description under the location image
-        const textOffset = 120
+        const textOffset = -20 + namePlateExtraOffset
         const textPlateOffset = textOffset + 16
         const locationDescription = this.scene.add.text(0, width / 2 - textOffset, this.locationText, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(32)
         // location plate name
         const namePlate = this.scene.add.graphics().fillStyle(0xffffff, 1).fillRoundedRect(0 - (locationDescription.width + 14) / 2, width / 2 - textPlateOffset, locationDescription.width + 14 /* text's width + 10 (to have space between border and text) */, 27, 10).setDepth(31)
-
-        //align the location image and description
-        //Phaser.Display.Align.In.TopCenter(this.location, locationDescription)
 
         // back button that appears 
         var enterButtonY = this.y - (width / 2) - 50
