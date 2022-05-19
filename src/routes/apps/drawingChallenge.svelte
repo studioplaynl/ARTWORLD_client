@@ -1,19 +1,61 @@
 <script>
   import { fabric } from "./fabric";
   import { onMount } from "svelte";
+  import ManageSession from "../game/ManageSession";
+
   let canvas;
   let canv;
+  let posX, posY;
 
-  onMount(() => {
-    // const getElement = function (id) {
-    //   return document.getElementById(id);
+  onMount(async () => {
+    // await ManageSession.socket.rpc("join", "drawingChallenge");
+
+    // ManageSession.socket.onstreamdata = (streamdata) => {
+    //   console.log("streamdata", streamdata);
     // };
+
+    console.log("managesession.socket", ManageSession.socket);
+
+    ManageSession.socket.onstreamdata = (streamdata) => {
+      //console.info("Received stream data:", streamdata)
+      let data = JSON.parse(streamdata.data);
+      console.log(data);
+    };
 
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
     });
 
     fabric.Object.prototype.transparentCorners = false;
+
+    // catching the movement of mouse pointer over canvas
+    canvas.on("mouse:down", function (options) {
+      // coords
+      posX = options.e.layerX;
+      posY = options.e.layerY;
+      console.log(posX, posY);
+
+      const location = "drawingchallenge";
+
+      // send
+      const data = `{ "posX": ${posX}, "posY": ${posY}, "location": "${location}" }`;
+      console.log("data", data);
+
+      ManageSession.socket.rpc("move_position", data);
+    });
+
+    // function getMouseCoords(event) {
+    //   const pointer = canvas.getPointer(event.e);
+    //   const posX = pointer.x;
+    //   const posY = pointer.y;
+    //   console.log(posX + ", " + posY);
+    // }
+    // function mouseMoved(event) {
+    //   var canvasMouseX =
+    //     event.clientX - (canvas.offsetLeft - window.pageXOffset);
+    //   var canvasMouseY =
+    //     event.clientY - (canvas.offsetTop - window.pageYOffset);
+    // }
 
     // var drawingModeEl = getElement("drawing-mode"),
     //   drawingOptionsEl = getElement("drawing-mode-options"),
