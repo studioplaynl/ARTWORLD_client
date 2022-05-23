@@ -2,6 +2,7 @@
   import { fabric } from "./fabric";
   import { onMount } from "svelte";
   import ManageSession from "../game/ManageSession";
+  import { Session } from "../../session";
 
   let canvas;
   let canv;
@@ -17,20 +18,26 @@
     ManageSession.socket.onstreamdata = (streamdata) => {
       let data = JSON.parse(streamdata.data);
       console.log("Receiving data from stream", data);
+      console.log("$Session.user_id", $Session.user_id);
+      console.log("data.user_id", data.user_id);
 
-      fabric.loadSVGFromString(data.action, function (objects, options) {
-        objects.forEach(function (svg) {
-          // svg.set({
-          //   top: 90,
-          //   left: 90,
-          //   originX: "center",
-          //   originY: "center",
-          // });
-          // svg.scaleToWidth(50);
-          // svg.scaleToHeight(50);
-          canvas.add(svg).renderAll();
+      if ($Session.user_id != data.user_id) {
+        fabric.loadSVGFromString(data.action, function (objects, options) {
+          objects.forEach(function (svg) {
+            // svg.set({
+            //   top: 90,
+            //   left: 90,
+            //   originX: "center",
+            //   originY: "center",
+            // });
+            // svg.scaleToWidth(50);
+            // svg.scaleToHeight(50);
+            canvas.add(svg).renderAll();
+          });
         });
-      });
+      } else {
+        console.log("The same user!");
+      }
     };
 
     canvas = new fabric.Canvas(canv, {
