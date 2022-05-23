@@ -20,14 +20,14 @@
 
       fabric.loadSVGFromString(data.action, function (objects, options) {
         objects.forEach(function (svg) {
-          svg.set({
-            top: 90,
-            left: 90,
-            originX: "center",
-            originY: "center",
-          });
-          svg.scaleToWidth(50);
-          svg.scaleToHeight(50);
+          // svg.set({
+          //   top: 90,
+          //   left: 90,
+          //   originX: "center",
+          //   originY: "center",
+          // });
+          // svg.scaleToWidth(50);
+          // svg.scaleToHeight(50);
           canvas.add(svg).renderAll();
         });
       });
