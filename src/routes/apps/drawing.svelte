@@ -442,7 +442,7 @@
 
       // needed SVG is stored inside of body which we want to send only
       const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
-
+      console.log("sentsvg",body)
       // all data to send
       const location = "drawingchallenge";
       const dataToSend = `{ "action": ${JSON.stringify(
@@ -461,18 +461,9 @@
         // apply drawings to the canvas if only it is received from other participant
         fabric.loadSVGFromString(data.action, function (objects, options) {
           objects.forEach(function (svg) {
+
+            svg.set({ zoomX: 1, zoomY: 1, scaleX: 1,scaleY: 1,left: (svg.left/scaleRatio), top: (svg.top/scaleRatio) });;
             console.log("svg", svg);
-            svg.set({ left: 0, top: 0 });
-            svg.scaleToHeight(256);
-            svg.scaleToWidth(256);
-            // svg.set({
-            //   top: 90,
-            //   left: 90,
-            //   originX: "center",
-            //   originY: "center",
-            // });
-            // svg.scaleToWidth(50);
-            // svg.scaleToHeight(50);
             canvas.add(svg).renderAll();
           });
         });
