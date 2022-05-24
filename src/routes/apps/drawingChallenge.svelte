@@ -17,9 +17,11 @@
 
     ManageSession.socket.onstreamdata = (streamdata) => {
       let data = JSON.parse(streamdata.data);
-      console.log("Receiving data from stream", data);
-      console.log("$Session.user_id", $Session.user_id);
-      console.log("data.user_id", data.user_id);
+
+      // console.log("$Session.user_id", $Session.user_id);
+      // console.log("data.user_id", data.user_id);
+
+      console.log("data received", data.action);
 
       if ($Session.user_id != data.user_id) {
         fabric.loadSVGFromString(data.action, function (objects, options) {
@@ -66,15 +68,37 @@
 
     canvas.on("mouse:up", () => {
       // console.log("canvas.toJSON()", canvas.toJSON());
-      const canvasData = JSON.stringify(canvas.toSVG());
-      // console.log("canvasData", canvasData);
+      const canvasData = canvas.toSVG();
+      console.log("canvasData", canvasData);
+
+      const parsedSVG = new DOMParser().parseFromString(
+        canvasData,
+        "text/html"
+      );
+
+      console.log("parsedSVG", parsedSVG);
+
+      const tagElement = parsedSVG.getElementsByTagName("g");
+      console.log("tagElement", tagElement);
+
+      for (let i = 0; i < tagElement.length - 2; i++) {
+        tagElement[i].remove;
+      }
+
+      console.log("parsedSVG", parsedSVG);
+
+      const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
+
+      console.log("body", body);
 
       // all data to send
 
       const location = "drawingchallenge";
-      const dataToSend = `{ "action": ${canvasData}, "location": "${location}" }`;
+      const dataToSend = `{ "action": ${JSON.stringify(
+        body
+      )}, "location": "${location}" }`;
       console.log("dataToSend", dataToSend);
-      // send data
+      // // send data
       ManageSession.socket.rpc("move_position", dataToSend);
 
       // isDrawing = false;
