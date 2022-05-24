@@ -72,13 +72,13 @@
     </div>
 
     <div class="app" transition:fly={{ y: window.innerHeight, duration: 500 }}>
-        {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar"}
+        {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar" || appOpen == "drawingchallenge"}
             <DrawingApp bind:appType={appOpen} />
         {/if}
 
-        {#if appOpen == "drawingchallenge"}
+        <!-- {#if appOpen == "drawingchallenge"}
             <DrawingChallenge bind:appType={appOpen} />
-        {/if}
+        {/if} -->
     </div>
 {/if}
 

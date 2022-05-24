@@ -18,6 +18,7 @@
   import NameGenerator from "../components/nameGenerator.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
   import Avatar from "../components/avatar.svelte";
+  import ManageSession from "../game/ManageSession";
 
   let scaleRatio, lastImg, lastValue, lastWidth;
   let params = { user: $location.split("/")[2], name: $location.split("/")[3] };
@@ -129,7 +130,8 @@
       isDrawingMode: true,
     });
 
-    getImage();
+    // getImage();
+    setLoader(false);
 
     fabric.Object.prototype.transparentCorners = false;
     resizeCanvas();
@@ -416,6 +418,70 @@
     };
 
     //////////////// mouse circle ////////////////////////////
+
+    //////////////// drawing challenge ////////////////////////
+
+    // each mouse-up event sends the drawing
+    canvas.on("mouse:up", () => {
+      // get the drawing from the canvas in the format of SVG
+      const canvasData = canvas.toSVG();
+
+      // convert SVG into the HTML format in order to be able to manipulate inner data
+      const parsedSVG = new DOMParser().parseFromString(
+        canvasData,
+        "text/html"
+      );
+
+      // all <g> tags contain drawing action
+      const gTagElement = parsedSVG.getElementsByTagName("g");
+
+      // loop through <g> tags, remove all previous drawings and leave only the last one
+      for (let i = 0; i < gTagElement.length - 2; i++) {
+        gTagElement[i].remove;
+      }
+
+      // needed SVG is stored inside of body which we want to send only
+      const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
+
+      // all data to send
+      const location = "drawingchallenge";
+      const dataToSend = `{ "action": ${JSON.stringify(
+        body
+      )}, "location": "${location}" }`;
+
+      // send data
+      ManageSession.socket.rpc("move_position", dataToSend);
+    });
+
+    // listening to the stream to get actions of other person's drawing
+    ManageSession.socket.onstreamdata = (streamdata) => {
+      let data = JSON.parse(streamdata.data);
+
+      if ($Session.user_id != data.user_id) {
+        // apply drawings to the canvas if only it is received from other participant
+        fabric.loadSVGFromString(data.action, function (objects, options) {
+          objects.forEach(function (svg) {
+            console.log("svg", svg);
+            svg.set({ left: 0, top: 0 });
+            svg.scaleToHeight(256);
+            svg.scaleToWidth(256);
+            // svg.set({
+            //   top: 90,
+            //   left: 90,
+            //   originX: "center",
+            //   originY: "center",
+            // });
+            // svg.scaleToWidth(50);
+            // svg.scaleToHeight(50);
+            canvas.add(svg).renderAll();
+          });
+        });
+      } else {
+        console.log("The same user!");
+      }
+    };
+
+    //////////////// drawing challenge ////////////////////////
   });
 
   const upload = async () => {
@@ -584,8 +650,8 @@
     }
 
     if (!!!params.user) {
-          console.log(window.location.pathname)
-          replace("/" + appType + "/" + $Session.user_id + "/" + displayName);
+      console.log(window.location.pathname);
+      replace("/" + appType + "/" + $Session.user_id + "/" + displayName);
     }
 
     // let localStore = JSON.parse(localStorage.getItem("Drawing"));
