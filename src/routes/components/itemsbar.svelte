@@ -472,14 +472,15 @@
         background-color: white;
         text-align: center;
         border-radius: 50px;
-        border: 2px solid #7300ed;
+        /* border: 2px solid #7300ed; */
+        box-shadow: 5px 5px 0px #7300ed;
         padding: 8px;
         position: fixed;
         z-index: 10;
-        -webkit-transition: 0.5s all ease-in-out;
-        -moz-transition: 0.5s all ease-in-out;
-        -o-transition: 0.5s all ease-in-out;
-        transition: 0.5s all ease-in-out;
+        -webkit-transition: 0.01s all ease-in-out;
+        -moz-transition: 0.01s all ease-in-out;
+        -o-transition: 0.01s all ease-in-out;
+        transition: 0.01s all ease-in-out;
         opacity: 0;
         pointer-events: none;
         max-height: 90vh;
