@@ -76,9 +76,9 @@
             <DrawingApp bind:appType={appOpen} />
         {/if}
 
-        {#if appOpen == "drawingchallenge"}
+        <!-- {#if appOpen == "drawingchallenge"}
             <DrawingChallenge bind:appType={appOpen} />
-        {/if}
+        {/if} -->
     </div>
 {/if}
 
