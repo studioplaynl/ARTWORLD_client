@@ -420,74 +420,118 @@
     //////////////// mouse circle ////////////////////////////
 
     //////////////// drawing challenge ////////////////////////
-    if(appType == "drawingchallenge"){
-    // each mouse-up event sends the drawing
-    canvas.on("mouse:up", () => {
-      // get the drawing from the canvas in the format of SVG
-      const canvasData = canvas.toSVG();
+    if (appType == "drawingchallenge") {
+      // each mouse-up event sends the drawing
+      canvas.on("mouse:up", () => {
+        // get the drawing from the canvas in the format of SVG
+        const canvasData = canvas.toSVG();
 
-      // convert SVG into the HTML format in order to be able to manipulate inner data
-      const parsedSVG = new DOMParser().parseFromString(
-        canvasData,
-        "text/html"
-      );
+        console.log("canvas to JSON sent", canvas.toJSON());
+        console.log("scale ratio sender", scaleRatio);
+        // convert SVG into the HTML format in order to be able to manipulate inner data
+        const parsedSVG = new DOMParser().parseFromString(
+          canvasData,
+          "text/html"
+        );
 
-      // all <g> tags contain drawing action
-      const gTagElement = parsedSVG.getElementsByTagName("g");
+        // all <g> tags contain drawing action
+        const gTagElement = parsedSVG.getElementsByTagName("g");
 
-      // loop through <g> tags, remove all previous drawings and leave only the last one
-      for (let i = gTagElement.length - 2; i >= 0; --i) {
-        gTagElement[i].remove();
-      }
+        // loop through <g> tags, remove all previous drawings and leave only the last one
+        for (let i = gTagElement.length - 2; i >= 0; --i) {
+          gTagElement[i].remove();
+        }
 
-      // needed SVG is stored inside of body which we want to send only
-      const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
-      console.log("sentsvg", body);
-      // console.log("sentsvg",body)
-      // all data to send
-      const location = "drawingchallenge";
-      const dataToSend = `{ "action": ${JSON.stringify(
-        body
-      )}, "location": "${location}" }`;
+        const positionObject = canvas.toJSON().objects;
 
-      console.log("data sent", parsedSVG);
+        // positionObject[positionObject.length];
 
-      // send data
-      ManageSession.socket.rpc("move_position", dataToSend);
-    });
+        // needed SVG is stored inside of body which we want to send only
+        const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
 
-    // listening to the stream to get actions of other person's drawing
-    ManageSession.socket.onstreamdata = (streamdata) => {
-      let data = JSON.parse(streamdata.data);
-      // console.log("data received", data.action);
+        console.log("sentsvg", body);
+        // all data to send
+        const location = "drawingchallenge";
+        const dataToSend = `{ "action": ${JSON.stringify(
+          body
+        )}, "location": "${location}", "posX": ${
+          positionObject[positionObject.length - 1].left
+        }, "posY": ${positionObject[positionObject.length - 1].top}}`;
 
-      if ($Session.user_id != data.user_id) {
-        // console.log("data receiver inner triggered");
-        // apply drawings to the canvas if only it is received from other participant
-        fabric.loadSVGFromString(data.action, function (objects, options) {
-          objects.forEach(function (svg) {
-            // get old scale ratio of other screen
-            // set that to left and top
+        console.log("data sent", dataToSend);
 
-            svg.set({
-              zoomX: 1,
-              zoomY: 1,
-              scaleX: 1,
-              scaleY: 1,
-              left: svg.left / scaleRatio,
-              top: svg.top / scaleRatio,
+        // send data
+        ManageSession.socket.rpc("move_position", dataToSend);
+
+        // const jsonCanvas = canvas.toJSON();
+
+        // const jsonToSend = `{ "action": ${JSON.stringify(
+        //   jsonCanvas
+        // )}, "location": "${location}"  }`;
+        // console.log("jsontosend", jsonToSend);
+
+        // ManageSession.socket.rpc("move_position", jsonToSend);
+      });
+
+      // listening to the stream to get actions of other person's drawing
+      ManageSession.socket.onstreamdata = (streamdata) => {
+        let data = JSON.parse(streamdata.data);
+        console.log("data received", data);
+
+        // console.log("scale ratio receiver", scaleRatio);
+        if ($Session.user_id != data.user_id) {
+          const parsedSVG = new DOMParser().parseFromString(
+            data.action,
+            "text/html"
+          );
+
+          console.log("received parsedSVG", parsedSVG);
+
+          const receivedWidth = parsedSVG
+            .getElementsByTagName("svg")[0]
+            .getAttribute("width");
+
+          const receivedHeight = parsedSVG
+            .getElementsByTagName("svg")[0]
+            .getAttribute("width");
+
+          const currentWidth = canvas.width;
+          const currentHeight = canvas.height;
+
+          const factorX = receivedWidth / currentWidth;
+          const factorY = receivedHeight / currentHeight;
+
+          console.log("receivedWidth", receivedWidth);
+          console.log("receivedHeight", receivedHeight);
+          console.log("currentWidth", currentWidth);
+          console.log("currentHeight", currentHeight);
+          console.log("factorX", factorX);
+          console.log("factorY", factorY);
+
+          // console.log("data receiver inner triggered");
+          // apply drawings to the canvas if only it is received from other participant
+          fabric.loadSVGFromString(data.action, function (objects, options) {
+            objects.forEach(function (svg) {
+              console.log("received svg", svg);
+              svg.set({
+                // zoomX: 1,
+                // zoomY: 1,
+                scaleX: 1,
+                scaleY: 1,
+                left: data.posX,
+                top: data.posY,
+              });
+
+              console.log("svg", svg);
+              // console.log("svg", svg);
+              canvas.add(svg).renderAll();
             });
- 
-            console.log("svg", svg);
-            // console.log("svg", svg);
-            canvas.add(svg).renderAll();
           });
-        });
-      } else {
-        console.log("The same user!");
-      }
-    };
-  };
+        } else {
+          console.log("The same user!");
+        }
+      };
+    }
     //////////////// drawing challenge ////////////////////////
   });
 
@@ -994,7 +1038,7 @@
       });
     }
     FrameObject.left = 0;
-   // data.objects = [{ ...FrameObject }].concat(data.objects);
+    // data.objects = [{ ...FrameObject }].concat(data.objects);
 
     console.log("data", data);
 
@@ -1066,9 +1110,8 @@
   const saveHistory = () => {};
 
   const undo = () => {
-    let lastObject = canvas.toJSON().objects[
-      canvas.toJSON().objects.length - 1
-    ];
+    let lastObject =
+      canvas.toJSON().objects[canvas.toJSON().objects.length - 1];
     history.push(lastObject);
     let newFile = canvas.toJSON();
     newFile.objects.pop();
