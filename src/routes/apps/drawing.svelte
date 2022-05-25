@@ -436,18 +436,21 @@
       const gTagElement = parsedSVG.getElementsByTagName("g");
 
       // loop through <g> tags, remove all previous drawings and leave only the last one
-      for (let i = 0; i < gTagElement.length - 2; i++) {
-        gTagElement[i].remove;
+      for (let i = gTagElement.length - 2; i >= 0; --i) {
+        gTagElement[i].remove();
       }
 
       // needed SVG is stored inside of body which we want to send only
       const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
       console.log("sentsvg", body);
+      // console.log("sentsvg",body)
       // all data to send
       const location = "drawingchallenge";
       const dataToSend = `{ "action": ${JSON.stringify(
         body
       )}, "location": "${location}" }`;
+
+      console.log("data sent", parsedSVG);
 
       // send data
       ManageSession.socket.rpc("move_position", dataToSend);
@@ -456,8 +459,10 @@
     // listening to the stream to get actions of other person's drawing
     ManageSession.socket.onstreamdata = (streamdata) => {
       let data = JSON.parse(streamdata.data);
+      // console.log("data received", data.action);
 
       if ($Session.user_id != data.user_id) {
+        // console.log("data receiver inner triggered");
         // apply drawings to the canvas if only it is received from other participant
         fabric.loadSVGFromString(data.action, function (objects, options) {
           objects.forEach(function (svg) {
@@ -472,7 +477,9 @@
               left: svg.left / scaleRatio,
               top: svg.top / scaleRatio,
             });
+ 
             console.log("svg", svg);
+            // console.log("svg", svg);
             canvas.add(svg).renderAll();
           });
         });

@@ -71,8 +71,11 @@
         <img src="assets/SHB/svg/AW-icon-cross.svg" />
     </div>
 
-    <div class="app" transition:fly={{ y: window.innerHeight, duration: 700, opacity: 1}}>
-        {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar"}
+    <div
+        class="app"
+        transition:fly={{ y: window.innerHeight, duration: 700, opacity: 1 }}
+    >
+        {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar" || appOpen == "drawingchallenge"}
             <DrawingApp bind:appType={appOpen} />
         {/if}
 
