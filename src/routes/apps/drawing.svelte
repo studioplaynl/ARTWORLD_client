@@ -1808,7 +1808,9 @@
   }
 
   .optionbox {
-    width: fit-content;
+    width: fit-content;  
+   /* max-width: 80%; */
+    /* justify-content: right; */
     display: flex;
   }
 
@@ -1996,8 +1998,11 @@
 
   #clear-canvas {
     position: fixed;
-    left: 20px;
-    top: 75px;
+    /* left: 20px;
+    top: 75px; */
+    right: 10px;
+    top: 40px;
+
     z-index: 13;
     /* border: 2px solid #7300ed; */
     box-shadow: 5px 5px 0px #7300ed;
@@ -2027,12 +2032,30 @@
       position: fixed;
       bottom: 0;
       display: block;
+      
     }
 
     .optionbar {
-      width: 100vw;
-      height: min-content;
+      margin-left: 0;
       border-right: none;
+      
+      border-top: 2px solid #7300ed;
+      height: min-content;
+      background-color: white;
+      transition: all 0.5s ease-in-out;
+      padding: 0px;
+      transform: translateY(0%);
+      /* float: right; */  
+      width: 90vw;
+ 
+    }
+
+    .optionbar.hidden {
+      width: 100vw;
+      transform: translateY(160%);
+      display: inline;
+      padding: 0px;
+      margin: 0px;
     }
 
     .currentSelected {
@@ -2041,9 +2064,9 @@
 
     .iconbox {
       width: max-content;
+      height: min-content;
       display: block;
       margin: 0 auto;
-      height: min-content;
     }
 
     .topbar {
@@ -2069,25 +2092,6 @@
       display: inline-block;
     }
 
-    .optionbar {
-      margin-left: 0;
-      border-top: 2px solid #7300ed;
-      height: min-content;
-      background-color: white;
-      transition: all 0.5s ease-in-out;
-      padding: 0px;
-      transform: translateY(0%);
-      width: 100vw;
-      display: block;
-    }
-
-    .optionbar.hidden {
-      width: 100vw;
-      transform: translateY(160%);
-      display: inline;
-      padding: 0px;
-      margin: 0px;
-    }
     .icon {
       min-width: 50px;
       height: 50px;

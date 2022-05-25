@@ -474,7 +474,7 @@
         border-radius: 50px;
         /* border: 2px solid #7300ed; */
         box-shadow: 5px 5px 0px #7300ed;
-        padding: 8px;
+        padding: 14px;
         position: fixed;
         z-index: 10;
         -webkit-transition: 0.01s all ease-in-out;
@@ -491,14 +491,15 @@
         #currentUser,
         #itemsButton {
             left: 3px;
-            bottom: 3px;
+            bottom: 8px;
         }
 
         #onlineUser {
             right: 3px;
-            bottom: 3px;
+            bottom: 8px;
         }
     }
+    
     @media screen and (min-width: 600px) {
         #currentUser,
         #itemsButton {

@@ -71,7 +71,10 @@
         <img src="assets/SHB/svg/AW-icon-cross.svg" />
     </div>
 
-    <div class="app" transition:fly={{ y: window.innerHeight, duration: 700, opacity: 1}}>
+    <div
+        class="app"
+        transition:fly={{ y: window.innerHeight, duration: 700, opacity: 1 }}
+    >
         {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar"}
             <DrawingApp bind:appType={appOpen} />
         {/if}
@@ -111,10 +114,13 @@
         width: 40px;
     }
 
+    /* mobile */
     @media only screen and (max-width: 700px) {
         #close {
             top: unset;
-            bottom: 20px;
+            left: unset;
+            right: 10px;
+            bottom: 140px;
         }
     }
 </style>
