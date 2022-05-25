@@ -1,7 +1,8 @@
 <script>
   import { Profile, CurrentApp } from "../../session";
-  import { convertImage } from "../../api";
+  import { convertImage, setAvatar } from "../../api";
   import { onDestroy, onMount } from "svelte";
+
   let image;
   let frame = 0;
   let interval;
@@ -9,27 +10,31 @@
   let show = false;
   let showHistory = false;
   let version;
+  const img = new Image();
+
 
   async function nextVersion() {
     version++;
     console.log("version", version);
-    // get url
-    // check if url is valid
-    // if valid place
-    // if not valid dont update to new 
-    url = await convertImage(`avatar/${$Profile.id}/${version}_current.png`,"150","1000")
-    console.log(url)
 
+    url = await setAvatar(`avatar/${$Profile.id}/${version}_current.png`)
+    img.src = url;
+    img.onerror = () => {
+        version -= 2
+        nextVersion()
+        console.log("img not availible, gone bacck")
+      };
   }
 
   async function backVersion() {
-      if(version <= 1) return
+      if(version <= 1) return console.log("first image reached")
     version--;
     console.log("version", version);
     url = await convertImage(`avatar/${$Profile.id}/${version}_current.png`,'150','1000')
-    console.log(url)
-
+    setAvatar(`avatar/${$Profile.id}/${version}_current.png`)
   }
+
+
 
   onMount(async () => {
     url = $Profile.url

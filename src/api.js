@@ -224,6 +224,18 @@ export async function getAvatar(avatar_url) {
   return getFile(avatar_url)
 }
 
+export async function setAvatar(avatar_url) {
+  await client.updateAccount(Sess, {
+    avatar_url
+  });
+  let Image = await convertImage(avatar_url, "128", "1000", "png")
+  //Profile.update((n) => { n.url = Image; return n });
+  getAccount()
+  Succes.update(s => s = true)
+  setLoader(false);
+  return Image
+}
+
 export async function getFile(file_url) {
   const payload = { "url": file_url };
   let url
