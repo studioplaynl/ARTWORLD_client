@@ -130,7 +130,7 @@
       isDrawingMode: true,
     });
 
-    // getImage();
+    getImage();
     setLoader(false);
 
     fabric.Object.prototype.transparentCorners = false;
@@ -420,7 +420,7 @@
     //////////////// mouse circle ////////////////////////////
 
     //////////////// drawing challenge ////////////////////////
-
+    if(appType == "drawingchallenge"){
     // each mouse-up event sends the drawing
     canvas.on("mouse:up", () => {
       // get the drawing from the canvas in the format of SVG
@@ -442,7 +442,7 @@
 
       // needed SVG is stored inside of body which we want to send only
       const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
-      console.log("sentsvg",body)
+      console.log("sentsvg", body);
       // all data to send
       const location = "drawingchallenge";
       const dataToSend = `{ "action": ${JSON.stringify(
@@ -461,8 +461,17 @@
         // apply drawings to the canvas if only it is received from other participant
         fabric.loadSVGFromString(data.action, function (objects, options) {
           objects.forEach(function (svg) {
+            // get old scale ratio of other screen
+            // set that to left and top
 
-            svg.set({ zoomX: 1, zoomY: 1, scaleX: 1,scaleY: 1,left: (svg.left/scaleRatio), top: (svg.top/scaleRatio) });;
+            svg.set({
+              zoomX: 1,
+              zoomY: 1,
+              scaleX: 1,
+              scaleY: 1,
+              left: svg.left / scaleRatio,
+              top: svg.top / scaleRatio,
+            });
             console.log("svg", svg);
             canvas.add(svg).renderAll();
           });
@@ -471,7 +480,7 @@
         console.log("The same user!");
       }
     };
-
+  };
     //////////////// drawing challenge ////////////////////////
   });
 
@@ -575,6 +584,7 @@
     if (!!!params.name && (appType == "stopmotion" || appType == "drawing"))
       return setLoader(false);
     console.log("appType", appType);
+    // get images
     if (appType == "avatar") {
       lastImg = await convertImage($Profile.avatar_url, "2048", "10000");
     } else if (appType == "house") {
@@ -593,7 +603,7 @@
       console.log("displayName", displayName);
       lastImg = await convertImage(Object.value.url);
     }
-
+    // put images on canvas
     if (appType == "avatar" || appType == "stopmotion") {
       console.log("avatar");
       let frameAmount;
@@ -608,7 +618,17 @@
         FrameObject.width = lastWidth;
         frames = [];
         for (let i = 0; i < frameAmount; i++) {
-          FrameObject.left = i * -2048;
+          FrameObject.left = 0;
+          FrameObject.width = 2048;
+          FrameObject.cropX = i * 2048;
+          // FrameObject.clipTo = function (ctx) {
+          //   // origin is the center of the image
+          //   // var x = rectangle.left - image.getWidth() / 2;
+          //   // var y = rectangle.top - image.getHeight() / 2;
+          //   // ctx.rect(i * -2048, 2048, (i * -2048)+2048, 2048);
+          //   ctx.rect(0,-2048,2048,2048)
+          // };
+          // FrameObject.setCoords();
           frames.push({
             version: "4.6.0",
             objects: [{ ...FrameObject }],
@@ -1059,7 +1079,7 @@
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
-        if (object.type == "image") return;
+        //if (object.type == "image") return;
         const newObject = { ...object };
         newObject.top = newObject.top;
         newObject.left += size * i;
@@ -1069,7 +1089,7 @@
       });
     }
     FrameObject.left = 0;
-    data.objects = [{ ...FrameObject }].concat(data.objects);
+   // data.objects = [{ ...FrameObject }].concat(data.objects);
 
     console.log("data", data);
 
@@ -1141,8 +1161,9 @@
   const saveHistory = () => {};
 
   const undo = () => {
-    let lastObject =
-      canvas.toJSON().objects[canvas.toJSON().objects.length - 1];
+    let lastObject = canvas.toJSON().objects[
+      canvas.toJSON().objects.length - 1
+    ];
     history.push(lastObject);
     let newFile = canvas.toJSON();
     newFile.objects.pop();
