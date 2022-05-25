@@ -75,7 +75,7 @@
         class="app"
         transition:fly={{ y: window.innerHeight, duration: 700, opacity: 1 }}
     >
-        {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar"}
+        {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar" || appOpen == "drawingchallenge"}
             <DrawingApp bind:appType={appOpen} />
         {/if}
 
