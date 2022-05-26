@@ -56,6 +56,7 @@
   export let appType = $location.split("/")[1];
   let version = 0;
   let optionbox = true;
+  let isDrawn = false;
 
   let FrameObject = {
     type: "image",
@@ -105,6 +106,7 @@
   };
 
   onMount(() => {
+    console.log("on mount isDrawn", isDrawn);
     setLoader(true);
     const autosave = setInterval(() => {
       if (!saved) {
@@ -149,13 +151,20 @@
       clearEl = fab("clear-canvas");
 
     clearEl.onclick = function () {
-      if (window.confirm("are you sure?")) {
-        canvas.clear();
-        localStorage.setItem("Drawing", "");
+      // if (window.confirm("are you sure?")) {
+      console.log("renewal page button is clicked");
+      if (isDrawn) {
+        upload();
       }
+      canvas.clear();
+      localStorage.setItem("Drawing", "");
+      isDrawn = false;
+
+      // }
     };
 
     drawingModeEl.onclick = function () {
+      // console.log("mouse is down");
       switchOption("draw");
       canvas.isDrawingMode = true;
       changebrush();
@@ -423,8 +432,6 @@
         // get the drawing from the canvas in the format of SVG
         const canvasData = canvas.toSVG();
 
-        console.log("canvas to JSON sent", canvas.toJSON());
-        console.log("scale ratio sender", scaleRatio);
         // convert SVG into the HTML format in order to be able to manipulate inner data
         const parsedSVG = new DOMParser().parseFromString(
           canvasData,
@@ -439,88 +446,40 @@
           gTagElement[i].remove();
         }
 
+        // get the position of the drawing
         const positionObject = canvas.toJSON().objects;
-
-        // positionObject[positionObject.length];
+        // console.log("sending JSON format", positionObject[0]);
 
         // needed SVG is stored inside of body which we want to send only
         const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
 
-        console.log("sentsvg", body);
         // all data to send
         const location = "drawingchallenge";
-        const dataToSend = `{ "action": ${JSON.stringify(
+        const JSONToSend = `{ "action": ${JSON.stringify(
           body
         )}, "location": "${location}", "posX": ${
           positionObject[positionObject.length - 1].left
         }, "posY": ${positionObject[positionObject.length - 1].top}}`;
 
-        console.log("data sent", dataToSend);
-
         // send data
-        ManageSession.socket.rpc("move_position", dataToSend);
-
-        // const jsonCanvas = canvas.toJSON();
-
-        // const jsonToSend = `{ "action": ${JSON.stringify(
-        //   jsonCanvas
-        // )}, "location": "${location}"  }`;
-        // console.log("jsontosend", jsonToSend);
-
-        // ManageSession.socket.rpc("move_position", jsonToSend);
+        ManageSession.socket.rpc("move_position", JSONToSend);
       });
 
       // listening to the stream to get actions of other person's drawing
       ManageSession.socket.onstreamdata = (streamdata) => {
         let data = JSON.parse(streamdata.data);
-        console.log("data received", data);
 
-        // console.log("scale ratio receiver", scaleRatio);
         if ($Session.user_id != data.user_id) {
-          const parsedSVG = new DOMParser().parseFromString(
-            data.action,
-            "text/html"
-          );
-
-          console.log("received parsedSVG", parsedSVG);
-
-          const receivedWidth = parsedSVG
-            .getElementsByTagName("svg")[0]
-            .getAttribute("width");
-
-          const receivedHeight = parsedSVG
-            .getElementsByTagName("svg")[0]
-            .getAttribute("width");
-
-          const currentWidth = canvas.width;
-          const currentHeight = canvas.height;
-
-          const factorX = receivedWidth / currentWidth;
-          const factorY = receivedHeight / currentHeight;
-
-          console.log("receivedWidth", receivedWidth);
-          console.log("receivedHeight", receivedHeight);
-          console.log("currentWidth", currentWidth);
-          console.log("currentHeight", currentHeight);
-          console.log("factorX", factorX);
-          console.log("factorY", factorY);
-
-          // console.log("data receiver inner triggered");
           // apply drawings to the canvas if only it is received from other participant
-          fabric.loadSVGFromString(data.action, function (objects, options) {
+          fabric.loadSVGFromString(data.action, function (objects) {
             objects.forEach(function (svg) {
-              console.log("received svg", svg);
+              console.log("svg", svg);
               svg.set({
-                // zoomX: 1,
-                // zoomY: 1,
                 scaleX: 1,
                 scaleY: 1,
                 left: data.posX,
                 top: data.posY,
               });
-
-              console.log("svg", svg);
-              // console.log("svg", svg);
               canvas.add(svg).renderAll();
             });
           });
@@ -533,6 +492,8 @@
   });
 
   const upload = async () => {
+    console.log("upload is clicked");
+    if (!isDrawn) return;
     if (!invalidTitle) return;
     saving = true;
     setLoader(true);
@@ -599,8 +560,10 @@
       console.log(localStore);
       console.log("store " + localStore.name);
       console.log("param " + params.name);
-      if (localStore.name == params.name) {
+      if (localStore.name == params.name && typeof params.name != "undefined") {
         console.log(localStore.type);
+        isDrawn = true;
+        console.log("localstorage isDrawn", isDrawn);
         if (localStore.type == "drawing") {
           console.log("test");
           // canvas.loadFromJSON(
@@ -713,7 +676,6 @@
       replace("/" + appType + "/" + $Session.user_id + "/" + displayName);
     }
 
- 
     setLoader(false);
   };
 
@@ -1121,6 +1083,10 @@
     let newFile = canvas.toJSON();
     newFile.objects.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
+    console.log("undo is clicked", canvas.toJSON().objects);
+    if (canvas.toJSON().objects.length == 0) {
+      isDrawn = false;
+    }
   };
 
   const redo = () => {
@@ -1625,14 +1591,19 @@
           <TrashIcon />
         </button> -->
 
+        <!-- svelte-ignore a11y-missing-attribute -->
         <a
           class:currentSelected={current === "saveToggle"}
           on:click={() => {
-            if (appType == "drawing" || appType == "stopmotion") {
-              saveToggle = !saveToggle;
-              switchOption("saveToggle");
+            // console.log("saving is clicked");
+            // console.log("length", canvas.toJSON().objects);
+            if (isDrawn) {
+              if (appType == "drawing" || appType == "stopmotion") {
+                saveToggle = !saveToggle;
+                switchOption("saveToggle");
+              }
+              upload();
             }
-            upload();
           }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
         >
       </div>
@@ -1773,8 +1744,8 @@
   }
 
   .optionbox {
-    width: fit-content;  
-   /* max-width: 80%; */
+    width: fit-content;
+    /* max-width: 80%; */
     /* justify-content: right; */
     display: flex;
   }
@@ -1997,22 +1968,20 @@
       position: fixed;
       bottom: 0;
       display: block;
-      
     }
 
     .optionbar {
       margin-left: 0;
       border-right: none;
-      
+
       border-top: 2px solid #7300ed;
       height: min-content;
       background-color: white;
       transition: all 0.5s ease-in-out;
       padding: 0px;
       transform: translateY(0%);
-      /* float: right; */  
+      /* float: right; */
       width: 90vw;
- 
     }
 
     .optionbar.hidden {
