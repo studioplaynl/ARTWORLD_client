@@ -56,6 +56,7 @@
   export let appType = $location.split("/")[1];
   let version = 0;
   let optionbox = true;
+  let isDrawn = false;
 
   let FrameObject = {
     type: "image",
@@ -105,6 +106,7 @@
   };
 
   onMount(() => {
+    console.log("on mount isDrawn", isDrawn);
     setLoader(true);
     const autosave = setInterval(() => {
       if (!saved) {
@@ -149,13 +151,20 @@
       clearEl = fab("clear-canvas");
 
     clearEl.onclick = function () {
-      if (window.confirm("are you sure?")) {
-        canvas.clear();
-        localStorage.setItem("Drawing", "");
+      // if (window.confirm("are you sure?")) {
+      console.log("renewal page button is clicked");
+      if (isDrawn) {
+        upload();
       }
+      canvas.clear();
+      localStorage.setItem("Drawing", "");
+      isDrawn = false;
+
+      // }
     };
 
     drawingModeEl.onclick = function () {
+      // console.log("mouse is down");
       switchOption("draw");
       canvas.isDrawingMode = true;
       changebrush();
@@ -338,6 +347,8 @@
     console.log(params);
 
     canvas.on("mouse:up", function (element) {
+      console.log("mouse is down");
+      isDrawn = true;
       console.log(element);
       setTimeout(() => {
         updateFrame();
@@ -486,6 +497,8 @@
   });
 
   const upload = async () => {
+    console.log("upload is clicked");
+    if (!isDrawn) return;
     if (!invalidTitle) return;
     saving = true;
     setLoader(true);
@@ -552,8 +565,10 @@
       console.log(localStore);
       console.log("store " + localStore.name);
       console.log("param " + params.name);
-      if (localStore.name == params.name) {
+      if (localStore.name == params.name && typeof params.name != "undefined") {
         console.log(localStore.type);
+        isDrawn = true;
+        console.log("localstorage isDrawn", isDrawn);
         if (localStore.type == "drawing") {
           console.log("test");
           // canvas.loadFromJSON(
@@ -1065,6 +1080,10 @@
     let newFile = canvas.toJSON();
     newFile.objects.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
+    console.log("undo is clicked", canvas.toJSON().objects);
+    if (canvas.toJSON().objects.length == 0) {
+      isDrawn = false;
+    }
   };
 
   const redo = () => {
@@ -1569,14 +1588,19 @@
           <TrashIcon />
         </button> -->
 
+        <!-- svelte-ignore a11y-missing-attribute -->
         <a
           class:currentSelected={current === "saveToggle"}
           on:click={() => {
-            if (appType == "drawing" || appType == "stopmotion") {
-              saveToggle = !saveToggle;
-              switchOption("saveToggle");
+            // console.log("saving is clicked");
+            // console.log("length", canvas.toJSON().objects);
+            if (isDrawn) {
+              if (appType == "drawing" || appType == "stopmotion") {
+                saveToggle = !saveToggle;
+                switchOption("saveToggle");
+              }
+              upload();
             }
-            upload();
           }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
         >
       </div>
