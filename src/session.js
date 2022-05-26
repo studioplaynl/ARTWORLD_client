@@ -41,6 +41,8 @@ Profile.subscribe((value) => {
 
 
 export const Error = writable();
+export const Notification = writable();
+
 
 export const Succes = writable();
 

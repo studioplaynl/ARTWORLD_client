@@ -2,6 +2,7 @@ import { get } from "svelte/store";
 import { client, SSL } from "../../nakama.svelte";
 import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate from artworld coordinates to Phaser 2D screen coordinates
 import {location} from "svelte-spa-router"
+import {Notification} from "../../session"
 
 import { SCENES } from "./config.js";
 
@@ -231,6 +232,14 @@ class ManageSession {
         // this.getStreamUsers("home")
       }
     }; //this.socket.onstreampresence
+
+
+    this.socket.onnotification = (notif) => {
+      Notification.set(notif)
+      console.log("Received %o", notif);
+      console.log("Notification content %s", notif);
+
+  }
   } //end createSocket
 
   async getStreamUsers(rpc_command, location) {
@@ -363,6 +372,11 @@ class ManageSession {
       // console.log(data);
     });
   }
+
+  
+
+
+
 } //end class
 
 export default new ManageSession();

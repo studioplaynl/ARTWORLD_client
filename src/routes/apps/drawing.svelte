@@ -338,12 +338,9 @@
     console.log(params);
 
     canvas.on("mouse:up", function (element) {
-      console.log(element);
-      setTimeout(() => {
-        updateFrame();
-        saveHistory();
-      }, 200);
+      mouseEvent()
     });
+
 
     //////////////// mouse circle ////////////////////////////
 
@@ -753,6 +750,14 @@
   }
 
   window.addEventListener("resize", resizeCanvas, false);
+
+  function mouseEvent(){
+      setTimeout(() => {
+        updateFrame();
+        saveHistory();
+      }, 200);
+    }
+
 
   function resizeCanvas() {
     if (document.body.clientWidth <= document.body.clientHeight) {
@@ -1380,7 +1385,7 @@
   }
 </script>
 
-<main>
+<main on:mouseup="{mouseEvent}">
   <div class="box1">
     {#if current == "camera"}
       <video bind:this={video} autoplay />
