@@ -347,7 +347,8 @@
     console.log(params);
 
     canvas.on("mouse:up", function (element) {
-      mouseEvent()
+      isDrawn = true
+      // mouseEvent()
     });
 
 
@@ -838,7 +839,7 @@
 
   const deleteFrame = (Frame) => {
     for (var i = 0; i < frames.length; i++) {
-      console.log(frames[i], Frame);
+      console.log("frames[i], Frame", frames[i], Frame);
       if (i == Frame) {
         console.log("i", i);
         frames.splice(i, 1);
@@ -1383,6 +1384,7 @@
                 class:selected={currentFrame === index}
                 on:click={() => {
                   changeFrame(index);
+                  console.log("debug index of frame:", index); //remove debug
                 }}
                 style="background-image: url({backgroundFrames[index]})"
               >
