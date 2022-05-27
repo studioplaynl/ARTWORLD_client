@@ -347,10 +347,9 @@
     console.log(params);
 
     canvas.on("mouse:up", function (element) {
-      isDrawn = true
-      // mouseEvent()
+      isDrawn = true;
+      mouseEvent();
     });
-
 
     //////////////// mouse circle ////////////////////////////
 
@@ -714,13 +713,12 @@
 
   window.addEventListener("resize", resizeCanvas, false);
 
-  function mouseEvent(){
-      setTimeout(() => {
-        updateFrame();
-        saveHistory();
-      }, 200);
-    }
-
+  function mouseEvent() {
+    setTimeout(() => {
+      updateFrame();
+      saveHistory();
+    }, 200);
+  }
 
   function resizeCanvas() {
     if (document.body.clientWidth <= document.body.clientHeight) {
@@ -1352,7 +1350,7 @@
   }
 </script>
 
-<main on:mouseup="{mouseEvent}">
+<main on:mouseup={mouseEvent}>
   <div class="box1">
     {#if current == "camera"}
       <video bind:this={video} autoplay />
@@ -1936,10 +1934,8 @@
 
   #clear-canvas {
     position: fixed;
-    /* left: 20px;
-    top: 75px; */
-    right: 10px;
-    top: 40px;
+    left: 20px;
+    top: 80px;
 
     z-index: 13;
     /* border: 2px solid #7300ed; */
@@ -1973,25 +1969,60 @@
     }
 
     .optionbar {
-      margin-left: 0;
+      margin: 0;
       border-right: none;
-
-      border-top: 2px solid #7300ed;
+      border-top: 2px dotted #7300ed;
       height: min-content;
-      background-color: white;
-      transition: all 0.5s ease-in-out;
+      width: initial;
       padding: 0px;
-      transform: translateY(0%);
-      /* float: right; */
-      width: 90vw;
+      transition: none;
+      animation: growup 0.3s ease-in-out forwards;
+      transform-origin: bottom center;
+      /* width: 90vw;
+      float: right;
+      position: relative;
+      z-index: 20;
+      border-left: 2px solid #7300ed; */
+    }
+
+    @keyframes growup {
+      0% {
+        transform: scaleY(0);
+      }
+      80% {
+        transform: scaleY(1.1);
+      }
+      100% {
+        transform: scaleY(1);
+      }
     }
 
     .optionbar.hidden {
-      width: 100vw;
-      transform: translateY(160%);
+      margin: 0;
+      border-right: none;
+      height: min-content;
+      width: auto;
+      transform: none;
       display: inline;
-      padding: 0px;
-      margin: 0px;
+      animation: growdown 2s ease-in-out forwards;
+    }
+
+    @keyframes growdown {
+      0% {
+        transform: scaleY(1);
+      }
+      50% {
+        transform: scaleY(0.5);
+      }
+      100% {
+        transform: scaleY(0);
+      }
+    }
+
+    .box2 {
+      position: fixed;
+      -ms-transform: initial;
+      transform: initial;
     }
 
     .currentSelected {
@@ -2046,8 +2077,9 @@
     }
 
     #clear-canvas {
-      bottom: 75px;
-      top: unset;
+      top: initial;
+      left: 10px;
+      bottom: 80px;
     }
   }
 
