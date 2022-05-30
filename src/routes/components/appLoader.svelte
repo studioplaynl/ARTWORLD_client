@@ -70,7 +70,6 @@
     <div id="close" on:click={closeApp}>
         <img src="assets/SHB/svg/AW-icon-cross.svg" />
     </div>
-
     <div
         class="app"
         transition:fly={{ y: window.innerHeight, duration: 700, opacity: 1 }}
@@ -101,7 +100,6 @@
         left: 20px;
         top: 20px;
         z-index: 13;
-        /* border: 2px solid #7300ed; */
         box-shadow: 5px 5px 0px #7300ed;
         cursor: pointer;
         padding: 0;
@@ -110,6 +108,7 @@
         width: 40px;
         height: 40px;
     }
+
     #close > img {
         width: 40px;
     }
@@ -117,9 +116,8 @@
     /* mobile */
     @media only screen and (max-width: 700px) {
         #close {
-            top: unset;
-            left: unset;
-            right: 10px;
+            top: initial;
+            left: 10px;
             bottom: 140px;
         }
     }
