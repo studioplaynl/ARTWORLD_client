@@ -1356,11 +1356,7 @@
   }
 </script>
 
-<<<<<<< HEAD
 <main on:click="{mouseEvent}">
-=======
-<main on:mouseup={mouseEvent}>
->>>>>>> 588d7e77930bb252754622950fdd1e72bb9e593a
   <div class="box1">
     {#if current == "camera"}
       <video bind:this={video} autoplay />
