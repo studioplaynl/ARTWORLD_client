@@ -1,18 +1,27 @@
 <script>
     import SvelteTable from "svelte-table";
 import { each } from "svelte/internal";
-    import {ListFriends, addFriend} from "../api"
+import FriendAction from "./components/friendaction.svelte"
+import Stopmotion from "./components/stopmotion.svelte"
+    import {ListFriends, addFriend, setLoader, convertImage} from "../api"
     var users = [];
     var usersRequest = [];
     var usersPending = [];
     var ID = "";
     var Username
 
-    ListFriends()
+
+    let load = async function() {
+        users = []
+        usersRequest = []
+        usersPending = []
+        setLoader(true)
+        ListFriends()
     .then( list => {
         console.log(list.friends)
-        list.friends.forEach(user => {
-            console.log(user)
+        list.friends.forEach(async (user) => {
+            console.log(user.user.avatar_url)
+            user.user.url = await convertImage(user.user.avatar_url,"150","1000")
             if(user.state === 2){
                 usersRequest.push(user)
                 usersRequest = usersRequest
@@ -27,15 +36,24 @@ import { each } from "svelte/internal";
             }
         });
         console.log(usersRequest)
+        setLoader(false)
     })
+    }
+
+    load()
+    
     
     const columns = [
         {
           key: "status",
-          title: "status",
-          value: v => { if(v.user.online) {return "online"} else {return "offline"}},
-          sortable: true,
+          title: "",
+          value: v => { if(v.user.online) {return `<div class="online"/>`} else {return `<div class="offline"/>`}},
         },
+        {
+        key: "avatar",
+        title: "",
+        renderComponent: {component: Stopmotion, props: {}}
+      },
         {
           key: "Username",
           title: "Username",
@@ -43,17 +61,17 @@ import { each } from "svelte/internal";
           sortable: true,
         },
         {
-          key: "Locatie",
-          title: "AZC",
-          value: v => v.user.metadata.azc
-        },
+        key: "action",
+        title: "",
+        renderComponent: {component: FriendAction, props: {load}}
+      },
       ]
   </script>
   
   <h1>Add friend</h1>
-  <input bind:value={ID} placeholder="user ID">
+  <!-- <input bind:value={ID} placeholder="user ID"> -->
   <input bind:value={Username} placeholder="username">
-  <button on:click="{()=>{ addFriend(ID,Username)}}">Add friend</button>
+  <button on:click="{()=>{ addFriend(ID,Username).then(()=>{ load()})}}">Add friend</button>
 
   <h1>All friends</h1>
   <SvelteTable columns="{columns}" rows="{users}" classNameTable="profileTable"></SvelteTable>
@@ -66,5 +84,6 @@ import { each } from "svelte/internal";
   <SvelteTable columns="{columns}" rows="{usersRequest}" classNameTable="profileTable"></SvelteTable>
   
   <style>
+
   
   </style>

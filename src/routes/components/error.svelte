@@ -13,8 +13,8 @@
 
     let error
     let succes
-    let notification ="test"
-    let notificationCode = -1
+    let notification
+    let notificationCode = 0
     let showMessage = false
     Error.subscribe(err => setError(err));
     Notification.subscribe(notif => setNotification(notif))
@@ -112,12 +112,19 @@
        <!-- User X wants to join your group. -->
        <GroupAddIcon/>
        {:else if notificationCode == -6}
-<!-- Your friend X has just joined the game. -->
+        <!-- Your friend X has just joined the game. -->
        <PersonIcon/>
        {:else if notificationCode == -7}
 
-<!-- Final notifications to sockets closed via the single_socket configuration.
--->
+       <!-- Final notifications to sockets closed via the single_socket configuration. -->
+
+        {:else if notificationCode == 1}
+        <!-- somebody liked your artpiece -->
+        {:else if notificationCode == 2}
+        <!-- somebody sent you an artpiece -->
+        {:else if notificationCode == 3}
+        <!-- invite to play together -->
+
        {/if}
 
     
@@ -127,7 +134,7 @@
     {#if showMessage}
     <div id="notificationMessage">
         <!-- {#if !!notification.code}  -->
-        {JSON.stringify(notification.content)}
+        {notification.content.username}
         <!-- {/if} -->
 
     </div>
