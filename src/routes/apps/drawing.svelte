@@ -1351,7 +1351,7 @@
 </script>
 
 <main on:mouseup={mouseEvent}>
-  <div class="box1">
+  <div class="canvas-container">
     {#if current == "camera"}
       <video bind:this={video} autoplay />
       <button on:click={capturePicture} class="videoButton" />
@@ -1372,7 +1372,7 @@
     <div class="savecanvas">
       <canvas bind:this={saveCanvas} />
     </div>
-    <div class="frameBox">
+    <div class="frame-box">
       {#if appType == "stopmotion" || appType == "avatar"}
         <div id="framebar">
           {#each frames as frame, index}
@@ -1405,7 +1405,7 @@
             </div>
           {/if}
         </div>
-        <div id="frameButtons">
+        <div class="frame-buttons">
           {#if play}
             <a
               id="playPause"
@@ -1434,7 +1434,7 @@
       {/if}
     </div>
   </div>
-  <div class="box2">
+  <div class="optionbox-container">
     <div class="optionbox">
       <div class="optionbar" class:hidden={optionbox}>
         <div id="drawing-mode-options" class:hidden={current != "draw"}>
@@ -1618,6 +1618,11 @@
 </main>
 
 <style>
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
   main {
     margin: 0 auto;
     width: fit-content;
@@ -1642,9 +1647,10 @@
   }
 
   .canvas {
-    width: 100vw;
-    height: 100vw;
-    margin: 0px;
+    /* width: 100vw;
+    height: 100vw; */
+    /* width: 100%;
+    margin: 0px; */
   }
 
   .selected {
@@ -1770,24 +1776,6 @@
     height: 100vw;
   } */
 
-  @media only screen and (min-width: 700px) {
-    video {
-      /* width: 700px;
-      height: 700px; */
-      margin: 0 auto;
-      display: block;
-    }
-
-    .box1 {
-      float: left;
-      /* width: 100vw; */
-    }
-
-    .topbar {
-      width: unset;
-    }
-  }
-
   .videoButton {
     border-radius: 50%;
     padding: 25px;
@@ -1823,14 +1811,54 @@
   /* new css */
   .canvasBox {
     background-color: white;
-    margin: 0 auto;
-    width: fit-content;
+    /* margin: 0 auto; */
+    /* width: fit-content; */
     border: 2px solid #7300ed;
+    /* position: relative; */
+    /* max-width: 100%; */
+    /* min-width: 20%; */
+    /* width: 520px; */
+    /* flex-shrink: 4; */
+    /* min-width: 300px; */
+    /* float: left; */
+  }
+
+  .frame-box {
+    /* margin: 0 auto; */
+    /* width: fit-content; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
+    flex-direction: column;
+    /* border: 2px solid black; */
+    /* height: 100vh; */
+    /* width: fit-content; */
+    /* width: 200px; */
+    /* float: right; */
+    /* flex-shrink: 1; */
   }
 
   #framebar {
-    display: inline;
+    display: flex;
+    flex-direction: column;
+    max-height: 600px;
+    width: 100px;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity;
+    /* float: left; */
+    /* margin: 5px; */
+  }
+  #framebar > div {
+    /* display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row; */
+  }
+
+  #framebar > div > img {
+    margin: 10px 10px 0 0;
   }
 
   #framebar > div > div {
@@ -1846,97 +1874,37 @@
     background-size: contain;
   }
 
-  .frameBox {
-    margin: 0 auto;
-    width: fit-content;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    height: 100vh;
-    flex-direction: column;
+  #framebar > div > div:hover {
+    cursor: pointer;
   }
 
   #framebar > div > div > div {
-    background-color: rgba(255, 255, 255, 0.2);
+    /* background-color: rgba(255, 255, 255, 0.2); */
     height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  #framebar > div > div:hover {
-    cursor: pointer;
-  }
-
-  #framebar > div {
-    display: block;
-  }
-
   .frameDelete {
     position: absolute;
   }
 
-  /* PC */
-  @media only screen and (min-width: 700px) {
-    .canvasBox {
-      height: min-content;
-      width: min-content;
-      float: left;
-      margin: -4px;
-    }
+  .frame-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    align-self: flex-start;
+  }
 
-    .topbar {
-      float: left;
-      height: 100vh;
-    }
-
-    .topbar > div {
-      display: inline-grid;
-      position: relative;
-      top: 50%;
-      margin: 10px;
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
-    }
-
-    .topbar > button {
-      display: block;
-    }
-
-    .frameBox {
-      float: left;
-    }
-
-    #framebar {
-      display: inline-block;
-      max-height: 600px;
-      width: 100px;
-      overflow-y: auto;
-      overscroll-behavior-y: contain;
-      scroll-snap-type: y proximity;
-      float: left;
-      margin: 5px;
-    }
-
-    #framebar > div:last-child {
-      overflow-anchor: auto;
-    }
-
-    .box2 {
-      position: fixed;
-      left: 0;
-      top: 50vh;
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
-    }
+  .frame-buttons > a > img {
+    display: block;
   }
 
   #clear-canvas {
     position: fixed;
     left: 20px;
     top: 80px;
-
     z-index: 13;
     /* border: 2px solid #7300ed; */
     box-shadow: 5px 5px 0px #7300ed;
@@ -1952,12 +1920,140 @@
     width: 40px;
   }
 
-  /* mobile */
-  @media only screen and (max-width: 700px) {
+  video {
+    /* width: 700px;
+      height: 700px; */
+    margin: 0 auto;
+    display: block;
+  }
+
+  .canvas-container {
+    display: flex;
+    flex-direction: row;
+    /* float: left; */
+    /* width: 100vw; */
+  }
+
+  .topbar {
+    width: unset;
+  }
+
+  .canvasBox {
+    /* height: min-content; */
+    /* width: min-content; */
+
+    /* max-width: 100%; */
+    /* margin: -4px; */
+  }
+
+  .topbar {
+    float: left;
+    height: 100vh;
+  }
+
+  .topbar > div {
+    display: inline-grid;
+    position: relative;
+    top: 50%;
+    margin: 10px;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  /* .topbar > button {
+    display: block;
+  } */
+
+  .frame-box {
+    /* float: left; */
+  }
+
+  #framebar > div:last-child {
+    overflow-anchor: auto;
+  }
+
+  .optionbox-container {
+    position: fixed;
+    left: 0;
+    top: 50vh;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+  .unselected {
+    filter: grayscale(1) opacity(0.5);
+  }
+
+  #avatarBox {
+    position: fixed;
+    top: 130px;
+    left: 20px;
+  }
+
+  /* .frame-buttons > a > img {
+    display: block;
+  } */
+
+  @media only screen and (max-width: 1085px) {
+    .canvas-container {
+      flex-direction: column;
+    }
+
     .canvasBox {
-      border: none;
+      /* height: 80vh; */
+      /* width: 100vw; */
+    }
+
+    .frame-box {
+      margin-bottom: -70px;
       border-top: 2px solid #7300ed;
-      border-bottom: 2px solid #7300ed;
+      background-color: white;
+      flex-direction: row;
+      bottom: 0;
+      left: 0;
+      position: absolute;
+      width: 100%;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .frame-box:hover {
+      margin-bottom: 0;
+    }
+
+    #framebar {
+      flex-direction: row;
+      height: 140px;
+      width: 450px;
+      overflow-x: auto;
+      overflow-y: none;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x proximity;
+    }
+
+    #framebar > div {
+      display: block;
+    }
+
+    #framebar > div > img {
+      display: inline-block;
+      margin-left: -60px;
+      margin-top: 70px;
+    }
+
+    .frame-buttons {
+      /* display: flex; */
+      flex-direction: row;
+      padding: 0;
+      justify-self: flex-start;
+      margin-top: 10px;
+    }
+  }
+
+  /* mobile */
+  @media only screen and (max-width: 500px) {
+    .canvasBox {
+      /* height: 100vh;
+      width: 100vw; */
     }
 
     .optionbox {
@@ -2019,7 +2115,7 @@
       }
     }
 
-    .box2 {
+    .optionbox-container {
       position: fixed;
       -ms-transform: initial;
       transform: initial;
@@ -2036,13 +2132,28 @@
       margin: 0 auto;
     }
 
-    .topbar {
+    .frame-box {
+      margin: 0;
+      border: unset;
+      position: relative;
+      transition: none;
+    }
+
+    .frame-box:hover {
+      margin: unset;
+    }
+
+    #framebar {
+      width: 160px;
+    }
+
+    /* .topbar {
       width: max-content;
       margin: 0px auto;
       display: block;
-    }
-
-    .frameBox {
+    } */
+    /* 
+    .frame-box {
       height: min-content;
       width: 80vw;
       align-items: normal;
@@ -2057,7 +2168,7 @@
 
     #framebar > div {
       display: inline-block;
-    }
+    } */
 
     .icon {
       min-width: 50px;
@@ -2081,19 +2192,5 @@
       left: 10px;
       bottom: 80px;
     }
-  }
-
-  .unselected {
-    filter: grayscale(1) opacity(0.5);
-  }
-
-  #avatarBox {
-    position: fixed;
-    top: 130px;
-    left: 20px;
-  }
-
-  #frameButtons > a > img {
-    display: block;
   }
 </style>

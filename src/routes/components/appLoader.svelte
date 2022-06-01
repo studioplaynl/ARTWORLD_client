@@ -114,7 +114,7 @@
     }
 
     /* mobile */
-    @media only screen and (max-width: 700px) {
+    @media only screen and (max-width: 500px) {
         #close {
             top: initial;
             left: 10px;
