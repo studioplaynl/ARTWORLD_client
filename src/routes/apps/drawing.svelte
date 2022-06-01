@@ -2030,6 +2030,8 @@
     }
 
     #framebar > div {
+      padding: 0;
+      margin: 0;
       display: block;
     }
 
@@ -2050,6 +2052,10 @@
 
   /* mobile */
   @media only screen and (max-width: 500px) {
+    main {
+      margin: 0;
+      width: 100%;
+    }
     .canvasBox {
       order: 2;
       position: absolute;
@@ -2060,22 +2066,35 @@
     .frame-box {
       order: 1;
       top: 0;
-      left: 0;
+      right: 0;
       border: none;
       flex-direction: row;
       position: relative;
-      width: 100%;
-      justify-content: space-around;
-
+      width: 80%;
+      justify-content: space-between;
+      align-self: flex-end;
       /* transition: all 0.5s ease-in-out; */
     }
 
     #framebar {
-      width: 230px;
+      /* width: 230px; */
+      /* min-width: 190px; */
+      max-width: 300px;
+      height: 115px;
     }
+
+    #framebar > div {
+      /* height: 100px; */
+    }
+
+    #framebar > div > img {
+      /* margin-left: -60px; */
+      margin-top: 50px;
+    }
+
     .frame-buttons {
       /* flex-grow: 1; */
-      /* flex-direction: column; */
+      flex-direction: column-reverse;
       /* margin: 0; */
       /* align-self: unset; */
     }
@@ -2203,9 +2222,8 @@
     }
 
     #clear-canvas {
-      top: initial;
+      top: 80px;
       left: 10px;
-      bottom: 80px;
     }
   }
 </style>
