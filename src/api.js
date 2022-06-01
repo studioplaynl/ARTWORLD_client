@@ -304,13 +304,37 @@ export async function addFriend(id, usernames) {
     }
   }
   if (typeof usernames == "string") {
-    if (!!username) {
+    if (!!usernames) {
       usernames = [usernames]
     } else {
       usernames = undefined
     }
   }
   await client.addFriends(Sess, id, usernames)
+    .then(status => {
+      Succes.update(s => s = true)
+    })
+    .catch(err => {
+      throw err
+    })
+}
+
+export async function removeFriend(id, usernames) {
+  if (typeof id == "string") {
+    if (!!id) {
+      id = [id]
+    } else {
+      id = undefined
+    }
+  }
+  if (typeof usernames == "string") {
+    if (!!username) {
+      usernames = [usernames]
+    } else {
+      usernames = undefined
+    }
+  }
+  await client.deleteFriends(Sess, id, usernames)
     .then(status => {
       Succes.update(s => s = true)
     })

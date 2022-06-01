@@ -814,11 +814,12 @@
   }
 
   const changeFrame = (newFrame) => {
+    console.log("newFrame", newFrame);
     if (!play) {
       console.log(frames);
       // save frame
       // put as background of button
-      //canvas.clear()
+      canvas.clear();
       // load frame
       canvas.loadFromJSON(frames[newFrame], canvas.renderAll.bind(canvas));
       if (showBackground) img.src = backgroundFrames[newFrame - 1];
@@ -836,18 +837,23 @@
   };
 
   const deleteFrame = (Frame) => {
+    console.log("Frame", Frame);
     for (var i = 0; i < frames.length; i++) {
       console.log("frames[i], Frame", frames[i], Frame);
       if (i == Frame) {
         console.log("i", i);
-        frames.splice(i, 1);
-        if (i > 0) currentFrame = i - 1;
-        else
-          setTimeout(() => {
-            frames[0].backgroundImage = {};
-            currentFrame = 1;
-            changeFrame(0);
-          }, 500);
+
+        if (i > 0) {
+          frames.splice(i, 1);
+          currentFrame = i - 1;
+          frames[currentFrame].backgroundImage = {};
+          changeFrame(currentFrame);
+        } else {
+          frames.shift();
+          frames[0].backgroundImage = {};
+          currentFrame = 0;
+          changeFrame(0);
+        }
       }
     }
   };

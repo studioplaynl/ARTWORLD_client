@@ -4,8 +4,8 @@
   import { push } from "svelte-spa-router";
   let image;
   let frame = 0;
+  let url
   let interval;
-  let url;
   export let value;
   export let row;
 
@@ -19,6 +19,12 @@
 //   convertURL();
 
   onMount(async () => {
+
+    if(!!row.user){
+      url = row.user.url
+    }else if(!!row.value){
+      url = row.value.previewUrl
+    }
     interval = setInterval(() => {
       frame++;
       if (frame >= image.clientWidth / 150) {
@@ -35,9 +41,9 @@
   });
 </script>
 
-<a on:click={push(`/${row.collection}/${row.user_id}/${row.key}`)}>
+<a on:click={()=>{if(!!row.value) push(`/${row.collection}/${row.user_id}/${row.key}`)}}>
   <div class="stopmotion">
-    <img bind:this={image} src={row.value.previewUrl} />
+    <img bind:this={image} src={url} />
     <!-- <p class="hide" on:change="{convertURL}">{row.value.url}</p> -->
   </div>
 </a>
