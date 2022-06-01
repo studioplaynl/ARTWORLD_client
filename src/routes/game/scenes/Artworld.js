@@ -117,6 +117,7 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async create() {
+  
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
@@ -136,12 +137,16 @@ export default class Artworld extends Phaser.Scene {
     ManageSession.createPlayer = true
     //....... end LOAD PLAYER AVATAR .......................................................................
 
-    Background // the order of creation is the order of drawing: first = bottom ...............................
+     // the order of creation is the order of drawing: first = bottom ...............................
+     this.purpleBorder = this.add.rectangle(0, 0, this.worldSize.x * 2, this.worldSize.y * 2, 0x7300ed).setOrigin(0.5)
+     this.purpleBorder.x = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0)
+     this.purpleBorder.y = CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0)
+
     Background.repeatingDots({
       scene: this,
       gridOffset: 80,
       dotWidth: 2,
-      dotColor: 0x909090,
+      dotColor: 0x7300ed,
       backgroundColor: 0xffffff,
     })
 

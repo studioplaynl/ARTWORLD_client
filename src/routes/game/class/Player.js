@@ -87,6 +87,7 @@ class Player {
     if (lastPosX > scene.worldSize.x / 2 || lastPosX < - scene.worldSize.x / 2) lastPosX = Math.floor((Math.random() * 300) - 150)
     if (lastPosY > scene.worldSize.y / 2 || lastPosY < - scene.worldSize.y / 2) lastPosY = Math.floor((Math.random() * 300) - 150)
     console.log("lastPosX, lastPosY", lastPosX, lastPosY)
+    console.log()
 
     //place player in Phaser2D coordinates
     scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, lastPosX)
@@ -95,6 +96,16 @@ class Player {
     //console.log("scene.player.x, scene.player.y", scene.player.x, scene.player.y)
     //set url param's to player pos and scene key, url params are in artworldCoords lastPosX lastPosY is artworldCoords
     ManageSession.setUrl(scene.location, lastPosX, lastPosY)
+
+    //store the current position of player in ManageSession.lastMoveCommand
+   //set this.scene in ManageSession.currentScene
+   ManageSession.currentScene = scene
+    ManageSession.lastMoveCommand.posX = scene.player.x
+    ManageSession.lastMoveCommand.posY = scene.player.y
+    ManageSession.lastMoveCommand.action = "stop"
+    ManageSession.lastMoveCommand.location = ManageSession.location
+    console.log("ManageSession.lastMoveCommand", ManageSession.lastMoveCommand)
+
 
     //if for some reason the url of the player avatar is empty, load the default avatar
     if (userprofile.url === "") {
