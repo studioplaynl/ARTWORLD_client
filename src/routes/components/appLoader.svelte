@@ -116,9 +116,7 @@
     /* mobile */
     @media only screen and (max-width: 500px) {
         #close {
-            top: initial;
             left: 10px;
-            bottom: 140px;
         }
     }
 </style>

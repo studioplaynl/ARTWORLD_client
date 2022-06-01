@@ -1816,10 +1816,11 @@
 
   /* new css */
   .canvasBox {
+    position: relative;
     background-color: white;
+    border: 2px solid #7300ed;
     /* margin: 0 auto; */
     /* width: fit-content; */
-    border: 2px solid #7300ed;
     /* position: relative; */
     /* max-width: 100%; */
     /* min-width: 20%; */
@@ -1970,10 +1971,6 @@
     display: block;
   } */
 
-  .frame-box {
-    /* float: left; */
-  }
-
   #framebar > div:last-child {
     overflow-anchor: auto;
   }
@@ -1995,10 +1992,6 @@
     top: 130px;
     left: 20px;
   }
-
-  /* .frame-buttons > a > img {
-    display: block;
-  } */
 
   @media only screen and (max-width: 1085px) {
     .canvas-container {
@@ -2037,6 +2030,8 @@
     }
 
     #framebar > div {
+      padding: 0;
+      margin: 0;
       display: block;
     }
 
@@ -2057,10 +2052,63 @@
 
   /* mobile */
   @media only screen and (max-width: 500px) {
-    .canvasBox {
-      /* height: 100vh;
-      width: 100vw; */
+    main {
+      margin: 0;
+      width: 100%;
     }
+    .canvasBox {
+      order: 2;
+      position: absolute;
+      left: 0;
+      top: 150px;
+    }
+
+    .frame-box {
+      order: 1;
+      top: 0;
+      right: 0;
+      border: none;
+      flex-direction: row;
+      position: relative;
+      width: 80%;
+      justify-content: space-between;
+      align-self: flex-end;
+      /* transition: all 0.5s ease-in-out; */
+    }
+
+    #framebar {
+      /* width: 230px; */
+      /* min-width: 190px; */
+      max-width: 300px;
+      height: 115px;
+    }
+
+    #framebar > div {
+      /* height: 100px; */
+    }
+
+    #framebar > div > img {
+      /* margin-left: -60px; */
+      margin-top: 50px;
+    }
+
+    .frame-buttons {
+      /* flex-grow: 1; */
+      flex-direction: column-reverse;
+      /* margin: 0; */
+      /* align-self: unset; */
+    }
+
+    /* .frame-box {
+      margin: 0;
+      border: unset;
+      position: relative;
+      transition: none;
+    } */
+
+    /* .frame-box:hover {
+      margin-top: 0;
+    } */
 
     .optionbox {
       width: 100vw;
@@ -2138,32 +2186,12 @@
       margin: 0 auto;
     }
 
-    .frame-box {
-      margin: 0;
-      border: unset;
-      position: relative;
-      transition: none;
-    }
-
-    .frame-box:hover {
-      margin: unset;
-    }
-
-    #framebar {
-      width: 160px;
-    }
-
     /* .topbar {
       width: max-content;
       margin: 0px auto;
       display: block;
     } */
     /* 
-    .frame-box {
-      height: min-content;
-      width: 80vw;
-      align-items: normal;
-    }
 
     #framebar {
       margin-bottom: 60px;
@@ -2194,9 +2222,8 @@
     }
 
     #clear-canvas {
-      top: initial;
+      top: 80px;
       left: 10px;
-      bottom: 80px;
     }
   }
 </style>
