@@ -1818,9 +1818,9 @@
   .canvasBox {
     position: relative;
     background-color: white;
+    border: 2px solid #7300ed;
     /* margin: 0 auto; */
     /* width: fit-content; */
-    border: 2px solid #7300ed;
     /* position: relative; */
     /* max-width: 100%; */
     /* min-width: 20%; */
@@ -1971,10 +1971,6 @@
     display: block;
   } */
 
-  .frame-box {
-    /* float: left; */
-  }
-
   #framebar > div:last-child {
     overflow-anchor: auto;
   }
@@ -1996,10 +1992,6 @@
     top: 130px;
     left: 20px;
   }
-
-  /* .frame-buttons > a > img {
-    display: block;
-  } */
 
   @media only screen and (max-width: 1085px) {
     .canvas-container {
@@ -2059,9 +2051,45 @@
   /* mobile */
   @media only screen and (max-width: 500px) {
     .canvasBox {
-      /* height: 100vh;
-      width: 100vw; */
+      order: 2;
+      position: absolute;
+      left: 0;
+      top: 150px;
     }
+
+    .frame-box {
+      order: 1;
+      top: 0;
+      left: 0;
+      border: none;
+      flex-direction: row;
+      position: relative;
+      width: 100%;
+      justify-content: space-around;
+
+      /* transition: all 0.5s ease-in-out; */
+    }
+
+    #framebar {
+      width: 230px;
+    }
+    .frame-buttons {
+      /* flex-grow: 1; */
+      /* flex-direction: column; */
+      /* margin: 0; */
+      /* align-self: unset; */
+    }
+
+    /* .frame-box {
+      margin: 0;
+      border: unset;
+      position: relative;
+      transition: none;
+    } */
+
+    /* .frame-box:hover {
+      margin-top: 0;
+    } */
 
     .optionbox {
       width: 100vw;
@@ -2139,32 +2167,12 @@
       margin: 0 auto;
     }
 
-    .frame-box {
-      margin: 0;
-      border: unset;
-      position: relative;
-      transition: none;
-    }
-
-    .frame-box:hover {
-      margin: unset;
-    }
-
-    #framebar {
-      width: 160px;
-    }
-
     /* .topbar {
       width: max-content;
       margin: 0px auto;
       display: block;
     } */
     /* 
-    .frame-box {
-      height: min-content;
-      width: 80vw;
-      align-items: normal;
-    }
 
     #framebar {
       margin-bottom: 60px;
