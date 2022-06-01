@@ -1816,6 +1816,7 @@
 
   /* new css */
   .canvasBox {
+    position: relative;
     background-color: white;
     /* margin: 0 auto; */
     /* width: fit-content; */
