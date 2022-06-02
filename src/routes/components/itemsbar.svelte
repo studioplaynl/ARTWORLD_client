@@ -15,7 +15,7 @@
   import { Liked, Addressbook } from "../../storage.js";
   import { get } from "svelte/store";
   import MdPersonOutline from "svelte-icons/md/MdPersonOutline.svelte";
-  import MdPersonAdd from 'svelte-icons/md/MdPersonAdd.svelte'
+  import MdPersonAdd from "svelte-icons/md/MdPersonAdd.svelte";
 
   let ManageSession;
   let current;
@@ -72,7 +72,7 @@
         "ManageSession.selectedOnlinePlayer.id",
         ManageSession.selectedOnlinePlayer.id
       );
-      user_id = ManageSession.selectedOnlinePlayer.id
+      user_id = ManageSession.selectedOnlinePlayer.id;
       house_url = await getObject(
         "home",
         ManageSession.selectedOnlinePlayer.metadata.Azc,
@@ -431,7 +431,10 @@
     <p>{user_name}</p>
     <a on:click={() => {}} class="avatar"><img src={avatar_url} /></a>
     <a on:click={getHomeOptions}><img id="house" src={house_url} /></a>
-    <a on:click={() => {addFriend(user_id)}}
+    <a
+      on:click={() => {
+        addFriend(user_id);
+      }}
       ><div class="icon">
         <MdPersonAdd />
       </div>
@@ -461,7 +464,7 @@
     border-radius: 50px;
     /* border: 2px solid #7300ed; */
     box-shadow: 5px 5px 0px #7300ed;
-    padding: 14px;
+    padding: 14px 14px 14px 18px;
     position: fixed;
     z-index: 10;
     -webkit-transition: 0.01s all ease-in-out;
