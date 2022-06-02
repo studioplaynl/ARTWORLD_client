@@ -68,7 +68,7 @@ class ManageSession {
     this.playerStopKey = "stop"
     this.lastMoveCommand = {action: "stop", posX: 0, posY: 0, location: this.location}
 
-    this.draggableHomes = false
+    //this.draggableHomes = false
     this.selectedHomeGameObject //to select a home and save it's position as admin server side
 
     this.gameStarted = false;

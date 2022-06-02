@@ -232,7 +232,7 @@ class ServerCall {
       scene: scene,
       size: 140,
       userHome: element.user_id,
-      draggable: ManageSession.draggableHomes,
+      draggable: ManageSession.gameEditMode,
       type: "image",
       x: CoordinatesTranslator.artworldToPhaser2DX(
         scene.worldSize.x,
