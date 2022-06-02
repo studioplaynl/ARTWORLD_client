@@ -12,6 +12,7 @@ class Exhibition {
 
         //the container with the name of the config
         scene[name] = scene.add.container()
+        scene[name].name = name
 
         const billBoardName = name + "_billBoard"
         scene[billBoardName] = scene.add.image(0,
@@ -89,6 +90,7 @@ class Exhibition {
 
         //the container with the name of the config
         scene[name] = scene.add.container()
+        scene[name].name = name
 
         const billBoardName = name + "_billBoard"
         scene[billBoardName] = scene.add.image(0,
@@ -156,6 +158,7 @@ class Exhibition {
 
         //the container with the name of the config
         scene[name] = scene.add.container()
+        scene[name].name = name
 
         const billBoardName = name + "_billBoard"
         scene[billBoardName] = scene.add.image(0,
@@ -188,8 +191,8 @@ class Exhibition {
         const indicies = [0, 2, 1, 2, 3, 1];
 
         const meshName = name + "_mesh"
-        scene[meshName] = scene.add.mesh( - 20,
-             - 80, 'play')
+        scene[meshName] = scene.add.mesh(- 20,
+            - 80, 'play')
 
         // play
         // artFrame_512

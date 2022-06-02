@@ -10,7 +10,7 @@ class Background {
         const worldSize = config.scene.worldSize
 
         ///*........... white background of worldSize*2 width .............................................................
-        scene.add.rectangle(0, 0, worldSize.x * 1.2, worldSize.y * 1.2, config.backgroundColor).setOrigin(0)
+        scene.add.rectangle(0, 0, worldSize.x, worldSize.y, config.backgroundColor).setOrigin(0)
 
         //*........... repeating pattern on the white background .............................................................
         const gridWidth = worldSize.x
@@ -97,10 +97,13 @@ class Background {
         rt2.x = posX - (size / 2)
         rt2.y = posY - (size / 2)
 
-        //save the rendertexture with a key 
+        // save the rendertexture with a key 
+        // and as this.[name] on scene level
+        // add name to the scene[name] gameObject
+
         rt2.saveTexture(name)
         scene[name] = scene.add.image(posX, posY, name).setOrigin(0.5).setScale(1)
-
+        scene[name].name = name
         //console.log(name)
 
         rt2.destroy()

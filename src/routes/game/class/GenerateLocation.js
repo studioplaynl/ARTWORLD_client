@@ -31,6 +31,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.enterButtonTween
         this.enterCircleTween
         this.size = config.size
+        const referenceName = config.referenceName
         
         let width
         let namePlateExtraOffset = 0
@@ -152,6 +153,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         //the container is created at the this.x and this.y
         //this.setSize(width, width)
+        // this.scene[referenceName] = this.add(this.location)
+        this.name = referenceName
         this.add(this.location)
         this.add(namePlate)
         this.add(locationDescription)

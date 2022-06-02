@@ -67,14 +67,13 @@
 </script>
 
 {#if !!appOpen}
-    <div id="close" on:click={closeApp}>
-        <img src="assets/SHB/svg/AW-icon-cross.svg" />
-    </div>
     <div
         class="app"
         transition:fly={{ y: window.innerHeight, duration: 700, opacity: 1 }}
     >
-    
+        <div id="close" on:click={closeApp}>
+            <img src="assets/SHB/svg/AW-icon-cross.svg" />
+        </div>
         {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar" || appOpen == "drawingchallenge"}
             <DrawingApp bind:appType={appOpen} />
         {/if}
@@ -98,7 +97,7 @@
 
     #close {
         position: fixed;
-        left: 20px;
+        left: 8px;
         top: 20px;
         z-index: 13;
         box-shadow: 5px 5px 0px #7300ed;
@@ -112,14 +111,5 @@
 
     #close > img {
         width: 40px;
-    }
-
-    /* mobile */
-    @media only screen and (max-width: 500px) {
-        #close {
-            top: initial;
-            left: 10px;
-            bottom: 140px;
-        }
     }
 </style>

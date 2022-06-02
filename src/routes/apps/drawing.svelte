@@ -127,6 +127,63 @@
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
     });
+
+    let canvasSize =
+      window.innerWidth > window.innerHeight
+        ? window.innerHeight
+        : window.innerWidth;
+
+    canvas.setWidth(canvasSize - 80);
+    canvas.setHeight(canvasSize - 80);
+
+    window.onresize = () => {
+      canvasSize =
+        window.innerWidth > window.innerHeight
+          ? window.innerHeight
+          : window.innerWidth;
+
+      canvas.setWidth(canvasSize - 80);
+      canvas.setHeight(canvasSize - 80);
+
+      if (canvasSize < 1008 && canvasSize > 640) {
+        canvas.setWidth(canvasSize - 140);
+        canvas.setHeight(canvasSize - 140);
+      }
+
+      if (canvasSize <= 640) {
+        canvas.setWidth(canvasSize - 220);
+        canvas.setHeight(canvasSize - 220);
+      }
+
+      if (canvasSize <= 540) {
+        canvas.setWidth(canvasSize - 80);
+        canvas.setHeight(canvasSize - 80);
+      }
+
+      console.log("canvasSize", canvasSize);
+
+      // if (width != window.innerWidth) {
+      //   if (width > height) {
+      //     canvas.setWidth(height - 200);
+      //     // canvas.setHeight(height - 200);
+      //   } else {
+      //     canvas.setWidth(width - 200);
+      //     // canvas.setHeight(width - 200);
+      //   }
+      // }
+      // if (height != window.innerHeight) {
+      //   // if (height > width) {
+      //     // canvas.setWidth(width - 200);
+      //     // canvas.setHeight(width - 200);
+      //   } else {
+      //     // canvas.setWidth(height - 200);
+      //     // canvas.setHeight(height - 200);
+      //   }
+      // }
+      // var width = window.innerWidth > 0 ? window.innerWidth : screen.width;
+      // var height = window.innerHeight > 0 ? window.innerHeight : screen.height;
+    };
+
     MouseIcon;
     savecanvas = new fabric.Canvas(saveCanvas, {
       isDrawingMode: true,
@@ -1357,109 +1414,27 @@
 </script>
 
 <main on:mouseup={mouseEvent}>
-  <div class="canvas-container">
-    {#if current == "camera"}
-      <video bind:this={video} autoplay />
-      <button on:click={capturePicture} class="videoButton" />
-      <div class="videocanvas">
-        <canvas bind:this={videoCanvas} />
-      </div>
-    {/if}
-    <!-- <div class="topbar">
-      <div>
-        <a on:click={undo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg"></a>
-        <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
-      </div>
-    </div> -->
-    <div class="canvasBox" class:hidden={current === "camera"}>
-      <canvas bind:this={canv} class="canvas" />
-      <canvas bind:this={Cursor} id="cursor" />
-    </div>
-    <div class="savecanvas">
-      <canvas bind:this={saveCanvas} />
-    </div>
-    <div class="frame-box">
-      {#if appType == "stopmotion" || appType == "avatar"}
-        <div id="framebar">
-          {#each frames as frame, index}
-            <div>
-              <div
-                id={index}
-                class:selected={currentFrame === index}
-                on:click={() => {
-                  changeFrame(index);
-                  console.log("debug index of frame:", index); //remove debug
-                }}
-                style="background-image: url({backgroundFrames[index]})"
-              >
-                <div>{index + 1}</div>
-              </div>
-              {#if currentFrame === index && frames.length > 1}
-                <img
-                  class="icon frameDelete"
-                  on:click={() => {
-                    deleteFrame(index);
-                  }}
-                  src="assets/SHB/svg/AW-icon-trash.svg"
-                />
-              {/if}
-            </div>
-          {/each}
-          {#if frames.length < maxFrames}
-            <div>
-              <div id="frameNew" on:click={addFrame}><div>+</div></div>
-            </div>
-          {/if}
-        </div>
-        <div class="frame-buttons">
-          {#if play}
-            <a
-              id="playPause"
-              on:click={() => {
-                play = false;
-                setPlay(false);
-              }}><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" /></a
-            >
-          {:else}
-            <a
-              id="playPause"
-              on:click={() => {
-                play = true;
-                setPlay(true);
-              }}><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" /></a
-            >
-          {/if}
-          <a on:click={backgroundHide}
-            ><img
-              class="icon"
-              class:unselected={!showBackground}
-              src="assets/SHB/svg/AW-icon-onion.svg"
-            /></a
-          >
-        </div>
-      {/if}
-    </div>
-  </div>
-  <div class="optionbox-container">
-    <div class="optionbox">
-      <div class="optionbar" class:hidden={optionbox}>
-        <div id="drawing-mode-options" class:hidden={current != "draw"}>
-          <select id="drawing-mode-selector">
-            <option>Pencil</option>
-            <option>Circle</option>
-            <option>Spray</option>
-            <option>Pattern</option>
+  <div class="main-container">
+    <div class="optionbox-container">
+      <div class="optionbox">
+        <div class="optionbar" class:hidden={optionbox}>
+          <div id="drawing-mode-options" class:hidden={current != "draw"}>
+            <select id="drawing-mode-selector">
+              <option>Pencil</option>
+              <option>Circle</option>
+              <option>Spray</option>
+              <option>Pattern</option>
 
-            <option>hline</option>
-            <option>vline</option>
-            <option>square</option>
-            <option>diamond</option>
-            <option>texture</option>
-          </select>
-        </div>
+              <option>hline</option>
+              <option>vline</option>
+              <option>square</option>
+              <option>diamond</option>
+              <option>texture</option>
+            </select>
+          </div>
 
-        <div class="colorTab" class:hidden={current != "draw"}>
-          <!-- <div
+          <div class="colorTab" class:hidden={current != "draw"}>
+            <!-- <div
             class="widthBox"
             style="background-color: {drawingColor};"
             on:click={() => {
@@ -1468,23 +1443,23 @@
           >
             
           </div> -->
-          <input
-            type="color"
-            bind:value={drawingColor}
-            bind:this={drawingColorEl}
-            id="drawing-color"
-          />
-          <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
+            <input
+              type="color"
+              bind:value={drawingColor}
+              bind:this={drawingColorEl}
+              id="drawing-color"
+            />
+            <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
 
-          <span class="info">{lineWidth}</span><input
-            type="range"
-            min="10"
-            max="500"
-            id="drawing-line-width"
-            bind:value={lineWidth}
-          />
+            <span class="info">{lineWidth}</span><input
+              type="range"
+              min="10"
+              max="500"
+              id="drawing-line-width"
+              bind:value={lineWidth}
+            />
 
-          <!-- <label for="drawing-shadow-color">Shadow color:</label>
+            <!-- <label for="drawing-shadow-color">Shadow color:</label>
           <input
             type="color"
             bind:value={shadowColor}
@@ -1508,84 +1483,85 @@
             max="50"
             id="drawing-shadow-offset"
           /> -->
-        </div>
-        <div class="eraseTab" class:hidden={current != "erase"}>
-          <div class="widthBox">
-            <div
-              class="lineWidth"
-              style="background-color: black;margin:  0px auto;"
+          </div>
+          <div class="eraseTab" class:hidden={current != "erase"}>
+            <div class="widthBox">
+              <div
+                class="lineWidth"
+                style="background-color: black;margin:  0px auto;"
+              />
+            </div>
+            <span class="info">{lineWidth}</span><input
+              type="range"
+              min="10"
+              max="500"
+              id="erase-line-width"
+              bind:value={lineWidth}
             />
           </div>
-          <span class="info">{lineWidth}</span><input
-            type="range"
-            min="10"
-            max="500"
-            id="erase-line-width"
-            bind:value={lineWidth}
-          />
-        </div>
-        <div class="fillTab" class:hidden={current != "fill"}>
-          <input type="color" bind:value={fillColor} id="fill-color" />
-        </div>
-        <div class="selectTab" class:hidden={current != "select"}>
-          <a on:click={Copy}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
-          >
-          <a on:click={Paste}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
-          >
-          <a on:click={Delete}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
-          >
-        </div>
-        <div class="saveBox" class:hidden={current != "saveToggle"}>
-          <div class="saveTab">
-            {#if appType != "avatar" && appType != "house"}
-              <label for="title">Title</label>
-              <NameGenerator bind:value={displayName} bind:invalidTitle />
-
-              <label for="status">Status</label>
-              <select bind:value={status} on:change={() => (answer = "")}>
-                {#each statussen as status}
-                  <option value={status}>
-                    {status}
-                  </option>
-                {/each}
-              </select>
-            {/if}
-
-            <button on:click={upload}
-              >{#if saving}Saving{:else if saved} Saved{:else}Save{/if}</button
+          <div class="fillTab" class:hidden={current != "fill"}>
+            <input type="color" bind:value={fillColor} id="fill-color" />
+          </div>
+          <div class="selectTab" class:hidden={current != "select"}>
+            <a on:click={Copy}
+              ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
             >
-            {#if saved}
-              <button on:click={download}>Download</button>
-            {/if}
+            <a on:click={Paste}
+              ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
+            >
+            <a on:click={Delete}
+              ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
+            >
+          </div>
+          <div class="saveBox" class:hidden={current != "saveToggle"}>
+            <div class="saveTab">
+              {#if appType != "avatar" && appType != "house"}
+                <label for="title">Title</label>
+                <NameGenerator bind:value={displayName} bind:invalidTitle />
+
+                <label for="status">Status</label>
+                <select bind:value={status} on:change={() => (answer = "")}>
+                  {#each statussen as status}
+                    <option value={status}>
+                      {status}
+                    </option>
+                  {/each}
+                </select>
+              {/if}
+
+              <button on:click={upload}
+                >{#if saving}Saving{:else if saved}
+                  Saved{:else}Save{/if}</button
+              >
+              {#if saved}
+                <button on:click={download}>Download</button>
+              {/if}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="iconbox">
-        <a on:click={undo}
-          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
-        >
-        <a on:click={redo}
-          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
-        >
-        <a id="drawing-mode" class:currentSelected={current === "draw"}
-          ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
-        >
-        <a id="erase-mode" class:currentSelected={current === "erase"}
-          ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" /></a
-        >
-        <!-- <button
+        <div class="iconbox">
+          <a on:click={undo}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
+          >
+          <a on:click={redo}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
+          >
+          <a id="drawing-mode" class:currentSelected={current === "draw"}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
+          >
+          <a id="erase-mode" class:currentSelected={current === "erase"}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" /></a
+          >
+          <!-- <button
           class="icon"
           id="fill-mode"
           class:currentSelected={current === "fill"}><BucketIcon /></button
         > -->
-        <a id="select-mode" class:currentSelected={current === "select"}
-          ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
-        >
-        <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
+          <a id="select-mode" class:currentSelected={current === "select"}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
+          >
+          <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
           <button
             class="icon"
             id="camera-mode"
@@ -1593,34 +1569,120 @@
             on:click={camera}><CameraIcon /></button
           >
         {/if} -->
-        <!-- <button id="clear-canvas" class="btn btn-info icon">
+          <!-- <button id="clear-canvas" class="btn btn-info icon">
           <TrashIcon />
         </button> -->
 
-        <!-- svelte-ignore a11y-missing-attribute -->
-        <a
-          class:currentSelected={current === "saveToggle"}
-          on:click={() => {
-            // console.log("saving is clicked");
-            // console.log("length", canvas.toJSON().objects);
-            if (isDrawn) {
-              if (appType == "drawing" || appType == "stopmotion") {
-                saveToggle = !saveToggle;
-                switchOption("saveToggle");
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <a
+            class:currentSelected={current === "saveToggle"}
+            on:click={() => {
+              // console.log("saving is clicked");
+              // console.log("length", canvas.toJSON().objects);
+              if (isDrawn) {
+                if (appType == "drawing" || appType == "stopmotion") {
+                  saveToggle = !saveToggle;
+                  switchOption("saveToggle");
+                }
+                upload();
               }
-              upload();
-            }
-          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
-        >
+            }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+          >
+        </div>
+      </div>
+    </div>
+    <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg" /></div>
+    {#if appType == "avatar"}
+      <div id="avatarBox">
+        <Avatar />
+      </div>
+    {/if}
+
+    <div class="inner-container">
+      {#if current == "camera"}
+        <video bind:this={video} autoplay />
+        <button on:click={capturePicture} class="videoButton" />
+        <div class="videocanvas">
+          <canvas bind:this={videoCanvas} />
+        </div>
+      {/if}
+      <!-- <div class="topbar">
+      <div>
+        <a on:click={undo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg"></a>
+        <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
+      </div>
+    </div> -->
+      <div class="canvasBox" class:hidden={current === "camera"}>
+        <canvas bind:this={canv} class="canvas" />
+        <canvas bind:this={Cursor} id="cursor" />
+      </div>
+      <div class="savecanvas">
+        <canvas bind:this={saveCanvas} />
+      </div>
+      <div class="frame-box">
+        {#if appType == "stopmotion" || appType == "avatar"}
+          <div id="framebar">
+            {#each frames as frame, index}
+              <div>
+                <div
+                  id={index}
+                  class:selected={currentFrame === index}
+                  on:click={() => {
+                    changeFrame(index);
+                    console.log("debug index of frame:", index); //remove debug
+                  }}
+                  style="background-image: url({backgroundFrames[index]})"
+                >
+                  <div>{index + 1}</div>
+                </div>
+                {#if currentFrame === index && frames.length > 1}
+                  <img
+                    class="icon"
+                    on:click={() => {
+                      deleteFrame(index);
+                    }}
+                    src="assets/SHB/svg/AW-icon-trash.svg"
+                  />
+                {/if}
+              </div>
+            {/each}
+            {#if frames.length < maxFrames}
+              <div>
+                <div id="frameNew" on:click={addFrame}><div>+</div></div>
+              </div>
+            {/if}
+          </div>
+          <div class="frame-buttons">
+            {#if play}
+              <a
+                id="playPause"
+                on:click={() => {
+                  play = false;
+                  setPlay(false);
+                }}
+                ><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" /></a
+              >
+            {:else}
+              <a
+                id="playPause"
+                on:click={() => {
+                  play = true;
+                  setPlay(true);
+                }}><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" /></a
+              >
+            {/if}
+            <a on:click={backgroundHide}
+              ><img
+                class="icon"
+                class:unselected={!showBackground}
+                src="assets/SHB/svg/AW-icon-onion.svg"
+              /></a
+            >
+          </div>
+        {/if}
       </div>
     </div>
   </div>
-  <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg" /></div>
-  {#if appType == "avatar"}
-    <div id="avatarBox">
-      <Avatar />
-    </div>
-  {/if}
 </main>
 
 <style>
@@ -1629,10 +1691,19 @@
     padding: 0;
     margin: 0;
   }
-  main {
-    margin: 0 auto;
-    width: fit-content;
+
+  .main-container {
+    /* width: 100vw;
+    height: 100vh; */
+    /* justify-content: center; */
+    /* margin: 100px; */
+    display: flex;
+    align-items: center;
   }
+
+  /* .canvas-container {
+    height: calc(100vh - 250px);
+  } */
 
   #cursor {
     pointer-events: none !important;
@@ -1816,10 +1887,11 @@
 
   /* new css */
   .canvasBox {
+    position: relative;
     background-color: white;
+    border: 2px solid #7300ed;
     /* margin: 0 auto; */
     /* width: fit-content; */
-    border: 2px solid #7300ed;
     /* position: relative; */
     /* max-width: 100%; */
     /* min-width: 20%; */
@@ -1848,8 +1920,8 @@
   #framebar {
     display: flex;
     flex-direction: column;
-    max-height: 600px;
-    width: 100px;
+    max-height: 300px;
+    width: 130px;
     overflow-y: auto;
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
@@ -1857,14 +1929,14 @@
     /* margin: 5px; */
   }
   #framebar > div {
-    /* display: flex;
+    display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: row; */
+    flex-direction: row;
   }
 
   #framebar > div > img {
-    margin: 10px 10px 0 0;
+    /* margin: 10px 10px 0 0; */
   }
 
   #framebar > div > div {
@@ -1892,15 +1964,15 @@
     align-items: center;
   }
 
-  .frameDelete {
-    position: absolute;
-  }
+  /* .frameDelete {
+    position: abs;
+  } */
 
   .frame-buttons {
     display: flex;
     flex-direction: column;
-    margin-left: 10px;
-    align-self: flex-start;
+    /* margin-left: 10px; */
+    /* align-self: flex-start; */
   }
 
   .frame-buttons > a > img {
@@ -1909,7 +1981,7 @@
 
   #clear-canvas {
     position: fixed;
-    left: 20px;
+    left: 8px;
     top: 80px;
     z-index: 13;
     /* border: 2px solid #7300ed; */
@@ -1933,24 +2005,22 @@
     display: block;
   }
 
-  .canvas-container {
+  .inner-container {
     display: flex;
     flex-direction: row;
-    /* float: left; */
-    /* width: 100vw; */
   }
 
   .topbar {
     width: unset;
   }
 
-  .canvasBox {
-    /* height: min-content; */
-    /* width: min-content; */
+  /* .canvasBox {
+    height: min-content;
+    width: min-content;
 
-    /* max-width: 100%; */
-    /* margin: -4px; */
-  }
+    max-width: 100%;
+    margin: -4px;
+  } */
 
   .topbar {
     float: left;
@@ -1970,20 +2040,18 @@
     display: block;
   } */
 
-  .frame-box {
-    /* float: left; */
-  }
-
   #framebar > div:last-child {
     overflow-anchor: auto;
   }
 
   .optionbox-container {
+    margin: 0 10px 0 0;
+    /* z-index: 20;
     position: fixed;
     left: 0;
     top: 50vh;
     -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+    transform: translateY(-50%); */
   }
 
   .unselected {
@@ -1996,39 +2064,35 @@
     left: 20px;
   }
 
-  /* .frame-buttons > a > img {
-    display: block;
-  } */
-
-  @media only screen and (max-width: 1085px) {
-    .canvas-container {
+  @media only screen and (max-width: 1007px) {
+    .inner-container {
       flex-direction: column;
     }
 
-    .canvasBox {
-      /* height: 80vh; */
-      /* width: 100vw; */
-    }
+    /* .canvasBox {
+      height: 80vh; */
+    /* width: 100vw;
+    } */
 
     .frame-box {
-      margin-bottom: -70px;
-      border-top: 2px solid #7300ed;
-      background-color: white;
+      /* margin-bottom: -20px; */
+      /* border-top: 2px solid #7300ed; */
+      /* background-color: white; */
       flex-direction: row;
-      bottom: 0;
-      left: 0;
-      position: absolute;
-      width: 100%;
-      transition: all 0.5s ease-in-out;
+      /* bottom: 0; */
+
+      /* position: absolute; */
+      /* width: 100%; */
+      /* transition: all 0.5s ease-in-out; */
     }
 
-    .frame-box:hover {
-      margin-bottom: 0;
-    }
+    /* .frame-box:hover {
+      margin-bottom: 10px;
+    } */
 
     #framebar {
       flex-direction: row;
-      height: 140px;
+      /* height: 140px; */
       width: 450px;
       overflow-x: auto;
       overflow-y: none;
@@ -2036,34 +2100,107 @@
       scroll-snap-type: x proximity;
     }
 
-    #framebar > div {
+    /* #framebar > div {
+      padding: 0;
+      margin: 0;
       display: block;
+    } */
+
+    #framebar > div {
+      /* display: flex; */
+      /* justify-content: center; */
+      /* align-items: center; */
+      flex-direction: column;
     }
 
     #framebar > div > img {
-      display: inline-block;
+      /* display: inline-block;
       margin-left: -60px;
-      margin-top: 70px;
+      margin-top: 70px; */
     }
 
     .frame-buttons {
       /* display: flex; */
       flex-direction: row;
-      padding: 0;
-      justify-self: flex-start;
-      margin-top: 10px;
+      /* padding: 0; */
+      /* justify-self: flex-start; */
+      /* align-self: flex-start; */
     }
   }
 
   /* mobile */
-  @media only screen and (max-width: 500px) {
-    .canvasBox {
-      /* height: 100vh;
-      width: 100vw; */
+  @media only screen and (max-width: 640px) {
+    .main-container {
+      display: unset;
     }
 
+    .inner-container {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .canvasBox {
+      order: 2;
+      /* position: absolute; */
+      /* left: 0; */
+      /* top: 150px; */
+    }
+
+    .frame-box {
+      order: 1;
+      /* top: 0;
+      right: 0; */
+      /* border: none; */
+      flex-direction: row;
+      /* position: relative; */
+      width: 80%;
+      justify-content: space-between;
+      align-self: flex-end;
+      /* transition: all 0.5s ease-in-out; */
+    }
+
+    #framebar {
+      /* width: 230px; */
+      /* min-width: 190px; */
+      max-width: 300px;
+      height: 140px;
+      margin-right: 10px;
+    }
+
+    /* #framebar > div {
+      height: 100px;
+    } */
+
+    #framebar > div {
+      flex-direction: column-reverse;
+    }
+
+    #framebar > div > img {
+      /* margin-left: -60px; */
+      /* margin-top: 50px; */
+    }
+
+    .frame-buttons {
+      flex-direction: column-reverse;
+      margin: unset;
+      align-self: center;
+    }
+
+    /* .frame-box {
+      margin: 0;
+      border: unset;
+      position: relative;
+      transition: none;
+    } */
+
+    /* .frame-box:hover {
+      margin-top: 0;
+    } */
+
     .optionbox {
-      width: 100vw;
+      /* width: 100vw; */
+      width: 100%;
       height: min-content;
       position: fixed;
       bottom: 0;
@@ -2080,11 +2217,10 @@
       transition: none;
       animation: growup 0.3s ease-in-out forwards;
       transform-origin: bottom center;
-      /* width: 90vw;
-      float: right;
-      position: relative;
-      z-index: 20;
-      border-left: 2px solid #7300ed; */
+      /* width: 90vw; */
+      position: sticky;
+      z-index: 40;
+      /* border-left: 2px solid #7300ed; */
     }
 
     @keyframes growup {
@@ -2138,32 +2274,12 @@
       margin: 0 auto;
     }
 
-    .frame-box {
-      margin: 0;
-      border: unset;
-      position: relative;
-      transition: none;
-    }
-
-    .frame-box:hover {
-      margin: unset;
-    }
-
-    #framebar {
-      width: 160px;
-    }
-
     /* .topbar {
       width: max-content;
       margin: 0px auto;
       display: block;
     } */
     /* 
-    .frame-box {
-      height: min-content;
-      width: 80vw;
-      align-items: normal;
-    }
 
     #framebar {
       margin-bottom: 60px;
@@ -2176,7 +2292,7 @@
       display: inline-block;
     } */
 
-    .icon {
+    /* .icon {
       min-width: 50px;
       height: 50px;
       width: 50px;
@@ -2184,19 +2300,13 @@
       padding: 0;
       margin: 5px;
       cursor: pointer;
-    }
+    } */
 
     .currentSelected > img {
       border: 2px solid #7300ed;
     }
     .currentSelected {
       box-shadow: unset;
-    }
-
-    #clear-canvas {
-      top: initial;
-      left: 10px;
-      bottom: 80px;
     }
   }
 </style>

@@ -7,9 +7,11 @@ import Player from "./Player"
 class DebugFuntions {
     constructor(scene) {
         //scene = config.scene 
-
+        this.shiftDown = false
+        
     }
 
+    //DebugFuntions.keyboard
     keyboard(scene) {
         //combo ALT SHIT E F
         scene.input.keyboard.createCombo([16, 18, 69, 70], { resetOnMatch: true })
@@ -31,14 +33,65 @@ class DebugFuntions {
             //only activate debug functions when in edit mode
             if (ManageSession.gameEditMode) {
                 //console.log(event)
-                this.debugKeys(scene, event.code)
+                this.debugUpKeys(scene, event.code)
             }
         }, this)
 
-        // scene.events.emit(eventName, parameter0, ...)
+        scene.input.keyboard.on('keydown', function (event) {
+            //only activate debug functions when in edit mode
+            if (ManageSession.gameEditMode) {
+                //console.log(event)
+                this.debugDownKeys(scene, event.code)
+            }
+        }, this)
     }
 
-    debugKeys(scene, code) {
+    debugDownKeys(scene, code) {
+        switch (code) {
+            case 'ShiftLeft':
+                this.shiftDown = true
+                break
+
+            case 'ShiftRight':
+                this.shiftDown = true
+                break
+
+            case 'Equal':
+                if (this.shiftDown) {
+                    let scale = ManageSession.selectedGameObject.scale
+                    scale = scale + 0.01
+
+                    ManageSession.selectedGameObject.setScale(scale)
+                    //console.log("scale", scale)
+                } else {
+                    ManageSession.selectedGameObject.setScale(ManageSession.selectedGameObject_startScale)
+                }
+
+                break
+
+            case 'Minus':
+                if (this.shiftDown) {
+                    let scale = ManageSession.selectedGameObject.scale
+                    scale = scale - 0.01
+                    if (scale < 0.01) {
+                        scale = 0.01
+                    }
+                    ManageSession.selectedGameObject.setScale(scale)
+                    //console.log("scale", scale)
+                } else {
+                    ManageSession.selectedGameObject.x = ManageSession.selectedGameObject_startPosition.x
+                    ManageSession.selectedGameObject.y = ManageSession.selectedGameObject_startPosition.y
+                }
+                break
+
+            default:
+                //console.log(code)
+                break
+
+        }
+    }
+
+    debugUpKeys(scene, code) {
         //avoid E F -> already used for edit mode
 
         //edit mode to activate debugKeyboard
@@ -46,8 +99,10 @@ class DebugFuntions {
         // code: AltLeft, KeyS, Digit1 -> always the same for alphabet and digits
         // key: Alt, s, Shift, 1 -> always small key, also with shift, except with CAPS
         // keyCode: 18, 83, 49
+        //! keyU reserved for updating homes as ADMIN
 
         switch (code) {
+
             case ('ArrowRight'):
                 //reserverd for moving the camera in EditMode
                 ManageSession.currentScene.player.x += 50
@@ -176,30 +231,30 @@ class DebugFuntions {
 
                 console.log("a selected home will be saved server side")
 
-                console.log("ManageSession.selectedHomeGameObject container:", ManageSession.selectedHomeGameObject)
+                console.log("ManageSession.selectedGameObject container:", ManageSession.selectedGameObject)
 
                 //we check if the selected gameObject is a Home by looking if it has .locationDestination = "DefaultUserHome"
-                if (ManageSession.selectedHomeGameObject.locationDestination == "DefaultUserHome"){
+                if (ManageSession.selectedGameObject.locationDestination == "DefaultUserHome") {
 
-                    const updatedPosition = new Phaser.Math.Vector2(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, ManageSession.selectedHomeGameObject.x), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, ManageSession.selectedHomeGameObject.y))
+                    const updatedPosition = new Phaser.Math.Vector2(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, ManageSession.selectedGameObject.x), CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, ManageSession.selectedGameObject.y))
 
                     console.log("updated position = ", updatedPosition)
                     //console.log("scene.homes", ManageSession.currentScene.homes)
-                    const selectedHomeObject = this.scene.homes.find(element => element.user_id == ManageSession.selectedHomeGameObject.userHome)
+                    const selectedHomeObject = this.scene.homes.find(element => element.user_id == ManageSession.selectedGameObject.userHome)
                     console.log("selectedHomeObject ", selectedHomeObject)
-    
+
                     //replace the posX and posY of the selectedHomeObject with updatedPosition
                     console.log("selectedHomeObject.value", selectedHomeObject.value)
                     selectedHomeObject.value.posX = updatedPosition.x
                     selectedHomeObject.value.posY = updatedPosition.y
                     console.log("selectedHomeObject.value replaced: ", selectedHomeObject.value)
-    
+
                     const idObject = selectedHomeObject.user_id
                     const typeObject = selectedHomeObject.collection
                     const nameObject = selectedHomeObject.key
                     const valueObject = selectedHomeObject.value
                     const pubObject = 2
-    
+
                     updateObjectAdmin(idObject, typeObject, nameObject, valueObject, pubObject)
                 } else {
                     console.log("The selected gameObject is not a user Home")
@@ -224,8 +279,29 @@ class DebugFuntions {
 
                 break
 
-            default:
+            case 'Equal':
+                if (this.shiftDown) {
+                    console.log("editMode info scale:  ",  ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height* ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
+                }
 
+                break
+
+            case 'Minus':
+                if (this.shiftDown) {
+                    console.log("editMode info scale:  ",  ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height* ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
+                }
+                break
+
+            case 'ShiftLeft':
+                this.shiftDown = false
+                break
+
+            case 'ShiftRight':
+                this.shiftDown = false
+                break
+
+            default:
+                //console.log(code)
                 break
 
         }
