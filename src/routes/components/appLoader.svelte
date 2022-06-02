@@ -97,7 +97,7 @@
 
     #close {
         position: fixed;
-        left: 20px;
+        left: 8px;
         top: 20px;
         z-index: 13;
         box-shadow: 5px 5px 0px #7300ed;
@@ -111,12 +111,5 @@
 
     #close > img {
         width: 40px;
-    }
-
-    /* mobile */
-    @media only screen and (max-width: 500px) {
-        #close {
-            left: 10px;
-        }
     }
 </style>
