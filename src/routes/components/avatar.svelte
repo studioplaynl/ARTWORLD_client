@@ -14,9 +14,10 @@
 
 
   async function nextVersion() {
+    if($Profile.meta.LastAvatarVersion <= version) return
     version++;
     console.log("version", version);
-
+    console.log("$Profile.meta.LastAvatarVersion",$Profile.meta.LastAvatarVersion)
     url = await setAvatar(`avatar/${$Profile.id}/${version}_current.png`)
     img.src = url;
     img.onerror = () => {
@@ -34,12 +35,18 @@
     setAvatar(`avatar/${$Profile.id}/${version}_current.png`)
   }
 
-
-
-  onMount(async () => {
+  function loadUrl(){
     url = $Profile.url
     console.log(url);
     version = Number($Profile.avatar_url.split("/")[2].split("_")[0]);
+  }
+
+  Profile.subscribe(loadUrl)
+
+
+
+  onMount(async () => {
+    loadUrl()
     interval = setInterval(() => {
       frame++;
       if (frame >= image.clientWidth / 150) {
