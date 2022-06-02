@@ -67,13 +67,13 @@
 </script>
 
 {#if !!appOpen}
-    <div id="close" on:click={closeApp}>
-        <img src="assets/SHB/svg/AW-icon-cross.svg" />
-    </div>
     <div
         class="app"
         transition:fly={{ y: window.innerHeight, duration: 700, opacity: 1 }}
     >
+        <div id="close" on:click={closeApp}>
+            <img src="assets/SHB/svg/AW-icon-cross.svg" />
+        </div>
         {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar" || appOpen == "drawingchallenge"}
             <DrawingApp bind:appType={appOpen} />
         {/if}

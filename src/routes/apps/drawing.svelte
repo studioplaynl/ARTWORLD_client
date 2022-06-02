@@ -1396,7 +1396,7 @@
               </div>
               {#if currentFrame === index && frames.length > 1}
                 <img
-                  class="icon frameDelete"
+                  class="icon"
                   on:click={() => {
                     deleteFrame(index);
                   }}
@@ -1850,7 +1850,7 @@
     display: flex;
     flex-direction: column;
     max-height: 600px;
-    width: 100px;
+    width: 130px;
     overflow-y: auto;
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
@@ -1858,14 +1858,14 @@
     /* margin: 5px; */
   }
   #framebar > div {
-    /* display: flex;
+    display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: row; */
+    flex-direction: row;
   }
 
   #framebar > div > img {
-    margin: 10px 10px 0 0;
+    /* margin: 10px 10px 0 0; */
   }
 
   #framebar > div > div {
@@ -1893,15 +1893,15 @@
     align-items: center;
   }
 
-  .frameDelete {
-    position: absolute;
-  }
+  /* .frameDelete {
+    position: abs;
+  } */
 
   .frame-buttons {
     display: flex;
     flex-direction: column;
-    margin-left: 10px;
-    align-self: flex-start;
+    /* margin-left: 10px; */
+    /* align-self: flex-start; */
   }
 
   .frame-buttons > a > img {
@@ -1945,13 +1945,13 @@
     width: unset;
   }
 
-  .canvasBox {
-    /* height: min-content; */
-    /* width: min-content; */
+  /* .canvasBox {
+    height: min-content;
+    width: min-content;
 
-    /* max-width: 100%; */
-    /* margin: -4px; */
-  }
+    max-width: 100%;
+    margin: -4px;
+  } */
 
   .topbar {
     float: left;
@@ -1998,13 +1998,13 @@
       flex-direction: column;
     }
 
-    .canvasBox {
-      /* height: 80vh; */
-      /* width: 100vw; */
-    }
+    /* .canvasBox {
+      height: 80vh; */
+    /* width: 100vw;
+    } */
 
     .frame-box {
-      margin-bottom: -70px;
+      /* margin-bottom: -20px; */
       border-top: 2px solid #7300ed;
       background-color: white;
       flex-direction: row;
@@ -2012,16 +2012,16 @@
       left: 0;
       position: absolute;
       width: 100%;
-      transition: all 0.5s ease-in-out;
+      /* transition: all 0.5s ease-in-out; */
     }
 
-    .frame-box:hover {
+    /* .frame-box:hover {
       margin-bottom: 0;
-    }
+    } */
 
     #framebar {
       flex-direction: row;
-      height: 140px;
+      /* height: 140px; */
       width: 450px;
       overflow-x: auto;
       overflow-y: none;
@@ -2029,24 +2029,31 @@
       scroll-snap-type: x proximity;
     }
 
-    #framebar > div {
+    /* #framebar > div {
       padding: 0;
       margin: 0;
       display: block;
+    } */
+
+    #framebar > div {
+      /* display: flex; */
+      /* justify-content: center; */
+      /* align-items: center; */
+      flex-direction: column;
     }
 
     #framebar > div > img {
-      display: inline-block;
+      /* display: inline-block;
       margin-left: -60px;
-      margin-top: 70px;
+      margin-top: 70px; */
     }
 
     .frame-buttons {
       /* display: flex; */
       flex-direction: row;
-      padding: 0;
-      justify-self: flex-start;
-      margin-top: 10px;
+      /* padding: 0; */
+      /* justify-self: flex-start; */
+      /* align-self: flex-start; */
     }
   }
 
@@ -2080,23 +2087,26 @@
       /* width: 230px; */
       /* min-width: 190px; */
       max-width: 300px;
-      height: 115px;
+      height: 140px;
     }
 
+    /* #framebar > div {
+      height: 100px;
+    } */
+
     #framebar > div {
-      /* height: 100px; */
+      flex-direction: column-reverse;
     }
 
     #framebar > div > img {
       /* margin-left: -60px; */
-      margin-top: 50px;
+      /* margin-top: 50px; */
     }
 
     .frame-buttons {
-      /* flex-grow: 1; */
       flex-direction: column-reverse;
-      /* margin: 0; */
-      /* align-self: unset; */
+      margin: unset;
+      align-self: center;
     }
 
     /* .frame-box {
@@ -2204,7 +2214,7 @@
       display: inline-block;
     } */
 
-    .icon {
+    /* .icon {
       min-width: 50px;
       height: 50px;
       width: 50px;
@@ -2212,7 +2222,7 @@
       padding: 0;
       margin: 5px;
       cursor: pointer;
-    }
+    } */
 
     .currentSelected > img {
       border: 2px solid #7300ed;
