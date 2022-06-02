@@ -10,7 +10,7 @@ class Background {
         const worldSize = config.scene.worldSize
 
         ///*........... white background of worldSize*2 width .............................................................
-        scene.add.rectangle(0, 0, worldSize.x * 1.2, worldSize.y * 1.2, config.backgroundColor).setOrigin(0)
+        scene.add.rectangle(0, 0, worldSize.x, worldSize.y, config.backgroundColor).setOrigin(0)
 
         //*........... repeating pattern on the white background .............................................................
         const gridWidth = worldSize.x

@@ -1,8 +1,8 @@
 import { get } from "svelte/store";
 import { client, SSL } from "../../nakama.svelte";
 import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate from artworld coordinates to Phaser 2D screen coordinates
-import {location} from "svelte-spa-router"
-import {Notification} from "../../session"
+import { location } from "svelte-spa-router"
+import { Notification } from "../../session"
 
 import { SCENES } from "./config.js";
 
@@ -37,6 +37,11 @@ class ManageSession {
     this.matchID;
     this.deviceID;
 
+    // for back button
+    this.locationHistory = [];
+    this.location; // scene key to start a scene
+    this.locationID; //the user_id if the scene is a house => DefaultUserHome
+
     this.AccountObject;
     this.playerObjectSelf;
     this.createPlayer = true;
@@ -61,18 +66,16 @@ class ManageSession {
     this.playerAvatarKeyDefault = "avatar1"
     this.playerMovingKey = "moving"
     this.playerStopKey = "stop"
+    this.lastMoveCommand = {action: "stop", posX: 0, posY: 0, location: this.location}
 
-    this.draggableHomes = false
+    //this.draggableHomes = false
     this.selectedHomeGameObject //to select a home and save it's position as admin server side
 
     this.gameStarted = false;
     this.currentScene;
     this.launchLocation = "Location1"; //default
 
-    // for back button
-    this.locationHistory = [];
-    this.location; // scene key to start a scene
-    this.locationID; //the user_id if the scene is a house => DefaultUserHome
+    
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";
@@ -110,7 +113,7 @@ class ManageSession {
   setUrl(local, posX, posY) {
     //console.log(" setUrl location, posX, posY", location, posX, posY)
     //console.log("window.location",get(location))
-    window.history.pushState('', 'Artworld', '/?location='+local+'&posX='+Math.round(posX)+'&posY='+Math.round(posY) + "#" + get(location))
+    window.history.pushState('', 'Artworld', '/?location=' + local + '&posX=' + Math.round(posX) + '&posY=' + Math.round(posY) + "#" + get(location))
   }
   // .......................... end URL PARSING .....................................
 
@@ -216,13 +219,13 @@ class ManageSession {
       if (!!streampresence.joins) {
         streampresence.joins.forEach((join) => {
           //filter out the player it self
-          console.log("this.userProfile.id", this.userProfile.id);
+          //console.log("this.userProfile.id", this.userProfile.id);
           if (join.user_id != this.userProfile.id) {
             //console.log(this.userProfile)
-            console.log("some one joined");
+            console.log("some one joined", join);
             // this.getStreamUsers("home")
             //console.log(join.username)
-            console.log("join", join);
+            //console.log("join", join);
             //const tempName = join.user_id
             this.getStreamUsers("get_users", this.location);
           } else {
@@ -239,7 +242,7 @@ class ManageSession {
       console.log("Received %o", notif);
       console.log("Notification content %s", notif);
 
-  }
+    }
   } //end createSocket
 
   async getStreamUsers(rpc_command, location) {
@@ -278,6 +281,15 @@ class ManageSession {
           console.log("remove onlinePlayer", onlinePlayer);
         }
       });
+
+      //send our current location in the world to all connected players
+      console.log("send our current location in the world to all connected players")
+      //console.log("this.lastMoveCommand", this.lastMoveCommand)
+      //console.log("this.currentScene", this.currentScene)
+      console.log("this.lastMoveCommand", this.lastMoveCommand)
+      // if (typeof this.currentScene != "undefined") {
+        setTimeout (() => {this.sendMoveMessage(this.currentScene, this.lastMoveCommand.posX, this.lastMoveCommand.posY, this.lastMoveCommand.action)}, 1500) 
+      // }
     });
   }
 
@@ -313,21 +325,18 @@ class ManageSession {
     //transpose phaser coordinates to artworld coordinates
     //console.log(scene)
 
+    //
+    this.lastMoveCommand = {action: action, posX: posX, posY: posY, location: this.location}
+    console.log("this.lastMoveCommand", this.lastMoveCommand)
+
     //console.log(posX, posY)
     posX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, posX);
     posY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, posY);
     //console.log(posX, posY)
 
-    var opCode = 1;
-    var data = `{ "action": "${action}", "posX": ${posX}, "posY": ${posY}, "location": "${this.location}" }`;
-
-    //  '{ "action": ' + action +  '"posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }'
-    //console.log(data)
-
+    const data = `{ "action": "${action}", "posX": ${posX}, "posY": ${posY}, "location": "${this.location}" }`;
+    
     this.socket.rpc("move_position", data);
-    // .then((rec) => {
-    //   console.log(rec)
-    // });
   } //end sendChatMessage
 
   checkIfSceneExists(location) {
@@ -373,7 +382,7 @@ class ManageSession {
     });
   }
 
-  
+
 
 
 

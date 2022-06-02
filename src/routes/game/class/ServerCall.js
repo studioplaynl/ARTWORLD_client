@@ -227,12 +227,12 @@ class ServerCall {
     // get converted image from AWS
     const url = element.value.url
 
-    console.log("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
+    //console.log("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
     scene.homesRepresented[index] = new GenerateLocation({
       scene: scene,
       size: 140,
       userHome: element.user_id,
-      draggable: ManageSession.draggableHomes,
+      draggable: ManageSession.gameEditMode,
       type: "image",
       x: CoordinatesTranslator.artworldToPhaser2DX(
         scene.worldSize.x,

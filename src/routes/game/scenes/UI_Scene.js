@@ -105,48 +105,15 @@ export default class UI_Scene extends Phaser.Scene {
 
     switch (arg) {
       case 'on':
-        if (typeof scene.editModeElements == "undefined") {
-
-          break
-        }
-
-        if (scene.editModeElements.length > 0) {
-          console.log("set elements to draggable")
-          //console.log("scene.homesRepresented", scene.homesRepresented)
-
-          ManageSession.draggableHomes = true
-          scene.homes = []
-          scene.homesRepresented.forEach((element) => element.destroy())
-          ServerCall.getHomesFiltered("home", "Amsterdam", 100, ManageSession.currentScene)
-
-          scene.editModeElements.forEach((element) => {
-            element.setInteractive({ draggable: true })
-
-          })
-
-        }
-
+        //ManageSession.gameEditMode is already set in Debugkeys
+        //we restart the scene with the new flag
+        scene.scene.restart()
         break
 
       case 'off':
-
-        if (typeof scene.editModeElements == "undefined") {
-          break
-        }
-
-        if (scene.editModeElements.length > 0) {
-
-          ManageSession.draggableHomes = false
-          scene.homes = []
-          scene.homesRepresented.forEach((element) => element.destroy())
-          ServerCall.getHomesFiltered("home", "Amsterdam", 100, ManageSession.currentScene)
-
-          scene.editModeElements.forEach((element) => {
-            element.disableInteractive()
-            //console.log("element", element)
-          })
-
-        }
+        //ManageSession.gameEditMode is already set in Debugkeys
+        //we restart the scene with the new flag
+        scene.scene.restart()
         break
     }
   }
