@@ -151,8 +151,8 @@ export default class Artworld extends Phaser.Scene {
     Background.circle({
       scene: this,
       name: "gradientAmsterdam1",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -249),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 66),
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1743),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -634),
       size: 810,
       gradient1: 0x85feff,
       gradient2: 0xff01ff,
@@ -163,8 +163,8 @@ export default class Artworld extends Phaser.Scene {
     Background.circle({
       scene: this,
       name: "gradientAmsterdam2",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 51),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 684),
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2093),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1011),
       size: 564,
       gradient1: 0xfbff00,
       gradient2: 0x85feff,
@@ -175,8 +175,8 @@ export default class Artworld extends Phaser.Scene {
     Background.circle({
       scene: this,
       name: "gradientAmsterdam3",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 654),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -303),
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1990),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -927),
       size: 914,
       gradient1: 0x3a4bba,
       gradient2: 0xbb00ff,
@@ -189,8 +189,8 @@ export default class Artworld extends Phaser.Scene {
     Background.circle({
       scene: this,
       name: "gradientGrass1",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1728),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -411),
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
       size: 2300,
       gradient1: 0x15d64a,
       gradient2: 0x2b8042,
@@ -215,15 +215,17 @@ export default class Artworld extends Phaser.Scene {
 
 
     // sunglass_stripes
-    this.sunglasses_striped = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 564),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 383.34),
+    this.sunglasses_stripes = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1417),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 687),
       "sunglass_stripes"
     )
+    this.sunglasses_stripes.name = "sunglass_stripes"
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.sunglasses_striped.setInteractive({ draggable: true }) }
+    if (ManageSession.gameEditMode) { this.sunglasses_stripes.setInteractive({ draggable: true }) }
 
-    this.train = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -790), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'metro_train_grey')
+    this.train = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 617), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1357), 'metro_train_grey')
+    this.train.name = "train"
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.train.setInteractive({ draggable: true })
@@ -242,7 +244,7 @@ export default class Artworld extends Phaser.Scene {
 
 
     //create(scene, x, y, width, height, name, color, imageFile = null) {
-    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1540), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 776), 800, 400, "graffitiBrickWall", 0, 'brickWall')
+    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2323), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1306), 800, 400, "graffitiBrickWall", 0, 'brickWall')
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) { this.graffitiBrickWall.setInteractive({ draggable: true }) }
 
@@ -283,7 +285,7 @@ export default class Artworld extends Phaser.Scene {
           this.physics.pause()
         })
 
-      GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1383), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1600), 400, 400, "sunDraw", 180, 'artFrame_512') 
+      GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1383), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1600), 400, 400, "sunDraw", 180, 'artFrame_512')
       this.sunDraw.setVisible(false)
 
 
@@ -316,6 +318,7 @@ export default class Artworld extends Phaser.Scene {
 
     this.cloudDrawingExample = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1200), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2050), "drawn_cloud")
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
+    this.cloudDrawingExample.name = "cloudDrawingExample"
     if (ManageSession.gameEditMode) {
       this.cloudDrawingExample.setInteractive({ draggable: true })
     } else {
@@ -361,15 +364,17 @@ export default class Artworld extends Phaser.Scene {
 
 
     //...................................................................................................
-    this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -784.67), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 800), 'photo_camera').setFlip(true, false)
+    this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 662), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1377), 'photo_camera').setFlip(true, false)
+    this.photo_camera.name = "photo_camera"
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) {  this.photo_camera.setInteractive({ draggable: true })  }
+    if (ManageSession.gameEditMode) { this.photo_camera.setInteractive({ draggable: true }) }
 
-    this.tree_palm = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 117),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1106.33),
+    this.tree_palm = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -193),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 440),
       "tree_palm")
-        //we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) {  this.tree_palm.setInteractive({ draggable: true })  }
+    this.tree_palm.name = "tree_palm"
+    //we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) { this.tree_palm.setInteractive({ draggable: true }) }
 
     Exhibition.AbriBig({
       scene: this,
@@ -378,8 +383,8 @@ export default class Artworld extends Phaser.Scene {
       posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1357),
       size: 564,
     })
-      //we set elements draggable for edit mode by restarting the scene and checking for a flag
-      if (ManageSession.gameEditMode) {  this.exhibit_outdoor_big1.setInteractive({ draggable: true })  }
+    //we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) { this.exhibit_outdoor_big1.setInteractive({ draggable: true }) }
 
 
     Exhibition.AbriSmall2({
@@ -389,27 +394,10 @@ export default class Artworld extends Phaser.Scene {
       posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1149),
       size: 564,
     })
-      //we set elements draggable for edit mode by restarting the scene and checking for a flag
-      if (ManageSession.gameEditMode) {  this.exhibit_outdoor_small2_1.setInteractive({ draggable: true })  }
+    //we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) { this.exhibit_outdoor_small2_1.setInteractive({ draggable: true }) }
 
-    //! needed for handling object dragging
-    this.input.on('dragstart', function (pointer, gameObject) {
 
-    }, this)
-
-    this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
-      gameObject.x = dragX;
-      gameObject.y = dragY;
-    }, this)
-
-    this.input.on('dragend', function (pointer, gameObject) {
-      let worldX = CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x)
-      let worldY = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y)
-      console.log(worldX, worldY)
-      console.log("gameObject", gameObject)
-      ManageSession.selectedHomeGameObject = gameObject
-    }, this)
-    //!
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
     // End Background .........................................................................................
@@ -431,17 +419,44 @@ export default class Artworld extends Phaser.Scene {
     //https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
     //......... end PLAYER VS WORLD .......................................................................
 
+    //! needed for handling object dragging
+    this.input.on('dragstart', function (pointer, gameObject) {
 
+    }, this)
+
+    this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
+      gameObject.x = dragX;
+      gameObject.y = dragY;
+
+      gameObject.data.get('vector').set(dragX, dragY);
+    }, this)
+
+    this.input.on('dragend', function (pointer, gameObject) {
+      let worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x))
+      let worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y))
+      
+
+      //store the original scale when selecting the gameObject for the first time
+      if (ManageSession.selectedGameObject != gameObject) {
+        ManageSession.selectedGameObject = gameObject
+        ManageSession.selectedGameObject_startScale = gameObject.scale
+        ManageSession.selectedGameObject_startPosition.x = gameObject.x
+        ManageSession.selectedGameObject_startPosition.y = gameObject.y
+        console.log("editMode info startScale:", ManageSession.selectedGameObject_startScale)
+      }
+      //ManageSession.selectedGameObject = gameObject
+
+      console.log("editMode info posX posY: ", worldX, worldY, "scale:",  ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height* ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
+    }, this)
+
+
+    //!
 
     //.......... locations ................................................................................
     ServerCall.getHomesFiltered("home", "Amsterdam", 100, this)
     this.generateLocations()
     //.......... end locations ............................................................................
 
-    //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
-
-    //create items bar for onlineplayer, after UIscene, because it need currentZoom
-    //Player.createOnlinePlayerItemsBar(this)
     Player.loadPlayerAvatar(this)
     // this.avatarDetailsContainer.setDepth(999)
 
@@ -487,11 +502,11 @@ export default class Artworld extends Phaser.Scene {
     let path = { t: 0, vec: new Phaser.Math.Vector2() };
 
     this.curve = new Phaser.Curves.Spline([
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2535), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 375),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2154), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 246),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2203), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -143),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1641), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -133),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1461), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 702),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -977), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 598),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -604), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 526),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -608), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 92),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 339), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 202),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 616), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 972),
     ]);
 
     let points = this.curve.points;
@@ -507,27 +522,6 @@ export default class Artworld extends Phaser.Scene {
 
       this.input.setDraggable(this.handle);
     }
-
-    this.input.on('dragstart', function (pointer, gameObject) {
-
-
-    });
-
-    this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
-
-      gameObject.x = dragX;
-      gameObject.y = dragY;
-
-      gameObject.data.get('vector').set(dragX, dragY);
-
-    });
-
-    this.input.on('dragend', function (pointer, gameObject) {
-
-
-    });
-
-
 
     this.curveGraphics = this.add.graphics();
   }
@@ -584,7 +578,7 @@ export default class Artworld extends Phaser.Scene {
 
   generateLocations() {
     //we set draggable on restart scene with a global flag
-    
+
     let location1Vector = new Phaser.Math.Vector2(-701.83, -304.33)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
@@ -652,11 +646,11 @@ export default class Artworld extends Phaser.Scene {
       color3: 0x63a505,
     })
     this.mario_star.setDepth(140)
-   
+
 
     music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
 
-    location1Vector = new Phaser.Math.Vector2(22, 800)
+    location1Vector = new Phaser.Math.Vector2(-2125, 1017)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       location1Vector

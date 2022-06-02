@@ -9,6 +9,7 @@ import ar from "../../../langauge/ar/ui.json"
 import HistoryTracker from "../class/HistoryTracker"
 import DebugFuntions from "../class/DebugFuntions"
 import { element } from "svelte/internal"
+import CoordinatesTranslator from "../class/CoordinatesTranslator"
 import ServerCall from "../class/ServerCall"
 
 i18next.init({
@@ -64,12 +65,19 @@ export default class UI_Scene extends Phaser.Scene {
     })
 
     //......... INPUT .....................................................................................
+    // keyboard events caught for debug functions, edit mode
     this.input.keyboard.createCursorKeys()
+
+    // dragging events caught for when in editMode
+    
+
     //.......... end INPUT ................................................................................
+
     //......... DEBUG FUNCTIONS ...........................................................................
     this.events.on('gameEditMode', this.gameEditModeSign, this) // show edit mode indicator
     this.events.on('gameEditMode', this.editElementsScene, this) // make elements editable
 
+    // keyboard events caught for debug functions, edit mode
     DebugFuntions.keyboard(this)
     //......... end DEBUG FUNCTIONS .......................................................................
 

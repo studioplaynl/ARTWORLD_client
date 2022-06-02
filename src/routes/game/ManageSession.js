@@ -68,14 +68,17 @@ class ManageSession {
     this.playerStopKey = "stop"
     this.lastMoveCommand = {action: "stop", posX: 0, posY: 0, location: this.location}
 
-    //this.draggableHomes = false
-    this.selectedHomeGameObject //to select a home and save it's position as admin server side
+    //.....................................................................
+    // to select a home and save it's position as admin server side (it doesn't save when it is not a home)
+    // and to select and manipulate GameObjects in Edit Mode
+    this.selectedGameObject 
+    this.selectedGameObject_startScale = 1 //being able to reset scale to original, within edit mode
+    this.selectedGameObject_startPosition = new Phaser.Math.Vector2(0,0) //being able to reset position to original, within edit mode
+    //.....................................................................
 
     this.gameStarted = false;
     this.currentScene;
     this.launchLocation = "Location1"; //default
-
-    
 
     //chat example
     this.channelId = "pineapple-pizza-lovers-room";

@@ -9,6 +9,7 @@ class GraffitiWall {
 
     //we name the container as this.[name] so we can reference it later
     scene[name] = scene.add.container()
+    scene[name].name = name
     scene[name].setSize(width + 10, height + 10)
 
     // checking if a drawing wall has a front image

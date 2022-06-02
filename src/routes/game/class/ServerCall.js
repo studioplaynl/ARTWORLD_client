@@ -245,6 +245,7 @@ class ServerCall {
       locationDestination: "DefaultUserHome",
       locationText: locationDescription,
       locationImage: homeImageKey,
+      referenceName: locationDescription,
       enterButtonImage: "enter_button",
       fontColor: 0x8dcb0e,
       color1: 0xffe31f,
