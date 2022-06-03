@@ -67,7 +67,11 @@ export async function uploadHouse( data) {
   console.log("value",value)
   value.username = prof.username
   if(!!!value.version) value.version = 0
-  else value.version = value.version + 1 
+  else value.version = value.version + 1
+  if(value.version > value.LastVersion){
+    value.LastVersion = value.version
+  }
+  
   pub = true
 
   var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png", value.version)
@@ -256,7 +260,7 @@ export async function getFile(file_url) {
 
 export async function uploadAvatar(data, json) {
   setLoader(true);
-  let avatarVersion = Number(prof.avatar_url.split("/")[2].split("_")[0]) + 1
+  let avatarVersion = prof.meta.LastAvatarVersion + 1
   if(!!!avatarVersion) avatarVersion = 0
   var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png", avatarVersion)
   console.log(jpegURL)

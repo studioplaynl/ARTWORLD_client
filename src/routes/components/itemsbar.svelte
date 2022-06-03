@@ -98,39 +98,7 @@
     }
   });
 
-  function subscribeToLiked() {
-    //console.log("subscribeToLiked");
-    Liked.subscribe((value) => {
-      alreadySubscribedToLiked = true;
-      console.log("subscribeToLiked value", value);
-      console.log(
-        "lastLengthArtworks, value.length",
-        lastLengthArtworks,
-        value.length
-      );
-      if (lastLengthArtworks != value.length) {
-        console.log("subscribeToLiked value changed");
-        lastLengthArtworks = value.length;
-        //clear the images list
-        images = [];
-        likedArtworks = value;
-        console.log("images, likedArtworks", images, likedArtworks);
-
-        if (likedArtworks.length > 0) {
-          likedArtworks.forEach(async (liked) => {
-            console.log("liked", liked);
-            console.log("liked.url", liked.value.url);
-            images.push({
-              img: await convertImage(liked.value.url, "128", "128"),
-              url: liked.value.url,
-            });
-            images = images;
-            console.log("images", images);
-          });
-        }
-      }
-    });
-  }
+ 
 
   function subscribeToAddressbook() {
     Addressbook.subscribe((value) => {
@@ -177,10 +145,7 @@
       current = false;
       return;
     }
-    //subscribe once to the Liked store
-    if (alreadySubscribedToLiked != true) {
-      subscribeToLiked();
-    }
+
 
     current = "liked";
   }
@@ -348,15 +313,7 @@
   <div id="right">
     {#if current == "liked"}
       <div>
-        {#each images as image}
-          <!-- <a href="/#/{image.url}"> -->
-          <!-- <img src="{image.img}" onError={(e) => e.target.style.display='none' }> -->
-          <div
-            id="image"
-            style="background-image: url({image.img}); width:128px; height: 128px; margin: 10px"
-          />
-          <!-- </a> -->
-        {/each}
+        <LikedPage/>
       </div>
     {/if}
     {#if current == "addressbook"}
@@ -405,14 +362,7 @@
   <div id="right">
     {#if current == "liked"}
       <div>
-        {#each images as image}
-          <a href="/#/{image.url}"
-            ><img
-              src={image.img}
-              onError={(e) => (e.target.style.display = "none")}
-            /></a
-          >
-        {/each}
+        <LikedPage/>
       </div>
     {/if}
 
@@ -568,7 +518,7 @@
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
     max-height: 80vh;
-    margin: 15px;
+    margin: 0px;
     align-items: flex-start;
   }
   .avatar {

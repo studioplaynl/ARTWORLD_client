@@ -1,6 +1,6 @@
 <script>
   import { convertImage } from "../../api";
-  import { onDestroy, onMount } from "svelte";
+  import { onDestroy, beforeUpdate } from "svelte";
   import { push } from "svelte-spa-router";
   let image;
   let frame = 0;
@@ -18,12 +18,14 @@
 //   }
 //   convertURL();
 
-  onMount(async () => {
-
+beforeUpdate(async () => {
+    clearInterval(interval);
     if(!!row.user){
       url = row.user.url
     }else if(!!row.value){
       url = row.value.previewUrl
+    }else if(!!row.img){
+      url = row.img
     }
     interval = setInterval(() => {
       frame++;

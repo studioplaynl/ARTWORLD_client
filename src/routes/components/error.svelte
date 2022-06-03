@@ -119,6 +119,7 @@
        <!-- Final notifications to sockets closed via the single_socket configuration. -->
 
         {:else if notificationCode == 1}
+        <img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" />
         <!-- somebody liked your artpiece -->
         {:else if notificationCode == 2}
         <!-- somebody sent you an artpiece -->
@@ -133,9 +134,10 @@
     </div>
     {#if showMessage}
     <div id="notificationMessage">
-        <!-- {#if !!notification.code}  -->
-        {notification.content.username}
-        <!-- {/if} -->
+        {#if !!notification.code == 1} 
+        {notification.content.username}<br>
+        {notification.content.key}
+        {/if}
 
     </div>
     {/if}
