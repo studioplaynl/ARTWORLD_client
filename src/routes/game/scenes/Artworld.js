@@ -234,7 +234,7 @@ export default class Artworld extends Phaser.Scene {
       this.tweens.add({
         targets: this.train,
         duration: 3000,
-        x: '+=2360',
+        x: '+=560',
         yoyo: false,
         repeat: -1,
         repeatDelay: 8000,
@@ -579,7 +579,7 @@ export default class Artworld extends Phaser.Scene {
   generateLocations() {
     //we set draggable on restart scene with a global flag
 
-    let location1Vector = new Phaser.Math.Vector2(-701.83, -304.33)
+    let location1Vector = new Phaser.Math.Vector2(-1215, -589)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       location1Vector
@@ -622,7 +622,7 @@ export default class Artworld extends Phaser.Scene {
       frequency: 1600,
     })
 
-    location1Vector = new Phaser.Math.Vector2(22.81, -428.32)
+    location1Vector = new Phaser.Math.Vector2(-792, -1138)
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       location1Vector
