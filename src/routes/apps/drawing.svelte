@@ -922,7 +922,7 @@
     frames.push({});
     frames = frames;
     await changeFrame(frames.length - 1);
-    let framebar = document.getElementById("framebar");
+    let framebar = document.getElementById("frame-bar");
     framebar.scrollTo({ left: 0, top: framebar.scrollHeight });
   }
 
@@ -1598,7 +1598,7 @@
       </div>
     {/if}
 
-    <div class="inner-container">
+    <div class="canvas-frame-container">
       {#if current == "camera"}
         <video bind:this={video} autoplay />
         <button on:click={capturePicture} class="videoButton" />
@@ -1612,7 +1612,7 @@
         <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
       </div>
     </div> -->
-      <div class="canvasBox" class:hidden={current === "camera"}>
+      <div class="canvas-box" class:hidden={current === "camera"}>
         <canvas bind:this={canv} class="canvas" />
         <canvas bind:this={Cursor} id="cursor" />
       </div>
@@ -1621,7 +1621,7 @@
       </div>
       <div class="frame-box">
         {#if appType == "stopmotion" || appType == "avatar"}
-          <div id="framebar">
+          <div id="frame-bar">
             {#each frames as frame, index}
               <div>
                 <div
@@ -1693,24 +1693,15 @@
   }
 
   .main-container {
-    /* width: 100vw;
-    height: 100vh; */
-    /* justify-content: center; */
-    /* margin: 100px; */
     display: flex;
     align-items: center;
   }
-
-  /* .canvas-container {
-    height: calc(100vh - 250px);
-  } */
 
   #cursor {
     pointer-events: none !important;
     width: 100vw;
     height: 100vw;
     margin: 0px;
-
     position: absolute;
     user-select: none;
     top: 0px;
@@ -1721,13 +1712,6 @@
   .topbar {
     width: 100vw;
     margin: 0px auto;
-  }
-
-  .canvas {
-    /* width: 100vw;
-    height: 100vw; */
-    /* width: 100%;
-    margin: 0px; */
   }
 
   .selected {
@@ -1762,10 +1746,6 @@
     display: block;
     color: green;
   }
-
-  /* .savecanvas {
-    display: none;
-  } */
 
   .iconbox {
     width: 50px;
@@ -1828,8 +1808,6 @@
 
   .optionbox {
     width: fit-content;
-    /* max-width: 80%; */
-    /* justify-content: right; */
     display: flex;
   }
 
@@ -1847,11 +1825,6 @@
   .hidden {
     display: none;
   }
-
-  /* video {
-    width: 100vw;
-    height: 100vw;
-  } */
 
   .videoButton {
     border-radius: 50%;
@@ -1885,39 +1858,21 @@
     bottom: 5px;
   }
 
-  /* new css */
-  .canvasBox {
+  .canvas-box {
     position: relative;
     background-color: white;
     border: 2px solid #7300ed;
-    /* margin: 0 auto; */
-    /* width: fit-content; */
-    /* position: relative; */
-    /* max-width: 100%; */
-    /* min-width: 20%; */
-    /* width: 520px; */
-    /* flex-shrink: 4; */
-    /* min-width: 300px; */
-    /* float: left; */
   }
 
   .frame-box {
-    /* margin: 0 auto; */
-    /* width: fit-content; */
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     flex-direction: column;
-    /* border: 2px solid black; */
-    /* height: 100vh; */
-    /* width: fit-content; */
-    /* width: 200px; */
-    /* float: right; */
-    /* flex-shrink: 1; */
   }
 
-  #framebar {
+  #frame-bar {
     display: flex;
     flex-direction: column;
     max-height: 300px;
@@ -1925,21 +1880,15 @@
     overflow-y: auto;
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
-    /* float: left; */
-    /* margin: 5px; */
   }
-  #framebar > div {
+  #frame-bar > div {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: row;
   }
 
-  #framebar > div > img {
-    /* margin: 10px 10px 0 0; */
-  }
-
-  #framebar > div > div {
+  #frame-bar > div > div {
     display: inline-block;
     width: 60px;
     height: 60px;
@@ -1952,27 +1901,20 @@
     background-size: contain;
   }
 
-  #framebar > div > div:hover {
+  #frame-bar > div > div:hover {
     cursor: pointer;
   }
 
-  #framebar > div > div > div {
-    /* background-color: rgba(255, 255, 255, 0.2); */
+  #frame-bar > div > div > div {
     height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  /* .frameDelete {
-    position: abs;
-  } */
-
   .frame-buttons {
     display: flex;
     flex-direction: column;
-    /* margin-left: 10px; */
-    /* align-self: flex-start; */
   }
 
   .frame-buttons > a > img {
@@ -1984,7 +1926,6 @@
     left: 8px;
     top: 80px;
     z-index: 13;
-    /* border: 2px solid #7300ed; */
     box-shadow: 5px 5px 0px #7300ed;
     cursor: pointer;
     padding: 0;
@@ -1999,13 +1940,11 @@
   }
 
   video {
-    /* width: 700px;
-      height: 700px; */
     margin: 0 auto;
     display: block;
   }
 
-  .inner-container {
+  .canvas-frame-container {
     display: flex;
     flex-direction: row;
   }
@@ -2013,14 +1952,6 @@
   .topbar {
     width: unset;
   }
-
-  /* .canvasBox {
-    height: min-content;
-    width: min-content;
-
-    max-width: 100%;
-    margin: -4px;
-  } */
 
   .topbar {
     float: left;
@@ -2036,22 +1967,12 @@
     transform: translateY(-50%);
   }
 
-  /* .topbar > button {
-    display: block;
-  } */
-
-  #framebar > div:last-child {
+  #frame-bar > div:last-child {
     overflow-anchor: auto;
   }
 
   .optionbox-container {
     margin: 0 10px 0 0;
-    /* z-index: 20;
-    position: fixed;
-    left: 0;
-    top: 50vh;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%); */
   }
 
   .unselected {
@@ -2064,35 +1985,18 @@
     left: 20px;
   }
 
+  /* medium size */
   @media only screen and (max-width: 1007px) {
-    .inner-container {
+    .canvas-frame-container {
       flex-direction: column;
     }
 
-    /* .canvasBox {
-      height: 80vh; */
-    /* width: 100vw;
-    } */
-
     .frame-box {
-      /* margin-bottom: -20px; */
-      /* border-top: 2px solid #7300ed; */
-      /* background-color: white; */
       flex-direction: row;
-      /* bottom: 0; */
-
-      /* position: absolute; */
-      /* width: 100%; */
-      /* transition: all 0.5s ease-in-out; */
     }
 
-    /* .frame-box:hover {
-      margin-bottom: 10px;
-    } */
-
-    #framebar {
+    #frame-bar {
       flex-direction: row;
-      /* height: 140px; */
       width: 450px;
       overflow-x: auto;
       overflow-y: none;
@@ -2100,85 +2004,46 @@
       scroll-snap-type: x proximity;
     }
 
-    /* #framebar > div {
-      padding: 0;
-      margin: 0;
-      display: block;
-    } */
-
-    #framebar > div {
-      /* display: flex; */
-      /* justify-content: center; */
-      /* align-items: center; */
+    #frame-bar > div {
       flex-direction: column;
     }
 
-    #framebar > div > img {
-      /* display: inline-block;
-      margin-left: -60px;
-      margin-top: 70px; */
-    }
-
     .frame-buttons {
-      /* display: flex; */
       flex-direction: row;
-      /* padding: 0; */
-      /* justify-self: flex-start; */
-      /* align-self: flex-start; */
     }
   }
 
-  /* mobile */
+  /* small */
   @media only screen and (max-width: 640px) {
     .main-container {
       display: unset;
     }
 
-    .inner-container {
-      flex-direction: column;
+    .canvas-frame-container {
       justify-content: center;
       align-items: center;
     }
 
-    .canvasBox {
+    .canvas-box {
       order: 2;
-      /* position: absolute; */
-      /* left: 0; */
-      /* top: 150px; */
     }
 
     .frame-box {
       order: 1;
-      /* top: 0;
-      right: 0; */
-      /* border: none; */
       flex-direction: row;
-      /* position: relative; */
-      width: 80%;
+      /* width: 80%; */
       justify-content: space-between;
       align-self: flex-end;
-      /* transition: all 0.5s ease-in-out; */
     }
 
-    #framebar {
-      /* width: 230px; */
-      /* min-width: 190px; */
+    #frame-bar {
       max-width: 300px;
       height: 140px;
       margin-right: 10px;
     }
 
-    /* #framebar > div {
-      height: 100px;
-    } */
-
-    #framebar > div {
+    #frame-bar > div {
       flex-direction: column-reverse;
-    }
-
-    #framebar > div > img {
-      /* margin-left: -60px; */
-      /* margin-top: 50px; */
     }
 
     .frame-buttons {
@@ -2187,19 +2052,7 @@
       align-self: center;
     }
 
-    /* .frame-box {
-      margin: 0;
-      border: unset;
-      position: relative;
-      transition: none;
-    } */
-
-    /* .frame-box:hover {
-      margin-top: 0;
-    } */
-
     .optionbox {
-      /* width: 100vw; */
       width: 100%;
       height: min-content;
       position: fixed;
@@ -2217,10 +2070,8 @@
       transition: none;
       animation: growup 0.3s ease-in-out forwards;
       transform-origin: bottom center;
-      /* width: 90vw; */
       position: sticky;
       z-index: 40;
-      /* border-left: 2px solid #7300ed; */
     }
 
     @keyframes growup {
@@ -2274,39 +2125,16 @@
       margin: 0 auto;
     }
 
-    /* .topbar {
-      width: max-content;
-      margin: 0px auto;
-      display: block;
-    } */
-    /* 
-
-    #framebar {
-      margin-bottom: 60px;
-      overflow-y: auto;
-      max-height: 79px;
-      overflow-x: auto;
-    }
-
-    #framebar > div {
-      display: inline-block;
-    } */
-
-    /* .icon {
-      min-width: 50px;
-      height: 50px;
-      width: 50px;
-      border-radius: 71%;
-      padding: 0;
-      margin: 5px;
-      cursor: pointer;
-    } */
-
     .currentSelected > img {
       border: 2px solid #7300ed;
     }
     .currentSelected {
       box-shadow: unset;
+    }
+
+    #clear-canvas {
+      top: unset;
+      bottom: 60px;
     }
   }
 </style>
