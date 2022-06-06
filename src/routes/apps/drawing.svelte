@@ -50,7 +50,7 @@
     saveToggle = false,
     savedURL = "",
     colorToggle = true;
-  const statussen = ["zichtbaar", "verborgen"];
+  // const statussen = ["zichtbaar", "verborgen"];
   let status = "zichtbaar";
   let displayName;
   export let appType = $location.split("/")[1];
@@ -151,8 +151,8 @@
       }
 
       if (canvasSize <= 640) {
-        canvas.setWidth(canvasSize - 220);
-        canvas.setHeight(canvasSize - 220);
+        canvas.setWidth(canvasSize - 110);
+        canvas.setHeight(canvasSize - 110);
       }
 
       if (canvasSize <= 540) {
@@ -1283,6 +1283,16 @@
     return rgb.concat(opacity);
   }
 
+  function toggleVisibility() {
+    if (status == "zichtbaar") {
+      status = "verborgen";
+      console.log("status", status);
+    } else {
+      status = "zichtbaar";
+      console.log("status", status);
+    }
+  }
+
   function floodFill(enable) {
     if (!enable) {
       canvas.off("mouse:down");
@@ -1603,14 +1613,30 @@
               <label for="title">Title</label>
               <NameGenerator bind:value={displayName} bind:invalidTitle />
 
-              <label for="status">Status</label>
+              <!-- <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
                 {#each statussen as status}
                   <option value={status}>
                     {status}
                   </option>
                 {/each}
-              </select>
+              </select> -->
+              <div>
+                Status
+                <div on:click={toggleVisibility}>
+                  {#if status == "zichtbaar"}
+                    <img
+                      class="visibility-status"
+                      src="assets/save_image/visible.png"
+                    />
+                  {:else}
+                    <img
+                      class="visibility-status"
+                      src="assets/save_image/hidden.png"
+                    />
+                  {/if}
+                </div>
+              </div>
             {/if}
 
             <button on:click={upload}
@@ -1990,6 +2016,10 @@
     position: fixed;
     top: 130px;
     left: 20px;
+  }
+
+  .visibility-status {
+    width: 80px;
   }
 
   /* medium size */
