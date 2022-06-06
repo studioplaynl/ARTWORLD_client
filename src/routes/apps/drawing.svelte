@@ -1415,189 +1415,6 @@
 
 <main on:mouseup={mouseEvent}>
   <div class="main-container">
-    <div class="optionbox-container">
-      <div class="optionbox">
-        <div class="optionbar" class:hidden={optionbox}>
-          <div id="drawing-mode-options" class:hidden={current != "draw"}>
-            <select id="drawing-mode-selector">
-              <option>Pencil</option>
-              <option>Circle</option>
-              <option>Spray</option>
-              <option>Pattern</option>
-
-              <option>hline</option>
-              <option>vline</option>
-              <option>square</option>
-              <option>diamond</option>
-              <option>texture</option>
-            </select>
-          </div>
-
-          <div class="colorTab" class:hidden={current != "draw"}>
-            <!-- <div
-            class="widthBox"
-            style="background-color: {drawingColor};"
-            on:click={() => {
-              drawingColorEl.click();
-            }}
-          >
-            
-          </div> -->
-            <input
-              type="color"
-              bind:value={drawingColor}
-              bind:this={drawingColorEl}
-              id="drawing-color"
-            />
-            <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
-
-            <span class="info">{lineWidth}</span><input
-              type="range"
-              min="10"
-              max="500"
-              id="drawing-line-width"
-              bind:value={lineWidth}
-            />
-
-            <!-- <label for="drawing-shadow-color">Shadow color:</label>
-          <input
-            type="color"
-            bind:value={shadowColor}
-            id="drawing-shadow-color"
-          />
-
-          <label for="drawing-shadow-width">Shadow width:</label>
-          <span class="info">0</span><input
-            type="range"
-            bind:value={shadowWidth}
-            min="0"
-            max="50"
-            id="drawing-shadow-width"
-          />
-
-          <label for="drawing-shadow-offset">Shadow offset:</label>
-          <span class="info">0</span><input
-            type="range"
-            bind:value={shadowOffset}
-            min="0"
-            max="50"
-            id="drawing-shadow-offset"
-          /> -->
-          </div>
-          <div class="eraseTab" class:hidden={current != "erase"}>
-            <div class="widthBox">
-              <div
-                class="lineWidth"
-                style="background-color: black;margin:  0px auto;"
-              />
-            </div>
-            <span class="info">{lineWidth}</span><input
-              type="range"
-              min="10"
-              max="500"
-              id="erase-line-width"
-              bind:value={lineWidth}
-            />
-          </div>
-          <div class="fillTab" class:hidden={current != "fill"}>
-            <input type="color" bind:value={fillColor} id="fill-color" />
-          </div>
-          <div class="selectTab" class:hidden={current != "select"}>
-            <a on:click={Copy}
-              ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
-            >
-            <a on:click={Paste}
-              ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
-            >
-            <a on:click={Delete}
-              ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
-            >
-          </div>
-          <div class="saveBox" class:hidden={current != "saveToggle"}>
-            <div class="saveTab">
-              {#if appType != "avatar" && appType != "house"}
-                <label for="title">Title</label>
-                <NameGenerator bind:value={displayName} bind:invalidTitle />
-
-                <label for="status">Status</label>
-                <select bind:value={status} on:change={() => (answer = "")}>
-                  {#each statussen as status}
-                    <option value={status}>
-                      {status}
-                    </option>
-                  {/each}
-                </select>
-              {/if}
-
-              <button on:click={upload}
-                >{#if saving}Saving{:else if saved}
-                  Saved{:else}Save{/if}</button
-              >
-              {#if saved}
-                <button on:click={download}>Download</button>
-              {/if}
-            </div>
-          </div>
-        </div>
-
-        <div class="iconbox">
-          <a on:click={undo}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
-          >
-          <a on:click={redo}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
-          >
-          <a id="drawing-mode" class:currentSelected={current === "draw"}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
-          >
-          <a id="erase-mode" class:currentSelected={current === "erase"}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" /></a
-          >
-          <!-- <button
-          class="icon"
-          id="fill-mode"
-          class:currentSelected={current === "fill"}><BucketIcon /></button
-        > -->
-          <a id="select-mode" class:currentSelected={current === "select"}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
-          >
-          <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
-          <button
-            class="icon"
-            id="camera-mode"
-            class:currentSelected={current == "camera"}
-            on:click={camera}><CameraIcon /></button
-          >
-        {/if} -->
-          <!-- <button id="clear-canvas" class="btn btn-info icon">
-          <TrashIcon />
-        </button> -->
-
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <a
-            class:currentSelected={current === "saveToggle"}
-            on:click={() => {
-              // console.log("saving is clicked");
-              // console.log("length", canvas.toJSON().objects);
-              if (isDrawn) {
-                if (appType == "drawing" || appType == "stopmotion") {
-                  saveToggle = !saveToggle;
-                  switchOption("saveToggle");
-                }
-                upload();
-              }
-            }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
-          >
-        </div>
-      </div>
-    </div>
-    <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg" /></div>
-    {#if appType == "avatar"}
-      <div id="avatarBox">
-        <Avatar />
-      </div>
-    {/if}
-
     <div class="canvas-frame-container">
       {#if current == "camera"}
         <video bind:this={video} autoplay />
@@ -1683,6 +1500,187 @@
       </div>
     </div>
   </div>
+  <div class="optionbox-container">
+    <div class="optionbox">
+      <div class="optionbar" class:hidden={optionbox}>
+        <div class="colorTab" class:hidden={current != "draw"}>
+          <div id="drawing-mode-options">
+            <select id="drawing-mode-selector">
+              <option>Pencil</option>
+              <option>Circle</option>
+              <option>Spray</option>
+              <option>Pattern</option>
+
+              <option>hline</option>
+              <option>vline</option>
+              <option>square</option>
+              <option>diamond</option>
+              <option>texture</option>
+            </select>
+          </div>
+          <!-- <div
+          class="widthBox"
+          style="background-color: {drawingColor};"
+          on:click={() => {
+            drawingColorEl.click();
+          }}
+        >
+          
+        </div> -->
+          <input
+            type="color"
+            bind:value={drawingColor}
+            bind:this={drawingColorEl}
+            id="drawing-color"
+          />
+          <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
+
+          <span class="info">{lineWidth}</span><input
+            type="range"
+            min="10"
+            max="500"
+            id="drawing-line-width"
+            bind:value={lineWidth}
+          />
+
+          <!-- <label for="drawing-shadow-color">Shadow color:</label>
+        <input
+          type="color"
+          bind:value={shadowColor}
+          id="drawing-shadow-color"
+        />
+
+        <label for="drawing-shadow-width">Shadow width:</label>
+        <span class="info">0</span><input
+          type="range"
+          bind:value={shadowWidth}
+          min="0"
+          max="50"
+          id="drawing-shadow-width"
+        />
+
+        <label for="drawing-shadow-offset">Shadow offset:</label>
+        <span class="info">0</span><input
+          type="range"
+          bind:value={shadowOffset}
+          min="0"
+          max="50"
+          id="drawing-shadow-offset"
+        /> -->
+        </div>
+        <div class="eraseTab" class:hidden={current != "erase"}>
+          <div class="widthBox">
+            <div
+              class="lineWidth"
+              style="background-color: black;margin:  0px auto;"
+            />
+          </div>
+          <span class="info">{lineWidth}</span><input
+            type="range"
+            min="10"
+            max="500"
+            id="erase-line-width"
+            bind:value={lineWidth}
+          />
+        </div>
+        <div class="fillTab" class:hidden={current != "fill"}>
+          <input type="color" bind:value={fillColor} id="fill-color" />
+        </div>
+        <div class="selectTab" class:hidden={current != "select"}>
+          <a on:click={Copy}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
+          >
+          <a on:click={Paste}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
+          >
+          <a on:click={Delete}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
+          >
+        </div>
+        <div class="saveBox" class:hidden={current != "saveToggle"}>
+          <div class="saveTab">
+            {#if appType != "avatar" && appType != "house"}
+              <label for="title">Title</label>
+              <NameGenerator bind:value={displayName} bind:invalidTitle />
+
+              <label for="status">Status</label>
+              <select bind:value={status} on:change={() => (answer = "")}>
+                {#each statussen as status}
+                  <option value={status}>
+                    {status}
+                  </option>
+                {/each}
+              </select>
+            {/if}
+
+            <button on:click={upload}
+              >{#if saving}Saving{:else if saved}
+                Saved{:else}Save{/if}</button
+            >
+            {#if saved}
+              <button on:click={download}>Download</button>
+            {/if}
+          </div>
+        </div>
+      </div>
+
+      <div class="iconbox">
+        <a on:click={undo}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
+        >
+        <a on:click={redo}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
+        >
+        <a id="drawing-mode" class:currentSelected={current === "draw"}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
+        >
+        <a id="erase-mode" class:currentSelected={current === "erase"}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" /></a
+        >
+        <!-- <button
+        class="icon"
+        id="fill-mode"
+        class:currentSelected={current === "fill"}><BucketIcon /></button
+      > -->
+        <a id="select-mode" class:currentSelected={current === "select"}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
+        >
+        <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
+        <button
+          class="icon"
+          id="camera-mode"
+          class:currentSelected={current == "camera"}
+          on:click={camera}><CameraIcon /></button
+        >
+      {/if} -->
+        <!-- <button id="clear-canvas" class="btn btn-info icon">
+        <TrashIcon />
+      </button> -->
+
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a
+          class:currentSelected={current === "saveToggle"}
+          on:click={() => {
+            // console.log("saving is clicked");
+            // console.log("length", canvas.toJSON().objects);
+            if (isDrawn) {
+              if (appType == "drawing" || appType == "stopmotion") {
+                saveToggle = !saveToggle;
+                switchOption("saveToggle");
+              }
+              upload();
+            }
+          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+        >
+      </div>
+    </div>
+  </div>
+  <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg" /></div>
+  {#if appType == "avatar"}
+    <div id="avatarBox">
+      <Avatar />
+    </div>
+  {/if}
 </main>
 
 <style>
@@ -1695,6 +1693,7 @@
   .main-container {
     display: flex;
     align-items: center;
+    margin-left: 60px;
   }
 
   #cursor {
@@ -1719,7 +1718,9 @@
   }
 
   .colorTab {
-    margin: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .saveTab {
@@ -1761,6 +1762,7 @@
   .optionbar {
     margin-left: 10px;
     border-right: 2px solid #7300ed;
+    /* box-shadow: 10px 0px 5px 0px rgba(115,0,237,0.5); */
     height: 100vh;
     background-color: white;
     transition: all 0.5s ease-in-out;
@@ -1788,7 +1790,7 @@
   }
 
   .optionbar > * {
-    margin: 5px auto;
+    /* margin: 5px auto; */
   }
 
   .icon {
@@ -1973,6 +1975,11 @@
 
   .optionbox-container {
     margin: 0 10px 0 0;
+    position: fixed;
+    left: 0;
+    top: 50vh;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
   }
 
   .unselected {
@@ -2017,6 +2024,8 @@
   @media only screen and (max-width: 640px) {
     .main-container {
       display: unset;
+      align-items: unset;
+      margin: 0;
     }
 
     .canvas-frame-container {
@@ -2063,15 +2072,21 @@
     .optionbar {
       margin: 0;
       border-right: none;
-      border-top: 2px dotted #7300ed;
+      border-top: 2px solid #7300ed;
+      box-shadow: 0px -5px 5px 0px #7300ed;
       height: min-content;
-      width: initial;
+      width: 100%;
       padding: 0px;
       transition: none;
       animation: growup 0.3s ease-in-out forwards;
       transform-origin: bottom center;
       position: sticky;
       z-index: 40;
+      align-items: flex-end;
+    }
+
+    .optionbar > * {
+      margin: 20px 50px 20px 0;
     }
 
     @keyframes growup {
