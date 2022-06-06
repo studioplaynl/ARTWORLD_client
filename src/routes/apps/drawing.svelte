@@ -2031,9 +2031,9 @@
     .frame-box {
       order: 1;
       flex-direction: row;
-      /* width: 80%; */
+      /* width: 100%; */
       justify-content: space-between;
-      align-self: flex-end;
+      /* align-self: flex-end; */
     }
 
     #frame-bar {
