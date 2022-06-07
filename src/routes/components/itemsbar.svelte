@@ -98,8 +98,6 @@
     }
   });
 
- 
-
   function subscribeToAddressbook() {
     Addressbook.subscribe((value) => {
       alreadySubscribedToAddressbook = true;
@@ -145,7 +143,6 @@
       current = false;
       return;
     }
-
 
     current = "liked";
   }
@@ -313,7 +310,7 @@
   <div id="right">
     {#if current == "liked"}
       <div>
-        <LikedPage/>
+        <LikedPage />
       </div>
     {/if}
     {#if current == "addressbook"}
@@ -362,7 +359,7 @@
   <div id="right">
     {#if current == "liked"}
       <div>
-        <LikedPage/>
+        <LikedPage />
       </div>
     {/if}
 
@@ -443,12 +440,12 @@
   @media screen and (min-width: 600px) {
     #currentUser,
     #itemsButton {
-      left: 30px;
-      bottom: 30px;
+      left: 9px;
+      bottom: 9px;
     }
     #onlineUser {
-      right: 30px;
-      bottom: 30px;
+      right: 9px;
+      bottom: 9px;
     }
   }
 

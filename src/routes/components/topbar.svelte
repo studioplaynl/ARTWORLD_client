@@ -1,7 +1,7 @@
 <script>
     import HistoryTracker from "../game/class/HistoryTracker";
     import ManageSession from "../game/ManageSession";
-    import {history} from "../../session";
+    import { history } from "../../session";
 
     let home = "Artworld";
 
@@ -40,10 +40,9 @@
         /></a
     >
     <a on:click={goBack}
-
         ><img
             class="TopIcon"
-            class:showBack="{$history.length > 1}"
+            class:showBack={$history.length > 1}
             id="back"
             src="/assets/SHB/svg/AW-icon-previous.svg"
         /></a
@@ -64,7 +63,7 @@
         position: fixed;
         left: 0;
         top: 0;
-        margin: 15px;
+        margin: 15px 15px 15px 30px;
     }
 
     .TopIcon {
@@ -82,7 +81,7 @@
         visibility: hidden;
     }
 
-    .showBack{
+    .showBack {
         visibility: visible !important;
     }
 </style>
