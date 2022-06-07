@@ -66,7 +66,7 @@ class GraffitiWall {
           //get the interpolated points on the line, with interpolation factor
           points = line1.getPoints(16)
         }
-        
+
 
         points.forEach(function (p) {
           //console.log("p", p)
@@ -82,7 +82,7 @@ class GraffitiWall {
       this.graffitiDrawing = false
 
       //empty the array of previous point when lifting the pointer
-      previousPointer = [] 
+      previousPointer = []
       points = []
       // rt.snapshot(async (image) => {
 
@@ -90,7 +90,7 @@ class GraffitiWall {
       //   const name = displayName
       //   const type = "drawing"
       //   const json = ""
-      //   const status = "zichtbaar"
+      //   const status = true
       //   const version = 1
       //   console.log("image", image.src)
 
@@ -109,7 +109,7 @@ class GraffitiWall {
 function dataURItoBlob(dataURI) {
   var binary = atob(dataURI.split(",")[1]);
   var array = [];
-  for (var i = 0; i < binary.length; i++) {
+  for (var i = 0;i < binary.length;i++) {
     array.push(binary.charCodeAt(i));
   }
   return new Blob([new Uint8Array(array)], { type: "image/png" });

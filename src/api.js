@@ -21,7 +21,7 @@ export async function uploadImage(name, type, img, status, version, displayName)
 
   var [jpegURL, jpegLocation] = await getUploadURL(type, name, "png", version)
   var value = { "url": jpegLocation, "version": version, "displayname": displayName };
-  if (status == "zichtbaar" || status == 2) {
+  if (status || status == 2) {
     pub = true
   } else {
     pub = false
@@ -50,32 +50,32 @@ export async function updateTitle(collection, key, name, userID) {
   if (!!!userID) userID = Sess.user_id
   let Object = await getObject(collection, key, userID)
   Object.value.displayname = name
-  if(prof.meta.Role == "admin" ||prof.meta.Role == "moderator" ) await updateObject(collection, key, Object.value,Object.permission_read, userID)
-  else await updateObject(collection, key, Object.value,Object.permission_read)
+  if (prof.meta.Role == "admin" || prof.meta.Role == "moderator") await updateObject(collection, key, Object.value, Object.permission_read, userID)
+  else await updateObject(collection, key, Object.value, Object.permission_read)
 }
 
 
-export async function uploadHouse( data) {
+export async function uploadHouse(data) {
 
-  
+
   let type = "home"
   let name = prof.meta.Azc
   let object = await getObject(type, name)
   let value
   if (!!!object) { value = {}; }
   else { value = object.value }
-  console.log("value",value)
+  console.log("value", value)
   value.username = prof.username
-  if(!!!value.version) value.version = 0
+  if (!!!value.version) value.version = 0
   else value.version = value.version + 1
-  if(value.version > value.LastVersion){
+  if (value.version > value.LastVersion) {
     value.LastVersion = value.version
   }
-  
+
   pub = true
 
   var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png", value.version)
-  
+
   await fetch(jpegURL, {
     method: "PUT",
     headers: {
@@ -86,7 +86,7 @@ export async function uploadHouse( data) {
 
   value.url = jpegLocation
   // get object
-  console.log("value",value)
+  console.log("value", value)
   await updateObject(type, name, JSON.stringify(value), pub)
 
 }
@@ -128,7 +128,7 @@ export async function updateObject(type, name, value, pub, userID) {
     //"version": "*"
   }
   console.log(prof.meta.Role)
-  if(prof.meta.Role == "admin" || prof.meta.Role == "moderator"){
+  if (prof.meta.Role == "admin" || prof.meta.Role == "moderator") {
     console.log("working!")
     await updateObjectAdmin(userID, type, name, value, pub)
   } else {
@@ -261,7 +261,7 @@ export async function getFile(file_url) {
 export async function uploadAvatar(data, json) {
   setLoader(true);
   let avatarVersion = prof.meta.LastAvatarVersion + 1
-  if(!!!avatarVersion) avatarVersion = 0
+  if (!!!avatarVersion) avatarVersion = 0
   var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png", avatarVersion)
   console.log(jpegURL)
 
@@ -296,7 +296,7 @@ export async function deleteFile(type, file, user) {
   const rpcid = "delete_file";
   const fileurl = await client.rpc(Sess, rpcid, payload)
     .catch((e) => { throw e })
-    Succes.update(s => s = true)
+  Succes.update(s => s = true)
 }
 
 export async function addFriend(id, usernames) {
@@ -478,7 +478,7 @@ export function setLoader(state) {
 }
 
 export function saveAchievement(name) {
-//  ManageSession.achievements.achievements[0][name] = true
+  //  ManageSession.achievements.achievements[0][name] = true
   console.log("achievement:" + name)
   const type = "achievements"
   const key = type + "_" + ManageSession.userProfile.id

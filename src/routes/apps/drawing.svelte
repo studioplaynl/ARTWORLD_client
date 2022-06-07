@@ -50,8 +50,8 @@
     saveToggle = false,
     savedURL = "",
     colorToggle = true;
-  // const statussen = ["zichtbaar", "verborgen"];
-  let status = "zichtbaar";
+  // const statussen = [true, false];
+  let status = true;
   let displayName;
   export let appType = $location.split("/")[1];
   let version = 0;
@@ -1283,16 +1283,6 @@
     return rgb.concat(opacity);
   }
 
-  function toggleVisibility() {
-    if (status == "zichtbaar") {
-      status = "verborgen";
-      console.log("status", status);
-    } else {
-      status = "zichtbaar";
-      console.log("status", status);
-    }
-  }
-
   function floodFill(enable) {
     if (!enable) {
       canvas.off("mouse:down");
@@ -1623,8 +1613,8 @@
               </select> -->
               <div>
                 Status
-                <div on:click={toggleVisibility}>
-                  {#if status == "zichtbaar"}
+                <div on:click={() => (status = !status)}>
+                  {#if status}
                     <img
                       class="visibility-status"
                       src="assets/save_image/visible.png"
