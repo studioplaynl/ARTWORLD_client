@@ -57,6 +57,8 @@
   let version = 0;
   let optionbox = true;
   let isDrawn = false;
+  let applyBrush;
+  let selectedBrush = "Pencil";
 
   let FrameObject = {
     type: "image",
@@ -219,7 +221,6 @@
       // console.log("mouse is down");
       switchOption("draw");
       canvas.isDrawingMode = true;
-      changebrush();
       console.log(drawingColor);
       floodFill(false);
     };
@@ -322,41 +323,42 @@
       };
     }
 
-    fab("drawing-mode-selector").onchange = () => changebrush();
+    // fab("drawing-mode-selector").onchange = () => changebrush();
 
-    function changebrush() {
-      brush = fab("drawing-mode-selector");
-      console.log(brush);
-      if (brush.value === "hline") {
-        canvas.freeDrawingBrush = vLinePatternBrush;
-      } else if (brush.value === "vline") {
-        canvas.freeDrawingBrush = hLinePatternBrush;
-      } else if (brush.value === "square") {
-        canvas.freeDrawingBrush = squarePatternBrush;
-      } else if (brush.value === "diamond") {
-        canvas.freeDrawingBrush = diamondPatternBrush;
-      } else if (brush.value === "texture") {
-        canvas.freeDrawingBrush = texturePatternBrush;
-      } else {
-        canvas.freeDrawingBrush = new fabric[brush.value + "Brush"](canvas);
-      }
+    // function changebrush() {
+    //   brush = fab("drawing-mode-selector");
+    //   console.log(brush);
+    //   if (brush.value === "hline") {
+    //     canvas.freeDrawingBrush = vLinePatternBrush;
+    //   } else if (brush.value === "vline") {
+    //     canvas.freeDrawingBrush = hLinePatternBrush;
+    //   } else if (brush.value === "square") {
+    //     canvas.freeDrawingBrush = squarePatternBrush;
+    //   } else if (brush.value === "diamond") {
+    //     canvas.freeDrawingBrush = diamondPatternBrush;
+    //   } else if (brush.value === "texture") {
+    //     canvas.freeDrawingBrush = texturePatternBrush;
+    //   } else {
+    //     canvas.freeDrawingBrush = new fabric[brush.value + "Brush"](canvas);
 
-      if (canvas.freeDrawingBrush) {
-        var brush = canvas.freeDrawingBrush;
-        brush.color = drawingColorEl.value;
-        if (brush.getPatternSrc) {
-          brush.source = brush.getPatternSrc.call(brush);
-        }
-        brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
-        // brush.shadow = new fabric.Shadow({
-        //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
-        //   offsetX: 0,
-        //   offsetY: 0,
-        //   affectStroke: true,
-        //   color: drawingShadowColorEl.value,
-        // });
-      }
-    }
+    //   }
+
+    //   if (canvas.freeDrawingBrush) {
+    //     var brush = canvas.freeDrawingBrush;
+    //     brush.color = drawingColorEl.value;
+    //     if (brush.getPatternSrc) {
+    //       brush.source = brush.getPatternSrc.call(brush);
+    //     }
+    //     brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+    //     // brush.shadow = new fabric.Shadow({
+    //     //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
+    //     //   offsetX: 0,
+    //     //   offsetY: 0,
+    //     //   affectStroke: true,
+    //     //   color: drawingShadowColorEl.value,
+    //     // });
+    //   }
+    // }
 
     drawingColorEl.onchange = function () {
       var brush = canvas.freeDrawingBrush;
@@ -543,6 +545,19 @@
     //////////////// drawing challenge ////////////////////////
 
     adaptCanvasSize();
+
+    applyBrush = (brushType) => {
+      selectedBrush = brushType;
+      canvas.freeDrawingBrush = new fabric[brushType + "Brush"](canvas);
+      if (canvas.freeDrawingBrush) {
+        var brush = canvas.freeDrawingBrush;
+        brush.color = drawingColorEl.value;
+        if (brush.getPatternSrc) {
+          brush.source = brush.getPatternSrc.call(brush);
+        }
+        brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+      }
+    };
   });
   /////////////////// end onMount ///////////////////////
 
@@ -1502,7 +1517,33 @@
     <div class="optionbox">
       <div class="optionbar" class:hidden={optionbox}>
         <div class="colorTab" class:hidden={current != "draw"}>
-          <div id="drawing-mode-options">
+          <div class="drawing-options-container">
+            <img
+              on:click={() => applyBrush("Pencil")}
+              class="icon"
+              class:selected={selectedBrush == "Pencil"}
+              src="assets/svg/drawing_pencil2.svg"
+            />
+            <img
+              on:click={() => applyBrush("Circle")}
+              class="icon"
+              class:selected={selectedBrush == "Circle"}
+              src="assets/svg/drawing_circle2.svg"
+            />
+            <img
+              on:click={() => applyBrush("Spray")}
+              class="icon"
+              class:selected={selectedBrush == "Spray"}
+              src="assets/svg/drawing_spray.svg"
+            />
+            <img
+              on:click={() => applyBrush("Pattern")}
+              class="icon"
+              class:selected={selectedBrush == "Pattern"}
+              src="assets/svg/drawing_pattern.svg"
+            />
+          </div>
+          <!-- <div id="drawing-mode-options">
             <select id="drawing-mode-selector">
               <option>Pencil</option>
               <option>Circle</option>
@@ -1515,7 +1556,7 @@
               <option>diamond</option>
               <option>texture</option>
             </select>
-          </div>
+          </div> -->
           <!-- <div
           class="widthBox"
           style="background-color: {drawingColor};"
@@ -2008,6 +2049,12 @@
 
   .visibility-status {
     width: 80px;
+  }
+
+  .drawing-options-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
   /* medium size */
