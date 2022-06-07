@@ -105,6 +105,53 @@
     return document.getElementById(id);
   };
 
+  function adaptCanvasSize() {
+    // the canvas size is set by the least of two (width and height)
+    const canvasSize =
+      window.innerWidth > window.innerHeight
+        ? window.innerHeight
+        : window.innerWidth;
+
+    // as a default the canvas has 100px less size that the window
+    canvas.setWidth(canvasSize - 100);
+    canvas.setHeight(canvasSize - 100);
+
+    // in case when the size of height and width are more or less close in px (within the difference of 300px) ("square windows")
+    if (
+      (window.innerWidth >= 1008 &&
+        window.innerWidth - window.innerHeight >= 0 &&
+        window.innerWidth - window.innerHeight < 300) ||
+      (window.innerWidth >= 1008 &&
+        window.innerHeight - window.innerWidth >= 0 &&
+        window.innerHeight - window.innerWidth < 300)
+    ) {
+      canvas.setWidth(canvasSize - 200);
+      canvas.setHeight(canvasSize - 200);
+      return;
+    }
+
+    // for medium screens
+    if (canvasSize < 1008 && canvasSize > 640) {
+      canvas.setWidth(canvasSize - 140);
+      canvas.setHeight(canvasSize - 140);
+      return;
+    }
+
+    // for mobile screens
+    if (canvasSize <= 640) {
+      canvas.setWidth(canvasSize - 110);
+      canvas.setHeight(canvasSize - 110);
+      return;
+    }
+
+    // for mobile screens
+    if (canvasSize <= 540) {
+      canvas.setWidth(canvasSize - 80);
+      canvas.setHeight(canvasSize - 80);
+      return;
+    }
+  }
+
   onMount(() => {
     console.log("on mount isDrawn", isDrawn);
     setLoader(true);
@@ -128,60 +175,8 @@
       isDrawingMode: true,
     });
 
-    let canvasSize =
-      window.innerWidth > window.innerHeight
-        ? window.innerHeight
-        : window.innerWidth;
-
-    canvas.setWidth(canvasSize - 80);
-    canvas.setHeight(canvasSize - 80);
-
     window.onresize = () => {
-      canvasSize =
-        window.innerWidth > window.innerHeight
-          ? window.innerHeight
-          : window.innerWidth;
-
-      canvas.setWidth(canvasSize - 80);
-      canvas.setHeight(canvasSize - 80);
-
-      if (canvasSize < 1008 && canvasSize > 640) {
-        canvas.setWidth(canvasSize - 140);
-        canvas.setHeight(canvasSize - 140);
-      }
-
-      if (canvasSize <= 640) {
-        canvas.setWidth(canvasSize - 110);
-        canvas.setHeight(canvasSize - 110);
-      }
-
-      if (canvasSize <= 540) {
-        canvas.setWidth(canvasSize - 80);
-        canvas.setHeight(canvasSize - 80);
-      }
-
-      console.log("canvasSize", canvasSize);
-
-      // if (width != window.innerWidth) {
-      //   if (width > height) {
-      //     canvas.setWidth(height - 200);
-      //     // canvas.setHeight(height - 200);
-      //   } else {
-      //     canvas.setWidth(width - 200);
-      //     // canvas.setHeight(width - 200);
-      //   }
-      // }
-      // if (height != window.innerHeight) {
-      //   // if (height > width) {
-      //     // canvas.setWidth(width - 200);
-      //     // canvas.setHeight(width - 200);
-      //   } else {
-      //     // canvas.setWidth(height - 200);
-      //     // canvas.setHeight(height - 200);
-      //   }
-      // }
-      // var width = window.innerWidth > 0 ? window.innerWidth : screen.width;
-      // var height = window.innerHeight > 0 ? window.innerHeight : screen.height;
+      adaptCanvasSize();
     };
 
     MouseIcon;
@@ -546,7 +541,10 @@
       };
     }
     //////////////// drawing challenge ////////////////////////
+
+    adaptCanvasSize();
   });
+  /////////////////// end onMount ///////////////////////
 
   const upload = async () => {
     console.log("upload is clicked");
