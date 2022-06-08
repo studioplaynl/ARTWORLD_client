@@ -32,10 +32,14 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.enterCircleTween
         this.size = config.size
         const referenceName = config.referenceName
-        
+        this.debugRect
+        this.debugRect_y
+        this.debugRect_height
+        this.debugRectXMargin
+
         let width
         let namePlateExtraOffset = 0
-       
+
 
         if (typeof this.size === "undefined") {
             width = 200
@@ -60,6 +64,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.scene.textures.exists(this.locationImage)
             this.location = this.scene.physics.add.image(0, 0, this.locationImage).setOrigin(0.5, 0.5).setDepth(30)
 
+            //debug rectangle to see to total space needed for the placement of a house
+            this.debugRect_y = - (width / 2)
+            this.debugRect_height = width
+
             //set the location to a fixed size, also scales the physics body
             this.location.displayWidth = width
             this.location.scaleY = this.location.scaleX
@@ -70,6 +78,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             //console.log("isoTriangle!")
             //this.location = this.scene.add.isotriangle(0, width / 4, width, width, false, 0x8dcb0e, 0x3f8403, 0x63a505)
             this.location = this.scene.add.isotriangle(0, width / 4, width, width, false, this.color1, this.color2, this.color3)
+
+            //debug rectangle to see to total space needed for the placement of a house
+            this.debugRect_y = - (width / 2)
+            this.debugRect_height = width
+
             this.scene.physics.add.existing(this.location)
             this.location.body.setSize(this.location.width, this.location.height)
             this.location.body.setOffset(0, -(this.location.height / 4))
@@ -79,6 +92,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             //console.log("isoBox!")
             // this.location = this.scene.add.isobox(0, 0, width, width / 1.4, 0xffe31f, 0xf2a022, 0xf8d80b)
             this.location = this.scene.add.isobox(0, 0, width, width / 1.4, this.color1, this.color2, this.color3)
+
+            //debug rectangle to see to total space needed for the placement of a house
+            this.debugRect_y =  - (width * 0.98)
+            this.debugRect_height = width * 1.25
+
             this.scene.physics.add.existing(this.location)
             this.location.body.setSize(this.location.width, this.location.height * 1.6)
             this.location.body.setOffset(0, -(this.location.height / 1.4))
@@ -90,9 +108,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         if (!this.draggable) {
             this.location.setInteractive({ useHandCursor: true })
             //console.log("this.location.width, this.location.height", this.location.width, this.location.height)
+
             // the width and height are not the same for isobox, 
             // we make the hitarea for 
-
             const hitAreaWidth = this.location.width
             const hitAreaheight = this.location.height
             if (hitAreaWidth != hitAreaheight) {
@@ -105,7 +123,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
             }
 
-            // console.log("this.location", this.location)
             // on home click, we let the player to see the entrance arrow above the home
             this.location.on('pointerdown', () => {
                 if (!this.showing) {
@@ -125,8 +142,14 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         const namePlate = this.scene.add.graphics().fillStyle(0xE8E8E8, 1).fillRoundedRect(0 - (locationDescription.width + namePlateMargin) / 2, width / 2 - textPlateOffset, locationDescription.width + namePlateMargin /* text's width + 10 (to have space between border and text) */, namePlateMargin * 2, 10).setDepth(31)
 
         // back button that appears 
-        var enterButtonY = this.y - (width / 2) - 50
-        var enterButtonTweenY = enterButtonY + 15
+        const enterButtonYOffset = 50
+        const enterButtonYTweenOffset = 15
+        const enterButtonY = this.y - (width / 2) - enterButtonYOffset
+        const enterButtonTweenY = enterButtonY + enterButtonYTweenOffset
+
+        // calculate y of debugRect according to the enterButton offset
+        this.debugRect_height = this.debugRect_height + (enterButtonYOffset * 1.5)
+        this.debugRect_y = this.debugRect_y - (enterButtonYOffset * 1.5)
 
         // this.enterButtonHitArea = this.scene.add.image(this.x, enterButtonY, 'enterButtonHitArea').setDepth(201)
         // this.enterButtonHitArea.alpha = 0 // make the hitArea invisible
@@ -140,7 +163,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             .setScale(0.6)
             .setDepth(500)
 
-
         this.enterButtonTween = this.scene.tweens.add({
             targets: this.enterButton,
             y: enterButtonTweenY,
@@ -151,13 +173,19 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             yoyo: true
         })
 
+        //set a square margin around the location so that the spacing of them next to each other feels less crammed
+        this.debugRectXMargin = this.scene.add.graphics().fillStyle(0xff0000, 0.4).fillRoundedRect(0 - (this.debugRect_height / 2), this.debugRect_y, this.debugRect_height, this.debugRect_height, 10).setDepth(30).setVisible(false)
+        this.debugRect = this.scene.add.graphics().fillStyle(0xffff00, 0.6).fillRoundedRect(0 - (width / 2), this.debugRect_y, width, this.debugRect_height, 10).setDepth(30).setVisible(false)
+
         //the container is created at the this.x and this.y
         //this.setSize(width, width)
         // this.scene[referenceName] = this.add(this.location)
         this.name = referenceName
-        this.add(this.location)
-        this.add(namePlate)
-        this.add(locationDescription)
+        this.add(this.debugRect) // add to the container
+        this.add(this.debugRectXMargin) // add to the container
+        this.add(this.location) // add to the container
+        this.add(namePlate) // add to the container
+        this.add(locationDescription) // add to the container
         //this.add(this.enterButtonHitArea)
 
         //changing the order in the container, changes the drawing order?
@@ -168,7 +196,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         if (this.draggable) {
             this.setInteractive()
+            this.debugRect.setVisible(true)
+            this.debugRectXMargin.setVisible(true)
                 .on('drag', (p, x, y) => {
+                    
                     this.setX(p.worldX)
                     this.setY(p.worldY)
                     // The enterButton is outside the container, so that it can appear above the player
@@ -230,7 +261,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                 }
             }
 
-             if (typeof this.externalUrl != "undefined") {
+            if (typeof this.externalUrl != "undefined") {
                 this.scene.scene.pause()
                 var url = this.externalUrl
 
@@ -242,15 +273,15 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                 else if (!s) {
                     window.location.href = url
                 }
-            } 
-            
-            if (typeof this.appUrl != "undefined"){
+            }
+
+            if (typeof this.appUrl != "undefined") {
                 console.log("CurrentApp.set(this.appUrl)", this.appUrl)
                 CurrentApp.set(this.appUrl)
-            } 
-                //console.log("GenerateLocation this.scene, this.locationDestination, this.userHome", this.scene, this.locationDestination, this.userHome)
-                HistoryTracker.switchScene(this.scene, this.locationDestination, this.userHome)
-            
+            }
+            //console.log("GenerateLocation this.scene, this.locationDestination, this.userHome", this.scene, this.locationDestination, this.userHome)
+            HistoryTracker.switchScene(this.scene, this.locationDestination, this.userHome)
+
         })
 
         this.scene.physics.add.overlap(this.scene.player, this.location, this.confirmEnterLocation, null, this)

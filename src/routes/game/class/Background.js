@@ -9,7 +9,7 @@ class Background {
 
         const worldSize = config.scene.worldSize
 
-        ///*........... white background of worldSize*2 width .............................................................
+        ///*........... white background of worldSize width .............................................................
         scene.add.rectangle(0, 0, worldSize.x, worldSize.y, config.backgroundColor).setOrigin(0)
 
         //*........... repeating pattern on the white background .............................................................
@@ -17,10 +17,6 @@ class Background {
         const gridHeight = worldSize.y
         const offset = config.gridOffset
         const offsetY = offset / 2
-
-        // const gridWidth = 600
-        // const gridHeight = 600
-        // const offset = 50
 
         //......... repeating dots as pattern on white background .............................................................
         //background dot size
@@ -40,7 +36,7 @@ class Background {
         //save the rendertexture with a key ('dot')
         bgDotRendertexture.saveTexture('dot')
 
-        // destroy the bgDot graphic and renderTexture
+        // destroy the bgDot graphic and renderTexture, because we can reference the dot as 'dot' (prev step)
         bgDot.destroy()
         bgDotRendertexture.destroy()
 

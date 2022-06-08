@@ -50,7 +50,18 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.load.svg('abstract1', './assets/svg/abstract1.svg')
         this.load.svg('pencil', './assets/svg/pencil.svg', {scale: 2})
-        
+
+        //animal for animalGarden Challenge
+        this.load.image('dinoA', './assets/DinoA_01.png')
+        //animation png sequence
+        this.load.image('animation_png_animal_henk_00001', './assets/animation_png_animal_henk/animation_png_animal_henk_00001.png')
+        this.load.image('animation_png_animal_henk_00002', './assets/animation_png_animal_henk/animation_png_animal_henk_00002.png')
+        this.load.image('animation_png_animal_henk_00003', './assets/animation_png_animal_henk/animation_png_animal_henk_00003.png')
+        this.load.image('animation_png_animal_henk_00004', './assets/animation_png_animal_henk/animation_png_animal_henk_00004.png')
+        this.load.image('animation_png_animal_henk_00005', './assets/animation_png_animal_henk/animation_png_animal_henk_00005.png')
+        this.load.image('animation_png_animal_henk_00006', './assets/animation_png_animal_henk/animation_png_animal_henk_00006.png')
+        this.load.image('animation_png_animal_henk_00007', './assets/animation_png_animal_henk/animation_png_animal_henk_00007.png')
+
         // this.load.image('friend', './assets/popup/friend.png')
         // this.load.image('friend2', './assets/popup/friend2.png')
         // this.load.image('friend3', './assets/popup/friend3.png')
