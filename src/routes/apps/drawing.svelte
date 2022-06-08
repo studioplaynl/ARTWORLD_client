@@ -452,9 +452,11 @@
       var size = parseInt(lineWidth, 10);
       canvas.freeDrawingBrush.width = size;
       mousecursor
-        .center()
+        // .center()
         .set({
           radius: size / 2,
+          top: 500,
+          left: 1300,
         })
         .setCoords()
         .canvas.renderAll();
@@ -547,8 +549,8 @@
     adaptCanvasSize();
 
     applyBrush = (brushType) => {
-      selectedBrush = brushType;
-      canvas.freeDrawingBrush = new fabric[brushType + "Brush"](canvas);
+      if (typeof brushType == "string") selectedBrush = brushType;
+      canvas.freeDrawingBrush = new fabric[selectedBrush + "Brush"](canvas);
       if (canvas.freeDrawingBrush) {
         var brush = canvas.freeDrawingBrush;
         brush.color = drawingColorEl.value;
@@ -1586,15 +1588,20 @@
             bind:this={drawingColorEl}
             id="drawing-color"
           />
-          <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
+          <!-- <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" /> -->
 
-          <span class="info">{lineWidth}</span><input
-            type="range"
-            min="10"
-            max="500"
-            id="drawing-line-width"
-            bind:value={lineWidth}
-          />
+          <!-- <span class="info">{lineWidth}</span> -->
+          <div class="range-container">
+            <div class="circle-box-small" />
+            <input
+              type="range"
+              min="10"
+              max="500"
+              id="drawing-line-width"
+              bind:value={lineWidth}
+            />
+            <div class="circle-box-big" />
+          </div>
 
           <!-- <label for="drawing-shadow-color">Shadow color:</label>
         <input
@@ -1622,19 +1629,24 @@
         /> -->
         </div>
         <div class="eraseTab" class:hidden={current != "erase"}>
-          <div class="widthBox">
+          <!-- <div class="widthBox">
             <div
               class="lineWidth"
               style="background-color: black;margin:  0px auto;"
             />
           </div>
-          <span class="info">{lineWidth}</span><input
-            type="range"
-            min="10"
-            max="500"
-            id="erase-line-width"
-            bind:value={lineWidth}
-          />
+          <span class="info">{lineWidth}</span> -->
+          <div class="range-container">
+            <div class="circle-box-small" />
+            <input
+              type="range"
+              min="10"
+              max="500"
+              id="erase-line-width"
+              bind:value={lineWidth}
+            />
+            <div class="circle-box-big" />
+          </div>
         </div>
         <div class="fillTab" class:hidden={current != "fill"}>
           <input type="color" bind:value={fillColor} id="fill-color" />
@@ -1664,8 +1676,7 @@
                   </option>
                 {/each}
               </select> -->
-              <div>
-                Status
+              <div class="status-save-download-container">
                 <div on:click={() => (status = !status)}>
                   {#if status}
                     <img
@@ -1679,15 +1690,38 @@
                     />
                   {/if}
                 </div>
-              </div>
-            {/if}
 
-            <button on:click={upload}
+                <div>
+                  {#if saving}
+                    <img
+                      on:click={upload}
+                      class="icon selected"
+                      src="assets/SHB/svg/AW-icon-history.svg"
+                    />
+                  {:else if saved}
+                    <img
+                      on:click={upload}
+                      class="icon selected"
+                      src="assets/SHB/svg/AW-icon-check.svg"
+                    />
+                  {/if}
+                </div>
+                <!-- <button on:click={upload}
               >{#if saving}Saving{:else if saved}
                 Saved{:else}Save{/if}</button
-            >
-            {#if saved}
-              <button on:click={download}>Download</button>
+            > -->
+                <div>
+                  {#if saved}<img
+                      on:click={download}
+                      class="icon selected"
+                      src="assets/SHB/svg/AW-icon-save.svg"
+                    />
+                  {/if}
+                </div>
+              </div>
+              <!-- {#if saved}
+              <button >Download</button>
+            {/if} -->
             {/if}
           </div>
         </div>
@@ -1700,7 +1734,10 @@
         <a on:click={redo}
           ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
         >
-        <a id="drawing-mode" class:currentSelected={current === "draw"}
+        <a
+          on:click={applyBrush}
+          id="drawing-mode"
+          class:currentSelected={current === "draw"}
           ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
         >
         <a id="erase-mode" class:currentSelected={current === "erase"}
@@ -1915,21 +1952,49 @@
     transform: translate(-50%, -50%);
   }
 
-  .widthBox {
-    height: 30px;
-    position: relative;
-    border: solid 2px black;
-    border-radius: 25px;
-    padding: 10px;
-    width: 30px;
+  .range-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
   }
 
-  .colorIcon {
+  .circle-box-small {
+    border: solid 2px black;
+    border-radius: 50%;
+    padding: 5px;
+  }
+
+  .circle-box-big {
+    border: solid 2px black;
+    border-radius: 50%;
+    padding: 10px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    -moz-apperance: none;
+    border-radius: 6px;
+    border: 4px solid #7300ed;
+    height: 4px;
+    margin: 0 10px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background-color: black;
+    border: 1px solid black;
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+  }
+
+  /* .colorIcon {
     width: 32px;
     position: absolute;
     right: 5px;
     bottom: 5px;
-  }
+  } */
 
   .canvas-box {
     position: relative;
@@ -2069,6 +2134,14 @@
     flex-wrap: wrap;
   }
 
+  .status-save-download-container {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    /* align-items: center; */
+    height: min-content;
+  }
+
   /* medium size */
   @media only screen and (max-width: 1007px) {
     .canvas-frame-container {
@@ -2164,6 +2237,11 @@
 
     .optionbar > * {
       margin: 20px 50px 20px 0;
+    }
+
+    .status-save-download-container {
+      flex-direction: row;
+      justify-content: space-between;
     }
 
     @keyframes growup {
