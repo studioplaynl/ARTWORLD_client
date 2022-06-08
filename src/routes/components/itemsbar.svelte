@@ -8,6 +8,7 @@
   import itemsBar from "./itemsbar.js";
   import ProfilePage from "../profile.svelte";
   import FriendsPage from "../friends.svelte";
+  import LikedPage from "../liked.svelte"
   import { Profile, Session } from "../../session";
   import { CurrentApp, logout } from "../../session";
   import Awards from "../awards.svelte";

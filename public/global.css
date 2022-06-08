@@ -173,4 +173,7 @@ margin: 0 auto;
     border-radius: 50%;
   }
   
-  
+  div#phaserId {
+    max-width: 100vw;
+    max-height: 100vh;
+}
