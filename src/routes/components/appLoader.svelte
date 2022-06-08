@@ -112,4 +112,11 @@
     #close > img {
         width: 40px;
     }
+
+    @media only screen and (max-width: 640px) {
+        #close {
+            top: unset;
+            bottom: 120px;
+        }
+    }
 </style>

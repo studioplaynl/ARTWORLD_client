@@ -50,13 +50,15 @@
     saveToggle = false,
     savedURL = "",
     colorToggle = true;
-  const statussen = ["zichtbaar", "verborgen"];
-  let status = "zichtbaar";
+  // const statussen = [true, false];
+  let status = true;
   let displayName;
   export let appType = $location.split("/")[1];
   let version = 0;
   let optionbox = true;
   let isDrawn = false;
+  let applyBrush;
+  let selectedBrush = "Pencil";
 
   let FrameObject = {
     type: "image",
@@ -105,6 +107,53 @@
     return document.getElementById(id);
   };
 
+  function adaptCanvasSize() {
+    // the canvas size is set by the least of two (width and height)
+    const canvasSize =
+      window.innerWidth > window.innerHeight
+        ? window.innerHeight
+        : window.innerWidth;
+
+    // as a default the canvas has 100px less size that the window
+    canvas.setWidth(canvasSize - 100);
+    canvas.setHeight(canvasSize - 100);
+
+    // in case when the size of height and width are more or less close in px (within the difference of 300px) ("square windows")
+    if (
+      (window.innerWidth >= 1008 &&
+        window.innerWidth - window.innerHeight >= 0 &&
+        window.innerWidth - window.innerHeight < 300) ||
+      (window.innerWidth >= 1008 &&
+        window.innerHeight - window.innerWidth >= 0 &&
+        window.innerHeight - window.innerWidth < 300)
+    ) {
+      canvas.setWidth(canvasSize - 200);
+      canvas.setHeight(canvasSize - 200);
+      return;
+    }
+
+    // for medium screens
+    if (canvasSize < 1008 && canvasSize > 640) {
+      canvas.setWidth(canvasSize - 140);
+      canvas.setHeight(canvasSize - 140);
+      return;
+    }
+
+    // for mobile screens
+    if (canvasSize <= 640) {
+      canvas.setWidth(canvasSize - 110);
+      canvas.setHeight(canvasSize - 110);
+      return;
+    }
+
+    // for mobile screens
+    if (canvasSize <= 540) {
+      canvas.setWidth(canvasSize - 80);
+      canvas.setHeight(canvasSize - 80);
+      return;
+    }
+  }
+
   onMount(() => {
     console.log("on mount isDrawn", isDrawn);
     setLoader(true);
@@ -128,60 +177,8 @@
       isDrawingMode: true,
     });
 
-    let canvasSize =
-      window.innerWidth > window.innerHeight
-        ? window.innerHeight
-        : window.innerWidth;
-
-    canvas.setWidth(canvasSize - 80);
-    canvas.setHeight(canvasSize - 80);
-
     window.onresize = () => {
-      canvasSize =
-        window.innerWidth > window.innerHeight
-          ? window.innerHeight
-          : window.innerWidth;
-
-      canvas.setWidth(canvasSize - 80);
-      canvas.setHeight(canvasSize - 80);
-
-      if (canvasSize < 1008 && canvasSize > 640) {
-        canvas.setWidth(canvasSize - 140);
-        canvas.setHeight(canvasSize - 140);
-      }
-
-      if (canvasSize <= 640) {
-        canvas.setWidth(canvasSize - 220);
-        canvas.setHeight(canvasSize - 220);
-      }
-
-      if (canvasSize <= 540) {
-        canvas.setWidth(canvasSize - 80);
-        canvas.setHeight(canvasSize - 80);
-      }
-
-      console.log("canvasSize", canvasSize);
-
-      // if (width != window.innerWidth) {
-      //   if (width > height) {
-      //     canvas.setWidth(height - 200);
-      //     // canvas.setHeight(height - 200);
-      //   } else {
-      //     canvas.setWidth(width - 200);
-      //     // canvas.setHeight(width - 200);
-      //   }
-      // }
-      // if (height != window.innerHeight) {
-      //   // if (height > width) {
-      //     // canvas.setWidth(width - 200);
-      //     // canvas.setHeight(width - 200);
-      //   } else {
-      //     // canvas.setWidth(height - 200);
-      //     // canvas.setHeight(height - 200);
-      //   }
-      // }
-      // var width = window.innerWidth > 0 ? window.innerWidth : screen.width;
-      // var height = window.innerHeight > 0 ? window.innerHeight : screen.height;
+      adaptCanvasSize();
     };
 
     MouseIcon;
@@ -224,7 +221,6 @@
       // console.log("mouse is down");
       switchOption("draw");
       canvas.isDrawingMode = true;
-      changebrush();
       console.log(drawingColor);
       floodFill(false);
     };
@@ -327,41 +323,42 @@
       };
     }
 
-    fab("drawing-mode-selector").onchange = () => changebrush();
+    // fab("drawing-mode-selector").onchange = () => changebrush();
 
-    function changebrush() {
-      brush = fab("drawing-mode-selector");
-      console.log(brush);
-      if (brush.value === "hline") {
-        canvas.freeDrawingBrush = vLinePatternBrush;
-      } else if (brush.value === "vline") {
-        canvas.freeDrawingBrush = hLinePatternBrush;
-      } else if (brush.value === "square") {
-        canvas.freeDrawingBrush = squarePatternBrush;
-      } else if (brush.value === "diamond") {
-        canvas.freeDrawingBrush = diamondPatternBrush;
-      } else if (brush.value === "texture") {
-        canvas.freeDrawingBrush = texturePatternBrush;
-      } else {
-        canvas.freeDrawingBrush = new fabric[brush.value + "Brush"](canvas);
-      }
+    // function changebrush() {
+    //   brush = fab("drawing-mode-selector");
+    //   console.log(brush);
+    //   if (brush.value === "hline") {
+    //     canvas.freeDrawingBrush = vLinePatternBrush;
+    //   } else if (brush.value === "vline") {
+    //     canvas.freeDrawingBrush = hLinePatternBrush;
+    //   } else if (brush.value === "square") {
+    //     canvas.freeDrawingBrush = squarePatternBrush;
+    //   } else if (brush.value === "diamond") {
+    //     canvas.freeDrawingBrush = diamondPatternBrush;
+    //   } else if (brush.value === "texture") {
+    //     canvas.freeDrawingBrush = texturePatternBrush;
+    //   } else {
+    //     canvas.freeDrawingBrush = new fabric[brush.value + "Brush"](canvas);
 
-      if (canvas.freeDrawingBrush) {
-        var brush = canvas.freeDrawingBrush;
-        brush.color = drawingColorEl.value;
-        if (brush.getPatternSrc) {
-          brush.source = brush.getPatternSrc.call(brush);
-        }
-        brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
-        // brush.shadow = new fabric.Shadow({
-        //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
-        //   offsetX: 0,
-        //   offsetY: 0,
-        //   affectStroke: true,
-        //   color: drawingShadowColorEl.value,
-        // });
-      }
-    }
+    //   }
+
+    //   if (canvas.freeDrawingBrush) {
+    //     var brush = canvas.freeDrawingBrush;
+    //     brush.color = drawingColorEl.value;
+    //     if (brush.getPatternSrc) {
+    //       brush.source = brush.getPatternSrc.call(brush);
+    //     }
+    //     brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+    //     // brush.shadow = new fabric.Shadow({
+    //     //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
+    //     //   offsetX: 0,
+    //     //   offsetY: 0,
+    //     //   affectStroke: true,
+    //     //   color: drawingShadowColorEl.value,
+    //     // });
+    //   }
+    // }
 
     drawingColorEl.onchange = function () {
       var brush = canvas.freeDrawingBrush;
@@ -546,7 +543,23 @@
       };
     }
     //////////////// drawing challenge ////////////////////////
+
+    adaptCanvasSize();
+
+    applyBrush = (brushType) => {
+      selectedBrush = brushType;
+      canvas.freeDrawingBrush = new fabric[brushType + "Brush"](canvas);
+      if (canvas.freeDrawingBrush) {
+        var brush = canvas.freeDrawingBrush;
+        brush.color = drawingColorEl.value;
+        if (brush.getPatternSrc) {
+          brush.source = brush.getPatternSrc.call(brush);
+        }
+        brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+      }
+    };
   });
+  /////////////////// end onMount ///////////////////////
 
   const upload = async () => {
     console.log("upload is clicked");
@@ -922,7 +935,7 @@
     frames.push({});
     frames = frames;
     await changeFrame(frames.length - 1);
-    let framebar = document.getElementById("framebar");
+    let framebar = document.getElementById("frame-bar");
     framebar.scrollTo({ left: 0, top: framebar.scrollHeight });
   }
 
@@ -1415,190 +1428,7 @@
 
 <main on:mouseup={mouseEvent}>
   <div class="main-container">
-    <div class="optionbox-container">
-      <div class="optionbox">
-        <div class="optionbar" class:hidden={optionbox}>
-          <div id="drawing-mode-options" class:hidden={current != "draw"}>
-            <select id="drawing-mode-selector">
-              <option>Pencil</option>
-              <option>Circle</option>
-              <option>Spray</option>
-              <option>Pattern</option>
-
-              <option>hline</option>
-              <option>vline</option>
-              <option>square</option>
-              <option>diamond</option>
-              <option>texture</option>
-            </select>
-          </div>
-
-          <div class="colorTab" class:hidden={current != "draw"}>
-            <!-- <div
-            class="widthBox"
-            style="background-color: {drawingColor};"
-            on:click={() => {
-              drawingColorEl.click();
-            }}
-          >
-            
-          </div> -->
-            <input
-              type="color"
-              bind:value={drawingColor}
-              bind:this={drawingColorEl}
-              id="drawing-color"
-            />
-            <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
-
-            <span class="info">{lineWidth}</span><input
-              type="range"
-              min="10"
-              max="500"
-              id="drawing-line-width"
-              bind:value={lineWidth}
-            />
-
-            <!-- <label for="drawing-shadow-color">Shadow color:</label>
-          <input
-            type="color"
-            bind:value={shadowColor}
-            id="drawing-shadow-color"
-          />
-
-          <label for="drawing-shadow-width">Shadow width:</label>
-          <span class="info">0</span><input
-            type="range"
-            bind:value={shadowWidth}
-            min="0"
-            max="50"
-            id="drawing-shadow-width"
-          />
-
-          <label for="drawing-shadow-offset">Shadow offset:</label>
-          <span class="info">0</span><input
-            type="range"
-            bind:value={shadowOffset}
-            min="0"
-            max="50"
-            id="drawing-shadow-offset"
-          /> -->
-          </div>
-          <div class="eraseTab" class:hidden={current != "erase"}>
-            <div class="widthBox">
-              <div
-                class="lineWidth"
-                style="background-color: black;margin:  0px auto;"
-              />
-            </div>
-            <span class="info">{lineWidth}</span><input
-              type="range"
-              min="10"
-              max="500"
-              id="erase-line-width"
-              bind:value={lineWidth}
-            />
-          </div>
-          <div class="fillTab" class:hidden={current != "fill"}>
-            <input type="color" bind:value={fillColor} id="fill-color" />
-          </div>
-          <div class="selectTab" class:hidden={current != "select"}>
-            <a on:click={Copy}
-              ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
-            >
-            <a on:click={Paste}
-              ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
-            >
-            <a on:click={Delete}
-              ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
-            >
-          </div>
-          <div class="saveBox" class:hidden={current != "saveToggle"}>
-            <div class="saveTab">
-              {#if appType != "avatar" && appType != "house"}
-                <label for="title">Title</label>
-                <NameGenerator bind:value={displayName} bind:invalidTitle />
-
-                <label for="status">Status</label>
-                <select bind:value={status} on:change={() => (answer = "")}>
-                  {#each statussen as status}
-                    <option value={status}>
-                      {status}
-                    </option>
-                  {/each}
-                </select>
-              {/if}
-
-              <button on:click={upload}
-                >{#if saving}Saving{:else if saved}
-                  Saved{:else}Save{/if}</button
-              >
-              {#if saved}
-                <button on:click={download}>Download</button>
-              {/if}
-            </div>
-          </div>
-        </div>
-
-        <div class="iconbox">
-          <a on:click={undo}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
-          >
-          <a on:click={redo}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
-          >
-          <a id="drawing-mode" class:currentSelected={current === "draw"}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
-          >
-          <a id="erase-mode" class:currentSelected={current === "erase"}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" /></a
-          >
-          <!-- <button
-          class="icon"
-          id="fill-mode"
-          class:currentSelected={current === "fill"}><BucketIcon /></button
-        > -->
-          <a id="select-mode" class:currentSelected={current === "select"}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
-          >
-          <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
-          <button
-            class="icon"
-            id="camera-mode"
-            class:currentSelected={current == "camera"}
-            on:click={camera}><CameraIcon /></button
-          >
-        {/if} -->
-          <!-- <button id="clear-canvas" class="btn btn-info icon">
-          <TrashIcon />
-        </button> -->
-
-          <!-- svelte-ignore a11y-missing-attribute -->
-          <a
-            class:currentSelected={current === "saveToggle"}
-            on:click={() => {
-              // console.log("saving is clicked");
-              // console.log("length", canvas.toJSON().objects);
-              if (isDrawn) {
-                if (appType == "drawing" || appType == "stopmotion") {
-                  saveToggle = !saveToggle;
-                  switchOption("saveToggle");
-                }
-                upload();
-              }
-            }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
-          >
-        </div>
-      </div>
-    </div>
-    <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg" /></div>
-    {#if appType == "avatar"}
-      <div id="avatarBox">
-        <Avatar />
-      </div>
-    {/if}
-
-    <div class="inner-container">
+    <div class="canvas-frame-container">
       {#if current == "camera"}
         <video bind:this={video} autoplay />
         <button on:click={capturePicture} class="videoButton" />
@@ -1612,7 +1442,7 @@
         <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
       </div>
     </div> -->
-      <div class="canvasBox" class:hidden={current === "camera"}>
+      <div class="canvas-box" class:hidden={current === "camera"}>
         <canvas bind:this={canv} class="canvas" />
         <canvas bind:this={Cursor} id="cursor" />
       </div>
@@ -1621,7 +1451,7 @@
       </div>
       <div class="frame-box">
         {#if appType == "stopmotion" || appType == "avatar"}
-          <div id="framebar">
+          <div id="frame-bar">
             {#each frames as frame, index}
               <div>
                 <div
@@ -1683,6 +1513,229 @@
       </div>
     </div>
   </div>
+  <div class="optionbox-container">
+    <div class="optionbox">
+      <div class="optionbar" class:hidden={optionbox}>
+        <div class="colorTab" class:hidden={current != "draw"}>
+          <div class="drawing-options-container">
+            <img
+              on:click={() => applyBrush("Pencil")}
+              class="icon"
+              class:selected={selectedBrush == "Pencil"}
+              src="assets/svg/drawing_pencil2.svg"
+            />
+            <img
+              on:click={() => applyBrush("Circle")}
+              class="icon"
+              class:selected={selectedBrush == "Circle"}
+              src="assets/svg/drawing_circle2.svg"
+            />
+            <img
+              on:click={() => applyBrush("Spray")}
+              class="icon"
+              class:selected={selectedBrush == "Spray"}
+              src="assets/svg/drawing_spray.svg"
+            />
+            <img
+              on:click={() => applyBrush("Pattern")}
+              class="icon"
+              class:selected={selectedBrush == "Pattern"}
+              src="assets/svg/drawing_pattern.svg"
+            />
+          </div>
+          <!-- <div id="drawing-mode-options">
+            <select id="drawing-mode-selector">
+              <option>Pencil</option>
+              <option>Circle</option>
+              <option>Spray</option>
+              <option>Pattern</option>
+
+              <option>hline</option>
+              <option>vline</option>
+              <option>square</option>
+              <option>diamond</option>
+              <option>texture</option>
+            </select>
+          </div> -->
+          <!-- <div
+          class="widthBox"
+          style="background-color: {drawingColor};"
+          on:click={() => {
+            drawingColorEl.click();
+          }}
+        >
+          
+        </div> -->
+          <input
+            type="color"
+            bind:value={drawingColor}
+            bind:this={drawingColorEl}
+            id="drawing-color"
+          />
+          <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" />
+
+          <span class="info">{lineWidth}</span><input
+            type="range"
+            min="10"
+            max="500"
+            id="drawing-line-width"
+            bind:value={lineWidth}
+          />
+
+          <!-- <label for="drawing-shadow-color">Shadow color:</label>
+        <input
+          type="color"
+          bind:value={shadowColor}
+          id="drawing-shadow-color"
+        />
+
+        <label for="drawing-shadow-width">Shadow width:</label>
+        <span class="info">0</span><input
+          type="range"
+          bind:value={shadowWidth}
+          min="0"
+          max="50"
+          id="drawing-shadow-width"
+        />
+
+        <label for="drawing-shadow-offset">Shadow offset:</label>
+        <span class="info">0</span><input
+          type="range"
+          bind:value={shadowOffset}
+          min="0"
+          max="50"
+          id="drawing-shadow-offset"
+        /> -->
+        </div>
+        <div class="eraseTab" class:hidden={current != "erase"}>
+          <div class="widthBox">
+            <div
+              class="lineWidth"
+              style="background-color: black;margin:  0px auto;"
+            />
+          </div>
+          <span class="info">{lineWidth}</span><input
+            type="range"
+            min="10"
+            max="500"
+            id="erase-line-width"
+            bind:value={lineWidth}
+          />
+        </div>
+        <div class="fillTab" class:hidden={current != "fill"}>
+          <input type="color" bind:value={fillColor} id="fill-color" />
+        </div>
+        <div class="selectTab" class:hidden={current != "select"}>
+          <a on:click={Copy}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
+          >
+          <a on:click={Paste}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
+          >
+          <a on:click={Delete}
+            ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
+          >
+        </div>
+        <div class="saveBox" class:hidden={current != "saveToggle"}>
+          <div class="saveTab">
+            {#if appType != "avatar" && appType != "house"}
+              <label for="title">Title</label>
+              <NameGenerator bind:value={displayName} bind:invalidTitle />
+
+              <!-- <label for="status">Status</label>
+              <select bind:value={status} on:change={() => (answer = "")}>
+                {#each statussen as status}
+                  <option value={status}>
+                    {status}
+                  </option>
+                {/each}
+              </select> -->
+              <div>
+                Status
+                <div on:click={() => (status = !status)}>
+                  {#if status}
+                    <img
+                      class="visibility-status"
+                      src="assets/save_image/visible.png"
+                    />
+                  {:else}
+                    <img
+                      class="visibility-status"
+                      src="assets/save_image/hidden.png"
+                    />
+                  {/if}
+                </div>
+              </div>
+            {/if}
+
+            <button on:click={upload}
+              >{#if saving}Saving{:else if saved}
+                Saved{:else}Save{/if}</button
+            >
+            {#if saved}
+              <button on:click={download}>Download</button>
+            {/if}
+          </div>
+        </div>
+      </div>
+
+      <div class="iconbox">
+        <a on:click={undo}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
+        >
+        <a on:click={redo}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
+        >
+        <a id="drawing-mode" class:currentSelected={current === "draw"}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
+        >
+        <a id="erase-mode" class:currentSelected={current === "erase"}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" /></a
+        >
+        <!-- <button
+        class="icon"
+        id="fill-mode"
+        class:currentSelected={current === "fill"}><BucketIcon /></button
+      > -->
+        <a id="select-mode" class:currentSelected={current === "select"}
+          ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
+        >
+        <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
+        <button
+          class="icon"
+          id="camera-mode"
+          class:currentSelected={current == "camera"}
+          on:click={camera}><CameraIcon /></button
+        >
+      {/if} -->
+        <!-- <button id="clear-canvas" class="btn btn-info icon">
+        <TrashIcon />
+      </button> -->
+
+        <!-- svelte-ignore a11y-missing-attribute -->
+        <a
+          class:currentSelected={current === "saveToggle"}
+          on:click={() => {
+            // console.log("saving is clicked");
+            // console.log("length", canvas.toJSON().objects);
+            if (isDrawn) {
+              if (appType == "drawing" || appType == "stopmotion") {
+                saveToggle = !saveToggle;
+                switchOption("saveToggle");
+              }
+              upload();
+            }
+          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+        >
+      </div>
+    </div>
+  </div>
+  <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg" /></div>
+  {#if appType == "avatar"}
+    <div id="avatarBox">
+      <Avatar />
+    </div>
+  {/if}
 </main>
 
 <style>
@@ -1693,24 +1746,16 @@
   }
 
   .main-container {
-    /* width: 100vw;
-    height: 100vh; */
-    /* justify-content: center; */
-    /* margin: 100px; */
     display: flex;
     align-items: center;
+    margin-left: 60px;
   }
-
-  /* .canvas-container {
-    height: calc(100vh - 250px);
-  } */
 
   #cursor {
     pointer-events: none !important;
     width: 100vw;
     height: 100vw;
     margin: 0px;
-
     position: absolute;
     user-select: none;
     top: 0px;
@@ -1723,19 +1768,14 @@
     margin: 0px auto;
   }
 
-  .canvas {
-    /* width: 100vw;
-    height: 100vw; */
-    /* width: 100%;
-    margin: 0px; */
-  }
-
   .selected {
     box-shadow: -3px 3px #7300ed;
   }
 
   .colorTab {
-    margin: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .saveTab {
@@ -1763,10 +1803,6 @@
     color: green;
   }
 
-  /* .savecanvas {
-    display: none;
-  } */
-
   .iconbox {
     width: 50px;
     position: relative;
@@ -1781,6 +1817,7 @@
   .optionbar {
     margin-left: 10px;
     border-right: 2px solid #7300ed;
+    /* box-shadow: 10px 0px 5px 0px rgba(115,0,237,0.5); */
     height: 100vh;
     background-color: white;
     transition: all 0.5s ease-in-out;
@@ -1808,7 +1845,7 @@
   }
 
   .optionbar > * {
-    margin: 5px auto;
+    /* margin: 5px auto; */
   }
 
   .icon {
@@ -1828,8 +1865,6 @@
 
   .optionbox {
     width: fit-content;
-    /* max-width: 80%; */
-    /* justify-content: right; */
     display: flex;
   }
 
@@ -1847,11 +1882,6 @@
   .hidden {
     display: none;
   }
-
-  /* video {
-    width: 100vw;
-    height: 100vw;
-  } */
 
   .videoButton {
     border-radius: 50%;
@@ -1885,39 +1915,21 @@
     bottom: 5px;
   }
 
-  /* new css */
-  .canvasBox {
+  .canvas-box {
     position: relative;
     background-color: white;
     border: 2px solid #7300ed;
-    /* margin: 0 auto; */
-    /* width: fit-content; */
-    /* position: relative; */
-    /* max-width: 100%; */
-    /* min-width: 20%; */
-    /* width: 520px; */
-    /* flex-shrink: 4; */
-    /* min-width: 300px; */
-    /* float: left; */
   }
 
   .frame-box {
-    /* margin: 0 auto; */
-    /* width: fit-content; */
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     flex-direction: column;
-    /* border: 2px solid black; */
-    /* height: 100vh; */
-    /* width: fit-content; */
-    /* width: 200px; */
-    /* float: right; */
-    /* flex-shrink: 1; */
   }
 
-  #framebar {
+  #frame-bar {
     display: flex;
     flex-direction: column;
     max-height: 300px;
@@ -1925,21 +1937,15 @@
     overflow-y: auto;
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
-    /* float: left; */
-    /* margin: 5px; */
   }
-  #framebar > div {
+  #frame-bar > div {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: row;
   }
 
-  #framebar > div > img {
-    /* margin: 10px 10px 0 0; */
-  }
-
-  #framebar > div > div {
+  #frame-bar > div > div {
     display: inline-block;
     width: 60px;
     height: 60px;
@@ -1952,27 +1958,20 @@
     background-size: contain;
   }
 
-  #framebar > div > div:hover {
+  #frame-bar > div > div:hover {
     cursor: pointer;
   }
 
-  #framebar > div > div > div {
-    /* background-color: rgba(255, 255, 255, 0.2); */
+  #frame-bar > div > div > div {
     height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  /* .frameDelete {
-    position: abs;
-  } */
-
   .frame-buttons {
     display: flex;
     flex-direction: column;
-    /* margin-left: 10px; */
-    /* align-self: flex-start; */
   }
 
   .frame-buttons > a > img {
@@ -1984,7 +1983,6 @@
     left: 8px;
     top: 80px;
     z-index: 13;
-    /* border: 2px solid #7300ed; */
     box-shadow: 5px 5px 0px #7300ed;
     cursor: pointer;
     padding: 0;
@@ -1999,13 +1997,11 @@
   }
 
   video {
-    /* width: 700px;
-      height: 700px; */
     margin: 0 auto;
     display: block;
   }
 
-  .inner-container {
+  .canvas-frame-container {
     display: flex;
     flex-direction: row;
   }
@@ -2013,14 +2009,6 @@
   .topbar {
     width: unset;
   }
-
-  /* .canvasBox {
-    height: min-content;
-    width: min-content;
-
-    max-width: 100%;
-    margin: -4px;
-  } */
 
   .topbar {
     float: left;
@@ -2036,22 +2024,17 @@
     transform: translateY(-50%);
   }
 
-  /* .topbar > button {
-    display: block;
-  } */
-
-  #framebar > div:last-child {
+  #frame-bar > div:last-child {
     overflow-anchor: auto;
   }
 
   .optionbox-container {
     margin: 0 10px 0 0;
-    /* z-index: 20;
     position: fixed;
     left: 0;
     top: 50vh;
     -ms-transform: translateY(-50%);
-    transform: translateY(-50%); */
+    transform: translateY(-50%);
   }
 
   .unselected {
@@ -2064,35 +2047,28 @@
     left: 20px;
   }
 
+  .visibility-status {
+    width: 80px;
+  }
+
+  .drawing-options-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  /* medium size */
   @media only screen and (max-width: 1007px) {
-    .inner-container {
+    .canvas-frame-container {
       flex-direction: column;
     }
 
-    /* .canvasBox {
-      height: 80vh; */
-    /* width: 100vw;
-    } */
-
     .frame-box {
-      /* margin-bottom: -20px; */
-      /* border-top: 2px solid #7300ed; */
-      /* background-color: white; */
       flex-direction: row;
-      /* bottom: 0; */
-
-      /* position: absolute; */
-      /* width: 100%; */
-      /* transition: all 0.5s ease-in-out; */
     }
 
-    /* .frame-box:hover {
-      margin-bottom: 10px;
-    } */
-
-    #framebar {
+    #frame-bar {
       flex-direction: row;
-      /* height: 140px; */
       width: 450px;
       overflow-x: auto;
       overflow-y: none;
@@ -2100,85 +2076,48 @@
       scroll-snap-type: x proximity;
     }
 
-    /* #framebar > div {
-      padding: 0;
-      margin: 0;
-      display: block;
-    } */
-
-    #framebar > div {
-      /* display: flex; */
-      /* justify-content: center; */
-      /* align-items: center; */
+    #frame-bar > div {
       flex-direction: column;
-    }
-
-    #framebar > div > img {
-      /* display: inline-block;
-      margin-left: -60px;
-      margin-top: 70px; */
     }
 
     .frame-buttons {
-      /* display: flex; */
       flex-direction: row;
-      /* padding: 0; */
-      /* justify-self: flex-start; */
-      /* align-self: flex-start; */
     }
   }
 
-  /* mobile */
+  /* small */
   @media only screen and (max-width: 640px) {
     .main-container {
       display: unset;
+      align-items: unset;
+      margin: 0;
     }
 
-    .inner-container {
-      flex-direction: column;
+    .canvas-frame-container {
       justify-content: center;
       align-items: center;
     }
 
-    .canvasBox {
+    .canvas-box {
       order: 2;
-      /* position: absolute; */
-      /* left: 0; */
-      /* top: 150px; */
     }
 
     .frame-box {
       order: 1;
-      /* top: 0;
-      right: 0; */
-      /* border: none; */
       flex-direction: row;
-      /* position: relative; */
-      width: 80%;
+      /* width: 100%; */
       justify-content: space-between;
-      align-self: flex-end;
-      /* transition: all 0.5s ease-in-out; */
+      /* align-self: flex-end; */
     }
 
-    #framebar {
-      /* width: 230px; */
-      /* min-width: 190px; */
+    #frame-bar {
       max-width: 300px;
       height: 140px;
       margin-right: 10px;
     }
 
-    /* #framebar > div {
-      height: 100px;
-    } */
-
-    #framebar > div {
+    #frame-bar > div {
       flex-direction: column-reverse;
-    }
-
-    #framebar > div > img {
-      /* margin-left: -60px; */
-      /* margin-top: 50px; */
     }
 
     .frame-buttons {
@@ -2187,19 +2126,7 @@
       align-self: center;
     }
 
-    /* .frame-box {
-      margin: 0;
-      border: unset;
-      position: relative;
-      transition: none;
-    } */
-
-    /* .frame-box:hover {
-      margin-top: 0;
-    } */
-
     .optionbox {
-      /* width: 100vw; */
       width: 100%;
       height: min-content;
       position: fixed;
@@ -2210,17 +2137,21 @@
     .optionbar {
       margin: 0;
       border-right: none;
-      border-top: 2px dotted #7300ed;
+      border-top: 2px solid #7300ed;
+      box-shadow: 0px -5px 5px 0px #7300ed;
       height: min-content;
-      width: initial;
+      width: 100%;
       padding: 0px;
       transition: none;
       animation: growup 0.3s ease-in-out forwards;
       transform-origin: bottom center;
-      /* width: 90vw; */
       position: sticky;
       z-index: 40;
-      /* border-left: 2px solid #7300ed; */
+      align-items: flex-end;
+    }
+
+    .optionbar > * {
+      margin: 20px 50px 20px 0;
     }
 
     @keyframes growup {
@@ -2274,39 +2205,16 @@
       margin: 0 auto;
     }
 
-    /* .topbar {
-      width: max-content;
-      margin: 0px auto;
-      display: block;
-    } */
-    /* 
-
-    #framebar {
-      margin-bottom: 60px;
-      overflow-y: auto;
-      max-height: 79px;
-      overflow-x: auto;
-    }
-
-    #framebar > div {
-      display: inline-block;
-    } */
-
-    /* .icon {
-      min-width: 50px;
-      height: 50px;
-      width: 50px;
-      border-radius: 71%;
-      padding: 0;
-      margin: 5px;
-      cursor: pointer;
-    } */
-
     .currentSelected > img {
       border: 2px solid #7300ed;
     }
     .currentSelected {
       box-shadow: unset;
+    }
+
+    #clear-canvas {
+      top: unset;
+      bottom: 60px;
     }
   }
 </style>
