@@ -11,6 +11,7 @@ import Artworld from "./scenes/Artworld.js"
 import TestCoordinates from "./scenes/TestCoordinates"
 import DefaultUserHome from "./scenes/DefaultUserHome"
 import AnimalGardenChallenge from "./scenes/AnimalGardenChallenge"
+import FlowerFieldChallenge from "./scenes/FlowerFieldChallenge"
 
 export const CONFIG = {
   WIDTH: window.innerWidth,
@@ -34,7 +35,8 @@ export const SCENES = [
   UI_Scene,
   TestCoordinates,
   DefaultUserHome,
-  AnimalGardenChallenge
+  AnimalGardenChallenge,
+  FlowerFieldChallenge
 ]
 
 //export default CONFIG
