@@ -1,7 +1,7 @@
 <script>
   import { fabric } from "./fabric";
   import { location, replace } from "svelte-spa-router";
-  import { onMount, beforeUpdate } from "svelte";
+  import { onMount, beforeUpdate, onDestroy } from "svelte";
   import {
     uploadImage,
     user,
@@ -610,6 +610,12 @@
     }
   };
 
+  onDestroy(() => {
+    if (isDrawn) {
+      upload();
+    }
+  });
+
   async function download() {
     console.log("download", savedURL);
     let url = await convertImage(savedURL);
@@ -1169,6 +1175,14 @@
     newFile.objects.push(history[history.length - 1]);
     history.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
+
+    if (canvas.toJSON().objects.length > 0) {
+      isDrawn = true;
+      console.log(
+        "canvas.toJSON().objects.length",
+        canvas.toJSON().objects.length
+      );
+    }
   };
 
   //////////////////// redo/undo function end ///////////////////////////
@@ -1655,13 +1669,13 @@
                 <div on:click={() => (status = !status)}>
                   {#if status}
                     <img
-                      class="visibility-status"
-                      src="assets/save_image/visible.png"
+                      class="icon selected"
+                      src="assets/save_image/visible.svg"
                     />
                   {:else}
                     <img
-                      class="visibility-status"
-                      src="assets/save_image/hidden.png"
+                      class="icon selected"
+                      src="assets/save_image/hidden.svg"
                     />
                   {/if}
                 </div>
@@ -1713,20 +1727,22 @@
       </button> -->
 
         <!-- svelte-ignore a11y-missing-attribute -->
-        <a
-          class:currentSelected={current === "saveToggle"}
-          on:click={() => {
-            // console.log("saving is clicked");
-            // console.log("length", canvas.toJSON().objects);
-            if (isDrawn) {
-              if (appType == "drawing" || appType == "stopmotion") {
-                saveToggle = !saveToggle;
-                switchOption("saveToggle");
+        {#if isDrawn}
+          <a
+            class:currentSelected={current === "saveToggle"}
+            on:click={() => {
+              // console.log("saving is clicked");
+              // console.log("length", canvas.toJSON().objects);
+              if (isDrawn) {
+                if (appType == "drawing" || appType == "stopmotion") {
+                  saveToggle = !saveToggle;
+                  switchOption("saveToggle");
+                }
+                upload();
               }
-              upload();
-            }
-          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
-        >
+            }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+          >
+        {/if}
       </div>
     </div>
   </div>
@@ -2045,10 +2061,6 @@
     position: fixed;
     top: 130px;
     left: 20px;
-  }
-
-  .visibility-status {
-    width: 80px;
   }
 
   .drawing-options-container {

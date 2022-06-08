@@ -228,8 +228,8 @@ export default class Artworld extends Phaser.Scene {
 
     // sunglass_stripes
     this.sunglasses_stripes = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1417),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 687),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -893),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1129),
       "sunglass_stripes"
     )
     this.sunglasses_stripes.name = "sunglass_stripes"
@@ -246,7 +246,7 @@ export default class Artworld extends Phaser.Scene {
       this.tweens.add({
         targets: this.train,
         duration: 3000,
-        x: '+=1830',
+        x: '+=1750',
         yoyo: false,
         repeat: -1,
         repeatDelay: 8000,
@@ -381,8 +381,8 @@ export default class Artworld extends Phaser.Scene {
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) { this.photo_camera.setInteractive({ draggable: true }) }
 
-    this.tree_palm = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -193),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 440),
+    this.tree_palm = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 992),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 772),
       "tree_palm")
     this.tree_palm.name = "tree_palm"
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -391,8 +391,8 @@ export default class Artworld extends Phaser.Scene {
     Exhibition.AbriBig({
       scene: this,
       name: "exhibit_outdoor_big1",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -500),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1357),
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -300),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1262),
       size: 564,
     })
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -402,8 +402,8 @@ export default class Artworld extends Phaser.Scene {
     Exhibition.AbriSmall2({
       scene: this,
       name: "exhibit_outdoor_small2_1",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1014),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1149),
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1659),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 287),
       size: 564,
     })
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -713,11 +713,35 @@ export default class Artworld extends Phaser.Scene {
       draggable: ManageSession.gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
-      locationDestination: "AnimalGardenChallenge",
+      locationDestination: "ChallengeAnimalGarden",
       locationImage: "dinoA",
       enterButtonImage: "enter_button",
       locationText: "animal Garden",
       referenceName: "animalGardenChallenge",
+      fontColor: 0x8dcb0e,
+      color1: 0x8dcb0e,
+      color2: 0x3f8403,
+      color3: 0x63a505,
+    })
+
+    locationVector = new Phaser.Math.Vector2(1464, 989)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
+    this.flowerFieldChallenge = new GenerateLocation({
+      scene: this,
+      type: "image",
+
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "ChallengeFlowerField",
+      locationImage: "flower",
+      enterButtonImage: "enter_button",
+      locationText: "flower Flied",
+      referenceName: "flowerFieldChallenge",
       fontColor: 0x8dcb0e,
       color1: 0x8dcb0e,
       color2: 0x3f8403,

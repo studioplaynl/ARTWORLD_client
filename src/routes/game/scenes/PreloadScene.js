@@ -61,6 +61,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('animation_png_animal_henk_00005', './assets/animation_png_animal_henk/animation_png_animal_henk_00005.png')
         this.load.image('animation_png_animal_henk_00006', './assets/animation_png_animal_henk/animation_png_animal_henk_00006.png')
         this.load.image('animation_png_animal_henk_00007', './assets/animation_png_animal_henk/animation_png_animal_henk_00007.png')
+        //flower for the flowerField Challenge
+        this.load.image('flower', './assets/flower.png')
 
         // this.load.image('friend', './assets/popup/friend.png')
         // this.load.image('friend2', './assets/popup/friend2.png')
