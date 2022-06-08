@@ -1169,6 +1169,14 @@
     newFile.objects.push(history[history.length - 1]);
     history.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
+
+    if (canvas.toJSON().objects.length > 0) {
+      isDrawn = true;
+      console.log(
+        "canvas.toJSON().objects.length",
+        canvas.toJSON().objects.length
+      );
+    }
   };
 
   //////////////////// redo/undo function end ///////////////////////////
@@ -1713,20 +1721,22 @@
       </button> -->
 
         <!-- svelte-ignore a11y-missing-attribute -->
-        <a
-          class:currentSelected={current === "saveToggle"}
-          on:click={() => {
-            // console.log("saving is clicked");
-            // console.log("length", canvas.toJSON().objects);
-            if (isDrawn) {
-              if (appType == "drawing" || appType == "stopmotion") {
-                saveToggle = !saveToggle;
-                switchOption("saveToggle");
+        {#if isDrawn}
+          <a
+            class:currentSelected={current === "saveToggle"}
+            on:click={() => {
+              // console.log("saving is clicked");
+              // console.log("length", canvas.toJSON().objects);
+              if (isDrawn) {
+                if (appType == "drawing" || appType == "stopmotion") {
+                  saveToggle = !saveToggle;
+                  switchOption("saveToggle");
+                }
+                upload();
               }
-              upload();
-            }
-          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
-        >
+            }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+          >
+        {/if}
       </div>
     </div>
   </div>
