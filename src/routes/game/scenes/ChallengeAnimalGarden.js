@@ -16,10 +16,10 @@ import ServerCall from "../class/ServerCall"
 import Exhibition from "../class/Exhibition"
 import { CurrentApp } from "../../../session"
 
-export default class Challenge_FlowerField extends Phaser.Scene {
+export default class ChallengeAnimalGarden extends Phaser.Scene {
 
     constructor() {
-        super("Challenge_FlowerField");
+        super("ChallengeAnimalGarden");
 
         this.worldSize = new Phaser.Math.Vector2(3000, 3000)
 
@@ -58,7 +58,7 @@ export default class Challenge_FlowerField extends Phaser.Scene {
 
         this.offlineOnlineUsers
 
-        this.location = "Challenge_FlowerField"
+        this.location = "ChallengeAnimalGarden"
 
         //.......................REX UI ............
         this.COLOR_PRIMARY = 0xff5733
