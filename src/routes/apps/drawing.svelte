@@ -1,7 +1,7 @@
 <script>
   import { fabric } from "./fabric";
   import { location, replace } from "svelte-spa-router";
-  import { onMount, beforeUpdate } from "svelte";
+  import { onMount, beforeUpdate, onDestroy } from "svelte";
   import {
     uploadImage,
     user,
@@ -609,6 +609,12 @@
       setLoader(false);
     }
   };
+
+  onDestroy(() => {
+    if (isDrawn) {
+      upload();
+    }
+  });
 
   async function download() {
     console.log("download", savedURL);
