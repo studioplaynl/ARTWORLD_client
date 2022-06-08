@@ -1655,13 +1655,13 @@
                 <div on:click={() => (status = !status)}>
                   {#if status}
                     <img
-                      class="visibility-status"
-                      src="assets/save_image/visible.png"
+                      class="icon selected"
+                      src="assets/save_image/visible.svg"
                     />
                   {:else}
                     <img
-                      class="visibility-status"
-                      src="assets/save_image/hidden.png"
+                      class="icon selected"
+                      src="assets/save_image/hidden.svg"
                     />
                   {/if}
                 </div>
@@ -2045,10 +2045,6 @@
     position: fixed;
     top: 130px;
     left: 20px;
-  }
-
-  .visibility-status {
-    width: 80px;
   }
 
   .drawing-options-container {
