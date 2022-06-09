@@ -1034,7 +1034,7 @@
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
-        if (object.type == "image") return;
+        //if (object.type == "image") return;
         const newObject = { ...object };
         newObject.top = newObject.top;
         newObject.left += size * i;
@@ -1044,7 +1044,8 @@
       });
     }
     FrameObject.left = 0;
-    data.objects = [{ ...FrameObject }].concat(data.objects);
+    // data.objects = [{ ...FrameObject }].concat(data.objects);
+
 
     console.log("data", data);
 
