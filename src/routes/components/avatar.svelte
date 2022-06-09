@@ -71,8 +71,8 @@
 <div
   class="avatar"
   on:click={() => {
-    show = !show;
-    showHistory = false;
+    // show = !show;
+    // showHistory = false;
   }}
 >
   <img bind:this={image} src={url} />
