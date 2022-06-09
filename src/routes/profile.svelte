@@ -16,7 +16,7 @@
   import Avatar from "./components/avatar.svelte";
   import { onDestroy, onMount } from "svelte";
   import Stopmotion from "./components/stopmotion.svelte";
-
+  import House from "./components/house.svelte"
   export let params = {};
   export let userID;
 
@@ -242,25 +242,10 @@
       <div class="top">
         <h1>{user}</h1>
         <br />
-        <!-- <div on:click="{()=>{goApp("avatar")}}"> -->
         <Avatar />
-        <!-- </div> -->
+        <House />
 
-        <div id="avatarDiv">
-          {#if !!house_url}
-            <a
-              on:click={() => {
-                goApp("house");
-              }}><img id="house" src={house_url} /></a
-            >
-          {:else}
-            <a
-              on:click={() => {
-                goApp("house");
-              }}>Create house</a
-            >
-          {/if}
-        </div>
+         
       </div>
       <div class="bottom">
         <SvelteTable {columns} rows={art} classNameTable="profileTable" />

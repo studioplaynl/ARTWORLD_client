@@ -20,10 +20,10 @@
 <main>
 
     {#if row.state == 2}
-   <div class="accept" on:click="{accept}">+</div>
+   <div class="accept" on:click="{accept}"><img class="icon" src="/assets/SHB/svg/AW-icon-check.svg"></div>
    {/if}
    {#if row.state == 0 || row.state == 2 || row.state == 1}
-   <div class="cancel" on:click="{cancel}">-</div>
+   <div class="cancel " on:click="{cancel}"><img class="icon" src="/assets/SHB/svg/AW-icon-cross.svg"></div>
    {/if}
 </main>
 
