@@ -162,23 +162,41 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
         // }
 
-        this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
+        //used for world bounds collision detection
+        // this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
+
 
         //create border rects
         // alpha set to 0, to hide them
         const borderBoxWidth = 40
-        this.borderBoxNorth = this.add.rectangle(this.worldSize.x / 2, - (borderBoxWidth / 2), this.worldSize.x, borderBoxWidth, 0xff0000, 0)
+        //create 
+        // let tempRectForCollision = this.add.rectangle(0, 0, this.worldSize.x, borderBoxWidth, 0xff0000, 1)
+        // let rt1 = this.add.renderTexture(0, 0, this.worldSize.x, borderBoxWidth)
+        // rt1.draw(tempRectForCollision)
+        // rt1.saveTexture("collisionWall")
+        // rt1.destroy()
+        // tempRectForCollision.destroy()
+
+        // this.collisionBorders = this.physics.add.staticGroup()
+        // this.collisionBorders.create(this.worldSize.x / 2, - (borderBoxWidth / 2), 'collisionWall')
+
+        this.borderBoxNorth = this.add.rectangle(this.worldSize.x / 2, - (borderBoxWidth / 2), this.worldSize.x, borderBoxWidth, 0xff00ff, 0)
         this.physics.add.existing(this.borderBoxNorth)
+        this.borderBoxNorth.name = "borderBoxNorth"
 
         this.borderBoxSouth = this.add.rectangle(this.worldSize.x / 2, (this.worldSize.y) + (borderBoxWidth / 2), this.worldSize.x, borderBoxWidth, 0xff0000, 0)
         this.physics.add.existing(this.borderBoxSouth)
+        this.borderBoxSouth.name = "borderBoxSouth"
 
         this.borderBoxEast = this.add.rectangle(this.worldSize.x + (borderBoxWidth / 2), this.worldSize.y / 2, borderBoxWidth, this.worldSize.x, 0xffff00, 0)
         this.physics.add.existing(this.borderBoxEast)
+        this.borderBoxEast.name = "borderBoxEast"
 
         this.borderBoxWest = this.add.rectangle(0 - (borderBoxWidth / 2), this.worldSize.y / 2, borderBoxWidth, this.worldSize.x, 0xff00ff, 0)
         this.physics.add.existing(this.borderBoxWest)
+        this.borderBoxWest.name = "borderBoxWest"
 
+        //this.collisionBorders = this.physics.add.staticGroup(this.physics.world, this.scene, [this.borderBoxNorth, this.borderBoxSouth, this.borderBoxWest, this.borderBoxEast])
         //!
 
 
@@ -275,21 +293,60 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             repeat: 0
         });
 
-        this.animalHenk = this.physics.add.sprite(400, 300, 'animal_hank')
+        this.animalHenk = this.physics.add.sprite(1000, 1000, 'animal_hank')
             .play('animal_animation_henk_moving')
-        this.animalHenk.body.setCircle(200, 300, 300)
-        //this.physics.add.sprite(this.animalHenk)
+        this.animalHenk.setBodySize(500, 400)
+        //this.animalHenk.body.setCircle(200, 300, 300) // gives problems with collision with walls!
 
         //orientation horizontal, looking at right side = angle 0
         // this.animalHenk.flipY = false
         // this.animalHenk.angle = 180
         // console.log("this.animalHenk.angle.toFixed(2)", this.animalHenk.angle.toFixed(2))
 
+        //set a collider between the animal and the walls
+        this.physics.add.overlap(this.animalHenk, this.borderBoxSouth, this.animalWallCollide, null, this)
+        this.physics.add.overlap(this.animalHenk, this.borderBoxWest, this.animalWallCollide, null, this)
+        this.physics.add.overlap(this.animalHenk, this.borderBoxEast, this.animalWallCollide, null, this)
+
+        this.physics.add.overlap(this.animalHenk, this.borderBoxNorth, this.animalWallCollide, null, this)
+
+
         //set an overlap detection between the animal and the border of the canvas
-        this.animalHenk.setVelocity(Phaser.Math.Between(200, 400), Phaser.Math.Between(200, 400));
-        this.animalHenk.setBounce(1).setCollideWorldBounds(true)
+        this.animalHenk.setVelocity(400, -600);
+        this.animalHenk.setBounce(1)
+        console.log("this.animalHenk.body.velocity ", this.animalHenk.body.velocity)
 
     } //end create
+
+    animalWallCollide(animal, wall) {
+
+       // console.log("animal, wall", animal, wall)
+       // console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
+
+        //left - right impact: 
+        if (wall.name == "borderBoxWest" || wall.name == "borderBoxEast") {
+            //console.log('wall.name == "borderBoxWest" || wall.name == "borderBoxEast")')
+            // animal.body.velocity.y = -Phaser.Math.Between(animal.body.velocity.y - 100, animal.body.velocity.y + 100)
+            // animal.body.velocity.x = Phaser.Math.Between(animal.body.velocity.x - 100, animal.body.velocity.x + 100)
+            animal.body.velocity.x = -animal.body.velocity.x
+        }
+        //up - down impact: 
+        if (wall.name == "borderBoxNorth" || wall.name == "borderBoxSouth") {
+            //console.log('wall.name == "borderBoxNorth" || wall.name == "borderBoxSouth")')
+            // animal.body.velocity.y = Phaser.Math.Between(animal.body.velocity.y - 100, animal.body.velocity.y + 100)
+            // animal.body.velocity.x = -Phaser.Math.Between(animal.body.velocity.x - 100, animal.body.velocity.x + 100)
+            animal.body.velocity.y = -animal.body.velocity.y
+        }
+        //console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
+        //animal.angle = Phaser.Math.RadToDeg(animal.body.angle) + 90
+        if (animal.body.velocity.x > 0) {
+            this.animalHenk.flipX = false
+        } else {
+            this.animalHenk.flipX = true
+        }
+
+
+    }
 
     generateLocations() {
         //we set draggable on restart scene with a global flag
@@ -450,6 +507,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             //when in edit mode
             //this.updateCurveGraphics()
         }
+
 
     } //update
 
