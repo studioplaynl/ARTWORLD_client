@@ -8,7 +8,7 @@
   import itemsBar from "./itemsbar.js";
   import ProfilePage from "../profile.svelte";
   import FriendsPage from "../friends.svelte";
-  import LikedPage from "../liked.svelte"
+  import LikedPage from "../liked.svelte";
   import { Profile, Session } from "../../session";
   import { CurrentApp, logout } from "../../session";
   import Awards from "../awards.svelte";
@@ -293,7 +293,7 @@
       ><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" /></a
     >
 
-    <a
+    <!-- <a
       on:click={() => {
         goApp("drawingchallenge");
         console.log("Drawing Challenge is clicked");
@@ -301,7 +301,7 @@
       class="avatar"
     >
       <h3>DC</h3></a
-    >
+    > -->
 
     <span>-</span>
     <a on:click={logout}

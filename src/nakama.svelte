@@ -14,7 +14,7 @@
     //"193.187.129.81", //artworld.vrolijkheid.nl
     //"192.168.0.133", //local
     "185.193.67.152", //betaworld
-    // "localhost",
+    //  "localhost",
     "7350",
     SSL
   );
