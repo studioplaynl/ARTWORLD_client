@@ -605,10 +605,13 @@
       setLoader(false);
     }
     if (appType == "avatar") {
-      await createAvatar();
-      saved = true;
-      saving = false;
-      setLoader(false);
+      createAvatar()
+      .then(()=>{
+        saved = true;
+        saving = false;
+        //setLoader(false);
+      })
+      
     }
   };
 
@@ -678,7 +681,7 @@
       lastImg = await convertImage($Profile.avatar_url, "2048", "10000");
     } else if (appType == "house") {
       let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
-      lastImg = await convertImage(Object.value.url);
+      lastImg = await convertImage(Object.value.url, "2048", "2048");
       lastValue = Object.value;
       title = Object.key;
       status = Object.permission_read;

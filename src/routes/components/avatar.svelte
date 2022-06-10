@@ -73,6 +73,8 @@
   on:click={() => {
     // show = !show;
     // showHistory = false;
+    $CurrentApp = "avatar";
+
   }}
 >
   <img bind:this={image} src={url} />
