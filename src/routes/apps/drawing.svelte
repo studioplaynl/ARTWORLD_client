@@ -129,29 +129,37 @@
     ) {
       canvas.setWidth(canvasSize - 200);
       canvas.setHeight(canvasSize - 200);
-      return;
+     // resizeCanvas()
+
+
     }
 
     // for medium screens
     if (canvasSize < 1008 && canvasSize > 640) {
       canvas.setWidth(canvasSize - 140);
       canvas.setHeight(canvasSize - 140);
-      return;
     }
 
     // for mobile screens
     if (canvasSize <= 640) {
       canvas.setWidth(canvasSize - 110);
       canvas.setHeight(canvasSize - 110);
-      return;
     }
 
     // for mobile screens
     if (canvasSize <= 540) {
       canvas.setWidth(canvasSize - 80);
       canvas.setHeight(canvasSize - 80);
-      return;
     }
+
+    scaleRatio = Math.min(
+        canvas.width / 2048,
+        canvas.width / 2048
+      );
+   
+   
+    cursor.setZoom(scaleRatio);
+    canvas.setZoom(scaleRatio);
   }
 
   onMount(() => {
@@ -190,7 +198,7 @@
     setLoader(false);
 
     fabric.Object.prototype.transparentCorners = false;
-    resizeCanvas();
+    //resizeCanvas();
 
     var drawingModeEl = fab("drawing-mode"),
       selectModeEl = fab("select-mode"),
@@ -605,10 +613,13 @@
       setLoader(false);
     }
     if (appType == "avatar") {
-      await createAvatar();
-      saved = true;
-      saving = false;
-      setLoader(false);
+      createAvatar()
+      .then(()=>{
+        saved = true;
+        saving = false;
+        //setLoader(false);
+      })
+      
     }
   };
 
@@ -678,7 +689,7 @@
       lastImg = await convertImage($Profile.avatar_url, "2048", "10000");
     } else if (appType == "house") {
       let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
-      lastImg = await convertImage(Object.value.url);
+      lastImg = await convertImage(Object.value.url, "2048", "2048");
       lastValue = Object.value;
       title = Object.key;
       status = Object.permission_read;
@@ -789,7 +800,6 @@
     return image;
   }
 
-  window.addEventListener("resize", resizeCanvas, false);
 
   function mouseEvent() {
     setTimeout(() => {
@@ -798,31 +808,7 @@
     }, 200);
   }
 
-  function resizeCanvas() {
-    if (document.body.clientWidth <= document.body.clientHeight) {
-      scaleRatio = Math.min(
-        document.body.clientWidth / 2048,
-        document.body.clientWidth / 2048
-      );
-    } else {
-      scaleRatio = Math.min(
-        window.innerHeight / 2048,
-        window.innerHeight / 2048
-      );
-    }
-    canvas.setDimensions({
-      width: 2048 * scaleRatio,
-      height: 2048 * scaleRatio,
-    });
-    // savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
-    cursor.setDimensions({
-      width: 2048 * scaleRatio,
-      height: 2048 * scaleRatio,
-    });
-    cursor.setZoom(scaleRatio);
-    canvas.setZoom(scaleRatio);
-    //savecanvas.setZoom(scaleRatio)
-  }
+
 
   function zoomIt(factor) {
     // canvas.setHeight(canvas.getHeight() * factor);
@@ -1045,7 +1031,6 @@
     }
     FrameObject.left = 0;
     // data.objects = [{ ...FrameObject }].concat(data.objects);
-
 
     console.log("data", data);
 
