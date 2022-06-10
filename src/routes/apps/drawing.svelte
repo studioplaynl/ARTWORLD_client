@@ -792,7 +792,7 @@
     return image;
   }
 
-  window.addEventListener("resize", resizeCanvas, false);
+  // window.addEventListener("resize", resizeCanvas, false);
 
   function mouseEvent() {
     setTimeout(() => {
@@ -1048,7 +1048,6 @@
     }
     FrameObject.left = 0;
     // data.objects = [{ ...FrameObject }].concat(data.objects);
-
 
     console.log("data", data);
 
