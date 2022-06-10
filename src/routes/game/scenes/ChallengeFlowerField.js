@@ -205,7 +205,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
             this.backgroundFlowerFieldSky.setVisible(!this.backgroundFlowerFieldSky.visible)
         })
 
-        this.fliefFloorButton = this.add.circle(40, 40+20+20+5, 20, 0xff0000).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setDepth(500)
+        this.fliefFloorButton = this.add.circle(40, 40 + 20 + 20 + 5, 20, 0xff0000).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setDepth(500)
         this.fliefFloorButton.on('pointerup', (pointer) => {
             //toggle the visibility of this.backgroundFlowerFieldFloor
             this.backgroundFlowerFieldFloor.setVisible(!this.backgroundFlowerFieldFloor.visible)
@@ -369,7 +369,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     makeFlowerFlied() {
 
         console.log("makeFlowerFlield")
-        console.log("this.flowerFliedStartedMaking", this.flowerFliedStartedMaking)
+        // console.log("this.flowerFliedStartedMaking", this.flowerFliedStartedMaking)
 
         if (this.flowerFliedStartedMaking) {
             return
@@ -385,13 +385,15 @@ export default class ChallengeFlowerField extends Phaser.Scene {
                 element.stop()
                 element.remove()
             })
+            this.flowerTweenArray.length = 0
 
             this.flowerArray.forEach((element) => {
                 element.destroy()
             })
+            this.flowerArray.length = 0
 
-            console.log("this.flowerArray.length", this.flowerArray.length)
-            console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
+            // console.log("this.flowerArray.length", this.flowerArray.length)
+            // console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
 
             //console.log("makeFlowerFlied this.flowerArray, this.flowerTweenArray", this.flowerArray, this.flowerTweenArray)
 
@@ -441,6 +443,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
             this.makeFlowerRow(flowerRowY)
 
             this.flowerFliedStartedMaking = false
+            // console.log("this.flowerArray.length", this.flowerArray.length)
+            // console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
         }
 
     }
@@ -495,7 +499,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         this.load.on("complete", () => {
             // finished downloading 
             // replace flowers in the field
-            console.log("this.flowerKeyArray", this.flowerKeyArray)
+            // console.log("this.flowerKeyArray", this.flowerKeyArray)
             //
             this.makeFlowerFlied()
 
