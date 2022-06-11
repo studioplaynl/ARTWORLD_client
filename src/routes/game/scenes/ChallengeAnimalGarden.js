@@ -21,7 +21,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     constructor() {
         super("ChallengeAnimalGarden");
 
-        this.worldSize = new Phaser.Math.Vector2(3000, 3000)
+        this.worldSize = new Phaser.Math.Vector2(4000, 1200)
 
         this.debug = false
 
@@ -107,8 +107,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         this.heartButtonImage
 
         this.scrollablePanel
-
-        this.progress = []
     }
 
     async preload() {
@@ -139,28 +137,28 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
         // the order of creation is the order of drawing: first = bottom ...............................
 
-        Background.repeatingDots({
-            scene: this,
-            gridOffset: 80,
-            dotWidth: 2,
-            dotColor: 0x7300ed,
-            backgroundColor: 0xffffff,
-        })
+        // Background.repeatingDots({
+        //     scene: this,
+        //     gridOffset: 80,
+        //     dotWidth: 2,
+        //     dotColor: 0x7300ed,
+        //     backgroundColor: 0xffffff,
+        // })
 
         // make a repeating set of rectangles around the artworld canvas
         const middleCoordinates = new Phaser.Math.Vector2(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0))
-        // this.borderRectArray = []
+        this.borderRectArray = []
 
-        // for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) {
 
-        //     this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i))
-        //     this.borderRectArray[i].setStrokeStyle(4 + i, 0x7300ed)
+            this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i))
+            this.borderRectArray[i].setStrokeStyle(4 + i, 0x7300ed)
 
-        //     this.borderRectArray[i].x = middleCoordinates.x
-        //     this.borderRectArray[i].y = middleCoordinates.y
+            this.borderRectArray[i].x = middleCoordinates.x
+            this.borderRectArray[i].y = middleCoordinates.y
 
 
-        // }
+        }
 
         //used for world bounds collision detection
         // this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
@@ -298,44 +296,274 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         this.animalHenk.setBodySize(500, 400)
         //this.animalHenk.body.setCircle(200, 300, 300) // gives problems with collision with walls!
 
-        //orientation horizontal, looking at right side = angle 0
-        // this.animalHenk.flipY = false
-        // this.animalHenk.angle = 180
-        // console.log("this.animalHenk.angle.toFixed(2)", this.animalHenk.angle.toFixed(2))
+        // download all dier from all users
+        this.animalKeyArray = []
+        this.animalArray = []
+        this.getListOf("dier")
 
         //set a collider between the animal and the walls
         this.physics.add.overlap(this.animalHenk, this.borderBoxSouth, this.animalWallCollide, null, this)
         this.physics.add.overlap(this.animalHenk, this.borderBoxWest, this.animalWallCollide, null, this)
         this.physics.add.overlap(this.animalHenk, this.borderBoxEast, this.animalWallCollide, null, this)
-
         this.physics.add.overlap(this.animalHenk, this.borderBoxNorth, this.animalWallCollide, null, this)
 
-
+        this.add.image(this.worldSize.x / 2, (this.worldSize.y / 2) - 256, "testdier")
+        
         //set an overlap detection between the animal and the border of the canvas
-        this.animalHenk.setVelocity(400, -600);
-        this.animalHenk.setBounce(1)
+        this.animalHenk.setVelocity(300, -300)
+        this.animalHenk.setBounce(1).setInteractive().setDepth(230)
+        this.animalHenk.name = "dier"
+
+        this.animalHenk.on('pointerup', (pointer, gameobject) => {
+            console.log("pointer, gameobject", pointer, gameobject)
+            if (gameobject[0].name == "dier") {
+                gameobject[0].play('animal_animation_henk_stop')
+                gameobject[0].setVelocity(0, 0)
+                this.time.addEvent({ delay: 2000, callback: this.resumeAnimalMovement, args: [gameobject], callbackScope: this, loop: false })
+            }
+        })
+
         console.log("this.animalHenk.body.velocity ", this.animalHenk.body.velocity)
 
     } //end create
 
+    makeNewAnimal() {
+        console.log("this.animalKeyArray", this.animalKeyArray)
+
+        //destroy and empty the this.animalArray
+        this.animalArray.forEach((element) => element.destroy())
+        this.animalArray.length = 0
+
+        this.animalKeyArray.forEach((element, index) => {
+            //this.animalKeyArray
+            //download animal from this.animalKeyArray
+
+
+            //we load the onlineplayer avatar, make a key for it
+            const avatarKey = element
+
+            console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
+
+            if (this.textures.exists(avatarKey)) {
+
+
+                //console.log("avatarKey", avatarKey)
+
+                const avatar = this.textures.get(avatarKey)
+                console.log("avatar", avatar)
+                const avatarWidth = avatar.frames.__BASE.width
+                const avatarHeight = avatar.frames.__BASE.height
+                console.log("avatarWidth, avatarHeight", avatarWidth, avatarHeight)
+
+
+
+                const avatarFrames = Math.round(avatarWidth / avatarHeight)
+                console.log(avatarFrames)
+
+                if (avatarFrames > 1) {
+                    // set names for the moving and stop animations
+
+                    // tempAnimal.setData("movingKey", "moving" + "_" + avatarKey)
+                    // tempAnimal.setData("stopKey", "stop" + "_" + avatarKey)
+                    // console.log("tempAnimal.getData('movingKey')", tempAnimal.getData("movingKey"))
+
+                    //create animation for moving
+                    // if (!this.anims.exists(tempAnimal.getData("movingKey"))) {
+                    // this.anims.create({
+                    //     key: "move",
+                    //     frames: this.anims.generateFrameNumbers("testdier", {
+                    //         start: 0,
+                    //         end: avatarFrames - 1,
+                    //     }),
+                    //     frameRate: (avatarFrames + 2) * 2,
+                    //     repeat: -1,
+                    //     yoyo: true,
+                    // })
+
+                    // //create animation for stop
+                    // this.anims.create({
+                    //     key: "stop",
+                    //     frames: this.anims.generateFrameNumbers("testdier", {
+                    //         start: 0,
+                    //         end: 0,
+                    //     }),
+                    // })
+
+                    this.anims.create({
+                        key: 'moveDier_' + avatarKey,
+                        frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: 2 }),
+                        frameRate: 8,
+                        repeat: -1,
+                        yoyo: true
+                    })
+
+                    this.anims.create({
+                        key: 'stopDier_' + avatarKey,
+                        frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: 0 }),
+                        //frameRate: 8,
+                        //repeat: -1,
+                        //yoyo: true
+                    })
+                    let tempAnimal = this.physics.add.sprite(this.worldSize.x / 2 + Phaser.Math.Between(-100, 100), this.worldSize.y / 2 + Phaser.Math.Between(-100, 100), avatarKey)
+                        .setDepth(200)
+                    tempAnimal.setData('moveAnim', 'moveDier_' + avatarKey)
+                    tempAnimal.name = avatarKey
+
+                    tempAnimal.play(tempAnimal.getData('moveAnim'))
+                    this.animalArray.push(tempAnimal)
+                    // }
+                }//if (avatarFrames > 1) {
+
+                // tempAnimal.setTexture(avatarKey)
+
+                // //scale the player to 64px
+                // const width = 64
+                // tempAnimal.displayWidth = width
+                // tempAnimal.scaleY = tempAnimal.scaleX
+
+
+
+
+
+                //...............................................................................................................................
+
+                //create default animation for moving
+            } else {
+
+            }
+        }) // end this.animalKeyArray.forEach
+    } // end makeNewAnimal
+
+    resumeAnimalMovement(gameobject) {
+        console.log("gameobject[0]", gameobject[0])
+        gameobject[0].setVelocity(Phaser.Math.Between(30, 400), Phaser.Math.Between(-30, -300))
+        gameobject[0].play('animal_animation_henk_moving')
+    }
+
+    async getListOf(displayName) {
+        await listObjects("stopmotion", null, 100).then((rec) => {
+            //download all the drawings and then filter for "bloem"
+            this.userArtServerList = rec.filter(obj => obj.permission_read == 2)
+            //console.log("this.userArtServerList", this.userArtServerList)
+            this.userArtServerList = this.userArtServerList.filter(obj => obj.value.displayname == displayName)
+            console.log("this.userArtServerList", this.userArtServerList)
+            if (this.userArtServerList.length > 0) {
+                this.userArtServerList.forEach((element, index, array) => {
+                    this.getUrlKeys(element, index, array)
+                })
+            }
+        })
+    }
+
+    async getUrlKeys(element, index, array) {
+        //! we are placing the artWorks 'around' (left and right of) the center of the world
+        const totalArtWorks = array.length
+        const imageKeyUrl = element.value.url
+        console.log("element.value.displayname", element.value.displayname)
+        console.log("imageKeyUrl", imageKeyUrl)
+        const imgSize = "256" //download as 512pixels
+        const imageWidth = "1000"
+        const fileFormat = "png"
+
+        if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
+
+            // adds the image to the container if it is not yet in the list
+            const exists = this.animalKeyArray.some(element => element == imageKeyUrl)
+            if (!exists) {
+                this.animalKeyArray.push(imageKeyUrl)
+            }
+
+        } else { // otherwise download the image and add it
+
+            this.convertedImage = await convertImage(imageKeyUrl, imgSize, imageWidth, fileFormat)
+
+            // for tracking each file in progress
+            // this.progress.push({ imageKeyUrl })
+            //let convertedImage = this.convertedImage
+            this.downloadSpriteSheet(imageKeyUrl,  this.convertedImage, 256)
+
+        }
+
+        this.load.on('filecomplete', (key) => {
+            // on completion of each specific artwork
+            // const currentImage = this.progress.find(element => element.imageKeyUrl == key)
+            console.log('filecomplete, key', key)
+            // we don't want to trigger any other load completions 
+            // if (currentImage) {
+
+            // adds the image to the container if it is not yet in the list
+            const exists = this.animalKeyArray.some(element => element == imageKeyUrl)
+            if (!exists) {
+                const avatarKey = imageKeyUrl
+                console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
+                const avatar = this.textures.get(avatarKey)
+                console.log("avatar", avatar)
+                const avatarWidth = avatar.frames.__BASE.width
+                const avatarHeight = avatar.frames.__BASE.height
+                console.log("avatarWidth, avatarHeight", avatarWidth, avatarHeight)
+
+                if (avatarHeight != 256) {
+                    console.log("reloading the image", avatarHeight, this.convertedImage)
+                    this.textures.remove(imageKeyUrl)
+                    console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
+
+                    
+                    this.downloadSpriteSheet(imageKeyUrl, (this.convertedImage), avatarHeight)
+
+                    // this.load.spritesheet(imageKeyUrl, this.convertedImage, { frameWidth: avatarHeight, frameHeight: avatarHeight })
+                    // // this.progress.push({ imageKeyUrl })
+                    // this.load.start() // start the load queue to get the image in memory
+                } else {
+                    console.log("avatarHeight should be 128", avatarHeight)
+                    this.animalKeyArray.push(imageKeyUrl)
+                }
+
+            } else {
+                console.log("complete file already exists")
+            }
+
+            // }
+        })
+
+        this.load.on("complete", () => {
+            // finished downloading 
+            // replace flowers in the field
+            console.log("complete this.animalKeyArray", this.animalKeyArray)
+            //
+            this.makeNewAnimal()
+
+        })
+    }//end downloadArt
+
+    downloadSpriteSheet(imageKeyUrl, convertedUrl, height) {
+
+        console.log("convertedImage", convertedUrl)
+        this.load.spritesheet(imageKeyUrl, convertedUrl, { frameWidth: height, frameHeight: height })
+
+        this.load.start() // start the load queue to get the image in memory
+    }
+
     animalWallCollide(animal, wall) {
 
-       // console.log("animal, wall", animal, wall)
-       // console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
+        // console.log("animal, wall", animal, wall)
+        // console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
 
         //left - right impact: 
         if (wall.name == "borderBoxWest" || wall.name == "borderBoxEast") {
-            //console.log('wall.name == "borderBoxWest" || wall.name == "borderBoxEast")')
-            // animal.body.velocity.y = -Phaser.Math.Between(animal.body.velocity.y - 100, animal.body.velocity.y + 100)
-            // animal.body.velocity.x = Phaser.Math.Between(animal.body.velocity.x - 100, animal.body.velocity.x + 100)
-            animal.body.velocity.x = -animal.body.velocity.x
+            animal.body.velocity.x = -Phaser.Math.Between(animal.body.velocity.x - 100, animal.body.velocity.x + 100)
+            //animal.body.velocity.x = -animal.body.velocity.x
+            if (animal.body.velocity.x > 700 || animal.body.velocity.x < -700) {
+                animal.body.velocity.x = animal.body.velocity.x / 3
+            }
+
         }
         //up - down impact: 
         if (wall.name == "borderBoxNorth" || wall.name == "borderBoxSouth") {
-            //console.log('wall.name == "borderBoxNorth" || wall.name == "borderBoxSouth")')
-            // animal.body.velocity.y = Phaser.Math.Between(animal.body.velocity.y - 100, animal.body.velocity.y + 100)
-            // animal.body.velocity.x = -Phaser.Math.Between(animal.body.velocity.x - 100, animal.body.velocity.x + 100)
-            animal.body.velocity.y = -animal.body.velocity.y
+            animal.body.velocity.y = -Phaser.Math.Between(animal.body.velocity.y - 100, animal.body.velocity.y + 100)
+            if (animal.body.velocity.y > 700 || animal.body.velocity.y < -700) {
+                animal.body.velocity.y = animal.body.velocity.y / 3
+            }
+            //animal.body.velocity.y = -animal.body.velocity.y
         }
         //console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
         //animal.angle = Phaser.Math.RadToDeg(animal.body.angle) + 90

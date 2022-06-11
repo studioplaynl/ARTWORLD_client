@@ -740,7 +740,7 @@ export default class Artworld extends Phaser.Scene {
       locationDestination: "ChallengeFlowerField",
       locationImage: "flower",
       enterButtonImage: "enter_button",
-      locationText: "flower Flied",
+      locationText: "bloemen Veld",
       referenceName: "flowerFieldChallenge",
       fontColor: 0x8dcb0e,
       color1: 0x8dcb0e,

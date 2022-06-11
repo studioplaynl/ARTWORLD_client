@@ -49,7 +49,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.svg('save', './assets/SHB/svg/AW-icon-save.svg', { scale: 0.6 })
 
         this.load.svg('abstract1', './assets/svg/abstract1.svg')
-        this.load.svg('pencil', './assets/svg/pencil.svg', {scale: 2})
+        this.load.svg('pencil', './assets/svg/pencil.svg', { scale: 2 })
 
         //animal for animalGarden Challenge
         this.load.image('dinoA', './assets/DinoA_01.png')
@@ -63,6 +63,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('animation_png_animal_henk_00007', './assets/animation_png_animal_henk/animation_png_animal_henk_00007.png')
         //flower for the flowerField Challenge
         this.load.image('flower', './assets/flower.png')
+        this.load.spritesheet('testdier', './assets/test_dier.png', { frameWidth: 128, frameHeight: 128 })
 
         // this.load.image('friend', './assets/popup/friend.png')
         // this.load.image('friend2', './assets/popup/friend2.png')
@@ -108,9 +109,12 @@ export default class PreloadScene extends Phaser.Scene {
 
         // debug test image square
         this.load.svg('test_image_square', 'https://upload.wikimedia.org/wikipedia/commons/d/de/TestScreen_square.svg')
+       
+
     }
 
     async create() {
+        
         this.playerAvatarPlaceholder = "avatar1"
 
         this.playerMovingKey = "moving"

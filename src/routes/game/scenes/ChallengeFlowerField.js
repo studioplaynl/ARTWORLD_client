@@ -16,7 +16,7 @@ import ServerCall from "../class/ServerCall"
 import Exhibition from "../class/Exhibition"
 import { CurrentApp } from "../../../session"
 import ArtworkList from "../class/ArtworkList"
-import { element } from "svelte/internal"
+
 
 export default class ChallengeFlowerField extends Phaser.Scene {
 
@@ -109,9 +109,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         this.heartButtonImage
 
         this.scrollablePanel
-
-        this.progress = []
-
     }
 
     async preload() {
@@ -199,8 +196,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         this.backgroundFlowerFieldSky.setVisible(false)
 
 
-        this.fliefFloorSky = this.add.circle(40, 40, 20, 0xff0000).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setDepth(500)
-        this.fliefFloorSky.on('pointerup', (pointer) => {
+        this.fliedFloorSky = this.add.circle(40, 40, 20, 0xff0000).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setDepth(500)
+        this.fliedFloorSky.on('pointerup', (pointer) => {
             //toggle the visibility of this.backgroundFlowerFieldFloor
             this.backgroundFlowerFieldSky.setVisible(!this.backgroundFlowerFieldSky.visible)
         })
@@ -303,26 +300,14 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         Player.loadPlayerAvatar(this)
         //!
 
-        console.log("ManageSession.userProfile", ManageSession.userProfile.id)
-        console.log("ManageSession.allConnectedUsers", ManageSession.allConnectedUsers)
-
-        //make an array of everybody in the room = self + ManageSession.allConnectedUsers
-        this.allUsersChallenge = []
-        this.allUsersChallenge.push(ManageSession.userProfile.id)
-        ManageSession.allConnectedUsers.forEach((element) => this.allUsersChallenge.push(element.id))
-
         this.flowerKeyArray = ["flower"]
         //download all drawings "bloem" from allUsersChallenge
 
-        this.allUsersChallenge.forEach((element) => {
-            this.getListOfBloem(element)
-        })
-
-
+        this.getListOfBloem()
     }//end create
 
-    async getListOfBloem(element) {
-        await listObjects("drawing", element.id, 100).then((rec) => {
+    async getListOfBloem() {
+        await listObjects("drawing", null, 100).then((rec) => {
             //download all the drawings and then filter for "bloem"
             this.userArtServerList = rec.filter(obj => obj.permission_read == 2)
             //console.log("this.userArtServerList", this.userArtServerList)
@@ -397,8 +382,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
             //console.log("makeFlowerFlied this.flowerArray, this.flowerTweenArray", this.flowerArray, this.flowerTweenArray)
 
-            this.flowerAmountOfOverlapX = 0.4
-            this.flowerAmountOfOverlapY = 0.8
+            this.flowerAmountOfOverlapX = 0.2
+            this.flowerAmountOfOverlapY = 0.6
             let flowerRowY = this.worldSize.y / 3
 
 
@@ -473,7 +458,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
             // for tracking each file in progress
             this.progress.push({ imageKeyUrl })
-
+            // console.log("convertedImage", convertedImage)
             this.load.image(imageKeyUrl, convertedImage)
 
             this.load.start() // start the load queue to get the image in memory
@@ -481,7 +466,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
         this.load.on('filecomplete', (key) => {
 
-            // on completion of each specific artwork
+            // on completion of each speci512fic artwork
             const currentImage = this.progress.find(element => element.imageKeyUrl == key)
 
             // we don't want to trigger any other load completions 
@@ -501,6 +486,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
             // replace flowers in the field
             // console.log("this.flowerKeyArray", this.flowerKeyArray)
             //
+            console.log("this.flowerKeyArray", this.flowerKeyArray)
             this.makeFlowerFlied()
 
         })

@@ -98,8 +98,8 @@ class Player {
     ManageSession.setUrl(scene.location, lastPosX, lastPosY)
 
     //store the current position of player in ManageSession.lastMoveCommand
-   //set this.scene in ManageSession.currentScene
-   ManageSession.currentScene = scene
+    //set this.scene in ManageSession.currentScene
+    ManageSession.currentScene = scene
     ManageSession.lastMoveCommand.posX = scene.player.x
     ManageSession.lastMoveCommand.posY = scene.player.y
     ManageSession.lastMoveCommand.action = "stop"
