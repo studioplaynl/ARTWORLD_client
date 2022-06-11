@@ -117,6 +117,8 @@
     // as a default the canvas has 100px less size that the window
     canvas.setWidth(canvasSize - 100);
     canvas.setHeight(canvasSize - 100);
+    cursor.setWidth(canvasSize - 100);
+    cursor.setHeight(canvasSize - 100);
 
     // in case when the size of height and width are more or less close in px (within the difference of 300px) ("square windows")
     if (
@@ -129,27 +131,32 @@
     ) {
       canvas.setWidth(canvasSize - 200);
       canvas.setHeight(canvasSize - 200);
-     // resizeCanvas()
-
-
+      cursor.setWidth(canvasSize - 200);
+      cursor.setHeight(canvasSize - 200);
     }
 
     // for medium screens
     if (canvasSize < 1008 && canvasSize > 640) {
       canvas.setWidth(canvasSize - 140);
       canvas.setHeight(canvasSize - 140);
+      cursor.setWidth(canvasSize - 140);
+      cursor.setHeight(canvasSize - 140);
     }
 
     // for mobile screens
     if (canvasSize <= 640) {
       canvas.setWidth(canvasSize - 110);
       canvas.setHeight(canvasSize - 110);
+      cursor.setWidth(canvasSize - 110);
+      cursor.setHeight(canvasSize - 110);
     }
 
     // for mobile screens
     if (canvasSize <= 540) {
       canvas.setWidth(canvasSize - 80);
       canvas.setHeight(canvasSize - 80);
+      cursor.setWidth(canvasSize - 80);
+      cursor.setHeight(canvasSize - 80);
     }
 
     scaleRatio = Math.min(
@@ -160,6 +167,16 @@
    
     cursor.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
+    // savecanvas.setZoom(scaleRatio);
+    // canvas.setDimensions({
+    //   width: 2048 * scaleRatio,
+    //   height: 2048 * scaleRatio,
+    // });
+    // // savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
+    // cursor.setDimensions({
+    //   width: 2048 * scaleRatio,
+    //   height: 2048 * scaleRatio,
+    // });
   }
 
   onMount(() => {
@@ -858,9 +875,9 @@
     img.onload = function () {
       var f_img = new fabric.Image(img);
       let options;
-      let scale = 2048 / document.body.clientHeight;
-      if (document.body.clientWidth <= document.body.clientHeight) {
-        scale = 2048 / document.body.clientWidth;
+      let scale = 2048 / canvas.height;
+      if (canvas.width <= canvas.height) {
+        scale = 2048 / canvas.width;
       }
       if (!play)
         options = {
