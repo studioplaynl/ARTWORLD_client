@@ -330,7 +330,7 @@ class ManageSession {
 
     //
     this.lastMoveCommand = {action: action, posX: posX, posY: posY, location: this.location}
-    console.log("this.lastMoveCommand", this.lastMoveCommand)
+    //console.log("this.lastMoveCommand", this.lastMoveCommand)
 
     //console.log(posX, posY)
     posX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, posX);
