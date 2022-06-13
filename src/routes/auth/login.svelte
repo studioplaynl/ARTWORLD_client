@@ -70,7 +70,14 @@
 </script>
 
 <main>
-  <div class="registerForm">
+  <div class="device-type">
+    {#if isMobile}
+      <img class="icon" src="assets/device_type/mobile.png" />
+    {:else}
+      <img class="icon" src="assets/device_type/laptop.png" />
+    {/if}
+  </div>
+  <div class="register-form">
     <form on:submit|preventDefault={onSubmit}>
       <div class="container">
         <label for="email"><b>{$_("register.email")}</b></label>
@@ -93,29 +100,35 @@
           required
         />
 
-        <button type="submit" class="registerbtn">{$_("login.login")}</button>
+        <button type="submit" class="register-btn">{$_("login.login")}</button>
       </div>
     </form>
   </div>
 </main>
 
 <style>
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
   main {
     background: linear-gradient(90deg, white 29px, transparent 0%) center,
       linear-gradient(white 29px, transparent 0%) center, #7300ed;
     background-size: 30px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
   }
 
-  * {
-    box-sizing: border-box;
-  }
-  .registerForm {
+  .register-form {
     max-width: 400px;
-    margin: 0 auto;
     display: flex;
     justify-content: space-around;
     flex-direction: column;
-    height: 100vh;
   }
 
   /* Add padding to containers */
@@ -146,7 +159,7 @@
   }
 
   /* Set a style for the submit/register button */
-  .registerbtn {
+  .register-btn {
     background-color: #7300eb;
     border-radius: 25px;
     color: white;
@@ -158,18 +171,34 @@
     opacity: 0.9;
   }
 
-  .registerbtn:hover {
+  .register-btn:hover {
     opacity: 1;
   }
 
   /* Add a blue text color to links */
   a {
-    color: dodgerblue;
+    color: #7300ed;
   }
 
   /* Set a grey background color and center the text of the "sign in" section */
   .signin {
     background-color: #f1f1f1;
     text-align: center;
+  }
+
+  .device-type {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .icon {
+    position: relative;
+    min-width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #7300ed;
+    padding: 10px;
+    background-color: white;
   }
 </style>
