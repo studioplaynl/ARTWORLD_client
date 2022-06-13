@@ -269,7 +269,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
 
         this.anims.create({
-            key: 'animal_animation_henk_moving',
+            key: 'moveAnim_Henk',
             frames: [
                 { key: 'animation_png_animal_henk_00001' },
                 { key: 'animation_png_animal_henk_00002' },
@@ -281,19 +281,22 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             ],
             frameRate: 8,
             repeat: -1
-        });
+        })
 
         this.anims.create({
-            key: 'animal_animation_henk_stop',
+            key: 'stopAnim_Henk',
             frames: [
                 { key: 'animation_png_animal_henk_00001' },
             ],
             repeat: 0
-        });
+        })
 
-        this.animalHenk = this.physics.add.sprite(1000, 1000, 'animal_hank')
-            .play('animal_animation_henk_moving')
+        this.animalHenk = this.physics.add.sprite(1000, 1000, 'animal_henk')
+            .play('moveAnim_Henk')
         this.animalHenk.setBodySize(500, 400)
+        this.animalHenk.setData("moveAnim", "moveAnim_Henk")
+        this.animalHenk.setData("stopAnim", "stopAnim_Henk")
+        console.log("this.animalHenk", this.animalHenk)
         //this.animalHenk.body.setCircle(200, 300, 300) // gives problems with collision with walls!
 
         // download all dier from all users
@@ -307,21 +310,26 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         this.physics.add.overlap(this.animalHenk, this.borderBoxEast, this.animalWallCollide, null, this)
         this.physics.add.overlap(this.animalHenk, this.borderBoxNorth, this.animalWallCollide, null, this)
 
-        this.add.image(this.worldSize.x / 2, (this.worldSize.y / 2) - 256, "testdier")
-        
+
         //set an overlap detection between the animal and the border of the canvas
         this.animalHenk.setVelocity(300, -300)
-        this.animalHenk.setBounce(1).setInteractive().setDepth(230)
+        this.animalHenk.setBounce(1).setInteractive().setDepth(200)
         this.animalHenk.name = "dier"
 
-        this.animalHenk.on('pointerup', (pointer, gameobject) => {
-            console.log("pointer, gameobject", pointer, gameobject)
-            if (gameobject[0].name == "dier") {
-                gameobject[0].play('animal_animation_henk_stop')
-                gameobject[0].setVelocity(0, 0)
-                this.time.addEvent({ delay: 2000, callback: this.resumeAnimalMovement, args: [gameobject], callbackScope: this, loop: false })
-            }
-        })
+        const tempDelay = Phaser.Math.Between(1000, 20000)
+        this.time.addEvent({ delay: tempDelay, callback: this.stopAnimalMovement, args: [this.animalHenk], callbackScope: this, loop: false })
+
+
+        // this.animalHenk.on('pointerup', (pointer, x, y, gameobject) => {
+        //     console.log("pointer, x, y, gameobject", gameobject)
+        //     if (gameobject[0].name == "dier") {
+        //         const tempStopAnim = gameobject[0].getData("stopAnim")
+        //         gameobject[0].play(tempStopAnim)
+        //         gameobject[0].setVelocity(0, 0)
+        //         const tempDelay = Phaser.Math.Between(1000, 20000)
+        //         this.time.addEvent({ delay: tempDelay, callback: this.resumeAnimalMovement, args: [gameobject[0]], callbackScope: this, loop: false })
+        //     }
+        // })
 
         console.log("this.animalHenk.body.velocity ", this.animalHenk.body.velocity)
 
@@ -390,7 +398,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                     // })
 
                     this.anims.create({
-                        key: 'moveDier_' + avatarKey,
+                        key: 'moving_' + avatarKey,
                         frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: 2 }),
                         frameRate: 8,
                         repeat: -1,
@@ -398,7 +406,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                     })
 
                     this.anims.create({
-                        key: 'stopDier_' + avatarKey,
+                        key: 'stop_' + avatarKey,
                         frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: 0 }),
                         //frameRate: 8,
                         //repeat: -1,
@@ -406,10 +414,32 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                     })
                     let tempAnimal = this.physics.add.sprite(this.worldSize.x / 2 + Phaser.Math.Between(-100, 100), this.worldSize.y / 2 + Phaser.Math.Between(-100, 100), avatarKey)
                         .setDepth(200)
-                    tempAnimal.setData('moveAnim', 'moveDier_' + avatarKey)
                     tempAnimal.name = avatarKey
 
+                    tempAnimal.setData("moveAnim", "moving" + "_" + avatarKey)
+                    tempAnimal.setData("stopAnim", "stop" + "_" + avatarKey)
+
                     tempAnimal.play(tempAnimal.getData('moveAnim'))
+                    tempAnimal.name = "dier"
+
+                    //set a collider between the animal and the walls
+                    this.physics.add.overlap(tempAnimal, this.borderBoxSouth, this.animalWallCollide, null, this)
+                    this.physics.add.overlap(tempAnimal, this.borderBoxWest, this.animalWallCollide, null, this)
+                    this.physics.add.overlap(tempAnimal, this.borderBoxEast, this.animalWallCollide, null, this)
+                    this.physics.add.overlap(tempAnimal, this.borderBoxNorth, this.animalWallCollide, null, this)
+
+
+                    //set random velocity and position
+                    const randomVelocity = new Phaser.Math.Vector2(Phaser.Math.Between(500, (this.worldSize.x - 500)), Phaser.Math.Between(500, (this.worldSize.y - 500)))
+                    tempAnimal.setVelocity(Phaser.Math.Between(-300, -500), Phaser.Math.Between(300, 600))
+                    // tempAnimal.setVelocity(300, -300)
+                    tempAnimal.setBounce(1).setInteractive().setDepth(200)
+
+                    const tempDelay = Phaser.Math.Between(1000, 20000)
+                    this.time.addEvent({ delay: tempDelay, callback: this.stopAnimalMovement, args: [tempAnimal], callbackScope: this, loop: false })
+
+
+
                     this.animalArray.push(tempAnimal)
                     // }
                 }//if (avatarFrames > 1) {
@@ -434,10 +464,27 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         }) // end this.animalKeyArray.forEach
     } // end makeNewAnimal
 
+
+    stopAnimalMovement(gameobject) {
+        console.log("gameobject", gameobject)
+        if (typeof gameobject.body != "undefined") {
+            const tempAnim = gameobject.getData("stopAnim")
+            gameobject.setVelocity(0, 0)
+            gameobject.play(tempAnim)
+            const tempDelay = Phaser.Math.Between(1000, 5000)
+            this.time.addEvent({ delay: tempDelay, callback: this.resumeAnimalMovement, args: [gameobject], callbackScope: this, loop: false })
+
+        }
+
+    }
+
     resumeAnimalMovement(gameobject) {
-        console.log("gameobject[0]", gameobject[0])
-        gameobject[0].setVelocity(Phaser.Math.Between(30, 400), Phaser.Math.Between(-30, -300))
-        gameobject[0].play('animal_animation_henk_moving')
+        console.log("gameobject", gameobject)
+        const tempAnim = gameobject.getData("moveAnim")
+        gameobject.setVelocity(Phaser.Math.Between(30, 400), Phaser.Math.Between(-30, -300))
+        gameobject.play(tempAnim)
+        const tempDelay = Phaser.Math.Between(1000, 20000)
+        this.time.addEvent({ delay: tempDelay, callback: this.stopAnimalMovement, args: [gameobject], callbackScope: this, loop: false })
     }
 
     async getListOf(displayName) {
@@ -462,7 +509,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         console.log("element.value.displayname", element.value.displayname)
         console.log("imageKeyUrl", imageKeyUrl)
         const imgSize = "256" //download as 512pixels
-        const imageWidth = "1000"
+        const imageWidth = "10000"
         const fileFormat = "png"
 
         if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
@@ -480,7 +527,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             // for tracking each file in progress
             // this.progress.push({ imageKeyUrl })
             //let convertedImage = this.convertedImage
-            this.downloadSpriteSheet(imageKeyUrl,  this.convertedImage, 256)
+            this.downloadSpriteSheet(imageKeyUrl, this.convertedImage, 256)
 
         }
 
@@ -507,7 +554,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                     this.textures.remove(imageKeyUrl)
                     console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
 
-                    
+
                     this.downloadSpriteSheet(imageKeyUrl, (this.convertedImage), avatarHeight)
 
                     // this.load.spritesheet(imageKeyUrl, this.convertedImage, { frameWidth: avatarHeight, frameHeight: avatarHeight })
@@ -550,27 +597,37 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
         //left - right impact: 
         if (wall.name == "borderBoxWest" || wall.name == "borderBoxEast") {
-            animal.body.velocity.x = -Phaser.Math.Between(animal.body.velocity.x - 100, animal.body.velocity.x + 100)
+            animal.body.velocity.x = -Phaser.Math.Between(animal.body.velocity.x - 200, animal.body.velocity.x + 200)
             //animal.body.velocity.x = -animal.body.velocity.x
             if (animal.body.velocity.x > 700 || animal.body.velocity.x < -700) {
                 animal.body.velocity.x = animal.body.velocity.x / 3
             }
 
+            if (animal.body.velocity.y < 170 && animal.body.velocity.y > -170) {
+                animal.body.velocity.y = animal.body.velocity.y * 2
+            }
         }
+
+
         //up - down impact: 
         if (wall.name == "borderBoxNorth" || wall.name == "borderBoxSouth") {
-            animal.body.velocity.y = -Phaser.Math.Between(animal.body.velocity.y - 100, animal.body.velocity.y + 100)
+            animal.body.velocity.y = -Phaser.Math.Between(animal.body.velocity.y - 200, animal.body.velocity.y + 200)
             if (animal.body.velocity.y > 700 || animal.body.velocity.y < -700) {
                 animal.body.velocity.y = animal.body.velocity.y / 3
             }
+
+            if (animal.body.velocity.x < 170 && animal.body.velocity.x > -170) {
+                animal.body.velocity.x = animal.body.velocity.x * 2
+            }
             //animal.body.velocity.y = -animal.body.velocity.y
         }
-        //console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
+        // console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
+        // console.log("Math.abs(animal.body.velocity.y) + Math.abs(animal.body.velocity.x)", Math.abs(animal.body.velocity.y) + Math.abs(animal.body.velocity.x))
         //animal.angle = Phaser.Math.RadToDeg(animal.body.angle) + 90
         if (animal.body.velocity.x > 0) {
-            this.animalHenk.flipX = false
+            animal.flipX = false
         } else {
-            this.animalHenk.flipX = true
+            animal.flipX = true
         }
 
 
