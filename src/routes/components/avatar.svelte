@@ -12,41 +12,45 @@
   let version;
   const img = new Image();
 
-
   async function nextVersion() {
-    if($Profile.meta.LastAvatarVersion <= version) return
+    if ($Profile.meta.LastAvatarVersion <= version) return;
     version++;
     console.log("version", version);
-    console.log("$Profile.meta.LastAvatarVersion",$Profile.meta.LastAvatarVersion)
-    url = await setAvatar(`avatar/${$Profile.id}/${version}_current.png`)
+    console.log(
+      "$Profile.meta.LastAvatarVersion",
+      $Profile.meta.LastAvatarVersion
+    );
+    url = await setAvatar(`avatar/${$Profile.id}/${version}_current.png`);
     img.src = url;
     img.onerror = () => {
-        version -= 2
-        nextVersion()
-        console.log("img not availible, gone bacck")
-      };
+      version -= 2;
+      nextVersion();
+      console.log("img not availible, gone bacck");
+    };
   }
 
   async function backVersion() {
-      if(version <= 1) return console.log("first image reached")
+    if (version <= 1) return console.log("first image reached");
     version--;
     console.log("version", version);
-    url = await convertImage(`avatar/${$Profile.id}/${version}_current.png`,'150','1000')
-    setAvatar(`avatar/${$Profile.id}/${version}_current.png`)
+    url = await convertImage(
+      `avatar/${$Profile.id}/${version}_current.png`,
+      "150",
+      "1000"
+    );
+    setAvatar(`avatar/${$Profile.id}/${version}_current.png`);
   }
 
-  function loadUrl(){
-    url = $Profile.url
+  function loadUrl() {
+    url = $Profile.url;
     console.log(url);
     version = Number($Profile.avatar_url.split("/")[2].split("_")[0]);
   }
 
-  Profile.subscribe(loadUrl)
-
-
+  Profile.subscribe(loadUrl);
 
   onMount(async () => {
-    loadUrl()
+    loadUrl();
     interval = setInterval(() => {
       frame++;
       if (frame >= image.clientWidth / 150) {
@@ -63,27 +67,28 @@
   });
 </script>
 
-{#if showHistory}
-  <div class="backAvatar">
-    <img src="/assets/SHB/svg/AW-icon-previous.svg" on:click={backVersion} />
+<div class="container-history-nav-buttons">
+  {#if showHistory}
+    <div class="backAvatar pointer">
+      <img src="/assets/SHB/svg/AW-icon-previous.svg" on:click={backVersion} />
+    </div>
+  {/if}
+  <div
+    class="avatar"
+    on:click={() => {
+      show = !show;
+      showHistory = false;
+      // $CurrentApp = "avatar";
+    }}
+  >
+    <img bind:this={image} src={url} />
   </div>
-{/if}
-<div
-  class="avatar"
-  on:click={() => {
-    // show = !show;
-    // showHistory = false;
-    $CurrentApp = "avatar";
-
-  }}
->
-  <img bind:this={image} src={url} />
+  {#if showHistory}
+    <div class="nextAvatar pointer">
+      <img src="/assets/SHB/svg/AW-icon-next.svg" on:click={nextVersion} />
+    </div>
+  {/if}
 </div>
-{#if showHistory}
-  <div class="nextAvatar">
-    <img src="/assets/SHB/svg/AW-icon-next.svg" on:click={nextVersion} />
-  </div>
-{/if}
 {#if show}
   <div class="action">
     <img
@@ -103,6 +108,12 @@
 {/if}
 
 <style>
+  .container-history-nav-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
   .avatar {
     height: 150px;
     width: 150px;
@@ -118,6 +129,10 @@
 
   .action > img {
     width: 70px;
+    cursor: pointer;
+  }
+
+  .pointer {
     cursor: pointer;
   }
 </style>
