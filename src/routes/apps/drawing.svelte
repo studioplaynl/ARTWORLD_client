@@ -56,7 +56,11 @@
   export let appType = $location.split("/")[1];
   let version = 0;
   let optionbox = true;
+
   let isDrawn = false;
+  let isExistingArt = false;
+  let alreadyUploaded = false;
+
   let applyBrush;
   let selectedBrush = "Pencil";
 
@@ -176,7 +180,14 @@
   }
 
   onMount(() => {
-    console.log("on mount isDrawn", isDrawn);
+    const linkExistingArt = window.location.href;
+    console.log("linkExistingArt", linkExistingArt);
+    const arrayLinkExistingArt = linkExistingArt.split("/");
+    console.log("arrayLinkExistingArt", arrayLinkExistingArt);
+    isExistingArt = arrayLinkExistingArt.length > 5 ? true : false;
+
+    console.log("isExistingArt", isExistingArt);
+
     setLoader(true);
     const autosave = setInterval(() => {
       if (!saved) {
@@ -586,64 +597,90 @@
 
   const upload = async () => {
     console.log("upload is clicked");
-    if (!isDrawn) return;
+    console.log("isDrawn", isDrawn);
+
     if (!invalidTitle) return;
-    saving = true;
-    setLoader(true);
-    if (appType == "drawing") {
-      var Image = canvas.toDataURL("image/png", 1);
-      var blobData = dataURItoBlob(Image);
-      if (!!!title) {
-        title = Date.now() + "_" + displayName;
+
+    if (isDrawn) {
+      saving = true;
+      setLoader(true);
+      if (appType == "drawing") {
+        var Image = canvas.toDataURL("image/png", 1);
+        var blobData = dataURItoBlob(Image);
+        if (!!!title) {
+          title = Date.now() + "_" + displayName;
+        }
+        // replace(`${$location}/${$Session.user_id}/${displayName}`);
+        await uploadImage(
+          title,
+          appType,
+          blobData,
+          status,
+          version,
+          displayName
+        ).then((url) => {
+          savedURL = url;
+          saved = true;
+          saving = false;
+          setLoader(false);
+        });
       }
-      // replace(`${$location}/${$Session.user_id}/${displayName}`);
-      await uploadImage(
-        title,
-        appType,
-        blobData,
-        status,
-        version,
-        displayName
-      ).then((url) => {
-        savedURL = url;
+      if (appType == "house") {
+        var Image = canvas.toDataURL("image/png", 1);
+        var blobData = dataURItoBlob(Image);
+        uploadHouse(blobData);
         saved = true;
         saving = false;
         setLoader(false);
-      });
-    }
-    if (appType == "house") {
-      var Image = canvas.toDataURL("image/png", 1);
-      var blobData = dataURItoBlob(Image);
-      uploadHouse(blobData);
-      saved = true;
-      saving = false;
-      setLoader(false);
-    }
-    if (appType == "stopmotion") {
-      await createStopmotion();
-      saved = true;
-      saving = false;
-      setLoader(false);
-    }
-    if (appType == "avatar") {
-      createAvatar().then(() => {
+      }
+      if (appType == "stopmotion") {
+        await createStopmotion();
         saved = true;
         saving = false;
-        //setLoader(false);
-      });
+        setLoader(false);
+      }
+      if (appType == "avatar") {
+        createAvatar().then(() => {
+          saved = true;
+          saving = false;
+          //setLoader(false);
+        });
+      }
+      alreadyUploaded = true;
     }
   };
 
   onDestroy(() => {
     if (isDrawn) {
       upload();
+      isDrawn = false;
     }
   });
 
   async function download() {
+    if (isDrawn) {
+      if (alreadyUploaded) {
+        let url = await convertImage(savedURL);
+        window.location = url;
+      } else {
+        await upload();
+        let url = await convertImage(savedURL);
+        window.location = url;
+      }
+    }
+    console.log("isExistingArt", isExistingArt);
+    if (isExistingArt) {
+      if (!savedURL) {
+        let url = lastImg;
+        window.location = url;
+      }
+      // else {
+      //   let url = await convertImage(savedURL);
+      //   window.location = url;
+      // }
+    }
+
     console.log("download", savedURL);
-    let url = await convertImage(savedURL);
-    window.location = url;
   }
 
   const updateFrame = () => {
@@ -662,8 +699,8 @@
       console.log("param " + params.name);
       if (localStore.name == params.name && typeof params.name != "undefined") {
         console.log(localStore.type);
-        isDrawn = true;
-        console.log("localstorage isDrawn", isDrawn);
+        // isDrawn = true;
+        // console.log("localstorage isDrawn", isDrawn);
         if (localStore.type == "drawing") {
           console.log("test");
           // canvas.loadFromJSON(
@@ -1686,31 +1723,32 @@
                 </div>
 
                 <div>
-                  {#if saving}
-                    <img
-                      on:click={upload}
-                      class="icon selected"
-                      src="assets/SHB/svg/AW-icon-history.svg"
-                    />
-                  {:else if saved}
-                    <img
-                      on:click={upload}
-                      class="icon selected"
-                      src="assets/SHB/svg/AW-icon-check.svg"
-                    />
-                  {/if}
+                  <!-- {#if saving} -->
+                  <!-- <img
+                    on:click={upload}
+                    class="icon selected"
+                    src="assets/SHB/svg/AW-icon-history.svg"
+                  /> -->
+                  <!-- {:else if saved} -->
+                  <img
+                    on:click={upload}
+                    class="icon selected"
+                    src="assets/SHB/svg/AW-icon-check.svg"
+                  />
+                  <!-- {/if} -->
                 </div>
                 <!-- <button on:click={upload}
               >{#if saving}Saving{:else if saved}
                 Saved{:else}Save{/if}</button
             > -->
                 <div>
-                  {#if saved}<img
-                      on:click={download}
-                      class="icon selected"
-                      src="assets/SHB/svg/AW-icon-save.svg"
-                    />
-                  {/if}
+                  <!-- {#if saved} -->
+                  <img
+                    on:click={download}
+                    class="icon selected"
+                    src="assets/SHB/svg/AW-icon-save.svg"
+                  />
+                  <!-- {/if} -->
                 </div>
               </div>
               <!-- {#if saved}
@@ -1758,22 +1796,17 @@
       </button> -->
 
         <!-- svelte-ignore a11y-missing-attribute -->
-        {#if isDrawn}
-          <a
-            class:currentSelected={current === "saveToggle"}
-            on:click={() => {
-              // console.log("saving is clicked");
-              // console.log("length", canvas.toJSON().objects);
-              if (isDrawn) {
-                if (appType == "drawing" || appType == "stopmotion") {
-                  saveToggle = !saveToggle;
-                  switchOption("saveToggle");
-                }
-                upload();
-              }
-            }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
-          >
-        {/if}
+        <a
+          class:currentSelected={current === "saveToggle"}
+          on:click={() => {
+            // console.log("saving is clicked");
+            // console.log("length", canvas.toJSON().objects);
+            if (appType == "drawing" || appType == "stopmotion") {
+              saveToggle = !saveToggle;
+              switchOption("saveToggle");
+            }
+          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+        >
       </div>
     </div>
   </div>
