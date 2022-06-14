@@ -155,7 +155,7 @@ class Player {
 
     //make an animation if the image is wider than tall
 
-    if (avatarFrames > 1) {
+    // if (avatarFrames < 1) {
       //. animation for the player avatar ......................
       console.log("avatarFrames > 1")
 
@@ -183,7 +183,8 @@ class Player {
           }),
         })
       }
-    }
+//    }
+
     //. end animation for the player avatar ......................
 
     scene.player.setTexture(scene.playerAvatarKey)

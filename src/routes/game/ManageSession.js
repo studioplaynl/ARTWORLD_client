@@ -19,7 +19,8 @@ class ManageSession {
 
     this.worldSizeCopy; // we copy the worldSize of the scene to make movement calculations
     this.currentScene; // To give access to the scene outside of the game
-    this.currentZoom = 1; //passing camera zoom from ui to scene
+    // default zoomlevel is set here 
+    this.currentZoom = 0.8 //passing camera zoom from ui to scene
 
     this.resolveErrorObjectArray = []; //handle load errors for images
 
