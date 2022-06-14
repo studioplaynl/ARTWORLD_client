@@ -245,6 +245,7 @@ class ServerCall {
 
 
     //console.log("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
+
     scene.homesRepresented[index] = new GenerateLocation({
       scene: scene,
       size: 140,
