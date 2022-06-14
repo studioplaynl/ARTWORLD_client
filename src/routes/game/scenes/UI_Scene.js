@@ -37,7 +37,7 @@ export default class UI_Scene extends Phaser.Scene {
 
   constructor() {
     super("UI_Scene")
-    this.currentZoom = 1
+    this.currentZoom
     this.location = "test"
 
     //Debug Text mobile
