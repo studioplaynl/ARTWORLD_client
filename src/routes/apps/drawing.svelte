@@ -1800,6 +1800,8 @@
     display: flex;
     align-items: center;
     margin-left: 60px;
+    /* justify-content: flex-end; */
+    justify-content: space-around;
   }
 
   #cursor {
