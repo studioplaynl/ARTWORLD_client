@@ -36,6 +36,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.debugRect_y
         this.debugRect_height
         this.debugRectXMargin
+        this.numberOfArtworks = config.numberOfArtworks
 
         let width
         let namePlateExtraOffset = 0
@@ -142,6 +143,13 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // location plate name
         const namePlate = this.scene.add.graphics().fillStyle(0xE8E8E8, 1).fillRoundedRect(0 - (locationDescription.width + namePlateMargin) / 2, width / 2 - textPlateOffset, locationDescription.width + namePlateMargin /* text's width + 10 (to have space between border and text) */, namePlateMargin * 2, 10).setDepth(31)
 
+        //if there is a number of artWorks passed on as argument, display the number besides the namePlate
+        if (typeof this.numberOfArtworks != "undefined") {
+            console.log("this.numberOfArtworks", this.numberOfArtworks)
+            this.numberBubble = this.scene.add.circle(namePlate.x + locationDescription.width + (namePlateMargin * 0.5), width / 2 - textOffset, namePlateMargin, 0xE8E8E8).setOrigin(0.5, 0.5).setDepth(498)
+            this.numberArt = this.scene.add.text(namePlate.x + locationDescription.width +  (namePlateMargin * 0.5), width / 2 - textOffset,  this.numberOfArtworks, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(499)
+        }
+
         // back button that appears 
         const enterButtonYOffset = 0
         const enterButtonYTweenOffset = 15
@@ -187,6 +195,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.add(this.location) // add to the container
         this.add(namePlate) // add to the container
         this.add(locationDescription) // add to the container
+        if (typeof this.numberOfArtworks != "undefined") {
+            this.add(this.numberBubble) // add to the container
+            this.add(this.numberArt)
+        }
         //this.add(this.enterShadowHitArea)
 
         //changing the order in the container, changes the drawing order?

@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession"
-import { getAccount, updateObject, listObjects, convertImage } from '../../../api.js'
+import { getAccount, updateObject, listObjects, convertImage, listAllObjects } from '../../../api.js'
 import GenerateLocation from "./GenerateLocation"
 import CoordinatesTranslator from "./CoordinatesTranslator"
 
@@ -164,15 +164,30 @@ class ServerCall {
     //get a list of all homes objects and then filter
     Promise.all([listObjects(collection, null, maxItems)])
       .then((rec) => {
-        console.log("rec: ", rec)
+        console.log("rec homes: ", rec)
         scene.homes = rec[0]
-
+        console.log("scene.homes", scene.homes)
         // filter only amsterdam homes
         scene.homes = scene.homes.filter((obj) => obj.key == filter)
+
+        // retreive how many artworks are in the home
+        // let tempAllArtPerUser = []
+        scene.homes.forEach((element, index) => {
+          Promise.all([listAllObjects("drawing", element.user_id), listAllObjects("stopmotion", element.user_id)]).then((rec) => {
+
+            rec.forEach((artElement) => {
+              //console.log("artElement", artElement)
+              //add the array of art objects to the userHouse object
+              element['artWorks'] = artElement
+            })
+            //console.log("element", element)
+          })
+          
+        })
         this.generateHomes(scene)
+        
       })
   }
-
 
   async generateHomes(scene) {
     //check if server query is finished, then make the home from the list
@@ -189,7 +204,7 @@ class ServerCall {
         if (scene.textures.exists(homeImageKey)) {
           //create the home
           this.createHome(element, index, homeImageKey, scene)
-          
+
         } else {
           // get the image server side
           this.getHomeImages(url, element, index, homeImageKey, scene)
@@ -219,13 +234,15 @@ class ServerCall {
   }
 
   createHome(element, index, homeImageKey, scene) {
+    //console.log("element", element)
+
     // home description
-    //console.log(element)
     const locationDescription = element.value.username
     //const homeImageKey = "homeKey_" + element.user_id
     // get a image url for each home
     // get converted image from AWS
     const url = element.value.url
+
 
     //console.log("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
     scene.homesRepresented[index] = new GenerateLocation({
@@ -243,6 +260,7 @@ class ServerCall {
         element.value.posY
       ),
       locationDestination: "DefaultUserHome",
+      numberOfArtworks: element.artWorks.length,
       locationText: locationDescription,
       locationImage: homeImageKey,
       referenceName: locationDescription,
@@ -253,6 +271,19 @@ class ServerCall {
       color3: 0xf8d80b,
     })
 
+    //make a home smaller when there is no art inside
+    // if (typeof element.artWorks != "undefined" && element.artWorks.length < 1) {
+    //   scene.homesRepresented[index].setScale(0.8)
+    // }
+
+    //set the house of SELF bigger
+    if (element.user_id == ManageSession.userProfile.id) {
+      scene.homesRepresented[index].setScale(1.6)
+    }
+
+    // add a bubble with the number of artworks in the house
+    //scene.add.circle(CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x,element.value.posX), CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, element.value.posY), 30, 0x7300ED).setOrigin(0.5, 0.5).setVisible(true).setDepth(499)
+        
     scene.homesRepresented[index].setDepth(30)
   }
 
