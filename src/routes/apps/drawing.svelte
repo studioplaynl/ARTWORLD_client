@@ -159,12 +159,8 @@
       cursor.setHeight(canvasSize - 80);
     }
 
-    scaleRatio = Math.min(
-        canvas.width / 2048,
-        canvas.width / 2048
-      );
-   
-   
+    scaleRatio = Math.min(canvas.width / 2048, canvas.width / 2048);
+
     cursor.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
     // savecanvas.setZoom(scaleRatio);
@@ -630,13 +626,11 @@
       setLoader(false);
     }
     if (appType == "avatar") {
-      createAvatar()
-      .then(()=>{
+      createAvatar().then(() => {
         saved = true;
         saving = false;
         //setLoader(false);
-      })
-      
+      });
     }
   };
 
@@ -817,15 +811,12 @@
     return image;
   }
 
-
   function mouseEvent() {
     setTimeout(() => {
       updateFrame();
       saveHistory();
     }, 200);
   }
-
-
 
   function zoomIt(factor) {
     // canvas.setHeight(canvas.getHeight() * factor);
@@ -1799,6 +1790,10 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .main-container {

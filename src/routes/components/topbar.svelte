@@ -59,6 +59,16 @@
 </div>
 
 <style>
+    * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
     .topbar {
         position: fixed;
         left: 0;

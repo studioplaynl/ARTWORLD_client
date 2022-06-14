@@ -80,9 +80,9 @@
   <div
     class="avatar"
     on:click={() => {
-      show = !show;
-      showHistory = false;
-      // $CurrentApp = "house";
+      // show = !show;
+      // showHistory = false;
+      $CurrentApp = "house";
     }}
   >
     <img id="house" src={house_url} />
