@@ -12,11 +12,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.x = config.x
         this.y = config.y
         this.locationImage = config.locationImage
-        this.enterButtonImage = config.enterButtonImage
+        this.enterShadowImage = config.enterButtonImage
         this.locationText = config.locationText
         this.fontColor = config.fontColor
         this.locationDestination = config.locationDestination
-        this.enterButton
+        this.enterShadow
         this.showing = false
         this.type = config.type
         this.color1 = config.color1
@@ -28,7 +28,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.internalUrl = config.internalUrl
         this.externalUrl = config.externalUrl
         this.appUrl = config.appUrl
-        this.enterButtonTween
+        this.enterShadowTween
         this.enterCircleTween
         this.size = config.size
         const referenceName = config.referenceName
@@ -94,7 +94,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.location = this.scene.add.isobox(0, 0, width, width / 1.4, this.color1, this.color2, this.color3)
 
             //debug rectangle to see to total space needed for the placement of a house
-            this.debugRect_y =  - (width * 0.98)
+            this.debugRect_y = - (width * 0.98)
             this.debugRect_height = width * 1.25
 
             this.scene.physics.add.existing(this.location)
@@ -127,8 +127,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.location.on('pointerdown', () => {
                 if (!this.showing) {
                     this.initConfirm()
-                    this.enterButton.setVisible(this.showing)
+                    this.enterShadow.setVisible(this.showing)
                     this.enterCircle.setVisible(this.showing)
+                    this.enterArea.setVisible(this.showing)
                 }
             })
         }
@@ -142,7 +143,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         const namePlate = this.scene.add.graphics().fillStyle(0xE8E8E8, 1).fillRoundedRect(0 - (locationDescription.width + namePlateMargin) / 2, width / 2 - textPlateOffset, locationDescription.width + namePlateMargin /* text's width + 10 (to have space between border and text) */, namePlateMargin * 2, 10).setDepth(31)
 
         // back button that appears 
-        const enterButtonYOffset = 50
+        const enterButtonYOffset = 0
         const enterButtonYTweenOffset = 15
         const enterButtonY = this.y - (width / 2) - enterButtonYOffset
         const enterButtonTweenY = enterButtonY + enterButtonYTweenOffset
@@ -151,20 +152,20 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.debugRect_height = this.debugRect_height + (enterButtonYOffset * 1.5)
         this.debugRect_y = this.debugRect_y - (enterButtonYOffset * 1.5)
 
-        // this.enterButtonHitArea = this.scene.add.image(this.x, enterButtonY, 'enterButtonHitArea').setDepth(201)
-        // this.enterButtonHitArea.alpha = 0 // make the hitArea invisible
+        // this.enterShadowHitArea = this.scene.add.image(this.x, enterButtonY, 'enterButtonHitArea').setDepth(201)
+        // this.enterShadowHitArea.alpha = 0 // make the hitArea invisible
 
-        // this.enterButtonHitArea.displayWidth = width / 1.05
-
-        this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0x7300ED).setOrigin(0.5, 0.5).setVisible(false).setInteractive({ useHandCursor: true }).setDepth(500)
+        // this.enterShadowHitArea.displayWidth = width / 1.05
+        this.enterArea = this.scene.add.rectangle(this.x, this.y, width, width, 0x7300ED, 0).setVisible(false).setInteractive({ useHandCursor: true }).setDepth(501)
+        this.enterCircle = this.scene.add.circle(this.x, enterButtonY + 5, 30, 0x7300ED).setOrigin(0.5, 0.5).setVisible(false).setDepth(500)
         // .setStrokeStyle(2, 0x000000)
-        this.enterButton = this.scene.add.image(this.x, enterButtonY, this.enterButtonImage).setOrigin(0.5, 0.5)
+        this.enterShadow = this.scene.add.image(this.x, enterButtonY, this.enterShadowImage).setOrigin(0.5, 0.5)
             .setVisible(false)
             .setScale(0.6)
             .setDepth(500)
 
-        this.enterButtonTween = this.scene.tweens.add({
-            targets: this.enterButton,
+        this.enterShadowTween = this.scene.tweens.add({
+            targets: this.enterShadow,
             y: enterButtonTweenY,
             // alpha: 0.5,
             duration: 500,
@@ -186,10 +187,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.add(this.location) // add to the container
         this.add(namePlate) // add to the container
         this.add(locationDescription) // add to the container
-        //this.add(this.enterButtonHitArea)
+        //this.add(this.enterShadowHitArea)
 
         //changing the order in the container, changes the drawing order?
-        // this.bringToTop(this.enterButtonHitArea)
+        // this.bringToTop(this.enterShadowHitArea)
 
         this.setSize(width, width, false)
         //set a reference for the house to be able to set it to draggable
@@ -199,20 +200,20 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.debugRect.setVisible(true)
             this.debugRectXMargin.setVisible(true)
                 .on('drag', (p, x, y) => {
-                    
+
                     this.setX(p.worldX)
                     this.setY(p.worldY)
                     // The enterButton is outside the container, so that it can appear above the player
                     // when dragging the container we have to move the enterButton aswell
-                    this.enterButton.x = this.x
+                    this.enterShadow.x = this.x
                     enterButtonY = this.y - (width / 2) - 60
                     enterButtonTweenY = enterButtonY + 90
-                    this.enterButton.y = enterButtonY
-                    //this.enterButtonTween.restart()
-                    this.enterButtonTween.stop()
-                    this.enterButtonTween.remove()
-                    this.enterButtonTween = this.scene.tweens.add({
-                        targets: this.enterButton,
+                    this.enterShadow.y = enterButtonY
+                    //this.enterShadowTween.restart()
+                    this.enterShadowTween.stop()
+                    this.enterShadowTween.remove()
+                    this.enterShadowTween = this.scene.tweens.add({
+                        targets: this.enterShadow,
                         y: enterButtonTweenY,
                         alpha: 0.0,
                         duration: 1000,
@@ -233,11 +234,11 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
                 })
         }
 
-        // this.enterButtonHitArea.on('pointerdown', () => {
+        // this.enterShadowHitArea.on('pointerdown', () => {
 
         // })
 
-        this.enterCircle.on('pointerdown', () => {
+        this.enterArea.on('pointerdown', () => {
             //check when entering the location if it is an URL or scene
 
             if (typeof this.internalUrl != "undefined") {
@@ -296,19 +297,21 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
     confirmEnterLocation() {
         this.initConfirm()
-        this.enterButton.setVisible(true)
+        this.enterShadow.setVisible(true)
         this.enterCircle.setVisible(true)
-        // this.enterButtonHitArea.setVisible(true)
-        // this.enterButtonHitArea.setInteractive({ useHandCursor: true })
-        // this.enterButtonHitArea.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+        this.enterArea.setVisible(true)
+        // this.enterShadowHitArea.setVisible(true)
+        // this.enterShadowHitArea.setInteractive({ useHandCursor: true })
+        // this.enterShadowHitArea.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
 
     }
 
     hideEnterButton() {
         this.showing = false
-        this.enterButton.setVisible(this.showing)
+        this.enterShadow.setVisible(this.showing)
         this.enterCircle.setVisible(this.showing)
-        // this.enterButtonHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
+        this.enterArea.setVisible(this.showing)
+        // this.enterShadowHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
     }
 
     initConfirm() {
@@ -316,7 +319,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         } else {
             this.showing = true
-            this.scene.time.addEvent({ delay: 2000, callback: this.hideEnterButton, callbackScope: this, loop: false })
+            this.scene.time.addEvent({ delay: 4000, callback: this.hideEnterButton, callbackScope: this, loop: false })
         }
     }
 }
