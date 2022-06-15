@@ -51,18 +51,21 @@
     savedURL = "",
     colorToggle = true;
   // const statussen = [true, false];
-  let status = true;
-  let displayName;
   export let appType = $location.split("/")[1];
   let version = 0;
   let optionbox = true;
 
+  let status = true;
+  let displayName;
   let isDrawn = false;
   let isPreexistingArt = false;
   let isAlreadyUploaded = false;
+  let isVisibilityChanged = false;
 
   let applyBrush;
   let selectedBrush = "Pencil";
+
+  let Object = {};
 
   let FrameObject = {
     type: "image",
@@ -184,14 +187,6 @@
   }
 
   onMount(() => {
-    // const linkExistingArt = window.location.href;
-
-    // const arrayLinkExistingArt = linkExistingArt.split("/");
-
-    // isPreexistingArt = arrayLinkExistingArt.length > 5 ? true : false;
-
-    // console.log("isPreexistingArt", isPreexistingArt);
-
     setLoader(true);
     const autosave = setInterval(() => {
       if (!saved) {
@@ -597,6 +592,7 @@
         brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
       }
     };
+    console.log("status", status);
   });
   /////////////////// end onMount ///////////////////////
 
@@ -606,7 +602,7 @@
 
     if (!invalidTitle) return;
 
-    if (isDrawn) {
+    if (isDrawn || isVisibilityChanged) {
       saving = true;
       setLoader(true);
       if (appType == "drawing") {
@@ -651,6 +647,7 @@
           //setLoader(false);
         });
       }
+      isVisibilityChanged = false;
       isAlreadyUploaded = true;
     }
   };
@@ -745,14 +742,15 @@
       lastImg = await convertImage(Object.value.url, "2048", "2048");
       lastValue = Object.value;
       title = Object.key;
-      status = Object.permission_read;
+      status = Object.permission_read == 2 ? true : false;
       isPreexistingArt = true;
     } else {
-      let Object = await getObject(appType, params.name, params.user);
+      Object = await getObject(appType, params.name, params.user);
       console.log("object", Object);
       displayName = Object.value.displayname;
       title = Object.key;
-      status = Object.permission_read;
+      status = Object.permission_read == 2 ? true : false;
+      console.log("status in getImage", status);
       version = Object.value.version + 1;
       console.log("displayName", displayName);
       lastImg = await convertImage(Object.value.url);
@@ -1715,16 +1713,30 @@
                 {/each}
               </select> -->
               <div class="status-save-download-container">
-                <div on:click={() => (status = !status)}>
+                <div
+                  on:click={() => {
+                    status = !status;
+                    console.log("triggered upper");
+                    if (isPreexistingArt) {
+                      isVisibilityChanged = true;
+                      updateObject(
+                        Object.collection,
+                        Object.key,
+                        Object.value,
+                        status
+                      );
+                    }
+                  }}
+                >
                   {#if status}
                     <img
                       class="icon selected"
-                      src="assets/save_image/visible.svg"
+                      src="assets/SHB/svg/AW-icon-visible.svg"
                     />
                   {:else}
                     <img
                       class="icon selected"
-                      src="assets/save_image/hidden.svg"
+                      src="assets/SHB/svg/AW-icon-invisible.svg"
                     />
                   {/if}
                 </div>
@@ -1808,7 +1820,12 @@
           on:click={() => {
             // console.log("saving is clicked");
             // console.log("length", canvas.toJSON().objects);
-            if (appType == "drawing" || appType == "stopmotion") {
+            if (
+              appType == "drawing" ||
+              appType == "stopmotion" ||
+              appType == "house" ||
+              appType == "avatar"
+            ) {
               saveToggle = !saveToggle;
               switchOption("saveToggle");
             }
