@@ -1862,7 +1862,7 @@
   }
 
   .selected {
-    box-shadow: -3px 3px #7300ed;
+    box-shadow: 3px 3px #7300ed;
   }
 
   .colorTab {
