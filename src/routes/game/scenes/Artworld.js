@@ -115,7 +115,7 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async create() {
-
+ 
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 

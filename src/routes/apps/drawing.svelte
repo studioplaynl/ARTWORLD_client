@@ -58,7 +58,7 @@
   let optionbox = true;
 
   let isDrawn = false;
-  let isExistingArt = false;
+  let isPreexistingArt = false;
   let isAlreadyUploaded = false;
 
   let applyBrush;
@@ -184,13 +184,13 @@
   }
 
   onMount(() => {
-    const linkExistingArt = window.location.href;
-    console.log("linkExistingArt", linkExistingArt);
-    const arrayLinkExistingArt = linkExistingArt.split("/");
-    console.log("arrayLinkExistingArt", arrayLinkExistingArt);
-    isExistingArt = arrayLinkExistingArt.length > 5 ? true : false;
+    // const linkExistingArt = window.location.href;
 
-    console.log("isExistingArt", isExistingArt);
+    // const arrayLinkExistingArt = linkExistingArt.split("/");
+
+    // isPreexistingArt = arrayLinkExistingArt.length > 5 ? true : false;
+
+    // console.log("isPreexistingArt", isPreexistingArt);
 
     setLoader(true);
     const autosave = setInterval(() => {
@@ -673,7 +673,7 @@
       }
     }
 
-    if (isExistingArt) {
+    if (isPreexistingArt) {
       if (!savedURL) {
         let url = lastImg;
         window.location = url;
@@ -739,12 +739,14 @@
     // get images
     if (appType == "avatar") {
       lastImg = await convertImage($Profile.avatar_url, "2048", "10000");
+      isPreexistingArt = true;
     } else if (appType == "house") {
       let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
       lastImg = await convertImage(Object.value.url, "2048", "2048");
       lastValue = Object.value;
       title = Object.key;
       status = Object.permission_read;
+      isPreexistingArt = true;
     } else {
       let Object = await getObject(appType, params.name, params.user);
       console.log("object", Object);
@@ -754,6 +756,7 @@
       version = Object.value.version + 1;
       console.log("displayName", displayName);
       lastImg = await convertImage(Object.value.url);
+      isPreexistingArt = true;
     }
     // put images on canvas
     if (appType == "avatar" || appType == "stopmotion") {
@@ -1859,7 +1862,7 @@
   }
 
   .selected {
-    box-shadow: -3px 3px #7300ed;
+    box-shadow: 3px 3px #7300ed;
   }
 
   .colorTab {
