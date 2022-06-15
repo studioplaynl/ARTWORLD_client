@@ -59,7 +59,7 @@
 
   let isDrawn = false;
   let isExistingArt = false;
-  let alreadyUploaded = false;
+  let isAlreadyUploaded = false;
 
   let applyBrush;
   let selectedBrush = "Pencil";
@@ -106,6 +106,10 @@
 
   console.log("version:" + version);
   console.log("title: " + title);
+
+  // document.addEventListener("contextmenu", function (e) {
+  //   e.preventDefault();
+  // });
 
   var fab = function (id) {
     return document.getElementById(id);
@@ -239,12 +243,12 @@
     clearEl.onclick = function () {
       // if (window.confirm("are you sure?")) {
       console.log("renewal page button is clicked");
-      if (isDrawn) {
+      if (isDrawn && !isAlreadyUploaded) {
         upload();
+        isDrawn = false;
       }
       canvas.clear();
       localStorage.setItem("Drawing", "");
-      isDrawn = false;
 
       // }
     };
@@ -434,6 +438,7 @@
 
     canvas.on("mouse:up", function (element) {
       isDrawn = true;
+      isAlreadyUploaded = false;
       mouseEvent();
     });
 
@@ -646,20 +651,19 @@
           //setLoader(false);
         });
       }
-      alreadyUploaded = true;
+      isAlreadyUploaded = true;
     }
   };
 
   onDestroy(() => {
-    if (isDrawn) {
+    if (!isAlreadyUploaded) {
       upload();
-      isDrawn = false;
     }
   });
 
   async function download() {
     if (isDrawn) {
-      if (alreadyUploaded) {
+      if (isAlreadyUploaded) {
         let url = await convertImage(savedURL);
         window.location = url;
       } else {
@@ -668,7 +672,7 @@
         window.location = url;
       }
     }
-    console.log("isExistingArt", isExistingArt);
+
     if (isExistingArt) {
       if (!savedURL) {
         let url = lastImg;
