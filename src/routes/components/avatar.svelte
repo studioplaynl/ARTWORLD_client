@@ -71,9 +71,9 @@
 <div
   class="avatar"
   on:click={() => {
-    // show = !show;
-    // showHistory = false;
-    $CurrentApp = "avatar";
+    show = !show;
+    showHistory = false;
+    // $CurrentApp = "avatar";
 
   }}
 >

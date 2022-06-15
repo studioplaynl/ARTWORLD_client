@@ -33,7 +33,8 @@
                 appOpen
             );
         appOpen = value;
-        if (!!value) push("/" + value);
+        if (!!value) push("/" + value)
+        else push("/")
     });
 
     const unsubscribe2 = location.subscribe(async () => {
