@@ -595,6 +595,15 @@
   });
   /////////////////// end onMount ///////////////////////
 
+  const changeVisibility = async () => {
+    setLoader(true);
+    status = !status;
+    if (isPreexistingArt) {
+      await updateObject(Object.collection, Object.key, Object.value, status);
+    }
+    setLoader(false);
+  };
+
   const upload = async () => {
     console.log("upload is clicked");
     console.log("isDrawn", isDrawn);
@@ -1701,8 +1710,8 @@
             {#if appType != "avatar" && appType != "house"}
               <label for="title">Title</label>
               <NameGenerator bind:value={displayName} bind:invalidTitle />
-
-              <!-- <label for="status">Status</label>
+            {/if}
+            <!-- <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
                 {#each statussen as status}
                   <option value={status}>
@@ -1710,20 +1719,9 @@
                   </option>
                 {/each}
               </select> -->
-              <div class="status-save-download-container">
-                <div
-                  on:click={() => {
-                    status = !status;
-                    if (isPreexistingArt) {
-                      updateObject(
-                        Object.collection,
-                        Object.key,
-                        Object.value,
-                        status
-                      );
-                    }
-                  }}
-                >
+            <div class="status-save-download-container">
+              {#if appType != "avatar" && appType != "house"}
+                <div on:click={changeVisibility}>
                   {#if status}
                     <img
                       class="icon selected"
@@ -1736,40 +1734,40 @@
                     />
                   {/if}
                 </div>
+              {/if}
 
-                <div>
-                  <!-- {#if saving} -->
-                  <!-- <img
+              <div>
+                <!-- {#if saving} -->
+                <!-- <img
                     on:click={upload}
                     class="icon selected"
                     src="assets/SHB/svg/AW-icon-history.svg"
                   /> -->
-                  <!-- {:else if saved} -->
-                  <img
-                    on:click={upload}
-                    class="icon selected"
-                    src="assets/SHB/svg/AW-icon-check.svg"
-                  />
-                  <!-- {/if} -->
-                </div>
-                <!-- <button on:click={upload}
+                <!-- {:else if saved} -->
+                <img
+                  on:click={upload}
+                  class="icon selected"
+                  src="assets/SHB/svg/AW-icon-check.svg"
+                />
+                <!-- {/if} -->
+              </div>
+              <!-- <button on:click={upload}
               >{#if saving}Saving{:else if saved}
                 Saved{:else}Save{/if}</button
             > -->
-                <div>
-                  <!-- {#if saved} -->
-                  <img
-                    on:click={download}
-                    class="icon selected"
-                    src="assets/SHB/svg/AW-icon-save.svg"
-                  />
-                  <!-- {/if} -->
-                </div>
+              <div>
+                <!-- {#if saved} -->
+                <img
+                  on:click={download}
+                  class="icon selected"
+                  src="assets/SHB/svg/AW-icon-save.svg"
+                />
+                <!-- {/if} -->
               </div>
-              <!-- {#if saved}
+            </div>
+            <!-- {#if saved}
               <button >Download</button>
             {/if} -->
-            {/if}
           </div>
         </div>
       </div>
