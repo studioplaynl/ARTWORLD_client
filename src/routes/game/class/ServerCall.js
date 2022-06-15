@@ -2,6 +2,7 @@ import ManageSession from "../ManageSession"
 import { getAccount, updateObject, listObjects, convertImage, listAllObjects } from '../../../api.js'
 import GenerateLocation from "./GenerateLocation"
 import CoordinatesTranslator from "./CoordinatesTranslator"
+import { number } from "svelte-i18n"
 
 class ServerCall {
   constructor() { }
@@ -182,10 +183,10 @@ class ServerCall {
             })
             //console.log("element", element)
           })
-          
+
         })
         this.generateHomes(scene)
-        
+
       })
   }
 
@@ -193,6 +194,7 @@ class ServerCall {
     //check if server query is finished, then make the home from the list
     if (scene.homes != null) {
       console.log("generate homes!")
+      console.log("scene.homes", scene.homes)
       scene.homes.forEach((element, index) => {
         //console.log(element, index)
         const homeImageKey = "homeKey_" + element.user_id
@@ -203,6 +205,7 @@ class ServerCall {
         //check if homekey is already loaded
         if (scene.textures.exists(homeImageKey)) {
           //create the home
+          console.log("element generateHomes textures.exists", element)
           this.createHome(element, index, homeImageKey, scene)
 
         } else {
@@ -234,7 +237,7 @@ class ServerCall {
   }
 
   createHome(element, index, homeImageKey, scene) {
-    //console.log("element", element)
+    //console.log(" createHome element.artWorks", element.artWorks)
 
     // home description
     const locationDescription = element.value.username
@@ -243,7 +246,12 @@ class ServerCall {
     // get converted image from AWS
     const url = element.value.url
 
-
+    //let numberOfArtworks = element.artWorks.length
+    // if (typeof element.artWorks == "undefined") {
+    //   numberOfArtworks = 0
+    // } else {
+    //   numberOfArtworks = element.artWorks.length
+    // }
     //console.log("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
 
     scene.homesRepresented[index] = new GenerateLocation({
@@ -261,7 +269,7 @@ class ServerCall {
         element.value.posY
       ),
       locationDestination: "DefaultUserHome",
-      numberOfArtworks: element.artWorks.length,
+      //numberOfArtworks: numberOfArtworks,
       locationText: locationDescription,
       locationImage: homeImageKey,
       referenceName: locationDescription,
@@ -284,7 +292,7 @@ class ServerCall {
 
     // add a bubble with the number of artworks in the house
     //scene.add.circle(CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x,element.value.posX), CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, element.value.posY), 30, 0x7300ED).setOrigin(0.5, 0.5).setVisible(true).setDepth(499)
-        
+
     scene.homesRepresented[index].setDepth(30)
   }
 
