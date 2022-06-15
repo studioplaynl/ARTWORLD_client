@@ -25,6 +25,7 @@
 
     document.addEventListener("contextmenu", function (e) {
         e.preventDefault();
+        e.target.click();
     });
 
     onMount(() => {
