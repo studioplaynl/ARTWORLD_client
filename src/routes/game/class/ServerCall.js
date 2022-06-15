@@ -1,7 +1,8 @@
 import ManageSession from "../ManageSession"
-import { getAccount, updateObject, listObjects, convertImage } from '../../../api.js'
+import { getAccount, updateObject, listObjects, convertImage, listAllObjects } from '../../../api.js'
 import GenerateLocation from "./GenerateLocation"
 import CoordinatesTranslator from "./CoordinatesTranslator"
+import { number } from "svelte-i18n"
 
 class ServerCall {
   constructor() { }
@@ -164,20 +165,36 @@ class ServerCall {
     //get a list of all homes objects and then filter
     Promise.all([listObjects(collection, null, maxItems)])
       .then((rec) => {
-        console.log("rec: ", rec)
+        console.log("rec homes: ", rec)
         scene.homes = rec[0]
-
+        console.log("scene.homes", scene.homes)
         // filter only amsterdam homes
         scene.homes = scene.homes.filter((obj) => obj.key == filter)
+
+        // retreive how many artworks are in the home
+        // let tempAllArtPerUser = []
+        scene.homes.forEach((element, index) => {
+          Promise.all([listAllObjects("drawing", element.user_id), listAllObjects("stopmotion", element.user_id)]).then((rec) => {
+
+            rec.forEach((artElement) => {
+              //console.log("artElement", artElement)
+              //add the array of art objects to the userHouse object
+              element['artWorks'] = artElement
+            })
+            //console.log("element", element)
+          })
+
+        })
         this.generateHomes(scene)
+
       })
   }
-
 
   async generateHomes(scene) {
     //check if server query is finished, then make the home from the list
     if (scene.homes != null) {
       console.log("generate homes!")
+      console.log("scene.homes", scene.homes)
       scene.homes.forEach((element, index) => {
         //console.log(element, index)
         const homeImageKey = "homeKey_" + element.user_id
@@ -188,8 +205,9 @@ class ServerCall {
         //check if homekey is already loaded
         if (scene.textures.exists(homeImageKey)) {
           //create the home
+          console.log("element generateHomes textures.exists", element)
           this.createHome(element, index, homeImageKey, scene)
-          
+
         } else {
           // get the image server side
           this.getHomeImages(url, element, index, homeImageKey, scene)
@@ -219,15 +237,23 @@ class ServerCall {
   }
 
   createHome(element, index, homeImageKey, scene) {
+    //console.log(" createHome element.artWorks", element.artWorks)
+
     // home description
-    //console.log(element)
     const locationDescription = element.value.username
     //const homeImageKey = "homeKey_" + element.user_id
     // get a image url for each home
     // get converted image from AWS
     const url = element.value.url
 
+    //let numberOfArtworks = element.artWorks.length
+    // if (typeof element.artWorks == "undefined") {
+    //   numberOfArtworks = 0
+    // } else {
+    //   numberOfArtworks = element.artWorks.length
+    // }
     //console.log("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
+
     scene.homesRepresented[index] = new GenerateLocation({
       scene: scene,
       size: 140,
@@ -243,6 +269,7 @@ class ServerCall {
         element.value.posY
       ),
       locationDestination: "DefaultUserHome",
+      //numberOfArtworks: numberOfArtworks,
       locationText: locationDescription,
       locationImage: homeImageKey,
       referenceName: locationDescription,
@@ -252,6 +279,19 @@ class ServerCall {
       color2: 0xf2a022,
       color3: 0xf8d80b,
     })
+
+    //make a home smaller when there is no art inside
+    // if (typeof element.artWorks != "undefined" && element.artWorks.length < 1) {
+    //   scene.homesRepresented[index].setScale(0.8)
+    // }
+
+    //set the house of SELF bigger
+    if (element.user_id == ManageSession.userProfile.id) {
+      scene.homesRepresented[index].setScale(1.6)
+    }
+
+    // add a bubble with the number of artworks in the house
+    //scene.add.circle(CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x,element.value.posX), CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, element.value.posY), 30, 0x7300ED).setOrigin(0.5, 0.5).setVisible(true).setDepth(499)
 
     scene.homesRepresented[index].setDepth(30)
   }

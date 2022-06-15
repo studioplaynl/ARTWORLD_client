@@ -1,6 +1,6 @@
 <script>
     import Router from "svelte-spa-router";
-    import {onMount} from "svelte"
+    import { onMount } from "svelte";
     import { wrap } from "svelte-spa-router/wrap";
     import home from "./routes/game/index.svelte";
     import registerPage from "./routes/auth/register.svelte";
@@ -15,18 +15,22 @@
     import Error from "./routes/components/error.svelte";
     import Menu from "./routes/components/menu.svelte";
     import Friends from "./routes/friends.svelte";
-    import Admin from "./routes/admin.svelte"
-    import updatePage from "./routes/auth/update.svelte"
-    import mandala from "./routes/apps/mandala.svelte"
-    import upload from "./routes/apps/upload.svelte"
-    import MarioSequencer from "./routes/apps/marioSequencer.svelte"
-    import player from "./routes/apps/player.svelte"
+    import Admin from "./routes/admin.svelte";
+    import updatePage from "./routes/auth/update.svelte";
+    import mandala from "./routes/apps/mandala.svelte";
+    import upload from "./routes/apps/upload.svelte";
+    import MarioSequencer from "./routes/apps/marioSequencer.svelte";
+    import player from "./routes/apps/player.svelte";
     import Moderate from "./routes/moderate.svelte";
 
-    onMount(()=>{
-        document.getElementById("loader").classList.add('hide');
+    document.addEventListener("contextmenu", function (e) {
+        e.preventDefault();
+        e.target.click();
+    });
 
-    })
+    onMount(() => {
+        document.getElementById("loader").classList.add("hide");
+    });
 
     let isLogedIn = (detail) => {
         if ($Session != null) return true;
@@ -36,7 +40,7 @@
         }
     };
     let isAdmin = (detail) => {
-        console.log($Profile)
+        console.log($Profile);
         if ($Profile.meta.Role == "admin") return true;
         else {
             window.location.href = "/#/";
@@ -44,16 +48,14 @@
         }
     };
     let isModerator = (detail) => {
-        console.log($Profile)
-        if ($Profile.meta.Role == "moderator" || $Profile.meta.role == "admin") return true;
+        console.log($Profile);
+        if ($Profile.meta.Role == "moderator" || $Profile.meta.role == "admin")
+            return true;
         else {
             window.location.href = "/#/";
             return false;
         }
     };
-
-
-    
 </script>
 
 <Menu />
@@ -68,7 +70,7 @@
                 },
             ],
         }),
-        "/update/:user?": wrap ({
+        "/update/:user?": wrap({
             component: updatePage,
             conditions: [
                 (detail) => {
@@ -105,7 +107,7 @@
             component: match,
             conditions: [
                 (detail) => {
-                    return isAdmin(detail); 
+                    return isAdmin(detail);
                 },
             ],
         }),
@@ -216,4 +218,3 @@
     }}
 />
 <Error />
-

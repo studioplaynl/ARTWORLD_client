@@ -17,9 +17,9 @@ class HistoryTracker {
     //console.log("ManageSession.currentScene", ManageSession.currentScene)
 
     history.subscribe((value) => {
-      console.log("history value", value)
+      //console.log("history value", value)
       this.tempHistoryArray = value
-      console.log("history this.tempHistoryArray", this.tempHistoryArray)
+      //console.log("history this.tempHistoryArray", this.tempHistoryArray)
     })
     
     // const tempArray = get(history) //can't get it to work
@@ -35,7 +35,7 @@ class HistoryTracker {
       if (!!scene.player) {
         playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)
         playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)
-        console.log(" ManageSession.locationHistory.push playerPosX playerPosY", playerPosX, playerPosY)
+        //console.log(" ManageSession.locationHistory.push playerPosX playerPosY", playerPosX, playerPosY)
       }
       this.tempHistoryArray.push({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
 
@@ -108,6 +108,7 @@ class HistoryTracker {
       callbackScope: scene,
       loop: false,
     })
+    
   }
   async pauseSceneStartApp(scene, app){
     scene.physics.pause()
