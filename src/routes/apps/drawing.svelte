@@ -60,7 +60,6 @@
   let isDrawn = false;
   let isPreexistingArt = false;
   let isAlreadyUploaded = false;
-  let isVisibilityChanged = false;
 
   let applyBrush;
   let selectedBrush = "Pencil";
@@ -602,7 +601,7 @@
 
     if (!invalidTitle) return;
 
-    if (isDrawn || isVisibilityChanged) {
+    if (isDrawn) {
       saving = true;
       setLoader(true);
       if (appType == "drawing") {
@@ -647,7 +646,6 @@
           //setLoader(false);
         });
       }
-      isVisibilityChanged = false;
       isAlreadyUploaded = true;
     }
   };
@@ -1716,9 +1714,7 @@
                 <div
                   on:click={() => {
                     status = !status;
-                    console.log("triggered upper");
                     if (isPreexistingArt) {
-                      isVisibilityChanged = true;
                       updateObject(
                         Object.collection,
                         Object.key,
