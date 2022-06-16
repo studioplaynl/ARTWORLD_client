@@ -26,10 +26,8 @@
   let history = [],
     historyCurrent;
   let canv, _clipboard, Cursor, cursor, drawingColorEl;
-  let saveCanvas,
-    savecanvas,
-    videoCanvas,
-    saving = false;
+  let saveCanvas, savecanvas, videoCanvas;
+  // saving = false;
   let videoWidth;
   let canvas,
     video,
@@ -60,6 +58,7 @@
   let isDrawn = false;
   let isPreexistingArt = false;
   let isAlreadyUploaded = false;
+  let isTitleChanged = false;
 
   let applyBrush;
   let selectedBrush = "Pencil";
@@ -125,32 +124,32 @@
         : window.innerWidth;
 
     // as a default the canvas has 100px less size that the window
-    canvas.setWidth(canvasSize - 100);
-    canvas.setHeight(canvasSize - 100);
-    cursor.setWidth(canvasSize - 100);
-    cursor.setHeight(canvasSize - 100);
+    canvas.setWidth(canvasSize);
+    canvas.setHeight(canvasSize);
+    cursor.setWidth(canvasSize);
+    cursor.setHeight(canvasSize);
 
     // in case when the size of height and width are more or less close in px (within the difference of 300px) ("square windows")
-    if (
-      (window.innerWidth >= 1008 &&
-        window.innerWidth - window.innerHeight >= 0 &&
-        window.innerWidth - window.innerHeight < 300) ||
-      (window.innerWidth >= 1008 &&
-        window.innerHeight - window.innerWidth >= 0 &&
-        window.innerHeight - window.innerWidth < 300)
-    ) {
+    // if (
+    //   (window.innerWidth >= 1008 &&
+    //     window.innerWidth - window.innerHeight >= 0 &&
+    //     window.innerWidth - window.innerHeight < 300) ||
+    //   (window.innerWidth >= 1008 &&
+    //     window.innerHeight - window.innerWidth >= 0 &&
+    //     window.innerHeight - window.innerWidth < 300)
+    // ) {
+    //   canvas.setWidth(canvasSize - 110);
+    //   canvas.setHeight(canvasSize - 110);
+    //   cursor.setWidth(canvasSize - 110);
+    //   cursor.setHeight(canvasSize - 110);
+    // }
+
+    // for medium screens
+    if (canvasSize < 1008 && canvasSize > 640) {
       canvas.setWidth(canvasSize - 200);
       canvas.setHeight(canvasSize - 200);
       cursor.setWidth(canvasSize - 200);
       cursor.setHeight(canvasSize - 200);
-    }
-
-    // for medium screens
-    if (canvasSize < 1008 && canvasSize > 640) {
-      canvas.setWidth(canvasSize - 140);
-      canvas.setHeight(canvasSize - 140);
-      cursor.setWidth(canvasSize - 140);
-      cursor.setHeight(canvasSize - 140);
     }
 
     // for mobile screens
@@ -432,6 +431,7 @@
 
     canvas.on("mouse:up", function (element) {
       isDrawn = true;
+      isPreexistingArt = false;
       isAlreadyUploaded = false;
       mouseEvent();
     });
@@ -605,13 +605,10 @@
   };
 
   const upload = async () => {
-    console.log("upload is clicked");
-    console.log("isDrawn", isDrawn);
-
     if (!invalidTitle) return;
 
     if (isDrawn) {
-      saving = true;
+      // saving = true;
       setLoader(true);
       if (appType == "drawing") {
         var Image = canvas.toDataURL("image/png", 1);
@@ -629,8 +626,9 @@
           displayName
         ).then((url) => {
           savedURL = url;
-          saved = true;
-          saving = false;
+          console.log("savedURL upload", savedURL);
+          // saved = true;
+          // saving = false;
           setLoader(false);
         });
       }
@@ -638,20 +636,21 @@
         var Image = canvas.toDataURL("image/png", 1);
         var blobData = dataURItoBlob(Image);
         uploadHouse(blobData);
-        saved = true;
-        saving = false;
+        // saved = true;
+        // saving = false;
         setLoader(false);
       }
       if (appType == "stopmotion") {
         await createStopmotion();
-        saved = true;
-        saving = false;
+        // saved = true;
+        // saving = false;
         setLoader(false);
       }
       if (appType == "avatar") {
-        createAvatar().then(() => {
-          saved = true;
-          saving = false;
+        createAvatar().then((resp) => {
+          console.log("resp", resp);
+          // saved = true;
+          // saving = false;
           //setLoader(false);
         });
       }
@@ -660,21 +659,25 @@
   };
 
   onDestroy(() => {
+    console.log("isTitleChanged", isTitleChanged);
     if (!isAlreadyUploaded) {
+      upload();
+    }
+    if (isTitleChanged) {
       upload();
     }
   });
 
   async function download() {
     if (isDrawn) {
-      if (isAlreadyUploaded) {
-        let url = await convertImage(savedURL);
-        window.location = url;
-      } else {
+      if (!isAlreadyUploaded) {
         await upload();
-        let url = await convertImage(savedURL);
-        window.location = url;
       }
+      setTimeout(async () => {
+        console.log("download savedURL", savedURL);
+        const url = await convertImage(savedURL);
+        window.location = url;
+      }, 5000);
     }
 
     if (isPreexistingArt) {
@@ -682,13 +685,7 @@
         let url = lastImg;
         window.location = url;
       }
-      // else {
-      //   let url = await convertImage(savedURL);
-      //   window.location = url;
-      // }
     }
-
-    console.log("download", savedURL);
   }
 
   const updateFrame = () => {
@@ -1150,7 +1147,7 @@
       uploadImage(title, appType, blobData, status, version, displayName).then(
         (url) => {
           savedURL = url;
-          saving = false;
+          // saving = false;
           setLoader(false);
         }
       );
@@ -1851,8 +1848,9 @@
     display: flex;
     align-items: center;
     margin-left: 60px;
-    /* justify-content: flex-end; */
-    justify-content: space-around;
+    justify-content: flex-end;
+    /* justify-content: space-around; */
+    margin: 20px 20px 0 0;
   }
 
   #cursor {
