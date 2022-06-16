@@ -195,7 +195,7 @@ class ManageSession {
               // if (typeof this[onlinePlayer] != "undefined") {
               //   this[onlinePlayer].stop()
               // }
-             
+
               let positionVector = new Phaser.Math.Vector2(
                 data.posX,
                 data.posY
@@ -222,11 +222,7 @@ class ManageSession {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
               //because there the scene context is known
 
-              // if there is an unfinished tween, stop it and stop the online player
-              if (typeof this[onlinePlayer] != "undefined") {
-                this[onlinePlayer].stop()
-              }
-             
+
               let positionVector = new Phaser.Math.Vector2(
                 data.posX,
                 data.posY
@@ -239,8 +235,30 @@ class ManageSession {
                 positionVector
               )
 
+              //set the position on the player for the server side storing
               onlinePlayer.posX = positionVector.x
               onlinePlayer.posY = positionVector.y
+
+              // if there is an unfinished tween, stop it and stop the online player
+              if (typeof this[onlinePlayer] != "undefined") {
+
+                console.log("this[onlinePlayer]", this[onlinePlayer])
+                this[onlinePlayer].stop()
+                // console.log("duration", duration)
+
+                const target = new Phaser.Math.Vector2(positionVector.x, positionVector.y);
+                const duration = target.length() / 2
+                console.log("duration", duration)
+
+                //set a variable for the onlinePlayer tween so it can be stopped when needed (by reference)
+                this[onlinePlayer] = scene.tweens.add({
+                  targets: onlinePlayer,
+                  x: positionVector.x,
+                  y: positionVector.y,
+                  paused: false,
+                  duration: duration,
+                })
+              }
 
               onlinePlayer.x = positionVector.x
               onlinePlayer.y = positionVector.y
