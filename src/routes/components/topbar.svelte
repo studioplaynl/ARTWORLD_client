@@ -51,7 +51,7 @@
         ><img class="TopIcon" src="/assets/SHB/svg/AW-icon-minus.svg" /></a
     >
     <a on:click={zoomReset} id="zoomReset"
-        ><img class="TopIcon" src="assets/SHB/svg/AW-icon-reset.svg" /></a
+        ><img class="TopIcon" src="assets/SHB/svg/AW-icon-zoom-reset.svg" /></a
     >
     <a on:click={zoomIn} id="zoomIn"
         ><img class="TopIcon" src="./assets/SHB/svg/AW-icon-plus.svg" /></a
