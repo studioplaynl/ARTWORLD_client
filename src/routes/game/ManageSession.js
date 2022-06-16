@@ -67,14 +67,14 @@ class ManageSession {
     this.playerAvatarKeyDefault = "avatar1"
     this.playerMovingKey = "moving"
     this.playerStopKey = "stop"
-    this.lastMoveCommand = {action: "stop", posX: 0, posY: 0, location: this.location}
+    this.lastMoveCommand = { action: "stop", posX: 0, posY: 0, location: this.location }
 
     //.....................................................................
     // to select a home and save it's position as admin server side (it doesn't save when it is not a home)
     // and to select and manipulate GameObjects in Edit Mode
-    this.selectedGameObject 
+    this.selectedGameObject
     this.selectedGameObject_startScale = 1 //being able to reset scale to original, within edit mode
-    this.selectedGameObject_startPosition = new Phaser.Math.Vector2(0,0) //being able to reset position to original, within edit mode
+    this.selectedGameObject_startPosition = new Phaser.Math.Vector2(0, 0) //being able to reset position to original, within edit mode
     //.....................................................................
 
     this.gameStarted = false;
@@ -164,48 +164,92 @@ class ManageSession {
               const moveToX = CoordinatesTranslator.artworldToPhaser2DX(
                 scene.worldSize.x,
                 data.posX
-              );
+              )
+
               const moveToY = CoordinatesTranslator.artworldToPhaser2DY(
                 scene.worldSize.y,
                 data.posY
-              );
+              )
 
               //scale duration to distance
               const target = new Phaser.Math.Vector2(moveToX, moveToY);
               const duration = target.length() / 8;
               // console.log("duration", duration)
 
-              scene.tweens.add({
+              //set a variable for the onlinePlayer tween so it can be stopped when needed (by reference)
+              this[onlinePlayer] = scene.tweens.add({
                 targets: onlinePlayer,
                 x: moveToX,
                 y: moveToY,
                 paused: false,
                 duration: duration,
-              });
+              })
               //console.log("target", target)
             }
 
             if (data.action == "stop") {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
               //because there the scene context is known
+
+              // // if there is an unfinished tween, stop it and stop the online player
+              // if (typeof this[onlinePlayer] != "undefined") {
+              //   this[onlinePlayer].stop()
+              // }
+             
               let positionVector = new Phaser.Math.Vector2(
                 data.posX,
                 data.posY
-              );
+              )
+
+              console.log("positionVector", positionVector)
+
               positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(
                 scene.worldSize,
                 positionVector
-              );
+              )
 
-              onlinePlayer.posX = positionVector.x;
-              onlinePlayer.posY = positionVector.y;
+              onlinePlayer.posX = positionVector.x
+              onlinePlayer.posY = positionVector.y
 
-              onlinePlayer.x = positionVector.x;
-              onlinePlayer.y = positionVector.y;
+              onlinePlayer.x = positionVector.x
+              onlinePlayer.y = positionVector.y
 
               //get the key for the stop animation of the player, and play it
-              onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true);
+              onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true)
             }
+
+            if (data.action == "physicsStop") {
+              // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
+              //because there the scene context is known
+
+              // if there is an unfinished tween, stop it and stop the online player
+              if (typeof this[onlinePlayer] != "undefined") {
+                this[onlinePlayer].stop()
+              }
+             
+              let positionVector = new Phaser.Math.Vector2(
+                data.posX,
+                data.posY
+              )
+
+              console.log("positionVector", positionVector)
+
+              positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+                scene.worldSize,
+                positionVector
+              )
+
+              onlinePlayer.posX = positionVector.x
+              onlinePlayer.posY = positionVector.y
+
+              onlinePlayer.x = positionVector.x
+              onlinePlayer.y = positionVector.y
+
+              //get the key for the stop animation of the player, and play it
+              onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true)
+            }
+
+
           }
         }
       }
@@ -292,7 +336,7 @@ class ManageSession {
       //console.log("this.currentScene", this.currentScene)
       console.log("this.lastMoveCommand", this.lastMoveCommand)
       // if (typeof this.currentScene != "undefined") {
-        setTimeout (() => {this.sendMoveMessage(this.currentScene, this.lastMoveCommand.posX, this.lastMoveCommand.posY, this.lastMoveCommand.action)}, 1500) 
+      setTimeout(() => { this.sendMoveMessage(this.currentScene, this.lastMoveCommand.posX, this.lastMoveCommand.posY, this.lastMoveCommand.action) }, 1500)
       // }
     });
   }
@@ -330,7 +374,7 @@ class ManageSession {
     //console.log(scene)
 
     //
-    this.lastMoveCommand = {action: action, posX: posX, posY: posY, location: this.location}
+    this.lastMoveCommand = { action: action, posX: posX, posY: posY, location: this.location }
     //console.log("this.lastMoveCommand", this.lastMoveCommand)
 
     //console.log(posX, posY)
@@ -339,12 +383,12 @@ class ManageSession {
     //console.log(posX, posY)
 
     const data = `{ "action": "${action}", "posX": ${posX}, "posY": ${posY}, "location": "${this.location}" }`;
-    
+
     this.socket.rpc("move_position", data);
   } //end sendChatMessage
 
   checkIfSceneExists(location) {
-    
+
     //check if this.launchLocation exists in SCENES
     //const locationExists = SCENES.includes(location)
 
