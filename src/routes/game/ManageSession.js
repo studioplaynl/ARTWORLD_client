@@ -192,9 +192,9 @@ class ManageSession {
               //because there the scene context is known
 
               // // if there is an unfinished tween, stop it and stop the online player
-              // if (typeof this[onlinePlayer] != "undefined") {
-              //   this[onlinePlayer].stop()
-              // }
+              if (typeof this[onlinePlayer] != "undefined") {
+                this[onlinePlayer].stop()
+              }
 
               let positionVector = new Phaser.Math.Vector2(
                 data.posX,
@@ -221,7 +221,6 @@ class ManageSession {
             if (data.action == "physicsStop") {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
               //because there the scene context is known
-
 
               let positionVector = new Phaser.Math.Vector2(
                 data.posX,
@@ -251,13 +250,13 @@ class ManageSession {
                 console.log("duration", duration)
 
                 //set a variable for the onlinePlayer tween so it can be stopped when needed (by reference)
-                this[onlinePlayer] = scene.tweens.add({
-                  targets: onlinePlayer,
-                  x: positionVector.x,
-                  y: positionVector.y,
-                  paused: false,
-                  duration: duration,
-                })
+                // this[onlinePlayer] = scene.tweens.add({
+                //   targets: onlinePlayer,
+                //   x: positionVector.x,
+                //   y: positionVector.y,
+                //   paused: false,
+                //   duration: duration,
+                // })
               }
 
               onlinePlayer.x = positionVector.x
@@ -266,7 +265,6 @@ class ManageSession {
               //get the key for the stop animation of the player, and play it
               onlinePlayer.anims.play(onlinePlayer.getData("stopKey"), true)
             }
-
 
           }
         }
