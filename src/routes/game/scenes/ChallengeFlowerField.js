@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession"
-import { listObjects, convertImage, getAccount } from "../../../api.js"
+import { listObjects, convertImage, getAccount, listAllObjects } from "../../../api.js"
 
 import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
@@ -307,7 +307,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     }//end create
 
     async getListOfBloem() {
-        await listObjects("drawing", null, 100).then((rec) => {
+        await listAllObjects("drawing", null).then((rec) => {
             //download all the drawings and then filter for "bloem"
             this.userArtServerList = rec.filter(obj => obj.permission_read == 2)
             //console.log("this.userArtServerList", this.userArtServerList)
@@ -436,7 +436,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
 
     async downloadFlowers(element, index, array) {
-        //! we are placing the artWorks 'around' (left and right of) the center of the world
         const totalArtWorks = array.length
         const imageKeyUrl = element.value.url
         console.log("element.value.displayname", element.value.displayname)
