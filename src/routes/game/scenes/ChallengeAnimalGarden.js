@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession"
-import { listObjects, convertImage, getAccount } from "../../../api.js"
+import { listObjects, convertImage, getAccount, listAllObjects} from "../../../api.js"
 
 import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
@@ -466,7 +466,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
 
     stopAnimalMovement(gameobject) {
-        console.log("gameobject", gameobject)
+        //console.log("gameobject", gameobject)
         if (typeof gameobject.body != "undefined") {
             const tempAnim = gameobject.getData("stopAnim")
             gameobject.setVelocity(0, 0)
@@ -479,7 +479,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     }
 
     resumeAnimalMovement(gameobject) {
-        console.log("gameobject", gameobject)
+        //console.log("gameobject", gameobject)
         const tempAnim = gameobject.getData("moveAnim")
         gameobject.setVelocity(Phaser.Math.Between(30, 400), Phaser.Math.Between(-30, -300))
         gameobject.play(tempAnim)
@@ -488,7 +488,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     }
 
     async getListOf(displayName) {
-        await listObjects("stopmotion", null, 100).then((rec) => {
+        await listAllObjects("stopmotion", null).then((rec) => {
             //download all the drawings and then filter for "bloem"
             this.userArtServerList = rec.filter(obj => obj.permission_read == 2)
             //console.log("this.userArtServerList", this.userArtServerList)
