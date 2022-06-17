@@ -608,9 +608,8 @@
     if (!invalidTitle) return;
 
     if (isDrawn) {
-      console.log("title", title);
-      console.log("displayName", displayName);
-      // saving = true;
+      version = version + 1;
+
       setLoader(true);
       if (appType == "drawing") {
         var Image = canvas.toDataURL("image/png", 1);
@@ -644,6 +643,7 @@
       }
       if (appType == "stopmotion") {
         await createStopmotion();
+        console.log("savedURL upload", savedURL);
         // saved = true;
         // saving = false;
         setLoader(false);
@@ -675,14 +675,15 @@
       if (!isAlreadyUploaded) {
         await upload();
       }
-      setTimeout(async () => {
-        console.log("download savedURL", savedURL);
-        const url = await convertImage(savedURL);
-        window.location = url;
-      }, 5000);
+      // setTimeout(async () => {
+      console.log("download savedURL", savedURL);
+      const url = await convertImage(savedURL);
+      window.location = url;
+      // }, 5000);
     }
 
     if (isPreexistingArt) {
+      console.log("are you running this???");
       if (!savedURL) {
         let url = lastImg;
         window.location = url;
@@ -757,7 +758,7 @@
       title = Object.key;
       status = Object.permission_read == 2 ? true : false;
       console.log("status in getImage", status);
-      version = Object.value.version + 1;
+      version = Object.value.version;
       console.log("displayName", displayName);
       lastImg = await convertImage(Object.value.url);
       isPreexistingArt = true;
@@ -1141,18 +1142,25 @@
       var saveImage = await savecanvas.toDataURL("image/png", 1);
       console.log("savedImage", saveImage);
 
-      var blobData = dataURItoBlob(saveImage);
+      var blobData = await dataURItoBlob(saveImage);
       console.log("blobData", blobData);
       if (!!!title) {
         title = Date.now() + "_" + displayName;
       }
-      uploadImage(title, appType, blobData, status, version, displayName).then(
-        (url) => {
-          savedURL = url;
-          // saving = false;
-          setLoader(false);
-        }
-      );
+      await uploadImage(
+        title,
+        appType,
+        blobData,
+        status,
+        version,
+        displayName
+      ).then((url) => {
+        savedURL = url;
+        console.log("savedURL stopmotion", savedURL);
+        console.log("am I getting this?");
+        // saving = false;
+        setLoader(false);
+      });
       //Profile.update(n => n.url = Image);
     });
   }
