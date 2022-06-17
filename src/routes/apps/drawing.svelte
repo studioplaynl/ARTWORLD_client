@@ -607,7 +607,7 @@
   const upload = async () => {
     if (!invalidTitle) return;
 
-    if (isDrawn) {
+    if (isDrawn || isTitleChanged) {
       version = version + 1;
 
       setLoader(true);
@@ -657,15 +657,12 @@
         });
       }
       isAlreadyUploaded = true;
+      isTitleChanged = false;
     }
   };
 
   onDestroy(() => {
-    console.log("isTitleChanged", isTitleChanged);
-    if (!isAlreadyUploaded) {
-      upload();
-    }
-    if (isTitleChanged) {
+    if (!isAlreadyUploaded || isTitleChanged) {
       upload();
     }
   });
