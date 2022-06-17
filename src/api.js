@@ -89,6 +89,7 @@ export async function uploadHouse(data) {
   console.log("value", value)
   await updateObject(type, name, JSON.stringify(value), pub)
 
+  return value.url
 }
 
 export async function getUploadURL(type, name, filetype, version) {

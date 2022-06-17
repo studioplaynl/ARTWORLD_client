@@ -591,7 +591,6 @@
         brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
       }
     };
-    console.log("status", status);
   });
   /////////////////// end onMount ///////////////////////
 
@@ -606,6 +605,10 @@
 
   const upload = async () => {
     if (!invalidTitle) return;
+
+    console.log("isDrawn down", isDrawn);
+
+    // console.log("isTitleChanged", isTitleChanged);
 
     if (isDrawn || isTitleChanged) {
       version = version + 1;
@@ -636,7 +639,10 @@
       if (appType == "house") {
         var Image = canvas.toDataURL("image/png", 1);
         var blobData = dataURItoBlob(Image);
-        uploadHouse(blobData);
+        await uploadHouse(blobData).then((response) => {
+          savedURL = response;
+          console.log("response", response);
+        });
         // saved = true;
         // saving = false;
         setLoader(false);
@@ -662,34 +668,39 @@
   };
 
   onDestroy(() => {
+    // upload the artwork if the user missed clicking the save button for an artwork
+    // or if the title has been changed of the preexisting artwork
     if (!isAlreadyUploaded || isTitleChanged) {
       upload();
     }
   });
 
   async function download() {
+    // check first if we are dealing with preexisting artwork
+    // if it is the case, simply download from the url of the artwork
+    if (isPreexistingArt) {
+      if (!savedURL) {
+        let url = lastImg;
+        window.location = url;
+        return; // don't proceed
+      }
+    }
+
+    // start the process of downloading, only if something is drawn on the canvas
     if (isDrawn) {
       if (!isAlreadyUploaded) {
+        // if the user missed clicking the save button (upload function), then upload it first
         await upload();
       }
       if (appType == "stopmotion") {
+        // "stopmotion" appType needs more time to upload, so we give enough time, before starting downloading
         setTimeout(async () => {
-          console.log("download savedURL", savedURL);
           const url = await convertImage(savedURL);
           window.location = url;
-        }, 5000);
+        }, 4500);
       } else {
+        // for the rest of appTypes no need to set Timeout
         const url = await convertImage(savedURL);
-        window.location = url;
-      }
-
-      return;
-    }
-
-    if (isPreexistingArt) {
-      console.log("are you running this???");
-      if (!savedURL) {
-        let url = lastImg;
         window.location = url;
       }
     }
@@ -1161,7 +1172,6 @@
       ).then((url) => {
         savedURL = url;
         console.log("savedURL stopmotion", savedURL);
-        console.log("am I getting this?");
         // saving = false;
         setLoader(false);
       });
