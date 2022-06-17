@@ -10,7 +10,7 @@
     getObject,
     setLoader,
     convertImage,
-    updateObject,
+    getFile,
   } from "../../api.js";
   import { client } from "../../nakama.svelte";
   import { Session, Profile, tutorial } from "../../session.js";
@@ -19,6 +19,8 @@
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
   import Avatar from "../components/avatar.svelte";
   import ManageSession from "../game/ManageSession";
+
+  let imageResolution = 2048
 
   let scaleRatio, lastImg, lastValue, lastWidth;
   let params = { user: $location.split("/")[2], name: $location.split("/")[3] };
@@ -69,10 +71,10 @@
     version: "4.6.0",
     originX: "left",
     originY: "top",
-    left: -2048,
+    left: -imageResolution,
     top: 0,
     width: 0,
-    height: 2048,
+    height: imageResolution,
     fill: "rgb(0,0,0)",
     stroke: null,
     strokeWidth: 0,
@@ -167,19 +169,19 @@
       cursor.setHeight(canvasSize - 80);
     }
 
-    scaleRatio = Math.min(canvas.width / 2048, canvas.width / 2048);
+    scaleRatio = Math.min(canvas.width / imageResolution, canvas.width / imageResolution);
 
     cursor.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
     // savecanvas.setZoom(scaleRatio);
     // canvas.setDimensions({
-    //   width: 2048 * scaleRatio,
-    //   height: 2048 * scaleRatio,
+    //   width: imageResolution * scaleRatio,
+    //   height: imageResolution * scaleRatio,
     // });
-    // // savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
+    // // savecanvas.setDimensions({ width: (imageResolution * scaleRatio), height: (imageResolution * scaleRatio) });
     // cursor.setDimensions({
-    //   width: 2048 * scaleRatio,
-    //   height: 2048 * scaleRatio,
+    //   width: imageResolution * scaleRatio,
+    //   height: imageResolution * scaleRatio,
     // });
   }
 
@@ -664,11 +666,11 @@
   async function download() {
     if (isDrawn) {
       if (isAlreadyUploaded) {
-        let url = await convertImage(savedURL);
+        let url = await getFile(savedURL);
         window.location = url;
       } else {
         await upload();
-        let url = await convertImage(savedURL);
+        let url = await getFile(savedURL);
         window.location = url;
       }
     }
@@ -679,7 +681,7 @@
         window.location = url;
       }
       // else {
-      //   let url = await convertImage(savedURL);
+      //   let url = await getFile(savedURL);
       //   window.location = url;
       // }
     }
@@ -715,8 +717,8 @@
             localStore.drawing,
             function (oImg) {
               oImg.set({ left: 0, top: 0 });
-              oImg.scaleToHeight(2048);
-              oImg.scaleToWidth(2048);
+              oImg.scaleToHeight(imageResolution);
+              oImg.scaleToWidth(imageResolution);
               canvas.add(oImg);
             },
             { crossOrigin: "anonymous" }
@@ -738,11 +740,11 @@
     console.log("appType", appType);
     // get images
     if (appType == "avatar") {
-      lastImg = await convertImage($Profile.avatar_url, "2048", "10000");
+      lastImg = await getFile($Profile.avatar_url, "imageResolution", "10000");
       isPreexistingArt = true;
     } else if (appType == "house") {
       let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
-      lastImg = await convertImage(Object.value.url, "2048", "2048");
+      lastImg = await getFile(Object.value.url, "imageResolution", "imageResolution");
       lastValue = Object.value;
       title = Object.key;
       status = Object.permission_read;
@@ -755,7 +757,7 @@
       status = Object.permission_read;
       version = Object.value.version + 1;
       console.log("displayName", displayName);
-      lastImg = await convertImage(Object.value.url);
+      lastImg = await getFile(Object.value.url);
       isPreexistingArt = true;
     }
     // put images on canvas
@@ -764,24 +766,25 @@
       let frameAmount;
       var framebuffer = new Image();
       framebuffer.src = lastImg;
+      framebuffer.height = 2048;
       framebuffer.onload = function () {
         console.log("img", this.width);
         lastWidth = this.width;
-        frameAmount = lastWidth / 2048;
+        frameAmount = lastWidth / imageResolution;
 
         FrameObject.src = lastImg;
         FrameObject.width = lastWidth;
         frames = [];
         for (let i = 0; i < frameAmount; i++) {
           FrameObject.left = 0;
-          FrameObject.width = 2048;
-          FrameObject.cropX = i * 2048;
+          FrameObject.width = imageResolution;
+          FrameObject.cropX = i * imageResolution;
           // FrameObject.clipTo = function (ctx) {
           //   // origin is the center of the image
           //   // var x = rectangle.left - image.getWidth() / 2;
           //   // var y = rectangle.top - image.getHeight() / 2;
-          //   // ctx.rect(i * -2048, 2048, (i * -2048)+2048, 2048);
-          //   ctx.rect(0,-2048,2048,2048)
+          //   // ctx.rect(i * -imageResolution, imageResolution, (i * -imageResolution)+imageResolution, imageResolution);
+          //   ctx.rect(0,-imageResolution,imageResolution,imageResolution)
           // };
           // FrameObject.setCoords();
           frames.push({
@@ -792,7 +795,7 @@
         frames = frames;
         console.log("frames", frames);
         currentFrame = 0;
-        canvas.loadFromJSON(frames[0], function () {
+        canvas.loadFromJSON(frames[0], function (oImg) {
           canvas.renderAll.bind(canvas);
           // for (let i = 0; i < frames.length; i++) {
           //     updateFrame()
@@ -807,8 +810,8 @@
         lastImg,
         function (oImg) {
           oImg.set({ left: 0, top: 0 });
-          oImg.scaleToHeight(2048);
-          oImg.scaleToWidth(2048);
+          oImg.scaleToHeight(imageResolution);
+          oImg.scaleToWidth(imageResolution);
           canvas.add(oImg);
         },
         { crossOrigin: "anonymous" }
@@ -845,8 +848,8 @@
     console.log("img", img);
     await fabric.Image.fromURL(img, function (oImg) {
       oImg.set({ left: 0, top: 0 });
-      oImg.scaleToHeight(2048);
-      oImg.scaleToWidth(2048);
+      oImg.scaleToHeight(imageResolution);
+      oImg.scaleToWidth(imageResolution);
       console.log(oImg);
       console.log(canvas);
       savecanvas.add(oImg);
@@ -910,15 +913,15 @@
     img.onload = function () {
       var f_img = new fabric.Image(img);
       let options;
-      let scale = 2048 / canvas.height;
+      let scale = imageResolution / canvas.height;
       if (canvas.width <= canvas.height) {
-        scale = 2048 / canvas.width;
+        scale = imageResolution / canvas.width;
       }
       if (!play)
         options = {
           opacity: 0.5,
-          width: 2048,
-          height: 2048,
+          width: imageResolution,
+          height: imageResolution,
           scaleX: scale,
           scaleY: scale,
         };
@@ -1062,7 +1065,7 @@
   }
 
   async function createAvatar() {
-    let size = 2048;
+    let size = imageResolution;
     savecanvas.setHeight(size);
     savecanvas.setWidth(size * frames.length);
     savecanvas.renderAll();
@@ -1076,8 +1079,8 @@
         const newObject = { ...object };
         newObject.top = newObject.top;
         newObject.left += size * i;
-        // newObject.scaleX = scaleRatio/2048;
-        // newObject.scaleY = scaleRatio/2048;
+        // newObject.scaleX = scaleRatio/imageResolution;
+        // newObject.scaleY = scaleRatio/imageResolution;
         data.objects.push(newObject);
       });
     }
@@ -1106,7 +1109,7 @@
     console.log("json", json);
     // var blobData = dataURItoBlob(frames);
     // uploadImage(title, appType, json, blobData, status);
-    let size = 2048;
+    let size = imageResolution;
     savecanvas.setHeight(size);
     savecanvas.setWidth(size * frames.length);
     savecanvas.renderAll();
@@ -1120,8 +1123,8 @@
         const newObject = { ...object };
         newObject.top = newObject.top;
         newObject.left += size * i;
-        // newObject.scaleX = scaleRatio/2048;
-        // newObject.scaleY = scaleRatio/2048;
+        // newObject.scaleX = scaleRatio/imageResolution;
+        // newObject.scaleY = scaleRatio/imageResolution;
         data.objects.push(newObject);
       });
     }
