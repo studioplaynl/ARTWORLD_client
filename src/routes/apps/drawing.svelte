@@ -675,11 +675,18 @@
       if (!isAlreadyUploaded) {
         await upload();
       }
-      // setTimeout(async () => {
-      console.log("download savedURL", savedURL);
-      const url = await convertImage(savedURL);
-      window.location = url;
-      // }, 5000);
+      if (appType == "stopmotion") {
+        setTimeout(async () => {
+          console.log("download savedURL", savedURL);
+          const url = await convertImage(savedURL);
+          window.location = url;
+        }, 5000);
+      } else {
+        const url = await convertImage(savedURL);
+        window.location = url;
+      }
+
+      return;
     }
 
     if (isPreexistingArt) {
