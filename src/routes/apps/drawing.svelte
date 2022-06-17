@@ -608,6 +608,8 @@
     if (!invalidTitle) return;
 
     if (isDrawn) {
+      console.log("title", title);
+      console.log("displayName", displayName);
       // saving = true;
       setLoader(true);
       if (appType == "drawing") {
@@ -1706,7 +1708,11 @@
           <div class="saveTab">
             {#if appType != "avatar" && appType != "house"}
               <label for="title">Title</label>
-              <NameGenerator bind:value={displayName} bind:invalidTitle />
+              <NameGenerator
+                bind:value={displayName}
+                bind:invalidTitle
+                bind:isTitleChanged
+              />
             {/if}
             <!-- <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
