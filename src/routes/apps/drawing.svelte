@@ -204,16 +204,14 @@
       clearEl = fab("clear-canvas");
 
     clearEl.onclick = function () {
-      // if (window.confirm("are you sure?")) {
-      console.log("renewal page button is clicked");
+      // if anything is drawn on the canvas and it has not been uploaded,
+      // save the artwork and clear the canvas
       if (isDrawn && !isAlreadyUploaded) {
         upload();
         isDrawn = false;
       }
       canvas.clear();
       localStorage.setItem("Drawing", "");
-
-      // }
     };
 
     drawingModeEl.onclick = function () {
@@ -399,7 +397,8 @@
     }
     console.log(params);
 
-    canvas.on("mouse:up", function (element) {
+    canvas.on("mouse:up", function () {
+      // once there is anything is drawn on the canvas
       isDrawn = true;
       isPreexistingArt = false;
       isAlreadyUploaded = false;
@@ -505,7 +504,6 @@
 
         // get the position of the drawing
         const positionObject = canvas.toJSON().objects;
-        // console.log("sending JSON format", positionObject[0]);
 
         // needed SVG is stored inside of body which we want to send only
         const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
@@ -564,10 +562,12 @@
   });
   /////////////////// end onMount ///////////////////////
 
+  // to change visible/hidden status of the artwork
   const changeVisibility = async () => {
     setLoader(true);
     status = !status;
     if (isPreexistingArt) {
+      // we update the name of the preexisting artwork
       await updateObject(Object.collection, Object.key, Object.value, status);
     }
     setLoader(false);
@@ -576,12 +576,9 @@
   const upload = async () => {
     if (!invalidTitle) return;
 
-    console.log("isDrawn down", isDrawn);
-
-    // console.log("isTitleChanged", isTitleChanged);
-
+    // we upload the artwork if either something added to the art itself or when it is title changed
     if (isDrawn || isTitleChanged) {
-      version = version + 1;
+      version = version + 1; // with every new update of the artwork, it is version gets +1
 
       setLoader(true);
       if (appType == "drawing") {
@@ -599,10 +596,9 @@
           version,
           displayName
         ).then((url) => {
+          // in every appType we assign url to the savedURL variable, it is needed for downloading
+          // by default savedURL equals ""
           savedURL = url;
-          console.log("savedURL upload", savedURL);
-          // saved = true;
-          // saving = false;
           setLoader(false);
         });
       }
@@ -611,37 +607,26 @@
         var blobData = dataURItoBlob(Image);
         await uploadHouse(blobData).then((response) => {
           savedURL = response;
-          // console.log("response", response);
         });
-        // saved = true;
-        // saving = false;
         setLoader(false);
       }
       if (appType == "stopmotion") {
         await createStopmotion();
-        console.log("444");
-        // console.log("savedURL upload", savedURL);
-        // saved = true;
-        // saving = false;
         setLoader(false);
       }
       if (appType == "avatar") {
         createAvatar().then((resp) => {
-          console.log("resp", resp);
-          // saved = true;
-          // saving = false;
-          //setLoader(false);
+          setLoader(false);
         });
       }
-      isAlreadyUploaded = true;
+      isAlreadyUploaded = true; // once it is uploaded, we don't have to upload it again on the close button click
       isTitleChanged = false;
-      return;
     }
   };
 
   onDestroy(() => {
-    // upload the artwork if the user missed clicking the save button for an artwork
-    // or if the title has been changed of the preexisting artwork
+    // upload the artwork on the close button click,
+    // if it is not uploaded yet or if the title has been changed
     if (!isAlreadyUploaded || isTitleChanged) {
       upload();
     }
@@ -649,7 +634,7 @@
 
   async function download() {
     // check first if we are dealing with preexisting artwork
-    // if it is the case, simply download from the url of the artwork
+    // if it is the case, simply download from the url of the artwork on the addressbar
     if (isPreexistingArt) {
       if (!savedURL) {
         let url = lastImg;
@@ -660,12 +645,13 @@
 
     // start the process of downloading, only if something is drawn on the canvas
     if (isDrawn) {
+      // if the user missed clicking the save button (upload function), then upload it first
       if (!isAlreadyUploaded) {
-        // if the user missed clicking the save button (upload function), then upload it first
         await upload();
       }
       if (appType == "stopmotion") {
-        // "stopmotion" appType needs more time to upload, so we give enough time, before starting downloading
+        // the stopmotion function is not awaiting properly, a further investigation is needed (!)
+        // once fixed, there is no need to use setTimeout
         setTimeout(async () => {
           const url = await convertImage(savedURL);
           window.location = url;
@@ -1205,7 +1191,8 @@
     let newFile = canvas.toJSON();
     newFile.objects.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
-    console.log("undo is clicked", canvas.toJSON().objects);
+
+    // once all previously drawn objects are deleted, isDrawn is set to false
     if (canvas.toJSON().objects.length == 0) {
       isDrawn = false;
     }
@@ -1217,12 +1204,9 @@
     history.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
 
+    // once the elements that has been removed are brought back, isDrawn is set back to true
     if (canvas.toJSON().objects.length > 0) {
       isDrawn = true;
-      console.log(
-        "canvas.toJSON().objects.length",
-        canvas.toJSON().objects.length
-      );
     }
   };
 
