@@ -60,8 +60,8 @@
   let isAlreadyUploaded = false;
   let isTitleChanged = false;
 
-  let applyBrush;
-  let selectedBrush = "Pencil";
+  let applyBrush; // declaring the variable to be available globally, onMount assinging a function to it
+  let selectedBrush = "Pencil"; // by default the Pencil is chosen
 
   let Object = {};
 
@@ -105,83 +105,53 @@
     filters: [],
   };
 
-  console.log("version:" + version);
-  console.log("title: " + title);
-
-  // document.addEventListener("contextmenu", function (e) {
-  //   e.preventDefault();
-  // });
-
   var fab = function (id) {
     return document.getElementById(id);
   };
 
   function adaptCanvasSize() {
-    // the canvas size is set by the least of two (width and height)
+    // the canvas size is set by the least of two (width / height)
     const canvasSize =
       window.innerWidth > window.innerHeight
         ? window.innerHeight
         : window.innerWidth;
 
-    // as a default the canvas has 100px less size that the window
+    // setting default width and height
     canvas.setWidth(canvasSize);
     canvas.setHeight(canvasSize);
     cursor.setWidth(canvasSize);
     cursor.setHeight(canvasSize);
 
-    // in case when the size of height and width are more or less close in px (within the difference of 300px) ("square windows")
-    // if (
-    //   (window.innerWidth >= 1008 &&
-    //     window.innerWidth - window.innerHeight >= 0 &&
-    //     window.innerWidth - window.innerHeight < 300) ||
-    //   (window.innerWidth >= 1008 &&
-    //     window.innerHeight - window.innerWidth >= 0 &&
-    //     window.innerHeight - window.innerWidth < 300)
-    // ) {
-    //   canvas.setWidth(canvasSize - 110);
-    //   canvas.setHeight(canvasSize - 110);
-    //   cursor.setWidth(canvasSize - 110);
-    //   cursor.setHeight(canvasSize - 110);
-    // }
+    const canvasReductionAmount = 200;
 
     // for medium screens
     if (canvasSize < 1008 && canvasSize > 640) {
-      canvas.setWidth(canvasSize - 200);
-      canvas.setHeight(canvasSize - 200);
-      cursor.setWidth(canvasSize - 200);
-      cursor.setHeight(canvasSize - 200);
+      canvas.setWidth(canvasSize - canvasReductionAmount);
+      canvas.setHeight(canvasSize - canvasReductionAmount);
+      cursor.setWidth(canvasSize - canvasReductionAmount);
+      cursor.setHeight(canvasSize - canvasReductionAmount);
     }
 
     // for mobile screens
     if (canvasSize <= 640) {
-      canvas.setWidth(canvasSize - 110);
-      canvas.setHeight(canvasSize - 110);
-      cursor.setWidth(canvasSize - 110);
-      cursor.setHeight(canvasSize - 110);
+      canvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
+      canvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
+      cursor.setWidth(canvasSize - canvasReductionAmount * 0, 55);
+      cursor.setHeight(canvasSize - canvasReductionAmount * 0, 55);
     }
 
     // for mobile screens
     if (canvasSize <= 540) {
-      canvas.setWidth(canvasSize - 80);
-      canvas.setHeight(canvasSize - 80);
-      cursor.setWidth(canvasSize - 80);
-      cursor.setHeight(canvasSize - 80);
+      canvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
+      canvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
+      cursor.setWidth(canvasSize - canvasReductionAmount * 0, 4);
+      cursor.setHeight(canvasSize - canvasReductionAmount * 0, 4);
     }
 
+    // for correct and adapted scaling of the preexisting artworks
     scaleRatio = Math.min(canvas.width / 2048, canvas.width / 2048);
-
     cursor.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
-    // savecanvas.setZoom(scaleRatio);
-    // canvas.setDimensions({
-    //   width: 2048 * scaleRatio,
-    //   height: 2048 * scaleRatio,
-    // });
-    // // savecanvas.setDimensions({ width: (2048 * scaleRatio), height: (2048 * scaleRatio) });
-    // cursor.setDimensions({
-    //   width: 2048 * scaleRatio,
-    //   height: 2048 * scaleRatio,
-    // });
   }
 
   onMount(() => {
@@ -206,6 +176,7 @@
       isDrawingMode: true,
     });
 
+    // always adapting the canvas size on screen size change
     window.onresize = () => {
       adaptCanvasSize();
     };
@@ -219,7 +190,6 @@
     setLoader(false);
 
     fabric.Object.prototype.transparentCorners = false;
-    //resizeCanvas();
 
     var drawingModeEl = fab("drawing-mode"),
       selectModeEl = fab("select-mode"),
@@ -641,7 +611,7 @@
         var blobData = dataURItoBlob(Image);
         await uploadHouse(blobData).then((response) => {
           savedURL = response;
-          console.log("response", response);
+          // console.log("response", response);
         });
         // saved = true;
         // saving = false;
@@ -649,7 +619,8 @@
       }
       if (appType == "stopmotion") {
         await createStopmotion();
-        console.log("savedURL upload", savedURL);
+        console.log("444");
+        // console.log("savedURL upload", savedURL);
         // saved = true;
         // saving = false;
         setLoader(false);
@@ -664,6 +635,7 @@
       }
       isAlreadyUploaded = true;
       isTitleChanged = false;
+      return;
     }
   };
 
@@ -1121,9 +1093,10 @@
   }
 
   async function createStopmotion() {
+    console.log("111");
     // console.log("saved");
     json = JSON.stringify(frames);
-    console.log("json", json);
+    // console.log("json", json);
     // var blobData = dataURItoBlob(frames);
     // uploadImage(title, appType, json, blobData, status);
     let size = 2048;
@@ -1148,17 +1121,18 @@
     FrameObject.left = 0;
     // data.objects = [{ ...FrameObject }].concat(data.objects);
 
-    console.log("data", data);
+    // console.log("data", data);
 
-    savecanvas.loadFromJSON(data, async function () {
+    savecanvas.loadFromJSON(data, async () => {
+      console.log("222");
       savecanvas.renderAll.bind(savecanvas);
       savecanvas.calcOffset();
 
       var saveImage = await savecanvas.toDataURL("image/png", 1);
-      console.log("savedImage", saveImage);
+      // console.log("savedImage", saveImage);
 
-      var blobData = await dataURItoBlob(saveImage);
-      console.log("blobData", blobData);
+      var blobData = dataURItoBlob(saveImage);
+      // console.log("blobData", blobData);
       if (!!!title) {
         title = Date.now() + "_" + displayName;
       }
@@ -1170,6 +1144,7 @@
         version,
         displayName
       ).then((url) => {
+        console.log("333");
         savedURL = url;
         console.log("savedURL stopmotion", savedURL);
         // saving = false;
@@ -2231,7 +2206,7 @@
 
     #frame-bar {
       flex-direction: row;
-      width: 450px;
+      width: 250px;
       overflow-x: auto;
       overflow-y: none;
       overscroll-behavior-x: contain;
