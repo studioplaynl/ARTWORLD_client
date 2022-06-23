@@ -89,6 +89,7 @@ export async function uploadHouse(data) {
   console.log("value", value)
   await updateObject(type, name, JSON.stringify(value), pub)
 
+  return value.url
 }
 
 export async function getUploadURL(type, name, filetype, version) {
@@ -263,7 +264,8 @@ export async function uploadAvatar(data, json) {
   let avatarVersion = Number(prof.avatar_url.split("/")[2].split("_")[0]) + 1;
   if (!!!avatarVersion) avatarVersion = 0
   var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png", avatarVersion)
-  console.log(jpegURL)
+  // console.log("jpegURL", jpegURL)
+  console.log("jpegLocation", jpegLocation)
 
   await fetch(jpegURL, {
     method: "PUT",

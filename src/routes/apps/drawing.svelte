@@ -62,8 +62,8 @@
   let isAlreadyUploaded = false;
   let isTitleChanged = false;
 
-  let applyBrush;
-  let selectedBrush = "Pencil";
+  let applyBrush; // declaring the variable to be available globally, onMount assinging a function to it
+  let selectedBrush = "Pencil"; // by default the Pencil is chosen
 
   let Object = {};
 
@@ -107,69 +107,50 @@
     filters: [],
   };
 
-  console.log("version:" + version);
-  console.log("title: " + title);
-
-  // document.addEventListener("contextmenu", function (e) {
-  //   e.preventDefault();
-  // });
-
   var fab = function (id) {
     return document.getElementById(id);
   };
 
   function adaptCanvasSize() {
-    // the canvas size is set by the least of two (width and height)
+    // the canvas size is set by the least of two (width / height)
     const canvasSize =
       window.innerWidth > window.innerHeight
         ? window.innerHeight
         : window.innerWidth;
 
-    // as a default the canvas has 100px less size that the window
+    // setting default width and height
     canvas.setWidth(canvasSize);
     canvas.setHeight(canvasSize);
     cursor.setWidth(canvasSize);
     cursor.setHeight(canvasSize);
 
-    // in case when the size of height and width are more or less close in px (within the difference of 300px) ("square windows")
-    // if (
-    //   (window.innerWidth >= 1008 &&
-    //     window.innerWidth - window.innerHeight >= 0 &&
-    //     window.innerWidth - window.innerHeight < 300) ||
-    //   (window.innerWidth >= 1008 &&
-    //     window.innerHeight - window.innerWidth >= 0 &&
-    //     window.innerHeight - window.innerWidth < 300)
-    // ) {
-    //   canvas.setWidth(canvasSize - 110);
-    //   canvas.setHeight(canvasSize - 110);
-    //   cursor.setWidth(canvasSize - 110);
-    //   cursor.setHeight(canvasSize - 110);
-    // }
+    const canvasReductionAmount = 200;
 
     // for medium screens
     if (canvasSize < 1008 && canvasSize > 640) {
-      canvas.setWidth(canvasSize - 200);
-      canvas.setHeight(canvasSize - 200);
-      cursor.setWidth(canvasSize - 200);
-      cursor.setHeight(canvasSize - 200);
+      canvas.setWidth(canvasSize - canvasReductionAmount);
+      canvas.setHeight(canvasSize - canvasReductionAmount);
+      cursor.setWidth(canvasSize - canvasReductionAmount);
+      cursor.setHeight(canvasSize - canvasReductionAmount);
     }
 
     // for mobile screens
     if (canvasSize <= 640) {
-      canvas.setWidth(canvasSize - 110);
-      canvas.setHeight(canvasSize - 110);
-      cursor.setWidth(canvasSize - 110);
-      cursor.setHeight(canvasSize - 110);
+      canvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
+      canvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
+      cursor.setWidth(canvasSize - canvasReductionAmount * 0, 55);
+      cursor.setHeight(canvasSize - canvasReductionAmount * 0, 55);
     }
 
     // for mobile screens
     if (canvasSize <= 540) {
-      canvas.setWidth(canvasSize - 80);
-      canvas.setHeight(canvasSize - 80);
-      cursor.setWidth(canvasSize - 80);
-      cursor.setHeight(canvasSize - 80);
+      canvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
+      canvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
+      cursor.setWidth(canvasSize - canvasReductionAmount * 0, 4);
+      cursor.setHeight(canvasSize - canvasReductionAmount * 0, 4);
     }
 
+<<<<<<< HEAD
     scaleRatio = Math.min(canvas.width / imageResolution, canvas.width / imageResolution);
 
     cursor.setZoom(scaleRatio);
@@ -184,6 +165,12 @@
     //   width: imageResolution * scaleRatio,
     //   height: imageResolution * scaleRatio,
     // });
+=======
+    // for correct and adapted scaling of the preexisting artworks
+    scaleRatio = Math.min(canvas.width / 2048, canvas.width / 2048);
+    cursor.setZoom(scaleRatio);
+    canvas.setZoom(scaleRatio);
+>>>>>>> 4d3f4a6be6e1659aa6175415e530fafb6fc9c5d4
   }
 
   onMount(() => {
@@ -208,6 +195,7 @@
       isDrawingMode: true,
     });
 
+    // always adapting the canvas size on screen size change
     window.onresize = () => {
       adaptCanvasSize();
     };
@@ -221,7 +209,6 @@
     setLoader(false);
 
     fabric.Object.prototype.transparentCorners = false;
-    //resizeCanvas();
 
     var drawingModeEl = fab("drawing-mode"),
       selectModeEl = fab("select-mode"),
@@ -236,16 +223,14 @@
       clearEl = fab("clear-canvas");
 
     clearEl.onclick = function () {
-      // if (window.confirm("are you sure?")) {
-      console.log("renewal page button is clicked");
+      // if anything is drawn on the canvas and it has not been uploaded,
+      // save the artwork and clear the canvas
       if (isDrawn && !isAlreadyUploaded) {
         upload();
         isDrawn = false;
       }
       canvas.clear();
       localStorage.setItem("Drawing", "");
-
-      // }
     };
 
     drawingModeEl.onclick = function () {
@@ -431,7 +416,8 @@
     }
     console.log(params);
 
-    canvas.on("mouse:up", function (element) {
+    canvas.on("mouse:up", function () {
+      // once there is anything is drawn on the canvas
       isDrawn = true;
       isPreexistingArt = false;
       isAlreadyUploaded = false;
@@ -537,7 +523,6 @@
 
         // get the position of the drawing
         const positionObject = canvas.toJSON().objects;
-        // console.log("sending JSON format", positionObject[0]);
 
         // needed SVG is stored inside of body which we want to send only
         const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
@@ -593,14 +578,15 @@
         brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
       }
     };
-    console.log("status", status);
   });
   /////////////////// end onMount ///////////////////////
 
+  // to change visible/hidden status of the artwork
   const changeVisibility = async () => {
     setLoader(true);
     status = !status;
     if (isPreexistingArt) {
+      // we update the name of the preexisting artwork
       await updateObject(Object.collection, Object.key, Object.value, status);
     }
     setLoader(false);
@@ -609,8 +595,10 @@
   const upload = async () => {
     if (!invalidTitle) return;
 
-    if (isDrawn) {
-      // saving = true;
+    // we upload the artwork if either something added to the art itself or when it is title changed
+    if (isDrawn || isTitleChanged) {
+      version = version + 1; // with every new update of the artwork, it is version gets +1
+
       setLoader(true);
       if (appType == "drawing") {
         var Image = canvas.toDataURL("image/png", 1);
@@ -627,64 +615,69 @@
           version,
           displayName
         ).then((url) => {
+          // in every appType we assign url to the savedURL variable, it is needed for downloading
+          // by default savedURL equals ""
           savedURL = url;
-          console.log("savedURL upload", savedURL);
-          // saved = true;
-          // saving = false;
           setLoader(false);
         });
       }
       if (appType == "house") {
         var Image = canvas.toDataURL("image/png", 1);
         var blobData = dataURItoBlob(Image);
-        uploadHouse(blobData);
-        // saved = true;
-        // saving = false;
+        await uploadHouse(blobData).then((response) => {
+          savedURL = response;
+        });
         setLoader(false);
       }
       if (appType == "stopmotion") {
         await createStopmotion();
-        // saved = true;
-        // saving = false;
         setLoader(false);
       }
       if (appType == "avatar") {
         createAvatar().then((resp) => {
-          console.log("resp", resp);
-          // saved = true;
-          // saving = false;
-          //setLoader(false);
+          setLoader(false);
         });
       }
-      isAlreadyUploaded = true;
+      isAlreadyUploaded = true; // once it is uploaded, we don't have to upload it again on the close button click
+      isTitleChanged = false;
     }
   };
 
   onDestroy(() => {
-    console.log("isTitleChanged", isTitleChanged);
-    if (!isAlreadyUploaded) {
-      upload();
-    }
-    if (isTitleChanged) {
+    // upload the artwork on the close button click,
+    // if it is not uploaded yet or if the title has been changed
+    if (!isAlreadyUploaded || isTitleChanged) {
       upload();
     }
   });
 
   async function download() {
-    if (isDrawn) {
-      if (!isAlreadyUploaded) {
-        await upload();
-      }
-      setTimeout(async () => {
-        console.log("download savedURL", savedURL);
-        const url = await convertImage(savedURL);
-        window.location = url;
-      }, 5000);
-    }
-
+    // check first if we are dealing with preexisting artwork
+    // if it is the case, simply download from the url of the artwork on the addressbar
     if (isPreexistingArt) {
       if (!savedURL) {
         let url = lastImg;
+        window.location = url;
+        return; // don't proceed
+      }
+    }
+
+    // start the process of downloading, only if something is drawn on the canvas
+    if (isDrawn) {
+      // if the user missed clicking the save button (upload function), then upload it first
+      if (!isAlreadyUploaded) {
+        await upload();
+      }
+      if (appType == "stopmotion") {
+        // the stopmotion function is not awaiting properly, a further investigation is needed (!)
+        // once fixed, there is no need to use setTimeout
+        setTimeout(async () => {
+          const url = await convertImage(savedURL);
+          window.location = url;
+        }, 4500);
+      } else {
+        // for the rest of appTypes no need to set Timeout
+        const url = await convertImage(savedURL);
         window.location = url;
       }
     }
@@ -757,7 +750,7 @@
       title = Object.key;
       status = Object.permission_read == 2 ? true : false;
       console.log("status in getImage", status);
-      version = Object.value.version + 1;
+      version = Object.value.version;
       console.log("displayName", displayName);
       lastImg = await getFile(Object.value.url);
       isPreexistingArt = true;
@@ -1106,9 +1099,10 @@
   }
 
   async function createStopmotion() {
+    console.log("111");
     // console.log("saved");
     json = JSON.stringify(frames);
-    console.log("json", json);
+    // console.log("json", json);
     // var blobData = dataURItoBlob(frames);
     // uploadImage(title, appType, json, blobData, status);
     let size = imageResolution;
@@ -1133,27 +1127,35 @@
     FrameObject.left = 0;
     // data.objects = [{ ...FrameObject }].concat(data.objects);
 
-    console.log("data", data);
+    // console.log("data", data);
 
-    savecanvas.loadFromJSON(data, async function () {
+    savecanvas.loadFromJSON(data, async () => {
+      console.log("222");
       savecanvas.renderAll.bind(savecanvas);
       savecanvas.calcOffset();
 
       var saveImage = await savecanvas.toDataURL("image/png", 1);
-      console.log("savedImage", saveImage);
+      // console.log("savedImage", saveImage);
 
       var blobData = dataURItoBlob(saveImage);
-      console.log("blobData", blobData);
+      // console.log("blobData", blobData);
       if (!!!title) {
         title = Date.now() + "_" + displayName;
       }
-      uploadImage(title, appType, blobData, status, version, displayName).then(
-        (url) => {
-          savedURL = url;
-          // saving = false;
-          setLoader(false);
-        }
-      );
+      await uploadImage(
+        title,
+        appType,
+        blobData,
+        status,
+        version,
+        displayName
+      ).then((url) => {
+        console.log("333");
+        savedURL = url;
+        console.log("savedURL stopmotion", savedURL);
+        // saving = false;
+        setLoader(false);
+      });
       //Profile.update(n => n.url = Image);
     });
   }
@@ -1209,7 +1211,8 @@
     let newFile = canvas.toJSON();
     newFile.objects.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
-    console.log("undo is clicked", canvas.toJSON().objects);
+
+    // once all previously drawn objects are deleted, isDrawn is set to false
     if (canvas.toJSON().objects.length == 0) {
       isDrawn = false;
     }
@@ -1221,12 +1224,9 @@
     history.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
 
+    // once the elements that has been removed are brought back, isDrawn is set back to true
     if (canvas.toJSON().objects.length > 0) {
       isDrawn = true;
-      console.log(
-        "canvas.toJSON().objects.length",
-        canvas.toJSON().objects.length
-      );
     }
   };
 
@@ -1709,7 +1709,11 @@
           <div class="saveTab">
             {#if appType != "avatar" && appType != "house"}
               <label for="title">Title</label>
-              <NameGenerator bind:value={displayName} bind:invalidTitle />
+              <NameGenerator
+                bind:value={displayName}
+                bind:invalidTitle
+                bind:isTitleChanged
+              />
             {/if}
             <!-- <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
@@ -2206,7 +2210,7 @@
 
     #frame-bar {
       flex-direction: row;
-      width: 450px;
+      width: 250px;
       overflow-x: auto;
       overflow-y: none;
       overscroll-behavior-x: contain;
