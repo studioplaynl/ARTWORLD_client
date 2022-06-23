@@ -150,27 +150,10 @@
       cursor.setHeight(canvasSize - canvasReductionAmount * 0, 4);
     }
 
-<<<<<<< HEAD
-    scaleRatio = Math.min(canvas.width / imageResolution, canvas.width / imageResolution);
-
-    cursor.setZoom(scaleRatio);
-    canvas.setZoom(scaleRatio);
-    // savecanvas.setZoom(scaleRatio);
-    // canvas.setDimensions({
-    //   width: imageResolution * scaleRatio,
-    //   height: imageResolution * scaleRatio,
-    // });
-    // // savecanvas.setDimensions({ width: (imageResolution * scaleRatio), height: (imageResolution * scaleRatio) });
-    // cursor.setDimensions({
-    //   width: imageResolution * scaleRatio,
-    //   height: imageResolution * scaleRatio,
-    // });
-=======
     // for correct and adapted scaling of the preexisting artworks
     scaleRatio = Math.min(canvas.width / 2048, canvas.width / 2048);
     cursor.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
->>>>>>> 4d3f4a6be6e1659aa6175415e530fafb6fc9c5d4
   }
 
   onMount(() => {

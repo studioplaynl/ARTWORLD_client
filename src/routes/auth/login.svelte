@@ -2,11 +2,15 @@
   import { Session, login, Error } from "../../session.js";
   import { _ } from "svelte-i18n";
   import { onMount } from "svelte";
+  import QRscanner from "./qrscanner.svelte"
+
+  import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte'
   export let params;
 
   console.log($Session);
   let email;
   let password;
+  let qrscanState = false;
 
   async function onSubmit() {
     let promise = await login(email, password);
@@ -19,44 +23,6 @@
   console.log("isMobile", isMobile);
 
   console.log("navigator", navigator.userAgent);
-
-  // const isMobileStorage = {
-  //   Android: function () {
-  //     return navigator.userAgent.match(/Android/i);
-  //   },
-  //   BlackBerry: function () {
-  //     return navigator.userAgent.match(/BlackBerry/i);
-  //   },
-  //   iOS: function () {
-  //     return navigator.userAgent.match(/iPhone/i);
-  //   },
-  //   Opera: function () {
-  //     return navigator.userAgent.match(/Opera Mini/i);
-  //   },
-  //   Windows: function () {
-  //     return (
-  //       navigator.userAgent.match(/IEMobile/i) ||
-  //       navigator.userAgent.match(/WPDesktop/i)
-  //     );
-  //   },
-  //   any: function () {
-  //     return (
-  //       isMobileStorage.Android() ||
-  //       isMobileStorage.BlackBerry() ||
-  //       isMobileStorage.iOS() ||
-  //       isMobileStorage.Opera() ||
-  //       isMobileStorage.Windows()
-  //     );
-  //   },
-  // };
-
-  // if (isMobileStorage.any()) {
-  //   isMobile = true;
-  // } else {
-  //   isMobile = false;
-  // }
-
-  // console.log("isMobile", isMobile);
 
   onMount(() => {
     email = params.user || "user1@vrolijkheid.nl";
@@ -76,6 +42,14 @@
     {:else}
       <img class="icon" src="assets/device_type/laptop.png" />
     {/if}
+  </div>
+
+
+  <div class="qrModal">
+    {#if qrscanState}
+      <QRscanner bind:email bind:password />
+    {/if}
+
   </div>
   <div class="register-form">
     <form on:submit|preventDefault={onSubmit}>
@@ -103,6 +77,7 @@
         <button type="submit" class="register-btn">{$_("login.login")}</button>
       </div>
     </form>
+    <button  class="qr-btn" on:click="{()=>{qrscanState = !qrscanState}}"><CameraIcon/></button>
   </div>
 </main>
 
@@ -201,4 +176,10 @@
     padding: 10px;
     background-color: white;
   }
+
+  .qr-btn {
+    max-height: 50px;
+    padding: 5px;
+  }
+
 </style>

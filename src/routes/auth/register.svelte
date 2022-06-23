@@ -91,7 +91,7 @@
 
 
 	function print(){
-		QRUrl = `${window.location.host}/#/login/${username}/${password} `
+		QRUrl = `https://${window.location.host}/#/login/${username}/${password} `
 		var print_area = window.open();
 		print_area.document.write(print_div.innerHTML);
 		print_area.document.close();

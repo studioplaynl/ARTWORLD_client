@@ -33,6 +33,7 @@
     "error-stack-parser": "^2.0.6",
     "fabric": "^4.5.0",
     "i18next": "^21.3.2",
+    "jsqr": "^1.4.0",
     "matter-js": "^0.17.1",
     "minimist": "^1.2.6",
     "phaser": "^3.55.2",
