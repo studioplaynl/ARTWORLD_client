@@ -115,7 +115,7 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async create() {
- 
+
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
 
@@ -136,7 +136,7 @@ export default class Artworld extends Phaser.Scene {
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     // the order of creation is the order of drawing: first = bottom ...............................
-   
+
     Background.repeatingDots({
       scene: this,
       gridOffset: 80,
@@ -152,7 +152,7 @@ export default class Artworld extends Phaser.Scene {
     for (let i = 0; i < 3; i++) {
 
       this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i))
-      this.borderRectArray[i].setStrokeStyle(6 + (i*2), 0x7300ed)
+      this.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed)
 
       this.borderRectArray[i].x = middleCoordinates.x
       this.borderRectArray[i].y = middleCoordinates.y
@@ -410,7 +410,6 @@ export default class Artworld extends Phaser.Scene {
     if (ManageSession.gameEditMode) { this.exhibit_outdoor_small2_1.setInteractive({ draggable: true }) }
 
 
-
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
     // End Background .........................................................................................
 
@@ -463,8 +462,6 @@ export default class Artworld extends Phaser.Scene {
 
       console.log("editMode info posX posY: ", worldX, worldY, "scale:", ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
     }, this)
-
-
     //!
 
     //.......... locations ................................................................................
@@ -511,7 +508,34 @@ export default class Artworld extends Phaser.Scene {
     //   }
     // })
 
+    //.....................PHYSICS TEST ..........................................................................
+    var obstacles = this.physics.add.staticGroup()
+
+    obstacles.create(this.worldSize.x /2, (this.worldSize.y /2)+ 600, 'ball')
+
+    //this.player.setBounce(0.2)
+
+    this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
+  
+  
   } //end create
+
+  animalWallCollide(animal, wall) {
+    //console.log("animal, wall", animal, wall)
+    this.player.body.reset(this.player.x, this.player.y)
+    // send Stop command
+    ManageSession.sendMoveMessage(this, this.player.x, this.player.y, "physicsStop")
+
+    Move.updatePositionHistory(this) // update the url and historyTracker
+
+    //update last player position in manageSession for when the player is reloaded inbetween scenes
+    ManageSession.playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, this.player.x)
+    ManageSession.playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, this.player.y)
+
+    //play "stop" animation
+    Move.movingAnimation(this, "stop")
+    this.isPlayerMoving = false
+  }
 
   createCurveWithHandles() {
     let path = { t: 0, vec: new Phaser.Math.Vector2() };

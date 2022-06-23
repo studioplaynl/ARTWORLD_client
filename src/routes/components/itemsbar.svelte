@@ -272,9 +272,7 @@
     >
 
     <a on:click={getFriends}
-      ><div class="icon">
-        <MdPersonOutline />
-      </div>
+      ><img class="icon" src="assets/SHB/svg/AW-icon-friend.svg" />
     </a>
 
     <a
@@ -383,9 +381,8 @@
       on:click={() => {
         addFriend(user_id);
       }}
-      ><div class="icon">
-        <MdPersonAdd />
-      </div>
+    >
+      <img class="icon" src="assets/SHB/svg/AW-icon-add-friend.svg" />
     </a>
     <a on:click={getLiked}
       ><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" /></a
