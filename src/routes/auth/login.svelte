@@ -135,7 +135,7 @@
 
   /* Set a style for the submit/register button */
   .register-btn {
-    background-color: #7300eb;
+    background-color: #7300EB;
     border-radius: 25px;
     color: white;
     padding: 16px 20px;
@@ -152,7 +152,7 @@
 
   /* Add a blue text color to links */
   a {
-    color: #7300ed;
+    color: #7300EB;
   }
 
   /* Set a grey background color and center the text of the "sign in" section */
@@ -172,7 +172,7 @@
     min-width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid #7300ed;
+    border: 2px solid #7300EB;
     padding: 10px;
     background-color: white;
   }
@@ -180,6 +180,8 @@
   .qr-btn {
     max-height: 50px;
     padding: 5px;
+    margin: 0 auto;
+    max-width: 80px;
   }
 
 </style>
