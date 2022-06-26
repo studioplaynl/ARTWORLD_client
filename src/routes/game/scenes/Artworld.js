@@ -112,6 +112,12 @@ export default class Artworld extends Phaser.Scene {
 
   async preload() {
     Preloader.Loading(this) //.... PRELOADER VISUALISER
+
+    //added after linting 
+    //outline effect
+    this.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
+    //added after linting 
+    //outline effect
   }
 
   async create() {
@@ -136,6 +142,13 @@ export default class Artworld extends Phaser.Scene {
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     // the order of creation is the order of drawing: first = bottom ...............................
+
+
+    //added after linting 
+    //outline effect
+    var postFxPlugin = this.plugins.get('rexoutlinepipelineplugin');
+    //added after linting 
+    //outline effect
 
     Background.repeatingDots({
       scene: this,
@@ -170,6 +183,28 @@ export default class Artworld extends Phaser.Scene {
     })
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) { this.gradientAmsterdam1.setInteractive({ draggable: true }) }
+    //added after linting 
+    //outline effect
+    this.gradientAmsterdam1.setInteractive()
+      .on('pointerover', function () {
+        // Add postfx pipeline
+        postFxPlugin.add(this, {
+          thickness: 3,
+          outlineColor: 0xff8a50
+        });
+
+        // Cascade 2nd outline
+        postFxPlugin.add(this, {
+          thickness: 5,
+          outlineColor: 0xc41c00
+        });
+      })
+      .on('pointerout', function () {
+        // Remove all outline post-fx pipelines
+        postFxPlugin.remove(this);
+      })
+    //added after linting 
+    //outline effect
 
     Background.circle({
       scene: this,
@@ -511,13 +546,13 @@ export default class Artworld extends Phaser.Scene {
     //.....................PHYSICS TEST ..........................................................................
     var obstacles = this.physics.add.staticGroup()
 
-    obstacles.create(this.worldSize.x /2, (this.worldSize.y /2)+ 600, 'ball')
+    obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
 
     //this.player.setBounce(0.2)
 
     this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
-  
-  
+
+
   } //end create
 
   animalWallCollide(animal, wall) {
