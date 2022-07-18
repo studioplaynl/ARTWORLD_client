@@ -41,6 +41,13 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         let width
         let namePlateExtraOffset = 0
 
+        //added after linting 
+        //outline effect
+        this.scene.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
+        this.postFxPlugin = this.scene.plugins.get('rexoutlinepipelineplugin');
+        //added after linting 
+        //outline effect
+
 
         if (typeof this.size === "undefined") {
             width = 200
@@ -147,7 +154,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         if (typeof this.numberOfArtworks != "undefined") {
             console.log("this.numberOfArtworks", this.numberOfArtworks)
             this.numberBubble = this.scene.add.circle(namePlate.x + locationDescription.width + (namePlateMargin * 0.5), width / 2 - textOffset, namePlateMargin, 0xE8E8E8).setOrigin(0.5, 0.5).setDepth(498)
-            this.numberArt = this.scene.add.text(namePlate.x + locationDescription.width +  (namePlateMargin * 0.5), width / 2 - textOffset,  this.numberOfArtworks, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(499)
+            this.numberArt = this.scene.add.text(namePlate.x + locationDescription.width + (namePlateMargin * 0.5), width / 2 - textOffset, this.numberOfArtworks, { fill: this.fontColor }).setOrigin(0.5, 0.5).setDepth(499)
         }
 
         // back button that appears 
@@ -315,7 +322,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // this.enterButtonHitArea.setVisible(true)
         // this.enterButtonHitArea.setInteractive({ useHandCursor: true })
         // this.enterButtonHitArea.input.alwaysEnabled = true //this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
-
     }
 
     hideEnterButton() {
@@ -324,6 +330,12 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.enterShadow.setVisible(this.showing)
         this.enterArea.setVisible(this.showing)
         // this.enterButtonHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
+
+        //added after linting 
+        //outline effect
+        this.postFxPlugin.remove(this);
+        //added after linting 
+        //outline effect
     }
 
     initConfirm() {
@@ -332,6 +344,20 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         } else {
             this.showing = true
             this.scene.time.addEvent({ delay: 4000, callback: this.hideEnterButton, callbackScope: this, loop: false })
+
+            //added after linting 
+            //outline effect
+            this.postFxPlugin.add(this, {
+                thickness: 5,
+                outlineColor: 0xff8a50
+            });
+
+            // this.postFxPlugin.add(this, {
+            //           thickness: 5,
+            //           outlineColor: 0xc41c00
+            //         });
+            //added after linting 
+            //outline effect
         }
     }
 }

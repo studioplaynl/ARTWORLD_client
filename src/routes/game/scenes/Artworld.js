@@ -5,7 +5,6 @@ import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
 import Player from "../class/Player.js"
 import Preloader from "../class/Preloader.js"
-import BouncingBird from "../class/BouncingBird.js"
 import GraffitiWall from "../class/GraffitiWall"
 import Background from "../class/Background.js"
 import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
@@ -14,7 +13,6 @@ import HistoryTracker from "../class/HistoryTracker.js"
 import Move from "../class/Move.js"
 import ServerCall from "../class/ServerCall"
 import Exhibition from "../class/Exhibition"
-import { CurrentApp } from "../../../session"
 
 export default class Artworld extends Phaser.Scene {
   constructor() {
@@ -115,7 +113,7 @@ export default class Artworld extends Phaser.Scene {
 
     //added after linting 
     //outline effect
-    this.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
+    // this.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
     //added after linting 
     //outline effect
   }
@@ -146,7 +144,7 @@ export default class Artworld extends Phaser.Scene {
 
     //added after linting 
     //outline effect
-    var postFxPlugin = this.plugins.get('rexoutlinepipelineplugin');
+    // var postFxPlugin = this.plugins.get('rexoutlinepipelineplugin');
     //added after linting 
     //outline effect
 
@@ -183,28 +181,28 @@ export default class Artworld extends Phaser.Scene {
     })
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) { this.gradientAmsterdam1.setInteractive({ draggable: true }) }
-    //added after linting 
-    //outline effect
-    this.gradientAmsterdam1.setInteractive()
-      .on('pointerover', function () {
-        // Add postfx pipeline
-        postFxPlugin.add(this, {
-          thickness: 3,
-          outlineColor: 0xff8a50
-        });
+    // //added after linting 
+    // //outline effect
+    // this.gradientAmsterdam1.setInteractive()
+    //   .on('pointerover', function () {
+    //     // Add postfx pipeline
+    //     postFxPlugin.add(this, {
+    //       thickness: 3,
+    //       outlineColor: 0xff8a50
+    //     });
 
-        // Cascade 2nd outline
-        postFxPlugin.add(this, {
-          thickness: 5,
-          outlineColor: 0xc41c00
-        });
-      })
-      .on('pointerout', function () {
-        // Remove all outline post-fx pipelines
-        postFxPlugin.remove(this);
-      })
-    //added after linting 
-    //outline effect
+    //     // Cascade 2nd outline
+    //     postFxPlugin.add(this, {
+    //       thickness: 5,
+    //       outlineColor: 0xc41c00
+    //     });
+    //   })
+    //   .on('pointerout', function () {
+    //     // Remove all outline post-fx pipelines
+    //     postFxPlugin.remove(this);
+    //   })
+    // //added after linting 
+    // //outline effect
 
     Background.circle({
       scene: this,
@@ -544,13 +542,11 @@ export default class Artworld extends Phaser.Scene {
     // })
 
     //.....................PHYSICS TEST ..........................................................................
-    var obstacles = this.physics.add.staticGroup()
+    // var obstacles = this.physics.add.staticGroup()
 
-    obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
+    // obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
 
-    //this.player.setBounce(0.2)
-
-    this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
+    // this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
 
 
   } //end create
@@ -686,20 +682,20 @@ export default class Artworld extends Phaser.Scene {
 
     //*set the particle first on 0,0 so they are below the mario_star
     //*later move them relative to the mario_star
-    var particles = this.add.particles('music_quarter_note').setDepth(139)
+    // var particles = this.add.particles('music_quarter_note').setDepth(139)
 
-    var music_emitter = particles.createEmitter({
-      x: 0,
-      y: 0,
-      lifespan: { min: 2000, max: 8000 },
-      speed: { min: 80, max: 120 },
-      angle: { min: 270, max: 360 },
-      gravityY: -50,
-      gravityX: 50,
-      scale: { start: 1, end: 0 },
-      quantity: 1,
-      frequency: 1600,
-    })
+    // var music_emitter = particles.createEmitter({
+    //   x: 0,
+    //   y: 0,
+    //   lifespan: { min: 2000, max: 8000 },
+    //   speed: { min: 80, max: 120 },
+    //   angle: { min: 270, max: 360 },
+    //   gravityY: -50,
+    //   gravityX: 50,
+    //   scale: { start: 1, end: 0 },
+    //   quantity: 1,
+    //   frequency: 1600,
+    // })
 
     locationVector = new Phaser.Math.Vector2(-792, -1138)
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
@@ -727,7 +723,7 @@ export default class Artworld extends Phaser.Scene {
     this.mario_star.setDepth(140)
 
 
-    music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
+    // music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
 
     locationVector = new Phaser.Math.Vector2(-2125, 1017)
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
