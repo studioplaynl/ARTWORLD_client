@@ -10,6 +10,7 @@
     getObject,
     setLoader,
     convertImage,
+    updateObject,
     getFile,
   } from "../../api.js";
   import { client } from "../../nakama.svelte";

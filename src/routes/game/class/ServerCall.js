@@ -196,7 +196,11 @@ class ServerCall {
       console.log("generate homes!")
       //console.log("scene.homes", scene.homes)
       scene.homes.forEach((element, index) => {
-        console.log(element, index)
+        //console.log(element, index)
+        //!to get the display name of the house we would have to get the user for each home
+        //!it would be more effecient to that on boot: get all the exisiting users/ homes and store basic info about them 
+        //!retreive that info locally (like display name)
+
         const homeImageKey = "homeKey_" + element.user_id
         // get a image url for each home
         // get converted image from AWS
