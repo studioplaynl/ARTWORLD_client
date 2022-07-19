@@ -194,9 +194,9 @@ class ServerCall {
     //check if server query is finished, then make the home from the list
     if (scene.homes != null) {
       console.log("generate homes!")
-      console.log("scene.homes", scene.homes)
+      //console.log("scene.homes", scene.homes)
       scene.homes.forEach((element, index) => {
-        //console.log(element, index)
+        console.log(element, index)
         const homeImageKey = "homeKey_" + element.user_id
         // get a image url for each home
         // get converted image from AWS
@@ -205,7 +205,7 @@ class ServerCall {
         //check if homekey is already loaded
         if (scene.textures.exists(homeImageKey)) {
           //create the home
-          console.log("element generateHomes textures.exists", element)
+          //console.log("element generateHomes textures.exists", element)
           this.createHome(element, index, homeImageKey, scene)
 
         } else {

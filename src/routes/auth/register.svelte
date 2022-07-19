@@ -116,10 +116,10 @@
 		  <input type="text" placeholder="Enter Email" name="email" id="email" bind:value={email} required>
 	  
 		  <label for="psw"><b>{$_('register.password')}</b></label>
-		  <input type="password" placeholder="Enter Password" name="psw" id="psw" bind:value={password} required>
+		  <input type="text" placeholder="Enter Password" name="psw" id="psw" bind:value={password} required>
 	  
 		  <label for="psw-repeat"><b>{$_('register.repeatPassword')}</b></label>
-		  <input type="password" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" bind:value={passwordCheck} required>
+		  <input type="text" placeholder="Repeat Password" name="psw-repeat" id="psw-repeat" bind:value={passwordCheck} required>
 		  <hr>
 
 		  <label for="Role"><b>{$_('register.role')}</b></label>
