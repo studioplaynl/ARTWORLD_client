@@ -91,7 +91,7 @@
 
 
 	function print(){
-		QRUrl = `https://${window.location.host}/#/login/${username}/${password} `
+		QRUrl = `https://${window.location.host}/#/login/${email}/${password}`
 		setTimeout(()=>{
 			var print_area = window.open();
 			print_area.document.write(print_div.innerHTML);
@@ -154,8 +154,8 @@
 	  <button on:click="{print}" class="registerbtn">print userdata</button>
 		  <div class="printarea" bind:this="{print_div}">  
 		  <QrCode value="{QRUrl}" />
-		  <h5>Username:</h5>
-		  <b>{username}</b>
+		  <h5>Email adress:</h5>
+		  <b>{email}</b>
 		  <h5>Password:</h5>
 		  <b>{password}</b>	
 	  </div>
