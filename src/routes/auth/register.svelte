@@ -113,7 +113,7 @@
 
 		  <hr>
 		  <label for="username"><b>{$_('register.username')}</b></label>
-		  <input type="text" placeholder="Enter Username" name="username" id="username" bind:value={username} required>
+		  <input type="text" placeholder="Enter Username" name="username" id="username" bind:value={username} on:change="{()=>{email = username + "@vrolijkheid.nl"}}" required>
 	  	  
 		  <label for="email"><b>{$_('register.email')}</b></label>
 		  <input type="text" placeholder="Enter Email" name="email" id="email" bind:value={email} required>
@@ -152,12 +152,20 @@
 		</div>
 	  </form>
 	  <button on:click="{print}" class="registerbtn">print userdata</button>
-		  <div class="printarea" bind:this="{print_div}">  
-		  <QrCode value="{QRUrl}" />
-		  <h5>Email adress:</h5>
-		  <b>{email}</b>
-		  <h5>Password:</h5>
-		  <b>{password}</b>	
+		  <div class="printarea" bind:this="{print_div}"> 
+			<table>
+			<tr> 
+				<td>
+					<QrCode value="{QRUrl}" />
+				</td>
+				<td>
+					<h5>Email adress:</h5>
+					<b>{email}</b>
+					<h5>Password:</h5>
+					<b>{password}</b>
+				</td>
+			</tr>	
+		</table>
 	  </div>
 
 	</div>
