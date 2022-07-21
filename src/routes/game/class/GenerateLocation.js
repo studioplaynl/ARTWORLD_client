@@ -43,7 +43,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         //added after linting 
         //outline effect
-        this.scene.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
+        //this.scene.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
         this.postFxPlugin = this.scene.plugins.get('rexoutlinepipelineplugin');
         //added after linting 
         //outline effect
