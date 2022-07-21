@@ -92,12 +92,15 @@
 
 	function print(){
 		QRUrl = `https://${window.location.host}/#/login/${username}/${password} `
-		var print_area = window.open();
-		print_area.document.write(print_div.innerHTML);
-		print_area.document.close();
-		print_area.focus();
-		print_area.print();
-		print_area.close();
+		setTimeout(()=>{
+			var print_area = window.open();
+			print_area.document.write(print_div.innerHTML);
+			print_area.document.close();
+			print_area.focus();
+			print_area.print();
+			print_area.close();
+		},1000)
+		
 	}
 
 </script>

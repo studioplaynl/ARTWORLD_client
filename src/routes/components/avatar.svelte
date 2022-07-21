@@ -69,11 +69,11 @@
   </div>
 {/if}
 <div
-  class="avatar"
+  class="avatar pointer"
   on:click={() => {
-    show = !show;
-    showHistory = false;
-    // $CurrentApp = "avatar";
+    // show = !show;
+    // showHistory = false;
+    $CurrentApp = "avatar";
 
   }}
 >
@@ -92,13 +92,13 @@
         $CurrentApp = "avatar";
       }}
     />
-    <img
+    <!-- <img
       src="/assets/SHB/svg/AW-icon-history.svg"
       on:click={() => {
         showHistory = true;
         show = false;
       }}
-    />
+    /> -->
   </div>
 {/if}
 
@@ -118,6 +118,9 @@
 
   .action > img {
     width: 70px;
+    cursor: pointer;
+  }
+  .pointer {
     cursor: pointer;
   }
 </style>

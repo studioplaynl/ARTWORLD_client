@@ -66,12 +66,15 @@ export async function uploadHouse(data) {
   else { value = object.value }
   console.log("value", value)
   value.username = prof.username
-  if (!!!value.version) value.version = 0
-  else value.version = value.version + 1
-  if (value.version > value.LastVersion) {
-    value.LastVersion = value.version
+  if (typeof value.version == "undefined") {value.version = 0}
+  else {
+  value.version = value.version + 1
   }
-
+  // if (value.version > value.LastVersion) {
+  //   value.LastVersion = value.version
+  // }
+  console.log("value", value)
+  
   pub = true
 
   var [jpegURL, jpegLocation] = await getUploadURL("home", "current", "png", value.version)
