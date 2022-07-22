@@ -18,7 +18,7 @@ export default class Artworld extends Phaser.Scene {
   constructor() {
     super("Artworld")
 
-    this.worldSize = new Phaser.Math.Vector2(5500, 5500)
+    this.worldSize = new Phaser.Math.Vector2(5000, 5000)
 
     this.debug = false
 
