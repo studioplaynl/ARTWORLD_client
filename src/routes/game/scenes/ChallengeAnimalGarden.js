@@ -356,7 +356,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                 const avatarFrames = Math.round(avatarWidth / avatarHeight)
                 if (ManageSession.debug) console.log(avatarFrames)
 
-                if (avatarFrames > 1) {
+               // if (avatarFrames > 1) {
                     // set names for the moving and stop animations
 
                     // tempAnimal.setData("movingKey", "moving" + "_" + avatarKey)
@@ -388,7 +388,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                     this.anims.create({
                         key: 'moving_' + avatarKey,
                         frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: avatarFrames - 1 }),
-                        frameRate: 8,
+                        frameRate: 6,
                         repeat: -1,
                         yoyo: true
                     })
@@ -430,7 +430,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
                     this.animalArray.push(tempAnimal)
                     // }
-                }//if (avatarFrames > 1) {
+                }////if (avatarFrames > 1) {
 
                 // tempAnimal.setTexture(avatarKey)
 
@@ -446,9 +446,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                 //...............................................................................................................................
 
                 //create default animation for moving
-            } else {
-
-            }
+      
         }) // end this.animalKeyArray.forEach
     } // end makeNewAnimal
 
