@@ -21,7 +21,7 @@
   import Avatar from "../components/avatar.svelte";
   import ManageSession from "../game/ManageSession";
 
-  let imageResolution = 2048
+  let imageResolution = 2048;
 
   let scaleRatio, lastImg, lastValue, lastWidth;
   let params = { user: $location.split("/")[2], name: $location.split("/")[3] };
@@ -152,7 +152,10 @@
     }
 
     // for correct and adapted scaling of the preexisting artworks
-    scaleRatio = Math.min(canvas.width / imageResolution, canvas.width / imageResolution);
+    scaleRatio = Math.min(
+      canvas.width / imageResolution,
+      canvas.width / imageResolution
+    );
     cursor.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
   }
@@ -722,7 +725,11 @@
       isPreexistingArt = true;
     } else if (appType == "house") {
       let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
-      lastImg = await getFile(Object.value.url, "imageResolution", "imageResolution");
+      lastImg = await getFile(
+        Object.value.url,
+        "imageResolution",
+        "imageResolution"
+      );
       lastValue = Object.value;
       title = Object.key;
       status = Object.permission_read == 2 ? true : false;
@@ -957,8 +964,10 @@
   };
 
   async function addFrame() {
+    //save the stopmotion to the server, in some cases the app crashed with too many frames
+    //to prevent data loss
     await upload();
-    
+
     await updateFrame();
     if (frames.length >= maxFrames) return;
     console.log("click");
@@ -967,13 +976,6 @@
     await changeFrame(frames.length - 1);
     let framebar = document.getElementById("frame-bar");
     framebar.scrollTo({ left: 0, top: framebar.scrollHeight });
-
-    //save the stopmotion to the server, in some cases the app crashed with too many frames
-    //to prevent data loss
-    // if (!isAlreadyUploaded || isTitleChanged) {
-    //   await upload();
-    // }
-    //await createStopmotion();
   }
 
   function playFrames() {
