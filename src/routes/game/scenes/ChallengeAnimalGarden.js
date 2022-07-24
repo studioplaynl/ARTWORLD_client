@@ -400,6 +400,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                         //repeat: -1,
                         //yoyo: true
                     })
+
                     let tempAnimal = this.physics.add.sprite(this.worldSize.x / 2 + Phaser.Math.Between(-100, 100), this.worldSize.y / 2 + Phaser.Math.Between(-100, 100), avatarKey)
                         .setDepth(200)
                     tempAnimal.name = avatarKey
@@ -430,6 +431,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
                     this.animalArray.push(tempAnimal)
                     // }
+                    console.log("animal placed in animalGarden")
                 }////if (avatarFrames > 1) {
 
                 // tempAnimal.setTexture(avatarKey)
