@@ -761,7 +761,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         //don't move the player with clicking and swiping in edit mode
         if (!ManageSession.gameEditMode) {
             //...... ONLINE PLAYERS ................................................
-            Player.parseNewOnlinePlayerArray(this)
+            //Player.parseNewOnlinePlayerArray(this)
             //........... PLAYER SHADOW .............................................................................
             // the shadow follows the player with an offset
             this.playerShadow.x = this.player.x + this.playerShadowOffset
