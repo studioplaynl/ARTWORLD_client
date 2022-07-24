@@ -152,7 +152,7 @@
     }
 
     // for correct and adapted scaling of the preexisting artworks
-    scaleRatio = Math.min(canvas.width / 2048, canvas.width / 2048);
+    scaleRatio = Math.min(canvas.width / imageResolution, canvas.width / imageResolution);
     cursor.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
   }
@@ -745,7 +745,7 @@
       let frameAmount;
       var framebuffer = new Image();
       framebuffer.src = lastImg;
-      framebuffer.height = 2048;
+      framebuffer.height = imageResolution;
       framebuffer.onload = function () {
         console.log("img", this.width);
         lastWidth = this.width;

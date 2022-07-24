@@ -126,6 +126,7 @@ class HistoryTracker {
   async startSceneCloseApp(scene, app) {
     if (!!!ManageSession.socket) return
     await ManageSession.socket.rpc("leave", app)
+
     await ManageSession.getStreamUsers("join", ManageSession.location)
 
     if (ManageSession.debug) console.log(scene)
@@ -135,9 +136,12 @@ class HistoryTracker {
     //!changed from pausing to stopping the scene to save resources
     //! also reloading the scene updates houses etc
     if (ManageSession.debug) console.log("scene.scene.restart()")
-    scene.scene.restart()
+    scene.scene.start()
+    
     //close app
   }
+
+  
 }
 
 export default new HistoryTracker()
