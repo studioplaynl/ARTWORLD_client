@@ -1,5 +1,5 @@
 import ManageSession from "../ManageSession"
-import { listObjects, convertImage, getAccount, listAllObjects} from "../../../api.js"
+import { listObjects, convertImage, getAccount, listAllObjects } from "../../../api.js"
 
 import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
@@ -201,7 +201,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         //!
         this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
             .setInteractive() //{ useHandCursor: true }
-            //.on('pointerup', () => console.log('touched background'))
+            //.on('pointerup', () => if (ManageSession.debug) console.log('touched background'))
             .on('pointerdown', () => ManageSession.playerMove = true)
             .setDepth(219)
             .setOrigin(0)
@@ -230,37 +230,37 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         //......... end PLAYER VS WORLD .......................................................................
 
         //! needed for handling object dragging
-        this.input.on('dragstart', function (pointer, gameObject) {
+        // this.input.on('dragstart', function (pointer, gameObject) {
 
-        }, this)
+        // }, this)
 
-        this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
-            gameObject.x = dragX
-            gameObject.y = dragY
+        // this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
+        //     gameObject.x = dragX
+        //     gameObject.y = dragY
 
-            if (gameObject.name == "handle") {
-                gameObject.data.get('vector').set(dragX, dragY) //get the vector data for curve handle objects
-            }
+        //     if (gameObject.name == "handle") {
+        //         gameObject.data.get('vector').set(dragX, dragY) //get the vector data for curve handle objects
+        //     }
 
-        }, this)
+        // }, this)
 
-        this.input.on('dragend', function (pointer, gameObject) {
-            let worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x))
-            let worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y))
+        // this.input.on('dragend', function (pointer, gameObject) {
+        //     let worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x))
+        //     let worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y))
 
 
-            //store the original scale when selecting the gameObject for the first time
-            if (ManageSession.selectedGameObject != gameObject) {
-                ManageSession.selectedGameObject = gameObject
-                ManageSession.selectedGameObject_startScale = gameObject.scale
-                ManageSession.selectedGameObject_startPosition.x = gameObject.x
-                ManageSession.selectedGameObject_startPosition.y = gameObject.y
-                console.log("editMode info startScale:", ManageSession.selectedGameObject_startScale)
-            }
-            //ManageSession.selectedGameObject = gameObject
+        //     //store the original scale when selecting the gameObject for the first time
+        //     if (ManageSession.selectedGameObject != gameObject) {
+        //         ManageSession.selectedGameObject = gameObject
+        //         ManageSession.selectedGameObject_startScale = gameObject.scale
+        //         ManageSession.selectedGameObject_startPosition.x = gameObject.x
+        //         ManageSession.selectedGameObject_startPosition.y = gameObject.y
+        //         if (ManageSession.debug) console.log("editMode info startScale:", ManageSession.selectedGameObject_startScale)
+        //     }
+        //     //ManageSession.selectedGameObject = gameObject
 
-            console.log("editMode info posX posY: ", worldX, worldY, "scale:", ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
-        }, this)
+        //     if (ManageSession.debug) console.log("editMode info posX posY: ", worldX, worldY, "scale:", ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
+        // }, this)
         //!
 
         //!
@@ -268,75 +268,63 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         //!
 
 
-        this.anims.create({
-            key: 'moveAnim_Henk',
-            frames: [
-                { key: 'animation_png_animal_henk_00001' },
-                { key: 'animation_png_animal_henk_00002' },
-                { key: 'animation_png_animal_henk_00003' },
-                { key: 'animation_png_animal_henk_00004' },
-                { key: 'animation_png_animal_henk_00005' },
-                { key: 'animation_png_animal_henk_00006' },
-                { key: 'animation_png_animal_henk_00007' },
-            ],
-            frameRate: 8,
-            repeat: -1
-        })
+        // this.anims.create({
+        //     key: 'moveAnim_Henk',
+        //     frames: [
+        //         { key: 'animation_png_animal_henk_00001' },
+        //         { key: 'animation_png_animal_henk_00002' },
+        //         { key: 'animation_png_animal_henk_00003' },
+        //         { key: 'animation_png_animal_henk_00004' },
+        //         { key: 'animation_png_animal_henk_00005' },
+        //         { key: 'animation_png_animal_henk_00006' },
+        //         { key: 'animation_png_animal_henk_00007' },
+        //     ],
+        //     frameRate: 8,
+        //     repeat: -1
+        // })
 
-        this.anims.create({
-            key: 'stopAnim_Henk',
-            frames: [
-                { key: 'animation_png_animal_henk_00001' },
-            ],
-            repeat: 0
-        })
+        // this.anims.create({
+        //     key: 'stopAnim_Henk',
+        //     frames: [
+        //         { key: 'animation_png_animal_henk_00001' },
+        //     ],
+        //     repeat: 0
+        // })
 
-        this.animalHenk = this.physics.add.sprite(1000, 1000, 'animal_henk')
-            .play('moveAnim_Henk')
-        this.animalHenk.setBodySize(500, 400)
-        this.animalHenk.setData("moveAnim", "moveAnim_Henk")
-        this.animalHenk.setData("stopAnim", "stopAnim_Henk")
-        console.log("this.animalHenk", this.animalHenk)
-        //this.animalHenk.body.setCircle(200, 300, 300) // gives problems with collision with walls!
+        // this.animalHenk = this.physics.add.sprite(1000, 1000, 'animal_henk')
+        //     .play('moveAnim_Henk')
+        // this.animalHenk.setBodySize(500, 400)
+        // this.animalHenk.setData("moveAnim", "moveAnim_Henk")
+        // this.animalHenk.setData("stopAnim", "stopAnim_Henk")
+        // if (ManageSession.debug) console.log("this.animalHenk", this.animalHenk)
+        // //this.animalHenk.body.setCircle(200, 300, 300) // gives problems with collision with walls!
 
-        // download all dier from all users
+        // // download all dier from all users
         this.animalKeyArray = []
         this.animalArray = []
         this.getListOf("dier")
 
-        //set a collider between the animal and the walls
-        this.physics.add.overlap(this.animalHenk, this.borderBoxSouth, this.animalWallCollide, null, this)
-        this.physics.add.overlap(this.animalHenk, this.borderBoxWest, this.animalWallCollide, null, this)
-        this.physics.add.overlap(this.animalHenk, this.borderBoxEast, this.animalWallCollide, null, this)
-        this.physics.add.overlap(this.animalHenk, this.borderBoxNorth, this.animalWallCollide, null, this)
+        // //set a collider between the animal and the walls
+        // this.physics.add.overlap(this.animalHenk, this.borderBoxSouth, this.animalWallCollide, null, this)
+        // this.physics.add.overlap(this.animalHenk, this.borderBoxWest, this.animalWallCollide, null, this)
+        // this.physics.add.overlap(this.animalHenk, this.borderBoxEast, this.animalWallCollide, null, this)
+        // this.physics.add.overlap(this.animalHenk, this.borderBoxNorth, this.animalWallCollide, null, this)
 
 
-        //set an overlap detection between the animal and the border of the canvas
-        this.animalHenk.setVelocity(300, -300)
-        this.animalHenk.setBounce(1).setInteractive().setDepth(200)
-        this.animalHenk.name = "dier"
+        // //set an overlap detection between the animal and the border of the canvas
+        // this.animalHenk.setVelocity(300, -300)
+        // this.animalHenk.setBounce(1).setInteractive().setDepth(200)
+        // this.animalHenk.name = "dier"
 
-        const tempDelay = Phaser.Math.Between(1000, 20000)
-        this.time.addEvent({ delay: tempDelay, callback: this.stopAnimalMovement, args: [this.animalHenk], callbackScope: this, loop: false })
+        // const tempDelay = Phaser.Math.Between(1000, 20000)
+        // this.time.addEvent({ delay: tempDelay, callback: this.stopAnimalMovement, args: [this.animalHenk], callbackScope: this, loop: false })
 
-
-        // this.animalHenk.on('pointerup', (pointer, x, y, gameobject) => {
-        //     console.log("pointer, x, y, gameobject", gameobject)
-        //     if (gameobject[0].name == "dier") {
-        //         const tempStopAnim = gameobject[0].getData("stopAnim")
-        //         gameobject[0].play(tempStopAnim)
-        //         gameobject[0].setVelocity(0, 0)
-        //         const tempDelay = Phaser.Math.Between(1000, 20000)
-        //         this.time.addEvent({ delay: tempDelay, callback: this.resumeAnimalMovement, args: [gameobject[0]], callbackScope: this, loop: false })
-        //     }
-        // })
-
-        console.log("this.animalHenk.body.velocity ", this.animalHenk.body.velocity)
+        // if (ManageSession.debug) console.log("this.animalHenk.body.velocity ", this.animalHenk.body.velocity)
 
     } //end create
 
     makeNewAnimal() {
-        console.log("this.animalKeyArray", this.animalKeyArray)
+        if (ManageSession.debug) console.log("this.animalKeyArray", this.animalKeyArray)
 
         //destroy and empty the this.animalArray
         this.animalArray.forEach((element) => element.destroy())
@@ -350,30 +338,30 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             //we load the onlineplayer avatar, make a key for it
             const avatarKey = element
 
-            console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
+            if (ManageSession.debug) console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
 
             if (this.textures.exists(avatarKey)) {
 
 
-                //console.log("avatarKey", avatarKey)
+                //if (ManageSession.debug) console.log("avatarKey", avatarKey)
 
                 const avatar = this.textures.get(avatarKey)
-                console.log("avatar", avatar)
+                if (ManageSession.debug) console.log("avatar", avatar)
                 const avatarWidth = avatar.frames.__BASE.width
                 const avatarHeight = avatar.frames.__BASE.height
-                console.log("avatarWidth, avatarHeight", avatarWidth, avatarHeight)
+                if (ManageSession.debug) console.log("avatarWidth, avatarHeight", avatarWidth, avatarHeight)
 
 
 
                 const avatarFrames = Math.round(avatarWidth / avatarHeight)
-                console.log(avatarFrames)
+                if (ManageSession.debug) console.log(avatarFrames)
 
                 if (avatarFrames > 1) {
                     // set names for the moving and stop animations
 
                     // tempAnimal.setData("movingKey", "moving" + "_" + avatarKey)
                     // tempAnimal.setData("stopKey", "stop" + "_" + avatarKey)
-                    // console.log("tempAnimal.getData('movingKey')", tempAnimal.getData("movingKey"))
+                    // if (ManageSession.debug) console.log("tempAnimal.getData('movingKey')", tempAnimal.getData("movingKey"))
 
                     //create animation for moving
                     // if (!this.anims.exists(tempAnimal.getData("movingKey"))) {
@@ -399,7 +387,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
                     this.anims.create({
                         key: 'moving_' + avatarKey,
-                        frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: 2 }),
+                        frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: avatarFrames - 1 }),
                         frameRate: 8,
                         repeat: -1,
                         yoyo: true
@@ -466,7 +454,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
 
     stopAnimalMovement(gameobject) {
-        //console.log("gameobject", gameobject)
+        //if (ManageSession.debug) console.log("gameobject", gameobject)
         if (typeof gameobject.body != "undefined") {
             const tempAnim = gameobject.getData("stopAnim")
             gameobject.setVelocity(0, 0)
@@ -479,7 +467,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     }
 
     resumeAnimalMovement(gameobject) {
-        //console.log("gameobject", gameobject)
+        //if (ManageSession.debug) console.log("gameobject", gameobject)
         const tempAnim = gameobject.getData("moveAnim")
         gameobject.setVelocity(Phaser.Math.Between(30, 400), Phaser.Math.Between(-30, -300))
         gameobject.play(tempAnim)
@@ -489,9 +477,9 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
     async getListOf(displayName) {
         await listAllObjects("stopmotion", null).then((rec) => {
-            //download all the drawings and then filter for "bloem"
+            //download all the drawings and then filter for "dier"
             this.userArtServerList = rec.filter(obj => obj.permission_read == 2)
-            //console.log("this.userArtServerList", this.userArtServerList)
+            //if (ManageSession.debug) console.log("this.userArtServerList", this.userArtServerList)
             this.userArtServerList = this.userArtServerList.filter(obj => obj.value.displayname == displayName)
             console.log("this.userArtServerList", this.userArtServerList)
             if (this.userArtServerList.length > 0) {
@@ -503,12 +491,14 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     }
 
     async getUrlKeys(element, index, array) {
-        //! we are placing the artWorks 'around' (left and right of) the center of the world
         const totalArtWorks = array.length
+        //console.log("totalArtWorks", totalArtWorks)
+
         const imageKeyUrl = element.value.url
-        console.log("element.value.displayname", element.value.displayname)
-        console.log("imageKeyUrl", imageKeyUrl)
-        const imgSize = "256" //download as 512pixels
+        if (ManageSession.debug) console.log("element.value.displayname", element.value.displayname)
+        if (ManageSession.debug) console.log("imageKeyUrl", imageKeyUrl)
+        const imgSize = "128" //download as 256 pixels
+        const imgSizeInt = 128
         const imageWidth = "10000"
         const fileFormat = "png"
 
@@ -527,14 +517,14 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             // for tracking each file in progress
             // this.progress.push({ imageKeyUrl })
             //let convertedImage = this.convertedImage
-            this.downloadSpriteSheet(imageKeyUrl, this.convertedImage, 256)
+            this.downloadSpriteSheet(imageKeyUrl, this.convertedImage, imgSizeInt)
 
         }
 
         this.load.on('filecomplete', (key) => {
             // on completion of each specific artwork
             // const currentImage = this.progress.find(element => element.imageKeyUrl == key)
-            console.log('filecomplete, key', key)
+            if (ManageSession.debug) console.log('filecomplete, key', key)
             // we don't want to trigger any other load completions 
             // if (currentImage) {
 
@@ -542,17 +532,17 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             const exists = this.animalKeyArray.some(element => element == imageKeyUrl)
             if (!exists) {
                 const avatarKey = imageKeyUrl
-                console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
+                if (ManageSession.debug) console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
                 const avatar = this.textures.get(avatarKey)
-                console.log("avatar", avatar)
+                if (ManageSession.debug) console.log("avatar", avatar)
                 const avatarWidth = avatar.frames.__BASE.width
                 const avatarHeight = avatar.frames.__BASE.height
-                console.log("avatarWidth, avatarHeight", avatarWidth, avatarHeight)
+                if (ManageSession.debug) console.log("avatarWidth, avatarHeight", avatarWidth, avatarHeight)
 
-                if (avatarHeight != 256) {
-                    console.log("reloading the image", avatarHeight, this.convertedImage)
+                if (avatarHeight != imgSizeInt) {
+                    if (ManageSession.debug) console.log("reloading the image", avatarHeight, this.convertedImage)
                     this.textures.remove(imageKeyUrl)
-                    console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
+                    if (ManageSession.debug) console.log("this.textures.exists(avatarKey)", this.textures.exists(avatarKey), avatarKey)
 
 
                     this.downloadSpriteSheet(imageKeyUrl, (this.convertedImage), avatarHeight)
@@ -561,12 +551,12 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                     // // this.progress.push({ imageKeyUrl })
                     // this.load.start() // start the load queue to get the image in memory
                 } else {
-                    console.log("avatarHeight should be 128", avatarHeight)
+                    if (ManageSession.debug) console.log("avatarHeight should be 128", avatarHeight)
                     this.animalKeyArray.push(imageKeyUrl)
                 }
 
             } else {
-                console.log("complete file already exists")
+                if (ManageSession.debug) console.log("complete file already exists")
             }
 
             // }
@@ -575,7 +565,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         this.load.on("complete", () => {
             // finished downloading 
             // replace flowers in the field
-            console.log("complete this.animalKeyArray", this.animalKeyArray)
+            if (ManageSession.debug) console.log("complete this.animalKeyArray", this.animalKeyArray)
             //
             this.makeNewAnimal()
 
@@ -584,7 +574,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
     downloadSpriteSheet(imageKeyUrl, convertedUrl, height) {
 
-        console.log("convertedImage", convertedUrl)
+        if (ManageSession.debug) console.log("convertedImage", convertedUrl)
         this.load.spritesheet(imageKeyUrl, convertedUrl, { frameWidth: height, frameHeight: height })
 
         this.load.start() // start the load queue to get the image in memory
@@ -592,8 +582,8 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
     animalWallCollide(animal, wall) {
 
-        // console.log("animal, wall", animal, wall)
-        // console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
+        // if (ManageSession.debug) console.log("animal, wall", animal, wall)
+        // if (ManageSession.debug) console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
 
         //left - right impact: 
         if (wall.name == "borderBoxWest" || wall.name == "borderBoxEast") {
@@ -621,8 +611,8 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             }
             //animal.body.velocity.y = -animal.body.velocity.y
         }
-        // console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
-        // console.log("Math.abs(animal.body.velocity.y) + Math.abs(animal.body.velocity.x)", Math.abs(animal.body.velocity.y) + Math.abs(animal.body.velocity.x))
+        // if (ManageSession.debug) console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
+        // if (ManageSession.debug) console.log("Math.abs(animal.body.velocity.y) + Math.abs(animal.body.velocity.x)", Math.abs(animal.body.velocity.y) + Math.abs(animal.body.velocity.x))
         //animal.angle = Phaser.Math.RadToDeg(animal.body.angle) + 90
         if (animal.body.velocity.x > 0) {
             animal.flipX = false
