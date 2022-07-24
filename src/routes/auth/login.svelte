@@ -7,7 +7,7 @@
   import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte'
   export let params;
 
-  console.log($Session);
+  //console.log($Session);
   let email;
   let password;
   let qrscanState = false;

@@ -30,7 +30,7 @@ export default class MainMenu extends Phaser.Scene {
     //* check if the user profile is loaded, to be able to send the player to the right location
     //* check if there are params in the url, to send the player to that location instead
     let urlParams = ManageSession.getUrl()
-    console.log("urlParams", urlParams)
+    if (ManageSession.debug) console.log("urlParams", urlParams)
 
     // if there is no location paramter in the url
     if (typeof urlParams.location == "undefined") {

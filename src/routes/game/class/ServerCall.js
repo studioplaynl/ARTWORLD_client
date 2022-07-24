@@ -10,8 +10,8 @@ class ServerCall {
   async getServerArrayObject(collection, userID, maxItems) {
     Promise.all([listObjects(collection, userID, maxItems)])
       .then(response => {
-        //console.log("collection", collection)
-        //console.log("response", response)
+        //if (ManageSession.debug) console.log("collection", collection)
+        //if (ManageSession.debug) console.log("response", response)
 
         //check if the object exists
         if (response[0].length > 0) {
@@ -19,12 +19,12 @@ class ServerCall {
 
           // check if the right object exists: addressbook_user_id
           let filteredResponse = response[0].filter(element => {
-            //console.log(collection + "_" + ManageSession.userProfile.id, typeof collection)
-            //console.log("element", element)
+            //if (ManageSession.debug) console.log(collection + "_" + ManageSession.userProfile.id, typeof collection)
+            //if (ManageSession.debug) console.log("element", element)
             return element.key == collection + "_" + ManageSession.userProfile.id
           }
           )
-          //console.log("filteredResponse", filteredResponse)
+          //if (ManageSession.debug) console.log("filteredResponse", filteredResponse)
 
           if (filteredResponse.length > 0) {
             //the right collection object exists, but check if there is data in de object, in the expected format
@@ -32,7 +32,7 @@ class ServerCall {
             if (typeof filteredResponse[0].value[collection] != "undefined") {
               //the object is in the right format (object.value.object), we assign our local copy
               ManageSession[collection] = filteredResponse[0].value
-              //console.log("ManageSession." + collection, ManageSession[collection])
+              //if (ManageSession.debug) console.log("ManageSession." + collection, ManageSession[collection])
               return
             } else {
               //when the right addressbook does not exist: make an empty one
@@ -45,7 +45,7 @@ class ServerCall {
             this.createEmptyServerArrayObject(collection)
 
           }
-          //console.log("ManageSession." + collection, ManageSession[collection])
+          //if (ManageSession.debug) console.log("ManageSession." + collection, ManageSession[collection])
 
         } else {
           //the addressbook does not exist: make an empty one
@@ -56,8 +56,8 @@ class ServerCall {
 
   async createEmptyServerArrayObject(collection) {
     //general method of creating an array inside an object with the argument of the method
-    console.log("createEmptyServerObject")
-    console.log(collection)
+    if (ManageSession.debug) console.log("createEmptyServerObject")
+    if (ManageSession.debug) console.log(collection)
 
     //pass data locally: 
     // - ManageSession
@@ -68,15 +68,15 @@ class ServerCall {
     const name = type + "_" + ManageSession.userProfile.id
     const pub = 2
     const value = ManageSession[type]
-    console.log(" ManageSession. empty", ManageSession[type])
+    if (ManageSession.debug) console.log(" ManageSession. empty", ManageSession[type])
     updateObject(type, name, value, pub)
   }
 
   async getServerSingleObject(collection, userID, maxItems) {
     Promise.all([listObjects(collection, userID, maxItems)])
       .then(response => {
-        //console.log("collection", collection)
-        //console.log("response", response)
+        //if (ManageSession.debug) console.log("collection", collection)
+        //if (ManageSession.debug) console.log("response", response)
 
         //check if the object exists
         if (response[0].length > 0) {
@@ -84,12 +84,12 @@ class ServerCall {
 
           // check if the right object exists: addressbook_user_id
           let filteredResponse = response[0].filter(element => {
-            //console.log(collection + "_" + ManageSession.userProfile.id, typeof collection)
-            //console.log("element", element)
+            //if (ManageSession.debug) console.log(collection + "_" + ManageSession.userProfile.id, typeof collection)
+            //if (ManageSession.debug) console.log("element", element)
             return element.key == collection + "_" + ManageSession.userProfile.id
           }
           )
-          //console.log("filteredResponse", filteredResponse)
+          //if (ManageSession.debug) console.log("filteredResponse", filteredResponse)
 
           if (filteredResponse.length > 0) {
             //the right collection object exists, but check if there is data in de object, in the expected format
@@ -97,7 +97,7 @@ class ServerCall {
             if (typeof filteredResponse[0].value[collection] != "undefined") {
               //the object is in the right format (object.value.object), we assign our local copy
               ManageSession[collection] = filteredResponse[0].value
-              //console.log("ManageSession." + collection, ManageSession[collection])
+              //if (ManageSession.debug) console.log("ManageSession." + collection, ManageSession[collection])
               return
             } else {
               //when the right addressbook does not exist: make an empty one
@@ -110,7 +110,7 @@ class ServerCall {
             this.createEmptyServerObject(collection)
 
           }
-          //console.log("ManageSession." + collection, ManageSession[collection])
+          //if (ManageSession.debug) console.log("ManageSession." + collection, ManageSession[collection])
 
         } else {
           //the addressbook does not exist: make an empty one
@@ -131,7 +131,7 @@ class ServerCall {
     //get a list of all collection objects and then filter
     Promise.all([listObjects(collection, null, maxItems)])
       .then((rec) => {
-        //console.log("rec: ", rec)
+        //if (ManageSession.debug) console.log("rec: ", rec)
         scene[collection] = rec[0]
 
         if (typeof filter != "undefined") {
@@ -151,11 +151,11 @@ class ServerCall {
 
     // when there is a loading error, the error gets thrown multiple times because I subscribe to the 'loaderror' event multiple times
     const eventNames = scene.load.eventNames()
-    //console.log("eventNames", eventNames)
+    //if (ManageSession.debug) console.log("eventNames", eventNames)
     const isReady = scene.load.isReady()
-    console.log("isReady", isReady)
+    if (ManageSession.debug) console.log("isReady", isReady)
     const isLoading = scene.load.isLoading()
-    console.log("isLoading", isLoading)
+    if (ManageSession.debug) console.log("isLoading", isLoading)
 
     // subscribe to loaderror event
     scene.load.on(`loaderror`, (offendingFile) => {
@@ -165,9 +165,9 @@ class ServerCall {
     //get a list of all homes objects and then filter
     Promise.all([listObjects(collection, null, maxItems)])
       .then((rec) => {
-        console.log("rec homes: ", rec)
+        if (ManageSession.debug) console.log("rec homes: ", rec)
         scene.homes = rec[0]
-        console.log("scene.homes", scene.homes)
+        if (ManageSession.debug) console.log("scene.homes", scene.homes)
         // filter only amsterdam homes
         scene.homes = scene.homes.filter((obj) => obj.key == filter)
 
@@ -177,11 +177,11 @@ class ServerCall {
           Promise.all([listAllObjects("drawing", element.user_id), listAllObjects("stopmotion", element.user_id)]).then((rec) => {
 
             rec.forEach((artElement) => {
-              //console.log("artElement", artElement)
+              //if (ManageSession.debug) console.log("artElement", artElement)
               //add the array of art objects to the userHouse object
               element['artWorks'] = artElement
             })
-            //console.log("element", element)
+            //if (ManageSession.debug) console.log("element", element)
           })
 
         })
@@ -194,9 +194,9 @@ class ServerCall {
     //check if server query is finished, then make the home from the list
     if (scene.homes != null) {
       console.log("generate homes!")
-      //console.log("scene.homes", scene.homes)
+      //if (ManageSession.debug) console.log("scene.homes", scene.homes)
       scene.homes.forEach((element, index) => {
-        //console.log(element, index)
+        //if (ManageSession.debug) console.log(element, index)
         //!to get the display name of the house we would have to get the user for each home
         //!it would be more effecient to that on boot: get all the exisiting users/ homes and store basic info about them 
         //!retreive that info locally (like display name)
@@ -209,7 +209,7 @@ class ServerCall {
         //check if homekey is already loaded
         if (scene.textures.exists(homeImageKey)) {
           //create the home
-          //console.log("element generateHomes textures.exists", element)
+          //if (ManageSession.debug) console.log("element generateHomes textures.exists", element)
           this.createHome(element, index, homeImageKey, scene)
 
         } else {
@@ -221,16 +221,16 @@ class ServerCall {
   }
 
   async getHomeImages(url, element, index, homeImageKey, scene) {
-    console.log("getHomeImages")
+    if (ManageSession.debug) console.log("getHomeImages")
     await convertImage(url, "128", "128", "png")
       .then((rec) => {
-        //console.log("rec", rec)
+        //if (ManageSession.debug) console.log("rec", rec)
         // load all the images to phaser
         scene.load.image(homeImageKey, rec)
           .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
             //delete from ManageSession.resolveErrorObjectArray
             ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter((obj) => obj.imageKey !== homeImageKey)
-            // console.log("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
+            // if (ManageSession.debug) console.log("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
             //create the home
             this.createHome(element, index, homeImageKey, scene)
           }, this)
@@ -241,7 +241,7 @@ class ServerCall {
   }
 
   createHome(element, index, homeImageKey, scene) {
-    //console.log(" createHome element.artWorks", element.artWorks)
+    //if (ManageSession.debug) console.log(" createHome element.artWorks", element.artWorks)
 
     // home description
     const locationDescription = element.value.username
@@ -256,7 +256,7 @@ class ServerCall {
     // } else {
     //   numberOfArtworks = element.artWorks.length
     // }
-    //console.log("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
+    //if (ManageSession.debug) console.log("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
 
     scene.homesRepresented[index] = new GenerateLocation({
       scene: scene,
@@ -312,7 +312,7 @@ class ServerCall {
     let imageKey = offendingFile.key
     let scene = resolveErrorObject.scene
 
-    // console.log("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
+    //if (ManageSession.debug)  console.log("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
     switch (loadFunction) {
       case ("getHomeImage"):
         console.log("load offendingFile again", imageKey)

@@ -6,6 +6,8 @@
   // export const SSL = false;
 
   // export const client = new Client("RHSGvCuxJRmEf347", "192.168.0.138", "7350", SSL);
+  
+  export const debugConsole = false;
 
   export const SSL = false;
 

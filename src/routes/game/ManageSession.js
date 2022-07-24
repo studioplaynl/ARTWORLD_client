@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { client, SSL } from "../../nakama.svelte";
+import { client, SSL, debugConsole } from "../../nakama.svelte";
 import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate from artworld coordinates to Phaser 2D screen coordinates
 import { location } from "svelte-spa-router"
 import { Notification } from "../../session"
@@ -8,7 +8,7 @@ import { SCENES } from "./config.js";
 
 class ManageSession {
   constructor() {
-    this.debug = true;
+    this.debug = debugConsole;
     this.sessionStored;
     this.freshSession;
     this.userProfile;
@@ -201,7 +201,7 @@ class ManageSession {
                 data.posY
               )
 
-              console.log("positionVector", positionVector)
+              if (this.debug) console.log("positionVector", positionVector) 
 
               positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(
                 scene.worldSize,
@@ -227,7 +227,7 @@ class ManageSession {
                 data.posY
               )
 
-              console.log("positionVector", positionVector)
+              if (this.debug) console.log("positionVector", positionVector)
 
               positionVector = CoordinatesTranslator.artworldVectorToPhaser2D(
                 scene.worldSize,
@@ -241,13 +241,13 @@ class ManageSession {
               // if there is an unfinished tween, stop it and stop the online player
               if (typeof this[onlinePlayer] != "undefined") {
 
-                console.log("this[onlinePlayer]", this[onlinePlayer])
+                if (this.debug) console.log("this[onlinePlayer]", this[onlinePlayer])
                 this[onlinePlayer].stop()
                 // console.log("duration", duration)
 
                 const target = new Phaser.Math.Vector2(positionVector.x, positionVector.y);
                 const duration = target.length() / 2
-                console.log("duration", duration)
+                if (this.debug) console.log("duration", duration)
 
                 //set a variable for the onlinePlayer tween so it can be stopped when needed (by reference)
                 // this[onlinePlayer] = scene.tweens.add({
@@ -275,7 +275,7 @@ class ManageSession {
       //streampresence is everybody that is present also SELF
       if (!!streampresence.leaves) {
         streampresence.leaves.forEach((leave) => {
-          console.log("User left: %o", leave);
+          if (this.debug) console.log("User left: %o", leave);
           this.getStreamUsers("get_users", this.location);
         });
       }
@@ -286,14 +286,14 @@ class ManageSession {
           //console.log("this.userProfile.id", this.userProfile.id);
           if (join.user_id != this.userProfile.id) {
             //console.log(this.userProfile)
-            console.log("some one joined", join);
+            if (this.debug) console.log("some one joined", join);
             // this.getStreamUsers("home")
             //console.log(join.username)
             //console.log("join", join);
             //const tempName = join.user_id
             this.getStreamUsers("get_users", this.location);
           } else {
-            console.log("join", join);
+            if (this.debug) console.log("join", join);
           }
         });
         // this.getStreamUsers("home")
@@ -303,8 +303,8 @@ class ManageSession {
 
     this.socket.onnotification = (notif) => {
       Notification.set(notif)
-      console.log("Received %o", notif);
-      console.log("Notification content %s", notif);
+      if (this.debug) console.log("Received %o", notif);
+      if (this.debug) console.log("Notification content %s", notif);
 
     }
   } //end createSocket
@@ -313,17 +313,15 @@ class ManageSession {
     //* rpc_command:
     //* join" = join the stream, get the online users, except self
     //* get_users" = after joined, get the online users, except self
-    console.log(
-      'this.getStreamUsers("' + rpc_command + ', "' + location + '")'
-    );
+    if (this.debug)  console.log( 'this.getStreamUsers("' + rpc_command + ', "' + location + '")');
 
     this.socket.rpc(rpc_command, location).then((rec) => {
       //!the server reports all users in location except self_user
-      console.log(location);
+      if (this.debug) console.log(location);
       // get all online players = serverArray
       // create array for newUsers and create array for deleteUsers
       const serverArray = JSON.parse(rec.payload) || [];
-      console.log("serverArray", serverArray);
+      if (this.debug)  console.log("serverArray", serverArray);
 
       serverArray.forEach((newPlayer) => {
         const exists = this.allConnectedUsers.some(
@@ -331,7 +329,7 @@ class ManageSession {
         );
         if (!exists) {
           this.createOnlinePlayerArray.push(newPlayer);
-          console.log("newPlayer", newPlayer);
+          if (this.debug)  console.log("newPlayer", newPlayer);
         }
       });
 
@@ -342,15 +340,15 @@ class ManageSession {
         );
         if (!exists) {
           this.deleteOnlinePlayer(onlinePlayer);
-          console.log("remove onlinePlayer", onlinePlayer);
+          if (this.debug) console.log("remove onlinePlayer", onlinePlayer);
         }
       });
 
       //send our current location in the world to all connected players
-      console.log("send our current location in the world to all connected players")
+      if (this.debug) console.log("send our current location in the world to all connected players")
       //console.log("this.lastMoveCommand", this.lastMoveCommand)
       //console.log("this.currentScene", this.currentScene)
-      console.log("this.lastMoveCommand", this.lastMoveCommand)
+      if (this.debug)  console.log("this.lastMoveCommand", this.lastMoveCommand)
       // if (typeof this.currentScene != "undefined") {
       setTimeout(() => { this.sendMoveMessage(this.currentScene, this.lastMoveCommand.posX, this.lastMoveCommand.posY, this.lastMoveCommand.action) }, 1500)
       // }
@@ -367,7 +365,7 @@ class ManageSession {
     let removeUser = this.allConnectedUsers.filter(
       (obj) => obj.user_id == onlinePlayer.user_id
     );
-    console.log("removeUser", removeUser);
+    if (this.debug)  console.log("removeUser", removeUser);
 
     removeUser.forEach((element) => {
       element.destroy();
@@ -378,7 +376,7 @@ class ManageSession {
       (obj) => obj.user_id != onlinePlayer.user_id
     );
 
-    console.log("this.allConnectedUsers", this.allConnectedUsers);
+    if (this.debug)  console.log("this.allConnectedUsers", this.allConnectedUsers);
   }
 
   async leave(selected) {

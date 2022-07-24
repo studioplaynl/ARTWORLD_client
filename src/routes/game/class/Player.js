@@ -11,9 +11,9 @@ class Player {
 
   subscribeToProfile() {
     Profile.subscribe((value) => {
-      console.log("Profile refreshed avatar")
+      if (ManageSession.debug) console.log("Profile refreshed avatar")
 
-      console.log(value)
+      if (ManageSession.debug) console.log(value)
       this.subscribedToProfile = true
       this.loadPlayerAvatar(ManageSession.currentScene, undefined, undefined, value)
     })
@@ -21,12 +21,12 @@ class Player {
 
   loadPlayerAvatar(scene, placePlayerX, placePlayerY, userprofile) {
     if (!!!userprofile) userprofile = ManageSession.userProfile
-    console.log("loadPlayerAvatar", userprofile)
+    if (ManageSession.debug) console.log("loadPlayerAvatar", userprofile)
 
     //check for createPlayer flag
     if (!ManageSession.createPlayer) return
     //ManageSession.createPlayer = false
-    //console.log("ManageSession.createPlayer = false;")
+    //if (ManageSession.debug) console.log("ManageSession.createPlayer = false;")
     scene.createdPlayer = false
 
     // is playerAvaterKey already in loadedAvatars?
@@ -115,14 +115,14 @@ class Player {
 
     //if the texture doesnot exists (if it is new) load it and attach it to the player
     if (!scene.textures.exists(scene.playerAvatarKey)) {
-      console.log("didn't exist yet: scene.textures.exists(scene.playerAvatarKey)")
+      if (ManageSession.debug) console.log("didn't exist yet: scene.textures.exists(scene.playerAvatarKey)")
       const fileNameCheck = scene.playerAvatarKey
 
       //convert the avatar url to a converted png url
 
       scene.load.spritesheet(fileNameCheck, userprofile.url, { frameWidth: this.avatarSize * 2, frameHeight: this.avatarSize * 2 })
         .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => {
-          console.log("filecomplete-spritesheet scene.playerAvatarKey", scene.playerAvatarKey);
+          if (ManageSession.debug) console.log("filecomplete-spritesheet scene.playerAvatarKey", scene.playerAvatarKey);
           if (this.subscribedToProfile != true) {
             this.subscribeToProfile()
           }
@@ -132,23 +132,23 @@ class Player {
 
     } else {
       //else reload the old (already in memory avatar)
-      console.log("existed already: scene.textures.exists(scene.playerAvatarKey)")
+      if (ManageSession.debug) console.log("existed already: scene.textures.exists(scene.playerAvatarKey)")
       this.attachAvatarToPlayer(scene)
-      console.log("scene.location", scene.location)
+      if (ManageSession.debug) console.log("scene.location", scene.location)
 
     }
 
   }
 
   async attachAvatarToPlayer(scene) {
-    console.log(" attachAvatarToPlayer(scene)")
+    if (ManageSession.debug) console.log(" attachAvatarToPlayer(scene)")
 
     const avatar = scene.textures.get(scene.playerAvatarKey)
     const avatarWidth = avatar.frames.__BASE.width
-    console.log("avatarWidth: ", avatarWidth)
+    if (ManageSession.debug) console.log("avatarWidth: ", avatarWidth)
 
     const avatarHeight = avatar.frames.__BASE.height
-    console.log("avatarHeight: ", avatarHeight)
+    if (ManageSession.debug) console.log("avatarHeight: ", avatarHeight)
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight)
     //console.log("avatarFrames: " + avatarFrames)
@@ -157,7 +157,7 @@ class Player {
 
     // if (avatarFrames < 1) {
       //. animation for the player avatar ......................
-      console.log("avatarFrames > 1")
+      if (ManageSession.debug) console.log("avatarFrames > 1")
 
       scene.playerMovingKey = "moving" + "_" + scene.playerAvatarKey
       scene.playerStopKey = "stop" + "_" + scene.playerAvatarKey
@@ -190,7 +190,7 @@ class Player {
     scene.player.setTexture(scene.playerAvatarKey)
     scene.playerShadow.setTexture(scene.playerAvatarKey)
 
-    console.log("scene.player.setTexture(scene.playerAvatarKey) done ")
+    if (ManageSession.debug) console.log("scene.player.setTexture(scene.playerAvatarKey) done ")
     //scale the player to this.avatarSize
     const width = this.avatarSize
     scene.player.displayWidth = width
@@ -204,7 +204,7 @@ class Player {
     // scene.player.body.setCircle(width, width, width / 2)
     scene.player.body.setCircle(width / 1.1, width / 5, width / 5)
 
-    // console.log("player avatar has loaded ")
+    //if (ManageSession.debug)  console.log("player avatar has loaded ")
     scene.player.location = scene.location
     scene.createdPlayer = true
 
@@ -225,9 +225,9 @@ class Player {
       ManageSession.createOnlinePlayerArray.forEach(onlinePlayer => {
         Promise.all([getAccount(onlinePlayer.user_id)]).then(rec => {
           const newOnlinePlayer = rec[0]
-          //console.log(newOnlinePlayer)
+          //if (ManageSession.debug) console.log(newOnlinePlayer)
           this.createOnlinePlayer(scene, newOnlinePlayer)
-          //console.log("parseNewOnlinePlayerArray scene", scene)
+          //if (ManageSession.debug) console.log("parseNewOnlinePlayerArray scene", scene)
         })
 
         //new onlineplayer is removed from the newOnlinePlayer array, once we call more data on it
@@ -238,14 +238,14 @@ class Player {
 
   createOnlinePlayer(scene, onlinePlayer) {
     // check if onlinePlayer exists already 
-    //console.log(onlinePlayer)
+    //if (ManageSession.debug) console.log(onlinePlayer)
     const exists = ManageSession.allConnectedUsers.some(element => element.user_id == onlinePlayer.user_id)
     // if player exists
     if (!exists) {
 
       //create new onlinePlayer with default avatar
       const onlinePlayerCopy = onlinePlayer
-      //console.log("createOnlinePlayer scene", scene)
+      //if (ManageSession.debug) console.log("createOnlinePlayer scene", scene)
       onlinePlayer = scene.add
         .sprite(
           CoordinatesTranslator.artworldToPhaser2DX(
@@ -296,19 +296,19 @@ class Player {
       Object.assign(onlinePlayer, onlinePlayerCopy)
       //we copy the id over as user_id to kep data consistent across our internal logic
       onlinePlayer["user_id"] = onlinePlayerCopy.id
-      console.log("onlinePlayer", onlinePlayer)
+      if (ManageSession.debug) console.log("onlinePlayer", onlinePlayer)
 
       //we push the new online player to the allConnectedUsers array
       ManageSession.allConnectedUsers.push(onlinePlayer)
 
       //we load the onlineplayer avatar, make a key for it
       const avatarKey = onlinePlayer.user_id + "_" + onlinePlayer.update_time
-      //console.log("avatarKey", avatarKey)
+      //if (ManageSession.debug) console.log("avatarKey", avatarKey)
 
       //if the texture already exists attach it again to the player
       // const preExisting = false
       if (!scene.textures.exists(avatarKey)) {
-        //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        //if (ManageSession.debug) console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
         //add it to loading queue
         scene.load.spritesheet(avatarKey, onlinePlayer.url, {
           frameWidth: this.avatarSize * 2,
@@ -317,7 +317,7 @@ class Player {
         //when file is finished loading the attachToAvatar function is called
         scene.load.start() // start loading the image in memory
       } else {
-        //console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        //if (ManageSession.debug) console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
         //attach the avatar to the onlinePlayer when it is already in memory
         this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey)
       }
@@ -329,7 +329,7 @@ class Player {
   }
 
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
-    //console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
+    //if (ManageSession.debug) console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
 
     onlinePlayer.active = true
     onlinePlayer.visible = true
@@ -339,15 +339,15 @@ class Player {
     const avatarHeight = avatar.frames.__BASE.height
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight)
-    console.log(avatarFrames)
+    if (ManageSession.debug) console.log(avatarFrames)
 
     if (avatarFrames > 1) {
       // set names for the moving and stop animations
 
       onlinePlayer.setData("movingKey", "moving" + "_" + tempAvatarName)
       onlinePlayer.setData("stopKey", "stop" + "_" + tempAvatarName)
-      console.log('onlinePlayer.getData("movingKey")')
-      console.log(onlinePlayer.getData("movingKey"))
+      if (ManageSession.debug) console.log('onlinePlayer.getData("movingKey")')
+      if (ManageSession.debug) console.log(onlinePlayer.getData("movingKey"))
 
       //create animation for moving
       if (!scene.anims.exists(onlinePlayer.getData("movingKey"))) {

@@ -1,11 +1,11 @@
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
-import {history} from "../../../session"
+import { history } from "../../../session"
 import { onDestroy, get } from "svelte" // cant get it to work
 
 
 class HistoryTracker {
-  constructor() { 
+  constructor() {
     this.tempHistoryArray
   }
 
@@ -13,7 +13,7 @@ class HistoryTracker {
     console.log("this.pushLocation")
     //store the current scene in ManageSession for reference outside of Phaser (html ui)
     ManageSession.currentScene = scene
-    console.log("scene", scene)
+    //console.log("scene", scene)
     //console.log("ManageSession.currentScene", ManageSession.currentScene)
 
     history.subscribe((value) => {
@@ -21,13 +21,13 @@ class HistoryTracker {
       this.tempHistoryArray = value
       //console.log("history this.tempHistoryArray", this.tempHistoryArray)
     })
-    
+
     // const tempArray = get(history) //can't get it to work
     // console.log("tempArray", tempArray)
 
     //the current scene does not exist yet in history
     if (this.tempHistoryArray[this.tempHistoryArray.length - 1]?.locationID != scene.location) {
-      console.log("store scene in history tracker")
+      if (ManageSession.debug) console.log("store scene in history tracker")
       // set ManageSession.playerPosX Y to player.x and y
       let playerPosX
       let playerPosY
@@ -43,10 +43,10 @@ class HistoryTracker {
       //   console.log("add to history array")
       //   //history.update({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
       //   // history.update((value)=>{value.push("test"); return value})
-        history.set(this.tempHistoryArray)
+      history.set(this.tempHistoryArray)
       // } else {
       //   console.log("add to history for the first time")
-        // history.set({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
+      // history.set({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
       // }
 
     }
@@ -55,8 +55,8 @@ class HistoryTracker {
   updatePositionCurrentScene(playerPosX, playerPosY) {
     this.tempHistoryArray[this.tempHistoryArray.length - 1].playerPosX = playerPosX
     this.tempHistoryArray[this.tempHistoryArray.length - 1].playerPosY = playerPosY
-   // console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX)
-   // console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY)
+    // console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX)
+    // console.log("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY)
   }
 
   activateBackButton(scene) {
@@ -74,7 +74,7 @@ class HistoryTracker {
     //set up the player position in ManageSession to place the player in last known position when it is created
     ManageSession.playerPosX = previousLocation.playerPosX
     ManageSession.playerPosY = previousLocation.playerPosY
-    console.log("ManageSession.playerPosX , ManageSession.playerPosY", ManageSession.playerPosX, ManageSession.playerPosY)
+    if (ManageSession.debug) console.log("ManageSession.playerPosX , ManageSession.playerPosY", ManageSession.playerPosX, ManageSession.playerPosY)
     // switching scenes
     this.switchScene(currentLocation, previousLocation.locationName, previousLocation.locationID)
   }
@@ -82,8 +82,7 @@ class HistoryTracker {
   switchScene(scene, goToScene, locationID) {
     scene.physics.pause()
     scene.player.setTint(0xff0000)
-    console.log()
-    //console.log("switchScene leave scene.location", scene.location)
+    //if (ManageSession.debug) console.log("switchScene leave scene.location", scene.location)
     ManageSession.socket.rpc("leave", scene.location)
 
     //console.log("switchScene goToScene", goToScene)
@@ -94,40 +93,49 @@ class HistoryTracker {
       callback: () => {
         ManageSession.location = goToScene
         ManageSession.createPlayer = true
-        // console.log("scene.scene.stop(scene.scene.key)", scene.scene.key)
+        // if (ManageSession.debug) console.log("scene.scene.stop(scene.scene.key)", scene.scene.key)
         scene.scene.stop(scene.scene.key)
-        // console.log("scene.scene.start(goToScene, { user_id: locationID })", goToScene, locationID)
+        // if (ManageSession.debug) console.log("scene.scene.start(goToScene, { user_id: locationID })", goToScene, locationID)
 
 
         scene.scene.start(goToScene, { user_id: locationID })
-        //console.log("switchScene locationID", locationID)
+        //if (ManageSession.debug) console.log("switchScene locationID", locationID)
         ManageSession.location = locationID
-        // console.log("ManageSession.getStreamUsers('join', locationID)", locationID)
+        // if (ManageSession.debug) console.log("ManageSession.getStreamUsers('join', locationID)", locationID)
         ManageSession.getStreamUsers("join", locationID)
       },
       callbackScope: scene,
       loop: false,
     })
-    
+
   }
-  async pauseSceneStartApp(scene, app){
-    scene.physics.pause()
-    scene.scene.pause()
-   
+  async pauseSceneStartApp(scene, app) {
+    // scene.physics.pause()
+    // scene.scene.pause()
+
+    //!changed from pausing to stopping the scene to save resources
+    //! also reloading the scene updates houses etc
+    scene.scene.stop()
+    if (ManageSession.debug) console.log("scene.scene.stop()")
     await ManageSession.socket.rpc("leave", scene.location)
     await ManageSession.socket.rpc("join", app)
     //ManageSession.getStreamUsers("join", app)
     // open app
   }
 
-  async startSceneCloseApp(scene, app){
-    if(!!!ManageSession.socket) return
+  async startSceneCloseApp(scene, app) {
+    if (!!!ManageSession.socket) return
     await ManageSession.socket.rpc("leave", app)
     await ManageSession.getStreamUsers("join", ManageSession.location)
 
-    console.log(scene)
-    scene.physics.resume()
-    scene.scene.resume()
+    if (ManageSession.debug) console.log(scene)
+    // scene.physics.resume()
+    // scene.scene.resume()
+
+    //!changed from pausing to stopping the scene to save resources
+    //! also reloading the scene updates houses etc
+    if (ManageSession.debug) console.log("scene.scene.restart()")
+    scene.scene.restart()
     //close app
   }
 }

@@ -1,3 +1,4 @@
+import { debugConsole } from "./nakama.svelte";
 import { Session, Profile, Error, Succes } from "./session.js"
 import { deleteObject, updateObject, listAllObjects } from "./api"
 import { get } from 'svelte/store'
@@ -16,10 +17,10 @@ function createAchievement() {
       let obj = { key, value }
       updateObject("achievements", key, value, true).then(() => {
 
-        console.log("value", value)
+        if (debugConsole) console.log("value", value)
         ach.push(obj)
-        console.log("ach", ach)
-        console.log("key", key)
+        if (debugConsole) console.log("ach", ach)
+        if (debugConsole) console.log("key", key)
         Achievements.set(ach)
         return ach
       })
@@ -78,9 +79,9 @@ function createServerObject(objectName) {
       updateObject(objectName, key, value, true).then((value) => {
         let obj = { key, value }
         ach.push(obj)
-        console.log("ach")
-        console.log(ach)
-        console.log(key)
+        if (debugConsole) console.log("ach")
+        if (debugConsole) console.log(ach)
+        if (debugConsole) console.log(key)
         [objectName].set(ach)
         return ach
       })
@@ -194,33 +195,33 @@ function createLiked() {
 
     create: (key, value) => {
       let likedArray = get(Liked)
-      console.log("likedArray storage", likedArray)
+      if (debugConsole) console.log("likedArray storage", likedArray)
 
       if (!!likedArray.find(element => element.key == key)) return
       let obj = { key, value }
       updateObject("liked", key, value, true).then(() => {
-        console.log("value", value)
+        if (debugConsole) console.log("value", value)
 
         likedArray.push(obj)
-        console.log("likedArray", likedArray)
-        console.log("key", key)
-        console.log("value", value)
-        console.log("obj", obj)
+        if (debugConsole) console.log("likedArray", likedArray)
+        if (debugConsole) console.log("key", key)
+        if (debugConsole) console.log("value", value)
+        if (debugConsole) console.log("obj", obj)
         Liked.set(likedArray)
         return likedArray
       })
     },
     get: () => {
       let likedArray = get(Liked)
-      console.log("likedArray:1", likedArray)
+      if (debugConsole) console.log("likedArray:1", likedArray)
       let Sess = get(Session)
       if (!!likedArray && likedArray.length > 0) {
-        console.log("likedArray passed!")
+        if (debugConsole) console.log("likedArray passed!")
         return likedArray
       }
       else {
         if (!!Sess) listAllObjects("liked", Sess.user_id).then((likedArray) => {
-          console.log("likedArray 2", likedArray)
+          if (debugConsole) console.log("likedArray 2", likedArray)
           Liked.set(likedArray)
           return likedArray
         })
@@ -275,7 +276,7 @@ function createAddressbook() {
         return addressbookArray
       } else {
         if (!!Sess) listAllObjects("addressbook", Sess.user_id).then((addressbookArray) => {
-          console.log("storage addressbookArray", addressbookArray)
+          if (debugConsole) console.log("storage addressbookArray", addressbookArray)
           Addressbook.set(addressbookArray)
           return addressbookArray
         })
@@ -284,11 +285,11 @@ function createAddressbook() {
 
     create: (key, value) => {
       let addressbookArray = get(Addressbook)
-      console.log("storage addressbookArray", addressbookArray)
+      if (debugConsole) console.log("storage addressbookArray", addressbookArray)
       if (!!addressbookArray.find(element => element.key == key)) return
       let obj = { key, value }
       updateObject("addressbook", key, value, true).then(() => {
-        console.log("storage addressbook value", value)
+        if (debugConsole) console.log("storage addressbook value", value)
         addressbookArray.push(obj)
         Addressbook.set(addressbookArray)
         return addressbookArray
@@ -297,12 +298,12 @@ function createAddressbook() {
 
     delete: (key) => {
       Addressbook.update((value) => {
-        console.log("key", key)
-        console.log("value", value)
+        if (debugConsole) console.log("key", key)
+        if (debugConsole) console.log("value", value)
         const itemNum = value.findIndex((element) => {
           return element.value.user_id == key
         })
-        console.log("itemNum", itemNum)
+        if (debugConsole) console.log("itemNum", itemNum)
         if (itemNum == -1) return value
         value.splice(itemNum, 1)
         deleteObject("addressbook", key)
@@ -323,10 +324,10 @@ function createAddressbook() {
   //     let addressbookArray = get(Addressbook)
 
   //     let userId = Sess.user_id
-  //     console.log("userId", userId)
+  //     if (debugConsole) console.log("userId", userId)
   //     let userName = Sess.user_name
 
-  //     console.log("Am I running?")
+  //     if (debugConsole) console.log("Am I running?")
 
   //     // let obj = { userId, userName }
 
@@ -341,12 +342,12 @@ function createAddressbook() {
 
   //   // holds token and user's details
   //   let Sess = get(Session)
-  //   // console.log("Sess", Sess)
+  //   // if (debugConsole) console.log("Sess", Sess)
 
   //   // API call to get the list of friends
   //   listAllObjects("addressbook", Sess.user_id).then((addressbookArray) => {
   //     Addressbook.set(addressbookArray)
-  //     // console.log("addressbookArray", addressbookArray)
+  //     // if (debugConsole) console.log("addressbookArray", addressbookArray)
   //     return addressbookArray
   //   })
   // }
