@@ -957,6 +957,8 @@
   };
 
   async function addFrame() {
+    await upload();
+    
     await updateFrame();
     if (frames.length >= maxFrames) return;
     console.log("click");
@@ -965,6 +967,13 @@
     await changeFrame(frames.length - 1);
     let framebar = document.getElementById("frame-bar");
     framebar.scrollTo({ left: 0, top: framebar.scrollHeight });
+
+    //save the stopmotion to the server, in some cases the app crashed with too many frames
+    //to prevent data loss
+    // if (!isAlreadyUploaded || isTitleChanged) {
+    //   await upload();
+    // }
+    //await createStopmotion();
   }
 
   function playFrames() {
