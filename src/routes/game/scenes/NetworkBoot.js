@@ -1,30 +1,31 @@
-import ManageSession from "../ManageSession"
-import ServerCall from "../class/ServerCall"
-import { CurrentApp } from "../../../session"
-import { Addressbook, Liked } from "../../../storage"
+import ManageSession from '../ManageSession';
+import ServerCall from '../class/ServerCall';
+import { CurrentApp } from '../../../session';
+import { Addressbook, Liked } from '../../../storage';
+
+const { Phaser } = window;
 
 export default class NetworkBoot extends Phaser.Scene {
   constructor() {
-    super("NetworkBoot")
+    super('NetworkBoot');
   }
 
   async preload() {
-    //console.log("NetworkBoot")
-    //setLoader(true)
-    this.scene.launch("UI_Scene")
-    ManageSession.createPlayer = true
+    // console.log("NetworkBoot")
+    // setLoader(true)
+    this.scene.launch('UIScene');
+    ManageSession.createPlayer = true;
 
-    //we launch the player last location when we have a socket with the server
+    // we launch the player last location when we have a socket with the server
     await ManageSession.createSocket()
       .then(async () => {
+        // get server object so that the data is Initialized
+        Liked.get();
+        Addressbook.get();
 
-        //get server object so that the data is Initialized
-        Liked.get()
-        Addressbook.get()
-
-        console.log("ManageSession.locationID", ManageSession.locationID)
-        this.scene.launch(ManageSession.location, { user_id: ManageSession.locationID })
-        CurrentApp.update(n => "game")
-      })
+        console.log('ManageSession.locationID', ManageSession.locationID);
+        this.scene.launch(ManageSession.location, { user_id: ManageSession.locationID });
+        CurrentApp.update((n) => 'game');
+      });
   }
 }

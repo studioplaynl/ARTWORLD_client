@@ -1,57 +1,58 @@
 <script>
-  import Router from "svelte-spa-router";
-  import { onMount } from "svelte";
-  import { wrap } from "svelte-spa-router/wrap";
-  import home from "./routes/game/index.svelte";
-  import registerPage from "./routes/auth/register.svelte";
+  import Router from 'svelte-spa-router';
+  import { onMount } from 'svelte';
+  import { wrap } from 'svelte-spa-router/wrap';
+  import home from './routes/game/index.svelte';
+  import registerPage from './routes/auth/register.svelte';
 
-  import Users from "./routes/users.svelte";
-  import login from "./routes/auth/login.svelte";
-  import profile from "./routes/profile.svelte";
-  import match from "./routes/match.svelte";
+  import Users from './routes/users.svelte';
+  import login from './routes/auth/login.svelte';
+  import profile from './routes/profile.svelte';
+  import match from './routes/match.svelte';
   // import drawing from "./routes/apps/drawing.svelte";
-  import { Session, Profile } from "./session.js";
+  import { Session, Profile } from './session.js';
   // import UploadAvatar from "./routes/uploadAvatar.svelte";
-  import Error from "./routes/components/error.svelte";
-  import Menu from "./routes/components/menu.svelte";
-  import Friends from "./routes/friends.svelte";
-  import Admin from "./routes/admin.svelte";
-  import updatePage from "./routes/auth/update.svelte";
-  import mandala from "./routes/apps/mandala.svelte";
-  import upload from "./routes/apps/upload.svelte";
-  import MarioSequencer from "./routes/apps/marioSequencer.svelte";
-  import player from "./routes/apps/player.svelte";
-  import Moderate from "./routes/moderate.svelte";
+  import Error from './routes/components/error.svelte';
+  import Menu from './routes/components/menu.svelte';
+  import Friends from './routes/friends.svelte';
+  import Admin from './routes/admin.svelte';
+  import updatePage from './routes/auth/update.svelte';
+  import mandala from './routes/apps/mandala.svelte';
+  import upload from './routes/apps/upload.svelte';
+  import MarioSequencer from './routes/apps/marioSequencer.svelte';
+  import player from './routes/apps/player.svelte';
+  import Moderate from './routes/moderate.svelte';
 
-  document.addEventListener("contextmenu", function (e) {
+  document.addEventListener('contextmenu', function (e) {
     e.preventDefault();
     e.target.click();
   });
 
   onMount(() => {
-    document.getElementById("loader").classList.add("hide");
+    document.getElementById('loader').classList.add('hide');
   });
 
   let isLogedIn = (detail) => {
     if ($Session != null) return true;
     else {
-      window.location.href = "/#/login";
+      window.location.href = '/#/login';
       return false;
     }
   };
   let isAdmin = (detail) => {
     console.log($Profile);
-    if ($Profile.meta.Role == "admin") return true;
+    if ($Profile.meta.Role == 'admin') return true;
     else {
-      window.location.href = "/#/";
+      window.location.href = '/#/';
       return false;
     }
   };
   let isModerator = (detail) => {
     console.log($Profile);
-    if ($Profile.meta.Role == "moderator" || $Profile.meta.role == "admin") return true;
+    if ($Profile.meta.Role == 'moderator' || $Profile.meta.role == 'admin')
+      return true;
     else {
-      window.location.href = "/#/";
+      window.location.href = '/#/';
       return false;
     }
   };

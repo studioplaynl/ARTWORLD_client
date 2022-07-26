@@ -16,6 +16,7 @@ module.exports = {
     '@typescript-eslint', // add the TypeScript plugin
   ],
   rules: {
+    'linebreak-style': 0,
   },
   overrides: [ // this stays the same
     {

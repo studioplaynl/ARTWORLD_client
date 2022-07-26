@@ -5,8 +5,6 @@ import { client, SSL } from '../../nakama.svelte';
 import CoordinatesTranslator from './class/CoordinatesTranslator'; // translate from artworld coordinates to Phaser 2D screen coordinates
 import { Profile, Session, Notification } from '../../session';
 
-import { SCENES } from './config.js';
-
 // Phaser is loaded onto the browser window, not imported directly
 const { Phaser } = window;
 
@@ -118,7 +116,7 @@ class ManageSession {
     const createStatus = true;
 
     this.userProfile = get(Profile);
-    console.log("this.userProfile", this.userProfile);
+    console.log('this.userProfile', this.userProfile);
 
     await this.socket.connect(get(Session), createStatus);
     console.log('session created with socket');
@@ -263,8 +261,7 @@ class ManageSession {
     };
 
     this.socket.onstreampresence = (streampresence) => {
-
-      console.log("this.socket.onstreampresence");
+      console.log('this.socket.onstreampresence');
 
       // streampresence is everybody that is present also SELF
       if (streampresence.leaves) {
@@ -279,7 +276,6 @@ class ManageSession {
           // filter out the player it self
           // console.log("this.userProfile.id", this.userProfile.id);
 
-          
           console.log('this.userProfile = ', this.userProfile);
           if (join.user_id != this.userProfile.id) {
             // console.log(this.userProfile)
@@ -399,17 +395,6 @@ class ManageSession {
 
     this.socket.rpc('move_position', data);
   } // end sendChatMessage
-
-  checkIfSceneExists(location) {
-    // check if this.launchLocation exists in SCENES
-    // const locationExists = SCENES.includes(location)
-
-    const locationExists = SCENES.some((el) => el.name === location);
-    // console.log("SCENES", SCENES)
-    console.log('locationExists SCENES', locationExists, location, SCENES);
-
-    return locationExists;
-  }
 
   testMoveMessage() {
     // works

@@ -31,6 +31,8 @@
     console.log(params);
     let currentDate = Math.floor(Date.now() / 1000);
     if (!!$Session && $Session.expires_at > currentDate) {
+      
+      // TODO: If a user tried loading a deeplink, this should not transfer them back to the index page..
       window.location.href = "/#/";
     }
   });

@@ -1,20 +1,22 @@
 import ManageSession from '../ManageSession';
-import { listObjects, convertImage, getAccount } from '../../../api.js';
+import { listObjects, convertImage, getAccount } from '../../../api';
 
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
-import Player from '../class/Player.js';
-import Preloader from '../class/Preloader.js';
-import BouncingBird from '../class/BouncingBird.js';
+import Player from '../class/Player';
+import Preloader from '../class/Preloader';
+import BouncingBird from '../class/BouncingBird';
 import GraffitiWall from '../class/GraffitiWall';
-import Background from '../class/Background.js';
-import CoordinatesTranslator from '../class/CoordinatesTranslator.js';
-import GenerateLocation from '../class/GenerateLocation.js';
-import HistoryTracker from '../class/HistoryTracker.js';
-import Move from '../class/Move.js';
+import Background from '../class/Background';
+import CoordinatesTranslator from '../class/CoordinatesTranslator';
+import GenerateLocation from '../class/GenerateLocation';
+import HistoryTracker from '../class/HistoryTracker';
+import Move from '../class/Move';
 import ServerCall from '../class/ServerCall';
 import Exhibition from '../class/Exhibition';
 import { CurrentApp } from '../../../session';
+
+const { Phaser } = window;
 
 export default class Artworld extends Phaser.Scene {
   constructor() {

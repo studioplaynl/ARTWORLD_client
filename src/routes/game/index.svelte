@@ -1,71 +1,100 @@
 <script>
   //* Svelte
-  import { onMount } from "svelte"
+  import { onMount } from 'svelte';
 
   //* Phaser Plugins
-  //import { enable3d, Canvas } from "@enable3d/phaser-extension"
-  import Phaser from "phaser"
-  import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin.js"
-  import CircleMaskImagePlugin from "phaser3-rex-plugins/plugins/circlemaskimage-plugin.js"
-  import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin.js'
-  import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin.js'
-  import { CONFIG, SCENES } from "./config";
-  import {sessionCheck} from "../../api"
-  import Itemsbar from "../components/itemsbar.svelte";
-  import AppLoader from "../components/appLoader.svelte"
-  import TopBar from "../components/topbar.svelte"
-  import AchievementAnimation from "../components/achievement.svelte"
-  import TutLoader from "../tutorials/tutLoader.svelte"
+  // import { enable3d, Canvas } from "@enable3d/phaser-extension"
+  import Phaser from 'phaser';
+  import UIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin';
+  import CircleMaskImagePlugin from 'phaser3-rex-plugins/plugins/circlemaskimage-plugin';
+  import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin';
+  import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin';
+  import { CONFIG } from './config';
+  import { sessionCheck } from '../../api';
+  import Itemsbar from '../components/itemsbar.svelte';
+  import AppLoader from '../components/appLoader.svelte';
+  import TopBar from '../components/topbar.svelte';
+  import AchievementAnimation from '../components/achievement.svelte';
+  import TutLoader from '../tutorials/tutLoader.svelte';
 
+  // Add scenes
+  import PreloadScene from './scenes/PreloadScene';
+  import urlParser from './scenes/urlParser';
+  import NetworkBoot from './scenes/NetworkBoot';
+  import Location1 from './scenes/Location1';
+  import Location3 from './scenes/Location3';
+  import Location4 from './scenes/Location4';
+  import UIScene from './scenes/UIScene';
+  import Artworld from './scenes/Artworld';
+  import TestCoordinates from './scenes/TestCoordinates';
+  import DefaultUserHome from './scenes/DefaultUserHome';
+  import ChallengeAnimalGarden from './scenes/ChallengeAnimalGarden';
+  import ChallengeFlowerField from './scenes/ChallengeFlowerField';
+
+  const SCENES = [
+    PreloadScene,
+    urlParser,
+    NetworkBoot,
+    Location1,
+    Location3,
+    Location4,
+    Artworld,
+    UIScene,
+    TestCoordinates,
+    DefaultUserHome,
+    ChallengeAnimalGarden,
+    ChallengeFlowerField,
+  ];
 
   onMount(async () => {
-    sessionCheck()
+    sessionCheck();
+
     const config = {
-      //parent: "phaserId",
-  
+      // parent: "phaserId",
+
       type: Phaser.WEBGL,
       transparent: true, // for 3d scene
-      
+
       domCreateContainer: false,
       // width: CONFIG.WIDTH,
       // height: CONFIG.HEIGHT,
       input: {
-        windowEvents: false, //no input to phaser from outside the canvas, the rest of the html doc
+        windowEvents: false, // no input to phaser from outside the canvas, the rest of the html doc
       },
 
       scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        parent: "phaserId",
+        parent: 'phaserId',
         width: CONFIG.WIDTH,
         height: CONFIG.HEIGHT,
       },
       plugins: {
         scene: [
           {
-            key: "rexUI",
+            key: 'rexUI',
             plugin: UIPlugin,
-            mapping: "rexUI",
+            mapping: 'rexUI',
           },
           {
-            key: "rexSpinner",
+            key: 'rexSpinner',
             plugin: SpinnerPlugin,
-            mapping: "rexSpinner",
+            mapping: 'rexSpinner',
           },
         ],
         global: [
           {
-            key: "rexCircleMaskImagePlugin",
+            key: 'rexCircleMaskImagePlugin',
             plugin: CircleMaskImagePlugin,
             start: true,
           },
           {
             key: 'rexScroller',
             plugin: ScrollerPlugin,
-            start: true
-          }
+            start: true,
+          },
         ],
-      }, //end plugins
+      }, // end plugins
 
       // scale: {
       //           mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT ,
@@ -75,32 +104,30 @@
       // transparent: true,
 
       physics: {
-        default: "arcade",
+        default: 'arcade',
         arcade: {
-          //gravity: { y: 0 },
+          // gravity: { y: 0 },
           debug: false,
           fixedStep: true,
           fps: 60,
         },
       },
 
-      scene: SCENES, //scenes defined in config.js
+      scene: SCENES, // scenes defined in config.js
 
-      //...Canvas(), //enable 3D
-    }
+      // ...Canvas(), //enable 3D
+    };
 
-    //enable3d(() => new Phaser.Game(config)).withPhysics("/ammo/kripken")
-    new Phaser.Game(config)
-  })
+    // enable3d(() => new Phaser.Game(config)).withPhysics("/ammo/kripken")
+    new Phaser.Game(config);
+  });
 </script>
-
 
 <Itemsbar />
 <AppLoader />
 <TopBar />
 <AchievementAnimation />
 <main>
-  <div id="phaserId" />
+  <div id="phaserId"></div>
 </main>
-<TutLoader/>
-
+<TutLoader />
