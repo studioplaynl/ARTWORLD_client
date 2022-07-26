@@ -25,33 +25,33 @@ class HistoryTracker {
 
     // the current scene does not exist yet in History
 
-    if (this.tempHistoryArray.length > 0) {
-      if (this.tempHistoryArray[this.tempHistoryArray.length - 1]?.locationID !== scene.location) {
-        dlog('store scene in History tracker');
-        // set ManageSession.playerPosX Y to player.x and y
-        let playerPosX;
-        let playerPosY;
+    // if (this.tempHistoryArray.length > 0) {
+    if (this.tempHistoryArray[this.tempHistoryArray.length - 1]?.locationID !== scene.location) {
+      dlog('store scene in History tracker');
+      // set ManageSession.playerPosX Y to player.x and y
+      let playerPosX;
+      let playerPosY;
 
-        if (scene.player) {
-          playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
-          playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
+      if (scene.player) {
+        playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
+        playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
         // dlog(" ManageSession.locationHistory.push playerPosX playerPosY", playerPosX, playerPosY)
-        }
-        this.tempHistoryArray.push({
-          locationName: scene.scene.key, locationID: scene.location, playerPosX, playerPosY,
-        });
+      }
+      this.tempHistoryArray.push({
+        locationName: scene.scene.key, locationID: scene.location, playerPosX, playerPosY,
+      });
 
-        // if (this.tempHistoryArray.length > 1) {
-        //   dlog("add to History array")
-        //   //History.update({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
-        //   // History.update((value)=>{value.push("test"); return value})
-        History.set(this.tempHistoryArray);
+      // if (this.tempHistoryArray.length > 1) {
+      //   dlog("add to History array")
+      //   //History.update({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
+      //   // History.update((value)=>{value.push("test"); return value})
+      History.set(this.tempHistoryArray);
       // } else {
       //   dlog("add to History for the first time")
       // History.set({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
       // }
-      }
     }
+    // }
   }
 
   updatePositionCurrentScene(playerPosX, playerPosY) {
@@ -134,8 +134,6 @@ class HistoryTracker {
     scene.scene.resume();
     // close app
   }
-
-  
 }
 
 export default new HistoryTracker();
