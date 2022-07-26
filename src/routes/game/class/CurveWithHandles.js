@@ -3,6 +3,8 @@ import CoordinatesTranslator from './CoordinatesTranslator';
 
 const { Phaser } = window;
 
+/** Create a curve with handles in edit mode
+ * @todo Work in progress! */
 export default class CurveWithHandles {
   constructor(config) {
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;

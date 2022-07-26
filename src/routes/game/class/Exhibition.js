@@ -1,8 +1,5 @@
 /* eslint-disable class-methods-use-this */
 class Exhibition {
-  constructor(config) {
-  }
-
   AbriBig(config) {
     const {
       scene, posX, posY, name,

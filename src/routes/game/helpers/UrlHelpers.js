@@ -21,5 +21,9 @@ export const getUrl = () => {
 // };
 
 export const setUrl = (local, posX, posY) => {
-  window.history.pushState('', 'Artworld', `/?location=${local}&posX=${Math.round(posX)}&posY=${Math.round(posY)}#${get(location)}`);
+  window.history.pushState(
+    '',
+    'Artworld',
+    `/?location=${local}&posX=${Math.round(posX)}&posY=${Math.round(posY)}#${get(location)}`,
+  );
 };

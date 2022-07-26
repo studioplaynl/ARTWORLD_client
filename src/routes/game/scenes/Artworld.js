@@ -634,6 +634,8 @@ export default class Artworld extends Phaser.Scene {
     this.isPlayerMoving = false;
   }
 
+  /** Create a curve with handles in edit mode
+ * @todo Work in progress, replace with CurveWithHandles class? */
   createCurveWithHandles() {
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
     const { gameEditMode } = ManageSession;

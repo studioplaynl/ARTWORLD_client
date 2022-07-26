@@ -118,7 +118,6 @@ class DebugFuntions {
       createOnlinePlayers,
       allConnectedUsers,
       selectedGameObject,
-
     } = ManageSession;
 
     const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
@@ -156,17 +155,21 @@ class DebugFuntions {
       case 'Digit1':
         dlog(code);
 
-        Promise.all([listObjects('liked', userProfile.id, 10)])
+        Promise.all([
+          listObjects('liked', userProfile.id, 10),
+        ])
           .then((rec) => {
             dlog('liked query', rec[0]);
           });
         // ManageSession.getStreamUsers("get_users", scene.location)
         // listObjects("addressbook", userProfile.id, 10)
 
-        Promise.all([listObjects('addressbook', userProfile.id, 10),
-        ]).then((rec) => {
-          dlog('addressbook query', rec[0]);
-        });
+        Promise.all([
+          listObjects('addressbook', userProfile.id, 10),
+        ])
+          .then((rec) => {
+            dlog('addressbook query', rec[0]);
+          });
         break;
 
       case 'Digit2':
@@ -315,9 +318,6 @@ class DebugFuntions {
         break;
 
       case 'ShiftLeft':
-        this.shiftDown = false;
-        break;
-
       case 'ShiftRight':
         this.shiftDown = false;
         break;

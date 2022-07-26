@@ -9,7 +9,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     super(config.scene, config.x, config.y);
 
     // this.scene = scene
-    this.scene = { config };
+    this.scene = config.scene;
     this.x = config.x;
     this.y = config.y;
     this.locationImage = config.locationImage;

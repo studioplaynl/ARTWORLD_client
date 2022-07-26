@@ -340,7 +340,7 @@ class ManageSession {
 
   /**
    * Delete an online player
-   * @param  {} onlinePlayer
+   * @param {object} onlinePlayer The currently online player
    */
   deleteOnlinePlayer(onlinePlayer) {
     // onlinePlayer has id

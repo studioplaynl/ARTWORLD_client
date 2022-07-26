@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
 import ManageSession from '../ManageSession';
@@ -24,9 +23,8 @@ class Player {
     });
   }
 
+  /** Load users' avatar from server, after initially loading default avatar */
   loadPlayerAvatar(scene, placePlayerX, placePlayerY, userprofile) {
-    // TODO: Why is this necessary?
-
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     if (!userprofile) userprofile = ManageSession.userProfile;
@@ -52,7 +50,7 @@ class Player {
     //* data model userAccount:
     // avatar_url: "avatar/stock/avatarRood.png"
     // eslint-disable-next-line max-len
-    // url: "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/stock/avatarRood.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20220220%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20220220T131419Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f4a9c03bec8f53e0d8ea141494fe1dac7f124781b8c5d9f77794c8521454e621"
+    // url: "https://..."
     // username: "user11"
     // metadata:
     //        azc: "Amsterdam"

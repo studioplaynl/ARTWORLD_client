@@ -8,125 +8,6 @@ import CoordinatesTranslator from './CoordinatesTranslator';
 import { dlog } from '../helpers/DebugLog';
 
 class ServerCall {
-  static async getServerArrayObject(collection, userID, maxItems) {
-    Promise.all([listObjects(collection, userID, maxItems)])
-      .then((response) => {
-        // check if the object exists
-        if (response[0].length > 0) {
-          // the object exists: addressbook
-
-          // check if the right object exists: addressbook_user_id
-          const filteredResponse = response[0].filter(
-            (element) => element.key === `${collection}_${ManageSession.userProfile.id}`,
-          );
-
-          if (filteredResponse.length > 0) {
-            // the right collection object exists, but check if there is data in de object, in the expected format
-
-            if (typeof filteredResponse[0].value[collection] !== 'undefined') {
-              // the object is in the right format (object.value.object), we assign our local copy
-              ManageSession[collection] = filteredResponse[0].value;
-              // dlog("ManageSession." + collection, ManageSession[collection])
-            } else {
-              // when the right addressbook does not exist: make an empty one
-              // addressbook_userid.value exists but .addressbook
-              ServerCall.createEmptyServerArrayObject(collection);
-            }
-          } else {
-            // when the right addressbook does not exist: make an empty one
-            ServerCall.createEmptyServerArrayObject(collection);
-          }
-          // dlog("ManageSession." + collection, ManageSession[collection])
-        } else {
-          // the addressbook does not exist: make an empty one
-          ServerCall.createEmptyServerArrayObject(collection);
-        }
-      });
-  }
-
-  static async createEmptyServerArrayObject(collection) {
-    // general method of creating an array inside an object with the argument of the method
-    dlog('createEmptyServerObject');
-    dlog(collection);
-
-    // pass data locally:
-    // - ManageSession
-
-    ManageSession[collection] = { [collection]: [] };
-
-    const type = collection;
-    const name = `${type}_${ManageSession.userProfile.id}`;
-    const pub = 2;
-    const value = ManageSession[type];
-    dlog(' ManageSession. empty', ManageSession[type]);
-    updateObject(type, name, value, pub);
-  }
-
-  static async getServerSingleObject(collection, userID, maxItems) {
-    Promise.all([listObjects(collection, userID, maxItems)])
-      .then((response) => {
-        // dlog("collection", collection)
-        // dlog("response", response)
-
-        // check if the object exists
-        if (response[0].length > 0) {
-          // the object exists: addressbook
-
-          // check if the right object exists: addressbook_user_id
-          const filteredResponse = response[0].filter(
-            (element) => element.key === `${collection}_${ManageSession.userProfile.id}`,
-          );
-
-          if (filteredResponse.length > 0) {
-            // the right collection object exists, but check if there is data in de object, in the expected format
-
-            if (typeof filteredResponse[0].value[collection] !== 'undefined') {
-              // the object is in the right format (object.value.object), we assign our local copy
-              ManageSession[collection] = filteredResponse[0].value;
-              // dlog("ManageSession." + collection, ManageSession[collection])
-            } else {
-              // when the right addressbook does not exist: make an empty one
-              // addressbook_userid.value exists but .addressbook
-              this.createEmptyServerObject(collection);
-            }
-          } else {
-            // when the right addressbook does not exist: make an empty one
-            this.createEmptyServerObject(collection);
-          }
-          // dlog("ManageSession." + collection, ManageSession[collection])
-        } else {
-          // the addressbook does not exist: make an empty one
-          this.createEmptyServerObject(collection);
-        }
-      });
-  }
-
-  static async getServerCollectionUrls(collection, array, filter, maxItems, _scene) {
-    const gameObjectRepresentation = `${collection}_gameObjectRepresentation`;
-    const scene = _scene;
-    scene[gameObjectRepresentation] = [];
-
-    // subscribe to loaderror event
-    scene.load.on('loaderror', (offendingFile) => {
-      this.resolveLoadError(offendingFile);
-    }, this);
-
-    // get a list of all collection objects and then filter
-    Promise.all([listObjects(collection, null, maxItems)])
-      .then((rec) => {
-        // dlog("rec: ", rec);
-        scene[collection] = rec[0];
-
-        if (typeof filter !== 'undefined') {
-          // filter only amsterdam homes
-          scene[collection] = scene[collection].filter(
-            (obj) => obj.key === filter,
-          );
-          this.generateHomes(scene);
-        }
-      });
-  }// end getServerCollectionUrls
-
   async getHomesFiltered(collection, filter, maxItems, _scene) {
     const scene = _scene;
     // homes represented, to created homes in the scene
@@ -289,6 +170,7 @@ class ServerCall {
     scene.homesRepresented[index].setDepth(30);
   }
 
+  /** Provide detailed information on a file loading error in Phaser, and provide fallback */
   resolveLoadError(offendingFile) {
     // element, index, homeImageKey, offendingFile, scene
     // ManageSession.resolveErrorObjectArray; // all loading images
@@ -305,7 +187,7 @@ class ServerCall {
 
     // dlog("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
     switch (loadFunction) {
-      case ('getHomeImage'):
+      case 'getHomeImage':
         dlog('load offendingFile again', imageKey);
 
         scene.load.image(imageKey, './assets/ball_grey.png')
