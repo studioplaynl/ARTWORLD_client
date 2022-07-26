@@ -1,7 +1,7 @@
 import ManageSession from '../ManageSession';
-import ServerCall from '../class/ServerCall';
 import { CurrentApp } from '../../../session';
 import { Addressbook, Liked } from '../../../storage';
+import { dlog } from '../helpers/DebugLog';
 
 const { Phaser } = window;
 
@@ -11,7 +11,6 @@ export default class NetworkBoot extends Phaser.Scene {
   }
 
   async preload() {
-    // console.log("NetworkBoot")
     // setLoader(true)
     this.scene.launch('UIScene');
     ManageSession.createPlayer = true;
@@ -23,9 +22,10 @@ export default class NetworkBoot extends Phaser.Scene {
         Liked.get();
         Addressbook.get();
 
-        console.log('ManageSession.locationID', ManageSession.locationID);
+        dlog('ManageSession.locationID', ManageSession.locationID);
         this.scene.launch(ManageSession.location, { user_id: ManageSession.locationID });
-        CurrentApp.update((n) => 'game');
+
+        CurrentApp.update(() => 'game');
       });
   }
 }

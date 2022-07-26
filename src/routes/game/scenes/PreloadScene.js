@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import Preloader from '../class/Preloader';
 
 const { Phaser } = window;
@@ -166,7 +167,7 @@ export default class PreloadScene extends Phaser.Scene {
     artFrameRendertexture.destroy();
   }
 
-  update(time, delta) {
-    if (this.loadingDone) this.scene.start('urlParser');
+  update() {
+    if (this.loadingDone) this.scene.start('UrlParser');
   } // end update
 }

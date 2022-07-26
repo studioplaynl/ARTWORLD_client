@@ -1,11 +1,11 @@
 import ManageSession from '../ManageSession';
-import { listObjects, convertImage, getAccount } from '../../../api';
+import { convertImage } from '../../../api';
 
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
-import BouncingBird from '../class/BouncingBird';
+// import BouncingBird from '../class/BouncingBird';
 import GraffitiWall from '../class/GraffitiWall';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
@@ -14,7 +14,8 @@ import HistoryTracker from '../class/HistoryTracker';
 import Move from '../class/Move';
 import ServerCall from '../class/ServerCall';
 import Exhibition from '../class/Exhibition';
-import { CurrentApp } from '../../../session';
+// import { CurrentApp } from '../../../session';
+import { dlog } from '../helpers/DebugLog';
 
 const { Phaser } = window;
 
@@ -33,13 +34,13 @@ export default class Artworld extends Phaser.Scene {
 
     this.newOnlinePlayers = [];
 
-    this.currentOnlinePlayer;
+    this.currentOnlinePlayer = {};
     this.avatarName = [];
     this.tempAvatarName = '';
     this.loadedAvatars = [];
 
-    this.player;
-    this.playerShadow;
+    this.player = {};
+    this.playerShadow = {};
     this.playerAvatarPlaceholder = 'avatar1';
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
@@ -52,7 +53,8 @@ export default class Artworld extends Phaser.Scene {
     // testing
     this.resolveLoadErrorCache = [];
 
-    this.playerContainer;
+    // TODO remove playerContainer?
+    // this.playerContainer;
 
     this.homes = [];
     this.homesRepreseneted = [];
@@ -65,6 +67,7 @@ export default class Artworld extends Phaser.Scene {
     this.COLOR_PRIMARY = 0xff5733;
     this.COLOR_LIGHT = 0xffffff;
     this.COLOR_DARK = 0x000000;
+    // TODO remove this.data?
     this.data;
     // ....................... end REX UI ......
 
@@ -159,11 +162,20 @@ export default class Artworld extends Phaser.Scene {
       backgroundColor: 0xffffff,
     });
 
+    const {
+      artworldToPhaser2DX, artworldToPhaser2DY, Phaser2DToArtworldX, Phaser2DToArtworldY,
+    } = CoordinatesTranslator;
+    const { gameEditMode } = ManageSession;
     // make a repeating set of rectangles around the artworld canvas
-    const middleCoordinates = new Phaser.Math.Vector2(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0));
+
+    const middleCoordinates = new Phaser.Math.Vector2(
+      artworldToPhaser2DX(this.worldSize.x, 0),
+      artworldToPhaser2DY(this.worldSize.y, 0),
+    );
+
     this.borderRectArray = [];
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i += 1) {
       this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i));
       this.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
 
@@ -174,69 +186,70 @@ export default class Artworld extends Phaser.Scene {
     Background.circle({
       scene: this,
       name: 'gradientAmsterdam1',
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1743),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -634),
+      posX: artworldToPhaser2DX(this.worldSize.x, 1743),
+      posY: artworldToPhaser2DY(this.worldSize.y, -634),
       size: 810,
       gradient1: 0x85feff,
       gradient2: 0xff01ff,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.gradientAmsterdam1.setInteractive({ draggable: true }); }
+    if (gameEditMode) { this.gradientAmsterdam1.setInteractive({ draggable: true }); }
 
     Background.circle({
       scene: this,
       name: 'gradientAmsterdam2',
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2093),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1011),
+      posX: artworldToPhaser2DX(this.worldSize.x, -2093),
+      posY: artworldToPhaser2DY(this.worldSize.y, 1011),
       size: 564,
       gradient1: 0xfbff00,
       gradient2: 0x85feff,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.gradientAmsterdam2.setInteractive({ draggable: true }); }
+    if (gameEditMode) { this.gradientAmsterdam2.setInteractive({ draggable: true }); }
 
     Background.circle({
       scene: this,
       name: 'gradientAmsterdam3',
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1990),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -927),
+      posX: artworldToPhaser2DX(this.worldSize.x, -1990),
+      posY: artworldToPhaser2DY(this.worldSize.y, -927),
       size: 914,
       gradient1: 0x3a4bba,
       gradient2: 0xbb00ff,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.gradientAmsterdam3.setInteractive({ draggable: true }); }
+    if (gameEditMode) { this.gradientAmsterdam3.setInteractive({ draggable: true }); }
 
-    // ............................................... homes area ................................................................................
+    // ............ homes area ............
+
     // grass background for houses
     Background.circle({
       scene: this,
       name: 'gradientGrass1',
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
+      posX: artworldToPhaser2DX(this.worldSize.x, 0),
+      posY: artworldToPhaser2DY(this.worldSize.y, 0),
       size: 2300,
       gradient1: 0x15d64a,
       gradient2: 0x2b8042,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.gradientGrass1.setInteractive({ draggable: true }); }
+    if (gameEditMode) { this.gradientGrass1.setInteractive({ draggable: true }); }
 
     // paths for the houses
     this.createCurveWithHandles();
 
-    // ............................................... end homes area ................................................................................
+    // ............  end homes area ............
 
     //!
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() // { useHandCursor: true }
-      // .on('pointerup', () => console.log('touched background'))
-      .on('pointerdown', () => ManageSession.playerMove = true)
+      // .on('pointerup', () => dlog('touched background'))
+      .on('pointerdown', () => { ManageSession.playerMove = true; })
       .setDepth(219)
       .setOrigin(0)
       .setVisible(false);
 
-    this.touchBackgroundCheck.input.alwaysEnabled = true; // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
-    //!
+    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    this.touchBackgroundCheck.input.alwaysEnabled = true;
 
     // sunglass_stripes
     this.sunglasses_stripes = this.add.image(
@@ -245,13 +258,19 @@ export default class Artworld extends Phaser.Scene {
       'sunglass_stripes',
     );
     this.sunglasses_stripes.name = 'sunglass_stripes';
-    // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.sunglasses_stripes.setInteractive({ draggable: true }); }
 
-    this.train = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 652), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1357), 'metro_train_grey');
-    this.train.name = 'train';
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) {
+    if (gameEditMode) { this.sunglasses_stripes.setInteractive({ draggable: true }); }
+
+    this.train = this.add.image(
+      artworldToPhaser2DX(this.worldSize.x, 652),
+      artworldToPhaser2DY(this.worldSize.y, 1357),
+      'metro_train_grey',
+    );
+    this.train.name = 'train';
+
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (gameEditMode) {
       this.train.setInteractive({ draggable: true });
     } else {
       // when not in edit mode add animation tween
@@ -267,9 +286,18 @@ export default class Artworld extends Phaser.Scene {
     }
 
     // create(scene, x, y, width, height, name, color, imageFile = null) {
-    GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2323), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1306), 800, 400, 'graffitiBrickWall', 0, 'brickWall');
+    GraffitiWall.create(
+      this,
+      artworldToPhaser2DX(this.worldSize.x, 2323),
+      artworldToPhaser2DY(this.worldSize.y, 1306),
+      800,
+      400,
+      'graffitiBrickWall',
+      0,
+      'brickWall',
+    );
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.graffitiBrickWall.setInteractive({ draggable: true }); }
+    if (gameEditMode) { this.graffitiBrickWall.setInteractive({ draggable: true }); }
 
     // ...................................................................................................
     // DRAW A SUN
@@ -277,14 +305,15 @@ export default class Artworld extends Phaser.Scene {
     Background.circle({
       scene: this,
       name: 'sunDrawingExample',
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1269),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2200),
+      posX: artworldToPhaser2DX(this.worldSize.x, 1269),
+      posY: artworldToPhaser2DY(this.worldSize.y, 2200),
       size: 400,
       gradient1: 0xffdf87,
       gradient2: 0xf7f76f,
     });
+
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) {
+    if (gameEditMode) {
       this.sunDrawingExample.setInteractive({ draggable: true });
     } else {
       // when we are not in edit mode
@@ -306,10 +335,24 @@ export default class Artworld extends Phaser.Scene {
           this.physics.pause();
         });
 
-      GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1383), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1600), 400, 400, 'sunDraw', 180, 'artFrame_512');
+      GraffitiWall.create(
+        this,
+        artworldToPhaser2DX(this.worldSize.x, 1383),
+        artworldToPhaser2DY(this.worldSize.y, 1600),
+        400,
+        400,
+        'sunDraw',
+        180,
+        'artFrame_512',
+      );
       this.sunDraw.setVisible(false);
 
-      this.sunDrawCloseButton = this.add.image(this.sunDraw.x + (this.sunDraw.width / 1.8), this.sunDraw.y - (this.sunDraw.width / 2), 'close');
+      // Create and add Close button
+      this.sunDrawCloseButton = this.add.image(
+        this.sunDraw.x + (this.sunDraw.width / 1.8),
+        this.sunDraw.y - (this.sunDraw.width / 2),
+        'close',
+      );
       this.sunDrawCloseButton.setInteractive()
         .on('pointerup', () => {
           this.sunDraw.setVisible(false);
@@ -319,12 +362,17 @@ export default class Artworld extends Phaser.Scene {
         });
       this.sunDrawCloseButton.setVisible(false);
 
-      this.sunDrawSaveButton = this.add.image(this.sunDrawCloseButton.x, this.sunDrawCloseButton.y + (this.sunDrawCloseButton.width * 1.1), 'save');
+      // Create and add Save button
+      this.sunDrawSaveButton = this.add.image(
+        this.sunDrawCloseButton.x,
+        this.sunDrawCloseButton.y + (this.sunDrawCloseButton.width * 1.1),
+        'save',
+      );
       this.sunDrawSaveButton.setInteractive()
         .on('pointerup', () => {
           const RT = this.sunDraw.getByName('sunDraw');
           RT.saveTexture('DrawnSun');
-          console.log('this.sunDrawingExample', this.sunDrawingExample);
+          dlog('this.sunDrawingExample', this.sunDrawingExample);
           this.sunDrawingExample.setTexture('DrawnSun');
         });
       this.sunDrawSaveButton.setVisible(false);
@@ -332,13 +380,17 @@ export default class Artworld extends Phaser.Scene {
     // end DRAW A SUN
     // ...................................................................................................
 
-    // .........................................................................................................................
+    // ...................................................................................................
     // DRAW A CLOUD
 
-    this.cloudDrawingExample = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1200), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2050), 'drawn_cloud');
+    this.cloudDrawingExample = this.add.image(
+      artworldToPhaser2DX(this.worldSize.x, 1200),
+      artworldToPhaser2DY(this.worldSize.y, 2050),
+      'drawn_cloud',
+    );
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     this.cloudDrawingExample.name = 'cloudDrawingExample';
-    if (ManageSession.gameEditMode) {
+    if (gameEditMode) {
       this.cloudDrawingExample.setInteractive({ draggable: true });
     } else {
       this.tweens.add({
@@ -358,10 +410,23 @@ export default class Artworld extends Phaser.Scene {
           this.cloudDrawSaveButton.setVisible(true);
         });
 
-      GraffitiWall.create(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1200), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1500), 600, 400, 'cloudDraw', 2, 'artFrame_512');
+      GraffitiWall.create(
+        this,
+        artworldToPhaser2DX(this.worldSize.x, 1200),
+        artworldToPhaser2DY(this.worldSize.y, 1500),
+        600,
+        400,
+        'cloudDraw',
+        2,
+        'artFrame_512',
+      );
       this.cloudDraw.setVisible(false);
 
-      this.cloudDrawCloseButton = this.add.image(this.cloudDraw.x + (this.cloudDraw.width / 1.8), this.cloudDraw.y - (this.cloudDraw.width / 1.8), 'close');
+      this.cloudDrawCloseButton = this.add.image(
+        this.cloudDraw.x + (this.cloudDraw.width / 1.8),
+        this.cloudDraw.y - (this.cloudDraw.width / 1.8),
+        'close',
+      );
       this.cloudDrawCloseButton.setInteractive()
         .on('pointerup', () => {
           this.cloudDraw.setVisible(false);
@@ -370,7 +435,11 @@ export default class Artworld extends Phaser.Scene {
         });
       this.cloudDrawCloseButton.setVisible(false);
 
-      this.cloudDrawSaveButton = this.add.image(this.cloudDrawCloseButton.x, this.cloudDrawCloseButton.y + (this.cloudDrawCloseButton.width * 1.1), 'save');
+      this.cloudDrawSaveButton = this.add.image(
+        this.cloudDrawCloseButton.x,
+        this.cloudDrawCloseButton.y + (this.cloudDrawCloseButton.width * 1.1),
+        'save',
+      );
       this.cloudDrawSaveButton.setInteractive()
         .on('pointerup', () => {
           const RT = this.cloudDraw.getByName('cloudDraw');
@@ -383,39 +452,43 @@ export default class Artworld extends Phaser.Scene {
     // ...................................................................................................
 
     // ...................................................................................................
-    this.photo_camera = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 662), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1377), 'photo_camera').setFlip(true, false);
+    this.photo_camera = this.add.image(
+      artworldToPhaser2DX(this.worldSize.x, 662),
+      artworldToPhaser2DY(this.worldSize.y, 1377),
+      'photo_camera',
+    ).setFlip(true, false);
     this.photo_camera.name = 'photo_camera';
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.photo_camera.setInteractive({ draggable: true }); }
+    if (gameEditMode) { this.photo_camera.setInteractive({ draggable: true }); }
 
     this.tree_palm = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 992),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 772),
+      artworldToPhaser2DX(this.worldSize.x, 992),
+      artworldToPhaser2DY(this.worldSize.y, 772),
       'tree_palm',
     );
     this.tree_palm.name = 'tree_palm';
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.tree_palm.setInteractive({ draggable: true }); }
+    if (gameEditMode) { this.tree_palm.setInteractive({ draggable: true }); }
 
     Exhibition.AbriBig({
       scene: this,
       name: 'exhibit_outdoor_big1',
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -300),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1262),
+      posX: artworldToPhaser2DX(this.worldSize.x, -300),
+      posY: artworldToPhaser2DY(this.worldSize.y, 1262),
       size: 564,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.exhibit_outdoor_big1.setInteractive({ draggable: true }); }
+    if (gameEditMode) { this.exhibit_outdoor_big1.setInteractive({ draggable: true }); }
 
     Exhibition.AbriSmall2({
       scene: this,
       name: 'exhibit_outdoor_small2_1',
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1659),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 287),
+      posX: artworldToPhaser2DX(this.worldSize.x, 1659),
+      posY: artworldToPhaser2DY(this.worldSize.y, 287),
       size: 564,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.exhibit_outdoor_small2_1.setInteractive({ draggable: true }); }
+    if (gameEditMode) { this.exhibit_outdoor_small2_1.setInteractive({ draggable: true }); }
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
     // End Background .........................................................................................
@@ -423,9 +496,18 @@ export default class Artworld extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
-    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201);
+    this.player = new PlayerDefault(
+      this,
+      artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX),
+      artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY),
+      this.playerAvatarPlaceholder,
+    ).setDepth(201);
+
     // Player.createPlayerItemsBar(this)
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
+    this.playerShadow = new PlayerDefaultShadow({
+      scene: this,
+      texture: this.playerAvatarPlaceholder,
+    }).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!
     HistoryTracker.pushLocation(this);
 
@@ -439,33 +521,43 @@ export default class Artworld extends Phaser.Scene {
 
     //! needed for handling object dragging
     this.input.on('dragstart', (pointer, gameObject) => {
-
+      dlog(pointer, gameObject);
     }, this);
 
     this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-      gameObject.x = dragX;
-      gameObject.y = dragY;
+      gameObject.setPosition(dragX, dragY);
 
-      if (gameObject.name == 'handle') {
+      if (gameObject.name === 'handle') {
         gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
       }
     }, this);
 
-    this.input.on('dragend', function (pointer, gameObject) {
-      const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
-      const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
+    this.input.on('dragend', (pointer, gameObject) => {
+      const worldX = Math.round(Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
+      const worldY = Math.round(Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
 
       // store the original scale when selecting the gameObject for the first time
-      if (ManageSession.selectedGameObject != gameObject) {
+      if (ManageSession.selectedGameObject !== gameObject) {
         ManageSession.selectedGameObject = gameObject;
         ManageSession.selectedGameObject_startScale = gameObject.scale;
         ManageSession.selectedGameObject_startPosition.x = gameObject.x;
         ManageSession.selectedGameObject_startPosition.y = gameObject.y;
-        console.log('editMode info startScale:', ManageSession.selectedGameObject_startScale);
+        dlog('editMode info startScale:', ManageSession.selectedGameObject_startScale);
       }
-      // ManageSession.selectedGameObject = gameObject
 
-      console.log('editMode info posX posY: ', worldX, worldY, 'scale:', ManageSession.selectedGameObject.scale, 'width*scale:', Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), 'height*scale:', Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), 'name:', ManageSession.selectedGameObject.name);
+      dlog(
+        'editMode info posX posY: ',
+        worldX,
+        worldY,
+        'scale:',
+        ManageSession.selectedGameObject.scale,
+        'width*scale:',
+        Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale),
+        'height*scale:',
+        Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale),
+        'name:',
+        ManageSession.selectedGameObject.name,
+      );
     }, this);
     //!
 
@@ -504,7 +596,7 @@ export default class Artworld extends Phaser.Scene {
     //   //filter only the visible art = "permission_read": 2
     //   this.userArtServerList = rec.filter(obj => obj.permission_read == 2)
 
-    //   console.log("this.userArtServerList", this.userArtServerList)
+    //   dlog("this.userArtServerList", this.userArtServerList)
     //   if (this.userArtServerList.length > 0) {
     //     this.userArtServerList.forEach((element, index, array) => {
     //       this.downloadArt(element, index, array)
@@ -523,8 +615,10 @@ export default class Artworld extends Phaser.Scene {
 
   } //end create
 
-  animalWallCollide(animal, wall) {
-    // console.log("animal, wall", animal, wall)
+  animalWallCollide() {
+    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
+
+    // dlog("animal, wall", animal, wall)
     this.player.body.reset(this.player.x, this.player.y);
     // send Stop command
     ManageSession.sendMoveMessage(this, this.player.x, this.player.y, 'physicsStop');
@@ -532,8 +626,8 @@ export default class Artworld extends Phaser.Scene {
     Move.updatePositionHistory(this); // update the url and historyTracker
 
     // update last player position in manageSession for when the player is reloaded inbetween scenes
-    ManageSession.playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, this.player.x);
-    ManageSession.playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, this.player.y);
+    ManageSession.playerPosX = Phaser2DToArtworldX(this.worldSize.x, this.player.x);
+    ManageSession.playerPosY = Phaser2DToArtworldY(this.worldSize.y, this.player.y);
 
     // play "stop" animation
     Move.movingAnimation(this, 'stop');
@@ -541,21 +635,22 @@ export default class Artworld extends Phaser.Scene {
   }
 
   createCurveWithHandles() {
-    const path = { t: 0, vec: new Phaser.Math.Vector2() };
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
+    const { gameEditMode } = ManageSession;
 
     this.curve = new Phaser.Curves.Spline([
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -977), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 598),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -604), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 526),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -608), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 92),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 339), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 202),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 616), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 972),
+      artworldToPhaser2DX(this.worldSize.x, -977), artworldToPhaser2DY(this.worldSize.y, 598),
+      artworldToPhaser2DX(this.worldSize.x, -604), artworldToPhaser2DY(this.worldSize.y, 526),
+      artworldToPhaser2DX(this.worldSize.x, -608), artworldToPhaser2DY(this.worldSize.y, 92),
+      artworldToPhaser2DX(this.worldSize.x, 339), artworldToPhaser2DY(this.worldSize.y, 202),
+      artworldToPhaser2DX(this.worldSize.x, 616), artworldToPhaser2DY(this.worldSize.y, 972),
     ]);
 
     const { points } = this.curve;
 
     //  Create drag-handles for each point
-    if (ManageSession.gameEditMode) {
-      for (let i = 0; i < points.length; i++) {
+    if (gameEditMode) {
+      for (let i = 0; i < points.length; i += 1) {
         const point = points[i];
 
         this.handle = this.add.image(point.x, point.y, 'ball', 0).setScale(0.1).setInteractive().setDepth(40);
@@ -572,6 +667,8 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async downloadArt(element, index, array) {
+    const { artworldToPhaser2DX } = CoordinatesTranslator;
+
     //! we are placing the artWorks 'around' (left and right of) the center of the world
     const totalArtWorks = array.length;
     const imageKeyUrl = element.value.url;
@@ -580,10 +677,10 @@ export default class Artworld extends Phaser.Scene {
     // put the artworks 'around' the center, which means: take total artworks * space = total x space eg 3 * 550 = 1650
     // we start at middleWorld.x - totalArtWidth + (artIndex * artDisplaySize)
 
-    const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks;
-
-    const middleWorldX = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0);
-    const startXArt = middleWorldX - (totalArtWidth / 2);
+    // TODO remove these 3?
+    // const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks;
+    // const middleWorldX = artworldToPhaser2DX(this.worldSize.x, 0);
+    // const startXArt = middleWorldX - (totalArtWidth / 2);
 
     if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
       let random = Math.floor(Math.random() * this.artArray.length);
@@ -617,10 +714,11 @@ export default class Artworld extends Phaser.Scene {
   }// end downloadArt
 
   generateLocations() {
-    // we set draggable on restart scene with a global flag
+    const { artworldVectorToPhaser2D } = CoordinatesTranslator;
+    const { gameEditMode } = ManageSession;
 
     let locationVector = new Phaser.Math.Vector2(-1215, -589);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+    locationVector = artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
@@ -630,7 +728,7 @@ export default class Artworld extends Phaser.Scene {
     this.location1 = new GenerateLocation({
       scene: this,
       type: 'isoBox',
-      draggable: ManageSession.gameEditMode,
+      draggable: gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Location1',
@@ -648,7 +746,7 @@ export default class Artworld extends Phaser.Scene {
     //* later move them relative to the mario_star
     const particles = this.add.particles('music_quarter_note').setDepth(139);
 
-    const music_emitter = particles.createEmitter({
+    const musicEmitter = particles.createEmitter({
       x: 0,
       y: 0,
       lifespan: { min: 2000, max: 8000 },
@@ -662,7 +760,7 @@ export default class Artworld extends Phaser.Scene {
     });
 
     locationVector = new Phaser.Math.Vector2(-792, -1138);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+    locationVector = artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
@@ -671,7 +769,7 @@ export default class Artworld extends Phaser.Scene {
       scene: this,
       type: 'image',
       size: 200,
-      draggable: ManageSession.gameEditMode,
+      draggable: gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
       internalUrl: 'mariosound',
@@ -686,10 +784,10 @@ export default class Artworld extends Phaser.Scene {
     });
     this.mario_star.setDepth(140);
 
-    music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20);
+    musicEmitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20);
 
     locationVector = new Phaser.Math.Vector2(-2125, 1017);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+    locationVector = artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
@@ -703,7 +801,7 @@ export default class Artworld extends Phaser.Scene {
       scene: this,
       type: 'image',
 
-      draggable: ManageSession.gameEditMode,
+      draggable: gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
       appUrl: 'drawing',
@@ -719,7 +817,7 @@ export default class Artworld extends Phaser.Scene {
     this.pencil.rotation = 0.12;
 
     locationVector = new Phaser.Math.Vector2(-1555, 809);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+    locationVector = artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
@@ -728,7 +826,7 @@ export default class Artworld extends Phaser.Scene {
       scene: this,
       type: 'image',
 
-      draggable: ManageSession.gameEditMode,
+      draggable: gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'ChallengeAnimalGarden',
@@ -743,7 +841,7 @@ export default class Artworld extends Phaser.Scene {
     });
 
     locationVector = new Phaser.Math.Vector2(1464, 989);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+    locationVector = artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
@@ -752,7 +850,7 @@ export default class Artworld extends Phaser.Scene {
       scene: this,
       type: 'image',
 
-      draggable: ManageSession.gameEditMode,
+      draggable: gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'ChallengeFlowerField',
@@ -767,12 +865,14 @@ export default class Artworld extends Phaser.Scene {
     });
   }
 
-  update(time, delta) {
+  update() {
+    const { gameEditMode } = ManageSession;
+
     // zoom in and out of game
     this.gameCam.zoom = ManageSession.currentZoom;
 
     // don't move the player with clicking and swiping in edit mode
-    if (!ManageSession.gameEditMode) {
+    if (!gameEditMode) {
       // ...... ONLINE PLAYERS ................................................
       Player.parseNewOnlinePlayerArray(this);
       // ........... PLAYER SHADOW .............................................................................
@@ -786,7 +886,7 @@ export default class Artworld extends Phaser.Scene {
       // ....... end stopping PLAYER .................................................................................
 
       // to detect if the player is clicking/tapping on one place or swiping
-      if (this.input.activePointer.downX != this.input.activePointer.upX) {
+      if (this.input.activePointer.downX !== this.input.activePointer.upX) {
         Move.moveBySwiping(this);
       } else {
         Move.moveByTapping(this);

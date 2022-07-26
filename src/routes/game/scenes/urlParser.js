@@ -17,11 +17,11 @@ const checkIfSceneExists = (location) => {
   return locationExists;
 };
 
-export default class urlParser extends Phaser.Scene {
+export default class UrlParser extends Phaser.Scene {
   debug = false;
 
   constructor() {
-    super('urlParser');
+    super('UrlParser');
     this.fallBackLocation = 'Artworld';
   }
 
@@ -133,7 +133,7 @@ export default class urlParser extends Phaser.Scene {
     if (this.debug) console.log('Launch: ', location, locationID);
     ManageSession.location = location; // scene key
     ManageSession.locationID = locationID; // in case of DefaultUserHome = user_id
-    this.scene.stop('urlParser');
+    this.scene.stop('UrlParser');
     this.scene.start('NetworkBoot');
   }
 
