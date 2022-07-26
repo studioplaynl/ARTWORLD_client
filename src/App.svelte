@@ -10,7 +10,7 @@
   import profile from './routes/profile.svelte';
   import match from './routes/match.svelte';
   // import drawing from "./routes/apps/drawing.svelte";
-  import { Session, Profile } from './session.js';
+  import { Session, Profile } from './session';
   // import UploadAvatar from "./routes/uploadAvatar.svelte";
   import Error from './routes/components/error.svelte';
   import Menu from './routes/components/menu.svelte';
@@ -23,7 +23,7 @@
   import player from './routes/apps/player.svelte';
   import Moderate from './routes/moderate.svelte';
 
-  document.addEventListener('contextmenu', function (e) {
+  document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     e.target.click();
   });
@@ -32,29 +32,27 @@
     document.getElementById('loader').classList.add('hide');
   });
 
-  let isLogedIn = (detail) => {
+  const isLogedIn = (detail) => {
     if ($Session != null) return true;
-    else {
-      window.location.href = '/#/login';
-      return false;
-    }
+
+    window.location.href = '/#/login';
+    return false;
   };
-  let isAdmin = (detail) => {
+  const isAdmin = (detail) => {
     console.log($Profile);
     if ($Profile.meta.Role == 'admin') return true;
-    else {
-      window.location.href = '/#/';
-      return false;
-    }
+
+    window.location.href = '/#/';
+    return false;
   };
-  let isModerator = (detail) => {
+  const isModerator = (detail) => {
     console.log($Profile);
-    if ($Profile.meta.Role == 'moderator' || $Profile.meta.role == 'admin')
+    if ($Profile.meta.Role == 'moderator' || $Profile.meta.role == 'admin') {
       return true;
-    else {
-      window.location.href = '/#/';
-      return false;
     }
+
+    window.location.href = '/#/';
+    return false;
   };
 </script>
 
@@ -64,52 +62,28 @@
   routes="{{
     '/register': wrap({
       component: registerPage,
-      conditions: [
-        (detail) => {
-          return isAdmin(detail);
-        },
-      ],
+      conditions: [(detail) => isAdmin(detail)],
     }),
     '/update/:user?': wrap({
       component: updatePage,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     '/users': wrap({
       component: Users,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     '/friends': wrap({
       component: Friends,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     '/login/:user?/:password?': login,
     '/profile/:user?': wrap({
       component: profile,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     '/match': wrap({
       component: match,
-      conditions: [
-        (detail) => {
-          return isAdmin(detail);
-        },
-      ],
+      conditions: [(detail) => isAdmin(detail)],
     }),
     // "/drawing/:user?/:name?/:version?": wrap({
     //     component: drawing,
@@ -129,19 +103,11 @@
     // }),
     '/mandala/:user?/:name?/:version?': wrap({
       component: mandala,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     '/mariosound/:user?/:name?': wrap({
       component: MarioSequencer,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     // "/avatar/:user?/:name?/:version?": wrap({
     //     component: drawing,
@@ -153,27 +119,15 @@
     // }),
     '/audio/:user?/:name?/:version?': wrap({
       component: player,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     '/video/:user?/:name?/:version?': wrap({
       component: player,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     '/picture/:user?/:name?/:version?': wrap({
       component: player,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     // "/house/:user?/:name?/:version?": wrap({
     //     component: drawing,
@@ -185,35 +139,19 @@
     // }),
     '/upload/:user?/:name?': wrap({
       component: upload,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
     '/admin': wrap({
       component: Admin,
-      conditions: [
-        (detail) => {
-          return isAdmin(detail);
-        },
-      ],
+      conditions: [(detail) => isAdmin(detail)],
     }),
     '/moderator': wrap({
       component: Moderate,
-      conditions: [
-        (detail) => {
-          return isModerator(detail);
-        },
-      ],
+      conditions: [(detail) => isModerator(detail)],
     }),
     '/:app?/:user?/:name?/:version?': wrap({
       component: home,
-      conditions: [
-        (detail) => {
-          return isLogedIn(detail);
-        },
-      ],
+      conditions: [(detail) => isLogedIn(detail)],
     }),
   }}"
 />

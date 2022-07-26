@@ -1,11 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import { get } from 'svelte/store';
-import { location } from 'svelte-spa-router';
 import { client, SSL } from '../../nakama.svelte';
-import CoordinatesTranslator from './class/CoordinatesTranslator'; // translate from artworld coordinates to Phaser 2D screen coordinates
+// translate from artworld coordinates to Phaser 2D screen coordinates
+import CoordinatesTranslator from './class/CoordinatesTranslator';
 import { Profile, Session, Notification } from '../../session';
 
-// Phaser is loaded onto the browser window, not imported directly
 const { Phaser } = window;
 
 class ManageSession {
@@ -86,13 +85,11 @@ class ManageSession {
   async createSocket() {
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
     console.log('socket created with client');
-    console.log('DIT IS EEN TEST');
-
-    const createStatus = true;
 
     this.userProfile = get(Profile);
     console.log('this.userProfile', this.userProfile);
 
+    const createStatus = true;
     await this.socket.connect(get(Session), createStatus);
     console.log('session created with socket');
 
@@ -100,32 +97,32 @@ class ManageSession {
     console.log(this.location);
     await this.getStreamUsers('join', this.location); // have to join a location to get stream presence events
 
-    // stream
+    // Streaming data containing movement data for the players in our allConnectedUsers array
     this.socket.onstreamdata = (streamdata) => {
-      // console.info("Received stream data:", streamdata)
       const data = JSON.parse(streamdata.data);
-      // console.log(data)
 
       // parse the movement data for the players in our allConnectedUsers array
-      for (const onlinePlayer of this.allConnectedUsers) {
-        // console.log("onlinePlayer", onlinePlayer)
-        if (onlinePlayer.scene) {
-          if (onlinePlayer.user_id == data.user_id) {
-            // console.log("data.user_id", daata.user_id)
-            // data is in the form of:
-            // location: "ArtworldAmsterdam"
-            // posX: -236.42065
-            // posY: -35.09519
-            // user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
-            // action: "moveTo" "stop"
-            // get the scene context from the onlinePlayer
-            const { scene } = onlinePlayer;
-            // console.log("onlinePlayer", onlinePlayer)
-            // console.log("scene", scene)
+      this.allConnectedUsers.forEach((onlinePlayer, index) => {
+        console.log('Dit is de player', onlinePlayer.user_id);
 
-            if (data.action == 'moveTo') {
-              const movingKey = onlinePlayer.getData('movingKey');
-              onlinePlayer.anims.play(movingKey, true);
+        // eslint-disable-next-line prefer-const
+        let updateOnlinePlayer = onlinePlayer;
+
+        if (updateOnlinePlayer.scene) {
+          if (updateOnlinePlayer.user_id === data.user_id) {
+            /* data is in the form of:
+                location: "ArtworldAmsterdam"
+                posX: -236.42065
+                posY: -35.09519
+                user_id: "4ced8bff-d79c-4842-b2bd-39e9d9aa597e"
+                action: "moveTo" "stop"
+                get the scene context from the updateOnlinePlayer */
+
+            const { scene } = updateOnlinePlayer;
+
+            if (data.action === 'moveTo') {
+              const movingKey = updateOnlinePlayer.getData('movingKey');
+              updateOnlinePlayer.anims.play(movingKey, true);
 
               const moveToX = CoordinatesTranslator.artworldToPhaser2DX(
                 scene.worldSize.x,
@@ -140,26 +137,24 @@ class ManageSession {
               // scale duration to distance
               const target = new Phaser.Math.Vector2(moveToX, moveToY);
               const duration = target.length() / 8;
-              // console.log("duration", duration)
 
-              // set a variable for the onlinePlayer tween so it can be stopped when needed (by reference)
-              this[onlinePlayer] = scene.tweens.add({
-                targets: onlinePlayer,
+              // set a variable for the updateOnlinePlayer tween so it can be stopped when needed (by reference)
+              this[updateOnlinePlayer] = scene.tweens.add({
+                targets: updateOnlinePlayer,
                 x: moveToX,
                 y: moveToY,
                 paused: false,
                 duration,
               });
-              // console.log("target", target)
             }
 
-            if (data.action == 'stop') {
+            if (data.action === 'stop') {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
               // because there the scene context is known
 
               // // if there is an unfinished tween, stop it and stop the online player
-              if (typeof this[onlinePlayer] !== 'undefined') {
-                this[onlinePlayer].stop();
+              if (typeof this[updateOnlinePlayer] !== 'undefined') {
+                this[updateOnlinePlayer].stop();
               }
 
               let positionVector = new Phaser.Math.Vector2(
@@ -174,17 +169,17 @@ class ManageSession {
                 positionVector,
               );
 
-              onlinePlayer.posX = positionVector.x;
-              onlinePlayer.posY = positionVector.y;
+              updateOnlinePlayer.posX = positionVector.x;
+              updateOnlinePlayer.posY = positionVector.y;
 
-              onlinePlayer.x = positionVector.x;
-              onlinePlayer.y = positionVector.y;
+              updateOnlinePlayer.x = positionVector.x;
+              updateOnlinePlayer.y = positionVector.y;
 
               // get the key for the stop animation of the player, and play it
-              onlinePlayer.anims.play(onlinePlayer.getData('stopKey'), true);
+              updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);
             }
 
-            if (data.action == 'physicsStop') {
+            if (data.action === 'physicsStop') {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
               // because there the scene context is known
 
@@ -201,22 +196,22 @@ class ManageSession {
               );
 
               // set the position on the player for the server side storing
-              onlinePlayer.posX = positionVector.x;
-              onlinePlayer.posY = positionVector.y;
+              updateOnlinePlayer.posX = positionVector.x;
+              updateOnlinePlayer.posY = positionVector.y;
 
               // if there is an unfinished tween, stop it and stop the online player
-              if (typeof this[onlinePlayer] !== 'undefined') {
-                console.log('this[onlinePlayer]', this[onlinePlayer]);
-                this[onlinePlayer].stop();
+              if (typeof this[updateOnlinePlayer] !== 'undefined') {
+                console.log('this[updateOnlinePlayer]', this[updateOnlinePlayer]);
+                this[updateOnlinePlayer].stop();
                 // console.log("duration", duration)
 
                 const target = new Phaser.Math.Vector2(positionVector.x, positionVector.y);
                 const duration = target.length() / 2;
                 console.log('duration', duration);
 
-                // set a variable for the onlinePlayer tween so it can be stopped when needed (by reference)
-                // this[onlinePlayer] = scene.tweens.add({
-                //   targets: onlinePlayer,
+                // set a variable for the updateOnlinePlayer tween so it can be stopped when needed (by reference)
+                // this[updateOnlinePlayer] = scene.tweens.add({
+                //   targets: updateOnlinePlayer,
                 //   x: positionVector.x,
                 //   y: positionVector.y,
                 //   paused: false,
@@ -224,17 +219,21 @@ class ManageSession {
                 // })
               }
 
-              onlinePlayer.x = positionVector.x;
-              onlinePlayer.y = positionVector.y;
+              updateOnlinePlayer.x = positionVector.x;
+              updateOnlinePlayer.y = positionVector.y;
 
               // get the key for the stop animation of the player, and play it
-              onlinePlayer.anims.play(onlinePlayer.getData('stopKey'), true);
+              updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);
             }
           }
         }
-      }
+        // Finally set the player back in the array
+        this.allConnectedUsers[index] = updateOnlinePlayer;
+      // }
+      });
     };
 
+    // Another user has joined or left the stream
     this.socket.onstreampresence = (streampresence) => {
       console.log('this.socket.onstreampresence');
 
@@ -252,7 +251,7 @@ class ManageSession {
           // console.log("this.userProfile.id", this.userProfile.id);
 
           console.log('this.userProfile = ', this.userProfile);
-          if (join.user_id != this.userProfile.id) {
+          if (join.user_id !== this.userProfile.id) {
             // console.log(this.userProfile)
             console.log('some one joined', join);
             // this.getStreamUsers("home")
@@ -266,7 +265,7 @@ class ManageSession {
         });
         // this.getStreamUsers("home")
       }
-    }; // this.socket.onstreampresence
+    };
 
     this.socket.onnotification = (notif) => {
       Notification.set(notif);
@@ -318,7 +317,11 @@ class ManageSession {
       // console.log("this.currentScene", this.currentScene)
       console.log('this.lastMoveCommand', this.lastMoveCommand);
       // if (typeof this.currentScene != "undefined") {
-      setTimeout(() => { this.sendMoveMessage(this.currentScene, this.lastMoveCommand.posX, this.lastMoveCommand.posY, this.lastMoveCommand.action); }, 1500);
+      setTimeout(() => {
+        const { posX, posY, action } = this.lastMoveCommand;
+        this.sendMoveMessage(this.currentScene, posX, posY, action);
+        console.log('sending move message!');
+      }, 1500);
       // }
     });
   }
@@ -359,7 +362,6 @@ class ManageSession {
     this.lastMoveCommand = {
       action, posX, posY, location: this.location,
     };
-    // console.log("this.lastMoveCommand", this.lastMoveCommand)
 
     // console.log(posX, posY)
     posX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, posX);

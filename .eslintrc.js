@@ -17,6 +17,8 @@ module.exports = {
   ],
   rules: {
     'linebreak-style': 0,
+    'import/first': 0,
+    'max-len': ['error', { code: 120 }],
   },
   overrides: [ // this stays the same
     {

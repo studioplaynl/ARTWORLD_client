@@ -5,18 +5,18 @@
     getObject,
     listAllObjects,
     listObjects,
-  } from "../api.js";
-  import { Session, Profile, CurrentApp } from "../session.js";
-  import { client } from "../nakama.svelte";
-  import { _ } from "svelte-i18n";
-  import SvelteTable from "svelte-table";
-  import StatusComp from "./components/statusbox.svelte";
-  import DeleteComp from "./components/deleteButton.svelte";
-  import NameEdit from "./components/nameEdit.svelte";
-  import Avatar from "./components/avatar.svelte";
-  import { onDestroy, onMount } from "svelte";
-  import Stopmotion from "./components/stopmotion.svelte";
-  import House from "./components/house.svelte"
+  } from '../api.js';
+  import { Session, Profile, CurrentApp } from '../session.js';
+  import { client } from '../nakama.svelte';
+  import { _ } from 'svelte-i18n';
+  import SvelteTable from 'svelte-table';
+  import StatusComp from './components/statusbox.svelte';
+  import DeleteComp from './components/deleteButton.svelte';
+  import NameEdit from './components/nameEdit.svelte';
+  import Avatar from './components/avatar.svelte';
+  import { onDestroy, onMount } from 'svelte';
+  import Stopmotion from './components/stopmotion.svelte';
+  import House from './components/house.svelte';
   export let params = {};
   export let userID;
 
@@ -30,50 +30,50 @@
   let AudioIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
   let videoIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
-  let user = "",
-    role = "",
-    avatar_url = "",
-    house_url = "",
-    azc = "",
-    id = null,
-    art = [],
-    drawings = [],
-    stopMotion = [],
-    video = [],
-    audio = [],
-    trash = [],
-    picture = [],
-    CurrentUser,
-    avatar;
+  let user = '';
+  let role = '';
+  let avatar_url = '';
+  let house_url = '';
+  let azc = '';
+  let id = null;
+  let art = [];
+  let drawings = [];
+  let stopMotion = [];
+  let video = [];
+  let audio = [];
+  let trash = [];
+  let picture = [];
+  let CurrentUser;
+  let avatar;
 
   const columns = [
     {
-      key: "Soort",
-      title: "",
+      key: 'Soort',
+      title: '',
       value: (v) => {
-        if (v.collection == "drawing") {
+        if (v.collection == 'drawing') {
           return drawingIcon;
         }
-        if (v.collection == "stopmotion") {
+        if (v.collection == 'stopmotion') {
           return stopMotionIcon;
         }
-        if (v.collection == "audio") {
+        if (v.collection == 'audio') {
           return AudioIcon;
         }
-        if (v.collection == "video") {
+        if (v.collection == 'video') {
           return videoIcon;
         }
       },
       sortable: true,
     },
     {
-      key: "voorbeeld",
-      title: "",
+      key: 'voorbeeld',
+      title: '',
       renderComponent: { component: Stopmotion, props: {} },
     },
     {
-      key: "title",
-      title: "",
+      key: 'title',
+      title: '',
       renderComponent: { component: NameEdit, props: { isCurrentUser } },
     },
     // {
@@ -87,16 +87,16 @@
     // },
     {
       key: true,
-      title: "",
-      class: "iconWidth",
+      title: '',
+      class: 'iconWidth',
       renderComponent: {
         component: StatusComp,
         props: { moveToArt, isCurrentUser },
       },
     },
     {
-      key: "Delete",
-      title: "",
+      key: 'Delete',
+      title: '',
       renderComponent: {
         component: DeleteComp,
         props: { removeFromTrash, moveToTrash, isCurrentUser },
@@ -148,44 +148,44 @@
     if (!!params.user || !!userID) {
       id = params.user || userID;
       CurrentUser = false;
-      if ($Profile.meta.Role == "admin" || $Profile.meta.Role == "moderator") {
-        drawings = await listAllObjects("drawing", params.user);
-        video = await listAllObjects("video", params.user);
-        audio = await listAllObjects("audio", params.user);
-        stopMotion = await listAllObjects("stopmotion", params.user);
-        picture = await listAllObjects("picture", params.user);
+      if ($Profile.meta.Role == 'admin' || $Profile.meta.Role == 'moderator') {
+        drawings = await listAllObjects('drawing', params.user);
+        video = await listAllObjects('video', params.user);
+        audio = await listAllObjects('audio', params.user);
+        stopMotion = await listAllObjects('stopmotion', params.user);
+        picture = await listAllObjects('picture', params.user);
       } else {
-        drawings = await listObjects("drawing", params.user, 100);
-        video = await listObjects("video", params.user, 100);
-        audio = await listObjects("audio", params.user, 100);
-        stopMotion = await listObjects("stopmotion", params.user, 100);
-        picture = await listObjects("picture", params.user, 100);
+        drawings = await listObjects('drawing', params.user, 100);
+        video = await listObjects('video', params.user, 100);
+        audio = await listObjects('audio', params.user, 100);
+        stopMotion = await listObjects('stopmotion', params.user, 100);
+        picture = await listObjects('picture', params.user, 100);
       }
 
       useraccount = await getAccount(id);
       user = useraccount.username;
       role = useraccount.meta.Role;
       azc = useraccount.meta.Azc;
-      console.log("azc", azc);
+      console.log('azc', azc);
       avatar_url = useraccount.url;
 
       try {
-        house_url = await getObject("home", azc, params.user);
+        house_url = await getObject('home', azc, params.user);
       } catch (err) {
         console.log(err); // TypeError: failed to fetch
       }
-      if (typeof house_url == "object") {
-        house_url = await convertImage(house_url.value.url, "64", "64");
+      if (typeof house_url == 'object') {
+        house_url = await convertImage(house_url.value.url, '64', '64');
       } else {
-        house_url = "";
+        house_url = '';
       }
     } else {
       CurrentUser = true;
-      drawings = await listObjects("drawing", $Session.user_id, 100);
-      stopMotion = await listObjects("stopmotion", $Session.user_id, 100);
-      video = await listObjects("video", $Session.user_id, 100);
-      audio = await listObjects("audio", $Session.user_id, 100);
-      picture = await listObjects("picture", $Session.user_id, 100);
+      drawings = await listObjects('drawing', $Session.user_id, 100);
+      stopMotion = await listObjects('stopmotion', $Session.user_id, 100);
+      video = await listObjects('video', $Session.user_id, 100);
+      audio = await listObjects('audio', $Session.user_id, 100);
+      picture = await listObjects('picture', $Session.user_id, 100);
       useraccount = await getAccount();
       user = useraccount.username;
       role = useraccount.meta.Role;
@@ -193,14 +193,14 @@
       avatar_url = useraccount.url;
 
       try {
-        house_url = await getObject("home", azc, $Session.user_id);
+        house_url = await getObject('home', azc, $Session.user_id);
       } catch (err) {
         console.log(err); // TypeError: failed to fetch
       }
-      if (typeof house_url == "object") {
-        house_url = await convertImage(house_url.value.url, "64", "64");
+      if (typeof house_url == 'object') {
+        house_url = await convertImage(house_url.value.url, '64', '64');
       } else {
-        house_url = "";
+        house_url = '';
       }
     }
 
@@ -210,17 +210,17 @@
     art = art.concat(audio);
     art = art.concat(picture);
     art.forEach(async (item, index) => {
-      if (item.value.status === "trash") {
+      if (item.value.status === 'trash') {
         trash.push(item);
         delete art[index];
       }
-      if (item.value.json) item.url = item.value.json.split(".")[0];
-      if (item.value.url) item.url = item.value.url.split(".")[0];
+      if (item.value.json) item.url = item.value.json.split('.')[0];
+      if (item.value.url) item.url = item.value.url.split('.')[0];
       item.value.previewUrl = await convertImage(
         item.value.url,
-        "150",
-        "1000",
-        "png"
+        '150',
+        '1000',
+        'png',
       );
 
       art = art;
@@ -244,20 +244,26 @@
         <br />
         <Avatar />
         <House />
-
-         
       </div>
       <div class="bottom">
-        <SvelteTable {columns} rows={art} classNameTable="profileTable" />
+        <SvelteTable
+          columns="{columns}"
+          rows="{art}"
+          classNameTable="profileTable"
+        />
         {#if CurrentUser}
           <img class="icon" src="assets/SHB/svg/AW-icon-trashcan.svg" />
-          <SvelteTable {columns} rows={trash} classNameTable="profileTable" />
+          <SvelteTable
+            columns="{columns}"
+            rows="{trash}"
+            classNameTable="profileTable"
+          />
         {/if}
       </div>
     </div>
   </main>
 {:else}
-  <div class="lds-dual-ring" />
+  <div class="lds-dual-ring"></div>
 {/if}
 
 <style>
@@ -327,7 +333,7 @@
     top: 40%;
   }
   .lds-dual-ring:after {
-    content: " ";
+    content: ' ';
     display: block;
     width: 40px;
     height: 40px;
