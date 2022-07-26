@@ -25,3 +25,19 @@ _VRAGEN_
 - HistoryTracker onDestroy en get from svelte.. Should go?
 
 - ServerCall.js --> Wordt dit wel gebruikt? Aantal functies omgezet naar static maar worden nergens uberhaupt aangeroepen
+
+
+
+July 26
+
+### Player & DefaultPlayer classes
+
+- De classes verwijzen naar scene.player ipv naar zichzelf (this)
+- Overal setters & getters gebruiken is netter (in elk geval Player & DefaultPlayer) 
+- Revisit logica hier, misschien samenvoegen? (@maarten @eelke)
+
+
+
+- HistoryTracker onder de loep nemen (@maarten)
+- ServerCall functies los exporteren? (@eelke)
+- ServerCall resolveLoadError naar UIScene (aangezien deze scene permanent is)
