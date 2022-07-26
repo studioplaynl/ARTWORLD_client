@@ -1,5 +1,5 @@
 <script>
-    import { login } from "../../session.js";
+    import { login } from "../../api";
 
     import { onMount, onDestroy } from 'svelte';
     import jsQR from "jsqr";
