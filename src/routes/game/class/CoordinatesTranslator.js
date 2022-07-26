@@ -1,70 +1,75 @@
+// TODO This should not be a class (no shared data..)!
+// Instead each function should be exported as-is.
+// So as first step we are removing all CoordinatesTranslator.functionName calls and replacing with
+// const { functionName } = CoordinatesTranslator;
+
 class CoordinatesTranslator {
-    constructor() {
-    }
+  constructor() {
+  }
 
-    artworldVectorToPhaser2D(worldSize, positionVector) {
-        // usage: 
-        // pass the worldSize and the coordinates you want to do the calculation on
-        // output is a Vector
-        const worldSizeX = worldSize.x
-        const worldSizeY = worldSize.y
+  artworldVectorToPhaser2D(worldSize, positionVector) {
+    // usage:
+    // pass the worldSize and the coordinates you want to do the calculation on
+    // output is a Vector
+    const worldSizeX = worldSize.x;
+    const worldSizeY = worldSize.y;
 
-        positionVector.x = positionVector.x + (worldSizeX / 2) //* correct
-        positionVector.y = (worldSizeY / 2) - positionVector.y //* correct
-        return positionVector
-    }
+    positionVector.x += (worldSizeX / 2); //* correct
+    positionVector.y = (worldSizeY / 2) - positionVector.y; //* correct
+    return positionVector;
+  }
 
-    //single value calculation
-    artworldToPhaser2DX(worldAxis, a) {
-        // usage: ONLY FOR X!
-        // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
-        a = a + (worldAxis / 2) //* correct
+  // single value calculation
+  artworldToPhaser2DX(worldAxis, a) {
+    // usage: ONLY FOR X!
+    // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
+    a += (worldAxis / 2); //* correct
 
-        return a
-    }
+    return a;
+  }
 
-    //single value calculation
-    artworldToPhaser2DY(worldAxis, a) {
-        // usage: ONLY FOR Y!
-        // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
-        a = (worldAxis / 2) - a  //* correct
+  // single value calculation
+  artworldToPhaser2DY(worldAxis, a) {
+    // usage: ONLY FOR Y!
+    // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
+    a = (worldAxis / 2) - a; //* correct
 
-        return a
-    }
+    return a;
+  }
 
-    //..........................................................................................................
+  // ..........................................................................................................
 
-    Phaser2DVectorToArtworld(worldSize, positionVector) {
-        // usage: 
-        // pass the worldSize and the coordinates you want to do the calculation on
-        // output is a Vector
-        const worldSizeX = worldSize.x
-        const worldSizeY = worldSize.y
+  Phaser2DVectorToArtworld(worldSize, positionVector) {
+    // usage:
+    // pass the worldSize and the coordinates you want to do the calculation on
+    // output is a Vector
+    const worldSizeX = worldSize.x;
+    const worldSizeY = worldSize.y;
 
-        positionVector.x = positionVector.x - (worldSizeX / 2) //* correct
-        positionVector.y = -(positionVector.y - (worldSizeY / 2)) //* correct
-        return positionVector
-    }
+    positionVector.x -= (worldSizeX / 2); //* correct
+    positionVector.y = -(positionVector.y - (worldSizeY / 2)); //* correct
+    return positionVector;
+  }
 
-    //single value calculation
-    Phaser2DToArtworldX(worldAxis, a) {
-        // usage: ONLY X! 
-        // pass the this.worldSize.x or worldSize.y and the coordinate you want to do the calculation on
+  // single value calculation
+  Phaser2DToArtworldX(worldAxis, a) {
+    // usage: ONLY X!
+    // pass the this.worldSize.x or worldSize.y and the coordinate you want to do the calculation on
 
-        a = a - (worldAxis / 2) //* correct
+    a -= (worldAxis / 2); //* correct
 
-        return a
-    }
+    return a;
+  }
 
-    //single value calculation
-    Phaser2DToArtworldY(worldAxis, a) {
-        // usage: ONLY Y!
-        // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
+  // single value calculation
+  Phaser2DToArtworldY(worldAxis, a) {
+    // usage: ONLY Y!
+    // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
 
-        a = -(a - (worldAxis / 2)) //* correct
+    a = -(a - (worldAxis / 2)); //* correct
 
-        return a
-    }
+    return a;
+  }
 }
 
-export default new CoordinatesTranslator()
+export default new CoordinatesTranslator();

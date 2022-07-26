@@ -1,30 +1,24 @@
-import { number } from 'svelte-i18n';
+/* eslint-disable prefer-destructuring */
 import ManageSession from '../ManageSession';
 import {
-  getAccount, updateObject, listObjects, convertImage, listAllObjects,
-} from '../../../api.js';
+  updateObject, listObjects, convertImage, listAllObjects,
+} from '../../../api';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
+import { dlog } from '../helpers/DebugLog';
 
 class ServerCall {
-  constructor() { }
-
-  async getServerArrayObject(collection, userID, maxItems) {
+  static async getServerArrayObject(collection, userID, maxItems) {
     Promise.all([listObjects(collection, userID, maxItems)])
       .then((response) => {
-        // console.log("collection", collection)
-        // console.log("response", response)
-
         // check if the object exists
         if (response[0].length > 0) {
           // the object exists: addressbook
 
           // check if the right object exists: addressbook_user_id
-          const filteredResponse = response[0].filter((element) =>
-            // console.log(collection + "_" + ManageSession.userProfile.id, typeof collection)
-            // console.log("element", element)
-            element.key == `${collection}_${ManageSession.userProfile.id}`);
-          // console.log("filteredResponse", filteredResponse)
+          const filteredResponse = response[0].filter(
+            (element) => element.key === `${collection}_${ManageSession.userProfile.id}`,
+          );
 
           if (filteredResponse.length > 0) {
             // the right collection object exists, but check if there is data in de object, in the expected format
@@ -32,28 +26,28 @@ class ServerCall {
             if (typeof filteredResponse[0].value[collection] !== 'undefined') {
               // the object is in the right format (object.value.object), we assign our local copy
               ManageSession[collection] = filteredResponse[0].value;
-              // console.log("ManageSession." + collection, ManageSession[collection])
+              // dlog("ManageSession." + collection, ManageSession[collection])
             } else {
               // when the right addressbook does not exist: make an empty one
               // addressbook_userid.value exists but .addressbook
-              this.createEmptyServerArrayObject(collection);
+              ServerCall.createEmptyServerArrayObject(collection);
             }
           } else {
             // when the right addressbook does not exist: make an empty one
-            this.createEmptyServerArrayObject(collection);
+            ServerCall.createEmptyServerArrayObject(collection);
           }
-          // console.log("ManageSession." + collection, ManageSession[collection])
+          // dlog("ManageSession." + collection, ManageSession[collection])
         } else {
           // the addressbook does not exist: make an empty one
-          this.createEmptyServerArrayObject(collection);
+          ServerCall.createEmptyServerArrayObject(collection);
         }
       });
   }
 
-  async createEmptyServerArrayObject(collection) {
+  static async createEmptyServerArrayObject(collection) {
     // general method of creating an array inside an object with the argument of the method
-    console.log('createEmptyServerObject');
-    console.log(collection);
+    dlog('createEmptyServerObject');
+    dlog(collection);
 
     // pass data locally:
     // - ManageSession
@@ -64,26 +58,24 @@ class ServerCall {
     const name = `${type}_${ManageSession.userProfile.id}`;
     const pub = 2;
     const value = ManageSession[type];
-    console.log(' ManageSession. empty', ManageSession[type]);
+    dlog(' ManageSession. empty', ManageSession[type]);
     updateObject(type, name, value, pub);
   }
 
-  async getServerSingleObject(collection, userID, maxItems) {
+  static async getServerSingleObject(collection, userID, maxItems) {
     Promise.all([listObjects(collection, userID, maxItems)])
       .then((response) => {
-        // console.log("collection", collection)
-        // console.log("response", response)
+        // dlog("collection", collection)
+        // dlog("response", response)
 
         // check if the object exists
         if (response[0].length > 0) {
           // the object exists: addressbook
 
           // check if the right object exists: addressbook_user_id
-          const filteredResponse = response[0].filter((element) =>
-            // console.log(collection + "_" + ManageSession.userProfile.id, typeof collection)
-            // console.log("element", element)
-            element.key == `${collection}_${ManageSession.userProfile.id}`);
-          // console.log("filteredResponse", filteredResponse)
+          const filteredResponse = response[0].filter(
+            (element) => element.key === `${collection}_${ManageSession.userProfile.id}`,
+          );
 
           if (filteredResponse.length > 0) {
             // the right collection object exists, but check if there is data in de object, in the expected format
@@ -91,7 +83,7 @@ class ServerCall {
             if (typeof filteredResponse[0].value[collection] !== 'undefined') {
               // the object is in the right format (object.value.object), we assign our local copy
               ManageSession[collection] = filteredResponse[0].value;
-              // console.log("ManageSession." + collection, ManageSession[collection])
+              // dlog("ManageSession." + collection, ManageSession[collection])
             } else {
               // when the right addressbook does not exist: make an empty one
               // addressbook_userid.value exists but .addressbook
@@ -101,7 +93,7 @@ class ServerCall {
             // when the right addressbook does not exist: make an empty one
             this.createEmptyServerObject(collection);
           }
-          // console.log("ManageSession." + collection, ManageSession[collection])
+          // dlog("ManageSession." + collection, ManageSession[collection])
         } else {
           // the addressbook does not exist: make an empty one
           this.createEmptyServerObject(collection);
@@ -109,8 +101,9 @@ class ServerCall {
       });
   }
 
-  async getServerCollectionUrls(collection, array, filter, maxItems, scene) {
+  static async getServerCollectionUrls(collection, array, filter, maxItems, _scene) {
     const gameObjectRepresentation = `${collection}_gameObjectRepresentation`;
+    const scene = _scene;
     scene[gameObjectRepresentation] = [];
 
     // subscribe to loaderror event
@@ -121,28 +114,32 @@ class ServerCall {
     // get a list of all collection objects and then filter
     Promise.all([listObjects(collection, null, maxItems)])
       .then((rec) => {
-        // console.log("rec: ", rec)
+        // dlog("rec: ", rec);
         scene[collection] = rec[0];
 
         if (typeof filter !== 'undefined') {
           // filter only amsterdam homes
-          scene[collection] = scene[collection].filter((obj) => obj.key == filter);
+          scene[collection] = scene[collection].filter(
+            (obj) => obj.key === filter,
+          );
           this.generateHomes(scene);
         }
       });
   }// end getServerCollectionUrls
 
-  async getHomesFiltered(collection, filter, maxItems, scene) {
+  async getHomesFiltered(collection, filter, maxItems, _scene) {
+    const scene = _scene;
     // homes represented, to created homes in the scene
     scene.homesRepresented = [];
 
-    // when there is a loading error, the error gets thrown multiple times because I subscribe to the 'loaderror' event multiple times
-    const eventNames = scene.load.eventNames();
-    // console.log("eventNames", eventNames)
+    // when there is a loading error, the error gets thrown multiple times
+    // because I subscribe to the 'loaderror' event multiple times
+    // const eventNames = scene.load.eventNames();
+    // dlog("eventNames", eventNames)
     const isReady = scene.load.isReady();
-    console.log('isReady', isReady);
+    dlog('isReady', isReady);
     const isLoading = scene.load.isLoading();
-    console.log('isLoading', isLoading);
+    dlog('isLoading', isLoading);
 
     // subscribe to loaderror event
     scene.load.on('loaderror', (offendingFile) => {
@@ -152,24 +149,30 @@ class ServerCall {
     // get a list of all homes objects and then filter
     Promise.all([listObjects(collection, null, maxItems)])
       .then((rec) => {
-        console.log('rec homes: ', rec);
+        dlog('rec homes: ', rec);
         scene.homes = rec[0];
-        console.log('scene.homes', scene.homes);
+        dlog('scene.homes', scene.homes);
         // filter only amsterdam homes
-        scene.homes = scene.homes.filter((obj) => obj.key == filter);
+        scene.homes = scene.homes.filter((obj) => obj.key === filter);
 
         // retreive how many artworks are in the home
         // let tempAllArtPerUser = []
-        scene.homes.forEach((element, index) => {
-          Promise.all([listAllObjects('drawing', element.user_id), listAllObjects('stopmotion', element.user_id)]).then((rec) => {
-            rec.forEach((artElement) => {
-              // console.log("artElement", artElement)
-              // add the array of art objects to the userHouse object
-              element.artWorks = artElement;
-            });
-            // console.log("element", element)
-          });
-        });
+        scene.homes.forEach(
+          (element, index) => {
+            Promise.all([
+              listAllObjects('drawing', element.user_id),
+              listAllObjects('stopmotion', element.user_id)]).then(
+              () => {
+                rec.forEach((artElement) => {
+                  // dlog("artElement", artElement)
+                  // add the array of art objects to the userHouse object
+                  scene.homes[index].artWorks = artElement; // Don't set el, set home inside scene
+                });
+                // dlog("element", element)
+              },
+            );
+          },
+        );
         this.generateHomes(scene);
       });
   }
@@ -177,10 +180,10 @@ class ServerCall {
   async generateHomes(scene) {
     // check if server query is finished, then make the home from the list
     if (scene.homes != null) {
-      console.log('generate homes!');
-      console.log('scene.homes', scene.homes);
+      dlog('generate homes!');
+      dlog('scene.homes', scene.homes);
       scene.homes.forEach((element, index) => {
-        // console.log(element, index)
+        // dlog(element, index)
         const homeImageKey = `homeKey_${element.user_id}`;
         // get a image url for each home
         // get converted image from AWS
@@ -189,8 +192,8 @@ class ServerCall {
         // check if homekey is already loaded
         if (scene.textures.exists(homeImageKey)) {
           // create the home
-          console.log('element generateHomes textures.exists', element);
-          this.createHome(element, index, homeImageKey, scene);
+          dlog('element generateHomes textures.exists', element);
+          ServerCall.createHome(element, index, homeImageKey, scene);
         } else {
           // get the image server side
           this.getHomeImages(url, element, index, homeImageKey, scene);
@@ -200,18 +203,20 @@ class ServerCall {
   }
 
   async getHomeImages(url, element, index, homeImageKey, scene) {
-    console.log('getHomeImages');
+    dlog('getHomeImages');
     await convertImage(url, '128', '128', 'png')
       .then((rec) => {
-        // console.log("rec", rec)
+        // dlog("rec", rec)
         // load all the images to phaser
         scene.load.image(homeImageKey, rec)
-          .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) => {
+          .on(`filecomplete-image-${homeImageKey}`, () => {
             // delete from ManageSession.resolveErrorObjectArray
-            ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter((obj) => obj.imageKey !== homeImageKey);
-            // console.log("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
+            ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+              (obj) => obj.imageKey !== homeImageKey,
+            );
+            // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
             // create the home
-            this.createHome(element, index, homeImageKey, scene);
+            ServerCall.createHome(element, index, homeImageKey, scene);
           }, this);
         // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
         ManageSession.resolveErrorObjectArray.push({
@@ -221,15 +226,16 @@ class ServerCall {
       });
   }
 
-  createHome(element, index, homeImageKey, scene) {
-    // console.log(" createHome element.artWorks", element.artWorks)
+  static createHome(element, index, homeImageKey, _scene) {
+    const scene = _scene;
+    // dlog(" createHome element.artWorks", element.artWorks)
 
     // home description
     const locationDescription = element.value.username;
     // const homeImageKey = "homeKey_" + element.user_id
     // get a image url for each home
     // get converted image from AWS
-    const { url } = element.value;
+    // const { url } = element.value;
 
     // let numberOfArtworks = element.artWorks.length
     // if (typeof element.artWorks == "undefined") {
@@ -237,7 +243,8 @@ class ServerCall {
     // } else {
     //   numberOfArtworks = element.artWorks.length
     // }
-    // console.log("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
+    // eslint-disable-next-line max-len
+    // dlog("element.value.username, element.value.posX, element.value.posY", element.value.username, element.value.posX, element.value.posY)
 
     scene.homesRepresented[index] = new GenerateLocation({
       scene,
@@ -271,11 +278,12 @@ class ServerCall {
     // }
 
     // set the house of SELF bigger
-    if (element.user_id == ManageSession.userProfile.id) {
+    if (element.user_id === ManageSession.userProfile.id) {
       scene.homesRepresented[index].setScale(1.6);
     }
 
     // add a bubble with the number of artworks in the house
+    // eslint-disable-next-line max-len
     // scene.add.circle(CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x,element.value.posX), CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, element.value.posY), 30, 0x7300ED).setOrigin(0.5, 0.5).setVisible(true).setDepth(499)
 
     scene.homesRepresented[index].setDepth(30);
@@ -283,9 +291,11 @@ class ServerCall {
 
   resolveLoadError(offendingFile) {
     // element, index, homeImageKey, offendingFile, scene
-    ManageSession.resolveErrorObjectArray; // all loading images
+    // ManageSession.resolveErrorObjectArray; // all loading images
 
-    const resolveErrorObject = ManageSession.resolveErrorObjectArray.find((o) => o.imageKey == offendingFile.key);
+    const resolveErrorObject = ManageSession.resolveErrorObjectArray.find(
+      (o) => o.imageKey === offendingFile.key,
+    );
 
     const { loadFunction } = resolveErrorObject;
     const { element } = resolveErrorObject;
@@ -293,25 +303,27 @@ class ServerCall {
     const imageKey = offendingFile.key;
     const { scene } = resolveErrorObject;
 
-    // console.log("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
+    // dlog("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
     switch (loadFunction) {
       case ('getHomeImage'):
-        console.log('load offendingFile again', imageKey);
+        dlog('load offendingFile again', imageKey);
 
         scene.load.image(imageKey, './assets/ball_grey.png')
-          .on(`filecomplete-image-${imageKey}`, (imageKey) => {
+          .on(`filecomplete-image-${imageKey}`, () => {
             // delete from ManageSession.resolveErrorObjectArray
-            ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter((obj) => obj.imageKey !== imageKey);
-            console.log('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
+            ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+              (obj) => obj.imageKey !== imageKey,
+            );
+            dlog('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
 
             // create the home
-            this.createHome(element, index, imageKey, scene);
+            ServerCall.createHome(element, index, imageKey, scene);
           }, this);
         scene.load.start();
         break;
 
       default:
-        console.log('please state fom which function the loaderror occured!');
+        dlog('please state fom which function the loaderror occured!');
     }
   }
 } // end ServerCall

@@ -1,8 +1,6 @@
+/* eslint-disable class-methods-use-this */
 class BouncingBird {
-  constructor() {}
-
   generate(scene, birdX, birdY, birdScale) {
-
     const container = scene.add.container();
     const leg1 = scene.add.isobox(415, 340, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
     const leg2 = scene.add.isobox(390, 350, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
@@ -22,9 +20,9 @@ class BouncingBird {
       y: '-=160',
       yoyo: true,
       repeat: -1,
-      ease: 'Sine.easeInOut'
-    })
+      ease: 'Sine.easeInOut',
+    });
   }
 }
 
-export default new BouncingBird()
+export default new BouncingBird();

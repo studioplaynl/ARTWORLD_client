@@ -20,20 +20,31 @@ export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
     this.setInteractive({ useHandCursor: true });
 
     // also detect movementTouch when clicking on player: to detect swipt starting from player
-    this.on('pointerdown', () => ManageSession.playerMove = true);
+    this.on('pointerdown', () => {
+      ManageSession.playerMove = true;
+    });
 
     // creating a hit area for a better user experience
     this.input.hitArea.setTo(-10, -10, this.width + 50, this.height + 50);
 
     this.on('pointerup', async () => {
-      itemsBar.update((itemsbar) => itemsbar = { playerClicked: true, onlinePlayerClicked: false });
+      itemsBar.update(() => ({
+        playerClicked: true,
+        onlinePlayerClicked: false,
+      }));
     });
 
     //  Set some default physics properties
     this.body.onOverlap = true;
     this.setDepth(101);
 
+    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
+
     // set url param's to player pos and scene key
-    setUrl(scene.location, CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, ManageSession.playerPosY));
+    setUrl(
+      scene.location,
+      Phaser2DToArtworldX(scene.worldSize.x, ManageSession.playerPosX),
+      Phaser2DToArtworldY(scene.worldSize.y, ManageSession.playerPosY),
+    );
   }
 }

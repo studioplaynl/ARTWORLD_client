@@ -1,11 +1,15 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable class-methods-use-this */
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import HistoryTracker from './HistoryTracker';
 import { setUrl } from '../helpers/UrlHelpers';
 
-class Move {
-  constructor() { }
+const { Phaser } = window;
 
+// TODO This should probably all be just static functions
+
+class Move {
   moveByCursor(scene) {
     if (
       scene.cursors.up.isDown
@@ -20,12 +24,12 @@ class Move {
   }
 
   movingAnimation(scene, animation) {
-    if (animation == 'moving') {
+    if (animation === 'moving') {
       scene.player.anims.play(scene.playerMovingKey, true);
       scene.playerShadow.anims.play(scene.playerMovingKey, true);
     }
 
-    if (animation == 'stop') {
+    if (animation === 'stop') {
       scene.player.anims.play(scene.playerStopKey, true);
       scene.playerShadow.anims.play(scene.playerStopKey, true);
     }
@@ -33,7 +37,7 @@ class Move {
 
   moveByKeyboard(scene) {
     const speed = 175;
-    const prevPlayerVelocity = scene.player.body.velocity.clone();
+    // const prevPlayerVelocity = scene.player.body.velocity.clone();
 
     // Stop any previous movement from the last frame, the avatar itself and the container that holds the pop-up buttons
     scene.player.body.setVelocity(0);
@@ -60,7 +64,8 @@ class Move {
       this.sendMovement(scene);
     }
 
-    // Normalize and scale the velocity so that player can't move faster along a diagonal, the pop-up buttons are included
+    // Normalize and scale the velocity so that player can't move faster along a diagonal,
+    // the pop-up buttons are included
     scene.player.body.velocity.normalize().scale(speed);
   }
 
@@ -97,13 +102,20 @@ class Move {
   }
 
   checkIfPlayerReachedMoveGoal(scene) {
+    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
     // function to stop the player when it reached it goal
 
     //  10 is our distance tolerance, i.e. how close the source can get to the target
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (scene.isPlayerMoving) {
       // calculate distance only when playerIsMovingByClicking
-      scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y);
+      scene.distance = Phaser.Math.Distance.Between(
+        scene.player.x,
+        scene.player.y,
+        scene.target.x,
+        scene.target.y,
+      );
+
       if (scene.distance < scene.distanceTolerance) {
         if (ManageSession.cameraShake) {
           // camera shake when player walks into bounds of world
@@ -126,8 +138,8 @@ class Move {
         this.updatePositionHistory(scene); // update the url and historyTracker
 
         // update last player position in manageSession for when the player is reloaded inbetween scenes
-        ManageSession.playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
-        ManageSession.playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
+        ManageSession.playerPosX = Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
+        ManageSession.playerPosY = Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
 
         // play "stop" animation
         this.movingAnimation(scene, 'stop');
@@ -137,8 +149,10 @@ class Move {
   }
 
   updatePositionHistory(scene) {
-    const passPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
-    const passPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
+    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
+
+    const passPosX = Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
+    const passPosY = Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
 
     // update url
     setUrl(scene.location, passPosX, passPosY);
@@ -150,7 +164,7 @@ class Move {
     if (scene.input.activePointer.isDown && !scene.isClicking && ManageSession.playerMove) {
       scene.isClicking = true;
     }
-    if (!scene.input.activePointer.isDown && scene.isClicking == true) {
+    if (!scene.input.activePointer.isDown && scene.isClicking) {
       // play "move" animation
       // play the animation as soon as possible so it is more visible
       this.movingAnimation(scene, 'moving');
@@ -205,7 +219,7 @@ class Move {
         const clickDelay = scene.time.now - ManageSession.playerClickTime;
 
         // block too many clicks
-        if (clickDelay < 350 && ManageSession.playerClicks == 1) {
+        if (clickDelay < 350 && ManageSession.playerClicks === 1) {
           // block too many clicks
           ManageSession.playerClicks = 0;
 
@@ -233,7 +247,13 @@ class Move {
           scene.isPlayerMoving = true; // activate moving animation
 
           // generalized moving method
-          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed); // send moveTo over network, calculate speed as function of distance
+          // send moveTo over network, calculate speed as function of distance
+          this.moveObjectToTarget(
+            scene,
+            scene.player,
+            scene.target,
+            moveSpeed,
+          );
         }
       });
       scene.isClicking = false;
@@ -245,7 +265,11 @@ class Move {
     if (scene.createdPlayer) {
       // send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
       // moveTo or Stop
-      ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
+      ManageSession.sendMoveMessage(
+        scene,
+        scene.player.x,
+        scene.player.y,
+      );
       // console.log(this.player.x)
       ManageSession.updateMovementTimer = 0;
     }

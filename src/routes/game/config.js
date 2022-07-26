@@ -5,7 +5,7 @@ export const CONFIG = {
 
 export const SCENE_NAMES = [
   'PreloadScene',
-  'urlParser',
+  'UrlParser',
   'NetworkBoot',
   'Location1',
   'Location3',

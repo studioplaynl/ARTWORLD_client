@@ -1,9 +1,13 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-param-reassign */
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { getFullAccount, getAccount } from '../../../api';
 import itemsBar from '../../components/itemsbar';
 import { Profile } from '../../../session';
 import { setUrl } from '../helpers/UrlHelpers';
+import { dlog } from '../helpers/DebugLog';
 
 class Player {
   constructor() {
@@ -12,22 +16,26 @@ class Player {
 
   subscribeToProfile() {
     Profile.subscribe((value) => {
-      console.log('Profile refreshed avatar');
+      dlog('Profile refreshed avatar');
+      dlog(value);
 
-      console.log(value);
       this.subscribedToProfile = true;
       this.loadPlayerAvatar(ManageSession.currentScene, undefined, undefined, value);
     });
   }
 
   loadPlayerAvatar(scene, placePlayerX, placePlayerY, userprofile) {
+    // TODO: Why is this necessary?
+
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
+
     if (!userprofile) userprofile = ManageSession.userProfile;
-    console.log('loadPlayerAvatar', userprofile);
+    dlog('loadPlayerAvatar', userprofile);
 
     // check for createPlayer flag
     if (!ManageSession.createPlayer) return;
     // ManageSession.createPlayer = false
-    // console.log("ManageSession.createPlayer = false;")
+    // dlog("ManageSession.createPlayer = false;")
     scene.createdPlayer = false;
 
     // is playerAvaterKey already in loadedAvatars?
@@ -43,6 +51,7 @@ class Player {
 
     //* data model userAccount:
     // avatar_url: "avatar/stock/avatarRood.png"
+    // eslint-disable-next-line max-len
     // url: "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/stock/avatarRood.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20220220%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20220220T131419Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f4a9c03bec8f53e0d8ea141494fe1dac7f124781b8c5d9f77794c8521454e621"
     // username: "user11"
     // metadata:
@@ -57,44 +66,49 @@ class Player {
 
     // check if account info is loaded
     if (userprofile.id == null) {
-      console.log('(userprofile.id == null)');
-      this.reloadDefaultAvatar;
+      dlog('(userprofile.id == null)');
+      this.reloadDefaultAvatar();
     }
 
-    console.log('scene.playerAvatarKey avatar', scene.playerAvatarKey);
+    dlog('scene.playerAvatarKey avatar', scene.playerAvatarKey);
     let lastPosX;
     let lastPosY;
-    if (typeof placePlayerY !== 'undefined') { // if there is an argument to place the player on a specific position in the scene
+    if (typeof placePlayerY !== 'undefined') {
+      // if there is an argument to place the player on a specific position in the scene
       lastPosX = placePlayerX;
-      console.log('placePlayerX', placePlayerX);
+      dlog('placePlayerX', placePlayerX);
     } else {
       lastPosX = ManageSession.playerPosX; // playerPos is in artworldCoordinates, will be converted later
-      // console.log("lastPosX", lastPosX)
+      // dlog("lastPosX", lastPosX)
     }
     if (typeof placePlayerY !== 'undefined') {
       lastPosY = placePlayerY; // if there is an argument to place the player on a specific position in the scene
-      console.log('placePlayerY', placePlayerY);
+      dlog('placePlayerY', placePlayerY);
     } else {
       lastPosY = ManageSession.playerPosY; // playerPos is in artworldCoordinates, will be converted later
-      // console.log("lastPosY", lastPosY)
+      // dlog("lastPosY", lastPosY)
     }
-    // console.log("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)
+    // dlog("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)
 
     // positioning player
 
     // check if last position (artworldCoordinates) is outside the worldBounds for some reason
     // otherwise place it within worldBounds
     // a random number between -150 and 150
-    if (lastPosX > scene.worldSize.x / 2 || lastPosX < -scene.worldSize.x / 2) lastPosX = Math.floor((Math.random() * 300) - 150);
-    if (lastPosY > scene.worldSize.y / 2 || lastPosY < -scene.worldSize.y / 2) lastPosY = Math.floor((Math.random() * 300) - 150);
-    console.log('lastPosX, lastPosY', lastPosX, lastPosY);
-    console.log();
+    if (lastPosX > scene.worldSize.x / 2 || lastPosX < -scene.worldSize.x / 2) {
+      lastPosX = Math.floor((Math.random() * 300) - 150);
+    }
+    if (lastPosY > scene.worldSize.y / 2 || lastPosY < -scene.worldSize.y / 2) {
+      lastPosY = Math.floor((Math.random() * 300) - 150);
+    }
+    dlog('lastPosX, lastPosY', lastPosX, lastPosY);
+    dlog();
 
     // place player in Phaser2D coordinates
-    scene.player.x = CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, lastPosX);
-    scene.player.y = CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, lastPosY);
+    scene.player.x = artworldToPhaser2DX(scene.worldSize.x, lastPosX);
+    scene.player.y = artworldToPhaser2DY(scene.worldSize.y, lastPosY);
 
-    // console.log("scene.player.x, scene.player.y", scene.player.x, scene.player.y)
+    // dlog("scene.player.x, scene.player.y", scene.player.x, scene.player.y)
     // set url param's to player pos and scene key, url params are in artworldCoords lastPosX lastPosY is artworldCoords
     setUrl(scene.location, lastPosX, lastPosY);
 
@@ -105,25 +119,32 @@ class Player {
     ManageSession.lastMoveCommand.posY = scene.player.y;
     ManageSession.lastMoveCommand.action = 'stop';
     ManageSession.lastMoveCommand.location = ManageSession.location;
-    console.log('ManageSession.lastMoveCommand', ManageSession.lastMoveCommand);
+    dlog('ManageSession.lastMoveCommand', ManageSession.lastMoveCommand);
 
     // if for some reason the url of the player avatar is empty, load the default avatar
     if (userprofile.url === '') {
-      console.log("avatar url is empty, set to default 'avatar1' ");
-      this.reloadDefaultAvatar;
+      dlog("avatar url is empty, set to default 'avatar1' ");
+      this.reloadDefaultAvatar();
     }
 
     // if the texture doesnot exists (if it is new) load it and attach it to the player
     if (!scene.textures.exists(scene.playerAvatarKey)) {
-      console.log("didn't exist yet: scene.textures.exists(scene.playerAvatarKey)");
+      dlog("didn't exist yet: scene.textures.exists(scene.playerAvatarKey)");
       const fileNameCheck = scene.playerAvatarKey;
 
       // convert the avatar url to a converted png url
 
-      scene.load.spritesheet(fileNameCheck, userprofile.url, { frameWidth: this.avatarSize * 2, frameHeight: this.avatarSize * 2 })
-        .on(`filecomplete-spritesheet-${fileNameCheck}`, (fileNameCheck) => {
-          console.log('filecomplete-spritesheet scene.playerAvatarKey', scene.playerAvatarKey);
-          if (this.subscribedToProfile != true) {
+      scene.load.spritesheet(
+        fileNameCheck,
+        userprofile.url,
+        {
+          frameWidth: this.avatarSize * 2,
+          frameHeight: this.avatarSize * 2,
+        },
+      )
+        .on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
+          dlog('filecomplete-spritesheet scene.playerAvatarKey', scene.playerAvatarKey);
+          if (this.subscribedToProfile !== true) {
             this.subscribeToProfile();
           }
           this.attachAvatarToPlayer(scene, fileNameCheck);
@@ -131,33 +152,33 @@ class Player {
       scene.load.start(); // start loading the image in memory
     } else {
       // else reload the old (already in memory avatar)
-      console.log('existed already: scene.textures.exists(scene.playerAvatarKey)');
+      dlog('existed already: scene.textures.exists(scene.playerAvatarKey)');
       this.attachAvatarToPlayer(scene);
-      console.log('scene.location', scene.location);
+      dlog('scene.location', scene.location);
     }
   }
 
   async attachAvatarToPlayer(scene) {
-    console.log(' attachAvatarToPlayer(scene)');
+    dlog(' attachAvatarToPlayer(scene)');
 
     const avatar = scene.textures.get(scene.playerAvatarKey);
     const avatarWidth = avatar.frames.__BASE.width;
-    console.log('avatarWidth: ', avatarWidth);
+    dlog('avatarWidth: ', avatarWidth);
 
     const avatarHeight = avatar.frames.__BASE.height;
-    console.log('avatarHeight: ', avatarHeight);
+    dlog('avatarHeight: ', avatarHeight);
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    // console.log("avatarFrames: " + avatarFrames)
+    // dlog("avatarFrames: " + avatarFrames)
 
     // make an animation if the image is wider than tall
 
     // if (avatarFrames < 1) {
     // . animation for the player avatar ......................
-    console.log('avatarFrames > 1');
+    dlog('avatarFrames > 1');
 
-    scene.playerMovingKey = 'moving' + `_${scene.playerAvatarKey}`;
-    scene.playerStopKey = 'stop' + `_${scene.playerAvatarKey}`;
+    scene.playerMovingKey = `moving_${scene.playerAvatarKey}`;
+    scene.playerStopKey = `stop_${scene.playerAvatarKey}`;
 
     // check if the animation already exists
     if (!scene.anims.exists(scene.playerMovingKey)) {
@@ -187,7 +208,7 @@ class Player {
     scene.player.setTexture(scene.playerAvatarKey);
     scene.playerShadow.setTexture(scene.playerAvatarKey);
 
-    console.log('scene.player.setTexture(scene.playerAvatarKey) done ');
+    dlog('scene.player.setTexture(scene.playerAvatarKey) done ');
     // scale the player to this.avatarSize
     const width = this.avatarSize;
     scene.player.displayWidth = width;
@@ -201,7 +222,7 @@ class Player {
     // scene.player.body.setCircle(width, width, width / 2)
     scene.player.body.setCircle(width / 1.1, width / 5, width / 5);
 
-    // console.log("player avatar has loaded ")
+    // dlog("player avatar has loaded ")
     scene.player.location = scene.location;
     scene.createdPlayer = true;
 
@@ -221,26 +242,28 @@ class Player {
       ManageSession.createOnlinePlayerArray.forEach((onlinePlayer) => {
         Promise.all([getAccount(onlinePlayer.user_id)]).then((rec) => {
           const newOnlinePlayer = rec[0];
-          // console.log(newOnlinePlayer)
+          // dlog(newOnlinePlayer)
           this.createOnlinePlayer(scene, newOnlinePlayer);
-          // console.log("parseNewOnlinePlayerArray scene", scene)
+          // dlog("parseNewOnlinePlayerArray scene", scene)
         });
 
         // new onlineplayer is removed from the newOnlinePlayer array, once we call more data on it
-        ManageSession.createOnlinePlayerArray = ManageSession.createOnlinePlayerArray.filter((obj) => obj.user_id != onlinePlayer.user_id);
+        ManageSession.createOnlinePlayerArray = ManageSession.createOnlinePlayerArray.filter(
+          (obj) => obj.user_id !== onlinePlayer.user_id,
+        );
       });
     }
   }
 
   createOnlinePlayer(scene, onlinePlayer) {
     // check if onlinePlayer exists already
-    // console.log(onlinePlayer)
+    // dlog(onlinePlayer)
     const exists = ManageSession.allConnectedUsers.some((element) => element.user_id == onlinePlayer.user_id);
     // if player exists
     if (!exists) {
       // create new onlinePlayer with default avatar
       const onlinePlayerCopy = onlinePlayer;
-      // console.log("createOnlinePlayer scene", scene)
+      // dlog("createOnlinePlayer scene", scene)
       onlinePlayer = scene.add
         .sprite(
           CoordinatesTranslator.artworldToPhaser2DX(
@@ -291,28 +314,34 @@ class Player {
       Object.assign(onlinePlayer, onlinePlayerCopy);
       // we copy the id over as user_id to kep data consistent across our internal logic
       onlinePlayer.user_id = onlinePlayerCopy.id;
-      console.log('onlinePlayer', onlinePlayer);
+      dlog('onlinePlayer', onlinePlayer);
 
       // we push the new online player to the allConnectedUsers array
       ManageSession.allConnectedUsers.push(onlinePlayer);
 
       // we load the onlineplayer avatar, make a key for it
       const avatarKey = `${onlinePlayer.user_id}_${onlinePlayer.update_time}`;
-      // console.log("avatarKey", avatarKey)
+      // dlog("avatarKey", avatarKey)
 
       // if the texture already exists attach it again to the player
       // const preExisting = false
       if (!scene.textures.exists(avatarKey)) {
-        // console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        // dlog("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
         // add it to loading queue
         scene.load.spritesheet(avatarKey, onlinePlayer.url, {
           frameWidth: this.avatarSize * 2,
           frameHeight: this.avatarSize * 2,
-        }).on(`filecomplete-spritesheet-${avatarKey}`, (avatarKey) => { this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey); }, scene);
+        }).on(
+          `filecomplete-spritesheet-${avatarKey}`,
+          () => {
+            this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey);
+          },
+          scene,
+        );
         // when file is finished loading the attachToAvatar function is called
         scene.load.start(); // start loading the image in memory
       } else {
-        // console.log("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        // dlog("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
         // attach the avatar to the onlinePlayer when it is already in memory
         this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey);
       }
@@ -324,7 +353,7 @@ class Player {
   }
 
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
-    // console.log("player, tempAvatarName", onlinePlayer, tempAvatarName)
+    // dlog("player, tempAvatarName", onlinePlayer, tempAvatarName)
 
     onlinePlayer.active = true;
     onlinePlayer.visible = true;
@@ -334,15 +363,15 @@ class Player {
     const avatarHeight = avatar.frames.__BASE.height;
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    console.log(avatarFrames);
+    dlog(avatarFrames);
 
     if (avatarFrames > 1) {
       // set names for the moving and stop animations
 
-      onlinePlayer.setData('movingKey', 'moving' + `_${tempAvatarName}`);
-      onlinePlayer.setData('stopKey', 'stop' + `_${tempAvatarName}`);
-      console.log('onlinePlayer.getData("movingKey")');
-      console.log(onlinePlayer.getData('movingKey'));
+      onlinePlayer.setData('movingKey', `moving_${tempAvatarName}`);
+      onlinePlayer.setData('stopKey', `stop_${tempAvatarName}`);
+      dlog('onlinePlayer.getData("movingKey")');
+      dlog(onlinePlayer.getData('movingKey'));
 
       // create animation for moving
       if (!scene.anims.exists(onlinePlayer.getData('movingKey'))) {

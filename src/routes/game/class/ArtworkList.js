@@ -1,8 +1,6 @@
-import { updateObject, listObjects, convertImage } from '../../../api.js';
-import ManageSession from '../ManageSession.js';
-import Player from './Player.js';
-import R_UI from './R_UI';
-import { Liked } from '../../../storage.js';
+import { listObjects, convertImage } from '../../../api';
+import ManageSession from '../ManageSession';
+import { Liked } from '../../../storage';
 
 class ArtworkList {
   constructor() {

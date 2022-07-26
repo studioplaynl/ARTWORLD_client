@@ -1,221 +1,229 @@
+/* eslint-disable class-methods-use-this */
 class Exhibition {
-    constructor(config) {
-    }
+  constructor(config) {
+  }
 
-    AbriBig(config) {
-        const scene = config.scene
-        const posX = config.posX
-        const posY = config.posY
-        const name = config.name
-        // const worldSize = scene.worldSize
-        const size = config.size
+  AbriBig(config) {
+    const {
+      scene, posX, posY, name,
+    } = config;
 
-        //the container with the name of the config
-        scene[name] = scene.add.container()
-        scene[name].name = name
+    // the container with the name of the config
+    scene[name] = scene.add.container();
+    scene[name].name = name;
 
-        const billBoardName = name + "_billBoard"
-        scene[billBoardName] = scene.add.image(0,
-            0,
-            "exhibit_outdoor_big") // the image of the billBoard svg
+    const billBoardName = `${name}_billBoard`;
+    scene[billBoardName] = scene.add.image(
+      0,
+      0,
+      'exhibit_outdoor_big',
+    ); // the image of the billBoard svg
 
-        scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height)
+    scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height);
 
-        // 1. TopLeft
-        // 2. TopRight
-        // 3. LeftBottom
-        // 4. RightBottom
-        const vertices = [
-            -0.08, 0.154,
+    // 1. TopLeft
+    // 2. TopRight
+    // 3. LeftBottom
+    // 4. RightBottom
+    const vertices = [
+      -0.08, 0.154,
 
-            0.08, 0.062,
+      0.08, 0.062,
 
-            -0.08, -0.051,
+      -0.08, -0.051,
 
-            0.08, -0.143
-        ]
+      0.08, -0.143,
+    ];
 
-        const uvs = [
-            0, 0,
-            1, 0,
-            0, 1,
-            1, 1
-        ]
+    const uvs = [
+      0, 0,
+      1, 0,
+      0, 1,
+      1, 1,
+    ];
 
-        const indicies = [0, 2, 1, 2, 3, 1];
+    const indicies = [0, 2, 1, 2, 3, 1];
 
-        const meshName = name + "_mesh"
-        scene[meshName] = scene.add.mesh(- 20,
-            - 80, 'play')
+    const meshName = `${name}_mesh`;
+    scene[meshName] = scene.add.mesh(
+      -20,
+      -80,
 
-        // play
-        // artFrame_512
+      'play',
+    );
 
-        scene[meshName].addVertices(vertices, uvs, indicies)
+    // play
+    // artFrame_512
 
-        // placing the artWork in perspective works with the perspective cam of the mesh
-        //this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
-        scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60)
+    scene[meshName].addVertices(vertices, uvs, indicies);
 
-        // the 'zoom' is dependent on the screen size, this formula works well
-        let meshPanZ = (scene.sys.game.canvas.height / 1000) * 2
+    // placing the artWork in perspective works with the perspective cam of the mesh
+    // this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
+    scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60);
 
-        //console.log("meshPanZ", meshPanZ)
+    // the 'zoom' is dependent on the screen size, this formula works well
+    const meshPanZ = (scene.sys.game.canvas.height / 1000) * 2;
 
-        // the name of the mesh is name_mesh
-        scene[meshName].panZ(meshPanZ) // pan is zoom level, bigger is smaller, only works with perspective projection
-        // x: 0.4154389168615932
-        // y: -0.77795430111968
-        // z: -0.43183495571265507
+    // console.log("meshPanZ", meshPanZ)
 
-        // this.mesh.modelRotation.x = 0.42
-        // this.mesh.modelRotation.y = -0.77795430111968
-        // this.mesh.modelRotation.z = -0.42
+    // the name of the mesh is name_mesh
+    scene[meshName].panZ(meshPanZ); // pan is zoom level, bigger is smaller, only works with perspective projection
+    // x: 0.4154389168615932
+    // y: -0.77795430111968
+    // z: -0.43183495571265507
 
-        // const rotateRate = 1
-        // const panRate = 1
-        // const zoomRate = 4
-        scene[name].add([scene[billBoardName], scene[meshName]])
-        scene[name].x = posX
-        scene[name].y = posY
-    }
+    // this.mesh.modelRotation.x = 0.42
+    // this.mesh.modelRotation.y = -0.77795430111968
+    // this.mesh.modelRotation.z = -0.42
 
-    AbriSmall1(config) {
-        const scene = config.scene
-        const posX = config.posX
-        const posY = config.posY
-        const name = config.name
-        // const worldSize = scene.worldSize
-        const size = config.size
+    // const rotateRate = 1
+    // const panRate = 1
+    // const zoomRate = 4
+    scene[name].add([scene[billBoardName], scene[meshName]]);
+    scene[name].x = posX;
+    scene[name].y = posY;
+  }
 
-        //the container with the name of the config
-        scene[name] = scene.add.container()
-        scene[name].name = name
+  AbriSmall1(config) {
+    const {
+      scene, posX, posY, name,
+    } = config;
 
-        const billBoardName = name + "_billBoard"
-        scene[billBoardName] = scene.add.image(0,
-            0,
-            "exhibit_outdoor_small1")
+    // the container with the name of the config
+    scene[name] = scene.add.container();
+    scene[name].name = name;
 
-        scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height)
+    const billBoardName = `${name}_billBoard`;
+    scene[billBoardName] = scene.add.image(
+      0,
+      0,
+      'exhibit_outdoor_small1',
+    );
 
-        // 1. TopLeft
-        // 2. TopRight
-        // 3. LeftBottom
-        // 4. RightBottom
-        const vertices = [
-            -0.08, 0.154,
+    scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height);
 
-            0.08, 0.062,
+    // 1. TopLeft
+    // 2. TopRight
+    // 3. LeftBottom
+    // 4. RightBottom
+    const vertices = [
+      -0.08, 0.154,
 
-            -0.08, -0.051,
+      0.08, 0.062,
 
-            0.08, -0.143
-        ]
+      -0.08, -0.051,
 
-        const uvs = [
-            0, 0,
-            1, 0,
-            0, 1,
-            1, 1
-        ]
+      0.08, -0.143,
+    ];
 
-        const indicies = [0, 2, 1, 2, 3, 1];
+    const uvs = [
+      0, 0,
+      1, 0,
+      0, 1,
+      1, 1,
+    ];
 
-        const meshName = name + "_mesh"
-        scene[meshName] = scene.add.mesh(- 20,
-            - 80, 'play')
+    const indicies = [0, 2, 1, 2, 3, 1];
 
-        // play
-        // artFrame_512
+    const meshName = `${name}_mesh`;
+    scene[meshName] = scene.add.mesh(
+      -20,
+      -80,
 
-        scene[meshName].addVertices(vertices, uvs, indicies)
+      'play',
+    );
 
-        // placing the artWork in perspective works with the perspective cam of the mesh
-        //this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
-        scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60)
+    // play
+    // artFrame_512
 
-        // the 'zoom' is dependent on the screen size, this formula works well
-        let meshPanZ = (scene.sys.game.canvas.height / 1000) * 2
+    scene[meshName].addVertices(vertices, uvs, indicies);
 
-        //console.log("meshPanZ", meshPanZ)
+    // placing the artWork in perspective works with the perspective cam of the mesh
+    // this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
+    scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60);
 
-        // the name of the mesh is name_mesh
-        scene[meshName].panZ(meshPanZ) // pan is zoom level, bigger is smaller, only works with perspective projection
+    // the 'zoom' is dependent on the screen size, this formula works well
+    const meshPanZ = (scene.sys.game.canvas.height / 1000) * 2;
 
-        scene[name].add([scene[billBoardName], scene[meshName]])
-        scene[name].x = posX
-        scene[name].y = posY
-    }
+    // console.log("meshPanZ", meshPanZ)
 
-    AbriSmall2(config) {
-        const scene = config.scene
-        const posX = config.posX
-        const posY = config.posY
-        const name = config.name
-        // const worldSize = scene.worldSize
-        const size = config.size
+    // the name of the mesh is name_mesh
+    scene[meshName].panZ(meshPanZ); // pan is zoom level, bigger is smaller, only works with perspective projection
 
-        //the container with the name of the config
-        scene[name] = scene.add.container()
-        scene[name].name = name
+    scene[name].add([scene[billBoardName], scene[meshName]]);
+    scene[name].x = posX;
+    scene[name].y = posY;
+  }
 
-        const billBoardName = name + "_billBoard"
-        scene[billBoardName] = scene.add.image(0,
-            0,
-            "exhibit_outdoor_small2") // the image of the billBoard svg
+  AbriSmall2(config) {
+    const {
+      scene, posX, posY, name,
+    } = config;
+    // the container with the name of the config
+    scene[name] = scene.add.container();
+    scene[name].name = name;
 
-        scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height)
+    const billBoardName = `${name}_billBoard`;
+    scene[billBoardName] = scene.add.image(
+      0,
+      0,
+      'exhibit_outdoor_small2',
+    ); // the image of the billBoard svg
 
-        // 1. TopLeft
-        // 2. TopRight
-        // 3. LeftBottom
-        // 4. RightBottom
-        let vertices = [
-            -0.03, -0.017,
+    scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height);
 
-            0.051, -0.064,
+    // 1. TopLeft
+    // 2. TopRight
+    // 3. LeftBottom
+    // 4. RightBottom
+    const vertices = [
+      -0.03, -0.017,
 
-            -0.03, -0.098,
+      0.051, -0.064,
 
-            0.051, -0.145
-        ]
+      -0.03, -0.098,
 
-        const uvs = [
-            0, 0,
-            1, 0,
-            0, 1,
-            1, 1
-        ]
+      0.051, -0.145,
+    ];
 
-        const indicies = [0, 2, 1, 2, 3, 1];
+    const uvs = [
+      0, 0,
+      1, 0,
+      0, 1,
+      1, 1,
+    ];
 
-        const meshName = name + "_mesh"
-        scene[meshName] = scene.add.mesh(- 20,
-            - 80, 'play')
+    const indicies = [0, 2, 1, 2, 3, 1];
 
-        // play
-        // artFrame_512
+    const meshName = `${name}_mesh`;
+    scene[meshName] = scene.add.mesh(
+      -20,
+      -80,
 
-        scene[meshName].addVertices(vertices, uvs, indicies)
+      'play',
+    );
 
-        // placing the artWork in perspective works with the perspective cam of the mesh
-        //this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
-        scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60)
+    // play
+    // artFrame_512
 
-        // the 'zoom' is dependent on the screen size, this formula works well
-        let meshPanZ = (scene.sys.game.canvas.height / 1000) * 2
+    scene[meshName].addVertices(vertices, uvs, indicies);
 
-        //console.log("meshPanZ", meshPanZ)
+    // placing the artWork in perspective works with the perspective cam of the mesh
+    // this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
+    scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60);
 
-        // the name of the mesh is name_mesh
-        scene[meshName].panZ(meshPanZ) // pan is zoom level, bigger is smaller, only works with perspective projection
+    // the 'zoom' is dependent on the screen size, this formula works well
+    const meshPanZ = (scene.sys.game.canvas.height / 1000) * 2;
 
-        scene[name].add([scene[billBoardName], scene[meshName]])
-        scene[name].x = posX
-        scene[name].y = posY
+    // console.log("meshPanZ", meshPanZ)
 
-    }
+    // the name of the mesh is name_mesh
+    scene[meshName].panZ(meshPanZ); // pan is zoom level, bigger is smaller, only works with perspective projection
+
+    scene[name].add([scene[billBoardName], scene[meshName]]);
+    scene[name].x = posX;
+    scene[name].y = posY;
+  }
 }
 
-export default new Exhibition()
+export default new Exhibition();

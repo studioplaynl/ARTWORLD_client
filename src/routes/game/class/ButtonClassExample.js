@@ -1,37 +1,40 @@
+import { dlog } from '../helpers/DebugLog';
+
+const { Phaser } = window;
 export default class Button extends Phaser.GameObjects.Container {
+  constructor(scene, x, y, fontColor, key1, text) {
+    super(scene);
 
-    constructor(scene, x, y, fontColor, key1, text) {
+    // this.scene = scene
 
-        super(scene)
+    this.x = x;
+    this.y = y;
 
-        // this.scene = scene
+    const button = scene.add.image(
+      x,
+      y,
+      key1,
+    ).setInteractive();
 
-        this.x = x;
-        this.y = y;
+    const buttonText = scene.add.text(x, y, text, {
+      fontSize:
+                '18px',
+      color: fontColor,
+    });
 
-        const button = scene.add.image(x, y,
-            key1).setInteractive();
+    Phaser.Display.Align.In.Center(buttonText, button);
 
-        const buttonText = scene.add.text(x, y, text, {
-            fontSize:
-                '18px', color: fontColor
-        });
+    this.add(button);
+    this.add(buttonText);
+    button.on('pointerdown', () => {
+      buttonText.setText('pointerDown');
+    });
 
-        Phaser.Display.Align.In.Center(buttonText, button);
+    button.on('pointerup', () => {
+      buttonText.setText(text);
+    });
 
-        this.add(button);
-        this.add(buttonText);
-        button.on('pointerdown', () => {
-            buttonText.setText("pointerDown")
-        })
-
-        button.on('pointerup', () => {
-            buttonText.setText(text)
-        })
-
-        console.log(scene.textures.exists(key1))
-        scene.add.existing(this);
-    }
-
+    dlog(scene.textures.exists(key1));
+    scene.add.existing(this);
+  }
 }
-

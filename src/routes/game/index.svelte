@@ -19,7 +19,7 @@
 
   // Add scenes
   import PreloadScene from './scenes/PreloadScene';
-  import urlParser from './scenes/urlParser';
+  import UrlParser from './scenes/UrlParser';
   import NetworkBoot from './scenes/NetworkBoot';
   import Location1 from './scenes/Location1';
   import Location3 from './scenes/Location3';
@@ -33,7 +33,7 @@
 
   const SCENES = [
     PreloadScene,
-    urlParser,
+    UrlParser,
     NetworkBoot,
     Location1,
     Location3,
@@ -119,6 +119,7 @@
     };
 
     // enable3d(() => new Phaser.Game(config)).withPhysics("/ammo/kripken")
+    // TODO Fix 'new' error below:
     new Phaser.Game(config);
   });
 </script>
