@@ -1,9 +1,7 @@
 // Storage & communcatie tussen Server en App
 
 import { get, writable } from 'svelte/store';
-import {
-  Session, Profile, Error, Succes,
-} from './session.js';
+import { Session } from './session';
 import { deleteObject, updateObject, listAllObjects } from './api';
 
 //  Achievements of a user

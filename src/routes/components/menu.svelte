@@ -1,17 +1,10 @@
 <script>
   import { onMount } from "svelte";
-  import { checkLogin } from "./../../session";
-  import { fly } from 'svelte/transition';
-  import {
-    locale,
-    locales,
-    getLocaleFromNavigator,
-    init,
-    addMessages,
-    _,
-  } from "svelte-i18n";
+  import { checkLogin, logout } from "./../../api";
+  import { fly } from "svelte/transition";
+  import { locale, locales, getLocaleFromNavigator, init, addMessages, _ } from "svelte-i18n";
   import profile from "./../profile.svelte";
-  import { Session, Profile, logout } from "./../../session";
+  import { Session, Profile } from "./../../session";
   let MenuToggle = false;
   import en from "./../../langauge/en/en.json";
   import nl from "./../../langauge/nl/nl.json";
@@ -32,7 +25,7 @@
   let role;
   if ($Profile == null) {
     role = null;
-  } else {
+  } else if ("meta" in $Profile) {
     console.log($Profile);
     role = $Profile.meta.Role;
   }
@@ -43,11 +36,12 @@
   //   onMount(async () => {
   //     checkLogin($Session)
   // });
-  let transition = { y: 200, duration: 500 }
-  if(window.screen.width >= 600){
-    transition = { x: 200, duration: 500 }
+  let transition = { y: 200, duration: 500 };
+  if (window.screen.width >= 600) {
+    transition = { x: 200, duration: 500 };
   }
 </script>
+
 <!-- 
 <div class="logo">
   <div class="glyph">
@@ -68,90 +62,94 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#fff"></circle><path d="M49.27416,70H35.14721V26.3633H49.72143A21.97976,21.97976,0,0,1,60.7478,28.97365a17.43692,17.43692,0,0,1,7.05175,7.47852,25.59978,25.59978,0,0,1,2.46094,11.666,25.76025,25.76025,0,0,1-2.4707,11.71875,17.41851,17.41851,0,0,1-7.16992,7.53125A22.8821,22.8821,0,0,1,49.27416,70Zm-7.543-5.75293h7.18066q7.456,0,11.16406-4.18652,3.70752-4.18653,3.708-11.94239,0-7.71386-3.6543-11.85742-3.65478-4.144-10.81347-4.14453h-7.585Z" fill="#7300eb"></path></svg>    </div>
 </div> -->
 
-
 <nav>
   {#if MenuToggle}
-  <div class="menucontainer" transition:fly="{ transition }" >
-    <div class="nav">
-      <ul
-        class="menu"
-        on:click={() => {
-          MenuToggle = false;
-        }}
-      >
-       <li><a href="/#/">{$_("nav.game")}</a></li>
-        <!--  <li><a href="/#/friends">{$_("nav.friends")}</a></li>
+    <div class="menucontainer" transition:fly="{transition}">
+      <div class="nav">
+        <ul
+          class="menu"
+          on:click="{() => {
+            MenuToggle = false;
+          }}"
+        >
+          <li><a href="/#/">{$_("nav.game")}</a></li>
+          <!--  <li><a href="/#/friends">{$_("nav.friends")}</a></li>
         <li><a href="/#/drawing">{$_("nav.drawing")}</a></li>
         <li><a href="/#/stopmotion">{$_("nav.stopmotion")}</a></li>
         <li><a href="#" on:click="{()=> { location.href = "/#/mariosound" ;location.reload(); }}">{$_("nav.mariosound")}</a> -->
-      </ul>
-      <select bind:value={$locale} on:click>
-        {#each $locales as locale}
-          <option value={locale}>{locale}</option>
-        {/each}
-      </select>
-      <div
-        class="userInfo"
-        on:click={() => {
-          MenuToggle = false;
-        }}
-      >
-        {#if !!$Profile && $Profile.meta.Role == "admin"}
-          <ul
-            class="menu"
-            on:click={() => {
-              MenuToggle = false;
-            }}
-          >
-            <li><a href="/#/admin">{$_("role.admin")}</a></li>
-            <li><a href="/#/moderator">{$_("role.moderator")}</a></li>
-            <li><a href="/#/upload">{$_("nav.upload")}</a></li>
-          </ul>
-        {/if}
-        {#if !!$Profile && $Profile.meta.Role == "moderator"}
-        <ul
-          class="menu"
-          on:click={() => {
-            MenuToggle = false;
-          }}
-        >
-          <li><a href="/#/moderator">{$_("role.moderator")}</a></li>
-          <li><a href="/#/upload">{$_("role.upload")}</a></li>
         </ul>
-      {/if}
-        {#if $Session == null}
-          <button href="/#/login">{$_("nav.login")}</button>
-        {:else}
-          <a href="/#/profile">{$Session.username}</a>
-          <button on:click={logout} href="/">{$_("nav.logout")}</button>
-        {/if}
+        <select bind:value="{$locale}" on:click>
+          {#each $locales as locale}
+            <option value="{locale}">{locale}</option>
+          {/each}
+        </select>
+        <div
+          class="userInfo"
+          on:click="{() => {
+            MenuToggle = false;
+          }}"
+        >
+          {#if !!$Profile && "meta" in $Profile && $Profile.meta.Role == "admin"}
+            <ul
+              class="menu"
+              on:click="{() => {
+                MenuToggle = false;
+              }}"
+            >
+              <li><a href="/#/admin">{$_("role.admin")}</a></li>
+              <li><a href="/#/moderator">{$_("role.moderator")}</a></li>
+              <li><a href="/#/upload">{$_("nav.upload")}</a></li>
+            </ul>
+          {/if}
+          {#if !!$Profile && "meta" in $Profile && $Profile.meta.Role == "moderator"}
+            <ul
+              class="menu"
+              on:click="{() => {
+                MenuToggle = false;
+              }}"
+            >
+              <li><a href="/#/moderator">{$_("role.moderator")}</a></li>
+              <li><a href="/#/upload">{$_("role.upload")}</a></li>
+            </ul>
+          {/if}
+          {#if $Session == null}
+            <button href="/#/login">{$_("nav.login")}</button>
+          {:else}
+            <a href="/#/profile">{$Session.username}</a>
+            <button on:click="{logout}" href="/">{$_("nav.logout")}</button>
+          {/if}
+        </div>
       </div>
-      
-    </div>
-    <div
-    on:click={() => {
-      MenuToggle = false;
-    }}
-    class="closeicon"
-  >
-  <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none">
-    <path d="M6.22566 4.81096C5.83514 4.42044 5.20197 4.42044 4.81145 4.81096C4.42092 5.20148 4.42092 5.83465 4.81145 6.22517L10.5862 11.9999L4.81151 17.7746C4.42098 18.1651 4.42098 18.7983 4.81151 19.1888C5.20203 19.5793 5.8352 19.5793 6.22572 19.1888L12.0004 13.4141L17.7751 19.1888C18.1656 19.5793 18.7988 19.5793 19.1893 19.1888C19.5798 18.7983 19.5798 18.1651 19.1893 17.7746L13.4146 11.9999L19.1893 6.22517C19.5799 5.83465 19.5799 5.20148 19.1893 4.81096C18.7988 4.42044 18.1657 4.42044 17.7751 4.81096L12.0004 10.5857L6.22566 4.81096Z" fill="#7300eb"/>
-    </svg>
-  </div>
-  </div>
-  {:else}
-  {#if !!$Profile && ($Profile.meta.Role == "admin" || $Profile.meta.Role == "moderator")}    
       <div
-        on:click={() => {
-          MenuToggle = true;
-        }}
-        class="icon"
+        on:click="{() => {
+          MenuToggle = false;
+        }}"
+        class="closeicon"
       >
-        <div class="hamburger" />
-        <div class="hamburger" />
-        <div class="hamburger" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24px"
+          height="24px"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <path
+            d="M6.22566 4.81096C5.83514 4.42044 5.20197 4.42044 4.81145 4.81096C4.42092 5.20148 4.42092 5.83465 4.81145 6.22517L10.5862 11.9999L4.81151 17.7746C4.42098 18.1651 4.42098 18.7983 4.81151 19.1888C5.20203 19.5793 5.8352 19.5793 6.22572 19.1888L12.0004 13.4141L17.7751 19.1888C18.1656 19.5793 18.7988 19.5793 19.1893 19.1888C19.5798 18.7983 19.5798 18.1651 19.1893 17.7746L13.4146 11.9999L19.1893 6.22517C19.5799 5.83465 19.5799 5.20148 19.1893 4.81096C18.7988 4.42044 18.1657 4.42044 17.7751 4.81096L12.0004 10.5857L6.22566 4.81096Z"
+            fill="#7300eb"></path>
+        </svg>
       </div>
-    {/if}
+    </div>
+  {:else if !!$Profile && "meta" in $Profile && ($Profile.meta.Role == "admin" || $Profile.meta.Role == "moderator")}
+    <div
+      on:click="{() => {
+        MenuToggle = true;
+      }}"
+      class="icon"
+    >
+      <div class="hamburger"></div>
+      <div class="hamburger"></div>
+      <div class="hamburger"></div>
+    </div>
   {/if}
 </nav>
 
@@ -202,7 +200,7 @@
   }
 
   select {
-    background-color: #7300EB;
+    background-color: #7300eb;
     color: white;
     width: 100%;
   }
@@ -237,7 +235,7 @@
       padding: 25px;
     }
 
-    .closeicon{
+    .closeicon {
       cursor: pointer;
       padding: 10px 15px;
       margin: 10px -1px 0 0;
@@ -248,20 +246,12 @@
       top: -55px;
       right: 0;
     }
-
   }
-  .menucontainer{
+  .menucontainer {
     pointer-events: all;
   }
 
   .userInfo {
     margin-top: 20px;
   }
-
-
-
-
-
-
-
 </style>

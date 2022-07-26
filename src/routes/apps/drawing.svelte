@@ -14,7 +14,7 @@
     getFile,
   } from "../../api.js";
   import { client } from "../../nakama.svelte";
-  import { Session, Profile, tutorial } from "../../session.js";
+  import { Session, Profile, Tutorial } from "../../session.js";
   import { Achievements } from "../../storage";
   import NameGenerator from "../components/nameGenerator.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
@@ -115,9 +115,7 @@
   function adaptCanvasSize() {
     // the canvas size is set by the least of two (width / height)
     const canvasSize =
-      window.innerWidth > window.innerHeight
-        ? window.innerHeight
-        : window.innerWidth;
+      window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
 
     // setting default width and height
     canvas.setWidth(canvasSize);
@@ -243,8 +241,7 @@
       // erase functie kapot? recompile: http://fabricjs.com/build/
       var eraseBrush = new fabric.EraserBrush(canvas);
       canvas.freeDrawingBrush = eraseBrush;
-      canvas.freeDrawingBrush.width =
-        parseInt(drawingLineWidthEl.value, 10) || 1;
+      canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
       canvas.isDrawingMode = true;
       switchOption("erase");
       floodFill(false);
@@ -291,8 +288,7 @@
           squareDistance = 2;
 
         var patternCanvas = fabric.document.createElement("canvas");
-        patternCanvas.width = patternCanvas.height =
-          squareWidth + squareDistance;
+        patternCanvas.width = patternCanvas.height = squareWidth + squareDistance;
         var ctx = patternCanvas.getContext("2d");
 
         ctx.fillStyle = this.color;
@@ -315,8 +311,7 @@
 
         var canvasWidth = rect.getBoundingRect().width;
 
-        patternCanvas.width = patternCanvas.height =
-          canvasWidth + squareDistance;
+        patternCanvas.width = patternCanvas.height = canvasWidth + squareDistance;
         rect.set({ left: canvasWidth / 2, top: canvasWidth / 2 });
 
         var ctx = patternCanvas.getContext("2d");
@@ -391,8 +386,7 @@
     if (canvas.freeDrawingBrush) {
       canvas.freeDrawingBrush.color = drawingColorEl.value;
       // canvas.freeDrawingBrush.source = canvas.freeDrawingBrush.getPatternSrc.call(this);
-      canvas.freeDrawingBrush.width =
-        parseInt(drawingLineWidthEl.value, 10) || 1;
+      canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
       // canvas.freeDrawingBrush.shadow = new fabric.Shadow({
       //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
       //   offsetX: 0,
@@ -432,10 +426,7 @@
     //redraw cursor on new mouse position when moved
     canvas.on("mouse:move", function (evt) {
       if (current == "select")
-        return mousecursor
-          .set({ top: -100, left: -100 })
-          .setCoords()
-          .canvas.renderAll();
+        return mousecursor.set({ top: -100, left: -100 }).setCoords().canvas.renderAll();
       var mouse = this.getPointer(evt.e);
       mousecursor
         .set({
@@ -495,10 +486,7 @@
         const canvasData = canvas.toSVG();
 
         // convert SVG into the HTML format in order to be able to manipulate inner data
-        const parsedSVG = new DOMParser().parseFromString(
-          canvasData,
-          "text/html"
-        );
+        const parsedSVG = new DOMParser().parseFromString(canvasData, "text/html");
 
         // all <g> tags contain drawing action
         const gTagElement = parsedSVG.getElementsByTagName("g");
@@ -1200,8 +1188,7 @@
   const saveHistory = () => {};
 
   const undo = () => {
-    let lastObject =
-      canvas.toJSON().objects[canvas.toJSON().objects.length - 1];
+    let lastObject = canvas.toJSON().objects[canvas.toJSON().objects.length - 1];
     history.push(lastObject);
     let newFile = canvas.toJSON();
     newFile.objects.pop();
@@ -1247,16 +1234,7 @@
     },
 
     // The actual flood fill implementation
-    fill: function (
-      imageData,
-      getPointOffsetFn,
-      point,
-      color,
-      target,
-      tolerance,
-      width,
-      height
-    ) {
+    fill: function (imageData, getPointOffsetFn, point, color, target, tolerance, width, height) {
       var directions = [
           [1, 0],
           [0, 1],
@@ -1407,20 +1385,10 @@
         tmpCanvas.width = canvas.width;
         tmpCanvas.height = canvas.height;
 
-        var palette = tmpCtx.getImageData(
-          0,
-          0,
-          tmpCanvas.width,
-          tmpCanvas.height
-        ); // x, y, w, h
+        var palette = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height); // x, y, w, h
         palette.data.set(new Uint8ClampedArray(data.coords)); // Assuming values 0..255, RGBA
         tmpCtx.putImageData(palette, 0, 0); // Repost the data.
-        var imgData = tmpCtx.getImageData(
-          data.x,
-          data.y,
-          data.width,
-          data.height
-        ); // Get cropped image
+        var imgData = tmpCtx.getImageData(data.x, data.y, data.width, data.height); // Get cropped image
 
         tmpCanvas.width = data.width;
         tmpCanvas.height = data.height;
@@ -1480,14 +1448,14 @@
   }
 </script>
 
-<main on:mouseup={mouseEvent}>
+<main on:mouseup="{mouseEvent}">
   <div class="main-container">
     <div class="canvas-frame-container">
       {#if current == "camera"}
-        <video bind:this={video} autoplay />
-        <button on:click={capturePicture} class="videoButton" />
+        <video bind:this="{video}" autoplay></video>
+        <button on:click="{capturePicture}" class="videoButton"></button>
         <div class="videocanvas">
-          <canvas bind:this={videoCanvas} />
+          <canvas bind:this="{videoCanvas}"></canvas>
         </div>
       {/if}
       <!-- <div class="topbar">
@@ -1496,12 +1464,12 @@
         <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
       </div>
     </div> -->
-      <div class="canvas-box" class:hidden={current === "camera"}>
-        <canvas bind:this={canv} class="canvas" />
-        <canvas bind:this={Cursor} id="cursor" />
+      <div class="canvas-box" class:hidden="{current === 'camera'}">
+        <canvas bind:this="{canv}" class="canvas"></canvas>
+        <canvas bind:this="{Cursor}" id="cursor"></canvas>
       </div>
       <div class="savecanvas">
-        <canvas bind:this={saveCanvas} />
+        <canvas bind:this="{saveCanvas}"></canvas>
       </div>
       <div class="frame-box">
         {#if appType == "stopmotion" || appType == "avatar"}
@@ -1509,12 +1477,12 @@
             {#each frames as frame, index}
               <div>
                 <div
-                  id={index}
-                  class:selected={currentFrame === index}
-                  on:click={() => {
+                  id="{index}"
+                  class:selected="{currentFrame === index}"
+                  on:click="{() => {
                     changeFrame(index);
-                    console.log("debug index of frame:", index); //remove debug
-                  }}
+                    console.log('debug index of frame:', index); //remove debug
+                  }}"
                   style="background-image: url({backgroundFrames[index]})"
                 >
                   <div>{index + 1}</div>
@@ -1522,9 +1490,9 @@
                 {#if currentFrame === index && frames.length > 1}
                   <img
                     class="icon"
-                    on:click={() => {
+                    on:click="{() => {
                       deleteFrame(index);
-                    }}
+                    }}"
                     src="assets/SHB/svg/AW-icon-trash.svg"
                   />
                 {/if}
@@ -1532,7 +1500,7 @@
             {/each}
             {#if frames.length < maxFrames}
               <div>
-                <div id="frameNew" on:click={addFrame}><div>+</div></div>
+                <div id="frameNew" on:click="{addFrame}"><div>+</div></div>
               </div>
             {/if}
           </div>
@@ -1540,25 +1508,24 @@
             {#if play}
               <a
                 id="playPause"
-                on:click={() => {
+                on:click="{() => {
                   play = false;
                   setPlay(false);
-                }}
-                ><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" /></a
+                }}"><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" /></a
               >
             {:else}
               <a
                 id="playPause"
-                on:click={() => {
+                on:click="{() => {
                   play = true;
                   setPlay(true);
-                }}><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" /></a
+                }}"><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" /></a
               >
             {/if}
-            <a on:click={backgroundHide}
+            <a on:click="{backgroundHide}"
               ><img
                 class="icon"
-                class:unselected={!showBackground}
+                class:unselected="{!showBackground}"
                 src="assets/SHB/svg/AW-icon-onion.svg"
               /></a
             >
@@ -1569,31 +1536,31 @@
   </div>
   <div class="optionbox-container">
     <div class="optionbox">
-      <div class="optionbar" class:hidden={optionbox}>
-        <div class="colorTab" class:hidden={current != "draw"}>
+      <div class="optionbar" class:hidden="{optionbox}">
+        <div class="colorTab" class:hidden="{current != 'draw'}">
           <div class="drawing-options-container">
             <img
-              on:click={() => applyBrush("Pencil")}
+              on:click="{() => applyBrush('Pencil')}"
               class="icon"
-              class:selected={selectedBrush == "Pencil"}
+              class:selected="{selectedBrush == 'Pencil'}"
               src="assets/svg/drawing_pencil2.svg"
             />
             <img
-              on:click={() => applyBrush("Circle")}
+              on:click="{() => applyBrush('Circle')}"
               class="icon"
-              class:selected={selectedBrush == "Circle"}
+              class:selected="{selectedBrush == 'Circle'}"
               src="assets/svg/drawing_circle2.svg"
             />
             <img
-              on:click={() => applyBrush("Spray")}
+              on:click="{() => applyBrush('Spray')}"
               class="icon"
-              class:selected={selectedBrush == "Spray"}
+              class:selected="{selectedBrush == 'Spray'}"
               src="assets/svg/drawing_spray.svg"
             />
             <img
-              on:click={() => applyBrush("Pattern")}
+              on:click="{() => applyBrush('Pattern')}"
               class="icon"
-              class:selected={selectedBrush == "Pattern"}
+              class:selected="{selectedBrush == 'Pattern'}"
               src="assets/svg/drawing_pattern.svg"
             />
           </div>
@@ -1622,23 +1589,23 @@
         </div> -->
           <input
             type="color"
-            bind:value={drawingColor}
-            bind:this={drawingColorEl}
+            bind:value="{drawingColor}"
+            bind:this="{drawingColorEl}"
             id="drawing-color"
           />
           <!-- <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" /> -->
 
           <!-- <span class="info">{lineWidth}</span> -->
           <div class="range-container">
-            <div class="circle-box-small" />
+            <div class="circle-box-small"></div>
             <input
               type="range"
               min="10"
               max="500"
               id="drawing-line-width"
-              bind:value={lineWidth}
+              bind:value="{lineWidth}"
             />
-            <div class="circle-box-big" />
+            <div class="circle-box-big"></div>
           </div>
 
           <!-- <label for="drawing-shadow-color">Shadow color:</label>
@@ -1666,7 +1633,7 @@
           id="drawing-shadow-offset"
         /> -->
         </div>
-        <div class="eraseTab" class:hidden={current != "erase"}>
+        <div class="eraseTab" class:hidden="{current != 'erase'}">
           <!-- <div class="widthBox">
             <div
               class="lineWidth"
@@ -1675,40 +1642,24 @@
           </div>
           <span class="info">{lineWidth}</span> -->
           <div class="range-container">
-            <div class="circle-box-small" />
-            <input
-              type="range"
-              min="10"
-              max="500"
-              id="erase-line-width"
-              bind:value={lineWidth}
-            />
-            <div class="circle-box-big" />
+            <div class="circle-box-small"></div>
+            <input type="range" min="10" max="500" id="erase-line-width" bind:value="{lineWidth}" />
+            <div class="circle-box-big"></div>
           </div>
         </div>
-        <div class="fillTab" class:hidden={current != "fill"}>
-          <input type="color" bind:value={fillColor} id="fill-color" />
+        <div class="fillTab" class:hidden="{current != 'fill'}">
+          <input type="color" bind:value="{fillColor}" id="fill-color" />
         </div>
-        <div class="selectTab" class:hidden={current != "select"}>
-          <a on:click={Copy}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
-          >
-          <a on:click={Paste}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
-          >
-          <a on:click={Delete}
-            ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
-          >
+        <div class="selectTab" class:hidden="{current != 'select'}">
+          <a on:click="{Copy}"><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a>
+          <a on:click="{Paste}"><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a>
+          <a on:click="{Delete}"><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a>
         </div>
-        <div class="saveBox" class:hidden={current != "saveToggle"}>
+        <div class="saveBox" class:hidden="{current != 'saveToggle'}">
           <div class="saveTab">
             {#if appType != "avatar" && appType != "house"}
               <label for="title">Title</label>
-              <NameGenerator
-                bind:value={displayName}
-                bind:invalidTitle
-                bind:isTitleChanged
-              />
+              <NameGenerator bind:value="{displayName}" bind:invalidTitle bind:isTitleChanged />
             {/if}
             <!-- <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
@@ -1720,17 +1671,11 @@
               </select> -->
             <div class="status-save-download-container">
               {#if appType != "avatar" && appType != "house"}
-                <div on:click={changeVisibility}>
+                <div on:click="{changeVisibility}">
                   {#if status}
-                    <img
-                      class="icon selected"
-                      src="assets/SHB/svg/AW-icon-visible.svg"
-                    />
+                    <img class="icon selected" src="assets/SHB/svg/AW-icon-visible.svg" />
                   {:else}
-                    <img
-                      class="icon selected"
-                      src="assets/SHB/svg/AW-icon-invisible.svg"
-                    />
+                    <img class="icon selected" src="assets/SHB/svg/AW-icon-invisible.svg" />
                   {/if}
                 </div>
               {/if}
@@ -1744,7 +1689,7 @@
                   /> -->
                 <!-- {:else if saved} -->
                 <img
-                  on:click={upload}
+                  on:click="{upload}"
                   class="icon selected"
                   src="assets/SHB/svg/AW-icon-check.svg"
                 />
@@ -1757,7 +1702,7 @@
               <div>
                 <!-- {#if saved} -->
                 <img
-                  on:click={download}
+                  on:click="{download}"
                   class="icon selected"
                   src="assets/SHB/svg/AW-icon-save.svg"
                 />
@@ -1772,19 +1717,12 @@
       </div>
 
       <div class="iconbox">
-        <a on:click={undo}
-          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
-        >
-        <a on:click={redo}
-          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
-        >
-        <a
-          on:click={applyBrush}
-          id="drawing-mode"
-          class:currentSelected={current === "draw"}
+        <a on:click="{undo}"><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a>
+        <a on:click="{redo}"><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a>
+        <a on:click="{applyBrush}" id="drawing-mode" class:currentSelected="{current === 'draw'}"
           ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
         >
-        <a id="erase-mode" class:currentSelected={current === "erase"}
+        <a id="erase-mode" class:currentSelected="{current === 'erase'}"
           ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" /></a
         >
         <!-- <button
@@ -1792,7 +1730,7 @@
         id="fill-mode"
         class:currentSelected={current === "fill"}><BucketIcon /></button
       > -->
-        <a id="select-mode" class:currentSelected={current === "select"}
+        <a id="select-mode" class:currentSelected="{current === 'select'}"
           ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
         >
         <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
@@ -1809,20 +1747,20 @@
 
         <!-- svelte-ignore a11y-missing-attribute -->
         <a
-          class:currentSelected={current === "saveToggle"}
-          on:click={() => {
+          class:currentSelected="{current === 'saveToggle'}"
+          on:click="{() => {
             // console.log("saving is clicked");
             // console.log("length", canvas.toJSON().objects);
             if (
-              appType == "drawing" ||
-              appType == "stopmotion" ||
-              appType == "house" ||
-              appType == "avatar"
+              appType == 'drawing' ||
+              appType == 'stopmotion' ||
+              appType == 'house' ||
+              appType == 'avatar'
             ) {
               saveToggle = !saveToggle;
-              switchOption("saveToggle");
+              switchOption('saveToggle');
             }
-          }}><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+          }}"><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
         >
       </div>
     </div>

@@ -1,97 +1,93 @@
 <script>
-    import HistoryTracker from "../game/class/HistoryTracker";
-    import ManageSession from "../game/ManageSession";
-    import { history } from "../../session";
+  import HistoryTracker from "../game/class/HistoryTracker";
+  import ManageSession from "../game/ManageSession";
+  import { History } from "../../session";
 
-    let home = "Artworld";
+  let home = "Artworld";
 
-    async function goHome() {
-        HistoryTracker.switchScene(ManageSession.currentScene, home, home);
+  async function goHome() {
+    HistoryTracker.switchScene(ManageSession.currentScene, home, home);
+  }
+
+  async function goBack() {
+    console.log($History);
+    if ($History.length > 1) {
+      HistoryTracker.activateBackButton(ManageSession.currentScene);
     }
+  }
 
-    async function goBack() {
-        console.log($history);
-        if ($history.length > 1) {
-            HistoryTracker.activateBackButton(ManageSession.currentScene);
-        }
-    }
+  async function zoomIn() {
+    if (ManageSession.currentZoom >= 4) return;
+    ManageSession.currentZoom += 0.1;
+  }
 
-    async function zoomIn() {
-        if (ManageSession.currentZoom >= 4) return;
-        ManageSession.currentZoom += 0.1;
-    }
+  function zoomReset() {
+    ManageSession.currentZoom = 1;
+  }
 
-    function zoomReset() {
-        ManageSession.currentZoom = 1;
-    }
-
-    function zoomOut() {
-        if (ManageSession.currentZoom <= 0.2) return;
-        ManageSession.currentZoom -= 0.1;
-    }
+  function zoomOut() {
+    if (ManageSession.currentZoom <= 0.2) return;
+    ManageSession.currentZoom -= 0.1;
+  }
 </script>
 
 <div class="topbar">
-    <a on:click={goHome}
-        ><img
-            class="TopIcon"
-            id="logo"
-            src="assets/SHB/svg/AW-icon-logo-A.svg"
-        /></a
-    >
-    <a on:click={goBack}
-        ><img
-            class="TopIcon"
-            class:showBack={$history.length > 1}
-            id="back"
-            src="/assets/SHB/svg/AW-icon-previous.svg"
-        /></a
-    >
-    <a on:click={zoomOut} id="zoomOut"
-        ><img class="TopIcon" src="/assets/SHB/svg/AW-icon-minus.svg" /></a
-    >
-    <a on:click={zoomReset} id="zoomReset"
-        ><img class="TopIcon" src="assets/SHB/svg/AW-icon-zoom-reset.svg" /></a
-    >
-    <a on:click={zoomIn} id="zoomIn"
-        ><img class="TopIcon" src="./assets/SHB/svg/AW-icon-plus.svg" /></a
-    >
+  <a on:click="{goHome}"
+    ><img class="TopIcon" id="logo" src="assets/SHB/svg/AW-icon-logo-A.svg" /></a
+  >
+  <a on:click="{goBack}"
+    ><img
+      class="TopIcon"
+      class:showBack="{$History.length > 1}"
+      id="back"
+      src="/assets/SHB/svg/AW-icon-previous.svg"
+    /></a
+  >
+  <a on:click="{zoomOut}" id="zoomOut"
+    ><img class="TopIcon" src="/assets/SHB/svg/AW-icon-minus.svg" /></a
+  >
+  <a on:click="{zoomReset}" id="zoomReset"
+    ><img class="TopIcon" src="assets/SHB/svg/AW-icon-zoom-reset.svg" /></a
+  >
+  <a on:click="{zoomIn}" id="zoomIn"
+    ><img class="TopIcon" src="./assets/SHB/svg/AW-icon-plus.svg" /></a
+  >
 </div>
 
 <style>
-    * {
-        box-sizing: border-box;
-        padding: 0;
-        margin: 0;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 
-    .topbar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        margin: 15px 15px 15px 30px;
-    }
+  .topbar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    margin: 15px 15px 15px 30px;
+  }
 
-    .TopIcon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: white;
-    }
+  .TopIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+  }
 
-    #logo {
-        box-shadow: 5px 5px 0px #7300ed;
-    }
+  #logo {
+    box-shadow: 5px 5px 0px #7300ed;
+  }
 
-    #back {
-        visibility: hidden;
-    }
+  #back {
+    visibility: hidden;
+  }
 
-    .showBack {
-        visibility: visible !important;
-    }
+  .showBack {
+    visibility: visible !important;
+  }
 </style>

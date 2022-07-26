@@ -1,22 +1,17 @@
 <script>
-  import {
-    convertImage,
-    getObject,
-    addFriend,
-    listAllObjects,
-  } from "../../api";
+  import { convertImage, getObject, addFriend, listAllObjects, logout } from "../../api";
   import itemsBar from "./itemsbar.js";
   import ProfilePage from "../profile.svelte";
   import FriendsPage from "../friends.svelte";
   import LikedPage from "../liked.svelte";
-  import { Profile, Session } from "../../session";
-  import { CurrentApp, logout } from "../../session";
+  import { Profile, Session, CurrentApp } from "../../session";
   import Awards from "../awards.svelte";
   import { location } from "svelte-spa-router";
   import { Liked, Addressbook } from "../../storage.js";
   import { get } from "svelte/store";
   import MdPersonOutline from "svelte-icons/md/MdPersonOutline.svelte";
   import MdPersonAdd from "svelte-icons/md/MdPersonAdd.svelte";
+  import { onMount } from "svelte";
 
   let ManageSession;
   let current;
@@ -40,63 +35,60 @@
   let alreadySubscribedToAddressbook = false;
   let addressbookImages = [];
 
-  //check if player is clicked
-  const unsubscribe = itemsBar.subscribe(async (value) => {
-    console.log(value);
-    HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
-    ManageSession = (await import("../game/ManageSession.js")).default;
-    console.log($location);
-    if (!!!$Profile) return;
-    if ($location == "/login") return;
-    console.log($Profile);
-    user_avatar_url = $Profile.url;
-    if (user_house_url == undefined) {
-      user_house_url = await getObject("home", $Profile.meta.Azc, $Profile.id);
-      user_house_url = await convertImage(user_house_url.value.url, "50", "50");
-    }
-    //console.log(ManageSession)
+  onMount(() => {
+    //check if player is clicked
+    const unsubscribe = itemsBar.subscribe(async (value) => {
+      console.log("itemsBar update", value);
+      HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
+      ManageSession = (await import("../game/ManageSession.js")).default;
 
-    if (value.onlinePlayerClicked === true) {
-      console.log(
-        "ManageSession.selectedOnlinePlayer",
-        ManageSession.selectedOnlinePlayer
-      );
-      avatar_url = ManageSession.selectedOnlinePlayer.url;
-      console.log("avatar_url", avatar_url);
-      user_name = ManageSession.selectedOnlinePlayer.username;
-      console.log("user_name", user_name);
-      console.log(
-        "ManageSession.selectedOnlinePlayer.metadata.Azc",
-        ManageSession.selectedOnlinePlayer.metadata.Azc
-      );
-      console.log(
-        "ManageSession.selectedOnlinePlayer.id",
-        ManageSession.selectedOnlinePlayer.id
-      );
-      user_id = ManageSession.selectedOnlinePlayer.id;
-      house_url = await getObject(
-        "home",
-        ManageSession.selectedOnlinePlayer.metadata.Azc,
-        ManageSession.selectedOnlinePlayer.id
-      );
-      // getObject provides an object in the format of:
-      // collection: "home"
-      // create_time: "2021-12-13T14:37:50Z"
-      // key: "Amsterdam"
-      // permission_read: 2
-      // permission_write: 1
-      // update_time: "2022-04-25T13:59:04Z"
-      // user_id: "f42eb28f-9f4d-476c-9788-2240bac4cf48"
-      // value:
-      // // posX: 143.16
-      // // posY: -178.99
-      // // url: "home/f42eb28f-9f4d-476c-9788-2240bac4cf48/5_current.png"
-      // // username: "user33"
-      // // version: 5
-      console.log("house_url", house_url);
-      house_url = await convertImage(house_url.value.url, "50", "50");
-      console.log("house_url", house_url);
-    }
+      console.log($location);
+      if (!!!$Profile) return;
+      if ($location == "/login") return;
+      console.log($Profile);
+      user_avatar_url = $Profile.url;
+      if (user_house_url == undefined) {
+        user_house_url = await getObject("home", $Profile.meta.Azc, $Profile.id);
+        user_house_url = await convertImage(user_house_url.value.url, "50", "50");
+      }
+      //console.log(ManageSession)
+
+      if (value.onlinePlayerClicked === true) {
+        console.log("ManageSession.selectedOnlinePlayer", ManageSession.selectedOnlinePlayer);
+        avatar_url = ManageSession.selectedOnlinePlayer.url;
+        console.log("avatar_url", avatar_url);
+        user_name = ManageSession.selectedOnlinePlayer.username;
+        console.log("user_name", user_name);
+        console.log(
+          "ManageSession.selectedOnlinePlayer.metadata.Azc",
+          ManageSession.selectedOnlinePlayer.metadata.Azc
+        );
+        console.log("ManageSession.selectedOnlinePlayer.id", ManageSession.selectedOnlinePlayer.id);
+        user_id = ManageSession.selectedOnlinePlayer.id;
+        house_url = await getObject(
+          "home",
+          ManageSession.selectedOnlinePlayer.metadata.Azc,
+          ManageSession.selectedOnlinePlayer.id
+        );
+        // getObject provides an object in the format of:
+        // collection: "home"
+        // create_time: "2021-12-13T14:37:50Z"
+        // key: "Amsterdam"
+        // permission_read: 2
+        // permission_write: 1
+        // update_time: "2022-04-25T13:59:04Z"
+        // user_id: "f42eb28f-9f4d-476c-9788-2240bac4cf48"
+        // value:
+        // // posX: 143.16
+        // // posY: -178.99
+        // // url: "home/f42eb28f-9f4d-476c-9788-2240bac4cf48/5_current.png"
+        // // username: "user33"
+        // // version: 5
+        console.log("house_url", house_url);
+        house_url = await convertImage(house_url.value.url, "50", "50");
+        console.log("house_url", house_url);
+      }
+    });
   });
 
   function subscribeToAddressbook() {
@@ -110,11 +102,7 @@
           let tempArray = [];
           addressbookList.forEach(async (element) => {
             tempArray.push(
-              await getObject(
-                "home",
-                element.value.metadata.Azc,
-                element.value.user_id
-              )
+              await getObject("home", element.value.metadata.Azc, element.value.user_id)
             );
             if (addressbookList.length == tempArray.length) {
               tempArray.forEach(async (element) => {
@@ -188,11 +176,7 @@
 
   async function goHome(id) {
     if (typeof id == "string") {
-      HistoryTracker.switchScene(
-        ManageSession.currentScene,
-        "DefaultUserHome",
-        id
-      );
+      HistoryTracker.switchScene(ManageSession.currentScene, "DefaultUserHome", id);
     } else {
       if ($itemsBar.playerClicked) {
         HistoryTracker.switchScene(
@@ -248,47 +232,48 @@
   }
 </script>
 
+<!-- {#if $Profile}
+  <h1>FOUND PROFILE, {$Profile.url}</h1>
+{:else}
+  <h2>No profile found</h2>
+{/if} -->
+
 {#if $location != "/login"}
-  <div id="itemsButton" class:show={!$itemsBar.playerClicked}>
-    <a on:click={Click} class="avatar"><img src={$Profile.url} /></a>
+  <div id="itemsButton" class:show="{!$itemsBar.playerClicked}">
+    <a on:click="{Click}" class="avatar"><img src="{$Profile.url}" /></a>
   </div>
 {/if}
 <!-- current user -->
-<div class="itemsbar" id="currentUser" class:show={$itemsBar.playerClicked}>
+<div class="itemsbar" id="currentUser" class:show="{$itemsBar.playerClicked}">
   <div id="left">
     <!-- svelte-ignore a11y-missing-attribute -->
-    <a on:click={goProfile} class="avatar"><img src={$Profile.url} /></a>
+    <a on:click="{goProfile}" class="avatar"><img src="{$Profile.url}" /></a>
     <a
-      on:click={() => {
+      on:click="{() => {
         goHome();
-      }}
-      class="avatar"><img src={user_house_url} /></a
+      }}"
+      class="avatar"><img src="{user_house_url}" /></a
     >
-    <a on:click={award}
-      ><img class="icon" src="assets/SHB/svg/AW-icon-achievement.svg" /></a
-    >
-    <a on:click={getAdressbook}
+    <a on:click="{award}"><img class="icon" src="assets/SHB/svg/AW-icon-achievement.svg" /></a>
+    <a on:click="{getAdressbook}"
       ><img class="icon" src="assets/SHB/svg/AW-icon-addressbook-vert.svg" /></a
     >
 
-    <a on:click={getFriends}
-      ><img class="icon" src="assets/SHB/svg/AW-icon-friend.svg" />
-    </a>
+    <a on:click="{getFriends}"><img class="icon" src="assets/SHB/svg/AW-icon-friend.svg" /> </a>
 
     <a
-      on:click={() => {
+      on:click="{() => {
         getLiked;
-        goApp("drawing");
-      }}><img class="icon" src="assets/SHB/svg/AW-icon-drawing.svg" /></a
+        goApp('drawing');
+      }}"><img class="icon" src="assets/SHB/svg/AW-icon-drawing.svg" /></a
     >
     <a
-      on:click={() => {
-        goApp("stopmotion");
-      }}><img class="icon" src="assets/SHB/svg/AW-icon-animation.svg" /></a
+      on:click="{() => {
+        goApp('stopmotion');
+      }}"><img class="icon" src="assets/SHB/svg/AW-icon-animation.svg" /></a
     >
 
-    <a on:click={getLiked}
-      ><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" /></a
+    <a on:click="{getLiked}"><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" /></a
     >
 
     <!-- <a
@@ -302,9 +287,7 @@
     > -->
 
     <span>-</span>
-    <a on:click={logout}
-      ><img class="icon" src="assets/SHB/svg/AW-icon-exit.svg" /></a
-    >
+    <a on:click="{logout}"><img class="icon" src="assets/SHB/svg/AW-icon-exit.svg" /></a>
   </div>
   <div id="right">
     {#if current == "liked"}
@@ -320,19 +303,19 @@
           <div>
             <a
               style="margin-bottom: 20px"
-              on:click={() => {
+              on:click="{() => {
                 goHome(address.id);
-              }}
+              }}"
             >
-              <img class="addressbook-image" src={address.url} />{address.name}
+              <img class="addressbook-image" src="{address.url}" />{address.name}
             </a>
           </div>
 
           <!-- svelte-ignore a11y-missing-attribute -->
           <a
-            on:click={() => {
+            on:click="{() => {
               Addressbook.delete(address.id);
-            }}><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
+            }}"><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
           >
         </div>
       {/each}
@@ -350,11 +333,7 @@
 </div>
 
 <!-- online user -->
-<div
-  class="itemsbar"
-  id="onlineUser"
-  class:show={$itemsBar.onlinePlayerClicked}
->
+<div class="itemsbar" id="onlineUser" class:show="{$itemsBar.onlinePlayerClicked}">
   <div id="right">
     {#if current == "liked"}
       <div>
@@ -364,41 +343,36 @@
 
     {#if current == "home"}
       <br /><br /><br />
-      <a on:click={saveHome}
-        ><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
-      >
-      <a on:click={goHome}
-        ><img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg" /></a
-      >
+      <a on:click="{saveHome}"><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a>
+      <a on:click="{goHome}"><img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg" /></a>
       <!-- <ProfilePage userID="{ManageSession.selectedOnlinePlayer.id}" /> -->
     {/if}
   </div>
   <div id="left">
     <p>{user_name}</p>
-    <a on:click={() => {}} class="avatar"><img src={avatar_url} /></a>
-    <a on:click={getHomeOptions}><img id="house" src={house_url} /></a>
+    <a on:click="{() => {}}" class="avatar"><img src="{avatar_url}" /></a>
+    <a on:click="{getHomeOptions}"><img id="house" src="{house_url}" /></a>
     <a
-      on:click={() => {
+      on:click="{() => {
         addFriend(user_id);
-      }}
+      }}"
     >
       <img class="icon" src="assets/SHB/svg/AW-icon-add-friend.svg" />
     </a>
-    <a on:click={getLiked}
-      ><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" /></a
+    <a on:click="{getLiked}"><img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" /></a
     >
   </div>
 </div>
 
 {#if $itemsBar.playerClicked || $itemsBar.onlinePlayerClicked}
   <div
-    on:click={() => {
+    on:click="{() => {
       $itemsBar.playerClicked = false;
       $itemsBar.onlinePlayerClicked = false;
       current = false;
-    }}
+    }}"
     id="backdrop"
-  />
+  ></div>
 {/if}
 
 <style>

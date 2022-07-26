@@ -5,7 +5,9 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public --single"
+    "start": "sirv public --single",
+    "lint": "eslint 'src/**/*.{html,js,svelte}'",
+    "lint:fix": "eslint --fix 'src/**/*.{html,js,svelte}'"
   },
   "devDependencies": {
     "@azerion/phaser-i18next": "^1.0.3",

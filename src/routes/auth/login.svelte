@@ -1,5 +1,6 @@
 <script>
-  import { Session, login, Error } from "../../session.js";
+  import { Session, Error } from "../../session";
+  import { login } from "./../../api";
   import { _ } from "svelte-i18n";
   import { onMount } from "svelte";
   import QRscanner from "./qrscanner.svelte"

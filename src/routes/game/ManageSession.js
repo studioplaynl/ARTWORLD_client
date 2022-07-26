@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 import { location } from 'svelte-spa-router';
 import { client, SSL } from '../../nakama.svelte';
 import CoordinatesTranslator from './class/CoordinatesTranslator'; // translate from artworld coordinates to Phaser 2D screen coordinates
-import { Session, Notification } from '../../session';
+import { Profile, Session, Notification } from '../../session';
 
 import { SCENES } from './config.js';
 
@@ -113,8 +113,12 @@ class ManageSession {
   async createSocket() {
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
     console.log('socket created with client');
+    console.log('DIT IS EEN TEST');
 
     const createStatus = true;
+
+    this.userProfile = get(Profile);
+    console.log("this.userProfile", this.userProfile);
 
     await this.socket.connect(get(Session), createStatus);
     console.log('session created with socket');
@@ -134,7 +138,7 @@ class ManageSession {
         // console.log("onlinePlayer", onlinePlayer)
         if (onlinePlayer.scene) {
           if (onlinePlayer.user_id == data.user_id) {
-            // console.log("data.user_id", data.user_id)
+            // console.log("data.user_id", daata.user_id)
             // data is in the form of:
             // location: "ArtworldAmsterdam"
             // posX: -236.42065
@@ -259,6 +263,9 @@ class ManageSession {
     };
 
     this.socket.onstreampresence = (streampresence) => {
+
+      console.log("this.socket.onstreampresence");
+
       // streampresence is everybody that is present also SELF
       if (streampresence.leaves) {
         streampresence.leaves.forEach((leave) => {
@@ -272,7 +279,8 @@ class ManageSession {
           // filter out the player it self
           // console.log("this.userProfile.id", this.userProfile.id);
 
-          const userProfile = get(Profile);
+          
+          console.log('this.userProfile = ', this.userProfile);
           if (join.user_id != this.userProfile.id) {
             // console.log(this.userProfile)
             console.log('some one joined', join);
