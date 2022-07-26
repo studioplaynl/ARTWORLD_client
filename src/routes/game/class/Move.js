@@ -1,66 +1,67 @@
-import ManageSession from "../ManageSession"
-import CoordinatesTranslator from "./CoordinatesTranslator"
-import HistoryTracker from "./HistoryTracker"
+import ManageSession from '../ManageSession';
+import CoordinatesTranslator from './CoordinatesTranslator';
+import HistoryTracker from './HistoryTracker';
+import { setUrl } from '../helpers/UrlHelpers';
 
 class Move {
   constructor() { }
 
   moveByCursor(scene) {
     if (
-      scene.cursors.up.isDown ||
-      scene.cursors.down.isDown ||
-      scene.cursors.left.isDown ||
-      scene.cursors.right.isDown
+      scene.cursors.up.isDown
+      || scene.cursors.down.isDown
+      || scene.cursors.left.isDown
+      || scene.cursors.right.isDown
     ) {
-      scene.cursorKeyIsDown = true
+      scene.cursorKeyIsDown = true;
     } else {
-      scene.cursorKeyIsDown = false
+      scene.cursorKeyIsDown = false;
     }
   }
 
   movingAnimation(scene, animation) {
-    if (animation == "moving") {
-      scene.player.anims.play(scene.playerMovingKey, true)
-      scene.playerShadow.anims.play(scene.playerMovingKey, true)
+    if (animation == 'moving') {
+      scene.player.anims.play(scene.playerMovingKey, true);
+      scene.playerShadow.anims.play(scene.playerMovingKey, true);
     }
 
-    if (animation == "stop") {
-      scene.player.anims.play(scene.playerStopKey, true)
-      scene.playerShadow.anims.play(scene.playerStopKey, true)
+    if (animation == 'stop') {
+      scene.player.anims.play(scene.playerStopKey, true);
+      scene.playerShadow.anims.play(scene.playerStopKey, true);
     }
   }
 
   moveByKeyboard(scene) {
-    const speed = 175
-    const prevPlayerVelocity = scene.player.body.velocity.clone()
+    const speed = 175;
+    const prevPlayerVelocity = scene.player.body.velocity.clone();
 
     // Stop any previous movement from the last frame, the avatar itself and the container that holds the pop-up buttons
-    scene.player.body.setVelocity(0)
+    scene.player.body.setVelocity(0);
 
     // Horizontal movement
     if (scene.cursors.left.isDown) {
-      scene.player.body.setVelocityX(-speed)
+      scene.player.body.setVelocityX(-speed);
 
       // scene.cursorKeyIsDown = true;
       this.sendMovement(scene);
     } else if (scene.cursors.right.isDown) {
-      scene.player.body.setVelocityX(speed)
+      scene.player.body.setVelocityX(speed);
       // scene.cursorKeyIsDown = true
     }
 
     // Vertical movement
     if (scene.cursors.up.isDown) {
-      scene.player.body.setVelocityY(-speed)
+      scene.player.body.setVelocityY(-speed);
       // scene.cursorKeyIsDown = true
-      this.sendMovement(scene)
+      this.sendMovement(scene);
     } else if (scene.cursors.down.isDown) {
-      scene.player.body.setVelocityY(speed)
+      scene.player.body.setVelocityY(speed);
       // scene.cursorKeyIsDown = true
-      this.sendMovement(scene)
+      this.sendMovement(scene);
     }
 
     // Normalize and scale the velocity so that player can't move faster along a diagonal, the pop-up buttons are included
-    scene.player.body.velocity.normalize().scale(speed)
+    scene.player.body.velocity.normalize().scale(speed);
   }
 
   moveObjectToTarget(scene, container, target, speed) {
@@ -68,31 +69,31 @@ class Move {
     // we check if player stays in the world
     // keep the player in the world and send the moveTo commands
     if (target.x < 0) {
-      target.x = 0 + ManageSession.avatarSize
-      ManageSession.cameraShake = true
+      target.x = 0 + ManageSession.avatarSize;
+      ManageSession.cameraShake = true;
     }
     if (target.x > scene.worldSize.x) {
-      target.x = scene.worldSize.x - ManageSession.avatarSize
-      ManageSession.cameraShake = true
+      target.x = scene.worldSize.x - ManageSession.avatarSize;
+      ManageSession.cameraShake = true;
     }
     if (target.y < 0) {
-      target.y = 0 + ManageSession.avatarSize
-      ManageSession.cameraShake = true
+      target.y = 0 + ManageSession.avatarSize;
+      ManageSession.cameraShake = true;
     }
     if (target.y > scene.worldSize.y) {
-      target.y = scene.worldSize.y - ManageSession.avatarSize
-      ManageSession.cameraShake = true
+      target.y = scene.worldSize.y - ManageSession.avatarSize;
+      ManageSession.cameraShake = true;
     }
 
-    scene.physics.moveToObject(container, target, speed)
-    //send over the network
+    scene.physics.moveToObject(container, target, speed);
+    // send over the network
     // we pass on Phaser2D coordinates to ManageSession.sendMoveMessage
     // target is a vector
 
-    this.updatePositionHistory(scene) // update the url and historyTracker
+    this.updatePositionHistory(scene); // update the url and historyTracker
 
-    //set movement over network
-    ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")
+    // set movement over network
+    ManageSession.sendMoveMessage(scene, target.x, target.y, 'moveTo');
   }
 
   checkIfPlayerReachedMoveGoal(scene) {
@@ -102,154 +103,152 @@ class Move {
     //  before it is considered as being there. The faster it moves, the more tolerance is required.
     if (scene.isPlayerMoving) {
       // calculate distance only when playerIsMovingByClicking
-      scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y)
+      scene.distance = Phaser.Math.Distance.Between(scene.player.x, scene.player.y, scene.target.x, scene.target.y);
       if (scene.distance < scene.distanceTolerance) {
         if (ManageSession.cameraShake) {
           // camera shake when player walks into bounds of world
           // (duration, intensity)
-          let shakeIntensity = 0.005
-          let shakeDuration = 200
+          let shakeIntensity = 0.005;
+          let shakeDuration = 200;
           // increase the intensity when camera is zoomed out
           if (scene.gameCam.zoom < 1) {
-            shakeDuration = (shakeDuration * 3)
-            shakeIntensity = (shakeIntensity / scene.gameCam.zoom) * 2
+            shakeDuration *= 3;
+            shakeIntensity = (shakeIntensity / scene.gameCam.zoom) * 2;
           }
-          scene.cameras.main.shake(shakeDuration, shakeIntensity)
+          scene.cameras.main.shake(shakeDuration, shakeIntensity);
         }
 
-        ManageSession.cameraShake = false
-        scene.player.body.reset(scene.target.x, scene.target.y)
+        ManageSession.cameraShake = false;
+        scene.player.body.reset(scene.target.x, scene.target.y);
         // send Stop command
-        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, "stop")
+        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
 
-        this.updatePositionHistory(scene) // update the url and historyTracker
+        this.updatePositionHistory(scene); // update the url and historyTracker
 
-        //update last player position in manageSession for when the player is reloaded inbetween scenes
-        ManageSession.playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)
-        ManageSession.playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)
+        // update last player position in manageSession for when the player is reloaded inbetween scenes
+        ManageSession.playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
+        ManageSession.playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
 
-        //play "stop" animation
-        this.movingAnimation(scene, "stop")
-        scene.isPlayerMoving = false
+        // play "stop" animation
+        this.movingAnimation(scene, 'stop');
+        scene.isPlayerMoving = false;
       }
     }
   }
 
   updatePositionHistory(scene) {
-    const passPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)
-    const passPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)
+    const passPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
+    const passPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
 
-    //update url 
-    ManageSession.setUrl(scene.location, passPosX, passPosY)
+    // update url
+    setUrl(scene.location, passPosX, passPosY);
     // put the new pos in the history tracker
-    HistoryTracker.updatePositionCurrentScene(passPosX, passPosY)
+    HistoryTracker.updatePositionCurrentScene(passPosX, passPosY);
   }
 
   moveBySwiping(scene) {
     if (scene.input.activePointer.isDown && !scene.isClicking && ManageSession.playerMove) {
-      scene.isClicking = true
+      scene.isClicking = true;
     }
     if (!scene.input.activePointer.isDown && scene.isClicking == true) {
       // play "move" animation
       // play the animation as soon as possible so it is more visible
-      this.movingAnimation(scene, "moving")
+      this.movingAnimation(scene, 'moving');
 
-      const playerX = scene.player.x
-      const playerY = scene.player.y
+      const playerX = scene.player.x;
+      const playerY = scene.player.y;
 
-      let swipeX = scene.input.activePointer.upX - scene.input.activePointer.downX
-      let swipeY = scene.input.activePointer.upY - scene.input.activePointer.downY
+      let swipeX = scene.input.activePointer.upX - scene.input.activePointer.downX;
+      let swipeY = scene.input.activePointer.upY - scene.input.activePointer.downY;
 
-      scene.swipeAmount.x = swipeX
-      scene.swipeAmount.y = swipeY
+      scene.swipeAmount.x = swipeX;
+      scene.swipeAmount.y = swipeY;
 
-      //we scale the travel distance to the zoomlevel
-      let zoomFactor = scene.gameCam.zoom
-      swipeX = swipeX / zoomFactor
-      swipeY = swipeY / zoomFactor
+      // we scale the travel distance to the zoomlevel
+      const zoomFactor = scene.gameCam.zoom;
+      swipeX /= zoomFactor;
+      swipeY /= zoomFactor;
 
       // console.log("swipeX, swipeY", swipeX, swipeY)
 
-      scene.swipeAmount.x = swipeX
-      scene.swipeAmount.y = swipeY
+      scene.swipeAmount.x = swipeX;
+      scene.swipeAmount.y = swipeY;
 
-      let moveSpeed = scene.swipeAmount.length() * 2
+      const moveSpeed = scene.swipeAmount.length() * 2;
 
       // we scale the arrival check (distanceTolerance) to the speed of the player
-      scene.distanceTolerance = moveSpeed / 30
+      scene.distanceTolerance = moveSpeed / 30;
 
-      //console.log("moveBySwiping moveSpeed", moveSpeed)
+      // console.log("moveBySwiping moveSpeed", moveSpeed)
 
-      scene.isPlayerMoving = true // to stop the player when it reached its destination
+      scene.isPlayerMoving = true; // to stop the player when it reached its destination
 
-      scene.target.x = playerX + swipeX
-      scene.target.y = playerY + swipeY
+      scene.target.x = playerX + swipeX;
+      scene.target.y = playerY + swipeY;
 
       // generalized moving method
-      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed)
-      ManageSession.playerMove = false
-      scene.isClicking = false
+      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed);
+      ManageSession.playerMove = false;
+      scene.isClicking = false;
     }
   }
 
   moveByTapping(scene) {
     if (!scene.input.activePointer.isDown && ManageSession.playerMove) {
-      
-      //doubletap: first time mouse up
-      ManageSession.playerClicks = 1
+      // doubletap: first time mouse up
+      ManageSession.playerClicks = 1;
 
-      ManageSession.playerClickTime = scene.time.now
-      //doubletap: second time mouse up
-      scene.input.on("pointerup", () => {
-        //doubletap: second time mouse up: count time in between clicks
-        let clickDelay = scene.time.now - ManageSession.playerClickTime
+      ManageSession.playerClickTime = scene.time.now;
+      // doubletap: second time mouse up
+      scene.input.on('pointerup', () => {
+        // doubletap: second time mouse up: count time in between clicks
+        const clickDelay = scene.time.now - ManageSession.playerClickTime;
 
-        //block too many clicks
+        // block too many clicks
         if (clickDelay < 350 && ManageSession.playerClicks == 1) {
-          //block too many clicks
-          ManageSession.playerClicks = 0
-          
+          // block too many clicks
+          ManageSession.playerClicks = 0;
+
           // play "move" animation
           // play the animation as soon as possible so it is more visible
-          this.movingAnimation(scene, "moving")
+          this.movingAnimation(scene, 'moving');
 
-          const playerX = scene.player.x
-          const playerY = scene.player.y
+          const playerX = scene.player.x;
+          const playerY = scene.player.y;
 
-          //mouse point after doubletap is target
-          scene.target.x = scene.input.activePointer.worldX
-          scene.target.y = scene.input.activePointer.worldY
+          // mouse point after doubletap is target
+          scene.target.x = scene.input.activePointer.worldX;
+          scene.target.y = scene.input.activePointer.worldY;
 
-          scene.swipeAmount.x = playerX - scene.target.x
-          scene.swipeAmount.y = playerY - scene.target.y
+          scene.swipeAmount.x = playerX - scene.target.x;
+          scene.swipeAmount.y = playerY - scene.target.y;
 
-          let moveSpeed = scene.swipeAmount.length() * 2
+          const moveSpeed = scene.swipeAmount.length() * 2;
 
-          //console.log("moveByTapping moveSpeed", moveSpeed)
+          // console.log("moveByTapping moveSpeed", moveSpeed)
 
           // we scale the arrival check (distanceTolerance) to the speed of the player
-          scene.distanceTolerance = moveSpeed / 30
+          scene.distanceTolerance = moveSpeed / 30;
 
-          scene.isPlayerMoving = true // activate moving animation
+          scene.isPlayerMoving = true; // activate moving animation
 
           // generalized moving method
-          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed) // send moveTo over network, calculate speed as function of distance
+          this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed); // send moveTo over network, calculate speed as function of distance
         }
-      })
-      scene.isClicking = false
-      ManageSession.playerMove = false
+      });
+      scene.isClicking = false;
+      ManageSession.playerMove = false;
     }
   }
 
   sendMovement(scene) {
     if (scene.createdPlayer) {
-      //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
-      //moveTo or Stop
-      ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)
-      //console.log(this.player.x)
-      ManageSession.updateMovementTimer = 0
+      // send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
+      // moveTo or Stop
+      ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
+      // console.log(this.player.x)
+      ManageSession.updateMovementTimer = 0;
     }
   }
-
 }
-export default new Move()
+export default new Move();

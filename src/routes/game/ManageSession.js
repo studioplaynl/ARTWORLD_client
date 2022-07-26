@@ -83,31 +83,6 @@ class ManageSession {
     this.updateMovementInterval = 30; // 20 fps
   }
 
-  // TODO: Add URL utility class instead of doing it here..
-  // .......................... URL PARSING ........................................
-  getUrl() {
-    const params = new URLSearchParams(window.location.search);
-    const posX = params.get('posX');
-    const posY = params.get('posY');
-    const location = params.get('location');
-    const object = { posX, posY, location };
-    // console.log("object", object)
-    return object;
-  }
-
-  setAndGoUrl(location, posX, posY) {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (location) searchParams.set('location', location);
-    if (posX) searchParams.set('posX', posX);
-    if (posY) searchParams.set('posY', posY);
-    window.location.search = searchParams.toString();
-  }
-
-  setUrl(local, posX, posY) {
-    window.history.pushState('', 'Artworld', `/?location=${local}&posX=${Math.round(posX)}&posY=${Math.round(posY)}#${get(location)}`);
-  }
-  // .......................... end URL PARSING .....................................
-
   async createSocket() {
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
     console.log('socket created with client');

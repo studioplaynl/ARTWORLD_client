@@ -4,6 +4,7 @@ import { Profile } from '../../../session';
 import ManageSession from '../ManageSession';
 import { getAccount, listObjects } from '../../../api';
 import { SCENE_NAMES } from '../config';
+import { getUrl } from '../helpers/UrlHelpers';
 
 const { Phaser } = window;
 
@@ -32,7 +33,7 @@ export default class urlParser extends Phaser.Scene {
   parsePlayerLocation() {
     //* check if the user profile is loaded, to be able to send the player to the right location
     //* check if there are params in the url, to send the player to that location instead
-    let urlParams = ManageSession.getUrl();
+    let urlParams = getUrl();
     let profile = get(Profile);
     // if (this.debug) console.log('urlParams', urlParams);
 
