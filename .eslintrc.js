@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: [
     'airbnb-base',
+    'plugin:svelte/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -12,7 +13,6 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: [
-    'svelte3',
     '@typescript-eslint', // add the TypeScript plugin
   ],
   rules: {
@@ -25,14 +25,7 @@ module.exports = {
   overrides: [ // this stays the same
     {
       files: ['*.svelte'],
-      processor: 'svelte3/svelte3',
-      rules: {
-        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
-        'import/no-mutable-exports': 0,
-        'import/prefer-default-export': 0,
-        'no-labels': 0,
-        'no-restricted-syntax': 0,
-      },
+      parser: 'svelte-eslint-parser',
     },
   ],
   settings: {
