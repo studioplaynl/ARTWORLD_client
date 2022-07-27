@@ -427,6 +427,13 @@ export async function deleteObject(collection, key) {
   return true;
 }
 
+/** Update a Nakama object
+ * @param {string} id     User ID
+ * @param {string} type   Catagory of data (Nakama: collection)
+ * @param {string} name   Unique ID of object (Nakama: key)
+ * @param {any} value     Value (object or string)
+ * @param {number} pub    Permissions (read/write)
+*/
 export async function updateObjectAdmin(id, type, name, value, pub) {
   const session = get(Session);
   const storeValue = typeof value === 'object' ? JSON.stringify(value) : value;
@@ -475,41 +482,41 @@ export async function convertImage(path, height, width, format) {
   return user.payload.url;
 }
 
-export async function validate(string, type, input) {
-  // Regex for Valid Characters i.e. Alphabets, Numbers and Space.
-  let regex = new RegExp(/[^A-Za-z -@0-9]/g);
-  if (type == 'special') regex = /^[^\W|_]+$/g;
-  if (type == 'phone') regex = '';
-  if (type == 'email') regex = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
+// export async function validate(string, type) {
+//   // Regex for Valid Characters i.e. Alphabets, Numbers and Space.
+//   let regex = new RegExp(/[^A-Za-z -@0-9]/g);
+//   if (type == 'special') regex = /^[^\W|_]+$/g;
+//   if (type == 'phone') regex = '';
+//   if (type == 'email') regex = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
 
-  if (type == 'password') {
-    regex = /^[^]{8,15}$/g;
-    password = string;
-    console.log(`pass${password}`);
-  }
+//   if (type == 'password') {
+//     regex = /^[^]{8,15}$/g;
+//     password = string;
+//     console.log(`pass${password}`);
+//   }
 
-  console.log(regex);
-  console.log(string);
-  let valid = regex.test(string);
-  console.log(valid);
+//   console.log(regex);
+//   console.log(string);
+//   let valid = regex.test(string);
+//   console.log(valid);
 
-  if (type == 'repeatpassword') {
-    repeatpassword = string;
-    console.log(password);
-    console.log(repeatpassword);
-    if (repeatpassword == password) valid = true;
-    else valid = false;
-  }
-  console.log(input);
-  if (input) {
-    if (valid) {
-      input.path[0].style.border = '0px';
-    } else {
-      input.path[0].style.border = '1px solid red';
-    }
-  }
-  return valid;
-}
+//   if (type == 'repeatpassword') {
+//     repeatpassword = string;
+//     console.log(password);
+//     console.log(repeatpassword);
+//     if (repeatpassword == password) valid = true;
+//     else valid = false;
+//   }
+//   console.log(input);
+//   if (input) {
+//     if (valid) {
+//       input.path[0].style.border = '0px';
+//     } else {
+//       input.path[0].style.border = '1px solid red';
+//     }
+//   }
+//   return valid;
+// }
 
 export function setLoader(state) {
   if (state) {

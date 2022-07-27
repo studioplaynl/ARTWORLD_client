@@ -41,3 +41,27 @@ July 26
 - HistoryTracker onder de loep nemen (@maarten)
 - ServerCall functies los exporteren? (@eelke)
 - ServerCall resolveLoadError naar UIScene (aangezien deze scene permanent is)
+
+
+
+
+July 27
+
+### Svelte time!
+
+- Upload.svelte --> Er wordt alleen op extensie gecontroleerd, niet op MIME-type, content etc. ONVEILIG? ZIe https://stackoverflow.com/questions/18299806/how-to-check-file-mime-type-with-javascript-before-upload
+
+
+
+### CSS 
+- Global styles voor hr bijvoorbeeld, staan in kleine componenten. Global.css is er ook, maar staat daar niet in.
+
+- QR COde moet GEEN username/password combo bevatten, onveilig
+
+- QR Code redirect moet niet op window.location.host checken, want werkt niet lokaal. 
+
+- TODO @eelke Update formulier validation (reactive) dynamische css styles toevoegen
+
+- parser.parse error? Wat, hoe, waar?
+
+
