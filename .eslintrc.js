@@ -26,6 +26,26 @@ module.exports = {
     {
       files: ['*.svelte'],
       parser: 'svelte-eslint-parser',
+      parserOptions: {
+        sourceType: 'module',
+        ecmaVersion: 2021,
+        ecmaFeatures: {
+          globalReturn: false,
+          impliedStrict: false,
+          jsx: false,
+        },
+      },
+      rules: {
+        'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+        'import/no-mutable-exports': 0,
+        'import/prefer-default-export': 0,
+        'import/no-named-as-default': 0,
+        'import/no-named-as-default-member': 0,
+        'no-labels': 0,
+        'no-restricted-syntax': 0,
+        'no-use-before-define': 0,
+        'operator-linebreak': 0,
+      },
     },
   ],
   settings: {
