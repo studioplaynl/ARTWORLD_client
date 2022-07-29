@@ -49,3 +49,11 @@ export const Tutorial = writable([]);
 
 // Contains multiple steps of (the current) Tutorial
 export const History = writable([]);
+
+/** The currently selected onlinePlayer
+ * @alias $SelectedOnlinePlayer
+*/
+export const SelectedOnlinePlayer = writable(null);
+
+/** The visibility state of the Itemsbar */
+export const ShowItemsBar = writable(false);

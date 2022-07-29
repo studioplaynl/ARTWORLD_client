@@ -12,6 +12,7 @@
   import { CONFIG } from './config';
   import { sessionCheck } from '../../api';
   import Itemsbar from '../components/itemsbar.svelte';
+  import SelectedOnlinePlayerBar from '../components/selectedOnlinePlayerBar.svelte';
   import AppLoader from '../components/appLoader.svelte';
   import TopBar from '../components/topbar.svelte';
   import AchievementAnimation from '../components/achievement.svelte';
@@ -125,6 +126,7 @@
 </script>
 
 <Itemsbar />
+<SelectedOnlinePlayerBar />
 <AppLoader />
 <TopBar />
 <AchievementAnimation />

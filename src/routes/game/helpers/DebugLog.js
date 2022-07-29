@@ -8,6 +8,11 @@ export function dlog(...args) {
 
   if (debug) {
     // eslint-disable-next-line no-console
-    console.log(args);
+    const err = new Error();
+    const line = err.stack;
+    const lines = line.split('\n');
+    console.log(args, ` --- ${lines[2].substring(lines[2].indexOf('('), lines[2].lastIndexOf(')') + 1)}`);
   }
 }
+
+

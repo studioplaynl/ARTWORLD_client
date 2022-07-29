@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { get } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { client, SSL } from '../../nakama.svelte';
 // translate from artworld coordinates to Phaser 2D screen coordinates
 import CoordinatesTranslator from './class/CoordinatesTranslator';
@@ -8,6 +8,7 @@ import { dlog } from './helpers/DebugLog';
 
 const { Phaser } = window;
 
+/** Main utility class to share Game State between Phaser & Svelte  */
 class ManageSession {
   constructor() {
     this.debug = true;
@@ -46,8 +47,6 @@ class ManageSession {
     this.playerPosX = 0; // store playerPosX, also parsed from URL, to create player
     this.playerPosY = 0; // store playerPosY, also parsed from URL, to create player
 
-    /** @var selectedOnlinePlayer The currently selected onlinePlayer */
-    this.selectedOnlinePlayer = {};
 
     this.avatarSize = 64;
     this.cameraShake = false;

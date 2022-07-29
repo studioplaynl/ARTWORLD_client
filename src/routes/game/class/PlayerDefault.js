@@ -1,12 +1,12 @@
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import itemsBar from '../../components/itemsbar';
+import { ShowItemsBar } from '../../../session';
 import { setUrl } from '../helpers/UrlHelpers';
 
 const { Phaser } = window;
 
 export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, textureKey) {
+  constructor(scene, x, y) {
     super(scene, x, y, 'defaultPlayerAvatar');
 
     // load the texture that is associated with the animation key 'stop'
@@ -28,10 +28,7 @@ export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
     this.input.hitArea.setTo(-10, -10, this.width + 50, this.height + 50);
 
     this.on('pointerup', async () => {
-      itemsBar.update(() => ({
-        playerClicked: true,
-        onlinePlayerClicked: false,
-      }));
+      ShowItemsBar.set(true);
     });
 
     //  Set some default physics properties

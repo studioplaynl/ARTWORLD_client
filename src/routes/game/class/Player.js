@@ -3,8 +3,7 @@
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { getFullAccount, getAccount } from '../../../api';
-import itemsBar from '../../components/itemsbar';
-import { Profile } from '../../../session';
+import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { setUrl } from '../helpers/UrlHelpers';
 import { dlog } from '../helpers/DebugLog';
 
@@ -280,9 +279,9 @@ class Player {
       // hit area of onlinePlayer
       onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50);
       onlinePlayer.on('pointerup', () => {
-        // pass on values to itemsbar.svelte
-        ManageSession.selectedOnlinePlayer = onlinePlayer;
-        itemsBar.set({ playerClicked: false, onlinePlayerClicked: true });
+        // pass on values to itemsbar.svelte & selectedPlayerBar.svelte
+        SelectedOnlinePlayer.set(onlinePlayer);
+        ShowItemsBar.set(false);
       });
 
       onlinePlayer.setData('movingKey', 'moving');
