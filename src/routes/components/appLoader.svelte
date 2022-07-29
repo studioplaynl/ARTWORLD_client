@@ -1,29 +1,33 @@
 <script>
   import { fly } from 'svelte/transition';
   import { location, push } from 'svelte-spa-router';
-  import { onDestroy, onMount } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import DrawingApp from '../apps/drawing.svelte';
   import { CurrentApp } from '../../session';
   import HistoryTracker from '../game/class/HistoryTracker';
   import ManageSession from '../game/ManageSession';
   import { getAccount } from '../../api';
+  import { dlog } from '../game/helpers/DebugLog';
+  import { isValidApp } from '../apps/apps';
   // import DrawingChallenge from '../apps/drawingChallenge.svelte';
 
-  let appOpen = false;
-  let firstTry = true;
+  let appOpen = null;
+  /**
+   * URL structuur
+   * - /# --> root
+   * - /#/ --> root
+   * - /#/?location=Artworld
+   * - /#/?location=Artworld/stopmotion
+   */
+  const unsubscribe = CurrentApp.subscribe(async () => {
+    await tick();
 
-  const unsubscribe = CurrentApp.subscribe(async (value) => {
-    if (firstTry) {
-      firstTry = false;
-      const local = $location.split('/')[1];
-      if (local !== 'login') appOpen = $location.split('/')[1];
-      return value;
-    }
-    if (value === 'game') return;
+    if ($CurrentApp === 'game') return null;
+
     if ($CurrentApp) {
       await HistoryTracker.pauseSceneStartApp(
         ManageSession.currentScene,
-        value,
+        $CurrentApp,
       );
     } else {
       await HistoryTracker.startSceneCloseApp(
@@ -31,38 +35,45 @@
         appOpen,
       );
     }
-    appOpen = value;
-    if (value) push(`/${value}`);
-    else push('/');
+    if ($CurrentApp) {
+      push(`/${$CurrentApp}`);
+    } else {
+      push('/'); // No app..
+    }
+    return null;
   });
 
   const unsubscribe2 = location.subscribe(async () => {
-    appOpen = $location.split('/')[1];
-    console.log(appOpen);
+    // eslint-disable-next-line prefer-destructuring
+    const app = $location.split('/')[1];
+    if (isValidApp(app)) appOpen = app;
+    dlog(appOpen);
   });
 
   async function closeApp() {
-    console.log('closeApp');
+    dlog('closeApp');
 
-    if (appOpen == 'avatar') {
-      console.log('closeApp avatar, appOpen:', appOpen);
-      console.log('avatar user id:', ManageSession.userProfile.id);
+    if (appOpen === 'avatar') {
+      dlog('closeApp avatar, appOpen:', appOpen);
+      dlog('avatar user id:', ManageSession.userProfile.id);
       getAccount(ManageSession.userProfile.id);
     }
 
-    $CurrentApp = '';
+    CurrentApp.set(null);
     appOpen = '';
     push('/');
   }
 
-  function reloadApp() {
-    const app = $CurrentApp;
-    $CurrentApp = false;
-    $CurrentApp = app;
-  }
+  // async function reloadApp() {
+  //   const app = $CurrentApp;
+  //   CurrentApp.set(null);
+  //   await tick();
+  //   CurrentApp.set(app);
+  // }
 
   onMount(() => {
-    $CurrentApp = $location.split('/')[1];
+    const app = $location.split('/')[1];
+    if (isValidApp(app)) CurrentApp.set(app);
   });
 
   onDestroy(() => {
@@ -77,9 +88,9 @@
     transition:fly="{{ y: window.innerHeight, duration: 700, opacity: 1 }}"
   >
     <div id="close" on:click="{closeApp}">
-      <img src="assets/SHB/svg/AW-icon-cross.svg" />
+      <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
     </div>
-    {#if appOpen == 'drawing' || appOpen == 'stopmotion' || appOpen == 'house' || appOpen == 'avatar' || appOpen == 'drawingchallenge'}
+    {#if isValidApp(appOpen)}
       <DrawingApp bind:appType="{appOpen}" />
     {/if}
 
