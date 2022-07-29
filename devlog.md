@@ -65,3 +65,9 @@ July 27
 - parser.parse error? Wat, hoe, waar?
 
 
+
+July 29
+
+
+- Logging (dlog) stack trace @eelke
+
