@@ -220,14 +220,16 @@ export async function getAccount(id) {
     const account = await client.getAccount(session);
     loadedUser = account.user;
     loadedUser.meta = JSON.parse(loadedUser.metadata);
+    loadedUser.url = await convertImage(loadedUser.avatar_url, '128', '1000');
     Profile.set(loadedUser);
   } else {
     // With id: get account of other user
     const users = await client.getUsers(session, [id]);
     // eslint-disable-next-line prefer-destructuring
     loadedUser = users.users[0];
+    loadedUser.url = await convertImage(loadedUser.avatar_url, '128', '1000');
   }
-  loadedUser.url = await convertImage(loadedUser.avatar_url, '128', '1000');
+
 
   return loadedUser;
 }
