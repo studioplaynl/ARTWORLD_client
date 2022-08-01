@@ -18,6 +18,11 @@ export function hasSpecialCharacter(val) {
   return !regex.test(val);
 }
 
+/** Remove special characters from string (except a-z A-Z 0-9) */
+export function removeSpecialCharacters(str) {
+  return str.replace(/[^a-zA-Z0-9]/g, '');
+}
+
 /** Check for valid phone number? Let's trust users to input something valid due to inpredictable formatting.. */
 export function isValidPhone(val) {
   const regex = /.*/g;

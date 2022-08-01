@@ -6,6 +6,7 @@
   let url;
   let interval;
   export let row;
+  export let clickable = false;
 
   beforeUpdate(async () => {
     clearInterval(interval);
@@ -40,7 +41,7 @@
   }
 </script>
 
-<div class="stopmotion" on:click="{submitClicked}">
+<div class="stopmotion" on:click="{submitClicked}" class:clickable>
   <img bind:this="{image}" src="{url}" alt="Stop motion" />
 </div>
 
@@ -50,6 +51,13 @@
     width: 150px;
     overflow: hidden;
     position: relative;
+  }
+  .clickable {
+    cursor: pointer;
+  }
+
+  .clickable:hover {
+    opacity: 0.75;
   }
 
   .stopmotion > img {

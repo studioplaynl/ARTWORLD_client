@@ -1,6 +1,9 @@
 <script>
   import { Switch, Button } from 'attractions';
-  import { PERMISSION_READ_PUBLIC } from '../../constants';
+  import {
+    PERMISSION_READ_PUBLIC,
+    OBJECT_STATE_IN_TRASH,
+  } from '../../constants';
   import { updateObject } from '../../api';
   import { Profile } from '../../session';
 
@@ -29,7 +32,7 @@
 <main>
   <!-- currentUser => is dit mijn profiel of van iemand anders -->
   {#if currentUser || $Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator'}
-    {#if row.value.status !== 'trash'}
+    {#if row.value.status !== OBJECT_STATE_IN_TRASH}
       <Switch bind:value="{publicRead}" on:change="{change}" />
     {:else}
       <Button on:click="{restore}">Restore</Button>
