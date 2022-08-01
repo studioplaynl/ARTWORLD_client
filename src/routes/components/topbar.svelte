@@ -1,16 +1,17 @@
 <script>
-  import HistoryTracker from "../game/class/HistoryTracker";
-  import ManageSession from "../game/ManageSession";
-  import { History } from "../../session";
+  import HistoryTracker from '../game/class/HistoryTracker';
+  import ManageSession from '../game/ManageSession';
+  import { History } from '../../session';
+  import { dlog } from '../game/helpers/DebugLog';
 
-  let home = "Artworld";
+  const home = 'Artworld';
 
   async function goHome() {
     HistoryTracker.switchScene(ManageSession.currentScene, home, home);
   }
 
   async function goBack() {
-    console.log($History);
+    dlog($History);
     if ($History.length > 1) {
       HistoryTracker.activateBackButton(ManageSession.currentScene);
     }
@@ -32,29 +33,70 @@
 </script>
 
 <div class="topbar">
-  <a on:click="{goHome}"
-    ><img class="TopIcon" id="logo" src="assets/SHB/svg/AW-icon-logo-A.svg" /></a
-  >
-  <a on:click="{goBack}"
-    ><img
+  <button on:click="{goHome}">
+    <img
+      class="TopIcon"
+      id="logo"
+      src="assets/SHB/svg/AW-icon-logo-A.svg"
+      alt="Homepage"
+    />
+  </button>
+  <button on:click="{goBack}">
+    <img
       class="TopIcon"
       class:showBack="{$History.length > 1}"
       id="back"
       src="/assets/SHB/svg/AW-icon-previous.svg"
-    /></a
-  >
-  <a on:click="{zoomOut}" id="zoomOut"
-    ><img class="TopIcon" src="/assets/SHB/svg/AW-icon-minus.svg" /></a
-  >
-  <a on:click="{zoomReset}" id="zoomReset"
-    ><img class="TopIcon" src="assets/SHB/svg/AW-icon-zoom-reset.svg" /></a
-  >
-  <a on:click="{zoomIn}" id="zoomIn"
-    ><img class="TopIcon" src="./assets/SHB/svg/AW-icon-plus.svg" /></a
-  >
+      alt="Go back"
+    />
+  </button>
+  <button on:click="{zoomOut}" id="zoomOut">
+    <img
+      class="TopIcon"
+      src="/assets/SHB/svg/AW-icon-minus.svg"
+      alt="Zoom out"
+    />
+  </button>
+  <button on:click="{zoomReset}" id="zoomReset">
+    <img
+      class="TopIcon"
+      src="assets/SHB/svg/AW-icon-zoom-reset.svg"
+      alt="Reset zoom"
+    />
+  </button>
+  <button on:click="{zoomIn}" id="zoomIn">
+    <img
+      class="TopIcon"
+      src="./assets/SHB/svg/AW-icon-plus.svg"
+      alt="Zoom in"
+    />
+  </button>
 </div>
 
 <style>
+  button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: inline-block;
+    width: auto;
+    transform-origin: center;
+    transform: scale(1);
+  }
+  button:active,
+  button:not(:disabled):active {
+    outline: none;
+    background: transparent;
+    transform: scale(1.05);
+  }
+  button:focus {
+    outline: none;
+  }
+
   * {
     box-sizing: border-box;
     padding: 0;

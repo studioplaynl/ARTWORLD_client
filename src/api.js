@@ -142,6 +142,13 @@ export async function getUploadURL(type, name, filetype, version) {
   return [url, locatio];
 }
 
+/** Update a user object on server
+ * @param {string} type   Catagory of data (Nakama: collection)
+ * @param {string} name   Unique ID of object (Nakama: key)
+ * @param {any} value     Value (object or string)
+ * @param {boolean} pub   Public read permission
+ * @param {string} userID User ID
+*/
 export async function updateObject(type, name, value, pub, userID) {
   Succes.set(null);
 

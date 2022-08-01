@@ -12,10 +12,15 @@ export function isValidPassword(val) {
   return regex.test(val);
 }
 
-/** Check if string has no special characters (except a-z A-Z -_) */
+/** Check if string has no special characters (except a-z A-Z 0-9) */
 export function hasSpecialCharacter(val) {
-  const regex = /^[a-zA-Z0-9(_-]+$/g;
+  const regex = /^[a-zA-Z0-9]+$/g;
   return !regex.test(val);
+}
+
+/** Remove special characters from string (except a-z A-Z 0-9) */
+export function removeSpecialCharacters(str) {
+  return str.replace(/[^a-zA-Z0-9]/g, '');
 }
 
 /** Check for valid phone number? Let's trust users to input something valid due to inpredictable formatting.. */
