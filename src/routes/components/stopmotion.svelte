@@ -1,37 +1,26 @@
 <script>
-  import { convertImage } from "../../api";
-  import { onDestroy, beforeUpdate } from "svelte";
-  import { push } from "svelte-spa-router";
+  import { onDestroy, beforeUpdate, createEventDispatcher } from 'svelte';
+
   let image;
   let frame = 0;
-  let url
+  let url;
   let interval;
-  export let value;
   export let row;
 
-//   async function convertURL() {
-//       console.log("run converturl")
-//     if (!!row) value = item.value.previewUrl;
-
-//     url = await convertImage(row.value.url, "150", "1000", "png");
-//     console.log("stopmotion", url);
-//   }
-//   convertURL();
-
-beforeUpdate(async () => {
+  beforeUpdate(async () => {
     clearInterval(interval);
-    if(!!row.user){
-      url = row.user.url
-    }else if(!!row.value){
-      url = row.value.previewUrl
-    }else if(!!row.img){
-      url = row.img
+    if (row.user) {
+      url = row.user.url;
+    } else if (row.value) {
+      url = row.value.previewUrl;
+    } else if (row.img) {
+      url = row.img;
     }
     interval = setInterval(() => {
       frame++;
       if (frame >= image.clientWidth / 150) {
         frame = 0;
-        image.style.left = "0px";
+        image.style.left = '0px';
       } else {
         image.style.left = `-${frame * 150}px`;
       }
@@ -41,14 +30,19 @@ beforeUpdate(async () => {
   onDestroy(() => {
     clearInterval(interval);
   });
+
+  const dispatch = createEventDispatcher();
+
+  function submitClicked() {
+    // alert('Now submitting clicked');
+    // if (row.value) push(`/${row.collection}/${row.user_id}/${row.key}`);
+    dispatch('clicked', row);
+  }
 </script>
 
-<a on:click={()=>{if(!!row.value) push(`/${row.collection}/${row.user_id}/${row.key}`)}}>
-  <div class="stopmotion">
-    <img bind:this={image} src={url} />
-    <!-- <p class="hide" on:change="{convertURL}">{row.value.url}</p> -->
-  </div>
-</a>
+<div class="stopmotion" on:click="{submitClicked}">
+  <img bind:this="{image}" src="{url}" alt="Stop motion" />
+</div>
 
 <style>
   .stopmotion {

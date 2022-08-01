@@ -1,40 +1,38 @@
 <script>
-    import {updateObject} from "../../api.js"
-    import {Profile} from "../../session"
-    import { Switch, Button } from "attractions"
-    export let row;
-    export let moveToArt;
-    export let isCurrentUser;
+  import { Switch, Button } from 'attractions';
+  import { PERMISSION_READ_PUBLIC } from '../../constants';
+  import { updateObject } from '../../api';
+  import { Profile } from '../../session';
 
-let status = row.permission_read || false;
-if(status == 2){status = true}
-else{status = false}
-let currentUser = isCurrentUser()
+  export let row;
+  export let moveToArt;
+  export let isCurrentUser;
 
-const change = async () => {
-    //let value = JSON.parse(row.value)
-    let value = row.value
-    //value = JSON.stringify(value)
-    await updateObject(row.collection, row.key, value,status, row.user_id)
-}
+  let publicRead = row.permission_read === PERMISSION_READ_PUBLIC;
 
-const restore = async () => {
-    row.value.status = ""
-    let value = row.value
-    let pub = false
-    //if($Profile.meta.role == "admin" || $Profile.meta.role == "moderator")
-    await updateObject(row.collection, row.key, value,pub, row.user_id)
-    moveToArt(row.key)
-}
+  const currentUser = isCurrentUser(); // Bool? Of user object?
+
+  const change = async () => {
+    const { value } = row;
+    await updateObject(row.collection, row.key, value, publicRead, row.user_id);
+  };
+
+  const restore = async () => {
+    row.value.status = '';
+    const { value } = row;
+    const pub = false;
+    await updateObject(row.collection, row.key, value, pub, row.user_id);
+    moveToArt(row.key);
+  };
 </script>
 
 <main>
-    {#if currentUser || $Profile.meta.Role == "admin" || $Profile.meta.Role == "moderator"}
-        {#if row.value.status != "trash"}
-        <Switch bind:value={status} on:change={change}>
-        </Switch>
-        {:else}
-        <Button on:click={restore}> Restore </Button>
-        {/if}
+  <!-- currentUser => is dit mijn profiel of van iemand anders -->
+  {#if currentUser || $Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator'}
+    {#if row.value.status !== 'trash'}
+      <Switch bind:value="{publicRead}" on:change="{change}" />
+    {:else}
+      <Button on:click="{restore}">Restore</Button>
     {/if}
+  {/if}
 </main>

@@ -1,0 +1,2 @@
+export const PERMISSION_READ_PRIVATE = 1;
+export const PERMISSION_READ_PUBLIC = 2;

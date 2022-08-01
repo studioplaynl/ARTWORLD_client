@@ -155,7 +155,7 @@
 {/if} -->
 
 {#if $location !== '/login' && !$ShowItemsBar}
-  <div id="itemsButton" transition:fade>
+  <div id="itemsButton">
     <button on:click="{openItemsBar}" class="avatar">
       <img src="{$Profile.url}" alt="{$Profile.username}" />
     </button>
@@ -210,7 +210,7 @@
 
       <button
         on:click="{() => {
-          toggleLiked();
+          // toggleLiked();
           goApp('drawing');
         }}"
       >
@@ -328,7 +328,7 @@
   #itemsButton {
     background-color: white;
     text-align: center;
-    border-radius: 50px;
+    border-radius: 40px;
     /* border: 2px solid #7300ed; */
     box-shadow: 5px 5px 0px #7300ed;
     padding: 14px 14px 14px 18px;
@@ -341,6 +341,11 @@
     /* pointer-events: none; */
     max-height: 90vh;
     display: flex;
+  }
+
+  #itemsButton {
+    /* Force circle */
+    border-radius: 50%;
   }
 
   @media screen and (max-width: 600px) {
@@ -380,8 +385,13 @@
     margin-top: 5px;
   }
 
-  #itemsButton > button > img {
-    margin-top: 0px;
+  #itemsButton button {
+    height: 40px;
+    width: 40px;
+  }
+  #itemsButton img {
+    height: 40px;
+    width: auto;
   }
 
   .left {
@@ -400,7 +410,7 @@
     margin: 20px 0px;
   }
 
-  div#right > div {
+  /* .right > div {
     display: flex;
     flex-direction: column;
     padding: 15px;
@@ -410,7 +420,7 @@
     max-height: 80vh;
     margin: 0px;
     align-items: flex-start;
-  }
+  } */
   .avatar {
     height: 50px;
     width: 50px;
@@ -418,7 +428,7 @@
   }
 
   .avatar > img {
-    height: 50px;
+    height: 100%;
   }
 
   .addressbook-image {
