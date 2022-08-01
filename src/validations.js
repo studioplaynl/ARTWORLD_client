@@ -12,9 +12,9 @@ export function isValidPassword(val) {
   return regex.test(val);
 }
 
-/** Check if string has no special characters (except a-z A-Z -_) */
+/** Check if string has no special characters (except a-z A-Z 0-9) */
 export function hasSpecialCharacter(val) {
-  const regex = /^[a-zA-Z0-9(_-]+$/g;
+  const regex = /^[a-zA-Z0-9]+$/g;
   return !regex.test(val);
 }
 
