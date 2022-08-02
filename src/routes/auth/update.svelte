@@ -98,7 +98,7 @@
     // get metadata
 
     if ($Profile.meta.Role.toLowerCase() === 'admin') {
-      meta.azc = azc;
+      meta.Azc = azc;
       meta.Role = role;
     }
     dlog(meta);

@@ -41,21 +41,21 @@ export default class UrlParser extends Phaser.Scene {
     if (typeof urlParams.location === 'undefined') {
       if (typeof profile === 'undefined') {
         // get the location stored serverside
-        const { posX, posY, location } = profile.meta;
+        const { PosX, PosY, Location } = profile.meta;
         const { playerPosX, playerPosY } = ManageSession;
 
-        this.parsePlayerPosition(posX, posY);
-        urlParams = { posX: playerPosX, posY: playerPosY, location };
+        this.parsePlayerPosition(PosX, PosY);
+        urlParams = { posX: playerPosX, posY: playerPosY, Location };
         this.parseLocation(urlParams);
       } else {
         // if the account is empty, get it
         getAccount('', true)
           .then(() => {
             profile = get(Profile);
-            const { posX, posY, location } = profile.meta;
+            const { PosX, PosY, Location } = profile.meta;
             const { playerPosX, playerPosY } = ManageSession;
-            this.parsePlayerPosition(posX, posY);
-            urlParams = { posX: playerPosX, posY: playerPosY, location };
+            this.parsePlayerPosition(PosX, PosY);
+            urlParams = { posX: playerPosX, posY: playerPosY, Location };
             this.parseLocation(urlParams);
           });
       }

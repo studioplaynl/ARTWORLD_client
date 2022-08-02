@@ -1,86 +1,89 @@
 <script>
-  import SvelteTable from "svelte-table";
-  import { each } from "svelte/internal";
-  import FriendAction from "./components/friendaction.svelte";
-  import Stopmotion from "./components/stopmotion.svelte";
-  import { ListFriends, addFriend, setLoader, convertImage } from "../api";
-  import HistoryTracker from "./game/class/HistoryTracker";
-  import ManageSession from "./game/ManageSession";
+  import SvelteTable from 'svelte-table';
+  import FriendAction from './components/friendaction.svelte';
+  import ArtworkLoader from './components/artworkLoader.svelte';
+  import { ListFriends, addFriend, setLoader, convertImage } from '../api';
+  import HistoryTracker from './game/class/HistoryTracker';
+  import ManageSession from './game/ManageSession';
+  import { dlog } from './game/helpers/DebugLog';
+  import {
+    FRIENDSTATE_FRIENDS,
+    FRIENDSTATE_INVITATION_SENT,
+    FRIENDSTATE_INVITATION_RECEIVED,
+  } from '../constants';
 
-  var users = [];
-  var usersRequest = [];
-  var usersPending = [];
-  var ID = "";
-  var Username;
+  let friends = [];
+  let friendRequests = [];
+  let friendRequestsPending = [];
+  const ID = '';
+  let Username;
 
-  let load = async function () {
-    users = [];
-    usersRequest = [];
-    usersPending = [];
+  async function load() {
     setLoader(true);
-    ListFriends().then((list) => {
-      console.log(list.friends);
-      list.friends.forEach(async (user) => {
-        console.log(user.user.avatar_url);
-        user.user.url = await convertImage(user.user.avatar_url, "150", "1000");
-        if (user.state === 2) {
-          usersRequest.push(user);
-          usersRequest = usersRequest;
-        }
-        if (user.state === 1) {
-          usersPending.push(user);
-          usersPending = usersPending;
-        }
-        if (user.state === 0) {
-          users.push(user);
-          users = users;
+
+    await ListFriends().then((list) => {
+      dlog('My friends:', list.friends);
+
+      list.friends.forEach(async (_friend) => {
+        // eslint-disable-next-line prefer-const
+        let friend = _friend;
+
+        friend.user.url = await convertImage(
+          friend.user.avatar_url,
+          '150',
+          '1000',
+        );
+
+        if (friend.state === FRIENDSTATE_INVITATION_RECEIVED) {
+          friendRequests = [...friendRequests, friend];
+        } else if (friend.state === FRIENDSTATE_INVITATION_SENT) {
+          friendRequestsPending = [...friendRequestsPending, friend];
+        } else if (friend.state === FRIENDSTATE_FRIENDS) {
+          friends = [...friends, friend];
         }
       });
-      console.log(usersRequest);
+      dlog(friendRequests);
       setLoader(false);
     });
-  };
+  }
 
   load();
 
   function goTo(event) {
-    console.log("event", event);
-    const row = event.detail.row;
-    console.log("row", row);
-    if(event.detail.key == "action") return
+    const { row } = event.detail;
+    if (event.detail.key === 'action') return;
     HistoryTracker.switchScene(
       ManageSession.currentScene,
-      "DefaultUserHome",
-      row.user.id
+      'DefaultUserHome',
+      row.user.id,
     );
   }
 
   const columns = [
     {
-      key: "status",
-      title: "",
+      key: 'status',
+      title: '',
       value: (v) => {
         if (v.user.online) {
-          return `<div class="online"/>`;
-        } else {
-          return `<div class="offline"/>`;
+          return '<div class="online"/>';
         }
+        return '<div class="offline"/>';
       },
     },
     {
-      key: "avatar",
-      title: "",
-      renderComponent: { component: Stopmotion, props: {} },
+      key: 'avatar',
+      title: '',
+      renderComponent: { component: ArtworkLoader, props: {} },
     },
     {
-      key: "Username",
-      title: "Username",
+      key: 'Username',
+      title: 'Username',
       value: (v) => `<p>${v.user.username}<p>`,
       sortable: true,
     },
     {
-      key: "action",
-      title: "",
+      key: 'action',
+      title: '',
       renderComponent: { component: FriendAction, props: { load } },
     },
   ];
@@ -88,28 +91,32 @@
 
 <h1>Add friend</h1>
 <!-- <input bind:value={ID} placeholder="user ID"> -->
-<input bind:value={Username} placeholder="username" />
+<input bind:value="{Username}" placeholder="username" />
 <button
-  on:click={() => {
+  on:click="{() => {
     addFriend(ID, Username).then(() => {
       load();
     });
-  }}>Add friend</button
+  }}">Add friend</button
 >
 
 <h1>All friends</h1>
 <SvelteTable
-  {columns}
-  rows={users}
-  on:clickCell={goTo}
+  columns="{columns}"
+  rows="{friends}"
+  on:clickCell="{goTo}"
   classNameTable="profileTable"
 />
 
 <!-- <h1>Pending friend requests</h1>
-  <SvelteTable columns="{columns}" rows="{usersPending}" classNameTable="profileTable"></SvelteTable> -->
+  <SvelteTable columns="{columns}" rows="{friendRequestsPending}" classNameTable="profileTable"></SvelteTable> -->
 
 <h1>Friend requests</h1>
-<SvelteTable {columns} rows={usersRequest} classNameTable="profileTable" />
+<SvelteTable
+  columns="{columns}"
+  rows="{friendRequests}"
+  classNameTable="profileTable"
+/>
 
 <style>
 </style>

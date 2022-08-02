@@ -265,11 +265,11 @@ class Player {
         .sprite(
           CoordinatesTranslator.artworldToPhaser2DX(
             scene.worldSize.x,
-            onlinePlayerCopy.metadata.posX,
+            onlinePlayerCopy.meta.PosX,
           ),
           CoordinatesTranslator.artworldToPhaser2DY(
             scene.worldSize.y,
-            onlinePlayerCopy.metadata.posY,
+            onlinePlayerCopy.meta.PosY,
           ),
           scene.playerAvatarPlaceholder, //! change to ManageSession.playerAvatarPlaceholder
         )
@@ -323,7 +323,7 @@ class Player {
       // if the texture already exists attach it again to the player
       // const preExisting = false
       if (!scene.textures.exists(avatarKey)) {
-        // dlog("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
         // add it to loading queue
         scene.load.spritesheet(avatarKey, onlinePlayer.url, {
           frameWidth: this.avatarSize * 2,
@@ -338,7 +338,7 @@ class Player {
         // when file is finished loading the attachToAvatar function is called
         scene.load.start(); // start loading the image in memory
       } else {
-        // dlog("scene.textures.exists(avatarKey)", scene.textures.exists(avatarKey))
+        dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
         // attach the avatar to the onlinePlayer when it is already in memory
         this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey);
       }

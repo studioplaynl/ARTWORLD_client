@@ -3,10 +3,10 @@ import { locale } from 'svelte-i18n';
 import { element } from 'svelte/internal';
 import ManageSession from '../ManageSession';
 
-import nl from '../../../langauge/nl/ui.json';
-import en from '../../../langauge/en/ui.json';
-import ru from '../../../langauge/ru/ui.json';
-import ar from '../../../langauge/ar/ui.json';
+import nl from '../../../language/nl/ui.json';
+import en from '../../../language/en/ui.json';
+import ru from '../../../language/ru/ui.json';
+import ar from '../../../language/ar/ui.json';
 import HistoryTracker from '../class/HistoryTracker';
 import DebugFuntions from '../class/DebugFuntions';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';

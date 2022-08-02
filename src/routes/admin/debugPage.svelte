@@ -1,17 +1,22 @@
 <script>
-  import { client, SSL } from "../nakama.svelte";
-  import { Session, Profile, Error } from "../session.js";
-  import { updateObjectAdmin, listAllObjects, deleteObjectAdmin, convertImage } from "../api";
-  import { onMount } from "svelte";
-  //import { writable } from "svelte/store";
+  import { onMount } from 'svelte';
+  import { client, SSL } from '../../nakama.svelte';
+  import { Session, Profile, Error } from '../../session';
+  import {
+    updateObjectAdmin,
+    listAllObjects,
+    deleteObjectAdmin,
+    convertImage,
+  } from '../../api';
+  // import { writable } from "svelte/store";
 
   const verboseLogging = false;
   const socket = client.createSocket(SSL, verboseLogging);
-  let match_ID = "";
+  const match_ID = '';
   let AllUsers = [];
-  let payload = [];
-  let status = "left";
-  let locations = ["lab", `home`, `library`];
+  const payload = [];
+  let status = 'left';
+  const locations = ['lab', 'home', 'library'];
   let selected;
   let id;
 
@@ -26,119 +31,117 @@
 
     await socket.connect($Session, createStatus);
 
-    //own join
+    // own join
     // var joined = await socket.rpc('join')
 
-    //stream
+    // stream
     socket.onstreamdata = (streamdata) => {
-      console.info("Received stream data:", streamdata);
-      let data = JSON.parse(streamdata.data);
+      console.info('Received stream data:', streamdata);
+      const data = JSON.parse(streamdata.data);
       console.log(data);
       for (const user of AllUsers) {
         if (user.user_id == data.user_id) {
-          console.log("test");
+          console.log('test');
           user.posX = data.posX;
           user.posY = data.posY;
         }
       }
       console.log(AllUsers);
-      var newPos = AllUsers;
+      const newPos = AllUsers;
       AllUsers = newPos;
     };
     socket.onstreampresence = (streampresence) => {
-      console.log("Received presence event for stream: %o", streampresence);
+      console.log('Received presence event for stream: %o', streampresence);
 
-      console.log("leaves:" + streampresence.leaves);
-      if (!!streampresence.leaves) {
+      console.log(`leaves:${streampresence.leaves}`);
+      if (streampresence.leaves) {
         streampresence.leaves.forEach((leave) => {
-          console.log("User left: %o", leave.username);
-          AllUsers = AllUsers.filter(function (item) {
-            return item.name !== leave.username;
-          });
+          console.log('User left: %o', leave.username);
+          AllUsers = AllUsers.filter((item) => item.name !== leave.username);
         });
       }
-      if (!!streampresence.joins) {
+      if (streampresence.joins) {
         streampresence.joins.forEach((join) => {
           getUsers();
         });
       }
-      console.log("all user:");
+      console.log('all user:');
       console.log(AllUsers);
     };
 
     // current user array
   }
-  let promise = chat();
+  const promise = chat();
 
   export function onclick() {
-    var action = "walk"; //stop, too, move
-    var opCode = 1;
-    var data = `{ "action": "${action}",
+    const action = 'walk'; // stop, too, move
+    const opCode = 1;
+    const data = `{ "action": "${action}",
               "posX": ${Math.floor(Math.random() * 100)},
               "posY": ${Math.floor(Math.random() * 100)},
               "location": "${selected}"
              }`;
     console.log(data);
-    socket.rpc("move_position", data).then((rec) => {});
+    socket.rpc('move_position', data).then((rec) => {});
   }
 
   export async function join() {
-    await socket.rpc("join", selected).then((rec) => {
+    await socket.rpc('join', selected).then((rec) => {
       AllUsers = JSON.parse(rec.payload) || [];
-      console.log("joined " + selected);
-      console.log("join users:");
+      console.log(`joined ${selected}`);
+      console.log('join users:');
       console.log(AllUsers);
-      status = "joined";
+      status = 'joined';
     });
   }
 
   export async function getUsers() {
-    await socket.rpc("get_users", selected).then((rec) => {
+    await socket.rpc('get_users', selected).then((rec) => {
       AllUsers = JSON.parse(rec.payload) || [];
-      console.log("all current users in home:");
+      console.log('all current users in home:');
       console.log(AllUsers);
     });
   }
 
   export async function leave() {
-    await socket.rpc("leave", selected).then((rec) => {
-      console.log("left");
+    await socket.rpc('leave', selected).then((rec) => {
+      console.log('left');
       AllUsers = [];
-      status = "left";
+      status = 'left';
     });
   }
 
   export async function kill() {
-    await socket.rpc("kill", selected).then((rec) => {
-      console.log("left");
+    await socket.rpc('kill', selected).then((rec) => {
+      console.log('left');
       AllUsers = [];
-      status = "left";
+      status = 'left';
     });
   }
 
   socket.ondisconnect = (event) => {
-    console.info("Disconnected from the server. Event:", event);
-    $Error = "Disconnected from the server.";
+    console.info('Disconnected from the server. Event:', event);
+    $Error = 'Disconnected from the server.';
   };
 
   socket.onstatuspresence = (statusPresence) => {
-    console.info("Received status presence update:", statusPresence);
+    console.info('Received status presence update:', statusPresence);
   };
   socket.onstreampresence = (streamPresence) => {
-    console.info("Received stream presence update:", streamPresence);
+    console.info('Received stream presence update:', streamPresence);
   };
 
-  //////////////////////// locatie ////////////////////////
-  let locatie = "",
+  /// ///////////////////// locatie ////////////////////////
+  let locatie = '',
     posX = Math.floor(Math.random() * 100),
     posY = Math.floor(Math.random() * 100),
     where,
     name,
     value = '{"posX": "123", "posY": "123"}';
   async function addLocation() {
-    let type = where; // plaats hier de soort locatie
-    let pub = true; // is het publiek zichtbaar of enkel voor de gebruiker die het creert
-    //await updateObject(type, name, value, pub)
+    const type = where; // plaats hier de soort locatie
+    const pub = true; // is het publiek zichtbaar of enkel voor de gebruiker die het creert
+    // await updateObject(type, name, value, pub)
     console.log(id + type + name + value + pub);
     await updateObjectAdmin(id, type, name, value, pub);
 
@@ -161,11 +164,11 @@
     id = loc.user_id;
   }
 
-  ////////////////////////// image converter /////////////////////////////
+  /// /////////////////////// image converter /////////////////////////////
 
-  let imgUrl = "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg";
-  let imgSize = "64";
-  let fileFormat = "png";
+  let imgUrl = 'drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg';
+  let imgSize = '64';
+  let fileFormat = 'png';
   let url;
 
   async function convert() {
@@ -173,25 +176,25 @@
     console.log(url);
   }
 
-  ///////////////////// url parser and creator  ////////////////////
+  /// ////////////////// url parser and creator  ////////////////////
 
   function setUrl(local, posX, posY) {
-    var searchParams = new URLSearchParams(window.location.search);
-    if (local) searchParams.set("location", local);
-    if (posX) searchParams.set("posX", posX);
-    if (posY) searchParams.set("posY", posY);
+    const searchParams = new URLSearchParams(window.location.search);
+    if (local) searchParams.set('location', local);
+    if (posX) searchParams.set('posX', posX);
+    if (posY) searchParams.set('posY', posY);
     window.location.search = searchParams.toString();
   }
 
-  setUrl("test", 123, 456);
+  setUrl('test', 123, 456);
 
   function getUrl() {
-    var params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window.location.search);
 
-    posX = params.get("posX");
-    posY = params.get("posY");
-    let local = params.get("location");
-    let object = { posX, posY, local };
+    posX = params.get('posX');
+    posY = params.get('posY');
+    const local = params.get('location');
+    const object = { posX, posY, local };
     console.log(object);
     return object;
   }
@@ -236,8 +239,9 @@
   </select>
   <label>type object name</label><input type="text" bind:value="{where}" />
 
-  <label>value (alle keys and values need to be placed within " " to not error)</label><textarea
-    bind:value></textarea>
+  <label
+    >value (alle keys and values need to be placed within " " to not error)</label
+  ><textarea bind:value></textarea>
   <label>name</label><input type="text" bind:value="{name}" />
   <label>user_id</label><input type="text" bind:value="{id}" />
 
@@ -254,7 +258,10 @@
 
   <button on:click="{getUserLocations}">Get</button>
   {#each locationsList as location}
-    <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
+    <div
+      class:blueBack="{location.user_id === $Session.user_id}"
+      class="redBack"
+    >
       <p>username: {location.username}</p>
       <p>userID: {location.user_id}</p>
       <p>name:{location.key}</p>
@@ -262,7 +269,11 @@
         value: {JSON.stringify(location.value)}
         <button
           on:click="{async () => {
-            await deleteObjectAdmin(location.user_id, location.collection, location.key);
+            await deleteObjectAdmin(
+              location.user_id,
+              location.collection,
+              location.key,
+            );
             getUserLocations();
           }}">delete</button
         >

@@ -39,7 +39,7 @@
 </script>
 
 <div class="name-edit">
-  {#if isCurrentUser() || $Profile.meta.role === 'admin' || $Profile.meta.role === 'moderator'}
+  {#if isCurrentUser() || $Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator'}
     {#if !edit}
       <button
         class="clear-button-styles"

@@ -115,8 +115,6 @@ class ManageSession {
 
       // parse the movement data for the players in our allConnectedUsers array
       this.allConnectedUsers.forEach((onlinePlayer, index) => {
-        dlog('Dit is de player', onlinePlayer.user_id);
-
         // eslint-disable-next-line prefer-const
         let updateOnlinePlayer = onlinePlayer;
 
@@ -172,7 +170,7 @@ class ManageSession {
                 data.posY,
               );
 
-              dlog('positionVector', positionVector);
+              // dlog('positionVector', positionVector);
 
               positionVector = artworldVectorToPhaser2D(
                 scene.worldSize,
@@ -196,7 +194,7 @@ class ManageSession {
                 data.posY,
               );
 
-              dlog('positionVector', positionVector);
+              // dlog('positionVector', positionVector);
 
               positionVector = artworldVectorToPhaser2D(
                 scene.worldSize,
@@ -209,13 +207,13 @@ class ManageSession {
 
               // if there is an unfinished tween, stop it and stop the online player
               if (typeof this[updateOnlinePlayer] !== 'undefined') {
-                dlog('this[updateOnlinePlayer]', this[updateOnlinePlayer]);
+                // dlog('this[updateOnlinePlayer]', this[updateOnlinePlayer]);
                 this[updateOnlinePlayer].stop();
                 // dlog("duration", duration)
 
                 const target = new Phaser.Math.Vector2(positionVector.x, positionVector.y);
-                const duration = target.length() / 2;
-                dlog('duration', duration);
+                // const duration = target.length() / 2;
+                // dlog('duration', duration);
 
                 // set a variable for the updateOnlinePlayer tween so it can be stopped when needed (by reference)
                 // this[updateOnlinePlayer] = scene.tweens.add({
@@ -243,7 +241,7 @@ class ManageSession {
 
     // Another user has joined or left the stream
     this.socket.onstreampresence = (streampresence) => {
-      dlog('this.socket.onstreampresence');
+      // dlog('this.socket.onstreampresence');
 
       // streampresence is everybody that is present also SELF
       if (streampresence.leaves) {

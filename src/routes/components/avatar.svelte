@@ -65,7 +65,7 @@
     loadUrl();
     interval = setInterval(() => {
       frame++;
-      if (frame >= image.clientWidth / 150) {
+      if (frame >= Math.floor(image.clientWidth / 150)) {
         frame = 0;
         image.style.left = '0px';
       } else {

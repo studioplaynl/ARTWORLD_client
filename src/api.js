@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable camelcase */
 /* eslint-disable no-use-before-define */
 import { get } from 'svelte/store';
@@ -220,25 +221,25 @@ export async function listAllObjects(type, id) {
 
 export async function getAccount(id) {
   const session = get(Session);
-  let loadedUser;
+  let user;
 
   if (!id) {
     // No id given, gets own account
     const account = await client.getAccount(session);
-    loadedUser = account.user;
-    loadedUser.meta = JSON.parse(loadedUser.metadata);
-    loadedUser.url = await convertImage(loadedUser.avatar_url, '128', '1000');
-    Profile.set(loadedUser);
+    user = account.user;
+    user.meta = JSON.parse(user.metadata);
+    user.url = await convertImage(user.avatar_url, '128', '1000');
+    Profile.set(user);
   } else {
     // With id: get account of other user
+
     const users = await client.getUsers(session, [id]);
-    // eslint-disable-next-line prefer-destructuring
-    loadedUser = users.users[0];
-    loadedUser.url = await convertImage(loadedUser.avatar_url, '128', '1000');
+    user = users.users[0];
+    user.meta = typeof user.metadata === 'string' ? JSON.parse(user.metadata) : user.metadata;
+    user.url = await convertImage(user.avatar_url, '128', '1000');
   }
 
-
-  return loadedUser;
+  return user;
 }
 
 // TODO: hier verder
@@ -251,9 +252,8 @@ export async function getFullAccount(id) {
     payload = { id };
   }
 
-  let user;
-  user = await client.rpc(session, rpcid, payload);
-  console.log(user);
+  const user = await client.rpc(session, rpcid, payload);
+  // console.log(user);
 
   return user.payload;
 }
@@ -263,13 +263,10 @@ export async function setFullAccount(id, username, password, email, metadata) {
   const payload = {
     id, username, password, email, metadata,
   };
-  console.log('metadata');
-  console.log(metadata);
-  let user;
   const rpcid = 'set_full_account';
-  user = await client.rpc(session, rpcid, payload);
+  const user = await client.rpc(session, rpcid, payload);
   // console.log(user)
-  Succes.update((s) => s = true);
+  Succes.set(true);
   return user.payload;
 }
 
@@ -466,10 +463,10 @@ export async function deleteObjectAdmin(id, type, name) {
   const payload = { id, type, name };
 
   const rpcid = 'delete_object_admin';
-  user = await client.rpc(session, rpcid, payload);
-  console.log(user);
-  if (user.payload.status != 'succes') throw user.payload.status;
-  else Succes.update((s) => s = true);
+  const user = await client.rpc(session, rpcid, payload);
+  // console.log(user);
+  if (user.payload.status !== 'succes') throw user.payload.status;
+  else Succes.set(true);
   return user.payload;
 }
 
@@ -487,7 +484,7 @@ export async function convertImage(path, height, width, format) {
   };
   const rpcid = 'convert_image';
   const user = await client.rpc(session, rpcid, payload);
-  if (!user.payload.url) Error.update((er) => er = "couldn't convert image");
+  if (!user.payload.url) Error.set("couldn't convert image");
   return user.payload.url;
 }
 
