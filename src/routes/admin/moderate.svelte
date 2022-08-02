@@ -1,25 +1,27 @@
 <script>
-  import { getAccount, convertImage, listAllObjects } from "../api.js";
-  import { Session, Profile } from "../session.js";
-  import { _ } from "svelte-i18n";
-  import SvelteTable from "svelte-table";
-  import StatusComp from "./components/statusbox.svelte";
-  import DeleteComp from "./components/deleteButton.svelte";
-  import NameEdit from "./components/nameEdit.svelte";
+  import { _ } from 'svelte-i18n';
+  import SvelteTable from 'svelte-table';
+  import { getAccount, convertImage, listAllObjects } from '../../api';
+  import { Session, Profile } from '../../session';
+  import StatusComp from '../components/statusbox.svelte';
+  import DeleteComp from '../components/deleteButton.svelte';
+  import NameEdit from '../components/nameEdit.svelte';
+
   let useraccount;
-  let drawingIcon =
+  const drawingIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
-  let stopMotionIcon =
+  const stopMotionIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />';
-  let AudioIcon =
+  const AudioIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
-  let videoIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
+  const videoIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
   console.log($Session);
-  let user = "",
-    role = "",
-    avatar_url = "",
-    house_url = "",
-    azc = "",
+  let user = '',
+    role = '',
+    avatar_url = '',
+    house_url = '',
+    azc = '',
     id = null,
     art = [],
     drawings = [],
@@ -32,73 +34,65 @@
 
   const columns = [
     {
-      key: "Soort",
-      title: "Soort",
+      key: 'Soort',
+      title: 'Soort',
       value: (v) => {
-        if (v.collection == "drawing") {
+        if (v.collection == 'drawing') {
           return drawingIcon;
         }
-        if (v.collection == "stopmotion") {
+        if (v.collection == 'stopmotion') {
           return stopMotionIcon;
         }
-        if (v.collection == "audio") {
+        if (v.collection == 'audio') {
           return AudioIcon;
         }
-        if (v.collection == "video") {
+        if (v.collection == 'video') {
           return videoIcon;
         }
       },
       sortable: true,
     },
     {
-      key: "voorbeeld",
-      title: "voorbeeld",
+      key: 'voorbeeld',
+      title: 'voorbeeld',
       value: (v) => `<img src="${v.value.previewUrl}">`,
     },
     {
-      key: "title",
-      title: "Title",
+      key: 'title',
+      title: 'Title',
       renderComponent: { component: NameEdit, props: { isCurrentUser } },
     },
     {
-      key: "Datum",
-      title: "Datum",
+      key: 'Datum',
+      title: 'Datum',
       value: (v) => {
-        var d = new Date(v.update_time);
-        return (
-          d.getHours() +
-          ":" +
-          (d.getMinutes() < 10 ? "0" : "") +
-          d.getMinutes() +
-          " " +
-          (d.getDate() < 10 ? "0" : "") +
-          d.getDate() +
-          "/" +
-          (d.getMonth() + 1)
-        );
+        const d = new Date(v.update_time);
+        return `${d.getHours()}:${
+          d.getMinutes() < 10 ? '0' : ''
+        }${d.getMinutes()} ${d.getDate() < 10 ? '0' : ''}${d.getDate()}/${
+          d.getMonth() + 1
+        }`;
       },
       sortable: true,
     },
     {
-      key: "Username",
-      title: "Username",
-      value: (v) => {
-        return `<a href="/#/profile/${v.user_id}">${v.username}</a>`;
-      },
+      key: 'Username',
+      title: 'Username',
+      value: (v) => `<a href="/#/profile/${v.user_id}">${v.username}</a>`,
       sortable: true,
     },
     {
       key: true,
       title: true,
-      class: "iconWidth",
+      class: 'iconWidth',
       renderComponent: {
         component: StatusComp,
         props: { moveToArt, isCurrentUser },
       },
     },
     {
-      key: "Delete",
-      title: "Delete",
+      key: 'Delete',
+      title: 'Delete',
       renderComponent: {
         component: DeleteComp,
         props: { removeFromTrash, moveToTrash, isCurrentUser },
@@ -147,11 +141,11 @@
   }
 
   async function getArt() {
-    drawings = await listAllObjects("drawing");
-    video = await listAllObjects("video");
-    audio = await listAllObjects("audio");
-    stopMotion = await listAllObjects("stopmotion");
-    picture = await listAllObjects("picture");
+    drawings = await listAllObjects('drawing');
+    video = await listAllObjects('video');
+    audio = await listAllObjects('audio');
+    stopMotion = await listAllObjects('stopmotion');
+    picture = await listAllObjects('picture');
     console.log(drawings);
     useraccount = await getAccount(id);
     console.log(useraccount);
@@ -166,28 +160,32 @@
     art = art.concat(audio);
     art = art.concat(picture);
     art.forEach(async (item, index) => {
-      if (item.value.status === "trash") {
+      if (item.value.status === 'trash') {
         trash.push(item);
         delete art[index];
       }
-      if (item.value.json) item.url = item.value.json.split(".")[0];
-      if (item.value.url) item.url = item.value.url.split(".")[0];
-      item.value.previewUrl = await convertImage(item.value.url, "64", "64");
+      if (item.value.json) item.url = item.value.json.split('.')[0];
+      if (item.value.url) item.url = item.value.url.split('.')[0];
+      item.value.previewUrl = await convertImage(item.value.url, '64', '64');
       console.log(item.value.previewUrl);
       art = art;
     });
 
     trash = trash;
   }
-  let promise = getArt();
+  const promise = getArt();
 </script>
 
 <div class="box">
   <h1>kunstwerken</h1>
-  <SvelteTable {columns} rows={art} classNameTable="profileTable" />
-  {#if CurrentUser || $Profile.meta.Role == "moderator" || $Profile.meta.Role == "admin"}
+  <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable" />
+  {#if CurrentUser || $Profile.meta.Role == 'moderator' || $Profile.meta.Role == 'admin'}
     <h1>Prullenmand</h1>
-    <SvelteTable {columns} rows={trash} classNameTable="profileTable" />
+    <SvelteTable
+      columns="{columns}"
+      rows="{trash}"
+      classNameTable="profileTable"
+    />
   {/if}
 </div>
 

@@ -63,6 +63,7 @@
             {#if !!$Profile && 'meta' in $Profile && $Profile.meta.Role == 'admin'}
               <li><a href="/#/admin">{$_('role.admin')}</a></li>
               <li><a href="/#/moderator">{$_('role.moderator')}</a></li>
+              <li><a href="/#/debug">Debug page</a></li>
               <li><a href="/#/upload">{$_('nav.upload')}</a></li>
             {:else if !!$Profile && 'meta' in $Profile && $Profile.meta.Role == 'moderator'}
               <li><a href="/#/moderator">{$_('role.moderator')}</a></li>

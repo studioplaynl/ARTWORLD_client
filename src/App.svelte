@@ -8,20 +8,19 @@
   import Users from './routes/users.svelte';
   import login from './routes/auth/login.svelte';
   import profile from './routes/profile.svelte';
-  import match from './routes/match.svelte';
+  import DebugPage from './routes/admin/debugPage.svelte';
   // import drawing from "./routes/apps/drawing.svelte";
   import { Session, Profile } from './session';
-  // import UploadAvatar from "./routes/uploadAvatar.svelte";
   import Error from './routes/components/error.svelte';
   import Menu from './routes/components/menu.svelte';
   import Friends from './routes/friends.svelte';
-  import Admin from './routes/admin.svelte';
+  import Admin from './routes/admin/admin.svelte';
   import updatePage from './routes/auth/update.svelte';
   import mandala from './routes/apps/mandala.svelte';
-  import upload from './routes/apps/upload.svelte';
+  import upload from './routes/admin/upload.svelte';
   import MarioSequencer from './routes/apps/marioSequencer.svelte';
   import player from './routes/apps/player.svelte';
-  import Moderate from './routes/moderate.svelte';
+  import Moderate from './routes/admin/moderate.svelte';
 
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -40,14 +39,14 @@
   };
   const isAdmin = (detail) => {
     console.log($Profile);
-    if ($Profile.meta.Role == 'admin') return true;
+    if ($Profile.meta.Role === 'admin') return true;
 
     window.location.href = '/#/';
     return false;
   };
   const isModerator = (detail) => {
-    console.log($Profile);
-    if ($Profile.meta.Role == 'moderator' || $Profile.meta.role == 'admin') {
+    console.log($Profile.meta.Role);
+    if ($Profile.meta.Role === 'moderator' || $Profile.meta.Role === 'admin') {
       return true;
     }
 
@@ -81,8 +80,8 @@
       component: profile,
       conditions: [(detail) => isLogedIn(detail)],
     }),
-    '/match': wrap({
-      component: match,
+    '/debug': wrap({
+      component: DebugPage,
       conditions: [(detail) => isAdmin(detail)],
     }),
     // "/drawing/:user?/:name?/:version?": wrap({
@@ -139,7 +138,7 @@
     // }),
     '/upload/:user?/:name?': wrap({
       component: upload,
-      conditions: [(detail) => isLogedIn(detail)],
+      conditions: [(detail) => isModerator(detail)],
     }),
     '/admin': wrap({
       component: Admin,
