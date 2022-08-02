@@ -34,8 +34,8 @@
       },
 
       scale: {
-        //mode: Phaser.Scale.RESIZE, // only works on the width of the canvas //white border when going to fullscreen with browser
-        mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT, // works for auto resizing the canvas
+        mode: Phaser.Scale.RESIZE, // only works on the width of the canvas //white border when going to fullscreen with browser
+        //mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT, // works for auto resizing the canvas
         //mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH, //
         // mode: Phaser.Scale.NONE,
         //mode: Phaser.Scale.FIT,

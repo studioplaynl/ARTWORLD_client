@@ -548,9 +548,11 @@ export default class Artworld extends Phaser.Scene {
 
     // this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
 
-this.scale.on('resize', (size) => {
-this.cameras.resize(size.width, size.height);
-});
+    this.scale.on('resize', (size) => {
+       console.log("size", size)
+       //this.cameras.resize(size.width*0.8, size.height*0.8);
+       window.location.reload()
+    });
 
 
   } //end create
