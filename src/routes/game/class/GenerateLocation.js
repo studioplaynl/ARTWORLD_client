@@ -73,16 +73,21 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
             this.location = this.scene.physics.add.image(0, 0, this.locationImage).setOrigin(0.5, 0.5).setDepth(30)
 
             //console.log("this.location", this.location)
+
+            const cropWidth = this.location.width
+            const cropHeight = this.location.height
+
             //debug rectangle to see to total space needed for the placement of a house
             this.debugRect_y = - (width / 2)
             this.debugRect_height = width
 
             //set the location to a fixed size, also scales the physics body
+            
             this.location.displayWidth = width
             this.location.scaleY = this.location.scaleX
             this.location.body.setSize(this.location.width, this.location.height)
             const cropMargin = 1 //sometimes there is a little border visible on a drawn image
-            this.location.setCrop(cropMargin,cropMargin,width-cropMargin,width-cropMargin)
+            this.location.setCrop(cropMargin,cropMargin,cropWidth-cropMargin,cropHeight-cropMargin)
         }
 
         if (this.type === "isoTriangle") {
