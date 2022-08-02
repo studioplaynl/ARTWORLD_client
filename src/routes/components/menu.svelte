@@ -4,10 +4,10 @@
   import { logout } from '../../api';
   import { Session, Profile } from '../../session';
 
-  import en from '../../langauge/en/en.json';
-  import nl from '../../langauge/nl/nl.json';
-  import ru from '../../langauge/ru/ru.json';
-  import ar from '../../langauge/ar/ar.json';
+  import en from '../../language/en/en.json';
+  import nl from '../../language/nl/nl.json';
+  import ru from '../../language/ru/ru.json';
+  import ar from '../../language/ar/ar.json';
 
   import { dlog } from '../game/helpers/DebugLog';
 
