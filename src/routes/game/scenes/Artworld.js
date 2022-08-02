@@ -116,13 +116,13 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async preload() {
-    Preloader.Loading(this) //.... PRELOADER VISUALISER
+    Preloader.Loading(this); // .... PRELOADER VISUALISER
 
-    //added after linting 
-    //outline effect
+    // added after linting
+    // outline effect
     this.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
-    //added after linting 
-    //outline effect
+    // added after linting
+    // outline effect
   }
 
   async create() {
@@ -148,11 +148,11 @@ export default class Artworld extends Phaser.Scene {
     // the order of creation is the order of drawing: first = bottom ...............................
 
 
-    //added after linting 
-    //outline effect
+    // added after linting
+    // outline effect
     // var postFxPlugin = this.plugins.get('rexoutlinepipelineplugin');
-    //added after linting 
-    //outline effect
+    // added after linting
+    // outline effect
 
     Background.repeatingDots({
       scene: this,
@@ -605,15 +605,17 @@ export default class Artworld extends Phaser.Scene {
     //   }
     // })
 
-    //.....................PHYSICS TEST ..........................................................................
+    // .....................PHYSICS TEST ..........................................................................
     // var obstacles = this.physics.add.staticGroup()
 
     // obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
 
     // this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
 
-
-  } //end create
+    this.scale.on('resize', () => {
+      // ManageSession.currentZoom = 1;
+    });
+  } // end create
 
   animalWallCollide() {
     const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;

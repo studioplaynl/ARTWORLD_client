@@ -12,6 +12,7 @@ const { Phaser } = window;
 class DebugFuntions {
   constructor() {
     this.shiftDown = false;
+    this.fullScreenMode = false;
   }
 
   // DebugFuntions.keyboard
@@ -221,8 +222,13 @@ class DebugFuntions {
 
       case 'KeyH':
         dlog(code);
-        dlog(addressbook);
-        dlog(addressbook.value);
+        if (this.fullScreenMode) {
+          this.fullScreenMode = !this.fullScreenMode;
+          scene.scale.startFullscreen();
+        } else {
+          scene.scale.stopFullscreen();
+          this.fullScreenMode = !this.fullScreenMode;
+        }
         break;
 
       case 'KeyS':
@@ -304,6 +310,8 @@ class DebugFuntions {
         );
 
         break;
+
+
 
       case 'Equal':
       case 'Minus':
