@@ -1,31 +1,34 @@
 <script>
   import { onDestroy, beforeUpdate, createEventDispatcher } from 'svelte';
 
+  export let artwork;
+  export let clickable = false;
+
   let image;
   let frame = 0;
-  let url;
   let interval;
-  export let row;
-  export let clickable = false;
 
   beforeUpdate(async () => {
     clearInterval(interval);
-    if (row.user) {
-      url = row.user.url;
-    } else if (row.value) {
-      url = row.value.previewUrl;
-    } else if (row.img) {
-      url = row.img;
-    }
+
     interval = setInterval(() => {
       frame++;
-      if (frame >= image.clientWidth / 150) {
+      if (frame >= Math.floor(image.clientWidth / 150)) {
         frame = 0;
         image.style.left = '0px';
       } else {
         image.style.left = `-${frame * 150}px`;
       }
     }, 500);
+
+    // Don't animate if this (assumed) stop-motion is square
+    if (
+      image &&
+      image.clientWidth > 0 &&
+      image.clientWidth === image.clientHeight
+    ) {
+      clearInterval(interval);
+    }
   });
 
   onDestroy(() => {
@@ -35,14 +38,12 @@
   const dispatch = createEventDispatcher();
 
   function submitClicked() {
-    // alert('Now submitting clicked');
-    // if (row.value) push(`/${row.collection}/${row.user_id}/${row.key}`);
-    dispatch('clicked', row);
+    dispatch('clicked', artwork);
   }
 </script>
 
 <div class="stopmotion" on:click="{submitClicked}" class:clickable>
-  <img bind:this="{image}" src="{url}" alt="Stop motion" />
+  <img bind:this="{image}" src="{artwork}" alt="Stop motion" />
 </div>
 
 <style>
