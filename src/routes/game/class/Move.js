@@ -70,6 +70,7 @@ class Move {
   }
 
   moveObjectToTarget(scene, container, target, speed) {
+    this.movingAnimation(scene, 'moving');
     // moving is done in Phaser coordinates, sending movement over the network is done in ArtworldCoordinates
     // we check if player stays in the world
     // keep the player in the world and send the moveTo commands
@@ -90,7 +91,18 @@ class Move {
       ManageSession.cameraShake = true;
     }
 
-    scene.physics.moveToObject(container, target, speed);
+    // scene.physics.moveToObject(container, target, speed);
+    const duration = speed * 0.5;
+
+    scene.tweens.add({
+      targets: container,
+      x: target.x,
+      y: target.y,
+      paused: false,
+      duration,
+      onComplete: this.playerMovementTweenEnd.bind(this),
+    });
+
     // send over the network
     // we pass on Phaser2D coordinates to ManageSession.sendMoveMessage
     // target is a vector
@@ -99,6 +111,24 @@ class Move {
 
     // set movement over network
     ManageSession.sendMoveMessage(scene, target.x, target.y, 'moveTo');
+  }
+
+  playerMovementTweenEnd() {
+    const scene = ManageSession.currentScene;
+    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
+
+    // send Stop command
+    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
+
+    this.updatePositionHistory(scene); // update the url and historyTracker
+
+    // update last player position in manageSession for when the player is reloaded inbetween scenes
+    ManageSession.playerPosX = Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
+    ManageSession.playerPosY = Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
+
+    // play "stop" animation
+    this.movingAnimation(scene, 'stop');
+    scene.isPlayerMoving = false;
   }
 
   checkIfPlayerReachedMoveGoal(scene) {
