@@ -611,10 +611,6 @@ export default class Artworld extends Phaser.Scene {
     // obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
 
     // this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
-
-    this.scale.on('resize', () => {
-      // ManageSession.currentZoom = 1;
-    });
   } // end create
 
   animalWallCollide() {
