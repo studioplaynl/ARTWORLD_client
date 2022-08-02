@@ -70,6 +70,7 @@ export async function login(email, password) {
             return session
         })
         .catch((err) => {
+            setLoader(false)
             if (err.status == 404) {
                 Error.update(er => er = "invalid username")
             }

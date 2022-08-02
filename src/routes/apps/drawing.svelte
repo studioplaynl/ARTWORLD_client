@@ -160,7 +160,7 @@
     canvas.setZoom(scaleRatio);
   }
 
-  onMount(() => {
+  onMount(async () => {
     setLoader(true);
     const autosave = setInterval(() => {
       if (!saved) {
@@ -192,8 +192,10 @@
       isDrawingMode: true,
     });
 
-    getImage();
-    setLoader(false);
+    getImage()
+    .then(()=>{
+      setLoader(false);
+    })
 
     fabric.Object.prototype.transparentCorners = false;
 
@@ -679,6 +681,7 @@
   };
 
   const getImage = async () => {
+    setLoader(true)
     let localStore = JSON.parse(localStorage.getItem("Drawing"));
     if (!!localStore) {
       console.log(localStore);
@@ -809,7 +812,7 @@
       replace("/" + appType + "/" + $Session.user_id + "/" + displayName);
     }
 
-    setLoader(false);
+    //setLoader(false);
   };
 
   function dataURItoBlob(dataURI) {
@@ -841,6 +844,7 @@
       savecanvas.add(oImg);
     });
     image = savecanvas.toDataURL("image/png", 1);
+    setLoader(false)
     return image;
   }
 
@@ -887,7 +891,7 @@
 
   let frames = [{}];
   let backgroundFrames = [{}];
-  let maxFrames = 100;
+  let maxFrames = 7;
   let currentFrame = 0;
   let play = false;
 
