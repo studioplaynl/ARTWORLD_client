@@ -15,7 +15,7 @@
     list.shift();
     list.forEach((user) => {
       // eslint-disable-next-line no-param-reassign
-      if (!user.meta.azc) user.meta.azc = 'Unknown';
+      if (!user.meta.Azc) user.meta.Azc = 'Unknown';
     });
     dlog(list);
     users = list;
@@ -73,19 +73,19 @@
     {
       key: 'Locatie',
       title: 'AZC',
-      value: (v) => v.meta.azc,
+      value: (v) => v.meta.Azc,
       sortable: true,
       filterOptions: Locaties,
     },
     {
       key: 'Last location',
       title: 'Last location',
-      value: (v) => v.meta.location,
+      value: (v) => v.meta.Location,
     },
     {
       key: 'rol',
       title: 'Rol',
-      value: (v) => v.meta.role,
+      value: (v) => v.meta.Role,
       filterOptions: roles,
     },
     {

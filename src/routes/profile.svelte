@@ -1,40 +1,38 @@
 <script>
+  import SvelteTable from 'svelte-table';
+  import { push } from 'svelte-spa-router';
+  import { onMount } from 'svelte';
   import {
     getAccount,
     convertImage,
-    getObject,
     listAllObjects,
     listObjects,
-  } from '../api.js';
-  import { Session, Profile, CurrentApp } from '../session.js';
-  import { client } from '../nakama.svelte';
-  import { _ } from 'svelte-i18n';
-  import SvelteTable from 'svelte-table';
+  } from '../api';
+  import { Session, Profile } from '../session';
+
   import StatusComp from './components/statusbox.svelte';
   import DeleteComp from './components/deleteButton.svelte';
   import NameEdit from './components/nameEdit.svelte';
   import Avatar from './components/avatar.svelte';
-  import { onDestroy, onMount } from 'svelte';
-  import Stopmotion from './components/stopmotion.svelte';
+  import ArtworkLoader from './components/artworkLoader.svelte';
   import House from './components/house.svelte';
+
   export let params = {};
   export let userID;
 
-  let loader = true;
-
-  let useraccount;
-  let drawingIcon =
+  const drawingIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
-  let stopMotionIcon =
+  const stopMotionIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />';
-  let AudioIcon =
+  const AudioIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
-  let videoIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
-  let user = '';
-  let role = '';
-  let avatar_url = '';
-  let house_url = '';
-  let azc = '';
+  const videoIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
+
+  let loader = true;
+  let useraccount;
+  let azc;
+  let username = '';
   let id = null;
   let art = [];
   let drawings = [];
@@ -44,32 +42,33 @@
   let trash = [];
   let picture = [];
   let CurrentUser;
-  let avatar;
 
   const columns = [
     {
       key: 'Soort',
       title: '',
       value: (v) => {
-        if (v.collection == 'drawing') {
+        if (v.collection === 'drawing') {
           return drawingIcon;
         }
-        if (v.collection == 'stopmotion') {
+        if (v.collection === 'stopmotion') {
           return stopMotionIcon;
         }
-        if (v.collection == 'audio') {
+        if (v.collection === 'audio') {
           return AudioIcon;
         }
-        if (v.collection == 'video') {
+        if (v.collection === 'video') {
           return videoIcon;
         }
+        return null;
       },
       sortable: true,
     },
     {
       key: 'voorbeeld',
       title: '',
-      renderComponent: { component: Stopmotion, props: {} },
+
+      renderComponent: { component: ArtworkLoader, props: { clickable: true } },
     },
     {
       key: 'title',
@@ -162,23 +161,12 @@
         picture = await listObjects('picture', params.user, 100);
       }
 
-      useraccount = await getAccount(id);
-      user = useraccount.username;
-      role = useraccount.meta.Role;
-      azc = useraccount.meta.Azc;
-      console.log('azc', azc);
-      avatar_url = useraccount.url;
+      console.log('attempt to get account for', id);
 
-      try {
-        house_url = await getObject('home', azc, params.user);
-      } catch (err) {
-        console.log(err); // TypeError: failed to fetch
-      }
-      if (typeof house_url == 'object') {
-        house_url = await convertImage(house_url.value.url, '64', '64');
-      } else {
-        house_url = '';
-      }
+      useraccount = await getAccount(id);
+      username = useraccount.username;
+
+      azc = useraccount.meta.Azc;
     } else {
       CurrentUser = true;
       drawings = await listObjects('drawing', $Session.user_id, 100);
@@ -187,21 +175,9 @@
       audio = await listObjects('audio', $Session.user_id, 100);
       picture = await listObjects('picture', $Session.user_id, 100);
       useraccount = await getAccount();
-      user = useraccount.username;
-      role = useraccount.meta.Role;
-      azc = useraccount.meta.Azc;
-      avatar_url = useraccount.url;
+      username = useraccount.username;
 
-      try {
-        house_url = await getObject('home', azc, $Session.user_id);
-      } catch (err) {
-        console.log(err); // TypeError: failed to fetch
-      }
-      if (typeof house_url == 'object') {
-        house_url = await convertImage(house_url.value.url, '64', '64');
-      } else {
-        house_url = '';
-      }
+      azc = useraccount.meta.Azc;
     }
 
     art = [].concat(drawings);
@@ -229,10 +205,14 @@
     trash = trash;
     loader = false;
   }
-  let promise = getUser();
+  const promise = getUser();
 
-  async function goApp(App) {
-    $CurrentApp = App;
+  function goTo(evt) {
+    if (evt.detail.key === 'voorbeeld' && evt.detail.row.value) {
+      push(
+        `/${evt.detail.row.collection}/${evt.detail.row.user_id}/${evt.detail.row.key}`,
+      );
+    }
   }
 </script>
 
@@ -240,9 +220,9 @@
   <main>
     <div class="container">
       <div class="top">
-        <h1>{user}</h1>
+        <h1>{username}</h1>
         <br />
-        <Avatar />
+        <Avatar showHistory="{true}" />
         <House />
       </div>
       <div class="bottom">
@@ -250,6 +230,7 @@
           columns="{columns}"
           rows="{art}"
           classNameTable="profileTable"
+          on:clickCell="{goTo}"
         />
         {#if CurrentUser}
           <img class="icon" src="assets/SHB/svg/AW-icon-trashcan.svg" />
@@ -350,5 +331,10 @@
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  /* eslint-disable-next-line svelte/valid-compile */
+  .profileTable .stopmotion {
+    cursor: pointer;
   }
 </style>

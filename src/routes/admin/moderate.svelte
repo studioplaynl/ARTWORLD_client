@@ -150,8 +150,8 @@
     useraccount = await getAccount(id);
     console.log(useraccount);
     user = useraccount.username;
-    role = useraccount.metadata.role;
-    azc = useraccount.metadata.azc;
+    role = useraccount.meta.Role;
+    azc = useraccount.meta.Azc;
     avatar_url = useraccount.url;
 
     art = [].concat(drawings);
