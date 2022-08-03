@@ -8,7 +8,7 @@ class Background {
     const { worldSize } = config.scene;
 
     /// *........... white background of worldSize width .............................................................
-    scene.add.rectangle(0, 0, worldSize.x, worldSize.y, config.backgroundColor).setOrigin(0);
+    // scene.add.rectangle(0, 0, worldSize.x, worldSize.y, config.backgroundColor).setOrigin(0);
 
     //* ........... repeating pattern on the white background ..........................................................
     const gridWidth = worldSize.x;
@@ -104,6 +104,33 @@ class Background {
     rt1.destroy();
     eraser.destroy();
     rectangle.destroy();
+  }
+
+  rectangle(config) {
+    const { scene } = config;
+    const { posX } = config;
+    const { posY } = config;
+    const { setOrigin } = config;
+    const { color } = config;
+    const { alpha } = config;
+    const { name } = config;
+    const { worldSize } = scene;
+
+
+    const rectangle = scene.add.graphics();
+    rectangle.fillStyle(color, alpha);
+    rectangle.fillRect(0, 0, worldSize.x, worldSize.y);
+
+    const rt1 = scene.add.renderTexture(0, 0, worldSize.x, worldSize.y);
+    rt1.draw(rectangle);
+
+    rt1.saveTexture(name);
+    rt1.destroy();
+
+    rectangle.destroy();
+
+    scene[name] = scene.add.image(posX, posY, name).setOrigin(setOrigin).setScale(1);
+    scene[name].name = name;
   }
 }
 

@@ -210,3 +210,9 @@ div#phaserId {
   background: transparent;
   /* transform: scale(1.05); */
 }
+
+#phaserId canvas{
+
+width: 100vw;
+height: 100vh;
+} 

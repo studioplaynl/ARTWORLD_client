@@ -129,6 +129,12 @@ export default class Artworld extends Phaser.Scene {
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize;
 
+
+    const {
+      artworldToPhaser2DX, artworldToPhaser2DY, Phaser2DToArtworldX, Phaser2DToArtworldY,
+    } = CoordinatesTranslator;
+    const { gameEditMode } = ManageSession;
+
     // collection: "home"
     // create_time: "2022-01-19T16:31:43Z"
     // key: "Amsterdam"
@@ -153,6 +159,17 @@ export default class Artworld extends Phaser.Scene {
     // var postFxPlugin = this.plugins.get('rexoutlinepipelineplugin');
     // added after linting
     // outline effect
+    Background.rectangle({
+      scene: this,
+      name: 'bgImageWhite',
+      posX: 0,
+      posY: 0,
+      setOrigin: 0,
+      color: 0xff0000,
+      alpha: 1,
+    });
+
+    // this.bgImage = this.add.image(0, 0, 'bgImageWhite').setOrigin(0);;
 
     Background.repeatingDots({
       scene: this,
@@ -162,10 +179,7 @@ export default class Artworld extends Phaser.Scene {
       backgroundColor: 0xffffff,
     });
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY, Phaser2DToArtworldX, Phaser2DToArtworldY,
-    } = CoordinatesTranslator;
-    const { gameEditMode } = ManageSession;
+
     // make a repeating set of rectangles around the artworld canvas
 
     const middleCoordinates = new Phaser.Math.Vector2(
@@ -611,7 +625,27 @@ export default class Artworld extends Phaser.Scene {
     // obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
 
     // this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
+
+    // this.scale.on('resize', this.resize, this);
   } // end create
+
+  resize(gameSize) {
+    const gameCamera = this.cameras;
+
+    const { width } = gameSize;
+    const { height } = gameSize;
+    gameCamera.resize(window.innerWidth, window.innerHeight);
+
+    this.gameCam.zoom = ManageSession.currentZoom;
+    // this.gameCam.startFollow(this.player);
+    // this.cameras.main.setViewport(0, 0, width, height);
+    this.gameCam.setViewport(0, 0, window.innerWidth * window.devicePixelRatio, window.innerHeight) * window.devicePixelRatio;
+    // this.gameCam.resize(width, height);
+    // console.log('this.cameras', gameCamera);
+    // this.game.scale.resize(width, height);
+    console.log('width, height', width, height);
+    console.log('window.innerWidth, window.innnerHeight, window.devicePixelRatio', window.innerWidth, window.innerHeight, window.devicePixelRatio);
+  }
 
   animalWallCollide() {
     const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;

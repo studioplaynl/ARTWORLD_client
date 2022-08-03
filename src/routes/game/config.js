@@ -1,6 +1,6 @@
 export const CONFIG = {
-  WIDTH: window.innerWidth,
-  HEIGHT: window.innerHeight,
+  WIDTH: window.innerWidth * window.devicePixelRatio,
+  HEIGHT: window.innerHeight * window.devicePixelRatio,
 };
 
 export const SCENE_NAMES = [
