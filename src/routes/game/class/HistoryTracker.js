@@ -1,7 +1,7 @@
 import ManageSession from "../ManageSession"
 import CoordinatesTranslator from "./CoordinatesTranslator"
 import { history } from "../../../session"
-import { onDestroy, get } from "svelte" // cant get it to work
+//import { onDestroy, get } from "svelte" // cant get it to work
 
 
 class HistoryTracker {
