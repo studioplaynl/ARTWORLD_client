@@ -21,7 +21,7 @@
   onMount(async () => {
     sessionCheck()
     const config = {
-      //parent: "phaserId",
+      parent: "phaserId",
   
       type: Phaser.WEBGL,
       transparent: true, // for 3d scene
@@ -33,14 +33,16 @@
         windowEvents: false, //no input to phaser from outside the canvas, the rest of the html doc
       },
 
-      scale: {
+scale: {
         mode: Phaser.Scale.RESIZE, // only works on the width of the canvas //white border when going to fullscreen with browser
-        //mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT, // works for auto resizing the canvas
-        //mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH, //
+        // mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT, // works for auto resizing the canvas!
+        // mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH, //
         // mode: Phaser.Scale.NONE,
-        //mode: Phaser.Scale.FIT,
+        // mode: Phaser.Scale.SMOOTH,
+        // mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        parent: "phaserId",
+        // autoCenter: Phaser.Scale.NONE,
+        // parent: 'phaserId',
         width: CONFIG.WIDTH,
         height: CONFIG.HEIGHT,
       },

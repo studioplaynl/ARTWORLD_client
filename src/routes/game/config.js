@@ -14,8 +14,8 @@ import ChallengeAnimalGarden from "./scenes/ChallengeAnimalGarden"
 import ChallengeFlowerField from "./scenes/ChallengeFlowerField"
 
 export const CONFIG = {
-  WIDTH: window.innerWidth,
-  HEIGHT: window.innerHeight //HEIGHT: window.innerHeight - 22
+  WIDTH: window.innerWidth * window.devicePixelRatio,
+  HEIGHT: window.innerHeight * window.devicePixelRatio //HEIGHT: window.innerHeight - 22
   // WIDTH: '100%',
   // HEIGHT: '100%'
 
