@@ -11,7 +11,7 @@
   import DebugPage from './routes/admin/debugPage.svelte';
   // import drawing from "./routes/apps/drawing.svelte";
   import { Session, Profile } from './session';
-  import Error from './routes/components/error.svelte';
+  import Notifications from './routes/components/notifications.svelte';
   import Menu from './routes/components/menu.svelte';
   import Friends from './routes/friends.svelte';
   import Admin from './routes/admin/admin.svelte';
@@ -154,4 +154,4 @@
     }),
   }}"
 />
-<Error />
+<Notifications />
