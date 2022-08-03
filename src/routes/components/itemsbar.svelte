@@ -2,9 +2,7 @@
   import { location } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
-  import {
-    convertImage, getAccount, getObject, logout,
-  } from '../../api';
+  import { convertImage, getAccount, getObject, logout } from '../../api';
   import ProfilePage from '../profile.svelte';
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
@@ -33,21 +31,30 @@
   const unsubscribeItemsBar = ShowItemsBar.subscribe(async () => {
     if (!$Profile) return;
     if ($location === '/login') return;
-
     enableClickOutsideListener = false;
 
     try {
       if (userHouseUrl === undefined) {
         /** object containing house information (position, image url) */
+
         const houseObject = await getObject(
           'home',
-          $Profile.meta.Azc,
+          $Profile.meta.Azc || 'Amsterdam',
           $Profile.id,
         );
 
         /** convert image to small size */
-        userHouseUrl = await convertImage(houseObject.value.url, '50', '50');
+        userHouseUrl = await convertImage(
+          houseObject.value.url,
+          '50',
+          '50',
+          'png',
+        );
+
+        // console.log('itemsbar --- userHouseUrl?', userHouseUrl);
       }
+    } catch (error) {
+      // console.warn('Error:', error);
     } finally {
       setTimeout(() => {
         enableClickOutsideListener = true;
