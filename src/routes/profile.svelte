@@ -1,13 +1,8 @@
 <script>
   import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';
-  import { onMount } from 'svelte';
-  import {
-    getAccount,
-    convertImage,
-    listAllObjects,
-    listObjects,
-  } from '../api';
+  import { ArtworksStore } from '../storage';
+  import { getAccount } from '../api';
   import { Session, Profile } from '../session';
 
   import StatusComp from './components/statusbox.svelte';
@@ -16,6 +11,7 @@
   import Avatar from './components/avatar.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import House from './components/house.svelte';
+  import { OBJECT_STATE_IN_TRASH, OBJECT_STATE_REGULAR } from '../constants';
 
   export let params = {};
   export let userID;
@@ -31,16 +27,8 @@
 
   let loader = true;
   let useraccount;
-  let azc;
   let username = '';
   let id = null;
-  let art = [];
-  let drawings = [];
-  let stopMotion = [];
-  let video = [];
-  let audio = [];
-  let trash = [];
-  let picture = [];
   let CurrentUser;
 
   const columns = [
@@ -76,11 +64,12 @@
       renderComponent: { component: NameEdit, props: { isCurrentUser } },
     },
     // {
-    //   key: "Datum",
-    //   title: "",
-    //   value: v => {
-    //     var d = new Date(v.update_time)
-    //     return d.getHours() + ":" + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + " " + (d.getDate() < 10 ? '0' : '') + d.getDate() + "/" + (d.getMonth()+1)
+    //   key: 'Datum',
+    //   title: '',
+    //   value: (v) => {
+    //     const d = new Date(v.update_time);
+    //     eslint-disable-next-line max-len
+    //     return `${d.getHours()}:${d.getMinutes() < 10 ? '0' : ''}${d.getMinutes()} ${d.getDate() < 10 ? '0' : ''}${d.getDate()}/${d.getMonth() + 1}`;
     //   },
     //   sortable: true,
     // },
@@ -90,7 +79,9 @@
       class: 'iconWidth',
       renderComponent: {
         component: StatusComp,
-        props: { moveToArt, isCurrentUser },
+        props: {
+          isCurrentUser,
+        },
       },
     },
     {
@@ -98,114 +89,53 @@
       title: '',
       renderComponent: {
         component: DeleteComp,
-        props: { removeFromTrash, moveToTrash, isCurrentUser },
+        props: {
+          isCurrentUser,
+        },
       },
     },
   ];
 
-  function removeFromTrash(key) {
-    for (let i = 0; i < trash.length; i++) {
-      if (!!trash[i] && trash[i].key == key) {
-        delete trash[i];
-        i = trash.length;
-        trash = trash;
-      }
-    }
-  }
-
-  function moveToTrash(key) {
-    for (let i = 0; i < art.length; i++) {
-      if (!!art[i] && art[i].key == key) {
-        trash.push(art[i]);
-        delete art[i];
-        i = art.length;
-        trash = trash;
-        art = art;
-      }
-    }
-  }
-
-  function moveToArt(key) {
-    for (let i = 0; i < trash.length; i++) {
-      if (!!trash[i] && trash[i].key == key) {
-        art.push(trash[i]);
-        delete trash[i];
-        i = trash.length;
-        trash = trash;
-        art = art;
-      }
-    }
-  }
+  $: filteredArt = $ArtworksStore.filter(
+    (el) => el.value.status === OBJECT_STATE_REGULAR,
+  );
+  $: deletedArt = $ArtworksStore.filter(
+    (el) => el.value.status === OBJECT_STATE_IN_TRASH,
+  );
 
   function isCurrentUser() {
     return CurrentUser;
   }
 
-  onMount(async () => {});
+  async function loadArtworks() {
+    if ($Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator') {
+      await ArtworksStore.loadArtworks(id);
+    } else {
+      await ArtworksStore.loadArtworks(id, 100);
+    }
+
+    loader = false;
+  }
 
   async function getUser() {
     if (!!params.user || !!userID) {
-      id = params.user || userID;
       CurrentUser = false;
-      if ($Profile.meta.Role == 'admin' || $Profile.meta.Role == 'moderator') {
-        drawings = await listAllObjects('drawing', params.user);
-        video = await listAllObjects('video', params.user);
-        audio = await listAllObjects('audio', params.user);
-        stopMotion = await listAllObjects('stopmotion', params.user);
-        picture = await listAllObjects('picture', params.user);
-      } else {
-        drawings = await listObjects('drawing', params.user, 100);
-        video = await listObjects('video', params.user, 100);
-        audio = await listObjects('audio', params.user, 100);
-        stopMotion = await listObjects('stopmotion', params.user, 100);
-        picture = await listObjects('picture', params.user, 100);
-      }
-
-      console.log('attempt to get account for', id);
-
+      id = params.user || userID;
       useraccount = await getAccount(id);
       username = useraccount.username;
-
-      azc = useraccount.meta.Azc;
     } else {
       CurrentUser = true;
-      drawings = await listObjects('drawing', $Session.user_id, 100);
-      stopMotion = await listObjects('stopmotion', $Session.user_id, 100);
-      video = await listObjects('video', $Session.user_id, 100);
-      audio = await listObjects('audio', $Session.user_id, 100);
-      picture = await listObjects('picture', $Session.user_id, 100);
+      id = $Session.user_id;
       useraccount = await getAccount();
       username = useraccount.username;
-
-      azc = useraccount.meta.Azc;
     }
 
-    art = [].concat(drawings);
-    art = art.concat(stopMotion);
-    art = art.concat(video);
-    art = art.concat(audio);
-    art = art.concat(picture);
-    art.forEach(async (item, index) => {
-      if (item.value.status === 'trash') {
-        trash.push(item);
-        delete art[index];
-      }
-      if (item.value.json) item.url = item.value.json.split('.')[0];
-      if (item.value.url) item.url = item.value.url.split('.')[0];
-      item.value.previewUrl = await convertImage(
-        item.value.url,
-        '150',
-        '1000',
-        'png',
-      );
-
-      art = art;
-    });
-
-    trash = trash;
-    loader = false;
+    loadArtworks();
   }
-  const promise = getUser();
+
+  getUser();
+
+  // loadArtworks();
 
   function goTo(evt) {
     if (evt.detail.key === 'voorbeeld' && evt.detail.row.value) {
@@ -228,16 +158,20 @@
       <div class="bottom">
         <SvelteTable
           columns="{columns}"
-          rows="{art}"
+          rows="{filteredArt}"
           classNameTable="profileTable"
           on:clickCell="{goTo}"
         />
-        {#if CurrentUser}
-          <img class="icon" src="assets/SHB/svg/AW-icon-trashcan.svg" />
+        {#if CurrentUser && deletedArt.length}
+          <img
+            class="icon"
+            src="assets/SHB/svg/AW-icon-trashcan.svg"
+            alt="Trash can"
+          />
           <SvelteTable
             columns="{columns}"
-            rows="{trash}"
-            classNameTable="profileTable"
+            rows="{deletedArt}"
+            classNameTable="profileTable deletedTable"
           />
         {/if}
       </div>
@@ -248,42 +182,20 @@
 {/if}
 
 <style>
-  .flex-container {
-    display: flex;
-    flex-direction: row;
-    width: 100vw;
-    margin: 0 auto;
-    max-width: 1100px;
+  :global(.deletedTable tbody tr) {
+    opacity: 0.6;
+    position: relative;
   }
 
-  .flex-item-left {
-    text-align: center;
-    padding: 10px;
-    flex: 30%;
-  }
-
-  .flex-item-right {
-    padding: 10px;
-    flex: 70%;
-  }
-
-  /* Responsive layout - makes a one column-layout instead of two-column layout */
-  @media (max-width: 800px) {
-    .flex-container {
-      flex-direction: column;
-    }
-  }
-
-  #avatar,
-  #house {
-    width: 64px;
-    height: 64px;
-  }
-
-  #avatarDiv {
-    width: 75px;
-    height: 75px;
-    /* position: static; */
+  :global(.deletedTable tbody tr:after) {
+    content: '';
+    position: absolute;
+    bottom: 50%;
+    height: 2px;
+    left: 0;
+    right: 0;
+    opacity: 0.5;
+    background-color: gray;
   }
 
   .bottom {
@@ -300,10 +212,6 @@
     justify-content: space-evenly;
     text-align: center;
     flex-direction: column;
-  }
-
-  .userInfo {
-    display: block;
   }
 
   /* loader */
@@ -331,10 +239,5 @@
     100% {
       transform: rotate(360deg);
     }
-  }
-
-  /* eslint-disable-next-line svelte/valid-compile */
-  .profileTable .stopmotion {
-    cursor: pointer;
   }
 </style>

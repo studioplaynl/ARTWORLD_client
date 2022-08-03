@@ -6,6 +6,7 @@ import { client } from './nakama.svelte';
 import {
   Session, Profile, Error, Succes, CurrentApp,
 } from './session';
+import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 
 export let url; // TODO @linjoe Is this required? Maybe should be a store?
 export let user; // What?
@@ -159,7 +160,7 @@ export async function updateObject(type, name, value, pub, userID) {
 
   // "2" refers to Public Read permission
   // "1" refers to Owner Write permission
-  const permission = pub ? 2 : 1;
+  const permission = pub ? PERMISSION_READ_PUBLIC : PERMISSION_READ_PRIVATE;
 
   // Value to store
   const storeValue = typeof value === 'string' ? JSON.parse(value) : value;

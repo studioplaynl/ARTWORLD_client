@@ -1,8 +1,21 @@
+/* eslint-disable camelcase */
+/* eslint-disable prefer-destructuring */
 // Storage & communcatie tussen Server en App
 
 import { get, writable } from 'svelte/store';
 import { Session } from './session';
-import { deleteObject, updateObject, listAllObjects } from './api';
+import {
+  deleteObject,
+  updateObject,
+  listAllObjects,
+  listObjects,
+  convertImage,
+  deleteObjectAdmin,
+  deleteFile,
+} from './api';
+import {
+  PERMISSION_READ_PUBLIC, PERMISSION_READ_PRIVATE,
+} from './constants';
 
 //  Achievements of a user
 const achievementsStore = writable([]);
@@ -158,5 +171,150 @@ export const Addressbook = {
       deleteObject('addressbook', key);
       return addresses.filter((element) => element.key !== key);
     });
+  },
+};
+
+
+
+// Stores Artworks of user
+const artworksStore = writable([]);
+
+export const ArtworksStore = {
+
+  subscribe: artworksStore.subscribe,
+  set: artworksStore.set,
+  update: artworksStore.update,
+
+  loadArtworks: async (id, limit) => {
+    const types = ['drawing', 'video', 'audio', 'stopmotion', 'picture'];
+    const typePromises = [];
+    let loadedArt = [];
+
+    types.forEach(async (type) => {
+      // One promise per type..
+      typePromises.push(new Promise((resolveType) => {
+        // A promise to load objects from the server
+        const loadPromise = new Promise((resolve) => {
+          if (limit !== undefined) {
+            listAllObjects(type, id).then((loaded) => resolve(loaded));
+          } else {
+            listObjects(type, id, limit).then((loaded) => resolve(loaded));
+          }
+        });
+
+        // Objects were loaded, so update the preview URLs
+        loadPromise.then((loaded) => ArtworksStore.updatePreviewUrls(loaded)).then((loaded) => {
+          // Add to the loadedArt array
+          loadedArt = [...loadedArt, ...loaded];
+        }).then(() => {
+          // TODO: Maybe add some sorting?
+          // Resolve promise for this type
+          resolveType();
+        });
+      }));
+    });
+
+    // After all typePromises fulfilled, set data into store
+    Promise.all(typePromises).then(() => {
+      artworksStore.set(loadedArt);
+    });
+  },
+
+  getArtwork(key) {
+    return artworksStore.find((artwork) => artwork.key === key);
+  },
+
+  updatePreviewUrls(artworks) {
+    const artworksToUpdate = artworks;
+    const existingArtworks = get(artworksStore);
+
+
+    artworksToUpdate.forEach(async (item, index) => {
+      const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
+      const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
+      const artwork = item;
+
+      // console.log('Did I exist?', item.key, !!existingArtwork, 'outdated?', outdatedArtwork);
+
+      // Only get a fresh URL if no previewUrl is available or when it has been updated
+      if (!artwork.value.previewUrl || outdatedArtwork) {
+        if (artwork.value.json) {
+          artwork.url = artwork.value.json.split('.')[0];
+        }
+        if (artwork.value.url) {
+          artwork.url = artwork.value.url.split('.')[0];
+        }
+        artwork.value.previewUrl = await convertImage(
+          artwork.value.url,
+          '150',
+          '1000',
+          'png',
+        );
+        // console.log('artwork.value.previewUrl nu: ', artwork.value.previewUrl);
+        artworksToUpdate[index] = artwork;
+      }
+
+      // console.log('ArtworksStore: Artwork', artwork);
+
+
+      // console.log('artwork.value.previewUrl', artwork.value.previewUrl);
+    });
+    return artworksToUpdate;
+  },
+
+  updateState: (row, state) => {
+    const {
+      collection, key, value, user_id,
+    } = row;
+
+    // Update on server
+    value.status = state;
+    const pub = false;
+    updateObject(collection, key, value, pub, user_id);
+
+    // Update store
+    artworksStore.update((artworks) => {
+      const artworksToUpdate = artworks;
+      const artworkIndex = artworks.findIndex((i) => i.key === key);
+      if (artworkIndex) {
+        artworksToUpdate[artworkIndex].value.status = state;
+      }
+      return [...artworksToUpdate];
+    });
+  },
+
+  updatePublicRead: async (row, publicRead) => {
+    const {
+      collection, key, value, user_id,
+    } = row;
+
+    // Update on server
+    await updateObject(collection, key, value, publicRead, user_id);
+
+    // Update on store
+    artworksStore.update((artworks) => {
+      const artworksToUpdate = artworks;
+      const artworkIndex = artworks.findIndex((artwork) => artwork.key === key);
+      if (artworkIndex > -1) {
+        artworksToUpdate[artworkIndex].permission_read = publicRead ? PERMISSION_READ_PUBLIC : PERMISSION_READ_PRIVATE;
+      }
+      return [...artworksToUpdate];
+    });
+  },
+
+  delete: (row, role) => {
+    const {
+      collection, key, user_id,
+    } = row;
+
+    // Remove from server
+    if (role === 'admin' || role === 'moderator') {
+      deleteObjectAdmin(user_id, collection, key);
+    } else {
+      deleteFile(collection, key, user_id);
+    }
+
+    // Remove from store
+    artworksStore.update((artworks) => artworks.filter((artwork) => artwork.key !== key));
   },
 };

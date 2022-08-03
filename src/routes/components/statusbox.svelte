@@ -3,12 +3,12 @@
   import {
     PERMISSION_READ_PUBLIC,
     OBJECT_STATE_IN_TRASH,
+    OBJECT_STATE_REGULAR,
   } from '../../constants';
-  import { updateObject } from '../../api';
   import { Profile } from '../../session';
+  import { ArtworksStore } from '../../storage';
 
   export let row;
-  export let moveToArt;
   export let isCurrentUser;
 
   let publicRead = row.permission_read === PERMISSION_READ_PUBLIC;
@@ -16,17 +16,12 @@
   const currentUser = isCurrentUser(); // Bool? Of user object?
 
   const change = async () => {
-    const { value } = row;
-    await updateObject(row.collection, row.key, value, publicRead, row.user_id);
+    ArtworksStore.updatePublicRead(row, publicRead);
   };
 
-  const restore = async () => {
-    row.value.status = '';
-    const { value } = row;
-    const pub = false;
-    await updateObject(row.collection, row.key, value, pub, row.user_id);
-    moveToArt(row.key);
-  };
+  function restore() {
+    ArtworksStore.updateState(row, OBJECT_STATE_REGULAR);
+  }
 </script>
 
 <main>

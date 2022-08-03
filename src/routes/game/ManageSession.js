@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { get, writable } from 'svelte/store';
+import { get } from 'svelte/store';
 import { client, SSL } from '../../nakama.svelte';
 // translate from artworld coordinates to Phaser 2D screen coordinates
 import CoordinatesTranslator from './class/CoordinatesTranslator';
@@ -211,7 +211,7 @@ class ManageSession {
                 this[updateOnlinePlayer].stop();
                 // dlog("duration", duration)
 
-                const target = new Phaser.Math.Vector2(positionVector.x, positionVector.y);
+                // const target = new Phaser.Math.Vector2(positionVector.x, positionVector.y);
                 // const duration = target.length() / 2;
                 // dlog('duration', duration);
 
