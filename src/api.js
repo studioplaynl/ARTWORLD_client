@@ -9,7 +9,6 @@ import {
 
 export let url; // TODO @linjoe Is this required? Maybe should be a store?
 export let user; // What?
-
 export async function login(email, _password) {
   setLoader(true);
   const create = false;
@@ -138,9 +137,8 @@ export async function getUploadURL(type, name, filetype, version) {
   const session = get(Session);
   const rpcid = 'upload_file';
   const fileurl = await client.rpc(session, rpcid, payload);
-  url = fileurl.payload.url;
-  const locatio = fileurl.payload.location;
-  return [url, locatio];
+
+  return [fileurl.payload.url, fileurl.payload.location];
 }
 
 /** Update a user object on server
@@ -184,7 +182,7 @@ export async function updateObject(type, name, value, pub, userID) {
   }
 }
 
-export async function listObjects(type, userID, lim, page) {
+export async function listObjects(type, userID, lim) {
   const session = get(Session);
   const limit = lim || 100;
   // TODO: Figure out why pagination does not work (cors issue?)
@@ -228,7 +226,7 @@ export async function getAccount(id) {
     const account = await client.getAccount(session);
     user = account.user;
     user.meta = JSON.parse(user.metadata);
-    user.url = await convertImage(user.avatar_url, '128', '1000');
+    user.url = await convertImage(user.avatar_url, '128', '1000', 'png');
     Profile.set(user);
   } else {
     // With id: get account of other user
@@ -236,7 +234,7 @@ export async function getAccount(id) {
     const users = await client.getUsers(session, [id]);
     user = users.users[0];
     user.meta = typeof user.metadata === 'string' ? JSON.parse(user.metadata) : user.metadata;
-    user.url = await convertImage(user.avatar_url, '128', '1000');
+    user.url = await convertImage(user.avatar_url, '128', '1000', 'png');
   }
 
   return user;
@@ -283,7 +281,7 @@ export async function setAvatar(avatar_url) {
   const Image = await convertImage(avatar_url, '128', '1000', 'png');
   // Profile.update((n) => { n.url = Image; return n });
   getAccount();
-  Succes.update((s) => s = true);
+  Succes.set(true);
   setLoader(false);
   return Image;
 }
@@ -334,7 +332,7 @@ export async function uploadAvatar(data, json) {
   const Image = await convertImage(jpegLocation, '128', '1000', 'png');
   // Profile.update((n) => { n.url = Image; return n });
   getAccount();
-  Succes.update((s) => s = true);
+  Succes.set(true);
   setLoader(false);
   return jpegLocation;
 }
@@ -345,7 +343,7 @@ export async function deleteFile(type, file, user) {
   const rpcid = 'delete_file';
   const fileurl = await client.rpc(session, rpcid, payload)
     .catch((e) => { throw e; });
-  Succes.update((s) => s = true);
+  Succes.set(true);
 }
 
 export async function addFriend(id, usernames) {
@@ -366,7 +364,7 @@ export async function addFriend(id, usernames) {
   }
   await client.addFriends(session, id, usernames)
     .then((status) => {
-      Succes.update((s) => s = true);
+      Succes.set(true);
     })
     .catch((err) => {
       throw err;
@@ -391,7 +389,7 @@ export async function removeFriend(id, usernames) {
   }
   await client.deleteFriends(session, id, usernames)
     .then((status) => {
-      Succes.update((s) => s = true);
+      Succes.set(true);
     })
     .catch((err) => {
       throw err;
@@ -429,7 +427,7 @@ export async function deleteObject(collection, key) {
     }],
   });
   console.info('Deleted objects.');
-  Succes.update((s) => s = true);
+  Succes.set(true);
   return true;
 }
 
