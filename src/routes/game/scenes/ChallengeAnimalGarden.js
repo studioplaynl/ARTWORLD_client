@@ -648,16 +648,11 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             }
         } else {
             //when in edit mode
-            //this.updateCurveGraphics()
+            
         }
 
 
     } //update
 
-    updateCurveGraphics() {
-        this.curveGraphics.clear()
-        this.curveGraphics.lineStyle(60, 0xffff00, 1)
-        this.curve.draw(this.curveGraphics, 64)
-    }
-
+   
 } //class
