@@ -1,8 +1,7 @@
 <script>
   import { location, replace } from 'svelte-spa-router';
   import { onMount, onDestroy } from 'svelte';
-  import MouseIcon from 'svelte-icons/fa/FaMousePointer.svelte';
-
+  // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
   import {
@@ -60,11 +59,9 @@
   if (params.name) title = params.name;
 
   let showBackground = true;
-  let fillColor = '#f00';
-  const fillTolerance = 2;
+
   let current = 'draw';
 
-  let saveToggle = false;
   let savedURL = '';
 
   let version = 0;
@@ -214,20 +211,16 @@
     switch (mode) {
       case 'draw':
         canvas.isDrawingMode = true;
-        floodFill(false);
         break;
 
       case 'select':
         canvas.isDrawingMode = false;
-        floodFill(false);
         break;
 
       case 'erase':
         canvas.freeDrawingBrush = eraseBrush;
         canvas.freeDrawingBrush.width = parseInt(lineWidth, 10) || 1;
         canvas.isDrawingMode = true;
-
-        floodFill(false);
         break;
 
       default:
@@ -237,6 +230,8 @@
 
   onMount(() => {
     setLoader(true);
+
+    // Create autosave interval
     autosaveInterval = setInterval(() => {
       if (isDrawn || isTitleChanged) {
         const data = {};
@@ -245,19 +240,18 @@
         if (appType === 'drawing' || appType === 'house') {
           data.drawing = canvas.toDataURL('image/png', 1);
         }
-
         localStorage.setItem('Drawing', JSON.stringify(data));
-        // saved = true;
-        console.log('stored in localstorage');
       }
     }, 20000);
+
+    // Set up Canvases
     cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
     canvas = new fabric.Canvas(canvasEl, {
       isDrawingMode: true,
     });
     eraseBrush = new fabric.EraserBrush(canvas);
 
-    // always adapting the canvas size on screen size change
+    // Always adapt canvas sizes on screen size change
     window.onresize = () => {
       adaptCanvasSize();
     };
@@ -273,14 +267,6 @@
     setLoader(false);
 
     fabric.Object.prototype.transparentCorners = false;
-
-    canvas.on('mouse:up', () => {
-      // once there is anything is drawn on the canvas
-      isDrawn = true;
-      isPreexistingArt = false;
-      isAlreadyUploaded = false;
-      mouseEvent();
-    });
 
     /// ///////////// mouse circle ////////////////////////////
 
@@ -299,17 +285,27 @@
 
     cursorCanvas.add(mouseCursor);
 
+    // Set up Fabric Canvas interaction listeners
+    canvas.on('mouse:up', () => {
+      // once there is anything is drawn on the canvas
+      isDrawn = true;
+      isPreexistingArt = false;
+      isAlreadyUploaded = false;
+      mouseEvent();
+    });
+
     // redraw cursor on new mouse position when moved
+    // eslint-disable-next-line func-names
     canvas.on('mouse:move', function (evt) {
-      console.log('mouse:move', evt.e.x, evt.e.y);
-      if (current == 'select') {
+      if (current === 'select') {
         return mouseCursor
           .set({ top: -100, left: -100 })
           .setCoords()
           .canvas.renderAll();
       }
       const mouse = this.getPointer(evt.e);
-      mouseCursor
+
+      return mouseCursor
         .set({
           top: mouse.y,
           left: mouse.x,
@@ -318,39 +314,10 @@
         .canvas.renderAll();
     });
 
-    // while brush size is changed show cursor in center of canvas
-    // document.getElementById('drawing-line-width').oninput = () => {
-    //   changeBrushSize();
-    // };
-    // document.getElementById('erase-line-width').oninput = () => {
-    //   changeBrushSize();
-    // };
-
-    // function changeBrushSize() {
-    //   const size = parseInt(lineWidth, 10);
-    //   canvas.freeDrawingBrush.width = size;
-    //   mouseCursor
-    //     // .center()
-    //     .set({
-    //       radius: size / 2,
-    //       top: 500,
-    //       left: 1300,
-    //     })
-    //     .setCoords()
-    //     .canvas.renderAll();
-    // }
-
-    // // change drawing color
-    // drawingColorEl.onchange = function () {
-    //   console.log('color');
-    //   canvas.freeDrawingBrush.color = this.value;
-
-    // };
-
     /// ///////////// mouse circle ////////////////////////////
 
     /// ///////////// drawing challenge ////////////////////////
-    if (appType == 'drawingchallenge') {
+    if (appType === 'drawingchallenge') {
       // each mouse-up event sends the drawing
       canvas.on('mouse:up', () => {
         // get the drawing from the canvas in the format of SVG
@@ -377,12 +344,20 @@
         const body = parsedSVG.getElementsByTagName('BODY')[0].innerHTML;
 
         // all data to send
-        const location = 'drawingchallenge';
-        const JSONToSend = `{ "action": ${JSON.stringify(
-          body,
-        )}, "location": "${location}", "posX": ${
-          positionObject[positionObject.length - 1].left
-        }, "posY": ${positionObject[positionObject.length - 1].top}}`;
+
+        const JSONToSend = JSON.stringify({
+          action: body,
+          location: 'drawingchallenge',
+          posX: positionObject[positionObject.length - 1].left,
+          posY: positionObject[positionObject.length - 1].top,
+        });
+
+        // const location = 'drawingchallenge';
+        // const JSONToSend = `{ "action": ${JSON.stringify(
+        //   body,
+        // )}, "location": "${location}", "posX": ${
+        //   positionObject[positionObject.length - 1].left
+        // }, "posY": ${positionObject[positionObject.length - 1].top}}`;
 
         // send data
         ManageSession.socket.rpc('move_position', JSONToSend);
@@ -392,11 +367,11 @@
       ManageSession.socket.onstreamdata = (streamdata) => {
         const data = JSON.parse(streamdata.data);
 
-        if ($Session.user_id != data.user_id) {
+        if ($Session.user_id !== data.user_id) {
           // apply drawings to the canvas if only it is received from other participant
           fabric.loadSVGFromString(data.action, (objects) => {
             objects.forEach((svg) => {
-              console.log('svg', svg);
+              // console.log('svg', svg);
               svg.set({
                 scaleX: 1,
                 scaleY: 1,
@@ -407,7 +382,7 @@
             });
           });
         } else {
-          console.log('The same user!');
+          // console.log('The same user!');
         }
       };
     }
@@ -449,41 +424,40 @@
       version += 1; // with every new update of the artwork, it is version gets +1
 
       setLoader(true);
-      if (appType == 'drawing') {
-        var Image = canvas.toDataURL('image/png', 1);
-        var blobData = dataURItoBlob(Image);
-        if (!title) {
-          title = `${Date.now()}_${displayName}`;
+      const Image = canvas.toDataURL('image/png', 1);
+      const blobData = dataURItoBlob(Image);
+
+      if (appType === 'drawing' || appType === 'house') {
+        if (appType === 'drawing') {
+          if (!title) {
+            title = `${Date.now()}_${displayName}`;
+          }
+
+          // replace(`${$location}/${$Session.user_id}/${displayName}`);
+          await uploadImage(
+            title,
+            appType,
+            blobData,
+            status,
+            version,
+            displayName,
+          ).then((url) => {
+            // in every appType we assign url to the savedURL variable, it is needed for downloading
+            // by default savedURL equals ""
+            savedURL = url;
+            setLoader(false);
+          });
+        } else if (appType === 'house') {
+          await uploadHouse(blobData).then((response) => {
+            savedURL = response;
+            setLoader(false);
+          });
         }
-        // replace(`${$location}/${$Session.user_id}/${displayName}`);
-        await uploadImage(
-          title,
-          appType,
-          blobData,
-          status,
-          version,
-          displayName,
-        ).then((url) => {
-          // in every appType we assign url to the savedURL variable, it is needed for downloading
-          // by default savedURL equals ""
-          savedURL = url;
-          setLoader(false);
-        });
-      }
-      if (appType == 'house') {
-        var Image = canvas.toDataURL('image/png', 1);
-        var blobData = dataURItoBlob(Image);
-        await uploadHouse(blobData).then((response) => {
-          savedURL = response;
-        });
-        setLoader(false);
-      }
-      if (appType == 'stopmotion') {
+      } else if (appType === 'stopmotion') {
         await createStopmotion();
         setLoader(false);
-      }
-      if (appType == 'avatar') {
-        createAvatar().then((resp) => {
+      } else if (appType === 'avatar') {
+        createAvatar().then(() => {
           setLoader(false);
         });
       }
@@ -519,7 +493,7 @@
       if (!isAlreadyUploaded) {
         await upload();
       }
-      if (appType == 'stopmotion') {
+      if (appType === 'stopmotion') {
         // the stopmotion function is not awaiting properly, a further investigation is needed (!)
         // once fixed, there is no need to use setTimeout
         setTimeout(async () => {
@@ -535,27 +509,29 @@
   }
 
   const updateFrame = () => {
-    frames[currentFrame] = canvas.toJSON();
-    frames = frames;
+    const framesToUpdate = frames;
+    framesToUpdate[currentFrame] = canvas.toJSON();
+    frames = framesToUpdate;
 
-    backgroundFrames[currentFrame] = canvas.toDataURL('image/png', 1);
-    backgroundFrames = backgroundFrames;
+    const backgroundFramesToUpdate = backgroundFrames;
+    backgroundFramesToUpdate[currentFrame] = canvas.toDataURL('image/png', 1);
+    backgroundFrames = backgroundFramesToUpdate;
   };
 
   const getImage = async () => {
     const localStore = JSON.parse(localStorage.getItem('Drawing'));
     if (localStore) {
-      console.log(localStore);
-      console.log(`store ${localStore.name}`);
-      console.log(`param ${params.name}`);
+      // console.log(localStore);
+      // console.log(`store ${localStore.name}`);
+      // console.log(`param ${params.name}`);
       if (
-        localStore.name == params.name &&
+        localStore.name === params.name &&
         typeof params.name !== 'undefined'
       ) {
         console.log(localStore.type);
         // isDrawn = true;
         // console.log("localstorage isDrawn", isDrawn);
-        if (localStore.type == 'drawing') {
+        if (localStore.type === 'drawing') {
           console.log('test');
           // canvas.loadFromJSON(
           //   localStore.drawing,
@@ -726,37 +702,6 @@
     }, 200);
   }
 
-  function zoomIt(factor) {
-    // canvas.setHeight(canvas.getHeight() * factor);
-    // canvas.setWidth(canvas.getWidth() * factor);
-    if (canvas.backgroundImage) {
-      // Need to scale background images as well
-      const bi = canvas.backgroundImage;
-      bi.width *= factor;
-      bi.height *= factor;
-    }
-    const objects = canvas.getObjects();
-    for (const i in objects) {
-      const { scaleX } = objects[i];
-      const { scaleY } = objects[i];
-      const { left } = objects[i];
-      const { top } = objects[i];
-
-      const tempScaleX = scaleX * factor;
-      const tempScaleY = scaleY * factor;
-      const tempLeft = left * factor;
-      const tempTop = top * factor;
-
-      objects[i].scaleX = tempScaleX;
-      objects[i].scaleY = tempScaleY;
-      objects[i].left = tempLeft;
-      objects[i].top = tempTop;
-
-      objects[i].setCoords();
-    }
-    canvas.renderAll();
-    canvas.calcOffset();
-  }
 
   /// /////////////////////// stop motion functie ////////////////////////////////////////
 
@@ -1057,236 +1002,6 @@
 
   /// ///////////////// redo/undo function end ///////////////////////////
 
-  /// //////////////// fill functie //////////////////////////////////////
-  var FloodFill = {
-    // Compare subsection of array1's values to array2's values, with an optional tolerance
-    withinTolerance(array1, offset, array2, tolerance) {
-      let { length } = array2;
-      let start = offset + length;
-      tolerance = tolerance || 0;
-
-      // Iterate (in reverse) the items being compared in each array, checking their values are
-      // within tolerance of each other
-      while (start-- && length--) {
-        if (Math.abs(array1[start] - array2[length]) > tolerance) {
-          return false;
-        }
-      }
-
-      return true;
-    },
-
-    // The actual flood fill implementation
-    fill(
-      imageData,
-      getPointOffsetFn,
-      point,
-      color,
-      target,
-      tolerance,
-      width,
-      height,
-    ) {
-      const directions = [
-        [1, 0],
-        [0, 1],
-        [0, -1],
-        [-1, 0],
-      ];
-      const coords = [];
-      const points = [point];
-      const seen = {};
-      let key;
-      let x;
-      let y;
-      let offset;
-      let i;
-      let x2;
-      let y2;
-      let minX = -1;
-      let maxX = -1;
-      let minY = -1;
-      let maxY = -1;
-
-      // Keep going while we have points to walk
-      while ((point = points.pop())) {
-        x = point.x;
-        y = point.y;
-        offset = getPointOffsetFn(x, y);
-
-        // Move to next point if this pixel isn't within tolerance of the color being filled
-        if (!FloodFill.withinTolerance(imageData, offset, target, tolerance)) {
-          continue;
-        }
-
-        if (x > maxX) {
-          maxX = x;
-        }
-        if (y > maxY) {
-          maxY = y;
-        }
-        if (x < minX || minX == -1) {
-          minX = x;
-        }
-        if (y < minY || minY == -1) {
-          minY = y;
-        }
-
-        // Update the pixel to the fill color and add neighbours onto stack to traverse
-        // the fill area
-        i = directions.length;
-        while (i--) {
-          // Use the same loop for setting RGBA as for checking the neighbouring pixels
-          if (i < 4) {
-            imageData[offset + i] = color[i];
-            coords[offset + i] = color[i];
-          }
-
-          // Get the new coordinate by adjusting x and y based on current step
-          x2 = x + directions[i][0];
-          y2 = y + directions[i][1];
-          key = `${x2},${y2}`;
-
-          // If new coordinate is out of bounds, or we've already added it, then skip to
-          // trying the next neighbour without adding this one
-          if (x2 < 0 || y2 < 0 || x2 >= width || y2 >= height || seen[key]) {
-            continue;
-          }
-
-          // Push neighbour onto points array to be processed, and tag as seen
-          points.push({ x: x2, y: y2 });
-          seen[key] = true;
-        }
-      }
-
-      return {
-        x: minX,
-        y: minY,
-        width: maxX - minX,
-        height: maxY - minY,
-        coords,
-      };
-    },
-  }; // End FloodFill
-
-  function hexToRgb(hex, opacity) {
-    opacity = Math.round(opacity * 255) || 255;
-    hex = hex.replace('#', '');
-    const rgb = [];
-    const re = new RegExp(`(.{${hex.length / 3}})`, 'g');
-    hex.match(re).map((l) => {
-      rgb.push(parseInt(hex.length % 2 ? l + l : l, 16));
-    });
-    return rgb.concat(opacity);
-  }
-
-  function floodFill(enable) {
-    if (!enable) {
-      canvas.off('mouse:down');
-      canvas.selection = true;
-      canvas.forEachObject((object) => {
-        object.selectable = true;
-      });
-      return;
-    }
-
-    canvas.discardActiveObject();
-    canvas.renderAll();
-    canvas.selection = false;
-    canvas.forEachObject((object) => {
-      object.selectable = false;
-    });
-
-    canvas.on({
-      'mouse:down': function (e) {
-        const mouseX = Math.round(e.e.layerX);
-        const mouseY = Math.round(e.e.layerY);
-        // canvas = canvas.lowerCanvasEl,
-        const context = canvas.getContext('2d');
-        const parsedColor = hexToRgb(fillColor);
-        const imageData = context.getImageData(
-          0,
-          0,
-          canvas.width,
-          canvas.height,
-        );
-        const getPointOffset = function (x, y) {
-          return 4 * (y * imageData.width + x);
-        };
-        const targetOffset = getPointOffset(mouseX, mouseY);
-        const target = imageData.data.slice(targetOffset, targetOffset + 4);
-
-        if (FloodFill.withinTolerance(target, 0, parsedColor, fillTolerance)) {
-          // Trying to fill something which is (essentially) the fill color
-          return;
-        }
-
-        // Perform flood fill
-        const data = FloodFill.fill(
-          imageData.data,
-          getPointOffset,
-          { x: mouseX, y: mouseY },
-          parsedColor,
-          target,
-          fillTolerance,
-          imageData.width,
-          imageData.height,
-        );
-
-        if (data.width == 0 || data.height == 0) {
-          return;
-        }
-
-        const tmpCanvas = document.createElement('canvas');
-        const tmpCtx = tmpCanvas.getContext('2d');
-        tmpCanvas.width = canvas.width;
-        tmpCanvas.height = canvas.height;
-
-        const palette = tmpCtx.getImageData(
-          0,
-          0,
-          tmpCanvas.width,
-          tmpCanvas.height,
-        ); // x, y, w, h
-        palette.data.set(new Uint8ClampedArray(data.coords)); // Assuming values 0..255, RGBA
-        tmpCtx.putImageData(palette, 0, 0); // Repost the data.
-        const imgData = tmpCtx.getImageData(
-          data.x,
-          data.y,
-          data.width,
-          data.height,
-        ); // Get cropped image
-
-        tmpCanvas.width = data.width;
-        tmpCanvas.height = data.height;
-        tmpCtx.putImageData(imgData, 0, 0);
-
-        // Convert canvas back to image:
-        const img = new Image();
-        img.onload = function () {
-          canvas.add(
-            new fabric.Image(img, {
-              left: data.x,
-              top: data.y,
-              selectable: false,
-            }),
-          );
-        };
-        img.src = tmpCanvas.toDataURL('image/png', 1);
-
-        canvas.add(
-          new fabric.Image(tmpCanvas, {
-            left: data.x,
-            top: data.y,
-            selectable: false,
-          }),
-        );
-      },
-    });
-  }
-
-  /// ////////////// fill functie end ///////////////////////
-
   function backgroundHide() {
     showBackground = !showBackground;
     if (!showBackground) {
@@ -1319,23 +1034,23 @@
   <div class="main-container">
     <div class="canvas-frame-container">
       <div class="canvas-box">
-        <canvas bind:this="{canvasEl}" class="canvas"></canvas>
-        <canvas bind:this="{cursorCanvasEl}" id="cursor"></canvas>
+        <canvas bind:this="{canvasEl}" class="canvas"> </canvas>
+        <canvas bind:this="{cursorCanvasEl}" id="cursor"> </canvas>
       </div>
       <div class="saveCanvas">
         <canvas bind:this="{saveCanvasEl}"></canvas>
       </div>
       <div class="frame-box">
-        {#if appType == 'stopmotion' || appType == 'avatar'}
+        {#if appType === 'stopmotion' || appType === 'avatar'}
           <div id="frame-bar">
-            {#each frames as frame, index}
+            {#each frames as frame, index (index)}
               <div>
                 <div
                   id="{index}"
                   class:selected="{currentFrame === index}"
                   on:click="{() => {
                     changeFrame(index);
-                    console.log('debug index of frame:', index); // remove debug
+                    // console.log('debug index of frame:', index); // remove debug
                   }}"
                   style="background-image: url({backgroundFrames[index]})"
                 >
@@ -1347,6 +1062,7 @@
                     on:click="{() => {
                       deleteFrame(index);
                     }}"
+                    alt="Delete frame"
                     src="assets/SHB/svg/AW-icon-trash.svg"
                   />
                 {/if}
@@ -1360,31 +1076,42 @@
           </div>
           <div class="frame-buttons">
             {#if play}
-              <a
+              <button
                 id="playPause"
                 on:click="{() => {
                   play = false;
                   setPlay(false);
                 }}"
-                ><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" /></a
               >
+                <img
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-pause.svg"
+                  alt="Pause"
+                />
+              </button>
             {:else}
-              <a
+              <button
                 id="playPause"
                 on:click="{() => {
                   play = true;
                   setPlay(true);
                 }}"
-                ><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" /></a
               >
+                <img
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-play.svg"
+                  alt="Play"
+                />
+              </button>
             {/if}
-            <a on:click="{backgroundHide}"
-              ><img
+            <button on:click="{backgroundHide}">
+              <img
                 class="icon"
                 class:unselected="{!showBackground}"
                 src="assets/SHB/svg/AW-icon-onion.svg"
-              /></a
-            >
+                alt="Hide background"
+              />
+            </button>
           </div>
         {/if}
       </div>
@@ -1393,65 +1120,46 @@
   <div class="optionbox-container">
     <div class="optionbox">
       <div class="optionbar" class:hidden="{optionbox}">
-        <div class="colorTab" class:hidden="{current != 'draw'}">
+        <div class="colorTab" class:hidden="{current !== 'draw'}">
           <div class="drawing-options-container">
             <img
               on:click="{() => applyBrush('Pencil')}"
               class="icon"
-              class:selected="{selectedBrush == 'Pencil'}"
+              class:selected="{selectedBrush === 'Pencil'}"
               src="assets/svg/drawing_pencil2.svg"
+              alt="Draw with pencil"
             />
             <img
               on:click="{() => applyBrush('Circle')}"
               class="icon"
-              class:selected="{selectedBrush == 'Circle'}"
+              class:selected="{selectedBrush === 'Circle'}"
               src="assets/svg/drawing_circle2.svg"
+              alt="Paint dots"
             />
             <img
               on:click="{() => applyBrush('Spray')}"
               class="icon"
-              class:selected="{selectedBrush == 'Spray'}"
+              class:selected="{selectedBrush === 'Spray'}"
               src="assets/svg/drawing_spray.svg"
+              alt="Paint with spraycan"
             />
             <img
               on:click="{() => applyBrush('Pattern')}"
               class="icon"
-              class:selected="{selectedBrush == 'Pattern'}"
+              class:selected="{selectedBrush === 'Pattern'}"
               src="assets/svg/drawing_pattern.svg"
+              alt="Use pattern"
             />
           </div>
-          <!-- <div bind:this={drawingOptionsEl} id="drawing-mode-options">
-            <select id="drawing-mode-selector">
-              <option>Pencil</option>
-              <option>Circle</option>
-              <option>Spray</option>
-              <option>Pattern</option>
 
-              <option>hline</option>
-              <option>vline</option>
-              <option>square</option>
-              <option>diamond</option>
-              <option>texture</option>
-            </select>
-          </div> -->
-          <!-- <div
-          class="widthBox"
-          style="background-color: {drawingColor};"
-          on:click={() => {
-            drawingColorEl.click();
-          }}
-        >
-
-        </div> -->
           <input
             type="color"
             bind:value="{drawingColor}"
             bind:this="{drawingColorEl}"
             id="drawing-color"
+            title="Pick drawing color"
           />
-          <!-- <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" /> -->
 
-          <!-- <span class="info">{lineWidth}</span> -->
           <div class="range-container">
             <div class="circle-box-small"></div>
             <input
@@ -1459,45 +1167,14 @@
               min="10"
               max="500"
               id="drawing-line-width"
+              title="Set drawing thickness"
               bind:this="{drawingLineWidthEl}"
               bind:value="{lineWidth}"
             />
             <div class="circle-box-big"></div>
           </div>
-
-          <!-- <label for="drawing-shadow-color">Shadow color:</label>
-        <input
-          type="color"
-          bind:value={shadowColor}
-          id="drawing-shadow-color"
-        />
-
-        <label for="drawing-shadow-width">Shadow width:</label>
-        <span class="info">0</span><input
-          type="range"
-          bind:value={shadowWidth}
-          min="0"
-          max="50"
-          id="drawing-shadow-width"
-        />
-
-        <label for="drawing-shadow-offset">Shadow offset:</label>
-        <span class="info">0</span><input
-          type="range"
-          bind:value={shadowOffset}
-          min="0"
-          max="50"
-          id="drawing-shadow-offset"
-        /> -->
         </div>
-        <div class="eraseTab" class:hidden="{current != 'erase'}">
-          <!-- <div class="widthBox">
-            <div
-              class="lineWidth"
-              style="background-color: black;margin:  0px auto;"
-            />
-          </div>
-          <span class="info">{lineWidth}</span> -->
+        <div class="eraseTab" class:hidden="{current !== 'erase'}">
           <div class="range-container">
             <div class="circle-box-small"></div>
             <input
@@ -1510,87 +1187,80 @@
             <div class="circle-box-big"></div>
           </div>
         </div>
-        <div class="fillTab" class:hidden="{current != 'fill'}">
-          <input type="color" bind:value="{fillColor}" id="fill-color" />
+
+        <div class="selectTab" class:hidden="{current !== 'select'}">
+          <button on:click="{Copy}">
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-copy.svg"
+              alt="Copy selection"
+            />
+          </button>
+          <button on:click="{Paste}">
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-paste.svg"
+              alt="Paste selection"
+            />
+          </button>
+          <button on:click="{Delete}">
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-trash.svg"
+              alt="Delete selection"
+            />
+          </button>
         </div>
-        <div class="selectTab" class:hidden="{current != 'select'}">
-          <a on:click="{Copy}"
-            ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
-          >
-          <a on:click="{Paste}"
-            ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
-          >
-          <a on:click="{Delete}"
-            ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
-          >
-        </div>
-        <div class="saveBox" class:hidden="{current != 'saveToggle'}">
+
+        <div class="saveBox" class:hidden="{current !== 'saveToggle'}">
           <div class="saveTab">
-            {#if appType != 'avatar' && appType != 'house'}
+            {#if appType !== 'avatar' && appType !== 'house'}
               <label for="title">Title</label>
               <NameGenerator
                 bind:value="{displayName}"
                 bind:invalidTitle
                 bind:isTitleChanged
+                id="title"
               />
             {/if}
-            <!-- <label for="status">Status</label>
-              <select bind:value={status} on:change={() => (answer = "")}>
-                {#each statussen as status}
-                  <option value={status}>
-                    {status}
-                  </option>
-                {/each}
-              </select> -->
+
             <div class="status-save-download-container">
-              {#if appType != 'avatar' && appType != 'house'}
-                <div on:click="{changeVisibility}">
+              {#if appType !== 'avatar' && appType !== 'house'}
+                <button on:click="{changeVisibility}">
                   {#if status}
                     <img
                       class="icon selected"
                       src="assets/SHB/svg/AW-icon-visible.svg"
+                      alt="Hide"
                     />
                   {:else}
                     <img
                       class="icon selected"
                       src="assets/SHB/svg/AW-icon-invisible.svg"
+                      alt="Show"
                     />
                   {/if}
-                </div>
+                </button>
               {/if}
 
-              <div>
-                <!-- {#if saving} -->
-                <!-- <img
-                    on:click={upload}
-                    class="icon selected"
-                    src="assets/SHB/svg/AW-icon-history.svg"
-                  /> -->
-                <!-- {:else if saved} -->
+              <button>
                 <img
                   on:click="{upload}"
                   class="icon selected"
                   src="assets/SHB/svg/AW-icon-check.svg"
+                  alt="Save artwork"
                 />
-                <!-- {/if} -->
-              </div>
-              <!-- <button on:click={upload}
-              >{#if saving}Saving{:else if saved}
-                Saved{:else}Save{/if}</button
-            > -->
-              <div>
-                <!-- {#if saved} -->
+              </button>
+
+              <button>
                 <img
                   on:click="{download}"
                   class="icon selected"
                   src="assets/SHB/svg/AW-icon-save.svg"
+                  alt="Download artwork"
                 />
-                <!-- {/if} -->
-              </div>
+              </button>
             </div>
-            <!-- {#if saved}
-              <button >Download</button>
-            {/if} -->
           </div>
         </div>
       </div>
@@ -1658,12 +1328,11 @@
           class:currentSelected="{current === 'saveToggle'}"
           on:click="{() => {
             if (
-              appType == 'drawing' ||
-              appType == 'stopmotion' ||
-              appType == 'house' ||
-              appType == 'avatar'
+              appType === 'drawing' ||
+              appType === 'stopmotion' ||
+              appType === 'house' ||
+              appType === 'avatar'
             ) {
-              saveToggle = !saveToggle;
               switchOption('saveToggle');
             }
           }}"
@@ -1674,9 +1343,9 @@
     </div>
   </div>
   <div id="clear-canvas" on:click="{clearCanvas}">
-    <img src="assets/SHB/svg/AW-icon-reset.svg" />
+    <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
   </div>
-  {#if appType == 'avatar'}
+  {#if appType === 'avatar'}
     <div id="avatarBox">
       <Avatar />
     </div>
