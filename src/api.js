@@ -9,7 +9,7 @@ import {
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 
 export let url; // TODO @linjoe Is this required? Maybe should be a store?
-export let user; // What?
+// export let user; // What?
 export async function login(email, _password) {
   setLoader(true);
   const create = false;
@@ -258,10 +258,9 @@ export async function getAccount(id) {
 
     const users = await client.getUsers(session, [id]);
     user = users.users[0];
-    user.meta =
-      typeof user.metadata === 'string'
-        ? JSON.parse(user.metadata)
-        : user.metadata;
+    user.meta = typeof user.metadata === 'string'
+      ? JSON.parse(user.metadata)
+      : user.metadata;
     user.url = await convertImage(user.avatar_url, '128', '1000', 'png');
   }
 
@@ -341,8 +340,7 @@ export async function getFile(file_url) {
 export async function uploadAvatar(data, json) {
   const profile = get(Profile);
   setLoader(true);
-  let avatarVersion =
-    Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
+  let avatarVersion = Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
   if (!avatarVersion) avatarVersion = 0;
   const [jpegURL, jpegLocation] = await getUploadURL(
     'avatar',
@@ -388,22 +386,24 @@ export async function deleteFile(type, file, user) {
 
 export async function addFriend(id, usernames) {
   const session = get(Session);
-  if (typeof id === 'string') {
-    if (id) {
-      id = [id];
+  let friends = usernames;
+  let user_id = id;
+  if (typeof user_id === 'string') {
+    if (user_id) {
+      user_id = [user_id];
     } else {
-      id = undefined;
+      user_id = undefined;
     }
   }
-  if (typeof usernames === 'string') {
-    if (usernames) {
-      usernames = [usernames];
+  if (typeof friends === 'string') {
+    if (friends) {
+      friends = [friends];
     } else {
-      usernames = undefined;
+      friends = undefined;
     }
   }
   await client
-    .addFriends(session, id, usernames)
+    .addFriends(session, user_id, friends)
     .then((status) => {
       Succes.set(true);
     })
@@ -413,23 +413,26 @@ export async function addFriend(id, usernames) {
 }
 
 export async function removeFriend(id, usernames) {
+  let friends = usernames;
+  let user_id = id;
+
   const session = get(Session);
-  if (typeof id === 'string') {
-    if (id) {
-      id = [id];
+  if (typeof user_id === 'string') {
+    if (user_id) {
+      user_id = [user_id];
     } else {
-      id = undefined;
+      user_id = undefined;
     }
   }
-  if (typeof usernames === 'string') {
-    if (username) {
-      usernames = [usernames];
+  if (typeof friends === 'string') {
+    if (friends) {
+      friends = [friends];
     } else {
-      usernames = undefined;
+      friends = undefined;
     }
   }
   await client
-    .deleteFriends(session, id, usernames)
+    .deleteFriends(session, user_id, friends)
     .then((status) => {
       Succes.set(true);
     })

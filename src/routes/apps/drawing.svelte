@@ -1,10 +1,11 @@
 <script>
-  import { fabric } from './fabric';
   import { location, replace } from 'svelte-spa-router';
-  import { onMount, beforeUpdate, onDestroy } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
+  import MouseIcon from 'svelte-icons/fa/FaMousePointer.svelte';
+  import { fabric } from 'fabric/dist/fabric';
   import {
     uploadImage,
-    user,
+    // user,
     uploadAvatar,
     uploadHouse,
     getObject,
@@ -13,45 +14,57 @@
     updateObject,
     getFile,
     getRandomName,
-  } from '../../api.js';
-  import { client } from '../../nakama.svelte';
-  import { Session, Profile, Tutorial } from '../../session.js';
-  import { Achievements } from '../../storage';
+  } from '../../api';
+
+  import { Session, Profile } from '../../session';
+
   import NameGenerator from '../components/nameGenerator.svelte';
-  import MouseIcon from 'svelte-icons/fa/FaMousePointer.svelte';
   import Avatar from '../components/avatar.svelte';
   import ManageSession from '../game/ManageSession';
 
-  let imageResolution = 2048;
+  const imageResolution = 2048;
 
-  let scaleRatio, lastImg, lastValue, lastWidth;
-  let params = { user: $location.split('/')[2], name: $location.split('/')[3] };
+  // let user;
+  let scaleRatio;
+  let lastImg;
+
+  let lastWidth;
+  const params = {
+    user: $location.split('/')[2],
+    name: $location.split('/')[3],
+  };
   let invalidTitle = true;
-  let history = [],
-    historyCurrent;
-  let canv, _clipboard, Cursor, cursor, drawingColorEl;
-  let saveCanvas, savecanvas, videoCanvas;
-  // saving = false;
-  let videoWidth;
-  let canvas,
-    video,
-    lineWidth = 25;
-  let json,
-    drawingColor = '#000000';
-  let shadowOffset = 0,
-    shadowColor = '#ffffff',
-    shadowWidth = 0;
-  let title,
-    answer,
-    showBackground = true;
-  let fillColor = '#f00',
-    fillTolerance = 2;
+  const history = [];
+
+  let canv;
+  let drawingClipboard;
+  let drawingColorEl;
+
+  let cursorCanvasEl;
+  let cursorCanvas;
+
+  let saveCanvasEl;
+  let saveCanvas;
+
+  let canvas;
+
+  let lineWidth = 25;
+  let json;
+  let drawingColor = '#000000';
+  const shadowOffset = 0;
+  const shadowColor = '#ffffff';
+  const shadowWidth = 0;
+  let title;
+  let answer;
+  let showBackground = true;
+  let fillColor = '#f00';
+  const fillTolerance = 2;
   let current = 'draw';
-  if (!!params.name) title = params.name;
-  let saved = false,
-    saveToggle = false,
-    savedURL = '',
-    colorToggle = true;
+  if (params.name) title = params.name;
+  const saved = false;
+  let saveToggle = false;
+  let savedURL = '';
+  const colorToggle = true;
   // const statussen = [true, false];
   export let appType = $location.split('/')[1];
   let version = 0;
@@ -67,9 +80,9 @@
   let applyBrush; // declaring the variable to be available globally, onMount assinging a function to it
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
-  let Object = {};
+  const Object = {};
 
-  let FrameObject = {
+  const FrameObject = {
     type: 'image',
     version: '4.6.0',
     originX: 'left',
@@ -123,8 +136,8 @@
     // setting default width and height
     canvas.setWidth(canvasSize);
     canvas.setHeight(canvasSize);
-    cursor.setWidth(canvasSize);
-    cursor.setHeight(canvasSize);
+    cursorCanvas.setWidth(canvasSize);
+    cursorCanvas.setHeight(canvasSize);
 
     const canvasReductionAmount = 200;
 
@@ -132,24 +145,24 @@
     if (canvasSize < 1008 && canvasSize > 640) {
       canvas.setWidth(canvasSize - canvasReductionAmount);
       canvas.setHeight(canvasSize - canvasReductionAmount);
-      cursor.setWidth(canvasSize - canvasReductionAmount);
-      cursor.setHeight(canvasSize - canvasReductionAmount);
+      cursorCanvas.setWidth(canvasSize - canvasReductionAmount);
+      cursorCanvas.setHeight(canvasSize - canvasReductionAmount);
     }
 
     // for mobile screens
     if (canvasSize <= 640) {
       canvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
       canvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
-      cursor.setWidth(canvasSize - canvasReductionAmount * 0, 55);
-      cursor.setHeight(canvasSize - canvasReductionAmount * 0, 55);
+      cursorCanvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
+      cursorCanvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
     }
 
     // for mobile screens
     if (canvasSize <= 540) {
       canvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
       canvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
-      cursor.setWidth(canvasSize - canvasReductionAmount * 0, 4);
-      cursor.setHeight(canvasSize - canvasReductionAmount * 0, 4);
+      cursorCanvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
+      cursorCanvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
     }
 
     // for correct and adapted scaling of the preexisting artworks
@@ -157,7 +170,7 @@
       canvas.width / imageResolution,
       canvas.width / imageResolution,
     );
-    cursor.setZoom(scaleRatio);
+    cursorCanvas.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
   }
 
@@ -165,7 +178,7 @@
     setLoader(true);
     const autosave = setInterval(() => {
       if (!saved) {
-        let data = {};
+        const data = {};
         data.type = appType;
         data.name = title;
         if (appType == 'drawing' || appType == 'house') {
@@ -178,7 +191,7 @@
         console.log('stored in localstorage');
       }
     }, 20000);
-    cursor = new fabric.StaticCanvas(Cursor);
+    cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
     });
@@ -189,7 +202,7 @@
     };
 
     MouseIcon;
-    savecanvas = new fabric.Canvas(saveCanvas, {
+    saveCanvas = new fabric.Canvas(saveCanvasEl, {
       isDrawingMode: true,
     });
     if (typeof params.name !== 'undefined') {
@@ -201,17 +214,17 @@
 
     fabric.Object.prototype.transparentCorners = false;
 
-    var drawingModeEl = fab('drawing-mode'),
-      selectModeEl = fab('select-mode'),
-      //fillModeEl = fab("fill-mode"),
-      drawingOptionsEl = fab('drawing-mode-options'),
-      eraseModeEl = fab('erase-mode'),
-      drawingColorEl = fab('drawing-color'),
-      //drawingShadowColorEl = fab("drawing-shadow-color"),
-      drawingLineWidthEl = fab('drawing-line-width'),
-      //drawingShadowWidth = fab("drawing-shadow-width"),
-      //drawingShadowOffset = fab("drawing-shadow-offset");
-      clearEl = fab('clear-canvas');
+    const drawingModeEl = fab('drawing-mode');
+    const selectModeEl = fab('select-mode');
+    // fillModeEl = fab("fill-mode"),
+    const drawingOptionsEl = fab('drawing-mode-options');
+    const eraseModeEl = fab('erase-mode');
+    const drawingColorEl = fab('drawing-color');
+    // drawingShadowColorEl = fab("drawing-shadow-color"),
+    const drawingLineWidthEl = fab('drawing-line-width');
+    // drawingShadowWidth = fab("drawing-shadow-width"),
+    // drawingShadowOffset = fab("drawing-shadow-offset");
+    const clearEl = fab('clear-canvas');
 
     clearEl.onclick = function () {
       // if anything is drawn on the canvas and it has not been uploaded,
@@ -245,7 +258,7 @@
 
     eraseModeEl.onclick = function () {
       // erase functie kapot? recompile: http://fabricjs.com/build/
-      var eraseBrush = new fabric.EraserBrush(canvas);
+      const eraseBrush = new fabric.EraserBrush(canvas);
       canvas.freeDrawingBrush = eraseBrush;
       canvas.freeDrawingBrush.width =
         parseInt(drawingLineWidthEl.value, 10) || 1;
@@ -255,11 +268,11 @@
     };
 
     if (fabric.PatternBrush) {
-      var vLinePatternBrush = new fabric.PatternBrush(canvas);
+      const vLinePatternBrush = new fabric.PatternBrush(canvas);
       vLinePatternBrush.getPatternSrc = function () {
-        var patternCanvas = fabric.document.createElement('canvas');
+        const patternCanvas = fabric.document.createElement('canvas');
         patternCanvas.width = patternCanvas.height = 10;
-        var ctx = patternCanvas.getContext('2d');
+        const ctx = patternCanvas.getContext('2d');
 
         ctx.strokeStyle = this.color;
         ctx.lineWidth = lineWidth;
@@ -272,11 +285,11 @@
         return patternCanvas;
       };
 
-      var hLinePatternBrush = new fabric.PatternBrush(canvas);
+      const hLinePatternBrush = new fabric.PatternBrush(canvas);
       hLinePatternBrush.getPatternSrc = function () {
-        var patternCanvas = fabric.document.createElement('canvas');
+        const patternCanvas = fabric.document.createElement('canvas');
         patternCanvas.width = patternCanvas.height = 10;
-        var ctx = patternCanvas.getContext('2d');
+        const ctx = patternCanvas.getContext('2d');
 
         ctx.strokeStyle = this.color;
         ctx.lineWidth = lineWidth;
@@ -289,15 +302,15 @@
         return patternCanvas;
       };
 
-      var squarePatternBrush = new fabric.PatternBrush(canvas);
+      const squarePatternBrush = new fabric.PatternBrush(canvas);
       squarePatternBrush.getPatternSrc = function () {
-        var squareWidth = 10,
-          squareDistance = 2;
+        const squareWidth = 10;
+        const squareDistance = 2;
 
-        var patternCanvas = fabric.document.createElement('canvas');
+        const patternCanvas = fabric.document.createElement('canvas');
         patternCanvas.width = patternCanvas.height =
           squareWidth + squareDistance;
-        var ctx = patternCanvas.getContext('2d');
+        const ctx = patternCanvas.getContext('2d');
 
         ctx.fillStyle = this.color;
         ctx.fillRect(0, 0, squareWidth, squareWidth);
@@ -305,25 +318,25 @@
         return patternCanvas;
       };
 
-      var diamondPatternBrush = new fabric.PatternBrush(canvas);
+      const diamondPatternBrush = new fabric.PatternBrush(canvas);
       diamondPatternBrush.getPatternSrc = function () {
-        var squareWidth = 10,
-          squareDistance = 5;
-        var patternCanvas = fabric.document.createElement('canvas');
-        var rect = new fabric.Rect({
+        const squareWidth = 10;
+        const squareDistance = 5;
+        const patternCanvas = fabric.document.createElement('canvas');
+        const rect = new fabric.Rect({
           width: squareWidth,
           height: squareWidth,
           angle: 45,
           fill: this.color,
         });
 
-        var canvasWidth = rect.getBoundingRect().width;
+        const canvasWidth = rect.getBoundingRect().width;
 
         patternCanvas.width = patternCanvas.height =
           canvasWidth + squareDistance;
         rect.set({ left: canvasWidth / 2, top: canvasWidth / 2 });
 
-        var ctx = patternCanvas.getContext('2d');
+        const ctx = patternCanvas.getContext('2d');
         rect.render(ctx);
 
         return patternCanvas;
@@ -368,7 +381,7 @@
     // }
 
     drawingColorEl.onchange = function () {
-      var brush = canvas.freeDrawingBrush;
+      const brush = canvas.freeDrawingBrush;
       brush.color = this.value;
       if (brush.getPatternSrc) {
         brush.source = brush.getPatternSrc.call(brush);
@@ -407,7 +420,7 @@
     }
     console.log(params);
 
-    canvas.on('mouse:up', function () {
+    canvas.on('mouse:up', () => {
       // once there is anything is drawn on the canvas
       isDrawn = true;
       isPreexistingArt = false;
@@ -415,32 +428,33 @@
       mouseEvent();
     });
 
-    //////////////// mouse circle ////////////////////////////
+    /// ///////////// mouse circle ////////////////////////////
 
-    //mouse cursor layer
+    // mouse cursor layer
 
-    var cursorOpacity = 0.5;
-    //create cursor and place it off screen
-    var mousecursor = new fabric.Circle({
+    const cursorOpacity = 0.5;
+    // create cursor and place it off screen
+    const mousecursor = new fabric.Circle({
       left: -100,
       top: -100,
       radius: canvas.freeDrawingBrush.width / 2,
-      fill: 'rgba(0,0,0,' + cursorOpacity + ')',
+      fill: `rgba(0,0,0,${cursorOpacity})`,
       stroke: 'black',
       originX: 'center',
       originY: 'center',
     });
 
-    cursor.add(mousecursor);
+    cursorCanvas.add(mousecursor);
 
-    //redraw cursor on new mouse position when moved
+    // redraw cursor on new mouse position when moved
     canvas.on('mouse:move', function (evt) {
-      if (current == 'select')
+      if (current == 'select') {
         return mousecursor
           .set({ top: -100, left: -100 })
           .setCoords()
           .canvas.renderAll();
-      var mouse = this.getPointer(evt.e);
+      }
+      const mouse = this.getPointer(evt.e);
       mousecursor
         .set({
           top: mouse.y,
@@ -450,7 +464,7 @@
         .canvas.renderAll();
     });
 
-    //while brush size is changed show cursor in center of canvas
+    // while brush size is changed show cursor in center of canvas
     document.getElementById('drawing-line-width').oninput = () => {
       changeBrushSize();
     };
@@ -459,7 +473,7 @@
     };
 
     function changeBrushSize() {
-      var size = parseInt(lineWidth, 10);
+      const size = parseInt(lineWidth, 10);
       canvas.freeDrawingBrush.width = size;
       mousecursor
         // .center()
@@ -472,26 +486,26 @@
         .canvas.renderAll();
     }
 
-    //change drawing color
+    // change drawing color
     drawingColorEl.onchange = function () {
       console.log('color');
       canvas.freeDrawingBrush.color = this.value;
-      var bigint = parseInt(this.value.replace('#', ''), 16);
-      var r = (bigint >> 16) & 255;
-      var g = (bigint >> 8) & 255;
-      var b = bigint & 255;
+      const bigint = parseInt(this.value.replace('#', ''), 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
       //  mousecursor.fill = "rgba(" + [r,g,b,cursorOpacity].join(",") + ")"
 
       mousecursor
         .set({
-          fill: 'rgba(' + [r, g, b, cursorOpacity].join(',') + ')',
+          fill: `rgba(${[r, g, b, cursorOpacity].join(',')})`,
         })
         .canvas.renderAll();
     };
 
-    //////////////// mouse circle ////////////////////////////
+    /// ///////////// mouse circle ////////////////////////////
 
-    //////////////// drawing challenge ////////////////////////
+    /// ///////////// drawing challenge ////////////////////////
     if (appType == 'drawingchallenge') {
       // each mouse-up event sends the drawing
       canvas.on('mouse:up', () => {
@@ -532,12 +546,12 @@
 
       // listening to the stream to get actions of other person's drawing
       ManageSession.socket.onstreamdata = (streamdata) => {
-        let data = JSON.parse(streamdata.data);
+        const data = JSON.parse(streamdata.data);
 
         if ($Session.user_id != data.user_id) {
           // apply drawings to the canvas if only it is received from other participant
-          fabric.loadSVGFromString(data.action, function (objects) {
-            objects.forEach(function (svg) {
+          fabric.loadSVGFromString(data.action, (objects) => {
+            objects.forEach((svg) => {
               console.log('svg', svg);
               svg.set({
                 scaleX: 1,
@@ -553,15 +567,15 @@
         }
       };
     }
-    //////////////// drawing challenge ////////////////////////
+    /// ///////////// drawing challenge ////////////////////////
 
     adaptCanvasSize();
 
     applyBrush = (brushType) => {
-      if (typeof brushType == 'string') selectedBrush = brushType;
-      canvas.freeDrawingBrush = new fabric[selectedBrush + 'Brush'](canvas);
+      if (typeof brushType === 'string') selectedBrush = brushType;
+      canvas.freeDrawingBrush = new fabric[`${selectedBrush}Brush`](canvas);
       if (canvas.freeDrawingBrush) {
-        var brush = canvas.freeDrawingBrush;
+        const brush = canvas.freeDrawingBrush;
         brush.color = drawingColorEl.value;
         if (brush.getPatternSrc) {
           brush.source = brush.getPatternSrc.call(brush);
@@ -570,7 +584,7 @@
       }
     };
   });
-  /////////////////// end onMount ///////////////////////
+  /// //////////////// end onMount ///////////////////////
 
   // to change visible/hidden status of the artwork
   const changeVisibility = async () => {
@@ -588,14 +602,14 @@
 
     // we upload the artwork if either something added to the art itself or when it is title changed
     if (isDrawn || isTitleChanged) {
-      version = version + 1; // with every new update of the artwork, it is version gets +1
+      version += 1; // with every new update of the artwork, it is version gets +1
 
       setLoader(true);
       if (appType == 'drawing') {
         var Image = canvas.toDataURL('image/png', 1);
         var blobData = dataURItoBlob(Image);
-        if (!!!title) {
-          title = Date.now() + '_' + displayName;
+        if (!title) {
+          title = `${Date.now()}_${displayName}`;
         }
         // replace(`${$location}/${$Session.user_id}/${displayName}`);
         await uploadImage(
@@ -647,7 +661,7 @@
     // if it is the case, simply download from the url of the artwork on the addressbar
     if (isPreexistingArt) {
       if (!savedURL) {
-        let url = lastImg;
+        const url = lastImg;
         window.location = url;
         return; // don't proceed
       }
@@ -683,12 +697,15 @@
   };
 
   const getImage = async () => {
-    let localStore = JSON.parse(localStorage.getItem('Drawing'));
-    if (!!localStore) {
+    const localStore = JSON.parse(localStorage.getItem('Drawing'));
+    if (localStore) {
       console.log(localStore);
-      console.log('store ' + localStore.name);
-      console.log('param ' + params.name);
-      if (localStore.name == params.name && typeof params.name != 'undefined') {
+      console.log(`store ${localStore.name}`);
+      console.log(`param ${params.name}`);
+      if (
+        localStore.name == params.name &&
+        typeof params.name !== 'undefined'
+      ) {
         console.log(localStore.type);
         // isDrawn = true;
         // console.log("localstorage isDrawn", isDrawn);
@@ -700,7 +717,7 @@
           // );
           fabric.Image.fromURL(
             localStore.drawing,
-            function (oImg) {
+            (oImg) => {
               oImg.set({ left: 0, top: 0 });
               oImg.scaleToHeight(imageResolution);
               oImg.scaleToWidth(imageResolution);
@@ -720,41 +737,48 @@
       }
     }
 
-    if (!!!params.name && (appType == 'stopmotion' || appType == 'drawing'))
+    if (!params.name && (appType == 'stopmotion' || appType == 'drawing')) {
       return setLoader(false);
+    }
     console.log('appType', appType);
     // get images
     if (appType == 'avatar') {
       lastImg = await getFile($Profile.avatar_url, 'imageResolution', '10000');
       isPreexistingArt = true;
     } else if (appType == 'house') {
-      let Object = await getObject('home', $Profile.meta.Azc, $Profile.user_id);
+      const loadingObject = await getObject(
+        'home',
+        $Profile.meta.Azc,
+        $Profile.user_id,
+      );
       lastImg = await getFile(
-        Object.value.url,
+        loadingObject.value.url,
         'imageResolution',
         'imageResolution',
       );
       lastValue = Object.value;
-      title = Object.key;
-      status = Object.permission_read == 2 ? true : false;
+      title = loadingObject.key;
+      status = loadingObject.permission_read == 2;
       isPreexistingArt = true;
     } else {
-      Object = await getObject(appType, params.name, params.user);
-      console.log('object', Object);
-      displayName = Object.value.displayname;
-      title = Object.key;
-      status = Object.permission_read == 2 ? true : false;
-      console.log('status in getImage', status);
-      version = Object.value.version;
-      console.log('displayName', displayName);
-      lastImg = await getFile(Object.value.url);
-      isPreexistingArt = true;
+      const loadingObject = await getObject(appType, params.name, params.user);
+      console.log('object', loadingObject);
+      if (loadingObject) {
+        displayName = loadingObject.value.displayname;
+        title = loadingObject.key;
+        status = loadingObject.permission_read == 2;
+        console.log('status in getImage', status);
+        version = loadingObject.value.version;
+        console.log('displayName', displayName);
+        lastImg = await getFile(loadingObject.value.url);
+        isPreexistingArt = true;
+      }
     }
     // put images on canvas
     if (appType == 'avatar' || appType == 'stopmotion') {
       console.log('avatar');
       let frameAmount;
-      var framebuffer = new Image();
+      const framebuffer = new Image();
       framebuffer.src = lastImg;
       framebuffer.height = imageResolution;
       framebuffer.onload = function () {
@@ -785,7 +809,7 @@
         frames = frames;
         console.log('frames', frames);
         currentFrame = 0;
-        canvas.loadFromJSON(frames[0], function (oImg) {
+        canvas.loadFromJSON(frames[0], (oImg) => {
           canvas.renderAll.bind(canvas);
           // for (let i = 0; i < frames.length; i++) {
           //     updateFrame()
@@ -798,7 +822,7 @@
     if (appType == 'drawing' || appType == 'house') {
       fabric.Image.fromURL(
         lastImg,
-        function (oImg) {
+        (oImg) => {
           oImg.set({ left: 0, top: 0 });
           oImg.scaleToHeight(imageResolution);
           oImg.scaleToWidth(imageResolution);
@@ -812,9 +836,9 @@
   };
 
   function dataURItoBlob(dataURI) {
-    var binary = atob(dataURI.split(',')[1]);
-    var array = [];
-    for (var i = 0; i < binary.length; i++) {
+    const binary = atob(dataURI.split(',')[1]);
+    const array = [];
+    for (let i = 0; i < binary.length; i++) {
       array.push(binary.charCodeAt(i));
     }
     return new Blob([new Uint8Array(array)], { type: 'image/png' });
@@ -822,30 +846,30 @@
 
   const createURL = async () => {
     displayName = await getRandomName();
-    console.log("displayname", displayName);
+    console.log('displayname', displayName);
     replace(`/${appType}/${$Session.user_id}/${displayName}`);
   };
 
   async function getDataUrl(img) {
     //  // Set width and height
-    //  savecanvas.width = img.width;
-    //  savecanvas.height = img.height;
+    //  saveCanvas.width = img.width;
+    //  saveCanvas.height = img.height;
     //  // Draw the image
-    //  savecanvas.drawImage(img, 0, 0);
-    //  return savecanvas.toDataURL('image/jpeg');
+    //  saveCanvas.drawImage(img, 0, 0);
+    //  return saveCanvas.toDataURL('image/jpeg');
 
     // Create canvas
     let image;
     console.log('img', img);
-    await fabric.Image.fromURL(img, function (oImg) {
+    await fabric.Image.fromURL(img, (oImg) => {
       oImg.set({ left: 0, top: 0 });
       oImg.scaleToHeight(imageResolution);
       oImg.scaleToWidth(imageResolution);
       console.log(oImg);
       console.log(canvas);
-      savecanvas.add(oImg);
+      saveCanvas.add(oImg);
     });
-    image = savecanvas.toDataURL('image/png', 1);
+    image = saveCanvas.toDataURL('image/png', 1);
     return image;
   }
 
@@ -861,21 +885,21 @@
     // canvas.setWidth(canvas.getWidth() * factor);
     if (canvas.backgroundImage) {
       // Need to scale background images as well
-      var bi = canvas.backgroundImage;
-      bi.width = bi.width * factor;
-      bi.height = bi.height * factor;
+      const bi = canvas.backgroundImage;
+      bi.width *= factor;
+      bi.height *= factor;
     }
-    var objects = canvas.getObjects();
-    for (var i in objects) {
-      var scaleX = objects[i].scaleX;
-      var scaleY = objects[i].scaleY;
-      var left = objects[i].left;
-      var top = objects[i].top;
+    const objects = canvas.getObjects();
+    for (const i in objects) {
+      const { scaleX } = objects[i];
+      const { scaleY } = objects[i];
+      const { left } = objects[i];
+      const { top } = objects[i];
 
-      var tempScaleX = scaleX * factor;
-      var tempScaleY = scaleY * factor;
-      var tempLeft = left * factor;
-      var tempTop = top * factor;
+      const tempScaleX = scaleX * factor;
+      const tempScaleY = scaleY * factor;
+      const tempLeft = left * factor;
+      const tempTop = top * factor;
 
       objects[i].scaleX = tempScaleX;
       objects[i].scaleY = tempScaleY;
@@ -888,7 +912,7 @@
     canvas.calcOffset();
   }
 
-  ////////////////////////// stop motion functie ////////////////////////////////////////
+  /// /////////////////////// stop motion functie ////////////////////////////////////////
 
   let frames = [{}];
   let backgroundFrames = [{}];
@@ -902,13 +926,13 @@
   // When the image loads, set it as background image
   if (showBackground) {
     img.onload = function () {
-      var f_img = new fabric.Image(img);
+      const f_img = new fabric.Image(img);
       let options;
       let scale = imageResolution / canvas.height;
       if (canvas.width <= canvas.height) {
         scale = imageResolution / canvas.width;
       }
-      if (!play)
+      if (!play) {
         options = {
           opacity: 0.5,
           width: imageResolution,
@@ -916,7 +940,7 @@
           scaleX: scale,
           scaleY: scale,
         };
-      else options = {};
+      } else options = {};
       canvas.setBackgroundImage(f_img, canvas.renderAll.bind(canvas), options);
 
       canvas.renderAll();
@@ -948,7 +972,7 @@
 
   const deleteFrame = (Frame) => {
     console.log('Frame', Frame);
-    for (var i = 0; i < frames.length; i++) {
+    for (let i = 0; i < frames.length; i++) {
       console.log('frames[i], Frame', frames[i], Frame);
       if (i == Frame) {
         console.log('i', i);
@@ -969,8 +993,8 @@
   };
 
   async function addFrame() {
-    //save the stopmotion to the server, in some cases the app crashed with too many frames
-    //to prevent data loss
+    // save the stopmotion to the server, in some cases the app crashed with too many frames
+    // to prevent data loss
     await upload();
 
     await updateFrame();
@@ -979,7 +1003,7 @@
     frames.push({});
     frames = frames;
     await changeFrame(frames.length - 1);
-    let framebar = document.getElementById('frame-bar');
+    const framebar = document.getElementById('frame-bar');
     framebar.scrollTo({ left: 0, top: framebar.scrollHeight });
   }
 
@@ -999,20 +1023,20 @@
     }
   }
 
-  ///////////////////// select functions /////////////////////////////////
+  /// ////////////////// select functions /////////////////////////////////
   function Copy() {
     // clone what are you copying since you
     // may want copy and paste on different moment.
     // and you do not want the changes happened
     // later to reflect on the copy.
-    canvas.getActiveObject().clone(function (cloned) {
-      _clipboard = cloned;
+    canvas.getActiveObject().clone((cloned) => {
+      drawingClipboard = cloned;
     });
   }
 
   function Paste() {
     // clone again, so you can do multiple copies.
-    _clipboard.clone(function (clonedObj) {
+    drawingClipboard.clone((clonedObj) => {
       canvas.discardActiveObject();
       clonedObj.set({
         left: clonedObj.left + 10,
@@ -1022,7 +1046,7 @@
       if (clonedObj.type === 'activeSelection') {
         // active selection needs a reference to the canvas.
         clonedObj.canvas = canvas;
-        clonedObj.forEachObject(function (obj) {
+        clonedObj.forEachObject((obj) => {
           canvas.add(obj);
         });
         // this should solve the unselectability
@@ -1030,8 +1054,8 @@
       } else {
         canvas.add(clonedObj);
       }
-      _clipboard.top += 10;
-      _clipboard.left += 10;
+      drawingClipboard.top += 10;
+      drawingClipboard.left += 10;
       canvas.setActiveObject(clonedObj);
       canvas.requestRenderAll();
     });
@@ -1042,35 +1066,35 @@
     // may want copy and paste on different moment.
     // and you do not want the changes happened
     // later to reflect on the copy.
-    var curSelectedObjects = canvas.getActiveObjects();
+    const curSelectedObjects = canvas.getActiveObjects();
     canvas.discardActiveObject();
-    for (var i = 0; i < curSelectedObjects.length; i++) {
+    for (let i = 0; i < curSelectedObjects.length; i++) {
       canvas.remove(curSelectedObjects[i]);
     }
   }
 
-  /////////////// select functions end //////////////////
+  /// //////////// select functions end //////////////////
 
-  ///////////////////// stop motion functies end //////////////////////////////
+  /// ////////////////// stop motion functies end //////////////////////////////
 
-  //////////////////// avatar functies /////////////////////////////////
+  /// ///////////////// avatar functies /////////////////////////////////
 
   if (appType == 'avatar') {
     maxFrames = 5;
   }
 
   async function createAvatar() {
-    let size = imageResolution;
-    savecanvas.setHeight(size);
-    savecanvas.setWidth(size * frames.length);
-    savecanvas.renderAll();
-    savecanvas.clear();
-    let data = { objects: [] };
+    const size = imageResolution;
+    saveCanvas.setHeight(size);
+    saveCanvas.setWidth(size * frames.length);
+    saveCanvas.renderAll();
+    saveCanvas.clear();
+    const data = { objects: [] };
 
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
-        //if (object.type == "image") return;
+        // if (object.type == "image") return;
         const newObject = { ...object };
         newObject.top = newObject.top;
         newObject.left += size * i;
@@ -1084,15 +1108,15 @@
 
     console.log('data', data);
 
-    await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
-    await savecanvas.calcOffset();
+    await saveCanvas.loadFromJSON(data, saveCanvas.renderAll.bind(saveCanvas));
+    await saveCanvas.calcOffset();
 
-    //var Image = savecanvas.toDataURL("image/png", 0.2);
+    // var Image = saveCanvas.toDataURL("image/png", 0.2);
     // console.log(Image);
     // var blobData = dataURItoBlob(Image);
     setTimeout(async () => {
-      var Image = savecanvas.toDataURL('image/png', 1);
-      var blobData = dataURItoBlob(Image);
+      let Image = saveCanvas.toDataURL('image/png', 1);
+      const blobData = dataURItoBlob(Image);
       json = JSON.stringify(frames);
       Image = await uploadAvatar(blobData, json, version);
     }, 5000);
@@ -1105,17 +1129,17 @@
     // console.log("json", json);
     // var blobData = dataURItoBlob(frames);
     // uploadImage(title, appType, json, blobData, status);
-    let size = imageResolution;
-    savecanvas.setHeight(size);
-    savecanvas.setWidth(size * frames.length);
-    savecanvas.renderAll();
-    savecanvas.clear();
-    let data = { objects: [] };
+    const size = imageResolution;
+    saveCanvas.setHeight(size);
+    saveCanvas.setWidth(size * frames.length);
+    saveCanvas.renderAll();
+    saveCanvas.clear();
+    const data = { objects: [] };
 
     for (let i = 0; i < frames.length; i++) {
       frames[i].backgroundImage = {};
       const newFrames = frames[i].objects.map((object, index) => {
-        //if (object.type == "image") return;
+        // if (object.type == "image") return;
         const newObject = { ...object };
         newObject.top = newObject.top;
         newObject.left += size * i;
@@ -1129,18 +1153,18 @@
 
     // console.log("data", data);
 
-    savecanvas.loadFromJSON(data, async () => {
+    saveCanvas.loadFromJSON(data, async () => {
       console.log('222');
-      savecanvas.renderAll.bind(savecanvas);
-      savecanvas.calcOffset();
+      saveCanvas.renderAll.bind(saveCanvas);
+      saveCanvas.calcOffset();
 
-      var saveImage = await savecanvas.toDataURL('image/png', 1);
+      const saveImage = await saveCanvas.toDataURL('image/png', 1);
       // console.log("savedImage", saveImage);
 
-      var blobData = dataURItoBlob(saveImage);
+      const blobData = dataURItoBlob(saveImage);
       // console.log("blobData", blobData);
-      if (!!!title) {
-        title = Date.now() + '_' + displayName;
+      if (!title) {
+        title = `${Date.now()}_${displayName}`;
       }
       await uploadImage(
         title,
@@ -1156,60 +1180,21 @@
         // saving = false;
         setLoader(false);
       });
-      //Profile.update(n => n.url = Image);
+      // Profile.update(n => n.url = Image);
     });
   }
 
-  //////////////////// avatar functies end /////////////////////////////////
+  /// ///////////////// avatar functies end /////////////////////////////////
 
-  //////////////////// camera functies ///////////////////////////////
-  function camera() {
-    current = 'camera';
-
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then(function (stream) {
-          video.srcObject = stream;
-          video.play();
-        })
-        .catch((err) => {
-          console.log(err);
-          alert(err);
-        });
-    }
-  }
-
-  async function capturePicture() {
-    let videocanv = new fabric.Canvas(videoCanvas, {
-      isDrawingMode: false,
-    });
-    videocanv.setHeight(videoWidth / 1.33);
-    videocanv.setWidth(videoWidth);
-    let vidContext = videocanv.getContext('2d');
-    vidContext.drawImage(video, 0, 0, videoWidth, videoWidth / 1.33);
-    var uri = videoCanvas.toDataURL('image/png', 1);
-    fabric.Image.fromURL(uri, function (oImg) {
-      oImg.scale(1);
-      oImg.set({ left: 0, top: 0 });
-      canvas.add(oImg);
-    });
-    video.srcObject.getTracks()[0].stop();
-    current = 'select';
-  }
-
-  //////////////////// camera functies end ///////////////////////////
-
-  //////////////////// redo/undo function ///////////////////////////
+  /// ///////////////// redo/undo function ///////////////////////////
 
   const saveHistory = () => {};
 
   const undo = () => {
-    let lastObject = canvas.toJSON().objects[
-      canvas.toJSON().objects.length - 1
-    ];
+    const lastObject =
+      canvas.toJSON().objects[canvas.toJSON().objects.length - 1];
     history.push(lastObject);
-    let newFile = canvas.toJSON();
+    const newFile = canvas.toJSON();
     newFile.objects.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
 
@@ -1220,7 +1205,7 @@
   };
 
   const redo = () => {
-    let newFile = canvas.toJSON();
+    const newFile = canvas.toJSON();
     newFile.objects.push(history[history.length - 1]);
     history.pop();
     canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
@@ -1231,14 +1216,14 @@
     }
   };
 
-  //////////////////// redo/undo function end ///////////////////////////
+  /// ///////////////// redo/undo function end ///////////////////////////
 
-  /////////////////// fill functie //////////////////////////////////////
+  /// //////////////// fill functie //////////////////////////////////////
   var FloodFill = {
     // Compare subsection of array1's values to array2's values, with an optional tolerance
-    withinTolerance: function (array1, offset, array2, tolerance) {
-      var length = array2.length,
-        start = offset + length;
+    withinTolerance(array1, offset, array2, tolerance) {
+      let { length } = array2;
+      let start = offset + length;
       tolerance = tolerance || 0;
 
       // Iterate (in reverse) the items being compared in each array, checking their values are
@@ -1253,7 +1238,7 @@
     },
 
     // The actual flood fill implementation
-    fill: function (
+    fill(
       imageData,
       getPointOffsetFn,
       point,
@@ -1263,29 +1248,29 @@
       width,
       height,
     ) {
-      var directions = [
-          [1, 0],
-          [0, 1],
-          [0, -1],
-          [-1, 0],
-        ],
-        coords = [],
-        points = [point],
-        seen = {},
-        key,
-        x,
-        y,
-        offset,
-        i,
-        x2,
-        y2,
-        minX = -1,
-        maxX = -1,
-        minY = -1,
-        maxY = -1;
+      const directions = [
+        [1, 0],
+        [0, 1],
+        [0, -1],
+        [-1, 0],
+      ];
+      const coords = [];
+      const points = [point];
+      const seen = {};
+      let key;
+      let x;
+      let y;
+      let offset;
+      let i;
+      let x2;
+      let y2;
+      let minX = -1;
+      let maxX = -1;
+      let minY = -1;
+      let maxY = -1;
 
       // Keep going while we have points to walk
-      while (!!(point = points.pop())) {
+      while ((point = points.pop())) {
         x = point.x;
         y = point.y;
         offset = getPointOffsetFn(x, y);
@@ -1321,7 +1306,7 @@
           // Get the new coordinate by adjusting x and y based on current step
           x2 = x + directions[i][0];
           y2 = y + directions[i][1];
-          key = x2 + ',' + y2;
+          key = `${x2},${y2}`;
 
           // If new coordinate is out of bounds, or we've already added it, then skip to
           // trying the next neighbour without adding this one
@@ -1340,7 +1325,7 @@
         y: minY,
         width: maxX - minX,
         height: maxY - minY,
-        coords: coords,
+        coords,
       };
     },
   }; // End FloodFill
@@ -1348,9 +1333,9 @@
   function hexToRgb(hex, opacity) {
     opacity = Math.round(opacity * 255) || 255;
     hex = hex.replace('#', '');
-    var rgb = [],
-      re = new RegExp('(.{' + hex.length / 3 + '})', 'g');
-    hex.match(re).map(function (l) {
+    const rgb = [];
+    const re = new RegExp(`(.{${hex.length / 3}})`, 'g');
+    hex.match(re).map((l) => {
       rgb.push(parseInt(hex.length % 2 ? l + l : l, 16));
     });
     return rgb.concat(opacity);
@@ -1360,7 +1345,7 @@
     if (!enable) {
       canvas.off('mouse:down');
       canvas.selection = true;
-      canvas.forEachObject(function (object) {
+      canvas.forEachObject((object) => {
         object.selectable = true;
       });
       return;
@@ -1369,23 +1354,28 @@
     canvas.discardActiveObject();
     canvas.renderAll();
     canvas.selection = false;
-    canvas.forEachObject(function (object) {
+    canvas.forEachObject((object) => {
       object.selectable = false;
     });
 
     canvas.on({
       'mouse:down': function (e) {
-        var mouseX = Math.round(e.e.layerX),
-          mouseY = Math.round(e.e.layerY),
-          //canvas = canvas.lowerCanvasEl,
-          context = canvas.getContext('2d'),
-          parsedColor = hexToRgb(fillColor),
-          imageData = context.getImageData(0, 0, canvas.width, canvas.height),
-          getPointOffset = function (x, y) {
-            return 4 * (y * imageData.width + x);
-          },
-          targetOffset = getPointOffset(mouseX, mouseY),
-          target = imageData.data.slice(targetOffset, targetOffset + 4);
+        const mouseX = Math.round(e.e.layerX);
+        const mouseY = Math.round(e.e.layerY);
+        // canvas = canvas.lowerCanvasEl,
+        const context = canvas.getContext('2d');
+        const parsedColor = hexToRgb(fillColor);
+        const imageData = context.getImageData(
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+        );
+        const getPointOffset = function (x, y) {
+          return 4 * (y * imageData.width + x);
+        };
+        const targetOffset = getPointOffset(mouseX, mouseY);
+        const target = imageData.data.slice(targetOffset, targetOffset + 4);
 
         if (FloodFill.withinTolerance(target, 0, parsedColor, fillTolerance)) {
           // Trying to fill something which is (essentially) the fill color
@@ -1393,7 +1383,7 @@
         }
 
         // Perform flood fill
-        var data = FloodFill.fill(
+        const data = FloodFill.fill(
           imageData.data,
           getPointOffset,
           { x: mouseX, y: mouseY },
@@ -1404,16 +1394,16 @@
           imageData.height,
         );
 
-        if (0 == data.width || 0 == data.height) {
+        if (data.width == 0 || data.height == 0) {
           return;
         }
 
-        var tmpCanvas = document.createElement('canvas'),
-          tmpCtx = tmpCanvas.getContext('2d');
+        const tmpCanvas = document.createElement('canvas');
+        const tmpCtx = tmpCanvas.getContext('2d');
         tmpCanvas.width = canvas.width;
         tmpCanvas.height = canvas.height;
 
-        var palette = tmpCtx.getImageData(
+        const palette = tmpCtx.getImageData(
           0,
           0,
           tmpCanvas.width,
@@ -1421,7 +1411,7 @@
         ); // x, y, w, h
         palette.data.set(new Uint8ClampedArray(data.coords)); // Assuming values 0..255, RGBA
         tmpCtx.putImageData(palette, 0, 0); // Repost the data.
-        var imgData = tmpCtx.getImageData(
+        const imgData = tmpCtx.getImageData(
           data.x,
           data.y,
           data.width,
@@ -1433,7 +1423,7 @@
         tmpCtx.putImageData(imgData, 0, 0);
 
         // Convert canvas back to image:
-        var img = new Image();
+        const img = new Image();
         img.onload = function () {
           canvas.add(
             new fabric.Image(img, {
@@ -1456,7 +1446,7 @@
     });
   }
 
-  ///////////////// fill functie end ///////////////////////
+  /// ////////////// fill functie end ///////////////////////
 
   function backgroundHide() {
     showBackground = !showBackground;
@@ -1489,25 +1479,12 @@
 <main on:mouseup="{mouseEvent}">
   <div class="main-container">
     <div class="canvas-frame-container">
-      {#if current == 'camera'}
-        <video bind:this="{video}" autoplay></video>
-        <button on:click="{capturePicture}" class="videoButton"></button>
-        <div class="videocanvas">
-          <canvas bind:this="{videoCanvas}"></canvas>
-        </div>
-      {/if}
-      <!-- <div class="topbar">
-      <div>
-        <a on:click={undo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg"></a>
-        <a on:click={redo}><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg"></a>
-      </div>
-    </div> -->
       <div class="canvas-box" class:hidden="{current === 'camera'}">
         <canvas bind:this="{canv}" class="canvas"></canvas>
-        <canvas bind:this="{Cursor}" id="cursor"></canvas>
+        <canvas bind:this="{cursorCanvasEl}" id="cursor"></canvas>
       </div>
-      <div class="savecanvas">
-        <canvas bind:this="{saveCanvas}"></canvas>
+      <div class="saveCanvas">
+        <canvas bind:this="{saveCanvasEl}"></canvas>
       </div>
       <div class="frame-box">
         {#if appType == 'stopmotion' || appType == 'avatar'}
@@ -1519,7 +1496,7 @@
                   class:selected="{currentFrame === index}"
                   on:click="{() => {
                     changeFrame(index);
-                    console.log('debug index of frame:', index); //remove debug
+                    console.log('debug index of frame:', index); // remove debug
                   }}"
                   style="background-image: url({backgroundFrames[index]})"
                 >
@@ -1625,7 +1602,7 @@
             drawingColorEl.click();
           }}
         >
-          
+
         </div> -->
           <input
             type="color"
@@ -1802,14 +1779,14 @@
         <a id="select-mode" class:currentSelected="{current === 'select'}"
           ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
         >
-        <!-- {#if "mediaDevices" in navigator && "getUserMedia" in navigator.mediaDevices}
-        <button
-          class="icon"
-          id="camera-mode"
-          class:currentSelected={current == "camera"}
-          on:click={camera}><CameraIcon /></button
-        >
-      {/if} -->
+        {#if 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices}
+          <button
+            class="icon"
+            id="camera-mode"
+            class:currentSelected="{current == 'camera'}"
+            on:click="{camera}">CAMERA</button
+          >
+        {/if}
         <!-- <button id="clear-canvas" class="btn btn-info icon">
         <TrashIcon />
       </button> -->
@@ -1895,7 +1872,7 @@
     z-index: 1;
   }
 
-  .savecanvas {
+  .saveCanvasEl {
     display: none;
   }
 
@@ -1992,14 +1969,6 @@
 
   .hidden {
     display: none;
-  }
-
-  .videoButton {
-    border-radius: 50%;
-    padding: 25px;
-    margin: 0 auto;
-    background: red;
-    display: block;
   }
 
   .lineWidth {
@@ -2133,11 +2102,6 @@
 
   #clear-canvas > img {
     width: 40px;
-  }
-
-  video {
-    margin: 0 auto;
-    display: block;
   }
 
   .canvas-frame-container {
