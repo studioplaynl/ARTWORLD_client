@@ -45,6 +45,7 @@ module.exports = {
         'no-restricted-syntax': 0,
         'no-use-before-define': 0,
         'operator-linebreak': 0,
+        'no-bitwise': 0,
       },
     },
   ],

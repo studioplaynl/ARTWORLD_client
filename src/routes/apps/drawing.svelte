@@ -2,7 +2,9 @@
   import { location, replace } from 'svelte-spa-router';
   import { onMount, onDestroy } from 'svelte';
   import MouseIcon from 'svelte-icons/fa/FaMousePointer.svelte';
-  import { fabric } from 'fabric/dist/fabric';
+
+  // eslint-disable-next-line import/no-relative-packages
+  import { fabric } from './fabric/dist/fabric';
   import {
     uploadImage,
     uploadAvatar,
@@ -35,18 +37,21 @@
   let invalidTitle = true;
   const history = [];
 
+  // DOM ELements etc
   let canvasEl;
-  let drawingClipboard;
-  let drawingColorEl;
-
+  let canvas;
   let cursorCanvasEl;
   let cursorCanvas;
-
   let saveCanvasEl;
   let saveCanvas;
+  let eraseBrush;
+  let mouseCursor;
+  const cursorOpacity = 0.5;
 
-  let canvas;
+  let drawingColorEl;
+  let drawingLineWidthEl;
 
+  let drawingClipboard;
   let lineWidth = 25;
   let drawingColor = '#000000';
 
@@ -74,10 +79,35 @@
 
   let autosaveInterval;
 
-  let applyBrush; // declaring the variable to be available globally, onMount assinging a function to it
+  // declaring the variable to be available globally, onMount assinging a function to it
+  let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
-  const Object = {};
+  // Reactive function: update Fabric brush according to UI state
+  $: {
+    if (canvas) {
+      const brush = canvas.freeDrawingBrush;
+      brush.color = drawingColor;
+      brush.width = parseInt(lineWidth, 10) || 1;
+      if (brush.getPatternSrc) {
+        brush.source = brush.getPatternSrc.call(brush);
+      }
+
+      const bigint = parseInt(drawingColor.replace('#', ''), 16);
+
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+
+      mouseCursor
+        .set({
+          radius: brush.width / 2,
+          fill: `rgba(${[r, g, b, cursorOpacity].join(',')})`,
+        })
+        .setCoords()
+        .canvas.renderAll();
+    }
+  }
 
   const FrameObject = {
     type: 'image',
@@ -117,10 +147,6 @@
     src: '',
     crossOrigin: 'anonymous',
     filters: [],
-  };
-
-  var fab = function (id) {
-    return document.getElementById(id);
   };
 
   function adaptCanvasSize() {
@@ -171,6 +197,44 @@
     canvas.setZoom(scaleRatio);
   }
 
+  function clearCanvas() {
+    // if anything is drawn on the canvas and it has not been uploaded,
+    // save the artwork and clear the canvas
+    if (isDrawn && !isAlreadyUploaded) {
+      upload();
+      isDrawn = false;
+    }
+    canvas.clear();
+    localStorage.setItem('Drawing', '');
+  }
+
+  function switchMode(mode) {
+    switchOption(mode);
+
+    switch (mode) {
+      case 'draw':
+        canvas.isDrawingMode = true;
+        floodFill(false);
+        break;
+
+      case 'select':
+        canvas.isDrawingMode = false;
+        floodFill(false);
+        break;
+
+      case 'erase':
+        canvas.freeDrawingBrush = eraseBrush;
+        canvas.freeDrawingBrush.width = parseInt(lineWidth, 10) || 1;
+        canvas.isDrawingMode = true;
+
+        floodFill(false);
+        break;
+
+      default:
+        break;
+    }
+  }
+
   onMount(() => {
     setLoader(true);
     autosaveInterval = setInterval(() => {
@@ -178,12 +242,10 @@
         const data = {};
         data.type = appType;
         data.name = title;
-        if (appType == 'drawing' || appType == 'house') {
+        if (appType === 'drawing' || appType === 'house') {
           data.drawing = canvas.toDataURL('image/png', 1);
         }
-        // if (appType == "stopmotion" || appType == "avatar") {
-        //   data.frames = frames;
-        // }
+
         localStorage.setItem('Drawing', JSON.stringify(data));
         // saved = true;
         console.log('stored in localstorage');
@@ -193,13 +255,13 @@
     canvas = new fabric.Canvas(canvasEl, {
       isDrawingMode: true,
     });
+    eraseBrush = new fabric.EraserBrush(canvas);
 
     // always adapting the canvas size on screen size change
     window.onresize = () => {
       adaptCanvasSize();
     };
 
-    MouseIcon;
     saveCanvas = new fabric.Canvas(saveCanvasEl, {
       isDrawingMode: true,
     });
@@ -211,212 +273,6 @@
     setLoader(false);
 
     fabric.Object.prototype.transparentCorners = false;
-
-    const drawingModeEl = fab('drawing-mode');
-    const selectModeEl = fab('select-mode');
-    // fillModeEl = fab("fill-mode"),
-    const drawingOptionsEl = fab('drawing-mode-options');
-    const eraseModeEl = fab('erase-mode');
-    const drawingColorEl = fab('drawing-color');
-    // drawingShadowColorEl = fab("drawing-shadow-color"),
-    const drawingLineWidthEl = fab('drawing-line-width');
-    // drawingShadowWidth = fab("drawing-shadow-width"),
-    // drawingShadowOffset = fab("drawing-shadow-offset");
-    const clearEl = fab('clear-canvas');
-
-    clearEl.onclick = function () {
-      // if anything is drawn on the canvas and it has not been uploaded,
-      // save the artwork and clear the canvas
-      if (isDrawn && !isAlreadyUploaded) {
-        upload();
-        isDrawn = false;
-      }
-      canvas.clear();
-      localStorage.setItem('Drawing', '');
-    };
-
-    drawingModeEl.onclick = function () {
-      // console.log("mouse is down");
-      switchOption('draw');
-      canvas.isDrawingMode = true;
-      console.log(drawingColor);
-      floodFill(false);
-    };
-
-    selectModeEl.onclick = function () {
-      canvas.isDrawingMode = false;
-      switchOption('select');
-      floodFill(false);
-    };
-
-    // fillModeEl.onclick = function () {
-    //   current = "fill";
-    //   floodFill(true);
-    // };
-
-    eraseModeEl.onclick = function () {
-      // erase functie kapot? recompile: http://fabricjs.com/build/
-      const eraseBrush = new fabric.EraserBrush(canvas);
-      canvas.freeDrawingBrush = eraseBrush;
-      canvas.freeDrawingBrush.width =
-        parseInt(drawingLineWidthEl.value, 10) || 1;
-      canvas.isDrawingMode = true;
-      switchOption('erase');
-      floodFill(false);
-    };
-
-    if (fabric.PatternBrush) {
-      const vLinePatternBrush = new fabric.PatternBrush(canvas);
-      vLinePatternBrush.getPatternSrc = function () {
-        const patternCanvas = fabric.document.createElement('canvas');
-        patternCanvas.width = patternCanvas.height = 10;
-        const ctx = patternCanvas.getContext('2d');
-
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth = lineWidth;
-        ctx.beginPath();
-        ctx.moveTo(0, 5);
-        ctx.lineTo(10, 5);
-        ctx.closePath();
-        ctx.stroke();
-
-        return patternCanvas;
-      };
-
-      const hLinePatternBrush = new fabric.PatternBrush(canvas);
-      hLinePatternBrush.getPatternSrc = function () {
-        const patternCanvas = fabric.document.createElement('canvas');
-        patternCanvas.width = patternCanvas.height = 10;
-        const ctx = patternCanvas.getContext('2d');
-
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth = lineWidth;
-        ctx.beginPath();
-        ctx.moveTo(5, 0);
-        ctx.lineTo(5, 10);
-        ctx.closePath();
-        ctx.stroke();
-
-        return patternCanvas;
-      };
-
-      const squarePatternBrush = new fabric.PatternBrush(canvas);
-      squarePatternBrush.getPatternSrc = function () {
-        const squareWidth = 10;
-        const squareDistance = 2;
-
-        const patternCanvas = fabric.document.createElement('canvas');
-        patternCanvas.width = patternCanvas.height =
-          squareWidth + squareDistance;
-        const ctx = patternCanvas.getContext('2d');
-
-        ctx.fillStyle = this.color;
-        ctx.fillRect(0, 0, squareWidth, squareWidth);
-
-        return patternCanvas;
-      };
-
-      const diamondPatternBrush = new fabric.PatternBrush(canvas);
-      diamondPatternBrush.getPatternSrc = function () {
-        const squareWidth = 10;
-        const squareDistance = 5;
-        const patternCanvas = fabric.document.createElement('canvas');
-        const rect = new fabric.Rect({
-          width: squareWidth,
-          height: squareWidth,
-          angle: 45,
-          fill: this.color,
-        });
-
-        const canvasWidth = rect.getBoundingRect().width;
-
-        patternCanvas.width = patternCanvas.height =
-          canvasWidth + squareDistance;
-        rect.set({ left: canvasWidth / 2, top: canvasWidth / 2 });
-
-        const ctx = patternCanvas.getContext('2d');
-        rect.render(ctx);
-
-        return patternCanvas;
-      };
-    }
-
-    // fab("drawing-mode-selector").onchange = () => changebrush();
-
-    // function changebrush() {
-    //   brush = fab("drawing-mode-selector");
-    //   console.log(brush);
-    //   if (brush.value === "hline") {
-    //     canvas.freeDrawingBrush = vLinePatternBrush;
-    //   } else if (brush.value === "vline") {
-    //     canvas.freeDrawingBrush = hLinePatternBrush;
-    //   } else if (brush.value === "square") {
-    //     canvas.freeDrawingBrush = squarePatternBrush;
-    //   } else if (brush.value === "diamond") {
-    //     canvas.freeDrawingBrush = diamondPatternBrush;
-    //   } else if (brush.value === "texture") {
-    //     canvas.freeDrawingBrush = texturePatternBrush;
-    //   } else {
-    //     canvas.freeDrawingBrush = new fabric[brush.value + "Brush"](canvas);
-
-    //   }
-
-    //   if (canvas.freeDrawingBrush) {
-    //     var brush = canvas.freeDrawingBrush;
-    //     brush.color = drawingColorEl.value;
-    //     if (brush.getPatternSrc) {
-    //       brush.source = brush.getPatternSrc.call(brush);
-    //     }
-    //     brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
-    //     // brush.shadow = new fabric.Shadow({
-    //     //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
-    //     //   offsetX: 0,
-    //     //   offsetY: 0,
-    //     //   affectStroke: true,
-    //     //   color: drawingShadowColorEl.value,
-    //     // });
-    //   }
-    // }
-
-    drawingColorEl.onchange = function () {
-      const brush = canvas.freeDrawingBrush;
-      brush.color = this.value;
-      if (brush.getPatternSrc) {
-        brush.source = brush.getPatternSrc.call(brush);
-      }
-    };
-    // drawingShadowColorEl.onchange = function () {
-    //   canvas.freeDrawingBrush.shadow.color = this.value;
-    // };
-    drawingLineWidthEl.onchange = function () {
-      canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 1;
-      this.previousSibling.innerHTML = this.value;
-    };
-
-    // drawingShadowWidth.onchange = function () {
-    //   canvas.freeDrawingBrush.shadow.blur = parseInt(this.value, 10) || 0;
-    //   this.previousSibling.innerHTML = this.value;
-    // };
-    // drawingShadowOffset.onchange = function () {
-    //   canvas.freeDrawingBrush.shadow.offsframes = frames;tX = parseInt(this.value, 10) || 0;
-    //   canvas.freeDrawingBrush.shadow.offsetY = parseInt(this.value, 10) || 0;
-    //   this.previousSibling.innerHTML = this.value;
-    // };
-
-    if (canvas.freeDrawingBrush) {
-      canvas.freeDrawingBrush.color = drawingColorEl.value;
-      // canvas.freeDrawingBrush.source = canvas.freeDrawingBrush.getPatternSrc.call(this);
-      canvas.freeDrawingBrush.width =
-        parseInt(drawingLineWidthEl.value, 10) || 1;
-      // canvas.freeDrawingBrush.shadow = new fabric.Shadow({
-      //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
-      //   offsetX: 0,
-      //   offsetY: 0,
-      //   affectStroke: true,
-      //   color: drawingShadowColorEl.value,
-      // });
-    }
-    console.log(params);
 
     canvas.on('mouse:up', () => {
       // once there is anything is drawn on the canvas
@@ -430,9 +286,8 @@
 
     // mouse cursor layer
 
-    const cursorOpacity = 0.5;
     // create cursor and place it off screen
-    const mousecursor = new fabric.Circle({
+    mouseCursor = new fabric.Circle({
       left: -100,
       top: -100,
       radius: canvas.freeDrawingBrush.width / 2,
@@ -442,18 +297,19 @@
       originY: 'center',
     });
 
-    cursorCanvas.add(mousecursor);
+    cursorCanvas.add(mouseCursor);
 
     // redraw cursor on new mouse position when moved
     canvas.on('mouse:move', function (evt) {
+      console.log('mouse:move', evt.e.x, evt.e.y);
       if (current == 'select') {
-        return mousecursor
+        return mouseCursor
           .set({ top: -100, left: -100 })
           .setCoords()
           .canvas.renderAll();
       }
       const mouse = this.getPointer(evt.e);
-      mousecursor
+      mouseCursor
         .set({
           top: mouse.y,
           left: mouse.x,
@@ -463,43 +319,33 @@
     });
 
     // while brush size is changed show cursor in center of canvas
-    document.getElementById('drawing-line-width').oninput = () => {
-      changeBrushSize();
-    };
-    document.getElementById('erase-line-width').oninput = () => {
-      changeBrushSize();
-    };
+    // document.getElementById('drawing-line-width').oninput = () => {
+    //   changeBrushSize();
+    // };
+    // document.getElementById('erase-line-width').oninput = () => {
+    //   changeBrushSize();
+    // };
 
-    function changeBrushSize() {
-      const size = parseInt(lineWidth, 10);
-      canvas.freeDrawingBrush.width = size;
-      mousecursor
-        // .center()
-        .set({
-          radius: size / 2,
-          top: 500,
-          left: 1300,
-        })
-        .setCoords()
-        .canvas.renderAll();
-    }
+    // function changeBrushSize() {
+    //   const size = parseInt(lineWidth, 10);
+    //   canvas.freeDrawingBrush.width = size;
+    //   mouseCursor
+    //     // .center()
+    //     .set({
+    //       radius: size / 2,
+    //       top: 500,
+    //       left: 1300,
+    //     })
+    //     .setCoords()
+    //     .canvas.renderAll();
+    // }
 
-    // change drawing color
-    drawingColorEl.onchange = function () {
-      console.log('color');
-      canvas.freeDrawingBrush.color = this.value;
-      const bigint = parseInt(this.value.replace('#', ''), 16);
-      const r = (bigint >> 16) & 255;
-      const g = (bigint >> 8) & 255;
-      const b = bigint & 255;
-      //  mousecursor.fill = "rgba(" + [r,g,b,cursorOpacity].join(",") + ")"
+    // // change drawing color
+    // drawingColorEl.onchange = function () {
+    //   console.log('color');
+    //   canvas.freeDrawingBrush.color = this.value;
 
-      mousecursor
-        .set({
-          fill: `rgba(${[r, g, b, cursorOpacity].join(',')})`,
-        })
-        .canvas.renderAll();
-    };
+    // };
 
     /// ///////////// mouse circle ////////////////////////////
 
@@ -1574,7 +1420,7 @@
               src="assets/svg/drawing_pattern.svg"
             />
           </div>
-          <!-- <div id="drawing-mode-options">
+          <!-- <div bind:this={drawingOptionsEl} id="drawing-mode-options">
             <select id="drawing-mode-selector">
               <option>Pencil</option>
               <option>Circle</option>
@@ -1613,6 +1459,7 @@
               min="10"
               max="500"
               id="drawing-line-width"
+              bind:this="{drawingLineWidthEl}"
               bind:value="{lineWidth}"
             />
             <div class="circle-box-big"></div>
@@ -1749,40 +1596,67 @@
       </div>
 
       <div class="iconbox">
-        <a on:click="{undo}"
-          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
-        >
-        <a on:click="{redo}"
-          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
-        >
-        <a
-          on:click="{applyBrush}"
+        <button on:click="{undo}">
+          <img
+            class="icon"
+            src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
+            alt="Undo"
+          />
+        </button>
+        <button on:click="{redo}">
+          <img
+            class="icon"
+            src="assets/SHB/svg/AW-icon-rotate-CW.svg"
+            alt="Redo"
+          />
+        </button>
+        <button
           id="drawing-mode"
+          on:click="{() => {
+            switchMode('draw');
+            applyBrush();
+          }}"
           class:currentSelected="{current === 'draw'}"
-          ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
         >
-        <a id="erase-mode" class:currentSelected="{current === 'erase'}"
-          ><img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" /></a
+          <img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" alt="Draw" />
+        </button>
+        <!-- bind:this="{eraseModeEl}" -->
+        <button
+          on:click="{() => switchMode('erase')}"
+          id="erase-mode"
+          class:currentSelected="{current === 'erase'}"
         >
+          <img
+            class="icon"
+            src="assets/SHB/svg/AW-icon-erase.svg"
+            alt="Erase"
+          />
+        </button>
         <!-- <button
         class="icon"
         id="fill-mode"
         class:currentSelected={current === "fill"}><BucketIcon /></button
       > -->
-        <a id="select-mode" class:currentSelected="{current === 'select'}"
-          ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
+        <button
+          id="select-mode"
+          on:click="{() => switchMode('select')}"
+          class:currentSelected="{current === 'select'}"
         >
+          <img
+            class="icon"
+            src="assets/SHB/svg/AW-icon-pointer.svg"
+            alt="Select"
+          />
+        </button>
 
         <!-- <button id="clear-canvas" class="btn btn-info icon">
         <TrashIcon />
       </button> -->
 
         <!-- svelte-ignore a11y-missing-attribute -->
-        <a
+        <button
           class:currentSelected="{current === 'saveToggle'}"
           on:click="{() => {
-            // console.log("saving is clicked");
-            // console.log("length", canvas.toJSON().objects);
             if (
               appType == 'drawing' ||
               appType == 'stopmotion' ||
@@ -1792,12 +1666,16 @@
               saveToggle = !saveToggle;
               switchOption('saveToggle');
             }
-          }}"><img class="icon" src="assets/SHB/svg/AW-icon-save.svg" /></a
+          }}"
         >
+          <img class="icon" src="assets/SHB/svg/AW-icon-save.svg" alt="Save" />
+        </button>
       </div>
     </div>
   </div>
-  <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg" /></div>
+  <div id="clear-canvas" on:click="{clearCanvas}">
+    <img src="assets/SHB/svg/AW-icon-reset.svg" />
+  </div>
   {#if appType == 'avatar'}
     <div id="avatarBox">
       <Avatar />
@@ -2314,5 +2192,21 @@
       top: unset;
       bottom: 60px;
     }
+  }
+
+  button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: inline-block;
+    width: auto;
+    transform-origin: center;
+    transform: scale(1);
+    padding: 0;
+    margin: 0;
   }
 </style>
