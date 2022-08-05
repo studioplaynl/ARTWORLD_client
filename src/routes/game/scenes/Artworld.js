@@ -5,7 +5,6 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
-// import BouncingBird from '../class/BouncingBird';
 import GraffitiWall from '../class/GraffitiWall';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
@@ -45,7 +44,6 @@ export default class Artworld extends Phaser.Scene {
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
-    this.createdPlayer = false;
 
     this.artDisplaySize = 64;
     this.artArray = [];
@@ -77,7 +75,6 @@ export default class Artworld extends Phaser.Scene {
     this.cursorKeyIsDown = false;
     this.swipeDirection = 'down';
     this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-    this.graffitiDrawing = false;
 
     // pointer location example
     // this.source // = player
@@ -147,10 +144,6 @@ export default class Artworld extends Phaser.Scene {
     // username: "user88"
     // version: "0579e989a16f3e228a10d49d13dc3da6"
 
-    // .......  LOAD PLAYER AVATAR ..........................................................................
-    ManageSession.createPlayer = true;
-    // ....... end LOAD PLAYER AVATAR .......................................................................
-
     // the order of creation is the order of drawing: first = bottom ...............................
 
 
@@ -165,8 +158,10 @@ export default class Artworld extends Phaser.Scene {
       posX: 0,
       posY: 0,
       setOrigin: 0,
-      color: 0xff0000,
+      color: 0xffffff,
       alpha: 1,
+      width: this.worldSize.x,
+      height: this.worldSize.y,
     });
 
     // this.bgImage = this.add.image(0, 0, 'bgImageWhite').setOrigin(0);;
@@ -254,13 +249,27 @@ export default class Artworld extends Phaser.Scene {
     // ............  end homes area ............
 
     //!
-    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
-      .setInteractive() // { useHandCursor: true }
+    // this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000);
+    Background.rectangle({
+      scene: this,
+      posX: 0,
+      posY: 0,
+      color: 0xffff00,
+      alpha: 1,
+      width: this.worldSize.x,
+      height: this.worldSize.y,
+      name: 'touchBackgroundCheck',
+      setOrigin: 0,
+    });
+
+    this.touchBackgroundCheck
+    // draggable to detect player drag movement
+      .setInteractive() // { useHandCursor: true } { draggable: true }
       // .on('pointerup', () => dlog('touched background'))
-      .on('pointerdown', () => { ManageSession.playerMove = true; })
+      .on('pointerdown', () => { ManageSession.playerIsAllowedToMove = true; })
       .setDepth(219)
-      .setOrigin(0)
-      .setVisible(false);
+      .setOrigin(0);
+    this.touchBackgroundCheck.setVisible(false);
 
     // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
     this.touchBackgroundCheck.input.alwaysEnabled = true;
@@ -517,7 +526,6 @@ export default class Artworld extends Phaser.Scene {
       this.playerAvatarPlaceholder,
     ).setDepth(201);
 
-    // Player.createPlayerItemsBar(this)
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
       texture: this.playerAvatarPlaceholder,
@@ -533,45 +541,36 @@ export default class Artworld extends Phaser.Scene {
     // https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
     // ......... end PLAYER VS WORLD .......................................................................
 
-    //! needed for handling object dragging
+    //! needed for handling object dragging // this is needed of each scene dragging is used
     this.input.on('dragstart', (pointer, gameObject) => {
-      dlog(pointer, gameObject);
+
     }, this);
 
     this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-      gameObject.setPosition(dragX, dragY);
+      gameObject.x = dragX;
+      gameObject.y = dragY;
 
-      if (gameObject.name === 'handle') {
+      if (gameObject.name == 'handle') {
         gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
       }
     }, this);
 
-    this.input.on('dragend', (pointer, gameObject) => {
-      const worldX = Math.round(Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
-      const worldY = Math.round(Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
+    this.input.on('dragend', function (pointer, gameObject) {
+      const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
+      const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
+
 
       // store the original scale when selecting the gameObject for the first time
       if (ManageSession.selectedGameObject !== gameObject) {
         ManageSession.selectedGameObject = gameObject;
-        ManageSession.selectedGameObject_startScale = gameObject.scale;
-        ManageSession.selectedGameObject_startPosition.x = gameObject.x;
-        ManageSession.selectedGameObject_startPosition.y = gameObject.y;
-        dlog('editMode info startScale:', ManageSession.selectedGameObject_startScale);
+        ManageSession.selectedGameObjectStartScale = gameObject.scale;
+        ManageSession.selectedGameObjectStartPosition.x = gameObject.x;
+        ManageSession.selectedGameObjectStartPosition.y = gameObject.y;
+        console.log('editMode info startScale:', ManageSession.selectedGameObject_startScale);
       }
+      // ManageSession.selectedGameObject = gameObject
 
-      dlog(
-        'editMode info posX posY: ',
-        worldX,
-        worldY,
-        'scale:',
-        ManageSession.selectedGameObject.scale,
-        'width*scale:',
-        Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale),
-        'height*scale:',
-        Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale),
-        'name:',
-        ManageSession.selectedGameObject.name,
-      );
+      console.log('editMode info posX posY: ', worldX, worldY, 'scale:', ManageSession.selectedGameObject.scale, 'width*scale:', Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), 'height*scale:', Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), 'name:', ManageSession.selectedGameObject.name);
     }, this);
     //!
 
@@ -625,27 +624,7 @@ export default class Artworld extends Phaser.Scene {
     // obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
 
     // this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
-
-    // this.scale.on('resize', this.resize, this);
   } // end create
-
-  resize(gameSize) {
-    const gameCamera = this.cameras;
-
-    const { width } = gameSize;
-    const { height } = gameSize;
-    gameCamera.resize(window.innerWidth, window.innerHeight);
-
-    this.gameCam.zoom = ManageSession.currentZoom;
-    // this.gameCam.startFollow(this.player);
-    // this.cameras.main.setViewport(0, 0, width, height);
-    this.gameCam.setViewport(0, 0, window.innerWidth * window.devicePixelRatio, window.innerHeight) * window.devicePixelRatio;
-    // this.gameCam.resize(width, height);
-    // console.log('this.cameras', gameCamera);
-    // this.game.scale.resize(width, height);
-    console.log('width, height', width, height);
-    console.log('window.innerWidth, window.innnerHeight, window.devicePixelRatio', window.innerWidth, window.innerHeight, window.devicePixelRatio);
-  }
 
   animalWallCollide() {
     const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
@@ -915,13 +894,10 @@ export default class Artworld extends Phaser.Scene {
       this.playerShadow.y = this.player.y + this.playerShadowOffset;
       // ........... end PLAYER SHADOW .........................................................................
 
-      // ....... stopping PLAYER ......................................................................................
-      // Move.checkIfPlayerReachedMoveGoal(this); // to stop the player when it reached its destination
-      // ....... end stopping PLAYER .................................................................................
-
       // to detect if the player is clicking/tapping on one place or swiping
       if (this.input.activePointer.downX !== this.input.activePointer.upX) {
-        Move.moveBySwiping(this);
+        // Move.moveBySwiping(this);
+        Move.moveByDragging(this);
       } else {
         Move.moveByTapping(this);
       }

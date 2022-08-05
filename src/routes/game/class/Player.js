@@ -29,12 +29,6 @@ class Player {
     if (!userprofile) userprofile = ManageSession.userProfile;
     dlog('loadPlayerAvatar', userprofile);
 
-    // check for createPlayer flag
-    if (!ManageSession.createPlayer) return;
-    // ManageSession.createPlayer = false
-    // dlog("ManageSession.createPlayer = false;")
-    scene.createdPlayer = false;
-
     // is playerAvaterKey already in loadedAvatars?
     // no -> load the avatar and add to loadedAvatars
     // yes -> dont load the avatar
@@ -221,7 +215,6 @@ class Player {
 
     // dlog("player avatar has loaded ")
     scene.player.location = scene.location;
-    scene.createdPlayer = true;
 
     // send the current player position over the network
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');

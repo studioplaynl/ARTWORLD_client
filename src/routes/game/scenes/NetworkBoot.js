@@ -13,7 +13,6 @@ export default class NetworkBoot extends Phaser.Scene {
   async preload() {
     // setLoader(true)
     this.scene.launch('UIScene');
-    ManageSession.createPlayer = true;
 
     // we launch the player last location when we have a socket with the server
     await ManageSession.createSocket()

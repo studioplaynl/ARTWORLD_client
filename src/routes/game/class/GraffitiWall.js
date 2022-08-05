@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { dlog } from '../helpers/DebugLog';
+import ManageSession from '../ManageSession';
 
 const { Phaser } = window;
 
@@ -44,13 +45,13 @@ class GraffitiWall {
     rt.on('pointerdown', (pointer) => {
       dlog('graffiti wall');
 
-      this.graffitiDrawing = true;
+      ManageSession.graffitiDrawing = true;
       this.isClicking = true;
       const hsv = Phaser.Display.Color.HSVColorWheel();
       const i = color;
       dlog('hsv[i].color', hsv[i].color);
 
-      this.draw(
+      rt.draw(
         'brush',
         pointer.worldX - scene[name].x + (width / 2),
         pointer.worldY - scene[name].y + (height / 2),
@@ -67,7 +68,7 @@ class GraffitiWall {
       if (pointer.isDown) {
         // const line1 = new Phaser.Curves.Line([0, 0, 0, 0]);
         // var points = pointer.getInterpolatedPosition(30)
-        this.graffitiDrawing = true;
+        ManageSession.graffitiDrawing = true;
         this.isClicking = true;
         const hsv = Phaser.Display.Color.HSVColorWheel();
         const i = color;
@@ -116,7 +117,7 @@ class GraffitiWall {
     });
 
     rt.on('pointerup', () => {
-      this.graffitiDrawing = false;
+      ManageSession.graffitiDrawing = false;
 
       // empty the array of previous point when lifting the pointer
       previousPointer = [];

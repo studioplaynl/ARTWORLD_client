@@ -18,7 +18,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.fontColor = config.fontColor;
     this.locationDestination = config.locationDestination;
 
-    this.enterButton;
+    this.enterButton = {};
 
     this.showing = false;
 
@@ -29,20 +29,20 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.draggable = config.draggable;
     this.userHome = config.userHome;
 
-    this.location;
+    this.location = {};
 
     this.internalUrl = config.internalUrl;
     this.externalUrl = config.externalUrl;
     this.appUrl = config.appUrl;
 
-    this.enterButtonTween;
-    this.enterShadowTween;
+    this.enterButtonTween = {};
+    this.enterShadowTween = {};
     this.size = config.size;
     const { referenceName } = config;
-    this.debugRect;
-    this.debugRect_y;
-    this.debugRect_height;
-    this.debugRectXMargin;
+    this.debugRect = {};
+    this.debugRect_y = 0;
+    this.debugRect_height = 0;
+    this.debugRectXMargin = 0;
     this.numberOfArtworks = config.numberOfArtworks;
 
     let width;
@@ -322,7 +322,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       this.setInteractive();
       this.debugRect.setVisible(true);
       this.debugRectXMargin.setVisible(true)
-        .on('drag', (p, x, y) => {
+        .on('drag', (p) => {
           this.setX(p.worldX);
           this.setY(p.worldY);
           // The enterButton is outside the container, so that it can appear above the player

@@ -114,14 +114,18 @@ class Background {
     const { color } = config;
     const { alpha } = config;
     const { name } = config;
-    const { worldSize } = scene;
+    const { width } = config;
+    const { height } = config;
+    // const { worldSize } = scene;
 
 
     const rectangle = scene.add.graphics();
     rectangle.fillStyle(color, alpha);
-    rectangle.fillRect(0, 0, worldSize.x, worldSize.y);
+    rectangle.fillRect(0, 0, width, height);
 
-    const rt1 = scene.add.renderTexture(0, 0, worldSize.x, worldSize.y);
+    // const rt1 = scene.add.renderTexture(0, 0, worldSize.x, worldSize.y);
+    const rt1 = scene.add.renderTexture(0, 0, width, height);
+
     rt1.draw(rectangle);
 
     rt1.saveTexture(name);

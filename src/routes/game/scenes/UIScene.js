@@ -1,16 +1,12 @@
 import i18next from 'i18next';
 import { locale } from 'svelte-i18n';
-import { element } from 'svelte/internal';
-import ManageSession from '../ManageSession';
-
 import nl from '../../../language/nl/ui.json';
 import en from '../../../language/en/ui.json';
 import ru from '../../../language/ru/ui.json';
 import ar from '../../../language/ar/ui.json';
-import HistoryTracker from '../class/HistoryTracker';
+
+import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
-import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import ServerCall from '../class/ServerCall';
 
 const { Phaser } = window;
 
@@ -39,15 +35,15 @@ export default class UIScene extends Phaser.Scene {
 
   constructor() {
     super('UIScene');
-    this.currentZoom;
+    this.currentZoom = 1;
     this.location = 'test';
 
     // Debug Text mobile
     this.debugText = '';
-    this.debugTextField;
+    this.debugTextField = {};
+    this.gameEditModeSignGraphic = {};
+    this.scene = null;
   }
-
-  preload() { }
 
   async create() {
     let countDisplay = 0;
@@ -68,9 +64,6 @@ export default class UIScene extends Phaser.Scene {
     // ......... INPUT .....................................................................................
     // keyboard events caught for debug functions, edit mode
     this.input.keyboard.createCursorKeys();
-
-    // dragging events caught for when in editMode
-
     // .......... end INPUT ................................................................................
 
     // ......... DEBUG FUNCTIONS ...........................................................................
@@ -81,29 +74,14 @@ export default class UIScene extends Phaser.Scene {
     DebugFuntions.keyboard(this);
     // ......... end DEBUG FUNCTIONS .......................................................................
 
-    //  let displayText = `${this.sys.game.canvas.width} ${this.sys.game.canvas.height} ${window.devicePixelRatio}`
-    //  this.add.text((this.sys.game.canvas.width / 2 ) - 100, this.sys.game.canvas.height / 2, displayText, { fontSize: 16,
-    //   backgroundColor: '#000000',
-    //   color: '#fff' })
-
     this.camUI = this.cameras.main
       .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
       .setName('camMain');
     this.camUI.zoom = 1;
 
-    this.scale.on('resize', this.resize, this);
-
     // to make the UI scene always on top of other scenes
     this.scene.bringToTop();
   } // create
-
-  resize() {
-    // console.log("resizing")
-    const { width } = this.sys.game.canvas;
-    const { height } = this.sys.game.canvas;
-
-    // this.camUI.resize(width, height);
-  }
 
   editElementsScene(arg) {
     const scene = ManageSession.currentScene;
@@ -121,13 +99,16 @@ export default class UIScene extends Phaser.Scene {
         // we restart the scene with the new flag
         scene.scene.restart();
         break;
+
+      default:
+        break;
     }
   }
 
   gameEditModeSign(arg) {
     const { width } = this.sys.game.canvas;
     // let height = this.sys.game.canvas.height
-    this.gameEditModeSignGraphic;
+
 
     switch (arg) {
       case 'on':
@@ -150,7 +131,7 @@ export default class UIScene extends Phaser.Scene {
     }
   } // end gameEditModeSign
 
-  update(time, delta) {
-
+  update() {
+    if (this.scene != ManageSession.currentScene) this.scene = ManageSession.currentScene;
   }
 }

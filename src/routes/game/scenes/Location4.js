@@ -38,7 +38,6 @@ export default class Location4 extends Phaser.Scene {
     this.playerContainer;
     this.playerAvatarPlaceholder = 'playerAvatar';
     this.playerAvatarKey = '';
-    this.createdPlayer = false;
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
 
@@ -52,7 +51,6 @@ export default class Location4 extends Phaser.Scene {
     this.arrowDown = false;
     this.swipeDirection = 'down';
     this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-    this.graffitiDrawing = false;
 
     // pointer location example
     // this.source // = player
@@ -82,16 +80,13 @@ export default class Location4 extends Phaser.Scene {
   async create() {
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize;
-    // .......  LOAD PLAYER AVATAR ..........................................................................
-    ManageSession.createPlayer = true;
-    // ....... end LOAD PLAYER AVATAR .......................................................................
 
     this.generateBackground();
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() // { useHandCursor: true }
       .on('pointerup', () => console.log('touched background'))
-      .on('pointerdown', () => ManageSession.playerMove = true)
+      .on('pointerdown', () => ManageSession.playerIsAllowedToMove = true)
       .setDepth(219)
       .setOrigin(0)
       .setVisible(false);
@@ -252,10 +247,6 @@ export default class Location4 extends Phaser.Scene {
     this.playerShadow.x = this.player.x + this.playerShadowOffset;
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     // ........... end PLAYER SHADOW .........................................................................
-
-    // ....... moving ANIMATION ......................................................................................
-    // Move.checkIfPlayerReachedMoveGoal(this);
-    // ....... end moving ANIMATION .................................................................................
 
     // to detect if the player is clicking/tapping on one place or swiping
     if (this.input.activePointer.downX != this.input.activePointer.upX) {

@@ -1,22 +1,17 @@
 import ManageSession from '../ManageSession';
 import {
-  listObjects, convertImage, getAccount, listAllObjects,
+  convertImage, listAllObjects,
 } from '../../../api';
 
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
-import BouncingBird from '../class/BouncingBird';
-import GraffitiWall from '../class/GraffitiWall';
-import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import HistoryTracker from '../class/HistoryTracker';
 import Move from '../class/Move';
-import ServerCall from '../class/ServerCall';
-import Exhibition from '../class/Exhibition';
-import { CurrentApp } from '../../../session';
+
 
 const { Phaser } = window;
 
@@ -46,7 +41,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
-    this.createdPlayer = false;
 
     this.artDisplaySize = 64;
     this.artArray = [];
@@ -76,7 +70,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.cursorKeyIsDown = false;
     this.swipeDirection = 'down';
     this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-    this.graffitiDrawing = false;
 
     // pointer location example
     // this.source // = player
@@ -134,9 +127,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     // username: "user88"
     // version: "0579e989a16f3e228a10d49d13dc3da6"
     //!
-    // .......  LOAD PLAYER AVATAR ..........................................................................
-    ManageSession.createPlayer = true;
-    // ....... end LOAD PLAYER AVATAR .......................................................................
 
     // the order of creation is the order of drawing: first = bottom ...............................
 
@@ -200,7 +190,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() // { useHandCursor: true }
     // .on('pointerup', () => console.log('touched background'))
-      .on('pointerdown', () => ManageSession.playerMove = true)
+      .on('pointerdown', () => ManageSession.playerIsAllowedToMove = true)
       .setDepth(219)
       .setOrigin(0)
       .setVisible(false);
@@ -214,7 +204,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201);
-    // Player.createPlayerItemsBar(this)
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!
     HistoryTracker.pushLocation(this);
@@ -746,10 +735,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
       this.playerShadow.x = this.player.x + this.playerShadowOffset;
       this.playerShadow.y = this.player.y + this.playerShadowOffset;
       // ........... end PLAYER SHADOW .........................................................................
-
-      // ....... stopping PLAYER ......................................................................................
-      Move.checkIfPlayerReachedMoveGoal(this); // to stop the player when it reached its destination
-      // ....... end stopping PLAYER .................................................................................
 
       // to detect if the player is clicking/tapping on one place or swiping
       if (this.input.activePointer.downX != this.input.activePointer.upX) {

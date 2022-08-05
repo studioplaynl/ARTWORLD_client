@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { get, writable } from 'svelte/store';
+import { get } from 'svelte/store';
 import { client, SSL } from '../../nakama.svelte';
 // translate from artworld coordinates to Phaser 2D screen coordinates
 import CoordinatesTranslator from './class/CoordinatesTranslator';
@@ -14,9 +14,6 @@ class ManageSession {
     this.debug = true;
 
     this.gameEditMode = false;
-
-    // TODO: Remove?
-    // this.worldSizeCopy; // we copy the worldSize of the scene to make movement calculations
 
     this.currentScene = {}; // To give access to the scene outside of the game
     // default zoomlevel is set here
@@ -35,12 +32,12 @@ class ManageSession {
     this.location = null; // scene key to start a scene
     this.locationID = null; // the user_id if the scene is a house => DefaultUserHome
 
-    // TODO Remove createdPlayer?
-    this.createPlayer = true;
 
     // Check if we can start sending player movement data over the network
-    this.createdPlayer = false;
-    this.playerMove = false;
+    this.playerIsAllowedToMove = false;
+    this.createPlayer = true;
+
+    this.graffitiDrawing = false;
 
     this.playerClicks = 0;
     this.playerClickTime = 0;
@@ -77,9 +74,9 @@ class ManageSession {
     // and to select and manipulate GameObjects in Edit Mode
     this.selectedGameObject = null;
     // being able to reset scale to original, within edit mode
-    this.selectedGameObject_startScale = 1;
+    this.selectedGameObjectStartScale = 1;
     // being able to reset position to original, within edit mode
-    this.selectedGameObject_startPosition = new Phaser.Math.Vector2(0, 0);
+    this.selectedGameObjectStartPosition = new Phaser.Math.Vector2(0, 0);
     // .....................................................................
 
     this.gameStarted = false;
@@ -211,7 +208,7 @@ class ManageSession {
                 this[updateOnlinePlayer].stop();
                 // dlog("duration", duration)
 
-                const target = new Phaser.Math.Vector2(positionVector.x, positionVector.y);
+                // const target = new Phaser.Math.Vector2(positionVector.x, positionVector.y);
                 // const duration = target.length() / 2;
                 // dlog('duration', duration);
 

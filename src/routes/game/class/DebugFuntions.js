@@ -115,7 +115,6 @@ class DebugFuntions {
     const {
       currentScene,
       userProfile,
-      addressbook,
       createOnlinePlayers,
       allConnectedUsers,
       selectedGameObject,

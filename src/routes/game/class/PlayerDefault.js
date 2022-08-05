@@ -21,7 +21,7 @@ export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
 
     // also detect movementTouch when clicking on player: to detect swipt starting from player
     this.on('pointerdown', () => {
-      ManageSession.playerMove = true;
+      ManageSession.playerIsAllowedToMove = true;
     });
 
     // creating a hit area for a better user experience

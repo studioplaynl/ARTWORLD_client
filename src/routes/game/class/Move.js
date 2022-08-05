@@ -10,6 +10,7 @@ const { Phaser } = window;
 // TODO This should probably all be just static functions
 
 class Move {
+  // checks if we are moving with keyboard arrowKeys
   moveByCursor(scene) {
     if (
       scene.cursors.up.isDown
@@ -23,6 +24,7 @@ class Move {
     }
   }
 
+  // play moving animations
   movingAnimation(scene, animation) {
     if (animation === 'moving') {
       scene.player.anims.play(scene.playerMovingKey, true);
@@ -117,6 +119,20 @@ class Move {
     const scene = ManageSession.currentScene;
     const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
 
+    if (ManageSession.cameraShake) {
+      // camera shake when player walks into bounds of world
+      // (duration, intensity)
+      let shakeIntensity = 0.005;
+      let shakeDuration = 200;
+      // increase the intensity when camera is zoomed out
+      if (scene.gameCam.zoom < 1) {
+        shakeDuration *= 3;
+        shakeIntensity = (shakeIntensity / scene.gameCam.zoom) * 2;
+      }
+      scene.cameras.main.shake(shakeDuration, shakeIntensity);
+    }
+    ManageSession.cameraShake = false;
+
     // send Stop command
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
 
@@ -129,53 +145,6 @@ class Move {
     // play "stop" animation
     this.movingAnimation(scene, 'stop');
     scene.isPlayerMoving = false;
-  }
-
-  checkIfPlayerReachedMoveGoal(scene) {
-    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
-    // function to stop the player when it reached it goal
-
-    //  10 is our distance tolerance, i.e. how close the source can get to the target
-    //  before it is considered as being there. The faster it moves, the more tolerance is required.
-    if (scene.isPlayerMoving) {
-      // calculate distance only when playerIsMovingByClicking
-      scene.distance = Phaser.Math.Distance.Between(
-        scene.player.x,
-        scene.player.y,
-        scene.target.x,
-        scene.target.y,
-      );
-
-      if (scene.distance < scene.distanceTolerance) {
-        if (ManageSession.cameraShake) {
-          // camera shake when player walks into bounds of world
-          // (duration, intensity)
-          let shakeIntensity = 0.005;
-          let shakeDuration = 200;
-          // increase the intensity when camera is zoomed out
-          if (scene.gameCam.zoom < 1) {
-            shakeDuration *= 3;
-            shakeIntensity = (shakeIntensity / scene.gameCam.zoom) * 2;
-          }
-          scene.cameras.main.shake(shakeDuration, shakeIntensity);
-        }
-
-        ManageSession.cameraShake = false;
-        scene.player.body.reset(scene.target.x, scene.target.y);
-        // send Stop command
-        ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
-
-        this.updatePositionHistory(scene); // update the url and historyTracker
-
-        // update last player position in manageSession for when the player is reloaded inbetween scenes
-        ManageSession.playerPosX = Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
-        ManageSession.playerPosY = Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
-
-        // play "stop" animation
-        this.movingAnimation(scene, 'stop');
-        scene.isPlayerMoving = false;
-      }
-    }
   }
 
   updatePositionHistory(scene) {
@@ -191,7 +160,7 @@ class Move {
   }
 
   moveBySwiping(scene) {
-    if (scene.input.activePointer.isDown && !scene.isClicking && ManageSession.playerMove) {
+    if (scene.input.activePointer.isDown && !scene.isClicking && ManageSession.playerIsAllowedToMove) {
       scene.isClicking = true;
     }
     if (!scene.input.activePointer.isDown && scene.isClicking) {
@@ -232,13 +201,74 @@ class Move {
 
       // generalized moving method
       this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed);
-      ManageSession.playerMove = false;
+      ManageSession.playerIsAllowedToMove = false;
       scene.isClicking = false;
     }
   }
 
+  moveByDragging(scene) {
+    if (scene.input.activePointer.isDown && !ManageSession.graffitiDrawing) {
+      ManageSession.playerIsAllowedToMove = true;
+      const pointerCurrentPositionX = scene.input.activePointer.position.x;
+      const pointerCurrentPositionY = scene.input.activePointer.position.y;
+      const pointerPrevPositionX = scene.input.activePointer.prevPosition.x;
+      const pointerPrevPositionY = scene.input.activePointer.prevPosition.y;
+
+      const movementX = pointerCurrentPositionX - pointerPrevPositionX;
+      const movementY = pointerCurrentPositionY - pointerPrevPositionY;
+      // console.log('movementX, movementY', movementX, movementY);
+
+      // drag world
+      scene.player.x -= movementX;
+      scene.player.y -= movementY;
+
+      // // drag player
+      // scene.player.x -= movementX;
+      // scene.player.y -= movementY;
+    }
+    // play "move" animation
+    // play the animation as soon as possible so it is more visible
+    // this.movingAnimation(scene, 'moving');
+
+    // const playerX = scene.player.x;
+    // const playerY = scene.player.y;
+
+
+
+    // let swipeY = scene.input.activePointer.upY - scene.input.activePointer.downY;
+
+    // scene.swipeAmount.x = swipeX;
+    // scene.swipeAmount.y = swipeY;
+
+    // // we scale the travel distance to the zoomlevel
+    // const zoomFactor = scene.gameCam.zoom;
+    // swipeX /= zoomFactor;
+    // swipeY /= zoomFactor;
+
+    // // console.log("swipeX, swipeY", swipeX, swipeY)
+
+    // scene.swipeAmount.x = swipeX;
+    // scene.swipeAmount.y = swipeY;
+
+    // const moveSpeed = scene.swipeAmount.length() * 2;
+
+
+    // // console.log("moveBySwiping moveSpeed", moveSpeed)
+
+    // scene.isPlayerMoving = true; // to stop the player when it reached its destination
+
+    // scene.target.x = playerX + swipeX;
+    // scene.target.y = playerY + swipeY;
+
+    // // generalized moving method
+    // this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed);
+    // ManageSession.playerIsAllowedToMove = false;
+    // scene.isClicking = false;
+  }
+
+
   moveByTapping(scene) {
-    if (!scene.input.activePointer.isDown && ManageSession.playerMove) {
+    if (!scene.input.activePointer.isDown && ManageSession.playerIsAllowedToMove) {
       // doubletap: first time mouse up
       ManageSession.playerClicks = 1;
 
@@ -255,7 +285,7 @@ class Move {
 
           // play "move" animation
           // play the animation as soon as possible so it is more visible
-          this.movingAnimation(scene, 'moving');
+          scene.isPlayerMoving = true; // activate moving animation
 
           const playerX = scene.player.x;
           const playerY = scene.player.y;
@@ -269,13 +299,6 @@ class Move {
 
           const moveSpeed = scene.swipeAmount.length() * 2;
 
-          // console.log("moveByTapping moveSpeed", moveSpeed)
-
-          // we scale the arrival check (distanceTolerance) to the speed of the player
-          scene.distanceTolerance = moveSpeed / 30;
-
-          scene.isPlayerMoving = true; // activate moving animation
-
           // generalized moving method
           // send moveTo over network, calculate speed as function of distance
           this.moveObjectToTarget(
@@ -287,22 +310,20 @@ class Move {
         }
       });
       scene.isClicking = false;
-      ManageSession.playerMove = false;
+      ManageSession.playerIsAllowedToMove = false;
     }
   }
 
   sendMovement(scene) {
-    if (scene.createdPlayer) {
-      // send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
-      // moveTo or Stop
-      ManageSession.sendMoveMessage(
-        scene,
-        scene.player.x,
-        scene.player.y,
-      );
-      // console.log(this.player.x)
-      ManageSession.updateMovementTimer = 0;
-    }
+    // send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
+    // moveTo or Stop
+    ManageSession.sendMoveMessage(
+      scene,
+      scene.player.x,
+      scene.player.y,
+    );
+    // console.log(this.player.x)
+    ManageSession.updateMovementTimer = 0;
   }
 }
 export default new Move();
