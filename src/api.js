@@ -6,13 +6,15 @@ import { client } from './nakama.svelte';
 import {
   Session, Profile, Error, Succes, CurrentApp,
 } from './session';
+import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 
 export let url; // TODO @linjoe Is this required? Maybe should be a store?
-export let user; // What?
+// export let user; // What?
 export async function login(email, _password) {
   setLoader(true);
   const create = false;
-  client.authenticateEmail(email, _password, create)
+  client
+    .authenticateEmail(email, _password, create)
     .then(async (response) => {
       const session = response;
       // console.log("login, after authenticateEmail, session= ",session)
@@ -41,7 +43,7 @@ export const logout = () => {
 
 export async function checkLogin(session) {
   if (session != null) {
-    if ((`${session.expires_at}000`) <= Date.now()) {
+    if (`${session.expires_at}000` <= Date.now()) {
       logout();
       window.location.href = '/#/login';
       window.history.go(0);
@@ -50,10 +52,22 @@ export async function checkLogin(session) {
   }
 }
 
-export async function uploadImage(name, type, img, status, version, displayName) {
-  const [jpegURL, jpegLocation] = await getUploadURL(type, name, 'png', version);
+export async function uploadImage(
+  name,
+  type,
+  img,
+  status,
+  version,
+  displayName,
+) {
+  const [jpegURL, jpegLocation] = await getUploadURL(
+    type,
+    name,
+    'png',
+    version,
+  );
   const value = { url: jpegLocation, version, displayname: displayName };
-  const pub = (status || status === 2);
+  const pub = status || status === 2;
 
   // FIXME: Why are we converting between 2/1 pub status and booleans?
   // if (status || status === 2) {
@@ -90,7 +104,13 @@ export async function updateTitle(collection, key, name, userID) {
   const Object = await getObject(collection, key, uid);
   Object.value.displayname = name;
   if (profile.meta.Role === 'admin' || profile.meta.Role === 'moderator') {
-    await updateObject(collection, key, Object.value, Object.permission_read, userID);
+    await updateObject(
+      collection,
+      key,
+      Object.value,
+      Object.permission_read,
+      userID,
+    );
   } else {
     await updateObject(collection, key, Object.value, Object.permission_read);
   }
@@ -113,7 +133,12 @@ export async function uploadHouse(data) {
 
   const makePublic = true;
 
-  const [jpegURL, jpegLocation] = await getUploadURL('home', 'current', 'png', value.version);
+  const [jpegURL, jpegLocation] = await getUploadURL(
+    'home',
+    'current',
+    'png',
+    value.version,
+  );
 
   await fetch(jpegURL, {
     method: 'PUT',
@@ -147,7 +172,7 @@ export async function getUploadURL(type, name, filetype, version) {
  * @param {any} value     Value (object or string)
  * @param {boolean} pub   Public read permission
  * @param {string} userID User ID
-*/
+ */
 export async function updateObject(type, name, value, pub, userID) {
   Succes.set(null);
 
@@ -159,7 +184,7 @@ export async function updateObject(type, name, value, pub, userID) {
 
   // "2" refers to Public Read permission
   // "1" refers to Owner Write permission
-  const permission = pub ? 2 : 1;
+  const permission = pub ? PERMISSION_READ_PUBLIC : PERMISSION_READ_PRIVATE;
 
   // Value to store
   const storeValue = typeof value === 'string' ? JSON.parse(value) : value;
@@ -174,9 +199,7 @@ export async function updateObject(type, name, value, pub, userID) {
       permission_read: permission,
       // "version": "*"
     };
-    const objectIDs = await client.writeStorageObjects(session, [
-      object,
-    ]);
+    const objectIDs = await client.writeStorageObjects(session, [object]);
     console.info('Stored objects: %o', objectIDs);
     Succes.set(true);
   }
@@ -187,7 +210,7 @@ export async function listObjects(type, userID, lim) {
   const limit = lim || 100;
   // TODO: Figure out why pagination does not work (cors issue?)
   // const offset = page * limit || null;
-  const objects = await client.listStorageObjects(session, type, userID, limit);// , offset);
+  const objects = await client.listStorageObjects(session, type, userID, limit); // , offset);
   // console.log('listObjects result: ', objects);
   return objects.objects;
 }
@@ -197,11 +220,13 @@ export async function getObject(collection, key, userID) {
   const user_id = userID || session.user_id;
 
   const objects = await client.readStorageObjects(session, {
-    object_ids: [{
-      collection,
-      key,
-      user_id,
-    }],
+    object_ids: [
+      {
+        collection,
+        key,
+        user_id,
+      },
+    ],
   });
   return objects.objects[0];
 }
@@ -233,7 +258,9 @@ export async function getAccount(id) {
 
     const users = await client.getUsers(session, [id]);
     user = users.users[0];
-    user.meta = typeof user.metadata === 'string' ? JSON.parse(user.metadata) : user.metadata;
+    user.meta = typeof user.metadata === 'string'
+      ? JSON.parse(user.metadata)
+      : user.metadata;
     user.url = await convertImage(user.avatar_url, '128', '1000', 'png');
   }
 
@@ -259,7 +286,11 @@ export async function getFullAccount(id) {
 export async function setFullAccount(id, username, password, email, metadata) {
   const session = get(Session);
   const payload = {
-    id, username, password, email, metadata,
+    id,
+    username,
+    password,
+    email,
+    metadata,
   };
   const rpcid = 'set_full_account';
   const user = await client.rpc(session, rpcid, payload);
@@ -291,7 +322,8 @@ export async function getFile(file_url) {
   const payload = { url: file_url };
   let url;
   const rpcid = 'download_file';
-  await client.rpc(session, rpcid, payload)
+  await client
+    .rpc(session, rpcid, payload)
     .then((fileurl) => {
       url = fileurl.payload.url;
       // console.log("url")
@@ -305,12 +337,17 @@ export async function getFile(file_url) {
   return url;
 }
 
-export async function uploadAvatar(data, json) {
+export async function uploadAvatar(data) {
   const profile = get(Profile);
   setLoader(true);
   let avatarVersion = Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
   if (!avatarVersion) avatarVersion = 0;
-  const [jpegURL, jpegLocation] = await getUploadURL('avatar', 'current', 'png', avatarVersion);
+  const [jpegURL, jpegLocation] = await getUploadURL(
+    'avatar',
+    'current',
+    'png',
+    avatarVersion,
+  );
   console.log(jpegURL);
 
   await fetch(jpegURL, {
@@ -341,28 +378,32 @@ export async function deleteFile(type, file, user) {
   const payload = { type, name: file, user };
   const session = get(Session);
   const rpcid = 'delete_file';
-  const fileurl = await client.rpc(session, rpcid, payload)
-    .catch((e) => { throw e; });
+  const fileurl = await client.rpc(session, rpcid, payload).catch((e) => {
+    throw e;
+  });
   Succes.set(true);
 }
 
 export async function addFriend(id, usernames) {
   const session = get(Session);
-  if (typeof id === 'string') {
-    if (id) {
-      id = [id];
+  let friends = usernames;
+  let user_id = id;
+  if (typeof user_id === 'string') {
+    if (user_id) {
+      user_id = [user_id];
     } else {
-      id = undefined;
+      user_id = undefined;
     }
   }
-  if (typeof usernames === 'string') {
-    if (usernames) {
-      usernames = [usernames];
+  if (typeof friends === 'string') {
+    if (friends) {
+      friends = [friends];
     } else {
-      usernames = undefined;
+      friends = undefined;
     }
   }
-  await client.addFriends(session, id, usernames)
+  await client
+    .addFriends(session, user_id, friends)
     .then((status) => {
       Succes.set(true);
     })
@@ -372,22 +413,26 @@ export async function addFriend(id, usernames) {
 }
 
 export async function removeFriend(id, usernames) {
+  let friends = usernames;
+  let user_id = id;
+
   const session = get(Session);
-  if (typeof id === 'string') {
-    if (id) {
-      id = [id];
+  if (typeof user_id === 'string') {
+    if (user_id) {
+      user_id = [user_id];
     } else {
-      id = undefined;
+      user_id = undefined;
     }
   }
-  if (typeof usernames === 'string') {
-    if (username) {
-      usernames = [usernames];
+  if (typeof friends === 'string') {
+    if (friends) {
+      friends = [friends];
     } else {
-      usernames = undefined;
+      friends = undefined;
     }
   }
-  await client.deleteFriends(session, id, usernames)
+  await client
+    .deleteFriends(session, user_id, friends)
     .then((status) => {
       Succes.set(true);
     })
@@ -421,10 +466,12 @@ export async function ListAllArt(page, ammount) {
 export async function deleteObject(collection, key) {
   const session = get(Session);
   await client.deleteStorageObjects(session, {
-    object_ids: [{
-      collection,
-      key,
-    }],
+    object_ids: [
+      {
+        collection,
+        key,
+      },
+    ],
   });
   console.info('Deleted objects.');
   Succes.set(true);
@@ -437,12 +484,16 @@ export async function deleteObject(collection, key) {
  * @param {string} name   Unique ID of object (Nakama: key)
  * @param {any} value     Value (object or string)
  * @param {number} pub    Permissions (read/write)
-*/
+ */
 export async function updateObjectAdmin(id, type, name, value, pub) {
   const session = get(Session);
   const storeValue = typeof value === 'object' ? JSON.stringify(value) : value;
   const payload = {
-    id, type, name, storeValue, pub,
+    id,
+    type,
+    name,
+    storeValue,
+    pub,
   };
 
   const rpcid = 'create_object_admin';
@@ -478,7 +529,10 @@ export async function deleteObjectAdmin(id, type, name) {
 export async function convertImage(path, height, width, format) {
   const session = get(Session);
   const payload = {
-    path, height, width, format,
+    path,
+    height,
+    width,
+    format,
   };
   const rpcid = 'convert_image';
   const user = await client.rpc(session, rpcid, payload);
@@ -528,4 +582,17 @@ export function setLoader(state) {
   } else {
     document.getElementById('loader').classList.add('hide');
   }
+}
+
+export async function getRandomName() {
+  let value;
+  await fetch('/assets/woordenlijst.json')
+    .then((res) => res.json())
+    .then((out) => {
+      const dier = out.dier[Math.floor(Math.random() * out.dier.length)];
+      const kleur = out.kleur[Math.floor(Math.random() * out.kleur.length)];
+      value = kleur + dier;
+    })
+    .catch((err) => dlog(err));
+  return value;
 }

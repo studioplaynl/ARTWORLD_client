@@ -6,6 +6,7 @@
   export let invalidTitle = true;
   export let value;
   export let isTitleChanged = false;
+  export let id = 'title';
 
   onMount(async () => {
     const url = '/assets/woordenlijst.json';
@@ -30,7 +31,7 @@
   }
 </script>
 
-<input type="text" bind:value on:keyup="{ifValid}" id="title" />
+<input type="text" bind:value on:keyup="{ifValid}" id="{id}" />
 {#if invalidTitle}
   <p style="color: red">No special characters</p>
 {/if}

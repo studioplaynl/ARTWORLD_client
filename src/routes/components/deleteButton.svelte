@@ -1,35 +1,21 @@
 <script>
   import { Modal, Dialog, Button } from 'attractions';
-  import { updateObject, deleteFile, deleteObjectAdmin } from '../../api';
+  import { ArtworksStore } from '../../storage';
   import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
-  import { dlog } from '../game/helpers/DebugLog';
 
   export let row;
-  export let removeFromTrash;
-  export let moveToTrash;
   export let isCurrentUser;
 
   let modalOpen = false;
 
   const Trash = () => {
-    const { value } = row;
-    value.status = OBJECT_STATE_IN_TRASH;
-    const pub = false;
-    updateObject(row.collection, row.key, value, pub, row.user_id);
-    moveToTrash(row.key);
+    ArtworksStore.updateState(row, OBJECT_STATE_IN_TRASH);
   };
 
   const Delete = () => {
     modalOpen = false;
-    if ($Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator') {
-      dlog('admin');
-      deleteObjectAdmin(row.user_id, row.collection, row.key);
-    } else {
-      deleteFile(row.collection, row.key, row.user_id);
-    }
-    removeFromTrash(row.key);
-    dlog('deleted');
+    ArtworksStore.delete(row, $Profile.meta.Role);
   };
 </script>
 

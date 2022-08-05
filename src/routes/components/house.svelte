@@ -57,7 +57,11 @@
 
   onMount(async () => {
     try {
-      houseUrl = await getObject('home', $Profile.meta.Azc, $Profile.user_id);
+      houseUrl = await getObject(
+        'home',
+        $Profile.meta.Azc || 'Amsterdam',
+        $Profile.user_id,
+      );
     } catch (err) {
       dlog(err); // TypeError: failed to fetch
     }
