@@ -5,7 +5,6 @@
   import { fabric } from 'fabric/dist/fabric';
   import {
     uploadImage,
-    // user,
     uploadAvatar,
     uploadHouse,
     getObject,
@@ -15,12 +14,12 @@
     getFile,
     getRandomName,
   } from '../../api';
-
   import { Session, Profile } from '../../session';
-
   import NameGenerator from '../components/nameGenerator.svelte';
   import Avatar from '../components/avatar.svelte';
   import ManageSession from '../game/ManageSession';
+
+  export let appType = $location.split('/')[1];
 
   const imageResolution = 2048;
 
@@ -36,7 +35,7 @@
   let invalidTitle = true;
   const history = [];
 
-  let canv;
+  let canvasEl;
   let drawingClipboard;
   let drawingColorEl;
 
@@ -49,24 +48,20 @@
   let canvas;
 
   let lineWidth = 25;
-  let json;
   let drawingColor = '#000000';
-  const shadowOffset = 0;
-  const shadowColor = '#ffffff';
-  const shadowWidth = 0;
+
+  /** Title of artwork on the server */
   let title;
-  let answer;
+  if (params.name) title = params.name;
+
   let showBackground = true;
   let fillColor = '#f00';
   const fillTolerance = 2;
   let current = 'draw';
-  if (params.name) title = params.name;
-  const saved = false;
+
   let saveToggle = false;
   let savedURL = '';
-  const colorToggle = true;
-  // const statussen = [true, false];
-  export let appType = $location.split('/')[1];
+
   let version = 0;
   let optionbox = true;
 
@@ -76,6 +71,8 @@
   let isPreexistingArt = false;
   let isAlreadyUploaded = false;
   let isTitleChanged = false;
+
+  let autosaveInterval;
 
   let applyBrush; // declaring the variable to be available globally, onMount assinging a function to it
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
@@ -176,8 +173,8 @@
 
   onMount(() => {
     setLoader(true);
-    const autosave = setInterval(() => {
-      if (!saved) {
+    autosaveInterval = setInterval(() => {
+      if (isDrawn || isTitleChanged) {
         const data = {};
         data.type = appType;
         data.name = title;
@@ -188,11 +185,12 @@
         //   data.frames = frames;
         // }
         localStorage.setItem('Drawing', JSON.stringify(data));
+        // saved = true;
         console.log('stored in localstorage');
       }
     }, 20000);
     cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
-    canvas = new fabric.Canvas(canv, {
+    canvas = new fabric.Canvas(canvasEl, {
       isDrawingMode: true,
     });
 
@@ -654,6 +652,8 @@
     if (!isAlreadyUploaded || isTitleChanged) {
       upload();
     }
+
+    clearInterval(autosaveInterval);
   });
 
   async function download() {
@@ -1117,18 +1117,11 @@
     setTimeout(async () => {
       let Image = saveCanvas.toDataURL('image/png', 1);
       const blobData = dataURItoBlob(Image);
-      json = JSON.stringify(frames);
-      Image = await uploadAvatar(blobData, json, version);
+      Image = await uploadAvatar(blobData);
     }, 5000);
   }
 
   async function createStopmotion() {
-    console.log('111');
-    // console.log("saved");
-    json = JSON.stringify(frames);
-    // console.log("json", json);
-    // var blobData = dataURItoBlob(frames);
-    // uploadImage(title, appType, json, blobData, status);
     const size = imageResolution;
     saveCanvas.setHeight(size);
     saveCanvas.setWidth(size * frames.length);
@@ -1479,8 +1472,8 @@
 <main on:mouseup="{mouseEvent}">
   <div class="main-container">
     <div class="canvas-frame-container">
-      <div class="canvas-box" class:hidden="{current === 'camera'}">
-        <canvas bind:this="{canv}" class="canvas"></canvas>
+      <div class="canvas-box">
+        <canvas bind:this="{canvasEl}" class="canvas"></canvas>
         <canvas bind:this="{cursorCanvasEl}" id="cursor"></canvas>
       </div>
       <div class="saveCanvas">
@@ -1779,14 +1772,7 @@
         <a id="select-mode" class:currentSelected="{current === 'select'}"
           ><img class="icon" src="assets/SHB/svg/AW-icon-pointer.svg" /></a
         >
-        {#if 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices}
-          <button
-            class="icon"
-            id="camera-mode"
-            class:currentSelected="{current == 'camera'}"
-            on:click="{camera}">CAMERA</button
-          >
-        {/if}
+
         <!-- <button id="clear-canvas" class="btn btn-info icon">
         <TrashIcon />
       </button> -->

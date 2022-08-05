@@ -337,7 +337,7 @@ export async function getFile(file_url) {
   return url;
 }
 
-export async function uploadAvatar(data, json) {
+export async function uploadAvatar(data) {
   const profile = get(Profile);
   setLoader(true);
   let avatarVersion = Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
