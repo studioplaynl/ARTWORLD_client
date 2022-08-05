@@ -1,7 +1,7 @@
 <script>
-  import { fabric } from "./fabric";
-  import { location, replace } from "svelte-spa-router";
-  import { onMount, beforeUpdate, onDestroy } from "svelte";
+  import { fabric } from './fabric';
+  import { location, replace } from 'svelte-spa-router';
+  import { onMount, beforeUpdate, onDestroy } from 'svelte';
   import {
     uploadImage,
     user,
@@ -12,19 +12,20 @@
     convertImage,
     updateObject,
     getFile,
-  } from "../../api.js";
-  import { client } from "../../nakama.svelte";
-  import { Session, Profile, Tutorial } from "../../session.js";
-  import { Achievements } from "../../storage";
-  import NameGenerator from "../components/nameGenerator.svelte";
-  import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
-  import Avatar from "../components/avatar.svelte";
-  import ManageSession from "../game/ManageSession";
+    getRandomName,
+  } from '../../api.js';
+  import { client } from '../../nakama.svelte';
+  import { Session, Profile, Tutorial } from '../../session.js';
+  import { Achievements } from '../../storage';
+  import NameGenerator from '../components/nameGenerator.svelte';
+  import MouseIcon from 'svelte-icons/fa/FaMousePointer.svelte';
+  import Avatar from '../components/avatar.svelte';
+  import ManageSession from '../game/ManageSession';
 
   let imageResolution = 2048;
 
   let scaleRatio, lastImg, lastValue, lastWidth;
-  let params = { user: $location.split("/")[2], name: $location.split("/")[3] };
+  let params = { user: $location.split('/')[2], name: $location.split('/')[3] };
   let invalidTitle = true;
   let history = [],
     historyCurrent;
@@ -36,23 +37,23 @@
     video,
     lineWidth = 25;
   let json,
-    drawingColor = "#000000";
+    drawingColor = '#000000';
   let shadowOffset = 0,
-    shadowColor = "#ffffff",
+    shadowColor = '#ffffff',
     shadowWidth = 0;
   let title,
     answer,
     showBackground = true;
-  let fillColor = "#f00",
+  let fillColor = '#f00',
     fillTolerance = 2;
-  let current = "draw";
+  let current = 'draw';
   if (!!params.name) title = params.name;
   let saved = false,
     saveToggle = false,
-    savedURL = "",
+    savedURL = '',
     colorToggle = true;
   // const statussen = [true, false];
-  export let appType = $location.split("/")[1];
+  export let appType = $location.split('/')[1];
   let version = 0;
   let optionbox = true;
 
@@ -64,26 +65,26 @@
   let isTitleChanged = false;
 
   let applyBrush; // declaring the variable to be available globally, onMount assinging a function to it
-  let selectedBrush = "Pencil"; // by default the Pencil is chosen
+  let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
   let Object = {};
 
   let FrameObject = {
-    type: "image",
-    version: "4.6.0",
-    originX: "left",
-    originY: "top",
+    type: 'image',
+    version: '4.6.0',
+    originX: 'left',
+    originY: 'top',
     left: -imageResolution,
     top: 0,
     width: 0,
     height: imageResolution,
-    fill: "rgb(0,0,0)",
+    fill: 'rgb(0,0,0)',
     stroke: null,
     strokeWidth: 0,
     strokeDashArray: null,
-    strokeLineCap: "butt",
+    strokeLineCap: 'butt',
     strokeDashOffset: 0,
-    strokeLineJoin: "miter",
+    strokeLineJoin: 'miter',
     strokeUniform: false,
     strokeMiterLimit: 4,
     scaleX: 1,
@@ -94,17 +95,17 @@
     opacity: 1,
     shadow: null,
     visible: true,
-    backgroundColor: "",
-    fillRule: "nonzero",
-    paintFirst: "fill",
-    globalCompositeOperation: "source-over",
+    backgroundColor: '',
+    fillRule: 'nonzero',
+    paintFirst: 'fill',
+    globalCompositeOperation: 'source-over',
     skewX: 0,
     skewY: 0,
     erasable: true,
     cropX: 0,
     cropY: 0,
-    src: "",
-    crossOrigin: "anonymous",
+    src: '',
+    crossOrigin: 'anonymous',
     filters: [],
   };
 
@@ -115,7 +116,9 @@
   function adaptCanvasSize() {
     // the canvas size is set by the least of two (width / height)
     const canvasSize =
-      window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth;
+      window.innerWidth > window.innerHeight
+        ? window.innerHeight
+        : window.innerWidth;
 
     // setting default width and height
     canvas.setWidth(canvasSize);
@@ -152,7 +155,7 @@
     // for correct and adapted scaling of the preexisting artworks
     scaleRatio = Math.min(
       canvas.width / imageResolution,
-      canvas.width / imageResolution
+      canvas.width / imageResolution,
     );
     cursor.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
@@ -165,14 +168,14 @@
         let data = {};
         data.type = appType;
         data.name = title;
-        if (appType == "drawing" || appType == "house") {
-          data.drawing = canvas.toDataURL("image/png", 1);
+        if (appType == 'drawing' || appType == 'house') {
+          data.drawing = canvas.toDataURL('image/png', 1);
         }
         // if (appType == "stopmotion" || appType == "avatar") {
         //   data.frames = frames;
         // }
-        localStorage.setItem("Drawing", JSON.stringify(data));
-        console.log("stored in localstorage");
+        localStorage.setItem('Drawing', JSON.stringify(data));
+        console.log('stored in localstorage');
       }
     }, 20000);
     cursor = new fabric.StaticCanvas(Cursor);
@@ -189,23 +192,26 @@
     savecanvas = new fabric.Canvas(saveCanvas, {
       isDrawingMode: true,
     });
-
-    getImage();
+    if (typeof params.name !== 'undefined') {
+      getImage();
+    } else {
+      createURL();
+    }
     setLoader(false);
 
     fabric.Object.prototype.transparentCorners = false;
 
-    var drawingModeEl = fab("drawing-mode"),
-      selectModeEl = fab("select-mode"),
+    var drawingModeEl = fab('drawing-mode'),
+      selectModeEl = fab('select-mode'),
       //fillModeEl = fab("fill-mode"),
-      drawingOptionsEl = fab("drawing-mode-options"),
-      eraseModeEl = fab("erase-mode"),
-      drawingColorEl = fab("drawing-color"),
+      drawingOptionsEl = fab('drawing-mode-options'),
+      eraseModeEl = fab('erase-mode'),
+      drawingColorEl = fab('drawing-color'),
       //drawingShadowColorEl = fab("drawing-shadow-color"),
-      drawingLineWidthEl = fab("drawing-line-width"),
+      drawingLineWidthEl = fab('drawing-line-width'),
       //drawingShadowWidth = fab("drawing-shadow-width"),
       //drawingShadowOffset = fab("drawing-shadow-offset");
-      clearEl = fab("clear-canvas");
+      clearEl = fab('clear-canvas');
 
     clearEl.onclick = function () {
       // if anything is drawn on the canvas and it has not been uploaded,
@@ -215,12 +221,12 @@
         isDrawn = false;
       }
       canvas.clear();
-      localStorage.setItem("Drawing", "");
+      localStorage.setItem('Drawing', '');
     };
 
     drawingModeEl.onclick = function () {
       // console.log("mouse is down");
-      switchOption("draw");
+      switchOption('draw');
       canvas.isDrawingMode = true;
       console.log(drawingColor);
       floodFill(false);
@@ -228,7 +234,7 @@
 
     selectModeEl.onclick = function () {
       canvas.isDrawingMode = false;
-      switchOption("select");
+      switchOption('select');
       floodFill(false);
     };
 
@@ -241,18 +247,19 @@
       // erase functie kapot? recompile: http://fabricjs.com/build/
       var eraseBrush = new fabric.EraserBrush(canvas);
       canvas.freeDrawingBrush = eraseBrush;
-      canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+      canvas.freeDrawingBrush.width =
+        parseInt(drawingLineWidthEl.value, 10) || 1;
       canvas.isDrawingMode = true;
-      switchOption("erase");
+      switchOption('erase');
       floodFill(false);
     };
 
     if (fabric.PatternBrush) {
       var vLinePatternBrush = new fabric.PatternBrush(canvas);
       vLinePatternBrush.getPatternSrc = function () {
-        var patternCanvas = fabric.document.createElement("canvas");
+        var patternCanvas = fabric.document.createElement('canvas');
         patternCanvas.width = patternCanvas.height = 10;
-        var ctx = patternCanvas.getContext("2d");
+        var ctx = patternCanvas.getContext('2d');
 
         ctx.strokeStyle = this.color;
         ctx.lineWidth = lineWidth;
@@ -267,9 +274,9 @@
 
       var hLinePatternBrush = new fabric.PatternBrush(canvas);
       hLinePatternBrush.getPatternSrc = function () {
-        var patternCanvas = fabric.document.createElement("canvas");
+        var patternCanvas = fabric.document.createElement('canvas');
         patternCanvas.width = patternCanvas.height = 10;
-        var ctx = patternCanvas.getContext("2d");
+        var ctx = patternCanvas.getContext('2d');
 
         ctx.strokeStyle = this.color;
         ctx.lineWidth = lineWidth;
@@ -287,9 +294,10 @@
         var squareWidth = 10,
           squareDistance = 2;
 
-        var patternCanvas = fabric.document.createElement("canvas");
-        patternCanvas.width = patternCanvas.height = squareWidth + squareDistance;
-        var ctx = patternCanvas.getContext("2d");
+        var patternCanvas = fabric.document.createElement('canvas');
+        patternCanvas.width = patternCanvas.height =
+          squareWidth + squareDistance;
+        var ctx = patternCanvas.getContext('2d');
 
         ctx.fillStyle = this.color;
         ctx.fillRect(0, 0, squareWidth, squareWidth);
@@ -301,7 +309,7 @@
       diamondPatternBrush.getPatternSrc = function () {
         var squareWidth = 10,
           squareDistance = 5;
-        var patternCanvas = fabric.document.createElement("canvas");
+        var patternCanvas = fabric.document.createElement('canvas');
         var rect = new fabric.Rect({
           width: squareWidth,
           height: squareWidth,
@@ -311,10 +319,11 @@
 
         var canvasWidth = rect.getBoundingRect().width;
 
-        patternCanvas.width = patternCanvas.height = canvasWidth + squareDistance;
+        patternCanvas.width = patternCanvas.height =
+          canvasWidth + squareDistance;
         rect.set({ left: canvasWidth / 2, top: canvasWidth / 2 });
 
-        var ctx = patternCanvas.getContext("2d");
+        var ctx = patternCanvas.getContext('2d');
         rect.render(ctx);
 
         return patternCanvas;
@@ -386,7 +395,8 @@
     if (canvas.freeDrawingBrush) {
       canvas.freeDrawingBrush.color = drawingColorEl.value;
       // canvas.freeDrawingBrush.source = canvas.freeDrawingBrush.getPatternSrc.call(this);
-      canvas.freeDrawingBrush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+      canvas.freeDrawingBrush.width =
+        parseInt(drawingLineWidthEl.value, 10) || 1;
       // canvas.freeDrawingBrush.shadow = new fabric.Shadow({
       //   blur: parseInt(drawingShadowWidth.value, 10) || 0,
       //   offsetX: 0,
@@ -397,7 +407,7 @@
     }
     console.log(params);
 
-    canvas.on("mouse:up", function () {
+    canvas.on('mouse:up', function () {
       // once there is anything is drawn on the canvas
       isDrawn = true;
       isPreexistingArt = false;
@@ -415,18 +425,21 @@
       left: -100,
       top: -100,
       radius: canvas.freeDrawingBrush.width / 2,
-      fill: "rgba(0,0,0," + cursorOpacity + ")",
-      stroke: "black",
-      originX: "center",
-      originY: "center",
+      fill: 'rgba(0,0,0,' + cursorOpacity + ')',
+      stroke: 'black',
+      originX: 'center',
+      originY: 'center',
     });
 
     cursor.add(mousecursor);
 
     //redraw cursor on new mouse position when moved
-    canvas.on("mouse:move", function (evt) {
-      if (current == "select")
-        return mousecursor.set({ top: -100, left: -100 }).setCoords().canvas.renderAll();
+    canvas.on('mouse:move', function (evt) {
+      if (current == 'select')
+        return mousecursor
+          .set({ top: -100, left: -100 })
+          .setCoords()
+          .canvas.renderAll();
       var mouse = this.getPointer(evt.e);
       mousecursor
         .set({
@@ -438,10 +451,10 @@
     });
 
     //while brush size is changed show cursor in center of canvas
-    document.getElementById("drawing-line-width").oninput = () => {
+    document.getElementById('drawing-line-width').oninput = () => {
       changeBrushSize();
     };
-    document.getElementById("erase-line-width").oninput = () => {
+    document.getElementById('erase-line-width').oninput = () => {
       changeBrushSize();
     };
 
@@ -461,9 +474,9 @@
 
     //change drawing color
     drawingColorEl.onchange = function () {
-      console.log("color");
+      console.log('color');
       canvas.freeDrawingBrush.color = this.value;
-      var bigint = parseInt(this.value.replace("#", ""), 16);
+      var bigint = parseInt(this.value.replace('#', ''), 16);
       var r = (bigint >> 16) & 255;
       var g = (bigint >> 8) & 255;
       var b = bigint & 255;
@@ -471,7 +484,7 @@
 
       mousecursor
         .set({
-          fill: "rgba(" + [r, g, b, cursorOpacity].join(",") + ")",
+          fill: 'rgba(' + [r, g, b, cursorOpacity].join(',') + ')',
         })
         .canvas.renderAll();
     };
@@ -479,17 +492,20 @@
     //////////////// mouse circle ////////////////////////////
 
     //////////////// drawing challenge ////////////////////////
-    if (appType == "drawingchallenge") {
+    if (appType == 'drawingchallenge') {
       // each mouse-up event sends the drawing
-      canvas.on("mouse:up", () => {
+      canvas.on('mouse:up', () => {
         // get the drawing from the canvas in the format of SVG
         const canvasData = canvas.toSVG();
 
         // convert SVG into the HTML format in order to be able to manipulate inner data
-        const parsedSVG = new DOMParser().parseFromString(canvasData, "text/html");
+        const parsedSVG = new DOMParser().parseFromString(
+          canvasData,
+          'text/html',
+        );
 
         // all <g> tags contain drawing action
-        const gTagElement = parsedSVG.getElementsByTagName("g");
+        const gTagElement = parsedSVG.getElementsByTagName('g');
 
         // loop through <g> tags, remove all previous drawings and leave only the last one
         for (let i = gTagElement.length - 2; i >= 0; --i) {
@@ -500,18 +516,18 @@
         const positionObject = canvas.toJSON().objects;
 
         // needed SVG is stored inside of body which we want to send only
-        const body = parsedSVG.getElementsByTagName("BODY")[0].innerHTML;
+        const body = parsedSVG.getElementsByTagName('BODY')[0].innerHTML;
 
         // all data to send
-        const location = "drawingchallenge";
+        const location = 'drawingchallenge';
         const JSONToSend = `{ "action": ${JSON.stringify(
-          body
+          body,
         )}, "location": "${location}", "posX": ${
           positionObject[positionObject.length - 1].left
         }, "posY": ${positionObject[positionObject.length - 1].top}}`;
 
         // send data
-        ManageSession.socket.rpc("move_position", JSONToSend);
+        ManageSession.socket.rpc('move_position', JSONToSend);
       });
 
       // listening to the stream to get actions of other person's drawing
@@ -522,7 +538,7 @@
           // apply drawings to the canvas if only it is received from other participant
           fabric.loadSVGFromString(data.action, function (objects) {
             objects.forEach(function (svg) {
-              console.log("svg", svg);
+              console.log('svg', svg);
               svg.set({
                 scaleX: 1,
                 scaleY: 1,
@@ -533,7 +549,7 @@
             });
           });
         } else {
-          console.log("The same user!");
+          console.log('The same user!');
         }
       };
     }
@@ -542,8 +558,8 @@
     adaptCanvasSize();
 
     applyBrush = (brushType) => {
-      if (typeof brushType == "string") selectedBrush = brushType;
-      canvas.freeDrawingBrush = new fabric[selectedBrush + "Brush"](canvas);
+      if (typeof brushType == 'string') selectedBrush = brushType;
+      canvas.freeDrawingBrush = new fabric[selectedBrush + 'Brush'](canvas);
       if (canvas.freeDrawingBrush) {
         var brush = canvas.freeDrawingBrush;
         brush.color = drawingColorEl.value;
@@ -575,11 +591,11 @@
       version = version + 1; // with every new update of the artwork, it is version gets +1
 
       setLoader(true);
-      if (appType == "drawing") {
-        var Image = canvas.toDataURL("image/png", 1);
+      if (appType == 'drawing') {
+        var Image = canvas.toDataURL('image/png', 1);
         var blobData = dataURItoBlob(Image);
         if (!!!title) {
-          title = Date.now() + "_" + displayName;
+          title = Date.now() + '_' + displayName;
         }
         // replace(`${$location}/${$Session.user_id}/${displayName}`);
         await uploadImage(
@@ -588,7 +604,7 @@
           blobData,
           status,
           version,
-          displayName
+          displayName,
         ).then((url) => {
           // in every appType we assign url to the savedURL variable, it is needed for downloading
           // by default savedURL equals ""
@@ -596,19 +612,19 @@
           setLoader(false);
         });
       }
-      if (appType == "house") {
-        var Image = canvas.toDataURL("image/png", 1);
+      if (appType == 'house') {
+        var Image = canvas.toDataURL('image/png', 1);
         var blobData = dataURItoBlob(Image);
         await uploadHouse(blobData).then((response) => {
           savedURL = response;
         });
         setLoader(false);
       }
-      if (appType == "stopmotion") {
+      if (appType == 'stopmotion') {
         await createStopmotion();
         setLoader(false);
       }
-      if (appType == "avatar") {
+      if (appType == 'avatar') {
         createAvatar().then((resp) => {
           setLoader(false);
         });
@@ -643,7 +659,7 @@
       if (!isAlreadyUploaded) {
         await upload();
       }
-      if (appType == "stopmotion") {
+      if (appType == 'stopmotion') {
         // the stopmotion function is not awaiting properly, a further investigation is needed (!)
         // once fixed, there is no need to use setTimeout
         setTimeout(async () => {
@@ -662,22 +678,22 @@
     frames[currentFrame] = canvas.toJSON();
     frames = frames;
 
-    backgroundFrames[currentFrame] = canvas.toDataURL("image/png", 1);
+    backgroundFrames[currentFrame] = canvas.toDataURL('image/png', 1);
     backgroundFrames = backgroundFrames;
   };
 
   const getImage = async () => {
-    let localStore = JSON.parse(localStorage.getItem("Drawing"));
+    let localStore = JSON.parse(localStorage.getItem('Drawing'));
     if (!!localStore) {
       console.log(localStore);
-      console.log("store " + localStore.name);
-      console.log("param " + params.name);
-      if (localStore.name == params.name && typeof params.name != "undefined") {
+      console.log('store ' + localStore.name);
+      console.log('param ' + params.name);
+      if (localStore.name == params.name && typeof params.name != 'undefined') {
         console.log(localStore.type);
         // isDrawn = true;
         // console.log("localstorage isDrawn", isDrawn);
-        if (localStore.type == "drawing") {
-          console.log("test");
+        if (localStore.type == 'drawing') {
+          console.log('test');
           // canvas.loadFromJSON(
           //   localStore.drawing,
           //   canvas.renderAll.bind(canvas)
@@ -690,7 +706,7 @@
               oImg.scaleToWidth(imageResolution);
               canvas.add(oImg);
             },
-            { crossOrigin: "anonymous" }
+            { crossOrigin: 'anonymous' },
           );
         }
 
@@ -704,19 +720,19 @@
       }
     }
 
-    if (!!!params.name && (appType == "stopmotion" || appType == "drawing"))
+    if (!!!params.name && (appType == 'stopmotion' || appType == 'drawing'))
       return setLoader(false);
-    console.log("appType", appType);
+    console.log('appType', appType);
     // get images
-    if (appType == "avatar") {
-      lastImg = await getFile($Profile.avatar_url, "imageResolution", "10000");
+    if (appType == 'avatar') {
+      lastImg = await getFile($Profile.avatar_url, 'imageResolution', '10000');
       isPreexistingArt = true;
-    } else if (appType == "house") {
-      let Object = await getObject("home", $Profile.meta.Azc, $Profile.user_id);
+    } else if (appType == 'house') {
+      let Object = await getObject('home', $Profile.meta.Azc, $Profile.user_id);
       lastImg = await getFile(
         Object.value.url,
-        "imageResolution",
-        "imageResolution"
+        'imageResolution',
+        'imageResolution',
       );
       lastValue = Object.value;
       title = Object.key;
@@ -724,25 +740,25 @@
       isPreexistingArt = true;
     } else {
       Object = await getObject(appType, params.name, params.user);
-      console.log("object", Object);
+      console.log('object', Object);
       displayName = Object.value.displayname;
       title = Object.key;
       status = Object.permission_read == 2 ? true : false;
-      console.log("status in getImage", status);
+      console.log('status in getImage', status);
       version = Object.value.version;
-      console.log("displayName", displayName);
+      console.log('displayName', displayName);
       lastImg = await getFile(Object.value.url);
       isPreexistingArt = true;
     }
     // put images on canvas
-    if (appType == "avatar" || appType == "stopmotion") {
-      console.log("avatar");
+    if (appType == 'avatar' || appType == 'stopmotion') {
+      console.log('avatar');
       let frameAmount;
       var framebuffer = new Image();
       framebuffer.src = lastImg;
       framebuffer.height = imageResolution;
       framebuffer.onload = function () {
-        console.log("img", this.width);
+        console.log('img', this.width);
         lastWidth = this.width;
         frameAmount = lastWidth / imageResolution;
 
@@ -762,12 +778,12 @@
           // };
           // FrameObject.setCoords();
           frames.push({
-            version: "4.6.0",
+            version: '4.6.0',
             objects: [{ ...FrameObject }],
           });
         }
         frames = frames;
-        console.log("frames", frames);
+        console.log('frames', frames);
         currentFrame = 0;
         canvas.loadFromJSON(frames[0], function (oImg) {
           canvas.renderAll.bind(canvas);
@@ -779,7 +795,7 @@
         });
       };
     }
-    if (appType == "drawing" || appType == "house") {
+    if (appType == 'drawing' || appType == 'house') {
       fabric.Image.fromURL(
         lastImg,
         function (oImg) {
@@ -788,26 +804,27 @@
           oImg.scaleToWidth(imageResolution);
           canvas.add(oImg);
         },
-        { crossOrigin: "anonymous" }
+        { crossOrigin: 'anonymous' },
       );
-    }
-
-    if (!!!params.user) {
-      console.log(window.location.pathname);
-      replace("/" + appType + "/" + $Session.user_id + "/" + displayName);
     }
 
     setLoader(false);
   };
 
   function dataURItoBlob(dataURI) {
-    var binary = atob(dataURI.split(",")[1]);
+    var binary = atob(dataURI.split(',')[1]);
     var array = [];
     for (var i = 0; i < binary.length; i++) {
       array.push(binary.charCodeAt(i));
     }
-    return new Blob([new Uint8Array(array)], { type: "image/png" });
+    return new Blob([new Uint8Array(array)], { type: 'image/png' });
   }
+
+  const createURL = async () => {
+    displayName = await getRandomName();
+    console.log("displayname", displayName);
+    replace(`/${appType}/${$Session.user_id}/${displayName}`);
+  };
 
   async function getDataUrl(img) {
     //  // Set width and height
@@ -819,7 +836,7 @@
 
     // Create canvas
     let image;
-    console.log("img", img);
+    console.log('img', img);
     await fabric.Image.fromURL(img, function (oImg) {
       oImg.set({ left: 0, top: 0 });
       oImg.scaleToHeight(imageResolution);
@@ -828,7 +845,7 @@
       console.log(canvas);
       savecanvas.add(oImg);
     });
-    image = savecanvas.toDataURL("image/png", 1);
+    image = savecanvas.toDataURL('image/png', 1);
     return image;
   }
 
@@ -907,7 +924,7 @@
   }
 
   const changeFrame = (newFrame) => {
-    console.log("newFrame", newFrame);
+    console.log('newFrame', newFrame);
     if (!play) {
       console.log(frames);
       // save frame
@@ -930,11 +947,11 @@
   };
 
   const deleteFrame = (Frame) => {
-    console.log("Frame", Frame);
+    console.log('Frame', Frame);
     for (var i = 0; i < frames.length; i++) {
-      console.log("frames[i], Frame", frames[i], Frame);
+      console.log('frames[i], Frame', frames[i], Frame);
       if (i == Frame) {
-        console.log("i", i);
+        console.log('i', i);
 
         if (i > 0) {
           frames.splice(i, 1);
@@ -958,11 +975,11 @@
 
     await updateFrame();
     if (frames.length >= maxFrames) return;
-    console.log("click");
+    console.log('click');
     frames.push({});
     frames = frames;
     await changeFrame(frames.length - 1);
-    let framebar = document.getElementById("frame-bar");
+    let framebar = document.getElementById('frame-bar');
     framebar.scrollTo({ left: 0, top: framebar.scrollHeight });
   }
 
@@ -1002,7 +1019,7 @@
         top: clonedObj.top + 10,
         evented: true,
       });
-      if (clonedObj.type === "activeSelection") {
+      if (clonedObj.type === 'activeSelection') {
         // active selection needs a reference to the canvas.
         clonedObj.canvas = canvas;
         clonedObj.forEachObject(function (obj) {
@@ -1038,7 +1055,7 @@
 
   //////////////////// avatar functies /////////////////////////////////
 
-  if (appType == "avatar") {
+  if (appType == 'avatar') {
     maxFrames = 5;
   }
 
@@ -1065,7 +1082,7 @@
     FrameObject.left = 0;
     // data.objects = [{ ...FrameObject }].concat(data.objects);
 
-    console.log("data", data);
+    console.log('data', data);
 
     await savecanvas.loadFromJSON(data, savecanvas.renderAll.bind(savecanvas));
     await savecanvas.calcOffset();
@@ -1074,7 +1091,7 @@
     // console.log(Image);
     // var blobData = dataURItoBlob(Image);
     setTimeout(async () => {
-      var Image = savecanvas.toDataURL("image/png", 1);
+      var Image = savecanvas.toDataURL('image/png', 1);
       var blobData = dataURItoBlob(Image);
       json = JSON.stringify(frames);
       Image = await uploadAvatar(blobData, json, version);
@@ -1082,7 +1099,7 @@
   }
 
   async function createStopmotion() {
-    console.log("111");
+    console.log('111');
     // console.log("saved");
     json = JSON.stringify(frames);
     // console.log("json", json);
@@ -1113,17 +1130,17 @@
     // console.log("data", data);
 
     savecanvas.loadFromJSON(data, async () => {
-      console.log("222");
+      console.log('222');
       savecanvas.renderAll.bind(savecanvas);
       savecanvas.calcOffset();
 
-      var saveImage = await savecanvas.toDataURL("image/png", 1);
+      var saveImage = await savecanvas.toDataURL('image/png', 1);
       // console.log("savedImage", saveImage);
 
       var blobData = dataURItoBlob(saveImage);
       // console.log("blobData", blobData);
       if (!!!title) {
-        title = Date.now() + "_" + displayName;
+        title = Date.now() + '_' + displayName;
       }
       await uploadImage(
         title,
@@ -1131,11 +1148,11 @@
         blobData,
         status,
         version,
-        displayName
+        displayName,
       ).then((url) => {
-        console.log("333");
+        console.log('333');
         savedURL = url;
-        console.log("savedURL stopmotion", savedURL);
+        console.log('savedURL stopmotion', savedURL);
         // saving = false;
         setLoader(false);
       });
@@ -1147,7 +1164,7 @@
 
   //////////////////// camera functies ///////////////////////////////
   function camera() {
-    current = "camera";
+    current = 'camera';
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
@@ -1169,16 +1186,16 @@
     });
     videocanv.setHeight(videoWidth / 1.33);
     videocanv.setWidth(videoWidth);
-    let vidContext = videocanv.getContext("2d");
+    let vidContext = videocanv.getContext('2d');
     vidContext.drawImage(video, 0, 0, videoWidth, videoWidth / 1.33);
-    var uri = videoCanvas.toDataURL("image/png", 1);
+    var uri = videoCanvas.toDataURL('image/png', 1);
     fabric.Image.fromURL(uri, function (oImg) {
       oImg.scale(1);
       oImg.set({ left: 0, top: 0 });
       canvas.add(oImg);
     });
     video.srcObject.getTracks()[0].stop();
-    current = "select";
+    current = 'select';
   }
 
   //////////////////// camera functies end ///////////////////////////
@@ -1188,7 +1205,9 @@
   const saveHistory = () => {};
 
   const undo = () => {
-    let lastObject = canvas.toJSON().objects[canvas.toJSON().objects.length - 1];
+    let lastObject = canvas.toJSON().objects[
+      canvas.toJSON().objects.length - 1
+    ];
     history.push(lastObject);
     let newFile = canvas.toJSON();
     newFile.objects.pop();
@@ -1234,7 +1253,16 @@
     },
 
     // The actual flood fill implementation
-    fill: function (imageData, getPointOffsetFn, point, color, target, tolerance, width, height) {
+    fill: function (
+      imageData,
+      getPointOffsetFn,
+      point,
+      color,
+      target,
+      tolerance,
+      width,
+      height,
+    ) {
       var directions = [
           [1, 0],
           [0, 1],
@@ -1293,7 +1321,7 @@
           // Get the new coordinate by adjusting x and y based on current step
           x2 = x + directions[i][0];
           y2 = y + directions[i][1];
-          key = x2 + "," + y2;
+          key = x2 + ',' + y2;
 
           // If new coordinate is out of bounds, or we've already added it, then skip to
           // trying the next neighbour without adding this one
@@ -1319,9 +1347,9 @@
 
   function hexToRgb(hex, opacity) {
     opacity = Math.round(opacity * 255) || 255;
-    hex = hex.replace("#", "");
+    hex = hex.replace('#', '');
     var rgb = [],
-      re = new RegExp("(.{" + hex.length / 3 + "})", "g");
+      re = new RegExp('(.{' + hex.length / 3 + '})', 'g');
     hex.match(re).map(function (l) {
       rgb.push(parseInt(hex.length % 2 ? l + l : l, 16));
     });
@@ -1330,7 +1358,7 @@
 
   function floodFill(enable) {
     if (!enable) {
-      canvas.off("mouse:down");
+      canvas.off('mouse:down');
       canvas.selection = true;
       canvas.forEachObject(function (object) {
         object.selectable = true;
@@ -1346,11 +1374,11 @@
     });
 
     canvas.on({
-      "mouse:down": function (e) {
+      'mouse:down': function (e) {
         var mouseX = Math.round(e.e.layerX),
           mouseY = Math.round(e.e.layerY),
           //canvas = canvas.lowerCanvasEl,
-          context = canvas.getContext("2d"),
+          context = canvas.getContext('2d'),
           parsedColor = hexToRgb(fillColor),
           imageData = context.getImageData(0, 0, canvas.width, canvas.height),
           getPointOffset = function (x, y) {
@@ -1373,22 +1401,32 @@
           target,
           fillTolerance,
           imageData.width,
-          imageData.height
+          imageData.height,
         );
 
         if (0 == data.width || 0 == data.height) {
           return;
         }
 
-        var tmpCanvas = document.createElement("canvas"),
-          tmpCtx = tmpCanvas.getContext("2d");
+        var tmpCanvas = document.createElement('canvas'),
+          tmpCtx = tmpCanvas.getContext('2d');
         tmpCanvas.width = canvas.width;
         tmpCanvas.height = canvas.height;
 
-        var palette = tmpCtx.getImageData(0, 0, tmpCanvas.width, tmpCanvas.height); // x, y, w, h
+        var palette = tmpCtx.getImageData(
+          0,
+          0,
+          tmpCanvas.width,
+          tmpCanvas.height,
+        ); // x, y, w, h
         palette.data.set(new Uint8ClampedArray(data.coords)); // Assuming values 0..255, RGBA
         tmpCtx.putImageData(palette, 0, 0); // Repost the data.
-        var imgData = tmpCtx.getImageData(data.x, data.y, data.width, data.height); // Get cropped image
+        var imgData = tmpCtx.getImageData(
+          data.x,
+          data.y,
+          data.width,
+          data.height,
+        ); // Get cropped image
 
         tmpCanvas.width = data.width;
         tmpCanvas.height = data.height;
@@ -1402,17 +1440,17 @@
               left: data.x,
               top: data.y,
               selectable: false,
-            })
+            }),
           );
         };
-        img.src = tmpCanvas.toDataURL("image/png", 1);
+        img.src = tmpCanvas.toDataURL('image/png', 1);
 
         canvas.add(
           new fabric.Image(tmpCanvas, {
             left: data.x,
             top: data.y,
             selectable: false,
-          })
+          }),
         );
       },
     });
@@ -1451,7 +1489,7 @@
 <main on:mouseup="{mouseEvent}">
   <div class="main-container">
     <div class="canvas-frame-container">
-      {#if current == "camera"}
+      {#if current == 'camera'}
         <video bind:this="{video}" autoplay></video>
         <button on:click="{capturePicture}" class="videoButton"></button>
         <div class="videocanvas">
@@ -1472,7 +1510,7 @@
         <canvas bind:this="{saveCanvas}"></canvas>
       </div>
       <div class="frame-box">
-        {#if appType == "stopmotion" || appType == "avatar"}
+        {#if appType == 'stopmotion' || appType == 'avatar'}
           <div id="frame-bar">
             {#each frames as frame, index}
               <div>
@@ -1511,7 +1549,8 @@
                 on:click="{() => {
                   play = false;
                   setPlay(false);
-                }}"><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" /></a
+                }}"
+                ><img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" /></a
               >
             {:else}
               <a
@@ -1519,7 +1558,8 @@
                 on:click="{() => {
                   play = true;
                   setPlay(true);
-                }}"><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" /></a
+                }}"
+                ><img class="icon" src="assets/SHB/svg/AW-icon-play.svg" /></a
               >
             {/if}
             <a on:click="{backgroundHide}"
@@ -1643,7 +1683,13 @@
           <span class="info">{lineWidth}</span> -->
           <div class="range-container">
             <div class="circle-box-small"></div>
-            <input type="range" min="10" max="500" id="erase-line-width" bind:value="{lineWidth}" />
+            <input
+              type="range"
+              min="10"
+              max="500"
+              id="erase-line-width"
+              bind:value="{lineWidth}"
+            />
             <div class="circle-box-big"></div>
           </div>
         </div>
@@ -1651,15 +1697,25 @@
           <input type="color" bind:value="{fillColor}" id="fill-color" />
         </div>
         <div class="selectTab" class:hidden="{current != 'select'}">
-          <a on:click="{Copy}"><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a>
-          <a on:click="{Paste}"><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a>
-          <a on:click="{Delete}"><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a>
+          <a on:click="{Copy}"
+            ><img class="icon" src="assets/SHB/svg/AW-icon-copy.svg" /></a
+          >
+          <a on:click="{Paste}"
+            ><img class="icon" src="assets/SHB/svg/AW-icon-paste.svg" /></a
+          >
+          <a on:click="{Delete}"
+            ><img class="icon" src="assets/SHB/svg/AW-icon-trash.svg" /></a
+          >
         </div>
         <div class="saveBox" class:hidden="{current != 'saveToggle'}">
           <div class="saveTab">
-            {#if appType != "avatar" && appType != "house"}
+            {#if appType != 'avatar' && appType != 'house'}
               <label for="title">Title</label>
-              <NameGenerator bind:value="{displayName}" bind:invalidTitle bind:isTitleChanged />
+              <NameGenerator
+                bind:value="{displayName}"
+                bind:invalidTitle
+                bind:isTitleChanged
+              />
             {/if}
             <!-- <label for="status">Status</label>
               <select bind:value={status} on:change={() => (answer = "")}>
@@ -1670,12 +1726,18 @@
                 {/each}
               </select> -->
             <div class="status-save-download-container">
-              {#if appType != "avatar" && appType != "house"}
+              {#if appType != 'avatar' && appType != 'house'}
                 <div on:click="{changeVisibility}">
                   {#if status}
-                    <img class="icon selected" src="assets/SHB/svg/AW-icon-visible.svg" />
+                    <img
+                      class="icon selected"
+                      src="assets/SHB/svg/AW-icon-visible.svg"
+                    />
                   {:else}
-                    <img class="icon selected" src="assets/SHB/svg/AW-icon-invisible.svg" />
+                    <img
+                      class="icon selected"
+                      src="assets/SHB/svg/AW-icon-invisible.svg"
+                    />
                   {/if}
                 </div>
               {/if}
@@ -1717,9 +1779,16 @@
       </div>
 
       <div class="iconbox">
-        <a on:click="{undo}"><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a>
-        <a on:click="{redo}"><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a>
-        <a on:click="{applyBrush}" id="drawing-mode" class:currentSelected="{current === 'draw'}"
+        <a on:click="{undo}"
+          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" /></a
+        >
+        <a on:click="{redo}"
+          ><img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" /></a
+        >
+        <a
+          on:click="{applyBrush}"
+          id="drawing-mode"
+          class:currentSelected="{current === 'draw'}"
           ><img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" /></a
         >
         <a id="erase-mode" class:currentSelected="{current === 'erase'}"
@@ -1766,7 +1835,7 @@
     </div>
   </div>
   <div id="clear-canvas"><img src="assets/SHB/svg/AW-icon-reset.svg" /></div>
-  {#if appType == "avatar"}
+  {#if appType == 'avatar'}
     <div id="avatarBox">
       <Avatar />
     </div>
@@ -1960,7 +2029,7 @@
     padding: 10px;
   }
 
-  input[type="range"] {
+  input[type='range'] {
     -webkit-appearance: none;
     -moz-apperance: none;
     border-radius: 6px;
@@ -1969,7 +2038,7 @@
     margin: 0 10px;
   }
 
-  input[type="range"]::-webkit-slider-thumb {
+  input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none !important;
     background-color: black;
     border: 1px solid black;
