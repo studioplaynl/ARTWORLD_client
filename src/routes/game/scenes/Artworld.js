@@ -113,7 +113,7 @@ export default class Artworld extends Phaser.Scene {
 
     //added after linting 
     //outline effect
-    this.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
+    //this.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
     //added after linting 
     //outline effect
   }

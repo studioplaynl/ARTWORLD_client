@@ -512,7 +512,15 @@ export default class Location1 extends Phaser.Scene {
     let locationVector = new Phaser.Math.Vector2(-200, -200)
 
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector)
-    const location3 = new GenerateLocation({ scene: this, type: "image", x: locationVector.x, y: locationVector.y, locationDestination: "Location3", locationImage: "museum", enterButtonImage: "enter_button", locationText: "Location 3", fontColor: 0x8dcb0e })
+    const location3 = new GenerateLocation({ scene: this, 
+      type: "image", 
+      x: locationVector.x, 
+      y: locationVector.y, 
+      locationDestination: "Location3", 
+      locationImage: "museum", 
+      enterButtonImage: "enter_button", 
+      locationText: "Location 3", 
+      fontColor: 0x8dcb0e })
 
     locationVector = new Phaser.Math.Vector2(200, 200)
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector)

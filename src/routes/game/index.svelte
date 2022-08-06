@@ -7,6 +7,7 @@
   import Phaser from "phaser"
   import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin.js"
   import CircleMaskImagePlugin from "phaser3-rex-plugins/plugins/circlemaskimage-plugin.js"
+  import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin.js';
   import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin.js'
   import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin.js'
   import { CONFIG, SCENES } from "./config";
@@ -58,6 +59,7 @@ scale: {
             mapping: "rexSpinner",
           },
         ],
+
         global: [
           {
             key: "rexCircleMaskImagePlugin",
@@ -68,7 +70,12 @@ scale: {
             key: 'rexScroller',
             plugin: ScrollerPlugin,
             start: true
-          }
+          },
+          {
+            key: 'rexOutlinePipeline',
+            plugin: OutlinePipelinePlugin,
+            start: true
+        }
         ],
       }, //end plugins
 
