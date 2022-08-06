@@ -1,10 +1,7 @@
-import { CONFIG } from '../config';
 import ManageSession from '../ManageSession';
-
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-import Preloader from '../class/Preloader';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import HistoryTracker from '../class/HistoryTracker';
 import Move from '../class/Move';
@@ -21,7 +18,6 @@ export default class Location3 extends Phaser.Scene {
     this.phaser = this;
     // this.playerPos;
     this.onlinePlayers = [];
-    this.currentOnlinePlayer;
     this.avatarName = [];
     this.tempAvatarName = '';
     this.loadedAvatars = [];
@@ -33,8 +29,6 @@ export default class Location3 extends Phaser.Scene {
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
 
-    this.cursors;
-    this.pointer;
     this.isClicking = false;
     this.arrowDown = false;
     this.swipeDirection = 'down';
@@ -43,13 +37,12 @@ export default class Location3 extends Phaser.Scene {
     // pointer location example
     // this.source // = player
     this.target = new Phaser.Math.Vector2();
-    this.distance;
 
     // shadow
     this.playerShadowOffset = -8;
     this.playerIsMovingByClicking = false;
 
-    this.currentZoom;
+    this.currentZoom = 1;
   }
 
   async preload() {
@@ -73,20 +66,36 @@ export default class Location3 extends Phaser.Scene {
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() // { useHandCursor: true }
       .on('pointerup', () => console.log('touched background'))
-      .on('pointerdown', () => ManageSession.playerIsAllowedToMove = true)
+      .on('pointerdown', () => {
+        ManageSession.playerIsAllowedToMove = true;
+        return ManageSession.playerIsAllowedToMove;
+      })
       .setDepth(219)
       .setOrigin(0)
       .setVisible(false);
 
-    this.touchBackgroundCheck.input.alwaysEnabled = true; // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    this.touchBackgroundCheck.input.alwaysEnabled = true;
 
     // .......  PLAYER ..........................................................................
 
-    // set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
+    // set playerAvatarKey to a placeholder,
+    // so that the player loads even when the networks is slow, and the dependencies on player will funciton
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
-    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201);
+    this.player = new PlayerDefault(
+      this,
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        ManageSession.playerPosX,
+      ),
+      CoordinatesTranslator.artworldToPhaser2DY(
+        this.worldSize.y,
+        ManageSession.playerPosY,
+      ),
+      this.playerAvatarPlaceholder,
+    ).setDepth(201);
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
 
     // for back button, has to be done after player is created for the history tracking!
@@ -129,21 +138,24 @@ export default class Location3 extends Phaser.Scene {
     // 1
     const tileset = map.addTilesetImage('tuxmon-sample-32px-extruded', 'tiles');
 
+    // eslint-disable-next-line no-unused-vars
     const belowLayer = map.createLayer('Below Player', tileset, 0, 0);
+    // eslint-disable-next-line no-unused-vars
     const worldLayer = map.createLayer('World', tileset, 0, 0);
+    // eslint-disable-next-line no-unused-vars
     const aboveLayer = map.createLayer('Above Player', tileset, 0, 0);
 
     // worldLayer.setCollisionByProperty({ collides: true })
 
-    const spawnPoint = map.findObject(
-      'Objects',
-      (obj) => obj.name === 'Spawn Point',
-    );
+    // const spawnPoint = map.findObject(
+    //   'Objects',
+    //   (obj) => obj.name === 'Spawn Point',
+    // );
 
     // ....... end TILEMAP ......................................................................
   }
 
-  update(time, delta) {
+  update() {
     // ...... ONLINE PLAYERS ................................................
     Player.parseNewOnlinePlayerArray(this);
     // .......................................................................
@@ -156,7 +168,7 @@ export default class Location3 extends Phaser.Scene {
     // ........... end PLAYER SHADOW .........................................................................
 
     // to detect if the player is clicking/tapping on one place or swiping
-    if (this.input.activePointer.downX != this.input.activePointer.upX) {
+    if (this.input.activePointer.downX !== this.input.activePointer.upX) {
       Move.moveBySwiping(this);
     } else {
       Move.moveByTapping(this);

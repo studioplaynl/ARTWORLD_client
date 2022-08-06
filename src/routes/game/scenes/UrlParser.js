@@ -91,7 +91,7 @@ export default class UrlParser extends Phaser.Scene {
       if (this.debug) console.log("locationName.split('-') locationName: ", locationName);
       if (splitString.length > 3) {
         Promise.all([listObjects('home', locationName, 10)])
-          .catch((rec) => {
+          .catch(() => {
             if (this.debug) console.log('error getting the home object');
             this.parsePlayerPosition(null, null);
             this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation);

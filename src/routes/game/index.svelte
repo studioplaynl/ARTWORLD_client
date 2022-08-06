@@ -8,7 +8,7 @@ import Phaser from 'phaser';
 import CircleMaskImagePlugin from 'phaser3-rex-plugins/plugins/circlemaskimage-plugin';
 import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin';
 import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin';
-import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin.js';
+import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin';
 import { CONFIG } from './config';
 import { sessionCheck } from '../../api';
 import Itemsbar from '../components/itemsbar.svelte';
