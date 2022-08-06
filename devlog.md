@@ -9,8 +9,6 @@ _VRAGEN_
 - Kleuren die gezet zijn voor REX UI, kan weg?
 - REX UI this.data -> conflict met Phaser?
 
-- Kan playerContainer weg?
-
 - Jsdoc doorvoeren?
 
 

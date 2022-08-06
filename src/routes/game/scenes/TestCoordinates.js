@@ -38,7 +38,6 @@ export default class TestCoordinates extends Phaser.Scene {
 
     this.player;
     this.playerShadow;
-    this.playerContainer;
     this.playerAvatarPlaceholder = 'avatar1';
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';

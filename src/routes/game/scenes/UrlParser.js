@@ -8,9 +8,8 @@ import { getUrl } from '../helpers/UrlHelpers';
 
 const { Phaser } = window;
 
-// TODO: Check if scene booting works correctly on server
 const checkIfSceneExists = (location) => {
-  const locationExists = SCENE_NAMES.indexOf(location) > -1;
+  const locationExists = SCENE_NAMES.includes(location);
 
   console.log('locationExists SCENE_NAMES', locationExists, location, SCENE_NAMES);
 
@@ -66,8 +65,9 @@ export default class UrlParser extends Phaser.Scene {
   }
 
   parseLocation(urlParams) {
-    const { posX, posY, location } = urlParams;
-    const locationName = location || this.fallBackLocation;
+    const { posX, posY, Location } = urlParams;
+    console.log('location', Location);
+    const locationName = Location || this.fallBackLocation;
     // if (this.debug) console.log('urlParams, locationName', urlParams, locationName);
     // check if location is of DefaultUserHome_user_ID format
     let splitString = locationName.split('_');

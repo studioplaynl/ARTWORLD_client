@@ -54,8 +54,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     // testing
     this.resolveLoadErrorCache = [];
 
-    this.playerContainer;
-
     this.homes = [];
     this.homesRepreseneted = [];
 
@@ -97,18 +95,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.artUrl = [];
     this.userArtServerList = [];
     this.progress = [];
-
-    // pop-up buttons of the user's avatar
-    this.isPopUpButtonsDisplayed;
-    this.playerContainer;
-    this.selectedPlayerID;
-
-    this.homeButtonCircle;
-    this.homeButtonImage;
-    this.heartButtonCircle;
-    this.heartButtonImage;
-
-    this.scrollablePanel;
   }
 
   async preload() {

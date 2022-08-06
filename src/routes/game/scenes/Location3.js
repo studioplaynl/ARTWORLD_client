@@ -60,7 +60,7 @@ export default class Location3 extends Phaser.Scene {
       './assets/tilesets/tuxmon-sample-32px-extruded.png',
     );
 
-    this.load.tilemapTiledJSON('map', './assets/tilemaps/tuxemon-townon');
+    this.load.tilemapTiledJSON('map', './assets/tilemaps/tuxemon-town.json');
     // end 1
   }
 

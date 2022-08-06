@@ -48,6 +48,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     let width;
     let namePlateExtraOffset = 0;
 
+    this.postFxPlugin = this.scene.plugins.get('rexOutlinePipeline');
+
     if (typeof this.size === 'undefined') {
       width = 200;
     } else {
@@ -440,6 +442,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.enterShadow.setVisible(this.showing);
     this.enterArea.setVisible(this.showing);
     // this.enterButtonHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
+    this.postFxPlugin.remove(this);
   }
 
   initConfirm() {
@@ -447,6 +450,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       this.showing = true;
       this.scene.time.addEvent({
         delay: 4000, callback: this.hideEnterButton, callbackScope: this, loop: false,
+      });
+      this.postFxPlugin.add(this, {
+        thickness: 5,
+        outlineColor: 0xff8a50,
       });
     }
   }

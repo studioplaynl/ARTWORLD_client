@@ -6,8 +6,8 @@ export const getUrl = () => {
   const params = new URLSearchParams(window.location.search);
   const posX = params.get('posX');
   const posY = params.get('posY');
-  const loc = params.get('location');
-  const object = { posX, posY, loc };
+  const Location = params.get('location');
+  const object = { posX, posY, Location };
   // console.log("object", object)
   return object;
 };

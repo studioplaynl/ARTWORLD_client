@@ -35,7 +35,6 @@ export default class Location4 extends Phaser.Scene {
 
     this.player;
     this.playerShadow;
-    this.playerContainer;
     this.playerAvatarPlaceholder = 'playerAvatar';
     this.playerAvatarKey = '';
     this.playerMovingKey = 'moving';
