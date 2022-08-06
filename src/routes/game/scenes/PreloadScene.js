@@ -53,17 +53,9 @@ export default class PreloadScene extends Phaser.Scene {
 
         //animal for animalGarden Challenge
         this.load.image('dinoA', './assets/DinoA_01.png')
-        //animation png sequence
-        this.load.image('animation_png_animal_henk_00001', './assets/animation_png_animal_henk/animation_png_animal_henk_00001.png')
-        this.load.image('animation_png_animal_henk_00002', './assets/animation_png_animal_henk/animation_png_animal_henk_00002.png')
-        this.load.image('animation_png_animal_henk_00003', './assets/animation_png_animal_henk/animation_png_animal_henk_00003.png')
-        this.load.image('animation_png_animal_henk_00004', './assets/animation_png_animal_henk/animation_png_animal_henk_00004.png')
-        this.load.image('animation_png_animal_henk_00005', './assets/animation_png_animal_henk/animation_png_animal_henk_00005.png')
-        this.load.image('animation_png_animal_henk_00006', './assets/animation_png_animal_henk/animation_png_animal_henk_00006.png')
-        this.load.image('animation_png_animal_henk_00007', './assets/animation_png_animal_henk/animation_png_animal_henk_00007.png')
+        
         //flower for the flowerField Challenge
         this.load.image('flower', './assets/flower.png')
-        this.load.spritesheet('testdier', './assets/test_dier.png', { frameWidth: 128, frameHeight: 128 })
 
         // this.load.image('friend', './assets/popup/friend.png')
         // this.load.image('friend2', './assets/popup/friend2.png')

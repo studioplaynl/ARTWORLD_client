@@ -17,7 +17,6 @@
   import AchievementAnimation from "../components/achievement.svelte"
   import TutLoader from "../tutorials/tutLoader.svelte"
 
-
   onMount(async () => {
     sessionCheck()
     const config = {

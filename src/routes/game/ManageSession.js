@@ -4,7 +4,7 @@ import CoordinatesTranslator from "./class/CoordinatesTranslator"; // translate 
 import { location } from "svelte-spa-router"
 import { Notification } from "../../session"
 
-import { SCENES } from "./config.js";
+import { SCENE_NAMES } from "./config.js";
 
 class ManageSession {
   constructor() {
@@ -403,12 +403,12 @@ class ManageSession {
 
   checkIfSceneExists(location) {
 
-    //check if this.launchLocation exists in SCENES
-    //const locationExists = SCENES.includes(location)
+    //check if this.launchLocation exists in SCENE_NAMES
+    //const locationExists = SCENE_NAMES.includes(location)
 
-    const locationExists = SCENES.some((el) => el.name === location);
-    // console.log("SCENES", SCENES)
-    console.log("locationExists SCENES", locationExists, location, SCENES);
+    const locationExists = SCENE_NAMES.includes(location);
+    // console.log("SCENE_NAMES", SCENE_NAMES)
+    console.log("locationExists SCENE_NAMES", locationExists, location, SCENE_NAMES);
 
     return locationExists;
   }

@@ -267,59 +267,9 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         Player.loadPlayerAvatar(this)
         //!
 
-
-        // this.anims.create({
-        //     key: 'moveAnim_Henk',
-        //     frames: [
-        //         { key: 'animation_png_animal_henk_00001' },
-        //         { key: 'animation_png_animal_henk_00002' },
-        //         { key: 'animation_png_animal_henk_00003' },
-        //         { key: 'animation_png_animal_henk_00004' },
-        //         { key: 'animation_png_animal_henk_00005' },
-        //         { key: 'animation_png_animal_henk_00006' },
-        //         { key: 'animation_png_animal_henk_00007' },
-        //     ],
-        //     frameRate: 8,
-        //     repeat: -1
-        // })
-
-        // this.anims.create({
-        //     key: 'stopAnim_Henk',
-        //     frames: [
-        //         { key: 'animation_png_animal_henk_00001' },
-        //     ],
-        //     repeat: 0
-        // })
-
-        // this.animalHenk = this.physics.add.sprite(1000, 1000, 'animal_henk')
-        //     .play('moveAnim_Henk')
-        // this.animalHenk.setBodySize(500, 400)
-        // this.animalHenk.setData("moveAnim", "moveAnim_Henk")
-        // this.animalHenk.setData("stopAnim", "stopAnim_Henk")
-        // if (ManageSession.debug) console.log("this.animalHenk", this.animalHenk)
-        // //this.animalHenk.body.setCircle(200, 300, 300) // gives problems with collision with walls!
-
-        // // download all dier from all users
         this.animalKeyArray = []
         this.animalArray = []
         this.getListOf("dier")
-
-        // //set a collider between the animal and the walls
-        // this.physics.add.overlap(this.animalHenk, this.borderBoxSouth, this.animalWallCollide, null, this)
-        // this.physics.add.overlap(this.animalHenk, this.borderBoxWest, this.animalWallCollide, null, this)
-        // this.physics.add.overlap(this.animalHenk, this.borderBoxEast, this.animalWallCollide, null, this)
-        // this.physics.add.overlap(this.animalHenk, this.borderBoxNorth, this.animalWallCollide, null, this)
-
-
-        // //set an overlap detection between the animal and the border of the canvas
-        // this.animalHenk.setVelocity(300, -300)
-        // this.animalHenk.setBounce(1).setInteractive().setDepth(200)
-        // this.animalHenk.name = "dier"
-
-        // const tempDelay = Phaser.Math.Between(1000, 20000)
-        // this.time.addEvent({ delay: tempDelay, callback: this.stopAnimalMovement, args: [this.animalHenk], callbackScope: this, loop: false })
-
-        // if (ManageSession.debug) console.log("this.animalHenk.body.velocity ", this.animalHenk.body.velocity)
 
     } //end create
 
@@ -342,9 +292,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
             if (this.textures.exists(avatarKey)) {
 
-
-                //if (ManageSession.debug) console.log("avatarKey", avatarKey)
-
                 const avatar = this.textures.get(avatarKey)
                 if (ManageSession.debug) console.log("avatar", avatar)
                 const avatarWidth = avatar.frames.__BASE.width
@@ -356,36 +303,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                 const avatarFrames = Math.round(avatarWidth / avatarHeight)
                 if (ManageSession.debug) console.log(avatarFrames)
 
-               // if (avatarFrames > 1) {
-                    // set names for the moving and stop animations
-
-                    // tempAnimal.setData("movingKey", "moving" + "_" + avatarKey)
-                    // tempAnimal.setData("stopKey", "stop" + "_" + avatarKey)
-                    // if (ManageSession.debug) console.log("tempAnimal.getData('movingKey')", tempAnimal.getData("movingKey"))
-
-                    //create animation for moving
-                    // if (!this.anims.exists(tempAnimal.getData("movingKey"))) {
-                    // this.anims.create({
-                    //     key: "move",
-                    //     frames: this.anims.generateFrameNumbers("testdier", {
-                    //         start: 0,
-                    //         end: avatarFrames - 1,
-                    //     }),
-                    //     frameRate: (avatarFrames + 2) * 2,
-                    //     repeat: -1,
-                    //     yoyo: true,
-                    // })
-
-                    // //create animation for stop
-                    // this.anims.create({
-                    //     key: "stop",
-                    //     frames: this.anims.generateFrameNumbers("testdier", {
-                    //         start: 0,
-                    //         end: 0,
-                    //     }),
-                    // })
-
-                    this.anims.create({
+                              this.anims.create({
                         key: 'moving_' + avatarKey,
                         frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: avatarFrames - 1 }),
                         frameRate: 6,
@@ -430,22 +348,9 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
 
                     this.animalArray.push(tempAnimal)
-                    // }
+                
                     console.log("animal placed in animalGarden")
                 }////if (avatarFrames > 1) {
-
-                // tempAnimal.setTexture(avatarKey)
-
-                // //scale the player to 64px
-                // const width = 64
-                // tempAnimal.displayWidth = width
-                // tempAnimal.scaleY = tempAnimal.scaleX
-
-
-
-
-
-                //...............................................................................................................................
 
                 //create default animation for moving
       

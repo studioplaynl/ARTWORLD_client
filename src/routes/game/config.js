@@ -22,7 +22,7 @@ export const CONFIG = {
   // WIDTH: window.innerWidth * window.devicePixelRatio,
   // HEIGHT: window.innerHeight * window.devicePixelRatio
 
-}
+} 
 
 export const SCENES = [
   PreloadScene,
@@ -38,5 +38,20 @@ export const SCENES = [
   ChallengeAnimalGarden,
   ChallengeFlowerField
 ]
+
+export const SCENE_NAMES = [
+  "PreloadScene",
+  "MainMenu",
+  "NetworkBoot",
+  "Location1",
+  "Location3",
+  "Location4",
+  "Artworld",
+  "UI_Scene",
+  "TestCoordinates",
+  "DefaultUserHome",
+  "ChallengeAnimalGarden",
+  "ChallengeFlowerField"
+];
 
 //export default CONFIG
