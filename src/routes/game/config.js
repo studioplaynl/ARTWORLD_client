@@ -12,17 +12,14 @@ import TestCoordinates from "./scenes/TestCoordinates"
 import DefaultUserHome from "./scenes/DefaultUserHome"
 import ChallengeAnimalGarden from "./scenes/ChallengeAnimalGarden"
 import ChallengeFlowerField from "./scenes/ChallengeFlowerField"
+import GreenSquare from "./scenes/GreenSquare"
+import TurquoiseTriangle from "./scenes/TurquoiseTriangle"
+import RedStar from "./scenes/RedStar"
 
 export const CONFIG = {
-  WIDTH: window.innerWidth,
-  HEIGHT: window.innerHeight //HEIGHT: window.innerHeight - 22
-  // WIDTH: '100%',
-  // HEIGHT: '100%'
-
-  // WIDTH: window.innerWidth * window.devicePixelRatio,
-  // HEIGHT: window.innerHeight * window.devicePixelRatio
-
-}
+  WIDTH: window.innerWidth * window.devicePixelRatio,
+  HEIGHT: window.innerHeight * window.devicePixelRatio 
+} 
 
 export const SCENES = [
   PreloadScene,
@@ -36,7 +33,28 @@ export const SCENES = [
   TestCoordinates,
   DefaultUserHome,
   ChallengeAnimalGarden,
-  ChallengeFlowerField
+  ChallengeFlowerField,
+  GreenSquare,
+  RedStar,
+  TurquoiseTriangle
 ]
+
+export const SCENE_NAMES = [
+  "PreloadScene",
+  "MainMenu",
+  "NetworkBoot",
+  "Location1",
+  "Location3",
+  "Location4",
+  "Artworld",
+  "UI_Scene",
+  "TestCoordinates",
+  "DefaultUserHome",
+  "ChallengeAnimalGarden",
+  "ChallengeFlowerField",
+  "GreenSquare",
+  "RedStar",
+  "TurquoiseTriangle"
+];
 
 //export default CONFIG

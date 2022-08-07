@@ -131,9 +131,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         // username: "user88"
         // version: "0579e989a16f3e228a10d49d13dc3da6"
         //!
-        //.......  LOAD PLAYER AVATAR ..........................................................................
-        ManageSession.createPlayer = true
-        //....... end LOAD PLAYER AVATAR .......................................................................
 
         // the order of creation is the order of drawing: first = bottom ...............................
 
@@ -216,7 +213,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         //* create default player and playerShadow
         //* create player in center with artworldCoordinates
         this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201)
-        //Player.createPlayerItemsBar(this)
         this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
         // for back button, has to be done after player is created for the history tracking!
         HistoryTracker.pushLocation(this)
@@ -267,59 +263,9 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         Player.loadPlayerAvatar(this)
         //!
 
-
-        // this.anims.create({
-        //     key: 'moveAnim_Henk',
-        //     frames: [
-        //         { key: 'animation_png_animal_henk_00001' },
-        //         { key: 'animation_png_animal_henk_00002' },
-        //         { key: 'animation_png_animal_henk_00003' },
-        //         { key: 'animation_png_animal_henk_00004' },
-        //         { key: 'animation_png_animal_henk_00005' },
-        //         { key: 'animation_png_animal_henk_00006' },
-        //         { key: 'animation_png_animal_henk_00007' },
-        //     ],
-        //     frameRate: 8,
-        //     repeat: -1
-        // })
-
-        // this.anims.create({
-        //     key: 'stopAnim_Henk',
-        //     frames: [
-        //         { key: 'animation_png_animal_henk_00001' },
-        //     ],
-        //     repeat: 0
-        // })
-
-        // this.animalHenk = this.physics.add.sprite(1000, 1000, 'animal_henk')
-        //     .play('moveAnim_Henk')
-        // this.animalHenk.setBodySize(500, 400)
-        // this.animalHenk.setData("moveAnim", "moveAnim_Henk")
-        // this.animalHenk.setData("stopAnim", "stopAnim_Henk")
-        // if (ManageSession.debug) console.log("this.animalHenk", this.animalHenk)
-        // //this.animalHenk.body.setCircle(200, 300, 300) // gives problems with collision with walls!
-
-        // // download all dier from all users
         this.animalKeyArray = []
         this.animalArray = []
         this.getListOf("dier")
-
-        // //set a collider between the animal and the walls
-        // this.physics.add.overlap(this.animalHenk, this.borderBoxSouth, this.animalWallCollide, null, this)
-        // this.physics.add.overlap(this.animalHenk, this.borderBoxWest, this.animalWallCollide, null, this)
-        // this.physics.add.overlap(this.animalHenk, this.borderBoxEast, this.animalWallCollide, null, this)
-        // this.physics.add.overlap(this.animalHenk, this.borderBoxNorth, this.animalWallCollide, null, this)
-
-
-        // //set an overlap detection between the animal and the border of the canvas
-        // this.animalHenk.setVelocity(300, -300)
-        // this.animalHenk.setBounce(1).setInteractive().setDepth(200)
-        // this.animalHenk.name = "dier"
-
-        // const tempDelay = Phaser.Math.Between(1000, 20000)
-        // this.time.addEvent({ delay: tempDelay, callback: this.stopAnimalMovement, args: [this.animalHenk], callbackScope: this, loop: false })
-
-        // if (ManageSession.debug) console.log("this.animalHenk.body.velocity ", this.animalHenk.body.velocity)
 
     } //end create
 
@@ -342,9 +288,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
             if (this.textures.exists(avatarKey)) {
 
-
-                //if (ManageSession.debug) console.log("avatarKey", avatarKey)
-
                 const avatar = this.textures.get(avatarKey)
                 if (ManageSession.debug) console.log("avatar", avatar)
                 const avatarWidth = avatar.frames.__BASE.width
@@ -356,36 +299,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                 const avatarFrames = Math.round(avatarWidth / avatarHeight)
                 if (ManageSession.debug) console.log(avatarFrames)
 
-               // if (avatarFrames > 1) {
-                    // set names for the moving and stop animations
-
-                    // tempAnimal.setData("movingKey", "moving" + "_" + avatarKey)
-                    // tempAnimal.setData("stopKey", "stop" + "_" + avatarKey)
-                    // if (ManageSession.debug) console.log("tempAnimal.getData('movingKey')", tempAnimal.getData("movingKey"))
-
-                    //create animation for moving
-                    // if (!this.anims.exists(tempAnimal.getData("movingKey"))) {
-                    // this.anims.create({
-                    //     key: "move",
-                    //     frames: this.anims.generateFrameNumbers("testdier", {
-                    //         start: 0,
-                    //         end: avatarFrames - 1,
-                    //     }),
-                    //     frameRate: (avatarFrames + 2) * 2,
-                    //     repeat: -1,
-                    //     yoyo: true,
-                    // })
-
-                    // //create animation for stop
-                    // this.anims.create({
-                    //     key: "stop",
-                    //     frames: this.anims.generateFrameNumbers("testdier", {
-                    //         start: 0,
-                    //         end: 0,
-                    //     }),
-                    // })
-
-                    this.anims.create({
+                              this.anims.create({
                         key: 'moving_' + avatarKey,
                         frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: avatarFrames - 1 }),
                         frameRate: 6,
@@ -430,22 +344,9 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
 
                     this.animalArray.push(tempAnimal)
-                    // }
+                
                     console.log("animal placed in animalGarden")
                 }////if (avatarFrames > 1) {
-
-                // tempAnimal.setTexture(avatarKey)
-
-                // //scale the player to 64px
-                // const width = 64
-                // tempAnimal.displayWidth = width
-                // tempAnimal.scaleY = tempAnimal.scaleX
-
-
-
-
-
-                //...............................................................................................................................
 
                 //create default animation for moving
       
@@ -619,138 +520,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         } else {
             animal.flipX = true
         }
-
-
-    }
-
-    generateLocations() {
-        //we set draggable on restart scene with a global flag
-
-        let locationVector = new Phaser.Math.Vector2(-1215, -589)
-        locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-            this.worldSize,
-            locationVector
-        )
-
-        //  if ( this.location1 != null ) this.location1.destroy()
-
-        this.location1 = new GenerateLocation({
-            scene: this,
-            type: "isoBox",
-            draggable: ManageSession.gameEditMode,
-            x: locationVector.x,
-            y: locationVector.y,
-            locationDestination: "Location1",
-            locationImage: "museum",
-            enterButtonImage: "enter_button",
-            locationText: "Location 1",
-            referenceName: "Location1",
-            fontColor: 0x8dcb0e,
-            color1: 0xffe31f,
-            color2: 0xf2a022,
-            color3: 0xf8d80b,
-        })
-
-
-        //*set the particle first on 0,0 so they are below the mario_star
-        //*later move them relative to the mario_star
-        var particles = this.add.particles('music_quarter_note').setDepth(139)
-
-        var music_emitter = particles.createEmitter({
-            x: 0,
-            y: 0,
-            lifespan: { min: 2000, max: 8000 },
-            speed: { min: 80, max: 120 },
-            angle: { min: 270, max: 360 },
-            gravityY: -50,
-            gravityX: 50,
-            scale: { start: 1, end: 0 },
-            quantity: 1,
-            frequency: 1600,
-        })
-
-        locationVector = new Phaser.Math.Vector2(-792, -1138)
-        locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-            this.worldSize,
-            locationVector
-        )
-
-        this.mario_star = new GenerateLocation({
-            scene: this,
-            type: "image",
-            size: 200,
-            draggable: ManageSession.gameEditMode,
-            x: locationVector.x,
-            y: locationVector.y,
-            internalUrl: "mariosound",
-            locationImage: "mario_star",
-            enterButtonImage: "enter_button",
-            locationText: "Mario Sound",
-            referenceName: "MarioSound",
-            fontColor: 0x8dcb0e,
-            color1: 0x8dcb0e,
-            color2: 0x3f8403,
-            color3: 0x63a505,
-        })
-        this.mario_star.setDepth(140)
-
-
-        music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
-
-        locationVector = new Phaser.Math.Vector2(-2125, 1017)
-        locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-            this.worldSize,
-            locationVector
-        )
-
-        // this.pencil = this.add.image(locationVector.x, locationVector.y, "pencil")
-        // this.pencil.rotation = 0.12
-        // this.pencil.setInteractive()
-        // this.pencil.on('pointerup', () => CurrentApp.set("drawing"))
-
-        this.pencil = new GenerateLocation({
-            scene: this,
-            type: "image",
-
-            draggable: ManageSession.gameEditMode,
-            x: locationVector.x,
-            y: locationVector.y,
-            appUrl: "drawing",
-            locationImage: "pencil",
-            enterButtonImage: "enter_button",
-            locationText: "drawingApp",
-            referenceName: "drawingApp",
-            fontColor: 0x8dcb0e,
-            color1: 0x8dcb0e,
-            color2: 0x3f8403,
-            color3: 0x63a505,
-        })
-        this.pencil.rotation = 0.12
-
-        locationVector = new Phaser.Math.Vector2(-1555, 809)
-        locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-            this.worldSize,
-            locationVector
-        )
-
-        this.animalGardenChallenge = new GenerateLocation({
-            scene: this,
-            type: "image",
-
-            draggable: ManageSession.gameEditMode,
-            x: locationVector.x,
-            y: locationVector.y,
-            locationDestination: "AnimalGardenChallenge",
-            locationImage: "dinoA",
-            enterButtonImage: "enter_button",
-            locationText: "animal Garden",
-            referenceName: "animalGardenChallenge",
-            fontColor: 0x8dcb0e,
-            color1: 0x8dcb0e,
-            color2: 0x3f8403,
-            color3: 0x63a505,
-        })
-
     }
 
     update(time, delta) {
@@ -769,7 +538,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             //........... end PLAYER SHADOW .........................................................................
 
             //....... stopping PLAYER ......................................................................................
-            Move.checkIfPlayerReachedMoveGoal(this) // to stop the player when it reached its destination
+            //Move.checkIfPlayerReachedMoveGoal(this) // to stop the player when it reached its destination
             //....... end stopping PLAYER .................................................................................
 
             // to detect if the player is clicking/tapping on one place or swiping
@@ -780,16 +549,11 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             }
         } else {
             //when in edit mode
-            //this.updateCurveGraphics()
+            
         }
 
 
     } //update
 
-    updateCurveGraphics() {
-        this.curveGraphics.clear()
-        this.curveGraphics.lineStyle(60, 0xffff00, 1)
-        this.curve.draw(this.curveGraphics, 64)
-    }
-
+   
 } //class

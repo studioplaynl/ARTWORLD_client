@@ -133,9 +133,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         // username: "user88"
         // version: "0579e989a16f3e228a10d49d13dc3da6"
         //!
-        //.......  LOAD PLAYER AVATAR ..........................................................................
-        ManageSession.createPlayer = true
-        //....... end LOAD PLAYER AVATAR .......................................................................
 
         // the order of creation is the order of drawing: first = bottom ...............................
 
@@ -249,7 +246,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         //* create default player and playerShadow
         //* create player in center with artworldCoordinates
         this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201)
-        //Player.createPlayerItemsBar(this)
         this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
         // for back button, has to be done after player is created for the history tracking!
         HistoryTracker.pushLocation(this)
@@ -262,40 +258,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         //https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
         //......... end PLAYER VS WORLD .......................................................................
 
-        //! needed for handling object dragging
-        this.input.on('dragstart', function (pointer, gameObject) {
-
-        }, this)
-
-        this.input.on("drag", function (pointer, gameObject, dragX, dragY) {
-            gameObject.x = dragX
-            gameObject.y = dragY
-
-            if (gameObject.name == "handle") {
-                gameObject.data.get('vector').set(dragX, dragY) //get the vector data for curve handle objects
-            }
-
-        }, this)
-
-        this.input.on('dragend', function (pointer, gameObject) {
-            let worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x))
-            let worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y))
-
-
-            //store the original scale when selecting the gameObject for the first time
-            if (ManageSession.selectedGameObject != gameObject) {
-                ManageSession.selectedGameObject = gameObject
-                ManageSession.selectedGameObject_startScale = gameObject.scale
-                ManageSession.selectedGameObject_startPosition.x = gameObject.x
-                ManageSession.selectedGameObject_startPosition.y = gameObject.y
-                console.log("editMode info startScale:", ManageSession.selectedGameObject_startScale)
-            }
-            //ManageSession.selectedGameObject = gameObject
-
-            console.log("editMode info posX posY: ", worldX, worldY, "scale:", ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
-        }, this)
-        //!
-
+    
         //!
         Player.loadPlayerAvatar(this)
         //!
@@ -492,135 +455,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     }//end downloadArt
 
 
-    generateLocations() {
-        //we set draggable on restart scene with a global flag
-
-        let locationVector = new Phaser.Math.Vector2(-1215, -589)
-        locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-            this.worldSize,
-            locationVector
-        )
-
-        //  if ( this.location1 != null ) this.location1.destroy()
-
-        this.location1 = new GenerateLocation({
-            scene: this,
-            type: "isoBox",
-            draggable: ManageSession.gameEditMode,
-            x: locationVector.x,
-            y: locationVector.y,
-            locationDestination: "Location1",
-            locationImage: "museum",
-            enterButtonImage: "enter_button",
-            locationText: "Location 1",
-            referenceName: "Location1",
-            fontColor: 0x8dcb0e,
-            color1: 0xffe31f,
-            color2: 0xf2a022,
-            color3: 0xf8d80b,
-        })
-
-
-        //*set the particle first on 0,0 so they are below the mario_star
-        //*later move them relative to the mario_star
-        var particles = this.add.particles('music_quarter_note').setDepth(139)
-
-        var music_emitter = particles.createEmitter({
-            x: 0,
-            y: 0,
-            lifespan: { min: 2000, max: 8000 },
-            speed: { min: 80, max: 120 },
-            angle: { min: 270, max: 360 },
-            gravityY: -50,
-            gravityX: 50,
-            scale: { start: 1, end: 0 },
-            quantity: 1,
-            frequency: 1600,
-        })
-
-        locationVector = new Phaser.Math.Vector2(-792, -1138)
-        locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-            this.worldSize,
-            locationVector
-        )
-
-        this.mario_star = new GenerateLocation({
-            scene: this,
-            type: "image",
-            size: 200,
-            draggable: ManageSession.gameEditMode,
-            x: locationVector.x,
-            y: locationVector.y,
-            internalUrl: "mariosound",
-            locationImage: "mario_star",
-            enterButtonImage: "enter_button",
-            locationText: "Mario Sound",
-            referenceName: "MarioSound",
-            fontColor: 0x8dcb0e,
-            color1: 0x8dcb0e,
-            color2: 0x3f8403,
-            color3: 0x63a505,
-        })
-        this.mario_star.setDepth(140)
-
-
-        music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
-
-        locationVector = new Phaser.Math.Vector2(-2125, 1017)
-        locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-            this.worldSize,
-            locationVector
-        )
-
-        // this.pencil = this.add.image(locationVector.x, locationVector.y, "pencil")
-        // this.pencil.rotation = 0.12
-        // this.pencil.setInteractive()
-        // this.pencil.on('pointerup', () => CurrentApp.set("drawing"))
-
-        this.pencil = new GenerateLocation({
-            scene: this,
-            type: "image",
-
-            draggable: ManageSession.gameEditMode,
-            x: locationVector.x,
-            y: locationVector.y,
-            appUrl: "drawing",
-            locationImage: "pencil",
-            enterButtonImage: "enter_button",
-            locationText: "drawingApp",
-            referenceName: "drawingApp",
-            fontColor: 0x8dcb0e,
-            color1: 0x8dcb0e,
-            color2: 0x3f8403,
-            color3: 0x63a505,
-        })
-        this.pencil.rotation = 0.12
-
-        locationVector = new Phaser.Math.Vector2(-1555, 809)
-        locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-            this.worldSize,
-            locationVector
-        )
-
-        this.animalGardenChallenge = new GenerateLocation({
-            scene: this,
-            type: "image",
-
-            draggable: ManageSession.gameEditMode,
-            x: locationVector.x,
-            y: locationVector.y,
-            locationDestination: "AnimalGardenChallenge",
-            locationImage: "dinoA",
-            enterButtonImage: "enter_button",
-            locationText: "animal Garden",
-            referenceName: "animalGardenChallenge",
-            fontColor: 0x8dcb0e,
-            color1: 0x8dcb0e,
-            color2: 0x3f8403,
-            color3: 0x63a505,
-        })
-
-    }
+    
 
     update(time, delta) {
 
@@ -638,7 +473,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
             //........... end PLAYER SHADOW .........................................................................
 
             //....... stopping PLAYER ......................................................................................
-            Move.checkIfPlayerReachedMoveGoal(this) // to stop the player when it reached its destination
+            //Move.checkIfPlayerReachedMoveGoal(this) // to stop the player when it reached its destination
             //....... end stopping PLAYER .................................................................................
 
             // to detect if the player is clicking/tapping on one place or swiping

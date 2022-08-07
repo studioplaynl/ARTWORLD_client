@@ -1,6 +1,5 @@
 import ManageSession from "../ManageSession"
-import { listObjects, convertImage, getAccount } from "../../../api.js"
-
+import { convertImage } from "../../../api.js"
 import PlayerDefault from "../class/PlayerDefault"
 import PlayerDefaultShadow from "../class/PlayerDefaultShadow"
 import Player from "../class/Player.js"
@@ -17,6 +16,7 @@ import Exhibition from "../class/Exhibition"
 export default class Artworld extends Phaser.Scene {
   constructor() {
     super("Artworld")
+    this.location = "Artworld"
 
     this.worldSize = new Phaser.Math.Vector2(5500, 5500)
 
@@ -54,9 +54,6 @@ export default class Artworld extends Phaser.Scene {
     this.homesRepreseneted = []
 
     this.offlineOnlineUsers
-
-    this.location = "Artworld"
-
     //.......................REX UI ............
     this.COLOR_PRIMARY = 0xff5733
     this.COLOR_LIGHT = 0xffffff
@@ -113,7 +110,7 @@ export default class Artworld extends Phaser.Scene {
 
     //added after linting 
     //outline effect
-    this.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
+    //this.load.plugin('rexoutlinepipelineplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexoutlinepipelineplugin.min.js', true);
     //added after linting 
     //outline effect
   }
@@ -135,18 +132,23 @@ export default class Artworld extends Phaser.Scene {
     // username: "user88"
     // version: "0579e989a16f3e228a10d49d13dc3da6"
 
-    //.......  LOAD PLAYER AVATAR ..........................................................................
-    ManageSession.createPlayer = true
-    //....... end LOAD PLAYER AVATAR .......................................................................
-
     // the order of creation is the order of drawing: first = bottom ...............................
+    Background.rectangle({
+      scene: this,
+      name: 'bgImageWhite',
+      posX: 0,
+      posY: 0,
+      setOrigin: 0,
+      gradient1: 0xffffff,
+      gradient2: 0xffffff,
+      gradient3: 0xffffff,
+      gradient4: 0xffffff,
+      alpha: 1,
+      width: this.worldSize.x,
+      height: this.worldSize.y,
+    });
 
-
-    //added after linting 
-    //outline effect
-    // var postFxPlugin = this.plugins.get('rexoutlinepipelineplugin');
-    //added after linting 
-    //outline effect
+    // this.bgImage = this.add.image(0, 0, 'bgImageWhite').setOrigin(0);;
 
     Background.repeatingDots({
       scene: this,
@@ -154,7 +156,7 @@ export default class Artworld extends Phaser.Scene {
       dotWidth: 2,
       dotColor: 0x7300ed,
       backgroundColor: 0xffffff,
-    })
+    });
 
     // make a repeating set of rectangles around the artworld canvas
     const middleCoordinates = new Phaser.Math.Vector2(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0))
@@ -181,28 +183,6 @@ export default class Artworld extends Phaser.Scene {
     })
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) { this.gradientAmsterdam1.setInteractive({ draggable: true }) }
-    // //added after linting 
-    // //outline effect
-    // this.gradientAmsterdam1.setInteractive()
-    //   .on('pointerover', function () {
-    //     // Add postfx pipeline
-    //     postFxPlugin.add(this, {
-    //       thickness: 3,
-    //       outlineColor: 0xff8a50
-    //     });
-
-    //     // Cascade 2nd outline
-    //     postFxPlugin.add(this, {
-    //       thickness: 5,
-    //       outlineColor: 0xc41c00
-    //     });
-    //   })
-    //   .on('pointerout', function () {
-    //     // Remove all outline post-fx pipelines
-    //     postFxPlugin.remove(this);
-    //   })
-    // //added after linting 
-    // //outline effect
 
     Background.circle({
       scene: this,
@@ -218,24 +198,24 @@ export default class Artworld extends Phaser.Scene {
 
     Background.circle({
       scene: this,
-      name: "gradientAmsterdam3",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1990),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -927),
-      size: 914,
-      gradient1: 0x3a4bba,
-      gradient2: 0xbb00ff,
+      name: "purple_circle",
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
+      size: 558,
+      gradient1: 0x7300EB,
+      gradient2: 0x3a4bba,
     })
     //we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.gradientAmsterdam3.setInteractive({ draggable: true }) }
+    if (ManageSession.gameEditMode) { this.purple_circle.setInteractive({ draggable: true }) }
 
     //............................................... homes area ................................................................................
     //grass background for houses
     Background.circle({
       scene: this,
       name: "gradientGrass1",
-      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
-      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
-      size: 2300,
+      posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2107),
+      posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 120),
+      size: 920,
       gradient1: 0x15d64a,
       gradient2: 0x2b8042,
     })
@@ -450,7 +430,6 @@ export default class Artworld extends Phaser.Scene {
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201)
-    //Player.createPlayerItemsBar(this)
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200)
     // for back button, has to be done after player is created for the history tracking!
     HistoryTracker.pushLocation(this)
@@ -498,7 +477,10 @@ export default class Artworld extends Phaser.Scene {
     //!
 
     //.......... locations ................................................................................
-    ServerCall.getHomesFiltered("home", "Amsterdam", 100, this)
+    // create the user homes
+    //ServerCall.getHomesFiltered("home", "Amsterdam", this)
+    
+    // create accessable locations 
     this.generateLocations()
     //.......... end locations ............................................................................
 
@@ -540,49 +522,17 @@ export default class Artworld extends Phaser.Scene {
 
     //   }
     // })
-
-    //.....................PHYSICS TEST ..........................................................................
-    // var obstacles = this.physics.add.staticGroup()
-
-    // obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
-
-    // this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
-
-    this.scale.on('resize', (size) => {
-       console.log("size", size)
-       //this.cameras.resize(size.width*0.8, size.height*0.8);
-       window.location.reload()
-    });
-
-
   } //end create
-
-  animalWallCollide(animal, wall) {
-    //console.log("animal, wall", animal, wall)
-    this.player.body.reset(this.player.x, this.player.y)
-    // send Stop command
-    ManageSession.sendMoveMessage(this, this.player.x, this.player.y, "physicsStop")
-
-    Move.updatePositionHistory(this) // update the url and historyTracker
-
-    //update last player position in manageSession for when the player is reloaded inbetween scenes
-    ManageSession.playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, this.player.x)
-    ManageSession.playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, this.player.y)
-
-    //play "stop" animation
-    Move.movingAnimation(this, "stop")
-    this.isPlayerMoving = false
-  }
 
   createCurveWithHandles() {
     let path = { t: 0, vec: new Phaser.Math.Vector2() };
 
     this.curve = new Phaser.Curves.Spline([
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -977), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 598),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -604), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 526),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -608), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 92),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 339), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 202),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 616), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 972),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2497), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 328),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2254), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 146),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2128), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -173),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1806), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -3),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1849), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 467),
     ]);
 
     let points = this.curve.points;
@@ -660,7 +610,108 @@ export default class Artworld extends Phaser.Scene {
   generateLocations() {
     //we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(-1215, -589)
+    let locationVector = new Phaser.Math.Vector2(-400, 300)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
+    Background.rectangle({
+      scene: this,
+      name: 'green_square_location_image',
+      // posX: 0,
+      // posY: 0,
+      // setOrigin: 0,
+      gradient1: 0x15d64a,
+      gradient2: 0x15d64a,
+      gradient3: 0x2b8042,
+      gradient4: 0x2b8042,
+      alpha: 1,
+      width: 140,
+      height: 140,
+      imageOnly: true
+    });
+
+    this.greenSquareLocation = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "GreenSquare",
+      locationImage: "green_square_location_image",
+      enterButtonImage: "enter_button",
+      locationText: "Groene Vierkant Wereld",
+      fontColor: 0x8dcb0e,
+    })
+ 
+    locationVector = new Phaser.Math.Vector2(400, 330)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
+    // green_square world for homes
+    // 
+    Background.triangle({
+      scene: this,
+      name: 'turquoise_triangle_location_image',
+      // setOrigin: 0,
+      posX: locationVector.x,
+      posY: locationVector.y,
+      gradient1: 0x40E0D0,
+      gradient2: 0x40E0D0,
+      gradient3: 0x39C9BB,
+      gradient4: 0x39C9BB,
+      alpha: 1,
+      size: 200,
+      imageOnly: true
+    });
+
+    this.turquoiseTriangle = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "TurquoiseTriangle",
+      locationImage:  'turquoise_triangle_location_image',
+      enterButtonImage: "enter_button",
+      locationText: "Turquoise Driehoek Wereld",
+      fontColor: 0x8dcb0e,
+    })
+
+    locationVector = new Phaser.Math.Vector2(0, -420)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
+    Background.star({
+      scene: this,
+      name: 'red_star_location_image',
+      gradient1: 0xE50000,
+      gradient2: 0xE50000,
+      alpha: 1,
+      size: 200,
+      imageOnly: true,
+      spikes: 5
+    });
+
+    this.redStar = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "RedStar",
+      locationImage:  'red_star_location_image',
+      enterButtonImage: "enter_button",
+      locationText: "Rode Ster Wereld",
+      fontColor: 0x8dcb0e,
+    })
+
+    locationVector = new Phaser.Math.Vector2(-1215, -589)
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector
@@ -675,7 +726,6 @@ export default class Artworld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: "Location1",
-      locationImage: "museum",
       enterButtonImage: "enter_button",
       locationText: "Location 1",
       referenceName: "Location1",
@@ -811,7 +861,7 @@ export default class Artworld extends Phaser.Scene {
 
   }
 
-  update(time, delta) {
+  update() {
 
     // zoom in and out of game
     this.gameCam.zoom = ManageSession.currentZoom

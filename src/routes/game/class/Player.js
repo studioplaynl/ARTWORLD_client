@@ -23,10 +23,6 @@ class Player {
     if (!!!userprofile) userprofile = ManageSession.userProfile
     if (ManageSession.debug) console.log("loadPlayerAvatar", userprofile)
 
-    //check for createPlayer flag
-    if (!ManageSession.createPlayer) return
-    //ManageSession.createPlayer = false
-    //if (ManageSession.debug) console.log("ManageSession.createPlayer = false;")
     scene.createdPlayer = false
 
     // is playerAvaterKey already in loadedAvatars?

@@ -107,9 +107,6 @@ export default class DefaultUserHome extends Phaser.Scene {
         //copy worldSize over to ManageSession, so that positionTranslation can be done there
         ManageSession.worldSize = this.worldSize
 
-        //.......  LOAD PLAYER AVATAR ..........................................................................
-        ManageSession.createPlayer = true
-        //....... end LOAD PLAYER AVATAR .......................................................................
         Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
 
         this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)

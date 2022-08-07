@@ -89,12 +89,6 @@ export default class TestCoordinates extends Phaser.Scene {
         ManageSession.updateMovementTimer = 0;
         ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
 
-        //.......  LOAD PLAYER AVATAR ..........................................................................
-        ManageSession.createPlayer = true
-        // console.log("ManageSession.createPlayer: ")
-        // console.log(ManageSession.createPlayer)
-        //....... end LOAD PLAYER AVATAR .......................................................................
-
         Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
 
         //.......  PLAYER ....................................................................................
