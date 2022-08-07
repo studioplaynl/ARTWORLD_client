@@ -274,10 +274,14 @@
     <a on:click={getFriends}
       ><img class="icon" src="assets/SHB/svg/AW-icon-friend.svg" />
     </a>
-
+    <a
+    on:click={() => {
+      window.location.href = "/#/mariosound";
+      
+    }}><img class="icon" src="assets/SHB/svg/AW-icon-sound.svg" /></a
+  >
     <a
       on:click={() => {
-        getLiked;
         goApp("drawing");
       }}><img class="icon" src="assets/SHB/svg/AW-icon-drawing.svg" /></a
     >

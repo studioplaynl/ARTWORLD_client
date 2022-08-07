@@ -135,14 +135,14 @@
                 },
             ],
         }),
-        "/mariosound/:user?/:name?": wrap({
-            component: MarioSequencer,
-            conditions: [
-                (detail) => {
-                    return isLogedIn(detail);
-                },
-            ],
-        }),
+        // "/mariosound/:user?/:name?": wrap({
+        //     component: MarioSequencer,
+        //     conditions: [
+        //         (detail) => {
+        //             return isLogedIn(detail);
+        //         },
+        //     ],
+        // }),
         // "/avatar/:user?/:name?/:version?": wrap({
         //     component: drawing,
         //     conditions: [
