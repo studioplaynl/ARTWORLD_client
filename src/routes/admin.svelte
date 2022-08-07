@@ -21,32 +21,11 @@
   // create user
 
   const Locaties = [
-    "Amersfoort",
-    "Almelo",
-    "Almere",
     "Amsterdam",
-    "Apeldoorn",
-    "Arnhem-Zuid",
-    "Baexem",
-    "Budel-Cranendonck",
-    "Burgum",
-    "Delfzijl",
-    "Den Helde",
-    "Drachten",
-    "Emmen",
-    "Gilze en Rijen",
-    "Grave",
-    "Heerhugowaard",
-    "Heerlen",
-    "Katwijk",
-    "Leersum",
-    "Luttelgeest",
-    "Middelburg",
-    "Oisterwijk",
-    "Overloon",
-    "Rijswijk",
-    "Ter Apel",
-    "Utrecht",
+    "GreenSquare",
+    "TurquoiseTriangle",
+    "RedStar",
+    "PurpleCircle"
   ];
   const roles = ["admin", "speler", "kunstenaar", "moderator"];
   const groupColumns = []

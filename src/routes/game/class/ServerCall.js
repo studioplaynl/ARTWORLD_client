@@ -1,13 +1,11 @@
 import ManageSession from "../ManageSession"
-import { getAccount, updateObject, listObjects, convertImage, listAllObjects } from '../../../api.js'
+import { listObjects, convertImage, listAllObjects } from '../../../api.js'
 import GenerateLocation from "./GenerateLocation"
 import CoordinatesTranslator from "./CoordinatesTranslator"
-import { number } from "svelte-i18n"
-
 class ServerCall {
   constructor() { }
 
-  async getHomesFiltered(collection, filter, maxItems, scene) {
+  async getHomesFiltered(collection, filter, scene) {
     //homes represented, to created homes in the scene
     scene.homesRepresented = []
 
@@ -25,14 +23,14 @@ class ServerCall {
     }, this)
 
     //get a list of all homes objects and then filter
-    Promise.all([listObjects(collection, null, maxItems)])
+    Promise.all([listAllObjects(collection, null)])
       .then((rec) => {
-        if (ManageSession.debug) console.log("rec homes: ", rec)
         scene.homes = rec[0]
         if (ManageSession.debug) console.log("scene.homes", scene.homes)
+        // console.log("scene.homes", scene.homes)
         // filter only amsterdam homes
         scene.homes = scene.homes.filter((obj) => obj.key == filter)
-
+        // console.log("scene.homes.filter", filter, scene.homes)
         // retreive how many artworks are in the home
         // let tempAllArtPerUser = []
         scene.homes.forEach((element, index) => {

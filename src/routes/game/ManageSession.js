@@ -45,7 +45,6 @@ class ManageSession {
 
     this.AccountObject;
     this.playerObjectSelf;
-    this.createPlayer = true;
     this.createdPlayer = false; //used for checking if we can start sending player movement data over the network
     this.playerMove;
     this.playerClicks = 0;

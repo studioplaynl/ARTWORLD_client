@@ -92,7 +92,6 @@ class HistoryTracker {
       delay: 700,
       callback: () => {
         ManageSession.location = goToScene
-        ManageSession.createPlayer = true
         // if (ManageSession.debug) console.log("scene.scene.stop(scene.scene.key)", scene.scene.key)
         scene.scene.stop(scene.scene.key)
         // if (ManageSession.debug) console.log("scene.scene.start(goToScene, { user_id: locationID })", goToScene, locationID)

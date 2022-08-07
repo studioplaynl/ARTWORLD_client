@@ -81,10 +81,6 @@ export default class Location4 extends Phaser.Scene {
   async create() {
     //copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize
-    //.......  LOAD PLAYER AVATAR ..........................................................................
-    ManageSession.createPlayer = true
-    //....... end LOAD PLAYER AVATAR .......................................................................
-
     this.generateBackground()
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)

@@ -135,8 +135,6 @@ export default class Location1 extends Phaser.Scene {
 
     //.......  LOAD PLAYER AVATAR ..........................................................................
     this.playerIdText = ManageSession.userProfile.id;
-
-    ManageSession.createPlayer = true
     //....... end LOAD PLAYER AVATAR .......................................................................
 
     this.generateBackground()
