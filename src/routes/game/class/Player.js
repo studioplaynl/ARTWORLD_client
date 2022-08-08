@@ -61,7 +61,7 @@ class Player {
       this.reloadDefaultAvatar();
     }
 
-    dlog('scene.playerAvatarKey avatar', scene.playerAvatarKey);
+    // dlog('scene.playerAvatarKey avatar', scene.playerAvatarKey);
     let lastPosX;
     let lastPosY;
     if (typeof placePlayerY !== 'undefined') {
@@ -120,7 +120,7 @@ class Player {
 
     // if the texture doesnot exists (if it is new) load it and attach it to the player
     if (!scene.textures.exists(scene.playerAvatarKey)) {
-      dlog("didn't exist yet: scene.textures.exists(scene.playerAvatarKey)");
+      // dlog("didn't exist yet: scene.textures.exists(scene.playerAvatarKey)");
       const fileNameCheck = scene.playerAvatarKey;
 
       // convert the avatar url to a converted png url
@@ -143,21 +143,20 @@ class Player {
       scene.load.start(); // start loading the image in memory
     } else {
       // else reload the old (already in memory avatar)
-      dlog('existed already: scene.textures.exists(scene.playerAvatarKey)');
+      // dlog('existed already: scene.textures.exists(scene.playerAvatarKey)');
       this.attachAvatarToPlayer(scene);
-      dlog('scene.location', scene.location);
     }
   }
 
   async attachAvatarToPlayer(scene) {
-    dlog(' attachAvatarToPlayer(scene)');
+    // dlog(' attachAvatarToPlayer(scene)');
 
     const avatar = scene.textures.get(scene.playerAvatarKey);
     const avatarWidth = avatar.frames.__BASE.width;
-    dlog('avatarWidth: ', avatarWidth);
+    // dlog('avatarWidth: ', avatarWidth);
 
     const avatarHeight = avatar.frames.__BASE.height;
-    dlog('avatarHeight: ', avatarHeight);
+    // dlog('avatarHeight: ', avatarHeight);
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
     // dlog("avatarFrames: " + avatarFrames)
@@ -166,7 +165,7 @@ class Player {
 
     // if (avatarFrames < 1) {
     // . animation for the player avatar ......................
-    dlog('avatarFrames > 1');
+    // dlog('avatarFrames > 1');
 
     scene.playerMovingKey = `moving_${scene.playerAvatarKey}`;
     scene.playerStopKey = `stop_${scene.playerAvatarKey}`;
