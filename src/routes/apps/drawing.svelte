@@ -30,13 +30,8 @@
   let lastImg;
 
   let lastWidth;
-  const params = {
-    /** User */
-    user: $location.split('/')[2],
+  const params = {};
 
-    /** Filename */
-    name: $location.split('/')[3],
-  };
   let invalidTitle = true;
   const history = [];
 
@@ -60,7 +55,6 @@
 
   /** Title of artwork on the server */
   let title;
-  if (params.name) title = params.name;
 
   let showBackground = true;
 
@@ -235,6 +229,14 @@
   onMount(() => {
     setLoader(true);
 
+    if ($location.split('/').length > 2) {
+      // eslint-disable-next-line prefer-destructuring
+      params.user = $location.split('/')[2];
+      // eslint-disable-next-line prefer-destructuring
+      params.name = $location.split('/')[3];
+      if (params.name) title = params.name;
+    }
+
     // Create autosave interval
     autosaveInterval = setInterval(() => {
       if (isDrawn || isTitleChanged) {
@@ -245,7 +247,7 @@
           data.drawing = canvas.toDataURL('image/png', 1);
         }
         localStorage.setItem('Drawing', JSON.stringify(data));
-        console.log('Added drawing to localstorage');
+        // console.log('Added drawing to localstorage');
       }
     }, 20000);
 
@@ -264,7 +266,12 @@
     saveCanvas = new fabric.Canvas(saveCanvasEl, {
       isDrawingMode: true,
     });
-    if (typeof params.name !== 'undefined') {
+
+    if (
+      appType === 'avatar' ||
+      appType === 'house' ||
+      typeof params.name !== 'undefined'
+    ) {
       getImage();
     } else {
       createURL();
@@ -586,8 +593,7 @@
     }
     return null;
   }
-
-  // eslint-disable-next-line no-unused-vars, consistent-return
+  // eslint-disable-next-line consistent-return
   async function getImage() {
     if (!params.name && (appType === 'stopmotion' || appType === 'drawing')) {
       return setLoader(false);
@@ -637,7 +643,7 @@
       // Load House from server
       const loadingObject = await getObject(
         'home',
-        $Profile.meta.Azc,
+        $Profile.meta.Azc || 'Amsterdam',
         $Profile.user_id,
       );
       const loadingImage = await getFile(
