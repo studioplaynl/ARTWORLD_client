@@ -15,10 +15,11 @@
     getFile,
     getRandomName,
   } from '../../api';
-  import { Session, Profile } from '../../session';
+  import { Session, Profile, Error } from '../../session';
   import NameGenerator from '../components/nameGenerator.svelte';
   import Avatar from '../components/avatar.svelte';
   import ManageSession from '../game/ManageSession';
+  import { PERMISSION_READ_PUBLIC } from '../../constants';
 
   export let appType = $location.split('/')[1];
 
@@ -30,7 +31,10 @@
 
   let lastWidth;
   const params = {
+    /** User */
     user: $location.split('/')[2],
+
+    /** Filename */
     name: $location.split('/')[3],
   };
   let invalidTitle = true;
@@ -241,6 +245,7 @@
           data.drawing = canvas.toDataURL('image/png', 1);
         }
         localStorage.setItem('Drawing', JSON.stringify(data));
+        console.log('Added drawing to localstorage');
       }
     }, 20000);
 
@@ -263,8 +268,8 @@
       getImage();
     } else {
       createURL();
+      setLoader(false);
     }
-    setLoader(false);
 
     fabric.Object.prototype.transparentCorners = false;
 
@@ -518,144 +523,149 @@
     backgroundFrames = backgroundFramesToUpdate;
   };
 
-  const getImage = async () => {
-    const localStore = JSON.parse(localStorage.getItem('Drawing'));
-    if (localStore) {
-      // console.log(localStore);
-      // console.log(`store ${localStore.name}`);
-      // console.log(`param ${params.name}`);
-      if (
-        localStore.name === params.name &&
-        typeof params.name !== 'undefined'
-      ) {
-        console.log(localStore.type);
-        // isDrawn = true;
-        // console.log("localstorage isDrawn", isDrawn);
-        if (localStore.type === 'drawing') {
-          console.log('test');
-          // canvas.loadFromJSON(
-          //   localStore.drawing,
-          //   canvas.renderAll.bind(canvas)
-          // );
-          fabric.Image.fromURL(
-            localStore.drawing,
-            (oImg) => {
-              oImg.set({ left: 0, top: 0 });
-              oImg.scaleToHeight(imageResolution);
-              oImg.scaleToWidth(imageResolution);
-              canvas.add(oImg);
-            },
-            { crossOrigin: 'anonymous' },
-          );
-        }
+  function putImageOnCanvas(imgUrl, callback) {
+    fabric.Image.fromURL(
+      imgUrl,
+      (image, success) => {
+        image.set({ left: 0, top: 0 });
+        image.scaleToHeight(imageResolution);
+        image.scaleToWidth(imageResolution);
+        canvas.add(image);
 
-        //     if (localStore.type == "stopmotion") {
-        //       frames = localStore.frames;
-        //       canvas.loadFromJSON(
-        //         localStore.frames[0],
-        //         canvas.renderAll.bind(canvas)
-        //       );
-        //     }
+        if (typeof callback === 'function') callback(success);
+      },
+      { crossOrigin: 'anonymous' },
+    );
+  }
+
+  function putAnimationOnCanvas(loadImage, callback) {
+    currentFrame = 0;
+    const framebuffer = new Image();
+    framebuffer.height = imageResolution;
+
+    // eslint-disable-next-line func-names
+    framebuffer.onload = function () {
+      const framesToLoad = [];
+
+      lastWidth = this.width;
+      const frameAmount = lastWidth / imageResolution;
+
+      for (let i = 0; i < frameAmount; i++) {
+        const frame = { ...FrameObject };
+        frame.src = loadImage;
+        frame.width = lastWidth;
+        frame.left = 0;
+        frame.width = imageResolution;
+        frame.cropX = i * imageResolution;
+
+        framesToLoad.push({
+          version: '4.6.0',
+          objects: [{ ...frame }],
+        });
       }
-    }
 
-    if (!params.name && (appType == 'stopmotion' || appType == 'drawing')) {
+      frames = framesToLoad;
+
+      canvas.loadFromJSON(frames[currentFrame], (image) => {
+        canvas.renderAll.bind(canvas);
+        if (typeof callback === 'function') callback(image);
+      });
+    };
+
+    framebuffer.src = loadImage;
+  }
+
+  async function getImageInformation() {
+    const loadingObject = await getObject(appType, params.name, params.user);
+
+    if (loadingObject) {
+      ({ displayName, version } = loadingObject.value.displayname);
+      title = loadingObject.key;
+      status = loadingObject.permission_read === PERMISSION_READ_PUBLIC;
+      return getFile(loadingObject.value.url);
+    }
+    return null;
+  }
+
+  // eslint-disable-next-line no-unused-vars, consistent-return
+  async function getImage() {
+    if (!params.name && (appType === 'stopmotion' || appType === 'drawing')) {
       return setLoader(false);
     }
-    console.log('appType', appType);
-    // get images
-    if (appType == 'avatar') {
-      lastImg = await getFile($Profile.avatar_url, 'imageResolution', '10000');
-      isPreexistingArt = true;
-    } else if (appType == 'house') {
+
+    if (appType === 'drawing') {
+      // Load Drawing from localStorage or Server
+      const localStore = JSON.parse(localStorage.getItem('Drawing'));
+
+      if (
+        typeof params.name !== 'undefined' &&
+        localStore &&
+        localStore.type === 'drawing' &&
+        localStore.name === params.name
+      ) {
+        isPreexistingArt = true;
+        putImageOnCanvas(localStore.drawing, (success) => {
+          if (!success) {
+            Error.set('Drawing: Failed loading image from localStorage');
+          }
+          return setLoader(false);
+        });
+      }
+
+      // Drawing was not found in localStorage
+      getImageInformation().then((loadingImage) => {
+        isPreexistingArt = true;
+        putImageOnCanvas(loadingImage, (success) => {
+          if (!success) {
+            Error.set('Failed loading drawing from server');
+          }
+          return setLoader(false);
+        });
+      });
+    } else if (appType === 'avatar') {
+      // Load Avatar from server
+      const loadingImage = await getFile(
+        $Profile.avatar_url,
+        'imageResolution',
+        '10000',
+      );
+      putAnimationOnCanvas(loadingImage, () => {
+        isPreexistingArt = true;
+        return setLoader(false);
+      });
+    } else if (appType === 'house') {
+      // Load House from server
       const loadingObject = await getObject(
         'home',
         $Profile.meta.Azc,
         $Profile.user_id,
       );
-      lastImg = await getFile(
+      const loadingImage = await getFile(
         loadingObject.value.url,
         'imageResolution',
         'imageResolution',
       );
-      lastValue = Object.value;
       title = loadingObject.key;
-      status = loadingObject.permission_read == 2;
-      isPreexistingArt = true;
-    } else {
-      const loadingObject = await getObject(appType, params.name, params.user);
-      console.log('object', loadingObject);
-      if (loadingObject) {
-        displayName = loadingObject.value.displayname;
-        title = loadingObject.key;
-        status = loadingObject.permission_read == 2;
-        console.log('status in getImage', status);
-        version = loadingObject.value.version;
-        console.log('displayName', displayName);
-        lastImg = await getFile(loadingObject.value.url);
+      status = loadingObject.permission_read === PERMISSION_READ_PUBLIC;
+
+      putImageOnCanvas(loadingImage, (success) => {
         isPreexistingArt = true;
-      }
-    }
-    // put images on canvas
-    if (appType == 'avatar' || appType == 'stopmotion') {
-      console.log('avatar');
-      let frameAmount;
-      const framebuffer = new Image();
-      framebuffer.src = lastImg;
-      framebuffer.height = imageResolution;
-      framebuffer.onload = function () {
-        console.log('img', this.width);
-        lastWidth = this.width;
-        frameAmount = lastWidth / imageResolution;
-
-        FrameObject.src = lastImg;
-        FrameObject.width = lastWidth;
-        frames = [];
-        for (let i = 0; i < frameAmount; i++) {
-          FrameObject.left = 0;
-          FrameObject.width = imageResolution;
-          FrameObject.cropX = i * imageResolution;
-          // FrameObject.clipTo = function (ctx) {
-          //   // origin is the center of the image
-          //   // var x = rectangle.left - image.getWidth() / 2;
-          //   // var y = rectangle.top - image.getHeight() / 2;
-          //   // ctx.rect(i * -imageResolution, imageResolution, (i * -imageResolution)+imageResolution, imageResolution);
-          //   ctx.rect(0,-imageResolution,imageResolution,imageResolution)
-          // };
-          // FrameObject.setCoords();
-          frames.push({
-            version: '4.6.0',
-            objects: [{ ...FrameObject }],
-          });
+        if (!success) {
+          Error.set('Failed loading house from server');
         }
-        frames = frames;
-        console.log('frames', frames);
-        currentFrame = 0;
-        canvas.loadFromJSON(frames[0], (oImg) => {
-          canvas.renderAll.bind(canvas);
-          // for (let i = 0; i < frames.length; i++) {
-          //     updateFrame()
-          //     changeFrame(i)
+        return setLoader(false);
+      });
+    } else if (appType === 'stopmotion') {
+      // Load StopMotion from server
 
-          // }
-        });
-      };
+      getImageInformation().then((loadingImage) => {
+        isPreexistingArt = true;
+        putAnimationOnCanvas(loadingImage, () => setLoader(false));
+      });
+    } else {
+      return setLoader(false);
     }
-    if (appType == 'drawing' || appType == 'house') {
-      fabric.Image.fromURL(
-        lastImg,
-        (oImg) => {
-          oImg.set({ left: 0, top: 0 });
-          oImg.scaleToHeight(imageResolution);
-          oImg.scaleToWidth(imageResolution);
-          canvas.add(oImg);
-        },
-        { crossOrigin: 'anonymous' },
-      );
-    }
-
-    setLoader(false);
-  };
+  }
 
   function dataURItoBlob(dataURI) {
     const binary = atob(dataURI.split(',')[1]);
@@ -672,36 +682,12 @@
     replace(`/${appType}/${$Session.user_id}/${displayName}`);
   };
 
-  async function getDataUrl(img) {
-    //  // Set width and height
-    //  saveCanvas.width = img.width;
-    //  saveCanvas.height = img.height;
-    //  // Draw the image
-    //  saveCanvas.drawImage(img, 0, 0);
-    //  return saveCanvas.toDataURL('image/jpeg');
-
-    // Create canvas
-    let image;
-    console.log('img', img);
-    await fabric.Image.fromURL(img, (oImg) => {
-      oImg.set({ left: 0, top: 0 });
-      oImg.scaleToHeight(imageResolution);
-      oImg.scaleToWidth(imageResolution);
-      console.log(oImg);
-      console.log(canvas);
-      saveCanvas.add(oImg);
-    });
-    image = saveCanvas.toDataURL('image/png', 1);
-    return image;
-  }
-
   function mouseEvent() {
     setTimeout(() => {
       updateFrame();
       saveHistory();
     }, 200);
   }
-
 
   /// /////////////////////// stop motion functie ////////////////////////////////////////
 

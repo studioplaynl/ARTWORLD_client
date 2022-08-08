@@ -582,6 +582,7 @@ export function setLoader(state) {
   } else {
     document.getElementById('loader').classList.add('hide');
   }
+  return state;
 }
 
 export async function getRandomName() {
