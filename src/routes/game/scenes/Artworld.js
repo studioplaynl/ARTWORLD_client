@@ -546,7 +546,7 @@ export default class Artworld extends Phaser.Scene {
         ManageSession.selectedGameObjectStartScale = gameObject.scale;
         ManageSession.selectedGameObjectStartPosition.x = gameObject.x;
         ManageSession.selectedGameObjectStartPosition.y = gameObject.y;
-        console.log('editMode info startScale:', ManageSession.selectedGameObject_startScale);
+        console.log('editMode info startScale:', ManageSession.selectedGameObjectStartScale);
       }
       // ManageSession.selectedGameObject = gameObject
 

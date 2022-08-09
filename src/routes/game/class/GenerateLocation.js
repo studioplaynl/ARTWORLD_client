@@ -48,8 +48,16 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     let width;
     let namePlateExtraOffset = 0;
 
+    // setting 'enteringPossible' to true, this can be changed from outside with .setData
+    this.setData('enteringPossible', 'true');
+
+    // disable entering when the location is draggable
+    // if (this.draggable) this.setData('enteringPossible', 'false');
+
+
     this.postFxPlugin = this.scene.plugins.get('rexOutlinePipeline');
 
+    // default size, if no size is specified
     if (typeof this.size === 'undefined') {
       width = 200;
     } else {
@@ -70,18 +78,17 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     // image for the location, physical body for collision with the player
     // setOrigin(0.5) in the middle
     if (this.type === 'image') {
-      this.scene.textures.exists(this.locationImage);
+      // this.scene.textures.exists(this.locationImage);
       this.location = this.scene.physics.add.image(0, 0, this.locationImage).setOrigin(0.5, 0.5).setDepth(30);
 
       const cropWidth = this.location.width;
       const cropHeight = this.location.height;
 
-      // debug rectangle to see to total space needed for the placement of a house
+      // debug rectangle to see to total space needed for the placement of a house when in dragging mode
       this.debugRect_y = -(width / 2);
       this.debugRect_height = width;
 
       // set the location to a fixed size, also scales the physics body
-
       this.location.displayWidth = width;
       this.location.scaleY = this.location.scaleX;
       this.location.body.setSize(this.location.width, this.location.height);
@@ -138,35 +145,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     // can't drag the location if there is another function for pointerdown
     // we set the location either clickable or dragable (because dragging is a edit function)
     if (!this.draggable) {
-      this.location.setInteractive({ useHandCursor: true });
-      // dlog("this.location.width, this.location.height", this.location.width, this.location.height)
-
-      // the width and height are not the same for isobox,
-      // we make the hitarea for
-      const hitAreaWidth = this.location.width;
-      const hitAreaheight = this.location.height;
-      if (hitAreaWidth !== hitAreaheight) {
-        //  Coordinates are relative from the top-left, so we want out hit area to be
-        //  an extra 60 pixels around the texture, so -30 from the x/y and + 60 to the texture width and height
-
-        // extend the isobox hitarea
-        this.location.input.hitArea.setTo(
-          -hitAreaWidth / 3,
-          -hitAreaWidth / 1.3,
-          hitAreaWidth * 1.4,
-          hitAreaWidth * 1.5,
-        );
-      }
-
-      // on home click, we let the player to see the entrance arrow above the home
-      this.location.on('pointerdown', () => {
-        if (!this.showing) {
-          this.initConfirm();
-          this.enterButton.setVisible(this.showing);
-          this.enterShadow.setVisible(this.showing);
-          this.enterArea.setVisible(this.showing);
-        }
-      });
+      this.setLocationAsInteractive();
     }
 
     // place thethis.userHome description under the location image
@@ -183,6 +162,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     )
       .setOrigin(0.5, 0.5)
       .setDepth(32);
+
     // location plate name
     const namePlate = this.scene.add.graphics()
       .fillStyle(0xE8E8E8, 1)
@@ -227,12 +207,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     // back button that appears
     const enterButtonYOffset = -30;
     const enterButtonYTweenOffset = 15;
-    let enterButtonY = this.y - (width / 2) - enterButtonYOffset;
-    let enterButtonTweenY = enterButtonY + enterButtonYTweenOffset;
-
-    // calculate y of debugRect according to the enterButton offset
-    // this.debugRect_height = this.debugRect_height + (enterButtonYOffset * 1.5)
-    // this.debugRect_y = this.debugRect_y - (enterButtonYOffset * 1.5)
+    const enterButtonY = this.y - (width / 2) - enterButtonYOffset;
+    const enterButtonTweenY = enterButtonY + enterButtonYTweenOffset;
 
     // this.enterButtonHitArea = this.scene.add.image(this.x, enterButtonY, 'enterButtonHitArea').setDepth(201)
     // this.enterButtonHitArea.alpha = 0 // make the hitArea invisible
@@ -247,7 +223,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       0,
     )
       .setVisible(false)
-      .setInteractive({ useHandCursor: true })
+      .setInteractive() // { useHandCursor: true }
+      .setName('enterArea')
       .setDepth(501);
 
     this.enterShadow = this.scene.add.circle(
@@ -319,53 +296,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       this.add(this.numberBubble); // add to the container
       this.add(this.numberArt);
     }
-    // this.add(this.enterButtonHitArea)
-
-    // changing the order in the container, changes the drawing order?
-    // this.bringToTop(this.enterButtonHitArea)
 
     this.setSize(width, width, false);
-    // set a reference for the house to be able to set it to draggable
-
-    if (this.draggable) {
-      this.setInteractive();
-      this.debugRect.setVisible(true);
-      this.debugRectXMargin.setVisible(true)
-        .on('drag', (p) => {
-          this.setX(p.worldX);
-          this.setY(p.worldY);
-          // The enterButton is outside the container, so that it can appear above the player
-          // when dragging the container we have to move the enterButton aswell
-          this.enterButton.x = this.x;
-          enterButtonY = this.y - (width / 2) - 60;
-          enterButtonTweenY = enterButtonY + 90;
-          this.enterButton.y = enterButtonY;
-          // this.enterButtonTween.restart()
-          this.enterButtonTween.stop();
-          this.enterButtonTween.remove();
-          this.enterButtonTween = this.scene.tweens.add({
-            targets: this.enterButton,
-            y: enterButtonTweenY,
-            alpha: 0.0,
-            duration: 1000,
-            ease: 'Sine.easeInOut',
-            repeat: -1,
-            yoyo: true,
-          });
-        });
-      // .on('pointerdown', (p, x, y) => {
-      //   // dlog('dragging')
-      //   // dlog(p.worldX, p.worldY)
-      // })
-      // .on('pointerup', (p, x, y) => {
-      //   /* dlog(CoordinatesTranslator.Phaser2DToArtworldX(this.scene.worldSize.x, p.worldX),
-      //    CoordinatesTranslator.Phaser2DToArtworldY(this.scene.worldSize.y, p.worldY)); */
-      // });
-    }
-
-    // this.enterButtonHitArea.on('pointerdown', () => {
-
-    // })
 
     this.enterArea.on('pointerdown', () => {
       // check when entering the location if it is an URL or scene
@@ -407,17 +339,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         dlog('CurrentApp.set(this.appUrl)', this.appUrl);
         CurrentApp.set(this.appUrl);
       }
-      //   dlog(
-      //     'GenerateLocation',
-      //     'scene: ',
-      //     this.scene,
-
-      //     'locationDestination',
-      //     this.locationDestination,
-
-      //     'userHome: ',
-      //     this.userHome,
-      //   );
       HistoryTracker.switchScene(this.scene, this.locationDestination, this.userHome);
     });
 
@@ -426,21 +347,113 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.scene.add.existing(this);
     this.scene.physics.add.existing(this);
 
+    // TODO draggable should be event based driven so it can be set reactive
+    // with this.getData('draggable') values can be changed from outside
+    // and with functions/ data events there can be reactions
     if (this.draggable) {
-      this.scene.input.setDraggable(this, true);
+      this.makeDraggable();
     }
+
+    // data change example
+    this.on('changedata-enteringPossible', (GameObject, arg) => {
+      // console.log('datachanged, GameObject, arg', GameObject, arg);
+      // console.log('datachanged, arg ', arg);
+
+      // when this.draggable this.location does not exist
+      // check if this.location is not null
+      const locationExists = (typeof this.location !== 'undefined');
+
+      switch (arg) {
+        case 'true':
+          if (locationExists) { this.location.setInteractive({ useHandCursor: true }); }
+
+          break;
+
+        case 'false':
+          if (locationExists) { this.location.disableInteractive(); }
+          break;
+
+        default:
+          console.log('changedata-enteringPossible NEEDS ARGUMENTS', GameObject, arg);
+          break;
+      }
+    });
+  }
+
+  setLocationAsInteractive() {
+    this.location.setInteractive({ useHandCursor: true });
+    this.location.setName('location');
+    // dlog("this.location.width, this.location.height", this.location.width, this.location.height)
+
+    // the width and height are not the same for isobox,
+    // we make the hitarea for
+    const hitAreaWidth = this.location.width;
+    const hitAreaheight = this.location.height;
+    if (hitAreaWidth !== hitAreaheight) {
+      //  Coordinates are relative from the top-left, so we want out hit area to be
+      //  an extra 60 pixels around the texture, so -30 from the x/y and + 60 to the texture width and height
+
+      // extend the isobox hitarea
+      this.location.input.hitArea.setTo(
+        -hitAreaWidth / 3,
+        -hitAreaWidth / 1.3,
+        hitAreaWidth * 1.4,
+        hitAreaWidth * 1.5,
+      );
+    }
+
+    // on home click, we let the player to see the entrance arrow above the home
+    this.location.on('pointerdown', () => {
+      if (!this.showing && this.getData('enteringPossible') === 'true') {
+        this.initConfirm();
+        this.enterButton.setVisible(this.showing);
+        this.enterShadow.setVisible(this.showing);
+        this.enterArea.setVisible(this.showing);
+      }
+    });
+  }
+
+  makeDraggable() {
+    // this.location.disableInteractive();
+    this.setInteractive(); // the whole container is draggable
+    this.debugRect.setVisible(true);
+    this.debugRectXMargin.setVisible(true)
+      .on('drag', (p) => {
+        this.setX(p.worldX);
+        this.setY(p.worldY);
+        // The enterButton is outside the container, so that it can appear above the player
+        // when dragging the container we have to move the enterButton aswell
+        this.enterButton.x = this.x;
+        enterButtonY = this.y - (width / 2) - 60;
+        enterButtonTweenY = enterButtonY + 90;
+        this.enterButton.y = enterButtonY;
+        // this.enterButtonTween.restart()
+        this.enterButtonTween.stop();
+        this.enterButtonTween.remove();
+        this.enterButtonTween = this.scene.tweens.add({
+          targets: this.enterButton,
+          y: enterButtonTweenY,
+          alpha: 0.0,
+          duration: 1000,
+          ease: 'Sine.easeInOut',
+          repeat: -1,
+          yoyo: true,
+        });
+      });
+
+    this.scene.input.setDraggable(this, true);
   }
 
   confirmEnterLocation() {
-    this.initConfirm();
-    this.enterButton.setVisible(true);
-    this.enterShadow.setVisible(true);
-    this.enterArea.setVisible(true);
-    // this.enterButtonHitArea.setVisible(true)
-    // this.enterButtonHitArea.setInteractive({ useHandCursor: true })
+    if (this.getData('enteringPossible') === 'true') {
+      this.initConfirm();
+      this.enterButton.setVisible(true);
+      this.enterShadow.setVisible(true);
+      this.enterArea.setVisible(true);
 
     // needed for an image or sprite to be interactive when alpha = 0
     // this.enterButtonHitArea.input.alwaysEnabled = true
+    }
   }
 
   hideEnterButton() {

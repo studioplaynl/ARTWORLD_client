@@ -64,7 +64,6 @@ class ServerCall {
       listAllObjects('stopmotion', homeElement.user_id)]).then(
       (artWorksArrays) => {
         // the 2 promisses create an array each, so iterate over both
-        // console.log('rec after promisses artWorks', artWorksArrays[0], artWorksArrays[1]); // dit klopt: twee arrays van artworks: drawing en stopmotion
 
         // we filter out the visible artworks
         // filter only the visible art = "permission_read": 2
@@ -133,22 +132,26 @@ class ServerCall {
     // scene.homes bevat het aantal artWorks
     const scene = ManageSession.currentScene;
 
-    scene.homesRepresented.forEach((element, index) => {
-      const artWorkLength = scene.homes[index].artWorks.length;
-      element.numberOfArtworks = artWorkLength;
-      element.numberArt.setText(artWorkLength);
-      if (artWorkLength > 0) {
-        scene.homesRepresented[index].numberArt.setVisible(true);
-        scene.homesRepresented[index].numberBubble.setVisible(true);
-      }
-    });
+    if (!ManageSession.gameEditMode) {
+      scene.homesRepresented.forEach((element, index) => {
+        const artWorkLength = scene.homes[index].artWorks.length;
+        element.numberOfArtworks = artWorkLength;
+        element.numberArt.setText(artWorkLength);
+        if (artWorkLength > 0) {
+          scene.homesRepresented[index].numberArt.setVisible(true);
+          scene.homesRepresented[index].numberBubble.setVisible(true);
+          scene.homesRepresented[index].setData('enteringPossible', 'true');
+        } else {
+          scene.homesRepresented[index].numberArt.setVisible(false);
+          scene.homesRepresented[index].numberBubble.setVisible(false);
+          scene.homesRepresented[index].setData('enteringPossible', 'false');
+        }
+      });
+    }
   }
 
   static createHome(element, index, homeImageKey, _scene) {
     const scene = _scene;
-    // console.log('scene.homesRepresented.length createHome', scene.homesRepresented.length);
-    // console.log('scene.homes.length createHome', scene.homes.length);
-    // dlog(" createHome element.artWorks", element.artWorks)
 
     // home description
     const locationDescription = element.value.username;
@@ -160,8 +163,6 @@ class ServerCall {
     } else {
       numberOfArtworks = element.artWorks.length;
     }
-
-    // console.log('numberOfArtworks createHome', numberOfArtworks);
 
     scene.homesRepresented[index] = new GenerateLocation({
       scene,
@@ -199,15 +200,12 @@ class ServerCall {
       scene.homesRepresented[index].setScale(1.6);
     }
 
-    // add a bubble with the number of artworks in the house
-    // eslint-disable-next-line max-len
-    // scene.add.circle(CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x,element.value.posX), CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, element.value.posY), 30, 0x7300ED).setOrigin(0.5, 0.5).setVisible(true).setDepth(499)
-
     scene.homesRepresented[index].setDepth(30);
-    // console.log('scene.homesRepresented[index]', scene.homesRepresented[index]);
-    if (scene.homesRepresented[index].numberOfArtworks < 1) {
+
+    if (scene.homesRepresented[index].numberOfArtworks < 1 || ManageSession.gameEditMode) {
       scene.homesRepresented[index].numberArt.setVisible(false);
       scene.homesRepresented[index].numberBubble.setVisible(false);
+      scene.homesRepresented[index].setData('enteringPossible', 'false');
     }
   }
 

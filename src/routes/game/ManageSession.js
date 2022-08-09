@@ -360,11 +360,6 @@ class ManageSession {
     dlog('this.allConnectedUsers', this.allConnectedUsers);
   }
 
-  // TODO Remove?
-  // async leave(selected) {
-  //   await socket.rpc('leave', selected);
-  // }
-
   /** Transpose phaser coordinates to artworld coordinates and send move message */
   sendMoveMessage(scene, posX, posY, action) {
     this.lastMoveCommand = {
@@ -380,24 +375,6 @@ class ManageSession {
 
     this.socket.rpc('move_position', JSON.stringify(data));
   }
-
-  // TODO Remove?
-  // testMoveMessage() {
-  //   // works
-  //   const opCode = 1;
-  //   let data = `{ "posX": ${
-  //     Math.floor(Math.random() * 100)
-  //   }, "posY": ${
-  //     Math.floor(Math.random() * 100)
-  //   }, "location": "home" }`;
-
-  //   this.socket.rpc('move_position', data).then((rec) => {
-  //     // status;
-  //     data = JSON.parse(rec.payload) || [];
-  //     // dlog("sent pos:");
-  //     // dlog(data);
-  //   });
-  // }
 } // end class
 
 export default new ManageSession();
