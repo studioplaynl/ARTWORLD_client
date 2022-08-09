@@ -1,14 +1,16 @@
 <script>
   import { onMount } from 'svelte';
   import ErrorIcon from 'svelte-icons/md/MdErrorOutline.svelte';
-  import SuccesIcon from 'svelte-icons/md/MdDone.svelte';
+  import SuccessIcon from 'svelte-icons/md/MdDone.svelte';
 
   // notification icons
   import NotificationIcon from 'svelte-icons/md/MdEmail.svelte';
   import UserAddIcon from 'svelte-icons/md/MdPersonAdd.svelte';
   import GroupAddIcon from 'svelte-icons/md/MdGroupAdd.svelte';
   import PersonIcon from 'svelte-icons/md/MdPerson.svelte';
-  import { Error, Session, Succes, Notification } from '../../session';
+  import {
+    Error, Session, Success, Notification,
+  } from '../../session';
 
   import {
     NOTIFICATION_MESSAGE_RECEIVED_WHILE_OFFLINE_OR_NOT_IN_CHANNEL,
@@ -24,12 +26,31 @@
   } from '../../constants';
 
   let error;
-  let succes;
+  let success;
   let notification;
   let notificationCode = 0;
   let showMessage = false;
-  Error.subscribe((err) => setError(err));
-  Notification.subscribe((notif) => setNotification(notif));
+
+  Error.subscribe((val) => {
+    if (val) {
+      console.warn('ERROR: ', val);
+      setError(val);
+    }
+  });
+
+  Notification.subscribe((val) => {
+    if (val) {
+      console.log('NOTIFICATION: ', val);
+      setNotification(val);
+    }
+  });
+
+  Success.subscribe((val) => {
+    if (val) {
+      console.log('SUCCESS: ', val);
+      setSuccess(val);
+    }
+  });
 
   function setError(err) {
     error = err;
@@ -49,14 +70,12 @@
     }
   }
 
-  Succes.subscribe((val) => setSucces(val));
-
-  function setSucces(val) {
+  function setSuccess(val) {
     if (val) {
-      succes = true;
+      success = true;
       setTimeout(() => {
-        succes = false;
-        $Succes = false;
+        success = false;
+        $Success = false;
       }, 1500);
     }
   }
@@ -91,13 +110,12 @@
       showMessage = false;
       error = '';
     }
-    console.log('test');
   };
 </script>
 
-{#if succes}
+{#if success}
   <div class="snackbar">
-    <div class="icon green"><SuccesIcon /></div>
+    <div class="icon green"><SuccessIcon /></div>
   </div>
 {/if}
 

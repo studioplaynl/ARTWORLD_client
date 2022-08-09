@@ -460,8 +460,8 @@
             setLoader(false);
           });
         } else if (appType === 'house') {
-          await uploadHouse(blobData).then((response) => {
-            savedURL = response;
+          await uploadHouse(blobData).then((url) => {
+            savedURL = url;
             setLoader(false);
           });
         }
@@ -533,13 +533,13 @@
   function putImageOnCanvas(imgUrl, callback) {
     fabric.Image.fromURL(
       imgUrl,
-      (image, success) => {
+      (image, hasError) => {
         image.set({ left: 0, top: 0 });
         image.scaleToHeight(imageResolution);
         image.scaleToWidth(imageResolution);
         canvas.add(image);
 
-        if (typeof callback === 'function') callback(success);
+        if (typeof callback === 'function') callback(hasError === false);
       },
       { crossOrigin: 'anonymous' },
     );
