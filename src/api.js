@@ -4,7 +4,7 @@
 import { get } from 'svelte/store';
 import { client } from './nakama.svelte';
 import {
-  Session, Profile, Error, Succes, CurrentApp,
+  Session, Profile, Error, Success, CurrentApp,
 } from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 
@@ -119,7 +119,7 @@ export async function updateTitle(collection, key, name, userID) {
 export async function uploadHouse(data) {
   const type = 'home';
   const profile = get(Profile);
-  const name = profile.meta.Azc;
+  const name = profile.meta.Azc || 'Amsterdam';
   const object = await getObject(type, name);
 
   // eslint-disable-next-line prefer-const
@@ -151,7 +151,7 @@ export async function uploadHouse(data) {
   value.url = jpegLocation;
   // get object
   // console.log('value', value);
-  await updateObject(type, name, JSON.stringify(value), makePublic);
+  await updateObject(type, name, value, makePublic);
 
   return value.url;
 }
@@ -174,7 +174,7 @@ export async function getUploadURL(type, name, filetype, version) {
  * @param {string} userID User ID
  */
 export async function updateObject(type, name, value, pub, userID) {
-  Succes.set(null);
+  Success.set(null);
 
   const session = get(Session);
   const profile = get(Profile);
@@ -201,7 +201,7 @@ export async function updateObject(type, name, value, pub, userID) {
     };
     const objectIDs = await client.writeStorageObjects(session, [object]);
     console.info('Stored objects: %o', objectIDs);
-    Succes.set(true);
+    Success.set(true);
   }
 }
 
@@ -295,7 +295,7 @@ export async function setFullAccount(id, username, password, email, metadata) {
   const rpcid = 'set_full_account';
   const user = await client.rpc(session, rpcid, payload);
   // console.log(user)
-  Succes.set(true);
+  Success.set(true);
   return user.payload;
 }
 
@@ -312,7 +312,7 @@ export async function setAvatar(avatar_url) {
   const Image = await convertImage(avatar_url, '128', '1000', 'png');
   // Profile.update((n) => { n.url = Image; return n });
   getAccount();
-  Succes.set(true);
+  Success.set(true);
   setLoader(false);
   return Image;
 }
@@ -369,7 +369,7 @@ export async function uploadAvatar(data) {
   const Image = await convertImage(jpegLocation, '128', '1000', 'png');
   // Profile.update((n) => { n.url = Image; return n });
   getAccount();
-  Succes.set(true);
+  Success.set(true);
   setLoader(false);
   return jpegLocation;
 }
@@ -381,7 +381,7 @@ export async function deleteFile(type, file, user) {
   const fileurl = await client.rpc(session, rpcid, payload).catch((e) => {
     throw e;
   });
-  Succes.set(true);
+  Success.set(true);
 }
 
 export async function addFriend(id, usernames) {
@@ -405,7 +405,7 @@ export async function addFriend(id, usernames) {
   await client
     .addFriends(session, user_id, friends)
     .then((status) => {
-      Succes.set(true);
+      Success.set(true);
     })
     .catch((err) => {
       throw err;
@@ -434,7 +434,7 @@ export async function removeFriend(id, usernames) {
   await client
     .deleteFriends(session, user_id, friends)
     .then((status) => {
-      Succes.set(true);
+      Success.set(true);
     })
     .catch((err) => {
       throw err;
@@ -474,7 +474,7 @@ export async function deleteObject(collection, key) {
     ],
   });
   console.info('Deleted objects.');
-  Succes.set(true);
+  Success.set(true);
   return true;
 }
 
@@ -499,8 +499,9 @@ export async function updateObjectAdmin(id, type, name, value, pub) {
   const rpcid = 'create_object_admin';
   const result = await client.rpc(session, rpcid, payload);
 
+  console.log('Maybe a typo? ', result.payload.status, result.payload.status === 'success');
   if (result.payload.status === 'succes') {
-    Succes.set(true);
+    Success.set(true);
   } else {
     Error.set(result.payload.status);
   }
@@ -514,8 +515,9 @@ export async function deleteObjectAdmin(id, type, name) {
   const rpcid = 'delete_object_admin';
   const user = await client.rpc(session, rpcid, payload);
   // console.log(user);
+  console.log('Maybe a typo? ', user.payload.status, user.payload.status === 'success');
   if (user.payload.status !== 'succes') throw user.payload.status;
-  else Succes.set(true);
+  else Success.set(true);
   return user.payload;
 }
 
@@ -582,6 +584,7 @@ export function setLoader(state) {
   } else {
     document.getElementById('loader').classList.add('hide');
   }
+  return state;
 }
 
 export async function getRandomName() {

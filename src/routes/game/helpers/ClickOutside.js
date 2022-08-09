@@ -2,7 +2,7 @@
 // eslint-disable-next-line import/prefer-default-export
 export function clickOutside(node) {
   const handleClick = (event) => {
-    console.log(node, event.target);
+    // console.log(node, event.target);
     if (node && !node.contains(event.target) && !event.defaultPrevented) {
       node.dispatchEvent(
         new CustomEvent('click_outside', node),

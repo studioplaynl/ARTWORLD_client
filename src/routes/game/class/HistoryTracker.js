@@ -115,11 +115,13 @@ class HistoryTracker {
   }
 
   async pauseSceneStartApp(scene, app) {
-    scene.physics.pause();
-    scene.scene.pause();
+    if (scene) {
+      scene.physics.pause();
+      scene.scene.pause();
 
-    await ManageSession.socket.rpc('leave', scene.location);
-    await ManageSession.socket.rpc('join', app);
+      await ManageSession.socket.rpc('leave', scene.location);
+      await ManageSession.socket.rpc('join', app);
+    }
     // ManageSession.getStreamUsers("join", app)
     // open app
   }

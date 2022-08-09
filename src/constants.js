@@ -1,4 +1,7 @@
+/** File is readable by user and admins only */
 export const PERMISSION_READ_PRIVATE = 1;
+
+/** File is public */
 export const PERMISSION_READ_PUBLIC = 2;
 
 

@@ -41,7 +41,7 @@ export const Notification = writable();
 
 /** Contains Success messages
  * @todo Remove or extend to multiple messages array? */
-export const Succes = writable();
+export const Success = writable();
 
 /** Contains current artApp that was loaded */
 export const CurrentApp = writable();

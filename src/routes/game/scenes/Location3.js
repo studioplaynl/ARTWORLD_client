@@ -138,12 +138,14 @@ export default class Location3 extends Phaser.Scene {
     // 1
     const tileset = map.addTilesetImage('tuxmon-sample-32px-extruded', 'tiles');
 
-    // eslint-disable-next-line no-unused-vars
-    const belowLayer = map.createLayer('Below Player', tileset, 0, 0);
-    // eslint-disable-next-line no-unused-vars
-    const worldLayer = map.createLayer('World', tileset, 0, 0);
-    // eslint-disable-next-line no-unused-vars
-    const aboveLayer = map.createLayer('Above Player', tileset, 0, 0);
+    // Create below layer
+    map.createLayer('Below Player', tileset, 0, 0);
+
+    // Create world Layer
+    map.createLayer('World', tileset, 0, 0);
+
+    // Create above Layer
+    map.createLayer('Above Player', tileset, 0, 0);
 
     // worldLayer.setCollisionByProperty({ collides: true })
 
