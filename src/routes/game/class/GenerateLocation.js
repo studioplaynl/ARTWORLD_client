@@ -196,21 +196,28 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
     // if there is a number of artWorks passed on as argument, display the number besides the namePlate
     if (typeof this.numberOfArtworks !== 'undefined') {
-      dlog('this.numberOfArtworks', this.numberOfArtworks);
+      // if (this.numberOfArtworks !== -1) {
+      // dlog('this.numberOfArtworks', this.numberOfArtworks);
       this.numberBubble = this.scene.add.circle(
         namePlate.x + locationDescription.width + (namePlateMargin * 0.5),
-        width / 2 - textOffset,
+        -width / 2 + (textOffset * 0.5),
         namePlateMargin,
         0xE8E8E8,
       )
         .setOrigin(0.5, 0.5)
-        .setDepth(498);
+        .setDepth(498)
+        .setName([this.numberBubble]);
+
       this.numberArt = this.scene.add.text(
         namePlate.x + locationDescription.width + (namePlateMargin * 0.5),
-        width / 2 - textOffset,
+        -width / 2 + (textOffset * 0.5),
         this.numberOfArtworks,
         {
-          fill: this.fontColor,
+          fontFamily: 'Courier',
+          fontSize: '22px',
+          fontStyle: 'bold',
+          backgroundColor: null,
+          color: '#ff0000',
         },
       )
         .setOrigin(0.5, 0.5)

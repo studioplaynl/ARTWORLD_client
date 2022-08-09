@@ -99,14 +99,14 @@ class HistoryTracker {
       callback: () => {
         ManageSession.location = goToScene;
         // ManageSession.createPlayer = true;
-        // dlog("scene.scene.stop(scene.scene.key)", scene.scene.key)
+        console.log('scene.scene.stop(scene.scene.key)', scene.scene.key);
         scene.scene.stop(scene.scene.key);
         // dlog("scene.scene.start(goToScene, { user_id: locationID })", goToScene, locationID)
 
         scene.scene.start(goToScene, { user_id: locationID });
-        // dlog("switchScene locationID", locationID)
+        console.log('switchScene locationID', locationID);
         ManageSession.location = locationID;
-        // dlog("ManageSession.getStreamUsers('join', locationID)", locationID)
+        console.log("ManageSession.getStreamUsers('join', locationID)", locationID);
         ManageSession.getStreamUsers('join', locationID);
       },
       callbackScope: scene,

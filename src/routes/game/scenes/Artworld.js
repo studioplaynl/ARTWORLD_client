@@ -604,26 +604,8 @@ export default class Artworld extends Phaser.Scene {
     // obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
 
     // this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
+    this.events.on('updateArtBubbles', ServerCall.updateArtBubbles);
   } // end create
-
-  animalWallCollide() {
-    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
-
-    // dlog("animal, wall", animal, wall)
-    this.player.body.reset(this.player.x, this.player.y);
-    // send Stop command
-    ManageSession.sendMoveMessage(this, this.player.x, this.player.y, 'physicsStop');
-
-    Move.updatePositionHistory(this); // update the url and historyTracker
-
-    // update last player position in manageSession for when the player is reloaded inbetween scenes
-    ManageSession.playerPosX = Phaser2DToArtworldX(this.worldSize.x, this.player.x);
-    ManageSession.playerPosY = Phaser2DToArtworldY(this.worldSize.y, this.player.y);
-
-    // play "stop" animation
-    Move.movingAnimation(this, 'stop');
-    this.isPlayerMoving = false;
-  }
 
   /** Create a curve with handles in edit mode
  * @todo Work in progress, replace with CurveWithHandles class? */

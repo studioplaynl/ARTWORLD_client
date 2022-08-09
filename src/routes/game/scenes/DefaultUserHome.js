@@ -177,7 +177,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       // filter only the visible art = "permission_read": 2
       this.userArtServerList = rec.filter((obj) => obj.permission_read == 2);
 
-      console.log('this.userArtServerList', this.userArtServerList);
+      // console.log('this.userArtServerList', this.userArtServerList);
       if (this.userArtServerList.length > 0) {
         this.userArtServerList.forEach((element, index, array) => {
           this.downloadArt(element, index, array);
@@ -232,7 +232,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks;
 
-    console.log('totalArtWidth', totalArtWidth);
+    // console.log('totalArtWidth', totalArtWidth);
     const middleWorldX = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0);
     const startXArt = middleWorldX - (totalArtWidth / 2);
 
@@ -254,10 +254,10 @@ export default class DefaultUserHome extends Phaser.Scene {
 
       // for tracking each file in progress
       this.progressStopmotion.push({ imageKeyUrl, coordX });
-      console.log('imageKeyUrl stopmotion', imageKeyUrl);
+      // console.log('imageKeyUrl stopmotion', imageKeyUrl);
 
       this.load.spritesheet(imageKeyUrl, convertedImage, { frameWidth: this.artDisplaySize, frameHeight: this.artDisplaySize });
-      console.log('stopmotion', imageKeyUrl);
+      // console.log('stopmotion', imageKeyUrl);
       this.load.start(); // start the load queue to get the image in memory
     }
 
@@ -265,7 +265,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       // on completion of each specific artwork
       const currentImage = this.progressStopmotion.find((element) => element.imageKeyUrl == key);
 
-      console.log('currentImage', currentImage);
+      // console.log('currentImage', currentImage);
       // we don't want to trigger any other load completions
       if (currentImage) {
         // adds a frame to the container
@@ -273,13 +273,13 @@ export default class DefaultUserHome extends Phaser.Scene {
 
         const avatar = this.textures.get(currentImage.imageKeyUrl);
         const avatarWidth = avatar.frames.__BASE.width;
-        console.log('stopmotion width: ', avatarWidth);
+        // console.log('stopmotion width: ', avatarWidth);
 
         const avatarHeight = avatar.frames.__BASE.height;
-        console.log(`stopmotion Height: ${avatarHeight}`);
+        // console.log(`stopmotion Height: ${avatarHeight}`);
 
         const avatarFrames = Math.round(avatarWidth / avatarHeight);
-        console.log(`stopmotion Frames: ${avatarFrames}`);
+        // console.log(`stopmotion Frames: ${avatarFrames}`);
 
         // make an animation if the image is wider than tall
 
@@ -330,7 +330,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     //! we are placing the artWorks 'around' (left and right of) the center of the world
     const totalArtWorks = array.length;
     const imageKeyUrl = element.value.url;
-    console.log('imageKeyUrl stopmotion', imageKeyUrl);
+    // console.log('imageKeyUrl stopmotion', imageKeyUrl);
     const imgSize = this.artDisplaySize.toString();
     const fileFormat = 'png';
     // put the artworks 'around' the center, which means: take total artworks * space = total x space eg 3 * 550 = 1650
@@ -338,7 +338,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks;
 
-    console.log('totalArtWidth', totalArtWidth);
+    // console.log('totalArtWidth', totalArtWidth);
     const middleWorldX = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0);
     const startXArt = middleWorldX - (totalArtWidth / 2);
 
