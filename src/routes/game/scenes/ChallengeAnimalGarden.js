@@ -1,3 +1,4 @@
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import {
   convertImage, listAllObjects,
@@ -11,6 +12,7 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import HistoryTracker from '../class/HistoryTracker';
 import Move from '../class/Move';
+import { playerPosX, playerPosY } from '../playerState';
 
 
 const { Phaser } = window;
@@ -124,8 +126,12 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     //     backgroundColor: 0xffffff,
     // })
 
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
     // make a repeating set of rectangles around the artworld canvas
-    const middleCoordinates = new Phaser.Math.Vector2(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0));
+    const middleCoordinates = new Phaser.Math.Vector2(
+      artworldToPhaser2DX(this.worldSize.x, 0),
+      artworldToPhaser2DY(this.worldSize.y, 0),
+    );
     this.borderRectArray = [];
 
     for (let i = 0; i < 3; i++) {
@@ -153,19 +159,47 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     // this.collisionBorders = this.physics.add.staticGroup()
     // this.collisionBorders.create(this.worldSize.x / 2, - (borderBoxWidth / 2), 'collisionWall')
 
-    this.borderBoxNorth = this.add.rectangle(this.worldSize.x / 2, -(borderBoxWidth / 2), this.worldSize.x, borderBoxWidth, 0xff00ff, 0);
+    this.borderBoxNorth = this.add.rectangle(
+      this.worldSize.x / 2,
+      -(borderBoxWidth / 2),
+      this.worldSize.x,
+      borderBoxWidth,
+      0xff00ff,
+      0,
+    );
     this.physics.add.existing(this.borderBoxNorth);
     this.borderBoxNorth.name = 'borderBoxNorth';
 
-    this.borderBoxSouth = this.add.rectangle(this.worldSize.x / 2, (this.worldSize.y) + (borderBoxWidth / 2), this.worldSize.x, borderBoxWidth, 0xff0000, 0);
+    this.borderBoxSouth = this.add.rectangle(
+      this.worldSize.x / 2,
+      (this.worldSize.y) + (borderBoxWidth / 2),
+      this.worldSize.x,
+      borderBoxWidth,
+      0xff0000,
+      0,
+    );
     this.physics.add.existing(this.borderBoxSouth);
     this.borderBoxSouth.name = 'borderBoxSouth';
 
-    this.borderBoxEast = this.add.rectangle(this.worldSize.x + (borderBoxWidth / 2), this.worldSize.y / 2, borderBoxWidth, this.worldSize.x, 0xffff00, 0);
+    this.borderBoxEast = this.add.rectangle(
+      this.worldSize.x + (borderBoxWidth / 2),
+      this.worldSize.y / 2,
+      borderBoxWidth,
+      this.worldSize.x,
+      0xffff00,
+      0,
+    );
     this.physics.add.existing(this.borderBoxEast);
     this.borderBoxEast.name = 'borderBoxEast';
 
-    this.borderBoxWest = this.add.rectangle(0 - (borderBoxWidth / 2), this.worldSize.y / 2, borderBoxWidth, this.worldSize.x, 0xff00ff, 0);
+    this.borderBoxWest = this.add.rectangle(
+      0 - (borderBoxWidth / 2),
+      this.worldSize.y / 2,
+      borderBoxWidth,
+      this.worldSize.x,
+      0xff00ff,
+      0,
+    );
     this.physics.add.existing(this.borderBoxWest);
     this.borderBoxWest.name = 'borderBoxWest';
 
@@ -176,12 +210,15 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() // { useHandCursor: true }
     // .on('pointerup', () => console.log('touched background'))
-      .on('pointerdown', () => ManageSession.playerIsAllowedToMove = true)
+      .on('pointerdown', () => {
+        ManageSession.playerIsAllowedToMove = true;
+      })
       .setDepth(219)
       .setOrigin(0)
       .setVisible(false);
 
-    this.touchBackgroundCheck.input.alwaysEnabled = true; // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    this.touchBackgroundCheck.input.alwaysEnabled = true;
     //!
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
     // End Background .........................................................................................
@@ -189,8 +226,24 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
-    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY), this.playerAvatarPlaceholder).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
+    this.player = new PlayerDefault(
+      this,
+      artworldToPhaser2DX(
+        this.worldSize.x,
+        get(playerPosX),
+      ),
+      artworldToPhaser2DY(
+        this.worldSize.y,
+        get(playerPosY),
+      ),
+      this.playerAvatarPlaceholder,
+    ).setDepth(201);
+    this.playerShadow = new PlayerDefaultShadow(
+      {
+        scene: this,
+        texture: this.playerAvatarPlaceholder,
+      },
+    ).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!
     HistoryTracker.pushLocation(this);
 
@@ -208,10 +261,12 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     }, this);
 
     this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+      // eslint-disable-next-line no-param-reassign
       gameObject.x = dragX;
+      // eslint-disable-next-line no-param-reassign
       gameObject.y = dragY;
 
-      if (gameObject.name == 'handle') {
+      if (gameObject.name === 'handle') {
         gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
       }
     }, this);

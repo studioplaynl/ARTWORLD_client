@@ -5,6 +5,7 @@ import ManageSession from '../ManageSession';
 import { getAccount, listObjects } from '../../../api';
 import { SCENE_NAMES } from '../config';
 import { getUrl } from '../helpers/UrlHelpers';
+import { playerPosX, playerPosY } from '../playerState';
 
 const { Phaser } = window;
 
@@ -41,10 +42,10 @@ export default class UrlParser extends Phaser.Scene {
       if (typeof profile === 'undefined') {
         // get the location stored serverside
         const { PosX, PosY, Location } = profile.meta;
-        const { playerPosX, playerPosY } = ManageSession;
+        // const { playerPosX, playerPosY } = ManageSession;
 
         this.parsePlayerPosition(PosX, PosY);
-        urlParams = { posX: playerPosX, posY: playerPosY, Location };
+        urlParams = { posX: get(playerPosX), posY: get(playerPosY), Location };
         this.parseLocation(urlParams);
       } else {
         // if the account is empty, get it
@@ -52,9 +53,9 @@ export default class UrlParser extends Phaser.Scene {
           .then(() => {
             profile = get(Profile);
             const { PosX, PosY, Location } = profile.meta;
-            const { playerPosX, playerPosY } = ManageSession;
+            // const { playerPosX, playerPosY } = ManageSession;
             this.parsePlayerPosition(PosX, PosY);
-            urlParams = { posX: playerPosX, posY: playerPosY, Location };
+            urlParams = { posX: get(playerPosX), posY: get(playerPosY), Location };
             this.parseLocation(urlParams);
           });
       }
@@ -89,7 +90,7 @@ export default class UrlParser extends Phaser.Scene {
       // if location is of _user_ID format
       splitString = locationName.split('-');
       if (this.debug) console.log("locationName.split('-') locationName: ", locationName);
-      if (splitString.length > 3) {
+      if (splitString.length > 3) { // user id dus
         Promise.all([listObjects('home', locationName, 10)])
           .catch(() => {
             if (this.debug) console.log('error getting the home object');
@@ -145,16 +146,16 @@ export default class UrlParser extends Phaser.Scene {
       if (this.debug) console.log('tempInt:', tempInt);
       if (!Number.isNaN(tempInt)) {
         if (this.debug) console.log('parsed posX:', posX);
-        ManageSession.playerPosX = tempInt;// expected artworldCoordinates
+        playerPosX.set(tempInt);// expected artworldCoordinates
       } else {
         // a random number between -150 and 150
-        ManageSession.playerPosX = Math.floor((Math.random() * 300) - 150);
-        if (this.debug) console.log('no known posX, created...', ManageSession.playerPosX);
+        playerPosX.set(Math.floor((Math.random() * 300) - 150));
+        if (this.debug) console.log('no known posX, created...', get(playerPosX));
       }
     } else {
       // a random number between -150 and 150
-      ManageSession.playerPosX = Math.floor((Math.random() * 300) - 150);
-      if (this.debug) console.log('no known posX, created...', ManageSession.playerPosX);
+      playerPosX.set(Math.floor((Math.random() * 300) - 150));
+      if (this.debug) console.log('no known posX, created...', get(playerPosX));
     }
 
     if (typeof posY !== 'undefined') {
@@ -163,16 +164,16 @@ export default class UrlParser extends Phaser.Scene {
       const tempInt = parseInt(posY, 10);
       if (this.debug) console.log('tempInt:', tempInt);
       if (!Number.isNaN(tempInt)) {
-        ManageSession.playerPosY = tempInt;// expected artworldCoordinates
+        playerPosY.set(tempInt);// expected artworldCoordinates
       } else {
         // a random number between -150 and 150
-        ManageSession.playerPosY = Math.floor((Math.random() * 300) - 150);
-        if (this.debug) console.log('no known posY, created...', ManageSession.playerPosY);
+        playerPosY.set(Math.floor((Math.random() * 300) - 150));
+        if (this.debug) console.log('no known posY, created...', get(playerPosY));
       }
     } else {
       // a random number between -150 and 150
-      ManageSession.playerPosY = Math.floor((Math.random() * 300) - 150);
-      if (this.debug) console.log('no known posY, created...', ManageSession.playerPosY);
+      playerPosY.set(Math.floor((Math.random() * 300) - 150));
+      if (this.debug) console.log('no known posY, created...', get(playerPosY));
     }
   }
 }

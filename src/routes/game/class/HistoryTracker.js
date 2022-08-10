@@ -59,8 +59,6 @@ class HistoryTracker {
       this.tempHistoryArray[this.tempHistoryArray.length - 1].playerPosX = playerPosX;
       this.tempHistoryArray[this.tempHistoryArray.length - 1].playerPosY = playerPosY;
     }
-    // dlog("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosX)
-    // dlog("ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY", ManageSession.locationHistory[ManageSession.locationHistory.length - 1].playerPosY)
   }
 
   // eslint-disable-next-line no-unused-vars

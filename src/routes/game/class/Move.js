@@ -4,6 +4,7 @@ import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import HistoryTracker from './HistoryTracker';
 import { setUrl } from '../helpers/UrlHelpers';
+import { playerPosX, playerPosY } from '../playerState';
 
 const { Phaser } = window;
 
@@ -139,8 +140,8 @@ class Move {
     this.updatePositionHistory(scene); // update the url and historyTracker
 
     // update last player position in manageSession for when the player is reloaded inbetween scenes
-    ManageSession.playerPosX = Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
-    ManageSession.playerPosY = Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
+    playerPosX.set(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x));
+    playerPosY.set(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y));
 
     // play "stop" animation
     this.movingAnimation(scene, 'stop');

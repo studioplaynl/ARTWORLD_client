@@ -1,3 +1,4 @@
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
@@ -5,6 +6,7 @@ import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import HistoryTracker from '../class/HistoryTracker';
 import Move from '../class/Move';
+import { playerPosX, playerPosY } from '../playerState';
 
 const { Phaser } = window;
 
@@ -88,11 +90,11 @@ export default class Location3 extends Phaser.Scene {
       this,
       CoordinatesTranslator.artworldToPhaser2DX(
         this.worldSize.x,
-        ManageSession.playerPosX,
+        get(playerPosX),
       ),
       CoordinatesTranslator.artworldToPhaser2DY(
         this.worldSize.y,
-        ManageSession.playerPosY,
+        get(playerPosY),
       ),
       this.playerAvatarPlaceholder,
     ).setDepth(201);

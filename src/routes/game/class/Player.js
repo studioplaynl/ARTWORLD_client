@@ -1,11 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { getFullAccount, getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { setUrl } from '../helpers/UrlHelpers';
 import { dlog } from '../helpers/DebugLog';
+import { playerPosX, playerPosY } from '../playerState';
 
 class Player {
   constructor() {
@@ -69,14 +71,14 @@ class Player {
       lastPosX = placePlayerX;
       dlog('placePlayerX', placePlayerX);
     } else {
-      lastPosX = ManageSession.playerPosX; // playerPos is in artworldCoordinates, will be converted later
+      lastPosX = get(playerPosX); // playerPos is in artworldCoordinates, will be converted later
       // dlog("lastPosX", lastPosX)
     }
     if (typeof placePlayerY !== 'undefined') {
       lastPosY = placePlayerY; // if there is an argument to place the player on a specific position in the scene
       dlog('placePlayerY', placePlayerY);
     } else {
-      lastPosY = ManageSession.playerPosY; // playerPos is in artworldCoordinates, will be converted later
+      lastPosY = get(playerPosY); // playerPos is in artworldCoordinates, will be converted later
       // dlog("lastPosY", lastPosY)
     }
     // dlog("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)

@@ -1,3 +1,4 @@
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { convertImage } from '../../../api';
 
@@ -15,6 +16,7 @@ import ServerCall from '../class/ServerCall';
 import Exhibition from '../class/Exhibition';
 // import { CurrentApp } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
+import { playerPosX, playerPosY } from '../playerState';
 
 const { Phaser } = window;
 
@@ -501,8 +503,8 @@ export default class Artworld extends Phaser.Scene {
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      artworldToPhaser2DX(this.worldSize.x, ManageSession.playerPosX),
-      artworldToPhaser2DY(this.worldSize.y, ManageSession.playerPosY),
+      artworldToPhaser2DX(this.worldSize.x, get(playerPosX)),
+      artworldToPhaser2DY(this.worldSize.y, get(playerPosY)),
       this.playerAvatarPlaceholder,
     ).setDepth(201);
 

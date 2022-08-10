@@ -1,10 +1,13 @@
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { ShowItemsBar } from '../../../session';
 import { setUrl } from '../helpers/UrlHelpers';
+import { playerPosX, playerPosY } from '../playerState';
 
 const { Phaser } = window;
 
+//
 export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, 'defaultPlayerAvatar');
@@ -40,8 +43,8 @@ export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
     // set url param's to player pos and scene key
     setUrl(
       scene.location,
-      Phaser2DToArtworldX(scene.worldSize.x, ManageSession.playerPosX),
-      Phaser2DToArtworldY(scene.worldSize.y, ManageSession.playerPosY),
+      Phaser2DToArtworldX(scene.worldSize.x, get(playerPosX)),
+      Phaser2DToArtworldY(scene.worldSize.y, get(playerPosY)),
     );
   }
 }
