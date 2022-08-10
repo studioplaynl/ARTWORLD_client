@@ -2,6 +2,7 @@
   import { _ } from 'svelte-i18n';
   import { onMount } from 'svelte';
   import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte';
+  import { push } from 'svelte-spa-router';
   import { Session } from '../../session';
   import { login } from '../../api';
   import QRscanner from './qrscanner.svelte';
@@ -27,11 +28,11 @@
   onMount(() => {
     email = params.user || 'user1@vrolijkheid.nl';
     password = params.password || 'somesupersecretpassword';
-    dlog(params);
+    // dlog(params);
     const currentDate = Math.floor(Date.now() / 1000);
     if (!!$Session && $Session.expires_at > currentDate) {
       // TODO: If a user tried loading a deeplink, this should not transfer them back to the index page..
-      window.location.href = '/#/';
+      push('/');
     }
   });
 </script>

@@ -1,10 +1,10 @@
 <script>
   import Router, { push } from 'svelte-spa-router';
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { wrap } from 'svelte-spa-router/wrap';
   import Phaser from 'phaser';
-  import { Session, Profile } from './session';
-  import { sessionCheck } from './api';
+  import { Session, Profile, Error } from './session';
+  import { sessionCheck, checkLoginExpired, logout } from './api';
 
   /** Admin pages */
   import Admin from './routes/admin/admin.svelte';
@@ -40,7 +40,13 @@
 
   onMount(() => {
     document.getElementById('loader').classList.add('hide');
-    mounted = true;
+    if (checkLoginExpired() === true) {
+      logout();
+      push('/login');
+      Error.set('Please relogin');
+    } else {
+      mounted = true;
+    }
   });
 
   $: isLoggedIn = $Session !== null && $Profile && $Profile?.username;
@@ -52,8 +58,15 @@
     if (!isLoggedIn) push('/login');
     else if (typeof game === 'undefined' && mounted) {
       sessionCheck();
-      game = new Phaser.Game(gameConfig);
+
+      startGame();
     }
+  }
+
+  // Wait one tick to allow target div to become visible
+  async function startGame() {
+    await tick();
+    game = new Phaser.Game(gameConfig);
   }
 
   const routes = {

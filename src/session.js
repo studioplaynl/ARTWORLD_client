@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { push } from 'svelte-spa-router';
 
 /** Session from localStorage */
 let storedSession = localStorage.getItem('Session');
@@ -20,7 +21,10 @@ export const Session = writable(storedSession || null);
 Session.subscribe((value) => {
   if (value) {
     localStorage.setItem('Session', JSON.stringify(value));
-  } else localStorage.removeItem('Session'); // for logout
+  } else {
+    localStorage.removeItem('Session'); // for logout
+    push('/login');
+  }
 });
 
 /** User Profile contains the user name, posX, posY et cetera */

@@ -2,14 +2,13 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-use-before-define */
 import { get } from 'svelte/store';
+import { push } from 'svelte-spa-router';
 import { client } from './nakama.svelte';
 import {
   Session, Profile, Error, Success, CurrentApp,
 } from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 
-export let url; // TODO @linjoe Is this required? Maybe should be a store?
-// export let user; // What?
 export async function login(email, _password) {
   setLoader(true);
   const create = false;
@@ -20,7 +19,7 @@ export async function login(email, _password) {
       // console.log("login, after authenticateEmail, session= ",session)
       Session.set(session);
       await getAccount();
-      window.location.href = '/#/';
+      push('/');
       setLoader(false);
       return session;
     })
@@ -35,21 +34,21 @@ export async function login(email, _password) {
 }
 
 export const logout = () => {
-  Session.set(null);
   Profile.set(null);
-  window.location.href = '/#/login';
-  window.history.go(0);
+  Session.set(null);
+
+  // ==>You should be automatically redirected to login, via the
+  // push('/login');
+  // window.location.href = '/#/login';
+  // window.history.go(0);
 };
 
-export async function checkLogin(session) {
+export async function checkLoginExpired() {
+  const session = get(Session);
   if (session != null) {
-    if (`${session.expires_at}000` <= Date.now()) {
-      logout();
-      window.location.href = '/#/login';
-      window.history.go(0);
-      Error.set('Please relogin');
-    }
+    return (`${session.expires_at}000` > Date.now());
   }
+  return null;
 }
 
 export async function uploadImage(
@@ -94,7 +93,7 @@ export async function sessionCheck() {
   const session = get(Session);
   const response = await client.rpc(session, rpcid, payload);
   // eslint-disable-next-line no-console
-  console.log(response);
+  console.log('sessionCheck result', response);
 }
 
 export async function updateTitle(collection, key, name, userID) {
@@ -245,6 +244,8 @@ export async function listAllObjects(type, id) {
 export async function getAccount(id) {
   const session = get(Session);
   let user;
+
+  console.log('getAccount called, id = ', id, 'Session = ', session);
 
   if (!id) {
     // No id given, gets own account
