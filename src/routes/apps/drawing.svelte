@@ -1329,7 +1329,7 @@
             }
           }}"
         >
-          <img class="icon" src="assets/SHB/svg/AW-icon-save.svg" alt="Save" />
+          <img class="icon" src="assets/SHB/svg/AW-icon-check.svg" alt="Save" />
         </button>
       </div>
     </div>
