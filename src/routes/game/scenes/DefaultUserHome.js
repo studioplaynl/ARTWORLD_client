@@ -8,7 +8,7 @@ import Preloader from '../class/Preloader';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 // import GenerateLocation from "../class/GenerateLocation.js"
-import HistoryTracker from '../class/HistoryTracker';
+import SceneSwitcher from '../class/SceneSwitcher';
 import ArtworkList from '../class/ArtworkList';
 import Move from '../class/Move';
 
@@ -125,7 +125,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
     // .......  end PLAYER ................................................................................
     // for back button
-    HistoryTracker.pushLocation(this);
+    SceneSwitcher.pushLocation(this);
 
     // ....... onlinePlayers ..............................................................................
     // add onlineplayers group

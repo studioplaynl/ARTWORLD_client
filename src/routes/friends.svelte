@@ -3,7 +3,7 @@
   import FriendAction from './components/friendaction.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import { ListFriends, addFriend, setLoader, convertImage } from '../api';
-  import HistoryTracker from './game/class/HistoryTracker';
+  import SceneSwitcher from './game/class/SceneSwitcher';
   import ManageSession from './game/ManageSession';
   import { dlog } from './game/helpers/DebugLog';
   import {
@@ -52,7 +52,7 @@
   function goTo(event) {
     const { row } = event.detail;
     if (event.detail.key === 'action') return;
-    HistoryTracker.switchScene(
+    SceneSwitcher.switchScene(
       ManageSession.currentScene,
       'DefaultUserHome',
       row.user.id,

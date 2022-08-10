@@ -4,7 +4,7 @@
   import { onDestroy, onMount, tick } from 'svelte';
   import DrawingApp from '../apps/drawing.svelte';
   import { CurrentApp } from '../../session';
-  import HistoryTracker from '../game/class/HistoryTracker';
+  import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import { getAccount } from '../../api';
   import { dlog } from '../game/helpers/DebugLog';
@@ -25,12 +25,12 @@
     if ($CurrentApp === 'game') return null;
 
     if ($CurrentApp) {
-      await HistoryTracker.pauseSceneStartApp(
+      await SceneSwitcher.pauseSceneStartApp(
         ManageSession.currentScene,
         $CurrentApp,
       );
     } else {
-      await HistoryTracker.startSceneCloseApp(
+      await SceneSwitcher.startSceneCloseApp(
         ManageSession.currentScene,
         appOpen,
       );

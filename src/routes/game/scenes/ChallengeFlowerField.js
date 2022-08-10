@@ -13,7 +13,7 @@ import GraffitiWall from '../class/GraffitiWall';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
-import HistoryTracker from '../class/HistoryTracker';
+import SceneSwitcher from '../class/SceneSwitcher';
 import Move from '../class/Move';
 import ServerCall from '../class/ServerCall';
 import Exhibition from '../class/Exhibition';
@@ -229,7 +229,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, get(playerPosX)), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, get(playerPosY)), this.playerAvatarPlaceholder).setDepth(201);
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!
-    HistoryTracker.pushLocation(this);
+    SceneSwitcher.pushLocation(this);
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);

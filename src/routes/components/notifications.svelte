@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import ErrorIcon from 'svelte-icons/md/MdErrorOutline.svelte';
   import SuccessIcon from 'svelte-icons/md/MdDone.svelte';
-  import { push } from 'svelte-spa-router';
 
   // notification icons
   import NotificationIcon from 'svelte-icons/md/MdEmail.svelte';
@@ -81,16 +80,11 @@
 
   onMount(() => {
     window.onunhandledrejection = (e) => {
-      // console.log(e);
-      // console.log(e.reason);
-
-      // console.log(typeof e.reason);
       if (typeof e.reason === 'object') {
         setError(e.reason.message || e.reason.statusText);
         if (e.reason.state === '401' || e.reason.status === '401') {
-          // relogin
-          Session.set(null); // --> This should automatically redirect the user to the login screen (as defined in the Session.subscribe call in session.js)
-          // push('/login');
+          /** Setting Session to null automatically redirects you to login route */
+          Session.set(null);
         }
       } else {
         setError(e.reason);

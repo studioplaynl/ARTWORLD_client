@@ -1,5 +1,5 @@
 <script>
-  import HistoryTracker from '../game/class/HistoryTracker';
+  import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import { History } from '../../session';
   import { dlog } from '../game/helpers/DebugLog';
@@ -7,13 +7,13 @@
   const home = 'Artworld';
 
   async function goHome() {
-    HistoryTracker.switchScene(ManageSession.currentScene, home, home);
+    SceneSwitcher.switchScene(ManageSession.currentScene, home, home);
   }
 
   async function goBack() {
     dlog($History);
     if ($History.length > 1) {
-      HistoryTracker.activateBackButton(ManageSession.currentScene);
+      SceneSwitcher.activateBackButton(ManageSession.currentScene);
     }
   }
 

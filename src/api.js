@@ -35,12 +35,9 @@ export async function login(email, _password) {
 
 export const logout = () => {
   Profile.set(null);
-  Session.set(null);
 
-  // ==>You should be automatically redirected to login, via the
-  // push('/login');
-  // window.location.href = '/#/login';
-  // window.history.go(0);
+  /** Setting Session to null automatically redirects you to login route */
+  Session.set(null);
 };
 
 export async function checkLoginExpired() {

@@ -8,7 +8,7 @@ import { dlog } from '../helpers/DebugLog';
 /** Keeps track of user locations, enables back button
  * @todo Refactor?
  */
-class HistoryTracker {
+class SceneSwitcher {
   constructor() {
     this.tempHistoryArray = [];
   }
@@ -136,4 +136,4 @@ class HistoryTracker {
   }
 }
 
-export default new HistoryTracker();
+export default new SceneSwitcher();

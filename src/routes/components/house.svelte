@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { Profile, CurrentApp } from '../../session';
   import { convertImage, getObject } from '../../api';
-  import HistoryTracker from '../game/class/HistoryTracker';
+  import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import { dlog } from '../game/helpers/DebugLog';
 
@@ -48,7 +48,7 @@
   // }
 
   async function goHome() {
-    HistoryTracker.switchScene(
+    SceneSwitcher.switchScene(
       ManageSession.currentScene,
       'DefaultUserHome',
       ManageSession.userProfile.id,

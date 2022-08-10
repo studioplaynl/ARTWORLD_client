@@ -6,8 +6,6 @@ import CoordinatesTranslator from './class/CoordinatesTranslator';
 import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
 
-// import { playerPosX, playerPosY } from './playerState';
-
 const { Phaser } = window;
 
 /** Main utility class to share Game State between Phaser & Svelte  */
@@ -43,9 +41,6 @@ class ManageSession {
 
     this.playerClicks = 0;
     this.playerClickTime = 0;
-    // this.playerPosX = 0; // store playerPosX, also parsed from URL, to create player
-    // this.playerPosY = 0; // store playerPosY, also parsed from URL, to create player
-
 
     this.avatarSize = 64;
     this.cameraShake = false;

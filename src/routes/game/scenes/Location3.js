@@ -4,7 +4,7 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import HistoryTracker from '../class/HistoryTracker';
+import SceneSwitcher from '../class/SceneSwitcher';
 import Move from '../class/Move';
 import { playerPosX, playerPosY } from '../playerState';
 
@@ -101,7 +101,7 @@ export default class Location3 extends Phaser.Scene {
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
 
     // for back button, has to be done after player is created for the history tracking!
-    HistoryTracker.pushLocation(this);
+    SceneSwitcher.pushLocation(this);
     // .......  end PLAYER .............................................................................
 
     // ....... PLAYER VS WORLD ..........................................................................

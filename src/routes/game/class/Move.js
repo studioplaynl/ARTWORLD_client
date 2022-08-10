@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import HistoryTracker from './HistoryTracker';
+import SceneSwitcher from './SceneSwitcher';
 import { setUrl } from '../helpers/UrlHelpers';
 import { playerPosX, playerPosY } from '../playerState';
 
@@ -157,7 +157,7 @@ class Move {
     // update url
     setUrl(scene.location, passPosX, passPosY);
     // put the new pos in the history tracker
-    HistoryTracker.updatePositionCurrentScene(passPosX, passPosY);
+    SceneSwitcher.updatePositionCurrentScene(passPosX, passPosY);
   }
 
   moveBySwiping(scene) {

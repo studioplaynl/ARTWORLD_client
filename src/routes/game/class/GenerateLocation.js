@@ -1,4 +1,5 @@
-import HistoryTracker from './HistoryTracker';
+import { push, location, querystring } from 'svelte-spa-router';
+import SceneSwitcher from './SceneSwitcher';
 import { CurrentApp } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
 
@@ -65,7 +66,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     }
 
     // if the location is not userHome we set the userHome to locationDestination,
-    // because that is used for HistoryTracker
+    // because that is used for SceneSwitcher
     if (typeof this.userHome === 'undefined') {
       this.userHome = this.locationDestination;
     }
@@ -339,7 +340,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         dlog('CurrentApp.set(this.appUrl)', this.appUrl);
         CurrentApp.set(this.appUrl);
       }
-      HistoryTracker.switchScene(this.scene, this.locationDestination, this.userHome);
+      SceneSwitcher.switchScene(this.scene, this.locationDestination, this.userHome);
     });
 
     this.scene.physics.add.overlap(this.scene.player, this.location, this.confirmEnterLocation, null, this);

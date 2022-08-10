@@ -9,7 +9,7 @@
   import { Profile, CurrentApp, ShowItemsBar } from '../../session';
   import Awards from '../awards.svelte';
   import { Addressbook } from '../../storage';
-  import HistoryTracker from '../game/class/HistoryTracker';
+  import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
   import { isValidApp } from '../apps/apps';
@@ -138,13 +138,13 @@
 
   async function goHome(id) {
     if (typeof id === 'string') {
-      HistoryTracker.switchScene(
+      SceneSwitcher.switchScene(
         ManageSession.currentScene,
         'DefaultUserHome',
         id,
       );
     } else if ($ShowItemsBar) {
-      HistoryTracker.switchScene(
+      SceneSwitcher.switchScene(
         ManageSession.currentScene,
         'DefaultUserHome',
         ManageSession.userProfile.id,
@@ -153,7 +153,7 @@
   }
 
   async function goApp(App) {
-    // HistoryTracker.pauseSceneStartApp(ManageSession.currentScene, App)
+    // SceneSwitcher.pauseSceneStartApp(ManageSession.currentScene, App)
     if (isValidApp(App)) CurrentApp.set(App);
   }
 </script>

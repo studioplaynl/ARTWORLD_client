@@ -10,7 +10,7 @@ import BouncingBird from '../class/BouncingBird.js';
 import GraffitiWall from '../class/GraffitiWall.js';
 import CoordinatesTranslator from '../class/CoordinatesTranslator.js';
 import GenerateLocation from '../class/GenerateLocation.js';
-import HistoryTracker from '../class/HistoryTracker.js';
+import SceneSwitcher from '../class/SceneSwitcher.js';
 import Move from '../class/Move.js';
 
 const { Phaser } = window;
@@ -150,7 +150,7 @@ export default class Location1 extends Phaser.Scene {
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
 
     // for back button, has to be done after player is created for the history tracking!
-    HistoryTracker.pushLocation(this);
+    SceneSwitcher.pushLocation(this);
 
     Player.loadPlayerAvatar(this);
     // .......  end PLAYER .............................................................................

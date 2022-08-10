@@ -10,7 +10,7 @@ import Player from '../class/Player';
 import Preloader from '../class/Preloader';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
-import HistoryTracker from '../class/HistoryTracker';
+import SceneSwitcher from '../class/SceneSwitcher';
 import Move from '../class/Move';
 import { playerPosX, playerPosY } from '../playerState';
 
@@ -245,7 +245,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
       },
     ).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!
-    HistoryTracker.pushLocation(this);
+    SceneSwitcher.pushLocation(this);
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
