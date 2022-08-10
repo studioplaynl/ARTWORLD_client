@@ -1,3 +1,21 @@
+export const CONFIG = {
+  WIDTH: window.innerWidth * window.devicePixelRatio,
+  HEIGHT: window.innerHeight * window.devicePixelRatio,
+};
+
+/** List of Scenes a user may navigate to */
+export const VALID_USER_SCENES = [
+  'Location1',
+  'Location3',
+  'Location4',
+  'Artworld',
+  'ChallengeAnimalGarden',
+  'ChallengeFlowerField',
+];
+
+export const DEFAULT_SCENE = 'Artworld';
+export const DEFAULT_HOME = 'DefaultUserHome';
+
 /** File is readable by user and admins only */
 export const PERMISSION_READ_PRIVATE = 1;
 

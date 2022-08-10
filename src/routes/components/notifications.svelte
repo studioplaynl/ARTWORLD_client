@@ -80,17 +80,32 @@
 
   onMount(() => {
     window.onunhandledrejection = (e) => {
+      // console.log(
+      //   'unhandled rejection!',
+      //   e,
+      //   typeof e.reason,
+      //   e.reason,
+      //   e.reason?.state,
+      //   e.reason?.status,
+      // );
       if (typeof e.reason === 'object') {
         setError(e.reason.message || e.reason.statusText);
-        if (e.reason.state === '401' || e.reason.status === '401') {
+        if (
+          parseInt(e.reason.state, 10) === 401 ||
+          parseInt(e.reason.status, 10) === 401
+        ) {
           /** Setting Session to null automatically redirects you to login route */
+          console.log(
+            '401! Should now automatically redirect to login route..?',
+          );
           Session.set(null);
         }
       } else {
         setError(e.reason);
       }
     };
-    window.onerror = function onError(msg) {
+    window.onerror = (msg) => {
+      console.log('On Error: ', msg);
       setError(msg);
     };
   });

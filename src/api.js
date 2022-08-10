@@ -2,7 +2,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-use-before-define */
 import { get } from 'svelte/store';
-import { push } from 'svelte-spa-router';
+import { push, querystring } from 'svelte-spa-router';
 import { client } from './nakama.svelte';
 import {
   Session, Profile, Error, Success, CurrentApp,
@@ -16,10 +16,10 @@ export async function login(email, _password) {
     .authenticateEmail(email, _password, create)
     .then(async (response) => {
       const session = response;
-      // console.log("login, after authenticateEmail, session= ",session)
+      console.log('login, after authenticateEmail, session= ', session);
       Session.set(session);
       await getAccount();
-      push('/');
+      push(`/?${$querystring}`);
       setLoader(false);
       return session;
     })
@@ -42,8 +42,11 @@ export const logout = () => {
 
 export async function checkLoginExpired() {
   const session = get(Session);
+  // console.log('login: check status', session, session.expires_at);
   if (session != null) {
-    return (`${session.expires_at}000` > Date.now());
+    const expired = parseInt(`${session.expires_at}000`, 10) > Date.now();
+    // console.log('login: expired: ', expired);
+    return expired;
   }
   return null;
 }

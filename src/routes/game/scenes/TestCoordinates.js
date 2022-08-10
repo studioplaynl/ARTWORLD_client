@@ -1,4 +1,4 @@
-import { CONFIG } from '../config';
+import { CONFIG } from '../../../constants';
 import ManageSession from '../ManageSession';
 import { getAccount } from '../../../api';
 

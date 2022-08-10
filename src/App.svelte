@@ -41,8 +41,9 @@
   onMount(() => {
     document.getElementById('loader').classList.add('hide');
     if (checkLoginExpired() === true) {
+      console.log('login expired! go to login page');
       logout();
-      push('/login');
+
       Error.set('Please relogin');
     } else {
       mounted = true;

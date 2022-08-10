@@ -5,9 +5,9 @@ import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { getFullAccount, getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
-import { setUrl } from '../helpers/UrlHelpers';
+import { updateQueryString } from '../helpers/UrlHelpers';
 import { dlog } from '../helpers/DebugLog';
-import { playerPosX, playerPosY } from '../playerState';
+import { playerPosX, playerPosY, playerLocation } from '../playerState';
 
 class Player {
   constructor() {
@@ -103,7 +103,8 @@ class Player {
 
     // dlog("scene.player.x, scene.player.y", scene.player.x, scene.player.y)
     // set url param's to player pos and scene key, url params are in artworldCoords lastPosX lastPosY is artworldCoords
-    setUrl(scene.location, lastPosX, lastPosY);
+    // setUrl(scene.location, lastPosX, lastPosY);
+    // updateQueryString();
 
     // store the current position of player in ManageSession.lastMoveCommand
     // set this.scene in ManageSession.currentScene

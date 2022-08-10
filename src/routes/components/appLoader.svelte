@@ -1,6 +1,6 @@
 <script>
   import { fly } from 'svelte/transition';
-  import { location, push } from 'svelte-spa-router';
+  import { location, push, querystring } from 'svelte-spa-router';
   import { onDestroy, onMount, tick } from 'svelte';
   import DrawingApp from '../apps/drawing.svelte';
   import { CurrentApp } from '../../session';
@@ -9,6 +9,7 @@
   import { getAccount } from '../../api';
   import { dlog } from '../game/helpers/DebugLog';
   import { isValidApp } from '../apps/apps';
+
   // import DrawingChallenge from '../apps/drawingChallenge.svelte';
 
   let appOpen = null;
@@ -35,10 +36,11 @@
         appOpen,
       );
     }
+    // TODO: Apps should just load by URL instead of the other way around
     if ($CurrentApp) {
-      push(`/${$CurrentApp}`);
+      push(`/${$CurrentApp}?${$querystring}`);
     } else {
-      push('/'); // No app..
+      push(`/?${$querystring}`); // No app..
     }
     return null;
   });
@@ -61,6 +63,7 @@
 
     CurrentApp.set(null);
     appOpen = '';
+    console.log('Pushing to / ');
     push('/');
   }
 

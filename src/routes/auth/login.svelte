@@ -2,7 +2,7 @@
   import { _ } from 'svelte-i18n';
   import { onMount } from 'svelte';
   import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte';
-  import { push } from 'svelte-spa-router';
+  import { push, querystring } from 'svelte-spa-router';
   import { Session } from '../../session';
   import { login } from '../../api';
   import QRscanner from './qrscanner.svelte';
@@ -31,8 +31,9 @@
     // dlog(params);
     const currentDate = Math.floor(Date.now() / 1000);
     if (!!$Session && $Session.expires_at > currentDate) {
+      console.log('onMount login, seems ok', $Session);
       // TODO: If a user tried loading a deeplink, this should not transfer them back to the index page..
-      push('/');
+      push(`/?${$querystring}`); // No app..
     }
   });
 </script>

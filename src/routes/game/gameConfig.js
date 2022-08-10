@@ -37,7 +37,7 @@ const SCENES = [
   ChallengeFlowerField,
 ];
 
-import { CONFIG } from './config';
+import { CONFIG } from '../../constants';
 
 
 export default {

@@ -1,9 +1,9 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import CoordinatesTranslator from './CoordinatesTranslator';
+// import CoordinatesTranslator from './CoordinatesTranslator';
 import { ShowItemsBar } from '../../../session';
-import { setUrl } from '../helpers/UrlHelpers';
-import { playerPosX, playerPosY } from '../playerState';
+import { updateQueryString } from '../helpers/UrlHelpers';
+// import { playerPosX, playerPosY } from '../playerState';
 
 const { Phaser } = window;
 
@@ -38,13 +38,14 @@ export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
     this.body.onOverlap = true;
     this.setDepth(101);
 
-    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
+    // const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
 
     // set url param's to player pos and scene key
-    setUrl(
-      scene.location,
-      Phaser2DToArtworldX(scene.worldSize.x, get(playerPosX)),
-      Phaser2DToArtworldY(scene.worldSize.y, get(playerPosY)),
-    );
+    // updateQueryString();
+    // setUrl(
+    //   scene.location,
+    //   Phaser2DToArtworldX(scene.worldSize.x, get(playerPosX)),
+    //   Phaser2DToArtworldY(scene.worldSize.y, get(playerPosY)),
+    // );
   }
 }

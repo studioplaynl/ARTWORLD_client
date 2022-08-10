@@ -3,7 +3,7 @@
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import SceneSwitcher from './SceneSwitcher';
-import { setUrl } from '../helpers/UrlHelpers';
+import { updateQueryString } from '../helpers/UrlHelpers';
 import { playerPosX, playerPosY } from '../playerState';
 
 const { Phaser } = window;
@@ -149,15 +149,16 @@ class Move {
   }
 
   updatePositionHistory(scene) {
-    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
+    // const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
 
-    const passPosX = Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
-    const passPosY = Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
+    // const passPosX = Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
+    // const passPosY = Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
 
     // update url
-    setUrl(scene.location, passPosX, passPosY);
+    // updateQueryString();
+    // setUrl(scene.location, passPosX, passPosY);
     // put the new pos in the history tracker
-    SceneSwitcher.updatePositionCurrentScene(passPosX, passPosY);
+    // SceneSwitcher.updatePositionCurrentScene(passPosX, passPosY);
   }
 
   moveBySwiping(scene) {

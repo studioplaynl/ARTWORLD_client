@@ -175,30 +175,6 @@
     url = await convertImage(imgUrl, imgSize, imgSize, fileFormat);
     console.log(url);
   }
-
-  /// ////////////////// url parser and creator  ////////////////////
-
-  function setUrl(local, posX, posY) {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (local) searchParams.set('location', local);
-    if (posX) searchParams.set('posX', posX);
-    if (posY) searchParams.set('posY', posY);
-    window.location.search = searchParams.toString();
-  }
-
-  setUrl('test', 123, 456);
-
-  function getUrl() {
-    const params = new URLSearchParams(window.location.search);
-
-    posX = params.get('posX');
-    posY = params.get('posY');
-    const local = params.get('location');
-    const object = { posX, posY, local };
-    console.log(object);
-    return object;
-  }
-  getUrl();
 </script>
 
 <main>

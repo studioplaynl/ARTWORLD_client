@@ -1,8 +1,8 @@
 <script>
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
-  import { History } from '../../session';
-  import { dlog } from '../game/helpers/DebugLog';
+  // import { History } from '../../session';
+  // import { dlog } from '../game/helpers/DebugLog';
 
   const home = 'Artworld';
 
@@ -10,12 +10,12 @@
     SceneSwitcher.switchScene(ManageSession.currentScene, home, home);
   }
 
-  async function goBack() {
-    dlog($History);
-    if ($History.length > 1) {
-      SceneSwitcher.activateBackButton(ManageSession.currentScene);
-    }
-  }
+  // async function goBack() {
+  // dlog($History);
+  // if ($History.length > 1) {
+  //   SceneSwitcher.activateBackButton(ManageSession.currentScene);
+  // }
+  // }
 
   async function zoomIn() {
     if (ManageSession.currentZoom >= 4) return;
@@ -41,7 +41,7 @@
       alt="Homepage"
     />
   </button>
-  <button on:click="{goBack}">
+  <!-- <button on:click="{goBack}">
     <img
       class="TopIcon"
       class:showBack="{$History.length > 1}"
@@ -49,7 +49,7 @@
       src="/assets/SHB/svg/AW-icon-previous.svg"
       alt="Go back"
     />
-  </button>
+  </button> -->
   <button on:click="{zoomOut}" id="zoomOut">
     <img
       class="TopIcon"

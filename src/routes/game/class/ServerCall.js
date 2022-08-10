@@ -104,7 +104,7 @@ class ServerCall {
   }
 
   async getHomeImages(url, element, index, homeImageKey, scene) {
-    dlog('getHomeImages');
+    // dlog('getHomeImages');
     await convertImage(url, '128', '128', 'png')
       .then((rec) => {
         // dlog("rec", rec)
