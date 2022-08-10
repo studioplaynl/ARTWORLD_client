@@ -17,3 +17,5 @@ export const SCENE_NAMES = [
   'ChallengeAnimalGarden',
   'ChallengeFlowerField',
 ];
+
+
