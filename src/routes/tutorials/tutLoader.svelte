@@ -65,6 +65,7 @@
     });
 </script>
 
+{#if CurrentApp === ""}
 {#each sequence as seq, i}
     {#if seq.type == "tap"}
         {#if !hide[i]}
@@ -93,3 +94,4 @@
         {/if}
     {/if}
 {/each}
+{/if}

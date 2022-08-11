@@ -162,21 +162,21 @@
 
   onMount(async () => {
     setLoader(true);
-    const autosave = setInterval(() => {
-      if (!saved) {
-        let data = {};
-        data.type = appType;
-        data.name = title;
-        if (appType == "drawing" || appType == "house") {
-          data.drawing = canvas.toDataURL("image/png", 1);
-        }
-        // if (appType == "stopmotion" || appType == "avatar") {
-        //   data.frames = frames;
-        // }
-        localStorage.setItem("Drawing", JSON.stringify(data));
-        console.log("stored in localstorage");
-      }
-    }, 20000);
+    // const autosave = setInterval(() => {
+    //   if (!saved) {
+    //     let data = {};
+    //     data.type = appType;
+    //     data.name = title;
+    //     if (appType == "drawing" || appType == "house") {
+    //       data.drawing = canvas.toDataURL("image/png", 1);
+    //     }
+    //     // if (appType == "stopmotion" || appType == "avatar") {
+    //     //   data.frames = frames;
+    //     // }
+    //     localStorage.setItem("Drawing", JSON.stringify(data));
+    //     console.log("stored in localstorage");
+    //   }
+    // }, 20000);
     cursor = new fabric.StaticCanvas(Cursor);
     canvas = new fabric.Canvas(canv, {
       isDrawingMode: true,
@@ -365,13 +365,10 @@
     //   }
     // }
 
-    drawingColorEl.onchange = function () {
-      var brush = canvas.freeDrawingBrush;
-      brush.color = this.value;
-      if (brush.getPatternSrc) {
-        brush.source = brush.getPatternSrc.call(brush);
-      }
-    };
+    
+
+
+
     // drawingShadowColorEl.onchange = function () {
     //   canvas.freeDrawingBrush.shadow.color = this.value;
     // };
@@ -570,6 +567,16 @@
   });
   /////////////////// end onMount ///////////////////////
 
+
+    function changeColor() {
+      var brush = canvas.freeDrawingBrush;
+      brush.color = this.value;
+      if (brush.getPatternSrc) {
+        brush.source = brush.getPatternSrc.call(brush);
+      }
+    };
+
+
   // to change visible/hidden status of the artwork
   const changeVisibility = async () => {
     setLoader(true);
@@ -682,42 +689,42 @@
 
   const getImage = async () => {
     setLoader(true)
-    let localStore = JSON.parse(localStorage.getItem("Drawing"));
-    if (!!localStore) {
-      console.log(localStore);
-      console.log("store " + localStore.name);
-      console.log("param " + params.name);
-      if (localStore.name == params.name && typeof params.name != "undefined") {
-        console.log(localStore.type);
-        // isDrawn = true;
-        // console.log("localstorage isDrawn", isDrawn);
-        if (localStore.type == "drawing") {
-          console.log("test");
-          // canvas.loadFromJSON(
-          //   localStore.drawing,
-          //   canvas.renderAll.bind(canvas)
-          // );
-          fabric.Image.fromURL(
-            localStore.drawing,
-            function (oImg) {
-              oImg.set({ left: 0, top: 0 });
-              oImg.scaleToHeight(imageResolution);
-              oImg.scaleToWidth(imageResolution);
-              canvas.add(oImg);
-            },
-            { crossOrigin: "anonymous" }
-          );
-        }
+    // let localStore = JSON.parse(localStorage.getItem("Drawing"));
+    // if (!!localStore) {
+    //   console.log(localStore);
+    //   console.log("store " + localStore.name);
+    //   console.log("param " + params.name);
+    //   if (localStore.name == params.name && typeof params.name != "undefined") {
+    //     console.log(localStore.type);
+    //     // isDrawn = true;
+    //     // console.log("localstorage isDrawn", isDrawn);
+    //     if (localStore.type == "drawing") {
+    //       console.log("test");
+    //       // canvas.loadFromJSON(
+    //       //   localStore.drawing,
+    //       //   canvas.renderAll.bind(canvas)
+    //       // );
+    //       fabric.Image.fromURL(
+    //         localStore.drawing,
+    //         function (oImg) {
+    //           oImg.set({ left: 0, top: 0 });
+    //           oImg.scaleToHeight(imageResolution);
+    //           oImg.scaleToWidth(imageResolution);
+    //           canvas.add(oImg);
+    //         },
+    //         { crossOrigin: "anonymous" }
+    //       );
+    //     }
 
-        //     if (localStore.type == "stopmotion") {
-        //       frames = localStore.frames;
-        //       canvas.loadFromJSON(
-        //         localStore.frames[0],
-        //         canvas.renderAll.bind(canvas)
-        //       );
-        //     }
-      }
-    }
+    //     //     if (localStore.type == "stopmotion") {
+    //     //       frames = localStore.frames;
+    //     //       canvas.loadFromJSON(
+    //     //         localStore.frames[0],
+    //     //         canvas.renderAll.bind(canvas)
+    //     //       );
+    //     //     }
+    //   }
+    // }
 
     if (!!!params.name && (appType == "stopmotion" || appType == "drawing"))
       return setLoader(false);
@@ -1628,6 +1635,7 @@
             type="color"
             bind:value={drawingColor}
             bind:this={drawingColorEl}
+            on:change="{changeColor}"
             id="drawing-color"
           />
           <!-- <img class="colorIcon" src="assets/SHB/svg/AW-icon-paint.svg" /> -->
