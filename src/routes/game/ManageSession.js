@@ -72,8 +72,8 @@ class ManageSession {
     // to select a home and save it's position as admin server side (it doesn't save when it is not a home)
     // and to select and manipulate GameObjects in Edit Mode
     this.selectedGameObject
-    this.selectedGameObject_startScale = 1 //being able to reset scale to original, within edit mode
-    this.selectedGameObject_startPosition = new Phaser.Math.Vector2(0, 0) //being able to reset position to original, within edit mode
+    this.selectedGameObjectStartScale = 1 //being able to reset scale to original, within edit mode
+    this.selectedGameObjectStartPosition = new Phaser.Math.Vector2(0, 0) //being able to reset position to original, within edit mode
     //.....................................................................
 
     this.gameStarted = false;

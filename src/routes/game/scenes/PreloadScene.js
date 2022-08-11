@@ -91,8 +91,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.svg('music_quarter_note', 'assets/svg/music_note_quarter_note.svg')
 
         this.load.svg('metro_train_grey', 'assets/svg/metro_train_grey.svg')
-        this.load.svg('geleRuit', 'assets/svg/geleRuit.svg')
-        this.load.svg('blauwZeil', 'assets/svg/blauwZeil.svg')
+        this.load.svg('yellow_diamond_location_image', 'assets/svg/geleRuit.svg')
+        this.load.svg('blue_sail_location_image', 'assets/svg/blauwZeil.svg')
         //create a hitArea for locations, as an image with key 'enterButtonHitArea', 128x128pix
         this.createHitAreaLocations()
 

@@ -465,10 +465,10 @@ export default class Artworld extends Phaser.Scene {
       //store the original scale when selecting the gameObject for the first time
       if (ManageSession.selectedGameObject != gameObject) {
         ManageSession.selectedGameObject = gameObject
-        ManageSession.selectedGameObject_startScale = gameObject.scale
-        ManageSession.selectedGameObject_startPosition.x = gameObject.x
-        ManageSession.selectedGameObject_startPosition.y = gameObject.y
-        console.log("editMode info startScale:", ManageSession.selectedGameObject_startScale)
+        ManageSession.selectedGameObjectStartScale = gameObject.scale
+        ManageSession.selectedGameObjectStartPosition.x = gameObject.x
+        ManageSession.selectedGameObjectStartPosition.y = gameObject.y
+        console.log("editMode info startScale:", ManageSession.selectedGameObjectStartScale)
       }
       //ManageSession.selectedGameObject = gameObject
 
@@ -642,6 +642,27 @@ export default class Artworld extends Phaser.Scene {
       locationImage: "green_square_location_image",
       enterButtonImage: "enter_button",
       locationText: "Groene Vierkant Wereld",
+      referenceName: "this.greenSquareLocation", 
+      fontColor: 0x8dcb0e,
+    })
+
+    locationVector = new Phaser.Math.Vector2(-400, -200)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
+    this.yellowDiamondLocation = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "YellowDiamond",
+      locationImage: "yellow_diamond_location_image",
+      enterButtonImage: "enter_button",
+      locationText: "Gele Diamant Wereld",
+      referenceName: "this.yellowDiamondLocation", 
       fontColor: 0x8dcb0e,
     })
  
@@ -651,8 +672,26 @@ export default class Artworld extends Phaser.Scene {
       locationVector
     )
 
-    // green_square world for homes
-    // 
+    this.blueSailLocation = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "BlueSail",
+      locationImage: "blue_sail_location_image",
+      enterButtonImage: "enter_button",
+      locationText: "Blauwe Zeil Wereld",
+      referenceName: "this.blueSailLocation", 
+      fontColor: 0x8dcb0e,
+    })
+
+      locationVector = new Phaser.Math.Vector2(455, -165)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
     Background.triangle({
       scene: this,
       name: 'turquoise_triangle_location_image',
@@ -678,6 +717,7 @@ export default class Artworld extends Phaser.Scene {
       locationImage:  'turquoise_triangle_location_image',
       enterButtonImage: "enter_button",
       locationText: "Turquoise Driehoek Wereld",
+      referenceName: "this.turquoiseTriangle", 
       fontColor: 0x8dcb0e,
     })
 
@@ -708,6 +748,7 @@ export default class Artworld extends Phaser.Scene {
       locationImage:  'red_star_location_image',
       enterButtonImage: "enter_button",
       locationText: "Rode Ster Wereld",
+      referenceName: "this.redStar", 
       fontColor: 0x8dcb0e,
     })
 

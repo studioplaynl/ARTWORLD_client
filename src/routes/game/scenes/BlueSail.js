@@ -10,10 +10,10 @@ import HistoryTracker from "../class/HistoryTracker.js"
 import Move from "../class/Move.js"
 import ServerCall from "../class/ServerCall"
 
-export default class TurquoiseTriangle extends Phaser.Scene {
+export default class BlueSail extends Phaser.Scene {
   constructor() {
-    super("TurquoiseTriangle")
-    this.location = "TurquoiseTriangle"
+    super("BlueSail")
+    this.location = "BlueSail"
 
     this.worldSize = new Phaser.Math.Vector2(5500, 5500)
 
@@ -227,18 +227,17 @@ export default class TurquoiseTriangle extends Phaser.Scene {
     this.input.on('dragend', function (pointer, gameObject) {
       let worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x))
       let worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y))
-   
-      //store the original scale when selecting the gameObject for the first time
+
+        //store the original scale when selecting the gameObject for the first time
       if (ManageSession.selectedGameObject != gameObject) {
         ManageSession.selectedGameObject = gameObject
-        console.log( "ManageSession.selectedGameObject, gameObject", ManageSession.selectedGameObject, gameObject)
+        
         ManageSession.selectedGameObjectStartScale = gameObject.scale
         ManageSession.selectedGameObjectStartPosition.x = gameObject.x
         ManageSession.selectedGameObjectStartPosition.y = gameObject.y
         console.log("editMode info startScale:", ManageSession.selectedGameObjectStartScale)
       }
-
-      console.log("editMode info posX posY: ", worldX, worldY, "scale:", ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
+        console.log("editMode info posX posY: ", worldX, worldY, "scale:", ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
     }, this)
     //!
 
@@ -315,7 +314,7 @@ export default class TurquoiseTriangle extends Phaser.Scene {
       imageOnly: true
     });
 
-    this.purpleCircleLocation = new GenerateLocation({
+     this.purpleCircleLocation = new GenerateLocation({
       scene: this,
       type: "image",
       draggable: ManageSession.gameEditMode,
@@ -329,7 +328,7 @@ export default class TurquoiseTriangle extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     })
 
-    locationVector = new Phaser.Math.Vector2( 374, 240)
+    locationVector = new Phaser.Math.Vector2(-400, 300)
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector
@@ -361,7 +360,66 @@ export default class TurquoiseTriangle extends Phaser.Scene {
       locationImage: "green_square_location_image",
       enterButtonImage: "enter_button",
       locationText: "Groene Vierkant Wereld",
-      referenceName: "this.greenSquareLocation",
+        referenceName: "this.greenSquareLocation",
+      fontColor: 0x8dcb0e,
+    })
+
+
+    locationVector = new Phaser.Math.Vector2(403, 327)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
+    // green_square world for homes
+    // 
+    Background.triangle({
+      scene: this,
+      name: 'turquoise_triangle_location_image',
+      // setOrigin: 0,
+      posX: locationVector.x,
+      posY: locationVector.y,
+      gradient1: 0x40E0D0,
+      gradient2: 0x40E0D0,
+      gradient3: 0x39C9BB,
+      gradient4: 0x39C9BB,
+      alpha: 1,
+      size: 200,
+      imageOnly: true
+    });
+
+    this.turquoiseTriangle = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "TurquoiseTriangle",
+      locationImage:  'turquoise_triangle_location_image',
+      enterButtonImage: "enter_button",
+      locationText: "Turquoise Driehoek Wereld",
+              referenceName: "this.turquoiseTriangle",
+
+      fontColor: 0x8dcb0e,
+    })
+
+    locationVector = new Phaser.Math.Vector2(417, -51)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
+    this.yellowDiamondLocation = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "YellowDiamond",
+      locationImage: "yellow_diamond_location_image",
+      enterButtonImage: "enter_button",
+      locationText: "Gele Diamant Wereld",
+      referenceName: "this.yellowDiamondLocation", 
       fontColor: 0x8dcb0e,
     })
 
@@ -371,7 +429,9 @@ export default class TurquoiseTriangle extends Phaser.Scene {
       locationVector
     )
 
-     Background.star({
+    // green_square world for homes
+    // 
+    Background.star({
       scene: this,
       name: 'red_star_location_image',
       gradient1: 0xE50000,
@@ -392,52 +452,13 @@ export default class TurquoiseTriangle extends Phaser.Scene {
       locationImage:  'red_star_location_image',
       enterButtonImage: "enter_button",
       locationText: "Rode Ster Wereld",
-      referenceName: "this.redStar",
-      fontColor: 0x8dcb0e,
-    })
+                    referenceName: "this.redStar",
 
-    locationVector = new Phaser.Math.Vector2(26, 411)
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector
-    )
-
-    this.yellowDiamondLocation = new GenerateLocation({
-      scene: this,
-      type: "image",
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: "YellowDiamond",
-      locationImage: "yellow_diamond_location_image",
-      enterButtonImage: "enter_button",
-      locationText: "Gele Diamant Wereld",
-      referenceName: "this.yellowDiamondLocation", 
-      fontColor: 0x8dcb0e,
-    })
-
-    locationVector = new Phaser.Math.Vector2(-546, -84)
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector
-    )
-
-    this.blueSailLocation = new GenerateLocation({
-      scene: this,
-      type: "image",
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: "BlueSail",
-      locationImage: "blue_sail_location_image",
-      enterButtonImage: "enter_button",
-      locationText: "Blauwe Zeil Wereld",
-      referenceName: "this.blueSailLocation", 
       fontColor: 0x8dcb0e,
     })
 
 
-    locationVector = new Phaser.Math.Vector2(-395, 207 )
+    locationVector = new Phaser.Math.Vector2(-535, 35 )
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector
@@ -454,7 +475,8 @@ export default class TurquoiseTriangle extends Phaser.Scene {
       locationImage: "pencil",
       enterButtonImage: "enter_button",
       locationText: "drawingApp",
-      referenceName: "this.pencil",
+                          referenceName: "this.pencil",
+
       fontColor: 0x8dcb0e,
       color1: 0x8dcb0e,
       color2: 0x3f8403,

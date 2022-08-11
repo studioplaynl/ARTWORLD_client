@@ -15,6 +15,8 @@ import ChallengeFlowerField from "./scenes/ChallengeFlowerField"
 import GreenSquare from "./scenes/GreenSquare"
 import TurquoiseTriangle from "./scenes/TurquoiseTriangle"
 import RedStar from "./scenes/RedStar"
+import YellowDiamond from "./scenes/YellowDiamond"
+import BlueSail from "./scenes/BlueSail"
 
 export const CONFIG = {
   WIDTH: window.innerWidth * window.devicePixelRatio,
@@ -36,7 +38,9 @@ export const SCENES = [
   ChallengeFlowerField,
   GreenSquare,
   RedStar,
-  TurquoiseTriangle
+  TurquoiseTriangle,
+  YellowDiamond,
+  BlueSail
 ]
 
 export const SCENE_NAMES = [
@@ -54,7 +58,9 @@ export const SCENE_NAMES = [
   "ChallengeFlowerField",
   "GreenSquare",
   "RedStar",
-  "TurquoiseTriangle"
+  "TurquoiseTriangle",
+  "YellowDiamond",
+  "BlueSail"
 ];
 
 //export default CONFIG

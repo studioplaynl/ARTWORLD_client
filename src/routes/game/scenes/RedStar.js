@@ -228,16 +228,14 @@ export default class RedStar extends Phaser.Scene {
       let worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x))
       let worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y))
 
-
-      //store the original scale when selecting the gameObject for the first time
+    //store the original scale when selecting the gameObject for the first time
       if (ManageSession.selectedGameObject != gameObject) {
         ManageSession.selectedGameObject = gameObject
-        ManageSession.selectedGameObject_startScale = gameObject.scale
-        ManageSession.selectedGameObject_startPosition.x = gameObject.x
-        ManageSession.selectedGameObject_startPosition.y = gameObject.y
-        console.log("editMode info startScale:", ManageSession.selectedGameObject_startScale)
+        ManageSession.selectedGameObjectStartScale = gameObject.scale
+        ManageSession.selectedGameObjectStartPosition.x = gameObject.x
+        ManageSession.selectedGameObjectStartPosition.y = gameObject.y
+        console.log("editMode info startScale:", ManageSession.selectedGameObjectStartScale)
       }
-      //ManageSession.selectedGameObject = gameObject
 
       console.log("editMode info posX posY: ", worldX, worldY, "scale:", ManageSession.selectedGameObject.scale, "width*scale:", Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), "height*scale:", Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), "name:", ManageSession.selectedGameObject.name)
     }, this)
@@ -326,6 +324,7 @@ export default class RedStar extends Phaser.Scene {
       locationImage: "purple_circle_location_image",
       enterButtonImage: "enter_button",
       locationText: "Paarse Cirkel Wereld",
+      referenceName: "this.purpleCircleLocation",
       fontColor: 0x8dcb0e,
     })
 
@@ -362,6 +361,7 @@ export default class RedStar extends Phaser.Scene {
       locationImage:  'turquoise_triangle_location_image',
       enterButtonImage: "enter_button",
       locationText: "Turquoise Driehoek Wereld",
+      referenceName: "this.turquoiseTriangle",
       fontColor: 0x8dcb0e,
     })
 
@@ -397,8 +397,50 @@ export default class RedStar extends Phaser.Scene {
       locationImage: "green_square_location_image",
       enterButtonImage: "enter_button",
       locationText: "Groene Vierkant Wereld",
+      referenceName: "this.greenSquareLocation",
       fontColor: 0x8dcb0e,
     })
+
+    locationVector = new Phaser.Math.Vector2(15, 410)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
+    this.yellowDiamondLocation = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "YellowDiamond",
+      locationImage: "yellow_diamond_location_image",
+      enterButtonImage: "enter_button",
+      locationText: "Gele Diamant Wereld",
+      referenceName: "this.yellowDiamondLocation", 
+      fontColor: 0x8dcb0e,
+    })
+
+    locationVector = new Phaser.Math.Vector2(-626, -97)
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector
+    )
+
+    this.blueSailLocation = new GenerateLocation({
+      scene: this,
+      type: "image",
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: "BlueSail",
+      locationImage: "blue_sail_location_image",
+      enterButtonImage: "enter_button",
+      locationText: "Blauwe Zeil Wereld",
+      referenceName: "this.blueSailLocation", 
+      fontColor: 0x8dcb0e,
+    })
+
 
     locationVector = new Phaser.Math.Vector2(-395, 207 )
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
