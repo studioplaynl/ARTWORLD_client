@@ -1,46 +1,31 @@
 <script>
 	let email = "@vrolijkheid.nl"
 	let username = "user"
-	let password = 'somesupersecretpassword'
+	let password = ''
+
 	let passwordCheck = 'somesupersecretpassword'
 	let role = 'speler'
-	let azc = "Amsterdam"
+	let azc = "BlueSail"
 	let print_div;
 	import QrCode from "svelte-qrcode"
 	export let params = {}
     import {Session, Error} from "../../session.js"
-	import {getAccount} from "../../api"
 	import {client} from "../../nakama.svelte"
 	import { _ } from 'svelte-i18n'
+	import { onMount } from 'svelte';
+
 	let QRUrl
 
+	onMount(async () => {
+		genPassword()
+	});
+
 	const Locaties = [
-    "Amersfoort",
-    "Almelo",
-    "Almere",
-    "Amsterdam",
-    "Apeldoorn",
-    "Arnhem-Zuid",
-    "Baexem",
-    "Budel-Cranendonck",
-    "Burgum",
-    "Delfzijl",
-    "Den Helde",
-    "Drachten",
-    "Emmen",
-    "Gilze en Rijen",
-    "Grave",
-    "Heerhugowaard",
-    "Heerlen",
-    "Katwijk",
-    "Leersum",
-    "Luttelgeest",
-    "Middelburg",
-    "Oisterwijk",
-    "Overloon",
-    "Rijswijk",
-    "Ter Apel",
-    "Utrecht",
+    "GreenSquare",
+    "RedStar",
+    "TurquioseTriangle",
+    "YellowDiamond",
+	"BlueSail"
   ];
 
   let houses = [
@@ -66,7 +51,17 @@
 	]
 
 	let avatar = avatars[(Math.floor(avatars.length*Math.random()))]
-
+	
+	function genPassword() {
+		//removed confusing charecters like O o L and made the chance for number bigger
+   	 let chars = "0123456789abcdefghijklmnpqrstuvwxyz0123456789ABCDEFGHIJKMNPQRSTUVWXYZ0123456789";
+  	  let passwordLength = 9;
+ 		for (var i = 0; i <= passwordLength; i++) {
+ 	  let randomNumber = Math.floor(Math.random() * chars.length);
+ 		  password += chars.substring(randomNumber, randomNumber +1);
+ 		 }
+        //document.getElementById("password").value = password;
+	 }
 
 	console.log($_ /*_("game.mainmenu.welcomeTo")*/)
 
@@ -81,7 +76,9 @@
 		.catch(err => $Error = err)
 		client.configuration.bearerToken = token
 		console.log(newUser)
-		alert('New user created' + newUser.user_id)
+		//alert('New user created: ' + newUser.user_id)
+
+		print();
 	}
 	
 	function onSubmit() {
@@ -94,6 +91,7 @@
 		QRUrl = `https://${window.location.host}/#/login/${email}/${password}`
 		setTimeout(()=>{
 			var print_area = window.open();
+			print_area.document.title = username;
 			print_area.document.write(print_div.innerHTML);
 			print_area.document.close();
 			print_area.focus();
