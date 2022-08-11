@@ -240,6 +240,7 @@ class Move {
 
   moveByTapping(scene) {
     if (!scene.input.activePointer.isDown && ManageSession.playerMove) {
+      console.log("moveByTapping after if")
       // doubletap: first time mouse up
       ManageSession.playerClicks = 1;
 
