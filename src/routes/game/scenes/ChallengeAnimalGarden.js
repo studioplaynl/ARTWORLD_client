@@ -299,7 +299,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
                 const avatarFrames = Math.round(avatarWidth / avatarHeight)
                 if (ManageSession.debug) console.log(avatarFrames)
 
-                              this.anims.create({
+                  this.anims.create({
                         key: 'moving_' + avatarKey,
                         frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: avatarFrames - 1 }),
                         frameRate: 6,
