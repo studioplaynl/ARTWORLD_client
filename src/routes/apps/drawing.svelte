@@ -4,7 +4,7 @@
   import { onMount, beforeUpdate, onDestroy } from "svelte";
   import {
     uploadImage,
-    user,
+    //user,
     uploadAvatar,
     uploadHouse,
     getObject,

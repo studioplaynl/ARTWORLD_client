@@ -1,5 +1,6 @@
 <script>
     import DrawingApp from "../apps/drawing.svelte";
+    import MarioSound from "../apps/marioSequencer.svelte"
     import { CurrentApp } from "../../session";
     import { fly } from "svelte/transition";
     import HistoryTracker from "../game/class/HistoryTracker";
@@ -78,7 +79,9 @@
         {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar" || appOpen == "drawingchallenge"}
             <DrawingApp bind:appType={appOpen} />
         {/if}
-
+        {#if appOpen == "mariosound"}
+            <MarioSound />
+        {/if}
         <!-- {#if appOpen == "drawingchallenge"}
             <DrawingChallenge bind:appType={appOpen} />
         {/if} -->
