@@ -7,7 +7,7 @@ import { getFullAccount, getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { updateQueryString } from '../helpers/UrlHelpers';
 import { dlog } from '../helpers/DebugLog';
-import { playerPosX, playerPosY, playerLocation } from '../playerState';
+import { playerPosX, playerPosY, playerLocationScene } from '../playerState';
 
 class Player {
   constructor() {
@@ -109,11 +109,12 @@ class Player {
     // store the current position of player in ManageSession.lastMoveCommand
     // set this.scene in ManageSession.currentScene
     ManageSession.currentScene = scene;
-    ManageSession.lastMoveCommand.posX = scene.player.x;
-    ManageSession.lastMoveCommand.posY = scene.player.y;
-    ManageSession.lastMoveCommand.action = 'stop';
-    ManageSession.lastMoveCommand.location = ManageSession.location;
-    dlog('ManageSession.lastMoveCommand', ManageSession.lastMoveCommand);
+
+    // ManageSession.lastMoveCommand.posX = scene.player.x;
+    // ManageSession.lastMoveCommand.posY = scene.player.y;
+    // ManageSession.lastMoveCommand.action = 'stop';
+    // ManageSession.lastMoveCommand.location = ManageSession.location;
+    // dlog('ManageSession.lastMoveCommand', ManageSession.lastMoveCommand);
 
     // if for some reason the url of the player avatar is empty, load the default avatar
     if (userprofile.url === '') {
@@ -214,9 +215,6 @@ class Player {
     //* setCircle(radius [, offsetX] [, offsetY])
     // scene.player.body.setCircle(width, width, width / 2)
     scene.player.body.setCircle(width / 1.1, width / 5, width / 5);
-
-    // dlog("player avatar has loaded ")
-    scene.player.location = scene.location;
 
     // send the current player position over the network
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');

@@ -1,9 +1,14 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable max-len */
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import CoordinatesTranslator from './CoordinatesTranslator';
-// import { History } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
+import { playerLocationScene, playerLocationHouse } from '../playerState';
+import { DEFAULT_HOME } from '../../../constants';
+import { Error } from '../../../session';
+import { setLoader } from '../../../api';
+// import { push, querystring} from "svelte-spa-router";
+
 
 /** Keeps track of user locations, enables back button
  * @todo Refactor?
@@ -11,6 +16,13 @@ import { dlog } from '../helpers/DebugLog';
 class SceneSwitcher {
   constructor() {
     this.tempHistoryArray = [];
+
+    this.subsubscribeScene = playerLocationScene.subscribe(() => {
+      this.doSwitchScene();
+    });
+    this.subsubscribeHouse = playerLocationHouse.subscribe(() => {
+      this.doSwitchScene();
+    });
   }
 
   pushLocation(scene) {
@@ -18,40 +30,6 @@ class SceneSwitcher {
     // store the current scene in ManageSession for reference outside of Phaser (html ui)
     ManageSession.currentScene = scene;
     dlog('scene', scene);
-
-    // History.subscribe((value) => {
-    //   this.tempHistoryArray = value;
-    // });
-
-    // the current scene does not exist yet in History
-
-    // if (this.tempHistoryArray.length > 0) {
-    // if (this.tempHistoryArray[this.tempHistoryArray.length - 1]?.locationID !== scene.location) {
-    //   dlog('store scene in History tracker');
-    //   // set ManageSession.playerPosX Y to player.x and y
-    //   let playerPosX;
-    //   let playerPosY;
-
-    //   if (scene.player) {
-    //     playerPosX = CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
-    //     playerPosY = CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
-    //     // dlog(" ManageSession.locationHistory.push playerPosX playerPosY", playerPosX, playerPosY)
-    //   }
-    //   this.tempHistoryArray.push({
-    //     locationName: scene.scene.key, locationID: scene.location, playerPosX, playerPosY,
-    //   });
-
-    // if (this.tempHistoryArray.length > 1) {
-    //   dlog("add to History array")
-    //   //History.update({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
-    //   // History.update((value)=>{value.push("test"); return value})
-    // History.set(this.tempHistoryArray);
-    // } else {
-    //   dlog("add to History for the first time")
-    // History.set({ locationName: scene.scene.key, locationID: scene.location, playerPosX: playerPosX, playerPosY: playerPosY })
-    // }
-    // }
-    // }
   }
 
   updatePositionCurrentScene(playerPosX, playerPosY) {
@@ -61,54 +39,50 @@ class SceneSwitcher {
     }
   }
 
-  // eslint-disable-next-line no-unused-vars
-  // activateBackButton(scene) {
-  //   // remove the current scene from the History
-  //   this.tempHistoryArray.pop();
-  //   History.set(this.tempHistoryArray);
+  switchScene(targetScene, targetHouse) {
+    playerLocationScene.set(targetScene);
+    playerLocationHouse.set(targetHouse);
+  }
 
-  //   // and get access to it through its key
-  //   const currentLocation = ManageSession.currentScene;
-  //   // dlog("currentLocation", currentLocation)
-  //   // getting access to the previous scene through locationHistory
-  //   if (this.tempHistoryArray.length > 0) {
-  //     const previousLocation = this.tempHistoryArray[this.tempHistoryArray.length - 1];
-  //     // set up the player position in ManageSession to place the player in last known position when it is created
-  //     ManageSession.playerPosX = previousLocation.playerPosX;
-  //     ManageSession.playerPosY = previousLocation.playerPosY;
-  //     dlog('ManageSession.playerPosX , ManageSession.playerPosY', ManageSession.playerPosX, ManageSession.playerPosY);
-  //     // switching scenes
-  //     this.switchScene(currentLocation, previousLocation.locationName, previousLocation.locationID);
-  //   }
-  // }
+  doSwitchScene() {
+    const scene = ManageSession.currentScene;
+    const targetLocation = get(playerLocationScene);
+    const targetHouse = get(playerLocationHouse);
 
-  switchScene(scene, goToScene, locationID) {
+    if (targetLocation === DEFAULT_HOME && targetHouse === null) {
+      return;
+    }
+
+    if (!scene || !scene?.player) return;
+
+    setLoader(true);
+
+    // console.log('SWITCH: ', targetLocation, targetHouse);
+
     scene.physics.pause();
     scene.player.setTint(0xff0000);
-    // dlog("switchScene leave scene.location", scene.location)
-    ManageSession.socket.rpc('leave', scene.location);
 
-    // dlog("switchScene goToScene", goToScene)
-    // TODO: Figure out if scene.player has any setter functions instead of directly setting property
-    scene.player.location = goToScene;
-
-    scene.time.addEvent({
-      delay: 700,
-      callback: () => {
-        ManageSession.location = goToScene;
-        // ManageSession.createPlayer = true;
-        console.log('scene.scene.stop(scene.scene.key)', scene.scene.key);
+    ManageSession.socket.rpc('leave', scene.location).then((data) => {
+      if (data.id === 'leave' && data.payload === 'Success') {
         scene.scene.stop(scene.scene.key);
-        // dlog("scene.scene.start(goToScene, { user_id: locationID })", goToScene, locationID)
 
-        scene.scene.start(goToScene, { user_id: locationID });
-        console.log('switchScene locationID', locationID);
-        ManageSession.location = locationID;
-        console.log("ManageSession.getStreamUsers('join', locationID)", locationID);
-        ManageSession.getStreamUsers('join', locationID);
-      },
-      callbackScope: scene,
-      loop: false,
+        if (targetHouse !== null && targetLocation === DEFAULT_HOME) {
+          scene.scene.start(targetLocation, { user_id: targetHouse });
+          ManageSession.getStreamUsers('join').then(() => {
+            console.log('GetStreamUsers resolved, set loader to false');
+            setLoader(false);
+          });
+        } else if (targetLocation) {
+          playerLocationHouse.set(null);
+          scene.scene.start(targetLocation);
+          ManageSession.getStreamUsers('join').then(() => {
+            console.log('GetStreamUsers resolved, set loader to false');
+            setLoader(false);
+          });
+        }
+      }
+    }).catch((...args) => {
+      Error.set('Something went wrong with the Socket', args);
     });
   }
 
@@ -117,7 +91,7 @@ class SceneSwitcher {
       scene.physics.pause();
       scene.scene.pause();
 
-      await ManageSession.socket.rpc('leave', scene.location);
+      await ManageSession.socket.rpc('leave', ManageSession.getRPCStreamID());
       await ManageSession.socket.rpc('join', app);
     }
     // ManageSession.getStreamUsers("join", app)
@@ -127,7 +101,7 @@ class SceneSwitcher {
   async startSceneCloseApp(scene, app) {
     if (!ManageSession.socket) return;
     await ManageSession.socket.rpc('leave', app);
-    await ManageSession.getStreamUsers('join', ManageSession.location);
+    await ManageSession.getStreamUsers('join');
 
     dlog(scene);
     scene.physics.resume();

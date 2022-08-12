@@ -48,11 +48,7 @@
   // }
 
   async function goHome() {
-    SceneSwitcher.switchScene(
-      ManageSession.currentScene,
-      'DefaultUserHome',
-      ManageSession.userProfile.id,
-    );
+    SceneSwitcher.switchScene('DefaultUserHome', ManageSession.userProfile.id);
   }
 
   onMount(async () => {

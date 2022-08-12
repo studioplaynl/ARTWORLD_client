@@ -9,7 +9,6 @@ import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-p
 // Load Scenes
 import PreloadScene from './scenes/PreloadScene';
 import UrlParser from './scenes/UrlParser';
-import NetworkBoot from './scenes/NetworkBoot';
 import Location1 from './scenes/Location1';
 import Location3 from './scenes/Location3';
 import Location4 from './scenes/Location4';
@@ -25,7 +24,6 @@ import ChallengeFlowerField from './scenes/ChallengeFlowerField';
 const SCENES = [
   PreloadScene,
   UrlParser,
-  NetworkBoot,
   Location1,
   Location3,
   Location4,

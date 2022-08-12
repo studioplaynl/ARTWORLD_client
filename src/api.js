@@ -10,27 +10,34 @@ import {
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 
 export async function login(email, _password) {
-  setLoader(true);
-  const create = false;
-  client
-    .authenticateEmail(email, _password, create)
-    .then(async (response) => {
-      const session = response;
-      console.log('login, after authenticateEmail, session= ', session);
-      Session.set(session);
-      await getAccount();
-      push(`/?${$querystring}`);
-      setLoader(false);
-      return session;
-    })
-    .catch((err) => {
-      if (err.status === 404) {
-        Error.set('invalid username');
-      }
-      if (err.status === 401) {
-        Error.set('invalid password');
-      } else Error.set(`Unknown error, status ${err.status}`);
-    });
+  const loginPromise = new Promise((resolve, reject) => {
+    setLoader(true);
+    const create = false;
+    client
+      .authenticateEmail(email, _password, create)
+      .then(async (response) => {
+        const session = response;
+        // console.log('login, after authenticateEmail, session= ', session);
+        Session.set(session);
+        await getAccount();
+        push(`/?${get(querystring)}`);
+        setLoader(false);
+        resolve(session);
+      })
+      .catch((err) => {
+        if (parseInt(err.status, 10) === 404 || parseInt(err.status, 10) === 401) {
+          Error.set('invalid username');
+          push(`/login?${get(querystring)}`);
+        } else {
+          Error.set(`Unknown error, status ${err.status}`);
+          push(`/login?${get(querystring)}`);
+        }
+        // console.log('error in login, returning null');
+        setLoader(false);
+        reject();
+      });
+  });
+  return loginPromise;
 }
 
 export const logout = () => {

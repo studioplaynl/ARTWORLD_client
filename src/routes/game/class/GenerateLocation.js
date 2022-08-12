@@ -2,6 +2,7 @@ import { push, location, querystring } from 'svelte-spa-router';
 import SceneSwitcher from './SceneSwitcher';
 import { CurrentApp } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
+import ManageSession from '../ManageSession';
 
 const { Phaser } = window;
 
@@ -340,7 +341,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         dlog('CurrentApp.set(this.appUrl)', this.appUrl);
         CurrentApp.set(this.appUrl);
       }
-      SceneSwitcher.switchScene(this.scene, this.locationDestination, this.userHome);
+
+      SceneSwitcher.switchScene(this.locationDestination, this.userHome);
     });
 
     this.scene.physics.add.overlap(this.scene.player, this.location, this.confirmEnterLocation, null, this);

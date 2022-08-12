@@ -52,11 +52,7 @@
   function goTo(event) {
     const { row } = event.detail;
     if (event.detail.key === 'action') return;
-    SceneSwitcher.switchScene(
-      ManageSession.currentScene,
-      'DefaultUserHome',
-      row.user.id,
-    );
+    SceneSwitcher.switchScene('DefaultUserHome', row.user.id);
   }
 
   const columns = [

@@ -5,6 +5,7 @@ export const CONFIG = {
 
 /** List of Scenes a user may navigate to */
 export const VALID_USER_SCENES = [
+  'DefaultUserHome',
   'Location1',
   'Location3',
   'Location4',

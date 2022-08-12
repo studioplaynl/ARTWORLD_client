@@ -4,7 +4,7 @@
   import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte';
   import { push, querystring } from 'svelte-spa-router';
   import { Session } from '../../session';
-  import { login } from '../../api';
+  import { login, checkLoginExpired } from '../../api';
   import QRscanner from './qrscanner.svelte';
   import { dlog } from '../game/helpers/DebugLog';
 
@@ -16,22 +16,27 @@
   let qrscanState = false;
 
   async function onSubmit() {
-    await login(email, password);
+    login(email, password).catch(() => {
+      email = params.user || 'user1@vrolijkheid.nl';
+      password = params.password || 'somesupersecretpassword';
+    });
   }
 
   const isMobileDevice = /Mobi/i.test(window.navigator.userAgent);
   const isMobile = !!isMobileDevice;
 
-  dlog('isMobile', isMobile);
-  dlog('navigator', navigator.userAgent);
+  // dlog('isMobile', isMobile);
+  // dlog('navigator', navigator.userAgent);
 
   onMount(() => {
+    // console.log(
+    //   'Login: am I logged in? ',
+    //   !!$Session?.token,
+    //   checkLoginExpired(),
+    // );
     email = params.user || 'user1@vrolijkheid.nl';
     password = params.password || 'somesupersecretpassword';
-    // dlog(params);
-    const currentDate = Math.floor(Date.now() / 1000);
-    if (!!$Session && $Session.expires_at > currentDate) {
-      console.log('onMount login, seems ok', $Session);
+    if ($Session?.token && checkLoginExpired() !== true) {
       // TODO: If a user tried loading a deeplink, this should not transfer them back to the index page..
       push(`/?${$querystring}`); // No app..
     }

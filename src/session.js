@@ -16,7 +16,9 @@ if (storedSession) {
   }
 }
 
-/** Session contains the user session from the Nakama server */
+/** Session contains the user session from the Nakama server
+ * @todo Create custom store with checks on the getter function (is expired? is valid? etc)
+*/
 export const Session = writable(storedSession || null);
 Session.subscribe((value) => {
   if (value) {

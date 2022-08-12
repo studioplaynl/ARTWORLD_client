@@ -1,12 +1,15 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-console */
 import { get } from 'svelte/store';
-import { Profile } from '../../../session';
+import { Profile, CurrentApp } from '../../../session';
 import ManageSession from '../ManageSession';
 import { listObjects } from '../../../api';
 import { VALID_USER_SCENES, DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
-import { parseQueryString } from '../helpers/UrlHelpers';
-import { playerPosX, playerPosY, playerLocation } from '../playerState';
+import {
+  playerPosX, playerPosY, playerLocationScene, playerLocationHouse,
+} from '../playerState';
+import { Addressbook, Liked } from '../../../storage';
+import { dlog } from '../helpers/DebugLog';
 
 const { Phaser } = window;
 
@@ -18,7 +21,7 @@ const checkIfSceneIsAllowed = (location) => {
   return locationExists;
 };
 
-const checkIfLocationLooksLikeAHouse = (location) => location.split('-').length > 3;
+const checkIfLocationLooksLikeAHouse = (location) => location !== null && location.split('-').length > 3;
 
 export default class UrlParser extends Phaser.Scene {
   debug = false;
@@ -30,46 +33,57 @@ export default class UrlParser extends Phaser.Scene {
 
   async create() {
     // check if there is a url param, otherwise get last location serverside
-    this.parsePlayerLocation();
+    this.parseplayerLocationScene();
+
+
+    // TODO add subscription op scene en house en dan run de parser
   } // create
 
 
   // onBoard() {
 
   // 1. parseQueryString() --> haal data uit url
-  // 2. $playerLocation === null? Haal uit data uit $Player.meta en zet in de stores
+  // 2. $playerLocationScene === null? Haal uit data uit $Player.meta en zet in de stores
   // 3. -> Zet de positiedata om naar game (nu: randomiseNullPosition)
   //    -> Gebruik de location en laad de scene in
 
   // }
 
 
-  async parsePlayerLocation() {
+  async parseplayerLocationScene() {
     //* check if the user profile is loaded, to be able to send the player to the right location
     //* check if there are params in the url, to send the player to that location instead
 
     // Parse the current query string
-    parseQueryString();
+    // parseQueryString();
 
     const profile = get(Profile);
 
     // If there is no location paramter in the url..
-    if (get(playerLocation) === null) {
+    if (get(playerLocationScene) === null) {
       if (profile.meta?.PosX) {
-        playerPosX.set(profile.meta.PosX);
+        playerPosX.set(Math.round(profile.meta.PosX));
       }
       if (profile.meta?.PosY) {
-        playerPosY.set(profile.meta.PosY);
+        playerPosY.set(Math.round(profile.meta.PosY));
       }
-      if (profile.meta?.Location && checkIfSceneIsAllowed(profile.meta.Location)) {
-        playerLocation.set(profile.meta.Location);
+      if (profile.meta?.Location && checkIfSceneIsAllowed(profile.meta.Location)
+      ) {
+        playerLocationScene.set(profile.meta.Location);
+      } else if (profile.meta?.Location
+        && checkIfLocationLooksLikeAHouse(profile.meta.Location)) {
+        playerLocationScene.set(DEFAULT_HOME);
+        playerLocationHouse.set(profile.meta.Location);
       }
+
+      console.log('meta', profile.meta);
     }
 
     // Set a default player location
-    if (!get(playerLocation)) {
-      console.log('Playerlocation does not seem valid, set default scene');
-      playerLocation.set(DEFAULT_SCENE);
+    if (!get(playerLocationScene)) {
+      console.log('playerLocationScene does not seem valid, set default scene');
+      playerLocationScene.set(DEFAULT_SCENE);
+      playerLocationHouse.set(null);
     }
 
     // If a position is null, randomise it..
@@ -81,24 +95,23 @@ export default class UrlParser extends Phaser.Scene {
     }
 
 
-    const targetLocation = get(playerLocation);
-    console.log('targetLocation = ', targetLocation);
+    const targetLocation = get(playerLocationScene);
+    const targetHouse = get(playerLocationHouse);
+    // console.log('targetLocation = ', targetLocation, 'targetHouse = ', targetHouse);
 
-    if (checkIfLocationLooksLikeAHouse(targetLocation)) {
-      // List Objects to see if this location is valid home
-
-      console.log('Looks like a home!!', targetLocation);
-      listObjects('home', targetLocation, 1).catch(() => {
-        // No objects found for this ID, switch to default scene
-        playerLocation.set(DEFAULT_SCENE);
-        this.prepareLaunchSceneAndSwitch(DEFAULT_SCENE);
-      }).then(() => {
-        console.log('I found stuff for this home!', targetLocation);
-        this.prepareLaunchSceneAndSwitch(DEFAULT_HOME, targetLocation);
-      });
-    } else if (checkIfSceneIsAllowed(targetLocation)) {
-      // scene laden
-      this.prepareLaunchSceneAndSwitch(targetLocation);
+    if (checkIfSceneIsAllowed(targetLocation)) {
+      if (checkIfLocationLooksLikeAHouse(targetHouse)) {
+        console.log('Looks like a home!!', targetHouse);
+        listObjects('home', targetHouse, 1).catch(() => {
+          // No objects found for this ID, switch to default scene
+          playerLocationScene.set(DEFAULT_SCENE);
+          playerLocationHouse.set(targetHouse);
+        }).then(() => {
+          this.launchGame(DEFAULT_HOME, targetHouse);
+        });
+      } else {
+        this.launchGame(targetLocation);
+      }
     }
 
     // }
@@ -108,11 +121,23 @@ export default class UrlParser extends Phaser.Scene {
 
   // location => scene naam
   // locationID => id van huisje van user
-  prepareLaunchSceneAndSwitch(location, locationID) {
+  async launchGame(location, locationID) {
     if (this.debug) console.log('Launch: ', location, locationID);
-    ManageSession.location = location; // scene key
-    ManageSession.locationID = locationID; // in case of DefaultUserHome = user_id
+
     this.scene.stop('UrlParser');
-    this.scene.start('NetworkBoot');
+    this.scene.launch('UIScene');
+
+    // we launch the player last location when we have a socket with the server
+    await ManageSession.createSocket()
+      .then(async () => {
+        // get server object so that the data is Initialized
+        Liked.get();
+        Addressbook.get();
+
+        dlog('locationID', locationID);
+        this.scene.launch(location, { user_id: locationID });
+
+        CurrentApp.update(() => 'game');
+      });
   }
 }

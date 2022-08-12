@@ -2,7 +2,9 @@
   import { location } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { convertImage, getAccount, getObject, logout } from '../../api';
+  import {
+    convertImage, getAccount, getObject, logout,
+  } from '../../api';
   import ProfilePage from '../profile.svelte';
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
@@ -139,13 +141,11 @@
   async function goHome(id) {
     if (typeof id === 'string') {
       SceneSwitcher.switchScene(
-        ManageSession.currentScene,
         'DefaultUserHome',
         id,
       );
     } else if ($ShowItemsBar) {
       SceneSwitcher.switchScene(
-        ManageSession.currentScene,
         'DefaultUserHome',
         ManageSession.userProfile.id,
       );

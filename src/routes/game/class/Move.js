@@ -140,8 +140,8 @@ class Move {
     this.updatePositionHistory(scene); // update the url and historyTracker
 
     // update last player position in manageSession for when the player is reloaded inbetween scenes
-    playerPosX.set(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x));
-    playerPosY.set(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y));
+    playerPosX.set(Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)));
+    playerPosY.set(Math.round(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)));
 
     // play "stop" animation
     this.movingAnimation(scene, 'stop');

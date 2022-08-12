@@ -53,11 +53,7 @@
   }
 
   function goHome() {
-    SceneSwitcher.switchScene(
-      ManageSession.currentScene,
-      'DefaultUserHome',
-      $SelectedOnlinePlayer.id,
-    );
+    SceneSwitcher.switchScene('DefaultUserHome', $SelectedOnlinePlayer.id);
   }
 
   function clickOutsideUser() {

@@ -1,13 +1,20 @@
 <script>
+  import { link } from 'svelte-spa-router';
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
+  import {
+    playerPosX,
+    playerPosY,
+    playerLocationScene,
+    playerLocationHouse,
+  } from '../game/playerState';
   // import { History } from '../../session';
   // import { dlog } from '../game/helpers/DebugLog';
 
   const home = 'Artworld';
 
   async function goHome() {
-    SceneSwitcher.switchScene(ManageSession.currentScene, home, home);
+    SceneSwitcher.switchScene(home, home);
   }
 
   // async function goBack() {
@@ -33,14 +40,14 @@
 </script>
 
 <div class="topbar">
-  <button on:click="{goHome}">
+  <a href="/?location=Artworld&house=" use:link>
     <img
       class="TopIcon"
       id="logo"
       src="assets/SHB/svg/AW-icon-logo-A.svg"
       alt="Homepage"
     />
-  </button>
+  </a>
   <!-- <button on:click="{goBack}">
     <img
       class="TopIcon"
@@ -71,6 +78,10 @@
       alt="Zoom in"
     />
   </button>
+
+  <div class="debug">
+    {$playerPosX} x {$playerPosY} - {$playerLocationScene} - {$playerLocationHouse}
+  </div>
 </div>
 
 <style>
@@ -131,5 +142,8 @@
 
   .showBack {
     visibility: visible !important;
+  }
+
+  .debug {
   }
 </style>
