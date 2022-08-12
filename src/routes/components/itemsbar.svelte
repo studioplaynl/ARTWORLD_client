@@ -51,7 +51,7 @@
     console.log($Profile);
     user_avatar_url = $Profile.url;
     if (user_house_url == undefined) {
-      user_house_url = await getObject("home", $Profile.meta.Azc, $Profile.id);
+      user_house_url = await getObject("home", $Profile.meta.Azc || $Profile.meta.azc, $Profile.id);
       user_house_url = await convertImage(user_house_url.value.url, "50", "50");
     }
     //console.log(ManageSession)
@@ -76,7 +76,7 @@
       user_id = ManageSession.selectedOnlinePlayer.id;
       house_url = await getObject(
         "home",
-        ManageSession.selectedOnlinePlayer.metadata.Azc,
+        ManageSession.selectedOnlinePlayer.metadata.Azc || ManageSession.selectedOnlinePlayer.metadata.azc,
         ManageSession.selectedOnlinePlayer.id
       );
       // getObject provides an object in the format of:
@@ -112,7 +112,7 @@
             tempArray.push(
               await getObject(
                 "home",
-                element.value.metadata.Azc,
+                element.value.metadata.Azc || element.value.metadata.azc,
                 element.value.user_id
               )
             );

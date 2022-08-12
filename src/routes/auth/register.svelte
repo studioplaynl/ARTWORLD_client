@@ -68,7 +68,7 @@
 	async function register() {
 		const create = true;
 		console.log("azc: " + azc)
-		let data = {"userId": $Session.user_id, "azc": azc, "role": role, "avatar": "/avatar/stock/" + avatar, "home": "/home/stock/" + house }
+		let data = {"userId": $Session.user_id, "Azc": azc, "Role": role, "avatar": "/avatar/stock/" + avatar, "home": "/home/stock/" + house }
 		console.log(client)
 		var token = client.configuration.bearerToken
 		client.configuration.bearerToken = null

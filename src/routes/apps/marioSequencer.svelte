@@ -6,7 +6,7 @@ import { onMount } from "svelte"
 
 
 <svelte:head>
-	
+	<script src="/MarioSequencer/shared.js" ></script>
 </svelte:head>
 
 <main>
@@ -28,7 +28,6 @@ import { onMount } from "svelte"
 <button onclick="download()">Save</button>
 </center> -->
 <!-- <script src="/MarioSequencer/shared.js"></script> -->
-<script src="/MarioSequencer/shared.js" ></script>
 </main>
 
 <style>
