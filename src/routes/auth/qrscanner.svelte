@@ -80,8 +80,9 @@
           drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
           drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
 
-          if(code.data.includes(`${window.location.host}/#/login/`) && !redirect){
-            console.log('redirected to: ' + code.data)
+         // if(code.data.includes(`${window.location.host}/#/login/`) && !redirect){
+          if(code.data.includes(`/#/login/`) && !redirect){
+          console.log('redirected to: ' + code.data)
             let urlChunks = code.data.split('/')
             email = urlChunks[urlChunks.length-2]
             password = urlChunks[urlChunks.length-1]
