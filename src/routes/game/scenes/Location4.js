@@ -35,7 +35,7 @@ export default class Location4 extends Phaser.Scene {
 
     this.player;
     this.playerShadow;
-    this.playerAvatarPlaceholder = 'playerAvatar';
+
     this.playerAvatarKey = '';
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
@@ -95,8 +95,8 @@ export default class Location4 extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default -1185, 692 artworldCoordinates
-    this.player = new PlayerDefault(this, -1185, 692, this.playerAvatarPlaceholder).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
+    this.player = new PlayerDefault(this, -1185, 692, ManageSession.playerAvatarPlaceholder).setDepth(201);
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder }).setDepth(200);
     // .......  end PLAYER ................................................................................
     // for back button
     SceneSwitcher.pushLocation(this);

@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import Preloader from '../class/Preloader';
+import ManageSession from '../ManageSession';
 
 const { Phaser } = window;
 
@@ -113,21 +114,19 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   async create() {
-    this.playerAvatarPlaceholder = 'avatar1';
-
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
 
     this.anims.create({
       key: this.playerMovingKey,
-      frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 0, end: 8 }),
+      frames: this.anims.generateFrameNumbers(ManageSession.playerAvatarPlaceholder, { start: 0, end: 8 }),
       frameRate: 20,
       repeat: -1,
     });
 
     this.anims.create({
       key: this.playerStopKey,
-      frames: this.anims.generateFrameNumbers(this.playerAvatarPlaceholder, { start: 4, end: 4 }),
+      frames: this.anims.generateFrameNumbers(ManageSession.playerAvatarPlaceholder, { start: 4, end: 4 }),
     });
   } // create
 

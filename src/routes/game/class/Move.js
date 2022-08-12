@@ -2,11 +2,7 @@
 /* eslint-disable class-methods-use-this */
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import SceneSwitcher from './SceneSwitcher';
-import { updateQueryString } from '../helpers/UrlHelpers';
 import { playerPosX, playerPosY } from '../playerState';
-
-const { Phaser } = window;
 
 // TODO This should probably all be just static functions
 
@@ -110,8 +106,6 @@ class Move {
     // we pass on Phaser2D coordinates to ManageSession.sendMoveMessage
     // target is a vector
 
-    this.updatePositionHistory(scene); // update the url and historyTracker
-
     // set movement over network
     ManageSession.sendMoveMessage(scene, target.x, target.y, 'moveTo');
   }
@@ -137,8 +131,6 @@ class Move {
     // send Stop command
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
 
-    this.updatePositionHistory(scene); // update the url and historyTracker
-
     // update last player position in manageSession for when the player is reloaded inbetween scenes
     playerPosX.set(Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)));
     playerPosY.set(Math.round(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)));
@@ -148,18 +140,6 @@ class Move {
     scene.isPlayerMoving = false;
   }
 
-  updatePositionHistory(scene) {
-    // const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
-
-    // const passPosX = Phaser2DToArtworldX(scene.worldSize.x, scene.player.x);
-    // const passPosY = Phaser2DToArtworldY(scene.worldSize.y, scene.player.y);
-
-    // update url
-    // updateQueryString();
-    // setUrl(scene.location, passPosX, passPosY);
-    // put the new pos in the history tracker
-    // SceneSwitcher.updatePositionCurrentScene(passPosX, passPosY);
-  }
 
   moveBySwiping(scene) {
     if (scene.input.activePointer.isDown && !scene.isClicking && ManageSession.playerIsAllowedToMove) {

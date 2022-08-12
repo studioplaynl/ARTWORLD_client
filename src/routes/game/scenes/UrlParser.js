@@ -15,9 +15,6 @@ const { Phaser } = window;
 
 const checkIfSceneIsAllowed = (location) => {
   const locationExists = VALID_USER_SCENES.includes(location);
-
-  console.log('locationExists VALID_USER_SCENES', locationExists, location, VALID_USER_SCENES);
-
   return locationExists;
 };
 

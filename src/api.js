@@ -587,6 +587,7 @@ export async function convertImage(path, height, width, format) {
 // }
 
 export function setLoader(state) {
+  console.log('setLoader to ... ', state);
   if (state) {
     document.getElementById('loader').classList.remove('hide');
   } else {

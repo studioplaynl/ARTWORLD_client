@@ -11,6 +11,7 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ArtworkList from '../class/ArtworkList';
 import Move from '../class/Move';
+import { playerPosX, playerPosY } from '../playerState';
 
 const { Phaser } = window;
 
@@ -35,7 +36,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     this.player;
     this.playerShadow;
-    this.playerAvatarPlaceholder = 'avatar1';
+
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
@@ -121,8 +122,8 @@ export default class DefaultUserHome extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default 0 ,0 artworldCoordinates
-    this.player = new PlayerDefault(this, 0, 0, this.playerAvatarPlaceholder).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
+    this.player = new PlayerDefault(this, 0, 0, ManageSession.playerAvatarPlaceholder).setDepth(201);
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder }).setDepth(200);
     // .......  end PLAYER ................................................................................
     // for back button
     SceneSwitcher.pushLocation(this);
@@ -150,7 +151,14 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     this.artworksListSpinner.start();
 
+    //
+
     Player.loadPlayerAvatar(this, 0, 0);
+
+    // Set the player on 0,0 position (this also updates the URL automatically)
+    playerPosX.set(0);
+    playerPosY.set(0);
+
 
     await listObjects('drawing', this.location, 100).then((rec) => {
       // this.userArtServerList is an array with objects, in the form of:

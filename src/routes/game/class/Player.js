@@ -3,11 +3,10 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import { getFullAccount, getAccount } from '../../../api';
+import { getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
-import { updateQueryString } from '../helpers/UrlHelpers';
 import { dlog } from '../helpers/DebugLog';
-import { playerPosX, playerPosY, playerLocationScene } from '../playerState';
+import { playerPosX, playerPosY } from '../playerState';
 
 class Player {
   constructor() {
@@ -248,7 +247,7 @@ class Player {
   createOnlinePlayer(scene, onlinePlayer) {
     // check if onlinePlayer exists already
     // dlog(onlinePlayer)
-    const exists = ManageSession.allConnectedUsers.some((element) => element.user_id == onlinePlayer.user_id);
+    const exists = ManageSession.allConnectedUsers.some((element) => element.user_id === onlinePlayer.user_id);
     // if player exists
     if (!exists) {
       // create new onlinePlayer with default avatar
@@ -264,9 +263,9 @@ class Player {
             scene.worldSize.y,
             onlinePlayerCopy.meta.PosY,
           ),
-          scene.playerAvatarPlaceholder, //! change to ManageSession.playerAvatarPlaceholder
+          ManageSession.playerAvatarPlaceholder,
         )
-        // element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
+
         .setDepth(200);
       onlinePlayer.setInteractive({ useHandCursor: true });
       // hit area of onlinePlayer
@@ -284,7 +283,7 @@ class Player {
       scene.anims.create({
         key: onlinePlayer.getData('movingKey'),
         frames: scene.anims.generateFrameNumbers(
-          scene.playerAvatarPlaceholder,
+          ManageSession.playerAvatarPlaceholder,
           { start: 0, end: 8 },
         ),
         frameRate: 20,
@@ -295,7 +294,7 @@ class Player {
       scene.anims.create({
         key: onlinePlayer.getData('stopKey'),
         frames: scene.anims.generateFrameNumbers(
-          scene.playerAvatarPlaceholder,
+          ManageSession.playerAvatarPlaceholder,
           { start: 4, end: 4 },
         ),
       });
@@ -304,7 +303,7 @@ class Player {
       Object.assign(onlinePlayer, onlinePlayerCopy);
       // we copy the id over as user_id to kep data consistent across our internal logic
       onlinePlayer.user_id = onlinePlayerCopy.id;
-      dlog('onlinePlayer', onlinePlayer);
+      // dlog('onlinePlayer', onlinePlayer);
 
       // we push the new online player to the allConnectedUsers array
       ManageSession.allConnectedUsers.push(onlinePlayer);
@@ -316,7 +315,7 @@ class Player {
       // if the texture already exists attach it again to the player
       // const preExisting = false
       if (!scene.textures.exists(avatarKey)) {
-        dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
+        // dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
         // add it to loading queue
         scene.load.spritesheet(avatarKey, onlinePlayer.url, {
           frameWidth: this.avatarSize * 2,
@@ -331,7 +330,7 @@ class Player {
         // when file is finished loading the attachToAvatar function is called
         scene.load.start(); // start loading the image in memory
       } else {
-        dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
+        // dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
         // attach the avatar to the onlinePlayer when it is already in memory
         this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey);
       }
@@ -393,10 +392,6 @@ class Player {
     const width = 64;
     onlinePlayer.displayWidth = width;
     onlinePlayer.scaleY = onlinePlayer.scaleX;
-  }
-
-  async getAccountDetails(id) {
-    await getFullAccount(id).then((rec) => rec);
   }
 }
 

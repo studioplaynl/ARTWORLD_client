@@ -37,7 +37,7 @@ export default class Location1 extends Phaser.Scene {
 
     this.player;
     this.playerShadow;
-    this.playerAvatarPlaceholder = 'playerAvatar';
+
     this.playerAvatarKey = '';
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
@@ -142,12 +142,10 @@ export default class Location1 extends Phaser.Scene {
     // GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall", 0x000000)
 
     // .......  PLAYER ..........................................................................
-    // set playerAvatarKey to a placeholder, so that the player loads even when the networks is slow, and the dependencies on player will funciton
-    this.playerAvatarPlaceholder = 'avatar1';
 
     //* create default player and playerShadow
-    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), ManageSession.playerAvatarPlaceholder).setDepth(201);
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder }).setDepth(200);
 
     // for back button, has to be done after player is created for the history tracking!
     SceneSwitcher.pushLocation(this);

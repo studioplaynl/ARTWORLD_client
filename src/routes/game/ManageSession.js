@@ -6,7 +6,7 @@ import CoordinatesTranslator from './class/CoordinatesTranslator';
 import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
 import {
-  playerLocationScene, playerLocationHouse,
+  playerLocationScene, playerLocationHouse, playerStreamID,
 } from './playerState';
 import { DEFAULT_SCENE } from '../../constants';
 
@@ -41,6 +41,7 @@ class ManageSession {
     this.playerClicks = 0;
     this.playerClickTime = 0;
 
+    this.playerAvatarPlaceholder = 'avatar1';
     this.avatarSize = 64;
     this.cameraShake = false;
 
@@ -61,7 +62,7 @@ class ManageSession {
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.lastMoveCommand = {
-      action: 'stop', posX: 0, posY: 0, location: this.getRPCStreamID(),
+      action: 'stop', posX: 0, posY: 0, location: get(playerStreamID),
     };
 
     // .....................................................................
@@ -284,7 +285,7 @@ class ManageSession {
       `this.getStreamUsers("${rpcCommand})`,
     );
 
-    const location = this.getRPCStreamID();
+    const location = get(playerStreamID);
 
     const streamUsersPromise = new Promise((resolve) => {
       this.socket.rpc(rpcCommand, location).then((rec) => {
@@ -378,16 +379,11 @@ class ManageSession {
       action,
       posX: CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, posX),
       posY: CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, posY),
-      location: this.getRPCStreamID(),
+      location: get(playerStreamID),
     };
 
     this.lastMoveCommand = { ...data };
     this.socket.rpc('move_position', JSON.stringify(data));
-  }
-
-  getRPCStreamID() {
-    const streamID = get(playerLocationHouse) || get(playerLocationScene);
-    return streamID;
   }
 } // end class
 

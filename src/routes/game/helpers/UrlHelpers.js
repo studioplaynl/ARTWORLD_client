@@ -84,7 +84,8 @@ export function updateQueryString() {
 }
 
 // TODO: Check if this runs just once..
-console.log('Set up subscriptions');
+// console.log('Set up subscriptions');
+
 querystring.subscribe(() => parseQueryString());
 playerPosX.subscribe(() => updateQueryString());
 playerPosY.subscribe(() => updateQueryString());

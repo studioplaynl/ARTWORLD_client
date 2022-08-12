@@ -39,7 +39,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
     this.player;
     this.playerShadow;
-    this.playerAvatarPlaceholder = 'avatar1';
+
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
@@ -236,12 +236,12 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         this.worldSize.y,
         get(playerPosY),
       ),
-      this.playerAvatarPlaceholder,
+      ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
     this.playerShadow = new PlayerDefaultShadow(
       {
         scene: this,
-        texture: this.playerAvatarPlaceholder,
+        texture: ManageSession.playerAvatarPlaceholder,
       },
     ).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!

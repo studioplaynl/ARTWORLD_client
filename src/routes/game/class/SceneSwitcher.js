@@ -3,7 +3,7 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog } from '../helpers/DebugLog';
-import { playerLocationScene, playerLocationHouse } from '../playerState';
+import { playerLocationScene, playerLocationHouse, playerStreamID } from '../playerState';
 import { DEFAULT_HOME } from '../../../constants';
 import { Error } from '../../../session';
 import { setLoader } from '../../../api';
@@ -17,10 +17,10 @@ class SceneSwitcher {
   constructor() {
     this.tempHistoryArray = [];
 
-    this.subsubscribeScene = playerLocationScene.subscribe(() => {
+    this.unsubscribeScene = playerLocationScene.subscribe(() => {
       this.doSwitchScene();
     });
-    this.subsubscribeHouse = playerLocationHouse.subscribe(() => {
+    this.unsubscribeHouse = playerLocationHouse.subscribe(() => {
       this.doSwitchScene();
     });
   }
@@ -55,6 +55,7 @@ class SceneSwitcher {
 
     if (!scene || !scene?.player) return;
 
+    // console.log('doSwitchScene, set loader to true, leaving', scene.location);
     setLoader(true);
 
     // console.log('SWITCH: ', targetLocation, targetHouse);
@@ -69,14 +70,14 @@ class SceneSwitcher {
         if (targetHouse !== null && targetLocation === DEFAULT_HOME) {
           scene.scene.start(targetLocation, { user_id: targetHouse });
           ManageSession.getStreamUsers('join').then(() => {
-            console.log('GetStreamUsers resolved, set loader to false');
+            // console.log('doSwitchScene resolved, set loader to false');
             setLoader(false);
           });
         } else if (targetLocation) {
           playerLocationHouse.set(null);
           scene.scene.start(targetLocation);
           ManageSession.getStreamUsers('join').then(() => {
-            console.log('GetStreamUsers resolved, set loader to false');
+            // console.log('doSwitchScene resolved, set loader to false');
             setLoader(false);
           });
         }
@@ -91,7 +92,7 @@ class SceneSwitcher {
       scene.physics.pause();
       scene.scene.pause();
 
-      await ManageSession.socket.rpc('leave', ManageSession.getRPCStreamID());
+      await ManageSession.socket.rpc('leave', get(playerStreamID));
       await ManageSession.socket.rpc('join', app);
     }
     // ManageSession.getStreamUsers("join", app)

@@ -26,7 +26,6 @@ export default class Location3 extends Phaser.Scene {
 
     this.location = 'Location3';
 
-    this.playerAvatarPlaceholder = 'playerAvatar';
     this.playerAvatarKey = '';
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
@@ -96,9 +95,9 @@ export default class Location3 extends Phaser.Scene {
         this.worldSize.y,
         get(playerPosY),
       ),
-      this.playerAvatarPlaceholder,
+      ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder }).setDepth(200);
 
     // for back button, has to be done after player is created for the history tracking!
     SceneSwitcher.pushLocation(this);

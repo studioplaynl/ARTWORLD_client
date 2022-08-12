@@ -2,12 +2,13 @@
   import { link } from 'svelte-spa-router';
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
-  import {
-    playerPosX,
-    playerPosY,
-    playerLocationScene,
-    playerLocationHouse,
-  } from '../game/playerState';
+  // import {
+  //   playerPosX,
+  //   playerPosY,
+  //   playerLocationScene,
+  //   playerLocationHouse,
+  //   playerStreamID,
+  // } from '../game/playerState';
   // import { History } from '../../session';
   // import { dlog } from '../game/helpers/DebugLog';
 
@@ -79,9 +80,11 @@
     />
   </button>
 
-  <div class="debug">
-    {$playerPosX} x {$playerPosY} - {$playerLocationScene} - {$playerLocationHouse}
-  </div>
+  <!-- <div class="debug">
+    {$playerPosX} x {$playerPosY} - {$playerLocationScene} - {$playerLocationHouse}<br
+    />
+    Stream: {$playerStreamID}
+  </div> -->
 </div>
 
 <style>

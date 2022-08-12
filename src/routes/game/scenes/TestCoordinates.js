@@ -38,7 +38,7 @@ export default class TestCoordinates extends Phaser.Scene {
 
     this.player;
     this.playerShadow;
-    this.playerAvatarPlaceholder = 'avatar1';
+
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
@@ -90,7 +90,7 @@ export default class TestCoordinates extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create deafult player and playerShadow
     // create player in center with artworldCoordinates
-    // this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
+    // this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), ManageSession.playerAvatarPlaceholder)
     // create draggable player
     this.player = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), 'ui_eye').setScale(0.6).setDepth(101).setInteractive();
 
@@ -100,7 +100,7 @@ export default class TestCoordinates extends Phaser.Scene {
       gameObject.y = dragY;
     });
 
-    // this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+    // this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder })
     // .......  end PLAYER ................................................................................
 
     // ....... onlinePlayers ..............................................................................

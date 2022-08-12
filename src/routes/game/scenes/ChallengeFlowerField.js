@@ -45,7 +45,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
     this.player;
     this.playerShadow;
-    this.playerAvatarPlaceholder = 'avatar1';
+
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
@@ -226,8 +226,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
-    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, get(playerPosX)), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, get(playerPosY)), this.playerAvatarPlaceholder).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
+    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, get(playerPosX)), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, get(playerPosY)), ManageSession.playerAvatarPlaceholder).setDepth(201);
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder }).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!
     SceneSwitcher.pushLocation(this);
 
