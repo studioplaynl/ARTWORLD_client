@@ -33,18 +33,18 @@ class ServerCall {
         // console.log("scene.homes.filter", filter, scene.homes)
         // retreive how many artworks are in the home
         // let tempAllArtPerUser = []
-        scene.homes.forEach((element, index) => {
-          Promise.all([listAllObjects("drawing", element.user_id), listAllObjects("stopmotion", element.user_id)]).then((rec) => {
+        // scene.homes.forEach((element, index) => {
+        //   Promise.all([listAllObjects("drawing", element.user_id), listAllObjects("stopmotion", element.user_id)]).then((rec) => {
 
-            rec.forEach((artElement) => {
-              //if (ManageSession.debug) console.log("artElement", artElement)
-              //add the array of art objects to the userHouse object
-              element['artWorks'] = artElement
-            })
-            //if (ManageSession.debug) console.log("element", element)
-          })
+        //     rec.forEach((artElement) => {
+        //       //if (ManageSession.debug) console.log("artElement", artElement)
+        //       //add the array of art objects to the userHouse object
+        //       element['artWorks'] = artElement
+        //     })
+        //     //if (ManageSession.debug) console.log("element", element)
+        //   })
 
-        })
+        // })
         this.generateHomes(scene)
 
       })
