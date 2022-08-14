@@ -639,9 +639,9 @@
   onDestroy(() => {
     // upload the artwork on the close button click,
     // if it is not uploaded yet or if the title has been changed
-    if (!isAlreadyUploaded || isTitleChanged) {
+    //if (!isAlreadyUploaded || isTitleChanged) {
       upload();
-    }
+    //}
   });
 
   async function download() {
