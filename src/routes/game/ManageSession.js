@@ -312,8 +312,9 @@ class ManageSession {
     //* rpc_command:
     //* join" = join the stream, get the online users, except self
     //* get_users" = after joined, get the online users, except self
-    if (this.debug)  console.log( 'this.getStreamUsers("' + rpc_command + ', "' + location + '")');
+    console.log( 'this.getStreamUsers("' + rpc_command + ', "' + location + '")');
 
+     const streamUsersPromise = new Promise((resolve) => {
     this.socket.rpc(rpc_command, location).then((rec) => {
       //!the server reports all users in location except self_user
       if (this.debug) console.log(location);
@@ -349,9 +350,19 @@ class ManageSession {
       //console.log("this.currentScene", this.currentScene)
       if (this.debug)  console.log("this.lastMoveCommand", this.lastMoveCommand)
       // if (typeof this.currentScene != "undefined") {
-      setTimeout(() => { this.sendMoveMessage(this.currentScene, this.lastMoveCommand.posX, this.lastMoveCommand.posY, this.lastMoveCommand.action) }, 1500)
+             if (this.currentScene !== null) {
+          setTimeout(() => {
+            const { posX, posY, action } = this.lastMoveCommand;
       // }
+      resolve(rpc_command, location);
+          }, 1500);
+        } else {
+          resolve(rpc_command, location);
+        }
     });
+  });
+
+    return streamUsersPromise;
   }
 
   deleteOnlinePlayer(onlinePlayer) {

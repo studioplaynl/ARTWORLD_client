@@ -83,15 +83,13 @@ class HistoryTracker {
     scene.physics.pause()
     scene.player.setTint(0xff0000)
     //if (ManageSession.debug) console.log("switchScene leave scene.location", scene.location)
-    ManageSession.socket.rpc("leave", scene.location)
 
-    //console.log("switchScene goToScene", goToScene)
-    scene.player.location = goToScene
 
-    scene.time.addEvent({
-      delay: 700,
-      callback: () => {
-        ManageSession.location = goToScene
+ManageSession.socket.rpc('leave', scene.location).then((data) => {
+      if (data.id === 'leave' && data.payload === 'Success') {
+        scene.scene.stop(scene.scene.key);
+
+        //ManageSession.location = goToScene
         // if (ManageSession.debug) console.log("scene.scene.stop(scene.scene.key)", scene.scene.key)
         scene.scene.stop(scene.scene.key)
         // if (ManageSession.debug) console.log("scene.scene.start(goToScene, { user_id: locationID })", goToScene, locationID)
@@ -102,12 +100,14 @@ class HistoryTracker {
         ManageSession.location = locationID
         // if (ManageSession.debug) console.log("ManageSession.getStreamUsers('join', locationID)", locationID)
         ManageSession.getStreamUsers("join", locationID)
-      },
-      callbackScope: scene,
-      loop: false,
-    })
-
+      }
+    }).catch((...args) => {
+      Error.set('Something went wrong with the Socket', args);
+    });
   }
+
+
+
   async pauseSceneStartApp(scene, app) {
     // scene.physics.pause()
     // scene.scene.pause()
