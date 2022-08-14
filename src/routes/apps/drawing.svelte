@@ -895,7 +895,7 @@
 
   let frames = [{}];
   let backgroundFrames = [{}];
-  let maxFrames = 7;
+  let maxFrames = 4;
   let currentFrame = 0;
   let play = false;
 
