@@ -585,7 +585,7 @@
     setLoader(false);
   };
 
-  const upload = async () => {
+ export const upload = async () => {
     if (!invalidTitle) return;
 
     // we upload the artwork if either something added to the art itself or when it is title changed
@@ -636,13 +636,13 @@
     }
   };
 
-  onDestroy(() => {
-    // upload the artwork on the close button click,
-    // if it is not uploaded yet or if the title has been changed
-    //if (!isAlreadyUploaded || isTitleChanged) {
-      upload();
-    //}
-  });
+  // onDestroy(() => {
+  //   // upload the artwork on the close button click,
+  //   // if it is not uploaded yet or if the title has been changed
+  //   if (!isAlreadyUploaded || isTitleChanged) {
+  //     upload();
+  //   }
+  // });
 
   async function download() {
     // check first if we are dealing with preexisting artwork
@@ -676,7 +676,7 @@
     }
   }
 
-  const updateFrame = () => {
+  const updateFrame = async () => {
     frames[currentFrame] = canvas.toJSON();
     frames = frames;
 
@@ -926,7 +926,7 @@
     };
   }
 
-  const changeFrame = (newFrame) => {
+  const changeFrame = async (newFrame) => {
     console.log("newFrame", newFrame);
     if (!play) {
       console.log(frames);
