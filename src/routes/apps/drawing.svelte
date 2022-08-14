@@ -1,7 +1,7 @@
 <script>
   import { fabric } from "./fabric";
   import { location, replace } from "svelte-spa-router";
-  import { onMount, beforeUpdate, onDestroy } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import {
     uploadImage,
     //user,
@@ -13,13 +13,10 @@
     updateObject,
     getFile,
   } from "../../api.js";
-  import { client } from "../../nakama.svelte";
-  import { Session, Profile, tutorial } from "../../session.js";
-  import { Achievements } from "../../storage";
+  import { Session, Profile } from "../../session.js";
   import NameGenerator from "../components/nameGenerator.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
   import Avatar from "../components/avatar.svelte";
-  import ManageSession from "../game/ManageSession";
 
   let imageResolution = 2048;
 

@@ -3,20 +3,18 @@
     convertImage,
     getObject,
     addFriend,
-    listAllObjects,
+    
   } from "../../api";
   import itemsBar from "./itemsbar.js";
   import ProfilePage from "../profile.svelte";
   import FriendsPage from "../friends.svelte";
   import LikedPage from "../liked.svelte";
-  import { Profile, Session } from "../../session";
+  import { Profile} from "../../session";
   import { CurrentApp, logout } from "../../session";
   import Awards from "../awards.svelte";
   import { location } from "svelte-spa-router";
-  import { Liked, Addressbook } from "../../storage.js";
-  import { get } from "svelte/store";
-  import MdPersonOutline from "svelte-icons/md/MdPersonOutline.svelte";
-  import MdPersonAdd from "svelte-icons/md/MdPersonAdd.svelte";
+  import { Addressbook } from "../../storage.js";
+import {debugConsole} from "./../../nakama.svelte"
 
   let ManageSession;
   let current;
@@ -42,34 +40,34 @@
 
   //check if player is clicked
   const unsubscribe = itemsBar.subscribe(async (value) => {
-    console.log(value);
+    if (debugConsole) console.log(value);
     HistoryTracker = (await import("../game/class/HistoryTracker.js")).default;
     ManageSession = (await import("../game/ManageSession.js")).default;
-    console.log($location);
+    if (debugConsole) console.log($location);
     if (!!!$Profile) return;
     if ($location == "/login") return;
-    console.log($Profile);
+    if (debugConsole) console.log($Profile);
     user_avatar_url = $Profile.url;
     if (user_house_url == undefined) {
       user_house_url = await getObject("home", $Profile.meta.Azc || $Profile.meta.azc, $Profile.id);
       user_house_url = await convertImage(user_house_url.value.url, "50", "50");
     }
-    //console.log(ManageSession)
+    //if (debugConsole) console.log(ManageSession)
 
     if (value.onlinePlayerClicked === true) {
-      console.log(
+      if (debugConsole) console.log(
         "ManageSession.selectedOnlinePlayer",
         ManageSession.selectedOnlinePlayer
       );
       avatar_url = ManageSession.selectedOnlinePlayer.url;
-      console.log("avatar_url", avatar_url);
+      if (debugConsole) console.log("avatar_url", avatar_url);
       user_name = ManageSession.selectedOnlinePlayer.username;
-      console.log("user_name", user_name);
-      console.log(
+      if (debugConsole) console.log("user_name", user_name);
+      if (debugConsole) console.log(
         "ManageSession.selectedOnlinePlayer.metadata.Azc",
         ManageSession.selectedOnlinePlayer.metadata.Azc
       );
-      console.log(
+      if (debugConsole) console.log(
         "ManageSession.selectedOnlinePlayer.id",
         ManageSession.selectedOnlinePlayer.id
       );
@@ -93,9 +91,9 @@
       // // url: "home/f42eb28f-9f4d-476c-9788-2240bac4cf48/5_current.png"
       // // username: "user33"
       // // version: 5
-      console.log("house_url", house_url);
+      if (debugConsole) console.log("house_url", house_url);
       house_url = await convertImage(house_url.value.url, "50", "50");
-      console.log("house_url", house_url);
+      if (debugConsole) console.log("house_url", house_url);
     }
   });
 
@@ -217,7 +215,7 @@
   }
 
   async function award() {
-    console.log(ManageSession.userProfile.meta);
+    if (debugConsole) console.log(ManageSession.userProfile.meta);
     if (current == "awards") {
       current = false;
       return;
@@ -298,7 +296,7 @@
     <!-- <a
       on:click={() => {
         goApp("drawingchallenge");
-        console.log("Drawing Challenge is clicked");
+        if (debugConsole) console.log("Drawing Challenge is clicked");
       }}
       class="avatar"
     >

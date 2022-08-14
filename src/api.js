@@ -1,8 +1,6 @@
-import { date } from "svelte-i18n";
-import { client } from "./nakama.svelte"
+import { client, debugConsole } from "./nakama.svelte"
 import { Session, Profile, Error, Succes, CurrentApp } from "./session.js"
 import ManageSession from "./routes/game/ManageSession.js"; //push awards to ManageSession
-import { get } from 'svelte/store'
 
 let Sess, pub, prof;
 export let url;
@@ -43,7 +41,7 @@ export async function sessionCheck() {
   let payload = {}
   const rpcid = "SessionCheck";
   const response = await client.rpc(Sess, rpcid, payload);
-  console.log(response)
+  if (debugConsole) console.log(response)
 }
 
 export async function updateTitle(collection, key, name, userID) {
@@ -64,7 +62,7 @@ export async function uploadHouse(data) {
   let value
   if (!!!object) { value = {}; }
   else { value = object.value }
-  console.log("value", value)
+  if (debugConsole) console.log("value", value)
   value.username = prof.username
   if (typeof value.version == "undefined") {value.version = 0}
   else {
@@ -73,7 +71,7 @@ export async function uploadHouse(data) {
   // if (value.version > value.LastVersion) {
   //   value.LastVersion = value.version
   // }
-  console.log("value", value)
+  if (debugConsole) console.log("value", value)
   
   pub = true
 
@@ -89,7 +87,7 @@ export async function uploadHouse(data) {
 
   value.url = jpegLocation
   // get object
-  console.log("value", value)
+  if (debugConsole) console.log("value", value)
   await updateObject(type, name, JSON.stringify(value), pub)
 
   return value.url
@@ -98,15 +96,17 @@ export async function uploadHouse(data) {
 export async function getUploadURL(type, name, filetype, version) {
   name = version + "_" + name + '.' + filetype
   const payload = { "type": type, "filename": name };
-  console.log("payload")
-  console.log(payload)
+  if (debugConsole) console.log("payload")
+  if (debugConsole) console.log(payload)
   const rpcid = "upload_file";
-  console.log("Sess")
-  console.log(Sess)
+  if (debugConsole) console.log("rpcid", rpcid)
+
+  if (debugConsole) console.log("Sess", Sess)
   const fileurl = await client.rpc(Sess, rpcid, payload);
-  console.log(fileurl)
+  if (debugConsole) console.log("fileurl", fileurl)
   url = fileurl.payload.url
   var locatio = fileurl.payload.location
+  if (debugConsole) console.log("url, locatio", url, locatio)
   return [url, locatio]
 }
 
@@ -131,9 +131,9 @@ export async function updateObject(type, name, value, pub, userID) {
     "permission_read": pub,
     //"version": "*"
   }
-  console.log(prof.meta.Role)
+  if (debugConsole) console.log(prof.meta.Role)
   if (prof.meta.Role == "admin" || prof.meta.Role == "moderator") {
-    console.log("working!")
+    if (debugConsole) console.log("working!")
     await updateObjectAdmin(userID, type, name, value, pub)
   } else {
     // else 
@@ -149,7 +149,7 @@ export async function updateObject(type, name, value, pub, userID) {
 export async function listObjects(type, userID, limit, page) {
   if (!!!limit) limit = 100;
   const objects = await client.listStorageObjects(Sess, type, userID, limit, page);
-  // console.log(objects)
+  // if (debugConsole) console.log(objects)
   return objects.objects
 }
 
@@ -186,15 +186,15 @@ export async function getAccount(id, avatar) {
     let user = account.user;
     user.url = await convertImage(user.avatar_url, "128", "1000")
     user.meta = JSON.parse(user.metadata)
-    console.log(user)
+    if (debugConsole) console.log(user)
     Profile.set(user)
     return user
   } else {
     const users = await client.getUsers(Sess, [id]);
-    console.log(users)
+    if (debugConsole) console.log(users)
     let user = users.users[0]
     user.url = await convertImage(user.avatar_url, "128", "1000")
-    //console.log(user)
+    //if (debugConsole) console.log(user)
     return user
   }
 }
@@ -209,19 +209,19 @@ export async function getFullAccount(id) {
   let user
   const rpcid = "get_full_account";
   user = await client.rpc(Sess, rpcid, payload)
-  console.log(user)
+  if (debugConsole) console.log(user)
 
   return user.payload
 }
 
 export async function setFullAccount(id, username, password, email, metadata) {
   let payload = { id, username, password, email, metadata };
-  console.log("metadata")
-  console.log(metadata)
+  if (debugConsole) console.log("metadata")
+  if (debugConsole) console.log(metadata)
   let user
   const rpcid = "set_full_account";
   user = await client.rpc(Sess, rpcid, payload)
-  //console.log(user)
+  //if (debugConsole) console.log(user)
   Succes.update(s => s = true)
   return user.payload
 }
@@ -251,12 +251,12 @@ export async function getFile(file_url) {
   await client.rpc(Sess, rpcid, payload)
     .then((fileurl) => {
       url = fileurl.payload.url
-      //console.log("url")
-      //console.log(url)
+      //if (debugConsole) console.log("url")
+      //if (debugConsole) console.log(url)
       return url
     })
     .catch(() => {
-      console.log('fail')
+      if (debugConsole) console.log('fail')
       return ''
     })
   return url
@@ -267,8 +267,8 @@ export async function uploadAvatar(data, json) {
   let avatarVersion = Number(prof.avatar_url.split("/")[2].split("_")[0]) + 1;
   if (!!!avatarVersion) avatarVersion = 0
   var [jpegURL, jpegLocation] = await getUploadURL("avatar", "current", "png", avatarVersion)
-  // console.log("jpegURL", jpegURL)
-  console.log("jpegLocation", jpegLocation)
+  // if (debugConsole) console.log("jpegURL", jpegURL)
+  if (debugConsole) console.log("jpegLocation", jpegLocation)
 
   await fetch(jpegURL, {
     method: "PUT",
@@ -297,7 +297,7 @@ export async function uploadAvatar(data, json) {
 
 export async function deleteFile(type, file, user) {
   const payload = { "type": type, "name": file, "user": user };
-  console.log(payload)
+  if (debugConsole) console.log(payload)
   const rpcid = "delete_file";
   const fileurl = await client.rpc(Sess, rpcid, payload)
     .catch((e) => { throw e })
@@ -393,11 +393,11 @@ export async function updateObjectAdmin(id, type, name, value, pub) {
     value = JSON.stringify(value)
   }
   let payload = { id, type, name, value, pub };
-  console.log(payload)
+  if (debugConsole) console.log(payload)
 
   const rpcid = "create_object_admin";
   result = await client.rpc(Sess, rpcid, payload)
-  console.log(result)
+  if (debugConsole) console.log(result)
   if (result.payload.status == "succes") {
     Succes.update(s => s = true)
   } // succes
@@ -414,7 +414,7 @@ export async function deleteObjectAdmin(id, type, name) {
 
   const rpcid = "delete_object_admin";
   user = await client.rpc(Sess, rpcid, payload)
-  console.log(user)
+  if (debugConsole) console.log(user)
   if (user.payload.status != "succes") throw user.payload.status
   else Succes.update(s => s = true)
   return user.payload
@@ -447,22 +447,22 @@ export async function validate(string, type, input) {
   if (type == "password") {
     regex = /^[^]{8,15}$/g
     password = string
-    console.log("pass" + password)
+    if (debugConsole) console.log("pass" + password)
   }
 
-  console.log(regex)
-  console.log(string)
+  if (debugConsole) console.log(regex)
+  if (debugConsole) console.log(string)
   let valid = regex.test(string)
-  console.log(valid)
+  if (debugConsole) console.log(valid)
 
   if (type == "repeatpassword") {
     repeatpassword = string
-    console.log(password)
-    console.log(repeatpassword)
+    if (debugConsole) console.log(password)
+    if (debugConsole) console.log(repeatpassword)
     if (repeatpassword == password) valid = true
     else valid = false
   }
-  console.log(input)
+  if (debugConsole) console.log(input)
   if (!!input) {
     if (valid) {
       input.path[0].style.border = "0px"
@@ -484,7 +484,7 @@ export function setLoader(state) {
 
 export function saveAchievement(name) {
   //  ManageSession.achievements.achievements[0][name] = true
-  console.log("achievement:" + name)
+  if (debugConsole) console.log("achievement:" + name)
   const type = "achievements"
   const key = type + "_" + ManageSession.userProfile.id
   const pub = 2
