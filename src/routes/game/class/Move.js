@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { playerPosX, playerPosY } from '../playerState';
@@ -7,6 +8,33 @@ import { playerPosX, playerPosY } from '../playerState';
 // TODO This should probably all be just static functions
 
 class Move {
+  constructor() {
+    playerPosX.subscribe((pos) => {
+      this.moveByPositionStores({ x: pos, y: null });
+    });
+    playerPosY.subscribe((pos) => {
+      this.moveByPositionStores({ y: pos, x: null });
+    });
+  }
+
+  /** Respond to changes in playerPos stores ( controlled through URLs or direct manipulation) */
+  moveByPositionStores(pos) {
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
+
+    const scene = ManageSession.currentScene;
+    if (scene && pos.x !== null) {
+      scene.player.x = artworldToPhaser2DX(
+        scene.worldSize.x,
+        pos.x,
+      );
+    } else if (scene && pos.y !== null) {
+      scene.player.y = artworldToPhaser2DY(
+        scene.worldSize.y,
+        pos.y,
+      );
+    }
+  }
+
   // checks if we are moving with keyboard arrowKeys
   moveByCursor(scene) {
     if (
@@ -189,6 +217,9 @@ class Move {
   }
 
   moveByDragging(scene) {
+    return false;
+    // console.log('moveByDragging', scene, scene.input.activePointer.isDown);
+
     if (scene.input.activePointer.isDown && !ManageSession.graffitiDrawing) {
       ManageSession.playerIsAllowedToMove = true;
       const pointerCurrentPositionX = scene.input.activePointer.position.x;
@@ -198,54 +229,11 @@ class Move {
 
       const movementX = pointerCurrentPositionX - pointerPrevPositionX;
       const movementY = pointerCurrentPositionY - pointerPrevPositionY;
-      // console.log('movementX, movementY', movementX, movementY);
 
       // drag world
       scene.player.x -= movementX;
       scene.player.y -= movementY;
-
-      // // drag player
-      // scene.player.x -= movementX;
-      // scene.player.y -= movementY;
     }
-    // play "move" animation
-    // play the animation as soon as possible so it is more visible
-    // this.movingAnimation(scene, 'moving');
-
-    // const playerX = scene.player.x;
-    // const playerY = scene.player.y;
-
-
-
-    // let swipeY = scene.input.activePointer.upY - scene.input.activePointer.downY;
-
-    // scene.swipeAmount.x = swipeX;
-    // scene.swipeAmount.y = swipeY;
-
-    // // we scale the travel distance to the zoomlevel
-    // const zoomFactor = scene.gameCam.zoom;
-    // swipeX /= zoomFactor;
-    // swipeY /= zoomFactor;
-
-    // // console.log("swipeX, swipeY", swipeX, swipeY)
-
-    // scene.swipeAmount.x = swipeX;
-    // scene.swipeAmount.y = swipeY;
-
-    // const moveSpeed = scene.swipeAmount.length() * 2;
-
-
-    // // console.log("moveBySwiping moveSpeed", moveSpeed)
-
-    // scene.isPlayerMoving = true; // to stop the player when it reached its destination
-
-    // scene.target.x = playerX + swipeX;
-    // scene.target.y = playerY + swipeY;
-
-    // // generalized moving method
-    // this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed);
-    // ManageSession.playerIsAllowedToMove = false;
-    // scene.isClicking = false;
   }
 
 

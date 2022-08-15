@@ -8,6 +8,7 @@ import {
   Session, Profile, Error, Success, CurrentApp,
 } from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
+import { dlog } from './routes/game/helpers/DebugLog';
 
 export async function login(email, _password) {
   const loginPromise = new Promise((resolve, reject) => {
@@ -17,7 +18,7 @@ export async function login(email, _password) {
       .authenticateEmail(email, _password, create)
       .then(async (response) => {
         const session = response;
-        // console.log('login, after authenticateEmail, session= ', session);
+        // dlog('login, after authenticateEmail, session= ', session);
         Session.set(session);
         await getAccount();
         push(`/?${get(querystring)}`);
@@ -32,7 +33,7 @@ export async function login(email, _password) {
           Error.set(`Unknown error, status ${err.status}`);
           push(`/login?${get(querystring)}`);
         }
-        // console.log('error in login, returning null');
+        // dlog('error in login, returning null');
         setLoader(false);
         reject();
       });
@@ -51,10 +52,10 @@ export const logout = async () => {
 
 export async function checkLoginExpired() {
   const session = get(Session);
-  // console.log('login: check status', session, session.expires_at);
+  // dlog('login: check status', session, session.expires_at);
   if (session != null) {
     const expired = parseInt(`${session.expires_at}000`, 10) > Date.now();
-    // console.log('login: expired: ', expired);
+    // dlog('login: expired: ', expired);
     return expired;
   }
   return null;
@@ -102,7 +103,7 @@ export async function sessionCheck() {
   const session = get(Session);
   const response = await client.rpc(session, rpcid, payload);
   // eslint-disable-next-line no-console
-  console.log('sessionCheck result', response);
+  // dlog('sessionCheck result', response);
 }
 
 export async function updateTitle(collection, key, name, userID) {
@@ -158,7 +159,7 @@ export async function uploadHouse(data) {
 
   value.url = jpegLocation;
   // get object
-  // console.log('value', value);
+  // dlog('value', value);
   await updateObject(type, name, value, makePublic);
 
   return value.url;
@@ -219,7 +220,7 @@ export async function listObjects(type, userID, lim) {
   // TODO: Figure out why pagination does not work (cors issue?)
   // const offset = page * limit || null;
   const objects = await client.listStorageObjects(session, type, userID, limit); // , offset);
-  // console.log('listObjects result: ', objects);
+  // dlog('listObjects result: ', objects);
   return objects.objects;
 }
 
@@ -254,7 +255,7 @@ export async function getAccount(id) {
   const session = get(Session);
   let user;
 
-  console.log('getAccount called, id = ', id, 'Session = ', session);
+  // dlog('getAccount called, id = ', id, 'Session = ', session);
 
   if (!id) {
     // No id given, gets own account
@@ -288,7 +289,7 @@ export async function getFullAccount(id) {
   }
 
   const user = await client.rpc(session, rpcid, payload);
-  // console.log(user);
+  // dlog(user);
 
   return user.payload;
 }
@@ -304,7 +305,7 @@ export async function setFullAccount(id, username, password, email, metadata) {
   };
   const rpcid = 'set_full_account';
   const user = await client.rpc(session, rpcid, payload);
-  // console.log(user)
+  // dlog(user)
   Success.set(true);
   return user.payload;
 }
@@ -336,12 +337,12 @@ export async function getFile(file_url) {
     .rpc(session, rpcid, payload)
     .then((fileurl) => {
       url = fileurl.payload.url;
-      // console.log("url")
-      // console.log(url)
+      // dlog("url")
+      // dlog(url)
       return url;
     })
     .catch(() => {
-      console.log('fail');
+      dlog('fail');
       return '';
     });
   return url;
@@ -358,7 +359,7 @@ export async function uploadAvatar(data) {
     'png',
     avatarVersion,
   );
-  console.log(jpegURL);
+  // dlog(jpegURL);
 
   await fetch(jpegURL, {
     method: 'PUT',
@@ -483,7 +484,7 @@ export async function deleteObject(collection, key) {
       },
     ],
   });
-  console.info('Deleted objects.');
+  // console.info('Deleted objects.');
   Success.set(true);
   return true;
 }
@@ -509,7 +510,7 @@ export async function updateObjectAdmin(id, type, name, value, pub) {
   const rpcid = 'create_object_admin';
   const result = await client.rpc(session, rpcid, payload);
 
-  console.log('Maybe a typo? ', result.payload.status, result.payload.status === 'success');
+  // dlog('Maybe a typo? ', result.payload.status, result.payload.status === 'success');
   if (result.payload.status === 'succes') {
     Success.set(true);
   } else {
@@ -524,8 +525,8 @@ export async function deleteObjectAdmin(id, type, name) {
 
   const rpcid = 'delete_object_admin';
   const user = await client.rpc(session, rpcid, payload);
-  // console.log(user);
-  console.log('Maybe a typo? ', user.payload.status, user.payload.status === 'success');
+  // dlog(user);
+  // dlog('Maybe a typo? ', user.payload.status, user.payload.status === 'success');
   if (user.payload.status !== 'succes') throw user.payload.status;
   else Success.set(true);
   return user.payload;
@@ -562,22 +563,22 @@ export async function convertImage(path, height, width, format) {
 //   if (type == 'password') {
 //     regex = /^[^]{8,15}$/g;
 //     password = string;
-//     console.log(`pass${password}`);
+//     dlog(`pass${password}`);
 //   }
 
-//   console.log(regex);
-//   console.log(string);
+//   dlog(regex);
+//   dlog(string);
 //   let valid = regex.test(string);
-//   console.log(valid);
+//   dlog(valid);
 
 //   if (type == 'repeatpassword') {
 //     repeatpassword = string;
-//     console.log(password);
-//     console.log(repeatpassword);
+//     dlog(password);
+//     dlog(repeatpassword);
 //     if (repeatpassword == password) valid = true;
 //     else valid = false;
 //   }
-//   console.log(input);
+//   dlog(input);
 //   if (input) {
 //     if (valid) {
 //       input.path[0].style.border = '0px';
@@ -589,7 +590,7 @@ export async function convertImage(path, height, width, format) {
 // }
 
 export function setLoader(state) {
-  console.log('setLoader to ... ', state);
+  dlog('setLoader to ... ', state);
   if (state) {
     document.getElementById('loader').classList.remove('hide');
   } else {

@@ -111,7 +111,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
       .setInteractive() // { useHandCursor: true }
-      .on('pointerup', () => console.log('touched background'))
+      // .on('pointerup', () => console.log('touched background'))
       .on('pointerdown', () => ManageSession.playerIsAllowedToMove = true)
       .setDepth(219)
       .setOrigin(0)

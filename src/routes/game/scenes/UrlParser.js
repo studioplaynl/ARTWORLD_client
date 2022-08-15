@@ -1,24 +1,26 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-console */
 import { get } from 'svelte/store';
+import { querystring, location } from 'svelte-spa-router';
 import { Profile, CurrentApp } from '../../../session';
 import ManageSession from '../ManageSession';
 import { listObjects } from '../../../api';
 import { VALID_USER_SCENES, DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
 import {
-  playerPosX, playerPosY, playerLocationScene, playerLocationHouse,
+  playerPosX, playerPosY, playerLocation, playerHistory,
 } from '../playerState';
 import { Addressbook, Liked } from '../../../storage';
 import { dlog } from '../helpers/DebugLog';
+import { parseQueryString } from '../helpers/UrlHelpers';
 
 const { Phaser } = window;
 
-const checkIfSceneIsAllowed = (location) => {
-  const locationExists = VALID_USER_SCENES.includes(location);
+const checkIfSceneIsAllowed = (loc) => {
+  const locationExists = VALID_USER_SCENES.includes(loc);
   return locationExists;
 };
 
-const checkIfLocationLooksLikeAHouse = (location) => location !== null && location.split('-').length > 3;
+const checkIfLocationLooksLikeAHouse = (loc) => loc !== null && loc.split('-').length > 3;
 
 export default class UrlParser extends Phaser.Scene {
   debug = false;
@@ -30,34 +32,31 @@ export default class UrlParser extends Phaser.Scene {
 
   async create() {
     // check if there is a url param, otherwise get last location serverside
-    this.parseplayerLocationScene();
+    await this.parsePlayerLocation();
+
+    // Put the first page into history
+    if (get(playerHistory).length === 0) {
+      playerHistory.push(`${get(location)}?${get(querystring)}`);
+    }
 
 
     // TODO add subscription op scene en house en dan run de parser
   } // create
 
 
-  // onBoard() {
-
-  // 1. parseQueryString() --> haal data uit url
-  // 2. $playerLocationScene === null? Haal uit data uit $Player.meta en zet in de stores
-  // 3. -> Zet de positiedata om naar game (nu: randomiseNullPosition)
-  //    -> Gebruik de location en laad de scene in
-
-  // }
 
 
-  async parseplayerLocationScene() {
+  async parsePlayerLocation() {
     //* check if the user profile is loaded, to be able to send the player to the right location
     //* check if there are params in the url, to send the player to that location instead
 
     // Parse the current query string
-    // parseQueryString();
+    parseQueryString();
 
     const profile = get(Profile);
 
-    // If there is no location paramter in the url..
-    if (get(playerLocationScene) === null) {
+    // If there is no location parameter in the url..
+    if (get(playerLocation).scene === null) {
       if (profile.meta?.PosX) {
         playerPosX.set(Math.round(profile.meta.PosX));
       }
@@ -66,21 +65,28 @@ export default class UrlParser extends Phaser.Scene {
       }
       if (profile.meta?.Location && checkIfSceneIsAllowed(profile.meta.Location)
       ) {
-        playerLocationScene.set(profile.meta.Location);
+        playerLocation.set({
+          scene: profile.meta.Location,
+          house: null,
+        });
       } else if (profile.meta?.Location
         && checkIfLocationLooksLikeAHouse(profile.meta.Location)) {
-        playerLocationScene.set(DEFAULT_HOME);
-        playerLocationHouse.set(profile.meta.Location);
+        playerLocation.set({
+          scene: DEFAULT_HOME,
+          house: profile.meta.Location,
+        });
       }
 
       console.log('meta', profile.meta);
     }
 
     // Set a default player location
-    if (!get(playerLocationScene)) {
-      console.log('playerLocationScene does not seem valid, set default scene');
-      playerLocationScene.set(DEFAULT_SCENE);
-      playerLocationHouse.set(null);
+    if (!get(playerLocation).scene) {
+      console.log('playerLocation.scene does not seem valid, set default scene');
+      playerLocation.set({
+        scene: DEFAULT_SCENE,
+        house: null,
+      });
     }
 
     // If a position is null, randomise it..
@@ -92,24 +98,28 @@ export default class UrlParser extends Phaser.Scene {
     }
 
 
-    const targetLocation = get(playerLocationScene);
-    const targetHouse = get(playerLocationHouse);
-    // console.log('targetLocation = ', targetLocation, 'targetHouse = ', targetHouse);
+    const targetScene = get(playerLocation).scene;
+    const targetHouse = get(playerLocation).house;
+    // console.log('targetScene = ', targetScene, 'targetHouse = ', targetHouse);
 
-    if (checkIfSceneIsAllowed(targetLocation)) {
-      if (checkIfLocationLooksLikeAHouse(targetHouse)) {
+    if (targetScene && checkIfSceneIsAllowed(targetScene)) {
+      if (targetHouse && checkIfLocationLooksLikeAHouse(targetHouse)) {
         console.log('Looks like a home!!', targetHouse);
         listObjects('home', targetHouse, 1).catch(() => {
           // No objects found for this ID, switch to default scene
-          playerLocationScene.set(DEFAULT_SCENE);
-          playerLocationHouse.set(targetHouse);
+          playerLocation.set({
+            scene: DEFAULT_SCENE,
+            house: null,
+          });
         }).then(() => {
           this.launchGame(DEFAULT_HOME, targetHouse);
         });
       } else {
-        this.launchGame(targetLocation);
+        this.launchGame(targetScene);
       }
     }
+
+
 
     // }
   }
@@ -118,8 +128,8 @@ export default class UrlParser extends Phaser.Scene {
 
   // location => scene naam
   // locationID => id van huisje van user
-  async launchGame(location, locationID) {
-    if (this.debug) console.log('Launch: ', location, locationID);
+  async launchGame(loc, locationID) {
+    if (this.debug) console.log('Launch: ', loc, locationID);
 
     this.scene.stop('UrlParser');
     this.scene.launch('UIScene');
@@ -132,7 +142,7 @@ export default class UrlParser extends Phaser.Scene {
         Addressbook.get();
 
         dlog('locationID', locationID);
-        this.scene.launch(location, { user_id: locationID });
+        this.scene.launch(loc, { user_id: locationID });
 
         CurrentApp.update(() => 'game');
       });

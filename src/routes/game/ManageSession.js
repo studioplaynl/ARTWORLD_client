@@ -6,9 +6,9 @@ import CoordinatesTranslator from './class/CoordinatesTranslator';
 import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
 import {
-  playerLocationScene, playerLocationHouse, playerStreamID,
+  playerLocation, playerStreamID,
 } from './playerState';
-import { DEFAULT_SCENE } from '../../constants';
+
 
 const { Phaser } = window;
 
@@ -99,7 +99,7 @@ class ManageSession {
     dlog('session created with socket');
 
     dlog('Join:');
-    dlog(get(playerLocationScene));
+    dlog(get(playerLocation).scene);
     // have to join a location to get stream presence events
     await this.getStreamUsers('join');
 
