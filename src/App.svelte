@@ -5,6 +5,7 @@
   import Phaser from 'phaser';
   import { Session, Profile, Error } from './session';
   import { sessionCheck, checkLoginExpired, logout } from './api';
+  import { dlog } from './routes/game/helpers/DebugLog';
 
   /** Admin pages */
   import Admin from './routes/admin/admin.svelte';
@@ -47,7 +48,7 @@
   onMount(() => {
     document.getElementById('loader').classList.add('hide');
     if (checkLoginExpired() === true) {
-      console.log('login expired! go to login page');
+      dlog('login expired! go to login page');
       logout();
 
       Error.set('Please relogin');
@@ -171,26 +172,26 @@
     // }),
   };
 
-  function routeLoading(event) {
-    console.log('router::querystring routeLoading event');
-    console.log('router::querystring Route', event.detail.route);
-    console.log('router::querystring Location', event.detail.location);
-    console.log('router::querystring Querystring', event.detail.querystring);
-    console.log('router::querystring User data', event.detail.userData);
-  }
+  // function routeLoading(event) {
+  // console.log('router::querystring routeLoading event');
+  // console.log('router::querystring Route', event.detail.route);
+  // console.log('router::querystring Location', event.detail.location);
+  // console.log('router::querystring Querystring', event.detail.querystring);
+  // console.log('router::querystring User data', event.detail.userData);
+  // }
 
-  function routeLoaded(event) {
-    console.log('router::querystring routeLoaded event');
-    // The first 5 properties are the same as for the routeLoading event
-    console.log('router::querystring Route', event.detail.route);
-    console.log('router::querystring Location', event.detail.location);
-    console.log('router::querystring Querystring', event.detail.querystring);
-    console.log('router::querystring Params', event.detail.params);
-    console.log('router::querystring User data', event.detail.userData);
-    // The last two properties are unique to routeLoaded
-    console.log('router::querystring Component', event.detail.component); // This is a Svelte component, so a function
-    console.log('router::querystring Name', event.detail.name);
-  }
+  // function routeLoaded(event) {
+  // console.log('router::querystring routeLoaded event');
+  // // The first 5 properties are the same as for the routeLoading event
+  // console.log('router::querystring Route', event.detail.route);
+  // console.log('router::querystring Location', event.detail.location);
+  // console.log('router::querystring Querystring', event.detail.querystring);
+  // console.log('router::querystring Params', event.detail.params);
+  // console.log('router::querystring User data', event.detail.userData);
+  // // The last two properties are unique to routeLoaded
+  // console.log('router::querystring Component', event.detail.component); // This is a Svelte component, so a function
+  // console.log('router::querystring Name', event.detail.name);
+  // }
 </script>
 
 <svelte:head>
@@ -211,11 +212,9 @@
 
 <!-- Routes go on top of Game -->
 <Menu />
-<Router
-  routes="{routes}"
-  on:routeLoading="{routeLoading}"
-  on:routeLoaded="{routeLoaded}"
-/>
+<Router routes="{routes}" />
+<!-- on:routeLoading="{routeLoading}"
+  on:routeLoaded="{routeLoaded}" -->
 
 <!-- Notifcations go on to of everything -->
 <Notifications />
