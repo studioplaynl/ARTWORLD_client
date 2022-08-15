@@ -1,9 +1,10 @@
 import { writable, derived, get } from 'svelte/store';
 import { dlog } from './helpers/DebugLog';
 
-
-export const playerPosX = writable(null);
-export const playerPosY = writable(null);
+export const playerPos = writable({
+  x: null,
+  y: null,
+});
 export const playerLocation = writable({
   scene: null,
   house: null,

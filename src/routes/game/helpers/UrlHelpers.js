@@ -5,7 +5,7 @@ import {
   push, replace, location, querystring,
 } from 'svelte-spa-router';
 import {
-  playerPosX, playerPosY, playerLocation, playerHistory,
+  playerPos, playerLocation, playerHistory,
 } from '../playerState';
 import { DEFAULT_HOME, VALID_USER_SCENES } from '../../../constants';
 import { dlog } from './DebugLog';
@@ -20,21 +20,24 @@ let previousQuery = {};
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
   const query = parse(get(querystring));
+  const pos = get(playerPos);
+  const newPlayerPosition = { x: pos.x, y: pos.y };
 
   // TODO: These boundries must be drawn from the current scene
-  if ('x' in query) {
+  if ('x' in query && 'y' in query) {
     const queryX = parseInt(query.x, 10);
-    if (get(playerPosX) !== queryX) {
-      playerPosX.set(Math.max(MIN_X, Math.min(queryX, MAX_X)));
+    const queryY = parseInt(query.y, 10);
+    if (pos.x !== queryX) {
+      newPlayerPosition.x = Math.max(MIN_X, Math.min(queryX, MAX_X));
     }
+    if (pos.y !== queryY) {
+      newPlayerPosition.y = Math.max(MIN_Y, Math.min(queryY, MAX_Y));
+    }
+
+    console.log('setting position to', newPlayerPosition);
+    playerPos.set(newPlayerPosition);
   }
 
-  if ('y' in query) {
-    const queryY = parseInt(query.y, 10);
-    if (get(playerPosY) !== queryY) {
-      playerPosY.set(Math.max(MIN_Y, Math.min(queryY, MAX_Y)));
-    }
-  }
 
   const newPlayerLocation = {};
 
@@ -71,59 +74,36 @@ querystring.subscribe(() => parseQueryString());
 
 
 /* Set the query parameter after updating stores, because we have set up a subscription to these.
- * Any value changes on playerPosX, playerPosY, playerLocation make this function run
+ * Any value changes on playerPos & playerLocation make this function run
 * And subsequently update the query string in the URL of the browser */
 export function updateQueryString() {
-  const x = get(playerPosX);
-  const y = get(playerPosY);
-  const l = get(playerLocation).scene;
-  const h = get(playerLocation).house;
+  const { x, y } = get(playerPos);
+  const { scene, house } = get(playerLocation);
 
-  if (x !== null && y !== null && l !== null) {
+
+  if (x !== null && y !== null && scene !== null) {
     const query = { ...parse(get(querystring)) };
 
     let method = 'replace';
 
-    const locationChanged = l !== previousQuery?.location;
-    // const locationIsDefaultHome = l === DEFAULT_HOME;
-    // const houseChanged = h !== previousQuery?.house;
-    // const houseIsNull = h === null;
+    const locationChanged = scene !== previousQuery?.location;
 
-    // const pushLocation = (locationChanged && !locationIsDefaultHome && houseIsNull);
-    // const pushHouse = (locationIsDefaultHome && houseChanged && !houseIsNull);
-
-
-    // if (pushLocation || pushHouse) {
-    //   method = 'push';
-    // }
 
     if (locationChanged) method = 'push';
 
     // Set variables (as string)
     query.x = Math.round(x).toString();
     query.y = Math.round(y).toString();
-    query.location = l;
+    query.location = scene;
 
     // House can be optional, and should be removed from querystring if null or empty
-    if (l !== DEFAULT_HOME || h === null) {
+    if (scene !== DEFAULT_HOME || house === null) {
       delete query.house;
     } else {
-      query.house = h;
+      query.house = house;
     }
 
     if (stringify(previousQuery) !== stringify(query)) {
-    //   console.log(
-    //     'Query: ',
-    //     query,
-    //     '\nPrevious Query',
-    //     previousQuery,
-    //     '\n',
-    //     {
-    //       locationChanged, locationIsDefaultHome, houseChanged, houseWasUndefined, houseIsNull,
-    //     },
-    //     { pushLocation, pushHouse },
-    //   );
-
       const newLocation = `${get(location)}?${stringify(query)}`;
       // Only scene or app changes should be added to the browser history
       if (method === 'push') {
@@ -148,8 +128,7 @@ export function updateQueryString() {
  *  In other words: any changes to playerPos and playerLocation stores
  *  should become part of the browser location
 */
-playerPosX.subscribe(() => updateQueryString());
-playerPosY.subscribe(() => updateQueryString());
+playerPos.subscribe(() => updateQueryString());
 playerLocation.subscribe(() => updateQueryString());
 
 

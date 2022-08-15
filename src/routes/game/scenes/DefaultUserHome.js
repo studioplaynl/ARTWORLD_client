@@ -11,7 +11,7 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ArtworkList from '../class/ArtworkList';
 import Move from '../class/Move';
-import { playerPosX, playerPosY } from '../playerState';
+import { playerPos } from '../playerState';
 
 const { Phaser } = window;
 
@@ -156,8 +156,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     Player.loadPlayerAvatar(this, 0, 0);
 
     // Set the player on 0,0 position (this also updates the URL automatically)
-    playerPosX.set(0);
-    playerPosY.set(0);
+    playerPos.set({
+      x: 0,
+      y: 0,
+    });
+
 
 
     await listObjects('drawing', this.location, 100).then((rec) => {

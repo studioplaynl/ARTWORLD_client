@@ -3,17 +3,14 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import { playerPosX, playerPosY } from '../playerState';
+import { playerPos } from '../playerState';
 
 // TODO This should probably all be just static functions
 
 class Move {
   constructor() {
-    playerPosX.subscribe((pos) => {
-      this.moveByPositionStores({ x: pos, y: null });
-    });
-    playerPosY.subscribe((pos) => {
-      this.moveByPositionStores({ y: pos, x: null });
+    playerPos.subscribe((pos) => {
+      this.moveByPositionStores(pos);
     });
   }
 
@@ -27,7 +24,8 @@ class Move {
         scene.worldSize.x,
         pos.x,
       );
-    } else if (scene && pos.y !== null) {
+    }
+    if (scene && pos.y !== null) {
       scene.player.y = artworldToPhaser2DY(
         scene.worldSize.y,
         pos.y,
@@ -160,8 +158,10 @@ class Move {
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
 
     // update last player position in manageSession for when the player is reloaded inbetween scenes
-    playerPosX.set(Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)));
-    playerPosY.set(Math.round(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)));
+    playerPos.set({
+      x: Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)),
+      y: Math.round(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)),
+    });
 
     // play "stop" animation
     this.movingAnimation(scene, 'stop');

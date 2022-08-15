@@ -7,7 +7,7 @@ import ManageSession from '../ManageSession';
 import { listObjects } from '../../../api';
 import { VALID_USER_SCENES, DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
 import {
-  playerPosX, playerPosY, playerLocation, playerHistory,
+  playerPos, playerLocation, playerHistory,
 } from '../playerState';
 import { Addressbook, Liked } from '../../../storage';
 import { dlog } from '../helpers/DebugLog';
@@ -57,11 +57,11 @@ export default class UrlParser extends Phaser.Scene {
 
     // If there is no location parameter in the url..
     if (get(playerLocation).scene === null) {
-      if (profile.meta?.PosX) {
-        playerPosX.set(Math.round(profile.meta.PosX));
-      }
-      if (profile.meta?.PosY) {
-        playerPosY.set(Math.round(profile.meta.PosY));
+      if (profile.meta?.PosX && profile.meta?.PosY) {
+        playerPos.set({
+          x: Math.round(profile.meta.PosX),
+          y: Math.round(profile.meta.PosY),
+        });
       }
       if (profile.meta?.Location && checkIfSceneIsAllowed(profile.meta.Location)
       ) {
@@ -90,13 +90,12 @@ export default class UrlParser extends Phaser.Scene {
     }
 
     // If a position is null, randomise it..
-    if (get(playerPosX) === null) {
-      playerPosX.set(Math.floor((Math.random() * 300) - 150));
+    if (get(playerPos).x === null && get(playerPos).y === null) {
+      playerPos.set({
+        x: Math.floor((Math.random() * 300) - 150),
+        y: Math.floor((Math.random() * 300) - 150),
+      });
     }
-    if (get(playerPosY) === null) {
-      playerPosY.set(Math.floor((Math.random() * 300) - 150));
-    }
-
 
     const targetScene = get(playerLocation).scene;
     const targetHouse = get(playerLocation).house;

@@ -16,7 +16,7 @@ import { setLoader } from '../../../api';
  */
 class SceneSwitcher {
   constructor() {
-    this.tempHistoryArray = [];
+    // this.tempHistoryArray = [];
 
     this.unsubscribeScene = playerLocation.subscribe(() => {
       this.doSwitchScene();
@@ -27,17 +27,7 @@ class SceneSwitcher {
   }
 
   pushLocation(scene) {
-    // dlog('this.pushLocation');
-    // store the current scene in ManageSession for reference outside of Phaser (html ui)
     ManageSession.currentScene = scene;
-    // dlog('scene', scene);
-  }
-
-  updatePositionCurrentScene(playerPosX, playerPosY) {
-    if (this.tempHistoryArray.length > 0) {
-      this.tempHistoryArray[this.tempHistoryArray.length - 1].playerPosX = playerPosX;
-      this.tempHistoryArray[this.tempHistoryArray.length - 1].playerPosY = playerPosY;
-    }
   }
 
   switchScene(targetScene, targetHouse) {

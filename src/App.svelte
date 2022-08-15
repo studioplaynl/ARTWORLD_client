@@ -30,11 +30,7 @@
   import Notifications from './routes/components/notifications.svelte';
 
   import gameConfig from './routes/game/gameConfig';
-  import {
-    playerPosX,
-    playerPosY,
-    playerLocation,
-  } from './routes/game/playerState';
+  import { playerPos, playerLocation } from './routes/game/playerState';
 
   let game;
   let mounted = false;
@@ -74,8 +70,8 @@
   $: {
     let t = '';
 
-    if ($playerPosX !== null && $playerPosY !== null) {
-      t = `${$playerPosX} x ${$playerPosY}`;
+    if ($playerPos.x !== null && $playerPos.y !== null) {
+      t = `${$playerPos.x} x ${$playerPos.y}`;
     }
 
     if ($playerLocation.house) {

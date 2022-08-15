@@ -12,7 +12,7 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import SceneSwitcher from '../class/SceneSwitcher';
 import Move from '../class/Move';
-import { playerPosX, playerPosY } from '../playerState';
+import { playerPos } from '../playerState';
 
 
 const { Phaser } = window;
@@ -230,11 +230,11 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
       this,
       artworldToPhaser2DX(
         this.worldSize.x,
-        get(playerPosX),
+        get(playerPos).x,
       ),
       artworldToPhaser2DY(
         this.worldSize.y,
-        get(playerPosY),
+        get(playerPos).y,
       ),
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
