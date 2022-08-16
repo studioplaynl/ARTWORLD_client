@@ -29,7 +29,7 @@ class SceneSwitcher {
     dlog('this.pushLocation');
     // store the current scene in ManageSession for reference outside of Phaser (html ui)
     ManageSession.currentScene = scene;
-    dlog('scene', scene);
+    dlog('scene.location', scene.location);
   }
 
   updatePositionCurrentScene(playerPosX, playerPosY) {

@@ -36,10 +36,18 @@ class ManageSession {
     this.playerIsAllowedToMove = false;
     this.createPlayer = true;
 
+    // movement of the player variables .......
     this.graffitiDrawing = false;
 
     this.playerClicks = 0;
     this.playerClickTime = 0;
+    this.isClicking = false;
+    this.cursorKeyIsDown = false;
+    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
+    this.target = new Phaser.Math.Vector2();
+    this.distanceTolerance = 9;
+    // movement of the player variables .......
+
 
     this.playerAvatarPlaceholder = 'avatar1';
     this.avatarSize = 64;
@@ -260,7 +268,7 @@ class ManageSession {
             // const tempName = join.user_id
             this.getStreamUsers('get_users');
           } else {
-            dlog('join', join);
+            // dlog('join', join);
           }
         });
         // this.getStreamUsers("home")
@@ -294,7 +302,7 @@ class ManageSession {
         // get all online players = serverArray
         // create array for newUsers and create array for deleteUsers
         const serverArray = JSON.parse(rec.payload) || [];
-        dlog('serverArray', serverArray, 'currentScene', this.currentScene);
+        // dlog('serverArray', serverArray, 'currentScene', this.currentScene);
 
 
 

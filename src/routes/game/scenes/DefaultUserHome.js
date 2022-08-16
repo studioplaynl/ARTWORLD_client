@@ -86,7 +86,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
-    this.playerIsMovingByClicking = false;
 
     // UI scene
     this.currentZoom;
@@ -422,7 +421,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
   }// end downloadArt
 
-  update(time, delta) {
+  update() {
     // ...... ONLINE PLAYERS ................................................
     // Player.parseNewOnlinePlayerArray(this)
     // .......................................................................
@@ -435,12 +434,5 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.playerShadow.x = this.player.x + this.playerShadowOffset;
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     // ........... end PLAYER SHADOW .........................................................................
-
-    // to detect if the player is clicking/tapping on one place or swiping
-    if (this.input.activePointer.downX != this.input.activePointer.upX) {
-      Move.moveBySwiping(this);
-    } else {
-      Move.moveByTapping(this);
-    }
   } // update
 } // class

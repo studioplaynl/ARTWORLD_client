@@ -85,7 +85,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
-    this.playerIsMovingByClicking = false;
 
     this.currentZoom;
 

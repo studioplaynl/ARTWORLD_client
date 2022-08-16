@@ -66,7 +66,6 @@ export default class TestCoordinates extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
-    this.playerIsMovingByClicking = false;
 
     this.currentZoom;
     this.UIScene;

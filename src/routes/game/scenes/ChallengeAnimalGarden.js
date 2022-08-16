@@ -79,7 +79,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
-    this.playerIsMovingByClicking = false;
 
     this.currentZoom;
 
@@ -256,7 +255,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     // ......... end PLAYER VS WORLD .......................................................................
 
     //! needed for handling object dragging
-    this.input.on('dragstart', (pointer, gameObject) => {
+    this.input.on('dragstart', () => {
 
     }, this);
 

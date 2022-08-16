@@ -13,6 +13,7 @@ const { Phaser } = window;
 export default class Location3 extends Phaser.Scene {
   constructor() {
     super('Location3');
+    this.location = 'Location3';
 
     this.worldSize = new Phaser.Math.Vector2(1320, 1320);
 
@@ -24,24 +25,22 @@ export default class Location3 extends Phaser.Scene {
     this.tempAvatarName = '';
     this.loadedAvatars = [];
 
-    this.location = 'Location3';
-
     this.playerAvatarKey = '';
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
 
+    this.cursors;
+    this.pointer;
     this.isClicking = false;
-    this.arrowDown = false;
+    this.cursorKeyIsDown = false;
     this.swipeDirection = 'down';
     this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-
-    // pointer location example
-    // this.source // = player
     this.target = new Phaser.Math.Vector2();
+    this.distance = 1;
+    this.distanceTolerance = 9;
 
     // shadow
     this.playerShadowOffset = -8;
-    this.playerIsMovingByClicking = false;
 
     this.currentZoom = 1;
   }
@@ -169,12 +168,5 @@ export default class Location3 extends Phaser.Scene {
     this.playerShadow.x = this.player.x + this.playerShadowOffset;
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     // ........... end PLAYER SHADOW .........................................................................
-
-    // to detect if the player is clicking/tapping on one place or swiping
-    if (this.input.activePointer.downX !== this.input.activePointer.upX) {
-      Move.moveBySwiping(this);
-    } else {
-      Move.moveByTapping(this);
-    }
   } // update
 } // class

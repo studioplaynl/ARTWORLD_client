@@ -1,6 +1,5 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import { convertImage } from '../../../api';
 
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
@@ -11,10 +10,9 @@ import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import SceneSwitcher from '../class/SceneSwitcher';
-import Move from '../class/Move';
 import ServerCall from '../class/ServerCall';
 import Exhibition from '../class/Exhibition';
-// import { CurrentApp } from '../../../session';
+import Move from '../class/Move';
 import { dlog } from '../helpers/DebugLog';
 import { playerPosX, playerPosY } from '../playerState';
 
@@ -23,6 +21,7 @@ const { Phaser } = window;
 export default class Artworld extends Phaser.Scene {
   constructor() {
     super('Artworld');
+    this.location = 'Artworld';
 
     this.worldSize = new Phaser.Math.Vector2(6000, 6000);
 
@@ -42,7 +41,6 @@ export default class Artworld extends Phaser.Scene {
 
     this.player = {};
     this.playerShadow = {};
-
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
@@ -53,51 +51,13 @@ export default class Artworld extends Phaser.Scene {
     // testing
     this.resolveLoadErrorCache = [];
 
-    // TODO remove playerContainer?
-    // this.playerContainer;
-
     this.homes = [];
     this.homesRepreseneted = [];
 
-    this.offlineOnlineUsers;
-
-    this.location = 'Artworld';
-
-    // .......................REX UI ............
-    this.COLOR_PRIMARY = 0xff5733;
-    this.COLOR_LIGHT = 0xffffff;
-    this.COLOR_DARK = 0x000000;
-    // TODO remove this.data?
-    this.data;
-    // ....................... end REX UI ......
-
-    this.cursors;
-    this.pointer;
-    this.isClicking = false;
-    this.cursorKeyIsDown = false;
-    this.swipeDirection = 'down';
-    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-
-    // pointer location example
-    // this.source // = player
-    this.target = new Phaser.Math.Vector2();
-    this.distance = 1;
-    this.distanceTolerance = 9;
-
     // shadow
     this.playerShadowOffset = -8;
-    this.playerIsMovingByClicking = false;
 
     this.currentZoom = 1;
-
-    // itemsbar
-
-    // size for the artWorks
-    this.artPreviewSize = 128;
-
-    this.artUrl = [];
-    this.userArtServerList = [];
-    this.progress = [];
   }
 
   async preload() {
@@ -110,30 +70,74 @@ export default class Artworld extends Phaser.Scene {
 
 
     const {
-      artworldToPhaser2DX, artworldToPhaser2DY, Phaser2DToArtworldX, Phaser2DToArtworldY,
+      artworldToPhaser2DX, artworldToPhaser2DY,
     } = CoordinatesTranslator;
     const { gameEditMode } = ManageSession;
 
-    // collection: "home"
-    // create_time: "2022-01-19T16:31:43Z"
-    // key: "Amsterdam"
-    // permission_read: 2
-    // permission_write: 1
-    // update_time: "2022-01-19T16:32:27Z"
-    // user_id: "4c0003f0-3e3f-4b49-8aad-10db98f2d3dc"
-    // value:
-    // url: "home/4c0003f0-3e3f-4b49-8aad-10db98f2d3dc/3_current.png"
-    // username: "user88"
-    // version: "0579e989a16f3e228a10d49d13dc3da6"
+    //! needed for handling object dragging // this is needed of each scene dragging is used
+    this.input.on('dragstart', () => {
+    }, this);
+
+    this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+      if (gameEditMode) {
+        gameObject.setPosition(dragX, dragY);
+
+        if (gameObject.name === 'handle') {
+          gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
+        }
+      } else {
+        // console.log('dragX, dragY', dragX, dragY);
+        // if we drag the touchBackgroundCheck layer, we update the player
+        // eslint-disable-next-line no-lonely-if
+        if (gameObject.name === 'touchBackgroundCheck') {
+          const moveCommand = 'moving';
+          const movementData = { dragX, dragY, moveCommand };
+          Move.moveByDragging(movementData);
+        }
+      }
+    }, this);
+
+    this.input.on('dragend', (pointer, gameObject) => {
+      if (gameEditMode) {
+        const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
+        const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
+
+
+        // store the original scale when selecting the gameObject for the first time
+        if (ManageSession.selectedGameObject !== gameObject) {
+          ManageSession.selectedGameObject = gameObject;
+          ManageSession.selectedGameObjectStartScale = gameObject.scale;
+          ManageSession.selectedGameObjectStartPosition.x = gameObject.x;
+          ManageSession.selectedGameObjectStartPosition.y = gameObject.y;
+          dlog('editMode info startScale:', ManageSession.selectedGameObjectStartScale);
+        }
+        // ManageSession.selectedGameObject = gameObject
+
+        dlog(
+          'editMode info posX posY: ',
+          worldX,
+          worldY,
+          'scale:',
+          ManageSession.selectedGameObject.scale,
+          'width*scale:',
+          Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale),
+          'height*scale:',
+          Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale),
+          'name:',
+          ManageSession.selectedGameObject.name,
+        );
+      } else if (gameObject.name === 'touchBackgroundCheck') {
+        const moveCommand = 'stop';
+        const dragX = 0;
+        const dragY = 0;
+        const movementData = { dragX, dragY, moveCommand };
+        Move.moveByDragging(movementData);
+        // ManageSession.playerIsAllowedToMove = false;
+      }
+    }, this);
+    //!
 
     // the order of creation is the order of drawing: first = bottom ...............................
-
-
-    // added after linting
-    // outline effect
-    // var postFxPlugin = this.plugins.get('rexoutlinepipelineplugin');
-    // added after linting
-    // outline effect
     Background.rectangle({
       scene: this,
       name: 'bgImageWhite',
@@ -158,21 +162,6 @@ export default class Artworld extends Phaser.Scene {
 
 
     // make a repeating set of rectangles around the artworld canvas
-
-    const middleCoordinates = new Phaser.Math.Vector2(
-      artworldToPhaser2DX(this.worldSize.x, 0),
-      artworldToPhaser2DY(this.worldSize.y, 0),
-    );
-
-    this.borderRectArray = [];
-
-    for (let i = 0; i < 3; i += 1) {
-      this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i));
-      this.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
-
-      this.borderRectArray[i].x = middleCoordinates.x;
-      this.borderRectArray[i].y = middleCoordinates.y;
-    }
 
     Background.circle({
       scene: this,
@@ -246,9 +235,24 @@ export default class Artworld extends Phaser.Scene {
 
     this.touchBackgroundCheck
     // draggable to detect player drag movement
-      .setInteractive() // { useHandCursor: true } { draggable: true }
-      // .on('pointerup', () => dlog('touched background'))
-      .on('pointerdown', () => { ManageSession.playerIsAllowedToMove = true; })
+      .setInteractive({ draggable: true }) // { useHandCursor: true } { draggable: true }
+      .on('pointerup', () => {
+        const moveCommand = 'stop';
+        const dragX = 0;
+        const dragY = 0;
+        const movementData = { dragX, dragY, moveCommand };
+        Move.moveByDragging(movementData);
+        // ManageSession.playerIsAllowedToMove = false;
+      })
+      .on('pointerdown', () => {
+        ManageSession.playerIsAllowedToMove = true;
+        // console.log('pointerdown, ManageSession.playerIsAllowedToMove:', ManageSession.playerIsAllowedToMove);
+      });
+    // this.touchBackgroundCheck.on('drag', (pointer, gameObject, dragX, dragY) => {
+    //   console.log('pointer, gameObject, dragX, dragY', dragX, dragY);
+    // }, this);
+
+    this.touchBackgroundCheck
       .setDepth(219)
       .setOrigin(0);
     this.touchBackgroundCheck.setVisible(false);
@@ -505,13 +509,14 @@ export default class Artworld extends Phaser.Scene {
       this,
       artworldToPhaser2DX(this.worldSize.x, get(playerPosX)),
       artworldToPhaser2DY(this.worldSize.y, get(playerPosY)),
-      ManageSession.playerAvatarPlaceholder,
+      this.playerAvatarPlaceholder,
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
-      texture: ManageSession.playerAvatarPlaceholder,
+      texture: this.playerAvatarPlaceholder,
     }).setDepth(200);
+
     // for back button, has to be done after player is created for the history tracking!
     SceneSwitcher.pushLocation(this);
 
@@ -523,38 +528,6 @@ export default class Artworld extends Phaser.Scene {
     // https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
     // ......... end PLAYER VS WORLD .......................................................................
 
-    //! needed for handling object dragging // this is needed of each scene dragging is used
-    this.input.on('dragstart', (pointer, gameObject) => {
-
-    }, this);
-
-    this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-      gameObject.x = dragX;
-      gameObject.y = dragY;
-
-      if (gameObject.name == 'handle') {
-        gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
-      }
-    }, this);
-
-    this.input.on('dragend', function (pointer, gameObject) {
-      const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
-      const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
-
-
-      // store the original scale when selecting the gameObject for the first time
-      if (ManageSession.selectedGameObject !== gameObject) {
-        ManageSession.selectedGameObject = gameObject;
-        ManageSession.selectedGameObjectStartScale = gameObject.scale;
-        ManageSession.selectedGameObjectStartPosition.x = gameObject.x;
-        ManageSession.selectedGameObjectStartPosition.y = gameObject.y;
-        console.log('editMode info startScale:', ManageSession.selectedGameObjectStartScale);
-      }
-      // ManageSession.selectedGameObject = gameObject
-
-      console.log('editMode info posX posY: ', worldX, worldY, 'scale:', ManageSession.selectedGameObject.scale, 'width*scale:', Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), 'height*scale:', Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), 'name:', ManageSession.selectedGameObject.name);
-    }, this);
-    //!
 
     // .......... locations ................................................................................
     ServerCall.getHomesFiltered('home', 'Amsterdam', 100, this);
@@ -562,50 +535,7 @@ export default class Artworld extends Phaser.Scene {
     // .......... end locations ............................................................................
 
     Player.loadPlayerAvatar(this);
-    // this.avatarDetailsContainer.setDepth(999)
 
-    // .......... loadplayers art
-    // const userID = ManageSession.userProfile.id
-    // await listObjects("drawing", userID, 100).then((rec) => {
-    //   //this.userArtServerList is an array with objects, in the form of:
-
-    //   //collection: "drawing"
-    //   //create_time: "2022-01-27T16:46:00Z"
-    //   //key: "1643301959176_cyaanConejo"
-    //   //permission_read: 1
-    //   //permission_write: 1
-    //   //update_time: "2022-02-09T13:47:01Z"
-    //   //user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
-    //   //value:
-    //   //  displayname: "cyaanConejo"
-    //   //  json: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
-    //   //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
-    //   //  status: ""
-    //   //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
-    //   //  version: 0
-
-    //   //permission_read: 1 indicates hidden
-    //   //permission_read: 2 indicates visible
-
-    //   //we filter out the visible artworks
-    //   //filter only the visible art = "permission_read": 2
-    //   this.userArtServerList = rec.filter(obj => obj.permission_read == 2)
-
-    //   dlog("this.userArtServerList", this.userArtServerList)
-    //   if (this.userArtServerList.length > 0) {
-    //     this.userArtServerList.forEach((element, index, array) => {
-    //       this.downloadArt(element, index, array)
-    //     })
-
-    //   }
-    // })
-
-    // .....................PHYSICS TEST ..........................................................................
-    // var obstacles = this.physics.add.staticGroup()
-
-    // obstacles.create(this.worldSize.x / 2, (this.worldSize.y / 2) + 600, 'ball')
-
-    // this.physics.add.collider(this.player, obstacles, this.animalWallCollide, null, this)
     this.events.on('updateArtBubbles', ServerCall.updateArtBubbles);
   } // end create
 
@@ -642,53 +572,6 @@ export default class Artworld extends Phaser.Scene {
     this.curveGraphics.lineStyle(60, 0xffff00, 1);
     this.curve.draw(this.curveGraphics, 64);
   }
-
-  async downloadArt(element, index, array) {
-    const { artworldToPhaser2DX } = CoordinatesTranslator;
-
-    //! we are placing the artWorks 'around' (left and right of) the center of the world
-    const totalArtWorks = array.length;
-    const imageKeyUrl = element.value.url;
-    const imgSize = this.artDisplaySize.toString();
-    const fileFormat = 'png';
-    // put the artworks 'around' the center, which means: take total artworks * space = total x space eg 3 * 550 = 1650
-    // we start at middleWorld.x - totalArtWidth + (artIndex * artDisplaySize)
-
-    // TODO remove these 3?
-    // const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks;
-    // const middleWorldX = artworldToPhaser2DX(this.worldSize.x, 0);
-    // const startXArt = middleWorldX - (totalArtWidth / 2);
-
-    if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
-      let random = Math.floor(Math.random() * this.artArray.length);
-      this.exhibit_outdoor_big1_mesh.setTexture(this.artArray[random]);
-
-      random = Math.floor(Math.random() * this.artArray.length);
-      this.exhibit_outdoor_small2_1_mesh.setTexture(this.artArray[random]);
-    } else { // otherwise download the image and add it
-      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
-      this.load.image(imageKeyUrl, convertedImage);
-
-      this.load.start(); // start the load queue to get the image in memory
-    }
-
-    this.load.on('filecomplete', (key) => {
-      // on completion of each specific artwork
-
-      // we don't want to trigger any other load completions
-
-      // adds a frame to the container
-      this.artArray.push(key);
-    });
-
-    this.load.on('complete', () => {
-      let random = Math.floor(Math.random() * this.artArray.length);
-      this.exhibit_outdoor_big1_mesh.setTexture(this.artArray[random]);
-
-      random = Math.floor(Math.random() * this.artArray.length);
-      this.exhibit_outdoor_small2_1_mesh.setTexture(this.artArray[random]);
-    });
-  }// end downloadArt
 
   generateLocations() {
     const { artworldVectorToPhaser2D } = CoordinatesTranslator;
@@ -858,13 +741,7 @@ export default class Artworld extends Phaser.Scene {
       this.playerShadow.y = this.player.y + this.playerShadowOffset;
       // ........... end PLAYER SHADOW .........................................................................
 
-      // to detect if the player is clicking/tapping on one place or swiping
-      if (this.input.activePointer.downX !== this.input.activePointer.upX) {
-        // Move.moveBySwiping(this);
-        Move.moveByDragging(this);
-      } else {
-        Move.moveByTapping(this);
-      }
+      Move.moveByTapping(this);
     } else {
       // when in edit mode
       this.updateCurveGraphics();

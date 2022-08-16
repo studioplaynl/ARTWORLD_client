@@ -16,7 +16,7 @@ class Player {
   subscribeToProfile() {
     Profile.subscribe((value) => {
       dlog('Profile refreshed avatar');
-      dlog(value);
+      // dlog(value);
 
       this.subscribedToProfile = true;
       this.loadPlayerAvatar(ManageSession.currentScene, undefined, undefined, value);
@@ -28,7 +28,7 @@ class Player {
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     if (!userprofile) userprofile = ManageSession.userProfile;
-    dlog('loadPlayerAvatar', userprofile);
+    // dlog('loadPlayerAvatar');
 
     // is playerAvaterKey already in loadedAvatars?
     // no -> load the avatar and add to loadedAvatars
@@ -137,7 +137,7 @@ class Player {
         },
       )
         .on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
-          dlog('filecomplete-spritesheet scene.playerAvatarKey', scene.playerAvatarKey);
+          // dlog('filecomplete-spritesheet scene.playerAvatarKey', scene.playerAvatarKey);
           if (this.subscribedToProfile !== true) {
             this.subscribeToProfile();
           }
@@ -201,7 +201,7 @@ class Player {
     scene.player.setTexture(scene.playerAvatarKey);
     scene.playerShadow.setTexture(scene.playerAvatarKey);
 
-    dlog('scene.player.setTexture(scene.playerAvatarKey) done ');
+    // dlog('scene.player.setTexture(scene.playerAvatarKey) done ');
     // scale the player to this.avatarSize
     const width = this.avatarSize;
     scene.player.displayWidth = width;

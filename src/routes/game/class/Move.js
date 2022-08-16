@@ -4,7 +4,7 @@ import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { playerPosX, playerPosY } from '../playerState';
 
-// TODO This should probably all be just static functions
+const { Phaser } = window;
 
 class Move {
   // checks if we are moving with keyboard arrowKeys
@@ -15,14 +15,15 @@ class Move {
       || scene.cursors.left.isDown
       || scene.cursors.right.isDown
     ) {
-      scene.cursorKeyIsDown = true;
+      ManageSession.cursorKeyIsDown = true;
     } else {
-      scene.cursorKeyIsDown = false;
+      ManageSession.cursorKeyIsDown = false;
     }
   }
 
   // play moving animations
   movingAnimation(scene, animation) {
+    // console.log('movingAnimation');
     if (animation === 'moving') {
       scene.player.anims.play(scene.playerMovingKey, true);
       scene.playerShadow.anims.play(scene.playerMovingKey, true);
@@ -45,21 +46,21 @@ class Move {
     if (scene.cursors.left.isDown) {
       scene.player.body.setVelocityX(-speed);
 
-      // scene.cursorKeyIsDown = true;
+      // ManageSession.cursorKeyIsDown = true;
       this.sendMovement(scene);
     } else if (scene.cursors.right.isDown) {
       scene.player.body.setVelocityX(speed);
-      // scene.cursorKeyIsDown = true
+      // ManageSession.cursorKeyIsDown = true
     }
 
     // Vertical movement
     if (scene.cursors.up.isDown) {
       scene.player.body.setVelocityY(-speed);
-      // scene.cursorKeyIsDown = true
+      // ManageSession.cursorKeyIsDown = true
       this.sendMovement(scene);
     } else if (scene.cursors.down.isDown) {
       scene.player.body.setVelocityY(speed);
-      // scene.cursorKeyIsDown = true
+      // ManageSession.cursorKeyIsDown = true
       this.sendMovement(scene);
     }
 
@@ -68,7 +69,7 @@ class Move {
     scene.player.body.velocity.normalize().scale(speed);
   }
 
-  moveObjectToTarget(scene, container, target, speed) {
+  moveObjectToTarget(scene, container, target, distance) {
     this.movingAnimation(scene, 'moving');
     // moving is done in Phaser coordinates, sending movement over the network is done in ArtworldCoordinates
     // we check if player stays in the world
@@ -91,7 +92,7 @@ class Move {
     }
 
     // scene.physics.moveToObject(container, target, speed);
-    const duration = speed * 0.5;
+    const duration = distance * 0.5;
 
     scene.tweens.add({
       targets: container,
@@ -142,115 +143,97 @@ class Move {
 
 
   moveBySwiping(scene) {
-    if (scene.input.activePointer.isDown && !scene.isClicking && ManageSession.playerIsAllowedToMove) {
-      scene.isClicking = true;
-    }
-    if (!scene.input.activePointer.isDown && scene.isClicking) {
+    if (scene.input.activePointer.downX !== scene.input.activePointer.upX) {
+      if (scene.input.activePointer.isDown && !ManageSession.isClicking && ManageSession.playerIsAllowedToMove) {
+        ManageSession.isClicking = true;
+      }
+      if (!scene.input.activePointer.isDown && ManageSession.isClicking) {
       // play "move" animation
       // play the animation as soon as possible so it is more visible
+        this.movingAnimation(scene, 'moving');
+
+        const playerX = scene.player.x;
+        const playerY = scene.player.y;
+
+        let swipeX = scene.input.activePointer.upX - scene.input.activePointer.downX;
+        let swipeY = scene.input.activePointer.upY - scene.input.activePointer.downY;
+
+        ManageSession.swipeAmount.x = swipeX;
+        ManageSession.swipeAmount.y = swipeY;
+
+        // we scale the travel distance to the zoomlevel
+        const zoomFactor = scene.gameCam.zoom;
+        swipeX /= zoomFactor;
+        swipeY /= zoomFactor;
+
+        // console.log("swipeX, swipeY", swipeX, swipeY)
+
+        ManageSession.swipeAmount.x = swipeX;
+        ManageSession.swipeAmount.y = swipeY;
+
+        const moveSpeed = ManageSession.swipeAmount.length() * 2;
+
+        // we scale the arrival check (distanceTolerance) to the speed of the player
+        ManageSession.distanceTolerance = moveSpeed / 30;
+
+        // console.log("moveBySwiping moveSpeed", moveSpeed)
+
+        scene.isPlayerMoving = true; // to stop the player when it reached its destination
+
+        ManageSession.target.x = playerX + swipeX;
+        ManageSession.target.y = playerY + swipeY;
+
+        // generalized moving method
+        this.moveObjectToTarget(scene, scene.player, ManageSession.target, moveSpeed);
+        ManageSession.playerIsAllowedToMove = false;
+        ManageSession.isClicking = false;
+      }
+    }
+  }
+
+  moveByDragging(movementData) {
+    const scene = ManageSession.currentScene;
+    const { dragX } = movementData;
+    const { dragY } = movementData;
+    const { moveCommand } = movementData;
+    // console.log('dragX, dragY, moveCommand', dragX, dragY, moveCommand);
+
+    if (moveCommand === 'stop') {
+      this.movingAnimation(scene, 'stop');
+      // send current position over the network
+
+      // when we stop dragging, we send the final position
+      //
+      ManageSession.target.x = scene.player.x;
+      ManageSession.target.y = scene.player.y;
+
+      const tempVec = new Phaser.Math.Vector2(0, 0);
+      tempVec.x = ManageSession.lastMoveCommand.posX;
+      tempVec.y = ManageSession.lastMoveCommand.posY;
+
+      const moveDistance = Math.abs(ManageSession.target.length() - tempVec.length());
+
+      // console.log({ ManageSession.target, moveDistance, ManageSession.lastMoveCommand, tempVec});
+
+      // this creates a double movement animation: replace by sendMovement and timedEvent with Stop
+
+      this.moveObjectToTarget(
+        scene,
+        tempVec,
+        ManageSession.target,
+        moveDistance,
+      );
+    }
+    if (moveCommand === 'moving') {
+      // drag player
       this.movingAnimation(scene, 'moving');
-
-      const playerX = scene.player.x;
-      const playerY = scene.player.y;
-
-      let swipeX = scene.input.activePointer.upX - scene.input.activePointer.downX;
-      let swipeY = scene.input.activePointer.upY - scene.input.activePointer.downY;
-
-      scene.swipeAmount.x = swipeX;
-      scene.swipeAmount.y = swipeY;
-
-      // we scale the travel distance to the zoomlevel
-      const zoomFactor = scene.gameCam.zoom;
-      swipeX /= zoomFactor;
-      swipeY /= zoomFactor;
-
-      // console.log("swipeX, swipeY", swipeX, swipeY)
-
-      scene.swipeAmount.x = swipeX;
-      scene.swipeAmount.y = swipeY;
-
-      const moveSpeed = scene.swipeAmount.length() * 2;
-
-      // we scale the arrival check (distanceTolerance) to the speed of the player
-      scene.distanceTolerance = moveSpeed / 30;
-
-      // console.log("moveBySwiping moveSpeed", moveSpeed)
-
-      scene.isPlayerMoving = true; // to stop the player when it reached its destination
-
-      scene.target.x = playerX + swipeX;
-      scene.target.y = playerY + swipeY;
-
-      // generalized moving method
-      this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed);
-      ManageSession.playerIsAllowedToMove = false;
-      scene.isClicking = false;
+      scene.player.x -= dragX;
+      scene.player.y -= dragY;
     }
   }
-
-  moveByDragging(scene) {
-    if (scene.input.activePointer.isDown && !ManageSession.graffitiDrawing) {
-      ManageSession.playerIsAllowedToMove = true;
-      const pointerCurrentPositionX = scene.input.activePointer.position.x;
-      const pointerCurrentPositionY = scene.input.activePointer.position.y;
-      const pointerPrevPositionX = scene.input.activePointer.prevPosition.x;
-      const pointerPrevPositionY = scene.input.activePointer.prevPosition.y;
-
-      const movementX = pointerCurrentPositionX - pointerPrevPositionX;
-      const movementY = pointerCurrentPositionY - pointerPrevPositionY;
-      // console.log('movementX, movementY', movementX, movementY);
-
-      // drag world
-      scene.player.x -= movementX;
-      scene.player.y -= movementY;
-
-      // // drag player
-      // scene.player.x -= movementX;
-      // scene.player.y -= movementY;
-    }
-    // play "move" animation
-    // play the animation as soon as possible so it is more visible
-    // this.movingAnimation(scene, 'moving');
-
-    // const playerX = scene.player.x;
-    // const playerY = scene.player.y;
-
-
-
-    // let swipeY = scene.input.activePointer.upY - scene.input.activePointer.downY;
-
-    // scene.swipeAmount.x = swipeX;
-    // scene.swipeAmount.y = swipeY;
-
-    // // we scale the travel distance to the zoomlevel
-    // const zoomFactor = scene.gameCam.zoom;
-    // swipeX /= zoomFactor;
-    // swipeY /= zoomFactor;
-
-    // // console.log("swipeX, swipeY", swipeX, swipeY)
-
-    // scene.swipeAmount.x = swipeX;
-    // scene.swipeAmount.y = swipeY;
-
-    // const moveSpeed = scene.swipeAmount.length() * 2;
-
-
-    // // console.log("moveBySwiping moveSpeed", moveSpeed)
-
-    // scene.isPlayerMoving = true; // to stop the player when it reached its destination
-
-    // scene.target.x = playerX + swipeX;
-    // scene.target.y = playerY + swipeY;
-
-    // // generalized moving method
-    // this.moveObjectToTarget(scene, scene.player, scene.target, moveSpeed);
-    // ManageSession.playerIsAllowedToMove = false;
-    // scene.isClicking = false;
-  }
-
 
   moveByTapping(scene) {
-    if (!scene.input.activePointer.isDown && ManageSession.playerIsAllowedToMove) {
+    if (!scene.input.activePointer.isDown && ManageSession.playerIsAllowedToMove) { //
       // doubletap: first time mouse up
       ManageSession.playerClicks = 1;
 
@@ -273,25 +256,25 @@ class Move {
           const playerY = scene.player.y;
 
           // mouse point after doubletap is target
-          scene.target.x = scene.input.activePointer.worldX;
-          scene.target.y = scene.input.activePointer.worldY;
+          ManageSession.target.x = scene.input.activePointer.worldX;
+          ManageSession.target.y = scene.input.activePointer.worldY;
 
-          scene.swipeAmount.x = playerX - scene.target.x;
-          scene.swipeAmount.y = playerY - scene.target.y;
+          ManageSession.swipeAmount.x = playerX - ManageSession.target.x;
+          ManageSession.swipeAmount.y = playerY - ManageSession.target.y;
 
-          const moveSpeed = scene.swipeAmount.length() * 2;
+          const moveDistance = ManageSession.swipeAmount.length() * 2;
 
           // generalized moving method
           // send moveTo over network, calculate speed as function of distance
           this.moveObjectToTarget(
             scene,
             scene.player,
-            scene.target,
-            moveSpeed,
+            ManageSession.target,
+            moveDistance,
           );
         }
       });
-      scene.isClicking = false;
+      ManageSession.isClicking = false;
       ManageSession.playerIsAllowedToMove = false;
     }
   }
