@@ -4,7 +4,12 @@
   import { wrap } from 'svelte-spa-router/wrap';
   import Phaser from 'phaser';
   import { Session, Profile, Error } from './session';
-  import { sessionCheck, checkLoginExpired, logout } from './api';
+  import {
+    sessionCheck,
+    checkLoginExpired,
+    logout,
+    restoreSession,
+  } from './api';
   import { dlog } from './routes/game/helpers/DebugLog';
 
   /** Admin pages */
@@ -41,8 +46,12 @@
     e.target.click();
   });
 
-  onMount(() => {
+  onMount(async () => {
     document.getElementById('loader').classList.add('hide');
+
+    // Attempt to restore a saved session
+    await restoreSession();
+
     if (checkLoginExpired() === true) {
       dlog('login expired! go to login page');
       logout();
@@ -117,6 +126,8 @@
       component: DebugPage,
       conditions: [() => isAdmin()],
     }),
+    // '/'
+
     // "/drawing/:user?/:name?/:version?": wrap({
     //     component: drawing,
     //     conditions: [
