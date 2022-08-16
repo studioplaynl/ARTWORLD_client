@@ -514,7 +514,7 @@ export default class Artworld extends Phaser.Scene {
 
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
-      texture: this.playerAvatarPlaceholder,
+      texture: ManageSession.playerAvatarPlaceholder,
     }).setDepth(200);
 
     // for back button, has to be done after player is created for the history tracking!
