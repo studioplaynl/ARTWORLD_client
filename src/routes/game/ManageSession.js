@@ -98,8 +98,7 @@ class ManageSession {
     await this.socket.connect(get(Session), createStatus);
     dlog('session created with socket');
 
-    dlog('Join:');
-    dlog(get(playerLocation).scene);
+    dlog('Join:', get(playerLocation).scene);
     // have to join a location to get stream presence events
     await this.getStreamUsers('join');
 
@@ -281,11 +280,12 @@ class ManageSession {
     //* rpcCommand:
     //* join" = join the stream, get the online users, except self
     //* get_users" = after joined, get the online users, except self
+    const location = get(playerStreamID);
+
     dlog(
-      `this.getStreamUsers("${rpcCommand})`,
+      `this.getStreamUsers("${rpcCommand}"), location = ${location}`,
     );
 
-    const location = get(playerStreamID);
 
     const streamUsersPromise = new Promise((resolve) => {
       this.socket.rpc(rpcCommand, location).then((rec) => {

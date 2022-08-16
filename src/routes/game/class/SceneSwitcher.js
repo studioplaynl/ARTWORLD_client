@@ -35,7 +35,6 @@ class SceneSwitcher {
       house: targetHouse,
       scene: targetScene,
     });
-    // playerLocationHouse.set(targetHouse);
   }
 
   doSwitchScene() {
@@ -65,15 +64,11 @@ class SceneSwitcher {
 
         if (targetHouse !== null && targetScene === DEFAULT_HOME) {
           scene.scene.start(targetScene, { user_id: targetHouse });
-          ManageSession.getStreamUsers('join').then(() => {
-            // console.log('doSwitchScene resolved, set loader to false');
-            setLoader(false);
-          });
         } else if (targetScene) {
-          // playerLocationHouse.set(null);
           scene.scene.start(targetScene);
+        }
+        if (targetScene) {
           ManageSession.getStreamUsers('join').then(() => {
-            // console.log('doSwitchScene resolved, set loader to false');
             setLoader(false);
           });
         }

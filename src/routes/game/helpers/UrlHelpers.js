@@ -34,7 +34,7 @@ export function parseQueryString() {
       newPlayerPosition.y = Math.max(MIN_Y, Math.min(queryY, MAX_Y));
     }
 
-    console.log('setting position to', newPlayerPosition);
+    dlog('setting position to', newPlayerPosition);
     playerPos.set(newPlayerPosition);
   }
 

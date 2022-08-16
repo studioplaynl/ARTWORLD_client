@@ -14,11 +14,10 @@ export const playerLocation = writable({
 export const playerStreamID = derived(
   playerLocation,
   ($pl, set) => {
-    if ($pl.house !== null) set($pl.house);
+    if ($pl.house) set($pl.house);
     else set($pl.scene);
   },
 );
-
 
 function createHistory() {
   const playerHistoryStore = writable([]);

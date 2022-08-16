@@ -63,21 +63,21 @@ export default class UrlParser extends Phaser.Scene {
           y: Math.round(profile.meta.PosY),
         });
       }
-      if (profile.meta?.Location && checkIfSceneIsAllowed(profile.meta.Location)
-      ) {
-        playerLocation.set({
-          scene: profile.meta.Location,
-          house: null,
-        });
-      } else if (profile.meta?.Location
+      if (profile.meta?.Location
         && checkIfLocationLooksLikeAHouse(profile.meta.Location)) {
         playerLocation.set({
           scene: DEFAULT_HOME,
           house: profile.meta.Location,
         });
+      } else if (profile.meta?.Location && checkIfSceneIsAllowed(profile.meta.Location)
+      ) {
+        playerLocation.set({
+          scene: profile.meta.Location,
+          house: null,
+        });
       }
 
-      console.log('meta', profile.meta);
+      dlog('meta', profile.meta);
     }
 
     // Set a default player location
