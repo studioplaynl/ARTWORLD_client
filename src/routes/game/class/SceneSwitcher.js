@@ -3,10 +3,11 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog } from '../helpers/DebugLog';
-import { playerLocationScene, playerLocationHouse, playerStreamID } from '../playerState';
+import { playerLocation, playerStreamID } from '../playerState';
 import { DEFAULT_HOME } from '../../../constants';
 import { Error } from '../../../session';
 import { setLoader } from '../../../api';
+// import { ListFormat } from 'typescript';
 // import { push, querystring} from "svelte-spa-router";
 
 
@@ -15,50 +16,44 @@ import { setLoader } from '../../../api';
  */
 class SceneSwitcher {
   constructor() {
-    this.tempHistoryArray = [];
+    // this.tempHistoryArray = [];
 
-    this.unsubscribeScene = playerLocationScene.subscribe(() => {
+    this.unsubscribeScene = playerLocation.subscribe(() => {
       this.doSwitchScene();
     });
-    this.unsubscribeHouse = playerLocationHouse.subscribe(() => {
-      this.doSwitchScene();
-    });
+    // this.unsubscribeHouse = playerLocationHouse.subscribe(() => {
+    //   this.doSwitchScene();
+    // });
   }
 
   pushLocation(scene) {
-    dlog('this.pushLocation');
-    // store the current scene in ManageSession for reference outside of Phaser (html ui)
     ManageSession.currentScene = scene;
-    dlog('scene.location', scene.location);
-  }
-
-  updatePositionCurrentScene(playerPosX, playerPosY) {
-    if (this.tempHistoryArray.length > 0) {
-      this.tempHistoryArray[this.tempHistoryArray.length - 1].playerPosX = playerPosX;
-      this.tempHistoryArray[this.tempHistoryArray.length - 1].playerPosY = playerPosY;
-    }
   }
 
   switchScene(targetScene, targetHouse) {
-    playerLocationScene.set(targetScene);
-    playerLocationHouse.set(targetHouse);
+    playerLocation.set({
+      house: targetHouse,
+      scene: targetScene,
+    });
   }
 
   doSwitchScene() {
     const scene = ManageSession.currentScene;
-    const targetLocation = get(playerLocationScene);
-    const targetHouse = get(playerLocationHouse);
+    const targetScene = get(playerLocation).scene;
+    const targetHouse = get(playerLocation).house;
 
-    if (targetLocation === DEFAULT_HOME && targetHouse === null) {
+    if (targetScene === DEFAULT_HOME && targetHouse === null) {
       return;
     }
 
     if (!scene || !scene?.player) return;
 
+    // console.log('SceneSwitcher: continue with doSwitchScene', scene, targetScene, targetHouse);
+
     // console.log('doSwitchScene, set loader to true, leaving', scene.location);
     setLoader(true);
 
-    // console.log('SWITCH: ', targetLocation, targetHouse);
+    // console.log('SWITCH: ', targetScene, targetHouse);
 
     scene.physics.pause();
     scene.player.setTint(0xff0000);
@@ -67,17 +62,13 @@ class SceneSwitcher {
       if (data.id === 'leave' && data.payload === 'Success') {
         scene.scene.stop(scene.scene.key);
 
-        if (targetHouse !== null && targetLocation === DEFAULT_HOME) {
-          scene.scene.start(targetLocation, { user_id: targetHouse });
+        if (targetHouse !== null && targetScene === DEFAULT_HOME) {
+          scene.scene.start(targetScene, { user_id: targetHouse });
+        } else if (targetScene) {
+          scene.scene.start(targetScene);
+        }
+        if (targetScene) {
           ManageSession.getStreamUsers('join').then(() => {
-            // console.log('doSwitchScene resolved, set loader to false');
-            setLoader(false);
-          });
-        } else if (targetLocation) {
-          playerLocationHouse.set(null);
-          scene.scene.start(targetLocation);
-          ManageSession.getStreamUsers('join').then(() => {
-            // console.log('doSwitchScene resolved, set loader to false');
             setLoader(false);
           });
         }

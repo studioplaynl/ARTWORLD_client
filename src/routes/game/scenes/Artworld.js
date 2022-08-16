@@ -14,7 +14,7 @@ import ServerCall from '../class/ServerCall';
 import Exhibition from '../class/Exhibition';
 import Move from '../class/Move';
 import { dlog } from '../helpers/DebugLog';
-import { playerPosX, playerPosY } from '../playerState';
+import { playerPos } from '../playerState';
 
 const { Phaser } = window;
 
@@ -507,9 +507,9 @@ export default class Artworld extends Phaser.Scene {
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      artworldToPhaser2DX(this.worldSize.x, get(playerPosX)),
-      artworldToPhaser2DY(this.worldSize.y, get(playerPosY)),
-      this.playerAvatarPlaceholder,
+      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
+      ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({

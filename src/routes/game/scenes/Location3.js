@@ -6,7 +6,7 @@ import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
 import Move from '../class/Move';
-import { playerPosX, playerPosY } from '../playerState';
+import { playerPos } from '../playerState';
 
 const { Phaser } = window;
 
@@ -88,15 +88,20 @@ export default class Location3 extends Phaser.Scene {
       this,
       CoordinatesTranslator.artworldToPhaser2DX(
         this.worldSize.x,
-        get(playerPosX),
+        get(playerPos).x,
       ),
       CoordinatesTranslator.artworldToPhaser2DY(
         this.worldSize.y,
-        get(playerPosY),
+        get(playerPos).y,
       ),
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder }).setDepth(200);
+    this.playerShadow = new PlayerDefaultShadow(
+      {
+        scene: this,
+        texture: ManageSession.playerAvatarPlaceholder,
+      },
+    ).setDepth(200);
 
     // for back button, has to be done after player is created for the history tracking!
     SceneSwitcher.pushLocation(this);

@@ -1,25 +1,19 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import {
-  listObjects, convertImage, getAccount, listAllObjects,
+  convertImage, listAllObjects,
 } from '../../../api';
 
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
-import BouncingBird from '../class/BouncingBird';
-import GraffitiWall from '../class/GraffitiWall';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import SceneSwitcher from '../class/SceneSwitcher';
 import Move from '../class/Move';
-import ServerCall from '../class/ServerCall';
-import Exhibition from '../class/Exhibition';
-import { CurrentApp } from '../../../session';
-import ArtworkList from '../class/ArtworkList';
-import { playerPosX, playerPosY } from '../playerState';
+import { playerPos } from '../playerState';
 
 const { Phaser } = window;
 
@@ -103,6 +97,10 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   }
 
   async create() {
+    const {
+      artworldToPhaser2DX, artworldToPhaser2DY, Phaser2DToArtworldY, Phaser2DToArtworldX,
+    } = CoordinatesTranslator;
+
     //!
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
     ManageSession.worldSize = this.worldSize;
@@ -131,7 +129,10 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     });
 
     // make a repeating set of rectangles around the artworld canvas
-    const middleCoordinates = new Phaser.Math.Vector2(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0));
+    const middleCoordinates = new Phaser.Math.Vector2(
+      artworldToPhaser2DX(this.worldSize.x, 0),
+      artworldToPhaser2DY(this.worldSize.y, 0),
+    );
     this.borderRectArray = [];
 
     for (let i = 0; i < 3; i++) {
@@ -165,9 +166,18 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.backgroundFlowerFieldFloor = this.add.graphics();
     this.backgroundFlowerFieldFloor.name = 'this.backgroundFlowerFieldFloor';
     // this.backgroundFlowerFieldFloor.fillGradientStyle(0xffff00, 0xffff00, 0x704d15, 0x704d15, 1)
-    this.backgroundFlowerFieldFloor.fillGradientStyle(0x704d15, 0x704d15, 0x5c370c, 0x5c370c, 1);
-    this.backgroundFlowerFieldFloor.fillRect(0, this.worldSize.y / 3, this.worldSize.x, this.worldSize.y - (this.worldSize.y / 3));
-    this.backgroundFlowerFieldFloor.setVisible(false);
+    this.backgroundFlowerFieldFloor.fillGradientStyle(
+      0x704d15,
+      0x704d15,
+      0x5c370c,
+      0x5c370c,
+      1,
+    ).fillRect(
+      0,
+      this.worldSize.y / 3,
+      this.worldSize.x,
+      this.worldSize.y - (this.worldSize.y / 3),
+    ).setVisible(false);
 
     // make sky for flowers
     this.backgroundFlowerFieldSky = this.add.graphics();
@@ -176,13 +186,29 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.backgroundFlowerFieldSky.fillRect(0, 0, this.worldSize.x, this.worldSize.y / 3);
     this.backgroundFlowerFieldSky.setVisible(false);
 
-    this.fliedFloorSky = this.add.circle(40, 40, 20, 0xff0000).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setDepth(500);
+    this.fliedFloorSky = this.add.circle(
+      40,
+      40,
+      20,
+      0xff0000,
+    )
+      .setOrigin(0.5, 0.5)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(500);
     this.fliedFloorSky.on('pointerup', (pointer) => {
       // toggle the visibility of this.backgroundFlowerFieldFloor
       this.backgroundFlowerFieldSky.setVisible(!this.backgroundFlowerFieldSky.visible);
     });
 
-    this.fliefFloorButton = this.add.circle(40, 40 + 20 + 20 + 5, 20, 0xff0000).setOrigin(0.5, 0.5).setInteractive({ useHandCursor: true }).setDepth(500);
+    this.fliefFloorButton = this.add.circle(
+      40,
+      40 + 20 + 20 + 5,
+      20,
+      0xff0000,
+    )
+      .setOrigin(0.5, 0.5)
+      .setInteractive({ useHandCursor: true })
+      .setDepth(500);
     this.fliefFloorButton.on('pointerup', (pointer) => {
       // toggle the visibility of this.backgroundFlowerFieldFloor
       this.backgroundFlowerFieldFloor.setVisible(!this.backgroundFlowerFieldFloor.visible);
@@ -225,8 +251,19 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
-    this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, get(playerPosX)), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, get(playerPosY)), ManageSession.playerAvatarPlaceholder).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder }).setDepth(200);
+    this.player = new PlayerDefault(
+      this,
+      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
+      ManageSession.playerAvatarPlaceholder,
+    ).setDepth(201);
+
+    this.playerShadow = new PlayerDefaultShadow(
+      {
+        scene: this,
+        texture: ManageSession.playerAvatarPlaceholder,
+      },
+    ).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!
     SceneSwitcher.pushLocation(this);
 
@@ -239,7 +276,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     // ......... end PLAYER VS WORLD .......................................................................
 
     //! needed for handling object dragging
-    this.input.on('dragstart', (pointer, gameObject) => {
+    this.input.on('dragstart', () => {
 
     }, this);
 
@@ -253,8 +290,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     }, this);
 
     this.input.on('dragend', function (pointer, gameObject) {
-      const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
-      const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
+      const worldX = Math.round(Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
+      const worldY = Math.round(Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
 
       // store the original scale when selecting the gameObject for the first time
       if (ManageSession.selectedGameObject != gameObject) {

@@ -5,91 +5,131 @@ import {
   push, replace, location, querystring,
 } from 'svelte-spa-router';
 import {
-  playerPosX, playerPosY, playerLocationScene, playerLocationHouse,
+  playerPos, playerLocation, playerHistory,
 } from '../playerState';
-import { VALID_USER_SCENES } from '../../../constants';
+import { DEFAULT_HOME, VALID_USER_SCENES } from '../../../constants';
+import { dlog } from './DebugLog';
 
 const MIN_X = -5000;
 const MIN_Y = -5000;
 const MAX_X = 5000;
 const MAX_Y = 5000;
 
+let previousQuery = {};
+
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
   const query = parse(get(querystring));
+  const pos = get(playerPos);
+  const newPlayerPosition = { x: pos.x, y: pos.y };
 
   // TODO: These boundries must be drawn from the current scene
-  if (query?.x) {
+  if ('x' in query && 'y' in query) {
     const queryX = parseInt(query.x, 10);
-    if (get(playerPosX) !== queryX) {
-      playerPosX.set(Math.max(MIN_X, Math.min(queryX, MAX_X)));
-    }
-  }
-
-  if (query?.y) {
     const queryY = parseInt(query.y, 10);
-    if (get(playerPosY) !== queryY) {
-      playerPosY.set(Math.max(MIN_Y, Math.min(queryY, MAX_Y)));
+    if (pos.x !== queryX) {
+      newPlayerPosition.x = Math.max(MIN_X, Math.min(queryX, MAX_X));
     }
+    if (pos.y !== queryY) {
+      newPlayerPosition.y = Math.max(MIN_Y, Math.min(queryY, MAX_Y));
+    }
+
+    dlog('setting position to', newPlayerPosition);
+    playerPos.set(newPlayerPosition);
   }
 
-  if (query?.house) {
+
+  const newPlayerLocation = {};
+
+  if ('house' in query) {
     const looksLikeHouse = query.house.split('-').length > 3;
-    if (looksLikeHouse && get(playerLocationHouse) !== query.house) {
-      playerLocationHouse.set(query.house);
+    if (looksLikeHouse && get(playerLocation).house !== query.house) {
+      newPlayerLocation.house = query.house;
     }
   }
 
-  if (query?.location) {
+  if ('location' in query) {
     const lowercaseScenes = VALID_USER_SCENES.map((scene) => scene.toLowerCase());
     const validSceneName = lowercaseScenes.indexOf(query.location.toLowerCase()) > -1;
-    if (validSceneName && get(playerLocationScene) !== query.location) {
-      playerLocationScene.set(query.location);
+    if (validSceneName && get(playerLocation).scene !== query.location) {
+      newPlayerLocation.scene = query.location;
     }
   }
+
+  // Update the playerLocation store if a scene was set
+  if (newPlayerLocation?.scene) {
+    playerLocation.set(newPlayerLocation);
+  }
+
+  if (stringify({ ...query }) !== stringify({ ...previousQuery })) {
+    // console.log('query diff!', { ...query }, { ...previousQuery });
+    previousQuery = { ...query };
+  }
 }
+/** Set up a subscription to the querystring (from svelte-spa-router)
+ * (in other words: set up a listener to the current query string of the browser window)
+ * Any changes to the querystring runs the parseQueryString function.
+ * These changes set the playerPos & playerLocation stores */
+querystring.subscribe(() => parseQueryString());
 
-/* Set the query parameter after updating stores */
+
+/* Set the query parameter after updating stores, because we have set up a subscription to these.
+ * Any value changes on playerPos & playerLocation make this function run
+* And subsequently update the query string in the URL of the browser */
 export function updateQueryString() {
-  const x = get(playerPosX);
-  const y = get(playerPosY);
-  const l = get(playerLocationScene);
-  const h = get(playerLocationHouse);
+  const { x, y } = get(playerPos);
+  const { scene, house } = get(playerLocation);
 
-  // console.log('updateQueryString', x, y, l, get(querystring));
 
-  if (x !== null && y !== null && l !== null && h !== null) {
-    // console.log('updateQueryString called, querystring = ', get(querystring), x, y, l);
-
-    const newQuery = { ...parse(get(querystring)) };
-
-    // document.title = `ArtWorld — I am at ${newQuery.x} ${newQuery.y} - ${newQuery.location}`;
+  if (x !== null && y !== null && scene !== null) {
+    const query = { ...parse(get(querystring)) };
 
     let method = 'replace';
-    if (newQuery.location !== l || newQuery.house !== h) {
-      method = 'push';
+
+    const locationChanged = scene !== previousQuery?.location;
+
+
+    if (locationChanged) method = 'push';
+
+    // Set variables (as string)
+    query.x = Math.round(x).toString();
+    query.y = Math.round(y).toString();
+    query.location = scene;
+
+    // House can be optional, and should be removed from querystring if null or empty
+    if (scene !== DEFAULT_HOME || house === null) {
+      delete query.house;
+    } else {
+      query.house = house;
     }
 
-    newQuery.x = Math.round(x);
-    newQuery.y = Math.round(y);
-    newQuery.location = l;
-    newQuery.house = h;
-
-    if (method === 'push') {
-      push(`${get(location)}?${stringify(newQuery)}`);
-    } else {
-      replace(`${get(location)}?${stringify(newQuery)}`);
+    if (stringify(previousQuery) !== stringify(query)) {
+      const newLocation = `${get(location)}?${stringify(query)}`;
+      // Only scene or app changes should be added to the browser history
+      if (method === 'push') {
+        push(newLocation);
+        playerHistory.push(newLocation);
+        dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #00FF00');
+      } else {
+        // Location changes should just update the querystring..
+        // ..so the location remains available on deeplinks and reloads
+        replace(newLocation);
+        playerHistory.replace(newLocation);
+        dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #FF0000');
+      }
     }
   }
 }
 
-// TODO: Check if this runs just once..
-// console.log('Set up subscriptions');
 
-querystring.subscribe(() => parseQueryString());
-playerPosX.subscribe(() => updateQueryString());
-playerPosY.subscribe(() => updateQueryString());
-playerLocationScene.subscribe(() => updateQueryString());
-playerLocationHouse.subscribe(() => updateQueryString());
+
+
+/** Set up the subscriptions to stores that should update the querystring
+ *  In other words: any changes to playerPos and playerLocation stores
+ *  should become part of the browser location
+*/
+playerPos.subscribe(() => updateQueryString());
+playerLocation.subscribe(() => updateQueryString());
+
 
 

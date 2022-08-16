@@ -1,12 +1,38 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import { playerPosX, playerPosY } from '../playerState';
+import { playerPos } from '../playerState';
 
 const { Phaser } = window;
 
 class Move {
+  constructor() {
+    playerPos.subscribe((pos) => {
+      this.moveByPositionStores(pos);
+    });
+  }
+
+  /** Respond to changes in playerPos stores ( controlled through URLs or direct manipulation) */
+  moveByPositionStores(pos) {
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
+
+    const scene = ManageSession.currentScene;
+    if (scene && pos.x !== null) {
+      scene.player.x = artworldToPhaser2DX(
+        scene.worldSize.x,
+        pos.x,
+      );
+    }
+    if (scene && pos.y !== null) {
+      scene.player.y = artworldToPhaser2DY(
+        scene.worldSize.y,
+        pos.y,
+      );
+    }
+  }
+
   // checks if we are moving with keyboard arrowKeys
   moveByCursor(scene) {
     if (
@@ -133,8 +159,10 @@ class Move {
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
 
     // update last player position in manageSession for when the player is reloaded inbetween scenes
-    playerPosX.set(Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)));
-    playerPosY.set(Math.round(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)));
+    playerPos.set({
+      x: Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)),
+      y: Math.round(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)),
+    });
 
     // play "stop" animation
     this.movingAnimation(scene, 'stop');
