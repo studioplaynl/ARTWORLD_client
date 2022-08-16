@@ -16,8 +16,10 @@
   }
 
   async function goBack() {
-    playerHistory.pop();
-    pop();
+    if ($playerHistory.length > 1) {
+      playerHistory.pop();
+      pop();
+    }
   }
 
   async function zoomIn() {
@@ -44,16 +46,17 @@
       alt="Homepage"
     />
   </button>
-  {#if $playerHistory.length > 1}
-    <button on:click="{goBack}">
-      <img
-        class="TopIcon"
-        id="logo"
-        src="/assets/SHB/svg/AW-icon-previous.svg"
-        alt="Go back"
-      />
-    </button>
-  {/if}
+
+  <button on:click="{goBack}">
+    <img
+      class="TopIcon"
+      id="back"
+      class:showBack="{$playerHistory.length > 1}"
+      src="/assets/SHB/svg/AW-icon-previous.svg"
+      alt="Go back"
+    />
+  </button>
+
   <button on:click="{zoomOut}" id="zoomOut">
     <img
       class="TopIcon"
