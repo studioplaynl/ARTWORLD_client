@@ -1,8 +1,10 @@
 import { writable } from 'svelte/store';
 import { push } from 'svelte-spa-router';
+import { Session as NakamaSession } from '@heroiclabs/nakama-js';
 
 /** Session from localStorage */
 let storedSession = localStorage.getItem('Session');
+let storedSessionObject;
 
 /** User Profile from localStorage */
 const storedProfile = localStorage.getItem('Profile');
@@ -10,16 +12,14 @@ const storedProfile = localStorage.getItem('Profile');
 // If stored & expired, remove and forward to login..
 if (storedSession) {
   storedSession = JSON.parse(storedSession);
-  if ((`${storedSession.expires_at}000`) <= Date.now()) {
-    localStorage.removeItem('Profile'); // for logout
-    window.location.replace('/#/login');
-  }
+  storedSessionObject = new NakamaSession(storedSession.token, storedSession.refresh_token, storedSession.created);
+  // console.log('restoring session from localstorage:', storedSessionObject);
 }
 
 /** Session contains the user session from the Nakama server
  * @todo Create custom store with checks on the getter function (is expired? is valid? etc)
 */
-export const Session = writable(storedSession || null);
+export const Session = writable(storedSessionObject || null);
 Session.subscribe((value) => {
   if (value) {
     localStorage.setItem('Session', JSON.stringify(value));
