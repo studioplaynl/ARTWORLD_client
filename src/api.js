@@ -41,7 +41,8 @@ export async function login(email, _password) {
   return loginPromise;
 }
 
-export const logout = () => {
+export const logout = async () => {
+  await client.sessionLogout(get(Session));
   Profile.set(null);
 
   /** Setting Session to null automatically redirects you to login route */
