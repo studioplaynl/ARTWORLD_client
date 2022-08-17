@@ -18,7 +18,6 @@ export async function login(email, _password) {
       .authenticateEmail(email, _password, create)
       .then(async (response) => {
         const session = response;
-        // dlog('login, after authenticateEmail, session= ', session);
         Session.set(session);
         await getAccount();
         push(`/?${get(querystring)}`);
@@ -44,7 +43,6 @@ export async function login(email, _password) {
 export const logout = async () => {
   await client.sessionLogout(get(Session));
   Profile.set(null);
-
   /** Setting Session to null automatically redirects you to login route */
   Session.set(null);
 };
@@ -58,6 +56,20 @@ export async function checkLoginExpired() {
     return expired;
   }
   return null;
+}
+
+export async function restoreSession() {
+  const session = get(Session);
+
+  if (session) {
+    await client.sessionRefresh(session).then((newSession) => {
+      // dlog('sessionRefresh result', newSession);
+      Session.set(newSession);
+    });
+    // .catch((...args) => {
+    // dlog('sessionRefresh failed', args);
+    // });
+  }
 }
 
 export async function uploadImage(
@@ -100,7 +112,7 @@ export async function sessionCheck() {
   const payload = {};
   const rpcid = 'SessionCheck';
   const session = get(Session);
-  const response = await client.rpc(session, rpcid, payload);
+  await client.rpc(session, rpcid, payload);
   // eslint-disable-next-line no-console
   // dlog('sessionCheck result', response);
 }
@@ -207,8 +219,9 @@ export async function updateObject(type, name, value, pub, userID) {
       permission_read: permission,
       // "version": "*"
     };
-    const objectIDs = await client.writeStorageObjects(session, [object]);
-    console.info('Stored objects: %o', objectIDs);
+    // const objectIDs =
+    await client.writeStorageObjects(session, [object]);
+    // console.info('Stored objects: %o', objectIDs);
     Success.set(true);
   }
 }
@@ -376,7 +389,7 @@ export async function uploadAvatar(data) {
     avatar_url: jpegLocation,
   });
   CurrentApp.set('');
-  const Image = await convertImage(jpegLocation, '128', '1000', 'png');
+  await convertImage(jpegLocation, '128', '1000', 'png');
   // Profile.update((n) => { n.url = Image; return n });
   getAccount();
   Success.set(true);
@@ -388,7 +401,7 @@ export async function deleteFile(type, file, user) {
   const payload = { type, name: file, user };
   const session = get(Session);
   const rpcid = 'delete_file';
-  const fileurl = await client.rpc(session, rpcid, payload).catch((e) => {
+  await client.rpc(session, rpcid, payload).catch((e) => {
     throw e;
   });
   Success.set(true);
@@ -414,7 +427,7 @@ export async function addFriend(id, usernames) {
   }
   await client
     .addFriends(session, user_id, friends)
-    .then((status) => {
+    .then(() => {
       Success.set(true);
     })
     .catch((err) => {
@@ -443,7 +456,7 @@ export async function removeFriend(id, usernames) {
   }
   await client
     .deleteFriends(session, user_id, friends)
-    .then((status) => {
+    .then(() => {
       Success.set(true);
     })
     .catch((err) => {
