@@ -5,7 +5,7 @@ import CircleMaskImagePlugin from 'phaser3-rex-plugins/plugins/circlemaskimage-p
 import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin';
 import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin';
 import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin';
-
+import GesturesPlugin from 'phaser3-rex-plugins/plugins/gestures-plugin';
 // Load Scenes
 import PreloadScene from './scenes/PreloadScene';
 import UrlParser from './scenes/UrlParser';
@@ -63,6 +63,11 @@ export default {
         plugin: SpinnerPlugin,
         mapping: 'rexSpinner',
       },
+      {
+        key: 'rexGestures',
+        plugin: GesturesPlugin,
+        mapping: 'rexGestures',
+      },
     ],
 
     global: [
@@ -81,6 +86,7 @@ export default {
         plugin: OutlinePipelinePlugin,
         start: true,
       },
+
     ],
   }, // end plugins
 

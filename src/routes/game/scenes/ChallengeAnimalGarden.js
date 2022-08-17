@@ -1,18 +1,21 @@
+/* eslint-disable no-underscore-dangle */
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import {
   convertImage, listAllObjects,
 } from '../../../api';
 
+import Background from '../class/Background';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import GenerateLocation from '../class/GenerateLocation';
 import SceneSwitcher from '../class/SceneSwitcher';
 import Move from '../class/Move';
+import { dlog } from '../helpers/DebugLog';
 import { playerPos } from '../playerState';
+import { SCENE_INFO } from '../../../constants';
 
 
 const { Phaser } = window;
@@ -22,24 +25,14 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     super('ChallengeAnimalGarden');
 
     this.worldSize = new Phaser.Math.Vector2(4000, 1200);
-
+    this.location = 'ChallengeAnimalGarden';
     this.debug = false;
 
-    this.gameStarted = false;
     this.phaser = this;
     // this.playerPos
-    this.onlinePlayers = [];
 
-    this.newOnlinePlayers = [];
-
-    this.currentOnlinePlayer;
-    this.avatarName = [];
-    this.tempAvatarName = '';
-    this.loadedAvatars = [];
-
-    this.player;
-    this.playerShadow;
-
+    this.player = {};
+    this.playerShadow = {};
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
@@ -50,39 +43,10 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     // testing
     this.resolveLoadErrorCache = [];
 
-    this.homes = [];
-    this.homesRepreseneted = [];
-
-    this.offlineOnlineUsers;
-
-    this.location = 'ChallengeAnimalGarden';
-
-    // .......................REX UI ............
-    this.COLOR_PRIMARY = 0xff5733;
-    this.COLOR_LIGHT = 0xffffff;
-    this.COLOR_DARK = 0x000000;
-    this.data;
-    // ....................... end REX UI ......
-
-    this.cursors;
-    this.pointer;
-    this.isClicking = false;
-    this.cursorKeyIsDown = false;
-    this.swipeDirection = 'down';
-    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-
-    // pointer location example
-    // this.source // = player
-    this.target = new Phaser.Math.Vector2();
-    this.distance;
-    this.distanceTolerance = 9;
-
     // shadow
     this.playerShadowOffset = -8;
 
-    this.currentZoom;
-
-    // itemsbar
+    this.currentZoom = 1;
 
     // size for the artWorks
     this.artPreviewSize = 128;
@@ -98,65 +62,24 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
   async create() {
     //!
+    // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
+    let sceneInfo = SCENE_INFO.find(obj => obj.scene === this.scene.key);
+    this.worldSize.x = sceneInfo.sizeX
+    this.worldSize.y = sceneInfo.sizeY
     ManageSession.worldSize = this.worldSize;
     //!
 
-    // collection: "home"
-    // create_time: "2022-01-19T16:31:43Z"
-    // key: "Amsterdam"
-    // permission_read: 2
-    // permission_write: 1
-    // update_time: "2022-01-19T16:32:27Z"
-    // user_id: "4c0003f0-3e3f-4b49-8aad-10db98f2d3dc"
-    // value:
-    // url: "home/4c0003f0-3e3f-4b49-8aad-10db98f2d3dc/3_current.png"
-    // username: "user88"
-    // version: "0579e989a16f3e228a10d49d13dc3da6"
-    //!
+    const {
+      artworldToPhaser2DX, artworldToPhaser2DY,
+    } = CoordinatesTranslator;
 
-    // the order of creation is the order of drawing: first = bottom ...............................
+    this.handlePlayerMovement();
 
-    // Background.repeatingDots({
-    //     scene: this,
-    //     gridOffset: 80,
-    //     dotWidth: 2,
-    //     dotColor: 0x7300ed,
-    //     backgroundColor: 0xffffff,
-    // })
+    this.makeBackground();
+    
 
-    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
-    // make a repeating set of rectangles around the artworld canvas
-    const middleCoordinates = new Phaser.Math.Vector2(
-      artworldToPhaser2DX(this.worldSize.x, 0),
-      artworldToPhaser2DY(this.worldSize.y, 0),
-    );
-    this.borderRectArray = [];
-
-    for (let i = 0; i < 3; i++) {
-      this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i));
-      this.borderRectArray[i].setStrokeStyle(4 + i, 0x7300ed);
-
-      this.borderRectArray[i].x = middleCoordinates.x;
-      this.borderRectArray[i].y = middleCoordinates.y;
-    }
-
-    // used for world bounds collision detection
-    // this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
-
-    // create border rects
-    // alpha set to 0, to hide them
     const borderBoxWidth = 40;
-    // create
-    // let tempRectForCollision = this.add.rectangle(0, 0, this.worldSize.x, borderBoxWidth, 0xff0000, 1)
-    // let rt1 = this.add.renderTexture(0, 0, this.worldSize.x, borderBoxWidth)
-    // rt1.draw(tempRectForCollision)
-    // rt1.saveTexture("collisionWall")
-    // rt1.destroy()
-    // tempRectForCollision.destroy()
-
-    // this.collisionBorders = this.physics.add.staticGroup()
-    // this.collisionBorders.create(this.worldSize.x / 2, - (borderBoxWidth / 2), 'collisionWall')
 
     this.borderBoxNorth = this.add.rectangle(
       this.worldSize.x / 2,
@@ -202,24 +125,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.physics.add.existing(this.borderBoxWest);
     this.borderBoxWest.name = 'borderBoxWest';
 
-    // this.collisionBorders = this.physics.add.staticGroup(this.physics.world, this.scene, [this.borderBoxNorth, this.borderBoxSouth, this.borderBoxWest, this.borderBoxEast])
-    //!
-
-    //!
-    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
-      .setInteractive() // { useHandCursor: true }
-    // .on('pointerup', () => console.log('touched background'))
-      .on('pointerdown', () => {
-        ManageSession.playerIsAllowedToMove = true;
-      })
-      .setDepth(219)
-      .setOrigin(0)
-      .setVisible(false);
-
-    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
-    this.touchBackgroundCheck.input.alwaysEnabled = true;
-    //!
-    // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
     // End Background .........................................................................................
 
     // .......  PLAYER ....................................................................................
@@ -254,40 +159,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     // https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
     // ......... end PLAYER VS WORLD .......................................................................
 
-    //! needed for handling object dragging
-    this.input.on('dragstart', () => {
-
-    }, this);
-
-    this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-      // eslint-disable-next-line no-param-reassign
-      gameObject.x = dragX;
-      // eslint-disable-next-line no-param-reassign
-      gameObject.y = dragY;
-
-      if (gameObject.name === 'handle') {
-        gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
-      }
-    }, this);
-
-    this.input.on('dragend', function (pointer, gameObject) {
-      const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
-      const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
-
-      // store the original scale when selecting the gameObject for the first time
-      if (ManageSession.selectedGameObject != gameObject) {
-        ManageSession.selectedGameObject = gameObject;
-        ManageSession.selectedGameObject_startScale = gameObject.scale;
-        ManageSession.selectedGameObject_startPosition.x = gameObject.x;
-        ManageSession.selectedGameObject_startPosition.y = gameObject.y;
-        console.log('editMode info startScale:', ManageSession.selectedGameObject_startScale);
-      }
-      // ManageSession.selectedGameObject = gameObject
-
-      console.log('editMode info posX posY: ', worldX, worldY, 'scale:', ManageSession.selectedGameObject.scale, 'width*scale:', Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), 'height*scale:', Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), 'name:', ManageSession.selectedGameObject.name);
-    }, this);
-    //!
-
     //!
     Player.loadPlayerAvatar(this);
     //!
@@ -320,7 +191,8 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.animalHenk.setBodySize(500, 400);
     this.animalHenk.setData('moveAnim', 'moveAnim_Henk');
     this.animalHenk.setData('stopAnim', 'stopAnim_Henk');
-    console.log('this.animalHenk', this.animalHenk);
+    this.animalHenk.setDepth(20);
+    // dlog('this.animalHenk', this.animalHenk);
     // this.animalHenk.body.setCircle(200, 300, 300) // gives problems with collision with walls!
 
     // download all dier from all users
@@ -329,10 +201,10 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.getListOf('dier');
 
     // set a collider between the animal and the walls
-    this.physics.add.overlap(this.animalHenk, this.borderBoxSouth, this.animalWallCollide, null, this);
-    this.physics.add.overlap(this.animalHenk, this.borderBoxWest, this.animalWallCollide, null, this);
-    this.physics.add.overlap(this.animalHenk, this.borderBoxEast, this.animalWallCollide, null, this);
-    this.physics.add.overlap(this.animalHenk, this.borderBoxNorth, this.animalWallCollide, null, this);
+    this.physics.add.overlap(this.animalHenk, this.borderBoxSouth, ChallengeAnimalGarden.animalWallCollide, null, this);
+    this.physics.add.overlap(this.animalHenk, this.borderBoxWest, ChallengeAnimalGarden.animalWallCollide, null, this);
+    this.physics.add.overlap(this.animalHenk, this.borderBoxEast, ChallengeAnimalGarden.animalWallCollide, null, this);
+    this.physics.add.overlap(this.animalHenk, this.borderBoxNorth, ChallengeAnimalGarden.animalWallCollide, null, this);
 
     // set an overlap detection between the animal and the border of the canvas
     this.animalHenk.setVelocity(300, -300);
@@ -345,76 +217,180 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     });
 
     // this.animalHenk.on('pointerup', (pointer, x, y, gameobject) => {
-    //     console.log("pointer, x, y, gameobject", gameobject)
+    //     dlog("pointer, x, y, gameobject", gameobject)
     //     if (gameobject[0].name == "dier") {
     //         const tempStopAnim = gameobject[0].getData("stopAnim")
     //         gameobject[0].play(tempStopAnim)
     //         gameobject[0].setVelocity(0, 0)
     //         const tempDelay = Phaser.Math.Between(1000, 20000)
-    //         this.time.addEvent({ delay: tempDelay, callback: this.resumeAnimalMovement, args: [gameobject[0]], callbackScope: this, loop: false })
+    // this.time.addEvent({
+    //   delay: tempDelay,
+    //   callback: this.resumeAnimalMovement,
+    //   args: [gameobject[0]],
+    //   callbackScope: this,
+    //   loop: false,
+    // });
     //     }
     // })
 
-    console.log('this.animalHenk.body.velocity ', this.animalHenk.body.velocity);
+    dlog('this.animalHenk.body.velocity ', this.animalHenk.body.velocity);
   } // end create
 
+  handlePlayerMovement() {
+    //! DETECT dragging and mouseDown on rectangle
+    Background.rectangle({
+      scene: this,
+      posX: 0,
+      posY: 0,
+      color: 0xffff00,
+      alpha: 1,
+      width: this.worldSize.x,
+      height: this.worldSize.y,
+      name: 'touchBackgroundCheck',
+      setOrigin: 0,
+    });
+
+    this.touchBackgroundCheck
+    // draggable to detect player drag movement
+      .setInteractive({ draggable: true }) // { useHandCursor: true } { draggable: true }
+      .on('pointerup', () => {
+      })
+      .on('pointerdown', () => {
+        ManageSession.playerIsAllowedToMove = true;
+      })
+      .on('drag', (pointer, dragX, dragY) => {
+        this.input.manager.canvas.style.cursor = "grabbing";
+        // dlog('dragX, dragY', dragX, dragY);
+        // console.log('dragX, dragY', dragX, dragY);
+        // if we drag the touchBackgroundCheck layer, we update the player
+        // eslint-disable-next-line no-lonely-if
+
+        const moveCommand = 'moving';
+        const movementData = { dragX, dragY, moveCommand };
+        Move.moveByDragging(movementData);
+        ManageSession.movingByDragging = true;
+      })
+      .on('dragend', () => {
+        // check if player was moving by dragging
+        // otherwise movingByTapping would get a stop animation command
+        if (ManageSession.movingByDragging) {
+          this.input.manager.canvas.style.cursor = "default";
+          const moveCommand = 'stop';
+          const dragX = 0;
+          const dragY = 0;
+          const movementData = { dragX, dragY, moveCommand };
+          Move.moveByDragging(movementData);
+          ManageSession.movingByDragging = false;
+          ManageSession.playerIsAllowedToMove = false;
+        }
+      });
+
+    this.touchBackgroundCheck
+      .setDepth(219)
+      .setOrigin(0);
+    this.touchBackgroundCheck.setVisible(false);
+
+    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    this.touchBackgroundCheck.input.alwaysEnabled = true;
+    //! end DETECT dragging and mouseDown on rectangle
+
+    //! DoubleClick for moveByTapping
+    this.tapInput = this.rexGestures.add.tap({
+      enable: true,
+      // bounds: undefined,
+      time: 250,
+      tapInterval: 350,
+      // threshold: 9,
+      // tapOffset: 10,
+      // taps: undefined,
+      // minTaps: undefined,
+      // maxTaps: undefined,
+    })
+      .on('tap', () => {
+        // dlog('tap');
+      }, this)
+      .on('tappingstart', () => {
+        // dlog('tapstart');
+      })
+      .on('tapping', (tap) => {
+        // dlog('tapping', tap.tapsCount);
+        if (tap.tapsCount === 2) {
+          if (ManageSession.playerIsAllowedToMove) {
+            Move.moveByTapping(this);
+          }
+        }
+      });
+    //! doubleClick for moveByTapping
+  }
+
+makeBackground() {
+    // the order of creation is the order of drawing: first = bottom ...............................
+    Background.rectangle({
+      scene: this,
+      name: 'bgImageWhite',
+      posX: 0,
+      posY: 0,
+      setOrigin: 0,
+      color: 0xffffff,
+      alpha: 1,
+      width: this.worldSize.x,
+      height: this.worldSize.y,
+    });
+
+    Background.repeatingDots({
+      scene: this,
+      gridOffset: 80,
+      dotWidth: 2,
+      dotColor: 0x7300ed,
+      backgroundColor: 0xffffff,
+    });
+
+    // make a repeating set of rectangles around the artworld canvas
+    const middleCoordinates = new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
+    );
+    this.borderRectArray = [];
+
+    for (let i = 0; i < 3; i++) {
+      this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i));
+      this.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
+
+      this.borderRectArray[i].x = middleCoordinates.x;
+      this.borderRectArray[i].y = middleCoordinates.y;
+    }
+  }
+
   makeNewAnimal() {
-    console.log('this.animalKeyArray', this.animalKeyArray);
+    dlog('this.animalKeyArray', this.animalKeyArray);
 
     // destroy and empty the this.animalArray
     this.animalArray.forEach((element) => element.destroy());
     this.animalArray.length = 0;
 
-    this.animalKeyArray.forEach((element, index) => {
+    this.animalKeyArray.forEach((element) => {
       // this.animalKeyArray
       // download animal from this.animalKeyArray
 
       // we load the onlineplayer avatar, make a key for it
       const avatarKey = element;
 
-      console.log('this.textures.exists(avatarKey)', this.textures.exists(avatarKey), avatarKey);
+      // dlog('this.textures.exists(avatarKey)', this.textures.exists(avatarKey), avatarKey);
 
       if (this.textures.exists(avatarKey)) {
-        // console.log("avatarKey", avatarKey)
+        // dlog("avatarKey", avatarKey)
 
         const avatar = this.textures.get(avatarKey);
-        console.log('avatar', avatar);
+        dlog('avatar', avatar);
         const avatarWidth = avatar.frames.__BASE.width;
         const avatarHeight = avatar.frames.__BASE.height;
-        console.log('avatarWidth, avatarHeight', avatarWidth, avatarHeight);
+        dlog('avatarWidth, avatarHeight', avatarWidth, avatarHeight);
 
         const avatarFrames = Math.round(avatarWidth / avatarHeight);
-        console.log(avatarFrames);
+        dlog(avatarFrames);
 
         if (avatarFrames > 1) {
           // set names for the moving and stop animations
-
-          // tempAnimal.setData("movingKey", "moving" + "_" + avatarKey)
-          // tempAnimal.setData("stopKey", "stop" + "_" + avatarKey)
-          // console.log("tempAnimal.getData('movingKey')", tempAnimal.getData("movingKey"))
-
-          // create animation for moving
-          // if (!this.anims.exists(tempAnimal.getData("movingKey"))) {
-          // this.anims.create({
-          //     key: "move",
-          //     frames: this.anims.generateFrameNumbers("testdier", {
-          //         start: 0,
-          //         end: avatarFrames - 1,
-          //     }),
-          //     frameRate: (avatarFrames + 2) * 2,
-          //     repeat: -1,
-          //     yoyo: true,
-          // })
-
-          // //create animation for stop
-          // this.anims.create({
-          //     key: "stop",
-          //     frames: this.anims.generateFrameNumbers("testdier", {
-          //         start: 0,
-          //         end: 0,
-          //     }),
-          // })
-
           this.anims.create({
             key: `moving_${avatarKey}`,
             frames: this.anims.generateFrameNumbers(avatarKey, { start: 0, end: 2 }),
@@ -430,24 +406,55 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
             // repeat: -1,
             // yoyo: true
           });
-          const tempAnimal = this.physics.add.sprite(this.worldSize.x / 2 + Phaser.Math.Between(-100, 100), this.worldSize.y / 2 + Phaser.Math.Between(-100, 100), avatarKey)
-            .setDepth(200);
+          const tempAnimal = this.physics.add.sprite(
+            this.worldSize.x / 2 + Phaser.Math.Between(-100, 100),
+            this.worldSize.y / 2 + Phaser.Math.Between(-100, 100),
+            avatarKey,
+          )
+            .setDepth(20);
           tempAnimal.name = avatarKey;
 
-          tempAnimal.setData('moveAnim', 'moving' + `_${avatarKey}`);
-          tempAnimal.setData('stopAnim', 'stop' + `_${avatarKey}`);
+          tempAnimal.setData('moveAnim', `moving_${avatarKey}`);
+          tempAnimal.setData('stopAnim', `stop_${avatarKey}`);
 
           tempAnimal.play(tempAnimal.getData('moveAnim'));
           tempAnimal.name = 'dier';
 
           // set a collider between the animal and the walls
-          this.physics.add.overlap(tempAnimal, this.borderBoxSouth, this.animalWallCollide, null, this);
-          this.physics.add.overlap(tempAnimal, this.borderBoxWest, this.animalWallCollide, null, this);
-          this.physics.add.overlap(tempAnimal, this.borderBoxEast, this.animalWallCollide, null, this);
-          this.physics.add.overlap(tempAnimal, this.borderBoxNorth, this.animalWallCollide, null, this);
+          this.physics.add.overlap(
+            tempAnimal,
+            this.borderBoxSouth,
+            ChallengeAnimalGarden.animalWallCollide,
+            null,
+            this,
+          );
+          this.physics.add.overlap(
+            tempAnimal,
+            this.borderBoxWest,
+            ChallengeAnimalGarden.animalWallCollide,
+            null,
+            this,
+          );
+          this.physics.add.overlap(
+            tempAnimal,
+            this.borderBoxEast,
+            ChallengeAnimalGarden.animalWallCollide,
+            null,
+            this,
+          );
+          this.physics.add.overlap(
+            tempAnimal,
+            this.borderBoxNorth,
+            ChallengeAnimalGarden.animalWallCollide,
+            null,
+            this,
+          );
 
           // set random velocity and position
-          const randomVelocity = new Phaser.Math.Vector2(Phaser.Math.Between(500, (this.worldSize.x - 500)), Phaser.Math.Between(500, (this.worldSize.y - 500)));
+          // const randomVelocity = new Phaser.Math.Vector2(
+          //   Phaser.Math.Between(500, (this.worldSize.x - 500)),
+          //   Phaser.Math.Between(500, (this.worldSize.y - 500)),
+          // );
           tempAnimal.setVelocity(Phaser.Math.Between(-300, -500), Phaser.Math.Between(300, 600));
           // tempAnimal.setVelocity(300, -300)
           tempAnimal.setBounce(1).setInteractive().setDepth(200);
@@ -468,17 +475,14 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         // tempAnimal.displayWidth = width
         // tempAnimal.scaleY = tempAnimal.scaleX
 
-        // ...............................................................................................................................
-
+        // ...........................................................................................................
         // create default animation for moving
-      } else {
-
       }
     }); // end this.animalKeyArray.forEach
   } // end makeNewAnimal
 
   stopAnimalMovement(gameobject) {
-    // console.log("gameobject", gameobject)
+    // dlog("gameobject", gameobject)
     if (typeof gameobject.body !== 'undefined') {
       const tempAnim = gameobject.getData('stopAnim');
       gameobject.setVelocity(0, 0);
@@ -491,7 +495,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   }
 
   resumeAnimalMovement(gameobject) {
-    // console.log("gameobject", gameobject)
+    // dlog("gameobject", gameobject)
     const tempAnim = gameobject.getData('moveAnim');
     gameobject.setVelocity(Phaser.Math.Between(30, 400), Phaser.Math.Between(-30, -300));
     gameobject.play(tempAnim);
@@ -504,10 +508,10 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   async getListOf(displayName) {
     await listAllObjects('stopmotion', null).then((rec) => {
       // download all the drawings and then filter for "bloem"
-      this.userArtServerList = rec.filter((obj) => obj.permission_read == 2);
-      // console.log("this.userArtServerList", this.userArtServerList)
-      this.userArtServerList = this.userArtServerList.filter((obj) => obj.value.displayname == displayName);
-      console.log('this.userArtServerList', this.userArtServerList);
+      this.userArtServerList = rec.filter((obj) => obj.permission_read === 2);
+      // dlog("this.userArtServerList", this.userArtServerList)
+      this.userArtServerList = this.userArtServerList.filter((obj) => obj.value.displayname === displayName);
+      dlog('this.userArtServerList', this.userArtServerList);
       if (this.userArtServerList.length > 0) {
         this.userArtServerList.forEach((element, index, array) => {
           this.getUrlKeys(element, index, array);
@@ -516,19 +520,19 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     });
   }
 
-  async getUrlKeys(element, index, array) {
+  async getUrlKeys(element) {
     //! we are placing the artWorks 'around' (left and right of) the center of the world
-    const totalArtWorks = array.length;
+    // const totalArtWorks = array.length;
     const imageKeyUrl = element.value.url;
-    console.log('element.value.displayname', element.value.displayname);
-    console.log('imageKeyUrl', imageKeyUrl);
+    dlog('element.value.displayname', element.value.displayname);
+    dlog('imageKeyUrl', imageKeyUrl);
     const imgSize = '256'; // download as 512pixels
     const imageWidth = '10000';
     const fileFormat = 'png';
 
     if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
       // adds the image to the container if it is not yet in the list
-      const exists = this.animalKeyArray.some((element) => element == imageKeyUrl);
+      const exists = this.animalKeyArray.some((elementCheck) => elementCheck === imageKeyUrl);
       if (!exists) {
         this.animalKeyArray.push(imageKeyUrl);
       }
@@ -544,37 +548,35 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.load.on('filecomplete', (key) => {
       // on completion of each specific artwork
       // const currentImage = this.progress.find(element => element.imageKeyUrl == key)
-      console.log('filecomplete, key', key);
+      dlog('filecomplete, key', key);
       // we don't want to trigger any other load completions
       // if (currentImage) {
 
       // adds the image to the container if it is not yet in the list
-      const exists = this.animalKeyArray.some((element) => element == imageKeyUrl);
+      const exists = this.animalKeyArray.some((elementCheck) => elementCheck === imageKeyUrl);
       if (!exists) {
         const avatarKey = imageKeyUrl;
-        console.log('this.textures.exists(avatarKey)', this.textures.exists(avatarKey), avatarKey);
+        dlog('this.textures.exists(avatarKey)', this.textures.exists(avatarKey), avatarKey);
         const avatar = this.textures.get(avatarKey);
-        console.log('avatar', avatar);
+        dlog('avatar', avatar);
         const avatarWidth = avatar.frames.__BASE.width;
         const avatarHeight = avatar.frames.__BASE.height;
-        console.log('avatarWidth, avatarHeight', avatarWidth, avatarHeight);
+        dlog('avatarWidth, avatarHeight', avatarWidth, avatarHeight);
 
-        if (avatarHeight != 256) {
-          console.log('reloading the image', avatarHeight, this.convertedImage);
+        if (avatarHeight !== 256) {
+          dlog('reloading the image', avatarHeight, this.convertedImage);
           this.textures.remove(imageKeyUrl);
-          console.log('this.textures.exists(avatarKey)', this.textures.exists(avatarKey), avatarKey);
+          dlog('this.textures.exists(avatarKey)', this.textures.exists(avatarKey), avatarKey);
 
           this.downloadSpriteSheet(imageKeyUrl, (this.convertedImage), avatarHeight);
 
-          // this.load.spritesheet(imageKeyUrl, this.convertedImage, { frameWidth: avatarHeight, frameHeight: avatarHeight })
-          // // this.progress.push({ imageKeyUrl })
           // this.load.start() // start the load queue to get the image in memory
         } else {
-          console.log('avatarHeight should be 128', avatarHeight);
+          dlog('avatarHeight should be 128', avatarHeight);
           this.animalKeyArray.push(imageKeyUrl);
         }
       } else {
-        console.log('complete file already exists');
+        dlog('complete file already exists');
       }
 
       // }
@@ -583,186 +585,63 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.load.on('complete', () => {
       // finished downloading
       // replace flowers in the field
-      console.log('complete this.animalKeyArray', this.animalKeyArray);
+      dlog('complete this.animalKeyArray', this.animalKeyArray);
       //
       this.makeNewAnimal();
     });
   }// end downloadArt
 
   downloadSpriteSheet(imageKeyUrl, convertedUrl, height) {
-    console.log('convertedImage', convertedUrl);
+    dlog('convertedImage', convertedUrl);
     this.load.spritesheet(imageKeyUrl, convertedUrl, { frameWidth: height, frameHeight: height });
 
     this.load.start(); // start the load queue to get the image in memory
   }
 
-  animalWallCollide(animal, wall) {
-    // console.log("animal, wall", animal, wall)
-    // console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
+  static animalWallCollide(animal, wall) {
+    // dlog("animal, wall", animal, wall)
+    // dlog("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
 
     // left - right impact:
-    if (wall.name == 'borderBoxWest' || wall.name == 'borderBoxEast') {
-      animal.body.velocity.x = -Phaser.Math.Between(animal.body.velocity.x - 200, animal.body.velocity.x + 200);
-      // animal.body.velocity.x = -animal.body.velocity.x
+    if (wall.name === 'borderBoxWest' || wall.name === 'borderBoxEast') {
+      animal.body.setVelocity(-Phaser.Math.Between(animal.body.velocity.x - 200, animal.body.velocity.x + 200));
+      // animal.body.velocity.x = -Phaser.Math.Between(animal.body.velocity.x - 200, animal.body.velocity.x + 200);
       if (animal.body.velocity.x > 700 || animal.body.velocity.x < -700) {
-        animal.body.velocity.x = animal.body.velocity.x / 3;
+        animal.body.setVelocity(animal.body.velocity.x / 3);
+        //  animal.body.velocity.x /= 3;
       }
 
       if (animal.body.velocity.y < 170 && animal.body.velocity.y > -170) {
-        animal.body.velocity.y = animal.body.velocity.y * 2;
+        animal.body.setVelocity(animal.body.velocity.x * 2);
+        // animal.body.velocity.y *= 2;
       }
     }
 
     // up - down impact:
-    if (wall.name == 'borderBoxNorth' || wall.name == 'borderBoxSouth') {
-      animal.body.velocity.y = -Phaser.Math.Between(animal.body.velocity.y - 200, animal.body.velocity.y + 200);
+    if (wall.name === 'borderBoxNorth' || wall.name === 'borderBoxSouth') {
+      animal.body.setVelocity(-Phaser.Math.Between(animal.body.velocity.x - 200, animal.body.velocity.x + 200));
+      // animal.body.velocity.y = -Phaser.Math.Between(animal.body.velocity.y - 200, animal.body.velocity.y + 200);
       if (animal.body.velocity.y > 700 || animal.body.velocity.y < -700) {
-        animal.body.velocity.y = animal.body.velocity.y / 3;
+        animal.body.setVelocity(animal.body.velocity.x / 3);
+        // animal.body.velocity.y /= 3;
       }
 
       if (animal.body.velocity.x < 170 && animal.body.velocity.x > -170) {
-        animal.body.velocity.x = animal.body.velocity.x * 2;
+        animal.body.setVelocity(animal.body.velocity.x * 2);
+        // animal.body.velocity.x *= 2;
       }
-      // animal.body.velocity.y = -animal.body.velocity.y
     }
-    // console.log("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
-    // console.log("Math.abs(animal.body.velocity.y) + Math.abs(animal.body.velocity.x)", Math.abs(animal.body.velocity.y) + Math.abs(animal.body.velocity.x))
-    // animal.angle = Phaser.Math.RadToDeg(animal.body.angle) + 90
+    // dlog("animal.body.velocity angle", animal.body.velocity, Phaser.Math.RadToDeg(animal.body.angle))
     if (animal.body.velocity.x > 0) {
-      animal.flipX = false;
+      animal.setFlipX(false);
+      // animal.flipX = false;
     } else {
-      animal.flipX = true;
+      animal.setFlipX(true);
+      // animal.flipX = true;
     }
   }
 
-  generateLocations() {
-    // we set draggable on restart scene with a global flag
-
-    let locationVector = new Phaser.Math.Vector2(-1215, -589);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
-
-    //  if ( this.location1 != null ) this.location1.destroy()
-
-    this.location1 = new GenerateLocation({
-      scene: this,
-      type: 'isoBox',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'Location1',
-      locationImage: 'museum',
-      enterButtonImage: 'enter_button',
-      locationText: 'Location 1',
-      referenceName: 'Location1',
-      fontColor: 0x8dcb0e,
-      color1: 0xffe31f,
-      color2: 0xf2a022,
-      color3: 0xf8d80b,
-    });
-
-    //* set the particle first on 0,0 so they are below the mario_star
-    //* later move them relative to the mario_star
-    const particles = this.add.particles('music_quarter_note').setDepth(139);
-
-    const music_emitter = particles.createEmitter({
-      x: 0,
-      y: 0,
-      lifespan: { min: 2000, max: 8000 },
-      speed: { min: 80, max: 120 },
-      angle: { min: 270, max: 360 },
-      gravityY: -50,
-      gravityX: 50,
-      scale: { start: 1, end: 0 },
-      quantity: 1,
-      frequency: 1600,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-792, -1138);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
-
-    this.mario_star = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      size: 200,
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      internalUrl: 'mariosound',
-      locationImage: 'mario_star',
-      enterButtonImage: 'enter_button',
-      locationText: 'Mario Sound',
-      referenceName: 'MarioSound',
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-    this.mario_star.setDepth(140);
-
-    music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20);
-
-    locationVector = new Phaser.Math.Vector2(-2125, 1017);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
-
-    // this.pencil = this.add.image(locationVector.x, locationVector.y, "pencil")
-    // this.pencil.rotation = 0.12
-    // this.pencil.setInteractive()
-    // this.pencil.on('pointerup', () => CurrentApp.set("drawing"))
-
-    this.pencil = new GenerateLocation({
-      scene: this,
-      type: 'image',
-
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      appUrl: 'drawing',
-      locationImage: 'pencil',
-      enterButtonImage: 'enter_button',
-      locationText: 'drawingApp',
-      referenceName: 'drawingApp',
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-    this.pencil.rotation = 0.12;
-
-    locationVector = new Phaser.Math.Vector2(-1555, 809);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
-
-    this.animalGardenChallenge = new GenerateLocation({
-      scene: this,
-      type: 'image',
-
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'AnimalGardenChallenge',
-      locationImage: 'dinoA',
-      enterButtonImage: 'enter_button',
-      locationText: 'animal Garden',
-      referenceName: 'animalGardenChallenge',
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-  }
-
-  update(time, delta) {
+  update() {
     // zoom in and out of game
     this.gameCam.zoom = ManageSession.currentZoom;
 
@@ -775,22 +654,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
       this.playerShadow.x = this.player.x + this.playerShadowOffset;
       this.playerShadow.y = this.player.y + this.playerShadowOffset;
       // ........... end PLAYER SHADOW .........................................................................
-
-      // to detect if the player is clicking/tapping on one place or swiping
-      if (this.input.activePointer.downX != this.input.activePointer.upX) {
-        Move.moveBySwiping(this);
-      } else {
-        Move.moveByTapping(this);
-      }
-    } else {
-      // when in edit mode
-      // this.updateCurveGraphics()
     }
   } // update
-
-  updateCurveGraphics() {
-    this.curveGraphics.clear();
-    this.curveGraphics.lineStyle(60, 0xffff00, 1);
-    this.curve.draw(this.curveGraphics, 64);
-  }
 } // class

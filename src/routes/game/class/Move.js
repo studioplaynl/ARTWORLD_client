@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
-import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { playerPos } from '../playerState';
+// eslint-disable-next-line no-unused-vars
+import { dlog } from '../helpers/DebugLog';
 
 const { Phaser } = window;
 
@@ -51,6 +52,7 @@ class Move {
   movingAnimation(scene, animation) {
     // console.log('movingAnimation');
     if (animation === 'moving') {
+      // dlog('movingAnimation moving');
       scene.player.anims.play(scene.playerMovingKey, true);
       scene.playerShadow.anims.play(scene.playerMovingKey, true);
     }
@@ -97,6 +99,7 @@ class Move {
 
   moveObjectToTarget(scene, container, target, distance) {
     this.movingAnimation(scene, 'moving');
+    // dlog('this.moveObjectToTarget');
     // moving is done in Phaser coordinates, sending movement over the network is done in ArtworldCoordinates
     // we check if player stays in the world
     // keep the player in the world and send the moveTo commands
@@ -140,7 +143,7 @@ class Move {
   playerMovementTweenEnd() {
     const scene = ManageSession.currentScene;
     const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
-
+    // dlog('this.playerMovementTweenEnd');
     if (ManageSession.cameraShake) {
       // camera shake when player walks into bounds of world
       // (duration, intensity)
@@ -157,7 +160,7 @@ class Move {
 
     // send Stop command
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
-
+    // dlog('ManageSession.sendMoveMessage', scene.player.x, scene.player.y, 'stop');
     // update last player position in manageSession for when the player is reloaded inbetween scenes
     playerPos.set({
       x: Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)),
@@ -166,7 +169,6 @@ class Move {
 
     // play "stop" animation
     this.movingAnimation(scene, 'stop');
-    scene.isPlayerMoving = false;
   }
 
 
@@ -206,7 +208,7 @@ class Move {
 
         // console.log("moveBySwiping moveSpeed", moveSpeed)
 
-        scene.isPlayerMoving = true; // to stop the player when it reached its destination
+        this.movingAnimation(scene, 'stop'); // to stop the player when it reached its destination
 
         ManageSession.target.x = playerX + swipeX;
         ManageSession.target.y = playerY + swipeY;
@@ -239,7 +241,7 @@ class Move {
       tempVec.x = ManageSession.lastMoveCommand.posX;
       tempVec.y = ManageSession.lastMoveCommand.posY;
 
-      const moveDistance = Math.abs(ManageSession.target.length() - tempVec.length());
+      // const moveDistance = Math.abs(ManageSession.target.length() - tempVec.length());
 
       // console.log({ ManageSession.target, moveDistance, ManageSession.lastMoveCommand, tempVec});
 
@@ -249,7 +251,7 @@ class Move {
         scene,
         tempVec,
         ManageSession.target,
-        moveDistance,
+        0,
       );
     }
     if (moveCommand === 'moving') {
@@ -257,54 +259,45 @@ class Move {
       this.movingAnimation(scene, 'moving');
       scene.player.x -= dragX;
       scene.player.y -= dragY;
+
+      // keep player within world bounds
+      const halfAvatarSize = ManageSession.avatarSize / 2;
+
+      if (scene.player.x > scene.worldSize.x - halfAvatarSize) scene.player.x = scene.worldSize.x - halfAvatarSize;
+      if (scene.player.x < 0 + halfAvatarSize) scene.player.x = halfAvatarSize;
+      if (scene.player.y > scene.worldSize.y - halfAvatarSize) scene.player.y = scene.worldSize.y - halfAvatarSize;
+      if (scene.player.y < 0 + halfAvatarSize) scene.player.y = halfAvatarSize;
     }
   }
 
   moveByTapping(scene) {
-    if (!scene.input.activePointer.isDown && ManageSession.playerIsAllowedToMove) { //
-      // doubletap: first time mouse up
-      ManageSession.playerClicks = 1;
+    this.movingAnimation(scene, 'moving');
 
-      ManageSession.playerClickTime = scene.time.now;
-      // doubletap: second time mouse up
-      scene.input.on('pointerup', () => {
-        // doubletap: second time mouse up: count time in between clicks
-        const clickDelay = scene.time.now - ManageSession.playerClickTime;
+    const playerX = scene.player.x;
+    const playerY = scene.player.y;
 
-        // block too many clicks
-        if (clickDelay < 350 && ManageSession.playerClicks === 1) {
-          // block too many clicks
-          ManageSession.playerClicks = 0;
+    // mouse point after doubletap is target
+    ManageSession.target.x = scene.input.activePointer.worldX;
+    ManageSession.target.y = scene.input.activePointer.worldY;
 
-          // play "move" animation
-          // play the animation as soon as possible so it is more visible
-          scene.isPlayerMoving = true; // activate moving animation
+    ManageSession.swipeAmount.x = playerX - ManageSession.target.x;
+    ManageSession.swipeAmount.y = playerY - ManageSession.target.y;
 
-          const playerX = scene.player.x;
-          const playerY = scene.player.y;
+    const moveSpeed = ManageSession.swipeAmount.length() * 2;
 
-          // mouse point after doubletap is target
-          ManageSession.target.x = scene.input.activePointer.worldX;
-          ManageSession.target.y = scene.input.activePointer.worldY;
+    // console.log("moveByTapping moveSpeed", moveSpeed)
 
-          ManageSession.swipeAmount.x = playerX - ManageSession.target.x;
-          ManageSession.swipeAmount.y = playerY - ManageSession.target.y;
+    // generalized moving method
+    // send moveTo over network, calculate speed as function of distance
+    this.moveObjectToTarget(
+      scene,
+      scene.player,
+      ManageSession.target,
+      moveSpeed,
+    );
 
-          const moveDistance = ManageSession.swipeAmount.length() * 2;
-
-          // generalized moving method
-          // send moveTo over network, calculate speed as function of distance
-          this.moveObjectToTarget(
-            scene,
-            scene.player,
-            ManageSession.target,
-            moveDistance,
-          );
-        }
-      });
-      ManageSession.isClicking = false;
-      ManageSession.playerIsAllowedToMove = false;
-    }
+    ManageSession.isClicking = false;
+    ManageSession.playerIsAllowedToMove = false;
   }
 
   sendMovement(scene) {
