@@ -23,7 +23,7 @@
     const config = {
       parent: "phaserId",
   
-      type: Phaser.CANVAS, //WEBGL
+      type: Phaser.WEBGL, //WEBGL
       transparent: true, // for 3d scene
       
       domCreateContainer: false,
