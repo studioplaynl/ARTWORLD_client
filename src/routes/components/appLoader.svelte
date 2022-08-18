@@ -12,8 +12,9 @@
 
     let appOpen = false;
     let firstTry = true;
+    let upload;
 
-    export let params;
+    // export let params;
 
     const unsubscribe = CurrentApp.subscribe(async (value) => {
         if (firstTry) {
@@ -52,6 +53,8 @@
             getAccount(ManageSession.userProfile.id);
         }
 
+        if(appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar" || appOpen == "drawingchallenge") await upload();
+
         $CurrentApp = "";
         appOpen = "";
         push("/");
@@ -77,7 +80,7 @@
             <img src="assets/SHB/svg/AW-icon-cross.svg" />
         </div>
         {#if appOpen == "drawing" || appOpen == "stopmotion" || appOpen == "house" || appOpen == "avatar" || appOpen == "drawingchallenge"}
-            <DrawingApp bind:appType={appOpen} />
+            <DrawingApp bind:appType={appOpen} bind:upload={upload} />
         {/if}
         {#if appOpen == "mariosound"}
             <MarioSound />
