@@ -5,7 +5,7 @@ import { get } from 'svelte/store';
 import { push, querystring } from 'svelte-spa-router';
 import { client } from './nakama.svelte';
 import {
-  Session, Profile, Error, Success, CurrentApp,
+  Session, Profile, Error, Success,
 } from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 import { dlog } from './routes/game/helpers/DebugLog';

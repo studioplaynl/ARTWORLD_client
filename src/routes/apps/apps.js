@@ -6,6 +6,10 @@ export const APPS = [
   'house',
   'avatar',
   'drawingchallenge',
+  'dev_drawing',
+  'dev_stopmotion',
+  'dev_avatar',
+  'dev_house',
 ];
 
 export const DEFAULT_APP = 'game';

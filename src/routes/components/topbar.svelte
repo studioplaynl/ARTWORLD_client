@@ -1,5 +1,5 @@
 <script>
-  import { push, pop } from 'svelte-spa-router';
+  import { push, pop, link } from 'svelte-spa-router';
   import ManageSession from '../game/ManageSession';
   import { playerHistory } from '../game/playerState';
   import { DEFAULT_SCENE } from '../../constants';
@@ -78,6 +78,11 @@
       alt="Zoom in"
     />
   </button>
+
+  <a href="/dev_drawing" use:link>DRAWING</a>
+  <a href="/dev_stopmotion" use:link>STOP MOTION</a>
+  <a href="/dev_avatar" use:link>AVATAR</a>
+  <a href="/dev_house" use:link>HOUSE</a>
 </div>
 
 <style>
