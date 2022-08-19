@@ -5,12 +5,12 @@
   const dispatch = createEventDispatcher();
 
   function save() {
-    dispatch('save', file);
+    dispatch('save', file.id);
   }
 </script>
 
-<h1>New drawing App!</h1>
-{file}
+<h1>{file.id} - {file.type}</h1>
+
 <button on:click="{save}">Save this file</button>
 
-<img src="{file}" alt="" />
+<img src="{file.path}" alt="" />

@@ -14,14 +14,14 @@
 
   import AppContainer from './appContainer.svelte';
 
-  let currentFile = null;
+  let currentFile = {};
 
   async function closeApp() {
     if ($CurrentApp === 'avatar') {
       getAccount(ManageSession.userProfile.id);
     }
 
-    currentFile = null;
+    currentFile = {};
     // If a user has been here for a little while, just bring them where they were before
     if (get(playerHistory).length > 1) {
       pop();
@@ -72,23 +72,45 @@
       });
   }
 
+  $: hasCurrentFile = currentFile !== {};
+
   function load(type) {
     switch (type) {
       case 'dev_drawing':
         // TODO: Load file URL from server
-        currentFile = 'https://picsum.photos/id/1/400/300/';
+        currentFile = {
+          id: 123123,
+          type: 'drawing',
+          path: 'https://picsum.photos/id/1/400/300/',
+          frames: 1,
+        };
         break;
 
       case 'dev_stopmotion':
-        currentFile = 'https://picsum.photos/id/2/400/300/';
+        currentFile = {
+          id: 234234,
+          type: 'stopmotion',
+          path: 'https://picsum.photos/id/2/2000/400/',
+          frames: 5,
+        };
         break;
 
       case 'dev_house':
-        currentFile = 'https://picsum.photos/id/3/400/300/';
+        currentFile = {
+          id: 345345,
+          type: 'house',
+          path: 'https://picsum.photos/id/234/400/300/',
+          frames: 1,
+        };
         break;
 
       case 'dev_avatar':
-        currentFile = 'https://picsum.photos/id/4/400/300/';
+        currentFile = {
+          id: 456456,
+          type: 'avatar',
+          path: 'https://picsum.photos/id/1/1200/400/',
+          frames: 3,
+        };
         break;
 
       default:
@@ -103,13 +125,13 @@
     isValidApp($CurrentApp)}"
   on:close="{closeApp}"
 >
-  {#if $CurrentApp === 'dev_drawing' && currentFile}
+  {#if $CurrentApp === 'dev_drawing' && hasCurrentFile}
     <DevDrawing file="{currentFile}" on:save="{onSave}" />
-  {:else if $CurrentApp === 'dev_house' && currentFile}
+  {:else if $CurrentApp === 'dev_house' && hasCurrentFile}
     <DevDrawing file="{currentFile}" on:save="{onSave}" />
-  {:else if $CurrentApp === 'dev_stopmotion' && currentFile}
+  {:else if $CurrentApp === 'dev_stopmotion' && hasCurrentFile}
     <DevStopmotion file="{currentFile}" on:save="{onSave}" />
-  {:else if $CurrentApp === 'dev_avatar' && currentFile}
+  {:else if $CurrentApp === 'dev_avatar' && hasCurrentFile}
     <DevStopmotion file="{currentFile}" on:save="{onSave}" />
   {:else}
     <!-- Default = current solution -->
