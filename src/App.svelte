@@ -108,29 +108,30 @@
   const routes = {
     '/register': wrap({
       component: RegisterPage,
-      conditions: [() => isAdmin()],
+      conditions: [() => isAdmin],
     }),
     '/update/:user?': wrap({
       component: UpdatePage,
-      conditions: [() => isLoggedIn()],
+      conditions: [() => isLoggedIn],
     }),
     '/users': wrap({
       component: UsersPage,
-      conditions: [() => isLoggedIn()],
+      conditions: [() => isLoggedIn],
     }),
     '/friends': wrap({
       component: FriendsPage,
-      conditions: [() => isLoggedIn()],
+      conditions: [() => isLoggedIn],
     }),
     '/login/:user?/:password?': LoginPage,
     '/profile/:user?': wrap({
       component: ProfilePage,
-      conditions: [() => isLoggedIn()],
+      conditions: [() => isLoggedIn],
     }),
     '/debug': wrap({
       component: DebugPage,
-      conditions: [() => isAdmin()],
+      conditions: [() => isAdmin],
     }),
+
     // '/'
 
     // "/drawing/:user?/:name?/:version?": wrap({
@@ -168,15 +169,15 @@
     // }),
     '/upload/:user?/:name?': wrap({
       component: UploadPage,
-      conditions: [() => isModerator()],
+      conditions: [() => isModerator],
     }),
     '/admin': wrap({
       component: Admin,
-      conditions: [() => isAdmin()],
+      conditions: [() => isAdmin],
     }),
     '/moderator': wrap({
       component: ModeratePage,
-      conditions: [() => isModerator()],
+      conditions: [() => isModerator],
     }),
     // '/:app?/:user?/:name?/:version?': wrap({
     //   component: home,
@@ -209,3 +210,9 @@
 
 <!-- Notifcations go on to of everything -->
 <Notifications />
+
+<style>
+  main {
+    position: relative;
+  }
+</style>

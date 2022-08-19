@@ -41,10 +41,15 @@ export async function login(email, _password) {
 }
 
 export const logout = async () => {
-  await client.sessionLogout(get(Session));
-  Profile.set(null);
-  /** Setting Session to null automatically redirects you to login route */
-  Session.set(null);
+  try {
+    await client.sessionLogout(get(Session));
+  } catch (err) {
+    dlog('Failed logging out on server!', err);
+  } finally {
+    Profile.set(null);
+    /** Setting Session to null automatically redirects you to login route */
+    Session.set(null);
+  }
 };
 
 export async function checkLoginExpired() {

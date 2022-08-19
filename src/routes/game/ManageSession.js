@@ -5,6 +5,7 @@ import { client, SSL } from '../../nakama.svelte';
 import CoordinatesTranslator from './class/CoordinatesTranslator';
 import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
+import { logout } from '../../api';
 import {
   playerLocation, playerStreamID,
 } from './playerState';
@@ -90,6 +91,9 @@ class ManageSession {
     // timers
     this.updateMovementTimer = 0;
     this.updateMovementInterval = 30; // 20 fps
+
+
+    this.socketIsConnected = false;
   }
 
   /** Create Socket connection and listen for incoming streaming data, presence and notifications */
@@ -103,12 +107,12 @@ class ManageSession {
     dlog('this.userProfile', this.userProfile);
 
     const createStatus = true;
-    await this.socket.connect(get(Session), createStatus);
-    dlog('session created with socket');
+    this.socket.connect(get(Session), createStatus).then(() => {
+      this.socketIsConnected = true;
+      this.getStreamUsers('join');
+      dlog('Join:', get(playerLocation).scene);
+    });
 
-    dlog('Join:', get(playerLocation).scene);
-    // have to join a location to get stream presence events
-    await this.getStreamUsers('join');
 
     // Streaming data containing movement data for the players in our allConnectedUsers array
     this.socket.onstreamdata = (streamdata) => {
@@ -279,6 +283,14 @@ class ManageSession {
       dlog('Received %o', notif);
       dlog('Notification content %s', notif);
     };
+
+    // this.socket.onerror = (event) => {
+    // console.log('socket error!', event);
+    // };
+
+    this.socket.ondisconnect = async () => {
+      logout();
+    };
   } // end createSocket
 
   /** Get ...
@@ -297,7 +309,7 @@ class ManageSession {
 
     const streamUsersPromise = new Promise((resolve) => {
       this.socket.rpc(rpcCommand, location).then((rec) => {
-      //! the server reports all users in location except self_user
+        //! the server reports all users in location except self_user
         dlog(location);
         // get all online players = serverArray
         // create array for newUsers and create array for deleteUsers
