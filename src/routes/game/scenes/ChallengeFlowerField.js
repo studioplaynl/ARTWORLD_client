@@ -14,6 +14,7 @@ import GenerateLocation from '../class/GenerateLocation';
 import SceneSwitcher from '../class/SceneSwitcher';
 import Move from '../class/Move';
 import { playerPos } from '../playerState';
+import { SCENE_INFO } from '../../../constants';
 
 const { Phaser } = window;
 
@@ -21,25 +22,21 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   constructor() {
     super('ChallengeFlowerField');
 
-    this.worldSize = new Phaser.Math.Vector2(3000, 2000);
+    this.location = 'ChallengeFlowerField';
+    this.worldSize = new Phaser.Math.Vector2(0, 0);
 
     this.debug = false;
 
-    this.gameStarted = false;
     this.phaser = this;
-    // this.playerPos
-    this.onlinePlayers = [];
 
     this.newOnlinePlayers = [];
 
-    this.currentOnlinePlayer;
     this.avatarName = [];
     this.tempAvatarName = '';
     this.loadedAvatars = [];
 
-    this.player;
-    this.playerShadow;
-
+    this.player = {};
+    this.playerShadow = {};
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
@@ -50,39 +47,10 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     // testing
     this.resolveLoadErrorCache = [];
 
-    this.homes = [];
-    this.homesRepreseneted = [];
-
-    this.offlineOnlineUsers;
-
-    this.location = 'ChallengeFlowerField';
-
-    // .......................REX UI ............
-    this.COLOR_PRIMARY = 0xff5733;
-    this.COLOR_LIGHT = 0xffffff;
-    this.COLOR_DARK = 0x000000;
-    this.data;
-    // ....................... end REX UI ......
-
-    this.cursors;
-    this.pointer;
-    this.isClicking = false;
-    this.cursorKeyIsDown = false;
-    this.swipeDirection = 'down';
-    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-
-    // pointer location example
-    // this.source // = player
-    this.target = new Phaser.Math.Vector2();
-    this.distance;
-    this.distanceTolerance = 9;
-
     // shadow
     this.playerShadowOffset = -8;
 
-    this.currentZoom;
-
-    // itemsbar
+    this.currentZoom = 1;
 
     // size for the artWorks
     this.artPreviewSize = 128;
@@ -97,14 +65,18 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   }
 
   async create() {
+    //!
+    // get scene size from SCENE_INFO constants
+    // copy worldSize over to ManageSession, so that positionTranslation can be done there
+    let sceneInfo = SCENE_INFO.find(obj => obj.scene === this.scene.key);
+    this.worldSize.x = sceneInfo.sizeX
+    this.worldSize.y = sceneInfo.sizeY
+    ManageSession.worldSize = this.worldSize;
+    //!
+
     const {
       artworldToPhaser2DX, artworldToPhaser2DY, Phaser2DToArtworldY, Phaser2DToArtworldX,
     } = CoordinatesTranslator;
-
-    //!
-    // copy worldSize over to ManageSession, so that positionTranslation can be done there
-    ManageSession.worldSize = this.worldSize;
-    //!
 
     // collection: "home"
     // create_time: "2022-01-19T16:31:43Z"
@@ -120,6 +92,62 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
     // the order of creation is the order of drawing: first = bottom ...............................
 
+    this.makeBackground();
+    this.handlePlayerMovement();
+
+    this.everythingFlowerFlied()
+
+    // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
+    // End Background .........................................................................................
+
+    // .......  PLAYER ....................................................................................
+    //* create default player and playerShadow
+    //* create player in center with artworldCoordinates
+    this.player = new PlayerDefault(
+      this,
+      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
+      ManageSession.playerAvatarPlaceholder,
+    ).setDepth(201);
+
+    this.playerShadow = new PlayerDefaultShadow(
+      {
+        scene: this,
+        texture: ManageSession.playerAvatarPlaceholder,
+      },
+    ).setDepth(200);
+    // for back button, has to be done after player is created for the history tracking!
+    SceneSwitcher.pushLocation(this);
+
+    // ....... PLAYER VS WORLD .............................................................................
+    this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
+    this.gameCam.zoom = 1;
+    this.gameCam.startFollow(this.player);
+    this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
+    // https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
+    // ......... end PLAYER VS WORLD .......................................................................
+
+    //!
+    Player.loadPlayerAvatar(this);
+    //!
+  }// end create
+
+   makeBackground() {
+    // the order of creation is the order of drawing: first = bottom ...............................
+    Background.rectangle({
+      scene: this,
+      name: 'bgImageWhite',
+      posX: 0,
+      posY: 0,
+      setOrigin: 0,
+      color: 0xffffff,
+      alpha: 1,
+      width: this.worldSize.x,
+      height: this.worldSize.y,
+    });
+
+    // this.bgImage = this.add.image(0, 0, 'bgImageWhite').setOrigin(0);;
+
     Background.repeatingDots({
       scene: this,
       gridOffset: 80,
@@ -128,41 +156,112 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       backgroundColor: 0xffffff,
     });
 
+
     // make a repeating set of rectangles around the artworld canvas
     const middleCoordinates = new Phaser.Math.Vector2(
-      artworldToPhaser2DX(this.worldSize.x, 0),
-      artworldToPhaser2DY(this.worldSize.y, 0),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
     );
     this.borderRectArray = [];
 
     for (let i = 0; i < 3; i++) {
       this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i));
-      this.borderRectArray[i].setStrokeStyle(4 + i, 0x7300ed);
+      this.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
 
       this.borderRectArray[i].x = middleCoordinates.x;
       this.borderRectArray[i].y = middleCoordinates.y;
     }
+  }
 
-    this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
+ handlePlayerMovement() {
+    //! DETECT dragging and mouseDown on rectangle
+    Background.rectangle({
+      scene: this,
+      posX: 0,
+      posY: 0,
+      color: 0xffff00,
+      alpha: 1,
+      width: this.worldSize.x,
+      height: this.worldSize.y,
+      name: 'touchBackgroundCheck',
+      setOrigin: 0,
+    });
 
-    // create border rects
-    // alpha set to 0, to hide them
-    // const borderBoxWidth = 40
-    // this.borderBoxNorth = this.add.rectangle(this.worldSize.x / 2, - (borderBoxWidth / 2), this.worldSize.x, borderBoxWidth, 0xff0000, 0)
-    // this.physics.add.existing(this.borderBoxNorth)
+    this.touchBackgroundCheck
+    // draggable to detect player drag movement
+      .setInteractive({ draggable: true }) // { useHandCursor: true } { draggable: true }
+      .on('pointerup', () => {
+      })
+      .on('pointerdown', () => {
+        ManageSession.playerIsAllowedToMove = true;
+      })
+      .on('drag', (pointer, dragX, dragY) => {
+        this.input.manager.canvas.style.cursor = "grabbing";
+        // dlog('dragX, dragY', dragX, dragY);
+        // console.log('dragX, dragY', dragX, dragY);
+        // if we drag the touchBackgroundCheck layer, we update the player
+        // eslint-disable-next-line no-lonely-if
 
-    // this.borderBoxSouth = this.add.rectangle(this.worldSize.x / 2, (this.worldSize.y) + (borderBoxWidth / 2), this.worldSize.x, borderBoxWidth, 0xff0000, 0)
-    // this.physics.add.existing(this.borderBoxSouth)
+        const moveCommand = 'moving';
+        const movementData = { dragX, dragY, moveCommand };
+        Move.moveByDragging(movementData);
+        ManageSession.movingByDragging = true;
+      })
+      .on('dragend', () => {
+        // check if player was moving by dragging
+        // otherwise movingByTapping would get a stop animation command
+        if (ManageSession.movingByDragging) {
+          this.input.manager.canvas.style.cursor = "default";
+          const moveCommand = 'stop';
+          const dragX = 0;
+          const dragY = 0;
+          const movementData = { dragX, dragY, moveCommand };
+          Move.moveByDragging(movementData);
+          ManageSession.movingByDragging = false;
+          ManageSession.playerIsAllowedToMove = false;
+        }
+      });
 
-    // this.borderBoxEast = this.add.rectangle(this.worldSize.x + (borderBoxWidth / 2), this.worldSize.y / 2, borderBoxWidth, this.worldSize.x, 0xffff00, 0)
-    // this.physics.add.existing(this.borderBoxEast)
+    this.touchBackgroundCheck
+      .setDepth(219)
+      .setOrigin(0);
+    this.touchBackgroundCheck.setVisible(false);
 
-    // this.borderBoxWest = this.add.rectangle(0 - (borderBoxWidth / 2), this.worldSize.y / 2, borderBoxWidth, this.worldSize.x, 0xff00ff, 0)
-    // this.physics.add.existing(this.borderBoxWest)
+    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    this.touchBackgroundCheck.input.alwaysEnabled = true;
+    //! end DETECT dragging and mouseDown on rectangle
 
-    //!
-
-    // make background for flowers
+    //! DoubleClick for moveByTapping
+    this.tapInput = this.rexGestures.add.tap({
+      enable: true,
+      // bounds: undefined,
+      time: 250,
+      tapInterval: 350,
+      // threshold: 9,
+      // tapOffset: 10,
+      // taps: undefined,
+      // minTaps: undefined,
+      // maxTaps: undefined,
+    })
+      .on('tap', () => {
+        // dlog('tap');
+      }, this)
+      .on('tappingstart', () => {
+        // dlog('tapstart');
+      })
+      .on('tapping', (tap) => {
+        // dlog('tapping', tap.tapsCount);
+        if (tap.tapsCount === 2) {
+          if (ManageSession.playerIsAllowedToMove) {
+            Move.moveByTapping(this);
+          }
+        }
+      });
+    //! doubleClick for moveByTapping
+  }
+everythingFlowerFlied()
+{
+  // make background for flowers
     this.backgroundFlowerFieldFloor = this.add.graphics();
     this.backgroundFlowerFieldFloor.name = 'this.backgroundFlowerFieldFloor';
     // this.backgroundFlowerFieldFloor.fillGradientStyle(0xffff00, 0xffff00, 0x704d15, 0x704d15, 1)
@@ -234,88 +333,11 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
     this.makeFlowerFlied();
 
-    //!
-    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
-      .setInteractive() // { useHandCursor: true }
-    // .on('pointerup', () => console.log('touched background'))
-      .on('pointerdown', () => ManageSession.playerIsAllowedToMove = true)
-      .setDepth(219)
-      .setOrigin(0)
-      .setVisible(false);
-
-    this.touchBackgroundCheck.input.alwaysEnabled = true; // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
-    //!
-    // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
-    // End Background .........................................................................................
-
-    // .......  PLAYER ....................................................................................
-    //* create default player and playerShadow
-    //* create player in center with artworldCoordinates
-    this.player = new PlayerDefault(
-      this,
-      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
-      ManageSession.playerAvatarPlaceholder,
-    ).setDepth(201);
-
-    this.playerShadow = new PlayerDefaultShadow(
-      {
-        scene: this,
-        texture: ManageSession.playerAvatarPlaceholder,
-      },
-    ).setDepth(200);
-    // for back button, has to be done after player is created for the history tracking!
-    SceneSwitcher.pushLocation(this);
-
-    // ....... PLAYER VS WORLD .............................................................................
-    this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-    this.gameCam.zoom = 1;
-    this.gameCam.startFollow(this.player);
-    this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
-    // https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
-    // ......... end PLAYER VS WORLD .......................................................................
-
-    //! needed for handling object dragging
-    this.input.on('dragstart', () => {
-
-    }, this);
-
-    this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-      gameObject.x = dragX;
-      gameObject.y = dragY;
-
-      if (gameObject.name == 'handle') {
-        gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
-      }
-    }, this);
-
-    this.input.on('dragend', function (pointer, gameObject) {
-      const worldX = Math.round(Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
-      const worldY = Math.round(Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
-
-      // store the original scale when selecting the gameObject for the first time
-      if (ManageSession.selectedGameObject != gameObject) {
-        ManageSession.selectedGameObject = gameObject;
-        ManageSession.selectedGameObject_startScale = gameObject.scale;
-        ManageSession.selectedGameObject_startPosition.x = gameObject.x;
-        ManageSession.selectedGameObject_startPosition.y = gameObject.y;
-        console.log('editMode info startScale:', ManageSession.selectedGameObject_startScale);
-      }
-      // ManageSession.selectedGameObject = gameObject
-
-      console.log('editMode info posX posY: ', worldX, worldY, 'scale:', ManageSession.selectedGameObject.scale, 'width*scale:', Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale), 'height*scale:', Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale), 'name:', ManageSession.selectedGameObject.name);
-    }, this);
-    //!
-
-    //!
-    Player.loadPlayerAvatar(this);
-    //!
-
-    this.flowerKeyArray = ['flower'];
+     this.flowerKeyArray = ['flower'];
     // download all drawings "bloem" from allUsersChallenge
 
     this.getListOfBloem();
-  }// end create
+}
 
   async getListOfBloem() {
     await listAllObjects('drawing', null).then((rec) => {
@@ -626,13 +648,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       this.playerShadow.x = this.player.x + this.playerShadowOffset;
       this.playerShadow.y = this.player.y + this.playerShadowOffset;
       // ........... end PLAYER SHADOW .........................................................................
-
-      // to detect if the player is clicking/tapping on one place or swiping
-      if (this.input.activePointer.downX != this.input.activePointer.upX) {
-        Move.moveBySwiping(this);
-      } else {
-        Move.moveByTapping(this);
-      }
     } else {
       // when in edit mode
       // this.updateCurveGraphics()

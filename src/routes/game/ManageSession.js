@@ -9,7 +9,6 @@ import {
   playerLocation, playerStreamID,
 } from './playerState';
 
-
 const { Phaser } = window;
 
 /** Main utility class to share Game State between Phaser & Svelte  */
@@ -46,6 +45,7 @@ class ManageSession {
     this.swipeAmount = new Phaser.Math.Vector2(0, 0);
     this.target = new Phaser.Math.Vector2();
     this.distanceTolerance = 9;
+    this.movingByDragging = false;
     // movement of the player variables .......
 
 
@@ -84,7 +84,7 @@ class ManageSession {
     this.selectedGameObjectStartPosition = new Phaser.Math.Vector2(0, 0);
     // .....................................................................
 
-    this.gameStarted = false;
+    // this.gameStarted = false;
     this.launchLocation = 'Location1'; // default
 
     // timers
@@ -161,10 +161,10 @@ class ManageSession {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
               // because there the scene context is known
 
-              // // if there is an unfinished tween, stop it and stop the online player
-              if (typeof this[updateOnlinePlayer] !== 'undefined') {
-                this[updateOnlinePlayer].stop();
-              }
+              // if there is an unfinished tween, stop it and stop the online player
+              // if (typeof this[updateOnlinePlayer] !== 'undefined') {
+              //   this[updateOnlinePlayer].stop();
+              // }
 
               let positionVector = new Phaser.Math.Vector2(
                 data.posX,

@@ -303,7 +303,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
     this.enterArea.on('pointerdown', () => {
       // check when entering the location if it is an URL or scene
-
+      ManageSession.playerIsAllowedToMove = false;
       if (typeof this.internalUrl !== 'undefined') {
         dlog('internal url 1');
         this.scene.scene.pause();
@@ -414,6 +414,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.enterButton.setVisible(this.showing);
         this.enterShadow.setVisible(this.showing);
         this.enterArea.setVisible(this.showing);
+        ManageSession.playerIsAllowedToMove = false;
       }
     });
   }

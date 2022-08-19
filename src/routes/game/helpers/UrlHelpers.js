@@ -8,17 +8,19 @@ import {
   playerPos, playerLocation, playerHistory,
 } from '../playerState';
 import { CurrentApp } from '../../../session';
-import { DEFAULT_HOME, VALID_USER_SCENES } from '../../../constants';
+import { DEFAULT_HOME, VALID_USER_SCENES, SCENE_INFO } from '../../../constants';
 import { dlog } from './DebugLog';
 import { DEFAULT_APP, isValidApp } from '../../apps/apps';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ManageSession from '../ManageSession';
 
 
-const MIN_X = -5000;
-const MIN_Y = -5000;
-const MAX_X = 5000;
-const MAX_Y = 5000;
+const { Phaser } = window;
+
+let minX = -5000;
+let minY = -5000;
+let maxX = 5000;
+let maxY = 5000;
 
 let previousQuery = {};
 
@@ -79,19 +81,6 @@ export function parseQueryString() {
   const pos = get(playerPos);
   const newPlayerPosition = { x: pos.x, y: pos.y };
 
-  if ('x' in query && 'y' in query) {
-    const queryX = parseInt(query.x, 10);
-    const queryY = parseInt(query.y, 10);
-    if (pos.x !== queryX && !Number.isNaN(queryX)) {
-      newPlayerPosition.x = Math.max(MIN_X, Math.min(queryX, MAX_X));
-    }
-    if (pos.y !== queryY && !Number.isNaN(queryY)) {
-      newPlayerPosition.y = Math.max(MIN_Y, Math.min(queryY, MAX_Y));
-    }
-
-    dlog('setting position to', newPlayerPosition);
-    playerPos.set(newPlayerPosition);
-  }
 
 
   const newPlayerLocation = {};
@@ -111,6 +100,56 @@ export function parseQueryString() {
   // Update the playerLocation store if a scene was set
   if (newPlayerLocation?.scene) {
     playerLocation.set(newPlayerLocation);
+  }
+
+
+
+  // TODO: These boundries must be drawn from the current scene
+
+  if ('x' in query && 'y' in query) {
+    // TODO SOLUTION:
+    // url gets parsed before scene is loaded, so there is no way of knowing the
+    // scene size when onboarding the scene
+    // solution: set the sceneSize in a file, both scene and urlHelpers can read from it?
+    // but then we need to parse first the location?
+
+    const currentLocation = get(playerLocation);
+
+    // scene is not loaded, getting the info from SCENE_INFO
+    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === currentLocation.scene);
+
+    // dlog ("currentScene, sceneInfo", currentScene, sceneInfo)
+    const currentSceneSize = new Phaser.Math.Vector2(sceneInfo.sizeX, sceneInfo.sizeY);
+
+    minX = -(currentSceneSize.x / 2) + (ManageSession.avatarSize / 2);
+    maxX = (currentSceneSize.x / 2) - (ManageSession.avatarSize / 2);
+    minY = -(currentSceneSize.y / 2) + (ManageSession.avatarSize / 2);
+    maxY = (currentSceneSize.y / 2) - (ManageSession.avatarSize / 2);
+
+    // TODO SOLUTION end
+
+    const queryX = parseInt(query.x, 10);
+    const queryY = parseInt(query.y, 10);
+    // dlog(pos, queryX, queryY);
+    if (pos.x !== queryX) {
+      if (Number.isNaN(queryX)) {
+        // set it to prev player pos
+        newPlayerPosition.x = Math.max(minX, Math.min(pos.x, maxX));
+      } else {
+        newPlayerPosition.x = Math.max(minX, Math.min(queryX, maxX));
+      }
+    }
+    if (pos.y !== queryY) {
+      if (Number.isNaN(queryY)) {
+        // set it to prev player pos
+        newPlayerPosition.y = Math.max(minX, Math.min(pos.y, maxX));
+      } else {
+        newPlayerPosition.y = Math.max(minY, Math.min(queryY, maxY));
+      }
+    }
+
+    dlog('setting position to', newPlayerPosition);
+    playerPos.set(newPlayerPosition);
   }
 
   if (stringify({ ...query }) !== stringify({ ...previousQuery })) {

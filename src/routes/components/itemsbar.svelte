@@ -251,7 +251,7 @@
     > -->
 
       <span>-</span>
-      <button on:click="{logout}">
+      <button on:click="{() => { current = ''; logout(); }}">
         <img
           class="icon"
           src="assets/SHB/svg/AW-icon-exit.svg"

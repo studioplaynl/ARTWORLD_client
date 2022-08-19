@@ -47,6 +47,7 @@ class GraffitiWall {
 
       ManageSession.graffitiDrawing = true;
       this.isClicking = true;
+      ManageSession.playerIsAllowedToMove = false;
       const hsv = Phaser.Display.Color.HSVColorWheel();
       const i = color;
       dlog('hsv[i].color', hsv[i].color);
@@ -70,6 +71,7 @@ class GraffitiWall {
         // var points = pointer.getInterpolatedPosition(30)
         ManageSession.graffitiDrawing = true;
         this.isClicking = true;
+        ManageSession.playerIsAllowedToMove = false;
         const hsv = Phaser.Display.Color.HSVColorWheel();
         const i = color;
 
@@ -142,14 +144,14 @@ class GraffitiWall {
   }
 }
 
-// TODO remove?
-function dataURItoBlob(dataURI) {
-  const binary = atob(dataURI.split(',')[1]);
-  const array = [];
-  for (let i = 0; i < binary.length; i++) {
-    array.push(binary.charCodeAt(i));
-  }
-  return new Blob([new Uint8Array(array)], { type: 'image/png' });
-}
+// TODO store a drawing server side
+// function dataURItoBlob(dataURI) {
+//   const binary = atob(dataURI.split(',')[1]);
+//   const array = [];
+//   for (let i = 0; i < binary.length; i++) {
+//     array.push(binary.charCodeAt(i));
+//   }
+//   return new Blob([new Uint8Array(array)], { type: 'image/png' });
+// }
 
 export default new GraffitiWall();

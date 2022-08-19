@@ -1,12 +1,5 @@
-import { CONFIG } from '../../../constants';
 import ManageSession from '../ManageSession';
-import { getAccount } from '../../../api';
-
-import PlayerDefault from '../class/PlayerDefault';
-import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
-import Player from '../class/Player';
 import Preloader from '../class/Preloader';
-import BouncingBird from '../class/BouncingBird';
 import Background from '../class/Background';
 import DebugFuntions from '../class/DebugFuntions';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
@@ -19,58 +12,25 @@ export default class TestCoordinates extends Phaser.Scene {
     super('TestCoordinates');
 
     this.location = 'TestCoordinates';
-
     this.worldSize = new Phaser.Math.Vector2(600, 600);
 
     this.debug = false;
 
-    this.gameStarted = false;
     this.phaser = this;
-    // this.playerPos;
-    this.onlinePlayers = [];
 
-    this.newOnlinePlayers = [];
-
-    this.currentOnlinePlayer;
-    this.avatarName = [];
-    this.tempAvatarName = '';
-    this.loadedAvatars = [];
-
-    this.player;
-    this.playerShadow;
-
+    this.player = {};
+    this.playerShadow = {};
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.playerAvatarKey = '';
 
-    this.offlineOnlineUsers;
-
-    // .......................REX UI ............
-    this.COLOR_PRIMARY = 0xff5733;
-    this.COLOR_LIGHT = 0xffffff;
-    this.COLOR_DARK = 0x000000;
-    this.data;
-    // ....................... end REX UI ......
-
-    this.cursors;
-    this.pointer;
-    this.isClicking = false;
-    this.cursorKeyIsDown = false;
-    this.swipeDirection = 'down';
-    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-
-    // pointer location example
-    // this.source // = player
-    this.target = new Phaser.Math.Vector2();
-    this.distance;
-
     // shadow
     this.playerShadowOffset = -8;
 
-    this.currentZoom;
-    this.UIScene;
+    this.currentZoom = 1;
+    this.UIScene = {};
 
-    this.text1;
+    this.text1 = '';
   }
 
   async preload() {
