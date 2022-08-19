@@ -20,7 +20,7 @@ export async function login(email, _password) {
         const session = response;
         Session.set(session);
         await getAccount();
-        push(`/?${get(querystring)}`);
+        push(`/game?${get(querystring)}`);
         setLoader(false);
         resolve(session);
       })
@@ -63,12 +63,14 @@ export async function restoreSession() {
 
   if (session) {
     await client.sessionRefresh(session).then((newSession) => {
-      // dlog('sessionRefresh result', newSession);
       Session.set(newSession);
-    });
-    // .catch((...args) => {
-    // dlog('sessionRefresh failed', args);
-    // });
+    })
+      .catch((...args) => {
+        dlog('sessionRefresh failed', args);
+        logout();
+        // Session.set(null);
+        // Profile.set(null);
+      });
   }
 }
 
@@ -388,7 +390,7 @@ export async function uploadAvatar(data) {
   await client.updateAccount(session, {
     avatar_url: jpegLocation,
   });
-  CurrentApp.set('');
+  // CurrentApp.set(''); <--- uitgezet, zou via URL moeten werken?
   await convertImage(jpegLocation, '128', '1000', 'png');
   // Profile.update((n) => { n.url = Image; return n });
   getAccount();

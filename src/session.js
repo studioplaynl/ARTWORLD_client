@@ -50,7 +50,7 @@ export const Notification = writable();
 export const Success = writable();
 
 /** Contains current artApp that was loaded */
-export const CurrentApp = writable();
+export const CurrentApp = writable(null);
 
 /** Contains multiple steps of (the current) Tutorial
  * @todo Remove or extend to multiple messages array? */

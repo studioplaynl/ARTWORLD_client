@@ -37,11 +37,16 @@
     email = params.user || 'user1@vrolijkheid.nl';
     password = params.password || 'somesupersecretpassword';
     if ($Session?.token && checkLoginExpired() !== true) {
-      // TODO: If a user tried loading a deeplink, this should not transfer them back to the index page..
-      push(`/?${$querystring}`); // No app..
+      // Note: should a previous position of the user be available in Profile.meta,
+      // they will be redirected there after the push below
+      push(`/game?${$querystring}`);
     }
   });
 </script>
+
+<svelte:head>
+  <title>Log in — ArtWorld</title>
+</svelte:head>
 
 <main>
   <div class="device-type">

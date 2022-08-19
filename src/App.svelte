@@ -3,7 +3,7 @@
   import { onMount, tick } from 'svelte';
   import { wrap } from 'svelte-spa-router/wrap';
   import Phaser from 'phaser';
-  import { Session, Profile, Error } from './session';
+  import { CurrentApp, Session, Profile, Error } from './session';
   import {
     sessionCheck,
     checkLoginExpired,
@@ -36,6 +36,7 @@
 
   import gameConfig from './routes/game/gameConfig';
   import { playerPos, playerLocation } from './routes/game/playerState';
+  import { DEFAULT_APP } from './routes/apps/apps';
 
   let game;
   let mounted = false;
@@ -87,6 +88,10 @@
       t = `${$playerLocation.house} - ${t}`;
     } else if ($playerLocation.scene) {
       t = `${$playerLocation.scene} - ${t}`;
+    }
+
+    if ($CurrentApp && $CurrentApp !== DEFAULT_APP) {
+      t = `${$CurrentApp} — Artworld`;
     }
 
     if (t === '') t = 'ArtWorld';
@@ -178,27 +183,6 @@
     //   conditions: [() => isLoggedIn()],
     // }),
   };
-
-  // function routeLoading(event) {
-  // console.log('router::querystring routeLoading event');
-  // console.log('router::querystring Route', event.detail.route);
-  // console.log('router::querystring Location', event.detail.location);
-  // console.log('router::querystring Querystring', event.detail.querystring);
-  // console.log('router::querystring User data', event.detail.userData);
-  // }
-
-  // function routeLoaded(event) {
-  // console.log('router::querystring routeLoaded event');
-  // // The first 5 properties are the same as for the routeLoading event
-  // console.log('router::querystring Route', event.detail.route);
-  // console.log('router::querystring Location', event.detail.location);
-  // console.log('router::querystring Querystring', event.detail.querystring);
-  // console.log('router::querystring Params', event.detail.params);
-  // console.log('router::querystring User data', event.detail.userData);
-  // // The last two properties are unique to routeLoaded
-  // console.log('router::querystring Component', event.detail.component); // This is a Svelte component, so a function
-  // console.log('router::querystring Name', event.detail.name);
-  // }
 </script>
 
 <svelte:head>

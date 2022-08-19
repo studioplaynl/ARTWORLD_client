@@ -338,8 +338,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       }
 
       if (typeof this.appUrl !== 'undefined') {
-        dlog('CurrentApp.set(this.appUrl)', this.appUrl);
-        CurrentApp.set(this.appUrl);
+        // Add a leading slash as apps should reflect URLs
+        if (this.appUrl.split('')[0] !== '/') this.appUrl = `/${this.appUrl}`;
+        dlog('push(this.appUrl)', this.appUrl);
+        push(this.appUrl);
       }
 
       SceneSwitcher.switchScene(this.locationDestination, this.userHome);

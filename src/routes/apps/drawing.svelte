@@ -684,7 +684,6 @@
 
   const createURL = async () => {
     displayName = await getRandomName();
-    console.log('displayname', displayName);
     replace(`/${appType}/${$Session.user_id}/${displayName}`);
   };
 
@@ -1632,24 +1631,6 @@
   .canvas-frame-container {
     display: flex;
     flex-direction: row;
-  }
-
-  .topbar {
-    width: unset;
-  }
-
-  .topbar {
-    float: left;
-    height: 100vh;
-  }
-
-  .topbar > div {
-    display: inline-grid;
-    position: relative;
-    top: 50%;
-    margin: 10px;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
   }
 
   #frame-bar > div:last-child {

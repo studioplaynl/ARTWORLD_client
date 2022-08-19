@@ -1,6 +1,7 @@
 <script>
+  import { push } from 'svelte-spa-router';
   import { onDestroy, onMount } from 'svelte';
-  import { Profile, CurrentApp } from '../../session';
+  import { Profile } from '../../session';
   import { convertImage, setAvatar } from '../../api';
   import { dlog } from '../game/helpers/DebugLog';
 
@@ -82,7 +83,7 @@
 <button
   class="avatar"
   on:click="{() => {
-    CurrentApp.set('avatar');
+    push('/avatar');
   }}"
 >
   <img bind:this="{image}" src="{url}" alt="My Avatar" />

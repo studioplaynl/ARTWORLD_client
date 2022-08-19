@@ -19,6 +19,7 @@ export const playerStreamID = derived(
   },
 );
 
+
 function createHistory() {
   const playerHistoryStore = writable([]);
 
@@ -51,6 +52,16 @@ function createHistory() {
       dlog('pop history =', get(playerHistoryStore));
     },
 
+
+    previous: () => {
+      const hist = get(playerHistoryStore);
+      const historyLength = hist.length;
+      if (historyLength > 0) {
+        return hist[historyLength - 1];
+      }
+      return null;
+    },
+
     // Search for most recent visit to page (by string, for instance: getAt('Artworld'))
     getAt: (page) => {
       const filtered = get(playerHistoryStore).reverse().filter((el) => (el.indexOf(page) > -1));
@@ -61,6 +72,8 @@ function createHistory() {
   };
 }
 
+
+/** playerHistory gives us access to a bit more information than just pushing/popping on window.history */
 export const playerHistory = createHistory();
 
 window.getPlayerHistory = () => {

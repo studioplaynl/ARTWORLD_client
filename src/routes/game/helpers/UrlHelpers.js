@@ -7,8 +7,13 @@ import {
 import {
   playerPos, playerLocation, playerHistory,
 } from '../playerState';
+import { CurrentApp } from '../../../session';
 import { DEFAULT_HOME, VALID_USER_SCENES } from '../../../constants';
 import { dlog } from './DebugLog';
+import { DEFAULT_APP, isValidApp } from '../../apps/apps';
+import SceneSwitcher from '../class/SceneSwitcher';
+import ManageSession from '../ManageSession';
+
 
 const MIN_X = -5000;
 const MIN_Y = -5000;
@@ -17,20 +22,70 @@ const MAX_Y = 5000;
 
 let previousQuery = {};
 
+export const checkIfSceneIsAllowed = (loc) => {
+  const lowercaseScenes = VALID_USER_SCENES.map((scene) => scene.toLowerCase());
+  return loc && lowercaseScenes.indexOf(loc.toLowerCase()) > -1;
+};
+
+export const checkIfLocationLooksLikeAHouse = (loc) => loc !== null && loc.split('-').length > 3;
+
+
+/** Parse the URL and set currentApp accordingly */
+export function parseURL() {
+  const loc = get(location);
+  const parts = loc.split('/');
+
+  // In case of error in url
+  if (parts.length < 1) return;
+
+  let appName = parts[1].toString().toLowerCase();
+  const previousAppName = get(CurrentApp);
+
+  // An empty appName is no longer supported, /game is default
+  if (appName === '') {
+    appName = DEFAULT_APP;
+    replace(`/${appName}?${get(querystring)}`);
+    playerHistory.replace(`/${appName}?${get(querystring)}`);
+  }
+
+  if (`/${appName}` !== playerHistory.previous()) {
+    playerHistory.push(`/${appName}`);
+  }
+
+  // Check if a valid app..
+  if (isValidApp(appName)) {
+    CurrentApp.set(appName);
+    if (appName === DEFAULT_APP) {
+      SceneSwitcher.startSceneCloseApp(
+        ManageSession.currentScene,
+        previousAppName,
+      );
+    } else {
+      SceneSwitcher.pauseSceneStartApp(
+        ManageSession.currentScene,
+        appName,
+      );
+    }
+  }
+}
+
+location.subscribe(() => parseURL());
+
+
+
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
   const query = parse(get(querystring));
   const pos = get(playerPos);
   const newPlayerPosition = { x: pos.x, y: pos.y };
 
-  // TODO: These boundries must be drawn from the current scene
   if ('x' in query && 'y' in query) {
     const queryX = parseInt(query.x, 10);
     const queryY = parseInt(query.y, 10);
-    if (pos.x !== queryX) {
+    if (pos.x !== queryX && !Number.isNaN(queryX)) {
       newPlayerPosition.x = Math.max(MIN_X, Math.min(queryX, MAX_X));
     }
-    if (pos.y !== queryY) {
+    if (pos.y !== queryY && !Number.isNaN(queryY)) {
       newPlayerPosition.y = Math.max(MIN_Y, Math.min(queryY, MAX_Y));
     }
 
@@ -42,16 +97,13 @@ export function parseQueryString() {
   const newPlayerLocation = {};
 
   if ('house' in query) {
-    const looksLikeHouse = query.house.split('-').length > 3;
-    if (looksLikeHouse && get(playerLocation).house !== query.house) {
+    if (checkIfLocationLooksLikeAHouse(query.house) && get(playerLocation).house !== query.house) {
       newPlayerLocation.house = query.house;
     }
   }
 
   if ('location' in query) {
-    const lowercaseScenes = VALID_USER_SCENES.map((scene) => scene.toLowerCase());
-    const validSceneName = lowercaseScenes.indexOf(query.location.toLowerCase()) > -1;
-    if (validSceneName && get(playerLocation).scene !== query.location) {
+    if (checkIfSceneIsAllowed(query.location) && get(playerLocation).scene !== query.location) {
       newPlayerLocation.scene = query.location;
     }
   }
@@ -62,10 +114,10 @@ export function parseQueryString() {
   }
 
   if (stringify({ ...query }) !== stringify({ ...previousQuery })) {
-    // console.log('query diff!', { ...query }, { ...previousQuery });
     previousQuery = { ...query };
   }
 }
+
 /** Set up a subscription to the querystring (from svelte-spa-router)
  * (in other words: set up a listener to the current query string of the browser window)
  * Any changes to the querystring runs the parseQueryString function.
@@ -83,13 +135,8 @@ export function updateQueryString() {
 
   if (x !== null && y !== null && scene !== null) {
     const query = { ...parse(get(querystring)) };
-
-    let method = 'replace';
-
-    const locationChanged = scene !== previousQuery?.location;
-
-
-    if (locationChanged) method = 'push';
+    const locationChanged = 'location' in previousQuery && scene !== previousQuery?.location;
+    const method = locationChanged ? 'push' : 'replace';
 
     // Set variables (as string)
     query.x = Math.round(x).toString();
@@ -120,9 +167,6 @@ export function updateQueryString() {
     }
   }
 }
-
-
-
 
 /** Set up the subscriptions to stores that should update the querystring
  *  In other words: any changes to playerPos and playerLocation stores

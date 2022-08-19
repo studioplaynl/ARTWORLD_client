@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { push } from 'svelte-spa-router';
   import { Profile, CurrentApp } from '../../session';
   import { convertImage, getObject } from '../../api';
   import SceneSwitcher from '../game/class/SceneSwitcher';
@@ -84,7 +85,7 @@
     on:click="{() => {
       // show = !show;
       // showHistory = false;
-      CurrentApp.set('house');
+      push('/house');
     }}"
   >
     <img alt="My House" id="house" src="{houseUrl}" />
@@ -101,7 +102,7 @@
       alt="Edit House"
       src="/assets/SHB/svg/AW-icon-pen.svg"
       on:click="{() => {
-        CurrentApp.set('house');
+        push('/house');
       }}"
     />
     <img

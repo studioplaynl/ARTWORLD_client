@@ -1,20 +1,17 @@
 <script>
-  import { location } from 'svelte-spa-router';
+  import { location, push } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
-  import {
-    convertImage, getAccount, getObject, logout,
-  } from '../../api';
+  import { convertImage, getAccount, getObject, logout } from '../../api';
   import ProfilePage from '../profile.svelte';
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
-  import { Profile, CurrentApp, ShowItemsBar } from '../../session';
+  import { Profile, ShowItemsBar } from '../../session';
   import Awards from '../awards.svelte';
   import { Addressbook } from '../../storage';
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
-  import { isValidApp } from '../apps/apps';
 
   // TODO: current moet een store worden, zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties)
   let current;
@@ -140,21 +137,13 @@
 
   async function goHome(id) {
     if (typeof id === 'string') {
-      SceneSwitcher.switchScene(
-        'DefaultUserHome',
-        id,
-      );
+      SceneSwitcher.switchScene('DefaultUserHome', id);
     } else if ($ShowItemsBar) {
       SceneSwitcher.switchScene(
         'DefaultUserHome',
         ManageSession.userProfile.id,
       );
     }
-  }
-
-  async function goApp(App) {
-    // SceneSwitcher.pauseSceneStartApp(ManageSession.currentScene, App)
-    if (isValidApp(App)) CurrentApp.set(App);
   }
 </script>
 
@@ -221,7 +210,7 @@
       <button
         on:click="{() => {
           // toggleLiked();
-          goApp('drawing');
+          push('/drawing');
         }}"
       >
         <img
@@ -233,7 +222,7 @@
 
       <button
         on:click="{() => {
-          goApp('stopmotion');
+          push('/stopmotion');
         }}"
       >
         <img
