@@ -8,7 +8,7 @@ import {
   playerPos, playerLocation, playerHistory,
 } from '../playerState';
 import { CurrentApp } from '../../../session';
-import { DEFAULT_HOME, VALID_USER_SCENES, SCENE_INFO } from '../../../constants';
+import { DEFAULT_HOME, SCENE_INFO } from '../../../constants';
 import { dlog } from './DebugLog';
 import { DEFAULT_APP, isValidApp } from '../../apps/apps';
 import SceneSwitcher from '../class/SceneSwitcher';
@@ -25,7 +25,7 @@ let maxY = 5000;
 let previousQuery = {};
 
 export const checkIfSceneIsAllowed = (loc) => {
-  const lowercaseScenes = VALID_USER_SCENES.map((scene) => scene.toLowerCase());
+  const lowercaseScenes = SCENE_INFO.map((obj) => obj.scene.toLowerCase());
   return loc && lowercaseScenes.indexOf(loc.toLowerCase()) > -1;
 };
 
