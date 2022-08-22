@@ -493,7 +493,12 @@ export function saveAchievement(name) {
 }
 
 
-
+export function getAllHouses(location,user_id) {
+  const payload = { location, user_id }; 
+  const rpcid = "get_all_houses_object";
+  const object = await client.rpc(Sess, rpcid, payload);
+  return object.payload;
+}
 
 
 
