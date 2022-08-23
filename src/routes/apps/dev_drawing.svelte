@@ -1,74 +1,44 @@
 <script>
-  export let file;
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+  import { writable } from 'svelte/store';
+
+  // Important: keep the eslint comment below intact!
+  // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
-  import {
-    uploadImage,
-    uploadAvatar,
-    uploadHouse,
-    getObject,
-    setLoader,
-    convertImage,
-    updateObject,
-    getFile,
-    getRandomName,
-  } from '../../api';
+  import { setLoader } from '../../api';
+
+  export let file;
 
   const imageResolution = 2048;
+  const cursorOpacity = 0.5;
+  const dispatch = createEventDispatcher();
 
-  // let user;
+  const state = writable({});
+  const pastStates = writable([]);
+  const futureStates = writable([]);
+
   let scaleRatio;
-  let lastImg;
 
-  let lastWidth;
-  const params = {};
-
-  let invalidTitle = true;
-  const history = [];
   // DOM ELements etc
   let canvasEl;
   let canvas;
   let cursorCanvasEl;
   let cursorCanvas;
-  let saveCanvasEl;
-  let saveCanvas;
   let eraseBrush;
   let mouseCursor;
 
-  const cursorOpacity = 0.5;
   let drawingColorEl;
   let drawingLineWidthEl;
-
   let drawingClipboard;
   let lineWidth = 25;
   let drawingColor = '#000000';
-
-  /** Title of artwork on the server */
-  let title;
-
-  let showBackground = true;
-
   let current = 'draw';
-
-  let savedURL = '';
-
-  let version = 0;
   let optionbox = true;
-
-  let status = true;
-  let displayName;
-  let isDrawn = false;
-  let isPreexistingArt = false;
-  let isAlreadyUploaded = false;
-  let isTitleChanged = false;
-
-  let autosaveInterval;
+  // eslint-disable-next-line no-unused-vars
 
   // declaring the variable to be available globally, onMount assinging a function to it
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
-
-  const dispatch = createEventDispatcher();
 
   function save() {
     dispatch('save', file.id);
@@ -102,27 +72,6 @@
 
   onMount(() => {
     setLoader(true);
-    // if ($location.split('/').length > 2) {
-    //   // eslint-disable-next-line prefer-destructuring
-    //   params.user = $location.split('/')[2];
-    //   // eslint-disable-next-line prefer-destructuring
-    //   params.name = $location.split('/')[3];
-    //   if (params.name) title = params.name;
-    // }
-
-    // Create autosave interval
-    // autosaveInterval = setInterval(() => {
-    //   if (isDrawn || isTitleChanged) {
-    //     const data = {};
-    //     data.type = appType;
-    //     data.name = title;
-    //     if (appType === 'drawing' || appType === 'house') {
-    //       data.drawing = canvas.toDataURL('image/png', 1);
-    //     }
-    //     localStorage.setItem('Drawing', JSON.stringify(data));
-    //     // console.log('Added drawing to localstorage');
-    //   }
-    // }, 20000);
 
     // Set up Canvases
     cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
@@ -136,16 +85,9 @@
       adaptCanvasSize();
     };
 
-    saveCanvas = new fabric.Canvas(saveCanvasEl, {
-      isDrawingMode: true,
-    });
-
     fabric.Object.prototype.transparentCorners = false;
 
-    /// ///////////// mouse circle ////////////////////////////
-
     // mouse cursor layer
-
     // create cursor and place it off screen
     mouseCursor = new fabric.Circle({
       left: -100,
@@ -158,15 +100,6 @@
     });
 
     cursorCanvas.add(mouseCursor);
-
-    // Set up Fabric Canvas interaction listeners
-    canvas.on('mouse:up', () => {
-      // once there is anything is drawn on the canvas
-      isDrawn = true;
-      isPreexistingArt = false;
-      isAlreadyUploaded = false;
-      mouseEvent();
-    });
 
     // redraw cursor on new mouse position when moved
     // eslint-disable-next-line func-names
@@ -188,80 +121,13 @@
         .canvas.renderAll();
     });
 
-    /// ///////////// mouse circle ////////////////////////////
+    // TODO @chip Figure out the best event to listen to (maybe multiple events?)
 
-    // /// ///////////// drawing challenge ////////////////////////
-    // if (appType === 'drawingchallenge') {
-    //   // each mouse-up event sends the drawing
-    //   canvas.on('mouse:up', () => {
-    //     // get the drawing from the canvas in the format of SVG
-    //     const canvasData = canvas.toSVG();
-
-    //     // convert SVG into the HTML format in order to be able to manipulate inner data
-    //     const parsedSVG = new DOMParser().parseFromString(
-    //       canvasData,
-    //       'text/html',
-    //     );
-
-    //     // all <g> tags contain drawing action
-    //     const gTagElement = parsedSVG.getElementsByTagName('g');
-
-    //     // loop through <g> tags, remove all previous drawings and leave only the last one
-    //     for (let i = gTagElement.length - 2; i >= 0; --i) {
-    //       gTagElement[i].remove();
-    //     }
-
-    //     // get the position of the drawing
-    //     const positionObject = canvas.toJSON().objects;
-
-    //     // needed SVG is stored inside of body which we want to send only
-    //     const body = parsedSVG.getElementsByTagName('BODY')[0].innerHTML;
-
-    //     // all data to send
-
-    //     const JSONToSend = JSON.stringify({
-    //       action: body,
-    //       location: 'drawingchallenge',
-    //       posX: positionObject[positionObject.length - 1].left,
-    //       posY: positionObject[positionObject.length - 1].top,
-    //     });
-
-    //     // const location = 'drawingchallenge';
-    //     // const JSONToSend = `{ "action": ${JSON.stringify(
-    //     //   body,
-    //     // )}, "location": "${location}", "posX": ${
-    //     //   positionObject[positionObject.length - 1].left
-    //     // }, "posY": ${positionObject[positionObject.length - 1].top}}`;
-
-    //     // send data
-    //     ManageSession.socket.rpc('move_position', JSONToSend);
-    //   });
-
-    //   // listening to the stream to get actions of other person's drawing
-    //   ManageSession.socket.onstreamdata = (streamdata) => {
-    //     const data = JSON.parse(streamdata.data);
-
-    //     if ($Session.user_id !== data.user_id) {
-    //       // apply drawings to the canvas if only it is received from other participant
-    //       fabric.loadSVGFromString(data.action, (objects) => {
-    //         objects.forEach((svg) => {
-    //           // console.log('svg', svg);
-    //           svg.set({
-    //             scaleX: 1,
-    //             scaleY: 1,
-    //             left: data.posX,
-    //             top: data.posY,
-    //           });
-    //           canvas.add(svg).renderAll();
-    //         });
-    //       });
-    //     } else {
-    //       // console.log('The same user!');
-    //     }
-    //   };
-    /// ///////////// drawing challenge ////////////////////////
-
-    // adaptCanvasSize();
+    // Set up Fabric Canvas interaction listeners
+    // canvas.on('object:modified', () => {
+    canvas.on('mouse:up', () => {
+      saveState();
+    });
 
     applyBrush = (brushType) => {
       if (typeof brushType === 'string') selectedBrush = brushType;
@@ -275,16 +141,72 @@
         brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
       }
     };
+
     adaptCanvasSize();
 
     putImageOnCanvas(file.path, (success) => {
       if (!success) {
         Error.set('Failed loading drawing from server');
       }
+
+      saveState();
       return setLoader(false);
     });
   });
 
+  // Save state locally
+  function saveState() {
+    // Clear futureStates (should be empty after each new edit..)
+    futureStates.set([]);
+
+    // If $state is existing, add it to pastStates
+    if ($state && $state !== $pastStates[$pastStates.length - 1]) {
+      pastStates.update((states) => [...states, $state]);
+    }
+
+    state.set(canvas.toJSON());
+  }
+
+  // Go back to previous state
+  function undoState() {
+    // Add current state to futureStates
+    futureStates.update((states) => [...states, $state]);
+
+    // Then revert to last state from pastStates
+    pastStates.update((past) => {
+      // Set current state to last in redoStates
+      state.set(past.pop());
+      return past;
+    });
+
+    resetCanvasFromState();
+  }
+
+  // Go back to previous reverted state
+  function redoState() {
+    // Add current state to pastStates
+    pastStates.update((states) => [...states, $state]);
+
+    // Then revert to last state from futureStates
+    futureStates.update((future) => {
+      // Set current state to last in futureStates
+      state.set(future.pop());
+      return future;
+    });
+
+    resetCanvasFromState();
+  }
+
+  function resetCanvasFromState() {
+    if ($state) {
+      canvas.clear();
+      canvas.loadFromJSON($state, () => {
+        canvas.renderAll();
+      });
+    }
+  }
+
+  // Respond to window size changes
   function adaptCanvasSize() {
     // the canvas size is set by the least of two (width / height)
     const canvasSize =
@@ -333,16 +255,6 @@
     canvas.setZoom(scaleRatio);
   }
 
-  // const updateFrame = () => {
-  //   const framesToUpdate = frames;
-  //   framesToUpdate[currentFrame] = canvas.toJSON();
-  //   frames = framesToUpdate;
-
-  //   const backgroundFramesToUpdate = backgroundFrames;
-  //   backgroundFramesToUpdate[currentFrame] = canvas.toDataURL('image/png', 1);
-  //   backgroundFrames = backgroundFramesToUpdate;
-  // };
-
   function putImageOnCanvas(imgUrl, callback) {
     fabric.Image.fromURL(
       imgUrl,
@@ -357,46 +269,6 @@
       { crossOrigin: 'anonymous' },
     );
   }
-
-  function mouseEvent() {
-    setTimeout(() => {
-      // updateFrame();
-      //saveHistory();
-    }, 200);
-  }
-
-  /// ///////////////// redo/undo function ///////////////////////////
-
-  const saveHistory = () => {};
-
-  const undo = () => {
-    const lastObject = canvas.toJSON().objects[
-      canvas.toJSON().objects.length - 1
-    ];
-    history.push(lastObject);
-    const newFile = canvas.toJSON();
-    newFile.objects.pop();
-    canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
-
-    // once all previously drawn objects are deleted, isDrawn is set to false
-    if (canvas.toJSON().objects.length === 0) {
-      isDrawn = false;
-    }
-  };
-
-  const redo = () => {
-    const newFile = canvas.toJSON();
-    newFile.objects.push(history[history.length - 1]);
-    history.pop();
-    canvas.loadFromJSON(newFile, canvas.renderAll.bind(canvas));
-
-    // once the elements that has been removed are brought back, isDrawn is set back to true
-    if (canvas.toJSON().objects.length > 0) {
-      isDrawn = true;
-    }
-  };
-
-  /// ///////////////// redo/undo function end ///////////////////////////
 
   /// ////////////////// select functions /////////////////////////////////
   function Copy() {
@@ -420,6 +292,7 @@
       });
       if (clonedObj.type === 'activeSelection') {
         // active selection needs a reference to the canvas.
+        // eslint-disable-next-line no-param-reassign
         clonedObj.canvas = canvas;
         clonedObj.forEachObject((obj) => {
           canvas.add(obj);
@@ -451,12 +324,8 @@
   function clearCanvas() {
     // if anything is drawn on the canvas and it has not been uploaded,
     // save the artwork and clear the canvas
-    if (isDrawn && !isAlreadyUploaded) {
-      // upload();
-      isDrawn = false;
-    }
+    // isDrawn = false;
     canvas.clear();
-    localStorage.setItem('Drawing', '');
   }
 
   /// //////////// select functions end //////////////////
@@ -494,18 +363,13 @@
   }
 </script>
 
-
-<main on:mouseup="{mouseEvent}">
+<main>
   <div class="main-container">
     <div class="canvas-frame-container">
       <div class="canvas-box">
         <canvas bind:this="{canvasEl}" class="canvas"> </canvas>
         <canvas bind:this="{cursorCanvasEl}" id="cursor"> </canvas>
       </div>
-      <div class="saveCanvas">
-        <canvas bind:this="{saveCanvasEl}"></canvas>
-      </div>
-
     </div>
   </div>
   <div class="optionbox-container">
@@ -604,22 +468,20 @@
         </div>
         <div class="saveTab" class:hidden="{current !== 'saveToggle'}">
           <p on:click="{save}">Save this file</p>
-
         </div>
-
 
         <!--  -->
       </div>
 
       <div class="iconbox">
-        <button on:click="{undo}">
+        <button on:click="{undoState}" disabled="{$pastStates.length === 0}">
           <img
             class="icon"
             src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
             alt="Undo"
           />
         </button>
-        <button on:click="{redo}">
+        <button on:click="{redoState}" disabled="{$futureStates.length === 0}">
           <img
             class="icon"
             src="assets/SHB/svg/AW-icon-rotate-CW.svg"
@@ -669,7 +531,6 @@
         <TrashIcon />
       </button> -->
 
-        <!-- svelte-ignore a11y-missing-attribute -->
         <button
           class:currentSelected="{current === 'saveToggle'}"
           on:click="{() => {
@@ -723,11 +584,6 @@
     pointer-events: none;
   }
 
-  .topbar {
-    width: 100vw;
-    margin: 0px auto;
-  }
-
   .selected {
     box-shadow: 3px 3px #7300ed;
   }
@@ -744,25 +600,11 @@
     z-index: 1;
   }
 
-  .saveCanvasEl {
-    display: none;
-  }
-
   .saveTab > * {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
   }
-  .saveBox {
-    position: relative;
-    display: inline-block;
-  }
-
-  .saveBox:hover .saveTab {
-    display: block;
-    color: green;
-  }
-
   .iconbox {
     width: 50px;
     position: relative;
@@ -816,8 +658,7 @@
     cursor: pointer;
   }
 
-  #drawing-color,
-  #drawing-shadow-color {
+  #drawing-color {
     padding: 0px;
     display: block;
     margin: 20px auto;
@@ -893,63 +734,6 @@
     border: 2px solid #7300ed;
   }
 
-  .frame-box {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    flex-direction: column;
-  }
-
-  #frame-bar {
-    display: flex;
-    flex-direction: column;
-    max-height: 300px;
-    width: 130px;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity;
-  }
-  #frame-bar > div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-  }
-
-  #frame-bar > div > div {
-    display: inline-block;
-    width: 60px;
-    height: 60px;
-    margin: 5px;
-    border: 2px solid #7300eb;
-    font-size: 30px;
-    text-align: center;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-  }
-
-  #frame-bar > div > div:hover {
-    cursor: pointer;
-  }
-
-  #frame-bar > div > div > div {
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .frame-buttons {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .frame-buttons > a > img {
-    display: block;
-  }
-
   #clear-canvas {
     position: fixed;
     left: 8px;
@@ -973,10 +757,6 @@
     flex-direction: row;
   }
 
-  #frame-bar > div:last-child {
-    overflow-anchor: auto;
-  }
-
   .optionbox-container {
     margin: 0 10px 0 0;
     position: fixed;
@@ -986,55 +766,16 @@
     transform: translateY(-50%);
   }
 
-  .unselected {
-    filter: grayscale(1) opacity(0.5);
-  }
-
-  #avatarBox {
-    position: fixed;
-    top: 130px;
-    left: 20px;
-  }
-
   .drawing-options-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
   }
 
-  .status-save-download-container {
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */
-    /* align-items: center; */
-    height: min-content;
-  }
-
   /* medium size */
   @media only screen and (max-width: 1007px) {
     .canvas-frame-container {
       flex-direction: column;
-    }
-
-    .frame-box {
-      flex-direction: row;
-    }
-
-    #frame-bar {
-      flex-direction: row;
-      width: 250px;
-      overflow-x: auto;
-      overflow-y: none;
-      overscroll-behavior-x: contain;
-      scroll-snap-type: x proximity;
-    }
-
-    #frame-bar > div {
-      flex-direction: column;
-    }
-
-    .frame-buttons {
-      flex-direction: row;
     }
   }
 
@@ -1053,30 +794,6 @@
 
     .canvas-box {
       order: 2;
-    }
-
-    .frame-box {
-      order: 1;
-      flex-direction: row;
-      /* width: 100%; */
-      justify-content: space-between;
-      /* align-self: flex-end; */
-    }
-
-    #frame-bar {
-      max-width: 300px;
-      height: 140px;
-      margin-right: 10px;
-    }
-
-    #frame-bar > div {
-      flex-direction: column-reverse;
-    }
-
-    .frame-buttons {
-      flex-direction: column-reverse;
-      margin: unset;
-      align-self: center;
     }
 
     .optionbox {
@@ -1105,11 +822,6 @@
 
     .optionbar > * {
       margin: 20px 50px 20px 0;
-    }
-
-    .status-save-download-container {
-      flex-direction: row;
-      justify-content: space-between;
     }
 
     @keyframes growup {
@@ -1190,5 +902,10 @@
     transform: scale(1);
     padding: 0;
     margin: 0;
+  }
+
+  button[disabled],
+  button:disabled {
+    opacity: 0.3;
   }
 </style>
