@@ -14,23 +14,11 @@
 
   import AppContainer from './appContainer.svelte';
 
+  // Object containing info about the current file
+  // Loaded from the server..
   let currentFile = {};
-
-  async function closeApp() {
-    if ($CurrentApp === 'avatar') {
-      getAccount(ManageSession.userProfile.id);
-    }
-
-    currentFile = {};
-    // If a user has been here for a little while, just bring them where they were before
-    if (get(playerHistory).length > 1) {
-      pop();
-      playerHistory.pop();
-    } else {
-      // Else, if a user came here through a deep link, forward to app defaults
-      push(`/${DEFAULT_APP}?location=${DEFAULT_SCENE}`);
-    }
-  }
+  // Object containing the current Apps rendered data (whatever needs saving)
+  let data = null;
 
   const unsubscribe = CurrentApp.subscribe((val) => {
     if (isValidApp(val)) {
@@ -42,29 +30,46 @@
     unsubscribe();
   });
 
-  async function onSave(evt) {
-    const fileDetails = evt.detail;
+  async function closeApp() {
+    if ($CurrentApp === 'avatar') {
+      getAccount(ManageSession.userProfile.id);
+    }
+
+    currentFile = {};
+    data = null;
+    // If a user has been here for a little while, just bring them where they were before
+    if (get(playerHistory).length > 1) {
+      pop();
+      playerHistory.pop();
+    } else {
+      // Else, if a user came here through a deep link, forward to app defaults
+      push(`/${DEFAULT_APP}?location=${DEFAULT_SCENE}`);
+    }
+  }
+
+  async function saveData(andClose) {
     setLoader(true);
 
     // Fake a delay in saving..
     const promise = new Promise((resolve, reject) => {
       // Fake an error that could occur while saving. (reject the promise!)
-      if (fileDetails?.error) {
+      if (currentFile?.error) {
         setTimeout(() => {
-          reject(fileDetails.error);
+          reject(currentFile.error);
         }, 1500);
       }
 
       setTimeout(() => {
-        resolve();
+        resolve(data);
       }, 1500);
     });
 
     // Saving should be able to succeed or fail
     promise
-      .then(() => {
-        CurrentApp.set('game');
+      .then((imgData) => {
+        console.log('here is the image!', imgData);
         setLoader(false);
+        if (andClose) closeApp();
       })
       .catch((error) => {
         Error.set(error);
@@ -81,7 +86,7 @@
         currentFile = {
           id: 123123,
           type: 'drawing',
-          path: 'https://picsum.photos/id/1/400/300/',
+          path: 'https://cdn.webshopapp.com/shops/244181/files/335856252/1600x1600x1/blablabla-framed-in-black-50x70.jpg',
           frames: 1,
         };
         break;
@@ -123,16 +128,16 @@
   open="{$CurrentApp !== null &&
     $CurrentApp !== DEFAULT_APP &&
     isValidApp($CurrentApp)}"
-  on:close="{closeApp}"
+  on:close="{() => saveData(true)}"
 >
   {#if $CurrentApp === 'dev_drawing' && hasCurrentFile}
-    <DevDrawing file="{currentFile}" on:save="{onSave}" />
+    <DevDrawing file="{currentFile}" bind:data on:save="{saveData}" />
   {:else if $CurrentApp === 'dev_house' && hasCurrentFile}
-    <DevDrawing file="{currentFile}" on:save="{onSave}" />
+    <DevDrawing file="{currentFile}" bind:data on:save="{saveData}" />
   {:else if $CurrentApp === 'dev_stopmotion' && hasCurrentFile}
-    <DevStopmotion file="{currentFile}" on:save="{onSave}" />
+    <DevStopmotion file="{currentFile}" bind:data on:save="{saveData}" />
   {:else if $CurrentApp === 'dev_avatar' && hasCurrentFile}
-    <DevStopmotion file="{currentFile}" on:save="{onSave}" />
+    <DevStopmotion file="{currentFile}" bind:data on:save="{saveData}" />
   {:else}
     <!-- Default = current solution -->
     <DrawingApp bind:appType="{$CurrentApp}" />

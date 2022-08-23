@@ -8,6 +8,7 @@
   import { setLoader } from '../../api';
 
   export let file;
+  export let data;
 
   const imageResolution = 2048;
   const cursorOpacity = 0.5;
@@ -41,7 +42,8 @@
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
   function save() {
-    dispatch('save', file.id);
+    data = canvas.toDataURL('image/png', 1);
+    dispatch('save', file);
   }
 
   // Reactive function: update Fabric brush according to UI state
@@ -162,6 +164,7 @@
     // If $state is existing, add it to pastStates
     if ($state && $state !== $pastStates[$pastStates.length - 1]) {
       pastStates.update((states) => [...states, $state]);
+      // data = canvas.toDataURL('image/png', 1);
     }
 
     state.set(canvas.toJSON());
@@ -199,9 +202,11 @@
 
   function resetCanvasFromState() {
     if ($state) {
+      console.log('clear canvas & load from JSON', $state);
       canvas.clear();
       canvas.loadFromJSON($state, () => {
         canvas.renderAll();
+        data = canvas.toDataURL('image/png', 1);
       });
     }
   }
