@@ -79,10 +79,16 @@
     />
   </button>
 
-  <a href="/dev_drawing" use:link>DRAWING</a>
+  <a
+    href="/dev_drawing?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&key=1654865563806_olijfgroensprinkhaan"
+    use:link>DRAWING</a
+  >
+  <a href="/dev_drawing?" use:link>DRAWING NEW</a>
   <a href="/dev_stopmotion" use:link>STOP MOTION</a>
   <a href="/dev_avatar" use:link>AVATAR</a>
-  <a href="/dev_house" use:link>HOUSE</a>
+  <a href="/dev_house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&" use:link
+    >HOUSE</a
+  >
 </div>
 
 <style>

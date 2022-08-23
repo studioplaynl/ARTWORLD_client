@@ -1,11 +1,12 @@
 <script>
-  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte';
   import { writable } from 'svelte/store';
 
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
   import { setLoader } from '../../api';
+  import { Error } from '../../session';
 
   export let file;
   export let data;
@@ -146,9 +147,9 @@
 
     adaptCanvasSize();
 
-    putImageOnCanvas(file.path, (success) => {
+    putImageOnCanvas(file.url, (success) => {
       if (!success) {
-        Error.set('Failed loading drawing from server');
+        Error.set(`Failed loading drawing from server: ${file.url}`);
       }
 
       saveState();
@@ -157,17 +158,24 @@
   });
 
   // Save state locally
-  function saveState() {
+  async function saveState() {
     // Clear futureStates (should be empty after each new edit..)
     futureStates.set([]);
 
     // If $state is existing, add it to pastStates
     if ($state && $state !== $pastStates[$pastStates.length - 1]) {
       pastStates.update((states) => [...states, $state]);
-      // data = canvas.toDataURL('image/png', 1);
     }
 
-    state.set(canvas.toJSON());
+    const json = canvas.toJSON();
+    if (json) {
+      state.set(json);
+
+      // FIXME? Needs a timeout, as it clears the canvas?!
+      setTimeout(() => {
+        data = canvas.toDataURL('image/png', 1);
+      }, 500);
+    }
   }
 
   // Go back to previous state
@@ -202,7 +210,6 @@
 
   function resetCanvasFromState() {
     if ($state) {
-      console.log('clear canvas & load from JSON', $state);
       canvas.clear();
       canvas.loadFromJSON($state, () => {
         canvas.renderAll();

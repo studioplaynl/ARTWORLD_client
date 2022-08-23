@@ -1,30 +1,46 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { onDestroy } from 'svelte';
+  import { parse } from 'qs';
   import { get } from 'svelte/store';
-  import { pop, push } from 'svelte-spa-router';
-  import DrawingApp from '../apps/drawing.svelte';
+  import { pop, push, querystring } from 'svelte-spa-router';
+  // import DrawingApp from '../apps/drawing.svelte';
   import DevDrawing from '../apps/dev_drawing.svelte';
   import DevStopmotion from '../apps/dev_stopmotion.svelte';
-  import { CurrentApp, Error } from '../../session';
+  import { CurrentApp, Profile, Error } from '../../session';
   import ManageSession from '../game/ManageSession';
-  import { getAccount, setLoader } from '../../api';
+  import { getAccount, getObject, setLoader, getFile } from '../../api';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { playerHistory } from '../game/playerState';
-  import { DEFAULT_SCENE } from '../../constants';
+  import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC } from '../../constants';
 
   import AppContainer from './appContainer.svelte';
 
+  /**
+   * /drawing?user_id=UUID&key=KEY&version=VERSION ---> Object met oa URL
+   * /
+   *
+   *
+   */
+
   // Object containing info about the current file
   // Loaded from the server..
-  let currentFile = {};
+  let currentFile = {
+    loaded: false,
+  };
   // Object containing the current Apps rendered data (whatever needs saving)
   let data = null;
 
   const unsubscribe = CurrentApp.subscribe((val) => {
-    if (isValidApp(val)) {
-      load(val);
+    if (isValidApp(val) && isValidQuery()) {
+      load();
     }
   });
+
+  function isValidQuery() {
+    const parsedQuery = parse($querystring);
+    const userId = parsedQuery.userId ?? null;
+    return userId;
+  }
 
   onDestroy(() => {
     unsubscribe();
@@ -35,7 +51,7 @@
       getAccount(ManageSession.userProfile.id);
     }
 
-    currentFile = {};
+    currentFile = { loaded: false };
     data = null;
     // If a user has been here for a little while, just bring them where they were before
     if (get(playerHistory).length > 1) {
@@ -77,50 +93,61 @@
       });
   }
 
-  $: hasCurrentFile = currentFile !== {};
+  async function load() {
+    currentFile.loaded = false;
 
-  function load(type) {
-    switch (type) {
-      case 'dev_drawing':
-        // TODO: Load file URL from server
-        currentFile = {
-          id: 123123,
-          type: 'drawing',
-          path: 'https://cdn.webshopapp.com/shops/244181/files/335856252/1600x1600x1/blablabla-framed-in-black-50x70.jpg',
-          frames: 1,
-        };
-        break;
+    const parsedQuery = parse($querystring);
+    const userId = parsedQuery.userId ?? null;
+    let key = parsedQuery.key ?? null;
 
-      case 'dev_stopmotion':
-        currentFile = {
-          id: 234234,
-          type: 'stopmotion',
-          path: 'https://picsum.photos/id/2/2000/400/',
-          frames: 5,
-        };
-        break;
-
-      case 'dev_house':
-        currentFile = {
-          id: 345345,
-          type: 'house',
-          path: 'https://picsum.photos/id/234/400/300/',
-          frames: 1,
-        };
-        break;
-
-      case 'dev_avatar':
-        currentFile = {
-          id: 456456,
-          type: 'avatar',
-          path: 'https://picsum.photos/id/1/1200/400/',
-          frames: 3,
-        };
-        break;
-
-      default:
-        break;
+    // Temporarily make dev_ versions of apps work too
+    let loadFromCollection = $CurrentApp;
+    if ($CurrentApp === 'dev_drawing') {
+      loadFromCollection = 'drawing';
+    } else if ($CurrentApp === 'dev_stopmotion') {
+      loadFromCollection = 'stopmotion';
+    } else if ($CurrentApp === 'dev_house') {
+      loadFromCollection = 'home';
+      key = $Profile.meta.Azc || 'Amsterdam';
+    } else if ($CurrentApp === 'dev_avatar') {
+      loadFromCollection = 'avatar';
     }
+
+    currentFile = await getFileInformation(loadFromCollection, userId, key);
+  }
+
+  // Utility functions
+
+  /** Load file information from server and return object with */
+  async function getFileInformation(collectionName, userId, key) {
+    if (userId && key) {
+      const loadingObject = await getObject(collectionName, key, userId);
+
+      if (loadingObject) {
+        try {
+          const file = await getFile(loadingObject.value.url);
+
+          return {
+            key,
+            userId,
+            loaded: true,
+            displayName: loadingObject.value.displayname,
+            type: loadingObject.collection,
+            status: loadingObject.permission_read === PERMISSION_READ_PUBLIC,
+            url: file,
+            frames: 1, // Maybe use this instead of width/height ratio to calculate framecount?
+          };
+        } catch (error) {
+          return {
+            key,
+            userId,
+            loaded: false,
+          };
+        }
+      }
+    }
+
+    return { loaded: false };
   }
 </script>
 
@@ -130,16 +157,16 @@
     isValidApp($CurrentApp)}"
   on:close="{() => saveData(true)}"
 >
-  {#if $CurrentApp === 'dev_drawing' && hasCurrentFile}
+  {#if $CurrentApp === 'dev_drawing' && currentFile.loaded}
     <DevDrawing file="{currentFile}" bind:data on:save="{saveData}" />
-  {:else if $CurrentApp === 'dev_house' && hasCurrentFile}
+  {:else if $CurrentApp === 'dev_house' && currentFile.loaded}
     <DevDrawing file="{currentFile}" bind:data on:save="{saveData}" />
-  {:else if $CurrentApp === 'dev_stopmotion' && hasCurrentFile}
+  {:else if $CurrentApp === 'dev_stopmotion' && currentFile.loaded}
     <DevStopmotion file="{currentFile}" bind:data on:save="{saveData}" />
-  {:else if $CurrentApp === 'dev_avatar' && hasCurrentFile}
+  {:else if $CurrentApp === 'dev_avatar' && currentFile.loaded}
     <DevStopmotion file="{currentFile}" bind:data on:save="{saveData}" />
   {:else}
     <!-- Default = current solution -->
-    <DrawingApp bind:appType="{$CurrentApp}" />
+    <!-- <DrawingApp bind:appType="{$CurrentApp}" /> -->
   {/if}
 </AppContainer>
