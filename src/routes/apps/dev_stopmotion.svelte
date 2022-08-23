@@ -1,6 +1,7 @@
 <script>
   export let file;
   import { createEventDispatcher } from 'svelte';
+  import DevDrawing from './dev_drawing.svelte';
 
   const dispatch = createEventDispatcher();
 
@@ -23,26 +24,30 @@
         steps(${file.frames}) 
         infinite`
     : '';
+
+
+    //get width of file, devide by set resolution(2048) to get amount of frames
+
+    //set file to most left corner
+
+    // switch frame function
+
+    function switchFrame(frameNumber) {
+      
+    }
+
 </script>
 
-<h1>{file.id} - {file.type}</h1>
+<!-- <h1>{file.id} - {file.type}</h1>
 
 <button on:click="{save}">Save this file</button>
-<button on:click="{saveError}">Fail saving this file</button>
-
-<div class="stopmotion-container">
+<button on:click="{saveError}">Fail saving this file</button> -->
+<!-- <div class="stopmotion-container">
   <img src="{file.path}" alt="{file.id}" style:animation="{animationStyle}" />
-</div>
+</div> -->
+<DevDrawing bind:file="{file}"/>
 
-
-
-
-
-
-
-
-
-      <!-- <div class="frame-box">
+<div class="frame-box">
         {#if appType === 'stopmotion' || appType === 'avatar'}
           <div id="frame-bar">
             {#each frames as frame, index (index)}
@@ -116,17 +121,7 @@
             </button>
           </div>
         {/if}
-      </div> -->
-
-
-
-
-
-
-
-
-
-
+      </div>
 <style>
   .stopmotion-container {
     max-width: 400px;
