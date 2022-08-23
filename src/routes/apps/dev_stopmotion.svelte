@@ -34,6 +34,99 @@
   <img src="{file.path}" alt="{file.id}" style:animation="{animationStyle}" />
 </div>
 
+
+
+
+
+
+
+
+
+      <!-- <div class="frame-box">
+        {#if appType === 'stopmotion' || appType === 'avatar'}
+          <div id="frame-bar">
+            {#each frames as frame, index (index)}
+              <div>
+                <div
+                  id="{index}"
+                  class:selected="{currentFrame === index}"
+                  on:click="{() => {
+                    changeFrame(index);
+                    // console.log('debug index of frame:', index); // remove debug
+                  }}"
+                  style="background-image: url({backgroundFrames[index]})"
+                >
+                  <div>{index + 1}</div>
+                </div>
+                {#if currentFrame === index && frames.length > 1}
+                  <img
+                    class="icon"
+                    on:click="{() => {
+                      deleteFrame(index);
+                    }}"
+                    alt="Delete frame"
+                    src="assets/SHB/svg/AW-icon-trash.svg"
+                  />
+                {/if}
+              </div>
+            {/each}
+            {#if frames.length < maxFrames}
+              <div>
+                <div id="frameNew" on:click="{addFrame}"><div>+</div></div>
+              </div>
+            {/if}
+          </div>
+          <div class="frame-buttons">
+            {#if play}
+              <button
+                id="playPause"
+                on:click="{() => {
+                  play = false;
+                  setPlay(false);
+                }}"
+              >
+                <img
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-pause.svg"
+                  alt="Pause"
+                />
+              </button>
+            {:else}
+              <button
+                id="playPause"
+                on:click="{() => {
+                  play = true;
+                  setPlay(true);
+                }}"
+              >
+                <img
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-play.svg"
+                  alt="Play"
+                />
+              </button>
+            {/if}
+            <button on:click="{backgroundHide}">
+              <img
+                class="icon"
+                class:unselected="{!showBackground}"
+                src="assets/SHB/svg/AW-icon-onion.svg"
+                alt="Hide background"
+              />
+            </button>
+          </div>
+        {/if}
+      </div> -->
+
+
+
+
+
+
+
+
+
+
 <style>
   .stopmotion-container {
     max-width: 400px;
