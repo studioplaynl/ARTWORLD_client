@@ -68,9 +68,9 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     //!
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
-    let sceneInfo = SCENE_INFO.find(obj => obj.scene === this.scene.key);
-    this.worldSize.x = sceneInfo.sizeX
-    this.worldSize.y = sceneInfo.sizeY
+    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
+    this.worldSize.x = sceneInfo.sizeX;
+    this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
     //!
 
@@ -95,7 +95,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.makeBackground();
     this.handlePlayerMovement();
 
-    this.everythingFlowerFlied()
+    this.everythingFlowerFlied();
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
     // End Background .........................................................................................
@@ -132,19 +132,10 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     //!
   }// end create
 
-   makeBackground() {
+  makeBackground() {
     // the order of creation is the order of drawing: first = bottom ...............................
-    Background.rectangle({
-      scene: this,
-      name: 'bgImageWhite',
-      posX: 0,
-      posY: 0,
-      setOrigin: 0,
-      color: 0xffffff,
-      alpha: 1,
-      width: this.worldSize.x,
-      height: this.worldSize.y,
-    });
+    this.bgImageWhite = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff).setOrigin(0);
+    this.bgImageWhite.setName('bgImageWhite');
 
     // this.bgImage = this.add.image(0, 0, 'bgImageWhite').setOrigin(0);;
 
@@ -173,7 +164,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     }
   }
 
- handlePlayerMovement() {
+  handlePlayerMovement() {
     //! DETECT dragging and mouseDown on rectangle
     Background.rectangle({
       scene: this,
@@ -196,7 +187,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         ManageSession.playerIsAllowedToMove = true;
       })
       .on('drag', (pointer, dragX, dragY) => {
-        this.input.manager.canvas.style.cursor = "grabbing";
+        this.input.manager.canvas.style.cursor = 'grabbing';
         // dlog('dragX, dragY', dragX, dragY);
         // console.log('dragX, dragY', dragX, dragY);
         // if we drag the touchBackgroundCheck layer, we update the player
@@ -211,7 +202,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         // check if player was moving by dragging
         // otherwise movingByTapping would get a stop animation command
         if (ManageSession.movingByDragging) {
-          this.input.manager.canvas.style.cursor = "default";
+          this.input.manager.canvas.style.cursor = 'default';
           const moveCommand = 'stop';
           const dragX = 0;
           const dragY = 0;
@@ -259,8 +250,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       });
     //! doubleClick for moveByTapping
   }
-everythingFlowerFlied()
-{
+
+  everythingFlowerFlied() {
   // make background for flowers
     this.backgroundFlowerFieldFloor = this.add.graphics();
     this.backgroundFlowerFieldFloor.name = 'this.backgroundFlowerFieldFloor';
@@ -333,11 +324,11 @@ everythingFlowerFlied()
 
     this.makeFlowerFlied();
 
-     this.flowerKeyArray = ['flower'];
+    this.flowerKeyArray = ['flower'];
     // download all drawings "bloem" from allUsersChallenge
 
     this.getListOfBloem();
-}
+  }
 
   async getListOfBloem() {
     await listAllObjects('drawing', null).then((rec) => {

@@ -1,3 +1,4 @@
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
@@ -13,7 +14,6 @@ import Move from '../class/Move';
 import { dlog } from '../helpers/DebugLog';
 import { SCENE_INFO } from '../../../constants';
 import { playerPos } from '../playerState';
-import { get } from 'svelte/store';
 
 const { Phaser } = window;
 
@@ -63,12 +63,12 @@ export default class Location1 extends Phaser.Scene {
     //!
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
-    let sceneInfo = SCENE_INFO.find(obj => obj.scene === this.scene.key);
-    this.worldSize.x = sceneInfo.sizeX
-    this.worldSize.y = sceneInfo.sizeY
+    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
+    this.worldSize.x = sceneInfo.sizeX;
+    this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
     //!
-    
+
     this.handleEditMode();
 
     this.makeBackground();
@@ -133,17 +133,8 @@ export default class Location1 extends Phaser.Scene {
 
   makeBackground() {
     // the order of creation is the order of drawing: first = bottom ...............................
-    Background.rectangle({
-      scene: this,
-      name: 'bgImageWhite',
-      posX: 0,
-      posY: 0,
-      setOrigin: 0,
-      color: 0xffffff,
-      alpha: 1,
-      width: this.worldSize.x,
-      height: this.worldSize.y,
-    });
+    this.bgImageWhite = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff).setOrigin(0);
+    this.bgImageWhite.setName('bgImageWhite');
 
     // this.bgImage = this.add.image(0, 0, 'bgImageWhite').setOrigin(0);;
 
@@ -241,7 +232,7 @@ export default class Location1 extends Phaser.Scene {
         ManageSession.playerIsAllowedToMove = true;
       })
       .on('drag', (pointer, dragX, dragY) => {
-        this.input.manager.canvas.style.cursor = "grabbing";
+        this.input.manager.canvas.style.cursor = 'grabbing';
         // dlog('dragX, dragY', dragX, dragY);
         // console.log('dragX, dragY', dragX, dragY);
         // if we drag the touchBackgroundCheck layer, we update the player
@@ -256,7 +247,7 @@ export default class Location1 extends Phaser.Scene {
         // check if player was moving by dragging
         // otherwise movingByTapping would get a stop animation command
         if (ManageSession.movingByDragging) {
-          this.input.manager.canvas.style.cursor = "default";
+          this.input.manager.canvas.style.cursor = 'default';
           const moveCommand = 'stop';
           const dragX = 0;
           const dragY = 0;

@@ -84,9 +84,9 @@ export default class DefaultUserHome extends Phaser.Scene {
     //!
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
-    let sceneInfo = SCENE_INFO.find(obj => obj.scene === this.scene.key);
-    this.worldSize.x = sceneInfo.sizeX
-    this.worldSize.y = sceneInfo.sizeY
+    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
+    this.worldSize.x = sceneInfo.sizeX;
+    this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
     //!
 
@@ -205,7 +205,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         });
       }
     });
-    
+
 
     // await listObjects("stopmotion", this.location, 100).then((rec) => {
     // this.userArtServerList is an array with objects, in the form of:
@@ -283,7 +283,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       this.load.start(); // start the load queue to get the image in memory
     }
 
-    //ArtworkList.placeHeartButton(this, coordX, y, imageKeyUrl, element, this.stopmotionContainer);
+    // ArtworkList.placeHeartButton(this, coordX, y, imageKeyUrl, element, this.stopmotionContainer);
 
     this.load.on('filecomplete', (key) => {
       // on completion of each specific artwork
@@ -318,7 +318,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         // check if the animation already exists
         if (!this.anims.exists(this.stopmotionMovingKey)) {
           this.anims.create({
-            key: 'moving_' + key,
+            key: `moving_${key}`,
             frames: this.anims.generateFrameNumbers(currentImage.imageKeyUrl, {
               start: 0,
               end: avatarFrames - 1,
@@ -329,7 +329,7 @@ export default class DefaultUserHome extends Phaser.Scene {
           });
 
           this.anims.create({
-            key: 'stop_' + key,
+            key: `stop_${key}`,
             frames: this.anims.generateFrameNumbers(currentImage.imageKeyUrl, {
               start: 0,
               end: 0,
@@ -337,19 +337,18 @@ export default class DefaultUserHome extends Phaser.Scene {
           });
         }
         // . end animation for the player avatar ......................
-        
+
         // adds the image to the container
         const completedImage = this.add.sprite(currentImage.coordX - this.artDisplaySize / 2, y, currentImage.imageKeyUrl).setOrigin(0.5);
         this.stopmotionContainer.add(completedImage);
 
-        completedImage.setData("moveAnim", "moving_" + key)
-        completedImage.setData("stopAnim", "stop_" + key)
+        completedImage.setData('moveAnim', `moving_${key}`);
+        completedImage.setData('stopAnim', `stop_${key}`);
         if (avatarFrames > 1) {
-          completedImage.play("moving_" + key);
+          completedImage.play(`moving_${key}`);
         }
 
         ArtworkList.placePlayPauseButton(this, coordX, y, imageKeyUrl, element, this.stopmotionContainer);
-
       }
     });
   }// end downloadStopmotion
@@ -458,17 +457,8 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   makeBackground() {
     // the order of creation is the order of drawing: first = bottom ...............................
-    Background.rectangle({
-      scene: this,
-      name: 'bgImageWhite',
-      posX: 0,
-      posY: 0,
-      setOrigin: 0,
-      color: 0xffffff,
-      alpha: 1,
-      width: this.worldSize.x,
-      height: this.worldSize.y,
-    });
+    this.bgImageWhite = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff).setOrigin(0);
+    this.bgImageWhite.setName('bgImageWhite');
 
     // this.bgImage = this.add.image(0, 0, 'bgImageWhite').setOrigin(0);;
 
@@ -566,7 +556,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         ManageSession.playerIsAllowedToMove = true;
       })
       .on('drag', (pointer, dragX, dragY) => {
-        this.input.manager.canvas.style.cursor = "grabbing";
+        this.input.manager.canvas.style.cursor = 'grabbing';
         // dlog('dragX, dragY', dragX, dragY);
         // console.log('dragX, dragY', dragX, dragY);
         // if we drag the touchBackgroundCheck layer, we update the player
@@ -581,7 +571,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         // check if player was moving by dragging
         // otherwise movingByTapping would get a stop animation command
         if (ManageSession.movingByDragging) {
-          this.input.manager.canvas.style.cursor = "default";
+          this.input.manager.canvas.style.cursor = 'default';
           const moveCommand = 'stop';
           const dragX = 0;
           const dragY = 0;
