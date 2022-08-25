@@ -179,9 +179,9 @@
       component: ModeratePage,
       conditions: [() => isModerator],
     }),
-    // '/:app?/:user?/:name?/:version?': wrap({
-    //   component: home,
-    //   conditions: [() => isLoggedIn()],
+    // '/:app?': wrap({
+    //   component: AppLoader,
+    //   conditions: [(detail) => isLoggedIn && detail.location !== DEFAULT_APP],
     // }),
   };
 </script>

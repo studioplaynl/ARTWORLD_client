@@ -11,7 +11,11 @@
   import Avatar from './components/avatar.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import House from './components/house.svelte';
-  import { OBJECT_STATE_IN_TRASH, OBJECT_STATE_REGULAR } from '../constants';
+  import {
+    OBJECT_STATE_IN_TRASH,
+    OBJECT_STATE_REGULAR,
+    OBJECT_STATE_UNDEFINED,
+  } from '../constants';
 
   export let params = {};
   export let userID;
@@ -97,7 +101,10 @@
   ];
 
   $: filteredArt = $ArtworksStore.filter(
-    (el) => el.value.status === OBJECT_STATE_REGULAR,
+    (el) =>
+      // eslint-disable-next-line implicit-arrow-linebreak
+      el.value.status === OBJECT_STATE_REGULAR ||
+      el.value.status === OBJECT_STATE_UNDEFINED,
   );
   $: deletedArt = $ArtworksStore.filter(
     (el) => el.value.status === OBJECT_STATE_IN_TRASH,
@@ -113,7 +120,6 @@
     } else {
       await ArtworksStore.loadArtworks(id, 100);
     }
-
     loader = false;
   }
 
@@ -139,8 +145,9 @@
 
   function goTo(evt) {
     if (evt.detail.key === 'voorbeeld' && evt.detail.row.value) {
+      // TODO: remove dev_ from url here!
       push(
-        `/${evt.detail.row.collection}/${evt.detail.row.user_id}/${evt.detail.row.key}`,
+        `/dev_${evt.detail.row.collection}?userId=${evt.detail.row.user_id}&key=${evt.detail.row.key}`,
       );
     }
   }

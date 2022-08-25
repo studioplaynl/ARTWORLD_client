@@ -10,6 +10,7 @@
 
   export let file;
   export let data;
+  export let changes;
 
   const imageResolution = 2048;
   const cursorOpacity = 0.5;
@@ -18,6 +19,11 @@
   const state = writable({});
   const pastStates = writable([]);
   const futureStates = writable([]);
+
+  // Let appLoader keep track of nr of changes
+  $: {
+    changes = $pastStates.length;
+  }
 
   let scaleRatio;
 
@@ -36,7 +42,6 @@
   let drawingColor = '#000000';
   let current = 'draw';
   let optionbox = true;
-  // eslint-disable-next-line no-unused-vars
 
   // declaring the variable to be available globally, onMount assinging a function to it
   let applyBrush;
@@ -124,8 +129,7 @@
         .canvas.renderAll();
     });
 
-    // TODO @chip Figure out the best event to listen to (maybe multiple events?)
-
+    // TODO @chip Figure out the best event to listen to (maybe multiple events?) in order to trigger a saveState()?
     // Set up Fabric Canvas interaction listeners
     // canvas.on('object:modified', () => {
     canvas.on('mouse:up', () => {
@@ -147,14 +151,20 @@
 
     adaptCanvasSize();
 
-    putImageOnCanvas(file.url, (success) => {
-      if (!success) {
-        Error.set(`Failed loading drawing from server: ${file.url}`);
-      }
+    // Was there an image to load? Do so
+    if (file?.url) {
+      putImageOnCanvas(file.url, (success) => {
+        if (!success) {
+          Error.set(`Failed loading drawing from server: ${file.url}`);
+        }
 
-      saveState();
+        // saveState();
+        return setLoader(false);
+      });
+    } else {
+      // Else no image to load? That's fine too.
       return setLoader(false);
-    });
+    }
   });
 
   // Save state locally
@@ -163,7 +173,10 @@
     futureStates.set([]);
 
     // If $state is existing, add it to pastStates
-    if ($state && $state !== $pastStates[$pastStates.length - 1]) {
+    if (
+      ($state && $pastStates.length === 0) ||
+      ($pastStates.length > 0 && $state !== $pastStates[$pastStates.length - 1])
+    ) {
       pastStates.update((states) => [...states, $state]);
     }
 
@@ -171,7 +184,11 @@
     if (json) {
       state.set(json);
 
-      // FIXME? Needs a timeout, as it clears the canvas?!
+      // TODO MAYBE: If required, we could add a save to localStorage here.
+      // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
+
+      // Set the data object (so the AppLoader can save it to server if required)
+      // FIXME? Somehow this requires a timeout, as calling it directly clears the canvas?!
       setTimeout(() => {
         data = canvas.toDataURL('image/png', 1);
       }, 500);
@@ -486,7 +503,7 @@
       </div>
 
       <div class="iconbox">
-        <button on:click="{undoState}" disabled="{$pastStates.length === 0}">
+        <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
           <img
             class="icon"
             src="assets/SHB/svg/AW-icon-rotate-CCW.svg"

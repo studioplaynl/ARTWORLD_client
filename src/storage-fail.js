@@ -174,7 +174,50 @@ export const Addressbook = {
   },
 };
 
+console.log('Now defining convertPromise OUTSIDE the store');
 
+const convertPromise = new Promise((convertResolve) => {
+  setTimeout(() => {
+    console.log('This is the convertPromise kicking off OUTSIDE the store');
+    convertResolve();
+  }, 100);
+  // const existingArtworks = get(artworksStore);
+
+  // loadedArt.forEach(async (item, index) => {
+  //   const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
+  //   const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
+  //   const artwork = item;
+
+  //   // console.log('updatePreviewUrls', artwork, !artwork.value.outdatedArtwork);
+
+  //   // Only get a fresh URL if no previewUrl is available or when it has been updated
+  //   if (!artwork.value.previewUrl || outdatedArtwork) {
+  //     if (artwork.value.url) {
+  //       artwork.url = artwork.value.url.split('.')[0];
+  //     }
+  //     convertImage(
+  //       artwork.value.url,
+  //       '150',
+  //       '1000',
+  //       'png',
+  //     ).then((val) => {
+  //       artwork.value.previewUrl = val;
+  //       console.log('artwork.url', artwork.url, 'artwork.value.previewUrl', artwork.value.previewUrl);
+  //       // console.log('artwork.value.previewUrl nu: ', artwork.value.previewUrl);
+  //       loadedArt[index] = artwork;
+
+  //       console.log('loadedArt:', loadedArt, 'artwork.url', artwork.url, 'artwork.value.previewUrl', artwork.value.previewUrl);
+
+  //       if (index === loadedArt.length - 1) {
+  //         console.log('resolving convertPromise');
+  //         resolve();
+  //       }
+  //     });
+  //   }
+  // });
+});
+
+console.log('Now done defining convertPromise OUTSIDE the store');
 
 // Stores Artworks of user
 const artworksStore = writable([]);
@@ -185,106 +228,65 @@ export const ArtworksStore = {
   set: artworksStore.set,
   update: artworksStore.update,
 
-  /** Load artworks of a specific user
- * @param id User ID
- * @param limit Limit the results from the server
- */
   loadArtworks: async (id, limit) => {
     const types = ['drawing', 'video', 'audio', 'stopmotion', 'picture'];
     const typePromises = [];
     let loadedArt = [];
 
-    types.forEach(async (type) => {
+
+
+
+    types.forEach((type) => {
       // One promise per type..
       typePromises.push(new Promise((resolveType) => {
         // A promise to load objects from the server
-        const loadPromise = new Promise((resolve) => {
+        const loadPromise = new Promise((resolveLoad) => {
           if (limit !== undefined) {
-            listAllObjects(type, id).then((loaded) => resolve(loaded));
+            listAllObjects(type, id).then((loaded) => resolveLoad(loaded));
           } else {
-            listObjects(type, id, limit).then((loaded) => resolve(loaded));
+            listObjects(type, id, limit).then((loaded) => resolveLoad(loaded));
           }
         });
 
 
-        // Objects were loaded, so update the preview URLs
-        loadPromise
-          .then(async (loaded) => {
-            // Execute a Promise in order to update preview URLS
-            ArtworksStore.updatePreviewUrls(loaded).then((updatedLoaded) => {
-              // Add the updated artworks to the loadedArt array
-              loadedArt = [...loadedArt, ...updatedLoaded];
-              // Resolve the Promise for this type
-              resolveType();
-            });
-          });
+        loadPromise.then((loaded) => {
+          // Add to the loadedArt array
+          console.log('Add to loadedArt', ...loaded);
+          loadedArt = [...loadedArt, ...loaded];
+        }).then(() => {
+          // TODO: Maybe add some sorting?
+          // Resolve promise for this type
+          console.log('resolveType for ', type);
+          resolveType();
+        });
       }));
     });
 
+
+
+    console.log({ typePromises });
+
     // After all typePromises fulfilled, set data into store
-    Promise.all(typePromises).then(() => {
+    Promise.all([...typePromises, convertPromise]).then((results) => {
+      console.log('all type promises settled', results);
+
+      // if (results.length) {
+      //   convertPromise.then(() => {
+      // console.log('convertPromise settled, setting loadedArt', loadedArt);
       artworksStore.set(loadedArt);
+      // });
+      // }
     });
   },
 
-  /** Get a single Artwork by Key */
   getArtwork(key) {
     return artworksStore.find((artwork) => artwork.key === key);
   },
 
-  /** Update the Preview URLs for images that are new, or have been updated
-   * @param artworks Array of artworks (plain JS)
-   * @return {Promise} A Promise that resolves an updated array of artworks that includes the
-  */
-  updatePreviewUrls(artworks) {
-    return new Promise((resolvePreviewUrls) => {
-      const artworksToUpdate = artworks;
-      const existingArtworks = get(artworksStore);
-      const updatePromises = [];
+  // async updatePreviewUrls(artworks) {
 
-      artworksToUpdate.forEach(async (item, index) => {
-        // Check if artwork already existed, and if so, is it was outdated
-        const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
-        const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
-        const artwork = item;
+  // },
 
-        // Only get a fresh URL if no previewUrl is available or when it has been updated
-        if (!artwork.value.previewUrl || outdatedArtwork) {
-          if (artwork.value.url) {
-            artwork.url = artwork.value.url.split('.')[0];
-          }
-
-          // Prepare a promise per update that resolves after setting the
-          updatePromises.push(new Promise((resolveUpdatePromise) => {
-            convertImage(
-              artwork.value.url,
-              '150',
-              '1000',
-              'png',
-            ).then((val) => {
-              // Set the previewUrl value, update the array
-              artwork.value.previewUrl = val;
-              artworksToUpdate[index] = artwork;
-
-              // Then resolve this updatePromise
-              resolveUpdatePromise(val);
-            });
-          }));
-        }
-      });
-
-      // Resolve all updatePromises and resolve the main Promise
-      // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
-      Promise.all(updatePromises).then(() => {
-        resolvePreviewUrls(artworksToUpdate);
-      });
-    });
-  },
-
-  /** Update the state (trashed/regular) of an Artwork
-   * @param row SvelteTable row
-   * @param state
-  */
   updateState: (row, state) => {
     const {
       collection, key, value, user_id,
@@ -306,10 +308,6 @@ export const ArtworksStore = {
     });
   },
 
-  /** Update the public read status of an Artwork
-   * @param row SvelteTable row
-   * @param publicRead New read status
-  */
   updatePublicRead: async (row, publicRead) => {
     const {
       collection, key, value, user_id,
@@ -329,10 +327,6 @@ export const ArtworksStore = {
     });
   },
 
-  /** Delete an Artwork
-   * @param row SvelteTable row
-   * @param role User role
-  */
   delete: (row, role) => {
     const {
       collection, key, user_id,

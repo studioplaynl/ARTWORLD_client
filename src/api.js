@@ -94,7 +94,7 @@ export async function uploadImage(
     version,
   );
   const value = { url: jpegLocation, version, displayname: displayName };
-  const pub = status || status === 2;
+  const pub = status || status === PERMISSION_READ_PUBLIC;
 
   // FIXME: Why are we converting between 2/1 pub status and booleans?
   // if (status || status === 2) {
@@ -345,6 +345,24 @@ export async function setAvatar(avatar_url) {
   Success.set(true);
   setLoader(false);
   return Image;
+}
+
+export async function setHome(Home_url) {
+  const type = 'home';
+  const profile = get(Profile);
+  const name = profile.meta.Azc || 'Amsterdam';
+  const object = await getObject(type, name);
+  const makePublic = true;
+
+  // eslint-disable-next-line prefer-const
+  let value = !object ? {} : object.value;
+
+  value.url = Home_url;
+  // get object
+  // dlog('value', value);
+  await updateObject(type, name, value, makePublic);
+
+  return value.url;
 }
 
 export async function getFile(file_url) {

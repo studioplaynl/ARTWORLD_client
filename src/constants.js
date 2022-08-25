@@ -67,6 +67,7 @@ export const FRIENDSTATE_BANNED = 3;
 
 /** Object has been deleted */
 export const OBJECT_STATE_REGULAR = '';
+export const OBJECT_STATE_UNDEFINED = undefined;
 export const OBJECT_STATE_IN_TRASH = 'trash';
 
 
