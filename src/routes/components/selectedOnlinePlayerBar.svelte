@@ -201,15 +201,15 @@
 
   @media screen and (max-width: 600px) {
     #onlineUser {
-      right: 3px;
-      bottom: 8px;
+      right: 16px;
+      bottom: 16px;
     }
   }
 
   @media screen and (min-width: 600px) {
     #onlineUser {
-      right: 9px;
-      bottom: 9px;
+      right: 16px;
+      bottom: 16px;
     }
   }
 

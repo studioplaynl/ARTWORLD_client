@@ -352,20 +352,10 @@
     border-radius: 50%;
   }
 
-  @media screen and (max-width: 600px) {
-    #currentUser,
-    #itemsButton {
-      left: 16px;
-      bottom: 16px;
-    }
-  }
-
-  @media screen and (min-width: 600px) {
-    #currentUser,
-    #itemsButton {
-      left: 16px;
-      bottom: 16px;
-    }
+  #currentUser,
+  #itemsButton {
+    left: 16px;
+    bottom: 16px;
   }
 
   /* Clear button styling */

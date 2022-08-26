@@ -12,7 +12,10 @@
   export let file;
   export let data;
   export let changes;
+
+  // In order to allow for multi-frames (stopmotion), we need to expose these values
   export let frames = 1;
+  export let currentFrame = 1;
 
   const cursorOpacity = 0.5;
   const dispatch = createEventDispatcher();
@@ -26,7 +29,48 @@
     changes = $pastStates.length;
   }
 
+  // Window size, canvas size
+  let innerHeight;
+  let innerWidth;
+  let canvasWidth;
+  let canvasHeight;
   let scaleRatio;
+
+  $: windowRatio = innerWidth / innerHeight;
+  $: canvasSize = innerWidth > innerHeight ? innerHeight : innerWidth;
+
+  $: {
+    // Respond to changes in window size
+    if (innerWidth && innerHeight) {
+      let canvasEdge = 140;
+
+      // Mobile landscape
+      if (innerWidth <= 600 && windowRatio <= 0.8) {
+        canvasEdge = 32;
+      }
+      // Mobile portrait
+      if (innerHeight <= 600 && windowRatio >= 1.5) {
+        canvasEdge = 32;
+      }
+
+      canvasWidth = canvasSize * frames - canvasEdge;
+      canvasHeight = canvasSize - canvasEdge;
+
+      canvas.setWidth(canvasWidth);
+      canvas.setHeight(canvasHeight);
+      cursorCanvas.setWidth(canvasWidth);
+      cursorCanvas.setHeight(canvasHeight);
+
+      // for correct and adapted scaling of the preexisting artworks
+      // TODO: This does not work properly yet, probably
+      scaleRatio = Math.min(
+        (canvas.width * frames) / IMAGE_BASE_SIZE,
+        canvas.height / IMAGE_BASE_SIZE,
+      );
+      cursorCanvas.setZoom(scaleRatio);
+      canvas.setZoom(scaleRatio);
+    }
+  }
 
   // DOM ELements etc
   let canvasEl;
@@ -89,11 +133,6 @@
     });
     eraseBrush = new fabric.EraserBrush(canvas);
 
-    // Always adapt canvas sizes on screen size change
-    window.onresize = () => {
-      adaptCanvasSize();
-    };
-
     fabric.Object.prototype.transparentCorners = false;
 
     // mouse cursor layer
@@ -149,8 +188,6 @@
         brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
       }
     };
-
-    adaptCanvasSize();
 
     // Was there an image to load? Do so
     if (file?.url) {
@@ -236,57 +273,6 @@
     }
   }
 
-  // Respond to window size changes
-  function adaptCanvasSize() {
-    // the canvas size is set by the least of two (width / height)
-    // const canvasEdge = 40;
-    // const windowRatio = window.innerWidth / window.innerHeight;
-
-    // const canvasSize =
-    //   window.innerWidth > window.innerHeight
-    //     ? window.innerHeight - canvasEdge
-    //     : window.innerWidth - canvasEdge;
-
-    // // setting default width and height
-    // canvas.setWidth(canvasSize);
-    // canvas.setHeight(canvasSize);
-    // cursorCanvas.setWidth(canvasSize);
-    // cursorCanvas.setHeight(canvasSize);
-
-    // // Keep Iconbox clear
-    // const canvasReductionAmount = 70;
-    // if (window.innerWidth >= 600 && windowRatio < 1.05) {
-    //   canvas.setWidth(canvasSize - canvasReductionAmount);
-    //   canvas.setHeight(canvasSize - canvasReductionAmount);
-    //   cursorCanvas.setWidth(canvasSize - canvasReductionAmount);
-    //   cursorCanvas.setHeight(canvasSize - canvasReductionAmount);
-    // }
-
-    // // for mobile screens
-    // if (canvasSize <= 640) {
-    //   canvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
-    //   canvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
-    //   cursorCanvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
-    //   cursorCanvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
-    // }
-
-    // // for mobile screens
-    // if (canvasSize <= 540) {
-    //   canvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
-    //   canvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
-    //   cursorCanvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
-    //   cursorCanvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
-    // }
-
-    // for correct and adapted scaling of the preexisting artworks
-    scaleRatio = Math.min(
-      canvas.width / IMAGE_BASE_SIZE,
-      canvas.width / IMAGE_BASE_SIZE,
-    );
-    cursorCanvas.setZoom(scaleRatio);
-    canvas.setZoom(scaleRatio);
-  }
-
   function putImageOnCanvas(imgUrl, callback) {
     fabric.Image.fromURL(
       imgUrl,
@@ -354,9 +340,6 @@
   }
 
   function clearCanvas() {
-    // if anything is drawn on the canvas and it has not been uploaded,
-    // save the artwork and clear the canvas
-    // isDrawn = false;
     canvas.clear();
   }
 
@@ -395,10 +378,18 @@
   }
 </script>
 
+<svelte:window bind:innerHeight bind:innerWidth />
+
 <div class="drawing-app">
   <div class="main-container">
-    <div class="canvas-frame-container">
-      <div class="canvas-box">
+    <div
+      class="canvas-frame-container"
+      style="width: {canvasHeight}px; height: {canvasHeight}px;"
+    >
+      <div
+        class="canvas-box"
+        style="left: -{canvasHeight * (currentFrame - 1)}px;"
+      >
         <canvas bind:this="{canvasEl}" class="canvas"> </canvas>
         <canvas bind:this="{cursorCanvasEl}" class="cursor-canvas"> </canvas>
       </div>
@@ -577,14 +568,57 @@
   <div id="clear-canvas" on:click="{clearCanvas}">
     <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
   </div>
-  <!-- {#if appType === 'avatar'}
-    <div id="avatarBox">
-      <Avatar />
-    </div>
-  {/if} -->
+
+  <!-- <div class="debug">
+    <button
+      on:click="{() => {
+        frames = Math.max(1, frames - 1);
+      }}"
+    >
+      -
+    </button>
+    {frames}
+    <button
+      on:click="{() => {
+        frames = Math.min(10, frames + 1);
+      }}"
+    >
+      +
+    </button>
+    |
+    <button
+      on:click="{() => {
+        currentFrame = Math.max(1, currentFrame - 1);
+      }}"
+    >
+      &lt;
+    </button>
+    {currentFrame}
+    <button
+      on:click="{() => {
+        currentFrame = Math.min(10, currentFrame + 1);
+      }}"
+    >
+      &gt;
+    </button>
+  </div> -->
 </div>
 
 <style>
+  .debug {
+    position: fixed;
+    top: 0;
+    right: 0;
+    border: 1px solid red;
+    background-color: white;
+    padding: 5px;
+    margin: 5px;
+    z-index: 100;
+  }
+
+  .debug button {
+    color: blue;
+  }
   * {
     box-sizing: border-box;
     padding: 0;
@@ -601,12 +635,11 @@
   .main-container {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    /* justify-content: space-around; */
-    padding: 20px;
-    /* background: red; */
+    justify-content: center;
+    padding: 16px;
     height: 100vh;
     width: 100vw;
+    background-color: rgb(115, 0, 237, 0.15);
   }
 
   .cursor-canvas {
@@ -691,14 +724,21 @@
     min-width: 50px;
     height: 50px;
     border-radius: 50%;
-    padding: 8px 0px 8px 0px;
+    padding: 8px;
     cursor: pointer;
+    object-fit: contain;
+    /* margin: 0 4px 0 4px; */
+    /* outline: 1px solid #7300ed2e; */
+  }
+
+  .iconbox button {
+    opacity: 1;
   }
 
   #drawing-color {
     padding: 0px;
     display: block;
-    margin: 20px auto;
+    margin: 16px auto;
   }
 
   .optionbox {
@@ -765,10 +805,15 @@
     bottom: 5px;
   } */
 
-  .canvas-box {
-    position: relative;
+  .canvas-frame-container {
     background-color: white;
     border: 2px solid #7300ed;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .canvas-box {
+    position: relative;
   }
 
   #clear-canvas {
@@ -789,11 +834,6 @@
     width: 40px;
   }
 
-  /* .canvas-frame-container {
-    display: flex;
-    flex-direction: row;
-  } */
-
   .optionbox-container {
     margin: 0 10px 0 0;
     position: fixed;
@@ -803,7 +843,7 @@
     transform: translateY(-50%);
   }
 
-  @media only screen and (min-width: 640px) and (max-width: 1024px) and (min-aspect-ratio: 3/2) {
+  @media only screen and (min-width: 600px) and (max-width: 1024px) and (min-aspect-ratio: 3/2) {
     .iconbox {
       justify-content: flex-end;
     }
@@ -815,30 +855,8 @@
     flex-wrap: wrap;
   }
 
-  /* medium size */
-  /* @media only screen and (max-width: 1007px) {
-    .canvas-frame-container {
-      flex-direction: column;
-    }
-  } */
-
   /* small */
-  @media only screen and (max-width: 640px) {
-    /* .main-container {
-      display: unset;
-      align-items: unset;
-      margin: 0;
-    } */
-
-    /* .canvas-frame-container {
-      justify-content: center;
-      align-items: center;
-    } */
-
-    /* .canvas-box {
-      order: 2;
-    } */
-
+  @media only screen and (max-width: 600px) {
     .optionbox {
       width: 100%;
       height: min-content;
@@ -864,7 +882,7 @@
     }
 
     .optionbar > * {
-      margin: 20px 20px 20px 0;
+      margin: 16px 16px 16px 0;
     }
 
     @keyframes growup {
