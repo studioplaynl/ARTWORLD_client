@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher, onMount, onDestroy, tick } from 'svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { writable } from 'svelte/store';
 
   // Important: keep the eslint comment below intact!
@@ -7,12 +7,13 @@
   import { fabric } from './fabric/dist/fabric';
   import { setLoader } from '../../api';
   import { Error } from '../../session';
+  import { IMAGE_BASE_SIZE } from '../../constants';
 
   export let file;
   export let data;
   export let changes;
+  export let frames = 1;
 
-  const imageResolution = 2048;
   const cursorOpacity = 0.5;
   const dispatch = createEventDispatcher();
 
@@ -238,47 +239,49 @@
   // Respond to window size changes
   function adaptCanvasSize() {
     // the canvas size is set by the least of two (width / height)
-    const canvasSize =
-      window.innerWidth > window.innerHeight
-        ? window.innerHeight
-        : window.innerWidth;
+    // const canvasEdge = 40;
+    // const windowRatio = window.innerWidth / window.innerHeight;
 
-    // setting default width and height
-    canvas.setWidth(canvasSize);
-    canvas.setHeight(canvasSize);
-    cursorCanvas.setWidth(canvasSize);
-    cursorCanvas.setHeight(canvasSize);
+    // const canvasSize =
+    //   window.innerWidth > window.innerHeight
+    //     ? window.innerHeight - canvasEdge
+    //     : window.innerWidth - canvasEdge;
 
-    const canvasReductionAmount = 200;
+    // // setting default width and height
+    // canvas.setWidth(canvasSize);
+    // canvas.setHeight(canvasSize);
+    // cursorCanvas.setWidth(canvasSize);
+    // cursorCanvas.setHeight(canvasSize);
 
-    // for medium screens
-    if (canvasSize < 1008 && canvasSize > 640) {
-      canvas.setWidth(canvasSize - canvasReductionAmount);
-      canvas.setHeight(canvasSize - canvasReductionAmount);
-      cursorCanvas.setWidth(canvasSize - canvasReductionAmount);
-      cursorCanvas.setHeight(canvasSize - canvasReductionAmount);
-    }
+    // // Keep Iconbox clear
+    // const canvasReductionAmount = 70;
+    // if (window.innerWidth >= 600 && windowRatio < 1.05) {
+    //   canvas.setWidth(canvasSize - canvasReductionAmount);
+    //   canvas.setHeight(canvasSize - canvasReductionAmount);
+    //   cursorCanvas.setWidth(canvasSize - canvasReductionAmount);
+    //   cursorCanvas.setHeight(canvasSize - canvasReductionAmount);
+    // }
 
-    // for mobile screens
-    if (canvasSize <= 640) {
-      canvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
-      canvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
-      cursorCanvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
-      cursorCanvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
-    }
+    // // for mobile screens
+    // if (canvasSize <= 640) {
+    //   canvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
+    //   canvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
+    //   cursorCanvas.setWidth(canvasSize - canvasReductionAmount * 0, 55);
+    //   cursorCanvas.setHeight(canvasSize - canvasReductionAmount * 0, 55);
+    // }
 
-    // for mobile screens
-    if (canvasSize <= 540) {
-      canvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
-      canvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
-      cursorCanvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
-      cursorCanvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
-    }
+    // // for mobile screens
+    // if (canvasSize <= 540) {
+    //   canvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
+    //   canvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
+    //   cursorCanvas.setWidth(canvasSize - canvasReductionAmount * 0, 4);
+    //   cursorCanvas.setHeight(canvasSize - canvasReductionAmount * 0, 4);
+    // }
 
     // for correct and adapted scaling of the preexisting artworks
     scaleRatio = Math.min(
-      canvas.width / imageResolution,
-      canvas.width / imageResolution,
+      canvas.width / IMAGE_BASE_SIZE,
+      canvas.width / IMAGE_BASE_SIZE,
     );
     cursorCanvas.setZoom(scaleRatio);
     canvas.setZoom(scaleRatio);
@@ -289,8 +292,8 @@
       imgUrl,
       (image, hasError) => {
         image.set({ left: 0, top: 0 });
-        image.scaleToHeight(imageResolution);
-        image.scaleToWidth(imageResolution);
+        image.scaleToHeight(IMAGE_BASE_SIZE);
+        image.scaleToWidth(IMAGE_BASE_SIZE);
         canvas.add(image);
 
         if (typeof callback === 'function') callback(hasError === false);
@@ -392,12 +395,12 @@
   }
 </script>
 
-<main>
+<div class="drawing-app">
   <div class="main-container">
     <div class="canvas-frame-container">
       <div class="canvas-box">
         <canvas bind:this="{canvasEl}" class="canvas"> </canvas>
-        <canvas bind:this="{cursorCanvasEl}" id="cursor"> </canvas>
+        <canvas bind:this="{cursorCanvasEl}" class="cursor-canvas"> </canvas>
       </div>
     </div>
   </div>
@@ -579,7 +582,7 @@
       <Avatar />
     </div>
   {/if} -->
-</main>
+</div>
 
 <style>
   * {
@@ -592,16 +595,21 @@
     user-select: none;
   }
 
+  .drawing-app {
+    position: relative;
+  }
   .main-container {
     display: flex;
     align-items: center;
-    margin-left: 60px;
     justify-content: flex-end;
     /* justify-content: space-around; */
-    margin: 20px 20px 0 0;
+    padding: 20px;
+    /* background: red; */
+    height: 100vh;
+    width: 100vw;
   }
 
-  #cursor {
+  .cursor-canvas {
     pointer-events: none !important;
     width: 100vw;
     height: 100vw;
@@ -646,7 +654,7 @@
   }
 
   .optionbar {
-    margin-left: 10px;
+    /* margin-left: 10px; */
     border-right: 2px solid #7300ed;
     /* box-shadow: 10px 0px 5px 0px rgba(115,0,237,0.5); */
     height: 100vh;
@@ -683,7 +691,7 @@
     min-width: 50px;
     height: 50px;
     border-radius: 50%;
-    padding: 5px 0px 5px 0px;
+    padding: 8px 0px 8px 0px;
     cursor: pointer;
   }
 
@@ -765,8 +773,8 @@
 
   #clear-canvas {
     position: fixed;
-    left: 8px;
-    top: 80px;
+    left: 72px;
+    top: 16px;
     z-index: 13;
     box-shadow: 5px 5px 0px #7300ed;
     cursor: pointer;
@@ -781,10 +789,10 @@
     width: 40px;
   }
 
-  .canvas-frame-container {
+  /* .canvas-frame-container {
     display: flex;
     flex-direction: row;
-  }
+  } */
 
   .optionbox-container {
     margin: 0 10px 0 0;
@@ -795,6 +803,12 @@
     transform: translateY(-50%);
   }
 
+  @media only screen and (min-width: 640px) and (max-width: 1024px) and (min-aspect-ratio: 3/2) {
+    .iconbox {
+      justify-content: flex-end;
+    }
+  }
+
   .drawing-options-container {
     display: flex;
     flex-direction: row;
@@ -802,28 +816,28 @@
   }
 
   /* medium size */
-  @media only screen and (max-width: 1007px) {
+  /* @media only screen and (max-width: 1007px) {
     .canvas-frame-container {
       flex-direction: column;
     }
-  }
+  } */
 
   /* small */
   @media only screen and (max-width: 640px) {
-    .main-container {
+    /* .main-container {
       display: unset;
       align-items: unset;
       margin: 0;
-    }
+    } */
 
-    .canvas-frame-container {
+    /* .canvas-frame-container {
       justify-content: center;
       align-items: center;
-    }
+    } */
 
-    .canvas-box {
+    /* .canvas-box {
       order: 2;
-    }
+    } */
 
     .optionbox {
       width: 100%;
@@ -846,11 +860,11 @@
       transform-origin: bottom center;
       position: sticky;
       z-index: 40;
-      align-items: flex-end;
+      align-items: center;
     }
 
     .optionbar > * {
-      margin: 20px 50px 20px 0;
+      margin: 20px 20px 20px 0;
     }
 
     @keyframes growup {
@@ -895,6 +909,9 @@
 
     .currentSelected {
       display: inline;
+      border-radius: 50%;
+      height: 49px;
+      width: 49px;
     }
 
     .iconbox {
@@ -911,10 +928,10 @@
       box-shadow: unset;
     }
 
-    #clear-canvas {
+    /* #clear-canvas {
       top: unset;
       bottom: 60px;
-    }
+    } */
   }
 
   button {

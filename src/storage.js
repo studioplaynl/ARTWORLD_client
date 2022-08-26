@@ -228,58 +228,54 @@ export const ArtworksStore = {
   },
 
   /** Get a single Artwork by Key */
-  getArtwork(key) {
-    return artworksStore.find((artwork) => artwork.key === key);
-  },
+  getArtwork: (key) => artworksStore.find((artwork) => artwork.key === key),
 
   /** Update the Preview URLs for images that are new, or have been updated
    * @param artworks Array of artworks (plain JS)
    * @return {Promise} A Promise that resolves an updated array of artworks that includes the
   */
-  updatePreviewUrls(artworks) {
-    return new Promise((resolvePreviewUrls) => {
-      const artworksToUpdate = artworks;
-      const existingArtworks = get(artworksStore);
-      const updatePromises = [];
+  updatePreviewUrls: (artworks) => new Promise((resolvePreviewUrls) => {
+    const artworksToUpdate = artworks;
+    const existingArtworks = get(artworksStore);
+    const updatePromises = [];
 
-      artworksToUpdate.forEach(async (item, index) => {
-        // Check if artwork already existed, and if so, is it was outdated
-        const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
-        const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
-        const artwork = item;
+    artworksToUpdate.forEach(async (item, index) => {
+      // Check if artwork already existed, and if so, is it was outdated
+      const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
+      const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
+      const artwork = item;
 
-        // Only get a fresh URL if no previewUrl is available or when it has been updated
-        if (!artwork.value.previewUrl || outdatedArtwork) {
-          if (artwork.value.url) {
-            artwork.url = artwork.value.url.split('.')[0];
-          }
-
-          // Prepare a promise per update that resolves after setting the
-          updatePromises.push(new Promise((resolveUpdatePromise) => {
-            convertImage(
-              artwork.value.url,
-              '150',
-              '1000',
-              'png',
-            ).then((val) => {
-              // Set the previewUrl value, update the array
-              artwork.value.previewUrl = val;
-              artworksToUpdate[index] = artwork;
-
-              // Then resolve this updatePromise
-              resolveUpdatePromise(val);
-            });
-          }));
+      // Only get a fresh URL if no previewUrl is available or when it has been updated
+      if (!artwork.value.previewUrl || outdatedArtwork) {
+        if (artwork.value.url) {
+          artwork.url = artwork.value.url.split('.')[0];
         }
-      });
 
-      // Resolve all updatePromises and resolve the main Promise
-      // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
-      Promise.all(updatePromises).then(() => {
-        resolvePreviewUrls(artworksToUpdate);
-      });
+        // Prepare a promise per update that resolves after setting the
+        updatePromises.push(new Promise((resolveUpdatePromise) => {
+          convertImage(
+            artwork.value.url,
+            '150',
+            '1000',
+            'png',
+          ).then((val) => {
+            // Set the previewUrl value, update the array
+            artwork.value.previewUrl = val;
+            artworksToUpdate[index] = artwork;
+
+            // Then resolve this updatePromise
+            resolveUpdatePromise(val);
+          });
+        }));
+      }
     });
-  },
+
+    // Resolve all updatePromises and resolve the main Promise
+    // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
+    Promise.all(updatePromises).then(() => {
+      resolvePreviewUrls(artworksToUpdate);
+    });
+  }),
 
   /** Update the state (trashed/regular) of an Artwork
    * @param row SvelteTable row
@@ -331,7 +327,7 @@ export const ArtworksStore = {
 
   /** Delete an Artwork
    * @param row SvelteTable row
-   * @param role User role
+   * @param {string} role User role
   */
   delete: (row, role) => {
     const {

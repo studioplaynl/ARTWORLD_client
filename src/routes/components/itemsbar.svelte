@@ -251,7 +251,12 @@
     > -->
 
       <span>-</span>
-      <button on:click="{() => { current = ''; logout(); }}">
+      <button
+        on:click="{() => {
+          current = '';
+          logout();
+        }}"
+      >
         <img
           class="icon"
           src="assets/SHB/svg/AW-icon-exit.svg"
@@ -350,16 +355,16 @@
   @media screen and (max-width: 600px) {
     #currentUser,
     #itemsButton {
-      left: 3px;
-      bottom: 8px;
+      left: 16px;
+      bottom: 16px;
     }
   }
 
   @media screen and (min-width: 600px) {
     #currentUser,
     #itemsButton {
-      left: 9px;
-      bottom: 9px;
+      left: 16px;
+      bottom: 16px;
     }
   }
 

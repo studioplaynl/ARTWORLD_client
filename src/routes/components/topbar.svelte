@@ -136,7 +136,7 @@
     position: fixed;
     left: 0;
     top: 0;
-    margin: 15px 15px 15px 30px;
+    margin: 16px;
   }
 
   .TopIcon {

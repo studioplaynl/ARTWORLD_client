@@ -51,6 +51,9 @@ export const PERMISSION_READ_PRIVATE = 1;
 /** File is public */
 export const PERMISSION_READ_PUBLIC = 2;
 
+/** Base size used for artworks */
+export const IMAGE_BASE_SIZE = 2048;
+
 
 /*
 0 Users are friends with each other.
