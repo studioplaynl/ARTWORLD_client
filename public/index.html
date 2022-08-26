@@ -1,66 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset='utf-8'>
-	<meta name='viewport' content='width=device-width,initial-scale=1'>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1, user-scalable=no'>
 
-	<title>ArtWorld</title>
+  <title>ArtWorld</title>
 
-	<link rel='icon' type='image/png' href='./favicon.svg'>
+  <link rel='icon' type='image/png' href='./favicon.svg'>
 </head>
 
 <body>
-	<div id="loader">
-		<h1 class="bottom">
-			<span>A</span>
-			<span>R</span>
-			<span>T</span>
+  <div id="loader">
+    <h1 class="bottom">
+      <span>A</span>
+      <span>R</span>
+      <span>T</span>
       <span id="break"></span>
-			<span>W</span>
-			<span>O</span>
-			<span>R</span>
-			<span>L</span>
-			<span>D</span>
-		</h1>
+      <span>W</span>
+      <span>O</span>
+      <span>R</span>
+      <span>L</span>
+      <span>D</span>
+    </h1>
     <h1 class="top">
-			<span>A</span>
-			<span>R</span>
-			<span>T</span>
+      <span>A</span>
+      <span>R</span>
+      <span>T</span>
       <span id="break"></span>
-			<span>W</span>
-			<span>O</span>
-			<span>R</span>
-			<span>L</span>
-			<span>D</span>
-		</h1>
-	</div>
+      <span>W</span>
+      <span>O</span>
+      <span>R</span>
+      <span>L</span>
+      <span>D</span>
+    </h1>
+  </div>
 </body>
 <style>
+  #loader {
+    z-index: 50;
+    height: 100vh;
+    position: fixed;
+    width: 100vw;
+    /* background-color: rgba(255,0,0,0.5); */
 
-#loader {
-  z-index: 50;
-  height: 100vh;
-  position: fixed;
-  width: 100vw;
-  /* background-color: rgba(255,0,0,0.5); */
+  }
 
-}
-
-#loader > h1 {
-  text-align: center;
+  #loader>h1 {
+    text-align: center;
     max-width: 600px;
     margin: 0 auto;
     position: fixed;
     top: 50vh;
     left: 50vw;
     transform: translate(-50%, -50%);
-}
+  }
 
-#loader > h1 > span {
+  #loader>h1>span {
     display: inline-block;
 
-	font-family: Arial, sans-serif;
-	font-size: 2rem;
+    font-family: Arial, sans-serif;
+    font-size: 2rem;
     width: 3rem;
     height: 3rem;
     line-height: 3rem;
@@ -70,87 +70,130 @@
     border-radius: 50%;
     padding: 0;
     margin: 4px -5px;
-}
+  }
 
-.bottom > span {
-  -webkit-animation: bounce 15s linear infinite alternate;
+  .bottom>span {
+    -webkit-animation: bounce 15s linear infinite alternate;
     animation: bounce 15s linear out infinite alternate;
-}
+  }
 
-#loader h1 span:nth-child(2) { -webkit-animation-delay: .1s; animation-delay: .1s; }
-#loader h1 span:nth-child(3) { -webkit-animation-delay: .2s; animation-delay: .2s; }
-#loader h1 span:nth-child(4) { -webkit-animation-delay: .3s; animation-delay: .3s; }
-#loader h1 span:nth-child(5) { -webkit-animation-delay: .4s; animation-delay: .4s; }
-#loader h1 span:nth-child(6) { -webkit-animation-delay: .5s; animation-delay: .5s; }
-#loader h1 span:nth-child(7) { -webkit-animation-delay: .6s; animation-delay: .6s; }
-#loader h1 span:nth-child(8) { -webkit-animation-delay: .7s; animation-delay: .7s; }
+  #loader h1 span:nth-child(2) {
+    -webkit-animation-delay: .1s;
+    animation-delay: .1s;
+  }
 
-span#break {
-    width: 0px!important;
-    height: 0px!important;
-}
-@media screen and (max-width: 700px) {
+  #loader h1 span:nth-child(3) {
+    -webkit-animation-delay: .2s;
+    animation-delay: .2s;
+  }
+
+  #loader h1 span:nth-child(4) {
+    -webkit-animation-delay: .3s;
+    animation-delay: .3s;
+  }
+
+  #loader h1 span:nth-child(5) {
+    -webkit-animation-delay: .4s;
+    animation-delay: .4s;
+  }
+
+  #loader h1 span:nth-child(6) {
+    -webkit-animation-delay: .5s;
+    animation-delay: .5s;
+  }
+
+  #loader h1 span:nth-child(7) {
+    -webkit-animation-delay: .6s;
+    animation-delay: .6s;
+  }
+
+  #loader h1 span:nth-child(8) {
+    -webkit-animation-delay: .7s;
+    animation-delay: .7s;
+  }
+
   span#break {
-      display: block!important;
+    width: 0px !important;
+    height: 0px !important;
   }
-}
 
-@-webkit-keyframes bounce {
-  12% {
-	box-shadow: 0px 0px rgb(115 0 235);
+  @media screen and (max-width: 700px) {
+    span#break {
+      display: block !important;
+    }
   }
-  25% {
-	box-shadow: -1rem 1rem rgb(115 0 235);
-  }
-  37% {
-	box-shadow: 0px 0px rgb(115 0 235);
-  }
-  50% {
-	box-shadow: -1rem -1rem rgb(115 0 235);
-  }
-  62% {
-	box-shadow: 0px 0px rgb(115 0 235);
-  }
-  75% {
-	box-shadow: 1rem -1rem rgb(115 0 235);
-  }
-  82% {
-	box-shadow: 0px 0px rgb(115 0 235);
-  }
-  100% {
-	box-shadow: 1rem 1rem rgb(115 0 235);
-  }
-}
 
-@keyframes bounce {
-	12% {
-	box-shadow: 0px 0px rgb(115 0 235);
+  @-webkit-keyframes bounce {
+    12% {
+      box-shadow: 0px 0px rgb(115 0 235);
+    }
+
+    25% {
+      box-shadow: -1rem 1rem rgb(115 0 235);
+    }
+
+    37% {
+      box-shadow: 0px 0px rgb(115 0 235);
+    }
+
+    50% {
+      box-shadow: -1rem -1rem rgb(115 0 235);
+    }
+
+    62% {
+      box-shadow: 0px 0px rgb(115 0 235);
+    }
+
+    75% {
+      box-shadow: 1rem -1rem rgb(115 0 235);
+    }
+
+    82% {
+      box-shadow: 0px 0px rgb(115 0 235);
+    }
+
+    100% {
+      box-shadow: 1rem 1rem rgb(115 0 235);
+    }
   }
-  25% {
-	box-shadow: -1rem 1rem rgb(115 0 235);
+
+  @keyframes bounce {
+    12% {
+      box-shadow: 0px 0px rgb(115 0 235);
+    }
+
+    25% {
+      box-shadow: -1rem 1rem rgb(115 0 235);
+    }
+
+    37% {
+      box-shadow: 0px 0px rgb(115 0 235);
+    }
+
+    50% {
+      box-shadow: -1rem -1rem rgb(115 0 235);
+    }
+
+    62% {
+      box-shadow: 0px 0px rgb(115 0 235);
+    }
+
+    75% {
+      box-shadow: 1rem -1rem rgb(115 0 235);
+    }
+
+    82% {
+      box-shadow: 0px 0px rgb(115 0 235);
+    }
+
+    100% {
+      box-shadow: 1rem 1rem rgb(115 0 235);
+    }
   }
-  37% {
-	box-shadow: 0px 0px rgb(115 0 235);
-  }
-  50% {
-	box-shadow: -1rem -1rem rgb(115 0 235);
-  }
-  62% {
-	box-shadow: 0px 0px rgb(115 0 235);
-  }
-  75% {
-	box-shadow: 1rem -1rem rgb(115 0 235);
-  }
-  82% {
-	box-shadow: 0px 0px rgb(115 0 235);
-  }
-  100% {
-	box-shadow: 1rem 1rem rgb(115 0 235);
-  }
-}
 </style>
 <link rel='stylesheet' href='./global.css'>
 <link rel='stylesheet' href='./build/bundle.css'>
 
 <script defer src='./build/bundle.js'></script>
+
 </html>
