@@ -1,6 +1,5 @@
 import ManageSession from '../ManageSession';
 import { listObjects, convertImage } from '../../../api';
-
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
@@ -9,9 +8,9 @@ import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ArtworkList from '../class/ArtworkList';
-import Move from '../class/Move';
 import { playerPos } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
+import { handlePlayerMovement } from '../helpers/InputHelper';
 
 const { Phaser } = window;
 
@@ -57,18 +56,11 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     this.location = '';
 
-    // .......................REX UI ............
-    this.COLOR_PRIMARY = 0xff5733;
-    this.COLOR_LIGHT = 0xffffff;
-    this.COLOR_DARK = 0x000000;
-    this.data;
-    // ....................... end REX UI ......
-
     // shadow
     this.playerShadowOffset = -8;
 
     // UI scene
-    this.currentZoom;
+    this.currentZoom = 1;
   }
 
   init(data) {
@@ -90,17 +82,16 @@ export default class DefaultUserHome extends Phaser.Scene {
     ManageSession.worldSize = this.worldSize;
     //!
 
-    this.handleEditMode();
+    Background.standardWithDots(this);
 
-    this.makeBackground();
-
-    this.handlePlayerMovement();
+    handlePlayerMovement(this);
 
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default 0 ,0 artworldCoordinates
     this.player = new PlayerDefault(this, 0, 0, ManageSession.playerAvatarPlaceholder).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder }).setDepth(200);
+    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder })
+      .setDepth(200);
     // .......  end PLAYER ................................................................................
     // for back button
     SceneSwitcher.pushLocation(this);
@@ -151,7 +142,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       // value:
       //  displayname: "cyaanConejo"
       //  json: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
-      //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
+      //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-...?signature=6339.."
       //  status: ""
       //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
       //  version: 0
@@ -186,7 +177,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       // value:
       //  displayname: "cyaanConejo"
       //  json: "stopmotion//5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
-      //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
+      //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-...?signature=6339.."
       //  status: ""
       //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
       //  version: 0
@@ -220,7 +211,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     // value:
     //  displayname: "cyaanConejo"
     //  json: "stopmotion//5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
-    //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png?signature=6339bb9aa7f10a73387337ce0ab59ab5d657e3ce95b70a942b339cbbd6f15355"
+    //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-...?signature=6339.."
     //  status: ""
     //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
     //  version: 0
@@ -257,7 +248,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     const middleWorldX = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0);
     const startXArt = middleWorldX - (totalArtWidth / 2);
 
-    const coordX = index == 0 ? startXArt : (startXArt) + (index * (this.artDisplaySize + 38));
+    const coordX = index === 0 ? startXArt : (startXArt) + (index * (this.artDisplaySize + 38));
     this.stopmotionContainer = this.add.container(0, 0).setDepth(100);
 
     const y = 500 + this.artDisplaySize + (38 * 4);
@@ -278,7 +269,11 @@ export default class DefaultUserHome extends Phaser.Scene {
       this.progressStopmotion.push({ imageKeyUrl, coordX });
       // console.log('imageKeyUrl stopmotion', imageKeyUrl);
 
-      this.load.spritesheet(imageKeyUrl, convertedImage, { frameWidth: this.artDisplaySize, frameHeight: this.artDisplaySize });
+      this.load.spritesheet(
+        imageKeyUrl,
+        convertedImage,
+        { frameWidth: this.artDisplaySize, frameHeight: this.artDisplaySize },
+      );
       // console.log('stopmotion', imageKeyUrl);
       this.load.start(); // start the load queue to get the image in memory
     }
@@ -287,7 +282,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     this.load.on('filecomplete', (key) => {
       // on completion of each specific artwork
-      const currentImage = this.progressStopmotion.find((element) => element.imageKeyUrl === key);
+      const currentImage = this.progressStopmotion.find((element2) => element2.imageKeyUrl === key);
 
       // console.log('currentImage', currentImage);
       // we don't want to trigger any other load completions
@@ -301,9 +296,11 @@ export default class DefaultUserHome extends Phaser.Scene {
         ).setOrigin(0.5));
 
         const avatar = this.textures.get(currentImage.imageKeyUrl);
+        // eslint-disable-next-line no-underscore-dangle
         const avatarWidth = avatar.frames.__BASE.width;
         // console.log('stopmotion width: ', avatarWidth);
 
+        // eslint-disable-next-line no-underscore-dangle
         const avatarHeight = avatar.frames.__BASE.height;
         // console.log(`stopmotion Height: ${avatarHeight}`);
 
@@ -339,7 +336,11 @@ export default class DefaultUserHome extends Phaser.Scene {
         // . end animation for the player avatar ......................
 
         // adds the image to the container
-        const completedImage = this.add.sprite(currentImage.coordX - this.artDisplaySize / 2, y, currentImage.imageKeyUrl).setOrigin(0.5);
+        const completedImage = this.add.sprite(
+          currentImage.coordX - this.artDisplaySize / 2,
+          y,
+          currentImage.imageKeyUrl,
+        ).setOrigin(0.5);
         this.stopmotionContainer.add(completedImage);
 
         completedImage.setData('moveAnim', `moving_${key}`);
@@ -407,7 +408,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       progressBar.fillStyle(0xFFFFFF, 1);
 
       // the progress bar is displayed for each artworks loading process
-      const progressedImage = this.progress.find((element) => element.imageKeyUrl === file.key);
+      const progressedImage = this.progress.find((element3) => element3.imageKeyUrl === file.key);
 
       // we want to run the progress bar only for artworks,
       // and it should not be triggered for any other loading processes
@@ -424,7 +425,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     this.load.on('filecomplete', (key) => {
       // on completion of each specific artwork
-      const currentImage = this.progress.find((element) => element.imageKeyUrl === key);
+      const currentImage = this.progress.find((element4) => element4.imageKeyUrl === key);
 
       // we don't want to trigger any other load completions
       if (currentImage) {
@@ -454,171 +455,6 @@ export default class DefaultUserHome extends Phaser.Scene {
       this.artworksListSpinner.destroy();
     });
   }// end downloadArt
-
-  makeBackground() {
-    // the order of creation is the order of drawing: first = bottom ...............................
-    this.bgImageWhite = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xffffff).setOrigin(0);
-    this.bgImageWhite.setName('bgImageWhite');
-
-    // this.bgImage = this.add.image(0, 0, 'bgImageWhite').setOrigin(0);;
-
-    Background.repeatingDots({
-      scene: this,
-      gridOffset: 80,
-      dotWidth: 2,
-      dotColor: 0x7300ed,
-      backgroundColor: 0xffffff,
-    });
-
-
-    // make a repeating set of rectangles around the artworld canvas
-    const middleCoordinates = new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
-    );
-    this.borderRectArray = [];
-
-    for (let i = 0; i < 3; i++) {
-      this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i));
-      this.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
-
-      this.borderRectArray[i].x = middleCoordinates.x;
-      this.borderRectArray[i].y = middleCoordinates.y;
-    }
-  }
-
-  handleEditMode() {
-    //! needed for EDITMODE: dragging objects and getting info about them in console
-    // this is needed of each scene EDITMODE is used
-
-
-    this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-      if (ManageSession.gameEditMode) {
-        gameObject.setPosition(dragX, dragY);
-
-        if (gameObject.name === 'handle') {
-          gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
-        }
-      }
-    }, this);
-
-    this.input.on('dragend', (pointer, gameObject) => {
-      if (ManageSession.gameEditMode) {
-        const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
-        const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
-        // store the original scale when selecting the gameObject for the first time
-        if (ManageSession.selectedGameObject !== gameObject) {
-          ManageSession.selectedGameObject = gameObject;
-          ManageSession.selectedGameObjectStartScale = gameObject.scale;
-          ManageSession.selectedGameObjectStartPosition.x = gameObject.x;
-          ManageSession.selectedGameObjectStartPosition.y = gameObject.y;
-          dlog('editMode info startScale:', ManageSession.selectedGameObjectStartScale);
-        }
-        // ManageSession.selectedGameObject = gameObject
-
-        dlog(
-          'editMode info posX posY: ',
-          worldX,
-          worldY,
-          'scale:',
-          ManageSession.selectedGameObject.scale,
-          'width*scale:',
-          Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale),
-          'height*scale:',
-          Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale),
-          'name:',
-          ManageSession.selectedGameObject.name,
-        );
-      }
-    }, this);
-  }
-
-  handlePlayerMovement() {
-    //! DETECT dragging and mouseDown on rectangle
-    Background.rectangle({
-      scene: this,
-      posX: 0,
-      posY: 0,
-      color: 0xffff00,
-      alpha: 1,
-      width: this.worldSize.x,
-      height: this.worldSize.y,
-      name: 'touchBackgroundCheck',
-      setOrigin: 0,
-    });
-
-    this.touchBackgroundCheck
-    // draggable to detect player drag movement
-      .setInteractive({ draggable: true }) // { useHandCursor: true } { draggable: true }
-      .on('pointerup', () => {
-      })
-      .on('pointerdown', () => {
-        ManageSession.playerIsAllowedToMove = true;
-      })
-      .on('drag', (pointer, dragX, dragY) => {
-        this.input.manager.canvas.style.cursor = 'grabbing';
-        // dlog('dragX, dragY', dragX, dragY);
-        // console.log('dragX, dragY', dragX, dragY);
-        // if we drag the touchBackgroundCheck layer, we update the player
-        // eslint-disable-next-line no-lonely-if
-
-        const moveCommand = 'moving';
-        const movementData = { dragX, dragY, moveCommand };
-        Move.moveByDragging(movementData);
-        ManageSession.movingByDragging = true;
-      })
-      .on('dragend', () => {
-        // check if player was moving by dragging
-        // otherwise movingByTapping would get a stop animation command
-        if (ManageSession.movingByDragging) {
-          this.input.manager.canvas.style.cursor = 'default';
-          const moveCommand = 'stop';
-          const dragX = 0;
-          const dragY = 0;
-          const movementData = { dragX, dragY, moveCommand };
-          Move.moveByDragging(movementData);
-          ManageSession.movingByDragging = false;
-          ManageSession.playerIsAllowedToMove = false;
-        }
-      });
-
-    this.touchBackgroundCheck
-      .setDepth(219)
-      .setOrigin(0);
-    this.touchBackgroundCheck.setVisible(false);
-
-    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
-    this.touchBackgroundCheck.input.alwaysEnabled = true;
-    //! end DETECT dragging and mouseDown on rectangle
-
-    //! DoubleClick for moveByTapping
-    this.tapInput = this.rexGestures.add.tap({
-      enable: true,
-      // bounds: undefined,
-      time: 250,
-      tapInterval: 350,
-      // threshold: 9,
-      // tapOffset: 10,
-      // taps: undefined,
-      // minTaps: undefined,
-      // maxTaps: undefined,
-    })
-      .on('tap', () => {
-        // dlog('tap');
-      }, this)
-      .on('tappingstart', () => {
-        // dlog('tapstart');
-      })
-      .on('tapping', (tap) => {
-        // dlog('tapping', tap.tapsCount);
-        if (tap.tapsCount === 2) {
-          if (ManageSession.playerIsAllowedToMove) {
-            Move.moveByTapping(this);
-          }
-        }
-      });
-    //! doubleClick for moveByTapping
-  }
 
   update() {
     // ...... ONLINE PLAYERS ................................................
