@@ -129,5 +129,21 @@ export function handlePlayerMovement(scene) {
       }
     });
   // end doubleClick for moveByTapping
+
+  // PINCH TO ZOOM
+  const pinch = scene.rexGestures.add.pinch({
+    // enable: true,
+    // bounds: undefined,
+
+    // threshold: 0,
+    /* threshold : Fire pinch events after dragging distances
+    of catched pointers are larger than this threshold. */
+
+  });
+
+  pinch.on('pinch', (dragScale) => {
+    const { scaleFactor } = dragScale;
+    ManageSession.currentZoom *= scaleFactor;
+  });
 }
 
