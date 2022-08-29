@@ -288,7 +288,7 @@
       (image, hasError) => {
         image.set({ left: 0, top: 0 });
         image.scaleToHeight(IMAGE_BASE_SIZE);
-        image.scaleToWidth(IMAGE_BASE_SIZE);
+        image.scaleToWidth(IMAGE_BASE_SIZE * frames);
         canvas.add(image);
 
         if (typeof callback === 'function') callback(hasError === false);

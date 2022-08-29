@@ -1,5 +1,6 @@
 <script>
-    import Drawing from './drawing.svelte';
+  import { onMount } from 'svelte';
+  import Drawing from './drawing.svelte';
   import { STOPMOTION_MAX_FRAMES } from '../../constants';
 
   export let file;
@@ -7,11 +8,25 @@
   export let changes;
 
   let currentFrame = 1;
-  let frames = 1;
+  let frames = null;
   let playPreviewInterval = null;
 
   let enableOnionSkinning = false;
   $: enableEditor = playPreviewInterval === null;
+
+  onMount(() => {
+    // Was there an image to load?
+    // If so, load it and retrieve frame count from dimensions.
+    if (file?.url) {
+      const img = new Image();
+      img.onload = (e) => {
+        frames = Math.round(e.target.width / e.target.height);
+      };
+      img.src = file.url;
+    } else {
+      frames = 1;
+    }
+  });
 
   function switchFrame(frameNumber) {
     currentFrame = frameNumber;
@@ -55,38 +70,39 @@
   }
 </script>
 
-<Drawing
-  bind:file
-  bind:data
-  bind:changes
-  bind:currentFrame
-  bind:frames
-  bind:enableEditor
-  enableOnionSkinning="{enableOnionSkinning && enableEditor}"
-  on:save
->
-  <div class="stopmotion__frames">
-    <!-- eslint-disable-next-line no-unused-vars -->
-    {#each Array(frames + 1) as _, index (index)}
-      {#if index}
-        <div
-          class="stopmotion__frame"
-          class:selected="{currentFrame === index}"
-          id="stopmotion-frame-{index}"
-          on:click="{() => {
-            switchFrame(index);
-          }}"
-        >
+{#if frames !== null}
+  <Drawing
+    bind:file
+    bind:data
+    bind:changes
+    bind:currentFrame
+    bind:frames
+    bind:enableEditor
+    enableOnionSkinning="{enableOnionSkinning && enableEditor}"
+    on:save
+  >
+    <div class="stopmotion__frames">
+      <!-- eslint-disable-next-line no-unused-vars -->
+      {#each Array(frames + 1) as _, index (index)}
+        {#if index}
           <div
-            class="stopmotion__frame__background"
-            style="
+            class="stopmotion__frame"
+            class:selected="{currentFrame === index}"
+            id="stopmotion-frame-{index}"
+            on:click="{() => {
+              switchFrame(index);
+            }}"
+          >
+            <div
+              class="stopmotion__frame__background"
+              style="
               background-image: url({data});
               left: {-100 * (index - 1)}%;
               width: {frames * 100}%;
               "
-          ></div>
-          <div class="stopmotion__frame__index">{index}</div>
-          <!-- {#if currentFrame === index && frames.length > 1}
+            ></div>
+            <div class="stopmotion__frame__index">{index}</div>
+            <!-- {#if currentFrame === index && frames.length > 1}
           <img
             class="icon"
             on:click="{() => {
@@ -96,50 +112,45 @@
             src="assets/SHB/svg/AW-icon-trash.svg"
           />
         {/if} -->
+          </div>
+        {/if}
+      {/each}
+      {#if frames < STOPMOTION_MAX_FRAMES && playPreviewInterval === null}
+        <div
+          class="stopmotion__frame"
+          id="stopmotion-frame-new"
+          on:click="{addFrame}"
+        >
+          <div class="stopmotion__frame__index">+</div>
         </div>
       {/if}
-    {/each}
-    {#if frames < STOPMOTION_MAX_FRAMES && playPreviewInterval === null}
-      <div
-        class="stopmotion__frame"
-        id="stopmotion-frame-new"
-        on:click="{addFrame}"
-      >
-        <div class="stopmotion__frame__index">+</div>
-      </div>
-    {/if}
-  </div>
-</Drawing>
-<!-- drawingPadding="{{
-    left: 16,
-    right: 64,
-    bottom: 16,
-    top: 16,
-  }}" -->
+    </div>
+  </Drawing>
 
-<div class="stopmotion__controls">
-  <div
-    id="playPause"
-    class="stopmotion__button button--play-pause"
-    on:click="{() => {
-      togglePlayPreview();
-    }}"
-  >
-    {#if playPreviewInterval}
-      <img src="assets/SHB/svg/AW-icon-pause.svg" alt="Pause" />
-    {:else}
-      <img src="assets/SHB/svg/AW-icon-play.svg" alt="Play" />
-    {/if}
-  </div>
+  <div class="stopmotion__controls">
+    <div
+      id="playPause"
+      class="stopmotion__button button--play-pause"
+      on:click="{() => {
+        togglePlayPreview();
+      }}"
+    >
+      {#if playPreviewInterval}
+        <img src="assets/SHB/svg/AW-icon-pause.svg" alt="Pause" />
+      {:else}
+        <img src="assets/SHB/svg/AW-icon-play.svg" alt="Play" />
+      {/if}
+    </div>
 
-  <div
-    on:click="{toggleOnionSkinning}"
-    class="stopmotion__button button--toggle-onion-skinning status"
-    class:status--on="{enableOnionSkinning}"
-  >
-    <img src="assets/SHB/svg/AW-icon-onion.svg" alt="Hide background" />
+    <div
+      on:click="{toggleOnionSkinning}"
+      class="stopmotion__button button--toggle-onion-skinning status"
+      class:status--on="{enableOnionSkinning}"
+    >
+      <img src="assets/SHB/svg/AW-icon-onion.svg" alt="Hide background" />
+    </div>
   </div>
-</div>
+{/if}
 
 <style>
   .stopmotion__frames {
