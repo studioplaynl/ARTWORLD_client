@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { writable } from 'svelte/store';
 
   // Important: keep the eslint comment below intact!
@@ -7,7 +7,7 @@
   import { fabric } from './fabric/dist/fabric';
   import { setLoader } from '../../api';
   import { Error } from '../../session';
-  import { IMAGE_BASE_SIZE } from '../../constants';
+  import { IMAGE_BASE_SIZE, STOPMOTION_MAX_FRAMES } from '../../constants';
 
   export let file;
   export let data;
@@ -69,6 +69,9 @@
       );
       cursorCanvas.setZoom(scaleRatio);
       canvas.setZoom(scaleRatio);
+
+      // Finally update 'data' object immediately
+      data = canvas.toDataURL('image/png', 1);
     }
   }
 
@@ -289,6 +292,12 @@
   }
 
   /// ////////////////// select functions /////////////////////////////////
+  function handleKeydown(evt) {
+    if (evt.key === 'Backspace' || evt.key === 'Delete') {
+      Delete();
+    }
+  }
+
   function Copy() {
     // clone what are you copying since you
     // may want copy and paste on different moment.
@@ -378,7 +387,7 @@
   }
 </script>
 
-<svelte:window bind:innerHeight bind:innerWidth />
+<svelte:window bind:innerHeight bind:innerWidth on:keydown="{handleKeydown}" />
 
 <div class="drawing-app">
   <div class="main-container">
@@ -569,7 +578,7 @@
     <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
   </div>
 
-  <!-- <div class="debug">
+  <div class="debug">
     <button
       on:click="{() => {
         frames = Math.max(1, frames - 1);
@@ -580,7 +589,7 @@
     {frames}
     <button
       on:click="{() => {
-        frames = Math.min(10, frames + 1);
+        frames = Math.min(STOPMOTION_MAX_FRAMES, frames + 1);
       }}"
     >
       +
@@ -596,12 +605,12 @@
     {currentFrame}
     <button
       on:click="{() => {
-        currentFrame = Math.min(10, currentFrame + 1);
+        currentFrame = Math.min(frames, currentFrame + 1);
       }}"
     >
       &gt;
     </button>
-  </div> -->
+  </div>
 </div>
 
 <style>

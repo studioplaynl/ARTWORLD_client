@@ -290,33 +290,23 @@
     isValidApp($CurrentApp)}"
   on:close="{() => saveData(true)}"
 >
-  {#if $CurrentApp === 'dev_drawing' || $CurrentApp === 'dev_house'}
-    {#if (userIsOwner && currentFile.loaded) || currentFile.new}
+  {#if (userIsOwner && currentFile.loaded) || currentFile.new}
+    {#if $CurrentApp === 'dev_drawing' || $CurrentApp === 'dev_house'}
       <DevDrawing
         file="{currentFile}"
         bind:data
         bind:changes
         on:save="{saveData}"
       />
-    {:else if currentFile.loaded}
-      <Preview file="{currentFile}" />
+    {:else if $CurrentApp === 'dev_stopmotion' || $CurrentApp === 'dev_avatar'}
+      <DevStopmotion
+        file="{currentFile}"
+        bind:data
+        bind:changes
+        on:save="{saveData}"
+      />
     {/if}
-  {:else if $CurrentApp === 'dev_stopmotion' && currentFile.loaded}
-    <DevStopmotion
-      file="{currentFile}"
-      bind:data
-      bind:changes
-      on:save="{saveData}"
-    />
-  {:else if $CurrentApp === 'dev_avatar' && currentFile.loaded}
-    <DevStopmotion
-      file="{currentFile}"
-      bind:data
-      bind:changes
-      on:save="{saveData}"
-    />
-  {:else}
-    <!-- Default = current solution -->
-    <!-- <DrawingApp bind:appType="{$CurrentApp}" /> -->
+  {:else if currentFile.loaded}
+    <Preview file="{currentFile}" />
   {/if}
 </AppContainer>
