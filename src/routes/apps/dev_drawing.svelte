@@ -7,7 +7,7 @@
   import { fabric } from './fabric/dist/fabric';
   import { setLoader } from '../../api';
   import { Error } from '../../session';
-  import { IMAGE_BASE_SIZE, STOPMOTION_MAX_FRAMES } from '../../constants';
+  import { IMAGE_BASE_SIZE } from '../../constants';
 
   export let file;
   export let data;
@@ -16,6 +16,10 @@
   // In order to allow for multi-frames (stopmotion), we need to expose these values
   export let frames = 1;
   export let currentFrame = 1;
+
+  // In order to hide editor functions when previewing stopmotion
+  export let enableEditor = true;
+  export let enableOnionSkinning = false;
 
   const cursorOpacity = 0.5;
   const dispatch = createEventDispatcher();
@@ -71,7 +75,9 @@
       canvas.setZoom(scaleRatio);
 
       // Finally update 'data' object immediately
-      data = canvas.toDataURL('image/png', 1);
+      setTimeout(() => {
+        data = canvas.toDataURL('image/png', 1);
+      }, 100);
     }
   }
 
@@ -82,14 +88,13 @@
   let cursorCanvas;
   let eraseBrush;
   let mouseCursor;
-
-  let drawingColorEl;
-  let drawingLineWidthEl;
   let drawingClipboard;
   let lineWidth = 25;
   let drawingColor = '#000000';
-  let current = 'draw';
-  let optionbox = true;
+  let currentTab = null;
+
+  let showOptionbox = false;
+  // $: showOptionbox = currentTab !== null;
 
   // declaring the variable to be available globally, onMount assinging a function to it
   let applyBrush;
@@ -126,6 +131,7 @@
     }
   }
 
+  // eslint-disable-next-line consistent-return
   onMount(() => {
     setLoader(true);
 
@@ -155,7 +161,7 @@
     // redraw cursor on new mouse position when moved
     // eslint-disable-next-line func-names
     canvas.on('mouse:move', function (evt) {
-      if (current === 'select') {
+      if (currentTab === 'select') {
         return mouseCursor
           .set({ top: -100, left: -100 })
           .setCoords()
@@ -184,11 +190,11 @@
       canvas.freeDrawingBrush = new fabric[`${selectedBrush}Brush`](canvas);
       if (canvas.freeDrawingBrush) {
         const brush = canvas.freeDrawingBrush;
-        brush.color = drawingColorEl.value;
+        brush.color = drawingColor;
         if (brush.getPatternSrc) {
           brush.source = brush.getPatternSrc.call(brush);
         }
-        brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+        brush.width = parseInt(lineWidth, 10) || 1;
       }
     };
 
@@ -337,10 +343,6 @@
   }
 
   function Delete() {
-    // clone what are you copying since you
-    // may want copy and paste on different moment.
-    // and you do not want the changes happened
-    // later to reflect on the copy.
     const curSelectedObjects = canvas.getActiveObjects();
     canvas.discardActiveObject();
     for (let i = 0; i < curSelectedObjects.length; i++) {
@@ -354,17 +356,17 @@
 
   /// //////////// select functions end //////////////////
 
-  function switchOption(option) {
-    if (current === option) {
-      optionbox = !optionbox;
-    } else {
-      optionbox = false;
-      current = option;
-    }
-  }
-
   function switchMode(mode) {
-    switchOption(mode);
+    if (currentTab === mode) {
+      if (!showOptionbox) {
+        showOptionbox = true;
+      } else {
+        showOptionbox = false;
+        currentTab = null;
+      }
+    } else {
+      currentTab = mode;
+    }
 
     switch (mode) {
       case 'draw':
@@ -395,6 +397,14 @@
       class="canvas-frame-container"
       style="width: {canvasHeight}px; height: {canvasHeight}px;"
     >
+      {#if enableOnionSkinning}
+        <div
+          class="canvas-onion"
+          style="
+            background-image: url({data});
+            left: -{canvasHeight * (currentFrame - 2)}px;"
+        ></div>
+      {/if}
       <div
         class="canvas-box"
         style="left: -{canvasHeight * (currentFrame - 1)}px;"
@@ -403,182 +413,201 @@
         <canvas bind:this="{cursorCanvasEl}" class="cursor-canvas"> </canvas>
       </div>
     </div>
-  </div>
-  <div class="optionbox-container">
-    <div class="optionbox">
-      <div class="optionbar" class:hidden="{optionbox}">
-        <div class="colorTab" class:hidden="{current !== 'draw'}">
-          <div class="drawing-options-container">
-            <img
-              on:click="{() => applyBrush('Pencil')}"
-              class="icon"
-              class:selected="{selectedBrush === 'Pencil'}"
-              src="assets/svg/drawing_pencil2.svg"
-              alt="Draw with pencil"
-            />
-            <img
-              on:click="{() => applyBrush('Circle')}"
-              class="icon"
-              class:selected="{selectedBrush === 'Circle'}"
-              src="assets/svg/drawing_circle2.svg"
-              alt="Paint dots"
-            />
-            <img
-              on:click="{() => applyBrush('Spray')}"
-              class="icon"
-              class:selected="{selectedBrush === 'Spray'}"
-              src="assets/svg/drawing_spray.svg"
-              alt="Paint with spraycan"
-            />
-            <img
-              on:click="{() => applyBrush('Pattern')}"
-              class="icon"
-              class:selected="{selectedBrush === 'Pattern'}"
-              src="assets/svg/drawing_pattern.svg"
-              alt="Use pattern"
-            />
-          </div>
-
-          <input
-            type="color"
-            bind:value="{drawingColor}"
-            bind:this="{drawingColorEl}"
-            id="drawing-color"
-            title="Pick drawing color"
-          />
-
-          <div class="range-container">
-            <div class="circle-box-small"></div>
-            <input
-              type="range"
-              min="10"
-              max="500"
-              id="drawing-line-width"
-              title="Set drawing thickness"
-              bind:this="{drawingLineWidthEl}"
-              bind:value="{lineWidth}"
-            />
-            <div class="circle-box-big"></div>
-          </div>
-        </div>
-        <div class="eraseTab" class:hidden="{current !== 'erase'}">
-          <div class="range-container">
-            <div class="circle-box-small"></div>
-            <input
-              type="range"
-              min="10"
-              max="500"
-              id="erase-line-width"
-              bind:value="{lineWidth}"
-            />
-            <div class="circle-box-big"></div>
-          </div>
-        </div>
-
-        <div class="selectTab" class:hidden="{current !== 'select'}">
-          <button on:click="{Copy}">
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-copy.svg"
-              alt="Copy selection"
-            />
-          </button>
-          <button on:click="{Paste}">
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-paste.svg"
-              alt="Paste selection"
-            />
-          </button>
-          <button on:click="{Delete}">
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-trash.svg"
-              alt="Delete selection"
-            />
-          </button>
-        </div>
-        <div class="saveTab" class:hidden="{current !== 'saveToggle'}">
-          <p on:click="{save}">Save this file</p>
-        </div>
-
-        <!--  -->
-      </div>
-
-      <div class="iconbox">
-        <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
-          <img
-            class="icon"
-            src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
-            alt="Undo"
-          />
-        </button>
-        <button on:click="{redoState}" disabled="{$futureStates.length === 0}">
-          <img
-            class="icon"
-            src="assets/SHB/svg/AW-icon-rotate-CW.svg"
-            alt="Redo"
-          />
-        </button>
-        <button
-          id="drawing-mode"
-          on:click="{() => {
-            switchMode('draw');
-            applyBrush();
-          }}"
-          class:currentSelected="{current === 'draw'}"
-        >
-          <img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" alt="Draw" />
-        </button>
-        <!-- bind:this="{eraseModeEl}" -->
-        <button
-          on:click="{() => switchMode('erase')}"
-          id="erase-mode"
-          class:currentSelected="{current === 'erase'}"
-        >
-          <img
-            class="icon"
-            src="assets/SHB/svg/AW-icon-erase.svg"
-            alt="Erase"
-          />
-        </button>
-        <!-- <button
-        class="icon"
-        id="fill-mode"
-        class:currentSelected={current === "fill"}><BucketIcon /></button
-      > -->
-        <button
-          id="select-mode"
-          on:click="{() => switchMode('select')}"
-          class:currentSelected="{current === 'select'}"
-        >
-          <img
-            class="icon"
-            src="assets/SHB/svg/AW-icon-pointer.svg"
-            alt="Select"
-          />
-        </button>
-
-        <!-- <button id="clear-canvas" class="btn btn-info icon">
-        <TrashIcon />
-      </button> -->
-
-        <button
-          class:currentSelected="{current === 'saveToggle'}"
-          on:click="{() => {
-            switchOption('saveToggle');
-          }}"
-        >
-          <img class="icon" src="assets/SHB/svg/AW-icon-save.svg" alt="Save" />
-        </button>
-      </div>
+    <div class="canvas-controls">
+      <slot />
     </div>
   </div>
-  <div id="clear-canvas" on:click="{clearCanvas}">
-    <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
-  </div>
+  {#if enableEditor}
+    <div class="optionbox-container" class:open="{showOptionbox}">
+      <div class="optionbox">
+        <div class="optionbar">
+          {#if currentTab === 'draw'}
+            <div class="tab tab--draw">
+              <div class="drawing-options-container">
+                <img
+                  on:click="{() => applyBrush('Pencil')}"
+                  class="icon"
+                  class:selected="{selectedBrush === 'Pencil'}"
+                  src="assets/svg/drawing_pencil2.svg"
+                  alt="Draw with pencil"
+                />
+                <img
+                  on:click="{() => applyBrush('Circle')}"
+                  class="icon"
+                  class:selected="{selectedBrush === 'Circle'}"
+                  src="assets/svg/drawing_circle2.svg"
+                  alt="Paint dots"
+                />
+                <img
+                  on:click="{() => applyBrush('Spray')}"
+                  class="icon"
+                  class:selected="{selectedBrush === 'Spray'}"
+                  src="assets/svg/drawing_spray.svg"
+                  alt="Paint with spraycan"
+                />
+                <img
+                  on:click="{() => applyBrush('Pattern')}"
+                  class="icon"
+                  class:selected="{selectedBrush === 'Pattern'}"
+                  src="assets/svg/drawing_pattern.svg"
+                  alt="Use pattern"
+                />
+              </div>
 
-  <div class="debug">
+              <input
+                type="color"
+                bind:value="{drawingColor}"
+                id="drawing-color"
+                title="Pick drawing color"
+              />
+
+              <div class="range-container">
+                <div class="circle-box-small"></div>
+                <input
+                  type="range"
+                  min="10"
+                  max="500"
+                  id="drawing-line-width"
+                  title="Set drawing thickness"
+                  bind:value="{lineWidth}"
+                />
+                <div class="circle-box-big"></div>
+              </div>
+            </div>
+          {:else if currentTab === 'erase'}
+            <div class="tab tab--erase">
+              <div class="range-container">
+                <div class="circle-box-small"></div>
+
+                <input
+                  type="range"
+                  min="10"
+                  max="500"
+                  id="erase-line-width"
+                  bind:value="{lineWidth}"
+                />
+                <div class="circle-box-big"></div>
+              </div>
+            </div>
+          {:else if currentTab === 'select'}
+            <div class="tab tab--select">
+              <button on:click="{Copy}">
+                <img
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-copy.svg"
+                  alt="Copy selection"
+                />
+              </button>
+              <button on:click="{Paste}">
+                <img
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-paste.svg"
+                  alt="Paste selection"
+                />
+              </button>
+              <button on:click="{Delete}">
+                <img
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-trash.svg"
+                  alt="Delete selection"
+                />
+              </button>
+            </div>
+          {:else if currentTab === 'save'}
+            <div class="tab  tab--save">
+              <p on:click="{save}">Save this file</p>
+            </div>
+          {/if}
+        </div>
+
+        <div class="iconbox">
+          <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
+              alt="Undo"
+            />
+          </button>
+          <button
+            on:click="{redoState}"
+            disabled="{$futureStates.length === 0}"
+          >
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-rotate-CW.svg"
+              alt="Redo"
+            />
+          </button>
+          <button
+            id="drawing-mode"
+            on:click="{() => {
+              switchMode('draw');
+              applyBrush();
+            }}"
+            class:currentSelected="{currentTab === 'draw' ||
+              currentTab === null}"
+          >
+            <img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" alt="Draw" />
+          </button>
+          <!-- bind:this="{eraseModeEl}" -->
+          <button
+            on:click="{() => switchMode('erase')}"
+            id="erase-mode"
+            class:currentSelected="{currentTab === 'erase'}"
+          >
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-erase.svg"
+              alt="Erase"
+            />
+          </button>
+          <!-- <button
+            class="icon"
+            id="fill-mode"
+            class:currentSelected="{current === 'fill'}"
+          >
+            <BucketIcon />
+          </button> -->
+
+          <button
+            id="select-mode"
+            on:click="{() => switchMode('select')}"
+            class:currentSelected="{currentTab === 'select'}"
+          >
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-pointer.svg"
+              alt="Select"
+            />
+          </button>
+
+          <!-- <button id="clear-canvas" class="btn btn-info icon">
+            <TrashIcon />
+          </button> -->
+
+          <button
+            class:currentSelected="{currentTab === 'save'}"
+            on:click="{() => {
+              switchMode('save');
+            }}"
+          >
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-save.svg"
+              alt="Save"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  {/if}
+  {#if enableEditor}
+    <div id="clear-canvas" on:click="{clearCanvas}">
+      <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
+    </div>
+  {/if}
+
+  <!-- <div class="debug">
     <button
       on:click="{() => {
         frames = Math.max(1, frames - 1);
@@ -610,7 +639,7 @@
     >
       &gt;
     </button>
-  </div>
+  </div> -->
 </div>
 
 <style>
@@ -643,9 +672,10 @@
   }
   .main-container {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 16px;
+
     height: 100vh;
     width: 100vw;
     background-color: rgb(115, 0, 237, 0.15);
@@ -667,19 +697,53 @@
     box-shadow: 3px 3px #7300ed;
   }
 
-  .colorTab {
+  .optionbox-container {
+    margin: 0 10px 0 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    transition: transform 200ms ease-in-out;
+    display: flex;
+  }
+
+  .optionbox-container.open {
+    transform: translateX(280px);
+  }
+
+  .optionbar {
+    border-right: 2px solid #7300ed;
+    height: 100vh;
+    background-color: white;
+    width: fit-content;
+    padding: 15px;
+    width: 280px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 0;
+    right: 50px;
+  }
+
+  .tab.tab--draw {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  .saveTab {
+  .tab.tab--erase {
+  }
+
+  .tab.tab--save {
     min-width: 160px;
     bottom: 50px;
     z-index: 1;
   }
 
-  .saveTab > * {
+  .tab.tab--save > * {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
@@ -692,41 +756,7 @@
     align-items: center;
     flex-direction: column;
     flex-wrap: wrap;
-    transition: all 0.5s ease-in-out;
-  }
-
-  .optionbar {
-    /* margin-left: 10px; */
-    border-right: 2px solid #7300ed;
-    /* box-shadow: 10px 0px 5px 0px rgba(115,0,237,0.5); */
-    height: 100vh;
-    background-color: white;
-    transition: all 0.5s ease-in-out;
-    width: fit-content;
-    padding: 15px;
-    transform: translateX(0%);
-    width: 280px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    flex-wrap: wrap;
-  }
-
-  .optionbar.hidden {
-    width: 0px;
-    transform: translateX(-160%);
-    display: inline;
-    padding: 0px;
-    margin: 0px;
-  }
-
-  .optionbar.hidden > * {
-    display: none;
-  }
-
-  .optionbar > * {
-    /* margin: 5px auto; */
+    /* transition: all 0.5s ease-in-out; */
   }
 
   .icon {
@@ -764,10 +794,6 @@
     padding: 0px;
     background-color: white;
     margin-left: -5px;
-  }
-
-  .hidden {
-    display: none;
   }
 
   .range-container {
@@ -825,6 +851,15 @@
     position: relative;
   }
 
+  .canvas-onion {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.2;
+  }
+
   #clear-canvas {
     position: fixed;
     left: 72px;
@@ -843,20 +878,17 @@
     width: 40px;
   }
 
-  .optionbox-container {
-    margin: 0 10px 0 0;
-    position: fixed;
-    left: 0;
-    top: 50vh;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-  }
-
   @media only screen and (min-width: 600px) and (max-width: 1024px) and (min-aspect-ratio: 3/2) {
     .iconbox {
       justify-content: flex-end;
     }
   }
+
+  /* @media only screen and (min-width: 300px) and (max-width: 500px) {
+    .iconbox {
+      justify-content: flex-start;
+    }
+  } */
 
   .drawing-options-container {
     display: flex;
@@ -866,6 +898,57 @@
 
   /* small */
   @media only screen and (max-width: 600px) {
+    .main-container {
+      flex-direction: column;
+    }
+    .optionbox-container {
+      left: 0;
+      bottom: -220px;
+      width: 100%;
+      height: 280px;
+      transform: translateY(0);
+    }
+
+    .optionbox-container.open {
+      transform: translateY(-220px);
+    }
+    .optionbox {
+      flex-direction: row;
+      width: 100%;
+    }
+
+    .optionbar {
+      height: 220px;
+      width: 100%;
+      top: unset;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      box-shadow: 4px 4px #7300ed;
+      z-index: 2;
+    }
+
+    .iconbox {
+      flex-direction: row;
+      width: 100%;
+      height: 60px;
+      z-index: 1;
+    }
+
+    .currentSelected {
+      box-shadow: 4px 4px #7300ed;
+      border-radius: 50% 50% 0 0;
+      height: 60px;
+      display: block;
+      width: 49px;
+      padding: 0px;
+      background-color: white;
+      margin-left: -5px;
+    }
+  }
+
+  /* small */
+  /* @media only screen and (max-width: 600px) {
     .optionbox {
       width: 100%;
       height: min-content;
@@ -882,8 +965,7 @@
       height: min-content;
       width: 100%;
       padding: 0px;
-      transition: none;
-      animation: growup 0.3s ease-in-out forwards;
+
       transform-origin: bottom center;
       position: sticky;
       z-index: 40;
@@ -894,39 +976,8 @@
       margin: 16px 16px 16px 0;
     }
 
-    @keyframes growup {
-      0% {
-        transform: scaleY(0);
-      }
-      80% {
-        transform: scaleY(1.1);
-      }
-      100% {
-        transform: scaleY(1);
-      }
-    }
 
-    .optionbar.hidden {
-      margin: 0;
-      border-right: none;
-      height: min-content;
-      width: auto;
-      transform: none;
-      display: inline;
-      animation: growdown 2s ease-in-out forwards;
-    }
 
-    @keyframes growdown {
-      0% {
-        transform: scaleY(1);
-      }
-      50% {
-        transform: scaleY(0.5);
-      }
-      100% {
-        transform: scaleY(0);
-      }
-    }
 
     .optionbox-container {
       position: fixed;
@@ -955,11 +1006,7 @@
       box-shadow: unset;
     }
 
-    /* #clear-canvas {
-      top: unset;
-      bottom: 60px;
-    } */
-  }
+  } */
 
   button {
     border: 0;

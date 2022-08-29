@@ -11,8 +11,9 @@
 
   let currentFrame = 1;
   let frames = 1;
-  let play = false;
-  let showBackground = true;
+  let playPreviewInterval = null;
+
+  let enableOnionSkinning = false;
 
   // function save() {
   //   dispatch('save', { file });
@@ -37,6 +38,8 @@
   // get width of file, devide by set resolution(2048) to get amount of frames
 
   onMount(() => {});
+
+  $: enableEditor = playPreviewInterval === null;
 
   // set file to most left corner
 
@@ -65,11 +68,23 @@
     );
   }
 
-  function toggleBackground() {
-    showBackground = !showBackground;
+  function toggleOnionSkinning() {
+    enableOnionSkinning = !enableOnionSkinning;
   }
 
-  function setPlay(state) {}
+  function togglePlayPreview() {
+    if (playPreviewInterval) {
+      clearInterval(playPreviewInterval);
+      playPreviewInterval = null;
+    } else {
+      playPreviewInterval = setInterval(() => {
+        if (currentFrame === frames) currentFrame = 1;
+        else {
+          currentFrame = Math.min(frames, currentFrame + 1);
+        }
+      }, 200);
+    }
+  }
 </script>
 
 <DevDrawing
@@ -78,10 +93,10 @@
   bind:changes
   bind:currentFrame
   bind:frames
+  bind:enableEditor
+  enableOnionSkinning="{enableOnionSkinning && enableEditor}"
   on:save
-/>
-
-<div class="stopmotion-container">
+>
   <div class="stopmotion__frames">
     <!-- eslint-disable-next-line no-unused-vars -->
     {#each Array(frames + 1) as _, index (index)}
@@ -116,7 +131,7 @@
         </div>
       {/if}
     {/each}
-    {#if frames < STOPMOTION_MAX_FRAMES}
+    {#if frames < STOPMOTION_MAX_FRAMES && playPreviewInterval === null}
       <div
         class="stopmotion__frame"
         id="stopmotion-frame-new"
@@ -126,77 +141,75 @@
       </div>
     {/if}
   </div>
-  <div class="stopmotion__frame-buttons">
-    {#if play}
-      <button
-        id="playPause"
-        on:click="{() => {
-          play = false;
-          setPlay(false);
-        }}"
-      >
-        <img class="icon" src="assets/SHB/svg/AW-icon-pause.svg" alt="Pause" />
-      </button>
+</DevDrawing>
+<!-- drawingPadding="{{
+    left: 16,
+    right: 64,
+    bottom: 16,
+    top: 16,
+  }}" -->
+
+<div class="stopmotion__controls">
+  <div
+    id="playPause"
+    class="stopmotion__button button--play-pause"
+    on:click="{() => {
+      togglePlayPreview();
+    }}"
+  >
+    {#if playPreviewInterval}
+      <img src="assets/SHB/svg/AW-icon-pause.svg" alt="Pause" />
     {:else}
-      <button
-        id="playPause"
-        on:click="{() => {
-          play = true;
-          setPlay(true);
-        }}"
-      >
-        <img class="icon" src="assets/SHB/svg/AW-icon-play.svg" alt="Play" />
-      </button>
+      <img src="assets/SHB/svg/AW-icon-play.svg" alt="Play" />
     {/if}
-    <button on:click="{toggleBackground}">
-      <img
-        class="icon"
-        class:unselected="{!showBackground}"
-        src="assets/SHB/svg/AW-icon-onion.svg"
-        alt="Hide background"
-      />
-    </button>
+  </div>
+
+  <div
+    on:click="{toggleOnionSkinning}"
+    class="stopmotion__button button--toggle-onion-skinning status"
+    class:status--on="{enableOnionSkinning}"
+  >
+    <img src="assets/SHB/svg/AW-icon-onion.svg" alt="Hide background" />
   </div>
 </div>
 
 <style>
-  .stopmotion-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    flex-direction: column;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-  }
-
   .stopmotion__frames {
     display: flex;
     flex-direction: column;
-    max-height: 300px;
-    /* width: 130px; */
-    overflow-y: auto;
+    /* max-height: 80vh; */
+    /* TODO REPLACE MAX_HEIGHT logic */
+    /* overflow-y: auto;
     overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity;
+    scroll-snap-type: y proximity; */
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    width: 64px;
   }
   .stopmotion__frame {
     display: block;
-    width: 60px;
-    min-height: 60px;
-    margin: 5px;
+    width: 48px;
+    min-height: 48px;
+    margin: 4px;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     border: 2px solid #7300eb;
+    cursor: pointer;
   }
 
   .stopmotion__frame.selected {
     transform: scale(1.05);
     border-width: 4px;
-    margin-left: 3px;
+    margin-left: 2px;
     transform-origin: center;
   }
 
@@ -204,115 +217,82 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 60px;
-    height: 60px;
+    width: 48px;
+    height: 48px;
     background-repeat: no-repeat;
     background-position: left top;
     background-size: cover;
   }
 
+  @media only screen and (max-width: 600px) {
+    .stopmotion__frames {
+      max-height: unset;
+      top: unset;
+      flex-direction: row;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      height: 48px;
+      bottom: 0;
+      position: relative;
+    }
+
+    .stopmotion__frame {
+      width: 32px;
+      min-height: 32px;
+    }
+
+    .stopmotion__frame__background {
+      width: 32px;
+      height: 32px !important;
+    }
+  }
+
   .stopmotion__frame__index {
-    font-size: 30px;
+    font-size: 28px;
     color: #7300eb;
     text-align: center;
     display: inline-block;
   }
+  .stopmotion__controls {
+    position: fixed;
+    right: 16px;
+    top: 16px;
+    display: flex;
+    flex-direction: row;
+  }
 
-  .stopmotion__frames > div > div:hover {
+  .stopmotion__button {
+    z-index: 13;
+    box-shadow: 5px 5px 0px #7300ed;
     cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-left: 16px;
   }
 
-  .stopmotion__frames > div > div > div {
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .status.status--on {
+    box-shadow: 5px 5px 0px #7300ed;
   }
 
-  .stopmotion__frame-buttons {
-    display: flex;
-    flex-direction: column;
+  .status {
+    box-shadow: 5px 5px 0px rgba(115, 0, 237, 0.4);
   }
 
-  .stopmotion__frame-buttons > a > img {
-    display: block;
+  .status > img {
+    opacity: 0.4;
   }
 
-  /** From Svelte-docs: If you want to make @keyframes that are accessible globally,
-  * you need to prepend your keyframe names with -global-.
-  * The -global- part will be removed when compiled, and the keyframe then
-  * be referenced using just my-animation-name elsewhere in your code. */
-  @keyframes -global-animate-stopmotion-2 {
-    0% {
-      left: 0;
-    }
-    100% {
-      left: -100%;
-    }
-  }
-  @keyframes -global-animate-stopmotion-3 {
-    0% {
-      left: 0;
-    }
-    100% {
-      left: -200%;
-    }
-  }
-  @keyframes -global-animate-stopmotion-4 {
-    0% {
-      left: 0;
-    }
-    100% {
-      left: -300%;
-    }
+  .status.status--on img {
+    opacity: 1;
   }
 
-  @keyframes -global-animate-stopmotion-5 {
-    0% {
-      left: 0;
-    }
-    100% {
-      left: -400%;
-    }
-  }
-  @keyframes -global-animate-stopmotion-6 {
-    0% {
-      left: 0;
-    }
-    100% {
-      left: -500%;
-    }
-  }
-  @keyframes -global-animate-stopmotion-7 {
-    0% {
-      left: 0;
-    }
-    100% {
-      left: -600%;
-    }
-  }
-  @keyframes -global-animate-stopmotion-8 {
-    0% {
-      left: 0;
-    }
-    100% {
-      left: -700%;
-    }
-  }
-  @keyframes -global-animate-stopmotion-9 {
-    0% {
-      left: 0;
-    }
-    100% {
-      left: -800%;
-    }
-  }
-  @keyframes -global-animate-stopmotion-10 {
-    0% {
-      left: 0;
-    }
-    100% {
-      left: -900%;
-    }
+  .stopmotion__button img {
+    width: 40px;
   }
 </style>
