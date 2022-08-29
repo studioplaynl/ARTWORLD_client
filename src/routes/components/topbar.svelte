@@ -80,20 +80,21 @@
   </button>
 
   <a
-    href="/dev_drawing?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&key=1654865563806_olijfgroensprinkhaan"
+    href="/drawing?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&key=1654865563806_olijfgroensprinkhaan"
     use:link>DRAWING</a
   >
-  <a href="/dev_drawing?" use:link>DRAWING NEW</a>
-  <a href="/dev_stopmotion" use:link>STOP MOTION</a>
-  <a href="/dev_avatar" use:link>AVATAR</a>
+  <a href="/drawing?" use:link>(NEW)</a>
+  <a href="/stopmotion" use:link>STOP MOTION</a>
+  <a href="/stopmotion" use:link>(NEW)</a>
+  <a href="/avatar" use:link>AVATAR</a>
   <!-- avatar ook key test1 en test -->
   <!-- er komt hier nog een key bij! -->
   <a
-    href="/dev_house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
+    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
     use:link>HOUSE 1</a
   >
   <a
-    href="/dev_house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
+    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
     use:link>HOUSE 2</a
   >
 </div>

@@ -1,9 +1,6 @@
 <script>
-  import { createEventDispatcher, onMount } from 'svelte';
-  import DevDrawing from './dev_drawing.svelte';
+    import Drawing from './drawing.svelte';
   import { STOPMOTION_MAX_FRAMES } from '../../constants';
-
-  const dispatch = createEventDispatcher();
 
   export let file;
   export let data;
@@ -14,36 +11,7 @@
   let playPreviewInterval = null;
 
   let enableOnionSkinning = false;
-
-  // function save() {
-  //   dispatch('save', { file });
-  // }
-
-  // function saveError() {
-  //   dispatch('save', { file, error: 'This one wont save' });
-  // }
-
-  /** Duration of a single frame (in ms) */
-  // const frameDuration = 200;
-
-  // Set CSS animation steps based on nr of frames
-
-  // $: animationStyle = frames > 1
-  //   ? ` animate-stopmotion-${frames}
-  //       ${frames * frameDuration}ms
-  //       steps(${frames})
-  //       infinite`
-  //   : '';
-
-  // get width of file, devide by set resolution(2048) to get amount of frames
-
-  onMount(() => {});
-
   $: enableEditor = playPreviewInterval === null;
-
-  // set file to most left corner
-
-  // switch frame function
 
   function switchFrame(frameNumber) {
     currentFrame = frameNumber;
@@ -56,17 +24,17 @@
     }
   }
 
-  function removeLastFrame() {
-    if (frames > 1) frames--;
-  }
+  // function removeLastFrame() {
+  //   if (frames > 1) frames--;
+  // }
 
-  function deleteFrame(frameNumber) {
-    console.log(
-      'delete frame ',
-      frameNumber,
-      'not sure if this can be implemented though',
-    );
-  }
+  // function deleteFrame(frameNumber) {
+  //   console.log(
+  //     'delete frame ',
+  //     frameNumber,
+  //     'not sure if this can be implemented though',
+  //   );
+  // }
 
   function toggleOnionSkinning() {
     enableOnionSkinning = !enableOnionSkinning;
@@ -87,7 +55,7 @@
   }
 </script>
 
-<DevDrawing
+<Drawing
   bind:file
   bind:data
   bind:changes
@@ -141,7 +109,7 @@
       </div>
     {/if}
   </div>
-</DevDrawing>
+</Drawing>
 <!-- drawingPadding="{{
     left: 16,
     right: 64,

@@ -145,9 +145,8 @@
 
   function goTo(evt) {
     if (evt.detail.key === 'voorbeeld' && evt.detail.row.value) {
-      // TODO: remove dev_ from url here!
       push(
-        `/dev_${evt.detail.row.collection}?userId=${evt.detail.row.user_id}&key=${evt.detail.row.key}`,
+        `/${evt.detail.row.collection}?userId=${evt.detail.row.user_id}&key=${evt.detail.row.key}`,
       );
     }
   }

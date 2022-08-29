@@ -3,9 +3,8 @@
   import { parse } from 'qs';
   import { get } from 'svelte/store';
   import { pop, push, querystring, loc } from 'svelte-spa-router';
-  // import DrawingApp from '../apps/drawing.svelte';
-  import DevDrawing from '../apps/dev_drawing.svelte';
-  import DevStopmotion from '../apps/dev_stopmotion.svelte';
+  import Drawing from '../apps/drawing.svelte';
+  import Stopmotion from '../apps/stopmotion.svelte';
   import { CurrentApp, Profile, Error } from '../../session';
   import ManageSession from '../game/ManageSession';
   import {
@@ -181,36 +180,18 @@
       });
   }
 
-  // Temporarily make dev_ versions of apps work too
-  function swapAppNames() {
-    let loadFromCollection = $CurrentApp;
-    if ($CurrentApp === 'dev_drawing') {
-      loadFromCollection = 'drawing';
-    } else if ($CurrentApp === 'dev_stopmotion') {
-      loadFromCollection = 'stopmotion';
-    } else if ($CurrentApp === 'dev_house') {
-      loadFromCollection = 'house';
-    } else if ($CurrentApp === 'dev_avatar') {
-      loadFromCollection = 'avatar';
-    }
-    return loadFromCollection;
-  }
-
   async function loadFile() {
     currentFile.loaded = false;
 
     const userId = parsedQuery?.userId ?? null;
     const key = parsedQuery?.key ?? null;
-
-    // Temporarily make dev_ versions of apps work too
-    const loadFromCollection = swapAppNames();
+    const loadFromCollection = $CurrentApp;
 
     currentFile = await getFileInformation(loadFromCollection, userId, key);
   }
 
   async function newFile() {
-    // Temporarily make dev_ versions of apps work too
-    const saveToCollection = swapAppNames();
+    const saveToCollection = $CurrentApp;
     const displayName = await getRandomName();
     currentFile = {
       userId: $Profile.id,
@@ -291,15 +272,15 @@
   on:close="{() => saveData(true)}"
 >
   {#if (userIsOwner && currentFile.loaded) || currentFile.new}
-    {#if $CurrentApp === 'dev_drawing' || $CurrentApp === 'dev_house'}
-      <DevDrawing
+    {#if $CurrentApp === 'drawing' || $CurrentApp === 'house'}
+      <Drawing
         file="{currentFile}"
         bind:data
         bind:changes
         on:save="{saveData}"
       />
-    {:else if $CurrentApp === 'dev_stopmotion' || $CurrentApp === 'dev_avatar'}
-      <DevStopmotion
+    {:else if $CurrentApp === 'stopmotion' || $CurrentApp === 'avatar'}
+      <Stopmotion
         file="{currentFile}"
         bind:data
         bind:changes
