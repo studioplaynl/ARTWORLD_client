@@ -4,9 +4,7 @@
 import { get } from 'svelte/store';
 import { push, querystring } from 'svelte-spa-router';
 import { client } from './nakama.svelte';
-import {
-  Session, Profile, Error, Success,
-} from './session';
+import { Session, Profile, Error, Success, myHome } from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 import { dlog } from './routes/game/helpers/DebugLog';
 
@@ -25,7 +23,10 @@ export async function login(email, _password) {
         resolve(session);
       })
       .catch((err) => {
-        if (parseInt(err.status, 10) === 404 || parseInt(err.status, 10) === 401) {
+        if (
+          parseInt(err.status, 10) === 404 ||
+          parseInt(err.status, 10) === 401
+        ) {
           Error.set('invalid username');
           push(`/login?${get(querystring)}`);
         } else {
@@ -67,9 +68,11 @@ export async function restoreSession() {
   const session = get(Session);
 
   if (session) {
-    await client.sessionRefresh(session).then((newSession) => {
-      Session.set(newSession);
-    })
+    await client
+      .sessionRefresh(session)
+      .then((newSession) => {
+        Session.set(newSession);
+      })
       .catch((...args) => {
         dlog('sessionRefresh failed', args);
         logout();
@@ -227,9 +230,11 @@ export async function updateObject(type, name, value, pub, userID) {
       // "version": "*"
     };
     // const objectIDs =
-    await client.writeStorageObjects(session, [object]);
+    client.writeStorageObjects(session, [object]);
     // console.info('Stored objects: %o', objectIDs);
     Success.set(true);
+
+    return object;
   }
 }
 
@@ -288,9 +293,10 @@ export async function getAccount(id) {
 
     const users = await client.getUsers(session, [id]);
     user = users.users[0];
-    user.meta = typeof user.metadata === 'string'
-      ? JSON.parse(user.metadata)
-      : user.metadata;
+    user.meta =
+      typeof user.metadata === 'string'
+        ? JSON.parse(user.metadata)
+        : user.metadata;
     user.url = await convertImage(user.avatar_url, '128', '1000', 'png');
   }
 
@@ -347,6 +353,52 @@ export async function setAvatar(avatar_url) {
   return Image;
 }
 
+export async function setHome(Home_url) {
+  const type = 'home';
+  const profile = get(Profile);
+  const name = profile.meta.Azc;
+  const object = await getObject(type, name);
+  const makePublic = true;
+
+  // eslint-disable-next-line prefer-const
+  let value = !object ? {} : object.value;
+
+  value.url = Home_url;
+  // get object
+  // dlog('value', value);
+  const returnedObject = await updateObject(type, name, value, makePublic);
+  console.log('returnedObject', returnedObject);
+  myHome.set(returnedObject);
+  return value.url;
+}
+
+export async function getHome(userID) {
+  const MyHome = get(myHome);
+  let HouseObject;
+  const profile = get(Profile);
+  if (typeof userID !== 'string') {
+    userID = profile.user_id;
+  }
+
+  if (typeof MyHome === 'object') {
+    HouseObject = MyHome;
+  } else {
+    try {
+      HouseObject = await getObject(
+        'home',
+        profile.meta.Azc || 'Amsterdam',
+        userID,
+      );
+    } catch (err) {
+      dlog(err); // TypeError: failed to fetch
+    }
+    HouseObject.url = await convertImage(HouseObject.value.url, '150', '150');
+    myHome.set(HouseObject);
+  }
+
+  return HouseObject;
+}
+
 export async function getFile(file_url) {
   const session = get(Session);
   const payload = { url: file_url };
@@ -370,7 +422,8 @@ export async function getFile(file_url) {
 export async function uploadAvatar(data) {
   const profile = get(Profile);
   setLoader(true);
-  let avatarVersion = Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
+  let avatarVersion =
+    Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
   if (!avatarVersion) avatarVersion = 0;
   const [jpegURL, jpegLocation] = await getUploadURL(
     'avatar',
