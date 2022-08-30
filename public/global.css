@@ -1,179 +1,218 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
 * {
-	touch-action: manipulation;
+  touch-action: manipulation;
 }
 
-html, body {
-	position: relative;
-	width: 100%;
-	height: 100%;
+html,
+body {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 body {
-	color: #7300EB;
-	margin: 0;
-	padding: 0px;
-	box-sizing: border-box;
-	font-family: 'Inter', sans-serif;}
+  color: #7300EB;
+  margin: 0;
+  padding: 0px;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
 
 .hide {
-	display: none;
+  display: none;
 }
 
 
 .show {
-	display: block;
+  display: block;
 }
+
 a {
-	color: rgb(0,100,200);
-	text-decoration: none;
-	cursor: pointer;
+  color: rgb(0, 100, 200);
+  text-decoration: none;
+  cursor: pointer;
 }
 
 a:hover {
-	text-decoration: underline;
+  text-decoration: underline;
 }
 
 a:visited {
-	color: rgb(0,80,160);
+  color: rgb(0, 80, 160);
 }
 
 label {
-	display: block;
+  display: block;
 }
 
-input, button, select, textarea {
-	font-family: inherit;
-	font-size: inherit;
-	-webkit-padding: 0.4em 0;
-	padding: 0.4em;
-	margin: 0 0 0.5em 0;
-	box-sizing: border-box;
-	border: 2px solid #7300EB;
-	border-radius: 2px;
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  -webkit-padding: 0.4em 0;
+  padding: 0.4em;
+  margin: 0 0 0.5em 0;
+  box-sizing: border-box;
+  border: 2px solid #7300EB;
+  border-radius: 2px;
 }
 
 input:disabled {
-	color: #ccc;
+  color: #ccc;
 }
 
 button {
-	background-color: #7300EB;
-    border-radius: 25px;
-    color: white;
-    padding: 10px 10px;
-    margin: 8px 0;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    opacity: 0.9;
+  background-color: #7300EB;
+  border-radius: 25px;
+  color: white;
+  padding: 10px 10px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
 }
 
 button:disabled {
-	color: #999;
+  color: #999;
 }
 
 button:not(:disabled):active {
-	background-color: #ddd;
+  background-color: #ddd;
 }
 
 button:focus {
-	border-color: #666;
+  border-color: #666;
 }
 
 .icon {
-    stroke: currentColor;
-    fill: currentColor;
-    stroke-width: 0;
-    width: 100%;
-    height: auto;
-    max-height: 100%;
-    max-width: 30px;
-  }  
+  stroke: currentColor;
+  fill: currentColor;
+  stroke-width: 0;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  max-width: 30px;
+}
 
 .card {
-max-width: fit-content;
-margin: 0 auto;
+  max-width: fit-content;
+  margin: 0 auto;
 }
 
 .profileTable {
-	width: fit-content;
-	max-width: 800px;
-	align-content: center;
-	border-collapse: collapse;
-	border-bottom: 2px solid #7300EB;
-	margin-bottom: 25px;
+  width: fit-content;
+  max-width: 800px;
+  align-content: center;
+  border-collapse: collapse;
+  border-bottom: 2px solid #7300EB;
+  margin-bottom: 25px;
 }
 
 
-.profileTable, .profileTable a {
-	text-align: center;
-	color: #7300EB;
+.profileTable,
+.profileTable a {
+  text-align: center;
+  color: #7300EB;
 }
 
 .profileTable th {
-	padding: 5px;
-  }
+  padding: 5px;
+}
 
-  .profileTable td {
-	border-top: 2px solid #7300EB;
-	padding: 5px;
-	word-break: break-all;
-  }
+.profileTable td {
+  border-top: 2px solid #7300EB;
+  padding: 5px;
+  word-break: break-all;
+}
 
 .iconWidth button {
-margin: 0 auto;
+  margin: 0 auto;
 }
 
 .iconWidth div {
-margin: 0 auto;
+  margin: 0 auto;
 }
 
-.icon > svg {
-    height: 60%;
-  }
+.icon>svg {
+  height: 60%;
+}
 
 .icon {
-    color: dimgrey;
+  color: dimgrey;
 }
 
 * {
-	scrollbar-width: auto;          /* "auto" or "thin" */
-	scrollbar-color: white #7300ED;   /* scroll thumb and track */ 
-  }
-
-
-  /* Works on Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-	width: 12px;
-  }
-  
-  *::-webkit-scrollbar-track {
-	background: #7300ED;
-	border-radius: 10px;
-  }
-  
-  *::-webkit-scrollbar-thumb {
-	background-color: white;
-	border-radius: 20px;
-	border: 2px solid #7300ED;
-  }
-
-  .online {
-    background-color: green;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
-  .offline {
-    background-color: red;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
-  
-  div#phaserId {
-    max-width: 100vw;
-    max-height: 100vh;
+  scrollbar-width: auto;
+  /* "auto" or "thin" */
+  scrollbar-color: white #7300ED;
+  /* scroll thumb and track */
 }
+
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #7300ED;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 20px;
+  border: 2px solid #7300ED;
+}
+
+.online {
+  background-color: green;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.offline {
+  background-color: red;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+div#phaserId {
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+.clear-button-styles {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  display: inline-block;
+  width: auto;
+  transform-origin: center;
+  transform: scale(1);
+  padding: 0;
+  margin: 0;
+}
+
+.clear-button-styles:active,
+.clear-button-styles:not(:disabled):active {
+  outline: none;
+  background: transparent;
+  /* transform: scale(1.05); */
+}
+
+#phaserId canvas{
+
+width: 100vw;
+height: 100vh;
+} 

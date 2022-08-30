@@ -1,19 +1,21 @@
-import { setLoader } from "../../../api.js"
+import { setLoader } from '../../../api';
 
 class Preloader {
-    constructor() {
-    }
-    Loading(scene) {
+  Loading(_scene) {
+    this.scene = _scene;
+    this.scene.load.once(
+      'progress',
+      () => {
+        // we could start the Loader when clicking on login button to start the animation sooner
+        setLoader(true);
+      },
+    );
 
-        scene.load.once('progress', function (value) {
-           setLoader(true) //we could start the Loader when clicking on login button to start the animation sooner
-        })
+    this.scene.load.on('complete', () => {
+      setLoader(false);
+      this.scene.loadingDone = true;
+    });
+  }
+} // end class
 
-        scene.load.on('complete', function () {
-            setLoader(false)
-            scene.loadingDone = true
-        })
-    }
-} //end class
-
-export default new Preloader()
+export default new Preloader();

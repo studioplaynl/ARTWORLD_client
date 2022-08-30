@@ -1,24 +1,21 @@
 <script>
-export let saving;
-
-
+  export let saving;
 </script>
 
-
 {#if saving}
-    <div class="savecontainer">
-      <p class="saving">Saving<span>.</span><span>.</span><span>.</span></p>
-    </div>
-  {/if}
+  <div class="savecontainer">
+    <p class="saving">Saving<span>.</span><span>.</span><span>.</span></p>
+  </div>
+{/if}
 
-  <style>
-      @keyframes blink {
+<style>
+  @keyframes blink {
     /**
      * At the start of the animation the dot
      * has an opacity of .2
      */
     0% {
-      opacity: .2;
+      opacity: 0.2;
     }
     /**
      * At 20% the dot is fully visible and
@@ -32,18 +29,18 @@ export let saving;
      * the animation can start again
      */
     100% {
-      opacity: .2;
+      opacity: 0.2;
     }
-}
+  }
 
-.saving {
-  top: 50vh;
-  left: 50vw;
-  position: fixed;
-  transform: translate(-50%,-50%);
-}
+  .saving {
+    top: 50vh;
+    left: 50vw;
+    position: fixed;
+    transform: translate(-50%, -50%);
+  }
 
-.saving span {
+  .saving span {
     /**
      * Use the blink animation, which is defined above
      */
@@ -64,34 +61,34 @@ export let saving;
      * as the animation. Same applies for the ending styles.
      */
     animation-fill-mode: both;
-}
+  }
 
-.saving span:nth-child(2) {
+  .saving span:nth-child(2) {
     /**
      * Starts the animation of the third dot
      * with a delay of .2s, otherwise all dots
      * would animate at the same time
      */
-    animation-delay: .2s;
-}
+    animation-delay: 0.2s;
+  }
 
-.saving span:nth-child(3) {
+  .saving span:nth-child(3) {
     /**
      * Starts the animation of the third dot
      * with a delay of .4s, otherwise all dots
      * would animate at the same time
      */
-    animation-delay: .4s;
-}
+    animation-delay: 0.4s;
+  }
 
-.savecontainer {
+  .savecontainer {
     z-index: 5;
     position: fixed;
     left: 0;
     top: 0;
     font-size: 60px;
-    background: rgba(50,50,50,0.5);
+    background: rgba(50, 50, 50, 0.5);
     width: 100vw;
     height: 100vh;
-}  
-  </style>
+  }
+</style>

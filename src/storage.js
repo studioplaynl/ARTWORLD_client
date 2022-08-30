@@ -1,409 +1,320 @@
-import { Session, Profile, Error, Succes } from "./session.js"
-import { deleteObject, updateObject, listAllObjects } from "./api"
-import { get } from 'svelte/store'
-import { writable } from 'svelte/store';
+/* eslint-disable camelcase */
+/* eslint-disable prefer-destructuring */
+// Storage & communcatie tussen Server en App
 
-function createAchievement() {
-  const { subscribe, set, update } = writable([]);
+import { get, writable } from 'svelte/store';
+import { Session } from './session';
+import {
+  deleteObject,
+  updateObject,
+  listAllObjects,
+  listObjects,
+  convertImage,
+  deleteObjectAdmin,
+  deleteFile,
+} from './api';
+import {
+  PERMISSION_READ_PUBLIC, PERMISSION_READ_PRIVATE,
+} from './constants';
 
-  return {
-    subscribe,
-    set,
-    update,
-    create: (key, value) => {
-      let ach = get(Achievements)
-      if (!!ach.find(element => element.key == key)) return
-      let obj = { key, value }
-      updateObject("achievements", key, value, true).then(() => {
+//  Achievements of a user
+const achievementsStore = writable([]);
 
-        console.log("value", value)
-        ach.push(obj)
-        console.log("ach", ach)
-        console.log("key", key)
-        Achievements.set(ach)
-        return ach
-      })
-    },
-    get: () => {
-      let ach = get(Achievements)
-      let Sess = get(Session)
-      if (!!ach && ach.length > 0) return ach
-      else {
-        if (!!Sess) listAllObjects("achievements", Sess.user_id).then((ach) => {
-          Achievements.set(ach)
-          return ach
-        })
-      }
-    },
-    find: (key) => {
-      let ach = get(Achievements)
-      let i = ach.findIndex((element) => element.key == key)
-      if (i != -1) return ach[i].value
-      else return undefined
-    },
-    // update: (Item) =>{
-    //             updateObject("achievements", Item.name, Item.value, Item.pub).then( (value) =>{
-    //                 let ach = get(achievements)
-    //                 const itemNum = ach.findIndex((element) => element.name == Item.name)
-    //                 ach[itemNum] = Item
-    //                 Achievements.set(ach)
-    //                 return ach
-    //             })
+export const Achievements = {
 
-    //         },
+  subscribe: achievementsStore.subscribe,
+  set: achievementsStore.set,
+  update: achievementsStore.update,
 
-    delete: (key) => {
-      Achievements.update((value) => {
-        const itemNum = value.findIndex((element) => element.key == key)
-        if (itemNum == -1) return value
-        value.splice(itemNum, 1);
-        deleteObject("achievements", key)
-        return value
-      })
-    },
+  create: (key, value) => {
+    const localAchievements = get(achievementsStore);
+    if (localAchievements.find((element) => element.key === key)) return;
+    const obj = { key, value };
+    updateObject('achievements', key, value, true).then(() => {
+      localAchievements.push(obj);
+      achievementsStore.set(localAchievements);
+      return localAchievements;
+    });
+  },
 
-  };
-}
+  get: () => {
+    const localAchievements = get(achievementsStore);
+    const Sess = get(Session);
+    if (!!localAchievements && localAchievements.length > 0) return localAchievements;
 
-function createServerObject(objectName) {
-  const { subscribe, set, update } = writable([]);
+    if (Sess) {
+      listAllObjects('achievements', Sess.user_id).then((serverAchievements) => {
+        achievementsStore.set(serverAchievements);
+        return serverAchievements;
+      });
+    } return null;
+  },
 
-  return {
-    subscribe,
-    set,
-    update,
-    create: (objectName, key, value) => {
-      let ach = get(objectName)
-      if (!!ach.find(element => element.key == key)) return
-      updateObject(objectName, key, value, true).then((value) => {
-        let obj = { key, value }
-        ach.push(obj)
-        console.log("ach")
-        console.log(ach)
-        console.log(key)
-        [objectName].set(ach)
-        return ach
-      })
-    },
-    get: () => {
-      let ach = get(objectName)
-      let Sess = get(Session)
-      if (!!ach && ach.length > 0) return ach
-      else {
-        if (!!Sess) listAllObjects(objectName, Sess.user_id).then((ach) => {
-          [objectName].set(ach)
-          return ach
-        })
-      }
-    },
-    find: (key) => {
-      let ach = get(objectName)
-      let i = ach.findIndex((element) => element.key == key)
-      if (i != -1) return ach[i].value
-      else return undefined
-    },
-    // update: (Item) =>{
-    //             updateObject("achievements", Item.name, Item.value, Item.pub).then( (value) =>{
-    //                 let ach = get(achievements)
-    //                 const itemNum = ach.findIndex((element) => element.name == Item.name)
-    //                 ach[itemNum] = Item
-    //                 Achievements.set(ach)
-    //                 return ach
-    //             })
+  find: (key) => {
+    const localAchievements = get(achievementsStore);
+    const i = localAchievements.findIndex((element) => element.key === key);
+    if (i > -1) return localAchievements[i].value;
+    return undefined;
+  },
 
-    //         },
+  delete: (key) => {
+    achievementsStore.update((localAchievements) => {
+      const itemNum = localAchievements.findIndex((element) => element.key === key);
+      if (itemNum === -1) return localAchievements;
 
-    delete: (key) => {
-      [objectName].update((value) => {
-        const itemNum = value.findIndex((element) => element.key == key)
-        if (itemNum == -1) return value
-        value.splice(itemNum, 1);
-        deleteObject(objectName, key)
-        return value
-      })
-    },
+      deleteObject('achievements', key);
 
-  };
-}
+      const updatedAchievements = localAchievements.filter((element) => element.key !== key);
+      return updatedAchievements;
+    });
+  },
+};
 
-export const Achievements = createAchievement()
+// Stores whatever a user has liked
+const likedStore = writable([]);
 
-// export const Achievements = createServerObject("Achievements")
+export const Liked = {
 
-// {
+  subscribe: likedStore.subscribe,
+  set: likedStore.set,
+  update: likedStore.update,
 
-//     create: (key, value) =>{
-//       let ach = get(achievements)
-//       if( !!ach.find(element => element.key == key)) return
-//         updateObject("achievements", key, value, true).then( (value) =>{
-//           let obj = {key, value}
-//          achievements.update((v) => {v.push(obj); return v} )
-//          // return true
-//       })
+  create: (key, value) => {
+    const likedArray = get(likedStore);
 
-//     },
+    // If a user already liked something, don't like it again
+    if (likedArray.find((element) => element.key === key)) return;
 
-//     update: (Item) =>{
-//         updateObject("achievements", Item.name, Item.value, Item.pub).then( (value) =>{
-//             let ach = get(achievements)
-//             const itemNum = ach.findIndex((element) => element.name == Item.name)
-//             ach[itemNum] = Item
-//             achievements.set(ach)
-//             return ach
-//         })
+    const obj = { key, value };
+    updateObject('liked', key, value, true).then(() => {
+      likedArray.push(obj);
+      Liked.set(likedArray);
+      return likedArray;
+    });
+  },
 
-//     },
-
-//     delete: (key) =>{
-//         achievements.update((value)=>{
-//           const itemNum = value.findIndex((element) => element.key == key)
-//           if(itemNum == -1) return value
-//           value.splice(itemNum, 1);
-//           deleteObject("achievements", key)
-//           return value
-//         })
-//     },
-//     find: (key) => {
-//       let ach = get(achievements)
-//       let i = ach.findIndex((element) => element.key == key)
-//       if(i != -1) return ach[i].value
-//       else return undefined
-//     },
-
-//     get: () =>{
-//         let ach = get(achievements)
-//         let Sess = get(Session)
-//         if(!!ach && ach.length > 0) return ach
-//         else {
-//           if(!!Sess)listAllObjects("achievements", Sess.user_id).then((ach)=>{
-//             achievements.set(ach)
-//             return ach
-//           })
-//         }
-//     }
-
-// }
-
-function createLiked() {
-  const { subscribe, set, update } = writable([])
-  return {
-
-    subscribe,
-    set,
-    update,
-
-    create: (key, value) => {
-      let likedArray = get(Liked)
-      console.log("likedArray storage", likedArray)
-
-      if (!!likedArray.find(element => element.key == key)) return
-      let obj = { key, value }
-      updateObject("liked", key, value, true).then(() => {
-        console.log("value", value)
-
-        likedArray.push(obj)
-        console.log("likedArray", likedArray)
-        console.log("key", key)
-        console.log("value", value)
-        console.log("obj", obj)
-        Liked.set(likedArray)
-        return likedArray
-      })
-    },
-    get: () => {
-      let likedArray = get(Liked)
-      console.log("likedArray:1", likedArray)
-      let Sess = get(Session)
-      if (!!likedArray && likedArray.length > 0) {
-        console.log("likedArray passed!")
-        return likedArray
-      }
-      else {
-        if (!!Sess) listAllObjects("liked", Sess.user_id).then((likedArray) => {
-          console.log("likedArray 2", likedArray)
-          Liked.set(likedArray)
-          return likedArray
-        })
-      }
-    },
-    find: (key) => {
-      let likedArray = get(Liked)
-      let i = likedArray.findIndex((element) => element.key == key)
-      if (i != -1) return likedArray[i].value
-      else return undefined
-    },
-    // update: (Item) =>{
-    //             updateObject("achievements", Item.name, Item.value, Item.pub).then( (value) =>{
-    //                 let ach = get(achievements)
-    //                 const itemNum = ach.findIndex((element) => element.name == Item.name)
-    //                 ach[itemNum] = Item
-    //                 Achievements.set(ach)
-    //                 return ach
-    //             })
-
-    //         },
-
-    delete: (key) => {
-      Liked.update((value) => {
-        const itemNum = value.findIndex((element) => element.key == key)
-        if (itemNum == -1) return value
-        value.splice(itemNum, 1)
-        deleteObject("liked", key)
-        return value
-      })
-    },
-
-  }
-}
-
-export const Liked = createLiked()
-
-
-function createAddressbook() {
-  const { subscribe, set, update } = writable([])
-  return {
-
-    subscribe,
-    set,
-    update,
-
-    get: () => {
-      let addressbookArray = get(Addressbook)
-
-      const Sess = get(Session)
-      if (!!addressbookArray && addressbookArray.length > 0) {
-        return addressbookArray
-      } else {
-        if (!!Sess) listAllObjects("addressbook", Sess.user_id).then((addressbookArray) => {
-          console.log("storage addressbookArray", addressbookArray)
-          Addressbook.set(addressbookArray)
-          return addressbookArray
-        })
-      }
-    },
-
-    create: (key, value) => {
-      let addressbookArray = get(Addressbook)
-      console.log("storage addressbookArray", addressbookArray)
-      if (!!addressbookArray.find(element => element.key == key)) return
-      let obj = { key, value }
-      updateObject("addressbook", key, value, true).then(() => {
-        console.log("storage addressbook value", value)
-        addressbookArray.push(obj)
-        Addressbook.set(addressbookArray)
-        return addressbookArray
-      })
-    },
-
-    delete: (key) => {
-      Addressbook.update((value) => {
-        console.log("key", key)
-        console.log("value", value)
-        const itemNum = value.findIndex((element) => {
-          return element.value.user_id == key
-        })
-        console.log("itemNum", itemNum)
-        if (itemNum == -1) return value
-        value.splice(itemNum, 1)
-        deleteObject("addressbook", key)
-        return value
-      })
+  get: () => {
+    const localLikedArray = get(likedStore);
+    const Sess = get(Session);
+    if (!!localLikedArray && localLikedArray.length > 0) {
+      return localLikedArray;
     }
-  }
 
-  // const { subscribe, set, update } = writable([])
+    if (Sess) {
+      listAllObjects('liked', Sess.user_id).then((serverLikedArray) => {
+        Liked.set(serverLikedArray);
+        return serverLikedArray;
+      });
+    }
+    return null;
+  },
 
-  // let Sess = get(Session)
+  find: (key) => {
+    const likedArray = get(likedStore);
+    const i = likedArray.findIndex((element) => element.key === key);
+    if (i > -1) return likedArray[i].value;
+    return undefined;
+  },
 
-  // return {
+  delete: (key) => {
+    likedStore.update((likedItems) => {
+      const itemNum = likedItems.findIndex((element) => element.key === key);
+      if (itemNum === -1) return likedItems;
 
-  //   subscribe,
+      deleteObject('liked', key);
 
-  //   create: () => {
-  //     let addressbookArray = get(Addressbook)
+      return likedItems.filter((element) => element.key !== key);
+    });
+  },
+};
 
-  //     let userId = Sess.user_id
-  //     console.log("userId", userId)
-  //     let userName = Sess.user_name
+// Stores contacts of user
+const addressBookStore = writable([]);
 
-  //     console.log("Am I running?")
+export const Addressbook = {
 
-  //     // let obj = { userId, userName }
+  subscribe: addressBookStore.subscribe,
+  set: addressBookStore.set,
+  update: addressBookStore.update,
+
+  get: () => {
+    const localAddressbookArray = get(Addressbook);
+
+    const Sess = get(Session);
+    if (!!localAddressbookArray && localAddressbookArray.length > 0) {
+      return localAddressbookArray;
+    }
+    if (Sess) {
+      listAllObjects('addressbook', Sess.user_id).then((serverAddressbookArray) => {
+        Addressbook.set(serverAddressbookArray);
+        return serverAddressbookArray;
+      });
+    }
+    return null;
+  },
+
+  create: (key, value) => {
+    const addressbookArray = get(Addressbook);
+    if (addressbookArray.find((element) => element.key === key)) return;
+    const obj = { key, value };
+    updateObject('addressbook', key, value, true).then(() => {
+      addressbookArray.push(obj);
+      Addressbook.set(addressbookArray);
+      return addressbookArray;
+    });
+  },
+
+  delete: (key) => {
+    Addressbook.update((addresses) => {
+      const itemNum = addresses.findIndex((element) => element.value.user_id === key);
+      if (itemNum === -1) return addresses;
+      deleteObject('addressbook', key);
+      return addresses.filter((element) => element.key !== key);
+    });
+  },
+};
 
 
-  //     updateObject("addressbook", "123", "345", true)
-  //     // return addressbookArray
-  //   },
 
-  // get: () => {
-  //   // at the initial run the value is an empty array since "writable" is []
-  //   let addressbookArray = get(Addressbook) // does it refer to the same class?
+// Stores Artworks of user
+const artworksStore = writable([]);
 
-  //   // holds token and user's details
-  //   let Sess = get(Session)
-  //   // console.log("Sess", Sess)
+export const ArtworksStore = {
 
-  //   // API call to get the list of friends
-  //   listAllObjects("addressbook", Sess.user_id).then((addressbookArray) => {
-  //     Addressbook.set(addressbookArray)
-  //     // console.log("addressbookArray", addressbookArray)
-  //     return addressbookArray
-  //   })
-  // }
-  // }
-}
+  subscribe: artworksStore.subscribe,
+  set: artworksStore.set,
+  update: artworksStore.update,
 
-export const Addressbook = createAddressbook()
+  loadArtworks: async (id, limit) => {
+    const types = ['drawing', 'video', 'audio', 'stopmotion', 'picture'];
+    const typePromises = [];
+    let loadedArt = [];
 
-// export const Addressbook = {
+    types.forEach(async (type) => {
+      // One promise per type..
+      typePromises.push(new Promise((resolveType) => {
+        // A promise to load objects from the server
+        const loadPromise = new Promise((resolve) => {
+          if (limit !== undefined) {
+            listAllObjects(type, id).then((loaded) => resolve(loaded));
+          } else {
+            listObjects(type, id, limit).then((loaded) => resolve(loaded));
+          }
+        });
 
-//   create: (key, value) => {
-//     let ach = get(achievements)
-//     if (!!ach.find(element => element.key == key)) return
-//     updateObject("achievements", key, value, true).then((value) => {
-//       let obj = { key, value }
-//       achievements.update((v) => { v.push(obj); return v })
-//       // return true
-//     })
+        // Objects were loaded, so update the preview URLs
+        loadPromise.then((loaded) => ArtworksStore.updatePreviewUrls(loaded)).then((loaded) => {
+          // Add to the loadedArt array
+          loadedArt = [...loadedArt, ...loaded];
+        }).then(() => {
+          // TODO: Maybe add some sorting?
+          // Resolve promise for this type
+          resolveType();
+        });
+      }));
+    });
 
-//   },
+    // After all typePromises fulfilled, set data into store
+    Promise.all(typePromises).then(() => {
+      artworksStore.set(loadedArt);
+    });
+  },
 
-//   update: (Item) => {
-//     updateObject("achievements", Item.name, Item.value, Item.pub).then((value) => {
-//       let ach = get(achievements)
-//       const itemNum = ach.findIndex((element) => element.name == Item.name)
-//       ach[itemNum] = Item
-//       achievements.set(ach)
-//       return ach
-//     })
+  getArtwork(key) {
+    return artworksStore.find((artwork) => artwork.key === key);
+  },
 
-//   },
+  updatePreviewUrls(artworks) {
+    const artworksToUpdate = artworks;
+    const existingArtworks = get(artworksStore);
 
-//   delete: (key) => {
-//     achievements.update((value) => {
-//       const itemNum = value.findIndex((element) => element.key == key)
-//       if (itemNum == -1) return value
-//       value.splice(itemNum, 1);
-//       deleteObject("achievements", key)
-//       return value
-//     })
-//   },
-//   find: (key) => {
-//     let ach = get(achievements)
-//     let i = ach.findIndex((element) => element.key == key)
-//     if (i != -1) return ach[i].value
-//     else return undefined
-//   },
 
-//   get: () => {
-//     let ach = get(achievements)
-//     if (!!ach && ach.length > 0) return ach
-//     else {
-//       listAllObjects("achievements", Sess.user_id).then((ach) => {
-//         achievements.set(ach)
-//         return ach
-//       })
-//     }
-//   }
+    artworksToUpdate.forEach(async (item, index) => {
+      const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
+      const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
+      const artwork = item;
 
-// }
+      // console.log('Did I exist?', item.key, !!existingArtwork, 'outdated?', outdatedArtwork);
+
+      // Only get a fresh URL if no previewUrl is available or when it has been updated
+      if (!artwork.value.previewUrl || outdatedArtwork) {
+        if (artwork.value.json) {
+          artwork.url = artwork.value.json.split('.')[0];
+        }
+        if (artwork.value.url) {
+          artwork.url = artwork.value.url.split('.')[0];
+        }
+        artwork.value.previewUrl = await convertImage(
+          artwork.value.url,
+          '150',
+          '1000',
+          'png',
+        );
+        // console.log('artwork.value.previewUrl nu: ', artwork.value.previewUrl);
+        artworksToUpdate[index] = artwork;
+      }
+
+      // console.log('ArtworksStore: Artwork', artwork);
+
+
+      // console.log('artwork.value.previewUrl', artwork.value.previewUrl);
+    });
+    return artworksToUpdate;
+  },
+
+  updateState: (row, state) => {
+    const {
+      collection, key, value, user_id,
+    } = row;
+
+    // Update on server
+    value.status = state;
+    const pub = false;
+    updateObject(collection, key, value, pub, user_id);
+
+    // Update store
+    artworksStore.update((artworks) => {
+      const artworksToUpdate = artworks;
+      const artworkIndex = artworks.findIndex((i) => i.key === key);
+      if (artworkIndex) {
+        artworksToUpdate[artworkIndex].value.status = state;
+      }
+      return [...artworksToUpdate];
+    });
+  },
+
+  updatePublicRead: async (row, publicRead) => {
+    const {
+      collection, key, value, user_id,
+    } = row;
+
+    // Update on server
+    await updateObject(collection, key, value, publicRead, user_id);
+
+    // Update on store
+    artworksStore.update((artworks) => {
+      const artworksToUpdate = artworks;
+      const artworkIndex = artworks.findIndex((artwork) => artwork.key === key);
+      if (artworkIndex > -1) {
+        artworksToUpdate[artworkIndex].permission_read = publicRead ? PERMISSION_READ_PUBLIC : PERMISSION_READ_PRIVATE;
+      }
+      return [...artworksToUpdate];
+    });
+  },
+
+  delete: (row, role) => {
+    const {
+      collection, key, user_id,
+    } = row;
+
+    // Remove from server
+    if (role === 'admin' || role === 'moderator') {
+      deleteObjectAdmin(user_id, collection, key);
+    } else {
+      deleteFile(collection, key, user_id);
+    }
+
+    // Remove from store
+    artworksStore.update((artworks) => artworks.filter((artwork) => artwork.key !== key));
+  },
+};

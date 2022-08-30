@@ -5,7 +5,9 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public --single --host 0.0.0.0"
+    "start": "sirv public --single",
+    "lint": "eslint 'src/**/*.{html,js,svelte}'",
+    "lint:fix": "eslint --fix 'src/**/*.{html,js,svelte}'"
   },
   "devDependencies": {
     "@azerion/phaser-i18next": "^1.0.3",
@@ -13,7 +15,13 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@smui/snackbar": "^5.0.0-beta.7",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
     "attractions": "^3.3.0",
+    "eslint": "^8.21.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-svelte": "^2.3.0",
     "postcss": "^8.3.6",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
@@ -22,7 +30,7 @@
     "rollup-plugin-svelte": "^7.0.0",
     "rollup-plugin-terser": "^7.0.0",
     "sass": "^1.39.0",
-    "svelte": "^3.0.0",
+    "svelte-eslint-parser": "^0.17.0",
     "svelte-preprocess": "^4.10.1"
   },
   "dependencies": {
@@ -31,20 +39,27 @@
     "axios": "^0.21.1",
     "bluebird": "^3.7.2",
     "error-stack-parser": "^2.0.6",
-    "fabric": "^4.5.0",
+    "eslint-scope": "^5.1.1",
     "i18next": "^21.3.2",
+    "jsqr": "^1.4.0",
     "matter-js": "^0.17.1",
     "minimist": "^1.2.6",
     "phaser": "^3.55.2",
     "phaser3-rex-plugins": "^1.1.65",
     "sirv-cli": "^1.0.0",
+    "svelte": "^3.0.0",
     "svelte-i18n": "^3.3.9",
     "svelte-icons": "^2.1.0",
     "svelte-qrcode": "^1.0.0",
     "svelte-spa-router": "^3.2.0",
     "svelte-table": "^0.1.18",
     "three": "^0.133.1",
-    "typescript": "^4.3.5",
+    "typescript": "^4.7.3",
+    "typescript-eslint": "^0.0.1-alpha.0",
     "uuid": "^8.3.2"
+  },
+  "volta": {
+    "node": "16.15.1",
+    "npm": "8.4.1"
   }
 }

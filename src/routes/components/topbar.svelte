@@ -1,97 +1,135 @@
 <script>
-    import HistoryTracker from "../game/class/HistoryTracker";
-    import ManageSession from "../game/ManageSession";
-    import { history } from "../../session";
+  import HistoryTracker from '../game/class/HistoryTracker';
+  import ManageSession from '../game/ManageSession';
+  import { History } from '../../session';
+  import { dlog } from '../game/helpers/DebugLog';
 
-    let home = "Artworld";
+  const home = 'Artworld';
 
-    async function goHome() {
-        HistoryTracker.switchScene(ManageSession.currentScene, home, home);
+  async function goHome() {
+    HistoryTracker.switchScene(ManageSession.currentScene, home, home);
+  }
+
+  async function goBack() {
+    dlog($History);
+    if ($History.length > 1) {
+      HistoryTracker.activateBackButton(ManageSession.currentScene);
     }
+  }
 
-    async function goBack() {
-        console.log($history);
-        if ($history.length > 1) {
-            HistoryTracker.activateBackButton(ManageSession.currentScene);
-        }
-    }
+  async function zoomIn() {
+    if (ManageSession.currentZoom >= 4) return;
+    ManageSession.currentZoom += 0.1;
+  }
 
-    async function zoomIn() {
-        if (ManageSession.currentZoom >= 4) return;
-        ManageSession.currentZoom += 0.1;
-    }
+  function zoomReset() {
+    ManageSession.currentZoom = 1;
+  }
 
-    function zoomReset() {
-        ManageSession.currentZoom = 1;
-    }
-
-    function zoomOut() {
-        if (ManageSession.currentZoom <= 0.2) return;
-        ManageSession.currentZoom -= 0.1;
-    }
+  function zoomOut() {
+    if (ManageSession.currentZoom <= 0.2) return;
+    ManageSession.currentZoom -= 0.1;
+  }
 </script>
 
 <div class="topbar">
-    <a on:click={goHome}
-        ><img
-            class="TopIcon"
-            id="logo"
-            src="assets/SHB/svg/AW-icon-logo-A.svg"
-        /></a
-    >
-    <a on:click={goBack}
-        ><img
-            class="TopIcon"
-            class:showBack={$history.length > 1}
-            id="back"
-            src="/assets/SHB/svg/AW-icon-previous.svg"
-        /></a
-    >
-    <a on:click={zoomOut} id="zoomOut"
-        ><img class="TopIcon" src="/assets/SHB/svg/AW-icon-minus.svg" /></a
-    >
-    <a on:click={zoomReset} id="zoomReset"
-        ><img class="TopIcon" src="assets/SHB/svg/AW-icon-zoom-reset.svg" /></a
-    >
-    <a on:click={zoomIn} id="zoomIn"
-        ><img class="TopIcon" src="./assets/SHB/svg/AW-icon-plus.svg" /></a
-    >
+  <button on:click="{goHome}">
+    <img
+      class="TopIcon"
+      id="logo"
+      src="assets/SHB/svg/AW-icon-logo-A.svg"
+      alt="Homepage"
+    />
+  </button>
+  <button on:click="{goBack}">
+    <img
+      class="TopIcon"
+      class:showBack="{$History.length > 1}"
+      id="back"
+      src="/assets/SHB/svg/AW-icon-previous.svg"
+      alt="Go back"
+    />
+  </button>
+  <button on:click="{zoomOut}" id="zoomOut">
+    <img
+      class="TopIcon"
+      src="/assets/SHB/svg/AW-icon-minus.svg"
+      alt="Zoom out"
+    />
+  </button>
+  <button on:click="{zoomReset}" id="zoomReset">
+    <img
+      class="TopIcon"
+      src="assets/SHB/svg/AW-icon-zoom-reset.svg"
+      alt="Reset zoom"
+    />
+  </button>
+  <button on:click="{zoomIn}" id="zoomIn">
+    <img
+      class="TopIcon"
+      src="./assets/SHB/svg/AW-icon-plus.svg"
+      alt="Zoom in"
+    />
+  </button>
 </div>
 
 <style>
-    * {
-        box-sizing: border-box;
-        padding: 0;
-        margin: 0;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
+  button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: inline-block;
+    width: auto;
+    transform-origin: center;
+    transform: scale(1);
+  }
+  button:active,
+  button:not(:disabled):active {
+    outline: none;
+    background: transparent;
+    transform: scale(1.05);
+  }
+  button:focus {
+    outline: none;
+  }
 
-    .topbar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        margin: 15px 15px 15px 30px;
-    }
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 
-    .TopIcon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: white;
-    }
+  .topbar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    margin: 15px 15px 15px 30px;
+  }
 
-    #logo {
-        box-shadow: 5px 5px 0px #7300ed;
-    }
+  .TopIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+  }
 
-    #back {
-        visibility: hidden;
-    }
+  #logo {
+    box-shadow: 5px 5px 0px #7300ed;
+  }
 
-    .showBack {
-        visibility: visible !important;
-    }
+  #back {
+    visibility: hidden;
+  }
+
+  .showBack {
+    visibility: visible !important;
+  }
 </style>

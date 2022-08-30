@@ -1,223 +1,212 @@
-import { CONFIG } from "../config.js";
-import ManageSession from "../ManageSession"
-import { getAccount } from '../../../api.js'
+import { CONFIG } from '../config';
+import ManageSession from '../ManageSession';
+import { getAccount } from '../../../api';
 
-import PlayerDefault from '../class/PlayerDefault'
-import PlayerDefaultShadow from '../class/PlayerDefaultShadow'
-import Player from '../class/Player.js'
-import Preloader from '../class/Preloader.js'
-import BouncingBird from "../class/BouncingBird.js"
-import Background from "../class/Background.js"
-import DebugFuntions from "../class/DebugFuntions.js"
-import CoordinatesTranslator from "../class/CoordinatesTranslator.js"
-import GenerateLocation from "../class/GenerateLocation.js"
+import PlayerDefault from '../class/PlayerDefault';
+import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
+import Player from '../class/Player';
+import Preloader from '../class/Preloader';
+import BouncingBird from '../class/BouncingBird';
+import Background from '../class/Background';
+import DebugFuntions from '../class/DebugFuntions';
+import CoordinatesTranslator from '../class/CoordinatesTranslator';
+import GenerateLocation from '../class/GenerateLocation';
+
+const { Phaser } = window;
 
 export default class TestCoordinates extends Phaser.Scene {
+  constructor() {
+    super('TestCoordinates');
 
-    constructor() {
-        super("TestCoordinates");
+    this.location = 'TestCoordinates';
 
-        this.location = "TestCoordinates"
+    this.worldSize = new Phaser.Math.Vector2(600, 600);
 
-        this.worldSize = new Phaser.Math.Vector2(600, 600)
+    this.debug = false;
 
-        this.debug = false
+    this.gameStarted = false;
+    this.phaser = this;
+    // this.playerPos;
+    this.onlinePlayers = [];
 
-        this.gameStarted = false
-        this.phaser = this
-        // this.playerPos;
-        this.onlinePlayers = []
+    this.newOnlinePlayers = [];
 
-        this.newOnlinePlayers = []
+    this.currentOnlinePlayer;
+    this.avatarName = [];
+    this.tempAvatarName = '';
+    this.loadedAvatars = [];
 
-        this.currentOnlinePlayer
-        this.avatarName = []
-        this.tempAvatarName = ""
-        this.loadedAvatars = []
+    this.player;
+    this.playerShadow;
+    this.playerAvatarPlaceholder = 'avatar1';
+    this.playerMovingKey = 'moving';
+    this.playerStopKey = 'stop';
+    this.playerAvatarKey = '';
 
-        this.player
-        this.playerShadow
-        this.playerContainer
-        this.playerAvatarPlaceholder = "avatar1"
-        this.playerMovingKey = "moving"
-        this.playerStopKey = "stop"
-        this.playerAvatarKey = ""
-        this.createdPlayer = false
+    this.offlineOnlineUsers;
 
-        this.offlineOnlineUsers
+    // .......................REX UI ............
+    this.COLOR_PRIMARY = 0xff5733;
+    this.COLOR_LIGHT = 0xffffff;
+    this.COLOR_DARK = 0x000000;
+    this.data;
+    // ....................... end REX UI ......
 
+    this.cursors;
+    this.pointer;
+    this.isClicking = false;
+    this.cursorKeyIsDown = false;
+    this.swipeDirection = 'down';
+    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
 
-        //.......................REX UI ............
-        this.COLOR_PRIMARY = 0xff5733
-        this.COLOR_LIGHT = 0xffffff
-        this.COLOR_DARK = 0x000000
-        this.data
-        //....................... end REX UI ......
+    // pointer location example
+    // this.source // = player
+    this.target = new Phaser.Math.Vector2();
+    this.distance;
 
-        this.cursors
-        this.pointer
-        this.isClicking = false
-        this.cursorKeyIsDown = false
-        this.swipeDirection = "down"
-        this.swipeAmount = new Phaser.Math.Vector2(0, 0)
-        this.graffitiDrawing = false
+    // shadow
+    this.playerShadowOffset = -8;
+    this.playerIsMovingByClicking = false;
 
-        //pointer location example
-        // this.source // = player
-        this.target = new Phaser.Math.Vector2();
-        this.distance
+    this.currentZoom;
+    this.UIScene;
 
-        //shadow
-        this.playerShadowOffset = -8
-        this.playerIsMovingByClicking = false
+    this.text1;
+  }
 
-        this.currentZoom
-        this.UI_Scene
+  async preload() {
+    Preloader.Loading(this); // .... PRELOADER VISUALISER
+  }
 
-        this.text1
-    }
+  async create() {
+    // timers
+    ManageSession.updateMovementTimer = 0;
+    ManageSession.updateMovementInterval = 60; // 1000 / frames =  millisec
 
-    async preload() {
-        Preloader.Loading(this) //.... PRELOADER VISUALISER
+    Background.repeatingDots({
+      scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF,
+    });
 
+    // .......  PLAYER ....................................................................................
+    //* create deafult player and playerShadow
+    // create player in center with artworldCoordinates
+    // this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
+    // create draggable player
+    this.player = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), 'ui_eye').setScale(0.6).setDepth(101).setInteractive();
 
-    }
+    this.input.setDraggable(this.player);
+    this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+      gameObject.x = dragX;
+      gameObject.y = dragY;
+    });
 
-    async create() {
+    // this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
+    // .......  end PLAYER ................................................................................
 
-        //timers
-        ManageSession.updateMovementTimer = 0;
-        ManageSession.updateMovementInterval = 60; //1000 / frames =  millisec
+    // ....... onlinePlayers ..............................................................................
+    // add onlineplayers group
+    this.onlinePlayersGroup = this.add.group();
+    // ....... end onlinePlayers ..........................................................................
 
-        //.......  LOAD PLAYER AVATAR ..........................................................................
-        ManageSession.createPlayer = true
-        // console.log("ManageSession.createPlayer: ")
-        // console.log(ManageSession.createPlayer)
-        //....... end LOAD PLAYER AVATAR .......................................................................
+    // ....... PLAYER VS WORLD .............................................................................
+    this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
+    //! setBounds has to be set before follow, otherwise the camera doesn't follow!
+    this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
+    this.gameCam.zoom = 1;
+    // this.gameCam.startFollow(this.player)
+    // ......... end PLAYER VS WORLD .......................................................................
 
-        Background.repeatingDots({ scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF })
+    // ......... INPUT .....................................................................................
+    this.cursors = this.input.keyboard.createCursorKeys();
+    // .......... end INPUT ................................................................................
 
-        //.......  PLAYER ....................................................................................
-        //*create deafult player and playerShadow
-        // create player in center with artworldCoordinates
-        //this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), this.playerAvatarPlaceholder)
-        //create draggable player 
-        this.player = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), 'ui_eye',).setScale(0.6).setDepth(101).setInteractive()
+    // .......... locations ................................................................................
+    // this.generateLocations()
+    let location1Vector = new Phaser.Math.Vector2(-100, -100);
+    // console.log(location1Vector)
 
-        this.input.setDraggable(this.player)
-        this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector);
+    // console.log(location1Vector)
 
-            gameObject.x = dragX
-            gameObject.y = dragY
+    const location1 = new GenerateLocation({
+      scene: this, type: 'image', x: location1Vector.x, y: location1Vector.y, key1: 'avatar1', text: 'Hello!', fontColor: 0x8dcb0e,
+    });
+    // .......... end locations ............................................................................
 
-        })
+    // BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
 
-        //this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder })
-        //.......  end PLAYER ................................................................................
+    // ......... DEBUG FUNCTIONS ...........................................................................
+    DebugFuntions.keyboard(this);
+    // this.createDebugText();
+    // ......... end DEBUG FUNCTIONS .......................................................................
 
-        //....... onlinePlayers ..............................................................................
-        // add onlineplayers group
-        this.onlinePlayersGroup = this.add.group();
-        //....... end onlinePlayers ..........................................................................
+    // ......... UI Scene  .................................................................................
+    this.UIScene = this.scene.get('UIScene');
+    this.scene.launch('UIScene');
+    this.currentZoom = this.UIScene.currentZoom;
+    this.UIScene.location = this.location;
+    this.gameCam.zoom = this.currentZoom;
+    // ......... end UI Scene ..............................................................................
+    this.text1 = this.add.text(10, 10, '', { fill: '#00ff00' });
+  }
 
-        //....... PLAYER VS WORLD .............................................................................
-        this.gameCam = this.cameras.main //.setBackgroundColor(0xFFFFFF);
-        //!setBounds has to be set before follow, otherwise the camera doesn't follow!
-        this.gameCam.setBounds(0, 0, this.worldSize.x, this.worldSize.y)
-        this.gameCam.zoom = 1
-        //this.gameCam.startFollow(this.player)
-        //......... end PLAYER VS WORLD .......................................................................
+  update(time, delta) {
+    // ...... ONLINE PLAYERS ................................................
+    // Player.loadOnlinePlayers(this)
+    // Player.receiveOnlinePlayersMovement(this)
+    // Player.loadOnlineAvatar(this)
 
-        //......... INPUT .....................................................................................
-        this.cursors = this.input.keyboard.createCursorKeys();
-        //.......... end INPUT ................................................................................
+    this.gameCam.zoom = this.UIScene.currentZoom;
 
-        //.......... locations ................................................................................
-        //this.generateLocations()
-        let location1Vector = new Phaser.Math.Vector2(-100, -100)
-        //console.log(location1Vector)
+    const pointer = this.input.activePointer;
 
-        location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector)
-        //console.log(location1Vector)
+    const toARTWORLDx = CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, pointer.worldX);
+    const toARTWORLDy = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, pointer.worldY);
 
-        const location1 = new GenerateLocation({ scene: this, type: "image", x: location1Vector.x, y: location1Vector.y, key1: "avatar1", text: "Hello!", fontColor: 0x8dcb0e })
-        //.......... end locations ............................................................................
+    this.text1.setText([
+      `x: ${pointer.worldX}`,
+      `y: ${pointer.worldY}`,
+      `isDown: ${pointer.isDown}`,
+      `toARTWORLDx: ${toARTWORLDx}`,
+      `toARTWORLDy: ${toARTWORLDy}`,
+      'convert back to screen: ',
+      `x: ${CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, toARTWORLDx)}`,
+      `y: ${CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, toARTWORLDy)}`,
+    ]);
 
-        //BouncingBird.generate({ scene: this, birdX: 200, birdY: 200, birdScale: 1.2 })
+    // .......................................................................
 
-        //......... DEBUG FUNCTIONS ...........................................................................
-        DebugFuntions.keyboard(this);
-        //this.createDebugText();
-        //......... end DEBUG FUNCTIONS .......................................................................
+    // ........... PLAYER SHADOW .............................................................................
+    // the shadow follows the player with an offset
+    // this.playerShadow.x = this.player.x + this.playerShadowOffset
+    // this.playerShadow.y = this.player.y + this.playerShadowOffset
+    // ........... end PLAYER SHADOW .........................................................................
 
-        //......... UI Scene  .................................................................................
-        this.UI_Scene = this.scene.get("UI_Scene")
-        this.scene.launch("UI_Scene")
-        this.currentZoom = this.UI_Scene.currentZoom
-        this.UI_Scene.location = this.location
-        this.gameCam.zoom = this.currentZoom
-        //......... end UI Scene ..............................................................................
-        this.text1 = this.add.text(10, 10, '', { fill: '#00ff00' });
-    }
+    // .......... UPDATE TIMER      ..........................................................................
+    // ManageSession.updateMovementTimer += delta
+    // console.log(time) //running time in millisec
+    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
+    // ....... end UPDATE TIMER  ..............................................................................
 
-    update(time, delta) {
-        //...... ONLINE PLAYERS ................................................
-        //Player.loadOnlinePlayers(this)
-        // Player.receiveOnlinePlayersMovement(this)
-        //Player.loadOnlineAvatar(this)
+    // ........ PLAYER MOVE BY KEYBOARD  ......................................................................
+    // if (!this.playerIsMovingByClicking) {
+    //     Player.moveByKeyboard(this) //player moving with keyboard with playerMoving Class
+    // }
 
-        this.gameCam.zoom = this.UI_Scene.currentZoom
+    // Player.moveByCursor(this)
+    // //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
 
-        var pointer = this.input.activePointer
+    // //....... moving ANIMATION ......................................................................................
+    // Player.movingAnimation(this)
+    // //....... end moving ANIMATION .................................................................................
 
-        var toARTWORLDx = CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, pointer.worldX)
-        var toARTWORLDy = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, pointer.worldY)
+    // //this.playerMovingByClicking()
 
-        this.text1.setText([
-            'x: ' + pointer.worldX,
-            'y: ' + pointer.worldY,
-            'isDown: ' + pointer.isDown,
-            'toARTWORLDx: ' + toARTWORLDx,
-            'toARTWORLDy: ' + toARTWORLDy,
-            'convert back to screen: ',
-            'x: ' + CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, toARTWORLDx),
-            'y: ' + CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, toARTWORLDy)
-        ])
-
-        //.......................................................................
-
-        //........... PLAYER SHADOW .............................................................................
-        // the shadow follows the player with an offset
-        //this.playerShadow.x = this.player.x + this.playerShadowOffset
-        //this.playerShadow.y = this.player.y + this.playerShadowOffset
-        //........... end PLAYER SHADOW .........................................................................
-
-        //.......... UPDATE TIMER      ..........................................................................
-        // ManageSession.updateMovementTimer += delta
-        // console.log(time) //running time in millisec
-        // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
-        //....... end UPDATE TIMER  ..............................................................................
-
-        //........ PLAYER MOVE BY KEYBOARD  ......................................................................
-        // if (!this.playerIsMovingByClicking) {
-        //     Player.moveByKeyboard(this) //player moving with keyboard with playerMoving Class
-        // }
-
-        // Player.moveByCursor(this)
-        // //....... end PLAYER MOVE BY KEYBOARD  ..........................................................................
-
-        // //....... moving ANIMATION ......................................................................................
-        // Player.movingAnimation(this)
-        // //....... end moving ANIMATION .................................................................................
-
-        // //this.playerMovingByClicking()
-
-        // // to detect if the player is clicking/tapping on one place or swiping
-        // if (this.input.activePointer.downX != this.input.activePointer.upX) {
-        //     Player.moveBySwiping(this)
-        // } else {
-        //     Player.moveByTapping(this)
-        // }
-
-    } //update
-} //class
+    // // to detect if the player is clicking/tapping on one place or swiping
+    // if (this.input.activePointer.downX != this.input.activePointer.upX) {
+    //     Player.moveBySwiping(this)
+    // } else {
+    //     Player.moveByTapping(this)
+    // }
+  } // update
+} // class

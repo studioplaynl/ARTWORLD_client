@@ -1,109 +1,62 @@
-import { writable } from "svelte/store";
-import { client, SSL } from "./nakama.svelte"
-import { getAccount, setLoader } from "./api.js"
-import ManageSession from "./routes/game/ManageSession.js"; //push the profile to ManageSession
+import { writable } from 'svelte/store';
 
-let storedSession = localStorage.getItem("Session")
-storedSession = JSON.parse(storedSession)
+/** Session from localStorage */
+let storedSession = localStorage.getItem('Session');
 
-if(!!storedSession){
-    if((storedSession.expires_at + "000") <= Date.now()){
-        localStorage.removeItem('profile'); // for logout
-        window.location.replace("/#/login");  
-        
-    }
+/** User Profile from localStorage */
+const storedProfile = localStorage.getItem('Profile');
+
+// If stored & expired, remove and forward to login..
+if (storedSession) {
+  storedSession = JSON.parse(storedSession);
+  if ((`${storedSession.expires_at}000`) <= Date.now()) {
+    localStorage.removeItem('Profile'); // for logout
+    window.location.replace('/#/login');
+  }
 }
 
-export const Session = writable(storedSession ? storedSession : null);
+/** Session contains the user session from the Nakama server */
+export const Session = writable(storedSession || null);
 Session.subscribe((value) => {
-    if (!!value) {
-        console.log(value)
-        ManageSession.sessionStored = value; //! push the Session with url to ManageSession
-        localStorage.setItem('Session', JSON.stringify(value))
-    }
-    else localStorage.removeItem('Session'); // for logout
-})
+  if (value) {
+    localStorage.setItem('Session', JSON.stringify(value));
+  } else localStorage.removeItem('Session'); // for logout
+});
 
-//  export const Profile = writable(null);
-
-let profileStore = localStorage.getItem("profile")
-export const Profile = writable(profileStore ? JSON.parse(profileStore) : null);
+/** User Profile contains the user name, posX, posY et cetera */
+export const Profile = writable(storedProfile ? JSON.parse(storedProfile) : null);
 Profile.subscribe((value) => {
-    if (!!value) {
-        localStorage.setItem('profile', JSON.stringify(value));
-        ManageSession.userProfile = value //! push the profile with url to ManageSession
-        // console.log("Profile.subscribe((value)")
-        // console.log(value)
-    }
-    else localStorage.removeItem('profile'); // for logout
-})
+  if (value) {
+    localStorage.setItem('Profile', JSON.stringify(value));
+  } else localStorage.removeItem('Profile'); // for logout
+});
 
-
-
+/** Contains the Session Errors
+ * @todo Remove or extend to multiple messages array? */
 export const Error = writable();
+
+/** Contains the Session Notifications
+ * @todo Remove or extend to multiple messages array? */
 export const Notification = writable();
 
+/** Contains Success messages
+ * @todo Remove or extend to multiple messages array? */
+export const Success = writable();
 
-export const Succes = writable();
-
+/** Contains current artApp that was loaded */
 export const CurrentApp = writable();
 
-export const tutorial = writable();
+/** Contains multiple steps of (the current) Tutorial
+ * @todo Remove or extend to multiple messages array? */
+export const Tutorial = writable([]);
 
-export const liked = writable([]);
+/** Contains user History */
+export const History = writable([]);
 
-export const adressbook = writable([]);
+/** The currently selected onlinePlayer
+ * @alias $SelectedOnlinePlayer
+*/
+export const SelectedOnlinePlayer = writable(null);
 
-export const history = writable([])
-
-export async function login(email, password) {
-    setLoader(true)
-    const create = false;
-    client.authenticateEmail(email, password, create)
-        .then(async (response) => {
-            console.log(response)
-            const session = response
-            Session.set(session);
-            await getAccount()
-            window.location.href = "/#/"
-            setLoader(false)
-            return session
-        })
-        .catch((err) => {
-            if (err.status == 404) {
-                Error.update(er => er = "invalid username")
-            }
-            if (err.status == 401) {
-                Error.update(er => er = "invalid password")
-            }
-            console.log(err)
-
-        })
-
-    //throw "invalid username/password"
-
-}
-
-export const logout = () => { Session.set(null); Profile.set(null); window.location.href = "/#/login";history.go(0) }
-
-export async function checkLogin(session) {
-    if (session != null) {
-        if ((session.expires_at + "000") > Date.now()) {
-            console.log('user still loged in')
-        } else {
-            logout()
-            window.location.href = "/#/login"
-            history.go(0)
-            Error.update(er => er = "Please  relogin")
-        }
-
-        // client.getAccount(session)
-        // .then(() => console.log('user still loged in'))
-        // .catch((err) => {
-        //         Error = "User not loged in"    
-        //         logout()
-        //         window.location.href = "/#/login"
-        //         history.go(0)
-        // })
-    }
-}
+/** The visibility state of the Itemsbar */
+export const ShowItemsBar = writable(false);

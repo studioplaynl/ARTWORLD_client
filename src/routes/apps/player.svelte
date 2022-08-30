@@ -1,47 +1,46 @@
 <script>
-    import {onMount} from "svelte";
-    import { location } from "svelte-spa-router";
+  import { onMount } from 'svelte';
+  import { location } from 'svelte-spa-router';
+  import { getObject, getFile } from '../../api';
+  import { dlog } from '../game/helpers/DebugLog';
 
-    import {getObject, getFile} from "../../api"
-    export let params = {};
-    let file_url
-    let appType = $location.split("/")[1];
-    console.log(params)
+  export let params;
+  let fileUrl;
+  const appType = $location.split('/')[1];
 
-    onMount(async ()=> {
-        file_url = await getObject(appType, params.name, params.user)
-        console.log(file_url)
-        file_url = await getFile(file_url.value.url)
-    })
+  dlog(params);
 
-
+  onMount(async () => {
+    fileUrl = await getObject(appType, params.name, params.user);
+    dlog(fileUrl);
+    fileUrl = await getFile(fileUrl.value.url);
+  });
 </script>
 
+<!-- svelte-ignore a11y-media-has-caption -->
 <main>
-    <center>
-    {#if (typeof file_url == "string")}
-        {#if appType == "audio"}
-            <audio controls autoplay>
-                <source src="{file_url}" type="audio/mpeg">
-            Your browser does not support the audio element.
-            </audio>
-        {:else if appType == "video" }
+  <center>
+    {#if typeof fileUrl === 'string'}
+      {#if appType === 'audio'}
+        <audio controls autoplay>
+          <source src="{fileUrl}" type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      {:else if appType === 'video'}
         <video controls autoplay>
-            <source src="{file_url}" type="video/mp4">
+          <source src="{fileUrl}" type="video/mp4" />
           Your browser does not support the video tag.
-          </video>
-        {:else if appType == "picture" }
-          <img src="{file_url}">
-        {/if}
+        </video>
+      {:else if appType === 'picture'}
+        <img src="{fileUrl}" alt="" />
+      {/if}
     {/if}
-    </center>
-
+  </center>
 </main>
 
-
 <style>
-video {
+  video {
     width: 100vw;
     height: 100vh;
-}
+  }
 </style>

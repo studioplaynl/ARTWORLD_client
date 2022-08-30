@@ -1,54 +1,50 @@
 <script>
-  import { convertImage } from "../../api";
-  import { onDestroy, beforeUpdate } from "svelte";
-  import { push } from "svelte-spa-router";
+  import { onDestroy, beforeUpdate, createEventDispatcher } from 'svelte';
+
+  export let artwork;
+  export let clickable = false;
+
   let image;
   let frame = 0;
-  let url
   let interval;
-  export let value;
-  export let row;
 
-//   async function convertURL() {
-//       console.log("run converturl")
-//     if (!!row) value = item.value.previewUrl;
-
-//     url = await convertImage(row.value.url, "150", "1000", "png");
-//     console.log("stopmotion", url);
-//   }
-//   convertURL();
-
-beforeUpdate(async () => {
+  beforeUpdate(async () => {
     clearInterval(interval);
-    if(!!row.user){
-      url = row.user.url
-    }else if(!!row.value){
-      url = row.value.previewUrl
-    }else if(!!row.img){
-      url = row.img
-    }
+
     interval = setInterval(() => {
       frame++;
-      if (frame >= image.clientWidth / 150) {
+      if (frame >= Math.floor(image.clientWidth / 150)) {
         frame = 0;
-        image.style.left = "0px";
+        image.style.left = '0px';
       } else {
         image.style.left = `-${frame * 150}px`;
       }
     }, 500);
+
+    // Don't animate if this (assumed) stop-motion is square
+    if (
+      image &&
+      image.clientWidth > 0 &&
+      image.clientWidth === image.clientHeight
+    ) {
+      clearInterval(interval);
+    }
   });
 
   onDestroy(() => {
     clearInterval(interval);
   });
+
+  const dispatch = createEventDispatcher();
+
+  function submitClicked() {
+    dispatch('clicked', artwork);
+  }
 </script>
 
-<a on:click={()=>{if(!!row.value) push(`/${row.collection}/${row.user_id}/${row.key}`)}}>
-  <div class="stopmotion">
-    <img bind:this={image} src={url} />
-    <!-- <p class="hide" on:change="{convertURL}">{row.value.url}</p> -->
-  </div>
-</a>
+<div class="stopmotion" on:click="{submitClicked}" class:clickable>
+  <img bind:this="{image}" src="{artwork}" alt="Stop motion" />
+</div>
 
 <style>
   .stopmotion {
@@ -56,6 +52,13 @@ beforeUpdate(async () => {
     width: 150px;
     overflow: hidden;
     position: relative;
+  }
+  .clickable {
+    cursor: pointer;
+  }
+
+  .clickable:hover {
+    opacity: 0.75;
   }
 
   .stopmotion > img {

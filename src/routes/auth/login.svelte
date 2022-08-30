@@ -1,70 +1,37 @@
 <script>
-  import { Session, login, Error } from "../../session.js";
-  import { _ } from "svelte-i18n";
-  import { onMount } from "svelte";
+  import { _ } from 'svelte-i18n';
+  import { onMount } from 'svelte';
+  import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte';
+  import { Session } from '../../session';
+  import { login } from '../../api';
+  import QRscanner from './qrscanner.svelte';
+  import { dlog } from '../game/helpers/DebugLog';
+
   export let params;
 
-  console.log($Session);
+  // dlog($Session);
   let email;
   let password;
+  let qrscanState = false;
 
   async function onSubmit() {
-    let promise = await login(email, password);
+    await login(email, password);
   }
 
   const isMobileDevice = /Mobi/i.test(window.navigator.userAgent);
+  const isMobile = !!isMobileDevice;
 
-  let isMobile = isMobileDevice ? true : false;
-
-  console.log("isMobile", isMobile);
-
-  console.log("navigator", navigator.userAgent);
-
-  // const isMobileStorage = {
-  //   Android: function () {
-  //     return navigator.userAgent.match(/Android/i);
-  //   },
-  //   BlackBerry: function () {
-  //     return navigator.userAgent.match(/BlackBerry/i);
-  //   },
-  //   iOS: function () {
-  //     return navigator.userAgent.match(/iPhone/i);
-  //   },
-  //   Opera: function () {
-  //     return navigator.userAgent.match(/Opera Mini/i);
-  //   },
-  //   Windows: function () {
-  //     return (
-  //       navigator.userAgent.match(/IEMobile/i) ||
-  //       navigator.userAgent.match(/WPDesktop/i)
-  //     );
-  //   },
-  //   any: function () {
-  //     return (
-  //       isMobileStorage.Android() ||
-  //       isMobileStorage.BlackBerry() ||
-  //       isMobileStorage.iOS() ||
-  //       isMobileStorage.Opera() ||
-  //       isMobileStorage.Windows()
-  //     );
-  //   },
-  // };
-
-  // if (isMobileStorage.any()) {
-  //   isMobile = true;
-  // } else {
-  //   isMobile = false;
-  // }
-
-  // console.log("isMobile", isMobile);
+  dlog('isMobile', isMobile);
+  dlog('navigator', navigator.userAgent);
 
   onMount(() => {
-    email = params.user || "user1@vrolijkheid.nl";
-    password = params.password || "somesupersecretpassword";
-    console.log(params);
-    let currentDate = Math.floor(Date.now() / 1000);
+    email = params.user || 'user1@vrolijkheid.nl';
+    password = params.password || 'somesupersecretpassword';
+    dlog(params);
+    const currentDate = Math.floor(Date.now() / 1000);
     if (!!$Session && $Session.expires_at > currentDate) {
-      window.location.href = "/#/";
+      // TODO: If a user tried loading a deeplink, this should not transfer them back to the index page..
+      window.location.href = '/#/';
     }
   });
 </script>
@@ -72,37 +39,54 @@
 <main>
   <div class="device-type">
     {#if isMobile}
-      <img class="icon" src="assets/device_type/mobile.png" />
+      <img
+        alt="Mobile phone"
+        class="icon"
+        src="assets/device_type/mobile.png"
+      />
     {:else}
-      <img class="icon" src="assets/device_type/laptop.png" />
+      <img alt="Laptop" class="icon" src="assets/device_type/laptop.png" />
     {/if}
   </div>
+
+  <div class="qrModal">
+    {#if qrscanState}
+      <QRscanner bind:email bind:password />
+    {/if}
+  </div>
+
   <div class="register-form">
-    <form on:submit|preventDefault={onSubmit}>
+    <form on:submit|preventDefault="{onSubmit}">
       <div class="container">
-        <label for="email"><b>{$_("register.email")}</b></label>
+        <label for="email"><b>{$_('register.email')}</b></label>
         <input
           type="text"
           placeholder="Enter Email"
           name="email"
           id="email"
-          bind:value={email}
+          bind:value="{email}"
           required
         />
 
-        <label for="psw"><b>{$_("register.password")}</b></label>
+        <label for="psw"><b>{$_('register.password')}</b></label>
         <input
           type="password"
           placeholder="Enter Password"
           name="psw"
           id="psw"
-          bind:value={password}
+          bind:value="{password}"
           required
         />
 
-        <button type="submit" class="register-btn">{$_("login.login")}</button>
+        <button type="submit" class="register-btn">{$_('login.login')}</button>
       </div>
     </form>
+    <button
+      class="qr-btn"
+      on:click="{() => {
+        qrscanState = !qrscanState;
+      }}"><CameraIcon /></button
+    >
   </div>
 </main>
 
@@ -137,8 +121,8 @@
   }
 
   /* Full-width input fields */
-  input[type="text"],
-  input[type="password"] {
+  input[type='text'],
+  input[type='password'] {
     width: 100%;
     padding: 15px;
     margin: 5px 0 22px 0;
@@ -146,8 +130,8 @@
     background: #f1f1f1;
   }
 
-  input[type="text"]:focus,
-  input[type="password"]:focus {
+  input[type='text']:focus,
+  input[type='password']:focus {
     background-color: #ddd;
     outline: none;
   }
@@ -175,17 +159,7 @@
     opacity: 1;
   }
 
-  /* Add a blue text color to links */
-  a {
-    color: #7300ed;
-  }
-
   /* Set a grey background color and center the text of the "sign in" section */
-  .signin {
-    background-color: #f1f1f1;
-    text-align: center;
-  }
-
   .device-type {
     position: absolute;
     bottom: 20px;
@@ -197,8 +171,15 @@
     min-width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: 2px solid #7300ed;
+    border: 2px solid #7300eb;
     padding: 10px;
     background-color: white;
+  }
+
+  .qr-btn {
+    max-height: 50px;
+    padding: 5px;
+    margin: 0 auto;
+    max-width: 80px;
   }
 </style>
