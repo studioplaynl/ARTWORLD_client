@@ -108,7 +108,7 @@ export default class UrlParser extends Phaser.Scene {
     if (this.debug) console.log('Launch: ', targetScene, targetHouse);
 
     this.scene.stop('UrlParser');
-    this.scene.launch('UIScene');
+
 
     // we launch the player last location when we have a socket with the server
     await ManageSession.createSocket()
@@ -119,6 +119,7 @@ export default class UrlParser extends Phaser.Scene {
         Achievements.get();
 
         this.scene.launch(targetScene, { user_id: targetHouse });
+        this.scene.launch('UIScene');
       });
   }
 }

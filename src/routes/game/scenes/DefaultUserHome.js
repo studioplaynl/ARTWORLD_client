@@ -1,5 +1,5 @@
 import ManageSession from '../ManageSession';
-import { listObjects, convertImage } from '../../../api';
+import { listObjects, listAllObjects, convertImage } from '../../../api';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
@@ -118,7 +118,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     }).setDepth(199);
 
     this.artworksListSpinner.start();
-
     //
 
     Player.loadPlayerAvatar(this, 0, 0);
@@ -129,7 +128,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       y: 0,
     });
 
-    await listObjects('drawing', this.location, 100).then((rec) => {
+    await listAllObjects('drawing', this.location).then((rec) => {
       // this.userArtServerList is an array with objects, in the form of:
 
       // collection: "drawing"
@@ -164,7 +163,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       }
     });
 
-    await listObjects('stopmotion', this.location, 100).then((rec) => {
+    await listAllObjects('stopmotion', this.location).then((rec) => {
     // this.userArtServerList is an array with objects, in the form of:
 
       // collection: "stopmotion"
@@ -237,7 +236,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     const totalArtWorks = array.length;
     const imageKeyUrl = element.value.url;
     const imgSize = this.artDisplaySize.toString();
-    const getImageWidth = (this.artDisplaySize * 10000).toString();
+    const getImageWidth = (this.artDisplaySize * 1000).toString();
     const fileFormat = 'png';
     // put the artworks 'around' the center, which means: take total artworks * space = total x space eg 3 * 550 = 1650
     // we start at middleWorld.x - totalArtWidth + (artIndex * artDisplaySize)

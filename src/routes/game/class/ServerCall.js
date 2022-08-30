@@ -1,14 +1,14 @@
 /* eslint-disable prefer-destructuring */
 import ManageSession from '../ManageSession';
 import {
-  listObjects, convertImage, listAllObjects,
+  listObjects, convertImage, listAllObjects, getAllHouses,
 } from '../../../api';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { dlog } from '../helpers/DebugLog';
 
 class ServerCall {
-  async getHomesFiltered(collection, filter, maxItems, _scene) {
+  async getHomesFiltered(filter, _scene) {
     const scene = _scene;
     // homes represented, to created homes in the scene
     scene.homesRepresented = [];
@@ -31,51 +31,14 @@ class ServerCall {
     }, this);
 
     // get a list of all homes objects and then filter
-    Promise.all([listObjects(collection, null, maxItems)])
+    Promise.all([getAllHouses(filter, null)])
       .then((homesRec) => {
         // console.log('rec homes: ', homesRec);
         scene.homes = homesRec[0];
-        // console.log('scene.homes', scene.homes);
-        // filter only amsterdam homes
-        scene.homes = scene.homes.filter((obj) => obj.key === filter);
+        console.log('scene.homes', scene.homes);
 
-        // retreive how many artworks are in the home
-        // let tempAllArtPerUser = []
-
-        scene.homes.forEach(
-          (homeElement, homeIndex) => {
-            if (typeof scene.homes[homeIndex].artWorks === 'undefined') {
-              scene.homes[homeIndex].artWorks = [];
-              // console.log('artWorks was undefined');
-            }
-
-            this.getAllArtworks(homeElement, homeIndex);
-          },
-        );
         this.generateHomes(scene);
       });
-  }
-
-  getAllArtworks(homeElement, homeIndex) {
-    // console.log('this.getAllArtworks');
-    const scene = ManageSession.currentScene;
-    Promise.all([
-      listAllObjects('drawing', homeElement.user_id),
-      listAllObjects('stopmotion', homeElement.user_id)]).then(
-      (artWorksArrays) => {
-        // the 2 promisses create an array each, so iterate over both
-
-        // we filter out the visible artworks
-        // filter only the visible art = "permission_read": 2
-        artWorksArrays[0] = artWorksArrays[0].filter((obj) => obj.permission_read === 2);
-        artWorksArrays[1] = artWorksArrays[1].filter((obj) => obj.permission_read === 2);
-
-        const allArtworks = [...artWorksArrays[0], ...artWorksArrays[1]];
-
-        scene.homes[homeIndex].artWorks = allArtworks;
-        scene.events.emit('updateArtBubbles');
-      },
-    );
   }
 
   async generateHomes(scene) {
@@ -127,29 +90,6 @@ class ServerCall {
       });
   }
 
-  updateArtBubbles() {
-    // scene.homesRepresented is klaar en zijn de GameObjects
-    // scene.homes bevat het aantal artWorks
-    const scene = ManageSession.currentScene;
-
-    if (!ManageSession.gameEditMode) {
-      scene.homesRepresented.forEach((element, index) => {
-        const artWorkLength = scene.homes[index].artWorks.length;
-        element.numberOfArtworks = artWorkLength;
-        element.numberArt.setText(artWorkLength);
-        if (artWorkLength > 0) {
-          scene.homesRepresented[index].numberArt.setVisible(true);
-          scene.homesRepresented[index].numberBubble.setVisible(true);
-          scene.homesRepresented[index].setData('enteringPossible', 'true');
-        } else {
-          scene.homesRepresented[index].numberArt.setVisible(false);
-          scene.homesRepresented[index].numberBubble.setVisible(false);
-          scene.homesRepresented[index].setData('enteringPossible', 'false');
-        }
-      });
-    }
-  }
-
   static createHome(element, index, homeImageKey, _scene) {
     const scene = _scene;
 
@@ -157,12 +97,15 @@ class ServerCall {
     const locationDescription = element.value.username;
 
     // only show the number of artworks on the houses if we know it
-    let numberOfArtworks;
-    if (typeof element.artWorks === 'undefined') {
-      numberOfArtworks = -1;
-    } else {
-      numberOfArtworks = element.artWorks.length;
-    }
+    const numberOfDrawing = element.artworks.drawing;
+    const numberOfStopmotion = element.artworks.stopmotion;
+
+    const numberOfArtworks = numberOfDrawing + numberOfStopmotion;
+    // if (typeof element.artWorks === 'undefined') {
+    //   numberOfArtworks = -1;
+    // } else {
+    //   numberOfArtworks = element.artWorks.length;
+    // }
 
     scene.homesRepresented[index] = new GenerateLocation({
       scene,
@@ -208,6 +151,9 @@ class ServerCall {
       scene.homesRepresented[index].setData('enteringPossible', 'false');
     }
   }
+
+  async;
+
 
   /** Provide detailed information on a file loading error in Phaser, and provide fallback */
   resolveLoadError(offendingFile) {

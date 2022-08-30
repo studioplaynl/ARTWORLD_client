@@ -48,6 +48,7 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async preload() {
+    ManageSession.currentScene = this.scene; // getting a central scene context
     Preloader.Loading(this); // .... PRELOADER VISUALISER
   }
 
@@ -55,6 +56,7 @@ export default class Artworld extends Phaser.Scene {
     //!
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
+
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
     this.worldSize.x = sceneInfo.sizeX;
     this.worldSize.y = sceneInfo.sizeY;
@@ -71,12 +73,9 @@ export default class Artworld extends Phaser.Scene {
       artworldToPhaser2DX, artworldToPhaser2DY,
     } = CoordinatesTranslator;
 
-
-
     this.makeWorldElements();
 
-
-    // .......  PLAYER ....................................................................................
+    // .......  PLAYER ..........................................JA even ..........................................
     //* create default player and playerShadow
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
@@ -104,14 +103,11 @@ export default class Artworld extends Phaser.Scene {
 
 
     // .......... locations ................................................................................
-    ServerCall.getHomesFiltered('home', 'Amsterdam', 100, this);
+    ServerCall.getHomesFiltered('Amsterdam', this);
     this.generateLocations();
     // .......... end locations ............................................................................
 
     Player.loadPlayerAvatar(this);
-
-    // when a scene is reloaded, update the howManyArtWorksAreThereInAHouse
-    this.events.on('updateArtBubbles', ServerCall.updateArtBubbles);
   } // end create
 
   makeWorldElements() {

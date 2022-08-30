@@ -1,5 +1,6 @@
 import i18next from 'i18next';
 import { locale } from 'svelte-i18n';
+import { get } from 'svelte/store';
 import nl from '../../../language/nl/ui.json';
 import en from '../../../language/en/ui.json';
 import ru from '../../../language/ru/ui.json';
@@ -7,6 +8,9 @@ import ar from '../../../language/ar/ui.json';
 
 import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
+import {
+  playerLocation,
+} from '../playerState';
 
 const { Phaser } = window;
 
@@ -70,6 +74,12 @@ export default class UIScene extends Phaser.Scene {
     this.events.on('gameEditMode', this.gameEditModeSign, this); // show edit mode indicator
     this.events.on('gameEditMode', this.editElementsScene, this); // make elements editable
 
+    const scene = ManageSession.currentScene;
+    console.log('scene', scene);
+    scene.load.on('loaderror', (offendingFile) => {
+      // this.resolveLoadError(offendingFile);
+      console.log('offendingFile', offendingFile);
+    });
     // keyboard events caught for debug functions, edit mode
     DebugFuntions.keyboard(this);
     // ......... end DEBUG FUNCTIONS .......................................................................

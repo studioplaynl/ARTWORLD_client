@@ -5,7 +5,7 @@ import { get } from 'svelte/store';
 import { push, querystring } from 'svelte-spa-router';
 import { client } from './nakama.svelte';
 import {
-  Session, Profile, Error, Success, CurrentApp,
+  Session, Profile, Error, Success,
 } from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 import { dlog } from './routes/game/helpers/DebugLog';
@@ -629,4 +629,12 @@ export async function getRandomName() {
     })
     .catch((err) => dlog(err));
   return value;
+}
+
+export async function getAllHouses(location, user_id) {
+  const Sess = get(Session);
+  const payload = { location, user_id };
+  const rpcid = 'get_all_houses_object';
+  const object = await client.rpc(Sess, rpcid, payload);
+  return object.payload;
 }
