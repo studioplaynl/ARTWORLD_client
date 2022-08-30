@@ -7,6 +7,7 @@ import { client } from './nakama.svelte';
 import { Session, Profile, Error, Success, myHome } from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 import { dlog } from './routes/game/helpers/DebugLog';
+import ManageSession from './routes/game/ManageSession';
 
 export async function login(email, _password) {
   const loginPromise = new Promise((resolve, reject) => {
@@ -682,4 +683,22 @@ export async function getRandomName() {
     })
     .catch((err) => dlog(err));
   return value;
+}
+
+export async function sendMailToUser(userId, data) {
+  const profile = get(Profile);
+  const payload = { userId, ...data, username: profile.username };
+  const rpcid = 'send_artpiece';
+  const session = get(Session);
+  await client.rpc(session, rpcid, payload);
+  // eslint-disable-next-line no-console
+  // dlog('sessionCheck result', response);
+  Success.set(true);
+}
+
+export async function listAllNotifications() {
+  const session = get(Session);
+  const result = await client.listNotifications(session, 100);
+
+  return result;
 }

@@ -118,7 +118,7 @@
         />
       </button>
 
-      <button on:click="{toggleHome}">
+      <button on:click="{goHome}">
         <img alt="House" id="house" src="{houseUrl}" />
       </button>
 

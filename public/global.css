@@ -224,3 +224,7 @@ div#phaserId {
   height: 100vh;
   margin: 0 !important;
 }
+
+.selectContainer {
+  min-width: 125px;
+}

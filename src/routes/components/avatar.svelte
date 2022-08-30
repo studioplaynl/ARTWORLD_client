@@ -39,20 +39,46 @@
   });
 </script>
 
-<button
+<!-- <button
   class="avatar"
   on:click="{() => {
     showHistory = !showHistory;
   }}"
 >
   <img bind:this="{image}" src="{$Profile.url}" alt="My Avatar" />
-</button>
+</button> -->
+<div class="avatar">
+  <img bind:this="{image}" src="{$Profile.url}" alt="My Avatar" />
+</div>
+<div class="avatarButtons">
+  <img
+    class="icon"
+    alt="Edit House"
+    src="/assets/SHB/svg/AW-icon-pen.svg"
+    on:click="{() => {
+      push('/avatar');
+    }}"
+  />
+  <img
+    class="icon"
+    src="/assets/SHB/svg/AW-icon-history.svg"
+    on:click="{() => {
+      showHistory = !showHistory;
+    }}"
+  />
+</div>
 
 {#if !showHistory}
   <ImagePicker dataType="avatar" />
 {/if}
 
 <style>
+  .icon {
+    max-width: 50px;
+    margin: 10px;
+    cursor: pointer;
+  }
+
   .avatar {
     height: 150px;
     width: 150px;

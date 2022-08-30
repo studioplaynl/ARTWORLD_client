@@ -56,13 +56,11 @@
   >
     <img alt="My House" id="house" src="{$myHome.url || ''}" />
   </div>
-  {#if showHistory}
-    <ImagePicker dataType="house" />
-  {/if}
 </div>
-{#if show}
+
   <div class="action">
     <img
+      class="icon"
       alt="Edit House"
       src="/assets/SHB/svg/AW-icon-pen.svg"
       on:click="{() => {
@@ -70,6 +68,7 @@
       }}"
     />
     <img
+      class="icon"
       alt="Go Home"
       src="assets/SHB/svg/AW-icon-enter-space.svg"
       on:click="{() => {
@@ -78,16 +77,24 @@
     />
 
     <img
+    class="icon"
       src="/assets/SHB/svg/AW-icon-history.svg"
       on:click="{() => {
-        showHistory = true;
-        show = false;
+        showHistory = !showHistory;
       }}"
     />
   </div>
-{/if}
+  {#if showHistory}
+    <ImagePicker dataType="house" />
+  {/if}
 
 <style>
+  .icon {
+    max-width: 50px;
+    margin: 10px;
+    cursor: pointer;
+  }
+
   .container-history-nav-buttons {
     display: flex;
     flex-direction: row;

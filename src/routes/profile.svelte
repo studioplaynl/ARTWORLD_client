@@ -8,6 +8,7 @@
   import StatusComp from './components/statusbox.svelte';
   import DeleteComp from './components/deleteButton.svelte';
   import NameEdit from './components/nameEdit.svelte';
+  import postSend from './components/postSend.svelte';
   import Avatar from './components/avatar.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import House from './components/house.svelte';
@@ -58,10 +59,15 @@
 
       renderComponent: { component: ArtworkLoader, props: { clickable: true } },
     },
-    {
-      key: 'title',
+    // {
+    //   key: 'title',
+    //   title: '',
+    //   renderComponent: { component: NameEdit, props: { isCurrentUser } },
+    // },
+        {
+      key: 'post',
       title: '',
-      renderComponent: { component: NameEdit, props: { isCurrentUser } },
+      renderComponent: { component: postSend, props: { isCurrentUser } },
     },
     // {
     //   key: 'Datum',
