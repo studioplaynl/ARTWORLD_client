@@ -1,7 +1,15 @@
+<!-- TODO:
+  - max frames 15
+  - grouping per frame
+  - split loaded image in frames
+  - delete a single frame
+  -->
 <script>
   import { onMount } from 'svelte';
+  import { Swiper, SwiperSlide } from 'swiper/svelte';
   import Drawing from './drawing.svelte';
   import { STOPMOTION_MAX_FRAMES } from '../../constants';
+  import 'swiper/css';
 
   export let file;
   export let data;
@@ -13,6 +21,16 @@
 
   let enableOnionSkinning = false;
   $: enableEditor = playPreviewInterval === null;
+
+  let swiper;
+  $: {
+    if (swiper && currentFrame && frames) {
+      setTimeout(() => {
+        console.log('slideTo currentFrame', swiper, currentFrame);
+        swiper.slideTo(currentFrame - 1);
+      }, 100);
+    }
+  }
 
   onMount(() => {
     // Was there an image to load?
@@ -33,11 +51,18 @@
   }
 
   function addFrame() {
-    if (frames < STOPMOTION_MAX_FRAMES) {
-      frames++;
-      currentFrame = frames;
-    }
+    setTimeout(() => {
+      if (frames < STOPMOTION_MAX_FRAMES) {
+        frames++;
+        currentFrame = frames;
+      }
+    }, 100);
   }
+
+  const onSwiper = (e) => {
+    [swiper] = e.detail;
+    console.log('Setting swiper to ', e, swiper);
+  };
 
   // function removeLastFrame() {
   //   if (frames > 1) frames--;
@@ -81,28 +106,51 @@
     enableOnionSkinning="{enableOnionSkinning && enableEditor}"
     on:save
   >
-    <div class="stopmotion__frames">
-      <!-- eslint-disable-next-line no-unused-vars -->
-      {#each Array(frames + 1) as _, index (index)}
-        {#if index}
-          <div
-            class="stopmotion__frame"
-            class:selected="{currentFrame === index}"
-            id="stopmotion-frame-{index}"
-            on:click="{() => {
-              switchFrame(index);
-            }}"
-          >
-            <div
-              class="stopmotion__frame__background"
-              style="
+    <svelte:fragment slot="stopmotion">
+      <div class="stopmotion__frames">
+        <Swiper
+          class="stopmotion__swiper"
+          spaceBetween="{0}"
+          slidesPerView="auto"
+          observer="{true}"
+          centeredSlides="{true}"
+          direction="horizontal"
+          breakpoints="{{
+            601: {
+              direction: 'vertical',
+            },
+          }}"
+          on:swiper="{onSwiper}"
+        >
+          <!-- activeIndex="{currentFrame}" -->
+          <!-- on:slideChange="{() => console.log('on:slideChange', ...arguments)}" -->
+          <!-- on:progress="{() => console.log('on:progress', ...arguments)}" -->
+          <!-- centeredSlides="{true}" -->
+          <!-- eslint-disable-next-line no-unused-vars -->
+          {#each Array(frames + 1) as _, index (index)}
+            {#if index}
+              <SwiperSlide class="stopmotion__swiper__slide">
+                <div
+                  class="{`stopmotion__frame ${
+                    currentFrame === index ? 'selected' : ''
+                  }`}"
+                  id="stopmotion-frame-{index}"
+                  on:click="{() => {
+                    switchFrame(index);
+                  }}"
+                >
+                  <div
+                    class="stopmotion__frame__background"
+                    style="
               background-image: url({data});
               left: {-100 * (index - 1)}%;
               width: {frames * 100}%;
               "
-            ></div>
-            <div class="stopmotion__frame__index">{index}</div>
-            <!-- {#if currentFrame === index && frames.length > 1}
+                  ></div>
+                  <div class="stopmotion__frame__index">
+                    {index}
+                  </div>
+                  <!-- {#if currentFrame === index && frames.length > 1}
           <img
             class="icon"
             on:click="{() => {
@@ -112,19 +160,24 @@
             src="assets/SHB/svg/AW-icon-trash.svg"
           />
         {/if} -->
-          </div>
-        {/if}
-      {/each}
-      {#if frames < STOPMOTION_MAX_FRAMES && playPreviewInterval === null}
-        <div
-          class="stopmotion__frame"
-          id="stopmotion-frame-new"
-          on:click="{addFrame}"
-        >
-          <div class="stopmotion__frame__index">+</div>
-        </div>
-      {/if}
-    </div>
+                </div>
+              </SwiperSlide>
+            {/if}
+          {/each}
+          {#if frames < STOPMOTION_MAX_FRAMES && playPreviewInterval === null}
+            <SwiperSlide class="stopmotion__swiper__slide">
+              <div
+                class="stopmotion__frame"
+                id="stopmotion-frame-new"
+                on:click="{addFrame}"
+              >
+                <div class="stopmotion__frame__index">+</div>
+              </div>
+            </SwiperSlide>
+          {/if}
+        </Swiper>
+      </div>
+    </svelte:fragment>
   </Drawing>
 
   <div class="stopmotion__controls">
@@ -153,23 +206,31 @@
 {/if}
 
 <style>
+  :global(.swiper.stopmotion__swiper) {
+    width: auto;
+    height: 100%;
+  }
+  :global(.swiper-slide.stopmotion__swiper__slide) {
+    width: auto;
+    height: auto;
+  }
   .stopmotion__frames {
-    display: flex;
-    flex-direction: column;
+    /* display: flex; */
+    /* flex-direction: column; */
     /* max-height: 80vh; */
     /* TODO REPLACE MAX_HEIGHT logic */
     /* overflow-y: auto;
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity; */
-    overflow: hidden;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    /* overflow: hidden; */
+    /* position: absolute; */
+    /* right: 0; */
+    /* top: 50%; */
+    /* transform: translateY(-50%); */
     height: 100%;
     justify-content: center;
     align-items: center;
-    width: 64px;
+    /* width: 64px; */
   }
   .stopmotion__frame {
     display: block;
@@ -198,19 +259,25 @@
     left: 0;
     width: 48px;
     height: 48px;
+    background-color: white;
     background-repeat: no-repeat;
     background-position: left top;
     background-size: cover;
   }
 
   @media only screen and (max-width: 600px) {
+    :global(.swiper.stopmotion__swiper) {
+      height: auto;
+      width: 100%;
+    }
+
     .stopmotion__frames {
       max-height: unset;
       top: unset;
-      flex-direction: row;
+      /* flex-direction: row; */
       left: 50%;
       transform: translateX(-50%);
-      width: 100%;
+      width: 100vw;
       justify-content: center;
       align-items: center;
       height: 48px;
@@ -230,10 +297,11 @@
   }
 
   .stopmotion__frame__index {
-    font-size: 28px;
+    font-size: 16px;
     color: #7300eb;
     text-align: center;
     display: inline-block;
+    z-index: 1;
   }
   .stopmotion__controls {
     position: fixed;

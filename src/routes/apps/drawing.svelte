@@ -7,7 +7,7 @@
   import { fabric } from './fabric/dist/fabric';
   import { setLoader } from '../../api';
   import { Error } from '../../session';
-  import { IMAGE_BASE_SIZE } from '../../constants';
+  import { IMAGE_BASE_SIZE, STOPMOTION_MAX_FRAMES } from '../../constants';
 
   export let file;
   export let data;
@@ -42,6 +42,9 @@
 
   $: windowRatio = innerWidth / innerHeight;
   $: canvasSize = innerWidth > innerHeight ? innerHeight : innerWidth;
+
+  $: controlsWidth = innerWidth <= 600 ? `${canvasHeight}px` : 'auto';
+  $: controlsHeight = innerWidth > 600 ? `${canvasHeight}px` : 'auto';
 
   $: {
     // Respond to changes in window size
@@ -410,12 +413,25 @@
         style="left: -{canvasHeight * (currentFrame - 1)}px;"
       >
         <canvas bind:this="{canvasEl}" class="canvas"> </canvas>
-        <canvas bind:this="{cursorCanvasEl}" class="cursor-canvas"> </canvas>
+
+        <canvas
+          bind:this="{cursorCanvasEl}"
+          class="cursor-canvas"
+          style:visibility="{enableEditor ? 'visible' : 'hidden'}"
+        >
+        </canvas>
       </div>
     </div>
-    <div class="canvas-controls">
-      <slot />
-    </div>
+    <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
+    {#if $$slots.stopmotion}
+      <div
+        class="stopmotion-controls"
+        style=" height: {controlsHeight};
+              width: {controlsWidth};"
+      >
+        <slot name="stopmotion" />
+      </div>
+    {/if}
   </div>
   {#if enableEditor}
     <div class="optionbox-container" class:open="{showOptionbox}">
@@ -619,6 +635,7 @@
     <button
       on:click="{() => {
         frames = Math.min(STOPMOTION_MAX_FRAMES, frames + 1);
+        currentFrame = frames;
       }}"
     >
       +
@@ -842,9 +859,10 @@
 
   .canvas-frame-container {
     background-color: white;
-    border: 2px solid #7300ed;
+    /* border: 2px solid #7300ed; */
     position: relative;
     overflow: hidden;
+    box-shadow: 5px 5px 0px #7300ed;
   }
 
   .canvas-box {
@@ -858,6 +876,14 @@
     right: 0;
     bottom: 0;
     opacity: 0.2;
+  }
+
+  .stopmotion-controls {
+    position: relative;
+    background-color: #e0c1ff;
+    overflow: hidden;
+    padding: 4px;
+    box-shadow: 5px 5px 0px #7300ed;
   }
 
   #clear-canvas {
