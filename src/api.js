@@ -4,10 +4,10 @@
 import { get } from 'svelte/store';
 import { push, querystring } from 'svelte-spa-router';
 import { client } from './nakama.svelte';
-import { Session, Profile, Error, Success, myHome } from './session';
+import { Success, Session, Profile, Error, } from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 import { dlog } from './routes/game/helpers/DebugLog';
-import ManageSession from './routes/game/ManageSession';
+// import ManageSession from './routes/game/ManageSession';
 
 export async function login(email, _password) {
   const loginPromise = new Promise((resolve, reject) => {
@@ -354,51 +354,27 @@ export async function setAvatar(avatar_url) {
   return Image;
 }
 
-export async function setHome(Home_url) {
-  const type = 'home';
-  const profile = get(Profile);
-  const name = profile.meta.Azc;
-  const object = await getObject(type, name);
-  const makePublic = true;
+// export async function setHome(Home_url) {
+//   const type = 'home';
+//   const profile = get(Profile);
+//   const name = profile.meta.Azc;
+//   const object = await getObject(type, name);
+//   const makePublic = true;
 
-  // eslint-disable-next-line prefer-const
-  let value = !object ? {} : object.value;
+//   // eslint-disable-next-line prefer-const
+//   let value = !object ? {} : object.value;
 
-  value.url = Home_url;
-  // get object
-  // dlog('value', value);
-  const returnedObject = await updateObject(type, name, value, makePublic);
-  console.log('returnedObject', returnedObject);
-  myHome.set(returnedObject);
-  return value.url;
-}
+//   value.url = Home_url;
+//   // get object
+//   // dlog('value', value);
+//   const returnedObject = await updateObject(type, name, value, makePublic);
+//   returnedObject.url = await convertImage(returnedObject.value.url, '150', '150');
+//   console.log('returnedObject', returnedObject);
+//   myHome.set(returnedObject);
+//   return value.url;
+// }
 
-export async function getHome(userID) {
-  const MyHome = get(myHome);
-  let HouseObject;
-  const profile = get(Profile);
-  if (typeof userID !== 'string') {
-    userID = profile.user_id;
-  }
 
-  if (typeof MyHome === 'object') {
-    HouseObject = MyHome;
-  } else {
-    try {
-      HouseObject = await getObject(
-        'home',
-        profile.meta.Azc || 'Amsterdam',
-        userID,
-      );
-    } catch (err) {
-      dlog(err); // TypeError: failed to fetch
-    }
-    HouseObject.url = await convertImage(HouseObject.value.url, '150', '150');
-    myHome.set(HouseObject);
-  }
-
-  return HouseObject;
-}
 
 export async function getFile(file_url) {
   const session = get(Session);

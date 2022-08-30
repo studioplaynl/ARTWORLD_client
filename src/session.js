@@ -43,9 +43,6 @@ Profile.subscribe((value) => {
   } else localStorage.removeItem('Profile'); // for logout
 });
 
-/** Contains the house object of current player */
-export const myHome = writable({ url: '' });
-
 /** Contains the Session Errors
  * @todo Remove or extend to multiple messages array? */
 export const Error = writable();
@@ -75,3 +72,7 @@ export const SelectedOnlinePlayer = writable(null);
 
 /** The visibility state of the Itemsbar */
 export const ShowItemsBar = writable(false);
+
+
+
+

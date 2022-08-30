@@ -9,7 +9,7 @@
   import MailPage from '../mail.svelte';
   import { Profile, ShowItemsBar } from '../../session';
   import Awards from '../awards.svelte';
-  import { Addressbook } from '../../storage';
+  import { Addressbook, myHome } from '../../storage';
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
@@ -26,7 +26,7 @@
   let enableClickOutsideListener = false;
 
   getAccount();
-
+  myHome.get();
   // check if player is clicked
   const unsubscribeItemsBar = ShowItemsBar.subscribe(async () => {
     if (!$Profile) return;
@@ -181,7 +181,7 @@
         }}"
         class="avatar"
       >
-        <img src="{userHouseUrl}" alt="My Home" />
+        <img src="{$myHome.url}" alt="My Home" />
       </button>
 
       <button on:click="{toggleAwards}">

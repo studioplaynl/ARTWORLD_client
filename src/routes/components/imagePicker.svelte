@@ -1,6 +1,7 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
-  import { myHome, Profile } from '../../session';
+  import {  Profile } from '../../session';
+  import { myHome } from '../../storage'
   import Stopmotion from './stopmotion.svelte'
 
   import {
@@ -8,9 +9,8 @@
     listObjects,
     setAvatar,
     convertImage,
-    setHome,
-    getHome,
   } from '../../api';
+import { fileURLToPath } from 'url';
   let objects = [];
   export let dataType = '';
   export let currentlySet = '';
@@ -49,8 +49,9 @@
       $Profile.url = object.value.previewUrl;
     }
     if (dataType === 'house') {
-      await setHome(object.value.url);
-      console.log(await getHome());
+      myHome.create(object.value.url)
+      //await setHome(object.value.url);
+      // console.log(await getHome());
     }
   }
   // on click of image, saveChange
@@ -62,7 +63,7 @@
 
 <div>
   {#each objects as object, i}
-    <div class:selected="{object.value.url === $Profile.avatar_url}">
+    <div class:selected="{(object.value.url === $Profile.avatar_url && dataType == "avatar") || (object.value.url === $myHome.value.url && dataType == "house")}">
       <a
         class="image"
         on:click="{() => {

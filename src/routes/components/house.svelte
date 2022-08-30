@@ -1,7 +1,8 @@
 <script>
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
-  import { Profile, CurrentApp, myHome } from '../../session';
+  import { Profile, CurrentApp } from '../../session';
+  import { myHome } from '../../storage';
   import { convertImage, getObject } from '../../api';
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
@@ -16,7 +17,6 @@
   async function goHome() {
     SceneSwitcher.switchScene('DefaultUserHome', ManageSession.userProfile.id);
   }
-
 
   onMount(async () => {
     // try {
@@ -54,39 +54,39 @@
       // push('/house');
     }}"
   >
-    <img alt="My House" id="house" src="{$myHome.url || ''}" />
+    <img alt="My House" id="house" src="{$myHome.url}" />
   </div>
 </div>
 
-  <div class="action">
-    <img
-      class="icon"
-      alt="Edit House"
-      src="/assets/SHB/svg/AW-icon-pen.svg"
-      on:click="{() => {
-        push('/house');
-      }}"
-    />
-    <img
-      class="icon"
-      alt="Go Home"
-      src="assets/SHB/svg/AW-icon-enter-space.svg"
-      on:click="{() => {
-        goHome();
-      }}"
-    />
-
-    <img
+<div class="action">
+  <img
     class="icon"
-      src="/assets/SHB/svg/AW-icon-history.svg"
-      on:click="{() => {
-        showHistory = !showHistory;
-      }}"
-    />
-  </div>
-  {#if showHistory}
-    <ImagePicker dataType="house" />
-  {/if}
+    alt="Edit House"
+    src="/assets/SHB/svg/AW-icon-pen.svg"
+    on:click="{() => {
+      push('/house');
+    }}"
+  />
+  <img
+    class="icon"
+    alt="Go Home"
+    src="assets/SHB/svg/AW-icon-enter-space.svg"
+    on:click="{() => {
+      goHome();
+    }}"
+  />
+
+  <img
+    class="icon"
+    src="/assets/SHB/svg/AW-icon-history.svg"
+    on:click="{() => {
+      showHistory = !showHistory;
+    }}"
+  />
+</div>
+{#if showHistory}
+  <ImagePicker dataType="house" />
+{/if}
 
 <style>
   .icon {

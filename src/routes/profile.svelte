@@ -158,7 +158,9 @@
       <div class="top">
         <h1>{username}</h1>
         <br />
+        <span class="splitter"></span>
         <Avatar showHistory="{true}" />
+        <span class="splitter"></span>
         <House />
       </div>
       <div class="bottom">
@@ -246,4 +248,10 @@
       transform: rotate(360deg);
     }
   }
+
+  .splitter {
+    background-color: #7300EB;
+    width: 200%;
+    height: 2px;
+}
 </style>
