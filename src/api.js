@@ -27,8 +27,8 @@ export async function login(email, _password) {
       })
       .catch((err) => {
         if (
-          parseInt(err.status, 10) === 404 ||
-          parseInt(err.status, 10) === 401
+          parseInt(err.status, 10) === 404
+          || parseInt(err.status, 10) === 401
         ) {
           Error.set('invalid username');
           push(`/login?${get(querystring)}`);
@@ -676,4 +676,12 @@ export async function listAllNotifications() {
   const result = await client.listNotifications(session, 100);
 
   return result;
+}
+
+export async function getAllHouses(location, user_id) {
+  const Sess = get(Session);
+  const payload = { location, user_id };
+  const rpcid = 'get_all_houses_object';
+  const object = await client.rpc(Sess, rpcid, payload);
+  return object.payload;
 }
