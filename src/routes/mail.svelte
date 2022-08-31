@@ -1,12 +1,8 @@
 <script>
   import { onMount } from 'svelte';
 
-  // notification icons
-  import NotificationIcon from 'svelte-icons/md/MdEmail.svelte';
-  import UserAddIcon from 'svelte-icons/md/MdPersonAdd.svelte';
-  import GroupAddIcon from 'svelte-icons/md/MdGroupAdd.svelte';
-  import PersonIcon from 'svelte-icons/md/MdPerson.svelte';
-
+  import SceneSwitcher from './game/class/SceneSwitcher';
+  import { Profile } from '../session';
   import { listAllNotifications, convertImage } from '../api';
   import {
     NOTIFICATION_MESSAGE_RECEIVED_WHILE_OFFLINE_OR_NOT_IN_CHANNEL,
@@ -44,6 +40,10 @@
     console.log(posts);
     console.log(likes);
   });
+
+  async function goHome(id) {
+    SceneSwitcher.switchScene('DefaultUserHome', id);
+  }
 </script>
 
 <div>
@@ -64,8 +64,14 @@
             alt="Someone sent you an artwork"
           />
         </div>
-        <p>{notification.content.username}</p>
-        <img src="{notification.content.previewUrl}" />
+        <a on:click="{goHome(notification.userId)}">
+          {notification.content.username}</a
+        >
+        <a
+          href="/#/drawing?userId={notification.content
+            .userId}&key={notification.content.key}"
+          ><img src="{notification.content.previewUrl}" /></a
+        >
       </div>
     {/each}
   </div>
@@ -87,12 +93,17 @@
             alt="Someone liked your artwork"
           />
         </div>
-        <p>{notification.content.username}</p>
-        <img src="{notification.previewUrl}" />
+        <a on:click="{goHome(notification.sender_id)}">
+          {notification.content.username}</a
+        >
+        <a
+          href="/#/drawing?userId={$Profile.id}&key={notification.content.key}"
+        >
+          <img src="{notification.previewUrl}" />
+        </a>
       </div>
     {/each}
   </div>
-
 </div>
 
 <style>
@@ -104,7 +115,7 @@
     border-radius: 10px;
   }
 
-  .notification > img {
+  .notification img {
     width: 50px;
   }
 
