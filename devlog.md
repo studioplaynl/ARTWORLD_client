@@ -67,5 +67,13 @@ July 27
 July 29
 
 
-- Logging (dlog) stack trace @eelke
+- Logging (dlog) stack trace @eelke ✔️
+
+
+
+August 19
+
+@Maarten dragging in DefaultHome gaat niet lekker.
+
+
 

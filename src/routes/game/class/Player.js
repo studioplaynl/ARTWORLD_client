@@ -1,11 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import { getFullAccount, getAccount } from '../../../api';
+import { getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
-import { setUrl } from '../helpers/UrlHelpers';
 import { dlog } from '../helpers/DebugLog';
+import { playerPos } from '../playerState';
 
 class Player {
   constructor() {
@@ -15,7 +16,7 @@ class Player {
   subscribeToProfile() {
     Profile.subscribe((value) => {
       dlog('Profile refreshed avatar');
-      dlog(value);
+      // dlog(value);
 
       this.subscribedToProfile = true;
       this.loadPlayerAvatar(ManageSession.currentScene, undefined, undefined, value);
@@ -27,7 +28,7 @@ class Player {
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     if (!userprofile) userprofile = ManageSession.userProfile;
-    dlog('loadPlayerAvatar', userprofile);
+    // dlog('loadPlayerAvatar');
 
     // is playerAvaterKey already in loadedAvatars?
     // no -> load the avatar and add to loadedAvatars
@@ -69,14 +70,14 @@ class Player {
       lastPosX = placePlayerX;
       dlog('placePlayerX', placePlayerX);
     } else {
-      lastPosX = ManageSession.playerPosX; // playerPos is in artworldCoordinates, will be converted later
+      lastPosX = get(playerPos).x; // playerPos is in artworldCoordinates, will be converted later
       // dlog("lastPosX", lastPosX)
     }
     if (typeof placePlayerY !== 'undefined') {
       lastPosY = placePlayerY; // if there is an argument to place the player on a specific position in the scene
       dlog('placePlayerY', placePlayerY);
     } else {
-      lastPosY = ManageSession.playerPosY; // playerPos is in artworldCoordinates, will be converted later
+      lastPosY = get(playerPos).y; // playerPos is in artworldCoordinates, will be converted later
       // dlog("lastPosY", lastPosY)
     }
     // dlog("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)
@@ -101,16 +102,18 @@ class Player {
 
     // dlog("scene.player.x, scene.player.y", scene.player.x, scene.player.y)
     // set url param's to player pos and scene key, url params are in artworldCoords lastPosX lastPosY is artworldCoords
-    setUrl(scene.location, lastPosX, lastPosY);
+    // setUrl(scene.location, lastPosX, lastPosY);
+    // updateQueryString();
 
     // store the current position of player in ManageSession.lastMoveCommand
     // set this.scene in ManageSession.currentScene
     ManageSession.currentScene = scene;
-    ManageSession.lastMoveCommand.posX = scene.player.x;
-    ManageSession.lastMoveCommand.posY = scene.player.y;
-    ManageSession.lastMoveCommand.action = 'stop';
-    ManageSession.lastMoveCommand.location = ManageSession.location;
-    dlog('ManageSession.lastMoveCommand', ManageSession.lastMoveCommand);
+
+    // ManageSession.lastMoveCommand.posX = scene.player.x;
+    // ManageSession.lastMoveCommand.posY = scene.player.y;
+    // ManageSession.lastMoveCommand.action = 'stop';
+    // ManageSession.lastMoveCommand.location = ManageSession.location;
+    // dlog('ManageSession.lastMoveCommand', ManageSession.lastMoveCommand);
 
     // if for some reason the url of the player avatar is empty, load the default avatar
     if (userprofile.url === '') {
@@ -134,7 +137,7 @@ class Player {
         },
       )
         .on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
-          dlog('filecomplete-spritesheet scene.playerAvatarKey', scene.playerAvatarKey);
+          // dlog('filecomplete-spritesheet scene.playerAvatarKey', scene.playerAvatarKey);
           if (this.subscribedToProfile !== true) {
             this.subscribeToProfile();
           }
@@ -198,7 +201,7 @@ class Player {
     scene.player.setTexture(scene.playerAvatarKey);
     scene.playerShadow.setTexture(scene.playerAvatarKey);
 
-    dlog('scene.player.setTexture(scene.playerAvatarKey) done ');
+    // dlog('scene.player.setTexture(scene.playerAvatarKey) done ');
     // scale the player to this.avatarSize
     const width = this.avatarSize;
     scene.player.displayWidth = width;
@@ -211,9 +214,6 @@ class Player {
     //* setCircle(radius [, offsetX] [, offsetY])
     // scene.player.body.setCircle(width, width, width / 2)
     scene.player.body.setCircle(width / 1.1, width / 5, width / 5);
-
-    // dlog("player avatar has loaded ")
-    scene.player.location = scene.location;
 
     // send the current player position over the network
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
@@ -247,7 +247,7 @@ class Player {
   createOnlinePlayer(scene, onlinePlayer) {
     // check if onlinePlayer exists already
     // dlog(onlinePlayer)
-    const exists = ManageSession.allConnectedUsers.some((element) => element.user_id == onlinePlayer.user_id);
+    const exists = ManageSession.allConnectedUsers.some((element) => element.user_id === onlinePlayer.user_id);
     // if player exists
     if (!exists) {
       // create new onlinePlayer with default avatar
@@ -263,9 +263,9 @@ class Player {
             scene.worldSize.y,
             onlinePlayerCopy.meta.PosY,
           ),
-          scene.playerAvatarPlaceholder, //! change to ManageSession.playerAvatarPlaceholder
+          ManageSession.playerAvatarPlaceholder,
         )
-        // element = scene.add.sprite(CoordinatesTranslator.artworldToPhaser2D({scene: scene, x: element.posX}), CoordinatesTranslator.artworldToPhaser2D({scene: scene, y: element.posY}), scene.playerAvatarPlaceholder)
+
         .setDepth(200);
       onlinePlayer.setInteractive({ useHandCursor: true });
       // hit area of onlinePlayer
@@ -283,7 +283,7 @@ class Player {
       scene.anims.create({
         key: onlinePlayer.getData('movingKey'),
         frames: scene.anims.generateFrameNumbers(
-          scene.playerAvatarPlaceholder,
+          ManageSession.playerAvatarPlaceholder,
           { start: 0, end: 8 },
         ),
         frameRate: 20,
@@ -294,7 +294,7 @@ class Player {
       scene.anims.create({
         key: onlinePlayer.getData('stopKey'),
         frames: scene.anims.generateFrameNumbers(
-          scene.playerAvatarPlaceholder,
+          ManageSession.playerAvatarPlaceholder,
           { start: 4, end: 4 },
         ),
       });
@@ -303,7 +303,7 @@ class Player {
       Object.assign(onlinePlayer, onlinePlayerCopy);
       // we copy the id over as user_id to kep data consistent across our internal logic
       onlinePlayer.user_id = onlinePlayerCopy.id;
-      dlog('onlinePlayer', onlinePlayer);
+      // dlog('onlinePlayer', onlinePlayer);
 
       // we push the new online player to the allConnectedUsers array
       ManageSession.allConnectedUsers.push(onlinePlayer);
@@ -315,7 +315,7 @@ class Player {
       // if the texture already exists attach it again to the player
       // const preExisting = false
       if (!scene.textures.exists(avatarKey)) {
-        dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
+        // dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
         // add it to loading queue
         scene.load.spritesheet(avatarKey, onlinePlayer.url, {
           frameWidth: this.avatarSize * 2,
@@ -330,7 +330,7 @@ class Player {
         // when file is finished loading the attachToAvatar function is called
         scene.load.start(); // start loading the image in memory
       } else {
-        dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
+        // dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
         // attach the avatar to the onlinePlayer when it is already in memory
         this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey);
       }
@@ -392,10 +392,6 @@ class Player {
     const width = 64;
     onlinePlayer.displayWidth = width;
     onlinePlayer.scaleY = onlinePlayer.scaleX;
-  }
-
-  async getAccountDetails(id) {
-    await getFullAccount(id).then((rec) => rec);
   }
 }
 

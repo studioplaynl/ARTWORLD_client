@@ -7,7 +7,7 @@
 
   import StatusComp from './components/statusbox.svelte';
   import DeleteComp from './components/deleteButton.svelte';
-  import NameEdit from './components/nameEdit.svelte';
+  import postSend from './components/postSend.svelte';
   import Avatar from './components/avatar.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import House from './components/house.svelte';
@@ -58,10 +58,15 @@
 
       renderComponent: { component: ArtworkLoader, props: { clickable: true } },
     },
+    // {
+    //   key: 'title',
+    //   title: '',
+    //   renderComponent: { component: NameEdit, props: { isCurrentUser } },
+    // },
     {
-      key: 'title',
+      key: 'post',
       title: '',
-      renderComponent: { component: NameEdit, props: { isCurrentUser } },
+      renderComponent: { component: postSend, props: { isCurrentUser } },
     },
     // {
     //   key: 'Datum',
@@ -152,7 +157,9 @@
       <div class="top">
         <h1>{username}</h1>
         <br />
+        <span class="splitter"></span>
         <Avatar showHistory="{true}" />
+        <span class="splitter"></span>
         <House />
       </div>
       <div class="bottom">
@@ -240,4 +247,10 @@
       transform: rotate(360deg);
     }
   }
+
+  .splitter {
+    background-color: #7300EB;
+    width: 200%;
+    height: 2px;
+}
 </style>

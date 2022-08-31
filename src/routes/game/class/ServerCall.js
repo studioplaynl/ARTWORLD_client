@@ -81,7 +81,7 @@ class ServerCall {
   async generateHomes(scene) {
     // check if server query is finished, then make the home from the list
     if (scene.homes != null) {
-      dlog('generate homes!');
+      // dlog('generate homes!');
       // dlog('scene.homes', scene.homes);
       scene.homes.forEach((element, index) => {
         // dlog(element, index)
@@ -104,7 +104,7 @@ class ServerCall {
   }
 
   async getHomeImages(url, element, index, homeImageKey, scene) {
-    dlog('getHomeImages');
+    // dlog('getHomeImages');
     await convertImage(url, '128', '128', 'png')
       .then((rec) => {
         // dlog("rec", rec)

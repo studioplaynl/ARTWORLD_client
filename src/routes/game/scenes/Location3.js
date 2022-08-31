@@ -1,20 +1,24 @@
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import HistoryTracker from '../class/HistoryTracker';
+import SceneSwitcher from '../class/SceneSwitcher';
 import Move from '../class/Move';
+import Background from '../class/Background';
+import { playerPos } from '../playerState';
+import { SCENE_INFO } from '../../../constants';
 
 const { Phaser } = window;
 
 export default class Location3 extends Phaser.Scene {
   constructor() {
     super('Location3');
+    this.location = 'Location3';
 
     this.worldSize = new Phaser.Math.Vector2(1320, 1320);
 
-    this.gameStarted = false;
     this.phaser = this;
     // this.playerPos;
     this.onlinePlayers = [];
@@ -22,25 +26,12 @@ export default class Location3 extends Phaser.Scene {
     this.tempAvatarName = '';
     this.loadedAvatars = [];
 
-    this.location = 'Location3';
-
-    this.playerAvatarPlaceholder = 'playerAvatar';
     this.playerAvatarKey = '';
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
 
-    this.isClicking = false;
-    this.arrowDown = false;
-    this.swipeDirection = 'down';
-    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-
-    // pointer location example
-    // this.source // = player
-    this.target = new Phaser.Math.Vector2();
-
     // shadow
     this.playerShadowOffset = -8;
-    this.playerIsMovingByClicking = false;
 
     this.currentZoom = 1;
   }
@@ -58,25 +49,20 @@ export default class Location3 extends Phaser.Scene {
   }
 
   async create() {
+    //!
+    // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
+    let sceneInfo = SCENE_INFO.find(obj => obj.scene === this.scene.key);
+    this.worldSize.x = sceneInfo.sizeX
+    this.worldSize.y = sceneInfo.sizeY
     ManageSession.worldSize = this.worldSize;
+    //!
 
     this.generateTileMap();
 
-    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
-      .setInteractive() // { useHandCursor: true }
-      .on('pointerup', () => console.log('touched background'))
-      .on('pointerdown', () => {
-        ManageSession.playerIsAllowedToMove = true;
-        return ManageSession.playerIsAllowedToMove;
-      })
-      .setDepth(219)
-      .setOrigin(0)
-      .setVisible(false);
+    this.handleEditMode();
 
-    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
-    this.touchBackgroundCheck.input.alwaysEnabled = true;
-
+    this.handlePlayerMovement();
     // .......  PLAYER ..........................................................................
 
     // set playerAvatarKey to a placeholder,
@@ -88,18 +74,23 @@ export default class Location3 extends Phaser.Scene {
       this,
       CoordinatesTranslator.artworldToPhaser2DX(
         this.worldSize.x,
-        ManageSession.playerPosX,
+        get(playerPos).x,
       ),
       CoordinatesTranslator.artworldToPhaser2DY(
         this.worldSize.y,
-        ManageSession.playerPosY,
+        get(playerPos).y,
       ),
-      this.playerAvatarPlaceholder,
+      ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
+    this.playerShadow = new PlayerDefaultShadow(
+      {
+        scene: this,
+        texture: ManageSession.playerAvatarPlaceholder,
+      },
+    ).setDepth(200);
 
     // for back button, has to be done after player is created for the history tracking!
-    HistoryTracker.pushLocation(this);
+    SceneSwitcher.pushLocation(this);
     // .......  end PLAYER .............................................................................
 
     // ....... PLAYER VS WORLD ..........................................................................
@@ -157,6 +148,138 @@ export default class Location3 extends Phaser.Scene {
     // ....... end TILEMAP ......................................................................
   }
 
+  handleEditMode() {
+    //! needed for EDITMODE: dragging objects and getting info about them in console
+    // this is needed of each scene EDITMODE is used
+
+
+    this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+      if (ManageSession.gameEditMode) {
+        gameObject.setPosition(dragX, dragY);
+
+        if (gameObject.name === 'handle') {
+          gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
+        }
+      }
+    }, this);
+
+    this.input.on('dragend', (pointer, gameObject) => {
+      if (ManageSession.gameEditMode) {
+        const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, gameObject.x));
+        const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, gameObject.y));
+        // store the original scale when selecting the gameObject for the first time
+        if (ManageSession.selectedGameObject !== gameObject) {
+          ManageSession.selectedGameObject = gameObject;
+          ManageSession.selectedGameObjectStartScale = gameObject.scale;
+          ManageSession.selectedGameObjectStartPosition.x = gameObject.x;
+          ManageSession.selectedGameObjectStartPosition.y = gameObject.y;
+          dlog('editMode info startScale:', ManageSession.selectedGameObjectStartScale);
+        }
+        // ManageSession.selectedGameObject = gameObject
+
+        dlog(
+          'editMode info posX posY: ',
+          worldX,
+          worldY,
+          'scale:',
+          ManageSession.selectedGameObject.scale,
+          'width*scale:',
+          Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale),
+          'height*scale:',
+          Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale),
+          'name:',
+          ManageSession.selectedGameObject.name,
+        );
+      }
+    }, this);
+  }
+
+  handlePlayerMovement() {
+    //! DETECT dragging and mouseDown on rectangle
+    Background.rectangle({
+      scene: this,
+      posX: 0,
+      posY: 0,
+      color: 0xffff00,
+      alpha: 1,
+      width: this.worldSize.x,
+      height: this.worldSize.y,
+      name: 'touchBackgroundCheck',
+      setOrigin: 0,
+    });
+
+    this.touchBackgroundCheck
+    // draggable to detect player drag movement
+      .setInteractive({ draggable: true }) // { useHandCursor: true } { draggable: true }
+      .on('pointerup', () => {
+      })
+      .on('pointerdown', () => {
+        ManageSession.playerIsAllowedToMove = true;
+      })
+      .on('drag', (pointer, dragX, dragY) => {
+        this.input.manager.canvas.style.cursor = "grabbing";
+        // dlog('dragX, dragY', dragX, dragY);
+        // console.log('dragX, dragY', dragX, dragY);
+        // if we drag the touchBackgroundCheck layer, we update the player
+        // eslint-disable-next-line no-lonely-if
+
+        const moveCommand = 'moving';
+        const movementData = { dragX, dragY, moveCommand };
+        Move.moveByDragging(movementData);
+        ManageSession.movingByDragging = true;
+      })
+      .on('dragend', () => {
+        // check if player was moving by dragging
+        // otherwise movingByTapping would get a stop animation command
+        if (ManageSession.movingByDragging) {
+          this.input.manager.canvas.style.cursor = "default";
+          const moveCommand = 'stop';
+          const dragX = 0;
+          const dragY = 0;
+          const movementData = { dragX, dragY, moveCommand };
+          Move.moveByDragging(movementData);
+          ManageSession.movingByDragging = false;
+          ManageSession.playerIsAllowedToMove = false;
+        }
+      });
+
+    this.touchBackgroundCheck
+      .setDepth(219)
+      .setOrigin(0);
+    this.touchBackgroundCheck.setVisible(false);
+
+    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    this.touchBackgroundCheck.input.alwaysEnabled = true;
+    //! end DETECT dragging and mouseDown on rectangle
+
+    //! DoubleClick for moveByTapping
+    this.tapInput = this.rexGestures.add.tap({
+      enable: true,
+      // bounds: undefined,
+      time: 250,
+      tapInterval: 350,
+      // threshold: 9,
+      // tapOffset: 10,
+      // taps: undefined,
+      // minTaps: undefined,
+      // maxTaps: undefined,
+    })
+      .on('tap', () => {
+        // dlog('tap');
+      }, this)
+      .on('tappingstart', () => {
+        // dlog('tapstart');
+      })
+      .on('tapping', (tap) => {
+        // dlog('tapping', tap.tapsCount);
+        if (tap.tapsCount === 2) {
+          if (ManageSession.playerIsAllowedToMove) {
+            Move.moveByTapping(this);
+          }
+        }
+      });
+    //! doubleClick for moveByTapping
+  }
   update() {
     // ...... ONLINE PLAYERS ................................................
     Player.parseNewOnlinePlayerArray(this);
@@ -168,12 +291,5 @@ export default class Location3 extends Phaser.Scene {
     this.playerShadow.x = this.player.x + this.playerShadowOffset;
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     // ........... end PLAYER SHADOW .........................................................................
-
-    // to detect if the player is clicking/tapping on one place or swiping
-    if (this.input.activePointer.downX !== this.input.activePointer.upX) {
-      Move.moveBySwiping(this);
-    } else {
-      Move.moveByTapping(this);
-    }
   } // update
 } // class

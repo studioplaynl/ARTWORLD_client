@@ -11,6 +11,7 @@
   let canvasElement;
   let canvas;
   let redirect = false;
+  let doRequest = false;
 
   onMount(async () => {
     video = document.createElement('video');
@@ -23,14 +24,17 @@
         video.srcObject = stream;
         video.setAttribute('playsinline', true); // required to tell iOS safari we don't want fullscreen
         video.play();
+        doRequest = true;
         requestAnimationFrame(tick);
       });
   });
 
   onDestroy(() => {
+    doRequest = false;
     const stream = video.srcObject;
     // now get all tracks
     const tracks = stream.getTracks();
+
     // now close each track by having forEach loop
     tracks.forEach((track) => {
       // stopping every track
@@ -49,64 +53,72 @@
   }
 
   function tick() {
-    // loadingMessage.innerText = "⌛ Loading video..."
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      // loadingMessage.hidden = true;
-      canvasElement.hidden = false;
-      // outputContainer.hidden = false;
+    if (doRequest) {
+      // loadingMessage.innerText = "⌛ Loading video..."
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        // loadingMessage.hidden = true;
+        canvasElement.hidden = false;
+        // outputContainer.hidden = false;
 
-      canvasElement.height = video.videoHeight;
-      canvasElement.width = video.videoWidth;
-      canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-      const imageData = canvas.getImageData(
-        0,
-        0,
-        canvasElement.width,
-        canvasElement.height,
-      );
-      const code = jsQR(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: 'dontInvert',
-      });
-      dlog(code);
-      if (code) {
-        drawLine(
-          code.location.topLeftCorner,
-          code.location.topRightCorner,
-          '#FF3B58',
+        canvasElement.height = video.videoHeight;
+        canvasElement.width = video.videoWidth;
+        canvas.drawImage(
+          video,
+          0,
+          0,
+          canvasElement.width,
+          canvasElement.height,
         );
-        drawLine(
-          code.location.topRightCorner,
-          code.location.bottomRightCorner,
-          '#FF3B58',
+        const imageData = canvas.getImageData(
+          0,
+          0,
+          canvasElement.width,
+          canvasElement.height,
         );
-        drawLine(
-          code.location.bottomRightCorner,
-          code.location.bottomLeftCorner,
-          '#FF3B58',
-        );
-        drawLine(
-          code.location.bottomLeftCorner,
-          code.location.topLeftCorner,
-          '#FF3B58',
-        );
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+          inversionAttempts: 'dontInvert',
+        });
+        dlog(code);
+        if (code) {
+          drawLine(
+            code.location.topLeftCorner,
+            code.location.topRightCorner,
+            '#FF3B58',
+          );
+          drawLine(
+            code.location.topRightCorner,
+            code.location.bottomRightCorner,
+            '#FF3B58',
+          );
+          drawLine(
+            code.location.bottomRightCorner,
+            code.location.bottomLeftCorner,
+            '#FF3B58',
+          );
+          drawLine(
+            code.location.bottomLeftCorner,
+            code.location.topLeftCorner,
+            '#FF3B58',
+          );
 
-        // TODO: Checken op array van geldige hostnames, ipv enkele window.location.host
-        // Hostnames per environment (dev, live) strakker instellen (live = alleen artworld.vrolijkheid.nl)
-        if (
-          // eslint-disable-next-line operator-linebreak
-          !redirect &&
-          code.data.includes(`${window.location.host}/#/login/`)
-        ) {
-          dlog(`redirected to: ${code.data}`);
-          const urlChunks = code.data.split('/');
-          email = urlChunks[urlChunks.length - 2];
-          password = urlChunks[urlChunks.length - 1];
-          login(email, password);
-          redirect = true;
+          // TODO: Checken op array van geldige hostnames, ipv enkele window.location.host
+          // Hostnames per environment (dev, live) strakker instellen (live = alleen artworld.vrolijkheid.nl)
+          if (
+            // eslint-disable-next-line operator-linebreak
+            !redirect &&
+            code.data.includes(`${window.location.host}/#/login/`)
+          ) {
+            dlog(`redirected to: ${code.data}`);
+            const urlChunks = code.data.split('/');
+            email = urlChunks[urlChunks.length - 2];
+            password = urlChunks[urlChunks.length - 1];
+            login(email, password);
+            redirect = true;
+          }
         }
       }
+      requestAnimationFrame(tick);
     }
-    requestAnimationFrame(tick);
   }
 </script>
 

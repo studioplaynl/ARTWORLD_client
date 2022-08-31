@@ -5,6 +5,10 @@ import { client, SSL } from '../../nakama.svelte';
 import CoordinatesTranslator from './class/CoordinatesTranslator';
 import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
+import { logout } from '../../api';
+import {
+  playerLocation, playerStreamID,
+} from './playerState';
 
 const { Phaser } = window;
 
@@ -15,7 +19,8 @@ class ManageSession {
 
     this.gameEditMode = false;
 
-    this.currentScene = {}; // To give access to the scene outside of the game
+    /** @var {Phaser.Scene} currentScene */
+    this.currentScene = null; // To give access to the scene outside of the game
     // default zoomlevel is set here
     this.currentZoom = 0.8; // passing camera zoom from ui to scene
 
@@ -27,24 +32,25 @@ class ManageSession {
     this.useSSL = SSL;
     this.verboseLogging = false;
 
-    // for back button
-    this.locationHistory = [];
-    this.location = null; // scene key to start a scene
-    this.locationID = null; // the user_id if the scene is a house => DefaultUserHome
-
-
     // Check if we can start sending player movement data over the network
     this.playerIsAllowedToMove = false;
     this.createPlayer = true;
 
+    // movement of the player variables .......
     this.graffitiDrawing = false;
 
     this.playerClicks = 0;
     this.playerClickTime = 0;
-    this.playerPosX = 0; // store playerPosX, also parsed from URL, to create player
-    this.playerPosY = 0; // store playerPosY, also parsed from URL, to create player
+    this.isClicking = false;
+    this.cursorKeyIsDown = false;
+    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
+    this.target = new Phaser.Math.Vector2();
+    this.distanceTolerance = 9;
+    this.movingByDragging = false;
+    // movement of the player variables .......
 
 
+    this.playerAvatarPlaceholder = 'avatar1';
     this.avatarSize = 64;
     this.cameraShake = false;
 
@@ -65,7 +71,7 @@ class ManageSession {
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.lastMoveCommand = {
-      action: 'stop', posX: 0, posY: 0, location: this.location,
+      action: 'stop', posX: 0, posY: 0, location: get(playerStreamID),
     };
 
     // .....................................................................
@@ -79,13 +85,15 @@ class ManageSession {
     this.selectedGameObjectStartPosition = new Phaser.Math.Vector2(0, 0);
     // .....................................................................
 
-    this.gameStarted = false;
-    this.currentScene = null;
+    // this.gameStarted = false;
     this.launchLocation = 'Location1'; // default
 
     // timers
     this.updateMovementTimer = 0;
     this.updateMovementInterval = 30; // 20 fps
+
+
+    this.socketIsConnected = false;
   }
 
   /** Create Socket connection and listen for incoming streaming data, presence and notifications */
@@ -99,12 +107,12 @@ class ManageSession {
     dlog('this.userProfile', this.userProfile);
 
     const createStatus = true;
-    await this.socket.connect(get(Session), createStatus);
-    dlog('session created with socket');
+    this.socket.connect(get(Session), createStatus).then(() => {
+      this.socketIsConnected = true;
+      this.getStreamUsers('join');
+      dlog('Join:', get(playerLocation).scene);
+    });
 
-    dlog('Join:');
-    dlog(this.location);
-    await this.getStreamUsers('join', this.location); // have to join a location to get stream presence events
 
     // Streaming data containing movement data for the players in our allConnectedUsers array
     this.socket.onstreamdata = (streamdata) => {
@@ -157,10 +165,10 @@ class ManageSession {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
               // because there the scene context is known
 
-              // // if there is an unfinished tween, stop it and stop the online player
-              if (typeof this[updateOnlinePlayer] !== 'undefined') {
-                this[updateOnlinePlayer].stop();
-              }
+              // if there is an unfinished tween, stop it and stop the online player
+              // if (typeof this[updateOnlinePlayer] !== 'undefined') {
+              //   this[updateOnlinePlayer].stop();
+              // }
 
               let positionVector = new Phaser.Math.Vector2(
                 data.posX,
@@ -244,7 +252,7 @@ class ManageSession {
       if (streampresence.leaves) {
         streampresence.leaves.forEach((leave) => {
           dlog('User left: %o', leave);
-          this.getStreamUsers('get_users', this.location);
+          this.getStreamUsers('get_users');
         });
       }
 
@@ -253,17 +261,17 @@ class ManageSession {
           // filter out the player it self
           // dlog("this.userProfile.id", this.userProfile.id);
 
-          dlog('this.userProfile = ', this.userProfile);
+          // dlog('this.userProfile = ', this.userProfile);
           if (join.user_id !== this.userProfile.id) {
             // dlog(this.userProfile)
-            dlog('some one joined', join);
+            dlog('someone joined', join);
             // this.getStreamUsers("home")
             // dlog(join.username)
             // dlog("join", join);
             // const tempName = join.user_id
-            this.getStreamUsers('get_users', this.location);
+            this.getStreamUsers('get_users');
           } else {
-            dlog('join', join);
+            // dlog('join', join);
           }
         });
         // this.getStreamUsers("home")
@@ -275,61 +283,86 @@ class ManageSession {
       dlog('Received %o', notif);
       dlog('Notification content %s', notif);
     };
+
+    // this.socket.onerror = (event) => {
+    // console.log('socket error!', event);
+    // };
+
+    this.socket.ondisconnect = async () => {
+      logout();
+    };
   } // end createSocket
 
   /** Get ...
    * @todo Extend documentation
    */
-  async getStreamUsers(rpcCommand, location) {
+  async getStreamUsers(rpcCommand) {
     //* rpcCommand:
     //* join" = join the stream, get the online users, except self
     //* get_users" = after joined, get the online users, except self
+    const location = get(playerStreamID);
+
     dlog(
-      `this.getStreamUsers("${rpcCommand}, "${location}")`,
+      `this.getStreamUsers("${rpcCommand}"), location = ${location}`,
     );
 
-    this.socket.rpc(rpcCommand, location).then((rec) => {
-      //! the server reports all users in location except self_user
-      dlog(location);
-      // get all online players = serverArray
-      // create array for newUsers and create array for deleteUsers
-      const serverArray = JSON.parse(rec.payload) || [];
-      dlog('serverArray', serverArray);
 
-      serverArray.forEach((newPlayer) => {
-        const exists = this.allConnectedUsers.some(
-          (element) => element.user_id === newPlayer.user_id,
-        );
-        if (!exists) {
-          this.createOnlinePlayerArray.push(newPlayer);
-          dlog('newPlayer', newPlayer);
+    const streamUsersPromise = new Promise((resolve) => {
+      this.socket.rpc(rpcCommand, location).then((rec) => {
+        //! the server reports all users in location except self_user
+        dlog(location);
+        // get all online players = serverArray
+        // create array for newUsers and create array for deleteUsers
+        const serverArray = JSON.parse(rec.payload) || [];
+        // dlog('serverArray', serverArray, 'currentScene', this.currentScene);
+
+
+
+        serverArray.forEach((newPlayer) => {
+          const exists = this.allConnectedUsers.some(
+            (element) => element.user_id === newPlayer.user_id,
+          );
+          if (!exists) {
+            this.createOnlinePlayerArray.push(newPlayer);
+            dlog('newPlayer', newPlayer);
+          }
+        });
+
+        // allConnectedUsers had id, serverArray has user_id
+        this.allConnectedUsers.forEach((onlinePlayer) => {
+          const exists = serverArray.some(
+            (element) => element.user_id === onlinePlayer.user_id,
+          );
+          if (!exists) {
+            this.deleteOnlinePlayer(onlinePlayer);
+            dlog('remove onlinePlayer', onlinePlayer);
+          }
+        });
+
+        // send our current location in the world to all connected players
+        // dlog('send our current location in the world to all connected players');
+        // dlog("this.lastMoveCommand", this.lastMoveCommand)
+        // dlog("this.currentScene", this.currentScene)
+        // dlog('this.lastMoveCommand', this.lastMoveCommand);
+
+        // resolve();
+        if (this.currentScene !== null) {
+          setTimeout(() => {
+            const { posX, posY, action } = this.lastMoveCommand;
+
+            // dlog('timeout!, currentScene = ', this.currentScene);
+            this.sendMoveMessage(this.currentScene, posX, posY, action);
+            // dlog('sending move message!');
+
+            resolve(rpcCommand, location);
+          }, 1500);
+        } else {
+          resolve(rpcCommand, location);
         }
       });
-
-      // allConnectedUsers had id, serverArray has user_id
-      this.allConnectedUsers.forEach((onlinePlayer) => {
-        const exists = serverArray.some(
-          (element) => element.user_id === onlinePlayer.user_id,
-        );
-        if (!exists) {
-          this.deleteOnlinePlayer(onlinePlayer);
-          dlog('remove onlinePlayer', onlinePlayer);
-        }
-      });
-
-      // send our current location in the world to all connected players
-      dlog('send our current location in the world to all connected players');
-      // dlog("this.lastMoveCommand", this.lastMoveCommand)
-      // dlog("this.currentScene", this.currentScene)
-      dlog('this.lastMoveCommand', this.lastMoveCommand);
-      // if (typeof this.currentScene != "undefined") {
-      setTimeout(() => {
-        const { posX, posY, action } = this.lastMoveCommand;
-        this.sendMoveMessage(this.currentScene, posX, posY, action);
-        dlog('sending move message!');
-      }, 1500);
-      // }
     });
+
+    return streamUsersPromise;
   }
 
   /**
@@ -362,17 +395,14 @@ class ManageSession {
 
   /** Transpose phaser coordinates to artworld coordinates and send move message */
   sendMoveMessage(scene, posX, posY, action) {
-    this.lastMoveCommand = {
-      action, posX, posY, location: this.location,
-    };
-
     const data = {
       action,
       posX: CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, posX),
       posY: CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, posY),
-      location: this.location,
+      location: get(playerStreamID),
     };
 
+    this.lastMoveCommand = { ...data };
     this.socket.rpc('move_position', JSON.stringify(data));
   }
 } // end class

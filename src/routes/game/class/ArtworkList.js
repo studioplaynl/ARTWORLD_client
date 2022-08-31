@@ -16,7 +16,7 @@ class ArtworkList {
     });
   }
 
-  placeHeartButton(scene, x, y, keyImgUrl, mediaObject) {
+  placeHeartButton(scene, x, y, keyImgUrl, mediaObject, artContainer) {
     // we get the mediaObject passed along:
     // collection: "drawing"
     // create_time: "2022-01-27T16:46:00Z"
@@ -52,7 +52,7 @@ class ArtworkList {
         },
       );
 
-    scene.artContainer.add(currentHeart);
+    artContainer.add(currentHeart);
 
     // subscribe once to the Liked store
     if (this.alreadySubscribedToLiked !== true) {
@@ -118,6 +118,53 @@ class ArtworkList {
       Liked.delete(mediaObject.key);
     }
   }
+
+    placePlayPauseButton(scene, x, y, imageurl, gameObject, artContainer) {
+
+    // place heartButton under the artwork, make them interactive
+    const artFrame = scene.textures.get('artFrame_512');
+    const marginY = 16;
+    const playCircle = scene.add.circle(x - artFrame.height + marginY, 
+      y + (artFrame.height / 2) + marginY, 30,
+     0x000000)
+     .setOrigin(0)
+    // const playPause = scene.add.image(
+    //   x - artFrame.height + marginY, 
+    //   y + (artFrame.height / 2) + marginY,
+    //   'play',
+    // )
+    //   .setOrigin(0)
+    //   .setScale(1.2)
+      .setInteractive()
+      .setData('togglePlay', true) // true, not liked state
+      .on(
+        'pointerup',
+        () => {
+          ArtworkList.playPauseButtonToggle();
+        },
+      );
+
+    artContainer.add(playCircle);
+   // artContainer.add(playPause);
+
+ 
+
+
+    // if (playing) {
+    //   // changing to red, liked
+    //   currentHeart.setTexture('play');
+    //   currentHeart.setData('togglePlay', false);
+    // } else {
+    //   // changing to blank, not liked
+    //   currentHeart.setTexture('pause');
+    //   currentHeart.setData('togglePlay', true);
+    // }
+  }
+
+  static async playPauseButtonToggle() {
+ console.log("clicked play button")
+    }
+  
 }
 
 export default new ArtworkList();

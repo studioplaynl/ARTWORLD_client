@@ -1,3 +1,50 @@
+export const CONFIG = {
+  WIDTH: window.innerWidth * window.devicePixelRatio,
+  HEIGHT: window.innerHeight * window.devicePixelRatio,
+};
+
+/** List of Scenes a user may navigate to */
+export const SCENE_INFO = [
+  {
+    scene: 'DefaultUserHome',
+    sizeX: 6000,
+    sizeY: 2000,
+  },
+  {
+    scene: 'Location1',
+    sizeX: 3000,
+    sizeY: 3000,
+  },
+  {
+    scene: 'Location3',
+    sizeX: 1320,
+    sizeY: 1320,
+  },
+  {
+    scene: 'Location4',
+    sizeX: 3000,
+    sizeY: 3000,
+  },
+  {
+    scene: 'Artworld',
+    sizeX: 6000,
+    sizeY: 6000,
+  },
+  {
+    scene: 'ChallengeAnimalGarden',
+    sizeX: 4000,
+    sizeY: 1200,
+  },
+  {
+    scene: 'ChallengeFlowerField',
+    sizeX: 3000,
+    sizeY: 2000,
+  },
+];
+
+export const DEFAULT_SCENE = 'Artworld';
+export const DEFAULT_HOME = 'DefaultUserHome';
+
 /** File is readable by user and admins only */
 export const PERMISSION_READ_PRIVATE = 1;
 
