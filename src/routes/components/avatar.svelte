@@ -59,13 +59,23 @@
       push('/avatar');
     }}"
   />
+  {#if !showHistory}
   <img
     class="icon"
-    src="/assets/SHB/svg/AW-icon-history.svg"
+    src="/assets/SHB/svg/AW-icon-cross.svg"
     on:click="{() => {
       showHistory = !showHistory;
     }}"
   />
+  {:else }
+  <img
+  class="icon"
+  src="/assets/SHB/svg/AW-icon-history.svg"
+  on:click="{() => {
+    showHistory = !showHistory;
+  }}"
+/>
+  {/if}
 </div>
 
 {#if !showHistory}
