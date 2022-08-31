@@ -48,7 +48,9 @@
   $: controlsHeight = innerWidth > 600 ? `${canvasHeight}px` : 'auto';
   $: controlsWidth = innerWidth <= 600 ? `${canvasHeight}px` : 'auto';
 
-  /** Delete all content from a single frame */
+  /** Delete all content from a single frame
+   * @maybe this belongs inside Stopmotion app instead..
+   */
   export function deleteFrame(deleteableFrame) {
     const objects = canvas.getObjects();
 
@@ -237,17 +239,16 @@
 
     // Was there an image to load? Do so
     if (file?.url) {
-      putImageOnCanvas(file.url, (success) => {
-        if (!success) {
+      putImageOnCanvas(file.url)
+        .then(() => {
+          updateExportedImages();
+        })
+        .catch(() => {
           Error.set(`Failed loading drawing from server: ${file.url}`);
-        }
-
-        // saveState();
-        return setLoader(false);
-      });
-    } else {
-      // Else no image to load? That's fine too.
-      return setLoader(false);
+        })
+        .finally(() => {
+          setLoader(false);
+        });
     }
   });
 
@@ -325,19 +326,60 @@
     }
   }
 
-  function putImageOnCanvas(imgUrl, callback) {
-    fabric.Image.fromURL(
-      imgUrl,
-      (image, hasError) => {
-        image.set({ left: 0, top: 0 });
-        image.scaleToHeight(IMAGE_BASE_SIZE);
-        image.scaleToWidth(IMAGE_BASE_SIZE * frames);
-        canvas.add(image);
+  function putImageOnCanvas(imgUrl) {
+    return new Promise((resolve, reject) => {
+      const imagePromises = [];
+      for (let frame = 0; frame < frames; frame++) {
+        imagePromises.push(
+          new Promise((resolveImage, rejectImage) => {
+            fabric.Image.fromURL(
+              imgUrl,
+              // eslint-disable-next-line no-loop-func
+              (image, err) => {
+                // image.opacity = 0.5;
 
-        if (typeof callback === 'function') callback(hasError === false);
-      },
-      { crossOrigin: 'anonymous' },
-    );
+                // Step 1: Crop using the loaded image's width'
+                const nativeHeight = image.height;
+                image.set({
+                  cropX: nativeHeight * frame,
+                  cropY: 0,
+                  width: nativeHeight,
+                  height: nativeHeight,
+                });
+
+                // Step 2: Scale to canvas dimensions
+                image.scaleToHeight(IMAGE_BASE_SIZE);
+
+                // Step 3: Put on right spot
+                image.set({
+                  left: IMAGE_BASE_SIZE * frame,
+                  top: 0,
+                  frameNumber: frame + 1, // Frames in the app are 1-based
+                });
+
+                if (err) {
+                  rejectImage();
+                } else {
+                  resolveImage(image);
+                }
+              },
+              { crossOrigin: 'anonymous' },
+            );
+          }),
+        );
+      }
+
+      Promise.all(imagePromises)
+        .then((images) => {
+          images.forEach((image) => {
+            canvas.add(image);
+          });
+          resolve();
+        })
+        .catch(() => {
+          reject();
+        });
+    });
   }
 
   /// ////////////////// select functions /////////////////////////////////

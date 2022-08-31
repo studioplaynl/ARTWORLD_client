@@ -40,7 +40,7 @@
     if (file?.url) {
       const img = new Image();
       img.onload = (e) => {
-        frames = Math.round(e.target.width / e.target.height);
+        frames = Math.floor(e.target.width / e.target.height);
       };
       img.src = file.url;
     } else {
@@ -61,14 +61,13 @@
     }, 100);
   }
 
+  // Set up swiper as reference to Swiper.js instance
   const onSwiper = (e) => {
     [swiper] = e.detail;
-    console.log('Setting swiper to ', e, swiper);
   };
 
+  // Set up binding between slide index and currentFrame
   const onSlideChange = () => {
-    console.log('slide change', swiper.activeIndex);
-
     // Don't change currentFrame when activating the [+] slide
     if (swiper.activeIndex === frames) {
       swiper.slideTo(frames - 1);
