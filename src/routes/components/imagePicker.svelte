@@ -1,29 +1,28 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount } from 'svelte';
+  import { push } from 'svelte-spa-router';
   import { Profile } from '../../session';
   import { myHome } from '../../storage';
   import Stopmotion from './stopmotion.svelte';
-  import {push} from 'svelte-spa-router'
   import {
-    updateObject,
     listObjects,
+    deleteObject,
     setAvatar,
     convertImage,
   } from '../../api';
-  import { fileURLToPath } from 'url';
+
   let objects = [];
   export let dataType = '';
-  export let currentlySet = '';
 
-  let image;
-  let frame = 0;
-  let interval;
+
+  let deleteCheck = null;
 
   onMount(async () => {
     objects = await listObjects(dataType, Profile.userID, 100);
 
     for (let index = 0; index < objects.length; index++) {
       if (typeof objects[index].value.previewUrl !== 'string') {
+        // eslint-disable-next-line no-await-in-loop
         objects[index].value.previewUrl = await convertImage(
           objects[index].value.url,
           '128',
@@ -32,35 +31,36 @@
         );
       }
     }
-    console.log(objects);
 
     // get type avatar or house
     // get list of objects
-    //listObjects(type, userID, lim)
+    // listObjects(type, userID, lim)
     // show objects
   });
 
   async function save(object) {
-    console.log('saving', object);
     if (dataType === 'avatar') {
       setAvatar(object.value.url);
       $Profile.url = object.value.previewUrl;
     }
     if (dataType === 'house') {
       myHome.create(object.value.url);
-      //await setHome(object.value.url);
+      // await setHome(object.value.url);
       // console.log(await getHome());
     }
   }
   // on click of image, saveChange
   // if avatar -> save url to Profile
-  //setAvatar(avatar_url)
+  // setAvatar(avatar_url)
   // if house -> save url to home object
   //   updateObject(type, name, value, pub, userID)
 
+  async function deleteObj(object) {
+    deleteObject(object.collection, object.key);
+  }
+
   function addNew() {
-    console.log('addNew');
-    push('/'+dataType)
+    push(`/${dataType}`);
   }
 </script>
 
@@ -68,24 +68,48 @@
   <div class="addNew" on:click="{addNew}">+</div>
   {#each objects as object, i}
     <div
+      class="item"
       class:selected="{(object.value.url === $Profile.avatar_url &&
-        dataType == 'avatar') ||
-        (object.value.url === $myHome.value.url && dataType == 'house')}"
+        dataType === 'avatar') ||
+        (object.value.url === $myHome.value.url && dataType === 'house')}"
     >
-      <a
+      <p
         class="image"
         on:click="{() => {
           save(object);
         }}"
       >
         <Stopmotion artwork="{object.value.previewUrl}" />
-      </a>
+      </p>
+
+      {#if deleteCheck === i}
+        <img
+          alt="delete"
+          class="icon"
+          src="/assets/SHB/svg/AW-icon-trash.svg"
+          on:click="{() => {
+            deleteObj(object);
+          }}"
+        />
+      {:else}
+        <img
+          alt="shure you want to delete?"
+          class="icon"
+          src="/assets/SHB/svg/AW-icon-cross.svg"
+          on:click="{() => {
+            deleteCheck = i;
+          }}"
+        />
+      {/if}
     </div>
   {/each}
-  
 </div>
 
 <style>
+  .item {
+    display: flex;
+  }
+
   .selected {
     border: 2px solid #7300ed;
     border-radius: 15px;
