@@ -5,16 +5,8 @@
   import { Profile } from '../session';
   import { listAllNotifications, convertImage } from '../api';
   import {
-    NOTIFICATION_MESSAGE_RECEIVED_WHILE_OFFLINE_OR_NOT_IN_CHANNEL,
-    NOTIFICATION_FRIENDSHIP_REQUEST_RECEIVED,
-    NOTIFICATION_MY_FRIENDSHIP_REQUEST_ACCEPTED,
-    NOTIFICATION_MY_GROUP_REQUEST_ACCEPTED,
-    NOTIFICATION_GROUP_REQUEST_RECEIVED,
-    NOTIFICATION_FRIEND_JOINED_GAME,
-    NOTIFICATION_SOCKET_CLOSED,
     NOTIFICATION_ARTWORK_LIKE_RECEIVED,
     NOTIFICATION_ARTWORK_RECEIVED,
-    NOTIFICATION_INVITE_RECEIVED,
   } from '../constants';
 
   let messages = { notifications: [] };
@@ -24,21 +16,18 @@
     messages = await listAllNotifications();
 
     for (let i = messages.notifications.length - 1; i > 0; i--) {
-      console.log(messages.notifications[i].code);
-      if (messages.notifications[i].code === 1) {
+      if (messages.notifications[i].code === NOTIFICATION_ARTWORK_LIKE_RECEIVED) {
+        // eslint-disable-next-line no-await-in-loop
         messages.notifications[i].previewUrl = await convertImage(
           messages.notifications[i].content.url,
         );
 
         likes = [...likes, messages.notifications[i]];
       }
-      if (messages.notifications[i].code === 2) {
+      if (messages.notifications[i].code === NOTIFICATION_ARTWORK_RECEIVED) {
         posts = [...posts, messages.notifications[i]];
       }
     }
-
-    console.log(posts);
-    console.log(likes);
   });
 
   async function goHome(id) {
@@ -64,13 +53,13 @@
             alt="Someone sent you an artwork"
           />
         </div>
-        <a on:click="{goHome(notification.userId)}">
-          {notification.content.username}</a
+        <p on:click="{goHome(notification.userId)}">
+          {notification.content.username}</p
         >
         <a
           href="/#/drawing?userId={notification.content
             .userId}&key={notification.content.key}"
-          ><img src="{notification.content.previewUrl}" /></a
+          ><img alt="previewURL" src="{notification.content.previewUrl}" /></a
         >
       </div>
     {/each}
@@ -93,13 +82,13 @@
             alt="Someone liked your artwork"
           />
         </div>
-        <a on:click="{goHome(notification.sender_id)}">
-          {notification.content.username}</a
+        <p on:click="{goHome(notification.sender_id)}">
+          {notification.content.username}</p
         >
         <a
           href="/#/drawing?userId={$Profile.id}&key={notification.content.key}"
         >
-          <img src="{notification.previewUrl}" />
+          <img alt="previewURL" src="{notification.previewUrl}" />
         </a>
       </div>
     {/each}

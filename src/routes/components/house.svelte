@@ -1,13 +1,10 @@
 <script>
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
-  import { Profile, CurrentApp } from '../../session';
   import { myHome } from '../../storage';
-  import { convertImage, getObject } from '../../api';
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import ImagePicker from './imagePicker.svelte';
-  import { dlog } from '../game/helpers/DebugLog';
 
   // let url;
   let show = false;
@@ -77,6 +74,7 @@
   />
   {#if showHistory}
   <img
+  alt="close"
     class="icon"
     src="/assets/SHB/svg/AW-icon-cross.svg"
     on:click="{() => {
@@ -85,6 +83,7 @@
   />
   {:else }
   <img
+  alt="history"
   class="icon"
   src="/assets/SHB/svg/AW-icon-history.svg"
   on:click="{() => {

@@ -4,7 +4,9 @@
 import { get } from 'svelte/store';
 import { push, querystring } from 'svelte-spa-router';
 import { client } from './nakama.svelte';
-import { Success, Session, Profile, Error, } from './session';
+import {
+  Success, Session, Profile, Error,
+} from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 import { dlog } from './routes/game/helpers/DebugLog';
 // import ManageSession from './routes/game/ManageSession';
@@ -237,6 +239,7 @@ export async function updateObject(type, name, value, pub, userID) {
 
     return object;
   }
+  return '';
 }
 
 export async function listObjects(type, userID, lim) {
@@ -294,10 +297,9 @@ export async function getAccount(id) {
 
     const users = await client.getUsers(session, [id]);
     user = users.users[0];
-    user.meta =
-      typeof user.metadata === 'string'
-        ? JSON.parse(user.metadata)
-        : user.metadata;
+    user.meta = typeof user.metadata === 'string'
+      ? JSON.parse(user.metadata)
+      : user.metadata;
     user.url = await convertImage(user.avatar_url, '128', '1000', 'png');
   }
 
@@ -374,8 +376,6 @@ export async function setAvatar(avatar_url) {
 //   return value.url;
 // }
 
-
-
 export async function getFile(file_url) {
   const session = get(Session);
   const payload = { url: file_url };
@@ -399,8 +399,7 @@ export async function getFile(file_url) {
 export async function uploadAvatar(data) {
   const profile = get(Profile);
   setLoader(true);
-  let avatarVersion =
-    Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
+  let avatarVersion = Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
   if (!avatarVersion) avatarVersion = 0;
   const [jpegURL, jpegLocation] = await getUploadURL(
     'avatar',

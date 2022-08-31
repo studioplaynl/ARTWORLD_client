@@ -1,7 +1,7 @@
 <script>
   import Select from 'svelte-select';
-  import { ListFriends, sendMailToUser } from '../../api';
   import MdSend from 'svelte-icons/md/MdSend.svelte';
+  import { ListFriends, sendMailToUser } from '../../api';
 
   export let row;
   let toggleMode = true;
@@ -10,12 +10,9 @@
 
   async function toggle() {
     friends = await ListFriends();
-    console.log(friends);
     friends.friends.forEach((friend) => {
-      console.log(friend.user);
       items = [...items, friend.user];
     });
-    console.log(await ListFriends());
     toggleMode = false;
   }
 
@@ -28,7 +25,7 @@
 
   async function send() {
     const data = {
-        user_id: row.user_id,
+      user_id: row.user_id,
       key: row.key,
       username: row.username,
       previewUrl: row.value.previewUrl,
@@ -42,10 +39,11 @@
 <div>
   {#if toggleMode}
     <button on:click="{toggle}">
+      <!-- svelte-ignore a11y-img-redundant-alt -->
       <img
+        alt="send picture"
         class="icon"
         src="assets/SHB/svg/AW-icon-post.svg"
-        alt="send picture"
       />
     </button>
   {:else}

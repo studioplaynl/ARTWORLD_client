@@ -1,11 +1,12 @@
 <script>
   import SvelteTable from 'svelte-table';
+  import MdSearch from 'svelte-icons/md/MdSearch.svelte';
   import FriendAction from './components/friendaction.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
-  import { ListFriends, addFriend, setLoader, convertImage } from '../api';
+  import {
+    ListFriends, addFriend, setLoader, convertImage,
+  } from '../api';
   import SceneSwitcher from './game/class/SceneSwitcher';
-  import ManageSession from './game/ManageSession';
-  import MdSearch from 'svelte-icons/md/MdSearch.svelte';
   import { dlog } from './game/helpers/DebugLog';
   import {
     FRIENDSTATE_FRIENDS,

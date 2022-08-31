@@ -2,16 +2,15 @@
   import { push } from 'svelte-spa-router';
   import { onDestroy, onMount } from 'svelte';
   import { Profile } from '../../session';
-  import { convertImage, setAvatar } from '../../api';
   import ImagePicker from './imagePicker.svelte';
-  import { dlog } from '../game/helpers/DebugLog';
+
 
   export let showHistory = false;
 
   let image;
   let frame = 0;
   let interval;
-  let url;
+
 
   // function loadUrl() {
   //   url = $Profile.url;
@@ -61,6 +60,7 @@
   />
   {#if !showHistory}
   <img
+  alt="close"
     class="icon"
     src="/assets/SHB/svg/AW-icon-cross.svg"
     on:click="{() => {
@@ -69,6 +69,7 @@
   />
   {:else }
   <img
+  alt="history"
   class="icon"
   src="/assets/SHB/svg/AW-icon-history.svg"
   on:click="{() => {
@@ -103,29 +104,6 @@
     top: 0;
   }
 
-  .avatarHistory {
-    display: flex;
-  }
 
-  button {
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    border-radius: 0;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    display: inline-block;
-    width: auto;
-    transform-origin: center;
-    transform: scale(1);
-    padding: 0;
-    margin: 0;
-  }
-  button:active,
-  button:not(:disabled):active {
-    outline: none;
-    background: transparent;
-    transform: scale(1.05);
-  }
+
 </style>

@@ -7,7 +7,6 @@
 
   import StatusComp from './components/statusbox.svelte';
   import DeleteComp from './components/deleteButton.svelte';
-  import NameEdit from './components/nameEdit.svelte';
   import postSend from './components/postSend.svelte';
   import Avatar from './components/avatar.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
@@ -64,7 +63,7 @@
     //   title: '',
     //   renderComponent: { component: NameEdit, props: { isCurrentUser } },
     // },
-        {
+    {
       key: 'post',
       title: '',
       renderComponent: { component: postSend, props: { isCurrentUser } },
