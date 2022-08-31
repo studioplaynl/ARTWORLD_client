@@ -9,13 +9,16 @@
   import { Swiper, SwiperSlide } from 'swiper/svelte';
   import Drawing from './drawing.svelte';
   import { STOPMOTION_MAX_FRAMES } from '../../constants';
+  // eslint-disable-next-line import/no-unresolved
   import 'swiper/css';
 
   export let file;
   export let data;
   export let changes;
 
+  let thumb;
   let currentFrame = 1;
+  let drawing = null;
   let frames = null;
   let playPreviewInterval = null;
 
@@ -26,7 +29,6 @@
   $: {
     if (swiper && currentFrame && frames) {
       setTimeout(() => {
-        console.log('slideTo currentFrame', swiper, currentFrame);
         swiper.slideTo(currentFrame - 1);
       }, 100);
     }
@@ -64,17 +66,17 @@
     console.log('Setting swiper to ', e, swiper);
   };
 
-  // function removeLastFrame() {
-  //   if (frames > 1) frames--;
-  // }
+  const onSlideChange = () => {
+    console.log('slide change', swiper.activeIndex);
 
-  // function deleteFrame(frameNumber) {
-  //   console.log(
-  //     'delete frame ',
-  //     frameNumber,
-  //     'not sure if this can be implemented though',
-  //   );
-  // }
+    // Don't change currentFrame when activating the [+] slide
+    if (swiper.activeIndex === frames) {
+      swiper.slideTo(frames - 1);
+      // currentFrame = frames;
+    } else {
+      currentFrame = swiper.activeIndex + 1;
+    }
+  };
 
   function toggleOnionSkinning() {
     enableOnionSkinning = !enableOnionSkinning;
@@ -93,18 +95,34 @@
       }, 200);
     }
   }
+
+  function onClearCanvas() {
+    currentFrame = 1;
+    frames = 1;
+  }
+
+  function onFrameContentDeleted() {
+    frames = Math.max(1, frames - 1);
+    if (currentFrame > frames) currentFrame = frames;
+
+    swiper.update();
+  }
 </script>
 
 {#if frames !== null}
   <Drawing
+    bind:this="{drawing}"
     bind:file
     bind:data
+    bind:thumb
     bind:changes
     bind:currentFrame
     bind:frames
     bind:enableEditor
     enableOnionSkinning="{enableOnionSkinning && enableEditor}"
     on:save
+    on:frameContentDeleted="{onFrameContentDeleted}"
+    on:clearCanvas="{onClearCanvas}"
   >
     <svelte:fragment slot="stopmotion">
       <div class="stopmotion__frames">
@@ -121,6 +139,7 @@
             },
           }}"
           on:swiper="{onSwiper}"
+          on:slideChange="{onSlideChange}"
         >
           <!-- activeIndex="{currentFrame}" -->
           <!-- on:slideChange="{() => console.log('on:slideChange', ...arguments)}" -->
@@ -142,7 +161,7 @@
                   <div
                     class="stopmotion__frame__background"
                     style="
-              background-image: url({data});
+              background-image: url({thumb});
               left: {-100 * (index - 1)}%;
               width: {frames * 100}%;
               "
@@ -150,17 +169,14 @@
                   <div class="stopmotion__frame__index">
                     {index}
                   </div>
-                  <!-- {#if currentFrame === index && frames.length > 1}
-          <img
-            class="icon"
-            on:click="{() => {
-              deleteFrame(index);
-            }}"
-            alt="Delete frame"
-            src="assets/SHB/svg/AW-icon-trash.svg"
-          />
-        {/if} -->
                 </div>
+                {#if currentFrame === index && frames > 1}
+                  <button
+                    class="clear-button-styles stopmotion__delete"
+                    on:click="{() => drawing.deleteFrame(index)}"
+                    >&times;</button
+                  >
+                {/if}
               </SwiperSlide>
             {/if}
           {/each}
@@ -302,6 +318,27 @@
     text-align: center;
     display: inline-block;
     z-index: 1;
+  }
+  .stopmotion__delete {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: -3px;
+    right: -0;
+    border-radius: 50%;
+    background-color: gray;
+    color: white;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+    font-size: 16px;
+    z-index: 5;
+    padding-left: 1px;
+    padding-bottom: 3px;
+  }
+
+  .stopmotion__delete:hover {
+    background: red;
   }
   .stopmotion__controls {
     position: fixed;

@@ -256,7 +256,7 @@ export const ArtworksStore = {
           convertImage(
             artwork.value.url,
             '150',
-            '1000',
+            '2250',
             'png',
           ).then((val) => {
             // Set the previewUrl value, update the array

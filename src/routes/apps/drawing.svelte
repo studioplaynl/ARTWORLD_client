@@ -7,15 +7,17 @@
   import { fabric } from './fabric/dist/fabric';
   import { setLoader } from '../../api';
   import { Error } from '../../session';
-  import { IMAGE_BASE_SIZE, STOPMOTION_MAX_FRAMES } from '../../constants';
+  import { IMAGE_BASE_SIZE } from '../../constants';
 
   export let file;
   export let data;
+  export let thumb;
   export let changes;
 
   // In order to allow for multi-frames (stopmotion), we need to expose these values
   export let frames = 1;
   export let currentFrame = 1;
+  // let deleteableFrame = null;
 
   // In order to hide editor functions when previewing stopmotion
   export let enableEditor = true;
@@ -43,8 +45,34 @@
   $: windowRatio = innerWidth / innerHeight;
   $: canvasSize = innerWidth > innerHeight ? innerHeight : innerWidth;
 
-  $: controlsWidth = innerWidth <= 600 ? `${canvasHeight}px` : 'auto';
   $: controlsHeight = innerWidth > 600 ? `${canvasHeight}px` : 'auto';
+  $: controlsWidth = innerWidth <= 600 ? `${canvasHeight}px` : 'auto';
+
+  /** Delete all content from a single frame */
+  export function deleteFrame(deleteableFrame) {
+    const objects = canvas.getObjects();
+
+    // Find and remove all objects with the required frameNumber attribute
+    objects
+      .filter((obj) => obj.frameNumber === deleteableFrame)
+      .forEach((obj) => {
+        canvas.remove(obj);
+      });
+
+    // Select all content to the right of the frame, and move over by –canvasWidth px
+    objects
+      .filter((obj) => obj.frameNumber > deleteableFrame)
+      .forEach((obj) => {
+        // eslint-disable-next-line no-param-reassign
+        obj.left -= canvasHeight / scaleRatio;
+      });
+
+    // Emit event that deletion is done
+    dispatch('frameContentDeleted');
+
+    // Finally update data
+    updateExportedImages();
+  }
 
   $: {
     // Respond to changes in window size
@@ -78,9 +106,7 @@
       canvas.setZoom(scaleRatio);
 
       // Finally update 'data' object immediately
-      setTimeout(() => {
-        data = canvas.toDataURL('image/png', 1);
-      }, 100);
+      updateExportedImages();
     }
   }
 
@@ -95,9 +121,7 @@
   let lineWidth = 25;
   let drawingColor = '#000000';
   let currentTab = null;
-
   let showOptionbox = false;
-  // $: showOptionbox = currentTab !== null;
 
   // declaring the variable to be available globally, onMount assinging a function to it
   let applyBrush;
@@ -144,6 +168,16 @@
       isDrawingMode: true,
     });
     eraseBrush = new fabric.EraserBrush(canvas);
+
+    // canvas.on('object:modified', (el) => {
+    //   console.log('object modified', el.target, el.target.frameNumber);
+    // });
+
+    // Set frameNumber on object, to refer to when deleting frames
+    canvas.on('path:created', () => {
+      const idx = canvas.getObjects().length - 1;
+      canvas.item(idx).frameNumber = currentFrame;
+    });
 
     fabric.Object.prototype.transparentCorners = false;
 
@@ -239,10 +273,16 @@
 
       // Set the data object (so the AppLoader can save it to server if required)
       // FIXME? Somehow this requires a timeout, as calling it directly clears the canvas?!
-      setTimeout(() => {
-        data = canvas.toDataURL('image/png', 1);
-      }, 500);
+      updateExportedImages();
     }
+  }
+
+  function updateExportedImages() {
+    setTimeout(() => {
+      data = canvas.toDataURL('image/png', 1);
+      // Small format thumbnail to add to frames
+      thumb = canvas.toDataURL({ format: 'png', multiplier: 0.25 });
+    }, 100);
   }
 
   // Go back to previous state
@@ -355,6 +395,8 @@
 
   function clearCanvas() {
     canvas.clear();
+    deleteableFrame = null;
+    dispatch('clearCanvas');
   }
 
   /// //////////// select functions end //////////////////
@@ -622,58 +664,9 @@
       <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
     </div>
   {/if}
-
-  <!-- <div class="debug">
-    <button
-      on:click="{() => {
-        frames = Math.max(1, frames - 1);
-      }}"
-    >
-      -
-    </button>
-    {frames}
-    <button
-      on:click="{() => {
-        frames = Math.min(STOPMOTION_MAX_FRAMES, frames + 1);
-        currentFrame = frames;
-      }}"
-    >
-      +
-    </button>
-    |
-    <button
-      on:click="{() => {
-        currentFrame = Math.max(1, currentFrame - 1);
-      }}"
-    >
-      &lt;
-    </button>
-    {currentFrame}
-    <button
-      on:click="{() => {
-        currentFrame = Math.min(frames, currentFrame + 1);
-      }}"
-    >
-      &gt;
-    </button>
-  </div> -->
 </div>
 
 <style>
-  .debug {
-    position: fixed;
-    top: 0;
-    right: 0;
-    border: 1px solid red;
-    background-color: white;
-    padding: 5px;
-    margin: 5px;
-    z-index: 100;
-  }
-
-  .debug button {
-    color: blue;
-  }
   * {
     box-sizing: border-box;
     padding: 0;
