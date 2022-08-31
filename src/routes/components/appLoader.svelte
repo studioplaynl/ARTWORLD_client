@@ -143,11 +143,11 @@
         currentFile.displayName,
       )
         .then((url) => {
-          console.log('Upload result:', url);
+          // console.log('Upload result:', url);
           resolve(url);
         })
         .catch((error) => {
-          console.log('Upload ERROR:', error);
+          // console.log('Upload ERROR:', error);
           reject();
         });
     });
@@ -159,7 +159,7 @@
             resolve();
           })
           .catch((error) => {
-            console.log('setHome ERROR:', error);
+            // console.log('setHome ERROR:', error);
             reject();
           });
       } else {
@@ -170,7 +170,7 @@
     // Saving should be able to succeed or fail
     Promise.all([uploadPromise, setHomePromise])
       .then(() => {
-        console.log('here is the image!', data);
+        // console.log('here is the image!', data);
         setLoader(false);
         if (andClose) closeApp();
       })
@@ -202,7 +202,7 @@
       type: saveToCollection,
       status: true,
     };
-    console.log({ currentFile });
+    // console.log({ currentFile });
   }
 
   // Utility functions
@@ -215,7 +215,7 @@
 
         // TODO: Het kan zijn dat een object leeg terugkomt. Dan staan wellicht de permissies fout.
 
-        console.log(...arguments, { loadingObject });
+        // console.log(...arguments, { loadingObject });
         if (loadingObject) {
           const file = await getFile(loadingObject.value.url);
 
