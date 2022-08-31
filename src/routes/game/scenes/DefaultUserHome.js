@@ -1,5 +1,5 @@
 import ManageSession from '../ManageSession';
-import { listObjects, listAllObjects, convertImage } from '../../../api';
+import { listAllObjects, convertImage } from '../../../api';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
