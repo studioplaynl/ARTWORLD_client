@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export, no-console */
-const debug = false;
+const debug = true;
 
 /** Log message when debug == true
  * @return null

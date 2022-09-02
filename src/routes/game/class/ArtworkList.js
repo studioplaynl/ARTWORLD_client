@@ -1,4 +1,5 @@
 import { Liked } from '../../../storage';
+import { dlog } from '../helpers/DebugLog';
 
 class ArtworkList {
   constructor() {
@@ -35,13 +36,12 @@ class ArtworkList {
     // keyImgUrl = mediaObject.value.url
 
     // place heartButton under the artwork, make them interactive
-    const artFrame = scene.textures.get('artFrame_512');
     const currentHeart = scene.add.image(
       x,
-      y + (artFrame.height / 2),
+      y,
       'heart',
     )
-      .setOrigin(1, 0)
+      .setOrigin(0)
       .setScale(0.7)
       .setInteractive()
       .setData('toggle', true) // true, not liked state
@@ -119,17 +119,20 @@ class ArtworkList {
     }
   }
 
-    placePlayPauseButton(scene, x, y, imageurl, gameObject, artContainer) {
-
+  placePlayPauseButton(scene, x, y, imageurl, gameObject, artContainer) {
     // place heartButton under the artwork, make them interactive
     const artFrame = scene.textures.get('artFrame_512');
     const marginY = 16;
-    const playCircle = scene.add.circle(x - artFrame.height + marginY, 
-      y + (artFrame.height / 2) + marginY, 30,
-     0x000000)
-     .setOrigin(0)
+    const playCircle = scene.add.circle(
+      x - artFrame.height + marginY,
+      y + (artFrame.height / 2) + marginY,
+
+      30,
+      0x000000,
+    )
+      .setOrigin(0)
     // const playPause = scene.add.image(
-    //   x - artFrame.height + marginY, 
+    //   x - artFrame.height + marginY,
     //   y + (artFrame.height / 2) + marginY,
     //   'play',
     // )
@@ -145,9 +148,9 @@ class ArtworkList {
       );
 
     artContainer.add(playCircle);
-   // artContainer.add(playPause);
+    // artContainer.add(playPause);
 
- 
+
 
 
     // if (playing) {
@@ -162,9 +165,8 @@ class ArtworkList {
   }
 
   static async playPauseButtonToggle() {
- console.log("clicked play button")
-    }
-  
+    console.log('clicked play button');
+  }
 }
 
 export default new ArtworkList();

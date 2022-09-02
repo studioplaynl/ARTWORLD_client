@@ -45,6 +45,9 @@ export const SCENE_INFO = [
 export const DEFAULT_SCENE = 'Artworld';
 export const DEFAULT_HOME = 'DefaultUserHome';
 
+// art settings
+export const ART_FRAME_BORDER = 10;
+
 /** File is readable by user and admins only */
 export const PERMISSION_READ_PRIVATE = 1;
 

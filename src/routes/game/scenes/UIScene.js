@@ -8,9 +8,8 @@ import ar from '../../../language/ar/ui.json';
 
 import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
-import {
-  playerLocation,
-} from '../playerState';
+import ServerCall from '../class/ServerCall';
+import { dlog } from '../helpers/DebugLog';
 
 const { Phaser } = window;
 
@@ -74,12 +73,21 @@ export default class UIScene extends Phaser.Scene {
     this.events.on('gameEditMode', this.gameEditModeSign, this); // show edit mode indicator
     this.events.on('gameEditMode', this.editElementsScene, this); // make elements editable
 
+    // make load events global for the game
+    // resolve load errors globally in the game
     const scene = ManageSession.currentScene;
-    console.log('scene', scene);
     scene.load.on('loaderror', (offendingFile) => {
       // this.resolveLoadError(offendingFile);
-      console.log('offendingFile', offendingFile);
+      ServerCall.resolveLoadError(offendingFile);
     });
+
+    // const eventNames = scene.load.eventNames();
+    // dlog("eventNames", eventNames)
+    // const isReady = scene.load.isReady();
+    // dlog('loader isReady', isReady);
+    // const isLoading = scene.load.isLoading();
+    // dlog('loader isLoading', isLoading);
+
     // keyboard events caught for debug functions, edit mode
     DebugFuntions.keyboard(this);
     // ......... end DEBUG FUNCTIONS .......................................................................
@@ -93,9 +101,10 @@ export default class UIScene extends Phaser.Scene {
     this.scene.bringToTop();
   } // create
 
+  // eslint-disable-next-line class-methods-use-this
   editElementsScene(arg) {
     const scene = ManageSession.currentScene;
-    console.log('editElementsScene arg:', arg);
+    dlog('editElementsScene arg:', arg);
 
     switch (arg) {
       case 'on':
@@ -130,7 +139,7 @@ export default class UIScene extends Phaser.Scene {
         break;
 
       case 'off':
-        console.log('gameEditMode received', arg);
+        dlog('gameEditMode received', arg);
         this.gameEditModeSignGraphic.destroy();
         this.gameEditModeSignText.destroy();
         break;
