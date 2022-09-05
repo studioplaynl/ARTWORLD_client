@@ -1,5 +1,4 @@
 /* eslint-disable prefer-destructuring */
-import { element } from 'svelte/internal';
 import ManageSession from '../ManageSession';
 import {
   convertImage, getAllHouses, listAllObjects,
@@ -9,6 +8,7 @@ import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkList from './ArtworkList';
 import { ART_FRAME_BORDER } from '../../../constants';
 import { dlog } from '../helpers/DebugLog';
+import AnimalChallenge from './animalChallenge';
 
 class ServerCall {
   async getHomesFiltered(filter, _scene) {
@@ -146,16 +146,48 @@ class ServerCall {
     await listAllObjects(type, location).then((rec) => {
       // eslint-disable-next-line no-param-reassign
       serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
-      // eslint-disable-next-line no-param-reassign
-      serverItemsArray.startLength = serverItemsArray.array.length;
-      // eslint-disable-next-line no-param-reassign
-      serverItemsArray.itemsDownloadCompleted = 0;
-      // eslint-disable-next-line no-param-reassign
-      serverItemsArray.itemsFailed = 0;
+      dlog('serverItemsArray, rec : ', rec, serverItemsArray);
 
+      if (type === 'dier') {
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === 'dier');
+      }
 
-      dlog('finding offending serverItemsArray: ', type, serverItemsArray);
+      dlog('serverItemsArray: ', type, serverItemsArray);
       if (serverItemsArray.array.length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.startLength = serverItemsArray.array.length;
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.itemsDownloadCompleted = 0;
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.itemsFailed = 0;
+
+        serverItemsArray.array.forEach((element, index, array) => {
+          this.downloadArtwork(element, index, array, type, artSize, artMargin);
+        });
+      }
+    });
+  }
+
+  async downloadAnimalChallenge(type, serverItemsArray, artSize, artMargin) {
+    // const scene = ManageSession.currentScene;
+    await listAllObjects('stopmotion', null).then((rec) => {
+      // eslint-disable-next-line no-param-reassign
+      serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
+      // dlog('serverItemsArray, rec : ', rec, serverItemsArray);
+
+      // eslint-disable-next-line no-param-reassign
+      serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
+
+      dlog('serverItemsArray: ', type, serverItemsArray);
+      if (serverItemsArray.array.length > 0) {
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.startLength = serverItemsArray.array.length;
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.itemsDownloadCompleted = 0;
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.itemsFailed = 0;
+
         serverItemsArray.array.forEach((element, index, array) => {
           this.downloadArtwork(element, index, array, type, artSize, artMargin);
         });
@@ -180,6 +212,9 @@ class ServerCall {
         // eslint-disable-next-line no-param-reassign
         element.downloaded = true;
         this.createStopmotionContainer(element, index, artSize, artMargin);
+      } else if (type === 'dier') {
+        // eslint-disable-next-line no-new
+        new AnimalChallenge(scene, element, artSize);
       }
       // if the artwork is not already downloaded
     } else if (type === 'drawing') {
@@ -229,7 +264,6 @@ class ServerCall {
       });
     } else if (type === 'stopmotion') {
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
-      // const convertedImage = element.value.previewUrl
 
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
@@ -266,6 +300,30 @@ class ServerCall {
           this.repositionContainers('stopmotion');
         }
       });
+    } else if (type === 'dier') {
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
+      // const convertedImage = element.value.previewUrl
+
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'downloadAnimalChallenge', element, index, imageKey: imageKeyUrl, scene,
+      });
+
+      scene.load.spritesheet(
+        imageKeyUrl,
+        convertedImage,
+        { frameWidth: artSize, frameHeight: artSize },
+      )
+        .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
+          // remove the file from the error-resolve-queue
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl,
+          );
+
+          // eslint-disable-next-line no-new
+          new AnimalChallenge(scene, element, artSize);
+        });
+      scene.load.start(); // start the load queue to get the image in memory
     }
   }
 
@@ -335,27 +393,24 @@ class ServerCall {
     this.stopmotionMovingKey = 'moving_stopmotion';
     this.stopmotionStopKey = 'stop_stopmotion';
 
-    // check if the animation already exists
-    if (!scene.anims.exists(this.stopmotionMovingKey)) {
-      scene.anims.create({
-        key: `moving_${imageKeyUrl}`,
-        frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
-          start: 0,
-          end: avatarFrames - 1,
-        }),
-        frameRate: setFrameRate,
-        repeat: -1,
-        yoyo: false,
-      });
+    scene.anims.create({
+      key: `moving_${imageKeyUrl}`,
+      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+        start: 0,
+        end: avatarFrames - 1,
+      }),
+      frameRate: setFrameRate,
+      repeat: -1,
+      yoyo: false,
+    });
 
-      scene.anims.create({
-        key: `stop_${imageKeyUrl}`,
-        frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
-          start: 0,
-          end: 0,
-        }),
-      });
-    }
+    scene.anims.create({
+      key: `stop_${imageKeyUrl}`,
+      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+        start: 0,
+        end: 0,
+      }),
+    });
     // . end animation for the player avatar ......................
 
     // adds the image to the container
@@ -383,6 +438,7 @@ class ServerCall {
 
   // eslint-disable-next-line class-methods-use-this
   repositionContainers(type) {
+    // if there are images that didn't download, reorder the containers
     // get the children of the stopmotion group
     const scene = ManageSession.currentScene;
     let containers = {};
@@ -396,10 +452,10 @@ class ServerCall {
 
     const artSize = scene.artDisplaySize;
     const artMargin = scene.artMargin;
-    const artBorder = ART_FRAME_BORDER;
+    // const artBorder = ART_FRAME_BORDER;
 
     // give each container a position according to the place in the index
-    const y = artSize * 2.4;
+    // const y = artSize * 2.4;
 
     const artStart = 38; // start the art on the left side
     containers.forEach((element, index) => {
@@ -455,13 +511,13 @@ class ServerCall {
         ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
           (obj) => obj.imageKey !== imageKey,
         );
-        dlog('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
-
+        // dlog('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
 
         break;
 
       case 'downloadStopmotionDefaultUserHome':
         dlog('offending stopmotion loading failed, removing from array');
+        // eslint-disable-next-line no-case-declarations
         const userStopmotionServerList = scene.userStopmotionServerList;
         // delete from scene.userStopmotionServerList
 
@@ -472,7 +528,20 @@ class ServerCall {
           (obj) => obj.imageKey !== imageKey,
         );
 
+        break;
 
+      case 'downloadAnimalChallenge':
+        dlog('offending dier loading failed, removing from array');
+        // eslint-disable-next-line no-case-declarations
+        const userServerList = scene.animalArray;
+        // delete from scene.userStopmotionServerList
+
+        userServerList.array = userServerList.array.filter((obj) => obj.value.url !== imageKey);
+
+        // delete from ManageSession.resolveErrorObjectArray
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey,
+        );
 
         break;
 

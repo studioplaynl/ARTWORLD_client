@@ -1,13 +1,10 @@
 import ManageSession from '../ManageSession';
-import { convertImage } from '../../../api';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
 import Background from '../class/Background';
-import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
-import ArtworkList from '../class/ArtworkList';
 import { playerPos } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';

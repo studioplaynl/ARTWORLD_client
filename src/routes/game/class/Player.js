@@ -341,6 +341,7 @@ class Player {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
     // dlog("player, tempAvatarName", onlinePlayer, tempAvatarName)
 

@@ -1,6 +1,5 @@
-import { push, location, querystring } from 'svelte-spa-router';
+import { push } from 'svelte-spa-router';
 import SceneSwitcher from './SceneSwitcher';
-import { CurrentApp } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
 import ManageSession from '../ManageSession';
 
@@ -356,13 +355,13 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     // with this.getData('draggable') values can be changed from outside
     // and with functions/ data events there can be reactions
     if (this.draggable) {
-      this.makeDraggable();
+      this.makeDraggable(enterButtonY, enterButtonTweenY);
     }
 
     // data change example
     this.on('changedata-enteringPossible', (GameObject, arg) => {
-      // console.log('datachanged, GameObject, arg', GameObject, arg);
-      // console.log('datachanged, arg ', arg);
+      // dlog('datachanged, GameObject, arg', GameObject, arg);
+      // dlog('datachanged, arg ', arg);
 
       // when this.draggable this.location does not exist
       // check if this.location is not null
@@ -379,7 +378,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
           break;
 
         default:
-          console.log('changedata-enteringPossible NEEDS ARGUMENTS', GameObject, arg);
+          dlog('changedata-enteringPossible NEEDS ARGUMENTS', GameObject, arg);
           break;
       }
     });
@@ -420,6 +419,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
   }
 
   makeDraggable() {
+    const { width } = this;
     // this.location.disableInteractive();
     this.setInteractive(); // the whole container is draggable
     this.debugRect.setVisible(true);
@@ -430,8 +430,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // The enterButton is outside the container, so that it can appear above the player
         // when dragging the container we have to move the enterButton aswell
         this.enterButton.x = this.x;
-        enterButtonY = this.y - (width / 2) - 60;
-        enterButtonTweenY = enterButtonY + 90;
+        const enterButtonY = this.y - (width / 2) - 60;
+        const enterButtonTweenY = enterButtonY + 90;
         this.enterButton.y = enterButtonY;
         // this.enterButtonTween.restart()
         this.enterButtonTween.stop();
