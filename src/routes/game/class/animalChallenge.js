@@ -71,9 +71,10 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
 
     this.animal.name = 'dier';
 
-    this.animal.setVelocity(Phaser.Math.Between(-300, -500), Phaser.Math.Between(200, 400));
+    this.animal.setVelocity(Phaser.Math.Between(-300, 401), Phaser.Math.Between(-200, 400));
 
-    this.animal.setInteractive().setDepth(200);
+    // this.animal.setInteractive()
+    this.animal.setDepth(200);
 
     const tempDelay = Phaser.Math.Between(1000, 20000);
     scene.time.addEvent({
