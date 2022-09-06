@@ -191,11 +191,11 @@ class ServerCall {
       if (type === 'drawing') {
         // eslint-disable-next-line no-param-reassign
         element.downloaded = true;
-        this.createImageContainer(element, index, artSize, artMargin);
+        ServerCall.createDrawingContainer(element, index, artSize, artMargin);
       } else if (type === 'stopmotion') {
         // eslint-disable-next-line no-param-reassign
         element.downloaded = true;
-        this.createStopmotionContainer(element, index, artSize, artMargin);
+        ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
       } else if (type === 'dier') {
         // eslint-disable-next-line no-new
         new AnimalChallenge(scene, element, artSize);
@@ -221,7 +221,7 @@ class ServerCall {
           // dlog('object updated: ', element);
           // create container with artwork
 
-          this.createImageContainer(element, index, artSize, artMargin);
+          ServerCall.createDrawingContainer(element, index, artSize, artMargin);
           // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
           // create the home
           // ServerCall.createHome(element, index, homeImageKey, scene);
@@ -242,8 +242,8 @@ class ServerCall {
         scene.userDrawingServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
-          dlog('loader STOPMOTION COMPLETE');
-          this.repositionContainers('drawing');
+          dlog('loader DRAWING COMPLETE');
+          ServerCall.repositionContainers('drawing');
         }
       });
     } else if (type === 'stopmotion') {
@@ -265,7 +265,7 @@ class ServerCall {
             (obj) => obj.imageKey !== imageKeyUrl,
           );
 
-          this.createStopmotionContainer(element, index, artSize, artMargin);
+          ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
         });
       // console.log('stopmotion', imageKeyUrl);
       scene.load.start(); // start the load queue to get the image in memory
@@ -281,7 +281,7 @@ class ServerCall {
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('loader STOPMOTION COMPLETE');
-          this.repositionContainers('stopmotion');
+          ServerCall.repositionContainers('stopmotion');
         }
       });
     } else if (type === 'dier') {
@@ -311,8 +311,7 @@ class ServerCall {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  createImageContainer(element, index, artSize, artMargin) {
+  static createDrawingContainer(element, index, artSize, artMargin) {
     const scene = ManageSession.currentScene;
 
     const imageKeyUrl = element.value.url;
@@ -341,7 +340,7 @@ class ServerCall {
     // dlog('scene.drawingGroup.getChildren()', scene.drawingGroup.getChildren());
   }
 
-  createStopmotionContainer(element, index, artSize, artMargin) {
+  static createStopmotionContainer(element, index, artSize, artMargin) {
     const scene = ManageSession.currentScene;
 
     const imageKeyUrl = element.value.url;
@@ -372,11 +371,7 @@ class ServerCall {
     }
     // console.log(`stopmotion Frames: ${avatarFrames}`);
 
-    // . animation for the player avatar ......................
-
-    this.stopmotionMovingKey = 'moving_stopmotion';
-    this.stopmotionStopKey = 'stop_stopmotion';
-
+    // animation for the player avatar .........................
     scene.anims.create({
       key: `moving_${imageKeyUrl}`,
       frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
@@ -420,8 +415,7 @@ class ServerCall {
     scene.stopmotionGroup.add(imageContainer);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  repositionContainers(type) {
+  static repositionContainers(type) {
     // if there are images that didn't download, reorder the containers
     // get the children of the stopmotion group
     const scene = ManageSession.currentScene;
@@ -445,6 +439,7 @@ class ServerCall {
     containers.forEach((element, index) => {
       const coordX = index === 0 ? artStart : (artStart) + (index * (artSize + artMargin));
       element.setX(coordX);
+      dlog('reposition: coordX', coordX);
     });
   }
 

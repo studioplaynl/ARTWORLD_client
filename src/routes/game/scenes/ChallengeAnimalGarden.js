@@ -107,7 +107,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
     this.gameCam.zoom = 1;
     this.gameCam.startFollow(this.player);
-    this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
+    // this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     // https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
     // ......... end PLAYER VS WORLD .......................................................................
 
@@ -116,6 +116,11 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     //!
 
     // download all dier from all users
+    this.getAllAnimals();
+  } // end create
+
+
+  getAllAnimals() {
     const type = 'dier';
     const serverItemsArray = this.animalArray;
     const location = null; // to get all users' artworks
@@ -124,7 +129,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.artMargin = artMargin;
     this.animalGroup = this.add.group();
     ServerCall.downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin);
-  } // end create
+  }
 
   update() {
     // zoom in and out of game
