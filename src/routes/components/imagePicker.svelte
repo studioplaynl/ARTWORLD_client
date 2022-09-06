@@ -18,7 +18,7 @@
   let deleteCheck = null;
 
   onMount(async () => {
-    objects = await listObjects(dataType, Profile.userID, 100);
+    objects = await listObjects(dataType, $Profile.id, 100);
 
     for (let index = 0; index < objects.length; index++) {
       if (typeof objects[index].value.previewUrl !== 'string') {
