@@ -1,4 +1,5 @@
 import { Liked } from '../../../storage';
+// eslint-disable-next-line no-unused-vars
 import { dlog } from '../helpers/DebugLog';
 
 class ArtworkList {
@@ -119,7 +120,7 @@ class ArtworkList {
     }
   }
 
-  placePlayPauseButton(scene, x, y, imageurl, gameObject, artContainer) {
+  static placePlayPauseButton(scene, x, y, imageurl, gameObject, artContainer) {
     // place heartButton under the artwork, make them interactive
     const artFrame = scene.textures.get('artFrame_512');
     const marginY = 16;

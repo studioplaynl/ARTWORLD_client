@@ -143,56 +143,40 @@ class ServerCall {
 
   async downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin) {
     // const scene = ManageSession.currentScene;
-    await listAllObjects(type, location).then((rec) => {
+    if (type === 'dier') {
+      await listAllObjects('stopmotion', null).then((rec) => {
       // eslint-disable-next-line no-param-reassign
-      serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
-      dlog('serverItemsArray, rec : ', rec, serverItemsArray);
+        serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
+        // dlog('serverItemsArray, rec : ', rec, serverItemsArray);
 
-      if (type === 'dier') {
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === 'dier');
-      }
+        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
 
-      dlog('serverItemsArray: ', type, serverItemsArray);
-      if (serverItemsArray.array.length > 0) {
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.startLength = serverItemsArray.array.length;
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.itemsDownloadCompleted = 0;
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.itemsFailed = 0;
-
-        serverItemsArray.array.forEach((element, index, array) => {
-          this.downloadArtwork(element, index, array, type, artSize, artMargin);
-        });
-      }
-    });
+        this.handleServerArray(type, serverItemsArray, artSize, artMargin);
+      });
+    } else {
+      await listAllObjects(type, location).then((rec) => {
+      // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
+        dlog('serverItemsArray: ', type, serverItemsArray);
+        this.handleServerArray(type, serverItemsArray, artSize, artMargin);
+      });
+    }
   }
 
-  async downloadAnimalChallenge(type, serverItemsArray, artSize, artMargin) {
-    // const scene = ManageSession.currentScene;
-    await listAllObjects('stopmotion', null).then((rec) => {
+  handleServerArray(type, serverItemsArray, artSize, artMargin) {
+    if (serverItemsArray.array.length > 0) {
       // eslint-disable-next-line no-param-reassign
-      serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
-      // dlog('serverItemsArray, rec : ', rec, serverItemsArray);
-
+      serverItemsArray.startLength = serverItemsArray.array.length;
       // eslint-disable-next-line no-param-reassign
-      serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
+      serverItemsArray.itemsDownloadCompleted = 0;
+      // eslint-disable-next-line no-param-reassign
+      serverItemsArray.itemsFailed = 0;
 
-      dlog('serverItemsArray: ', type, serverItemsArray);
-      if (serverItemsArray.array.length > 0) {
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.startLength = serverItemsArray.array.length;
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.itemsDownloadCompleted = 0;
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.itemsFailed = 0;
-
-        serverItemsArray.array.forEach((element, index, array) => {
-          this.downloadArtwork(element, index, array, type, artSize, artMargin);
-        });
-      }
-    });
+      serverItemsArray.array.forEach((element, index, array) => {
+        this.downloadArtwork(element, index, array, type, artSize, artMargin);
+      });
+    }
   }
 
   async downloadArtwork(element, index, array, type, artSize, artMargin) {
