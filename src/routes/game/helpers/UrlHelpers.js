@@ -102,16 +102,9 @@ export function parseQueryString() {
     playerLocation.set(newPlayerLocation);
   }
 
-
-
-  // TODO: These boundries must be drawn from the current scene
-
   if ('x' in query && 'y' in query) {
-    // TODO SOLUTION:
     // url gets parsed before scene is loaded, so there is no way of knowing the
     // scene size when onboarding the scene
-    // solution: set the sceneSize in a file, both scene and urlHelpers can read from it?
-    // but then we need to parse first the location?
 
     const currentLocation = get(playerLocation);
 
@@ -125,8 +118,6 @@ export function parseQueryString() {
     maxX = (currentSceneSize.x / 2) - (ManageSession.avatarSize / 2);
     minY = -(currentSceneSize.y / 2) + (ManageSession.avatarSize / 2);
     maxY = (currentSceneSize.y / 2) - (ManageSession.avatarSize / 2);
-
-    // TODO SOLUTION end
 
     const queryX = parseInt(query.x, 10);
     const queryY = parseInt(query.y, 10);

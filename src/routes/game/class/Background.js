@@ -1,5 +1,37 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
+import ManageSession from '../ManageSession';
+import CoordinatesTranslator from './CoordinatesTranslator';
+
+const { Phaser } = window;
+
 class Background {
+  standardWithDots(scene) {
+    this.repeatingDots({
+      scene,
+      gridOffset: 80,
+      dotWidth: 2,
+      dotColor: 0x7300ed,
+      backgroundColor: 0xffffff,
+    });
+
+    // make a repeating set of rectangles around the artworld canvas
+    const middleCoordinates = new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, 0),
+      CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, 0),
+    );
+
+    scene.borderRectArray = [];
+
+    for (let i = 0; i < 3; i++) {
+      scene.borderRectArray[i] = scene.add.rectangle(0, 0, scene.worldSize.x + (80 * i), scene.worldSize.y + (80 * i));
+      scene.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
+
+      scene.borderRectArray[i].x = middleCoordinates.x;
+      scene.borderRectArray[i].y = middleCoordinates.y;
+    }
+  }
+
   repeatingDots(config) {
     // fill in textures
     // get world size
@@ -104,6 +136,48 @@ class Background {
     rt1.destroy();
     eraser.destroy();
     rectangle.destroy();
+  }
+
+  bigRectangleScaled(config) {
+    const { scene } = config;
+    const { color } = config;
+    const { alpha } = config;
+    const { name } = config;
+    const { width } = config;
+    const { height } = config;
+    const { posX } = config;
+    const { posY } = config;
+    const { setOrigin } = config;
+    const { imageOnly } = config;
+
+    // const { worldSize } = scene;
+    const partWidth = width / 6;
+    const partHeight = height / 6;
+    // console.log("width, partWidth, height, partHeight", width, partWidth, height, partHeight)
+
+    const rectangle = scene.add.rectangle(0, 0, partWidth, partHeight, color, alpha);
+
+    const rt1 = scene.add.renderTexture(0, 0, partWidth, partWidth);
+
+    rt1.draw(rectangle);
+
+    rt1.saveTexture(name);
+    rt1.destroy();
+
+    rectangle.destroy();
+
+    // with imageOnly we don't place it into the scene with a name and reference
+    if (typeof imageOnly === 'undefined' || imageOnly === false) {
+      const square1 = scene.add.image(posX, posY, name).setOrigin(setOrigin).setScale(12).setInteractive()
+        .on('pointerdown', () => {
+          ManageSession.playerIsAllowedToMove = true;
+        })
+        .on('pointerup', () => {
+          // ManageSession.playerIsAllowedToMove = false
+        })
+        .setVisible(false);
+      square1.input.alwaysEnabled = true;
+    }
   }
 
   rectangle(config) {

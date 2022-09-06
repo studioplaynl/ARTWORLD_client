@@ -17,6 +17,7 @@ body {
   padding: 0px;
   box-sizing: border-box;
   font-family: 'Inter', sans-serif;
+  overscroll-behavior-y: contain;
 }
 
 .hide {
@@ -223,4 +224,8 @@ div#phaserId {
   width: 100vw;
   height: 100vh;
   margin: 0 !important;
+}
+
+.selectContainer {
+  min-width: 125px;
 }

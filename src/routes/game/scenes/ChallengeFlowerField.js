@@ -12,9 +12,9 @@ import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import SceneSwitcher from '../class/SceneSwitcher';
-import Move from '../class/Move';
 import { playerPos } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
+import { handlePlayerMovement } from '../helpers/InputHelper';
 
 const { Phaser } = window;
 
@@ -68,14 +68,14 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     //!
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
-    let sceneInfo = SCENE_INFO.find(obj => obj.scene === this.scene.key);
-    this.worldSize.x = sceneInfo.sizeX
-    this.worldSize.y = sceneInfo.sizeY
+    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
+    this.worldSize.x = sceneInfo.sizeX;
+    this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
     //!
 
     const {
-      artworldToPhaser2DX, artworldToPhaser2DY, Phaser2DToArtworldY, Phaser2DToArtworldX,
+      artworldToPhaser2DX, artworldToPhaser2DY,
     } = CoordinatesTranslator;
 
     // collection: "home"
@@ -92,10 +92,11 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
     // the order of creation is the order of drawing: first = bottom ...............................
 
-    this.makeBackground();
-    this.handlePlayerMovement();
+    Background.standardWithDots(this);
 
-    this.everythingFlowerFlied()
+    handlePlayerMovement(this);
+
+    this.everythingFlowerFlied();
 
     // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
     // End Background .........................................................................................
@@ -132,135 +133,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     //!
   }// end create
 
-   makeBackground() {
-    // the order of creation is the order of drawing: first = bottom ...............................
-    Background.rectangle({
-      scene: this,
-      name: 'bgImageWhite',
-      posX: 0,
-      posY: 0,
-      setOrigin: 0,
-      color: 0xffffff,
-      alpha: 1,
-      width: this.worldSize.x,
-      height: this.worldSize.y,
-    });
-
-    // this.bgImage = this.add.image(0, 0, 'bgImageWhite').setOrigin(0);;
-
-    Background.repeatingDots({
-      scene: this,
-      gridOffset: 80,
-      dotWidth: 2,
-      dotColor: 0x7300ed,
-      backgroundColor: 0xffffff,
-    });
-
-
-    // make a repeating set of rectangles around the artworld canvas
-    const middleCoordinates = new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
-    );
-    this.borderRectArray = [];
-
-    for (let i = 0; i < 3; i++) {
-      this.borderRectArray[i] = this.add.rectangle(0, 0, this.worldSize.x + (80 * i), this.worldSize.y + (80 * i));
-      this.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
-
-      this.borderRectArray[i].x = middleCoordinates.x;
-      this.borderRectArray[i].y = middleCoordinates.y;
-    }
-  }
-
- handlePlayerMovement() {
-    //! DETECT dragging and mouseDown on rectangle
-    Background.rectangle({
-      scene: this,
-      posX: 0,
-      posY: 0,
-      color: 0xffff00,
-      alpha: 1,
-      width: this.worldSize.x,
-      height: this.worldSize.y,
-      name: 'touchBackgroundCheck',
-      setOrigin: 0,
-    });
-
-    this.touchBackgroundCheck
-    // draggable to detect player drag movement
-      .setInteractive({ draggable: true }) // { useHandCursor: true } { draggable: true }
-      .on('pointerup', () => {
-      })
-      .on('pointerdown', () => {
-        ManageSession.playerIsAllowedToMove = true;
-      })
-      .on('drag', (pointer, dragX, dragY) => {
-        this.input.manager.canvas.style.cursor = "grabbing";
-        // dlog('dragX, dragY', dragX, dragY);
-        // console.log('dragX, dragY', dragX, dragY);
-        // if we drag the touchBackgroundCheck layer, we update the player
-        // eslint-disable-next-line no-lonely-if
-
-        const moveCommand = 'moving';
-        const movementData = { dragX, dragY, moveCommand };
-        Move.moveByDragging(movementData);
-        ManageSession.movingByDragging = true;
-      })
-      .on('dragend', () => {
-        // check if player was moving by dragging
-        // otherwise movingByTapping would get a stop animation command
-        if (ManageSession.movingByDragging) {
-          this.input.manager.canvas.style.cursor = "default";
-          const moveCommand = 'stop';
-          const dragX = 0;
-          const dragY = 0;
-          const movementData = { dragX, dragY, moveCommand };
-          Move.moveByDragging(movementData);
-          ManageSession.movingByDragging = false;
-          ManageSession.playerIsAllowedToMove = false;
-        }
-      });
-
-    this.touchBackgroundCheck
-      .setDepth(219)
-      .setOrigin(0);
-    this.touchBackgroundCheck.setVisible(false);
-
-    // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
-    this.touchBackgroundCheck.input.alwaysEnabled = true;
-    //! end DETECT dragging and mouseDown on rectangle
-
-    //! DoubleClick for moveByTapping
-    this.tapInput = this.rexGestures.add.tap({
-      enable: true,
-      // bounds: undefined,
-      time: 250,
-      tapInterval: 350,
-      // threshold: 9,
-      // tapOffset: 10,
-      // taps: undefined,
-      // minTaps: undefined,
-      // maxTaps: undefined,
-    })
-      .on('tap', () => {
-        // dlog('tap');
-      }, this)
-      .on('tappingstart', () => {
-        // dlog('tapstart');
-      })
-      .on('tapping', (tap) => {
-        // dlog('tapping', tap.tapsCount);
-        if (tap.tapsCount === 2) {
-          if (ManageSession.playerIsAllowedToMove) {
-            Move.moveByTapping(this);
-          }
-        }
-      });
-    //! doubleClick for moveByTapping
-  }
-everythingFlowerFlied()
-{
+  everythingFlowerFlied() {
   // make background for flowers
     this.backgroundFlowerFieldFloor = this.add.graphics();
     this.backgroundFlowerFieldFloor.name = 'this.backgroundFlowerFieldFloor';
@@ -294,7 +167,7 @@ everythingFlowerFlied()
       .setOrigin(0.5, 0.5)
       .setInteractive({ useHandCursor: true })
       .setDepth(500);
-    this.fliedFloorSky.on('pointerup', (pointer) => {
+    this.fliedFloorSky.on('pointerup', () => {
       // toggle the visibility of this.backgroundFlowerFieldFloor
       this.backgroundFlowerFieldSky.setVisible(!this.backgroundFlowerFieldSky.visible);
     });
@@ -308,7 +181,7 @@ everythingFlowerFlied()
       .setOrigin(0.5, 0.5)
       .setInteractive({ useHandCursor: true })
       .setDepth(500);
-    this.fliefFloorButton.on('pointerup', (pointer) => {
+    this.fliefFloorButton.on('pointerup', () => {
       // toggle the visibility of this.backgroundFlowerFieldFloor
       this.backgroundFlowerFieldFloor.setVisible(!this.backgroundFlowerFieldFloor.visible);
     });
@@ -320,31 +193,30 @@ everythingFlowerFlied()
     this.flowerAmountOfOverlapX = 0.5;
     this.flowerAmountOfOverlapY = 0.8;
     this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
-    console.log('this.amountOfFlowers', this.amountOfFlowers);
     this.flowerKeyArray = ['flower'];
     this.flowerArray = [];
     this.flowerTweenArray = [];
-    this.flowerObject;
-    this.flowerTween;
-    this.flowerScale;
-    this.flowerRotateAmount;
-    this.flowerTweenTime;
+    this.flowerObject = null;
+    this.flowerTween = null;
+    this.flowerScale = null;
+    this.flowerRotateAmount = null;
+    this.flowerTweenTime = null;
     this.flowerFliedStartedMaking = false;
 
     this.makeFlowerFlied();
 
-     this.flowerKeyArray = ['flower'];
+    this.flowerKeyArray = ['flower'];
     // download all drawings "bloem" from allUsersChallenge
 
     this.getListOfBloem();
-}
+  }
 
   async getListOfBloem() {
     await listAllObjects('drawing', null).then((rec) => {
       // download all the drawings and then filter for "bloem"
-      this.userArtServerList = rec.filter((obj) => obj.permission_read == 2);
+      this.userArtServerList = rec.filter((obj) => obj.permission_read === 2);
       // console.log("this.userArtServerList", this.userArtServerList)
-      this.userArtServerList = this.userArtServerList.filter((obj) => obj.value.displayname == 'bloem');
+      this.userArtServerList = this.userArtServerList.filter((obj) => obj.value.displayname === 'bloem');
 
       if (this.userArtServerList.length > 0) {
         this.userArtServerList.forEach((element, index, array) => {
@@ -359,14 +231,22 @@ everythingFlowerFlied()
 
     // console.log("flowerRowY", flowerRowY)
     for (let i = 0; i < this.amountOfFlowers; i++) {
-      this.flowerScale = Phaser.Math.FloatBetween(this.flowerScaleFactor - (this.flowerScaleFactor / 12), this.flowerScaleFactor + (this.flowerScaleFactor / 12));
+      this.flowerScale = Phaser.Math.FloatBetween(
+        this.flowerScaleFactor - (this.flowerScaleFactor / 12),
+        this.flowerScaleFactor + (this.flowerScaleFactor / 12),
+      );
       // scale around 0.5 (0.4 - 0.6)
       // get a new flower key from the array, randomly
       flowerKey = this.flowerKeyArray[Phaser.Math.Between(0, this.flowerKeyArray.length - 1)];
       // console.log("flowerKey", flowerKey)
       const flowerY = Phaser.Math.Between(flowerRowY - 35, flowerRowY + 35);
       // console.log("flowerY", flowerY)
-      this.flowerObject = this.add.image(i * (this.flowerSize * this.flowerAmountOfOverlapX), flowerY, flowerKey).setScale(this.flowerScale).setOrigin(0.5, 1);
+      this.flowerObject = this.add.image(
+        i * (this.flowerSize * this.flowerAmountOfOverlapX),
+        flowerY,
+
+        flowerKey,
+      ).setScale(this.flowerScale).setOrigin(0.5, 1);
       this.flowerRotateAmount = Phaser.Math.Between(8, 18);
       this.flowerTweenTime = Phaser.Math.Between(1000, 1100);
       this.flowerTween = this.tweens.add({
@@ -384,7 +264,6 @@ everythingFlowerFlied()
   }
 
   makeFlowerFlied() {
-    console.log('makeFlowerFlield');
     // console.log("this.flowerFliedStartedMaking", this.flowerFliedStartedMaking)
 
     if (this.flowerFliedStartedMaking) {
@@ -393,7 +272,6 @@ everythingFlowerFlied()
 
     if (!this.flowerFliedStartedMaking) {
       this.flowerFliedStartedMaking = true;
-      console.log('this.flowerFliedStartedMaking', this.flowerFliedStartedMaking);
       // empty the array; start with empty field
       // if (this.flowerArray.length > 0) {
       // first remove the tween, after destoy the old flower gameobject
@@ -459,17 +337,14 @@ everythingFlowerFlied()
     }
   }
 
-  async downloadFlowers(element, index, array) {
-    const totalArtWorks = array.length;
+  async downloadFlowers(element) {
     const imageKeyUrl = element.value.url;
-    console.log('element.value.displayname', element.value.displayname);
-    console.log('imageKeyUrl', imageKeyUrl);
     const imgSize = '512'; // download as 512pixels
     const fileFormat = 'png';
 
     if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
       // adds the image to the container if it is not yet in the list
-      const exists = this.flowerKeyArray.some((element) => element == imageKeyUrl);
+      const exists = this.flowerKeyArray.some((element2) => element2 === imageKeyUrl);
       if (!exists) {
         this.flowerKeyArray.push(imageKeyUrl);
       }
@@ -486,12 +361,12 @@ everythingFlowerFlied()
 
     this.load.on('filecomplete', (key) => {
       // on completion of each speci512fic artwork
-      const currentImage = this.progress.find((element) => element.imageKeyUrl == key);
+      const currentImage = this.progress.find((element3) => element3.imageKeyUrl === key);
 
       // we don't want to trigger any other load completions
       if (currentImage) {
         // adds the image to the container if it is not yet in the list
-        const exists = this.flowerKeyArray.some((element) => element == imageKeyUrl);
+        const exists = this.flowerKeyArray.some((element4) => element4 === imageKeyUrl);
         if (!exists) {
           this.flowerKeyArray.push(imageKeyUrl);
         }
@@ -503,7 +378,6 @@ everythingFlowerFlied()
       // replace flowers in the field
       // console.log("this.flowerKeyArray", this.flowerKeyArray)
       //
-      console.log('this.flowerKeyArray', this.flowerKeyArray);
       this.makeFlowerFlied();
     });
   }// end downloadArt
@@ -540,7 +414,7 @@ everythingFlowerFlied()
     //* later move them relative to the mario_star
     const particles = this.add.particles('music_quarter_note').setDepth(139);
 
-    const music_emitter = particles.createEmitter({
+    const musicEmitter = particles.createEmitter({
       x: 0,
       y: 0,
       lifespan: { min: 2000, max: 8000 },
@@ -578,7 +452,7 @@ everythingFlowerFlied()
     });
     this.mario_star.setDepth(140);
 
-    music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20);
+    musicEmitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20);
 
     locationVector = new Phaser.Math.Vector2(-2125, 1017);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
@@ -635,7 +509,7 @@ everythingFlowerFlied()
     });
   }
 
-  update(time, delta) {
+  update() {
     // zoom in and out of game
     this.gameCam.zoom = ManageSession.currentZoom;
 

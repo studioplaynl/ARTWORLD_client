@@ -5,10 +5,11 @@ import { get } from 'svelte/store';
 import { push, querystring } from 'svelte-spa-router';
 import { client } from './nakama.svelte';
 import {
-  Session, Profile, Error, Success,
+  Success, Session, Profile, Error,
 } from './session';
 import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
 import { dlog } from './routes/game/helpers/DebugLog';
+// import ManageSession from './routes/game/ManageSession';
 
 export async function login(email, _password) {
   const loginPromise = new Promise((resolve, reject) => {
@@ -25,7 +26,10 @@ export async function login(email, _password) {
         resolve(session);
       })
       .catch((err) => {
-        if (parseInt(err.status, 10) === 404 || parseInt(err.status, 10) === 401) {
+        if (
+          parseInt(err.status, 10) === 404
+          || parseInt(err.status, 10) === 401
+        ) {
           Error.set('invalid username');
           push(`/login?${get(querystring)}`);
         } else {
@@ -67,9 +71,11 @@ export async function restoreSession() {
   const session = get(Session);
 
   if (session) {
-    await client.sessionRefresh(session).then((newSession) => {
-      Session.set(newSession);
-    })
+    await client
+      .sessionRefresh(session)
+      .then((newSession) => {
+        Session.set(newSession);
+      })
       .catch((...args) => {
         dlog('sessionRefresh failed', args);
         logout();
@@ -227,10 +233,13 @@ export async function updateObject(type, name, value, pub, userID) {
       // "version": "*"
     };
     // const objectIDs =
-    await client.writeStorageObjects(session, [object]);
+    client.writeStorageObjects(session, [object]);
     // console.info('Stored objects: %o', objectIDs);
     Success.set(true);
+
+    return object;
   }
+  return '';
 }
 
 export async function listObjects(type, userID, lim) {
@@ -647,4 +656,30 @@ export async function getRandomName() {
     })
     .catch((err) => dlog(err));
   return value;
+}
+
+export async function sendMailToUser(userId, data) {
+  const profile = get(Profile);
+  const payload = { userId, ...data, username: profile.username };
+  const rpcid = 'send_artpiece';
+  const session = get(Session);
+  await client.rpc(session, rpcid, payload);
+  // eslint-disable-next-line no-console
+  // dlog('sessionCheck result', response);
+  Success.set(true);
+}
+
+export async function listAllNotifications() {
+  const session = get(Session);
+  const result = await client.listNotifications(session, 100);
+
+  return result;
+}
+
+export async function getAllHouses(location, user_id) {
+  const Sess = get(Session);
+  const payload = { location, user_id };
+  const rpcid = 'get_all_houses_object';
+  const object = await client.rpc(Sess, rpcid, payload);
+  return object.payload;
 }

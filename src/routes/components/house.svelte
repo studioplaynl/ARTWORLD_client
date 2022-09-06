@@ -1,72 +1,35 @@
 <script>
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
-  import { Profile, CurrentApp } from '../../session';
-  import { convertImage, getObject } from '../../api';
+  import { myHome } from '../../storage';
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
-  import { dlog } from '../game/helpers/DebugLog';
+  import ImagePicker from './imagePicker.svelte';
 
   // let url;
-  const show = false;
-  // const showHistory = false;
+  let show = false;
+  let showHistory = false;
   // let version;
-  let houseUrl;
-
-  // async function nextVersion() {
-  //   if ($Profile.meta.LastAvatarVersion <= version) return;
-  //   version++;
-  //   // console.log('version', version);
-  //   // console.log(
-  //   //   '$Profile.meta.LastAvatarVersion',
-  //   //   $Profile.meta.LastAvatarVersion,
-  //   // );
-  //   url = await setAvatar(`avatar/${$Profile.id}/${version}_current.png`);
-  //   img.src = url;
-  //   img.onerror = () => {
-  //     version -= 2;
-  //     nextVersion();
-  //     console.log('img not availible, gone bacck');
-  //   };
-  // }
-
-  // async function backVersion() {
-  //   if (version <= 1) return console.log('first image reached');
-  //   version--;
-  //   console.log('version', version);
-  //   url = await convertImage(
-  //     `avatar/${$Profile.id}/${version}_current.png`,
-  //     '150',
-  //     '1000',
-  //   );
-  //   setAvatar(`avatar/${$Profile.id}/${version}_current.png`);
-  // }
-
-  // function loadUrl() {
-  //   url = $Profile.url;
-  //   console.log(url);
-  //   version = Number($Profile.avatar_url.split('/')[2].split('_')[0]);
-  // }
 
   async function goHome() {
     SceneSwitcher.switchScene('DefaultUserHome', ManageSession.userProfile.id);
   }
 
   onMount(async () => {
-    try {
-      houseUrl = await getObject(
-        'home',
-        $Profile.meta.Azc || 'Amsterdam',
-        $Profile.user_id,
-      );
-    } catch (err) {
-      dlog(err); // TypeError: failed to fetch
-    }
-    if (typeof houseUrl === 'object') {
-      houseUrl = await convertImage(houseUrl.value.url, '150', '150');
-    } else {
-      houseUrl = '';
-    }
+    // try {
+    //   houseUrl = await getObject(
+    //     'home',
+    //     $Profile.meta.Azc || 'Amsterdam',
+    //     $Profile.user_id,
+    //   );
+    // } catch (err) {
+    //   dlog(err); // TypeError: failed to fetch
+    // }
+    // if (typeof houseUrl === 'object') {
+    //   houseUrl = await convertImage(houseUrl.value.url, '150', '150');
+    // } else {
+    //   houseUrl = '';
+    // }
   });
 </script>
 
@@ -83,47 +46,63 @@
   <div
     class="avatar pointer"
     on:click="{() => {
-      // show = !show;
-      // showHistory = false;
-      push('/house');
+      show = !show;
+      showHistory = false;
+      // push('/house');
     }}"
   >
-    <img alt="My House" id="house" src="{houseUrl}" />
+    <img alt="My House" id="house" src="{$myHome.url}" />
   </div>
-  <!-- {#if showHistory}
-    <div class="nextAvatar pointer">
-      <img src="/assets/SHB/svg/AW-icon-next.svg" on:click="{nextVersion}" />
-    </div>
-  {/if} -->
 </div>
-{#if show}
-  <div class="action">
-    <img
-      alt="Edit House"
-      src="/assets/SHB/svg/AW-icon-pen.svg"
-      on:click="{() => {
-        push('/house');
-      }}"
-    />
-    <img
-      alt="Go Home"
-      src="assets/SHB/svg/AW-icon-enter-space.svg"
-      on:click="{() => {
-        goHome();
-      }}"
-    />
 
-    <!-- <img
-      src="/assets/SHB/svg/AW-icon-history.svg"
-      on:click={() => {
-        showHistory = true;
-        show = false;
-      }}
-    /> -->
-  </div>
+<div class="action">
+  <img
+    class="icon"
+    alt="Edit House"
+    src="/assets/SHB/svg/AW-icon-pen.svg"
+    on:click="{() => {
+      push('/house');
+    }}"
+  />
+  <img
+    class="icon"
+    alt="Go Home"
+    src="assets/SHB/svg/AW-icon-enter-space.svg"
+    on:click="{() => {
+      goHome();
+    }}"
+  />
+  {#if showHistory}
+  <img
+  alt="close"
+    class="icon"
+    src="/assets/SHB/svg/AW-icon-cross.svg"
+    on:click="{() => {
+      showHistory = !showHistory;
+    }}"
+  />
+  {:else }
+  <img
+  alt="history"
+  class="icon"
+  src="/assets/SHB/svg/AW-icon-history.svg"
+  on:click="{() => {
+    showHistory = !showHistory;
+  }}"
+/>
+  {/if}
+</div>
+{#if showHistory}
+  <ImagePicker dataType="house" />
 {/if}
 
 <style>
+  .icon {
+    max-width: 50px;
+    margin: 10px;
+    cursor: pointer;
+  }
+
   .container-history-nav-buttons {
     display: flex;
     flex-direction: row;

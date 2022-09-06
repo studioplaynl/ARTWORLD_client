@@ -3,7 +3,7 @@
 // Storage & communcatie tussen Server en App
 
 import { get, writable } from 'svelte/store';
-import { Session } from './session';
+import { Session, Profile } from './session';
 import {
   deleteObject,
   updateObject,
@@ -12,6 +12,7 @@ import {
   convertImage,
   deleteObjectAdmin,
   deleteFile,
+  getObject,
 } from './api';
 import {
   PERMISSION_READ_PUBLIC, PERMISSION_READ_PRIVATE,
@@ -345,3 +346,80 @@ export const ArtworksStore = {
     artworksStore.update((artworks) => artworks.filter((artwork) => artwork.key !== key));
   },
 };
+
+
+/** Contains the house object of current player */
+export const myHomeStore = writable({ url: '' });
+
+
+export const myHome = {
+
+  subscribe: myHomeStore.subscribe,
+  set: myHomeStore.set,
+  update: myHomeStore.update,
+
+  create: async (Home_url) => {
+    const type = 'home';
+    const profile = get(Profile);
+    const name = profile.meta.Azc;
+    const object = await getObject(type, name);
+    const makePublic = true;
+  
+    // eslint-disable-next-line prefer-const
+    let value = !object ? {} : object.value;
+  
+    value.url = Home_url;
+    // get object
+    // dlog('value', value);
+    const returnedObject = await updateObject(type, name, value, makePublic);
+    returnedObject.url = await convertImage(returnedObject.value.url, '150', '150');
+    console.log('returnedObject', returnedObject);
+    myHome.set(returnedObject);
+    return value.url;
+  },
+
+  get: async () => {
+    let localHome = get(myHomeStore);
+    const profile = get(Profile);
+    const Sess = get(Session);
+    if (!!localHome && localHome.length > 0) return localHome;
+
+    if (Sess) {
+      try {
+        localHome = await getObject(
+          'home',
+          profile.meta.Azc,
+          Sess.user_id,
+        );
+      } catch (err) {
+        // dlog(err); // TypeError: failed to fetch
+      }
+      localHome.url = await convertImage(localHome.value.url, '150', '150');
+      console.log(localHome)
+      myHome.set(localHome);
+    } return localHome;
+  },
+
+};
+
+
+
+// export async function setHome(Home_url) {
+//   const type = 'home';
+//   const profile = get(Profile);
+//   const name = profile.meta.Azc;
+//   const object = await getObject(type, name);
+//   const makePublic = true;
+
+//   // eslint-disable-next-line prefer-const
+//   let value = !object ? {} : object.value;
+
+//   value.url = Home_url;
+//   // get object
+//   // dlog('value', value);
+//   const returnedObject = await updateObject(type, name, value, makePublic);
+//   returnedObject.url = await convertImage(returnedObject.value.url, '150', '150');
+//   console.log('returnedObject', returnedObject);
+//   myHome.set(returnedObject);
+//   return value.url;
+// }

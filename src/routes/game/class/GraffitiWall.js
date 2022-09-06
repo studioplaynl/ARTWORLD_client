@@ -9,7 +9,13 @@ class GraffitiWall {
     // we name the container as this.[name] so we can reference it later
     scene[name] = scene.add.container();
     scene[name].name = name;
-    scene[name].setSize(width + 10, height + 10);
+    // add a border around the graffiti wall to be able to drag it when in gameEdit Mode
+    const draggableBorder = 10;
+
+    // add a tool palette to the right
+    // const toolPaletteSpace = 80;
+
+    scene[name].setSize(width + draggableBorder, height + draggableBorder);
 
     // checking if a drawing wall has a front image
     if (imageFile) {
@@ -43,7 +49,7 @@ class GraffitiWall {
     });
 
     rt.on('pointerdown', (pointer) => {
-      dlog('graffiti wall');
+      // dlog('graffiti wall');
 
       ManageSession.graffitiDrawing = true;
       this.isClicking = true;

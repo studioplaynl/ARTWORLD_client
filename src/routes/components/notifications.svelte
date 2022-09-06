@@ -169,6 +169,11 @@
         />
         <!-- somebody liked your artpiece -->
       {:else if notificationCode === NOTIFICATION_ARTWORK_RECEIVED}
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-post.svg"
+          alt="Someone sent you an artwork"
+        />
         <!-- somebody sent you an artpiece -->
       {:else if notificationCode === NOTIFICATION_INVITE_RECEIVED}
         <!-- invite to play together -->
