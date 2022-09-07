@@ -1,13 +1,13 @@
 <script>
   import { push, pop } from 'svelte-spa-router';
-  import { playerHistory, PlayerZoom } from '../game/playerState';
+  import { PlayerHistory, PlayerZoom } from '../game/playerState';
   import { DEFAULT_SCENE } from '../../constants';
 
   async function goHome() {
     // Nice way to always reset to 0x0?
 
     push(`/?location=${DEFAULT_SCENE}&x=0&y=0`);
-    // const goTo = playerHistory.getAt(DEFAULT_SCENE);
+    // const goTo = PlayerHistory.getAt(DEFAULT_SCENE);
     // if (goTo) push(goTo);
     // else {
     //  push(`/?location=${DEFAULT_SCENE}&x=0&y=0`);
@@ -15,8 +15,8 @@
   }
 
   async function goBack() {
-    if ($playerHistory.length > 1) {
-      playerHistory.pop();
+    if ($PlayerHistory.length > 1) {
+      PlayerHistory.pop();
       pop();
     }
   }
@@ -48,7 +48,7 @@
     <img
       class="TopIcon"
       id="back"
-      class:showBack="{$playerHistory.length > 1}"
+      class:showBack="{$PlayerHistory.length > 1}"
       src="/assets/SHB/svg/AW-icon-previous.svg"
       alt="Go back"
     />

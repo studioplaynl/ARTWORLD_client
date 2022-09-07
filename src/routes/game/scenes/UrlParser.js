@@ -6,7 +6,7 @@ import ManageSession from '../ManageSession';
 import { listObjects } from '../../../api';
 import { DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
 import {
-  PlayerPos, PlayerLocation, playerHistory,
+  PlayerPos, PlayerLocation, PlayerHistory,
 } from '../playerState';
 import { Addressbook, Liked, Achievements } from '../../../storage';
 import { dlog } from '../helpers/DebugLog';
@@ -76,7 +76,7 @@ export default class UrlParser extends Phaser.Scene {
         house: null,
       });
       // Don't store this change in scene in the history..
-      playerHistory.pop();
+      PlayerHistory.pop();
     }
 
     if (targetHouse && checkIfLocationLooksLikeAHouse(targetHouse)) {
@@ -88,7 +88,7 @@ export default class UrlParser extends Phaser.Scene {
           house: null,
         });
         // Don't store this change in scene in the history..
-        playerHistory.pop();
+        PlayerHistory.pop();
         this.launchGame();
       }).then(() => {
         // Objects were found, so we continue to launch

@@ -5,7 +5,7 @@ import {
   push, replace, location, querystring,
 } from 'svelte-spa-router';
 import {
-  PlayerPos, PlayerLocation, playerHistory, PlayerZoom,
+  PlayerPos, PlayerLocation, PlayerHistory, PlayerZoom,
 } from '../playerState';
 import { CurrentApp } from '../../../session';
 import {
@@ -49,11 +49,11 @@ export function parseURL() {
   if (appName === '') {
     appName = DEFAULT_APP;
     replace(`/${appName}?${get(querystring)}`);
-    playerHistory.replace(`/${appName}?${get(querystring)}`);
+    PlayerHistory.replace(`/${appName}?${get(querystring)}`);
   }
 
-  if (`/${appName}` !== playerHistory.previous()) {
-    playerHistory.push(`/${appName}`);
+  if (`/${appName}` !== PlayerHistory.previous()) {
+    PlayerHistory.push(`/${appName}`);
   }
 
   // Check if a valid app..
@@ -195,13 +195,13 @@ export function updateQueryString() {
       // Only scene or app changes should be added to the browser history
       if (method === 'push') {
         push(newLocation);
-        playerHistory.push(newLocation);
+        PlayerHistory.push(newLocation);
         dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #00FF00');
       } else {
         // Location changes should just update the querystring..
         // ..so the location remains available on deeplinks and reloads
         replace(newLocation);
-        playerHistory.replace(newLocation);
+        PlayerHistory.replace(newLocation);
         dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #FF0000');
       }
     }

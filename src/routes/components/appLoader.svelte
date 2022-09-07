@@ -19,7 +19,7 @@
     setAvatar,
   } from '../../api';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
-  import { playerHistory } from '../game/playerState';
+  import { PlayerHistory } from '../game/playerState';
   import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC } from '../../constants';
 
   import AppContainer from './appContainer.svelte';
@@ -96,9 +96,9 @@
     data = null;
 
     // If a user has been here for a little while, just bring them where they were before
-    if (get(playerHistory).length > 1) {
+    if (get(PlayerHistory).length > 1) {
       pop();
-      playerHistory.pop();
+      PlayerHistory.pop();
     } else {
       // Else, if a user came here through a deep link, forward to app defaults
       push(`/${DEFAULT_APP}?location=${DEFAULT_SCENE}`);

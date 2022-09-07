@@ -56,40 +56,40 @@ export const playerStreamID = derived(
 
 
 function createHistory() {
-  const playerHistoryStore = writable([]);
+  const PlayerHistoryStore = writable([]);
 
   return {
-    subscribe: playerHistoryStore.subscribe,
-    set: playerHistoryStore.set,
-    update: playerHistoryStore.update,
+    subscribe: PlayerHistoryStore.subscribe,
+    set: PlayerHistoryStore.set,
+    update: PlayerHistoryStore.update,
 
     push: (path) => {
-      playerHistoryStore.update((hist) => [
+      PlayerHistoryStore.update((hist) => [
         ...hist,
         path,
       ]);
-      dlog('push history =', get(playerHistoryStore));
+      dlog('push history =', get(PlayerHistoryStore));
     },
 
     replace: (path) => {
-      playerHistoryStore.update((hist) => {
+      PlayerHistoryStore.update((hist) => {
         const updatedHistory = [...hist];
         if (updatedHistory.length) {
           updatedHistory[updatedHistory.length - 1] = path;
         }
         return updatedHistory;
       });
-      dlog('replace history =', get(playerHistoryStore));
+      dlog('replace history =', get(PlayerHistoryStore));
     },
 
     pop: () => {
-      playerHistoryStore.update((hist) => hist.slice(0, -1));
-      dlog('pop history =', get(playerHistoryStore));
+      PlayerHistoryStore.update((hist) => hist.slice(0, -1));
+      dlog('pop history =', get(PlayerHistoryStore));
     },
 
 
     previous: () => {
-      const hist = get(playerHistoryStore);
+      const hist = get(PlayerHistoryStore);
       const historyLength = hist.length;
       if (historyLength > 0) {
         return hist[historyLength - 1];
@@ -99,7 +99,7 @@ function createHistory() {
 
     // Search for most recent visit to page (by string, for instance: getAt('Artworld'))
     getAt: (page) => {
-      const filtered = get(playerHistoryStore).reverse().filter((el) => (el.indexOf(page) > -1));
+      const filtered = get(PlayerHistoryStore).reverse().filter((el) => (el.indexOf(page) > -1));
       if (filtered.length > 0) return filtered[0];
       return null;
     },
@@ -108,9 +108,9 @@ function createHistory() {
 }
 
 
-/** playerHistory gives us access to a bit more information than just pushing/popping on window.history */
-export const playerHistory = createHistory();
+/** PlayerHistory gives us access to a bit more information than just pushing/popping on window.history */
+export const PlayerHistory = createHistory();
 
 window.getPlayerHistory = () => {
-  console.log('history', get(playerHistory));
+  console.log('history', get(PlayerHistory));
 };
