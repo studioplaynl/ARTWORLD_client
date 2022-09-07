@@ -1,5 +1,5 @@
 <script>
-  import { push, pop } from 'svelte-spa-router';
+  import { push, pop, link } from 'svelte-spa-router';
   import ManageSession from '../game/ManageSession';
   import { playerHistory } from '../game/playerState';
   import { DEFAULT_SCENE } from '../../constants';
@@ -78,6 +78,25 @@
       alt="Zoom in"
     />
   </button>
+
+  <!-- <a
+    href="/drawing?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&key=1654865563806_olijfgroensprinkhaan"
+    use:link>DRAWING</a
+  >
+  <a href="/drawing?" use:link>(NEW)</a>
+  <a href="/stopmotion" use:link>STOP MOTION</a>
+  <a href="/stopmotion" use:link>(NEW)</a>
+  <a href="/avatar" use:link>AVATAR</a>
+  <!-- avatar ook key test1 en test -->
+  <!-- er komt hier nog een key bij! -->
+  <!-- <a
+    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
+    use:link>HOUSE 1</a
+  >
+  <a
+    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
+    use:link>HOUSE 2</a
+  > -->
 </div>
 
 <style>
@@ -118,7 +137,7 @@
     position: fixed;
     left: 0;
     top: 0;
-    margin: 15px 15px 15px 30px;
+    margin: 16px;
   }
 
   .TopIcon {

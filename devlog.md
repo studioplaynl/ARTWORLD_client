@@ -77,3 +77,7 @@ August 19
 
 
 
+
+Aug 29
+- Probably we need to group all objects in a single frame group (currentObject into a group)
+So we can delete a group as a whole when removing a frame. 

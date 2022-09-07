@@ -56,8 +56,8 @@
 
   .app-close {
     position: fixed;
-    left: 8px;
-    top: 20px;
+    left: 16px;
+    top: 16px;
     z-index: 13;
     box-shadow: 5px 5px 0px #7300ed;
     cursor: pointer;
@@ -70,12 +70,5 @@
 
   .app-close > img {
     width: 40px;
-  }
-
-  @media only screen and (max-width: 640px) {
-    .app-close {
-      top: unset;
-      bottom: 120px;
-    }
   }
 </style>

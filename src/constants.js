@@ -51,6 +51,14 @@ export const PERMISSION_READ_PRIVATE = 1;
 /** File is public */
 export const PERMISSION_READ_PUBLIC = 2;
 
+/** Base size used for artworks */
+export const IMAGE_BASE_SIZE = 2048;
+
+export const DEFAULT_PREVIEW_HEIGHT = 150;
+export const STOPMOTION_BASE_SIZE = 1024;
+export const STOPMOTION_MAX_FRAMES = 12;
+export const STOPMOTION_FPS = 5;
+
 
 /*
 0 Users are friends with each other.
@@ -67,6 +75,7 @@ export const FRIENDSTATE_BANNED = 3;
 
 /** Object has been deleted */
 export const OBJECT_STATE_REGULAR = '';
+export const OBJECT_STATE_UNDEFINED = undefined;
 export const OBJECT_STATE_IN_TRASH = 'trash';
 
 

@@ -78,8 +78,8 @@ export function handlePlayerMovement(scene) {
     })
     .on('drag1', (drag) => {
       if (ManageSession.playerIsAllowedToMove && !ManageSession.gameEditMode) {
-        const dragX = drag.drag1Vector.x;
-        const dragY = drag.drag1Vector.y;
+        const dragX = drag.drag1Vector.x / ManageSession.currentZoom;
+        const dragY = drag.drag1Vector.y / ManageSession.currentZoom;
 
         const moveCommand = 'moving';
         const movementData = { dragX, dragY, moveCommand };

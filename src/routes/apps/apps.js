@@ -1,11 +1,13 @@
 // eslint-disable-next-line import/prefer-default-export
 export const APPS = [
   'game',
-  'drawing',
-  'stopmotion',
   'house',
   'avatar',
   'drawingchallenge',
+  'drawing',
+  'stopmotion',
+  'avatar',
+  'house',
 ];
 
 export const DEFAULT_APP = 'game';

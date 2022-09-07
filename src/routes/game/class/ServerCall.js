@@ -1,7 +1,7 @@
 /* eslint-disable prefer-destructuring */
 import ManageSession from '../ManageSession';
 import {
-  listObjects, convertImage, listAllObjects, getAllHouses,
+  convertImage, getAllHouses,
 } from '../../../api';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
@@ -152,7 +152,9 @@ class ServerCall {
     }
   }
 
-  async;
+  async getAllArtworkType() {
+
+  }
 
 
   /** Provide detailed information on a file loading error in Phaser, and provide fallback */

@@ -40,7 +40,7 @@
     <button class="cancel" on:click="{cancel}">
       <img
         class="icon"
-        src="/assets/SHB/svg/AW-icon-cross.svg"
+        src="/assets/SHB/svg/AW-icon-trash.svg"
         alt="Cancel friendship request"
       />
     </button>
