@@ -1,14 +1,13 @@
 <script>
-  import { push, pop, link } from 'svelte-spa-router';
-  import ManageSession from '../game/ManageSession';
-  import { playerHistory } from '../game/playerState';
+  import { push, pop } from 'svelte-spa-router';
+  import { PlayerHistory, PlayerZoom } from '../game/playerState';
   import { DEFAULT_SCENE } from '../../constants';
 
   async function goHome() {
     // Nice way to always reset to 0x0?
 
     push(`/?location=${DEFAULT_SCENE}&x=0&y=0`);
-    // const goTo = playerHistory.getAt(DEFAULT_SCENE);
+    // const goTo = PlayerHistory.getAt(DEFAULT_SCENE);
     // if (goTo) push(goTo);
     // else {
     //  push(`/?location=${DEFAULT_SCENE}&x=0&y=0`);
@@ -16,24 +15,22 @@
   }
 
   async function goBack() {
-    if ($playerHistory.length > 1) {
-      playerHistory.pop();
+    if ($PlayerHistory.length > 1) {
+      PlayerHistory.pop();
       pop();
     }
   }
 
   async function zoomIn() {
-    if (ManageSession.currentZoom >= 4) return;
-    ManageSession.currentZoom += 0.1;
+    PlayerZoom.in();
   }
 
   function zoomReset() {
-    ManageSession.currentZoom = 1;
+    PlayerZoom.reset();
   }
 
   function zoomOut() {
-    if (ManageSession.currentZoom <= 0.2) return;
-    ManageSession.currentZoom -= 0.1;
+    PlayerZoom.out();
   }
 </script>
 
@@ -51,7 +48,7 @@
     <img
       class="TopIcon"
       id="back"
-      class:showBack="{$playerHistory.length > 1}"
+      class:showBack="{$PlayerHistory.length > 1}"
       src="/assets/SHB/svg/AW-icon-previous.svg"
       alt="Go back"
     />
@@ -79,16 +76,24 @@
     />
   </button>
 
-  <a
-    href="/dev_drawing?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&key=1654865563806_olijfgroensprinkhaan"
+  <!-- <a
+    href="/drawing?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&key=1654865563806_olijfgroensprinkhaan"
     use:link>DRAWING</a
   >
-  <a href="/dev_drawing?" use:link>DRAWING NEW</a>
-  <a href="/dev_stopmotion" use:link>STOP MOTION</a>
-  <a href="/dev_avatar" use:link>AVATAR</a>
-  <a href="/dev_house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&" use:link
-    >HOUSE</a
+  <a href="/drawing?" use:link>(NEW)</a>
+  <a href="/stopmotion" use:link>STOP MOTION</a>
+  <a href="/stopmotion" use:link>(NEW)</a>
+  <a href="/avatar" use:link>AVATAR</a>
+  <!-- avatar ook key test1 en test -->
+  <!-- er komt hier nog een key bij! -->
+  <!-- <a
+    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
+    use:link>HOUSE 1</a
   >
+  <a
+    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
+    use:link>HOUSE 2</a
+  > -->
 </div>
 
 <style>
@@ -129,7 +134,7 @@
     position: fixed;
     left: 0;
     top: 0;
-    margin: 15px 15px 15px 30px;
+    margin: 16px;
   }
 
   .TopIcon {
@@ -150,7 +155,6 @@
   .showBack {
     visibility: visible !important;
   }
-
-  .debug {
-  }
+  /* .debug {
+  } */
 </style>

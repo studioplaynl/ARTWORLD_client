@@ -2,7 +2,7 @@
 /* eslint-disable class-methods-use-this */
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import { playerPos } from '../playerState';
+import { PlayerPos } from '../playerState';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../helpers/DebugLog';
 
@@ -10,12 +10,12 @@ const { Phaser } = window;
 
 class Move {
   constructor() {
-    playerPos.subscribe((pos) => {
+    PlayerPos.subscribe((pos) => {
       this.moveByPositionStores(pos);
     });
   }
 
-  /** Respond to changes in playerPos stores ( controlled through URLs or direct manipulation) */
+  /** Respond to changes in PlayerPos stores ( controlled through URLs or direct manipulation) */
   moveByPositionStores(pos) {
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
@@ -162,7 +162,7 @@ class Move {
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
     // dlog('ManageSession.sendMoveMessage', scene.player.x, scene.player.y, 'stop');
     // update last player position in manageSession for when the player is reloaded inbetween scenes
-    playerPos.set({
+    PlayerPos.set({
       x: Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)),
       y: Math.round(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)),
     });

@@ -8,7 +8,7 @@ import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ArtworkList from '../class/ArtworkList';
-import { playerPos } from '../playerState';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 
@@ -58,9 +58,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
-
-    // UI scene
-    this.currentZoom = 1;
   }
 
   init(data) {
@@ -102,8 +99,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     // ....... end onlinePlayers ..........................................................................
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-    //! setBounds has to be set before follow, otherwise the camera doesn't follow!
-    this.gameCam.zoom = 1;
+
+    PlayerZoom.subscribe((zoom) => {
+      this.gameCam.zoom = zoom;
+    });
+
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     // ......... end PLAYER VS WORLD .......................................................................
@@ -123,7 +123,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     Player.loadPlayerAvatar(this, 0, 0);
 
     // Set the player on 0,0 position (this also updates the URL automatically)
-    playerPos.set({
+    PlayerPos.set({
       x: 0,
       y: 0,
     });
@@ -460,7 +460,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     // Player.parseNewOnlinePlayerArray(this)
     // .......................................................................
 
-    this.gameCam.zoom = ManageSession.currentZoom;
     // .......................................................................
 
     // ........... PLAYER SHADOW .............................................................................

@@ -7,7 +7,12 @@ import { client } from './nakama.svelte';
 import {
   Success, Session, Profile, Error,
 } from './session';
-import { PERMISSION_READ_PRIVATE, PERMISSION_READ_PUBLIC } from './constants';
+import {
+  PERMISSION_READ_PRIVATE,
+  PERMISSION_READ_PUBLIC,
+  STOPMOTION_MAX_FRAMES,
+  DEFAULT_PREVIEW_HEIGHT,
+} from './constants';
 import { dlog } from './routes/game/helpers/DebugLog';
 // import ManageSession from './routes/game/ManageSession';
 
@@ -100,7 +105,7 @@ export async function uploadImage(
     version,
   );
   const value = { url: jpegLocation, version, displayname: displayName };
-  const pub = status || status === 2;
+  const pub = status || status === PERMISSION_READ_PUBLIC;
 
   // FIXME: Why are we converting between 2/1 pub status and booleans?
   // if (status || status === 2) {
@@ -290,7 +295,12 @@ export async function getAccount(id) {
     const account = await client.getAccount(session);
     user = account.user;
     user.meta = JSON.parse(user.metadata);
-    user.url = await convertImage(user.avatar_url, '128', '1000', 'png');
+    user.url = await convertImage(
+      user.avatar_url,
+      DEFAULT_PREVIEW_HEIGHT,
+      DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+      'png',
+    );
     Profile.set(user);
   } else {
     // With id: get account of other user
@@ -300,7 +310,12 @@ export async function getAccount(id) {
     user.meta = typeof user.metadata === 'string'
       ? JSON.parse(user.metadata)
       : user.metadata;
-    user.url = await convertImage(user.avatar_url, '128', '1000', 'png');
+    user.url = await convertImage(
+      user.avatar_url,
+      DEFAULT_PREVIEW_HEIGHT,
+      DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+      'png',
+    );
   }
 
   return user;
@@ -348,7 +363,12 @@ export async function setAvatar(avatar_url) {
   await client.updateAccount(session, {
     avatar_url,
   });
-  const Image = await convertImage(avatar_url, '128', '1000', 'png');
+  const Image = await convertImage(
+    avatar_url,
+    DEFAULT_PREVIEW_HEIGHT,
+    DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+    'png',
+  );
   // Profile.update((n) => { n.url = Image; return n });
   getAccount();
   Success.set(true);
@@ -356,25 +376,23 @@ export async function setAvatar(avatar_url) {
   return Image;
 }
 
-// export async function setHome(Home_url) {
-//   const type = 'home';
-//   const profile = get(Profile);
-//   const name = profile.meta.Azc;
-//   const object = await getObject(type, name);
-//   const makePublic = true;
+export async function setHome(Home_url) {
+  const type = 'home';
+  const profile = get(Profile);
+  const name = profile.meta.Azc || 'Amsterdam';
+  const object = await getObject(type, name);
+  const makePublic = true;
 
-//   // eslint-disable-next-line prefer-const
-//   let value = !object ? {} : object.value;
+  // eslint-disable-next-line prefer-const
+  let value = !object ? {} : object.value;
 
-//   value.url = Home_url;
-//   // get object
-//   // dlog('value', value);
-//   const returnedObject = await updateObject(type, name, value, makePublic);
-//   returnedObject.url = await convertImage(returnedObject.value.url, '150', '150');
-//   console.log('returnedObject', returnedObject);
-//   myHome.set(returnedObject);
-//   return value.url;
-// }
+  value.url = Home_url;
+  // get object
+  // dlog('value', value);
+  await updateObject(type, name, value, makePublic);
+
+  return value.url;
+}
 
 export async function getFile(file_url) {
   const session = get(Session);
@@ -425,7 +443,12 @@ export async function uploadAvatar(data) {
     avatar_url: jpegLocation,
   });
   // CurrentApp.set(''); <--- uitgezet, zou via URL moeten werken?
-  await convertImage(jpegLocation, '128', '1000', 'png');
+  await convertImage(
+    jpegLocation,
+    DEFAULT_PREVIEW_HEIGHT,
+    DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+    'png',
+  );
   // Profile.update((n) => { n.url = Image; return n });
   getAccount();
   Success.set(true);
@@ -582,60 +605,29 @@ export async function deleteObjectAdmin(id, type, name) {
 
 // ..................... image converter ................................
 // usage:
-
 // path = "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg"
-// size = "64"
+// width = "64"
 // format = "png"
 
 export async function convertImage(path, height, width, format) {
   const session = get(Session);
+
+  const payloadHeight = typeof height === 'undefined' ? DEFAULT_PREVIEW_HEIGHT.toString() : width.toString();
+  const payloadWidth = typeof width === 'undefined' ? payloadHeight : width.toString();
+  const payloadFormat = typeof format === 'undefined' ? 'png' : format;
   const payload = {
     path,
-    height,
-    width,
-    format,
+    height: payloadHeight,
+    width: payloadWidth,
+    format: payloadFormat,
   };
+
   const rpcid = 'convert_image';
   const user = await client.rpc(session, rpcid, payload);
   if (!user.payload.url) Error.set("couldn't convert image");
   return user.payload.url;
 }
 
-// export async function validate(string, type) {
-//   // Regex for Valid Characters i.e. Alphabets, Numbers and Space.
-//   let regex = new RegExp(/[^A-Za-z -@0-9]/g);
-//   if (type == 'special') regex = /^[^\W|_]+$/g;
-//   if (type == 'phone') regex = '';
-//   if (type == 'email') regex = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/);
-
-//   if (type == 'password') {
-//     regex = /^[^]{8,15}$/g;
-//     password = string;
-//     dlog(`pass${password}`);
-//   }
-
-//   dlog(regex);
-//   dlog(string);
-//   let valid = regex.test(string);
-//   dlog(valid);
-
-//   if (type == 'repeatpassword') {
-//     repeatpassword = string;
-//     dlog(password);
-//     dlog(repeatpassword);
-//     if (repeatpassword == password) valid = true;
-//     else valid = false;
-//   }
-//   dlog(input);
-//   if (input) {
-//     if (valid) {
-//       input.path[0].style.border = '0px';
-//     } else {
-//       input.path[0].style.border = '1px solid red';
-//     }
-//   }
-//   return valid;
-// }
 
 export function setLoader(state) {
   dlog('setLoader to ... ', state);

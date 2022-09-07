@@ -3,7 +3,7 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog } from '../helpers/DebugLog';
-import { playerLocation, playerStreamID } from '../playerState';
+import { PlayerLocation, playerStreamID } from '../playerState';
 import { DEFAULT_HOME } from '../../../constants';
 import { Error } from '../../../session';
 import { setLoader } from '../../../api';
@@ -18,21 +18,21 @@ class SceneSwitcher {
   constructor() {
     // this.tempHistoryArray = [];
 
-    this.unsubscribeScene = playerLocation.subscribe(() => {
+    this.unsubscribeScene = PlayerLocation.subscribe(() => {
       this.doSwitchScene();
     });
-    // this.unsubscribeHouse = playerLocationHouse.subscribe(() => {
+    // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {
     //   this.doSwitchScene();
     // });
   }
 
   pushLocation(scene) {
-    console.log('pushLocation called', scene);
+    // console.log('pushLocation called', scene);
     ManageSession.currentScene = scene;
   }
 
   switchScene(targetScene, targetHouse) {
-    playerLocation.set({
+    PlayerLocation.set({
       house: targetHouse,
       scene: targetScene,
     });
@@ -40,8 +40,8 @@ class SceneSwitcher {
 
   doSwitchScene() {
     const scene = ManageSession.currentScene;
-    const targetScene = get(playerLocation).scene;
-    const targetHouse = get(playerLocation).house;
+    const targetScene = get(PlayerLocation).scene;
+    const targetHouse = get(PlayerLocation).house;
 
     if (targetScene === DEFAULT_HOME && targetHouse === null) {
       return;

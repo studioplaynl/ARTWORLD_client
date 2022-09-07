@@ -73,23 +73,23 @@
     }}"
   />
   {#if showHistory}
-  <img
-  alt="close"
-    class="icon"
-    src="/assets/SHB/svg/AW-icon-cross.svg"
-    on:click="{() => {
-      showHistory = !showHistory;
-    }}"
-  />
-  {:else }
-  <img
-  alt="history"
-  class="icon"
-  src="/assets/SHB/svg/AW-icon-history.svg"
-  on:click="{() => {
-    showHistory = !showHistory;
-  }}"
-/>
+    <img
+      alt="close"
+      class="icon"
+      src="/assets/SHB/svg/AW-icon-cross.svg"
+      on:click="{() => {
+        showHistory = !showHistory;
+      }}"
+    />
+  {:else}
+    <img
+      alt="history"
+      class="icon"
+      src="/assets/SHB/svg/AW-icon-history.svg"
+      on:click="{() => {
+        showHistory = !showHistory;
+      }}"
+    />
   {/if}
 </div>
 {#if showHistory}

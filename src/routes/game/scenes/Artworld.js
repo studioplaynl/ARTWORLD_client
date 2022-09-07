@@ -12,7 +12,7 @@ import SceneSwitcher from '../class/SceneSwitcher';
 import ServerCall from '../class/ServerCall';
 import Exhibition from '../class/Exhibition';
 import { dlog } from '../helpers/DebugLog';
-import { playerPos } from '../playerState';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
@@ -43,8 +43,6 @@ export default class Artworld extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
-
-    this.currentZoom = 1;
   }
 
   async preload() {
@@ -80,8 +78,8 @@ export default class Artworld extends Phaser.Scene {
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
+      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 
@@ -95,9 +93,14 @@ export default class Artworld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-    this.gameCam.zoom = 1;
+
+
+    PlayerZoom.subscribe((zoom) => {
+      this.gameCam.zoom = zoom;
+    });
+
     this.gameCam.startFollow(this.player);
-    this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
+    // this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     // https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
     // ......... end PLAYER VS WORLD .......................................................................
 
@@ -598,9 +601,6 @@ export default class Artworld extends Phaser.Scene {
   }
 
   update() {
-    // zoom in and out of game
-    this.gameCam.zoom = ManageSession.currentZoom;
-
     // don't move the player with clicking and swiping in edit mode
     if (!ManageSession.gameEditMode) {
       // ...... ONLINE PLAYERS ................................................

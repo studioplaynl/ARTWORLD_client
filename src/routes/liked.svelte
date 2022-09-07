@@ -70,7 +70,10 @@
         if (likedArtworks.length > 0) {
           likedArtworks.forEach(async (liked) => {
             if (liked.value && liked.value?.url) {
-              const img = await convertImage(liked.value.url, '128', '128');
+              const img = await convertImage(
+                liked.value.url,
+                DEFAULT_PREVIEW_HEIGHT,
+              );
 
               images = [
                 ...images,
