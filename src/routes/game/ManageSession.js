@@ -104,7 +104,7 @@ class ManageSession {
     dlog('socket created with client');
 
     this.userProfile = get(Profile);
-    dlog('this.userProfile', this.userProfile);
+    // dlog('this.userProfile', this.userProfile);
 
     const createStatus = true;
     this.socket.connect(get(Session), createStatus).then(() => {

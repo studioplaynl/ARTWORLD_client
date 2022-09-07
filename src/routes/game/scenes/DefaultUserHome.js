@@ -1,16 +1,15 @@
 import ManageSession from '../ManageSession';
-import { listAllObjects, convertImage } from '../../../api';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
 import Background from '../class/Background';
-import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
-import ArtworkList from '../class/ArtworkList';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
+import ServerCall from '../class/ServerCall';
+import { dlog } from '../helpers/DebugLog';
 
 const { Phaser } = window;
 
@@ -38,6 +37,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.homesRepreseneted = [];
     this.homesGenerate = false;
 
+    this.userStopmotionServerList = {};
+    this.userDrawingServerList = {};
+    this.drawingGroup = null;
+    this.stopmotionGroup = null;
+
     this.allUserArt = [];
     this.userArtServerList = [];
     this.userArtDisplayList = [];
@@ -51,6 +55,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.artIconSize = 64;
     this.artPreviewSize = 128;
     this.artDisplaySize = 512;
+    this.artMargin = 10;
 
     this.artOffsetBetween = 20;
 
@@ -117,343 +122,38 @@ export default class DefaultUserHome extends Phaser.Scene {
       color: 0xffff00,
     }).setDepth(199);
 
-    this.artworksListSpinner.start();
+    this.artworksListSpinner.destroy();
+    //! this.artworksListSpinner.start();
     //
 
     Player.loadPlayerAvatar(this, 0, 0);
 
-    // Set the player on 0,0 position (this also updates the URL automatically)
+    // Set the player on the left side of the world (this also updates the URL automatically)
     PlayerPos.set({
-      x: 0,
+      x: -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2),
       y: 0,
     });
 
-    await listAllObjects('drawing', this.location).then((rec) => {
-      // this.userArtServerList is an array with objects, in the form of:
-
-      // collection: "drawing"
-      // create_time: "2022-01-27T16:46:00Z"
-      // key: "1643301959176_cyaanConejo"
-      // permission_read: 1
-      // permission_write: 1
-      // update_time: "2022-02-09T13:47:01Z"
-      // user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
-      // value:
-      //  displayname: "cyaanConejo"
-      //  json: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
-      //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-...?signature=6339.."
-      //  status: ""
-      //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
-      //  version: 0
-
-      // permission_read: 1 indicates hidden
-      // permission_read: 2 indicates visible
-
-      // we filter out the visible artworks
-      // filter only the visible art = "permission_read": 2
-      this.userArtServerList = rec.filter((obj) => obj.permission_read === 2);
-
-      // console.log('this.userArtServerList', this.userArtServerList);
-      if (this.userArtServerList.length > 0) {
-        this.userArtServerList.forEach((element, index, array) => {
-          this.loadDrawing(element, index, array);
-        });
-      } else {
-        this.artworksListSpinner.destroy();
-      }
-    });
-
-    await listAllObjects('stopmotion', this.location).then((rec) => {
-    // this.userArtServerList is an array with objects, in the form of:
-
-      // collection: "stopmotion"
-      // create_time: "2022-01-27T16:46:00Z"
-      // key: "1643301959176_cyaanConejo"
-      // permission_read: 1
-      // permission_write: 1
-      // update_time: "2022-02-09T13:47:01Z"
-      // user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
-      // value:
-      //  displayname: "cyaanConejo"
-      //  json: "stopmotion//5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
-      //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-...?signature=6339.."
-      //  status: ""
-      //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
-      //  version: 0
-
-      // permission_read: 1 indicates hidden
-      // permission_read: 2 indicates visible
-
-      // we filter out the visible artworks
-      // filter only the visible art = "permission_read": 2
-      this.userStopmotionServerList = rec.filter((obj) => obj.permission_read === 2);
-
-      console.log('this.userStopmotionServerList', this.userStopmotionServerList);
-      if (this.userStopmotionServerList.length > 0) {
-        this.userStopmotionServerList.forEach((element, index, array) => {
-          this.downloadStopmotion(element, index, array);
-        });
-      }
-    });
-
-
-    // await listObjects("stopmotion", this.location, 100).then((rec) => {
-    // this.userArtServerList is an array with objects, in the form of:
-
-    // collection: "stopmotion"
-    // create_time: "2022-01-27T16:46:00Z"
-    // key: "1643301959176_cyaanConejo"
-    // permission_read: 1
-    // permission_write: 1
-    // update_time: "2022-02-09T13:47:01Z"
-    // user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
-    // value:
-    //  displayname: "cyaanConejo"
-    //  json: "stopmotion//5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.json"
-    //  previewUrl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/drawing/5264dc23-a339-...?signature=6339.."
-    //  status: ""
-    //  url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
-    //  version: 0
-
-    // permission_read: 1 indicates hidden
-    // permission_read: 2 indicates visible
-
-    // we filter out the visible artworks
-    // filter only the visible art = "permission_read": 2
-    //     this.userStopmotionServerList = rec.filter(obj => obj.permission_read == 2)
-
-    //     console.log("this.userStopmotionServerList", this.userStopmotionServerList)
-    //     if (this.userStopmotionServerList.length > 0) {
-    //         this.userStopmotionServerList.forEach((element, index, array) => {
-    //             this.downloadStopmotion(element, index, array)
-    //         })
-    //     }
-    // })
+    this.loadAndPlaceArtworks();
   }// end create
 
-  async downloadStopmotion(element, index, array) {
-    //! we are placing the artWorks 'around' (left and right of) the center of the world
-    const totalArtWorks = array.length;
-    const imageKeyUrl = element.value.url;
-    const imgSize = this.artDisplaySize.toString();
-    const getImageWidth = (this.artDisplaySize * 1000).toString();
-    const fileFormat = 'png';
-    // put the artworks 'around' the center, which means: take total artworks * space = total x space eg 3 * 550 = 1650
-    // we start at middleWorld.x - totalArtWidth + (artIndex * artDisplaySize)
+  loadAndPlaceArtworks() {
+    let type = 'drawing';
+    let serverItemsArray = this.userDrawingServerList;
+    const { location } = this;
+    dlog('this.location', location);
+    const artSize = this.artDisplaySize;
+    const artMargin = artSize / 10;
+    this.artMargin = artMargin;
+    this.drawingGroup = this.add.group();
+    ServerCall.downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin);
 
-    const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks;
-
-    // console.log('totalArtWidth', totalArtWidth);
-    const middleWorldX = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0);
-    const startXArt = middleWorldX - (totalArtWidth / 2);
-
-    const coordX = index === 0 ? startXArt : (startXArt) + (index * (this.artDisplaySize + 38));
-    this.stopmotionContainer = this.add.container(0, 0).setDepth(100);
-
-    const y = 500 + this.artDisplaySize + (38 * 4);
-
-    if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
-      // adds a frame to the container
-      this.stopmotionContainer.add(this.add.image(coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0.5));
-
-      // adds the image to the container
-      const setImage = this.add.sprite(coordX - this.artDisplaySize / 2, y, imageKeyUrl).setOrigin(0.5);
-      this.stopmotionContainer.add(setImage);
-      this.artworksListSpinner.destroy();
-    } else { // otherwise download the image and add it
-      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
-      // const convertedImage = element.value.previewUrl
-
-      // for tracking each file in progress
-      this.progressStopmotion.push({ imageKeyUrl, coordX });
-      // console.log('imageKeyUrl stopmotion', imageKeyUrl);
-
-      this.load.spritesheet(
-        imageKeyUrl,
-        convertedImage,
-        { frameWidth: this.artDisplaySize, frameHeight: this.artDisplaySize },
-      );
-      // console.log('stopmotion', imageKeyUrl);
-      this.load.start(); // start the load queue to get the image in memory
-    }
-
-    // ArtworkList.placeHeartButton(this, coordX, y, imageKeyUrl, element, this.stopmotionContainer);
-
-    this.load.on('filecomplete', (key) => {
-      // on completion of each specific artwork
-      const currentImage = this.progressStopmotion.find((element2) => element2.imageKeyUrl === key);
-
-      // console.log('currentImage', currentImage);
-      // we don't want to trigger any other load completions
-      if (currentImage) {
-        // adds a frame to the container
-        this.stopmotionContainer.add(this.add.image(
-          currentImage.coordX - this.artDisplaySize / 2,
-          y,
-
-          'artFrame_512',
-        ).setOrigin(0.5));
-
-        const avatar = this.textures.get(currentImage.imageKeyUrl);
-        // eslint-disable-next-line no-underscore-dangle
-        const avatarWidth = avatar.frames.__BASE.width;
-        // console.log('stopmotion width: ', avatarWidth);
-
-        // eslint-disable-next-line no-underscore-dangle
-        const avatarHeight = avatar.frames.__BASE.height;
-        // console.log(`stopmotion Height: ${avatarHeight}`);
-
-        const avatarFrames = Math.round(avatarWidth / avatarHeight);
-        // console.log(`stopmotion Frames: ${avatarFrames}`);
-
-        // . animation for the player avatar ......................
-
-        this.stopmotionMovingKey = 'moving_stopmotion';
-        this.stopmotionStopKey = 'stop_stopmotion';
-
-        // check if the animation already exists
-        if (!this.anims.exists(this.stopmotionMovingKey)) {
-          this.anims.create({
-            key: `moving_${key}`,
-            frames: this.anims.generateFrameNumbers(currentImage.imageKeyUrl, {
-              start: 0,
-              end: avatarFrames - 1,
-            }),
-            frameRate: (avatarFrames + 2) * 2,
-            repeat: -1,
-            yoyo: false,
-          });
-
-          this.anims.create({
-            key: `stop_${key}`,
-            frames: this.anims.generateFrameNumbers(currentImage.imageKeyUrl, {
-              start: 0,
-              end: 0,
-            }),
-          });
-        }
-        // . end animation for the player avatar ......................
-
-        // adds the image to the container
-        const completedImage = this.add.sprite(
-          currentImage.coordX - this.artDisplaySize / 2,
-          y,
-          currentImage.imageKeyUrl,
-        ).setOrigin(0.5);
-        this.stopmotionContainer.add(completedImage);
-
-        completedImage.setData('moveAnim', `moving_${key}`);
-        completedImage.setData('stopAnim', `stop_${key}`);
-        if (avatarFrames > 1) {
-          completedImage.play(`moving_${key}`);
-        }
-
-        ArtworkList.placePlayPauseButton(this, coordX, y, imageKeyUrl, element, this.stopmotionContainer);
-      }
-    });
-  }// end downloadStopmotion
-
-  async loadDrawing(element, index, array) {
-    //! we are placing the artWorks 'around' (left and right of) the center of the world
-    const totalArtWorks = array.length;
-    const imageKeyUrl = element.value.url;
-    const imgSize = this.artDisplaySize.toString();
-    const fileFormat = 'png';
-    // put the artworks 'around' the center, which means: take total artworks * space = total x space eg 3 * 550 = 1650
-    // we start at middleWorld.x - totalArtWidth + (artIndex * artDisplaySize)
-
-    const totalArtWidth = (this.artDisplaySize + 38) * totalArtWorks;
-
-    // console.log('totalArtWidth', totalArtWidth);
-    const middleWorldX = CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0);
-    const startXArt = middleWorldX - (totalArtWidth / 2);
-
-    const coordX = index === 0 ? startXArt : (startXArt) + (index * (this.artDisplaySize + 38));
-    this.drawingContainer = this.add.container(0, 0).setDepth(100);
-
-    const y = 500;
-
-    if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
-      // adds a frame to the container
-      this.drawingContainer.add(this.add.image(coordX - this.artDisplaySize / 2, y, 'artFrame_512').setOrigin(0.5));
-
-      // adds the image to the container
-      const setImage = this.add.image(coordX - this.artDisplaySize / 2, y, imageKeyUrl).setOrigin(0.5);
-      this.drawingContainer.add(setImage);
-      this.artworksListSpinner.destroy();
-    } else { // otherwise download the image and add it
-      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
-
-      // for tracking each file in progress
-      this.progress.push({ imageKeyUrl, coordX });
-
-      this.load.image(imageKeyUrl, convertedImage);
-
-      this.load.start(); // start the load queue to get the image in memory
-    }
-
-    ArtworkList.placeHeartButton(this, coordX, y, imageKeyUrl, element, this.drawingContainer);
-
-    const progressBox = this.add.graphics();
-    const progressBar = this.add.graphics();
-    const progressWidth = 256;
-    const progressHeight = 50;
-    const padding = 10;
-
-    this.load.on('fileprogress', (file, value) => {
-      progressBox.clear();
-      progressBar.clear();
-      progressBox.fillStyle(0x000000, 1);
-      progressBar.fillStyle(0xFFFFFF, 1);
-
-      // the progress bar is displayed for each artworks loading process
-      const progressedImage = this.progress.find((element3) => element3.imageKeyUrl === file.key);
-
-      // we want to run the progress bar only for artworks,
-      // and it should not be triggered for any other loading processes
-      if (progressedImage) {
-        progressBox.fillRect(progressedImage.coordX - progressWidth * 1.5, y, progressWidth, progressHeight);
-        progressBar.fillRect(
-          progressedImage.coordX - progressWidth * 1.5 + padding,
-          y + padding,
-          (progressWidth * value) - (padding * 2),
-          progressHeight - padding * 2,
-        );
-      }
-    });
-
-    this.load.on('filecomplete', (key) => {
-      // on completion of each specific artwork
-      const currentImage = this.progress.find((element4) => element4.imageKeyUrl === key);
-
-      // we don't want to trigger any other load completions
-      if (currentImage) {
-        // adds a frame to the container
-        this.drawingContainer.add(this.add.image(
-          currentImage.coordX - this.artDisplaySize / 2,
-          y,
-          'artFrame_512',
-        )
-          .setOrigin(0.5));
-
-        // adds the image to the container
-        const completedImage = this.add.image(
-          currentImage.coordX - this.artDisplaySize / 2,
-          y,
-          currentImage.imageKeyUrl,
-        )
-          .setOrigin(0.5);
-        this.drawingContainer.add(completedImage);
-      }
-    });
-
-    this.load.on('complete', () => {
-      progressBar.destroy();
-      progressBox.destroy();
-      this.progress = [];
-      this.artworksListSpinner.destroy();
-    });
-  }// end downloadArt
+    type = 'stopmotion';
+    // this.userStopmotionServerList = [];
+    serverItemsArray = this.userStopmotionServerList;
+    this.stopmotionGroup = this.add.group();
+    ServerCall.downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin);
+  }
 
   update() {
     // ...... ONLINE PLAYERS ................................................

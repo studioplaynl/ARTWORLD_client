@@ -49,6 +49,9 @@ export const ZOOM_MIN = 0.2;
 export const ZOOM_MAX = 3.0;
 export const ZOOM_STEP = 0.1;
 
+// art settings
+export const ART_FRAME_BORDER = 10;
+
 /** File is readable by user and admins only */
 export const PERMISSION_READ_PRIVATE = 1;
 

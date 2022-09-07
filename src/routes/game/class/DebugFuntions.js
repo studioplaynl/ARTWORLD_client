@@ -175,30 +175,39 @@ class DebugFuntions {
       case 'Digit2':
         dlog(code);
 
-        scene.player.anims.play(scene.playerMovingKey, true);
-        scene.playerShadow.anims.play(scene.playerMovingKey, true);
+        currentScene.player.anims.play(scene.playerMovingKey, true);
+        currentScene.playerShadow.anims.play(scene.playerMovingKey, true);
         break;
+
+      case 'Digit3':
+        dlog(code);
+
+        dlog('offending scene.userStopmotionServerList.array', currentScene.userStopmotionServerList.array);
+        dlog('offending ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
+
+        break;
+
 
       case 'KeyD':
         dlog(code);
 
         // list all images in the textureManager
-        dlog(scene.textures.list);
+        dlog(currentScene.textures.list);
 
         // Return an array listing the events for which the emitter has registered listeners.
         dlog('Return an array listing the events for which the emitter has registered listeners: ');
-        dlog(scene.textures.eventNames());
+        dlog(currentScene.textures.eventNames());
 
-        dlog(scene.children); // get the whole DisplayList
+        dlog(currentScene.children); // get the whole DisplayList
 
         break;
 
       case 'KeyG':
         dlog(code);
-        dlog('scene.onlinePlayers: ', scene.onlinePlayers);
+        dlog('scene.onlinePlayers: ', currentScene.onlinePlayers);
         dlog('ManageSession.allConnectedUsers: ', allConnectedUsers);
-        dlog('onlinePlayerGroup Children: ', scene.onlinePlayersGroup.getChildren());
-        dlog('scene.player: ', scene.player);
+        dlog('onlinePlayerGroup Children: ', currentScene.onlinePlayersGroup.getChildren());
+        dlog('scene.player: ', currentScene.player);
 
         break;
 
@@ -223,9 +232,9 @@ class DebugFuntions {
         dlog(code);
         if (this.fullScreenMode) {
           this.fullScreenMode = !this.fullScreenMode;
-          scene.scale.startFullscreen();
+          currentScene.scale.startFullscreen();
         } else {
-          scene.scale.stopFullscreen();
+          currentScene.scale.stopFullscreen();
           this.fullScreenMode = !this.fullScreenMode;
         }
         break;
@@ -250,8 +259,6 @@ class DebugFuntions {
         //! reserved for updating homes as ADMIN
         dlog(code);
 
-        // set this.scene to the currentScene via ManageSession
-        this.scene = currentScene;
 
         dlog('a selected home will be saved server side');
         dlog('selectedGameObject container:', selectedGameObject);
@@ -259,8 +266,8 @@ class DebugFuntions {
         // we check if the selected gameObject is a Home by looking if it has .locationDestination = "DefaultUserHome"
         if (selectedGameObject.locationDestination === 'DefaultUserHome') {
           const updatedPosition = new Phaser.Math.Vector2(
-            Phaser2DToArtworldX(this.scene.worldSize.x, selectedGameObject.x),
-            Phaser2DToArtworldY(this.scene.worldSize.y, selectedGameObject.y),
+            Phaser2DToArtworldX(currentScene.worldSize.x, selectedGameObject.x),
+            Phaser2DToArtworldY(currentScene.worldSize.y, selectedGameObject.y),
           );
 
           dlog('updated position = ', updatedPosition);
@@ -299,13 +306,13 @@ class DebugFuntions {
         dlog('Display Mouse coordinates');
         dlog(
           'World Coordinates: ',
-          scene.input.mousePointer.worldX,
-          scene.input.mousePointer.worldY,
+          currentScene.input.mousePointer.worldX,
+          currentScene.input.mousePointer.worldY,
         );
         dlog(
           'artworldCoordinates: ',
-          Phaser2DToArtworldX(scene.worldSize.x, scene.input.activePointer.worldX),
-          Phaser2DToArtworldX(scene.worldSize.y, scene.input.activePointer.worldY),
+          Phaser2DToArtworldX(currentScene.worldSize.x, scene.input.activePointer.worldX),
+          Phaser2DToArtworldX(currentScene.worldSize.y, scene.input.activePointer.worldY),
         );
 
         break;

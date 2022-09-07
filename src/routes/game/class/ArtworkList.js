@@ -1,4 +1,6 @@
 import { Liked } from '../../../storage';
+// eslint-disable-next-line no-unused-vars
+import { dlog } from '../helpers/DebugLog';
 
 class ArtworkList {
   constructor() {
@@ -35,14 +37,13 @@ class ArtworkList {
     // keyImgUrl = mediaObject.value.url
 
     // place heartButton under the artwork, make them interactive
-    const artFrame = scene.textures.get('artFrame_512');
     const currentHeart = scene.add.image(
       x,
-      y + (artFrame.height / 2),
+      y,
       'heart',
     )
-      .setOrigin(1, 0)
-      .setScale(0.7)
+      .setOrigin(0)
+      .setScale(1)
       .setInteractive()
       .setData('toggle', true) // true, not liked state
       .on(
@@ -74,7 +75,53 @@ class ArtworkList {
     }
   }
 
-  static async heartButtonToggle(scene, mediaObject, button) {
+  placePlayPauseButton(scene, x, y, imageurl, mediaObject, artContainer) {
+    // scene, x, y, keyImgUrl, mediaObject, artContainer
+    // place heartButton under the artwork, make them interactive
+    // const artFrame = scene.textures.get('artFrame_512');
+    const marginY = 16;
+    const playButton = scene.add.circle(
+      x - (marginY * 2), // - artFrame.height
+      y + marginY,
+
+      20,
+      0x000000,
+    )
+      .setOrigin(0)
+    // const playPause = scene.add.image(
+    //   x - artFrame.height + marginY,
+    //   y + (artFrame.height / 2) + marginY,
+    //   'play',
+    // )
+    //   .setOrigin(0)
+    //   .setScale(1.2)
+      .setInteractive()
+      .setData('togglePlay', true) // true, not liked state
+      .on(
+        'pointerup',
+        () => {
+          ArtworkList.playPauseButtonToggle(playButton);
+        },
+      );
+
+    artContainer.add(playButton);
+    // artContainer.add(playPause);
+
+
+
+
+    // if (playing) {
+    //   // changing to red, liked
+    //   currentHeart.setTexture('play');
+    //   currentHeart.setData('togglePlay', false);
+    // } else {
+    //   // changing to blank, not liked
+    //   currentHeart.setTexture('pause');
+    //   currentHeart.setData('togglePlay', true);
+    // }
+  }
+
+  static async heartButtonToggle(mediaObject, button) {
     // we get the mediaObject passed along:
     // collection: "drawing"
     // create_time: "2022-01-27T16:46:00Z"
@@ -119,52 +166,27 @@ class ArtworkList {
     }
   }
 
-    placePlayPauseButton(scene, x, y, imageurl, gameObject, artContainer) {
+  static playPauseButtonToggle(button) {
+    const container = button.parentContainer;
+    const stopmotion = container.getByName('stopmotion');
+    // dlog('clicked play button, container, button, stopmotion', container, button, stopmotion);
 
-    // place heartButton under the artwork, make them interactive
-    const artFrame = scene.textures.get('artFrame_512');
-    const marginY = 16;
-    const playCircle = scene.add.circle(x - artFrame.height + marginY, 
-      y + (artFrame.height / 2) + marginY, 30,
-     0x000000)
-     .setOrigin(0)
-    // const playPause = scene.add.image(
-    //   x - artFrame.height + marginY, 
-    //   y + (artFrame.height / 2) + marginY,
-    //   'play',
-    // )
-    //   .setOrigin(0)
-    //   .setScale(1.2)
-      .setInteractive()
-      .setData('togglePlay', true) // true, not liked state
-      .on(
-        'pointerup',
-        () => {
-          ArtworkList.playPauseButtonToggle();
-        },
-      );
+    const toggle = button.getData('togglePlay');
 
-    artContainer.add(playCircle);
-   // artContainer.add(playPause);
-
- 
-
-
-    // if (playing) {
-    //   // changing to red, liked
-    //   currentHeart.setTexture('play');
-    //   currentHeart.setData('togglePlay', false);
-    // } else {
-    //   // changing to blank, not liked
-    //   currentHeart.setTexture('pause');
-    //   currentHeart.setData('togglePlay', true);
-    // }
-  }
-
-  static async playPauseButtonToggle() {
- console.log("clicked play button")
+    if (toggle) {
+      // changing to red, liked
+      button.setAlpha(0.5);
+      button.setData('togglePlay', false);
+      // stopmotion.play(stopmotion.getData('stopAnim'));
+      stopmotion.anims.msPerFrame = 400;
+    } else {
+      // changing to empty, not liked
+      button.setAlpha(1);
+      button.setData('togglePlay', true);
+      stopmotion.play(stopmotion.getData('playAnim'));
+      stopmotion.anims.msPerFrame = 120;
     }
-  
+  }
 }
 
 export default new ArtworkList();
