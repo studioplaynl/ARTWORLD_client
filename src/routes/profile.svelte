@@ -1,7 +1,7 @@
 <script>
   import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';
-  import { ArtworksStore } from '../storage';
+  import { ArtworksStore, AvatarsStore } from '../storage';
   import { getAccount } from '../api';
   import { Session, Profile } from '../session';
 
@@ -128,6 +128,15 @@
     loader = false;
   }
 
+  async function loadAvatars() {
+    if ($Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator') {
+      await AvatarsStore.loadAvatars(id);
+    } else {
+      await AvatarsStore.loadAvatars(id, 100);
+    }
+    loader = false;
+  }
+
   async function getUser() {
     if (!!params.user || !!userID) {
       CurrentUser = false;
@@ -142,6 +151,7 @@
     }
 
     loadArtworks();
+    loadAvatars();
   }
 
   getUser();
@@ -255,8 +265,8 @@
   }
 
   .splitter {
-    background-color: #7300EB;
+    background-color: #7300eb;
     width: 200%;
     height: 2px;
-}
+  }
 </style>

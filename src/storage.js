@@ -15,7 +15,10 @@ import {
   getObject,
 } from './api';
 import {
-  PERMISSION_READ_PUBLIC, PERMISSION_READ_PRIVATE,
+  PERMISSION_READ_PUBLIC,
+  PERMISSION_READ_PRIVATE,
+  STOPMOTION_MAX_FRAMES,
+  DEFAULT_PREVIEW_HEIGHT,
 } from './constants';
 
 //  Achievements of a user
@@ -182,6 +185,7 @@ const artworksStore = writable([]);
 
 export const ArtworksStore = {
 
+
   subscribe: artworksStore.subscribe,
   set: artworksStore.set,
   update: artworksStore.update,
@@ -191,9 +195,10 @@ export const ArtworksStore = {
  * @param limit Limit the results from the server
  */
   loadArtworks: async (id, limit) => {
-    const types = ['drawing', 'video', 'audio', 'stopmotion', 'picture'];
     const typePromises = [];
     let loadedArt = [];
+
+    const types = ['drawing', 'video', 'audio', 'stopmotion', 'picture'];
 
     types.forEach(async (type) => {
       // One promise per type..
@@ -256,8 +261,8 @@ export const ArtworksStore = {
         updatePromises.push(new Promise((resolveUpdatePromise) => {
           convertImage(
             artwork.value.url,
-            '150',
-            '2250',
+            DEFAULT_PREVIEW_HEIGHT,
+            DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
             'png',
           ).then((val) => {
             // Set the previewUrl value, update the array
@@ -348,6 +353,121 @@ export const ArtworksStore = {
 };
 
 
+
+const avatarsStore = writable([]);
+export const AvatarsStore = {
+
+  subscribe: avatarsStore.subscribe,
+  set: avatarsStore.set,
+  update: avatarsStore.update,
+
+  list: () => get(avatarsStore),
+
+  getCurrent: () => {
+    const allAvatars = get(avatarsStore);
+    const currentAvatar = get(Profile).avatar_url;
+    const current = allAvatars.find((avatar) => avatar.value.url === currentAvatar);
+    console.log('current avatar: ', current);
+    return current;
+  },
+
+  loadAvatars: async (id, limit) => {
+    // A promise to load objects from the server
+    const loadPromise = new Promise((resolve) => {
+      if (limit !== undefined) {
+        listAllObjects('avatar', id).then((loaded) => {
+          resolve(loaded);
+        });
+      } else {
+        listObjects('avatar', id, limit).then((loaded) => {
+          resolve(loaded);
+        });
+      }
+    });
+
+
+    // Objects were loaded, so update the preview URLs
+    loadPromise
+      .then(async (loaded) => {
+        // Execute a Promise in order to update preview URLS
+        AvatarsStore.updatePreviewUrls(loaded).then((updatedLoaded) => {
+          // Add the updated artworks to the loadedArt array
+          avatarsStore.set(updatedLoaded);
+        });
+      });
+  },
+
+  /** Update the Preview URLs for images that are new, or have been updated
+   * @param artworks Array of artworks (plain JS)
+   * @return {Promise} A Promise that resolves an updated array of artworks that includes the
+  */
+  updatePreviewUrls: (avatars) => new Promise((resolvePreviewUrls) => {
+    const avatarsToUpdate = avatars;
+    const existingAvatars = get(avatarsStore);
+    const updatePromises = [];
+
+    avatarsToUpdate.forEach(async (item, index) => {
+      // Check if avatar already existed, and if so, is it was outdated
+      const existingAvatar = existingAvatars.find((avatar) => avatar.key === item.key);
+      const outdatedAvatar = (!!existingAvatar && (existingAvatar?.update_time !== item?.update_time));
+      const avatar = item;
+
+      // Only get a fresh URL if no previewUrl is available or when it has been updated
+      if (!avatar.value.previewUrl || outdatedAvatar) {
+        if (avatar.value.url) {
+          avatar.url = avatar.value.url.split('.')[0];
+        }
+
+        // Prepare a promise per update that resolves after setting the
+        updatePromises.push(new Promise((resolveUpdatePromise) => {
+          convertImage(
+            avatar.value.url,
+            DEFAULT_PREVIEW_HEIGHT,
+            DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+            'png',
+          ).then((val) => {
+            // Set the previewUrl value, update the array
+            avatar.value.previewUrl = val;
+            avatarsToUpdate[index] = avatar;
+
+            // Then resolve this updatePromise
+            resolveUpdatePromise(val);
+          });
+        }));
+      }
+    });
+
+    // Resolve all updatePromises and resolve the main Promise
+    // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
+    Promise.all(updatePromises).then(() => {
+      resolvePreviewUrls(avatarsToUpdate);
+    });
+  }),
+
+
+  /** Delete an Avatar
+   * @param row SvelteTable row
+   * @param {string} role User role
+  */
+  delete: (row, role) => {
+    const {
+      collection, key, user_id,
+    } = row;
+
+    // Remove from server
+    if (role === 'admin' || role === 'moderator') {
+      deleteObjectAdmin(user_id, collection, key);
+    } else {
+      deleteFile(collection, key, user_id);
+    }
+
+    // Remove from store
+    avatarsStore.update((avatars) => avatars.filter((avatar) => avatar.key !== key));
+  },
+};
+
+
+
 /** Contains the house object of current player */
 export const myHomeStore = writable({ url: '' });
 
@@ -364,16 +484,16 @@ export const myHome = {
     const name = profile.meta.Azc;
     const object = await getObject(type, name);
     const makePublic = true;
-  
+
     // eslint-disable-next-line prefer-const
     let value = !object ? {} : object.value;
-  
+
     value.url = Home_url;
     // get object
     // dlog('value', value);
     const returnedObject = await updateObject(type, name, value, makePublic);
-    returnedObject.url = await convertImage(returnedObject.value.url, '150', '150');
-    console.log('returnedObject', returnedObject);
+    returnedObject.url = await convertImage(returnedObject.value.url, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_HEIGHT);
+
     myHome.set(returnedObject);
     return value.url;
   },
@@ -394,32 +514,10 @@ export const myHome = {
       } catch (err) {
         // dlog(err); // TypeError: failed to fetch
       }
-      localHome.url = await convertImage(localHome.value.url, '150', '150');
-      console.log(localHome)
+      localHome.url = await convertImage(localHome.value.url, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_HEIGHT);
+
       myHome.set(localHome);
     } return localHome;
   },
 
 };
-
-
-
-// export async function setHome(Home_url) {
-//   const type = 'home';
-//   const profile = get(Profile);
-//   const name = profile.meta.Azc;
-//   const object = await getObject(type, name);
-//   const makePublic = true;
-
-//   // eslint-disable-next-line prefer-const
-//   let value = !object ? {} : object.value;
-
-//   value.url = Home_url;
-//   // get object
-//   // dlog('value', value);
-//   const returnedObject = await updateObject(type, name, value, makePublic);
-//   returnedObject.url = await convertImage(returnedObject.value.url, '150', '150');
-//   console.log('returnedObject', returnedObject);
-//   myHome.set(returnedObject);
-//   return value.url;
-// }

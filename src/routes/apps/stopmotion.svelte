@@ -1,14 +1,8 @@
-<!-- TODO:
-  - max frames 15
-  - grouping per frame
-  - split loaded image in frames
-  - delete a single frame
-  -->
 <script>
   import { onMount } from 'svelte';
   import { Swiper, SwiperSlide } from 'swiper/svelte';
   import Drawing from './drawing.svelte';
-  import { STOPMOTION_MAX_FRAMES } from '../../constants';
+  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS } from '../../constants';
   // eslint-disable-next-line import/no-unresolved
   import 'swiper/css';
 
@@ -91,7 +85,7 @@
         else {
           currentFrame = Math.min(frames, currentFrame + 1);
         }
-      }, 200);
+      }, 1000 / STOPMOTION_FPS);
     }
   }
 
@@ -118,6 +112,7 @@
     bind:currentFrame
     bind:frames
     bind:enableEditor
+    stopMotion="{true}"
     enableOnionSkinning="{enableOnionSkinning && enableEditor}"
     on:save
     on:frameContentDeleted="{onFrameContentDeleted}"
@@ -127,7 +122,7 @@
       <div class="stopmotion__frames">
         <Swiper
           class="stopmotion__swiper"
-          spaceBetween="{0}"
+          spaceBetween="{8}"
           slidesPerView="auto"
           observer="{true}"
           centeredSlides="{true}"
@@ -135,6 +130,7 @@
           breakpoints="{{
             601: {
               direction: 'vertical',
+              spaceBetween: 0,
             },
           }}"
           on:swiper="{onSwiper}"

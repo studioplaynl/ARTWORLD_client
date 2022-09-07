@@ -12,6 +12,8 @@
     FRIENDSTATE_FRIENDS,
     FRIENDSTATE_INVITATION_SENT,
     FRIENDSTATE_INVITATION_RECEIVED,
+    STOPMOTION_MAX_FRAMES,
+    DEFAULT_PREVIEW_HEIGHT,
   } from '../constants';
 
   let friends = [];
@@ -35,8 +37,8 @@
 
         friend.user.url = await convertImage(
           friend.user.avatar_url,
-          '150',
-          '1000',
+          DEFAULT_PREVIEW_HEIGHT,
+          DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
         );
 
         if (friend.state === FRIENDSTATE_INVITATION_RECEIVED) {

@@ -6,6 +6,7 @@
   import Drawing from '../apps/drawing.svelte';
   import Stopmotion from '../apps/stopmotion.svelte';
   import { CurrentApp, Profile, Error } from '../../session';
+  import { AvatarsStore } from '../../storage';
   import ManageSession from '../game/ManageSession';
   import {
     getAccount,
@@ -15,6 +16,7 @@
     getRandomName,
     uploadImage,
     setHome,
+    setAvatar,
   } from '../../api';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { playerHistory } from '../game/playerState';
@@ -117,21 +119,6 @@
 
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
-      // Fake an error that could occur while saving. (reject the promise!)
-      // if (currentFile?.error) {
-      //   setTimeout(() => {
-      //     reject(currentFile.error);
-      //   }, 1500);
-      // }
-
-      // setTimeout(() => {
-      //   resolve(data);
-      // }, 1500);
-
-      // save img
-      // if (new ) => nieuw huis
-      // else niks
-
       const blobData = dataURItoBlob(data);
 
       uploadImage(
@@ -144,6 +131,7 @@
       )
         .then((url) => {
           // console.log('Upload result:', url);
+          currentFile.uploadUrl = url;
           resolve(url);
         })
         .catch((error) => {
@@ -159,7 +147,21 @@
             resolve();
           })
           .catch((error) => {
-            // console.log('setHome ERROR:', error);
+            reject();
+          });
+      } else {
+        resolve();
+      }
+    });
+
+    const setAvatarPromise = new Promise((resolve, reject) => {
+      if (currentFile.new && currentFile.type === 'avatar') {
+        setAvatar(currentFile.uploadUrl)
+          .then(() => {
+            AvatarsStore.loadAvatars();
+            resolve();
+          })
+          .catch((error) => {
             reject();
           });
       } else {
@@ -168,7 +170,7 @@
     });
 
     // Saving should be able to succeed or fail
-    Promise.all([uploadPromise, setHomePromise])
+    Promise.all([uploadPromise, setHomePromise, setAvatarPromise])
       .then(() => {
         // console.log('here is the image!', data);
         setLoader(false);

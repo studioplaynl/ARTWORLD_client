@@ -7,7 +7,7 @@
   import { fabric } from './fabric/dist/fabric';
   import { setLoader } from '../../api';
   import { Error } from '../../session';
-  import { IMAGE_BASE_SIZE } from '../../constants';
+  import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
 
   export let file;
   export let data;
@@ -17,7 +17,12 @@
   // In order to allow for multi-frames (stopmotion), we need to expose these values
   export let frames = 1;
   export let currentFrame = 1;
-  // let deleteableFrame = null;
+  export let stopMotion = false;
+
+  let baseSize = IMAGE_BASE_SIZE;
+  $: {
+    if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
+  }
 
   // In order to hide editor functions when previewing stopmotion
   export let enableEditor = true;
@@ -101,8 +106,8 @@
       // for correct and adapted scaling of the preexisting artworks
       // TODO: This does not work properly yet, probably
       scaleRatio = Math.min(
-        (canvas.width * frames) / IMAGE_BASE_SIZE,
-        canvas.height / IMAGE_BASE_SIZE,
+        (canvas.width * frames) / baseSize,
+        canvas.height / baseSize,
       );
       cursorCanvas.setZoom(scaleRatio);
       canvas.setZoom(scaleRatio);
@@ -249,6 +254,8 @@
         .finally(() => {
           setLoader(false);
         });
+    } else {
+      setLoader(false);
     }
   });
 
@@ -280,9 +287,19 @@
 
   function updateExportedImages() {
     setTimeout(() => {
-      data = canvas.toDataURL('image/png', 1);
+      canvas.setZoom(1);
+
+      data = canvas.toDataURL({
+        format: 'png',
+        height: baseSize,
+        width: baseSize * frames,
+      });
       // Small format thumbnail to add to frames
-      thumb = canvas.toDataURL({ format: 'png', multiplier: 0.25 });
+      canvas.setZoom(scaleRatio);
+      thumb = canvas.toDataURL({
+        format: 'png',
+        multiplier: 0.25,
+      });
     }, 100);
   }
 
@@ -321,7 +338,7 @@
       canvas.clear();
       canvas.loadFromJSON($state, () => {
         canvas.renderAll();
-        data = canvas.toDataURL('image/png', 1);
+        updateExportedImages();
       });
     }
   }
@@ -348,11 +365,11 @@
                 });
 
                 // Step 2: Scale to canvas dimensions
-                image.scaleToHeight(IMAGE_BASE_SIZE);
+                image.scaleToHeight(baseSize);
 
                 // Step 3: Put on right spot
                 image.set({
-                  left: IMAGE_BASE_SIZE * frame,
+                  left: baseSize * frame,
                   top: 0,
                   frameNumber: frame + 1, // Frames in the app are 1-based
                 });
@@ -433,11 +450,11 @@
     for (let i = 0; i < curSelectedObjects.length; i++) {
       canvas.remove(curSelectedObjects[i]);
     }
+    updateExportedImages();
   }
 
   function clearCanvas() {
     canvas.clear();
-    deleteableFrame = null;
     dispatch('clearCanvas');
   }
 
@@ -482,7 +499,7 @@
   <div class="main-container">
     <div
       class="canvas-frame-container"
-      style="width: {canvasHeight}px; height: {canvasHeight}px;"
+      style="width: {canvasHeight}px; height: {canvasHeight}px; "
     >
       {#if enableOnionSkinning}
         <div
@@ -494,7 +511,10 @@
       {/if}
       <div
         class="canvas-box"
-        style="left: -{canvasHeight * (currentFrame - 1)}px;"
+        style="
+          left: -{canvasHeight * (currentFrame - 1)}px;
+          pointer-events: {enableEditor ? 'all' : 'none'};
+          "
       >
         <canvas bind:this="{canvasEl}" class="canvas"> </canvas>
 
@@ -911,6 +931,7 @@
     right: 0;
     bottom: 0;
     opacity: 0.2;
+    background-size: cover;
   }
 
   .stopmotion-controls {
