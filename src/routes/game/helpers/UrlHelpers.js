@@ -5,10 +5,12 @@ import {
   push, replace, location, querystring,
 } from 'svelte-spa-router';
 import {
-  playerPos, playerLocation, playerHistory,
+  playerPos, playerLocation, playerHistory, PlayerZoom,
 } from '../playerState';
 import { CurrentApp } from '../../../session';
-import { DEFAULT_HOME, SCENE_INFO } from '../../../constants';
+import {
+  DEFAULT_HOME, DEFAULT_ZOOM, SCENE_INFO, ZOOM_MAX, ZOOM_MIN,
+} from '../../../constants';
 import { dlog } from './DebugLog';
 import { DEFAULT_APP, isValidApp } from '../../apps/apps';
 import SceneSwitcher from '../class/SceneSwitcher';
@@ -80,9 +82,6 @@ export function parseQueryString() {
   const query = parse(get(querystring));
   const pos = get(playerPos);
   const newPlayerPosition = { x: pos.x, y: pos.y };
-
-
-
   const newPlayerLocation = {};
 
   if ('house' in query) {
@@ -95,6 +94,16 @@ export function parseQueryString() {
     if (checkIfSceneIsAllowed(query.location) && get(playerLocation).scene !== query.location) {
       newPlayerLocation.scene = query.location;
     }
+  }
+
+  if ('zoom' in query) {
+    if (parseFloat(query.zoom) <= ZOOM_MAX && parseFloat(query.zoom) >= ZOOM_MIN) {
+      PlayerZoom.set(parseFloat(query.zoom));
+    } else {
+      PlayerZoom.set(DEFAULT_ZOOM);
+    }
+  } else {
+    PlayerZoom.set(DEFAULT_ZOOM);
   }
 
   // Update the playerLocation store if a scene was set
@@ -161,7 +170,7 @@ querystring.subscribe(() => parseQueryString());
 export function updateQueryString() {
   const { x, y } = get(playerPos);
   const { scene, house } = get(playerLocation);
-
+  const zoom = get(PlayerZoom);
 
   if (x !== null && y !== null && scene !== null) {
     const query = { ...parse(get(querystring)) };
@@ -172,6 +181,7 @@ export function updateQueryString() {
     query.x = Math.round(x).toString();
     query.y = Math.round(y).toString();
     query.location = scene;
+    query.zoom = zoom;
 
     // House can be optional, and should be removed from querystring if null or empty
     if (scene !== DEFAULT_HOME || house === null) {
@@ -203,6 +213,7 @@ export function updateQueryString() {
  *  should become part of the browser location
 */
 playerPos.subscribe(() => updateQueryString());
+PlayerZoom.subscribe(() => updateQueryString());
 playerLocation.subscribe(() => updateQueryString());
 
 

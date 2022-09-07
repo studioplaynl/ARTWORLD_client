@@ -1,5 +1,8 @@
 import { writable, derived, get } from 'svelte/store';
 import { dlog } from './helpers/DebugLog';
+import {
+  DEFAULT_ZOOM, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
+} from '../../constants';
 
 export const playerPos = writable({
   x: null,
@@ -9,6 +12,38 @@ export const playerLocation = writable({
   scene: null,
   house: null,
 });
+
+const playerZoom = writable(null);
+export const PlayerZoom = {
+
+  subscribe: playerZoom.subscribe,
+  set: playerZoom.set,
+  update: playerZoom.update,
+
+  pinch: (factor) => {
+    if (get(playerZoom) * factor >= ZOOM_MAX) return;
+    if (get(playerZoom) * factor <= ZOOM_MIN) return;
+    playerZoom.update((zoom) => zoom * factor);
+  },
+  in: () => {
+    const zoom = get(playerZoom);
+    const targetZoom = Math.round((zoom + ZOOM_STEP) * 100, 10) / 100;
+    if (targetZoom <= ZOOM_MAX) {
+      playerZoom.set(targetZoom);
+    }
+  },
+  out: () => {
+    const zoom = get(playerZoom);
+    const targetZoom = Math.round((zoom - ZOOM_STEP) * 100, 10) / 100;
+    if (targetZoom >= ZOOM_MIN) {
+      playerZoom.set(targetZoom);
+    }
+  },
+  reset: () => {
+    playerZoom.set(DEFAULT_ZOOM);
+  },
+};
+
 
 /** @var {string} playerStreamID Name of current Nakama stream to get events from/to. Either a House ID or a Scene */
 export const playerStreamID = derived(

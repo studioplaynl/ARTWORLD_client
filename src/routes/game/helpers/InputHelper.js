@@ -1,7 +1,9 @@
 /* eslint-disable no-param-reassign */
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import Move from '../class/Move';
+import { PlayerZoom } from '../playerState';
 import Background from '../class/Background';
 import { dlog } from './DebugLog';
 
@@ -78,8 +80,8 @@ export function handlePlayerMovement(scene) {
     })
     .on('drag1', (drag) => {
       if (ManageSession.playerIsAllowedToMove && !ManageSession.gameEditMode) {
-        const dragX = drag.drag1Vector.x / ManageSession.currentZoom;
-        const dragY = drag.drag1Vector.y / ManageSession.currentZoom;
+        const dragX = drag.drag1Vector.x / get(PlayerZoom);
+        const dragY = drag.drag1Vector.y / get(PlayerZoom);
 
         const moveCommand = 'moving';
         const movementData = { dragX, dragY, moveCommand };
@@ -143,7 +145,7 @@ export function handlePlayerMovement(scene) {
 
   pinch.on('pinch', (dragScale) => {
     const { scaleFactor } = dragScale;
-    ManageSession.currentZoom *= scaleFactor;
+    PlayerZoom.pinch(scaleFactor);
   });
 }
 

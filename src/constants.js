@@ -44,6 +44,10 @@ export const SCENE_INFO = [
 
 export const DEFAULT_SCENE = 'Artworld';
 export const DEFAULT_HOME = 'DefaultUserHome';
+export const DEFAULT_ZOOM = 0.8;
+export const ZOOM_MIN = 0.2;
+export const ZOOM_MAX = 3.0;
+export const ZOOM_STEP = 0.1;
 
 /** File is readable by user and admins only */
 export const PERMISSION_READ_PRIVATE = 1;

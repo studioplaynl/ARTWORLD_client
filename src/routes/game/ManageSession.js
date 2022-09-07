@@ -21,11 +21,11 @@ class ManageSession {
 
     /** @var {Phaser.Scene} currentScene */
     this.currentScene = null; // To give access to the scene outside of the game
-    // default zoomlevel is set here
-    this.currentZoom = 0.8; // passing camera zoom from ui to scene
 
     this.resolveErrorObjectArray = []; // handle load errors for images
     this.addressbook = {};
+    this.currentZoom = 1;
+
 
     this.client = null;
     this.socket = null;

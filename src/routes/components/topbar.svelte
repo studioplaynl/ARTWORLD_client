@@ -1,8 +1,8 @@
 <script>
   import { push, pop, link } from 'svelte-spa-router';
   import ManageSession from '../game/ManageSession';
-  import { playerHistory } from '../game/playerState';
-  import { DEFAULT_SCENE } from '../../constants';
+  import { playerHistory, PlayerZoom } from '../game/playerState';
+  import { DEFAULT_SCENE, DEFAULT_ZOOM } from '../../constants';
 
   async function goHome() {
     // Nice way to always reset to 0x0?
@@ -23,17 +23,15 @@
   }
 
   async function zoomIn() {
-    if (ManageSession.currentZoom >= 4) return;
-    ManageSession.currentZoom += 0.1;
+    PlayerZoom.in();
   }
 
   function zoomReset() {
-    ManageSession.currentZoom = 1;
+    PlayerZoom.reset();
   }
 
   function zoomOut() {
-    if (ManageSession.currentZoom <= 0.2) return;
-    ManageSession.currentZoom -= 0.1;
+    PlayerZoom.out();
   }
 </script>
 
