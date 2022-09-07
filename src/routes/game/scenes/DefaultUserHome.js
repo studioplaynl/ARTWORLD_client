@@ -134,6 +134,10 @@ export default class DefaultUserHome extends Phaser.Scene {
       y: 0,
     });
 
+    this.loadAndPlaceArtworks();
+  }// end create
+
+  loadAndPlaceArtworks() {
     let type = 'drawing';
     let serverItemsArray = this.userDrawingServerList;
     const { location } = this;
@@ -149,7 +153,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     serverItemsArray = this.userStopmotionServerList;
     this.stopmotionGroup = this.add.group();
     ServerCall.downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin);
-  }// end create
+  }
 
   update() {
     // ...... ONLINE PLAYERS ................................................

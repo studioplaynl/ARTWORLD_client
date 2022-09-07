@@ -352,7 +352,7 @@ class ServerCall {
     const coordX = index === 0 ? artStart : (artStart) + (index * (artSize + artMargin));
     const imageContainer = scene.add.container(0, 0).setDepth(100);
 
-    imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
+    imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0).setName('frame'));
 
     // dlog('STOPMOTION element, index, artSize, artMargin', element, index, artSize, artMargin);
     const avatar = scene.textures.get(imageKeyUrl);
@@ -398,9 +398,10 @@ class ServerCall {
       0 + artBorder,
       imageKeyUrl,
     ).setOrigin(0);
+    completedImage.setName('stopmotion');
     imageContainer.add(completedImage);
 
-    completedImage.setData('moveAnim', `moving_${imageKeyUrl}`);
+    completedImage.setData('playAnim', `moving_${imageKeyUrl}`);
     completedImage.setData('stopAnim', `stop_${imageKeyUrl}`);
     if (avatarFrames > 1) {
       completedImage.play(`moving_${imageKeyUrl}`);
@@ -410,6 +411,7 @@ class ServerCall {
     const tempX = containerSize - artMargin;
     const tempY = containerSize + artBorder;
     ArtworkList.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
+    ArtworkList.placePlayPauseButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     imageContainer.setPosition(coordX, y);
     imageContainer.setSize(containerSize, containerSize);
     scene.stopmotionGroup.add(imageContainer);

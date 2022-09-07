@@ -37,7 +37,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('drawn_cloud', './assets/drawn_cloud.png');
 
     // drawing on a wall
-    this.load.image('brush', 'assets/brush3.png');
+    this.load.image('brush', './assets/brush3.png');
     this.load.image('brickWall', './assets/brickwall_white.jpg');
 
     this.load.svg('home', './assets/SHB/svg/AW-icon-home.svg', { scale: 0.7 });
