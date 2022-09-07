@@ -100,7 +100,7 @@ export default class Artworld extends Phaser.Scene {
     });
 
     this.gameCam.startFollow(this.player);
-    this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
+    // this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     // https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
     // ......... end PLAYER VS WORLD .......................................................................
 

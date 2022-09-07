@@ -1,9 +1,13 @@
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
 import SceneSwitcher from '../class/SceneSwitcher';
+import { playerPos, PlayerZoom } from '../playerState';
+import CoordinatesTranslator from '../class/CoordinatesTranslator';
+
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
@@ -58,6 +62,9 @@ export default class Location4 extends Phaser.Scene {
     this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
     //!
+    const {
+      artworldToPhaser2DX, artworldToPhaser2DY,
+    } = CoordinatesTranslator;
 
     this.generateBackground();
 
@@ -68,12 +75,19 @@ export default class Location4 extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default -1185, 692 artworldCoordinates
-    this.player = new PlayerDefault(this, -1185, 692, ManageSession.playerAvatarPlaceholder).setDepth(201);
+    this.player = new PlayerDefault(
+      this,
+      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
+      ManageSession.playerAvatarPlaceholder,
+    ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
       texture: ManageSession.playerAvatarPlaceholder,
     }).setDepth(200);
+
+    Player.loadPlayerAvatar(this, 0, 0);
     // .......  end PLAYER ................................................................................
     // for back button
     SceneSwitcher.pushLocation(this);
@@ -85,8 +99,11 @@ export default class Location4 extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-    //! setBounds has to be set before follow, otherwise the camera doesn't follow!
-    this.gameCam.zoom = 1;
+
+    PlayerZoom.subscribe((zoom) => {
+      this.gameCam.zoom = zoom;
+    });
+
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
 
@@ -140,9 +157,6 @@ export default class Location4 extends Phaser.Scene {
   update() {
     // ...... ONLINE PLAYERS ................................................
     // Player.parseNewOnlinePlayerArray(this)
-    // .......................................................................
-
-    this.gameCam.zoom = ManageSession.currentZoom;
     // .......................................................................
 
     // ........... PLAYER SHADOW .............................................................................

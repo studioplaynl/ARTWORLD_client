@@ -520,9 +520,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   }
 
   update() {
-    // zoom in and out of game
-
-
     // don't move the player with clicking and swiping in edit mode
     if (!ManageSession.gameEditMode) {
       // ...... ONLINE PLAYERS ................................................

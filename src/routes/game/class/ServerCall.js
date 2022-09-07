@@ -35,7 +35,7 @@ class ServerCall {
       .then((homesRec) => {
         // console.log('rec homes: ', homesRec);
         scene.homes = homesRec[0];
-        console.log('scene.homes', scene.homes);
+        // dlog('scene.homes', scene.homes);
 
         this.generateHomes(scene);
       });

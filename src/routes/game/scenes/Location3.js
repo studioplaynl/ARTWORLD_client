@@ -5,7 +5,7 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
-import { playerPos } from '../playerState';
+import { playerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 
@@ -98,7 +98,11 @@ export default class Location3 extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-    this.gameCam.zoom = 1;
+
+    PlayerZoom.subscribe((zoom) => {
+      this.gameCam.zoom = zoom;
+    });
+
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     // https://phaser.io/examples/v3/view/physics/arcade/world-bounds-event
@@ -149,7 +153,7 @@ export default class Location3 extends Phaser.Scene {
     // ...... ONLINE PLAYERS ................................................
     Player.parseNewOnlinePlayerArray(this);
     // .......................................................................
-    this.gameCam.zoom = ManageSession.currentZoom;
+
     // .......................................................................
 
     // ........... PLAYER SHADOW .............................................................................
