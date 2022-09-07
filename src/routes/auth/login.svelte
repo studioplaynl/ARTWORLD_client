@@ -2,8 +2,9 @@
   import { _ } from 'svelte-i18n';
   import { onMount } from 'svelte';
   import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte';
+  import { push, querystring } from 'svelte-spa-router';
   import { Session } from '../../session';
-  import { login } from '../../api';
+  import { login, checkLoginExpired } from '../../api';
   import QRscanner from './qrscanner.svelte';
   import { dlog } from '../game/helpers/DebugLog';
 
@@ -15,26 +16,37 @@
   let qrscanState = false;
 
   async function onSubmit() {
-    await login(email, password);
+    login(email, password).catch(() => {
+      email = params.user || 'user1@vrolijkheid.nl';
+      password = params.password || 'somesupersecretpassword';
+    });
   }
 
   const isMobileDevice = /Mobi/i.test(window.navigator.userAgent);
   const isMobile = !!isMobileDevice;
 
-  dlog('isMobile', isMobile);
-  dlog('navigator', navigator.userAgent);
+  // dlog('isMobile', isMobile);
+  // dlog('navigator', navigator.userAgent);
 
   onMount(() => {
+    // console.log(
+    //   'Login: am I logged in? ',
+    //   !!$Session?.token,
+    //   checkLoginExpired(),
+    // );
     email = params.user || 'user1@vrolijkheid.nl';
     password = params.password || 'somesupersecretpassword';
-    dlog(params);
-    const currentDate = Math.floor(Date.now() / 1000);
-    if (!!$Session && $Session.expires_at > currentDate) {
-      // TODO: If a user tried loading a deeplink, this should not transfer them back to the index page..
-      window.location.href = '/#/';
+    if ($Session?.token && checkLoginExpired() !== true) {
+      // Note: should a previous position of the user be available in Profile.meta,
+      // they will be redirected there after the push below
+      push(`/game?${$querystring}`);
     }
   });
 </script>
+
+<svelte:head>
+  <title>Log in — ArtWorld</title>
+</svelte:head>
 
 <main>
   <div class="device-type">

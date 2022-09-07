@@ -1,8 +1,67 @@
+export const CONFIG = {
+  WIDTH: window.innerWidth * window.devicePixelRatio,
+  HEIGHT: window.innerHeight * window.devicePixelRatio,
+};
+
+/** List of Scenes a user may navigate to */
+export const SCENE_INFO = [
+  {
+    scene: 'DefaultUserHome',
+    sizeX: 6000,
+    sizeY: 2000,
+  },
+  {
+    scene: 'Location1',
+    sizeX: 3000,
+    sizeY: 3000,
+  },
+  {
+    scene: 'Location3',
+    sizeX: 1320,
+    sizeY: 1320,
+  },
+  {
+    scene: 'Location4',
+    sizeX: 3000,
+    sizeY: 3000,
+  },
+  {
+    scene: 'Artworld',
+    sizeX: 6000,
+    sizeY: 6000,
+  },
+  {
+    scene: 'ChallengeAnimalGarden',
+    sizeX: 4000,
+    sizeY: 1200,
+  },
+  {
+    scene: 'ChallengeFlowerField',
+    sizeX: 3000,
+    sizeY: 2000,
+  },
+];
+
+export const DEFAULT_SCENE = 'Artworld';
+export const DEFAULT_HOME = 'DefaultUserHome';
+export const DEFAULT_ZOOM = 0.8;
+export const ZOOM_MIN = 0.2;
+export const ZOOM_MAX = 3.0;
+export const ZOOM_STEP = 0.1;
+
 /** File is readable by user and admins only */
 export const PERMISSION_READ_PRIVATE = 1;
 
 /** File is public */
 export const PERMISSION_READ_PUBLIC = 2;
+
+/** Base size used for artworks */
+export const IMAGE_BASE_SIZE = 2048;
+
+export const DEFAULT_PREVIEW_HEIGHT = 150;
+export const STOPMOTION_BASE_SIZE = 1024;
+export const STOPMOTION_MAX_FRAMES = 12;
+export const STOPMOTION_FPS = 5;
 
 
 /*
@@ -20,6 +79,7 @@ export const FRIENDSTATE_BANNED = 3;
 
 /** Object has been deleted */
 export const OBJECT_STATE_REGULAR = '';
+export const OBJECT_STATE_UNDEFINED = undefined;
 export const OBJECT_STATE_IN_TRASH = 'trash';
 
 

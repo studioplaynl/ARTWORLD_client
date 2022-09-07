@@ -9,7 +9,13 @@ class GraffitiWall {
     // we name the container as this.[name] so we can reference it later
     scene[name] = scene.add.container();
     scene[name].name = name;
-    scene[name].setSize(width + 10, height + 10);
+    // add a border around the graffiti wall to be able to drag it when in gameEdit Mode
+    const draggableBorder = 10;
+
+    // add a tool palette to the right
+    // const toolPaletteSpace = 80;
+
+    scene[name].setSize(width + draggableBorder, height + draggableBorder);
 
     // checking if a drawing wall has a front image
     if (imageFile) {
@@ -43,10 +49,11 @@ class GraffitiWall {
     });
 
     rt.on('pointerdown', (pointer) => {
-      dlog('graffiti wall');
+      // dlog('graffiti wall');
 
       ManageSession.graffitiDrawing = true;
       this.isClicking = true;
+      ManageSession.playerIsAllowedToMove = false;
       const hsv = Phaser.Display.Color.HSVColorWheel();
       const i = color;
       dlog('hsv[i].color', hsv[i].color);
@@ -70,6 +77,7 @@ class GraffitiWall {
         // var points = pointer.getInterpolatedPosition(30)
         ManageSession.graffitiDrawing = true;
         this.isClicking = true;
+        ManageSession.playerIsAllowedToMove = false;
         const hsv = Phaser.Display.Color.HSVColorWheel();
         const i = color;
 
@@ -142,14 +150,14 @@ class GraffitiWall {
   }
 }
 
-// TODO remove?
-function dataURItoBlob(dataURI) {
-  const binary = atob(dataURI.split(',')[1]);
-  const array = [];
-  for (let i = 0; i < binary.length; i++) {
-    array.push(binary.charCodeAt(i));
-  }
-  return new Blob([new Uint8Array(array)], { type: 'image/png' });
-}
+// TODO store a drawing server side
+// function dataURItoBlob(dataURI) {
+//   const binary = atob(dataURI.split(',')[1]);
+//   const array = [];
+//   for (let i = 0; i < binary.length; i++) {
+//     array.push(binary.charCodeAt(i));
+//   }
+//   return new Blob([new Uint8Array(array)], { type: 'image/png' });
+// }
 
 export default new GraffitiWall();

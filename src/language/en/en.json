@@ -14,8 +14,8 @@
     }
   },
   "login": {
-    "title": "Login",
-    "login": "Login"
+    "title": "Log in",
+    "login": "Log in"
   },
   "register": {
     "title": "Register a new user",

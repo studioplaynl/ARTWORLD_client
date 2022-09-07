@@ -8,9 +8,7 @@
   import UserAddIcon from 'svelte-icons/md/MdPersonAdd.svelte';
   import GroupAddIcon from 'svelte-icons/md/MdGroupAdd.svelte';
   import PersonIcon from 'svelte-icons/md/MdPerson.svelte';
-  import {
-    Error, Session, Success, Notification,
-  } from '../../session';
+  import { Error, Session, Success, Notification } from '../../session';
 
   import {
     NOTIFICATION_MESSAGE_RECEIVED_WHILE_OFFLINE_OR_NOT_IN_CHANNEL,
@@ -82,23 +80,32 @@
 
   onMount(() => {
     window.onunhandledrejection = (e) => {
-      // console.log(e);
-      // console.log(e.reason);
-
-      // console.log(typeof e.reason);
+      // console.log(
+      //   'unhandled rejection!',
+      //   e,
+      //   typeof e.reason,
+      //   e.reason,
+      //   e.reason?.state,
+      //   e.reason?.status,
+      // );
       if (typeof e.reason === 'object') {
         setError(e.reason.message || e.reason.statusText);
-        if (e.reason.state === '401' || e.reason.status === '401') {
-          // relogin
-          $Session = null;
-          window.location.href = '/#/login';
-          window.history.go(0);
+        if (
+          parseInt(e.reason.state, 10) === 401 ||
+          parseInt(e.reason.status, 10) === 401
+        ) {
+          /** Setting Session to null automatically redirects you to login route */
+          console.log(
+            '401! Should now automatically redirect to login route..?',
+          );
+          Session.set(null);
         }
       } else {
         setError(e.reason);
       }
     };
-    window.onerror = function onError(msg) {
+    window.onerror = (msg) => {
+      console.log('On Error: ', msg);
       setError(msg);
     };
   });
@@ -162,6 +169,11 @@
         />
         <!-- somebody liked your artpiece -->
       {:else if notificationCode === NOTIFICATION_ARTWORK_RECEIVED}
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-post.svg"
+          alt="Someone sent you an artwork"
+        />
         <!-- somebody sent you an artpiece -->
       {:else if notificationCode === NOTIFICATION_INVITE_RECEIVED}
         <!-- invite to play together -->

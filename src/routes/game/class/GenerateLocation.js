@@ -1,6 +1,8 @@
-import HistoryTracker from './HistoryTracker';
+import { push, location, querystring } from 'svelte-spa-router';
+import SceneSwitcher from './SceneSwitcher';
 import { CurrentApp } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
+import ManageSession from '../ManageSession';
 
 const { Phaser } = window;
 
@@ -65,7 +67,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     }
 
     // if the location is not userHome we set the userHome to locationDestination,
-    // because that is used for HistoryTracker
+    // because that is used for SceneSwitcher
     if (typeof this.userHome === 'undefined') {
       this.userHome = this.locationDestination;
     }
@@ -301,7 +303,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
     this.enterArea.on('pointerdown', () => {
       // check when entering the location if it is an URL or scene
-
+      ManageSession.playerIsAllowedToMove = false;
       if (typeof this.internalUrl !== 'undefined') {
         dlog('internal url 1');
         this.scene.scene.pause();
@@ -336,10 +338,13 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       }
 
       if (typeof this.appUrl !== 'undefined') {
-        dlog('CurrentApp.set(this.appUrl)', this.appUrl);
-        CurrentApp.set(this.appUrl);
+        // Add a leading slash as apps should reflect URLs
+        if (this.appUrl.split('')[0] !== '/') this.appUrl = `/${this.appUrl}`;
+        dlog('push(this.appUrl)', this.appUrl);
+        push(this.appUrl);
       }
-      HistoryTracker.switchScene(this.scene, this.locationDestination, this.userHome);
+
+      SceneSwitcher.switchScene(this.locationDestination, this.userHome);
     });
 
     this.scene.physics.add.overlap(this.scene.player, this.location, this.confirmEnterLocation, null, this);
@@ -409,6 +414,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         this.enterButton.setVisible(this.showing);
         this.enterShadow.setVisible(this.showing);
         this.enterArea.setVisible(this.showing);
+        ManageSession.playerIsAllowedToMove = false;
       }
     });
   }

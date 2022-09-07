@@ -67,5 +67,17 @@ July 27
 July 29
 
 
-- Logging (dlog) stack trace @eelke
+- Logging (dlog) stack trace @eelke ✔️
 
+
+
+August 19
+
+@Maarten dragging in DefaultHome gaat niet lekker.
+
+
+
+
+Aug 29
+- Probably we need to group all objects in a single frame group (currentObject into a group)
+So we can delete a group as a whole when removing a frame. 

@@ -15,8 +15,8 @@
         }
     },
     "login": {
-        "title": "Login",
-        "login": "Login"
+        "title": "Log in",
+        "login": "Log in"
     },
     "register": {
         "title": "Registreer een nieuwe gebruiker",

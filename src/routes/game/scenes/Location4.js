@@ -1,66 +1,43 @@
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
-
+import SceneSwitcher from '../class/SceneSwitcher';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import GenerateLocation from '../class/GenerateLocation';
-import HistoryTracker from '../class/HistoryTracker';
-import Move from '../class/Move';
 
-// import { getAvatar } from '../../profile.svelte'
-import { getAccount, listObjects } from '../../../api';
+import { SCENE_INFO } from '../../../constants';
+import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 const { Phaser } = window;
-
 export default class Location4 extends Phaser.Scene {
   constructor() {
     super('Location4');
 
+    this.location = 'Location4';
     this.worldSize = new Phaser.Math.Vector2(3000, 3000);
 
     this.debug = false;
 
-    this.gameStarted = false;
     this.phaser = this;
-    // this.playerPos;
-    this.onlinePlayers = [];
-    this.newOnlinePlayers = [];
 
-    this.currentOnlinePlayer;
     this.avatarName = [];
     this.tempAvatarName = '';
     this.loadedAvatars = [];
 
-    this.player;
-    this.playerShadow;
-    this.playerAvatarPlaceholder = 'playerAvatar';
+    this.player = null;
+    this.playerShadow = null;
+
     this.playerAvatarKey = '';
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
 
-    this.offlineOnlineUsers;
-
-    this.location = 'Location4';
-
-    this.cursors;
-    this.pointer;
-    this.isClicking = false;
-    this.arrowDown = false;
-    this.swipeDirection = 'down';
-    this.swipeAmount = new Phaser.Math.Vector2(0, 0);
-
-    // pointer location example
-    // this.source // = player
-    this.target = new Phaser.Math.Vector2();
-    this.distance;
-
     // shadow
     this.playerShadowOffset = -8;
-    this.playerIsMovingByClicking = false;
 
-    this.currentZoom;
+    this.currentZoom = 1;
   }
 
   async preload() {
@@ -77,29 +54,43 @@ export default class Location4 extends Phaser.Scene {
   }
 
   async create() {
+    //!
+    // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
+    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
+    this.worldSize.x = sceneInfo.sizeX;
+    this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
+    //!
+    const {
+      artworldToPhaser2DX, artworldToPhaser2DY,
+    } = CoordinatesTranslator;
 
     this.generateBackground();
 
-    this.touchBackgroundCheck = this.add.rectangle(0, 0, this.worldSize.x, this.worldSize.y, 0xfff000)
-      .setInteractive() // { useHandCursor: true }
-      .on('pointerup', () => console.log('touched background'))
-      .on('pointerdown', () => ManageSession.playerIsAllowedToMove = true)
-      .setDepth(219)
-      .setOrigin(0)
-      .setVisible(false);
+    handleEditMode(this);
 
-    this.touchBackgroundCheck.input.alwaysEnabled = true; // this is needed for an image or sprite to be interactive also when alpha = 0 (invisible)
+    handlePlayerMovement(this);
 
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default -1185, 692 artworldCoordinates
-    this.player = new PlayerDefault(this, -1185, 692, this.playerAvatarPlaceholder).setDepth(201);
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: this.playerAvatarPlaceholder }).setDepth(200);
+    this.player = new PlayerDefault(
+      this,
+      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      ManageSession.playerAvatarPlaceholder,
+    ).setDepth(201);
+
+    this.playerShadow = new PlayerDefaultShadow({
+      scene: this,
+      texture: ManageSession.playerAvatarPlaceholder,
+    }).setDepth(200);
+
+    Player.loadPlayerAvatar(this, 0, 0);
     // .......  end PLAYER ................................................................................
     // for back button
-    HistoryTracker.pushLocation(this);
+    SceneSwitcher.pushLocation(this);
 
     // ....... onlinePlayers ..............................................................................
     // add onlineplayers group
@@ -108,8 +99,11 @@ export default class Location4 extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-    //! setBounds has to be set before follow, otherwise the camera doesn't follow!
-    this.gameCam.zoom = 1;
+
+    PlayerZoom.subscribe((zoom) => {
+      this.gameCam.zoom = zoom;
+    });
+
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
 
@@ -133,33 +127,9 @@ export default class Location4 extends Phaser.Scene {
     Player.loadPlayerAvatar(this, -1185, 692);
   } // end create
 
-  generateBouncingBird() {
-    const container = this.add.container();
-    const leg1 = this.add.isobox(415, 340, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
-    const leg2 = this.add.isobox(390, 350, 10, 50, 0xffe31f, 0xf2a022, 0xf8d80b);
-    const body1 = this.add.isobox(360, 288, 50, 22, 0x00b9f2, 0x016fce, 0x028fdf);
-    const body2 = this.add.isobox(400, 300, 80, 80, 0x00b9f2, 0x016fce, 0x028fdf);
-    const beak = this.add.isobox(430, 270, 40, 10, 0xffe31f, 0xf2a022, 0xf8d80b);
-    const eye = this.add.isobox(394, 255, 30, 15, 0xffffff, 0xffffff, 0xffffff).setFaces(false, true, false);
-    const pupil = this.add.isobox(391, 255, 15, 10, 0x000000, 0x000000, 0x000000).setFaces(false, true, false);
-    const wing = this.add.isobox(366, 300, 50, 10, 0x00b9f2, 0x016fce, 0x028fdf);
-    container.add([leg1, leg2, body1, body2, beak, eye, pupil, wing]);
-    container.x = 900;
-    container.y = 400;
-    container.setScale(1.5);
-
-    this.tweens.add({
-      targets: container,
-      y: '-=160',
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
-  }
-
   generateBackground() {
     // fill in textures
-    const background = this.add.rectangle(0, 0, 6000, 6000, 0xFFFFFF);
+    this.add.rectangle(0, 0, 6000, 6000, 0xFFFFFF);
 
     const cross = [
       '.....',
@@ -182,63 +152,11 @@ export default class Location4 extends Phaser.Scene {
         this.add.image(i, j, 'cross').setOrigin(0, 1);
       }
     }
-
-    // this.add.image(0, 200, "background4").setOrigin(0,0).setScale(1.3)
-    // this.add.image(0, -300, "background5").setOrigin(0, 0).setScale(1)
-
-    // let graphics = this.add.graphics();
-
-    // graphics.fillStyle(0x0000ff, 1);
-
-    // graphics.fillCircle(800, 300, 200);
-
-    // for (let i = 0; i < 250; i += 60) {
-    //   graphics.lineStyle(5, 0xFF00FF, 1.0);
-    //   graphics.beginPath();
-    //   graphics.moveTo(800, 200 + i);
-    //   graphics.lineTo(1200, 200 + i);
-    //   graphics.closePath();
-    //   graphics.strokePath();
-    // }
-
-    // for (let i = 0; i < 250; i += 60) {
-    //   graphics.lineStyle(5, 0xFF00FF, 1.0);
-    //   graphics.beginPath();
-    //   graphics.moveTo(900 + i, 150);
-    //   graphics.lineTo(900 + i, 550);
-    //   graphics.closePath();
-    //   graphics.strokePath();
-    // }
-
-    // let rectangle = this.add.graphics();
-    // rectangle.setVisible(false);
-    // rectangle.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
-    // rectangle.fillRect(0, 0, 400, 400);
-
-    // let rt = this.add.renderTexture(200, 100, 600, 600);
-    // let rt2 = this.add.renderTexture(100, 600, 600, 600);
-
-    // rt.draw(rectangle);
-    // rt2.draw(rectangle);
-
-    // let eraser = this.add.circle(0, 0, 190, 0x000000);
-    // eraser.setVisible(false);
-
-    // rt.erase(eraser, 200, 200);
-
-    // rt2.erase(rt, 0, 0)
-    // rt2.x = 400
-    // rt2.y = 600
-
-    // end fill in textures
   }
 
-  update(time, delta) {
+  update() {
     // ...... ONLINE PLAYERS ................................................
     // Player.parseNewOnlinePlayerArray(this)
-    // .......................................................................
-
-    this.gameCam.zoom = ManageSession.currentZoom;
     // .......................................................................
 
     // ........... PLAYER SHADOW .............................................................................
@@ -246,12 +164,5 @@ export default class Location4 extends Phaser.Scene {
     this.playerShadow.x = this.player.x + this.playerShadowOffset;
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     // ........... end PLAYER SHADOW .........................................................................
-
-    // to detect if the player is clicking/tapping on one place or swiping
-    if (this.input.activePointer.downX != this.input.activePointer.upX) {
-      Move.moveBySwiping(this);
-    } else {
-      Move.moveByTapping(this);
-    }
   } // update
 } // class

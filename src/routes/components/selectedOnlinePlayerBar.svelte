@@ -5,7 +5,7 @@
   import LikedPage from '../liked.svelte';
   import { SelectedOnlinePlayer } from '../../session';
   import { Addressbook } from '../../storage';
-  import HistoryTracker from '../game/class/HistoryTracker';
+  import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
 
@@ -53,11 +53,7 @@
   }
 
   function goHome() {
-    HistoryTracker.switchScene(
-      ManageSession.currentScene,
-      'DefaultUserHome',
-      $SelectedOnlinePlayer.id,
-    );
+    SceneSwitcher.switchScene('DefaultUserHome', $SelectedOnlinePlayer.id);
   }
 
   function clickOutsideUser() {
@@ -122,7 +118,7 @@
         />
       </button>
 
-      <button on:click="{toggleHome}">
+      <button on:click="{goHome}">
         <img alt="House" id="house" src="{houseUrl}" />
       </button>
 
@@ -205,15 +201,15 @@
 
   @media screen and (max-width: 600px) {
     #onlineUser {
-      right: 3px;
-      bottom: 8px;
+      right: 16px;
+      bottom: 16px;
     }
   }
 
   @media screen and (min-width: 600px) {
     #onlineUser {
-      right: 9px;
-      bottom: 9px;
+      right: 16px;
+      bottom: 16px;
     }
   }
 

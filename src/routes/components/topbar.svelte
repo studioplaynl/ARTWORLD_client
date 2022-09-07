@@ -1,34 +1,36 @@
 <script>
-  import HistoryTracker from '../game/class/HistoryTracker';
-  import ManageSession from '../game/ManageSession';
-  import { History } from '../../session';
-  import { dlog } from '../game/helpers/DebugLog';
-
-  const home = 'Artworld';
+  import { push, pop } from 'svelte-spa-router';
+  import { PlayerHistory, PlayerZoom } from '../game/playerState';
+  import { DEFAULT_SCENE } from '../../constants';
 
   async function goHome() {
-    HistoryTracker.switchScene(ManageSession.currentScene, home, home);
+    // Nice way to always reset to 0x0?
+
+    push(`/?location=${DEFAULT_SCENE}&x=0&y=0`);
+    // const goTo = PlayerHistory.getAt(DEFAULT_SCENE);
+    // if (goTo) push(goTo);
+    // else {
+    //  push(`/?location=${DEFAULT_SCENE}&x=0&y=0`);
+    // }
   }
 
   async function goBack() {
-    dlog($History);
-    if ($History.length > 1) {
-      HistoryTracker.activateBackButton(ManageSession.currentScene);
+    if ($PlayerHistory.length > 1) {
+      PlayerHistory.pop();
+      pop();
     }
   }
 
   async function zoomIn() {
-    if (ManageSession.currentZoom >= 4) return;
-    ManageSession.currentZoom += 0.1;
+    PlayerZoom.in();
   }
 
   function zoomReset() {
-    ManageSession.currentZoom = 1;
+    PlayerZoom.reset();
   }
 
   function zoomOut() {
-    if (ManageSession.currentZoom <= 0.2) return;
-    ManageSession.currentZoom -= 0.1;
+    PlayerZoom.out();
   }
 </script>
 
@@ -41,15 +43,17 @@
       alt="Homepage"
     />
   </button>
+
   <button on:click="{goBack}">
     <img
       class="TopIcon"
-      class:showBack="{$History.length > 1}"
       id="back"
+      class:showBack="{$PlayerHistory.length > 1}"
       src="/assets/SHB/svg/AW-icon-previous.svg"
       alt="Go back"
     />
   </button>
+
   <button on:click="{zoomOut}" id="zoomOut">
     <img
       class="TopIcon"
@@ -71,6 +75,25 @@
       alt="Zoom in"
     />
   </button>
+
+  <!-- <a
+    href="/drawing?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&key=1654865563806_olijfgroensprinkhaan"
+    use:link>DRAWING</a
+  >
+  <a href="/drawing?" use:link>(NEW)</a>
+  <a href="/stopmotion" use:link>STOP MOTION</a>
+  <a href="/stopmotion" use:link>(NEW)</a>
+  <a href="/avatar" use:link>AVATAR</a>
+  <!-- avatar ook key test1 en test -->
+  <!-- er komt hier nog een key bij! -->
+  <!-- <a
+    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
+    use:link>HOUSE 1</a
+  >
+  <a
+    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
+    use:link>HOUSE 2</a
+  > -->
 </div>
 
 <style>
@@ -111,7 +134,7 @@
     position: fixed;
     left: 0;
     top: 0;
-    margin: 15px 15px 15px 30px;
+    margin: 16px;
   }
 
   .TopIcon {
@@ -132,4 +155,6 @@
   .showBack {
     visibility: visible !important;
   }
+  /* .debug {
+  } */
 </style>

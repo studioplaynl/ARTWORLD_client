@@ -1,10 +1,10 @@
 import ManageSession from '../ManageSession';
-import CoordinatesTranslator from './CoordinatesTranslator';
+// import CoordinatesTranslator from './CoordinatesTranslator';
 import { ShowItemsBar } from '../../../session';
-import { setUrl } from '../helpers/UrlHelpers';
 
 const { Phaser } = window;
 
+//
 export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, 'defaultPlayerAvatar');
@@ -34,14 +34,5 @@ export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
     //  Set some default physics properties
     this.body.onOverlap = true;
     this.setDepth(101);
-
-    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
-
-    // set url param's to player pos and scene key
-    setUrl(
-      scene.location,
-      Phaser2DToArtworldX(scene.worldSize.x, ManageSession.playerPosX),
-      Phaser2DToArtworldY(scene.worldSize.y, ManageSession.playerPosY),
-    );
   }
 }

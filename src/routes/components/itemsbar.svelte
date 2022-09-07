@@ -1,18 +1,18 @@
 <script>
-  import { location } from 'svelte-spa-router';
+  import { location, push } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
   import { convertImage, getAccount, getObject, logout } from '../../api';
   import ProfilePage from '../profile.svelte';
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
-  import { Profile, CurrentApp, ShowItemsBar } from '../../session';
+  import MailPage from '../mail.svelte';
+  import { Profile, ShowItemsBar } from '../../session';
   import Awards from '../awards.svelte';
-  import { Addressbook } from '../../storage';
-  import HistoryTracker from '../game/class/HistoryTracker';
+  import { Addressbook, myHome } from '../../storage';
+  import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
-  import { isValidApp } from '../apps/apps';
 
   // TODO: current moet een store worden, zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties)
   let current;
@@ -26,7 +26,7 @@
   let enableClickOutsideListener = false;
 
   getAccount();
-
+  myHome.get();
   // check if player is clicked
   const unsubscribeItemsBar = ShowItemsBar.subscribe(async () => {
     if (!$Profile) return;
@@ -111,8 +111,8 @@
     current = current === 'friends' ? null : 'friends';
   }
 
-  function toggleAddressBook() {
-    current = current === 'addressbook' ? null : 'addressbook';
+  function toggleMailbox() {
+    current = current === 'mail' ? null : 'mail';
 
     if (!alreadySubscribedToAddressbook) {
       subscribeToAddressbook();
@@ -138,23 +138,13 @@
 
   async function goHome(id) {
     if (typeof id === 'string') {
-      HistoryTracker.switchScene(
-        ManageSession.currentScene,
-        'DefaultUserHome',
-        id,
-      );
+      SceneSwitcher.switchScene('DefaultUserHome', id);
     } else if ($ShowItemsBar) {
-      HistoryTracker.switchScene(
-        ManageSession.currentScene,
+      SceneSwitcher.switchScene(
         'DefaultUserHome',
         ManageSession.userProfile.id,
       );
     }
-  }
-
-  async function goApp(App) {
-    // HistoryTracker.pauseSceneStartApp(ManageSession.currentScene, App)
-    if (isValidApp(App)) CurrentApp.set(App);
   }
 </script>
 
@@ -191,7 +181,7 @@
         }}"
         class="avatar"
       >
-        <img src="{userHouseUrl}" alt="My Home" />
+        <img src="{$myHome.url}" alt="My Home" />
       </button>
 
       <button on:click="{toggleAwards}">
@@ -202,11 +192,11 @@
         />
       </button>
 
-      <button on:click="{toggleAddressBook}">
+      <button on:click="{toggleMailbox}">
         <img
           class="icon"
-          src="assets/SHB/svg/AW-icon-addressbook-vert.svg"
-          alt="Toggle Address book"
+          src="assets/SHB/svg/AW-icon-post.svg"
+          alt="Toggle mailbox"
         />
       </button>
 
@@ -221,7 +211,7 @@
       <button
         on:click="{() => {
           // toggleLiked();
-          goApp('drawing');
+          push('/drawing');
         }}"
       >
         <img
@@ -233,7 +223,7 @@
 
       <button
         on:click="{() => {
-          goApp('stopmotion');
+          push('/stopmotion');
         }}"
       >
         <img
@@ -262,7 +252,12 @@
     > -->
 
       <span>-</span>
-      <button on:click="{logout}">
+      <button
+        on:click="{() => {
+          current = '';
+          logout();
+        }}"
+      >
         <img
           class="icon"
           src="assets/SHB/svg/AW-icon-exit.svg"
@@ -275,38 +270,8 @@
         <div>
           <LikedPage />
         </div>
-      {:else if current === 'addressbook'}
-        {#each addressbookImages as address}
-          <div style="display: flex; flex-direction: row">
-            <div>
-              <button
-                style="margin-bottom: 20px"
-                on:click="{() => {
-                  goHome(address.id);
-                }}"
-              >
-                <img
-                  class="addressbook-image"
-                  src="{address.url}"
-                  alt="{address.name}"
-                />
-                {address.name}
-              </button>
-            </div>
-
-            <button
-              on:click="{() => {
-                Addressbook.delete(address.id);
-              }}"
-            >
-              <img
-                class="icon"
-                src="assets/SHB/svg/AW-icon-trash.svg"
-                alt="Remove from Address book"
-              />
-            </button>
-          </div>
-        {/each}
+      {:else if current === 'mail'}
+        <MailPage />
       {:else if current === 'home'}
         <ProfilePage />
       {:else if current === 'friends'}
@@ -358,20 +323,10 @@
     border-radius: 50%;
   }
 
-  @media screen and (max-width: 600px) {
-    #currentUser,
-    #itemsButton {
-      left: 3px;
-      bottom: 8px;
-    }
-  }
-
-  @media screen and (min-width: 600px) {
-    #currentUser,
-    #itemsButton {
-      left: 9px;
-      bottom: 9px;
-    }
+  #currentUser,
+  #itemsButton {
+    left: 16px;
+    bottom: 16px;
   }
 
   /* Clear button styling */

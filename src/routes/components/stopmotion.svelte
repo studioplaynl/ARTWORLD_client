@@ -1,5 +1,6 @@
 <script>
   import { onDestroy, beforeUpdate, createEventDispatcher } from 'svelte';
+  import { STOPMOTION_FPS } from '../../constants';
 
   export let artwork;
   export let clickable = false;
@@ -19,7 +20,7 @@
       } else {
         image.style.left = `-${frame * 150}px`;
       }
-    }, 500);
+    }, 1000 / STOPMOTION_FPS);
 
     // Don't animate if this (assumed) stop-motion is square
     if (

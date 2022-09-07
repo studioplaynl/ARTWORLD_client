@@ -1,157 +1,218 @@
 <script>
-  import Router from 'svelte-spa-router';
-  import { onMount } from 'svelte';
+  import Router, { push } from 'svelte-spa-router';
+  import { onMount, tick } from 'svelte';
   import { wrap } from 'svelte-spa-router/wrap';
-  import home from './routes/game/index.svelte';
-  import registerPage from './routes/auth/register.svelte';
+  import Phaser from 'phaser';
+  import { CurrentApp, Session, Profile, Error } from './session';
+  import {
+    sessionCheck,
+    checkLoginExpired,
+    logout,
+    restoreSession,
+  } from './api';
+  import { dlog } from './routes/game/helpers/DebugLog';
 
-  import Users from './routes/users.svelte';
-  import login from './routes/auth/login.svelte';
-  import profile from './routes/profile.svelte';
-  import DebugPage from './routes/admin/debugPage.svelte';
-  // import drawing from "./routes/apps/drawing.svelte";
-  import { Session, Profile } from './session';
-  import Notifications from './routes/components/notifications.svelte';
-  import Menu from './routes/components/menu.svelte';
-  import Friends from './routes/friends.svelte';
+  /** Admin pages */
   import Admin from './routes/admin/admin.svelte';
-  import updatePage from './routes/auth/update.svelte';
-  import mandala from './routes/apps/mandala.svelte';
-  import upload from './routes/admin/upload.svelte';
-  import MarioSequencer from './routes/apps/marioSequencer.svelte';
-  import player from './routes/apps/player.svelte';
-  import Moderate from './routes/admin/moderate.svelte';
+  import Menu from './routes/components/menu.svelte';
+  import RegisterPage from './routes/auth/register.svelte';
+  import UsersPage from './routes/users.svelte';
+  import LoginPage from './routes/auth/login.svelte';
+  import ProfilePage from './routes/profile.svelte';
+  import DebugPage from './routes/admin/debugPage.svelte';
+  import FriendsPage from './routes/friends.svelte';
+  import UpdatePage from './routes/auth/update.svelte';
+  import UploadPage from './routes/admin/upload.svelte';
+  import ModeratePage from './routes/admin/moderate.svelte';
+
+  /** Game components */
+  import Itemsbar from './routes/components/itemsbar.svelte';
+  import SelectedOnlinePlayerBar from './routes/components/selectedOnlinePlayerBar.svelte';
+  import AppLoader from './routes/components/appLoader.svelte';
+  import TopBar from './routes/components/topbar.svelte';
+  import AchievementAnimation from './routes/components/achievement.svelte';
+  import TutLoader from './routes/tutorials/tutLoader.svelte';
+  import Notifications from './routes/components/notifications.svelte';
+
+  import gameConfig from './routes/game/gameConfig';
+  import { PlayerPos, PlayerLocation } from './routes/game/playerState';
+  import { DEFAULT_APP } from './routes/apps/apps';
+
+  let game;
+  let mounted = false;
+  let title;
 
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     e.target.click();
   });
 
-  onMount(() => {
+  onMount(async () => {
     document.getElementById('loader').classList.add('hide');
+
+    // Attempt to restore a saved session
+    await restoreSession();
+
+    if (checkLoginExpired() === true) {
+      dlog('login expired! go to login page');
+      logout();
+
+      Error.set('Please relogin');
+    } else {
+      mounted = true;
+    }
   });
 
-  const isLogedIn = (detail) => {
-    if ($Session != null) return true;
+  $: isLoggedIn = $Session !== null && $Profile && $Profile?.username;
+  $: isAdmin = $Profile?.meta?.Role === 'admin';
+  $: isModerator =
+    $Profile?.meta?.Role === 'moderator' || $Profile?.meta?.Role === 'admin';
 
-    window.location.href = '/#/login';
-    return false;
-  };
-  const isAdmin = (detail) => {
-    console.log($Profile);
-    if ($Profile.meta.Role === 'admin') return true;
+  $: {
+    if (!isLoggedIn) push('/login');
+    else if (typeof game === 'undefined' && mounted) {
+      sessionCheck();
 
-    window.location.href = '/#/';
-    return false;
-  };
-  const isModerator = (detail) => {
-    console.log($Profile.meta.Role);
-    if ($Profile.meta.Role === 'moderator' || $Profile.meta.Role === 'admin') {
-      return true;
+      startGame();
+    }
+  }
+
+  $: {
+    let t = '';
+
+    if ($PlayerPos.x !== null && $PlayerPos.y !== null) {
+      t = `${$PlayerPos.x} x ${$PlayerPos.y}`;
     }
 
-    window.location.href = '/#/';
-    return false;
-  };
-</script>
+    if ($PlayerLocation.house) {
+      t = `${$PlayerLocation.house} - ${t}`;
+    } else if ($PlayerLocation.scene) {
+      t = `${$PlayerLocation.scene} - ${t}`;
+    }
 
-<Menu />
+    if ($CurrentApp && $CurrentApp !== DEFAULT_APP) {
+      t = `${$CurrentApp} — Artworld`;
+    }
 
-<Router
-  routes="{{
+    if (t === '') t = 'ArtWorld';
+
+    title = t;
+  }
+
+  // Wait one tick to allow target div to become visible
+  async function startGame() {
+    await tick();
+    game = new Phaser.Game(gameConfig);
+  }
+
+  const routes = {
     '/register': wrap({
-      component: registerPage,
-      conditions: [(detail) => isAdmin(detail)],
+      component: RegisterPage,
+      conditions: [() => isAdmin],
     }),
     '/update/:user?': wrap({
-      component: updatePage,
-      conditions: [(detail) => isLogedIn(detail)],
+      component: UpdatePage,
+      conditions: [() => isLoggedIn],
     }),
     '/users': wrap({
-      component: Users,
-      conditions: [(detail) => isLogedIn(detail)],
+      component: UsersPage,
+      conditions: [() => isLoggedIn],
     }),
     '/friends': wrap({
-      component: Friends,
-      conditions: [(detail) => isLogedIn(detail)],
+      component: FriendsPage,
+      conditions: [() => isLoggedIn],
     }),
-    '/login/:user?/:password?': login,
+    '/login/:user?/:password?': LoginPage,
     '/profile/:user?': wrap({
-      component: profile,
-      conditions: [(detail) => isLogedIn(detail)],
+      component: ProfilePage,
+      conditions: [() => isLoggedIn],
     }),
     '/debug': wrap({
       component: DebugPage,
-      conditions: [(detail) => isAdmin(detail)],
+      conditions: [() => isAdmin],
     }),
+
+    // '/'
+
     // "/drawing/:user?/:name?/:version?": wrap({
     //     component: drawing,
     //     conditions: [
-    //         (detail) => {
-    //             return isLogedIn(detail);
+    //         () => {
+    //             return isLoggedIn();
     //         },
     //     ],
     // }),
     // "/stopmotion/:user?/:name?/:version?": wrap({
     //     component: drawing,
     //     conditions: [
-    //         (detail) => {
-    //             return isLogedIn(detail);
+    //         () => {
+    //             return isLoggedIn();
     //         },
     //     ],
     // }),
-    '/mandala/:user?/:name?/:version?': wrap({
-      component: mandala,
-      conditions: [(detail) => isLogedIn(detail)],
-    }),
-    '/mariosound/:user?/:name?': wrap({
-      component: MarioSequencer,
-      conditions: [(detail) => isLogedIn(detail)],
-    }),
-    // "/avatar/:user?/:name?/:version?": wrap({
-    //     component: drawing,
-    //     conditions: [
-    //         (detail) => {
-    //             return isLogedIn(detail);
-    //         },
-    //     ],
+    // '/mandala/:user?/:name?/:version?': wrap({
+    //   component: mandala,
+    //   conditions: [() => isLoggedIn()],
     // }),
-    '/audio/:user?/:name?/:version?': wrap({
-      component: player,
-      conditions: [(detail) => isLogedIn(detail)],
-    }),
-    '/video/:user?/:name?/:version?': wrap({
-      component: player,
-      conditions: [(detail) => isLogedIn(detail)],
-    }),
-    '/picture/:user?/:name?/:version?': wrap({
-      component: player,
-      conditions: [(detail) => isLogedIn(detail)],
-    }),
-    // "/house/:user?/:name?/:version?": wrap({
-    //     component: drawing,
-    //     conditions: [
-    //         (detail) => {
-    //             return isLogedIn(detail);
-    //         },
-    //     ],
+
+    // '/audio/:user?/:name?/:version?': wrap({
+    //   component: player,
+    //   conditions: [() => isLoggedIn()],
+    // }),
+    // '/video/:user?/:name?/:version?': wrap({
+    //   component: player,
+    //   conditions: [() => isLoggedIn()],
+    // }),
+    // '/picture/:user?/:name?/:version?': wrap({
+    //   component: player,
+    //   conditions: [() => isLoggedIn()],
     // }),
     '/upload/:user?/:name?': wrap({
-      component: upload,
-      conditions: [(detail) => isModerator(detail)],
+      component: UploadPage,
+      conditions: [() => isModerator],
     }),
     '/admin': wrap({
       component: Admin,
-      conditions: [(detail) => isAdmin(detail)],
+      conditions: [() => isAdmin],
     }),
     '/moderator': wrap({
-      component: Moderate,
-      conditions: [(detail) => isModerator(detail)],
+      component: ModeratePage,
+      conditions: [() => isModerator],
     }),
-    '/:app?/:user?/:name?/:version?': wrap({
-      component: home,
-      conditions: [(detail) => isLogedIn(detail)],
-    }),
-  }}"
-/>
+    // '/:app?': wrap({
+    //   component: AppLoader,
+    //   conditions: [(detail) => isLoggedIn && detail.location !== DEFAULT_APP],
+    // }),
+  };
+</script>
+
+<svelte:head>
+  <title>{title}</title>
+</svelte:head>
+
+{#if isLoggedIn}
+  <main>
+    <div id="phaserId"></div>
+  </main>
+  <Itemsbar />
+  <SelectedOnlinePlayerBar />
+  <AppLoader />
+  <TopBar />
+  <AchievementAnimation />
+  <TutLoader />
+{/if}
+
+<!-- Routes go on top of Game -->
+<Menu />
+<Router routes="{routes}" />
+<!-- on:routeLoading="{routeLoading}"
+  on:routeLoaded="{routeLoaded}" -->
+
+<!-- Notifcations go on to of everything -->
 <Notifications />
+
+<style>
+  main {
+    position: relative;
+  }
+</style>

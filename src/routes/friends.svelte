@@ -1,15 +1,19 @@
 <script>
   import SvelteTable from 'svelte-table';
+  import MdSearch from 'svelte-icons/md/MdSearch.svelte';
   import FriendAction from './components/friendaction.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
-  import { ListFriends, addFriend, setLoader, convertImage } from '../api';
-  import HistoryTracker from './game/class/HistoryTracker';
-  import ManageSession from './game/ManageSession';
+  import {
+    ListFriends, addFriend, setLoader, convertImage,
+  } from '../api';
+  import SceneSwitcher from './game/class/SceneSwitcher';
   import { dlog } from './game/helpers/DebugLog';
   import {
     FRIENDSTATE_FRIENDS,
     FRIENDSTATE_INVITATION_SENT,
     FRIENDSTATE_INVITATION_RECEIVED,
+    STOPMOTION_MAX_FRAMES,
+    DEFAULT_PREVIEW_HEIGHT,
   } from '../constants';
 
   let friends = [];
@@ -22,6 +26,9 @@
     setLoader(true);
 
     await ListFriends().then((list) => {
+      friends = [];
+      friendRequests = [];
+      friendRequestsPending = [];
       dlog('My friends:', list.friends);
 
       list.friends.forEach(async (_friend) => {
@@ -30,8 +37,8 @@
 
         friend.user.url = await convertImage(
           friend.user.avatar_url,
-          '150',
-          '1000',
+          DEFAULT_PREVIEW_HEIGHT,
+          DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
         );
 
         if (friend.state === FRIENDSTATE_INVITATION_RECEIVED) {
@@ -52,11 +59,7 @@
   function goTo(event) {
     const { row } = event.detail;
     if (event.detail.key === 'action') return;
-    HistoryTracker.switchScene(
-      ManageSession.currentScene,
-      'DefaultUserHome',
-      row.user.id,
-    );
+    SceneSwitcher.switchScene('DefaultUserHome', row.user.id);
   }
 
   const columns = [
@@ -89,18 +92,41 @@
   ];
 </script>
 
-<h1>Add friend</h1>
+<img
+  src="/assets/SHB/svg/AW-icon-add-friend.svg"
+  class="headerIcon"
+  alt="Add friend"
+/><br />
 <!-- <input bind:value={ID} placeholder="user ID"> -->
-<input bind:value="{Username}" placeholder="username" />
-<button
-  on:click="{() => {
-    addFriend(ID, Username).then(() => {
-      load();
-    });
-  }}">Add friend</button
->
+<div class="search">
+  <input bind:value="{Username}" />
+  <button
+    on:click="{() => {
+      addFriend(ID, Username).then(() => {
+        load();
+      });
+    }}"><MdSearch /></button
+  >
+</div>
 
-<h1>All friends</h1>
+{#if friendRequests.length > 0}
+  <img
+    src="/assets/SHB/svg/AW-icon-friend-request.svg"
+    class="headerIcon"
+    alt="Friend requests"
+  />
+  <SvelteTable
+    columns="{columns}"
+    rows="{friendRequests}"
+    classNameTable="profileTable"
+  />
+{/if}
+
+<img
+  src="/assets/SHB/svg/AW-icon-friend.svg"
+  class="headerIcon"
+  alt="All friend"
+/>
 <SvelteTable
   columns="{columns}"
   rows="{friends}"
@@ -110,13 +136,11 @@
 
 <!-- <h1>Pending friend requests</h1>
   <SvelteTable columns="{columns}" rows="{friendRequestsPending}" classNameTable="profileTable"></SvelteTable> -->
-
-<h1>Friend requests</h1>
-<SvelteTable
-  columns="{columns}"
-  rows="{friendRequests}"
-  classNameTable="profileTable"
-/>
-
 <style>
+  .search > button {
+    width: 25px;
+    padding: 3px 3px;
+    margin: 0px 0;
+    border-radius: 7px;
+  }
 </style>

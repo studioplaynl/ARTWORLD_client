@@ -1,178 +1,125 @@
+/* eslint-disable class-methods-use-this */
 /* eslint-disable no-console */
 import { get } from 'svelte/store';
 import { Profile } from '../../../session';
 import ManageSession from '../ManageSession';
-import { getAccount, listObjects } from '../../../api';
-import { SCENE_NAMES } from '../config';
-import { getUrl } from '../helpers/UrlHelpers';
+import { listObjects } from '../../../api';
+import { DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
+import {
+  PlayerPos, PlayerLocation, PlayerHistory,
+} from '../playerState';
+import { Addressbook, Liked, Achievements } from '../../../storage';
+import { dlog } from '../helpers/DebugLog';
+import { parseQueryString, checkIfSceneIsAllowed, checkIfLocationLooksLikeAHouse } from '../helpers/UrlHelpers';
 
 const { Phaser } = window;
 
-const checkIfSceneExists = (location) => {
-  const locationExists = SCENE_NAMES.includes(location);
-
-  console.log('locationExists SCENE_NAMES', locationExists, location, SCENE_NAMES);
-
-  return locationExists;
-};
 
 export default class UrlParser extends Phaser.Scene {
   debug = false;
 
   constructor() {
     super('UrlParser');
-    this.fallBackLocation = 'Artworld';
+    // this.fallBackLocation = 'Artworld';
   }
 
   async create() {
-    // check if there is a url param, otherwise get last location serverside
-    this.parsePlayerLocation();
-  } // create
-
-  parsePlayerLocation() {
     //* check if the user profile is loaded, to be able to send the player to the right location
     //* check if there are params in the url, to send the player to that location instead
-    let urlParams = getUrl();
-    let profile = get(Profile);
-    // if (this.debug) console.log('urlParams', urlParams);
 
-    // if there is no location paramter in the url
-    if (typeof urlParams.location === 'undefined') {
-      if (typeof profile === 'undefined') {
-        // get the location stored serverside
-        const { PosX, PosY, Location } = profile.meta;
-        const { playerPosX, playerPosY } = ManageSession;
+    // Parse the current query string
+    parseQueryString();
 
-        this.parsePlayerPosition(PosX, PosY);
-        urlParams = { posX: playerPosX, posY: playerPosY, Location };
-        this.parseLocation(urlParams);
-      } else {
-        // if the account is empty, get it
-        getAccount('', true)
-          .then(() => {
-            profile = get(Profile);
-            const { PosX, PosY, Location } = profile.meta;
-            const { playerPosX, playerPosY } = ManageSession;
-            this.parsePlayerPosition(PosX, PosY);
-            urlParams = { posX: playerPosX, posY: playerPosY, Location };
-            this.parseLocation(urlParams);
-          });
+    const profile = get(Profile);
+
+    // If there is no location parameter in the url..
+    if (get(PlayerLocation).scene === null) {
+      if (profile.meta?.PosX && profile.meta?.PosY) {
+        PlayerPos.set({
+          x: Math.round(profile.meta.PosX),
+          y: Math.round(profile.meta.PosY),
+        });
       }
+      if (profile.meta?.Location
+        && checkIfLocationLooksLikeAHouse(profile.meta.Location)) {
+        PlayerLocation.set({
+          scene: DEFAULT_HOME,
+          house: profile.meta.Location,
+        });
+      } else if (profile.meta?.Location
+        && checkIfSceneIsAllowed(profile.meta.Location)
+      ) {
+        PlayerLocation.set({
+          scene: profile.meta.Location,
+          house: null,
+        });
+      }
+
+      dlog('meta', profile.meta);
+    }
+
+    // If a position is null, randomise it..
+    if (get(PlayerPos).x === null && get(PlayerPos).y === null) {
+      PlayerPos.set({
+        x: Math.floor((Math.random() * 300) - 150),
+        y: Math.floor((Math.random() * 300) - 150),
+      });
+    }
+
+    const targetScene = get(PlayerLocation).scene;
+    const targetHouse = get(PlayerLocation).house;
+
+    // Check if scene exists and is valid, if not: set DEFAULT_SCENE
+    if (!targetScene || !checkIfSceneIsAllowed(targetScene)) {
+      PlayerLocation.set({
+        scene: DEFAULT_SCENE,
+        house: null,
+      });
+      // Don't store this change in scene in the history..
+      PlayerHistory.pop();
+    }
+
+    if (targetHouse && checkIfLocationLooksLikeAHouse(targetHouse)) {
+      listObjects('home', targetHouse, 1).catch(() => {
+        // No objects found for this ID, switch to default scene
+        dlog(`This ID (${targetHouse}) has no objects, switching to default scene`);
+        PlayerLocation.set({
+          scene: DEFAULT_SCENE,
+          house: null,
+        });
+        // Don't store this change in scene in the history..
+        PlayerHistory.pop();
+        this.launchGame();
+      }).then(() => {
+        // Objects were found, so we continue to launch
+        this.launchGame();
+      });
     } else {
-      // if there is a location parameter in the url
-      this.parseLocation(urlParams);
+      // Launch in DEFAULT_SCENE
+      this.launchGame();
     }
   }
 
-  parseLocation(urlParams) {
-    const { posX, posY, Location } = urlParams;
-    console.log('location', Location);
-    const locationName = Location || this.fallBackLocation;
-    // if (this.debug) console.log('urlParams, locationName', urlParams, locationName);
-    // check if location is of DefaultUserHome_user_ID format
-    let splitString = locationName.split('_');
+  async launchGame() {
+    const targetScene = get(PlayerLocation).scene;
+    const targetHouse = get(PlayerLocation).house;
 
-    // if true then location is DefaultUserHome_user_ID
-    if (splitString.length > 1) {
-      // if (this.debug) console.log("splitString.length > 1 '_' locationName: ", locationName);
-      // check if first part is DefaultUserHome
-      if (checkIfSceneExists(splitString[0])) {
-        this.parsePlayerPosition(posX, posY);
-        this.prepareLaunchSceneAndSwitch(splitString[0], splitString[1]);
-      } else {
-        // send to default position
-        this.parsePlayerPosition(null, null);
-        // goto default location
-        this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation);
-      }
-    } else {
-      // if location is of _user_ID format
-      splitString = locationName.split('-');
-      if (this.debug) console.log("locationName.split('-') locationName: ", locationName);
-      if (splitString.length > 3) {
-        Promise.all([listObjects('home', locationName, 10)])
-          .catch(() => {
-            if (this.debug) console.log('error getting the home object');
-            this.parsePlayerPosition(null, null);
-            this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation);
-          })
-          .then((rec) => {
-            if (this.debug) console.log('rec: ', rec);
 
-            if (rec) {
-              // filter only amsterdam homes
-              // scene.homes = scene.homes.filter((obj) => obj.key == filter)
-              if (this.debug) console.log("splitString.length > 3 ('-') locationName: ", locationName);
-              // locationName is user_id format
-              this.parsePlayerPosition(posX, posY);
-              this.prepareLaunchSceneAndSwitch('DefaultUserHome', locationName);
-            } else {
-              // if rec is empty, user does not exists
-              if (this.debug) console.log('userID does not return home');
-              this.parsePlayerPosition(null, null);
-              this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation);
-            }
-          });
-      } else if (locationName === 'DefaultUserHome') {
-        // send to default location
-        this.parsePlayerPosition(null, null);
-        this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation);
-      } else if (checkIfSceneExists(locationName)) {
-        this.parsePlayerPosition(posX, posY);
-        this.prepareLaunchSceneAndSwitch(locationName, locationName);
-      } else {
-        // if the sceneName doesn't exist, send to default location
-        this.parsePlayerPosition(null, null);
-        this.prepareLaunchSceneAndSwitch(this.fallBackLocation, this.fallBackLocation);
-      }
-    }
-  }
-  // end parseLocation
+    if (this.debug) console.log('Launch: ', targetScene, targetHouse);
 
-  prepareLaunchSceneAndSwitch(location, locationID) {
-    if (this.debug) console.log('Launch: ', location, locationID);
-    ManageSession.location = location; // scene key
-    ManageSession.locationID = locationID; // in case of DefaultUserHome = user_id
     this.scene.stop('UrlParser');
-    this.scene.start('NetworkBoot');
-  }
 
-  // eslint-disable-next-line class-methods-use-this
-  parsePlayerPosition(posX, posY) {
-    if (typeof posX !== 'undefined') {
-      // if it exists and isn't null
-      const tempInt = parseInt(posX, 10);
-      if (this.debug) console.log('tempInt:', tempInt);
-      if (!Number.isNaN(tempInt)) {
-        if (this.debug) console.log('parsed posX:', posX);
-        ManageSession.playerPosX = tempInt;// expected artworldCoordinates
-      } else {
-        // a random number between -150 and 150
-        ManageSession.playerPosX = Math.floor((Math.random() * 300) - 150);
-        if (this.debug) console.log('no known posX, created...', ManageSession.playerPosX);
-      }
-    } else {
-      // a random number between -150 and 150
-      ManageSession.playerPosX = Math.floor((Math.random() * 300) - 150);
-      if (this.debug) console.log('no known posX, created...', ManageSession.playerPosX);
-    }
 
-    if (typeof posY !== 'undefined') {
-      // if it exists and isn't null
-      if (this.debug) console.log('parsed posY:', posY);
-      const tempInt = parseInt(posY, 10);
-      if (this.debug) console.log('tempInt:', tempInt);
-      if (!Number.isNaN(tempInt)) {
-        ManageSession.playerPosY = tempInt;// expected artworldCoordinates
-      } else {
-        // a random number between -150 and 150
-        ManageSession.playerPosY = Math.floor((Math.random() * 300) - 150);
-        if (this.debug) console.log('no known posY, created...', ManageSession.playerPosY);
-      }
-    } else {
-      // a random number between -150 and 150
-      ManageSession.playerPosY = Math.floor((Math.random() * 300) - 150);
-      if (this.debug) console.log('no known posY, created...', ManageSession.playerPosY);
-    }
+    // we launch the player last location when we have a socket with the server
+    await ManageSession.createSocket()
+      .then(async () => {
+        // get server object so that the data is Initialized
+        Liked.get();
+        Addressbook.get();
+        Achievements.get();
+
+        this.scene.launch(targetScene, { user_id: targetHouse });
+        this.scene.launch('UIScene');
+      });
   }
 }
