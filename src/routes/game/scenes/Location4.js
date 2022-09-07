@@ -5,7 +5,7 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
 import SceneSwitcher from '../class/SceneSwitcher';
-import { playerPos, PlayerZoom } from '../playerState';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
 import { SCENE_INFO } from '../../../constants';
@@ -77,8 +77,8 @@ export default class Location4 extends Phaser.Scene {
     //* create player in center with Default -1185, 692 artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
+      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 

@@ -4,11 +4,11 @@ import {
   DEFAULT_ZOOM, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
 } from '../../constants';
 
-export const playerPos = writable({
+export const PlayerPos = writable({
   x: null,
   y: null,
 });
-export const playerLocation = writable({
+export const PlayerLocation = writable({
   scene: null,
   house: null,
 });
@@ -47,7 +47,7 @@ export const PlayerZoom = {
 
 /** @var {string} playerStreamID Name of current Nakama stream to get events from/to. Either a House ID or a Scene */
 export const playerStreamID = derived(
-  playerLocation,
+  PlayerLocation,
   ($pl, set) => {
     if ($pl.house) set($pl.house);
     else set($pl.scene);

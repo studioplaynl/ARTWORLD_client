@@ -7,7 +7,7 @@ import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
 import { logout } from '../../api';
 import {
-  playerLocation, playerStreamID,
+  PlayerLocation, playerStreamID,
 } from './playerState';
 
 const { Phaser } = window;
@@ -110,7 +110,7 @@ class ManageSession {
     this.socket.connect(get(Session), createStatus).then(() => {
       this.socketIsConnected = true;
       this.getStreamUsers('join');
-      dlog('Join:', get(playerLocation).scene);
+      dlog('Join:', get(PlayerLocation).scene);
     });
 
 

@@ -13,7 +13,7 @@ import Preloader from '../class/Preloader';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
 import { dlog } from '../helpers/DebugLog';
-import { playerPos, PlayerZoom } from '../playerState';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 
@@ -29,7 +29,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.debug = false;
 
     this.phaser = this;
-    // this.playerPos
+    // this.PlayerPos
 
     this.player = {};
     this.playerShadow = {};
@@ -133,11 +133,11 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
       this,
       artworldToPhaser2DX(
         this.worldSize.x,
-        get(playerPos).x,
+        get(PlayerPos).x,
       ),
       artworldToPhaser2DY(
         this.worldSize.y,
-        get(playerPos).y,
+        get(PlayerPos).y,
       ),
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);

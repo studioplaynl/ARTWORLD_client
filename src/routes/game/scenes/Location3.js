@@ -5,7 +5,7 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
-import { playerPos, PlayerZoom } from '../playerState';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 
@@ -19,7 +19,7 @@ export default class Location3 extends Phaser.Scene {
     this.worldSize = new Phaser.Math.Vector2(1320, 1320);
 
     this.phaser = this;
-    // this.playerPos;
+    // this.PlayerPos;
     this.onlinePlayers = [];
     this.avatarName = [];
     this.tempAvatarName = '';
@@ -71,11 +71,11 @@ export default class Location3 extends Phaser.Scene {
       this,
       CoordinatesTranslator.artworldToPhaser2DX(
         this.worldSize.x,
-        get(playerPos).x,
+        get(PlayerPos).x,
       ),
       CoordinatesTranslator.artworldToPhaser2DY(
         this.worldSize.y,
-        get(playerPos).y,
+        get(PlayerPos).y,
       ),
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);

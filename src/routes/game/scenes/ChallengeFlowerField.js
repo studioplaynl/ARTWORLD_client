@@ -12,7 +12,7 @@ import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import SceneSwitcher from '../class/SceneSwitcher';
-import { playerPos, PlayerZoom } from '../playerState';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 
@@ -104,8 +104,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
+      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 

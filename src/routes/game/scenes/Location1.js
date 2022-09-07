@@ -11,7 +11,7 @@ import GenerateLocation from '../class/GenerateLocation';
 import SceneSwitcher from '../class/SceneSwitcher';
 import Background from '../class/Background';
 import { SCENE_INFO } from '../../../constants';
-import { playerPos, PlayerZoom } from '../playerState';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 
@@ -91,8 +91,8 @@ export default class Location1 extends Phaser.Scene {
     //* create default player and playerShadow
     this.player = new PlayerDefault(
       this,
-      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
+      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 

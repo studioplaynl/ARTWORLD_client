@@ -12,7 +12,7 @@ import SceneSwitcher from '../class/SceneSwitcher';
 import ServerCall from '../class/ServerCall';
 import Exhibition from '../class/Exhibition';
 import { dlog } from '../helpers/DebugLog';
-import { playerPos, PlayerZoom } from '../playerState';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
@@ -78,8 +78,8 @@ export default class Artworld extends Phaser.Scene {
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      artworldToPhaser2DX(this.worldSize.x, get(playerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(playerPos).y),
+      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 

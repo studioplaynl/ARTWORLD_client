@@ -8,7 +8,7 @@ import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ArtworkList from '../class/ArtworkList';
-import { playerPos, PlayerZoom } from '../playerState';
+import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 
@@ -123,7 +123,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     Player.loadPlayerAvatar(this, 0, 0);
 
     // Set the player on 0,0 position (this also updates the URL automatically)
-    playerPos.set({
+    PlayerPos.set({
       x: 0,
       y: 0,
     });

@@ -35,7 +35,7 @@
   import Notifications from './routes/components/notifications.svelte';
 
   import gameConfig from './routes/game/gameConfig';
-  import { playerPos, playerLocation } from './routes/game/playerState';
+  import { PlayerPos, PlayerLocation } from './routes/game/playerState';
   import { DEFAULT_APP } from './routes/apps/apps';
 
   let game;
@@ -80,14 +80,14 @@
   $: {
     let t = '';
 
-    if ($playerPos.x !== null && $playerPos.y !== null) {
-      t = `${$playerPos.x} x ${$playerPos.y}`;
+    if ($PlayerPos.x !== null && $PlayerPos.y !== null) {
+      t = `${$PlayerPos.x} x ${$PlayerPos.y}`;
     }
 
-    if ($playerLocation.house) {
-      t = `${$playerLocation.house} - ${t}`;
-    } else if ($playerLocation.scene) {
-      t = `${$playerLocation.scene} - ${t}`;
+    if ($PlayerLocation.house) {
+      t = `${$PlayerLocation.house} - ${t}`;
+    } else if ($PlayerLocation.scene) {
+      t = `${$PlayerLocation.scene} - ${t}`;
     }
 
     if ($CurrentApp && $CurrentApp !== DEFAULT_APP) {

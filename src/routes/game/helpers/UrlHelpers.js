@@ -5,7 +5,7 @@ import {
   push, replace, location, querystring,
 } from 'svelte-spa-router';
 import {
-  playerPos, playerLocation, playerHistory, PlayerZoom,
+  PlayerPos, PlayerLocation, playerHistory, PlayerZoom,
 } from '../playerState';
 import { CurrentApp } from '../../../session';
 import {
@@ -80,18 +80,18 @@ location.subscribe(() => parseURL());
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
   const query = parse(get(querystring));
-  const pos = get(playerPos);
+  const pos = get(PlayerPos);
   const newPlayerPosition = { x: pos.x, y: pos.y };
   const newPlayerLocation = {};
 
   if ('house' in query) {
-    if (checkIfLocationLooksLikeAHouse(query.house) && get(playerLocation).house !== query.house) {
+    if (checkIfLocationLooksLikeAHouse(query.house) && get(PlayerLocation).house !== query.house) {
       newPlayerLocation.house = query.house;
     }
   }
 
   if ('location' in query) {
-    if (checkIfSceneIsAllowed(query.location) && get(playerLocation).scene !== query.location) {
+    if (checkIfSceneIsAllowed(query.location) && get(PlayerLocation).scene !== query.location) {
       newPlayerLocation.scene = query.location;
     }
   }
@@ -106,16 +106,16 @@ export function parseQueryString() {
     PlayerZoom.set(DEFAULT_ZOOM);
   }
 
-  // Update the playerLocation store if a scene was set
+  // Update the PlayerLocation store if a scene was set
   if (newPlayerLocation?.scene) {
-    playerLocation.set(newPlayerLocation);
+    PlayerLocation.set(newPlayerLocation);
   }
 
   if ('x' in query && 'y' in query) {
     // url gets parsed before scene is loaded, so there is no way of knowing the
     // scene size when onboarding the scene
 
-    const currentLocation = get(playerLocation);
+    const currentLocation = get(PlayerLocation);
 
     // scene is not loaded, getting the info from SCENE_INFO
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === currentLocation.scene);
@@ -149,7 +149,7 @@ export function parseQueryString() {
     }
 
     dlog('setting position to', newPlayerPosition);
-    playerPos.set(newPlayerPosition);
+    PlayerPos.set(newPlayerPosition);
   }
 
   if (stringify({ ...query }) !== stringify({ ...previousQuery })) {
@@ -160,16 +160,16 @@ export function parseQueryString() {
 /** Set up a subscription to the querystring (from svelte-spa-router)
  * (in other words: set up a listener to the current query string of the browser window)
  * Any changes to the querystring runs the parseQueryString function.
- * These changes set the playerPos & playerLocation stores */
+ * These changes set the PlayerPos & PlayerLocation stores */
 querystring.subscribe(() => parseQueryString());
 
 
 /* Set the query parameter after updating stores, because we have set up a subscription to these.
- * Any value changes on playerPos & playerLocation make this function run
+ * Any value changes on PlayerPos & PlayerLocation make this function run
 * And subsequently update the query string in the URL of the browser */
 export function updateQueryString() {
-  const { x, y } = get(playerPos);
-  const { scene, house } = get(playerLocation);
+  const { x, y } = get(PlayerPos);
+  const { scene, house } = get(PlayerLocation);
   const zoom = get(PlayerZoom);
 
   if (x !== null && y !== null && scene !== null) {
@@ -209,12 +209,12 @@ export function updateQueryString() {
 }
 
 /** Set up the subscriptions to stores that should update the querystring
- *  In other words: any changes to playerPos and playerLocation stores
+ *  In other words: any changes to PlayerPos and PlayerLocation stores
  *  should become part of the browser location
 */
-playerPos.subscribe(() => updateQueryString());
+PlayerPos.subscribe(() => updateQueryString());
 PlayerZoom.subscribe(() => updateQueryString());
-playerLocation.subscribe(() => updateQueryString());
+PlayerLocation.subscribe(() => updateQueryString());
 
 
 
