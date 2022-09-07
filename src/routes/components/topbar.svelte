@@ -1,8 +1,7 @@
 <script>
-  import { push, pop, link } from 'svelte-spa-router';
-  import ManageSession from '../game/ManageSession';
+  import { push, pop } from 'svelte-spa-router';
   import { playerHistory, PlayerZoom } from '../game/playerState';
-  import { DEFAULT_SCENE, DEFAULT_ZOOM } from '../../constants';
+  import { DEFAULT_SCENE } from '../../constants';
 
   async function goHome() {
     // Nice way to always reset to 0x0?
@@ -156,7 +155,6 @@
   .showBack {
     visibility: visible !important;
   }
-
-  .debug {
-  }
+  /* .debug {
+  } */
 </style>
