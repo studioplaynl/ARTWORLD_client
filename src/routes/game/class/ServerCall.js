@@ -158,7 +158,7 @@ class ServerCall {
       await listAllObjects(type, location).then((rec) => {
       // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
-        dlog('serverItemsArray: ', type, serverItemsArray);
+        dlog('serverItemsArray: ', type, location, serverItemsArray);
         this.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
     }
@@ -184,7 +184,7 @@ class ServerCall {
     const imageKeyUrl = element.value.url;
     const imgSize = artSize.toString();
     const fileFormat = 'png';
-    const getImageWidth = (artSize * 1000).toString();
+    const getImageWidth = (artSize * 100).toString();
 
     if (scene.textures.exists(imageKeyUrl)) {
       // if the artwork has already been downloaded

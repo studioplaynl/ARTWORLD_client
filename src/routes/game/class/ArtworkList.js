@@ -75,6 +75,7 @@ class ArtworkList {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   placePlayPauseButton(scene, x, y, imageurl, mediaObject, artContainer) {
     // scene, x, y, keyImgUrl, mediaObject, artContainer
     // place heartButton under the artwork, make them interactive
@@ -177,14 +178,14 @@ class ArtworkList {
       // changing to red, liked
       button.setAlpha(0.5);
       button.setData('togglePlay', false);
-      // stopmotion.play(stopmotion.getData('stopAnim'));
-      stopmotion.anims.msPerFrame = 400;
+      stopmotion.play(stopmotion.getData('stopAnim'));
+      // stopmotion.anims.msPerFrame = 400;
     } else {
       // changing to empty, not liked
       button.setAlpha(1);
       button.setData('togglePlay', true);
       stopmotion.play(stopmotion.getData('playAnim'));
-      stopmotion.anims.msPerFrame = 120;
+      // stopmotion.anims.msPerFrame = 120;
     }
   }
 }

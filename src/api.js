@@ -612,7 +612,7 @@ export async function deleteObjectAdmin(id, type, name) {
 export async function convertImage(path, height, width, format) {
   const session = get(Session);
 
-  const payloadHeight = typeof height === 'undefined' ? DEFAULT_PREVIEW_HEIGHT.toString() : width.toString();
+  const payloadHeight = typeof height === 'undefined' ? DEFAULT_PREVIEW_HEIGHT.toString() : height.toString();
   const payloadWidth = typeof width === 'undefined' ? payloadHeight : width.toString();
   const payloadFormat = typeof format === 'undefined' ? 'png' : format;
   const payload = {
@@ -623,8 +623,10 @@ export async function convertImage(path, height, width, format) {
   };
 
   const rpcid = 'convert_image';
+  // dlog('payload height, width', payload, height, width);
   const user = await client.rpc(session, rpcid, payload);
   if (!user.payload.url) Error.set("couldn't convert image");
+  // dlog('user.payload', user.payload);
   return user.payload.url;
 }
 

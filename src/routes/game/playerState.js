@@ -1,4 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
+// eslint-disable-next-line no-unused-vars
 import { dlog } from './helpers/DebugLog';
 import {
   DEFAULT_ZOOM, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
@@ -68,7 +69,7 @@ function createHistory() {
         ...hist,
         path,
       ]);
-      dlog('push history =', get(PlayerHistoryStore));
+      // dlog('push history =', get(PlayerHistoryStore));
     },
 
     replace: (path) => {
@@ -79,12 +80,12 @@ function createHistory() {
         }
         return updatedHistory;
       });
-      dlog('replace history =', get(PlayerHistoryStore));
+      // dlog('replace history =', get(PlayerHistoryStore));
     },
 
     pop: () => {
       PlayerHistoryStore.update((hist) => hist.slice(0, -1));
-      dlog('pop history =', get(PlayerHistoryStore));
+      // dlog('pop history =', get(PlayerHistoryStore));
     },
 
 

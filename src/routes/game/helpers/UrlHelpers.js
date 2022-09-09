@@ -11,6 +11,7 @@ import { CurrentApp } from '../../../session';
 import {
   DEFAULT_HOME, DEFAULT_ZOOM, SCENE_INFO, ZOOM_MAX, ZOOM_MIN,
 } from '../../../constants';
+// eslint-disable-next-line no-unused-vars
 import { dlog } from './DebugLog';
 import { DEFAULT_APP, isValidApp } from '../../apps/apps';
 import SceneSwitcher from '../class/SceneSwitcher';
@@ -148,7 +149,7 @@ export function parseQueryString() {
       }
     }
 
-    dlog('setting position to', newPlayerPosition);
+    // dlog('setting position to', newPlayerPosition);
     PlayerPos.set(newPlayerPosition);
   }
 
@@ -196,13 +197,13 @@ export function updateQueryString() {
       if (method === 'push') {
         push(newLocation);
         PlayerHistory.push(newLocation);
-        dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #00FF00');
+        // dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #00FF00');
       } else {
         // Location changes should just update the querystring..
         // ..so the location remains available on deeplinks and reloads
         replace(newLocation);
         PlayerHistory.replace(newLocation);
-        dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #FF0000');
+        // dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #FF0000');
       }
     }
   }
