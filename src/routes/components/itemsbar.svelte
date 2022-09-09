@@ -2,7 +2,9 @@
   import { location, push } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { convertImage, getAccount, getObject, logout } from '../../api';
+  import {
+    convertImage, getAccount, getObject, logout,
+  } from '../../api';
   import ProfilePage from '../profile.svelte';
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
@@ -14,7 +16,8 @@
   import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
 
-  // TODO: current moet een store worden, zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties)
+  // TODO: current moet een store worden
+  // zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties)
   let current;
   let userHouseUrl;
 
@@ -396,9 +399,9 @@
     height: 100%;
   }
 
-  .addressbook-image {
+  /* .addressbook-image {
     display: block;
     height: 50px;
     width: 50px;
-  }
+  } */
 </style>
