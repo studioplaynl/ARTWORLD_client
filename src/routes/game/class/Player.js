@@ -7,7 +7,6 @@ import { getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
 import { PlayerPos } from '../playerState';
-import ServerCall from './ServerCall';
 
 class Player {
   constructor() {
