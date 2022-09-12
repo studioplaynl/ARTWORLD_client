@@ -7,6 +7,7 @@ import { getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
 import { PlayerPos } from '../playerState';
+import ServerCall from './ServerCall';
 
 class Player {
   constructor() {
@@ -132,8 +133,8 @@ class Player {
         fileNameCheck,
         userprofile.url,
         {
-          frameWidth: this.avatarSize * 2,
-          frameHeight: this.avatarSize * 2,
+          frameWidth: 150,
+          frameHeight: 150,
         },
       )
         .on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
@@ -156,13 +157,13 @@ class Player {
 
     const avatar = scene.textures.get(scene.playerAvatarKey);
     const avatarWidth = avatar.frames.__BASE.width;
-    // dlog('avatarWidth: ', avatarWidth);
+    dlog('avatarWidth: ', avatarWidth);
 
     const avatarHeight = avatar.frames.__BASE.height;
-    // dlog('avatarHeight: ', avatarHeight);
+    dlog('avatarHeight: ', avatarHeight);
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    // dlog("avatarFrames: " + avatarFrames)
+    dlog(`avatarFrames: ${avatarFrames}`);
 
     // make an animation if the image is wider than tall
 

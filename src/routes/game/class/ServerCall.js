@@ -308,6 +308,44 @@ class ServerCall {
           new AnimalChallenge(scene, element, artSize);
         });
       scene.load.start(); // start the load queue to get the image in memory
+    } else if (type === 'avatar') {
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
+
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'downloadAvatarKey', element, index, imageKey: imageKeyUrl, scene,
+      });
+
+      scene.load.spritesheet(
+        imageKeyUrl,
+        convertedImage,
+        { frameWidth: artSize, frameHeight: artSize },
+      )
+        .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
+          // remove the file from the error-resolve-queue
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl,
+          );
+
+          scene.events.emit('avatarConverted', imageKeyUrl);
+        });
+      // console.log('stopmotion', imageKeyUrl);
+      scene.load.start(); // start the load queue to get the image in memory
+
+      // this is fired each time a file is finished downloading (or failing)
+      // scene.load.on('complete', () => {
+      //   // dlog('loader STOPMOTION is complete');
+      //   const startLength = scene.userStopmotionServerList.startLength;
+      //   let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
+      //   // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
+      //   downloadCompleted += 1;
+      //   scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
+      //   // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
+      //   if (downloadCompleted === startLength) {
+      //     dlog('loader STOPMOTION COMPLETE');
+      //     ServerCall.repositionContainers('stopmotion');
+      //   }
+      // });
     }
   }
 
@@ -524,6 +562,13 @@ class ServerCall {
           (obj) => obj.imageKey !== imageKey,
         );
 
+        break;
+
+      case 'downloadAvatarKey':
+        dlog('loading avatar conversion failed');
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey,
+        );
         break;
 
       default:
