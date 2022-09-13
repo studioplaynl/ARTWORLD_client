@@ -14,7 +14,7 @@
   const minLength = 3;
   const maxLength = 24;
 
-  let title = row.value.displayname;
+  let title = row.value.displayname || '';
   async function update() {
     if (titleIsInvalid || titleIsTooShort || titleIsTooLong) return;
     row.value.displayname = title;

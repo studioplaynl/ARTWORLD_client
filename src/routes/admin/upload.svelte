@@ -69,7 +69,7 @@
   }
 </script>
 
-<div class="Form">
+<div class="box">
   <div class="container">
     <label for="userId">Username:</label>
     <select id="userId" bind:value="{id}">

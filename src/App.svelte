@@ -204,6 +204,7 @@
 
 <!-- Routes go on top of Game -->
 <Menu />
+
 <Router routes="{routes}" />
 <!-- on:routeLoading="{routeLoading}"
   on:routeLoaded="{routeLoaded}" -->
@@ -215,4 +216,5 @@
   main {
     position: relative;
   }
+
 </style>

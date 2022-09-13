@@ -1,9 +1,12 @@
 <script>
-  /** eslint-disable max-len */
+  import { push } from 'svelte-spa-router';
 
+  /** eslint-disable max-len */
   import SvelteTable from 'svelte-table';
   import { ListAllUsers } from '../../api';
   import { dlog } from '../game/helpers/DebugLog';
+
+
 
   const groups = [];
   let users = [];
@@ -99,30 +102,34 @@
 <div class="box">
   <h1>All Users</h1>
   <a href="/#/register"><button>Add new user</button></a>
-  <a href="/#/match"><button>extra options</button></a>
   <SvelteTable
     columns="{userColumns}"
     rows="{users}"
     classNameTable="profileTable"
   />
 
-  <h1>All Groeps</h1>
+  <!-- <h1>All Groeps</h1>
   <a href="/#/group"><button>Add new group</button></a>
   <SvelteTable
     columns="{groupColumns}"
     rows="{groups}"
     classNameTable="profileTable"
-  />
+  /> -->
+  <div
+      class="app-close"
+      on:click="{() => {
+        push('/');
+      }}"
+    >
+      <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
+    </div>
 </div>
 
 <style>
   * {
     box-sizing: border-box;
   }
-  .box {
-    max-width: fit-content;
-    margin: 0 auto;
-  }
+
   h1 {
     display: inline;
   }
@@ -130,5 +137,30 @@
   button {
     float: right;
     margin: 5px;
+  }
+
+  .app-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 13;
+    box-shadow: 5px 5px 0px #7300ed;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+
+  .app-close > img {
+    width: 40px;
+  }
+
+  @media only screen and (max-width: 640px) {
+    .app-close {
+      top: unset;
+      bottom: 120px;
+    }
   }
 </style>
