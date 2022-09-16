@@ -6,7 +6,7 @@ import CoordinatesTranslator from './CoordinatesTranslator';
 import { getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
-import { playerPos } from '../playerState';
+import { PlayerPos } from '../playerState';
 
 class Player {
   constructor() {
@@ -70,14 +70,14 @@ class Player {
       lastPosX = placePlayerX;
       dlog('placePlayerX', placePlayerX);
     } else {
-      lastPosX = get(playerPos).x; // playerPos is in artworldCoordinates, will be converted later
+      lastPosX = get(PlayerPos).x; // PlayerPos is in artworldCoordinates, will be converted later
       // dlog("lastPosX", lastPosX)
     }
     if (typeof placePlayerY !== 'undefined') {
       lastPosY = placePlayerY; // if there is an argument to place the player on a specific position in the scene
       dlog('placePlayerY', placePlayerY);
     } else {
-      lastPosY = get(playerPos).y; // playerPos is in artworldCoordinates, will be converted later
+      lastPosY = get(PlayerPos).y; // PlayerPos is in artworldCoordinates, will be converted later
       // dlog("lastPosY", lastPosY)
     }
     // dlog("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)
@@ -132,8 +132,8 @@ class Player {
         fileNameCheck,
         userprofile.url,
         {
-          frameWidth: this.avatarSize * 2,
-          frameHeight: this.avatarSize * 2,
+          frameWidth: 150,
+          frameHeight: 150,
         },
       )
         .on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
@@ -156,13 +156,13 @@ class Player {
 
     const avatar = scene.textures.get(scene.playerAvatarKey);
     const avatarWidth = avatar.frames.__BASE.width;
-    // dlog('avatarWidth: ', avatarWidth);
+    dlog('avatarWidth: ', avatarWidth);
 
     const avatarHeight = avatar.frames.__BASE.height;
-    // dlog('avatarHeight: ', avatarHeight);
+    dlog('avatarHeight: ', avatarHeight);
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    // dlog("avatarFrames: " + avatarFrames)
+    dlog(`avatarFrames: ${avatarFrames}`);
 
     // make an animation if the image is wider than tall
 
@@ -341,6 +341,7 @@ class Player {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
     // dlog("player, tempAvatarName", onlinePlayer, tempAvatarName)
 

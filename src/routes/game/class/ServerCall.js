@@ -1,14 +1,17 @@
 /* eslint-disable prefer-destructuring */
 import ManageSession from '../ManageSession';
 import {
-  listObjects, convertImage, listAllObjects,
+  convertImage, getAllHouses, listAllObjects,
 } from '../../../api';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
+import ArtworkList from './ArtworkList';
+import { ART_FRAME_BORDER } from '../../../constants';
 import { dlog } from '../helpers/DebugLog';
+import AnimalChallenge from './animalChallenge';
 
 class ServerCall {
-  async getHomesFiltered(collection, filter, maxItems, _scene) {
+  async getHomesFiltered(filter, _scene) {
     const scene = _scene;
     // homes represented, to created homes in the scene
     scene.homesRepresented = [];
@@ -16,66 +19,15 @@ class ServerCall {
     // console.log('scene.homesRepresented.length before', scene.homesRepresented.length);
     // console.log('scene.homes.length before', scene.homes.length);
 
-    // when there is a loading error, the error gets thrown multiple times
-    // because I subscribe to the 'loaderror' event multiple times
-    // const eventNames = scene.load.eventNames();
-    // dlog("eventNames", eventNames)
-    const isReady = scene.load.isReady();
-    dlog('isReady', isReady);
-    const isLoading = scene.load.isLoading();
-    dlog('isLoading', isLoading);
-
-    // subscribe to loaderror event
-    scene.load.on('loaderror', (offendingFile) => {
-      this.resolveLoadError(offendingFile);
-    }, this);
-
     // get a list of all homes objects and then filter
-    Promise.all([listObjects(collection, null, maxItems)])
+    Promise.all([getAllHouses(filter, null)])
       .then((homesRec) => {
         // console.log('rec homes: ', homesRec);
         scene.homes = homesRec[0];
-        // console.log('scene.homes', scene.homes);
-        // filter only amsterdam homes
-        scene.homes = scene.homes.filter((obj) => obj.key === filter);
+        // dlog('scene.homes', scene.homes);
 
-        // retreive how many artworks are in the home
-        // let tempAllArtPerUser = []
-
-        scene.homes.forEach(
-          (homeElement, homeIndex) => {
-            if (typeof scene.homes[homeIndex].artWorks === 'undefined') {
-              scene.homes[homeIndex].artWorks = [];
-              // console.log('artWorks was undefined');
-            }
-
-            this.getAllArtworks(homeElement, homeIndex);
-          },
-        );
         this.generateHomes(scene);
       });
-  }
-
-  getAllArtworks(homeElement, homeIndex) {
-    // console.log('this.getAllArtworks');
-    const scene = ManageSession.currentScene;
-    Promise.all([
-      listAllObjects('drawing', homeElement.user_id),
-      listAllObjects('stopmotion', homeElement.user_id)]).then(
-      (artWorksArrays) => {
-        // the 2 promisses create an array each, so iterate over both
-
-        // we filter out the visible artworks
-        // filter only the visible art = "permission_read": 2
-        artWorksArrays[0] = artWorksArrays[0].filter((obj) => obj.permission_read === 2);
-        artWorksArrays[1] = artWorksArrays[1].filter((obj) => obj.permission_read === 2);
-
-        const allArtworks = [...artWorksArrays[0], ...artWorksArrays[1]];
-
-        scene.homes[homeIndex].artWorks = allArtworks;
-        scene.events.emit('updateArtBubbles');
-      },
-    );
   }
 
   async generateHomes(scene) {
@@ -127,29 +79,6 @@ class ServerCall {
       });
   }
 
-  updateArtBubbles() {
-    // scene.homesRepresented is klaar en zijn de GameObjects
-    // scene.homes bevat het aantal artWorks
-    const scene = ManageSession.currentScene;
-
-    if (!ManageSession.gameEditMode) {
-      scene.homesRepresented.forEach((element, index) => {
-        const artWorkLength = scene.homes[index].artWorks.length;
-        element.numberOfArtworks = artWorkLength;
-        element.numberArt.setText(artWorkLength);
-        if (artWorkLength > 0) {
-          scene.homesRepresented[index].numberArt.setVisible(true);
-          scene.homesRepresented[index].numberBubble.setVisible(true);
-          scene.homesRepresented[index].setData('enteringPossible', 'true');
-        } else {
-          scene.homesRepresented[index].numberArt.setVisible(false);
-          scene.homesRepresented[index].numberBubble.setVisible(false);
-          scene.homesRepresented[index].setData('enteringPossible', 'false');
-        }
-      });
-    }
-  }
-
   static createHome(element, index, homeImageKey, _scene) {
     const scene = _scene;
 
@@ -157,12 +86,15 @@ class ServerCall {
     const locationDescription = element.value.username;
 
     // only show the number of artworks on the houses if we know it
-    let numberOfArtworks;
-    if (typeof element.artWorks === 'undefined') {
-      numberOfArtworks = -1;
-    } else {
-      numberOfArtworks = element.artWorks.length;
-    }
+    const numberOfDrawing = element.artworks.drawing;
+    const numberOfStopmotion = element.artworks.stopmotion;
+
+    const numberOfArtworks = numberOfDrawing + numberOfStopmotion;
+    // if (typeof element.artWorks === 'undefined') {
+    //   numberOfArtworks = -1;
+    // } else {
+    //   numberOfArtworks = element.artWorks.length;
+    // }
 
     scene.homesRepresented[index] = new GenerateLocation({
       scene,
@@ -209,25 +141,369 @@ class ServerCall {
     }
   }
 
+  async downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin) {
+    // const scene = ManageSession.currentScene;
+    if (type === 'dier') {
+      await listAllObjects('stopmotion', null).then((rec) => {
+      // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
+        // dlog('serverItemsArray, rec : ', rec, serverItemsArray);
+
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
+
+        this.handleServerArray(type, serverItemsArray, artSize, artMargin);
+      });
+    } else {
+      await listAllObjects(type, location).then((rec) => {
+      // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
+        dlog('serverItemsArray: ', type, location, serverItemsArray);
+        this.handleServerArray(type, serverItemsArray, artSize, artMargin);
+      });
+    }
+  }
+
+  handleServerArray(type, serverItemsArray, artSize, artMargin) {
+    if (serverItemsArray.array.length > 0) {
+      // eslint-disable-next-line no-param-reassign
+      serverItemsArray.startLength = serverItemsArray.array.length;
+      // eslint-disable-next-line no-param-reassign
+      serverItemsArray.itemsDownloadCompleted = 0;
+      // eslint-disable-next-line no-param-reassign
+      serverItemsArray.itemsFailed = 0;
+
+      serverItemsArray.array.forEach((element, index, array) => {
+        this.downloadArtwork(element, index, array, type, artSize, artMargin);
+      });
+    }
+  }
+
+  async downloadArtwork(element, index, array, type, artSize, artMargin) {
+    const scene = ManageSession.currentScene;
+    const imageKeyUrl = element.value.url;
+    const imgSize = artSize.toString();
+    const fileFormat = 'png';
+    const getImageWidth = (artSize * 100).toString();
+
+    if (scene.textures.exists(imageKeyUrl)) {
+      // if the artwork has already been downloaded
+      if (type === 'drawing') {
+        // eslint-disable-next-line no-param-reassign
+        element.downloaded = true;
+        ServerCall.createDrawingContainer(element, index, artSize, artMargin);
+      } else if (type === 'stopmotion') {
+        // eslint-disable-next-line no-param-reassign
+        element.downloaded = true;
+        ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
+      } else if (type === 'dier') {
+        // eslint-disable-next-line no-new
+        new AnimalChallenge(scene, element, artSize);
+      }
+      // if the artwork is not already downloaded
+    } else if (type === 'drawing') {
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
+
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
+      });
+
+      scene.load.image(imageKeyUrl, convertedImage)
+        .on(`filecomplete-image-${imageKeyUrl}`, () => {
+          // delete from ManageSession.resolveErrorObjectArray because of succesful download
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl,
+          );
+          // eslint-disable-next-line no-param-reassign
+          element.downloaded = true;
+          // dlog('drawing downloaded', imageKeyUrl);
+          // dlog('object updated: ', element);
+          // create container with artwork
+
+          ServerCall.createDrawingContainer(element, index, artSize, artMargin);
+          // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
+          // create the home
+          // ServerCall.createHome(element, index, homeImageKey, scene);
+        }, this);
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      // ManageSession.resolveErrorObjectArray.push({
+      //   loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
+      // });
+
+      scene.load.start(); // start the load queue to get the image in memory
+
+      // this is fired each time a file is finished downloading (or failing)
+      scene.load.on('complete', () => {
+        const startLength = scene.userDrawingServerList.startLength;
+        let downloadCompleted = scene.userDrawingServerList.itemsDownloadCompleted;
+        // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
+        downloadCompleted += 1;
+        scene.userDrawingServerList.itemsDownloadCompleted = downloadCompleted;
+        // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        if (downloadCompleted === startLength) {
+          dlog('loader DRAWING COMPLETE');
+          ServerCall.repositionContainers('drawing');
+        }
+      });
+    } else if (type === 'stopmotion') {
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
+
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'downloadStopmotionDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
+      });
+
+      scene.load.spritesheet(
+        imageKeyUrl,
+        convertedImage,
+        { frameWidth: artSize, frameHeight: artSize },
+      )
+        .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
+          // remove the file from the error-resolve-queue
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl,
+          );
+
+          ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
+        });
+      // console.log('stopmotion', imageKeyUrl);
+      scene.load.start(); // start the load queue to get the image in memory
+
+      // this is fired each time a file is finished downloading (or failing)
+      scene.load.on('complete', () => {
+        // dlog('loader STOPMOTION is complete');
+        const startLength = scene.userStopmotionServerList.startLength;
+        let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
+        // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
+        downloadCompleted += 1;
+        scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
+        // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        if (downloadCompleted === startLength) {
+          dlog('loader STOPMOTION COMPLETE');
+          ServerCall.repositionContainers('stopmotion');
+        }
+      });
+    } else if (type === 'dier') {
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
+      // const convertedImage = element.value.previewUrl
+
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'downloadAnimalChallenge', element, index, imageKey: imageKeyUrl, scene,
+      });
+
+      scene.load.spritesheet(
+        imageKeyUrl,
+        convertedImage,
+        { frameWidth: artSize, frameHeight: artSize },
+      )
+        .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
+          // remove the file from the error-resolve-queue
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl,
+          );
+
+          // eslint-disable-next-line no-new
+          new AnimalChallenge(scene, element, artSize);
+        });
+      scene.load.start(); // start the load queue to get the image in memory
+    } else if (type === 'avatar') {
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
+
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'downloadAvatarKey', element, index, imageKey: imageKeyUrl, scene,
+      });
+
+      scene.load.spritesheet(
+        imageKeyUrl,
+        convertedImage,
+        { frameWidth: artSize, frameHeight: artSize },
+      )
+        .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
+          // remove the file from the error-resolve-queue
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl,
+          );
+
+          scene.events.emit('avatarConverted', imageKeyUrl);
+        });
+      // console.log('stopmotion', imageKeyUrl);
+      scene.load.start(); // start the load queue to get the image in memory
+
+      // this is fired each time a file is finished downloading (or failing)
+      // scene.load.on('complete', () => {
+      //   // dlog('loader STOPMOTION is complete');
+      //   const startLength = scene.userStopmotionServerList.startLength;
+      //   let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
+      //   // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
+      //   downloadCompleted += 1;
+      //   scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
+      //   // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
+      //   if (downloadCompleted === startLength) {
+      //     dlog('loader STOPMOTION COMPLETE');
+      //     ServerCall.repositionContainers('stopmotion');
+      //   }
+      // });
+    }
+  }
+
+  static createDrawingContainer(element, index, artSize, artMargin) {
+    const scene = ManageSession.currentScene;
+
+    const imageKeyUrl = element.value.url;
+    const y = 38;
+    const artBorder = ART_FRAME_BORDER;
+
+    const artStart = 38; // start the art on the left side
+
+    const coordX = index === 0 ? artStart : (artStart) + (index * (artSize + artMargin));
+    // dlog('image coordX, index', coordX, index);
+    const imageContainer = scene.add.container(0, 0).setDepth(100);
+
+    imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
+
+    // adds the image to the container
+    const setImage = scene.add.image(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0);
+    imageContainer.add(setImage);
+
+    const containerSize = artSize + artBorder;
+    const tempX = containerSize - artMargin;
+    const tempY = containerSize + artBorder;
+    ArtworkList.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
+    imageContainer.setPosition(coordX, y);
+    imageContainer.setSize(containerSize, containerSize);
+    scene.drawingGroup.add(imageContainer);
+    // dlog('scene.drawingGroup.getChildren()', scene.drawingGroup.getChildren());
+  }
+
+  static createStopmotionContainer(element, index, artSize, artMargin) {
+    const scene = ManageSession.currentScene;
+
+    const imageKeyUrl = element.value.url;
+    const y = artSize * 1.4;
+    const artBorder = ART_FRAME_BORDER;
+
+    const artStart = 38; // start the art on the left side
+
+    const coordX = index === 0 ? artStart : (artStart) + (index * (artSize + artMargin));
+    const imageContainer = scene.add.container(0, 0).setDepth(100);
+
+    imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0).setName('frame'));
+
+    // dlog('STOPMOTION element, index, artSize, artMargin', element, index, artSize, artMargin);
+    const avatar = scene.textures.get(imageKeyUrl);
+    // eslint-disable-next-line no-underscore-dangle
+    const avatarWidth = avatar.frames.__BASE.width;
+    // console.log('stopmotion width: ', avatarWidth);
+
+    // eslint-disable-next-line no-underscore-dangle
+    const avatarHeight = avatar.frames.__BASE.height;
+    // console.log(`stopmotion Height: ${avatarHeight}`);
+
+    const avatarFrames = Math.round(avatarWidth / avatarHeight);
+    let setFrameRate = 0;
+    if (avatarFrames > 1) { setFrameRate = (avatarFrames); } else {
+      setFrameRate = 0;
+    }
+    // console.log(`stopmotion Frames: ${avatarFrames}`);
+
+    // animation for the player avatar .........................
+    scene.anims.create({
+      key: `moving_${imageKeyUrl}`,
+      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+        start: 0,
+        end: avatarFrames - 1,
+      }),
+      frameRate: setFrameRate,
+      repeat: -1,
+      yoyo: false,
+    });
+
+    scene.anims.create({
+      key: `stop_${imageKeyUrl}`,
+      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+        start: 0,
+        end: 0,
+      }),
+    });
+    // . end animation for the player avatar ......................
+
+    // adds the image to the container
+    const completedImage = scene.add.sprite(
+      0 + artBorder,
+      0 + artBorder,
+      imageKeyUrl,
+    ).setOrigin(0);
+    completedImage.setName('stopmotion');
+    imageContainer.add(completedImage);
+
+    completedImage.setData('playAnim', `moving_${imageKeyUrl}`);
+    completedImage.setData('stopAnim', `stop_${imageKeyUrl}`);
+    if (avatarFrames > 1) {
+      completedImage.play(`moving_${imageKeyUrl}`);
+    }
+
+    const containerSize = artSize + artBorder;
+    const tempX = containerSize - artMargin;
+    const tempY = containerSize + artBorder;
+    ArtworkList.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
+    ArtworkList.placePlayPauseButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
+    imageContainer.setPosition(coordX, y);
+    imageContainer.setSize(containerSize, containerSize);
+    scene.stopmotionGroup.add(imageContainer);
+  }
+
+  static repositionContainers(type) {
+    // if there are images that didn't download, reorder the containers
+    // get the children of the stopmotion group
+    const scene = ManageSession.currentScene;
+    let containers = {};
+
+    if (type === 'drawing') {
+      containers = scene.drawingGroup.getChildren();
+    } else if (type === 'stopmotion') {
+      containers = scene.stopmotionGroup.getChildren();
+    }
+
+
+    const artSize = scene.artDisplaySize;
+    const artMargin = scene.artMargin;
+    // const artBorder = ART_FRAME_BORDER;
+
+    // give each container a position according to the place in the index
+    // const y = artSize * 2.4;
+
+    const artStart = 38; // start the art on the left side
+    containers.forEach((element, index) => {
+      const coordX = index === 0 ? artStart : (artStart) + (index * (artSize + artMargin));
+      element.setX(coordX);
+      dlog('reposition: coordX', coordX);
+    });
+  }
+
   /** Provide detailed information on a file loading error in Phaser, and provide fallback */
   resolveLoadError(offendingFile) {
     // element, index, homeImageKey, offendingFile, scene
     // ManageSession.resolveErrorObjectArray; // all loading images
+    dlog('offendingFile', offendingFile);
 
     const resolveErrorObject = ManageSession.resolveErrorObjectArray.find(
       (o) => o.imageKey === offendingFile.key,
     );
+
+    // dlog('offendingFile resolveErrorObject', resolveErrorObject);
 
     const { loadFunction } = resolveErrorObject;
     const { element } = resolveErrorObject;
     const { index } = resolveErrorObject;
     const imageKey = offendingFile.key;
     const { scene } = resolveErrorObject;
-
     // dlog("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
     switch (loadFunction) {
       case 'getHomeImage':
-        dlog('load offendingFile again', imageKey);
+        dlog('offending file, load placeholder image instead', imageKey);
 
         scene.load.image(imageKey, './assets/ball_grey.png')
           .on(`filecomplete-image-${imageKey}`, () => {
@@ -241,6 +517,58 @@ class ServerCall {
             ServerCall.createHome(element, index, imageKey, scene);
           }, this);
         scene.load.start();
+        break;
+      case 'downloadDrawingDefaultUserHome':
+        dlog('offending drawing loading failed, removing from array', imageKey);
+
+
+        // delete from scene.userDrawingServerList
+        // eslint-disable-next-line max-len
+        scene.userDrawingServerList.array = scene.userDrawingServerList.array.filter((obj) => obj.value.url !== imageKey);
+
+        // delete from ManageSession.resolveErrorObjectArray
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey,
+        );
+        // dlog('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
+
+        break;
+
+      case 'downloadStopmotionDefaultUserHome':
+        dlog('offending stopmotion loading failed, removing from array');
+        // eslint-disable-next-line no-case-declarations
+        const userStopmotionServerList = scene.userStopmotionServerList;
+        // delete from scene.userStopmotionServerList
+
+        userStopmotionServerList.array = userStopmotionServerList.array.filter((obj) => obj.value.url !== imageKey);
+
+        // delete from ManageSession.resolveErrorObjectArray
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey,
+        );
+
+        break;
+
+      case 'downloadAnimalChallenge':
+        dlog('offending dier loading failed, removing from array');
+        // eslint-disable-next-line no-case-declarations
+        const userServerList = scene.animalArray;
+        // delete from scene.userStopmotionServerList
+
+        userServerList.array = userServerList.array.filter((obj) => obj.value.url !== imageKey);
+
+        // delete from ManageSession.resolveErrorObjectArray
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey,
+        );
+
+        break;
+
+      case 'downloadAvatarKey':
+        dlog('loading avatar conversion failed');
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey,
+        );
         break;
 
       default:

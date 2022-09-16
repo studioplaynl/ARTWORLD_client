@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import Preloader from '../class/Preloader';
 import ManageSession from '../ManageSession';
+import { ART_FRAME_BORDER } from '../../../constants';
 
 const { Phaser } = window;
 
@@ -36,7 +37,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('drawn_cloud', './assets/drawn_cloud.png');
 
     // drawing on a wall
-    this.load.image('brush', 'assets/brush3.png');
+    this.load.image('brush', './assets/brush3.png');
     this.load.image('brickWall', './assets/brickwall_white.jpg');
 
     this.load.svg('home', './assets/SHB/svg/AW-icon-home.svg', { scale: 0.7 });
@@ -144,7 +145,7 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   createArtFrame(postFix) {
-    const frameBorderSize = 10;
+    const frameBorderSize = ART_FRAME_BORDER;
     const frame = this.add.graphics();
     // create a black square size of art + 20pix
     frame.fillStyle(0x000000);

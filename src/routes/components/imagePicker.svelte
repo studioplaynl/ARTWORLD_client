@@ -3,6 +3,10 @@
   import { push } from 'svelte-spa-router';
   import { Profile } from '../../session';
   import { myHome } from '../../storage';
+  import {
+    STOPMOTION_MAX_FRAMES,
+    DEFAULT_PREVIEW_HEIGHT,
+  } from '../../constants';
   import Stopmotion from './stopmotion.svelte';
   import {
     listObjects,
@@ -14,19 +18,18 @@
   let objects = [];
   export let dataType = '';
 
-
   let deleteCheck = null;
 
   onMount(async () => {
-    objects = await listObjects(dataType, Profile.userID, 100);
+    objects = await listObjects(dataType, $Profile.id, 100);
 
     for (let index = 0; index < objects.length; index++) {
       if (typeof objects[index].value.previewUrl !== 'string') {
         // eslint-disable-next-line no-await-in-loop
         objects[index].value.previewUrl = await convertImage(
           objects[index].value.url,
-          '128',
-          '1000',
+          DEFAULT_PREVIEW_HEIGHT,
+          DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
           'png',
         );
       }

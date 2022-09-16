@@ -6,7 +6,7 @@ import ManageSession from '../ManageSession';
 import { listObjects } from '../../../api';
 import { DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
 import {
-  playerPos, playerLocation, playerHistory,
+  PlayerPos, PlayerLocation, PlayerHistory,
 } from '../playerState';
 import { Addressbook, Liked, Achievements } from '../../../storage';
 import { dlog } from '../helpers/DebugLog';
@@ -33,23 +33,23 @@ export default class UrlParser extends Phaser.Scene {
     const profile = get(Profile);
 
     // If there is no location parameter in the url..
-    if (get(playerLocation).scene === null) {
+    if (get(PlayerLocation).scene === null) {
       if (profile.meta?.PosX && profile.meta?.PosY) {
-        playerPos.set({
+        PlayerPos.set({
           x: Math.round(profile.meta.PosX),
           y: Math.round(profile.meta.PosY),
         });
       }
       if (profile.meta?.Location
         && checkIfLocationLooksLikeAHouse(profile.meta.Location)) {
-        playerLocation.set({
+        PlayerLocation.set({
           scene: DEFAULT_HOME,
           house: profile.meta.Location,
         });
       } else if (profile.meta?.Location
         && checkIfSceneIsAllowed(profile.meta.Location)
       ) {
-        playerLocation.set({
+        PlayerLocation.set({
           scene: profile.meta.Location,
           house: null,
         });
@@ -59,36 +59,36 @@ export default class UrlParser extends Phaser.Scene {
     }
 
     // If a position is null, randomise it..
-    if (get(playerPos).x === null && get(playerPos).y === null) {
-      playerPos.set({
+    if (get(PlayerPos).x === null && get(PlayerPos).y === null) {
+      PlayerPos.set({
         x: Math.floor((Math.random() * 300) - 150),
         y: Math.floor((Math.random() * 300) - 150),
       });
     }
 
-    const targetScene = get(playerLocation).scene;
-    const targetHouse = get(playerLocation).house;
+    const targetScene = get(PlayerLocation).scene;
+    const targetHouse = get(PlayerLocation).house;
 
     // Check if scene exists and is valid, if not: set DEFAULT_SCENE
     if (!targetScene || !checkIfSceneIsAllowed(targetScene)) {
-      playerLocation.set({
+      PlayerLocation.set({
         scene: DEFAULT_SCENE,
         house: null,
       });
       // Don't store this change in scene in the history..
-      playerHistory.pop();
+      PlayerHistory.pop();
     }
 
     if (targetHouse && checkIfLocationLooksLikeAHouse(targetHouse)) {
       listObjects('home', targetHouse, 1).catch(() => {
         // No objects found for this ID, switch to default scene
         dlog(`This ID (${targetHouse}) has no objects, switching to default scene`);
-        playerLocation.set({
+        PlayerLocation.set({
           scene: DEFAULT_SCENE,
           house: null,
         });
         // Don't store this change in scene in the history..
-        playerHistory.pop();
+        PlayerHistory.pop();
         this.launchGame();
       }).then(() => {
         // Objects were found, so we continue to launch
@@ -101,14 +101,14 @@ export default class UrlParser extends Phaser.Scene {
   }
 
   async launchGame() {
-    const targetScene = get(playerLocation).scene;
-    const targetHouse = get(playerLocation).house;
+    const targetScene = get(PlayerLocation).scene;
+    const targetHouse = get(PlayerLocation).house;
 
 
     if (this.debug) console.log('Launch: ', targetScene, targetHouse);
 
     this.scene.stop('UrlParser');
-    this.scene.launch('UIScene');
+
 
     // we launch the player last location when we have a socket with the server
     await ManageSession.createSocket()
@@ -119,6 +119,7 @@ export default class UrlParser extends Phaser.Scene {
         Achievements.get();
 
         this.scene.launch(targetScene, { user_id: targetHouse });
+        this.scene.launch('UIScene');
       });
   }
 }

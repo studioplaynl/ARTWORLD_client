@@ -6,6 +6,7 @@
   import { Session } from '../../session';
   import { login, checkLoginExpired } from '../../api';
   import QRscanner from './qrscanner.svelte';
+  // eslint-disable-next-line no-unused-vars
   import { dlog } from '../game/helpers/DebugLog';
 
   export let params;
@@ -149,10 +150,10 @@
   }
 
   /* Overwrite default styles of hr */
-  hr {
+  /* hr {
     border: 1px solid #f1f1f1;
     margin-bottom: 25px;
-  }
+  } */
 
   /* Set a style for the submit/register button */
   .register-btn {

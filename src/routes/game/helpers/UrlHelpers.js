@@ -5,10 +5,13 @@ import {
   push, replace, location, querystring,
 } from 'svelte-spa-router';
 import {
-  playerPos, playerLocation, playerHistory,
+  PlayerPos, PlayerLocation, PlayerHistory, PlayerZoom,
 } from '../playerState';
 import { CurrentApp } from '../../../session';
-import { DEFAULT_HOME, SCENE_INFO } from '../../../constants';
+import {
+  DEFAULT_HOME, DEFAULT_ZOOM, SCENE_INFO, ZOOM_MAX, ZOOM_MIN,
+} from '../../../constants';
+// eslint-disable-next-line no-unused-vars
 import { dlog } from './DebugLog';
 import { DEFAULT_APP, isValidApp } from '../../apps/apps';
 import SceneSwitcher from '../class/SceneSwitcher';
@@ -47,11 +50,11 @@ export function parseURL() {
   if (appName === '') {
     appName = DEFAULT_APP;
     replace(`/${appName}?${get(querystring)}`);
-    playerHistory.replace(`/${appName}?${get(querystring)}`);
+    PlayerHistory.replace(`/${appName}?${get(querystring)}`);
   }
 
-  if (`/${appName}` !== playerHistory.previous()) {
-    playerHistory.push(`/${appName}`);
+  if (`/${appName}` !== PlayerHistory.previous()) {
+    PlayerHistory.push(`/${appName}`);
   }
 
   // Check if a valid app..
@@ -78,42 +81,42 @@ location.subscribe(() => parseURL());
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
   const query = parse(get(querystring));
-  const pos = get(playerPos);
+  const pos = get(PlayerPos);
   const newPlayerPosition = { x: pos.x, y: pos.y };
-
-
-
   const newPlayerLocation = {};
 
   if ('house' in query) {
-    if (checkIfLocationLooksLikeAHouse(query.house) && get(playerLocation).house !== query.house) {
+    if (checkIfLocationLooksLikeAHouse(query.house) && get(PlayerLocation).house !== query.house) {
       newPlayerLocation.house = query.house;
     }
   }
 
   if ('location' in query) {
-    if (checkIfSceneIsAllowed(query.location) && get(playerLocation).scene !== query.location) {
+    if (checkIfSceneIsAllowed(query.location) && get(PlayerLocation).scene !== query.location) {
       newPlayerLocation.scene = query.location;
     }
   }
 
-  // Update the playerLocation store if a scene was set
-  if (newPlayerLocation?.scene) {
-    playerLocation.set(newPlayerLocation);
+  if ('zoom' in query) {
+    if (parseFloat(query.zoom) <= ZOOM_MAX && parseFloat(query.zoom) >= ZOOM_MIN) {
+      PlayerZoom.set(parseFloat(query.zoom));
+    } else {
+      PlayerZoom.set(DEFAULT_ZOOM);
+    }
+  } else {
+    PlayerZoom.set(DEFAULT_ZOOM);
   }
 
-
-
-  // TODO: These boundries must be drawn from the current scene
+  // Update the PlayerLocation store if a scene was set
+  if (newPlayerLocation?.scene) {
+    PlayerLocation.set(newPlayerLocation);
+  }
 
   if ('x' in query && 'y' in query) {
-    // TODO SOLUTION:
     // url gets parsed before scene is loaded, so there is no way of knowing the
     // scene size when onboarding the scene
-    // solution: set the sceneSize in a file, both scene and urlHelpers can read from it?
-    // but then we need to parse first the location?
 
-    const currentLocation = get(playerLocation);
+    const currentLocation = get(PlayerLocation);
 
     // scene is not loaded, getting the info from SCENE_INFO
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === currentLocation.scene);
@@ -125,8 +128,6 @@ export function parseQueryString() {
     maxX = (currentSceneSize.x / 2) - (ManageSession.avatarSize / 2);
     minY = -(currentSceneSize.y / 2) + (ManageSession.avatarSize / 2);
     maxY = (currentSceneSize.y / 2) - (ManageSession.avatarSize / 2);
-
-    // TODO SOLUTION end
 
     const queryX = parseInt(query.x, 10);
     const queryY = parseInt(query.y, 10);
@@ -148,8 +149,8 @@ export function parseQueryString() {
       }
     }
 
-    dlog('setting position to', newPlayerPosition);
-    playerPos.set(newPlayerPosition);
+    // dlog('setting position to', newPlayerPosition);
+    PlayerPos.set(newPlayerPosition);
   }
 
   if (stringify({ ...query }) !== stringify({ ...previousQuery })) {
@@ -160,17 +161,17 @@ export function parseQueryString() {
 /** Set up a subscription to the querystring (from svelte-spa-router)
  * (in other words: set up a listener to the current query string of the browser window)
  * Any changes to the querystring runs the parseQueryString function.
- * These changes set the playerPos & playerLocation stores */
+ * These changes set the PlayerPos & PlayerLocation stores */
 querystring.subscribe(() => parseQueryString());
 
 
 /* Set the query parameter after updating stores, because we have set up a subscription to these.
- * Any value changes on playerPos & playerLocation make this function run
+ * Any value changes on PlayerPos & PlayerLocation make this function run
 * And subsequently update the query string in the URL of the browser */
 export function updateQueryString() {
-  const { x, y } = get(playerPos);
-  const { scene, house } = get(playerLocation);
-
+  const { x, y } = get(PlayerPos);
+  const { scene, house } = get(PlayerLocation);
+  const zoom = get(PlayerZoom);
 
   if (x !== null && y !== null && scene !== null) {
     const query = { ...parse(get(querystring)) };
@@ -181,6 +182,7 @@ export function updateQueryString() {
     query.x = Math.round(x).toString();
     query.y = Math.round(y).toString();
     query.location = scene;
+    query.zoom = zoom;
 
     // House can be optional, and should be removed from querystring if null or empty
     if (scene !== DEFAULT_HOME || house === null) {
@@ -194,25 +196,26 @@ export function updateQueryString() {
       // Only scene or app changes should be added to the browser history
       if (method === 'push') {
         push(newLocation);
-        playerHistory.push(newLocation);
-        dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #00FF00');
+        PlayerHistory.push(newLocation);
+        // dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #00FF00');
       } else {
         // Location changes should just update the querystring..
         // ..so the location remains available on deeplinks and reloads
         replace(newLocation);
-        playerHistory.replace(newLocation);
-        dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #FF0000');
+        PlayerHistory.replace(newLocation);
+        // dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #FF0000');
       }
     }
   }
 }
 
 /** Set up the subscriptions to stores that should update the querystring
- *  In other words: any changes to playerPos and playerLocation stores
+ *  In other words: any changes to PlayerPos and PlayerLocation stores
  *  should become part of the browser location
 */
-playerPos.subscribe(() => updateQueryString());
-playerLocation.subscribe(() => updateQueryString());
+PlayerPos.subscribe(() => updateQueryString());
+PlayerZoom.subscribe(() => updateQueryString());
+PlayerLocation.subscribe(() => updateQueryString());
 
 
 

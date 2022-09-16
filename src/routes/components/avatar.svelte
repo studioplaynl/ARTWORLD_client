@@ -2,23 +2,22 @@
   import { push } from 'svelte-spa-router';
   import { onDestroy, onMount } from 'svelte';
   import { Profile } from '../../session';
+  import { AvatarsStore } from '../../storage';
   import ImagePicker from './imagePicker.svelte';
-
+  import { STOPMOTION_FPS } from '../../constants';
 
   export let showHistory = false;
 
   let image;
   let frame = 0;
   let interval;
+  let currentAvatar;
 
-
-  // function loadUrl() {
-  //   url = $Profile.url;
-  //   dlog(url);
-  //   version = Number($Profile.avatar_url.split('/')[2].split('_')[0]);
-  // }
-
-  // Profile.subscribe(loadUrl);
+  const unsubscribe = AvatarsStore.subscribe((val) => {
+    if (val.length > 0) {
+      currentAvatar = AvatarsStore.getCurrent();
+    }
+  });
 
   onMount(async () => {
     //   loadUrl();
@@ -30,10 +29,11 @@
       } else {
         image.style.left = `-${frame * 150}px`;
       }
-    }, 200);
+    }, 1000 / STOPMOTION_FPS);
   });
 
   onDestroy(() => {
+    unsubscribe();
     clearInterval(interval);
   });
 </script>
@@ -55,27 +55,27 @@
     alt="Edit House"
     src="/assets/SHB/svg/AW-icon-pen.svg"
     on:click="{() => {
-      push('/avatar');
+      push(`/avatar?userId=${$Profile.id}&key=${currentAvatar.key}`);
     }}"
   />
   {#if !showHistory}
-  <img
-  alt="close"
-    class="icon"
-    src="/assets/SHB/svg/AW-icon-cross.svg"
-    on:click="{() => {
-      showHistory = !showHistory;
-    }}"
-  />
-  {:else }
-  <img
-  alt="history"
-  class="icon"
-  src="/assets/SHB/svg/AW-icon-history.svg"
-  on:click="{() => {
-    showHistory = !showHistory;
-  }}"
-/>
+    <img
+      alt="close"
+      class="icon"
+      src="/assets/SHB/svg/AW-icon-cross.svg"
+      on:click="{() => {
+        showHistory = !showHistory;
+      }}"
+    />
+  {:else}
+    <img
+      alt="history"
+      class="icon"
+      src="/assets/SHB/svg/AW-icon-history.svg"
+      on:click="{() => {
+        showHistory = !showHistory;
+      }}"
+    />
   {/if}
 </div>
 
@@ -103,7 +103,4 @@
     left: 0px;
     top: 0;
   }
-
-
-
 </style>

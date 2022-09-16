@@ -5,7 +5,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public --single",
+    "start": "sirv public --single --host 0.0.0.0",
     "lint": "eslint 'src/**/*.{html,js,svelte}'",
     "lint:fix": "eslint --fix 'src/**/*.{html,js,svelte}'"
   },
@@ -41,6 +41,7 @@
     "bluebird": "^3.7.2",
     "error-stack-parser": "^2.0.6",
     "eslint-scope": "^5.1.1",
+    "i": "^0.3.7",
     "i18next": "^21.3.2",
     "jsqr": "^1.4.0",
     "matter-js": "^0.17.1",
@@ -56,6 +57,7 @@
     "svelte-select": "^4.4.7",
     "svelte-spa-router": "^3.2.0",
     "svelte-table": "^0.1.18",
+    "swiper": "^8.3.2",
     "three": "^0.133.1",
     "typescript": "^4.7.3",
     "typescript-eslint": "^0.0.1-alpha.0",

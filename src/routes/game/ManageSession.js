@@ -7,7 +7,7 @@ import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
 import { logout } from '../../api';
 import {
-  playerLocation, playerStreamID,
+  PlayerLocation, playerStreamID,
 } from './playerState';
 
 const { Phaser } = window;
@@ -21,11 +21,11 @@ class ManageSession {
 
     /** @var {Phaser.Scene} currentScene */
     this.currentScene = null; // To give access to the scene outside of the game
-    // default zoomlevel is set here
-    this.currentZoom = 0.8; // passing camera zoom from ui to scene
 
     this.resolveErrorObjectArray = []; // handle load errors for images
     this.addressbook = {};
+    this.currentZoom = 1;
+
 
     this.client = null;
     this.socket = null;
@@ -104,13 +104,13 @@ class ManageSession {
     dlog('socket created with client');
 
     this.userProfile = get(Profile);
-    dlog('this.userProfile', this.userProfile);
+    // dlog('this.userProfile', this.userProfile);
 
     const createStatus = true;
     this.socket.connect(get(Session), createStatus).then(() => {
       this.socketIsConnected = true;
       this.getStreamUsers('join');
-      dlog('Join:', get(playerLocation).scene);
+      dlog('Join:', get(PlayerLocation).scene);
     });
 
 
