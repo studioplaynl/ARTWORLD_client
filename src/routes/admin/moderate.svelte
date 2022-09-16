@@ -1,11 +1,19 @@
 <script>
   import { _ } from 'svelte-i18n';
   import SvelteTable from 'svelte-table';
-  import { getAccount, convertImage, listAllObjects } from '../../api';
+  import { push } from 'svelte-spa-router';
+  import {
+    getAccount,
+    convertImage,
+    listAllObjects,
+    deleteObjectAdmin,
+    updateObjectAdmin,
+  } from '../../api';
   import { Session, Profile } from '../../session';
   import StatusComp from '../components/statusbox.svelte';
   import DeleteComp from '../components/deleteButton.svelte';
   import NameEdit from '../components/nameEdit.svelte';
+  import { runInNewContext } from 'vm';
 
   let useraccount;
   const drawingIcon =
@@ -65,7 +73,9 @@
     {
       key: 'Datum',
       title: 'Datum',
-      value: (v) => {
+      value: (v) => v.update_time,
+      filterValue: (v) => v.update_time,
+      renderValue: (v) => {
         const d = new Date(v.update_time);
         return `${d.getHours()}:${
           d.getMinutes() < 10 ? '0' : ''
@@ -78,12 +88,12 @@
     {
       key: 'Username',
       title: 'Username',
-      value: (v) => `<a href="/#/profile/${v.user_id}">${v.username}</a>`,
+      value: (v) => `<a >${v.username}</a>`, // href="/#/profile/${v.user_id}"
       sortable: true,
     },
     {
-      key: true,
-      title: true,
+      key: 'Status',
+      title: 'Status',
       class: 'iconWidth',
       renderComponent: {
         component: StatusComp,
@@ -95,14 +105,17 @@
       title: 'Delete',
       renderComponent: {
         component: DeleteComp,
-        props: { removeFromTrash, moveToTrash, isCurrentUser },
+        props: { removeFromTrash, moveToTrash, isCurrentUser, role },
       },
     },
   ];
 
-  function removeFromTrash(key) {
+  function removeFromTrash(row) {
+    deleteObjectAdmin(row.user_id, row.collection, row.key);
+    const key = row.key;
+
     for (let i = 0; i < trash.length; i++) {
-      if (!!trash[i] && trash[i].key == key) {
+      if (!!trash[i] && trash[i].key === key) {
         delete trash[i];
         i = trash.length;
         trash = trash;
@@ -110,9 +123,20 @@
     }
   }
 
-  function moveToTrash(key) {
+  function moveToTrash(row) {
+    const key = row.key;
+    const value = row.value;
+    value.status = 'trash';
+    updateObjectAdmin(
+      row.user_id,
+      row.collection,
+      row.key,
+      value,
+      row.permission_read,
+    );
+
     for (let i = 0; i < art.length; i++) {
-      if (!!art[i] && art[i].key == key) {
+      if (!!art[i] && art[i].key === key) {
         console.log(art[i]);
         trash.push(art[i]);
         delete art[i];
@@ -123,8 +147,17 @@
     }
   }
 
-  function moveToArt(key) {
-    console.log(trash);
+  function moveToArt(row) {
+    const key = row.key;
+    const value = row.value;
+    value.status = '';
+    updateObjectAdmin(
+      row.user_id,
+      row.collection,
+      row.key,
+      value,
+      row.permission_read,
+    );
     for (let i = 0; i < trash.length; i++) {
       if (!!trash[i] && trash[i].key == key) {
         art.push(trash[i]);
@@ -147,12 +180,12 @@
     stopMotion = await listAllObjects('stopmotion');
     picture = await listAllObjects('picture');
     console.log(drawings);
-    useraccount = await getAccount(id);
-    console.log(useraccount);
-    user = useraccount.username;
-    role = useraccount.meta.Role;
-    azc = useraccount.meta.Azc;
-    avatar_url = useraccount.url;
+    // useraccount = await getAccount(id);
+    // console.log(useraccount);
+    // user = useraccount.username;
+    //role = useraccount.meta.Role;
+    // azc = useraccount.meta.Azc;
+    // avatar_url = useraccount.url;
 
     art = [].concat(drawings);
     art = art.concat(stopMotion);
@@ -167,7 +200,6 @@
       if (item.value.json) item.url = item.value.json.split('.')[0];
       if (item.value.url) item.url = item.value.url.split('.')[0];
       item.value.previewUrl = await convertImage(item.value.url, '64', '64');
-      console.log(item.value.previewUrl);
       art = art;
     });
 
@@ -187,11 +219,39 @@
       classNameTable="profileTable"
     />
   {/if}
+  <div
+    class="app-close"
+    on:click="{() => {
+      push('/');
+    }}"
+  >
+    <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
+  </div>
 </div>
 
 <style>
-  .box {
-    max-width: fit-content;
-    margin: 0 auto;
+  .app-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 13;
+    box-shadow: 5px 5px 0px #7300ed;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+
+  .app-close > img {
+    width: 40px;
+  }
+
+  @media only screen and (max-width: 640px) {
+    .app-close {
+      top: unset;
+      bottom: 120px;
+    }
   }
 </style>

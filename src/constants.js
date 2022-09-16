@@ -58,6 +58,7 @@ export const PERMISSION_READ_PRIVATE = 1;
 /** File is public */
 export const PERMISSION_READ_PUBLIC = 2;
 
+
 /** Base size used for artworks */
 export const IMAGE_BASE_SIZE = 2048;
 
@@ -79,13 +80,10 @@ export const FRIENDSTATE_INVITATION_SENT = 1;
 export const FRIENDSTATE_INVITATION_RECEIVED = 2;
 export const FRIENDSTATE_BANNED = 3;
 
-
 /** Object has been deleted */
 export const OBJECT_STATE_REGULAR = '';
 export const OBJECT_STATE_UNDEFINED = undefined;
 export const OBJECT_STATE_IN_TRASH = 'trash';
-
-
 
 /** Notification codes */
 
@@ -99,3 +97,5 @@ export const NOTIFICATION_SOCKET_CLOSED = -7;
 export const NOTIFICATION_ARTWORK_LIKE_RECEIVED = 1;
 export const NOTIFICATION_ARTWORK_RECEIVED = 2;
 export const NOTIFICATION_INVITE_RECEIVED = 3;
+
+export const ARTWORK_TYPES = ['stopmotion', 'drawing'];

@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { _ } from 'svelte-i18n';
   import { Session, Profile } from '../../session';
+  import { push } from 'svelte-spa-router';
   import {
     isValidEmail,
     isValidPassword,
@@ -15,6 +16,7 @@
     updateObjectAdmin,
     deleteObjectAdmin,
     listObjects,
+    resetPasswordAdmin,
   } from '../../api';
   import { dlog } from '../game/helpers/DebugLog';
 
@@ -134,9 +136,15 @@
   async function deleteObject(_id, _type, _name) {
     deleteObjectAdmin(_id, _type, _name);
   }
+
+  async function resetPassword() {
+    if (!passwordCheckValid) return;
+    resetPasswordAdmin(id, email, password);
+  }
+
 </script>
 
-<main>
+<div class="box">
   <div class="registerForm">
     <form on:submit|preventDefault="{onSubmit}">
       <div class="container">
@@ -169,32 +177,6 @@
           required
         />
 
-        <label for="psw">
-          <b>{$_('register.password')}</b>
-        </label>
-        <input
-          type="password"
-          placeholder="Enter Password"
-          name="psw"
-          id="psw"
-          bind:value="{password}"
-          class:invalid="{!passwordValid}"
-          required
-        />
-
-        <label for="psw-repeat">
-          <b>{$_('register.repeatPassword')}</b>
-        </label>
-        <input
-          type="password"
-          placeholder="Repeat Password"
-          name="psw-repeat"
-          id="psw-repeat"
-          bind:value="{passwordCheck}"
-          class:invalid="{!passwordCheckValid}"
-          required
-        />
-
         {#if $Profile.meta.Role === 'admin'}
           <hr />
 
@@ -223,6 +205,36 @@
         >
       </div>
     </form>
+    <div class="password-form">
+      <h1>Password reset</h1>
+      <label for="psw">
+        <b>{$_('register.password')}</b>
+      </label>
+      <input
+        type="password"
+        placeholder="Enter Password"
+        name="psw"
+        id="psw"
+        bind:value="{password}"
+        class:invalid="{!passwordValid}"
+        required
+      />
+
+      <label for="psw-repeat">
+        <b>{$_('register.repeatPassword')}</b>
+      </label>
+      <input
+        type="password"
+        placeholder="Repeat Password"
+        name="psw-repeat"
+        id="psw-repeat"
+        bind:value="{passwordCheck}"
+        class:invalid="{!passwordCheckValid}"
+        required
+      />
+      <button on:click="{resetPassword}">Reset password</button>
+    </div>
+
     <div>
       <h1>{$_('update.addLocation')}</h1>
 
@@ -305,7 +317,16 @@
       {/each}
     </div>
   </div>
-</main>
+
+  <div
+    class="app-close"
+    on:click="{() => {
+      push('/admin');
+    }}"
+  >
+    <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
+  </div>
+</div>
 
 <style>
   * {
@@ -371,5 +392,35 @@
 
   .registerbtn:hover {
     opacity: 1;
+  }
+
+  .app-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 13;
+    box-shadow: 5px 5px 0px #7300ed;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+
+  .app-close > img {
+    width: 40px;
+  }
+
+  @media only screen and (max-width: 640px) {
+    .app-close {
+      top: unset;
+      bottom: 120px;
+    }
+  }
+
+  select {
+    width: 100%;
+    padding: 10px;
   }
 </style>

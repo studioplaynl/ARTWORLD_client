@@ -106,7 +106,6 @@ button:focus {
 
 .profileTable {
   width: fit-content;
-  max-width: 800px;
   align-content: center;
   border-collapse: collapse;
   border-bottom: 2px solid #7300EB;
@@ -228,4 +227,17 @@ div#phaserId {
 
 .selectContainer {
   min-width: 125px;
+}
+
+.box {
+  z-index: 3;
+  position: inherit;
+  top: 0;
+  left: 0;
+  max-width: fit-content;
+  background-color: white;
+  padding: 10px 50px;
+  border-radius: 50px;
+  border: 2px solid;
+  margin: 60px auto;
 }

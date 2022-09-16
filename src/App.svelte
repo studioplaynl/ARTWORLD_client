@@ -18,7 +18,7 @@
   import RegisterPage from './routes/auth/register.svelte';
   import UsersPage from './routes/users.svelte';
   import LoginPage from './routes/auth/login.svelte';
-  import ProfilePage from './routes/profile.svelte';
+  import ProfilePage from './routes/admin/profileWrapper.svelte';
   import DebugPage from './routes/admin/debugPage.svelte';
   import FriendsPage from './routes/friends.svelte';
   import UpdatePage from './routes/auth/update.svelte';
@@ -204,6 +204,7 @@
 
 <!-- Routes go on top of Game -->
 <Menu />
+
 <Router routes="{routes}" />
 <!-- on:routeLoading="{routeLoading}"
   on:routeLoaded="{routeLoaded}" -->
@@ -215,4 +216,5 @@
   main {
     position: relative;
   }
+
 </style>

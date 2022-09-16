@@ -1,6 +1,7 @@
 <script>
   import QrCode from 'svelte-qrcode';
   import { _ } from 'svelte-i18n';
+  import {push} from "svelte-spa-router"
   import { Session, Error } from '../../session';
   import { client } from '../../nakama.svelte';
   import { dlog } from '../game/helpers/DebugLog';
@@ -108,7 +109,7 @@
   }
 </script>
 
-<main>
+<div class="box">
   <div class="registerForm">
     <form on:submit|preventDefault="{onSubmit}">
       <div class="container">
@@ -199,7 +200,16 @@
       </table>
     </div>
   </div>
-</main>
+
+<div
+      class="app-close"
+      on:click="{() => {
+        push('/admin');
+      }}"
+    >
+      <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
+    </div>
+</div>
 
 <style>
   * {
@@ -271,5 +281,35 @@
 
   img {
     width: 60px;
+  }
+
+  .app-close {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    z-index: 13;
+    box-shadow: 5px 5px 0px #7300ed;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+
+  .app-close > img {
+    width: 40px;
+  }
+
+  @media only screen and (max-width: 640px) {
+    .app-close {
+      top: unset;
+      bottom: 120px;
+    }
+  }
+
+  select {
+    width: 100%;
+    padding: 10px;
   }
 </style>

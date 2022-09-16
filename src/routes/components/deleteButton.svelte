@@ -5,17 +5,28 @@
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
 
   export let row;
+  const role = $Profile.meta.Role; // ;
   export let isCurrentUser;
+  export let removeFromTrash;
+  export let moveToTrash;
 
   let modalOpen = false;
 
   const Trash = () => {
-    ArtworksStore.updateState(row, OBJECT_STATE_IN_TRASH);
+    if (role === 'admin' || role === 'moderator') {
+      moveToTrash(row);
+    } else {
+      ArtworksStore.updateState(row, OBJECT_STATE_IN_TRASH);
+    }
   };
 
   const Delete = () => {
     modalOpen = false;
-    ArtworksStore.delete(row, $Profile.meta.Role);
+    if (role === 'admin' || role === 'moderator') {
+      removeFromTrash(row);
+    } else {
+      ArtworksStore.delete(row, $Profile.meta.Role);
+    }
   };
 </script>
 

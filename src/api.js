@@ -4,6 +4,7 @@
 import { get } from 'svelte/store';
 import { push, querystring } from 'svelte-spa-router';
 import { client } from './nakama.svelte';
+
 import {
   Success, Session, Profile, Error,
 } from './session';
@@ -13,6 +14,7 @@ import {
   STOPMOTION_MAX_FRAMES,
   DEFAULT_PREVIEW_HEIGHT,
 } from './constants';
+
 import { dlog } from './routes/game/helpers/DebugLog';
 // import ManageSession from './routes/game/ManageSession';
 
@@ -307,6 +309,7 @@ export async function getAccount(id) {
 
     const users = await client.getUsers(session, [id]);
     user = users.users[0];
+
     user.meta = typeof user.metadata === 'string'
       ? JSON.parse(user.metadata)
       : user.metadata;
@@ -316,6 +319,7 @@ export async function getAccount(id) {
       DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
       'png',
     );
+
   }
 
   return user;
@@ -417,7 +421,8 @@ export async function getFile(file_url) {
 export async function uploadAvatar(data) {
   const profile = get(Profile);
   setLoader(true);
-  let avatarVersion = Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
+  let avatarVersion =
+    Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
   if (!avatarVersion) avatarVersion = 0;
   const [jpegURL, jpegLocation] = await getUploadURL(
     'avatar',
@@ -541,8 +546,8 @@ export async function ListAllArt(page, ammount) {
   const session = get(Session);
   const payload = { page, ammount };
   const rpcid = 'get_all_art';
-  const users = await client.rpc(session, rpcid, payload);
-  return users.payload;
+  const art = await client.rpc(session, rpcid, payload);
+  return art.payload;
 }
 
 export async function deleteObject(collection, key) {
@@ -569,12 +574,12 @@ export async function deleteObject(collection, key) {
  */
 export async function updateObjectAdmin(id, type, name, value, pub) {
   const session = get(Session);
-  const storeValue = typeof value === 'object' ? JSON.stringify(value) : value;
+  //const storeValue = typeof value === 'object' ? JSON.stringify(value) : value;
   const payload = {
     id,
     type,
     name,
-    storeValue,
+    value,
     pub,
   };
 
@@ -670,6 +675,20 @@ export async function listAllNotifications() {
   const result = await client.listNotifications(session, 100);
 
   return result;
+}
+
+
+export async function resetPasswordAdmin(id, email, password) {
+  const session = get(Session);
+  const payload = {
+    id,
+    email,
+    password,
+  };
+  const rpcid = 'reset_password_admin';
+  const response = await client.rpc(session, rpcid, payload);
+  if (response.status === 'failed') Error.set("couldn't set password");
+  Success.set(true);
 }
 
 export async function getAllHouses(location, user_id) {
