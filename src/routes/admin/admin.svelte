@@ -22,6 +22,7 @@
     });
     dlog(list);
     users = list;
+    console.log(users)
   });
 
   // location house
@@ -62,33 +63,33 @@
     {
       key: 'Username',
       title: 'Username',
-      value: (v) => `<a href="/#/profile/${v.user_id}">${v.name}<a>`,
+      value: (v) => `<a >${v.name}<a>`, // href="/#/profile/${v.user_id}"
       sortable: true,
       searchValue: (v) => v.name,
     },
-    {
-      key: 'User ID',
-      title: 'User ID',
-      value: (v) => v.user_id,
-      sortable: true,
-      searchValue: (v) => v.user_id,
-    },
+    // {
+    //   key: 'User ID',
+    //   title: 'User ID',
+    //   value: (v) => v.user_id,
+    //   sortable: true,
+    //   searchValue: (v) => v.user_id,
+    // },
     {
       key: 'Locatie',
-      title: 'AZC',
-      value: (v) => v.meta.Azc,
+      title: 'Huis locatie',
+      value: (v) => v.meta.azc,
       sortable: true,
       filterOptions: Locaties,
     },
     {
       key: 'Last location',
-      title: 'Last location',
-      value: (v) => v.meta.Location,
+      title: 'Laatste locatie',
+      value: (v) => v.meta.location,
     },
     {
       key: 'rol',
       title: 'Rol',
-      value: (v) => v.meta.Role,
+      value: (v) => v.meta.role,
       filterOptions: roles,
     },
     {

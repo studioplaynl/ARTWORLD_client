@@ -1,4 +1,5 @@
 <script>
+
   import { onMount } from 'svelte';
   import { Achievements } from '../storage';
 
@@ -15,6 +16,10 @@
    *       pub: true,
    * });
    */
+
+  function test(){
+    Achievements.create('testachievement', {});
+  }
 </script>
 
 <div class="awards">
@@ -22,6 +27,8 @@
     <img class="icon" src="assets/SHB/svg/AW-icon-award.svg" alt="{X.key}" />
     <p>{X.key}</p>
   {/each}
+
+  <button on:click="{test}">test</button>
 </div>
 
 <style>

@@ -77,7 +77,7 @@
   });
 </script>
 
-<div id="box{num}" class="box">
+<div id="box{num}" class="cursorBox">
   {#if mobile}
     <img
       id="cursor{num}"
@@ -117,7 +117,7 @@
     pointer-events: none;
   }
 
-  .box {
+  .cursorBox {
     position: absolute;
     left: 0;
     top: 0;

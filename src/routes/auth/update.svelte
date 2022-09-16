@@ -418,4 +418,9 @@
       bottom: 120px;
     }
   }
+
+  select {
+    width: 100%;
+    padding: 10px;
+  }
 </style>

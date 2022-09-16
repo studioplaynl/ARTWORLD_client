@@ -105,7 +105,6 @@ button:focus {
 
 .profileTable {
   width: fit-content;
-  max-width: 800px;
   align-content: center;
   border-collapse: collapse;
   border-bottom: 2px solid #7300EB;
@@ -239,5 +238,5 @@ div#phaserId {
   padding: 10px 50px;
   border-radius: 50px;
   border: 2px solid;
-  margin: 20px auto;
+  margin: 60px auto;
 }

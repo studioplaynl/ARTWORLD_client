@@ -2,8 +2,9 @@
   import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';
   import { ArtworksStore } from '../storage';
-  import { getAccount } from '../api';
+  import { getAccount, convertImage, getObject } from '../api';
   import { Session, Profile } from '../session';
+  import { dlog } from './game/helpers/DebugLog';
 
   import StatusComp from './components/statusbox.svelte';
   import DeleteComp from './components/deleteButton.svelte';
@@ -15,6 +16,8 @@
 
   export let params = {};
   export let userID;
+  let avatar;
+  let house;
 
   const drawingIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
@@ -127,7 +130,25 @@
       CurrentUser = false;
       id = params.user || userID;
       useraccount = await getAccount(id);
+      console.log('useraccount', useraccount);
       username = useraccount.username;
+      avatar = useraccount.url; // convertImage(useraccount.avatar_url, 150);
+
+      try {
+        house = await getObject(
+          'home',
+          $Profile.meta.Azc || 'Amsterdam',
+          $Profile.user_id,
+        );
+      } catch (err) {
+        dlog(err); // TypeError: failed to fetch
+      }
+      if (typeof house === 'object') {
+        house = await convertImage(house.value.url, '150', '150');
+      } else {
+        house = '';
+      }
+
     } else {
       CurrentUser = true;
       id = $Session.user_id;
@@ -157,10 +178,18 @@
       <div class="top">
         <h1>{username}</h1>
         <br />
-        <span class="splitter"></span>
-        <Avatar showHistory="{true}" />
-        <span class="splitter"></span>
-        <House />
+
+        {#if CurrentUser && deletedArt.length}
+          <span class="splitter"></span>
+          <Avatar showHistory="{true}" />
+          <span class="splitter"></span>
+          <House />
+        {:else}
+          <span class="splitter"></span>
+          <img src="{avatar}" />
+          <span class="splitter"></span>
+          <img src="{house}" />
+        {/if}
       </div>
       <div class="bottom">
         <SvelteTable
@@ -249,8 +278,8 @@
   }
 
   .splitter {
-    background-color: #7300EB;
-    width: 200%;
+    background-color: #7300eb;
+    width: 100%;
     height: 2px;
-}
+  }
 </style>
