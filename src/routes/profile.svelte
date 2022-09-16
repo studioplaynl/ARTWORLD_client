@@ -197,7 +197,7 @@
         <h1>{username}</h1>
         <br />
 
-        {#if CurrentUser && deletedArt.length}
+        {#if CurrentUser}
           <span class="splitter"></span>
           <Avatar showHistory="{true}" />
           <span class="splitter"></span>

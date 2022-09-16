@@ -17,9 +17,7 @@
    * });
    */
 
-  function test(){
-    Achievements.create('testachievement', {});
-  }
+
 </script>
 
 <div class="awards">
@@ -28,7 +26,6 @@
     <p>{X.key}</p>
   {/each}
 
-  <button on:click="{test}">test</button>
 </div>
 
 <style>
