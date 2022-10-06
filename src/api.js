@@ -60,6 +60,7 @@ export const logout = async () => {
     Profile.set(null);
     /** Setting Session to null automatically redirects you to login route */
     Session.set(null);
+    document.location.reload(true)
   }
 };
 
