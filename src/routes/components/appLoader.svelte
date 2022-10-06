@@ -5,6 +5,7 @@
   import { pop, push, querystring, loc } from 'svelte-spa-router';
   import Drawing from '../apps/drawing.svelte';
   import Stopmotion from '../apps/stopmotion.svelte';
+  import Mariosound from '../apps/marioSequencer.svelte';
   import { CurrentApp, Profile, Error } from '../../session';
   import { AvatarsStore } from '../../storage';
   import ManageSession from '../game/ManageSession';
@@ -288,6 +289,14 @@
         bind:changes
         on:save="{saveData}"
       />
+    {:else if $CurrentApp === 'mariosound'}
+      <Mariosound />
+      <!-- <Stopmotion
+        file="{currentFile}"
+        bind:data
+        bind:changes
+        on:save="{saveData}"
+      /> -->
     {/if}
   {:else if currentFile.loaded}
     <Preview file="{currentFile}" />

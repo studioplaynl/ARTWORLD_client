@@ -8,6 +8,7 @@ export const APPS = [
   'stopmotion',
   'avatar',
   'house',
+  'mariosound',
 ];
 
 export const DEFAULT_APP = 'game';

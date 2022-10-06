@@ -236,6 +236,18 @@
         />
       </button>
 
+      <button
+      on:click="{() => {
+        push('/mariosound');
+      }}"
+    >
+      <img
+        class="icon"
+        src="assets/SHB/svg/AW-icon-sound.svg"
+        alt="Start mariosound!"
+      />
+    </button>
+
       <button on:click="{toggleLiked}">
         <img
           class="icon"
