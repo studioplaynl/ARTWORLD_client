@@ -239,6 +239,7 @@
       <button
       on:click="{() => {
         push('/mariosound');
+        setTimeout(()=>{window.location.reload(); }, 300);
       }}"
     >
       <img
