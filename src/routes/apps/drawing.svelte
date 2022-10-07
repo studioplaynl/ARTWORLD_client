@@ -134,6 +134,7 @@
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
+  // eslint-disable-next-line no-unused-vars
   function save() {
     data = canvas.toDataURL('image/png', 1);
     dispatch('save', file);
