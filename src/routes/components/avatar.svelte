@@ -55,7 +55,11 @@
     alt="Edit House"
     src="/assets/SHB/svg/AW-icon-pen.svg"
     on:click="{() => {
-      push(`/avatar?userId=${$Profile.id}&key=${currentAvatar.key}`);
+      if (typeof currentAvatar === 'object') {
+        push(`/avatar?userId=${$Profile.id}&key=${currentAvatar.key}`);
+      } else {
+        push(`/avatar`);
+      }
     }}"
   />
   {#if !showHistory}

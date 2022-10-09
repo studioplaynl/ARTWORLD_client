@@ -61,6 +61,7 @@
     alt="Edit House"
     src="/assets/SHB/svg/AW-icon-pen.svg"
     on:click="{() => {
+      console.log($myHome);
       push('/house');
     }}"
   />
