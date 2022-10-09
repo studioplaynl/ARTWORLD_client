@@ -287,10 +287,10 @@ class ServerCall {
         }
       });
     } else if (type === 'dier') {
-      // dlog('element, index', element, index);
+      dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
       // const convertedImage = element.value.previewUrl
-
+      dlog('convertedImage', convertedImage);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
         loadFunction: 'downloadAnimalChallenge', element, index, imageKey: imageKeyUrl, scene,

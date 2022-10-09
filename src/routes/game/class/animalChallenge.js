@@ -77,7 +77,7 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
 
     // this.animal.setInteractive()
     this.animal.setDepth(200);
-    dlog('this.animal', this.animal);
+    // dlog('this.animal', this.animal);
     const tempDelay = Phaser.Math.Between(1000, 20000);
     scene.time.addEvent({
       delay: tempDelay, callback: this.stopAnimalMovement, args: [this.animal], callbackScope: this, loop: false,
