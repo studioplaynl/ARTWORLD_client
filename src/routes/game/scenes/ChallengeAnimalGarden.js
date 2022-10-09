@@ -9,7 +9,7 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Preloader from '../class/Preloader';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import SceneSwitcher from '../class/SceneSwitcher';
+// eslint-disable-next-line no-unused-vars
 import { dlog } from '../helpers/DebugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
@@ -22,8 +22,8 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   constructor() {
     super('ChallengeAnimalGarden');
 
-    this.worldSize = new Phaser.Math.Vector2(4000, 1200);
-    this.location = 'ChallengeAnimalGarden';
+    this.worldSize = new Phaser.Math.Vector2(0, 0);
+
     this.debug = false;
 
     this.phaser = this;
@@ -57,6 +57,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   }
 
   async preload() {
+    ManageSession.currentScene = this.scene; // getting a central scene context
     Preloader.Loading(this); // .... PRELOADER VISUALISER
   }
 
@@ -102,7 +103,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
       },
     ).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!
-    SceneSwitcher.pushLocation(this);
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);

@@ -38,16 +38,16 @@ export default class UIScene extends Phaser.Scene {
   constructor() {
     super('UIScene');
     this.currentZoom = 1;
-    this.location = 'test';
 
     // Debug Text mobile
     this.debugText = '';
     this.debugTextField = {};
     this.gameEditModeSignGraphic = {};
-    this.scene = null;
   }
 
   async create() {
+    const scene = ManageSession.currentScene;
+
     let countDisplay = 0;
     locale.subscribe((value) => {
       if (countDisplay === 0) {
@@ -58,7 +58,7 @@ export default class UIScene extends Phaser.Scene {
         i18next.changeLanguage(value);
       }
       if (latestValue !== value) {
-        this.scene.restart();
+        scene.restart();
       }
       latestValue = value;
     });
@@ -74,11 +74,12 @@ export default class UIScene extends Phaser.Scene {
 
     // make load events global for the game
     // resolve load errors globally in the game
-    const scene = ManageSession.currentScene;
+
     scene.load.on('loaderror', (offendingFile) => {
       // this.resolveLoadError(offendingFile);
       ServerCall.resolveLoadError(offendingFile);
     });
+
 
     // const eventNames = scene.load.eventNames();
     // dlog("eventNames", eventNames)
@@ -150,6 +151,6 @@ export default class UIScene extends Phaser.Scene {
   } // end gameEditModeSign
 
   update() {
-    if (this.scene !== ManageSession.currentScene) this.scene = ManageSession.currentScene;
+    // if (this.scene !== ManageSession.currentScene) this.scene = ManageSession.currentScene;
   }
 }

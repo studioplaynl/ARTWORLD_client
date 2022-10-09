@@ -27,7 +27,6 @@ class SceneSwitcher {
   }
 
   pushLocation(scene) {
-    // console.log('pushLocation called', scene);
     ManageSession.currentScene = scene;
   }
 

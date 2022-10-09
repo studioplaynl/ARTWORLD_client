@@ -1,3 +1,4 @@
+/* eslint-disable no-new */
 /* eslint-disable prefer-destructuring */
 import ManageSession from '../ManageSession';
 import {
@@ -151,7 +152,7 @@ class ServerCall {
 
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
-
+        dlog('serverItemsArray.array', serverItemsArray.array);
         this.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
     } else {
@@ -198,6 +199,7 @@ class ServerCall {
         ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
       } else if (type === 'dier') {
         // eslint-disable-next-line no-new
+        // dlog('element, index', element, index);
         new AnimalChallenge(scene, element, artSize);
       }
       // if the artwork is not already downloaded
@@ -285,6 +287,7 @@ class ServerCall {
         }
       });
     } else if (type === 'dier') {
+      // dlog('element, index', element, index);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
       // const convertedImage = element.value.previewUrl
 
@@ -304,6 +307,7 @@ class ServerCall {
             (obj) => obj.imageKey !== imageKeyUrl,
           );
 
+          // dlog('imageKeyUrl', imageKeyUrl);
           // eslint-disable-next-line no-new
           new AnimalChallenge(scene, element, artSize);
         });
