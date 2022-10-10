@@ -340,10 +340,17 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // Add a leading slash as apps should reflect URLs
         if (this.appUrl.split('')[0] !== '/') this.appUrl = `/${this.appUrl}`;
         dlog('push(this.appUrl)', this.appUrl);
-        push(this.appUrl);
+        if (this.appUrl === '/mariosound') {
+          setTimeout(() => { window.location.reload(); }, 500);
+          push(this.appUrl);
+        } else {
+          push(this.appUrl);
+        }
       }
 
-      SceneSwitcher.switchScene(this.locationDestination, this.userHome);
+      if (typeof this.locationDestination !== 'undefined') {
+        SceneSwitcher.switchScene(this.locationDestination, this.userHome);
+      }
     });
 
     this.scene.physics.add.overlap(this.scene.player, this.location, this.confirmEnterLocation, null, this);

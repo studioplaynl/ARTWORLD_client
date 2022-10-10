@@ -643,7 +643,7 @@ export default class Artworld extends Phaser.Scene {
       draggable: ManageSession.gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
-      internalUrl: 'mariosound',
+      appUrl: 'mariosound',
       locationImage: 'mario_star',
       enterButtonImage: 'enter_button',
       locationText: 'Mario Sound',
@@ -663,11 +663,6 @@ export default class Artworld extends Phaser.Scene {
       this.worldSize,
       locationVector,
     );
-
-    // this.pencil = this.add.image(locationVector.x, locationVector.y, "pencil")
-    // this.pencil.rotation = 0.12
-    // this.pencil.setInteractive()
-    // this.pencil.on('pointerup', () => CurrentApp.set("drawing"))
 
     this.pencil = new GenerateLocation({
       scene: this,
