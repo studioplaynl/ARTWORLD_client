@@ -11,9 +11,9 @@
 
   export const client = new Client(
     'RHSGvCuxJRmEf347',
-    // '193.187.129.81', // artworld.vrolijkheid.nl
+    '193.187.129.81', // artworld.vrolijkheid.nl
     // '192.168.0.133', // local
-    '185.193.67.152', // betaworld
+    // '185.193.67.152', // betaworld
     // 'localhost',
     '7350',
     SSL,

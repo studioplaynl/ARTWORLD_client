@@ -156,13 +156,13 @@ class Player {
 
     const avatar = scene.textures.get(scene.playerAvatarKey);
     const avatarWidth = avatar.frames.__BASE.width;
-    dlog('avatarWidth: ', avatarWidth);
+    // dlog('avatarWidth: ', avatarWidth);
 
     const avatarHeight = avatar.frames.__BASE.height;
-    dlog('avatarHeight: ', avatarHeight);
+    // dlog('avatarHeight: ', avatarHeight);
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    dlog(`avatarFrames: ${avatarFrames}`);
+    // dlog(`avatarFrames: ${avatarFrames}`);
 
     // make an animation if the image is wider than tall
 

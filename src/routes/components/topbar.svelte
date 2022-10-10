@@ -2,6 +2,7 @@
   import { push, pop } from 'svelte-spa-router';
   import { PlayerHistory, PlayerZoom } from '../game/playerState';
   import { DEFAULT_SCENE } from '../../constants';
+  import { dlog } from '../game/helpers/DebugLog';
 
   async function goHome() {
     // Nice way to always reset to 0x0?

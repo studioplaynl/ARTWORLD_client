@@ -40,6 +40,32 @@ export const SCENE_INFO = [
     sizeX: 3000,
     sizeY: 2000,
   },
+  {
+    scene: 'BlueSail',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
+  {
+    scene: 'GreenSquare',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
+  {
+    scene: 'RedStar',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
+
+  {
+    scene: 'TurquoiseTriangle',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
+  {
+    scene: 'YellowDiamond',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
 ];
 
 export const DEFAULT_SCENE = 'Artworld';

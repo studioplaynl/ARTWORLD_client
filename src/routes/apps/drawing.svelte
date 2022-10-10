@@ -134,6 +134,7 @@
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
+  // eslint-disable-next-line no-unused-vars
   function save() {
     data = canvas.toDataURL('image/png', 1);
     dispatch('save', file);
@@ -445,6 +446,23 @@
     if (evt.key === 'Backspace' || evt.key === 'Delete') {
       Delete();
     }
+    // testing out the download function
+    // save() = save and close
+    if (evt.key === '1') {
+      downloadImage();
+    }
+  }
+
+  function downloadImage() {
+    // console.log('file', file);
+    const filename = `${file.key}.png`;
+    data = canvas.toDataURL('image/png', 1);
+
+    const a = document.createElement('a');
+    a.href = data;
+    a.download = filename;
+    // document.body.appendChild(a);
+    a.click();
   }
 
   function Copy() {
@@ -680,7 +698,13 @@
             </div>
           {:else if currentTab === 'save'}
             <div class="tab  tab--save">
-              <p on:click="{save}">Save this file</p>
+              <!-- <p on:click="{save}">Save this file</p> -->
+              <img
+                  on:click={downloadImage}
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-save.svg"
+                  alt="Download Artwork"
+                />
             </div>
           {/if}
         </div>
@@ -861,7 +885,7 @@
   }
 
   .tab.tab--save > * {
-    padding: 12px 16px;
+    padding: 0px 0px;
     text-decoration: none;
     display: block;
   }
@@ -886,7 +910,6 @@
     /* margin: 0 4px 0 4px; */
     /* outline: 1px solid #7300ed2e; */
   }
-
   .iconbox button {
     opacity: 1;
   }

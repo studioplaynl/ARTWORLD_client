@@ -18,6 +18,11 @@ import TestCoordinates from './scenes/TestCoordinates';
 import DefaultUserHome from './scenes/DefaultUserHome';
 import ChallengeAnimalGarden from './scenes/ChallengeAnimalGarden';
 import ChallengeFlowerField from './scenes/ChallengeFlowerField';
+import BlueSail from './scenes/BlueSail';
+import GreenSquare from './scenes/GreenSquare';
+import RedStar from './scenes/RedStar';
+import TurquoiseTriangle from './scenes/TurquoiseTriangle';
+import YellowDiamond from './scenes/YellowDiamond';
 
 /** Phaser Plugins */
 
@@ -33,6 +38,11 @@ const SCENES = [
   DefaultUserHome,
   ChallengeAnimalGarden,
   ChallengeFlowerField,
+  BlueSail,
+  GreenSquare,
+  RedStar,
+  TurquoiseTriangle,
+  YellowDiamond,
 ];
 
 import { CONFIG } from '../../constants';

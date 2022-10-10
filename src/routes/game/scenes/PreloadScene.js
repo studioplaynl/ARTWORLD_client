@@ -57,13 +57,13 @@ export default class PreloadScene extends Phaser.Scene {
     // animal for animalGarden Challenge
     this.load.image('dinoA', './assets/DinoA_01.png');
     // animation png sequence
-    this.load.image('animation_png_animal_henk_00001', './assets/animation_png_animal_henk/animation_png_animal_henk_00001.png');
-    this.load.image('animation_png_animal_henk_00002', './assets/animation_png_animal_henk/animation_png_animal_henk_00002.png');
-    this.load.image('animation_png_animal_henk_00003', './assets/animation_png_animal_henk/animation_png_animal_henk_00003.png');
-    this.load.image('animation_png_animal_henk_00004', './assets/animation_png_animal_henk/animation_png_animal_henk_00004.png');
-    this.load.image('animation_png_animal_henk_00005', './assets/animation_png_animal_henk/animation_png_animal_henk_00005.png');
-    this.load.image('animation_png_animal_henk_00006', './assets/animation_png_animal_henk/animation_png_animal_henk_00006.png');
-    this.load.image('animation_png_animal_henk_00007', './assets/animation_png_animal_henk/animation_png_animal_henk_00007.png');
+    // this.load.image('animation_png_animal_henk_00001', './assets/animation_png_animal_henk/animation_png_animal_henk_00001.png');
+    // this.load.image('animation_png_animal_henk_00002', './assets/animation_png_animal_henk/animation_png_animal_henk_00002.png');
+    // this.load.image('animation_png_animal_henk_00003', './assets/animation_png_animal_henk/animation_png_animal_henk_00003.png');
+    // this.load.image('animation_png_animal_henk_00004', './assets/animation_png_animal_henk/animation_png_animal_henk_00004.png');
+    // this.load.image('animation_png_animal_henk_00005', './assets/animation_png_animal_henk/animation_png_animal_henk_00005.png');
+    // this.load.image('animation_png_animal_henk_00006', './assets/animation_png_animal_henk/animation_png_animal_henk_00006.png');
+    // this.load.image('animation_png_animal_henk_00007', './assets/animation_png_animal_henk/animation_png_animal_henk_00007.png');
     // flower for the flowerField Challenge
     this.load.image('flower', './assets/flower.png');
     this.load.spritesheet('testdier', './assets/test_dier.png', { frameWidth: 128, frameHeight: 128 });
@@ -82,8 +82,11 @@ export default class PreloadScene extends Phaser.Scene {
     // this.load.image("background4", "./assets/art_styles/repetition/3fb6da9378545.560cd556c9413.jpg")
 
     // rex ui video player
-    this.load.image('play', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/play.png');
-    this.load.image('pause', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/pause.png');
+    // this.load.image('play', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/play.png');
+    // this.load.image('pause', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/images/pause.png');
+
+    this.load.image('play', './assets/SHB/svg/AW-icon-play.svg');
+
     this.load.video('test', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/video/test.mp4', 'canplaythrough', true, true);
     // ................ end rex ui video player
 
@@ -102,6 +105,8 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.svg('music_quarter_note', 'assets/svg/music_note_quarter_note.svg');
 
     this.load.svg('metro_train_grey', 'assets/svg/metro_train_grey.svg');
+    this.load.svg('yellow_diamond_location_image', 'assets/svg/geleRuit.svg');
+    this.load.svg('blue_sail_location_image', 'assets/svg/blauwZeil.svg');
     // create a hitArea for locations, as an image with key 'enterButtonHitArea', 128x128pix
     this.createHitAreaLocations();
 

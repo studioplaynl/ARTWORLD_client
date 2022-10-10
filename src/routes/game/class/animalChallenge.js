@@ -26,6 +26,7 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
     scene.physics.add.existing(this);
 
     const avatar = scene.textures.get(avatarKey);
+    // dlog('avatar', avatar);
     const avatarWidth = avatar.frames.__BASE.width;
     const avatarHeight = avatar.frames.__BASE.height;
 
@@ -57,6 +58,7 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
     const tempX = Phaser.Math.Between((this.artSize * 2), scene.worldSize.x - (this.artSize * 2));
     const tempY = Phaser.Math.Between((this.artSize * 2), scene.worldSize.y - (this.artSize * 2));
 
+    dlog('tempX, tempY', tempX, tempY);
     this.animal = scene.physics.add.sprite(tempX, tempY, 'avatar1');
 
     this.animal.setData('moveAnim', `moving_${avatarKey}`);
@@ -75,7 +77,7 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
 
     // this.animal.setInteractive()
     this.animal.setDepth(200);
-
+    // dlog('this.animal', this.animal);
     const tempDelay = Phaser.Math.Between(1000, 20000);
     scene.time.addEvent({
       delay: tempDelay, callback: this.stopAnimalMovement, args: [this.animal], callbackScope: this, loop: false,

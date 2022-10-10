@@ -81,12 +81,11 @@ class ArtworkList {
     // place heartButton under the artwork, make them interactive
     // const artFrame = scene.textures.get('artFrame_512');
     const marginY = 16;
-    const playButton = scene.add.circle(
-      x - (marginY * 2), // - artFrame.height
-      y + marginY,
 
-      20,
-      0x000000,
+    const playButton = scene.add.image(
+      x - (marginY * 6), // - artFrame.height
+      y,
+      'play',
     )
       .setOrigin(0)
     // const playPause = scene.add.image(
@@ -94,8 +93,7 @@ class ArtworkList {
     //   y + (artFrame.height / 2) + marginY,
     //   'play',
     // )
-    //   .setOrigin(0)
-    //   .setScale(1.2)
+      .setScale(0.7)
       .setInteractive()
       .setData('togglePlay', true) // true, not liked state
       .on(
@@ -104,6 +102,23 @@ class ArtworkList {
           ArtworkList.playPauseButtonToggle(playButton);
         },
       );
+
+    // const playButton = scene.add.circle(
+    //   x - (marginY * 2), // - artFrame.height
+    //   y + marginY,
+
+    //   20,
+    //   0x000000,
+    // )
+    //   .setOrigin(0)
+    //   .setInteractive()
+    //   .setData('togglePlay', true) // true, not liked state
+    //   .on(
+    //     'pointerup',
+    //     () => {
+    //       ArtworkList.playPauseButtonToggle(playButton);
+    //     },
+    //   );
 
     artContainer.add(playButton);
     // artContainer.add(playPause);
