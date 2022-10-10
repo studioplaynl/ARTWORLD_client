@@ -46,6 +46,15 @@
     if (dataType === 'house') stockItems = houses;
     else if (dataType === 'avatar') stockItems = avatars;
 
+    getImages();
+
+    // get type avatar or house
+    // get list of objects
+    // listObjects(type, userID, lim)
+    // show objects
+  });
+
+  async function getImages() {
     objects = await listObjects(dataType, $Profile.id, 100);
     console.log(objects);
 
@@ -60,12 +69,7 @@
         );
       }
     }
-
-    // get type avatar or house
-    // get list of objects
-    // listObjects(type, userID, lim)
-    // show objects
-  });
+  }
 
   async function save(object) {
     if (dataType === 'avatar') {
@@ -85,6 +89,21 @@
   //   updateObject(type, name, value, pub, userID)
 
   async function deleteObj(object) {
+    for (let index = 0; index < objects.length; index++) {
+      if (objects[index].key === object.key) {
+        if (object.value.url === $Profile.avatar_url && dataType === 'avatar') {
+          save({ value: { url: `/avatar/stock/avatarBlauw.png` } });
+        }
+        if (object.value.url === $myHome.value.url && dataType === 'house') {
+          save({ value: { url: `/home/stock/portalBlauw.png` } });
+        }
+
+        console.log('deleted');
+        objects.splice(index, 1);
+        objects = objects;
+      }
+    }
+
     deleteObject(object.collection, object.key);
   }
 
@@ -130,6 +149,17 @@
           }}"
         />
       {/if}
+        <img
+          class="icon"
+          alt="Edit House"
+          src="/assets/SHB/svg/AW-icon-pen.svg"
+          on:click="{() => {
+            console.log('home', $myHome);
+            // push('/house');
+            if(dataType === 'house') push(`/house?userId=${$Profile.id}&key=${object.key}`);
+            if(dataType === 'avatar') push(`/avatar?userId=${$Profile.id}&key=${object.key}`);
+          }}"
+        />
     </div>
   {/each}
 

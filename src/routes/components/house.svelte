@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { myHome } from '../../storage';
+  import { Profile } from '../../session'
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import ImagePicker from './imagePicker.svelte';
@@ -56,23 +57,28 @@
 </div>
 
 <div class="action">
-  <img
+  <!-- <img
     class="icon"
     alt="Edit House"
     src="/assets/SHB/svg/AW-icon-pen.svg"
     on:click="{() => {
-      console.log($myHome);
-      push('/house');
+      console.log("home", $myHome);
+      // push('/house');
+      if (typeof $myHome === 'object') {
+        push(`/house?userId=${$Profile.id}&key=${$myHome.key}`);
+      } else {
+        push(`/house`);
+      }
     }}"
-  />
-  <img
+  /> -->
+  <!-- <img
     class="icon"
     alt="Go Home"
     src="assets/SHB/svg/AW-icon-enter-space.svg"
     on:click="{() => {
       goHome();
     }}"
-  />
+  /> -->
   {#if showHistory}
     <img
       alt="close"
