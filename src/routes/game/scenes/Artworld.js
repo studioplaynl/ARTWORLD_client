@@ -410,7 +410,7 @@ export default class Artworld extends Phaser.Scene {
   /** Create a curve with handles in edit mode
  * @todo Work in progress, replace with CurveWithHandles class? */
   createCurveWithHandles() {
-    const path = { t: 0, vec: new Phaser.Math.Vector2() };
+    // const path = { t: 0, vec: new Phaser.Math.Vector2() };
 
     this.curve = new Phaser.Curves.Spline([
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2497),

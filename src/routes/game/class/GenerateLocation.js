@@ -341,7 +341,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         if (this.appUrl.split('')[0] !== '/') this.appUrl = `/${this.appUrl}`;
         dlog('push(this.appUrl)', this.appUrl);
         if (this.appUrl === '/mariosound') {
-          setTimeout(() => { window.location.reload(); }, 500);
+          setTimeout(() => { window.location.reload(); }, 300);
           push(this.appUrl);
         } else {
           push(this.appUrl);
