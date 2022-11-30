@@ -1,48 +1,34 @@
 <script>
   import QrCode from 'svelte-qrcode';
   import { _ } from 'svelte-i18n';
-  import {push} from "svelte-spa-router"
+  import { push } from 'svelte-spa-router';
+import { onMount } from 'svelte';
   import { Session, Error } from '../../session';
   import { client } from '../../nakama.svelte';
   import { dlog } from '../game/helpers/DebugLog';
+  import { createAccountAdmin } from '../../api';
 
   let QRUrl;
   let email = '@vrolijkheid.nl';
   let username = 'user';
-  let password = 'somesupersecretpassword';
+  let password;
   let passwordCheck = 'somesupersecretpassword';
   let role = 'speler';
   let azc = 'Amsterdam';
   let printDiv = null;
 
-  const Locaties = [
-    'Amersfoort',
-    'Almelo',
-    'Almere',
-    'Amsterdam',
-    'Apeldoorn',
-    'Arnhem-Zuid',
-    'Baexem',
-    'Budel-Cranendonck',
-    'Burgum',
-    'Delfzijl',
-    'Den Helde',
-    'Drachten',
-    'Emmen',
-    'Gilze en Rijen',
-    'Grave',
-    'Heerhugowaard',
-    'Heerlen',
-    'Katwijk',
-    'Leersum',
-    'Luttelgeest',
-    'Middelburg',
-    'Oisterwijk',
-    'Overloon',
-    'Rijswijk',
-    'Ter Apel',
-    'Utrecht',
-  ];
+  onMount(async () => {
+    genPassword();
+  });
+
+
+const Locaties = [
+  'GreenSquare',
+  'RedStar',
+  'TurquioseTriangle',
+  'YellowDiamond',
+  'BlueSail',
+];
 
   const houses = [
     'portalBlauw.png',
@@ -69,31 +55,35 @@
   const avatar = avatars[Math.floor(avatars.length * Math.random())];
 
   async function register() {
-    const create = true;
-    dlog(`azc: ${azc}`);
     const data = {
+      email,
+      password,
+      username,
       userId: $Session.user_id,
       azc,
       role,
       avatar: `/avatar/stock/${avatar}`,
       home: `/home/stock/${house}`,
     };
-    dlog(client);
-    const token = client.configuration.bearerToken;
-    client.configuration.bearerToken = null;
-    const newUser = await client
-      .authenticateEmail(email, password, create, username, data)
-      .catch((err) => {
-        $Error = err;
-      });
-    client.configuration.bearerToken = token;
-    dlog(newUser);
-    // eslint-disable-next-line no-alert
-    alert(`New user created${newUser.user_id}`);
+
+    createAccountAdmin(data);
   }
 
   function onSubmit() {
     register();
+  }
+
+
+  function genPassword() {
+    // removed confusing charecters like O o L and made the chance for number bigger
+    const chars = '0123456789abcdefghijklmnpqrstuvwxyz0123456789ABCDEFGHIJKMNPQRSTUVWXYZ0123456789';
+    // eslint-disable-next-line no-mixed-spaces-and-tabs
+    const passwordLength = 9;
+    for (let i = 0; i <= passwordLength; i++) {
+      const randomNumber = Math.floor(Math.random() * chars.length);
+      password += chars.substring(randomNumber, randomNumber + 1);
+    }
+    // document.getElementById("password").value = password;
   }
 
   function print() {

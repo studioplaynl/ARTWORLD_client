@@ -60,7 +60,7 @@ export const logout = async () => {
     Profile.set(null);
     /** Setting Session to null automatically redirects you to login route */
     Session.set(null);
-    document.location.reload(true)
+    document.location.reload(true);
   }
 };
 
@@ -320,7 +320,6 @@ export async function getAccount(id) {
       DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
       'png',
     );
-
   }
 
   return user;
@@ -422,8 +421,7 @@ export async function getFile(file_url) {
 export async function uploadAvatar(data) {
   const profile = get(Profile);
   setLoader(true);
-  let avatarVersion =
-    Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
+  let avatarVersion = Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
   if (!avatarVersion) avatarVersion = 0;
   const [jpegURL, jpegLocation] = await getUploadURL(
     'avatar',
@@ -575,7 +573,7 @@ export async function deleteObject(collection, key) {
  */
 export async function updateObjectAdmin(id, type, name, value, pub) {
   const session = get(Session);
-  //const storeValue = typeof value === 'object' ? JSON.stringify(value) : value;
+  // const storeValue = typeof value === 'object' ? JSON.stringify(value) : value;
   const payload = {
     id,
     type,
@@ -699,3 +697,16 @@ export async function getAllHouses(location, user_id) {
   const object = await client.rpc(Sess, rpcid, payload);
   return object.payload;
 }
+
+
+export async function createAccountAdmin(payload) {
+  const Sess = get(Session);
+  const rpcid = 'create_account_admin';
+  const user = await client.rpc(Sess, rpcid, payload);
+
+  // if (user.payload.status !== 'succes') throw user.payload.status;
+  Success.set(true);
+  return user.payload;
+}
+
+
