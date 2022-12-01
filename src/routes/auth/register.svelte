@@ -3,16 +3,16 @@
   import { _ } from 'svelte-i18n';
   import { push } from 'svelte-spa-router';
 import { onMount } from 'svelte';
-  import { Session, Error } from '../../session';
-  import { client } from '../../nakama.svelte';
-  import { dlog } from '../game/helpers/DebugLog';
+  import { Session } from '../../session';
+  // import { client } from '../../nakama.svelte';
+  // import { dlog } from '../game/helpers/DebugLog';
   import { createAccountAdmin } from '../../api';
 
   let QRUrl;
   let email = '@vrolijkheid.nl';
   let username = 'user';
-  let password;
-  let passwordCheck = 'somesupersecretpassword';
+  let password = '';
+  let passwordCheck = '';
   let role = 'speler';
   let azc = 'Amsterdam';
   let printDiv = null;
@@ -75,8 +75,8 @@ const Locaties = [
 
 
   function genPassword() {
-    // removed confusing charecters like O o L and made the chance for number bigger
-    const chars = '0123456789abcdefghijklmnpqrstuvwxyz0123456789ABCDEFGHIJKMNPQRSTUVWXYZ0123456789';
+    // removed confusing charecters like 0 O o l l q and made the chance for number bigger
+    const chars = '123456789abcdefghijkmnprstuvwxyz0123456789ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
     // eslint-disable-next-line no-mixed-spaces-and-tabs
     const passwordLength = 9;
     for (let i = 0; i <= passwordLength; i++) {
@@ -84,10 +84,11 @@ const Locaties = [
       password += chars.substring(randomNumber, randomNumber + 1);
     }
     // document.getElementById("password").value = password;
+    passwordCheck = password;
   }
 
   function print() {
-    QRUrl = `https://${window.location.host}/#/login/${email}/${password}`;
+    QRUrl = `https://artworld.vrolijkheid.nl/#/login/${email}/${password}`;
     setTimeout(() => {
       const printArea = window.open();
       printArea.document.write(printDiv.innerHTML);
