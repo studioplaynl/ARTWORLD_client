@@ -78,7 +78,7 @@
         const code = jsQR(imageData.data, imageData.width, imageData.height, {
           inversionAttempts: 'dontInvert',
         });
-        dlog(code);
+        // dlog(code);
         if (code) {
           drawLine(
             code.location.topLeftCorner,
@@ -106,7 +106,7 @@
           if (
             // eslint-disable-next-line operator-linebreak
             !redirect &&
-            code.data.includes(`${window.location.host}/#/login/`)
+            code.data.includes('/#/login/')
           ) {
             dlog(`redirected to: ${code.data}`);
             const urlChunks = code.data.split('/');

@@ -87,7 +87,7 @@ export default class PreloadScene extends Phaser.Scene {
 
     this.load.image('play', './assets/SHB/svg/AW-icon-play.svg');
 
-    this.load.video('test', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/video/test.mp4', 'canplaythrough', true, true);
+    // this.load.video('test', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/assets/video/test.mp4', 'canplaythrough', true, true);
     // ................ end rex ui video player
 
     // artworld elements
