@@ -1,8 +1,9 @@
 <script>
-  import QrCode from 'svelte-qrcode';
+  // import QrCode from 'svelte-qrcode';
+  import QRCode from 'qrcode';
   import { _ } from 'svelte-i18n';
   import { push } from 'svelte-spa-router';
-import { onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { Session } from '../../session';
   // import { client } from '../../nakama.svelte';
   // import { dlog } from '../game/helpers/DebugLog';
@@ -12,13 +13,13 @@ import { onMount } from 'svelte';
   let email = '@vrolijkheid.nl';
   let username = 'user';
   let password = '';
-  let passwordCheck = '';
   let role = 'speler';
   let azc = 'Amsterdam';
-  let printDiv = null;
+  const printDiv = null;
 
   onMount(async () => {
-    genPassword();
+    genKidsPassword();
+    updateQrCanvas();
   });
 
 
@@ -74,30 +75,70 @@ const Locaties = [
   }
 
 
-  function genPassword() {
-    // removed confusing charecters like 0 O o l l q and made the chance for number bigger
-    const chars = '123456789abcdefghijkmnprstuvwxyz0123456789ABCDEFGHJKLMNPQRSTUVWXYZ123456789';
+  function genKidsPassword() {
+    // removed confusing charecters like 0 O o l l q S and made the chance for number bigger
+    const chars = '123456789abcdefghijkmnprstuvwxyz0123456789ABCDEFGHJKLMNPQRTUVWXYZ123456789';
     // eslint-disable-next-line no-mixed-spaces-and-tabs
     const passwordLength = 9;
+    password = '';
     for (let i = 0; i <= passwordLength; i++) {
       const randomNumber = Math.floor(Math.random() * chars.length);
       password += chars.substring(randomNumber, randomNumber + 1);
     }
-    // document.getElementById("password").value = password;
-    passwordCheck = password;
   }
 
-  function print() {
-    QRUrl = `https://artworld.vrolijkheid.nl/#/login/${email}/${password}`;
-    setTimeout(() => {
-      const printArea = window.open();
-      printArea.document.write(printDiv.innerHTML);
-      printArea.document.close();
-      printArea.focus();
-      printArea.print();
-      printArea.close();
-    }, 1000);
-  }
+  // function print() {
+  //   QRUrl = `https://artworld.vrolijkheid.nl/#/login/${email}/${password}`;
+  //   setTimeout(() => {
+  //     const printArea = window.open();
+  //     printArea.document.write(printDiv.innerHTML);
+  //     printArea.document.close();
+  //     printArea.focus();
+  //     printArea.print();
+  //     printArea.close();
+  //   }, 1000);
+  // }
+
+function updateQrCanvas() {
+  QRUrl = `https://artworld.vrolijkheid.nl/#/login/${email}/${password}`;
+  // const qrCodeImage = document.getElementById('qrCodeImage').innerHTML;
+
+  QRCode.toDataURL(QRUrl)
+    .then((qrCodeImage) => {
+      // console.log(qrCodeImage);
+
+      const startTextX = 180;
+      const canvas = document.getElementById('qrCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const img = new Image();
+      img.onload = function () {
+        ctx.drawImage(img, -5, -5); // Or at whatever offset you like
+      };
+      img.src = qrCodeImage;
+
+      ctx.font = 'oblique 14px arial';
+      ctx.fillStyle = 'black';
+      ctx.textAlign = 'left';
+      ctx.fillText('Email:', startTextX, 30);
+      ctx.font = 'bold 14px arial';
+      ctx.fillText(email, startTextX, 55);
+      ctx.font = 'oblique 14px arial';
+      ctx.fillText('Password:', startTextX, 105);
+      ctx.font = 'bold 18px arial';
+      ctx.fillText(password, startTextX, 135);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+function downloadLoginImage() {
+  const link = document.createElement('a');
+  link.download = `${email}.png`;
+  link.href = document.getElementById('qrCanvas').toDataURL();
+  link.click();
+}
 </script>
 
 <div class="box">
@@ -116,6 +157,7 @@ const Locaties = [
           bind:value="{username}"
           on:change="{() => {
             email = `${username}@vrolijkheid.nl`;
+            updateQrCanvas();
           }}"
           required
         />
@@ -137,18 +179,12 @@ const Locaties = [
           name="psw"
           id="psw"
           bind:value="{password}"
+          on:change="{() => {
+            updateQrCanvas();
+          }}"
           required
         />
 
-        <label for="psw-repeat"><b>{$_('register.repeatPassword')}</b></label>
-        <input
-          type="text"
-          placeholder="Repeat Password"
-          name="psw-repeat"
-          id="psw-repeat"
-          bind:value="{passwordCheck}"
-          required
-        />
         <hr />
 
         <label for="Role"><b>{$_('register.role')}</b></label>
@@ -162,7 +198,7 @@ const Locaties = [
         <label for="AZC"><b>{$_('register.location')}</b></label>
         <select name="AZC" bind:value="{azc}" required>
           <option value="null">{$_('register.none')}</option>
-          {#each Locaties as locatie, i}
+          {#each Locaties as locatie}
             <option value="{locatie}">{locatie}</option>
           {/each}
         </select>
@@ -174,11 +210,12 @@ const Locaties = [
         <button type="submit" class="registerbtn">Register</button>
       </div>
     </form>
-    <button on:click="{print}" class="registerbtn">print userdata</button>
-    <div class="printarea" bind:this="{printDiv}">
+     <button on:click="{genKidsPassword}" class="registerbtn">new Password</button>
+    <!-- <button on:click="{print}" class="registerbtn">print userdata</button> -->
+    <!-- <div class="printarea" bind:this="{printDiv}">
       <table>
         <tr>
-          <td>
+          <td id="qrCodeImage">
             <QrCode value="{QRUrl}" />
           </td>
           <td>
@@ -189,7 +226,14 @@ const Locaties = [
           </td>
         </tr>
       </table>
-    </div>
+    </div> -->
+    <div class="imageCanvas" >
+    <canvas id="qrCanvas" width="340"
+            height="174"
+            style="border:3px solid">
+    </canvas>
+      </div>
+      <button on:click="{downloadLoginImage}" class="registerbtn">Download QR Code</button>
   </div>
 
 <div
@@ -217,8 +261,8 @@ const Locaties = [
   }
 
   /* Full-width input fields */
-  input[type='text'],
-  input[type='password'] {
+  input[type='text']
+   {
     width: 100%;
     padding: 15px;
     margin: 5px 0 22px 0;
@@ -226,8 +270,8 @@ const Locaties = [
     background: #f1f1f1;
   }
 
-  input[type='text']:focus,
-  input[type='password']:focus {
+  input[type='text']:focus
+  {
     background-color: #ddd;
     outline: none;
   }
@@ -256,19 +300,19 @@ const Locaties = [
   }
 
   /* Add a blue text color to links */
-  a {
+  /* a {
     color: dodgerblue;
-  }
+  } */
 
   /* Set a grey background color and center the text of the "sign in" section */
-  .signin {
+  /* .signin {
     background-color: #f1f1f1;
     text-align: center;
-  }
+  }  */
 
-  .printarea {
+  /* .printarea {
     display: none;
-  }
+  } */
 
   img {
     width: 60px;

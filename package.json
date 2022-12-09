@@ -48,6 +48,7 @@
     "minimist": "^1.2.6",
     "phaser": "^3.55.2",
     "phaser3-rex-plugins": "^1.1.65",
+    "qrcode": "^1.5.1",
     "qs": "^6.11.0",
     "sirv-cli": "^1.0.0",
     "svelte": "^3.0.0",
