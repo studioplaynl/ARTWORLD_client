@@ -94,7 +94,7 @@ var download = function () {
 	type="file"
 />
  <button on:click="{download}" class="registerbtn">download sheet</button>
-  <canvas id = "fullSheetCanvas" width="1190" height="1684" style="border: 1px solid black;">
+  <canvas id = "fullSheetCanvas" width="1190" height="1684" style="border: 0px solid black;">
   </canvas>
 <div
       class="app-close"

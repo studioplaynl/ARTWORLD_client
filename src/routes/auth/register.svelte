@@ -71,6 +71,11 @@ const Locaties = [
 
   function onSubmit() {
     register();
+    console.log('register done');
+    setTimeout(() => {
+      downloadLoginImage();
+      navigator.clipboard.writeText(password);
+    }, 1000);
   }
 
 
@@ -156,6 +161,7 @@ function downloadLoginImage() {
           bind:value="{username}"
           on:change="{() => {
             email = `${username}@vrolijkheid.nl`;
+            genKidsPassword();
             updateQrCanvas();
           }}"
           required
