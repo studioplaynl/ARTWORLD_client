@@ -1,8 +1,8 @@
 <script>
   import { onMount } from 'svelte';
   import { _ } from 'svelte-i18n';
-  import { Session, Profile } from '../../session';
   import { push } from 'svelte-spa-router';
+  import { Session, Profile } from '../../session';
   import {
     isValidEmail,
     isValidPassword,

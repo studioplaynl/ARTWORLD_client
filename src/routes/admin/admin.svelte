@@ -8,7 +8,7 @@
 
 
 
-  const groups = [];
+  // const groups = [];
   let users = [];
   const drawingIcon =
     // eslint-disable-next-line max-len
@@ -22,7 +22,7 @@
     });
     dlog(list);
     users = list;
-    console.log(users)
+    console.log(users);
   });
 
   // location house
@@ -58,7 +58,7 @@
     'Utrecht',
   ];
   const roles = ['admin', 'speler', 'kunstenaar', 'moderator'];
-  const groupColumns = [];
+  // const groupColumns = [];
   const userColumns = [
     {
       key: 'Username',
@@ -103,6 +103,7 @@
 <div class="box">
   <h1>All Users</h1>
   <a href="/#/register"><button>Add new user</button></a>
+  <a href="/#/printSheet"><button>Print QR Code Sheet</button></a>
   <SvelteTable
     columns="{userColumns}"
     rows="{users}"

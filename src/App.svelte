@@ -3,7 +3,9 @@
   import { onMount, tick } from 'svelte';
   import { wrap } from 'svelte-spa-router/wrap';
   import Phaser from 'phaser';
-  import { CurrentApp, Session, Profile, Error } from './session';
+  import {
+    CurrentApp, Session, Profile, Error,
+  } from './session';
   import {
     sessionCheck,
     checkLoginExpired,
@@ -16,6 +18,7 @@
   import Admin from './routes/admin/admin.svelte';
   import Menu from './routes/components/menu.svelte';
   import RegisterPage from './routes/auth/register.svelte';
+  import PrintQrCodesSheet from './routes/auth/printQrCodesSheet.svelte';
   import UsersPage from './routes/users.svelte';
   import LoginPage from './routes/auth/login.svelte';
   import ProfilePage from './routes/admin/profileWrapper.svelte';
@@ -108,6 +111,10 @@
   const routes = {
     '/register': wrap({
       component: RegisterPage,
+      conditions: [() => isAdmin],
+    }),
+    '/printSheet': wrap({
+      component: PrintQrCodesSheet,
       conditions: [() => isAdmin],
     }),
     '/update/:user?': wrap({

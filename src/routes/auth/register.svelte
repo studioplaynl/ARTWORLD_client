@@ -15,7 +15,6 @@
   let password = '';
   let role = 'speler';
   let azc = 'Amsterdam';
-  const printDiv = null;
 
   onMount(async () => {
     genKidsPassword();

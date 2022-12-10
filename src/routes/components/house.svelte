@@ -1,8 +1,8 @@
 <script>
   import { onMount } from 'svelte';
-  import { push } from 'svelte-spa-router';
+  // import { push } from 'svelte-spa-router';
   import { myHome } from '../../storage';
-  import { Profile } from '../../session'
+  // import { Profile } from '../../session'
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import ImagePicker from './imagePicker.svelte';

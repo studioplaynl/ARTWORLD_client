@@ -259,45 +259,44 @@
       setLoader(false);
     }
 
-
     // start fix for drawing over the edge
-  //   canvas.on('path:created', function (e) {
-  //     var obj = e.path;
-  //     var points = [...obj.path];
-  //     var rect = obj.getBoundingRect();
-  //     console.log('e', e);
-  //     console.log(rect);
-  //     console.log(currentFrame);
-  //     console.log(baseSize);
-  //     console.log('before', obj.path.length);
-  //     if (
-  //       obj.left < baseSize * (currentFrame - 1) ||
-  //       obj.top < 0 ||
-  //       obj.left + obj.width > baseSize * currentFrame ||
-  //       obj.top + obj.height > baseSize
-  //     ) {
-  //       ///clip borders
-  //       // for (let i = 0; i < points.length; i++) {
-  //       //   const element = points[i];
-  //       //   if (
-  //       //     element[1] < baseSize * (currentFrame - 1) ||
-  //       //     element[2] < 0 ||
-  //       //     element[1] > baseSize * currentFrame ||
-  //       //     element[2] > baseSize
-  //       //   ) {
-  //       //     points.splice(i, 1);
-  //       //   }
-  //       //   console.log(element);
-  //       // }
+    //   canvas.on('path:created', function (e) {
+    //     var obj = e.path;
+    //     var points = [...obj.path];
+    //     var rect = obj.getBoundingRect();
+    //     console.log('e', e);
+    //     console.log(rect);
+    //     console.log(currentFrame);
+    //     console.log(baseSize);
+    //     console.log('before', obj.path.length);
+    //     if (
+    //       obj.left < baseSize * (currentFrame - 1) ||
+    //       obj.top < 0 ||
+    //       obj.left + obj.width > baseSize * currentFrame ||
+    //       obj.top + obj.height > baseSize
+    //     ) {
+    //       ///clip borders
+    //       // for (let i = 0; i < points.length; i++) {
+    //       //   const element = points[i];
+    //       //   if (
+    //       //     element[1] < baseSize * (currentFrame - 1) ||
+    //       //     element[2] < 0 ||
+    //       //     element[1] > baseSize * currentFrame ||
+    //       //     element[2] > baseSize
+    //       //   ) {
+    //       //     points.splice(i, 1);
+    //       //   }
+    //       //   console.log(element);
+    //       // }
 
-  //         // update value if > or < then border, ajust value to border value ( -line width)
+    //         // update value if > or < then border, ajust value to border value ( -line width)
 
 
-  //     }
-  //     canvas.renderAll();
-  //     obj.set({ path: points });
-  //     obj.setCoords();
-  //     // canvas.renderAll();
+    //     }
+    //     canvas.renderAll();
+    //     obj.set({ path: points });
+    //     obj.setCoords();
+    //     // canvas.renderAll();
 
   //     console.log('after', obj.path.length);
   //   });
@@ -577,8 +576,8 @@
           left: -{canvasHeight *
           (currentFrame - 1)}px;
           pointer-events: {enableEditor
-          ? 'all'
-          : 'none'};
+            ? 'all'
+            : 'none'};
           "
       >
         <canvas bind:this="{canvasEl}" class="canvas"> </canvas>
