@@ -21,7 +21,7 @@ $: if (files) {
 }
 onMount(async () => {
   createCanvasContext();
-  load24LabelTemplate();
+  // load24LabelTemplate();
   // handleFileUpload();
 });
 
@@ -57,7 +57,7 @@ function handleMultipleFileUpload(_file) {
   }
 
 
-  const offsetY = 193;
+  const offsetY = 192;
   const startY = 80;
   const yPlacement = (rowCount * offsetY) + startY;
   console.log('filesCount, yPlacement', rowCount, yPlacement);
