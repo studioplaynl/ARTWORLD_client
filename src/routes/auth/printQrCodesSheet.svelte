@@ -6,27 +6,23 @@
 let canvasContext;
 let labelSheetTemplate;
 let files;
-let reader;
+let filesCount = 0;
 
 $: if (files) {
   // Note that `files` is of type `FileList`, not an Array:
   // https://developer.mozilla.org/en-US/docs/Web/API/FileList
   console.log(files);
 
-  reader = new FileReader();
-  const offsetY = 120;
-
-
+  filesCount = -1;
   for (const file of files) {
     handleMultipleFileUpload(file);
-    console.log(`${file.name}: ${file.size} bytes`);
   }
+  // files.forEach((file, index) => handleMultipleFileUpload(file, index));
 }
 onMount(async () => {
   createCanvasContext();
   load24LabelTemplate();
-  // loadImageIntoCanvas();
-  handleFileUpload();
+  // handleFileUpload();
 });
 
 function createCanvasContext() {
@@ -47,51 +43,49 @@ function load24LabelTemplate() {
   labelSheetTemplate.src = './assets/printQrSheet/24label_template.png';
 }
 
-function loadImageIntoCanvas(source) {
-  const tempImage = new Image();
-  tempImage.onload = function () {
-    canvasContext.drawImage(tempImage, 50, 80);
-  };
-  tempImage.src = source;
-}
-
-function handleFileUpload() {
-  const imgInput = document.getElementById('imageInput');
-  imgInput.addEventListener('change', (e) => {
-    console.log('e', e);
-    if (e.target.files) {
-      const imageFile = e.target.files[0]; // here we get the image file
-      const reader = new FileReader();
-      reader.readAsDataURL(imageFile);
-      reader.onloadend = function (e) {
-        const myImage = new Image(); // Creates image object
-        myImage.src = e.target.result; // Assigns converted image to image object
-        myImage.onload = (ev) => {
-          canvasContext.drawImage(myImage, 0, 0); // Draws the image on canvas
-        };
-      };
-    }
-  });
-}
-
 function handleMultipleFileUpload(_file) {
+  filesCount++;
+  let offsetX = 50;
+  let rowCount = filesCount;
+
+  if (filesCount > 15) {
+    offsetX = 800;
+    rowCount -= 16;
+  } else if (filesCount > 7) {
+    offsetX = 420;
+    rowCount -= 8;
+  }
+
+
+  const offsetY = 193;
+  const startY = 80;
+  const yPlacement = (rowCount * offsetY) + startY;
+  console.log('filesCount, yPlacement', rowCount, yPlacement);
+  const reader = new FileReader();
   const imageFile = _file; // here we get the image file
 
   reader.readAsDataURL(imageFile);
-  const myImage = new Image(); // Creates image object
+
   reader.onloadend = (e) => {
-    myImage.src = e.target.result; // Assigns converted image to image object
+    const myImage = new Image();
     myImage.onload = () => {
-      canvasContext.drawImage(myImage, 0, 0); // Draws the image on canvas
+      canvasContext.drawImage(myImage, offsetX, yPlacement); // Draws the image on canvas
     };
+    myImage.src = e.target.result; // Assigns converted image to image object
   };
 }
 
+var download = function () {
+  const link = document.createElement('a');
+  link.download = 'filename.png';
+  link.href = document.getElementById('fullSheetCanvas').toDataURL();
+  link.click();
+};
 </script>
 
 <div class="box">
-  <input type="file" id="imageInput" accept = "image/*" class="registerbtn">
-  <label for="many">Upload multiple files of any type:</label>
+  <!-- <input type="file" id="imageInput" accept = "image/*" class="registerbtn"> -->
+  <label for="many">Upload multiple QR Codes</label>
 <input
   accept="image/png, image/jpeg"
 	bind:files
@@ -99,7 +93,7 @@ function handleMultipleFileUpload(_file) {
 	multiple
 	type="file"
 />
-
+ <button on:click="{download}" class="registerbtn">download sheet</button>
   <canvas id = "fullSheetCanvas" width="1190" height="1684" style="border: 1px solid black;">
   </canvas>
 <div
