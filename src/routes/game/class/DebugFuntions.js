@@ -271,7 +271,7 @@ class DebugFuntions {
           );
 
           dlog('updated position = ', updatedPosition);
-          dlog('scene.homes', currentScene.homes);
+          // dlog('scene.homes', currentScene.homes);
           const selectedHomeObject = currentScene.homes.find(
             (element) => element.user_id === selectedGameObject.userHome,
           );
