@@ -28,6 +28,8 @@ const Locaties = [
   'TurquioseTriangle',
   'YellowDiamond',
   'BlueSail',
+  'RobotWorld',
+  'FireWorld',
 ];
 
   const houses = [

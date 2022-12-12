@@ -482,6 +482,26 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
+    locationVector = new Phaser.Math.Vector2(0, 540);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.fireWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'FireWorld',
+      locationImage: 'yellow_diamond_location_image',
+      enterButtonImage: 'enter_button',
+      locationText: 'Vuur Wereld',
+      referenceName: 'this.fireWorldLocation',
+      fontColor: 0x8dcb0e,
+    });
+
     locationVector = new Phaser.Math.Vector2(-400, -200);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
@@ -585,6 +605,26 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Rode Ster Wereld',
       referenceName: 'this.redStar',
+      fontColor: 0x8dcb0e,
+    });
+
+    locationVector = new Phaser.Math.Vector2(347, -480);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.robotoWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'RobotWorld',
+      locationImage: 'red_star_location_image',
+      enterButtonImage: 'enter_button',
+      locationText: 'Robot Wereld',
+      referenceName: 'this.robotWorldLocation',
       fontColor: 0x8dcb0e,
     });
 

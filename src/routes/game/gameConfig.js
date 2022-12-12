@@ -23,6 +23,8 @@ import GreenSquare from './scenes/GreenSquare';
 import RedStar from './scenes/RedStar';
 import TurquoiseTriangle from './scenes/TurquoiseTriangle';
 import YellowDiamond from './scenes/YellowDiamond';
+import RobotWorld from './scenes/RobotWorld';
+import FireWorld from './scenes/FireWorld';
 
 /** Phaser Plugins */
 
@@ -43,6 +45,8 @@ const SCENES = [
   RedStar,
   TurquoiseTriangle,
   YellowDiamond,
+  FireWorld,
+  RobotWorld,
 ];
 
 import { CONFIG } from '../../constants';

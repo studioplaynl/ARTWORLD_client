@@ -66,6 +66,16 @@ export const SCENE_INFO = [
     sizeX: 5500,
     sizeY: 5500,
   },
+  {
+    scene: 'FireWorld',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
+  {
+    scene: 'RobotWorld',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
 ];
 
 export const DEFAULT_SCENE = 'Artworld';
