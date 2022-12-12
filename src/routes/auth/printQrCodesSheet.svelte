@@ -14,6 +14,10 @@ $: if (files) {
   // console.log(files);
 
   filesCount = -1;
+
+  canvasContext.clearRect(0, 0, canvasContext.width, canvasContext.height * 2);
+  canvasContext.width = 1190;
+  canvasContext.height = 1684;
   for (const file of files) {
     handleMultipleFileUpload(file);
   }
@@ -27,6 +31,7 @@ onMount(async () => {
 
 function createCanvasContext() {
   canvasContext = document.getElementById('fullSheetCanvas');
+
   if (canvasContext.getContext) {
     canvasContext = canvasContext.getContext('2d');
   }
