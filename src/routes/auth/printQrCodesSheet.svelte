@@ -11,7 +11,7 @@ let filesCount = 0;
 $: if (files) {
   // Note that `files` is of type `FileList`, not an Array:
   // https://developer.mozilla.org/en-US/docs/Web/API/FileList
-  console.log(files);
+  // console.log(files);
 
   filesCount = -1;
   for (const file of files) {
@@ -32,6 +32,7 @@ function createCanvasContext() {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 function load24LabelTemplate() {
   // Loading of the image
   labelSheetTemplate = new Image();
@@ -60,7 +61,7 @@ function handleMultipleFileUpload(_file) {
   const offsetY = 192;
   const startY = 80;
   const yPlacement = (rowCount * offsetY) + startY;
-  console.log('filesCount, yPlacement', rowCount, yPlacement);
+  // console.log('filesCount, yPlacement', rowCount, yPlacement);
   const reader = new FileReader();
   const imageFile = _file; // here we get the image file
 
@@ -75,12 +76,12 @@ function handleMultipleFileUpload(_file) {
   };
 }
 
-var download = function () {
+function download() {
   const link = document.createElement('a');
   link.download = 'filename.png';
   link.href = document.getElementById('fullSheetCanvas').toDataURL();
   link.click();
-};
+}
 </script>
 
 <div class="box">
@@ -88,10 +89,10 @@ var download = function () {
   <label for="many">Upload multiple QR Codes</label>
 <input
   accept="image/png, image/jpeg"
-	bind:files
-	id="many"
-	multiple
-	type="file"
+bind:files
+id="many"
+multiple
+type="file"
 />
  <button on:click="{download}" class="registerbtn">download sheet</button>
   <canvas id = "fullSheetCanvas" width="1190" height="1684" style="border: 0px solid black;">
@@ -110,18 +111,18 @@ var download = function () {
   * {
     box-sizing: border-box;
   }
-  .registerForm {
+  /* .registerForm {
     max-width: 400px;
     margin: 0 auto;
-  }
+  } */
 
   /* Add padding to containers */
-  .container {
+  /* .container {
     padding: 16px;
-  }
+  } */
 
   /* Full-width input fields */
-  input[type='text']
+  /* input[type='text']
    {
     width: 100%;
     padding: 15px;
@@ -134,13 +135,13 @@ var download = function () {
   {
     background-color: #ddd;
     outline: none;
-  }
+  } */
 
   /* Overwrite default styles of hr */
-  hr {
+  /* hr {
     border: 1px solid #f1f1f1;
     margin-bottom: 25px;
-  }
+  }  */
 
   /* Set a style for the submit/register button */
   .registerbtn {
@@ -203,8 +204,8 @@ var download = function () {
     }
   }
 
-  select {
+  /* select {
     width: 100%;
     padding: 10px;
-  }
+  } */
 </style>
