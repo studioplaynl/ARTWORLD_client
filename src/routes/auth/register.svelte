@@ -41,7 +41,7 @@ const Locaties = [
     'portalZwart.png',
   ];
 
-  const house = houses[Math.floor(houses.length * Math.random())];
+  let house = houses[Math.floor(houses.length * Math.random())];
 
   const avatars = [
     'avatarBlauw.png',
@@ -137,6 +137,7 @@ function updateQrCanvas() {
       console.error(err);
     });
 }
+
 function downloadLoginImage() {
   const link = document.createElement('a');
   link.download = `${email}.png`;
@@ -163,6 +164,7 @@ function downloadLoginImage() {
             email = `${username}@vrolijkheid.nl`;
             genKidsPassword();
             updateQrCanvas();
+            house = houses[Math.floor(houses.length * Math.random())];
           }}"
           required
         />
