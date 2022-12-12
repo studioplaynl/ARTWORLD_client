@@ -52,7 +52,7 @@ const Locaties = [
     'avatarRoze.png',
   ];
 
-  const avatar = avatars[Math.floor(avatars.length * Math.random())];
+  let avatar = avatars[Math.floor(avatars.length * Math.random())];
 
   async function register() {
     const data = {
@@ -165,6 +165,7 @@ function downloadLoginImage() {
             genKidsPassword();
             updateQrCanvas();
             house = houses[Math.floor(houses.length * Math.random())];
+            avatar = avatars[Math.floor(avatars.length * Math.random())];
           }}"
           required
         />
