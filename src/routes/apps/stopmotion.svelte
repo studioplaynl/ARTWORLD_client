@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { Swiper, SwiperSlide } from 'swiper/svelte';
   import Drawing from './drawing.svelte';
-  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS } from '../../constants';
+  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS, STOPMOTION_BASE_SIZE } from '../../constants';
   // eslint-disable-next-line import/no-unresolved
   import 'swiper/css';
 
@@ -136,10 +136,7 @@
           on:swiper="{onSwiper}"
           on:slideChange="{onSlideChange}"
         >
-          <!-- activeIndex="{currentFrame}" -->
-          <!-- on:slideChange="{() => console.log('on:slideChange', ...arguments)}" -->
-          <!-- on:progress="{() => console.log('on:progress', ...arguments)}" -->
-          <!-- centeredSlides="{true}" -->
+
           <!-- eslint-disable-next-line no-unused-vars -->
           {#each Array(frames + 1) as _, index (index)}
             {#if index}
@@ -181,6 +178,8 @@
                 class="stopmotion__frame"
                 id="stopmotion-frame-new"
                 on:click="{addFrame}"
+
+
               >
                 <div class="stopmotion__frame__index">+</div>
               </div>

@@ -84,7 +84,7 @@
   $: {
     // Respond to changes in window size
     if (innerWidth && innerHeight) {
-      let canvasEdge = 140;
+      let canvasEdge = 240;
 
       // Mobile landscape
       if (innerWidth <= 600 && windowRatio <= 0.8) {
@@ -98,19 +98,23 @@
       canvasWidth = canvasSize * frames - canvasEdge;
       canvasHeight = canvasSize - canvasEdge;
 
+
+
       canvas.setWidth(canvasWidth);
       canvas.setHeight(canvasHeight);
       cursorCanvas.setWidth(canvasWidth);
       cursorCanvas.setHeight(canvasHeight);
 
       // for correct and adapted scaling of the preexisting artworks
-      // TODO: This does not work properly yet, probably
       scaleRatio = Math.min(
         (canvas.width * frames) / baseSize,
         canvas.height / baseSize,
       );
       cursorCanvas.setZoom(scaleRatio);
       canvas.setZoom(scaleRatio);
+
+      // make a new rectangle to clip the edge, so as to not draw into the next frame
+      setCanvasClipper();
 
       // Finally update 'data' object immediately
       updateExportedImages();
@@ -122,6 +126,7 @@
   let canvas;
   let cursorCanvasEl;
   let cursorCanvas;
+  const canvasClipperArray = []; // bugfixing
   let eraseBrush;
   let mouseCursor;
   let drawingClipboard;
@@ -166,25 +171,56 @@
     }
   }
 
+  function setCanvasClipper() {
+    const index = currentFrame - 1;
+    if (canvasClipperArray.length < frames) {
+      canvasClipperArray[index] = new fabric.Rect({
+        top: 0,
+        left: baseSize * index,
+        absolutePositioned: true,
+        width: baseSize - 1,
+        height: baseSize - 1,
+        fill: 'white',
+        globalCompositionOperation: 'destination-out',
+        controlsAboveOverlay: true,
+      });
+      canvas.add(canvasClipperArray[index]);
+      canvasClipperArray[index].frameNumber = currentFrame; // add clipper to the frame group
+      canvasClipperArray[index].canvas.renderAll();
+    }
+  }
+
   // eslint-disable-next-line consistent-return
   onMount(() => {
     setLoader(true);
 
+    // canvas should be setup on default size, later resized to fit screen
+
     // Set up Canvases
     cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
+    cursorCanvas.set('width', baseSize);
+    cursorCanvas.set('height', baseSize);
+
     canvas = new fabric.Canvas(canvasEl, {
       isDrawingMode: true,
     });
+    canvas.set('width', baseSize);
+    canvas.set('height', baseSize);
+
     eraseBrush = new fabric.EraserBrush(canvas);
 
-    // canvas.on('object:modified', (el) => {
-    //   console.log('object modified', el.target, el.target.frameNumber);
-    // });
+    // bugFixing
+    setCanvasClipper();
+    // bugFixing
 
     // Set frameNumber on object, to refer to when deleting frames
     canvas.on('path:created', () => {
       const idx = canvas.getObjects().length - 1;
       canvas.item(idx).frameNumber = currentFrame;
+
+      // clip the path with the canvasClipper so as to not draw into the next frame
+      const index = currentFrame - 1;
+      canvas.item(idx).clipPath = canvasClipperArray[index];
     });
 
     fabric.Object.prototype.transparentCorners = false;
@@ -258,48 +294,6 @@
     } else {
       setLoader(false);
     }
-
-    // start fix for drawing over the edge
-    //   canvas.on('path:created', function (e) {
-    //     var obj = e.path;
-    //     var points = [...obj.path];
-    //     var rect = obj.getBoundingRect();
-    //     console.log('e', e);
-    //     console.log(rect);
-    //     console.log(currentFrame);
-    //     console.log(baseSize);
-    //     console.log('before', obj.path.length);
-    //     if (
-    //       obj.left < baseSize * (currentFrame - 1) ||
-    //       obj.top < 0 ||
-    //       obj.left + obj.width > baseSize * currentFrame ||
-    //       obj.top + obj.height > baseSize
-    //     ) {
-    //       ///clip borders
-    //       // for (let i = 0; i < points.length; i++) {
-    //       //   const element = points[i];
-    //       //   if (
-    //       //     element[1] < baseSize * (currentFrame - 1) ||
-    //       //     element[2] < 0 ||
-    //       //     element[1] > baseSize * currentFrame ||
-    //       //     element[2] > baseSize
-    //       //   ) {
-    //       //     points.splice(i, 1);
-    //       //   }
-    //       //   console.log(element);
-    //       // }
-
-    //         // update value if > or < then border, ajust value to border value ( -line width)
-
-
-    //     }
-    //     canvas.renderAll();
-    //     obj.set({ path: points });
-    //     obj.setCoords();
-    //     // canvas.renderAll();
-
-  //     console.log('after', obj.path.length);
-  //   });
   });
 
   // Save state locally
@@ -455,7 +449,6 @@
   }
 
   function downloadImage() {
-    // console.log('file', file);
     const filename = `${file.key}.png`;
     data = canvas.toDataURL('image/png', 1);
 
