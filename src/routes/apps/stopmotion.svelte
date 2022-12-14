@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { Swiper, SwiperSlide } from 'swiper/svelte';
   import Drawing from './drawing.svelte';
-  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS, STOPMOTION_BASE_SIZE } from '../../constants';
+  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS } from '../../constants';
   // eslint-disable-next-line import/no-unresolved
   import 'swiper/css';
 
