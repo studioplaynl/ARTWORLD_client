@@ -621,7 +621,7 @@ export default class Artworld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'RobotWorld',
-      locationImage: 'red_star_location_image',
+      locationImage: 'robotWorldPortal',
       enterButtonImage: 'enter_button',
       locationText: 'Robot Wereld',
       referenceName: 'this.robotWorldLocation',
