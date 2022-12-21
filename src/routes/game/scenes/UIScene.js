@@ -149,8 +149,4 @@ export default class UIScene extends Phaser.Scene {
         break;
     }
   } // end gameEditModeSign
-
-  update() {
-    // if (this.scene !== ManageSession.currentScene) this.scene = ManageSession.currentScene;
-  }
 }

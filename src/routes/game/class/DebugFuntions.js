@@ -57,7 +57,6 @@ class DebugFuntions {
       selectedGameObject_startPosition,
     } = ManageSession;
 
-    console.log(scene, selectedGameObject, selectedGameObject_startScale, selectedGameObject_startPosition);
     switch (code) {
       case 'ShiftLeft':
         this.shiftDown = true;

@@ -15,7 +15,8 @@ export function handleEditMode(scene) {
     if (ManageSession.gameEditMode) {
       gameObject.setPosition(dragX, dragY);
 
-      if (gameObject.name === 'handle') {
+      const splitGameObjectName = gameObject.name.split('_');
+      if (splitGameObjectName[0] === 'handle') {
         gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
       }
     }
@@ -53,7 +54,7 @@ export function handleEditMode(scene) {
 }
 
 /**   handles player movement; dragging and double tapping
- *      for dragging an background rectangle is created to detect appropiate mouse down states
+ *      for dragging a background rectangle is created to detect appropiate mouse down states
  *      movement is handles in the Move class
  *      scene context is passed on
  *

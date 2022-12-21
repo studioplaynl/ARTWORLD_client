@@ -148,7 +148,7 @@ export default class RobotWorld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(-535, 35);
+    locationVector = new Phaser.Math.Vector2(2340, -1015);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -212,68 +212,237 @@ export default class RobotWorld extends Phaser.Scene {
       this.robothuis3_ms.setInteractive({ draggable: true });
     }
 
-    this.robot_treeC_01 = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1717),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 903),
-
+    this.robot_treeC_01_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -752),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 523),
       'robot_treeC_01',
     );
-    this.robot_treeC_01.setScale(0.5);
-    this.robot_treeC_01.setDepth(202);
-    this.robot_treeC_01.name = 'robot_treeC_01';
+    this.robot_treeC_01_1.setScale(0.4);
+    this.robot_treeC_01_1.setDepth(202);
+    this.robot_treeC_01_1.name = 'robot_treeC_01_1';
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
-      this.robot_treeC_01.setInteractive({ draggable: true });
+      this.robot_treeC_01_1.setInteractive({ draggable: true });
     }
 
-    this.robot_treeC_02 = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 60),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2514),
+    this.robot_treeC_01_2 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2372),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 578),
+      'robot_treeC_01',
+    );
+    this.robot_treeC_01_2.setScale(0.74);
+    this.robot_treeC_01_2.setDepth(202);
+    this.robot_treeC_01_2.name = 'robot_treeC_01_2';
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.robot_treeC_01_2.setInteractive({ draggable: true });
+    }
+
+
+    this.robot_treeC_02_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 985),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1196),
       'robot_treeC_02',
     );
-    this.robot_treeC_02.setDepth(202);
-    this.robot_treeC_02.setScale(0.5);
-    this.robot_treeC_02.name = 'robot_treeC_02';
+    this.robot_treeC_02_1.setDepth(202);
+    this.robot_treeC_02_1.setScale(0.5);
+    this.robot_treeC_02_1.name = 'robot_treeC_02_1';
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
-      this.robot_treeC_02.setInteractive({ draggable: true });
+      this.robot_treeC_02_1.setInteractive({ draggable: true });
     }
 
+    this.robot_treeC_02_2 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1965),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -856),
+      'robot_treeC_02',
+    );
+    this.robot_treeC_02_2.setDepth(202);
+    this.robot_treeC_02_2.setScale(0.5);
+    this.robot_treeC_02_2.name = 'robot_treeC_02_2';
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.robot_treeC_02_2.setInteractive({ draggable: true });
+    }
+
+    this.robot_treeC_03_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -580),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1014),
+      'robot_treeC_03',
+    );
+    this.robot_treeC_03_1.setDepth(202);
+    this.robot_treeC_03_1.setScale(0.5);
+    this.robot_treeC_03_1.name = 'robot_treeC_03_1';
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.robot_treeC_03_1.setInteractive({ draggable: true });
+    }
+
+    this.robot_treeC_03_2 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 205),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2559),
+      'robot_treeC_03',
+    );
+    this.robot_treeC_03_2.setDepth(202);
+    this.robot_treeC_03_2.setScale(0.5);
+    this.robot_treeC_03_2.name = 'robot_treeC_03_2';
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.robot_treeC_03_2.setInteractive({ draggable: true });
+    }
+
+    this.robot_treeC_04_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -375),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 684),
+      'robot_treeC_04',
+    );
+    this.robot_treeC_04_1.setDepth(202);
+    this.robot_treeC_04_1.setScale(0.6);
+    this.robot_treeC_04_1.name = 'robot_treeC_04_1';
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.robot_treeC_04_1.setInteractive({ draggable: true });
+    }
+
+    this.robot_treeC_04_2 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2115),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1071),
+      'robot_treeC_04',
+    );
+    this.robot_treeC_04_2.setDepth(202);
+    this.robot_treeC_04_2.setScale(0.6);
+    this.robot_treeC_04_2.name = 'robot_treeC_04_2';
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.robot_treeC_04_2.setInteractive({ draggable: true });
+    }
 
     // paths for the houses
-    this.createCurveWithHandles();
+    this.pointsCurve1 = [new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 187),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2367),
+    ),
+    new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -841),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 846),
+    )];
+
+    this.createCurveWithHandles({
+      color1: '0x2e4043', points: this.pointsCurve1, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '1',
+    });
+
+
+    this.pointsCurve2 = [new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -867),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1570),
+    ),
+    new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2709),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -599),
+    ),
+    ];
+
+    this.createCurveWithHandles({
+      color1: '0x2e4043', points: this.pointsCurve2, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '2',
+    });
+
+
+    this.pointsCurve3 = [new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2661),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1987),
+    ),
+    new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1431),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -604),
+    ),
+    ];
+
+    this.createCurveWithHandles({
+      color1: '0x2e4043', points: this.pointsCurve3, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '3',
+    });
+
+
+    this.pointsCurve4 = [new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -454),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 560),
+    ),
+    new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2719),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2724),
+    ),
+    ];
+
+    this.createCurveWithHandles({
+      color1: '0x2e4043', points: this.pointsCurve4, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '4',
+    });
+
+
+    this.pointsCurve5 = [new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -454),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1),
+    ),
+    new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2719),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1),
+    ),
+    ];
+
+    this.createCurveWithHandles({
+      color1: '0x2e4043', points: this.pointsCurve5, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '5',
+    });
+
+    this.pointsCurve6 = [new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1199),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 391),
+    ),
+    new Phaser.Math.Vector2(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -774),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2711),
+    ),
+    ];
+
+    this.createCurveWithHandles({
+      color1: '0x2e4043', points: this.pointsCurve6, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '6',
+    });
   }
 
   /** Create a curve with handles in edit mode
  * @todo Work in progress, replace with CurveWithHandles class? */
-  createCurveWithHandles() {
-    // const path = { t: 0, vec: new Phaser.Math.Vector2() };
+  createCurveWithHandles(config) {
+    const { color1 } = config;
+    // const { color2 } = config;
+    const { points } = config;
+    const { lineWidth } = config;
+    const { lineAlpha } = config;
+    const { name } = config;
+    const { lineResolution } = config;
 
-    this.curve1 = new Phaser.Curves.Spline([
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2361),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1424),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 187),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2367),
-    ]);
+    const curveName = `curve${name}`;
+    const curveGraphicsName = `curveGraphics${name}`;
+    this[curveName] = new Phaser.Curves.Spline(points);
 
-    const { points } = this.curve1;
-    console.log('points1', points);
-    //  Create drag-handles for each point
     if (ManageSession.gameEditMode) {
       for (let i = 0; i < points.length; i++) {
         const point = points[i];
+        const curveHandleName = `curveHandle${name}_${i}`;
+        // const point = this[curveHandleName].getData('vector');
 
-        this.handle1 = this.add.image(point.x, point.y, 'ball', 0).setScale(0.1).setInteractive().setDepth(40);
-        this.handle1.name = 'handle';
+        this[curveHandleName] = this.add.image(point.x, point.y, 'ball', 0).setScale(0.1).setInteractive().setDepth(40);
+        this[curveHandleName].setName(`handle_${curveHandleName}`);
 
-        this.handle1.setData('vector', point);
+        this[curveHandleName].setData('vector', point);
+        this[curveHandleName].setData('lineResolution', lineResolution);
+        this[curveHandleName].setData('curveHandle', curveHandleName);
 
-        this.input.setDraggable(this.handle1);
+        this.input.setDraggable(this[curveHandleName]);
       }
     }
-    this.curveGraphics1 = this.add.graphics();
-    this.curveGraphics1.lineStyle(60, 0x0c5c44, 1);
-    this.curve1.draw(this.curveGraphics1, 64);
+
+    this[curveGraphicsName] = this.add.graphics();
+    this[curveGraphicsName].lineStyle(lineWidth, color1, lineAlpha);
+    this[curveName].draw(this[curveGraphicsName], lineResolution);
+    console.log('this[curveGraphicsName]', this[curveGraphicsName]);
+    console.log('this[curveName]', this[curveName]);
   }
 
   update() {
@@ -286,19 +455,43 @@ export default class RobotWorld extends Phaser.Scene {
       this.playerShadow.x = this.player.x + this.playerShadowOffset;
       this.playerShadow.y = this.player.y + this.playerShadowOffset;
       // ........... end PLAYER SHADOW .........................................................................
-
-      // ....... stopping PLAYER ......................................................................................
-      // Move.checkIfPlayerReachedMoveGoal(this) // to stop the player when it reached its destination
-      // ....... end stopping PLAYER .................................................................................
     } else {
       // when in edit mode
-      this.updateCurveGraphics();
+      this.updateCurveGraphics({ name: '1' });
+      this.updateCurveGraphics({ name: '2' });
+      this.updateCurveGraphics({ name: '3' });
+      this.updateCurveGraphics({ name: '4' });
+      this.updateCurveGraphics({ name: '5' });
+      this.updateCurveGraphics({ name: '6' });
     }
   } // update
 
-  updateCurveGraphics() {
-    this.curveGraphics1.clear();
-    this.curveGraphics1.lineStyle(60, 0x0c5c44, 1);
-    this.curve1.draw(this.curveGraphics1, 64);
+
+  updateCurveGraphics(config) {
+    const { name } = config;
+
+    const curveName = `curve${name}`;
+    const curveGraphicsName = `curveGraphics${name}`;
+    const { points } = this[curveName];
+
+    let lineResolution = 32;
+    const lineWidth = this[curveGraphicsName].commandBuffer[1];
+    const color1 = this[curveGraphicsName].commandBuffer[2];
+    const lineAlpha = this[curveGraphicsName].commandBuffer[3];
+
+    points.forEach((element, index) => {
+      const curveHandleName = `curveHandle${name}_${index}`;
+      const point = this[curveHandleName].getData('vector');
+      // console.log('curveGraphicsName', curveGraphicsName);
+      points[index] = point;
+      lineResolution = this[curveHandleName].getData('lineResolution');
+      // console.log('this[curveHandleName] point', point);
+    });
+
+    // console.log('points', points);
+
+    this[curveGraphicsName].clear();
+    this[curveGraphicsName].lineStyle(lineWidth, color1, lineAlpha);
+    this[curveName].draw(this[curveGraphicsName], lineResolution);
   }
 } // class
