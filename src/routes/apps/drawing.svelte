@@ -113,9 +113,6 @@
       cursorCanvas.setZoom(scaleRatio);
       canvas.setZoom(scaleRatio);
 
-      // make a new rectangle to clip the edge, so as to not draw into the next frame
-      setCanvasClipper();
-
       // Finally update 'data' object immediately
       updateExportedImages();
     }
@@ -171,25 +168,6 @@
     }
   }
 
-  function setCanvasClipper() {
-    const index = currentFrame - 1;
-    if (canvasClipperArray.length < frames) {
-      canvasClipperArray[index] = new fabric.Rect({
-        top: 0,
-        left: baseSize * index,
-        absolutePositioned: true,
-        width: baseSize - 1,
-        height: baseSize - 1,
-        fill: 'white',
-        globalCompositionOperation: 'destination-out',
-        controlsAboveOverlay: true,
-      });
-      canvas.add(canvasClipperArray[index]);
-      canvasClipperArray[index].frameNumber = currentFrame; // add clipper to the frame group
-      canvasClipperArray[index].canvas.renderAll();
-    }
-  }
-
   // eslint-disable-next-line consistent-return
   onMount(() => {
     setLoader(true);
@@ -209,18 +187,10 @@
 
     eraseBrush = new fabric.EraserBrush(canvas);
 
-    // bugFixing
-    setCanvasClipper();
-    // bugFixing
-
     // Set frameNumber on object, to refer to when deleting frames
     canvas.on('path:created', () => {
       const idx = canvas.getObjects().length - 1;
       canvas.item(idx).frameNumber = currentFrame;
-
-      // clip the path with the canvasClipper so as to not draw into the next frame
-      const index = currentFrame - 1;
-      canvas.item(idx).clipPath = canvasClipperArray[index];
     });
 
     fabric.Object.prototype.transparentCorners = false;
