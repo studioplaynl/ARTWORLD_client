@@ -131,6 +131,23 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
     this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
     this.load.image('Robot_Clap_NoAnimation', './assets/world_robot_torquoise/_Robot_Clap_NoAnimation.png');
+
+    // FireWorld
+    this.load.image('fireWorldPortal', './assets/world_fireworld/Portal_vuur_Naartoe_zonderAnimatie.png');
+    this.load.image('artWorldPortalFire', './assets/world_fireworld/Portal_vuur_Terug.png');
+    this.load.image('lavafall_boy', './assets/world_fireworld/lavafall_boy.png');
+    this.load.image('tree1_vuur_licht', './assets/world_fireworld/tree1_vuur_licht.png');
+    this.load.image('tree2_vuur_licht', './assets/world_fireworld/tree2_vuur_licht.png');
+    this.load.image('tree3_vuur_licht', './assets/world_fireworld/tree3_vuur_licht.png');
+    this.load.image('vulcano1_kleur_helder', './assets/world_fireworld/vulcano1_kleur_helder.png');
+    this.load.image('vulkan2', './assets/world_fireworld/vulkan2.png');
+    this.load.image('vuur_wereld_Lavameer01', './assets/world_fireworld/vuur_wereld_Lavameer01.png');
+    // this.load.image('tree1_vuur__geenlicht', './assets/world_fireworld/tree1_vuur__geenlicht.png');
+
+    // tree1_vuur__geenlicht.png
+    // tree2_vuur_geenL.png
+    // tree3_vuur_zonderlicht.png
+    // vulcano1.png
   }
 
   async create() {

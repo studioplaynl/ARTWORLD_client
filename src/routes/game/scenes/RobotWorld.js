@@ -147,13 +147,14 @@ export default class RobotWorld extends Phaser.Scene {
       referenceName: 'this.purpleCircleLocation',
       fontColor: 0x8dcb0e,
     });
+    this.purpleCircleLocation.setScale(1.5);
 
     locationVector = new Phaser.Math.Vector2(2340, -1015);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
-    this.purpleCircleLocation.scale = 1.5;
+
 
     this.pencil = new GenerateLocation({
       scene: this,

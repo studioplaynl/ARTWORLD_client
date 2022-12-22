@@ -482,7 +482,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(0, 540);
+    locationVector = new Phaser.Math.Vector2(2, 460);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -495,14 +495,14 @@ export default class Artworld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'FireWorld',
-      locationImage: 'yellow_diamond_location_image',
+      locationImage: 'fireWorldPortal',
       enterButtonImage: 'enter_button',
       locationText: 'Vuur Wereld',
       referenceName: 'this.fireWorldLocation',
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(-400, -200);
+    locationVector = new Phaser.Math.Vector2(-436, -56);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -522,7 +522,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(400, 330);
+    locationVector = new Phaser.Math.Vector2(384, 228);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -542,7 +542,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(455, -165);
+    locationVector = new Phaser.Math.Vector2(414, -134);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -577,7 +577,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(0, -420);
+    locationVector = new Phaser.Math.Vector2(-250, -386);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -608,7 +608,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(347, -480);
+    locationVector = new Phaser.Math.Vector2(133, -418);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,

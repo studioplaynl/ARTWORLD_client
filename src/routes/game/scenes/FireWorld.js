@@ -59,7 +59,24 @@ export default class FireWorld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    Background.standardWithDots(this);
+    // Background.standardWithDots(this);
+
+    // green gradient background
+    Background.rectangle({
+      scene: this,
+      name: 'robot_world_background_image',
+      posX: 0,
+      posY: 0,
+      setOrigin: 0,
+      gradient1: 0x958f8d,
+      gradient2: 0x958f8d,
+      gradient3: 0x4c4845,
+      gradient4: 0x4c4845,
+      alpha: 1,
+      width: this.worldSize.x,
+      height: this.worldSize.y,
+      imageOnly: false,
+    });
 
     handlePlayerMovement(this);
 
@@ -102,6 +119,7 @@ export default class FireWorld extends Phaser.Scene {
 
     // create accessable locations
     this.generateLocations();
+    this.makeWorldElements();
     // .......... end locations ............................................................................
 
     Player.loadPlayerAvatar(this);
@@ -138,16 +156,17 @@ export default class FireWorld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Artworld',
-      locationImage: 'purple_circle_location_image',
+      locationImage: 'artWorldPortalFire',
       enterButtonImage: 'enter_button',
       locationText: 'Paarse Cirkel Wereld',
       referenceName: 'this.purpleCircleLocation',
       fontColor: 0x8dcb0e,
     });
+    this.purpleCircleLocation.setScale(1.5);
 
 
 
-    locationVector = new Phaser.Math.Vector2(-535, 35);
+    locationVector = new Phaser.Math.Vector2(1575, 1400);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -172,6 +191,219 @@ export default class FireWorld extends Phaser.Scene {
       color3: 0x63a505,
     });
     this.pencil.rotation = 0.12;
+  }
+
+  makeWorldElements() {
+    // .........vulcano1_bright............................................................
+    this.vulcano1_bright_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1787),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1538),
+      'vulcano1_kleur_helder',
+    );
+    this.vulcano1_bright_1.name = 'vulcano1_bright_1';
+    this.vulcano1_bright_1.setScale(1.91);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.vulcano1_bright_1.setInteractive({ draggable: true });
+    }
+
+    // .........vuur_wereld_Lavameer01............................................................
+    this.vuur_wereld_Lavameer01_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -602),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1203),
+      'vuur_wereld_Lavameer01',
+    );
+    this.vuur_wereld_Lavameer01_1.name = 'vuur_wereld_Lavameer01_1';
+    this.vuur_wereld_Lavameer01_1.setScale(1.98);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.vuur_wereld_Lavameer01_1.setInteractive({ draggable: true });
+    }
+
+
+    // .........lavafall_boy............................................................
+    this.lavafall_boy_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1423),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 430),
+      'lavafall_boy',
+    );
+    this.lavafall_boy_1.name = 'lavafall_boy_1';
+    this.lavafall_boy_1.setScale(1.98);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.lavafall_boy_1.setInteractive({ draggable: true });
+    }
+
+    // .........vulkan2 + vuur_wereld_Lavameer01_2............................................................
+    // the volcano goes on top of the lake, therefore is loaded after the lake
+    this.vuur_wereld_Lavameer01_2 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1737),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -435),
+      'vuur_wereld_Lavameer01',
+    );
+    this.vuur_wereld_Lavameer01_2.name = 'vuur_wereld_Lavameer01_2';
+    this.vuur_wereld_Lavameer01_2.setScale(1.46);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.vuur_wereld_Lavameer01_2.setInteractive({ draggable: true });
+    }
+
+    this.vulkan2_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -947),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -165),
+      'vulkan2',
+    );
+    this.vulkan2_1.name = 'vulkan2_1';
+    this.vulkan2_1.setScale(2.3);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.vulkan2_1.setInteractive({ draggable: true });
+    }
+
+    // .........vuur_wereld_Lavameer01_3............................................................
+    this.vuur_wereld_Lavameer01_3 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1003),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1090),
+      'vuur_wereld_Lavameer01',
+    );
+    this.vuur_wereld_Lavameer01_3.name = 'vuur_wereld_Lavameer01_3';
+    this.vuur_wereld_Lavameer01_3.setScale(1.26);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.vuur_wereld_Lavameer01_3.setInteractive({ draggable: true });
+    }
+
+
+    // .........tree1_1............................................................
+    this.tree1_vuur_licht_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -245),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -805),
+      'tree1_vuur_licht',
+    );
+    this.tree1_vuur_licht_1.name = 'tree1_vuur_licht_1';
+    this.tree1_vuur_licht_1.setScale(1.46);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree1_vuur_licht_1.setInteractive({ draggable: true });
+    }
+
+    // .........tree1_2............................................................
+    this.tree1_vuur_licht_2 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 405),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -830),
+      'tree1_vuur_licht',
+    );
+    this.tree1_vuur_licht_2.name = 'tree1_vuur_licht_2';
+    this.tree1_vuur_licht_2.setScale(1.24);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree1_vuur_licht_2.setInteractive({ draggable: true });
+    }
+
+    // .........tree1_vuur_licht_3............................................................
+    this.tree1_vuur_licht_3 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1740),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1890),
+      'tree1_vuur_licht',
+    );
+    this.tree1_vuur_licht_3.name = 'tree1_vuur_licht_3';
+    this.tree1_vuur_licht_3.setScale(2.44);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree1_vuur_licht_3.setInteractive({ draggable: true });
+    }
+
+    // .........tree1_vuur_licht_4............................................................
+    this.tree1_vuur_licht_4 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -885),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1760),
+      'tree1_vuur_licht',
+    );
+    this.tree1_vuur_licht_4.name = 'tree1_vuur_licht_4';
+    this.tree1_vuur_licht_4.setScale(2);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree1_vuur_licht_4.setInteractive({ draggable: true });
+    }
+
+    // .........tree2_1............................................................
+    this.tree2_vuur_licht_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 305),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 20),
+      'tree2_vuur_licht',
+    );
+    this.tree2_vuur_licht_1.name = 'tree2_vuur_licht_1';
+    this.tree2_vuur_licht_1.setScale(1.46);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree2_vuur_licht_1.setInteractive({ draggable: true });
+    }
+
+    // .........tree2_vuur_licht_2............................................................
+    this.tree2_vuur_licht_2 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -515),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -670),
+      'tree2_vuur_licht',
+    );
+    this.tree2_vuur_licht_2.name = 'tree2_vuur_licht_2';
+    this.tree2_vuur_licht_2.setScale(1.46);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree2_vuur_licht_2.setInteractive({ draggable: true });
+    }
+
+    // .........tree2_vuur_licht_3............................................................
+    this.tree2_vuur_licht_3 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -885),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1760),
+      'tree2_vuur_licht',
+    );
+    this.tree2_vuur_licht_3.name = 'tree2_vuur_licht_3';
+    this.tree2_vuur_licht_3.setScale(1.46);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree2_vuur_licht_3.setInteractive({ draggable: true });
+    }
+
+    // .........tree3_1............................................................
+    this.tree3_vuur_licht_1 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 55),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -760),
+      'tree3_vuur_licht',
+    );
+    this.tree3_vuur_licht_1.name = 'tree3_vuur_licht_1';
+    this.tree3_vuur_licht_1.setScale(1.46);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree3_vuur_licht_1.setInteractive({ draggable: true });
+    }
+
+    // .........tree3_2............................................................
+    this.tree3_vuur_licht_2 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -355),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 140),
+      'tree3_vuur_licht',
+    );
+    this.tree3_vuur_licht_2.name = 'tree3_vuur_licht_2';
+    this.tree3_vuur_licht_2.setScale(1.46);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree3_vuur_licht_2.setInteractive({ draggable: true });
+    }
+
+    // .........tree3_vuur_licht_3............................................................
+    this.tree3_vuur_licht_3 = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -410),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1850),
+      'tree3_vuur_licht',
+    );
+    this.tree3_vuur_licht_3.name = 'tree3_vuur_licht_3';
+    this.tree3_vuur_licht_3.setScale(2.3);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.tree3_vuur_licht_3.setInteractive({ draggable: true });
+    }
+    // ............................................................................................................
   }
 
   update() {
