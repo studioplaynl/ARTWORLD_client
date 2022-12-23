@@ -1,124 +1,14 @@
 <script>
-  import { createEventDispatcher, onMount } from 'svelte';
-  import { writable } from 'svelte/store';
-
-  // Important: keep the eslint comment below intact!
-  // eslint-disable-next-line import/no-relative-packages
-  import { fabric } from './fabric/dist/fabric';
-  import { setLoader } from '../../api';
-  import { Error } from '../../session';
+  import Konva from 'konva';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
-
-  export let file;
-  export let data;
-  export let thumb;
-  export let changes;
-
-  // In order to allow for multi-frames (stopmotion), we need to expose these values
-  export let frames = 1;
-  export let currentFrame = 1;
-  export let stopMotion = false;
-
+  
   let baseSize = IMAGE_BASE_SIZE;
-  $: {
-    if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
-  }
-
-  // In order to hide editor functions when previewing stopmotion
-  export let enableEditor = true;
-  export let enableOnionSkinning = false;
-
-  const cursorOpacity = 0.5;
-  const dispatch = createEventDispatcher();
-
-  const state = writable({});
-  const pastStates = writable([]);
-  const futureStates = writable([]);
-
-  // Let appLoader keep track of nr of changes
-  $: {
-    changes = $pastStates.length;
-  }
-
-  // Window size, canvas size
   let innerHeight;
   let innerWidth;
   let canvasWidth;
   let canvasHeight;
   let scaleRatio;
 
-  $: windowRatio = innerWidth / innerHeight;
-  $: canvasSize = innerWidth > innerHeight ? innerHeight : innerWidth;
-
-  $: controlsHeight = innerWidth > 600 ? `${canvasHeight}px` : 'auto';
-  $: controlsWidth = innerWidth <= 600 ? `${canvasHeight}px` : 'auto';
-
-  /** Delete all content from a single frame
-   * @maybe this belongs inside Stopmotion app instead..
-   */
-  export function deleteFrame(deleteableFrame) {
-    const objects = canvas.getObjects();
-
-    // Find and remove all objects with the required frameNumber attribute
-    objects
-      .filter((obj) => obj.frameNumber === deleteableFrame)
-      .forEach((obj) => {
-        canvas.remove(obj);
-      });
-
-    // Select all content to the right of the frame, and move over by –canvasWidth px
-    objects
-      .filter((obj) => obj.frameNumber > deleteableFrame)
-      .forEach((obj) => {
-        // eslint-disable-next-line no-param-reassign
-        obj.left -= canvasHeight / scaleRatio;
-      });
-
-    // Emit event that deletion is done
-    dispatch('frameContentDeleted');
-
-    // Finally update data
-    updateExportedImages();
-  }
-
-  $: {
-    // Respond to changes in window size
-    if (innerWidth && innerHeight) {
-      let canvasEdge = 240;
-
-      // Mobile landscape
-      if (innerWidth <= 600 && windowRatio <= 0.8) {
-        canvasEdge = 32;
-      }
-      // Mobile portrait
-      if (innerHeight <= 600 && windowRatio >= 1.5) {
-        canvasEdge = 32;
-      }
-
-      canvasWidth = canvasSize * frames - canvasEdge;
-      canvasHeight = canvasSize - canvasEdge;
-
-
-
-      canvas.setWidth(canvasWidth);
-      canvas.setHeight(canvasHeight);
-      cursorCanvas.setWidth(canvasWidth);
-      cursorCanvas.setHeight(canvasHeight);
-
-      // for correct and adapted scaling of the preexisting artworks
-      scaleRatio = Math.min(
-        (canvas.width * frames) / baseSize,
-        canvas.height / baseSize,
-      );
-      cursorCanvas.setZoom(scaleRatio);
-      canvas.setZoom(scaleRatio);
-
-      // Finally update 'data' object immediately
-      updateExportedImages();
-    }
-  }
-
-  // DOM ELements etc
   let canvasEl;
   let canvas;
   let cursorCanvasEl;
@@ -131,389 +21,99 @@
   let drawingColor = '#000000';
   let currentTab = null;
   let showOptionbox = false;
-
   // declaring the variable to be available globally, onMount assinging a function to it
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
-  // eslint-disable-next-line no-unused-vars
-  function save() {
-    data = canvas.toDataURL('image/png', 1);
-    dispatch('save', file);
-  }
+  // $: {
+  //   if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
+  // }
 
-  // Reactive function: update Fabric brush according to UI state
-  $: {
-    if (canvas) {
-      const brush = canvas.freeDrawingBrush;
-      brush.color = drawingColor;
-      brush.width = parseInt(lineWidth, 10) || 1;
-      if (brush.getPatternSrc) {
-        brush.source = brush.getPatternSrc.call(brush);
-      }
-
-      const bigint = parseInt(drawingColor.replace('#', ''), 16);
-
-      const r = (bigint >> 16) & 255;
-      const g = (bigint >> 8) & 255;
-      const b = bigint & 255;
-
-      mouseCursor
-        .set({
-          radius: brush.width / 2,
-          fill: `rgba(${[r, g, b, cursorOpacity].join(',')})`,
-        })
-        .setCoords()
-        .canvas.renderAll();
-    }
-  }
-
-  // eslint-disable-next-line consistent-return
-  onMount(() => {
-    setLoader(true);
-
-    // canvas should be setup on default size, later resized to fit screen
-
-    // Set up Canvases
-    cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
-    cursorCanvas.set('width', baseSize);
-    cursorCanvas.set('height', baseSize);
-
-    canvas = new fabric.Canvas(canvasEl, {
-      isDrawingMode: true,
-    });
-    canvas.set('width', baseSize);
-    canvas.set('height', baseSize);
-
-    eraseBrush = new fabric.EraserBrush(canvas);
-
-    // Set frameNumber on object, to refer to when deleting frames
-    canvas.on('path:created', () => {
-      const idx = canvas.getObjects().length - 1;
-      canvas.item(idx).frameNumber = currentFrame;
-    });
-
-    fabric.Object.prototype.transparentCorners = false;
-
-    // mouse cursor layer
-    // create cursor and place it off screen
-    mouseCursor = new fabric.Circle({
-      left: -100,
-      top: -100,
-      radius: canvas.freeDrawingBrush.width / 2,
-      fill: `rgba(0,0,0,${cursorOpacity})`,
-      stroke: 'black',
-      originX: 'center',
-      originY: 'center',
-    });
-
-    cursorCanvas.add(mouseCursor);
-
-    // redraw cursor on new mouse position when moved
-    // eslint-disable-next-line func-names
-    canvas.on('mouse:move', function (evt) {
-      if (currentTab === 'select') {
-        return mouseCursor
-          .set({ top: -100, left: -100 })
-          .setCoords()
-          .canvas.renderAll();
-      }
-      const mouse = this.getPointer(evt.e);
-
-      return mouseCursor
-        .set({
-          top: mouse.y,
-          left: mouse.x,
-        })
-        .setCoords()
-        .canvas.renderAll();
-    });
-
-    // TODO @chip Figure out the best event to listen to (maybe multiple events?) in order to trigger a saveState()?
-    // Set up Fabric Canvas interaction listeners
-    // canvas.on('object:modified', () => {
-    canvas.on('mouse:up', () => {
-      saveState();
-    });
-
-    applyBrush = (brushType) => {
-      if (typeof brushType === 'string') selectedBrush = brushType;
-      canvas.freeDrawingBrush = new fabric[`${selectedBrush}Brush`](canvas);
-      if (canvas.freeDrawingBrush) {
-        const brush = canvas.freeDrawingBrush;
-        brush.color = drawingColor;
-        if (brush.getPatternSrc) {
-          brush.source = brush.getPatternSrc.call(brush);
-        }
-        brush.width = parseInt(lineWidth, 10) || 1;
-      }
-    };
-
-    // Was there an image to load? Do so
-    if (file?.url) {
-      putImageOnCanvas(file.url)
-        .then(() => {
-          updateExportedImages();
-        })
-        .catch(() => {
-          Error.set(`Failed loading drawing from server: ${file.url}`);
-        })
-        .finally(() => {
-          setLoader(false);
-        });
-    } else {
-      setLoader(false);
-    }
-  });
-
-  // Save state locally
-  async function saveState() {
-    // Clear futureStates (should be empty after each new edit..)
-    futureStates.set([]);
-
-    // If $state is existing, add it to pastStates
-    if (
-      ($state && $pastStates.length === 0) ||
-      ($pastStates.length > 0 && $state !== $pastStates[$pastStates.length - 1])
-    ) {
-      pastStates.update((states) => [...states, $state]);
-    }
-
-    const json = canvas.toJSON();
-    if (json) {
-      state.set(json);
-
-      // TODO MAYBE: If required, we could add a save to localStorage here.
-      // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
-
-      // Set the data object (so the AppLoader can save it to server if required)
-      // FIXME? Somehow this requires a timeout, as calling it directly clears the canvas?!
-      updateExportedImages();
-    }
-  }
-
-  function updateExportedImages() {
-    setTimeout(() => {
-      canvas.setZoom(1);
-
-      data = canvas.toDataURL({
-        format: 'png',
+      // first we need Konva core things: stage and layer
+      var stage = new Konva.Stage({
+        container: 'container',
+        width: baseSize,
         height: baseSize,
-        width: baseSize * frames,
       });
-      // Small format thumbnail to add to frames
-      canvas.setZoom(scaleRatio);
-      thumb = canvas.toDataURL({
-        format: 'png',
-        multiplier: 0.25,
+
+      var layer = new Konva.Layer();
+      stage.add(layer);
+
+      // then we are going to draw into special canvas element
+      canvas.width = stage.width();
+      canvas.height = stage.height();
+
+      // created canvas we can add to layer as "Konva.Image" element
+      var image = new Konva.Image({
+        image: canvas,
+        x: 0,
+        y: 0,
       });
-    }, 100);
-  }
+      layer.add(image);
 
-  // Go back to previous state
-  function undoState() {
-    // Add current state to futureStates
-    futureStates.update((states) => [...states, $state]);
+      // Good. Now we need to get access to context element
+      var context = canvas.getContext('2d');
+      context.strokeStyle = '#df4b26';
+      context.lineJoin = 'round';
+      context.lineWidth = 5;
 
-    // Then revert to last state from pastStates
-    pastStates.update((past) => {
-      // Set current state to last in redoStates
-      state.set(past.pop());
-      return past;
-    });
+      var isPaint = false;
+      var lastPointerPosition;
+      var mode = 'brush';
 
-    resetCanvasFromState();
-  }
-
-  // Go back to previous reverted state
-  function redoState() {
-    // Add current state to pastStates
-    pastStates.update((states) => [...states, $state]);
-
-    // Then revert to last state from futureStates
-    futureStates.update((future) => {
-      // Set current state to last in futureStates
-      state.set(future.pop());
-      return future;
-    });
-
-    resetCanvasFromState();
-  }
-
-  function resetCanvasFromState() {
-    if ($state) {
-      canvas.clear();
-      canvas.loadFromJSON($state, () => {
-        canvas.renderAll();
-        updateExportedImages();
+      // now we need to bind some events
+      // we need to start drawing on mousedown
+      // and stop drawing on mouseup
+      image.on('mousedown touchstart', function () {
+        isPaint = true;
+        lastPointerPosition = stage.getPointerPosition();
       });
-    }
-  }
 
-  function putImageOnCanvas(imgUrl) {
-    return new Promise((resolve, reject) => {
-      const imagePromises = [];
-      for (let frame = 0; frame < frames; frame++) {
-        imagePromises.push(
-          new Promise((resolveImage, rejectImage) => {
-            fabric.Image.fromURL(
-              imgUrl,
-              // eslint-disable-next-line no-loop-func
-              (image, err) => {
-                // image.opacity = 0.5;
+      // will it be better to listen move/end events on the window?
 
-                // Step 1: Crop using the loaded image's width'
-                const nativeHeight = image.height;
-                image.set({
-                  cropX: nativeHeight * frame,
-                  cropY: 0,
-                  width: nativeHeight,
-                  height: nativeHeight,
-                });
-
-                // Step 2: Scale to canvas dimensions
-                image.scaleToHeight(baseSize);
-
-                // Step 3: Put on right spot
-                image.set({
-                  left: baseSize * frame,
-                  top: 0,
-                  frameNumber: frame + 1, // Frames in the app are 1-based
-                });
-
-                if (err) {
-                  rejectImage();
-                } else {
-                  resolveImage(image);
-                }
-              },
-              { crossOrigin: 'anonymous' },
-            );
-          }),
-        );
-      }
-
-      Promise.all(imagePromises)
-        .then((images) => {
-          images.forEach((image) => {
-            canvas.add(image);
-          });
-          resolve();
-        })
-        .catch(() => {
-          reject();
-        });
-    });
-  }
-
-  /// ////////////////// select functions /////////////////////////////////
-  function handleKeydown(evt) {
-    if (evt.key === 'Backspace' || evt.key === 'Delete') {
-      Delete();
-    }
-    // testing out the download function
-    // save() = save and close
-    if (evt.key === '1') {
-      downloadImage();
-    }
-  }
-
-  function downloadImage() {
-    const filename = `${file.key}.png`;
-    data = canvas.toDataURL('image/png', 1);
-
-    const a = document.createElement('a');
-    a.href = data;
-    a.download = filename;
-    // document.body.appendChild(a);
-    a.click();
-  }
-
-  function Copy() {
-    // clone what are you copying since you
-    // may want copy and paste on different moment.
-    // and you do not want the changes happened
-    // later to reflect on the copy.
-    canvas.getActiveObject().clone((cloned) => {
-      drawingClipboard = cloned;
-    });
-  }
-
-  function Paste() {
-    // clone again, so you can do multiple copies.
-    drawingClipboard.clone((clonedObj) => {
-      canvas.discardActiveObject();
-      clonedObj.set({
-        left: clonedObj.left + 10,
-        top: clonedObj.top + 10,
-        evented: true,
+      stage.on('mouseup touchend', function () {
+        isPaint = false;
       });
-      if (clonedObj.type === 'activeSelection') {
-        // active selection needs a reference to the canvas.
-        // eslint-disable-next-line no-param-reassign
-        clonedObj.canvas = canvas;
-        clonedObj.forEachObject((obj) => {
-          canvas.add(obj);
-        });
-        // this should solve the unselectability
-        clonedObj.setCoords();
-      } else {
-        canvas.add(clonedObj);
-      }
-      drawingClipboard.top += 10;
-      drawingClipboard.left += 10;
-      canvas.setActiveObject(clonedObj);
-      canvas.requestRenderAll();
-    });
-  }
 
-  function Delete() {
-    const curSelectedObjects = canvas.getActiveObjects();
-    canvas.discardActiveObject();
-    for (let i = 0; i < curSelectedObjects.length; i++) {
-      canvas.remove(curSelectedObjects[i]);
-    }
-    updateExportedImages();
-  }
+      // and core function - drawing
+      stage.on('mousemove touchmove', function () {
+        if (!isPaint) {
+          return;
+        }
 
-  function clearCanvas() {
-    canvas.clear();
-    dispatch('clearCanvas');
-  }
+        if (mode === 'brush') {
+          context.globalCompositeOperation = 'source-over';
+        }
+        if (mode === 'eraser') {
+          context.globalCompositeOperation = 'destination-out';
+        }
+        context.beginPath();
 
-  /// //////////// select functions end //////////////////
+        var localPos = {
+          x: lastPointerPosition.x - image.x(),
+          y: lastPointerPosition.y - image.y(),
+        };
+        context.moveTo(localPos.x, localPos.y);
+        var pos = stage.getPointerPosition();
+        localPos = {
+          x: pos.x - image.x(),
+          y: pos.y - image.y(),
+        };
+        context.lineTo(localPos.x, localPos.y);
+        context.closePath();
+        context.stroke();
 
-  function switchMode(mode) {
-    if (currentTab === mode) {
-      if (!showOptionbox) {
-        showOptionbox = true;
-      } else {
-        showOptionbox = false;
-        currentTab = null;
-      }
-    } else {
-      currentTab = mode;
-    }
+        lastPointerPosition = pos;
+        // redraw manually
+        layer.batchDraw();
+      });
 
-    switch (mode) {
-      case 'draw':
-        canvas.isDrawingMode = true;
-        break;
+      // var select = document.getElementById('tool');
+      // select.addEventListener('change', function () {
+      //   mode = select.value;
+      // });
 
-      case 'select':
-        canvas.isDrawingMode = false;
-        break;
 
-      case 'erase':
-        canvas.freeDrawingBrush = eraseBrush;
-        canvas.freeDrawingBrush.width = parseInt(lineWidth, 10) || 1;
-        canvas.isDrawingMode = true;
-        break;
-
-      default:
-        break;
-    }
-  }
 </script>
 
 <svelte:window bind:innerHeight bind:innerWidth on:keydown="{handleKeydown}" />
@@ -543,14 +143,14 @@
             : 'none'};
           "
       >
-        <canvas bind:this="{canvasEl}" class="canvas"> </canvas>
+        <canvas bind:this="{canvas}" class="canvas"> </canvas>
 
-        <canvas
+        <!-- <canvas
           bind:this="{cursorCanvasEl}"
           class="cursor-canvas"
           style:visibility="{enableEditor ? 'visible' : 'hidden'}"
         >
-        </canvas>
+        </canvas> -->
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
