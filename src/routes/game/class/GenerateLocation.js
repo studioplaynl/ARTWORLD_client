@@ -80,6 +80,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     // setOrigin(0.5) in the middle
     if (this.type === 'image') {
       // this.scene.textures.exists(this.locationImage);
+
+
       this.location = this.scene.physics.add.image(0, 0, this.locationImage).setOrigin(0.5, 0.5).setDepth(30);
 
       const cropWidth = this.location.width;
@@ -153,6 +155,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     const namePlateMargin = 20;
     const textOffset = -20 + namePlateExtraOffset;
     const textPlateOffset = textOffset + namePlateMargin;
+
     const locationDescription = this.scene.add.text(
       0,
       width / 2 - textOffset,
@@ -165,29 +168,31 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       .setDepth(32);
 
     // location plate name
-    const namePlate = this.scene.add.graphics()
-      .fillStyle(0xE8E8E8, 1)
-      .fillRoundedRect(
-        0 - (locationDescription.width + namePlateMargin) / 2,
-        width / 2 - textPlateOffset,
-        locationDescription.width + namePlateMargin, // text's width + 10 (to have space between border and text)
-        namePlateMargin * 2,
-        10,
-      ).setDepth(31);
+    const namePlate = this.scene.add.image(
+      0,
+      width / 2 + namePlateMargin,
+      'greySquare_256',
+    ).setDepth(31);
+    namePlate.displayWidth = locationDescription.width + namePlateMargin;
+    // text's width + 10 (to have space between border and text)
+    namePlate.displayHeight = namePlateMargin * 2;
+
 
     // if there is a number of artWorks passed on as argument, display the number besides the namePlate
     if (typeof this.numberOfArtworks !== 'undefined') {
       // if (this.numberOfArtworks !== -1) {
       // dlog('this.numberOfArtworks', this.numberOfArtworks);
-      this.numberBubble = this.scene.add.circle(
+      this.numberBubble = this.scene.add.image(
         namePlate.x + locationDescription.width + (namePlateMargin * 0.5),
         -width / 2 + (textOffset * 0.5),
-        namePlateMargin,
-        0xE8E8E8,
+        'greyCircle_64',
       )
         .setOrigin(0.5, 0.5)
         .setDepth(498)
         .setName([this.numberBubble]);
+      this.numberBubble.displayWidth = namePlateMargin * 2;
+      this.numberBubble.displayHeight = namePlateMargin * 2;
+
 
       this.numberArt = this.scene.add.text(
         namePlate.x + locationDescription.width + (namePlateMargin * 0.5),
@@ -211,33 +216,37 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     const enterButtonY = this.y - (width / 2) - enterButtonYOffset;
     const enterButtonTweenY = enterButtonY + enterButtonYTweenOffset;
 
-    // this.enterButtonHitArea = this.scene.add.image(this.x, enterButtonY, 'enterButtonHitArea').setDepth(201)
-    // this.enterButtonHitArea.alpha = 0 // make the hitArea invisible
+    this.enterButtonHitArea = this.scene.add.image(this.x, enterButtonY, 'enterButtonHitArea').setDepth(201);
+    this.enterButtonHitArea.alpha = 0; // make the hitArea invisible
 
-    // this.enterButtonHitArea.displayWidth = width / 1.05
-    this.enterArea = this.scene.add.rectangle(
+    this.enterButtonHitArea.displayWidth = width / 1.05;
+
+    this.enterArea = this.scene.add.image(
       this.x,
       this.y,
-      width,
-      width,
-      0x7300ED,
-      0,
+      'greySquare_256',
     )
       .setVisible(false)
       .setInteractive() // { useHandCursor: true }
       .setName('enterArea')
       .setDepth(501);
+    this.enterArea.displayWidth = width;
+    this.enterArea.displayHeight = width;
+    this.enterArea.alpha = 0.00001; // make invisible
+    // needed for an image or sprite to be interactive when alpha = 0
+    this.enterArea.input.alwaysEnabled = true; // does not work for some reason, so alpha is set to 0.0001
 
-    this.enterShadow = this.scene.add.circle(
+    this.enterShadow = this.scene.add.image(
       this.x,
       enterButtonY + 5,
-      30,
-      0x7300ED,
+      'purpleCircle_128',
     )
       .setOrigin(0.5, 0.5)
       .setVisible(false)
       .setDepth(500);
-    // .setStrokeStyle(2, 0x000000)
+    this.enterShadow.displayWidth = 60;
+    this.enterShadow.displayHeight = 60;
+
 
     this.enterButton = this.scene.add.image(
       this.x,
@@ -260,29 +269,30 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     });
 
     // set a square margin around the location so that the spacing of them next to each other feels less crammed
-    this.debugRectXMargin = this.scene.add.graphics()
-      .fillStyle(0xff0000, 0.4)
-      .fillRoundedRect(
-        0 - (this.debugRect_height / 2),
-        this.debugRect_y,
-        this.debugRect_height,
-        this.debugRect_height,
-        10,
-      )
+    this.debugRectXMargin = this.scene.add.image(
+      0,
+      0,
+      'greySquare_256',
+    )
+      .setOrigin(0.5)
       .setDepth(30)
       .setVisible(false);
+    this.debugRectXMargin.displayWidth = this.debugRect_height * 0.5;
+    this.debugRectXMargin.displayHeight = this.debugRect_height * 0.5;
 
-    this.debugRect = this.scene.add.graphics()
-      .fillStyle(0xffff00, 0.6)
-      .fillRoundedRect(
-        0 - (width / 2),
-        this.debugRect_y,
-        width,
-        this.debugRect_height,
-        10,
-      )
+    this.debugRect = this.scene.add.image(
+      0,
+      0,
+      'purpleSquare_256',
+    )
+      .setOrigin(0.5)
       .setDepth(30)
       .setVisible(false);
+    this.debugRect.displayWidth = width * 1.3;
+    this.debugRect.displayHeight = this.debugRect_height * 1.3;
+
+    console.log('this.debugRect', this.debugRect);
+
 
     // the container is created at the this.x and this.y
     // this.setSize(width, width)
@@ -453,6 +463,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
           yoyo: true,
         });
       });
+    console.log('this.debugRectXMargin:', this.debugRectXMargin, this.debugRectXMargin.x);
 
     this.scene.input.setDraggable(this, true);
   }
@@ -463,17 +474,14 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       this.enterButton.setVisible(true);
       this.enterShadow.setVisible(true);
       this.enterArea.setVisible(true);
-
-    // needed for an image or sprite to be interactive when alpha = 0
-    // this.enterButtonHitArea.input.alwaysEnabled = true
     }
   }
 
   hideEnterButton() {
     this.showing = false;
-    this.enterButton.setVisible(this.showing);
-    this.enterShadow.setVisible(this.showing);
-    this.enterArea.setVisible(this.showing);
+    this.enterButton.setVisible(false);
+    this.enterShadow.setVisible(false);
+    this.enterArea.setVisible(false);
     // this.enterButtonHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
     this.postFxPlugin.remove(this);
   }

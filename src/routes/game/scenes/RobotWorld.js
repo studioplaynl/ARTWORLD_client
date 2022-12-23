@@ -59,23 +59,12 @@ export default class RobotWorld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    // Background.standardWithDots(this);
-
-    // green gradient background
-    Background.rectangle({
+    Background.gradientTileMap({
       scene: this,
-      name: 'robot_world_background_image',
-      posX: 0,
-      posY: 0,
-      setOrigin: 0,
-      gradient1: 0x3de8bc,
-      gradient2: 0x3de8bc,
-      gradient3: 0x169876,
-      gradient4: 0x169876,
-      alpha: 1,
-      width: this.worldSize.x,
-      height: this.worldSize.y,
-      imageOnly: false,
+      tileMapName: 'WorldBackgroundTileMap',
+      gradientColor1: 0x3de8bc,
+      gradientColor2: 0x169876,
+      tileWidth: 128,
     });
 
     handlePlayerMovement(this);
@@ -368,8 +357,8 @@ export default class RobotWorld extends Phaser.Scene {
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 560),
     ),
     new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2719),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2724),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2584),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2544),
     ),
     ];
 
@@ -397,8 +386,9 @@ export default class RobotWorld extends Phaser.Scene {
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 391),
     ),
     new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -774),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2711),
+
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -649),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2561),
     ),
     ];
 
@@ -442,8 +432,6 @@ export default class RobotWorld extends Phaser.Scene {
     this[curveGraphicsName] = this.add.graphics();
     this[curveGraphicsName].lineStyle(lineWidth, color1, lineAlpha);
     this[curveName].draw(this[curveGraphicsName], lineResolution);
-    console.log('this[curveGraphicsName]', this[curveGraphicsName]);
-    console.log('this[curveName]', this[curveName]);
   }
 
   update() {

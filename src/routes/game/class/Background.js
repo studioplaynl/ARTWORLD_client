@@ -1,8 +1,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
+import { dlog } from '../helpers/DebugLog';
 import ManageSession from '../ManageSession';
-import CoordinatesTranslator from './CoordinatesTranslator';
+// import CoordinatesTranslator from './CoordinatesTranslator';
 
+// eslint-disable-next-line no-unused-vars
 const { Phaser } = window;
 
 class Background {
@@ -10,28 +12,78 @@ class Background {
   // }
 
   standardWithDots(scene) {
-    this.repeatingDots({
-      scene,
-      gridOffset: 80,
-      dotWidth: 2,
-      dotColor: 0x7300ed,
-      backgroundColor: 0xffffff,
+    // const scene = ManageSession.currentScene;
+    // const { worldSize } = ManageSession.currentScene;
+
+    // this.repeatingDots({
+    //   scene,
+    //   gridOffset: 80,
+    //   dotWidth: 2,
+    //   dotColor: 0x7300ed,
+    //   backgroundColor: 0xffffff,
+    // });
+
+    // // make a repeating set of rectangles around the artworld canvas
+    // const middleCoordinates = new Phaser.Math.Vector2(
+    //   CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, 0),
+    //   CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, 0),
+    // );
+    // scene.borderRectArray = [];
+
+    // for (let i = 0; i < 3; i++) {
+    //   scene.borderRectArray[i] = scene.add.rectangle(0,
+    // 0, scene.worldSize.x + (80 * i), scene.worldSize.y + (80 * i));
+    //   scene.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
+
+    //   scene.borderRectArray[i].x = middleCoordinates.x;
+    //   scene.borderRectArray[i].y = middleCoordinates.y;
+    // }
+    const tileSize = 80;
+    dlog('scene, worldSize', scene, scene.worldSize);
+    const mapWidth = scene.worldSize.x / tileSize;
+    const mapHeight = scene.worldSize.y / tileSize;
+    this.dotTile(scene);
+    const map = scene.make.tilemap({
+      tileWidth: 80, tileHeight: 80, width: mapWidth, height: mapHeight,
     });
+    const tiles = map.addTilesetImage('dotWithBg');
 
-    // make a repeating set of rectangles around the artworld canvas
-    const middleCoordinates = new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, 0),
-      CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, 0),
-    );
-    scene.borderRectArray = [];
+    const layer = map.createBlankLayer('layer1', tiles);
+    // layer.setScale(2);
 
-    for (let i = 0; i < 3; i++) {
-      scene.borderRectArray[i] = scene.add.rectangle(0, 0, scene.worldSize.x + (80 * i), scene.worldSize.y + (80 * i));
-      scene.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
+    // Add a simple scene with some random element
+    layer.fill(0, 0, 0, mapWidth, mapHeight);
+  }
 
-      scene.borderRectArray[i].x = middleCoordinates.x;
-      scene.borderRectArray[i].y = middleCoordinates.y;
-    }
+  dotTile(scene) {
+    // const scene = ManageSession.currentScene;
+
+    const tileWidth = 80;
+    const dotWidth = 2;
+    const fillColor = 0xffffff;
+    const dotColor = 0x7300ed;
+
+    // create the dot: graphics
+    const dot = scene.add.graphics();
+    dot.fillStyle(dotColor);
+    dot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false);
+
+    const bgDot = scene.add.rectangle(0, 0, tileWidth, tileWidth, fillColor).setVisible(false);
+
+    // create renderTexture to place the dot on
+    const dotRendertexture = scene.add.renderTexture(0, 0, tileWidth, tileWidth);
+
+    // draw the dot on the renderTexture
+    dotRendertexture.draw(bgDot);
+    dotRendertexture.draw(dot);
+
+    // save the rendertexture with a key ('dot')
+    dotRendertexture.saveTexture('dotWithBg');
+
+    // destroy the bgDot graphic and renderTexture, because we can reference the dot as 'dot' (prev step)
+    bgDot.destroy();
+    dot.destroy();
+    dotRendertexture.destroy();
   }
 
   repeatingDots(config) {
@@ -84,6 +136,47 @@ class Background {
         }
       }
     }
+  }
+
+  gradientTileMap(config) {
+    const { tileWidth } = config;
+    const { scene } = config;
+    const sceneHeight = scene.worldSize.y;
+    const { gradientColor1 } = config;
+    const { gradientColor2 } = config;
+    const { tileMapName } = config;
+    const alpha = 1;
+
+    // create the dot: graphics
+    const gradientTile = scene.add.graphics();
+    gradientTile.fillGradientStyle(gradientColor2, gradientColor2, gradientColor1, gradientColor1, alpha);
+    gradientTile.fillRect(0, 0, tileWidth, sceneHeight);
+
+    // const rt1 = scene.add.renderTexture(0, 0, worldSize.x, worldSize.y);
+    const rt1 = scene.add.renderTexture(0, 0, tileWidth, sceneHeight);
+
+    rt1.draw(gradientTile);
+
+    rt1.saveTexture(tileMapName);
+    rt1.destroy();
+
+    gradientTile.destroy();
+
+    const mapWidth = scene.worldSize.x / tileWidth;
+    const mapHeight = scene.worldSize.y / tileWidth;
+
+    const map = scene.make.tilemap({
+      tileWidth, tileHeight: tileWidth, width: mapWidth, height: mapHeight,
+    });
+    const tiles = map.addTilesetImage(tileMapName);
+
+    const layer = map.createBlankLayer('layer1', tiles);
+    // layer.setScale(2);
+
+    for (let i = 0; i < mapHeight; i += 1) {
+      layer.fill(i, 0, i, mapWidth, 1);
+    }
+    // layer.fill(1, 0, 0, mapWidth, 1);
   }
 
   circle(config) {
@@ -154,7 +247,7 @@ class Background {
     const { gradient2 } = config;
     const { gradient3 } = config;
     const { gradient4 } = config;
-    const { alpha } = config;
+    let { alpha } = config;
     const { name } = config;
     const { width } = config;
     const { height } = config;
@@ -164,7 +257,9 @@ class Background {
     const { imageOnly } = config;
 
     // const { worldSize } = scene;
-
+    if (typeof alpha === 'undefined') {
+      alpha = 1;
+    }
     const rectangle = scene.add.graphics();
     rectangle.fillGradientStyle(gradient1, gradient2, gradient3, gradient4, alpha);
     rectangle.fillRect(0, 0, width, height);

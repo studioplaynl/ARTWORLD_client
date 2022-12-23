@@ -62,21 +62,29 @@ export default class FireWorld extends Phaser.Scene {
     // Background.standardWithDots(this);
 
     // green gradient background
-    Background.rectangle({
+    Background.gradientTileMap({
       scene: this,
-      name: 'robot_world_background_image',
-      posX: 0,
-      posY: 0,
-      setOrigin: 0,
-      gradient1: 0x958f8d,
-      gradient2: 0x958f8d,
-      gradient3: 0x4c4845,
-      gradient4: 0x4c4845,
-      alpha: 1,
-      width: this.worldSize.x,
-      height: this.worldSize.y,
-      imageOnly: false,
+      tileMapName: 'WorldBackgroundTileMap',
+      gradientColor1: 0x958f8d,
+      gradientColor2: 0x4c4845,
+      tileWidth: 128,
     });
+
+    // Background.rectangle({
+    //   scene: this,
+    //   name: 'robot_world_background_image',
+    //   posX: 0,
+    //   posY: 0,
+    //   setOrigin: 0,
+    //   gradient1: 0x958f8d,
+    //   gradient2: 0x958f8d,
+    //   gradient3: 0x4c4845,
+    //   gradient4: 0x4c4845,
+    //   alpha: 1,
+    //   width: this.worldSize.x,
+    //   height: this.worldSize.y,
+    //   imageOnly: false,
+    // });
 
     handlePlayerMovement(this);
 

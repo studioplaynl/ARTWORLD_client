@@ -2,6 +2,7 @@
 import Preloader from '../class/Preloader';
 import ManageSession from '../ManageSession';
 import { ART_FRAME_BORDER } from '../../../constants';
+import Background from '../class/Background';
 
 const { Phaser } = window;
 
@@ -24,6 +25,43 @@ export default class PreloadScene extends Phaser.Scene {
 
     // artworld logo
     this.load.image('artworld', 'assets/artworld.png');
+
+    // hitArea, namePlate, bubbles etc
+    // grey circle for use as an image
+    Background.circle({
+      scene: this, name: 'greyCircle_64', size: 64, gradient1: 0xE8E8E8, gradient2: 0xE8E8E8, imageOnly: true,
+    });
+    // purple circle for use as UI image
+    Background.circle({
+      scene: this, name: 'purpleCircle_128', size: 128, gradient1: 0x7300ED, gradient2: 0x7300ED, imageOnly: true,
+    });
+
+    Background.rectangle({
+      scene: this,
+      name: 'greySquare_256',
+      width: 256,
+      height: 256,
+      gradient1: 0xE8E8E8,
+      gradient2: 0xE8E8E8,
+      gradient3: 0xE8E8E8,
+      gradient4: 0xE8E8E8,
+      imageOnly: true,
+    });
+    Background.rectangle({
+      scene: this,
+      name: 'purpleSquare_256',
+      size: 256,
+      gradient1: 0x7300ED,
+      gradient2: 0x7300ED,
+      gradient3: 0x7300ED,
+      gradient4: 0x7300ED,
+      imageOnly: true,
+      width: 256,
+      height: 256,
+      // posX: 0,
+      // posY: 0,
+    });
+
     // general UI assets
     this.load.svg('ui_magnifier_minus', './assets/SHB/svg/AW-icon-minus.svg', { scale: 3 });
     this.load.svg('ui_magnifier_plus', './assets/SHB/svg/AW-icon-plus.svg', { scale: 3 });
