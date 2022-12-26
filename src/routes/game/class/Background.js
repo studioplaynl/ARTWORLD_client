@@ -139,6 +139,7 @@ class Background {
   }
 
   gradientTileMap(config) {
+    //! this does not perform on android phones: and image bigger then 1024 to set the gradient causes a crash
     const { tileWidth } = config;
     const { scene } = config;
     const sceneHeight = scene.worldSize.y;
@@ -186,6 +187,37 @@ class Background {
       layer.fill(i, 0, i, mapWidth, 1);
     }
     // layer.fill(1, 0, 0, mapWidth, 1);
+  }
+
+  gradientStretchedToFitWorld(config) {
+    const { tileWidth } = config;
+    const { scene } = config;
+    const { gradientColor1 } = config;
+    const { gradientColor2 } = config;
+    const { tileMapName } = config;
+    const alpha = 1;
+
+    // create the dot: graphics
+    const gradientTile = scene.add.graphics();
+    gradientTile.fillGradientStyle(gradientColor1, gradientColor1, gradientColor2, gradientColor2, alpha);
+    gradientTile.fillRect(0, 0, tileWidth, tileWidth);
+
+    // const rt1 = scene.add.renderTexture(0, 0, worldSize.x, worldSize.y);
+    const rt1 = scene.add.renderTexture(0, 0, tileWidth, tileWidth);
+
+    rt1.draw(gradientTile);
+
+    rt1.saveTexture(tileMapName);
+    rt1.destroy();
+
+    gradientTile.destroy();
+
+    const bgGradient = scene.add.image(0, 0, tileMapName)
+      .setOrigin(0);
+
+    // strech the gradient image to the word size
+    bgGradient.displayWidth = scene.worldSize.x;
+    bgGradient.displayHeight = scene.worldSize.y;
   }
 
   circle(config) {

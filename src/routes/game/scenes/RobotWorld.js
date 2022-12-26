@@ -59,12 +59,12 @@ export default class RobotWorld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    Background.gradientTileMap({
+    Background.gradientStretchedToFitWorld({
       scene: this,
       tileMapName: 'WorldBackgroundTileMap',
       gradientColor1: 0x3de8bc,
       gradientColor2: 0x169876,
-      tileWidth: 128,
+      tileWidth: 512,
     });
 
     handlePlayerMovement(this);
