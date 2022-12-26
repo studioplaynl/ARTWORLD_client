@@ -282,7 +282,6 @@ export default class Artworld extends Phaser.Scene {
         .on('pointerup', () => {
           const RT = this.sunDraw.getByName('sunDraw');
           RT.saveTexture('DrawnSun');
-          console.log('this.sunDrawingExample', this.sunDrawingExample);
           this.sunDrawingExample.setTexture('DrawnSun');
         });
       this.sunDrawSaveButton.setVisible(false);

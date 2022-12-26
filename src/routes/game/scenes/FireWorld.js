@@ -59,32 +59,13 @@ export default class FireWorld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    // Background.standardWithDots(this);
-
-    // green gradient background
-    Background.gradientTileMap({
+    Background.gradientStretchedToFitWorld({
       scene: this,
       tileMapName: 'WorldBackgroundTileMap',
       gradientColor1: 0x958f8d,
       gradientColor2: 0x4c4845,
-      tileWidth: 128,
+      tileWidth: 512,
     });
-
-    // Background.rectangle({
-    //   scene: this,
-    //   name: 'robot_world_background_image',
-    //   posX: 0,
-    //   posY: 0,
-    //   setOrigin: 0,
-    //   gradient1: 0x958f8d,
-    //   gradient2: 0x958f8d,
-    //   gradient3: 0x4c4845,
-    //   gradient4: 0x4c4845,
-    //   alpha: 1,
-    //   width: this.worldSize.x,
-    //   height: this.worldSize.y,
-    //   imageOnly: false,
-    // });
 
     handlePlayerMovement(this);
 
@@ -108,9 +89,6 @@ export default class FireWorld extends Phaser.Scene {
       scene: this,
       texture: ManageSession.playerAvatarPlaceholder,
     }).setDepth(200);
-
-    // for back button, has to be done after player is created for the history tracking!
-    // SceneSwitcher.pushLocation(this);
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);

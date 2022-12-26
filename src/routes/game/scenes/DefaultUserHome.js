@@ -67,7 +67,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   init(data) {
     this.location = data.user_id;
-    // console.log('init', data)
   }
 
   async preload() {

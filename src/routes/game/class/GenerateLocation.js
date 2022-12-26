@@ -154,7 +154,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     // place thethis.userHome description under the location image
     const namePlateMargin = 20;
     const textOffset = -20 + namePlateExtraOffset;
-    const textPlateOffset = textOffset + namePlateMargin;
+    // const textPlateOffset = textOffset + namePlateMargin;
 
     const locationDescription = this.scene.add.text(
       0,
@@ -291,7 +291,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.debugRect.displayWidth = width * 1.3;
     this.debugRect.displayHeight = this.debugRect_height * 1.3;
 
-    console.log('this.debugRect', this.debugRect);
+    // console.log('this.debugRect', this.debugRect);
 
 
     // the container is created at the this.x and this.y
@@ -463,7 +463,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
           yoyo: true,
         });
       });
-    console.log('this.debugRectXMargin:', this.debugRectXMargin, this.debugRectXMargin.x);
+    // console.log('this.debugRectXMargin:', this.debugRectXMargin, this.debugRectXMargin.x);
 
     this.scene.input.setDraggable(this, true);
   }
