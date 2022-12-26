@@ -13,3 +13,4 @@
     <div id="container" bind:this="{containerPainter}"></div>
 
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spainter@1.2.10/index.css"/>
+
