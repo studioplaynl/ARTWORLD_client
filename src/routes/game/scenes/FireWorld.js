@@ -67,7 +67,7 @@ export default class FireWorld extends Phaser.Scene {
       tileMapName: 'WorldBackgroundTileMap',
       gradientColor1: 0x958f8d,
       gradientColor2: 0x4c4845,
-      tileWidth: 128,
+      tileWidth: 64,
     });
 
     // Background.rectangle({

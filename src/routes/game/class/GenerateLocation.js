@@ -291,7 +291,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.debugRect.displayWidth = width * 1.3;
     this.debugRect.displayHeight = this.debugRect_height * 1.3;
 
-    console.log('this.debugRect', this.debugRect);
+    // console.log('this.debugRect', this.debugRect);
 
 
     // the container is created at the this.x and this.y

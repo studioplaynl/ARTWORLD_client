@@ -146,14 +146,16 @@ class Background {
     const { gradientColor2 } = config;
     const { tileMapName } = config;
     const alpha = 1;
+    const maxSize = 1024;
 
-    // create the dot: graphics
+    // create the square gradient: graphics
     const gradientTile = scene.add.graphics();
     gradientTile.fillGradientStyle(gradientColor2, gradientColor2, gradientColor1, gradientColor1, alpha);
-    gradientTile.fillRect(0, 0, tileWidth, sceneHeight);
+    // gradientTile.fillRect(0, 0, tileWidth, sceneHeight / 4);
+    gradientTile.fillRect(0, 0, tileWidth, sceneHeight / 4);
 
     // const rt1 = scene.add.renderTexture(0, 0, worldSize.x, worldSize.y);
-    const rt1 = scene.add.renderTexture(0, 0, tileWidth, sceneHeight);
+    const rt1 = scene.add.renderTexture(0, 0, maxSize, maxSize);
 
     rt1.draw(gradientTile);
 
@@ -162,16 +164,23 @@ class Background {
 
     gradientTile.destroy();
 
-    const mapWidth = scene.worldSize.x / tileWidth;
-    const mapHeight = scene.worldSize.y / tileWidth;
+    // const mapWidth = scene.worldSize.x / tileWidth;
+    // const mapHeight = scene.worldSize.y / tileWidth / 4;
+    const mapWidth = maxSize / tileWidth;
+    const mapHeight = maxSize;
 
+    // const map = scene.make.tilemap({
+    //   tileWidth, tileHeight: tileWidth, width: mapWidth, height: mapHeight,
+    // });
     const map = scene.make.tilemap({
-      tileWidth, tileHeight: tileWidth, width: mapWidth, height: mapHeight,
+      tileWidth, tileHeight: tileWidth, width: maxSize, height: maxSize,
     });
+
     const tiles = map.addTilesetImage(tileMapName);
 
     const layer = map.createBlankLayer('layer1', tiles);
-    // layer.setScale(2);
+    const scaleMap = scene.worldSize.x / maxSize;
+    layer.setScale(scaleMap);
 
     for (let i = 0; i < mapHeight; i += 1) {
       layer.fill(i, 0, i, mapWidth, 1);
