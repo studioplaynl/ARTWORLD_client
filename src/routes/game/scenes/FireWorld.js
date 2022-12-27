@@ -303,8 +303,8 @@ export default class FireWorld extends Phaser.Scene {
 
     // .........tree1_vuur_licht_4............................................................
     this.tree1_vuur_licht_4 = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -885),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1760),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -795),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1797),
       'tree1_vuur_licht',
     );
     this.tree1_vuur_licht_4.name = 'tree1_vuur_licht_4';
@@ -342,8 +342,8 @@ export default class FireWorld extends Phaser.Scene {
 
     // .........tree2_vuur_licht_3............................................................
     this.tree2_vuur_licht_3 = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -885),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1760),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1592),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1565),
       'tree2_vuur_licht',
     );
     this.tree2_vuur_licht_3.name = 'tree2_vuur_licht_3';
