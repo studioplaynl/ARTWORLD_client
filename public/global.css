@@ -241,3 +241,16 @@ div#phaserId {
   border: 2px solid;
   margin: 60px auto;
 }
+
+
+/* spainter */
+.spainterContainer .toolsAndCanvas .canvasWrapper canvas  {
+  background-color: white!important;
+  background-image: none!important;
+  border: solid;
+}
+
+.spainterContainer .toolsAndCanvas .painterTools {
+  padding-top: 100px;
+}
+/* spainter */
