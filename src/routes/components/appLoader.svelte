@@ -2,13 +2,16 @@
   import { onDestroy, tick } from 'svelte';
   import { parse } from 'qs';
   import { get } from 'svelte/store';
-  import { pop, push, querystring, loc } from 'svelte-spa-router';
+  import {
+    pop, push, querystring, loc,
+  } from 'svelte-spa-router';
   import Drawing from '../apps/drawing.svelte';
   import Stopmotion from '../apps/stopmotion.svelte';
   import Mariosound from '../apps/marioSequencer.svelte';
   import { CurrentApp, Profile, Error } from '../../session';
   import { AvatarsStore } from '../../storage';
   import ManageSession from '../game/ManageSession';
+  import { dlog } from '../game/helpers/DebugLog';
   import {
     getAccount,
     getObject,
@@ -131,12 +134,19 @@
         currentFile.displayName,
       )
         .then((url) => {
-          // console.log('Upload result:', url);
+          console.log(
+            'Avatar saveData Upload currentFile.key, currentFile.type, currentFile.status, currentFile.displayName,:',
+            currentFile.key,
+            currentFile.type,
+            currentFile.status,
+            currentFile.displayName,
+          );
+          console.log('Avatar saveData Upload result:', url);
           currentFile.uploadUrl = url;
           resolve(url);
         })
         .catch((error) => {
-          // console.log('Upload ERROR:', error);
+          dlog('Upload ERROR:', error);
           reject();
         });
     });
@@ -148,6 +158,7 @@
             resolve();
           })
           .catch((error) => {
+            dlog('setHomePromise error', error);
             reject();
           });
       } else {
@@ -159,10 +170,12 @@
       if (currentFile.new && currentFile.type === 'avatar') {
         setAvatar(currentFile.uploadUrl)
           .then(() => {
+            console.log('avatar setAvatarPromise .loadAvatars');
             AvatarsStore.loadAvatars();
             resolve();
           })
           .catch((error) => {
+            dlog('setAvatarPromise error', error);
             reject();
           });
       } else {

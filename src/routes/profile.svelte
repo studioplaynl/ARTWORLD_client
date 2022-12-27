@@ -165,7 +165,6 @@
       } else {
         house = '';
       }
-
     } else {
       CurrentUser = true;
       id = $Session.user_id;
@@ -204,9 +203,9 @@
           <House />
         {:else}
           <span class="splitter"></span>
-          <img src="{avatar}" />
+          <img src="{avatar}" alt="avatar"/>
           <span class="splitter"></span>
-          <img src="{house}" />
+          <img src="{house}" alt="avatar"/>
         {/if}
       </div>
       <div class="bottom">

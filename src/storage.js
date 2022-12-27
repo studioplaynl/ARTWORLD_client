@@ -376,10 +376,13 @@ export const AvatarsStore = {
     const loadPromise = new Promise((resolve) => {
       if (limit !== undefined) {
         listAllObjects('avatar', id).then((loaded) => {
+          console.log('avatar loaded without limit: ', loaded);
           resolve(loaded);
         });
       } else {
         listObjects('avatar', id, limit).then((loaded) => {
+          console.log('avatar loaded: ', loaded);
+
           resolve(loaded);
         });
       }
@@ -392,6 +395,8 @@ export const AvatarsStore = {
         // Execute a Promise in order to update preview URLS
         AvatarsStore.updatePreviewUrls(loaded).then((updatedLoaded) => {
           // Add the updated artworks to the loadedArt array
+          console.log('avatar updatedLoaded: ', updatedLoaded);
+
           avatarsStore.set(updatedLoaded);
         });
       });
@@ -409,6 +414,8 @@ export const AvatarsStore = {
     avatarsToUpdate.forEach(async (item, index) => {
       // Check if avatar already existed, and if so, is it was outdated
       const existingAvatar = existingAvatars.find((avatar) => avatar.key === item.key);
+      //! BUG: update_time is not reflective of the last time an edit was made
+      //! investigate: is the Nakama Object not updated when an edit is made?
       const outdatedAvatar = (!!existingAvatar && (existingAvatar?.update_time !== item?.update_time));
       const avatar = item;
 
