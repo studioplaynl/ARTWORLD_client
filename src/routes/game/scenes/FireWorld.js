@@ -209,12 +209,14 @@ export default class FireWorld extends Phaser.Scene {
 
     // .........lavafall_boy............................................................
     this.lavafall_boy_1 = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1423),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 430),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1513),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 335),
       'lavafall_boy',
     );
     this.lavafall_boy_1.name = 'lavafall_boy_1';
     this.lavafall_boy_1.setScale(1.98);
+    this.lavafall_boy_1.setFlipX(true);
+
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.lavafall_boy_1.setInteractive({ draggable: true });

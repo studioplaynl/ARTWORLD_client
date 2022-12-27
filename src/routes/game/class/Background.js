@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
+// eslint-disable-next-line no-unused-vars
 import { dlog } from '../helpers/DebugLog';
 import ManageSession from '../ManageSession';
 // import CoordinatesTranslator from './CoordinatesTranslator';
@@ -39,7 +40,7 @@ class Background {
     //   scene.borderRectArray[i].y = middleCoordinates.y;
     // }
     const tileSize = 80;
-    dlog('scene, worldSize', scene, scene.worldSize);
+    // dlog('scene, worldSize', scene, scene.worldSize);
     const mapWidth = scene.worldSize.x / tileSize;
     const mapHeight = scene.worldSize.y / tileSize;
     this.dotTile(scene);
