@@ -121,9 +121,24 @@
 
     setLoader(true);
 
+
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
       const blobData = dataURItoBlob(data);
+
+      // make a new file when editing Avatar or House
+      if ($CurrentApp === 'avatar' || $CurrentApp === 'house') {
+        console.log('avatar or house saving, currentFile: ', currentFile);
+
+        // check if it is a new file
+        if (currentFile.new === false) {
+          console.log('flagging an edited file as new');
+          const { displayName } = currentFile;
+          currentFile.key = `${getDateMillis()}_${displayName}`;
+          // currentFile.loaded = false;
+          currentFile.new = true;
+        }
+      }
 
       uploadImage(
         currentFile.key, // ook wel title/name
@@ -135,13 +150,13 @@
       )
         .then((url) => {
           console.log(
-            'Avatar saveData Upload currentFile.key, currentFile.type, currentFile.status, currentFile.displayName,:',
+            ' saveData Upload currentFile.key, currentFile.type, currentFile.status, currentFile.displayName,:',
             currentFile.key,
             currentFile.type,
             currentFile.status,
             currentFile.displayName,
           );
-          console.log('Avatar saveData Upload result:', url);
+          console.log(' saveData Upload result:', url);
           currentFile.uploadUrl = url;
           resolve(url);
         })
@@ -304,12 +319,6 @@
       />
     {:else if $CurrentApp === 'mariosound'}
       <Mariosound />
-      <!-- <Stopmotion
-        file="{currentFile}"
-        bind:data
-        bind:changes
-        on:save="{saveData}"
-      /> -->
     {/if}
   {:else if currentFile.loaded}
     <Preview file="{currentFile}" />
