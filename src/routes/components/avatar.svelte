@@ -56,7 +56,6 @@
     src="/assets/SHB/svg/AW-icon-pen.svg"
     on:click="{() => {
       if (typeof currentAvatar === 'object') {
-        console.log('avatar.svelte currentAvatar.key: ', currentAvatar.key);
         push(`/avatar?userId=${$Profile.id}&key=${currentAvatar.key}`);
       } else {
         push('/avatar');

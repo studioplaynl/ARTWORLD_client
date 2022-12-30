@@ -123,7 +123,6 @@
   let canvas;
   let cursorCanvasEl;
   let cursorCanvas;
-  const canvasClipperArray = []; // bugfixing
   let eraseBrush;
   let mouseCursor;
   let drawingClipboard;

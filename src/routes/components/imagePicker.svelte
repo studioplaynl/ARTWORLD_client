@@ -78,6 +78,9 @@
     }
     if (dataType === 'house') {
       myHome.create(object.value.url);
+      console.log('object.value.url', object.value.url);
+      //! hier moet set home nog komen
+
       // await setHome(object.value.url);
       // console.log(await getHome());
     }
@@ -92,10 +95,10 @@
     for (let index = 0; index < objects.length; index++) {
       if (objects[index].key === object.key) {
         if (object.value.url === $Profile.avatar_url && dataType === 'avatar') {
-          save({ value: { url: `/avatar/stock/avatarBlauw.png` } });
+          save({ value: { url: '/avatar/stock/avatarBlauw.png' } });
         }
         if (object.value.url === $myHome.value.url && dataType === 'house') {
-          save({ value: { url: `/home/stock/portalBlauw.png` } });
+          save({ value: { url: '/home/stock/portalBlauw.png' } });
         }
 
         console.log('deleted');
@@ -156,8 +159,8 @@
           on:click="{() => {
             console.log('home', $myHome);
             // push('/house');
-            if(dataType === 'house') push(`/house?userId=${$Profile.id}&key=${object.key}`);
-            if(dataType === 'avatar') push(`/avatar?userId=${$Profile.id}&key=${object.key}`);
+            if (dataType === 'house') push(`/house?userId=${$Profile.id}&key=${object.key}`);
+            if (dataType === 'avatar') push(`/avatar?userId=${$Profile.id}&key=${object.key}`);
           }}"
         />
     </div>
@@ -174,10 +177,8 @@
       <p
         class="image"
         on:click="{() => {
-          if (dataType === 'avatar')
-            save({ value: { url: `/avatar/stock/${stockItem}` } });
-          if (dataType === 'house')
-            save({ value: { url: `/home/stock/${stockItem}` } });
+          if (dataType === 'avatar') { save({ value: { url: `/avatar/stock/${stockItem}` } }); }
+          if (dataType === 'house') { save({ value: { url: `/home/stock/${stockItem}` } }); }
         }}"
       >
         {#if dataType === 'house'}
@@ -185,7 +186,7 @@
         {:else if dataType === 'avatar'}
           <Stopmotion artwork="assets/SHB/avatar/{stockItem}" />
         {/if}
-        <!-- 
+        <!--
         avatar: `/avatar/stock/${avatar}`,
       home: `/home/stock/${house}`, -->
       </p>
