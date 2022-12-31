@@ -138,7 +138,7 @@
   let cursorCanvas;
   let eraseBrush;
   let mouseCursor;
-  let drawingClipboard;
+  // let drawingClipboard;
   let lineWidth = 25;
   let drawingColor = '#000000';
   let currentTab = null;
@@ -516,43 +516,43 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
     a.click();
   }
 
-  function Copy() {
-    // clone what are you copying since you
-    // may want copy and paste on different moment.
-    // and you do not want the changes happened
-    // later to reflect on the copy.
-    canvas.getActiveObject().clone((cloned) => {
-      drawingClipboard = cloned;
-    });
-  }
+  // function Copy() {
+  //   // clone what are you copying since you
+  //   // may want copy and paste on different moment.
+  //   // and you do not want the changes happened
+  //   // later to reflect on the copy.
+  //   canvas.getActiveObject().clone((cloned) => {
+  //     drawingClipboard = cloned;
+  //   });
+  // }
 
-  function Paste() {
-    // clone again, so you can do multiple copies.
-    drawingClipboard.clone((clonedObj) => {
-      canvas.discardActiveObject();
-      clonedObj.set({
-        left: clonedObj.left + 10,
-        top: clonedObj.top + 10,
-        evented: true,
-      });
-      if (clonedObj.type === 'activeSelection') {
-        // active selection needs a reference to the canvas.
-        // eslint-disable-next-line no-param-reassign
-        clonedObj.canvas = canvas;
-        clonedObj.forEachObject((obj) => {
-          canvas.add(obj);
-        });
-        // this should solve the unselectability
-        clonedObj.setCoords();
-      } else {
-        canvas.add(clonedObj);
-      }
-      drawingClipboard.top += 10;
-      drawingClipboard.left += 10;
-      canvas.setActiveObject(clonedObj);
-      canvas.requestRenderAll();
-    });
-  }
+  // function Paste() {
+  //   // clone again, so you can do multiple copies.
+  //   drawingClipboard.clone((clonedObj) => {
+  //     canvas.discardActiveObject();
+  //     clonedObj.set({
+  //       left: clonedObj.left + 10,
+  //       top: clonedObj.top + 10,
+  //       evented: true,
+  //     });
+  //     if (clonedObj.type === 'activeSelection') {
+  //       // active selection needs a reference to the canvas.
+  //       // eslint-disable-next-line no-param-reassign
+  //       clonedObj.canvas = canvas;
+  //       clonedObj.forEachObject((obj) => {
+  //         canvas.add(obj);
+  //       });
+  //       // this should solve the unselectability
+  //       clonedObj.setCoords();
+  //     } else {
+  //       canvas.add(clonedObj);
+  //     }
+  //     drawingClipboard.top += 10;
+  //     drawingClipboard.left += 10;
+  //     canvas.setActiveObject(clonedObj);
+  //     canvas.requestRenderAll();
+  //   });
+  // }
 
   function Delete() {
     const curSelectedObjects = canvas.getActiveObjects();
@@ -722,7 +722,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
                 <div class="circle-box-big"></div>
               </div>
             </div>
-          {:else if currentTab === 'select'}
+          <!-- {:else if currentTab === 'select'}
             <div class="tab tab--select">
               <button on:click="{Copy}">
                 <img
@@ -745,7 +745,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
                   alt="Delete selection"
                 />
               </button>
-            </div>
+            </div> -->
           {:else if currentTab === 'save'}
             <div class="tab  tab--save">
               <!-- <p on:click="{save}">Save this file</p> -->
@@ -800,15 +800,9 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
               alt="Erase"
             />
           </button>
-          <!-- <button
-            class="icon"
-            id="fill-mode"
-            class:currentSelected="{current === 'fill'}"
-          >
-            <BucketIcon />
-          </button> -->
 
-          <button
+
+          <!-- <button
             id="select-mode"
             on:click="{() => switchMode('select')}"
             class:currentSelected="{currentTab === 'select'}"
@@ -818,11 +812,8 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
               src="assets/SHB/svg/AW-icon-pointer.svg"
               alt="Select"
             />
-          </button>
-
-          <!-- <button id="clear-canvas" class="btn btn-info icon">
-            <TrashIcon />
           </button> -->
+
 
           <button
             class:currentSelected="{currentTab === 'save'}"
