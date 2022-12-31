@@ -21,7 +21,6 @@
 
   let baseSize = IMAGE_BASE_SIZE;
   $: { // when the currenFrame changes, clear the canvas
-    console.log('reactive currentFrame', currentFrame);
     if (canvas) {
       canvas.clear();
       getCroppedImageFromSaveCanvas(canvas, currentFrame);
@@ -103,17 +102,13 @@
         canvasEdge = 32;
       }
 
-      canvasWidth = (canvasSize * frames - canvasEdge) * 0.3;
-      canvasHeight = (canvasSize - canvasEdge) * 0.3;
-
-
-
+      // here canvas size on screen is set
+      canvasWidth = (canvasSize * frames - canvasEdge);
+      canvasHeight = (canvasSize - canvasEdge);
       canvas.setWidth(canvasHeight);
       canvas.setHeight(canvasHeight); // keep the drawing Canvas square
-      console.log('canvas', canvas);
       saveCanvas.setWidth(canvasWidth);
       saveCanvas.setHeight(canvasHeight);
-      console.log('canvasWidth, canvasHeight', canvasWidth, canvasHeight);
       cursorCanvas.setWidth(canvasHeight);
       cursorCanvas.setHeight(canvasHeight); // keep the cursorCanvas square
 
@@ -124,7 +119,6 @@
       );
       cursorCanvas.setZoom(scaleRatio);
       // saveCanvas.setZoom(scaleRatio * 0.3);
-      // console.log('scaleRatio scaleRatio*0.6', scaleRatio, scaleRatio * 0.6);
       canvas.setZoom(scaleRatio);
 
       // make a new rectangle to clip the edge, so as to not draw into the next frame
@@ -203,12 +197,10 @@
     canvas.set('width', baseSize);
     canvas.set('height', baseSize);
 
-    saveCanvas = new fabric.Canvas(saveCanvasEl, {
+    saveCanvas = new fabric.StaticCanvas(saveCanvasEl, {
     });
     saveCanvas.set('width', baseSize);
     saveCanvas.set('height', baseSize);
-    console.log('saveCanvas', saveCanvas);
-
 
     eraseBrush = new fabric.EraserBrush(canvas);
 
@@ -260,7 +252,6 @@
     // Set up Fabric Canvas interaction listeners
     // canvas.on('object:modified', () => {
     canvas.on('mouse:up', () => {
-      //! check for race condition with updatingExportFrames
       saveState();
     });
 
@@ -304,19 +295,19 @@
       ($state && $pastStates.length === 0) ||
       ($pastStates.length > 0 && $state !== $pastStates[$pastStates.length - 1])
     ) {
-      pastStates.update((states) => [...states, $state]);
+      // pastStates.update((states) => [...states, $state]); //working code
+      pastStates.update(() => [$state]); // to make changes work, but there is only the last line as state
     }
 
     const json = canvas.toJSON();
     if (json) {
       state.set(json);
-      console.log('WHEN IS json fired!?!?!?!??!?!?!?!?!?!?');
       // TODO MAYBE: If required, we could add a save to localStorage here.
       // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
 
       // Set the data object (so the AppLoader can save it to server if required)
       // FIXME? Somehow this requires a timeout, as calling it directly clears the canvas?!
-      updateExportedImages();
+      // updateExportedImages();
     }
   }
 
@@ -336,48 +327,48 @@
         multiplier: 0.25,
       });
       saveCanvas.setZoom(1);
-    }, 100);
+    }, 30);
   }
 
   // Go back to previous state
-  function undoState() {
-    // Add current state to futureStates
-    futureStates.update((states) => [...states, $state]);
+  // function undoState() {
+  //   // Add current state to futureStates
+  //   futureStates.update((states) => [...states, $state]);
 
-    // Then revert to last state from pastStates
-    pastStates.update((past) => {
-      // Set current state to last in redoStates
-      state.set(past.pop());
-      return past;
-    });
+  //   // Then revert to last state from pastStates
+  //   pastStates.update((past) => {
+  //     // Set current state to last in redoStates
+  //     state.set(past.pop());
+  //     return past;
+  //   });
 
-    resetCanvasFromState();
-  }
+  //   resetCanvasFromState();
+  // }
 
   // Go back to previous reverted state
-  function redoState() {
-    // Add current state to pastStates
-    pastStates.update((states) => [...states, $state]);
+  // function redoState() {
+  //   // Add current state to pastStates
+  //   pastStates.update((states) => [...states, $state]);
 
-    // Then revert to last state from futureStates
-    futureStates.update((future) => {
-      // Set current state to last in futureStates
-      state.set(future.pop());
-      return future;
-    });
+  //   // Then revert to last state from futureStates
+  //   futureStates.update((future) => {
+  //     // Set current state to last in futureStates
+  //     state.set(future.pop());
+  //     return future;
+  //   });
 
-    resetCanvasFromState();
-  }
+  //   resetCanvasFromState();
+  // }
 
-  function resetCanvasFromState() {
-    if ($state) {
-      canvas.clear();
-      canvas.loadFromJSON($state, () => {
-        canvas.renderAll();
-        updateExportedImages();
-      });
-    }
-  }
+  // function resetCanvasFromState() {
+  //   if ($state) {
+  //     canvas.clear();
+  //     canvas.loadFromJSON($state, () => {
+  //       canvas.renderAll();
+  //       updateExportedImages();
+  //     });
+  //   }
+  // }
 
   function putImageOnCanvas(imgUrl) {
     return new Promise((resolve, reject) => {
@@ -426,6 +417,8 @@
         .then((images) => {
           images.forEach((image) => {
             // canvas.add(image);
+            // eslint-disable-next-line no-param-reassign
+            image.frame = 'importedImagePart';
             saveCanvas.add(image);
           });
           updateExportedImages();
@@ -442,7 +435,6 @@
 function getCroppedImageFromSaveCanvas(ToCanvas) {
   const frameOffset = currentFrame - 1;
   const leftOffset = baseSize * frameOffset;
-  console.log('frameOffset, leftOffset, baseSize', frameOffset, leftOffset, baseSize);
   // var cropped = new Image();
   const cropped = saveCanvas.toDataURL({
     left: leftOffset,
@@ -463,7 +455,6 @@ function getCroppedImageFromSaveCanvas(ToCanvas) {
 
 function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
   const prevZoom = _fromCanvas.getZoom();
-  console.log('prevZoom', prevZoom);
   _fromCanvas.setZoom(1);
 
   const frameOffset = currentFrame - 1;
@@ -471,7 +462,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
   // remnove all objects with frame: frameNumber
   // that way there is only 1 image layer; the last one
   saveCanvasObjects.forEach((element) => {
-    if (element.frame === frameOffset) {
+    if (element.frameNumber === currentFrame) {
       saveCanvas.remove(element);
     }
   });
@@ -490,7 +481,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
       top: 0,
       height: baseSize,
       width: baseSize,
-      frame: frameOffset,
+      frameNumber: currentFrame,
     }));
   }, { crossOrigin: 'anonymous' });
   // show how many objects there are in canvas3
@@ -615,8 +606,6 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
 <svelte:window bind:innerHeight bind:innerWidth on:keydown="{handleKeydown}" />
 
 <div class="drawing-app">
-  <canvas bind:this="{saveCanvasEl}" class="saveCanvas"></canvas>
-
   <div class="main-container">
     <div
       class="canvas-frame-container"
@@ -647,6 +636,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
           class="cursor-canvas"
           style:visibility="{enableEditor ? 'visible' : 'hidden'}"
         ></canvas>
+        <canvas hidden bind:this="{saveCanvasEl}" class="saveCanvas" ></canvas>
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
@@ -770,7 +760,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
         </div>
 
         <div class="iconbox">
-          <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
+          <!-- <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
             <img
               class="icon"
               src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
@@ -786,7 +776,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
               src="assets/SHB/svg/AW-icon-rotate-CW.svg"
               alt="Redo"
             />
-          </button>
+          </button> -->
           <button
             id="drawing-mode"
             on:click="{() => {
@@ -884,11 +874,11 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
   }
 
   .saveCanvas{
-    position: fixed;
+    /* position: fixed;
     top: 10px;
     left: 500px;
     width: 1024px;
-    border: 3px solid #73AD21;
+    border: 3px solid #73AD21; */
   }
   .cursor-canvas {
     pointer-events: none !important;
@@ -1181,7 +1171,6 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
     margin: 0;
   }
 
-  button[disabled],
   button:disabled {
     opacity: 0.3;
   }

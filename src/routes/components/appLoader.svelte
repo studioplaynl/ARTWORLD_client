@@ -117,7 +117,6 @@
       if (andClose) closeApp();
       return;
     }
-
     setLoader(true);
 
     /** Attempt to save the file, then resolve or reject after doing so */
@@ -133,12 +132,11 @@
         currentFile.displayName,
       )
         .then((url) => {
-          // console.log('Upload result:', url);
           currentFile.uploadUrl = url;
           resolve(url);
         })
         .catch((error) => {
-          // console.log('Upload ERROR:', error);
+          console.log('Upload ERROR:', error);
           reject();
         });
     });
@@ -150,7 +148,7 @@
             resolve();
           })
           .catch((error) => {
-            reject();
+            reject(error);
           });
       } else {
         resolve();
@@ -165,7 +163,7 @@
             resolve();
           })
           .catch((error) => {
-            reject();
+            reject(error);
           });
       } else {
         resolve();
