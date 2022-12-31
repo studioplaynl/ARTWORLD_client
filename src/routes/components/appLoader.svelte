@@ -2,7 +2,9 @@
   import { onDestroy, tick } from 'svelte';
   import { parse } from 'qs';
   import { get } from 'svelte/store';
-  import { pop, push, querystring, loc } from 'svelte-spa-router';
+  import {
+    pop, push, querystring, loc,
+  } from 'svelte-spa-router';
   import Drawing from '../apps/drawing.svelte';
   import Stopmotion from '../apps/stopmotion.svelte';
   import Mariosound from '../apps/marioSequencer.svelte';
@@ -218,9 +220,9 @@
 
         // TODO: Het kan zijn dat een object leeg terugkomt. Dan staan wellicht de permissies fout.
 
-        // console.log(...arguments, { loadingObject });
         if (loadingObject) {
           const file = await getFile(loadingObject.value.url);
+          console.log('loadingObject', loadingObject);
 
           return {
             key,

@@ -65,8 +65,10 @@
     // Don't change currentFrame when activating the [+] slide
     if (swiper.activeIndex === frames) {
       swiper.slideTo(frames - 1);
+      console.log('onSlideChange() currentFrame', currentFrame);
       // currentFrame = frames;
     } else {
+      // when adding a frame with the [+]; view is going to the added frame
       currentFrame = swiper.activeIndex + 1;
     }
   };

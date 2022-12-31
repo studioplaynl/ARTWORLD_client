@@ -20,6 +20,14 @@
   export let stopMotion = false;
 
   let baseSize = IMAGE_BASE_SIZE;
+  $: { // when the currenFrame changes, clear the canvas
+    console.log('reactive currentFrame', currentFrame);
+    if (canvas) {
+      canvas.clear();
+      getCroppedImageFromSaveCanvas(canvas, currentFrame);
+    }
+  }
+
   $: {
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
   }
@@ -95,15 +103,19 @@
         canvasEdge = 32;
       }
 
-      canvasWidth = canvasSize * frames - canvasEdge;
-      canvasHeight = canvasSize - canvasEdge;
+      canvasWidth = (canvasSize * frames - canvasEdge) * 0.3;
+      canvasHeight = (canvasSize - canvasEdge) * 0.3;
 
 
 
-      canvas.setWidth(canvasWidth);
-      canvas.setHeight(canvasHeight);
-      cursorCanvas.setWidth(canvasWidth);
-      cursorCanvas.setHeight(canvasHeight);
+      canvas.setWidth(canvasHeight);
+      canvas.setHeight(canvasHeight); // keep the drawing Canvas square
+      console.log('canvas', canvas);
+      saveCanvas.setWidth(canvasWidth);
+      saveCanvas.setHeight(canvasHeight);
+      console.log('canvasWidth, canvasHeight', canvasWidth, canvasHeight);
+      cursorCanvas.setWidth(canvasHeight);
+      cursorCanvas.setHeight(canvasHeight); // keep the cursorCanvas square
 
       // for correct and adapted scaling of the preexisting artworks
       scaleRatio = Math.min(
@@ -111,10 +123,12 @@
         canvas.height / baseSize,
       );
       cursorCanvas.setZoom(scaleRatio);
+      // saveCanvas.setZoom(scaleRatio * 0.3);
+      // console.log('scaleRatio scaleRatio*0.6', scaleRatio, scaleRatio * 0.6);
       canvas.setZoom(scaleRatio);
 
       // make a new rectangle to clip the edge, so as to not draw into the next frame
-      setCanvasClipper();
+      // setCanvasClipper();
 
       // Finally update 'data' object immediately
       updateExportedImages();
@@ -124,9 +138,10 @@
   // DOM ELements etc
   let canvasEl;
   let canvas;
+  let saveCanvas;
+  let saveCanvasEl;
   let cursorCanvasEl;
   let cursorCanvas;
-  const canvasClipperArray = []; // bugfixing
   let eraseBrush;
   let mouseCursor;
   let drawingClipboard;
@@ -171,25 +186,6 @@
     }
   }
 
-  function setCanvasClipper() {
-    const index = currentFrame - 1;
-    if (canvasClipperArray.length < frames) {
-      canvasClipperArray[index] = new fabric.Rect({
-        top: 0,
-        left: baseSize * index,
-        absolutePositioned: true,
-        width: baseSize - 1,
-        height: baseSize - 1,
-        fill: 'white',
-        globalCompositionOperation: 'destination-out',
-        controlsAboveOverlay: true,
-      });
-      canvas.add(canvasClipperArray[index]);
-      canvasClipperArray[index].frameNumber = currentFrame; // add clipper to the frame group
-      canvasClipperArray[index].canvas.renderAll();
-    }
-  }
-
   // eslint-disable-next-line consistent-return
   onMount(() => {
     setLoader(true);
@@ -207,20 +203,21 @@
     canvas.set('width', baseSize);
     canvas.set('height', baseSize);
 
-    eraseBrush = new fabric.EraserBrush(canvas);
+    saveCanvas = new fabric.Canvas(saveCanvasEl, {
+    });
+    saveCanvas.set('width', baseSize);
+    saveCanvas.set('height', baseSize);
+    console.log('saveCanvas', saveCanvas);
 
-    // bugFixing
-    setCanvasClipper();
-    // bugFixing
+
+    eraseBrush = new fabric.EraserBrush(canvas);
 
     // Set frameNumber on object, to refer to when deleting frames
     canvas.on('path:created', () => {
       const idx = canvas.getObjects().length - 1;
       canvas.item(idx).frameNumber = currentFrame;
-
-      // clip the path with the canvasClipper so as to not draw into the next frame
-      const index = currentFrame - 1;
-      canvas.item(idx).clipPath = canvasClipperArray[index];
+      canvas.renderAll();
+      pushDrawingCanvasToSaveCanvas(canvas, currentFrame);
     });
 
     fabric.Object.prototype.transparentCorners = false;
@@ -263,6 +260,7 @@
     // Set up Fabric Canvas interaction listeners
     // canvas.on('object:modified', () => {
     canvas.on('mouse:up', () => {
+      //! check for race condition with updatingExportFrames
       saveState();
     });
 
@@ -312,7 +310,7 @@
     const json = canvas.toJSON();
     if (json) {
       state.set(json);
-
+      console.log('WHEN IS json fired!?!?!?!??!?!?!?!?!?!?');
       // TODO MAYBE: If required, we could add a save to localStorage here.
       // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
 
@@ -324,19 +322,20 @@
 
   function updateExportedImages() {
     setTimeout(() => {
-      canvas.setZoom(1);
+      saveCanvas.setZoom(1);
 
-      data = canvas.toDataURL({
+      data = saveCanvas.toDataURL({
         format: 'png',
         height: baseSize,
         width: baseSize * frames,
       });
       // Small format thumbnail to add to frames
-      canvas.setZoom(scaleRatio);
-      thumb = canvas.toDataURL({
+      saveCanvas.setZoom(scaleRatio);
+      thumb = saveCanvas.toDataURL({
         format: 'png',
         multiplier: 0.25,
       });
+      saveCanvas.setZoom(1);
     }, 100);
   }
 
@@ -426,8 +425,11 @@
       Promise.all(imagePromises)
         .then((images) => {
           images.forEach((image) => {
-            canvas.add(image);
+            // canvas.add(image);
+            saveCanvas.add(image);
           });
+          updateExportedImages();
+          getCroppedImageFromSaveCanvas(canvas);
           resolve();
         })
         .catch(() => {
@@ -435,6 +437,70 @@
         });
     });
   }
+
+  /// / NEW FUNCTIONS ////////////////////////////////////////////
+function getCroppedImageFromSaveCanvas(ToCanvas) {
+  const frameOffset = currentFrame - 1;
+  const leftOffset = baseSize * frameOffset;
+  console.log('frameOffset, leftOffset, baseSize', frameOffset, leftOffset, baseSize);
+  // var cropped = new Image();
+  const cropped = saveCanvas.toDataURL({
+    left: leftOffset,
+    top: 0,
+    width: baseSize,
+    height: baseSize,
+  });
+  fabric.Image.fromURL(cropped, (img) => {
+    ToCanvas.add(img.set({
+      left: 0,
+      top: 0,
+      height: baseSize,
+      width: baseSize,
+    }));
+  }, { crossOrigin: 'anonymous' });
+}
+
+
+function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
+  const prevZoom = _fromCanvas.getZoom();
+  console.log('prevZoom', prevZoom);
+  _fromCanvas.setZoom(1);
+
+  const frameOffset = currentFrame - 1;
+  const saveCanvasObjects = saveCanvas.getObjects();
+  // remnove all objects with frame: frameNumber
+  // that way there is only 1 image layer; the last one
+  saveCanvasObjects.forEach((element) => {
+    if (element.frame === frameOffset) {
+      saveCanvas.remove(element);
+    }
+  });
+
+  const leftOffset = baseSize * frameOffset;
+
+  const preview = _fromCanvas.toDataURL({
+    format: 'png',
+    height: baseSize,
+    width: baseSize,
+  });
+
+  fabric.Image.fromURL(preview, (img) => {
+    saveCanvas.add(img.set({
+      left: leftOffset,
+      top: 0,
+      height: baseSize,
+      width: baseSize,
+      frame: frameOffset,
+    }));
+  }, { crossOrigin: 'anonymous' });
+  // show how many objects there are in canvas3
+  const canvasObjects = saveCanvas.getObjects();
+  console.log('canvasObjects', canvasObjects);
+  _fromCanvas.setZoom(prevZoom);
+  updateExportedImages();
+  // return preview;
+}
+/// / NEW FUNCTIONS /////////////////////////////////////////////////
 
   /// ////////////////// select functions /////////////////////////////////
   function handleKeydown(evt) {
@@ -450,7 +516,7 @@
 
   function downloadImage() {
     const filename = `${file.key}.png`;
-    data = canvas.toDataURL('image/png', 1);
+    data = saveCanvas.toDataURL('image/png', 1);
 
     const a = document.createElement('a');
     a.href = data;
@@ -549,6 +615,8 @@
 <svelte:window bind:innerHeight bind:innerWidth on:keydown="{handleKeydown}" />
 
 <div class="drawing-app">
+  <canvas bind:this="{saveCanvasEl}" class="saveCanvas"></canvas>
+
   <div class="main-container">
     <div
       class="canvas-frame-container"
@@ -566,8 +634,7 @@
       <div
         class="canvas-box"
         style="
-          left: -{canvasHeight *
-          (currentFrame - 1)}px;
+          left: 0px;
           pointer-events: {enableEditor
             ? 'all'
             : 'none'};
@@ -579,8 +646,7 @@
           bind:this="{cursorCanvasEl}"
           class="cursor-canvas"
           style:visibility="{enableEditor ? 'visible' : 'hidden'}"
-        >
-        </canvas>
+        ></canvas>
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
@@ -789,6 +855,7 @@
       <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
     </div>
   {/if}
+
 </div>
 
 <style>
@@ -816,6 +883,13 @@
     background-color: rgb(115, 0, 237, 0.15);
   }
 
+  .saveCanvas{
+    position: fixed;
+    top: 10px;
+    left: 500px;
+    width: 1024px;
+    border: 3px solid #73AD21;
+  }
   .cursor-canvas {
     pointer-events: none !important;
     width: 100vw;
@@ -1090,67 +1164,6 @@
       margin-left: -5px;
     }
   }
-
-  /* small */
-  /* @media only screen and (max-width: 600px) {
-    .optionbox {
-      width: 100%;
-      height: min-content;
-      position: fixed;
-      bottom: 0;
-      display: block;
-    }
-
-    .optionbar {
-      margin: 0;
-      border-right: none;
-      border-top: 2px solid #7300ed;
-      box-shadow: 0px -5px 5px 0px #7300ed;
-      height: min-content;
-      width: 100%;
-      padding: 0px;
-
-      transform-origin: bottom center;
-      position: sticky;
-      z-index: 40;
-      align-items: center;
-    }
-
-    .optionbar > * {
-      margin: 16px 16px 16px 0;
-    }
-
-
-
-
-    .optionbox-container {
-      position: fixed;
-      -ms-transform: initial;
-      transform: initial;
-    }
-
-    .currentSelected {
-      display: inline;
-      border-radius: 50%;
-      height: 49px;
-      width: 49px;
-    }
-
-    .iconbox {
-      width: max-content;
-      height: min-content;
-      display: block;
-      margin: 0 auto;
-    }
-
-    .currentSelected > img {
-      border: 2px solid #7300ed;
-    }
-    .currentSelected {
-      box-shadow: unset;
-    }
-
-  } */
 
   button {
     border: 0;
