@@ -2,7 +2,8 @@
   import { onMount } from 'svelte';
   import { Swiper, SwiperSlide } from 'swiper/svelte';
   import Drawing from './drawing.svelte';
-  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS } from '../../constants';
+  // eslint-disable-next-line no-unused-vars
+  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS, STOPMOTION_BASE_SIZE } from '../../constants';
   // eslint-disable-next-line import/no-unresolved
   import 'swiper/css';
 
@@ -65,8 +66,10 @@
     // Don't change currentFrame when activating the [+] slide
     if (swiper.activeIndex === frames) {
       swiper.slideTo(frames - 1);
+      // console.log('onSlideChange() currentFrame', currentFrame);
       // currentFrame = frames;
     } else {
+      // when adding a frame with the [+]; view is going to the added frame
       currentFrame = swiper.activeIndex + 1;
     }
   };

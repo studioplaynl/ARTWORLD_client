@@ -5,14 +5,31 @@
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
-  import { setLoader } from '../../api';
+  import {
+    setLoader,
+  } from '../../api';
   import { Error } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
+  // import NameGenerator from '../components/nameGenerator.svelte';
+  import { CurrentFileInfo } from '../../storage';
+  import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
 
   export let file;
   export let data;
   export let thumb;
   export let changes;
+
+  // change artwork name
+  let displayName;
+  let currentFile;
+
+  // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
+CurrentFileInfo.subscribe((value) => {
+  if (typeof value !== 'undefined') {
+    currentFile = value;
+    displayName = value.value.displayname;
+  }
+});
 
   // In order to allow for multi-frames (stopmotion), we need to expose these values
   export let frames = 1;
@@ -20,9 +37,30 @@
   export let stopMotion = false;
 
   let baseSize = IMAGE_BASE_SIZE;
+  $: { // when the currenFrame changes, clear the canvas
+    if (canvas) {
+      canvas.clear();
+      getCroppedImageFromSaveCanvas(canvas, currentFrame);
+    }
+  }
+
   $: {
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
   }
+
+  $: {
+    if (displayName) {
+      console.log('displayName, ', displayName);
+      console.log('currentFile', currentFile);
+      const tempInfo = currentFile;
+      tempInfo.value.displayname = displayName;
+      console.log('tempInfo', tempInfo);
+      CurrentFileInfo.set(tempInfo);
+    }
+  }
+
+  // remove forbidden characters from displayname
+  $: if (hasSpecialCharacter(displayName)) displayName = removeSpecialCharacters(displayName);
 
   // In order to hide editor functions when previewing stopmotion
   export let enableEditor = true;
@@ -43,7 +81,6 @@
   // Window size, canvas size
   let innerHeight;
   let innerWidth;
-  let canvasWidth;
   let canvasHeight;
   let scaleRatio;
 
@@ -95,15 +132,16 @@
         canvasEdge = 32;
       }
 
-      canvasWidth = canvasSize * frames - canvasEdge;
-      canvasHeight = canvasSize - canvasEdge;
+      // here canvas size on screen is set
+      // canvasWidth = (canvasSize * frames - canvasEdge);
+      canvasHeight = (canvasSize - canvasEdge);
+      canvas.setWidth(canvasHeight);
+      canvas.setHeight(canvasHeight); // keep the drawing Canvas square
 
-
-
-      canvas.setWidth(canvasWidth);
-      canvas.setHeight(canvasHeight);
-      cursorCanvas.setWidth(canvasWidth);
-      cursorCanvas.setHeight(canvasHeight);
+      saveCanvas.setWidth(baseSize * frames);
+      saveCanvas.setHeight(baseSize);
+      cursorCanvas.setWidth(canvasHeight);
+      cursorCanvas.setHeight(canvasHeight); // keep the cursorCanvas square
 
       // for correct and adapted scaling of the preexisting artworks
       scaleRatio = Math.min(
@@ -111,6 +149,7 @@
         canvas.height / baseSize,
       );
       cursorCanvas.setZoom(scaleRatio);
+      // saveCanvas.setZoom(scaleRatio * 0.3);
       canvas.setZoom(scaleRatio);
 
       // Finally update 'data' object immediately
@@ -121,11 +160,13 @@
   // DOM ELements etc
   let canvasEl;
   let canvas;
+  let saveCanvas;
+  let saveCanvasEl;
   let cursorCanvasEl;
   let cursorCanvas;
   let eraseBrush;
   let mouseCursor;
-  let drawingClipboard;
+  // let drawingClipboard;
   let lineWidth = 25;
   let drawingColor = '#000000';
   let currentTab = null;
@@ -134,12 +175,6 @@
   // declaring the variable to be available globally, onMount assinging a function to it
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
-
-  // eslint-disable-next-line no-unused-vars
-  // function save() {
-  //   data = canvas.toDataURL('image/png', 1);
-  //   dispatch('save', file);
-  // }
 
   // Reactive function: update Fabric brush according to UI state
   $: {
@@ -172,7 +207,6 @@
     setLoader(true);
 
     // canvas should be setup on default size, later resized to fit screen
-
     // Set up Canvases
     cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
     cursorCanvas.set('width', baseSize);
@@ -184,12 +218,19 @@
     canvas.set('width', baseSize);
     canvas.set('height', baseSize);
 
+    saveCanvas = new fabric.StaticCanvas(saveCanvasEl, {
+    });
+    saveCanvas.set('width', baseSize);
+    saveCanvas.set('height', baseSize);
+
     eraseBrush = new fabric.EraserBrush(canvas);
 
     // Set frameNumber on object, to refer to when deleting frames
     canvas.on('path:created', () => {
       const idx = canvas.getObjects().length - 1;
       canvas.item(idx).frameNumber = currentFrame;
+      canvas.renderAll();
+      pushDrawingCanvasToSaveCanvas(canvas, currentFrame);
     });
 
     fabric.Object.prototype.transparentCorners = false;
@@ -275,79 +316,80 @@
       ($state && $pastStates.length === 0) ||
       ($pastStates.length > 0 && $state !== $pastStates[$pastStates.length - 1])
     ) {
-      pastStates.update((states) => [...states, $state]);
+      // pastStates.update((states) => [...states, $state]); //working code
+      pastStates.update(() => [$state]); // to make changes work, but there is only the last line as state
     }
 
     const json = canvas.toJSON();
     if (json) {
       state.set(json);
-
       // TODO MAYBE: If required, we could add a save to localStorage here.
       // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
 
       // Set the data object (so the AppLoader can save it to server if required)
       // FIXME? Somehow this requires a timeout, as calling it directly clears the canvas?!
-      updateExportedImages();
+      // updateExportedImages();
     }
   }
 
   function updateExportedImages() {
     setTimeout(() => {
-      canvas.setZoom(1);
+      saveCanvas.setZoom(1);
 
-      data = canvas.toDataURL({
+      data = saveCanvas.toDataURL({
         format: 'png',
         height: baseSize,
         width: baseSize * frames,
       });
       // Small format thumbnail to add to frames
-      canvas.setZoom(scaleRatio);
-      thumb = canvas.toDataURL({
+      saveCanvas.setZoom(scaleRatio);
+      thumb = saveCanvas.toDataURL({
         format: 'png',
         multiplier: 0.25,
       });
-    }, 100);
+      saveCanvas.setZoom(1);
+    }, 30);
   }
 
   // Go back to previous state
-  function undoState() {
-    // Add current state to futureStates
-    futureStates.update((states) => [...states, $state]);
+  // function undoState() {
+  //   // Add current state to futureStates
+  //   futureStates.update((states) => [...states, $state]);
 
-    // Then revert to last state from pastStates
-    pastStates.update((past) => {
-      // Set current state to last in redoStates
-      state.set(past.pop());
-      return past;
-    });
+  //   // Then revert to last state from pastStates
+  //   pastStates.update((past) => {
+  //     // Set current state to last in redoStates
+  //     state.set(past.pop());
+  //     return past;
+  //   });
 
-    resetCanvasFromState();
-  }
+  //   resetCanvasFromState();
+  // }
 
   // Go back to previous reverted state
-  function redoState() {
-    // Add current state to pastStates
-    pastStates.update((states) => [...states, $state]);
+  // function redoState() {
+  //   // Add current state to pastStates
+  //   pastStates.update((states) => [...states, $state]);
 
-    // Then revert to last state from futureStates
-    futureStates.update((future) => {
-      // Set current state to last in futureStates
-      state.set(future.pop());
-      return future;
-    });
+  //   // Then revert to last state from futureStates
+  //   futureStates.update((future) => {
+  //     // Set current state to last in futureStates
+  //     state.set(future.pop());
+  //     return future;
+  //   });
 
-    resetCanvasFromState();
-  }
+  //   resetCanvasFromState();
+  // }
 
-  function resetCanvasFromState() {
-    if ($state) {
-      canvas.clear();
-      canvas.loadFromJSON($state, () => {
-        canvas.renderAll();
-        updateExportedImages();
-      });
-    }
-  }
+  // function resetCanvasFromState() {
+  //   if ($state) {
+  //     canvas.clear();
+  //     canvas.loadFromJSON($state, () => {
+  //       canvas.renderAll();
+  //       updateExportedImages();
+  //     });
+  //   }
+  // }
 
   function putImageOnCanvas(imgUrl) {
     return new Promise((resolve, reject) => {
@@ -395,8 +437,13 @@
       Promise.all(imagePromises)
         .then((images) => {
           images.forEach((image) => {
-            canvas.add(image);
+            // canvas.add(image);
+            // eslint-disable-next-line no-param-reassign
+            image.frame = 'importedImagePart';
+            saveCanvas.add(image);
           });
+          updateExportedImages();
+          getCroppedImageFromSaveCanvas(canvas);
           resolve();
         })
         .catch(() => {
@@ -404,6 +451,68 @@
         });
     });
   }
+
+  /// / going from drawing canvas to SaveCanvas FUNCTIONS ////////////////////////////////////////////
+function getCroppedImageFromSaveCanvas(ToCanvas) {
+  const frameOffset = currentFrame - 1;
+  const leftOffset = baseSize * frameOffset;
+  // var cropped = new Image();
+  const cropped = saveCanvas.toDataURL({
+    left: leftOffset,
+    top: 0,
+    width: baseSize,
+    height: baseSize,
+  });
+  fabric.Image.fromURL(cropped, (img) => {
+    ToCanvas.add(img.set({
+      left: 0,
+      top: 0,
+      height: baseSize,
+      width: baseSize,
+    }));
+  }, { crossOrigin: 'anonymous' });
+}
+
+
+function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
+  const prevZoom = _fromCanvas.getZoom();
+  _fromCanvas.setZoom(1);
+
+  const frameOffset = currentFrame - 1;
+  const saveCanvasObjects = saveCanvas.getObjects();
+  // remnove all objects with frame: frameNumber
+  // that way there is only 1 image layer; the last one
+  saveCanvasObjects.forEach((element) => {
+    if (element.frameNumber === currentFrame) {
+      saveCanvas.remove(element);
+    }
+  });
+
+  const leftOffset = baseSize * frameOffset;
+
+  const preview = _fromCanvas.toDataURL({
+    format: 'png',
+    height: baseSize,
+    width: baseSize,
+  });
+
+  fabric.Image.fromURL(preview, (img) => {
+    saveCanvas.add(img.set({
+      left: leftOffset,
+      top: 0,
+      height: baseSize,
+      width: baseSize,
+      frameNumber: currentFrame,
+    }));
+  }, { crossOrigin: 'anonymous' });
+  // show how many objects there are in canvas3
+  // const canvasObjects = saveCanvas.getObjects();
+  // console.log('canvasObjects', canvasObjects);
+  _fromCanvas.setZoom(prevZoom);
+  updateExportedImages();
+  // return preview;
+}
+/// / end going from drawing canvas to SaveCanvas FUNCTIONS /////////////////////////////////////////////////
 
   /// ////////////////// select functions /////////////////////////////////
   function handleKeydown(evt) {
@@ -418,8 +527,10 @@
   }
 
   function downloadImage() {
-    const filename = `${file.key}.png`;
-    data = canvas.toDataURL('image/png', 1);
+    // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
+    const filename = `${currentFile.key}_${displayName}.png`;
+
+    data = saveCanvas.toDataURL('image/png', 1);
 
     const a = document.createElement('a');
     a.href = data;
@@ -428,43 +539,43 @@
     a.click();
   }
 
-  function Copy() {
-    // clone what are you copying since you
-    // may want copy and paste on different moment.
-    // and you do not want the changes happened
-    // later to reflect on the copy.
-    canvas.getActiveObject().clone((cloned) => {
-      drawingClipboard = cloned;
-    });
-  }
+  // function Copy() {
+  //   // clone what are you copying since you
+  //   // may want copy and paste on different moment.
+  //   // and you do not want the changes happened
+  //   // later to reflect on the copy.
+  //   canvas.getActiveObject().clone((cloned) => {
+  //     drawingClipboard = cloned;
+  //   });
+  // }
 
-  function Paste() {
-    // clone again, so you can do multiple copies.
-    drawingClipboard.clone((clonedObj) => {
-      canvas.discardActiveObject();
-      clonedObj.set({
-        left: clonedObj.left + 10,
-        top: clonedObj.top + 10,
-        evented: true,
-      });
-      if (clonedObj.type === 'activeSelection') {
-        // active selection needs a reference to the canvas.
-        // eslint-disable-next-line no-param-reassign
-        clonedObj.canvas = canvas;
-        clonedObj.forEachObject((obj) => {
-          canvas.add(obj);
-        });
-        // this should solve the unselectability
-        clonedObj.setCoords();
-      } else {
-        canvas.add(clonedObj);
-      }
-      drawingClipboard.top += 10;
-      drawingClipboard.left += 10;
-      canvas.setActiveObject(clonedObj);
-      canvas.requestRenderAll();
-    });
-  }
+  // function Paste() {
+  //   // clone again, so you can do multiple copies.
+  //   drawingClipboard.clone((clonedObj) => {
+  //     canvas.discardActiveObject();
+  //     clonedObj.set({
+  //       left: clonedObj.left + 10,
+  //       top: clonedObj.top + 10,
+  //       evented: true,
+  //     });
+  //     if (clonedObj.type === 'activeSelection') {
+  //       // active selection needs a reference to the canvas.
+  //       // eslint-disable-next-line no-param-reassign
+  //       clonedObj.canvas = canvas;
+  //       clonedObj.forEachObject((obj) => {
+  //         canvas.add(obj);
+  //       });
+  //       // this should solve the unselectability
+  //       clonedObj.setCoords();
+  //     } else {
+  //       canvas.add(clonedObj);
+  //     }
+  //     drawingClipboard.top += 10;
+  //     drawingClipboard.left += 10;
+  //     canvas.setActiveObject(clonedObj);
+  //     canvas.requestRenderAll();
+  //   });
+  // }
 
   function Delete() {
     const curSelectedObjects = canvas.getActiveObjects();
@@ -477,6 +588,7 @@
 
   function clearCanvas() {
     canvas.clear();
+    saveCanvas.clear();
     dispatch('clearCanvas');
   }
 
@@ -535,8 +647,7 @@
       <div
         class="canvas-box"
         style="
-          left: -{canvasHeight *
-          (currentFrame - 1)}px;
+          left: 0px;
           pointer-events: {enableEditor
             ? 'all'
             : 'none'};
@@ -548,8 +659,8 @@
           bind:this="{cursorCanvasEl}"
           class="cursor-canvas"
           style:visibility="{enableEditor ? 'visible' : 'hidden'}"
-        >
-        </canvas>
+        ></canvas>
+        <canvas hidden bind:this="{saveCanvasEl}" class="saveCanvas" ></canvas>
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
@@ -635,7 +746,7 @@
                 <div class="circle-box-big"></div>
               </div>
             </div>
-          {:else if currentTab === 'select'}
+          <!-- {:else if currentTab === 'select'}
             <div class="tab tab--select">
               <button on:click="{Copy}">
                 <img
@@ -658,10 +769,24 @@
                   alt="Delete selection"
                 />
               </button>
-            </div>
+            </div> -->
           {:else if currentTab === 'save'}
             <div class="tab  tab--save">
-              <!-- <p on:click="{save}">Save this file</p> -->
+
+      <!-- {#if appType != "avatar" && appType != "house"} -->
+              <label for="title">displayName</label>
+              <!-- <NameGenerator
+                bind:value={displayName}
+                bind:invalidTitle
+                bind:isTitleChanged
+              /> -->
+              <input type="text" bind:value="{displayName}" />
+              <!-- {#if invalidTitle}
+                <p style="color: red">No special characters</p>
+              {/if} -->
+
+            <!-- {/if} -->
+
               <img
                   on:click={downloadImage}
                   class="icon"
@@ -673,7 +798,7 @@
         </div>
 
         <div class="iconbox">
-          <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
+          <!-- <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
             <img
               class="icon"
               src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
@@ -689,7 +814,7 @@
               src="assets/SHB/svg/AW-icon-rotate-CW.svg"
               alt="Redo"
             />
-          </button>
+          </button> -->
           <button
             id="drawing-mode"
             on:click="{() => {
@@ -713,15 +838,9 @@
               alt="Erase"
             />
           </button>
-          <!-- <button
-            class="icon"
-            id="fill-mode"
-            class:currentSelected="{current === 'fill'}"
-          >
-            <BucketIcon />
-          </button> -->
 
-          <button
+
+          <!-- <button
             id="select-mode"
             on:click="{() => switchMode('select')}"
             class:currentSelected="{currentTab === 'select'}"
@@ -731,11 +850,8 @@
               src="assets/SHB/svg/AW-icon-pointer.svg"
               alt="Select"
             />
-          </button>
-
-          <!-- <button id="clear-canvas" class="btn btn-info icon">
-            <TrashIcon />
           </button> -->
+
 
           <button
             class:currentSelected="{currentTab === 'save'}"
@@ -758,6 +874,7 @@
       <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
     </div>
   {/if}
+
 </div>
 
 <style>
@@ -785,6 +902,13 @@
     background-color: rgb(115, 0, 237, 0.15);
   }
 
+  .saveCanvas{
+    /* position: fixed;
+    top: 10px;
+    left: 500px;
+    width: 1024px;
+    border: 3px solid #73AD21; */
+  }
   .cursor-canvas {
     pointer-events: none !important;
     width: 100vw;
@@ -1060,67 +1184,6 @@
     }
   }
 
-  /* small */
-  /* @media only screen and (max-width: 600px) {
-    .optionbox {
-      width: 100%;
-      height: min-content;
-      position: fixed;
-      bottom: 0;
-      display: block;
-    }
-
-    .optionbar {
-      margin: 0;
-      border-right: none;
-      border-top: 2px solid #7300ed;
-      box-shadow: 0px -5px 5px 0px #7300ed;
-      height: min-content;
-      width: 100%;
-      padding: 0px;
-
-      transform-origin: bottom center;
-      position: sticky;
-      z-index: 40;
-      align-items: center;
-    }
-
-    .optionbar > * {
-      margin: 16px 16px 16px 0;
-    }
-
-
-
-
-    .optionbox-container {
-      position: fixed;
-      -ms-transform: initial;
-      transform: initial;
-    }
-
-    .currentSelected {
-      display: inline;
-      border-radius: 50%;
-      height: 49px;
-      width: 49px;
-    }
-
-    .iconbox {
-      width: max-content;
-      height: min-content;
-      display: block;
-      margin: 0 auto;
-    }
-
-    .currentSelected > img {
-      border: 2px solid #7300ed;
-    }
-    .currentSelected {
-      box-shadow: unset;
-    }
-
-  } */
-
   button {
     border: 0;
     background: transparent;
@@ -1137,7 +1200,6 @@
     margin: 0;
   }
 
-  button[disabled],
   button:disabled {
     opacity: 0.3;
   }
