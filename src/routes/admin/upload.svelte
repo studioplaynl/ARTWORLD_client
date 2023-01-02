@@ -1,10 +1,10 @@
 <script>
   /** eslint-disable prefer-destructuring */
+  import { pop } from 'svelte-spa-router';
   import { getUploadURL, updateObjectAdmin } from '../../api';
   import SaveAnimation from '../components/saveAnimation.svelte';
   import UserSelect from '../components/userSelect.svelte';
   import { dlog } from '../game/helpers/DebugLog';
-  import { pop } from 'svelte-spa-router';
 
   let filesVar;
   let type;
@@ -12,7 +12,7 @@
   let filetype;
   let value;
   let pub;
-  let items = [];
+  // let items = [];
   let id;
   let user;
 
@@ -104,10 +104,10 @@
     width: 100%;
   }
 
-  .Form {
+  /* .Form {
     max-width: 400px;
     margin: 0 auto;
-  }
+  } */
 
   /* Add padding to containers */
   .container {
