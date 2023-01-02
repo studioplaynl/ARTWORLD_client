@@ -165,7 +165,6 @@
       } else {
         house = '';
       }
-
     } else {
       CurrentUser = true;
       id = $Session.user_id;

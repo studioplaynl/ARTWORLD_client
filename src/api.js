@@ -157,6 +157,13 @@ export async function updateTitle(collection, key, name, userID) {
   }
 }
 
+export function getDateAndTimeFormatted() {
+  const dateMillis = new Date();
+  const dateIsoString = dateMillis.toISOString();
+  const dateReplaced1 = dateIsoString.replace(/:/g, '_');
+  return dateReplaced1.split('.')[0];
+}
+
 export async function uploadHouse(data) {
   const type = 'home';
   const profile = get(Profile);

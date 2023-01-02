@@ -9,7 +9,7 @@
   import Stopmotion from '../apps/stopmotion.svelte';
   import Mariosound from '../apps/marioSequencer.svelte';
   import { CurrentApp, Profile, Error } from '../../session';
-  import { AvatarsStore } from '../../storage';
+  import { AvatarsStore, CurrentFileInfo } from '../../storage';
   import ManageSession from '../game/ManageSession';
   import {
     getAccount,
@@ -20,6 +20,8 @@
     uploadImage,
     setHome,
     setAvatar,
+    getDateAndTimeFormatted,
+    updateObject,
   } from '../../api';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { PlayerHistory } from '../game/playerState';
@@ -45,9 +47,20 @@
 
   // Object containing info about the current file
   // Loaded from the server..
-  let currentFile = {
+  export let currentFile = {
     loaded: false,
   };
+
+  // subscribe to CurrentFileInfo so that the display name is stored as set in the drawing app
+  CurrentFileInfo.subscribe((value) => {
+    if (typeof value !== 'undefined') {
+      console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
+      currentFile.AwsUrl = value.value.url;
+      currentFile.displayName = value.value.displayname;
+    // displayName = value.value.displayname;
+    }
+  });
+
   // Object containing the current Apps rendered data (whatever needs saving)
   let data = null;
   let changes = 0;
@@ -113,11 +126,39 @@
    */
   async function saveData(andClose) {
     // NO changes? We don't need to save anything.
+
+    //! if only the displayName changed, the object should be updated but not the image
+    //! for now: update the object always
     if (changes < 1) {
-      if (andClose) closeApp();
+      setLoader(true);
+
+      if (andClose) {
+        const tempValue = {
+          displayname: currentFile.displayName,
+          url: currentFile.AwsUrl,
+          version: '0',
+        };
+
+        Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
+          .then(() => {
+            console.log(
+              'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
+              currentFile.type,
+              currentFile.key,
+              tempValue,
+              currentFile.permission_read,
+            );
+            setLoader(false);
+
+            closeApp();
+          })
+          .catch((error) => {
+            Error.set(error);
+            setLoader(false);
+          });
+      }
       return;
     }
-    setLoader(true);
 
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
@@ -201,7 +242,7 @@
       loaded: false,
       new: true,
       displayName,
-      key: `${getDateMillis()}_${displayName}`,
+      key: `${getDateAndTimeFormatted()}_${displayName}`,
       type: saveToCollection,
       status: true,
     };
@@ -221,7 +262,7 @@
         if (loadingObject) {
           const file = await getFile(loadingObject.value.url);
           console.log('loadingObject', loadingObject);
-
+          CurrentFileInfo.set(loadingObject);
           return {
             key,
             userId,
@@ -260,12 +301,12 @@
     return new Blob([new Uint8Array(array)], { type: 'image/png' });
   }
 
-  function getDateMillis() {
-    const dateMillis = new Date();
-    const dateIsoString = dateMillis.toISOString();
-    const dateReplaced1 = dateIsoString.replace(/:/g, '_');
-    return dateReplaced1.split('.')[0];
-  }
+  // function getDateMillis() {
+  //   const dateMillis = new Date();
+  //   const dateIsoString = dateMillis.toISOString();
+  //   const dateReplaced1 = dateIsoString.replace(/:/g, '_');
+  //   return dateReplaced1.split('.')[0];
+  // }
 </script>
 
 <AppContainer

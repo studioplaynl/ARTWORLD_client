@@ -5,14 +5,31 @@
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
-  import { setLoader } from '../../api';
+  import {
+    setLoader,
+  } from '../../api';
   import { Error } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
+  // import NameGenerator from '../components/nameGenerator.svelte';
+  import { CurrentFileInfo } from '../../storage';
+  import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
 
   export let file;
   export let data;
   export let thumb;
   export let changes;
+
+  // change artwork name
+  let displayName;
+  let currentFile;
+
+  // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
+CurrentFileInfo.subscribe((value) => {
+  if (typeof value !== 'undefined') {
+    currentFile = value;
+    displayName = value.value.displayname;
+  }
+});
 
   // In order to allow for multi-frames (stopmotion), we need to expose these values
   export let frames = 1;
@@ -30,6 +47,20 @@
   $: {
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
   }
+
+  $: {
+    if (displayName) {
+      console.log('displayName, ', displayName);
+      console.log('currentFile', currentFile);
+      const tempInfo = currentFile;
+      tempInfo.value.displayname = displayName;
+      console.log('tempInfo', tempInfo);
+      CurrentFileInfo.set(tempInfo);
+    }
+  }
+
+  // remove forbidden characters from displayname
+  $: if (hasSpecialCharacter(displayName)) displayName = removeSpecialCharacters(displayName);
 
   // In order to hide editor functions when previewing stopmotion
   export let enableEditor = true;
@@ -50,7 +81,6 @@
   // Window size, canvas size
   let innerHeight;
   let innerWidth;
-  let canvasWidth;
   let canvasHeight;
   let scaleRatio;
 
@@ -103,12 +133,13 @@
       }
 
       // here canvas size on screen is set
-      canvasWidth = (canvasSize * frames - canvasEdge);
+      // canvasWidth = (canvasSize * frames - canvasEdge);
       canvasHeight = (canvasSize - canvasEdge);
       canvas.setWidth(canvasHeight);
       canvas.setHeight(canvasHeight); // keep the drawing Canvas square
-      saveCanvas.setWidth(canvasWidth);
-      saveCanvas.setHeight(canvasHeight);
+
+      saveCanvas.setWidth(baseSize * frames);
+      saveCanvas.setHeight(baseSize);
       cursorCanvas.setWidth(canvasHeight);
       cursorCanvas.setHeight(canvasHeight); // keep the cursorCanvas square
 
@@ -148,12 +179,6 @@
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
-  // eslint-disable-next-line no-unused-vars
-  function save() {
-    data = canvas.toDataURL('image/png', 1);
-    dispatch('save', file);
-  }
-
   // Reactive function: update Fabric brush according to UI state
   $: {
     if (canvas) {
@@ -185,7 +210,6 @@
     setLoader(true);
 
     // canvas should be setup on default size, later resized to fit screen
-
     // Set up Canvases
     cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
     cursorCanvas.set('width', baseSize);
@@ -431,7 +455,7 @@
     });
   }
 
-  /// / NEW FUNCTIONS ////////////////////////////////////////////
+  /// / going from drawing canvas to SaveCanvas FUNCTIONS ////////////////////////////////////////////
 function getCroppedImageFromSaveCanvas(ToCanvas) {
   const frameOffset = currentFrame - 1;
   const leftOffset = baseSize * frameOffset;
@@ -485,13 +509,13 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
     }));
   }, { crossOrigin: 'anonymous' });
   // show how many objects there are in canvas3
-  const canvasObjects = saveCanvas.getObjects();
-  console.log('canvasObjects', canvasObjects);
+  // const canvasObjects = saveCanvas.getObjects();
+  // console.log('canvasObjects', canvasObjects);
   _fromCanvas.setZoom(prevZoom);
   updateExportedImages();
   // return preview;
 }
-/// / NEW FUNCTIONS /////////////////////////////////////////////////
+/// / end going from drawing canvas to SaveCanvas FUNCTIONS /////////////////////////////////////////////////
 
   /// ////////////////// select functions /////////////////////////////////
   function handleKeydown(evt) {
@@ -506,7 +530,9 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
   }
 
   function downloadImage() {
-    const filename = `${file.key}.png`;
+    // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
+    const filename = `${currentFile.key}_${displayName}.png`;
+
     data = saveCanvas.toDataURL('image/png', 1);
 
     const a = document.createElement('a');
@@ -565,6 +591,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
 
   function clearCanvas() {
     canvas.clear();
+    saveCanvas.clear();
     dispatch('clearCanvas');
   }
 
@@ -748,7 +775,21 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
             </div> -->
           {:else if currentTab === 'save'}
             <div class="tab  tab--save">
-              <!-- <p on:click="{save}">Save this file</p> -->
+
+      <!-- {#if appType != "avatar" && appType != "house"} -->
+              <label for="title">displayName</label>
+              <!-- <NameGenerator
+                bind:value={displayName}
+                bind:invalidTitle
+                bind:isTitleChanged
+              /> -->
+              <input type="text" bind:value="{displayName}" />
+              <!-- {#if invalidTitle}
+                <p style="color: red">No special characters</p>
+              {/if} -->
+
+            <!-- {/if} -->
+
               <img
                   on:click={downloadImage}
                   class="icon"
