@@ -25,9 +25,18 @@
 
   // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
 CurrentFileInfo.subscribe((value) => {
+  console.log('CurrentFileInfo.subscribe( value', value);
   if (typeof value !== 'undefined') {
     currentFile = value;
-    displayName = value.value.displayname;
+    // if the artwork was loaded: value.value.displayname
+    // if the artwork is new: value.displayName
+    if (value.value == null) {
+      displayName = value.displayName;
+    } else {
+      displayName = value.value.displayname;
+    }
+
+    //
   }
 });
 
@@ -53,7 +62,15 @@ CurrentFileInfo.subscribe((value) => {
       console.log('displayName, ', displayName);
       console.log('currentFile', currentFile);
       const tempInfo = currentFile;
-      tempInfo.value.displayname = displayName;
+
+      // if the artwork was loaded: value.value.displayname
+      // if the artwork is new: value.displayName
+      if (tempInfo.value == null) {
+        tempInfo.displayName = displayName;
+      } else {
+        tempInfo.value.displayname = displayName;
+      }
+      // tempInfo.value.displayname = displayName;
       console.log('tempInfo', tempInfo);
       CurrentFileInfo.set(tempInfo);
     }
@@ -334,7 +351,7 @@ CurrentFileInfo.subscribe((value) => {
 
   function updateExportedImages() {
     setTimeout(() => {
-      saveCanvas.setZoom(1);
+      // saveCanvas.setZoom(1);
 
       data = saveCanvas.toDataURL({
         format: 'png',
@@ -342,12 +359,12 @@ CurrentFileInfo.subscribe((value) => {
         width: baseSize * frames,
       });
       // Small format thumbnail to add to frames
-      saveCanvas.setZoom(scaleRatio);
+      // saveCanvas.setZoom(scaleRatio);
       thumb = saveCanvas.toDataURL({
         format: 'png',
         multiplier: 0.25,
       });
-      saveCanvas.setZoom(1);
+      // saveCanvas.setZoom(1);
     }, 30);
   }
 
@@ -869,11 +886,14 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
       </div>
     </div>
   {/if}
-  {#if enableEditor}
+  <!-- DISABLED because this is not the desired behaviour:
+    we want to save the current drawing/ stopmotion then start a new drawing/ stopmotion -->
+  <!-- something along the lines of: saveData(andNew) in the appLoader -->
+  <!-- {#if enableEditor}
     <div id="clear-canvas" on:click="{clearCanvas}">
       <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
     </div>
-  {/if}
+  {/if} -->
 
 </div>
 

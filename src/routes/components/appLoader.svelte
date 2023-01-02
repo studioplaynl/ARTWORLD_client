@@ -54,7 +54,7 @@
 
   // subscribe to CurrentFileInfo so that the display name is stored as set in the drawing app
   CurrentFileInfo.subscribe((value) => {
-    if (typeof value !== 'undefined') {
+    if (typeof value !== 'undefined' && !currentFile.new) {
       console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
       currentFile.AwsUrl = value.value.url;
       currentFile.displayName = value.value.displayname;
@@ -134,36 +134,38 @@
       setLoader(true);
 
       if (andClose) {
-        const tempValue = {
-          displayname: currentFile.displayName,
-          url: currentFile.AwsUrl,
-          version: '0',
-        };
+        if (currentFile.loaded) {
+          const tempValue = {
+            displayname: currentFile.displayName,
+            url: currentFile.AwsUrl,
+            version: '0',
+          };
 
-        Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
-          .then(() => {
-            console.log(
-              'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
-              currentFile.type,
-              currentFile.key,
-              tempValue,
-              currentFile.permission_read,
-            );
-            setLoader(false);
+          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
+            .then(() => {
+              console.log(
+                'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
+                currentFile.type,
+                currentFile.key,
+                tempValue,
+                currentFile.permission_read,
+              );
+            })
+            .catch((error) => {
+              Error.set(error);
+              setLoader(false);
+            });
+        }
+        setLoader(false);
 
-            closeApp();
-          })
-          .catch((error) => {
-            Error.set(error);
-            setLoader(false);
-          });
+        closeApp();
       }
       return;
     }
 
     setLoader(true);
 
-    // make a new file when editing Avatar or House
+    // save as a new file when having edited Avatar or House
     if ($CurrentApp === 'avatar' || $CurrentApp === 'house') {
       // check if it is a new file
       if (currentFile.new === false) {
@@ -287,15 +289,17 @@
   async function newFile() {
     const saveToCollection = $CurrentApp;
     const displayName = await getRandomName();
+    const tempKey = await getDateAndTimeFormatted();
     currentFile = {
       userId: $Profile.id,
       loaded: false,
       new: true,
       displayName,
-      key: `${getDateAndTimeFormatted()}_${displayName}`,
+      key: `${tempKey}_${displayName}`,
       type: saveToCollection,
       status: true,
     };
+    CurrentFileInfo.set(currentFile);
   }
 
   // Utility functions
