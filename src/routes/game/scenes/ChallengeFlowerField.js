@@ -216,8 +216,9 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   async getListOfBloem() {
     await listAllObjects('drawing', null).then((rec) => {
       // download all the drawings and then filter for "bloem"
+      this.userArtServerList = rec;
       this.userArtServerList = rec.filter((obj) => obj.permission_read === 2);
-      // console.log("this.userArtServerList", this.userArtServerList)
+      // console.log('this.userArtServerList', this.userArtServerList);
       this.userArtServerList = this.userArtServerList.filter((obj) => obj.value.displayname === 'bloem');
 
       if (this.userArtServerList.length > 0) {

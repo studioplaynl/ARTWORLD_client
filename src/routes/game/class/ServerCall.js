@@ -147,8 +147,12 @@ class ServerCall {
     if (type === 'dier') {
       await listAllObjects('stopmotion', null).then((rec) => {
       // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
-        // dlog('serverItemsArray, rec : ', rec, serverItemsArray);
+        dlog('serverItemsArray, rec : ', rec, serverItemsArray);
+
+        // serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = rec;
+
 
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
