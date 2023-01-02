@@ -2,13 +2,16 @@
   import { onDestroy, tick } from 'svelte';
   import { parse } from 'qs';
   import { get } from 'svelte/store';
-  import { pop, push, querystring, loc } from 'svelte-spa-router';
+  import {
+    pop, push, querystring, loc,
+  } from 'svelte-spa-router';
   import Drawing from '../apps/drawing.svelte';
   import Stopmotion from '../apps/stopmotion.svelte';
   import Mariosound from '../apps/marioSequencer.svelte';
   import { CurrentApp, Profile, Error } from '../../session';
-  import { AvatarsStore } from '../../storage';
+  import { AvatarsStore, myHome } from '../../storage';
   import ManageSession from '../game/ManageSession';
+  import { dlog } from '../game/helpers/DebugLog';
   import {
     getAccount,
     getObject,
@@ -118,9 +121,21 @@
 
     setLoader(true);
 
+    // make a new file when editing Avatar or House
+    if ($CurrentApp === 'avatar' || $CurrentApp === 'house') {
+      // check if it is a new file
+      if (currentFile.new === false) {
+        const { displayName } = currentFile;
+        currentFile.key = `${getDateMillis()}_${displayName}`;
+        currentFile.new = true;
+      }
+    }
+
+
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
       const blobData = dataURItoBlob(data);
+
 
       uploadImage(
         currentFile.key, // ook wel title/name
@@ -131,47 +146,54 @@
         currentFile.displayName,
       )
         .then((url) => {
-          // console.log('Upload result:', url);
           currentFile.uploadUrl = url;
           resolve(url);
+
+          // eslint-disable-next-line no-unused-vars
+          const setHomePromise = new Promise((resolveSetHomePromise, rejectSetHomePromise) => {
+            if (currentFile.new && currentFile.type === 'house') {
+              const newHomeUrl = currentFile.uploadUrl;
+              setHome(currentFile.uploadUrl)
+                .then(() => {
+                  myHome.create(newHomeUrl); // update the home
+                  resolveSetHomePromise();
+                })
+                .catch((error) => {
+                  dlog('setHomePromise error', error);
+                  rejectSetHomePromise();
+                });
+            } else {
+              resolveSetHomePromise();
+            }
+          });
+
+          // eslint-disable-next-line no-unused-vars
+          const setAvatarPromise = new Promise((resolveSetAvatarPromise, rejectSetAvatarPromise) => {
+            if (currentFile.new && currentFile.type === 'avatar') {
+              setAvatar(currentFile.uploadUrl)
+                .then(() => {
+                  AvatarsStore.loadAvatars();
+                  resolveSetAvatarPromise();
+                })
+                .catch((error) => {
+                  dlog('setAvatarPromise error', error);
+                  rejectSetAvatarPromise();
+                });
+            } else {
+              resolveSetAvatarPromise();
+            }
+          });
         })
         .catch((error) => {
-          // console.log('Upload ERROR:', error);
+          dlog('Upload ERROR:', error);
           reject();
         });
     });
 
-    const setHomePromise = new Promise((resolve, reject) => {
-      if (currentFile.new && currentFile.type === 'house') {
-        setHome(currentFile.uploadUrl)
-          .then(() => {
-            resolve();
-          })
-          .catch((error) => {
-            reject();
-          });
-      } else {
-        resolve();
-      }
-    });
 
-    const setAvatarPromise = new Promise((resolve, reject) => {
-      if (currentFile.new && currentFile.type === 'avatar') {
-        setAvatar(currentFile.uploadUrl)
-          .then(() => {
-            AvatarsStore.loadAvatars();
-            resolve();
-          })
-          .catch((error) => {
-            reject();
-          });
-      } else {
-        resolve();
-      }
-    });
 
     // Saving should be able to succeed or fail
-    Promise.all([uploadPromise, setHomePromise, setAvatarPromise])
+    Promise.all([uploadPromise]) // ,
       .then(() => {
         // console.log('here is the image!', data);
         setLoader(false);
@@ -205,7 +227,6 @@
       type: saveToCollection,
       status: true,
     };
-    // console.log({ currentFile });
   }
 
   // Utility functions
@@ -218,7 +239,6 @@
 
         // TODO: Het kan zijn dat een object leeg terugkomt. Dan staan wellicht de permissies fout.
 
-        // console.log(...arguments, { loadingObject });
         if (loadingObject) {
           const file = await getFile(loadingObject.value.url);
 
@@ -291,12 +311,6 @@
       />
     {:else if $CurrentApp === 'mariosound'}
       <Mariosound />
-      <!-- <Stopmotion
-        file="{currentFile}"
-        bind:data
-        bind:changes
-        on:save="{saveData}"
-      /> -->
     {/if}
   {:else if currentFile.loaded}
     <Preview file="{currentFile}" />

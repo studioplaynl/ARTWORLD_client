@@ -123,7 +123,6 @@
   let canvas;
   let cursorCanvasEl;
   let cursorCanvas;
-  const canvasClipperArray = []; // bugfixing
   let eraseBrush;
   let mouseCursor;
   let drawingClipboard;
@@ -137,10 +136,10 @@
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
   // eslint-disable-next-line no-unused-vars
-  function save() {
-    data = canvas.toDataURL('image/png', 1);
-    dispatch('save', file);
-  }
+  // function save() {
+  //   data = canvas.toDataURL('image/png', 1);
+  //   dispatch('save', file);
+  // }
 
   // Reactive function: update Fabric brush according to UI state
   $: {

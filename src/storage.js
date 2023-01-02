@@ -367,7 +367,7 @@ export const AvatarsStore = {
     const allAvatars = get(avatarsStore);
     const currentAvatar = get(Profile).avatar_url;
     const current = allAvatars.find((avatar) => avatar.value.url === currentAvatar);
-    console.log('current avatar: ', current);
+    // console.log('current avatar: ', current);
     return current;
   },
 
@@ -519,5 +519,4 @@ export const myHome = {
       myHome.set(localHome);
     } return localHome;
   },
-
 };

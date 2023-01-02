@@ -58,7 +58,7 @@
       if (typeof currentAvatar === 'object') {
         push(`/avatar?userId=${$Profile.id}&key=${currentAvatar.key}`);
       } else {
-        push(`/avatar`);
+        push('/avatar');
       }
     }}"
   />
