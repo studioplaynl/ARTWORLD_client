@@ -52,15 +52,16 @@
     loaded: false,
   };
 
-  // subscribe to CurrentFileInfo so that the display name is stored as set in the drawing app
-  CurrentFileInfo.subscribe((value) => {
-    if (typeof value !== 'undefined' && !currentFile.new) {
-      console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
-      currentFile.AwsUrl = value.value.url;
-      currentFile.displayName = value.value.displayname;
-    // displayName = value.value.displayname;
-    }
-  });
+  //! currentFile bug?
+  // // subscribe to CurrentFileInfo so that the display name is stored as set in the drawing app
+  // CurrentFileInfo.subscribe((value) => {
+  //   if (typeof value !== 'undefined' && !currentFile.new) {
+  //     console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
+  //     currentFile.AwsUrl = value.value.url;
+  //     currentFile.displayName = value.value.displayname;
+  //   // displayName = value.value.displayname;
+  //   }
+  // });
 
   // Object containing the current Apps rendered data (whatever needs saving)
   let data = null;
@@ -134,28 +135,31 @@
       setLoader(true);
 
       if (andClose) {
-        if (currentFile.loaded) {
-          const tempValue = {
-            displayname: currentFile.displayName,
-            url: currentFile.AwsUrl,
-            version: '0',
-          };
+        //! currentFile bug
+        // if (currentFile.loaded) {
+        //   const tempValue = {
+        //     displayname: currentFile.displayName,
+        //     url: currentFile.AwsUrl,
+        //     version: '0',
+        //   };
 
-          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
-            .then(() => {
-              console.log(
-                'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
-                currentFile.type,
-                currentFile.key,
-                tempValue,
-                currentFile.permission_read,
-              );
-            })
-            .catch((error) => {
-              Error.set(error);
-              setLoader(false);
-            });
-        }
+        //   Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
+        //     .then(() => {
+        //       console.log(
+        //         'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
+        //         currentFile.type,
+        //         currentFile.key,
+        //         tempValue,
+        //         currentFile.permission_read,
+        //       );
+        //     })
+        //     .catch((error) => {
+        //       Error.set(error);
+        //       setLoader(false);
+        //     });
+        // }
+        //! currentFile bug
+
         setLoader(false);
 
         closeApp();
@@ -315,7 +319,11 @@
         if (loadingObject) {
           const file = await getFile(loadingObject.value.url);
           console.log('loadingObject', loadingObject);
-          CurrentFileInfo.set(loadingObject);
+
+          //! currentFile bug
+          // CurrentFileInfo.set(loadingObject);
+          // currentfile bug
+
           return {
             key,
             userId,
