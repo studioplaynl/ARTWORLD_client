@@ -889,11 +889,11 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
   <!-- DISABLED because this is not the desired behaviour:
     we want to save the current drawing/ stopmotion then start a new drawing/ stopmotion -->
   <!-- something along the lines of: saveData(andNew) in the appLoader -->
-  <!-- {#if enableEditor}
+  {#if enableEditor}
     <div id="clear-canvas" on:click="{clearCanvas}">
       <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
     </div>
-  {/if} -->
+  {/if}
 
 </div>
 
