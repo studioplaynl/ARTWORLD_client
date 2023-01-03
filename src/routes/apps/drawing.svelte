@@ -23,22 +23,24 @@
   let displayName;
   let currentFile;
 
-  // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
-CurrentFileInfo.subscribe((value) => {
-  console.log('CurrentFileInfo.subscribe( value', value);
-  if (typeof value !== 'undefined') {
-    currentFile = value;
-    // if the artwork was loaded: value.value.displayname
-    // if the artwork is new: value.displayName
-    if (value.value == null) {
-      displayName = value.displayName;
-    } else {
-      displayName = value.value.displayname;
-    }
+  //! currentFile bug
+//   // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
+// CurrentFileInfo.subscribe((value) => {
+//   console.log('CurrentFileInfo.subscribe( value', value);
+//   if (typeof value !== 'undefined') {
+//     currentFile = value;
+//     // if the artwork was loaded: value.value.displayname
+//     // if the artwork is new: value.displayName
+//     if (value.value == null) {
+//       displayName = value.displayName;
+//     } else {
+//       displayName = value.value.displayname;
+//     }
 
-    //
-  }
-});
+//     //
+//   }
+// });
+  //!
 
   // In order to allow for multi-frames (stopmotion), we need to expose these values
   export let frames = 1;
@@ -57,24 +59,26 @@ CurrentFileInfo.subscribe((value) => {
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
   }
 
-  $: {
-    if (displayName) {
-      console.log('displayName, ', displayName);
-      console.log('currentFile', currentFile);
-      const tempInfo = currentFile;
+  // //! currentFile bug
+  // $: {
+  //   if (displayName) {
+  //     console.log('displayName, ', displayName);
+  //     console.log('currentFile', currentFile);
+  //     const tempInfo = currentFile;
 
-      // if the artwork was loaded: value.value.displayname
-      // if the artwork is new: value.displayName
-      if (tempInfo.value == null) {
-        tempInfo.displayName = displayName;
-      } else {
-        tempInfo.value.displayname = displayName;
-      }
-      // tempInfo.value.displayname = displayName;
-      console.log('tempInfo', tempInfo);
-      CurrentFileInfo.set(tempInfo);
-    }
-  }
+  //     // if the artwork was loaded: value.value.displayname
+  //     // if the artwork is new: value.displayName
+  //     if (tempInfo.value == null) {
+  //       tempInfo.displayName = displayName;
+  //     } else {
+  //       tempInfo.value.displayname = displayName;
+  //     }
+  //     // tempInfo.value.displayname = displayName;
+  //     console.log('tempInfo', tempInfo);
+  //     CurrentFileInfo.set(tempInfo);
+  //   }
+  // }
+  //! currentFile bug
 
   // remove forbidden characters from displayname
   $: if (hasSpecialCharacter(displayName)) displayName = removeSpecialCharacters(displayName);
