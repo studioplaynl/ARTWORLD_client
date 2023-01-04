@@ -312,16 +312,16 @@ CurrentFileInfo.subscribe((value) => {
 
     // Was there an image to load? Do so
     if (file?.url) {
-      putImageOnCanvas(file.url)
-        .then(() => {
-          updateExportedImages();
-        })
-        .catch(() => {
-          Error.set(`Failed loading drawing from server: ${file.url}`);
-        })
-        .finally(() => {
-          setLoader(false);
-        });
+      putImageOnCanvas(file.url);
+      // .then(() => {
+      //   updateExportedImages();
+      // })
+      // .catch(() => {
+      //   Error.set(`Failed loading drawing from server: ${file.url}`);
+      // })
+      // .finally(() => {
+      //   setLoader(false);
+      // });
     } else {
       setLoader(false);
     }
@@ -469,10 +469,11 @@ CurrentFileInfo.subscribe((value) => {
           });
           updateExportedImages();
           getCroppedImageFromSaveCanvas(canvas);
-          resolve();
+          setLoader(false);
+          // resolve();
         })
         .catch(() => {
-          reject();
+          // reject();
         });
     });
   }
