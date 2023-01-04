@@ -28,19 +28,19 @@
   // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
 // CurrentFileInfo.subscribe((value) => {
 //   console.log('CurrentFileInfo.subscribe( value', value);
-  if (typeof value !== 'undefined') {
-    currentFile = value;
-    // if the artwork was loaded: value.value.displayname
-    // if the artwork is new: value.displayName
-    if (value.value == null) {
-      displayName = value.displayName;
-    } else {
-      displayName = value.value.displayname;
-    }
+//   if (typeof value !== 'undefined') {
+//     currentFile = value;
+//     // if the artwork was loaded: value.value.displayname
+//     // if the artwork is new: value.displayName
+//     if (value.value == null) {
+//       displayName = value.displayName;
+//     } else {
+//       displayName = value.value.displayname;
+//     }
 
-    //
-  }
-});
+//     //
+//   }
+// });
   //!
 
   // In order to allow for multi-frames (stopmotion), we need to expose these values
