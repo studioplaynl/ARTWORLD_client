@@ -367,14 +367,12 @@ CurrentFileInfo.subscribe((value) => {
         format: 'png',
         height: baseSize,
         width: baseSize * frames,
-        crossOrigin: 'anonymous',
       });
       // Small format thumbnail to add to frames
       // saveCanvas.setZoom(scaleRatio);
       thumb = saveCanvas.toDataURL({
         format: 'png',
         multiplier: 0.25,
-        crossOrigin: 'anonymous',
 
       });
       // saveCanvas.setZoom(1);
@@ -435,8 +433,8 @@ async function downloadImageTEST(imageSrc) {
     }, { crossOrigin: 'anonymous' });
 
     saveCanvas.add(placeImage);
-    updateExportedImages();
-    getCroppedImageFromSaveCanvas(canvas);
+    // updateExportedImages();
+    // getCroppedImageFromSaveCanvas(canvas);
     setLoader(false);
   };
 }
@@ -461,7 +459,6 @@ async function downloadImageTEST(imageSrc) {
            cropY: 0,
            width: nativeHeight,
            height: nativeHeight,
-           crossOrigin: 'anonymous',
          });
 
          console.log('image', image);
@@ -473,7 +470,6 @@ async function downloadImageTEST(imageSrc) {
            left: baseSize * frame,
            top: 0,
            frameNumber: frame + 1, // Frames in the app are 1-based
-           crossOrigin: 'anonymous',
          });
          if (error) {
            rejectDownloadImageUrl();
@@ -571,7 +567,6 @@ function getCroppedImageFromSaveCanvas(ToCanvas) {
     top: 0,
     width: baseSize,
     height: baseSize,
-    crossOrigin: 'anonymous',
   });
   fabric.Image.fromURL(cropped, (img) => {
     ToCanvas.add(img.set({
@@ -579,7 +574,6 @@ function getCroppedImageFromSaveCanvas(ToCanvas) {
       top: 0,
       height: baseSize,
       width: baseSize,
-      crossOrigin: 'anonymous',
     }));
   }, { crossOrigin: 'anonymous' });
 }
