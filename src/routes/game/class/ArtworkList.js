@@ -49,7 +49,7 @@ class ArtworkList {
       .on(
         'pointerup',
         () => {
-          ArtworkList.heartButtonToggle(scene, mediaObject, currentHeart);
+          ArtworkList.heartButtonToggle(mediaObject, currentHeart);
         },
       );
 
