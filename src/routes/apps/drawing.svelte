@@ -6,6 +6,7 @@
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
   import {
+    convertImage,
     setLoader,
   } from '../../api';
   import { Error } from '../../session';
