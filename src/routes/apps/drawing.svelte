@@ -415,6 +415,7 @@ CurrentFileInfo.subscribe((value) => {
   function putImageOnCanvas(imgUrl) {
     return new Promise((resolve, reject) => {
       const imagePromises = [];
+      console.log('frames', frames);
       for (let frame = 0; frame < frames; frame++) {
         imagePromises.push(
           new Promise((resolveImage, rejectImage) => {
@@ -431,6 +432,7 @@ CurrentFileInfo.subscribe((value) => {
                   cropY: 0,
                   width: nativeHeight,
                   height: nativeHeight,
+                  crossOrigin: 'anonymous',
                 });
 
                 // Step 2: Scale to canvas dimensions
@@ -441,6 +443,7 @@ CurrentFileInfo.subscribe((value) => {
                   left: baseSize * frame,
                   top: 0,
                   frameNumber: frame + 1, // Frames in the app are 1-based
+                  crossOrigin: 'anonymous',
                 });
 
                 if (err) {
@@ -461,6 +464,7 @@ CurrentFileInfo.subscribe((value) => {
             // canvas.add(image);
             // eslint-disable-next-line no-param-reassign
             image.frame = 'importedImagePart';
+            console.log('image', image);
             saveCanvas.add(image);
           });
           updateExportedImages();
