@@ -54,14 +54,14 @@
 
   //! currentFile bug?
   // subscribe to CurrentFileInfo so that the display name is stored as set in the drawing app
-  CurrentFileInfo.subscribe((value) => {
-    if (typeof value !== 'undefined' && !currentFile.new) {
-      console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
-      currentFile.AwsUrl = value.value.url;
-      currentFile.displayName = value.value.displayname;
-    // displayName = value.value.displayname;
-    }
-  });
+  // CurrentFileInfo.subscribe((value) => {
+  //   if (typeof value !== 'undefined' && !currentFile.new) {
+  //     console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
+  //     currentFile.AwsUrl = value.value.url;
+  //     currentFile.displayName = value.value.displayname;
+  //   // displayName = value.value.displayname;
+  //   }
+  // });
 
   // Object containing the current Apps rendered data (whatever needs saving)
   let data = null;
@@ -136,28 +136,28 @@
 
       if (andClose) {
         //! currentFile bug
-        if (currentFile.loaded) {
-          const tempValue = {
-            displayname: currentFile.displayName,
-            url: currentFile.AwsUrl,
-            version: '0',
-          };
+        // if (currentFile.loaded) {
+        //   const tempValue = {
+        //     displayname: currentFile.displayName,
+        //     url: currentFile.AwsUrl,
+        //     version: '0',
+        //   };
 
-          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
-            .then(() => {
-              console.log(
-                'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
-                currentFile.type,
-                currentFile.key,
-                tempValue,
-                currentFile.permission_read,
-              );
-            })
-            .catch((error) => {
-              Error.set(error);
-              setLoader(false);
-            });
-        }
+        //   Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
+        //     .then(() => {
+        //       console.log(
+        //         'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
+        //         currentFile.type,
+        //         currentFile.key,
+        //         tempValue,
+        //         currentFile.permission_read,
+        //       );
+        //     })
+        //     .catch((error) => {
+        //       Error.set(error);
+        //       setLoader(false);
+        //     });
+        // }
         //! currentFile bug
 
         setLoader(false);
@@ -321,7 +321,7 @@
           console.log('loadingObject', loadingObject);
 
           //! currentFile bug
-          CurrentFileInfo.set(loadingObject);
+          // CurrentFileInfo.set(loadingObject);
           // currentfile bug
 
           return {

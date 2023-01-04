@@ -26,8 +26,8 @@
 
   //! currentFile bug
   // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
-CurrentFileInfo.subscribe((value) => {
-  console.log('CurrentFileInfo.subscribe( value', value);
+// CurrentFileInfo.subscribe((value) => {
+//   console.log('CurrentFileInfo.subscribe( value', value);
   if (typeof value !== 'undefined') {
     currentFile = value;
     // if the artwork was loaded: value.value.displayname
@@ -61,24 +61,24 @@ CurrentFileInfo.subscribe((value) => {
   }
 
   // //! currentFile bug
-  $: {
-    if (displayName) {
-      console.log('displayName, ', displayName);
-      console.log('currentFile', currentFile);
-      const tempInfo = currentFile;
+  // $: {
+  //   if (displayName) {
+  //     console.log('displayName, ', displayName);
+  //     console.log('currentFile', currentFile);
+  //     const tempInfo = currentFile;
 
-      // if the artwork was loaded: value.value.displayname
-      // if the artwork is new: value.displayName
-      if (tempInfo.value == null) {
-        tempInfo.displayName = displayName;
-      } else {
-        tempInfo.value.displayname = displayName;
-      }
-      // tempInfo.value.displayname = displayName;
-      console.log('tempInfo', tempInfo);
-      CurrentFileInfo.set(tempInfo);
-    }
-  }
+  //     // if the artwork was loaded: value.value.displayname
+  //     // if the artwork is new: value.displayName
+  //     if (tempInfo.value == null) {
+  //       tempInfo.displayName = displayName;
+  //     } else {
+  //       tempInfo.value.displayname = displayName;
+  //     }
+  //     // tempInfo.value.displayname = displayName;
+  //     console.log('tempInfo', tempInfo);
+  //     CurrentFileInfo.set(tempInfo);
+  //   }
+  // }
   //! currentFile bug
 
   // remove forbidden characters from displayname
