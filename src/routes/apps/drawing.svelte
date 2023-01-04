@@ -422,18 +422,18 @@ CurrentFileInfo.subscribe((value) => {
   // }
 async function downloadImageTEST(imageSrc) {
   const downloadingImage = new Image();
+  downloadingImage.crossOrigin = 'anonymous';
   downloadingImage.src = imageSrc;
 
   downloadingImage.onload = function () {
     console.log('downloadImage loaded');
-    downloadingImage.crossorigin = 'anonymous';
     console.log('downloadingImage', downloadingImage);
     const placeImage = new fabric.Image(downloadingImage, {
       left: 0,
       top: 0,
       angle: 0,
-      crossOrigin: 'anonymous',
     });
+
     saveCanvas.add(placeImage);
     updateExportedImages();
     getCroppedImageFromSaveCanvas(canvas);
