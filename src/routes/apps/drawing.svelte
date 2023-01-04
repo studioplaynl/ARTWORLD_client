@@ -312,20 +312,20 @@ CurrentFileInfo.subscribe((value) => {
 
     // Was there an image to load? Do so
     if (file?.url) {
-      // putImageOnCanvas(file.url);
-      // .then(() => {
-      //   updateExportedImages();
-      // })
-      // .catch(() => {
-      //   Error.set(`Failed loading drawing from server: ${file.url}`);
-      // })
-      // .finally(() => {
-      //   setLoader(false);
+      putImageOnCanvas(file.url)
+        .then(() => {
+          // updateExportedImages();
+        })
+        .catch(() => {
+          Error.set(`Failed loading drawing from server: ${file.url}`);
+        })
+        .finally(() => {
+          setLoader(false);
+        });
+      // downloadImagePromise(file.url).then((image) => {
+      //   console.log('image', image);
+      //   putImageUrlOnCanvas(image);
       // });
-      downloadImagePromise(file.url).then((image) => {
-        console.log('image', image);
-        putImageUrlOnCanvas(image);
-      });
     } else {
       setLoader(false);
     }
@@ -417,59 +417,59 @@ CurrentFileInfo.subscribe((value) => {
   // }
 
 
- async function downloadImagePromise(imgUrl) {
-   return new Promise((resolveDownloadImageUrl, rejectDownloadImageUrl) => {
-     // return new Promise((resolve, reject) => {
-   // const imagePromises = [];
-     console.log('frames', frames);
-     // for (let frame = 0; frame < frames; frame++) {
-     const frame = 0;
-     fabric.Image.fromURL(
-       imgUrl,
-       // eslint-disable-next-line no-loop-func
-       (image, error) => {
-       // image.opacity = 0.5;
+//  async function downloadImagePromise(imgUrl) {
+//    return new Promise((resolveDownloadImageUrl, rejectDownloadImageUrl) => {
+//      // return new Promise((resolve, reject) => {
+//    // const imagePromises = [];
+//      console.log('frames', frames);
+//      // for (let frame = 0; frame < frames; frame++) {
+//      const frame = 0;
+//      fabric.Image.fromURL(
+//        imgUrl,
+//        // eslint-disable-next-line no-loop-func
+//        (image, error) => {
+//        // image.opacity = 0.5;
 
-         // Step 1: Crop using the loaded image's width'
-         const nativeHeight = image.height;
-         image.set({
-           cropX: nativeHeight * frame,
-           cropY: 0,
-           width: nativeHeight,
-           height: nativeHeight,
-           crossOrigin: 'anonymous',
-         });
+//          // Step 1: Crop using the loaded image's width'
+//          const nativeHeight = image.height;
+//          image.set({
+//            cropX: nativeHeight * frame,
+//            cropY: 0,
+//            width: nativeHeight,
+//            height: nativeHeight,
+//            crossOrigin: 'anonymous',
+//          });
 
-         console.log('image', image);
-         // Step 2: Scale to canvas dimensions
-         image.scaleToHeight(baseSize);
+//          console.log('image', image);
+//          // Step 2: Scale to canvas dimensions
+//          image.scaleToHeight(baseSize);
 
-         // Step 3: Put on right spot
-         image.set({
-           left: baseSize * frame,
-           top: 0,
-           frameNumber: frame + 1, // Frames in the app are 1-based
-           crossOrigin: 'anonymous',
-         });
-         if (error) {
-           rejectDownloadImageUrl();
-         } else {
-           resolveDownloadImageUrl(image);
-         }
-       },
-       { crossOrigin: 'anonymous' },
-     );
-   });
- }
+//          // Step 3: Put on right spot
+//          image.set({
+//            left: baseSize * frame,
+//            top: 0,
+//            frameNumber: frame + 1, // Frames in the app are 1-based
+//            crossOrigin: 'anonymous',
+//          });
+//          if (error) {
+//            rejectDownloadImageUrl();
+//          } else {
+//            resolveDownloadImageUrl(image);
+//          }
+//        },
+//        { crossOrigin: 'anonymous' },
+//      );
+//    });
+//  }
 
- async function putImageUrlOnCanvas(img) {
- //  img.frame = 'importedImagePart';
-   console.log('image', img);
-   saveCanvas.add(img);
-   updateExportedImages();
-   getCroppedImageFromSaveCanvas(canvas);
-   setLoader(false);
- }
+//  async function putImageUrlOnCanvas(img) {
+//  //  img.frame = 'importedImagePart';
+//    console.log('image', img);
+//    saveCanvas.add(img);
+//    updateExportedImages();
+//    getCroppedImageFromSaveCanvas(canvas);
+//    setLoader(false);
+//  }
 
   function putImageOnCanvas(imgUrl) {
     return new Promise((resolve, reject) => {
@@ -547,6 +547,7 @@ function getCroppedImageFromSaveCanvas(ToCanvas) {
     top: 0,
     width: baseSize,
     height: baseSize,
+    crossOrigin: 'anonymous',
   });
   fabric.Image.fromURL(cropped, (img) => {
     ToCanvas.add(img.set({
@@ -554,6 +555,7 @@ function getCroppedImageFromSaveCanvas(ToCanvas) {
       top: 0,
       height: baseSize,
       width: baseSize,
+      crossOrigin: 'anonymous',
     }));
   }, { crossOrigin: 'anonymous' });
 }
@@ -579,7 +581,9 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
     format: 'png',
     height: baseSize,
     width: baseSize,
-  });
+    crossOrigin: 'anonymous',
+
+  }, { crossOrigin: 'anonymous' });
 
   fabric.Image.fromURL(preview, (img) => {
     saveCanvas.add(img.set({
@@ -588,6 +592,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
       height: baseSize,
       width: baseSize,
       frameNumber: currentFrame,
+      crossOrigin: 'anonymous',
     }));
   }, { crossOrigin: 'anonymous' });
   // show how many objects there are in canvas3
