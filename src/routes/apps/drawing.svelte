@@ -426,15 +426,15 @@ async function downloadImageTEST(imageSrc) {
   downloadingImage.onload = function () {
     console.log('downloadImage loaded');
     console.log('downloadingImage', downloadingImage);
-    // const placeImage = new fabric.Image(downloadingImage, {
-    //   left: 0,
-    //   top: 0,
-    //   angle: 0,
-    // }, { crossOrigin: 'anonymous' });
+    const placeImage = new fabric.Image(downloadingImage, {
+      left: 0,
+      top: 0,
+      angle: 0,
+    }, { crossOrigin: 'anonymous' });
 
-    // saveCanvas.add(placeImage);
-    // updateExportedImages();
-    // getCroppedImageFromSaveCanvas(canvas);
+    saveCanvas.add(placeImage);
+    updateExportedImages();
+    getCroppedImageFromSaveCanvas(canvas);
     setLoader(false);
   };
 }
