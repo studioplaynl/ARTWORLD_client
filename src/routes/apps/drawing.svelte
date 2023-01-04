@@ -432,7 +432,7 @@ async function downloadImageTEST(imageSrc) {
       left: 0,
       top: 0,
       angle: 0,
-    });
+    }, { crossOrigin: 'anonymous' });
 
     saveCanvas.add(placeImage);
     updateExportedImages();
