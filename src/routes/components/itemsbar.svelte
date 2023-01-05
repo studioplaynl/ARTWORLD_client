@@ -239,13 +239,14 @@
       <button
       on:click="{() => {
         const url = 'https://minghai.github.io/MarioSequencer/';
-        const s = window.open(url, '_parent');
+        window.open(url, '_top')
+        // const s = window.open(url, '_parent');
 
-        if (s && s.focus) {
-          s.focus();
-        } else if (!s) {
-          window.location.href = url;
-        }
+        // if (s && s.focus) {
+        //   s.focus();
+        // } else if (!s) {
+        //   window.location.href = url;
+        // }
 
         // push('/mariosound');
         // setTimeout(() => { window.location.reload(); }, 300);
