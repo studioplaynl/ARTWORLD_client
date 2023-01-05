@@ -323,10 +323,10 @@
         .finally(() => {
           setLoader(false);
         });
-      downloadImagePromise(file.url).then((image) => {
-        console.log('image', image);
-        putImageUrlOnCanvas(image);
-      });
+      // downloadImagePromise(file.url).then((image) => {
+      //   console.log('image', image);
+      //   putImageUrlOnCanvas(image);
+      // });
       // downloadImageTEST(file.url);
     } else {
       setLoader(false);
