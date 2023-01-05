@@ -407,24 +407,24 @@ export async function setHome(Home_url) {
 
 export async function getFile(file_url) {
   console.log('fileURL', file_url);
-  // const url = `https://artworld.vrolijkheid.nl/proxy/${file_url}`;
+  const url = `https://artworld.vrolijkheid.nl/proxy/${file_url}`;
 
-  const session = get(Session);
-  const payload = { url: file_url };
-  let url;
-  const rpcid = 'download_file';
-  await client
-    .rpc(session, rpcid, payload)
-    .then((fileurl) => {
-      url = fileurl.payload.url;
-      // dlog("url")
-      // dlog(url)
-      return url;
-    })
-    .catch(() => {
-      dlog('fail');
-      return '';
-    });
+  // const session = get(Session);
+  // const payload = { url: file_url };
+  // let url;
+  // const rpcid = 'download_file';
+  // await client
+  //   .rpc(session, rpcid, payload)
+  //   .then((fileurl) => {
+  //     url = fileurl.payload.url;
+  //     // dlog("url")
+  //     // dlog(url)
+  //     return url;
+  //   })
+  //   .catch(() => {
+  //     dlog('fail');
+  //     return '';
+  //   });
   return url;
 }
 
