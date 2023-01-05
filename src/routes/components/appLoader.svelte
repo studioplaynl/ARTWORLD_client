@@ -23,6 +23,7 @@
     setAvatar,
     getDateAndTimeFormatted,
     updateObject,
+    updateTitle,
   } from '../../api';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { PlayerHistory } from '../game/playerState';
@@ -54,14 +55,14 @@
 
   //! currentFile bug?
   // subscribe to CurrentFileInfo so that the display name is stored as set in the drawing app
-  // CurrentFileInfo.subscribe((value) => {
-  //   if (typeof value !== 'undefined' && !currentFile.new) {
-  //     console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
-  //     currentFile.AwsUrl = value.value.url;
-  //     currentFile.displayName = value.value.displayname;
-  //   // displayName = value.value.displayname;
-  //   }
-  // });
+  CurrentFileInfo.subscribe((value) => {
+    if (typeof value !== 'undefined' && !currentFile.new) {
+      console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
+      currentFile.AwsUrl = value.value.url;
+      currentFile.displayName = value.value.displayname;
+    // displayName = value.value.displayname;
+    }
+  });
 
   // Object containing the current Apps rendered data (whatever needs saving)
   let data = null;
@@ -136,28 +137,33 @@
 
       if (andClose) {
         //! currentFile bug
-        // if (currentFile.loaded) {
-        //   const tempValue = {
-        //     displayname: currentFile.displayName,
-        //     url: currentFile.AwsUrl,
-        //     version: '0',
-        //   };
+        console.log('currentFile', currentFile);
+        if (currentFile.loaded) {
+          const tempValue = {
+            displayname: currentFile.displayName,
+            url: currentFile.AwsUrl,
+            version: '0',
+          };
+          // const userID = currentFile.user_id;
+          // updateTitle(currentFile.type, currentFile.key, tempValue, userID);
 
-        //   Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
-        //     .then(() => {
-        //       console.log(
-        //         'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
-        //         currentFile.type,
-        //         currentFile.key,
-        //         tempValue,
-        //         currentFile.permission_read,
-        //       );
-        //     })
-        //     .catch((error) => {
-        //       Error.set(error);
-        //       setLoader(false);
-        //     });
-        // }
+          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
+            .then(() => {
+              console.log(
+                'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
+                currentFile.type,
+                currentFile.key,
+                tempValue,
+                // currentFile.permission_read,
+                '2',
+              );
+            })
+            .catch((error) => {
+              Error.set(error);
+              setLoader(false);
+            });
+          setLoader(false);
+        }
         //! currentFile bug
 
         setLoader(false);
@@ -288,6 +294,7 @@
     const loadFromCollection = $CurrentApp;
 
     currentFile = await getFileInformation(loadFromCollection, userId, key);
+    console.log('currentFile', currentFile);
   }
 
   async function newFile() {
@@ -321,7 +328,7 @@
           console.log('loadingObject', loadingObject);
 
           //! currentFile bug
-          // CurrentFileInfo.set(loadingObject);
+          CurrentFileInfo.set(loadingObject);
           // currentfile bug
 
           return {
