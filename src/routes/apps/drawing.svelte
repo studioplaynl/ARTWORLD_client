@@ -6,6 +6,7 @@
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
   import {
+    convertImage,
     setLoader,
   } from '../../api';
   import { Error } from '../../session';
@@ -24,7 +25,7 @@
   let currentFile;
 
   //! currentFile bug
-//   // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
+  // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
 // CurrentFileInfo.subscribe((value) => {
 //   console.log('CurrentFileInfo.subscribe( value', value);
 //   if (typeof value !== 'undefined') {
@@ -312,16 +313,21 @@
 
     // Was there an image to load? Do so
     if (file?.url) {
-      putImageOnCanvas(file.url)
-        .then(() => {
-          updateExportedImages();
-        })
-        .catch(() => {
-          Error.set(`Failed loading drawing from server: ${file.url}`);
-        })
-        .finally(() => {
-          setLoader(false);
-        });
+      // putImageOnCanvas(file.url)
+      //   .then(() => {
+      //     // updateExportedImages();
+      //   })
+      //   .catch(() => {
+      //     Error.set(`Failed loading drawing from server: ${file.url}`);
+      //   })
+      //   .finally(() => {
+      //     setLoader(false);
+      //   });
+      // downloadImagePromise(file.url).then((image) => {
+      //   console.log('image', image);
+      //   putImageUrlOnCanvas(image);
+      // });
+      downloadImageTEST(file.url);
     } else {
       setLoader(false);
     }
@@ -367,6 +373,7 @@
       thumb = saveCanvas.toDataURL({
         format: 'png',
         multiplier: 0.25,
+
       });
       // saveCanvas.setZoom(1);
     }, 30);
@@ -411,10 +418,83 @@
   //     });
   //   }
   // }
+async function downloadImageTEST(imageSrc) {
+  const downloadingImage = new Image();
+  downloadingImage.crossOrigin = 'anonymous';
+  downloadingImage.src = imageSrc;
+
+  downloadingImage.onload = function () {
+    console.log('downloadImage loaded');
+    console.log('downloadingImage', downloadingImage);
+    const placeImage = new fabric.Image(downloadingImage, {
+      left: 0,
+      top: 0,
+      angle: 0,
+    }, { crossOrigin: 'anonymous' });
+
+    saveCanvas.add(placeImage);
+    updateExportedImages();
+    getCroppedImageFromSaveCanvas(canvas);
+    setLoader(false);
+  };
+}
+
+ async function downloadImagePromise(imgUrl) {
+   return new Promise((resolveDownloadImageUrl, rejectDownloadImageUrl) => {
+     // return new Promise((resolve, reject) => {
+   // const imagePromises = [];
+     console.log('frames', frames);
+     // for (let frame = 0; frame < frames; frame++) {
+     const frame = 0;
+     fabric.Image.fromURL(
+       imgUrl,
+       // eslint-disable-next-line no-loop-func
+       (image, error) => {
+       // image.opacity = 0.5;
+
+         // Step 1: Crop using the loaded image's width'
+         const nativeHeight = image.height;
+         image.set({
+           cropX: nativeHeight * frame,
+           cropY: 0,
+           width: nativeHeight,
+           height: nativeHeight,
+         });
+
+         console.log('image', image);
+         // Step 2: Scale to canvas dimensions
+         image.scaleToHeight(baseSize);
+
+         // Step 3: Put on right spot
+         image.set({
+           left: baseSize * frame,
+           top: 0,
+           frameNumber: frame + 1, // Frames in the app are 1-based
+         });
+         if (error) {
+           rejectDownloadImageUrl();
+         } else {
+           resolveDownloadImageUrl(image);
+         }
+       },
+       { crossOrigin: 'anonymous' },
+     );
+   });
+ }
+
+ async function putImageUrlOnCanvas(img) {
+ //  img.frame = 'importedImagePart';
+   console.log('image', img);
+   saveCanvas.add(img);
+   updateExportedImages();
+   getCroppedImageFromSaveCanvas(canvas);
+   setLoader(false);
+ }
 
   function putImageOnCanvas(imgUrl) {
     return new Promise((resolve, reject) => {
       const imagePromises = [];
+      console.log('frames', frames);
       for (let frame = 0; frame < frames; frame++) {
         imagePromises.push(
           new Promise((resolveImage, rejectImage) => {
@@ -431,6 +511,7 @@
                   cropY: 0,
                   width: nativeHeight,
                   height: nativeHeight,
+                  crossOrigin: 'anonymous',
                 });
 
                 // Step 2: Scale to canvas dimensions
@@ -441,6 +522,7 @@
                   left: baseSize * frame,
                   top: 0,
                   frameNumber: frame + 1, // Frames in the app are 1-based
+                  crossOrigin: 'anonymous',
                 });
 
                 if (err) {
@@ -461,10 +543,12 @@
             // canvas.add(image);
             // eslint-disable-next-line no-param-reassign
             image.frame = 'importedImagePart';
+            console.log('image', image);
             saveCanvas.add(image);
           });
           updateExportedImages();
           getCroppedImageFromSaveCanvas(canvas);
+          setLoader(false);
           resolve();
         })
         .catch(() => {
@@ -515,7 +599,9 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
     format: 'png',
     height: baseSize,
     width: baseSize,
-  });
+    crossOrigin: 'anonymous',
+
+  }, { crossOrigin: 'anonymous' });
 
   fabric.Image.fromURL(preview, (img) => {
     saveCanvas.add(img.set({
@@ -524,6 +610,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
       height: baseSize,
       width: baseSize,
       frameNumber: currentFrame,
+      crossOrigin: 'anonymous',
     }));
   }, { crossOrigin: 'anonymous' });
   // show how many objects there are in canvas3
@@ -893,11 +980,11 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
   <!-- DISABLED because this is not the desired behaviour:
     we want to save the current drawing/ stopmotion then start a new drawing/ stopmotion -->
   <!-- something along the lines of: saveData(andNew) in the appLoader -->
-  <!-- {#if enableEditor}
+  {#if enableEditor}
     <div id="clear-canvas" on:click="{clearCanvas}">
       <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
     </div>
-  {/if} -->
+  {/if}
 
 </div>
 

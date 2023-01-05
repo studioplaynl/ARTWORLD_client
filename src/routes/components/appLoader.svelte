@@ -53,7 +53,7 @@
   };
 
   //! currentFile bug?
-  // // subscribe to CurrentFileInfo so that the display name is stored as set in the drawing app
+  // subscribe to CurrentFileInfo so that the display name is stored as set in the drawing app
   // CurrentFileInfo.subscribe((value) => {
   //   if (typeof value !== 'undefined' && !currentFile.new) {
   //     console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
