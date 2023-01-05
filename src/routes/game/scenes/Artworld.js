@@ -669,7 +669,9 @@ export default class Artworld extends Phaser.Scene {
     //   frequency: 1600,
     // })
 
-    locationVector = new Phaser.Math.Vector2(-792, -1138);
+    // sound apps ............................................................
+
+    locationVector = new Phaser.Math.Vector2(-667, -763);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -694,15 +696,90 @@ export default class Artworld extends Phaser.Scene {
     });
     this.mario_star.setDepth(140);
 
+    locationVector = new Phaser.Math.Vector2(-247, -1048);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
 
+    this.mario_star = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      size: 200,
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      externalUrl: 'https://musiclab.chromeexperiments.com/Song-Maker/',
+      locationImage: 'songmaker',
+      enterButtonImage: 'enter_button',
+      locationText: 'Song Maker',
+      referenceName: 'songmaker',
+      fontColor: 0x8dcb0e,
+      color1: 0x8dcb0e,
+      color2: 0x3f8403,
+      color3: 0x63a505,
+    });
+    this.mario_star.setDepth(140);
+
+    locationVector = new Phaser.Math.Vector2(532, -781);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.mario_star = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      size: 200,
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      externalUrl: 'https://musiclab.chromeexperiments.com/Kandinsky/',
+      locationImage: 'kandinsky',
+      enterButtonImage: 'enter_button',
+      locationText: 'Kandinsky Sound',
+      referenceName: 'kandinsky',
+      fontColor: 0x8dcb0e,
+      color1: 0x8dcb0e,
+      color2: 0x3f8403,
+      color3: 0x63a505,
+    });
+    this.mario_star.setDepth(140);
     // music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
+
+
+
+    locationVector = new Phaser.Math.Vector2(143, -1056);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.mario_star = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      size: 200,
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      externalUrl: 'https://musiclab.chromeexperiments.com/Melody-Maker/',
+      locationImage: 'melodymaker',
+      enterButtonImage: 'enter_button',
+      locationText: 'Melody Maker',
+      referenceName: 'melodymaker',
+      fontColor: 0x8dcb0e,
+      color1: 0x8dcb0e,
+      color2: 0x3f8403,
+      color3: 0x63a505,
+    });
+    this.mario_star.setDepth(140);
 
     locationVector = new Phaser.Math.Vector2(-2125, 1017);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
-
+    // end sound apps ............................................................
     this.pencil = new GenerateLocation({
       scene: this,
       type: 'image',

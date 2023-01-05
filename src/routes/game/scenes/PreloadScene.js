@@ -92,6 +92,11 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.svg('abstract1', './assets/svg/abstract1.svg');
     this.load.svg('pencil', './assets/svg/pencil.svg', { scale: 2 });
 
+    // app icons; sound apps
+    this.load.image('songmaker', './assets/apps/songmaker.png');
+    this.load.image('melodymaker', './assets/apps/melodymaker.png');
+    this.load.image('kandinsky', './assets/apps/kandinsky.png');
+
     // animal for animalGarden Challenge
     this.load.image('dinoA', './assets/DinoA_01.png');
     // animation png sequence
