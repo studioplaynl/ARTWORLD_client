@@ -390,7 +390,7 @@ export async function setAvatar(avatar_url) {
 export async function setHome(Home_url) {
   const type = 'home';
   const profile = get(Profile);
-  const name = profile.meta.Azc || 'Amsterdam';
+  const name = profile.meta.Azc || 'GreenSquare';
   const object = await getObject(type, name);
   const makePublic = true;
 

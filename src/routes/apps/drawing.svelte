@@ -313,21 +313,21 @@
 
     // Was there an image to load? Do so
     if (file?.url) {
-      // putImageOnCanvas(file.url)
-      //   .then(() => {
-      //     // updateExportedImages();
-      //   })
-      //   .catch(() => {
-      //     Error.set(`Failed loading drawing from server: ${file.url}`);
-      //   })
-      //   .finally(() => {
-      //     setLoader(false);
-      //   });
-      // downloadImagePromise(file.url).then((image) => {
-      //   console.log('image', image);
-      //   putImageUrlOnCanvas(image);
-      // });
-      downloadImageTEST(file.url);
+      putImageOnCanvas(file.url)
+        .then(() => {
+          updateExportedImages();
+        })
+        .catch(() => {
+          Error.set(`Failed loading drawing from server: ${file.url}`);
+        })
+        .finally(() => {
+          setLoader(false);
+        });
+      downloadImagePromise(file.url).then((image) => {
+        console.log('image', image);
+        putImageUrlOnCanvas(image);
+      });
+      // downloadImageTEST(file.url);
     } else {
       setLoader(false);
     }
@@ -511,7 +511,6 @@ async function downloadImageTEST(imageSrc) {
                   cropY: 0,
                   width: nativeHeight,
                   height: nativeHeight,
-                  crossOrigin: 'anonymous',
                 });
 
                 // Step 2: Scale to canvas dimensions
@@ -522,7 +521,6 @@ async function downloadImageTEST(imageSrc) {
                   left: baseSize * frame,
                   top: 0,
                   frameNumber: frame + 1, // Frames in the app are 1-based
-                  crossOrigin: 'anonymous',
                 });
 
                 if (err) {
@@ -599,8 +597,6 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
     format: 'png',
     height: baseSize,
     width: baseSize,
-    crossOrigin: 'anonymous',
-
   }, { crossOrigin: 'anonymous' });
 
   fabric.Image.fromURL(preview, (img) => {
@@ -610,12 +606,11 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
       height: baseSize,
       width: baseSize,
       frameNumber: currentFrame,
-      crossOrigin: 'anonymous',
     }));
   }, { crossOrigin: 'anonymous' });
   // show how many objects there are in canvas3
-  // const canvasObjects = saveCanvas.getObjects();
-  // console.log('canvasObjects', canvasObjects);
+  const canvasObjects = saveCanvas.getObjects();
+  console.log('canvasObjects', canvasObjects);
   _fromCanvas.setZoom(prevZoom);
   updateExportedImages();
   // return preview;
