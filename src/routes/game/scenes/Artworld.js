@@ -682,7 +682,7 @@ export default class Artworld extends Phaser.Scene {
       draggable: ManageSession.gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
-      appUrl: 'mariosound',
+      externalUrl: 'https://minghai.github.io/MarioSequencer/',
       locationImage: 'mario_star',
       enterButtonImage: 'enter_button',
       locationText: 'Mario Sound',
