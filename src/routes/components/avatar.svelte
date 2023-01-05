@@ -50,18 +50,20 @@
   <img bind:this="{image}" src="{$Profile.url}" alt="My Avatar" />
 </div>
 <div class="avatarButtons">
-  <img
+  <!-- <img
     class="icon"
     alt="Edit House"
     src="/assets/SHB/svg/AW-icon-pen.svg"
     on:click="{() => {
+      currentAvatar = AvatarsStore.getCurrent();
+      console.log(currentAvatar);
       if (typeof currentAvatar === 'object') {
         push(`/avatar?userId=${$Profile.id}&key=${currentAvatar.key}`);
       } else {
         push('/avatar');
       }
     }}"
-  />
+  /> -->
   {#if !showHistory}
     <img
       alt="close"
