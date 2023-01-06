@@ -269,7 +269,7 @@
     // Saving should be able to succeed or fail
     Promise.all([uploadPromise]) // ,
       .then(() => {
-        // console.log('here is the image!', data);
+        dlog('artwork saved:', currentFile);
         setLoader(false);
         if (andClose) closeApp();
       })

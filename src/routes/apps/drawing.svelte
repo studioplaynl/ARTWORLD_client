@@ -570,8 +570,8 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
     }));
   }, { crossOrigin: 'anonymous' });
   // show how many objects there are in canvas3
-  const canvasObjects = saveCanvas.getObjects();
-  console.log('canvasObjects', canvasObjects);
+  // const canvasObjects = saveCanvas.getObjects();
+  // console.log('canvasObjects', canvasObjects);
   _fromCanvas.setZoom(prevZoom);
   updateExportedImages();
   // return preview;
