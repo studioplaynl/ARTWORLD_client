@@ -9,7 +9,7 @@
   import Stopmotion from '../apps/stopmotion.svelte';
   import Mariosound from '../apps/marioSequencer.svelte';
   import { CurrentApp, Profile, Error } from '../../session';
-  import { AvatarsStore, CurrentFileInfo, myHome } from '../../storage';
+  import { AvatarsStore, myHome } from '../../storage';
   import ManageSession from '../game/ManageSession';
   import { dlog } from '../game/helpers/DebugLog';
   import {
@@ -52,21 +52,11 @@
   export let currentFile = {
     loaded: false,
   };
-
-  //! currentFile bug?
-  // subscribe to CurrentFileInfo so that the display name is stored as set in the drawing app
-  CurrentFileInfo.subscribe((value) => {
-    if (typeof value !== 'undefined' && !currentFile.new) {
-      console.log('apploader currentFile subscribtion data: currentFile, value:', currentFile, value);
-      currentFile.AwsUrl = value.value.url;
-      currentFile.displayName = value.value.displayname;
-    // displayName = value.value.displayname;
-    }
-  });
+  let displayName = ''; // synced with drawing app; to be able to edit and store the name
 
   // Object containing the current Apps rendered data (whatever needs saving)
-  let data = null;
-  let changes = 0;
+  let data = null; // synced with drawing app
+  let changes = 0; // synced with drawing app
 
   /** Subscribe to 'loc', as changes to location AND querystring should trigger this evaluation */
   const unsubscribe = loc.subscribe(async () => {
@@ -140,22 +130,25 @@
         console.log('currentFile', currentFile);
         if (currentFile.loaded) {
           const tempValue = {
-            displayname: currentFile.displayName,
-            url: currentFile.AwsUrl,
+            displayname: displayName,
+            url: currentFile.awsUrl,
             version: '0',
           };
-          // const userID = currentFile.user_id;
-          // updateTitle(currentFile.type, currentFile.key, tempValue, userID);
+          const userID = currentFile.user_id;
 
-          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read)])
+
+          // updateTitle(currentFile.type, currentFile.key, displayName, userID)
+
+          // updateObject(type, name, value, pub, userID)
+
+          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read, userID)])
             .then(() => {
               console.log(
                 'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
                 currentFile.type,
                 currentFile.key,
                 tempValue,
-                // currentFile.permission_read,
-                '2',
+                currentFile.permission_read,
               );
             })
             .catch((error) => {
@@ -179,7 +172,7 @@
     if ($CurrentApp === 'avatar' || $CurrentApp === 'house') {
       // check if it is a new file
       if (currentFile.new === false) {
-        const { displayName } = currentFile;
+        // const { displayName } = currentFile;
         currentFile.key = `${getDateAndTimeFormatted()}_${displayName}`;
         currentFile.new = true;
       }
@@ -294,12 +287,11 @@
     const loadFromCollection = $CurrentApp;
 
     currentFile = await getFileInformation(loadFromCollection, userId, key);
-    console.log('currentFile', currentFile);
   }
 
   async function newFile() {
     const saveToCollection = $CurrentApp;
-    const displayName = await getRandomName();
+    displayName = await getRandomName();
     const tempKey = await getDateAndTimeFormatted();
     currentFile = {
       userId: $Profile.id,
@@ -310,7 +302,6 @@
       type: saveToCollection,
       status: true,
     };
-    CurrentFileInfo.set(currentFile);
   }
 
   // Utility functions
@@ -325,12 +316,9 @@
 
         if (loadingObject) {
           const file = await getFile(loadingObject.value.url);
-          console.log('loadingObject', loadingObject);
-
-          //! currentFile bug
-          CurrentFileInfo.set(loadingObject);
-          // currentfile bug
-
+          // console.log('loadingObject', loadingObject);
+          // set the displayName, so it can also be changed in the Drawing app
+          displayName = loadingObject.value.displayname;
           return {
             key,
             userId,
@@ -340,6 +328,7 @@
             type: loadingObject.collection,
             status: loadingObject.permission_read === PERMISSION_READ_PUBLIC,
             url: file,
+            awsUrl: loadingObject.value.url,
             frames: 1, // Maybe use this instead of width/height ratio to calculate framecount?
           };
         }
@@ -389,6 +378,7 @@
         file="{currentFile}"
         bind:data
         bind:changes
+        bind:displayName
         on:save="{saveData}"
       />
     {:else if $CurrentApp === 'stopmotion' || $CurrentApp === 'avatar'}

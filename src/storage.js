@@ -21,14 +21,6 @@ import {
   DEFAULT_PREVIEW_HEIGHT,
 } from './constants';
 
-// currentFile open by an app
-const currentFileStore = writable();
-export const CurrentFileInfo = {
-  subscribe: currentFileStore.subscribe,
-  set: currentFileStore.set,
-  update: currentFileStore.update,
-};
-
 //  Achievements of a user
 const achievementsStore = writable([]);
 

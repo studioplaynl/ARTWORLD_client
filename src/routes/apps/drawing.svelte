@@ -6,42 +6,21 @@
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
   import {
-    convertImage,
     setLoader,
   } from '../../api';
   import { Error } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
   // import NameGenerator from '../components/nameGenerator.svelte';
-  import { CurrentFileInfo } from '../../storage';
   import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
 
-  export let file;
+  export let file; // file is currentFile in the appLoader (synced)
   export let data;
   export let thumb;
   export let changes;
 
   // change artwork name
-  let displayName;
+  export let displayName;
   let currentFile;
-
-  //! currentFile bug
-  // subscribe to CurrentFileInfo via the appLoader, where artworks are loaded
-  CurrentFileInfo.subscribe((value) => {
-    console.log('CurrentFileInfo.subscribe( value', value);
-    if (typeof value !== 'undefined') {
-      currentFile = value;
-      // if the artwork was loaded: value.value.displayname
-      // if the artwork is new: value.displayName
-      if (value.value == null) {
-        displayName = value.displayName;
-      } else {
-        displayName = value.value.displayname;
-      }
-
-      //
-    }
-  });
-  //!
 
   // In order to allow for multi-frames (stopmotion), we need to expose these values
   export let frames = 1;
@@ -60,29 +39,11 @@
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
   }
 
-  // //! currentFile bug
-  $: {
-    if (displayName) {
-      console.log('displayName, ', displayName);
-      console.log('currentFile', currentFile);
-      const tempInfo = currentFile;
-
-      // if the artwork was loaded: value.value.displayname
-      // if the artwork is new: value.displayName
-      if (tempInfo.value == null) {
-        tempInfo.displayName = displayName;
-      } else {
-        tempInfo.value.displayname = displayName;
-      }
-      // tempInfo.value.displayname = displayName;
-      console.log('tempInfo', tempInfo);
-      CurrentFileInfo.set(tempInfo);
-    }
+  // remove forbidden characters from displayname after a new file has loaded or has been made
+  $: if (file.loaded || file.new) {
+    // console.log('displayName', displayName);
+    if (hasSpecialCharacter(displayName)) displayName = removeSpecialCharacters(displayName);
   }
-  //! currentFile bug
-
-  // remove forbidden characters from displayname
-  $: if (hasSpecialCharacter(displayName)) displayName = removeSpecialCharacters(displayName);
 
   // In order to hide editor functions when previewing stopmotion
   export let enableEditor = true;
@@ -541,7 +502,7 @@ async function downloadImageTEST(imageSrc) {
             // canvas.add(image);
             // eslint-disable-next-line no-param-reassign
             image.frame = 'importedImagePart';
-            console.log('image', image);
+            // console.log('image', image);
             saveCanvas.add(image);
           });
           updateExportedImages();
