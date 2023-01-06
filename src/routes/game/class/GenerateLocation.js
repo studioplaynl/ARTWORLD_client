@@ -334,17 +334,16 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       }
 
       if (typeof this.externalUrl !== 'undefined') {
-        // this.scene.scene.pause();
+        this.scene.scene.pause();
 
         const url = this.externalUrl;
-        window.open(url, '_top');
-        // const s = window.open(url, '_parent');
+        const s = window.open(url, '_parent');
 
-        // if (s && s.focus) {
-        //   s.focus();
-        // } else if (!s) {
-        //   window.location.href = url;
-        // }
+        if (s && s.focus) {
+          s.focus();
+        } else if (!s) {
+          window.location.href = url;
+        }
       }
 
       if (typeof this.appUrl !== 'undefined') {
