@@ -96,8 +96,9 @@ class SceneSwitcher {
     await ManageSession.getStreamUsers('join');
 
     dlog(scene);
-    scene.physics.resume();
+
     scene.scene.resume();
+    // scene.physics.resume();
     // close app
   }
 }
