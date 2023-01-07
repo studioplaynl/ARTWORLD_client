@@ -10,6 +10,7 @@
   export let file;
   export let data;
   export let changes;
+  export let displayName;
 
   let thumb;
   let currentFrame = 1;
@@ -115,6 +116,7 @@
     bind:currentFrame
     bind:frames
     bind:enableEditor
+    bind:displayName
     stopMotion="{true}"
     enableOnionSkinning="{enableOnionSkinning && enableEditor}"
     on:save

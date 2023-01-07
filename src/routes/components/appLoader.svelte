@@ -381,11 +381,13 @@
         bind:displayName
         on:save="{saveData}"
       />
+
     {:else if $CurrentApp === 'stopmotion' || $CurrentApp === 'avatar'}
       <Stopmotion
         file="{currentFile}"
         bind:data
         bind:changes
+        bind:displayName
         on:save="{saveData}"
       />
     {:else if $CurrentApp === 'mariosound'}
