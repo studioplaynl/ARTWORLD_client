@@ -34,6 +34,8 @@
     }
   }
 
+  // $: { console.log('file, displayName', file, displayName); }
+
   $: {
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
   }

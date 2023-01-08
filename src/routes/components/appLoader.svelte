@@ -58,6 +58,9 @@
   let data = null; // synced with drawing app
   let changes = 0; // synced with drawing app
 
+  // keep the displayName updated in currentFile, always up to date for saving etc
+  $: { currentFile.displayName = displayName; }
+
   /** Subscribe to 'loc', as changes to location AND querystring should trigger this evaluation */
   const unsubscribe = loc.subscribe(async () => {
     // We need to wait a tick, as sometimes querystring and locations dont match yet (??)
@@ -126,8 +129,6 @@
       setLoader(true);
 
       if (andClose) {
-        //! currentFile bug
-        console.log('currentFile', currentFile);
         if (currentFile.loaded) {
           const tempValue = {
             displayname: displayName,
