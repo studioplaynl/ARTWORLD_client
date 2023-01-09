@@ -15,6 +15,8 @@ import SceneSwitcher from '../class/SceneSwitcher';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
+import ServerCall from '../class/ServerCall';
+import { dlog } from '../helpers/DebugLog';
 
 const { Phaser } = window;
 
@@ -191,10 +193,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.flowerScaleFactor = 0.4;
     this.flowerSize = 512;
     // draw 10 layers, biggest 512 pix ,smallest 52pix
-    // we begin at the bottom so worldY
-    this.flowerAmountOfOverlapX = 0.5;
-    this.flowerAmountOfOverlapY = 0.8;
-    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
+
     this.flowerKeyArray = ['flower'];
     this.flowerArray = [];
     this.flowerTweenArray = [];
@@ -210,23 +209,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.flowerKeyArray = ['flower'];
     // download all drawings "bloem" from allUsersChallenge
 
-    this.getListOfBloem();
-  }
-
-  async getListOfBloem() {
-    await listAllObjects('drawing', null).then((rec) => {
-      // download all the drawings and then filter for "bloem"
-      this.userArtServerList = rec;
-      this.userArtServerList = rec.filter((obj) => obj.permission_read === 2);
-      // console.log('this.userArtServerList', this.userArtServerList);
-      this.userArtServerList = this.userArtServerList.filter((obj) => obj.value.displayname === 'bloem');
-
-      if (this.userArtServerList.length > 0) {
-        this.userArtServerList.forEach((element, index, array) => {
-          this.downloadFlowers(element, index, array);
-        });
-      }
-    });
+    // this.getListOfBloem();
+    ServerCall.downloadAndPlaceArtworksByType('bloem', '', this.flowerKeyArray, 512, 12);
   }
 
   makeFlowerRow(flowerRowY) {
@@ -272,118 +256,71 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     if (this.flowerFliedStartedMaking) {
       return;
     }
+    this.flowerFliedStartedMaking = true;
+    dlog('makeFlowerFlied this.flowerKeyArray', this.flowerKeyArray);
+    // empty the array; start with empty field
+    // if (this.flowerArray.length > 0) {
+    // first remove the tween, after destoy the old flower gameobject
+    this.flowerTweenArray.forEach((element) => {
+      element.stop();
+      element.remove();
+    });
+    this.flowerTweenArray.length = 0;
 
-    if (!this.flowerFliedStartedMaking) {
-      this.flowerFliedStartedMaking = true;
-      // empty the array; start with empty field
-      // if (this.flowerArray.length > 0) {
-      // first remove the tween, after destoy the old flower gameobject
-      this.flowerTweenArray.forEach((element) => {
-        element.stop();
-        element.remove();
-      });
-      this.flowerTweenArray.length = 0;
+    this.flowerArray.forEach((element) => {
+      element.destroy();
+    });
+    this.flowerArray.length = 0;
 
-      this.flowerArray.forEach((element) => {
-        element.destroy();
-      });
-      this.flowerArray.length = 0;
+    // console.log("this.flowerArray.length", this.flowerArray.length)
+    // console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
 
-      // console.log("this.flowerArray.length", this.flowerArray.length)
-      // console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
+    // console.log("makeFlowerFlied this.flowerArray, this.flowerTweenArray", this.flowerArray, this.flowerTweenArray)
 
-      // console.log("makeFlowerFlied this.flowerArray, this.flowerTweenArray", this.flowerArray, this.flowerTweenArray)
+    this.flowerAmountOfOverlapX = 0.2;
+    this.flowerAmountOfOverlapY = 0.6;
+    let flowerRowY = this.worldSize.y / 3;
 
-      this.flowerAmountOfOverlapX = 0.2;
-      this.flowerAmountOfOverlapY = 0.6;
-      let flowerRowY = this.worldSize.y / 3;
+    this.flowerScaleFactor = 0.1;
+    this.flowerSize = 512 * this.flowerScaleFactor;
 
-      this.flowerScaleFactor = 0.1;
-      this.flowerSize = 512 * this.flowerScaleFactor;
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
+    this.makeFlowerRow(flowerRowY);
 
-      this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
-      this.makeFlowerRow(flowerRowY);
+    this.flowerScaleFactor = 0.2;
+    this.flowerSize = 512 * this.flowerScaleFactor;
+    flowerRowY += this.flowerSize;
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
+    this.makeFlowerRow(flowerRowY);
 
-      this.flowerScaleFactor = 0.2;
-      this.flowerSize = 512 * this.flowerScaleFactor;
-      flowerRowY += this.flowerSize;
-      this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
-      this.makeFlowerRow(flowerRowY);
+    this.flowerScaleFactor = 0.3;
+    this.flowerSize = 512 * this.flowerScaleFactor;
+    flowerRowY += this.flowerSize;
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
+    this.makeFlowerRow(flowerRowY);
 
-      this.flowerScaleFactor = 0.3;
-      this.flowerSize = 512 * this.flowerScaleFactor;
-      flowerRowY += this.flowerSize;
-      this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
-      this.makeFlowerRow(flowerRowY);
+    this.flowerScaleFactor = 0.5;
+    this.flowerSize = 512 * this.flowerScaleFactor;
+    flowerRowY += this.flowerSize;
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
+    this.makeFlowerRow(flowerRowY);
 
-      this.flowerScaleFactor = 0.5;
-      this.flowerSize = 512 * this.flowerScaleFactor;
-      flowerRowY += this.flowerSize;
-      this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
-      this.makeFlowerRow(flowerRowY);
+    this.flowerScaleFactor = 0.7;
+    this.flowerSize = 512 * this.flowerScaleFactor;
+    flowerRowY += this.flowerSize;
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
+    this.makeFlowerRow(flowerRowY);
 
-      this.flowerScaleFactor = 0.7;
-      this.flowerSize = 512 * this.flowerScaleFactor;
-      flowerRowY += this.flowerSize;
-      this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
-      this.makeFlowerRow(flowerRowY);
+    this.flowerScaleFactor = 1;
+    this.flowerSize = 512 * this.flowerScaleFactor;
+    flowerRowY += this.flowerSize;
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
+    this.makeFlowerRow(flowerRowY);
 
-      this.flowerScaleFactor = 1;
-      this.flowerSize = 512 * this.flowerScaleFactor;
-      flowerRowY += this.flowerSize;
-      this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
-      this.makeFlowerRow(flowerRowY);
-
-      this.flowerFliedStartedMaking = false;
-      // console.log("this.flowerArray.length", this.flowerArray.length)
-      // console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
-    }
+    // this.flowerFliedStartedMaking = false;
+    // console.log("this.flowerArray.length", this.flowerArray.length)
+    // console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
   }
-
-  async downloadFlowers(element) {
-    const imageKeyUrl = element.value.url;
-    const imgSize = '512'; // download as 512pixels
-    const fileFormat = 'png';
-
-    if (this.textures.exists(imageKeyUrl)) { // if the image has already downloaded, then add image by using the key
-      // adds the image to the container if it is not yet in the list
-      const exists = this.flowerKeyArray.some((element2) => element2 === imageKeyUrl);
-      if (!exists) {
-        this.flowerKeyArray.push(imageKeyUrl);
-      }
-    } else { // otherwise download the image and add it
-      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
-
-      // for tracking each file in progress
-      this.progress.push({ imageKeyUrl });
-      // console.log("convertedImage", convertedImage)
-      this.load.image(imageKeyUrl, convertedImage);
-
-      this.load.start(); // start the load queue to get the image in memory
-    }
-
-    this.load.on('filecomplete', (key) => {
-      // on completion of each speci512fic artwork
-      const currentImage = this.progress.find((element3) => element3.imageKeyUrl === key);
-
-      // we don't want to trigger any other load completions
-      if (currentImage) {
-        // adds the image to the container if it is not yet in the list
-        const exists = this.flowerKeyArray.some((element4) => element4 === imageKeyUrl);
-        if (!exists) {
-          this.flowerKeyArray.push(imageKeyUrl);
-        }
-      }
-    });
-
-    this.load.on('complete', () => {
-      // finished downloading
-      // replace flowers in the field
-      // console.log("this.flowerKeyArray", this.flowerKeyArray)
-      //
-      this.makeFlowerFlied();
-    });
-  }// end downloadArt
 
   update() {
     // don't move the player with clicking and swiping in edit mode
@@ -395,6 +332,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       this.playerShadow.x = this.player.x + this.playerShadowOffset;
       this.playerShadow.y = this.player.y + this.playerShadowOffset;
       // ........... end PLAYER SHADOW .........................................................................
+      this.makeFlowerFlied();
     } else {
       // when in edit mode
       // this.updateCurveGraphics()

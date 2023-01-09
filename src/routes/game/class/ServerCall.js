@@ -159,6 +159,20 @@ class ServerCall {
         dlog('serverItemsArray.array', serverItemsArray.array);
         this.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
+    } else if (type === 'bloem') {
+      await listAllObjects('drawing', null).then((rec) => {
+      // eslint-disable-next-line no-param-reassign
+        dlog('serverItemsArray, rec : ', rec, serverItemsArray);
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = rec;
+
+        // serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
+
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
+        dlog('bloem serverItemsArray.array', serverItemsArray.array);
+        this.handleServerArray(type, serverItemsArray, artSize, artMargin);
+      });
     } else {
       await listAllObjects(type, location).then((rec) => {
       // eslint-disable-next-line no-param-reassign
@@ -179,6 +193,7 @@ class ServerCall {
       serverItemsArray.itemsFailed = 0;
 
       serverItemsArray.array.forEach((element, index, array) => {
+        // dlog('element', element);
         this.downloadArtwork(element, index, array, type, artSize, artMargin);
       });
     }
@@ -205,6 +220,11 @@ class ServerCall {
         // eslint-disable-next-line no-new
         // dlog('element, index', element, index);
         new AnimalChallenge(scene, element, artSize);
+      } else if (type === 'bloem') {
+        // eslint-disable-next-line no-new
+        dlog('element, index', element, index);
+        // push het element in flowerKeyArray
+        scene.flowerKeyArray.push(imageKeyUrl);
       }
       // if the artwork is not already downloaded
     } else if (type === 'drawing') {
@@ -354,6 +374,41 @@ class ServerCall {
       //     ServerCall.repositionContainers('stopmotion');
       //   }
       // });
+    } else if (type === 'bloem') {
+      // dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
+      // const convertedImage = element.value.previewUrl
+      dlog('convertedImage', convertedImage);
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'downloadFlowerChallenge', element, index, imageKey: imageKeyUrl, scene,
+      });
+
+      scene.load.image(imageKeyUrl, convertedImage)
+        .on(`filecomplete-image-${imageKeyUrl}`, () => {
+          // delete from ManageSession.resolveErrorObjectArray because of succesful download
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl,
+          );
+          // eslint-disable-next-line no-param-reassign
+          element.downloaded = true;
+          // dlog('drawing downloaded', imageKeyUrl);
+          // dlog('object updated: ', element);
+          // create container with artwork
+
+          // push het element in flowerKeyArray
+          // dlog('imageKeyUrl, convertedImage', imageKeyUrl, convertedImage);
+          scene.flowerKeyArray.push(imageKeyUrl);
+          scene.flowerFliedStartedMaking = false;
+        }, this);
+      scene.load.start(); // start the load queue to get the image in memory
+
+      // on('complete') fires each time an image is finished downloading
+      scene.load.on('complete', () => {
+        // dlog('downloading flowers complete');
+        scene.flowerFliedStartedMaking = false;
+        // dlog('scene.flowerKeyArray', scene.flowerKeyArray);
+      });
     }
   }
 
@@ -574,6 +629,20 @@ class ServerCall {
 
       case 'downloadAvatarKey':
         dlog('loading avatar conversion failed');
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey,
+        );
+        break;
+
+      case 'downloadFlowerChallenge':
+        dlog('loading flower for FlowerFlieldChallenge failed');
+
+        dlog(`remove ${imageKey} from flowerKeyArray`);
+        const flowerKeyArray = scene.flowerKeyArray;
+        // delete from scene.userStopmotionServerList
+
+        flowerKeyArray.array = flowerKeyArray.array.filter((obj) => obj.value.url !== imageKey);
+
         ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
           (obj) => obj.imageKey !== imageKey,
         );
