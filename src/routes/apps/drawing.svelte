@@ -20,7 +20,6 @@
 
   // change artwork name
   export let displayName;
-  let currentFile;
 
   // In order to allow for multi-frames (stopmotion), we need to expose these values
   export let frames = 1;
@@ -34,6 +33,8 @@
       getCroppedImageFromSaveCanvas(canvas, currentFrame);
     }
   }
+
+  // $: { console.log('file, displayName', file, displayName); }
 
   $: {
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
@@ -592,7 +593,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
 
   function downloadImage() {
     // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
-    const filename = `${currentFile.key}_${displayName}.png`;
+    const filename = `${file.key}_${displayName}.png`;
 
     data = saveCanvas.toDataURL('image/png', 1);
 
