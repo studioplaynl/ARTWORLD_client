@@ -202,7 +202,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.flowerScale = null;
     this.flowerRotateAmount = null;
     this.flowerTweenTime = null;
-    this.flowerFliedStartedMaking = false;
+    this.flowerFliedStartMaking = true;
 
     this.makeFlowerFlied();
 
@@ -251,12 +251,10 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   }
 
   makeFlowerFlied() {
-    // console.log("this.flowerFliedStartedMaking", this.flowerFliedStartedMaking)
-
-    if (this.flowerFliedStartedMaking) {
+    if (!this.flowerFliedStartMaking) {
       return;
     }
-    this.flowerFliedStartedMaking = true;
+    this.flowerFliedStartMaking = false;
     dlog('makeFlowerFlied this.flowerKeyArray', this.flowerKeyArray);
     // empty the array; start with empty field
     // if (this.flowerArray.length > 0) {
@@ -317,7 +315,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
     this.makeFlowerRow(flowerRowY);
 
-    // this.flowerFliedStartedMaking = false;
     // console.log("this.flowerArray.length", this.flowerArray.length)
     // console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
   }

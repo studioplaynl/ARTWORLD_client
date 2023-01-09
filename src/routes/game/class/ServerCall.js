@@ -225,6 +225,7 @@ class ServerCall {
         dlog('element, index', element, index);
         // push het element in flowerKeyArray
         scene.flowerKeyArray.push(imageKeyUrl);
+        scene.flowerFliedStartMaking = true;
       }
       // if the artwork is not already downloaded
     } else if (type === 'drawing') {
@@ -399,16 +400,14 @@ class ServerCall {
           // push het element in flowerKeyArray
           // dlog('imageKeyUrl, convertedImage', imageKeyUrl, convertedImage);
           scene.flowerKeyArray.push(imageKeyUrl);
-          scene.flowerFliedStartedMaking = false;
+          scene.flowerFliedStartMaking = true;
         }, this);
       scene.load.start(); // start the load queue to get the image in memory
 
       // on('complete') fires each time an image is finished downloading
-      scene.load.on('complete', () => {
-        // dlog('downloading flowers complete');
-        scene.flowerFliedStartedMaking = false;
-        // dlog('scene.flowerKeyArray', scene.flowerKeyArray);
-      });
+      // scene.load.on('complete', () => {
+
+      // });
     }
   }
 
