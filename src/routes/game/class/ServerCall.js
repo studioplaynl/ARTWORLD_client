@@ -153,10 +153,9 @@ class ServerCall {
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = rec;
 
-
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
-        dlog('serverItemsArray.array', serverItemsArray.array);
+        dlog('dier serverItemsArray.array', serverItemsArray.array);
         this.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
     } else if (type === 'bloem') {
@@ -312,10 +311,10 @@ class ServerCall {
         }
       });
     } else if (type === 'dier') {
-      dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
+      // dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
       // const convertedImage = element.value.previewUrl
-      dlog('convertedImage', convertedImage);
+      dlog('dier convertedImage', convertedImage);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
         loadFunction: 'downloadAnimalChallenge', element, index, imageKey: imageKeyUrl, scene,

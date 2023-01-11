@@ -85,7 +85,7 @@
   <a href="/stopmotion" use:link>STOP MOTION</a>
   <a href="/stopmotion" use:link>(NEW)</a>
   <a href="/avatar" use:link>AVATAR</a>
-  <!-- avatar ook key test1 en test -->
+   avatar ook key test1 en test -->
   <!-- er komt hier nog een key bij! -->
   <!-- <a
     href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"

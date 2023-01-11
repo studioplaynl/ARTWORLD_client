@@ -6,7 +6,7 @@
   import { SelectedOnlinePlayer } from '../../session';
   import { Addressbook } from '../../storage';
   import SceneSwitcher from '../game/class/SceneSwitcher';
-  import ManageSession from '../game/ManageSession';
+  // import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
 
   let current;
@@ -24,6 +24,7 @@
             $SelectedOnlinePlayer.meta?.Azc,
             $SelectedOnlinePlayer.id,
           );
+          console.log('$SelectedOnlinePlayer', $SelectedOnlinePlayer);
           houseUrl = await convertImage(houseObject.value.url, '50', '50');
         } catch (err) {
           console.warn(err);
@@ -42,9 +43,9 @@
   }
 
   /** toggle the open state of the panel "home" */
-  function toggleHome() {
-    current = current === 'home' ? null : 'home';
-  }
+  // function toggleHome() {
+  //   current = current === 'home' ? null : 'home';
+  // }
 
   function saveHome() {
     if ($SelectedOnlinePlayer) {

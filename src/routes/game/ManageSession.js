@@ -309,7 +309,7 @@ class ManageSession {
 
     const streamUsersPromise = new Promise((resolve) => {
       this.socket.rpc(rpcCommand, location).then((rec) => {
-        //! the server reports all users in location except self_user
+      //! the server reports all users in location except self_user
         dlog(location);
         // get all online players = serverArray
         // create array for newUsers and create array for deleteUsers
@@ -346,19 +346,20 @@ class ManageSession {
         // dlog('this.lastMoveCommand', this.lastMoveCommand);
 
         // resolve();
-        if (this.currentScene !== null) {
-          setTimeout(() => {
-            const { posX, posY, action } = this.lastMoveCommand;
+        // if (this.currentScene !== null) {
+        //   setTimeout(() => {
+        //     const { posX, posY, action } = this.lastMoveCommand;
 
-            // dlog('timeout!, currentScene = ', this.currentScene);
-            this.sendMoveMessage(this.currentScene, posX, posY, action);
-            // dlog('sending move message!');
+        //     // dlog('timeout!, currentScene = ', this.currentScene);
+        //     this.sendMoveMessage(this.currentScene, posX, posY, action);
+        //     // dlog('sending move message!');
 
-            resolve(rpcCommand, location);
-          }, 1500);
-        } else {
-          resolve(rpcCommand, location);
-        }
+        //     resolve(rpcCommand, location);
+        //   }, 3500);
+        // } else {
+        //   resolve(rpcCommand, location);
+        // }
+        resolve(rpcCommand, location);
       });
     });
 

@@ -19,6 +19,7 @@ class SceneSwitcher {
     // this.tempHistoryArray = [];
 
     this.unsubscribeScene = PlayerLocation.subscribe(() => {
+      dlog('player location changed, SceneSwitcher reacts');
       this.doSwitchScene();
     });
     // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {
@@ -35,6 +36,7 @@ class SceneSwitcher {
       house: targetHouse,
       scene: targetScene,
     });
+    this.doSwitchScene();
   }
 
   doSwitchScene() {
@@ -58,8 +60,61 @@ class SceneSwitcher {
     scene.physics.pause();
     scene.player.setTint(0xff0000);
 
-    ManageSession.socket.rpc('leave', scene.location).then((data) => {
+    this.switchStream(scene, targetScene);
+    // ManageSession.socket.rpc('leave', scene.scene.key).then((data) => {
+    //   if (data.id === 'leave' && data.payload === 'Success') {
+    //     dlog('leave socket succes', scene.scene.key);
+    //     scene.scene.stop(scene.scene.key);
+
+    //     if (targetHouse !== null && targetScene === DEFAULT_HOME) {
+    //       scene.scene.start(targetScene, { user_id: targetHouse });
+    //     } else if (targetScene) {
+    //       scene.scene.start(targetScene);
+    //     }
+    //     if (targetScene) {
+    //       ManageSession.getStreamUsers('join').then(() => {
+    //         setLoader(false);
+    //       });
+    //     }
+    //   }
+    // }).catch((...args) => {
+    //   Error.set('Something went wrong with the Socket', args);
+    // });
+  }
+
+  async pauseSceneStartApp(scene, app) {
+    if (scene) {
+      scene.physics.pause();
+      scene.scene.pause();
+
+      this.switchStream(scene, app);
+
+      // await ManageSession.socket.rpc('leave', get(playerStreamID));
+      // await ManageSession.socket.rpc('join', app);
+    }
+    // ManageSession.getStreamUsers("join", app)
+    // open app
+  }
+
+  async startSceneCloseApp(scene, app) {
+    if (!ManageSession.socket) return;
+
+    this.switchStream(scene, app);
+    // await ManageSession.socket.rpc('leave', app);
+    // await ManageSession.getStreamUsers('join');
+
+    dlog(scene.scene.key);
+
+    scene.scene.resume();
+    // scene.physics.resume();
+    // close app
+  }
+
+  async switchStream(scene, targetScene) {
+    const targetHouse = get(PlayerLocation).house;
+    ManageSession.socket.rpc('leave', scene.scene.key).then((data) => {
       if (data.id === 'leave' && data.payload === 'Success') {
+        dlog('leave socket succes', scene.scene.key);
         scene.scene.stop(scene.scene.key);
 
         if (targetHouse !== null && targetScene === DEFAULT_HOME) {
@@ -77,30 +132,8 @@ class SceneSwitcher {
       Error.set('Something went wrong with the Socket', args);
     });
   }
-
-  async pauseSceneStartApp(scene, app) {
-    if (scene) {
-      scene.physics.pause();
-      scene.scene.pause();
-
-      await ManageSession.socket.rpc('leave', get(playerStreamID));
-      await ManageSession.socket.rpc('join', app);
-    }
-    // ManageSession.getStreamUsers("join", app)
-    // open app
-  }
-
-  async startSceneCloseApp(scene, app) {
-    if (!ManageSession.socket) return;
-    await ManageSession.socket.rpc('leave', app);
-    await ManageSession.getStreamUsers('join');
-
-    dlog(scene);
-
-    scene.scene.resume();
-    // scene.physics.resume();
-    // close app
-  }
 }
+
+
 
 export default new SceneSwitcher();
