@@ -359,7 +359,27 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       }
 
       if (typeof this.locationDestination !== 'undefined') {
+        // place player in position
+        //     PlayerPos.set({
+        //   x: -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2),
+        //   y: 0,
+        // });
+
+        // When we go into a house, we place the player left, in the middle
+        // if (this.userHouse === DEFAULT_HOME) {
+        //   const PosX = -(this.scene.worldSize.x / 2) + (ManageSession.avatarSize * 2);
+        //   dlog('PosX: ', PosX);
+        //   const PosY = 0;
+        //   push(`/game?location=${this.locationDestination}&house=${this.userHome}&x=${PosX}&y=${PosY}`);
+        // } else {
         SceneSwitcher.switchScene(this.locationDestination, this.userHome);
+        // }
+
+        // this get converted to
+        //     PlayerLocation.set({
+        //   house: targetHouse,
+        //   scene: targetScene,
+        // });
       }
     });
 

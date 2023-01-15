@@ -122,15 +122,20 @@ export default class DefaultUserHome extends Phaser.Scene {
     }).setDepth(199);
 
     this.artworksListSpinner.destroy();
-    //! this.artworksListSpinner.start();
     //
 
-    Player.loadPlayerAvatar(this, 0, 0);
+    // Place the player on the left size in the y-middle, by passing on arguments in the Player class
+    // const PosX = 0;
+    // dlog('PosX: ', PosX);
+    // const PosY = (this.worldSize.x / 2);
+    // Player.loadPlayerAvatar(this, PosX, PosY);
 
-    // Set the player on the left side of the world (this also updates the URL automatically)
+    Player.loadPlayerAvatar(this);
+
+    // Set the player on the left side of the world (this also updates the URL automatically), in artworldCoordinates
     PlayerPos.set({
       x: -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2),
-      y: 0,
+      y: -(this.worldSize.y / 4),
     });
 
     this.loadAndPlaceArtworks();

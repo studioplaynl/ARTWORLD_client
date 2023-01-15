@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
-  import { writable } from 'svelte/store';
+  import { writable, get } from 'svelte/store';
 
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
@@ -8,7 +8,7 @@
   import {
     setLoader,
   } from '../../api';
-  import { Error } from '../../session';
+  import { Error, Profile } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
   // import NameGenerator from '../components/nameGenerator.svelte';
   import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
@@ -593,7 +593,9 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
 
   function downloadImage() {
     // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
-    const filename = `${file.key}_${displayName}.png`;
+    const userProfile = get(Profile);
+    // console.log('userProfile', userProfile.username);
+    const filename = `${userProfile.username}_${file.key}_${displayName}.png`;
 
     data = saveCanvas.toDataURL('image/png', 1);
 

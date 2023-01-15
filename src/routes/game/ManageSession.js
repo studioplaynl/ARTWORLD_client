@@ -110,7 +110,7 @@ class ManageSession {
     this.socket.connect(get(Session), createStatus).then(() => {
       this.socketIsConnected = true;
       this.getStreamUsers('join');
-      dlog('Join:', get(PlayerLocation).scene);
+      // dlog('Join:', get(PlayerLocation).scene);
     });
 
 
@@ -296,27 +296,25 @@ class ManageSession {
   /** Get ...
    * @todo Extend documentation
    */
-  async getStreamUsers(rpcCommand) {
+  async getStreamUsers(rpcCommand, location) {
     //* rpcCommand:
     //* join" = join the stream, get the online users, except self
     //* get_users" = after joined, get the online users, except self
-    const location = get(playerStreamID);
 
-    dlog(
-      `this.getStreamUsers("${rpcCommand}"), location = ${location}`,
-    );
+    if (typeof location === 'undefined') {
+      location = get(playerStreamID);
+    }
 
+    // location = get(playerStreamID);
 
     const streamUsersPromise = new Promise((resolve) => {
       this.socket.rpc(rpcCommand, location).then((rec) => {
       //! the server reports all users in location except self_user
-        dlog(location);
+        dlog('rpcCommand: ', rpcCommand, ' location: ', location);
         // get all online players = serverArray
         // create array for newUsers and create array for deleteUsers
         const serverArray = JSON.parse(rec.payload) || [];
         // dlog('serverArray', serverArray, 'currentScene', this.currentScene);
-
-
 
         serverArray.forEach((newPlayer) => {
           const exists = this.allConnectedUsers.some(
@@ -338,27 +336,6 @@ class ManageSession {
             dlog('remove onlinePlayer', onlinePlayer);
           }
         });
-
-        // send our current location in the world to all connected players
-        // dlog('send our current location in the world to all connected players');
-        // dlog("this.lastMoveCommand", this.lastMoveCommand)
-        // dlog("this.currentScene", this.currentScene)
-        // dlog('this.lastMoveCommand', this.lastMoveCommand);
-
-        // resolve();
-        // if (this.currentScene !== null) {
-        //   setTimeout(() => {
-        //     const { posX, posY, action } = this.lastMoveCommand;
-
-        //     // dlog('timeout!, currentScene = ', this.currentScene);
-        //     this.sendMoveMessage(this.currentScene, posX, posY, action);
-        //     // dlog('sending move message!');
-
-        //     resolve(rpcCommand, location);
-        //   }, 3500);
-        // } else {
-        //   resolve(rpcCommand, location);
-        // }
         resolve(rpcCommand, location);
       });
     });

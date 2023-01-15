@@ -20,6 +20,7 @@
   // zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties)
   let current;
   let userHouseUrl;
+  let userHouseObject;
 
   let addressbookList = [];
   let lastLengthAddressbook = 0;
@@ -40,9 +41,9 @@
       if (userHouseUrl === undefined) {
         /** object containing house information (position, image url) */
 
-        const houseObject = await getObject(
+        userHouseObject = await getObject(
           'home',
-          $Profile.meta.Azc || 'Amsterdam',
+          $Profile.meta.Azc || 'GreenSquare',
           $Profile.id,
         );
 
@@ -143,10 +144,14 @@
     if (typeof id === 'string') {
       SceneSwitcher.switchScene('DefaultUserHome', id);
     } else if ($ShowItemsBar) {
-      SceneSwitcher.switchScene(
-        'DefaultUserHome',
-        ManageSession.userProfile.id,
-      );
+      // place user next to nameplate of home
+      const playerPosX = userHouseObject.value.posX - 100;
+      const playerPoxY = userHouseObject.value.posY - 150;
+      push(`/?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`);
+      // SceneSwitcher.switchScene(
+      //   'DefaultUserHome',
+      //   ManageSession.userProfile.id,
+      // );
     }
   }
 </script>

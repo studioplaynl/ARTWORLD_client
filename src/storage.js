@@ -20,6 +20,7 @@ import {
   STOPMOTION_MAX_FRAMES,
   DEFAULT_PREVIEW_HEIGHT,
 } from './constants';
+import { dlog } from './routes/game/helpers/DebugLog';
 
 //  Achievements of a user
 const achievementsStore = writable([]);
@@ -512,9 +513,11 @@ export const myHome = {
           Sess.user_id,
         );
       } catch (err) {
-        // dlog(err); // TypeError: failed to fetch
+        dlog('cannot get home: ', err); // TypeError: failed to fetch
       }
+      dlog('getting the localHome.url', localHome);
       localHome.url = await convertImage(localHome.value.url, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_HEIGHT);
+      dlog('localHome', localHome);
 
       myHome.set(localHome);
     } return localHome;

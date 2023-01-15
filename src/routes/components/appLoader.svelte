@@ -109,6 +109,7 @@
 
     // If a user has been here for a little while, just bring them where they were before
     if (get(PlayerHistory).length > 1) {
+      dlog('pop spa router, PlayerHistory.pop');
       pop();
       PlayerHistory.pop();
     } else {

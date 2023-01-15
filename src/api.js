@@ -646,7 +646,7 @@ export async function convertImage(path, height, width, format) {
 
 
 export function setLoader(state) {
-  dlog('setLoader to ... ', state);
+  // dlog('setLoader to ... ', state);
   if (state) {
     document.getElementById('loader').classList.remove('hide');
   } else {

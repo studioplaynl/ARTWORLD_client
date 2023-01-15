@@ -55,17 +55,32 @@ export function parseURL() {
 
   if (`/${appName}` !== PlayerHistory.previous()) {
     PlayerHistory.push(`/${appName}`);
+    // const history = get(PlayerHistory);
+    // dlog('playerHistory: ', history);
   }
 
   // Check if a valid app..
   if (isValidApp(appName)) {
+    // game is also a valid app:
+    // DEFAULT_APP === game
+    dlog('appName: ', appName);
     CurrentApp.set(appName);
     if (appName === DEFAULT_APP) {
+      // when the app just launched ManageSession.currentScene is null
+      if (ManageSession.currentScene === null) return;
+
+      // only going to something else but game makes sense
+      // going from game to game does not make sense
+      if (previousAppName === 'game') return;
+
       SceneSwitcher.startSceneCloseApp(
-        ManageSession.currentScene,
         previousAppName,
+        ManageSession.currentScene.scene.key,
       );
     } else {
+      // when the app just launched ManageSession.currentScene is null
+      if (typeof ManageSession.currentScene === 'undefined') return;
+
       SceneSwitcher.pauseSceneStartApp(
         ManageSession.currentScene,
         appName,
@@ -166,7 +181,7 @@ querystring.subscribe(() => parseQueryString());
 
 
 /* Set the query parameter after updating stores, because we have set up a subscription to these.
- * Any value changes on PlayerPos & PlayerLocation make this function run
+* Any value changes on PlayerPos & PlayerLocation make this function run
 * And subsequently update the query string in the URL of the browser */
 export function updateQueryString() {
   const { x, y } = get(PlayerPos);
@@ -186,6 +201,8 @@ export function updateQueryString() {
 
     // House can be optional, and should be removed from querystring if null or empty
     if (scene !== DEFAULT_HOME || house === null) {
+      //! should we also remove it from PlayerLocation, make it null?
+      //! so that the PlayerLocation reflects the real state of the player...
       delete query.house;
     } else {
       query.house = house;
