@@ -208,7 +208,7 @@ export const ArtworksStore = {
           if (limit !== undefined) {
             listAllObjects(type, id).then((loaded) => resolve(loaded));
           } else {
-            listObjects(type, id, limit).then((loaded) => resolve(loaded));
+            listObjects(type, id, limit).then((loaded) => resolve(loaded.objects));
           }
         });
 
@@ -380,7 +380,7 @@ export const AvatarsStore = {
         });
       } else {
         listObjects('avatar', id, limit).then((loaded) => {
-          resolve(loaded);
+          resolve(loaded.objects);
         });
       }
     });

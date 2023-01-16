@@ -2,6 +2,8 @@
   import { _ } from 'svelte-i18n';
   import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';
+  import Select from 'svelte-select';
+
   import {
     getAccount,
     convertImage,
@@ -9,11 +11,18 @@
     deleteObjectAdmin,
     updateObjectAdmin,
   } from '../../api';
+ // import { APPS } from '../apps/apps'
   import { Session, Profile } from '../../session';
   import StatusComp from '../components/statusbox.svelte';
   import DeleteComp from '../components/deleteButton.svelte';
+  import DownloadComp from '../components/downloadButton.svelte'
   import NameEdit from '../components/nameEdit.svelte';
-  import { runInNewContext } from 'vm';
+  let APPS = ["drawing" , "stopmotion", "avatar", "house"]
+  let SelectedApp = "drawing";
+  let cursor = undefined;
+  let history = []
+  let limit = 50;
+
 
   let useraccount;
   const drawingIcon =
@@ -80,7 +89,8 @@
         return `${d.getHours()}:${
           d.getMinutes() < 10 ? '0' : ''
         }${d.getMinutes()} ${d.getDate() < 10 ? '0' : ''}${d.getDate()}/${
-          d.getMonth() + 1
+          d.getMonth() + 1}/${
+          d.getFullYear()
         }`;
       },
       sortable: true,
@@ -98,6 +108,13 @@
       renderComponent: {
         component: StatusComp,
         props: { moveToArt, isCurrentUser },
+      },
+    },
+    {
+      key: 'Download',
+      title: 'Download',
+      renderComponent: {
+        component: DownloadComp,
       },
     },
     {
@@ -173,25 +190,27 @@
     return CurrentUser;
   }
 
-  async function getArt() {
-    drawings = await listAllObjects('drawing');
-    video = await listAllObjects('video');
-    audio = await listAllObjects('audio');
-    stopMotion = await listAllObjects('stopmotion');
-    picture = await listAllObjects('picture');
-    console.log(drawings);
-    // useraccount = await getAccount(id);
-    // console.log(useraccount);
-    // user = useraccount.username;
-    //role = useraccount.meta.Role;
-    // azc = useraccount.meta.Azc;
-    // avatar_url = useraccount.url;
+  async function getArt(move) {
+    if(move == 'back'){
+      history.pop()
+      cursor = history[history.length-1]
+    } else {
+      history.push(cursor)
+    }
+    //  let objects = await listObjects(SelectedApp, null, limit, cursor)
+    let objects = await listAllObjects(SelectedApp, undefined, limit, cursor)
+     console.log(objects)
 
-    art = [].concat(drawings);
-    art = art.concat(stopMotion);
-    art = art.concat(video);
-    art = art.concat(audio);
-    art = art.concat(picture);
+    if(move == 'next'){
+      if(typeof objects[limit-1] != 'undefined'){
+        cursor = objects[limit-1].update_time
+      }else {
+        cursor = undefined
+      }
+    }
+      
+    art = objects 
+  
     art.forEach(async (item, index) => {
       if (item.value.status === 'trash') {
         trash.push(item);
@@ -205,20 +224,40 @@
 
     trash = trash;
   }
-  const promise = getArt();
+  const promise = getArt('next');
+
+  function handeChange(e) {
+    console.log(e.detail.value);
+    SelectedApp = e.detail.value
+    history = [];
+    getArt('next');
+  }
 </script>
 
 <div class="box">
   <h1>kunstwerken</h1>
+  <Select items={APPS} value="{SelectedApp}" on:change={handeChange} clearable={false}/>
+  {#if typeof cursor != "undefined"}
+  <button class="next-button" on:click="{()=>{getArt('next')}}">&gt;</button>
+  {/if} 
+  <button class="back-button" on:click="{()=>{getArt('back')}}">&lt;</button>
   <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable" />
   {#if CurrentUser || $Profile.meta.Role == 'moderator' || $Profile.meta.Role == 'admin'}
-    <h1>Prullenmand</h1>
+  {#if typeof cursor != "undefined"}
+    <button class="next-button" on:click="{()=>{getArt('next')}}">&gt;</button>
+  {/if} 
+  <button class="back-button" on:click="{()=>{getArt('back')}}">&lt;</button>  
+  <h1>Prullenmand</h1>
     <SvelteTable
       columns="{columns}"
       rows="{trash}"
       classNameTable="profileTable"
     />
   {/if}
+  <button class="back-button" on:click="{()=>{getArt('back')}}">&lt;</button>
+  {#if typeof cursor != "undefined"}
+    <button class="next-button" on:click="{()=>{getArt('next')}}">&gt;</button>
+  {/if}  
   <div
     class="app-close"
     on:click="{() => {
@@ -254,4 +293,14 @@
       bottom: 120px;
     }
   }
+
+  .back-button {
+    width: 80px;
+    float: left;
+}
+
+  .next-button {
+    width: 80px;
+    float: right;
+}
 </style>

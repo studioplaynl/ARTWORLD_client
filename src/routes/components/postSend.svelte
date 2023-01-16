@@ -4,6 +4,7 @@
   import { ListFriends, sendMailToUser } from '../../api';
 
   export let row;
+  export let col;
   let toggleMode = true;
 
   let friends = [];

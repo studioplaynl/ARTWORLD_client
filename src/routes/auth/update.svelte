@@ -129,7 +129,8 @@
       whereList = otherWhere;
     }
     const limit = 100;
-    locationsList = await listObjects(whereList, id, limit);
+    let objects = await listObjects(whereList, id, limit);
+    locationsList = objects.objects
     dlog(locationsList);
   }
 
