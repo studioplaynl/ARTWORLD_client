@@ -14,7 +14,7 @@
   let username = 'user';
   let password = '';
   let role = 'speler';
-  let azc = 'Amsterdam';
+  let azc = 'Greensquare';
 
   onMount(async () => {
     genKidsPassword();
@@ -67,7 +67,7 @@ const Locaties = [
       avatar: `/avatar/stock/${avatar}`,
       home: `/home/stock/${house}`,
     };
-
+    // console.log('data', data);
     createAccountAdmin(data);
   }
 
@@ -83,7 +83,7 @@ const Locaties = [
 
   function genKidsPassword() {
     // removed confusing charecters like 0 O o l l q S and made the chance for number bigger
-    const chars = '123456789abcdefghijkmnprstuvwxyz0123456789ABCDEFGHJKLMNPQRTUVWXYZ123456789';
+    const chars = '123456789abcdefghijkmnprstuvwxyz123456789ABCDEFGHJKLMNPQRTUVWXYZ123456789';
     // eslint-disable-next-line no-mixed-spaces-and-tabs
     const passwordLength = 9;
     password = '';
