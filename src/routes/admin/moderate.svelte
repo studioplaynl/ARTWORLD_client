@@ -3,7 +3,9 @@
   import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';
   import Select from 'svelte-select';
-
+  import {
+    PERMISSION_READ_PUBLIC,
+  } from '../../constants';
   import {
     getAccount,
     convertImage,
@@ -156,7 +158,7 @@
       if (!!art[i] && art[i].key === key) {
         console.log(art[i]);
         trash.push(art[i]);
-        delete art[i];
+        art.splice(i,1);
         i = art.length;
         trash = trash;
         art = art;
@@ -191,6 +193,8 @@
   }
 
   async function getArt(move) {
+    art = [];
+    trash = [];
     if(move == 'back'){
       history.pop()
       cursor = history[history.length-1]
@@ -199,7 +203,6 @@
     }
     //  let objects = await listObjects(SelectedApp, null, limit, cursor)
     let objects = await listAllObjects(SelectedApp, undefined, limit, cursor)
-     console.log(objects)
 
     if(move == 'next'){
       if(typeof objects[limit-1] != 'undefined'){
@@ -218,14 +221,16 @@
       }
       if (item.value.json) item.url = item.value.json.split('.')[0];
       if (item.value.url) item.url = item.value.url.split('.')[0];
+      item.permission_read = item.permission_read === PERMISSION_READ_PUBLIC;
       item.value.previewUrl = await convertImage(item.value.url, '64', '64');
-      art = art;
     });
+    art = [...art];
+    trash = [...trash];
+    console.log(art)
 
-    trash = trash;
   }
   const promise = getArt('next');
-
+ 
   function handeChange(e) {
     console.log(e.detail.value);
     SelectedApp = e.detail.value

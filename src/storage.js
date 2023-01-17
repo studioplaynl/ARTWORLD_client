@@ -250,6 +250,7 @@ export const ArtworksStore = {
       const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
       const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
       const artwork = item;
+      artwork.permission_read = artwork.permission_read === PERMISSION_READ_PUBLIC;
 
       // Only get a fresh URL if no previewUrl is available or when it has been updated
       if (!artwork.value.previewUrl || outdatedArtwork) {
@@ -325,7 +326,7 @@ export const ArtworksStore = {
       const artworksToUpdate = artworks;
       const artworkIndex = artworks.findIndex((artwork) => artwork.key === key);
       if (artworkIndex > -1) {
-        artworksToUpdate[artworkIndex].permission_read = publicRead ? PERMISSION_READ_PUBLIC : PERMISSION_READ_PRIVATE;
+        artworksToUpdate[artworkIndex].permission_read = publicRead;
       }
       return [...artworksToUpdate];
     });
