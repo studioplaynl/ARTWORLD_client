@@ -47,7 +47,6 @@
 <main>
   <!-- currentUser => is dit mijn profiel of van iemand anders -->
   {#if currentUser || role === 'admin' || role === 'moderator'}
-    <p>{row.permission_read}</p>
     {#if row.value.status !== OBJECT_STATE_IN_TRASH}
       <Switch bind:value="{row.permission_read}" on:change="{change}" />
     {:else}
