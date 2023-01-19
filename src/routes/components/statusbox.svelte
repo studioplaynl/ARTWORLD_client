@@ -1,7 +1,7 @@
 <script>
   import { Switch, Button } from 'attractions';
+  import { onMount } from 'svelte';
   import { updateObjectAdmin } from '../../api';
-  import {onMount} from 'svelte'
   import {
     PERMISSION_READ_PUBLIC,
     OBJECT_STATE_IN_TRASH,
@@ -12,20 +12,24 @@
 
   const role = $Profile.meta.Role; // ;
   export let row;
+  export let col;
   export let isCurrentUser;
   export let moveToArt;
 
 
+
   const currentUser = isCurrentUser(); // Bool? Of user object?
 
-  const change = async (e) => {    
+  const change = async (e) => {
     if (role === 'admin' || role === 'moderator') {
       console.log('admin');
 
-      const { collection, key, value, user_id } = row;
-  
+      const {
+        collection, key, value, user_id,
+      } = row;
+
       // Update on server
-      console.log(collection, key, value, e.detail.value, user_id)
+      console.log(collection, key, value, e.detail.value, user_id);
       await updateObjectAdmin(user_id, collection, key, value, e.detail.value);
 
       // ArtworksStore.updatePublicRead(row, publicRead);

@@ -1,45 +1,33 @@
 <script>
   import { Modal, Dialog, Button } from 'attractions';
   import { ArtworksStore } from '../../storage';
-  import {convertImage} from '../../api'
+  import { convertImage } from '../../api';
+  import { STOPMOTION_BASE_SIZE } from '../../constants';
 
-
+  export let col;
   export let row;
-  //const role = $Profile.meta.Role; // ;
-  let name = `${row.username}_${row.update_time}_${row.key}_${row.value.displayname}.png`
-  let image = ''
-  let link
+  // const role = $Profile.meta.Role; // ;
+  const name = `${row.username}_${row.update_time}_${row.key}_${row.value.displayname}`;
+  const image = `${window.location.origin}/proxy/${row.value.url}`;
 
-  async function download() {
-    await convertImage(row.value.url)
-    .then((url)=>{
-      var link = document.createElement('a');
-      link.href = url;
-      link.download = name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
-}
-
-
-  //userName_creationDateFormatted_artworkKey_displayName.png
 </script>
 
 <main>
-    <button class="clear-button-styles" on:click={download}> 
+  <a download={name} href={image}>
+    <button class="clear-button-styles">
         <img
           class="download"
           src="/assets/SHB/svg/AW-icon-save.svg"
           alt="Put item in trash can"
         />
       </button>
-  
+  </a>
   </main>
 
 <style>
-  .trash {
-    width: 40px;
+  img.download {
+    width: 42px;
     cursor: pointer;
   }
+
 </style>
