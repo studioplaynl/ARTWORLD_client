@@ -1,6 +1,8 @@
 <script>
   import { Switch, Button } from 'attractions';
   import { onMount } from 'svelte';
+  import { location } from 'svelte-spa-router';
+
   import { updateObjectAdmin } from '../../api';
   import {
     PERMISSION_READ_PUBLIC,
@@ -39,7 +41,7 @@
   };
 
   function restore() {
-    if (role === 'admin' || role === 'moderator') {
+    if ((role === 'admin' || role === 'moderator') && $location === '/moderator') {
       console.log('admin');
       moveToArt(row);
     } else {

@@ -1,5 +1,6 @@
 <script>
   import { Modal, Dialog, Button } from 'attractions';
+  import { location } from 'svelte-spa-router';
   import { ArtworksStore } from '../../storage';
   import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
@@ -14,16 +15,19 @@
   let modalOpen = false;
 
   const Trash = () => {
-    if (role === 'admin' || role === 'moderator') {
+    console.log('location', $location);
+    if ((role === 'admin' || role === 'moderator') && $location === '/moderator') {
       moveToTrash(row);
     } else {
+      console.log('before');
       ArtworksStore.updateState(row, OBJECT_STATE_IN_TRASH);
+      console.log('after');
     }
   };
 
   const Delete = () => {
     modalOpen = false;
-    if (role === 'admin' || role === 'moderator') {
+    if ((role === 'admin' || role === 'moderator') && $location === '/moderator') {
       removeFromTrash(row);
     } else {
       ArtworksStore.delete(row, role);
