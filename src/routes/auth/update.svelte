@@ -19,6 +19,7 @@
     resetPasswordAdmin,
   } from '../../api';
   import { dlog } from '../game/helpers/DebugLog';
+  import { SCENE_INFO } from '../../constants';
 
   export let params = {};
 
@@ -27,7 +28,7 @@
   let password = 'somesupersecretpassword';
   let passwordCheck = 'somesupersecretpassword';
   let role = 'speler';
-  let azc = 'Amsterdam';
+  let azc = 'GreenSquare';
   let id = '';
   let meta = {};
 
@@ -67,34 +68,7 @@
     }
   });
 
-  const Locaties = [
-    'Amersfoort',
-    'Almelo',
-    'Almere',
-    'Amsterdam',
-    'Apeldoorn',
-    'Arnhem-Zuid',
-    'Baexem',
-    'Budel-Cranendonck',
-    'Burgum',
-    'Delfzijl',
-    'Den Helde',
-    'Drachten',
-    'Emmen',
-    'Gilze en Rijen',
-    'Grave',
-    'Heerhugowaard',
-    'Heerlen',
-    'Katwijk',
-    'Leersum',
-    'Luttelgeest',
-    'Middelburg',
-    'Oisterwijk',
-    'Overloon',
-    'Rijswijk',
-    'Ter Apel',
-    'Utrecht',
-  ];
+const Locaties = SCENE_INFO.map((i) => i.scene);
 
   async function update() {
     // get metadata
@@ -103,7 +77,7 @@
       meta.Azc = azc;
       meta.Role = role;
     }
-    dlog(meta);
+    dlog('meta', meta);
     await setFullAccount(id, username, password, email, meta);
   }
 
@@ -129,8 +103,8 @@
       whereList = otherWhere;
     }
     const limit = 100;
-    let objects = await listObjects(whereList, id, limit);
-    locationsList = objects.objects
+    const objects = await listObjects(whereList, id, limit);
+    locationsList = objects.objects;
     dlog(locationsList);
   }
 

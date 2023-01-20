@@ -6,6 +6,8 @@
   import {
     STOPMOTION_MAX_FRAMES,
     DEFAULT_PREVIEW_HEIGHT,
+    STOCK_HOUSES,
+    STOCK_AVATARS,
   } from '../../constants';
   import Stopmotion from './stopmotion.svelte';
   import {
@@ -15,6 +17,7 @@
     convertImage,
   } from '../../api';
 
+
   let objects = [];
   export let dataType = '';
 
@@ -22,29 +25,9 @@
 
   let stockItems = [];
 
-  const houses = [
-    'portalBlauw.png',
-    'portalDonkerBlauw.png',
-    'portalGeel.png',
-    'portalGifGroen.png',
-    'portalGroen.png',
-    'portalRood.png',
-    'portalRoze.png',
-    'portalZwart.png',
-  ];
-
-  const avatars = [
-    'avatarBlauw.png',
-    'avatarGeel.png',
-    'avatarGroen.png',
-    'avatarPaars.png',
-    'avatarRood.png',
-    'avatarRoze.png',
-  ];
-
   onMount(async () => {
-    if (dataType === 'house') stockItems = houses;
-    else if (dataType === 'avatar') stockItems = avatars;
+    if (dataType === 'house') stockItems = STOCK_HOUSES;
+    else if (dataType === 'avatar') stockItems = STOCK_AVATARS;
 
     getImages();
 
