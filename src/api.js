@@ -257,14 +257,15 @@ export async function updateObject(type, name, value, pub, userID) {
   return '';
 }
 
-export async function listObjects(type, userID, lim) {
+export async function listObjects(type, userID, lim, curs) {
   const session = get(Session);
   const limit = lim || 100;
+  const cursor = curs || null;
   // TODO: Figure out why pagination does not work (cors issue?)
   // const offset = page * limit || null;
-  const objects = await client.listStorageObjects(session, type, userID, limit); // , offset);
+  const objects = await client.listStorageObjects(session, type, userID, limit, cursor); // , offset);
   // dlog('listObjects result: ', objects);
-  return objects.objects;
+  return objects;
 }
 
 export async function getObject(collection, key, userID) {
@@ -283,8 +284,8 @@ export async function getObject(collection, key, userID) {
   return objects.objects[0];
 }
 
-export async function listAllObjects(type, id) {
-  const payload = { type, id };
+export async function listAllObjects(type, id, limit, cursor) {
+  const payload = { type, id, limit, cursor };
   const rpcid = 'list_all_storage_object';
   const session = get(Session);
   const objects = await client.rpc(session, rpcid, payload);
