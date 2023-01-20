@@ -58,7 +58,7 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
     const tempX = Phaser.Math.Between((this.artSize * 2), scene.worldSize.x - (this.artSize * 2));
     const tempY = Phaser.Math.Between((this.artSize * 2), scene.worldSize.y - (this.artSize * 2));
 
-    dlog('tempX, tempY', tempX, tempY);
+    // dlog('tempX, tempY', tempX, tempY);
     this.animal = scene.physics.add.sprite(tempX, tempY, 'avatar1');
 
     this.animal.setData('moveAnim', `moving_${avatarKey}`);

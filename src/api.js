@@ -167,7 +167,7 @@ export function getDateAndTimeFormatted() {
 export async function uploadHouse(data) {
   const type = 'home';
   const profile = get(Profile);
-  const name = profile.meta.Azc || 'Amsterdam';
+  const name = profile.meta.Azc || 'GreenSquare';
   const object = await getObject(type, name);
 
   // eslint-disable-next-line prefer-const
@@ -283,8 +283,10 @@ export async function getObject(collection, key, userID) {
   return objects.objects[0];
 }
 
-export async function listAllObjects(type, id) {
-  const payload = { type, id };
+export async function listAllObjects(type, id, limit, cursor) {
+  const payload = {
+    type, id, limit, cursor,
+  };
   const rpcid = 'list_all_storage_object';
   const session = get(Session);
   const objects = await client.rpc(session, rpcid, payload);
@@ -293,7 +295,6 @@ export async function listAllObjects(type, id) {
   // });
   return objects.payload;
 }
-
 export async function getAccount(id) {
   const session = get(Session);
   let user;
@@ -332,7 +333,6 @@ export async function getAccount(id) {
   return user;
 }
 
-// TODO: hier verder
 export async function getFullAccount(id) {
   const rpcid = 'get_full_account';
   const session = get(Session);
