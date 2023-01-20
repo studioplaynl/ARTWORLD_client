@@ -257,14 +257,15 @@ export async function updateObject(type, name, value, pub, userID) {
   return '';
 }
 
-export async function listObjects(type, userID, lim) {
+export async function listObjects(type, userID, lim, curs) {
   const session = get(Session);
   const limit = lim || 100;
+  const cursor = curs || null;
   // TODO: Figure out why pagination does not work (cors issue?)
   // const offset = page * limit || null;
-  const objects = await client.listStorageObjects(session, type, userID, limit); // , offset);
+  const objects = await client.listStorageObjects(session, type, userID, limit, cursor); // , offset);
   // dlog('listObjects result: ', objects);
-  return objects.objects;
+  return objects;
 }
 
 export async function getObject(collection, key, userID) {

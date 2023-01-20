@@ -159,7 +159,7 @@ class DebugFuntions {
           listObjects('liked', userProfile.id, 10),
         ])
           .then((rec) => {
-            dlog('liked query', rec[0]);
+            dlog('liked query', rec.objects[0]);
           });
         // ManageSession.getStreamUsers("get_users", scene.location)
         // listObjects("addressbook", userProfile.id, 10)
@@ -168,7 +168,7 @@ class DebugFuntions {
           listObjects('addressbook', userProfile.id, 10),
         ])
           .then((rec) => {
-            dlog('addressbook query', rec[0]);
+            dlog('addressbook query', rec.objects[0]);
           });
         break;
 

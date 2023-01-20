@@ -2,6 +2,10 @@
   import { _ } from 'svelte-i18n';
   import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';
+  import Select from 'svelte-select';
+  import {
+    PERMISSION_READ_PUBLIC,
+  } from '../../constants';
   import {
     getAccount,
     convertImage,
@@ -9,11 +13,19 @@
     deleteObjectAdmin,
     updateObjectAdmin,
   } from '../../api';
+ // import { APPS } from '../apps/apps'
   import { Session, Profile } from '../../session';
   import StatusComp from '../components/statusbox.svelte';
   import DeleteComp from '../components/deleteButton.svelte';
+  import DownloadComp from '../components/downloadButton.svelte';
   import NameEdit from '../components/nameEdit.svelte';
-  import { runInNewContext } from 'vm';
+
+  const APPS = ['drawing', 'stopmotion', 'avatar', 'house'];
+  let SelectedApp = 'drawing';
+  let cursor;
+  let history = [];
+  const limit = 50;
+
 
   let useraccount;
   const drawingIcon =
@@ -26,7 +38,7 @@
     '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
   console.log($Session);
   let user = '',
-    role = '',
+    role = 'admin',
     avatar_url = '',
     house_url = '',
     azc = '',
@@ -38,7 +50,8 @@
     audio = [],
     trash = [],
     picture = [],
-    CurrentUser;
+    CurrentUser,
+    backActive;
 
   const columns = [
     {
@@ -80,7 +93,8 @@
         return `${d.getHours()}:${
           d.getMinutes() < 10 ? '0' : ''
         }${d.getMinutes()} ${d.getDate() < 10 ? '0' : ''}${d.getDate()}/${
-          d.getMonth() + 1
+          d.getMonth() + 1}/${
+          d.getFullYear()
         }`;
       },
       sortable: true,
@@ -101,18 +115,27 @@
       },
     },
     {
+      key: 'Download',
+      title: 'Download',
+      renderComponent: {
+        component: DownloadComp,
+      },
+    },
+    {
       key: 'Delete',
       title: 'Delete',
       renderComponent: {
         component: DeleteComp,
-        props: { removeFromTrash, moveToTrash, isCurrentUser, role },
+        props: {
+          removeFromTrash, moveToTrash, isCurrentUser,
+        },
       },
     },
   ];
 
   function removeFromTrash(row) {
     deleteObjectAdmin(row.user_id, row.collection, row.key);
-    const key = row.key;
+    const { key } = row;
 
     for (let i = 0; i < trash.length; i++) {
       if (!!trash[i] && trash[i].key === key) {
@@ -124,8 +147,8 @@
   }
 
   function moveToTrash(row) {
-    const key = row.key;
-    const value = row.value;
+    const { key } = row;
+    const { value } = row;
     value.status = 'trash';
     updateObjectAdmin(
       row.user_id,
@@ -139,7 +162,7 @@
       if (!!art[i] && art[i].key === key) {
         console.log(art[i]);
         trash.push(art[i]);
-        delete art[i];
+        art.splice(i, 1);
         i = art.length;
         trash = trash;
         art = art;
@@ -148,8 +171,8 @@
   }
 
   function moveToArt(row) {
-    const key = row.key;
-    const value = row.value;
+    const { key } = row;
+    const { value } = row;
     value.status = '';
     updateObjectAdmin(
       row.user_id,
@@ -173,52 +196,93 @@
     return CurrentUser;
   }
 
-  async function getArt() {
-    drawings = await listAllObjects('drawing');
-    video = await listAllObjects('video');
-    audio = await listAllObjects('audio');
-    stopMotion = await listAllObjects('stopmotion');
-    picture = await listAllObjects('picture');
-    console.log(drawings);
-    // useraccount = await getAccount(id);
-    // console.log(useraccount);
-    // user = useraccount.username;
-    //role = useraccount.meta.Role;
-    // azc = useraccount.meta.Azc;
-    // avatar_url = useraccount.url;
+  async function getArt(move) {
+    art = [];
+    trash = [];
+    if (move == 'back') {
+      history.pop();
+      cursor = history[history.length - 1];
+    }
 
-    art = [].concat(drawings);
-    art = art.concat(stopMotion);
-    art = art.concat(video);
-    art = art.concat(audio);
-    art = art.concat(picture);
-    art.forEach(async (item, index) => {
-      if (item.value.status === 'trash') {
-        trash.push(item);
-        delete art[index];
+    //  let objects = await listObjects(SelectedApp, null, limit, cursor)
+    const objects = await listAllObjects(SelectedApp, undefined, limit, cursor);
+
+    if (move == 'next') {
+      if (objects.length >= limit - 1) {
+        cursor = objects[limit - 1].update_time;
+        history.push(cursor);
+      } else {
+        cursor = undefined;
       }
+    }
+    console.log(history);
+
+    objects.forEach(async (item, index) => {
       if (item.value.json) item.url = item.value.json.split('.')[0];
       if (item.value.url) item.url = item.value.url.split('.')[0];
+      item.permission_read = item.permission_read === PERMISSION_READ_PUBLIC;
       item.value.previewUrl = await convertImage(item.value.url, '64', '64');
-      art = art;
-    });
 
-    trash = trash;
+      if (item.value.status === 'trash') {
+        trash = [...trash, item];
+      } else {
+        art = [...art, item];
+      }
+    });
+    console.log('hist', history.length);
+    backActive = history.length <= 1;
   }
-  const promise = getArt();
+  const promise = getArt('next');
+
+  function handeChange(e) {
+    console.log(e);
+    SelectedApp = e;
+    history = [];
+    getArt('next');
+  }
 </script>
 
 <div class="box">
   <h1>kunstwerken</h1>
+  <div class="buttonbox">
+    <button class:unactive="{backActive}" on:click="{() => { if (history.length > 1) getArt('back'); }}">&lt;</button>
+    <button class:unactive="{SelectedApp !== 'drawing'}" on:click="{() => { handeChange('drawing'); }}">Drawing</button>
+    <button class:unactive="{SelectedApp !== 'stopmotion'}" on:click="{() => { handeChange('stopmotion'); }}">stopmotion</button>
+    <button class:unactive="{SelectedApp !== 'avatar'}" on:click="{() => { handeChange('avatar'); }}">Avatar</button>
+    <button class:unactive="{SelectedApp !== 'house'}" on:click="{() => { handeChange('house'); }}">House</button>
+
+    <button class:unactive="{cursor == undefined}" on:click="{() => { if (cursor != undefined) getArt('next'); }}">&gt;</button>
+
+  </div>
   <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable" />
   {#if CurrentUser || $Profile.meta.Role == 'moderator' || $Profile.meta.Role == 'admin'}
-    <h1>Prullenmand</h1>
+  <div class="buttonbox">
+    <button class:unactive="{backActive}" on:click="{() => { if (history.length > 1) getArt('back'); }}">&lt;</button>
+    <button class:unactive="{SelectedApp !== 'drawing'}" on:click="{() => { handeChange('drawing'); }}">Drawing</button>
+    <button class:unactive="{SelectedApp !== 'stopmotion'}" on:click="{() => { handeChange('stopmotion'); }}">stopmotion</button>
+    <button class:unactive="{SelectedApp !== 'avatar'}" on:click="{() => { handeChange('avatar'); }}">Avatar</button>
+    <button class:unactive="{SelectedApp !== 'house'}" on:click="{() => { handeChange('house'); }}">House</button>
+
+    <button class:unactive="{cursor == undefined}" on:click="{() => { if (cursor != undefined) getArt('next'); }}">&gt;</button>
+
+  </div>
+  <h1>Prullenmand</h1>
     <SvelteTable
       columns="{columns}"
       rows="{trash}"
       classNameTable="profileTable"
     />
   {/if}
+  <div class="buttonbox">
+    <button class:unactive="{backActive}" on:click="{() => { if (history.length > 1) getArt('back'); }}">&lt;</button>
+    <button class:unactive="{SelectedApp !== 'drawing'}" on:click="{() => { handeChange('drawing'); }}">Drawing</button>
+    <button class:unactive="{SelectedApp !== 'stopmotion'}" on:click="{() => { handeChange('stopmotion'); }}">stopmotion</button>
+    <button class:unactive="{SelectedApp !== 'avatar'}" on:click="{() => { handeChange('avatar'); }}">Avatar</button>
+    <button class:unactive="{SelectedApp !== 'house'}" on:click="{() => { handeChange('house'); }}">House</button>
+
+    <button class:unactive="{cursor == undefined}" on:click="{() => { if (cursor != undefined) getArt('next'); }}">&gt;</button>
+
+  </div>
   <div
     class="app-close"
     on:click="{() => {
@@ -254,4 +318,14 @@
       bottom: 120px;
     }
   }
+
+.buttonbox {
+    display: flex;
+    flex-direction: row;
+}
+
+button.unactive {
+    background-color: grey;
+}
+
 </style>

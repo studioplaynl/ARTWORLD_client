@@ -1,9 +1,11 @@
 <script>
   import { Modal, Dialog, Button } from 'attractions';
+  import { location } from 'svelte-spa-router';
   import { ArtworksStore } from '../../storage';
   import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
 
+  export let col;
   export let row;
   const role = $Profile.meta.Role; // ;
   export let isCurrentUser;
@@ -13,25 +15,28 @@
   let modalOpen = false;
 
   const Trash = () => {
-    if (role === 'admin' || role === 'moderator') {
+    console.log('location', $location);
+    if ((role === 'admin' || role === 'moderator') && $location === '/moderator') {
       moveToTrash(row);
     } else {
+      console.log('before');
       ArtworksStore.updateState(row, OBJECT_STATE_IN_TRASH);
+      console.log('after');
     }
   };
 
   const Delete = () => {
     modalOpen = false;
-    if (role === 'admin' || role === 'moderator') {
+    if ((role === 'admin' || role === 'moderator') && $location === '/moderator') {
       removeFromTrash(row);
     } else {
-      ArtworksStore.delete(row, $Profile.meta.Role);
+      ArtworksStore.delete(row, role);
     }
   };
 </script>
 
 <main>
-  {#if isCurrentUser() || $Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator'}
+  {#if isCurrentUser() || role === 'admin' || role === 'moderator'}
     {#if row.value.status !== OBJECT_STATE_IN_TRASH}
       <button class="clear-button-styles" on:click="{Trash}">
         <img

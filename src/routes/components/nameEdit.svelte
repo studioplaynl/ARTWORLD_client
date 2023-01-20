@@ -7,6 +7,7 @@
   import { Profile } from '../../session';
   import { clickOutside } from '../game/helpers/ClickOutside';
 
+  export let col;
   export let row;
   export let isCurrentUser;
 
