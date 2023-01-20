@@ -38,7 +38,7 @@
     '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
   console.log($Session);
   let user = '',
-    role = '',
+    role = 'admin',
     avatar_url = '',
     house_url = '',
     azc = '',
@@ -50,7 +50,8 @@
     audio = [],
     trash = [],
     picture = [],
-    CurrentUser;
+    CurrentUser,
+    backActive;
 
   const columns = [
     {
@@ -126,7 +127,7 @@
       renderComponent: {
         component: DeleteComp,
         props: {
-          removeFromTrash, moveToTrash, isCurrentUser, role,
+          removeFromTrash, moveToTrash, isCurrentUser,
         },
       },
     },
@@ -201,20 +202,20 @@
     if (move == 'back') {
       history.pop();
       cursor = history[history.length - 1];
-    } else {
-      history.push(cursor);
     }
+
     //  let objects = await listObjects(SelectedApp, null, limit, cursor)
     const objects = await listAllObjects(SelectedApp, undefined, limit, cursor);
 
     if (move == 'next') {
-      if (typeof objects[limit - 1] !== 'undefined') {
+      if (objects.length >= limit - 1) {
         cursor = objects[limit - 1].update_time;
+        history.push(cursor);
       } else {
         cursor = undefined;
       }
     }
-
+    console.log(history);
 
     objects.forEach(async (item, index) => {
       if (item.value.json) item.url = item.value.json.split('.')[0];
@@ -228,6 +229,8 @@
         art = [...art, item];
       }
     });
+    console.log('hist', history.length);
+    backActive = history.length <= 1;
   }
   const promise = getArt('next');
 
@@ -242,21 +245,27 @@
 <div class="box">
   <h1>kunstwerken</h1>
   <div class="buttonbox">
-    <button on:click="{() => { getArt('back'); }}">&lt;</button>
-    <button class:unactive="{SelectedApp != 'drawing'}" on:click="{() => { handeChange('drawing'); }}">Drawing</button>
-    <button class:unactive="{SelectedApp != 'stopmotion'}" on:click="{() => { handeChange('stopmotion'); }}">stopmotion</button>
-    <button class:unactive="{SelectedApp != 'avatar'}" on:click="{() => { handeChange('avatar'); }}">Avatar</button>
-    <button class:unactive="{SelectedApp != 'house'}" on:click="{() => { handeChange('house'); }}">House</button>
-    {#if typeof cursor !== 'undefined'}
-      <button on:click="{() => { getArt('next'); }}">&gt;</button>
-    {/if}
+    <button class:unactive="{backActive}" on:click="{() => { if (history.length > 1) getArt('back'); }}">&lt;</button>
+    <button class:unactive="{SelectedApp !== 'drawing'}" on:click="{() => { handeChange('drawing'); }}">Drawing</button>
+    <button class:unactive="{SelectedApp !== 'stopmotion'}" on:click="{() => { handeChange('stopmotion'); }}">stopmotion</button>
+    <button class:unactive="{SelectedApp !== 'avatar'}" on:click="{() => { handeChange('avatar'); }}">Avatar</button>
+    <button class:unactive="{SelectedApp !== 'house'}" on:click="{() => { handeChange('house'); }}">House</button>
+
+    <button class:unactive="{cursor == undefined}" on:click="{() => { if (cursor != undefined) getArt('next'); }}">&gt;</button>
+
   </div>
   <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable" />
   {#if CurrentUser || $Profile.meta.Role == 'moderator' || $Profile.meta.Role == 'admin'}
-  {#if typeof cursor !== 'undefined'}
-    <button class="next-button" on:click="{() => { getArt('next'); }}">&gt;</button>
-  {/if}
-  <button class="back-button" on:click="{() => { getArt('back'); }}">&lt;</button>
+  <div class="buttonbox">
+    <button class:unactive="{backActive}" on:click="{() => { if (history.length > 1) getArt('back'); }}">&lt;</button>
+    <button class:unactive="{SelectedApp !== 'drawing'}" on:click="{() => { handeChange('drawing'); }}">Drawing</button>
+    <button class:unactive="{SelectedApp !== 'stopmotion'}" on:click="{() => { handeChange('stopmotion'); }}">stopmotion</button>
+    <button class:unactive="{SelectedApp !== 'avatar'}" on:click="{() => { handeChange('avatar'); }}">Avatar</button>
+    <button class:unactive="{SelectedApp !== 'house'}" on:click="{() => { handeChange('house'); }}">House</button>
+
+    <button class:unactive="{cursor == undefined}" on:click="{() => { if (cursor != undefined) getArt('next'); }}">&gt;</button>
+
+  </div>
   <h1>Prullenmand</h1>
     <SvelteTable
       columns="{columns}"
@@ -264,10 +273,16 @@
       classNameTable="profileTable"
     />
   {/if}
-  <button class="back-button" on:click="{() => { getArt('back'); }}">&lt;</button>
-  {#if typeof cursor !== 'undefined'}
-    <button class="next-button" on:click="{() => { getArt('next'); }}">&gt;</button>
-  {/if}
+  <div class="buttonbox">
+    <button class:unactive="{backActive}" on:click="{() => { if (history.length > 1) getArt('back'); }}">&lt;</button>
+    <button class:unactive="{SelectedApp !== 'drawing'}" on:click="{() => { handeChange('drawing'); }}">Drawing</button>
+    <button class:unactive="{SelectedApp !== 'stopmotion'}" on:click="{() => { handeChange('stopmotion'); }}">stopmotion</button>
+    <button class:unactive="{SelectedApp !== 'avatar'}" on:click="{() => { handeChange('avatar'); }}">Avatar</button>
+    <button class:unactive="{SelectedApp !== 'house'}" on:click="{() => { handeChange('house'); }}">House</button>
+
+    <button class:unactive="{cursor == undefined}" on:click="{() => { if (cursor != undefined) getArt('next'); }}">&gt;</button>
+
+  </div>
   <div
     class="app-close"
     on:click="{() => {
