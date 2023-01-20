@@ -1,8 +1,6 @@
 import { get } from 'svelte/store';
+
 import ManageSession from '../ManageSession';
-import {
-  convertImage, listAllObjects,
-} from '../../../api';
 
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
@@ -10,13 +8,12 @@ import Player from '../class/Player';
 import Preloader from '../class/Preloader';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import GenerateLocation from '../class/GenerateLocation';
 import SceneSwitcher from '../class/SceneSwitcher';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
-import { dlog } from '../helpers/DebugLog';
+// import { dlog } from '../helpers/DebugLog';
 
 const { Phaser } = window;
 
@@ -78,27 +75,11 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       artworldToPhaser2DX, artworldToPhaser2DY,
     } = CoordinatesTranslator;
 
-    // collection: "home"
-    // create_time: "2022-01-19T16:31:43Z"
-    // key: "Amsterdam"
-    // permission_read: 2
-    // permission_write: 1
-    // update_time: "2022-01-19T16:32:27Z"
-    // user_id: "4c0003f0-3e3f-4b49-8aad-10db98f2d3dc"
-    // value:
-    // url: "home/4c0003f0-3e3f-4b49-8aad-10db98f2d3dc/3_current.png"
-    // username: "user88"
-    // version: "0579e989a16f3e228a10d49d13dc3da6"
-
-    // the order of creation is the order of drawing: first = bottom ...............................
-
     Background.standardWithDots(this);
 
     handlePlayerMovement(this);
 
     this.everythingFlowerFlied();
-
-    // about drag an drop multiple  objects efficiently https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson
     // End Background .........................................................................................
 
     // .......  PLAYER ....................................................................................
@@ -255,9 +236,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       return;
     }
     this.flowerFliedStartMaking = false;
-    dlog('makeFlowerFlied this.flowerKeyArray', this.flowerKeyArray);
-    // empty the array; start with empty field
-    // if (this.flowerArray.length > 0) {
+    // dlog('makeFlowerFlied this.flowerKeyArray', this.flowerKeyArray);
+
     // first remove the tween, after destoy the old flower gameobject
     this.flowerTweenArray.forEach((element) => {
       element.stop();
@@ -269,11 +249,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       element.destroy();
     });
     this.flowerArray.length = 0;
-
-    // console.log("this.flowerArray.length", this.flowerArray.length)
-    // console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
-
-    // console.log("makeFlowerFlied this.flowerArray, this.flowerTweenArray", this.flowerArray, this.flowerTweenArray)
 
     this.flowerAmountOfOverlapX = 0.2;
     this.flowerAmountOfOverlapY = 0.6;
@@ -314,9 +289,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     flowerRowY += this.flowerSize;
     this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
     this.makeFlowerRow(flowerRowY);
-
-    // console.log("this.flowerArray.length", this.flowerArray.length)
-    // console.log("this.flowerTweenArray.length", this.flowerTweenArray.length)
   }
 
   update() {

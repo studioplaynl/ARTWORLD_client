@@ -154,7 +154,7 @@
       try {
         house = await getObject(
           'home',
-          $Profile.meta.Azc || 'Amsterdam',
+          $Profile.meta.Azc || 'GreenSquare',
           $Profile.user_id,
         );
       } catch (err) {

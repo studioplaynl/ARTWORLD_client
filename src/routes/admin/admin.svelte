@@ -5,7 +5,7 @@
   import SvelteTable from 'svelte-table';
   import { ListAllUsers } from '../../api';
   import { dlog } from '../game/helpers/DebugLog';
-
+  import { SCENE_INFO } from '../../constants';
 
 
   // const groups = [];
@@ -29,34 +29,7 @@
   // edit user
   // create user
 
-  const Locaties = [
-    'Amersfoort',
-    'Almelo',
-    'Almere',
-    'Amsterdam',
-    'Apeldoorn',
-    'Arnhem-Zuid',
-    'Baexem',
-    'Budel-Cranendonck',
-    'Burgum',
-    'Delfzijl',
-    'Den Helde',
-    'Drachten',
-    'Emmen',
-    'Gilze en Rijen',
-    'Grave',
-    'Heerhugowaard',
-    'Heerlen',
-    'Katwijk',
-    'Leersum',
-    'Luttelgeest',
-    'Middelburg',
-    'Oisterwijk',
-    'Overloon',
-    'Rijswijk',
-    'Ter Apel',
-    'Utrecht',
-  ];
+  const Locaties = SCENE_INFO.map((i) => i.scene);
   const roles = ['admin', 'speler', 'kunstenaar', 'moderator'];
   // const groupColumns = [];
   const userColumns = [

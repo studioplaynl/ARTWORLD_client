@@ -8,6 +8,7 @@
   // import { client } from '../../nakama.svelte';
   // import { dlog } from '../game/helpers/DebugLog';
   import { createAccountAdmin } from '../../api';
+  import { SCENE_INFO, STOCK_HOUSES, STOCK_AVATARS } from '../../constants';
 
   let QRUrl;
   let email = '@vrolijkheid.nl';
@@ -21,40 +22,11 @@
     updateQrCanvas();
   });
 
+const Locaties = SCENE_INFO.map((i) => i.scene);
 
-const Locaties = [
-  'GreenSquare',
-  'RedStar',
-  'TurquioseTriangle',
-  'YellowDiamond',
-  'BlueSail',
-  'RobotWorld',
-  'FireWorld',
-];
+  let house = STOCK_HOUSES[Math.floor(STOCK_HOUSES.length * Math.random())];
 
-  const houses = [
-    'portalBlauw.png',
-    'portalDonkerBlauw.png',
-    'portalGeel.png',
-    'portalGifGroen.png',
-    'portalGroen.png',
-    'portalRood.png',
-    'portalRoze.png',
-    'portalZwart.png',
-  ];
-
-  let house = houses[Math.floor(houses.length * Math.random())];
-
-  const avatars = [
-    'avatarBlauw.png',
-    'avatarGeel.png',
-    'avatarGroen.png',
-    'avatarPaars.png',
-    'avatarRood.png',
-    'avatarRoze.png',
-  ];
-
-  let avatar = avatars[Math.floor(avatars.length * Math.random())];
+  let avatar = STOCK_AVATARS[Math.floor(STOCK_AVATARS.length * Math.random())];
 
   async function register() {
     const data = {
@@ -166,8 +138,8 @@ function downloadLoginImage() {
             email = `${username}@vrolijkheid.nl`;
             genKidsPassword();
             updateQrCanvas();
-            house = houses[Math.floor(houses.length * Math.random())];
-            avatar = avatars[Math.floor(avatars.length * Math.random())];
+            house = STOCK_HOUSES[Math.floor(STOCK_HOUSES.length * Math.random())];
+            avatar = STOCK_AVATARS[Math.floor(STOCK_AVATARS.length * Math.random())];
           }}"
           required
         />

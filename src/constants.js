@@ -78,6 +78,26 @@ export const SCENE_INFO = [
   },
 ];
 
+export const STOCK_HOUSES = [
+  'portalBlauw.png',
+  'portalDonkerBlauw.png',
+  'portalGeel.png',
+  'portalGifGroen.png',
+  'portalGroen.png',
+  'portalRood.png',
+  'portalRoze.png',
+  'portalZwart.png',
+];
+
+export const STOCK_AVATARS = [
+  'avatarBlauw.png',
+  'avatarGeel.png',
+  'avatarGroen.png',
+  'avatarPaars.png',
+  'avatarRood.png',
+  'avatarRoze.png',
+];
+
 export const DEFAULT_SCENE = 'Artworld';
 export const DEFAULT_HOME = 'DefaultUserHome';
 export const DEFAULT_ZOOM = 0.8;

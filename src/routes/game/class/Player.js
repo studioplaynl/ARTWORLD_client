@@ -47,7 +47,7 @@ class Player {
     // url: "https://..."
     // username: "user11"
     // metadata:
-    //        azc: "Amsterdam"
+    //        azc: "GreenSquare"
     //        location: "5264dc23-a339-40db-bb84-e0849ded4e68"
     //        posX: -2483
     //        posY: 0
