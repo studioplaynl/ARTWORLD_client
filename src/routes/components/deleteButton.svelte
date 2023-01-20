@@ -1,13 +1,12 @@
 <script>
   import { Modal, Dialog, Button } from 'attractions';
   import { ArtworksStore } from '../../storage';
-  // import { Profile } from '../../session';
+  import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
 
-  export let row;
   export let col;
-  export let role;
-  // const role = $Profile.meta.Role; // ;
+  export let row;
+  const role = $Profile.meta.Role; // ;
   export let isCurrentUser;
   export let removeFromTrash;
   export let moveToTrash;
