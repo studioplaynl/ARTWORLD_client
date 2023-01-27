@@ -50,19 +50,19 @@
     {
       key: 'Locatie',
       title: 'Huis locatie',
-      value: (v) => v.meta.azc,
+      value: (v) => v.meta.Azc,
       sortable: true,
       filterOptions: Locaties,
     },
     {
       key: 'Last location',
       title: 'Laatste locatie',
-      value: (v) => v.meta.location,
+      value: (v) => v.meta.Location,
     },
     {
       key: 'rol',
       title: 'Rol',
-      value: (v) => v.meta.role,
+      value: (v) => v.meta.Role,
       filterOptions: roles,
     },
     {
