@@ -38,8 +38,9 @@
   });
 
   async function getImages() {
-    objects = await listObjects(dataType, $Profile.id, 100);
-    console.log(objects);
+    const files = await listObjects(dataType, $Profile.id, 100);
+    objects = files.objects;
+    console.log('objects', objects);
 
     for (let index = 0; index < objects.length; index++) {
       if (typeof objects[index].value.previewUrl !== 'string') {

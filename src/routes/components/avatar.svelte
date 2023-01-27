@@ -92,6 +92,7 @@
 <style>
   .icon {
     max-width: 50px;
+    width: 50px;
     margin: 10px;
     cursor: pointer;
   }
