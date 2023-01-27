@@ -145,118 +145,118 @@ export default class RedStar extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(403, 327);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    // locationVector = new Phaser.Math.Vector2(403, 327);
+    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+    //   this.worldSize,
+    //   locationVector,
+    // );
 
-    // green_square world for homes
-    //
-    Background.triangle({
-      scene: this,
-      name: 'turquoise_triangle_location_image',
-      // setOrigin: 0,
-      posX: locationVector.x,
-      posY: locationVector.y,
-      gradient1: 0x40E0D0,
-      gradient2: 0x40E0D0,
-      gradient3: 0x39C9BB,
-      gradient4: 0x39C9BB,
-      alpha: 1,
-      size: 200,
-      imageOnly: true,
-    });
+    // // green_square world for homes
+    // //
+    // Background.triangle({
+    //   scene: this,
+    //   name: 'turquoise_triangle_location_image',
+    //   // setOrigin: 0,
+    //   posX: locationVector.x,
+    //   posY: locationVector.y,
+    //   gradient1: 0x40E0D0,
+    //   gradient2: 0x40E0D0,
+    //   gradient3: 0x39C9BB,
+    //   gradient4: 0x39C9BB,
+    //   alpha: 1,
+    //   size: 200,
+    //   imageOnly: true,
+    // });
 
-    this.turquoiseTriangle = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'TurquoiseTriangle',
-      locationImage: 'turquoise_triangle_location_image',
-      enterButtonImage: 'enter_button',
-      locationText: 'Turquoise Driehoek Wereld',
-      referenceName: 'this.turquoiseTriangle',
-      fontColor: 0x8dcb0e,
-    });
+    // this.turquoiseTriangle = new GenerateLocation({
+    //   scene: this,
+    //   type: 'image',
+    //   draggable: ManageSession.gameEditMode,
+    //   x: locationVector.x,
+    //   y: locationVector.y,
+    //   locationDestination: 'TurquoiseTriangle',
+    //   locationImage: 'turquoise_triangle_location_image',
+    //   enterButtonImage: 'enter_button',
+    //   locationText: 'Turquoise Driehoek Wereld',
+    //   referenceName: 'this.turquoiseTriangle',
+    //   fontColor: 0x8dcb0e,
+    // });
 
-    locationVector = new Phaser.Math.Vector2(-400, -400);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    // locationVector = new Phaser.Math.Vector2(-400, -400);
+    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+    //   this.worldSize,
+    //   locationVector,
+    // );
 
-    Background.rectangle({
-      scene: this,
-      name: 'green_square_location_image',
-      // posX: 0,
-      // posY: 0,
-      // setOrigin: 0,
-      gradient1: 0x15d64a,
-      gradient2: 0x15d64a,
-      gradient3: 0x2b8042,
-      gradient4: 0x2b8042,
-      alpha: 1,
-      width: 140,
-      height: 140,
-      imageOnly: true,
-    });
+    // Background.rectangle({
+    //   scene: this,
+    //   name: 'green_square_location_image',
+    //   // posX: 0,
+    //   // posY: 0,
+    //   // setOrigin: 0,
+    //   gradient1: 0x15d64a,
+    //   gradient2: 0x15d64a,
+    //   gradient3: 0x2b8042,
+    //   gradient4: 0x2b8042,
+    //   alpha: 1,
+    //   width: 140,
+    //   height: 140,
+    //   imageOnly: true,
+    // });
 
-    this.greenSquareLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'GreenSquare',
-      locationImage: 'green_square_location_image',
-      enterButtonImage: 'enter_button',
-      locationText: 'Groene Vierkant Wereld',
-      referenceName: 'this.greenSquareLocation',
-      fontColor: 0x8dcb0e,
-    });
+    // this.greenSquareLocation = new GenerateLocation({
+    //   scene: this,
+    //   type: 'image',
+    //   draggable: ManageSession.gameEditMode,
+    //   x: locationVector.x,
+    //   y: locationVector.y,
+    //   locationDestination: 'GreenSquare',
+    //   locationImage: 'green_square_location_image',
+    //   enterButtonImage: 'enter_button',
+    //   locationText: 'Groene Vierkant Wereld',
+    //   referenceName: 'this.greenSquareLocation',
+    //   fontColor: 0x8dcb0e,
+    // });
 
-    locationVector = new Phaser.Math.Vector2(15, 410);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    // locationVector = new Phaser.Math.Vector2(15, 410);
+    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+    //   this.worldSize,
+    //   locationVector,
+    // );
 
-    this.yellowDiamondLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'YellowDiamond',
-      locationImage: 'yellow_diamond_location_image',
-      enterButtonImage: 'enter_button',
-      locationText: 'Gele Diamant Wereld',
-      referenceName: 'this.yellowDiamondLocation',
-      fontColor: 0x8dcb0e,
-    });
+    // this.yellowDiamondLocation = new GenerateLocation({
+    //   scene: this,
+    //   type: 'image',
+    //   draggable: ManageSession.gameEditMode,
+    //   x: locationVector.x,
+    //   y: locationVector.y,
+    //   locationDestination: 'YellowDiamond',
+    //   locationImage: 'yellow_diamond_location_image',
+    //   enterButtonImage: 'enter_button',
+    //   locationText: 'Gele Diamant Wereld',
+    //   referenceName: 'this.yellowDiamondLocation',
+    //   fontColor: 0x8dcb0e,
+    // });
 
-    locationVector = new Phaser.Math.Vector2(-626, -97);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    // locationVector = new Phaser.Math.Vector2(-626, -97);
+    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+    //   this.worldSize,
+    //   locationVector,
+    // );
 
-    this.blueSailLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'BlueSail',
-      locationImage: 'blue_sail_location_image',
-      enterButtonImage: 'enter_button',
-      locationText: 'Blauwe Zeil Wereld',
-      referenceName: 'this.blueSailLocation',
-      fontColor: 0x8dcb0e,
-    });
+    // this.blueSailLocation = new GenerateLocation({
+    //   scene: this,
+    //   type: 'image',
+    //   draggable: ManageSession.gameEditMode,
+    //   x: locationVector.x,
+    //   y: locationVector.y,
+    //   locationDestination: 'BlueSail',
+    //   locationImage: 'blue_sail_location_image',
+    //   enterButtonImage: 'enter_button',
+    //   locationText: 'Blauwe Zeil Wereld',
+    //   referenceName: 'this.blueSailLocation',
+    //   fontColor: 0x8dcb0e,
+    // });
 
 
     locationVector = new Phaser.Math.Vector2(-395, 207);
