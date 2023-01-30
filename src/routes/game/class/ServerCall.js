@@ -10,6 +10,7 @@ import ArtworkList from './ArtworkList';
 import { ART_FRAME_BORDER } from '../../../constants';
 import { dlog } from '../helpers/DebugLog';
 import AnimalChallenge from './animalChallenge';
+import { myHomeStore } from '../../../storage';
 
 class ServerCall {
   async getHomesFiltered(filter, _scene) {
@@ -58,26 +59,31 @@ class ServerCall {
 
   async getHomeImages(url, element, index, homeImageKey, scene) {
     // dlog('getHomeImages');
-    await convertImage(url, '128', '128', 'png')
-      .then((rec) => {
+    if (scene.textures.exists(homeImageKey)) {
+      ServerCall.createHome(element, index, homeImageKey, scene);
+    } else {
+      await convertImage(url, '128', '128', 'png')
+        .then((rec) => {
         // dlog("rec", rec)
         // load all the images to phaser
-        scene.load.image(homeImageKey, rec)
-          .on(`filecomplete-image-${homeImageKey}`, () => {
+          scene.load.image(homeImageKey, rec)
+            .on(`filecomplete-image-${homeImageKey}`, () => {
             // delete from ManageSession.resolveErrorObjectArray
-            ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
-              (obj) => obj.imageKey !== homeImageKey,
-            );
-            // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
-            // create the home
-            ServerCall.createHome(element, index, homeImageKey, scene);
-          }, this);
-        // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
-        ManageSession.resolveErrorObjectArray.push({
-          loadFunction: 'getHomeImage', element, index, imageKey: homeImageKey, scene,
+              ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+                (obj) => obj.imageKey !== homeImageKey,
+              );
+              // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
+              // create the home
+              ServerCall.createHome(element, index, homeImageKey, scene);
+            }, this);
+          // put the file in the loadErrorCache, in case it doesn't load
+          // it get's removed from loadErrorCache when it is loaded successfully
+          ManageSession.resolveErrorObjectArray.push({
+            loadFunction: 'getHomeImage', element, index, imageKey: homeImageKey, scene,
+          });
+          scene.load.start(); // start loading the image in memory
         });
-        scene.load.start(); // start loading the image in memory
-      });
+    }
   }
 
   static createHome(element, index, homeImageKey, _scene) {
@@ -130,7 +136,51 @@ class ServerCall {
 
     // set the house of SELF bigger
     if (element.user_id === ManageSession.userProfile.id) {
-      scene.homesRepresented[index].setScale(1.6);
+      // scene.homesRepresented[index].setScale(1.6);
+      // store the use home gameObject in ManageSession so that it can be referenced for live updating
+      ManageSession.playerHomeContainer = scene.homesRepresented[index];
+      // subscribe to myHome if the location is the home
+      let previousHome = null;
+      myHomeStore.subscribe((value) => {
+        if (previousHome !== null) {
+          if (previousHome.value.url !== value.value.url) {
+            dlog('user home image updated');
+            previousHome = value;
+            // dlog('value', value);
+            // dlog('value.url', value.url);
+            if (scene.textures.exists(value.url)) {
+              ManageSession.playerHomeContainer.list[2].setTexture(value.url);
+            } else {
+              scene.load.image(value.url, value.url)
+                .on(`filecomplete-image-${value.url}`, () => {
+                  dlog('done loading new home image');
+                  ManageSession.playerHomeContainer.list[2].setTexture(value.url);
+                }, this);
+              scene.load.start(); // start loading the image in memory
+            }
+
+            // dlog('ManageSession.playerHomeContainer.list[2]', ManageSession.playerHomeContainer.list[2]);
+            // set the right size
+            const width = 140;
+            ManageSession.playerHomeContainer.list[2].displayWidth = width;
+            ManageSession.playerHomeContainer.list[2].scaleY = ManageSession.playerHomeContainer.list[2].scaleX;
+            const cropMargin = 1; // sometimes there is a little border visible on a drawn image
+            ManageSession.playerHomeContainer.list[2].setCrop(
+              cropMargin,
+              cropMargin,
+              width - cropMargin,
+              width - cropMargin,
+            );
+          }
+        } else {
+          previousHome = value;
+        }
+        // dlog('user Home: ', value);
+        // dlog('ManageSession.playerHomeGameObject: ', ManageSession.playerHomeContainer);
+        // dlog('children: ', ManageSession.playerHomeContainer.list);
+        // give the player's home the current home image
+        // value.url is the 150x150 version of the home image
+      });
     }
 
     scene.homesRepresented[index].setDepth(30);
@@ -562,6 +612,7 @@ class ServerCall {
     const imageKey = offendingFile.key;
     const { scene } = resolveErrorObject;
     // dlog("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
+    let flowerKeyArray;
     switch (loadFunction) {
       case 'getHomeImage':
         dlog('offending file, load placeholder image instead', imageKey);
@@ -636,7 +687,7 @@ class ServerCall {
         dlog('loading flower for FlowerFlieldChallenge failed');
 
         dlog(`remove ${imageKey} from flowerKeyArray`);
-        const flowerKeyArray = scene.flowerKeyArray;
+        flowerKeyArray = scene.flowerKeyArray;
         // delete from scene.userStopmotionServerList
 
         flowerKeyArray.array = flowerKeyArray.array.filter((obj) => obj.value.url !== imageKey);

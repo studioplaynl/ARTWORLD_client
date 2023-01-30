@@ -7,7 +7,8 @@ import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
 import { logout } from '../../api';
 import {
-  PlayerLocation, playerStreamID,
+  // PlayerLocation,
+  playerStreamID,
 } from './playerState';
 
 const { Phaser } = window;
@@ -53,6 +54,7 @@ class ManageSession {
     this.playerAvatarPlaceholder = 'avatar1';
     this.avatarSize = 64;
     this.cameraShake = false;
+    this.playerHomeContainer = null; // container with home of self -> used for live updating the image
 
     this.createOnlinePlayers = false;
     this.updateOnlinePlayers = false;
@@ -75,6 +77,7 @@ class ManageSession {
     };
 
     // .....................................................................
+    // GAME EDIT MODE
     // to select a home and save it's position as admin server side
     // (it doesn't save when it is not a home)
     // and to select and manipulate GameObjects in Edit Mode
@@ -86,7 +89,7 @@ class ManageSession {
     // .....................................................................
 
     // this.gameStarted = false;
-    this.launchLocation = 'Location1'; // default
+    this.launchLocation = 'Artworld'; // default
 
     // timers
     this.updateMovementTimer = 0;
@@ -302,6 +305,7 @@ class ManageSession {
     //* get_users" = after joined, get the online users, except self
 
     if (typeof location === 'undefined') {
+      // eslint-disable-next-line no-param-reassign
       location = get(playerStreamID);
     }
 

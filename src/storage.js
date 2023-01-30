@@ -16,7 +16,7 @@ import {
 } from './api';
 import {
   PERMISSION_READ_PUBLIC,
-  PERMISSION_READ_PRIVATE,
+  // PERMISSION_READ_PRIVATE,
   STOPMOTION_MAX_FRAMES,
   DEFAULT_PREVIEW_HEIGHT,
 } from './constants';
@@ -516,9 +516,9 @@ export const myHome = {
       } catch (err) {
         dlog('cannot get home: ', err); // TypeError: failed to fetch
       }
-      dlog('getting the localHome.url', localHome);
+      // dlog('getting the localHome.url', localHome);
       localHome.url = await convertImage(localHome.value.url, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_HEIGHT);
-      dlog('localHome', localHome);
+      // dlog('localHome', localHome);
 
       myHome.set(localHome);
     } return localHome;
