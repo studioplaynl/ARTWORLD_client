@@ -53,10 +53,9 @@ export function parseURL() {
     PlayerHistory.replace(`/${appName}?${get(querystring)}`);
   }
 
-  if (`/${appName}` !== PlayerHistory.previous()) {
+  // Don't add login route to history
+  if (`/${appName}` !== PlayerHistory.previous() && appName !== 'login') {
     PlayerHistory.push(`/${appName}`);
-    // const history = get(PlayerHistory);
-    // dlog('playerHistory: ', history);
   }
 
   // Check if a valid app..
@@ -210,6 +209,7 @@ export function updateQueryString() {
 
     if (stringify(previousQuery) !== stringify(query)) {
       const newLocation = `${get(location)}?${stringify(query)}`;
+
       // Only scene or app changes should be added to the browser history
       if (method === 'push') {
         push(newLocation);
