@@ -2,7 +2,9 @@
   import Stopmotion from './stopmotion.svelte';
   import Drawing from './drawing.svelte';
 
-  export let row;
+  export let row = null;
+  // eslint-disable-next-line svelte/valid-compile
+  export let col = null;
   export let clickable = false;
 
   let artworkUrl;

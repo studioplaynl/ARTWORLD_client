@@ -1,11 +1,11 @@
 <script>
   import { Switch, Button } from 'attractions';
-  import { onMount } from 'svelte';
+  // import { onMount } from 'svelte';
   import { location } from 'svelte-spa-router';
 
   import { updateObjectAdmin } from '../../api';
   import {
-    PERMISSION_READ_PUBLIC,
+    // PERMISSION_READ_PUBLIC,
     OBJECT_STATE_IN_TRASH,
     OBJECT_STATE_REGULAR,
   } from '../../constants';
@@ -14,11 +14,10 @@
 
   const role = $Profile.meta.Role; // ;
   export let row;
-  export let col;
+  // eslint-disable-next-line svelte/valid-compile
+  export let col = null;
   export let isCurrentUser;
-  export let moveToArt;
-
-
+  export let moveToArt = null;
 
   const currentUser = isCurrentUser(); // Bool? Of user object?
 
@@ -27,6 +26,7 @@
       console.log('admin');
 
       const {
+        // eslint-disable-next-line camelcase
         collection, key, value, user_id,
       } = row;
 

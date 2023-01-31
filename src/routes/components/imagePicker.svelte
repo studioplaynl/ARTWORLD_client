@@ -150,7 +150,7 @@
     </div>
   {/each}
 
-  {#each stockItems as stockItem, i}
+  {#each stockItems as stockItem}
     <div
       class="item"
       class:selected="{(`/avatar/stock/${stockItem}` === $Profile.avatar_url &&

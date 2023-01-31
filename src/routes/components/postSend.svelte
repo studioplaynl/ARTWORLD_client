@@ -4,7 +4,11 @@
   import { ListFriends, sendMailToUser } from '../../api';
 
   export let row;
-  export let col;
+  // eslint-disable-next-line svelte/valid-compile
+  export let col = null;
+  // eslint-disable-next-line svelte/valid-compile
+  export let isCurrentUser = null;
+
   let toggleMode = true;
 
   let friends = [];

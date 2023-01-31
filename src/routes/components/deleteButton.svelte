@@ -5,12 +5,13 @@
   import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
 
-  export let col;
+  // eslint-disable-next-line svelte/valid-compile
+  export let col = null;
   export let row;
   const role = $Profile.meta.Role; // ;
   export let isCurrentUser;
-  export let removeFromTrash;
-  export let moveToTrash;
+  export let removeFromTrash = null;
+  export let moveToTrash = null;
 
   let modalOpen = false;
 

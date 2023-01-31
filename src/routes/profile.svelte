@@ -21,7 +21,7 @@
   } from '../constants';
 
   export let params = {};
-  export let userID;
+  export let userID = null;
   let avatar;
   let house;
 
