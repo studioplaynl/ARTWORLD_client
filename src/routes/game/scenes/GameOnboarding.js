@@ -15,11 +15,11 @@ import { parseQueryString, checkIfSceneIsAllowed, checkIfLocationLooksLikeAHouse
 const { Phaser } = window;
 
 
-export default class UrlParser extends Phaser.Scene {
+export default class GameOnboarding extends Phaser.Scene {
   debug = false;
 
   constructor() {
-    super('UrlParser');
+    super('GameOnboarding');
     // this.fallBackLocation = 'Artworld';
   }
 
@@ -107,7 +107,7 @@ export default class UrlParser extends Phaser.Scene {
 
     if (this.debug) console.log('Launch: ', targetScene, targetHouse);
 
-    this.scene.stop('UrlParser');
+    this.scene.stop('GameOnboarding');
 
 
     // we launch the player last location when we have a socket with the server

@@ -247,6 +247,6 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   update() {
-    if (this.loadingDone) this.scene.start('UrlParser');
+    if (this.loadingDone) this.scene.start('GameOnboarding');
   } // end update
 }
