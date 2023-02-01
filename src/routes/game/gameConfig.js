@@ -25,6 +25,7 @@ import TurquoiseTriangle from './scenes/TurquoiseTriangle';
 import YellowDiamond from './scenes/YellowDiamond';
 import RobotWorld from './scenes/RobotWorld';
 import FireWorld from './scenes/FireWorld';
+import SlimeWorld from './scenes/SlimeWorld';
 
 /** Phaser Plugins */
 
@@ -47,6 +48,7 @@ const SCENES = [
   YellowDiamond,
   FireWorld,
   RobotWorld,
+  SlimeWorld,
 ];
 
 import { CONFIG } from '../../constants';

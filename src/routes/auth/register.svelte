@@ -22,6 +22,10 @@
     updateQrCanvas();
   });
 
+  $: {
+    console.log(azc);
+    updateQrCanvas();
+  }
 const Locaties = SCENE_INFO.map((i) => i.scene);
 
   let house = STOCK_HOUSES[Math.floor(STOCK_HOUSES.length * Math.random())];
@@ -54,10 +58,10 @@ const Locaties = SCENE_INFO.map((i) => i.scene);
 
 
   function genKidsPassword() {
-    // removed confusing charecters like 0 O o l l q S and made the chance for number bigger
-    const chars = '123456789abcdefghijkmnprstuvwxyz123456789ABCDEFGHJKLMNPQRTUVWXYZ123456789';
+    // removed confusing charecters like 0 O o l l q S k and made the chance for number bigger
+    const chars = '123456789abcdefghijmnprstuvwxyz123456789ABCDEFGHJKLMNPQRTUVWXYZ123456789';
     // eslint-disable-next-line no-mixed-spaces-and-tabs
-    const passwordLength = 9;
+    const passwordLength = 7;
     password = '';
     for (let i = 0; i <= passwordLength; i++) {
       const randomNumber = Math.floor(Math.random() * chars.length);
@@ -85,7 +89,7 @@ function updateQrCanvas() {
     .then((qrCodeImage) => {
       // console.log(qrCodeImage);
 
-      const startTextX = 180;
+      const startTextX = 176;
       const canvas = document.getElementById('qrCanvas');
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -99,13 +103,15 @@ function updateQrCanvas() {
       ctx.font = 'oblique 14px arial';
       ctx.fillStyle = 'black';
       ctx.textAlign = 'left';
-      ctx.fillText('Email:', startTextX, 30);
+      ctx.fillText('Email:', startTextX, 25);
       ctx.font = 'bold 14px arial';
-      ctx.fillText(email, startTextX, 55);
+      ctx.fillText(email, startTextX, 45);
       ctx.font = 'oblique 14px arial';
-      ctx.fillText('Password:', startTextX, 105);
+      ctx.fillText('Wachtwoord:', startTextX, 85);
       ctx.font = 'bold 18px arial';
-      ctx.fillText(password, startTextX, 135);
+      ctx.fillText(password, startTextX, 110);
+      ctx.font = 'oblique 14px arial';
+      ctx.fillText(azc, startTextX, 156);
     })
     .catch((err) => {
       console.error(err);
@@ -114,7 +120,7 @@ function updateQrCanvas() {
 
 function downloadLoginImage() {
   const link = document.createElement('a');
-  link.download = `${email}.png`;
+  link.download = `${email}_${azc}.png`;
   link.href = document.getElementById('qrCanvas').toDataURL();
   link.click();
 }
