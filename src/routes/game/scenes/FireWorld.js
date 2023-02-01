@@ -120,21 +120,6 @@ export default class FireWorld extends Phaser.Scene {
       locationVector,
     );
 
-    Background.circle({
-      scene: this,
-      name: 'purple_circle_location_image',
-      // setOrigin: 0,
-      posX: locationVector.x,
-      posY: locationVector.y,
-      gradient1: 0x7300eb,
-      gradient2: 0x3a4bba,
-      gradient3: 0x3a4bba,
-      gradient4: 0x3a4bba,
-      alpha: 1,
-      size: 200,
-      imageOnly: true,
-    });
-
     this.purpleCircleLocation = new GenerateLocation({
       scene: this,
       type: 'image',
@@ -149,8 +134,6 @@ export default class FireWorld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
     this.purpleCircleLocation.setScale(1.5);
-
-
 
     locationVector = new Phaser.Math.Vector2(1575, 1400);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(

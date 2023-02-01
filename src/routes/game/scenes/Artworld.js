@@ -521,7 +521,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(384, 228);
+    locationVector = new Phaser.Math.Vector2(355, 332);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -541,7 +541,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(414, -134);
+    locationVector = new Phaser.Math.Vector2(449, -14);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -576,7 +576,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(-250, -386);
+    locationVector = new Phaser.Math.Vector2(-407, -403);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -607,7 +607,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(133, -418);
+    locationVector = new Phaser.Math.Vector2(16, -483);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -624,6 +624,26 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Robot Wereld',
       referenceName: 'this.robotWorldLocation',
+      fontColor: 0x8dcb0e,
+    });
+
+    locationVector = new Phaser.Math.Vector2(394, -389);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.robotoWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'SlimeWorld',
+      locationImage: 'slimeWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Slijm Wereld',
+      referenceName: 'this.slimeWorldLocation',
       fontColor: 0x8dcb0e,
     });
 

@@ -76,6 +76,11 @@ export const SCENE_INFO = [
     sizeX: 5500,
     sizeY: 5500,
   },
+  {
+    scene: 'SlimeWorld',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
 ];
 
 export const STOCK_HOUSES = [

@@ -112,16 +112,16 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     // ......... end PLAYER VS WORLD .......................................................................
 
-    this.artworksListSpinner = this.rexSpinner.add.pie({
-      x: this.worldSize.x / 2,
-      y: this.worldSize.y / 2,
-      width: 400,
-      height: 400,
-      duration: 850,
-      color: 0xffff00,
-    }).setDepth(199);
+    // this.artworksListSpinner = this.rexSpinner.add.pie({
+    //   x: this.worldSize.x / 2,
+    //   y: this.worldSize.y / 2,
+    //   width: 400,
+    //   height: 400,
+    //   duration: 850,
+    //   color: 0xffff00,
+    // }).setDepth(199);
 
-    this.artworksListSpinner.destroy();
+    // this.artworksListSpinner.destroy();
     //
 
     // Place the player on the left size in the y-middle, by passing on arguments in the Player class
