@@ -167,6 +167,15 @@ export default class PreloadScene extends Phaser.Scene {
     // RobotWorld
     this.load.image('robotWorldPortal', './assets/world_robot_torquoise/portaal_robot_zonderAnimatie.png');
 
+    this.load.image('robot_treeC_01', './assets/world_robot_torquoise/treeC_01.png');
+    this.load.image('robot_treeC_02', './assets/world_robot_torquoise/treeC_02.png');
+    this.load.image('robot_treeC_03', './assets/world_robot_torquoise/treeC_03.png');
+    this.load.image('robot_treeC_04', './assets/world_robot_torquoise/treeC_04.png');
+    this.load.image('robothuis3_ms', './assets/world_robot_torquoise/robothuis3_ms.png');
+    this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
+    this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
+    this.load.image('Robot_Clap_NoAnimation', './assets/world_robot_torquoise/_Robot_Clap_NoAnimation.png');
+
     // FireWorld
     this.load.image('fireWorldPortal', './assets/world_fireworld/Portal_vuur_Naartoe_zonderAnimatie.png');
     this.load.image('artWorldPortalFire', './assets/world_fireworld/Portal_vuur_Terug.png');
@@ -179,10 +188,26 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('vuur_wereld_Lavameer01', './assets/world_fireworld/vuur_wereld_Lavameer01.png');
     // this.load.image('tree1_vuur__geenlicht', './assets/world_fireworld/tree1_vuur__geenlicht.png');
 
-    // tree1_vuur__geenlicht.png
-    // tree2_vuur_geenL.png
-    // tree3_vuur_zonderlicht.png
-    // vulcano1.png
+    // SlimeWorld
+    // this.load.image('bubbleface1_frontlayer_slime', './assets/world_slime_world/bubbleface1_frontlayer_slime.png');
+    // this.load.image('bubbleface1_LayerBackground_slime', './assets/world_slime_world/bubbleface1_LayerBackground_slime.png');
+    this.load.image('bubbleface1_slime', './assets/world_slime_world/bubbleface1_slime.png');
+    this.load.image('bubbleplant1_slime', './assets/world_slime_world/bubbleplant1_slime.png');
+    this.load.image('bubbleplant2_slime', './assets/world_slime_world/bubbleplant2_slime.png');
+    this.load.image('bubbleplant3_slime', './assets/world_slime_world/bubbleplant3_slime.png');
+    this.load.image('bubbleplant4_slime', './assets/world_slime_world/bubbleplant4_slime.png');
+    this.load.image('cantarella_tree_1_slime', './assets/world_slime_world/cantarella_tree_1_slime.png');
+    this.load.image('cantarella_tree_2_slime', './assets/world_slime_world/cantarella_tree_2_slime.png');
+    this.load.image('cantarella_tree_3_slime', './assets/world_slime_world/cantarella_tree_3_slime.png');
+    this.load.image('cantarella_tree_4_slime', './assets/world_slime_world/cantarella_tree_4_slime.png');
+    this.load.image('cantarella_tree_5_slime', './assets/world_slime_world/cantarella_tree_5_slime.png');
+    this.load.image('cantarella_tree_6_slime', './assets/world_slime_world/cantarella_tree_6_slime.png');
+    this.load.image('cantarella_tree_7_slime', './assets/world_slime_world/cantarella_tree_7_slime.png');
+    this.load.image('rups_slime', './assets/world_slime_world/rups_slime.png');
+    this.load.image('slimepool_1_slime', './assets/world_slime_world/slimepool_1_slime.png');
+
+    this.load.image('slimeWorldPortal', './assets/world_slime_world/Portal_goHome_slime.png');
+    this.load.image('artWorldPortalSlime', './assets/world_slime_world/Portal_goSlime_slime.png');
   }
 
   async create() {
