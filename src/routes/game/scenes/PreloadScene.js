@@ -206,8 +206,8 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('rups_slime', './assets/world_slime_world/rups_slime.png');
     this.load.image('slimepool_1_slime', './assets/world_slime_world/slimepool_1_slime.png');
 
-    this.load.image('slimeWorldPortal', './assets/world_slime_world/Portal_goHome_slime.png');
-    this.load.image('artWorldPortalSlime', './assets/world_slime_world/Portal_goSlime_slime.png');
+    this.load.image('artWorldPortalSlime', './assets/world_slime_world/Portal_goHome_slime.png');
+    this.load.image('slimeWorldPortal', './assets/world_slime_world/Portal_goSlime_slime.png');
   }
 
   async create() {
