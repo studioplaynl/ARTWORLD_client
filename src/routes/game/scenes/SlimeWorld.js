@@ -288,30 +288,31 @@ export default class SlimeWorld extends Phaser.Scene {
     }
 
 
-    // .........cantarella_tree_4_slime............................................................
-    this.cantarella_tree_4_slime = this.add.image(
+    // .........cantarella_tree_4_1_slime............................................................
+    this.cantarella_tree_4_1_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 342),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 55),
       'cantarella_tree_4_slime',
     );
-    this.cantarella_tree_4_slime.name = 'cantarella_tree_4_slime';
-    this.cantarella_tree_4_slime.setScale(1.46);
+    this.cantarella_tree_4_1_slime.name = 'cantarella_tree_4_1_slime';
+    this.cantarella_tree_4_1_slime.setScale(1.46);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
-      this.cantarella_tree_4_slime.setInteractive({ draggable: true });
+      this.cantarella_tree_4_1_slime.setInteractive({ draggable: true });
     }
 
-    // .........cantarella_tree_5_slime............................................................
-    this.cantarella_tree_5_slime = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1075),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -135),
-      'cantarella_tree_5_slime',
+    // .........cantarella_tree_4_2_slime............................................................
+    this.cantarella_tree_4_2_slime = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1091),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -88),
+      'cantarella_tree_4_slime',
     );
-    this.cantarella_tree_5_slime.name = 'cantarella_tree_5_slime';
-    this.cantarella_tree_5_slime.setScale(1.24);
+    this.cantarella_tree_4_2_slime.name = 'cantarella_tree_4_2_slime';
+    this.cantarella_tree_4_2_slime.setScale(1.24);
+    this.cantarella_tree_4_2_slime.setFlipX(true);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
-      this.cantarella_tree_5_slime.setInteractive({ draggable: true });
+      this.cantarella_tree_4_2_slime.setInteractive({ draggable: true });
     }
 
     // .........cantarella_tree_6_slime............................................................
