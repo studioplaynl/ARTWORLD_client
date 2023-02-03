@@ -2,7 +2,9 @@
   import { onDestroy, tick } from 'svelte';
   import { parse } from 'qs';
   import { get } from 'svelte/store';
-  import { pop, push, querystring, loc } from 'svelte-spa-router';
+  import {
+    pop, push, querystring, loc,
+  } from 'svelte-spa-router';
   import Drawing from '../apps/drawing.svelte';
   import Stopmotion from '../apps/stopmotion.svelte';
   import Mariosound from '../apps/marioSequencer.svelte';
@@ -111,7 +113,7 @@
    */
   async function saveData(andClose) {
     // NO changes? We don't need to save anything.
-    if (changes < 1) {
+    if (changes <= 1) {
       if (andClose) closeApp();
       return;
     }

@@ -15,6 +15,7 @@
   let drawing = null;
   let frames = null;
   let playPreviewInterval = null;
+  let frameBuffer = [];
 
   let enableOnionSkinning = false;
   $: enableEditor = playPreviewInterval === null;
@@ -111,6 +112,7 @@
     bind:changes
     bind:currentFrame
     bind:frames
+    bind:frameBuffer
     bind:enableEditor
     stopMotion="{true}"
     enableOnionSkinning="{enableOnionSkinning && enableEditor}"
@@ -153,7 +155,7 @@
                   <div
                     class="stopmotion__frame__background"
                     style="
-              background-image: url({thumb});
+              background-image: url({frameBuffer[currentFrame - 1]});
               left: {-100 * (index - 1)}%;
               width: {frames * 100}%;
               "
@@ -219,6 +221,8 @@
   :global(.swiper.stopmotion__swiper) {
     width: auto;
     height: 100%;
+    position: fixed;
+    z-index: 15;
   }
   :global(.swiper-slide.stopmotion__swiper__slide) {
     width: auto;
@@ -340,6 +344,7 @@
     top: 16px;
     display: flex;
     flex-direction: row;
+    z-index: 10;
   }
 
   .stopmotion__button {
