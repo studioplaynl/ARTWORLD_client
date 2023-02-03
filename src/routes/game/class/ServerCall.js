@@ -140,43 +140,42 @@ class ServerCall {
       // store the use home gameObject in ManageSession so that it can be referenced for live updating
       ManageSession.playerHomeContainer = scene.homesRepresented[index];
       // subscribe to myHome if the location is the home
-      let previousHome = null;
-      myHomeStore.subscribe((value) => {
-        if (previousHome !== null) {
-          if (previousHome.value.url !== value.value.url) {
-            dlog('user home image updated');
-            previousHome = value;
-            // dlog('value', value);
-            // dlog('value.url', value.url);
-            if (scene.textures.exists(value.url)) {
-              ManageSession.playerHomeContainer.list[2].setTexture(value.url);
-            } else {
-              scene.load.image(value.url, value.url)
-                .on(`filecomplete-image-${value.url}`, () => {
-                  dlog('done loading new home image');
-                  ManageSession.playerHomeContainer.list[2].setTexture(value.url);
-                }, this);
-              scene.load.start(); // start loading the image in memory
-            }
+      let previousHome = { value: { url: '' } };
 
-            // dlog('ManageSession.playerHomeContainer.list[2]', ManageSession.playerHomeContainer.list[2]);
-            // set the right size
-            const width = 140;
-            if (typeof ManageSession.playerHomeContainer.list[2] !== 'undefined') {
-              ManageSession.playerHomeContainer.list[2].displayWidth = width;
-              ManageSession.playerHomeContainer.list[2].scaleY = ManageSession.playerHomeContainer.list[2].scaleX;
-              const cropMargin = 1; // sometimes there is a little border visible on a drawn image
-              ManageSession.playerHomeContainer.list[2].setCrop(
-                cropMargin,
-                cropMargin,
-                width - cropMargin,
-                width - cropMargin,
-              );
-            }
-          }
-        } else {
+      myHomeStore.subscribe((value) => {
+        console.log('previousHome: ', previousHome);
+        if (previousHome.value.url !== value.value.url) {
+          dlog('user home image updated');
           previousHome = value;
+          // dlog('value', value);
+          // dlog('value.url', value.url);
+          if (scene.textures.exists(value.url)) {
+            ManageSession.playerHomeContainer.list[2].setTexture(value.url);
+          } else {
+            scene.load.image(value.url, value.url)
+              .on(`filecomplete-image-${value.url}`, () => {
+                dlog('done loading new home image');
+                ManageSession.playerHomeContainer.list[2].setTexture(value.url);
+              }, this);
+            scene.load.start(); // start loading the image in memory
+          }
+
+          // dlog('ManageSession.playerHomeContainer.list[2]', ManageSession.playerHomeContainer.list[2]);
+          // set the right size
+          const width = 140;
+          if (typeof ManageSession.playerHomeContainer.list[2] !== 'undefined') {
+            ManageSession.playerHomeContainer.list[2].displayWidth = width;
+            ManageSession.playerHomeContainer.list[2].scaleY = ManageSession.playerHomeContainer.list[2].scaleX;
+            const cropMargin = 1; // sometimes there is a little border visible on a drawn image
+            ManageSession.playerHomeContainer.list[2].setCrop(
+              cropMargin,
+              cropMargin,
+              width - cropMargin,
+              width - cropMargin,
+            );
+          }
         }
+
         // dlog('user Home: ', value);
         // dlog('ManageSession.playerHomeGameObject: ', ManageSession.playerHomeContainer);
         // dlog('children: ', ManageSession.playerHomeContainer.list);

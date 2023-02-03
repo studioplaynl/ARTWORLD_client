@@ -53,10 +53,13 @@ export async function login(email, _password) {
 
 export const logout = async () => {
   try {
+    console.log('try logging out');
     await client.sessionLogout(get(Session));
   } catch (err) {
     dlog('Failed logging out on server!', err);
   } finally {
+    console.log('finally: logging out');
+
     Profile.set(null);
     /** Setting Session to null automatically redirects you to login route */
     Session.set(null);

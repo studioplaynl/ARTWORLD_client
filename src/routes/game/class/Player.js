@@ -15,11 +15,16 @@ class Player {
 
   subscribeToProfile() {
     Profile.subscribe((value) => {
-      dlog('Profile refreshed avatar');
-      // dlog(value);
+      // when logging out, Profile is set to null
+      if (value !== null) {
+        dlog('Profile refreshed avatar');
+        // dlog(value);
 
-      this.subscribedToProfile = true;
-      this.loadPlayerAvatar(ManageSession.currentScene, undefined, undefined, value);
+        this.subscribedToProfile = true;
+        // update the Profile also in ManageSession
+        ManageSession.userProfile = get(Profile);
+        this.loadPlayerAvatar(ManageSession.currentScene, undefined, undefined, value);
+      }
     });
   }
 
