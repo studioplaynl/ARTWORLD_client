@@ -7,11 +7,14 @@ import { getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
 import { PlayerPos } from '../playerState';
-import { AVATAR_BASE_SIZE, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
+import {
+  AVATAR_BASE_SIZE,
+  AVATAR_SPRITESHEET_LOAD_SIZE,
+} from '../../../constants';
 
 class Player {
   constructor() {
-
+    this.avatarSize = 64;
   }
 
   subscribeToProfile() {
@@ -147,17 +150,18 @@ class Player {
           if (this.subscribedToProfile !== true) {
             this.subscribeToProfile();
           }
-          this.attachAvatarToPlayer(scene, fileNameCheck);
+          Player.attachAvatarToPlayer(scene, fileNameCheck);
         }, scene);
       scene.load.start(); // start loading the image in memory
     } else {
       // else reload the old (already in memory avatar)
       // dlog('existed already: scene.textures.exists(scene.playerAvatarKey)');
-      this.attachAvatarToPlayer(scene);
+      Player.attachAvatarToPlayer(scene);
     }
   }
 
-  async attachAvatarToPlayer(scene) {
+  // eslint-disable-next-line class-methods-use-this
+  static async attachAvatarToPlayer(scene) {
     // dlog(' attachAvatarToPlayer(scene)');
 
     const avatar = scene.textures.get(scene.playerAvatarKey);
@@ -228,7 +232,7 @@ class Player {
   reloadDefaultAvatar(scene) {
     scene = ManageSession.currentScene;
     scene.playerAvatarKey = 'avatar1';
-    this.attachAvatarToPlayer(scene, 'avatar1');
+    Player.attachAvatarToPlayer(scene, 'avatar1');
   }
 
   parseNewOnlinePlayerArray(scene) {
