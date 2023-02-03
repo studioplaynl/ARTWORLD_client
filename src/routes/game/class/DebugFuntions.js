@@ -33,18 +33,19 @@ class DebugFuntions {
     });
 
     // check all key up events
+    // only activate debug functions when in edit mode
     scene.input.keyboard.on('keyup', (event) => {
-      // only activate debug functions when in edit mode
       if (ManageSession.gameEditMode) {
         // dlog(event)
         this.debugUpKeys(scene, event.code);
       }
     }, this);
 
+    // only activate debug functions when in edit mode
     scene.input.keyboard.on('keydown', (event) => {
-      // only activate debug functions when in edit mode
+      // events for gameEdit mode, like scaling a selected object
       if (ManageSession.gameEditMode) {
-        // dlog(event)
+      // dlog(event)
         this.debugDownKeys(scene, event.code);
       }
     }, this);
@@ -149,7 +150,7 @@ class DebugFuntions {
 
       case 'KeyA':
         dlog(code);
-
+        console.log('scene.tweens.getAllTweens(): ', currentScene.tweens.getAllTweens());
         break;
 
       case 'Digit1':

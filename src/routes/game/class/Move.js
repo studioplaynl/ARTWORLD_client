@@ -241,9 +241,9 @@ class Move {
       tempVec.x = ManageSession.lastMoveCommand.posX;
       tempVec.y = ManageSession.lastMoveCommand.posY;
 
-      // const moveDistance = Math.abs(ManageSession.target.length() - tempVec.length());
+      const moveDistance = Math.abs(ManageSession.target.length() - tempVec.length());
 
-      // console.log({ ManageSession.target, moveDistance, ManageSession.lastMoveCommand, tempVec});
+      console.log('moveDistance: ', moveDistance);
 
       // this creates a double movement animation: replace by sendMovement and timedEvent with Stop
 
@@ -251,7 +251,7 @@ class Move {
         scene,
         tempVec,
         ManageSession.target,
-        0,
+        moveDistance,
       );
     }
     if (moveCommand === 'moving') {
