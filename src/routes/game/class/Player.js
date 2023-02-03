@@ -68,7 +68,7 @@ class Player {
     // check if account info is loaded
     if (userprofile.id == null) {
       dlog('(userprofile.id == null)');
-      this.reloadDefaultAvatar();
+      Player.reloadDefaultAvatar();
     }
 
     // dlog('scene.playerAvatarKey avatar', scene.playerAvatarKey);
@@ -127,7 +127,7 @@ class Player {
     // if for some reason the url of the player avatar is empty, load the default avatar
     if (userprofile.url === '') {
       dlog("avatar url is empty, set to default 'avatar1' ");
-      this.reloadDefaultAvatar();
+      Player.reloadDefaultAvatar();
     }
 
     // if the texture doesnot exists (if it is new) load it and attach it to the player
@@ -160,7 +160,6 @@ class Player {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   static async attachAvatarToPlayer(scene) {
     // dlog(' attachAvatarToPlayer(scene)');
 
@@ -229,7 +228,7 @@ class Player {
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
   } // end attachAvatarToPlayer
 
-  reloadDefaultAvatar(scene) {
+  static reloadDefaultAvatar(scene) {
     scene = ManageSession.currentScene;
     scene.playerAvatarKey = 'avatar1';
     Player.attachAvatarToPlayer(scene, 'avatar1');
