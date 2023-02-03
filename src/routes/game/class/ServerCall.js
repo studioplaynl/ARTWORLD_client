@@ -162,15 +162,17 @@ class ServerCall {
             // dlog('ManageSession.playerHomeContainer.list[2]', ManageSession.playerHomeContainer.list[2]);
             // set the right size
             const width = 140;
-            ManageSession.playerHomeContainer.list[2].displayWidth = width;
-            ManageSession.playerHomeContainer.list[2].scaleY = ManageSession.playerHomeContainer.list[2].scaleX;
-            const cropMargin = 1; // sometimes there is a little border visible on a drawn image
-            ManageSession.playerHomeContainer.list[2].setCrop(
-              cropMargin,
-              cropMargin,
-              width - cropMargin,
-              width - cropMargin,
-            );
+            if (typeof ManageSession.playerHomeContainer.list[2] !== 'undefined') {
+              ManageSession.playerHomeContainer.list[2].displayWidth = width;
+              ManageSession.playerHomeContainer.list[2].scaleY = ManageSession.playerHomeContainer.list[2].scaleX;
+              const cropMargin = 1; // sometimes there is a little border visible on a drawn image
+              ManageSession.playerHomeContainer.list[2].setCrop(
+                cropMargin,
+                cropMargin,
+                width - cropMargin,
+                width - cropMargin,
+              );
+            }
           }
         } else {
           previousHome = value;
