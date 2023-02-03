@@ -119,6 +119,10 @@ export const PERMISSION_READ_PRIVATE = 1;
 /** File is public */
 export const PERMISSION_READ_PUBLIC = 2;
 
+/** Base size used for avatars: player and onlinePlayers */
+export const AVATAR_BASE_SIZE = 64;
+// TODO not sure why this has to be 150 to load player and onlinePlayer spriteSheets correctly
+export const AVATAR_SPRITESHEET_LOAD_SIZE = 150;
 
 /** Base size used for artworks */
 export const IMAGE_BASE_SIZE = 2048;

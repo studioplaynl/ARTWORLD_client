@@ -7,10 +7,11 @@ import { getAccount } from '../../../api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
 import { PlayerPos } from '../playerState';
+import { AVATAR_BASE_SIZE, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
 
 class Player {
   constructor() {
-    this.avatarSize = 64;
+
   }
 
   subscribeToProfile() {
@@ -137,8 +138,8 @@ class Player {
         fileNameCheck,
         userprofile.url,
         {
-          frameWidth: 150,
-          frameHeight: 150,
+          frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
+          frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
         },
       )
         .on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
@@ -207,8 +208,8 @@ class Player {
     scene.playerShadow.setTexture(scene.playerAvatarKey);
 
     // dlog('scene.player.setTexture(scene.playerAvatarKey) done ');
-    // scale the player to this.avatarSize
-    const width = this.avatarSize;
+    // scale the player to AVATAR_BASE_SIZE
+    const width = AVATAR_BASE_SIZE;
     scene.player.displayWidth = width;
     scene.player.scaleY = scene.player.scaleX;
 
@@ -253,7 +254,7 @@ class Player {
     // check if onlinePlayer exists already
     // dlog(onlinePlayer)
     const exists = ManageSession.allConnectedUsers.some((element) => element.user_id === onlinePlayer.user_id);
-    // if player exists
+    // if player does not exists yet
     if (!exists) {
       // create new onlinePlayer with default avatar
       const onlinePlayerCopy = onlinePlayer;
@@ -323,8 +324,8 @@ class Player {
         // dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
         // add it to loading queue
         scene.load.spritesheet(avatarKey, onlinePlayer.url, {
-          frameWidth: this.avatarSize * 2,
-          frameHeight: this.avatarSize * 2,
+          frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
+          frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
         }).on(
           `filecomplete-spritesheet-${avatarKey}`,
           () => {
@@ -358,7 +359,7 @@ class Player {
     const avatarHeight = avatar.frames.__BASE.height;
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    dlog(avatarFrames);
+    dlog('onlinePlayer avatarFrames', avatarFrames);
 
     if (avatarFrames > 1) {
       // set names for the moving and stop animations
@@ -395,7 +396,7 @@ class Player {
     onlinePlayer.setTexture(tempAvatarName);
 
     // scale the player to 64px
-    const width = 64;
+    const width = 62;
     onlinePlayer.displayWidth = width;
     onlinePlayer.scaleY = onlinePlayer.scaleX;
   }
