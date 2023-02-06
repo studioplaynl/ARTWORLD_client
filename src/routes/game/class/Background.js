@@ -69,7 +69,7 @@ class Background {
     dot.fillStyle(dotColor);
     dot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false);
 
-    const bgDot = scene.add.rectangle(0, 0, tileWidth, tileWidth, fillColor).setVisible(false);
+    const bgDot = scene.add.rectangle(0, 0, tileWidth * 2, tileWidth * 2, fillColor).setVisible(false);
 
     // create renderTexture to place the dot on
     const dotRendertexture = scene.add.renderTexture(0, 0, tileWidth, tileWidth);

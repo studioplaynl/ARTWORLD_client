@@ -109,8 +109,15 @@ export default {
     arcade: {
       // gravity: { y: 0 },
       debug: false,
-      fixedStep: true,
-      fps: 60,
+      // fixedStep: true,
+      fps: {
+        target: 60,
+        min: 15,
+        forceSetTimeOut: true,
+        // Unless you force usage of setTimeout
+        // Phaser will use Request Animation Frame to trigger updates and render,
+        // which will try to sync to your display refresh rate.
+      },
     },
   },
 
