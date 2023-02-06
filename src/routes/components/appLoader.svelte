@@ -23,7 +23,7 @@
     setAvatar,
     getDateAndTimeFormatted,
     updateObject,
-    updateTitle,
+    // updateTitle,
   } from '../../api';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { PlayerHistory } from '../game/playerState';
@@ -60,6 +60,7 @@
 
   // keep the displayName updated in currentFile, always up to date for saving etc
   $: { currentFile.displayName = displayName; }
+  // $: { dlog('currentFile: ', currentFile); }
 
   /** Subscribe to 'loc', as changes to location AND querystring should trigger this evaluation */
   const unsubscribe = loc.subscribe(async () => {
@@ -142,16 +143,16 @@
           // updateTitle(currentFile.type, currentFile.key, displayName, userID)
 
           // updateObject(type, name, value, pub, userID)
-
-          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read, userID)])
+          console.log(
+            'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.status',
+            currentFile.type,
+            currentFile.key,
+            tempValue,
+            currentFile.status,
+          );
+          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.status, userID)])
             .then(() => {
-              console.log(
-                'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
-                currentFile.type,
-                currentFile.key,
-                tempValue,
-                currentFile.permission_read,
-              );
+
             })
             .catch((error) => {
               Error.set(error);

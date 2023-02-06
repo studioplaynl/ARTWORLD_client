@@ -320,6 +320,7 @@ export const ArtworksStore = {
     } = row;
 
     // Update on server
+    dlog('update on server: ', collection, key, value, publicRead, user_id);
     await updateObject(collection, key, value, publicRead, user_id);
 
     // Update on store

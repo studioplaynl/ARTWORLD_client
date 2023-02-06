@@ -31,7 +31,7 @@
       } = row;
 
       // Update on server
-      console.log(collection, key, value, e.detail.value, user_id);
+      console.log('Update on server: ', collection, key, value, e.detail.value, user_id);
       await updateObjectAdmin(user_id, collection, key, value, e.detail.value);
 
       // ArtworksStore.updatePublicRead(row, publicRead);

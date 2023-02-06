@@ -15,7 +15,7 @@
 
   export let file; // file is currentFile in the appLoader (synced)
   export let data;
-  export let thumb;
+  export let thumb = null;
   export let changes;
 
   // change artwork name
