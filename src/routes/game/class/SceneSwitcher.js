@@ -20,12 +20,12 @@ class SceneSwitcher {
 
     this.unsubscribeScene = PlayerLocation.subscribe(() => {
       dlog('player location changed, SceneSwitcher reacts');
-      dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
+      // dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
       // check if we are going from the same world to the same world;
       // then don't switch scenes
-      dlog('\u001b[31m playerStreamID', get(playerStreamID));
-      const history = get(PlayerHistory);
-      dlog('playerHistory: ', history);
+      // dlog('\u001b[31m playerStreamID', get(playerStreamID));
+      // const history = get(PlayerHistory);
+      // dlog('playerHistory: ', history);
       this.doSwitchScene();
     });
     // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {
@@ -93,7 +93,6 @@ class SceneSwitcher {
 
     // if we are going inside a user house
     //! Bug: when going into a house, and pressing back button, we are first taken to the center of the house
-    //! when two player to inside house, and one player goes back, the other player is also visible in the scene, while being still in the house
     if (targetHouse !== null && targetScene === DEFAULT_HOME) {
       scene.scene.start(targetScene, { user_id: targetHouse });
       // later we join the house id channel
@@ -101,7 +100,7 @@ class SceneSwitcher {
     } else if (targetScene) {
       if (targetScene.scene !== null) {
         dlog('start targetScene: ', targetScene);
-        dlog('scene starting the targetScene: ', scene);
+        // dlog('scene starting the targetScene: ', scene);
         scene.scene.start(targetScene);
         // scene.scene.stop();
         // ManageSession.scene.launch(targetScene);

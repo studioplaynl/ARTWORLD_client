@@ -6,8 +6,12 @@
 
   async function goHome() {
     // Nice way to always reset to 0x0?
+    // replace(`/${appName}?${get(querystring)}`);
+    // PlayerHistory.replace(`/${appName}?${get(querystring)}`);
 
-    push(`/?location=${DEFAULT_SCENE}&x=0&y=0`);
+    push(`/game?location=${DEFAULT_SCENE}&x=0&y=0`);
+    PlayerHistory.push(`/game?location=${DEFAULT_SCENE}&x=0&y=0`);
+
     // const goTo = PlayerHistory.getAt(DEFAULT_SCENE);
     // if (goTo) push(goTo);
     // else {

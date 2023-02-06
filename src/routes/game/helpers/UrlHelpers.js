@@ -20,6 +20,7 @@ import ManageSession from '../ManageSession';
 
 const { Phaser } = window;
 
+// TODO get the max from current scene
 let minX = -5000;
 let minY = -5000;
 let maxX = 5000;
