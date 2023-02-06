@@ -19,10 +19,12 @@
     list.forEach((user) => {
       // eslint-disable-next-line no-param-reassign
       if (!user.meta.Azc) user.meta.Azc = 'Unknown';
+      if (user.meta.azc || user.meta.role) dlog('Incorrect Profile formatting!!! ', user);
+      // if (user.meta.Azc && user.meta.Role) dlog('Correct Profile formatting: ', user);
     });
-    dlog(list);
+    // dlog(list);
     users = list;
-    console.log(users);
+    // console.log(users);
   });
 
   // location house
