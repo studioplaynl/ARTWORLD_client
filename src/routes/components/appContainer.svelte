@@ -58,7 +58,7 @@
     position: fixed;
     left: 16px;
     top: 16px;
-    z-index: 13;
+    z-index: 20;
     box-shadow: 5px 5px 0px #7300ed;
     cursor: pointer;
     padding: 0;

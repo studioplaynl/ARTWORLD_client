@@ -36,7 +36,7 @@
    * /stopmotion?userId=UUID&key=KEY
    * /sound?userId=UUID&key=KEY
    */
-
+  let drawing;
   let parsedQuery = {};
   $: userIsOwner =
     $Profile !== null &&
@@ -119,7 +119,8 @@
     }
 
     setLoader(true);
-
+    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') await drawing.saveHandler();
+    console.log('done');
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
       const blobData = dataURItoBlob(data);
@@ -282,6 +283,7 @@
         file="{currentFile}"
         bind:data
         bind:changes
+        bind:this={drawing}
         on:save="{saveData}"
       />
     {:else if $CurrentApp === 'stopmotion' || $CurrentApp === 'avatar'}
@@ -289,6 +291,7 @@
         file="{currentFile}"
         bind:data
         bind:changes
+        bind:drawing
         on:save="{saveData}"
       />
     {:else if $CurrentApp === 'mariosound'}
