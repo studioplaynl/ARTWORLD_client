@@ -2,6 +2,8 @@ import { push } from 'svelte-spa-router';
 import SceneSwitcher from './SceneSwitcher';
 import { dlog } from '../helpers/DebugLog';
 import ManageSession from '../ManageSession';
+import { DEFAULT_HOME } from '../../../constants';
+import { PlayerHistory } from '../playerState';
 
 const { Phaser } = window;
 
@@ -366,14 +368,18 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // });
 
         // When we go into a house, we place the player left, in the middle
-        // if (this.userHouse === DEFAULT_HOME) {
-        //   const PosX = -(this.scene.worldSize.x / 2) + (ManageSession.avatarSize * 2);
-        //   dlog('PosX: ', PosX);
-        //   const PosY = 0;
-        //   push(`/game?location=${this.locationDestination}&house=${this.userHome}&x=${PosX}&y=${PosY}`);
-        // } else {
-        SceneSwitcher.switchScene(this.locationDestination, this.userHome);
-        // }
+        if (this.userHouse === DEFAULT_HOME) {
+          const PosX = -(this.scene.worldSize.x / 2) + (ManageSession.avatarSize * 2);
+          dlog('PosX: ', PosX);
+          const PosY = 0;
+          const value = `/game?location=${this.locationDestination}&house=${this.userHome}&x=${PosX}&y=${PosY}`;
+
+
+          push(value);
+          PlayerHistory.push(value);
+        } else {
+          SceneSwitcher.switchScene(this.locationDestination, this.userHome);
+        }
 
         // this get converted to
         //     PlayerLocation.set({

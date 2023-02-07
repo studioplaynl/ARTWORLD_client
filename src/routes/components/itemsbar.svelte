@@ -145,7 +145,7 @@
       SceneSwitcher.switchScene('DefaultUserHome', id);
     } else if ($ShowItemsBar) {
       // place user next to nameplate of home
-      const playerPosX = userHouseObject.value.posX - 50;
+      const playerPosX = userHouseObject.value.posX - 80;
       const playerPoxY = userHouseObject.value.posY - 100;
       push(`/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`);
       // SceneSwitcher.switchScene(
