@@ -30,7 +30,7 @@ ListAllUsers().then((list) => {
       rec[0].forEach((homeObject) => {
         // dlog('homeObject: ', homeObject.username, homeObject.key, homeObject.permission_read);
         if (homeObject.permission_read === 1) {
-          // dlog('homeObject 1: ', homeObject);
+          dlog('homeObject 1: ', homeObject);
           // collection: "home"
           // key: "SlimeWorld"
           // permission_read: 1
@@ -46,19 +46,19 @@ ListAllUsers().then((list) => {
 
           // test with one user
           // then with 2 in a loop
-          if (homeObject.username === 'user441' || homeObject.username === 'user440') {
-            // updateObjectAdmin(id, type, name, value, pub);
-            const pub = true;
-            // dlog(homeObject.user_id, homeObject.collection, homeObject.key, homeObject.value, pub);
-            // dlog('....');
-            // dlog('homeObject: ', homeObject);
-            Promise.all([updateObjectAdmin(homeObject.user_id, 'home', homeObject.key, homeObject.value, pub)]);
-          }
+          // if (homeObject.username === 'user442' || homeObject.username === 'user443') {
+          // updateObjectAdmin(id, type, name, value, pub);
+          const pub = true;
+          // dlog(homeObject.user_id, homeObject.collection, homeObject.key, homeObject.value, pub);
+          // dlog('....');
+          // dlog('homeObject: ', homeObject);
+          Promise.all([updateObjectAdmin(homeObject.user_id, 'home', homeObject.key, homeObject.value, pub)]);
+          // }
         }
         if (homeObject.permission_read === 2) {
-          if (homeObject.username === 'user441' || homeObject.username === 'user440') {
-            dlog('homeObject 2: ', homeObject);
-          }
+          // if (homeObject.username === 'user442' || homeObject.username === 'user443') {
+          // dlog('homeObject 2: ', homeObject);
+          // }
         }
 
 

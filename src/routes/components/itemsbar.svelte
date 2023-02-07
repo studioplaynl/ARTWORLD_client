@@ -15,6 +15,7 @@
   import SceneSwitcher from '../game/class/SceneSwitcher';
   import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
+  import { PlayerHistory } from '../game/playerState';
 
   // TODO: current moet een store worden
   // zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties)
@@ -147,7 +148,10 @@
       // place user next to nameplate of home
       const playerPosX = userHouseObject.value.posX - 80;
       const playerPoxY = userHouseObject.value.posY - 100;
-      push(`/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`);
+
+      const value = `/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`;
+      push(value);
+      PlayerHistory.push(value);
       // SceneSwitcher.switchScene(
       //   'DefaultUserHome',
       //   ManageSession.userProfile.id,

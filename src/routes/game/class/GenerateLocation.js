@@ -373,8 +373,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
           dlog('PosX: ', PosX);
           const PosY = 0;
           const value = `/game?location=${this.locationDestination}&house=${this.userHome}&x=${PosX}&y=${PosY}`;
-
-
           push(value);
           PlayerHistory.push(value);
         } else {
