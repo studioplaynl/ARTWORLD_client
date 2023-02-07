@@ -18,8 +18,6 @@
       export let stopMotion = false;
       let saveCanvas;
 
-      const backgroundURL = '';
-
       const options = {
         id: 'canvasContainer',
         defaultTool: 'brush',
@@ -37,9 +35,7 @@
 
      onMount(async () => {
        p = Painterro(options);
-       await p.show(file.url);
-       saveCanvas.width(IMAGE_BASE_SIZE * frames);
-       saveCanvas.height(IMAGE_BASE_SIZE);
+       await p.show(file.url).doScale({ width: IMAGE_BASE_SIZE });
      });
 
       function onImageLoaded() {
@@ -53,18 +49,49 @@
         } else {
           data = image.image.asDataURL();
         }
+      }
 
-        console.log('frameBuffer', frameBuffer[currentFrame - 1]);
+
+      function downloadImage(data, filename = 'untitled.jpeg') {
+        const a = document.createElement('a');
+        a.href = data;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
       }
 
       function saveHandler(image, done) {
-        swapFrame();
-        // console.log('changes done', image.operationsDone);
-        // changes = image.operationsDone;
-        // data = image.asDataURL();
-        // console.log('changes', changes);
-        // const background = document.getElementsByClassName('ptro-substrate').style.backgroundImage = 'url("https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fcomic-news.com%2Fwp-content%2Fuploads%2F2017%2F04%2F20-2.jpg&f=1&nofb=1&ipt=2c119e0f51ac114f36faa6dce28b5e44a4ab29368199f1fa7f962013fdf7dea1&ipo=images")!important';
-        // console.log(background);
+        console.log('saveCanvas', saveCanvas);
+        saveCanvas.width = IMAGE_BASE_SIZE * frames;
+        saveCanvas.height = IMAGE_BASE_SIZE;
+        console.log('called');
+
+
+
+
+
+
+
+
+        new Promise((resolve, reject) => {
+          let loaded = 0;
+          frameBuffer.forEach((frame, i) => {
+            const position = i * IMAGE_BASE_SIZE;
+            const img = new window.Image();
+            img.addEventListener('load', async () => {
+              await saveCanvas.getContext('2d').drawImage(img, position, 0);
+              loaded++;
+              if (loaded === frameBuffer.length) resolve();
+            });
+            img.setAttribute('src', frame);
+          });
+        }).then(() => {
+          data = saveCanvas.toDataURL('image/png');
+
+          downloadImage(data);
+
+          console.log('saved', data);
+        });
       }
 
        $: { // when the currenFrame changes, clear the canvas
@@ -77,16 +104,24 @@
       export function swapFrame(frame) {
         if (typeof frameBuffer[frame] === 'undefined') p.clear();
         else p.loadImage(frameBuffer[frame]);
-        console.log(p);
+      }
+
+      export function deleteFrame(deleteableFrame) {
+        currentFrame = deleteableFrame - 1;
+        frameBuffer.splice(deleteableFrame - 1, 1);
+
+        dispatch('frameContentDeleted');
+        // // Finally update data
+        // updateExportedImages();
       }
 
 
 
     </script>
 	  <slot name="stopmotion"></slot>
-    <canvas bind:this="{saveCanvas}" class="saveCanvas" ></canvas>
+    <canvas bind:this="{saveCanvas}" id="saveCanvas" ></canvas>
 
-    <div id= 'canvasContainer' />
+    <div id='canvasContainer' />
 
 
     // putimageoncanvas is voor het opslaan van de afbeelding in de savecanvas
