@@ -51,11 +51,7 @@ if (stopMotion === true) {
   });
 
   function onImageLoaded() {
-    if (stopMotion) {
-      p.doScale({ width: STOPMOTION_BASE_SIZE });
-    } else {
-      p.doScale({ width: IMAGE_BASE_SIZE });
-    }
+    p.doScale({ width: pDefaultSize });
   }
 
   function onChange(image) {
@@ -82,13 +78,8 @@ if (stopMotion === true) {
     console.log('saveCanvas', saveCanvas);
     var saveCanvas = document.createElement('CANVAS');
 
-    if (stopMotion) {
-      saveCanvas.width = STOPMOTION_BASE_SIZE * frames;
-      saveCanvas.height = STOPMOTION_BASE_SIZE;
-    } else {
-      saveCanvas.width = IMAGE_BASE_SIZE;
-      saveCanvas.height = IMAGE_BASE_SIZE;
-    }
+    saveCanvas.width = pDefaultSize * frames;
+
 
 
     console.log('called');
@@ -96,13 +87,7 @@ if (stopMotion === true) {
     await new Promise((resolve, reject) => {
       let loaded = 0;
       frameBuffer.forEach((frame, i) => {
-        let position;
-        if (stopMotion) {
-          position = i * STOPMOTION_BASE_SIZE;
-        } else {
-          position = i * IMAGE_BASE_SIZE;
-        }
-
+        const position = i * pDefaultSize;
         // const position = i * IMAGE_BASE_SIZE;
         const img = new window.Image();
         img.addEventListener('load', async () => {
