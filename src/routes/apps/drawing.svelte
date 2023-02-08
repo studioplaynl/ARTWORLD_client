@@ -18,11 +18,16 @@
   export let stopMotion = false;
   let saveCanvas;
 
+  // $: { console.log('file: ', file); }
+let pDefaultSize = IMAGE_BASE_SIZE;
+if (stopMotion === true) {
+  pDefaultSize = STOPMOTION_BASE_SIZE;
+}
   const options = {
     id: 'canvasContainer',
     defaultTool: 'brush',
     backgroundFillColorAlpha: 1,
-    defaultSize: `${IMAGE_BASE_SIZE}x${IMAGE_BASE_SIZE}`,
+    defaultSize: `${pDefaultSize}x${pDefaultSize}`,
     language: 'nl',
     hiddenTools: ['resize',
       'crop', 'close', 'arrow', 'text', 'rotate', 'save', 'open', 'pixelize', 'select', 'settings'],
@@ -30,7 +35,6 @@
     activeColor: '#ff0000',
     activeColorAlpha: 1.0,
     activeFillColor: '#ff0000',
-    activeFillColorAlpha: 1.0,
     defaultPrimitiveShadowOn: false,
     fixMobilePageReloader: true,
     buttonSizePx: 44,
@@ -43,11 +47,15 @@
 
   onMount(async () => {
     p = Painterro(options);
-    await p.show(file.url).doScale({ width: IMAGE_BASE_SIZE });
+    p.show();
   });
 
   function onImageLoaded() {
-    p.doScale({ width: IMAGE_BASE_SIZE });
+    if (stopMotion) {
+      p.doScale({ width: STOPMOTION_BASE_SIZE });
+    } else {
+      p.doScale({ width: IMAGE_BASE_SIZE });
+    }
   }
 
   function onChange(image) {
@@ -73,14 +81,29 @@
   export async function saveHandler(image, done) {
     console.log('saveCanvas', saveCanvas);
     var saveCanvas = document.createElement('CANVAS');
-    saveCanvas.width = IMAGE_BASE_SIZE * frames;
-    saveCanvas.height = IMAGE_BASE_SIZE;
+
+    if (stopMotion) {
+      saveCanvas.width = STOPMOTION_BASE_SIZE * frames;
+      saveCanvas.height = STOPMOTION_BASE_SIZE;
+    } else {
+      saveCanvas.width = IMAGE_BASE_SIZE;
+      saveCanvas.height = IMAGE_BASE_SIZE;
+    }
+
+
     console.log('called');
 
     await new Promise((resolve, reject) => {
       let loaded = 0;
       frameBuffer.forEach((frame, i) => {
-        const position = i * IMAGE_BASE_SIZE;
+        let position;
+        if (stopMotion) {
+          position = i * STOPMOTION_BASE_SIZE;
+        } else {
+          position = i * IMAGE_BASE_SIZE;
+        }
+
+        // const position = i * IMAGE_BASE_SIZE;
         const img = new window.Image();
         img.addEventListener('load', async () => {
           await saveCanvas.getContext('2d').drawImage(img, position, 0);
