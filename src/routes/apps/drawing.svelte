@@ -19,15 +19,15 @@
   let saveCanvas;
 
   // $: { console.log('file: ', file); }
-let pDefaultSize = IMAGE_BASE_SIZE;
+let painterroDefaultSize = IMAGE_BASE_SIZE;
 if (stopMotion === true) {
-  pDefaultSize = STOPMOTION_BASE_SIZE;
+  painterroDefaultSize = STOPMOTION_BASE_SIZE;
 }
   const options = {
     id: 'canvasContainer',
     defaultTool: 'brush',
     backgroundFillColorAlpha: 1,
-    defaultSize: `${pDefaultSize}x${pDefaultSize}`,
+    defaultSize: `${painterroDefaultSize}x${painterroDefaultSize}`,
     language: 'nl',
     hiddenTools: ['resize',
       'crop', 'close', 'arrow', 'text', 'rotate', 'save', 'open', 'pixelize', 'select', 'settings'],
@@ -51,7 +51,7 @@ if (stopMotion === true) {
   });
 
   function onImageLoaded() {
-    p.doScale({ width: pDefaultSize });
+    p.doScale({ width: painterroDefaultSize });
   }
 
   function onChange(image) {
@@ -78,7 +78,7 @@ if (stopMotion === true) {
     console.log('saveCanvas', saveCanvas);
     var saveCanvas = document.createElement('CANVAS');
 
-    saveCanvas.width = pDefaultSize * frames;
+    saveCanvas.width = painterroDefaultSize * frames;
 
 
 
@@ -87,7 +87,7 @@ if (stopMotion === true) {
     await new Promise((resolve, reject) => {
       let loaded = 0;
       frameBuffer.forEach((frame, i) => {
-        const position = i * pDefaultSize;
+        const position = i * painterroDefaultSize;
         // const position = i * IMAGE_BASE_SIZE;
         const img = new window.Image();
         img.addEventListener('load', async () => {
