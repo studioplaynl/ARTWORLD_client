@@ -156,8 +156,6 @@
                     class="stopmotion__frame__background"
                     style="
               background-image: url({frameBuffer[currentFrame - 1]});
-              left: {-100 * (index - 1)}%;
-              width: {frames * 100}%;
               "
                   ></div>
                   <div class="stopmotion__frame__index">

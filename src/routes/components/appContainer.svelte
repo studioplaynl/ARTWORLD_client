@@ -22,6 +22,15 @@
       <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
     </div>
 
+    <div
+      class="app-save"
+      on:click="{() => {
+        dispatch('saveToFile');
+      }}"
+    >
+      <img alt="Save" src="assets/SHB/svg/AW-icon-save.svg" />
+    </div>
+
     <div class="app">
       <slot />
     </div>
@@ -66,6 +75,24 @@
     border-radius: 50%;
     width: 40px;
     height: 40px;
+  }
+
+   .app-save {
+    position: fixed;
+    left: 75px;
+    top: 16px;
+    z-index: 20;
+    box-shadow: 5px 5px 0px #7300ed;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+  }
+
+    .app-save > img {
+    width: 40px;
   }
 
   .app-close > img {

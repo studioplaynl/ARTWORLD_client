@@ -38,7 +38,6 @@ if (stopMotion === true) {
     defaultPrimitiveShadowOn: false,
     fixMobilePageReloader: true,
     buttonSizePx: 44,
-    saveHandler,
     onImageLoaded,
     onChange,
   };
@@ -52,11 +51,12 @@ if (stopMotion === true) {
 
   function onImageLoaded() {
     p.doScale({ width: painterroDefaultSize });
+    changes = 0;
   }
 
   function onChange(image) {
     changes++;
-    console.log(changes);
+    console.log(frameBuffer);
     if (stopMotion) {
       frameBuffer[currentFrame - 1] = image.image.asDataURL();
     } else {
@@ -65,43 +65,33 @@ if (stopMotion === true) {
   }
 
 
-  function downloadImage(data, filename = 'untitled.jpeg') {
-    const a = document.createElement('a');
-    a.href = data;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-  }
 
 
-  export async function saveHandler(image, done) {
-    console.log('saveCanvas', saveCanvas);
-    var saveCanvas = document.createElement('CANVAS');
-
+  // gets executed inside appLoader
+  export async function stopmotionSaveHandler() {
+    // set dimensions of savecanvas
+    saveCanvas.height = painterroDefaultSize;
     saveCanvas.width = painterroDefaultSize * frames;
-
-
-
-    console.log('called');
 
     await new Promise((resolve, reject) => {
       let loaded = 0;
+      // framebuffer contains all frames in an array
       frameBuffer.forEach((frame, i) => {
         const position = i * painterroDefaultSize;
-        // const position = i * IMAGE_BASE_SIZE;
+        // create image holder
         const img = new window.Image();
+        // after image is placed in holder
         img.addEventListener('load', async () => {
           await saveCanvas.getContext('2d').drawImage(img, position, 0);
           loaded++;
+          // after all images are loaded, resolve
           if (loaded === frameBuffer.length) resolve();
         });
+        // load image in holder
         img.setAttribute('src', frame);
       });
     }).then(() => {
       data = saveCanvas.toDataURL('image/png');
-
-      // downloadImage(data);
-
       console.log('saved');
       return data;
     });
@@ -135,7 +125,4 @@ if (stopMotion === true) {
 <canvas bind:this="{saveCanvas}" id="saveCanvas" ></canvas>
 
 <div id='canvasContainer' />
-
-
-// putimageoncanvas is voor het opslaan van de afbeelding in de savecanvas
 

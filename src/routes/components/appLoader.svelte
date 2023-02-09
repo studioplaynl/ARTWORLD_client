@@ -253,6 +253,15 @@
     };
   }
 
+  async function saveToFile() {
+    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') {
+      await drawing.stopmotionSaveHandler();
+      downloadImage();
+    } else if ($CurrentApp === 'drawing' || $CurrentApp === 'house') {
+      downloadImage();
+    }
+  }
+
   function dataURItoBlob(dataURI) {
     // const binary = Buffer.from(dataURI.split(',')[1], 'base64');
     const binary = atob(dataURI.split(',')[1]);
@@ -261,6 +270,15 @@
       array.push(binary.charCodeAt(i));
     }
     return new Blob([new Uint8Array(array)], { type: 'image/png' });
+  }
+
+  function downloadImage() {
+    const filename = `${$Profile.username}_${currentFile.key}_${currentFile.displayName}.png`;
+    const a = document.createElement('a');
+    a.download = filename;
+    a.href = data;
+    document.body.appendChild(a);
+    a.click();
   }
 
   function getDateMillis() {
@@ -276,6 +294,7 @@
     $CurrentApp !== DEFAULT_APP &&
     isValidApp($CurrentApp)}"
   on:close="{() => saveData(true)}"
+  on:saveToFile="{() => saveToFile()}"
 >
   {#if (userIsOwner && currentFile.loaded) || currentFile.new}
     {#if $CurrentApp === 'drawing' || $CurrentApp === 'house'}
