@@ -503,14 +503,27 @@ export const myHome = {
   get: async () => {
     let localHome = get(myHomeStore);
     const profile = get(Profile);
+    dlog('profile: ', profile);
     const Sess = get(Session);
     if (!!localHome && localHome.length > 0) return localHome;
 
     if (Sess) {
       try {
+        // check for meta.azc because for a while there was a server bug that
+        // would return azc and role instead of Azc and Role
+        let profileAzc = '';
+        if (profile.meta.Azc) {
+          profileAzc = profile.meta.Azc;
+        } else if (profile.meta.azc) {
+          profileAzc = profile.meta.azc;
+        } else {
+          profileAzc = 'GreenSquare';
+        }
+        console.log('profileAzc: ', profileAzc);
+
         localHome = await getObject(
           'home',
-          profile.meta.Azc,
+          profileAzc,
           Sess.user_id,
         );
       } catch (err) {

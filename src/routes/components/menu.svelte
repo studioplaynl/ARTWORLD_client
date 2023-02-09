@@ -1,6 +1,8 @@
 <script>
   import { fly } from 'svelte/transition';
-  import { locale, locales, init, addMessages, _ } from 'svelte-i18n';
+  import {
+    locale, locales, init, addMessages, _,
+  } from 'svelte-i18n';
   import { logout } from '../../api';
   import { Session, Profile } from '../../session';
 
@@ -27,7 +29,6 @@
   if ($Profile == null) {
     role = null;
   } else if ('meta' in $Profile) {
-    dlog($Profile);
     // eslint-disable-next-line no-unused-vars
     role = $Profile.meta.Role;
   }

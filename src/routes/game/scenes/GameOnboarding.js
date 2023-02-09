@@ -31,6 +31,7 @@ export default class GameOnboarding extends Phaser.Scene {
     parseQueryString();
 
     const profile = get(Profile);
+    // dlog('profile: ', profile);
 
     // If there is no location parameter in the url..
     if (get(PlayerLocation).scene === null) {

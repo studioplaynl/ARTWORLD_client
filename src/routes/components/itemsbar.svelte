@@ -42,9 +42,22 @@
       if (userHouseUrl === undefined) {
         /** object containing house information (position, image url) */
 
+        // check for meta.azc because for a while there was a server bug that 
+        // would return azc and role instead of Azc and Role
+        let profileAzc = ''
+        // console.log('$Profile: ', $Profile)
+        if ($Profile.meta.Azc) {
+          profileAzc = $Profile.meta.Azc
+        } else if ($Profile.meta.azc) {
+          profileAzc = $Profile.meta.azc
+        } else {
+          profileAzc = 'GreenSquare'
+        }
+        console.log('profileAzc: ', profileAzc)
+
         userHouseObject = await getObject(
           'home',
-          $Profile.meta.Azc || 'GreenSquare',
+          profileAzc,
           $Profile.id,
         );
 
