@@ -119,7 +119,7 @@
     }
 
     setLoader(true);
-    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') await drawing.saveHandler();
+    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') await drawing.stopmotionSaveHandler();
     console.log('done');
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
@@ -273,7 +273,7 @@
   }
 
   function downloadImage() {
-    const filename = `${$Profile.username}_${currentFile.key}_${currentFile.displayName}.png`;
+    const filename = `${$Profile.username}_${currentFile.key}.png`;
     const a = document.createElement('a');
     a.download = filename;
     a.href = data;

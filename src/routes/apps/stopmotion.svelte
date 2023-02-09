@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { Swiper, SwiperSlide } from 'swiper/svelte';
   import Drawing from './drawing.svelte';
-  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS } from '../../constants';
+  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS, STOPMOTION_BASE_SIZE } from '../../constants';
   // eslint-disable-next-line import/no-unresolved
   import 'swiper/css';
 
@@ -10,6 +10,7 @@
   export let data;
   export let changes;
 
+  let loadCanvas;
   let thumb;
   let currentFrame = 1;
   export let drawing;
@@ -36,7 +37,9 @@
       const img = new Image();
       img.onload = (e) => {
         frames = Math.floor(e.target.width / e.target.height);
+        createframeBuffer(img);
       };
+      img.setAttribute('crossorigin', 'anonymous');
       img.src = file.url;
     } else {
       frames = 1;
@@ -55,6 +58,19 @@
       }
     }, 100);
   }
+
+  // go through all frames, and put each image in frameBuffer array
+  function createframeBuffer(img) {
+    loadCanvas.width = STOPMOTION_BASE_SIZE;
+    loadCanvas.height = STOPMOTION_BASE_SIZE;
+    const ctx = loadCanvas.getContext('2d');
+    for (let index = 0; index < frames; index++) {
+      ctx.drawImage(img, (index * img.height), 0, img.height, img.height, 0, 0, STOPMOTION_BASE_SIZE, STOPMOTION_BASE_SIZE);
+      frameBuffer[index] = loadCanvas.toDataURL('image/png');
+      ctx.clearRect(0, 0, STOPMOTION_BASE_SIZE, STOPMOTION_BASE_SIZE);
+    }
+  }
+
 
   // Set up swiper as reference to Swiper.js instance
   const onSwiper = (e) => {
@@ -155,7 +171,7 @@
                   <div
                     class="stopmotion__frame__background"
                     style="
-              background-image: url({frameBuffer[currentFrame - 1]});
+              background-image: url({frameBuffer[index - 1]});
               "
                   ></div>
                   <div class="stopmotion__frame__index">
@@ -214,6 +230,7 @@
     </div>
   </div>
 {/if}
+<canvas bind:this="{loadCanvas}"></canvas>
 
 <style>
   :global(.swiper.stopmotion__swiper) {

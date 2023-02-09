@@ -46,7 +46,8 @@ if (stopMotion === true) {
 
   onMount(async () => {
     p = Painterro(options);
-    p.show();
+    if (!stopMotion) p.show(file.url);
+    if (stopMotion) p.show(frameBuffer[currentFrame]);
   });
 
   function onImageLoaded() {
