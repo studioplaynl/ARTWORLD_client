@@ -330,14 +330,14 @@
         format: 'png',
         height: baseSize,
         width: baseSize * frames,
-      });
+      }, { crossOrigin: 'anonymous' });
       // Small format thumbnail to add to frames
       // saveCanvas.setZoom(scaleRatio);
       thumb = saveCanvas.toDataURL({
         format: 'png',
         multiplier: 0.25,
 
-      });
+      }, { crossOrigin: 'anonymous' });
       // saveCanvas.setZoom(1);
     }, 30);
   }
@@ -452,12 +452,9 @@ async function downloadImageTEST(imageSrc) {
    const imgObject = new Image();
    imgObject.src = img;
    imgObject.onload = function () {
-     const imgbase64 = new fabric.Image(img, {
-
-     });
-     saveCanvas.add(imgbase64);
+     saveCanvas.add(imgObject);
      // saveCanvas.deactivateAll().renderAll();
-     // updateExportedImages();
+     updateExportedImages();
      getCroppedImageFromSaveCanvas(canvas);
    };
    //  saveCanvas.add(img);
@@ -530,7 +527,7 @@ async function downloadImageTEST(imageSrc) {
     });
   }
 
-  /// / going from drawing canvas to SaveCanvas FUNCTIONS ////////////////////////////////////////////
+/// / going from drawing canvas to SaveCanvas FUNCTIONS ///////////////////////////////////////////
 function getCroppedImageFromSaveCanvas(ToCanvas) {
   const frameOffset = currentFrame - 1;
   const leftOffset = baseSize * frameOffset;
@@ -540,7 +537,7 @@ function getCroppedImageFromSaveCanvas(ToCanvas) {
     top: 0,
     width: baseSize,
     height: baseSize,
-  });
+  }, { crossOrigin: 'anonymous' });
   fabric.Image.fromURL(cropped, (img) => {
     ToCanvas.add(img.set({
       left: 0,
@@ -610,7 +607,11 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
     // console.log('userProfile', userProfile.username);
     const filename = `${userProfile.username}_${file.key}_${displayName}.png`;
 
-    data = saveCanvas.toDataURL('image/png', 1);
+    // data = saveCanvas.toDataURL('image/png', 1);
+    data = saveCanvas.toDataURL({
+      format: 'png',
+      multiplier: 1,
+    }, { crossOrigin: 'anonymous' });
 
     const a = document.createElement('a');
     a.href = data;
