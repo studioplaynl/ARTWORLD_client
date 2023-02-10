@@ -448,9 +448,22 @@ async function downloadImageTEST(imageSrc) {
  async function putImageUrlOnCanvas(img) {
  //  img.frame = 'importedImagePart';
    console.log('image', img);
-   saveCanvas.add(img);
-   updateExportedImages();
-   getCroppedImageFromSaveCanvas(canvas);
+
+   const imgObject = new Image();
+   imgObject.src = img;
+   imgObject.onload = function () {
+     const imgbase64 = new fabric.Image(img, {
+       scaleX: 0.2,
+       scaleY: 0.2,
+     });
+     saveCanvas.add(imgbase64);
+     saveCanvas.deactivateAll().renderAll();
+     updateExportedImages();
+     getCroppedImageFromSaveCanvas(canvas);
+   };
+   //  saveCanvas.add(img);
+   //  updateExportedImages();
+   //  getCroppedImageFromSaveCanvas(canvas);
    setLoader(false);
  }
 
