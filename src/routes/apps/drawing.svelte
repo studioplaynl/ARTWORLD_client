@@ -453,12 +453,11 @@ async function downloadImageTEST(imageSrc) {
    imgObject.src = img;
    imgObject.onload = function () {
      const imgbase64 = new fabric.Image(img, {
-       scaleX: 0.2,
-       scaleY: 0.2,
+
      });
      saveCanvas.add(imgbase64);
      // saveCanvas.deactivateAll().renderAll();
-     updateExportedImages();
+     // updateExportedImages();
      getCroppedImageFromSaveCanvas(canvas);
    };
    //  saveCanvas.add(img);
