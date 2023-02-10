@@ -457,7 +457,7 @@ async function downloadImageTEST(imageSrc) {
        scaleY: 0.2,
      });
      saveCanvas.add(imgbase64);
-     saveCanvas.deactivateAll().renderAll();
+     // saveCanvas.deactivateAll().renderAll();
      updateExportedImages();
      getCroppedImageFromSaveCanvas(canvas);
    };
