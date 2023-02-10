@@ -275,10 +275,10 @@
 
     // Was there an image to load? Do so
     if (file?.url) {
-      putImageUrlOnCanvas(file.url)
-      // putImageOnCanvas(file.url)
+      // putImageUrlOnCanvas(file.url)
+      putImageOnCanvas(file.url)
         .then(() => {
-          // updateExportedImages();
+          updateExportedImages();
         })
         .catch(() => {
           Error.set(`Failed loading drawing from server: ${file.url}`);
