@@ -26,6 +26,8 @@
   export let currentFrame = 1;
   export let stopMotion = false;
 
+
+
   let baseSize = IMAGE_BASE_SIZE;
   $: { // when the currenFrame changes, clear the canvas
     if (canvas) {
@@ -73,6 +75,47 @@
 
   $: controlsHeight = innerWidth > 600 ? `${canvasHeight}px` : 'auto';
   $: controlsWidth = innerWidth <= 600 ? `${canvasHeight}px` : 'auto';
+
+  let imageFrames = [{}];
+const FrameObject = {
+  type: 'image',
+  version: '4.6.0',
+  originX: 'left',
+  originY: 'top',
+  left: -baseSize,
+  top: 0,
+  width: 0,
+  height: baseSize,
+  fill: 'rgb(0,0,0)',
+  stroke: null,
+  strokeWidth: 0,
+  strokeDashArray: null,
+  strokeLineCap: 'butt',
+  strokeDashOffset: 0,
+  strokeLineJoin: 'miter',
+  strokeUniform: false,
+  strokeMiterLimit: 4,
+  scaleX: 1,
+  scaleY: 1,
+  angle: 0,
+  flipX: false,
+  flipY: false,
+  opacity: 1,
+  shadow: null,
+  visible: true,
+  backgroundColor: '',
+  fillRule: 'nonzero',
+  paintFirst: 'fill',
+  globalCompositeOperation: 'source-over',
+  skewX: 0,
+  skewY: 0,
+  erasable: true,
+  cropX: 0,
+  cropY: 0,
+  src: '',
+  crossOrigin: 'anonymous',
+  filters: [],
+};
 
   /** Delete all content from a single frame
    * @maybe this belongs inside Stopmotion app instead..
@@ -276,16 +319,17 @@
     // Was there an image to load? Do so
     if (file?.url) {
       // putImageUrlOnCanvas(file.url)
-      putImageOnCanvas(file.url)
-        .then(() => {
-          updateExportedImages();
-        })
-        .catch(() => {
-          Error.set(`Failed loading drawing from server: ${file.url}`);
-        })
-        .finally(() => {
-          setLoader(false);
-        });
+      putImageOnCanvas(file.url);
+      setLoader(false);
+      // .then(() => {
+      //   updateExportedImages();
+      // })
+      // .catch(() => {
+      //   Error.set(`Failed loading drawing from server: ${file.url}`);
+      // })
+      // .finally(() => {
+      //   setLoader(false);
+      // });
       // downloadImagePromise(file.url).then((image) => {
       //   console.log('image', image);
       //   putImageUrlOnCanvas(image);
@@ -464,67 +508,103 @@ async function downloadImageTEST(imageSrc) {
  }
 
   function putImageOnCanvas(imgUrl) {
-    return new Promise((resolve, reject) => {
-      const imagePromises = [];
-      console.log('frames', frames);
-      for (let frame = 0; frame < frames; frame++) {
-        imagePromises.push(
-          new Promise((resolveImage, rejectImage) => {
-            fabric.Image.fromURL(
-              imgUrl,
-              // eslint-disable-next-line no-loop-func
-              (image, err) => {
+    if (stopMotion) {
+      let frameAmount;
+      const framebuffer = new Image();
+      framebuffer.src = imgUrl;
+      console.log('baseSize', baseSize);
+      framebuffer.height = baseSize;
+      framebuffer.onload = function () {
+        console.log('this.width', this.width);
+        const lastWidth = this.width;
+        frameAmount = lastWidth / baseSize;
+        FrameObject.src = imgUrl;
+        FrameObject.width = lastWidth;
+        imageFrames = [];
+        for (let i = 0; i < frameAmount; i++) {
+          FrameObject.left = 0;
+          FrameObject.width = baseSize;
+          FrameObject.height = baseSize;
+          FrameObject.cropX = i * baseSize;
+
+          imageFrames.push({
+            version: '4.6.0',
+            objects: [{ ...FrameObject }],
+          });
+        }
+        imageFrames = imageFrames;
+        console.log('imageFrames', imageFrames);
+        currentFrame = 0;
+        // canvas.loadFromJSON(frames[0], (oImg) => {
+        //   canvas.renderAll.bind(canvas);
+
+        // });
+      };
+    } else {
+      return new Promise((resolve, reject) => {
+        const imagePromises = [];
+        console.log('frames', frames);
+
+
+        for (let frame = 0; frame < frames; frame++) {
+          imagePromises.push(
+            new Promise((resolveImage, rejectImage) => {
+              fabric.Image.fromURL(
+                imgUrl,
+                // eslint-disable-next-line no-loop-func
+                (image, err) => {
                 // image.opacity = 0.5;
 
-                // Step 1: Crop using the loaded image's width'
-                const nativeHeight = image.height;
-                image.set({
-                  cropX: nativeHeight * frame,
-                  cropY: 0,
-                  width: nativeHeight,
-                  height: nativeHeight,
-                });
+                  // Step 1: Crop using the loaded image's width'
+                  const nativeHeight = image.height;
+                  image.set({
+                    cropX: nativeHeight * frame,
+                    cropY: 0,
+                    width: nativeHeight,
+                    height: nativeHeight,
+                  });
 
-                // Step 2: Scale to canvas dimensions
-                image.scaleToHeight(baseSize);
+                  // Step 2: Scale to canvas dimensions
+                  image.scaleToHeight(baseSize);
 
-                // Step 3: Put on right spot
-                image.set({
-                  left: baseSize * frame,
-                  top: 0,
-                  frameNumber: frame + 1, // Frames in the app are 1-based
-                });
+                  // Step 3: Put on right spot
+                  image.set({
+                    left: baseSize * frame,
+                    top: 0,
+                    frameNumber: frame + 1, // Frames in the app are 1-based
+                  });
 
-                if (err) {
-                  rejectImage();
-                } else {
-                  resolveImage(image);
-                }
-              },
-              { crossOrigin: 'anonymous' },
-            );
-          }),
-        );
-      }
+                  if (err) {
+                    rejectImage();
+                  } else {
+                    resolveImage(image);
+                  }
+                },
+                { crossOrigin: 'anonymous' },
+              );
+            }),
+          );
+        }
 
-      Promise.all(imagePromises)
-        .then((images) => {
-          images.forEach((image) => {
+        Promise.all(imagePromises)
+          .then((images) => {
+            images.forEach((image) => {
             // canvas.add(image);
             // eslint-disable-next-line no-param-reassign
-            image.frame = 'importedImagePart';
-            // console.log('image', image);
-            saveCanvas.add(image);
+              image.frame = 'importedImagePart';
+              // console.log('image', image);
+              saveCanvas.add(image);
+            });
+            updateExportedImages();
+            getCroppedImageFromSaveCanvas(canvas);
+            setLoader(false);
+            resolve();
+          })
+          .catch(() => {
+            reject();
           });
-          updateExportedImages();
-          getCroppedImageFromSaveCanvas(canvas);
-          setLoader(false);
-          resolve();
-        })
-        .catch(() => {
-          reject();
-        });
-    });
+      });
+    }
   }
 
 /// / going from drawing canvas to SaveCanvas FUNCTIONS ///////////////////////////////////////////
@@ -555,7 +635,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
 
   const frameOffset = currentFrame - 1;
   const saveCanvasObjects = saveCanvas.getObjects();
-  // remnove all objects with frame: frameNumber
+  // remove all objects with frame: frameNumber
   // that way there is only 1 image layer; the last one
   saveCanvasObjects.forEach((element) => {
     if (element.frameNumber === currentFrame) {
