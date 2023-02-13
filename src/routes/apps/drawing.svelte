@@ -298,12 +298,6 @@
     }
   });
 
-  $: {
-    // console.log('currentFrame: ', currentFrame);
-    if (drawingCanvas) {
-      getImageFromFramesArray(currentFrame);
-    }
-  }
   // go through all frames, and put each image in framesArray array
   function createframeBuffer(img) {
     console.log('baseSize: ', baseSize);
