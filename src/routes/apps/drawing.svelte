@@ -331,7 +331,7 @@
     // make the loadingCanvas 0
     loadCanvas.width = 0;
 
-    // getImageFromFramesArray(currentFrame);
+    getImageFromFramesArray(currentFrame);
   } // ............................. createframeBuffer ......................
 
   // Save state locally
@@ -430,20 +430,20 @@ function getImageFromFramesArray(_currentFrame) {
   } else {
     frame = currentFrame - 1;
   }
-  // const storedFrame = framesArray[frame];
+  const storedFrame = framesArray[frame];
 
-  // fabric.Image.fromURL(storedFrame, (img) => {
-  //   drawingCanvas.add(img.set({
-  //     left: 0,
-  //     top: 0,
-  //     height: baseSize,
-  //     width: baseSize,
-  //     crossOrigin: 'anonymous',
-  //   }));
+  fabric.Image.fromURL(storedFrame, (img) => {
+    drawingCanvas.add(img.set({
+      left: 0,
+      top: 0,
+      height: baseSize,
+      width: baseSize,
+      crossOrigin: 'anonymous',
+    }));
 
-  //   // drawingCanvas.add(placeImage);
-  //   // drawingCanvas.renderAll();
-  // });
+    // drawingCanvas.add(placeImage);
+    // drawingCanvas.renderAll();
+  });
 }
 
 //! replacing
