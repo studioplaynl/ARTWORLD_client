@@ -287,7 +287,7 @@
         frames = Math.floor(e.target.width / e.target.height);
         createframeBuffer(img);
       };
-      img.setAttribute('crossorigin', 'anonymous');
+      img.crossOrigin = 'anonymous';
       img.src = file.url;
       setLoader(false);
     } else { // new image
@@ -451,6 +451,7 @@ function getImageFromFramesArray(_currentFrame) {
       top: 0,
       height: baseSize,
       width: baseSize,
+      crossOrigin: 'anonymous',
     }));
 
     // drawingCanvas.add(placeImage);
@@ -470,6 +471,7 @@ function putDrawingCanvasIntoFramesArray() {
     format: 'png',
     height: baseSize,
     width: baseSize,
+    crossOrigin: 'anonymous',
   });
 
   // put data into array
