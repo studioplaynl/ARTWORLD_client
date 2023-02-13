@@ -32,7 +32,6 @@
   $: { // when the currenFrame changes, clear the drawingCanvas
     if (drawingCanvas) {
       drawingCanvas.clear();
-      // getCroppedImageFromSaveCanvas(drawingCanvas, currentFrame);
       getImageFromFramesArray(currentFrame);
     }
   }
@@ -125,8 +124,6 @@
       drawingCanvas.setWidth(canvasHeight);
       drawingCanvas.setHeight(canvasHeight); // keep the drawing Canvas square
 
-      saveCanvas.setWidth(baseSize * frames);
-      saveCanvas.setHeight(baseSize);
       cursorCanvas.setWidth(canvasHeight);
       cursorCanvas.setHeight(canvasHeight); // keep the cursorCanvas square
 
@@ -136,7 +133,6 @@
         drawingCanvas.height / baseSize,
       );
       cursorCanvas.setZoom(scaleRatio);
-      // saveCanvas.setZoom(scaleRatio * 0.3);
       drawingCanvas.setZoom(scaleRatio);
 
       // Finally update 'data' object immediately
@@ -148,7 +144,6 @@
   let drawingCanvasEl;
   let drawingCanvas;
   let saveCanvas;
-  let saveCanvasEl;
   let cursorCanvasEl;
   let cursorCanvas;
   let eraseBrush;
@@ -205,11 +200,6 @@
     drawingCanvas.set('width', baseSize);
     drawingCanvas.set('height', baseSize);
 
-    saveCanvas = new fabric.StaticCanvas(saveCanvasEl, {
-    });
-    saveCanvas.set('width', baseSize);
-    saveCanvas.set('height', baseSize);
-
     eraseBrush = new fabric.EraserBrush(drawingCanvas);
 
     // Set frameNumber on object, to refer to when deleting frames
@@ -217,7 +207,6 @@
       // const idx = drawingCanvas.getObjects().length - 1;
       // drawingCanvas.item(idx).frameNumber = currentFrame;
       // drawingCanvas.renderAll();
-      // pushDrawingCanvasToSaveCanvas(drawingCanvas, currentFrame); //! replacing
 
       putDrawingCanvasIntoFramesArray();
       drawingCanvas.clear();
@@ -327,6 +316,36 @@
 
     getImageFromFramesArray(currentFrame);
   } // ............................. createframeBuffer ......................
+
+  // gets executed inside appLoader
+  export async function stopmotionSaveHandler() {
+    // set dimensions of savecanvas
+    saveCanvas.height = baseSize;
+    saveCanvas.width = baseSize * frames;
+
+    await new Promise((resolve, reject) => {
+      let loaded = 0;
+      // framebuffer contains all frames in an array
+      framesArray.forEach((frame, i) => {
+        const position = i * baseSize;
+        // create image holder
+        const img = new window.Image();
+        // after image is placed in holder
+        img.addEventListener('load', async () => {
+          await saveCanvas.getContext('2d').drawImage(img, position, 0);
+          loaded++;
+          // after all images are loaded, resolve
+          if (loaded === framesArray.length) resolve();
+        });
+        // load image in holder
+        img.setAttribute('src', frame);
+      });
+    }).then(() => {
+      data = saveCanvas.toDataURL('image/png');
+      console.log('stopmotionSaveHandler saved');
+      return data;
+    });
+  }
 
   // Save state locally
   async function saveState() {
@@ -459,45 +478,6 @@ function putDrawingCanvasIntoFramesArray() {
   framesArray[frame] = currentFrameData;
   drawingCanvas.setZoom(prevZoom);
 }
-
-// function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
-//   const prevZoom = _fromCanvas.getZoom();
-//   _fromCanvas.setZoom(1);
-
-//   const frameOffset = currentFrame - 1;
-//   const saveCanvasObjects = saveCanvas.getObjects();
-//   // remove all objects with frame: frameNumber
-//   // that way there is only 1 image layer; the last one
-//   saveCanvasObjects.forEach((element) => {
-//     if (element.frameNumber === currentFrame) {
-//       saveCanvas.remove(element);
-//     }
-//   });
-
-//   const leftOffset = baseSize * frameOffset;
-
-//   const preview = _fromCanvas.toDataURL({
-//     format: 'png',
-//     height: baseSize,
-//     width: baseSize,
-//   }, { crossOrigin: 'anonymous' });
-
-//   fabric.Image.fromURL(preview, (img) => {
-//     saveCanvas.add(img.set({
-//       left: leftOffset,
-//       top: 0,
-//       height: baseSize,
-//       width: baseSize,
-//       frameNumber: currentFrame,
-//     }));
-//   }, { crossOrigin: 'anonymous' });
-//   // show how many objects there are in canvas3
-//   // const canvasObjects = saveCanvas.getObjects();
-//   // console.log('canvasObjects', canvasObjects);
-//   _fromCanvas.setZoom(prevZoom);
-//   updateExportedImages();
-//   // return preview;
-// }
 /// / end going from drawing canvas to SaveCanvas FUNCTIONS /////////////////////////////////////////////////
 
   /// ////////////////// select functions /////////////////////////////////
@@ -580,7 +560,7 @@ function putDrawingCanvasIntoFramesArray() {
 
   function clearCanvas() {
     drawingCanvas.clear();
-    saveCanvas.clear();
+    // saveCanvas.clear();
     dispatch('clearCanvas');
   }
 
@@ -653,8 +633,7 @@ function putDrawingCanvasIntoFramesArray() {
           class="cursor-canvas"
           style:visibility="{enableEditor ? 'visible' : 'hidden'}"
         ></canvas>
-        <canvas hidden bind:this="{saveCanvasEl}" class="saveCanvas" ></canvas>
-        <canvas hidden bind:this="{loadCanvas}"></canvas>
+
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
@@ -665,6 +644,8 @@ function putDrawingCanvasIntoFramesArray() {
               width: {controlsWidth};"
       >
         <slot name="stopmotion" />
+        <canvas hidden bind:this="{saveCanvas}" class="saveCanvas" ></canvas>
+        <canvas hidden bind:this="{loadCanvas}"></canvas>
       </div>
     {/if}
   </div>

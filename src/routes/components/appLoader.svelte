@@ -23,7 +23,7 @@
     setAvatar,
     getDateAndTimeFormatted,
     updateObject,
-    updateTitle,
+    // updateTitle,
   } from '../../api';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { PlayerHistory } from '../game/playerState';
@@ -41,6 +41,8 @@
    * /sound?userId=UUID&key=KEY
    */
 
+  // for saving the stopmotion data in a promise
+  let drawing;
   let parsedQuery = {};
   $: userIsOwner =
     $Profile !== null &&
@@ -180,6 +182,8 @@
       }
     }
 
+    // create the data to save
+    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') await drawing.stopmotionSaveHandler();
 
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
@@ -350,6 +354,24 @@
     };
   }
 
+  async function saveToFile() {
+    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') {
+      await drawing.stopmotionSaveHandler();
+      downloadImage();
+    } else if ($CurrentApp === 'drawing' || $CurrentApp === 'house') {
+      downloadImage();
+    }
+  }
+
+    function downloadImage() {
+      const filename = `${$Profile.username}_${currentFile.key}.png`;
+      const a = document.createElement('a');
+      a.download = filename;
+      a.href = data;
+      document.body.appendChild(a);
+      a.click();
+    }
+
   function dataURItoBlob(dataURI) {
     // const binary = Buffer.from(dataURI.split(',')[1], 'base64');
     const binary = atob(dataURI.split(',')[1]);
@@ -373,6 +395,7 @@
     $CurrentApp !== DEFAULT_APP &&
     isValidApp($CurrentApp)}"
   on:close="{() => saveData(true)}"
+  on:saveToFile="{() => saveToFile()}"
 >
   {#if (userIsOwner && currentFile.loaded) || currentFile.new}
     {#if $CurrentApp === 'drawing' || $CurrentApp === 'house'}
@@ -381,6 +404,7 @@
         bind:data
         bind:changes
         bind:displayName
+        bind:this={drawing}
         on:save="{saveData}"
       />
 
@@ -390,6 +414,7 @@
         bind:data
         bind:changes
         bind:displayName
+        bind:drawing
         on:save="{saveData}"
       />
     {:else if $CurrentApp === 'mariosound'}
