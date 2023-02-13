@@ -15,7 +15,7 @@
 
   export let file; // file is currentFile in the appLoader (synced)
   export let data;
-  export let thumb;
+  export let thumb = null;
   export let changes;
 
   // change artwork name
@@ -29,10 +29,11 @@
   let loadCanvas;
 
   let baseSize = IMAGE_BASE_SIZE;
-  $: { // when the currenFrame changes, clear the canvas
-    if (canvas) {
-      canvas.clear();
-      getCroppedImageFromSaveCanvas(canvas, currentFrame);
+  $: { // when the currenFrame changes, clear the drawingCanvas
+    if (drawingCanvas) {
+      drawingCanvas.clear();
+      // getCroppedImageFromSaveCanvas(drawingCanvas, currentFrame);
+      getImageFromFramesArray();
     }
   }
 
@@ -76,58 +77,17 @@
   $: controlsHeight = innerWidth > 600 ? `${canvasHeight}px` : 'auto';
   $: controlsWidth = innerWidth <= 600 ? `${canvasHeight}px` : 'auto';
 
-  let imageFrames = [{}];
-const FrameObject = {
-  type: 'image',
-  version: '4.6.0',
-  originX: 'left',
-  originY: 'top',
-  left: -baseSize,
-  top: 0,
-  width: 0,
-  height: baseSize,
-  fill: 'rgb(0,0,0)',
-  stroke: null,
-  strokeWidth: 0,
-  strokeDashArray: null,
-  strokeLineCap: 'butt',
-  strokeDashOffset: 0,
-  strokeLineJoin: 'miter',
-  strokeUniform: false,
-  strokeMiterLimit: 4,
-  scaleX: 1,
-  scaleY: 1,
-  angle: 0,
-  flipX: false,
-  flipY: false,
-  opacity: 1,
-  shadow: null,
-  visible: true,
-  backgroundColor: '',
-  fillRule: 'nonzero',
-  paintFirst: 'fill',
-  globalCompositeOperation: 'source-over',
-  skewX: 0,
-  skewY: 0,
-  erasable: true,
-  cropX: 0,
-  cropY: 0,
-  src: '',
-  crossOrigin: 'anonymous',
-  filters: [],
-};
-
   /** Delete all content from a single frame
    * @maybe this belongs inside Stopmotion app instead..
    */
   export function deleteFrame(deleteableFrame) {
-    const objects = canvas.getObjects();
+    const objects = drawingCanvas.getObjects();
 
     // Find and remove all objects with the required frameNumber attribute
     objects
       .filter((obj) => obj.frameNumber === deleteableFrame)
       .forEach((obj) => {
-        canvas.remove(obj);
+        drawingCanvas.remove(obj);
       });
 
     // Select all content to the right of the frame, and move over by –canvasWidth px
@@ -162,8 +122,8 @@ const FrameObject = {
       // here canvas size on screen is set
       // canvasWidth = (canvasSize * frames - canvasEdge);
       canvasHeight = (canvasSize - canvasEdge);
-      canvas.setWidth(canvasHeight);
-      canvas.setHeight(canvasHeight); // keep the drawing Canvas square
+      drawingCanvas.setWidth(canvasHeight);
+      drawingCanvas.setHeight(canvasHeight); // keep the drawing Canvas square
 
       saveCanvas.setWidth(baseSize * frames);
       saveCanvas.setHeight(baseSize);
@@ -172,12 +132,12 @@ const FrameObject = {
 
       // for correct and adapted scaling of the preexisting artworks
       scaleRatio = Math.min(
-        (canvas.width * frames) / baseSize,
-        canvas.height / baseSize,
+        (drawingCanvas.width * frames) / baseSize,
+        drawingCanvas.height / baseSize,
       );
       cursorCanvas.setZoom(scaleRatio);
       // saveCanvas.setZoom(scaleRatio * 0.3);
-      canvas.setZoom(scaleRatio);
+      drawingCanvas.setZoom(scaleRatio);
 
       // Finally update 'data' object immediately
       updateExportedImages();
@@ -185,8 +145,8 @@ const FrameObject = {
   }
 
   // DOM ELements etc
-  let canvasEl;
-  let canvas;
+  let drawingCanvasEl;
+  let drawingCanvas;
   let saveCanvas;
   let saveCanvasEl;
   let cursorCanvasEl;
@@ -205,8 +165,8 @@ const FrameObject = {
 
   // Reactive function: update Fabric brush according to UI state
   $: {
-    if (canvas) {
-      const brush = canvas.freeDrawingBrush;
+    if (drawingCanvas) {
+      const brush = drawingCanvas.freeDrawingBrush;
       brush.color = drawingColor;
       brush.width = parseInt(lineWidth, 10) || 1;
       if (brush.getPatternSrc) {
@@ -233,31 +193,34 @@ const FrameObject = {
   onMount(() => {
     setLoader(true);
 
-    // canvas should be setup on default size, later resized to fit screen
+    // drawingCanvas should be setup on default size, later resized to fit screen
     // Set up Canvases
     cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
     cursorCanvas.set('width', baseSize);
     cursorCanvas.set('height', baseSize);
 
-    canvas = new fabric.Canvas(canvasEl, {
+    drawingCanvas = new fabric.Canvas(drawingCanvasEl, {
       isDrawingMode: true,
     });
-    canvas.set('width', baseSize);
-    canvas.set('height', baseSize);
+    drawingCanvas.set('width', baseSize);
+    drawingCanvas.set('height', baseSize);
 
     saveCanvas = new fabric.StaticCanvas(saveCanvasEl, {
     });
     saveCanvas.set('width', baseSize);
     saveCanvas.set('height', baseSize);
 
-    eraseBrush = new fabric.EraserBrush(canvas);
+    eraseBrush = new fabric.EraserBrush(drawingCanvas);
 
     // Set frameNumber on object, to refer to when deleting frames
-    canvas.on('path:created', () => {
-      const idx = canvas.getObjects().length - 1;
-      canvas.item(idx).frameNumber = currentFrame;
-      canvas.renderAll();
-      pushDrawingCanvasToSaveCanvas(canvas, currentFrame);
+    drawingCanvas.on('path:created', () => {
+      // const idx = drawingCanvas.getObjects().length - 1;
+      // drawingCanvas.item(idx).frameNumber = currentFrame;
+      // drawingCanvas.renderAll();
+      // pushDrawingCanvasToSaveCanvas(drawingCanvas, currentFrame); //! replacing
+      putDrawingCanvasIntoFramesArray();
+      drawingCanvas.clear();
+      getImageFromFramesArray(currentFrame);
     });
 
     fabric.Object.prototype.transparentCorners = false;
@@ -267,7 +230,7 @@ const FrameObject = {
     mouseCursor = new fabric.Circle({
       left: -100,
       top: -100,
-      radius: canvas.freeDrawingBrush.width / 2,
+      radius: drawingCanvas.freeDrawingBrush.width / 2,
       fill: `rgba(0,0,0,${cursorOpacity})`,
       stroke: 'black',
       originX: 'center',
@@ -278,7 +241,7 @@ const FrameObject = {
 
     // redraw cursor on new mouse position when moved
     // eslint-disable-next-line func-names
-    canvas.on('mouse:move', function (evt) {
+    drawingCanvas.on('mouse:move', function (evt) {
       if (currentTab === 'select') {
         return mouseCursor
           .set({ top: -100, left: -100 })
@@ -298,16 +261,16 @@ const FrameObject = {
 
     // TODO @chip Figure out the best event to listen to (maybe multiple events?) in order to trigger a saveState()?
     // Set up Fabric Canvas interaction listeners
-    // canvas.on('object:modified', () => {
-    canvas.on('mouse:up', () => {
+    // drawingCanvas.on('object:modified', () => {
+    drawingCanvas.on('mouse:up', () => {
       saveState();
     });
 
     applyBrush = (brushType) => {
       if (typeof brushType === 'string') selectedBrush = brushType;
-      canvas.freeDrawingBrush = new fabric[`${selectedBrush}Brush`](canvas);
-      if (canvas.freeDrawingBrush) {
-        const brush = canvas.freeDrawingBrush;
+      drawingCanvas.freeDrawingBrush = new fabric[`${selectedBrush}Brush`](drawingCanvas);
+      if (drawingCanvas.freeDrawingBrush) {
+        const brush = drawingCanvas.freeDrawingBrush;
         brush.color = drawingColor;
         if (brush.getPatternSrc) {
           brush.source = brush.getPatternSrc.call(brush);
@@ -318,6 +281,7 @@ const FrameObject = {
 
     // Was there an image to load? Do so
     if (file?.url) {
+      console.log('load file url drawing');
       const img = new Image();
       img.onload = (e) => {
         frames = Math.floor(e.target.width / e.target.height);
@@ -326,16 +290,23 @@ const FrameObject = {
       img.setAttribute('crossorigin', 'anonymous');
       img.src = file.url;
       setLoader(false);
-    } else {
+    } else { // new image
       frames = 1;
       setLoader(false);
     }
   });
 
+  $: {
+    // console.log('currentFrame: ', currentFrame);
+    if (drawingCanvas) {
+      getImageFromFramesArray(currentFrame);
+    }
+  }
   // go through all frames, and put each image in framesArray array
   function createframeBuffer(img) {
-    loadCanvas.width = STOPMOTION_BASE_SIZE;
-    loadCanvas.height = STOPMOTION_BASE_SIZE;
+    console.log('baseSize: ', baseSize);
+    loadCanvas.width = baseSize;
+    loadCanvas.height = baseSize;
     const ctx = loadCanvas.getContext('2d');
     for (let index = 0; index < frames; index++) {
       ctx.drawImage(
@@ -346,30 +317,35 @@ const FrameObject = {
         img.height,
         0,
         0,
-        STOPMOTION_BASE_SIZE,
-        STOPMOTION_BASE_SIZE,
+        baseSize,
+        baseSize,
       );
       framesArray[index] = loadCanvas.toDataURL('image/png');
-      // clear the canvas
-      ctx.clearRect(0, 0, STOPMOTION_BASE_SIZE, STOPMOTION_BASE_SIZE);
-      loadCanvas.width = 0;
+      // clear the loadingCanvas
+      ctx.clearRect(0, 0, baseSize, baseSize);
     }
-    console.log('framesArray: ', framesArray);
+    console.log('framesArray length: ', framesArray.length);
 
-    const imageUrl = framesArray[0]; // Replace with your data URL
-    fabric.Image.fromURL(imageUrl, (img) => {
-      // Set the image size and position on the canvas
-      img.set({
-        width: STOPMOTION_BASE_SIZE,
-        height: STOPMOTION_BASE_SIZE,
-        left: 0,
-        top: 0,
-      });
-      // Add the image to the canvas and render it
-      canvas.add(img);
-      canvas.renderAll();
-    });
-  }
+    // make the loadingCanvas 0
+    loadCanvas.width = 0;
+
+    getImageFromFramesArray(currentFrame);
+
+    // // load first frame to drawingCanvas
+    // const imageUrl = framesArray[0]; // first frame
+    // fabric.Image.fromURL(imageUrl, (placeImage) => {
+    //   // Set the image size and position on the drawingCanvas
+    //   placeImage.set({
+    //     width: baseSize,
+    //     height: baseSize,
+    //     left: 0,
+    //     top: 0,
+    //   });
+    //   // Add the image to the drawingCanvas and render it
+    //   drawingCanvas.add(placeImage);
+    //   drawingCanvas.renderAll();
+    // });
+  } // ............................. createframeBuffer ......................
 
   // Save state locally
   async function saveState() {
@@ -385,14 +361,14 @@ const FrameObject = {
       pastStates.update(() => [$state]); // to make changes work, but there is only the last line as state
     }
 
-    const json = canvas.toJSON();
+    const json = drawingCanvas.toJSON();
     if (json) {
       state.set(json);
       // TODO MAYBE: If required, we could add a save to localStorage here.
       // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
 
       // Set the data object (so the AppLoader can save it to server if required)
-      // FIXME? Somehow this requires a timeout, as calling it directly clears the canvas?!
+      // FIXME? Somehow this requires a timeout, as calling it directly clears the drawingCanvas?!
       // updateExportedImages();
     }
   }
@@ -405,14 +381,14 @@ const FrameObject = {
         format: 'png',
         height: baseSize,
         width: baseSize * frames,
-      }, { crossOrigin: 'anonymous' });
+      });
       // Small format thumbnail to add to frames
       // saveCanvas.setZoom(scaleRatio);
       thumb = saveCanvas.toDataURL({
         format: 'png',
         multiplier: 0.25,
 
-      }, { crossOrigin: 'anonymous' });
+      });
       // saveCanvas.setZoom(1);
     }, 30);
   }
@@ -449,194 +425,96 @@ const FrameObject = {
 
   // function resetCanvasFromState() {
   //   if ($state) {
-  //     canvas.clear();
-  //     canvas.loadFromJSON($state, () => {
-  //       canvas.renderAll();
+  //     drawingCanvas.clear();
+  //     drawingCanvas.loadFromJSON($state, () => {
+  //       drawingCanvas.renderAll();
   //       updateExportedImages();
   //     });
   //   }
   // }
 
-
- async function putImageUrlOnCanvas(img) {
- //  img.frame = 'importedImagePart';
-   console.log('image', img);
-
-   const imgObject = new Image();
-   imgObject.src = img;
-   imgObject.onload = function () {
-     saveCanvas.add(imgObject);
-     // saveCanvas.deactivateAll().renderAll();
-     updateExportedImages();
-     getCroppedImageFromSaveCanvas(canvas);
-   };
-   //  saveCanvas.add(img);
-   //  updateExportedImages();
-   //  getCroppedImageFromSaveCanvas(canvas);
-   setLoader(false);
- }
-
-  function putImageOnCanvas(imgUrl) {
-    if (stopMotion) {
-      let frameAmount;
-      const framebuffer = new Image();
-      framebuffer.src = imgUrl;
-      console.log('baseSize', baseSize);
-      framebuffer.height = baseSize;
-      framebuffer.onload = function () {
-        console.log('this.width', this.width);
-        const lastWidth = this.width;
-        frameAmount = lastWidth / baseSize;
-        FrameObject.src = imgUrl;
-        FrameObject.width = lastWidth;
-        imageFrames = [];
-        for (let i = 0; i < frameAmount; i++) {
-          FrameObject.left = 0;
-          FrameObject.width = baseSize;
-          FrameObject.height = baseSize;
-          FrameObject.cropX = i * baseSize;
-
-          imageFrames.push({
-            version: '4.6.0',
-            objects: [{ ...FrameObject }],
-          });
-        }
-        imageFrames = imageFrames;
-        console.log('imageFrames', imageFrames);
-        currentFrame = 0;
-        // canvas.loadFromJSON(frames[0], (oImg) => {
-        //   canvas.renderAll.bind(canvas);
-
-        // });
-      };
-    } else {
-      return new Promise((resolve, reject) => {
-        const imagePromises = [];
-        console.log('frames', frames);
-
-
-        for (let frame = 0; frame < frames; frame++) {
-          imagePromises.push(
-            new Promise((resolveImage, rejectImage) => {
-              fabric.Image.fromURL(
-                imgUrl,
-                // eslint-disable-next-line no-loop-func
-                (image, err) => {
-                // image.opacity = 0.5;
-
-                  // Step 1: Crop using the loaded image's width'
-                  const nativeHeight = image.height;
-                  image.set({
-                    cropX: nativeHeight * frame,
-                    cropY: 0,
-                    width: nativeHeight,
-                    height: nativeHeight,
-                  });
-
-                  // Step 2: Scale to canvas dimensions
-                  image.scaleToHeight(baseSize);
-
-                  // Step 3: Put on right spot
-                  image.set({
-                    left: baseSize * frame,
-                    top: 0,
-                    frameNumber: frame + 1, // Frames in the app are 1-based
-                  });
-
-                  if (err) {
-                    rejectImage();
-                  } else {
-                    resolveImage(image);
-                  }
-                },
-                { crossOrigin: 'anonymous' },
-              );
-            }),
-          );
-        }
-
-        Promise.all(imagePromises)
-          .then((images) => {
-            images.forEach((image) => {
-            // canvas.add(image);
-            // eslint-disable-next-line no-param-reassign
-              image.frame = 'importedImagePart';
-              // console.log('image', image);
-              saveCanvas.add(image);
-            });
-            updateExportedImages();
-            getCroppedImageFromSaveCanvas(canvas);
-            setLoader(false);
-            resolve();
-          })
-          .catch(() => {
-            reject();
-          });
-      });
-    }
-  }
-
 /// / going from drawing canvas to SaveCanvas FUNCTIONS ///////////////////////////////////////////
-function getCroppedImageFromSaveCanvas(ToCanvas) {
-  const frameOffset = currentFrame - 1;
-  const leftOffset = baseSize * frameOffset;
-  // var cropped = new Image();
-  const cropped = saveCanvas.toDataURL({
-    left: leftOffset,
-    top: 0,
-    width: baseSize,
-    height: baseSize,
-  }, { crossOrigin: 'anonymous' });
 
-  fabric.Image.fromURL(cropped, (img) => {
-    ToCanvas.add(img.set({
+//! replacing
+function getImageFromFramesArray(_currentFrame) {
+  let frame;
+  if (_currentFrame) {
+    frame = _currentFrame - 1;
+  } else {
+    frame = currentFrame - 1;
+  }
+  const storedFrame = framesArray[frame];
+
+  fabric.Image.fromURL(storedFrame, (img) => {
+    drawingCanvas.add(img.set({
       left: 0,
       top: 0,
       height: baseSize,
       width: baseSize,
     }));
-  }, { crossOrigin: 'anonymous' });
+
+    // drawingCanvas.add(placeImage);
+    // drawingCanvas.renderAll();
+  });
 }
 
+//! replacing
+function putDrawingCanvasIntoFramesArray() {
+  const prevZoom = drawingCanvas.getZoom();
+  drawingCanvas.setZoom(1);
 
-function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
-  const prevZoom = _fromCanvas.getZoom();
-  _fromCanvas.setZoom(1);
+  const frame = currentFrame - 1;
 
-  const frameOffset = currentFrame - 1;
-  const saveCanvasObjects = saveCanvas.getObjects();
-  // remove all objects with frame: frameNumber
-  // that way there is only 1 image layer; the last one
-  saveCanvasObjects.forEach((element) => {
-    if (element.frameNumber === currentFrame) {
-      saveCanvas.remove(element);
-    }
-  });
-
-  const leftOffset = baseSize * frameOffset;
-
-  const preview = _fromCanvas.toDataURL({
+  // get data from drawingCanvas
+  const currentFrameData = drawingCanvas.toDataURL({
     format: 'png',
     height: baseSize,
     width: baseSize,
-  }, { crossOrigin: 'anonymous' });
+  });
 
-  fabric.Image.fromURL(preview, (img) => {
-    saveCanvas.add(img.set({
-      left: leftOffset,
-      top: 0,
-      height: baseSize,
-      width: baseSize,
-      frameNumber: currentFrame,
-    }));
-  }, { crossOrigin: 'anonymous' });
-  // show how many objects there are in canvas3
-  // const canvasObjects = saveCanvas.getObjects();
-  // console.log('canvasObjects', canvasObjects);
-  _fromCanvas.setZoom(prevZoom);
-  updateExportedImages();
-  // return preview;
+  // put data into array
+  framesArray[frame] = currentFrameData;
+  drawingCanvas.setZoom(prevZoom);
 }
+
+// function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
+//   const prevZoom = _fromCanvas.getZoom();
+//   _fromCanvas.setZoom(1);
+
+//   const frameOffset = currentFrame - 1;
+//   const saveCanvasObjects = saveCanvas.getObjects();
+//   // remove all objects with frame: frameNumber
+//   // that way there is only 1 image layer; the last one
+//   saveCanvasObjects.forEach((element) => {
+//     if (element.frameNumber === currentFrame) {
+//       saveCanvas.remove(element);
+//     }
+//   });
+
+//   const leftOffset = baseSize * frameOffset;
+
+//   const preview = _fromCanvas.toDataURL({
+//     format: 'png',
+//     height: baseSize,
+//     width: baseSize,
+//   }, { crossOrigin: 'anonymous' });
+
+//   fabric.Image.fromURL(preview, (img) => {
+//     saveCanvas.add(img.set({
+//       left: leftOffset,
+//       top: 0,
+//       height: baseSize,
+//       width: baseSize,
+//       frameNumber: currentFrame,
+//     }));
+//   }, { crossOrigin: 'anonymous' });
+//   // show how many objects there are in canvas3
+//   // const canvasObjects = saveCanvas.getObjects();
+//   // console.log('canvasObjects', canvasObjects);
+//   _fromCanvas.setZoom(prevZoom);
+//   updateExportedImages();
+//   // return preview;
+// }
 /// / end going from drawing canvas to SaveCanvas FUNCTIONS /////////////////////////////////////////////////
 
   /// ////////////////// select functions /////////////////////////////////
@@ -709,16 +587,16 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
   // }
 
   function Delete() {
-    const curSelectedObjects = canvas.getActiveObjects();
-    canvas.discardActiveObject();
+    const curSelectedObjects = drawingCanvas.getActiveObjects();
+    drawingCanvas.discardActiveObject();
     for (let i = 0; i < curSelectedObjects.length; i++) {
-      canvas.remove(curSelectedObjects[i]);
+      drawingCanvas.remove(curSelectedObjects[i]);
     }
     updateExportedImages();
   }
 
   function clearCanvas() {
-    canvas.clear();
+    drawingCanvas.clear();
     saveCanvas.clear();
     dispatch('clearCanvas');
   }
@@ -739,17 +617,17 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
 
     switch (mode) {
       case 'draw':
-        canvas.isDrawingMode = true;
+        drawingCanvas.isDrawingMode = true;
         break;
 
       case 'select':
-        canvas.isDrawingMode = false;
+        drawingCanvas.isDrawingMode = false;
         break;
 
       case 'erase':
-        canvas.freeDrawingBrush = eraseBrush;
-        canvas.freeDrawingBrush.width = parseInt(lineWidth, 10) || 1;
-        canvas.isDrawingMode = true;
+        drawingCanvas.freeDrawingBrush = eraseBrush;
+        drawingCanvas.freeDrawingBrush.width = parseInt(lineWidth, 10) || 1;
+        drawingCanvas.isDrawingMode = true;
         break;
 
       default:
@@ -784,7 +662,8 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
             : 'none'};
           "
       >
-        <canvas bind:this="{canvasEl}" class="canvas"> </canvas>
+        <canvas bind:this="{drawingCanvasEl}" class="drawingCanvasEl"> </canvas>
+        <!-- <canvas bind:this="{drawingCanvasEl}" class="canvas"> </canvas> -->
 
         <canvas
           bind:this="{cursorCanvasEl}"
