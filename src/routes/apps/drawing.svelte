@@ -25,8 +25,8 @@
   export let frames = 1;
   export let currentFrame = 1;
   export let stopMotion = false;
-
-
+  export let framesArray = [];
+  let loadCanvas;
 
   let baseSize = IMAGE_BASE_SIZE;
   $: { // when the currenFrame changes, clear the canvas
@@ -318,27 +318,58 @@ const FrameObject = {
 
     // Was there an image to load? Do so
     if (file?.url) {
-      // putImageUrlOnCanvas(file.url)
-      putImageOnCanvas(file.url);
+      const img = new Image();
+      img.onload = (e) => {
+        frames = Math.floor(e.target.width / e.target.height);
+        createframeBuffer(img);
+      };
+      img.setAttribute('crossorigin', 'anonymous');
+      img.src = file.url;
       setLoader(false);
-      // .then(() => {
-      //   updateExportedImages();
-      // })
-      // .catch(() => {
-      //   Error.set(`Failed loading drawing from server: ${file.url}`);
-      // })
-      // .finally(() => {
-      //   setLoader(false);
-      // });
-      // downloadImagePromise(file.url).then((image) => {
-      //   console.log('image', image);
-      //   putImageUrlOnCanvas(image);
-      // });
-      // downloadImageTEST(file.url);
     } else {
+      frames = 1;
       setLoader(false);
     }
   });
+
+  // go through all frames, and put each image in framesArray array
+  function createframeBuffer(img) {
+    loadCanvas.width = STOPMOTION_BASE_SIZE;
+    loadCanvas.height = STOPMOTION_BASE_SIZE;
+    const ctx = loadCanvas.getContext('2d');
+    for (let index = 0; index < frames; index++) {
+      ctx.drawImage(
+        img, (
+          index * img.height),
+        0,
+        img.height,
+        img.height,
+        0,
+        0,
+        STOPMOTION_BASE_SIZE,
+        STOPMOTION_BASE_SIZE,
+      );
+      framesArray[index] = loadCanvas.toDataURL('image/png');
+      // clear the canvas
+      ctx.clearRect(0, 0, STOPMOTION_BASE_SIZE, STOPMOTION_BASE_SIZE);
+      loadCanvas.width = 0;
+    }
+    console.log('framesArray: ', framesArray);
+
+    const imageUrl = framesArray[0]; // Replace with your data URL
+    fabric.Image.fromURL(imageUrl, (img) => {
+      // Set the image size and position on the canvas
+      img.set({
+        width: STOPMOTION_BASE_SIZE,
+        height: STOPMOTION_BASE_SIZE,
+        left: 0,
+        top: 0,
+      });
+      // Add the image to the canvas and render it
+      canvas.add(img);
+      canvas.renderAll();
+    });
+  }
 
   // Save state locally
   async function saveState() {
@@ -425,69 +456,7 @@ const FrameObject = {
   //     });
   //   }
   // }
-async function downloadImageTEST(imageSrc) {
-  const downloadingImage = new Image();
-  downloadingImage.crossOrigin = 'anonymous';
-  downloadingImage.src = imageSrc;
 
-  downloadingImage.onload = function () {
-    console.log('downloadImage loaded');
-    console.log('downloadingImage', downloadingImage);
-    const placeImage = new fabric.Image(downloadingImage, {
-      left: 0,
-      top: 0,
-      angle: 0,
-    }, { crossOrigin: 'anonymous' });
-
-    saveCanvas.add(placeImage);
-    updateExportedImages();
-    getCroppedImageFromSaveCanvas(canvas);
-    setLoader(false);
-  };
-}
-
- async function downloadImagePromise(imgUrl) {
-   return new Promise((resolveDownloadImageUrl, rejectDownloadImageUrl) => {
-     // return new Promise((resolve, reject) => {
-   // const imagePromises = [];
-     console.log('frames', frames);
-     // for (let frame = 0; frame < frames; frame++) {
-     const frame = 0;
-     fabric.Image.fromURL(
-       imgUrl,
-       // eslint-disable-next-line no-loop-func
-       (image, error) => {
-       // image.opacity = 0.5;
-
-         // Step 1: Crop using the loaded image's width'
-         const nativeHeight = image.height;
-         image.set({
-           cropX: nativeHeight * frame,
-           cropY: 0,
-           width: nativeHeight,
-           height: nativeHeight,
-         });
-
-         console.log('image', image);
-         // Step 2: Scale to canvas dimensions
-         image.scaleToHeight(baseSize);
-
-         // Step 3: Put on right spot
-         image.set({
-           left: baseSize * frame,
-           top: 0,
-           frameNumber: frame + 1, // Frames in the app are 1-based
-         });
-         if (error) {
-           rejectDownloadImageUrl();
-         } else {
-           resolveDownloadImageUrl(image);
-         }
-       },
-       { crossOrigin: 'anonymous' },
-     );
-   });
- }
 
  async function putImageUrlOnCanvas(img) {
  //  img.frame = 'importedImagePart';
@@ -618,6 +587,7 @@ function getCroppedImageFromSaveCanvas(ToCanvas) {
     width: baseSize,
     height: baseSize,
   }, { crossOrigin: 'anonymous' });
+
   fabric.Image.fromURL(cropped, (img) => {
     ToCanvas.add(img.set({
       left: 0,
@@ -822,6 +792,7 @@ function pushDrawingCanvasToSaveCanvas(_fromCanvas) {
           style:visibility="{enableEditor ? 'visible' : 'hidden'}"
         ></canvas>
         <canvas hidden bind:this="{saveCanvasEl}" class="saveCanvas" ></canvas>
+        <canvas hidden bind:this="{loadCanvas}"></canvas>
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
