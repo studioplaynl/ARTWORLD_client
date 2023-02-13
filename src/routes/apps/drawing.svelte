@@ -33,7 +33,7 @@
     if (drawingCanvas) {
       drawingCanvas.clear();
       // getCroppedImageFromSaveCanvas(drawingCanvas, currentFrame);
-      getImageFromFramesArray();
+      getImageFromFramesArray(currentFrame);
     }
   }
 
