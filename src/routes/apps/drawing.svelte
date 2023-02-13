@@ -218,6 +218,7 @@
       // drawingCanvas.item(idx).frameNumber = currentFrame;
       // drawingCanvas.renderAll();
       // pushDrawingCanvasToSaveCanvas(drawingCanvas, currentFrame); //! replacing
+
       putDrawingCanvasIntoFramesArray();
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
@@ -285,7 +286,7 @@
       const img = new Image();
       img.onload = (e) => {
         frames = Math.floor(e.target.width / e.target.height);
-        createframeBuffer(img);
+        // createframeBuffer(img);
       };
       img.crossOrigin = 'anonymous';
       img.src = file.url;
