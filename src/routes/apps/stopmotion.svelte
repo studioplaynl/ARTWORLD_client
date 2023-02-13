@@ -14,7 +14,7 @@
 
   let thumb;
   let currentFrame = 1;
-  let drawing = null;
+  export let drawing;
   let frames = null;
   let playPreviewInterval = null;
 
