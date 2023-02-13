@@ -456,7 +456,7 @@ function getImageFromFramesArray(_currentFrame) {
 
   //   // drawingCanvas.add(placeImage);
   //   // drawingCanvas.renderAll();
-  });
+  // });
 }
 
 //! replacing
