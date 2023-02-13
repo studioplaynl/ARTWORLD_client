@@ -287,7 +287,7 @@
       img.crossOrigin = 'anonymous';
       img.onload = (e) => {
         frames = Math.floor(e.target.width / e.target.height);
-        // createframeBuffer(img);
+        // createframeBuffer(img); // disabled looking for error
       };
 
       img.src = file.url;

@@ -41,7 +41,7 @@
     //   };
     //   img.src = file.url;
     // } else {
-    //   frames = 1;
+    frames = 1;
     // }
   });
 
