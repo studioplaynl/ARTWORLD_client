@@ -33,16 +33,16 @@
   onMount(() => {
     // Was there an image to load?
     // If so, load it and retrieve frame count from dimensions.
-    if (file?.url) {
-      console.log('load file url stopmotion');
-      const img = new Image();
-      img.onload = (e) => {
-        frames = Math.floor(e.target.width / e.target.height);
-      };
-      img.src = file.url;
-    } else {
-      frames = 1;
-    }
+    // if (file?.url) {
+    console.log('load file url stopmotion');
+    //   const img = new Image();
+    //   img.onload = (e) => {
+    //     frames = Math.floor(e.target.width / e.target.height);
+    //   };
+    //   img.src = file.url;
+    // } else {
+    //   frames = 1;
+    // }
   });
 
   function switchFrame(frameNumber) {
