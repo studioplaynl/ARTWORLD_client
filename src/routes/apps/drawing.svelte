@@ -287,7 +287,7 @@
       img.crossOrigin = 'anonymous';
       img.onload = (e) => {
         frames = Math.floor(e.target.width / e.target.height);
-        // createframeBuffer(img); // disabled looking for error
+        createframeBuffer(img); // disabled looking for error
       };
 
       img.src = file.url;
@@ -331,22 +331,7 @@
     // make the loadingCanvas 0
     loadCanvas.width = 0;
 
-    getImageFromFramesArray(currentFrame);
-
-    // // load first frame to drawingCanvas
-    // const imageUrl = framesArray[0]; // first frame
-    // fabric.Image.fromURL(imageUrl, (placeImage) => {
-    //   // Set the image size and position on the drawingCanvas
-    //   placeImage.set({
-    //     width: baseSize,
-    //     height: baseSize,
-    //     left: 0,
-    //     top: 0,
-    //   });
-    //   // Add the image to the drawingCanvas and render it
-    //   drawingCanvas.add(placeImage);
-    //   drawingCanvas.renderAll();
-    // });
+    // getImageFromFramesArray(currentFrame);
   } // ............................. createframeBuffer ......................
 
   // Save state locally
