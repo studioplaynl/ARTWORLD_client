@@ -236,7 +236,7 @@
 
 <style>
   :global(.deletedTable tbody tr) {
-    opacity: 0.6;
+    opacity: 1;
     position: relative;
   }
 
