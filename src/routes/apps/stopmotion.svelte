@@ -13,6 +13,7 @@
   export let displayName;
 
   let thumb;
+  let framesArray;
   let currentFrame = 1;
   export let drawing;
   let frames = null;
@@ -107,7 +108,7 @@
   }
 </script>
 
-{#if frames !== null}
+{#if framesArray !== null}
   <Drawing
     bind:this="{drawing}"
     bind:file
@@ -116,6 +117,7 @@
     bind:changes
     bind:currentFrame
     bind:frames
+    bind:framesArray
     bind:enableEditor
     bind:displayName
     stopMotion="{true}"
@@ -159,9 +161,7 @@
                   <div
                     class="stopmotion__frame__background"
                     style="
-              background-image: url({thumb});
-              left: {-100 * (index - 1)}%;
-              width: {frames * 100}%;
+              background-image: url({framesArray[index - 1]});
               "
                   ></div>
                   <div class="stopmotion__frame__index">

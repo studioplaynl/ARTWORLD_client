@@ -314,6 +314,7 @@
     // make the loadingCanvas 0
     loadCanvas.width = 0;
 
+    // put currentFrame in the drawingCanvas
     getImageFromFramesArray(currentFrame);
   } // ............................. createframeBuffer ......................
 
