@@ -145,14 +145,14 @@
 
           // updateObject(type, name, value, pub, userID)
 
-          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read, userID)])
+          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.status, userID)])
             .then(() => {
               console.log(
                 'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
                 currentFile.type,
                 currentFile.key,
                 tempValue,
-                currentFile.permission_read,
+                currentFile.status,
               );
             })
             .catch((error) => {

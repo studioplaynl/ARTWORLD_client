@@ -127,6 +127,8 @@
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
 
+  $: { console.log('file: ', file); }
+
   // Reactive function: update Fabric brush according to UI state
   $: {
     if (drawingCanvas) {
