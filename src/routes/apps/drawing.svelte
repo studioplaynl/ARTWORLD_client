@@ -136,7 +136,7 @@
       drawingCanvas.setZoom(scaleRatio);
 
       // Finally update 'data' object immediately
-      updateExportedImages();
+      // updateExportedImages();
     }
   }
 
@@ -633,7 +633,8 @@ function putDrawingCanvasIntoFramesArray() {
           class="cursor-canvas"
           style:visibility="{enableEditor ? 'visible' : 'hidden'}"
         ></canvas>
-
+        <canvas hidden bind:this="{saveCanvas}" class="saveCanvas" ></canvas>
+        <canvas hidden bind:this="{loadCanvas}"></canvas>
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
@@ -644,8 +645,7 @@ function putDrawingCanvasIntoFramesArray() {
               width: {controlsWidth};"
       >
         <slot name="stopmotion" />
-        <canvas hidden bind:this="{saveCanvas}" class="saveCanvas" ></canvas>
-        <canvas hidden bind:this="{loadCanvas}"></canvas>
+
       </div>
     {/if}
   </div>

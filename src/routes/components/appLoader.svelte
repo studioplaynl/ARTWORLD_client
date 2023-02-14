@@ -183,6 +183,9 @@
     }
 
     // create the data to save
+
+    // if ($CurrentApp === 'stopmotion' ) run the function stopmotionSaveHandler() in drawing.svelte
+
     if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') await drawing.stopmotionSaveHandler();
 
     /** Attempt to save the file, then resolve or reject after doing so */
