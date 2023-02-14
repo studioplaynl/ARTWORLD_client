@@ -185,7 +185,11 @@
                 {#if currentFrame === index && frames > 1}
                   <button
                     class="clear-button-styles stopmotion__delete"
-                    on:click="{() => deleteFrame(index)}"
+                    on:click="{() => {
+                      deleteFrame(index);
+                      // update changes to trigger save
+                      changes++;
+                    }}"
                     >&times;</button
                   >
                 {/if}

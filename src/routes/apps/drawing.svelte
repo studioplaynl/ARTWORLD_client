@@ -28,6 +28,7 @@
   let loadCanvas;
 
   let baseSize = IMAGE_BASE_SIZE;
+
   $: { // when the currenFrame changes, clear the drawingCanvas
     if (drawingCanvas) {
       drawingCanvas.clear();
@@ -74,11 +75,6 @@
 
   $: controlsHeight = innerWidth > 600 ? `${canvasHeight}px` : 'auto';
   $: controlsWidth = innerWidth <= 600 ? `${canvasHeight}px` : 'auto';
-
-  /** Delete all content from a single frame
-   * @maybe this belongs inside Stopmotion app instead..
-   */
-
 
   $: {
     // Respond to changes in window size
