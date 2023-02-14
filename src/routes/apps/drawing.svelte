@@ -8,7 +8,7 @@
   import {
     setLoader,
   } from '../../api';
-  import { Error, Profile } from '../../session';
+  import { Profile } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
   // import NameGenerator from '../components/nameGenerator.svelte';
   import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
@@ -295,7 +295,7 @@
     saveCanvas.height = baseSize;
     saveCanvas.width = baseSize * frames;
 
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve) => {
       let loaded = 0;
       // framebuffer contains all frames in an array
       framesArray.forEach((frame, i) => {
@@ -314,7 +314,7 @@
       });
     }).then(() => {
       data = saveCanvas.toDataURL('image/png');
-      console.log('stopmotionSaveHandler saved');
+      console.log('saveHandler saved');
       return data;
     });
   }
@@ -557,9 +557,8 @@ function putDrawingCanvasIntoFramesArray() {
         <div
           class="canvas-onion"
           style="
-            background-image: url({data});
-            left: -{canvasHeight *
-            (currentFrame - 2)}px;"
+            background-image: url({framesArray[currentFrame - 2]});
+            "
         ></div>
       {/if}
       <div
