@@ -15,7 +15,6 @@
 
   export let file; // file is currentFile in the appLoader (synced)
   export let data;
-  export let thumb = null;
   export let changes;
 
   // change artwork name
@@ -79,30 +78,7 @@
   /** Delete all content from a single frame
    * @maybe this belongs inside Stopmotion app instead..
    */
-  export function deleteFrame(deleteableFrame) {
-    const objects = drawingCanvas.getObjects();
 
-    // Find and remove all objects with the required frameNumber attribute
-    objects
-      .filter((obj) => obj.frameNumber === deleteableFrame)
-      .forEach((obj) => {
-        drawingCanvas.remove(obj);
-      });
-
-    // Select all content to the right of the frame, and move over by –canvasWidth px
-    objects
-      .filter((obj) => obj.frameNumber > deleteableFrame)
-      .forEach((obj) => {
-        // eslint-disable-next-line no-param-reassign
-        obj.left -= canvasHeight / scaleRatio;
-      });
-
-    // Emit event that deletion is done
-    dispatch('frameContentDeleted');
-
-    // Finally update data
-    updateExportedImages();
-  }
 
   $: {
     // Respond to changes in window size
@@ -134,9 +110,6 @@
       );
       cursorCanvas.setZoom(scaleRatio);
       drawingCanvas.setZoom(scaleRatio);
-
-      // Finally update 'data' object immediately
-      // updateExportedImages();
     }
   }
 
@@ -367,31 +340,7 @@
       state.set(json);
       // TODO MAYBE: If required, we could add a save to localStorage here.
       // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
-
-      // Set the data object (so the AppLoader can save it to server if required)
-      // FIXME? Somehow this requires a timeout, as calling it directly clears the drawingCanvas?!
-      // updateExportedImages();
     }
-  }
-
-  function updateExportedImages() {
-    setTimeout(() => {
-      // saveCanvas.setZoom(1);
-
-      data = saveCanvas.toDataURL({
-        format: 'png',
-        height: baseSize,
-        width: baseSize * frames,
-      });
-      // Small format thumbnail to add to frames
-      // saveCanvas.setZoom(scaleRatio);
-      thumb = saveCanvas.toDataURL({
-        format: 'png',
-        multiplier: 0.25,
-
-      });
-      // saveCanvas.setZoom(1);
-    }, 30);
   }
 
   // Go back to previous state
@@ -429,7 +378,6 @@
   //     drawingCanvas.clear();
   //     drawingCanvas.loadFromJSON($state, () => {
   //       drawingCanvas.renderAll();
-  //       updateExportedImages();
   //     });
   //   }
   // }
@@ -437,7 +385,7 @@
 /// / going from drawing canvas to SaveCanvas FUNCTIONS ///////////////////////////////////////////
 
 //! replacing
-function getImageFromFramesArray(_currentFrame) {
+export function getImageFromFramesArray(_currentFrame) {
   let frame;
   if (_currentFrame) {
     frame = _currentFrame - 1;
@@ -556,7 +504,6 @@ function putDrawingCanvasIntoFramesArray() {
     for (let i = 0; i < curSelectedObjects.length; i++) {
       drawingCanvas.remove(curSelectedObjects[i]);
     }
-    updateExportedImages();
   }
 
   function clearCanvas() {

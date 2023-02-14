@@ -12,7 +12,6 @@
   export let changes;
   export let displayName;
 
-  let thumb;
   let framesArray;
   let currentFrame = 1;
   export let drawing;
@@ -58,6 +57,22 @@
       }
     }, 100);
   }
+
+    function deleteFrame(deleteableFrame) {
+      const deleteframe = deleteableFrame - 1;
+      console.log('deleteFrame, currentFrame', deleteframe, currentFrame);
+
+
+      if (deleteframe >= 0 && deleteframe < framesArray.length) {
+      // Remove the nth element from the array
+        framesArray.splice(deleteframe, 1);
+
+        // update drawingCanvas with currentFrame
+        drawing.getImageFromFramesArray(currentFrame - 1);
+      }
+
+      onFrameContentDeleted();
+    }
 
   // Set up swiper as reference to Swiper.js instance
   const onSwiper = (e) => {
@@ -113,7 +128,6 @@
     bind:this="{drawing}"
     bind:file
     bind:data
-    bind:thumb
     bind:changes
     bind:currentFrame
     bind:frames
@@ -171,7 +185,7 @@
                 {#if currentFrame === index && frames > 1}
                   <button
                     class="clear-button-styles stopmotion__delete"
-                    on:click="{() => drawing.deleteFrame(index)}"
+                    on:click="{() => deleteFrame(index)}"
                     >&times;</button
                   >
                 {/if}
