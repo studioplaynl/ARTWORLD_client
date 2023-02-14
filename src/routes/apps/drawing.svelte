@@ -290,7 +290,7 @@
   } // ............................. createframeBuffer ......................
 
   // gets executed inside appLoader
-  export async function stopmotionSaveHandler() {
+  export async function saveHandler() {
     // set dimensions of savecanvas
     saveCanvas.height = baseSize;
     saveCanvas.width = baseSize * frames;

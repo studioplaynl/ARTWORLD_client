@@ -183,15 +183,11 @@
     }
 
     // create the data to save
-
-    // if ($CurrentApp === 'stopmotion' ) run the function stopmotionSaveHandler() in drawing.svelte
-
-    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') await drawing.stopmotionSaveHandler();
+    await drawing.saveHandler();
 
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
       const blobData = dataURItoBlob(data);
-
 
       uploadImage(
         currentFile.key, // ook wel title/name
