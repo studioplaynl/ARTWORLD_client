@@ -120,6 +120,7 @@ export function handlePlayerMovement(scene) {
   })
     .on('tap', () => {
       // dlog('tap');
+      // ClickOutSide is not working on iOS
       ShowItemsBar.set(false);
     }, scene)
     .on('tappingstart', () => {
