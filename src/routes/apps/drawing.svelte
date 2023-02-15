@@ -289,7 +289,12 @@
     getImageFromFramesArray(currentFrame);
   } // ............................. createframeBuffer ......................
 
-  // gets executed inside appLoader
+  /**
+   *
+   * put framesArray in savaCanvas, and assign it as data
+   * get's used for downloading the image to desktop
+   * and in apploader to prepare the data for storage on the server
+   */
   export async function saveHandler() {
     // set dimensions of savecanvas
     saveCanvas.height = baseSize;
@@ -315,6 +320,11 @@
     }).then(() => {
       data = saveCanvas.toDataURL('image/png');
       console.log('saveHandler saved');
+
+      // empty the saveCanvas
+      saveCanvas.height = 0;
+      saveCanvas.width = 0;
+
       return data;
     });
   }
@@ -380,9 +390,8 @@
   //   }
   // }
 
-/// / going from drawing canvas to SaveCanvas FUNCTIONS ///////////////////////////////////////////
-
-//! replacing
+/// / going from framesArray to drawingCanvas FUNCTIONS ///////////////////////////////////////////
+// put the current frame in the drawingCanvas
 export function getImageFromFramesArray(_currentFrame) {
   let frame;
   if (_currentFrame) {
@@ -425,38 +434,28 @@ function putDrawingCanvasIntoFramesArray() {
   framesArray[frame] = currentFrameData;
   drawingCanvas.setZoom(prevZoom);
 }
-/// / end going from drawing canvas to SaveCanvas FUNCTIONS /////////////////////////////////////////////////
+/// / end going from framesArray to drawingCanvas FUNCTIONS /////////////////////////////////////////////////
 
   /// ////////////////// select functions /////////////////////////////////
   function handleKeydown(evt) {
     if (evt.key === 'Backspace' || evt.key === 'Delete') {
       Delete();
     }
-    // testing out the download function
-    // save() = save and close
-    if (evt.key === '1') {
-      downloadImage();
-    }
   }
 
-  function downloadImage() {
-    // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
-    const userProfile = get(Profile);
-    // console.log('userProfile', userProfile.username);
-    const filename = `${userProfile.username}_${file.key}_${displayName}.png`;
+ async function downloadImage() {
+   await saveHandler();
 
-    // data = saveCanvas.toDataURL('image/png', 1);
-    data = saveCanvas.toDataURL({
-      format: 'png',
-      multiplier: 1,
-    }, { crossOrigin: 'anonymous' });
-
-    const a = document.createElement('a');
-    a.href = data;
-    a.download = filename;
-    // document.body.appendChild(a);
-    a.click();
-  }
+   // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
+   const userProfile = get(Profile);
+   // console.log('userProfile', userProfile.username);
+   const filename = `${userProfile.username}_${file.key}_${displayName}.png`;
+   const a = document.createElement('a');
+   a.download = filename;
+   a.href = data;
+   document.body.appendChild(a);
+   a.click();
+ }
 
   // function Copy() {
   //   // clone what are you copying since you

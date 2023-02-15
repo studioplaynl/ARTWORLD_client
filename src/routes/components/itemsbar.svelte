@@ -53,7 +53,7 @@
         } else {
           profileAzc = 'GreenSquare'
         }
-        console.log('profileAzc: ', profileAzc)
+        // console.log('profileAzc: ', profileAzc)
 
         userHouseObject = await getObject(
           'home',

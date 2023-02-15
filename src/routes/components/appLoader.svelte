@@ -355,7 +355,7 @@
 
   async function saveToFile() {
     if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') {
-      await drawing.stopmotionSaveHandler();
+      await drawing.saveHandler();
       downloadImage();
     } else if ($CurrentApp === 'drawing' || $CurrentApp === 'house') {
       downloadImage();

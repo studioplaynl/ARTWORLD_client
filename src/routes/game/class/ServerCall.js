@@ -205,7 +205,7 @@ class ServerCall {
         serverItemsArray.array = rec;
 
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
+        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname.toLowerCase() === type);
         dlog('dier serverItemsArray.array', serverItemsArray.array);
         this.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
@@ -219,7 +219,7 @@ class ServerCall {
         // serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
 
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
+        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname.toLowerCase() === type);
         dlog('bloem serverItemsArray.array', serverItemsArray.array);
         this.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
@@ -429,7 +429,7 @@ class ServerCall {
       // dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
       // const convertedImage = element.value.previewUrl
-      dlog('convertedImage', convertedImage);
+      // dlog('convertedImage', convertedImage);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
         loadFunction: 'downloadFlowerChallenge', element, index, imageKey: imageKeyUrl, scene,
