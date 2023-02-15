@@ -126,6 +126,20 @@
   // declaring the variable to be available globally, onMount assinging a function to it
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
+  let brushWidthLogarithmic = lineWidth;
+
+  function updateLineWidth(value) {
+    // console.log('updateLineWidth', value);
+
+    // Map the input range (1 to 100) to the logarithmic scale (0 to 1)
+    const logValue = Math.log(value) / Math.log(100);
+
+    // Map the logarithmic scale (0 to 1) to the output range (1 to 1000)
+    const outputValue = 10 ** (logValue * 3);
+
+    // console.log('outputValue', outputValue);
+    return outputValue;
+  }
 
   $: { console.log('file: ', file); }
 
@@ -134,7 +148,7 @@
     if (drawingCanvas) {
       const brush = drawingCanvas.freeDrawingBrush;
       brush.color = drawingColor;
-      brush.width = parseInt(lineWidth, 10) || 1;
+      brush.width = parseInt(brushWidthLogarithmic, 10) || 1;
       if (brush.getPatternSrc) {
         brush.source = brush.getPatternSrc.call(brush);
       }
@@ -154,6 +168,12 @@
         .canvas.renderAll();
     }
   }
+
+  $: {
+    brushWidthLogarithmic = updateLineWidth(lineWidth);
+  }
+
+
 
   // eslint-disable-next-line consistent-return
   onMount(() => {
@@ -236,7 +256,8 @@
         if (brush.getPatternSrc) {
           brush.source = brush.getPatternSrc.call(brush);
         }
-        brush.width = parseInt(lineWidth, 10) || 1;
+        brush.width = parseInt(brushWidthLogarithmic, 10) || 1;
+        console.log('brush.width', brush.width);
       }
     };
 
@@ -534,7 +555,7 @@ function putDrawingCanvasIntoFramesArray() {
 
       case 'erase':
         drawingCanvas.freeDrawingBrush = eraseBrush;
-        drawingCanvas.freeDrawingBrush.width = parseInt(lineWidth, 10) || 1;
+        drawingCanvas.freeDrawingBrush.width = parseInt(brushWidthLogarithmic, 10) || 1;
         drawingCanvas.isDrawingMode = true;
         break;
 
@@ -641,8 +662,8 @@ function putDrawingCanvasIntoFramesArray() {
                 <div class="circle-box-small"></div>
                 <input
                   type="range"
-                  min="10"
-                  max="500"
+                  min="1"
+                  max="100"
                   id="drawing-line-width"
                   title="Set drawing thickness"
                   bind:value="{lineWidth}"
@@ -657,8 +678,8 @@ function putDrawingCanvasIntoFramesArray() {
 
                 <input
                   type="range"
-                  min="10"
-                  max="500"
+                  min="1"
+                  max="100"
                   id="erase-line-width"
                   bind:value="{lineWidth}"
                 />
