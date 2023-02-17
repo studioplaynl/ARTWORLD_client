@@ -116,7 +116,9 @@
       PlayerHistory.pop();
     } else {
       // Else, if a user came here through a deep link, forward to app defaults
-      push(`/${DEFAULT_APP}?location=${DEFAULT_SCENE}`);
+      const value = `/${DEFAULT_APP}?location=${DEFAULT_SCENE}`;
+      push(value);
+      PlayerHistory.push(value);
     }
   }
 
@@ -124,7 +126,7 @@
    * @param {boolean} andClose Should the AppContainer afterwards?
    */
   async function saveData(andClose) {
-    // NO changes? We don't need to save anything.
+    // NO changes? We don't need to save changesanything.
 
     //! if only the displayName changed, the object should be updated but not the image
     //! for now: update the object always
@@ -146,19 +148,21 @@
           // updateObject(type, name, value, pub, userID)
           Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.status, userID)])
             .then(() => {
-              console.log(
-                'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
-                currentFile.type,
-                currentFile.key,
-                tempValue,
-                currentFile.status,
-              );
+              dlog('saved object only: ');
+              dlog('currentFile.type: ', currentFile.type);
+              dlog('currentFile.key: ', currentFile.key);
+              dlog('tempValue: ', tempValue);
+              dlog('currentFile.permission_read: ', currentFile.permission_read);
+              dlog('currentFile.status: ', currentFile.status);
+              dlog('currentFile: ', currentFile);
             })
             .catch((error) => {
               Error.set(error);
               setLoader(false);
             });
           setLoader(false);
+        } else {
+          dlog('no changes saved');
         }
         //! currentFile bug
 
@@ -291,6 +295,7 @@
     const loadFromCollection = $CurrentApp;
 
     currentFile = await getFileInformation(loadFromCollection, userId, key);
+    console.log('currentFile loaded: ', currentFile);
   }
 
   async function newFile() {
@@ -319,6 +324,7 @@
         // TODO: Het kan zijn dat een object leeg terugkomt. Dan staan wellicht de permissies fout.
 
         if (loadingObject) {
+          console.log('loadingObject', loadingObject);
           const file = await getFile(loadingObject.value.url);
           // console.log('loadingObject', loadingObject);
           // set the displayName, so it can also be changed in the Drawing app
@@ -339,6 +345,7 @@
           };
         }
       } catch (error) {
+        console.log('error', error);
         return {
           key,
           userId,

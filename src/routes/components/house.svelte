@@ -49,7 +49,6 @@
     on:click="{() => {
       show = !show;
       showHistory = false;
-      // push('/house');
     }}"
   >
     <img alt="My House" id="house" src="{$myHome.url}" />

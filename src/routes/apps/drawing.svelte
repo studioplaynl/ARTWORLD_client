@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
-  import { writable, get } from 'svelte/store';
+  import { get } from 'svelte/store';
 
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
@@ -38,7 +38,7 @@
     }
   }
 
-
+  $: { console.log('changes', changes); }
 
   //   function resetUndoOnChangeFrame(_currentFrame) {
   //     console.log('prevFrame', prevFrame);
@@ -166,7 +166,7 @@
   let eraseBrush;
   let mouseCursor;
   // let drawingClipboard;
-  let lineWidth = 10;
+  let lineWidth = 100;
   let drawingColor = '#000000';
   let currentTab = null;
   let showOptionbox = false;
@@ -175,19 +175,26 @@
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
   let brushWidthLogarithmic = lineWidth;
+  // Set the maximum value of the slider
+  const brushSliderMax = 1000;
+  // Set the minimum value of the slider
+  const brushSliderMin = 2;
+  // Calculate the value range for the first 3/4 of the slider
+  const brushSliderQuarter = (brushSliderMax - brushSliderMin) * 0.9;
+  // Calculate the offset for the first 3/4 of the slider
+  const brushSliderOffset = brushSliderMin + brushSliderQuarter;
   // const maxUndo = 4;
 
-  function updateLineWidth(value) {
-    // console.log('updateLineWidth', value);
-
-    // Map the input range (1 to 100) to the logarithmic scale (0 to 1)
-    const logValue = Math.log(value) / Math.log(100);
-
-    // Map the logarithmic scale (0 to 1) to the output range (1 to 1000)
-    const outputValue = 10 ** (logValue * 3);
-
-    // console.log('outputValue', outputValue);
-    return outputValue;
+  function updateLineWidth(_value) {
+    // Get the value of the slider and convert it to an integer
+    let value = parseInt(_value);
+    // If the value is less than or equal to the offset, set the value to a value in the first 3/4 of the slider
+    if (value <= brushSliderOffset) {
+      value = Math.round((value - brushSliderMin) / brushSliderQuarter * 190) + brushSliderMin;
+    } else { // If the value is greater than the offset, set the value to a value in the remaining 1/4 of the slider
+      value = Math.round((value - brushSliderOffset) / (brushSliderMax - brushSliderOffset) * 800) + 200;
+    }
+    return value; // Set the value of the slider to the new value
   }
 
   $: { console.log('file: ', file); }
@@ -747,8 +754,8 @@ function putDrawingCanvasIntoFramesArray(_frame) {
                 <div class="circle-box-small"></div>
                 <input
                   type="range"
-                  min="1"
-                  max="100"
+                  min="{brushSliderMin}"
+                  max="{brushSliderMax}"
                   id="drawing-line-width"
                   title="Set drawing thickness"
                   bind:value="{lineWidth}"
