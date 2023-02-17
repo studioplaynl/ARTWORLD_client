@@ -249,7 +249,7 @@
     height: 2px;
     left: 0;
     right: 0;
-    opacity: 0.5;
+    opacity: 1;
     background-color: gray;
   }
 

@@ -145,17 +145,19 @@ class ServerCall {
       myHomeStore.subscribe((value) => {
         console.log('previousHome: ', previousHome);
         if (previousHome.value.url !== value.value.url) {
+          // find the image in the container by name
+          const homeImageInGame = ManageSession.playerHomeContainer.getByName('locationImage');
           dlog('user home image updated');
           previousHome = value;
           // dlog('value', value);
           // dlog('value.url', value.url);
           if (scene.textures.exists(value.url)) {
-            ManageSession.playerHomeContainer.list[2].setTexture(value.url);
+            homeImageInGame.setTexture(value.url);
           } else {
             scene.load.image(value.url, value.url)
               .on(`filecomplete-image-${value.url}`, () => {
                 dlog('done loading new home image');
-                ManageSession.playerHomeContainer.list[2].setTexture(value.url);
+                homeImageInGame.setTexture(value.url);
               }, this);
             scene.load.start(); // start loading the image in memory
           }
@@ -163,11 +165,11 @@ class ServerCall {
           // dlog('ManageSession.playerHomeContainer.list[2]', ManageSession.playerHomeContainer.list[2]);
           // set the right size
           const width = 140;
-          if (typeof ManageSession.playerHomeContainer.list[2] !== 'undefined') {
-            ManageSession.playerHomeContainer.list[2].displayWidth = width;
-            ManageSession.playerHomeContainer.list[2].scaleY = ManageSession.playerHomeContainer.list[2].scaleX;
+          if (typeof homeImageInGame !== 'undefined') {
+            homeImageInGame.displayWidth = width;
+            homeImageInGame.scaleY = homeImageInGame.scaleX;
             const cropMargin = 1; // sometimes there is a little border visible on a drawn image
-            ManageSession.playerHomeContainer.list[2].setCrop(
+            homeImageInGame.setCrop(
               cropMargin,
               cropMargin,
               width - cropMargin,
