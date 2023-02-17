@@ -147,6 +147,7 @@ class ServerCall {
         if (previousHome.value.url !== value.value.url) {
           // find the image in the container by name
           const homeImageInGame = ManageSession.playerHomeContainer.getByName('locationImage');
+          console.log('homeImageInGame: ', homeImageInGame);
           dlog('user home image updated');
           previousHome = value;
           // dlog('value', value);
@@ -157,7 +158,10 @@ class ServerCall {
             scene.load.image(value.url, value.url)
               .on(`filecomplete-image-${value.url}`, () => {
                 dlog('done loading new home image');
-                homeImageInGame.setTexture(value.url);
+                if (typeof homeImageInGame !== 'undefined') {
+                  console.log('homeImageInGame: ', homeImageInGame);
+                  homeImageInGame.setTexture(value.url);
+                }
               }, this);
             scene.load.start(); // start loading the image in memory
           }
@@ -165,7 +169,8 @@ class ServerCall {
           // dlog('ManageSession.playerHomeContainer.list[2]', ManageSession.playerHomeContainer.list[2]);
           // set the right size
           const width = 140;
-          if (typeof homeImageInGame !== 'undefined') {
+          if (typeof homeImageInGame.displayWidth !== 'undefined') {
+            console.log('homeImageInGame: ', homeImageInGame);
             homeImageInGame.displayWidth = width;
             homeImageInGame.scaleY = homeImageInGame.scaleX;
             const cropMargin = 1; // sometimes there is a little border visible on a drawn image
