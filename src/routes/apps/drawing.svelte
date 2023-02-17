@@ -28,13 +28,55 @@
   let loadCanvas;
 
   let baseSize = IMAGE_BASE_SIZE;
+  // let prevFrame = 1;
 
   $: { // when the currenFrame changes, clear the drawingCanvas
     if (drawingCanvas) {
+      // resetUndoOnChangeFrame(currentFrame);
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
     }
   }
+
+
+
+  //   function resetUndoOnChangeFrame(_currentFrame) {
+  //     console.log('prevFrame', prevFrame);
+  //     console.log('currentFrame', _currentFrame);
+  //     putDrawingCanvasIntoFramesArray(prevFrame);
+
+  //     // clear the canvas because we switch to a new frame
+  //     drawingCanvas.clear();
+  //     drawingCanvas.renderAll();
+
+  //     getImageFromFramesArray(currentFrame);
+  //     drawingCanvas.renderAll();
+
+  //     const allDrawingCanvasObjects = drawingCanvas.getObjects();
+  //     console.log('allDrawingCanvasObjects: ', allDrawingCanvasObjects);
+
+
+
+  //     // drawingCanvas.renderAll();
+  //     // let getStateStore = get(state);
+  //     console.log('state BEFORE', get(state));
+  //     //! maybe take away one prev object instead of clearing the whole canvas
+  //     const json = drawingCanvas.toJSON();
+  //     if (json) {
+  //       state.set(json);
+  //     // console.log('ending saveState $state: ', $state);
+  //     }
+  //     console.log('state AFTER', get(state));
+
+  //     // empty the pastStates and futureStates
+  //     pastStates.set([]);
+  //     futureStates.set([]);
+
+
+  //     if (prevFrame !== currentFrame) {
+  //       prevFrame = currentFrame;
+  //     }
+  //   }
 
   // $: { console.log('file, displayName', file, displayName); }
 
@@ -55,14 +97,20 @@
   const cursorOpacity = 0.5;
   const dispatch = createEventDispatcher();
 
-  const state = writable({});
-  const pastStates = writable([]);
-  const futureStates = writable([]);
+  // const state = writable({});
+  // const pastStates = writable([]);
+  // const futureStates = writable([]);
+
+  //   const stateObject = {}
+  // const pastStatesArray = []
+  // const futureStatesArray = []
 
   // Let appLoader keep track of nr of changes
-  $: {
-    changes = $pastStates.length;
-  }
+  // track changes with after a path is created,
+  // with undo decrease changes, with redo increase changes
+  // $: {
+  //   changes = $pastStates.length;
+  // }
 
   // Window size, canvas size
   let innerHeight;
@@ -118,7 +166,7 @@
   let eraseBrush;
   let mouseCursor;
   // let drawingClipboard;
-  let lineWidth = 25;
+  let lineWidth = 10;
   let drawingColor = '#000000';
   let currentTab = null;
   let showOptionbox = false;
@@ -127,6 +175,7 @@
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
   let brushWidthLogarithmic = lineWidth;
+  // const maxUndo = 4;
 
   function updateLineWidth(value) {
     // console.log('updateLineWidth', value);
@@ -169,6 +218,7 @@
     }
   }
 
+  // make brush size slider logarithmic
   $: {
     brushWidthLogarithmic = updateLineWidth(lineWidth);
   }
@@ -197,9 +247,31 @@
     drawingCanvas.on('path:created', () => {
       // const idx = drawingCanvas.getObjects().length - 1;
       // drawingCanvas.item(idx).frameNumber = currentFrame;
-      // drawingCanvas.renderAll();
 
-      putDrawingCanvasIntoFramesArray();
+      // // clear futureState (because we continue to draw) and save current state
+      // saveState();
+
+      // if ($pastStates.length >= maxUndo) {
+      //   console.log('maxUndo reached');
+      //   undoState();
+      //   putDrawingCanvasIntoFramesArray(currentFrame);
+      //   redoState();
+
+      //   // remove the first element of the pastStates array
+      //   pastStates.update((store) => {
+      //     store.shift();
+      //     state.set(store);
+      //     return store;
+      //   });
+      //   console.log('pasteStateLength: ', $pastStates.length);
+
+      //   // remove the first element of the 'objects' array inside the state store object
+      // }
+
+
+      // increment changes
+      changes++;
+      putDrawingCanvasIntoFramesArray(currentFrame);
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
     });
@@ -231,6 +303,7 @@
       }
       const mouse = this.getPointer(evt.e);
 
+
       return mouseCursor
         .set({
           top: mouse.y,
@@ -242,10 +315,14 @@
 
     // TODO @chip Figure out the best event to listen to (maybe multiple events?) in order to trigger a saveState()?
     // Set up Fabric Canvas interaction listeners
-    // drawingCanvas.on('object:modified', () => {
-    drawingCanvas.on('mouse:up', () => {
-      saveState();
-    });
+    // drawingCanvas.on('object:added', () => {
+    //   console.log('drawingCanvas.getObjects(): ', drawingCanvas.getObjects());
+    // });
+
+    // drawingCanvas.on('mouse:up', () => {
+    //   // console.log('mouse up');
+    //   saveState();
+    // });
 
     applyBrush = (brushType) => {
       if (typeof brushType === 'string') selectedBrush = brushType;
@@ -320,7 +397,7 @@
     // set dimensions of savecanvas
     saveCanvas.height = baseSize;
     saveCanvas.width = baseSize * frames;
-
+    putDrawingCanvasIntoFramesArray(currentFrame);
     await new Promise((resolve) => {
       let loaded = 0;
       // framebuffer contains all frames in an array
@@ -350,29 +427,31 @@
     });
   }
 
-  // Save state locally
-  async function saveState() {
-    // Clear futureStates (should be empty after each new edit..)
-    futureStates.set([]);
+  // // Save state locally
+  // async function saveState() {
+  //   // Clear futureStates (should be empty after each new edit..)
+  //   futureStates.set([]);
+  //   // console.log('beginning saveState $state: ', $state);
 
-    // If $state is existing, add it to pastStates
-    if (
-      ($state && $pastStates.length === 0) ||
-      ($pastStates.length > 0 && $state !== $pastStates[$pastStates.length - 1])
-    ) {
-      // pastStates.update((states) => [...states, $state]); //working code
-      pastStates.update(() => [$state]); // to make changes work, but there is only the last line as state
-    }
+  //   // If $state is existing, add it to pastStates
+  //   if (
+  //     ($state && $pastStates.length === 0) ||
+  //     ($pastStates.length > 0 && $state !== $pastStates[$pastStates.length - 1])
+  //   ) {
+  //     pastStates.update((states) => [...states, $state]); // working code
+  //     // pastStates.update(() => [$state]); // to make changes work, but there is only the last line as state
+  //   }
 
-    const json = drawingCanvas.toJSON();
-    if (json) {
-      state.set(json);
-      // TODO MAYBE: If required, we could add a save to localStorage here.
-      // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
-    }
-  }
+  //   const json = drawingCanvas.toJSON();
+  //   if (json) {
+  //     state.set(json);
+  //     // console.log('ending saveState $state: ', $state);
+  //     // TODO MAYBE: If required, we could add a save to localStorage here.
+  //     // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
+  //   }
+  // }
 
-  // Go back to previous state
+  // // Go back to previous state
   // function undoState() {
   //   // Add current state to futureStates
   //   futureStates.update((states) => [...states, $state]);
@@ -381,13 +460,14 @@
   //   pastStates.update((past) => {
   //     // Set current state to last in redoStates
   //     state.set(past.pop());
+  //     // console.log('past: ', past);
   //     return past;
   //   });
 
   //   resetCanvasFromState();
   // }
 
-  // Go back to previous reverted state
+  // // Go back to previous reverted state
   // function redoState() {
   //   // Add current state to pastStates
   //   pastStates.update((states) => [...states, $state]);
@@ -405,9 +485,14 @@
   // function resetCanvasFromState() {
   //   if ($state) {
   //     drawingCanvas.clear();
+  //     console.log('resetCanvasFromState $state: ', $state);
   //     drawingCanvas.loadFromJSON($state, () => {
   //       drawingCanvas.renderAll();
   //     });
+  //     if ($pastStates.length === 0) {
+  //       console.log('resetCanvasFromState $pastStates.length === 0');
+  //       getImageFromFramesArray(currentFrame);
+  //     }
   //   }
   // }
 
@@ -420,6 +505,7 @@ export function getImageFromFramesArray(_currentFrame) {
   } else {
     frame = currentFrame - 1;
   }
+  console.log('getImageFromFramesArray frame: ', frame);
   const storedFrame = framesArray[frame];
 
   fabric.Image.fromURL(storedFrame, (img) => {
@@ -428,20 +514,19 @@ export function getImageFromFramesArray(_currentFrame) {
       top: 0,
       height: baseSize,
       width: baseSize,
-      crossOrigin: 'anonymous',
-    }));
 
-    // drawingCanvas.add(placeImage);
+    }, { crossOrigin: 'anonymous' }));
+
+    // drawingCanvas.add(img);
     // drawingCanvas.renderAll();
   });
 }
 
-//! replacing
-function putDrawingCanvasIntoFramesArray() {
+function putDrawingCanvasIntoFramesArray(_frame) {
   const prevZoom = drawingCanvas.getZoom();
   drawingCanvas.setZoom(1);
 
-  const frame = currentFrame - 1;
+  const frame = _frame - 1;
 
   // get data from drawingCanvas
   const currentFrameData = drawingCanvas.toDataURL({
