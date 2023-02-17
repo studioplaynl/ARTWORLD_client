@@ -40,10 +40,13 @@
   import gameConfig from './routes/game/gameConfig';
   import { PlayerPos, PlayerLocation } from './routes/game/playerState';
   import { DEFAULT_APP } from './routes/apps/apps';
+  import { APP_VERSION_INFO } from './constants';
 
   let game;
   let mounted = false;
   let title;
+
+
 
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -106,6 +109,8 @@
   async function startGame() {
     await tick();
     game = new Phaser.Game(gameConfig);
+    console.log('APP_VERSION_INFO: ');
+    console.log(APP_VERSION_INFO);
   }
 
   const routes = {
