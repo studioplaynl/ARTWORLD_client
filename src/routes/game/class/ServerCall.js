@@ -139,15 +139,17 @@ class ServerCall {
       // scene.homesRepresented[index].setScale(1.6);
       // store the use home gameObject in ManageSession so that it can be referenced for live updating
       ManageSession.playerHomeContainer = scene.homesRepresented[index];
+      // console.log('ManageSession.playerHomeContainer: ', ManageSession.playerHomeContainer);
+      // console.log('ManageSession.playerHomeContainer.getAll(): ', ManageSession.playerHomeContainer.getAll());
       // subscribe to myHome if the location is the home
       let previousHome = { value: { url: '' } };
 
       myHomeStore.subscribe((value) => {
-        console.log('previousHome: ', previousHome);
+        // dlog('previousHome, value: ', previousHome, value);
         if (value.value.url !== '' && previousHome.value.url !== value.value.url) {
           // find the image in the container by name
-          const homeImageInGame = ManageSession.playerHomeContainer.getByName('locationImage');
-          console.log('homeImageInGame: ', homeImageInGame);
+          const homeImageInGame = ManageSession.playerHomeContainer.getByName('location');
+          // dlog('homeImageInGame: ', homeImageInGame);
           dlog('user home image updated');
           previousHome = value;
           // dlog('value', value);
@@ -158,8 +160,8 @@ class ServerCall {
             scene.load.image(value.url, value.url)
               .on(`filecomplete-image-${value.url}`, () => {
                 dlog('done loading new home image');
-                if (typeof homeImageInGame !== 'undefined') {
-                  console.log('homeImageInGame: ', homeImageInGame);
+                if (homeImageInGame !== null) {
+                  // console.log('homeImageInGame: ', homeImageInGame);
                   homeImageInGame.setTexture(value.url);
                 }
               }, this);
@@ -169,8 +171,8 @@ class ServerCall {
           // dlog('ManageSession.playerHomeContainer.list[2]', ManageSession.playerHomeContainer.list[2]);
           // set the right size
           const width = 140;
-          if (typeof homeImageInGame.displayWidth !== 'undefined') {
-            console.log('homeImageInGame: ', homeImageInGame);
+          if (homeImageInGame !== null) {
+            // console.log('homeImageInGame: ', homeImageInGame);
             homeImageInGame.displayWidth = width;
             homeImageInGame.scaleY = homeImageInGame.scaleX;
             const cropMargin = 1; // sometimes there is a little border visible on a drawn image

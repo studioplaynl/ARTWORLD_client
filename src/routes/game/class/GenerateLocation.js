@@ -85,7 +85,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
 
       this.location = this.scene.physics.add.image(0, 0, this.locationImage).setOrigin(0.5, 0.5).setDepth(30);
-      this.location.name = 'locationImage';
       const cropWidth = this.location.width;
       const cropHeight = this.location.height;
 
