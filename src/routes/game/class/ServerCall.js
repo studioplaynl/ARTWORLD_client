@@ -144,7 +144,7 @@ class ServerCall {
 
       myHomeStore.subscribe((value) => {
         console.log('previousHome: ', previousHome);
-        if (previousHome.value.url !== '' && previousHome.value.url !== value.value.url) {
+        if (value.value.url !== '' && previousHome.value.url !== value.value.url) {
           // find the image in the container by name
           const homeImageInGame = ManageSession.playerHomeContainer.getByName('locationImage');
           console.log('homeImageInGame: ', homeImageInGame);
