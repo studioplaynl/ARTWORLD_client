@@ -187,7 +187,7 @@
 
   function updateLineWidth(_value) {
     // Get the value of the slider and convert it to an integer
-    let value = parseInt(_value);
+    let value = parseInt(_value, 10);
     // If the value is less than or equal to the offset, set the value to a value in the first 3/4 of the slider
     if (value <= brushSliderOffset) {
       value = Math.round((value - brushSliderMin) / brushSliderQuarter * 190) + brushSliderMin;
