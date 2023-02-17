@@ -394,9 +394,17 @@ export async function setAvatar(avatar_url) {
 export async function setHome(Home_url) {
   const type = 'home';
   const profile = get(Profile);
-  const name = profile.meta.Azc || 'GreenSquare';
+  let name;
+  if (profile.meta.Azc) {
+    name = profile.meta.Azc;
+  } else if (profile.meta.azc) {
+    name = profile.meta.azc;
+  } else {
+    name = 'GreenSquare';
+  }
+
   const object = await getObject(type, name);
-  const makePublic = true;
+  const makePublic = 2;
 
   // eslint-disable-next-line prefer-const
   let value = !object ? {} : object.value;

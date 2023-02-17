@@ -144,7 +144,6 @@
           // updateTitle(currentFile.type, currentFile.key, displayName, userID)
 
           // updateObject(type, name, value, pub, userID)
-
           Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.status, userID)])
             .then(() => {
               console.log(
@@ -184,7 +183,7 @@
 
     // create the data to save
     await drawing.saveHandler();
-
+    console.log('currentFile.status', currentFile.status);
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
       const blobData = dataURItoBlob(data);
@@ -305,7 +304,7 @@
       displayName,
       key: `${tempKey}_${displayName}`,
       type: saveToCollection,
-      status: true,
+      status: PERMISSION_READ_PUBLIC,
     };
   }
 
@@ -324,6 +323,7 @@
           // console.log('loadingObject', loadingObject);
           // set the displayName, so it can also be changed in the Drawing app
           displayName = loadingObject.value.displayname;
+          console.log('loadingObject.permission_read: ', loadingObject.permission_read);
           return {
             key,
             userId,
@@ -331,10 +331,11 @@
             new: false,
             displayName: loadingObject.value.displayname,
             type: loadingObject.collection,
-            status: loadingObject.permission_read === PERMISSION_READ_PUBLIC,
+            // status: loadingObject.permission_read === PERMISSION_READ_PUBLIC,
+            status: loadingObject.permission_read,
             url: file,
             awsUrl: loadingObject.value.url,
-            frames: 1, // Maybe use this instead of width/height ratio to calculate framecount?
+            frames: 1,
           };
         }
       } catch (error) {
