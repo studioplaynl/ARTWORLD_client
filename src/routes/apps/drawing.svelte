@@ -512,7 +512,7 @@ export function getImageFromFramesArray(_currentFrame) {
   } else {
     frame = currentFrame - 1;
   }
-  console.log('getImageFromFramesArray frame: ', frame);
+  // console.log('getImageFromFramesArray frame: ', frame);
   const storedFrame = framesArray[frame];
 
   fabric.Image.fromURL(storedFrame, (img) => {
