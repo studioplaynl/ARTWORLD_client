@@ -208,6 +208,40 @@ export default class PreloadScene extends Phaser.Scene {
 
     this.load.image('artWorldPortalSlime', './assets/world_slime_world/Portal_goHome_slime.png');
     this.load.image('slimeWorldPortal', './assets/world_slime_world/Portal_goSlime_slime.png');
+
+    // MarsWorld
+    this.load.image('marsWorldPortal', './assets/world_mars_red/portal_gotoMars_mars.png');
+    this.load.image('artWorldPortalMars', './assets/world_mars_red/portal_goHome_mars.png');
+    this.load.image('krater_mars', './assets/world_mars_red/krater_mars.png');
+    this.load.image('rots1_mars', './assets/world_mars_red/rots1_mars.png');
+    this.load.image('rots2_mars', './assets/world_mars_red/rots2_mars.png');
+    this.load.image('rots3_mars', './assets/world_mars_red/rots3_mars.png');
+    this.load.image('rots4_mars', './assets/world_mars_red/rots4_mars.png');
+    this.load.image('rots5_mars', './assets/world_mars_red/rots5_mars.png');
+    this.load.image('rots6_mars', './assets/world_mars_red/rots6_mars.png');
+    this.load.image('rover_all_one_layer_mars', './assets/world_mars_red/rover_all_one_layer_mars.png');
+    this.load.image('ufo_atwork1_mars', './assets/world_mars_red/ufo_atwork1_mars.png');
+    this.load.image('ufo_slapend_vloer_mars', './assets/world_mars_red/ufo_slapend_vloer_mars.png');
+
+    // underwaterworld
+    this.load.image('artWorldPortalUnderwater', './assets/world_underwater_blue/Portaal_naarhuis_water.png');
+    this.load.image('underwaterWorldPortal', './assets/world_underwater_blue/Portaal_naarWater_water.png');
+
+    this.load.image('bubbles_1_water', './assets/world_underwater_blue/bubbles_1_water.png');
+    this.load.image('cloud01_water', './assets/world_underwater_blue/cloud01_water.png');
+    this.load.image('Inkvis_water', './assets/world_underwater_blue/Inkvis_water.png');
+    this.load.image('jellyvis1_water', './assets/world_underwater_blue/jellyvis1_water.png');
+    this.load.image('koral_water_01', './assets/world_underwater_blue/koral_water_01.png');
+    this.load.image('koral_water_02', './assets/world_underwater_blue/koral_water_02.png');
+    this.load.image('koral_water_03', './assets/world_underwater_blue/koral_water_03.png');
+    this.load.image('koral_water_04', './assets/world_underwater_blue/koral_water_04.png');
+    this.load.image('light1_water', './assets/world_underwater_blue/light1_water.png');
+    this.load.image('light_2_water', './assets/world_underwater_blue/light_2_water.png');
+    this.load.image('Rif_1_a', './assets/world_underwater_blue/Rif_1_a.png');
+    this.load.image('Rif_1_b', './assets/world_underwater_blue/Rif_1_b.png');
+    this.load.image('Rif_1_c', './assets/world_underwater_blue/Rif_1_c.png');
+    this.load.image('Rif_2_a', './assets/world_underwater_blue/Rif_2_a.png');
+    this.load.image('Rif_2_b', './assets/world_underwater_blue/Rif_2_b.png');
   }
 
   async create() {

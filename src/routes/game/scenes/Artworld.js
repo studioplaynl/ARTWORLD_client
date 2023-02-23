@@ -647,6 +647,46 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
+    locationVector = new Phaser.Math.Vector2(-783, 642);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.robotoWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'MarsWorld',
+      locationImage: 'marsWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Mars Wereld',
+      referenceName: 'this.marsWorldLocation',
+      fontColor: 0x8dcb0e,
+    });
+
+    locationVector = new Phaser.Math.Vector2(409, 730);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.robotoWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'UnderwaterWorld',
+      locationImage: 'underwaterWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Onderwater Wereld',
+      referenceName: 'this.underwaterWorldLocation',
+      fontColor: 0x8dcb0e,
+    });
+
     locationVector = new Phaser.Math.Vector2(-1215, -589);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
