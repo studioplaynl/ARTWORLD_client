@@ -113,7 +113,7 @@ const Locaties = SCENE_INFO.map((i) => i.scene);
   }
 
   async function resetPassword() {
-    if (!passwordCheckValid) return;
+    // if (!passwordCheckValid) return;
     resetPasswordAdmin(id, email, password);
   }
 

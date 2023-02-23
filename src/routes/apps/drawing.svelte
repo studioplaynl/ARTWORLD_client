@@ -2,6 +2,12 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import { get } from 'svelte/store';
 
+  // import '@melloware/coloris/dist/coloris.css';
+  // import { coloris, init } from '@melloware/coloris';
+
+  // import ColorPicker from 'svelte-awesome-color-picker';
+  // import Picker from 'vanilla-picker';
+
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
@@ -12,6 +18,14 @@
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
   // import NameGenerator from '../components/nameGenerator.svelte';
   import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
+
+  let hex = '#000000';
+
+  let eyeDropper = false;
+  $: {
+    drawingColor = hex;
+  }
+  $: { console.log('eyeDropper', eyeDropper); }
 
   export let file; // file is currentFile in the appLoader (synced)
   export let data;
@@ -139,8 +153,8 @@
       }
 
       // here canvas size on screen is set
-      // canvasWidth = (canvasSize * frames - canvasEdge);
       canvasHeight = (canvasSize - canvasEdge);
+      // canvasHeight = baseSize;
       drawingCanvas.setWidth(canvasHeight);
       drawingCanvas.setHeight(canvasHeight); // keep the drawing Canvas square
 
@@ -167,7 +181,7 @@
   let mouseCursor;
   // let drawingClipboard;
   let lineWidth = 100;
-  let drawingColor = '#000000';
+  let drawingColor = hex;
   let currentTab = null;
   let showOptionbox = false;
 
@@ -236,6 +250,9 @@
   onMount(() => {
     setLoader(true);
 
+
+
+
     // drawingCanvas should be setup on default size, later resized to fit screen
     // Set up Canvases
     cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
@@ -298,15 +315,68 @@
     });
 
     cursorCanvas.add(mouseCursor);
+    drawingCanvas.on('mouse:down', (evt) => {
+      if (eyeDropper) {
+        const canvasScaleRatio = canvasHeight / baseSize;
+        // get color of the canvas under the mouse
+        drawingCanvas.set('preserveObjectStacking', false);
+        const ctx = drawingCanvas.contextContainer;
+        // const ctx = drawingCanvas.getContext('2d');
+        // console.log('ctx: ', ctx);
+        const pointer = drawingCanvas.getPointer(evt.e);
+        // console.log('pointer: ', pointer);
+        const pixelData = ctx.getImageData(
+          Math.round(pointer.x * canvasScaleRatio),
+          Math.round(pointer.y * canvasScaleRatio),
+          1,
+          1,
+        ).data;
+        // console.log(`${pointer.x}, ${pointer.y}`);
+        console.log(`color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]} ${pixelData[3]}`);
+        // alert(`${pointer.x}, ${pointer.y} color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]}`);
+        const colorPicker = document.getElementById('drawing-color');
+        hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
+        colorPicker.value = hex;
+        eyeDropper = false;
+      }
+    });
 
     // redraw cursor on new mouse position when moved
     // eslint-disable-next-line func-names
     drawingCanvas.on('mouse:move', function (evt) {
-      if (currentTab === 'select') {
+      if (eyeDropper) {
+        const canvasScaleRatio = canvasHeight / baseSize;
+        // get color of the canvas under the mouse
+        drawingCanvas.set('preserveObjectStacking', false);
+        const ctx = drawingCanvas.contextContainer;
+        // const ctx = drawingCanvas.getContext('2d');
+        // console.log('ctx: ', ctx);
+        const pointer = drawingCanvas.getPointer(evt.e);
+        // console.log('pointer: ', pointer);
+        const pixelData = ctx.getImageData(
+          Math.round(pointer.x * canvasScaleRatio),
+          Math.round(pointer.y * canvasScaleRatio),
+          1,
+          1,
+        ).data;
+        // console.log(`${pointer.x}, ${pointer.y}`);
+        console.log(`color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]} ${pixelData[3]}`);
+        // alert(`${pointer.x}, ${pointer.y} color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]}`);
+        const colorPicker = document.getElementById('drawing-color');
+        hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
+        colorPicker.value = hex;
+
         return mouseCursor
           .set({ top: -100, left: -100 })
           .setCoords()
           .canvas.renderAll();
+        // return mouseCursor
+        //   .set({
+        //     top: pointer.y,
+        //     left: pointer.x,
+        //   })
+        //   .setCoords()
+        //   .canvas.renderAll();
       }
       const mouse = this.getPointer(evt.e);
 
@@ -330,6 +400,8 @@
     //   // console.log('mouse up');
     //   saveState();
     // });
+
+
 
     applyBrush = (brushType) => {
       if (typeof brushType === 'string') selectedBrush = brushType;
@@ -554,6 +626,10 @@ function putDrawingCanvasIntoFramesArray(_frame) {
     if (evt.key === 'Backspace' || evt.key === 'Delete') {
       Delete();
     }
+
+    if (evt.key === 'c' && evt.ctrlKey) {
+      getColor();
+    }
   }
 
  async function downloadImage() {
@@ -622,7 +698,32 @@ function putDrawingCanvasIntoFramesArray(_frame) {
     dispatch('clearCanvas');
   }
 
+  function getColor() {
+    drawingCanvas.set('preserveObjectStacking', false);
+    const ctx = drawingCanvas.contextContainer;
+    // const ctx = drawingCanvas.getContext('2d');
+    console.log('ctx: ', ctx);
+    const pointer = drawingCanvas.getPointer(e);
+    const pixelData = ctx.getImageData(Math.round(pointer.x), Math.round(pointer.y), 1, 1).data;
+    alert(`${pointer.x}, ${pointer.y} color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]}`);
+  }
+
   /// //////////// select functions end //////////////////
+
+  function rgbaToHex(r, g, b, a) {
+    const hexR = r.toString(16).padStart(2, '0');
+    const hexG = g.toString(16).padStart(2, '0');
+    const hexB = b.toString(16).padStart(2, '0');
+    const hexA = Math.round(a * 255).toString(16).padStart(2, '0');
+    return `#${hexR}${hexG}${hexB}${hexA}`;
+  }
+
+  function rgbToHex(r, g, b) {
+    const hexR = r.toString(16).padStart(2, '0');
+    const hexG = g.toString(16).padStart(2, '0');
+    const hexB = b.toString(16).padStart(2, '0');
+    return `#${hexR}${hexG}${hexB}`;
+  }
 
   function switchMode(mode) {
     if (currentTab === mode) {
@@ -750,6 +851,11 @@ function putDrawingCanvasIntoFramesArray(_frame) {
                 title="Pick drawing color"
               />
 
+  <!-- <ColorPicker bind:hex /> -->
+  <!-- <div class="color-picker-parent">
+    <div id="colorPicker" bind:this={picker}></div>
+  </div> -->
+
               <div class="range-container">
                 <div class="circle-box-small"></div>
                 <input
@@ -762,6 +868,15 @@ function putDrawingCanvasIntoFramesArray(_frame) {
                 />
                 <div class="circle-box-big"></div>
               </div>
+
+              <button on:click="{ () => eyeDropper = !eyeDropper }">
+                <img
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-trash.svg"
+                  alt="Delete selection"
+                />
+              </button>
+
             </div>
           {:else if currentTab === 'erase'}
             <div class="tab tab--erase">
@@ -770,16 +885,17 @@ function putDrawingCanvasIntoFramesArray(_frame) {
 
                 <input
                   type="range"
-                  min="1"
-                  max="100"
+                  min="{brushSliderMin}"
+                  max="{brushSliderMax}"
                   id="erase-line-width"
+                  title="Set erase thickness"
                   bind:value="{lineWidth}"
                 />
                 <div class="circle-box-big"></div>
               </div>
             </div>
-          <!-- {:else if currentTab === 'select'}
-            <div class="tab tab--select">
+          {:else if currentTab === 'select'}
+            <!-- <div class="tab tab--select">
               <button on:click="{Copy}">
                 <img
                   class="icon"
@@ -795,6 +911,7 @@ function putDrawingCanvasIntoFramesArray(_frame) {
                 />
               </button>
               <button on:click="{Delete}">
+                <button on:click="{getColor}">
                 <img
                   class="icon"
                   src="assets/SHB/svg/AW-icon-trash.svg"
@@ -1026,17 +1143,20 @@ function putDrawingCanvasIntoFramesArray(_frame) {
     min-width: 50px;
     height: 50px;
     border-radius: 50%;
-    padding: 8px;
+    box-sizing: border-box;
+    padding: 4px;
     cursor: pointer;
     object-fit: contain;
-    /* margin: 0 4px 0 4px; */
-    /* outline: 1px solid #7300ed2e; */
+    flex: 1 1 auto;
+    margin: 0 24px 0 6px;
+    /*outline: 1px solid #7300ed2e; */
   }
   .iconbox button {
     opacity: 1;
   }
 
   #drawing-color {
+    width: 50%;
     padding: 0px;
     display: block;
     margin: 16px auto;
@@ -1050,12 +1170,14 @@ function putDrawingCanvasIntoFramesArray(_frame) {
   .currentSelected {
     box-shadow: 0px 4px #7300ed;
     border-radius: 0% 50% 50% 0;
-    height: 60px;
-    display: block;
-    width: 49px;
+    height: 50px; /* horizontal: height, vertical: width */
+    box-sizing:  border-box;
+    object-fit: scale-down;
+    width: 60px;
     padding: 0px;
     background-color: white;
-    margin-left: -5px;
+    margin-left: -5px; /* horizontal offset */
+
   }
 
   .range-container {
@@ -1212,7 +1334,7 @@ function putDrawingCanvasIntoFramesArray(_frame) {
       border-radius: 50% 50% 0 0;
       height: 60px;
       display: block;
-      width: 49px;
+      width: 62px;
       padding: 0px;
       background-color: white;
       margin-left: -5px;
