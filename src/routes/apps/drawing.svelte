@@ -1,6 +1,6 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
-  import { get } from 'svelte/store';
+  import { get, writable } from 'svelte/store';
 
   // import '@melloware/coloris/dist/coloris.css';
   // import { coloris, init } from '@melloware/coloris';
@@ -55,6 +55,11 @@
   export let currentFrame = 1;
   export let stopMotion = false;
   export let framesArray = [];
+  const drawingCanvasUndoArray = writable([]);
+
+  // const drawingCanvasUndoArray = [];
+  const drawingCanvasRedoArray = writable([]);
+  const maxUndo = 10;
   let loadCanvas;
 
   let baseSize = IMAGE_BASE_SIZE;
@@ -62,7 +67,16 @@
 
   $: { // when the currenFrame changes, clear the drawingCanvas
     if (drawingCanvas) {
-      // resetUndoOnChangeFrame(currentFrame);
+      // reset the undo array
+      // Assuming you have a Svelte store for an array called myArray
+
+
+      // To empty the array:
+
+
+      drawingCanvasUndoArray.set([]);
+      drawingCanvasRedoArray.set([]);
+
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
     }
@@ -316,12 +330,18 @@
       //   // remove the first element of the 'objects' array inside the state store object
       // }
 
+      // clear the redo array when contuing to draw after undo
+      if ($drawingCanvasRedoArray.length > 0) {
+        drawingCanvasRedoArray.set([]);
+      }
 
       // increment changes
       changes++;
       putDrawingCanvasIntoFramesArray(currentFrame);
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
+      console.log('framesArray.length: ', framesArray.length);
+      console.log('$drawingCanvasUndoArray.length: ', $drawingCanvasUndoArray.length);
     });
 
     fabric.Object.prototype.transparentCorners = false;
@@ -602,6 +622,75 @@
   //   }
   // }
 
+  // Go back to previous state
+  function undoDrawingCanvas() {
+    if ($drawingCanvasUndoArray.length === 0) return;
+
+    drawingCanvas.clear();
+    // Add current index of drawingCanvasUndoArray to drawingCanvasRedoArray
+    const copyFrame = $drawingCanvasUndoArray[$drawingCanvasUndoArray.length - 1];
+    drawingCanvasRedoArray.update((array) => {
+      array.push(copyFrame);
+      return array;
+    });
+
+
+    drawingCanvasUndoArray.update((array) => {
+      array.pop();
+      return array;
+    });
+    // put last index of drawingCanvasUndoArray in the drawingCanvas
+    const frame = $drawingCanvasUndoArray[$drawingCanvasUndoArray.length - 1];
+
+    fabric.Image.fromURL(
+      frame,
+      (img) => {
+        drawingCanvas.add(img.set({
+          left: 0,
+          top: 0,
+          height: baseSize,
+          width: baseSize,
+
+        }, { crossOrigin: 'anonymous' }));
+      },
+    );
+
+    // update the framesArray
+    // put the copyFrame in the framesArray
+    framesArray[currentFrame - 1] = frame;
+
+    changes--;
+  }
+
+  // Go back to previous reverted state
+  function redoDrawingCanvas() {
+    if (drawingCanvasRedoArray.length === 0) return;
+
+    drawingCanvas.clear();
+    // Add current index of drawingCanvasRedoArray to drawingCanvasUndoArray
+    const copyFrame = $drawingCanvasRedoArray[$drawingCanvasRedoArray.length - 1];
+    drawingCanvasUndoArray.update((array) => {
+      array.push(copyFrame);
+      return array;
+    });
+
+    drawingCanvasRedoArray.update((array) => {
+      array.pop();
+      return array;
+    });
+    // put last index of drawingCanvasUndoArray in the drawingCanvas
+    const frame = $drawingCanvasUndoArray[$drawingCanvasUndoArray.length - 1];
+    fabric.Image.fromURL(frame, (img) => {
+      drawingCanvas.add(img.set({
+        left: 0,
+        top: 0,
+        height: baseSize,
+        width: baseSize,
+
+      }, { crossOrigin: 'anonymous' }));
+    });
+    changes++;
+  }
 /// / going from framesArray to drawingCanvas FUNCTIONS ///////////////////////////////////////////
 // put the current frame in the drawingCanvas
 export function getImageFromFramesArray(_currentFrame) {
@@ -644,8 +733,27 @@ function putDrawingCanvasIntoFramesArray(_frame) {
 
   // put data into array
   framesArray[frame] = currentFrameData;
+  // put drawingCanvas in undo Array
+  // check if the drawingCanvasUndoArray is full
+  if (drawingCanvasUndoArray.length === maxUndo) {
+    // if it is full, remove the first element
+    drawingCanvasUndoArray.update((array) => {
+      array.shift();
+      return array;
+    });
+  }
+
+
+  // add the currentFrameData to the drawingCanvasUndoArray
+  drawingCanvasUndoArray.update((array) => {
+    array.push(currentFrameData);
+    return array;
+  });
+
+
   drawingCanvas.setZoom(prevZoom);
 }
+
 /// / end going from framesArray to drawingCanvas FUNCTIONS /////////////////////////////////////////////////
 
   /// ////////////////// select functions /////////////////////////////////
@@ -989,6 +1097,22 @@ function putDrawingCanvasIntoFramesArray(_frame) {
               alt="Redo"
             />
           </button> -->
+          <button on:click="{undoDrawingCanvas}" disabled="{$drawingCanvasUndoArray.length < 1}">
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
+              alt="Undo"
+            />
+          </button>
+          <button
+            on:click="{redoDrawingCanvas}" disabled="{$drawingCanvasRedoArray.length < 1}"
+          >
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-rotate-CW.svg"
+              alt="Redo"
+            />
+          </button>
           <button
             id="drawing-mode"
             on:click="{() => {
