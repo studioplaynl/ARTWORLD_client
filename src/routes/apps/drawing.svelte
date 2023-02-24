@@ -37,7 +37,6 @@
     }
   }
   $: {
-    console.log('eyeDropper', eyeDropper);
     if (drawingCanvas) {
       if (eyeDropper) { drawingCanvas.isDrawingMode = false; } else { drawingCanvas.isDrawingMode = true; }
     }
@@ -78,9 +77,7 @@
       drawingCanvasRedoArray.set([]);
 
       drawingCanvas.clear();
-      console.log('drawingCanvas.getObjects(): ', drawingCanvas.getObjects());
       getImageFromFramesArray(currentFrame);
-      console.log('drawingCanvas.getObjects(): ', drawingCanvas.getObjects());
     }
   }
 
@@ -342,8 +339,8 @@
       putDrawingCanvasIntoFramesArray(currentFrame);
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
-      console.log('framesArray.length: ', framesArray.length);
-      console.log('$drawingCanvasUndoArray.length: ', $drawingCanvasUndoArray.length);
+      // console.log('framesArray.length: ', framesArray.length);
+      // console.log('$drawingCanvasUndoArray.length: ', $drawingCanvasUndoArray.length);
     });
 
     fabric.Object.prototype.transparentCorners = false;
@@ -378,7 +375,7 @@
           1,
         ).data;
         // console.log(`${pointer.x}, ${pointer.y}`);
-        console.log(`color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]} ${pixelData[3]}`);
+        // console.log(`color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]} ${pixelData[3]}`);
         // alert(`${pointer.x}, ${pointer.y} color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]}`);
         const colorPicker = document.getElementById('drawing-color');
         hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
@@ -407,7 +404,7 @@
           1,
         ).data;
         // console.log(`${pointer.x}, ${pointer.y}`);
-        console.log(`color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]} ${pixelData[3]}`);
+        // console.log(`color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]} ${pixelData[3]}`);
         // alert(`${pointer.x}, ${pointer.y} color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]}`);
         const colorPicker = document.getElementById('drawing-color');
         hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
@@ -462,13 +459,13 @@
           brush.source = brush.getPatternSrc.call(brush);
         }
         brush.width = parseInt(brushWidthLogarithmic, 10) || 1;
-        console.log('brush.width', brush.width);
+        // console.log('brush.width', brush.width);
       }
     };
 
     // Was there an image to load? Do so
     if (file?.url) {
-      console.log('load file url drawing');
+      dlog('load file url drawing');
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = (e) => {
@@ -486,7 +483,7 @@
 
   // go through all frames, and put each image in framesArray array
   function createframeBuffer(img) {
-    console.log('baseSize: ', baseSize);
+    dlog('baseSize: ', baseSize);
     loadCanvas.width = baseSize;
     loadCanvas.height = baseSize;
     const ctx = loadCanvas.getContext('2d');
@@ -506,7 +503,7 @@
       // clear the loadingCanvas
       ctx.clearRect(0, 0, baseSize, baseSize);
     }
-    console.log('framesArray length: ', framesArray.length);
+    // console.log('framesArray length: ', framesArray.length);
 
     // make the loadingCanvas 0
     loadCanvas.width = 0;
@@ -550,7 +547,7 @@
       });
     }).then(() => {
       data = saveCanvas.toDataURL('image/png');
-      console.log('saveHandler saved');
+      dlog('saveHandler saved');
 
       // empty the saveCanvas
       saveCanvas.height = 0;
@@ -839,17 +836,6 @@ export function putDrawingCanvasIntoFramesArray(_frame) {
     // saveCanvas.clear();
     dispatch('clearCanvas');
   }
-
-  function getColor() {
-    drawingCanvas.set('preserveObjectStacking', false);
-    const ctx = drawingCanvas.contextContainer;
-    // const ctx = drawingCanvas.getContext('2d');
-    console.log('ctx: ', ctx);
-    const pointer = drawingCanvas.getPointer(e);
-    const pixelData = ctx.getImageData(Math.round(pointer.x), Math.round(pointer.y), 1, 1).data;
-    alert(`${pointer.x}, ${pointer.y} color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]}`);
-  }
-
   /// //////////// select functions end //////////////////
 
   function rgbaToHex(r, g, b, a) {
