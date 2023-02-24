@@ -46,7 +46,8 @@
   let mounted = false;
   let title;
 
-
+    console.log('APP_VERSION_INFO: ');
+    console.log(APP_VERSION_INFO);
 
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -109,8 +110,6 @@
   async function startGame() {
     await tick();
     game = new Phaser.Game(gameConfig);
-    console.log('APP_VERSION_INFO: ');
-    console.log(APP_VERSION_INFO);
   }
 
   const routes = {

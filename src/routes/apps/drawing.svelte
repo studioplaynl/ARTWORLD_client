@@ -78,7 +78,9 @@
       drawingCanvasRedoArray.set([]);
 
       drawingCanvas.clear();
+      console.log('drawingCanvas.getObjects(): ', drawingCanvas.getObjects());
       getImageFromFramesArray(currentFrame);
+      console.log('drawingCanvas.getObjects(): ', drawingCanvas.getObjects());
     }
   }
 
@@ -524,6 +526,11 @@
     saveCanvas.height = baseSize;
     saveCanvas.width = baseSize * frames;
     putDrawingCanvasIntoFramesArray(currentFrame);
+    // // for each frames putDrawingCanvasIntoFramesArray
+    // for (let i = 0; i < frames; i++) {
+    //   putDrawingCanvasIntoFramesArray(i);
+    // }
+
     await new Promise((resolve) => {
       let loaded = 0;
       // framebuffer contains all frames in an array
@@ -717,7 +724,7 @@ export function getImageFromFramesArray(_currentFrame) {
   });
 }
 
-function putDrawingCanvasIntoFramesArray(_frame) {
+export function putDrawingCanvasIntoFramesArray(_frame) {
   const prevZoom = drawingCanvas.getZoom();
   drawingCanvas.setZoom(1);
 

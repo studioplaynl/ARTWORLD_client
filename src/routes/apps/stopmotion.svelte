@@ -50,6 +50,7 @@
   }
 
   function addFrame() {
+    drawing.putDrawingCanvasIntoFramesArray(currentFrame);
     setTimeout(() => {
       if (frames < STOPMOTION_MAX_FRAMES) {
         frames++;
