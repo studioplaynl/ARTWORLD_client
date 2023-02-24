@@ -300,8 +300,8 @@ export default class UnderwaterWorld extends Phaser.Scene {
 
     // .........Rif_1_b_1............................................................
     this.Rif_1_b_1 = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1245),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2287),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1246),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2302),
       'Rif_1_b',
     );
     this.Rif_1_b_1.name = 'Rif_1_b_1';
@@ -360,6 +360,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
     );
     this.koral_water_01.name = 'koral_water_01';
     this.koral_water_01.setScale(1.0);
+    this.koral_water_01.setDepth(202);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.koral_water_01.setInteractive({ draggable: true });
@@ -367,12 +368,13 @@ export default class UnderwaterWorld extends Phaser.Scene {
 
     // .........koral_water_03_1............................................................
     this.koral_water_03_1 = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1630),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1355),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1835),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1339),
       'koral_water_03',
     );
     this.koral_water_03_1.name = 'koral_water_03_1';
     this.koral_water_03_1.setScale(0.64);
+    this.koral_water_03_1.setDepth(202);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.koral_water_03_1.setInteractive({ draggable: true });
@@ -385,6 +387,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
     );
     this.koral_water_03_2.name = 'koral_water_03_2';
     this.koral_water_03_2.setScale(1.0);
+    this.koral_water_03_2.setDepth(202);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.koral_water_03_2.setInteractive({ draggable: true });
@@ -397,6 +400,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
     );
     this.koral_water_04_2.name = 'koral_water_04_2';
     this.koral_water_04_2.setScale(1);
+    this.koral_water_04_2.setDepth(202);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.koral_water_04_2.setInteractive({ draggable: true });
@@ -410,6 +414,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
     );
     this.koral_water_04_1.name = 'koral_water_04_1';
     this.koral_water_04_1.setScale(1);
+    this.koral_water_04_1.setDepth(202);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.koral_water_04_1.setInteractive({ draggable: true });
@@ -422,6 +427,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
     );
     this.koral_water_02.name = 'koral_water_02';
     this.koral_water_02.setScale(1.0);
+    this.koral_water_02.setDepth(202);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.koral_water_02.setInteractive({ draggable: true });
@@ -488,6 +494,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
     );
     this.bubbles_1_water_1.name = 'bubbles_1_water_1';
     this.bubbles_1_water_1.setScale(1.0);
+    this.bubbles_1_water_1.setDepth(202);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.bubbles_1_water_1.setInteractive({ draggable: true });
@@ -501,6 +508,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
     this.bubbles_1_water_2.name = 'bubbles_1_water_2';
     this.bubbles_1_water_2.setScale(1.0);
     this.bubbles_1_water_2.setFlipX(true);
+    this.bubbles_1_water_2.setDepth(202);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.bubbles_1_water_2.setInteractive({ draggable: true });
@@ -514,6 +522,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
     this.bubbles_1_water_3.name = 'bubbles_1_water_3';
     this.bubbles_1_water_3.setScale(1.0);
     this.bubbles_1_water_3.setFlipX(true);
+    this.bubbles_1_water_3.setDepth(202);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
     if (ManageSession.gameEditMode) {
       this.bubbles_1_water_3.setInteractive({ draggable: true });

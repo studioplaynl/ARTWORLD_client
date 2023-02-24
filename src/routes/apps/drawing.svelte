@@ -23,9 +23,25 @@
 
   let eyeDropper = false;
   $: {
-    drawingColor = hex;
+    drawingColor = hex; // the eyeDropper is hex, pass it on to the colorPicker
   }
-  $: { console.log('eyeDropper', eyeDropper); }
+
+  $: {
+    updateEyeDropper(drawingColor); // update the border around the eyeDropper icon when the colorPicker changes
+  }
+
+  function updateEyeDropper(drawingColor) {
+    if (drawingCanvas) {
+      const svgIcon = document.getElementById('eyeDropper');
+      svgIcon.style.borderColor = drawingColor;
+    }
+  }
+  $: {
+    console.log('eyeDropper', eyeDropper);
+    if (drawingCanvas) {
+      if (eyeDropper) { drawingCanvas.isDrawingMode = false; } else { drawingCanvas.isDrawingMode = true; }
+    }
+  }
 
   export let file; // file is currentFile in the appLoader (synced)
   export let data;
@@ -182,7 +198,7 @@
   // let drawingClipboard;
   let lineWidth = 100;
   let drawingColor = hex;
-  let currentTab = null;
+  let currentTab = 'draw';
   let showOptionbox = false;
 
   // declaring the variable to be available globally, onMount assinging a function to it
@@ -200,6 +216,14 @@
   // const maxUndo = 4;
 
   function updateLineWidth(_value) {
+    if (cursorCanvas) {
+      const middle = drawingCanvas.getWidth() / 2;
+      mouseCursor
+        .set({ top: middle, left: middle })
+        .setCoords()
+        .canvas.renderAll();
+    }
+
     // Get the value of the slider and convert it to an integer
     let value = parseInt(_value, 10);
     // If the value is less than or equal to the offset, set the value to a value in the first 3/4 of the slider
@@ -346,6 +370,7 @@
     drawingCanvas.on('mouse:move', function (evt) {
       if (eyeDropper) {
         const canvasScaleRatio = canvasHeight / baseSize;
+
         // get color of the canvas under the mouse
         drawingCanvas.set('preserveObjectStacking', false);
         const ctx = drawingCanvas.contextContainer;
@@ -365,6 +390,8 @@
         const colorPicker = document.getElementById('drawing-color');
         hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
         colorPicker.value = hex;
+        const svgIcon = document.getElementById('eyeDropper');
+        svgIcon.style.borderColor = hex;
 
         return mouseCursor
           .set({ top: -100, left: -100 })
@@ -844,13 +871,6 @@ function putDrawingCanvasIntoFramesArray(_frame) {
                 />
               </div>
 
-              <input
-                type="color"
-                bind:value="{drawingColor}"
-                id="drawing-color"
-                title="Pick drawing color"
-              />
-
   <!-- <ColorPicker bind:hex /> -->
   <!-- <div class="color-picker-parent">
     <div id="colorPicker" bind:this={picker}></div>
@@ -869,13 +889,18 @@ function putDrawingCanvasIntoFramesArray(_frame) {
                 <div class="circle-box-big"></div>
               </div>
 
+                            <div class="colorSection">
               <button on:click="{ () => eyeDropper = !eyeDropper }">
-                <img
-                  class="icon"
-                  src="assets/SHB/svg/AW-icon-trash.svg"
-                  alt="Delete selection"
-                />
+                <img id="eyeDropper" src="assets/svg/eyeDropper.svg" />;
               </button>
+
+              <input
+                type="color"
+                bind:value="{drawingColor}"
+                id="drawing-color"
+                title="Pick drawing color"
+              />
+              </div>
 
             </div>
           {:else if currentTab === 'erase'}
@@ -1151,6 +1176,24 @@ function putDrawingCanvasIntoFramesArray(_frame) {
     margin: 0 24px 0 6px;
     /*outline: 1px solid #7300ed2e; */
   }
+
+  .colorSection {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+  }
+  #eyeDropper {
+    min-width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: 5px solid black;
+    cursor: pointer;
+    object-fit: contain;
+    padding: 4px;
+    margin-left: 8px;
+  }
+
   .iconbox button {
     opacity: 1;
   }
@@ -1170,14 +1213,14 @@ function putDrawingCanvasIntoFramesArray(_frame) {
   .currentSelected {
     box-shadow: 0px 4px #7300ed;
     border-radius: 0% 50% 50% 0;
-    height: 50px; /* horizontal: height, vertical: width */
+    /* horizontal: height, vertical: width */
+    height: 60px;
+    width: 62px;
     box-sizing:  border-box;
     object-fit: scale-down;
-    width: 60px;
     padding: 0px;
     background-color: white;
-    margin-left: -5px; /* horizontal offset */
-
+    margin-left: -24px; /* horizontal offset */
   }
 
   .range-container {
@@ -1185,6 +1228,8 @@ function putDrawingCanvasIntoFramesArray(_frame) {
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
   }
 
   .circle-box-small {
@@ -1333,8 +1378,8 @@ function putDrawingCanvasIntoFramesArray(_frame) {
       box-shadow: 4px 4px #7300ed;
       border-radius: 50% 50% 0 0;
       height: 60px;
-      display: block;
       width: 62px;
+      display: block;
       padding: 0px;
       background-color: white;
       margin-left: -5px;

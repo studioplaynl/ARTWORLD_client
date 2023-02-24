@@ -664,6 +664,7 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Mars Wereld',
       referenceName: 'this.marsWorldLocation',
+      size: 226,
       fontColor: 0x8dcb0e,
     });
 
@@ -684,6 +685,7 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Onderwater Wereld',
       referenceName: 'this.underwaterWorldLocation',
+      size: 300,
       fontColor: 0x8dcb0e,
     });
 
