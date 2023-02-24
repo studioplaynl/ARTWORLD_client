@@ -1,17 +1,20 @@
 <script>
   import { onDestroy } from 'svelte';
+  import { push } from 'svelte-spa-router';
   import { fly } from 'svelte/transition';
   import { convertImage, getObject, addFriend } from '../../api';
   import LikedPage from '../liked.svelte';
   import { SelectedOnlinePlayer } from '../../session';
   import { Addressbook } from '../../storage';
-  import SceneSwitcher from '../game/class/SceneSwitcher';
+  // import SceneSwitcher from '../game/class/SceneSwitcher';
   // import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
+  import { PlayerHistory } from '../game/playerState';
 
   let current;
   let houseUrl;
   let enableClickOutsideListener = false;
+  let userHouseObject;
 
   // check if player is clicked
   const unsubscribeSelectedOnlinePlayer = SelectedOnlinePlayer.subscribe(
@@ -19,13 +22,27 @@
       if ($SelectedOnlinePlayer && 'id' in $SelectedOnlinePlayer) {
         try {
           enableClickOutsideListener = false;
-          const houseObject = await getObject(
+
+          // check for meta.azc because for a while there was a server bug that
+          // would return azc and role instead of Azc and Role
+          let profileAzc = '';
+          // console.log('$Profile: ', $Profile)
+          if ($SelectedOnlinePlayer.meta.Azc) {
+            profileAzc = $SelectedOnlinePlayer.meta.Azc;
+          } else if ($SelectedOnlinePlayer.meta.azc) {
+            profileAzc = $SelectedOnlinePlayer.meta.azc;
+          } else {
+            profileAzc = 'GreenSquare';
+          }
+
+          userHouseObject = await getObject(
             'home',
-            $SelectedOnlinePlayer.meta?.Azc,
+            profileAzc,
             $SelectedOnlinePlayer.id,
           );
-          console.log('$SelectedOnlinePlayer', $SelectedOnlinePlayer);
-          houseUrl = await convertImage(houseObject.value.url, '50', '50');
+          // console.log('userHouseObject', userHouseObject);
+          // console.log('$SelectedOnlinePlayer', $SelectedOnlinePlayer);
+          houseUrl = await convertImage(userHouseObject.value.url, '50', '50');
         } catch (err) {
           console.warn(err);
         } finally {
@@ -54,7 +71,15 @@
   }
 
   function goHome() {
-    SceneSwitcher.switchScene('DefaultUserHome', $SelectedOnlinePlayer.id);
+    // place user next to nameplate of home
+    const playerPosX = userHouseObject.value.posX - 80;
+    const playerPoxY = userHouseObject.value.posY - 100;
+
+    const value = `/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`;
+    push(value);
+    PlayerHistory.push(value);
+
+    // SceneSwitcher.switchScene('DefaultUserHome', $SelectedOnlinePlayer.id);
   }
 
   function clickOutsideUser() {
