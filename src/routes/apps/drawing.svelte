@@ -18,6 +18,7 @@
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
   // import NameGenerator from '../components/nameGenerator.svelte';
   import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
+  import { dlog } from '../game/helpers/DebugLog';
 
   let hex = '#000000';
 
@@ -65,17 +66,17 @@
   // let prevFrame = 1;
 
   $: { // when the currenFrame changes, clear the drawingCanvas
+    console.log('currentFrame: ', currentFrame);
+    // reset the undo array
+    switchingFrame();
+  }
+
+  function switchingFrame() {
     if (drawingCanvas) {
-      // reset the undo array
-      // Assuming you have a Svelte store for an array called myArray
-
-
-      // To empty the array:
-
-
-      drawingCanvasUndoArray.set([]);
-      drawingCanvasRedoArray.set([]);
-
+      if (drawingCanvasUndoArray) {
+        drawingCanvasUndoArray.set([]);
+        drawingCanvasRedoArray.set([]);
+      }
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
     }
