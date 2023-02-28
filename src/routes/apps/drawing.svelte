@@ -66,7 +66,7 @@
   // let prevFrame = 1;
 
   $: { // when the currenFrame changes, clear the drawingCanvas
-    console.log('currentFrame: ', currentFrame);
+    dlog('currentFrame: ', currentFrame);
     // reset the undo array
     switchingFrame();
   }
@@ -82,47 +82,7 @@
     }
   }
 
-  $: { console.log('changes', changes); }
-
-  //   function resetUndoOnChangeFrame(_currentFrame) {
-  //     console.log('prevFrame', prevFrame);
-  //     console.log('currentFrame', _currentFrame);
-  //     putDrawingCanvasIntoFramesArray(prevFrame);
-
-  //     // clear the canvas because we switch to a new frame
-  //     drawingCanvas.clear();
-  //     drawingCanvas.renderAll();
-
-  //     getImageFromFramesArray(currentFrame);
-  //     drawingCanvas.renderAll();
-
-  //     const allDrawingCanvasObjects = drawingCanvas.getObjects();
-  //     console.log('allDrawingCanvasObjects: ', allDrawingCanvasObjects);
-
-
-
-  //     // drawingCanvas.renderAll();
-  //     // let getStateStore = get(state);
-  //     console.log('state BEFORE', get(state));
-  //     //! maybe take away one prev object instead of clearing the whole canvas
-  //     const json = drawingCanvas.toJSON();
-  //     if (json) {
-  //       state.set(json);
-  //     // console.log('ending saveState $state: ', $state);
-  //     }
-  //     console.log('state AFTER', get(state));
-
-  //     // empty the pastStates and futureStates
-  //     pastStates.set([]);
-  //     futureStates.set([]);
-
-
-  //     if (prevFrame !== currentFrame) {
-  //       prevFrame = currentFrame;
-  //     }
-  //   }
-
-  // $: { console.log('file, displayName', file, displayName); }
+  $: { dlog('changes', changes); }
 
   $: {
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
@@ -130,7 +90,6 @@
 
   // remove forbidden characters from displayname after a new file has loaded or has been made
   $: if (file.loaded || file.new) {
-    // console.log('displayName', displayName);
     if (hasSpecialCharacter(displayName)) displayName = removeSpecialCharacters(displayName);
   }
 
@@ -140,21 +99,6 @@
 
   const cursorOpacity = 0.5;
   const dispatch = createEventDispatcher();
-
-  // const state = writable({});
-  // const pastStates = writable([]);
-  // const futureStates = writable([]);
-
-  //   const stateObject = {}
-  // const pastStatesArray = []
-  // const futureStatesArray = []
-
-  // Let appLoader keep track of nr of changes
-  // track changes with after a path is created,
-  // with undo decrease changes, with redo increase changes
-  // $: {
-  //   changes = $pastStates.length;
-  // }
 
   // Window size, canvas size
   let innerHeight;
@@ -188,6 +132,12 @@
       drawingCanvas.setWidth(canvasHeight);
       drawingCanvas.setHeight(canvasHeight); // keep the drawing Canvas square
 
+      antiFlickerCanvas.setWidth(canvasHeight);
+      antiFlickerCanvas.setHeight(canvasHeight);
+
+      antiFlickerCanvasRef = document.getElementById('antiFlickerCanvas');
+      antiFlickerCanvasContext = antiFlickerCanvasRef.getContext('2d');
+
       cursorCanvas.setWidth(canvasHeight);
       cursorCanvas.setHeight(canvasHeight); // keep the cursorCanvas square
 
@@ -198,12 +148,18 @@
       );
       cursorCanvas.setZoom(scaleRatio);
       drawingCanvas.setZoom(scaleRatio);
+      antiFlickerCanvas.setZoom(scaleRatio);
     }
   }
 
   // DOM ELements etc
   let drawingCanvasEl;
   let drawingCanvas;
+  // let noGlitchCanvasEl;
+  let antiFlickerCanvas;
+  let antiFlickerCanvasEl;
+  let antiFlickerCanvasRef;
+  let antiFlickerCanvasContext;
   let saveCanvas;
   let cursorCanvasEl;
   let cursorCanvas;
@@ -249,7 +205,7 @@
     return value; // Set the value of the slider to the new value
   }
 
-  $: { console.log('file: ', file); }
+  $: { dlog('file: ', file); }
 
   // Reactive function: update Fabric brush according to UI state
   $: {
@@ -288,9 +244,6 @@
   onMount(() => {
     setLoader(true);
 
-
-
-
     // drawingCanvas should be setup on default size, later resized to fit screen
     // Set up Canvases
     cursorCanvas = new fabric.StaticCanvas(cursorCanvasEl);
@@ -303,6 +256,10 @@
     drawingCanvas.set('width', baseSize);
     drawingCanvas.set('height', baseSize);
 
+    antiFlickerCanvas = new fabric.StaticCanvas(antiFlickerCanvasEl);
+    antiFlickerCanvas.set('width', baseSize);
+    antiFlickerCanvas.set('height', baseSize);
+
     eraseBrush = new fabric.EraserBrush(drawingCanvas);
 
     // Set frameNumber on object, to refer to when deleting frames
@@ -310,25 +267,6 @@
       // const idx = drawingCanvas.getObjects().length - 1;
       // drawingCanvas.item(idx).frameNumber = currentFrame;
 
-      // // clear futureState (because we continue to draw) and save current state
-      // saveState();
-
-      // if ($pastStates.length >= maxUndo) {
-      //   console.log('maxUndo reached');
-      //   undoState();
-      //   putDrawingCanvasIntoFramesArray(currentFrame);
-      //   redoState();
-
-      //   // remove the first element of the pastStates array
-      //   pastStates.update((store) => {
-      //     store.shift();
-      //     state.set(store);
-      //     return store;
-      //   });
-      //   console.log('pasteStateLength: ', $pastStates.length);
-
-      //   // remove the first element of the 'objects' array inside the state store object
-      // }
 
       // clear the redo array when contuing to draw after undo
       if ($drawingCanvasRedoArray.length > 0) {
@@ -337,11 +275,22 @@
 
       // increment changes
       changes++;
+
+      // antiFlickerCanvasContext.canvas.hidden = false;
+      // antiFlickerCanvasContext.canvas.hidden = false;
+      putDrawingCanvasIntoAntiFlickerCanvas();
+
+      antiFlickerCanvasContext.canvas.hidden = false;
+
+
       putDrawingCanvasIntoFramesArray(currentFrame);
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
-      // console.log('framesArray.length: ', framesArray.length);
-      // console.log('$drawingCanvasUndoArray.length: ', $drawingCanvasUndoArray.length);
+
+      setTimeout(() => {
+        antiFlickerCanvasContext.canvas.hidden = true;
+        antiFlickerCanvas.clear();
+      }, 20);
     });
 
     fabric.Object.prototype.transparentCorners = false;
@@ -365,19 +314,15 @@
         // get color of the canvas under the mouse
         drawingCanvas.set('preserveObjectStacking', false);
         const ctx = drawingCanvas.contextContainer;
-        // const ctx = drawingCanvas.getContext('2d');
-        // console.log('ctx: ', ctx);
         const pointer = drawingCanvas.getPointer(evt.e);
-        // console.log('pointer: ', pointer);
+
         const pixelData = ctx.getImageData(
           Math.round(pointer.x * canvasScaleRatio),
           Math.round(pointer.y * canvasScaleRatio),
           1,
           1,
         ).data;
-        // console.log(`${pointer.x}, ${pointer.y}`);
-        // console.log(`color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]} ${pixelData[3]}`);
-        // alert(`${pointer.x}, ${pointer.y} color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]}`);
+
         const colorPicker = document.getElementById('drawing-color');
         hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
         colorPicker.value = hex;
@@ -394,19 +339,16 @@
         // get color of the canvas under the mouse
         drawingCanvas.set('preserveObjectStacking', false);
         const ctx = drawingCanvas.contextContainer;
-        // const ctx = drawingCanvas.getContext('2d');
-        // console.log('ctx: ', ctx);
+
         const pointer = drawingCanvas.getPointer(evt.e);
-        // console.log('pointer: ', pointer);
+
         const pixelData = ctx.getImageData(
           Math.round(pointer.x * canvasScaleRatio),
           Math.round(pointer.y * canvasScaleRatio),
           1,
           1,
         ).data;
-        // console.log(`${pointer.x}, ${pointer.y}`);
-        // console.log(`color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]} ${pixelData[3]}`);
-        // alert(`${pointer.x}, ${pointer.y} color: ${pixelData[0]} ${pixelData[1]} ${pixelData[2]}`);
+
         const colorPicker = document.getElementById('drawing-color');
         hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
         colorPicker.value = hex;
@@ -437,19 +379,6 @@
         .canvas.renderAll();
     });
 
-    // TODO @chip Figure out the best event to listen to (maybe multiple events?) in order to trigger a saveState()?
-    // Set up Fabric Canvas interaction listeners
-    // drawingCanvas.on('object:added', () => {
-    //   console.log('drawingCanvas.getObjects(): ', drawingCanvas.getObjects());
-    // });
-
-    // drawingCanvas.on('mouse:up', () => {
-    //   // console.log('mouse up');
-    //   saveState();
-    // });
-
-
-
     applyBrush = (brushType) => {
       if (typeof brushType === 'string') selectedBrush = brushType;
       drawingCanvas.freeDrawingBrush = new fabric[`${selectedBrush}Brush`](drawingCanvas);
@@ -460,7 +389,6 @@
           brush.source = brush.getPatternSrc.call(brush);
         }
         brush.width = parseInt(brushWidthLogarithmic, 10) || 1;
-        // console.log('brush.width', brush.width);
       }
     };
 
@@ -504,7 +432,6 @@
       // clear the loadingCanvas
       ctx.clearRect(0, 0, baseSize, baseSize);
     }
-    // console.log('framesArray length: ', framesArray.length);
 
     // make the loadingCanvas 0
     loadCanvas.width = 0;
@@ -557,75 +484,6 @@
       return data;
     });
   }
-
-  // // Save state locally
-  // async function saveState() {
-  //   // Clear futureStates (should be empty after each new edit..)
-  //   futureStates.set([]);
-  //   // console.log('beginning saveState $state: ', $state);
-
-  //   // If $state is existing, add it to pastStates
-  //   if (
-  //     ($state && $pastStates.length === 0) ||
-  //     ($pastStates.length > 0 && $state !== $pastStates[$pastStates.length - 1])
-  //   ) {
-  //     pastStates.update((states) => [...states, $state]); // working code
-  //     // pastStates.update(() => [$state]); // to make changes work, but there is only the last line as state
-  //   }
-
-  //   const json = drawingCanvas.toJSON();
-  //   if (json) {
-  //     state.set(json);
-  //     // console.log('ending saveState $state: ', $state);
-  //     // TODO MAYBE: If required, we could add a save to localStorage here.
-  //     // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
-  //   }
-  // }
-
-  // // Go back to previous state
-  // function undoState() {
-  //   // Add current state to futureStates
-  //   futureStates.update((states) => [...states, $state]);
-
-  //   // Then revert to last state from pastStates
-  //   pastStates.update((past) => {
-  //     // Set current state to last in redoStates
-  //     state.set(past.pop());
-  //     // console.log('past: ', past);
-  //     return past;
-  //   });
-
-  //   resetCanvasFromState();
-  // }
-
-  // // Go back to previous reverted state
-  // function redoState() {
-  //   // Add current state to pastStates
-  //   pastStates.update((states) => [...states, $state]);
-
-  //   // Then revert to last state from futureStates
-  //   futureStates.update((future) => {
-  //     // Set current state to last in futureStates
-  //     state.set(future.pop());
-  //     return future;
-  //   });
-
-  //   resetCanvasFromState();
-  // }
-
-  // function resetCanvasFromState() {
-  //   if ($state) {
-  //     drawingCanvas.clear();
-  //     console.log('resetCanvasFromState $state: ', $state);
-  //     drawingCanvas.loadFromJSON($state, () => {
-  //       drawingCanvas.renderAll();
-  //     });
-  //     if ($pastStates.length === 0) {
-  //       console.log('resetCanvasFromState $pastStates.length === 0');
-  //       getImageFromFramesArray(currentFrame);
-  //     }
-  //   }
-  // }
 
   // Go back to previous state
   function undoDrawingCanvas() {
@@ -705,7 +563,6 @@ export function getImageFromFramesArray(_currentFrame) {
   } else {
     frame = currentFrame - 1;
   }
-  // console.log('getImageFromFramesArray frame: ', frame);
   const storedFrame = framesArray[frame];
 
   fabric.Image.fromURL(storedFrame, (img) => {
@@ -720,6 +577,34 @@ export function getImageFromFramesArray(_currentFrame) {
     // drawingCanvas.add(img);
     // drawingCanvas.renderAll();
   });
+}
+
+function putDrawingCanvasIntoAntiFlickerCanvas() {
+  // put the drawingCanvas into the antiFlickerCanvas
+  // const prevZoom = drawingCanvas.getZoom();
+  // drawingCanvas.setZoom(1);
+
+  // const frame = frame - 1;
+
+  // copy all objects from drawingCanvas to antiFlickerCanvas
+  drawingCanvas.forEachObject((obj) => {
+    antiFlickerCanvas.add(obj);
+  });
+  // const currentFrameData = drawingCanvas.toDataURL({
+  //   format: 'png',
+
+  // });
+
+  // fabric.Image.fromURL(currentFrameData, (img) => {
+  //   antiFlickerCanvas.add(img.set({
+  //     left: 0,
+  //     top: 0,
+  //     // height: baseSize,
+  //     // width: baseSize,
+
+  //   }, { crossOrigin: 'anonymous' }));
+  // });
+  // drawingCanvas.setZoom(prevZoom);
 }
 
 export function putDrawingCanvasIntoFramesArray(_frame) {
@@ -748,13 +633,11 @@ export function putDrawingCanvasIntoFramesArray(_frame) {
     });
   }
 
-
   // add the currentFrameData to the drawingCanvasUndoArray
   drawingCanvasUndoArray.update((array) => {
     array.push(currentFrameData);
     return array;
   });
-
 
   drawingCanvas.setZoom(prevZoom);
 }
@@ -777,7 +660,6 @@ export function putDrawingCanvasIntoFramesArray(_frame) {
 
    // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
    const userProfile = get(Profile);
-   // console.log('userProfile', userProfile.username);
    const filename = `${userProfile.username}_${file.key}_${displayName}.png`;
    const a = document.createElement('a');
    a.download = filename;
@@ -912,6 +794,8 @@ export function putDrawingCanvasIntoFramesArray(_frame) {
             : 'none'};
           "
       >
+        <canvas hidden bind:this="{antiFlickerCanvasEl}" class="drawingCanvasEl" id='antiFlickerCanvas'> </canvas>
+
         <canvas bind:this="{drawingCanvasEl}" class="drawingCanvasEl"> </canvas>
         <!-- <canvas bind:this="{drawingCanvasEl}" class="canvas"> </canvas> -->
 
