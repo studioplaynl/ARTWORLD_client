@@ -15,6 +15,7 @@
 
   async function toggle() {
     friends = await ListFriends();
+    console.log(friends);
     friends.friends.forEach((friend) => {
       items = [...items, friend.user];
     });
@@ -43,7 +44,7 @@
 
 <div>
   {#if toggleMode}
-    <button on:click="{toggle}">
+    <button on:click="{toggle}" class="sendButton">
       <!-- svelte-ignore a11y-img-redundant-alt -->
       <img
         alt="send picture"
@@ -52,12 +53,14 @@
       />
     </button>
   {:else}
+    <div class="selectBox">
     <Select
       items="{items}"
       bind:value
-      optionIdentifier="{optionIdentifier}"
-      labelIdentifier="{labelIdentifier}"
+      itemId="{optionIdentifier}"
+      label="{labelIdentifier}"
     />
+    </div>
     <button on:click="{send}" class="sendButton"><MdSend /></button>
   {/if}
 </div>
@@ -66,5 +69,8 @@
   button.sendButton {
     width: 45px;
     border-radius: 5px;
+  }
+  .selectBox {
+    width: 150px;
   }
 </style>
