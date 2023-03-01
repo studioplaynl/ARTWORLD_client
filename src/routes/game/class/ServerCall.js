@@ -26,7 +26,8 @@ class ServerCall {
       .then((homesRec) => {
         // console.log('rec homes: ', homesRec);
         scene.homes = homesRec[0];
-        // dlog('scene.homes', scene.homes);
+        dlog('scene.homes', scene.homes);
+
 
         this.generateHomes(scene);
       });
@@ -37,7 +38,14 @@ class ServerCall {
     if (scene.homes != null) {
       // dlog('generate homes!');
       // dlog('scene.homes', scene.homes);
+
+      // store element.username in a const with \n for linebreak
+      let usersWithAHome = '';
+
       scene.homes.forEach((element, index) => {
+        // add username to usersWithAHome
+        usersWithAHome += `${element.username}\n`;
+
         // dlog(element, index)
         const homeImageKey = `homeKey_${element.user_id}`;
         // get a image url for each home
@@ -54,6 +62,8 @@ class ServerCall {
           this.getHomeImages(url, element, index, homeImageKey, scene);
         }
       }); // end forEach
+      dlog('usersWithAHome:');
+      dlog(usersWithAHome);
     }
   }
 
@@ -139,23 +149,31 @@ class ServerCall {
       // scene.homesRepresented[index].setScale(1.6);
       // store the use home gameObject in ManageSession so that it can be referenced for live updating
       ManageSession.playerHomeContainer = scene.homesRepresented[index];
+      // console.log('ManageSession.playerHomeContainer: ', ManageSession.playerHomeContainer);
+      // console.log('ManageSession.playerHomeContainer.getAll(): ', ManageSession.playerHomeContainer.getAll());
       // subscribe to myHome if the location is the home
       let previousHome = { value: { url: '' } };
 
       myHomeStore.subscribe((value) => {
-        console.log('previousHome: ', previousHome);
-        if (previousHome.value.url !== value.value.url) {
+        // dlog('previousHome, value: ', previousHome, value);
+        if (value.value.url !== '' && previousHome.value.url !== value.value.url) {
+          // find the image in the container by name
+          const homeImageInGame = ManageSession.playerHomeContainer.getByName('location');
+          // dlog('homeImageInGame: ', homeImageInGame);
           dlog('user home image updated');
           previousHome = value;
           // dlog('value', value);
           // dlog('value.url', value.url);
           if (scene.textures.exists(value.url)) {
-            ManageSession.playerHomeContainer.list[2].setTexture(value.url);
+            homeImageInGame.setTexture(value.url);
           } else {
             scene.load.image(value.url, value.url)
               .on(`filecomplete-image-${value.url}`, () => {
                 dlog('done loading new home image');
-                ManageSession.playerHomeContainer.list[2].setTexture(value.url);
+                if (homeImageInGame !== null) {
+                  // console.log('homeImageInGame: ', homeImageInGame);
+                  homeImageInGame.setTexture(value.url);
+                }
               }, this);
             scene.load.start(); // start loading the image in memory
           }
@@ -163,11 +181,12 @@ class ServerCall {
           // dlog('ManageSession.playerHomeContainer.list[2]', ManageSession.playerHomeContainer.list[2]);
           // set the right size
           const width = 140;
-          if (typeof ManageSession.playerHomeContainer.list[2] !== 'undefined') {
-            ManageSession.playerHomeContainer.list[2].displayWidth = width;
-            ManageSession.playerHomeContainer.list[2].scaleY = ManageSession.playerHomeContainer.list[2].scaleX;
+          if (homeImageInGame !== null) {
+            // console.log('homeImageInGame: ', homeImageInGame);
+            homeImageInGame.displayWidth = width;
+            homeImageInGame.scaleY = homeImageInGame.scaleX;
             const cropMargin = 1; // sometimes there is a little border visible on a drawn image
-            ManageSession.playerHomeContainer.list[2].setCrop(
+            homeImageInGame.setCrop(
               cropMargin,
               cropMargin,
               width - cropMargin,
@@ -205,7 +224,7 @@ class ServerCall {
         serverItemsArray.array = rec;
 
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
+        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname.toLowerCase() === type);
         dlog('dier serverItemsArray.array', serverItemsArray.array);
         this.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
@@ -219,7 +238,7 @@ class ServerCall {
         // serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
 
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname === type);
+        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname.toLowerCase() === type);
         dlog('bloem serverItemsArray.array', serverItemsArray.array);
         this.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
@@ -429,7 +448,7 @@ class ServerCall {
       // dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
       // const convertedImage = element.value.previewUrl
-      dlog('convertedImage', convertedImage);
+      // dlog('convertedImage', convertedImage);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
         loadFunction: 'downloadFlowerChallenge', element, index, imageKey: imageKeyUrl, scene,

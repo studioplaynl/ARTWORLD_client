@@ -6,6 +6,7 @@ import Move from '../class/Move';
 import { PlayerZoom } from '../playerState';
 import Background from '../class/Background';
 import { dlog } from './DebugLog';
+import { ShowItemsBar } from '../../../session';
 
 /**   needed for EDITMODE: dragging objects and getting info about them in console
  *    scene context is passed on
@@ -119,6 +120,8 @@ export function handlePlayerMovement(scene) {
   })
     .on('tap', () => {
       // dlog('tap');
+      // ClickOutSide is not working on iOS
+      ShowItemsBar.set(false);
     }, scene)
     .on('tappingstart', () => {
       // dlog('tapstart');

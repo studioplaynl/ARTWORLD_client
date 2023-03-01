@@ -3,8 +3,8 @@
   import QRCode from 'qrcode';
   import { _ } from 'svelte-i18n';
   import { push } from 'svelte-spa-router';
-  import { onMount } from 'svelte';
-  import { Session } from '../../session';
+  import { onMount, onDestroy } from 'svelte';
+     import { Session } from '../../session';
   // import { client } from '../../nakama.svelte';
   // import { dlog } from '../game/helpers/DebugLog';
   import { createAccountAdmin } from '../../api';
@@ -15,7 +15,12 @@
   let username = 'user';
   let password = '';
   let role = 'speler';
-  let azc = 'Greensquare';
+  let azc = null;
+  let batchUserPasteBoard = '';
+  let registerNextUser = 0;
+  let incrementUser = 0;
+  let fromUser = 0;
+  let toUser = 0;
 
   onMount(async () => {
     genKidsPassword();
@@ -26,7 +31,14 @@
     console.log(azc);
     updateQrCanvas();
   }
-const Locaties = SCENE_INFO.map((i) => i.scene);
+
+  $: {
+    if (username) {
+      updateFormWhenUserNameChanges();
+    }
+  }
+
+  const Locaties = SCENE_INFO.map((i) => i.scene);
 
   let house = STOCK_HOUSES[Math.floor(STOCK_HOUSES.length * Math.random())];
 
@@ -47,18 +59,79 @@ const Locaties = SCENE_INFO.map((i) => i.scene);
     createAccountAdmin(data);
   }
 
+    function copyToClipboard() {
+      navigator.clipboard.writeText(batchUserPasteBoard);
+    }
+
+  function batchUserGenerator(_incrementUser) {
+    incrementUser = _incrementUser;
+    if (azc === null) {
+      alert('Please select an AZC');
+      return;
+    }
+
+    if (toUser - fromUser < 0) {
+      alert('Please select a valid range');
+      return;
+    }
+
+    if (incrementUser > (toUser - fromUser)) {
+      console.log('done');
+      incrementUser = 0;
+      console.log('batchUserPasteBoard');
+      console.log(batchUserPasteBoard);
+      return;
+    }
+
+    let userName = '';
+
+    const incrementedUser = fromUser + incrementUser;
+    userName = `user${incrementedUser}`;
+    fillAndSubmitForm(userName);
+  }
+
+  function updateFormWhenUserNameChanges() {
+    email = `${username}@vrolijkheid.nl`;
+    genKidsPassword();
+    updateQrCanvas();
+    house = STOCK_HOUSES[Math.floor(STOCK_HOUSES.length * Math.random())];
+    avatar = STOCK_AVATARS[Math.floor(STOCK_AVATARS.length * Math.random())];
+  }
+
+  function fillAndSubmitForm(_username) {
+    // Set the value of the username variable in the component's data
+    username = _username; // assuming $: username is declared in your component's script
+    console.log('username', username);
+
+
+    // Trigger the submit event on the form element
+    const form = document.querySelector('.registerForm form');
+    // console.log('form', form);
+    form.dispatchEvent(new Event('submit'));
+  }
+
   function onSubmit() {
     register();
-    console.log('register done');
+    // console.log('register done');
     setTimeout(() => {
       downloadLoginImage();
-      navigator.clipboard.writeText(password);
+
+
+      const pasteUser = `${username}\t${password}\t\t\t${azc}\n`;
+      batchUserPasteBoard += pasteUser;
+      copyToClipboard();
+
+      // console.log('batchUserPasteBoard');
+      // console.log(batchUserPasteBoard);
+      registerNextUser++;
+      batchUserGenerator(registerNextUser);
     }, 1000);
   }
 
 
+
   function genKidsPassword() {
-    // removed confusing charecters like 0 O o l l q S k and made the chance for number bigger
+    // removed confusing charecters like 0 O o l l q S k and made the chance for numbers bigger
     const chars = '123456789abcdefghijmnprstuvwxyz123456789ABCDEFGHJKLMNPQRTUVWXYZ123456789';
     // eslint-disable-next-line no-mixed-spaces-and-tabs
     const passwordLength = 7;
@@ -124,11 +197,31 @@ function downloadLoginImage() {
   link.href = document.getElementById('qrCanvas').toDataURL();
   link.click();
 }
+
+function handleKeyPress(event) {
+  // prevent 'Generate Multiple Users' button from being clicked when pressing enter
+  // and inadvertently creating multiple users when pressing enter in the username field
+}
+
+// add the event listener to the window object
+  window.addEventListener('keydown', handleKeyPress);
+
+  // remove the event listener when the component is destroyed
+  onDestroy(() => {
+    window.removeEventListener('keydown', handleKeyPress);
+  });
+
 </script>
 
 <div class="box">
   <div class="registerForm">
-    <form on:submit|preventDefault="{onSubmit}">
+    <form on:submit|preventDefault="{() => {
+      if (incrementUser < 1) {
+        console.log('initialization, clear clipboard');
+        batchUserPasteBoard = '';
+      }
+      onSubmit();
+    }}">
       <div class="container">
         <h1>{$_('register.title')}</h1>
 
@@ -140,13 +233,6 @@ function downloadLoginImage() {
           name="username"
           id="username"
           bind:value="{username}"
-          on:change="{() => {
-            email = `${username}@vrolijkheid.nl`;
-            genKidsPassword();
-            updateQrCanvas();
-            house = STOCK_HOUSES[Math.floor(STOCK_HOUSES.length * Math.random())];
-            avatar = STOCK_AVATARS[Math.floor(STOCK_AVATARS.length * Math.random())];
-          }}"
           required
         />
 
@@ -199,22 +285,7 @@ function downloadLoginImage() {
       </div>
     </form>
      <button on:click="{genKidsPassword}" class="registerbtn">new Password</button>
-    <!-- <button on:click="{print}" class="registerbtn">print userdata</button> -->
-    <!-- <div class="printarea" bind:this="{printDiv}">
-      <table>
-        <tr>
-          <td id="qrCodeImage">
-            <QrCode value="{QRUrl}" />
-          </td>
-          <td>
-            <h5>Email adress:</h5>
-            <b>{email}</b>
-            <h5>Password:</h5>
-            <b>{password}</b>
-          </td>
-        </tr>
-      </table>
-    </div> -->
+
     <div class="imageCanvas" >
     <canvas id="qrCanvas" width="340"
             height="174"
@@ -223,6 +294,28 @@ function downloadLoginImage() {
       </div>
       <button on:click="{downloadLoginImage}" class="registerbtn">Download QR Code</button>
   </div>
+
+  <!-- two input fields for integers, first labeled "from" and second labeled "to" -->
+  <hr />
+        <h1>Batch create multiple users </h1>
+<label for="fromUser"><b>from: user number </b></label>
+  <input type="number" bind:value="{fromUser}" />
+  <label for="toUser"><b>to: user number </b></label>
+
+  <input type="number" bind:value="{toUser}" />
+
+  <p>{(toUser - fromUser) + 1} number of users</p>
+
+  <!-- a button that, when clicked, sets registerNextUser to 0, then calls the batchUserGenerator fuction -->
+  <button on:click="{() => {
+    registerNextUser = 0;
+    batchUserGenerator(registerNextUser);
+  }}">Generate Multiple Users</button>
+
+<pre>{batchUserPasteBoard}</pre>
+<button on:click="{copyToClipboard}">
+      Copy user data to clipboard
+    </button>
 
 <div
       class="app-close"

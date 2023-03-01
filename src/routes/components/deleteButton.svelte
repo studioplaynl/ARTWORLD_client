@@ -26,15 +26,24 @@
     }
   };
 
-  const Delete = () => {
+  function Delete() {
     modalOpen = false;
     if ((role === 'admin' || role === 'moderator') && $location === '/moderator') {
       removeFromTrash(row);
     } else {
       ArtworksStore.delete(row, role);
     }
-  };
+  }
+
+  function handleKeydown(evt) {
+    if (modalOpen && evt.type === 'keyup' && evt.key === 'Enter') {
+      Delete();
+    }
+  }
+
 </script>
+
+<svelte:window on:keyup="{handleKeydown}" />
 
 <main>
   {#if isCurrentUser() || role === 'admin' || role === 'moderator'}
@@ -75,6 +84,7 @@
       <p>If you exit without saving, changes will be lost.</p>
       <p>Are you sure you want to exit?</p>
       <Button on:click="{Delete}">yes, delete</Button>
+
     </Dialog>
   </Modal>
 </main>

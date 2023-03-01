@@ -26,6 +26,8 @@ import YellowDiamond from './scenes/YellowDiamond';
 import RobotWorld from './scenes/RobotWorld';
 import FireWorld from './scenes/FireWorld';
 import SlimeWorld from './scenes/SlimeWorld';
+import MarsWorld from './scenes/MarsWorld';
+import UnderwaterWorld from './scenes/UnderwaterWorld';
 
 /** Phaser Plugins */
 
@@ -49,6 +51,8 @@ const SCENES = [
   FireWorld,
   RobotWorld,
   SlimeWorld,
+  MarsWorld,
+  UnderwaterWorld,
 ];
 
 import { CONFIG } from '../../constants';

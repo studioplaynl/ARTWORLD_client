@@ -4,6 +4,7 @@
   import { Liked } from '../storage';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import { convertImage } from '../api';
+  import { DEFAULT_PREVIEW_HEIGHT } from '../constants';
 
   const drawingIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';

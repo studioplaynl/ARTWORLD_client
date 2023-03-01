@@ -16,6 +16,7 @@
     setAvatar,
     convertImage,
   } from '../../api';
+  import { PlayerHistory } from '../game/playerState';
 
 
   let objects = [];
@@ -95,7 +96,9 @@
   }
 
   function addNew() {
-    push(`/${dataType}`);
+    const value = `/${dataType}`;
+    push(value);
+    PlayerHistory.push(value);
   }
 </script>
 
@@ -143,8 +146,16 @@
           on:click="{() => {
             console.log('home', $myHome);
             // push('/house');
-            if (dataType === 'house') push(`/house?userId=${$Profile.id}&key=${object.key}`);
-            if (dataType === 'avatar') push(`/avatar?userId=${$Profile.id}&key=${object.key}`);
+            if (dataType === 'house') {
+              const value = `/house?userId=${$Profile.id}&key=${object.key}`;
+              push(value);
+              PlayerHistory.push(value);
+            }
+            if (dataType === 'avatar') {
+              const value = `/avatar?userId=${$Profile.id}&key=${object.key}`;
+              push(value);
+              PlayerHistory.push(value);
+            }
           }}"
         />
     </div>

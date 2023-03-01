@@ -1,6 +1,12 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
-  import { writable, get } from 'svelte/store';
+  import { get, writable } from 'svelte/store';
+
+  // import '@melloware/coloris/dist/coloris.css';
+  // import { coloris, init } from '@melloware/coloris';
+
+  // import ColorPicker from 'svelte-awesome-color-picker';
+  // import Picker from 'vanilla-picker';
 
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
@@ -8,14 +14,37 @@
   import {
     setLoader,
   } from '../../api';
-  import { Error, Profile } from '../../session';
+  import { Profile } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
   // import NameGenerator from '../components/nameGenerator.svelte';
   import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
+  import { dlog } from '../game/helpers/DebugLog';
+
+  let hex = '#000000';
+
+  let eyeDropper = false;
+  $: {
+    drawingColor = hex; // the eyeDropper is hex, pass it on to the colorPicker
+  }
+
+  $: {
+    updateEyeDropper(drawingColor); // update the border around the eyeDropper icon when the colorPicker changes
+  }
+
+  function updateEyeDropper(drawingColor) {
+    if (drawingCanvas) {
+      const svgIcon = document.getElementById('eyeDropper');
+      svgIcon.style.borderColor = drawingColor;
+    }
+  }
+  $: {
+    if (drawingCanvas) {
+      if (eyeDropper) { drawingCanvas.isDrawingMode = false; } else { drawingCanvas.isDrawingMode = true; }
+    }
+  }
 
   export let file; // file is currentFile in the appLoader (synced)
   export let data;
-  export let thumb = null;
   export let changes;
 
   // change artwork name
@@ -26,17 +55,34 @@
   export let currentFrame = 1;
   export let stopMotion = false;
   export let framesArray = [];
+  const drawingCanvasUndoArray = writable([]);
+
+  // const drawingCanvasUndoArray = [];
+  const drawingCanvasRedoArray = writable([]);
+  const maxUndo = 10;
   let loadCanvas;
 
   let baseSize = IMAGE_BASE_SIZE;
+  // let prevFrame = 1;
+
   $: { // when the currenFrame changes, clear the drawingCanvas
+    dlog('currentFrame: ', currentFrame);
+    // reset the undo array
+    switchingFrame();
+  }
+
+  function switchingFrame() {
     if (drawingCanvas) {
+      if (drawingCanvasUndoArray) {
+        drawingCanvasUndoArray.set([]);
+        drawingCanvasRedoArray.set([]);
+      }
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
     }
   }
 
-  // $: { console.log('file, displayName', file, displayName); }
+  $: { dlog('changes', changes); }
 
   $: {
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
@@ -44,7 +90,6 @@
 
   // remove forbidden characters from displayname after a new file has loaded or has been made
   $: if (file.loaded || file.new) {
-    // console.log('displayName', displayName);
     if (hasSpecialCharacter(displayName)) displayName = removeSpecialCharacters(displayName);
   }
 
@@ -54,15 +99,6 @@
 
   const cursorOpacity = 0.5;
   const dispatch = createEventDispatcher();
-
-  const state = writable({});
-  const pastStates = writable([]);
-  const futureStates = writable([]);
-
-  // Let appLoader keep track of nr of changes
-  $: {
-    changes = $pastStates.length;
-  }
 
   // Window size, canvas size
   let innerHeight;
@@ -75,34 +111,6 @@
 
   $: controlsHeight = innerWidth > 600 ? `${canvasHeight}px` : 'auto';
   $: controlsWidth = innerWidth <= 600 ? `${canvasHeight}px` : 'auto';
-
-  /** Delete all content from a single frame
-   * @maybe this belongs inside Stopmotion app instead..
-   */
-  export function deleteFrame(deleteableFrame) {
-    const objects = drawingCanvas.getObjects();
-
-    // Find and remove all objects with the required frameNumber attribute
-    objects
-      .filter((obj) => obj.frameNumber === deleteableFrame)
-      .forEach((obj) => {
-        drawingCanvas.remove(obj);
-      });
-
-    // Select all content to the right of the frame, and move over by –canvasWidth px
-    objects
-      .filter((obj) => obj.frameNumber > deleteableFrame)
-      .forEach((obj) => {
-        // eslint-disable-next-line no-param-reassign
-        obj.left -= canvasHeight / scaleRatio;
-      });
-
-    // Emit event that deletion is done
-    dispatch('frameContentDeleted');
-
-    // Finally update data
-    updateExportedImages();
-  }
 
   $: {
     // Respond to changes in window size
@@ -119,10 +127,16 @@
       }
 
       // here canvas size on screen is set
-      // canvasWidth = (canvasSize * frames - canvasEdge);
       canvasHeight = (canvasSize - canvasEdge);
+      // canvasHeight = baseSize;
       drawingCanvas.setWidth(canvasHeight);
       drawingCanvas.setHeight(canvasHeight); // keep the drawing Canvas square
+
+      antiFlickerCanvas.setWidth(canvasHeight);
+      antiFlickerCanvas.setHeight(canvasHeight);
+
+      antiFlickerCanvasRef = document.getElementById('antiFlickerCanvas');
+      antiFlickerCanvasContext = antiFlickerCanvasRef.getContext('2d');
 
       cursorCanvas.setWidth(canvasHeight);
       cursorCanvas.setHeight(canvasHeight); // keep the cursorCanvas square
@@ -134,36 +148,71 @@
       );
       cursorCanvas.setZoom(scaleRatio);
       drawingCanvas.setZoom(scaleRatio);
-
-      // Finally update 'data' object immediately
-      updateExportedImages();
+      antiFlickerCanvas.setZoom(scaleRatio);
     }
   }
 
   // DOM ELements etc
   let drawingCanvasEl;
   let drawingCanvas;
+  // let noGlitchCanvasEl;
+  let antiFlickerCanvas;
+  let antiFlickerCanvasEl;
+  let antiFlickerCanvasRef;
+  let antiFlickerCanvasContext;
   let saveCanvas;
   let cursorCanvasEl;
   let cursorCanvas;
   let eraseBrush;
   let mouseCursor;
   // let drawingClipboard;
-  let lineWidth = 25;
-  let drawingColor = '#000000';
-  let currentTab = null;
+  let lineWidth = 100;
+  let drawingColor = hex;
+  let currentTab = 'draw';
   let showOptionbox = false;
 
   // declaring the variable to be available globally, onMount assinging a function to it
   let applyBrush;
   let selectedBrush = 'Pencil'; // by default the Pencil is chosen
+  let brushWidthLogarithmic = lineWidth;
+  // Set the maximum value of the slider
+  const brushSliderMax = 1000;
+  // Set the minimum value of the slider
+  const brushSliderMin = 2;
+  // Calculate the value range for the first 3/4 of the slider
+  const brushSliderQuarter = (brushSliderMax - brushSliderMin) * 0.9;
+  // Calculate the offset for the first 3/4 of the slider
+  const brushSliderOffset = brushSliderMin + brushSliderQuarter;
+  // const maxUndo = 4;
+
+  function updateLineWidth(_value) {
+    if (cursorCanvas) {
+      const middle = drawingCanvas.getWidth() / 2;
+      mouseCursor
+        .set({ top: middle, left: middle })
+        .setCoords()
+        .canvas.renderAll();
+    }
+
+    // Get the value of the slider and convert it to an integer
+    let value = parseInt(_value, 10);
+    // If the value is less than or equal to the offset, set the value to a value in the first 3/4 of the slider
+    if (value <= brushSliderOffset) {
+      value = Math.round((value - brushSliderMin) / brushSliderQuarter * 190) + brushSliderMin;
+    } else { // If the value is greater than the offset, set the value to a value in the remaining 1/4 of the slider
+      value = Math.round((value - brushSliderOffset) / (brushSliderMax - brushSliderOffset) * 800) + 200;
+    }
+    return value; // Set the value of the slider to the new value
+  }
+
+  $: { dlog('file: ', file); }
 
   // Reactive function: update Fabric brush according to UI state
   $: {
     if (drawingCanvas) {
       const brush = drawingCanvas.freeDrawingBrush;
       brush.color = drawingColor;
-      brush.width = parseInt(lineWidth, 10) || 1;
+      brush.width = parseInt(brushWidthLogarithmic, 10) || 1;
       if (brush.getPatternSrc) {
         brush.source = brush.getPatternSrc.call(brush);
       }
@@ -184,6 +233,13 @@
     }
   }
 
+  // make brush size slider logarithmic
+  $: {
+    brushWidthLogarithmic = updateLineWidth(lineWidth);
+  }
+
+
+
   // eslint-disable-next-line consistent-return
   onMount(() => {
     setLoader(true);
@@ -200,17 +256,41 @@
     drawingCanvas.set('width', baseSize);
     drawingCanvas.set('height', baseSize);
 
+    antiFlickerCanvas = new fabric.StaticCanvas(antiFlickerCanvasEl);
+    antiFlickerCanvas.set('width', baseSize);
+    antiFlickerCanvas.set('height', baseSize);
+
     eraseBrush = new fabric.EraserBrush(drawingCanvas);
 
     // Set frameNumber on object, to refer to when deleting frames
     drawingCanvas.on('path:created', () => {
       // const idx = drawingCanvas.getObjects().length - 1;
       // drawingCanvas.item(idx).frameNumber = currentFrame;
-      // drawingCanvas.renderAll();
 
-      putDrawingCanvasIntoFramesArray();
+
+      // clear the redo array when contuing to draw after undo
+      if ($drawingCanvasRedoArray.length > 0) {
+        drawingCanvasRedoArray.set([]);
+      }
+
+      // increment changes
+      changes++;
+
+      // antiFlickerCanvasContext.canvas.hidden = false;
+      // antiFlickerCanvasContext.canvas.hidden = false;
+      putDrawingCanvasIntoAntiFlickerCanvas();
+
+      antiFlickerCanvasContext.canvas.hidden = false;
+
+
+      putDrawingCanvasIntoFramesArray(currentFrame);
       drawingCanvas.clear();
       getImageFromFramesArray(currentFrame);
+
+      setTimeout(() => {
+        antiFlickerCanvasContext.canvas.hidden = true;
+        antiFlickerCanvas.clear();
+      }, 20);
     });
 
     fabric.Object.prototype.transparentCorners = false;
@@ -228,17 +308,67 @@
     });
 
     cursorCanvas.add(mouseCursor);
+    drawingCanvas.on('mouse:down', (evt) => {
+      if (eyeDropper) {
+        const canvasScaleRatio = canvasHeight / baseSize;
+        // get color of the canvas under the mouse
+        drawingCanvas.set('preserveObjectStacking', false);
+        const ctx = drawingCanvas.contextContainer;
+        const pointer = drawingCanvas.getPointer(evt.e);
+
+        const pixelData = ctx.getImageData(
+          Math.round(pointer.x * canvasScaleRatio),
+          Math.round(pointer.y * canvasScaleRatio),
+          1,
+          1,
+        ).data;
+
+        const colorPicker = document.getElementById('drawing-color');
+        hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
+        colorPicker.value = hex;
+        eyeDropper = false;
+      }
+    });
 
     // redraw cursor on new mouse position when moved
     // eslint-disable-next-line func-names
     drawingCanvas.on('mouse:move', function (evt) {
-      if (currentTab === 'select') {
+      if (eyeDropper) {
+        const canvasScaleRatio = canvasHeight / baseSize;
+
+        // get color of the canvas under the mouse
+        drawingCanvas.set('preserveObjectStacking', false);
+        const ctx = drawingCanvas.contextContainer;
+
+        const pointer = drawingCanvas.getPointer(evt.e);
+
+        const pixelData = ctx.getImageData(
+          Math.round(pointer.x * canvasScaleRatio),
+          Math.round(pointer.y * canvasScaleRatio),
+          1,
+          1,
+        ).data;
+
+        const colorPicker = document.getElementById('drawing-color');
+        hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
+        colorPicker.value = hex;
+        const svgIcon = document.getElementById('eyeDropper');
+        svgIcon.style.borderColor = hex;
+
         return mouseCursor
           .set({ top: -100, left: -100 })
           .setCoords()
           .canvas.renderAll();
+        // return mouseCursor
+        //   .set({
+        //     top: pointer.y,
+        //     left: pointer.x,
+        //   })
+        //   .setCoords()
+        //   .canvas.renderAll();
       }
       const mouse = this.getPointer(evt.e);
+
 
       return mouseCursor
         .set({
@@ -247,13 +377,6 @@
         })
         .setCoords()
         .canvas.renderAll();
-    });
-
-    // TODO @chip Figure out the best event to listen to (maybe multiple events?) in order to trigger a saveState()?
-    // Set up Fabric Canvas interaction listeners
-    // drawingCanvas.on('object:modified', () => {
-    drawingCanvas.on('mouse:up', () => {
-      saveState();
     });
 
     applyBrush = (brushType) => {
@@ -265,13 +388,13 @@
         if (brush.getPatternSrc) {
           brush.source = brush.getPatternSrc.call(brush);
         }
-        brush.width = parseInt(lineWidth, 10) || 1;
+        brush.width = parseInt(brushWidthLogarithmic, 10) || 1;
       }
     };
 
     // Was there an image to load? Do so
     if (file?.url) {
-      console.log('load file url drawing');
+      dlog('load file url drawing');
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = (e) => {
@@ -289,7 +412,7 @@
 
   // go through all frames, and put each image in framesArray array
   function createframeBuffer(img) {
-    console.log('baseSize: ', baseSize);
+    dlog('baseSize: ', baseSize);
     loadCanvas.width = baseSize;
     loadCanvas.height = baseSize;
     const ctx = loadCanvas.getContext('2d');
@@ -309,21 +432,31 @@
       // clear the loadingCanvas
       ctx.clearRect(0, 0, baseSize, baseSize);
     }
-    console.log('framesArray length: ', framesArray.length);
 
     // make the loadingCanvas 0
     loadCanvas.width = 0;
 
+    // put currentFrame in the drawingCanvas
     getImageFromFramesArray(currentFrame);
   } // ............................. createframeBuffer ......................
 
-  // gets executed inside appLoader
-  export async function stopmotionSaveHandler() {
+  /**
+   *
+   * put framesArray in savaCanvas, and assign it as data
+   * get's used for downloading the image to desktop
+   * and in apploader to prepare the data for storage on the server
+   */
+  export async function saveHandler() {
     // set dimensions of savecanvas
     saveCanvas.height = baseSize;
     saveCanvas.width = baseSize * frames;
+    putDrawingCanvasIntoFramesArray(currentFrame);
+    // // for each frames putDrawingCanvasIntoFramesArray
+    // for (let i = 0; i < frames; i++) {
+    //   putDrawingCanvasIntoFramesArray(i);
+    // }
 
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve) => {
       let loaded = 0;
       // framebuffer contains all frames in an array
       framesArray.forEach((frame, i) => {
@@ -342,101 +475,88 @@
       });
     }).then(() => {
       data = saveCanvas.toDataURL('image/png');
-      console.log('stopmotionSaveHandler saved');
+      dlog('saveHandler saved');
+
+      // empty the saveCanvas
+      saveCanvas.height = 0;
+      saveCanvas.width = 0;
+
       return data;
     });
   }
 
-  // Save state locally
-  async function saveState() {
-    // Clear futureStates (should be empty after each new edit..)
-    futureStates.set([]);
-
-    // If $state is existing, add it to pastStates
-    if (
-      ($state && $pastStates.length === 0) ||
-      ($pastStates.length > 0 && $state !== $pastStates[$pastStates.length - 1])
-    ) {
-      // pastStates.update((states) => [...states, $state]); //working code
-      pastStates.update(() => [$state]); // to make changes work, but there is only the last line as state
-    }
-
-    const json = drawingCanvas.toJSON();
-    if (json) {
-      state.set(json);
-      // TODO MAYBE: If required, we could add a save to localStorage here.
-      // Make sure to clear the localStorage in the save() function and apply it in onMount (if valid)
-
-      // Set the data object (so the AppLoader can save it to server if required)
-      // FIXME? Somehow this requires a timeout, as calling it directly clears the drawingCanvas?!
-      // updateExportedImages();
-    }
-  }
-
-  function updateExportedImages() {
-    setTimeout(() => {
-      // saveCanvas.setZoom(1);
-
-      data = saveCanvas.toDataURL({
-        format: 'png',
-        height: baseSize,
-        width: baseSize * frames,
-      });
-      // Small format thumbnail to add to frames
-      // saveCanvas.setZoom(scaleRatio);
-      thumb = saveCanvas.toDataURL({
-        format: 'png',
-        multiplier: 0.25,
-
-      });
-      // saveCanvas.setZoom(1);
-    }, 30);
-  }
-
   // Go back to previous state
-  // function undoState() {
-  //   // Add current state to futureStates
-  //   futureStates.update((states) => [...states, $state]);
+  function undoDrawingCanvas() {
+    if ($drawingCanvasUndoArray.length === 0) return;
 
-  //   // Then revert to last state from pastStates
-  //   pastStates.update((past) => {
-  //     // Set current state to last in redoStates
-  //     state.set(past.pop());
-  //     return past;
-  //   });
+    drawingCanvas.clear();
+    // Add current index of drawingCanvasUndoArray to drawingCanvasRedoArray
+    const copyFrame = $drawingCanvasUndoArray[$drawingCanvasUndoArray.length - 1];
+    drawingCanvasRedoArray.update((array) => {
+      array.push(copyFrame);
+      return array;
+    });
 
-  //   resetCanvasFromState();
-  // }
+
+    drawingCanvasUndoArray.update((array) => {
+      array.pop();
+      return array;
+    });
+    // put last index of drawingCanvasUndoArray in the drawingCanvas
+    const frame = $drawingCanvasUndoArray[$drawingCanvasUndoArray.length - 1];
+
+    fabric.Image.fromURL(
+      frame,
+      (img) => {
+        drawingCanvas.add(img.set({
+          left: 0,
+          top: 0,
+          height: baseSize,
+          width: baseSize,
+
+        }, { crossOrigin: 'anonymous' }));
+      },
+    );
+
+    // update the framesArray
+    // put the copyFrame in the framesArray
+    framesArray[currentFrame - 1] = frame;
+
+    changes--;
+  }
 
   // Go back to previous reverted state
-  // function redoState() {
-  //   // Add current state to pastStates
-  //   pastStates.update((states) => [...states, $state]);
+  function redoDrawingCanvas() {
+    if (drawingCanvasRedoArray.length === 0) return;
 
-  //   // Then revert to last state from futureStates
-  //   futureStates.update((future) => {
-  //     // Set current state to last in futureStates
-  //     state.set(future.pop());
-  //     return future;
-  //   });
+    drawingCanvas.clear();
+    // Add current index of drawingCanvasRedoArray to drawingCanvasUndoArray
+    const copyFrame = $drawingCanvasRedoArray[$drawingCanvasRedoArray.length - 1];
+    drawingCanvasUndoArray.update((array) => {
+      array.push(copyFrame);
+      return array;
+    });
 
-  //   resetCanvasFromState();
-  // }
+    drawingCanvasRedoArray.update((array) => {
+      array.pop();
+      return array;
+    });
+    // put last index of drawingCanvasUndoArray in the drawingCanvas
+    const frame = $drawingCanvasUndoArray[$drawingCanvasUndoArray.length - 1];
+    fabric.Image.fromURL(frame, (img) => {
+      drawingCanvas.add(img.set({
+        left: 0,
+        top: 0,
+        height: baseSize,
+        width: baseSize,
 
-  // function resetCanvasFromState() {
-  //   if ($state) {
-  //     drawingCanvas.clear();
-  //     drawingCanvas.loadFromJSON($state, () => {
-  //       drawingCanvas.renderAll();
-  //       updateExportedImages();
-  //     });
-  //   }
-  // }
-
-/// / going from drawing canvas to SaveCanvas FUNCTIONS ///////////////////////////////////////////
-
-//! replacing
-function getImageFromFramesArray(_currentFrame) {
+      }, { crossOrigin: 'anonymous' }));
+    });
+    changes++;
+  }
+/// / going from framesArray to drawingCanvas FUNCTIONS ///////////////////////////////////////////
+// put the current frame in the drawingCanvas
+export function getImageFromFramesArray(_currentFrame) {
   let frame;
   if (_currentFrame) {
     frame = _currentFrame - 1;
@@ -451,20 +571,47 @@ function getImageFromFramesArray(_currentFrame) {
       top: 0,
       height: baseSize,
       width: baseSize,
-      crossOrigin: 'anonymous',
-    }));
 
-    // drawingCanvas.add(placeImage);
+    }, { crossOrigin: 'anonymous' }));
+
+    // drawingCanvas.add(img);
     // drawingCanvas.renderAll();
   });
 }
 
-//! replacing
-function putDrawingCanvasIntoFramesArray() {
+function putDrawingCanvasIntoAntiFlickerCanvas() {
+  // put the drawingCanvas into the antiFlickerCanvas
+  // const prevZoom = drawingCanvas.getZoom();
+  // drawingCanvas.setZoom(1);
+
+  // const frame = frame - 1;
+
+  // copy all objects from drawingCanvas to antiFlickerCanvas
+  drawingCanvas.forEachObject((obj) => {
+    antiFlickerCanvas.add(obj);
+  });
+  // const currentFrameData = drawingCanvas.toDataURL({
+  //   format: 'png',
+
+  // });
+
+  // fabric.Image.fromURL(currentFrameData, (img) => {
+  //   antiFlickerCanvas.add(img.set({
+  //     left: 0,
+  //     top: 0,
+  //     // height: baseSize,
+  //     // width: baseSize,
+
+  //   }, { crossOrigin: 'anonymous' }));
+  // });
+  // drawingCanvas.setZoom(prevZoom);
+}
+
+export function putDrawingCanvasIntoFramesArray(_frame) {
   const prevZoom = drawingCanvas.getZoom();
   drawingCanvas.setZoom(1);
 
-  const frame = currentFrame - 1;
+  const frame = _frame - 1;
 
   // get data from drawingCanvas
   const currentFrameData = drawingCanvas.toDataURL({
@@ -476,40 +623,50 @@ function putDrawingCanvasIntoFramesArray() {
 
   // put data into array
   framesArray[frame] = currentFrameData;
+  // put drawingCanvas in undo Array
+  // check if the drawingCanvasUndoArray is full
+  if (drawingCanvasUndoArray.length === maxUndo) {
+    // if it is full, remove the first element
+    drawingCanvasUndoArray.update((array) => {
+      array.shift();
+      return array;
+    });
+  }
+
+  // add the currentFrameData to the drawingCanvasUndoArray
+  drawingCanvasUndoArray.update((array) => {
+    array.push(currentFrameData);
+    return array;
+  });
+
   drawingCanvas.setZoom(prevZoom);
 }
-/// / end going from drawing canvas to SaveCanvas FUNCTIONS /////////////////////////////////////////////////
+
+/// / end going from framesArray to drawingCanvas FUNCTIONS /////////////////////////////////////////////////
 
   /// ////////////////// select functions /////////////////////////////////
   function handleKeydown(evt) {
     if (evt.key === 'Backspace' || evt.key === 'Delete') {
       Delete();
     }
-    // testing out the download function
-    // save() = save and close
-    if (evt.key === '1') {
-      downloadImage();
+
+    if (evt.key === 'c' && evt.ctrlKey) {
+      getColor();
     }
   }
 
-  function downloadImage() {
-    // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
-    const userProfile = get(Profile);
-    // console.log('userProfile', userProfile.username);
-    const filename = `${userProfile.username}_${file.key}_${displayName}.png`;
+ async function downloadImage() {
+   await saveHandler();
 
-    // data = saveCanvas.toDataURL('image/png', 1);
-    data = saveCanvas.toDataURL({
-      format: 'png',
-      multiplier: 1,
-    }, { crossOrigin: 'anonymous' });
-
-    const a = document.createElement('a');
-    a.href = data;
-    a.download = filename;
-    // document.body.appendChild(a);
-    a.click();
-  }
+   // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
+   const userProfile = get(Profile);
+   const filename = `${userProfile.username}_${file.key}_${displayName}.png`;
+   const a = document.createElement('a');
+   a.download = filename;
+   a.href = data;
+   document.body.appendChild(a);
+   a.click();
+ }
 
   // function Copy() {
   //   // clone what are you copying since you
@@ -555,7 +712,6 @@ function putDrawingCanvasIntoFramesArray() {
     for (let i = 0; i < curSelectedObjects.length; i++) {
       drawingCanvas.remove(curSelectedObjects[i]);
     }
-    updateExportedImages();
   }
 
   function clearCanvas() {
@@ -563,8 +719,22 @@ function putDrawingCanvasIntoFramesArray() {
     // saveCanvas.clear();
     dispatch('clearCanvas');
   }
-
   /// //////////// select functions end //////////////////
+
+  function rgbaToHex(r, g, b, a) {
+    const hexR = r.toString(16).padStart(2, '0');
+    const hexG = g.toString(16).padStart(2, '0');
+    const hexB = b.toString(16).padStart(2, '0');
+    const hexA = Math.round(a * 255).toString(16).padStart(2, '0');
+    return `#${hexR}${hexG}${hexB}${hexA}`;
+  }
+
+  function rgbToHex(r, g, b) {
+    const hexR = r.toString(16).padStart(2, '0');
+    const hexG = g.toString(16).padStart(2, '0');
+    const hexB = b.toString(16).padStart(2, '0');
+    return `#${hexR}${hexG}${hexB}`;
+  }
 
   function switchMode(mode) {
     if (currentTab === mode) {
@@ -589,7 +759,7 @@ function putDrawingCanvasIntoFramesArray() {
 
       case 'erase':
         drawingCanvas.freeDrawingBrush = eraseBrush;
-        drawingCanvas.freeDrawingBrush.width = parseInt(lineWidth, 10) || 1;
+        drawingCanvas.freeDrawingBrush.width = parseInt(brushWidthLogarithmic, 10) || 1;
         drawingCanvas.isDrawingMode = true;
         break;
 
@@ -611,9 +781,8 @@ function putDrawingCanvasIntoFramesArray() {
         <div
           class="canvas-onion"
           style="
-            background-image: url({data});
-            left: -{canvasHeight *
-            (currentFrame - 2)}px;"
+            background-image: url({framesArray[currentFrame - 2]});
+            "
         ></div>
       {/if}
       <div
@@ -625,6 +794,8 @@ function putDrawingCanvasIntoFramesArray() {
             : 'none'};
           "
       >
+        <canvas hidden bind:this="{antiFlickerCanvasEl}" class="drawingCanvasEl" id='antiFlickerCanvas'> </canvas>
+
         <canvas bind:this="{drawingCanvasEl}" class="drawingCanvasEl"> </canvas>
         <!-- <canvas bind:this="{drawingCanvasEl}" class="canvas"> </canvas> -->
 
@@ -633,7 +804,8 @@ function putDrawingCanvasIntoFramesArray() {
           class="cursor-canvas"
           style:visibility="{enableEditor ? 'visible' : 'hidden'}"
         ></canvas>
-
+        <canvas hidden bind:this="{saveCanvas}" class="saveCanvas" ></canvas>
+        <canvas hidden bind:this="{loadCanvas}"></canvas>
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
@@ -644,8 +816,7 @@ function putDrawingCanvasIntoFramesArray() {
               width: {controlsWidth};"
       >
         <slot name="stopmotion" />
-        <canvas hidden bind:this="{saveCanvas}" class="saveCanvas" ></canvas>
-        <canvas hidden bind:this="{loadCanvas}"></canvas>
+
       </div>
     {/if}
   </div>
@@ -686,25 +857,37 @@ function putDrawingCanvasIntoFramesArray() {
                 />
               </div>
 
-              <input
-                type="color"
-                bind:value="{drawingColor}"
-                id="drawing-color"
-                title="Pick drawing color"
-              />
+  <!-- <ColorPicker bind:hex /> -->
+  <!-- <div class="color-picker-parent">
+    <div id="colorPicker" bind:this={picker}></div>
+  </div> -->
 
               <div class="range-container">
                 <div class="circle-box-small"></div>
                 <input
                   type="range"
-                  min="10"
-                  max="500"
+                  min="{brushSliderMin}"
+                  max="{brushSliderMax}"
                   id="drawing-line-width"
                   title="Set drawing thickness"
                   bind:value="{lineWidth}"
                 />
                 <div class="circle-box-big"></div>
               </div>
+
+                            <div class="colorSection">
+              <button on:click="{ () => eyeDropper = !eyeDropper }">
+                <img id="eyeDropper" src="assets/svg/eyeDropper.svg" />;
+              </button>
+
+              <input
+                type="color"
+                bind:value="{drawingColor}"
+                id="drawing-color"
+                title="Pick drawing color"
+              />
+              </div>
+
             </div>
           {:else if currentTab === 'erase'}
             <div class="tab tab--erase">
@@ -713,16 +896,17 @@ function putDrawingCanvasIntoFramesArray() {
 
                 <input
                   type="range"
-                  min="10"
-                  max="500"
+                  min="{brushSliderMin}"
+                  max="{brushSliderMax}"
                   id="erase-line-width"
+                  title="Set erase thickness"
                   bind:value="{lineWidth}"
                 />
                 <div class="circle-box-big"></div>
               </div>
             </div>
-          <!-- {:else if currentTab === 'select'}
-            <div class="tab tab--select">
+          {:else if currentTab === 'select'}
+            <!-- <div class="tab tab--select">
               <button on:click="{Copy}">
                 <img
                   class="icon"
@@ -738,6 +922,7 @@ function putDrawingCanvasIntoFramesArray() {
                 />
               </button>
               <button on:click="{Delete}">
+                <button on:click="{getColor}">
                 <img
                   class="icon"
                   src="assets/SHB/svg/AW-icon-trash.svg"
@@ -790,6 +975,22 @@ function putDrawingCanvasIntoFramesArray() {
               alt="Redo"
             />
           </button> -->
+          <button on:click="{undoDrawingCanvas}" disabled="{$drawingCanvasUndoArray.length < 1}">
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
+              alt="Undo"
+            />
+          </button>
+          <button
+            on:click="{redoDrawingCanvas}" disabled="{$drawingCanvasRedoArray.length < 1}"
+          >
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-rotate-CW.svg"
+              alt="Redo"
+            />
+          </button>
           <button
             id="drawing-mode"
             on:click="{() => {
@@ -969,17 +1170,38 @@ function putDrawingCanvasIntoFramesArray() {
     min-width: 50px;
     height: 50px;
     border-radius: 50%;
-    padding: 8px;
+    box-sizing: border-box;
+    padding: 4px;
     cursor: pointer;
     object-fit: contain;
-    /* margin: 0 4px 0 4px; */
-    /* outline: 1px solid #7300ed2e; */
+    flex: 1 1 auto;
+    margin: 0 24px 0 6px;
+    /*outline: 1px solid #7300ed2e; */
   }
+
+  .colorSection {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+  }
+  #eyeDropper {
+    min-width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    border: 5px solid black;
+    cursor: pointer;
+    object-fit: contain;
+    padding: 4px;
+    margin-left: 8px;
+  }
+
   .iconbox button {
     opacity: 1;
   }
 
   #drawing-color {
+    width: 50%;
     padding: 0px;
     display: block;
     margin: 16px auto;
@@ -993,12 +1215,14 @@ function putDrawingCanvasIntoFramesArray() {
   .currentSelected {
     box-shadow: 0px 4px #7300ed;
     border-radius: 0% 50% 50% 0;
+    /* horizontal: height, vertical: width */
     height: 60px;
-    display: block;
-    width: 49px;
+    width: 62px;
+    box-sizing:  border-box;
+    object-fit: scale-down;
     padding: 0px;
     background-color: white;
-    margin-left: -5px;
+    margin-left: -24px; /* horizontal offset */
   }
 
   .range-container {
@@ -1006,6 +1230,8 @@ function putDrawingCanvasIntoFramesArray() {
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
   }
 
   .circle-box-small {
@@ -1154,8 +1380,8 @@ function putDrawingCanvasIntoFramesArray() {
       box-shadow: 4px 4px #7300ed;
       border-radius: 50% 50% 0 0;
       height: 60px;
+      width: 62px;
       display: block;
-      width: 49px;
       padding: 0px;
       background-color: white;
       margin-left: -5px;

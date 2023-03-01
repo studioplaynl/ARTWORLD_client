@@ -8,15 +8,9 @@
     // Nice way to always reset to 0x0?
     // replace(`/${appName}?${get(querystring)}`);
     // PlayerHistory.replace(`/${appName}?${get(querystring)}`);
-
-    push(`/game?location=${DEFAULT_SCENE}&x=0&y=0`);
-    PlayerHistory.push(`/game?location=${DEFAULT_SCENE}&x=0&y=0`);
-
-    // const goTo = PlayerHistory.getAt(DEFAULT_SCENE);
-    // if (goTo) push(goTo);
-    // else {
-    //  push(`/?location=${DEFAULT_SCENE}&x=0&y=0`);
-    // }
+    const value = `/game?location=${DEFAULT_SCENE}&x=0&y=0`;
+    push(value);
+    PlayerHistory.push(value);
   }
 
   async function goBack() {
@@ -114,6 +108,7 @@
     width: auto;
     transform-origin: center;
     transform: scale(1);
+
   }
   button:active,
   button:not(:disabled):active {
@@ -151,6 +146,10 @@
 
   #logo {
     box-shadow: 5px 5px 0px #7300ed;
+
+    /* fix ios logo cut-off */
+    margin-right: 6px;
+    margin-bottom: 2px;
   }
 
   #back {

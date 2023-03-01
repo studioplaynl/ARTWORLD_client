@@ -18,6 +18,7 @@
     OBJECT_STATE_IN_TRASH,
     OBJECT_STATE_REGULAR,
     OBJECT_STATE_UNDEFINED,
+    APP_VERSION_INFO,
   } from '../constants';
 
   export let params = {};
@@ -193,6 +194,8 @@
   <main>
     <div class="container">
       <div class="top">
+        <br />
+        <br />
         <h1>{username}</h1>
         <br />
 
@@ -227,6 +230,7 @@
             classNameTable="profileTable deletedTable"
           />
         {/if}
+        <p>{APP_VERSION_INFO}</p>
       </div>
     </div>
   </main>
@@ -236,7 +240,7 @@
 
 <style>
   :global(.deletedTable tbody tr) {
-    opacity: 0.6;
+    opacity: 1;
     position: relative;
   }
 
@@ -247,7 +251,7 @@
     height: 2px;
     left: 0;
     right: 0;
-    opacity: 0.5;
+    opacity: 1;
     background-color: gray;
   }
 

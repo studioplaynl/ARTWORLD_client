@@ -40,10 +40,14 @@
   import gameConfig from './routes/game/gameConfig';
   import { PlayerPos, PlayerLocation } from './routes/game/playerState';
   import { DEFAULT_APP } from './routes/apps/apps';
+  import { APP_VERSION_INFO } from './constants';
 
   let game;
   let mounted = false;
   let title;
+
+    console.log('APP_VERSION_INFO: ');
+    console.log(APP_VERSION_INFO);
 
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();

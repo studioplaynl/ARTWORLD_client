@@ -3,6 +3,8 @@ export const CONFIG = {
   HEIGHT: window.innerHeight * window.devicePixelRatio,
 };
 
+/** version info: date time of push and branch name */
+export const APP_VERSION_INFO = '#2023-FEB-28 13:41 DEVELOP#';
 /** List of Scenes a user may navigate to */
 export const SCENE_INFO = [
   {
@@ -78,6 +80,16 @@ export const SCENE_INFO = [
   },
   {
     scene: 'SlimeWorld',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
+  {
+    scene: 'MarsWorld',
+    sizeX: 5500,
+    sizeY: 5500,
+  },
+  {
+    scene: 'UnderwaterWorld',
     sizeX: 5500,
     sizeY: 5500,
   },

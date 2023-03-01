@@ -53,7 +53,7 @@
         } else {
           profileAzc = 'GreenSquare'
         }
-        console.log('profileAzc: ', profileAzc)
+        // console.log('profileAzc: ', profileAzc)
 
         userHouseObject = await getObject(
           'home',
@@ -236,7 +236,9 @@
       <button
         on:click="{() => {
           // toggleLiked();
-          push('/drawing');
+                    const value = '/drawing' 
+          push(value);
+          PlayerHistory.push(value);
         }}"
       >
         <img
@@ -248,7 +250,9 @@
 
       <button
         on:click="{() => {
-          push('/stopmotion');
+          const value = '/stopmotion' 
+          push(value);
+          PlayerHistory.push(value);
         }}"
       >
         <img

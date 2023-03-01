@@ -12,7 +12,7 @@
   export let changes;
   export let displayName;
 
-  let thumb;
+  let framesArray;
   let currentFrame = 1;
   export let drawing;
   let frames = null;
@@ -50,6 +50,7 @@
   }
 
   function addFrame() {
+    drawing.putDrawingCanvasIntoFramesArray(currentFrame);
     setTimeout(() => {
       if (frames < STOPMOTION_MAX_FRAMES) {
         frames++;
@@ -57,6 +58,22 @@
       }
     }, 100);
   }
+
+    function deleteFrame(deleteableFrame) {
+      const deleteframe = deleteableFrame - 1;
+      console.log('deleteFrame, currentFrame', deleteframe, currentFrame);
+
+
+      if (deleteframe >= 0 && deleteframe < framesArray.length) {
+      // Remove the nth element from the array
+        framesArray.splice(deleteframe, 1);
+
+        // update drawingCanvas with currentFrame
+        drawing.getImageFromFramesArray(currentFrame - 1);
+      }
+
+      onFrameContentDeleted();
+    }
 
   // Set up swiper as reference to Swiper.js instance
   const onSwiper = (e) => {
@@ -107,15 +124,15 @@
   }
 </script>
 
-{#if frames !== null}
+{#if framesArray !== null}
   <Drawing
     bind:this="{drawing}"
     bind:file
     bind:data
-    bind:thumb
     bind:changes
     bind:currentFrame
     bind:frames
+    bind:framesArray
     bind:enableEditor
     bind:displayName
     stopMotion="{true}"
@@ -159,9 +176,7 @@
                   <div
                     class="stopmotion__frame__background"
                     style="
-              background-image: url({thumb});
-              left: {-100 * (index - 1)}%;
-              width: {frames * 100}%;
+              background-image: url({framesArray[index - 1]});
               "
                   ></div>
                   <div class="stopmotion__frame__index">
@@ -171,7 +186,11 @@
                 {#if currentFrame === index && frames > 1}
                   <button
                     class="clear-button-styles stopmotion__delete"
-                    on:click="{() => drawing.deleteFrame(index)}"
+                    on:click="{() => {
+                      deleteFrame(index);
+                      // update changes to trigger save
+                      changes++;
+                    }}"
                     >&times;</button
                   >
                 {/if}

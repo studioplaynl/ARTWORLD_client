@@ -116,7 +116,9 @@
       PlayerHistory.pop();
     } else {
       // Else, if a user came here through a deep link, forward to app defaults
-      push(`/${DEFAULT_APP}?location=${DEFAULT_SCENE}`);
+      const value = `/${DEFAULT_APP}?location=${DEFAULT_SCENE}`;
+      push(value);
+      PlayerHistory.push(value);
     }
   }
 
@@ -124,7 +126,7 @@
    * @param {boolean} andClose Should the AppContainer afterwards?
    */
   async function saveData(andClose) {
-    // NO changes? We don't need to save anything.
+    // NO changes? We don't need to save changesanything.
 
     //! if only the displayName changed, the object should be updated but not the image
     //! for now: update the object always
@@ -144,22 +146,23 @@
           // updateTitle(currentFile.type, currentFile.key, displayName, userID)
 
           // updateObject(type, name, value, pub, userID)
-
-          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.permission_read, userID)])
+          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.status, userID)])
             .then(() => {
-              console.log(
-                'updated object only: values:currentFile.type, currentFile.key, tempValue, currentFile.permission_read',
-                currentFile.type,
-                currentFile.key,
-                tempValue,
-                currentFile.permission_read,
-              );
+              dlog('saved object only: ');
+              dlog('currentFile.type: ', currentFile.type);
+              dlog('currentFile.key: ', currentFile.key);
+              dlog('tempValue: ', tempValue);
+              dlog('currentFile.permission_read: ', currentFile.permission_read);
+              dlog('currentFile.status: ', currentFile.status);
+              dlog('currentFile: ', currentFile);
             })
             .catch((error) => {
               Error.set(error);
               setLoader(false);
             });
           setLoader(false);
+        } else {
+          dlog('no changes saved');
         }
         //! currentFile bug
 
@@ -183,12 +186,11 @@
     }
 
     // create the data to save
-    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') await drawing.stopmotionSaveHandler();
-
+    await drawing.saveHandler();
+    console.log('currentFile.status', currentFile.status);
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
       const blobData = dataURItoBlob(data);
-
 
       uploadImage(
         currentFile.key, // ook wel title/name
@@ -293,6 +295,7 @@
     const loadFromCollection = $CurrentApp;
 
     currentFile = await getFileInformation(loadFromCollection, userId, key);
+    console.log('currentFile loaded: ', currentFile);
   }
 
   async function newFile() {
@@ -306,7 +309,7 @@
       displayName,
       key: `${tempKey}_${displayName}`,
       type: saveToCollection,
-      status: true,
+      status: PERMISSION_READ_PUBLIC,
     };
   }
 
@@ -321,10 +324,12 @@
         // TODO: Het kan zijn dat een object leeg terugkomt. Dan staan wellicht de permissies fout.
 
         if (loadingObject) {
+          console.log('loadingObject', loadingObject);
           const file = await getFile(loadingObject.value.url);
           // console.log('loadingObject', loadingObject);
           // set the displayName, so it can also be changed in the Drawing app
           displayName = loadingObject.value.displayname;
+          console.log('loadingObject.permission_read: ', loadingObject.permission_read);
           return {
             key,
             userId,
@@ -332,13 +337,15 @@
             new: false,
             displayName: loadingObject.value.displayname,
             type: loadingObject.collection,
-            status: loadingObject.permission_read === PERMISSION_READ_PUBLIC,
+            // status: loadingObject.permission_read === PERMISSION_READ_PUBLIC,
+            status: loadingObject.permission_read,
             url: file,
             awsUrl: loadingObject.value.url,
-            frames: 1, // Maybe use this instead of width/height ratio to calculate framecount?
+            frames: 1,
           };
         }
       } catch (error) {
+        console.log('error', error);
         return {
           key,
           userId,
@@ -356,7 +363,7 @@
 
   async function saveToFile() {
     if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') {
-      await drawing.stopmotionSaveHandler();
+      await drawing.saveHandler();
       downloadImage();
     } else if ($CurrentApp === 'drawing' || $CurrentApp === 'house') {
       downloadImage();
