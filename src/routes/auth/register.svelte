@@ -45,6 +45,8 @@
   let avatar = STOCK_AVATARS[Math.floor(STOCK_AVATARS.length * Math.random())];
 
   async function register() {
+    // update the email from the username
+    email = `${username}@vrolijkheid.nl`;
     const data = {
       email,
       password,
@@ -60,7 +62,13 @@
   }
 
     function copyToClipboard() {
-      navigator.clipboard.writeText(batchUserPasteBoard);
+      console.log(batchUserPasteBoard);
+      if (navigator.clipboard) {
+      // clipboard API is available
+        navigator.clipboard.writeText(batchUserPasteBoard);
+      } else {
+        // clipboard API is not available
+      }
     }
 
   function batchUserGenerator(_incrementUser) {
@@ -116,7 +124,7 @@
     setTimeout(() => {
       downloadLoginImage();
 
-
+      // clipboard formatting
       const pasteUser = `${username}\t${password}\t\t\t${azc}\n`;
       batchUserPasteBoard += pasteUser;
       copyToClipboard();
@@ -297,11 +305,11 @@ function handleKeyPress(event) {
 
   <!-- two input fields for integers, first labeled "from" and second labeled "to" -->
   <hr />
-        <h1>Batch create multiple users </h1>
-<label for="fromUser"><b>from: user number </b></label>
+  <h1>Batch create multiple users </h1>
+  <label for="fromUser"><b>from: user number </b></label>
   <input type="number" bind:value="{fromUser}" />
-  <label for="toUser"><b>to: user number </b></label>
 
+  <label for="toUser"><b>to: user number </b></label>
   <input type="number" bind:value="{toUser}" />
 
   <p>{(toUser - fromUser) + 1} number of users</p>

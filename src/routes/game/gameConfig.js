@@ -28,6 +28,7 @@ import FireWorld from './scenes/FireWorld';
 import SlimeWorld from './scenes/SlimeWorld';
 import MarsWorld from './scenes/MarsWorld';
 import UnderwaterWorld from './scenes/UnderwaterWorld';
+import SeaWorld from './scenes/SeaWorld';
 
 /** Phaser Plugins */
 
@@ -53,6 +54,7 @@ const SCENES = [
   SlimeWorld,
   MarsWorld,
   UnderwaterWorld,
+  SeaWorld,
 ];
 
 import { CONFIG } from '../../constants';
