@@ -21,6 +21,7 @@
   let incrementUser = 0;
   let fromUser = 0;
   let toUser = 0;
+  let batchCreation = false;
 
   onMount(async () => {
     genKidsPassword();
@@ -34,7 +35,9 @@
 
   $: {
     if (username) {
-      updateFormWhenUserNameChanges();
+      if (!batchCreation) {
+        updateFormWhenUserNameChanges();
+      }
     }
   }
 
@@ -46,7 +49,9 @@
 
   async function register() {
     // update the email from the username
-    email = `${username}@vrolijkheid.nl`;
+    // email = `${username}@vrolijkheid.nl`;
+    console.log('email: ', email);
+    console.log('password: ', password);
     const data = {
       email,
       password,
@@ -72,6 +77,7 @@
     }
 
   function batchUserGenerator(_incrementUser) {
+    batchCreation = true;
     incrementUser = _incrementUser;
     if (azc === null) {
       alert('Please select an AZC');
@@ -88,6 +94,7 @@
       incrementUser = 0;
       console.log('batchUserPasteBoard');
       console.log(batchUserPasteBoard);
+      batchCreation = false;
       return;
     }
 
@@ -110,7 +117,7 @@
     // Set the value of the username variable in the component's data
     username = _username; // assuming $: username is declared in your component's script
     console.log('username', username);
-
+    updateFormWhenUserNameChanges();
 
     // Trigger the submit event on the form element
     const form = document.querySelector('.registerForm form');
