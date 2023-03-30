@@ -16,9 +16,9 @@ import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 const { Phaser } = window;
 
-export default class FruitWorld extends Phaser.Scene {
+export default class MoonWorld extends Phaser.Scene {
   constructor() {
-    super('FruitWorld');
+    super('MoonWorld');
 
     this.worldSize = new Phaser.Math.Vector2(0, 0);
 
