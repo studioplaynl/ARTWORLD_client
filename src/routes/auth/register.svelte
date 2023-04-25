@@ -213,7 +213,7 @@ function downloadLoginImage() {
   link.click();
 }
 
-function handleKeyPress(event) {
+function handleKeyPress() {
   // prevent 'Generate Multiple Users' button from being clicked when pressing enter
   // and inadvertently creating multiple users when pressing enter in the username field
 }

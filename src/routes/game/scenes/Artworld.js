@@ -689,36 +689,33 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(-1215, -589);
+
+    locationVector = new Phaser.Math.Vector2(-935, 45);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
 
-    //
+    this.seaWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'SeaWorld',
+      locationImage: 'seaWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Zee Wereld',
+      referenceName: 'this.seaWorldLocation',
+      size: 300,
+      fontColor: 0x8dcb0e,
+    });
 
-    // locationVector = new Phaser.Math.Vector2(1409, 1230);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // this.seaWorldLocation = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'SeaWorld',
-    //   locationImage: 'underwaterWorldPortal',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Zee Wereld',
-    //   referenceName: 'this.seaWorldLocation',
-    //   size: 300,
-    //   fontColor: 0x8dcb0e,
-    // });
-
-    //
+    locationVector = new Phaser.Math.Vector2(-1215, -589);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
 
     locationVector = new Phaser.Math.Vector2(-1215, -589);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
