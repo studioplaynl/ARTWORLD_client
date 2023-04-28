@@ -1,5 +1,6 @@
 /* eslint-disable no-new */
 /* eslint-disable prefer-destructuring */
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import {
   convertImage, getAllHouses, listAllObjects,
@@ -27,7 +28,6 @@ class ServerCall {
         // console.log('rec homes: ', homesRec);
         scene.homes = homesRec[0];
         dlog('scene.homes', scene.homes);
-
 
         this.generateHomes(scene);
       });
@@ -234,7 +234,9 @@ class ServerCall {
         dlog('serverItemsArray, rec : ', rec, serverItemsArray);
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = rec;
-
+        // get the azc from the home store
+        const azc = get(myHomeStore).key;
+        dlog('azc: ', azc);
         // serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
 
         // eslint-disable-next-line no-param-reassign
