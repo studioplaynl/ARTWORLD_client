@@ -194,12 +194,6 @@ class ServerCall {
             );
           }
         }
-
-        // dlog('user Home: ', value);
-        // dlog('ManageSession.playerHomeGameObject: ', ManageSession.playerHomeContainer);
-        // dlog('children: ', ManageSession.playerHomeContainer.list);
-        // give the player's home the current home image
-        // value.url is the 150x150 version of the home image
       });
     }
 
@@ -230,31 +224,87 @@ class ServerCall {
       });
     } else if (type === 'bloem') {
       await listAllObjects('drawing', null).then((rec) => {
-      // eslint-disable-next-line no-param-reassign
+        // eslint-disable-next-line no-param-reassign
         dlog('serverItemsArray, rec : ', rec, serverItemsArray);
+
+        // drawings
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = rec;
-        // get the azc from the home store
-        const azc = get(myHomeStore).key;
-        dlog('azc: ', azc);
+
         // serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
 
+        // filter all 'bloem' from drawings
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname.toLowerCase() === type);
         dlog('bloem serverItemsArray.array', serverItemsArray.array);
-        this.handleServerArray(type, serverItemsArray, artSize, artMargin);
-      });
+
+        let foundFlowers = serverItemsArray.array;
+        // console.log('foundFlowers: ', foundFlowers);
+
+        // if there are more then 50 flower, make a selection of flowers to show
+        if (foundFlowers.length > 50) {
+          // amount of flowers we found so far, empty because we wan to find new flowers
+          foundFlowers = [];
+
+          const user = get(myHomeStore).value.username;
+          console.log('user: ', user);
+
+          // see if there are flowers from the user
+          const flowersOfUser = serverItemsArray.array.filter((obj) => obj.username === user);
+
+          // if there are flowers from the user, add them to the foundFlowers array
+          if (flowersOfUser.length > 0) {
+            // for loop to put the flowers in the foundFlowers array 20 times
+            for (let i = 0; i < 20; i += 1) {
+              foundFlowers = foundFlowers.concat(flowersOfUser);
+            }
+
+            // put 30 random unique items of the serverItemsArray in the foundFlowers array
+            // by removing the items from the serverItemsArray
+            for (let i = 0; i < 30; i += 1) {
+              const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
+              foundFlowers.push(serverItemsArray.array[randomIndex]);
+              serverItemsArray.array.splice(randomIndex, 1);
+            }
+          } else {
+            // put 50 random unique items of the serverItemsArray in the foundFlowers array
+            // by removing the items from the serverItemsArray
+            for (let i = 0; i < 50; i += 1) {
+              const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
+              foundFlowers.push(serverItemsArray.array[randomIndex]);
+              serverItemsArray.array.splice(randomIndex, 1);
+            }
+          }
+          ServerCall.serverHandleFlowerArray(foundFlowers, serverItemsArray, type, artSize, artMargin);
+          // console.log('foundFlowers: ', foundFlowers);
+        } else if (foundFlowers.length < 1) {
+          ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+        } else {
+          ServerCall.serverHandleFlowerArray(foundFlowers, serverItemsArray, type, artSize, artMargin);
+        }
+        // this.handleServerArray(type, serverItemsArray, artSize, artMargin);
+      }); // end of bloem
     } else {
       await listAllObjects(type, location).then((rec) => {
       // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
         dlog('serverItemsArray: ', type, location, serverItemsArray);
-        this.handleServerArray(type, serverItemsArray, artSize, artMargin);
+        ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
     }
   }
 
-  handleServerArray(type, serverItemsArray, artSize, artMargin) {
+  static serverHandleFlowerArray(foundFlowers, serverItemsArray, type, artSize, artMargin) {
+    // eslint-disable-next-line no-param-reassign
+    serverItemsArray.array = foundFlowers;
+    // remove the flower placeholder from the array
+    serverItemsArray.shift();
+    // console.log('foundFlowers: ', foundFlowers);
+    // console.log('serverItemsArray: ', serverItemsArray);
+    ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+  }
+
+  static handleServerArray(type, serverItemsArray, artSize, artMargin) {
     if (serverItemsArray.array.length > 0) {
       // eslint-disable-next-line no-param-reassign
       serverItemsArray.startLength = serverItemsArray.array.length;
@@ -265,13 +315,14 @@ class ServerCall {
 
       serverItemsArray.array.forEach((element, index, array) => {
         // dlog('element', element);
-        this.downloadArtwork(element, index, array, type, artSize, artMargin);
+        ServerCall.downloadArtwork(element, index, array, type, artSize, artMargin);
       });
     }
   }
 
-  async downloadArtwork(element, index, array, type, artSize, artMargin) {
+  static async downloadArtwork(element, index, array, type, artSize, artMargin) {
     const scene = ManageSession.currentScene;
+    if (!element.value.url) { console.log('element.value.url is empty'); return; }
     const imageKeyUrl = element.value.url;
     const imgSize = artSize.toString();
     const fileFormat = 'png';
@@ -293,10 +344,10 @@ class ServerCall {
         new AnimalChallenge(scene, element, artSize);
       } else if (type === 'bloem') {
         // eslint-disable-next-line no-new
-        dlog('element, index', element, index);
+        // dlog('element, index', element, index);
         // push het element in flowerKeyArray
         scene.flowerKeyArray.push(imageKeyUrl);
-        scene.flowerFliedStartMaking = true;
+        // scene.flowerFliedStartMaking = true;
       }
       // if the artwork is not already downloaded
     } else if (type === 'drawing') {
@@ -386,7 +437,7 @@ class ServerCall {
       // dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
       // const convertedImage = element.value.previewUrl
-      dlog('dier convertedImage', convertedImage);
+      // dlog('dier convertedImage', convertedImage);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
         loadFunction: 'downloadAnimalChallenge', element, index, imageKey: imageKeyUrl, scene,
@@ -431,21 +482,6 @@ class ServerCall {
         });
       // console.log('stopmotion', imageKeyUrl);
       scene.load.start(); // start the load queue to get the image in memory
-
-      // this is fired each time a file is finished downloading (or failing)
-      // scene.load.on('complete', () => {
-      //   // dlog('loader STOPMOTION is complete');
-      //   const startLength = scene.userStopmotionServerList.startLength;
-      //   let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
-      //   // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
-      //   downloadCompleted += 1;
-      //   scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
-      //   // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
-      //   if (downloadCompleted === startLength) {
-      //     dlog('loader STOPMOTION COMPLETE');
-      //     ServerCall.repositionContainers('stopmotion');
-      //   }
-      // });
     } else if (type === 'bloem') {
       // dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
@@ -471,7 +507,7 @@ class ServerCall {
           // push het element in flowerKeyArray
           // dlog('imageKeyUrl, convertedImage', imageKeyUrl, convertedImage);
           scene.flowerKeyArray.push(imageKeyUrl);
-          scene.flowerFliedStartMaking = true;
+          // scene.flowerFliedStartMaking = true;
         }, this);
       scene.load.start(); // start the load queue to get the image in memory
 

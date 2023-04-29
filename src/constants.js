@@ -4,7 +4,7 @@ export const CONFIG = {
 };
 
 /** version info: date time of push and branch name */
-export const APP_VERSION_INFO = '#2023-APR-28 13:41 DEVELOP#';
+export const APP_VERSION_INFO = '#2023-APR-29 17:41 DEVELOP#';
 /** List of Scenes a user may navigate to */
 export const SCENE_INFO = [
   {
@@ -31,6 +31,7 @@ export const SCENE_INFO = [
     scene: 'Artworld',
     sizeX: 6000,
     sizeY: 6000,
+    kind: 'landingScene',
   },
   {
     scene: 'ChallengeAnimalGarden',
@@ -46,67 +47,82 @@ export const SCENE_INFO = [
     scene: 'BlueSail',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
   {
     scene: 'GreenSquare',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
   {
     scene: 'RedStar',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
 
   {
     scene: 'TurquoiseTriangle',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
+
   },
   {
     scene: 'YellowDiamond',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
+
   },
   {
     scene: 'FireWorld',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
   {
     scene: 'RobotWorld',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
   {
     scene: 'SlimeWorld',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
   {
     scene: 'MarsWorld',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
   {
     scene: 'UnderwaterWorld',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
   {
     scene: 'SeaWorld',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
   {
     scene: 'CloudWorld',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
   {
     scene: 'MoonWorld',
     sizeX: 5500,
     sizeY: 5500,
+    kind: 'homeArea',
   },
 ];
 

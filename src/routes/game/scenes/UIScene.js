@@ -82,11 +82,12 @@ export default class UIScene extends Phaser.Scene {
 
 
     // const eventNames = scene.load.eventNames();
-    // dlog("eventNames", eventNames)
+    // dlog('eventNames', eventNames);
     // const isReady = scene.load.isReady();
     // dlog('loader isReady', isReady);
     // const isLoading = scene.load.isLoading();
     // dlog('loader isLoading', isLoading);
+
 
     // keyboard events caught for debug functions, edit mode
     DebugFuntions.keyboard(this);

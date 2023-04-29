@@ -13,7 +13,7 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
-// import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../helpers/DebugLog';
 
 const { Phaser } = window;
 
@@ -187,6 +187,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
     this.makeFlowerFlied();
 
+    this.load.on('complete', () => { console.log('complete'); this.flowerFliedStartMaking = true; });
     this.flowerKeyArray = ['flower'];
     // download all drawings "bloem" from allUsersChallenge
 
@@ -235,8 +236,9 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     if (!this.flowerFliedStartMaking) {
       return;
     }
+    this.flowerFliedMaking++;
     this.flowerFliedStartMaking = false;
-    // dlog('makeFlowerFlied this.flowerKeyArray', this.flowerKeyArray);
+    dlog('makeFlowerFlied this.flowerKeyArray');
 
     // first remove the tween, after destoy the old flower gameobject
     this.flowerTweenArray.forEach((element) => {
