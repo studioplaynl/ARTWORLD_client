@@ -211,7 +211,7 @@ class ServerCall {
     Promise.all([getAllHouses(userHome, null)])
       .then((homesRec) => {
         // console.log('rec homes: ', homesRec);
-        dlog('homesRec: ', homesRec);
+        // dlog('homesRec: ', homesRec);
         // from homesRec filter out the key 'name' and put it in an array
         const homesNames = homesRec[0].map((i) => i.username);
         // dlog('homesNames: ', homesNames);
@@ -224,9 +224,9 @@ class ServerCall {
           const usersAnimals = serverItemsArray.array.filter((i) => i.username === name);
 
           if (usersAnimals.length > 0) {
-            dlog('usersAnimals: ', usersAnimals);
+            // dlog('usersAnimals: ', usersAnimals);
             usersAnimals.forEach((animal) => {
-              dlog('animal: ', animal);
+              // dlog('animal: ', animal);
               foundAnimals.push(animal);
               serverItemsArray.array.splice(animal, 1);
             });
@@ -234,7 +234,7 @@ class ServerCall {
         });
       }); // end of getAllHouses
 
-    dlog('foundAnimals: ', foundAnimals);
+    // dlog('foundAnimals: ', foundAnimals);
 
     // add more animals to foundAnimals if there are less then 50
     if (foundAnimals.length < 50) {
@@ -289,49 +289,8 @@ class ServerCall {
             // put 50 random unique items of the serverItemsArray in the foundFlowers array
             // by removing the items from the serverItemsArray
 
-            // const Locaties = SCENE_INFO.map((i) => i.scene);
-
             ServerCall.getAnimalsFellowHomeArea(userHome, serverItemsArray, foundAnimals);
-            // // get all homes from the server with userHome in the name, with the function getAllHouse
-            // Promise.all([getAllHouses(userHome, null)])
-            //   .then((homesRec) => {
-            //     // console.log('rec homes: ', homesRec);
-            //     dlog('homesRec: ', homesRec);
-            //     // from homesRec filter out the key 'name' and put it in an array
-            //     const homesNames = homesRec[0].map((i) => i.username);
-            //     // dlog('homesNames: ', homesNames);
-
-            //     // for every name in homesNames, check if the are in serverItemsArray,
-            //     // if so, put them in foundAnimals and remove them from serverItemsArray
-            //     homesNames.forEach((name) => {
-            //       // dlog('name: ', name);
-
-            //       const usersAnimals = serverItemsArray.array.filter((i) => i.username === name);
-
-            //       if (usersAnimals.length > 0) {
-            //         dlog('usersAnimals: ', usersAnimals);
-            //         usersAnimals.forEach((animal) => {
-            //           dlog('animal: ', animal);
-            //           foundAnimals.push(animal);
-            //           serverItemsArray.array.splice(animal, 1);
-            //         });
-            //       }
-            //     });
-            //   }); // end of getAllHouses
-
-            // dlog('foundAnimals: ', foundAnimals);
-
-            // // add more animals to foundAnimals if there are less then 50
-            // if (foundAnimals.length < 50) {
-            //   const remainderAnimals = 50 - foundAnimals.length + 5;
-            //   for (let i = 0; i < remainderAnimals; i += 1) {
-            //     const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
-            //     foundAnimals.push(serverItemsArray.array[randomIndex]);
-            //     serverItemsArray.array.splice(randomIndex, 1);
-            //   }
-            // }
           }
-          dlog('foundAnimals: ', foundAnimals);
           serverItemsArray.array = foundAnimals;
           ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
           // console.log('foundFlowers: ', foundFlowers);
@@ -422,6 +381,8 @@ class ServerCall {
   }
 
   static handleServerArray(type, serverItemsArray, artSize, artMargin) {
+    dlog('serverItemsArray.array.length: ', serverItemsArray.array.length);
+
     if (serverItemsArray.array.length > 0) {
       // eslint-disable-next-line no-param-reassign
       serverItemsArray.startLength = serverItemsArray.array.length;
