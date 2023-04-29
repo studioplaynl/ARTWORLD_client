@@ -8,7 +8,7 @@ import {
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkList from './ArtworkList';
-import { ART_FRAME_BORDER } from '../../../constants';
+import { SCENE_INFO, ART_FRAME_BORDER } from '../../../constants';
 import { dlog } from '../helpers/DebugLog';
 import AnimalChallenge from './animalChallenge';
 import { myHomeStore } from '../../../storage';
@@ -206,6 +206,47 @@ class ServerCall {
     }
   }
 
+  static getAnimalsFellowHomeArea(userHome, serverItemsArray, foundAnimals) {
+    // get all homes from the server with userHome in the name, with the function getAllHouse
+    Promise.all([getAllHouses(userHome, null)])
+      .then((homesRec) => {
+        // console.log('rec homes: ', homesRec);
+        dlog('homesRec: ', homesRec);
+        // from homesRec filter out the key 'name' and put it in an array
+        const homesNames = homesRec[0].map((i) => i.username);
+        // dlog('homesNames: ', homesNames);
+
+        // for every name in homesNames, check if the are in serverItemsArray,
+        // if so, put them in foundAnimals and remove them from serverItemsArray
+        homesNames.forEach((name) => {
+          // dlog('name: ', name);
+
+          const usersAnimals = serverItemsArray.array.filter((i) => i.username === name);
+
+          if (usersAnimals.length > 0) {
+            dlog('usersAnimals: ', usersAnimals);
+            usersAnimals.forEach((animal) => {
+              dlog('animal: ', animal);
+              foundAnimals.push(animal);
+              serverItemsArray.array.splice(animal, 1);
+            });
+          }
+        });
+      }); // end of getAllHouses
+
+    dlog('foundAnimals: ', foundAnimals);
+
+    // add more animals to foundAnimals if there are less then 50
+    if (foundAnimals.length < 50) {
+      const remainderAnimals = 50 - foundAnimals.length + 5;
+      for (let i = 0; i < remainderAnimals; i += 1) {
+        const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
+        foundAnimals.push(serverItemsArray.array[randomIndex]);
+        serverItemsArray.array.splice(randomIndex, 1);
+      }
+    }
+  }
+
   async downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin) {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
@@ -230,34 +271,65 @@ class ServerCall {
           // amount of flowers we found so far, empty because we wan to find new flowers
           foundAnimals = [];
 
-          const user = get(myHomeStore).value.username;
+          const userProfile = get(myHomeStore);
+          const user = userProfile.value.username;
           dlog('user: ', user);
+          const userHome = userProfile.key;
+          dlog('userHome: ', userHome);
 
           // see if there are flowers from the user
-          const flowersOfUser = serverItemsArray.array.filter((obj) => obj.username === user);
+          const animalsOfUser = serverItemsArray.array.filter((obj) => obj.username === user);
+          dlog('animalsOfUser: ', animalsOfUser);
 
-          // if there are flowers from the user, add them to the foundFlowers array
-          if (flowersOfUser.length > 0) {
-            // for loop to put the flowers in the foundFlowers array 20 times
-
-            foundAnimals = foundAnimals.concat(flowersOfUser);
-
-
-            // put 30 random unique items of the serverItemsArray in the foundFlowers array
-            // by removing the items from the serverItemsArray
-            for (let i = 0; i < 50; i += 1) {
-              const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
-              foundAnimals.push(serverItemsArray.array[randomIndex]);
-              serverItemsArray.array.splice(randomIndex, 1);
-            }
+          // if there are animals from the user, add them to the foundFlowers array
+          if (animalsOfUser.length > 0) {
+            foundAnimals = foundAnimals.concat(animalsOfUser);
+            ServerCall.getAnimalsFellowHomeArea(userHome, serverItemsArray, foundAnimals);
           } else {
             // put 50 random unique items of the serverItemsArray in the foundFlowers array
             // by removing the items from the serverItemsArray
-            for (let i = 0; i < 50; i += 1) {
-              const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
-              foundAnimals.push(serverItemsArray.array[randomIndex]);
-              serverItemsArray.array.splice(randomIndex, 1);
-            }
+
+            // const Locaties = SCENE_INFO.map((i) => i.scene);
+
+            ServerCall.getAnimalsFellowHomeArea(userHome, serverItemsArray, foundAnimals);
+            // // get all homes from the server with userHome in the name, with the function getAllHouse
+            // Promise.all([getAllHouses(userHome, null)])
+            //   .then((homesRec) => {
+            //     // console.log('rec homes: ', homesRec);
+            //     dlog('homesRec: ', homesRec);
+            //     // from homesRec filter out the key 'name' and put it in an array
+            //     const homesNames = homesRec[0].map((i) => i.username);
+            //     // dlog('homesNames: ', homesNames);
+
+            //     // for every name in homesNames, check if the are in serverItemsArray,
+            //     // if so, put them in foundAnimals and remove them from serverItemsArray
+            //     homesNames.forEach((name) => {
+            //       // dlog('name: ', name);
+
+            //       const usersAnimals = serverItemsArray.array.filter((i) => i.username === name);
+
+            //       if (usersAnimals.length > 0) {
+            //         dlog('usersAnimals: ', usersAnimals);
+            //         usersAnimals.forEach((animal) => {
+            //           dlog('animal: ', animal);
+            //           foundAnimals.push(animal);
+            //           serverItemsArray.array.splice(animal, 1);
+            //         });
+            //       }
+            //     });
+            //   }); // end of getAllHouses
+
+            // dlog('foundAnimals: ', foundAnimals);
+
+            // // add more animals to foundAnimals if there are less then 50
+            // if (foundAnimals.length < 50) {
+            //   const remainderAnimals = 50 - foundAnimals.length + 5;
+            //   for (let i = 0; i < remainderAnimals; i += 1) {
+            //     const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
+            //     foundAnimals.push(serverItemsArray.array[randomIndex]);
+            //     serverItemsArray.array.splice(randomIndex, 1);
+            //   }
+            // }
           }
           dlog('foundAnimals: ', foundAnimals);
           serverItemsArray.array = foundAnimals;
