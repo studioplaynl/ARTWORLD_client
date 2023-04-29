@@ -220,7 +220,52 @@ class ServerCall {
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname.toLowerCase() === type);
         dlog('dier serverItemsArray.array', serverItemsArray.array);
-        this.handleServerArray(type, serverItemsArray, artSize, artMargin);
+        // ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+
+        let foundAnimals = serverItemsArray.array;
+        // console.log('foundFlowers: ', foundFlowers);
+
+        // if there are more then 50 flower, make a selection of flowers to show
+        if (foundAnimals.length > 50) {
+          // amount of flowers we found so far, empty because we wan to find new flowers
+          foundAnimals = [];
+
+          const user = get(myHomeStore).value.username;
+          dlog('user: ', user);
+
+          // see if there are flowers from the user
+          const flowersOfUser = serverItemsArray.array.filter((obj) => obj.username === user);
+
+          // if there are flowers from the user, add them to the foundFlowers array
+          if (flowersOfUser.length > 0) {
+            // for loop to put the flowers in the foundFlowers array 20 times
+
+            foundAnimals = foundAnimals.concat(flowersOfUser);
+
+
+            // put 30 random unique items of the serverItemsArray in the foundFlowers array
+            // by removing the items from the serverItemsArray
+            for (let i = 0; i < 50; i += 1) {
+              const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
+              foundAnimals.push(serverItemsArray.array[randomIndex]);
+              serverItemsArray.array.splice(randomIndex, 1);
+            }
+          } else {
+            // put 50 random unique items of the serverItemsArray in the foundFlowers array
+            // by removing the items from the serverItemsArray
+            for (let i = 0; i < 50; i += 1) {
+              const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
+              foundAnimals.push(serverItemsArray.array[randomIndex]);
+              serverItemsArray.array.splice(randomIndex, 1);
+            }
+          }
+          dlog('foundAnimals: ', foundAnimals);
+          serverItemsArray.array = foundAnimals;
+          ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+          // console.log('foundFlowers: ', foundFlowers);
+        } else {
+          ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+        }
       });
     } else if (type === 'bloem') {
       await listAllObjects('drawing', null).then((rec) => {
@@ -282,7 +327,7 @@ class ServerCall {
         } else {
           ServerCall.serverHandleFlowerArray(foundFlowers, serverItemsArray, type, artSize, artMargin);
         }
-        // this.handleServerArray(type, serverItemsArray, artSize, artMargin);
+        // ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
       }); // end of bloem
     } else {
       await listAllObjects(type, location).then((rec) => {
