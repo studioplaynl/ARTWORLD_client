@@ -260,6 +260,53 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('zeeRif_1', './assets/world_seaworld/zeeRif_1.png');
     this.load.image('zeeRif_2', './assets/world_seaworld/zeeRif_2.png');
     this.load.image('zeeRif_3', './assets/world_seaworld/zeeRif_3.png');
+
+    // cloudworld
+    this.load.image('artWorldPortalCloud', './assets/world_clouds/cloud_portal_naarHome.png');
+    this.load.image('cloudWorldPortal', './assets/world_clouds/cloud_portal_naarCloud.png');
+
+    // load cloud_ballonpeople_1b.png from ./assets/world_clouds/
+    this.load.image('cloud_ballonpeople_1b', './assets/world_clouds/cloud_ballonpeople_1b.png');
+    // load cloud_ballonpeople_2.png from./ assets / world_clouds /
+    this.load.image('cloud_ballonpeople_2', './assets/world_clouds/cloud_ballonpeople_2.png');
+    // load cloud_ballonpeople_3.png from ./assets/world_clouds/
+    this.load.image('cloud_ballonpeople_3', './assets/world_clouds/cloud_ballonpeople_3.png');
+    // load cloud_ballonpeople_4.png from ./assets/world_clouds/
+    this.load.image('cloud_ballonpeople_4', './assets/world_clouds/cloud_ballonpeople_4.png');
+    // load cloud_berg1.png from ./assets/world_clouds/
+    this.load.image('cloud_berg1', './assets/world_clouds/cloud_berg1.png');
+    // load cloud_berg1_tweekeer.png from ./assets/world_clouds/
+    this.load.image('cloud_berg1_tweekeer', './assets/world_clouds/cloud_berg1_tweekeer.png');
+    // load cloud_berg2_metCloud_achtergrond.png from ./assets/world_clouds/
+    this.load.image('cloud_berg2_metCloud_achtergrond', './assets/world_clouds/cloud_berg2_metCloud_achtergrond.png');
+    // load cloud_berg3.png from ./assets/world_clouds/
+    this.load.image('cloud_berg3', './assets/world_clouds/cloud_berg3.png');
+    // load cloud_berg3_mitWolken.png from ./assets/world_clouds/
+    this.load.image('cloud_berg3_mitWolken', './assets/world_clouds/cloud_berg3_mitWolken.png');
+    // load cloud_brug_1.png from ./assets/world_clouds/
+    this.load.image('cloud_brug_1', './assets/world_clouds/cloud_brug_1.png');
+    // load cloud_brug_2.png from ./assets/world_clouds/
+    this.load.image('cloud_brug_2', './assets/world_clouds/cloud_brug_2.png');
+    // load cloud_C1.png from ./assets/world_clouds/
+    this.load.image('cloud_C1', './assets/world_clouds/cloud_C1.png');
+    // load cloud_C2_withface.png from ./assets/world_clouds/
+    this.load.image('cloud_C2_withface', './assets/world_clouds/cloud_C2_withface.png');
+    // load cloud_C3.png from ./assets/world_clouds/
+    this.load.image('cloud_C3', './assets/world_clouds/cloud_C3.png');
+    // load cloud_C4.png from ./assets/world_clouds/
+    this.load.image('cloud_C4', './assets/world_clouds/cloud_C4.png');
+    // load cloud_C5.png from ./assets/world_clouds/
+    this.load.image('cloud_C5', './assets/world_clouds/cloud_C5.png');
+    // load cloud_C5_achtergrond.png from ./assets/world_clouds/
+    this.load.image('cloud_C5_achtergrond', './assets/world_clouds/cloud_C5_achtergrond.png');
+    // load cloud_huis_1.png from ./assets/world_clouds/
+    this.load.image('cloud_huis_1', './assets/world_clouds/cloud_huis_1.png');
+    // load cloud_huis_2.png from ./assets/world_clouds/
+    this.load.image('cloud_huis_2', './assets/world_clouds/cloud_huis_2.png');
+    // load cloud_huis_3.png from ./assets/world_clouds/
+    this.load.image('cloud_huis_3', './assets/world_clouds/cloud_huis_3.png');
+    // load cloud_portal_naarCloud.png from ./assets/world_clouds/
+    this.load.image('cloud_portal_naarCloud', './assets/world_clouds/cloud_portal_naarCloud.png');
   }
 
   async create() {

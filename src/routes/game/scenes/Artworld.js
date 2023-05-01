@@ -711,11 +711,26 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(-1215, -589);
+    locationVector = new Phaser.Math.Vector2(-1391, 436);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
+
+    this.cloudWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'CloudWorld',
+      locationImage: 'cloudWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Wolken Wereld',
+      referenceName: 'this.cloudWorldLocation',
+      size: 300,
+      fontColor: 0x8dcb0e,
+    });
 
     locationVector = new Phaser.Math.Vector2(-1215, -589);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
