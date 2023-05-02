@@ -3,7 +3,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-import Preloader from '../class/Preloader';
 import SceneSwitcher from '../class/SceneSwitcher';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
@@ -41,7 +40,6 @@ export default class Location4 extends Phaser.Scene {
   }
 
   async preload() {
-    Preloader.Loading(this); // .... PRELOADER VISUALISER
     // ....... IMAGES ......................................................................
     // exhibition
     this.load.image('exhibit1', './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg');

@@ -3,7 +3,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-import Preloader from '../class/Preloader';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
@@ -13,6 +12,7 @@ import { dlog } from '../helpers/DebugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
+import PlaceElement from '../class/PlaceElement';
 
 const { Phaser } = window;
 
@@ -44,7 +44,7 @@ export default class MoonWorld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
-    Preloader.Loading(this); // .... PRELOADER VISUALISER
+    // Preloader.Loading(this); // .... PRELOADER VISUALISER
   }
 
   async create() {
@@ -59,8 +59,13 @@ export default class MoonWorld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    Background.standardWithDots(this);
-
+    Background.gradientStretchedToFitWorld({
+      scene: this,
+      tileMapName: 'WorldBackgroundTileMap',
+      gradientColor1: 0x9de0ff,
+      gradientColor2: 0x1999c5,
+      tileWidth: 512,
+    });
     handlePlayerMovement(this);
 
     const {
@@ -101,6 +106,7 @@ export default class MoonWorld extends Phaser.Scene {
     ServerCall.getHomesFiltered(this.scene.key, this);
 
     // create accessable locations
+    this.makeWorldElements();
     this.generateLocations();
     // .......... end locations ............................................................................
 
@@ -110,26 +116,11 @@ export default class MoonWorld extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(0, 0);
+    let locationVector = new Phaser.Math.Vector2(945, -382);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
-
-    Background.circle({
-      scene: this,
-      name: 'purple_circle_location_image',
-      // setOrigin: 0,
-      posX: locationVector.x,
-      posY: locationVector.y,
-      gradient1: 0x7300eb,
-      gradient2: 0x3a4bba,
-      gradient3: 0x3a4bba,
-      gradient4: 0x3a4bba,
-      alpha: 1,
-      size: 200,
-      imageOnly: true,
-    });
 
     this.purpleCircleLocation = new GenerateLocation({
       scene: this,
@@ -138,167 +129,198 @@ export default class MoonWorld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Artworld',
-      locationImage: 'purple_circle_location_image',
+      locationImage: 'artWorldPortalCloud',
       enterButtonImage: 'enter_button',
       locationText: 'Paarse Cirkel Wereld',
       referenceName: 'this.purpleCircleLocation',
+      size: 500,
       fontColor: 0x8dcb0e,
     });
+  }
 
-    // locationVector = new Phaser.Math.Vector2(-400, 300);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // Background.rectangle({
-    //   scene: this,
-    //   name: 'green_square_location_image',
-    //   // posX: 0,
-    //   // posY: 0,
-    //   // setOrigin: 0,
-    //   gradient1: 0x15d64a,
-    //   gradient2: 0x15d64a,
-    //   gradient3: 0x2b8042,
-    //   gradient4: 0x2b8042,
-    //   alpha: 1,
-    //   width: 140,
-    //   height: 140,
-    //   imageOnly: true,
-    // });
-
-    // this.greenSquareLocation = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'GreenSquare',
-    //   locationImage: 'green_square_location_image',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Groene Vierkant Wereld',
-    //   referenceName: 'this.greenSquareLocation',
-    //   fontColor: 0x8dcb0e,
-    // });
-
-
-    // locationVector = new Phaser.Math.Vector2(403, 327);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // // green_square world for homes
-    // //
-    // Background.triangle({
-    //   scene: this,
-    //   name: 'turquoise_triangle_location_image',
-    //   // setOrigin: 0,
-    //   posX: locationVector.x,
-    //   posY: locationVector.y,
-    //   gradient1: 0x40E0D0,
-    //   gradient2: 0x40E0D0,
-    //   gradient3: 0x39C9BB,
-    //   gradient4: 0x39C9BB,
-    //   alpha: 1,
-    //   size: 200,
-    //   imageOnly: true,
-    // });
-
-    // this.turquoiseTriangle = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'TurquoiseTriangle',
-    //   locationImage: 'turquoise_triangle_location_image',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Turquoise Driehoek Wereld',
-    //   referenceName: 'this.turquoiseTriangle',
-
-    //   fontColor: 0x8dcb0e,
-    // });
-
-    // locationVector = new Phaser.Math.Vector2(-400, -400);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // // green_square world for homes
-    // //
-    // Background.star({
-    //   scene: this,
-    //   name: 'red_star_location_image',
-    //   gradient1: 0xE50000,
-    //   gradient2: 0xE50000,
-    //   alpha: 1,
-    //   size: 200,
-    //   imageOnly: true,
-    //   spikes: 5,
-    // });
-
-    // this.redStar = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'RedStar',
-    //   locationImage: 'red_star_location_image',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Rode Ster Wereld',
-    //   referenceName: 'this.redStar',
-
-    //   fontColor: 0x8dcb0e,
-    // });
-
-    // locationVector = new Phaser.Math.Vector2(5, 386);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // this.blueSailLocation = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'BlueSail',
-    //   locationImage: 'blue_sail_location_image',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Blauwe Zeil Wereld',
-    //   referenceName: 'this.blueSailLocation',
-    //   fontColor: 0x8dcb0e,
-    // });
-
-    locationVector = new Phaser.Math.Vector2(-535, 35);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
-
-    this.pencil = new GenerateLocation({
+  makeWorldElements() {
+    // .........cloud_ballonpeople_1b............................................................
+    PlaceElement.image({
+      x: -366,
+      y: 1597,
+      file: 'cloud_ballonpeople_1b',
+      scale: 1,
       scene: this,
-      type: 'image',
-
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      appUrl: 'drawing',
-      locationImage: 'pencil',
-      enterButtonImage: 'enter_button',
-      locationText: 'drawingApp',
-      referenceName: 'this.pencil',
-
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
     });
-    this.pencil.rotation = 0.12;
+
+    // .........cloud_ballonpeople_2............................................................
+    PlaceElement.image({
+      x: 1160,
+      y: 2183,
+      file: 'cloud_ballonpeople_2',
+      scale: 1,
+      scene: this,
+    });
+
+    // .........cloud_ballonpeople_3............................................................
+    PlaceElement.image({
+      x: -1310,
+      y: -220,
+      file: 'cloud_ballonpeople_3',
+      scale: 1,
+      scene: this,
+    });
+
+    // .........cloud_ballonpeople_4............................................................
+    PlaceElement.image({
+      x: -2324,
+      y: 2433,
+      file: 'cloud_ballonpeople_4',
+      scale: 1,
+      scene: this,
+    });
+
+    // .........cloud_berg2_metCloud_achtergrond............................................................
+    PlaceElement.image({
+      x: 2170,
+      y: -1600,
+      file: 'cloud_berg2_metCloud_achtergrond',
+      scale: 2.03,
+      scene: this,
+    });
+
+    // .........cloud_berg3............................................................
+    PlaceElement.image({
+      x: -743,
+      y: -2010,
+      file: 'cloud_berg3',
+      scale: 1.72,
+      flipX: true,
+      scene: this,
+      tint: 0x9de0ff,
+    });
+
+    // .........cloud_berg3_mitWolken............................................................
+    PlaceElement.image({
+
+      x: -1791,
+      y: -1633,
+      file: 'cloud_berg3_mitWolken',
+      scale: 3,
+      scene: this,
+    });
+
+    // .........cloud_berg1_tweekeer............................................................
+    PlaceElement.image({
+      x: 767,
+      y: -1707,
+      file: 'cloud_berg1_tweekeer',
+      scale: 2.82,
+      scene: this,
+    });
+
+    // .........cloud_C3_2............................................................
+    PlaceElement.image({
+      x: 1386,
+      y: 518,
+      name: 'cloud_C3_2',
+      file: 'cloud_C3',
+      scale: 2.36,
+      flipX: true,
+      scene: this,
+    });
+
+    // .........cloud_C1............................................................
+    PlaceElement.image({
+      x: 1243,
+      y: 1623,
+      file: 'cloud_C1',
+      scale: 3.34,
+      scene: this,
+    });
+
+    // .........cloud_C3............................................................
+    PlaceElement.image({
+      x: -1130,
+      y: 1033,
+      file: 'cloud_C3',
+      scale: 2.8,
+      scene: this,
+    });
+
+    // .........cloud_C4............................................................
+    PlaceElement.image({
+      x: -1207,
+      y: 2073,
+      file: 'cloud_C4',
+      scale: 2.7,
+      scene: this,
+    });
+
+    // .........cloud_C5_achtergrond............................................................
+    PlaceElement.image({
+      x: 480,
+      y: 2276,
+      file: 'cloud_C5_achtergrond',
+      scale: 1,
+      scene: this,
+    });
+
+    // .........cloud_C5_achtergrond_2............................................................
+    PlaceElement.image({
+      x: 75,
+      y: -1691,
+      file: 'cloud_C5_achtergrond',
+      scale: 1,
+      scene: this,
+    });
+
+    // .........cloud_huis_1............................................................
+    PlaceElement.image({
+      x: 2158,
+      y: 1665,
+      file: 'cloud_huis_1',
+      scale: 1,
+      scene: this,
+    });
+
+    // .........cloud_huis_3............................................................
+    PlaceElement.image({
+      x: -575,
+      y: -1231,
+      file: 'cloud_huis_3',
+      scale: 0.5,
+      alpha: 0.8,
+      scene: this,
+    });
+
+    // .........cloud_brug_1............................................................
+    PlaceElement.image({
+      x: -206,
+      y: 1303,
+      file: 'cloud_brug_1',
+      scale: 0.28,
+      alpha: 0.7,
+      flipX: true,
+      scene: this,
+    });
+
+    // .........cloud_brug_1_2............................................................
+    PlaceElement.image({
+      x: 130,
+      y: 1523,
+      name: 'cloud_brug_1_2',
+      file: 'cloud_brug_1',
+      scale: 0.156,
+      alpha: 0.7,
+      flipX: true,
+      scene: this,
+    });
+
+    // .........cloud_brug_2............................................................
+    PlaceElement.image({
+      x: 310,
+      y: 1779,
+      file: 'cloud_brug_2',
+      alpha: 0.5,
+      scale: 0.4,
+      scene: this,
+    });
   }
 
   update() {
@@ -311,10 +333,6 @@ export default class MoonWorld extends Phaser.Scene {
       this.playerShadow.x = this.player.x + this.playerShadowOffset;
       this.playerShadow.y = this.player.y + this.playerShadowOffset;
       // ........... end PLAYER SHADOW .........................................................................
-
-      // ....... stopping PLAYER ......................................................................................
-      // Move.checkIfPlayerReachedMoveGoal(this) // to stop the player when it reached its destination
-      // ....... end stopping PLAYER .................................................................................
     }
   } // update
 } // class

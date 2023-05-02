@@ -3,7 +3,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-import Preloader from '../class/Preloader';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
@@ -44,7 +43,6 @@ export default class YellowDiamond extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
-    Preloader.Loading(this); // .... PRELOADER VISUALISER
   }
 
   async create() {
@@ -144,161 +142,6 @@ export default class YellowDiamond extends Phaser.Scene {
       referenceName: 'this.purpleCircleLocation',
       fontColor: 0x8dcb0e,
     });
-
-    // locationVector = new Phaser.Math.Vector2(-400, 300);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // Background.rectangle({
-    //   scene: this,
-    //   name: 'green_square_location_image',
-    //   // posX: 0,
-    //   // posY: 0,
-    //   // setOrigin: 0,
-    //   gradient1: 0x15d64a,
-    //   gradient2: 0x15d64a,
-    //   gradient3: 0x2b8042,
-    //   gradient4: 0x2b8042,
-    //   alpha: 1,
-    //   width: 140,
-    //   height: 140,
-    //   imageOnly: true,
-    // });
-
-    // this.greenSquareLocation = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'GreenSquare',
-    //   locationImage: 'green_square_location_image',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Groene Vierkant Wereld',
-    //   referenceName: 'this.greenSquareLocation',
-    //   fontColor: 0x8dcb0e,
-    // });
-
-
-    // locationVector = new Phaser.Math.Vector2(403, 327);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // // green_square world for homes
-    // //
-    // Background.triangle({
-    //   scene: this,
-    //   name: 'turquoise_triangle_location_image',
-    //   // setOrigin: 0,
-    //   posX: locationVector.x,
-    //   posY: locationVector.y,
-    //   gradient1: 0x40E0D0,
-    //   gradient2: 0x40E0D0,
-    //   gradient3: 0x39C9BB,
-    //   gradient4: 0x39C9BB,
-    //   alpha: 1,
-    //   size: 200,
-    //   imageOnly: true,
-    // });
-
-    // this.turquoiseTriangle = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'TurquoiseTriangle',
-    //   locationImage: 'turquoise_triangle_location_image',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Turquoise Driehoek Wereld',
-    //   referenceName: 'this.turquoiseTriangle',
-
-    //   fontColor: 0x8dcb0e,
-    // });
-
-    // locationVector = new Phaser.Math.Vector2(-400, -400);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // // green_square world for homes
-    // //
-    // Background.star({
-    //   scene: this,
-    //   name: 'red_star_location_image',
-    //   gradient1: 0xE50000,
-    //   gradient2: 0xE50000,
-    //   alpha: 1,
-    //   size: 200,
-    //   imageOnly: true,
-    //   spikes: 5,
-    // });
-
-    // this.redStar = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'RedStar',
-    //   locationImage: 'red_star_location_image',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Rode Ster Wereld',
-    //   referenceName: 'this.redStar',
-
-    //   fontColor: 0x8dcb0e,
-    // });
-
-    // locationVector = new Phaser.Math.Vector2(5, 386);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // this.blueSailLocation = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'BlueSail',
-    //   locationImage: 'blue_sail_location_image',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Blauwe Zeil Wereld',
-    //   referenceName: 'this.blueSailLocation',
-    //   fontColor: 0x8dcb0e,
-    // });
-
-    locationVector = new Phaser.Math.Vector2(-535, 35);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
-
-    this.pencil = new GenerateLocation({
-      scene: this,
-      type: 'image',
-
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      appUrl: 'drawing',
-      locationImage: 'pencil',
-      enterButtonImage: 'enter_button',
-      locationText: 'drawingApp',
-      referenceName: 'this.pencil',
-
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-    this.pencil.rotation = 0.12;
   }
 
   update() {
@@ -311,10 +154,6 @@ export default class YellowDiamond extends Phaser.Scene {
       this.playerShadow.x = this.player.x + this.playerShadowOffset;
       this.playerShadow.y = this.player.y + this.playerShadowOffset;
       // ........... end PLAYER SHADOW .........................................................................
-
-      // ....... stopping PLAYER ......................................................................................
-      // Move.checkIfPlayerReachedMoveGoal(this) // to stop the player when it reached its destination
-      // ....... end stopping PLAYER .................................................................................
     }
   } // update
 } // class

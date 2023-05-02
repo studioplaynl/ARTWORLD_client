@@ -5,7 +5,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-// import Preloader from '../class/Preloader';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import SceneSwitcher from '../class/SceneSwitcher';
@@ -57,9 +56,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.progress = [];
   }
 
-  // async preload() {
-  // Preloader.Loading(this); // .... PRELOADER VISUALISER
-  // }
+
 
   async create() {
     //!

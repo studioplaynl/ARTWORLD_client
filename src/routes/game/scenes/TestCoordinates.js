@@ -1,5 +1,4 @@
 import ManageSession from '../ManageSession';
-import Preloader from '../class/Preloader';
 import Background from '../class/Background';
 import DebugFuntions from '../class/DebugFuntions';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
@@ -33,10 +32,6 @@ export default class TestCoordinates extends Phaser.Scene {
     this.text1 = '';
   }
 
-  async preload() {
-    Preloader.Loading(this); // .... PRELOADER VISUALISER
-  }
-
   async create() {
     // timers
     ManageSession.updateMovementTimer = 0;
@@ -48,14 +43,18 @@ export default class TestCoordinates extends Phaser.Scene {
 
     // .......  PLAYER ....................................................................................
     //* create deafult player and playerShadow
-    // create player in center with artworldCoordinates
-    // this.player = new PlayerDefault(this, CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), ManageSession.playerAvatarPlaceholder)
     // create draggable player
-    this.player = this.add.image(CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0), CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0), 'ui_eye').setScale(0.6).setDepth(101).setInteractive();
+    this.player = this.add.image(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
+      'ui_eye',
+    ).setScale(0.6).setDepth(101).setInteractive();
 
     this.input.setDraggable(this.player);
     this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+      // eslint-disable-next-line no-param-reassign
       gameObject.x = dragX;
+      // eslint-disable-next-line no-param-reassign
       gameObject.y = dragY;
     });
 
@@ -87,8 +86,15 @@ export default class TestCoordinates extends Phaser.Scene {
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector);
     // console.log(location1Vector)
 
+    // eslint-disable-next-line no-unused-vars
     const location1 = new GenerateLocation({
-      scene: this, type: 'image', x: location1Vector.x, y: location1Vector.y, key1: 'avatar1', text: 'Hello!', fontColor: 0x8dcb0e,
+      scene: this,
+      type: 'image',
+      x: location1Vector.x,
+      y: location1Vector.y,
+      key1: 'avatar1',
+      text: 'Hello!',
+      fontColor: 0x8dcb0e,
     });
     // .......... end locations ............................................................................
 
@@ -109,7 +115,7 @@ export default class TestCoordinates extends Phaser.Scene {
     this.text1 = this.add.text(10, 10, '', { fill: '#00ff00' });
   }
 
-  update(time, delta) {
+  update() {
     // ...... ONLINE PLAYERS ................................................
     // Player.loadOnlinePlayers(this)
     // Player.receiveOnlinePlayersMovement(this)

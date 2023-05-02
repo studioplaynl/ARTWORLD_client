@@ -3,7 +3,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-// import Preloader from '../class/Preloader';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
@@ -45,7 +44,6 @@ export default class CloudWorld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
-    // Preloader.Loading(this); // .... PRELOADER VISUALISER
   }
 
   async create() {
@@ -137,32 +135,6 @@ export default class CloudWorld extends Phaser.Scene {
       size: 500,
       fontColor: 0x8dcb0e,
     });
-
-    // locationVector = new Phaser.Math.Vector2(-535, 35);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-    //   this.worldSize,
-    //   locationVector,
-    // );
-
-    // this.pencil = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   appUrl: 'drawing',
-    //   locationImage: 'pencil',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'drawingApp',
-    //   referenceName: 'this.pencil',
-
-    //   fontColor: 0x8dcb0e,
-    //   color1: 0x8dcb0e,
-    //   color2: 0x3f8403,
-    //   color3: 0x63a505,
-    // });
-    // this.pencil.rotation = 0.12;
   }
 
   makeWorldElements() {
@@ -170,7 +142,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: -366,
       y: 1597,
-      name: 'cloud_ballonpeople_1b',
       file: 'cloud_ballonpeople_1b',
       scale: 1,
       scene: this,
@@ -180,7 +151,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: 1160,
       y: 2183,
-      name: 'cloud_ballonpeople_2',
       file: 'cloud_ballonpeople_2',
       scale: 1,
       scene: this,
@@ -190,7 +160,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: -1310,
       y: -220,
-      name: 'cloud_ballonpeople_3',
       file: 'cloud_ballonpeople_3',
       scale: 1,
       scene: this,
@@ -200,7 +169,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: -2324,
       y: 2433,
-      name: 'cloud_ballonpeople_4',
       file: 'cloud_ballonpeople_4',
       scale: 1,
       scene: this,
@@ -210,7 +178,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: 2170,
       y: -1600,
-      name: 'cloud_berg2_metCloud_achtergrond',
       file: 'cloud_berg2_metCloud_achtergrond',
       scale: 2.03,
       scene: this,
@@ -220,7 +187,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: -743,
       y: -2010,
-      name: 'cloud_berg3',
       file: 'cloud_berg3',
       scale: 1.72,
       flipX: true,
@@ -233,7 +199,6 @@ export default class CloudWorld extends Phaser.Scene {
 
       x: -1791,
       y: -1633,
-      name: 'cloud_berg3_mitWolken',
       file: 'cloud_berg3_mitWolken',
       scale: 3,
       scene: this,
@@ -243,7 +208,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: 767,
       y: -1707,
-      name: 'cloud_berg1_tweekeer',
       file: 'cloud_berg1_tweekeer',
       scale: 2.82,
       scene: this,
@@ -260,12 +224,10 @@ export default class CloudWorld extends Phaser.Scene {
       scene: this,
     });
 
-
     // .........cloud_C1............................................................
     PlaceElement.image({
       x: 1243,
       y: 1623,
-      name: 'cloud_C1',
       file: 'cloud_C1',
       scale: 3.34,
       scene: this,
@@ -275,7 +237,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: -1130,
       y: 1033,
-      name: 'cloud_C3',
       file: 'cloud_C3',
       scale: 2.8,
       scene: this,
@@ -285,7 +246,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: -1207,
       y: 2073,
-      name: 'cloud_C4',
       file: 'cloud_C4',
       scale: 2.7,
       scene: this,
@@ -295,7 +255,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: 480,
       y: 2276,
-      name: 'cloud_C5_achtergrond',
       file: 'cloud_C5_achtergrond',
       scale: 1,
       scene: this,
@@ -305,35 +264,24 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: 75,
       y: -1691,
-      name: 'cloud_C5_achtergrond_2',
       file: 'cloud_C5_achtergrond',
       scale: 1,
       scene: this,
     });
+
     // .........cloud_huis_1............................................................
     PlaceElement.image({
       x: 2158,
       y: 1665,
-      name: 'cloud_huis_1',
       file: 'cloud_huis_1',
       scale: 1,
       scene: this,
     });
-    // // .........cloud_huis_2............................................................
-    // PlaceElement.image({
-    //   x: 237,
-    //   y: 1070,
-    //   name: 'cloud_huis_2',
-    //   file: 'cloud_huis_2',
-    //   scale: 1,
-    //   scene: this,
-    // });
 
     // .........cloud_huis_3............................................................
     PlaceElement.image({
       x: -575,
       y: -1231,
-      name: 'cloud_huis_3',
       file: 'cloud_huis_3',
       scale: 0.5,
       alpha: 0.8,
@@ -344,7 +292,6 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: -206,
       y: 1303,
-      name: 'cloud_brug_1',
       file: 'cloud_brug_1',
       scale: 0.28,
       alpha: 0.7,
@@ -368,10 +315,8 @@ export default class CloudWorld extends Phaser.Scene {
     PlaceElement.image({
       x: 310,
       y: 1779,
-      name: 'cloud_brug_2',
       file: 'cloud_brug_2',
       alpha: 0.5,
-
       scale: 0.4,
       scene: this,
     });

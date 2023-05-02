@@ -2,7 +2,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-// import Preloader from '../class/Preloader';
 import Background from '../class/Background';
 import SceneSwitcher from '../class/SceneSwitcher';
 import { PlayerPos, PlayerZoom } from '../playerState';
@@ -70,7 +69,6 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   // async preload() {
-  //   Preloader.Loading(this); // .... PRELOADER VISUALISER
   // }// end preload
 
   async create() {

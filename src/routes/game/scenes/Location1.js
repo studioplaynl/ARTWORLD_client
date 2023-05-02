@@ -3,7 +3,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-import Preloader from '../class/Preloader';
 import BouncingBird from '../class/BouncingBird';
 import GraffitiWall from '../class/GraffitiWall';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
@@ -50,8 +49,6 @@ export default class Location1 extends Phaser.Scene {
 
   async preload() {
     // .... PRELOADER VISUALISER ..........................
-    Preloader.Loading(this);
-
     this.load.image('art1', './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg');
     this.load.image('art2', './assets/art_styles/drawing_painting/f7f2e083a0c70b97e459f2966bc8c3ae.jpg');
     this.load.image('art3', './assets/art_styles/drawing_painting/doodle_dogman.png');

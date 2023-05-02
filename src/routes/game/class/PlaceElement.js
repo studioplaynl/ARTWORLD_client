@@ -4,20 +4,21 @@ import { dlog } from '../helpers/DebugLog';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ManageSession from '../ManageSession';
 
-// const { Phaser } = window;
-
 class PlaceElement {
-  // constructor() {
-  // }
-
+  // eslint-disable-next-line class-methods-use-this
   image(config) {
     const {
-      x, y, name, file, scale, rotation, alpha, tint, scene, flipX,
+      x, y, file, scale, rotation, alpha, tint, scene, flipX,
     } = config;
+
+    let { name } = config;
 
     // const { worldSize } = ManageSession;
     dlog('scene: ', scene);
 
+    if (!name) {
+      name = file;
+    }
 
     // scene[name] =
     scene[name] = scene.add.image(
@@ -31,12 +32,9 @@ class PlaceElement {
     if (rotation) {
       scene[name].rotation = rotation;
     }
-    dlog('alpha: ', alpha);
-    if (alpha) {
-      dlog('alpha: ', alpha);
 
+    if (alpha) {
       scene[name].setAlpha(alpha);
-      dlog('scene[name]', scene[name]);
     }
     if (tint) {
       scene[name].setTint(tint);

@@ -3,7 +3,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-import Preloader from '../class/Preloader';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
@@ -44,7 +43,6 @@ export default class RobotWorld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
-    Preloader.Loading(this); // .... PRELOADER VISUALISER
   }
 
   async create() {
@@ -137,33 +135,6 @@ export default class RobotWorld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
     this.purpleCircleLocation.setScale(1.5);
-
-    locationVector = new Phaser.Math.Vector2(2340, -1015);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
-
-
-    this.pencil = new GenerateLocation({
-      scene: this,
-      type: 'image',
-
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      appUrl: 'drawing',
-      locationImage: 'pencil',
-      enterButtonImage: 'enter_button',
-      locationText: 'drawingApp',
-      referenceName: 'this.pencil',
-
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-    this.pencil.rotation = 0.12;
   }
 
   makeWorldElements() {

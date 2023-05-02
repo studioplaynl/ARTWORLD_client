@@ -7,7 +7,6 @@ import Background from '../class/Background';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-// import Preloader from '../class/Preloader';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../helpers/DebugLog';

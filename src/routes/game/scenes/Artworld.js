@@ -728,7 +728,6 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Wolken Wereld',
       referenceName: 'this.cloudWorldLocation',
-      size: 300,
       fontColor: 0x8dcb0e,
     });
 
