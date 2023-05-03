@@ -62,8 +62,8 @@ export default class MoonWorld extends Phaser.Scene {
     Background.gradientStretchedToFitWorld({
       scene: this,
       tileMapName: 'WorldBackgroundTileMap',
-      gradientColor1: 0x9de0ff,
-      gradientColor2: 0x1999c5,
+      gradientColor1: 0x000000,
+      gradientColor2: 0x002637,
       tileWidth: 512,
     });
     handlePlayerMovement(this);
@@ -116,7 +116,7 @@ export default class MoonWorld extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(945, -382);
+    let locationVector = new Phaser.Math.Vector2(1880, -1596);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -129,196 +129,135 @@ export default class MoonWorld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Artworld',
-      locationImage: 'artWorldPortalCloud',
+      locationImage: 'maan_portalRaket_naarHUIS_A',
       enterButtonImage: 'enter_button',
       locationText: 'Paarse Cirkel Wereld',
       referenceName: 'this.purpleCircleLocation',
-      size: 500,
+      size: 440,
       fontColor: 0x8dcb0e,
     });
+    this.purpleCircleLocation.rotation = 4;
   }
 
   makeWorldElements() {
-    // .........cloud_ballonpeople_1b............................................................
+    // .........maan_spaceBubble............................................................
     PlaceElement.image({
-      x: -366,
-      y: 1597,
-      file: 'cloud_ballonpeople_1b',
-      scale: 1,
+      x: 397,
+      y: 1914,
+      file: 'maan_spaceBubble',
+      scale: 1.8,
       scene: this,
-    });
-
-    // .........cloud_ballonpeople_2............................................................
-    PlaceElement.image({
-      x: 1160,
-      y: 2183,
-      file: 'cloud_ballonpeople_2',
-      scale: 1,
-      scene: this,
-    });
-
-    // .........cloud_ballonpeople_3............................................................
-    PlaceElement.image({
-      x: -1310,
-      y: -220,
-      file: 'cloud_ballonpeople_3',
-      scale: 1,
-      scene: this,
-    });
-
-    // .........cloud_ballonpeople_4............................................................
-    PlaceElement.image({
-      x: -2324,
-      y: 2433,
-      file: 'cloud_ballonpeople_4',
-      scale: 1,
-      scene: this,
-    });
-
-    // .........cloud_berg2_metCloud_achtergrond............................................................
-    PlaceElement.image({
-      x: 2170,
-      y: -1600,
-      file: 'cloud_berg2_metCloud_achtergrond',
-      scale: 2.03,
-      scene: this,
-    });
-
-    // .........cloud_berg3............................................................
-    PlaceElement.image({
-      x: -743,
-      y: -2010,
-      file: 'cloud_berg3',
-      scale: 1.72,
+      rotation: 0.4,
       flipX: true,
-      scene: this,
-      tint: 0x9de0ff,
     });
 
-    // .........cloud_berg3_mitWolken............................................................
+    // .........maan_MAAN_a............................................................
     PlaceElement.image({
+      x: 245,
+      y: -25,
+      file: 'maan_MAAN_a',
+      scale: 3.74,
+      scene: this,
+    });
 
+    // .........maan_KORR_portalRaket_naarHUIS_alleDelen............................................................
+    PlaceElement.image({
+      x: 1944,
+      y: -743,
+      file: 'maan_KORR_portalRaket_naarHUIS_alleDelen',
+      scale: 2,
+      scene: this,
+      rotation: 4,
+    });
+
+    // .........maan_meteoor_metStaart............................................................
+    PlaceElement.image({
+      x: -1167,
+      y: -1723,
+      file: 'maan_meteoor_metStaart',
+      scale: 3.5,
+      scene: this,
+    });
+
+    // .........maan_spaceBubble_2............................................................
+    PlaceElement.image({
+      x: 1000,
+      y: 1980,
+      name: 'maan_spaceBubble_2',
+
+      file: 'maan_spaceBubble',
+      scale: 2.56,
+      scene: this,
+    });
+
+    // .........maan_sputnik_metStaart............................................................
+    PlaceElement.image({
+      x: -1910,
+      y: 2027,
+      file: 'maan_sputnik_metStaart',
+      scale: 1.72,
+      scene: this,
+      rotation: -0.3,
+    });
+
+    // .........maan_steren............................................................
+    PlaceElement.image({
       x: -1791,
       y: -1633,
-      file: 'cloud_berg3_mitWolken',
+      name: 'maan_ster',
+      file: 'maan_steren',
       scale: 3,
       scene: this,
     });
 
-    // .........cloud_berg1_tweekeer............................................................
+
+    // .........maan_steren_2............................................................
     PlaceElement.image({
-      x: 767,
-      y: -1707,
-      file: 'cloud_berg1_tweekeer',
-      scale: 2.82,
+      x: -1816,
+      y: -153,
+      name: 'maan_ster_2',
+      file: 'maan_steren',
+      scale: 3,
       scene: this,
     });
 
-    // .........cloud_C3_2............................................................
+    // .........maan_steren_3............................................................
     PlaceElement.image({
-      x: 1386,
-      y: 518,
-      name: 'cloud_C3_2',
-      file: 'cloud_C3',
-      scale: 2.36,
-      flipX: true,
+      x: 1039,
+      y: -1918,
+      name: 'maan_ster_3',
+      file: 'maan_steren',
+      scale: 3,
       scene: this,
     });
 
-    // .........cloud_C1............................................................
+    // .........maan_steren_4............................................................
     PlaceElement.image({
-      x: 1243,
-      y: 1623,
-      file: 'cloud_C1',
-      scale: 3.34,
+      x: 2349,
+      y: 1892,
+      name: 'maan_ster_4',
+      file: 'maan_steren',
+      scale: 3,
       scene: this,
     });
 
-    // .........cloud_C3............................................................
+    // .........maan_steren_5............................................................
     PlaceElement.image({
-      x: -1130,
-      y: 1033,
-      file: 'cloud_C3',
-      scale: 2.8,
+      x: -926,
+      y: 1567,
+      name: 'maan_ster_5',
+      file: 'maan_steren',
+      scale: 3,
       scene: this,
     });
 
-    // .........cloud_C4............................................................
+    // .........maan_steren_6............................................................
     PlaceElement.image({
-      x: -1207,
-      y: 2073,
-      file: 'cloud_C4',
-      scale: 2.7,
-      scene: this,
-    });
-
-    // .........cloud_C5_achtergrond............................................................
-    PlaceElement.image({
-      x: 480,
-      y: 2276,
-      file: 'cloud_C5_achtergrond',
-      scale: 1,
-      scene: this,
-    });
-
-    // .........cloud_C5_achtergrond_2............................................................
-    PlaceElement.image({
-      x: 75,
-      y: -1691,
-      file: 'cloud_C5_achtergrond',
-      scale: 1,
-      scene: this,
-    });
-
-    // .........cloud_huis_1............................................................
-    PlaceElement.image({
-      x: 2158,
-      y: 1665,
-      file: 'cloud_huis_1',
-      scale: 1,
-      scene: this,
-    });
-
-    // .........cloud_huis_3............................................................
-    PlaceElement.image({
-      x: -575,
-      y: -1231,
-      file: 'cloud_huis_3',
-      scale: 0.5,
-      alpha: 0.8,
-      scene: this,
-    });
-
-    // .........cloud_brug_1............................................................
-    PlaceElement.image({
-      x: -206,
-      y: 1303,
-      file: 'cloud_brug_1',
-      scale: 0.28,
-      alpha: 0.7,
-      flipX: true,
-      scene: this,
-    });
-
-    // .........cloud_brug_1_2............................................................
-    PlaceElement.image({
-      x: 130,
-      y: 1523,
-      name: 'cloud_brug_1_2',
-      file: 'cloud_brug_1',
-      scale: 0.156,
-      alpha: 0.7,
-      flipX: true,
-      scene: this,
-    });
-
-    // .........cloud_brug_2............................................................
-    PlaceElement.image({
-      x: 310,
-      y: 1779,
-      file: 'cloud_brug_2',
-      alpha: 0.5,
-      scale: 0.4,
+      x: -2366,
+      y: 2332,
+      name: 'maan_ster_6',
+      file: 'maan_steren',
+      scale: 3,
       scene: this,
     });
   }

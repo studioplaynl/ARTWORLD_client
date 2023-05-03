@@ -76,9 +76,14 @@ export default class UIScene extends Phaser.Scene {
     // resolve load errors globally in the game
 
     scene.load.on('loaderror', (offendingFile) => {
-      // this.resolveLoadError(offendingFile);
-      ServerCall.resolveLoadError(offendingFile);
+      console.log('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
     });
+
+
 
 
     // const eventNames = scene.load.eventNames();

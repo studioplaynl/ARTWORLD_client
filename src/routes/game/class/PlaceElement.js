@@ -13,9 +13,6 @@ class PlaceElement {
 
     let { name } = config;
 
-    // const { worldSize } = ManageSession;
-    dlog('scene: ', scene);
-
     if (!name) {
       name = file;
     }

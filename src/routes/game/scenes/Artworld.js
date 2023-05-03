@@ -711,7 +711,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(-1391, 436);
+    locationVector = new Phaser.Math.Vector2(-370, 677);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -731,13 +731,32 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(-1215, -589);
+    locationVector = new Phaser.Math.Vector2(-1295, 439);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
     );
 
-    //  if ( this.location1 != null ) this.location1.destroy()
+    this.moonWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'MoonWorld',
+      locationImage: 'artWorldPortalMoon',
+      enterButtonImage: 'enter_button',
+      locationText: 'Maan Wereld',
+      referenceName: 'this.moonWorldLocation',
+      fontColor: 0x8dcb0e,
+    });
+
+    // ---- Location 1 ----------------------
+    locationVector = new Phaser.Math.Vector2(-1215, -589);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
 
     this.location1 = new GenerateLocation({
       scene: this,

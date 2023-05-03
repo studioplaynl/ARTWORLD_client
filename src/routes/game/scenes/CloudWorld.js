@@ -13,6 +13,7 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
+// import PreloadScene from './PreloadScene';
 
 const { Phaser } = window;
 
@@ -37,13 +38,44 @@ export default class CloudWorld extends Phaser.Scene {
 
     this.homes = [];
     this.homesRepreseneted = [];
-
     // shadow
     this.playerShadowOffset = -8;
   }
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
+    // this.scene.restart('UIScene');
+
+    this.localAssetsCheck = {};
+    // this.localAssetsCheck.startLength = 0;
+
+    const folderPath = './assets/world_clouds/';
+    const loadArray = [
+      { key: 'artWorldPortalCloud', path: `${folderPath}cloud_portal_naarHomeX.png` },
+
+      { key: 'cloud_ballonpeople_1b', path: `${folderPath}cloud_ballonpeople_1b.png` },
+      { key: 'cloud_ballonpeople_2', path: `${folderPath}cloud_ballonpeople_2.png` },
+      { key: 'cloud_ballonpeople_3', path: `${folderPath}cloud_ballonpeople_3.png` },
+      { key: 'cloud_ballonpeople_4', path: `${folderPath}cloud_ballonpeople_4.png` },
+      { key: 'cloud_berg1', path: `${folderPath}cloud_berg1.png` },
+      { key: 'cloud_berg1_tweekeer', path: `${folderPath}cloud_berg1_tweekeer.png` },
+      { key: 'cloud_berg2_metCloud_achtergrond', path: `${folderPath}cloud_berg2_metCloud_achtergrond.png` },
+      { key: 'cloud_berg3', path: `${folderPath}cloud_berg3.png` },
+      { key: 'cloud_berg3_mitWolken', path: `${folderPath}cloud_berg3_mitWolken.png` },
+      { key: 'cloud_brug_1', path: `${folderPath}cloud_brug_1.png` },
+      { key: 'cloud_brug_2', path: `${folderPath}cloud_brug_2.png` },
+      { key: 'cloud_C1', path: `${folderPath}cloud_C1.png` },
+      { key: 'cloud_C2_withface', path: `${folderPath}cloud_C2_withface.png` },
+      { key: 'cloud_C3', path: `${folderPath}cloud_C3.png` },
+      { key: 'cloud_C4', path: `${folderPath}cloud_C4.png` },
+      { key: 'cloud_C5', path: `${folderPath}cloud_C5.png` },
+      { key: 'cloud_C5_achtergrond', path: `${folderPath}cloud_C5_achtergrond.png` },
+      { key: 'cloud_huis_1', path: `${folderPath}cloud_huis_1.png` },
+      { key: 'cloud_huis_2', path: `${folderPath}cloud_huis_2.png` },
+      { key: 'cloud_huis_3', path: `${folderPath}cloud_huis_3.png` },
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
   }
 
   async create() {

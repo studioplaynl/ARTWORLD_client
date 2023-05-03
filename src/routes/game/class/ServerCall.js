@@ -8,7 +8,7 @@ import {
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkList from './ArtworkList';
-import { SCENE_INFO, ART_FRAME_BORDER } from '../../../constants';
+import { ART_FRAME_BORDER } from '../../../constants';
 import { dlog } from '../helpers/DebugLog';
 import AnimalChallenge from './animalChallenge';
 import { myHomeStore } from '../../../storage';
@@ -247,6 +247,7 @@ class ServerCall {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin) {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
@@ -291,6 +292,7 @@ class ServerCall {
 
             ServerCall.getAnimalsFellowHomeArea(userHome, serverItemsArray, foundAnimals);
           }
+          // eslint-disable-next-line no-param-reassign
           serverItemsArray.array = foundAnimals;
           ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
           // console.log('foundFlowers: ', foundFlowers);
@@ -394,6 +396,63 @@ class ServerCall {
       serverItemsArray.array.forEach((element, index, array) => {
         // dlog('element', element);
         ServerCall.downloadArtwork(element, index, array, type, artSize, artMargin);
+      });
+    }
+  }
+
+  loadAssetArray(scene, array, type) {
+    // eslint-disable-next-line no-param-reassign
+    scene.localAssetsCheck.startLength = array.length;
+    array.forEach((element, index) => {
+      // dlog('element', element);
+      this.loadAsset(scene, element, index, type);
+    });
+  }
+
+
+
+  loadAsset(scene, element, index, type) {
+    if (type === 'localImage') {
+      // const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
+      const imageKey = element.key;
+      const path = element.path;
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'downloadLocalImage', element, index, imageKey, scene,
+      });
+
+      scene.load.image(imageKey, path)
+        .on(`filecomplete-image-${imageKey}`, () => {
+          // delete from ManageSession.resolveErrorObjectArray because of succesful download
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKey,
+          );
+          // eslint-disable-next-line no-param-reassign
+          element.downloaded = true;
+
+
+          // ServerCall.createDrawingContainer(element, index, artSize, artMargin);
+        }, this);
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      // ManageSession.resolveErrorObjectArray.push({
+      //   loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
+      // });
+
+      scene.load.start(); // start the load queue to get the image in memory
+
+      // this is fired each time a file is finished downloading (or failing)
+      scene.load.on('complete', () => {
+        const startLength = scene.localAssetsCheck.startLength;
+        let downloadCompleted = scene.localAssetsCheck.itemsDownloadCompleted;
+        // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
+        downloadCompleted += 1;
+        // eslint-disable-next-line no-param-reassign
+        scene.localAssetsCheck.itemsDownloadCompleted = downloadCompleted;
+        // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        if (downloadCompleted === startLength) {
+          dlog('loader localImage COMPLETE');
+          // ServerCall.repositionContainers('drawing');
+        }
       });
     }
   }

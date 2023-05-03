@@ -3,7 +3,9 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog } from '../helpers/DebugLog';
-import { PlayerLocation, playerStreamID, PlayerHistory } from '../playerState';
+import { PlayerLocation } from '../playerState';
+// import { PlayerLocation, playerStreamID, PlayerHistory } from '../playerState';
+
 import { DEFAULT_HOME } from '../../../constants';
 import { Error } from '../../../session';
 import { setLoader } from '../../../api';
@@ -82,7 +84,7 @@ class SceneSwitcher {
     // we can't go from the same scene to the same scene
     if (scene.scene.key === targetScene) return;
 
-    console.log('SceneSwitcher: continue with doSwitchScene');
+    dlog('SceneSwitcher: continue with doSwitchScene');
 
     setLoader(true);
 
