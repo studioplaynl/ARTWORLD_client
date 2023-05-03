@@ -82,7 +82,12 @@ class SceneSwitcher {
     if (!scene || !scene?.player) return;
 
     // we can't go from the same scene to the same scene
-    if (scene.scene.key === targetScene) return;
+    // except when it is a house
+    if (scene.scene.key === targetScene && targetScene !== DEFAULT_HOME) {
+      dlog('SceneSwitcher: same scene, do nothing');
+      return;
+    }
+
 
     dlog('SceneSwitcher: continue with doSwitchScene');
 
