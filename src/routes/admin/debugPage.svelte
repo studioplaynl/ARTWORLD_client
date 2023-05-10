@@ -2,19 +2,12 @@
   import { onMount } from 'svelte';
   import { client, SSL } from '../../nakama.svelte';
   import { Session, Profile, Error } from '../../session';
-  import {
-    updateObjectAdmin,
-    listAllObjects,
-    deleteObjectAdmin,
-    convertImage,
-  } from '../../api';
+  import { updateObjectAdmin, listAllObjects, deleteObjectAdmin, convertImage } from '../../helpers/api';
   // import { writable } from "svelte/store";
 
   const verboseLogging = false;
   const socket = client.createSocket(SSL, verboseLogging);
-  const match_ID = '';
   let AllUsers = [];
-  const payload = [];
   let status = 'left';
   const locations = ['lab', 'home', 'library'];
   let selected;
@@ -55,13 +48,13 @@
 
       console.log(`leaves:${streampresence.leaves}`);
       if (streampresence.leaves) {
-        streampresence.leaves.forEach((leave) => {
-          console.log('User left: %o', leave.username);
-          AllUsers = AllUsers.filter((item) => item.name !== leave.username);
+        streampresence.leaves.forEach((left) => {
+          console.log('User left: %o', left.username);
+          AllUsers = AllUsers.filter((item) => item.name !== left.username);
         });
       }
       if (streampresence.joins) {
-        streampresence.joins.forEach((join) => {
+        streampresence.joins.forEach(() => {
           getUsers();
         });
       }
@@ -71,7 +64,8 @@
 
     // current user array
   }
-  const promise = chat();
+
+  chat();
 
   export function onclick() {
     const action = 'walk'; // stop, too, move
@@ -213,13 +207,15 @@
     <option value="world">world</option>
     <option value="addressbook">addressbook</option>
   </select>
-  <label>type object name</label><input type="text" bind:value="{where}" />
+  <label>type object name</label>
+  <input type="text" bind:value="{where}" />
 
-  <label
-    >value (alle keys and values need to be placed within " " to not error)</label
-  ><textarea bind:value></textarea>
-  <label>name</label><input type="text" bind:value="{name}" />
-  <label>user_id</label><input type="text" bind:value="{id}" />
+  <label>value (alle keys and values need to be placed within " " to not error)</label>
+  <textarea bind:value="{value}"></textarea>
+  <label>name</label>
+  <input type="text" bind:value="{name}" />
+  <label>user_id</label>
+  <input type="text" bind:value="{id}" />
 
   <button on:click="{addLocation(id)}">creeer</button>
 
@@ -230,14 +226,12 @@
     <option value="world">world</option>
     <option value="addressbook">addressbook</option>
   </select>
-  <label>type object name</label><input type="text" bind:value="{whereList}" />
+  <label>type object name</label>
+  <input type="text" bind:value="{whereList}" />
 
   <button on:click="{getUserLocations}">Get</button>
   {#each locationsList as location}
-    <div
-      class:blueBack="{location.user_id === $Session.user_id}"
-      class="redBack"
-    >
+    <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
       <p>username: {location.username}</p>
       <p>userID: {location.user_id}</p>
       <p>name:{location.key}</p>
@@ -245,20 +239,20 @@
         value: {JSON.stringify(location.value)}
         <button
           on:click="{async () => {
-            await deleteObjectAdmin(
-              location.user_id,
-              location.collection,
-              location.key,
-            );
+            await deleteObjectAdmin(location.user_id, location.collection, location.key);
             getUserLocations();
-          }}">delete</button
+          }}"
         >
+          delete
+        </button>
         <button
           on:click="{async () => {
             await renewObject(location);
             getUserLocations();
-          }}">update</button
+          }}"
         >
+          update
+        </button>
       </p>
     </div>
   {/each}

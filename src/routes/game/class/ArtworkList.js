@@ -88,11 +88,11 @@ class ArtworkList {
       'play',
     )
       .setOrigin(0)
-    // const playPause = scene.add.image(
-    //   x - artFrame.height + marginY,
-    //   y + (artFrame.height / 2) + marginY,
-    //   'play',
-    // )
+      // const playPause = scene.add.image(
+      //   x - artFrame.height + marginY,
+      //   y + (artFrame.height / 2) + marginY,
+      //   'play',
+      // )
       .setScale(0.7)
       .setInteractive()
       .setData('togglePlay', true) // true, not liked state

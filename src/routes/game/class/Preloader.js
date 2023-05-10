@@ -1,4 +1,4 @@
-import { setLoader } from '../../../api';
+import { setLoader } from '../../../helpers/api';
 
 class Preloader {
   Loading(_scene) {

@@ -31,7 +31,7 @@
   }
 </script>
 
-<input type="text" bind:value on:keyup="{ifValid}" id="{id}" />
+<input type="text" bind:value="{value}" on:keyup="{ifValid}" id="{id}" />
 {#if invalidTitle}
   <p style="color: red">No special characters</p>
 {/if}

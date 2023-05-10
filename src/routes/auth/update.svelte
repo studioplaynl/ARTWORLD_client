@@ -3,13 +3,7 @@
   import { _ } from 'svelte-i18n';
   import { push } from 'svelte-spa-router';
   import { Session, Profile } from '../../session';
-  import {
-    isValidEmail,
-    isValidPassword,
-    hasSpecialCharacter,
-    isEmpty,
-    isEqual,
-  } from '../../validations';
+  import { isValidEmail, isValidPassword, hasSpecialCharacter, isEmpty, isEqual } from '../../validations';
   import {
     getFullAccount,
     setFullAccount,
@@ -17,7 +11,7 @@
     deleteObjectAdmin,
     listObjects,
     resetPasswordAdmin,
-  } from '../../api';
+  } from '../../helpers/api';
   import { dlog } from '../game/helpers/DebugLog';
   import { SCENE_INFO } from '../../constants';
 
@@ -42,7 +36,10 @@
   let type;
   let other;
   let name;
-  let value = { posX: 123, posY: 123 };
+  let value = {
+    posX: 123,
+    posY: 123,
+  };
   let pub = true;
 
   onMount(() => {
@@ -68,7 +65,7 @@
     }
   });
 
-const Locaties = SCENE_INFO.map((i) => i.scene);
+  const Locaties = SCENE_INFO.map((i) => i.scene);
 
   async function update() {
     // get metadata
@@ -116,7 +113,6 @@ const Locaties = SCENE_INFO.map((i) => i.scene);
     // if (!passwordCheckValid) return;
     resetPasswordAdmin(id, email, password);
   }
-
 </script>
 
 <div class="box">
@@ -175,9 +171,7 @@ const Locaties = SCENE_INFO.map((i) => i.scene);
             {/each}
           </select>
         {/if}
-        <button type="submit" class="registerbtn" disabled="{!formValid}"
-          >Update</button
-        >
+        <button type="submit" class="registerbtn" disabled="{!formValid}">Update</button>
       </div>
     </form>
     <div class="password-form">
@@ -227,7 +221,7 @@ const Locaties = SCENE_INFO.map((i) => i.scene);
       {/if}
 
       <label for="value">Value</label>
-      <textarea id="value" bind:value></textarea>
+      <textarea id="value" bind:value="{value}"></textarea>
 
       <label for="name">name</label>
       <input id="name" type="text" bind:value="{name}" />
@@ -255,10 +249,7 @@ const Locaties = SCENE_INFO.map((i) => i.scene);
 
       <button on:click="{getLocations}">Get</button>
       {#each locationsList as location}
-        <div
-          class:blueBack="{location.user_id === $Session.user_id}"
-          class="redBack"
-        >
+        <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
           <p>userID: {location.user_id}</p>
           <p>key:{location.key}</p>
           <p>
@@ -266,14 +257,12 @@ const Locaties = SCENE_INFO.map((i) => i.scene);
           </p>
           <button
             on:click="{async () => {
-              await deleteObject(
-                location.user_id,
-                location.collection,
-                location.key,
-              );
+              await deleteObject(location.user_id, location.collection, location.key);
               getLocations();
-            }}">delete</button
+            }}"
           >
+            delete
+          </button>
           <button
             on:click="{async () => {
               // await deleteObject(
@@ -286,8 +275,10 @@ const Locaties = SCENE_INFO.map((i) => i.scene);
               value = JSON.stringify(location.value);
 
               getLocations();
-            }}">update</button
+            }}"
           >
+            update
+          </button>
         </div>
       {/each}
     </div>

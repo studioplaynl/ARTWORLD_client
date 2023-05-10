@@ -46,6 +46,11 @@ module.exports = {
         'no-use-before-define': 0,
         'operator-linebreak': 0,
         'no-bitwise': 0,
+        'object-curly-newline': ['off', {
+          multiline: true,
+          minProperties: 3,
+          consistent: false,
+        }],
       },
     },
   ],

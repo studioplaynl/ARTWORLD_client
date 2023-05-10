@@ -1,7 +1,7 @@
 <script>
   import Select from 'svelte-select';
   import MdSend from 'svelte-icons/md/MdSend.svelte';
-  import { ListFriends, sendMailToUser } from '../../api';
+  import { ListFriends, sendMailToUser } from '../../helpers/api';
 
   export let row;
   // eslint-disable-next-line svelte/valid-compile
@@ -46,20 +46,11 @@
   {#if toggleMode}
     <button on:click="{toggle}" class="sendButton">
       <!-- svelte-ignore a11y-img-redundant-alt -->
-      <img
-        alt="send picture"
-        class="icon"
-        src="assets/SHB/svg/AW-icon-post.svg"
-      />
+      <img alt="send picture" class="icon" src="assets/SHB/svg/AW-icon-post.svg" />
     </button>
   {:else}
     <div class="selectBox">
-    <Select
-      items="{items}"
-      bind:value
-      itemId="{optionIdentifier}"
-      label="{labelIdentifier}"
-    />
+      <Select items="{items}" bind:value="{value}" itemId="{optionIdentifier}" label="{labelIdentifier}" />
     </div>
     <button on:click="{send}" class="sendButton"><MdSend /></button>
   {/if}

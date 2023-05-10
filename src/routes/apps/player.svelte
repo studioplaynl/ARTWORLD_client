@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { location } from 'svelte-spa-router';
-  import { getObject, getFile } from '../../api';
+  import { getObject, getFile } from '../../helpers/api';
   import { dlog } from '../game/helpers/DebugLog';
 
   export let params;

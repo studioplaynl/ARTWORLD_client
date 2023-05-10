@@ -1,7 +1,7 @@
 <script>
   import Select from 'svelte-select';
   import { onMount } from 'svelte';
-  import { ListAllUsers } from '../../api';
+  import { ListAllUsers } from '../../helpers/api';
   import { dlog } from '../game/helpers/DebugLog';
 
   let items;

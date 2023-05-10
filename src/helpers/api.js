@@ -3,19 +3,19 @@
 /* eslint-disable no-use-before-define */
 import { get } from 'svelte/store';
 import { push, querystring } from 'svelte-spa-router';
-import { client } from './nakama.svelte';
+import { client } from '../nakama.svelte';
 
 import {
   Success, Session, Profile, Error,
-} from './session';
+} from '../session';
 import {
   PERMISSION_READ_PRIVATE,
   PERMISSION_READ_PUBLIC,
   STOPMOTION_MAX_FRAMES,
   DEFAULT_PREVIEW_HEIGHT,
-} from './constants';
+} from '../constants';
 
-import { dlog } from './routes/game/helpers/DebugLog';
+import { dlog } from '../routes/game/helpers/DebugLog';
 // import ManageSession from './routes/game/ManageSession';
 
 export async function login(email, _password) {

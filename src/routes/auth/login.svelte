@@ -4,7 +4,7 @@
   import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte';
   import { push, querystring } from 'svelte-spa-router';
   import { Session } from '../../session';
-  import { login, checkLoginExpired } from '../../api';
+  import { login, checkLoginExpired } from '../../helpers/api';
   import QRscanner from './qrscanner.svelte';
   // eslint-disable-next-line no-unused-vars
   import { dlog } from '../game/helpers/DebugLog';

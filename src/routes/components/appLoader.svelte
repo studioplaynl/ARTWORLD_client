@@ -2,9 +2,7 @@
   import { onDestroy, tick } from 'svelte';
   import { parse } from 'qs';
   import { get } from 'svelte/store';
-  import {
-    pop, push, querystring, loc,
-  } from 'svelte-spa-router';
+  import { pop, push, querystring, loc } from 'svelte-spa-router';
   import Drawing from '../apps/drawing.svelte';
   import Stopmotion from '../apps/stopmotion.svelte';
   import Mariosound from '../apps/marioSequencer.svelte';
@@ -24,7 +22,7 @@
     getDateAndTimeFormatted,
     updateObject,
     // updateTitle,
-  } from '../../api';
+  } from '../../helpers/api';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { PlayerHistory } from '../game/playerState';
   import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC } from '../../constants';
@@ -44,10 +42,7 @@
   // for saving the stopmotion data in a promise
   let drawing;
   let parsedQuery = {};
-  $: userIsOwner =
-    $Profile !== null &&
-    isValidQuery(parsedQuery) &&
-    $Profile.id === parsedQuery.userId;
+  $: userIsOwner = $Profile !== null && isValidQuery(parsedQuery) && $Profile.id === parsedQuery.userId;
 
   // Object containing info about the current file
   // Loaded from the server..
@@ -61,7 +56,9 @@
   let changes = 0; // synced with drawing app
 
   // keep the displayName updated in currentFile, always up to date for saving etc
-  $: { currentFile.displayName = displayName; }
+  $: {
+    currentFile.displayName = displayName;
+  }
 
   /** Subscribe to 'loc', as changes to location AND querystring should trigger this evaluation */
   const unsubscribe = loc.subscribe(async () => {
@@ -141,7 +138,6 @@
             version: '0',
           };
           const userID = currentFile.user_id;
-
 
           // updateTitle(currentFile.type, currentFile.key, displayName, userID)
 
@@ -370,14 +366,14 @@
     }
   }
 
-    function downloadImage() {
-      const filename = `${$Profile.username}_${currentFile.key}.png`;
-      const a = document.createElement('a');
-      a.download = filename;
-      a.href = data;
-      document.body.appendChild(a);
-      a.click();
-    }
+  function downloadImage() {
+    const filename = `${$Profile.username}_${currentFile.key}.png`;
+    const a = document.createElement('a');
+    a.download = filename;
+    a.href = data;
+    document.body.appendChild(a);
+    a.click();
+  }
 
   function dataURItoBlob(dataURI) {
     // const binary = Buffer.from(dataURI.split(',')[1], 'base64');
@@ -398,9 +394,7 @@
 </script>
 
 <AppContainer
-  open="{$CurrentApp !== null &&
-    $CurrentApp !== DEFAULT_APP &&
-    isValidApp($CurrentApp)}"
+  open="{$CurrentApp !== null && $CurrentApp !== DEFAULT_APP && isValidApp($CurrentApp)}"
   on:close="{() => saveData(true)}"
   on:saveToFile="{() => saveToFile()}"
 >
@@ -408,20 +402,19 @@
     {#if $CurrentApp === 'drawing' || $CurrentApp === 'house'}
       <Drawing
         file="{currentFile}"
-        bind:data
-        bind:changes
-        bind:displayName
-        bind:this={drawing}
+        bind:data="{data}"
+        bind:changes="{changes}"
+        bind:displayName="{displayName}"
+        bind:this="{drawing}"
         on:save="{saveData}"
       />
-
     {:else if $CurrentApp === 'stopmotion' || $CurrentApp === 'avatar'}
       <Stopmotion
         file="{currentFile}"
-        bind:data
-        bind:changes
-        bind:displayName
-        bind:drawing
+        bind:data="{data}"
+        bind:changes="{changes}"
+        bind:displayName="{displayName}"
+        bind:drawing="{drawing}"
         on:save="{saveData}"
       />
     {:else if $CurrentApp === 'mariosound'}

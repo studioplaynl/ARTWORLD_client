@@ -2,9 +2,7 @@
   import { location, push } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
-  import {
-    convertImage, getAccount, getObject, logout,
-  } from '../../api';
+  import { convertImage, getAccount, getObject, logout } from '../../helpers/api';
   import ProfilePage from '../profile.svelte';
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
@@ -42,32 +40,23 @@
       if (userHouseUrl === undefined) {
         /** object containing house information (position, image url) */
 
-        // check for meta.azc because for a while there was a server bug that 
+        // check for meta.azc because for a while there was a server bug that
         // would return azc and role instead of Azc and Role
-        let profileAzc = ''
+        let profileAzc = '';
         // console.log('$Profile: ', $Profile)
         if ($Profile.meta.Azc) {
-          profileAzc = $Profile.meta.Azc
+          profileAzc = $Profile.meta.Azc;
         } else if ($Profile.meta.azc) {
-          profileAzc = $Profile.meta.azc
+          profileAzc = $Profile.meta.azc;
         } else {
-          profileAzc = 'GreenSquare'
+          profileAzc = 'GreenSquare';
         }
         // console.log('profileAzc: ', profileAzc)
 
-        userHouseObject = await getObject(
-          'home',
-          profileAzc,
-          $Profile.id,
-        );
+        userHouseObject = await getObject('home', profileAzc, $Profile.id);
 
         /** convert image to small size */
-        userHouseUrl = await convertImage(
-          houseObject.value.url,
-          '50',
-          '50',
-          'png',
-        );
+        userHouseUrl = await convertImage(houseObject.value.url, '50', '50', 'png');
 
         // console.log('itemsbar --- userHouseUrl?', userHouseUrl);
       }
@@ -94,13 +83,7 @@
         if (addressbookList.length > 0) {
           const tempArray = [];
           addressbookList.forEach(async (element) => {
-            tempArray.push(
-              await getObject(
-                'home',
-                element.value.meta?.Azc,
-                element.value.user_id,
-              ),
-            );
+            tempArray.push(await getObject('home', element.value.meta?.Azc, element.value.user_id));
 
             if (addressbookList.length === tempArray.length) {
               tempArray.forEach(async (address) => {
@@ -210,86 +193,58 @@
       </button>
 
       <button on:click="{toggleAwards}">
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-achievement.svg"
-          alt="Toggle Awards"
-        />
+        <img class="icon" src="assets/SHB/svg/AW-icon-achievement.svg" alt="Toggle Awards" />
       </button>
 
       <button on:click="{toggleMailbox}">
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-post.svg"
-          alt="Toggle mailbox"
-        />
+        <img class="icon" src="assets/SHB/svg/AW-icon-post.svg" alt="Toggle mailbox" />
       </button>
 
       <button on:click="{toggleFriends}">
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-friend.svg"
-          alt="Toggle Friends"
-        />
+        <img class="icon" src="assets/SHB/svg/AW-icon-friend.svg" alt="Toggle Friends" />
       </button>
 
       <button
         on:click="{() => {
           // toggleLiked();
-                    const value = '/drawing' 
+          const value = '/drawing';
           push(value);
           PlayerHistory.push(value);
         }}"
       >
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-drawing.svg"
-          alt="Start drawing!"
-        />
+        <img class="icon" src="assets/SHB/svg/AW-icon-drawing.svg" alt="Start drawing!" />
       </button>
 
       <button
         on:click="{() => {
-          const value = '/stopmotion' 
+          const value = '/stopmotion';
           push(value);
           PlayerHistory.push(value);
         }}"
       >
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-animation.svg"
-          alt="Start stop motion!"
-        />
+        <img class="icon" src="assets/SHB/svg/AW-icon-animation.svg" alt="Start stop motion!" />
       </button>
 
       <button
-      on:click="{() => {
-        const url = 'https://minghai.github.io/MarioSequencer/';
-        const s = window.open(url, '_parent');
+        on:click="{() => {
+          const url = 'https://minghai.github.io/MarioSequencer/';
+          const s = window.open(url, '_parent');
 
-        if (s && s.focus) {
-          s.focus();
-        } else if (!s) {
-          window.location.href = url;
-        }
+          if (s && s.focus) {
+            s.focus();
+          } else if (!s) {
+            window.location.href = url;
+          }
 
-        // push('/mariosound');
-        // setTimeout(() => { window.location.reload(); }, 300);
-      }}"
-    >
-      <img
-        class="icon"
-        src="assets/SHB/svg/AW-icon-sound.svg"
-        alt="Start mariosound!"
-      />
-    </button>
+          // push('/mariosound');
+          // setTimeout(() => { window.location.reload(); }, 300);
+        }}"
+      >
+        <img class="icon" src="assets/SHB/svg/AW-icon-sound.svg" alt="Start mariosound!" />
+      </button>
 
       <button on:click="{toggleLiked}">
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-heart-full-red.svg"
-          alt="Toggle liked"
-        />
+        <img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" alt="Toggle liked" />
       </button>
 
       <!-- <button
@@ -309,11 +264,7 @@
           logout();
         }}"
       >
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-exit.svg"
-          alt="Log out!"
-        />
+        <img class="icon" src="assets/SHB/svg/AW-icon-exit.svg" alt="Log out!" />
       </button>
     </div>
     <div class="right">

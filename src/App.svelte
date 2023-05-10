@@ -3,15 +3,8 @@
   import { onMount, tick } from 'svelte';
   import { wrap } from 'svelte-spa-router/wrap';
   import Phaser from 'phaser';
-  import {
-    CurrentApp, Session, Profile, Error,
-  } from './session';
-  import {
-    sessionCheck,
-    checkLoginExpired,
-    logout,
-    restoreSession,
-  } from './api';
+  import { CurrentApp, Session, Profile, Error } from './session';
+  import { sessionCheck, checkLoginExpired, logout, restoreSession } from './helpers/api';
   import { dlog } from './routes/game/helpers/DebugLog';
 
   /** Admin pages */
@@ -46,8 +39,7 @@
   let mounted = false;
   let title;
 
-    console.log('APP_VERSION_INFO: ');
-    console.log(APP_VERSION_INFO);
+  console.log('APP_VERSION_INFO: ', APP_VERSION_INFO);
 
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -72,8 +64,7 @@
 
   $: isLoggedIn = $Session !== null && $Profile && $Profile?.username;
   $: isAdmin = $Profile?.meta?.Role === 'admin';
-  $: isModerator =
-    $Profile?.meta?.Role === 'moderator' || $Profile?.meta?.Role === 'admin';
+  $: isModerator = $Profile?.meta?.Role === 'moderator' || $Profile?.meta?.Role === 'admin';
 
   $: {
     if (!isLoggedIn) push('/login');
@@ -142,42 +133,6 @@
       component: DebugPage,
       conditions: [() => isAdmin],
     }),
-
-    // '/'
-
-    // "/drawing/:user?/:name?/:version?": wrap({
-    //     component: drawing,
-    //     conditions: [
-    //         () => {
-    //             return isLoggedIn();
-    //         },
-    //     ],
-    // }),
-    // "/stopmotion/:user?/:name?/:version?": wrap({
-    //     component: drawing,
-    //     conditions: [
-    //         () => {
-    //             return isLoggedIn();
-    //         },
-    //     ],
-    // }),
-    // '/mandala/:user?/:name?/:version?': wrap({
-    //   component: mandala,
-    //   conditions: [() => isLoggedIn()],
-    // }),
-
-    // '/audio/:user?/:name?/:version?': wrap({
-    //   component: player,
-    //   conditions: [() => isLoggedIn()],
-    // }),
-    // '/video/:user?/:name?/:version?': wrap({
-    //   component: player,
-    //   conditions: [() => isLoggedIn()],
-    // }),
-    // '/picture/:user?/:name?/:version?': wrap({
-    //   component: player,
-    //   conditions: [() => isLoggedIn()],
-    // }),
     '/upload/:user?/:name?': wrap({
       component: UploadPage,
       conditions: [() => isModerator],
@@ -190,10 +145,6 @@
       component: ModeratePage,
       conditions: [() => isModerator],
     }),
-    // '/:app?': wrap({
-    //   component: AppLoader,
-    //   conditions: [(detail) => isLoggedIn && detail.location !== DEFAULT_APP],
-    // }),
   };
 </script>
 
@@ -217,8 +168,6 @@
 <Menu />
 
 <Router routes="{routes}" />
-<!-- on:routeLoading="{routeLoading}"
-  on:routeLoaded="{routeLoaded}" -->
 
 <!-- Notifcations go on to of everything -->
 <Notifications />
@@ -227,5 +176,4 @@
   main {
     position: relative;
   }
-
 </style>

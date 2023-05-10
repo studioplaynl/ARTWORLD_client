@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import {
   convertImage, getAllHouses, listAllObjects,
-} from '../../../api';
+} from '../../../helpers/api';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkList from './ArtworkList';
@@ -74,11 +74,11 @@ class ServerCall {
     } else {
       await convertImage(url, '128', '128', 'png')
         .then((rec) => {
-        // dlog("rec", rec)
-        // load all the images to phaser
+          // dlog("rec", rec)
+          // load all the images to phaser
           scene.load.image(homeImageKey, rec)
             .on(`filecomplete-image-${homeImageKey}`, () => {
-            // delete from ManageSession.resolveErrorObjectArray
+              // delete from ManageSession.resolveErrorObjectArray
               ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
                 (obj) => obj.imageKey !== homeImageKey,
               );
@@ -252,7 +252,7 @@ class ServerCall {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
       await listAllObjects('stopmotion', null).then((rec) => {
-      // eslint-disable-next-line no-param-reassign
+        // eslint-disable-next-line no-param-reassign
         dlog('serverItemsArray, rec : ', rec, serverItemsArray);
 
         // serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
@@ -364,7 +364,7 @@ class ServerCall {
       }); // end of bloem
     } else {
       await listAllObjects(type, location).then((rec) => {
-      // eslint-disable-next-line no-param-reassign
+        // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
         dlog('serverItemsArray: ', type, location, serverItemsArray);
         ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);

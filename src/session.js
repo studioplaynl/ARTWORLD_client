@@ -33,7 +33,10 @@ Session.subscribe((value) => {
   }
 });
 
-/** User Profile contains the user name, posX, posY et cetera */
+/** User Profile contains the user name, posX, posY et cetera
+ *
+ * @alias $Profile
+*/
 export const Profile = writable(
   storedProfile ? JSON.parse(storedProfile) : null,
 );

@@ -23,11 +23,7 @@
     }, 1000 / STOPMOTION_FPS);
 
     // Don't animate if this (assumed) stop-motion is square
-    if (
-      image &&
-      image.clientWidth > 0 &&
-      image.clientWidth === image.clientHeight
-    ) {
+    if (image && image.clientWidth > 0 && image.clientWidth === image.clientHeight) {
       clearInterval(interval);
     }
   });
@@ -43,7 +39,7 @@
   }
 </script>
 
-<div class="stopmotion" on:click="{submitClicked}" class:clickable>
+<div class="stopmotion" on:click="{submitClicked}" class:clickable="{clickable}">
   <img bind:this="{image}" src="{artwork}" alt="Stop motion" />
 </div>
 

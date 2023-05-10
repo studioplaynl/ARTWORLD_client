@@ -92,9 +92,9 @@ class GraffitiWall {
           // create a line of previousPointer[0] and previousPointer[1]
           const line1 = new Phaser.Curves.Line(
             [previousPointer[0].x,
-              previousPointer[0].y,
-              previousPointer[1].x,
-              previousPointer[1].y],
+            previousPointer[0].y,
+            previousPointer[1].x,
+            previousPointer[1].y],
           );
           previousPointer.splice(0, 1);
 

@@ -4,7 +4,12 @@
 
 {#if saving}
   <div class="savecontainer">
-    <p class="saving">Saving<span>.</span><span>.</span><span>.</span></p>
+    <p class="saving">
+      Saving
+      <span>.</span>
+      <span>.</span>
+      <span>.</span>
+    </p>
   </div>
 {/if}
 

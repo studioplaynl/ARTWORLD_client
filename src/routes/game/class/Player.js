@@ -3,7 +3,7 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import { getAccount } from '../../../api';
+import { getAccount } from '../../../helpers/api';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { dlog } from '../helpers/DebugLog';
 import { PlayerPos } from '../playerState';

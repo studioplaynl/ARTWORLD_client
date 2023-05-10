@@ -4,10 +4,10 @@
   import { _ } from 'svelte-i18n';
   import { push } from 'svelte-spa-router';
   import { onMount, onDestroy } from 'svelte';
-     import { Session } from '../../session';
+  import { Session } from '../../session';
   // import { client } from '../../nakama.svelte';
   // import { dlog } from '../game/helpers/DebugLog';
-  import { createAccountAdmin } from '../../api';
+  import { createAccountAdmin } from '../../helpers/api';
   import { SCENE_INFO, STOCK_HOUSES, STOCK_AVATARS } from '../../constants';
 
   let QRUrl;
@@ -66,15 +66,15 @@
     createAccountAdmin(data);
   }
 
-    function copyToClipboard() {
-      console.log(batchUserPasteBoard);
-      if (navigator.clipboard) {
+  function copyToClipboard() {
+    console.log(batchUserPasteBoard);
+    if (navigator.clipboard) {
       // clipboard API is available
-        navigator.clipboard.writeText(batchUserPasteBoard);
-      } else {
-        // clipboard API is not available
-      }
+      navigator.clipboard.writeText(batchUserPasteBoard);
+    } else {
+      // clipboard API is not available
     }
+  }
 
   function batchUserGenerator(_incrementUser) {
     batchCreation = true;
@@ -89,7 +89,7 @@
       return;
     }
 
-    if (incrementUser > (toUser - fromUser)) {
+    if (incrementUser > toUser - fromUser) {
       console.log('done');
       incrementUser = 0;
       console.log('batchUserPasteBoard');
@@ -143,8 +143,6 @@
     }, 1000);
   }
 
-
-
   function genKidsPassword() {
     // removed confusing charecters like 0 O o l l q S k and made the chance for numbers bigger
     const chars = '123456789abcdefghijmnprstuvwxyz123456789ABCDEFGHJKLMNPQRTUVWXYZ123456789';
@@ -169,74 +167,75 @@
   //   }, 1000);
   // }
 
-function updateQrCanvas() {
-  QRUrl = `https://artworld.vrolijkheid.nl/#/login/${email}/${password}`;
-  // const qrCodeImage = document.getElementById('qrCodeImage').innerHTML;
+  function updateQrCanvas() {
+    QRUrl = `https://artworld.vrolijkheid.nl/#/login/${email}/${password}`;
+    // const qrCodeImage = document.getElementById('qrCodeImage').innerHTML;
 
-  QRCode.toDataURL(QRUrl)
-    .then((qrCodeImage) => {
-      // console.log(qrCodeImage);
+    QRCode.toDataURL(QRUrl)
+      .then((qrCodeImage) => {
+        // console.log(qrCodeImage);
 
-      const startTextX = 176;
-      const canvas = document.getElementById('qrCanvas');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const startTextX = 176;
+        const canvas = document.getElementById('qrCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const img = new Image();
-      img.onload = function () {
-        ctx.drawImage(img, -5, -5); // Or at whatever offset you like
-      };
-      img.src = qrCodeImage;
+        const img = new Image();
+        img.onload = function () {
+          ctx.drawImage(img, -5, -5); // Or at whatever offset you like
+        };
+        img.src = qrCodeImage;
 
-      ctx.font = 'oblique 14px arial';
-      ctx.fillStyle = 'black';
-      ctx.textAlign = 'left';
-      ctx.fillText('Email:', startTextX, 25);
-      ctx.font = 'bold 14px arial';
-      ctx.fillText(email, startTextX, 45);
-      ctx.font = 'oblique 14px arial';
-      ctx.fillText('Wachtwoord:', startTextX, 85);
-      ctx.font = 'bold 18px arial';
-      ctx.fillText(password, startTextX, 110);
-      ctx.font = 'oblique 14px arial';
-      ctx.fillText(azc, startTextX, 156);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
-}
+        ctx.font = 'oblique 14px arial';
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'left';
+        ctx.fillText('Email:', startTextX, 25);
+        ctx.font = 'bold 14px arial';
+        ctx.fillText(email, startTextX, 45);
+        ctx.font = 'oblique 14px arial';
+        ctx.fillText('Wachtwoord:', startTextX, 85);
+        ctx.font = 'bold 18px arial';
+        ctx.fillText(password, startTextX, 110);
+        ctx.font = 'oblique 14px arial';
+        ctx.fillText(azc, startTextX, 156);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
 
-function downloadLoginImage() {
-  const link = document.createElement('a');
-  link.download = `${email}_${azc}.png`;
-  link.href = document.getElementById('qrCanvas').toDataURL();
-  link.click();
-}
+  function downloadLoginImage() {
+    const link = document.createElement('a');
+    link.download = `${email}_${azc}.png`;
+    link.href = document.getElementById('qrCanvas').toDataURL();
+    link.click();
+  }
 
-function handleKeyPress() {
-  // prevent 'Generate Multiple Users' button from being clicked when pressing enter
-  // and inadvertently creating multiple users when pressing enter in the username field
-}
+  function handleKeyPress() {
+    // prevent 'Generate Multiple Users' button from being clicked when pressing enter
+    // and inadvertently creating multiple users when pressing enter in the username field
+  }
 
-// add the event listener to the window object
+  // add the event listener to the window object
   window.addEventListener('keydown', handleKeyPress);
 
   // remove the event listener when the component is destroyed
   onDestroy(() => {
     window.removeEventListener('keydown', handleKeyPress);
   });
-
 </script>
 
 <div class="box">
   <div class="registerForm">
-    <form on:submit|preventDefault="{() => {
-      if (incrementUser < 1) {
-        console.log('initialization, clear clipboard');
-        batchUserPasteBoard = '';
-      }
-      onSubmit();
-    }}">
+    <form
+      on:submit|preventDefault="{() => {
+        if (incrementUser < 1) {
+          console.log('initialization, clear clipboard');
+          batchUserPasteBoard = '';
+        }
+        onSubmit();
+      }}"
+    >
       <div class="container">
         <h1>{$_('register.title')}</h1>
 
@@ -252,14 +251,7 @@ function handleKeyPress() {
         />
 
         <label for="email"><b>{$_('register.email')}</b></label>
-        <input
-          type="text"
-          placeholder="Enter Email"
-          name="email"
-          id="email"
-          bind:value="{email}"
-          required
-        />
+        <input type="text" placeholder="Enter Email" name="email" id="email" bind:value="{email}" required />
 
         <label for="psw"><b>{$_('register.password')}</b></label>
         <input
@@ -299,47 +291,46 @@ function handleKeyPress() {
         <button type="submit" class="registerbtn">Register</button>
       </div>
     </form>
-     <button on:click="{genKidsPassword}" class="registerbtn">new Password</button>
+    <button on:click="{genKidsPassword}" class="registerbtn">new Password</button>
 
-    <div class="imageCanvas" >
-    <canvas id="qrCanvas" width="340"
-            height="174"
-            style="border:3px solid">
-    </canvas>
-      </div>
-      <button on:click="{downloadLoginImage}" class="registerbtn">Download QR Code</button>
+    <div class="imageCanvas">
+      <canvas id="qrCanvas" width="340" height="174" style="border:3px solid"></canvas>
+    </div>
+    <button on:click="{downloadLoginImage}" class="registerbtn">Download QR Code</button>
   </div>
 
   <!-- two input fields for integers, first labeled "from" and second labeled "to" -->
   <hr />
-  <h1>Batch create multiple users </h1>
-  <label for="fromUser"><b>from: user number </b></label>
+  <h1>Batch create multiple users</h1>
+  <label for="fromUser"><b>from: user number</b></label>
   <input type="number" bind:value="{fromUser}" />
 
-  <label for="toUser"><b>to: user number </b></label>
+  <label for="toUser"><b>to: user number</b></label>
   <input type="number" bind:value="{toUser}" />
 
-  <p>{(toUser - fromUser) + 1} number of users</p>
+  <p>{toUser - fromUser + 1} number of users</p>
 
   <!-- a button that, when clicked, sets registerNextUser to 0, then calls the batchUserGenerator fuction -->
-  <button on:click="{() => {
-    registerNextUser = 0;
-    batchUserGenerator(registerNextUser);
-  }}">Generate Multiple Users</button>
+  <button
+    on:click="{() => {
+      registerNextUser = 0;
+      batchUserGenerator(registerNextUser);
+    }}"
+  >
+    Generate Multiple Users
+  </button>
 
-<pre>{batchUserPasteBoard}</pre>
-<button on:click="{copyToClipboard}">
-      Copy user data to clipboard
-    </button>
+  <pre>{batchUserPasteBoard}</pre>
+  <button on:click="{copyToClipboard}">Copy user data to clipboard</button>
 
-<div
-      class="app-close"
-      on:click="{() => {
-        push('/admin');
-      }}"
-    >
-      <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
-    </div>
+  <div
+    class="app-close"
+    on:click="{() => {
+      push('/admin');
+    }}"
+  >
+    <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
+  </div>
 </div>
 
 <style>
@@ -357,8 +348,7 @@ function handleKeyPress() {
   }
 
   /* Full-width input fields */
-  input[type='text']
-   {
+  input[type='text'] {
     width: 100%;
     padding: 15px;
     margin: 5px 0 22px 0;
@@ -366,8 +356,7 @@ function handleKeyPress() {
     background: #f1f1f1;
   }
 
-  input[type='text']:focus
-  {
+  input[type='text']:focus {
     background-color: #ddd;
     outline: none;
   }

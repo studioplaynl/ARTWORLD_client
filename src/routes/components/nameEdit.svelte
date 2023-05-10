@@ -1,9 +1,6 @@
 <script>
-  import { updateTitle } from '../../api';
-  import {
-    hasSpecialCharacter,
-    removeSpecialCharacters,
-  } from '../../validations';
+  import { updateTitle } from '../../helpers/api';
+  import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
   import { Profile } from '../../session';
   import { clickOutside } from '../game/helpers/ClickOutside';
 
@@ -52,11 +49,7 @@
         {row.value.displayname}
       </button>
     {:else}
-      <form
-        on:submit|preventDefault="{update}"
-        use:clickOutside
-        on:click_outside="{clickOutsideForm}"
-      >
+      <form on:submit|preventDefault="{update}" use:clickOutside on:click_outside="{clickOutsideForm}">
         <input bind:value="{title}" />
         <button type="submit" class="clear-button-styles" on:click="{update}">
           <svg class="icon" viewBox="0 0 24 24">

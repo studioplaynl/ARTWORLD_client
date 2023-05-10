@@ -178,8 +178,8 @@ class Move {
         ManageSession.isClicking = true;
       }
       if (!scene.input.activePointer.isDown && ManageSession.isClicking) {
-      // play "move" animation
-      // play the animation as soon as possible so it is more visible
+        // play "move" animation
+        // play the animation as soon as possible so it is more visible
         this.movingAnimation(scene, 'moving');
 
         const playerX = scene.player.x;

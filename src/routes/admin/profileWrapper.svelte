@@ -1,12 +1,12 @@
 <script>
   import { pop } from 'svelte-spa-router';
   import Profile from '../profile.svelte';
-  export let params = {};
 
+  export let params = {};
 </script>
 
 <div class="box">
-  <Profile bind:params='{params}'/>
+  <Profile bind:params="{params}" />
   <div
     class="app-close"
     on:click="{() => {

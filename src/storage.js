@@ -13,7 +13,7 @@ import {
   deleteObjectAdmin,
   deleteFile,
   getObject,
-} from './api';
+} from './helpers/api';
 import {
   PERMISSION_READ_PUBLIC,
   // PERMISSION_READ_PRIVATE,

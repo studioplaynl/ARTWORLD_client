@@ -8,7 +8,7 @@ import { PlayerLocation } from '../playerState';
 
 import { DEFAULT_HOME } from '../../../constants';
 import { Error } from '../../../session';
-import { setLoader } from '../../../api';
+import { setLoader } from '../../../helpers/api';
 // import { ListFormat } from 'typescript';
 // import { push, querystring} from "svelte-spa-router";
 

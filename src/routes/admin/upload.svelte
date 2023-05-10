@@ -1,7 +1,7 @@
 <script>
   /** eslint-disable prefer-destructuring */
   import { pop } from 'svelte-spa-router';
-  import { getUploadURL, updateObjectAdmin } from '../../api';
+  import { getUploadURL, updateObjectAdmin } from '../../helpers/api';
   import SaveAnimation from '../components/saveAnimation.svelte';
   import UserSelect from '../components/userSelect.svelte';
   import { dlog } from '../game/helpers/DebugLog';
@@ -50,7 +50,10 @@
         },
         body: filesVar[0],
       });
-      value = JSON.stringify({ url: url[1], displayname: name });
+      value = JSON.stringify({
+        url: url[1],
+        displayname: name,
+      });
       pub = true;
       dlog(id);
       dlog(type);
@@ -71,7 +74,7 @@
 <div class="box">
   <div class="container">
     <label for="userId">Username:</label>
-    <UserSelect bind:user />
+    <UserSelect bind:user="{user}" />
     <label for="fileType">Filetype:</label>
     <select id="fileType" bind:value="{type}">
       <option value="stopmotion">stopmotion</option>

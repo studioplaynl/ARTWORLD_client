@@ -5,7 +5,7 @@ import { client, SSL } from '../../nakama.svelte';
 import CoordinatesTranslator from './class/CoordinatesTranslator';
 import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
-import { logout } from '../../api';
+import { logout } from '../../helpers/api';
 import {
   // PlayerLocation,
   playerStreamID,
@@ -243,7 +243,7 @@ class ManageSession {
         }
         // Finally set the player back in the array
         this.allConnectedUsers[index] = updateOnlinePlayer;
-      // }
+        // }
       });
     };
 
@@ -313,7 +313,7 @@ class ManageSession {
 
     const streamUsersPromise = new Promise((resolve) => {
       this.socket.rpc(rpcCommand, location).then((rec) => {
-      //! the server reports all users in location except self_user
+        //! the server reports all users in location except self_user
         dlog('rpcCommand: ', rpcCommand, ' location: ', location);
         // get all online players = serverArray
         // create array for newUsers and create array for deleteUsers

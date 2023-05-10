@@ -2,7 +2,7 @@
 import ManageSession from '../ManageSession';
 import {
   getAccount, updateObject, listObjects, updateObjectAdmin,
-} from '../../../api';
+} from '../../../helpers/api';
 import CoordinatesTranslator from './CoordinatesTranslator';
 
 import { dlog } from '../helpers/DebugLog';
@@ -45,7 +45,7 @@ class DebugFuntions {
     scene.input.keyboard.on('keydown', (event) => {
       // events for gameEdit mode, like scaling a selected object
       if (ManageSession.gameEditMode) {
-      // dlog(event)
+        // dlog(event)
         this.debugDownKeys(scene, event.code);
       }
     }, this);

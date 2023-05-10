@@ -3,21 +3,10 @@
   import { push } from 'svelte-spa-router';
   import { Profile } from '../../session';
   import { myHome } from '../../storage';
-  import {
-    STOPMOTION_MAX_FRAMES,
-    DEFAULT_PREVIEW_HEIGHT,
-    STOCK_HOUSES,
-    STOCK_AVATARS,
-  } from '../../constants';
+  import { STOPMOTION_MAX_FRAMES, DEFAULT_PREVIEW_HEIGHT, STOCK_HOUSES, STOCK_AVATARS } from '../../constants';
   import Stopmotion from './stopmotion.svelte';
-  import {
-    listObjects,
-    deleteObject,
-    setAvatar,
-    convertImage,
-  } from '../../api';
+  import { listObjects, deleteObject, setAvatar, convertImage } from '../../helpers/api';
   import { PlayerHistory } from '../game/playerState';
-
 
   let objects = [];
   export let dataType = '';
@@ -107,8 +96,7 @@
   {#each objects as object, i}
     <div
       class="item"
-      class:selected="{(object.value.url === $Profile.avatar_url &&
-        dataType === 'avatar') ||
+      class:selected="{(object.value.url === $Profile.avatar_url && dataType === 'avatar') ||
         (object.value.url === $myHome.value.url && dataType === 'house')}"
     >
       <p
@@ -139,41 +127,43 @@
           }}"
         />
       {/if}
-        <img
-          class="icon"
-          alt="Edit House"
-          src="/assets/SHB/svg/AW-icon-pen.svg"
-          on:click="{() => {
-            console.log('home', $myHome);
-            // push('/house');
-            if (dataType === 'house') {
-              const value = `/house?userId=${$Profile.id}&key=${object.key}`;
-              push(value);
-              PlayerHistory.push(value);
-            }
-            if (dataType === 'avatar') {
-              const value = `/avatar?userId=${$Profile.id}&key=${object.key}`;
-              push(value);
-              PlayerHistory.push(value);
-            }
-          }}"
-        />
+      <img
+        class="icon"
+        alt="Edit House"
+        src="/assets/SHB/svg/AW-icon-pen.svg"
+        on:click="{() => {
+          console.log('home', $myHome);
+          // push('/house');
+          if (dataType === 'house') {
+            const value = `/house?userId=${$Profile.id}&key=${object.key}`;
+            push(value);
+            PlayerHistory.push(value);
+          }
+          if (dataType === 'avatar') {
+            const value = `/avatar?userId=${$Profile.id}&key=${object.key}`;
+            push(value);
+            PlayerHistory.push(value);
+          }
+        }}"
+      />
     </div>
   {/each}
 
   {#each stockItems as stockItem}
     <div
       class="item"
-      class:selected="{(`/avatar/stock/${stockItem}` === $Profile.avatar_url &&
-        dataType === 'avatar') ||
-        (`/home/stock/${stockItem}` === $myHome.value.url &&
-          dataType === 'house')}"
+      class:selected="{(`/avatar/stock/${stockItem}` === $Profile.avatar_url && dataType === 'avatar') ||
+        (`/home/stock/${stockItem}` === $myHome.value.url && dataType === 'house')}"
     >
       <p
         class="image"
         on:click="{() => {
-          if (dataType === 'avatar') { save({ value: { url: `/avatar/stock/${stockItem}` } }); }
-          if (dataType === 'house') { save({ value: { url: `/home/stock/${stockItem}` } }); }
+          if (dataType === 'avatar') {
+            save({ value: { url: `/avatar/stock/${stockItem}` } });
+          }
+          if (dataType === 'house') {
+            save({ value: { url: `/home/stock/${stockItem}` } });
+          }
         }}"
       >
         {#if dataType === 'house'}

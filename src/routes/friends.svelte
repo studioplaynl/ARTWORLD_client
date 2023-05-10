@@ -7,8 +7,11 @@
   import FriendAction from './components/friendaction.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import {
-    ListFriends, addFriend, setLoader, convertImage,
-  } from '../api';
+    ListFriends,
+    addFriend,
+    setLoader,
+    convertImage,
+  } from '../helpers/api';
   import { dlog } from './game/helpers/DebugLog';
   import {
     FRIENDSTATE_FRIENDS,
@@ -82,7 +85,10 @@
     {
       key: 'avatar',
       title: '',
-      renderComponent: { component: ArtworkLoader, props: {} },
+      renderComponent: {
+        component: ArtworkLoader,
+        props: {},
+      },
     },
     {
       key: 'Username',
@@ -93,7 +99,12 @@
     {
       key: 'action',
       title: '',
-      renderComponent: { component: FriendAction, props: { load } },
+      renderComponent: {
+        component: FriendAction,
+        props: {
+          load,
+        },
+      },
     },
   ];
 </script>
@@ -102,7 +113,8 @@
   src="/assets/SHB/svg/AW-icon-add-friend.svg"
   class="headerIcon"
   alt="Add friend"
-/><br />
+/>
+<br />
 <!-- <input bind:value={ID} placeholder="user ID"> -->
 <div class="search">
   <input bind:value="{Username}" />
@@ -111,8 +123,10 @@
       addFriend(ID, Username).then(() => {
         load();
       });
-    }}"><MdSearch /></button
+    }}"
   >
+    <MdSearch />
+  </button>
 </div>
 
 {#if friendRequests.length > 0}

@@ -18,7 +18,7 @@ export default class Button extends Phaser.GameObjects.Container {
 
     const buttonText = scene.add.text(x, y, text, {
       fontSize:
-                '18px',
+        '18px',
       color: fontColor,
     });
 

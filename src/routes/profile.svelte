@@ -3,7 +3,7 @@
   import { push } from 'svelte-spa-router';
 
   import { ArtworksStore, AvatarsStore } from '../storage';
-  import { getAccount, convertImage, getObject } from '../api';
+  import { getAccount, convertImage, getObject } from '../helpers/api';
 
   import { Session, Profile } from '../session';
   import { dlog } from './game/helpers/DebugLog';
@@ -14,26 +14,17 @@
   import Avatar from './components/avatar.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import House from './components/house.svelte';
-  import {
-    OBJECT_STATE_IN_TRASH,
-    OBJECT_STATE_REGULAR,
-    OBJECT_STATE_UNDEFINED,
-    APP_VERSION_INFO,
-  } from '../constants';
+  import { OBJECT_STATE_IN_TRASH, OBJECT_STATE_REGULAR, OBJECT_STATE_UNDEFINED, APP_VERSION_INFO } from '../constants';
 
   export let params = {};
   export let userID = null;
   let avatar;
   let house;
 
-  const drawingIcon =
-    '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
-  const stopMotionIcon =
-    '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />';
-  const AudioIcon =
-    '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
-  const videoIcon =
-    '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
+  const drawingIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
+  const stopMotionIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />';
+  const AudioIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
+  const videoIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
 
   let loader = true;
   let useraccount;
@@ -66,7 +57,12 @@
       key: 'voorbeeld',
       title: '',
 
-      renderComponent: { component: ArtworkLoader, props: { clickable: true } },
+      renderComponent: {
+        component: ArtworkLoader,
+        props: {
+          clickable: true,
+        },
+      },
     },
     // {
     //   key: 'title',
@@ -76,7 +72,12 @@
     {
       key: 'post',
       title: '',
-      renderComponent: { component: postSend, props: { isCurrentUser } },
+      renderComponent: {
+        component: postSend,
+        props: {
+          isCurrentUser,
+        },
+      },
     },
     // {
     //   key: 'Datum',
@@ -114,12 +115,9 @@
   $: filteredArt = $ArtworksStore.filter(
     (el) =>
       // eslint-disable-next-line implicit-arrow-linebreak
-      el.value.status === OBJECT_STATE_REGULAR ||
-      el.value.status === OBJECT_STATE_UNDEFINED,
+      el.value.status === OBJECT_STATE_REGULAR || el.value.status === OBJECT_STATE_UNDEFINED,
   );
-  $: deletedArt = $ArtworksStore.filter(
-    (el) => el.value.status === OBJECT_STATE_IN_TRASH,
-  );
+  $: deletedArt = $ArtworksStore.filter((el) => el.value.status === OBJECT_STATE_IN_TRASH);
 
   function isCurrentUser() {
     return CurrentUser;
@@ -153,11 +151,7 @@
       avatar = useraccount.url; // convertImage(useraccount.avatar_url, 150);
 
       try {
-        house = await getObject(
-          'home',
-          $Profile.meta.Azc || 'GreenSquare',
-          $Profile.user_id,
-        );
+        house = await getObject('home', $Profile.meta.Azc || 'GreenSquare', $Profile.user_id);
       } catch (err) {
         dlog(err); // TypeError: failed to fetch
       }
@@ -183,9 +177,7 @@
 
   function goTo(evt) {
     if (evt.detail.key === 'voorbeeld' && evt.detail.row.value) {
-      push(
-        `/${evt.detail.row.collection}?userId=${evt.detail.row.user_id}&key=${evt.detail.row.key}`,
-      );
+      push(`/${evt.detail.row.collection}?userId=${evt.detail.row.user_id}&key=${evt.detail.row.key}`);
     }
   }
 </script>
@@ -206,29 +198,16 @@
           <House />
         {:else}
           <span class="splitter"></span>
-          <img src="{avatar}" alt="avatar"/>
+          <img src="{avatar}" alt="avatar" />
           <span class="splitter"></span>
-          <img src="{house}" alt="avatar"/>
+          <img src="{house}" alt="avatar" />
         {/if}
       </div>
       <div class="bottom">
-        <SvelteTable
-          columns="{columns}"
-          rows="{filteredArt}"
-          classNameTable="profileTable"
-          on:clickCell="{goTo}"
-        />
+        <SvelteTable columns="{columns}" rows="{filteredArt}" classNameTable="profileTable" on:clickCell="{goTo}" />
         {#if CurrentUser && deletedArt.length}
-          <img
-            class="icon"
-            src="assets/SHB/svg/AW-icon-trashcan.svg"
-            alt="Trash can"
-          />
-          <SvelteTable
-            columns="{columns}"
-            rows="{deletedArt}"
-            classNameTable="profileTable deletedTable"
-          />
+          <img class="icon" src="assets/SHB/svg/AW-icon-trashcan.svg" alt="Trash can" />
+          <SvelteTable columns="{columns}" rows="{deletedArt}" classNameTable="profileTable deletedTable" />
         {/if}
         <p>{APP_VERSION_INFO}</p>
       </div>
