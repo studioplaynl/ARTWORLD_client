@@ -3,7 +3,7 @@
 
   import SceneSwitcher from './game/class/SceneSwitcher';
   import { Profile } from '../session';
-  import { listAllNotifications, convertImage } from '../helpers/api';
+  import { listAllNotifications, convertImage } from '../helpers/nakama-helpers';
   import { NOTIFICATION_ARTWORK_LIKE_RECEIVED, NOTIFICATION_ARTWORK_RECEIVED } from '../constants';
 
   let messages = {

@@ -2,7 +2,7 @@
   import { onDestroy } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { fly } from 'svelte/transition';
-  import { convertImage, getObject, addFriend } from '../../helpers/api';
+  import { convertImage, getObject, addFriend } from '../../helpers/nakama-helpers';
   import LikedPage from '../liked.svelte';
   import { SelectedOnlinePlayer } from '../../session';
   import { Addressbook } from '../../storage';

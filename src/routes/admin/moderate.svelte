@@ -4,7 +4,13 @@
   import { push } from 'svelte-spa-router';
   import Select from 'svelte-select';
   import { PERMISSION_READ_PUBLIC } from '../../constants';
-  import { getAccount, convertImage, listAllObjects, deleteObjectAdmin, updateObjectAdmin } from '../../helpers/api';
+  import {
+    getAccount,
+    convertImage,
+    listAllObjects,
+    deleteObjectAdmin,
+    updateObjectAdmin,
+  } from '../../helpers/nakama-helpers';
   // import { APPS } from '../apps/apps'
   import { Session, Profile } from '../../session';
   import StatusComp from '../components/statusbox.svelte';

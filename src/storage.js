@@ -13,7 +13,7 @@ import {
   deleteObjectAdmin,
   deleteFile,
   getObject,
-} from './helpers/api';
+} from './helpers/nakama-helpers';
 import {
   PERMISSION_READ_PUBLIC,
   // PERMISSION_READ_PRIVATE,

@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { client, SSL } from '../../nakama.svelte';
   import { Session, Profile, Error } from '../../session';
-  import { updateObjectAdmin, listAllObjects, deleteObjectAdmin, convertImage } from '../../helpers/api';
+  import { updateObjectAdmin, listAllObjects, deleteObjectAdmin, convertImage } from '../../helpers/nakama-helpers';
   // import { writable } from "svelte/store";
 
   const verboseLogging = false;

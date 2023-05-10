@@ -11,7 +11,7 @@
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
-  import { setLoader } from '../../helpers/api';
+  import { setLoader } from '../../helpers/nakama-helpers';
   import { Profile } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
   // import NameGenerator from '../components/nameGenerator.svelte';

@@ -2,7 +2,7 @@
 import ManageSession from '../ManageSession';
 import {
   getAccount, updateObject, listObjects, updateObjectAdmin,
-} from '../../../helpers/api';
+} from '../../../helpers/nakama-helpers';
 import CoordinatesTranslator from './CoordinatesTranslator';
 
 import { dlog } from '../helpers/DebugLog';

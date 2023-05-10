@@ -5,7 +5,7 @@
   import { myHome } from '../../storage';
   import { STOPMOTION_MAX_FRAMES, DEFAULT_PREVIEW_HEIGHT, STOCK_HOUSES, STOCK_AVATARS } from '../../constants';
   import Stopmotion from './stopmotion.svelte';
-  import { listObjects, deleteObject, setAvatar, convertImage } from '../../helpers/api';
+  import { listObjects, deleteObject, setAvatar, convertImage } from '../../helpers/nakama-helpers';
   import { PlayerHistory } from '../game/playerState';
 
   let objects = [];

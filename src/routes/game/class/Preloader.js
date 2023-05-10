@@ -1,4 +1,4 @@
-import { setLoader } from '../../../helpers/api';
+import { setLoader } from '../../../helpers/nakama-helpers';
 
 class Preloader {
   Loading(_scene) {

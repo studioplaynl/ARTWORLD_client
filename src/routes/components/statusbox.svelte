@@ -3,7 +3,7 @@
   // import { onMount } from 'svelte';
   import { location } from 'svelte-spa-router';
 
-  import { updateObjectAdmin } from '../../helpers/api';
+  import { updateObjectAdmin } from '../../helpers/nakama-helpers';
   import {
     // PERMISSION_READ_PUBLIC,
     OBJECT_STATE_IN_TRASH,

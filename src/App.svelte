@@ -4,7 +4,7 @@
   import { wrap } from 'svelte-spa-router/wrap';
   import Phaser from 'phaser';
   import { CurrentApp, Session, Profile, Error } from './session';
-  import { sessionCheck, checkLoginExpired, logout, restoreSession } from './helpers/api';
+  import { sessionCheck, checkLoginExpired, logout, restoreSession } from './helpers/nakama-helpers';
   import { dlog } from './routes/game/helpers/DebugLog';
 
   /** Admin pages */

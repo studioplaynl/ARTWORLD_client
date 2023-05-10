@@ -4,7 +4,7 @@ import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import {
   convertImage, getAllHouses, listAllObjects,
-} from '../../../helpers/api';
+} from '../../../helpers/nakama-helpers';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkList from './ArtworkList';

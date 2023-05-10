@@ -1,7 +1,7 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
   import jsQR from 'jsqr';
-  import { login } from '../../helpers/api';
+  import { login } from '../../helpers/nakama-helpers';
   import { dlog } from '../game/helpers/DebugLog';
 
   export let email;

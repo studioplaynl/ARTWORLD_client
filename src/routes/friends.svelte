@@ -11,7 +11,8 @@
     addFriend,
     setLoader,
     convertImage,
-  } from '../helpers/api';
+  } from '../helpers/nakama-helpers';
+  import SceneSwitcher from './game/class/SceneSwitcher';
   import { dlog } from './game/helpers/DebugLog';
   import {
     FRIENDSTATE_FRIENDS,

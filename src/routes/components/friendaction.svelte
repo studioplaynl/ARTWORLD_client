@@ -1,5 +1,5 @@
 <script>
-  import { addFriend, removeFriend } from '../../helpers/api';
+  import { addFriend, removeFriend } from '../../helpers/nakama-helpers';
   import { FRIENDSTATE_FRIENDS, FRIENDSTATE_INVITATION_SENT, FRIENDSTATE_INVITATION_RECEIVED } from '../../constants';
 
   export let row;

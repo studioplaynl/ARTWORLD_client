@@ -22,7 +22,7 @@
     getDateAndTimeFormatted,
     updateObject,
     // updateTitle,
-  } from '../../helpers/api';
+  } from '../../helpers/nakama-helpers';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { PlayerHistory } from '../game/playerState';
   import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC } from '../../constants';

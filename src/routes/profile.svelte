@@ -3,7 +3,7 @@
   import { push } from 'svelte-spa-router';
 
   import { ArtworksStore, AvatarsStore } from '../storage';
-  import { getAccount, convertImage, getObject } from '../helpers/api';
+  import { getAccount, convertImage, getObject } from '../helpers/nakama-helpers';
 
   import { Session, Profile } from '../session';
   import { dlog } from './game/helpers/DebugLog';

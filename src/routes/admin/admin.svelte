@@ -3,7 +3,7 @@
 
   /** eslint-disable max-len */
   import SvelteTable from 'svelte-table';
-  import { ListAllUsers, listAllObjects, updateObjectAdmin } from '../../helpers/api';
+  import { ListAllUsers, listAllObjects, updateObjectAdmin } from '../../helpers/nakama-helpers';
   import { dlog } from '../game/helpers/DebugLog';
   import { SCENE_INFO } from '../../constants';
 

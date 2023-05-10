@@ -11,7 +11,7 @@
     deleteObjectAdmin,
     listObjects,
     resetPasswordAdmin,
-  } from '../../helpers/api';
+  } from '../../helpers/nakama-helpers';
   import { dlog } from '../game/helpers/DebugLog';
   import { SCENE_INFO } from '../../constants';
 

@@ -7,7 +7,7 @@
   import { Session } from '../../session';
   // import { client } from '../../nakama.svelte';
   // import { dlog } from '../game/helpers/DebugLog';
-  import { createAccountAdmin } from '../../helpers/api';
+  import { createAccountAdmin } from '../../helpers/nakama-helpers';
   import { SCENE_INFO, STOCK_HOUSES, STOCK_AVATARS } from '../../constants';
 
   let QRUrl;

@@ -1,7 +1,7 @@
 <script>
   import Select from 'svelte-select';
   import MdSend from 'svelte-icons/md/MdSend.svelte';
-  import { ListFriends, sendMailToUser } from '../../helpers/api';
+  import { ListFriends, sendMailToUser } from '../../helpers/nakama-helpers';
 
   export let row;
   // eslint-disable-next-line svelte/valid-compile

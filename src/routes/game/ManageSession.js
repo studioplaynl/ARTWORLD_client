@@ -5,7 +5,7 @@ import { client, SSL } from '../../nakama.svelte';
 import CoordinatesTranslator from './class/CoordinatesTranslator';
 import { Profile, Session, Notification } from '../../session';
 import { dlog } from './helpers/DebugLog';
-import { logout } from '../../helpers/api';
+import { logout } from '../../helpers/nakama-helpers';
 import {
   // PlayerLocation,
   playerStreamID,

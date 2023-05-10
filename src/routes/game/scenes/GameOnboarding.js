@@ -3,7 +3,7 @@
 import { get } from 'svelte/store';
 import { Profile } from '../../../session';
 import ManageSession from '../ManageSession';
-import { listObjects } from '../../../helpers/api';
+import { listObjects } from '../../../helpers/nakama-helpers';
 import { DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
 import {
   PlayerPos, PlayerLocation, PlayerHistory,

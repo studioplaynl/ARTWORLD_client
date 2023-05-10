@@ -1,7 +1,7 @@
 <script>
   import { fly } from 'svelte/transition';
   import { locale, locales, init, addMessages, _ } from 'svelte-i18n';
-  import { logout } from '../../helpers/api';
+  import { logout } from '../../helpers/nakama-helpers';
   import { Session, Profile } from '../../session';
 
   import en from '../../language/en/en.json';

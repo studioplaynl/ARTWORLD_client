@@ -1,5 +1,5 @@
 <script>
-  import { updateTitle } from '../../helpers/api';
+  import { updateTitle } from '../../helpers/nakama-helpers';
   import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
   import { Profile } from '../../session';
   import { clickOutside } from '../game/helpers/ClickOutside';
