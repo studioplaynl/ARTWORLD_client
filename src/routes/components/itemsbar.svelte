@@ -2,7 +2,7 @@
   import { location, push } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { convertImage, getAccount, getObject, logout } from '../../helpers/api';
+  import { convertImage, getAccount, getObject, logout } from '../../helpers/nakama-helpers';
   import ProfilePage from '../profile.svelte';
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
@@ -11,7 +11,6 @@
   import Awards from '../awards.svelte';
   import { Addressbook, myHome } from '../../storage';
   import SceneSwitcher from '../game/class/SceneSwitcher';
-  import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
   import { PlayerHistory } from '../game/playerState';
 
@@ -23,9 +22,7 @@
 
   let addressbookList = [];
   let lastLengthAddressbook = 0;
-  let alreadySubscribedToAddressbook = false;
   let addressbookImages = [];
-
   let enableClickOutsideListener = false;
 
   getAccount();
@@ -56,7 +53,7 @@
         userHouseObject = await getObject('home', profileAzc, $Profile.id);
 
         /** convert image to small size */
-        userHouseUrl = await convertImage(houseObject.value.url, '50', '50', 'png');
+        userHouseUrl = await convertImage(userHouseObject.value.url, '50', '50', 'png');
 
         // console.log('itemsbar --- userHouseUrl?', userHouseUrl);
       }
@@ -69,40 +66,38 @@
     }
   });
 
-  onDestroy(() => {
-    unsubscribeItemsBar();
+  const unsubscribeAddressBook = Addressbook.subscribe(async (value) => {
+    if (lastLengthAddressbook !== value.length) {
+      lastLengthAddressbook = value.length;
+      addressbookImages = [];
+      addressbookList = value;
+      if (addressbookList.length > 0) {
+        const tempArray = [];
+        addressbookList.forEach(async (element) => {
+          tempArray.push(await getObject('home', element.value.meta?.Azc, element.value.user_id));
+
+          if (addressbookList.length === tempArray.length) {
+            tempArray.forEach(async (address) => {
+              addressbookImages = [
+                ...addressbookImages,
+                {
+                  name: address.value.username,
+                  id: address.user_id,
+                  url: await convertImage(address.value.url, '50', '50'),
+                },
+              ];
+              // addressbookImages = addressbookImages;
+            });
+          }
+        });
+      }
+    }
   });
 
-  function subscribeToAddressbook() {
-    alreadySubscribedToAddressbook = true;
-    Addressbook.subscribe((value) => {
-      if (lastLengthAddressbook !== value.length) {
-        lastLengthAddressbook = value.length;
-        addressbookImages = [];
-        addressbookList = value;
-        if (addressbookList.length > 0) {
-          const tempArray = [];
-          addressbookList.forEach(async (element) => {
-            tempArray.push(await getObject('home', element.value.meta?.Azc, element.value.user_id));
-
-            if (addressbookList.length === tempArray.length) {
-              tempArray.forEach(async (address) => {
-                addressbookImages = [
-                  ...addressbookImages,
-                  {
-                    name: address.value.username,
-                    id: address.user_id,
-                    url: await convertImage(address.value.url, '50', '50'),
-                  },
-                ];
-                // addressbookImages = addressbookImages;
-              });
-            }
-          });
-        }
-      }
-    });
-  }
+  onDestroy(() => {
+    unsubscribeItemsBar();
+    unsubscribeAddressBook();
+  });
 
   function toggleLiked() {
     current = current === 'liked' ? null : 'liked';
@@ -114,11 +109,8 @@
 
   function toggleMailbox() {
     current = current === 'mail' ? null : 'mail';
-
-    if (!alreadySubscribedToAddressbook) {
-      subscribeToAddressbook();
-    }
   }
+
   function toggleHome() {
     current = current === 'home' ? null : 'home';
   }
@@ -153,6 +145,11 @@
       //   ManageSession.userProfile.id,
       // );
     }
+  }
+
+  async function doLogout() {
+    current = '';
+    await logout();
   }
 </script>
 
@@ -235,9 +232,6 @@
           } else if (!s) {
             window.location.href = url;
           }
-
-          // push('/mariosound');
-          // setTimeout(() => { window.location.reload(); }, 300);
         }}"
       >
         <img class="icon" src="assets/SHB/svg/AW-icon-sound.svg" alt="Start mariosound!" />
@@ -247,23 +241,9 @@
         <img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" alt="Toggle liked" />
       </button>
 
-      <!-- <button
-      on:click={() => {
-        goApp("drawingchallenge");
-        console.log("Drawing Challenge is clicked");
-      }}
-      class="avatar"
-    >
-      <h3>DC</h3></button
-    > -->
-
       <span>-</span>
-      <button
-        on:click="{() => {
-          current = '';
-          logout();
-        }}"
-      >
+
+      <button on:click="{doLogout}">
         <img class="icon" src="assets/SHB/svg/AW-icon-exit.svg" alt="Log out!" />
       </button>
     </div>
@@ -285,15 +265,6 @@
   </div>
 {/if}
 
-<!-- {#if $itemsBar.playerClicked}
-  <div
-    on:click="{() => {
-      $itemsBar.playerClicked = false;
-      current = false;
-    }}"
-    id="backdrop"
-  ></div>
-{/if} -->
 <style>
   * {
     -webkit-user-select: none;
@@ -377,17 +348,6 @@
     margin: 20px 0px;
   }
 
-  /* .right > div {
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    overflow-y: auto;
-    overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity;
-    max-height: 80vh;
-    margin: 0px;
-    align-items: flex-start;
-  } */
   .avatar {
     height: 50px;
     width: 50px;
@@ -397,10 +357,4 @@
   .avatar > img {
     height: 100%;
   }
-
-  /* .addressbook-image {
-    display: block;
-    height: 50px;
-    width: 50px;
-  } */
 </style>
