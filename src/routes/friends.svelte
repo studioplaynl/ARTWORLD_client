@@ -1,12 +1,14 @@
 <script>
+  import { push } from 'svelte-spa-router';
   import SvelteTable from 'svelte-table';
   import MdSearch from 'svelte-icons/md/MdSearch.svelte';
+  import { PlayerHistory } from './game/playerState';
+  import SceneSwitcher from './game/class/SceneSwitcher';
   import FriendAction from './components/friendaction.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import {
     ListFriends, addFriend, setLoader, convertImage,
   } from '../api';
-  import SceneSwitcher from './game/class/SceneSwitcher';
   import { dlog } from './game/helpers/DebugLog';
   import {
     FRIENDSTATE_FRIENDS,
@@ -14,6 +16,7 @@
     FRIENDSTATE_INVITATION_RECEIVED,
     STOPMOTION_MAX_FRAMES,
     DEFAULT_PREVIEW_HEIGHT,
+    DEFAULT_HOME,
   } from '../constants';
 
   let friends = [];
@@ -59,6 +62,9 @@
   function goTo(event) {
     const { row } = event.detail;
     if (event.detail.key === 'action') return;
+    const value = `/game?location=${DEFAULT_HOME}&house=${row.user.id}`;
+    push(value);
+    PlayerHistory.push(value);
     SceneSwitcher.switchScene('DefaultUserHome', row.user.id);
   }
 

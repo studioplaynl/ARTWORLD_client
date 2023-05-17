@@ -56,7 +56,6 @@ class SceneSwitcher {
     let sceneKey;
     let targetSceneKey;
 
-    // cleaner console log
     // scene is null when the game has just booted, and there is not yet a currentScene in ManageSession
     if (scene != null) {
       if (scene.scene != null) {
@@ -209,39 +208,6 @@ class SceneSwitcher {
         // WE LEFT THE SCENE SUCCESFULLY
         // 1. we pause the leaving Scene
         // 2. start the new scene
-
-        //! check this
-        // // check if it is a Phaser scene or app, apps are not stopped,they close
-        // if (scene.scene !== null) {
-        //   // check if it is a 'normal' scene or a user home
-        //   if (scene.scene.key === scene.scene.location) {
-        //     dlog(' pause scene: ', sceneKey);
-        //     // scene.scene.stop(sceneKey);
-        //     scene.scene.pause(sceneKey);
-        //   } else {
-        //     dlog(' pause scene: ', scene.scene.key);
-        //     // scene.scene.stop(scene.scene.key);
-        //     scene.scene.pause(scene.scene.key);
-        //   }
-        // }
-
-        //! check this
-        // if we are going inside a user house
-        // if (targetHouse !== null && targetScene === DEFAULT_HOME) {
-        //   //! we start the scene from the previous scene?
-        //   //! do we close or pause the previous scene? - ALREADY DONE ABOVE
-        //   scene.scene.start(targetScene, { user_id: targetHouse });
-        //   // later we join the house id channel
-        //   targetSceneKey = targetHouse;
-        // } else if (targetScene) {
-        //   if (targetScene.scene !== null) {
-        //     dlog('start targetScene: ', targetScene);
-        //     dlog('scene starting the targetScene: ', scene);
-        //     scene.scene.start(targetScene);
-        //     // scene.scene.stop();
-        //     // ManageSession.scene.launch(targetScene);
-        //   }
-        // }
 
         dlog('targetScene', targetScene);
         if (targetScene) {

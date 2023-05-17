@@ -122,10 +122,10 @@ export default class DefaultUserHome extends Phaser.Scene {
     // this.artworksListSpinner.destroy();
     //
 
-    // Place the player on the left size in the y-middle, by passing on arguments in the Player class
-    // const PosX = 0;
+    // // Place the player on the left size in the y-middle, by passing on arguments in the Player class
+    // const PosX = -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2);
     // dlog('PosX: ', PosX);
-    // const PosY = (this.worldSize.x / 2);
+    // const PosY = -(this.worldSize.y / 4);
     // Player.loadPlayerAvatar(this, PosX, PosY);
 
     Player.loadPlayerAvatar(this);

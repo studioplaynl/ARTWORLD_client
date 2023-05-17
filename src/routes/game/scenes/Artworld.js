@@ -3,7 +3,7 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-import Preloader from '../class/Preloader';
+// import Preloader from '../class/Preloader';
 import GraffitiWall from '../class/GraffitiWall';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
@@ -45,7 +45,7 @@ export default class Artworld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
-    Preloader.Loading(this); // .... PRELOADER VISUALISER
+    // Preloader.Loading(this); // .... PRELOADER VISUALISER
   }
 
   async create() {

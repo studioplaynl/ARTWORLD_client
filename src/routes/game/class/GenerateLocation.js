@@ -1,5 +1,4 @@
 import { push } from 'svelte-spa-router';
-import SceneSwitcher from './SceneSwitcher';
 import { dlog } from '../helpers/DebugLog';
 import ManageSession from '../ManageSession';
 import { DEFAULT_HOME } from '../../../constants';
@@ -369,20 +368,33 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // When we go into a house, we place the player left, in the middle
         if (this.userHouse === DEFAULT_HOME) {
           const PosX = -(this.scene.worldSize.x / 2) + (ManageSession.avatarSize * 2);
-          dlog('PosX: ', PosX);
+          dlog('userHouse PosX: ', PosX);
           const PosY = 0;
           const value = `/game?location=${this.locationDestination}&house=${this.userHome}&x=${PosX}&y=${PosY}`;
+          // pushes the url to the browser
           push(value);
+          // pushes the url to the history
           PlayerHistory.push(value);
+          // dlog('PlayerHistory.push(value); ', value);
         } else {
-          SceneSwitcher.switchScene(this.locationDestination, this.userHome);
-        }
+          // dlog(
+          //   'userHouse SceneSwitcher.switchScene(this.locationDestination, this.userHome); ',
+          //   this.locationDestination,
 
-        // this get converted to
-        //     PlayerLocation.set({
-        //   house: targetHouse,
-        //   scene: targetScene,
-        // });
+          //   this.userHome,
+          // );
+          // SceneSwitcher.switchScene(this.locationDestination, this.userHome);
+
+          const PosX = -(this.scene.worldSize.x / 2) + (ManageSession.avatarSize * 2);
+          // dlog('userHouse PosX: ', PosX);
+          const PosY = 0;
+          const value = `/game?location=${this.locationDestination}&house=${this.userHome}&x=${PosX}&y=${PosY}`;
+          // pushes the url to the browser
+          push(value);
+          // pushes the url to the history
+          PlayerHistory.push(value);
+          dlog('userHouse PlayerHistory.push(value); ', value);
+        }
       }
     });
 
