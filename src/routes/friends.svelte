@@ -87,7 +87,7 @@
     {
       key: 'Username',
       title: 'Username',
-      value: (v) => `<p>${v.user.username}<p>`,
+      value: (v) => `<p class="link">${v.user.username}<p>`,
       sortable: true,
     },
     {
