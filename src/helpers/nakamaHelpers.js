@@ -15,9 +15,15 @@ import {
   DEFAULT_PREVIEW_HEIGHT,
 } from '../constants';
 
-import { dlog } from '../routes/game/helpers/DebugLog';
+import { dlog } from './debugLog';
 // import ManageSession from './routes/game/ManageSession';
 
+/** Log a user in
+ * @param {String} email User email
+ * @param {String} _password User password
+ *
+ * @returns {Promise} Promise that resolves or rejects, based on succesful login.
+ */
 export async function login(email, _password) {
   const loginPromise = new Promise((resolve, reject) => {
     setLoader(true);
@@ -51,14 +57,18 @@ export async function login(email, _password) {
   return loginPromise;
 }
 
+
+/**
+ * Log out user, clear Profile, Session and reload window
+ */
 export const logout = async () => {
   try {
-    console.log('try logging out');
+    dlog('try logging out');
     await client.sessionLogout(get(Session));
   } catch (err) {
     dlog('Failed logging out on server!', err);
   } finally {
-    console.log('finally: logging out');
+    dlog('finally: logging out');
 
     Profile.set(null);
     /** Setting Session to null automatically redirects you to login route */
@@ -67,6 +77,11 @@ export const logout = async () => {
   }
 };
 
+
+/**
+ * Check if the Login has expired
+ * @returns {bool(true)|bool(false)|null}
+ */
 export async function checkLoginExpired() {
   const session = get(Session);
   // dlog('login: check status', session, session.expires_at);
@@ -418,7 +433,7 @@ export async function setHome(Home_url) {
 }
 
 export async function getFile(file_url) {
-  console.log('fileURL', file_url);
+  dlog('fileURL', file_url);
   // const url = `https://artworld.vrolijkheid.nl/proxy/${file_url}`;
 
   const session = get(Session);

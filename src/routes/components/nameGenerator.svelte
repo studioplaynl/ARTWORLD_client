@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { hasSpecialCharacter } from '../../validations';
-  import { dlog } from '../game/helpers/DebugLog';
+  import { dlog } from '../../helpers/debugLog';
 
   export let invalidTitle = true;
   export let value;

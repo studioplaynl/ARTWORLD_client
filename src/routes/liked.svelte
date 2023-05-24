@@ -3,13 +3,17 @@
   import { beforeUpdate } from 'svelte';
   import { Liked } from '../storage';
   import ArtworkLoader from './components/artworkLoader.svelte';
-  import { convertImage } from '../helpers/nakama-helpers';
+  import { convertImage } from '../helpers/nakamaHelpers';
   import { DEFAULT_PREVIEW_HEIGHT } from '../constants';
 
-  const drawingIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
-  const stopMotionIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />';
-  const AudioIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
-  const videoIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
+  const drawingIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
+  const stopMotionIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />';
+  const AudioIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
+  const videoIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
   let alreadysubbed = false;
 
   const columns = [
@@ -70,7 +74,10 @@
         if (likedArtworks.length > 0) {
           likedArtworks.forEach(async (liked) => {
             if (liked.value && liked.value?.url) {
-              const img = await convertImage(liked.value.url, DEFAULT_PREVIEW_HEIGHT);
+              const img = await convertImage(
+                liked.value.url,
+                DEFAULT_PREVIEW_HEIGHT,
+              );
 
               images = [
                 ...images,
@@ -88,4 +95,8 @@
   }
 </script>
 
-<SvelteTable columns="{columns}" rows="{images}" classNameTable="profileTable" />
+<SvelteTable
+  columns="{columns}"
+  rows="{images}"
+  classNameTable="profileTable"
+/>

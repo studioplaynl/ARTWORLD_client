@@ -15,7 +15,7 @@
   ];
 
   Achievements.subscribe((value) => {
-    // console.log("lastLength:", lastLength)
+    // dlog("lastLength:", lastLength)
     if (lastLength !== 0 && lastLength < value.length) {
       anime({
         targets: '#award',

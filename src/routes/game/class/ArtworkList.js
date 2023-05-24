@@ -1,6 +1,6 @@
 import { Liked } from '../../../storage';
 // eslint-disable-next-line no-unused-vars
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 
 class ArtworkList {
   constructor() {
@@ -60,7 +60,7 @@ class ArtworkList {
       this.subscribeToLiked();
     }
 
-    // console.log("this.heartArray", this.heartArray)
+    // dlog("this.heartArray", this.heartArray)
     const exists = this.heartArray.some(
       (element) => element.value.url === keyImgUrl,
     );

@@ -4,12 +4,12 @@ import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import {
   convertImage, getAllHouses, listAllObjects,
-} from '../../../helpers/nakama-helpers';
+} from '../../../helpers/nakamaHelpers';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkList from './ArtworkList';
 import { ART_FRAME_BORDER } from '../../../constants';
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import AnimalChallenge from './animalChallenge';
 import { myHomeStore } from '../../../storage';
 
@@ -19,13 +19,13 @@ class ServerCall {
     // homes represented, to created homes in the scene
     scene.homesRepresented = [];
     scene.homes = [];
-    // console.log('scene.homesRepresented.length before', scene.homesRepresented.length);
-    // console.log('scene.homes.length before', scene.homes.length);
+    // dlog('scene.homesRepresented.length before', scene.homesRepresented.length);
+    // dlog('scene.homes.length before', scene.homes.length);
 
     // get a list of all homes objects and then filter
     Promise.all([getAllHouses(filter, null)])
       .then((homesRec) => {
-        // console.log('rec homes: ', homesRec);
+        // dlog('rec homes: ', homesRec);
         scene.homes = homesRec[0];
         dlog('scene.homes', scene.homes);
 
@@ -149,8 +149,8 @@ class ServerCall {
       // scene.homesRepresented[index].setScale(1.6);
       // store the use home gameObject in ManageSession so that it can be referenced for live updating
       ManageSession.playerHomeContainer = scene.homesRepresented[index];
-      // console.log('ManageSession.playerHomeContainer: ', ManageSession.playerHomeContainer);
-      // console.log('ManageSession.playerHomeContainer.getAll(): ', ManageSession.playerHomeContainer.getAll());
+      // dlog('ManageSession.playerHomeContainer: ', ManageSession.playerHomeContainer);
+      // dlog('ManageSession.playerHomeContainer.getAll(): ', ManageSession.playerHomeContainer.getAll());
       // subscribe to myHome if the location is the home
       let previousHome = { value: { url: '' } };
 
@@ -171,7 +171,7 @@ class ServerCall {
               .on(`filecomplete-image-${value.url}`, () => {
                 dlog('done loading new home image');
                 if (homeImageInGame !== null) {
-                  // console.log('homeImageInGame: ', homeImageInGame);
+                  // dlog('homeImageInGame: ', homeImageInGame);
                   homeImageInGame.setTexture(value.url);
                 }
               }, this);
@@ -182,7 +182,7 @@ class ServerCall {
           // set the right size
           const width = 140;
           if (homeImageInGame !== null) {
-            // console.log('homeImageInGame: ', homeImageInGame);
+            // dlog('homeImageInGame: ', homeImageInGame);
             homeImageInGame.displayWidth = width;
             homeImageInGame.scaleY = homeImageInGame.scaleX;
             const cropMargin = 1; // sometimes there is a little border visible on a drawn image
@@ -210,7 +210,7 @@ class ServerCall {
     // get all homes from the server with userHome in the name, with the function getAllHouse
     Promise.all([getAllHouses(userHome, null)])
       .then((homesRec) => {
-        // console.log('rec homes: ', homesRec);
+        // dlog('rec homes: ', homesRec);
         // dlog('homesRec: ', homesRec);
         // from homesRec filter out the key 'name' and put it in an array
         const homesNames = homesRec[0].map((i) => i.username);
@@ -265,7 +265,7 @@ class ServerCall {
         // ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
 
         let foundAnimals = serverItemsArray.array;
-        // console.log('foundFlowers: ', foundFlowers);
+        // dlog('foundFlowers: ', foundFlowers);
 
         // if there are more then 50 flower, make a selection of flowers to show
         if (foundAnimals.length > 50) {
@@ -295,7 +295,7 @@ class ServerCall {
           // eslint-disable-next-line no-param-reassign
           serverItemsArray.array = foundAnimals;
           ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
-          // console.log('foundFlowers: ', foundFlowers);
+          // dlog('foundFlowers: ', foundFlowers);
         } else {
           ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
         }
@@ -317,7 +317,7 @@ class ServerCall {
         dlog('bloem serverItemsArray.array', serverItemsArray.array);
 
         let foundFlowers = serverItemsArray.array;
-        // console.log('foundFlowers: ', foundFlowers);
+        // dlog('foundFlowers: ', foundFlowers);
 
         // if there are more then 50 flower, make a selection of flowers to show
         if (foundFlowers.length > 50) {
@@ -325,7 +325,7 @@ class ServerCall {
           foundFlowers = [];
 
           const user = get(myHomeStore).value.username;
-          console.log('user: ', user);
+          dlog('user: ', user);
 
           // see if there are flowers from the user
           const flowersOfUser = serverItemsArray.array.filter((obj) => obj.username === user);
@@ -354,7 +354,7 @@ class ServerCall {
             }
           }
           ServerCall.serverHandleFlowerArray(foundFlowers, serverItemsArray, type, artSize, artMargin);
-          // console.log('foundFlowers: ', foundFlowers);
+          // dlog('foundFlowers: ', foundFlowers);
         } else if (foundFlowers.length < 1) {
           ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
         } else {
@@ -377,8 +377,8 @@ class ServerCall {
     serverItemsArray.array = foundFlowers;
     // remove the flower placeholder from the array
     serverItemsArray.shift();
-    // console.log('foundFlowers: ', foundFlowers);
-    // console.log('serverItemsArray: ', serverItemsArray);
+    // dlog('foundFlowers: ', foundFlowers);
+    // dlog('serverItemsArray: ', serverItemsArray);
     ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
   }
 
@@ -459,7 +459,7 @@ class ServerCall {
 
   static async downloadArtwork(element, index, array, type, artSize, artMargin) {
     const scene = ManageSession.currentScene;
-    if (!element.value.url) { console.log('element.value.url is empty'); return; }
+    if (!element.value.url) { dlog('element.value.url is empty'); return; }
     const imageKeyUrl = element.value.url;
     const imgSize = artSize.toString();
     const fileFormat = 'png';
@@ -553,7 +553,7 @@ class ServerCall {
 
           ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
         });
-      // console.log('stopmotion', imageKeyUrl);
+      // dlog('stopmotion', imageKeyUrl);
       scene.load.start(); // start the load queue to get the image in memory
 
       // this is fired each time a file is finished downloading (or failing)
@@ -617,7 +617,7 @@ class ServerCall {
 
           scene.events.emit('avatarConverted', imageKeyUrl);
         });
-      // console.log('stopmotion', imageKeyUrl);
+      // dlog('stopmotion', imageKeyUrl);
       scene.load.start(); // start the load queue to get the image in memory
     } else if (type === 'bloem') {
       // dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
@@ -702,18 +702,18 @@ class ServerCall {
     const avatar = scene.textures.get(imageKeyUrl);
     // eslint-disable-next-line no-underscore-dangle
     const avatarWidth = avatar.frames.__BASE.width;
-    // console.log('stopmotion width: ', avatarWidth);
+    // dlog('stopmotion width: ', avatarWidth);
 
     // eslint-disable-next-line no-underscore-dangle
     const avatarHeight = avatar.frames.__BASE.height;
-    // console.log(`stopmotion Height: ${avatarHeight}`);
+    // dlog(`stopmotion Height: ${avatarHeight}`);
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
     let setFrameRate = 0;
     if (avatarFrames > 1) { setFrameRate = (avatarFrames); } else {
       setFrameRate = 0;
     }
-    // console.log(`stopmotion Frames: ${avatarFrames}`);
+    // dlog(`stopmotion Frames: ${avatarFrames}`);
 
     // animation for the player avatar .........................
     scene.anims.create({

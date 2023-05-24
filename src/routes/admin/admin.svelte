@@ -3,8 +3,12 @@
 
   /** eslint-disable max-len */
   import SvelteTable from 'svelte-table';
-  import { ListAllUsers, listAllObjects, updateObjectAdmin } from '../../helpers/nakama-helpers';
-  import { dlog } from '../game/helpers/DebugLog';
+  import {
+    ListAllUsers,
+    listAllObjects,
+    updateObjectAdmin,
+  } from '../../helpers/nakamaHelpers';
+  import { dlog } from '../../helpers/debugLog';
   import { SCENE_INFO } from '../../constants';
 
   // const groups = [];
@@ -26,7 +30,9 @@
     list.forEach((user) => {
       // eslint-disable-next-line no-param-reassign
       if (!user.meta.Azc) user.meta.Azc = 'Unknown';
-      if (user.meta.azc || user.meta.role) dlog('Incorrect Profile formatting!!! ', user);
+      if (user.meta.azc || user.meta.role) {
+        dlog('Incorrect Profile formatting!!! ', user);
+      }
 
       // dlog('user.user_id: ', user.user_id);
       Promise.all([listAllObjects('home', user.user_id)]).then((rec) => {
@@ -59,7 +65,15 @@
             // dlog(homeObject.user_id, homeObject.collection, homeObject.key, homeObject.value, pub);
             // dlog('....');
             // dlog('homeObject: ', homeObject);
-            Promise.all([updateObjectAdmin(homeObject.user_id, 'home', homeObject.key, homeObject.value, pub)]);
+            Promise.all([
+              updateObjectAdmin(
+                homeObject.user_id,
+                'home',
+                homeObject.key,
+                homeObject.value,
+                pub,
+              ),
+            ]);
             // }
           }
           if (homeObject.permission_read === 2) {
@@ -136,7 +150,11 @@
   <h1>All Users</h1>
   <a href="/#/register"><button>Add new user</button></a>
   <a href="/#/printSheet"><button>Print QR Code Sheet</button></a>
-  <SvelteTable columns="{userColumns}" rows="{users}" classNameTable="profileTable" />
+  <SvelteTable
+    columns="{userColumns}"
+    rows="{users}"
+    classNameTable="profileTable"
+  />
 
   <!-- <h1>All Groeps</h1>
   <a href="/#/group"><button>Add new group</button></a>

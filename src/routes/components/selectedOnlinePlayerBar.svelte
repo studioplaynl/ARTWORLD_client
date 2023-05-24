@@ -2,51 +2,62 @@
   import { onDestroy } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { fly } from 'svelte/transition';
-  import { convertImage, getObject, addFriend } from '../../helpers/nakama-helpers';
+  import {
+    convertImage,
+    getObject,
+    addFriend,
+  } from '../../helpers/nakamaHelpers';
   import LikedPage from '../liked.svelte';
   import { SelectedOnlinePlayer } from '../../session';
   import { Addressbook } from '../../storage';
   // import SceneSwitcher from '../game/class/SceneSwitcher';
   // import ManageSession from '../game/ManageSession';
-  import { clickOutside } from '../game/helpers/ClickOutside';
+  import { clickOutside } from '../../helpers/clickOutside';
   import { PlayerHistory } from '../game/playerState';
+  import { dwarn } from '../../helpers/debugLog';
 
   let current;
   let houseUrl;
-  let enableClickOutsideListener = false;
+  let enableclickOutsideListener = false;
   let userHouseObject;
 
   // check if player is clicked
-  const unsubscribeSelectedOnlinePlayer = SelectedOnlinePlayer.subscribe(async () => {
-    if ($SelectedOnlinePlayer && 'id' in $SelectedOnlinePlayer) {
-      try {
-        enableClickOutsideListener = false;
+  const unsubscribeSelectedOnlinePlayer = SelectedOnlinePlayer.subscribe(
+    async () => {
+      if ($SelectedOnlinePlayer && 'id' in $SelectedOnlinePlayer) {
+        try {
+          enableclickOutsideListener = false;
 
-        // check for meta.azc because for a while there was a server bug that
-        // would return azc and role instead of Azc and Role
-        let profileAzc = '';
-        // console.log('$Profile: ', $Profile)
-        if ($SelectedOnlinePlayer.meta.Azc) {
-          profileAzc = $SelectedOnlinePlayer.meta.Azc;
-        } else if ($SelectedOnlinePlayer.meta.azc) {
-          profileAzc = $SelectedOnlinePlayer.meta.azc;
-        } else {
-          profileAzc = 'GreenSquare';
+          // check for meta.azc because for a while there was a server bug that
+          // would return azc and role instead of Azc and Role
+          let profileAzc = '';
+          // dlog('$Profile: ', $Profile)
+          if ($SelectedOnlinePlayer.meta.Azc) {
+            profileAzc = $SelectedOnlinePlayer.meta.Azc;
+          } else if ($SelectedOnlinePlayer.meta.azc) {
+            profileAzc = $SelectedOnlinePlayer.meta.azc;
+          } else {
+            profileAzc = 'GreenSquare';
+          }
+
+          userHouseObject = await getObject(
+            'home',
+            profileAzc,
+            $SelectedOnlinePlayer.id,
+          );
+          // dlog('userHouseObject', userHouseObject);
+          // dlog('$SelectedOnlinePlayer', $SelectedOnlinePlayer);
+          houseUrl = await convertImage(userHouseObject.value.url, '50', '50');
+        } catch (err) {
+          dwarn(err);
+        } finally {
+          setTimeout(() => {
+            enableclickOutsideListener = true;
+          }, 500);
         }
-
-        userHouseObject = await getObject('home', profileAzc, $SelectedOnlinePlayer.id);
-        // console.log('userHouseObject', userHouseObject);
-        // console.log('$SelectedOnlinePlayer', $SelectedOnlinePlayer);
-        houseUrl = await convertImage(userHouseObject.value.url, '50', '50');
-      } catch (err) {
-        console.warn(err);
-      } finally {
-        setTimeout(() => {
-          enableClickOutsideListener = true;
-        }, 500);
       }
-    }
-  });
+    },
+  );
 
   /** toggle the open state of the panel "liked" */
   function toggleLiked() {
@@ -77,7 +88,7 @@
   }
 
   function clickOutsideUser() {
-    if (enableClickOutsideListener) {
+    if (enableclickOutsideListener) {
       SelectedOnlinePlayer.set(null);
     }
   }
@@ -114,11 +125,19 @@
         <br />
 
         <button on:click="{saveHome}">
-          <img alt="Save Home" class="icon" src="assets/SHB/svg/AW-icon-save.svg" />
+          <img
+            alt="Save Home"
+            class="icon"
+            src="assets/SHB/svg/AW-icon-save.svg"
+          />
         </button>
 
         <button on:click="{goHome}">
-          <img class="icon" src="assets/SHB/svg/AW-icon-enter-space.svg" alt="Go Home" />
+          <img
+            class="icon"
+            src="assets/SHB/svg/AW-icon-enter-space.svg"
+            alt="Go Home"
+          />
         </button>
       {/if}
     </div>
@@ -126,7 +145,10 @@
       <p>{$SelectedOnlinePlayer.username}</p>
 
       <button class="avatar">
-        <img alt="{$SelectedOnlinePlayer.username}" src="{$SelectedOnlinePlayer.url}" />
+        <img
+          alt="{$SelectedOnlinePlayer.username}"
+          src="{$SelectedOnlinePlayer.url}"
+        />
       </button>
 
       <button on:click="{goHome}">
@@ -138,11 +160,19 @@
           addFriend($SelectedOnlinePlayer.id);
         }}"
       >
-        <img alt="Add friend" class="icon" src="assets/SHB/svg/AW-icon-add-friend.svg" />
+        <img
+          alt="Add friend"
+          class="icon"
+          src="assets/SHB/svg/AW-icon-add-friend.svg"
+        />
       </button>
 
       <button on:click="{toggleLiked}">
-        <img alt="Toggle Liked page" class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" />
+        <img
+          alt="Toggle Liked page"
+          class="icon"
+          src="assets/SHB/svg/AW-icon-heart-full-red.svg"
+        />
       </button>
     </div>
   </div>

@@ -2,13 +2,13 @@
 /* eslint-disable max-len */
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import { PlayerLocation } from '../playerState';
 // import { PlayerLocation, playerStreamID, PlayerHistory } from '../playerState';
 
 import { DEFAULT_HOME } from '../../../constants';
 import { Error } from '../../../session';
-import { setLoader } from '../../../helpers/nakama-helpers';
+import { setLoader } from '../../../helpers/nakamaHelpers';
 // import { ListFormat } from 'typescript';
 // import { push, querystring} from "svelte-spa-router";
 

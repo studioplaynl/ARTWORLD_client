@@ -61,7 +61,7 @@ class Exhibition {
     // the 'zoom' is dependent on the screen size, this formula works well
     const meshPanZ = (scene.sys.game.canvas.height / 1000) * 2;
 
-    // console.log("meshPanZ", meshPanZ)
+    // dlog("meshPanZ", meshPanZ)
 
     // the name of the mesh is name_mesh
     scene[meshName].panZ(meshPanZ); // pan is zoom level, bigger is smaller, only works with perspective projection
@@ -142,7 +142,7 @@ class Exhibition {
     // the 'zoom' is dependent on the screen size, this formula works well
     const meshPanZ = (scene.sys.game.canvas.height / 1000) * 2;
 
-    // console.log("meshPanZ", meshPanZ)
+    // dlog("meshPanZ", meshPanZ)
 
     // the name of the mesh is name_mesh
     scene[meshName].panZ(meshPanZ); // pan is zoom level, bigger is smaller, only works with perspective projection
@@ -212,7 +212,7 @@ class Exhibition {
     // the 'zoom' is dependent on the screen size, this formula works well
     const meshPanZ = (scene.sys.game.canvas.height / 1000) * 2;
 
-    // console.log("meshPanZ", meshPanZ)
+    // dlog("meshPanZ", meshPanZ)
 
     // the name of the mesh is name_mesh
     scene[meshName].panZ(meshPanZ); // pan is zoom level, bigger is smaller, only works with perspective projection

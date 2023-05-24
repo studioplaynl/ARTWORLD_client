@@ -1,10 +1,10 @@
 <script>
   /** eslint-disable prefer-destructuring */
   import { pop } from 'svelte-spa-router';
-  import { getUploadURL, updateObjectAdmin } from '../../helpers/nakama-helpers';
+  import { getUploadURL, updateObjectAdmin } from '../../helpers/nakamaHelpers';
   import SaveAnimation from '../components/saveAnimation.svelte';
   import UserSelect from '../components/userSelect.svelte';
-  import { dlog } from '../game/helpers/DebugLog';
+  import { dlog } from '../../helpers/debugLog';
 
   let filesVar;
   let type;

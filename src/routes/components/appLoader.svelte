@@ -9,7 +9,7 @@
   import { CurrentApp, Profile, Error } from '../../session';
   import { AvatarsStore, myHome } from '../../storage';
   import ManageSession from '../game/ManageSession';
-  import { dlog } from '../game/helpers/DebugLog';
+  import { dlog } from '../../helpers/debugLog';
   import {
     getAccount,
     getObject,
@@ -22,7 +22,7 @@
     getDateAndTimeFormatted,
     updateObject,
     // updateTitle,
-  } from '../../helpers/nakama-helpers';
+  } from '../../helpers/nakamaHelpers';
   import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { PlayerHistory } from '../game/playerState';
   import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC } from '../../constants';
@@ -42,7 +42,10 @@
   // for saving the stopmotion data in a promise
   let drawing;
   let parsedQuery = {};
-  $: userIsOwner = $Profile !== null && isValidQuery(parsedQuery) && $Profile.id === parsedQuery.userId;
+  $: userIsOwner =
+    $Profile !== null &&
+    isValidQuery(parsedQuery) &&
+    $Profile.id === parsedQuery.userId;
 
   // Object containing info about the current file
   // Loaded from the server..
@@ -142,13 +145,24 @@
           // updateTitle(currentFile.type, currentFile.key, displayName, userID)
 
           // updateObject(type, name, value, pub, userID)
-          Promise.all([updateObject(currentFile.type, currentFile.key, tempValue, currentFile.status, userID)])
+          Promise.all([
+            updateObject(
+              currentFile.type,
+              currentFile.key,
+              tempValue,
+              currentFile.status,
+              userID,
+            ),
+          ])
             .then(() => {
               dlog('saved object only: ');
               dlog('currentFile.type: ', currentFile.type);
               dlog('currentFile.key: ', currentFile.key);
               dlog('tempValue: ', tempValue);
-              dlog('currentFile.permission_read: ', currentFile.permission_read);
+              dlog(
+                'currentFile.permission_read: ',
+                currentFile.permission_read,
+              );
               dlog('currentFile.status: ', currentFile.status);
               dlog('currentFile: ', currentFile);
             })
@@ -183,7 +197,7 @@
 
     // create the data to save
     await drawing.saveHandler();
-    console.log('currentFile.status', currentFile.status);
+    dlog('currentFile.status', currentFile.status);
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
       const blobData = dataURItoBlob(data);
@@ -201,39 +215,43 @@
           resolve(url);
 
           // eslint-disable-next-line no-unused-vars
-          const setHomePromise = new Promise((resolveSetHomePromise, rejectSetHomePromise) => {
-            if (currentFile.new && currentFile.type === 'house') {
-              const newHomeUrl = currentFile.uploadUrl;
-              setHome(currentFile.uploadUrl)
-                .then(() => {
-                  myHome.create(newHomeUrl); // update the home
-                  resolveSetHomePromise();
-                })
-                .catch((error) => {
-                  dlog('setHomePromise error', error);
-                  rejectSetHomePromise();
-                });
-            } else {
-              resolveSetHomePromise();
-            }
-          });
+          const setHomePromise = new Promise(
+            (resolveSetHomePromise, rejectSetHomePromise) => {
+              if (currentFile.new && currentFile.type === 'house') {
+                const newHomeUrl = currentFile.uploadUrl;
+                setHome(currentFile.uploadUrl)
+                  .then(() => {
+                    myHome.create(newHomeUrl); // update the home
+                    resolveSetHomePromise();
+                  })
+                  .catch((error) => {
+                    dlog('setHomePromise error', error);
+                    rejectSetHomePromise();
+                  });
+              } else {
+                resolveSetHomePromise();
+              }
+            },
+          );
 
           // eslint-disable-next-line no-unused-vars
-          const setAvatarPromise = new Promise((resolveSetAvatarPromise, rejectSetAvatarPromise) => {
-            if (currentFile.new && currentFile.type === 'avatar') {
-              setAvatar(currentFile.uploadUrl)
-                .then(() => {
-                  AvatarsStore.loadAvatars();
-                  resolveSetAvatarPromise();
-                })
-                .catch((error) => {
-                  dlog('setAvatarPromise error', error);
-                  rejectSetAvatarPromise();
-                });
-            } else {
-              resolveSetAvatarPromise();
-            }
-          });
+          const setAvatarPromise = new Promise(
+            (resolveSetAvatarPromise, rejectSetAvatarPromise) => {
+              if (currentFile.new && currentFile.type === 'avatar') {
+                setAvatar(currentFile.uploadUrl)
+                  .then(() => {
+                    AvatarsStore.loadAvatars();
+                    resolveSetAvatarPromise();
+                  })
+                  .catch((error) => {
+                    dlog('setAvatarPromise error', error);
+                    rejectSetAvatarPromise();
+                  });
+              } else {
+                resolveSetAvatarPromise();
+              }
+            },
+          );
         })
         .catch((error) => {
           dlog('Upload ERROR:', error);
@@ -291,7 +309,7 @@
     const loadFromCollection = $CurrentApp;
 
     currentFile = await getFileInformation(loadFromCollection, userId, key);
-    console.log('currentFile loaded: ', currentFile);
+    dlog('currentFile loaded: ', currentFile);
   }
 
   async function newFile() {
@@ -320,12 +338,15 @@
         // TODO: Het kan zijn dat een object leeg terugkomt. Dan staan wellicht de permissies fout.
 
         if (loadingObject) {
-          console.log('loadingObject', loadingObject);
+          dlog('loadingObject', loadingObject);
           const file = await getFile(loadingObject.value.url);
-          // console.log('loadingObject', loadingObject);
+          // dlog('loadingObject', loadingObject);
           // set the displayName, so it can also be changed in the Drawing app
           displayName = loadingObject.value.displayname;
-          console.log('loadingObject.permission_read: ', loadingObject.permission_read);
+          dlog(
+            'loadingObject.permission_read: ',
+            loadingObject.permission_read,
+          );
           return {
             key,
             userId,
@@ -341,7 +362,7 @@
           };
         }
       } catch (error) {
-        console.log('error', error);
+        dlog('error', error);
         return {
           key,
           userId,
@@ -394,7 +415,9 @@
 </script>
 
 <AppContainer
-  open="{$CurrentApp !== null && $CurrentApp !== DEFAULT_APP && isValidApp($CurrentApp)}"
+  open="{$CurrentApp !== null &&
+    $CurrentApp !== DEFAULT_APP &&
+    isValidApp($CurrentApp)}"
   on:close="{() => saveData(true)}"
   on:saveToFile="{() => saveToFile()}"
 >

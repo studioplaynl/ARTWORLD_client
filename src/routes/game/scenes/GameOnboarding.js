@@ -3,13 +3,13 @@
 import { get } from 'svelte/store';
 import { Profile } from '../../../session';
 import ManageSession from '../ManageSession';
-import { listObjects } from '../../../helpers/nakama-helpers';
+import { listObjects } from '../../../helpers/nakamaHelpers';
 import { DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
 import {
   PlayerPos, PlayerLocation, PlayerHistory,
 } from '../playerState';
 import { Addressbook, Liked, Achievements } from '../../../storage';
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import { parseQueryString, checkIfSceneIsAllowed, checkIfLocationLooksLikeAHouse } from '../helpers/UrlHelpers';
 
 const { Phaser } = window;
@@ -106,7 +106,7 @@ export default class GameOnboarding extends Phaser.Scene {
     const targetHouse = get(PlayerLocation).house;
 
 
-    if (this.debug) console.log('Launch: ', targetScene, targetHouse);
+    if (this.debug) dlog('Launch: ', targetScene, targetHouse);
 
     this.scene.stop('GameOnboarding');
 

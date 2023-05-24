@@ -1,8 +1,8 @@
 <script>
   import Select from 'svelte-select';
   import { onMount } from 'svelte';
-  import { ListAllUsers } from '../../helpers/nakama-helpers';
-  import { dlog } from '../game/helpers/DebugLog';
+  import { ListAllUsers } from '../../helpers/nakamaHelpers';
+  import { dlog } from '../../helpers/debugLog';
 
   let items;
   export let user;
@@ -12,7 +12,6 @@
 
   onMount(async () => {
     items = await ListAllUsers();
-    console.log(items);
     dlog(items);
   });
 

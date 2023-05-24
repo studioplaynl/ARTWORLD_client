@@ -61,7 +61,7 @@
     alt="Edit House"
     src="/assets/SHB/svg/AW-icon-pen.svg"
     on:click="{() => {
-      console.log('home', $myHome);
+      dlog('home', $myHome);
       // push('/house');
       if (typeof $myHome === 'object') {
         push(`/house?userId=${$Profile.id}&key=${$myHome.key}`);

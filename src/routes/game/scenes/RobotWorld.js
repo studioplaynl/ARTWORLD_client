@@ -8,7 +8,7 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
@@ -442,13 +442,13 @@ export default class RobotWorld extends Phaser.Scene {
     points.forEach((element, index) => {
       const curveHandleName = `curveHandle${name}_${index}`;
       const point = this[curveHandleName].getData('vector');
-      // console.log('curveGraphicsName', curveGraphicsName);
+      // dlog('curveGraphicsName', curveGraphicsName);
       points[index] = point;
       lineResolution = this[curveHandleName].getData('lineResolution');
-      // console.log('this[curveHandleName] point', point);
+      // dlog('this[curveHandleName] point', point);
     });
 
-    // console.log('points', points);
+    // dlog('points', points);
 
     this[curveGraphicsName].clear();
     this[curveGraphicsName].lineStyle(lineWidth, color1, lineAlpha);

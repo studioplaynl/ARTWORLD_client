@@ -3,7 +3,13 @@
   import { _ } from 'svelte-i18n';
   import { push } from 'svelte-spa-router';
   import { Session, Profile } from '../../session';
-  import { isValidEmail, isValidPassword, hasSpecialCharacter, isEmpty, isEqual } from '../../validations';
+  import {
+    isValidEmail,
+    isValidPassword,
+    hasSpecialCharacter,
+    isEmpty,
+    isEqual,
+  } from '../../validations';
   import {
     getFullAccount,
     setFullAccount,
@@ -11,8 +17,8 @@
     deleteObjectAdmin,
     listObjects,
     resetPasswordAdmin,
-  } from '../../helpers/nakama-helpers';
-  import { dlog } from '../game/helpers/DebugLog';
+  } from '../../helpers/nakamaHelpers';
+  import { dlog } from '../../helpers/debugLog';
   import { SCENE_INFO } from '../../constants';
 
   export let params = {};
@@ -171,7 +177,9 @@
             {/each}
           </select>
         {/if}
-        <button type="submit" class="registerbtn" disabled="{!formValid}">Update</button>
+        <button type="submit" class="registerbtn" disabled="{!formValid}"
+          >Update</button
+        >
       </div>
     </form>
     <div class="password-form">
@@ -249,7 +257,10 @@
 
       <button on:click="{getLocations}">Get</button>
       {#each locationsList as location}
-        <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
+        <div
+          class:blueBack="{location.user_id === $Session.user_id}"
+          class="redBack"
+        >
           <p>userID: {location.user_id}</p>
           <p>key:{location.key}</p>
           <p>
@@ -257,7 +268,11 @@
           </p>
           <button
             on:click="{async () => {
-              await deleteObject(location.user_id, location.collection, location.key);
+              await deleteObject(
+                location.user_id,
+                location.collection,
+                location.key,
+              );
               getLocations();
             }}"
           >

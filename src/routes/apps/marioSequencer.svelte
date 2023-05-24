@@ -344,39 +344,8 @@
     // Mario Jump
     MarioClass.prototype.jump = function (x) {
       var h = [
-        0,
-        2,
-        4,
-        6,
-        8,
-        10,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        18,
-        19,
-        19,
-        19,
-        19,
-        19,
-        18,
-        18,
-        17,
-        16,
-        15,
-        14,
-        13,
-        12,
-        10,
-        8,
-        6,
-        4,
-        2,
-        0,
+        0, 2, 4, 6, 8, 10, 12, 13, 14, 15, 16, 17, 18, 18, 19, 19, 19, 19, 19,
+        18, 18, 17, 16, 15, 14, 13, 12, 10, 8, 6, 4, 2, 0,
       ];
       return h[Math.round(x) % 32];
     };
@@ -650,39 +619,8 @@
             idx = Mario.x + 8 - xorg;
           }
           var tbl = [
-            0,
-            1,
-            2,
-            3,
-            3,
-            4,
-            5,
-            5,
-            6,
-            6,
-            7,
-            7,
-            8,
-            8,
-            8,
-            8,
-            8,
-            8,
-            8,
-            8,
-            8,
-            7,
-            7,
-            6,
-            6,
-            5,
-            5,
-            4,
-            3,
-            3,
-            2,
-            1,
-            0,
+            0, 1, 2, 3, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7,
+            6, 6, 5, 5, 4, 3, 3, 2, 1, 0,
           ];
           delta = tbl[Math.round(idx)];
         }
@@ -961,7 +899,7 @@
             })
             .catch(function (err) {
               alert('Loading MSQ failed: ' + err.message);
-              console.log(err);
+              dlog(err);
             });
         }, Promise.resolve())
         .then(closing);
@@ -1113,7 +1051,7 @@
 
     // Select Listener
     function selectListener(e) {
-      console.log(e);
+      dlog(e);
       MAGNIFY = e.target.selectedIndex + 1;
       resizeScreen();
     }

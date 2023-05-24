@@ -1,16 +1,20 @@
 <script>
-  import { addFriend, removeFriend } from '../../helpers/nakama-helpers';
-  import { FRIENDSTATE_FRIENDS, FRIENDSTATE_INVITATION_SENT, FRIENDSTATE_INVITATION_RECEIVED } from '../../constants';
+  import { addFriend, removeFriend } from '../../helpers/nakamaHelpers';
+  import {
+    FRIENDSTATE_FRIENDS,
+    FRIENDSTATE_INVITATION_SENT,
+    FRIENDSTATE_INVITATION_RECEIVED,
+  } from '../../constants';
 
   export let row;
   export let load;
 
   async function accept() {
-    // console.log(row.user.id)
+    // dlog(row.user.id)
     addFriend(row.user.id).then(() => load());
   }
   async function cancel() {
-    // console.log('cancel clicked');
+    // dlog('cancel clicked');
     removeFriend(row.user.id).then(() => load());
   }
 
@@ -25,12 +29,20 @@
 <main>
   {#if canAccept}
     <button class="accept" on:click="{accept}">
-      <img class="icon" src="/assets/SHB/svg/AW-icon-check.svg" alt="Accept friendship request" />
+      <img
+        class="icon"
+        src="/assets/SHB/svg/AW-icon-check.svg"
+        alt="Accept friendship request"
+      />
     </button>
   {/if}
   {#if canCancel}
     <button class="cancel" on:click="{cancel}">
-      <img class="icon" src="/assets/SHB/svg/AW-icon-trash.svg" alt="Cancel friendship request" />
+      <img
+        class="icon"
+        src="/assets/SHB/svg/AW-icon-trash.svg"
+        alt="Cancel friendship request"
+      />
     </button>
   {/if}
 </main>

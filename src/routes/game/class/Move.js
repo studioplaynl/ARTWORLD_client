@@ -4,7 +4,7 @@ import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { PlayerPos } from '../playerState';
 // eslint-disable-next-line no-unused-vars
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 
 const { Phaser } = window;
 
@@ -50,7 +50,7 @@ class Move {
 
   // play moving animations
   movingAnimation(scene, animation) {
-    // console.log('movingAnimation');
+    // dlog('movingAnimation');
     if (animation === 'moving') {
       // dlog('movingAnimation moving');
       scene.player.anims.play(scene.playerMovingKey, true);
@@ -196,7 +196,7 @@ class Move {
         swipeX /= zoomFactor;
         swipeY /= zoomFactor;
 
-        // console.log("swipeX, swipeY", swipeX, swipeY)
+        // dlog("swipeX, swipeY", swipeX, swipeY)
 
         ManageSession.swipeAmount.x = swipeX;
         ManageSession.swipeAmount.y = swipeY;
@@ -206,7 +206,7 @@ class Move {
         // we scale the arrival check (distanceTolerance) to the speed of the player
         ManageSession.distanceTolerance = moveSpeed / 30;
 
-        // console.log("moveBySwiping moveSpeed", moveSpeed)
+        // dlog("moveBySwiping moveSpeed", moveSpeed)
 
         this.movingAnimation(scene, 'stop'); // to stop the player when it reached its destination
 
@@ -226,7 +226,7 @@ class Move {
     const { dragX } = movementData;
     const { dragY } = movementData;
     const { moveCommand } = movementData;
-    // console.log('dragX, dragY, moveCommand', dragX, dragY, moveCommand);
+    // dlog('dragX, dragY, moveCommand', dragX, dragY, moveCommand);
 
     if (moveCommand === 'stop') {
       this.movingAnimation(scene, 'stop');
@@ -243,7 +243,7 @@ class Move {
 
       const moveDistance = Math.abs(ManageSession.target.length() - tempVec.length());
 
-      console.log('moveDistance: ', moveDistance);
+      dlog('moveDistance: ', moveDistance);
 
       // this creates a double movement animation: replace by sendMovement and timedEvent with Stop
 
@@ -285,7 +285,7 @@ class Move {
 
     const moveSpeed = ManageSession.swipeAmount.length() * 2;
 
-    // console.log("moveByTapping moveSpeed", moveSpeed)
+    // dlog("moveByTapping moveSpeed", moveSpeed)
 
     // generalized moving method
     // send moveTo over network, calculate speed as function of distance
@@ -308,7 +308,7 @@ class Move {
       scene.player.x,
       scene.player.y,
     );
-    // console.log(this.player.x)
+    // dlog(this.player.x)
     ManageSession.updateMovementTimer = 0;
   }
 }

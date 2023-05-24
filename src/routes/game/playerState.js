@@ -1,6 +1,6 @@
 import { writable, derived, get } from 'svelte/store';
 // eslint-disable-next-line no-unused-vars
-import { dlog } from './helpers/DebugLog';
+import { dlog } from '../../helpers/debugLog';
 import {
   DEFAULT_ZOOM, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
 } from '../../constants';
@@ -113,5 +113,5 @@ function createHistory() {
 export const PlayerHistory = createHistory();
 
 window.getPlayerHistory = () => {
-  console.log('history', get(PlayerHistory));
+  dlog('history', get(PlayerHistory));
 };

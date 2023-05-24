@@ -4,10 +4,10 @@
   import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte';
   import { push, querystring } from 'svelte-spa-router';
   import { Session } from '../../session';
-  import { login, checkLoginExpired } from '../../helpers/nakama-helpers';
+  import { login, checkLoginExpired } from '../../helpers/nakamaHelpers';
   import QRscanner from './qrscanner.svelte';
   // eslint-disable-next-line no-unused-vars
-  import { dlog } from '../game/helpers/DebugLog';
+  import { dlog } from '../../helpers/debugLog';
 
   export let params;
 
@@ -30,7 +30,7 @@
   // dlog('navigator', navigator.userAgent);
 
   onMount(() => {
-    // console.log(
+    // dlog(
     //   'Login: am I logged in? ',
     //   !!$Session?.token,
     //   checkLoginExpired(),
@@ -52,7 +52,11 @@
 <main>
   <div class="device-type">
     {#if isMobile}
-      <img alt="Mobile phone" class="icon" src="assets/device_type/mobile.png" />
+      <img
+        alt="Mobile phone"
+        class="icon"
+        src="assets/device_type/mobile.png"
+      />
     {:else}
       <img alt="Laptop" class="icon" src="assets/device_type/laptop.png" />
     {/if}
@@ -68,10 +72,24 @@
     <form on:submit|preventDefault="{onSubmit}">
       <div class="container">
         <label for="email"><b>{$_('register.email')}</b></label>
-        <input type="text" placeholder="Enter Email" name="email" id="email" bind:value="{email}" required />
+        <input
+          type="text"
+          placeholder="Enter Email"
+          name="email"
+          id="email"
+          bind:value="{email}"
+          required
+        />
 
         <label for="psw"><b>{$_('register.password')}</b></label>
-        <input type="password" placeholder="Enter Password" name="psw" id="psw" bind:value="{password}" required />
+        <input
+          type="password"
+          placeholder="Enter Password"
+          name="psw"
+          id="psw"
+          bind:value="{password}"
+          required
+        />
 
         <button type="submit" class="register-btn">{$_('login.login')}</button>
       </div>

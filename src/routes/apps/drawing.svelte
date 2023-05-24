@@ -11,12 +11,15 @@
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from './fabric/dist/fabric';
-  import { setLoader } from '../../helpers/nakama-helpers';
+  import { setLoader } from '../../helpers/nakamaHelpers';
   import { Profile } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
   // import NameGenerator from '../components/nameGenerator.svelte';
-  import { hasSpecialCharacter, removeSpecialCharacters } from '../../validations';
-  import { dlog } from '../game/helpers/DebugLog';
+  import {
+    hasSpecialCharacter,
+    removeSpecialCharacters,
+  } from '../../validations';
+  import { dlog } from '../../helpers/debugLog';
 
   let hex = '#000000';
 
@@ -95,7 +98,9 @@
 
   // remove forbidden characters from displayname after a new file has loaded or has been made
   $: if (file.loaded || file.new) {
-    if (hasSpecialCharacter(displayName)) displayName = removeSpecialCharacters(displayName);
+    if (hasSpecialCharacter(displayName)) {
+      displayName = removeSpecialCharacters(displayName);
+    }
   }
 
   // In order to hide editor functions when previewing stopmotion
@@ -147,7 +152,10 @@
       cursorCanvas.setHeight(canvasHeight); // keep the cursorCanvas square
 
       // for correct and adapted scaling of the preexisting artworks
-      scaleRatio = Math.min((drawingCanvas.width * frames) / baseSize, drawingCanvas.height / baseSize);
+      scaleRatio = Math.min(
+        (drawingCanvas.width * frames) / baseSize,
+        drawingCanvas.height / baseSize,
+      );
       cursorCanvas.setZoom(scaleRatio);
       drawingCanvas.setZoom(scaleRatio);
       antiFlickerCanvas.setZoom(scaleRatio);
@@ -203,10 +211,16 @@
     let value = parseInt(_value, 10);
     // If the value is less than or equal to the offset, set the value to a value in the first 3/4 of the slider
     if (value <= brushSliderOffset) {
-      value = Math.round(((value - brushSliderMin) / brushSliderQuarter) * 190) + brushSliderMin;
+      value =
+        Math.round(((value - brushSliderMin) / brushSliderQuarter) * 190) +
+        brushSliderMin;
     } else {
       // If the value is greater than the offset, set the value to a value in the remaining 1/4 of the slider
-      value = Math.round(((value - brushSliderOffset) / (brushSliderMax - brushSliderOffset)) * 800) + 200;
+      value =
+        Math.round(
+          ((value - brushSliderOffset) / (brushSliderMax - brushSliderOffset)) *
+            800,
+        ) + 200;
     }
     return value; // Set the value of the slider to the new value
   }
@@ -387,7 +401,9 @@
 
     applyBrush = (brushType) => {
       if (typeof brushType === 'string') selectedBrush = brushType;
-      drawingCanvas.freeDrawingBrush = new fabric[`${selectedBrush}Brush`](drawingCanvas);
+      drawingCanvas.freeDrawingBrush = new fabric[`${selectedBrush}Brush`](
+        drawingCanvas,
+      );
       if (drawingCanvas.freeDrawingBrush) {
         const brush = drawingCanvas.freeDrawingBrush;
         brush.color = drawingColor;
@@ -424,7 +440,17 @@
     loadCanvas.height = baseSize;
     const ctx = loadCanvas.getContext('2d');
     for (let index = 0; index < frames; index++) {
-      ctx.drawImage(img, index * img.height, 0, img.height, img.height, 0, 0, baseSize, baseSize);
+      ctx.drawImage(
+        img,
+        index * img.height,
+        0,
+        img.height,
+        img.height,
+        0,
+        0,
+        baseSize,
+        baseSize,
+      );
       framesArray[index] = loadCanvas.toDataURL('image/png');
       // clear the loadingCanvas
       ctx.clearRect(0, 0, baseSize, baseSize);
@@ -488,7 +514,8 @@
 
     drawingCanvas.clear();
     // Add current index of drawingCanvasUndoArray to drawingCanvasRedoArray
-    const copyFrame = $drawingCanvasUndoArray[$drawingCanvasUndoArray.length - 1];
+    const copyFrame =
+      $drawingCanvasUndoArray[$drawingCanvasUndoArray.length - 1];
     drawingCanvasRedoArray.update((array) => {
       array.push(copyFrame);
       return array;
@@ -530,7 +557,8 @@
 
     drawingCanvas.clear();
     // Add current index of drawingCanvasRedoArray to drawingCanvasUndoArray
-    const copyFrame = $drawingCanvasRedoArray[$drawingCanvasRedoArray.length - 1];
+    const copyFrame =
+      $drawingCanvasRedoArray[$drawingCanvasRedoArray.length - 1];
     drawingCanvasUndoArray.update((array) => {
       array.push(copyFrame);
       return array;
@@ -772,7 +800,8 @@
 
       case 'erase':
         drawingCanvas.freeDrawingBrush = eraseBrush;
-        drawingCanvas.freeDrawingBrush.width = parseInt(brushWidthLogarithmic, 10) || 1;
+        drawingCanvas.freeDrawingBrush.width =
+          parseInt(brushWidthLogarithmic, 10) || 1;
         drawingCanvas.isDrawingMode = true;
         break;
 
@@ -782,11 +811,18 @@
   }
 </script>
 
-<svelte:window bind:innerHeight="{innerHeight}" bind:innerWidth="{innerWidth}" on:keydown="{handleKeydown}" />
+<svelte:window
+  bind:innerHeight="{innerHeight}"
+  bind:innerWidth="{innerWidth}"
+  on:keydown="{handleKeydown}"
+/>
 
 <div class="drawing-app">
   <div class="main-container">
-    <div class="canvas-frame-container" style="width: {canvasHeight}px; height: {canvasHeight}px; ">
+    <div
+      class="canvas-frame-container"
+      style="width: {canvasHeight}px; height: {canvasHeight}px; "
+    >
       {#if enableOnionSkinning}
         <div
           class="canvas-onion"
@@ -802,7 +838,11 @@
           pointer-events: {enableEditor ? 'all' : 'none'};
           "
       >
-        <canvas hidden bind:this="{antiFlickerCanvasEl}" class="drawingCanvasEl" id="antiFlickerCanvas"></canvas>
+        <canvas
+          hidden
+          bind:this="{antiFlickerCanvasEl}"
+          class="drawingCanvasEl"
+          id="antiFlickerCanvas"></canvas>
 
         <canvas bind:this="{drawingCanvasEl}" class="drawingCanvasEl"></canvas>
         <!-- <canvas bind:this="{drawingCanvasEl}" class="canvas"> </canvas> -->
@@ -810,8 +850,7 @@
         <canvas
           bind:this="{cursorCanvasEl}"
           class="cursor-canvas"
-          style:visibility="{enableEditor ? 'visible' : 'hidden'}"
-        ></canvas>
+          style:visibility="{enableEditor ? 'visible' : 'hidden'}"></canvas>
         <canvas hidden bind:this="{saveCanvas}" class="saveCanvas"></canvas>
         <canvas hidden bind:this="{loadCanvas}"></canvas>
       </div>
@@ -888,7 +927,12 @@
                   ;
                 </button>
 
-                <input type="color" bind:value="{drawingColor}" id="drawing-color" title="Pick drawing color" />
+                <input
+                  type="color"
+                  bind:value="{drawingColor}"
+                  id="drawing-color"
+                  title="Pick drawing color"
+                />
               </div>
             </div>
           {:else if currentTab === 'erase'}
@@ -976,11 +1020,25 @@
               alt="Redo"
             />
           </button> -->
-          <button on:click="{undoDrawingCanvas}" disabled="{$drawingCanvasUndoArray.length < 1}">
-            <img class="icon" src="assets/SHB/svg/AW-icon-rotate-CCW.svg" alt="Undo" />
+          <button
+            on:click="{undoDrawingCanvas}"
+            disabled="{$drawingCanvasUndoArray.length < 1}"
+          >
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
+              alt="Undo"
+            />
           </button>
-          <button on:click="{redoDrawingCanvas}" disabled="{$drawingCanvasRedoArray.length < 1}">
-            <img class="icon" src="assets/SHB/svg/AW-icon-rotate-CW.svg" alt="Redo" />
+          <button
+            on:click="{redoDrawingCanvas}"
+            disabled="{$drawingCanvasRedoArray.length < 1}"
+          >
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-rotate-CW.svg"
+              alt="Redo"
+            />
           </button>
           <button
             id="drawing-mode"
@@ -988,7 +1046,8 @@
               switchMode('draw');
               applyBrush();
             }}"
-            class:currentSelected="{currentTab === 'draw' || currentTab === null}"
+            class:currentSelected="{currentTab === 'draw' ||
+              currentTab === null}"
           >
             <img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" alt="Draw" />
           </button>
@@ -998,7 +1057,11 @@
             id="erase-mode"
             class:currentSelected="{currentTab === 'erase'}"
           >
-            <img class="icon" src="assets/SHB/svg/AW-icon-erase.svg" alt="Erase" />
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-erase.svg"
+              alt="Erase"
+            />
           </button>
 
           <!-- <button
@@ -1019,7 +1082,11 @@
               switchMode('save');
             }}"
           >
-            <img class="icon" src="assets/SHB/svg/AW-icon-save.svg" alt="Save" />
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-save.svg"
+              alt="Save"
+            />
           </button>
         </div>
       </div>

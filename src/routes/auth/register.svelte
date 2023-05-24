@@ -6,8 +6,8 @@
   import { onMount, onDestroy } from 'svelte';
   import { Session } from '../../session';
   // import { client } from '../../nakama.svelte';
-  // import { dlog } from '../game/helpers/DebugLog';
-  import { createAccountAdmin } from '../../helpers/nakama-helpers';
+  import { dlog } from '../../helpers/debugLog';
+  import { createAccountAdmin } from '../../helpers/nakamaHelpers';
   import { SCENE_INFO, STOCK_HOUSES, STOCK_AVATARS } from '../../constants';
 
   let QRUrl;
@@ -29,7 +29,7 @@
   });
 
   $: {
-    console.log(azc);
+    dlog(azc);
     updateQrCanvas();
   }
 
@@ -50,8 +50,8 @@
   async function register() {
     // update the email from the username
     // email = `${username}@vrolijkheid.nl`;
-    console.log('email: ', email);
-    console.log('password: ', password);
+    dlog('email: ', email);
+    dlog('password: ', password);
     const data = {
       email,
       password,
@@ -62,12 +62,12 @@
       avatar: `/avatar/stock/${avatar}`,
       home: `/home/stock/${house}`,
     };
-    // console.log('data', data);
+    // dlog('data', data);
     createAccountAdmin(data);
   }
 
   function copyToClipboard() {
-    console.log(batchUserPasteBoard);
+    dlog(batchUserPasteBoard);
     if (navigator.clipboard) {
       // clipboard API is available
       navigator.clipboard.writeText(batchUserPasteBoard);
@@ -90,10 +90,10 @@
     }
 
     if (incrementUser > toUser - fromUser) {
-      console.log('done');
+      dlog('done');
       incrementUser = 0;
-      console.log('batchUserPasteBoard');
-      console.log(batchUserPasteBoard);
+      dlog('batchUserPasteBoard');
+      dlog(batchUserPasteBoard);
       batchCreation = false;
       return;
     }
@@ -116,18 +116,18 @@
   function fillAndSubmitForm(_username) {
     // Set the value of the username variable in the component's data
     username = _username; // assuming $: username is declared in your component's script
-    console.log('username', username);
+    dlog('username', username);
     updateFormWhenUserNameChanges();
 
     // Trigger the submit event on the form element
     const form = document.querySelector('.registerForm form');
-    // console.log('form', form);
+    // dlog('form', form);
     form.dispatchEvent(new Event('submit'));
   }
 
   function onSubmit() {
     register();
-    // console.log('register done');
+    // dlog('register done');
     setTimeout(() => {
       downloadLoginImage();
 
@@ -136,8 +136,8 @@
       batchUserPasteBoard += pasteUser;
       copyToClipboard();
 
-      // console.log('batchUserPasteBoard');
-      // console.log(batchUserPasteBoard);
+      // dlog('batchUserPasteBoard');
+      // dlog(batchUserPasteBoard);
       registerNextUser++;
       batchUserGenerator(registerNextUser);
     }, 1000);
@@ -145,7 +145,8 @@
 
   function genKidsPassword() {
     // removed confusing charecters like 0 O o l l q S k and made the chance for numbers bigger
-    const chars = '123456789abcdefghijmnprstuvwxyz123456789ABCDEFGHJKLMNPQRTUVWXYZ123456789';
+    const chars =
+      '123456789abcdefghijmnprstuvwxyz123456789ABCDEFGHJKLMNPQRTUVWXYZ123456789';
     // eslint-disable-next-line no-mixed-spaces-and-tabs
     const passwordLength = 7;
     password = '';
@@ -173,7 +174,7 @@
 
     QRCode.toDataURL(QRUrl)
       .then((qrCodeImage) => {
-        // console.log(qrCodeImage);
+        // dlog(qrCodeImage);
 
         const startTextX = 176;
         const canvas = document.getElementById('qrCanvas');
@@ -230,7 +231,7 @@
     <form
       on:submit|preventDefault="{() => {
         if (incrementUser < 1) {
-          console.log('initialization, clear clipboard');
+          dlog('initialization, clear clipboard');
           batchUserPasteBoard = '';
         }
         onSubmit();
@@ -251,7 +252,14 @@
         />
 
         <label for="email"><b>{$_('register.email')}</b></label>
-        <input type="text" placeholder="Enter Email" name="email" id="email" bind:value="{email}" required />
+        <input
+          type="text"
+          placeholder="Enter Email"
+          name="email"
+          id="email"
+          bind:value="{email}"
+          required
+        />
 
         <label for="psw"><b>{$_('register.password')}</b></label>
         <input
@@ -291,12 +299,17 @@
         <button type="submit" class="registerbtn">Register</button>
       </div>
     </form>
-    <button on:click="{genKidsPassword}" class="registerbtn">new Password</button>
+    <button on:click="{genKidsPassword}" class="registerbtn"
+      >new Password</button
+    >
 
     <div class="imageCanvas">
-      <canvas id="qrCanvas" width="340" height="174" style="border:3px solid"></canvas>
+      <canvas id="qrCanvas" width="340" height="174" style="border:3px solid"
+      ></canvas>
     </div>
-    <button on:click="{downloadLoginImage}" class="registerbtn">Download QR Code</button>
+    <button on:click="{downloadLoginImage}" class="registerbtn"
+      >Download QR Code</button
+    >
   </div>
 
   <!-- two input fields for integers, first labeled "from" and second labeled "to" -->

@@ -2,7 +2,12 @@
   import { location, push } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { convertImage, getAccount, getObject, logout } from '../../helpers/nakama-helpers';
+  import {
+    convertImage,
+    getAccount,
+    getObject,
+    logout,
+  } from '../../helpers/nakamaHelpers';
   import ProfilePage from '../profile.svelte';
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
@@ -11,7 +16,7 @@
   import Awards from '../awards.svelte';
   import { Addressbook, myHome } from '../../storage';
   import SceneSwitcher from '../game/class/SceneSwitcher';
-  import { clickOutside } from '../game/helpers/ClickOutside';
+  import { clickOutside } from '../../helpers/clickOutside';
   import { PlayerHistory } from '../game/playerState';
 
   // TODO: current moet een store worden
@@ -23,7 +28,7 @@
   let addressbookList = [];
   let lastLengthAddressbook = 0;
   let addressbookImages = [];
-  let enableClickOutsideListener = false;
+  let enableclickOutsideListener = false;
 
   getAccount();
   myHome.get();
@@ -31,7 +36,7 @@
   const unsubscribeItemsBar = ShowItemsBar.subscribe(async () => {
     if (!$Profile) return;
     if ($location === '/login') return;
-    enableClickOutsideListener = false;
+    enableclickOutsideListener = false;
 
     try {
       if (userHouseUrl === undefined) {
@@ -40,7 +45,7 @@
         // check for meta.azc because for a while there was a server bug that
         // would return azc and role instead of Azc and Role
         let profileAzc = '';
-        // console.log('$Profile: ', $Profile)
+        // dlog('$Profile: ', $Profile)
         if ($Profile.meta.Azc) {
           profileAzc = $Profile.meta.Azc;
         } else if ($Profile.meta.azc) {
@@ -48,20 +53,25 @@
         } else {
           profileAzc = 'GreenSquare';
         }
-        // console.log('profileAzc: ', profileAzc)
+        // dlog('profileAzc: ', profileAzc)
 
         userHouseObject = await getObject('home', profileAzc, $Profile.id);
 
         /** convert image to small size */
-        userHouseUrl = await convertImage(userHouseObject.value.url, '50', '50', 'png');
+        userHouseUrl = await convertImage(
+          userHouseObject.value.url,
+          '50',
+          '50',
+          'png',
+        );
 
-        // console.log('itemsbar --- userHouseUrl?', userHouseUrl);
+        // dlog('itemsbar --- userHouseUrl?', userHouseUrl);
       }
     } catch (error) {
       // console.warn('Error:', error);
     } finally {
       setTimeout(() => {
-        enableClickOutsideListener = true;
+        enableclickOutsideListener = true;
       }, 500);
     }
   });
@@ -74,7 +84,13 @@
       if (addressbookList.length > 0) {
         const tempArray = [];
         addressbookList.forEach(async (element) => {
-          tempArray.push(await getObject('home', element.value.meta?.Azc, element.value.user_id));
+          tempArray.push(
+            await getObject(
+              'home',
+              element.value.meta?.Azc,
+              element.value.user_id,
+            ),
+          );
 
           if (addressbookList.length === tempArray.length) {
             tempArray.forEach(async (address) => {
@@ -120,7 +136,7 @@
   }
 
   function clickOutsideUser() {
-    if (enableClickOutsideListener) {
+    if (enableclickOutsideListener) {
       ShowItemsBar.set(false);
     }
   }
@@ -137,13 +153,18 @@
       const playerPosX = userHouseObject.value.posX - 80;
       const playerPoxY = userHouseObject.value.posY - 100;
 
-      const value = `/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`;
-      push(value);
-      PlayerHistory.push(value);
-      // SceneSwitcher.switchScene(
-      //   'DefaultUserHome',
-      //   ManageSession.userProfile.id,
-      // );
+      PlayerPos.set({
+        x: playerPosX,
+        y: playerPoxY,
+      });
+
+      // const value = `/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`;
+      // push(value);
+      // PlayerHistory.push(value);
+      SceneSwitcher.switchScene(
+        'DefaultUserHome',
+        ManageSession.userProfile.id,
+      );
     }
   }
 
@@ -190,15 +211,27 @@
       </button>
 
       <button on:click="{toggleAwards}">
-        <img class="icon" src="assets/SHB/svg/AW-icon-achievement.svg" alt="Toggle Awards" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-achievement.svg"
+          alt="Toggle Awards"
+        />
       </button>
 
       <button on:click="{toggleMailbox}">
-        <img class="icon" src="assets/SHB/svg/AW-icon-post.svg" alt="Toggle mailbox" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-post.svg"
+          alt="Toggle mailbox"
+        />
       </button>
 
       <button on:click="{toggleFriends}">
-        <img class="icon" src="assets/SHB/svg/AW-icon-friend.svg" alt="Toggle Friends" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-friend.svg"
+          alt="Toggle Friends"
+        />
       </button>
 
       <button
@@ -209,7 +242,11 @@
           PlayerHistory.push(value);
         }}"
       >
-        <img class="icon" src="assets/SHB/svg/AW-icon-drawing.svg" alt="Start drawing!" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-drawing.svg"
+          alt="Start drawing!"
+        />
       </button>
 
       <button
@@ -219,7 +256,11 @@
           PlayerHistory.push(value);
         }}"
       >
-        <img class="icon" src="assets/SHB/svg/AW-icon-animation.svg" alt="Start stop motion!" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-animation.svg"
+          alt="Start stop motion!"
+        />
       </button>
 
       <button
@@ -234,17 +275,29 @@
           }
         }}"
       >
-        <img class="icon" src="assets/SHB/svg/AW-icon-sound.svg" alt="Start mariosound!" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-sound.svg"
+          alt="Start mariosound!"
+        />
       </button>
 
       <button on:click="{toggleLiked}">
-        <img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" alt="Toggle liked" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-heart-full-red.svg"
+          alt="Toggle liked"
+        />
       </button>
 
       <span>-</span>
 
       <button on:click="{doLogout}">
-        <img class="icon" src="assets/SHB/svg/AW-icon-exit.svg" alt="Log out!" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-exit.svg"
+          alt="Log out!"
+        />
       </button>
     </div>
     <div class="right">

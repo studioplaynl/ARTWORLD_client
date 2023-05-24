@@ -1,8 +1,8 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
   import jsQR from 'jsqr';
-  import { login } from '../../helpers/nakama-helpers';
-  import { dlog } from '../game/helpers/DebugLog';
+  import { login } from '../../helpers/nakamaHelpers';
+  import { dlog } from '../../helpers/debugLog';
 
   export let email;
   export let password;
@@ -66,17 +66,44 @@
 
         canvasElement.height = video.videoHeight;
         canvasElement.width = video.videoWidth;
-        canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-        const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+        canvas.drawImage(
+          video,
+          0,
+          0,
+          canvasElement.width,
+          canvasElement.height,
+        );
+        const imageData = canvas.getImageData(
+          0,
+          0,
+          canvasElement.width,
+          canvasElement.height,
+        );
         const code = jsQR(imageData.data, imageData.width, imageData.height, {
           inversionAttempts: 'dontInvert',
         });
         // dlog(code);
         if (code) {
-          drawLine(code.location.topLeftCorner, code.location.topRightCorner, '#FF3B58');
-          drawLine(code.location.topRightCorner, code.location.bottomRightCorner, '#FF3B58');
-          drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, '#FF3B58');
-          drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, '#FF3B58');
+          drawLine(
+            code.location.topLeftCorner,
+            code.location.topRightCorner,
+            '#FF3B58',
+          );
+          drawLine(
+            code.location.topRightCorner,
+            code.location.bottomRightCorner,
+            '#FF3B58',
+          );
+          drawLine(
+            code.location.bottomRightCorner,
+            code.location.bottomLeftCorner,
+            '#FF3B58',
+          );
+          drawLine(
+            code.location.bottomLeftCorner,
+            code.location.topLeftCorner,
+            '#FF3B58',
+          );
 
           // TODO: Checken op array van geldige hostnames, ipv enkele window.location.host
           // Hostnames per environment (dev, live) strakker instellen (live = alleen artworld.vrolijkheid.nl)

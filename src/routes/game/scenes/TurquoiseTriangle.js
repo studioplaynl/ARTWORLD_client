@@ -8,7 +8,7 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
@@ -144,7 +144,7 @@ export default class TurquoiseTriangle extends Phaser.Scene {
   }
 
   update() {
-  // don't move the player with clicking and swiping in edit mode
+    // don't move the player with clicking and swiping in edit mode
     if (!ManageSession.gameEditMode) {
       // ...... ONLINE PLAYERS ................................................
       Player.parseNewOnlinePlayerArray(this);

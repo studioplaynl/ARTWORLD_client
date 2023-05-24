@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
 // eslint-disable-next-line no-unused-vars
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
 // import CoordinatesTranslator from './CoordinatesTranslator';
 
@@ -126,7 +126,7 @@ class Background {
     bgDotRendertexture.destroy();
 
     // repeat this saved texture over the background
-    // console.log("gridWidth/offset", gridWidth / offset)
+    // dlog("gridWidth/offset", gridWidth / offset)
     for (let i = 0; i < gridWidth / offset; i += 1) {
       for (let j = 0; j < gridHeight / offsetY; j += 1) {
         // offset the odd rows by half offset
@@ -338,7 +338,7 @@ class Background {
     // const { worldSize } = scene;
     const partWidth = width / 6;
     const partHeight = height / 6;
-    // console.log("width, partWidth, height, partHeight", width, partWidth, height, partHeight)
+    // dlog("width, partWidth, height, partHeight", width, partWidth, height, partHeight)
 
     const rectangle = scene.add.rectangle(0, 0, partWidth, partHeight, color, alpha);
 
@@ -421,7 +421,7 @@ class Background {
     // const { posX } = 0;
     // const { posY } = 0;
 
-    // console.log("config, gradient1, gradient2, spikes", config, gradient1, gradient2, spikes)
+    // dlog("config, gradient1, gradient2, spikes", config, gradient1, gradient2, spikes)
     const graphics = scene.add.graphics();
 
     const rt1 = scene.add.renderTexture(0, 0, size * 2, size * 2);

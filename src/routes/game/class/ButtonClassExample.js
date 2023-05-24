@@ -1,4 +1,4 @@
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 
 const { Phaser } = window;
 export default class Button extends Phaser.GameObjects.Container {

@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import { push } from 'svelte-spa-router';
 import { Session as NakamaSession } from '@heroiclabs/nakama-js';
+import { dwarn, dlog } from './helpers/debugLog';
 
 /** Session from localStorage */
 let storedSession = localStorage.getItem('Session');
@@ -17,7 +18,7 @@ if (storedSession) {
     storedSession.refresh_token,
     storedSession.created,
   );
-  // console.log('restoring session from localstorage:', storedSessionObject);
+  // dlog('restoring session from localstorage:', storedSessionObject);
 }
 
 /** Session contains the user session from the Nakama server
@@ -29,6 +30,8 @@ Session.subscribe((value) => {
     localStorage.setItem('Session', JSON.stringify(value));
   } else {
     localStorage.removeItem('Session'); // for logout
+
+    dwarn('Session received NO value, redirect to login route');
     push('/login');
   }
 });
@@ -49,6 +52,9 @@ Profile.subscribe((value) => {
 /** Contains the Session Errors
  * @todo Remove or extend to multiple messages array? */
 export const Error = writable();
+Error.subscribe((err) => {
+  console.error('Error Store received following error:', err);
+});
 
 /** Contains the Session Notifications
  * @todo Remove or extend to multiple messages array? */

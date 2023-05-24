@@ -3,9 +3,9 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import { getAccount } from '../../../helpers/nakama-helpers';
+import { getAccount } from '../../../helpers/nakamaHelpers';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos } from '../playerState';
 import {
   AVATAR_BASE_SIZE,

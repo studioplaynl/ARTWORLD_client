@@ -1,8 +1,8 @@
 <script>
   import { onMount } from 'svelte';
   import { location } from 'svelte-spa-router';
-  import { getObject, getFile } from '../../helpers/nakama-helpers';
-  import { dlog } from '../game/helpers/DebugLog';
+  import { getObject, getFile } from '../../helpers/nakamaHelpers';
+  import { dlog } from '../../helpers/debugLog';
 
   export let params;
   let fileUrl;

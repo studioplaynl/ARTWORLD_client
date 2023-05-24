@@ -4,6 +4,7 @@
   import { ArtworksStore } from '../../storage';
   import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
+  import { dlog } from '../../helpers/debugLog';
 
   // eslint-disable-next-line svelte/valid-compile
   export let col = null;
@@ -16,19 +17,25 @@
   let modalOpen = false;
 
   const Trash = () => {
-    console.log('location', $location);
-    if ((role === 'admin' || role === 'moderator') && $location === '/moderator') {
+    dlog('location', $location);
+    if (
+      (role === 'admin' || role === 'moderator') &&
+      $location === '/moderator'
+    ) {
       moveToTrash(row);
     } else {
-      console.log('before');
+      dlog('before');
       ArtworksStore.updateState(row, OBJECT_STATE_IN_TRASH);
-      console.log('after');
+      dlog('after');
     }
   };
 
   function Delete() {
     modalOpen = false;
-    if ((role === 'admin' || role === 'moderator') && $location === '/moderator') {
+    if (
+      (role === 'admin' || role === 'moderator') &&
+      $location === '/moderator'
+    ) {
       removeFromTrash(row);
     } else {
       ArtworksStore.delete(row, role);
@@ -40,7 +47,6 @@
       Delete();
     }
   }
-
 </script>
 
 <svelte:window on:keyup="{handleKeydown}" />
@@ -84,7 +90,6 @@
       <p>If you exit without saving, changes will be lost.</p>
       <p>Are you sure you want to exit?</p>
       <Button on:click="{Delete}">yes, delete</Button>
-
     </Dialog>
   </Modal>
 </main>

@@ -2,7 +2,12 @@
   import { onMount } from 'svelte';
   import { client, SSL } from '../../nakama.svelte';
   import { Session, Profile, Error } from '../../session';
-  import { updateObjectAdmin, listAllObjects, deleteObjectAdmin, convertImage } from '../../helpers/nakama-helpers';
+  import {
+    updateObjectAdmin,
+    listAllObjects,
+    deleteObjectAdmin,
+    convertImage,
+  } from '../../helpers/nakamaHelpers';
   // import { writable } from "svelte/store";
 
   const verboseLogging = false;
@@ -210,7 +215,9 @@
   <label>type object name</label>
   <input type="text" bind:value="{where}" />
 
-  <label>value (alle keys and values need to be placed within " " to not error)</label>
+  <label
+    >value (alle keys and values need to be placed within " " to not error)</label
+  >
   <textarea bind:value="{value}"></textarea>
   <label>name</label>
   <input type="text" bind:value="{name}" />
@@ -231,7 +238,10 @@
 
   <button on:click="{getUserLocations}">Get</button>
   {#each locationsList as location}
-    <div class:blueBack="{location.user_id === $Session.user_id}" class="redBack">
+    <div
+      class:blueBack="{location.user_id === $Session.user_id}"
+      class="redBack"
+    >
       <p>username: {location.username}</p>
       <p>userID: {location.user_id}</p>
       <p>name:{location.key}</p>
@@ -239,7 +249,11 @@
         value: {JSON.stringify(location.value)}
         <button
           on:click="{async () => {
-            await deleteObjectAdmin(location.user_id, location.collection, location.key);
+            await deleteObjectAdmin(
+              location.user_id,
+              location.collection,
+              location.key,
+            );
             getUserLocations();
           }}"
         >

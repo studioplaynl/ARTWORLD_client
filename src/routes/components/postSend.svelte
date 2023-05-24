@@ -1,7 +1,8 @@
 <script>
   import Select from 'svelte-select';
   import MdSend from 'svelte-icons/md/MdSend.svelte';
-  import { ListFriends, sendMailToUser } from '../../helpers/nakama-helpers';
+  import { ListFriends, sendMailToUser } from '../../helpers/nakamaHelpers';
+  import { dlog } from '../../helpers/debugLog';
 
   export let row;
   // eslint-disable-next-line svelte/valid-compile
@@ -15,7 +16,7 @@
 
   async function toggle() {
     friends = await ListFriends();
-    console.log(friends);
+    dlog(friends);
     friends.friends.forEach((friend) => {
       items = [...items, friend.user];
     });
@@ -46,11 +47,20 @@
   {#if toggleMode}
     <button on:click="{toggle}" class="sendButton">
       <!-- svelte-ignore a11y-img-redundant-alt -->
-      <img alt="send picture" class="icon" src="assets/SHB/svg/AW-icon-post.svg" />
+      <img
+        alt="send picture"
+        class="icon"
+        src="assets/SHB/svg/AW-icon-post.svg"
+      />
     </button>
   {:else}
     <div class="selectBox">
-      <Select items="{items}" bind:value="{value}" itemId="{optionIdentifier}" label="{labelIdentifier}" />
+      <Select
+        items="{items}"
+        bind:value="{value}"
+        itemId="{optionIdentifier}"
+        label="{labelIdentifier}"
+      />
     </div>
     <button on:click="{send}" class="sendButton"><MdSend /></button>
   {/if}

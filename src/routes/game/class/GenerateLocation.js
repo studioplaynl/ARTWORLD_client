@@ -1,5 +1,6 @@
 import { push } from 'svelte-spa-router';
-import { dlog } from '../helpers/DebugLog';
+import SceneSwitcher from './SceneSwitcher';
+import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
 import { DEFAULT_HOME } from '../../../constants';
 import { PlayerHistory } from '../playerState';
@@ -291,7 +292,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.debugRect.displayWidth = width * 1.3;
     this.debugRect.displayHeight = this.debugRect_height * 1.3;
 
-    // console.log('this.debugRect', this.debugRect);
+    // dlog('this.debugRect', this.debugRect);
 
 
     // the container is created at the this.x and this.y
@@ -498,7 +499,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
           yoyo: true,
         });
       });
-    // console.log('this.debugRectXMargin:', this.debugRectXMargin, this.debugRectXMargin.x);
+    // dlog('this.debugRectXMargin:', this.debugRectXMargin, this.debugRectXMargin.x);
 
     this.scene.input.setDraggable(this, true);
   }

@@ -3,6 +3,7 @@ import Background from '../class/Background';
 import DebugFuntions from '../class/DebugFuntions';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
+import { dlog } from '../../../helpers/debugLog';
 
 const { Phaser } = window;
 
@@ -81,10 +82,10 @@ export default class TestCoordinates extends Phaser.Scene {
     // .......... locations ................................................................................
     // this.generateLocations()
     let location1Vector = new Phaser.Math.Vector2(-100, -100);
-    // console.log(location1Vector)
+    // dlog(location1Vector)
 
     location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector);
-    // console.log(location1Vector)
+    // dlog(location1Vector)
 
     // eslint-disable-next-line no-unused-vars
     const location1 = new GenerateLocation({
@@ -149,8 +150,8 @@ export default class TestCoordinates extends Phaser.Scene {
 
     // .......... UPDATE TIMER      ..........................................................................
     // ManageSession.updateMovementTimer += delta
-    // console.log(time) //running time in millisec
-    // console.log(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
+    // dlog(time) //running time in millisec
+    // dlog(delta) //in principle 16.6 (60fps) but drop to 41.8ms sometimes
     // ....... end UPDATE TIMER  ..............................................................................
 
     // ........ PLAYER MOVE BY KEYBOARD  ......................................................................

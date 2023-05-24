@@ -9,6 +9,7 @@
   import GroupAddIcon from 'svelte-icons/md/MdGroupAdd.svelte';
   import PersonIcon from 'svelte-icons/md/MdPerson.svelte';
   import { Error, Session, Success, Notification } from '../../session';
+  import { dlog, dwarn } from '../../helpers/debugLog';
 
   import {
     NOTIFICATION_MESSAGE_RECEIVED_WHILE_OFFLINE_OR_NOT_IN_CHANNEL,
@@ -31,21 +32,21 @@
 
   Error.subscribe((val) => {
     if (val) {
-      console.warn('ERROR: ', val);
+      dwarn('ERROR: ', val);
       setError(val);
     }
   });
 
   Notification.subscribe((val) => {
     if (val) {
-      console.log('NOTIFICATION: ', val);
+      dlog('NOTIFICATION: ', val);
       setNotification(val);
     }
   });
 
   Success.subscribe((val) => {
     if (val) {
-      console.log('SUCCESS: ', val);
+      dlog('SUCCESS: ', val);
       setSuccess(val);
     }
   });
@@ -58,7 +59,7 @@
   }
 
   function setNotification(notif) {
-    // console.log('notif', notif);
+    // dlog('notif', notif);
     if (notif !== undefined) {
       notification = notif;
       notificationCode = notif.code;
@@ -80,7 +81,7 @@
 
   onMount(() => {
     window.onunhandledrejection = (e) => {
-      // console.log(
+      // dlog(
       //   'unhandled rejection!',
       //   e,
       //   typeof e.reason,
@@ -90,9 +91,12 @@
       // );
       if (typeof e.reason === 'object') {
         setError(e.reason.message || e.reason.statusText);
-        if (parseInt(e.reason.state, 10) === 401 || parseInt(e.reason.status, 10) === 401) {
+        if (
+          parseInt(e.reason.state, 10) === 401 ||
+          parseInt(e.reason.status, 10) === 401
+        ) {
           /** Setting Session to null automatically redirects you to login route */
-          console.log('401! Should now automatically redirect to login route..?');
+          dlog('401! Should now automatically redirect to login route..?');
           Session.set(null);
         }
       } else {
@@ -100,7 +104,7 @@
       }
     };
     window.onerror = (msg) => {
-      console.log('On Error: ', msg);
+      dlog('On Error: ', msg);
       setError(msg);
     };
   });
@@ -157,10 +161,18 @@
       {:else if notificationCode === NOTIFICATION_SOCKET_CLOSED}
         <!-- Final notifications to sockets closed via the single_socket configuration. -->
       {:else if notificationCode === NOTIFICATION_ARTWORK_LIKE_RECEIVED}
-        <img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" alt="Someone liked your artwork" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-heart-full-red.svg"
+          alt="Someone liked your artwork"
+        />
         <!-- somebody liked your artpiece -->
       {:else if notificationCode === NOTIFICATION_ARTWORK_RECEIVED}
-        <img class="icon" src="assets/SHB/svg/AW-icon-post.svg" alt="Someone sent you an artwork" />
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-post.svg"
+          alt="Someone sent you an artwork"
+        />
         <!-- somebody sent you an artpiece -->
       {:else if notificationCode === NOTIFICATION_INVITE_RECEIVED}
         <!-- invite to play together -->

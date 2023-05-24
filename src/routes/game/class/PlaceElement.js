@@ -1,6 +1,6 @@
 // import { Liked } from '../../../storage';
 // eslint-disable-next-line no-unused-vars
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ManageSession from '../ManageSession';
 

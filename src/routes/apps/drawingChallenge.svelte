@@ -3,7 +3,7 @@
   import { fabric } from 'fabric/dist/fabric';
   import ManageSession from '../game/ManageSession';
   import { Session } from '../../session';
-  import { dlog } from '../game/helpers/DebugLog';
+  import { dlog } from '../../helpers/debugLog';
 
   let canvas;
   let canv;

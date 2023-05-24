@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
 
 const { Phaser } = window;

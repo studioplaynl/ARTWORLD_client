@@ -1,3 +1,22 @@
+/** UrlHelpers.js
+ *
+ *  What is this file for?
+ *  ======================
+ *  UrlHelpers is specifically made to cater to
+ *  Svelte stores <=> Phaser game relationship via the URL
+ *
+ *  In general it works like this:
+ *  - Selecting an App should be done by manipulating the CurrentApp store directly
+ *  - Any changes made to the Game state, should be made by directly manipulating these Svelte stores:
+ *    - PlayerPos
+ *    - PlayerLocation
+ *    - PlayerZoom
+ *  - The subscriptions to these stores, set-up at the bottom of UrlHelpers make sure the URL gets
+ *    updated whenever these changes are registered
+ *  - Whenever the game gets loaded (via direct load, refresh, or history event), the `parseURL` and `parseQueryString`
+ *    methods rehydrate the stores with the information found in the window.location
+ */
+
 /* eslint-disable class-methods-use-this */
 import { get } from 'svelte/store';
 import { parse, stringify } from 'qs';
@@ -12,7 +31,7 @@ import {
   DEFAULT_HOME, DEFAULT_ZOOM, SCENE_INFO, ZOOM_MAX, ZOOM_MIN,
 } from '../../../constants';
 // eslint-disable-next-line no-unused-vars
-import { dlog } from './DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import { DEFAULT_APP, isValidApp } from '../../apps/apps';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ManageSession from '../ManageSession';
@@ -28,11 +47,17 @@ let maxY = 5000;
 
 let previousQuery = {};
 
+/** Does this string exist as a scene name?
+ * @return {boolean} Exists yes/no
+ */
 export const checkIfSceneIsAllowed = (loc) => {
   const lowercaseScenes = SCENE_INFO.map((obj) => obj.scene.toLowerCase());
   return loc && lowercaseScenes.indexOf(loc.toLowerCase()) > -1;
 };
 
+/** Does this string look like a house name name?
+ * @return {boolean} yes/no
+ */
 export const checkIfLocationLooksLikeAHouse = (loc) => loc !== null && loc.split('-').length > 3;
 
 
@@ -89,8 +114,8 @@ export function parseURL() {
   }
 }
 
+/** Set-up subscription to svelte-spa-router location store */
 location.subscribe(() => parseURL());
-
 
 
 /** Parse the Querystring and rehydrate Stores */
@@ -176,7 +201,7 @@ export function parseQueryString() {
 /** Set up a subscription to the querystring (from svelte-spa-router)
  * (in other words: set up a listener to the current query string of the browser window)
  * Any changes to the querystring runs the parseQueryString function.
- * These changes set the PlayerPos & PlayerLocation stores */
+ * These changes set the PlayerPos, PlayerLocation & PlayerZoom stores */
 querystring.subscribe(() => parseQueryString());
 
 
@@ -191,7 +216,8 @@ export function updateQueryString() {
   if (x !== null && y !== null && scene !== null) {
     const query = { ...parse(get(querystring)) };
     const locationChanged = 'location' in previousQuery && scene !== previousQuery?.location;
-    const method = locationChanged ? 'push' : 'replace';
+    const houseChanged = 'house' in previousQuery && house !== previousQuery?.house;
+    const method = (locationChanged || houseChanged) ? 'push' : 'replace';
 
     // Set variables (as string)
     query.x = Math.round(x).toString();

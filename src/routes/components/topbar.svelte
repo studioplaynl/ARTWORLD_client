@@ -2,7 +2,7 @@
   import { push, pop } from 'svelte-spa-router';
   import { PlayerHistory, PlayerZoom } from '../game/playerState';
   import { DEFAULT_SCENE } from '../../constants';
-  // import { dlog } from '../game/helpers/DebugLog';
+  // import { dlog } from '../game/helpers/debugLog';
 
   async function goHome() {
     // Nice way to always reset to 0x0?
@@ -35,7 +35,12 @@
 
 <div class="topbar">
   <button on:click="{goHome}">
-    <img class="TopIcon" id="logo" src="assets/SHB/svg/AW-icon-logo-A.svg" alt="Homepage" />
+    <img
+      class="TopIcon"
+      id="logo"
+      src="assets/SHB/svg/AW-icon-logo-A.svg"
+      alt="Homepage"
+    />
   </button>
 
   <button on:click="{goBack}">
@@ -49,13 +54,25 @@
   </button>
 
   <button on:click="{zoomOut}" id="zoomOut">
-    <img class="TopIcon" src="/assets/SHB/svg/AW-icon-minus.svg" alt="Zoom out" />
+    <img
+      class="TopIcon"
+      src="/assets/SHB/svg/AW-icon-minus.svg"
+      alt="Zoom out"
+    />
   </button>
   <button on:click="{zoomReset}" id="zoomReset">
-    <img class="TopIcon" src="assets/SHB/svg/AW-icon-zoom-reset.svg" alt="Reset zoom" />
+    <img
+      class="TopIcon"
+      src="assets/SHB/svg/AW-icon-zoom-reset.svg"
+      alt="Reset zoom"
+    />
   </button>
   <button on:click="{zoomIn}" id="zoomIn">
-    <img class="TopIcon" src="./assets/SHB/svg/AW-icon-plus.svg" alt="Zoom in" />
+    <img
+      class="TopIcon"
+      src="./assets/SHB/svg/AW-icon-plus.svg"
+      alt="Zoom in"
+    />
   </button>
 
   <!-- <a

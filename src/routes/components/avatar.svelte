@@ -56,7 +56,7 @@
     src="/assets/SHB/svg/AW-icon-pen.svg"
     on:click="{() => {
       currentAvatar = AvatarsStore.getCurrent();
-      console.log(currentAvatar);
+      dlog(currentAvatar);
       if (typeof currentAvatar === 'object') {
         push(`/avatar?userId=${$Profile.id}&key=${currentAvatar.key}`);
       } else {

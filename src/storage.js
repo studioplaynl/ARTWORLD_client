@@ -13,14 +13,14 @@ import {
   deleteObjectAdmin,
   deleteFile,
   getObject,
-} from './helpers/nakama-helpers';
+} from './helpers/nakamaHelpers';
 import {
   PERMISSION_READ_PUBLIC,
   // PERMISSION_READ_PRIVATE,
   STOPMOTION_MAX_FRAMES,
   DEFAULT_PREVIEW_HEIGHT,
 } from './constants';
-import { dlog } from './routes/game/helpers/DebugLog';
+import { dlog } from './helpers/debugLog';
 
 //  Achievements of a user
 const achievementsStore = writable([]);
@@ -369,7 +369,7 @@ export const AvatarsStore = {
     const allAvatars = get(avatarsStore);
     const currentAvatar = get(Profile).avatar_url;
     const current = allAvatars.find((avatar) => avatar.value.url === currentAvatar);
-    // console.log('current avatar: ', current);
+    // dlog('current avatar: ', current);
     return current;
   },
 
@@ -519,7 +519,7 @@ export const myHome = {
         } else {
           profileAzc = 'GreenSquare';
         }
-        console.log('profileAzc: ', profileAzc);
+        dlog('profileAzc: ', profileAzc);
 
         localHome = await getObject(
           'home',

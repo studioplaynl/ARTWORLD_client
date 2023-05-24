@@ -5,7 +5,7 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import Move from '../class/Move';
 import { PlayerZoom } from '../playerState';
 import Background from '../class/Background';
-import { dlog } from './DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 import { ShowItemsBar } from '../../../session';
 
 /**   needed for EDITMODE: dragging objects and getting info about them in console
@@ -92,7 +92,7 @@ export function handlePlayerMovement(scene) {
       }
     })
     .on('drag1end', () => {
-      // console.log("dragend")
+      // dlog("dragend")
       if (ManageSession.movingByDragging && !ManageSession.gameEditMode) {
         scene.input.manager.canvas.style.cursor = 'default';
         const moveCommand = 'stop';
@@ -120,7 +120,7 @@ export function handlePlayerMovement(scene) {
   })
     .on('tap', () => {
       // dlog('tap');
-      // ClickOutSide is not working on iOS
+      // clickOutside is not working on iOS
       ShowItemsBar.set(false);
     }, scene)
     .on('tappingstart', () => {

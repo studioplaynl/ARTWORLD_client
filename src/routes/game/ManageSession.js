@@ -4,8 +4,8 @@ import { client, SSL } from '../../nakama.svelte';
 // translate from artworld coordinates to Phaser 2D screen coordinates
 import CoordinatesTranslator from './class/CoordinatesTranslator';
 import { Profile, Session, Notification } from '../../session';
-import { dlog } from './helpers/DebugLog';
-import { logout } from '../../helpers/nakama-helpers';
+import { dlog } from '../../helpers/debugLog';
+import { logout } from '../../helpers/nakamaHelpers';
 import {
   // PlayerLocation,
   playerStreamID,
@@ -288,7 +288,7 @@ class ManageSession {
     };
 
     // this.socket.onerror = (event) => {
-    // console.log('socket error!', event);
+    // dlog('socket error!', event);
     // };
 
     this.socket.ondisconnect = async () => {

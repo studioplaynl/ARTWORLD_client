@@ -12,7 +12,7 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 
 const { Phaser } = window;
 
@@ -116,7 +116,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   }// end create
 
   everythingFlowerFlied() {
-  // make background for flowers
+    // make background for flowers
     this.backgroundFlowerFieldFloor = this.add.graphics();
     this.backgroundFlowerFieldFloor.name = 'this.backgroundFlowerFieldFloor';
     // this.backgroundFlowerFieldFloor.fillGradientStyle(0xffff00, 0xffff00, 0x704d15, 0x704d15, 1)
@@ -184,7 +184,10 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
     this.makeFlowerFlied();
 
-    this.load.on('complete', () => { console.log('complete'); this.flowerFliedStartMaking = true; });
+    this.load.on('complete', () => {
+      dlog('complete');
+      this.flowerFliedStartMaking = true;
+    });
     this.flowerKeyArray = ['flower'];
     // download all drawings "bloem" from allUsersChallenge
 
@@ -195,7 +198,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   makeFlowerRow(flowerRowY) {
     let flowerKey = this.flowerKeyArray[Phaser.Math.Between(0, this.flowerKeyArray.length - 1)];
 
-    // console.log("flowerRowY", flowerRowY)
+    // dlog("flowerRowY", flowerRowY)
     for (let i = 0; i < this.amountOfFlowers; i++) {
       this.flowerScale = Phaser.Math.FloatBetween(
         this.flowerScaleFactor - (this.flowerScaleFactor / 12),
@@ -204,9 +207,9 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       // scale around 0.5 (0.4 - 0.6)
       // get a new flower key from the array, randomly
       flowerKey = this.flowerKeyArray[Phaser.Math.Between(0, this.flowerKeyArray.length - 1)];
-      // console.log("flowerKey", flowerKey)
+      // dlog("flowerKey", flowerKey)
       const flowerY = Phaser.Math.Between(flowerRowY - 35, flowerRowY + 35);
-      // console.log("flowerY", flowerY)
+      // dlog("flowerY", flowerY)
       this.flowerObject = this.add.image(
         i * (this.flowerSize * this.flowerAmountOfOverlapX),
         flowerY,

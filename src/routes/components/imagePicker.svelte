@@ -3,9 +3,20 @@
   import { push } from 'svelte-spa-router';
   import { Profile } from '../../session';
   import { myHome } from '../../storage';
-  import { STOPMOTION_MAX_FRAMES, DEFAULT_PREVIEW_HEIGHT, STOCK_HOUSES, STOCK_AVATARS } from '../../constants';
+  import { dlog } from '../../helpers/debugLog';
+  import {
+    STOPMOTION_MAX_FRAMES,
+    DEFAULT_PREVIEW_HEIGHT,
+    STOCK_HOUSES,
+    STOCK_AVATARS,
+  } from '../../constants';
   import Stopmotion from './stopmotion.svelte';
-  import { listObjects, deleteObject, setAvatar, convertImage } from '../../helpers/nakama-helpers';
+  import {
+    listObjects,
+    deleteObject,
+    setAvatar,
+    convertImage,
+  } from '../../helpers/nakamaHelpers';
   import { PlayerHistory } from '../game/playerState';
 
   let objects = [];
@@ -30,7 +41,7 @@
   async function getImages() {
     const files = await listObjects(dataType, $Profile.id, 100);
     objects = files.objects;
-    console.log('objects', objects);
+    dlog('objects', objects);
 
     for (let index = 0; index < objects.length; index++) {
       if (typeof objects[index].value.previewUrl !== 'string') {
@@ -52,11 +63,11 @@
     }
     if (dataType === 'house') {
       myHome.create(object.value.url);
-      console.log('object.value.url', object.value.url);
+      dlog('object.value.url', object.value.url);
       //! hier moet set home nog komen
 
       // await setHome(object.value.url);
-      // console.log(await getHome());
+      // dlog(await getHome());
     }
   }
   // on click of image, saveChange
@@ -75,7 +86,7 @@
           save({ value: { url: '/home/stock/portalBlauw.png' } });
         }
 
-        console.log('deleted');
+        dlog('deleted');
         objects.splice(index, 1);
         objects = objects;
       }
@@ -96,7 +107,8 @@
   {#each objects as object, i}
     <div
       class="item"
-      class:selected="{(object.value.url === $Profile.avatar_url && dataType === 'avatar') ||
+      class:selected="{(object.value.url === $Profile.avatar_url &&
+        dataType === 'avatar') ||
         (object.value.url === $myHome.value.url && dataType === 'house')}"
     >
       <p
@@ -132,7 +144,7 @@
         alt="Edit House"
         src="/assets/SHB/svg/AW-icon-pen.svg"
         on:click="{() => {
-          console.log('home', $myHome);
+          dlog('home', $myHome);
           // push('/house');
           if (dataType === 'house') {
             const value = `/house?userId=${$Profile.id}&key=${object.key}`;
@@ -152,8 +164,10 @@
   {#each stockItems as stockItem}
     <div
       class="item"
-      class:selected="{(`/avatar/stock/${stockItem}` === $Profile.avatar_url && dataType === 'avatar') ||
-        (`/home/stock/${stockItem}` === $myHome.value.url && dataType === 'house')}"
+      class:selected="{(`/avatar/stock/${stockItem}` === $Profile.avatar_url &&
+        dataType === 'avatar') ||
+        (`/home/stock/${stockItem}` === $myHome.value.url &&
+          dataType === 'house')}"
     >
       <p
         class="image"

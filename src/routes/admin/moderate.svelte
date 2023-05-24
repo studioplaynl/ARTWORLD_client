@@ -10,7 +10,7 @@
     listAllObjects,
     deleteObjectAdmin,
     updateObjectAdmin,
-  } from '../../helpers/nakama-helpers';
+  } from '../../helpers/nakamaHelpers';
   // import { APPS } from '../apps/apps'
   import { Session, Profile } from '../../session';
   import StatusComp from '../components/statusbox.svelte';
@@ -25,10 +25,14 @@
   const limit = 50;
 
   let useraccount;
-  const drawingIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
-  const stopMotionIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />';
-  const AudioIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
-  const videoIcon = '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
+  const drawingIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
+  const stopMotionIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />';
+  const AudioIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
+  const videoIcon =
+    '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
   console.log($Session);
   let user = '',
     role = 'admin',
@@ -88,9 +92,11 @@
       filterValue: (v) => v.update_time,
       renderValue: (v) => {
         const d = new Date(v.update_time);
-        return `${d.getHours()}:${d.getMinutes() < 10 ? '0' : ''}${d.getMinutes()} ${
-          d.getDate() < 10 ? '0' : ''
-        }${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+        return `${d.getHours()}:${
+          d.getMinutes() < 10 ? '0' : ''
+        }${d.getMinutes()} ${d.getDate() < 10 ? '0' : ''}${d.getDate()}/${
+          d.getMonth() + 1
+        }/${d.getFullYear()}`;
       },
       sortable: true,
     },
@@ -150,7 +156,13 @@
     const { key } = row;
     const { value } = row;
     value.status = 'trash';
-    updateObjectAdmin(row.user_id, row.collection, row.key, value, row.permission_read);
+    updateObjectAdmin(
+      row.user_id,
+      row.collection,
+      row.key,
+      value,
+      row.permission_read,
+    );
 
     for (let i = 0; i < art.length; i++) {
       if (!!art[i] && art[i].key === key) {
@@ -168,7 +180,13 @@
     const { key } = row;
     const { value } = row;
     value.status = '';
-    updateObjectAdmin(row.user_id, row.collection, row.key, value, row.permission_read);
+    updateObjectAdmin(
+      row.user_id,
+      row.collection,
+      row.key,
+      value,
+      row.permission_read,
+    );
     for (let i = 0; i < trash.length; i++) {
       if (!!trash[i] && trash[i].key == key) {
         art.push(trash[i]);
@@ -337,7 +355,11 @@
       </button>
     </div>
     <h1>Prullenmand</h1>
-    <SvelteTable columns="{columns}" rows="{trash}" classNameTable="profileTable" />
+    <SvelteTable
+      columns="{columns}"
+      rows="{trash}"
+      classNameTable="profileTable"
+    />
   {/if}
   <div class="buttonbox">
     <button

@@ -2,10 +2,10 @@
 import ManageSession from '../ManageSession';
 import {
   getAccount, updateObject, listObjects, updateObjectAdmin,
-} from '../../../helpers/nakama-helpers';
+} from '../../../helpers/nakamaHelpers';
 import CoordinatesTranslator from './CoordinatesTranslator';
 
-import { dlog } from '../helpers/DebugLog';
+import { dlog } from '../../../helpers/debugLog';
 
 const { Phaser } = window;
 
@@ -150,7 +150,7 @@ class DebugFuntions {
 
       case 'KeyA':
         dlog(code);
-        console.log('scene.tweens.getAllTweens(): ', currentScene.tweens.getAllTweens());
+        dlog('scene.tweens.getAllTweens(): ', currentScene.tweens.getAllTweens());
         break;
 
       case 'Digit1':

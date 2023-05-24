@@ -2,8 +2,9 @@
   import { Switch, Button } from 'attractions';
   // import { onMount } from 'svelte';
   import { location } from 'svelte-spa-router';
+  import { dlog } from '../../helpers/debugLog';
 
-  import { updateObjectAdmin } from '../../helpers/nakama-helpers';
+  import { updateObjectAdmin } from '../../helpers/nakamaHelpers';
   import {
     // PERMISSION_READ_PUBLIC,
     OBJECT_STATE_IN_TRASH,
@@ -23,7 +24,7 @@
 
   const change = async (e) => {
     if (role === 'admin' || role === 'moderator') {
-      console.log('admin');
+      dlog('admin');
 
       const {
         // eslint-disable-next-line camelcase
@@ -34,7 +35,7 @@
       } = row;
 
       // Update on server
-      console.log(collection, key, value, e.detail.value, user_id);
+      dlog(collection, key, value, e.detail.value, user_id);
       await updateObjectAdmin(user_id, collection, key, value, e.detail.value);
 
       // ArtworksStore.updatePublicRead(row, publicRead);
@@ -44,8 +45,11 @@
   };
 
   function restore() {
-    if ((role === 'admin' || role === 'moderator') && $location === '/moderator') {
-      console.log('admin');
+    if (
+      (role === 'admin' || role === 'moderator') &&
+      $location === '/moderator'
+    ) {
+      dlog('admin');
       moveToArt(row);
     } else {
       ArtworksStore.updateState(row, OBJECT_STATE_REGULAR);

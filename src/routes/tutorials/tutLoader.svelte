@@ -5,12 +5,12 @@
 
   import { Tutorial, CurrentApp } from '../../session';
   import { Achievements } from '../../storage';
+  import { dlog } from '../../helpers/debugLog';
 
   let current = 0;
   const hide = [];
   let sequence = [];
   hide[0] = false;
-  let hasShown = false;
 
   Tutorial.subscribe((value) => {
     if (value) {
@@ -40,7 +40,7 @@
       }, 1500);
 
       setTimeout(() => {
-        console.log('current loaded', $Achievements);
+        dlog('current loaded', $Achievements);
         if (!Achievements.find('onboardMove')) {
           $Tutorial = [
             {

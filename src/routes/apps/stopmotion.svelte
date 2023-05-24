@@ -2,8 +2,13 @@
   import { onMount } from 'svelte';
   import { Swiper, SwiperSlide } from 'swiper/svelte';
   import Drawing from './drawing.svelte';
+  import { dlog } from '../../helpers/debugLog';
   // eslint-disable-next-line no-unused-vars
-  import { STOPMOTION_MAX_FRAMES, STOPMOTION_FPS, STOPMOTION_BASE_SIZE } from '../../constants';
+  import {
+    STOPMOTION_MAX_FRAMES,
+    STOPMOTION_FPS,
+    STOPMOTION_BASE_SIZE,
+  } from '../../constants';
   // eslint-disable-next-line import/no-unresolved
   import 'swiper/css';
 
@@ -34,7 +39,7 @@
     // Was there an image to load?
     // If so, load it and retrieve frame count from dimensions.
     // if (file?.url) {
-    console.log('load file url stopmotion');
+    dlog('load file url stopmotion');
     //   const img = new Image();
     //   img.onload = (e) => {
     //     frames = Math.floor(e.target.width / e.target.height);
@@ -59,21 +64,20 @@
     }, 100);
   }
 
-    function deleteFrame(deleteableFrame) {
-      const deleteframe = deleteableFrame - 1;
-      console.log('deleteFrame, currentFrame', deleteframe, currentFrame);
+  function deleteFrame(deleteableFrame) {
+    const deleteframe = deleteableFrame - 1;
+    dlog('deleteFrame, currentFrame', deleteframe, currentFrame);
 
-
-      if (deleteframe >= 0 && deleteframe < framesArray.length) {
+    if (deleteframe >= 0 && deleteframe < framesArray.length) {
       // Remove the nth element from the array
-        framesArray.splice(deleteframe, 1);
+      framesArray.splice(deleteframe, 1);
 
-        // update drawingCanvas with currentFrame
-        drawing.getImageFromFramesArray(currentFrame - 1);
-      }
-
-      onFrameContentDeleted();
+      // update drawingCanvas with currentFrame
+      drawing.getImageFromFramesArray(currentFrame - 1);
     }
+
+    onFrameContentDeleted();
+  }
 
   // Set up swiper as reference to Swiper.js instance
   const onSwiper = (e) => {
@@ -85,7 +89,7 @@
     // Don't change currentFrame when activating the [+] slide
     if (swiper.activeIndex === frames) {
       swiper.slideTo(frames - 1);
-      // console.log('onSlideChange() currentFrame', currentFrame);
+      // dlog('onSlideChange() currentFrame', currentFrame);
       // currentFrame = frames;
     } else {
       // when adding a frame with the [+]; view is going to the added frame
@@ -127,14 +131,14 @@
 {#if framesArray !== null}
   <Drawing
     bind:this="{drawing}"
-    bind:file
-    bind:data
-    bind:changes
-    bind:currentFrame
-    bind:frames
-    bind:framesArray
-    bind:enableEditor
-    bind:displayName
+    bind:file="{file}"
+    bind:data="{data}"
+    bind:changes="{changes}"
+    bind:currentFrame="{currentFrame}"
+    bind:frames="{frames}"
+    bind:framesArray="{framesArray}"
+    bind:enableEditor="{enableEditor}"
+    bind:displayName="{displayName}"
     stopMotion="{true}"
     enableOnionSkinning="{enableOnionSkinning && enableEditor}"
     on:save
@@ -159,7 +163,6 @@
           on:swiper="{onSwiper}"
           on:slideChange="{onSlideChange}"
         >
-
           <!-- eslint-disable-next-line no-unused-vars -->
           {#each Array(frames + 1) as _, index (index)}
             {#if index}
@@ -190,8 +193,7 @@
                       deleteFrame(index);
                       // update changes to trigger save
                       changes++;
-                    }}"
-                    >&times;</button
+                    }}">&times;</button
                   >
                 {/if}
               </SwiperSlide>
@@ -203,8 +205,6 @@
                 class="stopmotion__frame"
                 id="stopmotion-frame-new"
                 on:click="{addFrame}"
-
-
               >
                 <div class="stopmotion__frame__index">+</div>
               </div>

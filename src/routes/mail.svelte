@@ -3,8 +3,11 @@
 
   import SceneSwitcher from './game/class/SceneSwitcher';
   import { Profile } from '../session';
-  import { listAllNotifications, convertImage } from '../helpers/nakama-helpers';
-  import { NOTIFICATION_ARTWORK_LIKE_RECEIVED, NOTIFICATION_ARTWORK_RECEIVED } from '../constants';
+  import { listAllNotifications, convertImage } from '../helpers/nakamaHelpers';
+  import {
+    NOTIFICATION_ARTWORK_LIKE_RECEIVED,
+    NOTIFICATION_ARTWORK_RECEIVED,
+  } from '../constants';
 
   let messages = {
     notifications: [],
@@ -15,9 +18,13 @@
     messages = await listAllNotifications();
 
     for (let i = messages.notifications.length - 1; i > 0; i--) {
-      if (messages.notifications[i].code === NOTIFICATION_ARTWORK_LIKE_RECEIVED) {
+      if (
+        messages.notifications[i].code === NOTIFICATION_ARTWORK_LIKE_RECEIVED
+      ) {
         // eslint-disable-next-line no-await-in-loop
-        messages.notifications[i].previewUrl = await convertImage(messages.notifications[i].content.url);
+        messages.notifications[i].previewUrl = await convertImage(
+          messages.notifications[i].content.url,
+        );
 
         likes = [...likes, messages.notifications[i]];
       }
@@ -35,17 +42,28 @@
 <div>
   <div class="post">
     <div class="icon header">
-      <img class="icon" src="assets/SHB/svg/AW-icon-post.svg" alt="Someone sent you an artwork" />
+      <img
+        class="icon"
+        src="assets/SHB/svg/AW-icon-post.svg"
+        alt="Someone sent you an artwork"
+      />
     </div>
     {#each posts as notification}
       <div class="notification">
         <div class="icon">
-          <img class="icon" src="assets/SHB/svg/AW-icon-post.svg" alt="Someone sent you an artwork" />
+          <img
+            class="icon"
+            src="assets/SHB/svg/AW-icon-post.svg"
+            alt="Someone sent you an artwork"
+          />
         </div>
         <p on:click="{goHome(notification.userId)}">
           {notification.content.username}
         </p>
-        <a href="/#/drawing?userId={notification.content.userId}&key={notification.content.key}">
+        <a
+          href="/#/drawing?userId={notification.content
+            .userId}&key={notification.content.key}"
+        >
           <img alt="previewURL" src="{notification.content.previewUrl}" />
         </a>
       </div>
@@ -54,17 +72,27 @@
 
   <div class="likes">
     <div class="icon header">
-      <img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" alt="Someone liked your artwork" />
+      <img
+        class="icon"
+        src="assets/SHB/svg/AW-icon-heart-full-red.svg"
+        alt="Someone liked your artwork"
+      />
     </div>
     {#each likes as notification}
       <div class="notification">
         <div class="icon">
-          <img class="icon" src="assets/SHB/svg/AW-icon-heart-full-red.svg" alt="Someone liked your artwork" />
+          <img
+            class="icon"
+            src="assets/SHB/svg/AW-icon-heart-full-red.svg"
+            alt="Someone liked your artwork"
+          />
         </div>
         <p on:click="{goHome(notification.sender_id)}">
           {notification.content.username}
         </p>
-        <a href="/#/drawing?userId={$Profile.id}&key={notification.content.key}">
+        <a
+          href="/#/drawing?userId={$Profile.id}&key={notification.content.key}"
+        >
           <img alt="previewURL" src="{notification.previewUrl}" />
         </a>
       </div>

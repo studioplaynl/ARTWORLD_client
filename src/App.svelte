@@ -4,8 +4,13 @@
   import { wrap } from 'svelte-spa-router/wrap';
   import Phaser from 'phaser';
   import { CurrentApp, Session, Profile, Error } from './session';
-  import { sessionCheck, checkLoginExpired, logout, restoreSession } from './helpers/nakama-helpers';
-  import { dlog } from './routes/game/helpers/DebugLog';
+  import {
+    sessionCheck,
+    checkLoginExpired,
+    logout,
+    restoreSession,
+  } from './helpers/nakamaHelpers';
+  import { dlog } from './helpers/debugLog';
 
   /** Admin pages */
   import Admin from './routes/admin/admin.svelte';
@@ -39,7 +44,7 @@
   let mounted = false;
   let title;
 
-  console.log('APP_VERSION_INFO: ', APP_VERSION_INFO);
+  dlog('APP_VERSION_INFO: ', APP_VERSION_INFO);
 
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -64,7 +69,8 @@
 
   $: isLoggedIn = $Session !== null && $Profile && $Profile?.username;
   $: isAdmin = $Profile?.meta?.Role === 'admin';
-  $: isModerator = $Profile?.meta?.Role === 'moderator' || $Profile?.meta?.Role === 'admin';
+  $: isModerator =
+    $Profile?.meta?.Role === 'moderator' || $Profile?.meta?.Role === 'admin';
 
   $: {
     if (!isLoggedIn) push('/login');
