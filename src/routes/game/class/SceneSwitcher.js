@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import { dlog } from '../../../helpers/debugLog';
+import { dlog, dwarn } from '../../../helpers/debugLog';
 import { PlayerLocation } from '../playerState';
 // import { PlayerLocation, playerStreamID, PlayerHistory } from '../playerState';
 
@@ -20,8 +20,8 @@ class SceneSwitcher {
   constructor() {
     // this.tempHistoryArray = [];
 
-    this.unsubscribeScene = PlayerLocation.subscribe(() => {
-      dlog('player location changed, SceneSwitcher reacts');
+    this.unsubscribeScene = PlayerLocation.subscribe((val) => {
+      // dlog('HistoryBug: SceneSwitcher: PlayerLocation changed, SceneSwitcher reacts, value = ', JSON.stringify(val));
       // dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
       // check if we are going from the same world to the same world;
       // then don't switch scenes
@@ -36,18 +36,22 @@ class SceneSwitcher {
   }
 
   pushLocation(scene) {
-    ManageSession.currentScene = scene;
+    dwarn('pushLocation is deprecated!');
+    // ManageSession.currentScene = scene;
   }
 
-  switchScene(targetScene, targetHouse) {
-    PlayerLocation.set({
-      house: targetHouse,
-      scene: targetScene,
-    });
-    // this.doSwitchScene();
-  }
+  // switchScene(targetScene, targetHouse) {
+  //   // dlog('SwitchBug SwitchScene called: ', targetScene, targetHouse);
+
+  //   PlayerLocation.set({
+  //     house: targetHouse,
+  //     scene: targetScene,
+  //   });
+  //   // this.doSwitchScene();
+  // }
 
   doSwitchScene() {
+    // dlog('HistoryBug: doSwitchScene called');
     const scene = ManageSession.currentScene;
     const targetScene = get(PlayerLocation).scene;
     const targetHouse = get(PlayerLocation).house;

@@ -53,7 +53,9 @@ Profile.subscribe((value) => {
  * @todo Remove or extend to multiple messages array? */
 export const Error = writable();
 Error.subscribe((err) => {
-  console.error('Error Store received following error:', err);
+  if (err) {
+    console.error('Error Store received following error:', err);
+  }
 });
 
 /** Contains the Session Notifications

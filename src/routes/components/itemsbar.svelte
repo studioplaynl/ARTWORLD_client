@@ -15,9 +15,12 @@
   import { Profile, ShowItemsBar } from '../../session';
   import Awards from '../awards.svelte';
   import { Addressbook, myHome } from '../../storage';
-  import SceneSwitcher from '../game/class/SceneSwitcher';
   import { clickOutside } from '../../helpers/clickOutside';
-  import { PlayerHistory } from '../game/playerState';
+  import {
+    PlayerHistory,
+    PlayerPos,
+    PlayerLocation,
+  } from '../game/playerState';
 
   // TODO: current moet een store worden
   // zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties)
@@ -145,26 +148,21 @@
     ShowItemsBar.set(true);
   }
 
-  async function goHome(id) {
-    if (typeof id === 'string') {
-      SceneSwitcher.switchScene('DefaultUserHome', id);
-    } else if ($ShowItemsBar) {
+  async function goHome() {
+    if ($ShowItemsBar) {
       // place user next to nameplate of home
       const playerPosX = userHouseObject.value.posX - 80;
-      const playerPoxY = userHouseObject.value.posY - 100;
+      const playerPosY = userHouseObject.value.posY - 100;
+
+      PlayerLocation.set({
+        scene: userHouseObject.key,
+        // house: ManageSession.userProfile.id,
+      });
 
       PlayerPos.set({
         x: playerPosX,
-        y: playerPoxY,
+        y: playerPosY,
       });
-
-      // const value = `/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`;
-      // push(value);
-      // PlayerHistory.push(value);
-      SceneSwitcher.switchScene(
-        'DefaultUserHome',
-        ManageSession.userProfile.id,
-      );
     }
   }
 

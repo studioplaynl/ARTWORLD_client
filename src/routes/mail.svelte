@@ -1,10 +1,10 @@
 <script>
   import { onMount } from 'svelte';
-
-  import SceneSwitcher from './game/class/SceneSwitcher';
+  import { PlayerLocation } from './game/playerState';
   import { Profile } from '../session';
   import { listAllNotifications, convertImage } from '../helpers/nakamaHelpers';
   import {
+    DEFAULT_HOME,
     NOTIFICATION_ARTWORK_LIKE_RECEIVED,
     NOTIFICATION_ARTWORK_RECEIVED,
   } from '../constants';
@@ -35,7 +35,10 @@
   });
 
   async function goHome(id) {
-    SceneSwitcher.switchScene('DefaultUserHome', id);
+    PlayerLocation.set({
+      scene: DEFAULT_HOME,
+      house: id,
+    });
   }
 </script>
 

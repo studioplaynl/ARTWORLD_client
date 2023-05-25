@@ -119,9 +119,9 @@ button:focus {
   color: #7300EB;
 }
 
- .link {
-    cursor: pointer;
-  }
+.link {
+  cursor: pointer;
+}
 
 .profileTable th {
   padding: 5px;

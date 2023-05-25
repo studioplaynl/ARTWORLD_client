@@ -1,6 +1,11 @@
 <script>
   import { push, pop } from 'svelte-spa-router';
-  import { PlayerHistory, PlayerZoom } from '../game/playerState';
+  import {
+    PlayerHistory,
+    PlayerZoom,
+    PlayerLocation,
+    PlayerPos,
+  } from '../game/playerState';
   import { DEFAULT_SCENE } from '../../constants';
   // import { dlog } from '../game/helpers/debugLog';
 
@@ -8,9 +13,18 @@
     // Nice way to always reset to 0x0?
     // replace(`/${appName}?${get(querystring)}`);
     // PlayerHistory.replace(`/${appName}?${get(querystring)}`);
-    const value = `/game?location=${DEFAULT_SCENE}&x=0&y=0`;
-    push(value);
-    PlayerHistory.push(value);
+    // const value = `/game?location=${DEFAULT_SCENE}&x=0&y=0`;
+    // push(value);
+    // PlayerHistory.push(value);
+
+    PlayerPos.set({
+      x: 0,
+      y: 0,
+    });
+
+    PlayerLocation.set({
+      scene: DEFAULT_SCENE,
+    });
   }
 
   async function goBack() {

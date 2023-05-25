@@ -1,4 +1,6 @@
-/** UrlHelpers.js
+/**
+ * @file UrlHelpers
+ * @author Eelke
  *
  *  What is this file for?
  *  ======================
@@ -120,6 +122,8 @@ location.subscribe(() => parseURL());
 
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
+  // console.time('parseQueryString');
+
   const query = parse(get(querystring));
   const pos = get(PlayerPos);
   const newPlayerPosition = { x: pos.x, y: pos.y };
@@ -133,6 +137,7 @@ export function parseQueryString() {
 
   if ('location' in query) {
     if (checkIfSceneIsAllowed(query.location) && get(PlayerLocation).scene !== query.location) {
+      // console.log('SwitchBug What is the location? ', query.location);
       newPlayerLocation.scene = query.location;
     }
   }
@@ -149,6 +154,7 @@ export function parseQueryString() {
 
   // Update the PlayerLocation store if a scene was set
   if (newPlayerLocation?.scene) {
+    // console.log('SwitchBug to? ', stringify(newPlayerLocation));
     PlayerLocation.set(newPlayerLocation);
   }
 
@@ -161,41 +167,49 @@ export function parseQueryString() {
     // scene is not loaded, getting the info from SCENE_INFO
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === currentLocation.scene);
 
-    // dlog ("currentScene, sceneInfo", currentScene, sceneInfo)
-    const currentSceneSize = new Phaser.Math.Vector2(sceneInfo.sizeX, sceneInfo.sizeY);
+    if (sceneInfo) {
+      // dlog ("currentScene, sceneInfo", currentScene, sceneInfo)
+      const currentSceneSize = new Phaser.Math.Vector2(sceneInfo.sizeX, sceneInfo.sizeY);
 
-    minX = -(currentSceneSize.x / 2) + (ManageSession.avatarSize / 2);
-    maxX = (currentSceneSize.x / 2) - (ManageSession.avatarSize / 2);
-    minY = -(currentSceneSize.y / 2) + (ManageSession.avatarSize / 2);
-    maxY = (currentSceneSize.y / 2) - (ManageSession.avatarSize / 2);
+      minX = -(currentSceneSize.x / 2) + (ManageSession.avatarSize / 2);
+      maxX = (currentSceneSize.x / 2) - (ManageSession.avatarSize / 2);
+      minY = -(currentSceneSize.y / 2) + (ManageSession.avatarSize / 2);
+      maxY = (currentSceneSize.y / 2) - (ManageSession.avatarSize / 2);
 
-    const queryX = parseInt(query.x, 10);
-    const queryY = parseInt(query.y, 10);
-    // dlog(pos, queryX, queryY);
-    if (pos.x !== queryX) {
-      if (Number.isNaN(queryX)) {
-        // set it to prev player pos
-        newPlayerPosition.x = Math.max(minX, Math.min(pos.x, maxX));
-      } else {
-        newPlayerPosition.x = Math.max(minX, Math.min(queryX, maxX));
+      const queryX = parseInt(query.x, 10);
+      const queryY = parseInt(query.y, 10);
+
+      if (pos.x !== queryX) {
+        if (Number.isNaN(queryX)) {
+          // set it to prev player pos
+          newPlayerPosition.x = Math.max(minX, Math.min(pos.x, maxX));
+        } else {
+          newPlayerPosition.x = Math.max(minX, Math.min(queryX, maxX));
+        }
       }
-    }
-    if (pos.y !== queryY) {
-      if (Number.isNaN(queryY)) {
-        // set it to prev player pos
-        newPlayerPosition.y = Math.max(minX, Math.min(pos.y, maxX));
-      } else {
-        newPlayerPosition.y = Math.max(minY, Math.min(queryY, maxY));
+      if (pos.y !== queryY) {
+        if (Number.isNaN(queryY)) {
+          // set it to prev player pos
+          newPlayerPosition.y = Math.max(minX, Math.min(pos.y, maxX));
+        } else {
+          newPlayerPosition.y = Math.max(minY, Math.min(queryY, maxY));
+        }
       }
-    }
 
-    // dlog('setting position to', newPlayerPosition);
-    PlayerPos.set(newPlayerPosition);
+      // dlog('setting position to', newPlayerPosition);
+      if (newPlayerPosition.x !== pos.x || newPlayerPosition.y !== pos.y) {
+        PlayerPos.set(newPlayerPosition);
+      }
+    } else {
+      dlog('No sceneInfo found, not setting PlayerPos');
+    }
   }
 
   if (stringify({ ...query }) !== stringify({ ...previousQuery })) {
     previousQuery = { ...query };
   }
+
+  // console.timeEnd('parseQueryString');
 }
 
 /** Set up a subscription to the querystring (from svelte-spa-router)
@@ -209,15 +223,18 @@ querystring.subscribe(() => parseQueryString());
 * Any value changes on PlayerPos & PlayerLocation make this function run
 * And subsequently update the query string in the URL of the browser */
 export function updateQueryString() {
+  // console.time(`updateQueryString for ${reason}`);
+
   const { x, y } = get(PlayerPos);
   const { scene, house } = get(PlayerLocation);
   const zoom = get(PlayerZoom);
 
   if (x !== null && y !== null && scene !== null) {
     const query = { ...parse(get(querystring)) };
+
     const locationChanged = 'location' in previousQuery && scene !== previousQuery?.location;
-    const houseChanged = 'house' in previousQuery && house !== previousQuery?.house;
-    const method = (locationChanged || houseChanged) ? 'push' : 'replace';
+    // const houseChanged = 'house' in previousQuery && house !== previousQuery?.house;
+    const method = (locationChanged) ? 'push' : 'replace';
 
     // Set variables (as string)
     query.x = Math.round(x).toString();
@@ -251,6 +268,7 @@ export function updateQueryString() {
       }
     }
   }
+  // console.timeEnd(`updateQueryString for ${reason}`);
 }
 
 /** Set up the subscriptions to stores that should update the querystring

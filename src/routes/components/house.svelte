@@ -1,49 +1,13 @@
 <script>
-  import { onMount } from 'svelte';
-  // import { push } from 'svelte-spa-router';
   import { myHome } from '../../storage';
-  // import { Profile } from '../../session';
-  // import SceneSwitcher from '../game/class/SceneSwitcher';
-  // import ManageSession from '../game/ManageSession';
   import ImagePicker from './imagePicker.svelte';
 
   // let url;
   let show = false;
   let showHistory = false;
-  // let version;
-
-  // async function goHome() {
-  //   SceneSwitcher.switchScene('DefaultUserHome', ManageSession.userProfile.id);
-  // }
-
-  onMount(async () => {
-    // try {
-    //   houseUrl = await getObject(
-    //     'home',
-    //     $Profile.meta.Azc || 'GreenSquare',
-    //     $Profile.user_id,
-    //   );
-    // } catch (err) {
-    //   dlog(err); // TypeError: failed to fetch
-    // }
-    // if (typeof houseUrl === 'object') {
-    //   houseUrl = await convertImage(houseUrl.value.url, '150', '150');
-    // } else {
-    //   houseUrl = '';
-    // }
-  });
 </script>
 
 <div class="container-history-nav-buttons">
-  <!-- {#if showHistory}
-    <div class="backAvatar pointer">
-      <img
-      alt="Back"
-        src="/assets/SHB/svg/AW-icon-previous.svg"
-        on:click="{backVersion}"
-      />
-    </div>
-  {/if} -->
   <div
     class="avatar pointer"
     on:click="{() => {
@@ -56,28 +20,6 @@
 </div>
 
 <div class="action">
-  <!-- <img
-    class="icon"
-    alt="Edit House"
-    src="/assets/SHB/svg/AW-icon-pen.svg"
-    on:click="{() => {
-      dlog('home', $myHome);
-      // push('/house');
-      if (typeof $myHome === 'object') {
-        push(`/house?userId=${$Profile.id}&key=${$myHome.key}`);
-      } else {
-        push('/house');
-      }
-    }}"
-  /> -->
-  <!-- <img
-    class="icon"
-    alt="Go Home"
-    src="assets/SHB/svg/AW-icon-enter-space.svg"
-    on:click="{() => {
-      goHome();
-    }}"
-  /> -->
   {#if showHistory}
     <img
       alt="close"

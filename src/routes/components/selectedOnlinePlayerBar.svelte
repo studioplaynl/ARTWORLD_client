@@ -1,6 +1,5 @@
 <script>
   import { onDestroy } from 'svelte';
-  import { push } from 'svelte-spa-router';
   import { fly } from 'svelte/transition';
   import {
     convertImage,
@@ -13,7 +12,7 @@
   // import SceneSwitcher from '../game/class/SceneSwitcher';
   // import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../../helpers/clickOutside';
-  import { PlayerHistory } from '../game/playerState';
+  import { PlayerPos, PlayerLocation } from '../game/playerState';
   import { dwarn } from '../../helpers/debugLog';
 
   let current;
@@ -78,13 +77,20 @@
   function goHome() {
     // place user next to nameplate of home
     const playerPosX = userHouseObject.value.posX - 80;
-    const playerPoxY = userHouseObject.value.posY - 100;
+    const playerPosY = userHouseObject.value.posY - 100;
 
-    const value = `/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`;
-    push(value);
-    PlayerHistory.push(value);
+    // const value = `/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPosY}`;
+    // push(value);
+    // PlayerHistory.push(value);
 
-    // SceneSwitcher.switchScene('DefaultUserHome', $SelectedOnlinePlayer.id);
+    PlayerPos.set({
+      x: playerPosX,
+      y: playerPosY,
+    });
+
+    PlayerLocation.set({
+      scene: userHouseObject.key,
+    });
   }
 
   function clickOutsideUser() {

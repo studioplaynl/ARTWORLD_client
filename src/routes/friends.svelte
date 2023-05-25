@@ -2,7 +2,7 @@
   import { push } from 'svelte-spa-router';
   import SvelteTable from 'svelte-table';
   import MdSearch from 'svelte-icons/md/MdSearch.svelte';
-  import { PlayerHistory } from './game/playerState';
+  import { PlayerHistory, PlayerLocation } from './game/playerState';
   import SceneSwitcher from './game/class/SceneSwitcher';
   import FriendAction from './components/friendaction.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
@@ -12,7 +12,7 @@
     setLoader,
     convertImage,
   } from '../helpers/nakamaHelpers';
-  import SceneSwitcher from './game/class/SceneSwitcher';
+
   import { dlog } from '../helpers/debugLog';
   import {
     FRIENDSTATE_FRIENDS,
@@ -66,10 +66,11 @@
   function goTo(event) {
     const { row } = event.detail;
     if (event.detail.key === 'action') return;
-    const value = `/game?location=${DEFAULT_HOME}&house=${row.user.id}`;
-    push(value);
-    PlayerHistory.push(value);
-    SceneSwitcher.switchScene('DefaultUserHome', row.user.id);
+
+    PlayerLocation.set({
+      scene: DEFAULT_HOME,
+      house: row.user.id,
+    });
   }
 
   const columns = [
@@ -94,6 +95,7 @@
     {
       key: 'Username',
       title: 'Username',
+      // value: (v) => `<p>${v.user.username}<p>`,
       value: (v) => `<p class="link">${v.user.username}<p>`,
       sortable: true,
     },

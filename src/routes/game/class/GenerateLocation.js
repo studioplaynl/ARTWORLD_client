@@ -1,9 +1,11 @@
+/* eslint-disable brace-style */
 import { push } from 'svelte-spa-router';
+import { get } from 'svelte/store';
 import SceneSwitcher from './SceneSwitcher';
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
-import { DEFAULT_HOME } from '../../../constants';
-import { PlayerHistory } from '../playerState';
+import { DEFAULT_HOME, SCENE_INFO } from '../../../constants';
+import { PlayerHistory, PlayerPos, PlayerLocation } from '../playerState';
 
 const { Phaser } = window;
 
@@ -314,6 +316,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.enterArea.on('pointerdown', () => {
       // check when entering the location if it is an URL or scene
       ManageSession.playerIsAllowedToMove = false;
+
+      // TODO: Add comments
+      // Not sure when this gets called.. Maybe MarioSound?
       if (typeof this.internalUrl !== 'undefined') {
         dlog('internal url 1');
         this.scene.scene.pause();
@@ -334,6 +339,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         }
       }
 
+      // Check if it is an external URL
       if (typeof this.externalUrl !== 'undefined') {
         this.scene.scene.pause();
 
@@ -347,6 +353,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         }
       }
 
+      //
       if (typeof this.appUrl !== 'undefined') {
         // Add a leading slash as apps should reflect URLs
         if (this.appUrl.split('')[0] !== '/') this.appUrl = `/${this.appUrl}`;
@@ -359,43 +366,42 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         }
       }
 
+      //
       if (typeof this.locationDestination !== 'undefined') {
-        // place player in position
-        //     PlayerPos.set({
-        //   x: -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2),
-        //   y: 0,
-        // });
+        dlog('HistoryBug: this.locationDestination = ', this.locationDestination);
+
+        const targetLocation = {
+          scene: DEFAULT_HOME,
+          house: this.userHome,
+        };
+
 
         // When we go into a house, we place the player left, in the middle
-        if (this.userHouse === DEFAULT_HOME) {
-          const PosX = -(this.scene.worldSize.x / 2) + (ManageSession.avatarSize * 2);
-          dlog('userHouse PosX: ', PosX);
-          const PosY = 0;
-          const value = `/game?location=${this.locationDestination}&house=${this.userHome}&x=${PosX}&y=${PosY}`;
-          // pushes the url to the browser
-          push(value);
-          // pushes the url to the history
-          PlayerHistory.push(value);
-          // dlog('PlayerHistory.push(value); ', value);
+        if (this.locationDestination === DEFAULT_HOME) {
+          dlog('HistoryBug: locationDestination is equal to ', DEFAULT_HOME);
+
+          // const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+          // dlog('HistoryBug: targetScene =  ', targetScene);
+          // const PosX = -(targetScene.sizeX / 2) + (ManageSession.avatarSize * 2);
+
+          // PlayerPos.set({
+          //   x: PosX,
+          //   y: 0,
+          // });
+
+          dlog('HistoryBug: PlayerPos has been set to ', get(PlayerPos));
         } else {
-          // dlog(
-          //   'userHouse SceneSwitcher.switchScene(this.locationDestination, this.userHome); ',
-          //   this.locationDestination,
+          targetLocation.scene = this.locationDestination;
+          targetLocation.house = this.userHome;
 
-          //   this.userHome,
-          // );
-          // SceneSwitcher.switchScene(this.locationDestination, this.userHome);
-
-          const PosX = -(this.scene.worldSize.x / 2) + (ManageSession.avatarSize * 2);
-          // dlog('userHouse PosX: ', PosX);
-          const PosY = 0;
-          const value = `/game?location=${this.locationDestination}&house=${this.userHome}&x=${PosX}&y=${PosY}`;
-          // pushes the url to the browser
-          push(value);
-          // pushes the url to the history
-          PlayerHistory.push(value);
-          dlog('userHouse PlayerHistory.push(value); ', value);
+          dlog('HistoryBug: Updating location');
         }
+
+        dlog('HistoryBug: new Location = ', targetLocation);
+
+        PlayerLocation.set(targetLocation);
+
+        // this get converted to
       }
     });
 
