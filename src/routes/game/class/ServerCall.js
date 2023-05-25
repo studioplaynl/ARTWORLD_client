@@ -27,7 +27,7 @@ class ServerCall {
       .then((homesRec) => {
         // console.log('rec homes: ', homesRec);
         scene.homes = homesRec[0];
-        dlog('scene.homes', scene.homes);
+        //! dlog('scene.homes', scene.homes);
 
         this.generateHomes(scene);
       });
@@ -62,8 +62,8 @@ class ServerCall {
           this.getHomeImages(url, element, index, homeImageKey, scene);
         }
       }); // end forEach
-      dlog('usersWithAHome:');
-      dlog(usersWithAHome);
+      //! dlog('usersWithAHome:');
+      //! dlog(usersWithAHome);
     }
   }
 

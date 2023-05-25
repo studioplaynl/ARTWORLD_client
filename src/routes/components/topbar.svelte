@@ -20,6 +20,26 @@
     }
   }
 
+  async function goNextUser6House() {
+    const value = '/game?location=GreenSquare&x=-53.75&y=995';
+    push(value);
+  }
+
+  async function inToUser6House() {
+    const value = '/game?location=DefaultUserHome&house=fcbcc269-a109-4a4b-a570-5ccafc5308d8&x=-2622&y=0';
+    push(value);
+  }
+
+  async function goNextUser16House() {
+    const value = '/game?location=GreenSquare&x=211.25&y=996.25';
+    push(value);
+  }
+
+  async function inToUser16House() {
+    const value = '/game?location=DefaultUserHome&house=b3b8992b-60dd-4920-b156-3ea04d572b4e&x=-2622&y=0';
+    push(value);
+  }
+
   async function zoomIn() {
     PlayerZoom.in();
   }
@@ -53,7 +73,7 @@
     />
   </button>
 
-  <button on:click="{zoomOut}" id="zoomOut">
+  <!-- <button on:click="{zoomOut}" id="zoomOut">
     <img
       class="TopIcon"
       src="/assets/SHB/svg/AW-icon-minus.svg"
@@ -73,6 +93,20 @@
       src="./assets/SHB/svg/AW-icon-plus.svg"
       alt="Zoom in"
     />
+  </button> -->
+
+  <button on:click="{goNextUser6House}" id="user6_next" class="TopIcon">
+    nextTo6
+  </button>
+  <button on:click="{inToUser6House}" id="user6_in" class="TopIcon">
+    In_6
+  </button>
+
+  <button on:click="{goNextUser16House}" id="user16_next" class="TopIcon">
+    nextTo16
+  </button>
+  <button on:click="{inToUser16House}" id="user16_in" class="TopIcon">
+   In_16
   </button>
 
   <!-- <a
@@ -142,6 +176,54 @@
     height: 40px;
     border-radius: 50%;
     background-color: white;
+  }
+
+  #user6_next{
+    position: absolute;
+    top: 80px;
+    left: 15px;
+    box-shadow: 2px 2px #000000;
+    border: 1px solid black;
+    color: black;
+    width: auto;
+    padding: 4px;
+    border-radius: 0;
+  }
+
+  #user6_in{
+    position: absolute;
+    top: 80px;
+    left: 105px;
+    box-shadow: 2px 2px #000000;
+    border: 1px solid black;
+    color: black;
+    width: auto;
+    padding: 4px;
+    border-radius: 0;
+  }
+
+  #user16_next{
+    position: absolute;
+    top: 130px;
+    left: 15px;
+    box-shadow: 2px 2px #000000;
+    border: 1px solid black;
+    color: black;
+    width: auto;
+    padding: 4px;
+    border-radius: 0;
+  }
+
+  #user16_in{
+    position: absolute;
+    top: 130px;
+    left: 115px;
+    box-shadow: 2px 2px #000000;
+    border: 1px solid black;
+    color: black;
+    width: auto;
+    padding: 4px;
+    border-radius: 0;
   }
 
   #logo {

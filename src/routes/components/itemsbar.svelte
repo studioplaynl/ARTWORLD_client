@@ -13,7 +13,7 @@
   import Awards from '../awards.svelte';
   import { Addressbook, myHome } from '../../storage';
   import SceneSwitcher from '../game/class/SceneSwitcher';
-  import ManageSession from '../game/ManageSession';
+ // import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../game/helpers/ClickOutside';
   import { PlayerHistory } from '../game/playerState';
 
@@ -131,7 +131,7 @@
 
   function toggleMailbox() {
     current = current === 'mail' ? null : 'mail';
-
+ 
     if (!alreadySubscribedToAddressbook) {
       subscribeToAddressbook();
     }
@@ -156,18 +156,19 @@
 
   async function goHome(id) {
     if (typeof id === 'string') {
-      SceneSwitcher.switchScene('DefaultUserHome', id);
+      console.log("goHome id: ", id)
     } else if ($ShowItemsBar) {
       // place user next to nameplate of home
       const playerPosX = userHouseObject.value.posX - 80;
       const playerPoxY = userHouseObject.value.posY - 100;
-
+      console.log("userHouseObject: ", userHouseObject)
       const value = `/game?location=${userHouseObject.key}&x=${playerPosX}&y=${playerPoxY}`;
+      console.log("value: ", value);
+      console.log("userHouseObject.key: ", userHouseObject.key)
       push(value);
-      PlayerHistory.push(value);
+      //PlayerHistory.push(value);
       // SceneSwitcher.switchScene(
-      //   'DefaultUserHome',
-      //   ManageSession.userProfile.id,
+      //   userHouseObject.key
       // );
     }
   }

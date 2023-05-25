@@ -10,7 +10,7 @@
   const hide = [];
   let sequence = [];
   hide[0] = false;
-  let hasShown = false;
+  // const hasShown = false;
 
   Tutorial.subscribe((value) => {
     if (value) {
@@ -40,7 +40,7 @@
       }, 1500);
 
       setTimeout(() => {
-        console.log('current loaded', $Achievements);
+        // console.log('current loaded', $Achievements);
         if (!Achievements.find('onboardMove')) {
           $Tutorial = [
             {

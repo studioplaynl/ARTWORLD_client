@@ -191,8 +191,12 @@ export function updateQueryString() {
   if (x !== null && y !== null && scene !== null) {
     const query = { ...parse(get(querystring)) };
     const locationChanged = 'location' in previousQuery && scene !== previousQuery?.location;
+    dlog('previousQuery: ', previousQuery);
+    dlog('scene: ', scene);
+    // const locationChanged = true;
     const method = locationChanged ? 'push' : 'replace';
 
+    dlog('locationChanged: ', locationChanged);
     // Set variables (as string)
     query.x = Math.round(x).toString();
     query.y = Math.round(y).toString();
@@ -219,6 +223,7 @@ export function updateQueryString() {
       } else {
         // Location changes should just update the querystring..
         // ..so the location remains available on deeplinks and reloads
+        dlog('PlayerHistory.replace(newLocation);');
         replace(newLocation);
         PlayerHistory.replace(newLocation);
         // dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #FF0000');

@@ -3,7 +3,7 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog } from '../helpers/DebugLog';
-import { PlayerLocation } from '../playerState';
+import { PlayerLocation, PlayerHistory } from '../playerState';
 // import { PlayerLocation, playerStreamID, PlayerHistory } from '../playerState';
 
 import { DEFAULT_HOME } from '../../../constants';
@@ -26,8 +26,8 @@ class SceneSwitcher {
       // check if we are going from the same world to the same world;
       // then don't switch scenes
       // dlog('\u001b[31m playerStreamID', get(playerStreamID));
-      // const history = get(PlayerHistory);
-      // dlog('playerHistory: ', history);
+      const history = get(PlayerHistory);
+      dlog('playerHistory: ', history);
       this.doSwitchScene();
     });
     // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {
