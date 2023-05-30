@@ -13,9 +13,14 @@
  *  - We get the scene (house) size from the SCENE_INFO
  *  - We create:
  *      - a background
- *      - a player
  *      - player movement handler
- *      -
+ *      - a player with a default avatar
+ *      - game camera
+ *      - player zoom level
+ *      - physics bounds
+ *      - load players personal Avatar
+ *      - set a special position of the player
+ *      - load and place artworks of the home owner
  */
 
 import ManageSession from '../ManageSession';
@@ -112,15 +117,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default 0 ,0 artworldCoordinates
-    this.player = new PlayerDefault(this, 0, 0, ManageSession.playerAvatarPlaceholder).setDepth(201);
+    this.player = new PlayerDefault(this, null, null, ManageSession.playerAvatarPlaceholder).setDepth(201);
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder })
       .setDepth(200);
     // .......  end PLAYER ................................................................................
 
-    // ....... onlinePlayers ..............................................................................
-    // add onlineplayers group
-    // this.onlinePlayersGroup = this.add.group()
-    // ....... end onlinePlayers ..........................................................................
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
@@ -131,18 +132,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     // ......... end PLAYER VS WORLD .......................................................................
-
-    // this.artworksListSpinner = this.rexSpinner.add.pie({
-    //   x: this.worldSize.x / 2,
-    //   y: this.worldSize.y / 2,
-    //   width: 400,
-    //   height: 400,
-    //   duration: 850,
-    //   color: 0xffff00,
-    // }).setDepth(199);
-
-    // this.artworksListSpinner.destroy();
-    //
 
     // // Place the player on the left size in the y-middle, by passing on arguments in the Player class
     // const PosX = -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2);
@@ -180,12 +169,6 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   update() {
-    // ...... ONLINE PLAYERS ................................................
-    // Player.parseNewOnlinePlayerArray(this)
-    // .......................................................................
-
-    // .......................................................................
-
     // ........... PLAYER SHADOW .............................................................................
     // the shadow follows the player with an offset
     this.playerShadow.x = this.player.x + this.playerShadowOffset;

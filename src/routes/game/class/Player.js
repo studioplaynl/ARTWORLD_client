@@ -13,10 +13,6 @@ import {
 } from '../../../constants';
 
 class Player {
-  constructor() {
-    this.avatarSize = 64;
-  }
-
   subscribeToProfile() {
     Profile.subscribe((value) => {
       // when logging out, Profile is set to null
