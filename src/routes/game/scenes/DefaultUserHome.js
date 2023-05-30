@@ -1,3 +1,23 @@
+/**
+ * @file DefaultUserHome
+ * @author Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  This is a scene that acts as a template for a players home
+ *  The differentiater is the user ID, this is parced in init(data) and passed on by SceneSwitcher
+ *
+ *  In general it works like this:
+ *  - We start a loading animation that ends when all art works have been loaded
+ *      (phaser fires a this.scene.load.on('complete') when the loading queue finished)
+ *  - We get the scene (house) size from the SCENE_INFO
+ *  - We create:
+ *      - a background
+ *      - a player
+ *      - player movement handler
+ *      -
+ */
+
 import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
@@ -98,7 +118,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       .setDepth(200);
     // .......  end PLAYER ................................................................................
     // for back button
-    SceneSwitcher.pushLocation(this);
+    // SceneSwitcher.pushLocation(this);
 
     // ....... onlinePlayers ..............................................................................
     // add onlineplayers group

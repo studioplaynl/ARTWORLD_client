@@ -100,7 +100,7 @@ export default class Location1 extends Phaser.Scene {
     }).setDepth(200);
 
     // for back button, has to be done after player is created for the history tracking!
-    SceneSwitcher.pushLocation(this);
+    // SceneSwitcher.pushLocation(this);
 
     // Player.loadPlayerAvatar(this);
     // .......  end PLAYER .............................................................................
