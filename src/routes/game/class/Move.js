@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import { PlayerPos } from '../playerState';
+import { PlayerPos, PlayerHistory } from '../playerState';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 
@@ -11,6 +12,8 @@ const { Phaser } = window;
 class Move {
   constructor() {
     PlayerPos.subscribe((pos) => {
+      dlog('PlayerPos.subscribe this.moveByPositionStores(pos)');
+      dlog('PlayerHistory', get(PlayerHistory));
       this.moveByPositionStores(pos);
     });
   }
@@ -161,7 +164,7 @@ class Move {
     // send Stop command
     ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
     // dlog('ManageSession.sendMoveMessage', scene.player.x, scene.player.y, 'stop');
-    // update last player position in manageSession for when the player is reloaded inbetween scenes
+    // update last player position in PlayerPos for when the player is reloaded inbetween scenes
     PlayerPos.set({
       x: Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)),
       y: Math.round(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)),

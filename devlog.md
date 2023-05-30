@@ -81,3 +81,37 @@ August 19
 Aug 29
 - Probably we need to group all objects in a single frame group (currentObject into a group)
 So we can delete a group as a whole when removing a frame. 
+
+2023 May 30
+- Switching a Player to a different Location (scene) and placing them in a position in that scene was giving a bug with going back in the DefaultUserHome. Seems to be solved by not setting a x, y on the player when creating it in DefaultUserHome, only after loading the avatar of the player, we do PlayerPos.set(x,y)
+This is a patch solution, as it only works in the case of DefaultUserHome (because we can set the player in a fixed position there), but when we place a player ad hoc going to a new location the system fails:
+    - Can we also place the player by giving a x, y when loading in the avatar with Player.loadPlayerAvatar(this, x, y);?
+- The general way to place a player in a location is: 
+
+    PlayerPos.set({
+      x: 0,
+      y: 0,
+    });
+
+    PlayerLocation.set({
+      scene: DEFAULT_SCENE,
+    });
+
+    and then in the scene load the player with:
+
+    this.player = new PlayerDefault(
+      this,
+      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      ManageSession.playerAvatarPlaceholder,
+    ).setDepth(201);
+
+    * but when we do this and go back from the house, we are not put in the last position in the previous location, we are taken back to the pos of the home.
+    Looking at the push history, we see that the x, y of the previous location is replaced with the x,y of the home
+    It seems to happen because pos is set before location, then a replace is acted upon
+
+    * if we do first PlayLocation.set and then PlayerPos.set, we are taken back to the first position in the location
+
+    ** !! The solution maybe is to have a flag on setting the position (eg 'newLocation') so the system knows not the replace the pos on the current location, and setting it for the Location we a going to.
+
+** !! also: solve the delay in the moving animation, after it the position of the player is stored (replaced), if a player moves into an other location, the previous location is not stored correctly... 

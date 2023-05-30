@@ -1,5 +1,5 @@
 <script>
-  import { push, pop } from 'svelte-spa-router';
+  import { pop } from 'svelte-spa-router';
   import {
     PlayerHistory,
     PlayerZoom,

@@ -1,11 +1,11 @@
 /* eslint-disable brace-style */
 import { push } from 'svelte-spa-router';
 import { get } from 'svelte/store';
-import SceneSwitcher from './SceneSwitcher';
+// import SceneSwitcher from './SceneSwitcher';
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
-import { DEFAULT_HOME, SCENE_INFO } from '../../../constants';
-import { PlayerHistory, PlayerPos, PlayerLocation } from '../playerState';
+import { DEFAULT_HOME } from '../../../constants';
+import { PlayerPos, PlayerLocation } from '../playerState';
 
 const { Phaser } = window;
 
@@ -398,10 +398,19 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         }
 
         dlog('HistoryBug: new Location = ', targetLocation);
+        // const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+        // console.log('targetScene: ', targetScene);
+        // // const PosX = -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2);
+        // // const PosY = -(this.worldSize.y / 4);
 
+        // const PosX = -2000;
+        // const PosY = 40;
+
+        // PlayerPos.set({
+        //   x: PosX,
+        //   y: PosY,
+        // });
         PlayerLocation.set(targetLocation);
-
-        // this get converted to
       }
     });
 

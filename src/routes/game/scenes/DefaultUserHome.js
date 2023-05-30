@@ -23,6 +23,7 @@
  *      - load and place artworks of the home owner
  */
 
+// import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
@@ -34,6 +35,7 @@ import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
 import Preloader from '../class/Preloader';
+// import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
 const { Phaser } = window;
 
@@ -114,10 +116,25 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
+    // const {
+    //   artworldToPhaser2DX, artworldToPhaser2DY,
+    // } = CoordinatesTranslator;
+
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default 0 ,0 artworldCoordinates
-    this.player = new PlayerDefault(this, null, null, ManageSession.playerAvatarPlaceholder).setDepth(201);
+    // this.player = new PlayerDefault(
+    //   this,
+    //   artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+    //   artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+    //   ManageSession.playerAvatarPlaceholder,
+    // ).setDepth(201);
+    this.player = new PlayerDefault(
+      this,
+      null,
+      null,
+    ).setDepth(201);
+
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder })
       .setDepth(200);
     // .......  end PLAYER ................................................................................

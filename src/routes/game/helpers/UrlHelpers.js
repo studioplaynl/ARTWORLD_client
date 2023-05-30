@@ -256,12 +256,14 @@ export function updateQueryString() {
 
       // Only scene or app changes should be added to the browser history
       if (method === 'push') {
+        dlog('push: ', newLocation);
         push(newLocation);
         PlayerHistory.push(newLocation);
         // dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #00FF00');
       } else {
         // Location changes should just update the querystring..
         // ..so the location remains available on deeplinks and reloads
+        dlog('replace: ', newLocation);
         replace(newLocation);
         PlayerHistory.replace(newLocation);
         // dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #FF0000');
