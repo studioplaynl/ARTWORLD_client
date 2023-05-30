@@ -9,6 +9,7 @@ import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
+import Preloader from '../class/Preloader';
 
 const { Phaser } = window;
 
@@ -67,6 +68,10 @@ export default class DefaultUserHome extends Phaser.Scene {
   init(data) {
     this.location = data.user_id;
   }
+
+  async preload() {
+    Preloader.Loading(this); // .... PRELOADER VISUALISER
+  }// end preload
 
   // async preload() {
   // }// end preload
