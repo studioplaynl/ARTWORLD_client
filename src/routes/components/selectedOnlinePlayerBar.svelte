@@ -9,7 +9,6 @@
   import LikedPage from '../liked.svelte';
   import { SelectedOnlinePlayer } from '../../session';
   import { Addressbook } from '../../storage';
-  // import SceneSwitcher from '../game/class/SceneSwitcher';
   // import ManageSession from '../game/ManageSession';
   import { clickOutside } from '../../helpers/clickOutside';
   import { PlayerPos, PlayerLocation } from '../game/playerState';

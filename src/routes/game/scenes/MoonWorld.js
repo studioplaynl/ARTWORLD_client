@@ -89,9 +89,6 @@ export default class MoonWorld extends Phaser.Scene {
       texture: ManageSession.playerAvatarPlaceholder,
     }).setDepth(200);
 
-    // for back button, has to be done after player is created for the history tracking!
-    // SceneSwitcher.pushLocation(this);
-
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 

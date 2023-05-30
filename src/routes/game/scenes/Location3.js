@@ -4,7 +4,6 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import SceneSwitcher from '../class/SceneSwitcher';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
@@ -86,8 +85,6 @@ export default class Location3 extends Phaser.Scene {
       },
     ).setDepth(200);
 
-    // for back button, has to be done after player is created for the history tracking!
-    // SceneSwitcher.pushLocation(this);
     // .......  end PLAYER .............................................................................
 
     // ....... PLAYER VS WORLD ..........................................................................

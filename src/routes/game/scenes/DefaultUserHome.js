@@ -23,7 +23,6 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
-import SceneSwitcher from '../class/SceneSwitcher';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
@@ -117,8 +116,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder })
       .setDepth(200);
     // .......  end PLAYER ................................................................................
-    // for back button
-    // SceneSwitcher.pushLocation(this);
 
     // ....... onlinePlayers ..............................................................................
     // add onlineplayers group

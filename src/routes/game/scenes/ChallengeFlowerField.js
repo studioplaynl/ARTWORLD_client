@@ -7,7 +7,6 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import SceneSwitcher from '../class/SceneSwitcher';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
@@ -95,8 +94,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
         texture: ManageSession.playerAvatarPlaceholder,
       },
     ).setDepth(200);
-    // for back button, has to be done after player is created for the history tracking!
-    // SceneSwitcher.pushLocation(this);
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);

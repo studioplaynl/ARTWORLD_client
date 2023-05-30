@@ -7,7 +7,6 @@ import BouncingBird from '../class/BouncingBird';
 import GraffitiWall from '../class/GraffitiWall';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
-import SceneSwitcher from '../class/SceneSwitcher';
 import Background from '../class/Background';
 import { SCENE_INFO } from '../../../constants';
 import { PlayerPos, PlayerZoom } from '../playerState';
@@ -98,9 +97,6 @@ export default class Location1 extends Phaser.Scene {
       scene: this,
       texture: ManageSession.playerAvatarPlaceholder,
     }).setDepth(200);
-
-    // for back button, has to be done after player is created for the history tracking!
-    // SceneSwitcher.pushLocation(this);
 
     // Player.loadPlayerAvatar(this);
     // .......  end PLAYER .............................................................................

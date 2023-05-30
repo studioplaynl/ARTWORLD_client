@@ -3,7 +3,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-import SceneSwitcher from '../class/SceneSwitcher';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
@@ -87,13 +86,6 @@ export default class Location4 extends Phaser.Scene {
 
     Player.loadPlayerAvatar(this, 0, 0);
     // .......  end PLAYER ................................................................................
-    // for back button
-    SceneSwitcher.pushLocation(this);
-
-    // ....... onlinePlayers ..............................................................................
-    // add onlineplayers group
-    // this.onlinePlayersGroup = this.add.group()
-    // ....... end onlinePlayers ..........................................................................
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
@@ -108,7 +100,6 @@ export default class Location4 extends Phaser.Scene {
     // ......... end PLAYER VS WORLD .......................................................................
 
     // this.generateLocations()
-
     this.add.image(200, 200, 'exhibit1').setOrigin(0).setScale(0.53);
     this.add.image(600, 200, 'exhibit2').setOrigin(0).setScale(0.45);
     this.add.image(1000, 200, 'exhibit3').setOrigin(0).setScale(0.55);
