@@ -31,6 +31,7 @@
   $: {
     dlog(azc);
     updateQrCanvas();
+    dlog('Locaties: ', Locaties);
   }
 
   $: {

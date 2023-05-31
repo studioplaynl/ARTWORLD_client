@@ -748,6 +748,27 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
+
+    locationVector = new Phaser.Math.Vector2(-1418, -52);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.pizzaWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'PizzaWorld',
+      locationImage: 'artWorldPortalPizza',
+      enterButtonImage: 'enter_button',
+      locationText: 'Pizza Wereld',
+      referenceName: 'this.pizzaWorldLocation',
+      fontColor: 0x8dcb0e,
+    });
+
     // ---- Location 1 ----------------------
     locationVector = new Phaser.Math.Vector2(-1215, -589);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(

@@ -314,6 +314,29 @@ export default class PreloadScene extends Phaser.Scene {
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
+
+    // Pizzaworld
+    this.load.image('artWorldPortalPizza', './assets/world_pizza/Portal_naarPizza_pizza.png');
+
+    folderPath = './assets/world_pizza/';
+    loadArray = [
+      { key: 'artWorldPortalPizza', path: `${folderPath}Portal_naarHuis_pizza.png` },
+
+      { key: 'kaasbrugg_01_pizza', path: `${folderPath}kaasbrugg_01_pizza.png` },
+      { key: 'kaasbrugg_02_pizza', path: `${folderPath}kaasbrugg_02_pizza.png` },
+      { key: 'kaasbrugg_03_pizza', path: `${folderPath}kaasbrugg_03_pizza.png` },
+      { key: 'Slice_Caprese_metTomaatpeople', path: `${folderPath}Slice_Caprese_metTomaatpeople.png` },
+      { key: 'Slice_Hawaii_metAnanasPeople', path: `${folderPath}Slice_Hawaii_metAnanasPeople.png` },
+      { key: 'Slice_Salami_metSalamiworm', path: `${folderPath}Slice_Salami_metSalamiworm.png` },
+
+      { key: 'Slice_Caprese_zonder', path: `${folderPath}Slice_Caprese_zonder.png` },
+      { key: 'Slice_Hawaii_ZonderPineaplePeople', path: `${folderPath}Slice_Hawaii_ZonderPineaplePeople.png` },
+      { key: 'Slice_Salami_zonder', path: `${folderPath}Slice_Salami_zonder.png` },
+
+
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
   }
 
   async create() {

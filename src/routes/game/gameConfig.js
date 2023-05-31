@@ -2,8 +2,8 @@
 import Phaser from 'phaser';
 
 import CircleMaskImagePlugin from 'phaser3-rex-plugins/plugins/circlemaskimage-plugin';
-import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin';
-import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin';
+// import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin';
+// import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin';
 import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin';
 import GesturesPlugin from 'phaser3-rex-plugins/plugins/gestures-plugin';
 // Load Scenes
@@ -31,6 +31,8 @@ import UnderwaterWorld from './scenes/UnderwaterWorld';
 import SeaWorld from './scenes/SeaWorld';
 import CloudWorld from './scenes/CloudWorld';
 import MoonWorld from './scenes/MoonWorld';
+import PizzaWorld from './scenes/PizzaWorld';
+
 
 /** Phaser Plugins */
 
@@ -59,6 +61,7 @@ const SCENES = [
   SeaWorld,
   CloudWorld,
   MoonWorld,
+  PizzaWorld,
 ];
 
 import { CONFIG } from '../../constants';
@@ -84,11 +87,11 @@ export default {
   },
   plugins: {
     scene: [
-      {
-        key: 'rexSpinner',
-        plugin: SpinnerPlugin,
-        mapping: 'rexSpinner',
-      },
+      // {
+      //   key: 'rexSpinner',
+      //   plugin: SpinnerPlugin,
+      //   mapping: 'rexSpinner',
+      // },
       {
         key: 'rexGestures',
         plugin: GesturesPlugin,
@@ -102,11 +105,11 @@ export default {
         plugin: CircleMaskImagePlugin,
         start: true,
       },
-      {
-        key: 'rexScroller',
-        plugin: ScrollerPlugin,
-        start: true,
-      },
+      // {
+      //   key: 'rexScroller',
+      //   plugin: ScrollerPlugin,
+      //   start: true,
+      // },
       {
         key: 'rexOutlinePipeline',
         plugin: OutlinePipelinePlugin,

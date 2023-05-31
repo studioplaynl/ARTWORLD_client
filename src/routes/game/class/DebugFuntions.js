@@ -57,6 +57,7 @@ class DebugFuntions {
       selectedGameObject_startScale,
       selectedGameObject_startPosition,
     } = ManageSession;
+    let rotation;
 
     switch (code) {
       case 'ShiftLeft':
@@ -95,6 +96,24 @@ class DebugFuntions {
             selectedGameObject_startPosition.y,
           );
         }
+        break;
+
+      case 'KeyR':
+        rotation = selectedGameObject.rotation;
+        rotation += 0.05;
+        selectedGameObject.setRotation(
+          rotation,
+        );
+
+        break;
+
+      case 'KeyT':
+        rotation = selectedGameObject.rotation;
+        rotation -= 0.05;
+        selectedGameObject.setRotation(
+          rotation,
+        );
+
         break;
 
       default:

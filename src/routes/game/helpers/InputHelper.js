@@ -43,6 +43,8 @@ export function handleEditMode(scene) {
         worldY,
         'scale:',
         ManageSession.selectedGameObject.scale,
+        'rotation:',
+        ManageSession.selectedGameObject.rotation,
         'width*scale:',
         Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale),
         'height*scale:',
