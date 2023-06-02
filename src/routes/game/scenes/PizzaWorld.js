@@ -54,8 +54,6 @@ export default class PizzaWorld extends Phaser.Scene {
     //   { key: 'kaasbrugg_01_pizza', path: `${folderPath}kaasbrugg_01_pizza.png` },
     //   { key: 'kaasbrugg_02_pizza', path: `${folderPath}kaasbrugg_02_pizza.png` },
     //   { key: 'kaasbrugg_03_pizza', path: `${folderPath}kaasbrugg_03_pizza.png` },
-    //   { key: 'Slice_Caprese_metTomaatpeople', path: `${folderPath}Slice_Caprese_metTomaatpeople.png` },
-    //   { key: 'Slice_Hawaii_metAnanasPeople', path: `${folderPath}Slice_Hawaii_metAnanasPeople.png` },
     // ];
 
     // ServerCall.loadAssetArray(this, loadArray, 'localImage');
@@ -152,124 +150,115 @@ export default class PizzaWorld extends Phaser.Scene {
   makeWorldElements() {
     // .........Slice_Caprese_metTomaatpeople............................................................
     PlaceElement.image({
-      x: 644,
-      y: 59,
+      x: 1274,
+      y: 132,
       file: 'Slice_Caprese_metTomaatpeople',
-      scale: 1,
+      scale: 2.2,
       scene: this,
     });
 
-    // .........Slice_Caprese_zonder............................................................
+    // .........pizza_alaMaarten_2............................................................
     PlaceElement.image({
-      x: 439,
-      y: 1769,
-      file: 'Slice_Caprese_zonder',
-      scale: 1,
-      rotation: -1.15,
-      scene: this,
-    });
+      x: -938,
+      y: 918,
+      file: 'pizza_alaMaarten',
+      name: 'pizza_alaMaarten_2',
 
-    // .........Slice_Caprese_zonder_2............................................................
-    PlaceElement.image({
-      x: 2094,
-      y: 614,
-      file: 'Slice_Caprese_zonder',
-      name: 'Slice_Caprese_zonder_2',
-      scale: 1,
-      rotation: -1.15,
-      scene: this,
-    });
-
-    // .........Slice_Caprese_zonder_3............................................................
-    PlaceElement.image({
-      x: -1496,
-      y: 1789,
-      file: 'Slice_Caprese_zonder',
-      name: 'Slice_Caprese_zonder_3',
-      scale: 1,
-      rotation: -2.15,
-      scene: this,
-    });
-
-    // .........Slice_Caprese_zonder_4............................................................
-    PlaceElement.image({
-      x: 49,
-      y: -2031,
-      file: 'Slice_Caprese_zonder',
-      name: 'Slice_Caprese_zonder_4',
-      scale: 1,
-      rotation: 1.05,
-      scene: this,
-    });
-
-    // .........Slice_Hawaii_metAnanasPeople............................................................
-    PlaceElement.image({
-      x: -618,
-      y: 435,
-      file: 'Slice_Hawaii_metAnanasPeople',
-      scale: 1.3,
+      scale: 3,
       rotation: -0.05,
       scene: this,
     });
 
-    // .........Slice_Hawaii_ZonderPineaplePeople............................................................
-    PlaceElement.image({
-      x: -1970,
-      y: -767,
-      file: 'Slice_Hawaii_ZonderPineaplePeople',
-      scale: 1.3,
-      rotation: -1.15,
-      scene: this,
-    });
 
-    // .........Slice_Salami_metSalamiworm............................................................
+    // .........pizza_alaMaarten_3............................................................
     PlaceElement.image({
-      x: -235,
-      y: -738,
-      file: 'Slice_Salami_metSalamiworm',
-      scale: 1.4,
+      x: -452,
+      y: -1338,
+      file: 'pizza_alaMaarten',
+      name: 'pizza_alaMaarten_3',
+      scale: 2.7,
       scene: this,
-    });
-
-    // .........Slice_Salami_zonder............................................................
-    PlaceElement.image({
-      x: 1670,
-      y: -1415,
-      file: 'Slice_Salami_zonder',
-      scale: 1.4,
-      rotation: -1.35,
-      scene: this,
+      rotation: -2.1,
     });
 
     // .........kaasbrugg_01_pizza............................................................
     PlaceElement.image({
-      x: -497,
-      y: -94,
+      x: -777,
+      y: -144,
       file: 'kaasbrugg_01_pizza',
-      scale: 1.9,
+      scale: 2,
       rotation: 0.1,
       scene: this,
     });
 
     // .........kaasbrugg_02_pizza............................................................
     PlaceElement.image({
-      x: 433,
-      y: -537,
+      x: 973,
+      y: -1352,
       file: 'kaasbrugg_02_pizza',
-      scale: 2.03,
+      scale: 2,
       scene: this,
     });
 
     // .........kaasbrugg_03_pizza............................................................
     PlaceElement.image({
-      x: 170,
-      y: 780,
+      x: 492,
+      y: 1313,
       file: 'kaasbrugg_03_pizza',
-      scale: 2.04,
-      rotation: 0.1,
-      // flipX: true,
+      name: 'kaasbrugg_03_pizza',
+      scale: 2,
+      rotation: 0,
       scene: this,
-      tint: 0x9de0ff,
+    });
+
+    // .........ananasguy............................................................
+    PlaceElement.image({
+      x: -1898,
+      y: 2058,
+      file: 'ananasguy',
+      scale: 2,
+      rotation: 0,
+      scene: this,
+    });
+
+    // .........basil_2a............................................................
+    PlaceElement.image({
+      x: 2102,
+      y: 2148,
+      file: 'basil_2a',
+      scale: 4,
+      rotation: 0,
+      scene: this,
+    });
+
+    // .........paprika_g1............................................................
+    PlaceElement.image({
+      x: -1973,
+      y: -1782,
+      file: 'paprika_g1',
+      scale: 1.7,
+      rotation: 0,
+      scene: this,
+    });
+
+    // .........paprika_y1............................................................
+    PlaceElement.image({
+      x: -2353,
+      y: -1582,
+      file: 'paprika_y1',
+      scale: 2.2,
+      rotation: 0,
+      scene: this,
+    });
+
+    // .........korr_tomaat03_b............................................................
+    PlaceElement.image({
+      x: 1932,
+      y: -2112,
+      file: 'korr_tomaat03_b',
+      scale: 2.2,
+      rotation: 0,
+      scene: this,
     });
   }
 

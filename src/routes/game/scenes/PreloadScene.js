@@ -322,16 +322,20 @@ export default class PreloadScene extends Phaser.Scene {
     loadArray = [
       { key: 'artWorldPortalPizza', path: `${folderPath}Portal_naarHuis_pizza.png` },
 
-      { key: 'kaasbrugg_01_pizza', path: `${folderPath}kaasbrugg_01_pizza.png` },
-      { key: 'kaasbrugg_02_pizza', path: `${folderPath}kaasbrugg_02_pizza.png` },
-      { key: 'kaasbrugg_03_pizza', path: `${folderPath}kaasbrugg_03_pizza.png` },
-      { key: 'Slice_Caprese_metTomaatpeople', path: `${folderPath}Slice_Caprese_metTomaatpeople.png` },
-      { key: 'Slice_Hawaii_metAnanasPeople', path: `${folderPath}Slice_Hawaii_metAnanasPeople.png` },
-      { key: 'Slice_Salami_metSalamiworm', path: `${folderPath}Slice_Salami_metSalamiworm.png` },
+      { key: 'kaasbrugg_01_pizza', path: `${folderPath}Korr_kaasbrugg_01_pizza.png` },
+      { key: 'kaasbrugg_02_pizza', path: `${folderPath}Korr_kaasbrugg_02_pizza.png` },
+      { key: 'kaasbrugg_03_pizza', path: `${folderPath}Korr_kaasbrugg_03_pizza.png` },
 
-      { key: 'Slice_Caprese_zonder', path: `${folderPath}Slice_Caprese_zonder.png` },
-      { key: 'Slice_Hawaii_ZonderPineaplePeople', path: `${folderPath}Slice_Hawaii_ZonderPineaplePeople.png` },
-      { key: 'Slice_Salami_zonder', path: `${folderPath}Slice_Salami_zonder.png` },
+
+      { key: 'Slice_Caprese_metTomaatpeople', path: `${folderPath}Slice_Caprese_metTomaatpeople.png` },
+
+      { key: 'pizza_alaMaarten', path: `${folderPath}pizza_alaMaarten.png` },
+
+      { key: 'ananasguy', path: `${folderPath}ananasguy.png` },
+      { key: 'basil_2a', path: `${folderPath}basil_2a.png` },
+      { key: 'paprika_g1', path: `${folderPath}paprika_g1.png` },
+      { key: 'paprika_y1', path: `${folderPath}paprika_y1.png` },
+      { key: 'korr_tomaat03_b', path: `${folderPath}korr_tomaat03_b.png` },
 
 
     ];
