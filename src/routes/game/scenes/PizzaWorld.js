@@ -138,7 +138,7 @@ export default class PizzaWorld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Artworld',
-      locationImage: 'artWorldPortalPizza',
+      locationImage: 'Portal_naarHuis_pizza',
       enterButtonImage: 'enter_button',
       locationText: 'Paarse Cirkel Wereld',
       referenceName: 'this.purpleCircleLocation',

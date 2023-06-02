@@ -320,7 +320,7 @@ export default class PreloadScene extends Phaser.Scene {
 
     folderPath = './assets/world_pizza/';
     loadArray = [
-      { key: 'artWorldPortalPizza', path: `${folderPath}Portal_naarHuis_pizza.png` },
+      { key: 'Portal_naarHuis_pizza', path: `${folderPath}Portal_naarHuis_pizza.png` },
 
       { key: 'kaasbrugg_01_pizza', path: `${folderPath}Korr_kaasbrugg_01_pizza.png` },
       { key: 'kaasbrugg_02_pizza', path: `${folderPath}Korr_kaasbrugg_02_pizza.png` },
