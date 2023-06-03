@@ -142,7 +142,7 @@ export default class PizzaWorld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Paarse Cirkel Wereld',
       referenceName: 'this.purpleCircleLocation',
-      // size: 500,
+      size: 400,
       fontColor: 0x8dcb0e,
     });
   }

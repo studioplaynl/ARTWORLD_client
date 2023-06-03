@@ -17,10 +17,10 @@
     // push(value);
     // PlayerHistory.push(value);
 
-    PlayerPos.set({
-      x: 0,
-      y: 0,
-    });
+    // PlayerPos.set({
+    //   x: 0,
+    //   y: 0,
+    // });
 
     PlayerLocation.set({
       scene: DEFAULT_SCENE,
