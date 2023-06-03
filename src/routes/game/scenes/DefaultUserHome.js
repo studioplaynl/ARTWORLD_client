@@ -29,7 +29,9 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
-import { PlayerPos, PlayerZoom } from '../playerState';
+// import { PlayerPos, PlayerZoom } from '../playerState';
+import { PlayerZoom } from '../playerState';
+
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
@@ -159,10 +161,10 @@ export default class DefaultUserHome extends Phaser.Scene {
     Player.loadPlayerAvatar(this);
 
     // Set the player on the left side of the world (this also updates the URL automatically), in artworldCoordinates
-    PlayerPos.set({
-      x: -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2),
-      y: -(this.worldSize.y / 4),
-    });
+    // PlayerPos.set({
+    //   x: -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2),
+    //   y: -(this.worldSize.y / 4),
+    // });
 
     this.loadAndPlaceArtworks();
   }// end create

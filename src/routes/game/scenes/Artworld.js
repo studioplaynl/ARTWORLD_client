@@ -1,4 +1,4 @@
-import { get } from 'svelte/store';
+// import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
@@ -64,9 +64,9 @@ export default class Artworld extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    // const {
+    //   artworldToPhaser2DX, artworldToPhaser2DY,
+    // } = CoordinatesTranslator;
 
     this.makeWorldElements();
 
@@ -75,8 +75,8 @@ export default class Artworld extends Phaser.Scene {
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      0,
+      0,
       ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 
