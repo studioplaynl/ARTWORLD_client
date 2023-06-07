@@ -14,7 +14,6 @@ import {
   STOPMOTION_MAX_FRAMES,
   DEFAULT_PREVIEW_HEIGHT,
 } from '../constants';
-
 import { dlog } from './debugLog';
 // import ManageSession from './routes/game/ManageSession';
 
@@ -64,7 +63,12 @@ export async function login(email, _password) {
 export const logout = async () => {
   try {
     dlog('try logging out');
-    await client.sessionLogout(get(Session));
+    await client.sessionLogout(get(Session)).then(() => {
+      //! hier komen we niet
+      // Callback function after the promise is resolved
+      dlog('Logout successful!');
+      window.location.reload();
+    });
   } catch (err) {
     dlog('Failed logging out on server!', err);
   } finally {
@@ -73,10 +77,15 @@ export const logout = async () => {
     Profile.set(null);
     /** Setting Session to null automatically redirects you to login route */
     Session.set(null);
-    document.location.reload(true);
+
+    localStorage.clear();
+
+    // alert('console messages');
+    window.location.reload();
+
+    // document.location.reload(true);
   }
 };
-
 
 /**
  * Check if the Login has expired

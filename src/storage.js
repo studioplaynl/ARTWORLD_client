@@ -519,7 +519,7 @@ export const myHome = {
         } else {
           profileAzc = 'GreenSquare';
         }
-        dlog('profileAzc: ', profileAzc);
+        // dlog('profileAzc: ', profileAzc);
 
         localHome = await getObject(
           'home',

@@ -5,25 +5,24 @@
     PlayerZoom,
     PlayerLocation,
     PlayerPos,
+    PlayerUpdate,
   } from '../game/playerState';
   import { DEFAULT_SCENE } from '../../constants';
   // import { dlog } from '../game/helpers/debugLog';
 
   async function goHome() {
-    // Nice way to always reset to 0x0?
-    // replace(`/${appName}?${get(querystring)}`);
-    // PlayerHistory.replace(`/${appName}?${get(querystring)}`);
-    // const value = `/game?location=${DEFAULT_SCENE}&x=0&y=0`;
-    // push(value);
-    // PlayerHistory.push(value);
-
-    // PlayerPos.set({
-    //   x: 0,
-    //   y: 0,
-    // });
-
+    /** We send the player to the middle of artworld so there is a orientation point
+    //  We set the Position after the Location
+    //  when we set the position we force the urlparser to do a replace on the history and url,
+    //  with PlayerUpdate.set({ reactive: false });
+    */
     PlayerLocation.set({
       scene: DEFAULT_SCENE,
+    });
+    PlayerUpdate.set({ reactive: false });
+    PlayerPos.set({
+      x: 0,
+      y: 0,
     });
   }
 
@@ -88,25 +87,6 @@
       alt="Zoom in"
     />
   </button>
-
-  <!-- <a
-    href="/drawing?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&&key=1654865563806_olijfgroensprinkhaan"
-    use:link>DRAWING</a
-  >
-  <a href="/drawing?" use:link>(NEW)</a>
-  <a href="/stopmotion" use:link>STOP MOTION</a>
-  <a href="/stopmotion" use:link>(NEW)</a>
-  <a href="/avatar" use:link>AVATAR</a>
-   avatar ook key test1 en test -->
-  <!-- er komt hier nog een key bij! -->
-  <!-- <a
-    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
-    use:link>HOUSE 1</a
-  >
-  <a
-    href="/house?userId=fcbcc269-a109-4a4b-a570-5ccafc5308d8&key=test2"
-    use:link>HOUSE 2</a
-  > -->
 </div>
 
 <style>

@@ -1,9 +1,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
-import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import { PlayerPos, PlayerHistory } from '../playerState';
+import { PlayerPos } from '../playerState';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 
@@ -12,8 +11,8 @@ const { Phaser } = window;
 class Move {
   constructor() {
     PlayerPos.subscribe((pos) => {
-      dlog('PlayerPos.subscribe this.moveByPositionStores(pos)');
-      dlog('PlayerHistory', get(PlayerHistory));
+      // dlog('PlayerPos.subscribe this.moveByPositionStores(pos)');
+      // dlog('PlayerHistory', get(PlayerHistory));
       this.moveByPositionStores(pos);
     });
   }
@@ -235,7 +234,7 @@ class Move {
       this.movingAnimation(scene, 'stop');
       // send current position over the network
 
-      // when we stop dragging, we send the final position
+      // when we stop dragging, we send the final position over the network
       //
       ManageSession.target.x = scene.player.x;
       ManageSession.target.y = scene.player.y;
@@ -244,12 +243,10 @@ class Move {
       tempVec.x = ManageSession.lastMoveCommand.posX;
       tempVec.y = ManageSession.lastMoveCommand.posY;
 
-      const moveDistance = Math.abs(ManageSession.target.length() - tempVec.length());
-
+      const moveDistance = 0;
       dlog('moveDistance: ', moveDistance);
 
       // this creates a double movement animation: replace by sendMovement and timedEvent with Stop
-
       this.moveObjectToTarget(
         scene,
         tempVec,

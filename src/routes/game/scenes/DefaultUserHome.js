@@ -35,6 +35,7 @@ import { PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
+// eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import Preloader from '../class/Preloader';
 // import CoordinatesTranslator from '../class/CoordinatesTranslator';
@@ -158,22 +159,24 @@ export default class DefaultUserHome extends Phaser.Scene {
     // const PosY = -(this.worldSize.y / 4);
     // Player.loadPlayerAvatar(this, PosX, PosY);
 
+    // Player.loadPlayerAvatar(this, -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2), -(this.worldSize.y / 4));
     Player.loadPlayerAvatar(this);
 
-    // Set the player on the left side of the world (this also updates the URL automatically), in artworldCoordinates
+    await this.loadAndPlaceArtworks();
+
+    // // Set the player on the left side of the world (this also updates the URL automatically), in artworldCoordinates
+    // PlayerUpdate.set({ reactive: false });
     // PlayerPos.set({
     //   x: -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2),
     //   y: -(this.worldSize.y / 4),
     // });
-
-    this.loadAndPlaceArtworks();
   }// end create
 
-  loadAndPlaceArtworks() {
+  async loadAndPlaceArtworks() {
     let type = 'drawing';
     let serverItemsArray = this.userDrawingServerList;
     const { location } = this;
-    dlog('this.location', location);
+    // dlog('this.location', location);
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;

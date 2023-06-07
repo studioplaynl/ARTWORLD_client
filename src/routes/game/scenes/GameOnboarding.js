@@ -55,8 +55,6 @@ export default class GameOnboarding extends Phaser.Scene {
           house: null,
         });
       }
-
-      dlog('meta', profile.meta);
     }
 
     // If a position is null, randomise it..
@@ -72,6 +70,7 @@ export default class GameOnboarding extends Phaser.Scene {
 
     // Check if scene exists and is valid, if not: set DEFAULT_SCENE
     if (!targetScene || !checkIfSceneIsAllowed(targetScene)) {
+      dlog('invalid scene');
       PlayerLocation.set({
         scene: DEFAULT_SCENE,
         house: null,
@@ -106,10 +105,7 @@ export default class GameOnboarding extends Phaser.Scene {
     const targetHouse = get(PlayerLocation).house;
 
 
-    if (this.debug) dlog('Launch: ', targetScene, targetHouse);
-
-    this.scene.stop('GameOnboarding');
-
+    dlog('Launch: ', targetScene, targetHouse);
 
     // we launch the player last location when we have a socket with the server
     await ManageSession.createSocket()
@@ -119,7 +115,9 @@ export default class GameOnboarding extends Phaser.Scene {
         Addressbook.get();
         Achievements.get();
 
-        this.scene.launch(targetScene, { user_id: targetHouse });
+        // launch leaves the current scene running
+        // start stops the current (GameOnboarding) scene
+        this.scene.start(targetScene, { user_id: targetHouse });
         this.scene.launch('UIScene');
       });
   }

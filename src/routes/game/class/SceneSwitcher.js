@@ -3,7 +3,7 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog, dwarn } from '../../../helpers/debugLog';
-import { PlayerLocation } from '../playerState';
+import { PlayerLocation, PlayerHistory } from '../playerState';
 // import { PlayerLocation, playerStreamID, PlayerHistory } from '../playerState';
 
 import { DEFAULT_HOME } from '../../../constants';
@@ -28,7 +28,11 @@ class SceneSwitcher {
       // dlog('\u001b[31m playerStreamID', get(playerStreamID));
       // const history = get(PlayerHistory);
       // dlog('playerHistory: ', history);
-      this.doSwitchScene();
+      if (val.scene === 'logout') {
+        PlayerHistory.set('/logout');
+      } else {
+        this.doSwitchScene();
+      }
     });
     // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {
     //   this.doSwitchScene();
@@ -37,18 +41,8 @@ class SceneSwitcher {
 
   pushLocation(scene) {
     dwarn('pushLocation is deprecated!');
-    // ManageSession.currentScene = scene;
+    dlog(scene);
   }
-
-  // switchScene(targetScene, targetHouse) {
-  //   // dlog('SwitchBug SwitchScene called: ', targetScene, targetHouse);
-
-  //   PlayerLocation.set({
-  //     house: targetHouse,
-  //     scene: targetScene,
-  //   });
-  //   // this.doSwitchScene();
-  // }
 
   doSwitchScene() {
     // dlog('HistoryBug: doSwitchScene called');
@@ -60,6 +54,10 @@ class SceneSwitcher {
     let sceneKey;
     let targetSceneKey;
 
+    if (targetScene === null) {
+      dlog('PlayerLocation was null, we return');
+      return;
+    }
     // scene is null when the game has just booted, and there is not yet a currentScene in ManageSession
     if (scene != null) {
       if (scene.scene != null) {
@@ -76,6 +74,11 @@ class SceneSwitcher {
       dlog('\u001b[31m switchScene: scene: ', sceneKey, ' , targetScene: ', targetSceneKey, ' targetHouse: ', targetHouse);
     } else {
       dlog(' scene: ', scene, ' targetScene: ', targetScene, ' targetHouse: ', targetHouse);
+    }
+
+    if (targetScene === 'logout') {
+      // PlayerLocation.set({ scene: 'logout', house: null });
+      return;
     }
 
     if (targetScene === DEFAULT_HOME && targetHouse === null) {
@@ -96,13 +99,6 @@ class SceneSwitcher {
 
     setLoader(true);
 
-    //! testing off
-    // scene.physics.pause();
-    // scene.player.setTint(0xff0000);
-    // scene.scene.pause();
-
-    // if we are going inside a user house
-    //! Bug: when going into a house, and pressing back button, we are first taken to the center of the house
     if (targetHouse !== null && targetScene === DEFAULT_HOME) {
       scene.scene.start(targetScene, { user_id: targetHouse });
       // later we join the house id channel

@@ -27,7 +27,7 @@ class ServerCall {
       .then((homesRec) => {
         // dlog('rec homes: ', homesRec);
         scene.homes = homesRec[0];
-        dlog('scene.homes', scene.homes);
+        // dlog('scene.homes', scene.homes);
 
         this.generateHomes(scene);
       });
@@ -62,8 +62,10 @@ class ServerCall {
           this.getHomeImages(url, element, index, homeImageKey, scene);
         }
       }); // end forEach
-      dlog('usersWithAHome:');
-      dlog(usersWithAHome);
+      if (ManageSession.gameEditMode) {
+        dlog('usersWithAHome:');
+        dlog(usersWithAHome);
+      }
     }
   }
 
@@ -366,7 +368,7 @@ class ServerCall {
       await listAllObjects(type, location).then((rec) => {
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
-        dlog('serverItemsArray: ', type, location, serverItemsArray);
+        // dlog('serverItemsArray: ', type, location, serverItemsArray);
         ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
     }
@@ -785,7 +787,7 @@ class ServerCall {
     containers.forEach((element, index) => {
       const coordX = index === 0 ? artStart : (artStart) + (index * (artSize + artMargin));
       element.setX(coordX);
-      dlog('reposition: coordX', coordX);
+      // dlog('reposition: coordX', coordX);
     });
   }
 

@@ -46,6 +46,7 @@
 
   dlog('APP_VERSION_INFO: ', APP_VERSION_INFO);
 
+  //* * disables right mouse click; better game experience for the kids */
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     e.target.click();
@@ -53,6 +54,7 @@
 
   onMount(async () => {
     document.getElementById('loader').classList.add('hide');
+
 
     // Attempt to restore a saved session
     await restoreSession();
@@ -73,8 +75,12 @@
     $Profile?.meta?.Role === 'moderator' || $Profile?.meta?.Role === 'admin';
 
   $: {
-    if (!isLoggedIn) push('/login');
-    else if (typeof game === 'undefined' && mounted) {
+    if (!isLoggedIn) {
+      console.log('NOT LOGGED IN');
+      // we set Location to null to start fresh
+      PlayerLocation.set({ scene: null });
+      push('/login');
+    } else if (typeof game === 'undefined' && mounted) {
       sessionCheck();
 
       startGame();

@@ -4,8 +4,8 @@ import {
   getAccount, updateObject, listObjects, updateObjectAdmin,
 } from '../../../helpers/nakamaHelpers';
 import CoordinatesTranslator from './CoordinatesTranslator';
-
 import { dlog } from '../../../helpers/debugLog';
+import { SCENE_INFO } from '../../../constants';
 
 const { Phaser } = window;
 
@@ -142,6 +142,18 @@ class DebugFuntions {
 
     const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
 
+    // get all the scenes for printing out the active ones when a key is used in edit mode
+    // these scenes have to be added to the list:
+    // PreloadScene
+    // GameOnboarding
+    // UIScene
+
+    const sceneNames = SCENE_INFO.map((obj) => obj.scene);
+    sceneNames.push('GameOnboarding');
+    sceneNames.push('PreloadScene');
+    sceneNames.push('UIScene');
+
+
     switch (code) {
       case ('ArrowRight'):
         // reserverd for moving the camera in EditMode
@@ -169,7 +181,18 @@ class DebugFuntions {
 
       case 'KeyA':
         dlog(code);
-        dlog('scene.tweens.getAllTweens(): ', currentScene.tweens.getAllTweens());
+        // print out all active tweens
+        // dlog('scene.tweens.getAllTweens(): ', currentScene.tweens.getAllTweens());
+
+        // print out all scenes that are active
+        // console.log(sceneNames);
+        // sceneNames.forEach((key) => {
+        //   const isActive = scene.scene.isActive(key);
+        //   if (isActive) {
+        //     dlog(key, ' active');
+        //   }
+        // });
+
         break;
 
       case 'Digit1':

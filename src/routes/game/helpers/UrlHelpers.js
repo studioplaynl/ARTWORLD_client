@@ -26,7 +26,7 @@ import {
   push, replace, location, querystring,
 } from 'svelte-spa-router';
 import {
-  PlayerPos, PlayerLocation, PlayerHistory, PlayerZoom,
+  PlayerPos, PlayerLocation, PlayerHistory, PlayerZoom, PlayerUpdate,
 } from '../playerState';
 import { CurrentApp } from '../../../session';
 import {
@@ -137,7 +137,6 @@ export function parseQueryString() {
 
   if ('location' in query) {
     if (checkIfSceneIsAllowed(query.location) && get(PlayerLocation).scene !== query.location) {
-      // console.log('SwitchBug What is the location? ', query.location);
       newPlayerLocation.scene = query.location;
     }
   }
@@ -154,14 +153,12 @@ export function parseQueryString() {
 
   // Update the PlayerLocation store if a scene was set
   if (newPlayerLocation?.scene) {
-    // console.log('SwitchBug to? ', stringify(newPlayerLocation));
     PlayerLocation.set(newPlayerLocation);
   }
 
   if ('x' in query && 'y' in query) {
     // url gets parsed before scene is loaded, so there is no way of knowing the
     // scene size when onboarding the scene
-
     const currentLocation = get(PlayerLocation);
 
     // scene is not loaded, getting the info from SCENE_INFO
@@ -207,8 +204,8 @@ export function parseQueryString() {
 
   if (stringify({ ...query }) !== stringify({ ...previousQuery })) {
     previousQuery = { ...query };
+    // dlog('previousQuery: ', previousQuery);
   }
-
   // console.timeEnd('parseQueryString');
 }
 
@@ -223,6 +220,9 @@ querystring.subscribe(() => parseQueryString());
 * Any value changes on PlayerPos & PlayerLocation make this function run
 * And subsequently update the query string in the URL of the browser */
 export function updateQueryString() {
+  const { reactive } = get(PlayerUpdate);
+  // dlog('reactive: ', reactive);
+
   // console.time(`updateQueryString for ${reason}`);
 
   const { x, y } = get(PlayerPos);
@@ -233,8 +233,15 @@ export function updateQueryString() {
     const query = { ...parse(get(querystring)) };
 
     const locationChanged = 'location' in previousQuery && scene !== previousQuery?.location;
+
     // const houseChanged = 'house' in previousQuery && house !== previousQuery?.house;
-    const method = (locationChanged) ? 'push' : 'replace';
+    let method = (locationChanged) ? 'push' : 'replace';
+    if (!reactive) {
+      PlayerUpdate.set({ reactive: true });
+      // dlog('reactive: ', reactive);
+      method = 'replace';
+    }
+    // dlog('method: ', method);
 
     // Set variables (as string)
     query.x = Math.round(x).toString();
@@ -244,8 +251,6 @@ export function updateQueryString() {
 
     // House can be optional, and should be removed from querystring if null or empty
     if (scene !== DEFAULT_HOME || house === null) {
-      //! should we also remove it from PlayerLocation, make it null?
-      //! so that the PlayerLocation reflects the real state of the player...
       delete query.house;
     } else {
       query.house = house;

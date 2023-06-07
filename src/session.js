@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import { push } from 'svelte-spa-router';
 import { Session as NakamaSession } from '@heroiclabs/nakama-js';
-import { dwarn, dlog } from './helpers/debugLog';
+import { dwarn } from './helpers/debugLog';
 
 /** Session from localStorage */
 let storedSession = localStorage.getItem('Session');

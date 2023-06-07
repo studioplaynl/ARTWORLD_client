@@ -14,6 +14,10 @@ export const PlayerLocation = writable({
   house: null,
 });
 
+export const PlayerUpdate = writable({
+  reactive: true,
+});
+
 const playerZoom = writable(null);
 export const PlayerZoom = {
 

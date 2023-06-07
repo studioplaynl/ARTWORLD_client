@@ -1,11 +1,11 @@
 /* eslint-disable brace-style */
 import { push } from 'svelte-spa-router';
-import { get } from 'svelte/store';
+// import { get } from 'svelte/store';
 // import SceneSwitcher from './SceneSwitcher';
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
-import { DEFAULT_HOME } from '../../../constants';
-import { PlayerPos, PlayerLocation } from '../playerState';
+import { DEFAULT_HOME, SCENE_INFO } from '../../../constants';
+import { PlayerPos, PlayerLocation, PlayerUpdate } from '../playerState';
 
 const { Phaser } = window;
 
@@ -368,7 +368,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
       //
       if (typeof this.locationDestination !== 'undefined') {
-        dlog('HistoryBug: this.locationDestination = ', this.locationDestination);
+        // dlog('HistoryBug: this.locationDestination = ', this.locationDestination);
 
         const targetLocation = {
           scene: DEFAULT_HOME,
@@ -378,39 +378,28 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         // When we go into a house, we place the player left, in the middle
         if (this.locationDestination === DEFAULT_HOME) {
-          dlog('HistoryBug: locationDestination is equal to ', DEFAULT_HOME);
+          const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+          const PosX = -(targetScene.sizeX / 2) + (ManageSession.avatarSize * 2);
+          PlayerLocation.set(targetLocation);
 
-          // const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
-          // dlog('HistoryBug: targetScene =  ', targetScene);
-          // const PosX = -(targetScene.sizeX / 2) + (ManageSession.avatarSize * 2);
+          /** We send the player to the left side of the user's home so that the artworks can be seen
+          //  We set the Position after the Location
+          //  when we set the position we force the urlparser to do a replace on the history and url,
+          //  with PlayerUpdate.set({ reactive: false });
+          */
+          PlayerUpdate.set({ reactive: false });
+          PlayerPos.set({
+            x: PosX,
+            y: 0,
+          });
 
-          // PlayerPos.set({
-          //   x: PosX,
-          //   y: 0,
-          // });
-
-          dlog('HistoryBug: PlayerPos has been set to ', get(PlayerPos));
+          // dlog('HistoryBug: PlayerPos has been set to ', get(PlayerPos));
         } else {
           targetLocation.scene = this.locationDestination;
           targetLocation.house = this.userHome;
 
-          dlog('HistoryBug: Updating location');
+          PlayerLocation.set(targetLocation);
         }
-
-        dlog('HistoryBug: new Location = ', targetLocation);
-        // const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
-        // console.log('targetScene: ', targetScene);
-        // // const PosX = -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2);
-        // // const PosY = -(this.worldSize.y / 4);
-
-        // const PosX = -2000;
-        // const PosY = 40;
-
-        // PlayerPos.set({
-        //   x: PosX,
-        //   y: PosY,
-        // });
-        PlayerLocation.set(targetLocation);
       }
     });
 

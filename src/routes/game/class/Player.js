@@ -73,17 +73,17 @@ class Player {
     if (typeof placePlayerY !== 'undefined') {
       // if there is an argument to place the player on a specific position in the scene
       lastPosX = placePlayerX;
-      dlog('placePlayerX', placePlayerX);
+      // dlog('placePlayerX', placePlayerX);
     } else {
       lastPosX = get(PlayerPos).x; // PlayerPos is in artworldCoordinates, will be converted later
-      dlog('lastPosX', lastPosX);
+      // dlog('lastPosX', lastPosX);
     }
     if (typeof placePlayerY !== 'undefined') {
       lastPosY = placePlayerY; // if there is an argument to place the player on a specific position in the scene
-      dlog('placePlayerY', placePlayerY);
+      // dlog('placePlayerY', placePlayerY);
     } else {
       lastPosY = get(PlayerPos).y; // PlayerPos is in artworldCoordinates, will be converted later
-      dlog('lastPosY', lastPosY);
+      // dlog('lastPosY', lastPosY);
     }
     // dlog("lastPosX, lastPosY, locationID", lastPosX, lastPosY, ManageSession.locationID)
 
@@ -98,8 +98,8 @@ class Player {
     if (lastPosY > scene.worldSize.y / 2 || lastPosY < -scene.worldSize.y / 2) {
       lastPosY = Math.floor((Math.random() * 300) - 150);
     }
-    dlog('lastPosX, lastPosY', lastPosX, lastPosY);
-    dlog();
+    // dlog('lastPosX, lastPosY', lastPosX, lastPosY);
+    // dlog();
 
     // place player in Phaser2D coordinates
     scene.player.x = artworldToPhaser2DX(scene.worldSize.x, lastPosX);
@@ -358,15 +358,15 @@ class Player {
     const avatarHeight = avatar.frames.__BASE.height;
 
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    dlog('onlinePlayer avatarFrames', avatarFrames);
+    // dlog('onlinePlayer avatarFrames', avatarFrames);
 
     if (avatarFrames > 1) {
       // set names for the moving and stop animations
 
       onlinePlayer.setData('movingKey', `moving_${tempAvatarName}`);
       onlinePlayer.setData('stopKey', `stop_${tempAvatarName}`);
-      dlog('onlinePlayer.getData("movingKey")');
-      dlog(onlinePlayer.getData('movingKey'));
+      // dlog('onlinePlayer.getData("movingKey")');
+      // dlog(onlinePlayer.getData('movingKey'));
 
       // create animation for moving
       if (!scene.anims.exists(onlinePlayer.getData('movingKey'))) {
