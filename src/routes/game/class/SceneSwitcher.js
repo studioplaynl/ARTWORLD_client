@@ -27,12 +27,8 @@ class SceneSwitcher {
       // then don't switch scenes
       // dlog('\u001b[31m playerStreamID', get(playerStreamID));
       // const history = get(PlayerHistory);
-      // dlog('playerHistory: ', history);
-      if (val.scene === 'logout') {
-        PlayerHistory.set('/logout');
-      } else {
+      // dlog('SceneSwitcher playerHistory: ', history);
         this.doSwitchScene();
-      }
     });
     // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {
     //   this.doSwitchScene();
@@ -73,7 +69,7 @@ class SceneSwitcher {
       }
       dlog('\u001b[31m switchScene: scene: ', sceneKey, ' , targetScene: ', targetSceneKey, ' targetHouse: ', targetHouse);
     } else {
-      dlog(' scene: ', scene, ' targetScene: ', targetScene, ' targetHouse: ', targetHouse);
+      // dlog(' scene: ', scene, ' targetScene: ', targetScene, ' targetHouse: ', targetHouse);
     }
 
     if (targetScene === 'logout') {
@@ -95,7 +91,7 @@ class SceneSwitcher {
     }
 
 
-    dlog('SceneSwitcher: continue with doSwitchScene');
+    // dlog('SceneSwitcher: continue with doSwitchScene');
 
     setLoader(true);
 
@@ -178,14 +174,14 @@ class SceneSwitcher {
       targetSceneKey = targetScene;
     }
 
-    dlog('switchScene: scene: ', sceneKey, ' , targetScene: ', targetSceneKey);
+    dlog('switchScene: ', sceneKey, ' , targetScene: ', targetSceneKey);
 
     const targetHouse = get(PlayerLocation).house;
     // if we are leaving a home, we have to leave the home id stream
     //! targetHouse can also be a scene, is this unwanted? make it null when it is a scene?
     dlog('targetHouse: ', targetHouse);
     if (sceneKey === DEFAULT_HOME) {
-      dlog('scene: ', scene);
+      // dlog('scene: ', scene);
       sceneKey = scene.location;
     }
 

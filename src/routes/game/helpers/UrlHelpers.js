@@ -66,6 +66,7 @@ export const checkIfLocationLooksLikeAHouse = (loc) => loc !== null && loc.split
 /** Parse the URL and set currentApp accordingly */
 export function parseURL() {
   const loc = get(location);
+  // dlog('loc: ', loc)
   const parts = loc.split('/');
 
   // In case of error in url
@@ -73,6 +74,7 @@ export function parseURL() {
 
   let appName = parts[1].toString().toLowerCase();
   const previousAppName = get(CurrentApp);
+  // dlog("appName: ", appName, " previousAppName: ", previousAppName)
 
   // An empty appName is no longer supported, /game is default
   if (appName === '') {
@@ -90,7 +92,7 @@ export function parseURL() {
   if (isValidApp(appName)) {
     // game is also a valid app:
     // DEFAULT_APP === game
-    dlog('appName: ', appName);
+    // dlog('appName: ', appName);
     CurrentApp.set(appName);
     if (appName === DEFAULT_APP) {
       // when the app just launched ManageSession.currentScene is null
@@ -117,7 +119,10 @@ export function parseURL() {
 }
 
 /** Set-up subscription to svelte-spa-router location store */
-location.subscribe(() => parseURL());
+location.subscribe(() => {
+  // dlog('location.subscribe')
+  parseURL()
+});
 
 
 /** Parse the Querystring and rehydrate Stores */
@@ -152,9 +157,16 @@ export function parseQueryString() {
   }
 
   // Update the PlayerLocation store if a scene was set
-  if (newPlayerLocation?.scene) {
+  // add scene: DefaultUseHome in case of a house
+  if (newPlayerLocation?.scene ) {
+    // dlog('newPlayerLocation: ', newPlayerLocation)
+    PlayerLocation.set(newPlayerLocation);
+  } else if (newPlayerLocation?.house){
+    newPlayerLocation.scene = DEFAULT_HOME;
+    // dlog('newPlayerLocation: ', newPlayerLocation)
     PlayerLocation.set(newPlayerLocation);
   }
+
 
   if ('x' in query && 'y' in query) {
     // url gets parsed before scene is loaded, so there is no way of knowing the
@@ -212,8 +224,13 @@ export function parseQueryString() {
 /** Set up a subscription to the querystring (from svelte-spa-router)
  * (in other words: set up a listener to the current query string of the browser window)
  * Any changes to the querystring runs the parseQueryString function.
- * These changes set the PlayerPos, PlayerLocation & PlayerZoom stores */
-querystring.subscribe(() => parseQueryString());
+ * These changes set the PlayerPos, PlayerLocation & PlayerZoom stores 
+ * Eg the in game back button works with this subscription
+ * */
+querystring.subscribe(() => {
+  parseQueryString();
+});
+
 
 
 /* Set the query parameter after updating stores, because we have set up a subscription to these.
@@ -234,8 +251,10 @@ export function updateQueryString() {
 
     const locationChanged = 'location' in previousQuery && scene !== previousQuery?.location;
     const houseChanged = 'house' in previousQuery && house !== previousQuery?.house;
+    // dlog('houseChanged: ', houseChanged)
 
     let method = (locationChanged || houseChanged) ? 'push' : 'replace';
+    // dlog('method: ', method)
     if (!forceHistoryReplace) {
       PlayerUpdate.set({ forceHistoryReplace: true });
       // dlog('forceHistoryReplace: ', forceHistoryReplace);
@@ -261,7 +280,7 @@ export function updateQueryString() {
 
       // Only scene or app changes should be added to the browser history
       if (method === 'push') {
-        dlog('push: ', newLocation);
+        // dlog('push: ', newLocation);
         push(newLocation);
         PlayerHistory.push(newLocation);
         // dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #00FF00');

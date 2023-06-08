@@ -10,12 +10,12 @@
   import { DEFAULT_SCENE } from '../../constants';
   // import { dlog } from '../game/helpers/debugLog';
 
+  /** We send the player to the middle of artworld so there is a fixed orientation point
+  //  We set the Position after the Location
+  //  when we set the position we force the urlparser to do a replace on the history and url,
+  //  with PlayerUpdate.set({ forceHistoryReplace: false });
+  */
   async function goHome() {
-    /** We send the player to the middle of artworld so there is a orientation point
-    //  We set the Position after the Location
-    //  when we set the position we force the urlparser to do a replace on the history and url,
-    //  with PlayerUpdate.set({ forceHistoryReplace: false });
-    */
     PlayerLocation.set({
       scene: DEFAULT_SCENE,
     });
@@ -26,6 +26,9 @@
     });
   }
 
+  /**  pop() sets off a reaction where the url is parsed, and the player is taken back
+   *   PlayerHistory.pop() is to reflect the state there
+   */
   async function goBack() {
     if ($PlayerHistory.length > 1) {
       PlayerHistory.pop();
