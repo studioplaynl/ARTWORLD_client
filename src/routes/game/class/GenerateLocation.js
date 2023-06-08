@@ -385,9 +385,9 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
           /** We send the player to the left side of the user's home so that the artworks can be seen
           //  We set the Position after the Location
           //  when we set the position we force the urlparser to do a replace on the history and url,
-          //  with PlayerUpdate.set({ reactive: false });
+          //  with PlayerUpdate.set({ forceHistoryReplace: false });
           */
-          PlayerUpdate.set({ reactive: false });
+          PlayerUpdate.set({ forceHistoryReplace: false });
           PlayerPos.set({
             x: PosX,
             y: 0,

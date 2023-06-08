@@ -14,12 +14,12 @@
     /** We send the player to the middle of artworld so there is a orientation point
     //  We set the Position after the Location
     //  when we set the position we force the urlparser to do a replace on the history and url,
-    //  with PlayerUpdate.set({ reactive: false });
+    //  with PlayerUpdate.set({ forceHistoryReplace: false });
     */
     PlayerLocation.set({
       scene: DEFAULT_SCENE,
     });
-    PlayerUpdate.set({ reactive: false });
+    PlayerUpdate.set({ forceHistoryReplace: false });
     PlayerPos.set({
       x: 0,
       y: 0,

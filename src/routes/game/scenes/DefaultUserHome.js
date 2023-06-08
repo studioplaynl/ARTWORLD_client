@@ -165,7 +165,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     await this.loadAndPlaceArtworks();
 
     // // Set the player on the left side of the world (this also updates the URL automatically), in artworldCoordinates
-    // PlayerUpdate.set({ reactive: false });
+    // PlayerUpdate.set({ forceHistoryReplace: false });
     // PlayerPos.set({
     //   x: -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2),
     //   y: -(this.worldSize.y / 4),

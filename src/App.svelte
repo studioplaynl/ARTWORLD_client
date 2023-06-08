@@ -55,7 +55,6 @@
   onMount(async () => {
     document.getElementById('loader').classList.add('hide');
 
-
     // Attempt to restore a saved session
     await restoreSession();
 

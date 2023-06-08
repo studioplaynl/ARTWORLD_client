@@ -5,20 +5,37 @@ import {
   DEFAULT_ZOOM, ZOOM_MIN, ZOOM_MAX, ZOOM_STEP,
 } from '../../constants';
 
+/**
+ * @var {Writable} PlayerPos A store to store player current X/Y position in Phaser game
+*/
 export const PlayerPos = writable({
   x: null,
   y: null,
 });
+
+/**
+ * @var {Writable} PlayerLocation A store to control which scene / house gets loaded
+ * SceneSwitcher subscribes to any changes here.
+*/
 export const PlayerLocation = writable({
   scene: null,
   house: null,
 });
 
+/**
+ * @var {Writable} PlayerUpdate A store to explicitly enable replacing a history entry
+ * Created to deal with out-of-sync issue, where scenes were not finished loading,
+ * while PlayerPos would already be set, resulting in incorrect (mixed) history entries.
+*/
 export const PlayerUpdate = writable({
-  reactive: true,
+  forceHistoryReplace: true,
 });
 
 const playerZoom = writable(null);
+
+/**
+ * @var {Writable} PlayerZoom A store to control current zoom level in Phaser
+*/
 export const PlayerZoom = {
 
   subscribe: playerZoom.subscribe,
@@ -113,8 +130,11 @@ function createHistory() {
 }
 
 
-/** PlayerHistory gives us access to a bit more information than just pushing/popping on window.history */
+/**
+ * @var {Writable} PlayerHistory Store to give us access to a bit more information
+ * than simply pushing/popping on window.history */
 export const PlayerHistory = createHistory();
+
 
 window.getPlayerHistory = () => {
   dlog('history', get(PlayerHistory));

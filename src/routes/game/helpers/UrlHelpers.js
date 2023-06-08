@@ -220,8 +220,8 @@ querystring.subscribe(() => parseQueryString());
 * Any value changes on PlayerPos & PlayerLocation make this function run
 * And subsequently update the query string in the URL of the browser */
 export function updateQueryString() {
-  const { reactive } = get(PlayerUpdate);
-  // dlog('reactive: ', reactive);
+  const { forceHistoryReplace } = get(PlayerUpdate);
+  // dlog('forceHistoryReplace: ', forceHistoryReplace);
 
   // console.time(`updateQueryString for ${reason}`);
 
@@ -233,12 +233,12 @@ export function updateQueryString() {
     const query = { ...parse(get(querystring)) };
 
     const locationChanged = 'location' in previousQuery && scene !== previousQuery?.location;
+    const houseChanged = 'house' in previousQuery && house !== previousQuery?.house;
 
-    // const houseChanged = 'house' in previousQuery && house !== previousQuery?.house;
-    let method = (locationChanged) ? 'push' : 'replace';
-    if (!reactive) {
-      PlayerUpdate.set({ reactive: true });
-      // dlog('reactive: ', reactive);
+    let method = (locationChanged || houseChanged) ? 'push' : 'replace';
+    if (!forceHistoryReplace) {
+      PlayerUpdate.set({ forceHistoryReplace: true });
+      // dlog('forceHistoryReplace: ', forceHistoryReplace);
       method = 'replace';
     }
     // dlog('method: ', method);
