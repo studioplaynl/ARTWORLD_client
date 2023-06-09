@@ -1,4 +1,17 @@
 ## Dev log
+
+June 9 2023
+Code cleanup AVATAR_BASE_SIZE from constants.js
+
+Clicking friend in itemsBar takes you instide the friends home in the correct position. Should we be taken next to the house though?
+
+MailBox: ArtMail: clicking it, takes us to the home of the sender where the art is. 
+(one problem: when the art work is hidden? => so should this be opening the artwork? 
+TODO: opening the artwork of a artmail (the bug that happenend has to do with stopmotions are being opened as drawings)) 
+
+MailBox: Liked Art: clicking the user that liked the artwork, takes player to that users home, clicking your own artwork does nothing...
+TODO: implement previews of stopmototions
+
 June 7 2023
 Fixed the bug that kept the location of the last user logged in and passed it on to the next user
 

@@ -1,19 +1,23 @@
 <script>
   import { onMount } from 'svelte';
-  import { PlayerLocation } from './game/playerState';
-  import { Profile } from '../session';
+  import { PlayerLocation, PlayerPos, PlayerUpdate } from './game/playerState';
+  // import { Profile } from '../session';
   import { listAllNotifications, convertImage } from '../helpers/nakamaHelpers';
   import {
     DEFAULT_HOME,
     NOTIFICATION_ARTWORK_LIKE_RECEIVED,
     NOTIFICATION_ARTWORK_RECEIVED,
+    SCENE_INFO,
+    AVATAR_BASE_SIZE,
   } from '../constants';
+  import { dlog } from '../helpers/debugLog';
 
   let messages = {
     notifications: [],
   };
   let posts = [];
   let likes = [];
+
   onMount(async () => {
     messages = await listAllNotifications();
 
@@ -35,9 +39,24 @@
   });
 
   async function goHome(id) {
+    /** We send the player to the left side of the user's home so that the artworks can be seen
+    //  We set the Position after the Location
+    //  when we set the position we force the urlparser to do a replace on the history and url,
+    //  with PlayerUpdate.set({ forceHistoryReplace: false });
+    */
+    dlog('id: ', id);
+    const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+    const PosX = -(targetScene.sizeX / 2) + (AVATAR_BASE_SIZE * 2);
+
     PlayerLocation.set({
       scene: DEFAULT_HOME,
       house: id,
+    });
+
+    PlayerUpdate.set({ forceHistoryReplace: false });
+    PlayerPos.set({
+      x: PosX,
+      y: 0,
     });
   }
 </script>
@@ -60,15 +79,10 @@
             alt="Someone sent you an artwork"
           />
         </div>
-        <p on:click="{goHome(notification.userId)}">
+        <p on:click="{goHome(notification.sender_id)}">
           {notification.content.username}
         </p>
-        <a
-          href="/#/drawing?userId={notification.content
-            .userId}&key={notification.content.key}"
-        >
-          <img alt="previewURL" src="{notification.content.previewUrl}" />
-        </a>
+          <img alt="previewURL" src="{notification.content.previewUrl}" on:click="{goHome(notification.sender_id)}" />
       </div>
     {/each}
   </div>
@@ -93,11 +107,11 @@
         <p on:click="{goHome(notification.sender_id)}">
           {notification.content.username}
         </p>
-        <a
+        <!-- <a
           href="/#/drawing?userId={$Profile.id}&key={notification.content.key}"
-        >
+        > -->
           <img alt="previewURL" src="{notification.previewUrl}" />
-        </a>
+        <!-- </a> -->
       </div>
     {/each}
   </div>
