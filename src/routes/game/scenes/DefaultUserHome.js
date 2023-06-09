@@ -154,12 +154,12 @@ export default class DefaultUserHome extends Phaser.Scene {
     // ......... end PLAYER VS WORLD .......................................................................
 
     // // Place the player on the left size in the y-middle, by passing on arguments in the Player class
-    // const PosX = -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2);
+    // const PosX = -(this.worldSize.x / 2) + (AVATAR_BASE_SIZE * 2);
     // dlog('PosX: ', PosX);
     // const PosY = -(this.worldSize.y / 4);
     // Player.loadPlayerAvatar(this, PosX, PosY);
 
-    // Player.loadPlayerAvatar(this, -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2), -(this.worldSize.y / 4));
+    // Player.loadPlayerAvatar(this, -(this.worldSize.x / 2) + (AVATAR_BASE_SIZE * 2), -(this.worldSize.y / 4));
     Player.loadPlayerAvatar(this);
 
     await this.loadAndPlaceArtworks();
@@ -167,7 +167,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     // // Set the player on the left side of the world (this also updates the URL automatically), in artworldCoordinates
     // PlayerUpdate.set({ forceHistoryReplace: false });
     // PlayerPos.set({
-    //   x: -(this.worldSize.x / 2) + (ManageSession.avatarSize * 2),
+    //   x: -(this.worldSize.x / 2) + (AVATAR_BASE_SIZE * 2),
     //   y: -(this.worldSize.y / 4),
     // });
   }// end create

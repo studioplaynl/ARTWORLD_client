@@ -4,7 +4,7 @@ import { push } from 'svelte-spa-router';
 // import SceneSwitcher from './SceneSwitcher';
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
-import { DEFAULT_HOME, SCENE_INFO } from '../../../constants';
+import { DEFAULT_HOME, SCENE_INFO, AVATAR_BASE_SIZE } from '../../../constants';
 import { PlayerPos, PlayerLocation, PlayerUpdate } from '../playerState';
 
 const { Phaser } = window;
@@ -378,15 +378,16 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         // When we go into a house, we place the player left, in the middle
         if (this.locationDestination === DEFAULT_HOME) {
-          const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
-          const PosX = -(targetScene.sizeX / 2) + (ManageSession.avatarSize * 2);
-          PlayerLocation.set(targetLocation);
-
           /** We send the player to the left side of the user's home so that the artworks can be seen
           //  We set the Position after the Location
           //  when we set the position we force the urlparser to do a replace on the history and url,
           //  with PlayerUpdate.set({ forceHistoryReplace: false });
           */
+          PlayerLocation.set(targetLocation);
+
+          const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+          const PosX = -(targetScene.sizeX / 2) + (AVATAR_BASE_SIZE * 2);
+
           PlayerUpdate.set({ forceHistoryReplace: false });
           PlayerPos.set({
             x: PosX,

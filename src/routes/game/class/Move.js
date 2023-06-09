@@ -5,6 +5,7 @@ import CoordinatesTranslator from './CoordinatesTranslator';
 import { PlayerPos } from '../playerState';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
+import { AVATAR_BASE_SIZE } from '../../../constants';
 
 const { Phaser } = window;
 
@@ -106,19 +107,19 @@ class Move {
     // we check if player stays in the world
     // keep the player in the world and send the moveTo commands
     if (target.x < 0) {
-      target.x = 0 + ManageSession.avatarSize;
+      target.x = 0 + AVATAR_BASE_SIZE;
       ManageSession.cameraShake = true;
     }
     if (target.x > scene.worldSize.x) {
-      target.x = scene.worldSize.x - ManageSession.avatarSize;
+      target.x = scene.worldSize.x - AVATAR_BASE_SIZE;
       ManageSession.cameraShake = true;
     }
     if (target.y < 0) {
-      target.y = 0 + ManageSession.avatarSize;
+      target.y = 0 + AVATAR_BASE_SIZE;
       ManageSession.cameraShake = true;
     }
     if (target.y > scene.worldSize.y) {
-      target.y = scene.worldSize.y - ManageSession.avatarSize;
+      target.y = scene.worldSize.y - AVATAR_BASE_SIZE;
       ManageSession.cameraShake = true;
     }
 
@@ -261,7 +262,7 @@ class Move {
       scene.player.y -= dragY;
 
       // keep player within world bounds
-      const halfAvatarSize = ManageSession.avatarSize / 2;
+      const halfAvatarSize = AVATAR_BASE_SIZE / 2;
 
       if (scene.player.x > scene.worldSize.x - halfAvatarSize) scene.player.x = scene.worldSize.x - halfAvatarSize;
       if (scene.player.x < 0 + halfAvatarSize) scene.player.x = halfAvatarSize;

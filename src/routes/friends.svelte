@@ -1,9 +1,7 @@
 <script>
-  import { push } from 'svelte-spa-router';
   import SvelteTable from 'svelte-table';
   import MdSearch from 'svelte-icons/md/MdSearch.svelte';
-  import { PlayerHistory, PlayerLocation } from './game/playerState';
-  import SceneSwitcher from './game/class/SceneSwitcher';
+  import { PlayerPos, PlayerLocation, PlayerUpdate } from './game/playerState';
   import FriendAction from './components/friendaction.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import {
@@ -21,6 +19,8 @@
     STOPMOTION_MAX_FRAMES,
     DEFAULT_PREVIEW_HEIGHT,
     DEFAULT_HOME,
+    SCENE_INFO,
+    AVATAR_BASE_SIZE,
   } from '../constants';
 
   let friends = [];
@@ -67,9 +67,24 @@
     const { row } = event.detail;
     if (event.detail.key === 'action') return;
 
+    /** We send the player to the left side of the user's home so that the artworks can be seen
+    //  We set the Position after the Location
+    //  when we set the position we force the urlparser to do a replace on the history and url,
+    //  with PlayerUpdate.set({ forceHistoryReplace: false });
+    */
+
     PlayerLocation.set({
       scene: DEFAULT_HOME,
       house: row.user.id,
+    });
+
+    const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+    const PosX = -(targetScene.sizeX / 2) + (AVATAR_BASE_SIZE * 2);
+
+    PlayerUpdate.set({ forceHistoryReplace: false });
+    PlayerPos.set({
+      x: PosX,
+      y: 0,
     });
   }
 

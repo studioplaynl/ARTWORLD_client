@@ -30,7 +30,7 @@ import {
 } from '../playerState';
 import { CurrentApp } from '../../../session';
 import {
-  DEFAULT_HOME, DEFAULT_ZOOM, SCENE_INFO, ZOOM_MAX, ZOOM_MIN,
+  DEFAULT_HOME, DEFAULT_ZOOM, SCENE_INFO, ZOOM_MAX, ZOOM_MIN, AVATAR_BASE_SIZE,
 } from '../../../constants';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
@@ -121,7 +121,7 @@ export function parseURL() {
 /** Set-up subscription to svelte-spa-router location store */
 location.subscribe(() => {
   // dlog('location.subscribe')
-  parseURL()
+  parseURL();
 });
 
 
@@ -158,10 +158,10 @@ export function parseQueryString() {
 
   // Update the PlayerLocation store if a scene was set
   // add scene: DefaultUseHome in case of a house
-  if (newPlayerLocation?.scene ) {
+  if (newPlayerLocation?.scene) {
     // dlog('newPlayerLocation: ', newPlayerLocation)
     PlayerLocation.set(newPlayerLocation);
-  } else if (newPlayerLocation?.house){
+  } else if (newPlayerLocation?.house) {
     newPlayerLocation.scene = DEFAULT_HOME;
     // dlog('newPlayerLocation: ', newPlayerLocation)
     PlayerLocation.set(newPlayerLocation);
@@ -180,10 +180,11 @@ export function parseQueryString() {
       // dlog ("currentScene, sceneInfo", currentScene, sceneInfo)
       const currentSceneSize = new Phaser.Math.Vector2(sceneInfo.sizeX, sceneInfo.sizeY);
 
-      minX = -(currentSceneSize.x / 2) + (ManageSession.avatarSize / 2);
-      maxX = (currentSceneSize.x / 2) - (ManageSession.avatarSize / 2);
-      minY = -(currentSceneSize.y / 2) + (ManageSession.avatarSize / 2);
-      maxY = (currentSceneSize.y / 2) - (ManageSession.avatarSize / 2);
+      const avatarHalfSize = AVATAR_BASE_SIZE / 2;
+      minX = -(currentSceneSize.x / 2) + avatarHalfSize;
+      maxX = (currentSceneSize.x / 2) - avatarHalfSize;
+      minY = -(currentSceneSize.y / 2) + avatarHalfSize;
+      maxY = (currentSceneSize.y / 2) - avatarHalfSize;
 
       const queryX = parseInt(query.x, 10);
       const queryY = parseInt(query.y, 10);
@@ -224,7 +225,7 @@ export function parseQueryString() {
 /** Set up a subscription to the querystring (from svelte-spa-router)
  * (in other words: set up a listener to the current query string of the browser window)
  * Any changes to the querystring runs the parseQueryString function.
- * These changes set the PlayerPos, PlayerLocation & PlayerZoom stores 
+ * These changes set the PlayerPos, PlayerLocation & PlayerZoom stores
  * Eg the in game back button works with this subscription
  * */
 querystring.subscribe(() => {
