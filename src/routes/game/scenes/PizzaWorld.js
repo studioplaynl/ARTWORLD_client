@@ -148,83 +148,79 @@ export default class PizzaWorld extends Phaser.Scene {
   }
 
   makeWorldElements() {
-    // .........Slice_Caprese_metTomaatpeople............................................................
-    PlaceElement.image({
-      x: 1274,
-      y: 132,
-      file: 'Slice_Caprese_metTomaatpeople',
-      scale: 2.2,
-      scene: this,
-    });
-
-    // .........pizza_alaMaarten_2............................................................
+    // .........pizza_margarita............................................................
     PlaceElement.image({
       x: -938,
       y: 918,
-      file: 'pizza_alaMaarten',
-      name: 'pizza_alaMaarten_2',
-
-      scale: 3,
+      file: 'pizza_margarita',
+      scale: 1.9,
       rotation: -0.05,
       scene: this,
     });
 
 
-    // .........pizza_alaMaarten_3............................................................
+    // .........pizza_margarita2............................................................
     PlaceElement.image({
-      x: -452,
-      y: -1338,
-      file: 'pizza_alaMaarten',
-      name: 'pizza_alaMaarten_3',
-      scale: 2.7,
+      x: -447,
+      y: -1488,
+      file: 'pizza_margarita2',
+      scale: 1.9,
       scene: this,
-      rotation: -2.1,
+    });
+
+    // .........pizza_margarita3............................................................
+    PlaceElement.image({
+      x: 1359,
+      y: 207,
+      file: 'pizza_margarita3',
+      scale: 1.9,
+      scene: this,
     });
 
     // .........kaasbrugg_01_pizza............................................................
     PlaceElement.image({
-      x: -777,
-      y: -144,
+      x: -637,
+      y: -69,
       file: 'kaasbrugg_01_pizza',
-      scale: 2,
+      scale: 1.4,
       rotation: 0.1,
       scene: this,
     });
 
     // .........kaasbrugg_02_pizza............................................................
     PlaceElement.image({
-      x: 973,
-      y: -1352,
+      x: 1078,
+      y: -1317,
       file: 'kaasbrugg_02_pizza',
-      scale: 2,
+      scale: 1,
       scene: this,
     });
 
     // .........kaasbrugg_03_pizza............................................................
     PlaceElement.image({
-      x: 492,
-      y: 1313,
+      x: 497,
+      y: 1598,
       file: 'kaasbrugg_03_pizza',
       name: 'kaasbrugg_03_pizza',
-      scale: 2,
+      scale: 1.4,
       rotation: 0,
       scene: this,
     });
 
     // .........ananasguy............................................................
     PlaceElement.image({
-      x: -1898,
-      y: 2058,
+      x: -2033,
+      y: 2083,
       file: 'ananasguy',
-      scale: 2,
+      scale: 1.27,
       rotation: 0,
       scene: this,
     });
 
     // .........basil_2a............................................................
     PlaceElement.image({
-      x: 2102,
-      y: 2148,
+      x: 2202,
+      y: 2158,
       file: 'basil_2a',
       scale: 4,
       rotation: 0,
@@ -233,8 +229,8 @@ export default class PizzaWorld extends Phaser.Scene {
 
     // .........paprika_g1............................................................
     PlaceElement.image({
-      x: -1973,
-      y: -1782,
+      x: -1813,
+      y: -2412,
       file: 'paprika_g1',
       scale: 1.7,
       rotation: 0,
@@ -243,8 +239,8 @@ export default class PizzaWorld extends Phaser.Scene {
 
     // .........paprika_y1............................................................
     PlaceElement.image({
-      x: -2353,
-      y: -1582,
+      x: -2213,
+      y: -2152,
       file: 'paprika_y1',
       scale: 2.2,
       rotation: 0,
