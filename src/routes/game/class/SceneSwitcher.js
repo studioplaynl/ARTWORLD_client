@@ -3,7 +3,7 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog, dwarn } from '../../../helpers/debugLog';
-import { PlayerLocation, PlayerHistory } from '../playerState';
+import { PlayerLocation } from '../playerState';
 // import { PlayerLocation, playerStreamID, PlayerHistory } from '../playerState';
 
 import { DEFAULT_HOME } from '../../../constants';
@@ -20,7 +20,7 @@ class SceneSwitcher {
   constructor() {
     // this.tempHistoryArray = [];
 
-    this.unsubscribeScene = PlayerLocation.subscribe((val) => {
+    this.unsubscribeScene = PlayerLocation.subscribe(() => {
       // dlog('HistoryBug: SceneSwitcher: PlayerLocation changed, SceneSwitcher reacts, value = ', JSON.stringify(val));
       // dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
       // check if we are going from the same world to the same world;
@@ -28,7 +28,7 @@ class SceneSwitcher {
       // dlog('\u001b[31m playerStreamID', get(playerStreamID));
       // const history = get(PlayerHistory);
       // dlog('SceneSwitcher playerHistory: ', history);
-        this.doSwitchScene();
+      this.doSwitchScene();
     });
     // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {
     //   this.doSwitchScene();
