@@ -67,14 +67,12 @@ export const SCENE_INFO = [
     sizeX: 5500,
     sizeY: 5500,
     kind: 'homeArea',
-
   },
   {
     scene: 'YellowDiamond',
     sizeX: 5500,
     sizeY: 5500,
     kind: 'homeArea',
-
   },
   {
     scene: 'FireWorld',
@@ -126,6 +124,12 @@ export const SCENE_INFO = [
   },
   {
     scene: 'PizzaWorld',
+    sizeX: 5500,
+    sizeY: 5500,
+    kind: 'homeArea',
+  },
+  {
+    scene: 'UndergroundWorld',
     sizeX: 5500,
     sizeY: 5500,
     kind: 'homeArea',

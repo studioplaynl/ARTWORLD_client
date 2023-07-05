@@ -338,7 +338,21 @@ export default class PreloadScene extends Phaser.Scene {
       { key: 'paprika_g1', path: `${folderPath}paprika_g1.png` },
       { key: 'paprika_y1', path: `${folderPath}paprika_y1.png` },
       { key: 'korr_tomaat03_b', path: `${folderPath}korr_tomaat03_b.png` },
+    ];
 
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
+
+    // Underground
+    folderPath = './assets/world_underground/';
+
+    this.load.image('artWorldPortalUnderground', `${folderPath}Portal_naarOndergrond.png`);
+
+    loadArray = [
+      { key: 'Portal_naarHuis_underground', path: `${folderPath}Portal_naarHuis.png` },
+
+      { key: 'gras_metmieren', path: `${folderPath}gras_metAppel2.png` },
+      { key: 'geheel', path: `${folderPath}geheel.png` },
+      { key: 'mier02', path: `${folderPath}mier02.png` },
 
     ];
 

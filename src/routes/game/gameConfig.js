@@ -32,6 +32,8 @@ import SeaWorld from './scenes/SeaWorld';
 import CloudWorld from './scenes/CloudWorld';
 import MoonWorld from './scenes/MoonWorld';
 import PizzaWorld from './scenes/PizzaWorld';
+import UndergroundWorld from './scenes/UndergroundWorld';
+
 
 
 /** Phaser Plugins */
@@ -62,6 +64,7 @@ const SCENES = [
   CloudWorld,
   MoonWorld,
   PizzaWorld,
+  UndergroundWorld,
 ];
 
 import { CONFIG } from '../../constants';
