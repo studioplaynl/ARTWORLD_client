@@ -33,6 +33,7 @@ import CloudWorld from './scenes/CloudWorld';
 import MoonWorld from './scenes/MoonWorld';
 import PizzaWorld from './scenes/PizzaWorld';
 import UndergroundWorld from './scenes/UndergroundWorld';
+import WoestijnWereld from './scenes/WoestijnWereld';
 
 
 
@@ -65,6 +66,7 @@ const SCENES = [
   MoonWorld,
   PizzaWorld,
   UndergroundWorld,
+  WoestijnWereld,
 ];
 
 import { CONFIG } from '../../constants';

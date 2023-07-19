@@ -789,6 +789,26 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
+    locationVector = new Phaser.Math.Vector2(1300, 265);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.woestijnWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'WoestijnWereld',
+      locationImage: 'artWorldPortalWoestijn',
+      enterButtonImage: 'enter_button',
+      locationText: 'Woestijn Wereld',
+      referenceName: 'this.woestijnWorldLocation',
+      fontColor: 0x8dcb0e,
+    });
+
     // ---- Location 1 ----------------------
     locationVector = new Phaser.Math.Vector2(-1215, -589);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(

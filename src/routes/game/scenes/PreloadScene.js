@@ -351,9 +351,31 @@ export default class PreloadScene extends Phaser.Scene {
       { key: 'Portal_naarHuis_underground', path: `${folderPath}Portal_naarHuis.png` },
 
       { key: 'gras_metmieren', path: `${folderPath}gras_metAppel2.png` },
-      { key: 'geheel', path: `${folderPath}geheel.png` },
+      { key: 'geheel', path: `${folderPath}geheel_noPalettes-fs8.png` },
       { key: 'mier02', path: `${folderPath}mier02.png` },
 
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
+
+    // Woestijn
+    folderPath = './assets/world_woestijn/';
+
+    this.load.image('artWorldPortalWoestijn', `${folderPath}Portal_woestijn_naarWoestijn-fs8.png`);
+
+    loadArray = [
+      { key: 'Portal_naarHuis_woestijn', path: `${folderPath}Portal_woestijn_naarHuis-fs8.png` },
+
+      { key: 'oasis_blauw_01_ring', path: `${folderPath}oasis_blauw 01_ring-fs8.png` },
+      { key: 'oasis_blauw_01', path: `${folderPath}oasis_blauw 01-fs8.png` },
+      { key: 'oasis_blauw_02', path: `${folderPath}oasis_blauw_02-fs8.png` },
+
+      { key: 'oasis_blauw_03', path: `${folderPath}oasis_blauw_03-fs8.png` },
+      { key: 'oasis_blauw_04', path: `${folderPath}oasis_blauw_04-fs8.png` },
+      { key: 'pyradmide_01', path: `${folderPath}pyradmide_01-fs8.png` },
+      { key: 'pyradmide_02', path: `${folderPath}pyradmide_02-fs8.png` },
+      { key: 'pyradmide_03', path: `${folderPath}pyradmide_03-fs8.png` },
+      { key: 'pyradmide_GodofWater', path: `${folderPath}pyradmide_GodofWater-fs8.png` },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');

@@ -245,7 +245,7 @@ class Move {
       tempVec.y = ManageSession.lastMoveCommand.posY;
 
       const moveDistance = 0;
-      dlog('moveDistance: ', moveDistance);
+      // dlog('moveDistance: ', moveDistance);
 
       // this creates a double movement animation: replace by sendMovement and timedEvent with Stop
       this.moveObjectToTarget(

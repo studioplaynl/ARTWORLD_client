@@ -288,7 +288,7 @@ export function updateQueryString() {
       } else {
         // Location changes should just update the querystring..
         // ..so the location remains available on deeplinks and reloads
-        dlog('replace: ', newLocation);
+        // dlog('replace: ', newLocation);
         replace(newLocation);
         PlayerHistory.replace(newLocation);
         // dlog(`%cquerystring result: ${method}: ${newLocation}`, 'color: #FF0000');
