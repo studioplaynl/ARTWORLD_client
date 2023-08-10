@@ -140,6 +140,18 @@ export const SCENE_INFO = [
     sizeY: 5500,
     kind: 'homeArea',
   },
+  {
+    scene: 'IjscoWereld',
+    sizeX: 5500,
+    sizeY: 5500,
+    kind: 'homeArea',
+  },
+  {
+    scene: 'IjsWereld',
+    sizeX: 5500,
+    sizeY: 5500,
+    kind: 'homeArea',
+  },
 ];
 
 export const STOCK_HOUSES = [

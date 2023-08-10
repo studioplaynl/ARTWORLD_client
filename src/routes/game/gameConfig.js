@@ -34,8 +34,8 @@ import MoonWorld from './scenes/MoonWorld';
 import PizzaWorld from './scenes/PizzaWorld';
 import UndergroundWorld from './scenes/UndergroundWorld';
 import WoestijnWereld from './scenes/WoestijnWereld';
-
-
+import IjscoWereld from './scenes/IjscoWereld';
+import IjsWereld from './scenes/IjsWereld';
 
 /** Phaser Plugins */
 
@@ -67,6 +67,8 @@ const SCENES = [
   PizzaWorld,
   UndergroundWorld,
   WoestijnWereld,
+  IjscoWereld,
+  IjsWereld,
 ];
 
 import { CONFIG } from '../../constants';

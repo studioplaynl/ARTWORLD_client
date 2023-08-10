@@ -133,7 +133,7 @@
       downloadLoginImage();
 
       // clipboard formatting
-      const pasteUser = `${username}\t${password}\t\t\t${azc}\n`;
+      const pasteUser = `${username}\t${password}\t${azc}\n`;
       batchUserPasteBoard += pasteUser;
       copyToClipboard();
 

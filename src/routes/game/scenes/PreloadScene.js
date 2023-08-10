@@ -379,6 +379,34 @@ export default class PreloadScene extends Phaser.Scene {
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
+
+    // Ijs
+    folderPath = './assets/world_ice/';
+
+    this.load.image('artWorldPortalIjs', `${folderPath}Portaal_Naar_Ice-fs8.png`);
+
+    loadArray = [
+      { key: 'Portal_naarHuis_ijs', path: `${folderPath}Portaal_ice_naarHUIS-fs8.png` },
+      { key: 'Portaal_vanIjs_naarIjsco', path: `${folderPath}Portaal_vanIce_naarIceCream-fs8.png` },
+
+      { key: 'ijswereld', path: `${folderPath}ijs_wereld.jpg` },
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
+
+    // Ijsco
+    folderPath = './assets/world_ijsco/';
+
+    this.load.image('artWorldPortalIjsco', `${folderPath}Portaal_vanHOMEnaarICECREAM-fs8.png`);
+
+    loadArray = [
+      { key: 'Portaal_vanafIcecream_naarIce', path: `${folderPath}Portaal_vanafIcecream_naarIce-fs8.png` },
+      { key: 'Portaal_vanICECREAMnaarHOME', path: `${folderPath}Portaal_vanICECREAMnaarHOME-fs8.png` },
+
+      { key: 'ijscowereld', path: `${folderPath}ijscowereld.jpg` },
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
   }
 
   async create() {

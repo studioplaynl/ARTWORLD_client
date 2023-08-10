@@ -51,6 +51,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.numberOfArtworks = config.numberOfArtworks;
 
     let width;
+    this.width = 0;
     let namePlateExtraOffset = 0;
 
     // setting 'enteringPossible' to true, this can be changed from outside with .setData
@@ -65,6 +66,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     // default size, if no size is specified
     if (typeof this.size === 'undefined') {
       width = 200;
+      this.width = width;
     } else {
       width = this.size;
     }
@@ -90,14 +92,18 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       const cropWidth = this.location.width;
       const cropHeight = this.location.height;
 
-      // debug rectangle to see to total space needed for the placement of a house when in dragging mode
+      // debug rectangle to see the total space needed for the placement of a house when in dragging mode
       this.debugRect_y = -(width / 2);
       this.debugRect_height = width;
 
       // set the location to a fixed size, also scales the physics body
       this.location.displayWidth = width;
+
       this.location.scaleY = this.location.scaleX;
-      this.location.body.setSize(this.location.width, this.location.height);
+
+      // this.location.body.setSize(this.location.width, this.location.height);
+
+
       const cropMargin = 1; // sometimes there is a little border visible on a drawn image
       this.location.setCrop(cropMargin, cropMargin, cropWidth - cropMargin, cropHeight - cropMargin);
     }
@@ -159,9 +165,14 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     const textOffset = -20 + namePlateExtraOffset;
     // const textPlateOffset = textOffset + namePlateMargin;
 
+    let locationDescriptionY = this.location.displayHeight / 2 - textOffset;
+    if (this.type === 'isoBox') {
+      locationDescriptionY = (width / 2) - textOffset;
+    }
+
     const locationDescription = this.scene.add.text(
       0,
-      width / 2 - textOffset,
+      locationDescriptionY,
       this.locationText,
       {
         fill: this.fontColor,
@@ -173,7 +184,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     // location plate name
     const namePlate = this.scene.add.image(
       0,
-      width / 2 + namePlateMargin,
+      locationDescription.y,
       'greySquare_256',
     ).setDepth(31);
     namePlate.displayWidth = locationDescription.width + namePlateMargin;
@@ -456,17 +467,32 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       //  an extra 60 pixels around the texture, so -30 from the x/y and + 60 to the texture width and height
 
       // extend the isobox hitarea
-      this.location.input.hitArea.setTo(
-        -hitAreaWidth / 3,
-        -hitAreaWidth / 1.3,
-        hitAreaWidth * 1.4,
-        hitAreaWidth * 1.5,
-      );
+      if (this.type === 'isoBox') {
+        this.location.input.hitArea.setTo(
+          -hitAreaWidth / 3,
+          -hitAreaWidth / 1.3,
+          hitAreaWidth * 1.4,
+          hitAreaWidth * 1.5,
+        );
+      }
     }
 
     // on home click, we let the player to see the entrance arrow above the home
     this.location.on('pointerdown', () => {
       if (!this.showing && this.getData('enteringPossible') === 'true') {
+        console.log('this.location.displayWidth: ', this.location.displayWidth);
+        console.log('this.location.displayHeight: ', this.location.displayHeight);
+        console.log(
+          'this.location.displayWidth/ this.location.displayHeight: ',
+          this.location.displayWidth / this.location.displayHeight,
+        );
+        console.log('width: ', this.width);
+        console.log('this.location.width: ', this.location.width);
+        console.log('this.location.height: ', this.location.height);
+        console.log('this.location.width/ this.location.height: ', this.location.width / this.location.height);
+
+        console.log('this.location.body: ', this.location.body);
+
         this.initConfirm();
         this.enterButton.setVisible(this.showing);
         this.enterShadow.setVisible(this.showing);

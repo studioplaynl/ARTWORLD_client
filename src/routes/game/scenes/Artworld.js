@@ -789,7 +789,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(1300, 265);
+    locationVector = new Phaser.Math.Vector2(1018, -89);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -807,6 +807,49 @@ export default class Artworld extends Phaser.Scene {
       locationText: 'Woestijn Wereld',
       referenceName: 'this.woestijnWorldLocation',
       fontColor: 0x8dcb0e,
+      size: 400,
+    });
+
+    locationVector = new Phaser.Math.Vector2(913, -476);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.ijsWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'IjsWereld',
+      locationImage: 'artWorldPortalIjs',
+      enterButtonImage: 'enter_button',
+      locationText: 'Ijs Wereld',
+      referenceName: 'this.ijsWorldLocation',
+      fontColor: 0x8dcb0e,
+      size: 300,
+    });
+
+    locationVector = new Phaser.Math.Vector2(913, -876);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.ijscoWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'IjscoWereld',
+      locationImage: 'artWorldPortalIjsco',
+      enterButtonImage: 'enter_button',
+      locationText: 'Ijsco Wereld',
+      referenceName: 'this.ijscoWorldLocation',
+      fontColor: 0x8dcb0e,
+      size: 300,
     });
 
     // ---- Location 1 ----------------------
@@ -861,7 +904,6 @@ export default class Artworld extends Phaser.Scene {
     this.mario_star = new GenerateLocation({
       scene: this,
       type: 'image',
-      size: 200,
       draggable: ManageSession.gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
@@ -883,10 +925,9 @@ export default class Artworld extends Phaser.Scene {
       locationVector,
     );
 
-    this.mario_star = new GenerateLocation({
+    this.songMaker = new GenerateLocation({
       scene: this,
       type: 'image',
-      size: 200,
       draggable: ManageSession.gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
@@ -900,7 +941,7 @@ export default class Artworld extends Phaser.Scene {
       color2: 0x3f8403,
       color3: 0x63a505,
     });
-    this.mario_star.setDepth(140);
+    this.songMaker.setDepth(140);
 
     locationVector = new Phaser.Math.Vector2(532, -781);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
@@ -908,10 +949,9 @@ export default class Artworld extends Phaser.Scene {
       locationVector,
     );
 
-    this.mario_star = new GenerateLocation({
+    this.Kandinsky = new GenerateLocation({
       scene: this,
       type: 'image',
-      size: 200,
       draggable: ManageSession.gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
@@ -925,7 +965,7 @@ export default class Artworld extends Phaser.Scene {
       color2: 0x3f8403,
       color3: 0x63a505,
     });
-    this.mario_star.setDepth(140);
+    this.Kandinsky.setDepth(140);
     // music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
 
 
@@ -936,10 +976,9 @@ export default class Artworld extends Phaser.Scene {
       locationVector,
     );
 
-    this.mario_star = new GenerateLocation({
+    this.MelodyMaker = new GenerateLocation({
       scene: this,
       type: 'image',
-      size: 200,
       draggable: ManageSession.gameEditMode,
       x: locationVector.x,
       y: locationVector.y,
@@ -953,7 +992,7 @@ export default class Artworld extends Phaser.Scene {
       color2: 0x3f8403,
       color3: 0x63a505,
     });
-    this.mario_star.setDepth(140);
+    this.MelodyMaker.setDepth(140);
 
     locationVector = new Phaser.Math.Vector2(-2125, 1017);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
