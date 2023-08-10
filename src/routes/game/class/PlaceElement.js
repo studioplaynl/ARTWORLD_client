@@ -8,7 +8,7 @@ class PlaceElement {
   // eslint-disable-next-line class-methods-use-this
   image(config) {
     const {
-      x, y, file, scale, rotation, alpha, tint, scene, flipX,
+      x, y, file, scale, rotation, alpha, tint, scene, flipX, draggable,
     } = config;
 
     let { name } = config;
@@ -41,7 +41,7 @@ class PlaceElement {
     }
 
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) {
+    if (ManageSession.gameEditMode && !!draggable) {
       scene[name].setInteractive({ draggable: true });
     }
   }

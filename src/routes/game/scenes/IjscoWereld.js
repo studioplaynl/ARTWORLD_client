@@ -184,6 +184,7 @@ export default class IjscoWereld extends Phaser.Scene {
       y: 0,
       file: 'ijscowereld',
       scale: 1,
+      draggable: false,
       scene: this,
     });
   }
