@@ -61,6 +61,14 @@ export default class WoestijnWereld extends Phaser.Scene {
 
   async create() {
     //!
+    // show physics debug boundaries in gameEditMode
+    if (ManageSession.gameEditMode) {
+      this.physics.world.drawDebug = true;
+    } else {
+      this.physics.world.drawDebug = false;
+      this.physics.world.debugGraphic.clear();
+    }
+
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
@@ -125,7 +133,7 @@ export default class WoestijnWereld extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(612 , 1922);
+    let locationVector = new Phaser.Math.Vector2(612, 1922);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -148,8 +156,6 @@ export default class WoestijnWereld extends Phaser.Scene {
   }
 
   makeWorldElements() {
-
-
     // .........oasis_blauw_01............................................................
     PlaceElement.image({
       x: -925,
@@ -162,7 +168,7 @@ export default class WoestijnWereld extends Phaser.Scene {
 
     // .........oasis_blauw_02............................................................
     PlaceElement.image({
-      x:  1822,
+      x: 1822,
       y: 1255,
       file: 'oasis_blauw_02',
       scale: 1.6,
@@ -214,7 +220,7 @@ export default class WoestijnWereld extends Phaser.Scene {
     // .........pyradmide_03............................................................
     PlaceElement.image({
       x: -873,
-      y: -2144 ,
+      y: -2144,
       file: 'pyradmide_03',
       scale: 1.9,
       // rotation: -0.05,
@@ -223,7 +229,7 @@ export default class WoestijnWereld extends Phaser.Scene {
 
     // .........pyradmide_GodofWater............................................................
     PlaceElement.image({
-      x:  960,
+      x: 960,
       y: 256,
       file: 'pyradmide_GodofWater',
       scale: 1.4,

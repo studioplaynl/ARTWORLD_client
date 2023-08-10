@@ -47,6 +47,14 @@ export default class BlueSail extends Phaser.Scene {
 
   async create() {
     //!
+    // show physics debug boundaries in gameEditMode
+    if (ManageSession.gameEditMode) {
+      this.physics.world.drawDebug = true;
+    } else {
+      this.physics.world.drawDebug = false;
+      this.physics.world.debugGraphic.clear();
+    }
+
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
