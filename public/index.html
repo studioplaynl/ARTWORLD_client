@@ -34,7 +34,19 @@
       <span>L</span>
       <span>D</span>
     </h1>
+    <h2 class="reload">
+      <button id="button">↻</button>
+    </h2>
   </div>
+  <script>
+    setTimeout(function () {
+      document.getElementById("button").classList.add("visible");
+    }, 5000);
+
+    document.getElementById("button").onclick = function () {
+      window.location.reload(true);
+    };
+  </script>
 </body>
 <style>
   #loader {
@@ -71,6 +83,34 @@
     padding: 0;
     margin: 4px -5px;
   }
+
+  #button {
+    display: none;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    position: fixed;
+    bottom: 25vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+
+    font-family: Arial, sans-serif;
+    font-size: 2rem;
+    width: 3rem;
+    height: 3rem;
+    line-height: 3rem;
+    background: white;
+    /* box-shadow: 5px 5px rgb(115 0 235); */
+    color: rgb(115, 0, 235);
+    border-radius: 50%;
+    padding: 0;
+    margin: 4px -5px;
+  }
+
+  #button.visible {
+    display: inline-block;
+  }
+
 
   .bottom>span {
     -webkit-animation: bounce 15s linear infinite alternate;
