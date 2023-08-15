@@ -8,6 +8,8 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
+import { dlog } from '../../../helpers/debugLog';
+import ServerCall from '../class/ServerCall';
 
 const { Phaser } = window;
 export default class Location4 extends Phaser.Scene {
@@ -39,6 +41,16 @@ export default class Location4 extends Phaser.Scene {
   }
 
   async preload() {
+    ManageSession.currentScene = this.scene; // getting a central scene context
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
     // ....... IMAGES ......................................................................
     // exhibition
     this.load.image('exhibit1', './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg');

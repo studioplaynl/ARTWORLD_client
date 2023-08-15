@@ -186,12 +186,12 @@ class DebugFuntions {
 
         // print out all scenes that are active
         // console.log(sceneNames);
-        // sceneNames.forEach((key) => {
-        //   const isActive = scene.scene.isActive(key);
-        //   if (isActive) {
-        //     dlog(key, ' active');
-        //   }
-        // });
+        sceneNames.forEach((key) => {
+          const isActive = scene.scene.isActive(key);
+          if (isActive) {
+            dlog(key, ' active');
+          }
+        });
 
         break;
 

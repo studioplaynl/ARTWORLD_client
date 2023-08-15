@@ -44,7 +44,34 @@ export default class MoonWorld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
     // Preloader.Loading(this); // .... PRELOADER VISUALISER
+    // Moonworld
+    this.localAssetsCheck = {};
+    const folderPath = './assets/world_moon/';
+
+    const loadArray = [
+      {
+        key: 'maan_KORR_portalRaket_naarHUIS_alleDelen',
+        path: `${folderPath}maan_KORR_portalRaket_naarHUIS_alleDelen.png`,
+      },
+      { key: 'maan_MAAN_a', path: `${folderPath}maan_MAAN_a.png` },
+      { key: 'maan_meteoor_metStaart', path: `${folderPath}maan_meteoor_metStaart.png` },
+      { key: 'maan_portalRaket_naarHUIS_A', path: `${folderPath}maan_portalRaket_naarHUIS_A.png` },
+      { key: 'maan_spaceBubble', path: `${folderPath}maan_spaceBubble.png` },
+      { key: 'maan_sputnik_metStaart', path: `${folderPath}maan_sputnik_metStaart.png` },
+      { key: 'maan_steren', path: `${folderPath}maan_steren.png` },
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
   }
 
   async create() {

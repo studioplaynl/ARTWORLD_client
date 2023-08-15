@@ -58,6 +58,13 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
     // Preloader.Loading(this); // .... PRELOADER VISUALISER
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
   }
 
   async create() {

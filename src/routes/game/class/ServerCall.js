@@ -52,15 +52,8 @@ class ServerCall {
         // get converted image from AWS
         const { url } = element.value;
 
-        // check if homekey is already loaded
-        if (scene.textures.exists(homeImageKey)) {
-          // create the home
-          // dlog('element generateHomes textures.exists', element);
-          ServerCall.createHome(element, index, homeImageKey, scene);
-        } else {
-          // get the image server side
-          this.getHomeImages(url, element, index, homeImageKey, scene);
-        }
+        // get the image server side
+        this.getHomeImages(url, element, index, homeImageKey, scene);
       }); // end forEach
       if (ManageSession.gameEditMode) {
         dlog('usersWithAHome:');
@@ -86,6 +79,15 @@ class ServerCall {
               );
               // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
               // create the home
+              // //! TODO
+              // console.log(ManageSession.resolveErrorObjectArray.filter(
+              //   (obj) => obj.loadFunction === 'getHomeImage',
+              // ));
+              // const getHomeImageList = ManageSession.resolveErrorObjectArray.filter(
+              //   (obj) => obj.loadFunction === 'getHomeImage',
+              // );
+              // if (getHomeImageList.length === 0) console.log('loading home images completed');
+              // //! TODO
               ServerCall.createHome(element, index, homeImageKey, scene);
             }, this);
           // put the file in the loadErrorCache, in case it doesn't load
@@ -402,39 +404,39 @@ class ServerCall {
     }
   }
 
-  loadAssetArray(scene, array, type) {
+  async loadAssetArray(scene, array, type) {
     // eslint-disable-next-line no-param-reassign
     scene.localAssetsCheck.startLength = array.length;
+    dlog('array.length: ', array.length);
     array.forEach((element, index) => {
       // dlog('element', element);
       this.loadAsset(scene, element, index, type);
     });
+    console.log('ManageSession.resolveErrorObjectArray: ', ManageSession.resolveErrorObjectArray);
   }
 
-
-
-  loadAsset(scene, element, index, type) {
+  async loadAsset(scene, element, index, type) {
     if (type === 'localImage') {
       // const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
-      const imageKey = element.key;
+      // const imageKey = element.key;
       const path = element.path;
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
-        loadFunction: 'downloadLocalImage', element, index, imageKey, scene,
+        //! FINISH this!
+        loadFunction: 'localImage', element, index, imageKey: element.key, scene,
       });
 
-      scene.load.image(imageKey, path)
-        .on(`filecomplete-image-${imageKey}`, () => {
+      scene.load.image(element.key, path)
+        .on(`filecomplete-image-${element.key}`, () => {
+          // dlog('filecomplete-image-$ element.key: ,', element.key);
           // delete from ManageSession.resolveErrorObjectArray because of succesful download
           ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
-            (obj) => obj.imageKey !== imageKey,
+            (obj) => obj.imageKey !== element.key,
           );
           // eslint-disable-next-line no-param-reassign
           element.downloaded = true;
-
-
           // ServerCall.createDrawingContainer(element, index, artSize, artMargin);
-        }, this);
+        }, scene);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       // ManageSession.resolveErrorObjectArray.push({
       //   loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
@@ -443,7 +445,7 @@ class ServerCall {
       scene.load.start(); // start the load queue to get the image in memory
 
       // this is fired each time a file is finished downloading (or failing)
-      scene.load.on('complete', () => {
+      scene.load.once('complete', () => {
         const startLength = scene.localAssetsCheck.startLength;
         let downloadCompleted = scene.localAssetsCheck.itemsDownloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
@@ -494,7 +496,7 @@ class ServerCall {
 
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
-        loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
+        loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene, resolved: false,
       });
 
       scene.load.image(imageKeyUrl, convertedImage)
@@ -503,6 +505,7 @@ class ServerCall {
           ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
             (obj) => obj.imageKey !== imageKeyUrl,
           );
+
           // eslint-disable-next-line no-param-reassign
           element.downloaded = true;
           // dlog('drawing downloaded', imageKeyUrl);
@@ -513,7 +516,12 @@ class ServerCall {
           // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
           // create the home
           // ServerCall.createHome(element, index, homeImageKey, scene);
-        }, this);
+        }, scene);
+      // .on('fileprogress', (file, progress) => {
+      //   console.log('file: ', file);
+
+      //   console.log('progress: ', progress);
+      // }, scene);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       // ManageSession.resolveErrorObjectArray.push({
       //   loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
@@ -810,6 +818,7 @@ class ServerCall {
     const { scene } = resolveErrorObject;
     // dlog("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
     let flowerKeyArray;
+    let targetObject;
     switch (loadFunction) {
       case 'getHomeImage':
         dlog('offending file, load placeholder image instead', imageKey);
@@ -830,7 +839,6 @@ class ServerCall {
       case 'downloadDrawingDefaultUserHome':
         dlog('offending drawing loading failed, removing from array', imageKey);
 
-
         // delete from scene.userDrawingServerList
         // eslint-disable-next-line max-len
         scene.userDrawingServerList.array = scene.userDrawingServerList.array.filter((obj) => obj.value.url !== imageKey);
@@ -839,6 +847,7 @@ class ServerCall {
         ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
           (obj) => obj.imageKey !== imageKey,
         );
+
         // dlog('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
 
         break;
@@ -862,8 +871,8 @@ class ServerCall {
         dlog('offending dier loading failed, removing from array');
         // eslint-disable-next-line no-case-declarations
         const userServerList = scene.animalArray;
-        // delete from scene.userStopmotionServerList
 
+        // delete from scene.userStopmotionServerList
         userServerList.array = userServerList.array.filter((obj) => obj.value.url !== imageKey);
 
         // delete from ManageSession.resolveErrorObjectArray
@@ -885,13 +894,23 @@ class ServerCall {
 
         dlog(`remove ${imageKey} from flowerKeyArray`);
         flowerKeyArray = scene.flowerKeyArray;
-        // delete from scene.userStopmotionServerList
 
+        // delete from scene.userStopmotionServerList
         flowerKeyArray.array = flowerKeyArray.array.filter((obj) => obj.value.url !== imageKey);
 
         ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
           (obj) => obj.imageKey !== imageKey,
         );
+        break;
+
+      case 'localImage':
+        dlog('loading localImage failed');
+
+        // delete from ManageSession.resolveErrorObjectArray
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey,
+        );
+
         break;
 
       default:

@@ -102,10 +102,7 @@ class SceneSwitcher {
     } else if (targetScene) {
       if (targetScene.scene !== null) {
         dlog('start targetScene: ', targetScene);
-        // dlog('scene starting the targetScene: ', scene);
         scene.scene.start(targetScene);
-        // scene.scene.stop();
-        // ManageSession.scene.launch(targetScene);
       }
     }
 

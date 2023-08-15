@@ -7,6 +7,8 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
+import { dlog } from '../../../helpers/debugLog';
+import ServerCall from '../class/ServerCall';
 
 const { Phaser } = window;
 
@@ -35,6 +37,16 @@ export default class Location3 extends Phaser.Scene {
   }
 
   async preload() {
+    ManageSession.currentScene = this.scene; // getting a central scene context
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
     // ....... TILEMAP .........................................................................
     // 1
     this.load.image(

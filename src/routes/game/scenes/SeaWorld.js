@@ -43,6 +43,27 @@ export default class SeaWorld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
+    // seaWorld
+    this.load.image('artWorldPortalSea', './assets/world_seaworld/zee_ship_Portaal_naarhuis.png');
+    this.load.image('floating_egg', './assets/world_seaworld/Ei_land_a.png');
+    this.load.image('Zeeslang_head', './assets/world_seaworld/Z1_Zeeslang_head.png');
+    this.load.image('Zeeslang_tail_B', './assets/world_seaworld/Z2_Zeeslang_midden_B1.png');
+    this.load.image('Zeeslang_tail_A', './assets/world_seaworld/Z3_Zeeslang_midden_A2.png');
+    this.load.image('Zeeslang_tail_curveB', './assets/world_seaworld/Z4_zeeslang_curve_richtingB.png');
+    this.load.image('Zeeslang_tail_curveA', './assets/world_seaworld/Z8_zeeslang_curve_richtingA.png');
+    this.load.image('Zeeslang_tail', './assets/world_seaworld/Z10_Zeeslang_start.png');
+    this.load.image('zeeRif_1', './assets/world_seaworld/zeeRif_1.png');
+    this.load.image('zeeRif_2', './assets/world_seaworld/zeeRif_2.png');
+    this.load.image('zeeRif_3', './assets/world_seaworld/zeeRif_3.png');
   }
 
   async create() {

@@ -43,6 +43,28 @@ export default class SlimeWorld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
+    // SlimeWorld
+    this.load.image('bubbleface1_slime', './assets/world_slime_world/bubbleface1_slime.png');
+    this.load.image('bubbleplant1_slime', './assets/world_slime_world/bubbleplant1_slime.png');
+    this.load.image('bubbleplant2_slime', './assets/world_slime_world/bubbleplant2_slime.png');
+    this.load.image('cantarella_tree_1_slime', './assets/world_slime_world/cantarella_tree_1_slime.png');
+    this.load.image('cantarella_tree_2_slime', './assets/world_slime_world/cantarella_tree_2_slime.png');
+    this.load.image('cantarella_tree_3_slime', './assets/world_slime_world/cantarella_tree_3_slime.png');
+    this.load.image('cantarella_tree_4_slime', './assets/world_slime_world/cantarella_tree_4_slime.png');
+    this.load.image('cantarella_tree_6_slime', './assets/world_slime_world/cantarella_tree_6_slime.png');
+    this.load.image('cantarella_tree_7_slime', './assets/world_slime_world/cantarella_tree_7_slime.png');
+    this.load.image('rups_slime', './assets/world_slime_world/rups_slime.png');
+    this.load.image('slimepool_1_slime', './assets/world_slime_world/slimepool_1_slime.png');
+    this.load.image('artWorldPortalSlime', './assets/world_slime_world/Portal_goHome_slime.png');
   }
 
   async create() {

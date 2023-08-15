@@ -45,36 +45,47 @@ export default class CloudWorld extends Phaser.Scene {
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
 
-    // this.localAssetsCheck = {};
-    // // this.localAssetsCheck.startLength = 0;
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
 
-    // const folderPath = './assets/world_clouds/';
-    // const loadArray = [
-    //   { key: 'artWorldPortalCloud', path: `${folderPath}cloud_portal_naarHomeX.png` },
+    await this.getAssests();
+  }
 
-    //   { key: 'cloud_ballonpeople_1b', path: `${folderPath}cloud_ballonpeople_1b.png` },
-    //   { key: 'cloud_ballonpeople_2', path: `${folderPath}cloud_ballonpeople_2.png` },
-    //   { key: 'cloud_ballonpeople_3', path: `${folderPath}cloud_ballonpeople_3.png` },
-    //   { key: 'cloud_ballonpeople_4', path: `${folderPath}cloud_ballonpeople_4.png` },
-    //   { key: 'cloud_berg1', path: `${folderPath}cloud_berg1.png` },
-    //   { key: 'cloud_berg1_tweekeer', path: `${folderPath}cloud_berg1_tweekeer.png` },
-    //   { key: 'cloud_berg2_metCloud_achtergrond', path: `${folderPath}cloud_berg2_metCloud_achtergrond.png` },
-    //   { key: 'cloud_berg3', path: `${folderPath}cloud_berg3.png` },
-    //   { key: 'cloud_berg3_mitWolken', path: `${folderPath}cloud_berg3_mitWolken.png` },
-    //   { key: 'cloud_brug_1', path: `${folderPath}cloud_brug_1.png` },
-    //   { key: 'cloud_brug_2', path: `${folderPath}cloud_brug_2.png` },
-    //   { key: 'cloud_C1', path: `${folderPath}cloud_C1.png` },
-    //   { key: 'cloud_C2_withface', path: `${folderPath}cloud_C2_withface.png` },
-    //   { key: 'cloud_C3', path: `${folderPath}cloud_C3.png` },
-    //   { key: 'cloud_C4', path: `${folderPath}cloud_C4.png` },
-    //   { key: 'cloud_C5', path: `${folderPath}cloud_C5.png` },
-    //   { key: 'cloud_C5_achtergrond', path: `${folderPath}cloud_C5_achtergrond.png` },
-    //   { key: 'cloud_huis_1', path: `${folderPath}cloud_huis_1.png` },
-    //   { key: 'cloud_huis_2', path: `${folderPath}cloud_huis_2.png` },
-    //   { key: 'cloud_huis_3', path: `${folderPath}cloud_huis_3.png` },
-    // ];
+  async getAssests() {
+    this.localAssetsCheck = {};
 
-    // ServerCall.loadAssetArray(this, loadArray, 'localImage');
+    const folderPath = './assets/world_clouds/';
+    const loadArray = [
+      { key: 'artWorldPortalCloud', path: `${folderPath}cloud_portal_naarHome.png` },
+
+      { key: 'cloud_ballonpeople_1b', path: `${folderPath}cloud_ballonpeople_1b.png` },
+      { key: 'cloud_ballonpeople_2', path: `${folderPath}cloud_ballonpeople_2.png` },
+      { key: 'cloud_ballonpeople_3', path: `${folderPath}cloud_ballonpeople_3.png` },
+      { key: 'cloud_ballonpeople_4', path: `${folderPath}cloud_ballonpeople_4.png` },
+      { key: 'cloud_berg1', path: `${folderPath}cloud_berg1.png` },
+      { key: 'cloud_berg1_tweekeer', path: `${folderPath}cloud_berg1_tweekeer.png` },
+      { key: 'cloud_berg2_metCloud_achtergrond', path: `${folderPath}cloud_berg2_metCloud_achtergrond.png` },
+      { key: 'cloud_berg3', path: `${folderPath}cloud_berg3.png` },
+      { key: 'cloud_berg3_mitWolken', path: `${folderPath}cloud_berg3_mitWolken.png` },
+      { key: 'cloud_brug_1', path: `${folderPath}cloud_brug_1.png` },
+      { key: 'cloud_brug_2', path: `${folderPath}cloud_brug_2.png` },
+      { key: 'cloud_C1', path: `${folderPath}cloud_C1.png` },
+      { key: 'cloud_C2_withface', path: `${folderPath}cloud_C2_withface.png` },
+      { key: 'cloud_C3', path: `${folderPath}cloud_C3.png` },
+      { key: 'cloud_C4', path: `${folderPath}cloud_C4.png` },
+      { key: 'cloud_C5', path: `${folderPath}cloud_C5.png` },
+      { key: 'cloud_C5_achtergrond', path: `${folderPath}cloud_C5_achtergrond.png` },
+      { key: 'cloud_huis_1', path: `${folderPath}cloud_huis_1.png` },
+      { key: 'cloud_huis_2', path: `${folderPath}cloud_huis_2.png` },
+      { key: 'cloud_huis_3', path: `${folderPath}cloud_huis_3.png` },
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
   }
 
   async create() {

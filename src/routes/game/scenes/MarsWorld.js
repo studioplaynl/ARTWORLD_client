@@ -43,6 +43,27 @@ export default class MarsWorld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
+    // MarsWorld
+    this.load.image('artWorldPortalMars', './assets/world_mars_red/portal_goHome_mars.png');
+    this.load.image('krater_mars', './assets/world_mars_red/krater_mars.png');
+    this.load.image('rots1_mars', './assets/world_mars_red/rots1_mars.png');
+    this.load.image('rots2_mars', './assets/world_mars_red/rots2_mars.png');
+    this.load.image('rots3_mars', './assets/world_mars_red/rots3_mars.png');
+    this.load.image('rots4_mars', './assets/world_mars_red/rots4_mars.png');
+    this.load.image('rots5_mars', './assets/world_mars_red/rots5_mars.png');
+    this.load.image('rots6_mars', './assets/world_mars_red/rots6_mars.png');
+    this.load.image('rover_all_one_layer_mars', './assets/world_mars_red/rover_all_one_layer_mars.png');
+    this.load.image('ufo_atwork1_mars', './assets/world_mars_red/ufo_atwork1_mars.png');
+    this.load.image('ufo_slapend_vloer_mars', './assets/world_mars_red/ufo_slapend_vloer_mars.png');
   }
 
   async create() {

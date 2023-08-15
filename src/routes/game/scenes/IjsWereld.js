@@ -45,18 +45,28 @@ export default class IjscoWereld extends Phaser.Scene {
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
 
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
+    // Ijs
     this.localAssetsCheck = {};
 
-    // const folderPath = './assets/world_pizza/';
-    // const loadArray = [
-    //   { key: 'artWorldPortalPizza', path: `${folderPath}Portal_naarHuis_pizza.png` },
+    const folderPath = './assets/world_ice/';
 
-    //   { key: 'kaasbrugg_01_pizza', path: `${folderPath}kaasbrugg_01_pizza.png` },
-    //   { key: 'kaasbrugg_02_pizza', path: `${folderPath}kaasbrugg_02_pizza.png` },
-    //   { key: 'kaasbrugg_03_pizza', path: `${folderPath}kaasbrugg_03_pizza.png` },
-    // ];
 
-    // ServerCall.loadAssetArray(this, loadArray, 'localImage');
+    const loadArray = [
+      { key: 'Portal_naarHuis_ijs', path: `${folderPath}Portaal_ice_naarHUIS-fs8.png` },
+      { key: 'Portaal_vanIjs_naarIjsco', path: `${folderPath}Portaal_vanIce_naarIceCream-fs8.png` },
+
+      { key: 'ijswereld', path: `${folderPath}ijs_wereld.jpg` },
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
   }
 
   async create() {

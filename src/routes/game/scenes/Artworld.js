@@ -46,6 +46,37 @@ export default class Artworld extends Phaser.Scene {
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
     // Preloader.Loading(this); // .... PRELOADER VISUALISER
+
+    // artworld elements
+    this.load.image('drawn_cloud', './assets/drawn_cloud.png');
+    this.load.svg('sunglass_stripes', 'assets/svg/sunglass_stripes.svg');
+    this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', { scale: 2.4 });
+    this.load.svg('tree_palm', './assets/svg/tree_palm.svg');
+    this.load.svg('mario_star', 'assets/svg/mario_star.svg');
+    this.load.svg('music_quarter_note', 'assets/svg/music_note_quarter_note.svg');
+    this.load.svg('metro_train_grey', 'assets/svg/metro_train_grey.svg');
+    this.load.svg('yellow_diamond_location_image', 'assets/svg/geleRuit.svg');
+    this.load.svg('blue_sail_location_image', 'assets/svg/blauwZeil.svg');
+    // app icons; sound apps
+    this.load.image('songmaker', './assets/apps/songmaker.png');
+    this.load.image('melodymaker', './assets/apps/melodymaker.png');
+    this.load.image('kandinsky', './assets/apps/kandinsky.png');
+
+    // world portals in Artworld
+    this.load.image('robotWorldPortal', './assets/world_robot_torquoise/portaal_robot_zonderAnimatie.png');
+    this.load.image('artWorldPortalMoon', './assets/world_moon/maan_portalRaket_naarMaan.png');
+    this.load.image('artWorldPortalPizza', './assets/world_pizza/Portal_naarPizza_pizza.png');
+    this.load.image('seaWorldPortal', './assets/world_seaworld/zee_ship_Portaal_naarZEE.png');
+    this.load.image('marsWorldPortal', './assets/world_mars_red/portal_gotoMars_mars.png');
+    this.load.image('fireWorldPortal', './assets/world_fireworld/Portal_vuur_Naartoe_zonderAnimatie.png');
+    this.load.image('underwaterWorldPortal', './assets/world_underwater_blue/Portaal_naarWater_water.png');
+    this.load.image('slimeWorldPortal', './assets/world_slime_world/Portal_goSlime_slime.png');
+
+    this.load.image('artWorldPortalUnderground', './assets/world_underground/Portal_naarOndergrond.png');
+    this.load.image('artWorldPortalWoestijn', './assets/world_woestijn/Portal_woestijn_naarWoestijn-fs8.png');
+    this.load.image('artWorldPortalIjs', './assets/world_ice/Portaal_Naar_Ice-fs8.png');
+    this.load.image('artWorldPortalIjsco', './assets/world_ijsco/Portaal_vanHOMEnaarICECREAM-fs8.png');
+    this.load.image('cloudWorldPortal', './assets/world_clouds/cloud_portal_naarCloud.png');
   }
 
   async create() {
@@ -459,9 +490,6 @@ export default class Artworld extends Phaser.Scene {
     Background.rectangle({
       scene: this,
       name: 'green_square_location_image',
-      // posX: 0,
-      // posY: 0,
-      // setOrigin: 0,
       gradient1: 0x15d64a,
       gradient2: 0x15d64a,
       gradient3: 0x2b8042,

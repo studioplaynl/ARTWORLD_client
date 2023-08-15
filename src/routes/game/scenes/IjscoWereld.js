@@ -13,7 +13,6 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
-// import PreloadScene from './PreloadScene';
 
 const { Phaser } = window;
 
@@ -45,18 +44,27 @@ export default class IjscoWereld extends Phaser.Scene {
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
 
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
+    // Ijsco
     this.localAssetsCheck = {};
 
-    // const folderPath = './assets/world_pizza/';
-    // const loadArray = [
-    //   { key: 'artWorldPortalPizza', path: `${folderPath}Portal_naarHuis_pizza.png` },
+    const folderPath = './assets/world_ijsco/';
 
-    //   { key: 'kaasbrugg_01_pizza', path: `${folderPath}kaasbrugg_01_pizza.png` },
-    //   { key: 'kaasbrugg_02_pizza', path: `${folderPath}kaasbrugg_02_pizza.png` },
-    //   { key: 'kaasbrugg_03_pizza', path: `${folderPath}kaasbrugg_03_pizza.png` },
-    // ];
+    const loadArray = [
+      { key: 'Portaal_vanafIcecream_naarIce', path: `${folderPath}Portaal_vanafIcecream_naarIce-fs8.png` },
+      { key: 'Portaal_vanICECREAMnaarHOME', path: `${folderPath}Portaal_vanICECREAMnaarHOME-fs8.png` },
 
-    // ServerCall.loadAssetArray(this, loadArray, 'localImage');
+      { key: 'ijscowereld', path: `${folderPath}ijscowereld.jpg` },
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
   }
 
   async create() {
@@ -78,14 +86,6 @@ export default class IjscoWereld extends Phaser.Scene {
     //!
 
     handleEditMode(this);
-
-    // Background.gradientStretchedToFitWorld({
-    //   scene: this,
-    //   tileMapName: 'WorldBackgroundTileMap',
-    //   gradientColor1: 0xdcc580,
-    //   gradientColor2: 0xcea937,
-    //   tileWidth: 512,
-    // });
 
     handlePlayerMovement(this);
 
@@ -122,6 +122,7 @@ export default class IjscoWereld extends Phaser.Scene {
     // ......... end PLAYER VS WORLD .......................................................................
 
     ServerCall.getHomesFiltered(this.scene.key, this);
+
 
     // create accessable locations
     this.makeWorldElements();

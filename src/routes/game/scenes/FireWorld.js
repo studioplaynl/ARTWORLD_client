@@ -43,6 +43,16 @@ export default class FireWorld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
+
+    // FireWorld
+    this.load.image('artWorldPortalFire', './assets/world_fireworld/Portal_vuur_Terug.png');
+    this.load.image('lavafall_boy', './assets/world_fireworld/lavafall_boy.png');
+    this.load.image('tree1_vuur_licht', './assets/world_fireworld/tree1_vuur_licht.png');
+    this.load.image('tree2_vuur_licht', './assets/world_fireworld/tree2_vuur_licht.png');
+    this.load.image('tree3_vuur_licht', './assets/world_fireworld/tree3_vuur_licht.png');
+    this.load.image('vulcano1_kleur_helder', './assets/world_fireworld/vulcano1_kleur_helder.png');
+    this.load.image('vulkan2', './assets/world_fireworld/vulkan2.png');
+    this.load.image('vuur_wereld_Lavameer01', './assets/world_fireworld/vuur_wereld_Lavameer01.png');
   }
 
   async create() {

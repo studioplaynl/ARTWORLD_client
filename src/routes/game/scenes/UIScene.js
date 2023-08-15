@@ -7,7 +7,7 @@ import ar from '../../../language/ar/ui.json';
 
 import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
-import ServerCall from '../class/ServerCall';
+// import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
 
 const { Phaser } = window;
@@ -74,17 +74,14 @@ export default class UIScene extends Phaser.Scene {
 
     // make load events global for the game
     // resolve load errors globally in the game
-
-    scene.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-        // this.resolveLoadError(offendingFile);
-      }
-    });
-
-
-
+    // dlog('scene: ', scene);
+    // this.load.on('loaderror', (offendingFile) => {
+    //   if (typeof offendingFile !== 'undefined') {
+    //     dlog('loaderror', offendingFile);
+    //     ServerCall.resolveLoadError(offendingFile);
+    //     // this.resolveLoadError(offendingFile);
+    //   }
+    // });
 
     // const eventNames = scene.load.eventNames();
     // dlog('eventNames', eventNames);

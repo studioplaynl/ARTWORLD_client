@@ -100,12 +100,44 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async preload() {
     Preloader.Loading(this); // .... PRELOADER VISUALISER
+
+    await this.loadAndPlaceArtworks();
+
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
+    // this.load.once('complete', (loader) => {
+    //   console.log(loader);
+    // }, this);
+
+    // this.load.once('load', (fileObj) => {
+    //   console.log('fileObj: ', fileObj);
+    // }, this);
+
+    // const eventNames = this.load.eventNames();
+    // dlog('eventNames', eventNames);
+    // const isReady = this.load.isReady();
+    // dlog('loader isReady', isReady);
+    // const isLoading = this.load.isLoading();
+    // dlog('loader isLoading', isLoading);
+    // dlog('loader ', this.load.queue.entries);
   }// end preload
 
-  // async preload() {
-  // }// end preload
-
   async create() {
+    // const eventNames = this.load.eventNames();
+    // dlog('eventNames', eventNames);
+    // const isReady = this.load.isReady();
+    // dlog('loader isReady', isReady);
+    // const isLoading = this.load.isLoading();
+    // dlog('loader isLoading', isLoading);
+    // dlog('loader queue', this.load.queue.entries);
+
     //!
     // show physics debug boundaries in gameEditMode
     if (ManageSession.gameEditMode) {
@@ -170,7 +202,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     // Player.loadPlayerAvatar(this, -(this.worldSize.x / 2) + (AVATAR_BASE_SIZE * 2), -(this.worldSize.y / 4));
     Player.loadPlayerAvatar(this);
 
-    await this.loadAndPlaceArtworks();
 
     // // Set the player on the left side of the world (this also updates the URL automatically), in artworldCoordinates
     // PlayerUpdate.set({ forceHistoryReplace: false });
@@ -204,5 +235,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.playerShadow.x = this.player.x + this.playerShadowOffset;
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     // ........... end PLAYER SHADOW .........................................................................
+    // if (this.load.isLoading()) {
+    //   console.log('queue is loading');
+    // }
+    // if (this.load.isReady()) {
+    //   console.log('loading is ready');
+    // }
   } // update
 } // class

@@ -11,6 +11,8 @@ import Background from '../class/Background';
 import { SCENE_INFO } from '../../../constants';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
+import { dlog } from '../../../helpers/debugLog';
+import ServerCall from '../class/ServerCall';
 
 
 const { Phaser } = window;
@@ -47,6 +49,18 @@ export default class Location1 extends Phaser.Scene {
   }
 
   async preload() {
+    //!
+    ManageSession.currentScene = this.scene; // getting a central scene context
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+    //!
+
     // .... PRELOADER VISUALISER ..........................
     this.load.image('art1', './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg');
     this.load.image('art2', './assets/art_styles/drawing_painting/f7f2e083a0c70b97e459f2966bc8c3ae.jpg');
@@ -238,6 +252,41 @@ export default class Location1 extends Phaser.Scene {
       color1: 0x8dcb0e,
       color2: 0x3f8403,
       color3: 0x63a505,
+    });
+
+    locationVector = new Phaser.Math.Vector2(544, -477);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    Background.circle({
+      scene: this,
+      name: 'purple_circle_location_image',
+      // setOrigin: 0,
+      posX: locationVector.x,
+      posY: locationVector.y,
+      gradient1: 0x7300eb,
+      gradient2: 0x3a4bba,
+      gradient3: 0x3a4bba,
+      gradient4: 0x3a4bba,
+      alpha: 1,
+      size: 200,
+      imageOnly: true,
+    });
+
+    this.purpleCircleLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'Artworld',
+      locationImage: 'purple_circle_location_image',
+      enterButtonImage: 'enter_button',
+      locationText: 'Paarse Cirkel Wereld',
+      referenceName: 'this.purpleCircleLocation',
+      fontColor: 0x8dcb0e,
     });
   }
 

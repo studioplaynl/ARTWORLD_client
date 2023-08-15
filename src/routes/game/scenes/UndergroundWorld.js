@@ -45,18 +45,30 @@ export default class UndergroundWorld extends Phaser.Scene {
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
 
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
+    this.localAssetsCheck = {};
+    // Underground
+    const folderPath = './assets/world_underground/';
     this.localAssetsCheck = {};
 
-    // const folderPath = './assets/world_pizza/';
-    // const loadArray = [
-    //   { key: 'artWorldPortalPizza', path: `${folderPath}Portal_naarHuis_pizza.png` },
 
-    //   { key: 'kaasbrugg_01_pizza', path: `${folderPath}kaasbrugg_01_pizza.png` },
-    //   { key: 'kaasbrugg_02_pizza', path: `${folderPath}kaasbrugg_02_pizza.png` },
-    //   { key: 'kaasbrugg_03_pizza', path: `${folderPath}kaasbrugg_03_pizza.png` },
-    // ];
+    const loadArray = [
+      { key: 'Portal_naarHuis_underground', path: `${folderPath}Portal_naarHuis.png` },
 
-    // ServerCall.loadAssetArray(this, loadArray, 'localImage');
+      { key: 'gras_metmieren', path: `${folderPath}gras_metAppel2.png` },
+      { key: 'geheel', path: `${folderPath}geheel_noPalettes-fs8.png` },
+      { key: 'mier02', path: `${folderPath}mier02.png` },
+
+    ];
+
+    ServerCall.loadAssetArray(this, loadArray, 'localImage');
   }
 
   async create() {

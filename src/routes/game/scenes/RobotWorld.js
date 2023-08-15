@@ -43,6 +43,25 @@ export default class RobotWorld extends Phaser.Scene {
 
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
+
+    // RobotWorld
+    this.load.image('artWorldPortal', './assets/world_robot_torquoise/portaal_robot_terug.png');
+    this.load.image('robot_treeC_01', './assets/world_robot_torquoise/treeC_01.png');
+    this.load.image('robot_treeC_02', './assets/world_robot_torquoise/treeC_02.png');
+    this.load.image('robot_treeC_03', './assets/world_robot_torquoise/treeC_03.png');
+    this.load.image('robot_treeC_04', './assets/world_robot_torquoise/treeC_04.png');
+    this.load.image('robothuis3_ms', './assets/world_robot_torquoise/robothuis3_ms.png');
+    this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
+    this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
+    this.load.image('Robot_Clap_NoAnimation', './assets/world_robot_torquoise/_Robot_Clap_NoAnimation.png');
   }
 
   async create() {
