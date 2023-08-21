@@ -4,7 +4,7 @@ export const CONFIG = {
 };
 
 /** version info: date time of push and branch name */
-export const APP_VERSION_INFO = '#2023-AUG-11 10:45 DEVELOP#';
+export const APP_VERSION_INFO = '#2023-AUG-21 15:51 DEVELOP#';
 /** List of Scenes a user may navigate to */
 export const SCENE_INFO = [
   {
@@ -148,6 +148,12 @@ export const SCENE_INFO = [
   },
   {
     scene: 'IjsWereld',
+    sizeX: 5500,
+    sizeY: 5500,
+    kind: 'homeArea',
+  },
+  {
+    scene: 'BijenWereld',
     sizeX: 5500,
     sizeY: 5500,
     kind: 'homeArea',

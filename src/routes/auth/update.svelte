@@ -188,7 +188,7 @@
         <b>{$_('register.password')}</b>
       </label>
       <input
-        type="password"
+        type="text"
         placeholder="Enter Password"
         name="psw"
         id="psw"
@@ -201,7 +201,7 @@
         <b>{$_('register.repeatPassword')}</b>
       </label>
       <input
-        type="password"
+        type="text"
         placeholder="Repeat Password"
         name="psw-repeat"
         id="psw-repeat"
@@ -325,7 +325,7 @@
 
   /* Full-width input fields */
   input[type='text'],
-  input[type='password'],
+  input[type='text'],
   textarea {
     width: 100%;
     padding: 15px;
@@ -335,7 +335,7 @@
   }
 
   input[type='text']:focus,
-  input[type='password']:focus {
+  input[type='text']:focus {
     background-color: #ddd;
     outline: none;
   }

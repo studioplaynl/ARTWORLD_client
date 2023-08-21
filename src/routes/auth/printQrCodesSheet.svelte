@@ -2,32 +2,104 @@
   // import { _ } from 'svelte-i18n';
   import { push } from 'svelte-spa-router';
   import { onMount } from 'svelte';
+  import { dlog } from '../../helpers/debugLog';
 
   let canvasContext;
-  let labelSheetTemplate;
+  // let labelSheetTemplate;
   let files;
   let filesCount = 0;
+  let downloadFileName = 'file.png';
+  // let multipleSheets = 0;
 
-  $: if (files) {
-    // Note that `files` is of type `FileList`, not an Array:
-    // https://developer.mozilla.org/en-US/docs/Web/API/FileList
-    // dlog(files);
+$: if (files) {
+  // Note that `files` is of type `FileList`, not an Array:
+  // https://developer.mozilla.org/en-US/docs/Web/API/FileList
+  // dlog(files);
+  const fileListArray = Array.from(files);
+  fileListArray.sort((a, b) => a.name.localeCompare(b.name));
 
-    filesCount = -1;
+  // Process only the first 24 files
+  const filesToProcess = fileListArray.slice(0, 24);
 
-    canvasContext.clearRect(
-      0,
-      0,
-      canvasContext.width,
-      canvasContext.height * 2,
-    );
-    canvasContext.width = 1190;
-    canvasContext.height = 1684;
-    for (const file of files) {
-      handleMultipleFileUpload(file);
+  filesCount = -1;
+
+  canvasContext.clearRect(
+    0,
+    0,
+    canvasContext.width,
+    canvasContext.height * 2,
+  );
+  canvasContext.width = 1190;
+  canvasContext.height = 1684;
+
+  // Process the selected files
+  if (filesToProcess.length > 0) {
+    const firstFile = filesToProcess[0];
+    const lastFile = filesToProcess[filesToProcess.length - 1];
+
+    const firstFileNameParts = firstFile.name.split('.')[0].split('_');
+    dlog('firstFileNameParts: ', firstFileNameParts);
+    const firstUserNumber = firstFileNameParts[0].split('@')[0];
+    dlog('firstUserNumber: ', firstUserNumber);
+    const lastLastPart = firstFile.name.split('.')[1].split('_');
+    dlog('lastLastPart: ', lastLastPart);
+
+    const lastFileNameParts = lastFile.name.split('.')[0].split('_');
+    const lastUserNumber = lastFileNameParts[0].split('@')[0];
+
+    downloadFileName = `${firstUserNumber}-${lastUserNumber}_${lastLastPart[1]}_SHEET.png`;
+
+    for (const file of filesToProcess) {
+      placeImagesInGrid(file);
     }
-    // files.forEach((file, index) => handleMultipleFileUpload(file, index));
   }
+}
+
+// $: if (files) {
+//   const fileListArray = Array.from(files);
+//   fileListArray.sort((a, b) => a.name.localeCompare(b.name));
+
+//   const batchSize = 24;
+//   const totalBatches = Math.ceil(fileListArray.length / batchSize);
+
+//   filesCount = -1;
+
+//   canvasContext.clearRect(
+//     0,
+//     0,
+//     canvasContext.width,
+//     canvasContext.height * 2,
+//   );
+//   canvasContext.width = 1190;
+//   canvasContext.height = 1684;
+
+//   for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+//     const batchStart = batchIndex * batchSize;
+//     const batchEnd = batchStart + batchSize;
+//     const filesToProcess = fileListArray.slice(batchStart, batchEnd);
+
+//     if (filesToProcess.length > 0) {
+//       const firstFile = filesToProcess[0];
+//       const lastFile = filesToProcess[filesToProcess.length - 1];
+
+//       const firstFileNameParts = firstFile.name.split('.')[0].split('_');
+//       const firstUserNumber = firstFileNameParts[0].split('@')[0];
+//       const firstLastPart = firstFile.name.split('.')[1].split('_');
+
+//       const lastFileNameParts = lastFile.name.split('.')[0].split('_');
+//       const lastUserNumber = lastFileNameParts[0].split('@')[0];
+
+//       downloadFileName = `${firstUserNumber}-${lastUserNumber}_${firstLastPart[1]}_SHEET.png`;
+
+//       for (const file of filesToProcess) {
+//         placeImagesInGrid(file);
+//       }
+//     }
+//   }
+// }
+
+
+
   onMount(async () => {
     createCanvasContext();
     // load24LabelTemplate();
@@ -42,20 +114,21 @@
     }
   }
 
-  // eslint-disable-next-line no-unused-vars
-  function load24LabelTemplate() {
-    // Loading of the image
-    labelSheetTemplate = new Image();
-    // drawing of the image
-    labelSheetTemplate.onload = function () {
-      // draw background image
-      canvasContext.drawImage(labelSheetTemplate, 0, 0);
-    };
-    labelSheetTemplate.src = './assets/printQrSheet/24label_template.png';
-  }
+  // // eslint-disable-next-line no-unused-vars
+  // function load24LabelTemplate() {
+  //   // Loading of the image
+  //   labelSheetTemplate = new Image();
+  //   // drawing of the image
+  //   labelSheetTemplate.onload = function () {
+  //     // draw background image
+  //     canvasContext.drawImage(labelSheetTemplate, 0, 0);
+  //   };
+  //   labelSheetTemplate.src = './assets/printQrSheet/24label_template.png';
+  // }
 
-  function handleMultipleFileUpload(_file) {
+  function placeImagesInGrid(_file) {
     filesCount++;
+    dlog('filesCount: ', filesCount);
     let offsetX = 50;
     let rowCount = filesCount;
 
@@ -87,7 +160,7 @@
 
   function download() {
     const link = document.createElement('a');
-    link.download = 'filename.png';
+    link.download = downloadFileName;
     link.href = document.getElementById('fullSheetCanvas').toDataURL();
     link.click();
   }
@@ -95,7 +168,7 @@
 
 <div class="box">
   <!-- <input type="file" id="imageInput" accept = "image/*" class="registerbtn"> -->
-  <label for="many">Upload multiple QR Codes</label>
+  <label for="many">Upload multiple QR Codes (the first 24 will be used)</label>
   <input
     accept="image/png, image/jpeg"
     bind:files="{files}"

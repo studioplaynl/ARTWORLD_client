@@ -371,7 +371,7 @@ export async function getFullAccount(id) {
   }
 
   const user = await client.rpc(session, rpcid, payload);
-  // dlog(user);
+  dlog('user: ', user);
 
   return user.payload;
 }
