@@ -1,4 +1,20 @@
 <script>
+  /**
+ * @file profile.svelte
+ * @author Lindsey, Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  profile.svelte displays to the user:
+ *  in the items bar, more specifically the profile.svelte page
+ *  username, avatar.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ *
+ *  The over all structure is:
+ *  itemsBar.svelte > click avatar icon > unfolds left side of itemsBar
+ *  click avatar icon again > unfolds right side of itemsBar with:
+ *  username, avatar.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ */
+
   import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';
 
@@ -7,6 +23,7 @@
     getAccount,
     convertImage,
     getObject,
+    setDisplayName,
   } from '../helpers/nakamaHelpers';
 
   import { Session, Profile } from '../session';
@@ -24,6 +41,7 @@
     OBJECT_STATE_UNDEFINED,
     APP_VERSION_INFO,
   } from '../constants';
+  import { hasSpecialCharacter, removeSpecialCharacters } from '../validations';
 
   export let params = {};
   export let userID = null;
@@ -42,8 +60,11 @@
   let loader = true;
   let useraccount;
   let username = '';
+  let prevUserName = '';
   let id = null;
   let CurrentUser;
+  let usernameEditable = false;
+  let usernameIsEditting = false;
 
   const columns = [
     {
@@ -125,6 +146,11 @@
     },
   ];
 
+  // remove forbidden characters from username reactively
+  $: if (hasSpecialCharacter(username)) {
+    username = removeSpecialCharacters(username);
+  }
+
   $: filteredArt = $ArtworksStore.filter(
     (el) =>
       // eslint-disable-next-line implicit-arrow-linebreak
@@ -141,6 +167,7 @@
 
   async function loadArtworks() {
     if ($Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator') {
+      dlog('$Profile.meta.Role: ', $Profile.meta.Role);
       await ArtworksStore.loadArtworks(id);
     } else {
       await ArtworksStore.loadArtworks(id, 100);
@@ -158,12 +185,14 @@
   }
 
   async function getUser() {
+    // we get the user NAME AVATAR and HOME
+    // if display_name = '' then the user can set the NAME
+
     if (!!params.user || !!userID) {
       CurrentUser = false;
       id = params.user || userID;
       useraccount = await getAccount(id);
-      dlog('useraccount', useraccount);
-      username = useraccount.username;
+      // username = useraccount.username;
       avatar = useraccount.url; // convertImage(useraccount.avatar_url, 150);
 
       try {
@@ -184,9 +213,36 @@
       CurrentUser = true;
       id = $Session.user_id;
       useraccount = await getAccount();
-      username = useraccount.username;
+      // dlog('useraccount', useraccount);
+      // username = useraccount.display_name;
+      // username = useraccount.username;
     }
 
+    // we check if the user has a display_name
+    // if not, the user can set it. The user can only set the display_name once
+    if (useraccount.display_name && useraccount.display_name !== '') {
+      // the user has a display_name
+      usernameEditable = false;
+      username = useraccount.display_name;
+    } else {
+      // the user does not have a display_name
+      // we show username (userxx)
+      // the user can set the display_name
+      usernameEditable = true;
+      username = useraccount.username;
+      // TODO:
+      /*
+      The user can only change the name once
+      the admin can put the username is a changeable state by making the display_name ''
+
+      1. edit button
+      2. confirm button
+      3. cancel button
+
+      */
+    }
+    // prevUserName to be able to cancel the edit of the username
+    prevUserName = username;
     loadArtworks();
     loadAvatars();
   }
@@ -206,17 +262,72 @@
 
 {#if !loader}
   <main>
-    <div class="container">
-      <div class="top">
+    <div class="profilePageContainer">
+      <div class="profilePage-top">
         <br />
         <br />
-        <h1>{username}</h1>
+        <!-- username that can be edited if it has not been set before -->
+        {#if usernameEditable && !usernameIsEditting}
+        <!-- the username is editable: show pen icon on the right -->
+          <div class="usernameEditable">
+            <div class="userName">
+              <h2>{username}</h2>
+            </div>
+            <!-- <div class="icon"> -->
+              <img
+                alt="edit display name"
+                class="icon"
+                src="/assets/SHB/svg/AW-icon-pen.svg"
+                on:click="{() => {
+                  usernameIsEditting = true;
+                }}"
+              />
+            <!-- </div> end div class='icon' -->
+          </div> <!-- end div class='usernameEditable' -->
+
+          {:else if usernameEditable && usernameIsEditting}
+          <!-- the pen icon is pressed: user can change display_name -->
+          <div class="usernameEditable">
+            <div class="userName">
+              <!-- <h1>{username}</h1> -->
+              <input type="text" bind:value="{username}" />
+            </div>
+
+            <!-- <div class="icon"> -->
+            <img
+              alt="save display name"
+              class="icon"
+              src="/assets/SHB/svg/AW-icon-check.svg"
+              on:click="{() => {
+                setDisplayName(username);
+                usernameIsEditting = false;
+                usernameEditable = false;
+              }}"
+            />
+
+            <img
+              alt="cancel edit display name"
+              class="icon"
+              src="/assets/SHB/svg/AW-icon-trash.svg"
+              on:click="{() => {
+                username = prevUserName;
+                usernameIsEditting = false;
+              }}"
+            />
+            <!-- </div> end div class='icon' -->
+          </div> <!-- end div class='usernameEditable' -->
+
+        {:else}
+          <h1>{username}</h1>
+        {/if}
         <br />
 
         {#if CurrentUser}
           <span class="splitter"></span>
+          <br />
           <Avatar showHistory="{true}" />
           <span class="splitter"></span>
+          <br />
           <House />
         {:else}
           <span class="splitter"></span>
@@ -225,13 +336,15 @@
           <img src="{house}" alt="avatar" />
         {/if}
       </div>
-      <div class="bottom">
+      <div class="profilePage-bottom">
+        <!-- list of artworks with send mail, visibility and delete buttons -->
         <SvelteTable
           columns="{columns}"
           rows="{filteredArt}"
           classNameTable="profileTable"
           on:clickCell="{goTo}"
         />
+        <!-- artworks in the trash -->
         {#if CurrentUser && deletedArt.length}
           <img
             class="icon"
@@ -253,6 +366,26 @@
 {/if}
 
 <style>
+  .usernameEditable {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: space-between;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .userName{
+    /* float: right; */
+  }
+  .icon {
+    max-width: 40px;
+    height: 40px;
+    float: left;
+    margin-left: 0.3em;
+    /* margin-top: 5px; */
+  }
+
   :global(.deletedTable tbody tr) {
     opacity: 1;
     position: relative;
@@ -269,13 +402,13 @@
     background-color: gray;
   }
 
-  .bottom {
+  .profilePage-bottom {
     margin: 0 auto;
     display: block;
     width: fit-content;
   }
 
-  .top {
+  .profilePage-top {
     margin: 0 auto;
     display: flex;
     width: max-content;

@@ -1,4 +1,23 @@
 <script>
+      /**
+ * @file imagePicker.svelte
+ * @author Lindsey, Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  imagePicker.svelte is for show available avatars and homes
+ *  it resides in the items bar, more specifically the profile.svelte page
+ *
+ *  The overall structure is:
+ *  itemsBar.svelte > click avatar icon > unfolds left side of itemsBar
+ *  click avatar icon again > unfolds right side of itemsBar with:
+ *  username, avatar.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ *
+ *  The default is the closed state, in which a 'history' icon is present
+ *  When unfolded the user can add a avatar drawing or select one from the list
+ *  When unfolder IMAGEPICKER.svelte is used
+ */
+
   import { onMount } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { Profile } from '../../session';
@@ -41,7 +60,7 @@
   async function getImages() {
     const files = await listObjects(dataType, $Profile.id, 100);
     objects = files.objects;
-    dlog('objects', objects);
+    // dlog('objects', objects);
 
     for (let index = 0; index < objects.length; index++) {
       if (typeof objects[index].value.previewUrl !== 'string') {
@@ -104,13 +123,16 @@
 
 <div>
   <div class="addNew" on:click="{addNew}">+</div>
+
   {#each objects as object, i}
+  <!-- show the item image and if the item is selected -->
     <div
       class="item"
       class:selected="{(object.value.url === $Profile.avatar_url &&
         dataType === 'avatar') ||
         (object.value.url === $myHome.value.url && dataType === 'house')}"
     >
+    <!-- select the item when clicking on the image -->
       <p
         class="image"
         on:click="{() => {
@@ -120,6 +142,7 @@
         <Stopmotion artwork="{object.value.previewUrl}" />
       </p>
 
+      <!-- show delete button -->
       {#if deleteCheck === i}
         <img
           alt="delete"
@@ -139,6 +162,8 @@
           }}"
         />
       {/if}
+
+      <!-- show edit button -->
       <img
         class="icon"
         alt="Edit House"
@@ -158,7 +183,7 @@
           }
         }}"
       />
-    </div>
+    </div> <!-- end of items list div class='item' -->
   {/each}
 
   {#each stockItems as stockItem}

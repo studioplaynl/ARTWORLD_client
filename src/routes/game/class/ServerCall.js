@@ -148,7 +148,8 @@ class ServerCall {
     //   scene.homesRepresented[index].setScale(0.8)
     // }
 
-    // set the house of SELF bigger
+    // set a subscription on the user home object for when the image is updated
+    // to update it in game
     if (element.user_id === ManageSession.userProfile.id) {
       // scene.homesRepresented[index].setScale(1.6);
       // store the use home gameObject in ManageSession so that it can be referenced for live updating

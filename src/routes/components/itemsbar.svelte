@@ -23,7 +23,7 @@
   } from '../game/playerState';
 
   // TODO: current moet een store worden
-  // zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties)
+  // zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties of vanuit de game)
   let current;
   let userHouseUrl;
   let userHouseObject;
@@ -118,6 +118,7 @@
     unsubscribeAddressBook();
   });
 
+  // toggle opens the itemsbar panel to reveal more functionality
   function toggleLiked() {
     current = current === 'liked' ? null : 'liked';
   }
@@ -130,8 +131,11 @@
     current = current === 'mail' ? null : 'mail';
   }
 
-  function toggleHome() {
-    current = current === 'home' ? null : 'home';
+  // first item in the items bar on the bottom
+  // opens the panel where the user can edit it's avatar, home and
+  // see all its artworks
+  function toggleProfilePage() {
+    current = current === 'profilePage' ? null : 'profilePage';
   }
 
   function toggleAwards() {
@@ -172,12 +176,7 @@
   }
 </script>
 
-<!-- {#if $Profile}
-  <h1>FOUND PROFILE, {$Profile.url}</h1>
-{:else}
-  <h2>No profile found</h2>
-{/if} -->
-
+<!-- the itemsbar with the avatar as the image -->
 {#if $location !== '/login' && !$ShowItemsBar}
   <div id="itemsButton">
     <button on:click="{openItemsBar}" class="avatar">
@@ -186,6 +185,7 @@
   </div>
 {/if}
 
+<!-- open and close the itemsbar -->
 {#if $ShowItemsBar}
   <div
     class="itemsbar"
@@ -194,11 +194,16 @@
     on:click_outside="{clickOutsideUser}"
     transition:fade="{{ duration: 40 }}"
   >
-    <div class="left">
-      <button on:click="{toggleHome}" class="avatar">
+
+    <!-- the left part of the items bar, either folds out or opens an app -->
+    <div class="left-column-itemsbar">
+
+      <!-- opens panel with edit avatar, edit home, see all artworks -->
+      <button on:click="{toggleProfilePage}" class="avatar">
         <img src="{$Profile.url}" alt="{$Profile.username}" />
       </button>
 
+      <!-- first item above avatar: home image, takes user next to the house -->
       <button
         on:click="{() => {
           goHome();
@@ -298,14 +303,14 @@
         />
       </button>
     </div>
-    <div class="right">
+    <div class="right-column-itemsbar">
       {#if current === 'liked'}
         <div>
           <LikedPage />
         </div>
       {:else if current === 'mail'}
         <MailPage />
-      {:else if current === 'home'}
+      {:else if current === 'profilePage'}
         <ProfilePage />
       {:else if current === 'friends'}
         <FriendsPage />
@@ -383,7 +388,7 @@
     width: auto;
   }
 
-  .left {
+  .left-column-itemsbar {
     display: flex;
     flex-wrap: nowrap;
     float: left;
@@ -392,7 +397,7 @@
     flex-direction: column-reverse;
   }
 
-  .right {
+  .right-column-itemsbar {
     float: left;
     overflow-x: hidden;
     overflow-y: auto;

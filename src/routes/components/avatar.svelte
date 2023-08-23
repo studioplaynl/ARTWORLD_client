@@ -1,5 +1,29 @@
 <script>
-  import { push } from 'svelte-spa-router';
+    /**
+ * @file avatar.svelte
+ * @author Lindsey, Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  avatar.svelte implements selecting and editing a avatar stopmotion
+ *  it resides in the items bar, more specifically the profile.svelte page
+ *
+ *  The overall structure is:
+ *  itemsBar.svelte > click avatar icon > unfolds left side of itemsBar
+ *  click avatar icon again > unfolds right side of itemsBar with:
+ *  username, avatar.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ *
+ *  The default is the closed state, in which a 'history' icon is present
+ *  When unfolded the user can add a avatar drawing or select one from the list
+ *  All edits to existing drawings are stored as a new drawing
+ *  The user can delete drawings from the list, except default avatars
+ *
+ * imagePicker.svelte is used to list and interact with existing avatars and homes
+ * imagePicker dataType="house" is used for homes
+ * imagePicker dataType='avatar' is used for avatars
+ */
+
+  // import { push } from 'svelte-spa-router';
   import { onDestroy, onMount } from 'svelte';
   import { Profile } from '../../session';
   import { AvatarsStore } from '../../storage';
@@ -11,6 +35,7 @@
   let image;
   let frame = 0;
   let interval;
+  // eslint-disable-next-line no-unused-vars
   let currentAvatar;
 
   const unsubscribe = AvatarsStore.subscribe((val) => {
@@ -38,32 +63,11 @@
   });
 </script>
 
-<!-- <button
-  class="avatar"
-  on:click="{() => {
-    showHistory = !showHistory;
-  }}"
->
-  <img bind:this="{image}" src="{$Profile.url}" alt="My Avatar" />
-</button> -->
 <div class="avatar">
   <img bind:this="{image}" src="{$Profile.url}" alt="My Avatar" />
 </div>
 <div class="avatarButtons">
-  <!-- <img
-    class="icon"
-    alt="Edit House"
-    src="/assets/SHB/svg/AW-icon-pen.svg"
-    on:click="{() => {
-      currentAvatar = AvatarsStore.getCurrent();
-      dlog(currentAvatar);
-      if (typeof currentAvatar === 'object') {
-        push(`/avatar?userId=${$Profile.id}&key=${currentAvatar.key}`);
-      } else {
-        push('/avatar');
-      }
-    }}"
-  /> -->
+
   {#if !showHistory}
     <img
       alt="close"

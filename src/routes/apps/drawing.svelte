@@ -96,7 +96,8 @@
     if (stopMotion) baseSize = STOPMOTION_BASE_SIZE;
   }
 
-  // remove forbidden characters from displayname after a new file has loaded or has been made
+  // remove forbidden characters from displayname reactively
+  // but only if the file has done loading
   $: if (file.loaded || file.new) {
     if (hasSpecialCharacter(displayName)) {
       displayName = removeSpecialCharacters(displayName);

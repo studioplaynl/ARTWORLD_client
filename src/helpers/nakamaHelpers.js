@@ -415,6 +415,17 @@ export async function setAvatar(avatar_url) {
   return Image;
 }
 
+export async function setDisplayName(display_name) {
+  const session = get(Session);
+  await client.updateAccount(session, {
+    display_name,
+  });
+
+  getAccount();
+  Success.set(true);
+  setLoader(false);
+}
+
 export async function setHome(Home_url) {
   const type = 'home';
   const profile = get(Profile);
