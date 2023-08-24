@@ -25,6 +25,7 @@
 
   let email = '';
   let username = 'user';
+  let Displayname;
   let password = 'somesupersecretpassword';
   let passwordCheck = 'somesupersecretpassword';
   let role = 'speler';
@@ -58,6 +59,7 @@
         email = account.email;
         id = account.user_id;
         meta = account.meta;
+        Displayname = account.display_name;
       });
     } else {
       getFullAccount().then((account) => {
@@ -67,6 +69,7 @@
         azc = account.meta.Azc;
         email = account.email;
         id = account.user_id;
+        Displayname = account.display_name;
       });
     }
   });
@@ -81,7 +84,7 @@
       meta.Role = role;
     }
     dlog('meta', meta);
-    await setFullAccount(id, username, password, email, meta);
+    await setFullAccount(id, username, Displayname, email, meta);
   }
 
   async function onSubmit() {
@@ -156,7 +159,17 @@
 
         {#if $Profile.meta.Role === 'admin'}
           <hr />
-
+          <label for="displayName">
+            <b>Display name</b>
+          </label>
+          <input
+            type="text"
+            placeholder="Enter Displayname"
+            name="Displayname"
+            id="Displayname"
+            bind:value="{Displayname}"
+          />
+              
           <label for="Role">
             <b>{$_('register.role')}</b>
           </label>
@@ -176,6 +189,7 @@
               <option value="{locatie}">{locatie}</option>
             {/each}
           </select>
+          
         {/if}
         <button type="submit" class="registerbtn" disabled="{!formValid}"
           >Update</button
