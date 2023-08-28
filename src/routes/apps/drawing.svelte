@@ -690,9 +690,9 @@
       Delete();
     }
 
-    if (evt.key === 'c' && evt.ctrlKey) {
-      getColor();
-    }
+    // if (evt.key === 'c' && evt.ctrlKey) {
+
+    // }
   }
 
   async function downloadImage() {
@@ -761,15 +761,15 @@
   }
   /// //////////// select functions end //////////////////
 
-  function rgbaToHex(r, g, b, a) {
-    const hexR = r.toString(16).padStart(2, '0');
-    const hexG = g.toString(16).padStart(2, '0');
-    const hexB = b.toString(16).padStart(2, '0');
-    const hexA = Math.round(a * 255)
-      .toString(16)
-      .padStart(2, '0');
-    return `#${hexR}${hexG}${hexB}${hexA}`;
-  }
+  // function rgbaToHex(r, g, b, a) {
+  //   const hexR = r.toString(16).padStart(2, '0');
+  //   const hexG = g.toString(16).padStart(2, '0');
+  //   const hexB = b.toString(16).padStart(2, '0');
+  //   const hexA = Math.round(a * 255)
+  //     .toString(16)
+  //     .padStart(2, '0');
+  //   return `#${hexR}${hexG}${hexB}${hexA}`;
+  // }
 
   function rgbToHex(r, g, b) {
     const hexR = r.toString(16).padStart(2, '0');
@@ -923,8 +923,9 @@
               </div>
 
               <div class="colorSection">
+                // eslint-disable-next-line no-return-assign
                 <button on:click="{() => (eyeDropper = !eyeDropper)}">
-                  <img id="eyeDropper" src="assets/svg/eyeDropper.svg" />
+                  <img id="eyeDropper" alt="eyeDropper" src="assets/svg/eyeDropper.svg" />
                   ;
                 </button>
 
@@ -952,31 +953,8 @@
                 <div class="circle-box-big"></div>
               </div>
             </div>
-          {:else if currentTab === 'select'}
-            <!-- <div class="tab tab--select">
-              <button on:click="{Copy}">
-                <img
-                  class="icon"
-                  src="assets/SHB/svg/AW-icon-copy.svg"
-                  alt="Copy selection"
-                />
-              </button>
-              <button on:click="{Paste}">
-                <img
-                  class="icon"
-                  src="assets/SHB/svg/AW-icon-paste.svg"
-                  alt="Paste selection"
-                />
-              </button>
-              <button on:click="{Delete}">
-                <button on:click="{getColor}">
-                <img
-                  class="icon"
-                  src="assets/SHB/svg/AW-icon-trash.svg"
-                  alt="Delete selection"
-                />
-              </button>
-            </div> -->
+          <!-- {:else if currentTab === 'select'} -->
+
           {:else if currentTab === 'save'}
             <div class="tab tab--save">
               <!-- {#if appType != "avatar" && appType != "house"} -->

@@ -75,8 +75,11 @@ export default class Artworld extends Phaser.Scene {
     this.load.image('artWorldPortalUnderground', './assets/world_underground/Portal_naarOndergrond.png');
     this.load.image('artWorldPortalWoestijn', './assets/world_woestijn/Portal_woestijn_naarWoestijn-fs8.png');
     this.load.image('artWorldPortalIjs', './assets/world_ice/Portaal_Naar_Ice-fs8.png');
-    this.load.image('artWorldPortalIjsco', './assets/world_ijsco/Portaal_vanHOMEnaarICECREAM-fs8.png');
+
+    this.load.image('artWorldPortalIjsco', './assets/world_ijsco/Portaal_vanHOMEnaarICECREAM_corr-fs8.png');
+
     this.load.image('cloudWorldPortal', './assets/world_clouds/cloud_portal_naarCloud.png');
+    this.load.image('beeWorldPortal', './assets/world_bees/02b_Portaal_home_naar_bee-fs8.png');
   }
 
   async create() {
@@ -843,7 +846,7 @@ export default class Artworld extends Phaser.Scene {
       locationText: 'Woestijn Wereld',
       referenceName: 'this.woestijnWorldLocation',
       fontColor: 0x8dcb0e,
-      size: 400,
+      size: 300,
     });
 
     locationVector = new Phaser.Math.Vector2(913, -476);
@@ -884,6 +887,27 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Ijsco Wereld',
       referenceName: 'this.ijscoWorldLocation',
+      fontColor: 0x8dcb0e,
+      size: 300,
+    });
+
+    locationVector = new Phaser.Math.Vector2(1360, -1056);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.bijenWorldLocation = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'BijenWereld',
+      locationImage: 'beeWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Bijen Wereld',
+      referenceName: 'this.bijenWorldLocation',
       fontColor: 0x8dcb0e,
       size: 300,
     });

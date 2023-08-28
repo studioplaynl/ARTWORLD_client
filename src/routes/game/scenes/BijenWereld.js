@@ -56,14 +56,13 @@ export default class BijenWereld extends Phaser.Scene {
     // Ijs
     this.localAssetsCheck = {};
 
-    const folderPath = './assets/world_ice/';
+    const folderPath = './assets/world_bees/';
 
 
     const loadArray = [
-      { key: 'Portal_naarHuis_ijs', path: `${folderPath}Portaal_ice_naarHUIS-fs8.png` },
-      { key: 'Portaal_vanIjs_naarIjsco', path: `${folderPath}Portaal_vanIce_naarIceCream-fs8.png` },
+      { key: 'Portal_naarHuis_bijen', path: `${folderPath}02a_Portaal_bee_naar_home-fs8.png` },
 
-      { key: 'ijswereld', path: `${folderPath}ijs_wereld.jpg` },
+      { key: 'bijenwereld', path: `${folderPath}01_Wereld14_Beehive_geheel.jpg` },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
@@ -143,7 +142,7 @@ export default class BijenWereld extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(-210, 1250);
+    let locationVector = new Phaser.Math.Vector2(823, 1987);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -156,32 +155,11 @@ export default class BijenWereld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Artworld',
-      locationImage: 'Portal_naarHuis_ijs',
+      locationImage: 'Portal_naarHuis_bijen',
       enterButtonImage: 'enter_button',
       locationText: 'Paarse Cirkel Wereld',
       referenceName: 'this.purpleCircleLocation',
-      size: 500,
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-2110, 570);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
-
-    this.IscoWereld = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'IjscoWereld',
-      locationImage: 'Portaal_vanIjs_naarIjsco',
-      enterButtonImage: 'enter_button',
-      locationText: 'Ijsco Wereld',
-      referenceName: 'this.IscoWereld',
-      size: 500,
+      size: 400,
       fontColor: 0x8dcb0e,
     });
   }
@@ -191,7 +169,7 @@ export default class BijenWereld extends Phaser.Scene {
     PlaceElement.image({
       x: 0,
       y: 0,
-      file: 'ijswereld',
+      file: 'bijenwereld',
       scale: 1,
       // rotation: -0.05,
       draggable: false,

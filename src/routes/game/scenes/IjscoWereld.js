@@ -58,9 +58,8 @@ export default class IjscoWereld extends Phaser.Scene {
     const folderPath = './assets/world_ijsco/';
 
     const loadArray = [
-      { key: 'Portaal_vanafIcecream_naarIce', path: `${folderPath}Portaal_vanafIcecream_naarIce-fs8.png` },
-      { key: 'Portaal_vanICECREAMnaarHOME', path: `${folderPath}Portaal_vanICECREAMnaarHOME-fs8.png` },
-
+      { key: 'Portaal_vanafIcecream_naarIce', path: `${folderPath}k_Portaal_vanafIcecream_naarIce-fs8.png` },
+      { key: 'Portaal_vanICECREAMnaarHOME', path: `${folderPath}k_Portaal_vanICECREAMnaarHOME_corr-fs8.png` },
       { key: 'ijscowereld', path: `${folderPath}ijscowereld.jpg` },
     ];
 

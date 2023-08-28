@@ -7,7 +7,7 @@
   import {
     STOPMOTION_MAX_FRAMES,
     STOPMOTION_FPS,
-    STOPMOTION_BASE_SIZE,
+    // STOPMOTION_BASE_SIZE,
   } from '../../constants';
   // eslint-disable-next-line import/no-unresolved
   import 'swiper/css';
