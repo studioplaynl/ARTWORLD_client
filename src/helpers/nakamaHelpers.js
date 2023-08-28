@@ -376,17 +376,18 @@ export async function getFullAccount(id) {
   return user.payload;
 }
 
-export async function setFullAccount(id, username, DisplayName, email, metadata) {
+export async function setFullAccount(id, username, display_name, email, metadata) {
   const session = get(Session);
   const payload = {
     id,
     username,
-    DisplayName,
+    display_name,
     email,
     metadata,
   };
   const rpcid = 'set_full_account';
   const user = await client.rpc(session, rpcid, payload);
+  console.log("set full account", payload)
   // dlog(user)
   Success.set(true);
   return user.payload;
