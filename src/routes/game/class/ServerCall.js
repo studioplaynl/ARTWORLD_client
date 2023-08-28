@@ -416,6 +416,7 @@ class ServerCall {
     console.log('ManageSession.resolveErrorObjectArray: ', ManageSession.resolveErrorObjectArray);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async loadAsset(scene, element, index, type) {
     if (type === 'localImage') {
       // const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
@@ -819,7 +820,7 @@ class ServerCall {
     const { scene } = resolveErrorObject;
     // dlog("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
     let flowerKeyArray;
-    let targetObject;
+    // let targetObject;
     switch (loadFunction) {
       case 'getHomeImage':
         dlog('offending file, load placeholder image instead', imageKey);

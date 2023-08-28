@@ -163,6 +163,7 @@
         // house: ManageSession.userProfile.id,
       });
 
+      PlayerUpdate.set({ forceHistoryReplace: false });
       PlayerPos.set({
         x: playerPosX,
         y: playerPosY,

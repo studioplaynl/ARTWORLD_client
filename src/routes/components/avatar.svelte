@@ -63,10 +63,11 @@
   });
 </script>
 
+<div class="avatarContainer">
 <div class="avatar">
   <img bind:this="{image}" src="{$Profile.url}" alt="My Avatar" />
 </div>
-<div class="avatarButtons">
+<!-- <div class="avatarButtons"> -->
 
   {#if !showHistory}
     <img
@@ -81,19 +82,25 @@
     <img
       alt="history"
       class="icon"
-      src="/assets/SHB/svg/AW-icon-history.svg"
+      src="/assets/SHB/svg/AW-icon-pen.svg"
       on:click="{() => {
         showHistory = !showHistory;
       }}"
     />
   {/if}
-</div>
+<!-- </div> -->
+</div> <!--avatarContainer-->
 
 {#if !showHistory}
   <ImagePicker dataType="avatar" />
 {/if}
 
 <style>
+  .avatarContainer {
+    max-width: 1005%;
+    display: flex;
+  }
+
   .icon {
     max-width: 50px;
     width: 50px;

@@ -9,6 +9,8 @@
     addFriend,
     setLoader,
     convertImage,
+    getAccount,
+    getObject,
   } from '../helpers/nakamaHelpers';
 
   import { dlog } from '../helpers/debugLog';
@@ -63,29 +65,64 @@
 
   load();
 
-  function goTo(event) {
+  async function goTo(event) {
     const { row } = event.detail;
     if (event.detail.key === 'action') return;
 
-    /** We send the player to the left side of the user's home so that the artworks can be seen
-    //  We set the Position after the Location
-    //  when we set the position we force the urlparser to do a replace on the history and url,
-    //  with PlayerUpdate.set({ forceHistoryReplace: false });
-    */
+    // We send the player to the left side of the user's home
+
+    // get user account
+    const friendAccount = await getAccount(row.user.id);
+    // console.log('friendAccount: ', friendAccount);
+    // in the friendAccount.meta:
+    // metadata.Azc
+    const friendHomeLocation = friendAccount.metadata.Azc;
+    // get home object of friend to get pos of that home
+    const friendHome = await getObject('home', friendHomeLocation, row.user.id);
+    console.log('friendHome: ', friendHome.value);
+    console.log('playerPosX: ', friendHome.value.posX);
+    console.log('playerPosY: ', friendHome.value.posY);
 
     PlayerLocation.set({
-      scene: DEFAULT_HOME,
-      house: row.user.id,
+      scene: friendHomeLocation,
     });
 
-    const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
-    const PosX = -(targetScene.sizeX / 2) + (AVATAR_BASE_SIZE * 2);
+    // check if there is posX and posY from the home object
+    if (typeof friendHome.value.posX !== 'undefined' && typeof friendHome.value.posY !== 'undefined') {
+      console.log('set player x and y');
 
-    PlayerUpdate.set({ forceHistoryReplace: false });
-    PlayerPos.set({
-      x: PosX,
-      y: 0,
-    });
+      // place user next to nameplate of home
+      const playerPosX = friendHome.value.posX - 80;
+      const playerPosY = friendHome.value.posY - 100;
+
+      PlayerUpdate.set({ forceHistoryReplace: false });
+      PlayerPos.set({
+        x: playerPosX,
+        y: playerPosY,
+      });
+    } else {
+      // if there was no posX and y from home object
+      PlayerUpdate.set({ forceHistoryReplace: false });
+      PlayerPos.set({
+        x: -80,
+        y: -100,
+      });
+    }
+
+
+    // PlayerLocation.set({
+    //   scene: DEFAULT_HOME,
+    //   house: row.user.id,
+    // });
+
+    // const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+    // const PosX = -(targetScene.sizeX / 2) + (AVATAR_BASE_SIZE * 2);
+
+    // PlayerUpdate.set({ forceHistoryReplace: false });
+    // PlayerPos.set({
+    //   x: PosX,
+    //   y: 0,
+    // });
   }
 
   const columns = [
@@ -110,8 +147,7 @@
     {
       key: 'Username',
       title: 'Username',
-      // value: (v) => `<p>${v.user.username}<p>`,
-      value: (v) => `<p class="link">${v.user.username}<p>`,
+      value: (v) => `<p class="link">${v.user.display_name || v.user.username}<p>`,
       sortable: true,
     },
     {

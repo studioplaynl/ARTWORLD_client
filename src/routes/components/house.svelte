@@ -31,7 +31,8 @@
   let showHistory = false;
 </script>
 
-<div class="container-history-nav-buttons">
+<div class="homeContainer">
+<div class="homeImage">
     <img alt="My House" id="house" src="{$myHome.url}" />
   </div>
 
@@ -49,25 +50,32 @@
     <img
       alt="history"
       class="icon"
-      src="/assets/SHB/svg/AW-icon-history.svg"
+      src="/assets/SHB/svg/AW-icon-pen.svg"
       on:click="{() => {
         showHistory = !showHistory;
       }}"
     />
   {/if}
 </div>
+</div> <!-- homeContainer-->
+
 {#if showHistory}
   <ImagePicker dataType="house" />
 {/if}
 
 <style>
+  .homeContainer {
+    max-width: 1005%;
+    display: flex;
+  }
+
   .icon {
     max-width: 50px;
     margin: 10px;
     cursor: pointer;
   }
 
-  .container-history-nav-buttons {
+  .homeImage {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
