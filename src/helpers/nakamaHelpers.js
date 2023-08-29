@@ -136,7 +136,7 @@ export async function uploadImage(
   );
   const value = { url: jpegLocation, version, displayname: displayName };
   const pub = status || status === PERMISSION_READ_PUBLIC;
-
+  dlog('status: ', status);
   // FIXME: Why are we converting between 2/1 pub status and booleans?
   // if (status || status === 2) {
   //   pub = true;

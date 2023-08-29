@@ -108,6 +108,7 @@
     // Reset local variables
     currentFile = { loaded: false };
     data = null;
+    changes = 0;
 
     // If a user has been here for a little while, just bring them where they were before
     if (get(PlayerHistory).length > 1) {
@@ -198,9 +199,11 @@
     // create the data to save
     await drawing.saveHandler();
     dlog('currentFile.status', currentFile.status);
+
     /** Attempt to save the file, then resolve or reject after doing so */
     const uploadPromise = new Promise((resolve, reject) => {
       const blobData = dataURItoBlob(data);
+      dlog('currentFile', currentFile);
 
       uploadImage(
         currentFile.key, // ook wel title/name

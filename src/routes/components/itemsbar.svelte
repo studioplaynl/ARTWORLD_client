@@ -20,6 +20,7 @@
     PlayerHistory,
     PlayerPos,
     PlayerLocation,
+    PlayerUpdate,
   } from '../game/playerState';
 
   // TODO: current moet een store worden

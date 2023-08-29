@@ -38,11 +38,11 @@ $: if (files) {
     const lastFile = filesToProcess[filesToProcess.length - 1];
 
     const firstFileNameParts = firstFile.name.split('.')[0].split('_');
-    dlog('firstFileNameParts: ', firstFileNameParts);
+    // dlog('firstFileNameParts: ', firstFileNameParts);
     const firstUserNumber = firstFileNameParts[0].split('@')[0];
-    dlog('firstUserNumber: ', firstUserNumber);
+    // dlog('firstUserNumber: ', firstUserNumber);
     const lastLastPart = firstFile.name.split('.')[1].split('_');
-    dlog('lastLastPart: ', lastLastPart);
+    // dlog('lastLastPart: ', lastLastPart);
 
     const lastFileNameParts = lastFile.name.split('.')[0].split('_');
     const lastUserNumber = lastFileNameParts[0].split('@')[0];

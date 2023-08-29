@@ -413,6 +413,7 @@
         }
         brush.width = parseInt(brushWidthLogarithmic, 10) || 1;
       }
+      disableColorPicker();
     };
 
     // Was there an image to load? Do so
@@ -475,10 +476,6 @@
     saveCanvas.height = baseSize;
     saveCanvas.width = baseSize * frames;
     putDrawingCanvasIntoFramesArray(currentFrame);
-    // // for each frames putDrawingCanvasIntoFramesArray
-    // for (let i = 0; i < frames; i++) {
-    //   putDrawingCanvasIntoFramesArray(i);
-    // }
 
     await new Promise((resolve) => {
       let loaded = 0;
@@ -507,6 +504,12 @@
 
       return data;
     });
+  }
+
+  export async function saveFlipbookHandler() {
+    putDrawingCanvasIntoFramesArray(currentFrame);
+
+    // load template
   }
 
   // Go back to previous state
@@ -698,7 +701,8 @@
   async function downloadImage() {
     await saveHandler();
 
-    // eerst in de currentFileInfo de waardes veranderen en dan hier verkrijgen
+    // we put the user name and displayName in the file name
+    // retrieve those details
     const userProfile = get(Profile);
     const filename = `${userProfile.username}_${file.key}_${displayName}.png`;
     const a = document.createElement('a');
@@ -756,6 +760,7 @@
 
   function clearCanvas() {
     drawingCanvas.clear();
+    changes = 0;
     // saveCanvas.clear();
     dispatch('clearCanvas');
   }
@@ -809,6 +814,14 @@
       default:
         break;
     }
+  }
+
+  function toggleEyedropperState() {
+    eyeDropper = !eyeDropper;
+  }
+
+  function disableColorPicker() {
+    eyeDropper = false;
   }
 </script>
 
@@ -918,15 +931,16 @@
                   id="drawing-line-width"
                   title="Set drawing thickness"
                   bind:value="{lineWidth}"
+                  on:input="{disableColorPicker}"
+                  on:focus="{disableColorPicker}"
+                  on:blur="{disableColorPicker}"
                 />
                 <div class="circle-box-big"></div>
               </div>
 
               <div class="colorSection">
-                // eslint-disable-next-line no-return-assign
-                <button on:click="{() => (eyeDropper = !eyeDropper)}">
+                <button on:click="{() => toggleEyedropperState() }">
                   <img id="eyeDropper" alt="eyeDropper" src="assets/svg/eyeDropper.svg" />
-                  ;
                 </button>
 
                 <input
@@ -934,6 +948,9 @@
                   bind:value="{drawingColor}"
                   id="drawing-color"
                   title="Pick drawing color"
+                  on:input="{disableColorPicker}"
+                  on:focus="{disableColorPicker}"
+                  on:blur="{disableColorPicker}"
                 />
               </div>
             </div>
