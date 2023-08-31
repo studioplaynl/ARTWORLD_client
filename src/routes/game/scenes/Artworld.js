@@ -909,7 +909,7 @@ export default class Artworld extends Phaser.Scene {
       locationText: 'Bijen Wereld',
       referenceName: 'this.bijenWorldLocation',
       fontColor: 0x8dcb0e,
-      size: 300,
+      size: 240,
     });
 
     // ---- Location 1 ----------------------
