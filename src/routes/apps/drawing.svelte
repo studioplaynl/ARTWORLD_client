@@ -675,7 +675,7 @@
       downloadButton.style.top = topDistance;
 
       downloadButton.addEventListener('click', () => {
-        downloadFlipbookCanvas(canvas, `_${canvas.id}_FB_${filename}`);
+        downloadFlipbookCanvas(canvas, `${filename}_FB_${canvas.id}.png`);
         // Remove the download button and canvas after download
         downloadButton.remove();
         canvas.remove();
@@ -919,7 +919,7 @@
         filename += `_${userProfile.display_name}`;
       }
 
-      filename += `_${file.key}_${displayName}.png`;
+      filename += `_${file.key}_${displayName}`;
 
       await saveFlipbookHandler(filename);
     }
