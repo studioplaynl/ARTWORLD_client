@@ -19,7 +19,7 @@
 
   let framesArray;
   let currentFrame = 1;
-  export let drawing;
+  export let drawing = null;
   let frames = null;
   let playPreviewInterval = null;
 

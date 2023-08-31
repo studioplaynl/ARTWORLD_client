@@ -72,7 +72,7 @@
 
   $: {
     // when the currenFrame changes, clear the drawingCanvas
-    dlog('currentFrame: ', currentFrame);
+    // dlog('currentFrame: ', currentFrame);
     // reset the undo array
     switchingFrame();
   }
@@ -475,7 +475,7 @@
     // set dimensions of savecanvas
     saveCanvas.height = baseSize;
     saveCanvas.width = baseSize * frames;
-    putDrawingCanvasIntoFramesArray(currentFrame);
+    // putDrawingCanvasIntoFramesArray(currentFrame);
 
     await new Promise((resolve) => {
       let loaded = 0;
@@ -506,11 +506,200 @@
     });
   }
 
-  export async function saveFlipbookHandler() {
-    putDrawingCanvasIntoFramesArray(currentFrame);
+  export async function saveFlipbookHandler(filename) {
+    const flipbookCanvasWidth = 2480;
+    const flipbookCanvasHeight = 3508;
 
-    // load template
+    const numRows = 4;
+    const numCols = 2;
+    const minNumSheets = 3; // printing 3 sheets of stopmotion was the norm
+
+    let currentTemplateFrame = 0;
+    const offsetX = 468;
+    const offsetY = 123;
+    const templateImageWidth = 700;
+
+    // how many repeats fit in 3 sheets, then round up
+    const repeatsRoundedUp = Math.ceil((numRows * numCols * minNumSheets) / framesArray.length);
+
+    // total of frames we will be using
+    const framesTotal = repeatsRoundedUp * framesArray.length;
+
+    let framesTotalSoFar = 0;
+    const totalCanvases = Math.ceil(framesTotal / (numRows * numCols));
+    // const totalCanvases = Math.ceil((numRows * numCols) / framesArray.length);
+
+    /* load all images before the loop to avoid waiting
+        first we load the flipbooktemplate image
+        then  we load the frames into a new array
+    */
+    const flipbookTemplate = new Image();
+
+    await new Promise((resolve) => {
+      flipbookTemplate.onload = () => {
+        resolve();
+      };
+      flipbookTemplate.src = './assets/printSheet/fb_00_leeg.png';
+    });
+
+    // load empty flipbook frame
+    const flipbookFrame = new Image();
+    await new Promise((resolve) => {
+      flipbookFrame.onload = () => {
+        resolve();
+      };
+      flipbookFrame.src = './assets/printSheet/flipbook/flipbook_template_frame.jpg';
+    });
+
+    // load numbering assets for flipbook
+    const numbersAndDotsArray = [
+      './assets/printSheet/flipbook/flipbook_number_w_dots1-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots2-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots3-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots4-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots5-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots6-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots7-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots8-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots9-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots10-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots11-fs8.png',
+      './assets/printSheet/flipbook/flipbook_number_w_dots12-fs8.png',
+    ];
+
+    const numbersAndDotsArrayPromises = numbersAndDotsArray.map((frame) => new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        resolve(img);
+      };
+      img.src = frame;
+    }));
+    const numbersAndDotsImages = await Promise.all(numbersAndDotsArrayPromises);
+
+
+    // load all the frames of the stopmotion
+    // so there is no async await problem in the loop later
+    const imgPromises = framesArray.map((frame) => new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        resolve(img);
+      };
+      img.src = frame;
+    }));
+    const images = await Promise.all(imgPromises);
+
+    // const mainContainer = document.querySelector('.drawing-app');
+
+    // iterate of the flipbook sheets/ canvases
+    for (let i = 0; i < totalCanvases; i++) {
+      const canvas = document.createElement('canvas');
+      canvas.className = 'flipbook-canvas'; // Set the class name
+      canvas.id = (i + 1).toString(); // Set the id
+
+      // Hide the canvas
+      canvas.style.display = 'none';
+
+      // if (mainContainer) {
+      //   mainContainer.parentNode.insertBefore(canvas, mainContainer);
+      // }
+
+      const ctx = canvas.getContext('2d');
+      canvas.width = flipbookCanvasWidth; // Set canvas width
+      canvas.height = flipbookCanvasHeight; // Set canvas height
+
+      /* load the template image into the canvas */
+      // ctx.drawImage(
+      //   flipbookTemplate,
+      //   0,
+      //   0,
+      // );
+
+      // we iterate over the rows and colums of the flipbook
+      for (let j = 0; j < numRows; j++) {
+        for (let k = 0; k < numCols; k++) {
+          // we calculate a x and y for the images
+          const x = k * templateImageWidth + offsetX * (k + 1);
+          const y = j * templateImageWidth + offsetY * (j + 1);
+
+          // if we reach the framesTotal, we stop adding frames to the sheet
+          if (framesTotalSoFar >= framesTotal) break;
+
+          // we place empty frame
+          ctx.drawImage(
+            flipbookFrame,
+            x - offsetX + 30,
+            y,
+          );
+
+          // we place a sheet number symbol
+          // we repeat them according to the sheet number
+          for (let m = 0; m < (i + 1); m++) {
+            ctx.drawImage(
+              flipbookFrame,
+              x - offsetX + 80 + (13 * (m + 1)),
+              y + 50 + (13 * (m + 1)),
+              flipbookFrame.width / 14,
+              flipbookFrame.width / 14,
+            );
+          }
+
+          // we place numbering image
+          ctx.drawImage(
+            numbersAndDotsImages[currentTemplateFrame],
+            x - offsetX + 50,
+            y + (offsetY * 3.2),
+          );
+
+          ctx.drawImage(
+            images[currentTemplateFrame],
+            x,
+            y + 20,
+            templateImageWidth,
+            templateImageWidth,
+          );
+
+          // if we reach the framesTotal, we stop adding frames to the sheet
+          framesTotalSoFar++;
+
+          // we cycle through the available frames of the stopmotion
+          currentTemplateFrame++;
+          if (currentTemplateFrame === framesArray.length) currentTemplateFrame = 0;
+        }
+      }
+
+      // Create a button element for downloading the canvas
+      const downloadButton = document.createElement('button');
+      downloadButton.textContent = `flipbook_${canvas.id}`;
+      downloadButton.style.position = 'absolute';
+      const topDistance = `${canvas.id}00px`;
+      downloadButton.style.top = topDistance;
+
+      downloadButton.addEventListener('click', () => {
+        downloadFlipbookCanvas(canvas, `_${canvas.id}_FB_${filename}`);
+        // Remove the download button and canvas after download
+        downloadButton.remove();
+        canvas.remove();
+      });
+
+
+      // Append the container to the mainContainer
+      // mainContainer.appendChild(downloadButton);
+
+      // Trigger a click event on the download button
+      downloadButton.click();
+    }
   }
+
+
+  function downloadFlipbookCanvas(canvas, downloadFileName) {
+    canvas.toBlob((blob) => {
+      const link = document.createElement('a');
+      link.download = downloadFileName;
+      link.href = URL.createObjectURL(blob);
+      link.click();
+    }, 'image/png');
+  }
+
 
   // Go back to previous state
   function undoDrawingCanvas() {
@@ -704,13 +893,36 @@
     // we put the user name and displayName in the file name
     // retrieve those details
     const userProfile = get(Profile);
-    const filename = `${userProfile.username}_${file.key}_${displayName}.png`;
+
+    let filename = `${userProfile.username}`;
+    // if a display_name exists we also add that to the filename
+    if (userProfile.display_name) {
+      filename += `_${userProfile.display_name}`;
+    }
+
+    filename += `_${file.key}_${displayName}.png`;
     const a = document.createElement('a');
     a.download = filename;
     a.href = data;
     document.body.appendChild(a);
     a.click();
   }
+
+    async function downloadFlipbook() {
+      // we put the user name and displayName in the file name
+    // retrieve those details
+      const userProfile = get(Profile);
+
+      let filename = `${userProfile.username}`;
+      // if a display_name exists we also add that to the filename
+      if (userProfile.display_name) {
+        filename += `_${userProfile.display_name}`;
+      }
+
+      filename += `_${file.key}_${displayName}.png`;
+
+      await saveFlipbookHandler(filename);
+    }
 
   // function Copy() {
   //   // clone what are you copying since you
@@ -845,6 +1057,7 @@
             "
         ></div>
       {/if}
+
       <div
         class="canvas-box"
         style="
@@ -867,6 +1080,7 @@
           style:visibility="{enableEditor ? 'visible' : 'hidden'}"></canvas>
         <canvas hidden bind:this="{saveCanvas}" class="saveCanvas"></canvas>
         <canvas hidden bind:this="{loadCanvas}"></canvas>
+
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
@@ -976,24 +1190,42 @@
             <div class="tab tab--save">
               <!-- {#if appType != "avatar" && appType != "house"} -->
               <label for="title">displayName</label>
-              <!-- <NameGenerator
-                bind:value={displayName}
-                bind:invalidTitle
-                bind:isTitleChanged
-              /> -->
+
               <input type="text" bind:value="{displayName}" />
-              <!-- {#if invalidTitle}
-                <p style="color: red">No special characters</p>
-              {/if} -->
+              <div class="icon-group">
+                <br>
 
-              <!-- {/if} -->
-
+              <img
+                on:click="{downloadImage}"
+                class="iconImage"
+                id="pointer-cursor"
+                src="assets/svg/icon/strip.svg"
+                alt="Download Artwork"
+              />
               <img
                 on:click="{downloadImage}"
                 class="icon"
                 src="assets/SHB/svg/AW-icon-save.svg"
                 alt="Download Artwork"
               />
+              </div>
+              <div class="icon-group">
+              <br>
+
+              <img
+                on:click="{downloadFlipbook}"
+                class="iconImage"
+                id="pointer-cursor"
+                src="assets/svg/icon/stack.svg"
+                alt="Download Flipbook"
+              />
+              <img
+                on:click="{downloadFlipbook}"
+                class="icon"
+                src="assets/SHB/svg/AW-icon-save.svg"
+                alt="Download Flipbook"
+              />
+              </div>
             </div>
           {/if}
         </div>
@@ -1219,6 +1451,19 @@
     flex: 1 1 auto;
     margin: 0 24px 0 6px;
     /*outline: 1px solid #7300ed2e; */
+  }
+  .iconImage {
+    min-width: 40px;
+    width: 70px;
+    box-sizing: border-box;
+    padding: 4px;
+    object-fit: contain;
+    flex: 1 1 auto;
+    margin: 0 0px 0 12px;
+    /*outline: 1px solid #7300ed2e; */
+  }
+  #pointer-cursor {
+    cursor: pointer;
   }
 
   .colorSection {

@@ -341,7 +341,7 @@
         // TODO: Het kan zijn dat een object leeg terugkomt. Dan staan wellicht de permissies fout.
 
         if (loadingObject) {
-          dlog('loadingObject', loadingObject);
+          // dlog('loadingObject', loadingObject);
           const file = await getFile(loadingObject.value.url);
           // dlog('loadingObject', loadingObject);
           // set the displayName, so it can also be changed in the Drawing app

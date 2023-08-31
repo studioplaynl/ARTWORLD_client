@@ -453,7 +453,7 @@ export async function setHome(Home_url) {
 }
 
 export async function getFile(file_url) {
-  dlog('fileURL', file_url);
+  // dlog('fileURL', file_url);
   // const url = `https://artworld.vrolijkheid.nl/proxy/${file_url}`;
 
   const session = get(Session);

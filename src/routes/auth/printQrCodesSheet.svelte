@@ -123,7 +123,7 @@ $: if (files) {
   //     // draw background image
   //     canvasContext.drawImage(labelSheetTemplate, 0, 0);
   //   };
-  //   labelSheetTemplate.src = './assets/printQrSheet/24label_template.png';
+  //   labelSheetTemplate.src = './assets/printSheet/24label_template.png';
   // }
 
   function placeImagesInGrid(_file) {
