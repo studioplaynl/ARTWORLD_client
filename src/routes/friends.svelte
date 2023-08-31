@@ -20,9 +20,9 @@
     FRIENDSTATE_INVITATION_RECEIVED,
     STOPMOTION_MAX_FRAMES,
     DEFAULT_PREVIEW_HEIGHT,
-    DEFAULT_HOME,
-    SCENE_INFO,
-    AVATAR_BASE_SIZE,
+    // DEFAULT_HOME,
+    // SCENE_INFO,
+    // AVATAR_BASE_SIZE,
   } from '../constants';
 
   let friends = [];
@@ -163,13 +163,15 @@
   ];
 </script>
 
-<img
+<!-- searching for friends on the server stopped working
+we also want to be able to search on display_name
+which is not possible out of the box so we would have to write our own search -->
+<!-- <img
   src="/assets/SHB/svg/AW-icon-add-friend.svg"
   class="headerIcon"
   alt="Add friend"
 />
 <br />
-<!-- <input bind:value={ID} placeholder="user ID"> -->
 <div class="search">
   <input bind:value="{Username}" />
   <button
@@ -181,7 +183,7 @@
   >
     <MdSearch />
   </button>
-</div>
+</div> -->
 
 {#if friendRequests.length > 0}
   <img

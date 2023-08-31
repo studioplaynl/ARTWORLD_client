@@ -1194,12 +1194,11 @@
               <input type="text" bind:value="{displayName}" />
               <div class="icon-group">
                 <br>
-
               <img
                 on:click="{downloadImage}"
                 class="iconImage"
                 id="pointer-cursor"
-                src="assets/svg/icon/strip.svg"
+                src="{stopMotion ? 'assets/svg/icon/3strip_straight.svg' : 'assets/svg/icon/single_frame.svg' }"
                 alt="Download Artwork"
               />
               <img
@@ -1210,22 +1209,25 @@
               />
               </div>
               <div class="icon-group">
-              <br>
-
-              <img
-                on:click="{downloadFlipbook}"
-                class="iconImage"
-                id="pointer-cursor"
-                src="assets/svg/icon/stack.svg"
-                alt="Download Flipbook"
-              />
-              <img
-                on:click="{downloadFlipbook}"
-                class="icon"
-                src="assets/SHB/svg/AW-icon-save.svg"
-                alt="Download Flipbook"
-              />
+                <!-- only show flipbook download if stopMotion -->
+                {#if stopMotion}
+                  <br>
+                  <img
+                    on:click="{downloadFlipbook}"
+                    class="iconImage"
+                    id="pointer-cursor"
+                    src="assets/svg/icon/3stack_straight.svg"
+                    alt="Download Flipbook"
+                  />
+                  <img
+                    on:click="{downloadFlipbook}"
+                    class="icon"
+                    src="assets/SHB/svg/AW-icon-save.svg"
+                    alt="Download Flipbook"
+                  />
+                {/if}
               </div>
+
             </div>
           {/if}
         </div>
@@ -1454,7 +1456,7 @@
   }
   .iconImage {
     min-width: 40px;
-    width: 70px;
+    height: 50px;
     box-sizing: border-box;
     padding: 4px;
     object-fit: contain;
