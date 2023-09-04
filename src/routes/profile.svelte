@@ -186,7 +186,7 @@
 
   async function getUser() {
     // we get the user NAME AVATAR and HOME
-    // if display_name = '' then the user can set the NAME
+    // if display_name = '' or null then the user can set the NAME
 
     if (!!params.user || !!userID) {
       CurrentUser = false;

@@ -72,6 +72,7 @@
 
   $: {
     // when the currenFrame changes, clear the drawingCanvas
+    // the dlog triggers the reactivity
     dlog('currentFrame: ', currentFrame);
     // reset the undo array
     switchingFrame();

@@ -25,7 +25,7 @@ class ServerCall {
     // get a list of all homes objects and then filter
     Promise.all([getAllHouses(filter, null)])
       .then((homesRec) => {
-        // dlog('rec homes: ', homesRec);
+        // dlog('homesRec: ', homesRec[0]);
         scene.homes = homesRec[0];
         // dlog('scene.homes', scene.homes);
 
@@ -40,6 +40,7 @@ class ServerCall {
       // dlog('scene.homes', scene.homes);
 
       // store element.username in a const with \n for linebreak
+      // this is for debug purposes
       let usersWithAHome = '';
 
       scene.homes.forEach((element, index) => {
@@ -104,7 +105,15 @@ class ServerCall {
     const scene = _scene;
 
     // home description
-    const locationDescription = element.value.username;
+    // if there is a display_name of the user we use that
+    // otherwise we fall back to the username of the user
+    let locationDescription = '';
+
+    if (element.display_name && element.display_name !== '') {
+      locationDescription = element.display_name;
+    } else {
+      locationDescription = element.username;
+    }
 
     // only show the number of artworks on the houses if we know it
     const numberOfDrawing = element.artworks.drawing;
@@ -135,7 +144,7 @@ class ServerCall {
       numberOfArtworks,
       locationText: locationDescription,
       locationImage: homeImageKey,
-      referenceName: locationDescription,
+      referenceName: element.username,
       enterButtonImage: 'enter_button',
       fontColor: 0x8dcb0e,
       color1: 0xffe31f,
@@ -215,7 +224,6 @@ class ServerCall {
     // get all homes from the server with userHome in the name, with the function getAllHouse
     Promise.all([getAllHouses(userHome, null)])
       .then((homesRec) => {
-        // dlog('rec homes: ', homesRec);
         // dlog('homesRec: ', homesRec);
         // from homesRec filter out the key 'name' and put it in an array
         const homesNames = homesRec[0].map((i) => i.username);

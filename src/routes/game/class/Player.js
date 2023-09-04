@@ -277,6 +277,7 @@ class Player {
       onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50);
       onlinePlayer.on('pointerup', () => {
         // pass on values to itemsbar.svelte & selectedPlayerBar.svelte
+        console.log('onlinePlayer: ', onlinePlayer);
         SelectedOnlinePlayer.set(onlinePlayer);
         ShowItemsBar.set(false);
       });

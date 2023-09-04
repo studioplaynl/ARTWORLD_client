@@ -25,7 +25,7 @@
       if ($SelectedOnlinePlayer && 'id' in $SelectedOnlinePlayer) {
         try {
           enableclickOutsideListener = false;
-
+          console.log('$SelectedOnlinePlayer: ', $SelectedOnlinePlayer);
           // check for meta.azc because for a while there was a server bug that
           // would return azc and role instead of Azc and Role
           let profileAzc = '';
@@ -147,9 +147,13 @@
       {/if}
     </div>
     <div class="left">
+      {#if $SelectedOnlinePlayer.display_name && $SelectedOnlinePlayer.display_name !== ''}
+      <p>{$SelectedOnlinePlayer.display_name}</p>
+      {:else }
       <p>{$SelectedOnlinePlayer.username}</p>
+      {/if}
 
-      <button class="avatar">
+      <button class="avatar" id="no-pointer">
         <img
           alt="{$SelectedOnlinePlayer.username}"
           src="{$SelectedOnlinePlayer.url}"
@@ -219,6 +223,10 @@
   #house {
     min-width: 30px;
     min-height: 30px;
+  }
+
+  #no-pointer{
+    cursor:auto;
   }
 
   .left {
