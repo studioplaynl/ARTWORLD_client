@@ -1,12 +1,12 @@
 <script>
   import SvelteTable from 'svelte-table';
-  import MdSearch from 'svelte-icons/md/MdSearch.svelte';
+  // import MdSearch from 'svelte-icons/md/MdSearch.svelte';
   import { PlayerPos, PlayerLocation, PlayerUpdate } from './game/playerState';
   import FriendAction from './components/friendaction.svelte';
   import ArtworkLoader from './components/artworkLoader.svelte';
   import {
     ListFriends,
-    addFriend,
+    // addFriend,
     setLoader,
     convertImage,
     getAccount,
@@ -28,8 +28,8 @@
   let friends = [];
   let friendRequests = [];
   let friendRequestsPending = [];
-  const ID = '';
-  let Username;
+  // const ID = '';
+  // let Username;
 
   async function load() {
     setLoader(true);
@@ -79,9 +79,9 @@
     const friendHomeLocation = friendAccount.metadata.Azc;
     // get home object of friend to get pos of that home
     const friendHome = await getObject('home', friendHomeLocation, row.user.id);
-    console.log('friendHome: ', friendHome.value);
-    console.log('playerPosX: ', friendHome.value.posX);
-    console.log('playerPosY: ', friendHome.value.posY);
+    // console.log('friendHome: ', friendHome.value);
+    // console.log('playerPosX: ', friendHome.value.posX);
+    // console.log('playerPosY: ', friendHome.value.posY);
 
     PlayerLocation.set({
       scene: friendHomeLocation,
@@ -213,10 +213,10 @@ which is not possible out of the box so we would have to write our own search --
 <!-- <h1>Pending friend requests</h1>
   <SvelteTable columns="{columns}" rows="{friendRequestsPending}" classNameTable="profileTable"></SvelteTable> -->
 <style>
-  .search > button {
+  /* .search > button {
     width: 25px;
     padding: 3px 3px;
     margin: 0px 0;
     border-radius: 7px;
-  }
+  } */
 </style>
