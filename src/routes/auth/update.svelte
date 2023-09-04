@@ -52,7 +52,7 @@
   onMount(() => {
     if (params.user) {
       getFullAccount(params.user).then((account) => {
-        console.log("account", account);
+        console.log('account', account);
         username = account.name;
         role = account.meta.Role || 'speler';
         azc = account.meta.Azc;
@@ -169,7 +169,7 @@
             id="Displayname"
             bind:value="{Displayname}"
           />
-              
+
           <label for="Role">
             <b>{$_('register.role')}</b>
           </label>
@@ -189,7 +189,7 @@
               <option value="{locatie}">{locatie}</option>
             {/each}
           </select>
-          
+
         {/if}
         <button type="submit" class="registerbtn" disabled="{!formValid}"
           >Update</button
