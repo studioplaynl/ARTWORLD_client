@@ -72,7 +72,7 @@
 
   $: {
     // when the currenFrame changes, clear the drawingCanvas
-    // dlog('currentFrame: ', currentFrame);
+    dlog('currentFrame: ', currentFrame);
     // reset the undo array
     switchingFrame();
   }
