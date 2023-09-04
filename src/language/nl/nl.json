@@ -31,8 +31,8 @@
     },
     "update": {
         "title": "Update deze gebruiker",
-        "addLocation": "Voeg locatie toe",
-        "userLocation": "gebruikers locatie's"
+        "addLocation": "object: maak of update",
+        "userLocation": "gebruikers' objecten"
     },
     "role": {
         "admin": "Admin",
