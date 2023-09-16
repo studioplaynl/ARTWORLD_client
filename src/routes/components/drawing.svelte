@@ -17,13 +17,13 @@
 
 <style>
   .artwork {
-    height: 150px;
-    width: 150px;
+    height: 5rem;
+    width: 5rem;
     overflow: hidden;
     position: relative;
   }
   .artwork > img {
-    height: 150px;
+    height: 5rem;
     position: absolute;
     left: 0;
     top: 0;

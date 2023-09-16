@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="100"
+   height="100"
+   viewBox="0 0 26.458333 26.458334"
+   version="1.1"
+   id="svg1456"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="send_plane_flat2_square.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1458"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     units="px"
+     inkscape:zoom="4.2280779"
+     inkscape:cx="36.896198"
+     inkscape:cy="86.800671"
+     inkscape:window-width="2181"
+     inkscape:window-height="1531"
+     inkscape:window-x="2570"
+     inkscape:window-y="342"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1453" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#7300eb;stroke-width:0.0607723;fill-opacity:1"
+       d="m 0.15608731,24.500801 c -0.0226877,-0.04832 -0.0449191,-0.161826 -0.0493972,-0.252234 -0.004457,-0.09041 0.74738945,-2.459877 1.67082599,-5.265489 L 3.4564897,13.88197 14.951323,13.83525 26.446154,13.78853 13.685023,19.320292 C 0.01908574,25.244268 0.59888981,25.01063 0.31193834,24.709084 0.24892642,24.642846 0.17878561,24.54912 0.15608731,24.500808 Z M 1.7079854,7.4027956 C 0.7708387,4.621731 0.00773447,2.2713823 0.01219878,2.1797985 0.01665567,2.0882095 0.08586479,1.9266982 0.16597842,1.8208736 0.47278851,1.4155992 -0.43864097,1.0632163 13.635036,7.0283957 l 12.805724,5.4277523 -11.473582,0.0468 C 8.6567067,12.52869 3.4752097,12.52939 3.4527395,12.504537 3.4302429,12.479685 2.6451301,10.18389 1.7079854,7.4028242 Z"
+       id="path4635" />
+  </g>
+</svg>

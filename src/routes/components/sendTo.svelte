@@ -1,0 +1,372 @@
+<script>
+  // eslint-disable-next-line no-unused-vars
+  import { createEventDispatcher, onMount } from 'svelte';
+  import { dlog } from '../../helpers/debugLog';
+  import SendArtMail from './sendArtMail.svelte';
+  import { returnSameTypeApps, returnAppIconUrl, PERMISSION_READ_PUBLIC } from '../../constants';
+  import { getRandomName,
+    uploadImage,
+    getDateAndTimeFormatted,
+    getFile,
+    getObject,
+  } from '../../helpers/nakamaHelpers';
+
+  export let row = null;
+  // eslint-disable-next-line svelte/valid-compile
+  export let col = null;
+  // eslint-disable-next-line svelte/valid-compile
+  export let isCurrentUser = null;
+  export let rowIndex = -1;
+  let sendToApps = null;
+  let selectedSendTo = null;
+  let sendFromAppIconUrl = null;
+  let hasSent = false;
+  // dispatch an event to hide/ show other elements of the SvelteTable
+  const dispatch = createEventDispatcher();
+
+  let toggleMode = true;
+let displayName = '';
+
+  async function toggle() {
+    /* get sendToApps when we open the SendTo component
+    * as an array of app names */
+    if (toggleMode) {
+      /* get the icons of the apps the user can send art to
+      * it checks the type of art it is currently in
+      * then it gets the apps icons of similar art types
+      * the icons can be round, square, square with a border */
+      sendToApps = returnSameTypeApps(row.collection);
+    }
+
+    toggleMode = !toggleMode;
+    /* open/ close the panel depending on state in the parent component */
+    dispatch('toggleComponents', { rowIndex, toggleMode });
+  }
+
+  function close() {
+    toggleMode = !toggleMode;
+    /* close the panel in the parent component */
+    dispatch('toggleComponents', { rowIndex, toggleMode });
+  }
+
+  const optionIdentifier = 'id';
+  const labelIdentifier = 'username';
+
+  const items = [];
+
+  let value;
+
+  onMount(() => {
+    console.log('row: ', row);
+    /* we want to show the app icon from where we send */
+    sendFromAppIconUrl = returnAppIconUrl(row.collection, 'square');
+    console.log('sendFromAppIconUrl: ', sendFromAppIconUrl);
+    if (rowIndex) {
+      /* send a message back to the parent to close the other
+      * options in the row */
+      dispatch('toggleComponents', { rowIndex, toggleMode });
+    }
+  });
+
+    /** Load file information from server and return object with */
+  async function getFileInformation(collectionName, userId, key) {
+    if (userId && key) {
+      try {
+        const loadingObject = await getObject(collectionName, key, userId);
+
+        // TODO: Het kan zijn dat een object leeg terugkomt. Dan staan wellicht de permissies fout.
+
+        if (loadingObject) {
+          // dlog('loadingObject', loadingObject);
+          const file = await getFile(loadingObject.value.url);
+          // dlog('loadingObject', loadingObject);
+          // set the displayName, so it can also be changed in the Drawing app
+          displayName = loadingObject.value.displayname;
+          dlog(
+            'loadingObject.permission_read: ',
+            loadingObject.permission_read,
+          );
+          return {
+            key,
+            userId,
+            loaded: true,
+            new: false,
+            displayName: loadingObject.value.displayname,
+            type: loadingObject.collection,
+            // status: loadingObject.permission_read === PERMISSION_READ_PUBLIC,
+            status: loadingObject.permission_read,
+            url: file,
+            awsUrl: loadingObject.value.url,
+            frames: 1,
+          };
+        }
+      } catch (error) {
+        dlog('error', error);
+        return {
+          key,
+          userId,
+          loaded: false,
+          new: false,
+        };
+      }
+    }
+
+    return {
+      loaded: false,
+      new: false,
+    };
+  }
+
+  async function send() {
+    // const data = {
+    //   user_id: row.user_id,
+    //   key: row.key,
+    //   username: row.username,
+    //   previewUrl: row.value.previewUrl,
+    //   url: row.value.url,
+    // };
+    // dlog('data: ', data);
+
+    // Step 1: Download the artwork info
+    const currentFile = await getFileInformation(row.collection, row.user_id, row.key);
+
+    if (!currentFile.loaded) {
+      dlog('Unable to load the file.');
+      return;
+    }
+
+    // Step 2: Get the blob data from the file URL
+    const fileUrl = await getFile(currentFile.awsUrl);
+
+    if (!fileUrl) {
+      dlog('Failed to get the file URL.');
+      return;
+    }
+
+    const response = await fetch(fileUrl);
+    const blobData = await response.blob();
+    // const response = await fetch(fileUrl);
+
+    if (!blobData) {
+      dlog('Failed to fetch the blob data.');
+      return;
+    }
+
+    // Generate new attributes for the file
+    displayName = await getRandomName();
+    currentFile.key = `${getDateAndTimeFormatted()}_${displayName}`;
+    currentFile.type = selectedSendTo;
+    currentFile.status = PERMISSION_READ_PUBLIC;
+
+    // Step 3: Upload the image
+    const uploadedUrl = await uploadImage(
+      currentFile.key,
+      currentFile.type,
+      blobData,
+      currentFile.status,
+      0,
+      currentFile.displayName,
+    );
+
+    if (!uploadedUrl) {
+      dlog('Failed to upload the image.');
+      return;
+    }
+
+    /* the object associated with the uploaded file
+    *  is created in the uploadImage function
+    */
+
+    hasSent = true;
+    // Close the modal or panel
+    // close();
+  }
+
+
+  function handleSendTo(sendToApp) {
+    // console.log('sendToApp: ', sendToApp);
+    selectedSendTo = sendToApp;
+    /* if we have send and select an other app we should
+    * be able to send again
+    */
+    hasSent = false;
+  }
+
+</script>
+
+<div class="flex-container">
+  {#if toggleMode}
+    <button on:click="{toggle}" class="sendButton">
+      <img
+        alt="open send art options"
+        class="icon"
+        src="/assets/svg/icon/send_art_square.svg"
+      />
+    </button>
+  {:else}
+    <div class='row'>
+      <button on:click="{toggle}" class="sendButton">
+        <img
+        alt="open send art options"
+        class="icon"
+        src="/assets/svg/icon/send_art_square.svg"
+        />
+      </button>
+      <button on:click="{close}" class="sendButton close-btn">
+        <img
+        alt="close send art options"
+        class="icon"
+        src="/assets/SHB/svg/AW-icon-cross.svg"
+        />
+      </button>
+    </div> <!-- div row-->
+
+
+    <div class='row'>
+      <!-- for each sendToApp we make a button with image -->
+      {#each sendToApps as app}
+          <button class="sendButton {selectedSendTo === app ? 'selected' : ''}"
+          on:click={() => handleSendTo(app)} >
+            <img class="icon" src={returnAppIconUrl(app, 'square')} alt={app} />
+          </button>
+      {/each}
+      <button
+        on:click={() => handleSendTo('artMail')}
+        class="sendButton {selectedSendTo === 'artMail' ? 'selected' : ''}">
+        <img
+            alt="send as house art"
+            class="icon"
+            src="/assets/svg/icon/send_to_person.svg"
+          />
+      </button>
+    </div> <!-- div row-->
+
+    {#if selectedSendTo}
+    <div class="row">
+        {#if selectedSendTo === 'artMail'}
+        <SendArtMail row="{row}" />
+        {:else}
+        <div class="send-icon-row">
+            <img class="icon" src="{sendFromAppIconUrl}" alt="From app icon" />
+
+            <!-- show when the artwork has been send -->
+            {#if hasSent}
+            <img class="icon" src="/assets/svg/icon/send_art_square.svg" alt="Send art square icon" />
+            {/if}
+
+            <img class="icon" src={returnAppIconUrl(selectedSendTo, 'square')} alt={selectedSendTo} />
+
+            <div class="sendButtonContainer">
+              {#if !hasSent}
+                <button on:click="{send}" class="sendButton">
+                    <img src="/assets/SHB/svg/AW-icon-next.svg" alt="Send art mail to friend" class="sendIcon" />
+                </button>
+              {:else}
+                    <img src="/assets/SHB/svg/AW-icon-check.svg" alt="Mail Sent" class="checkIcon" />
+                {/if}
+            </div>
+        </div>
+        {/if}
+    </div>
+    {/if}
+  {/if}
+</div> <!-- div flex-container-->
+
+<style>
+  .selected {
+    border-radius: 50%;
+    border: 8px solid #7300ed;
+  }
+
+  .send-icon-row {
+    display: flex;
+    align-items: center;
+    /* flex-direction: column; */
+    gap: 6px; /* space between items */
+  }
+
+  .send-icon-row > .icon:first-child {
+      width: 40px;   /* Adjust this value to your preference for the "bigger" size */
+  }
+
+  .send-icon-row > .icon:nth-child(2) {
+      width: 40px;   /* Adjust this value to your preference for the "smaller" size */
+  }
+
+  .send-icon-row > .icon:nth-child(3) {
+      width: 40px;   /* Adjust this value to your preference for the "same as the first" size */
+  }
+
+  .sendIcon{
+    border-radius: 50%;
+    box-shadow: 5px 5px 0px #7300ed;
+  }
+  .sendButton {
+      background-color: white;
+      /* Adding shadow to the button */
+      /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  */
+      /* Smoothens the transition during hover and active states */
+      /* transition: transform 0.3s, box-shadow 0.3s;  */
+  }
+
+  .sendButtonContainer {
+    width: 40px;
+      /* display: flex;
+      align-items: center;
+      position: absolute;
+      right: -10%; /* adjust this value to position the send button as desired */
+      /* bottom: 50%; vertically centers the button with respect to the icon stack */
+  }
+
+  /* Hover State */
+  .sendButton:hover {
+      /* Example: Change background color slightly on hover */
+      /* background-color: rgba(240, 240, 240);  */
+
+      /* Optional: "Lift" effect on hover */
+      /* transform: scale(1.1); */
+      /* box-shadow: 5px 5px 0px #7300ed; */
+    }
+
+  /* Active/Pressed State */
+  .sendButton:active {
+      /* Simulate a pressed effect by scaling down the button slightly */
+      transform: scale(0.98);
+
+      /* You can also adjust the shadow to give a "pressed" depth effect */
+      /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  }
+
+  .flex-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 100%;
+  }
+  .checkIcon {
+    /* position: relative;
+    top: -8rem;
+    right: -4rem;
+    width: 2rem;
+    height: 2rem;
+    z-index: 999; */
+    border-radius: 50%;
+    /* box-shadow: 5px 5px 0px #7300ed; */
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .close-btn {
+    order: 2; /* Ensures the close button always goes to the end */
+  }
+
+  .icon{
+    width: 40px;
+    max-width: 40px;
+  }
+</style>

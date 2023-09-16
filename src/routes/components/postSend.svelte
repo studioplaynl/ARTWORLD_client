@@ -68,10 +68,11 @@
 
 <style>
   button.sendButton {
-    width: 45px;
-    border-radius: 5px;
+    width: 4rem;
+    border-radius: 1px;
   }
   .selectBox {
-    width: 150px;
+    width: 15rem;
   }
+
 </style>

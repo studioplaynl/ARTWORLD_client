@@ -37,7 +37,7 @@
 
   import gameConfig from './routes/game/gameConfig';
   import { PlayerPos, PlayerLocation } from './routes/game/playerState';
-  import { DEFAULT_APP } from './routes/apps/apps';
+  import { DEFAULT_APP } from './constants';
 
   let game;
   let mounted = false;

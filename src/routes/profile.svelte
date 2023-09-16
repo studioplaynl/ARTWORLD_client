@@ -16,7 +16,7 @@
  */
 
   import SvelteTable from 'svelte-table';
-  import { push } from 'svelte-spa-router';
+  // import { push } from 'svelte-spa-router';
 
   import { ArtworksStore, AvatarsStore } from '../storage';
   import {
@@ -47,6 +47,7 @@
   export let userID = null;
   let avatar;
   let house;
+  let columns = [];
 
   const drawingIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
@@ -56,6 +57,8 @@
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
   const videoIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
+  const animalChallengeIcon = '<img class="icon" src="/assets/svg/apps/animalChallenge-icon.svg" />';
+  const flowerChallengeIcon = '<img class="icon" src="/assets/svg/apps/flowerChallenge-icon.svg" />';
 
   let loader = true;
   let useraccount;
@@ -65,86 +68,8 @@
   let CurrentUser;
   let usernameEditable = false;
   let usernameIsEditting = false;
+  let store;
 
-  const columns = [
-    {
-      key: 'Soort',
-      title: '',
-      value: (v) => {
-        if (v.collection === 'drawing') {
-          return drawingIcon;
-        }
-        if (v.collection === 'stopmotion') {
-          return stopMotionIcon;
-        }
-        if (v.collection === 'audio') {
-          return AudioIcon;
-        }
-        if (v.collection === 'video') {
-          return videoIcon;
-        }
-        return null;
-      },
-      sortable: true,
-    },
-    {
-      key: 'voorbeeld',
-      title: '',
-
-      renderComponent: {
-        component: ArtworkLoader,
-        props: {
-          clickable: true,
-        },
-      },
-    },
-    // {
-    //   key: 'title',
-    //   title: '',
-    //   renderComponent: { component: NameEdit, props: { isCurrentUser } },
-    // },
-    {
-      key: 'post',
-      title: '',
-      renderComponent: {
-        component: postSend,
-        props: {
-          isCurrentUser,
-        },
-      },
-    },
-    // {
-    //   key: 'Datum',
-    //   title: '',
-    //   value: (v) => {
-    //     const d = new Date(v.update_time);
-    //     eslint-disable-next-line max-len
-    //     return `${d.getHours()}:${d.getMinutes() < 10 ? '0' : ''}${d.getMinutes()} ${d.getDate() < 10 ? '0' : ''}${d.getDate()}/${d.getMonth() + 1}`;
-    //   },
-    //   sortable: true,
-    // },
-    {
-      key: true,
-      title: '',
-      class: 'iconWidth',
-      renderComponent: {
-        component: StatusComp,
-        props: {
-          isCurrentUser,
-        },
-      },
-    },
-    {
-      key: 'Delete',
-      title: '',
-      renderComponent: {
-        component: DeleteComp,
-        props: {
-          isCurrentUser,
-        },
-      },
-    },
-  ];
 
   // remove forbidden characters from username reactively
   $: if (hasSpecialCharacter(username)) {
@@ -169,10 +94,101 @@
     if ($Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator') {
       dlog('$Profile.meta.Role: ', $Profile.meta.Role);
       await ArtworksStore.loadArtworks(id);
+      store = ArtworksStore;
     } else {
       await ArtworksStore.loadArtworks(id, 100);
+      store = ArtworksStore;
+      console.log('$store: ', $store);
     }
     loader = false;
+
+    columns = [
+      {
+        key: 'Soort',
+        title: '',
+        value: (v) => {
+          if (v.collection === 'drawing') {
+            return drawingIcon;
+          }
+          if (v.collection === 'stopmotion') {
+            return stopMotionIcon;
+          }
+          if (v.collection === 'audio') {
+            return AudioIcon;
+          }
+          if (v.collection === 'video') {
+            return videoIcon;
+          }
+          if (v.collection === 'animalchallenge') {
+            return animalChallengeIcon;
+          }
+          if (v.collection === 'flowerchallenge') {
+            return flowerChallengeIcon;
+          }
+          return null;
+        },
+        sortable: true,
+      },
+      {
+        key: 'voorbeeld',
+        title: '',
+
+        renderComponent: {
+          component: ArtworkLoader,
+          props: {
+            clickable: true,
+          },
+        },
+      },
+      // {
+      //   key: 'title',
+      //   title: '',
+      //   renderComponent: { component: NameEdit, props: { isCurrentUser } },
+      // },
+      {
+        key: 'post',
+        title: '',
+        renderComponent: {
+          component: postSend,
+          props: {
+            isCurrentUser,
+          },
+        },
+      },
+      // {
+      //   key: 'Datum',
+      //   title: '',
+      //   value: (v) => {
+      //     const d = new Date(v.update_time);
+      //     eslint-disable-next-line max-len
+      //     return `${d.getHours()}:${d.getMinutes() < 10 ? '0' : ''}${d.getMinutes()} ${d.getDate() < 10 ? '0' : ''}${d.getDate()}/${d.getMonth() + 1}`;
+      //   },
+      //   sortable: true,
+      // },
+      {
+        key: true,
+        title: '',
+        class: 'iconWidth',
+        renderComponent: {
+          component: StatusComp,
+          props: {
+            store,
+            isCurrentUser,
+          },
+        },
+      },
+      {
+        key: 'Delete',
+        title: '',
+        renderComponent: {
+          component: DeleteComp,
+          props: {
+            store,
+            isCurrentUser,
+          },
+        },
+      },
+    ];
   }
 
   async function loadAvatars() {
@@ -185,9 +201,11 @@
   }
 
   async function getUser() {
-    // we get the user NAME AVATAR and HOME
+    // we get the user NAME, AVATAR and HOME
     // if display_name = '' or null then the user can set the NAME
 
+    // TODO here we are getting user account again
+    // but we should have it in $Profile
     if (!!params.user || !!userID) {
       CurrentUser = false;
       id = params.user || userID;
@@ -209,13 +227,13 @@
       } else {
         house = '';
       }
+      // TODO here we are getting user account again
+    // but we should have it in $Profile
     } else {
       CurrentUser = true;
       id = $Session.user_id;
       useraccount = await getAccount();
-      // dlog('useraccount', useraccount);
-      // username = useraccount.display_name;
-      // username = useraccount.username;
+      console.log('useraccount: ', useraccount);
     }
 
     // we check if the user has a display_name
@@ -230,7 +248,7 @@
       // the user can set the display_name
       usernameEditable = true;
       username = useraccount.username;
-      // TODO:
+      //
       /*
       The user can only change the name once
       the admin can put the username is a changeable state by making the display_name ''
@@ -251,18 +269,20 @@
 
   // loadArtworks();
 
-  function goTo(evt) {
-    if (evt.detail.key === 'voorbeeld' && evt.detail.row.value) {
-      push(
-        `/${evt.detail.row.collection}?userId=${evt.detail.row.user_id}&key=${evt.detail.row.key}`,
-      );
-    }
-  }
+  // function goTo(evt) {
+  //   if (evt.detail.key === 'voorbeeld' && evt.detail.row.value) {
+  //     push(
+  //       `/${evt.detail.row.collection}?userId=${evt.detail.row.user_id}&key=${evt.detail.row.key}`,
+  //     );
+  //   }
+  // }
 </script>
 
 {#if !loader}
   <main>
     <div class="profilePageContainer">
+
+      <!-- user name, avatar picker, house picker -->
       <div class="profilePage-top">
         <br />
         <br />
@@ -320,8 +340,9 @@
         {:else}
           <h1>{username}</h1>
         {/if}
-        <br />
+      <br />
 
+<!-- avatar picker, house picker -->
         {#if CurrentUser}
           <span class="splitter"></span>
           <br />
@@ -336,13 +357,14 @@
           <img src="{house}" alt="avatar" />
         {/if}
       </div>
+
+<!-- list of artworks, and trash can -->
       <div class="profilePage-bottom">
         <!-- list of artworks with send mail, visibility and delete buttons -->
         <SvelteTable
           columns="{columns}"
           rows="{filteredArt}"
           classNameTable="profileTable"
-          on:clickCell="{goTo}"
         />
         <!-- artworks in the trash -->
         {#if CurrentUser && deletedArt.length}
@@ -379,8 +401,8 @@
     /* float: right; */
   }
   .icon {
-    max-width: 40px;
-    height: 40px;
+    max-width: 4rem;
+    height: 4rem;
     float: left;
     margin-left: 0.3em;
     /* margin-top: 5px; */
@@ -391,7 +413,8 @@
     position: relative;
   }
 
-  :global(.deletedTable tbody tr:after) {
+  /* line across deleted item in trash */
+  /* :global(.deletedTable tbody tr:after) {
     content: '';
     position: absolute;
     bottom: 50%;
@@ -400,7 +423,7 @@
     right: 0;
     opacity: 1;
     background-color: gray;
-  }
+  } */
 
   .profilePage-bottom {
     margin: 0 auto;

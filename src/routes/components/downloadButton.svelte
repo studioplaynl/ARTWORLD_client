@@ -3,7 +3,7 @@
   export let row;
   // const role = $Profile.meta.Role; // ;
   const name = `${row.username}_${row.update_time}_${row.key}_${row.value.displayname}.png`;
-  const image = `${window.location.origin}/proxy/${row.value.url}`;
+  const image = `${window.location.origin}/${row.value.url}`;
 </script>
 
 <main>

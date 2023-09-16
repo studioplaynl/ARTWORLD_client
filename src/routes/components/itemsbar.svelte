@@ -1,5 +1,7 @@
 <script>
-  import { location, push } from 'svelte-spa-router';
+  import { location,
+    // push
+  } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
   import {
@@ -12,12 +14,13 @@
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
   import MailPage from '../mail.svelte';
+  import AppsGroup from './appsGroup.svelte';
   import { Profile, ShowItemsBar } from '../../session';
   import Awards from '../awards.svelte';
   import { Addressbook, myHome } from '../../storage';
   import { clickOutside } from '../../helpers/clickOutside';
   import {
-    PlayerHistory,
+    // PlayerHistory,
     PlayerPos,
     PlayerLocation,
     PlayerUpdate,
@@ -143,6 +146,10 @@
     current = current === 'awards' ? null : 'awards';
   }
 
+  function toggleAppGroup() {
+    current = current === 'appsGroup' ? null : 'appsGroup';
+  }
+
   function clickOutsideUser() {
     if (enableclickOutsideListener) {
       ShowItemsBar.set(false);
@@ -240,6 +247,15 @@
       </button>
 
       <button
+       on:click="{toggleAppGroup}">
+      <img
+          class="icon"
+          src="/assets/svg/apps/appsgroup-icon-round2.svg"
+          alt="open app containter"
+        />
+      </button>
+
+      <!-- <button
         on:click="{() => {
           // toggleLiked();
           const value = '/drawing';
@@ -247,7 +263,7 @@
           PlayerHistory.push(value);
         }}"
       >
-        <img
+      <img
           class="icon"
           src="assets/SHB/svg/AW-icon-drawing.svg"
           alt="Start drawing!"
@@ -285,7 +301,7 @@
           src="assets/SHB/svg/AW-icon-sound.svg"
           alt="Start mariosound!"
         />
-      </button>
+      </button> -->
 
       <button on:click="{toggleLiked}">
         <img
@@ -318,6 +334,8 @@
         <FriendsPage />
       {:else if current === 'awards'}
         <Awards />
+      {:else if current === 'appsGroup'}
+        <AppsGroup />
       {/if}
     </div>
   </div>
@@ -335,7 +353,6 @@
     background-color: white;
     text-align: center;
     border-radius: 40px;
-    /* border: 2px solid #7300ed; */
     box-shadow: 5px 5px 0px #7300ed;
     padding: 14px 14px 14px 18px;
     position: fixed;

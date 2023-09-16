@@ -1,11 +1,14 @@
 <script>
-      /**
+/**
  * @file imagePicker.svelte
  * @author Lindsey, Maarten
  *
  *  What is this file for?
  *  ======================
- *  imagePicker.svelte is for show available avatars and homes
+ *  imagePicker.svelte is used for pick an avatar or house
+ *  it shows the available avatars and houses
+ *  the player can choose one, or make a new one
+ *
  *  it resides in the items bar, more specifically the profile.svelte page
  *
  *  The overall structure is:
@@ -115,6 +118,7 @@
   }
 
   function addNew() {
+    // open the relevant app
     const value = `/${dataType}`;
     push(value);
     PlayerHistory.push(value);
@@ -231,8 +235,8 @@
   }
 
   .addNew {
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;

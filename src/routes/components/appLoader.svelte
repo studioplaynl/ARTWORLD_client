@@ -23,9 +23,8 @@
     updateObject,
     // updateTitle,
   } from '../../helpers/nakamaHelpers';
-  import { isValidApp, DEFAULT_APP } from '../apps/apps';
   import { PlayerHistory } from '../game/playerState';
-  import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC } from '../../constants';
+  import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC, isValidApp, DEFAULT_APP } from '../../constants';
 
   import AppContainer from './appContainer.svelte';
   import Preview from '../apps/preview.svelte';
@@ -70,7 +69,6 @@
 
     // Update the parsedQuery (used in various places)
     parsedQuery = parse($querystring);
-
     if (
       isValidLoaderApp($CurrentApp) && // Dont run on the game
       isValidQuery(parsedQuery) // AND when the query is valid (to open an existing file)
@@ -382,10 +380,10 @@
   }
 
   async function saveToFile() {
-    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar') {
+    if ($CurrentApp === 'stopmotion' || $CurrentApp === 'avatar' || $CurrentApp === 'animalchallenge') {
       await drawing.saveHandler();
       downloadImage();
-    } else if ($CurrentApp === 'drawing' || $CurrentApp === 'house') {
+    } else if ($CurrentApp === 'drawing' || $CurrentApp === 'house' || $CurrentApp === 'flowerchallenge') {
       downloadImage();
     }
   }
@@ -425,7 +423,7 @@
   on:saveToFile="{() => saveToFile()}"
 >
   {#if (userIsOwner && currentFile.loaded) || currentFile.new}
-    {#if $CurrentApp === 'drawing' || $CurrentApp === 'house'}
+    {#if $CurrentApp === 'drawing' || $CurrentApp === 'house' || $CurrentApp === 'flowerchallenge'}
       <Drawing
         file="{currentFile}"
         bind:data="{data}"
@@ -434,7 +432,7 @@
         bind:this="{drawing}"
         on:save="{saveData}"
       />
-    {:else if $CurrentApp === 'stopmotion' || $CurrentApp === 'avatar'}
+    {:else if $CurrentApp === 'stopmotion' || $CurrentApp === 'avatar' || $CurrentApp === 'animalchallenge'}
       <Stopmotion
         file="{currentFile}"
         bind:data="{data}"
@@ -446,6 +444,7 @@
     {:else if $CurrentApp === 'mariosound'}
       <Mariosound />
     {/if}
+    <!-- if the file is loaded but the player is not the owner then we se a big preview -->
   {:else if currentFile.loaded}
     <Preview file="{currentFile}" />
   {/if}

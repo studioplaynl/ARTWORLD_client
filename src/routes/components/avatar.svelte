@@ -97,7 +97,7 @@
 
 <style>
   .avatarContainer {
-    max-width: 1005%;
+    max-width: 100%;
     display: flex;
   }
 

@@ -8,7 +8,7 @@
  *  Svelte stores <=> Phaser game relationship via the URL
  *
  *  In general it works like this:
- *  - Selecting an App should be done by manipulating the CurrentApp store directly
+ *  - Selecting an App should be done by manipulating the URL directly
  *  - Any changes made to the Game state, should be made by directly manipulating these Svelte stores:
  *    - PlayerPos
  *    - PlayerLocation
@@ -31,21 +31,14 @@ import {
 import { CurrentApp } from '../../../session';
 import {
   DEFAULT_HOME, DEFAULT_ZOOM, SCENE_INFO, ZOOM_MAX, ZOOM_MIN, AVATAR_BASE_SIZE,
+  DEFAULT_APP, isValidApp,
 } from '../../../constants';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
-import { DEFAULT_APP, isValidApp } from '../../apps/apps';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ManageSession from '../ManageSession';
 
-
 const { Phaser } = window;
-
-// TODO get the max from current scene
-let minX = -5000;
-let minY = -5000;
-let maxX = 5000;
-let maxY = 5000;
 
 let previousQuery = {};
 
@@ -181,10 +174,10 @@ export function parseQueryString() {
       const currentSceneSize = new Phaser.Math.Vector2(sceneInfo.sizeX, sceneInfo.sizeY);
 
       const avatarHalfSize = AVATAR_BASE_SIZE / 2;
-      minX = -(currentSceneSize.x / 2) + avatarHalfSize;
-      maxX = (currentSceneSize.x / 2) - avatarHalfSize;
-      minY = -(currentSceneSize.y / 2) + avatarHalfSize;
-      maxY = (currentSceneSize.y / 2) - avatarHalfSize;
+      const minX = -(currentSceneSize.x / 2) + avatarHalfSize;
+      const maxX = (currentSceneSize.x / 2) - avatarHalfSize;
+      const minY = -(currentSceneSize.y / 2) + avatarHalfSize;
+      const maxY = (currentSceneSize.y / 2) - avatarHalfSize;
 
       const queryX = parseInt(query.x, 10);
       const queryY = parseInt(query.y, 10);

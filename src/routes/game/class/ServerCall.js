@@ -378,8 +378,13 @@ class ServerCall {
     } else {
       await listAllObjects(type, location).then((rec) => {
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
-        // dlog('serverItemsArray: ', type, location, serverItemsArray);
+        serverItemsArray.array = rec
+          .filter((obj) => obj.permission_read === 2)
+          .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
+        // sorting by update_time in descending order
+
+        serverItemsArray.array.forEach((element) => console.log(element.update_time));
+        dlog('serverItemsArray: ', type, location, serverItemsArray);
         ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
     }

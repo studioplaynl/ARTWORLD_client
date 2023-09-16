@@ -11,14 +11,14 @@
     deleteObjectAdmin,
     updateObjectAdmin,
   } from '../../helpers/nakamaHelpers';
-  // import { APPS } from '../apps/apps'
   import { Session, Profile } from '../../session';
   import StatusComp from '../components/statusbox.svelte';
   import DeleteComp from '../components/deleteButton.svelte';
   import DownloadComp from '../components/downloadButton.svelte';
   import NameEdit from '../components/nameEdit.svelte';
 
-  const APPS = ['drawing', 'stopmotion', 'avatar', 'house'];
+  // const APPS = ['drawing', 'stopmotion', 'avatar', 'house'];
+
   let SelectedApp = 'drawing';
   let cursor;
   let history = [];

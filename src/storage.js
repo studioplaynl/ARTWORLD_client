@@ -179,13 +179,173 @@ export const Addressbook = {
   },
 };
 
+// Stores one type of Artwork
+export function createArtworksStore(type) {
+  const store = writable([]);
+  return {
+    subscribe: store.subscribe,
+    set: store.set,
+    update: store.update,
 
+    async loadArtworks(id, limit) {
+      const typePromises = [];
+      let loadedArt = [];
+
+      // One promise per type..
+      typePromises.push(new Promise((resolveType) => {
+        // A promise to load objects from the server
+        const loadPromise = new Promise((resolve) => {
+          if (limit !== undefined) {
+            listAllObjects(type, id).then((loaded) => resolve(loaded));
+          } else {
+            listObjects(type, id, limit).then((loaded) => resolve(loaded.objects));
+          }
+        });
+
+        // Objects were loaded, so update the preview URLs
+        loadPromise
+          .then(async (loaded) => {
+            // Execute a Promise in order to update preview URLS
+            this.updatePreviewUrls(loaded).then((updatedLoaded) => {
+              // Add the updated artworks to the loadedArt array
+              loadedArt = [...loadedArt, ...updatedLoaded];
+              // Resolve the Promise for this type
+              resolveType();
+            });
+          });
+      }));
+
+      // After all typePromises fulfilled, set data into store
+      Promise.all(typePromises).then(() => {
+        store.set(loadedArt);
+      });
+    },
+
+    /** Get a single Artwork by Key */
+    getArtwork: (key) => store.find((artwork) => artwork.key === key),
+
+    updateState: (row, state) => {
+      const {
+        collection, key, value, user_id,
+      } = row;
+
+      // Update on server
+      value.status = state;
+      const pub = false;
+      updateObject(collection, key, value, pub, user_id);
+
+      // Update store
+      store.update((artworks) => {
+        const artworksToUpdate = artworks;
+        const artworkIndex = artworks.findIndex((i) => i.key === key);
+        if (artworkIndex) {
+          artworksToUpdate[artworkIndex].value.status = state;
+        }
+        return [...artworksToUpdate];
+      });
+    },
+
+    /** Update the public read status of an Artwork
+     * @param row SvelteTable row
+     * @param publicRead New read status
+    */
+    updatePublicRead: async (row, publicRead) => {
+      const {
+        collection, key, value, user_id,
+      } = row;
+
+      // Update on server
+      await updateObject(collection, key, value, publicRead, user_id);
+
+      // Update on store
+      store.update((artworks) => {
+        const artworksToUpdate = artworks;
+        const artworkIndex = artworks.findIndex((artwork) => artwork.key === key);
+        if (artworkIndex > -1) {
+          artworksToUpdate[artworkIndex].permission_read = publicRead;
+        }
+        return [...artworksToUpdate];
+      });
+    },
+
+    /** Update the Preview URLs for images that are new, or have been updated
+   * @param artworks Array of artworks (plain JS)
+   * @return {Promise} A Promise that resolves an updated array of artworks that includes the
+  */
+    updatePreviewUrls: (artworks) => new Promise((resolvePreviewUrls) => {
+      const artworksToUpdate = artworks;
+      const existingArtworks = get(store);
+      const updatePromises = [];
+
+      artworksToUpdate.forEach(async (item, index) => {
+      // Check if artwork already existed, and if so, is it was outdated
+        const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
+        const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
+        const artwork = item;
+        artwork.permission_read = artwork.permission_read === PERMISSION_READ_PUBLIC;
+
+        // Only get a fresh URL if no previewUrl is available or when it has been updated
+        if (!artwork.value.previewUrl || outdatedArtwork) {
+          if (artwork.value.url) {
+            artwork.url = artwork.value.url.split('.')[0];
+          }
+
+          // Prepare a promise per update that resolves after setting the
+          updatePromises.push(new Promise((resolveUpdatePromise) => {
+            convertImage(
+              artwork.value.url,
+              DEFAULT_PREVIEW_HEIGHT,
+              DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+              'png',
+            ).then((val) => {
+            // Set the previewUrl value, update the array
+              artwork.value.previewUrl = val;
+              artworksToUpdate[index] = artwork;
+
+              // Then resolve this updatePromise
+              resolveUpdatePromise(val);
+            });
+          }));
+        }
+      });
+
+      // Resolve all updatePromises and resolve the main Promise
+      // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
+      Promise.all(updatePromises).then(() => {
+        resolvePreviewUrls(artworksToUpdate);
+      });
+    }),
+    /** Delete an Artwork
+     * @param row SvelteTable row
+     * @param {string} role User role
+    */
+    delete: (row, role) => {
+      const {
+        collection, key, user_id,
+      } = row;
+
+      // Remove from server
+      if (role === 'admin' || role === 'moderator') {
+        deleteObjectAdmin(user_id, collection, key);
+      } else {
+        deleteFile(collection, key, user_id);
+      }
+
+      // Remove from store
+      store.update((artworks) => artworks.filter((artwork) => artwork.key !== key));
+    },
+  };
+}
+
+// Usage example for creating different type-specific stores
+export const DrawingArtworksStore = createArtworksStore('drawing');
+export const VideoArtworksStore = createArtworksStore('video');
+export const AudioArtworksStore = createArtworksStore('audio');
 
 // Stores Artworks of user
 const artworksStore = writable([]);
 
 export const ArtworksStore = {
-
 
   subscribe: artworksStore.subscribe,
   set: artworksStore.set,
@@ -199,7 +359,7 @@ export const ArtworksStore = {
     const typePromises = [];
     let loadedArt = [];
 
-    const types = ['drawing', 'video', 'audio', 'stopmotion', 'picture'];
+    const types = ['drawing', 'video', 'audio', 'stopmotion', 'picture', 'animalchallenge', 'flowerchallenge'];
 
     types.forEach(async (type) => {
       // One promise per type..

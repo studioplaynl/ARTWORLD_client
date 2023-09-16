@@ -240,4 +240,70 @@ export const NOTIFICATION_ARTWORK_LIKE_RECEIVED = 1;
 export const NOTIFICATION_ARTWORK_RECEIVED = 2;
 export const NOTIFICATION_INVITE_RECEIVED = 3;
 
-export const ARTWORK_TYPES = ['stopmotion', 'drawing'];
+/** art apps */
+export const ARTWORK_TYPES = ['stopmotion', 'drawing', 'animalchallenge', 'flowerchallenge'];
+
+/** valid apps and some details about them
+ *  used for send to
+ */
+export const APPS = [
+  { app: 'game', artType: '', multiFrameDraw: null },
+  { app: 'house', artType: 'draw', multiFrameDraw: false },
+  { app: 'avatar', artType: 'draw', multiFrameDraw: true },
+  { app: 'drawing', artType: 'draw', multiFrameDraw: false },
+  { app: 'stopmotion', artType: 'draw', multiFrameDraw: true },
+  { app: 'animalchallenge', artType: 'draw', multiFrameDraw: true },
+  { app: 'flowerchallenge', artType: 'draw', multiFrameDraw: false },
+  { app: 'mariosound', artType: 'sound', multiFrameDraw: null },
+];
+
+const APP_ICONS = [
+  { app: 'house', iconUrl: '/assets/svg/apps/house-square-app.svg', type: 'square' },
+  { app: 'house', iconUrl: '/assets/SHB/svg/AW-icon-home.svg', type: 'round' },
+
+  { app: 'avatar', iconUrl: '/assets/svg/apps/avatar2-square-app.svg', type: 'square' },
+
+  { app: 'drawing', iconUrl: '/assets/SHB/svg/AW-icon-square-drawing.svg', type: 'square' },
+  { app: 'drawing', iconUrl: 'path/to/house/round.jpg', type: 'round' },
+
+  { app: 'stopmotion', iconUrl: '/assets/SHB/svg/AW-icon-square-animation.svg', type: 'square' },
+  { app: 'stopmotion', iconUrl: 'path/to/house/round.jpg', type: 'round' },
+
+  { app: 'animalchallenge', iconUrl: '/assets/svg/apps/animalChallenge-square-app.svg', type: 'square' },
+  { app: 'animalchallenge', iconUrl: '/assets/svg/apps/animalChallenge-icon.svg', type: 'round' },
+
+  { app: 'flowerchallenge', iconUrl: '/assets/svg/apps/flowerChallenge-icon.svg', type: 'round' },
+  { app: 'flowerchallenge', iconUrl: '/assets/svg/apps/flowerChallenge-square-app.svg', type: 'square' },
+
+  { app: 'musicgeneral', iconUrl: '/assets/SHB/svg/AW-icon-square-music.svg', type: 'square' },
+  { app: 'musicgeneral', iconUrl: '/assets/SHB/svg/AW-icon-sound.svg', type: 'round' },
+
+  { app: 'appgroup', iconUrl: '/assets/svg/apps/appsgroup-icon-round.svg', type: 'round' },
+];
+
+export function returnAppIconUrl(appName, type) {
+  const icon = APP_ICONS.find((iconFind) => iconFind.app === appName && iconFind.type === type);
+  return icon ? icon.iconUrl : '';
+  // Return an empty string or a default path if not found
+}
+
+export function isValidApp(app) {
+  return APPS.some((entry) => entry.app === app);
+}
+
+export function returnSameTypeApps(targetApp) {
+  // Find the target app details
+  const appDetails = APPS.find((app) => app.app === targetApp);
+
+  // Check if the app exists
+  if (!appDetails) {
+    return [];
+  }
+
+  // Filter and return the similar apps
+  return APPS.filter((app) => app.artType === appDetails.artType
+    && app.multiFrameDraw === appDetails.multiFrameDraw
+    && app.app !== targetApp).map((app) => app.app); // returning only the app names
+}
+
+export const DEFAULT_APP = 'game';

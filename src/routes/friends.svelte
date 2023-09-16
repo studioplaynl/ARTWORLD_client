@@ -73,15 +73,11 @@
 
     // get user account
     const friendAccount = await getAccount(row.user.id);
-    // console.log('friendAccount: ', friendAccount);
     // in the friendAccount.meta:
     // metadata.Azc
     const friendHomeLocation = friendAccount.metadata.Azc;
     // get home object of friend to get pos of that home
     const friendHome = await getObject('home', friendHomeLocation, row.user.id);
-    // console.log('friendHome: ', friendHome.value);
-    // console.log('playerPosX: ', friendHome.value.posX);
-    // console.log('playerPosY: ', friendHome.value.posY);
 
     PlayerLocation.set({
       scene: friendHomeLocation,
@@ -89,8 +85,6 @@
 
     // check if there is posX and posY from the home object
     if (typeof friendHome.value.posX !== 'undefined' && typeof friendHome.value.posY !== 'undefined') {
-      console.log('set player x and y');
-
       // place user next to nameplate of home
       const playerPosX = friendHome.value.posX - 80;
       const playerPosY = friendHome.value.posY - 100;
@@ -108,21 +102,6 @@
         y: -100,
       });
     }
-
-
-    // PlayerLocation.set({
-    //   scene: DEFAULT_HOME,
-    //   house: row.user.id,
-    // });
-
-    // const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
-    // const PosX = -(targetScene.sizeX / 2) + (AVATAR_BASE_SIZE * 2);
-
-    // PlayerUpdate.set({ forceHistoryReplace: false });
-    // PlayerPos.set({
-    //   x: PosX,
-    //   y: 0,
-    // });
   }
 
   const columns = [

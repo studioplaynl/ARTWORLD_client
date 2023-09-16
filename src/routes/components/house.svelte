@@ -26,8 +26,6 @@
   import { myHome } from '../../storage';
   import ImagePicker from './imagePicker.svelte';
 
-  // let url;
-  // const show = false;
   let showHistory = false;
 </script>
 
@@ -65,7 +63,7 @@
 
 <style>
   .homeContainer {
-    max-width: 1005%;
+    max-width: 100%;
     display: flex;
   }
 

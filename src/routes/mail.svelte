@@ -11,6 +11,7 @@
     AVATAR_BASE_SIZE,
   } from '../constants';
   import { dlog } from '../helpers/debugLog';
+  import Stopmotion from './components/stopmotion.svelte';
 
   let messages = {
     notifications: [],
@@ -20,7 +21,6 @@
 
   onMount(async () => {
     messages = await listAllNotifications();
-
     for (let i = messages.notifications.length - 1; i > 0; i--) {
       if (
         messages.notifications[i].code === NOTIFICATION_ARTWORK_LIKE_RECEIVED
@@ -34,6 +34,7 @@
       }
       if (messages.notifications[i].code === NOTIFICATION_ARTWORK_RECEIVED) {
         posts = [...posts, messages.notifications[i]];
+        console.log('posts: ', posts);
       }
     }
   });
@@ -82,7 +83,11 @@
         <p on:click="{goHome(notification.sender_id)}">
           {notification.content.username}
         </p>
-          <img alt="previewURL" src="{notification.content.previewUrl}" on:click="{goHome(notification.sender_id)}" />
+          <Stopmotion
+          row={notification.content}
+          artwork="{notification.content.previewUrl}"
+          clickable={true}
+          on:clicked={goHome(notification.sender_id)}/>
       </div>
     {/each}
   </div>
@@ -107,11 +112,7 @@
         <p on:click="{goHome(notification.sender_id)}">
           {notification.content.username}
         </p>
-        <!-- <a
-          href="/#/drawing?userId={$Profile.id}&key={notification.content.key}"
-        > -->
-          <img alt="previewURL" src="{notification.previewUrl}" />
-        <!-- </a> -->
+          <Stopmotion artwork="{notification.previewUrl}" clickable={true} on:clicked={goHome(notification.sender_id)}/>
       </div>
     {/each}
   </div>
