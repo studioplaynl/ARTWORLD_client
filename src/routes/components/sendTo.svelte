@@ -21,11 +21,12 @@
   let selectedSendTo = null;
   let sendFromAppIconUrl = null;
   let hasSent = false;
+
   // dispatch an event to hide/ show other elements of the SvelteTable
   const dispatch = createEventDispatcher();
 
   let toggleMode = true;
-let displayName = '';
+  let displayName = '';
 
   async function toggle() {
     /* get sendToApps when we open the SendTo component
@@ -61,7 +62,6 @@ let displayName = '';
     console.log('row: ', row);
     /* we want to show the app icon from where we send */
     sendFromAppIconUrl = returnAppIconUrl(row.collection, 'square');
-    console.log('sendFromAppIconUrl: ', sendFromAppIconUrl);
     if (rowIndex) {
       /* send a message back to the parent to close the other
       * options in the row */
@@ -70,6 +70,7 @@ let displayName = '';
   });
 
     /** Load file information from server and return object with */
+    /* TODO using the same function as in apploader/ drawing, consolidate this function */
   async function getFileInformation(collectionName, userId, key) {
     if (userId && key) {
       try {
@@ -136,15 +137,13 @@ let displayName = '';
       return;
     }
 
-    // Step 2: Get the blob data from the file URL
-    const fileUrl = await getFile(currentFile.awsUrl);
-
-    if (!fileUrl) {
+    // // Step 2: Get the blob data from the file URL
+    if (!currentFile.url) {
       dlog('Failed to get the file URL.');
       return;
     }
 
-    const response = await fetch(fileUrl);
+    const response = await fetch(currentFile.url);
     const blobData = await response.blob();
     // const response = await fetch(fileUrl);
 
@@ -284,7 +283,7 @@ let displayName = '';
   .send-icon-row {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
     width: 100%;
     gap: 6px; /* space between items */
   }

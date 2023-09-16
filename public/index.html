@@ -13,31 +13,25 @@
 <body>
   <div id="loader">
     <h1 class="bottom">
-      <span>A</span>
-      <span>R</span>
-      <span>T</span>
-      <span id="break"></span>
-      <span>W</span>
-      <span>O</span>
-      <span>R</span>
-      <span>L</span>
-      <span>D</span>
+      <div class="word">
+        <span>A</span>
+        <span>R</span>
+        <span>T</span>
+      </div>
+      <div class="word">
+        <span>W</span>
+        <span>O</span>
+        <span>R</span>
+        <span>L</span>
+        <span>D</span>
+      </div>
     </h1>
-    <h1 class="top">
-      <span>A</span>
-      <span>R</span>
-      <span>T</span>
-      <span id="break"></span>
-      <span>W</span>
-      <span>O</span>
-      <span>R</span>
-      <span>L</span>
-      <span>D</span>
-    </h1>
+
     <h2 class="reload">
       <button id="button">↻</button>
     </h2>
   </div>
+
   <script>
     setTimeout(function () {
       document.getElementById("button").classList.add("visible");
@@ -49,39 +43,57 @@
   </script>
 </body>
 <style>
+  .word {
+    display: inline-block;
+  }
+
   #loader {
     z-index: 50;
     height: 100vh;
     position: fixed;
     width: 100vw;
-    /* background-color: rgba(255,0,0,0.5); */
-
+    display: flex;
+    /* Added flex */
+    align-items: center;
+    /* Center children vertically */
+    justify-content: center;
+    /* Center children horizontally */
   }
 
-  #loader>h1 {
+
+  #loader h1 {
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    max-width: 600px;
-    margin: 0 auto;
-    position: fixed;
-    top: 50vh;
-    left: 50vw;
-    transform: translate(-50%, -50%);
+    /* Ensure text within this container is centered */
   }
 
-  #loader>h1>span {
+
+  #loader h1 .word>span {
+    font-size: 2rem;
+    width: 3rem;
+    height: 3rem;
+    line-height: 3rem;
+  }
+
+  #loader h1 .word>span {
     display: inline-block;
 
     font-family: Arial, sans-serif;
     font-size: 2rem;
     width: 3rem;
     height: 3rem;
+    text-align: center;
     line-height: 3rem;
+    /* This should be equal to the height of the span */
     background: white;
     /* box-shadow: 5px 5px rgb(115 0 235); */
     color: rgb(115, 0, 235);
     border-radius: 50%;
     padding: 0;
+    padding-top: 0.1rem;
     margin: 4px -5px;
+    vertical-align: middle;
   }
 
   #button {
@@ -117,39 +129,51 @@
     animation: bounce 15s linear out infinite alternate;
   }
 
-  #loader h1 span:nth-child(2) {
+  .bottom .word>span {
+    -webkit-animation: bounce 15s linear infinite alternate;
+    animation: bounce 15s linear out infinite alternate;
+  }
+
+  /* ART */
+  .bottom .word:nth-child(1)>span:nth-child(1) {
     -webkit-animation-delay: .1s;
     animation-delay: .1s;
   }
 
-  #loader h1 span:nth-child(3) {
+  .bottom .word:nth-child(1)>span:nth-child(2) {
     -webkit-animation-delay: .2s;
     animation-delay: .2s;
   }
 
-  #loader h1 span:nth-child(4) {
+  .bottom .word:nth-child(1)>span:nth-child(3) {
     -webkit-animation-delay: .3s;
     animation-delay: .3s;
   }
 
-  #loader h1 span:nth-child(5) {
+  /* WORLD */
+  .bottom .word:nth-child(2)>span:nth-child(1) {
     -webkit-animation-delay: .4s;
     animation-delay: .4s;
   }
 
-  #loader h1 span:nth-child(6) {
+  .bottom .word:nth-child(2)>span:nth-child(2) {
     -webkit-animation-delay: .5s;
     animation-delay: .5s;
   }
 
-  #loader h1 span:nth-child(7) {
+  .bottom .word:nth-child(2)>span:nth-child(3) {
     -webkit-animation-delay: .6s;
     animation-delay: .6s;
   }
 
-  #loader h1 span:nth-child(8) {
+  .bottom .word:nth-child(2)>span:nth-child(4) {
     -webkit-animation-delay: .7s;
     animation-delay: .7s;
+  }
+
+  .bottom .word:nth-child(2)>span:nth-child(5) {
+    -webkit-animation-delay: .8s;
+    animation-delay: .8s;
   }
 
   span#break {
@@ -160,6 +184,61 @@
   @media screen and (max-width: 700px) {
     span#break {
       display: block !important;
+    }
+  }
+
+
+  @media screen and (max-width: 400px) {
+    #loader h1 .word {
+      display: block;
+      /* Stack the words vertically */
+    }
+
+    #loader>h1>span {
+      font-size: 1.8rem;
+      width: 2.8rem;
+      height: 2.8rem;
+      line-height: 2.8rem;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    #loader h1 {
+      flex-direction: column;
+      /* Stack the words vertically */
+      align-items: center;
+      /* Center align items */
+    }
+
+    #loader h1 .word>span {
+      font-size: 3rem;
+      width: 4.5rem;
+      height: 4.5rem;
+      line-height: 4.5rem;
+    }
+
+    #button {
+      font-size: 3rem;
+      width: 4.5rem;
+      height: 4.5rem;
+      line-height: 4.5rem;
+    }
+  }
+
+
+  @media screen and (min-width: 1200px) {
+    #loader h1 .word>span {
+      font-size: 4rem;
+      width: 6rem;
+      height: 6rem;
+      line-height: 6rem;
+    }
+
+    #button {
+      font-size: 4rem;
+      width: 6rem;
+      height: 6rem;
+      line-height: 6rem;
     }
   }
 

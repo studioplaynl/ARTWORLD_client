@@ -128,14 +128,14 @@
   <Modal bind:open="{modalOpen}">
     <!-- let:closeCallback> -->
     <Dialog
-      title="Are you sure you want to Delete?"
+      title="Delete"
       closeCallback="{() => {
         modalOpen = false;
       }}"
       danger
     >
       <div slot="title-icon"></div>
-      <h2>⚠️This is permanent, no undo possible!⚠️</h2>
+       <h2>⚠️ no undo possible ⚠️</h2>
       <Button on:click="{Delete}">
        <img
             class="trash"
