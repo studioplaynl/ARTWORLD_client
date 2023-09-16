@@ -15,7 +15,6 @@
   // import { onMount } from 'svelte';
   // import SvelteTable from 'svelte-table';
 
-  import { push } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { createArtworksStore } from '../../storage';
   import { Profile } from '../../session';
@@ -34,7 +33,6 @@ import SendTo from './sendTo.svelte';
   import ArtworkLoader from './artworkLoader.svelte';
   // import postSend from './postSend.svelte';
 
-  import { PlayerHistory } from '../game/playerState';
 
   export let dataType = '';
 
@@ -64,10 +62,6 @@ function toggleSendTo(e) {
   }
 }
 
-
-
-//  const columns = [];
-
  $: if (store.length) {
    filteredArt = store.filter(
      (el) => el.value.status === OBJECT_STATE_REGULAR ||
@@ -84,8 +78,6 @@ $: if (store.length) {
   function isCurrentUser() {
     return CurrentUser;
   }
-
-
 
   async function loadArtworks() {
     store = createArtworksStore(dataType);
@@ -121,27 +113,20 @@ $: if (store.length) {
 
   getUser();
 
-  function addNew() {
-    // open the relevant app
-    const value = `/${dataType}`;
-    push(value);
-    PlayerHistory.push(value);
-  }
-
 </script>
 
 <div class="art-app-container">
-  <div class="addNew" on:click="{addNew}">+</div>
 
-      <div>
  {#each filteredArt as row, index (row.key)}
-  <div class="flex-row">
-      <ArtworkLoader
-        class="cell"
-        clickable="{true}"
-        row="{row}"
-      />
 
+  <div class="flex-row">
+      <div class="padding">
+        <ArtworkLoader
+            class="cell"
+            clickable="{true}"
+            row="{row}"
+          />
+      </div>
     <div class="cell action-buttons" id={`row-${index}`}>
       <div class="buttons {row.SendToIsOpen ? 'hidden' : ''}">
         <StatusComp
@@ -170,51 +155,50 @@ $: if (store.length) {
 
     </div>
   </div>
-{/each}
+  {/each}
+
+  {#each deletedArt as row, index (row.key)}
+  <div class="flex-row">
+    <img
+      class="icon"
+      src="assets/SHB/svg/AW-icon-trashcan.svg"
+      alt="Trash can"
+    />
+        <div class="padding">
+
+          <ArtworkLoader
+          class="cell "
+          clickable="{false}"
+          row="{row}"
+          />
+
+        </div>
+  <div class="cell action-buttons" id={`row-${index}`}>
+
+    <StatusComp
+      store="{store}"
+      isCurrentUser="{isCurrentUser}"
+      row="{row}"
+      rowIndex="{index}"
+    />
+
+    <DeleteComp
+      store="{store}"
+      isCurrentUser="{isCurrentUser}"
+      row="{row}"
+      rowIndex="{index}"
+    />
+
+  </div>
       </div>
-<span class="splitter"></span>
+    <!-- </div> -->
+  {/each}
 
-{#each deletedArt as row, index (row.key)}
-<div class="flex-row">
-  <img
-    class="icon"
-    src="assets/SHB/svg/AW-icon-trashcan.svg"
-    alt="Trash can"
-  />
-    <!-- <div class="flex-row"> -->
-
-  <ArtworkLoader
-  class="cell"
-  clickable="{false}"
-  row="{row}"
-  />
-
-<div class="cell action-buttons" id={`row-${index}`}>
-
-  <StatusComp
-    store="{store}"
-    isCurrentUser="{isCurrentUser}"
-    row="{row}"
-    rowIndex="{index}"
-  />
-
-  <DeleteComp
-    store="{store}"
-    isCurrentUser="{isCurrentUser}"
-    row="{row}"
-    rowIndex="{index}"
-  />
-
-</div>
-    </div>
-  <!-- </div> -->
-{/each}
-
-    </div>   <!-- end class="art-app-container" -->
+</div>   <!-- end class="art-app-container" -->
 
 <style>
 .art-app-container{
-  margin: 0 0 0 2rem;
+  margin: 2rem 0 1rem 0;
 }
 
 .hidden {
@@ -224,14 +208,22 @@ $: if (store.length) {
 
 .flex-row{
   display: flex;
-  width: 90%;
   justify-content: space-evenly;
-  border-bottom: solid 2px #7300eb;
+  border-bottom: dotted 2px #7300eb;
 }
 
 .cell {
   flex: 1;
   min-width: 0;
+}
+
+.rounded{
+  border: 1px solid;
+  border-radius: 8px;
+}
+
+.padding{
+  padding: 4px;
 }
 
 .action-buttons {
@@ -257,25 +249,4 @@ $: if (store.length) {
 .send-to-open {
   flex-grow: 3;
 }
-
-.addNew {
-    width: 100px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 50px;
-    border-radius: 10px;
-    background-color: #f0f0f0;
-    padding: 5px;
-    margin: 5px;
-    cursor: pointer;
-  }
-
-  .splitter {
-    background-color: #7300eb;
-    display: block;
-    width: 100%;
-    height: 2px;
-  }
 </style>

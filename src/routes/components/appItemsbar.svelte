@@ -13,59 +13,106 @@
  * imagePicker dataType="stopmotion" is used for stopmtion
  *
  */
-
+import { push } from 'svelte-spa-router';
 import ArtworkListViewer from './artworkListViewer.svelte';
 import { returnAppIconUrl } from '../../constants';
+import { PlayerHistory } from '../game/playerState';
 
 let showHistory = false;
 export let appName = '';
 
-</script>
-<div class="appItemsbarContainer">
+function addNew() {
+  // open the relevant app
+  const value = `/${appName}`;
+  push(value);
+  PlayerHistory.push(value);
+}
 
-  <!-- get the appropreate app icon from the function returnAppIconUrl -->
- <img src={returnAppIconUrl(appName, 'square')} alt={appName}
+</script>
+<div class="appItemsbarBorder">
+  <div class="appItemsbarContainer">
+
+    <!-- get the appropreate app icon from the function returnAppIconUrl -->
+  <img class="icon_big flex-row" src={returnAppIconUrl(appName, 'square')} alt={appName}
+          on:click="{() => {
+            showHistory = !showHistory;
+          }}"
+      />
+
+    <div class="addNew flex-row" >
+      <img class="icon_medium flex-row" src="/assets/SHB/svg/AW-icon-plus.svg" alt="make new"
+          on:click="{addNew}"
+      />
+    </div>
+
+    {#if showHistory}
+      <img
+        alt="close"
+        class="icon_medium flex-row"
+        src="/assets/SHB/svg/AW-icon-cross.svg"
         on:click="{() => {
           showHistory = !showHistory;
         }}"
-    />
+      />
+
+      {:else}
+          <img
+        alt="unfold options"
+        class="icon_medium flex-row"
+        src="/assets/SHB/svg/AW-icon-enter.svg"
+        on:click="{() => {
+          showHistory = !showHistory;
+        }}"
+      />
+    {/if}
+  </div> <!-- appItemsbarContainer -->
 
   {#if showHistory}
-    <img
-      alt="close"
-      class="icon"
-      src="/assets/SHB/svg/AW-icon-cross.svg"
-      on:click="{() => {
-        showHistory = !showHistory;
-      }}"
-    />
-
+      <ArtworkListViewer dataType={appName} />
   {/if}
-  <!-- </div>  action -->
-</div> <!-- drawingContainer -->
-
-{#if showHistory}
-    <ArtworkListViewer dataType={appName} />
-{/if}
+</div> <!-- appItemsbarBorder -->
 
 <style>
+  .appItemsbarBorder{
+    border: 2px dashed;
+    border-radius: 25px;
+    padding: 8px;
+  }
 
-.icon {
-    max-width: 50px;
-    margin: 10px;
+.icon_big {
+    width: 60px;
+    height: 60px;
+    margin: 5px;
     cursor: pointer;
 }
 
+.icon_medium {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.flex-row{
+  display: flex;
+  justify-content: space-evenly;
+}
 .appItemsbarContainer {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     flex-wrap: nowrap;
     align-items: center;
+    /* border-bottom: 1px solid #7300eb; */
 }
 
-#actionImage{
-    max-width: 80%;
-    width: 30%;
+.addNew {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
     cursor: pointer;
-}
+  }
 </style>

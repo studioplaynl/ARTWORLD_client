@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 // TODO This should not be a class (no shared data..)!
 // Instead each function should be exported as-is.
 // So as first step we are removing all CoordinatesTranslator.functionName calls and replacing with

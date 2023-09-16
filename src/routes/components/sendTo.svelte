@@ -44,6 +44,7 @@ let displayName = '';
   }
 
   function close() {
+    selectedSendTo = '';
     toggleMode = !toggleMode;
     /* close the panel in the parent component */
     dispatch('toggleComponents', { rowIndex, toggleMode });
@@ -194,115 +195,126 @@ let displayName = '';
 
 </script>
 
-<div class="flex-container">
+<div class="sendTo-flex-container">
   {#if toggleMode}
     <button on:click="{toggle}" class="sendButton">
       <img
         alt="open send art options"
-        class="icon"
+        class="icon-medium"
         src="/assets/svg/icon/send_art_square.svg"
       />
     </button>
   {:else}
-    <div class='row'>
-      <button on:click="{toggle}" class="sendButton">
-        <img
-        alt="open send art options"
-        class="icon"
-        src="/assets/svg/icon/send_art_square.svg"
-        />
-      </button>
-      <button on:click="{close}" class="sendButton close-btn">
-        <img
-        alt="close send art options"
-        class="icon"
-        src="/assets/SHB/svg/AW-icon-cross.svg"
-        />
-      </button>
-    </div> <!-- div row-->
-
-
-    <div class='row'>
-      <!-- for each sendToApp we make a button with image -->
-      {#each sendToApps as app}
-          <button class="sendButton {selectedSendTo === app ? 'selected' : ''}"
-          on:click={() => handleSendTo(app)} >
-            <img class="icon" src={returnAppIconUrl(app, 'square')} alt={app} />
-          </button>
-      {/each}
-      <button
-        on:click={() => handleSendTo('artMail')}
-        class="sendButton {selectedSendTo === 'artMail' ? 'selected' : ''}">
-        <img
-            alt="send as house art"
-            class="icon"
-            src="/assets/svg/icon/send_to_person.svg"
+    <div class='border'>
+      <div class='row'>
+        <button on:click="{toggle}" class="sendButton">
+          <img
+          alt="open send art options"
+          class="icon-medium"
+          src="/assets/svg/icon/send_art_square.svg"
           />
-      </button>
-    </div> <!-- div row-->
+        </button>
+        <button on:click="{close}" class="sendButton close-btn">
+          <img
+          alt="close send art options"
+          class="icon-medium"
+          src="/assets/SHB/svg/AW-icon-cross.svg"
+          />
+        </button>
+      </div> <!-- div row-->
 
-    {#if selectedSendTo}
-    <div class="row">
+
+      <div class='row'>
+        <!-- for each sendToApp we make a button with image -->
+        {#each sendToApps as app}
+        <button class="sendButton {selectedSendTo === app ? 'selected' : ''}"
+          on:click={() => handleSendTo(app)} >
+          <img class="icon-medium" src={returnAppIconUrl(app, 'square')} alt={app} />
+        </button>
+        {/each}
+        <button
+          on:click={() => handleSendTo('artMail')}
+          class="sendButton {selectedSendTo === 'artMail' ? 'selected' : ''}">
+          <img
+          alt="send as house art"
+          class="icon-medium"
+          src="/assets/svg/icon/send_to_person.svg"
+          />
+        </button>
+      </div> <!-- div row-->
+
+      {#if selectedSendTo}
+      <div class="row">
         {#if selectedSendTo === 'artMail'}
         <SendArtMail row="{row}" />
         {:else}
         <div class="send-icon-row">
-            <img class="icon" src="{sendFromAppIconUrl}" alt="From app icon" />
+          <img class="icon-medium" src="{sendFromAppIconUrl}" alt="From app icon" />
 
-            <!-- show when the artwork has been send -->
-            {#if hasSent}
-            <img class="icon" src="/assets/svg/icon/send_art_square.svg" alt="Send art square icon" />
+          <!-- show when the artwork has been send -->
+          {#if hasSent}
+          <img class="icon-medium" src="/assets/svg/icon/send_art_square.svg" alt="Send art square icon" />
+          {/if}
+
+          <img class="icon-medium" src={returnAppIconUrl(selectedSendTo, 'square')} alt={selectedSendTo} />
+
+          <div class="sendButtonContainer">
+            {#if !hasSent}
+            <button on:click="{send}" class="sendButton">
+              <img src="/assets/SHB/svg/AW-icon-next.svg" alt="Send art mail to friend" class="sendIcon" />
+            </button>
+            {:else}
+            <img src="/assets/SHB/svg/AW-icon-check.svg" alt="Mail Sent" class="checkIcon" />
             {/if}
-
-            <img class="icon" src={returnAppIconUrl(selectedSendTo, 'square')} alt={selectedSendTo} />
-
-            <div class="sendButtonContainer">
-              {#if !hasSent}
-                <button on:click="{send}" class="sendButton">
-                    <img src="/assets/SHB/svg/AW-icon-next.svg" alt="Send art mail to friend" class="sendIcon" />
-                </button>
-              {:else}
-                    <img src="/assets/SHB/svg/AW-icon-check.svg" alt="Mail Sent" class="checkIcon" />
-                {/if}
-            </div>
+          </div> <!--sendButtonContainer-->
         </div>
         {/if}
-    </div>
-    {/if}
-  {/if}
-</div> <!-- div flex-container-->
+      </div>
+      {/if}
+    </div> <!-- div border-->
+      {/if}
+</div> <!-- div sendTo-flex-container-->
 
 <style>
   .selected {
     border-radius: 50%;
-    border: 8px solid #7300ed;
+    border: 2px solid #7300ed;
   }
 
   .send-icon-row {
     display: flex;
     align-items: center;
-    /* flex-direction: column; */
+    justify-content: space-evenly;
+    width: 100%;
     gap: 6px; /* space between items */
   }
 
-  .send-icon-row > .icon:first-child {
+  .send-icon-row > .icon-medium:first-child {
       width: 40px;   /* Adjust this value to your preference for the "bigger" size */
   }
 
-  .send-icon-row > .icon:nth-child(2) {
+  .send-icon-row > .icon-medium:nth-child(2) {
       width: 40px;   /* Adjust this value to your preference for the "smaller" size */
   }
 
-  .send-icon-row > .icon:nth-child(3) {
+  .send-icon-row > .icon-medium:nth-child(3) {
       width: 40px;   /* Adjust this value to your preference for the "same as the first" size */
   }
 
   .sendIcon{
+    background-color: white;
     border-radius: 50%;
     box-shadow: 5px 5px 0px #7300ed;
+    width: 50px;
+    height: 50px;
   }
   .sendButton {
-      background-color: white;
+      background-color: transparent;
+      /* width: 50px;
+      height: 50px; */
+      /* border-radius: 50%;
+      height: 100%;
+      width: auto; */
       /* Adding shadow to the button */
       /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  */
       /* Smoothens the transition during hover and active states */
@@ -310,7 +322,8 @@ let displayName = '';
   }
 
   .sendButtonContainer {
-    width: 40px;
+    /* width: 50px;
+    background-color: white; */
       /* display: flex;
       align-items: center;
       position: absolute;
@@ -337,13 +350,19 @@ let displayName = '';
       /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
   }
 
-  .flex-container {
+  .sendTo-flex-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    width: 100%;
-    height: 100%;
+    /* width: 100%;
+    height: 100%; */
+  }
+
+  .border{
+    border:#7300ed 2px dotted;
+    border-radius: 12px;
+    background-color: rgb(255, 255, 255);
   }
   .checkIcon {
     /* position: relative;
@@ -353,6 +372,8 @@ let displayName = '';
     height: 2rem;
     z-index: 999; */
     border-radius: 50%;
+    width: 50px;
+    height: 50px;
     /* box-shadow: 5px 5px 0px #7300ed; */
   }
   .row {
@@ -365,8 +386,8 @@ let displayName = '';
     order: 2; /* Ensures the close button always goes to the end */
   }
 
-  .icon{
+  .icon-medium{
     width: 40px;
-    max-width: 40px;
+    height: 40px;
   }
 </style>
