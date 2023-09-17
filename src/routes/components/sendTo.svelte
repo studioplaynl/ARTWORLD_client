@@ -17,6 +17,10 @@
   // eslint-disable-next-line svelte/valid-compile
   export let isCurrentUser = null;
   export let rowIndex = -1;
+
+  // eslint-disable-next-line svelte/valid-compile
+  export let store = null;
+
   let sendToApps = null;
   let selectedSendTo = null;
   let sendFromAppIconUrl = null;
@@ -59,7 +63,7 @@
   let value;
 
   onMount(() => {
-    console.log('row: ', row);
+    // console.log('row: ', row);
     /* we want to show the app icon from where we send */
     sendFromAppIconUrl = returnAppIconUrl(row.collection, 'square');
     if (rowIndex) {
@@ -204,7 +208,7 @@
       />
     </button>
   {:else}
-    <div class='border'>
+    <div class='sendTo-border'>
       <div class='row'>
         <button on:click="{toggle}" class="sendButton">
           <img
@@ -235,7 +239,7 @@
           on:click={() => handleSendTo('artMail')}
           class="sendButton {selectedSendTo === 'artMail' ? 'selected' : ''}">
           <img
-          alt="send as house art"
+          alt="send art to friend"
           class="icon-medium"
           src="/assets/svg/icon/send_to_person.svg"
           />
@@ -248,24 +252,31 @@
         <SendArtMail row="{row}" />
         {:else}
         <div class="send-icon-row">
-          <img class="icon-medium" src="{sendFromAppIconUrl}" alt="From app icon" />
+          <!-- -->
 
           <!-- show when the artwork has been send -->
           {#if hasSent}
-          <img class="icon-medium" src="/assets/svg/icon/send_art_square.svg" alt="Send art square icon" />
+          <img class="icon-medium" src="{sendFromAppIconUrl}" alt="From app icon" />
+          <img class="icon-medium" src="/assets/SHB/svg/AW-icon-next.svg" alt="Send art square icon" />
+          <img class="icon-medium" src={returnAppIconUrl(selectedSendTo, 'square')} alt={selectedSendTo} />
           {/if}
 
-          <img class="icon-medium" src={returnAppIconUrl(selectedSendTo, 'square')} alt={selectedSendTo} />
+          <!--  -->
 
-          <div class="sendButtonContainer">
+          <!-- <div class="sendButtonContainer"> -->
             {#if !hasSent}
             <button on:click="{send}" class="sendButton">
               <img src="/assets/SHB/svg/AW-icon-next.svg" alt="Send art mail to friend" class="sendIcon" />
             </button>
             {:else}
+
             <img src="/assets/SHB/svg/AW-icon-check.svg" alt="Mail Sent" class="checkIcon" />
             {/if}
-          </div> <!--sendButtonContainer-->
+
+            <!--sendButtonContainer-->
+          <!-- </div>  -->
+
+          <!-- send-icon-row -->
         </div>
         {/if}
       </div>
@@ -278,14 +289,18 @@
   .selected {
     border-radius: 50%;
     border: 2px solid #7300ed;
+    /* box-shadow: 0 5px 0 0 #7300ed; */
   }
 
   .send-icon-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    gap: 6px; /* space between items */
+    /* width: 100%; */
+    margin: 0 10px 0 10px;
+    /* space between items */
+    /* gap: 6px;  */
+    position: relative;
   }
 
   .send-icon-row > .icon-medium:first-child {
@@ -300,6 +315,10 @@
       width: 40px;   /* Adjust this value to your preference for the "same as the first" size */
   }
 
+  .send-icon-row > .sendButton:first-child {
+      width: 40px;   /* Adjust this value to your preference for the "bigger" size */
+  }
+
   .sendIcon{
     background-color: white;
     border-radius: 50%;
@@ -309,11 +328,12 @@
   }
   .sendButton {
       background-color: transparent;
-      /* width: 50px;
-      height: 50px; */
-      /* border-radius: 50%;
-      height: 100%;
-      width: auto; */
+
+      /* keep the image in the middle of the button */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
       /* Adding shadow to the button */
       /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  */
       /* Smoothens the transition during hover and active states */
@@ -321,13 +341,7 @@
   }
 
   .sendButtonContainer {
-    /* width: 50px;
-    background-color: white; */
-      /* display: flex;
-      align-items: center;
-      position: absolute;
-      right: -10%; /* adjust this value to position the send button as desired */
-      /* bottom: 50%; vertically centers the button with respect to the icon stack */
+
   }
 
   /* Hover State */
@@ -358,9 +372,11 @@
     height: 100%; */
   }
 
-  .border{
-    border:#7300ed 2px dotted;
+  .sendTo-border{
+    box-shadow: 2px 2px #7300ed;
+    /* border:#7300ed 1px solid; */
     border-radius: 12px;
+    margin: 0 5px 15px 0;
     background-color: rgb(255, 255, 255);
   }
   .checkIcon {

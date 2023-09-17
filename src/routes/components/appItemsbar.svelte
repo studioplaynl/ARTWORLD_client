@@ -74,9 +74,10 @@ function addNew() {
 
 <style>
   .appItemsbarBorder{
-    border: 2px dashed;
+    /* border: 1px solid #7300eb; */
     border-radius: 25px;
-    padding: 8px;
+    padding: 6px;
+    box-shadow: 2px 2px #7300EC;
   }
 
 .icon_big {

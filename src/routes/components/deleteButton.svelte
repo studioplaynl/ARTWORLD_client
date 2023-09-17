@@ -7,6 +7,8 @@
 
   // eslint-disable-next-line svelte/valid-compile
   export let col = null;
+  // eslint-disable-next-line svelte/valid-compile
+  export let rowIndex = null;
   export let row;
   const role = $Profile.meta.Role; // ;
   export let isCurrentUser;
@@ -135,7 +137,7 @@
       danger
     >
       <div slot="title-icon"></div>
-       <h2>⚠️ no undo possible ⚠️</h2>
+       <h2>⚠️ undo is not possible ⚠️</h2>
       <Button on:click="{Delete}">
        <img
             class="trash"

@@ -31,7 +31,7 @@
         clearInterval(interval);
       }
     } else {
-      console.log('image: ', image);
+      // console.log('image: ', image);
     }
   });
 
@@ -50,7 +50,7 @@
     // checks if we clicked 'voorbeeld' cell and if it has a value
     // opens the artwork with the appropriate app
 
-      console.log('row: ', row);
+      // console.log('row: ', row);
 
       if (typeof row === 'undefined') return;
 

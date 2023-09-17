@@ -31,6 +31,6 @@ import AppItemsbar from './appItemsbar.svelte';
 
 <style>
 .appsGroupContainer{
-
+    padding: 4px
 }
 </style>

@@ -17,6 +17,8 @@
   export let row;
   // eslint-disable-next-line svelte/valid-compile
   export let col = null;
+  // eslint-disable-next-line svelte/valid-compile
+  export let rowIndex = null;
   export let isCurrentUser;
   export let moveToArt = null;
   export let store;

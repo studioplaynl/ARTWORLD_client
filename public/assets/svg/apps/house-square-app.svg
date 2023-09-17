@@ -47,7 +47,7 @@
   </g>
   <g
      id="g907"
-     transform="matrix(0.7676856,0,0,0.7676856,-13.38428,-9.465066)">
+     transform="matrix(0.71822175,0,0,0.71822175,-10.911088,-6.3273975)">
     <line
        x1="75"
        y1="50"
@@ -71,15 +71,15 @@
        stroke-width="4"
        id="line890" />
     <line
-       x1="25"
+       x1="30"
        y1="70"
-       x2="75"
+       x2="70"
        y2="70"
        fill="none"
        stroke="#7300eb"
        stroke-linecap="round"
        stroke-linejoin="round"
-       stroke-width="4"
+       stroke-width="3.57771"
        id="line892" />
     <polyline
        points="70 44.907 70 70 30 70 30 44.907"

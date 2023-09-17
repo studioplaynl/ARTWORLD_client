@@ -22,7 +22,7 @@
   import { dlog } from '../../helpers/debugLog';
   import StatusComp from './statusbox.svelte';
   import DeleteComp from './deleteButton.svelte';
-import SendTo from './sendTo.svelte';
+  import SendTo from './sendTo.svelte';
   import {
     // STOPMOTION_MAX_FRAMES,
     // DEFAULT_PREVIEW_HEIGHT,
@@ -119,13 +119,14 @@ $: if (store.length) {
 
  {#each filteredArt as row, index (row.key)}
 
-  <div class="flex-row">
+  <div class="artworkListViewer-flex-row">
       <div class="padding">
-        <ArtworkLoader
-            class="cell"
-            clickable="{true}"
-            row="{row}"
+        <div class="cell">
+          <ArtworkLoader
+          clickable="{true}"
+          row="{row}"
           />
+        </div>
       </div>
     <div class="cell action-buttons" id={`row-${index}`}>
       <div class="buttons {row.SendToIsOpen ? 'hidden' : ''}">
@@ -144,59 +145,85 @@ $: if (store.length) {
         />
       </div>
 
+      <div class={row && row.SendToIsOpen ? 'send-to-open' : ''}>
       <SendTo
-        class="{row.SendToIsOpen ? 'send-to-open' : ''}"
         store="{store}"
         isCurrentUser="{isCurrentUser}"
         rowIndex="{index}"
         on:toggleComponents="{toggleSendTo}"
         row="{row}"
       />
-
+      </div>
     </div>
   </div>
   {/each}
 
-  {#each deletedArt as row, index (row.key)}
-  <div class="flex-row">
+  <!-- if there is deletedArt -->
+  {#if deletedArt.length}
+  <div class="deleted-art-container">
     <img
-      class="icon"
+      class="trash-icon"
       src="assets/SHB/svg/AW-icon-trashcan.svg"
       alt="Trash can"
     />
-        <div class="padding">
-
-          <ArtworkLoader
-          class="cell "
-          clickable="{false}"
-          row="{row}"
-          />
-
-        </div>
-  <div class="cell action-buttons" id={`row-${index}`}>
-
-    <StatusComp
-      store="{store}"
-      isCurrentUser="{isCurrentUser}"
-      row="{row}"
-      rowIndex="{index}"
-    />
-
-    <DeleteComp
-      store="{store}"
-      isCurrentUser="{isCurrentUser}"
-      row="{row}"
-      rowIndex="{index}"
-    />
-
-  </div>
-      </div>
-    <!-- </div> -->
-  {/each}
+      {#each deletedArt as row, index (row.key)}
+        <div class="artworkListViewer-trash-flex-row">
+            <!-- <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-trashcan.svg"
+              alt="Trash can"
+            /> -->
+            <ArtworkLoader
+              class="cell "
+              clickable="{false}"
+              row="{row}"
+            />
+          <div class="cell trash-action-buttons" id={`row-${index}`}>
+            <StatusComp
+              store="{store}"
+              isCurrentUser="{isCurrentUser}"
+              row="{row}"
+              rowIndex="{index}"
+            />
+            <DeleteComp
+              store="{store}"
+              isCurrentUser="{isCurrentUser}"
+              row="{row}"
+              rowIndex="{index}"
+            />
+          </div> <!-- cell action-buttons -->
+        </div> <!-- artworkListViewer-flex-row -->
+      {/each}
+  </div> <!-- deleted-art-container -->
+  {/if}
 
 </div>   <!-- end class="art-app-container" -->
-
 <style>
+.deleted-art-container{
+  margin-top: 20px;
+  /* box-shadow: 2px 2px rgb(255, 0, 0); */
+  border-radius: 25px;
+  border: 1px dashed red;
+  padding: 4px;
+}
+.artworkListViewer-trash-flex-row{
+  display: flex;
+  justify-content: space-evenly;
+  border-top: dashed 1px #ff0000;
+}
+.trash-icon{
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  padding: 10px 0;
+}
+.trash-action-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+}
 .art-app-container{
   margin: 2rem 0 1rem 0;
 }
@@ -206,24 +233,26 @@ $: if (store.length) {
   width: 0;
 }
 
-.flex-row{
+.artworkListViewer-flex-row{
   display: flex;
   justify-content: space-evenly;
-  border-bottom: dotted 2px #7300eb;
+  border-bottom: dashed 1px #7300eb;
+  padding: 4px 0 4px 0;
 }
+
 
 .cell {
   flex: 1;
   min-width: 0;
 }
 
-.rounded{
+/* .rounded{
   border: 1px solid;
   border-radius: 8px;
-}
+} */
 
 .padding{
-  padding: 4px;
+  /* padding: 4px; */
 }
 
 .action-buttons {

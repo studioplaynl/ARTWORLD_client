@@ -1,7 +1,5 @@
 <script>
   import { onMount } from 'svelte';
-  import Select from 'svelte-select';
-  import MdSend from 'svelte-icons/md/MdSend.svelte';
   import { ListFriends, sendMailToUser } from '../../helpers/nakamaHelpers';
   import { dlog } from '../../helpers/debugLog';
 
