@@ -692,7 +692,6 @@ export async function convertImage(path, height, width, format) {
   return user.payload.url;
 }
 
-
 export function setLoader(state) {
   // dlog('setLoader to ... ', state);
   if (state) {
