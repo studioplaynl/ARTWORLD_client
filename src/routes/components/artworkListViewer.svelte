@@ -199,83 +199,75 @@ $: if (store.length) {
 
 </div>   <!-- end class="art-app-container" -->
 <style>
-.deleted-art-container{
-  margin-top: 20px;
-  /* box-shadow: 2px 2px rgb(255, 0, 0); */
-  border-radius: 25px;
-  border: 1px dashed red;
-  padding: 4px;
-}
-.artworkListViewer-trash-flex-row{
-  display: flex;
-  justify-content: space-evenly;
-  border-top: dashed 1px #ff0000;
-}
-.trash-icon{
-  height: 60px;
-  display: flex;
-  flex-direction: row;
-  padding: 10px 0;
-}
-.trash-action-buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-}
+/* Main Container Styling */
 .art-app-container{
   margin: 2rem 0 1rem 0;
 }
 
-.hidden {
-  display: none;
-  width: 0;
-}
-
-.artworkListViewer-flex-row{
-  display: flex;
-  justify-content: space-evenly;
+/* Main Artwork Listing Grid */
+.artworkListViewer-flex-row, .artworkListViewer-trash-flex-row {
+  display: grid;
+  grid-template-columns: auto 1fr; /* Auto for artwork, 1fr for action buttons */
+  gap: 1rem; /* Spacing between grid items */
   border-bottom: dashed 1px #7300eb;
-  padding: 4px 0 4px 0;
+  padding: 4px 0;
 }
 
-
-.cell {
-  flex: 1;
-  min-width: 0;
-}
-
-/* .rounded{
-  border: 1px solid;
-  border-radius: 8px;
-} */
-
-.padding{
-  /* padding: 4px; */
-}
-
-.action-buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+/* Action Buttons Grid */
+.action-buttons, .trash-action-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two equal columns for two buttons */
+  gap: 1rem; /* Spacing between buttons */
+  justify-items: center; /* Center each button horizontally */
+  align-items: center; /* Center each button vertically */
   width: 100%;
 }
 
+/* Additional Button Styling */
 .buttons {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
 }
 
+/* Deleted Artwork Container */
+.deleted-art-container {
+  margin-top: 20px;
+  border-radius: 25px;
+  border: 1px dashed red;
+  padding: 4px;
+}
+
+/* Deleted Artwork Listing Grid */
+.artworkListViewer-trash-flex-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  border-top: dashed 1px #ff0000;
+}
+
+/* Icon and other component Styling */
+.trash-icon {
+  height: 60px;
+  display: flex; /* This is retained for its flex-direction */
+  flex-direction: row;
+  padding: 10px 0;
+}
+
+/* Hide Elements */
 .hidden {
   display: none;
 }
 
+/* Send To Styling */
 .send-to-open {
-  flex-grow: 3;
+  width: 100%;
 }
+
+/* General Cell Styling */
+.cell {
+  width: 100%;
+}
+
+
 </style>

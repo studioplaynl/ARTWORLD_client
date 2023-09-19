@@ -220,161 +220,199 @@ class ServerCall {
     }
   }
 
-  static getAnimalsFellowHomeArea(userHome, serverItemsArray, foundAnimals) {
+  static async filterFellowHomeAreaObjects(userHomeArea, user, serverItemsArray) {
     // get all homes from the server with userHome in the name, with the function getAllHouse
-    Promise.all([getAllHouses(userHome, null)])
-      .then((homesRec) => {
-        // dlog('homesRec: ', homesRec);
-        // from homesRec filter out the key 'name' and put it in an array
-        const homesNames = homesRec[0].map((i) => i.username);
-        // dlog('homesNames: ', homesNames);
+    const homesRec = await getAllHouses(userHomeArea, null);
+    // dlog('homesRec: ', homesRec);
+    // from homesRec filter out the key 'name' and put it in an array
+    const namesInHomeAreaWithoutUser = homesRec
+      .map((i) => i.username)
+      .filter((i) => i !== user);
+    // dlog('homesNames: ', namesInHomeAreaWithoutUser);
+    // dlog('serverItemsArray: ', serverItemsArray);
 
-        // for every name in homesNames, check if the are in serverItemsArray,
-        // if so, put them in foundAnimals and remove them from serverItemsArray
-        homesNames.forEach((name) => {
-          // dlog('name: ', name);
+    // Filter serverItemsArray for objects whose username exists in namesInHomeAreaWithoutUser
+    const objectsOfFellowsOfUser = serverItemsArray.filter((obj) => namesInHomeAreaWithoutUser.includes(obj.username));
+    // dlog('objectsOfFellowsOfUser: ', objectsOfFellowsOfUser);
+    // Filter serverItemsArray for objects whose username doesn't exist in namesInHomeAreaWithoutUser
+    const remainingItemsArray = serverItemsArray.filter((obj) => !namesInHomeAreaWithoutUser.includes(obj.username));
+    // dlog('remainingItemsArray: ', remainingItemsArray);
 
-          const usersAnimals = serverItemsArray.array.filter((i) => i.username === name);
-
-          if (usersAnimals.length > 0) {
-            // dlog('usersAnimals: ', usersAnimals);
-            usersAnimals.forEach((animal) => {
-              // dlog('animal: ', animal);
-              foundAnimals.push(animal);
-              serverItemsArray.array.splice(animal, 1);
-            });
-          }
-        });
-      }); // end of getAllHouses
-
-    // dlog('foundAnimals: ', foundAnimals);
-
-    // add more animals to foundAnimals if there are less then 50
-    if (foundAnimals.length < 50) {
-      const remainderAnimals = 50 - foundAnimals.length + 5;
-      for (let i = 0; i < remainderAnimals; i += 1) {
-        const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
-        foundAnimals.push(serverItemsArray.array[randomIndex]);
-        serverItemsArray.array.splice(randomIndex, 1);
-      }
-    }
+    return { objectsOfFellowsOfUser, remainingItemsArray };
   }
+
 
   // eslint-disable-next-line class-methods-use-this
   async downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin) {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
-      await listAllObjects('stopmotion', null).then((rec) => {
-        // eslint-disable-next-line no-param-reassign
-        dlog('serverItemsArray, rec : ', rec, serverItemsArray);
+      let allFoundAnimals;
+      let animalsOfUser;
+      let allAnimalNotOfUser;
 
-        // serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = rec;
+      const recStopmotion = await listAllObjects('stopmotion', null);
+      const recAnimalChallenge = await listAllObjects('animalchallenge', null);
 
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname.toLowerCase() === type);
-        dlog('dier serverItemsArray.array', serverItemsArray.array);
-        // ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+      // dlog('recAnimalChallenge : ', recAnimalChallenge);
+      // filter out all stopmotion with displayname 'dier and who are not in the trash
+      allFoundAnimals = recStopmotion.filter((obj) => obj.value.displayname.toLowerCase() === type
+        && obj.value.status !== 'trash');
+      // dlog('allFoundAnimals', allFoundAnimals);
 
-        let foundAnimals = serverItemsArray.array;
-        // dlog('foundFlowers: ', foundFlowers);
 
-        // if there are more then 50 flower, make a selection of flowers to show
-        if (foundAnimals.length > 50) {
-          // amount of flowers we found so far, empty because we wan to find new flowers
-          foundAnimals = [];
+      // Adding animalchallenge results to foundAnimals
+      // exclude animals that are in the trash
+      const filteredRecAnimalChallenge = recAnimalChallenge.filter((obj) => obj.value.status !== 'trash');
+      allFoundAnimals = allFoundAnimals.concat(filteredRecAnimalChallenge);
 
-          const userProfile = get(myHomeStore);
-          const user = userProfile.value.username;
-          dlog('user: ', user);
-          const userHome = userProfile.key;
-          dlog('userHome: ', userHome);
+      // dlog('allFoundAnimals', allFoundAnimals);
 
-          // see if there are flowers from the user
-          const animalsOfUser = serverItemsArray.array.filter((obj) => obj.username === user);
-          dlog('animalsOfUser: ', animalsOfUser);
+      const maxAnimalsInGarden = 40;
 
-          // if there are animals from the user, add them to the foundFlowers array
-          if (animalsOfUser.length > 0) {
-            foundAnimals = foundAnimals.concat(animalsOfUser);
-            ServerCall.getAnimalsFellowHomeArea(userHome, serverItemsArray, foundAnimals);
+      // if there are only few animal we use them all, otherwise we filter
+      if (allFoundAnimals.length > maxAnimalsInGarden) {
+        // when there are a lot of animals we prioritize the users animals
+        const userProfile = get(myHomeStore);
+        const user = userProfile.value.username;
+        // dlog('user: ', user);
+        const userHomeArea = userProfile.key;
+        // dlog('userHomeArea: ', userHomeArea);
+
+        // filter out all animals of users and all animals not of user
+        const results = allFoundAnimals.reduce((acc, obj) => {
+          if (obj.username === user) {
+            acc.animalsOfUser.push(obj);
           } else {
-            // put 50 random unique items of the serverItemsArray in the foundFlowers array
-            // by removing the items from the serverItemsArray
-
-            ServerCall.getAnimalsFellowHomeArea(userHome, serverItemsArray, foundAnimals);
+            acc.allAnimalNotOfUser.push(obj);
           }
-          // eslint-disable-next-line no-param-reassign
-          serverItemsArray.array = foundAnimals;
-          ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
-          // dlog('foundFlowers: ', foundFlowers);
-        } else {
-          ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
-        }
-      });
+          return acc;
+        }, { animalsOfUser: [], allAnimalNotOfUser: [] });
+
+        animalsOfUser = results.animalsOfUser;
+        allAnimalNotOfUser = results.allAnimalNotOfUser;
+
+        // dlog('animalsOfUser: ', animalsOfUser);
+
+        const { objectsOfFellowsOfUser, remainingItemsArray } = await ServerCall.filterFellowHomeAreaObjects(
+          userHomeArea,
+          user,
+          allAnimalNotOfUser,
+        );
+
+        // dlog('objectsOfFellowsOfUser: ', objectsOfFellowsOfUser);
+        // dlog('remainingItemsArray: ', remainingItemsArray);
+
+        //         max 5 items of animalsOfUser
+        // max 20 items of animalsOfFellowsOfUser
+        // and fill the rest of animalArray to a max of 40 with items of allFoundAnimals
+        const userAnimals = animalsOfUser.slice(0, 5);
+        dlog('userAnimals: ', userAnimals);
+        const fellowAnimals = objectsOfFellowsOfUser.slice(0, 20);
+
+        const remainingLength = 40 - (userAnimals.length + fellowAnimals.length);
+
+        const shuffledOtherAnimals = ServerCall.shuffleArray([...remainingItemsArray]); // Create a copy and shuffle it
+        const otherAnimals = shuffledOtherAnimals.slice(0, remainingLength);
+
+        // const otherAnimals = allOtherAnimals.slice(0, remainingLength);
+
+        const animalArray = [...userAnimals, ...fellowAnimals, ...otherAnimals];
+
+
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = animalArray;
+        ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+      } else {
+        // we use all available animals
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = allFoundAnimals;
+        ServerCall.handleServerArray(type, allFoundAnimals, artSize, artMargin);
+      } // end of dier
     } else if (type === 'bloem') {
-      await listAllObjects('drawing', null).then((rec) => {
-        // eslint-disable-next-line no-param-reassign
-        dlog('serverItemsArray, rec : ', rec, serverItemsArray);
+      let allFoundFlowers;
+      let flowersOfUser;
+      let allFlowersNotOfUser;
 
-        // drawings
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = rec;
+      const recDrawing = await listAllObjects('drawing', null);
+      const recFlowerChallenge = await listAllObjects('flowerchallenge', null);
 
-        // serverItemsArray.array = rec.filter((obj) => obj.permission_read === 2);
+      // dlog('recAnimalChallenge : ', recAnimalChallenge);
+      // filter out all stopmotion with displayname 'dier and who are not in the trash
+      allFoundFlowers = recDrawing.filter((obj) => obj.value.displayname.toLowerCase() === type
+        && obj.value.status !== 'trash');
+      // dlog('allFoundAnimals', allFoundAnimals);
 
-        // filter all 'bloem' from drawings
-        // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = serverItemsArray.array.filter((obj) => obj.value.displayname.toLowerCase() === type);
-        dlog('bloem serverItemsArray.array', serverItemsArray.array);
 
-        let foundFlowers = serverItemsArray.array;
-        // dlog('foundFlowers: ', foundFlowers);
+      // Adding animalchallenge results to foundAnimals
+      // exclude animals that are in the trash
+      const filteredRecFlowerChallenge = recFlowerChallenge.filter((obj) => obj.value.status !== 'trash');
+      allFoundFlowers = allFoundFlowers.concat(filteredRecFlowerChallenge);
 
-        // if there are more then 50 flower, make a selection of flowers to show
-        if (foundFlowers.length > 50) {
-          // amount of flowers we found so far, empty because we wan to find new flowers
-          foundFlowers = [];
+      // dlog('allFoundAnimals', allFoundAnimals);
 
-          const user = get(myHomeStore).value.username;
-          dlog('user: ', user);
+      const maxDifferentFlowersInGarden = 20;
 
-          // see if there are flowers from the user
-          const flowersOfUser = serverItemsArray.array.filter((obj) => obj.username === user);
+      // if there are only few animal we use them all, otherwise we filter
+      if (allFoundFlowers.length > maxDifferentFlowersInGarden) {
+        // when there are a lot of animals we prioritize the users animals
+        const userProfile = get(myHomeStore);
+        const user = userProfile.value.username;
+        // dlog('user: ', user);
+        const userHomeArea = userProfile.key;
+        // dlog('userHomeArea: ', userHomeArea);
 
-          // if there are flowers from the user, add them to the foundFlowers array
-          if (flowersOfUser.length > 0) {
-            // for loop to put the flowers in the foundFlowers array 20 times
-            for (let i = 0; i < 20; i += 1) {
-              foundFlowers = foundFlowers.concat(flowersOfUser);
-            }
-
-            // put 30 random unique items of the serverItemsArray in the foundFlowers array
-            // by removing the items from the serverItemsArray
-            for (let i = 0; i < 30; i += 1) {
-              const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
-              foundFlowers.push(serverItemsArray.array[randomIndex]);
-              serverItemsArray.array.splice(randomIndex, 1);
-            }
+        // filter out all animals of users and all animals not of user
+        const results = allFoundFlowers.reduce((acc, obj) => {
+          if (obj.username === user) {
+            acc.flowersOfUser.push(obj);
           } else {
-            // put 50 random unique items of the serverItemsArray in the foundFlowers array
-            // by removing the items from the serverItemsArray
-            for (let i = 0; i < 50; i += 1) {
-              const randomIndex = Math.floor(Math.random() * serverItemsArray.array.length);
-              foundFlowers.push(serverItemsArray.array[randomIndex]);
-              serverItemsArray.array.splice(randomIndex, 1);
-            }
+            acc.allFlowersNotOfUser.push(obj);
           }
-          ServerCall.serverHandleFlowerArray(foundFlowers, serverItemsArray, type, artSize, artMargin);
-          // dlog('foundFlowers: ', foundFlowers);
-        } else if (foundFlowers.length < 1) {
-          ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
-        } else {
-          ServerCall.serverHandleFlowerArray(foundFlowers, serverItemsArray, type, artSize, artMargin);
-        }
-        // ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
-      }); // end of bloem
+          return acc;
+        }, { flowersOfUser: [], allFlowersNotOfUser: [] });
+
+        flowersOfUser = results.flowersOfUser;
+        allFlowersNotOfUser = results.allFlowersNotOfUser;
+
+        // dlog('animalsOfUser: ', animalsOfUser);
+
+        const { objectsOfFellowsOfUser, remainingItemsArray } = await ServerCall.filterFellowHomeAreaObjects(
+          userHomeArea,
+          user,
+          allFlowersNotOfUser,
+        );
+
+        // dlog('objectsOfFellowsOfUser: ', objectsOfFellowsOfUser);
+        // dlog('remainingItemsArray: ', remainingItemsArray);
+
+        //         max 5 items of animalsOfUser
+        // max 20 items of animalsOfFellowsOfUser
+        // and fill the rest of animalArray to a max of 40 with items of allFoundAnimals
+        const amountOfFlowersOfUser = 3;
+        const userFlowers = flowersOfUser.slice(0, amountOfFlowersOfUser);
+        dlog('userFlowers: ', userFlowers);
+        const maxAmauntOfFellowFlowers = Math.floor(maxDifferentFlowersInGarden - userFlowers.length) / 2;
+        const fellowFlowers = objectsOfFellowsOfUser.slice(0, maxAmauntOfFellowFlowers);
+
+        const remainingLength = maxDifferentFlowersInGarden - (userFlowers.length + fellowFlowers.length);
+
+        const shuffledOtherFlowers = ServerCall.shuffleArray([...remainingItemsArray]); // Create a copy and shuffle it
+        const otherFlowers = shuffledOtherFlowers.slice(0, remainingLength);
+
+        // const otherAnimals = allOtherAnimals.slice(0, remainingLength);
+
+        const animalArray = [...userFlowers, ...fellowFlowers, ...otherFlowers];
+
+
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = animalArray;
+        ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+      } else {
+        // we use all available animals
+        // eslint-disable-next-line no-param-reassign
+        serverItemsArray.array = allFoundFlowers;
+        ServerCall.handleServerArray(type, allFoundFlowers, artSize, artMargin);
+      }// end of bloem
     } else {
       await listAllObjects(type, location).then((rec) => {
         // eslint-disable-next-line no-param-reassign
@@ -389,6 +427,16 @@ class ServerCall {
       });
     }
   }
+
+  static shuffleArray(inputArray) {
+    const array = [...inputArray]; // Create a copy of the input array
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
 
   static serverHandleFlowerArray(foundFlowers, serverItemsArray, type, artSize, artMargin) {
     // eslint-disable-next-line no-param-reassign

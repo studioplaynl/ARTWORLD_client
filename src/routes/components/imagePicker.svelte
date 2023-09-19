@@ -191,13 +191,12 @@
   {/each}
 
   {#each stockItems as stockItem}
-    <div
-      class="item"
-      class:selected="{(`/avatar/stock/${stockItem}` === $Profile.avatar_url &&
-        dataType === 'avatar') ||
-        (`/home/stock/${stockItem}` === $myHome.value.url &&
-          dataType === 'house')}"
-    >
+<div
+  class="item"
+  class:selected="{(`/avatar/stock/${stockItem}` === $Profile.avatar_url && dataType === 'avatar') ||
+    ($myHome.value.url && `/home/stock/${stockItem}` === $myHome.value.url && dataType === 'house')}"
+>
+
       <p
         class="image"
         on:click="{() => {
