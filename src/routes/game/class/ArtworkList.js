@@ -172,6 +172,7 @@ class ArtworkList {
 
       // create server object
       // updates the object server side
+      dlog('mediaObject.key, parsedMediaOject: ', mediaObject.key, parsedMediaOject);
       Liked.create(mediaObject.key, parsedMediaOject);
     } else {
       // changing to empty, not liked

@@ -122,6 +122,7 @@ export const Liked = {
   },
 
   delete: (key) => {
+    dlog('delete: ', key);
     likedStore.update((likedItems) => {
       const itemNum = likedItems.findIndex((element) => element.key === key);
       if (itemNum === -1) return likedItems;

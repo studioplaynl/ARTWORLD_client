@@ -55,6 +55,24 @@ export const checkIfSceneIsAllowed = (loc) => {
  */
 export const checkIfLocationLooksLikeAHouse = (loc) => loc !== null && loc.split('-').length > 3;
 
+export function returnPartsOfArtUrl(url) {
+  const parts = url.split('/');
+  if (parts.length > 2) {
+    const artType = parts[0]; // assuming this is where the full artUrl is like "9_1659961342249_roodluipaard.png"
+    const userId = parts[1];
+    const fullArtUrl = parts[2];
+
+    // Extracting artKey by removing X_ prefix and .png suffix
+    const artKey = fullArtUrl.split('_').slice(1).join('_').replace('.png', '');
+
+    return {
+      userId, artType, fullArtUrl, artKey,
+    };
+  }
+  dlog.log('String does not match the expected format.');
+  return null;
+}
+
 
 /** Parse the URL and set currentApp accordingly */
 export function parseURL() {
