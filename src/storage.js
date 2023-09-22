@@ -16,7 +16,7 @@ import {
 } from './helpers/nakamaHelpers';
 import {
   PERMISSION_READ_PUBLIC,
-  // PERMISSION_READ_PRIVATE,
+  MODERATOR_LIKED_ID,
   STOPMOTION_MAX_FRAMES,
   DEFAULT_PREVIEW_HEIGHT,
 } from './constants';
@@ -108,6 +108,7 @@ export const Liked = {
     if (Sess) {
       listAllObjects('liked', Sess.user_id).then((serverLikedArray) => {
         Liked.set(serverLikedArray);
+        console.log('liked user', serverLikedArray);
         return serverLikedArray;
       });
     }
@@ -131,6 +132,38 @@ export const Liked = {
 
       return likedItems.filter((element) => element.key !== key);
     });
+  },
+};
+
+// Stores whatever a user has liked
+const moderatorLikedStore = writable([]);
+
+export const ModeratorLiked = {
+
+  subscribe: likedStore.subscribe,
+  set: moderatorLikedStore.set,
+  get: () => {
+    const localLikedArray = get(moderatorLikedStore);
+
+    if (!!localLikedArray && localLikedArray.length > 0) {
+      return localLikedArray;
+    }
+
+
+    listAllObjects('liked', MODERATOR_LIKED_ID).then((serverLikedArray) => {
+      ModeratorLiked.set(serverLikedArray);
+      console.log('liked mod', serverLikedArray);
+      return serverLikedArray;
+    });
+
+    return null;
+  },
+
+  find: (key) => {
+    const likedArray = get(moderatorLikedStore);
+    const i = likedArray.findIndex((element) => element.key === key);
+    if (i > -1) return likedArray[i].value;
+    return undefined;
   },
 };
 

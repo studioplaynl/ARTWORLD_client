@@ -59,6 +59,7 @@ class Player {
     //        role: "speler"
     //        user_id: ""
 
+    // TODO this should be kept in ManageSession or in this class is possible?
     scene.playerAvatarKey = `${userprofile.id}_${userprofile.update_time}`;
 
     // check if account info is loaded
@@ -128,7 +129,7 @@ class Player {
 
     // if the texture doesnot exists (if it is new) load it and attach it to the player
     if (!scene.textures.exists(scene.playerAvatarKey)) {
-      // dlog("didn't exist yet: scene.textures.exists(scene.playerAvatarKey)");
+      // dlog("didn't exist yet: scene.textures.exists(scene.playerAvatarKey)", scene.playerAvatarKey);
       const fileNameCheck = scene.playerAvatarKey;
 
       // convert the avatar url to a converted png url

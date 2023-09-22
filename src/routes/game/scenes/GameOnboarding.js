@@ -8,7 +8,9 @@ import { DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
 import {
   PlayerPos, PlayerLocation, PlayerHistory,
 } from '../playerState';
-import { Addressbook, Liked, Achievements } from '../../../storage';
+import {
+  Addressbook, Liked, Achievements, ModeratorLiked,
+} from '../../../storage';
 import { dlog } from '../../../helpers/debugLog';
 import { parseQueryString, checkIfSceneIsAllowed, checkIfLocationLooksLikeAHouse } from '../helpers/UrlHelpers';
 
@@ -112,6 +114,7 @@ export default class GameOnboarding extends Phaser.Scene {
       .then(async () => {
         // get server object so that the data is Initialized
         Liked.get();
+        ModeratorLiked.get();
         Addressbook.get();
         Achievements.get();
 

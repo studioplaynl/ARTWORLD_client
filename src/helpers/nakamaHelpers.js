@@ -328,39 +328,42 @@ export async function getAccount(id) {
   const session = get(Session);
   let user;
 
-  // dlog('getAccount called, id = ', id, 'Session = ', session);
-
   if (!id) {
-    // No id given, gets own account
     const account = await client.getAccount(session);
-    user = account.user;
-    user.meta = JSON.parse(user.metadata);
-    user.url = await convertImage(
-      user.avatar_url,
-      DEFAULT_PREVIEW_HEIGHT,
-      DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
-      'png',
-    );
+    user = account.user || {}; // Provide a default value
+
+    if (!user.metadata) return user; // If metadata doesn't exist, return early
+
+    user.meta = typeof user.metadata === 'string' ? JSON.parse(user.metadata) : user.metadata;
+    if (user.avatar_url) {
+      user.url = await convertImage(
+        user.avatar_url,
+        DEFAULT_PREVIEW_HEIGHT,
+        DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+        'png',
+      );
+    }
     Profile.set(user);
   } else {
-    // With id: get account of other user
-
     const users = await client.getUsers(session, [id]);
-    user = users.users[0];
+    user = users.users && users.users[0] ? users.users[0] : {}; // Check if users.users exists and has at least one item
 
-    user.meta = typeof user.metadata === 'string'
-      ? JSON.parse(user.metadata)
-      : user.metadata;
-    user.url = await convertImage(
-      user.avatar_url,
-      DEFAULT_PREVIEW_HEIGHT,
-      DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
-      'png',
-    );
+    if (!user.metadata) return user; // If metadata doesn't exist, return early
+
+    user.meta = typeof user.metadata === 'string' ? JSON.parse(user.metadata) : user.metadata;
+    if (user.avatar_url) {
+      user.url = await convertImage(
+        user.avatar_url,
+        DEFAULT_PREVIEW_HEIGHT,
+        DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+        'png',
+      );
+    }
   }
 
   return user;
 }
+
 
 export async function getFullAccount(id) {
   const rpcid = 'get_full_account';

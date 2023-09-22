@@ -1,17 +1,29 @@
+/**
+ * @file ServerCall.js
+ * @author Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  This file contains all the functions that make calls to the server from the game.
+ *  It also contains the functions that handle the data that comes back from the server.
+ *  Like handling houses, drawings, stopmotions, etc.
+ *
+ */
+
 /* eslint-disable no-new */
 /* eslint-disable prefer-destructuring */
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import {
-  convertImage, getAllHouses, listAllObjects,
+  convertImage, getAllHouses, listAllObjects, getAccount,
 } from '../../../helpers/nakamaHelpers';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
-import ArtworkList from './ArtworkList';
-import { ART_FRAME_BORDER } from '../../../constants';
+import ArtworkOptions from './ArtworkOptions';
+import { ART_FRAME_BORDER, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
 import { dlog } from '../../../helpers/debugLog';
 import AnimalChallenge from './animalChallenge';
-import { myHomeStore } from '../../../storage';
+import { myHomeStore, Liked, ModeratorLiked } from '../../../storage';
 
 class ServerCall {
   async getHomesFiltered(filter, _scene) {
@@ -241,9 +253,24 @@ class ServerCall {
     return { objectsOfFellowsOfUser, remainingItemsArray };
   }
 
+  static getRandomElements(arr, count) {
+    const randomElements = [];
+    const usedIndexes = new Set(); // To keep track of already selected indexes
+
+    while (randomElements.length < count && randomElements.length < arr.length) {
+      const randomIndex = Math.floor(Math.random() * arr.length);
+
+      if (!usedIndexes.has(randomIndex)) {
+        randomElements.push(arr[randomIndex]);
+        usedIndexes.add(randomIndex);
+      }
+    }
+
+    return randomElements;
+  }
 
   // eslint-disable-next-line class-methods-use-this
-  async downloadAndPlaceArtworksByType(type, location, serverItemsArray, artSize, artMargin) {
+  async downloadAndPlaceArtByType(type, userId, serverItemsArray, artSize, artMargin) {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
       let allFoundAnimals;
@@ -413,8 +440,20 @@ class ServerCall {
         serverItemsArray.array = allFoundFlowers;
         ServerCall.handleServerArray(type, allFoundFlowers, artSize, artMargin);
       }// end of bloem
+    } else if (type === 'likedDrawing') {
+      // async get the liked stores and handle the data when they are loaded
+      ServerCall.getLikedStores(serverItemsArray)
+        .then((randomLiked) => {
+          // eslint-disable-next-line no-param-reassign
+          serverItemsArray = randomLiked;
+          // console.log('type, randomLiked, artSize, artMargin: ', type, serverItemsArray, artSize, artMargin);
+          ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
     } else {
-      await listAllObjects(type, location).then((rec) => {
+      await listAllObjects(type, userId).then((rec) => {
         // eslint-disable-next-line no-param-reassign
         serverItemsArray.array = rec
           .filter((obj) => obj.permission_read === 2)
@@ -422,10 +461,38 @@ class ServerCall {
         // sorting by update_time in descending order
 
         serverItemsArray.array.forEach((element) => console.log(element.update_time));
-        dlog('serverItemsArray: ', type, location, serverItemsArray);
+        dlog('serverItemsArray: ', type, userId, serverItemsArray);
         ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
       });
     }
+  }
+
+  static async getLikedStores() {
+    return new Promise((resolve, reject) => {
+      try {
+        this.userLikedArt = Liked.get() || [];
+        this.moderatorLikedArt = ModeratorLiked.get() || [];
+
+        if (!Array.isArray(this.userLikedArt) || !Array.isArray(this.moderatorLikedArt)) {
+          reject(new Error('Data from stores is not in the expected format'));
+          return;
+        }
+
+        this.allLikedArt = [...this.userLikedArt, ...this.moderatorLikedArt];
+
+        this.stopmotionLiked = this.allLikedArt.filter((art) => art.value.collection === 'stopmotion');
+        this.drawingLiked = this.allLikedArt.filter((art) => art.value.collection === 'drawing');
+
+        this.randomLiked = {};
+        // eslint-disable-next-line no-param-reassign
+        this.randomLiked.array = ServerCall.getRandomElements(this.drawingLiked, 4);
+        // console.log('this.randomLiked: ', this.randomLiked);
+
+        resolve(this.randomLiked);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   static shuffleArray(inputArray) {
@@ -450,6 +517,10 @@ class ServerCall {
 
   static handleServerArray(type, serverItemsArray, artSize, artMargin) {
     dlog('serverItemsArray.array.length: ', serverItemsArray.array.length);
+
+    /* we keep stats on the array when we begin downloading media
+    *  if media does not download down the line, it will be removed from the list
+    *  and it will be marked as itemsFailed */
 
     if (serverItemsArray.array.length > 0) {
       // eslint-disable-next-line no-param-reassign
@@ -526,12 +597,16 @@ class ServerCall {
 
   static async downloadArtwork(element, index, array, type, artSize, artMargin) {
     const scene = ManageSession.currentScene;
-    if (!element.value.url) { dlog('element.value.url is empty'); return; }
+    if (!element.value.url || !element.value) { dlog('element.value.url is empty'); return; }
+
     const imageKeyUrl = element.value.url;
+    // console.log('imageKeyUrl: ', imageKeyUrl);
+    // console.log('element: ', element);
     const imgSize = artSize.toString();
     const fileFormat = 'png';
     const getImageWidth = (artSize * 100).toString();
 
+    // console.log('scene.textures.exists(imageKeyUrl): ', scene.textures.exists(imageKeyUrl));
     if (scene.textures.exists(imageKeyUrl)) {
       // if the artwork has already been downloaded
       if (type === 'drawing') {
@@ -552,6 +627,10 @@ class ServerCall {
         // push het element in flowerKeyArray
         scene.flowerKeyArray.push(imageKeyUrl);
         // scene.flowerFliedStartMaking = true;
+      } else if (type === 'likedDrawing') {
+        // eslint-disable-next-line no-param-reassign
+        element.downloaded = true;
+        ServerCall.createDrawingContainer(element, index, artSize, artMargin);
       }
       // if the artwork is not already downloaded
     } else if (type === 'drawing') {
@@ -594,11 +673,11 @@ class ServerCall {
 
       // this is fired each time a file is finished downloading (or failing)
       scene.load.on('complete', () => {
-        const startLength = scene.userDrawingServerList.startLength;
-        let downloadCompleted = scene.userDrawingServerList.itemsDownloadCompleted;
+        const startLength = scene.userHomeDrawingServerList.startLength;
+        let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
         downloadCompleted += 1;
-        scene.userDrawingServerList.itemsDownloadCompleted = downloadCompleted;
+        scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('loader DRAWING COMPLETE');
@@ -725,8 +804,205 @@ class ServerCall {
       // scene.load.on('complete', () => {
 
       // });
+    } else if (type === 'likedDrawing') {
+      // console.log(imageKeyUrl, imgSize, imgSize, fileFormat);
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
+
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'downloadLikedDrawing', element, index, imageKey: imageKeyUrl, scene, resolved: false,
+      });
+
+      scene.load.image(imageKeyUrl, convertedImage)
+        .on(`filecomplete-image-${imageKeyUrl}`, () => {
+          // delete from ManageSession.resolveErrorObjectArray because of succesful download
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl,
+          );
+
+          // eslint-disable-next-line no-param-reassign
+          element.downloaded = true;
+          // dlog('drawing downloaded', imageKeyUrl);
+          // dlog('object updated: ', element);
+          // create container with artwork
+
+          ServerCall.createLikedDrawingContainer(element, index, artSize, artMargin);
+          // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
+          // create the home
+          // ServerCall.createHome(element, index, homeImageKey, scene);
+        }, scene);
+      // .on('fileprogress', (file, progress) => {
+      //   console.log('file: ', file);
+
+      //   console.log('progress: ', progress);
+      // }, scene);
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      // ManageSession.resolveErrorObjectArray.push({
+      //   loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
+      // });
+
+      scene.load.start(); // start the load queue to get the image in memory
+
+      // this is fired each time a file is finished downloading (or failing)
+      // scene.load.on('complete', () => {
+      //   const startLength = scene.randomLiked.startLength;
+      //   let downloadCompleted = scene.randomLiked.itemsDownloadCompleted;
+      //   // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
+      //   downloadCompleted += 1;
+      //   scene.randomLiked.itemsDownloadCompleted = downloadCompleted;
+      //   // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
+      //   if (downloadCompleted === startLength) {
+      //     dlog('loader DRAWING COMPLETE');
+      //     ServerCall.repositionContainers('drawing');
+      //   }
+      // });
     }
   }
+
+  static getContainerBounds(container) {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    container.list.forEach((child) => {
+      const left = child.x - child.displayWidth * child.originX;
+      const right = child.x + child.displayWidth * (1 - child.originX);
+      const top = child.y - child.displayHeight * child.originY;
+      const bottom = child.y + child.displayHeight * (1 - child.originY);
+
+      minX = Math.min(minX, left);
+      maxX = Math.max(maxX, right);
+      minY = Math.min(minY, top);
+      maxY = Math.max(maxY, bottom);
+    });
+
+    return {
+      x: minX,
+      y: maxY,
+      width: maxX - minX,
+      height: maxY - minY,
+    };
+  }
+
+  static async loadUserAndSpritesheet(element, scene) {
+    const user = await getAccount(element.user_id);
+    if (!user || !user.url) {
+      console.error("Failed to fetch user data or user's avatar URL is missing");
+      return;
+    }
+    // console.log('user: ', user);
+    // 2. Load the Spritesheet
+    ServerCall.loadSpritesheetForUser(user, scene);
+    // .then((fileNameCheck) => fileNameCheck);
+  }
+
+  static loadSpritesheetForUser(user, scene) {
+    const fileNameCheck = `${user.id}_${user.update_time}`;
+
+    convertImage(
+      user.avatar_url,
+      AVATAR_SPRITESHEET_LOAD_SIZE,
+      AVATAR_SPRITESHEET_LOAD_SIZE * 100,
+      'png',
+    ).then((url) => {
+      console.log('url: ', url);
+      scene.load.spritesheet(
+        fileNameCheck,
+        url,
+        {
+          frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
+          frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
+        },
+      ).on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
+        console.log('fileNameCheck: ', fileNameCheck);
+        return fileNameCheck;
+      });
+      scene.load.start(); // start loading the image in memory
+    });
+  }
+
+  static async createLikedDrawingContainer(element, index) {
+    const scene = ManageSession.currentScene;
+    // console.log('element, index, artSize, artMargin, scene: ', element, index, artSize, artMargin, scene);
+    // console.log('scene.balloonContainer.getWidth(): ', ServerCall.getContainerBounds(scene.balloonContainer));
+    // console.log('element: ', element);
+    const user = await getAccount(element.value.user_id);
+    if (!user || !user.url) {
+      console.error("Failed to fetch user data or user's avatar URL is missing");
+      console.log('element: ', element);
+      const {
+        width,
+      } = ServerCall.getContainerBounds(scene.balloonContainer);
+
+      let placeX;
+      // let placeY;
+      if (index === 0) {
+        placeX = width;
+      } else {
+        placeX = width + 20;
+      }
+      const placeY = 200;
+
+      const imageKeyUrl = element.value.url;
+
+
+      // place the background (white image)
+      scene.balloonContainer.add(scene.add.image(placeX - 5, placeY, 'artFrame_512').setOrigin(0.5).setScale(0.5));
+
+      // adds the image to the container
+      scene.balloonContainer.add(scene.add.image(placeX, placeY, imageKeyUrl).setOrigin(0.5));
+      return;
+    }
+    // console.log('user: ', user);
+
+    const fileNameCheck = `${user.id}_${user.update_time}`;
+
+    convertImage(
+      user.avatar_url,
+      AVATAR_SPRITESHEET_LOAD_SIZE,
+      AVATAR_SPRITESHEET_LOAD_SIZE * 100,
+      'png',
+    ).then((url) => {
+      // console.log('url: ', url);
+      scene.load.spritesheet(
+        fileNameCheck,
+        url,
+        {
+          frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
+          frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
+        },
+      ).on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
+        console.log('fileNameCheck: ', fileNameCheck);
+
+        const {
+          width,
+        } = ServerCall.getContainerBounds(scene.balloonContainer);
+
+        let placeX;
+        // let placeY;
+        if (index === 0) {
+          placeX = width;
+        } else {
+          placeX = width + 20;
+        }
+        const placeY = 200;
+
+        const imageKeyUrl = element.value.url;
+
+
+        // place the background (white image)
+        scene.balloonContainer.add(scene.add.image(placeX - 5, placeY, 'artFrame_512').setOrigin(0.5).setScale(0.5));
+
+        // adds the image to the container
+        scene.balloonContainer.add(scene.add.image(placeX, placeY, imageKeyUrl).setOrigin(0.5));
+      });
+      scene.load.start(); // start loading the image in memory
+    });
+  }
+
+
+
 
   static createDrawingContainer(element, index, artSize, artMargin) {
     const scene = ManageSession.currentScene;
@@ -750,11 +1026,11 @@ class ServerCall {
     const containerSize = artSize + artBorder;
     const tempX = containerSize - artMargin;
     const tempY = containerSize + artBorder;
-    ArtworkList.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
+    ArtworkOptions.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     imageContainer.setPosition(coordX, y);
     imageContainer.setSize(containerSize, containerSize);
-    scene.drawingGroup.add(imageContainer);
-    // dlog('scene.drawingGroup.getChildren()', scene.drawingGroup.getChildren());
+    scene.homeDrawingGroup.add(imageContainer);
+    // dlog('scene.homeDrawingGroup.getChildren()', scene.homeDrawingGroup.getChildren());
   }
 
   static createStopmotionContainer(element, index, artSize, artMargin) {
@@ -827,11 +1103,11 @@ class ServerCall {
     const containerSize = artSize + artBorder;
     const tempX = containerSize - artMargin;
     const tempY = containerSize + artBorder;
-    ArtworkList.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
-    ArtworkList.placePlayPauseButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
+    ArtworkOptions.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
+    ArtworkOptions.placePlayPauseButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     imageContainer.setPosition(coordX, y);
     imageContainer.setSize(containerSize, containerSize);
-    scene.stopmotionGroup.add(imageContainer);
+    scene.homeStopmotionGroup.add(imageContainer);
   }
 
   static repositionContainers(type) {
@@ -841,9 +1117,9 @@ class ServerCall {
     let containers = {};
 
     if (type === 'drawing') {
-      containers = scene.drawingGroup.getChildren();
+      containers = scene.homeDrawingGroup.getChildren();
     } else if (type === 'stopmotion') {
-      containers = scene.stopmotionGroup.getChildren();
+      containers = scene.homeStopmotionGroup.getChildren();
     }
 
 
@@ -902,9 +1178,9 @@ class ServerCall {
       case 'downloadDrawingDefaultUserHome':
         dlog('offending drawing loading failed, removing from array', imageKey);
 
-        // delete from scene.userDrawingServerList
+        // delete from scene.userHomeDrawingServerList
         // eslint-disable-next-line max-len
-        scene.userDrawingServerList.array = scene.userDrawingServerList.array.filter((obj) => obj.value.url !== imageKey);
+        scene.userHomeDrawingServerList.array = scene.userHomeDrawingServerList.array.filter((obj) => obj.value.url !== imageKey);
 
         // delete from ManageSession.resolveErrorObjectArray
         ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(

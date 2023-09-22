@@ -1,9 +1,21 @@
+/**
+ * @file PreLoadScene.js
+ * @author Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  The file loads the assets for the game that are use anywhere.
+ *  Per scene there are assets loaded that are only used in that scene.
+ *
+ *  We have a few functions to create assets, maybe move them to a separate file?
+ */
+
 /* eslint-disable max-len */
 import Preloader from '../class/Preloader';
 import ManageSession from '../ManageSession';
 import { ART_FRAME_BORDER } from '../../../constants';
 import Background from '../class/Background';
-import ServerCall from '../class/ServerCall';
+// import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 
@@ -138,12 +150,17 @@ export default class PreloadScene extends Phaser.Scene {
     this.createHitAreaLocations();
 
     // create a generic artFrame for later use wit image key eg "artFrame_512"
-    this.createArtFrame('512');
-    this.createArtFrame('128');
-    this.createArtFrame('32');
+    this.createArtFrame(512);
+    this.createArtFrame(128);
+    this.createArtFrame(32);
 
+    // make a white square as a background for liked images that appear in the workd (image are transparent)
+    this.createWhiteSquare(256);
     // debug test image square
     this.load.svg('test_image_square', 'https://upload.wikimedia.org/wikipedia/commons/d/de/TestScreen_square.svg');
+
+    // balloon
+    this.load.image('likedBalloon', './assets/likes_balloon.png');
   }
 
   async create() {
@@ -188,12 +205,12 @@ export default class PreloadScene extends Phaser.Scene {
     const frame = this.add.graphics();
     // create a black square size of art + 20pix
     frame.fillStyle(0x000000);
-    frame.fillRect(0, 0, this.artDisplaySize + (frameBorderSize * 2), this.artDisplaySize + (frameBorderSize * 2)).setVisible(false);
+    frame.fillRect(0, 0, postFix + (frameBorderSize * 2), postFix + (frameBorderSize * 2)).setVisible(false);
     frame.fillStyle(0xffffff);
-    frame.fillRect(frameBorderSize, frameBorderSize, this.artDisplaySize, this.artDisplaySize).setVisible(false);
+    frame.fillRect(frameBorderSize, frameBorderSize, postFix, postFix).setVisible(false);
 
     // create renderTexture to place the dot on
-    const artFrameRendertexture = this.add.renderTexture(0, 0, this.artDisplaySize + (frameBorderSize * 2), this.artDisplaySize + (frameBorderSize * 2)).setVisible(false);
+    const artFrameRendertexture = this.add.renderTexture(0, 0, postFix + (frameBorderSize * 2), postFix + (frameBorderSize * 2)).setVisible(false);
 
     // draw the dot on the renderTexture
     artFrameRendertexture.draw(frame);
@@ -201,6 +218,26 @@ export default class PreloadScene extends Phaser.Scene {
     // save the rendertexture with a key ('dot'), basically making an image out of it
     artFrameRendertexture.saveTexture(`artFrame_${postFix}`);
     // this.add.image(0, 0, 'artFrame_512').setVisible(false) // .setOrigin(0)
+
+    frame.destroy();
+    artFrameRendertexture.destroy();
+  }
+
+  createWhiteSquare(postFix) {
+    const frame = this.add.graphics();
+    // create a black square size of art + 20pix
+    frame.fillStyle(0xffffff);
+    frame.fillRect(0, 0, postFix, postFix).setVisible(false);
+
+    // create renderTexture to place the dot on
+    const artFrameRendertexture = this.add.renderTexture(0, 0, postFix, postFix).setVisible(false);
+
+    // draw the dot on the renderTexture
+    artFrameRendertexture.draw(frame);
+
+    // save the rendertexture with a key ('dot'), basically making an image out of it
+    artFrameRendertexture.saveTexture(`whiteSquare_${postFix}`);
+    // dlog('whiteSqaure_postFix: ', `whiteSquare_${postFix}`);
 
     frame.destroy();
     artFrameRendertexture.destroy();

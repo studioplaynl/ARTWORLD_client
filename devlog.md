@@ -3,7 +3,7 @@
 June 9 2023
 Code cleanup AVATAR_BASE_SIZE from constants.js
 
-Clicking friend in itemsBar takes you instide the friends home in the correct position. Should we be taken next to the house though?
+Clicking friend in itemsBar takes you inside the friends home in the correct position. Should we be taken next to the house though?
 
 MailBox: ArtMail: clicking it, takes us to the home of the sender where the art is. 
 (one problem: when the art work is hidden? => so should this be opening the artwork? 

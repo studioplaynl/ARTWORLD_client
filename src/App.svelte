@@ -1,4 +1,15 @@
 <script>
+/**
+ * @file App.svelte
+ * @author Lindsey, Eelke, Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  App.svelte is the main file of the app. It contains the router and the game.
+ *  It also contains the menu and the notifications.
+ *  It also contains the admin pages.
+ *
+ */
   import Router, { push } from 'svelte-spa-router';
   import { onMount, tick } from 'svelte';
   import { wrap } from 'svelte-spa-router/wrap';

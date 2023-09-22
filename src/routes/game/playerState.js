@@ -90,7 +90,7 @@ function createHistory() {
         ...hist,
         path,
       ]);
-      dlog('push history =', get(PlayerHistoryStore));
+      // dlog('push history =', get(PlayerHistoryStore));
     },
 
     replace: (path) => {

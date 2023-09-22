@@ -1,3 +1,15 @@
+/**
+ * @file Artworld.js
+ * @author Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  This file is the main scene for the Artworld.
+ *  Portals to other worlds are located here.
+ *  We load the player and NetworkedPlayer here.
+ *  We have some animations with Tweens in the scene.
+ */
+
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
@@ -14,6 +26,8 @@ import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
+import ServerCall from '../class/ServerCall';
+import { Liked, ModeratorLiked } from '../../../storage';
 
 const { Phaser } = window;
 
@@ -41,6 +55,12 @@ export default class Artworld extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
+
+    // sizes for the artWorks
+    this.artIconSize = 64;
+    this.artPreviewSize = 128;
+    this.artDisplaySize = 256;
+    this.artMargin = 10;
   }
 
   async preload() {
@@ -62,6 +82,7 @@ export default class Artworld extends Phaser.Scene {
     this.load.image('melodymaker', './assets/apps/melodymaker.png');
     this.load.image('kandinsky', './assets/apps/kandinsky.png');
 
+
     // world portals in Artworld
     this.load.image('robotWorldPortal', './assets/world_robot_torquoise/portaal_robot_zonderAnimatie.png');
     this.load.image('artWorldPortalMoon', './assets/world_moon/maan_portalRaket_naarMaan.png');
@@ -80,6 +101,14 @@ export default class Artworld extends Phaser.Scene {
 
     this.load.image('cloudWorldPortal', './assets/world_clouds/cloud_portal_naarCloud.png');
     this.load.image('beeWorldPortal', './assets/world_bees/02b_Portaal_home_naar_bee-fs8.png');
+
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
+        // this.resolveLoadError(offendingFile);
+      }
+    });
   }
 
   async create() {
@@ -142,10 +171,125 @@ export default class Artworld extends Phaser.Scene {
     // .......... locations ................................................................................
     // ServerCall.getHomesFiltered('GreenSquare', this);
     this.generateLocations();
+    // this.getLikedArt();
+    this.loadAndPlaceArtworks();
+    this.likedBalloonAnimation();
     // .......... end locations ............................................................................
 
     Player.loadPlayerAvatar(this);
   } // end create
+
+  likedBalloonAnimation() {
+    this.balloonContainer = this.add.container(0, 0);
+
+    this.likedBalloon = this.add.image(
+      0,
+      0,
+      'likedBalloon',
+    );
+    this.likedBalloon.name = 'likedBalloon';
+
+    // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
+    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 400),
+
+    this.balloonContainer.add(this.likedBalloon);
+
+    this.balloonContainer.setPosition(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 2) - 800),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
+    );
+    this.balloonContainer.setDepth(602);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.likedBalloon.setInteractive({ draggable: true });
+    } else {
+      // when not in edit mode add animation tween
+
+      // this.likedTween = this.tweens.add({
+      //   targets: this.balloonContainer,
+      //   duration: 90000,
+      //   x: '-=8000',
+      //   yoyo: false,
+      //   repeat: -1,
+      //   repeatDelay: 300,
+      //   // ease: 'Sine.easeInOut'
+      // });
+    }
+  }
+
+  async getLikedArt() {
+    this.userLikedArt = Liked.get();
+    this.moderatorLikedArt = ModeratorLiked.get();
+    this.allLikedArt = [...this.userLikedArt, ...this.moderatorLikedArt];
+    // console.log('this.allLikedArt: ', this.allLikedArt);
+
+    // Filter the artworks based on the collection
+    this.stopmotionLiked = this.allLikedArt.filter((art) => art.value.collection === 'stopmotion');
+    this.drawingLiked = this.allLikedArt.filter((art) => art.value.collection === 'drawing');
+
+    // console.log('this.stopmotionLiked, this.drawingLiked: ', this.stopmotionLiked, this.drawingLiked);
+    // get 4 random artworks from allLikedArt
+    this.randomLiked = Artworld.getRandomElements(this.drawingLiked, 4);
+    // console.log('randomArtworks: ', this.randomLiked[0]);
+
+    // //test principle
+    // const liked1Url = await convertImage(
+    //   this.randomLiked[0].value.url,
+    //   this.artDisplaySize,
+    //   this.artDisplaySize,
+    //   'png',
+    // );
+
+    // console.log('liked1Url: ', liked1Url);
+    // this.load.image(this.randomLiked[0].value.url, liked1Url)
+    //   .on(`filecomplete-image-${this.randomLiked[0].value.url}`, () => {
+    //     console.log('download finished');
+    //     this.liked1 = this.add.image(
+    //       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2124),
+    //       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 400),
+    //       this.randomLiked[0].value.url,
+    //     );
+    //     this.liked1.name = 'liked1';
+    //   }, this);
+
+    // this.load.start(); // start the load queue to get the image in memory
+  }
+
+  static getRandomElements(arr, count) {
+    const randomElements = [];
+    const usedIndexes = new Set(); // To keep track of already selected indexes
+
+    while (randomElements.length < count && randomElements.length < arr.length) {
+      const randomIndex = Math.floor(Math.random() * arr.length);
+
+      if (!usedIndexes.has(randomIndex)) {
+        randomElements.push(arr[randomIndex]);
+        usedIndexes.add(randomIndex);
+      }
+    }
+
+    return randomElements;
+  }
+
+  async loadAndPlaceArtworks() {
+    const type = 'likedDrawing';
+    const serverItemsArray = this.randomLiked;
+    const location = this.scene;
+    // dlog('this.location', location);
+    const artSize = this.artDisplaySize;
+    const artMargin = artSize / 10;
+    this.artMargin = artMargin;
+    this.drawingGroup = this.add.group();
+    // console.log(
+    //   'type, location, serverItemsArray, artSize, artMargin: ',
+    //   type,
+    //   location,
+    //   serverItemsArray,
+    //   artSize,
+    //   artMargin,
+    // );
+    ServerCall.downloadAndPlaceArtByType(type, location, serverItemsArray, artSize, artMargin);
+  }
 
   makeWorldElements() {
     Background.circle({
@@ -237,7 +381,7 @@ export default class Artworld extends Phaser.Scene {
     // create(scene, x, y, width, height, name, color, imageFile = null) {
     GraffitiWall.create(
       this,
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2323),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2345),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1306),
       800,
       400,

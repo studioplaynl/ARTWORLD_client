@@ -13,7 +13,6 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
-// import PreloadScene from './PreloadScene';
 
 const { Phaser } = window;
 

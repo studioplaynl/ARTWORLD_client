@@ -180,6 +180,7 @@ export const STOCK_AVATARS = [
   'avatarRoze.png',
 ];
 
+export const MODERATOR_LIKED_ID = '5264dc23-a339-40db-bb84-e0849ded4e68';
 export const DEFAULT_SCENE = 'Artworld';
 export const DEFAULT_HOME = 'DefaultUserHome';
 export const DEFAULT_ZOOM = 0.8;

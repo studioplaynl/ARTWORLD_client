@@ -1,8 +1,21 @@
+/**
+ * @file ArtworkOptions.js
+ * @author Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  This file is used to place the heart button under the artwork
+ *  The heart button is used to like the artwork.
+ *  The other option is to place a play/ pause button under the stopmotion
+ *
+ *  The ServerCall class uses it when loading art in DefaultUserHome
+ */
+
 import { Liked } from '../../../storage';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 
-class ArtworkList {
+class ArtworkOptions {
   constructor() {
     this.heartArray = [];
     this.heartArrayLastValue = 0;
@@ -49,7 +62,7 @@ class ArtworkList {
       .on(
         'pointerup',
         () => {
-          ArtworkList.heartButtonToggle(mediaObject, currentHeart);
+          ArtworkOptions.heartButtonToggle(mediaObject, currentHeart);
         },
       );
 
@@ -99,7 +112,7 @@ class ArtworkList {
       .on(
         'pointerup',
         () => {
-          ArtworkList.playPauseButtonToggle(playButton);
+          ArtworkOptions.playPauseButtonToggle(playButton);
         },
       );
 
@@ -206,4 +219,4 @@ class ArtworkList {
   }
 }
 
-export default new ArtworkList();
+export default new ArtworkOptions();

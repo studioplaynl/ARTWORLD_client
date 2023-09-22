@@ -207,7 +207,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     // download all drawings "bloem" from allUsersChallenge
 
     // this.getListOfBloem();
-    ServerCall.downloadAndPlaceArtworksByType('bloem', '', this.flowerKeyArray, 512, 12);
+    ServerCall.downloadAndPlaceArtByType('bloem', '', this.flowerKeyArray, 512, 12);
   }
 
   makeFlowerRow(flowerRowY) {

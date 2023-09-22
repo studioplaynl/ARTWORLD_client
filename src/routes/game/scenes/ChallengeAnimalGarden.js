@@ -145,7 +145,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     const artSize = 256;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
-    ServerCall.downloadAndPlaceArtworksByType(type, location, array, artSize, artMargin);
+    ServerCall.downloadAndPlaceArtByType(type, location, array, artSize, artMargin);
   }
 
   update() {
