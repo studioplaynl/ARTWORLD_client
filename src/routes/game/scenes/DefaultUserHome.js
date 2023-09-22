@@ -214,19 +214,19 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async loadAndPlaceArtworks() {
     let type = 'drawing';
-    let serverArray = this.userHomeDrawingServerList;
+    let serverObjectsHandler = this.userHomeDrawingServerList;
     const userId = this.location;
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
     this.homeDrawingGroup = this.add.group();
-    ServerCall.downloadAndPlaceArtByType(type, userId, serverArray, artSize, artMargin);
+    ServerCall.downloadAndPlaceArtByType(type, userId, serverObjectsHandler, artSize, artMargin);
 
     type = 'stopmotion';
     // this.userStopmotionServerList = [];
-    serverArray = this.userStopmotionServerList;
+    serverObjectsHandler = this.userStopmotionServerList;
     this.homeStopmotionGroup = this.add.group();
-    ServerCall.downloadAndPlaceArtByType(type, userId, serverArray, artSize, artMargin);
+    ServerCall.downloadAndPlaceArtByType(type, userId, serverObjectsHandler, artSize, artMargin);
   }
 
   update() {

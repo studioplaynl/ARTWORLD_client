@@ -232,7 +232,7 @@ class ServerCall {
     }
   }
 
-  static async filterFellowHomeAreaObjects(userHomeArea, user, serverItemsArray) {
+  static async filterFellowHomeAreaObjects(userHomeArea, user, serverObjectsHandler) {
     // get all homes from the server with userHome in the name, with the function getAllHouse
     const homesRec = await getAllHouses(userHomeArea, null);
     // dlog('homesRec: ', homesRec);
@@ -241,13 +241,19 @@ class ServerCall {
       .map((i) => i.username)
       .filter((i) => i !== user);
     // dlog('homesNames: ', namesInHomeAreaWithoutUser);
-    // dlog('serverItemsArray: ', serverItemsArray);
+    // dlog('serverObjectsHandler: ', serverObjectsHandler);
 
-    // Filter serverItemsArray for objects whose username exists in namesInHomeAreaWithoutUser
-    const objectsOfFellowsOfUser = serverItemsArray.filter((obj) => namesInHomeAreaWithoutUser.includes(obj.username));
+    // Filter serverObjectsHandler for objects whose username exists in namesInHomeAreaWithoutUser
+    const objectsOfFellowsOfUser = serverObjectsHandler.filter(
+      (obj) => namesInHomeAreaWithoutUser.includes(obj.username),
+    );
+
     // dlog('objectsOfFellowsOfUser: ', objectsOfFellowsOfUser);
-    // Filter serverItemsArray for objects whose username doesn't exist in namesInHomeAreaWithoutUser
-    const remainingItemsArray = serverItemsArray.filter((obj) => !namesInHomeAreaWithoutUser.includes(obj.username));
+    // Filter serverObjectsHandler for objects whose username doesn't exist in namesInHomeAreaWithoutUser
+    const remainingItemsArray = serverObjectsHandler.filter(
+      (obj) => !namesInHomeAreaWithoutUser.includes(obj.username),
+    );
+
     // dlog('remainingItemsArray: ', remainingItemsArray);
 
     return { objectsOfFellowsOfUser, remainingItemsArray };
@@ -270,7 +276,7 @@ class ServerCall {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async downloadAndPlaceArtByType(type, userId, serverItemsArray, artSize, artMargin) {
+  async downloadAndPlaceArtByType(type, userId, serverObjectsHandler, artSize, artMargin) {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
       let allFoundAnimals;
@@ -347,12 +353,12 @@ class ServerCall {
 
 
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = animalArray;
-        ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+        serverObjectsHandler.array = animalArray;
+        ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
       } else {
         // we use all available animals
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = allFoundAnimals;
+        serverObjectsHandler.array = allFoundAnimals;
         ServerCall.handleServerArray(type, allFoundAnimals, artSize, artMargin);
       } // end of dier
     } else if (type === 'bloem') {
@@ -432,22 +438,22 @@ class ServerCall {
 
 
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = animalArray;
-        ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+        serverObjectsHandler.array = animalArray;
+        ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
       } else {
         // we use all available animals
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = allFoundFlowers;
+        serverObjectsHandler.array = allFoundFlowers;
         ServerCall.handleServerArray(type, allFoundFlowers, artSize, artMargin);
       }// end of bloem
     } else if (type === 'likedDrawing') {
       // async get the liked stores and handle the data when they are loaded
-      ServerCall.getLikedStores(serverItemsArray)
+      ServerCall.getLikedStores(serverObjectsHandler)
         .then((randomLiked) => {
           // eslint-disable-next-line no-param-reassign
-          serverItemsArray = randomLiked;
-          // console.log('type, randomLiked, artSize, artMargin: ', type, serverItemsArray, artSize, artMargin);
-          ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+          serverObjectsHandler = randomLiked;
+          // console.log('type, randomLiked, artSize, artMargin: ', type, serverObjectsHandler, artSize, artMargin);
+          ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -455,14 +461,14 @@ class ServerCall {
     } else {
       await listAllObjects(type, userId).then((rec) => {
         // eslint-disable-next-line no-param-reassign
-        serverItemsArray.array = rec
+        serverObjectsHandler.array = rec
           .filter((obj) => obj.permission_read === 2)
           .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
         // sorting by update_time in descending order
 
-        serverItemsArray.array.forEach((element) => console.log(element.update_time));
-        dlog('serverItemsArray: ', type, userId, serverItemsArray);
-        ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+        serverObjectsHandler.array.forEach((element) => console.log(element.update_time));
+        dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
+        ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
       });
     }
   }
@@ -505,32 +511,32 @@ class ServerCall {
   }
 
 
-  static serverHandleFlowerArray(foundFlowers, serverItemsArray, type, artSize, artMargin) {
+  static serverHandleFlowerArray(foundFlowers, serverObjectsHandler, type, artSize, artMargin) {
     // eslint-disable-next-line no-param-reassign
-    serverItemsArray.array = foundFlowers;
+    serverObjectsHandler.array = foundFlowers;
     // remove the flower placeholder from the array
-    serverItemsArray.shift();
+    serverObjectsHandler.shift();
     // dlog('foundFlowers: ', foundFlowers);
-    // dlog('serverItemsArray: ', serverItemsArray);
-    ServerCall.handleServerArray(type, serverItemsArray, artSize, artMargin);
+    // dlog('serverObjectsHandler: ', serverObjectsHandler);
+    ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
   }
 
-  static handleServerArray(type, serverItemsArray, artSize, artMargin) {
-    dlog('serverItemsArray.array.length: ', serverItemsArray.array.length);
+  static handleServerArray(type, serverObjectsHandler, artSize, artMargin) {
+    dlog('serverObjectsHandler.array.length: ', serverObjectsHandler.array.length);
 
     /* we keep stats on the array when we begin downloading media
     *  if media does not download down the line, it will be removed from the list
     *  and it will be marked as itemsFailed */
 
-    if (serverItemsArray.array.length > 0) {
+    if (serverObjectsHandler.array.length > 0) {
       // eslint-disable-next-line no-param-reassign
-      serverItemsArray.startLength = serverItemsArray.array.length;
+      serverObjectsHandler.startLength = serverObjectsHandler.array.length;
       // eslint-disable-next-line no-param-reassign
-      serverItemsArray.itemsDownloadCompleted = 0;
+      serverObjectsHandler.itemsDownloadCompleted = 0;
       // eslint-disable-next-line no-param-reassign
-      serverItemsArray.itemsFailed = 0;
+      serverObjectsHandler.itemsFailed = 0;
 
-      serverItemsArray.array.forEach((element, index, array) => {
+      serverObjectsHandler.array.forEach((element, index, array) => {
         // dlog('element', element);
         ServerCall.downloadArtwork(element, index, array, type, artSize, artMargin);
       });

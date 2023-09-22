@@ -8,8 +8,8 @@ import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import replace from '@rollup/plugin-replace';
 
-const svelteConfig = require('./svelte.config.js');
-
+const childProcess = require('child_process');
+const svelteConfig = require('./svelte.config');
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -23,7 +23,7 @@ function serve() {
   return {
     writeBundle() {
       if (server) return;
-      server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
+      server = childProcess.spawn('npm', ['run', 'start', '--', '--dev'], {
         stdio: ['ignore', 'inherit', 'inherit'],
         shell: true,
       });
@@ -44,7 +44,8 @@ export default {
   },
   plugins: [
     replace({
-      'process.env.NODE_ENV': true,
+      'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development'),
+      preventAssignment: true,
     }),
     nodePolyfills(/* options */),
     svelte({
