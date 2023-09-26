@@ -29,20 +29,11 @@
   });
 
 
-  onMount(async () => {
-    try {
-      await new Promise((resolve, reject) => {
-        const result = Achievements.get();
+onMount(() => {
+  Achievements.get()
+    .then((result) => {
+      dlog('achievements result', result);
 
-        // Check if the result is an array
-        if (!Array.isArray(result)) {
-          resolve(result);
-        } else {
-          reject(new Error('Achievements.get() did not return a valid array'));
-        }
-      });
-
-      // This block of code will only run if the promise resolves.
       document.body.addEventListener('click', () => {
         if (hide[current] && hide.length > current) {
           current++;
@@ -85,10 +76,12 @@
           }
         }, 4000);
       }
-    } catch (error) {
+    })
+    .catch((error) => {
       dlog('Error:', error);
-    }
-  });
+    });
+});
+
 </script>
 
 {#each sequence as seq, i}

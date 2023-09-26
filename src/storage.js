@@ -42,18 +42,27 @@ export const Achievements = {
     });
   },
 
-  get: () => {
+  // returns a promise that can be resolved with .then(result => { ... })
+  get: () => new Promise((resolve, reject) => {
     const localAchievements = get(achievementsStore);
     const Sess = get(Session);
-    if (!!localAchievements && localAchievements.length > 0) return localAchievements;
+
+    if (localAchievements && localAchievements.length > 0) {
+      resolve(localAchievements);
+      return;
+    }
 
     if (Sess) {
-      listAllObjects('achievements', Sess.user_id).then((serverAchievements) => {
-        achievementsStore.set(serverAchievements);
-        return serverAchievements;
-      });
-    } return null;
-  },
+      listAllObjects('achievements', Sess.user_id)
+        .then((serverAchievements) => {
+          achievementsStore.set(serverAchievements);
+          resolve(serverAchievements);
+        })
+        .catch((err) => reject(err));
+    } else {
+      reject(new Error('No session data available.'));
+    }
+  }),
 
   find: (key) => {
     const localAchievements = get(achievementsStore);
