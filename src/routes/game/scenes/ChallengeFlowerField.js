@@ -56,13 +56,15 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   }
 
   async preload() {
-    ManageSession.currentScene = this.scene; // getting a central scene context
-    // Preloader.Loading(this); // .... PRELOADER VISUALISER
+    /** subscription to the loaderror event
+    * strangely: if the more times the subscription is called, the more times the event is fired
+    * so we subscribe here only once in the scene
+    * so we don't have to remember to subribe to it when we download something that needs error handling
+    */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
         ServerCall.resolveLoadError(offendingFile);
-        // this.resolveLoadError(offendingFile);
       }
     });
   }
@@ -207,7 +209,14 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     // download all drawings "bloem" from allUsersChallenge
 
     // this.getListOfBloem();
-    ServerCall.downloadAndPlaceArtByType('bloem', '', this.flowerKeyArray, 512, 12);
+    const type = 'bloem';
+    const userId = '';
+    const serverObjectsHandler = this.flowerKeyArray;
+    const artSize = 512;
+
+    ServerCall.downloadAndPlaceArtByType({
+      type, userId, serverObjectsHandler, artSize,
+    });
   }
 
   makeFlowerRow(flowerRowY) {

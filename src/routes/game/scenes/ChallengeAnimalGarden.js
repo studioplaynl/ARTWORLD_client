@@ -56,13 +56,15 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   }
 
   async preload() {
-    ManageSession.currentScene = this.scene; // getting a central scene context
-    // Preloader.Loading(this); // .... PRELOADER VISUALISER
+    /** subscription to the loaderror event
+    * strangely: if the more times the subscription is called, the more times the event is fired
+    * so we subscribe here only once in the scene
+    * so we don't have to remember to subribe to it when we download something that needs error handling
+    */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
         ServerCall.resolveLoadError(offendingFile);
-        // this.resolveLoadError(offendingFile);
       }
     });
   }
@@ -139,13 +141,15 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   } // end create
 
 
-  getAnimals(array) {
+  getAnimals(serverObjectsHandler) {
     const type = 'dier';
-    const location = null; // to get all users' artworks
+    const userId = null; // to get all users' artworks
     const artSize = 256;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
-    ServerCall.downloadAndPlaceArtByType(type, location, array, artSize, artMargin);
+    ServerCall.downloadAndPlaceArtByType({
+      type, userId, serverObjectsHandler, artSize,
+    });
   }
 
   update() {

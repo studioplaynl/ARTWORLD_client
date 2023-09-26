@@ -67,7 +67,7 @@ class SceneSwitcher {
       } else {
         targetSceneKey = targetScene;
       }
-      dlog('\u001b[31m switchScene: scene: ', sceneKey, ' , targetScene: ', targetSceneKey, ' targetHouse: ', targetHouse);
+      dlog('\u001b[31m switchScene: ', sceneKey, ' , targetScene: ', targetSceneKey, ' targetHouse: ', targetHouse);
     } else {
       // dlog(' scene: ', scene, ' targetScene: ', targetScene, ' targetHouse: ', targetHouse);
     }
@@ -101,7 +101,7 @@ class SceneSwitcher {
       targetSceneKey = targetHouse;
     } else if (targetScene) {
       if (targetScene.scene !== null) {
-        dlog('start targetScene: ', targetScene);
+        // dlog('start targetScene: ', targetScene);
         scene.scene.start(targetScene);
       }
     }
@@ -150,9 +150,9 @@ class SceneSwitcher {
   }
 
   async switchStream(scene, targetScene) {
-    // in case of startSceneCloseApp the scene is a Phaser Scene Object
-    // in all other cases the scene is a scene key
-    // below we make the data consistent
+    /** in case of startSceneCloseApp the scene is a Phaser Scene Object
+    * in all other cases the scene is a scene key
+    * below we make the data consistent  */
 
     // check the format of the arguments: either a scene or a key
     let sceneKey;
@@ -171,12 +171,12 @@ class SceneSwitcher {
       targetSceneKey = targetScene;
     }
 
-    dlog('switchScene: ', sceneKey, ' , targetScene: ', targetSceneKey);
+    // dlog('switchScene: ', sceneKey, ' , targetScene: ', targetSceneKey);
 
     const targetHouse = get(PlayerLocation).house;
     // if we are leaving a home, we have to leave the home id stream
     //! targetHouse can also be a scene, is this unwanted? make it null when it is a scene?
-    dlog('targetHouse: ', targetHouse);
+    // dlog('targetHouse: ', targetHouse);
     if (sceneKey === DEFAULT_HOME) {
       // dlog('scene: ', scene);
       sceneKey = scene.location;
@@ -202,7 +202,7 @@ class SceneSwitcher {
         // 1. we pause the leaving Scene
         // 2. start the new scene
 
-        dlog('targetScene', targetScene);
+        // dlog('targetScene', targetScene);
         if (targetScene) {
           //! 'join' wordt zonder target uitgevoerd
           //! de target wordt uit playerStreanID gehaald

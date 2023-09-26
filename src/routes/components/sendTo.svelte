@@ -55,12 +55,12 @@
     dispatch('toggleComponents', { rowIndex, toggleMode });
   }
 
-  const optionIdentifier = 'id';
-  const labelIdentifier = 'username';
+  // const optionIdentifier = 'id';
+  // const labelIdentifier = 'username';
 
-  const items = [];
+  // const items = [];
 
-  let value;
+  // let value;
 
   onMount(() => {
     // console.log('row: ', row);
@@ -340,9 +340,9 @@
       /* transition: transform 0.3s, box-shadow 0.3s;  */
   }
 
-  .sendButtonContainer {
+  /* .sendButtonContainer {
 
-  }
+  } */
 
   /* Hover State */
   .sendButton:hover {

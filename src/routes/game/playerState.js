@@ -106,7 +106,7 @@ function createHistory() {
 
     pop: () => {
       PlayerHistoryStore.update((hist) => hist.slice(0, -1));
-      dlog('pop history =', get(PlayerHistoryStore));
+      // dlog('pop history =', get(PlayerHistoryStore));
     },
 
 

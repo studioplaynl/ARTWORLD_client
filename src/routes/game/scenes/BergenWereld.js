@@ -17,9 +17,9 @@ import PlaceElement from '../class/PlaceElement';
 
 const { Phaser } = window;
 
-export default class BijenWereld extends Phaser.Scene {
+export default class BergenWereld extends Phaser.Scene {
   constructor() {
-    super('BijenWereld');
+    super('BergenWereld');
 
     this.worldSize = new Phaser.Math.Vector2(0, 0);
 
@@ -55,16 +55,15 @@ export default class BijenWereld extends Phaser.Scene {
       }
     });
 
-    // Ijs
+    // BergenWereld
     this.localAssetsCheck = {};
 
-    const folderPath = './assets/world_bees/';
-
+    const folderPath = './assets/world_bergen/';
 
     const loadArray = [
-      { key: 'Portal_naarHuis_bijen', path: `${folderPath}02a_Portaal_bee_naar_home-fs8.png` },
+      { key: 'Portal_naarHuis_bergen', path: `${folderPath}Portaal01_Bergen_naar_huis_CROP-fs8.png` },
 
-      { key: 'bijenwereld', path: `${folderPath}01_Wereld14_Beehive_geheel.jpg` },
+      { key: 'bijenwereld', path: `${folderPath}Wereld15_bergen_geheel.jpg` },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
@@ -144,7 +143,7 @@ export default class BijenWereld extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(823, 1987);
+    let locationVector = new Phaser.Math.Vector2(-1057, 1090);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -157,7 +156,7 @@ export default class BijenWereld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Artworld',
-      locationImage: 'Portal_naarHuis_bijen',
+      locationImage: 'Portal_naarHuis_bergen',
       enterButtonImage: 'enter_button',
       locationText: 'Paarse Cirkel Wereld',
       referenceName: 'this.purpleCircleLocation',

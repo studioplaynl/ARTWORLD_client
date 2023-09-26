@@ -275,8 +275,14 @@ class ServerCall {
     return randomElements;
   }
 
+  /* this function first gets all the objects from the server
+  *  it filters out the objects that are not in the trash
+  *  then it sends the array to the function handleServerArray
+  */
   // eslint-disable-next-line class-methods-use-this
-  async downloadAndPlaceArtByType(type, userId, serverObjectsHandler, artSize, artMargin) {
+  async downloadAndPlaceArtByType({
+    type, userId, serverObjectsHandler, artSize, artMargin,
+  }) {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
       let allFoundAnimals;
@@ -354,12 +360,16 @@ class ServerCall {
 
         // eslint-disable-next-line no-param-reassign
         serverObjectsHandler.array = animalArray;
-        ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
+        ServerCall.handleServerArray({
+          type, serverObjectsHandler, artSize, artMargin,
+        });
       } else {
         // we use all available animals
         // eslint-disable-next-line no-param-reassign
         serverObjectsHandler.array = allFoundAnimals;
-        ServerCall.handleServerArray(type, allFoundAnimals, artSize, artMargin);
+        ServerCall.handleServerArray({
+          type, allFoundAnimals, artSize, artMargin,
+        });
       } // end of dier
     } else if (type === 'bloem') {
       let allFoundFlowers;
@@ -439,36 +449,64 @@ class ServerCall {
 
         // eslint-disable-next-line no-param-reassign
         serverObjectsHandler.array = animalArray;
-        ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
+        ServerCall.handleServerArray({
+          type, serverObjectsHandler, artSize, artMargin,
+        });
       } else {
-        // we use all available animals
+        // we use all available flowers
         // eslint-disable-next-line no-param-reassign
         serverObjectsHandler.array = allFoundFlowers;
         ServerCall.handleServerArray(type, allFoundFlowers, artSize, artMargin);
       }// end of bloem
     } else if (type === 'likedDrawing') {
       // async get the liked stores and handle the data when they are loaded
-      ServerCall.getLikedStores(serverObjectsHandler)
+      ServerCall.getLikedStores({ serverObjectsHandler })
         .then((randomLiked) => {
           // eslint-disable-next-line no-param-reassign
           serverObjectsHandler = randomLiked;
           // console.log('type, randomLiked, artSize, artMargin: ', type, serverObjectsHandler, artSize, artMargin);
-          ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
+          ServerCall.handleServerArray({
+            type, serverObjectsHandler, artSize, artMargin,
+          });
         })
         .catch((error) => {
           console.error('Error:', error);
         });
-    } else {
-      await listAllObjects(type, userId).then((rec) => {
+    } else if (type === 'downloadDrawingDefaultUserHome') {
+      /** type === 'downloadDrawingDefaultUserHome'
+       *  is for downloading all the drawings from a user's home
+       */
+
+      await listAllObjects('drawing', userId).then((rec) => {
+        dlog('type rec: ', type, rec);
         // eslint-disable-next-line no-param-reassign
         serverObjectsHandler.array = rec
           .filter((obj) => obj.permission_read === 2)
           .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
         // sorting by update_time in descending order
 
-        serverObjectsHandler.array.forEach((element) => console.log(element.update_time));
-        dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-        ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
+        // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
+        ServerCall.handleServerArray({
+          type, serverObjectsHandler, artSize, artMargin,
+        });
+      });
+    } else if (type === 'downloadStopmotionDefaultUserHome') {
+      /** type === 'downloadStopmotionDefaultUserHome'
+       *  is for downloading all the stopmotions from a user's home
+       */
+
+      await listAllObjects('stopmotion', userId).then((rec) => {
+        dlog('type rec: ', type, rec);
+        // eslint-disable-next-line no-param-reassign
+        serverObjectsHandler.array = rec
+          .filter((obj) => obj.permission_read === 2)
+          .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
+        // sorting by update_time in descending order
+
+        // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
+        ServerCall.handleServerArray({
+          type, serverObjectsHandler, artSize, artMargin,
+        });
       });
     }
   }
@@ -518,27 +556,45 @@ class ServerCall {
     serverObjectsHandler.shift();
     // dlog('foundFlowers: ', foundFlowers);
     // dlog('serverObjectsHandler: ', serverObjectsHandler);
-    ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
+    ServerCall.handleServerArray({
+      type, serverObjectsHandler, artSize, artMargin,
+    });
   }
 
-  static handleServerArray(type, serverObjectsHandler, artSize, artMargin) {
+  /** handle the array of objects that comes from the server
+  *  we keep stats on the array before we begin downloading media
+  *  we note how many media are being asked to be downloaded
+  *  We then mark the success of fail with a download completed counter
+  *  Depending on the kind of download we present a placeholder in case of  a fail
+  *  or we remove the item from the array (we skip a media that does exist)
+  * */
+  static handleServerArray({
+    type, serverObjectsHandler, artSize, artMargin,
+  }) {
     dlog('serverObjectsHandler.array.length: ', serverObjectsHandler.array.length);
-
-    /* we keep stats on the array when we begin downloading media
-    *  if media does not download down the line, it will be removed from the list
-    *  and it will be marked as itemsFailed */
 
     if (serverObjectsHandler.array.length > 0) {
       // eslint-disable-next-line no-param-reassign
       serverObjectsHandler.startLength = serverObjectsHandler.array.length;
+
+      /** itemsDownloadCompleted = success or failure
+       * we handle the fails in the resolveError function
+       * the phaser downloadManager will fire a on.('complete') event when a items has failed or downloaded
+       * we keep track of the items that have been completed in the downloadManager
+       * then we know when we are done with the download queque
+       * how we handle a failure depends on the situation:
+       * eg.
+       * downloading a house image will be replaced with a placeholder
+       * downloading a drawing will be skipped
+       */
       // eslint-disable-next-line no-param-reassign
       serverObjectsHandler.itemsDownloadCompleted = 0;
-      // eslint-disable-next-line no-param-reassign
-      serverObjectsHandler.itemsFailed = 0;
 
       serverObjectsHandler.array.forEach((element, index, array) => {
         // dlog('element', element);
-        ServerCall.downloadArtwork(element, index, array, type, artSize, artMargin);
+        ServerCall.downloadArtwork({
+          element, index, array, type, artSize, artMargin,
+        });
       });
     }
   }
@@ -595,19 +651,20 @@ class ServerCall {
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('loader localImage COMPLETE');
-          // ServerCall.repositionContainers('drawing');
         }
       });
     }
   }
 
-  static async downloadArtwork(element, index, array, type, artSize, artMargin) {
+  static async downloadArtwork({
+    element, index, array, type, artSize, artMargin,
+  }) {
     const scene = ManageSession.currentScene;
-    if (!element.value.url || !element.value) { dlog('element.value.url is empty'); return; }
+
+    //! we have to use the serverObjectsHandler to keep track of the download
+    // if (!element.value.url || !element.value) { dlog('element.value.url is empty'); return; }
 
     const imageKeyUrl = element.value.url;
-    // console.log('imageKeyUrl: ', imageKeyUrl);
-    // console.log('element: ', element);
     const imgSize = artSize.toString();
     const fileFormat = 'png';
     const getImageWidth = (artSize * 100).toString();
@@ -615,14 +672,34 @@ class ServerCall {
     // console.log('scene.textures.exists(imageKeyUrl): ', scene.textures.exists(imageKeyUrl));
     if (scene.textures.exists(imageKeyUrl)) {
       // if the artwork has already been downloaded
-      if (type === 'drawing') {
+      if (type === 'downloadDrawingDefaultUserHome') {
         // eslint-disable-next-line no-param-reassign
         element.downloaded = true;
         ServerCall.createDrawingContainer(element, index, artSize, artMargin);
-      } else if (type === 'stopmotion') {
+
+        const startLength = scene.userHomeDrawingServerList.startLength;
+        let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
+        downloadCompleted += 1;
+        scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
+        // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        if (downloadCompleted === startLength) {
+          dlog('load DRAWING COMPLETE');
+          ServerCall.repositionContainers(type);
+        }
+      } else if (type === 'downloadStopmotionDefaultUserHome') {
         // eslint-disable-next-line no-param-reassign
         element.downloaded = true;
         ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
+
+        const startLength = scene.userStopmotionServerList.startLength;
+        let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
+        downloadCompleted += 1;
+        scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
+        // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        if (downloadCompleted === startLength) {
+          dlog('load downloadStopmotionDefaultUserHome COMPLETE');
+          ServerCall.repositionContainers(type);
+        }
       } else if (type === 'dier') {
         // eslint-disable-next-line no-new
         // dlog('element, index', element, index);
@@ -639,13 +716,13 @@ class ServerCall {
         ServerCall.createDrawingContainer(element, index, artSize, artMargin);
       }
       // if the artwork is not already downloaded
-    } else if (type === 'drawing') {
-      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
-
+    } else if (type === 'downloadDrawingDefaultUserHome') {
+      console.log('imageKeyUrl, array: ', imageKeyUrl, array);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
         loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene, resolved: false,
       });
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
 
       scene.load.image(imageKeyUrl, convertedImage)
         .on(`filecomplete-image-${imageKeyUrl}`, () => {
@@ -656,41 +733,29 @@ class ServerCall {
 
           // eslint-disable-next-line no-param-reassign
           element.downloaded = true;
-          // dlog('drawing downloaded', imageKeyUrl);
-          // dlog('object updated: ', element);
-          // create container with artwork
 
           ServerCall.createDrawingContainer(element, index, artSize, artMargin);
-          // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
-          // create the home
-          // ServerCall.createHome(element, index, homeImageKey, scene);
         }, scene);
-      // .on('fileprogress', (file, progress) => {
-      //   console.log('file: ', file);
-
-      //   console.log('progress: ', progress);
-      // }, scene);
-      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
-      // ManageSession.resolveErrorObjectArray.push({
-      //   loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
-      // });
 
       scene.load.start(); // start the load queue to get the image in memory
 
-      // this is fired each time a file is finished downloading (or failing)
+      /** this is fired when the queue is finished downloading
+      * the phaser download queue reports downloads and failed download equaly
+      * but 'complete' does not say which file failed
+      * the on.('loaderror') event does report which file failed
+      *   */
       scene.load.on('complete', () => {
         const startLength = scene.userHomeDrawingServerList.startLength;
         let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
-        // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
         downloadCompleted += 1;
         scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
-        // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
-          dlog('loader DRAWING COMPLETE');
-          ServerCall.repositionContainers('drawing');
+          dlog('download downloadDrawingDefaultUserHome COMPLETE');
+          ServerCall.repositionContainers(type);
         }
       });
-    } else if (type === 'stopmotion') {
+    } else if (type === 'downloadStopmotionDefaultUserHome') {
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
 
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
@@ -724,8 +789,8 @@ class ServerCall {
         scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
-          dlog('loader STOPMOTION COMPLETE');
-          ServerCall.repositionContainers('stopmotion');
+          dlog('download STOPMOTION COMPLETE');
+          ServerCall.repositionContainers(type);
         }
       });
     } else if (type === 'dier') {
@@ -782,6 +847,7 @@ class ServerCall {
       const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
       // const convertedImage = element.value.previewUrl
       // dlog('convertedImage', convertedImage);
+
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
         loadFunction: 'downloadFlowerChallenge', element, index, imageKey: imageKeyUrl, scene,
@@ -795,9 +861,6 @@ class ServerCall {
           );
           // eslint-disable-next-line no-param-reassign
           element.downloaded = true;
-          // dlog('drawing downloaded', imageKeyUrl);
-          // dlog('object updated: ', element);
-          // create container with artwork
 
           // push het element in flowerKeyArray
           // dlog('imageKeyUrl, convertedImage', imageKeyUrl, convertedImage);
@@ -805,11 +868,6 @@ class ServerCall {
           // scene.flowerFliedStartMaking = true;
         }, this);
       scene.load.start(); // start the load queue to get the image in memory
-
-      // on('complete') fires each time an image is finished downloading
-      // scene.load.on('complete', () => {
-
-      // });
     } else if (type === 'likedDrawing') {
       // console.log(imageKeyUrl, imgSize, imgSize, fileFormat);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
@@ -1007,11 +1065,11 @@ class ServerCall {
     });
   }
 
-
-
-
   static createDrawingContainer(element, index, artSize, artMargin) {
+    console.log('element: ', element);
     const scene = ManageSession.currentScene;
+    if (!scene) return;
+    if (!element) return;
 
     const imageKeyUrl = element.value.url;
     const y = 38;
@@ -1023,6 +1081,23 @@ class ServerCall {
     // dlog('image coordX, index', coordX, index);
     const imageContainer = scene.add.container(0, 0).setDepth(100);
 
+    /**  copy over the data from the element to the container
+     * so we can do sorting on the container later (eg order on date)
+     * collection: "drawing"
+        downloaded: true
+        key: "1658759573357_groenblauwKogelvis"
+        permission_read: 2
+        read: 2
+        update_time: "2022-07-25T17:16:47.504205+02:00"
+        user_id: "8f0a26fc-f51a-4a05-ab67-638b37a2a979"
+        username: "user52"
+        value:
+          displayname: "groenblauwKogelvis"
+          url: "drawing/8f0a26fc-f51a-4a05-ab67-638b37a2a979/5_1658759573357_groenblauwKogelvis.png"
+          version: 5
+    */
+    imageContainer.nakamaData = { ...element };
+    // console.log('imageContainer: ', imageContainer);
     imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
 
     // adds the image to the container
@@ -1035,12 +1110,18 @@ class ServerCall {
     ArtworkOptions.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     imageContainer.setPosition(coordX, y);
     imageContainer.setSize(containerSize, containerSize);
+
+    /** this check prevent errors
+     * when we go out of the scene when things are still loading and being created  */
+    if (!scene.homeDrawingGroup) return;
     scene.homeDrawingGroup.add(imageContainer);
     // dlog('scene.homeDrawingGroup.getChildren()', scene.homeDrawingGroup.getChildren());
   }
 
   static createStopmotionContainer(element, index, artSize, artMargin) {
     const scene = ManageSession.currentScene;
+    if (!scene) return;
+    if (!element) return;
 
     const imageKeyUrl = element.value.url;
     const y = artSize * 1.4;
@@ -1050,7 +1131,7 @@ class ServerCall {
 
     const coordX = index === 0 ? artStart : (artStart) + (index * (artSize + artMargin));
     const imageContainer = scene.add.container(0, 0).setDepth(100);
-
+    imageContainer.nakamaData = { ...element };
     imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0).setName('frame'));
 
     // dlog('STOPMOTION element, index, artSize, artMargin', element, index, artSize, artMargin);
@@ -1070,7 +1151,7 @@ class ServerCall {
     }
     // dlog(`stopmotion Frames: ${avatarFrames}`);
 
-    // animation for the player avatar .........................
+    // animation for the stopmotion .........................
     scene.anims.create({
       key: `moving_${imageKeyUrl}`,
       frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
@@ -1089,7 +1170,7 @@ class ServerCall {
         end: 0,
       }),
     });
-    // . end animation for the player avatar ......................
+    // . end animation for the stopmotion ......................
 
     // adds the image to the container
     const completedImage = scene.add.sprite(
@@ -1113,6 +1194,9 @@ class ServerCall {
     ArtworkOptions.placePlayPauseButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     imageContainer.setPosition(coordX, y);
     imageContainer.setSize(containerSize, containerSize);
+    if (!imageContainer) return;
+    if (!scene) return;
+    if (!scene.homeStopmotionGroup) return;
     scene.homeStopmotionGroup.add(imageContainer);
   }
 
@@ -1122,12 +1206,21 @@ class ServerCall {
     const scene = ManageSession.currentScene;
     let containers = {};
 
-    if (type === 'drawing') {
+    if (!scene.homeDrawingGroup) return;
+    if (!scene.homeStopmotionGroup) return;
+    if (type === 'downloadDrawingDefaultUserHome') {
       containers = scene.homeDrawingGroup.getChildren();
-    } else if (type === 'stopmotion') {
+    } else if (type === 'downloadStopmotionDefaultUserHome') {
       containers = scene.homeStopmotionGroup.getChildren();
     }
+    // console.log('type containers: ', type, containers);
 
+    // Sorting the containers based on element.data.update_time
+    containers.sort((a, b) => {
+      const timeA = new Date(a.nakamaData.update_time).getTime();
+      const timeB = new Date(b.nakamaData.update_time).getTime();
+      return timeB - timeA; // For ascending order. Use timeB - timeA for descending.
+    });
 
     const artSize = scene.artDisplaySize;
     const artMargin = scene.artMargin;
@@ -1140,6 +1233,15 @@ class ServerCall {
     containers.forEach((element, index) => {
       const coordX = index === 0 ? artStart : (artStart) + (index * (artSize + artMargin));
       element.setX(coordX);
+      // console.log(
+      //   'container element.nakamaData.update_time, ',
+      //   element.nakamaData.update_time,
+      //   ' index, ',
+      //   index,
+      //   ' coordX: ',
+      //   coordX,
+      // );
+
       // dlog('reposition: coordX', coordX);
     });
   }
@@ -1148,13 +1250,14 @@ class ServerCall {
   resolveLoadError(offendingFile) {
     // element, index, homeImageKey, offendingFile, scene
     // ManageSession.resolveErrorObjectArray; // all loading images
-    dlog('offendingFile', offendingFile);
-
+    // dlog('offendingFile', offendingFile);
     const resolveErrorObject = ManageSession.resolveErrorObjectArray.find(
       (o) => o.imageKey === offendingFile.key,
     );
 
-    // dlog('offendingFile resolveErrorObject', resolveErrorObject);
+    if (!resolveErrorObject) { return; }
+
+    dlog('offendingFile resolveErrorObject', resolveErrorObject);
 
     const { loadFunction } = resolveErrorObject;
     const { element } = resolveErrorObject;
@@ -1168,6 +1271,7 @@ class ServerCall {
       case 'getHomeImage':
         dlog('offending file, load placeholder image instead', imageKey);
 
+        /** we assign the placeholder image to the imageKey of the user's home */
         scene.load.image(imageKey, './assets/ball_grey.png')
           .on(`filecomplete-image-${imageKey}`, () => {
             // delete from ManageSession.resolveErrorObjectArray
@@ -1176,7 +1280,7 @@ class ServerCall {
             );
             dlog('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
 
-            // create the home
+            // create the home with the placeholder imageKey
             ServerCall.createHome(element, index, imageKey, scene);
           }, this);
         scene.load.start();

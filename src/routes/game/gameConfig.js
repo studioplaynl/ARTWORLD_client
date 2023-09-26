@@ -37,6 +37,8 @@ import WoestijnWereld from './scenes/WoestijnWereld';
 import IjscoWereld from './scenes/IjscoWereld';
 import IjsWereld from './scenes/IjsWereld';
 import BijenWereld from './scenes/BijenWereld';
+import BergenWereld from './scenes/BergenWereld';
+
 
 /** Phaser Plugins */
 
@@ -71,6 +73,7 @@ const SCENES = [
   IjscoWereld,
   IjsWereld,
   BijenWereld,
+  BergenWereld,
 ];
 
 import { CONFIG } from '../../constants';

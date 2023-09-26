@@ -21,6 +21,7 @@ import { PlayerHistory } from '../game/playerState';
 let showHistory = false;
 export let appName = '';
 
+/* Make a new artwork */
 function addNew() {
   // open the relevant app
   const value = `/${appName}`;

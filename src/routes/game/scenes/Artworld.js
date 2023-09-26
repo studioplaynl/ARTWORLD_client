@@ -8,6 +8,21 @@
  *  Portals to other worlds are located here.
  *  We load the player and NetworkedPlayer here.
  *  We have some animations with Tweens in the scene.
+ *
+ * Making a new world involves:
+ * - making a new scene file
+ * - adding the scene to the constans.js file
+ * - adding the scene to the gameconfig.js file
+ * - make QR codes with the right nakama server
+ * - paste users in google sheet
+ * - save QR images
+ * - load QR sheets with 24 images
+ * - make assets smaller (compress)
+ * - put assets in world
+ * - put world with portal assets in artworld
+ * - correct position of portal in artworld with gameEdit mode
+ * - place all houses in world with gameEdit mode, save with U key
+ * - correct portal to artworld with gameEdit mode
  */
 
 import { get } from 'svelte/store';
@@ -27,7 +42,7 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
-import { Liked, ModeratorLiked } from '../../../storage';
+// import { Liked, ModeratorLiked } from '../../../storage';
 
 const { Phaser } = window;
 
@@ -64,9 +79,6 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async preload() {
-    ManageSession.currentScene = this.scene; // getting a central scene context
-    // Preloader.Loading(this); // .... PRELOADER VISUALISER
-
     // artworld elements
     this.load.image('drawn_cloud', './assets/drawn_cloud.png');
     this.load.svg('sunglass_stripes', 'assets/svg/sunglass_stripes.svg');
@@ -101,12 +113,17 @@ export default class Artworld extends Phaser.Scene {
 
     this.load.image('cloudWorldPortal', './assets/world_clouds/cloud_portal_naarCloud.png');
     this.load.image('beeWorldPortal', './assets/world_bees/02b_Portaal_home_naar_bee-fs8.png');
+    this.load.image('bergenWorldPortal', './assets/world_bergen/Portaal2_NaarBergen_CROP-fs8.png');
 
+    /** subscription to the loaderror event
+    * strangely: if the more times the subscription is called, the more times the event is fired
+    * so we subscribe here only once in the scene
+    * so we don't have to remember to subribe to it when we download something that needs error handling
+    */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
         ServerCall.resolveLoadError(offendingFile);
-        // this.resolveLoadError(offendingFile);
       }
     });
   }
@@ -217,78 +234,26 @@ export default class Artworld extends Phaser.Scene {
     }
   }
 
-  async getLikedArt() {
-    this.userLikedArt = Liked.get();
-    this.moderatorLikedArt = ModeratorLiked.get();
-    this.allLikedArt = [...this.userLikedArt, ...this.moderatorLikedArt];
-    // console.log('this.allLikedArt: ', this.allLikedArt);
-
-    // Filter the artworks based on the collection
-    this.stopmotionLiked = this.allLikedArt.filter((art) => art.value.collection === 'stopmotion');
-    this.drawingLiked = this.allLikedArt.filter((art) => art.value.collection === 'drawing');
-
-    // console.log('this.stopmotionLiked, this.drawingLiked: ', this.stopmotionLiked, this.drawingLiked);
-    // get 4 random artworks from allLikedArt
-    this.randomLiked = Artworld.getRandomElements(this.drawingLiked, 4);
-    // console.log('randomArtworks: ', this.randomLiked[0]);
-
-    // //test principle
-    // const liked1Url = await convertImage(
-    //   this.randomLiked[0].value.url,
-    //   this.artDisplaySize,
-    //   this.artDisplaySize,
-    //   'png',
-    // );
-
-    // console.log('liked1Url: ', liked1Url);
-    // this.load.image(this.randomLiked[0].value.url, liked1Url)
-    //   .on(`filecomplete-image-${this.randomLiked[0].value.url}`, () => {
-    //     console.log('download finished');
-    //     this.liked1 = this.add.image(
-    //       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2124),
-    //       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 400),
-    //       this.randomLiked[0].value.url,
-    //     );
-    //     this.liked1.name = 'liked1';
-    //   }, this);
-
-    // this.load.start(); // start the load queue to get the image in memory
-  }
-
-  static getRandomElements(arr, count) {
-    const randomElements = [];
-    const usedIndexes = new Set(); // To keep track of already selected indexes
-
-    while (randomElements.length < count && randomElements.length < arr.length) {
-      const randomIndex = Math.floor(Math.random() * arr.length);
-
-      if (!usedIndexes.has(randomIndex)) {
-        randomElements.push(arr[randomIndex]);
-        usedIndexes.add(randomIndex);
-      }
-    }
-
-    return randomElements;
-  }
-
   async loadAndPlaceArtworks() {
     const type = 'likedDrawing';
-    const serverItemsArray = this.randomLiked;
-    const location = this.scene;
+    const serverObjectsHandler = this.randomLiked;
+    const userId = '';
     // dlog('this.location', location);
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
     this.drawingGroup = this.add.group();
     // console.log(
-    //   'type, location, serverItemsArray, artSize, artMargin: ',
+    //   'type, location, serverObjectsHandler, artSize, artMargin: ',
     //   type,
     //   location,
-    //   serverItemsArray,
+    //   serverObjectsHandler,
     //   artSize,
     //   artMargin,
     // );
-    ServerCall.downloadAndPlaceArtByType(type, location, serverItemsArray, artSize, artMargin);
+    ServerCall.downloadAndPlaceArtByType({
+      type, userId, serverObjectsHandler, artSize, artMargin,
+    });
   }
 
   makeWorldElements() {
@@ -1035,7 +1000,7 @@ export default class Artworld extends Phaser.Scene {
       size: 300,
     });
 
-    locationVector = new Phaser.Math.Vector2(1360, -1056);
+    locationVector = new Phaser.Math.Vector2(1344, -1118);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -1052,6 +1017,27 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Bijen Wereld',
       referenceName: 'this.bijenWorldLocation',
+      fontColor: 0x8dcb0e,
+      size: 240,
+    });
+
+    locationVector = new Phaser.Math.Vector2(1730, -1260);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.bergenWorldPortal = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'BergenWereld',
+      locationImage: 'bergenWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Bergen Wereld',
+      referenceName: 'this.bergenWorldPortal',
       fontColor: 0x8dcb0e,
       size: 240,
     });

@@ -72,17 +72,6 @@ export default class UIScene extends Phaser.Scene {
     this.events.on('gameEditMode', this.gameEditModeSign, this); // show edit mode indicator
     this.events.on('gameEditMode', this.editElementsScene, this); // make elements editable
 
-    // make load events global for the game
-    // resolve load errors globally in the game
-    // dlog('scene: ', scene);
-    // this.load.on('loaderror', (offendingFile) => {
-    //   if (typeof offendingFile !== 'undefined') {
-    //     dlog('loaderror', offendingFile);
-    //     ServerCall.resolveLoadError(offendingFile);
-    //     // this.resolveLoadError(offendingFile);
-    //   }
-    // });
-
     // const eventNames = scene.load.eventNames();
     // dlog('eventNames', eventNames);
     // const isReady = scene.load.isReady();

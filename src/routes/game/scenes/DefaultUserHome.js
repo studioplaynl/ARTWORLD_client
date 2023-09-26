@@ -37,7 +37,7 @@ import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
-import Preloader from '../class/Preloader';
+// import Preloader from '../class/Preloader';
 
 // import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
@@ -100,45 +100,22 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   async preload() {
-    Preloader.Loading(this); // .... PRELOADER VISUALISER
+    this.loadAndPlaceArtworks();
 
-    await this.loadAndPlaceArtworks();
-
-
+    /** subscription to the loaderror event
+    * strangely: if the more times the subscription is called, the more times the event is fired
+    * so we subscribe here only once in the scene
+    * so we don't have to remember to subribe to it when we download something that needs error handling
+    */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
         ServerCall.resolveLoadError(offendingFile);
-        // this.resolveLoadError(offendingFile);
       }
     });
-
-    // this.load.once('complete', (loader) => {
-    //   console.log(loader);
-    // }, this);
-
-    // this.load.once('load', (fileObj) => {
-    //   console.log('fileObj: ', fileObj);
-    // }, this);
-
-    // const eventNames = this.load.eventNames();
-    // dlog('eventNames', eventNames);
-    // const isReady = this.load.isReady();
-    // dlog('loader isReady', isReady);
-    // const isLoading = this.load.isLoading();
-    // dlog('loader isLoading', isLoading);
-    // dlog('loader ', this.load.queue.entries);
   }// end preload
 
   async create() {
-    // const eventNames = this.load.eventNames();
-    // dlog('eventNames', eventNames);
-    // const isReady = this.load.isReady();
-    // dlog('loader isReady', isReady);
-    // const isLoading = this.load.isLoading();
-    // dlog('loader isLoading', isLoading);
-    // dlog('loader queue', this.load.queue.entries);
-
     //!
     // show physics debug boundaries in gameEditMode
     if (ManageSession.gameEditMode) {
@@ -148,8 +125,8 @@ export default class DefaultUserHome extends Phaser.Scene {
       this.physics.world.debugGraphic.clear();
     }
 
-    // get scene size from SCENE_INFO constants
-    // copy worldSize over to ManageSession, so that positionTranslation can be done there
+    /** get scene size from SCENE_INFO constants
+     * copy worldSize over to ManageSession, so that positionTranslation can be done there  */
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
     this.worldSize.x = sceneInfo.sizeX;
     this.worldSize.y = sceneInfo.sizeY;
@@ -160,19 +137,9 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
-    // const {
-    //   artworldToPhaser2DX, artworldToPhaser2DY,
-    // } = CoordinatesTranslator;
-
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default 0 ,0 artworldCoordinates
-    // this.player = new PlayerDefault(
-    //   this,
-    //   artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-    //   artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
-    //   ManageSession.playerAvatarPlaceholder,
-    // ).setDepth(201);
     this.player = new PlayerDefault(
       this,
       null,
@@ -194,39 +161,37 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
     // ......... end PLAYER VS WORLD .......................................................................
 
-    // // Place the player on the left size in the y-middle, by passing on arguments in the Player class
-    // const PosX = -(this.worldSize.x / 2) + (AVATAR_BASE_SIZE * 2);
-    // dlog('PosX: ', PosX);
-    // const PosY = -(this.worldSize.y / 4);
-    // Player.loadPlayerAvatar(this, PosX, PosY);
-
-    // Player.loadPlayerAvatar(this, -(this.worldSize.x / 2) + (AVATAR_BASE_SIZE * 2), -(this.worldSize.y / 4));
     Player.loadPlayerAvatar(this);
-
-
-    // // Set the player on the left side of the world (this also updates the URL automatically), in artworldCoordinates
-    // PlayerUpdate.set({ forceHistoryReplace: false });
-    // PlayerPos.set({
-    //   x: -(this.worldSize.x / 2) + (AVATAR_BASE_SIZE * 2),
-    //   y: -(this.worldSize.y / 4),
-    // });
   }// end create
 
   async loadAndPlaceArtworks() {
-    let type = 'drawing';
+    let type = 'downloadDrawingDefaultUserHome';
     let serverObjectsHandler = this.userHomeDrawingServerList;
     const userId = this.location;
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
     this.homeDrawingGroup = this.add.group();
-    ServerCall.downloadAndPlaceArtByType(type, userId, serverObjectsHandler, artSize, artMargin);
+    // console.log(
+    //   'loadAndPlaceArtworks, type, userId, serverObjectsHandler, artSize, artMargin: ',
+    //   type,
+    //   userId,
+    //   serverObjectsHandler,
+    //   artSize,
+    //   artMargin,
+    // );
 
-    type = 'stopmotion';
+    ServerCall.downloadAndPlaceArtByType({
+      type, userId, serverObjectsHandler, artSize, artMargin,
+    });
+
+    type = 'downloadStopmotionDefaultUserHome';
     // this.userStopmotionServerList = [];
     serverObjectsHandler = this.userStopmotionServerList;
     this.homeStopmotionGroup = this.add.group();
-    ServerCall.downloadAndPlaceArtByType(type, userId, serverObjectsHandler, artSize, artMargin);
+    ServerCall.downloadAndPlaceArtByType({
+      type, userId, serverObjectsHandler, artSize, artMargin,
+    });
   }
 
   update() {
