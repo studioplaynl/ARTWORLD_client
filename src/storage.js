@@ -117,7 +117,7 @@ export const Liked = {
     if (Sess) {
       listAllObjects('liked', Sess.user_id).then((serverLikedArray) => {
         Liked.set(serverLikedArray);
-        console.log('liked user', serverLikedArray);
+        // console.log('liked user', serverLikedArray);
         return serverLikedArray;
       });
     }
@@ -161,7 +161,7 @@ export const ModeratorLiked = {
 
     listAllObjects('liked', MODERATOR_LIKED_ID).then((serverLikedArray) => {
       ModeratorLiked.set(serverLikedArray);
-      console.log('liked mod', serverLikedArray);
+      // console.log('liked mod', serverLikedArray);
       return serverLikedArray;
     });
 
@@ -173,6 +173,39 @@ export const ModeratorLiked = {
     const i = likedArray.findIndex((element) => element.key === key);
     if (i > -1) return likedArray[i].value;
     return undefined;
+  },
+};
+
+const likedSuccessDownloadStore = writable([]);
+
+export const LikedSuccessDownloaded = {
+  subscribe: likedSuccessDownloadStore.subscribe,
+  set: likedSuccessDownloadStore.set,
+  update: likedSuccessDownloadStore.update,
+
+  add: (key, type, data) => {
+    likedSuccessDownloadStore.update((items) => {
+      // Check if the asset is already in the store
+      const exists = items.some((item) => item.key === key);
+
+      if (!exists) {
+        items.push({
+          key, type, data, used: false,
+        });
+      }
+
+      return items;
+    });
+  },
+
+  markUsed: (key) => {
+    likedSuccessDownloadStore.update((items) => {
+      const item = items.find((_item) => _item.key === key);
+      if (item) {
+        item.used = true;
+      }
+      return items;
+    });
   },
 };
 

@@ -212,7 +212,7 @@ export default class Artworld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 2) - 800),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -221,36 +221,33 @@ export default class Artworld extends Phaser.Scene {
       this.likedBalloon.setInteractive({ draggable: true });
     } else {
       // when not in edit mode add animation tween
-
-      // this.likedTween = this.tweens.add({
-      //   targets: this.balloonContainer,
-      //   duration: 90000,
-      //   x: '-=8000',
-      //   yoyo: false,
-      //   repeat: -1,
-      //   repeatDelay: 300,
-      //   // ease: 'Sine.easeInOut'
-      // });
+      this.likedTween = this.tweens.add({
+        targets: this.balloonContainer,
+        duration: 30000,
+        x: '-=8000',
+        yoyo: false,
+        repeat: -1,
+        repeatDelay: 300,
+        // ease: 'Sine.easeInOut',
+        onRepeat() {
+          // Your callback logic here
+          ServerCall.replaceLikedsInBalloonContainer();
+          // console.log('Tween repeated!');
+        },
+      });
     }
   }
 
+
   async loadAndPlaceArtworks() {
-    const type = 'likedDrawing';
-    const serverObjectsHandler = this.randomLiked;
+    const type = 'downloadLikedDrawing';
+    const serverObjectsHandler = ManageSession.likedStore;
     const userId = '';
     // dlog('this.location', location);
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
-    this.drawingGroup = this.add.group();
-    // console.log(
-    //   'type, location, serverObjectsHandler, artSize, artMargin: ',
-    //   type,
-    //   location,
-    //   serverObjectsHandler,
-    //   artSize,
-    //   artMargin,
-    // );
+
     ServerCall.downloadAndPlaceArtByType({
       type, userId, serverObjectsHandler, artSize, artMargin,
     });

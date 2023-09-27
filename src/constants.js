@@ -186,7 +186,8 @@ export const STOCK_AVATARS = [
   'avatarRoze.png',
 ];
 
-export const MODERATOR_LIKED_ID = '5264dc23-a339-40db-bb84-e0849ded4e68';
+// export const MODERATOR_LIKED_ID = '6a10eac1-35c9-4f47-acd7-2814e257574b'; /** test account! user4 */
+export const MODERATOR_LIKED_ID = '5264dc23-a339-40db-bb84-e0849ded4e68'; // user1 for deployment
 export const DEFAULT_SCENE = 'Artworld';
 export const DEFAULT_HOME = 'DefaultUserHome';
 export const DEFAULT_ZOOM = 0.8;

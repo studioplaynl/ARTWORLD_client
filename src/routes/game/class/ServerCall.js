@@ -25,6 +25,7 @@ import { dlog } from '../../../helpers/debugLog';
 import AnimalChallenge from './animalChallenge';
 import { myHomeStore, Liked, ModeratorLiked } from '../../../storage';
 
+const { Phaser } = window;
 class ServerCall {
   async getHomesFiltered(filter, _scene) {
     const scene = _scene;
@@ -90,17 +91,7 @@ class ServerCall {
               ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
                 (obj) => obj.imageKey !== homeImageKey,
               );
-              // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
-              // create the home
-              // //! TODO
-              // console.log(ManageSession.resolveErrorObjectArray.filter(
-              //   (obj) => obj.loadFunction === 'getHomeImage',
-              // ));
-              // const getHomeImageList = ManageSession.resolveErrorObjectArray.filter(
-              //   (obj) => obj.loadFunction === 'getHomeImage',
-              // );
-              // if (getHomeImageList.length === 0) console.log('loading home images completed');
-              // //! TODO
+
               ServerCall.createHome(element, index, homeImageKey, scene);
             }, this);
           // put the file in the loadErrorCache, in case it doesn't load
@@ -458,13 +449,17 @@ class ServerCall {
         serverObjectsHandler.array = allFoundFlowers;
         ServerCall.handleServerArray(type, allFoundFlowers, artSize, artMargin);
       }// end of bloem
-    } else if (type === 'likedDrawing') {
+    } else if (type === 'downloadLikedDrawing') {
       // async get the liked stores and handle the data when they are loaded
       ServerCall.getLikedStores({ serverObjectsHandler })
         .then((randomLiked) => {
           // eslint-disable-next-line no-param-reassign
-          serverObjectsHandler = randomLiked;
-          // console.log('type, randomLiked, artSize, artMargin: ', type, serverObjectsHandler, artSize, artMargin);
+          serverObjectsHandler.array = randomLiked;
+          /** randomLiked.array has that data
+           *  so it is passed on to serverObjectsHandler.array
+          */
+
+          console.log('randomLiked, serverObjectsHandler: ', randomLiked, serverObjectsHandler);
           ServerCall.handleServerArray({
             type, serverObjectsHandler, artSize, artMargin,
           });
@@ -514,25 +509,27 @@ class ServerCall {
   static async getLikedStores() {
     return new Promise((resolve, reject) => {
       try {
-        this.userLikedArt = Liked.get() || [];
-        this.moderatorLikedArt = ModeratorLiked.get() || [];
+        const userLikedArt = Liked.get() || [];
+        const moderatorLikedArt = ModeratorLiked.get() || [];
 
-        if (!Array.isArray(this.userLikedArt) || !Array.isArray(this.moderatorLikedArt)) {
+        if (!Array.isArray(userLikedArt) || !Array.isArray(moderatorLikedArt)) {
           reject(new Error('Data from stores is not in the expected format'));
           return;
         }
 
-        this.allLikedArt = [...this.userLikedArt, ...this.moderatorLikedArt];
+        ManageSession.likedStore.allLikedArt = [...userLikedArt, ...moderatorLikedArt];
+        console.log('ManageSession.likedStore.allLikedArt: ', ManageSession.likedStore.allLikedArt);
 
-        this.stopmotionLiked = this.allLikedArt.filter((art) => art.value.collection === 'stopmotion');
-        this.drawingLiked = this.allLikedArt.filter((art) => art.value.collection === 'drawing');
+        ManageSession.likedStore.stopmotionLiked = ManageSession.likedStore.allLikedArt
+          .filter((art) => art.value.collection === 'stopmotion');
 
-        this.randomLiked = {};
-        // eslint-disable-next-line no-param-reassign
-        this.randomLiked.array = ServerCall.getRandomElements(this.drawingLiked, 4);
-        // console.log('this.randomLiked: ', this.randomLiked);
+        ManageSession.likedStore.drawingLiked = ManageSession.likedStore.allLikedArt
+          .filter((art) => art.value.collection === 'drawing');
+        console.log('ManageSession.likedStore.drawingLiked: ', ManageSession.likedStore.drawingLiked);
 
-        resolve(this.randomLiked);
+        const randomLiked = ServerCall.getRandomElements(ManageSession.likedStore.drawingLiked, 4);
+
+        resolve(randomLiked);
       } catch (error) {
         reject(error);
       }
@@ -576,7 +573,6 @@ class ServerCall {
     if (serverObjectsHandler.array.length > 0) {
       // eslint-disable-next-line no-param-reassign
       serverObjectsHandler.startLength = serverObjectsHandler.array.length;
-
       /** itemsDownloadCompleted = success or failure
        * we handle the fails in the resolveError function
        * the phaser downloadManager will fire a on.('complete') event when a items has failed or downloaded
@@ -590,10 +586,17 @@ class ServerCall {
       // eslint-disable-next-line no-param-reassign
       serverObjectsHandler.itemsDownloadCompleted = 0;
 
-      serverObjectsHandler.array.forEach((element, index, array) => {
+      // add to serverObjectsHandler artSize
+      // eslint-disable-next-line no-param-reassign
+      serverObjectsHandler.artSize = artSize;
+      // add to serverObjectsHandler artMargin
+      // eslint-disable-next-line no-param-reassign
+      serverObjectsHandler.artMargin = artMargin;
+
+      serverObjectsHandler.array.forEach((element, index) => {
         // dlog('element', element);
         ServerCall.downloadArtwork({
-          element, index, array, type, artSize, artMargin,
+          element, index, type, artSize, artMargin,
         });
       });
     }
@@ -607,7 +610,6 @@ class ServerCall {
       // dlog('element', element);
       this.loadAsset(scene, element, index, type);
     });
-    console.log('ManageSession.resolveErrorObjectArray: ', ManageSession.resolveErrorObjectArray);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -618,14 +620,14 @@ class ServerCall {
       const path = element.path;
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
-        //! FINISH this!
+
         loadFunction: 'localImage', element, index, imageKey: element.key, scene,
       });
 
       scene.load.image(element.key, path)
         .on(`filecomplete-image-${element.key}`, () => {
           // dlog('filecomplete-image-$ element.key: ,', element.key);
-          // delete from ManageSession.resolveErrorObjectArray because of succesful download
+          // delete from ManageSession.resolveErrorObjectArray because of successful download
           ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
             (obj) => obj.imageKey !== element.key,
           );
@@ -657,12 +659,9 @@ class ServerCall {
   }
 
   static async downloadArtwork({
-    element, index, array, type, artSize, artMargin,
+    element, index, type, artSize, artMargin,
   }) {
     const scene = ManageSession.currentScene;
-
-    //! we have to use the serverObjectsHandler to keep track of the download
-    // if (!element.value.url || !element.value) { dlog('element.value.url is empty'); return; }
 
     const imageKeyUrl = element.value.url;
     const imgSize = artSize.toString();
@@ -710,14 +709,23 @@ class ServerCall {
         // push het element in flowerKeyArray
         scene.flowerKeyArray.push(imageKeyUrl);
         // scene.flowerFliedStartMaking = true;
-      } else if (type === 'likedDrawing') {
+      } else if (type === 'downloadLikedDrawing') {
         // eslint-disable-next-line no-param-reassign
         element.downloaded = true;
-        ServerCall.createDrawingContainer(element, index, artSize, artMargin);
+        ServerCall.createdownloadLikedDrawingContainer(element, index);
+
+        const startLength = ManageSession.likedStore.startLength;
+        let downloadCompleted = ManageSession.likedStore.itemsDownloadCompleted;
+        downloadCompleted += 1;
+        ManageSession.likedStore.itemsDownloadCompleted = downloadCompleted;
+        // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        if (downloadCompleted === startLength) {
+          dlog('load LIKED COMPLETE');
+          ServerCall.repositionContainers(type);
+        }
       }
       // if the artwork is not already downloaded
     } else if (type === 'downloadDrawingDefaultUserHome') {
-      console.log('imageKeyUrl, array: ', imageKeyUrl, array);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
         loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene, resolved: false,
@@ -726,7 +734,7 @@ class ServerCall {
 
       scene.load.image(imageKeyUrl, convertedImage)
         .on(`filecomplete-image-${imageKeyUrl}`, () => {
-          // delete from ManageSession.resolveErrorObjectArray because of succesful download
+          // delete from ManageSession.resolveErrorObjectArray because of successful download
           ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
             (obj) => obj.imageKey !== imageKeyUrl,
           );
@@ -855,7 +863,7 @@ class ServerCall {
 
       scene.load.image(imageKeyUrl, convertedImage)
         .on(`filecomplete-image-${imageKeyUrl}`, () => {
-          // delete from ManageSession.resolveErrorObjectArray because of succesful download
+          // delete from ManageSession.resolveErrorObjectArray because of successful download
           ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
             (obj) => obj.imageKey !== imageKeyUrl,
           );
@@ -868,7 +876,7 @@ class ServerCall {
           // scene.flowerFliedStartMaking = true;
         }, this);
       scene.load.start(); // start the load queue to get the image in memory
-    } else if (type === 'likedDrawing') {
+    } else if (type === 'downloadLikedDrawing') {
       // console.log(imageKeyUrl, imgSize, imgSize, fileFormat);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
 
@@ -879,47 +887,39 @@ class ServerCall {
 
       scene.load.image(imageKeyUrl, convertedImage)
         .on(`filecomplete-image-${imageKeyUrl}`, () => {
-          // delete from ManageSession.resolveErrorObjectArray because of succesful download
+          // delete from ManageSession.resolveErrorObjectArray because of successful download
           ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
             (obj) => obj.imageKey !== imageKeyUrl,
           );
 
-          // eslint-disable-next-line no-param-reassign
-          element.downloaded = true;
-          // dlog('drawing downloaded', imageKeyUrl);
-          // dlog('object updated: ', element);
-          // create container with artwork
+          const newElement = { ...element }; // create a new object with the same properties as element
+          newElement.downloaded = true; // modify the downloaded property of the new object
+          newElement.used = true; // mark the liked artwork as being used in the game
 
-          ServerCall.createLikedDrawingContainer(element, index, artSize, artMargin);
-          // dlog("ManageSession.resolveErrorObjectArray", ManageSession.resolveErrorObjectArray)
-          // create the home
-          // ServerCall.createHome(element, index, homeImageKey, scene);
+          /** add the successfully downloaded liked to the ManageSession.likedStore */
+          // add the newElement to the ManageSession.likedStore.successfulDownload array,
+          //  check first if ManageSession.likedStore.successfulDownload array exists, make it otherwise
+          ManageSession.likedStore.successfulDownload = ManageSession.likedStore.successfulDownload
+            ? [...ManageSession.likedStore.successfulDownload, newElement]
+            : [newElement];
+
+
+          ServerCall.createdownloadLikedDrawingContainer(newElement, index);
         }, scene);
-      // .on('fileprogress', (file, progress) => {
-      //   console.log('file: ', file);
-
-      //   console.log('progress: ', progress);
-      // }, scene);
-      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
-      // ManageSession.resolveErrorObjectArray.push({
-      //   loadFunction: 'downloadDrawingDefaultUserHome', element, index, imageKey: imageKeyUrl, scene,
-      // });
-
       scene.load.start(); // start the load queue to get the image in memory
 
       // this is fired each time a file is finished downloading (or failing)
-      // scene.load.on('complete', () => {
-      //   const startLength = scene.randomLiked.startLength;
-      //   let downloadCompleted = scene.randomLiked.itemsDownloadCompleted;
-      //   // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
-      //   downloadCompleted += 1;
-      //   scene.randomLiked.itemsDownloadCompleted = downloadCompleted;
-      //   // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
-      //   if (downloadCompleted === startLength) {
-      //     dlog('loader DRAWING COMPLETE');
-      //     ServerCall.repositionContainers('drawing');
-      //   }
-      // });
+      scene.load.on('complete', () => {
+        const startLength = ManageSession.likedStore.startLength;
+        let downloadCompleted = ManageSession.likedStore.itemsDownloadCompleted;
+        downloadCompleted += 1;
+        ManageSession.likedStore.itemsDownloadCompleted = downloadCompleted;
+        // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        if (downloadCompleted === startLength) {
+          dlog('load LIKED COMPLETE');
+          ServerCall.repositionContainers(type);
+        }
+      });
     }
   }
 
@@ -986,87 +986,74 @@ class ServerCall {
     });
   }
 
-  static async createLikedDrawingContainer(element, index) {
+  // eslint-disable-next-line class-methods-use-this
+  replaceLikedsInBalloonContainer() {
     const scene = ManageSession.currentScene;
-    // console.log('element, index, artSize, artMargin, scene: ', element, index, artSize, artMargin, scene);
-    // console.log('scene.balloonContainer.getWidth(): ', ServerCall.getContainerBounds(scene.balloonContainer));
-    // console.log('element: ', element);
-    const user = await getAccount(element.value.user_id);
-    if (!user || !user.url) {
-      console.error("Failed to fetch user data or user's avatar URL is missing");
-      console.log('element: ', element);
-      const {
-        width,
-      } = ServerCall.getContainerBounds(scene.balloonContainer);
+    const containers = scene.balloonContainer.list;
 
-      let placeX;
-      // let placeY;
-      if (index === 0) {
-        placeX = width;
-      } else {
-        placeX = width + 20;
+    // delete the liked drawings from the balloonContainer, not the balloon itself
+    containers.slice().forEach((child) => {
+      if (child instanceof Phaser.GameObjects.Container) {
+        scene.balloonContainer.remove(child, true); // Remove and destroy the child container
       }
-      const placeY = 200;
+    });
 
-      const imageKeyUrl = element.value.url;
+    // get 4 likes from the drawings
+    const randomLiked = ServerCall.getRandomElements(ManageSession.likedStore.drawingLiked, 4);
 
+    // put the 4 random liked drawings in the likedStore.array
+    ManageSession.likedStore.array = [];
+    ManageSession.likedStore.array = randomLiked;
 
-      // place the background (white image)
-      scene.balloonContainer.add(scene.add.image(placeX - 5, placeY, 'artFrame_512').setOrigin(0.5).setScale(0.5));
+    const type = 'downloadLikedDrawing';
+    const artSize = ManageSession.likedStore.artSize;
+    const artMargin = ManageSession.likedStore.artMargin;
+    const serverObjectsHandler = ManageSession.likedStore;
 
-      // adds the image to the container
-      scene.balloonContainer.add(scene.add.image(placeX, placeY, imageKeyUrl).setOrigin(0.5));
-      return;
-    }
-    // console.log('user: ', user);
-
-    const fileNameCheck = `${user.id}_${user.update_time}`;
-
-    convertImage(
-      user.avatar_url,
-      AVATAR_SPRITESHEET_LOAD_SIZE,
-      AVATAR_SPRITESHEET_LOAD_SIZE * 100,
-      'png',
-    ).then((url) => {
-      // console.log('url: ', url);
-      scene.load.spritesheet(
-        fileNameCheck,
-        url,
-        {
-          frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
-          frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
-        },
-      ).on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
-        console.log('fileNameCheck: ', fileNameCheck);
-
-        const {
-          width,
-        } = ServerCall.getContainerBounds(scene.balloonContainer);
-
-        let placeX;
-        // let placeY;
-        if (index === 0) {
-          placeX = width;
-        } else {
-          placeX = width + 20;
-        }
-        const placeY = 200;
-
-        const imageKeyUrl = element.value.url;
-
-
-        // place the background (white image)
-        scene.balloonContainer.add(scene.add.image(placeX - 5, placeY, 'artFrame_512').setOrigin(0.5).setScale(0.5));
-
-        // adds the image to the container
-        scene.balloonContainer.add(scene.add.image(placeX, placeY, imageKeyUrl).setOrigin(0.5));
-      });
-      scene.load.start(); // start loading the image in memory
+    ServerCall.handleServerArray({
+      type, serverObjectsHandler, artSize, artMargin,
     });
   }
 
+  static createdownloadLikedDrawingContainer(element, index) {
+    const scene = ManageSession.currentScene;
+    if (!scene) return;
+    if (!element) return;
+    if (scene.balloonContainer.list.length > 5) return;
+
+    const {
+      width,
+    } = ServerCall.getContainerBounds(scene.balloonContainer);
+
+    let placeX;
+    // let placeY;
+    if (index === 0) {
+      placeX = width * 0.6;
+    } else {
+      placeX = (width) + 20 + 256;
+    }
+    const placeY = 70;
+
+
+    const imageKeyUrl = element.value.url;
+    const imageContainer = scene.add.container(0, 0);
+    // put an artFrame in the container as a background and frame
+    imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0).setScale(0.5));
+    // adds the image to the container, on top of the artFrame
+    const setImage = scene.add.image(0 + (ART_FRAME_BORDER / 2), 0 + (ART_FRAME_BORDER / 2), imageKeyUrl).setOrigin(0);
+    imageContainer.add(setImage);
+    // place the background (white image)
+    // scene.balloonContainer.add(scene.add.image(placeX - 5, placeY, 'artFrame_512').setOrigin(0.5).setScale(0.5));
+
+    imageContainer.setPosition(placeX, placeY);
+    // imageContainer.setSize(256, 256);
+    // adds the image to the container
+    if (!scene.balloonContainer) return;
+    scene.balloonContainer.add(imageContainer);
+  }
+
   static createDrawingContainer(element, index, artSize, artMargin) {
-    console.log('element: ', element);
+    // console.log('element: ', element);
     const scene = ManageSession.currentScene;
     if (!scene) return;
     if (!element) return;
@@ -1097,10 +1084,11 @@ class ServerCall {
           version: 5
     */
     imageContainer.nakamaData = { ...element };
-    // console.log('imageContainer: ', imageContainer);
+
+    // put an artFrame in the container as a background and frame
     imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
 
-    // adds the image to the container
+    // adds the image to the container, on top of the artFrame
     const setImage = scene.add.image(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0);
     imageContainer.add(setImage);
 
@@ -1206,43 +1194,34 @@ class ServerCall {
     const scene = ManageSession.currentScene;
     let containers = {};
 
-    if (!scene.homeDrawingGroup) return;
-    if (!scene.homeStopmotionGroup) return;
     if (type === 'downloadDrawingDefaultUserHome') {
+      if (!scene.homeDrawingGroup) return;
       containers = scene.homeDrawingGroup.getChildren();
     } else if (type === 'downloadStopmotionDefaultUserHome') {
+      if (!scene.homeStopmotionGroup) return;
       containers = scene.homeStopmotionGroup.getChildren();
+    } else if (type === 'downloadLikedDrawing') {
+      containers = scene.balloonContainer.list;
     }
-    // console.log('type containers: ', type, containers);
 
-    // Sorting the containers based on element.data.update_time
-    containers.sort((a, b) => {
-      const timeA = new Date(a.nakamaData.update_time).getTime();
-      const timeB = new Date(b.nakamaData.update_time).getTime();
-      return timeB - timeA; // For ascending order. Use timeB - timeA for descending.
-    });
+    if (type !== 'downloadLikedDrawing') {
+      // Sorting the containers based on element.data.update_time
+      containers.sort((a, b) => {
+        const timeA = new Date(a.nakamaData.update_time).getTime();
+        const timeB = new Date(b.nakamaData.update_time).getTime();
+        return timeA - timeB; // For ascending order. Use timeB - timeA for descending.
+      });
+    }
 
     const artSize = scene.artDisplaySize;
     const artMargin = scene.artMargin;
     // const artBorder = ART_FRAME_BORDER;
 
     // give each container a position according to the place in the index
-    // const y = artSize * 2.4;
-
     const artStart = 38; // start the art on the left side
     containers.forEach((element, index) => {
       const coordX = index === 0 ? artStart : (artStart) + (index * (artSize + artMargin));
       element.setX(coordX);
-      // console.log(
-      //   'container element.nakamaData.update_time, ',
-      //   element.nakamaData.update_time,
-      //   ' index, ',
-      //   index,
-      //   ' coordX: ',
-      //   coordX,
-      // );
-
-      // dlog('reposition: coordX', coordX);
     });
   }
 
@@ -1266,6 +1245,12 @@ class ServerCall {
     const { scene } = resolveErrorObject;
     // dlog("element, index, homeImageKey, offendingFile, scene", element, index, imageKey, scene)
     let flowerKeyArray;
+    let randomLiked;
+    let type;
+    let serverObjectsHandler;
+    let artSize;
+    let artMargin;
+    let containers;
     // let targetObject;
     switch (loadFunction) {
       case 'getHomeImage':
@@ -1300,7 +1285,6 @@ class ServerCall {
         // dlog('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
 
         break;
-
       case 'downloadStopmotionDefaultUserHome':
         dlog('offending stopmotion loading failed, removing from array');
         // eslint-disable-next-line no-case-declarations
@@ -1315,7 +1299,6 @@ class ServerCall {
         );
 
         break;
-
       case 'downloadAnimalChallenge':
         dlog('offending dier loading failed, removing from array');
         // eslint-disable-next-line no-case-declarations
@@ -1330,14 +1313,12 @@ class ServerCall {
         );
 
         break;
-
       case 'downloadAvatarKey':
         dlog('loading avatar conversion failed');
         ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
           (obj) => obj.imageKey !== imageKey,
         );
         break;
-
       case 'downloadFlowerChallenge':
         dlog('loading flower for FlowerFlieldChallenge failed');
 
@@ -1351,7 +1332,6 @@ class ServerCall {
           (obj) => obj.imageKey !== imageKey,
         );
         break;
-
       case 'localImage':
         dlog('loading localImage failed');
 
@@ -1360,6 +1340,52 @@ class ServerCall {
           (obj) => obj.imageKey !== imageKey,
         );
 
+        break;
+      case 'downloadLikedDrawing':
+        dlog('loading downloadLikedDrawing failed');
+        // dlog('element, index, imageKey: ', element, index, imageKey);
+        dlog('ManageSession.likedStore: ', ManageSession.likedStore);
+
+        // delete from ManageSession.resolveErrorObjectArray
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey,
+        );
+
+        // delete the element from the ManageSession.likedStore.array
+        ManageSession.likedStore.array = ManageSession.likedStore.array
+          .filter((obj) => obj.value.url !== imageKey);
+
+        // delete the element from the ManageSession.likedStore.allLikedArt
+        // so we can't get it again later
+        ManageSession.likedStore.allLikedArt = ManageSession.likedStore.allLikedArt
+          .filter((obj) => obj.value.url !== imageKey);
+
+        // delete the element from the ManageSession.likedStore.drawingLiked
+        // so we can't get it again later
+        ManageSession.likedStore.drawingLiked = ManageSession.likedStore.drawingLiked
+          .filter((obj) => obj.value.url !== imageKey);
+
+        containers = scene.balloonContainer.list;
+        if (containers.length < 4) {
+          // get a new random liked drawing
+          randomLiked = ServerCall.getRandomElements(ManageSession.likedStore.drawingLiked, 1);
+          // dlog('ManageSession.likedStore.drawingLiked: ', ManageSession.likedStore.drawingLiked);
+          // dlog('randomLiked', randomLiked);
+
+          // replace the element in the likedStore.array with the new random liked drawing
+          // ManageSession.likedStore.array[index] = randomLiked[0];
+
+          // push the random liked drawing to the likedStore.array
+          ManageSession.likedStore.array.push(randomLiked[0]);
+
+          type = 'downloadLikedDrawing';
+          artSize = ManageSession.likedStore.artSize;
+          artMargin = ManageSession.likedStore.artMargin;
+          serverObjectsHandler = ManageSession.likedStore;
+          ServerCall.handleServerArray({
+            type, serverObjectsHandler, artSize, artMargin,
+          });
+        }
         break;
 
       default:

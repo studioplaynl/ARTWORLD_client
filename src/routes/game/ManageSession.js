@@ -97,6 +97,9 @@ class ManageSession {
 
 
     this.socketIsConnected = false;
+
+    /** Liked Art to show in scenes array so the data is persistent */
+    this.likedStore = {};
   }
 
   /** Create Socket connection and listen for incoming streaming data, presence and notifications */
