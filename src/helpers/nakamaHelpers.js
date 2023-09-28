@@ -248,40 +248,42 @@ export async function getUploadURL(type, name, filetype, version) {
  * @param {boolean} pub   Public read permission
  * @param {string} userID User ID
  */
-export async function updateObject(type, name, value, pub, userID) {
+// export async function updateObject(type, name, value, pub, userID) {//! off: bug
+export async function updateObject(type, name, value, pub) {
   Success.set(null);
 
   const session = get(Session);
-  const profile = get(Profile);
+  // const profile = get(Profile); //! off: bug
 
   // if user is admin/moderator and userID
-  const uid = userID || session.user_id;
+  // const uid = userID || session.user_id; //! off: bug
 
   // "2" refers to Public Read permission
   // "1" refers to Owner Write permission
   const permission = pub ? PERMISSION_READ_PUBLIC : PERMISSION_READ_PRIVATE;
 
   // Value to store
-  const storeValue = typeof value === 'string' ? JSON.parse(value) : value;
+  // const storeValue = typeof value === 'string' ? JSON.parse(value) : value; //! off: bug
 
-  if (profile.meta.Role === 'admin' || profile.meta.Role === 'moderator') {
-    await updateObjectAdmin(uid, type, name, storeValue, permission);
-  } else {
-    const object = {
-      collection: type,
-      key: name,
-      value,
-      permission_read: permission,
-      // "version": "*"
-    };
+  //! off: bug
+  // if (profile.meta.Role === 'admin' || profile.meta.Role === 'moderator') {
+  //   await updateObjectAdmin(uid, type, name, storeValue, permission);
+  // } else {//! off: bug
+  const object = {
+    collection: type,
+    key: name,
+    value,
+    permission_read: permission,
+    // "version": "*"
+  };
     // const objectIDs =
-    client.writeStorageObjects(session, [object]);
-    // console.info('Stored objects: %o', objectIDs);
-    Success.set(true);
+  client.writeStorageObjects(session, [object]);
+  // console.info('Stored objects: %o', objectIDs);
+  Success.set(true);
 
-    return object;
-  }
-  return '';
+  return object;
+  // }//! off: bug
+  // return '';//! off: bug
 }
 
 export async function listObjects(type, userID, lim, curs) {

@@ -38,15 +38,17 @@
   <!-- currentUser => is dit mijn profiel of van iemand anders -->
     {#if currentUser || role === 'admin' || role === 'moderator'}
       {#if row.value.status !== OBJECT_STATE_IN_TRASH}
+      <!-- toggle visibily -->
         <img src="{row.permission_read ? '/assets/SHB/svg/AW-icon-visible.svg'
           : '/assets/SHB/svg/AW-icon-invisible.svg'}"
         alt="Toggle visibility" on:click="{change}" />
       {:else}
-        <Button on:click="{restore}">      <img
-      alt="undo trash, restore artwork"
-      class="icon"
-      src="/assets/svg/icon/undo_trashcan.svg"
-      />
+      <!-- take item out of trash -->
+        <Button on:click="{restore}">
+          <img alt="undo trash, restore artwork"
+          class="icon"
+          src="/assets/svg/icon/undo_trashcan.svg"
+          />
     </Button>
       {/if}
     {/if}
