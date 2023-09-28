@@ -53,7 +53,7 @@
 
       // console.log('row: ', row);
 
-      if (typeof row === 'undefined') return;
+      if (typeof row === 'undefined' || row === null) return;
 
 
       if (row.value) {

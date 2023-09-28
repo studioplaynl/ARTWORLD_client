@@ -223,7 +223,7 @@ export default class Artworld extends Phaser.Scene {
       // when not in edit mode add animation tween
       this.likedTween = this.tweens.add({
         targets: this.balloonContainer,
-        duration: 30000,
+        duration: 90000,
         x: '-=8000',
         yoyo: false,
         repeat: -1,
