@@ -162,7 +162,8 @@ class Move {
     ManageSession.cameraShake = false;
 
     // send Stop command
-    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
+    // we dont send the stop command, we stop the animation locally when the moveTo tween is finished
+    // ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
     // dlog('ManageSession.sendMoveMessage', scene.player.x, scene.player.y, 'stop');
     // update last player position in PlayerPos for when the player is reloaded inbetween scenes
     PlayerPos.set({

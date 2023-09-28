@@ -143,6 +143,7 @@ class ManageSession {
 
             if (data.action === 'moveTo') {
               const movingKey = updateOnlinePlayer.getData('movingKey');
+              dlog('movingKey', movingKey);
               updateOnlinePlayer.anims.play(movingKey, true);
 
               const moveToX = artworldToPhaser2DX(
@@ -166,6 +167,11 @@ class ManageSession {
                 y: moveToY,
                 paused: false,
                 duration,
+                onComplete() {
+                  /** we stop the onlinePlayer's animation when the tween is finished,
+                   * because we always get a moveTo command, and we are not sending a stop command over the network */
+                  updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);
+                },
               });
             } else if (data.action === 'stop') {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
@@ -190,9 +196,6 @@ class ManageSession {
 
               updateOnlinePlayer.posX = positionVector.x;
               updateOnlinePlayer.posY = positionVector.y;
-
-              updateOnlinePlayer.x = positionVector.x;
-              updateOnlinePlayer.y = positionVector.y;
 
               // get the key for the stop animation of the player, and play it
               updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);

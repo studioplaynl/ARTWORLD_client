@@ -273,6 +273,9 @@ class Player {
         )
 
         .setDepth(200);
+      /** Make onlinePlayer interactive so that when we click on it
+       * we see onlinePlayer itemsBar in the right bottom corner
+       */
       onlinePlayer.setInteractive({ useHandCursor: true });
       // hit area of onlinePlayer
       onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50);
@@ -363,7 +366,7 @@ class Player {
     // dlog('onlinePlayer avatarFrames', avatarFrames);
 
     let setFrameRate = 0;
-    if (avatarFrames > 1) { setFrameRate = (avatarFrames); } else {
+    if (avatarFrames > 1) { setFrameRate = ((avatarFrames + 2) * 2); } else {
       setFrameRate = 0;
     }
     // if (avatarFrames > 1) {
@@ -372,7 +375,7 @@ class Player {
     onlinePlayer.setData('movingKey', `moving_${tempAvatarName}`);
     onlinePlayer.setData('stopKey', `stop_${tempAvatarName}`);
     // dlog('onlinePlayer.getData("movingKey")');
-    // dlog(onlinePlayer.getData('movingKey'));
+    // dlog(onlinePlayer.getData('stopKey'));
 
     // create animation for moving
     if (!scene.anims.exists(onlinePlayer.getData('movingKey'))) {
