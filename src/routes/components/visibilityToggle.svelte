@@ -1,10 +1,10 @@
 <script>
   import { Button } from 'attractions';
   // import { onMount } from 'svelte';
-  import { location } from 'svelte-spa-router';
+  // import { location } from 'svelte-spa-router';
+  // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
 
-  import { updateObjectAdmin } from '../../helpers/nakamaHelpers';
   import {
     // PERMISSION_READ_PUBLIC,
     OBJECT_STATE_IN_TRASH,
@@ -20,44 +20,17 @@
   // eslint-disable-next-line svelte/valid-compile
   export let rowIndex = null;
   export let isCurrentUser;
-  export let moveToArt = null;
+  // export let moveToArt = null;
   export let store;
   const currentUser = isCurrentUser(); // Bool? Of user object?
 
   const change = async () => {
     row.permission_read = !row.permission_read;
-    if (role === 'admin' || role === 'moderator') {
-      dlog('admin');
-
-      const {
-        // eslint-disable-next-line camelcase
-        collection,
-        key,
-        value,
-        // eslint-disable-next-line camelcase
-        user_id,
-      } = row;
-
-      // Update on server
-      dlog(collection, key, value, row.permission_read, user_id);
-      await updateObjectAdmin(user_id, collection, key, value, row.permission_read);
-
-      // ArtworksStore.updatePublicRead(row, publicRead);
-    } else {
-      store.updatePublicRead(row, row.permission_read);
-    }
+    store.updatePublicRead(row, row.permission_read);
   };
 
   function restore() {
-    if (
-      (role === 'admin' || role === 'moderator') &&
-      $location === '/moderator'
-    ) {
-      dlog('admin');
-      moveToArt(row);
-    } else {
-      store.restoreFromTrash(row, OBJECT_STATE_REGULAR);
-    }
+    store.restoreFromTrash(row, OBJECT_STATE_REGULAR);
   }
 </script>
 

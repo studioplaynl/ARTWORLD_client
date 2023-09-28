@@ -20,7 +20,7 @@
   import { Profile } from '../../session';
   // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
-  import StatusComp from './statusbox.svelte';
+  import StatusComp from './visibilityToggle.svelte';
   import DeleteComp from './deleteButton.svelte';
   import SendTo from './sendTo.svelte';
   import {
@@ -36,18 +36,19 @@
 
   export let dataType = '';
 
-  const deleteCheck = null;
-  let useraccount;
+  // const deleteCheck = null;
+  // eslint-disable-next-line no-unused-vars
+  let useraccount; // used in other components
   let filteredArt = [];
   let deletedArt = [];
   let id = null;
   let CurrentUser;
-  export let params = {};
-  export let userID = null;
+  export const params = {};
+  export const userID = null;
   let store;
   let unsubscribe;
   // eslint-disable-next-line svelte/valid-compile
-  export let col = null; // add this line
+  export let col = null;
 
 function toggleSendTo(e) {
   if (e.detail) {

@@ -459,7 +459,6 @@ class ServerCall {
            *  so it is passed on to serverObjectsHandler.array
           */
 
-          console.log('randomLiked, serverObjectsHandler: ', randomLiked, serverObjectsHandler);
           ServerCall.handleServerArray({
             type, serverObjectsHandler, artSize, artMargin,
           });
@@ -518,14 +517,12 @@ class ServerCall {
         }
 
         ManageSession.likedStore.allLikedArt = [...userLikedArt, ...moderatorLikedArt];
-        console.log('ManageSession.likedStore.allLikedArt: ', ManageSession.likedStore.allLikedArt);
 
         ManageSession.likedStore.stopmotionLiked = ManageSession.likedStore.allLikedArt
           .filter((art) => art.value.collection === 'stopmotion');
 
         ManageSession.likedStore.drawingLiked = ManageSession.likedStore.allLikedArt
           .filter((art) => art.value.collection === 'drawing');
-        console.log('ManageSession.likedStore.drawingLiked: ', ManageSession.likedStore.drawingLiked);
 
         const randomLiked = ServerCall.getRandomElements(ManageSession.likedStore.drawingLiked, 4);
 
@@ -568,7 +565,7 @@ class ServerCall {
   static handleServerArray({
     type, serverObjectsHandler, artSize, artMargin,
   }) {
-    dlog('serverObjectsHandler.array.length: ', serverObjectsHandler.array.length);
+    // dlog('serverObjectsHandler.array.length: ', serverObjectsHandler.array.length);
 
     if (serverObjectsHandler.array.length > 0) {
       // eslint-disable-next-line no-param-reassign
@@ -668,7 +665,6 @@ class ServerCall {
     const fileFormat = 'png';
     const getImageWidth = (artSize * 100).toString();
 
-    // console.log('scene.textures.exists(imageKeyUrl): ', scene.textures.exists(imageKeyUrl));
     if (scene.textures.exists(imageKeyUrl)) {
       // if the artwork has already been downloaded
       if (type === 'downloadDrawingDefaultUserHome') {
@@ -877,7 +873,6 @@ class ServerCall {
         }, this);
       scene.load.start(); // start the load queue to get the image in memory
     } else if (type === 'downloadLikedDrawing') {
-      // console.log(imageKeyUrl, imgSize, imgSize, fileFormat);
       const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
 
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
@@ -916,7 +911,7 @@ class ServerCall {
         ManageSession.likedStore.itemsDownloadCompleted = downloadCompleted;
         // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
-          dlog('load LIKED COMPLETE');
+          // dlog('load LIKED COMPLETE');
           ServerCall.repositionContainers(type);
         }
       });
@@ -955,7 +950,6 @@ class ServerCall {
       console.error("Failed to fetch user data or user's avatar URL is missing");
       return;
     }
-    // console.log('user: ', user);
     // 2. Load the Spritesheet
     ServerCall.loadSpritesheetForUser(user, scene);
     // .then((fileNameCheck) => fileNameCheck);
@@ -970,7 +964,6 @@ class ServerCall {
       AVATAR_SPRITESHEET_LOAD_SIZE * 100,
       'png',
     ).then((url) => {
-      console.log('url: ', url);
       scene.load.spritesheet(
         fileNameCheck,
         url,
@@ -978,10 +971,7 @@ class ServerCall {
           frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
           frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
         },
-      ).on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
-        console.log('fileNameCheck: ', fileNameCheck);
-        return fileNameCheck;
-      });
+      ).on(`filecomplete-spritesheet-${fileNameCheck}`, () => fileNameCheck);
       scene.load.start(); // start loading the image in memory
     });
   }
@@ -1053,7 +1043,6 @@ class ServerCall {
   }
 
   static createDrawingContainer(element, index, artSize, artMargin) {
-    // console.log('element: ', element);
     const scene = ManageSession.currentScene;
     if (!scene) return;
     if (!element) return;

@@ -4,7 +4,7 @@ export const CONFIG = {
 };
 
 /** version info: date time of push and branch name */
-export const APP_VERSION_INFO = '#2023-SEPT-26 15:30 DEVELOP#';
+export const APP_VERSION_INFO = '#2023-SEPT-28 11:44 DEVELOP#';
 /** List of Scenes a user may navigate to */
 export const SCENE_INFO = [
   {

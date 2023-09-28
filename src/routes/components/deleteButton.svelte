@@ -3,6 +3,7 @@
   import { location } from 'svelte-spa-router';
   import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
+  // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
 
   // eslint-disable-next-line svelte/valid-compile
@@ -66,17 +67,13 @@
       version: "e7bf6aed7cde3ee1168454b2e3cf7786"
       }
     */
-    console.log('row: ', row);
-    console.log('$store: ', $store);
     if (
       (role === 'admin' || role === 'moderator') &&
       $location === '/moderator'
     ) {
       moveToTrash(row);
     } else {
-      dlog('before');
-      store.updateState(row, OBJECT_STATE_IN_TRASH);
-      dlog('after');
+      store.restoreFromTrash(row, OBJECT_STATE_IN_TRASH);
     }
   };
 

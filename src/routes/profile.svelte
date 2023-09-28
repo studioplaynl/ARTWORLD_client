@@ -29,7 +29,7 @@
   import { Session, Profile } from '../session';
   import { dlog } from '../helpers/debugLog';
 
-  import StatusComp from './components/statusbox.svelte';
+  import StatusComp from './components/visibilityToggle.svelte';
   import DeleteComp from './components/deleteButton.svelte';
   import postSend from './components/postSend.svelte';
   import Avatar from './components/avatar.svelte';
@@ -98,7 +98,6 @@
     } else {
       await ArtworksStore.loadArtworks(id, 100);
       store = ArtworksStore;
-      console.log('$store: ', $store);
     }
     loader = false;
 
@@ -233,7 +232,6 @@
       CurrentUser = true;
       id = $Session.user_id;
       useraccount = await getAccount();
-      console.log('useraccount: ', useraccount);
     }
 
     // we check if the user has a display_name

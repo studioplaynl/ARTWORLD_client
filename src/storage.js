@@ -300,14 +300,14 @@ export function createArtworksStore(type) {
     /** Get a single Artwork by Key */
     getArtwork: (key) => store.find((artwork) => artwork.key === key),
 
-    updateState: (row, state) => {
+    restoreFromTrash: (row, state) => {
       const {
         collection, key, value, user_id,
       } = row;
 
       // Update on server
       value.status = state;
-      const pub = false;
+      const pub = true;
       updateObject(collection, key, value, pub, user_id);
 
       // Update store
@@ -525,14 +525,14 @@ export const ArtworksStore = {
    * @param row SvelteTable row
    * @param state
   */
-  updateState: (row, state) => {
+  restoreFromTrash: (row, state) => {
     const {
       collection, key, value, user_id,
     } = row;
 
     // Update on server
     value.status = state;
-    const pub = false;
+    const pub = true;
     updateObject(collection, key, value, pub, user_id);
 
     // Update store
