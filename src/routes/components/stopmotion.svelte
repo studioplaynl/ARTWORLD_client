@@ -4,13 +4,14 @@
   import { STOPMOTION_FPS } from '../../constants';
 
   export let artwork;
-  export let row;
+  export let row = null;
 
   export let clickable = false;
   // const dispatch = createEventDispatcher();
 
   let image;
   let frame = 0;
+  const avatarSize = 75;
   let interval;
 
   beforeUpdate(async () => {
@@ -18,11 +19,11 @@
       clearInterval(interval);
       interval = setInterval(() => {
         frame++;
-        if (frame >= Math.floor(image.clientWidth / 75)) {
+        if (frame >= Math.floor(image.clientWidth / avatarSize)) {
           frame = 0;
           image.style.left = '0px';
         } else {
-          image.style.left = `-${frame * 75}px`;
+          image.style.left = `-${frame * avatarSize}px`;
         }
       }, 1000 / STOPMOTION_FPS);
 
@@ -65,14 +66,15 @@
     }
 </script>
 
-<div class="artPreview" on:click="{handleOpenArtwork}" class:clickable="{clickable}">
+<div class="artPreview" style="--avatar-size: {avatarSize}px;"
+  on:click="{handleOpenArtwork}" class:clickable="{clickable}">
   <img bind:this="{image}" src="{artwork}" alt="artwork" />
 </div>
 
 <style>
   .artPreview {
-    height: 75px;
-    width: 75px;
+    height: var(--avatar-size);
+    width: var(--avatar-size);
     overflow: hidden;
     position: relative;
   }
@@ -85,7 +87,7 @@
   }
 
   .artPreview > img {
-    height: 75px;
+    height: var(--avatar-size);
     position: absolute;
     left: 0px;
   }

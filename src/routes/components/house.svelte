@@ -26,11 +26,13 @@
   import { myHome } from '../../storage';
   import ImagePicker from './imagePicker.svelte';
 
+  const avatarSize = 75;
+
   let showHistory = false;
 </script>
 
 <div class="homeContainer">
-<div class="homeImage">
+<div class="homeImage" style="--avatar-size: {avatarSize}px;">
     <img alt="My House" id="house" src="{$myHome.url}" />
   </div>
 
@@ -74,10 +76,17 @@
   }
 
   .homeImage {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
+        height: var(--avatar-size);
+    width: var(--avatar-size);
+    overflow: hidden;
+    position: relative;
+  }
+
+    .homeImage > img {
+    height: var(--avatar-size);
+    position: absolute;
+    left: 0px;
+    top: 0;
   }
   .action > img {
     width: 70px;

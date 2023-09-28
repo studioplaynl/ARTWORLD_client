@@ -32,6 +32,7 @@
 
   export let showHistory = false;
 
+  const avatarSize = 75;
   let image;
   let frame = 0;
   let interval;
@@ -48,11 +49,11 @@
     //   loadUrl();
     interval = setInterval(() => {
       frame++;
-      if (frame >= Math.floor(image.clientWidth / 150)) {
+      if (frame >= Math.floor(image.clientWidth / avatarSize)) {
         frame = 0;
         image.style.left = '0px';
       } else {
-        image.style.left = `-${frame * 150}px`;
+        image.style.left = `-${frame * avatarSize}px`;
       }
     }, 1000 / STOPMOTION_FPS);
   });
@@ -63,8 +64,8 @@
   });
 </script>
 
-<div class="avatarContainer">
-<div class="avatar">
+<div class="avatarContainer" >
+<div class="avatar" style="--avatar-size: {avatarSize}px;">
   <img bind:this="{image}" src="{$Profile.url}" alt="My Avatar" />
 </div>
 <!-- <div class="avatarButtons"> -->
@@ -109,14 +110,14 @@
   }
 
   .avatar {
-    height: 150px;
-    width: 150px;
+    height: var(--avatar-size);
+    width: var(--avatar-size);
     overflow: hidden;
     position: relative;
   }
 
   .avatar > img {
-    height: 150px;
+    height: var(--avatar-size);
     position: absolute;
     left: 0px;
     top: 0;

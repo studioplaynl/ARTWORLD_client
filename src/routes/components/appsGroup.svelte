@@ -11,12 +11,17 @@
  *  allows the player to start a new work
  */
 
-// import Avatar from './avatar.svelte';
+import Avatar from './avatar.svelte';
+import House from './house.svelte';
 import AppItemsbar from './appItemsbar.svelte';
 </script>
 
 <div class="appsGroupContainer">
 
+    <Avatar showHistory="{true}" />
+        <br />
+    <House />
+        <br />
     <AppItemsbar appName = 'drawing' />
         <br />
     <AppItemsbar appName = 'stopmotion' />
@@ -24,7 +29,6 @@ import AppItemsbar from './appItemsbar.svelte';
     <AppItemsbar appName = 'animalchallenge' />
         <br />
     <AppItemsbar appName = 'flowerchallenge' />
-        <br />
 
 </div>
 

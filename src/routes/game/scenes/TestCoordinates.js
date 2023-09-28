@@ -3,6 +3,7 @@ import Background from '../class/Background';
 import DebugFuntions from '../class/DebugFuntions';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
+// eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 
 const { Phaser } = window;
