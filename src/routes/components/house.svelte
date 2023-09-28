@@ -76,7 +76,7 @@
   }
 
   .homeImage {
-        height: var(--avatar-size);
+    height: var(--avatar-size);
     width: var(--avatar-size);
     overflow: hidden;
     position: relative;
