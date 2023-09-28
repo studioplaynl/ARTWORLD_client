@@ -329,7 +329,7 @@ class ManageSession {
           );
           if (!exists) {
             this.createOnlinePlayerArray.push(newPlayer);
-            dlog('newPlayer', newPlayer);
+            // dlog('newPlayer', newPlayer);
           }
         });
 

@@ -237,7 +237,7 @@ class Player {
       ManageSession.createOnlinePlayerArray.forEach((onlinePlayer) => {
         Promise.all([getAccount(onlinePlayer.user_id)]).then((rec) => {
           const newOnlinePlayer = rec[0];
-          // dlog(newOnlinePlayer)
+          dlog('newOnlinePlayer: ', newOnlinePlayer);
           this.createOnlinePlayer(scene, newOnlinePlayer);
           // dlog("parseNewOnlinePlayerArray scene", scene)
         });
@@ -362,37 +362,41 @@ class Player {
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
     // dlog('onlinePlayer avatarFrames', avatarFrames);
 
-    if (avatarFrames > 1) {
-      // set names for the moving and stop animations
+    let setFrameRate = 0;
+    if (avatarFrames > 1) { setFrameRate = (avatarFrames); } else {
+      setFrameRate = 0;
+    }
+    // if (avatarFrames > 1) {
+    // set names for the moving and stop animations
 
-      onlinePlayer.setData('movingKey', `moving_${tempAvatarName}`);
-      onlinePlayer.setData('stopKey', `stop_${tempAvatarName}`);
-      // dlog('onlinePlayer.getData("movingKey")');
-      // dlog(onlinePlayer.getData('movingKey'));
+    onlinePlayer.setData('movingKey', `moving_${tempAvatarName}`);
+    onlinePlayer.setData('stopKey', `stop_${tempAvatarName}`);
+    // dlog('onlinePlayer.getData("movingKey")');
+    // dlog(onlinePlayer.getData('movingKey'));
 
-      // create animation for moving
-      if (!scene.anims.exists(onlinePlayer.getData('movingKey'))) {
-        scene.anims.create({
-          key: onlinePlayer.getData('movingKey'),
-          frames: scene.anims.generateFrameNumbers(tempAvatarName, {
-            start: 0,
-            end: avatarFrames - 1,
-          }),
-          frameRate: (avatarFrames + 2) * 2,
-          repeat: -1,
-          yoyo: true,
-        });
+    // create animation for moving
+    if (!scene.anims.exists(onlinePlayer.getData('movingKey'))) {
+      scene.anims.create({
+        key: onlinePlayer.getData('movingKey'),
+        frames: scene.anims.generateFrameNumbers(tempAvatarName, {
+          start: 0,
+          end: avatarFrames - 1,
+        }),
+        frameRate: setFrameRate,
+        repeat: -1,
+        yoyo: true,
+      });
 
-        // create animation for stop
-        scene.anims.create({
-          key: onlinePlayer.getData('stopKey'),
-          frames: scene.anims.generateFrameNumbers(tempAvatarName, {
-            start: 0,
-            end: 0,
-          }),
-        });
-      }
-    }// if (avatarFrames > 1) {
+      // create animation for stop
+      scene.anims.create({
+        key: onlinePlayer.getData('stopKey'),
+        frames: scene.anims.generateFrameNumbers(tempAvatarName, {
+          start: 0,
+          end: 0,
+        }),
+      });
+    }
+    // }// if (avatarFrames > 1) {
 
     onlinePlayer.setTexture(tempAvatarName);
 
