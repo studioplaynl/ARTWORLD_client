@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-
+import { push } from 'svelte-spa-router';
 import ManageSession from '../ManageSession';
 
 import PlayerDefault from '../class/PlayerDefault';
@@ -7,7 +7,7 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import { PlayerPos, PlayerZoom } from '../playerState';
+import { PlayerHistory, PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
@@ -19,7 +19,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   constructor() {
     super('ChallengeFlowerField');
 
-    this.location = 'ChallengeFlowerField';
     this.worldSize = new Phaser.Math.Vector2(0, 0);
 
     this.debug = false;
@@ -46,13 +45,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
-
-    // size for the artWorks
-    this.artPreviewSize = 128;
-
-    this.artUrl = [];
-    this.userArtServerList = [];
-    this.progress = [];
   }
 
   async preload() {
@@ -130,7 +122,33 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     //!
     Player.loadPlayerAvatar(this);
     //!
+    this.makeNewFlowerButton();
+    this.reloadButton();
   }// end create
+
+  makeNewFlowerButton() {
+    // add the plussign button to the scene
+    const plusSign = this.add.image(this.worldSize.x / 2, 250, 'plusSign').setDepth(200);
+    plusSign.setInteractive();
+    plusSign.on('pointerup', () => {
+      console.log('plusSign clicked');
+      /* Make a new artwork */
+      // open the relevant app
+      const value = '/flowerchallenge';
+      push(value);
+      PlayerHistory.push(value);
+    });
+  }
+
+  reloadButton() {
+    const reloadButton = this.add.image((this.worldSize.x / 2) - 300, 250, 'reloadSign').setDepth(200);
+    reloadButton.setInteractive();
+    reloadButton.on('pointerup', () => {
+      console.log('reloadButton clicked');
+      // reload the flower field to show new flowers
+      this.scene.restart();
+    });
+  }
 
   everythingFlowerFlied() {
     // make background for flowers
@@ -220,6 +238,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   }
 
   makeFlowerRow(flowerRowY) {
+    // get a new flower key from the array, randomly
     let flowerKey = this.flowerKeyArray[Phaser.Math.Between(0, this.flowerKeyArray.length - 1)];
 
     // dlog("flowerRowY", flowerRowY)
@@ -264,7 +283,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.flowerFliedStartMaking = false;
     dlog('makeFlowerFlied this.flowerKeyArray');
 
-    // first remove the tween, after destoy the old flower gameobject
+    // first remove the tween, after destoy the old flower gameobjects
     this.flowerTweenArray.forEach((element) => {
       element.stop();
       element.remove();

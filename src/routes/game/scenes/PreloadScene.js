@@ -161,6 +161,11 @@ export default class PreloadScene extends Phaser.Scene {
 
     // balloon
     this.load.image('likedBalloon', './assets/likes_balloon.png');
+
+    // plus sign for adding artworks inGame
+    this.load.svg('plusSign', './assets/SHB/svg/AW-icon-plus.svg', { scale: 2 });
+    // reloadSign for reloading challenge artworks inGame
+    this.load.svg('reloadSign', './assets/SHB/svg/AW-icon-reset.svg', { scale: 2 });
   }
 
   async create() {

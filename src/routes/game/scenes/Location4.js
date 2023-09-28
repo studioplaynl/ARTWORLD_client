@@ -16,7 +16,6 @@ export default class Location4 extends Phaser.Scene {
   constructor() {
     super('Location4');
 
-    this.location = 'Location4';
     this.worldSize = new Phaser.Math.Vector2(3000, 3000);
 
     this.debug = false;

@@ -56,6 +56,7 @@ function toggleSendTo(e) {
     if (filteredArt[rowIndex].SendToIsOpen) {
       filteredArt[rowIndex].SendToIsOpen = !toggleMode;
     } else {
+      // eslint-disable-next-line no-unused-expressions
       filteredArt[rowIndex].SendToIsOpen;
       filteredArt[rowIndex].SendToIsOpen = !toggleMode;
     }

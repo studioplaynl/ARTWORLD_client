@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { get } from 'svelte/store';
+import { push } from 'svelte-spa-router';
 import ManageSession from '../ManageSession';
-
 
 import Background from '../class/Background';
 import PlayerDefault from '../class/PlayerDefault';
@@ -10,7 +10,7 @@ import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerPos, PlayerZoom } from '../playerState';
+import { PlayerHistory, PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
@@ -138,6 +138,8 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
     // download all dier from all users
     this.getAnimals(this.animalArray);
+    this.makeNewAnimalButton();
+    this.reloadButton();
   } // end create
 
 
@@ -149,6 +151,32 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.artMargin = artMargin;
     ServerCall.downloadAndPlaceArtByType({
       type, userId, serverObjectsHandler, artSize,
+    });
+  }
+
+
+  reloadButton() {
+    const reloadButton = this.add.image((this.worldSize.x / 2) - 300, -50, 'reloadSign').setDepth(200);
+    reloadButton.setInteractive();
+    reloadButton.on('pointerup', () => {
+      console.log('reloadButton clicked');
+      // reload the animal garden to show new animals
+      // setTimeout(() => { window.location.reload(); }, 300);
+      this.scene.restart();
+    });
+  }
+
+  makeNewAnimalButton() {
+    // add the plussign button to the scene
+    const plusSign = this.add.image(this.worldSize.x / 2, -50, 'plusSign').setDepth(200);
+    plusSign.setInteractive();
+    plusSign.on('pointerup', () => {
+      console.log('plusSign clicked');
+      /* Make a new artwork */
+      // open the relevant app
+      const value = '/animalchallenge';
+      push(value);
+      PlayerHistory.push(value);
     });
   }
 

@@ -11,7 +11,6 @@ export default class TestCoordinates extends Phaser.Scene {
   constructor() {
     super('TestCoordinates');
 
-    this.location = 'TestCoordinates';
     this.worldSize = new Phaser.Math.Vector2(600, 600);
 
     this.debug = false;
