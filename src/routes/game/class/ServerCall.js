@@ -1086,7 +1086,7 @@ class ServerCall {
     image.setInteractive();
     image.on('pointerup', () => {
       if (!gotoHouse) {
-        dlog('clicked image: ', element);
+        // dlog('clicked image: ', element);
         // show the button shadow and image
         // buttonShadow.setPosition(image.x, image.y + 5);
         // buttonShadow.setVisible(true);
@@ -1157,7 +1157,7 @@ class ServerCall {
     if (!element) return;
 
     const imageKeyUrl = element.value.url;
-    const y = 38;
+    const y = 60;
     const artBorder = ART_FRAME_BORDER;
 
     const artStart = 38; // start the art on the left side
@@ -1188,6 +1188,10 @@ class ServerCall {
 
     // adds the image to the container, on top of the artFrame
     const setImage = scene.add.image(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0);
+    // explicitly set the size of the image incase the image has a non standard size
+    setImage.displayWidth = artSize;
+    setImage.displayHeight = artSize;
+
     imageContainer.add(setImage);
 
     const containerSize = artSize + artBorder;
@@ -1210,7 +1214,7 @@ class ServerCall {
     if (!element) return;
 
     const imageKeyUrl = element.value.url;
-    const y = artSize * 1.4;
+    const y = artSize * 1.5;
     const artBorder = ART_FRAME_BORDER;
 
     const artStart = 38; // start the art on the left side
@@ -1264,6 +1268,8 @@ class ServerCall {
       0 + artBorder,
       imageKeyUrl,
     ).setOrigin(0);
+    // set the size of the stopmotion to artSize explicitly
+    completedImage.setScale(artSize / completedImage.width, artSize / completedImage.height);
     completedImage.setName('stopmotion');
     imageContainer.add(completedImage);
 
