@@ -107,7 +107,7 @@ export const Liked = {
     });
   },
 
-  get: () => {
+  get: async () => {
     const localLikedArray = get(likedStore);
     const Sess = get(Session);
     if (!!localLikedArray && localLikedArray.length > 0) {
@@ -151,21 +151,22 @@ export const ModeratorLiked = {
 
   subscribe: likedStore.subscribe,
   set: moderatorLikedStore.set,
-  get: () => {
+  get: async () => {
     const localLikedArray = get(moderatorLikedStore);
 
     if (!!localLikedArray && localLikedArray.length > 0) {
+      console.log('localLikedArray', localLikedArray);
       return localLikedArray;
     }
 
+    // Use await to handle the asynchronous server call
+    const serverLikedArray = await listAllObjects('liked', MODERATOR_LIKED_ID);
+    dlog('serverLikedArray', serverLikedArray);
+    // Now that we have the result from the server, set it to the store
+    ModeratorLiked.set(serverLikedArray);
 
-    listAllObjects('liked', MODERATOR_LIKED_ID).then((serverLikedArray) => {
-      ModeratorLiked.set(serverLikedArray);
-      // console.log('liked mod', serverLikedArray);
-      return serverLikedArray;
-    });
-
-    return null;
+    // If the serverLikedArray is empty, then you can decide to either return it or return null
+    return serverLikedArray.length > 0 ? serverLikedArray : null;
   },
 
   find: (key) => {

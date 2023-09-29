@@ -506,32 +506,27 @@ class ServerCall {
   }
 
   static async getLikedStores() {
-    return new Promise((resolve, reject) => {
-      try {
-        const userLikedArt = Liked.get() || [];
-        const moderatorLikedArt = ModeratorLiked.get() || [];
+    // Await for the asynchronous results
+    const userLikedArt = await Liked.get() || [];
+    const moderatorLikedArt = await ModeratorLiked.get() || [];
 
-        if (!Array.isArray(userLikedArt) || !Array.isArray(moderatorLikedArt)) {
-          reject(new Error('Data from stores is not in the expected format'));
-          return;
-        }
+    if (!Array.isArray(userLikedArt) || !Array.isArray(moderatorLikedArt)) {
+      throw new Error('Data from stores is not in the expected format');
+    }
 
-        ManageSession.likedStore.allLikedArt = [...userLikedArt, ...moderatorLikedArt];
+    ManageSession.likedStore.allLikedArt = [...userLikedArt, ...moderatorLikedArt];
 
-        ManageSession.likedStore.stopmotionLiked = ManageSession.likedStore.allLikedArt
-          .filter((art) => art.value.collection === 'stopmotion');
+    ManageSession.likedStore.stopmotionLiked = ManageSession.likedStore.allLikedArt
+      .filter((art) => art.value.collection === 'stopmotion');
 
-        ManageSession.likedStore.drawingLiked = ManageSession.likedStore.allLikedArt
-          .filter((art) => art.value.collection === 'drawing');
+    ManageSession.likedStore.drawingLiked = ManageSession.likedStore.allLikedArt
+      .filter((art) => art.value.collection === 'drawing');
 
-        const randomLiked = ServerCall.getRandomElements(ManageSession.likedStore.drawingLiked, 4);
+    const randomLiked = ServerCall.getRandomElements(ManageSession.likedStore.drawingLiked, 4);
 
-        resolve(randomLiked);
-      } catch (error) {
-        reject(error);
-      }
-    });
+    return randomLiked;
   }
+
 
   static shuffleArray(inputArray) {
     const array = [...inputArray]; // Create a copy of the input array
