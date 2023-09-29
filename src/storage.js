@@ -155,13 +155,11 @@ export const ModeratorLiked = {
     const localLikedArray = get(moderatorLikedStore);
 
     if (!!localLikedArray && localLikedArray.length > 0) {
-      console.log('localLikedArray', localLikedArray);
       return localLikedArray;
     }
 
     // Use await to handle the asynchronous server call
     const serverLikedArray = await listAllObjects('liked', MODERATOR_LIKED_ID);
-    dlog('serverLikedArray', serverLikedArray);
     // Now that we have the result from the server, set it to the store
     ModeratorLiked.set(serverLikedArray);
 
