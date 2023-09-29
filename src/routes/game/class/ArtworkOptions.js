@@ -4,7 +4,7 @@
  *
  *  What is this file for?
  *  ======================
- *  This file is used to place the heart button under the artwork
+ *  This file is used to place the heart button under the artwork in user home.
  *  The heart button is used to like the artwork.
  *  The other option is to place a play/ pause button under the stopmotion
  *

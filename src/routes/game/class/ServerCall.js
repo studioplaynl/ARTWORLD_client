@@ -1027,16 +1027,27 @@ class ServerCall {
 
     const imageKeyUrl = element.value.url;
     const imageContainer = scene.add.container(0, 0);
+
+    /** set the image explicitly to desiredWidth
+     * TODO use desiredWidth pass on to the function
+     */
+    const desiredWidth = 256;
+
+    // get the width and height of the original image
+    let imageWidth = scene.textures.get('artFrame_512').getSourceImage().width;
+    // add the background artFrame and set the image width to 256
+    let image = scene.add.image(0, 0, 'artFrame_512').setOrigin(0);
+    image.setScale((desiredWidth + ART_FRAME_BORDER) / imageWidth, (desiredWidth + ART_FRAME_BORDER) / imageWidth);
     // put an artFrame in the container as a background and frame
-    imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0).setScale(0.5));
+    imageContainer.add(image);
+
+    imageWidth = scene.textures.get(imageKeyUrl).getSourceImage().width;
     // adds the image to the container, on top of the artFrame
-    const setImage = scene.add.image(0 + (ART_FRAME_BORDER / 2), 0 + (ART_FRAME_BORDER / 2), imageKeyUrl).setOrigin(0);
-    imageContainer.add(setImage);
-    // place the background (white image)
-    // scene.balloonContainer.add(scene.add.image(placeX - 5, placeY, 'artFrame_512').setOrigin(0.5).setScale(0.5));
+    image = scene.add.image(0 + (ART_FRAME_BORDER / 2), 0 + (ART_FRAME_BORDER / 2), imageKeyUrl).setOrigin(0);
+    image.setScale(desiredWidth / imageWidth, desiredWidth / imageWidth);
+    imageContainer.add(image);
 
     imageContainer.setPosition(placeX, placeY);
-    // imageContainer.setSize(256, 256);
     // adds the image to the container
     if (!scene.balloonContainer) return;
     scene.balloonContainer.add(imageContainer);

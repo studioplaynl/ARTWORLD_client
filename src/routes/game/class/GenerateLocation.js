@@ -58,7 +58,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.setData('enteringPossible', 'true');
 
     // disable entering when the location is draggable
-    // if (this.draggable) this.setData('enteringPossible', 'false');
+    if (this.draggable) this.setData('enteringPossible', 'false');
 
 
     this.postFxPlugin = this.scene.plugins.get('rexOutlinePipeline');
