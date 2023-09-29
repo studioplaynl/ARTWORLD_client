@@ -15,7 +15,7 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import {
-  convertImage, getAllHouses, listAllObjects, getAccount,
+  convertImage, getAllHouses, listAllObjects, getAccount, getObject,
 } from '../../../helpers/nakamaHelpers';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
@@ -24,6 +24,7 @@ import { ART_FRAME_BORDER, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constan
 import { dlog } from '../../../helpers/debugLog';
 import AnimalChallenge from './animalChallenge';
 import { myHomeStore, Liked, ModeratorLiked } from '../../../storage';
+import { PlayerLocation, PlayerUpdate, PlayerPos } from '../playerState';
 
 const { Phaser } = window;
 class ServerCall {
@@ -1040,13 +1041,115 @@ class ServerCall {
     // adds the image to the container, on top of the artFrame
     image = scene.add.image(0 + (ART_FRAME_BORDER / 2), 0 + (ART_FRAME_BORDER / 2), imageKeyUrl).setOrigin(0);
     image.setScale(desiredWidth / imageWidth, desiredWidth / imageWidth);
+
+    // make image interactive so that we can goto the user's home
+    // we want to show a button image on top of the image
+    // to confirm we go to the user's home
+
+    // image.setInteractive();
+    // image.on('pointerup', () => {
+    //   dlog('clicked image: ', element);
+    // });
     imageContainer.add(image);
+
+    // create the button shadow
+    const buttonShadow = scene.add.image(imageWidth - 70, imageWidth, 'purpleCircle_128')
+      .setDepth(500);
+    buttonShadow.displayWidth = 60;
+    buttonShadow.displayHeight = 60;
+    buttonShadow.setVisible(false);
+    imageContainer.add(buttonShadow);
+
+    // create the button image
+    const buttonImage = scene.add.image(imageWidth - 70, imageWidth, 'enter')
+      .setDepth(500);
+    buttonImage.rotation = -1.5708;
+    buttonImage.displayWidth = 60;
+    buttonImage.displayHeight = 60;
+    buttonImage.setVisible(false);
+    imageContainer.add(buttonImage);
+
+    // create the button image tween
+    const enterButtonTweenX = buttonImage.x - 10;
+    const buttonImageTween = scene.tweens.add({
+      targets: buttonImage,
+      x: enterButtonTweenX,
+      duration: 500,
+      ease: 'Sine.easeInOut',
+      repeat: -1,
+      yoyo: true,
+    });
+
+
+    let gotoHouse = false;
+    // make the image interactive and show the button shadow and image when clicked
+    image.setInteractive();
+    image.on('pointerup', () => {
+      if (!gotoHouse) {
+        dlog('clicked image: ', element);
+        // show the button shadow and image
+        // buttonShadow.setPosition(image.x, image.y + 5);
+        // buttonShadow.setVisible(true);
+        // buttonImage.setPosition(image.x, enterButtonY);
+        buttonShadow.setVisible(true);
+        buttonImage.setVisible(true);
+        buttonImageTween.play();
+
+        // hide the button shadow and image after 2 seconds
+        setTimeout(() => {
+          buttonShadow.setVisible(false);
+          buttonImage.setVisible(false);
+          gotoHouse = false;
+        }, 3000);
+        gotoHouse = true;
+      } else {
+        // go to the user's home
+        dlog('go to the user home');
+        ServerCall.gotoPlayerHome(element);
+      }
+    });
 
     imageContainer.setPosition(placeX, placeY);
     // adds the image to the container
     if (!scene.balloonContainer) return;
     scene.balloonContainer.add(imageContainer);
   }
+
+  static async gotoPlayerHome(element) {
+    // get user account
+    const friendId = element.value.user_id;
+    const friendAccount = await getAccount(friendId);
+    // in the friendAccount.meta:
+    // metadata.Azc
+    const friendHomeLocation = friendAccount.metadata.Azc;
+    // get home object of friend to get pos of that home
+    const friendHome = await getObject('home', friendHomeLocation, friendId);
+
+    PlayerLocation.set({
+      scene: friendHomeLocation,
+    });
+
+    // check if there is posX and posY from the home object
+    if (typeof friendHome.value.posX !== 'undefined' && typeof friendHome.value.posY !== 'undefined') {
+      // place user next to nameplate of home
+      const playerPosX = friendHome.value.posX - 80;
+      const playerPosY = friendHome.value.posY - 100;
+
+      PlayerUpdate.set({ forceHistoryReplace: false });
+      PlayerPos.set({
+        x: playerPosX,
+        y: playerPosY,
+      });
+    } else {
+      // if there was no posX and y from home object
+      PlayerUpdate.set({ forceHistoryReplace: false });
+      PlayerPos.set({
+        x: -80,
+        y: -100,
+      });
+    }
+  }
+
 
   static createDrawingContainer(element, index, artSize, artMargin) {
     const scene = ManageSession.currentScene;
