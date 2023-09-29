@@ -116,8 +116,74 @@ export default class TurquoiseTriangle extends Phaser.Scene {
     this.generateLocations();
     // .......... end locations ............................................................................
 
+    this.loadAndPlaceLiked();
+    this.likedBalloonAnimation();
+    // .......... end likes ............................................................................
+
     Player.loadPlayerAvatar(this);
   } // end create
+
+  likedBalloonAnimation() {
+    this.balloonContainer = this.add.container(0, 0);
+
+    this.likedBalloon = this.add.image(
+      0,
+      0,
+      'likedBalloon',
+    );
+    this.likedBalloon.name = 'likedBalloon';
+
+    // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
+    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 400),
+
+    this.balloonContainer.add(this.likedBalloon);
+
+    this.balloonContainer.setPosition(
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
+    );
+    this.balloonContainer.setDepth(602);
+    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    if (ManageSession.gameEditMode) {
+      this.likedBalloon.setInteractive({ draggable: true });
+    } else {
+      // when not in edit mode add animation tween
+      this.likedTween = this.tweens.add({
+        targets: this.balloonContainer,
+        duration: 90000,
+        x: '-=8000',
+        yoyo: false,
+        repeat: -1,
+        repeatDelay: 300,
+        // ease: 'Sine.easeInOut',
+        onRepeat() {
+          // Your callback logic here
+          ServerCall.replaceLikedsInBalloonContainer();
+          // console.log('Tween repeated!');
+        },
+      });
+    }
+  }
+
+  async loadAndPlaceLiked() {
+    this.artIconSize = 64;
+    this.artPreviewSize = 128;
+    this.artDisplaySize = 256;
+    this.artMargin = 10;
+
+    const type = 'downloadLikedDrawing';
+    const serverObjectsHandler = ManageSession.likedStore;
+    const userId = '';
+    // dlog('this.location', location);
+    const artSize = 256;
+    const artMargin = artSize / 10;
+    this.artMargin = artMargin;
+
+    ServerCall.downloadAndPlaceArtByType({
+      type, userId, serverObjectsHandler, artSize, artMargin,
+    });
+  }
+
 
   generateLocations() {
     // we set draggable on restart scene with a global flag

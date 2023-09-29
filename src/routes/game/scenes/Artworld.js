@@ -188,10 +188,11 @@ export default class Artworld extends Phaser.Scene {
     // .......... locations ................................................................................
     // ServerCall.getHomesFiltered('GreenSquare', this);
     this.generateLocations();
-    // this.getLikedArt();
-    this.loadAndPlaceArtworks();
-    this.likedBalloonAnimation();
     // .......... end locations ............................................................................
+
+    this.loadAndPlaceLiked();
+    this.likedBalloonAnimation();
+    // .......... end likes ............................................................................
 
     Player.loadPlayerAvatar(this);
   } // end create
@@ -238,13 +239,17 @@ export default class Artworld extends Phaser.Scene {
     }
   }
 
+  async loadAndPlaceLiked() {
+    this.artIconSize = 64;
+    this.artPreviewSize = 128;
+    this.artDisplaySize = 256;
+    this.artMargin = 10;
 
-  async loadAndPlaceArtworks() {
     const type = 'downloadLikedDrawing';
     const serverObjectsHandler = ManageSession.likedStore;
     const userId = '';
     // dlog('this.location', location);
-    const artSize = this.artDisplaySize;
+    const artSize = 256;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
 
