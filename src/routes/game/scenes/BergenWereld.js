@@ -63,7 +63,7 @@ export default class BergenWereld extends Phaser.Scene {
     const loadArray = [
       { key: 'Portal_naarHuis_bergen', path: `${folderPath}Portaal01_Bergen_naar_huis_CROP-fs8.png` },
 
-      { key: 'bijenwereld', path: `${folderPath}Wereld15_bergen_geheel.jpg` },
+      { key: 'bergenwereld', path: `${folderPath}Wereld15_bergen_geheel.jpg` },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
@@ -234,7 +234,7 @@ export default class BergenWereld extends Phaser.Scene {
     PlaceElement.image({
       x: 0,
       y: 0,
-      file: 'bijenwereld',
+      file: 'bergenwereld',
       scale: 1,
       // rotation: -0.05,
       draggable: false,
