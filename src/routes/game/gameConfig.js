@@ -38,6 +38,7 @@ import IjscoWereld from './scenes/IjscoWereld';
 import IjsWereld from './scenes/IjsWereld';
 import BijenWereld from './scenes/BijenWereld';
 import BergenWereld from './scenes/BergenWereld';
+import PrismaWereld from './scenes/PrismaWereld';
 
 
 /** Phaser Plugins */
@@ -74,6 +75,7 @@ const SCENES = [
   IjsWereld,
   BijenWereld,
   BergenWereld,
+  PrismaWereld,
 ];
 
 import { CONFIG } from '../../constants';

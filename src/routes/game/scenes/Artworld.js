@@ -11,12 +11,13 @@
  *
  * Making a new world involves:
  * - making a new scene file
+ * - change the names inside the scene file
  * - adding the scene to the constans.js file
  * - adding the scene to the gameconfig.js file
- * - make QR codes with the right nakama server
- * - paste users in google sheet
- * - save QR images
- * - load QR sheets with 24 images
+ *  - make QR codes with the right nakama server
+ *  - paste users in google sheet
+ *  - save QR images
+ *  - load QR sheets with 24 images
  * - make assets smaller (compress)
  * - put assets in world
  * - correct the keys for the assets in the scene file
@@ -115,7 +116,7 @@ export default class Artworld extends Phaser.Scene {
     this.load.image('cloudWorldPortal', './assets/world_clouds/cloud_portal_naarCloud.png');
     this.load.image('beeWorldPortal', './assets/world_bees/02b_Portaal_home_naar_bee-fs8.png');
     this.load.image('bergenWorldPortal', './assets/world_bergen/Portaal2_NaarBergen_CROP-fs8.png');
-
+    this.load.image('prismaWorldPortal', './assets/world_prism/Portaal_Prisma_naar_PrismaCROP-fs8.png');
     /** subscription to the loaderror event
     * strangely: if the more times the subscription is called, the more times the event is fired
     * so we subscribe here only once in the scene
@@ -1041,6 +1042,27 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Bergen Wereld',
       referenceName: 'this.bergenWorldPortal',
+      fontColor: 0x8dcb0e,
+      size: 240,
+    });
+
+    locationVector = new Phaser.Math.Vector2(2093, -1067);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.prismaWorldPortal = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'PrismaWereld',
+      locationImage: 'prismaWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Prisma Wereld',
+      referenceName: 'this.prismaWorldPortal',
       fontColor: 0x8dcb0e,
       size: 240,
     });
