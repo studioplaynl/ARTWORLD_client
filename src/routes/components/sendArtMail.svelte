@@ -4,10 +4,8 @@
   import { dlog } from '../../helpers/debugLog';
 
   export let row;
-  // eslint-disable-next-line svelte/valid-compile
-  export let col = null;
-  // eslint-disable-next-line svelte/valid-compile
-  export let isCurrentUser = null;
+  export const col = null;
+  export const isCurrentUser = null;
   let hasSent = false;
 
   let friends = [];
@@ -20,8 +18,8 @@
     });
   });
 
-  const optionIdentifier = 'id';
-  const labelIdentifier = 'username';
+  // const optionIdentifier = 'id';
+  // const labelIdentifier = 'username';
 
   let items = [];
 

@@ -7,7 +7,7 @@
   import { Profile } from '../../session';
   import { clickOutside } from '../../helpers/clickOutside';
 
-  export let col;
+  export const col = null;
   export let row;
   export let isCurrentUser;
 
