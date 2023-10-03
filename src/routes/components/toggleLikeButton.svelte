@@ -5,8 +5,7 @@
 
     export let liked = true;
     export let row = null;
-    // eslint-disable-next-line svelte/valid-compile
-    export let col = null;
+    export const col = null;
     let showConfirm = false;
 
   function toggleLike() {

@@ -6,10 +6,8 @@
   // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
 
-  // eslint-disable-next-line svelte/valid-compile
-  export let col = null;
-  // eslint-disable-next-line svelte/valid-compile
-  export let rowIndex = null;
+  export const col = null;
+  export const rowIndex = null;
   export let row;
   const role = $Profile.meta.Role; // ;
   export let isCurrentUser;

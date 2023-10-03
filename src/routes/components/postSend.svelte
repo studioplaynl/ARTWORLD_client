@@ -5,10 +5,8 @@
   import { dlog } from '../../helpers/debugLog';
 
   export let row;
-  // eslint-disable-next-line svelte/valid-compile
-  export let col = null;
-  // eslint-disable-next-line svelte/valid-compile
-  export let isCurrentUser = null;
+  export const col = null;
+  export const isCurrentUser = null;
 
   let toggleMode = true;
 

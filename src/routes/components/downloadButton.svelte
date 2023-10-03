@@ -1,5 +1,5 @@
 <script>
-  export let col;
+  export const col = null;
   export let row;
   // const role = $Profile.meta.Role; // ;
   const name = `${row.username}_${row.update_time}_${row.key}_${row.value.displayname}.png`;

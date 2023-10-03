@@ -47,8 +47,7 @@
   export const userID = null;
   let store;
   let unsubscribe;
-  // eslint-disable-next-line svelte/valid-compile
-  export let col = null;
+  export const col = null;
 
 function toggleSendTo(e) {
   if (e.detail) {

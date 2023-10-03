@@ -12,14 +12,10 @@
   } from '../../helpers/nakamaHelpers';
 
   export let row = null;
-  // eslint-disable-next-line svelte/valid-compile
-  export let col = null;
-  // eslint-disable-next-line svelte/valid-compile
-  export let isCurrentUser = null;
+  export const col = null;
+  export const isCurrentUser = null;
   export let rowIndex = -1;
-
-  // eslint-disable-next-line svelte/valid-compile
-  export let store = null;
+  export const store = null;
 
   let sendToApps = null;
   let selectedSendTo = null;

@@ -20,8 +20,7 @@
   import { dlog } from '../../helpers/debugLog';
 
   export let row = null;
-  // eslint-disable-next-line svelte/valid-compile
-  export let col = null;
+  export const col = null;
   export let clickable = false;
 
   let artworkUrl;
