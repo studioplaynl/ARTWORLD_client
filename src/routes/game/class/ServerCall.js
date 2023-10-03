@@ -285,6 +285,7 @@ class ServerCall {
       const recAnimalChallenge = await listAllObjects('animalchallenge', null);
 
       // dlog('recAnimalChallenge : ', recAnimalChallenge);
+
       // filter out all stopmotion with displayname 'dier and who are not in the trash
       allFoundAnimals = recStopmotion.filter((obj) => obj.value.displayname.toLowerCase() === type
         && obj.value.status !== 'trash');
@@ -359,8 +360,10 @@ class ServerCall {
         // we use all available animals
         // eslint-disable-next-line no-param-reassign
         serverObjectsHandler.array = allFoundAnimals;
+        // dlog('serverObjectsHandler', serverObjectsHandler);
+
         ServerCall.handleServerArray({
-          type, allFoundAnimals, artSize, artMargin,
+          type, serverObjectsHandler, artSize, artMargin,
         });
       } // end of dier
     } else if (type === 'bloem') {
@@ -448,7 +451,7 @@ class ServerCall {
         // we use all available flowers
         // eslint-disable-next-line no-param-reassign
         serverObjectsHandler.array = allFoundFlowers;
-        ServerCall.handleServerArray(type, allFoundFlowers, artSize, artMargin);
+        ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
       }// end of bloem
     } else if (type === 'downloadLikedDrawing') {
       // async get the liked stores and handle the data when they are loaded
@@ -528,7 +531,6 @@ class ServerCall {
     return randomLiked;
   }
 
-
   static shuffleArray(inputArray) {
     const array = [...inputArray]; // Create a copy of the input array
     for (let i = array.length - 1; i > 0; i--) {
@@ -537,7 +539,6 @@ class ServerCall {
     }
     return array;
   }
-
 
   static serverHandleFlowerArray(foundFlowers, serverObjectsHandler, type, artSize, artMargin) {
     // eslint-disable-next-line no-param-reassign
@@ -561,7 +562,8 @@ class ServerCall {
   static handleServerArray({
     type, serverObjectsHandler, artSize, artMargin,
   }) {
-    // dlog('serverObjectsHandler.array.length: ', serverObjectsHandler.array.length);
+    dlog('serverObjectsHandler.array.length: ', serverObjectsHandler.array.length);
+    // dlog('serverObjectsHandler: ', serverObjectsHandler);
 
     if (serverObjectsHandler.array.length > 0) {
       // eslint-disable-next-line no-param-reassign

@@ -19,6 +19,7 @@
  * - load QR sheets with 24 images
  * - make assets smaller (compress)
  * - put assets in world
+ * - correct the keys for the assets in the scene file
  * - put world with portal assets in artworld
  * - correct position of portal in artworld with gameEdit mode
  * - place all houses in world with gameEdit mode, save with U key
