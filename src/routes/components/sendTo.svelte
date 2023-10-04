@@ -403,7 +403,7 @@
   }
 
   .sendTo-border{
-    box-shadow: 2px 2px #7300ed;
+    box-shadow: inset 0 3px 6px #7300ed;
     /* border:#7300ed 1px solid; */
     border-radius: 12px;
     margin: 0 5px 15px 0;
