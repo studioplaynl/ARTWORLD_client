@@ -251,9 +251,9 @@
 
           <!-- show when the artwork has been send -->
           {#if hasSent}
-          <img class="icon-medium" src="{sendFromAppIconUrl}" alt="From app icon" />
-          <img class="icon-medium" src="/assets/SHB/svg/AW-icon-next.svg" alt="Send art square icon" />
-          <img class="icon-medium" src={returnAppIconUrl(selectedSendTo, 'square')} alt={selectedSendTo} />
+          <img class="icon-medium green" src="{sendFromAppIconUrl}" alt="From app icon" />
+          <img class="icon-medium green" src="/assets/SHB/svg/AW-icon-next.svg" alt="Send art square icon" />
+          <img class="icon-medium green" src={returnAppIconUrl(selectedSendTo, 'square')} alt={selectedSendTo} />
           {/if}
 
           <!--  -->
@@ -265,7 +265,7 @@
             </button>
             {:else}
 
-            <img src="/assets/SHB/svg/AW-icon-check.svg" alt="Mail Sent" class="checkIcon" />
+            <img src="/assets/SHB/svg/AW-icon-check.svg" alt="Mail Sent" class="checkIcon green" />
             {/if}
 
             <!--sendButtonContainer-->
@@ -286,7 +286,12 @@
     border: 2px dashed #7300ed;
     /* padding: 12px; */
   }
-
+  /* .noFilter {
+  filter: none;
+  } */
+  .green{
+   filter: brightness(1) saturate(3) hue-rotate(180deg);
+  }
   .send-icon-row {
     display: flex;
     align-items: center;
@@ -313,13 +318,11 @@
   .send-icon-row > .icon-medium {
     flex-grow: 1;
     width: 40px; /* Adjust this value to your preference */
-    filter: none;
   }
 
   .icon-medium{
     width: 40px;
     height: 40px;
-    /* filter: grayscale(100%); */
   }
 
   .grayscale {
@@ -333,9 +336,19 @@
     box-shadow: 5px 5px 0px #7300ed;
     width: 50px;
     height: 50px;
-    animation: pulse 2s ease-in-out infinite;
+    animation: moveRight 2s ease-in-out infinite;
   }
 
+@keyframes moveRight {
+    0%, 100% {
+        transform: translateX(0);
+        /* transform: scale(1); */
+    }
+    50% {
+        transform: translateX(15px);
+        /* transform: scale(1.1); */
+    }
+}
   @keyframes pulse {
     0% {
       transform: scale(1);

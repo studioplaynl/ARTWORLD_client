@@ -8,7 +8,7 @@ class PlaceElement {
   // eslint-disable-next-line class-methods-use-this
   image(config) {
     const {
-      x, y, file, scale, rotation, alpha, tint, scene, flipX, draggable,
+      x, y, file, scale, rotation, alpha, tint, scene, flipX, draggable, depth,
     } = config;
 
     let { name } = config;
@@ -39,8 +39,13 @@ class PlaceElement {
     if (flipX) {
       scene[name].flipX = flipX;
     }
+    if (depth) {
+      scene[name].setDepth(depth);
+    }
 
-    // we set elements draggable for edit mode by restarting the scene and checking for a flag
+    /** if an element is editable, draggable,
+     * when the element in screen filling it does not need to be draggable (is annoying even)
+     * we set elements draggable for edit mode by restarting the scene and checking for a flag */
     if (ManageSession.gameEditMode && !!draggable) {
       scene[name].setInteractive({ draggable: true });
     }

@@ -63,7 +63,8 @@ export default class PrismaWereld extends Phaser.Scene {
     const loadArray = [
       { key: 'Portal_naarHuis_prisma', path: `${folderPath}Portaal_Prisma_naar_huisCROP-fs8.png` },
 
-      { key: 'prismawereld', path: `${folderPath}prisma_geheel.jpg` },
+      { key: 'prismawereld', path: `${folderPath}Prisma_no_beams_geheel.jpg` },
+      { key: 'prismawereld_beams', path: `${folderPath}B2_ONLYRAINBOW_transparent-fs8.png` },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
@@ -237,6 +238,16 @@ export default class PrismaWereld extends Phaser.Scene {
       file: 'prismawereld',
       scale: 1,
       // rotation: -0.05,
+      draggable: false,
+      scene: this,
+    });
+
+    PlaceElement.image({
+      x: 0,
+      y: 0,
+      file: 'prismawereld_beams',
+      scale: 1.1,
+      depth: 220,
       draggable: false,
       scene: this,
     });

@@ -1063,7 +1063,7 @@ export default class Artworld extends Phaser.Scene {
       locationText: 'Prisma Wereld',
       referenceName: 'this.prismaWorldPortal',
       fontColor: 0x8dcb0e,
-      size: 240,
+      size: 340,
     });
 
     // ---- Location 1 ----------------------
