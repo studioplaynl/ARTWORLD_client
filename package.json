@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "build": "node src/version.js && rollup -c",
+    "dev": "node src/version.js && rollup -c -w",
     "start": "sirv public --single --host 0.0.0.0",
     "lint": "eslint 'src/**/*.{html,js,svelte}'",
     "lint:fix": "eslint --fix 'src/**/*.{html,js,svelte}'"

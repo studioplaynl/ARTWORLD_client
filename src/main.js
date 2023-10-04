@@ -1,7 +1,7 @@
-import { APP_VERSION_INFO } from './constants';
+import { APP_VERSION } from './version_dev';
 import { dlog } from './helpers/debugLog';
 
-dlog('APP_VERSION_INFO: ', APP_VERSION_INFO);
+dlog('APP_VERSION_INFO: ', APP_VERSION);
 
 import App from './App.svelte';
 

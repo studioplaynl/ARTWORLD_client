@@ -39,8 +39,8 @@
     OBJECT_STATE_IN_TRASH,
     OBJECT_STATE_REGULAR,
     OBJECT_STATE_UNDEFINED,
-    APP_VERSION_INFO,
   } from '../constants';
+  import { APP_VERSION } from '../version_dev';
   import { hasSpecialCharacter, removeSpecialCharacters } from '../validations';
 
   export let params = {};
@@ -377,7 +377,7 @@
             classNameTable="profileTable deletedTable"
           />
         {/if}
-        <p>{APP_VERSION_INFO}</p>
+        <p>{APP_VERSION}</p>
       </div>
     </div>
   </main>
