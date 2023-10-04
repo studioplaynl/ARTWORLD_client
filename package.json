@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node src/version.js && rollup -c",
+    "build": "rollup -c",
     "dev": "node src/version.js && rollup -c -w",
     "start": "sirv public --single --host 0.0.0.0",
     "lint": "eslint 'src/**/*.{html,js,svelte}'",

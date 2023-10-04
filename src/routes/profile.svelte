@@ -40,7 +40,7 @@
     OBJECT_STATE_REGULAR,
     OBJECT_STATE_UNDEFINED,
   } from '../constants';
-  import { APP_VERSION } from '../version_dev';
+  import APP_VERSION from '../version_dev';
   import { hasSpecialCharacter, removeSpecialCharacters } from '../validations';
 
   export let params = {};
