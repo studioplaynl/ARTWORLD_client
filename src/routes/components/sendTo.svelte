@@ -283,8 +283,8 @@
 <style>
   .selected {
     border-radius: 50%;
-    border: 2px solid #7300ed;
-    /* box-shadow: 0 5px 0 0 #7300ed; */
+    border: 2px dashed #7300ed;
+    /* padding: 12px; */
   }
 
   .send-icon-row {
@@ -323,7 +323,8 @@
   }
 
   .grayscale {
-    filter: grayscale(100%);
+    filter: grayscale(100%) brightness(3.5);
+    /* transform: rotate(90deg); */
   }
 
   .sendIcon{
