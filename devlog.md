@@ -1,5 +1,13 @@
 ## Dev log
 
+okt 4 2023
+Added animation to send button in sendTo to show user the last button.
+Added greyscale to the first icon in sendTo when the pane is open (maybe not neccessary)
+
+okt 3 2023
+to create the best looking, smallest png files with transparency, in a terminal, in the correct directory:
+pngquant 64 --force --skip-if-larger *.png
+
 June 9 2023
 Code cleanup AVATAR_BASE_SIZE from constants.js
 

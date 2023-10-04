@@ -1,5 +1,4 @@
 <script>
-  // eslint-disable-next-line no-unused-vars
   import { createEventDispatcher, onMount } from 'svelte';
   import { dlog } from '../../helpers/debugLog';
   import SendArtMail from './sendArtMail.svelte';
@@ -209,7 +208,7 @@
         <button on:click="{toggle}" class="sendButton">
           <img
           alt="open send art options"
-          class="icon-medium"
+          class="icon-medium {toggleMode ? '' : 'grayscale'}"
           src="/assets/svg/icon/send_art_square.svg"
           />
         </button>
@@ -300,19 +299,31 @@
   }
 
   .send-icon-row > .icon-medium:first-child {
-      width: 40px;   /* Adjust this value to your preference for the "bigger" size */
+    width: 40px;   /* Adjust this value to your preference for the "bigger" size */
   }
 
   .send-icon-row > .icon-medium:nth-child(2) {
-      width: 40px;   /* Adjust this value to your preference for the "smaller" size */
+    width: 40px;   /* Adjust this value to your preference for the "smaller" size */
   }
 
   .send-icon-row > .icon-medium:nth-child(3) {
-      width: 40px;   /* Adjust this value to your preference for the "same as the first" size */
+    width: 40px;   /* Adjust this value to your preference for the "same as the first" size */
   }
 
-  .send-icon-row > .sendButton:first-child {
-      width: 40px;   /* Adjust this value to your preference for the "bigger" size */
+  .send-icon-row > .icon-medium {
+    flex-grow: 1;
+    width: 40px; /* Adjust this value to your preference */
+    filter: none;
+  }
+
+  .icon-medium{
+    width: 40px;
+    height: 40px;
+    /* filter: grayscale(100%); */
+  }
+
+  .grayscale {
+    filter: grayscale(100%);
   }
 
   .sendIcon{
@@ -321,10 +332,23 @@
     box-shadow: 5px 5px 0px #7300ed;
     width: 50px;
     height: 50px;
+    animation: pulse 2s ease-in-out infinite;
   }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
   .sendButton {
       background-color: transparent;
-
       /* keep the image in the middle of the button */
       display: flex;
       align-items: center;
@@ -335,10 +359,6 @@
       /* Smoothens the transition during hover and active states */
       /* transition: transform 0.3s, box-shadow 0.3s;  */
   }
-
-  /* .sendButtonContainer {
-
-  } */
 
   /* Hover State */
   .sendButton:hover {
@@ -395,10 +415,5 @@
 
   .close-btn {
     order: 2; /* Ensures the close button always goes to the end */
-  }
-
-  .icon-medium{
-    width: 40px;
-    height: 40px;
   }
 </style>
