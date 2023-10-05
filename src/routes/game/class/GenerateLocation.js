@@ -290,6 +290,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     )
       .setOrigin(0.5)
       .setDepth(30)
+      .setAlpha(0.5)
       .setVisible(false);
     this.debugRectXMargin.displayWidth = this.debugRect_height * 0.5;
     this.debugRectXMargin.displayHeight = this.debugRect_height * 0.5;
@@ -301,6 +302,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     )
       .setOrigin(0.5)
       .setDepth(30)
+      .setAlpha(0.3)
       .setVisible(false);
     this.debugRect.displayWidth = width * 1.3;
     this.debugRect.displayHeight = this.debugRect_height * 1.3;

@@ -8,7 +8,8 @@
   // import { client } from '../../nakama.svelte';
   import { dlog } from '../../helpers/debugLog';
   import { createAccountAdmin } from '../../helpers/nakamaHelpers';
-  import { SCENE_INFO, STOCK_HOUSES, STOCK_AVATARS } from '../../constants';
+  import { SCENE_INFO, STOCK_HOUSES, STOCK_AVATARS, ARTWORLD_IP, BETAWORLD_IP } from '../../constants';
+  import { client } from '../../nakama.svelte';
 
   let QRUrl;
   let email = '@vrolijkheid.nl';
@@ -22,8 +23,17 @@
   let fromUser = 0;
   let toUser = 0;
   let batchCreation = false;
+  const server = client.host;
+  let serverName = 'ARTWORLD';
 
   onMount(async () => {
+    // check if server is artworld or betaworld, so that we not make new accounts on the wrong server.
+    // we present the server in de UI to the admin
+    if (server === ARTWORLD_IP) {
+      serverName = 'ARTWORLD';
+    } else if (server === BETAWORLD_IP) {
+      serverName = 'BETA-WORLD';
+    }
     genKidsPassword();
     updateQrCanvas();
   });
@@ -239,6 +249,10 @@
       }}"
     >
       <div class="container">
+        <!-- check if server is artworld or betaworld.
+          So that we not make new accounts on the wrong server.
+          server should be checked against ARTWORLD_IP and BETAWORLD_IP -->
+        <h1 style="color: red;">{serverName}</h1>
         <h1>{$_('register.title')}</h1>
 
         <hr />

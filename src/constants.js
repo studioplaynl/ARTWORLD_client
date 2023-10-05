@@ -168,6 +168,12 @@ export const SCENE_INFO = [
     sizeY: 5500,
     kind: 'homeArea',
   },
+  {
+    scene: 'JungleWereld',
+    sizeX: 5500,
+    sizeY: 5500,
+    kind: 'homeArea',
+  },
 ];
 
 export const STOCK_HOUSES = [
@@ -189,6 +195,9 @@ export const STOCK_AVATARS = [
   'avatarRood.png',
   'avatarRoze.png',
 ];
+
+export const ARTWORLD_IP = '193.187.129.8';
+export const BETAWORLD_IP = '185.193.67.152';
 
 // export const MODERATOR_LIKED_ID = '6a10eac1-35c9-4f47-acd7-2814e257574b'; /** test account! user4 */
 export const MODERATOR_LIKED_ID = '5264dc23-a339-40db-bb84-e0849ded4e68'; // user1 for deployment

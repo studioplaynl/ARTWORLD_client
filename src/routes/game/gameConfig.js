@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 
 import Phaser from 'phaser';
 
@@ -39,7 +40,7 @@ import IjsWereld from './scenes/IjsWereld';
 import BijenWereld from './scenes/BijenWereld';
 import BergenWereld from './scenes/BergenWereld';
 import PrismaWereld from './scenes/PrismaWereld';
-
+import JungleWereld from './scenes/JungleWereld';
 
 /** Phaser Plugins */
 
@@ -76,6 +77,7 @@ const SCENES = [
   BijenWereld,
   BergenWereld,
   PrismaWereld,
+  JungleWereld,
 ];
 
 import { CONFIG } from '../../constants';

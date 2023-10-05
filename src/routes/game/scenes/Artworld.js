@@ -9,7 +9,8 @@
  *  We load the player and NetworkedPlayer here.
  *  We have some animations with Tweens in the scene.
  *
- * Making a new world involves:
+ * Making a new world involves: //!
+ * - CHECK THAT nakama.js is SET TO ARTWORLD SERVER!! There the new accounts will be made in the database!! //!
  * - making a new scene file
  * - change the names inside the scene file
  * - adding the scene to the constans.js file
@@ -24,6 +25,8 @@
  * - correct portal to artworld with gameEdit mode
  * - correct position of portal in artworld with gameEdit mode
  *  - place all houses in world with gameEdit mode, save with U key
+ * - push new code to github
+ * - deploy new code to server
  */
 
 import { get } from 'svelte/store';
@@ -116,6 +119,8 @@ export default class Artworld extends Phaser.Scene {
     this.load.image('beeWorldPortal', './assets/world_bees/02b_Portaal_home_naar_bee-fs8.png');
     this.load.image('bergenWorldPortal', './assets/world_bergen/Portaal2_NaarBergen_CROP-fs8.png');
     this.load.image('prismaWorldPortal', './assets/world_prism/Portaal_Prisma_naar_PrismaCROP-fs8.png');
+    this.load.image('jungleWorldPortal', './assets/world_jungle/portaal_naarJungle_crop-fs8.png');
+
     /** subscription to the loaderror event
     * strangely: if the more times the subscription is called, the more times the event is fired
     * so we subscribe here only once in the scene
@@ -940,7 +945,7 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-    locationVector = new Phaser.Math.Vector2(1018, -89);
+    locationVector = new Phaser.Math.Vector2(1616, -55);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -961,7 +966,7 @@ export default class Artworld extends Phaser.Scene {
       size: 300,
     });
 
-    locationVector = new Phaser.Math.Vector2(913, -476);
+    locationVector = new Phaser.Math.Vector2(1183, -362);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -982,7 +987,7 @@ export default class Artworld extends Phaser.Scene {
       size: 300,
     });
 
-    locationVector = new Phaser.Math.Vector2(913, -876);
+    locationVector = new Phaser.Math.Vector2(1177, -748);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -1003,7 +1008,7 @@ export default class Artworld extends Phaser.Scene {
       size: 300,
     });
 
-    locationVector = new Phaser.Math.Vector2(1344, -1118);
+    locationVector = new Phaser.Math.Vector2(1388, -1110);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -1021,10 +1026,10 @@ export default class Artworld extends Phaser.Scene {
       locationText: 'Bijen Wereld',
       referenceName: 'this.bijenWorldLocation',
       fontColor: 0x8dcb0e,
-      size: 240,
+      size: 238,
     });
 
-    locationVector = new Phaser.Math.Vector2(1730, -1260);
+    locationVector = new Phaser.Math.Vector2(1722, -1207);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -1045,7 +1050,7 @@ export default class Artworld extends Phaser.Scene {
       size: 240,
     });
 
-    locationVector = new Phaser.Math.Vector2(2093, -1067);
+    locationVector = new Phaser.Math.Vector2(2121, -1081);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -1064,6 +1069,27 @@ export default class Artworld extends Phaser.Scene {
       referenceName: 'this.prismaWorldPortal',
       fontColor: 0x8dcb0e,
       size: 340,
+    });
+
+    locationVector = new Phaser.Math.Vector2(2319, -603);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.jungleWorldPortal = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'JungleWereld',
+      locationImage: 'jungleWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Jungle Wereld',
+      referenceName: 'this.jungleWorldPortal',
+      fontColor: 0x8dcb0e,
+      size: 310,
     });
 
     // ---- Location 1 ----------------------

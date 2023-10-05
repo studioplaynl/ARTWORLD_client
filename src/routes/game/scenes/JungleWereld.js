@@ -17,9 +17,9 @@ import PlaceElement from '../class/PlaceElement';
 
 const { Phaser } = window;
 
-export default class PrismaWereld extends Phaser.Scene {
+export default class JungleWereld extends Phaser.Scene {
   constructor() {
-    super('PrismaWereld');
+    super('JungleWereld');
 
     this.worldSize = new Phaser.Math.Vector2(0, 0);
 
@@ -58,13 +58,11 @@ export default class PrismaWereld extends Phaser.Scene {
     // BergenWereld
     this.localAssetsCheck = {};
 
-    const folderPath = './assets/world_prism/';
+    const folderPath = './assets/world_jungle/';
 
     const loadArray = [
-      { key: 'Portal_naarHuis_prisma', path: `${folderPath}Portaal_Prisma_naar_huisCROP-fs8.png` },
-
-      { key: 'prismawereld', path: `${folderPath}Prisma_no_beams_geheel.jpg` },
-      { key: 'prismawereld_beams', path: `${folderPath}B2_ONLYRAINBOW_transparent-fs8.png` },
+      { key: 'Portal_naarHuis_jungle', path: `${folderPath}portaal_Junglenaarhuis_crop-fs8.png` },
+      { key: 'jungleWereld', path: `${folderPath}Jungle_wereld_geheel.jpg` },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
@@ -208,7 +206,7 @@ export default class PrismaWereld extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(240, -550);
+    let locationVector = new Phaser.Math.Vector2(1215, 1435);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -221,11 +219,11 @@ export default class PrismaWereld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Artworld',
-      locationImage: 'Portal_naarHuis_prisma',
+      locationImage: 'Portal_naarHuis_jungle',
       enterButtonImage: 'enter_button',
       locationText: 'Paarse Cirkel Wereld',
       referenceName: 'this.purpleCircleLocation',
-      size: 416,
+      size: 458,
       fontColor: 0x8dcb0e,
     });
   }
@@ -235,19 +233,9 @@ export default class PrismaWereld extends Phaser.Scene {
     PlaceElement.image({
       x: 0,
       y: 0,
-      file: 'prismawereld',
+      file: 'jungleWereld',
       scale: 1,
       // rotation: -0.05,
-      draggable: false,
-      scene: this,
-    });
-
-    PlaceElement.image({
-      x: 0,
-      y: 0,
-      file: 'prismawereld_beams',
-      scale: 1.1,
-      depth: 220,
       draggable: false,
       scene: this,
     });

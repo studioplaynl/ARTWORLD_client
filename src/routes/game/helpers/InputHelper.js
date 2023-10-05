@@ -36,10 +36,11 @@ export function handleEditMode(scene) {
         dlog('editMode info startScale:', ManageSession.selectedGameObjectStartScale);
       }
       // ManageSession.selectedGameObject = gameObject
-
+      dlog('editMode info ');
       dlog(
-        'editMode info posX posY: ',
+        'posX posY: ',
         worldX,
+        ', ',
         worldY,
         'scale:',
         ManageSession.selectedGameObject.scale,
