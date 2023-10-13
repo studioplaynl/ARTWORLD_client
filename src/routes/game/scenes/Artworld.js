@@ -9,8 +9,8 @@
  *  We load the player and NetworkedPlayer here.
  *  We have some animations with Tweens in the scene.
  *
- * Making a new world involves: //!
- * - CHECK THAT nakama.js is SET TO ARTWORLD SERVER!! There the new accounts will be made in the database!! //!
+ * Making a new world involves:
+ * - CHECK THAT nakama.js is SET TO ARTWORLD SERVER!! on the register page it is visible on which server you are
  * - making a new scene file
  * - change the names inside the scene file
  * - adding the scene to the constans.js file
@@ -20,6 +20,7 @@
  *  - save QR images
  *  - load QR sheets with 24 images
  * - make assets smaller (compress)
+ * - make assets folder and upload assets to folder
  * - put assets in world
  * - correct the keys for the assets in the scene file
  * - correct portal to artworld with gameEdit mode
@@ -120,6 +121,7 @@ export default class Artworld extends Phaser.Scene {
     this.load.image('bergenWorldPortal', './assets/world_bergen/Portaal2_NaarBergen_CROP-fs8.png');
     this.load.image('prismaWorldPortal', './assets/world_prism/Portaal_Prisma_naar_PrismaCROP-fs8.png');
     this.load.image('jungleWorldPortal', './assets/world_jungle/portaal_naarJungle_crop-fs8.png');
+    this.load.image('flamengoWorldPortal', './assets/world_flamengo/_Portaal_Flamingocity_naarMeteor_small-fs8.png');
 
     /** subscription to the loaderror event
     * strangely: if the more times the subscription is called, the more times the event is fired
@@ -1090,6 +1092,28 @@ export default class Artworld extends Phaser.Scene {
       referenceName: 'this.jungleWorldPortal',
       fontColor: 0x8dcb0e,
       size: 310,
+    });
+
+
+    locationVector = new Phaser.Math.Vector2(2127, -161);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.flamengoWorld = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'FlamengoWereld',
+      locationImage: 'flamengoWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Flamengo Wereld',
+      referenceName: 'this.flamengoWorld',
+      fontColor: 0x8dcb0e,
+      size: 156,
     });
 
     // ---- Location 1 ----------------------
