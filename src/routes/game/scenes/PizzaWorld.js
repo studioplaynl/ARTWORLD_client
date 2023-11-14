@@ -82,6 +82,7 @@ export default class PizzaWorld extends Phaser.Scene {
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
+    // this.load.image('Portal_naarHuis_pizza', `${folderPath}Portal_naarHuis_pizza.png`);
   }
 
   async create() {
@@ -148,6 +149,12 @@ export default class PizzaWorld extends Phaser.Scene {
     ServerCall.getHomesFiltered(this.scene.key, this);
     // .......... end locations ............................................................................
 
+    // create accessable locations
+    this.makeWorldElements();
+    this.generateLocations();
+    // .......... end locations ............................................................................
+
+    // .......... likes ............................................................................
     this.loadAndPlaceLiked();
     this.likedBalloonAnimation();
     // .......... end likes ............................................................................
