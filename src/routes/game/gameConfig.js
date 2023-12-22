@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
-
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 
 import CircleMaskImagePlugin from 'phaser3-rex-plugins/plugins/circlemaskimage-plugin';
 // import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin';

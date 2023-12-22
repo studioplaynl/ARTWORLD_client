@@ -10,10 +10,12 @@
  *  It also contains the admin pages.
  *
  */
+  import * as Phaser from 'phaser';
+
   import Router, { push } from 'svelte-spa-router';
   import { onMount, tick } from 'svelte';
   import { wrap } from 'svelte-spa-router/wrap';
-  import Phaser from 'phaser';
+  // import Phaser from 'phaser';
   import { CurrentApp, Session, Profile, Error } from './session';
   import {
     sessionCheck,
