@@ -1,5 +1,4 @@
 <script>
-  import { Button } from 'attractions';
   // import { onMount } from 'svelte';
   // import { location } from 'svelte-spa-router';
   // eslint-disable-next-line no-unused-vars
@@ -42,12 +41,12 @@
         alt="Toggle visibility" on:click="{change}" />
       {:else}
       <!-- take item out of trash -->
-        <Button on:click="{restore}">
+        <button on:click="{restore}">
           <img alt="undo trash, restore artwork"
           class="icon"
           src="/assets/svg/icon/undo_trashcan.svg"
           />
-    </Button>
+    </button>
       {/if}
     {/if}
 

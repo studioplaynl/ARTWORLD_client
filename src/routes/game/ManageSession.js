@@ -12,6 +12,7 @@ import {
 } from './playerState';
 
 const { Phaser } = window;
+// import * as Phaser from 'phaser/dist/phaser.esm';
 
 /** Main utility class to share Game State between Phaser & Svelte  */
 class ManageSession {

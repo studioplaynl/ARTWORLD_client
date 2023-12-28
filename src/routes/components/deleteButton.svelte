@@ -1,5 +1,5 @@
 <script>
-  import { Modal, Dialog, Button } from 'attractions';
+  // import { Modal, Dialog, Button } from 'attractions';
   import { location } from 'svelte-spa-router';
   import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
@@ -122,26 +122,7 @@
       {/if}
     {/if}
 
-  <Modal bind:open="{modalOpen}">
-    <!-- let:closeCallback> -->
-    <Dialog
-      title="Delete"
-      closeCallback="{() => {
-        modalOpen = false;
-      }}"
-      danger
-    >
-      <div slot="title-icon"></div>
-       <h2>⚠️ undo is not possible ⚠️</h2>
-      <Button on:click="{Delete}">
-       <img
-            class="trash"
-            src="/assets/svg/icon/trashcan_red.svg"
-            alt="Permanently delete item"
-          />
-      </Button>
-    </Dialog>
-  </Modal>
+  
 </main>
 
 <style>

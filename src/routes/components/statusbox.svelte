@@ -1,5 +1,5 @@
 <script>
-  import { Button } from 'attractions';
+  // import { Button } from 'attractions';
   // import { onMount } from 'svelte';
   import { location } from 'svelte-spa-router';
   import { dlog } from '../../helpers/debugLog';
@@ -67,12 +67,12 @@
           : '/assets/SHB/svg/AW-icon-invisible.svg'}"
         alt="Toggle visibility" on:click="{change}" />
       {:else}
-        <Button on:click="{restore}">      <img
+        <button on:click="{restore}">      <img
       alt="undo trash, restore artwork"
       class="icon"
       src="/assets/svg/icon/undo_trashcan.svg"
       />
-    </Button>
+    </button>
       {/if}
     {/if}
 

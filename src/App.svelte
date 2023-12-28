@@ -10,7 +10,7 @@
  *  It also contains the admin pages.
  *
  */
-  import * as Phaser from 'phaser';
+  import * as Phaser from 'phaser/dist/phaser.esm';
 
   import Router, { push } from 'svelte-spa-router';
   import { onMount, tick } from 'svelte';
@@ -64,6 +64,8 @@
   });
 
   onMount(async () => {
+    console.log("mounted")
+    console.log(window)
     document.getElementById('loader').classList.add('hide');
 
     // Attempt to restore a saved session
@@ -121,7 +123,9 @@
 
   // Wait one tick to allow target div to become visible
   async function startGame() {
+    console.log("before tick")
     await tick();
+    console.log("after tick")
     game = new Phaser.Game(gameConfig);
   }
 

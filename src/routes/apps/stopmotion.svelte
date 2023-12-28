@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { Swiper, SwiperSlide } from 'swiper/svelte';
+  import { Swiper, SwiperSlide } from 'swiper/svelte'; 
   import Drawing from './drawing.svelte';
   import { dlog } from '../../helpers/debugLog';
   // eslint-disable-next-line no-unused-vars
