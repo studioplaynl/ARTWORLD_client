@@ -1,0 +1,1 @@
+![https://docs.google.com/drawings/d/e/2PACX-1vT6plBcB-3iCs17WaybmIRYAY4bDIA1SBYbsZVmu3gzA8jfflSh0jVgSJoA7g5jnohfNZunZxA8d9LU/pub?w=960&h=720](https://docs.google.com/drawings/d/e/2PACX-1vT6plBcB-3iCs17WaybmIRYAY4bDIA1SBYbsZVmu3gzA8jfflSh0jVgSJoA7g5jnohfNZunZxA8d9LU/pub?w=960&h=720)
