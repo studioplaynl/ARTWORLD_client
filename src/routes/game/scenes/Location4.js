@@ -11,7 +11,8 @@ import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
 import ServerCall from '../class/ServerCall';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 export default class Location4 extends Phaser.Scene {
   constructor() {
     super('Location4');

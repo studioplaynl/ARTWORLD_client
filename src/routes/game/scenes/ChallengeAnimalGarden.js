@@ -15,7 +15,8 @@ import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class ChallengeAnimalGarden extends Phaser.Scene {
   constructor() {

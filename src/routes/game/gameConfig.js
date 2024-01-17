@@ -94,7 +94,7 @@ export default {
 
   parent: 'phaserId',
 
-  type: Phaser.WEBGL,
+  type: Phaser.AUTO,
   transparent: true, // for 3d scene
 
   domCreateContainer: false,
@@ -123,21 +123,21 @@ export default {
     ],
 
     global: [
-      {
-        key: 'rexCircleMaskImagePlugin',
-        plugin: CircleMaskImagePlugin,
-        start: true,
-      },
+      //! {
+      //   key: 'rexCircleMaskImagePlugin',
+      //   plugin: CircleMaskImagePlugin,
+      //   start: true,
+      // },
       // {
       //   key: 'rexScroller',
       //   plugin: ScrollerPlugin,
       //   start: true,
       // },
-      {
-        key: 'rexOutlinePipeline',
-        plugin: OutlinePipelinePlugin,
-        start: true,
-      },
+      //! {
+      //   key: 'rexOutlinePipeline',
+      //   plugin: OutlinePipelinePlugin,
+      //   start: true,
+      // },
 
     ],
   }, // end plugins

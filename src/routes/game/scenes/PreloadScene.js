@@ -19,7 +19,8 @@ import Background from '../class/Background';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {

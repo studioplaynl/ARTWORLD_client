@@ -2,7 +2,8 @@
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 class GraffitiWall {
   create(scene, x, y, width, height, name, color, imageFile = null) {

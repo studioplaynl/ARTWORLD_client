@@ -59,14 +59,14 @@ class Player {
     //        role: "speler"
     //        user_id: ""
 
-    // TODO this should be kept in ManageSession or in this class is possible?
-    scene.playerAvatarKey = `${userprofile.id}_${userprofile.update_time}`;
-
-    // check if account info is loaded
+        // check if account info is loaded
     if (userprofile.id == null) {
       dlog('(userprofile.id == null)');
       Player.reloadDefaultAvatar();
     }
+
+    // TODO this should be kept in ManageSession or in this class is possible?
+    scene.playerAvatarKey = `${userprofile.id}_${userprofile.update_time}`;
 
     // dlog('scene.playerAvatarKey avatar', scene.playerAvatarKey);
     let lastPosX;

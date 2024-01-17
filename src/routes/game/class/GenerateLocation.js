@@ -7,7 +7,8 @@ import ManageSession from '../ManageSession';
 import { DEFAULT_HOME, SCENE_INFO, AVATAR_BASE_SIZE } from '../../../constants';
 import { PlayerPos, PlayerLocation, PlayerUpdate } from '../playerState';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class GenerateLocation extends Phaser.GameObjects.Container {
   constructor(config) {
@@ -61,7 +62,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     if (this.draggable) this.setData('enteringPossible', 'false');
 
 
-    this.postFxPlugin = this.scene.plugins.get('rexOutlinePipeline');
+    //!  this.postFxPlugin = this.scene.plugins.get('rexOutlinePipeline');
 
     // default size, if no size is specified
     if (typeof this.size === 'undefined') {
@@ -552,7 +553,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.enterShadow.setVisible(false);
     this.enterArea.setVisible(false);
     // this.enterButtonHitArea.disableInteractive() //turn off interactive off hitArea when it is not used
-    this.postFxPlugin.remove(this);
+    //! this.postFxPlugin.remove(this);
   }
 
   initConfirm() {
@@ -561,10 +562,10 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       this.scene.time.addEvent({
         delay: 4000, callback: this.hideEnterButton, callbackScope: this, loop: false,
       });
-      this.postFxPlugin.add(this, {
-        thickness: 5,
-        outlineColor: 0xff8a50,
-      });
+      //! this.postFxPlugin.add(this, {
+      //   thickness: 5,
+      //   outlineColor: 0xff8a50,
+      // });
     }
   }
 }

@@ -1,4 +1,5 @@
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class PlayerDefaultShadow extends Phaser.GameObjects.Sprite {
   constructor(config) {

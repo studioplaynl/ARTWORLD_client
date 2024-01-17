@@ -41,7 +41,8 @@ import { dlog } from '../../../helpers/debugLog';
 
 // import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class DefaultUserHome extends Phaser.Scene {
   constructor() {

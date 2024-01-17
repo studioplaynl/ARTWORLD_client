@@ -1,7 +1,8 @@
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 /** Create a curve with handles in edit mode
  * @todo Work in progress! */

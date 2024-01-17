@@ -11,8 +11,9 @@ import {
   playerStreamID,
 } from './playerState';
 
-const { Phaser } = window;
-// import * as Phaser from 'phaser/dist/phaser.esm';
+// import * as Phaser from 'phaser';
+
+import * as Phaser from 'phaser';
 
 /** Main utility class to share Game State between Phaser & Svelte  */
 class ManageSession {
@@ -101,6 +102,9 @@ class ManageSession {
 
     /** Liked Art to show in scenes array so the data is persistent */
     this.likedStore = {};
+
+    this.worldSize = new Phaser.Math.Vector2(0, 0);
+    this.userProfile = null;
   }
 
   /** Create Socket connection and listen for incoming streaming data, presence and notifications */

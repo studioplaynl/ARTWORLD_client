@@ -7,7 +7,8 @@ import { PlayerPos } from '../playerState';
 import { dlog } from '../../../helpers/debugLog';
 import { AVATAR_BASE_SIZE } from '../../../constants';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 class Move {
   constructor() {

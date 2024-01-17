@@ -15,7 +15,8 @@ import { dlog } from '../../../helpers/debugLog';
 import ServerCall from '../class/ServerCall';
 
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class Location1 extends Phaser.Scene {
   constructor() {

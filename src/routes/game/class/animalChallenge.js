@@ -3,7 +3,8 @@
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
   constructor(scene, element, artSize) {
