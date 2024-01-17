@@ -26,7 +26,8 @@ import AnimalChallenge from './animalChallenge';
 import { myHomeStore, Liked, ModeratorLiked } from '../../../storage';
 import { PlayerLocation, PlayerUpdate, PlayerPos } from '../playerState';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 class ServerCall {
   async getHomesFiltered(filter, _scene) {
     const scene = _scene;

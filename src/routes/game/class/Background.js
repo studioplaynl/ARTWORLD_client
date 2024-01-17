@@ -6,7 +6,8 @@ import ManageSession from '../ManageSession';
 // import CoordinatesTranslator from './CoordinatesTranslator';
 
 // eslint-disable-next-line no-unused-vars
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 class Background {
   // constructor(config) {

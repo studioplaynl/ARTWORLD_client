@@ -38,7 +38,8 @@ import { dlog } from '../../../helpers/debugLog';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ManageSession from '../ManageSession';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 let previousQuery = {};
 

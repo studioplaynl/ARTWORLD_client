@@ -13,7 +13,8 @@ import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class ChallengeFlowerField extends Phaser.Scene {
   constructor() {

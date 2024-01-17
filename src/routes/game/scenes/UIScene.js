@@ -10,7 +10,8 @@ import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 i18next.init({
   lng: 'nl',

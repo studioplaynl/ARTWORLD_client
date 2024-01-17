@@ -2,7 +2,8 @@ import ManageSession from '../ManageSession';
 // import CoordinatesTranslator from './CoordinatesTranslator';
 import { ShowItemsBar } from '../../../session';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 //
 export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {

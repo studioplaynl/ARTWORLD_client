@@ -14,7 +14,8 @@ import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class MoonWorld extends Phaser.Scene {
   constructor() {

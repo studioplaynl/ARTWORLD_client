@@ -7,7 +7,8 @@ import CoordinatesTranslator from './CoordinatesTranslator';
 import { dlog } from '../../../helpers/debugLog';
 import { SCENE_INFO } from '../../../constants';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 class DebugFuntions {
   constructor() {

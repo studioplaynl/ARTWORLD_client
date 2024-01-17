@@ -6,7 +6,8 @@ import GenerateLocation from '../class/GenerateLocation';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class TestCoordinates extends Phaser.Scene {
   constructor() {

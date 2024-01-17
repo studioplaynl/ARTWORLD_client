@@ -49,7 +49,8 @@ import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 // import { Liked, ModeratorLiked } from '../../../storage';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class Artworld extends Phaser.Scene {
   constructor() {

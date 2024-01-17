@@ -13,7 +13,8 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class YellowDiamond extends Phaser.Scene {
   constructor() {

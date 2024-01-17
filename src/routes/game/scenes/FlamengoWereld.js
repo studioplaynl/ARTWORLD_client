@@ -15,7 +15,8 @@ import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
 // import PreloadScene from './PreloadScene';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 export default class FlamengoWereld extends Phaser.Scene {
   constructor() {
@@ -80,9 +81,11 @@ export default class FlamengoWereld extends Phaser.Scene {
 
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
+    console.log('this.scene.key', this.scene.key);
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
-    this.worldSize.x = sceneInfo.sizeX;
-    this.worldSize.y = sceneInfo.sizeY;
+    console.log('sceneInfo', sceneInfo);
+    this.worldSize.x = 5500;
+    this.worldSize.y = 5000;
     ManageSession.worldSize = this.worldSize;
     //!
 

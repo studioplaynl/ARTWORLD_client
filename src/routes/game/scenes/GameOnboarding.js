@@ -14,7 +14,8 @@ import {
 import { dlog } from '../../../helpers/debugLog';
 import { parseQueryString, checkIfSceneIsAllowed, checkIfLocationLooksLikeAHouse } from '../helpers/UrlHelpers';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 
 
 export default class GameOnboarding extends Phaser.Scene {

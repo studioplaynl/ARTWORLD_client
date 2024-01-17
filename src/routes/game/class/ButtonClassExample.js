@@ -1,6 +1,7 @@
 import { dlog } from '../../../helpers/debugLog';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 export default class Button extends Phaser.GameObjects.Container {
   constructor(scene, x, y, fontColor, key1, text) {
     super(scene);

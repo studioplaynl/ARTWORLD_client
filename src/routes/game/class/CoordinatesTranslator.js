@@ -4,7 +4,8 @@
 // So as first step we are removing all CoordinatesTranslator.functionName calls and replacing with
 // const { functionName } = CoordinatesTranslator;
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
+
 class CoordinatesTranslator {
   artworldVectorToPhaser2D(worldSize, _positionVector) {
     // usage:
