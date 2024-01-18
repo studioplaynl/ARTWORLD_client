@@ -21,5 +21,7 @@ For full documentation visit [mkdocs.org](https://www.mkdocs.org).
 
 Todo:
 - [ ] copy paste wordpress pages
+https://github.com/lonekorean/wordpress-export-to-markdown
+
 - [ ] copy paste nextcloud pages
 
