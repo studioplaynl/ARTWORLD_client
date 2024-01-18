@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Coordinate System Conversion - ARTWORLD Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Coordinate System Conversion";
+        var mkdocs_page_input_path = "1. implementation/Coordinate-System-Conversion.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> ARTWORLD Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome to MkDocs</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">1. implementation</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../Avatar/">Avatar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../BetaWorld/">domain names</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Chat-Message-Functionality/">Chat Message Functionality</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Compression-Tests-Images/">Compression Tests Images</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Conventions/">Conventions</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Coordinate System Conversion</a>
+    <ul class="current">
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Create_and_update_SERVER_OBJECT_examples/">Create and update SERVER OBJECT examples</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Depth_of_elements_in_game/">Depth of elements in game</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../HistoryTracker-and-the-Back-button/">HistoryTracker and the Back button</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Home/">Home</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../How_to_deploy_artworld/">needed</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Items-bar/">Items bar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../LOG-release-notes/">LOG release notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Last-Position-Players/">Last Position Players</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Like%28Heart%29-Button-and-OBJECT/">Like(Heart) Button and OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Locations-OBJECT/">Locations OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Network-Flow-Client-Side/">Network Flow Client Side</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Parsing-URL-Parameters---Phaser-onboarding/">Parsing URL Parameters   Phaser onboarding</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Phaser_error_handling/">Phaser error handling</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Phaser_event_system/">Phaser event system</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../RELEASE_LOG/">RELEASE LOG</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SERVEROBJECT-achievements/">SERVEROBJECT achievements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SERVEROBJECT-addressbook/">SERVEROBJECT addressbook</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SERVEROBJECT-liked/">SERVEROBJECT liked</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ServerCallsFormat/">ServerCallsFormat</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../UI-scrollable-panels/">UI scrollable panels</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../create_onlinePlayers_diagram/">create onlinePlayers diagram</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download_art_Images_flow/">download art Images flow</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../home-and-server-OBJECT/">home and server OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../icons-and-svg-FREE/">icons and svg FREE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../movement---player/">Movement   player</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../movement--onlinePlayer/">movement  onlinePlayer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../png_Compression/">png Compression</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../storage.js/">Storage.js</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../svelte-spa-router-query-params-demo---refactoring/">Svelte spa router query params demo   refactoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">2. research notes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Phaser3</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/A-canvas-can-be-used-as-a-Texture/">A canvas can be used as a Texture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Add-a-plugin-to-a-scene/">Add a plugin to a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Background-image-repeating/">Background image repeating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Changing-the-collision-shape%2C-size%2C-mouse-input-events/">Changing the collision shape, size, mouse input events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/DOM-elements-in-phaser-and-as-input/">DOM elements in phaser and as input</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Datamanager-system-registry/">Datamanager system registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Disable-mouse-input-from-outside-the-canvas/">Disable mouse input from outside the canvas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Drag-containers-%28also-scenes%21%29/">Drag containers (also scenes!)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Drawing-ideas-and-examples-Phaser/">Drawing ideas and examples Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Infinite-world/">Infinite world</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/LoaderPlugin-feedback/">LoaderPlugin feedback</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/No-Physics-possible-between-Scenes/">No Physics possible between Scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Phaser---timed-Events/">Phaser   timed Events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Separate-UI-with-a-overlay-Scene/">Separate UI with a overlay Scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Speech-bubble-GRAPHIC-across-SCENES/">Speech bubble GRAPHIC across SCENES</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Starting-and-stopping-scenes/">Starting and stopping scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/TextureManager/">TextureManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/add-3D-to-Phaser/">add 3D to Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/add-scene-on-the-fly/">Add scene on the fly</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/automatic-Scene-loading-flag/">automatic Scene loading flag</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/camera-effects%2C-colors%2C-fade/">Camera effects, colors, fade</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/camera-follow/">Camera follow</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/change-Gravity-per-sce/">change Gravity per sce</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/check-world-bounds/">Check world bounds</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/dragging/">Dragging</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/groups-vs-containers/">Groups vs containers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/loading-and-preloading/">Loading and preloading</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/pause-and-resume-a-scene/">Pause and resume a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/physics---overlap/">Physics   overlap</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/scaling-the-game---res-and-ppi/">Scaling the game   res and ppi</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/sending-data-to-scenes/">Sending data to scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/using-classes-for-GameObjects-and-extending-Phaser-Classes/">using classes for GameObjects and extending Phaser Classes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/xperimenting-with-different-backgrounds/">Xperimenting with different backgrounds</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">ARTWORLD Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">1. implementation</li>
+      <li class="breadcrumb-item active">Coordinate System Conversion</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p>Coordinate system Conversion</p>
+<p>ARTWORLD needs to be able to grow from time to time. It is better to have worlds where 0, 0 is the center, because then coordinates remain valid when worlds become bigger. 0 , 0 is still the center etc</p>
+<p>This means that there needs to be a conversion between what I call ARTWORLDcoordinates (0, 0 is center) and phaser2Dcoordinates(0,0 is top left)</p>
+<p>It is a simple conversion when we know the worldSize. </p>
+<pre><code>artworldVectorToPhaser2D(worldSize, positionVector) {
+    const worldSizeX = worldSize.x
+    const worldSizeY = worldSize.y
+
+    positionVector.x = positionVector.x + (worldSizeX / 2)
+    positionVector.y = positionVector.y + (worldSizeY / 2)
+    return positionVector
+}
+
+Phaser2DVectorToArtworld(worldSize, x, y) {
+    // usage: 
+    // pass the worldSize and the coordinates you want to do the calculation on
+    // output is a Vector
+
+    const worldSizeX = worldSize.x
+    const worldSizeY = worldSize.y
+
+    positionVector.x = positionVector.x - (worldSizeX / 2)
+    positionVector.y = positionVector.y - (worldSizeY / 2)
+    return positionVector
+}
+</code></pre>
+<p>So we need to define a wordSize(x,y) in each scene, this way our ARTWORLDcoordinates stay consistent.</p>
+<p>ARTWORLDcoordinates are especially important when we think where to place 'houses', artworks, etc, and when we store the last position of the player.</p>
+<hr />
+<h3 id="conventions-to-make-this-system-work">Conventions to make this system work</h3>
+<ul>
+<li>In Phaser everything works with Phaser2Dcoordinates   </li>
+<li>We design worlds with ARTWORLDcoordinates  </li>
+<li>On the server we store everything in ARTWROLDcoordinates, so that everything is placed as designed, also when the world has grown in each direction  </li>
+</ul>
+<p>That means that coordinates only have to be converted when sending it over the network, and when receiving coordinates over the networks. 
+ Also when we place Locations we do it with ARTWORLDcoordinates, and we convert them to Phaser2Dcoordinates when passing arguments.  Then Phaser just deals with them as Phaser2Dcoordinates  </p>
+<p>In practice what we have to do when making a scene:</p>
+<ul>
+<li>
+<p>import CoordinatesTranslator from "../class/CoordinatesTranslator.js"</p>
+</li>
+<li>
+<p>define globally: this.worldSize = new Phaser.Math.Vector2(3000, 3000)</p>
+</li>
+<li>
+<p>define locations with ARTWORLDcoordinates</p>
+</li>
+</ul>
+<p><code>this.location1 = this.add.isotriangle(CoordinatesTranslator.artworldToPhaser2D(this.worldSize.x, -200), CoordinatesTranslator.artworldToPhaser2D(this.worldSize.y, 200), 150, 150, false, 0x8dcb0e, 0x3f8403, 0x63a505)</code></p>
+<p>Behind the scenes coordinates are converted here:</p>
+<ul>
+<li>When the player avatar is loaded from the server, the last know position is also retreived</li>
+</ul>
+<blockquote>
+<p>in Player.js attachAvatarToPlayer <br />
+//*place the player in the last known position <br />
+scene.player.x = translateCoordinates.artworldToPhaser2D(this.worldSize.x, this.player.posX) <br />
+scene.player.y = translateCoordinates.artworldToPhaser2D(this.worldSize.y, this.player.posY)   </p>
+</blockquote>
+<ul>
+<li>When we send Player movement over the network<br />
+It is not yet converted in the Player.js, but it will be converted in ManageSession.sendMoveMessage, so we pass scene, to know worldSize later on.   </li>
+</ul>
+<blockquote>
+<p>in Player.js<br />
+sendMovement(scene) {<br />
+   if (scene.createdPlayer) {<br />
+     if (<br />
+      ManageSession.updateMovementTimer &gt; ManageSession.updateMovementInterval<br />
+     ) {<br />
+       //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server<br />
+       ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)<br />
+       ManageSession.updateMovementTimer = 0<br />
+     }<br />
+   }
+}</p>
+</blockquote>
+<p>In ManageSession.sendMoveMessage   </p>
+<p>`sendMoveMessage(scene, posX, posY) {
+    //transpose phaser coordinates to artworld coordinates
+    //console.log(scene)
+    posX = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.x, posX)
+    posY = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.y, posY)</p>
+<pre><code>var opCode = 1;
+var data =
+  '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }'
+
+this.socket.rpc("move_position", data)
+</code></pre>
+<p>}` </p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Conventions/" class="btn btn-neutral float-left" title="Conventions"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Create_and_update_SERVER_OBJECT_examples/" class="btn btn-neutral float-right" title="Create and update SERVER OBJECT examples">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../Conventions/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Create_and_update_SERVER_OBJECT_examples/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>ServerCallsFormat - ARTWORLD Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "ServerCallsFormat";
+        var mkdocs_page_input_path = "1. implementation/ServerCallsFormat.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> ARTWORLD Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome to MkDocs</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">1. implementation</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../Avatar/">Avatar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../BetaWorld/">domain names</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Chat-Message-Functionality/">Chat Message Functionality</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Compression-Tests-Images/">Compression Tests Images</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Conventions/">Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Coordinate-System-Conversion/">Coordinate System Conversion</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Create_and_update_SERVER_OBJECT_examples/">Create and update SERVER OBJECT examples</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Depth_of_elements_in_game/">Depth of elements in game</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../HistoryTracker-and-the-Back-button/">HistoryTracker and the Back button</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Home/">Home</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../How_to_deploy_artworld/">needed</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Items-bar/">Items bar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../LOG-release-notes/">LOG release notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Last-Position-Players/">Last Position Players</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Like%28Heart%29-Button-and-OBJECT/">Like(Heart) Button and OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Locations-OBJECT/">Locations OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Network-Flow-Client-Side/">Network Flow Client Side</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Parsing-URL-Parameters---Phaser-onboarding/">Parsing URL Parameters   Phaser onboarding</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Phaser_error_handling/">Phaser error handling</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Phaser_event_system/">Phaser event system</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../RELEASE_LOG/">RELEASE LOG</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SERVEROBJECT-achievements/">SERVEROBJECT achievements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SERVEROBJECT-addressbook/">SERVEROBJECT addressbook</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SERVEROBJECT-liked/">SERVEROBJECT liked</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">ServerCallsFormat</a>
+    <ul class="current">
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../UI-scrollable-panels/">UI scrollable panels</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../create_onlinePlayers_diagram/">create onlinePlayers diagram</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download_art_Images_flow/">download art Images flow</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../home-and-server-OBJECT/">home and server OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../icons-and-svg-FREE/">icons and svg FREE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../movement---player/">Movement   player</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../movement--onlinePlayer/">movement  onlinePlayer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../png_Compression/">png Compression</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../storage.js/">Storage.js</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../svelte-spa-router-query-params-demo---refactoring/">Svelte spa router query params demo   refactoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">2. research notes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Phaser3</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/A-canvas-can-be-used-as-a-Texture/">A canvas can be used as a Texture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Add-a-plugin-to-a-scene/">Add a plugin to a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Background-image-repeating/">Background image repeating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Changing-the-collision-shape%2C-size%2C-mouse-input-events/">Changing the collision shape, size, mouse input events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/DOM-elements-in-phaser-and-as-input/">DOM elements in phaser and as input</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Datamanager-system-registry/">Datamanager system registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Disable-mouse-input-from-outside-the-canvas/">Disable mouse input from outside the canvas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Drag-containers-%28also-scenes%21%29/">Drag containers (also scenes!)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Drawing-ideas-and-examples-Phaser/">Drawing ideas and examples Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Infinite-world/">Infinite world</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/LoaderPlugin-feedback/">LoaderPlugin feedback</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/No-Physics-possible-between-Scenes/">No Physics possible between Scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Phaser---timed-Events/">Phaser   timed Events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Separate-UI-with-a-overlay-Scene/">Separate UI with a overlay Scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Speech-bubble-GRAPHIC-across-SCENES/">Speech bubble GRAPHIC across SCENES</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Starting-and-stopping-scenes/">Starting and stopping scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/TextureManager/">TextureManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/add-3D-to-Phaser/">add 3D to Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/add-scene-on-the-fly/">Add scene on the fly</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/automatic-Scene-loading-flag/">automatic Scene loading flag</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/camera-effects%2C-colors%2C-fade/">Camera effects, colors, fade</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/camera-follow/">Camera follow</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/change-Gravity-per-sce/">change Gravity per sce</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/check-world-bounds/">Check world bounds</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/dragging/">Dragging</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/groups-vs-containers/">Groups vs containers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/loading-and-preloading/">Loading and preloading</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/pause-and-resume-a-scene/">Pause and resume a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/physics---overlap/">Physics   overlap</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/scaling-the-game---res-and-ppi/">Scaling the game   res and ppi</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/sending-data-to-scenes/">Sending data to scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/using-classes-for-GameObjects-and-extending-Phaser-Classes/">using classes for GameObjects and extending Phaser Classes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/xperimenting-with-different-backgrounds/">Xperimenting with different backgrounds</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">ARTWORLD Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">1. implementation</li>
+      <li class="breadcrumb-item active">ServerCallsFormat</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="uploadimagename-type-json-img-statusversion-displayname">uploadImage(name, type, json, img, status,version, displayName)</h2>
+<p>this function: 
+- gets upload URL for json and png
+- uploads blobs to aws
+- send an object to nakama containing:</p>
+<pre><code>{
+  &quot;url&quot;: &quot;drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png&quot;,
+  &quot;json&quot;: &quot;drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.json&quot;,
+  &quot;version&quot;: 4,
+  &quot;displayname&quot;: &quot;blauwSpotlijster&quot;
+}
+</code></pre>
+<p>no response on succes</p>
+<h2 id="getuploadurltype-name-filetypeversion">getUploadURL(type, name, filetype,version)</h2>
+<p>this function creates a signed upload url for file upload to AWS</p>
+<h3 id="usage-example">usage example</h3>
+<pre><code>var version = 1 
+var [jsonURL, jsonLocation] = await getUploadURL(&quot;home&quot;, &quot;current&quot;, &quot;json&quot;, version)
+// creates route on aws &quot;/home/user_id/1_current.json&quot;
+</code></pre>
+<h2 id="updatetitlecollection-key-name-userid">updateTitle(collection, key, name, userID)</h2>
+<p>this function:
+- picks up object
+- updates object.value.displayname
+- pushes object back to server</p>
+<h3 id="example">example</h3>
+<pre><code>updateTitle(&quot;drawing&quot;, &quot;12345345_geelkoe&quot;, &quot;nieuwe naam&quot;, &quot;`1231hh3123dasda&quot;)
+</code></pre>
+<h2 id="updateobjecttype-name-value-pub-userid">updateObject(type, name, value, pub, userID)</h2>
+<p>userID is optional, only necessary for admin and moderator functions.</p>
+<h3 id="example-addressbook">Example (addressbook):</h3>
+<pre><code>const type = &quot;addressbook&quot;
+const name = type + &quot;_&quot; + ManageSession.userProfile.id
+const value = '{&quot;user_id&quot;: &quot;b9ae6807-1ce1-4b71-a8a3-f5958be4d340&quot;, &quot;posX&quot;: &quot;500&quot;, &quot;posY&quot;: &quot;110&quot;}'
+const pub = 2
+
+updateObject(type, name, value, pub)
+</code></pre>
+<h2 id="getaccountid-avatar">getAccount(id, avatar)</h2>
+<pre><code>0:[
+{
+avatar_url: &quot;avatar/f42eb28f-9f4d-476c-9788-2240bac4cf48/current.png&quot;,
+create_time: &quot;2021-10-11T11:32:02Z&quot;,
+display_name: undefined,
+edge_count: 0,
+facebook_id: undefined,
+gamecenter_id: undefined,
+google_id: undefined,
+id: &quot;f42eb28f-9f4d-476c-9788-2240bac4cf48&quot;,
+lang_tag: &quot;en&quot;,
+location: undefined,
+metadata:{
+          azc: &quot;Amsterdam&quot;,
+          location: &quot;ArtworldAmsterdam&quot;,
+          posX: -122.62672,
+          posY: 22.468008,
+          role: &quot;speler&quot;,
+          user_id: &quot;&quot;,
+}
+online: true,
+steam_id: undefined,
+timezone: undefined,
+update_time: &quot;2022-02-08T13:02:37Z&quot;,
+url: &quot;https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/f42eb28f-9f4d-476c-9788-2240bac4cf48/current.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20220208%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20220208T130243Z&amp;X-Amz-Expires=86400&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=fbf4c90016829b9ad0376fd0b7c96b563a0dfd16d46f0d6289287a444fa8604c&quot;,
+username: &quot;user33&quot;,
+},
+]
+
+</code></pre>
+<p>The url is the actual avatar url, the url is called via getAccount, getUrl, but with a couple of await functions it takes a bit for the url to load via the getAccount function.</p>
+<h2 id="getavataravatar_url">getAvatar(avatar_url)</h2>
+<h2 id="uploadavatardata">uploadAvatar(data)</h2>
+<h2 id="deletefiletypefileuser">deleteFile(type,file,user)</h2>
+<h2 id="adding-data-eg-locations-to-the-backend">adding data (eg locations) to the backend</h2>
+<p><code>function updateObject(type, name, value, pub)</code></p>
+<p>Example:<br />
+type: "home" (collection)<br />
+name = "hansjes huisje" (key)<br />
+value = object with keys (value)<br />
+pub: permission_read (pub)  </p>
+<p>updateObject("location", name, value, true)</p>
+<h2 id="listobjectstype-userid-limit-page">listObjects(type, userID, limit, page)</h2>
+<p>type = "location"</p>
+<p>userID = per user, null to get all users</p>
+<p>limit = how many you want to get(standard 100)</p>
+<p>page = index of limit(if limit = 100, index 0 = 1 - 100, index 1 = 101 -200, index 2 = 202 - 300 etc...)</p>
+<h3 id="examples">examples</h3>
+<p><em>getting a users home object</em></p>
+<pre><code>listObjects('home','5264dc23-a339-40db-bb84-e0849ded4e68')
+</code></pre>
+<p>returns the object:</p>
+<pre><code>[
+  {
+    &quot;collection&quot;: &quot;home&quot;,
+    &quot;key&quot;: &quot;Amsterdam&quot;,
+    &quot;permission_read&quot;: 2,
+    &quot;permission_write&quot;: 1,
+    &quot;value&quot;: {
+      &quot;url&quot;: &quot;home/5264dc23-a339-40db-bb84-e0849ded4e68/current.png&quot;,
+      &quot;posX&quot;: 228.16,
+      &quot;posY&quot;: 57.66,
+      &quot;userName&quot;: &quot;user11&quot;
+    },
+    &quot;version&quot;: &quot;d1be852d6a66654ec9faa878fcb41b7d&quot;,
+    &quot;user_id&quot;: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;,
+    &quot;create_time&quot;: &quot;2022-01-12T12:31:53Z&quot;,
+    &quot;update_time&quot;: &quot;2022-01-13T15:45:02Z&quot;
+  }
+]
+</code></pre>
+<h2 id="convert-images">convert images</h2>
+<p><code>convertImage(path,size, format)</code></p>
+<p>output:</p>
+<p><code>"https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/filters:trim()/avatar/4ced8bff-d79c-4842-b2bd-39e9d9aa597e/current.png?signature=cbda2578e5612c70c009ebc6e0424e9025078aa94517543b310bf01eedefb167"</code></p>
+<p>size and format at not both required to work, either one or both will also function
+for example:</p>
+<p><code>convertImage(path,, format)</code> </p>
+<p>This is a replacement for getAvatar()</p>
+<p>if needed more filters can be added in the future, see:
+https://docs.aws.amazon.com/solutions/latest/serverless-image-handler/thumbor-filters.html</p>
+<h2 id="listallobjectstype-id-limit-cursor">listAllObjects(type, id, limit, cursor)</h2>
+<p><code>type</code> is eg drawing, location, etc ...  <br />
+<code>id</code> is userID(or <code>undefined</code>, but not <code>null</code> or <code>""</code>)  <br />
+<code>limit</code> is the max number of objects you want to receive (either by page or in total)  <br />
+<code>cursor</code> is on the first call ```undefined```` (just empty), when supplied, it defines the next page of limit-number of objects. The cursor is the last objects update time, so: objects[limit - 1].update_time    </p>
+<p>Results come back within .objects array:    </p>
+<pre><code>[
+{
+collection: &quot;drawing&quot;
+downloaded: true
+key: &quot;2023-01-02T21_50_42_GeelAvoceta&quot;
+permission_read: 1
+read: 1
+update_time: &quot;2023-01-20T16:55:15.02286+01:00&quot;
+user_id: &quot;f011a5dc-901a-42c0-9589-587b389d1e3e&quot;
+username: &quot;user11&quot;
+value: 
+      displayname: &quot;bloem&quot;
+      url: &quot;drawing/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-01-02T21_50_42_GeelAvoceta.png&quot;
+      version: &quot;0&quot;
+},
+.....
+]
+
+</code></pre>
+<p><code>update_time: "2023-01-20T16:55:15.02286+01:00"</code> of the last object is used as the cursor to get the next page of objects.</p>
+<h2 id="validatestringtypeinput">validate(string,type,input)</h2>
+<h3 id="types">types</h3>
+<p>email - validates email adresses</p>
+<p>password - validates length is betweenm 5 and 10 characters</p>
+<p>repeat password - checks if password and repeat password are identical</p>
+<p>special - checks if the value contains no special characters</p>
+<h3 id="examples_1">examples:</h3>
+<p>can be used in 2 ways, inline, automatically sets border to red if fail</p>
+<pre><code>&lt;input
+    type=&quot;text&quot;
+    placeholder=&quot;Enter Username&quot;
+    name=&quot;username&quot;
+    id=&quot;username&quot;
+    bind:value={username}
+    on:keyup={async input =&gt; {await validate(username,&quot;special&quot;,input)}}
+    required
+/&gt;
+</code></pre>
+<p>or can used within a function as following:</p>
+<pre><code>if(await validate(email,&quot;email&quot;)){
+// run action if valid
+} else {
+// run if invalid
+)
+</code></pre>
+<h1 id="setloaderstate">setLoader(state)</h1>
+<p><code>setLoader(true)</code> sets loading screen on</p>
+<p><code>setLoader(false)</code> sets loading screen off</p>
+<h1 id="getallhouseslocationuser_id">getAllHouses(location,user_id)</h1>
+<p>Gives you all the houses objects within the location, optionally add a user_id
+example result:</p>
+<pre><code>
+[
+  {
+    &quot;read&quot;: 2,
+    &quot;artworks&quot;: {
+      &quot;stopmotion&quot;: 1,
+      &quot;drawing&quot;: 3
+    },
+    &quot;username&quot;: &quot;user6&quot;,
+    &quot;key&quot;: &quot;Amsterdam&quot;,
+    &quot;collection&quot;: &quot;home&quot;,
+    &quot;update_time&quot;: &quot;2022-08-08T15:17:06.817697+02:00&quot;,
+    &quot;permission_read&quot;: 2,
+    &quot;value&quot;: {
+      &quot;username&quot;: &quot;user6&quot;,
+      &quot;url&quot;: &quot;home/fcbcc269-a109-4a4b-a570-5ccafc5308d8/5_current.png&quot;,
+      &quot;posX&quot;: -904.9999877562127,
+      &quot;posY&quot;: 72.49999139457941,
+      &quot;version&quot;: 5
+    },
+    &quot;user_id&quot;: &quot;fcbcc269-a109-4a4b-a570-5ccafc5308d8&quot;
+  },
+
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../SERVEROBJECT-liked/" class="btn btn-neutral float-left" title="SERVEROBJECT liked"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../UI-scrollable-panels/" class="btn btn-neutral float-right" title="UI scrollable panels">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../SERVEROBJECT-liked/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../UI-scrollable-panels/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

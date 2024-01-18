@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Network Flow Client Side - ARTWORLD Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Network Flow Client Side";
+        var mkdocs_page_input_path = "1. implementation/Network-Flow-Client-Side.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> ARTWORLD Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Welcome to MkDocs</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">1. implementation</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../Avatar/">Avatar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../BetaWorld/">domain names</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Chat-Message-Functionality/">Chat Message Functionality</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Compression-Tests-Images/">Compression Tests Images</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Conventions/">Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Coordinate-System-Conversion/">Coordinate System Conversion</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Create_and_update_SERVER_OBJECT_examples/">Create and update SERVER OBJECT examples</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Depth_of_elements_in_game/">Depth of elements in game</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../HistoryTracker-and-the-Back-button/">HistoryTracker and the Back button</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Home/">Home</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../How_to_deploy_artworld/">needed</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Items-bar/">Items bar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../LOG-release-notes/">LOG release notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Last-Position-Players/">Last Position Players</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Like%28Heart%29-Button-and-OBJECT/">Like(Heart) Button and OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Locations-OBJECT/">Locations OBJECT</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Network Flow Client Side</a>
+    <ul class="current">
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Parsing-URL-Parameters---Phaser-onboarding/">Parsing URL Parameters   Phaser onboarding</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Phaser_error_handling/">Phaser error handling</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Phaser_event_system/">Phaser event system</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../RELEASE_LOG/">RELEASE LOG</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SERVEROBJECT-achievements/">SERVEROBJECT achievements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SERVEROBJECT-addressbook/">SERVEROBJECT addressbook</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SERVEROBJECT-liked/">SERVEROBJECT liked</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ServerCallsFormat/">ServerCallsFormat</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../UI-scrollable-panels/">UI scrollable panels</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../create_onlinePlayers_diagram/">create onlinePlayers diagram</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../download_art_Images_flow/">download art Images flow</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../home-and-server-OBJECT/">home and server OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../icons-and-svg-FREE/">icons and svg FREE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../movement---player/">Movement   player</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../movement--onlinePlayer/">movement  onlinePlayer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../png_Compression/">png Compression</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../storage.js/">Storage.js</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../svelte-spa-router-query-params-demo---refactoring/">Svelte spa router query params demo   refactoring</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">2. research notes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Phaser3</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/A-canvas-can-be-used-as-a-Texture/">A canvas can be used as a Texture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Add-a-plugin-to-a-scene/">Add a plugin to a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Background-image-repeating/">Background image repeating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Changing-the-collision-shape%2C-size%2C-mouse-input-events/">Changing the collision shape, size, mouse input events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/DOM-elements-in-phaser-and-as-input/">DOM elements in phaser and as input</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Datamanager-system-registry/">Datamanager system registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Disable-mouse-input-from-outside-the-canvas/">Disable mouse input from outside the canvas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Drag-containers-%28also-scenes%21%29/">Drag containers (also scenes!)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Drawing-ideas-and-examples-Phaser/">Drawing ideas and examples Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Infinite-world/">Infinite world</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/LoaderPlugin-feedback/">LoaderPlugin feedback</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/No-Physics-possible-between-Scenes/">No Physics possible between Scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Phaser---timed-Events/">Phaser   timed Events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Separate-UI-with-a-overlay-Scene/">Separate UI with a overlay Scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Speech-bubble-GRAPHIC-across-SCENES/">Speech bubble GRAPHIC across SCENES</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/Starting-and-stopping-scenes/">Starting and stopping scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/TextureManager/">TextureManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/add-3D-to-Phaser/">add 3D to Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/add-scene-on-the-fly/">Add scene on the fly</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/automatic-Scene-loading-flag/">automatic Scene loading flag</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/camera-effects%2C-colors%2C-fade/">Camera effects, colors, fade</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/camera-follow/">Camera follow</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/change-Gravity-per-sce/">change Gravity per sce</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/check-world-bounds/">Check world bounds</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/dragging/">Dragging</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/groups-vs-containers/">Groups vs containers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/loading-and-preloading/">Loading and preloading</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/pause-and-resume-a-scene/">Pause and resume a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/physics---overlap/">Physics   overlap</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/scaling-the-game---res-and-ppi/">Scaling the game   res and ppi</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/sending-data-to-scenes/">Sending data to scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/using-classes-for-GameObjects-and-extending-Phaser-Classes/">using classes for GameObjects and extending Phaser Classes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../2.%20research%20notes/phaser3/xperimenting-with-different-backgrounds/">Xperimenting with different backgrounds</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">ARTWORLD Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">1. implementation</li>
+      <li class="breadcrumb-item active">Network Flow Client Side</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h3 id="graphical-flow-of-the-network">Graphical flow of the network:</h3>
+<h3 id="figma-network-flow-client"><a href="https://www.figma.com/file/v1VYHMOh1OW8Gy0bhY1g7K/artworld-network-architecture?node-id=0%3A1">Figma: network flow client</a></h3>
+<h2 id="1-appsvelte-is-the-session-empty">1. App.Svelte Is the Session empty?</h2>
+<p>session (https) -&gt; token, expiration</p>
+<h2 id="2-yes-the-session-is-empty">2. yes, the Session is empty:</h2>
+<p>login.Svelte
+session.js</p>
+<pre><code>let storedSession = localStorage.getItem(&quot;Session&quot;)
+
+export const Session = writable(storedSession ? JSON.parse(storedSession) : null);
+
+Session.subscribe((value) =&gt; {
+    if (value) {
+        manageSession.sessionStored = value; //! push the Session with url to manageSession
+        localStorage.setItem('Session', JSON.stringify(value))
+     }
+    else localStorage.removeItem('Session'); // for logout
+  })
+
+
+let profileStore = localStorage.getItem(&quot;profile&quot;)
+export const Profile = writable(profileStore ? JSON.parse(profileStore) : null);
+Profile.subscribe((value) =&gt; {
+        localStorage.setItem('profile', JSON.stringify(value));
+        manageSession.userProfile = value //! push the profile with url to manageSession
+        // console.log(&quot;Profile.subscribe((value)&quot;)
+        // console.log(value)
+    }
+    else localStorage.removeItem('profile'); // for logout
+</code></pre>
+<pre><code>client.authenticateEmail(email, password, create)
+    .then((response)=&gt; {  Session.set(session)
+getAccount()}
+</code></pre>
+<h3 id="session-object">Session object:</h3>
+<pre><code>Session$1 
+{
+created_at: “1636024979”,
+
+expires_at: “1636032179”,
+
+token: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1MjY0ZGMyMy1hMzM5LTQwZGItYmI4NC1lMDg0OWRlZDRlNjgiLCJ1c24iOiJ1c2VyMTEiLCJleHAiOjE2MzYwMzIxNzl9.HVT1r90Ud5cHd-I5PcqxIuygHmTlDRWBhN-7FeHhQSA&quot;
+
+user_id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;,
+
+username: &quot;user11&quot;,
+
+vars: undefined
+}
+</code></pre>
+<h3 id="profile-object-without-url">Profile Object <strong>without URL</strong></h3>
+<pre><code>$Profile
+{
+avatar_url: &quot;avatar/5264dc23-a339-40db-bb84-e0849ded4e68/current.png&quot;
+create_time: &quot;2021-10-16T17:28:59Z&quot;
+edge_count: 4
+id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;
+lang_tag: &quot;en&quot;
+meta: {azc: 'Amsterdam', posX: 528, posY: 800, role: 'speler', user_id: '', …}
+metadata: &quot;{\&quot;azc\&quot;: \&quot;Amsterdam\&quot;, \&quot;posX\&quot;: 528, \&quot;posY\&quot;: 800, \&quot;role\&quot;: \&quot;speler\&quot;, \&quot;user_id\&quot;: \&quot;\&quot;, \&quot;location\&quot;: \&quot;location1\&quot;}&quot;
+update_time: &quot;2021-11-03T16:00:14Z&quot;
+username: &quot;user11&quot;
+}
+</code></pre>
+<h3 id="profile-object-with-url">Profile Object <strong>WITH URL</strong></h3>
+<pre><code>$Profile
+{
+avatar_url: &quot;avatar/5264dc23-a339-40db-bb84-e0849ded4e68/current.png&quot;
+create_time: &quot;2021-10-16T17:28:59Z&quot;
+edge_count: 4
+id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;
+lang_tag: &quot;en&quot;
+meta: {azc: 'Amsterdam', posX: 528, posY: 800, role: 'speler', user_id: '', …}
+metadata: &quot;{\&quot;azc\&quot;: \&quot;Amsterdam\&quot;, \&quot;posX\&quot;: 528, \&quot;posY\&quot;: 800, \&quot;role\&quot;: \&quot;speler\&quot;, \&quot;user_id\&quot;: \&quot;\&quot;, \&quot;location\&quot;: \&quot;location1\&quot;}&quot;
+update_time: &quot;2021-11-03T16:00:14Z&quot;
+url: &quot;https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/5264dc23-a339-40db-bb84-e0849ded4e68/current.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20211104%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20211104T120408Z&amp;X-Amz-Expires=86400&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=f85d6c618c85f2561803d2fcb86a5a2288d6b8bf7325d0c7effe8268df36d26c&quot;
+username: &quot;user11&quot;
+}
+</code></pre>
+<h2 id="3-no-the-session-is-not-empty-mainmenujs">3. No the Session is not empty -&gt; MainMenu.js</h2>
+<pre><code>   //* check if the user profile is loaded, to be able to send the player to the right location
+    if (typeof (manageSession.userProfile.meta.location) != &quot;undefined&quot;) {
+      this.launchLocation = manageSession.userProfile.meta.location + &quot;_Scene&quot;
+      console.log(this.launchLocation)
+
+      this.checkSceneExistence()
+    } else {
+      getAccount(&quot;&quot;, true)
+        .then(rec =&gt; {
+          manageSession.freshSession = rec
+          //! only set the menu button visible if the user data is downloaded!
+          this.launchLocation = manageSession.freshSession.meta.location
++ &quot;_Scene&quot;
+          this.checkSceneExistence()
+        })
+    }
+  } //create
+
+  checkSceneExistence() {
+    //check if this.launchLocation exists in SCENES
+    const locationExists = SCENES.includes(this.launchLocation)
+    //if location does not exists; launch default location
+    if (!locationExists) {
+      //set to fail-back scene
+      manageSession.location = &quot;location1&quot;
+      manageSession.launchLocation = manageSession.location + &quot;_Scene&quot;
+    } else {
+      manageSession.location = manageSession.userProfile.meta.location
+    }
+    this.playBtn.setVisible(true)
+  }
+</code></pre>
+<h2 id="4a-networkboot_scenejs">4A. networkBoot_Scene.js</h2>
+<pre><code>manageSession.createPlayer = true
+
+ await manageSession.createSocket()
+      .then(rec =&gt; {
+        console.log(manageSession.launchLocation)
+        this.scene.launch(manageSession.launchLocation)
+})
+</code></pre>
+<h2 id="4b-managesessionjs">4B. manageSession.js</h2>
+<pre><code>createSocket
+
+socket.connect
+
+getStreamUsers (“join”, this.location)
+
+socket.onstreampresence
+</code></pre>
+<h2 id="5-locationx_scenejs">5. locationX_Scene.js</h2>
+<pre><code>manageSession.createPlayer = true
+
+loadAndCreatePlayerAvatar()
+attachtAvatarToPlayer()
+
+createOnlinePlayers()
+attachtAvatarToOnlinePlayer(player, preExisting)
+</code></pre>
+<h2 id="6-change-locations">6. CHANGE LOCATIONS</h2>
+<p><strong>LocationA:</strong></p>
+<pre><code>manageSession.socket.rpc(&quot;leave&quot;, locationA)
+
+
+ setTimeout(() =&gt; {
+      manageSession.location = location
+      manageSession.createPlayer = true
+      manageSession.getStreamUsers(&quot;join&quot;, locationB)
+      this.scene.start(locationScene)
+    }, 1000)
+</code></pre>
+<p><strong>LocationB:</strong></p>
+<pre><code>manageSession.createPlayer = true
+
+loadAndCreatePlayerAvatar()
+attachtAvatarToPlayer()
+
+createOnlinePlayers()
+attachtAvatarToOnlinePlayer(player, preExisting)
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Locations-OBJECT/" class="btn btn-neutral float-left" title="Locations OBJECT"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Parsing-URL-Parameters---Phaser-onboarding/" class="btn btn-neutral float-right" title="Parsing URL Parameters   Phaser onboarding">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../Locations-OBJECT/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Parsing-URL-Parameters---Phaser-onboarding/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
