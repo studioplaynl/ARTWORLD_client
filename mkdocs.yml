@@ -1,1 +1,3 @@
 site_name: ARTWORLD Documentation
+docs_dir: 'mkdocs'
+site_dir: 'docs'
