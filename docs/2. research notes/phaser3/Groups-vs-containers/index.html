@@ -2612,37 +2612,37 @@ Children of the group can’t be moved with the grouping</p>
 Works:
 * Group.getChildren()</p>
 <hr />
-<pre><code>group.create(400, 300, ‘phaser’);
-//  The above is a short-cut for:
-//  var sprite = this.add.sprite(400, 300, 'phaser');
-//  group.add(sprite);
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>group.create(400, 300, ‘phaser’);
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>//  The above is a short-cut for:
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>//  var sprite = this.add.sprite(400, 300, &#39;phaser&#39;);
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>//  group.add(sprite);
+</span></code></pre></div>
 <hr />
 <p>Sprite pool example</p>
 <p>https://phaser.io/examples/v3/view/game-objects/group/sprite-pool</p>
 <p>Group createCallback</p>
-<pre><code>group = this.add.group({
-defaultKey: ‘alien’,
-maxSize: 100,
-createCallback: function (alien) {
-alien.setName(‘alien’ + this.getLength());
-console.log(‘Created’, alien.name);
-},
-removeCallback: function (alien) {
-console.log(‘Removed’, alien.name);
-}
-</code></pre>
-<pre><code>this.time.addEvent({
-delay: 100,
-loop: true,
-callback: addAlien
-});
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>group = this.add.group({
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>defaultKey: ‘alien’,
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>maxSize: 100,
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>createCallback: function (alien) {
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>alien.setName(‘alien’ + this.getLength());
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>console.log(‘Created’, alien.name);
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>},
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>removeCallback: function (alien) {
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>console.log(‘Removed’, alien.name);
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>}
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>this.time.addEvent({
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>delay: 100,
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>loop: true,
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>callback: addAlien
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>});
+</span></code></pre></div>
 <hr />
 <p><strong>group.children.iterate</strong></p>
-<pre><code>// Find first inactive sprite in group or add new sprite, and set position
-const alien = group.get(x, y);
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>// Find first inactive sprite in group or add new sprite, and set position
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>const alien = group.get(x, y);
+</span></code></pre></div>
 
 
 
@@ -2689,7 +2689,7 @@ const alien = group.get(x, y);
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>

@@ -2603,28 +2603,25 @@
 
 <p>The best summary:
 <a href="https://www.joshmorony.com/how-to-scale-a-game-for-all-device-sizes-in-phaser/">https://www.joshmorony.com/how-to-scale-a-game-for-all-device-sizes-in-phaser/</a></p>
-<p>```game = new Phaser.Game(
+<p><code>game = new Phaser.Game(
   window.innerWidth * window.devicePixelRatio,
   window.innerHeight * window.devicePixelRatio,
   Phaser.CANVAS,
   'gameArea'
-);</p>
-<pre><code>
-Scaling Game Assets
-The other issue we run into when scaling is with the size of graphical assets (i.e player sprites, objects and so on). If you create some object at 300 x 300 pixels and it looks great on a device with a DPR of 1 (i.e your desktop computer or an iPhone 4) it will probably look teeny tiny on devices with a higher DPR.
-
-Take the iPhone 5 for example again, although the object is 300 x 300 pixels it will only look like it's 150 x 150 pixels. We need the asset to be twice as big for iPhone 5's, so how do we handle this?
-
-What you can do is create the object to suit the highest DPR you are supporting, which will likely be 3. This means that your 300 x 300 object should actually be 900 x 900. Then we scale it down in game to suit the device that it is actually on. On a device with a DPR of 3 we do nothing, with a DPR of 2 we will scale it down to 2/3rds of it's original size and for a device with a DPR of 1 we will scale it down to 1/3rd of its original size.
-
-To do this, first you need to figure out what this scaleRatio is. Create a new globally stored variable with the following code:
-</code></pre>
-<p>scaleRatio = window.devicePixelRatio / 3</p>
-<pre><code>
-and now whenever you add a new asset to the game, call the following method to scale it appropriately:
-</code></pre>
-<p>myAsset.scale.setTo(scaleRatio, scaleRatio)
-```
+);
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Scaling Game Assets
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>The other issue we run into when scaling is with the size of graphical assets (i.e player sprites, objects and so on). If you create some object at 300 x 300 pixels and it looks great on a device with a DPR of 1 (i.e your desktop computer or an iPhone 4) it will probably look teeny tiny on devices with a higher DPR.
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Take the iPhone 5 for example again, although the object is 300 x 300 pixels it will only look like it&#39;s 150 x 150 pixels. We need the asset to be twice as big for iPhone 5&#39;s, so how do we handle this?
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>What you can do is create the object to suit the highest DPR you are supporting, which will likely be 3. This means that your 300 x 300 object should actually be 900 x 900. Then we scale it down in game to suit the device that it is actually on. On a device with a DPR of 3 we do nothing, with a DPR of 2 we will scale it down to 2/3rds of it&#39;s original size and for a device with a DPR of 1 we will scale it down to 1/3rd of its original size.
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>To do this, first you need to figure out what this scaleRatio is. Create a new globally stored variable with the following code:
+</span></code></pre></div>
+scaleRatio = window.devicePixelRatio / 3
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>and now whenever you add a new asset to the game, call the following method to scale it appropriately:
+</span></code></pre></div>
+myAsset.scale.setTo(scaleRatio, scaleRatio)</code>
 Now your asset will scale appropriately no matter what device your game is loaded on.</p>
 <hr />
 <p>many examples of fitting and scaling, resizing:</p>
@@ -2677,7 +2674,7 @@ Now your asset will scale appropriately no matter what device your game is loade
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>

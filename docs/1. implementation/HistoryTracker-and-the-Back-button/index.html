@@ -2700,38 +2700,38 @@
 <h2 id="history-tracker">History Tracker</h2>
 <p>The class of History Tracker has two methods: <em>locationPush</em> and <em>homePush</em>.
 As the names suggest, when a player enters a location, a value of that location is pushed to the array of <em>ManageSession.locationHistory</em>, and when one gets into a home, an object with two properties is pushed to the same array: </p>
-<pre><code>{ locationName: "DefaultUserHome", homeID: scene.location }
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code>{ locationName: &quot;DefaultUserHome&quot;, homeID: scene.location }
+</code></pre></div>
 <p>Both methods have a condition, they should not be matching the value of the previous scene. Otherwise, a player gets into an infinite loop when using the back button.</p>
 <h2 id="back-button">Back button</h2>
 <p>On clicking of the back button, the last element of the array of <em>ManageSession.locationHistory</em> is taken in order to leave the current scene and stop the current scene:</p>
-<pre><code>let currentLocationKey = ManageSession.locationHistory.pop()
+<div class="language-text highlight"><pre><span></span><code>let currentLocationKey = ManageSession.locationHistory.pop()
 ...
-ManageSession.socket.rpc("leave", currentLocationKey)
+ManageSession.socket.rpc(&quot;leave&quot;, currentLocationKey)
 ...
 this.scene.stop(currentLocationKey)
-</code></pre>
+</code></pre></div>
 <p>But before leaving the scene, we check whether the scene is a location or a house:</p>
-<pre><code>if (currentLocationKey.locationName &amp;&amp; currentLocationKey.homeID) {
+<div class="language-text highlight"><pre><span></span><code>if (currentLocationKey.locationName &amp;&amp; currentLocationKey.homeID) {
   currentLocationKey = currentLocationKey.locationName
 }
-</code></pre>
+</code></pre></div>
 <p>if it is a house, then we reassign the value of the currentLocationKey.</p>
 <p>And for entering the previous scene, we take the last element of the array of <em>ManageSession.locationHistory</em> and join it:</p>
-<pre><code>let previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
+<div class="language-text highlight"><pre><span></span><code>let previousLocation = ManageSession.locationHistory[ManageSession.locationHistory.length - 1]
 ...
-ManageSession.getStreamUsers("join", previousLocation)
-</code></pre>
+ManageSession.getStreamUsers(&quot;join&quot;, previousLocation)
+</code></pre></div>
 <p>We also check whether the previous scene is a location or a house:</p>
-<pre><code>let homeID = null
+<div class="language-text highlight"><pre><span></span><code>let homeID = null
 if (previousLocation.locationName &amp;&amp; previousLocation.homeID) {
   homeID = previousLocation.homeID
   previousLocation = previousLocation.locationName
 }
-</code></pre>
+</code></pre></div>
 <p>For starting the previous scene, we provide two arguments, and the second argument is ignored when the scene is a location, not a home.</p>
-<pre><code>this.scene.start(previousLocation, { user_id: homeID })
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code>this.scene.start(previousLocation, { user_id: homeID })
+</code></pre></div>
 
 
 
@@ -2778,7 +2778,7 @@ if (previousLocation.locationName &amp;&amp; previousLocation.homeID) {
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>

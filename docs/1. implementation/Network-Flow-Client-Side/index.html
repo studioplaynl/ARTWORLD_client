@@ -2875,159 +2875,159 @@
 <h2 id="2-yes-the-session-is-empty">2. yes, the Session is empty:</h2>
 <p>login.Svelte
 session.js</p>
-<pre><code>let storedSession = localStorage.getItem(&quot;Session&quot;)
-
-export const Session = writable(storedSession ? JSON.parse(storedSession) : null);
-
-Session.subscribe((value) =&gt; {
-    if (value) {
-        manageSession.sessionStored = value; //! push the Session with url to manageSession
-        localStorage.setItem('Session', JSON.stringify(value))
-     }
-    else localStorage.removeItem('Session'); // for logout
-  })
-
-
-let profileStore = localStorage.getItem(&quot;profile&quot;)
-export const Profile = writable(profileStore ? JSON.parse(profileStore) : null);
-Profile.subscribe((value) =&gt; {
-        localStorage.setItem('profile', JSON.stringify(value));
-        manageSession.userProfile = value //! push the profile with url to manageSession
-        // console.log(&quot;Profile.subscribe((value)&quot;)
-        // console.log(value)
-    }
-    else localStorage.removeItem('profile'); // for logout
-</code></pre>
-<pre><code>client.authenticateEmail(email, password, create)
-    .then((response)=&gt; {  Session.set(session)
-getAccount()}
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>let storedSession = localStorage.getItem(&quot;Session&quot;)
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>export const Session = writable(storedSession ? JSON.parse(storedSession) : null);
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Session.subscribe((value) =&gt; {
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    if (value) {
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        manageSession.sessionStored = value; //! push the Session with url to manageSession
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        localStorage.setItem(&#39;Session&#39;, JSON.stringify(value))
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>     }
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    else localStorage.removeItem(&#39;Session&#39;); // for logout
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>  })
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>let profileStore = localStorage.getItem(&quot;profile&quot;)
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>export const Profile = writable(profileStore ? JSON.parse(profileStore) : null);
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Profile.subscribe((value) =&gt; {
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        localStorage.setItem(&#39;profile&#39;, JSON.stringify(value));
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        manageSession.userProfile = value //! push the profile with url to manageSession
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>        // console.log(&quot;Profile.subscribe((value)&quot;)
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        // console.log(value)
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    }
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    else localStorage.removeItem(&#39;profile&#39;); // for logout
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>client.authenticateEmail(email, password, create)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    .then((response)=&gt; {  Session.set(session)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>getAccount()}
+</span></code></pre></div>
 <h3 id="session-object">Session object:</h3>
-<pre><code>Session$1 
-{
-created_at: “1636024979”,
-
-expires_at: “1636032179”,
-
-token: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1MjY0ZGMyMy1hMzM5LTQwZGItYmI4NC1lMDg0OWRlZDRlNjgiLCJ1c24iOiJ1c2VyMTEiLCJleHAiOjE2MzYwMzIxNzl9.HVT1r90Ud5cHd-I5PcqxIuygHmTlDRWBhN-7FeHhQSA&quot;
-
-user_id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;,
-
-username: &quot;user11&quot;,
-
-vars: undefined
-}
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Session$1 
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>{
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>created_at: “1636024979”,
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>expires_at: “1636032179”,
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>token: &quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1MjY0ZGMyMy1hMzM5LTQwZGItYmI4NC1lMDg0OWRlZDRlNjgiLCJ1c24iOiJ1c2VyMTEiLCJleHAiOjE2MzYwMzIxNzl9.HVT1r90Ud5cHd-I5PcqxIuygHmTlDRWBhN-7FeHhQSA&quot;
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>user_id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;,
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>username: &quot;user11&quot;,
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>vars: undefined
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>}
+</span></code></pre></div>
 <h3 id="profile-object-without-url">Profile Object <strong>without URL</strong></h3>
-<pre><code>$Profile
-{
-avatar_url: &quot;avatar/5264dc23-a339-40db-bb84-e0849ded4e68/current.png&quot;
-create_time: &quot;2021-10-16T17:28:59Z&quot;
-edge_count: 4
-id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;
-lang_tag: &quot;en&quot;
-meta: {azc: 'Amsterdam', posX: 528, posY: 800, role: 'speler', user_id: '', …}
-metadata: &quot;{\&quot;azc\&quot;: \&quot;Amsterdam\&quot;, \&quot;posX\&quot;: 528, \&quot;posY\&quot;: 800, \&quot;role\&quot;: \&quot;speler\&quot;, \&quot;user_id\&quot;: \&quot;\&quot;, \&quot;location\&quot;: \&quot;location1\&quot;}&quot;
-update_time: &quot;2021-11-03T16:00:14Z&quot;
-username: &quot;user11&quot;
-}
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$Profile
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>{
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>avatar_url: &quot;avatar/5264dc23-a339-40db-bb84-e0849ded4e68/current.png&quot;
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>create_time: &quot;2021-10-16T17:28:59Z&quot;
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>edge_count: 4
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>lang_tag: &quot;en&quot;
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>meta: {azc: &#39;Amsterdam&#39;, posX: 528, posY: 800, role: &#39;speler&#39;, user_id: &#39;&#39;, …}
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>metadata: &quot;{\&quot;azc\&quot;: \&quot;Amsterdam\&quot;, \&quot;posX\&quot;: 528, \&quot;posY\&quot;: 800, \&quot;role\&quot;: \&quot;speler\&quot;, \&quot;user_id\&quot;: \&quot;\&quot;, \&quot;location\&quot;: \&quot;location1\&quot;}&quot;
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>update_time: &quot;2021-11-03T16:00:14Z&quot;
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>username: &quot;user11&quot;
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>}
+</span></code></pre></div>
 <h3 id="profile-object-with-url">Profile Object <strong>WITH URL</strong></h3>
-<pre><code>$Profile
-{
-avatar_url: &quot;avatar/5264dc23-a339-40db-bb84-e0849ded4e68/current.png&quot;
-create_time: &quot;2021-10-16T17:28:59Z&quot;
-edge_count: 4
-id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;
-lang_tag: &quot;en&quot;
-meta: {azc: 'Amsterdam', posX: 528, posY: 800, role: 'speler', user_id: '', …}
-metadata: &quot;{\&quot;azc\&quot;: \&quot;Amsterdam\&quot;, \&quot;posX\&quot;: 528, \&quot;posY\&quot;: 800, \&quot;role\&quot;: \&quot;speler\&quot;, \&quot;user_id\&quot;: \&quot;\&quot;, \&quot;location\&quot;: \&quot;location1\&quot;}&quot;
-update_time: &quot;2021-11-03T16:00:14Z&quot;
-url: &quot;https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/5264dc23-a339-40db-bb84-e0849ded4e68/current.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20211104%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20211104T120408Z&amp;X-Amz-Expires=86400&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=f85d6c618c85f2561803d2fcb86a5a2288d6b8bf7325d0c7effe8268df36d26c&quot;
-username: &quot;user11&quot;
-}
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$Profile
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>{
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>avatar_url: &quot;avatar/5264dc23-a339-40db-bb84-e0849ded4e68/current.png&quot;
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>create_time: &quot;2021-10-16T17:28:59Z&quot;
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>edge_count: 4
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>lang_tag: &quot;en&quot;
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>meta: {azc: &#39;Amsterdam&#39;, posX: 528, posY: 800, role: &#39;speler&#39;, user_id: &#39;&#39;, …}
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>metadata: &quot;{\&quot;azc\&quot;: \&quot;Amsterdam\&quot;, \&quot;posX\&quot;: 528, \&quot;posY\&quot;: 800, \&quot;role\&quot;: \&quot;speler\&quot;, \&quot;user_id\&quot;: \&quot;\&quot;, \&quot;location\&quot;: \&quot;location1\&quot;}&quot;
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>update_time: &quot;2021-11-03T16:00:14Z&quot;
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>url: &quot;https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/5264dc23-a339-40db-bb84-e0849ded4e68/current.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20211104%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20211104T120408Z&amp;X-Amz-Expires=86400&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=f85d6c618c85f2561803d2fcb86a5a2288d6b8bf7325d0c7effe8268df36d26c&quot;
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>username: &quot;user11&quot;
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>}
+</span></code></pre></div>
 <h2 id="3-no-the-session-is-not-empty-mainmenujs">3. No the Session is not empty -&gt; MainMenu.js</h2>
-<pre><code>   //* check if the user profile is loaded, to be able to send the player to the right location
-    if (typeof (manageSession.userProfile.meta.location) != &quot;undefined&quot;) {
-      this.launchLocation = manageSession.userProfile.meta.location + &quot;_Scene&quot;
-      console.log(this.launchLocation)
-
-      this.checkSceneExistence()
-    } else {
-      getAccount(&quot;&quot;, true)
-        .then(rec =&gt; {
-          manageSession.freshSession = rec
-          //! only set the menu button visible if the user data is downloaded!
-          this.launchLocation = manageSession.freshSession.meta.location
-+ &quot;_Scene&quot;
-          this.checkSceneExistence()
-        })
-    }
-  } //create
-
-  checkSceneExistence() {
-    //check if this.launchLocation exists in SCENES
-    const locationExists = SCENES.includes(this.launchLocation)
-    //if location does not exists; launch default location
-    if (!locationExists) {
-      //set to fail-back scene
-      manageSession.location = &quot;location1&quot;
-      manageSession.launchLocation = manageSession.location + &quot;_Scene&quot;
-    } else {
-      manageSession.location = manageSession.userProfile.meta.location
-    }
-    this.playBtn.setVisible(true)
-  }
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>   //* check if the user profile is loaded, to be able to send the player to the right location
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    if (typeof (manageSession.userProfile.meta.location) != &quot;undefined&quot;) {
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>      this.launchLocation = manageSession.userProfile.meta.location + &quot;_Scene&quot;
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>      console.log(this.launchLocation)
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>      this.checkSceneExistence()
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    } else {
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>      getAccount(&quot;&quot;, true)
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        .then(rec =&gt; {
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>          manageSession.freshSession = rec
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>          //! only set the menu button visible if the user data is downloaded!
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>          this.launchLocation = manageSession.freshSession.meta.location
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>+ &quot;_Scene&quot;
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>          this.checkSceneExistence()
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>        })
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    }
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>  } //create
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>  checkSceneExistence() {
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>    //check if this.launchLocation exists in SCENES
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>    const locationExists = SCENES.includes(this.launchLocation)
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>    //if location does not exists; launch default location
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>    if (!locationExists) {
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>      //set to fail-back scene
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>      manageSession.location = &quot;location1&quot;
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>      manageSession.launchLocation = manageSession.location + &quot;_Scene&quot;
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>    } else {
+</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a>      manageSession.location = manageSession.userProfile.meta.location
+</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a>    }
+</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a>    this.playBtn.setVisible(true)
+</span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a>  }
+</span></code></pre></div>
 <h2 id="4a-networkboot_scenejs">4A. networkBoot_Scene.js</h2>
-<pre><code>manageSession.createPlayer = true
-
- await manageSession.createSocket()
-      .then(rec =&gt; {
-        console.log(manageSession.launchLocation)
-        this.scene.launch(manageSession.launchLocation)
-})
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>manageSession.createPlayer = true
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a> await manageSession.createSocket()
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>      .then(rec =&gt; {
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>        console.log(manageSession.launchLocation)
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        this.scene.launch(manageSession.launchLocation)
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>})
+</span></code></pre></div>
 <h2 id="4b-managesessionjs">4B. manageSession.js</h2>
-<pre><code>createSocket
-
-socket.connect
-
-getStreamUsers (“join”, this.location)
-
-socket.onstreampresence
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>createSocket
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>socket.connect
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>getStreamUsers (“join”, this.location)
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>socket.onstreampresence
+</span></code></pre></div>
 <h2 id="5-locationx_scenejs">5. locationX_Scene.js</h2>
-<pre><code>manageSession.createPlayer = true
-
-loadAndCreatePlayerAvatar()
-attachtAvatarToPlayer()
-
-createOnlinePlayers()
-attachtAvatarToOnlinePlayer(player, preExisting)
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>manageSession.createPlayer = true
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>loadAndCreatePlayerAvatar()
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>attachtAvatarToPlayer()
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>createOnlinePlayers()
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>attachtAvatarToOnlinePlayer(player, preExisting)
+</span></code></pre></div>
 <h2 id="6-change-locations">6. CHANGE LOCATIONS</h2>
-<p><strong>LocationA:</strong></p>
-<pre><code>manageSession.socket.rpc(&quot;leave&quot;, locationA)
-
-
- setTimeout(() =&gt; {
-      manageSession.location = location
-      manageSession.createPlayer = true
-      manageSession.getStreamUsers(&quot;join&quot;, locationB)
-      this.scene.start(locationScene)
-    }, 1000)
-</code></pre>
-<p><strong>LocationB:</strong></p>
-<pre><code>manageSession.createPlayer = true
-
-loadAndCreatePlayerAvatar()
-attachtAvatarToPlayer()
-
-createOnlinePlayers()
-attachtAvatarToOnlinePlayer(player, preExisting)
-</code></pre>
+<p><strong>LocationA:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>manageSession.socket.rpc(&quot;leave&quot;, locationA)
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a> setTimeout(() =&gt; {
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>      manageSession.location = location
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>      manageSession.createPlayer = true
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>      manageSession.getStreamUsers(&quot;join&quot;, locationB)
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>      this.scene.start(locationScene)
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>    }, 1000)
+</span></code></pre></div>
+<strong>LocationB:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>manageSession.createPlayer = true
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>loadAndCreatePlayerAvatar()
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>attachtAvatarToPlayer()
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>createOnlinePlayers()
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>attachtAvatarToOnlinePlayer(player, preExisting)
+</span></code></pre></div></p>
 
 
 
@@ -3074,7 +3074,7 @@ attachtAvatarToOnlinePlayer(player, preExisting)
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>

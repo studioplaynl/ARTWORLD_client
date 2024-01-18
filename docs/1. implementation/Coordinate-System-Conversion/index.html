@@ -2662,7 +2662,7 @@
 <p>ARTWORLD needs to be able to grow from time to time. It is better to have worlds where 0, 0 is the center, because then coordinates remain valid when worlds become bigger. 0 , 0 is still the center etc</p>
 <p>This means that there needs to be a conversion between what I call ARTWORLDcoordinates (0, 0 is center) and phaser2Dcoordinates(0,0 is top left)</p>
 <p>It is a simple conversion when we know the worldSize. </p>
-<pre><code>artworldVectorToPhaser2D(worldSize, positionVector) {
+<div class="language-text highlight"><pre><span></span><code>artworldVectorToPhaser2D(worldSize, positionVector) {
     const worldSizeX = worldSize.x
     const worldSizeY = worldSize.y
 
@@ -2683,7 +2683,7 @@ Phaser2DVectorToArtworld(worldSize, x, y) {
     positionVector.y = positionVector.y - (worldSizeY / 2)
     return positionVector
 }
-</code></pre>
+</code></pre></div>
 <p>So we need to define a wordSize(x,y) in each scene, this way our ARTWORLDcoordinates stay consistent.</p>
 <p>ARTWORLDcoordinates are especially important when we think where to place 'houses', artworks, etc, and when we store the last position of the player.</p>
 <hr />
@@ -2742,12 +2742,12 @@ sendMovement(scene) {<br />
     //console.log(scene)
     posX = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.x, posX)
     posY = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.y, posY)</p>
-<pre><code>var opCode = 1;
+<div class="language-text highlight"><pre><span></span><code>var opCode = 1;
 var data =
-  '{ "posX": ' + posX + ', "posY": ' + posY + ', "location": "' + this.location + '" }'
+  &#39;{ &quot;posX&quot;: &#39; + posX + &#39;, &quot;posY&quot;: &#39; + posY + &#39;, &quot;location&quot;: &quot;&#39; + this.location + &#39;&quot; }&#39;
 
-this.socket.rpc("move_position", data)
-</code></pre>
+this.socket.rpc(&quot;move_position&quot;, data)
+</code></pre></div>
 <p>}` </p>
 
 
@@ -2795,7 +2795,7 @@ this.socket.rpc("move_position", data)
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>

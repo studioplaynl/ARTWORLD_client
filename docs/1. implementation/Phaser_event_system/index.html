@@ -2708,26 +2708,24 @@
 <hr />
 <h3 id="scene-event-senders-and-listeners">Scene event senders and listeners</h3>
 <p>Here is our event listener, the 'handler' function. The 'this' argument is the context.</p>
-<pre><code>    this.events.on('chatsubo', this.handler, this)
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code>    this.events.on(&#39;chatsubo&#39;, this.handler, this)
+</code></pre></div>
 <p>We'll use the Scenes own EventEmitter to dispatch our event</p>
-<pre><code>    this.events.emit('chatsubo')
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code>    this.events.emit(&#39;chatsubo&#39;)
+</code></pre></div>
 <h3 id="event-arguments">Event arguments</h3>
 <p>The event sends 2 arguments: 200 and 300</p>
-<pre><code>this.events.emit('addImage', 200, 300)
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code>this.events.emit(&#39;addImage&#39;, 200, 300)
+</code></pre></div>
 <p>The event handles sends the arguments on to the handler function</p>
 <p>```this.events.on('addImage', handler, this)</p>
 <p>function handler (x, y)
 {
     this.add.image(x, y, 'plush')
-}</p>
-<pre><code>
-### Create Event Emitter
-
-</code></pre>
-<p>//  Create our own EventEmitter instance
+}
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>### Create Event Emitter
+</span></code></pre></div>
+//  Create our own EventEmitter instance
 var emitter = new Phaser.Events.EventEmitter();</p>
 <p>//  Set-up an event handler
 emitter.on('addImage', this.handler, this);</p>
@@ -2743,8 +2741,8 @@ emitter.emit('addImage', 600, 300);
 ```</p>
 <h3 id="once-vs-on">Once vs On</h3>
 <p>This handler will only be called once, no matter how many times the event fires</p>
-<pre><code>    this.events.once('addImage', this.handler, this)
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code>    this.events.once(&#39;addImage&#39;, this.handler, this)
+</code></pre></div>
 <hr />
 <p>background info:</p>
 <p><a href="https://www.youtube.com/watch?v=vjlXPXLy5KU&amp;ab_channel=WClarkson">Events dispatch class </a></p>
@@ -2804,7 +2802,7 @@ https://rexrainbow.github.io/phaser3-rex-notes/docs/site/tween/#play-task</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>

@@ -2599,23 +2599,23 @@
 
   <h1>Home and server OBJECT</h1>
 
-<p>home object:    </p>
-<pre><code>collection: &quot;home&quot;
-create_time: &quot;2022-01-19T16:31:43Z&quot;
-key: &quot;Amsterdam&quot;
-permission_read: 2
-permission_write: 1
-update_time: &quot;2022-01-19T16:32:27Z&quot;
-user_id: &quot;4c0003f0-3e3f-4b49-8aad-10db98f2d3dc&quot;
-value:    
-    posX: 184.83
-    posY: 312.66
-    url: &quot;home/stock/portalBlauw.png&quot;
-    username: &quot;user22&quot;
-    version: 0
-
-version: &quot;0579e989a16f3e228a10d49d13dc3da6&quot;
-</code></pre>
+<p>home object:  <br />
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>collection: &quot;home&quot;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>create_time: &quot;2022-01-19T16:31:43Z&quot;
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>key: &quot;Amsterdam&quot;
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>permission_read: 2
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>permission_write: 1
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>update_time: &quot;2022-01-19T16:32:27Z&quot;
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>user_id: &quot;4c0003f0-3e3f-4b49-8aad-10db98f2d3dc&quot;
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>value:    
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    posX: 184.83
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    posY: 312.66
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    url: &quot;home/stock/portalBlauw.png&quot;
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    username: &quot;user22&quot;
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    version: 0
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>version: &quot;0579e989a16f3e228a10d49d13dc3da6&quot;
+</span></code></pre></div></p>
 <ol>
 <li>Get array of home objects =&gt; create home array <strong>scene.homes</strong> //  <strong>scene.homesRepresented = []</strong></li>
 <li>filter by key = location (eg Amsterdam) =&gt; <strong>scene.homes</strong></li>
@@ -2625,25 +2625,25 @@ version: &quot;0579e989a16f3e228a10d49d13dc3da6&quot;
 </ol>
 <hr />
 <p>In Phaser we get a global download error event, so we are handling that in a special way:</p>
-<pre><code>  await convertImage(url, &quot;128&quot;, &quot;png&quot;)
-            .then((rec) =&gt; {
-                //console.log(&quot;rec&quot;, rec)
-                // load all the images to phaser
-                scene.load.image(homeImageKey, rec)
-                    .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) =&gt; {
-                        //delete from this.resolveErrorObjectArray
-                        this.resolveErrorObjectArray = this.resolveErrorObjectArray.filter((obj) =&gt; obj.imageKey !== homeImageKey)
-                       // console.log(&quot;this.resolveErrorObjectArray&quot;, this.resolveErrorObjectArray)
-                        //create the home
-                        this.createHome(element, index, homeImageKey, scene)
-                    }, this)
-
-                // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
-                this.resolveErrorObjectArray.push({ loadFunction: &quot;getHomeImage&quot;, element: element, index: index, imageKey: homeImageKey, scene: scene })
-
-                scene.load.start() // start loading the image in memory
-            })
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>  await convertImage(url, &quot;128&quot;, &quot;png&quot;)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>            .then((rec) =&gt; {
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>                //console.log(&quot;rec&quot;, rec)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>                // load all the images to phaser
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>                scene.load.image(homeImageKey, rec)
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>                    .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) =&gt; {
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>                        //delete from this.resolveErrorObjectArray
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                        this.resolveErrorObjectArray = this.resolveErrorObjectArray.filter((obj) =&gt; obj.imageKey !== homeImageKey)
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>                       // console.log(&quot;this.resolveErrorObjectArray&quot;, this.resolveErrorObjectArray)
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>                        //create the home
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>                        this.createHome(element, index, homeImageKey, scene)
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>                    }, this)
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>                // put the file in the loadErrorCache, in case it doesn&#39;t load, it get&#39;s removed when it is loaded successfully
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>                this.resolveErrorObjectArray.push({ loadFunction: &quot;getHomeImage&quot;, element: element, index: index, imageKey: homeImageKey, scene: scene })
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>                scene.load.start() // start loading the image in memory
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>            })
+</span></code></pre></div>
 <p>We push the element we want to download into a global resolveErrorObjectArray with all the relevant information:  <br />
 1. the element (object)
 2. the index of the array it is being handled in 
@@ -2651,40 +2651,40 @@ version: &quot;0579e989a16f3e228a10d49d13dc3da6&quot;
 4. the scene it is being used in
 5. the loadFunction</p>
 <p>The loadFunction we use in the error handling function to inject the image in the right array and function to that the image is put in the right place:</p>
-<pre><code>resolveLoadError(offendingFile) {
-        // element, index, homeImageKey, offendingFile, scene
-        this.resolveErrorObjectArray //all loading images
-
-        let resolveErrorObject = this.resolveErrorObjectArray.find(o =&gt; o.imageKey == offendingFile.key)
-
-        let loadFunction = resolveErrorObject.loadFunction
-        let element = resolveErrorObject.element
-        let index = resolveErrorObject.index
-        let imageKey = offendingFile.key
-        let scene = resolveErrorObject.scene
-
-       // console.log(&quot;element, index, homeImageKey, offendingFile, scene&quot;, element, index, imageKey, scene)
-        switch (loadFunction) {
-            case (&quot;getHomeImage&quot;):
-                console.log(&quot;load offendingFile again&quot;, imageKey)
-
-                scene.load.image(imageKey, './assets/ball_grey.png')
-                    .on(`filecomplete-image-${imageKey}`, (imageKey) =&gt; {
-                        //delete from this.resolveErrorObjectArray
-                        this.resolveErrorObjectArray = this.resolveErrorObjectArray.filter((obj) =&gt; obj.imageKey !== imageKey)
-                        console.log(&quot;this.resolveErrorObjectArray&quot;, this.resolveErrorObjectArray)
-
-                        //create the home
-                        this.createHome(element, index, imageKey, scene);
-                    }, this)
-                scene.load.start()
-                break
-
-            default:
-                console.log(&quot;please state fom which function the loaderror occured!&quot;)
-        }
-    }
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>resolveLoadError(offendingFile) {
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>        // element, index, homeImageKey, offendingFile, scene
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        this.resolveErrorObjectArray //all loading images
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        let resolveErrorObject = this.resolveErrorObjectArray.find(o =&gt; o.imageKey == offendingFile.key)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        let loadFunction = resolveErrorObject.loadFunction
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        let element = resolveErrorObject.element
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        let index = resolveErrorObject.index
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        let imageKey = offendingFile.key
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        let scene = resolveErrorObject.scene
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>       // console.log(&quot;element, index, homeImageKey, offendingFile, scene&quot;, element, index, imageKey, scene)
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        switch (loadFunction) {
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>            case (&quot;getHomeImage&quot;):
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>                console.log(&quot;load offendingFile again&quot;, imageKey)
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>                scene.load.image(imageKey, &#39;./assets/ball_grey.png&#39;)
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>                    .on(`filecomplete-image-${imageKey}`, (imageKey) =&gt; {
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>                        //delete from this.resolveErrorObjectArray
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>                        this.resolveErrorObjectArray = this.resolveErrorObjectArray.filter((obj) =&gt; obj.imageKey !== imageKey)
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>                        console.log(&quot;this.resolveErrorObjectArray&quot;, this.resolveErrorObjectArray)
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>                        //create the home
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>                        this.createHome(element, index, imageKey, scene);
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>                    }, this)
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>                scene.load.start()
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>                break
+</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>
+</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>            default:
+</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>                console.log(&quot;please state fom which function the loaderror occured!&quot;)
+</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>        }
+</span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a>    }
+</span></code></pre></div>
 
 
 
@@ -2731,7 +2731,7 @@ version: &quot;0579e989a16f3e228a10d49d13dc3da6&quot;
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>

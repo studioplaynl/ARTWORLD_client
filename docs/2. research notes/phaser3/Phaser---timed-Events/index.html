@@ -2602,17 +2602,17 @@
   <h1>Phaser   timed Events</h1>
 
 <p>Run a function on a timer, optionally looped</p>
-<pre><code>timedEvent = this.time.addEvent({ delay: 50, callback: reduceHealth, callbackScope: this, loop: true });
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>timedEvent = this.time.addEvent({ delay: 50, callback: reduceHealth, callbackScope: this, loop: true });
+</span></code></pre></div>
 <p>Remove the timed event:</p>
-<pre><code>timedEvent.remove();
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>timedEvent.remove();
+</span></code></pre></div>
 <p>Pass extra arguments to the timed event:</p>
-<pre><code>this.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], loop: false })
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>this.time.addEvent({ delay: 2000, callback: this.enterLocationDialogBox, args: [player, location, show], loop: false })
+</span></code></pre></div>
 <p>standard javascript delay:</p>
-<pre><code>setTimeout(this.enterLocationDialogBox(player, location, show), 5000);
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>setTimeout(this.enterLocationDialogBox(player, location, show), 5000);
+</span></code></pre></div>
 <p>Rex Plugin:
 https://rexrainbow.github.io/phaser3-rex-notes/docs/site/timer/</p>
 
@@ -2661,7 +2661,7 @@ https://rexrainbow.github.io/phaser3-rex-notes/docs/site/timer/</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>

@@ -3,12 +3,27 @@ docs_dir: 'docs_files_md'
 site_dir: 'docs'
 theme:
   name: material
+  features:
+    - content.code.annotate
   shortcuts:
     help: 191    # ?
     next: 78     # n
     previous: 80 # p
     search: 83   # s
-  highlightjs: true
-  hljs_languages:
-    - yaml
-    - rust
+markdown_extensions:
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true

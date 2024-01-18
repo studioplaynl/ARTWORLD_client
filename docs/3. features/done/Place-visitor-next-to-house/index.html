@@ -2685,48 +2685,48 @@ $SelectedOnlinePlayer.meta.PosY = -30</p>
 <hr />
 <p>Case 1: current player</p>
 <p>itemsbar.svelte</p>
-<pre><code>     &lt;button
-        on:click=&quot;{() =&gt; {
-          goHome();
-        }}&quot;
-        class=&quot;avatar&quot;
-      &gt;
-        &lt;img src=&quot;{$myHome.url}&quot; alt=&quot;My Home&quot; /&gt;
-      &lt;/button&gt;
-</code></pre>
-<pre><code>  async function goHome(id) {
-    if (typeof id === 'string') {
-      SceneSwitcher.switchScene('DefaultUserHome', id);
-    } else if ($ShowItemsBar) {
-      SceneSwitcher.switchScene(
-        'DefaultUserHome',
-        ManageSession.userProfile.id,
-      );
-    }
-  }
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>     &lt;button
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>        on:click=&quot;{() =&gt; {
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>          goHome();
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        }}&quot;
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        class=&quot;avatar&quot;
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>      &gt;
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        &lt;img src=&quot;{$myHome.url}&quot; alt=&quot;My Home&quot; /&gt;
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>      &lt;/button&gt;
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>  async function goHome(id) {
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    if (typeof id === &#39;string&#39;) {
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>      SceneSwitcher.switchScene(&#39;DefaultUserHome&#39;, id);
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    } else if ($ShowItemsBar) {
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>      SceneSwitcher.switchScene(
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        &#39;DefaultUserHome&#39;,
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        ManageSession.userProfile.id,
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>      );
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    }
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>  }
+</span></code></pre></div>
 <p>We can switch to the scene where the home is (Profile.meta.Azc), we can get the PosX and PosY of the home by querying the Home object, then pass</p>
-<pre><code>push(`/?location=${SCENE}&amp;x=0&amp;y=0`);
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>push(`/?location=${SCENE}&amp;x=0&amp;y=0`);
+</span></code></pre></div>
 <p>Home Object is being loaded in the beginning as <strong>userHouseObject</strong></p>
-<pre><code>userHouseObject = {
-    &quot;collection&quot;: &quot;home&quot;,
-    &quot;key&quot;: &quot;GreenSquare&quot;,
-    &quot;permission_read&quot;: 2,
-    &quot;permission_write&quot;: 1,
-    &quot;value&quot;: {
-        &quot;url&quot;: &quot;house/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-01-03T21_08_34_BlauwChirurgVis.png&quot;,
-        &quot;posX&quot;: -1085.2499376200167,
-        &quot;posY&quot;: 84.58334073217338,
-        &quot;version&quot;: 2,
-        &quot;username&quot;: &quot;user11&quot;
-    },
-    &quot;version&quot;: &quot;c812e30ac619377abdf4522374739a7f&quot;,
-    &quot;user_id&quot;: &quot;f011a5dc-901a-42c0-9589-587b389d1e3e&quot;,
-    &quot;create_time&quot;: &quot;2022-08-07T09:20:32Z&quot;,
-    &quot;update_time&quot;: &quot;2023-01-03T21:09:04Z&quot;
-} 
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>userHouseObject = {
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    &quot;collection&quot;: &quot;home&quot;,
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    &quot;key&quot;: &quot;GreenSquare&quot;,
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    &quot;permission_read&quot;: 2,
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    &quot;permission_write&quot;: 1,
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    &quot;value&quot;: {
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        &quot;url&quot;: &quot;house/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-01-03T21_08_34_BlauwChirurgVis.png&quot;,
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>        &quot;posX&quot;: -1085.2499376200167,
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        &quot;posY&quot;: 84.58334073217338,
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        &quot;version&quot;: 2,
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>        &quot;username&quot;: &quot;user11&quot;
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    },
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    &quot;version&quot;: &quot;c812e30ac619377abdf4522374739a7f&quot;,
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    &quot;user_id&quot;: &quot;f011a5dc-901a-42c0-9589-587b389d1e3e&quot;,
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    &quot;create_time&quot;: &quot;2022-08-07T09:20:32Z&quot;,
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    &quot;update_time&quot;: &quot;2023-01-03T21:09:04Z&quot;
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>} 
+</span></code></pre></div>
 <hr />
 <p>There is a bug in switching user from location to location that has to be fixed first</p>
 <p>https://artworlddev.maartenvanderglas.com/?p=180</p>
@@ -2780,7 +2780,7 @@ $SelectedOnlinePlayer.meta.PosY = -30</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>

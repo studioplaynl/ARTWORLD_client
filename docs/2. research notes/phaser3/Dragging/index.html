@@ -2697,7 +2697,7 @@
   <h1>Dragging</h1>
 
 <h2 id="via-general-purpose-thisinputondrag">Via general purpose this.input.on(‘drag’</h2>
-<pre><code>var container = this.add.container(400, 300, [ bg, text ]);
+<div class="language-text highlight"><pre><span></span><code>var container = this.add.container(400, 300, [ bg, text ]);
 
 container.setSize(bg.width, bg.height);
 
@@ -2705,44 +2705,44 @@ container.setInteractive();
 
 this.input.setDraggable(container);
 
-this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+this.input.on(&#39;drag&#39;, function (pointer, gameObject, dragX, dragY) {
 
 gameObject.x = dragX;
 gameObject.y = dragY;
 
 });
-</code></pre>
+</code></pre></div>
 <h2 id="2-via-per-object-setinteractive-draggable-true">2. Via per object .setInteractive( { draggable: true })</h2>
-<pre><code>this.mario_star.setInteractive({ draggable: true })
+<div class="language-text highlight"><pre><span></span><code>this.mario_star.setInteractive({ draggable: true })
 
-this.mario_star.on('dragstart', function (pointer) {
+this.mario_star.on(&#39;dragstart&#39;, function (pointer) {
         this.setTint(0xff0000);
     })
 
-this.mario_star.on('drag', function (pointer, dragX, dragY) {
+this.mario_star.on(&#39;drag&#39;, function (pointer, dragX, dragY) {
         this.x = dragX;
         this.y = dragY;
     })
 
-this.mario_star.on('dragend', function (pointer) {
+this.mario_star.on(&#39;dragend&#39;, function (pointer) {
 
         this.clearTint();
 
     })
-</code></pre>
+</code></pre></div>
 <h2 id="3-via-general-input-check-but-with-with-checking-turning-onoff-listeners">3. Via general input check but with with checking, turning on/off listeners</h2>
 <p><strong><a href="https://www.youtube.com/watch?v=t56DvozbZX4&amp;ab_channel=WClarkson">https://www.youtube.com/watch?v=t56DvozbZX4&amp;ab_channel=WClarkson</a></strong></p>
-<pre><code>var dot = this.add.image(xx, yy, "dot" +i
+<div class="language-text highlight"><pre><span></span><code>var dot = this.add.image(xx, yy, &quot;dot&quot; +i
 dot.setInteractive()
 }
-this.input.on('pointerdown', this.startDrag, this)
+this.input.on(&#39;pointerdown&#39;, this.startDrag, this)
 }
 
 startDrag(pointer, targets){
-this.input.off('pointerdown', this.startDrag, this) // turn off input when there is already a target(!)
+this.input.off(&#39;pointerdown&#39;, this.startDrag, this) // turn off input when there is already a target(!)
 this.dragObj = targets[0] //first gameObject that is hit by the mouse pointer
-this.input.on('pointermove', this.doDrag, this)
-this.input.on('pointerup', this.stopDrag, this)
+this.input.on(&#39;pointermove&#39;, this.doDrag, this)
+this.input.on(&#39;pointerup&#39;, this.stopDrag, this)
 }
 
 doDrag(pointer) {
@@ -2751,11 +2751,11 @@ this.dragObj.y = pointer.y
 }
 
 stopDrag(){
-this.input.on('pointerdown', this.startDrag, this) // turn back on input for pointerdown(!)
-this.input.off('pointermove', this.doDrag, this) // turn off drag
-this.input.off('pointerup', this.stopDrag, this)
+this.input.on(&#39;pointerdown&#39;, this.startDrag, this) // turn back on input for pointerdown(!)
+this.input.off(&#39;pointermove&#39;, this.doDrag, this) // turn off drag
+this.input.off(&#39;pointerup&#39;, this.stopDrag, this)
 }
-</code></pre>
+</code></pre></div>
 
 
 
@@ -2802,7 +2802,7 @@ this.input.off('pointerup', this.stopDrag, this)
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>

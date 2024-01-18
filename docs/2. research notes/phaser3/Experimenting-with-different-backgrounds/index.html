@@ -2760,133 +2760,130 @@
 <hr />
 <h2 id="dot-repeating-with-grid-methods">Dot repeating with grid methods</h2>
 <p><img alt="" src="https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-21-16-41-47.png" /></p>
-<pre><code>let group = this.add.group({ key: 'dot', repeat: 8000, setX: { x: 0, y: 0, stepX: 64 } });
-
-Phaser.Actions.GridAlign(group.getChildren(), { width: 100, height: 200, cellWidth: 64, cellHeight: 64, x: 16, y: 16 });
-</code></pre>
-<p>There is not a sharpness advantage, because the SVG is being converted to an image when loading. You can preload the SVG scaled, that will actually create a scaled up image.
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>let group = this.add.group({ key: &#39;dot&#39;, repeat: 8000, setX: { x: 0, y: 0, stepX: 64 } });
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Phaser.Actions.GridAlign(group.getChildren(), { width: 100, height: 200, cellWidth: 64, cellHeight: 64, x: 16, y: 16 });
+</span></code></pre></div>
+There is not a sharpness advantage, because the SVG is being converted to an image when loading. You can preload the SVG scaled, that will actually create a scaled up image.
 See: https://phaser.io/examples/v3/view/loader/svg/load-svg-with-scale</p>
 <hr />
 <h2 id="graphics-elements">graphics elements</h2>
-<pre><code>
-let circles = [] &lt;br&gt;&lt;br&gt;const graphics = this.add.graphics();&lt;br&gt;&lt;br&gt;graphics.fillStyle(0xffffff); &lt;br&gt;graphics.fillRect(0, 0, 3000, 3000);&lt;br&gt;&lt;br&gt;graphics.fillStyle(color, alpha);
-
-const offset = 50 &lt;br&gt;for (let i = 0; i &amp;lt; 2000; i += offset) { &lt;br&gt;for (let j = 0; j &amp;lt; 2000; j += offset) { &lt;br&gt;circles[i] = graphics.fillCircle(i, j, 2); 
-
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>let circles = [] &lt;br&gt;&lt;br&gt;const graphics = this.add.graphics();&lt;br&gt;&lt;br&gt;graphics.fillStyle(0xffffff); &lt;br&gt;graphics.fillRect(0, 0, 3000, 3000);&lt;br&gt;&lt;br&gt;graphics.fillStyle(color, alpha);
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>const offset = 50 &lt;br&gt;for (let i = 0; i &amp;lt; 2000; i += offset) { &lt;br&gt;for (let j = 0; j &amp;lt; 2000; j += offset) { &lt;br&gt;circles[i] = graphics.fillCircle(i, j, 2); 
+</span></code></pre></div>
 <p>This works but there is slowness when loading the array, and when the player is moving accross the field the graphics scrolling is not smooth</p>
 <hr />
 <h2 id="this-works-really-well">This works really well:</h2>
 <h2 id="here-is-a-way-to-generate-patterns-on-a-texture-with-an-array">Here is a way to generate patterns on a texture with an array:</h2>
-<pre><code>et cross = [
-'.....',
- '..1..',
- '.111.',
- '..1..',
- '.....',
- ]
-
-//generate the texture from the array 
-
-this.textures.generate('cross', { data: cross, pixelWidth: 4 });
-
-//display the texture on an image 
-
-const gridWidth = 4000 
-const offset = 40
-
-for (let i=0;i&lt; gridWidth; i += offset){ for (let j=0;j&lt; gridWidth; j += offset){ this.add.image(i, j, 'cross').setOrigin(0, 1); } }
-</code></pre>
-<p><img alt="" src="https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-24-15-35-59.png" /></p>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>et cross = [
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>&#39;.....&#39;,
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a> &#39;..1..&#39;,
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a> &#39;.111.&#39;,
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a> &#39;..1..&#39;,
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a> &#39;.....&#39;,
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a> ]
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>//generate the texture from the array 
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>this.textures.generate(&#39;cross&#39;, { data: cross, pixelWidth: 4 });
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>//display the texture on an image 
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>const gridWidth = 4000 
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>const offset = 40
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>for (let i=0;i&lt; gridWidth; i += offset){ for (let j=0;j&lt; gridWidth; j += offset){ this.add.image(i, j, &#39;cross&#39;).setOrigin(0, 1); } }
+</span></code></pre></div>
+<img alt="" src="https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-24-15-35-59.png" /></p>
 <hr />
 <p>Draw a shape to a texture, and repeat it there.</p>
 <p>Slow to generate, but fast after that.</p>
 <p><img alt="" src="https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-27-12-05-01.png" /></p>
-<pre><code>// //display the texture on an image
-    const gridWidth = 4000
-    const offset = 50
-
-    let rt = this.add.renderTexture(0, 0, gridWidth, gridWidth);
-    let circle = this.add.circle(-1000, -1000, 6, 0x6666ff)
-    for (let i = 0; i &lt; gridWidth; i += offset) {
-      for (let j = 0; j &lt; gridWidth; j += offset) {
-        rt.draw(circle, i, j);
-      }
-    }
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>// //display the texture on an image
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    const gridWidth = 4000
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    const offset = 50
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    let rt = this.add.renderTexture(0, 0, gridWidth, gridWidth);
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    let circle = this.add.circle(-1000, -1000, 6, 0x6666ff)
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    for (let i = 0; i &lt; gridWidth; i += offset) {
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>      for (let j = 0; j &lt; gridWidth; j += offset) {
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        rt.draw(circle, i, j);
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>      }
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    }
+</span></code></pre></div>
 <hr />
 <p><img alt="" src="https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-27-13-40-23.png" /></p>
-<pre><code>
-let cross = [
-      '.....',
-      '..1..',
-      '.111.',
-      '..1..',
-      '.....',
-
-    ]
-
-    //generate the texture from the array
-    this.textures.generate('cross', { data: cross, pixelWidth: 2 });
-
-    //display the texture on an image
-    const gridWidth = 4000
-    const offset = 50
-
-    for (let i = 0; i &lt; gridWidth; i += offset) {
-      for (let j = 0; j &lt; gridWidth; j += offset) {
-        this.add.image(i, j, 'cross').setOrigin(0, 1);
-      }
-    }
-
-    let graphics = this.add.graphics();
-
-    graphics.fillStyle(0x0000ff, 1);
-
-    graphics.fillCircle(800, 300, 200);
-
-    for (let i = 0; i &lt; 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
-      graphics.beginPath();
-      graphics.moveTo(800, 200 + i);
-      graphics.lineTo(1200, 200 + i);
-      graphics.closePath();
-      graphics.strokePath();
-    }
-
-
-    for (let i = 0; i &lt; 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
-      graphics.beginPath();
-      graphics.moveTo(900 + i, 150);
-      graphics.lineTo(900 + i, 550);
-      graphics.closePath();
-      graphics.strokePath();
-    }
-
-
-
-    let rectangle = this.add.graphics();
-    rectangle.setVisible(false);
-    rectangle.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
-    rectangle.fillRect(0, 0, 400, 400);
-
-    let rt = this.add.renderTexture(200, 100, 600, 600);
-    let rt2 = this.add.renderTexture(100, 600, 600, 600);
-
-    rt.draw(rectangle);
-    rt2.draw(rectangle);
-
-    let eraser = this.add.circle(0, 0, 190, 0x000000);
-    eraser.setVisible(false);
-
-    rt.erase(eraser, 200, 200);
-
-    rt2.erase(rt, 0, 0)
-
-    rt2.x = 400
-    rt2.y = 600
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>let cross = [
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>      &#39;.....&#39;,
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>      &#39;..1..&#39;,
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>      &#39;.111.&#39;,
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>      &#39;..1..&#39;,
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>      &#39;.....&#39;,
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    ]
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    //generate the texture from the array
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    this.textures.generate(&#39;cross&#39;, { data: cross, pixelWidth: 2 });
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    //display the texture on an image
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>    const gridWidth = 4000
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    const offset = 50
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    for (let i = 0; i &lt; gridWidth; i += offset) {
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>      for (let j = 0; j &lt; gridWidth; j += offset) {
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>        this.add.image(i, j, &#39;cross&#39;).setOrigin(0, 1);
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>      }
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>    }
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>    let graphics = this.add.graphics();
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>    graphics.fillStyle(0x0000ff, 1);
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>    graphics.fillCircle(800, 300, 200);
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a>
+</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a>    for (let i = 0; i &lt; 250; i += 60) {
+</span><span id="__span-4-30"><a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a>      graphics.lineStyle(5, 0xFF00FF, 1.0);
+</span><span id="__span-4-31"><a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a>      graphics.beginPath();
+</span><span id="__span-4-32"><a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a>      graphics.moveTo(800, 200 + i);
+</span><span id="__span-4-33"><a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a>      graphics.lineTo(1200, 200 + i);
+</span><span id="__span-4-34"><a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a>      graphics.closePath();
+</span><span id="__span-4-35"><a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a>      graphics.strokePath();
+</span><span id="__span-4-36"><a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a>    }
+</span><span id="__span-4-37"><a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a>
+</span><span id="__span-4-38"><a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a>
+</span><span id="__span-4-39"><a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a>    for (let i = 0; i &lt; 250; i += 60) {
+</span><span id="__span-4-40"><a id="__codelineno-4-40" name="__codelineno-4-40" href="#__codelineno-4-40"></a>      graphics.lineStyle(5, 0xFF00FF, 1.0);
+</span><span id="__span-4-41"><a id="__codelineno-4-41" name="__codelineno-4-41" href="#__codelineno-4-41"></a>      graphics.beginPath();
+</span><span id="__span-4-42"><a id="__codelineno-4-42" name="__codelineno-4-42" href="#__codelineno-4-42"></a>      graphics.moveTo(900 + i, 150);
+</span><span id="__span-4-43"><a id="__codelineno-4-43" name="__codelineno-4-43" href="#__codelineno-4-43"></a>      graphics.lineTo(900 + i, 550);
+</span><span id="__span-4-44"><a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a>      graphics.closePath();
+</span><span id="__span-4-45"><a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a>      graphics.strokePath();
+</span><span id="__span-4-46"><a id="__codelineno-4-46" name="__codelineno-4-46" href="#__codelineno-4-46"></a>    }
+</span><span id="__span-4-47"><a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a>
+</span><span id="__span-4-48"><a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a>
+</span><span id="__span-4-49"><a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a>
+</span><span id="__span-4-50"><a id="__codelineno-4-50" name="__codelineno-4-50" href="#__codelineno-4-50"></a>    let rectangle = this.add.graphics();
+</span><span id="__span-4-51"><a id="__codelineno-4-51" name="__codelineno-4-51" href="#__codelineno-4-51"></a>    rectangle.setVisible(false);
+</span><span id="__span-4-52"><a id="__codelineno-4-52" name="__codelineno-4-52" href="#__codelineno-4-52"></a>    rectangle.fillGradientStyle(0xff0000, 0xff0000, 0xffff00, 0xffff00, 1);
+</span><span id="__span-4-53"><a id="__codelineno-4-53" name="__codelineno-4-53" href="#__codelineno-4-53"></a>    rectangle.fillRect(0, 0, 400, 400);
+</span><span id="__span-4-54"><a id="__codelineno-4-54" name="__codelineno-4-54" href="#__codelineno-4-54"></a>
+</span><span id="__span-4-55"><a id="__codelineno-4-55" name="__codelineno-4-55" href="#__codelineno-4-55"></a>    let rt = this.add.renderTexture(200, 100, 600, 600);
+</span><span id="__span-4-56"><a id="__codelineno-4-56" name="__codelineno-4-56" href="#__codelineno-4-56"></a>    let rt2 = this.add.renderTexture(100, 600, 600, 600);
+</span><span id="__span-4-57"><a id="__codelineno-4-57" name="__codelineno-4-57" href="#__codelineno-4-57"></a>
+</span><span id="__span-4-58"><a id="__codelineno-4-58" name="__codelineno-4-58" href="#__codelineno-4-58"></a>    rt.draw(rectangle);
+</span><span id="__span-4-59"><a id="__codelineno-4-59" name="__codelineno-4-59" href="#__codelineno-4-59"></a>    rt2.draw(rectangle);
+</span><span id="__span-4-60"><a id="__codelineno-4-60" name="__codelineno-4-60" href="#__codelineno-4-60"></a>
+</span><span id="__span-4-61"><a id="__codelineno-4-61" name="__codelineno-4-61" href="#__codelineno-4-61"></a>    let eraser = this.add.circle(0, 0, 190, 0x000000);
+</span><span id="__span-4-62"><a id="__codelineno-4-62" name="__codelineno-4-62" href="#__codelineno-4-62"></a>    eraser.setVisible(false);
+</span><span id="__span-4-63"><a id="__codelineno-4-63" name="__codelineno-4-63" href="#__codelineno-4-63"></a>
+</span><span id="__span-4-64"><a id="__codelineno-4-64" name="__codelineno-4-64" href="#__codelineno-4-64"></a>    rt.erase(eraser, 200, 200);
+</span><span id="__span-4-65"><a id="__codelineno-4-65" name="__codelineno-4-65" href="#__codelineno-4-65"></a>
+</span><span id="__span-4-66"><a id="__codelineno-4-66" name="__codelineno-4-66" href="#__codelineno-4-66"></a>    rt2.erase(rt, 0, 0)
+</span><span id="__span-4-67"><a id="__codelineno-4-67" name="__codelineno-4-67" href="#__codelineno-4-67"></a>
+</span><span id="__span-4-68"><a id="__codelineno-4-68" name="__codelineno-4-68" href="#__codelineno-4-68"></a>    rt2.x = 400
+</span><span id="__span-4-69"><a id="__codelineno-4-69" name="__codelineno-4-69" href="#__codelineno-4-69"></a>    rt2.y = 600
+</span></code></pre></div>
 <hr />
 
 
@@ -2934,7 +2931,7 @@ let cross = [
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>

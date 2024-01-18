@@ -2605,51 +2605,51 @@
 <p>http://labs.phaser.io/index.html?dir=physics/arcade/&amp;q=</p>
 <p><a href="https://www.youtube.com/watch?v=7rcw_9Bqso0&amp;ab_channel=WClarkson" title="collision shape and size"><img alt="alt text" src="https://img.youtube.com/vi/7rcw_9Bqso0/mqdefault.jpg" /></a></p>
 <p>The video explains how to set the size of the collision rectangle</p>
-<p>Eg star object set the box to 100, 200 pix, true sets it in the middle</p>
-<pre><code>star.body.setSize(100,200, true);
-</code></pre>
-<p>Change the shape to a circle:</p>
-<pre><code>star.body.setCircle(100, -100 + star.body.halfHeight, -100 + star.body.halfWidth)
-</code></pre>
+<p>Eg star object set the box to 100, 200 pix, true sets it in the middle
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>star.body.setSize(100,200, true);
+</span></code></pre></div>
+Change the shape to a circle:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>star.body.setCircle(100, -100 + star.body.halfHeight, -100 + star.body.halfWidth)
+</span></code></pre></div></p>
 <hr />
 <p>Center the circle</p>
 <p>https://phaser.discourse.group/t/circular-collider-using-setcircle-is-not-centred-properly/8263/3</p>
 <hr />
 <p>.setInteractive is to get pointer input events. Change the shape/ hit area like this:</p>
-<pre><code>let star = this.add.image(100,100, “star”)
-var shape = new Phaser.Geom.Polygon([ 0, 143, 200, 143, 220, 200, 0, 200 ]);
-star.setInteractive(shape, Phaser.Geom.Polygon.Contains);
-this.input.on(‘gameobjectover’, function (pointer, gameObject) {
-gameObject.setTint(0x7878ff); console.log(“mouse over”)
-});
-this.input.on(‘gameobjectout’, function (pointer, gameObject) {
-gameObject.clearTint();
-});
-// Draw the polygon var graphics = this.add.graphics({ x: star.x, y: star.y});
-graphics.lineStyle(2, 0x00aa00);
-graphics.beginPath();
-graphics.moveTo(shape.points[0].x, shape.points[0].y);
-for (var i = 1; i &lt; shape.points.length; i++) { graphics.lineTo(shape.points[i].x, shape.points[i].y); }
-graphics.closePath(); graphics.strokePath();
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>let star = this.add.image(100,100, “star”)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>var shape = new Phaser.Geom.Polygon([ 0, 143, 200, 143, 220, 200, 0, 200 ]);
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>star.setInteractive(shape, Phaser.Geom.Polygon.Contains);
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>this.input.on(‘gameobjectover’, function (pointer, gameObject) {
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>gameObject.setTint(0x7878ff); console.log(“mouse over”)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>});
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>this.input.on(‘gameobjectout’, function (pointer, gameObject) {
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>gameObject.clearTint();
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>});
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>// Draw the polygon var graphics = this.add.graphics({ x: star.x, y: star.y});
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>graphics.lineStyle(2, 0x00aa00);
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>graphics.beginPath();
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>graphics.moveTo(shape.points[0].x, shape.points[0].y);
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>for (var i = 1; i &lt; shape.points.length; i++) { graphics.lineTo(shape.points[i].x, shape.points[i].y); }
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>graphics.closePath(); graphics.strokePath();
+</span></code></pre></div>
 <p><img alt="" src="https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-24-12-55-57-282x300.png" /></p>
 <p>mousing over the green shape makes the start change color</p>
 <hr />
-<p>Mouse input with setInteractive, input area, attach input to GameObject:</p>
-<pre><code>this.location2DialogBox = this.add.graphics();
-
-this.location2DialogBox.fillStyle(0xfffff00, 0.4)
-
-this.location2DialogBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32) this.location2DialogBox.setVisible(false)
-
-this.realtimeTexture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
-
-this.realtimeTexture.draw(this.location2DialogBox);
-
-this.realtimeTexture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains)
-
-this.realtimeTexture.on(‘pointerdown’, () =&gt; { this.enterLocation2Scene() });
-</code></pre>
+<p>Mouse input with setInteractive, input area, attach input to GameObject:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>this.location2DialogBox = this.add.graphics();
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>this.location2DialogBox.fillStyle(0xfffff00, 0.4)
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>this.location2DialogBox.fillRoundedRect(0, 0, mainWidth, mainHeight, 32) this.location2DialogBox.setVisible(false)
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>this.realtimeTexture = this.add.renderTexture(0, 0, mainWidth, mainHeight);
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>this.realtimeTexture.draw(this.location2DialogBox);
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>this.realtimeTexture.setInteractive(new Phaser.Geom.Rectangle(0, 0, mainWidth, mainWidth), Phaser.Geom.Rectangle.Contains)
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>this.realtimeTexture.on(‘pointerdown’, () =&gt; { this.enterLocation2Scene() });
+</span></code></pre></div></p>
 <p>Add an existing GameObject to the physics</p>
 <p>this.physics.add.existing(Gameobject)</p>
 <p>Works also with graphics</p>
@@ -2701,7 +2701,7 @@ this.realtimeTexture.on(‘pointerdown’, () =&gt; { this.enterLocation2Scene()
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>

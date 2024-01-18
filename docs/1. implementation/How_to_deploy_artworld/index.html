@@ -2620,15 +2620,15 @@
 <ul>
 <li>clone ARTWORLD_client code to /var/www/artworld/</li>
 </ul>
-<pre><code>mkdir /var/www/artworld
-cd /var/www/artworld
-wget https://github.com/studioplaynl/ARTWORLD_client/archive/refs/heads/main.zip
-unzip main
-mv ARTWORLD_client-main/ ARTWORLD_client
-cd ARTWORLD_client/
-npm install
-npm run build
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir /var/www/artworld
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>cd /var/www/artworld
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>wget https://github.com/studioplaynl/ARTWORLD_client/archive/refs/heads/main.zip
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>unzip main
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>mv ARTWORLD_client-main/ ARTWORLD_client
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>cd ARTWORLD_client/
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>npm install
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>npm run build
+</span></code></pre></div>
 <p>-edit your server domain name in ./src/nakama.svelte</p>
 <h1 id="get-nginx-up-and-running">get nginx up and running:</h1>
 <ul>
@@ -2657,14 +2657,12 @@ npm run build
 <p>server should be live now.</p>
 <h1 id="clone-to-betaworld-server">clone to betaworld server</h1>
 <p>this has als9o been automated as a cron job, running at 1am each day</p>
-<pre><code>sudo docker commit artworld_nakama_server_nakama_1 artworld_nakama
-sudo docker save artworld_nakama | gzip | ssh root@185.193.67.152 'gunzip | docker load'
-
-sudo docker commit artworld_nakama_server_postgres_1 artworld_postgres
-sudo docker save artworld_postgres | gzip | ssh root@185.193.67.152 'gunzip | docker load'
-
-
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo docker commit artworld_nakama_server_nakama_1 artworld_nakama
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo docker save artworld_nakama | gzip | ssh root@185.193.67.152 &#39;gunzip | docker load&#39;
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo docker commit artworld_nakama_server_postgres_1 artworld_postgres
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo docker save artworld_postgres | gzip | ssh root@185.193.67.152 &#39;gunzip | docker load&#39;
+</span></code></pre></div>
 <h1 id="amazon-aws">Amazon AWS</h1>
 <ul>
 <li>Create a S3 bucket in Amazon AWS for storage of files.</li>
@@ -2675,45 +2673,42 @@ sudo docker save artworld_postgres | gzip | ssh root@185.193.67.152 'gunzip | do
 <li>encryption: disabled</li>
 <li>advanced settings: disabled</li>
 </ul>
-<p>cors settings:</p>
-<pre><code>[
-    {
-        &quot;AllowedHeaders&quot;: [
-            &quot;*&quot;
-        ],
-        &quot;AllowedMethods&quot;: [
-            &quot;PUT&quot;,
-            &quot;HEAD&quot;,
-            &quot;GET&quot;
-        ],
-        &quot;AllowedOrigins&quot;: [
-            &quot;https://yourdomain.com&quot;
-        ],
-        &quot;ExposeHeaders&quot;: []
-    }
-]
-
-</code></pre>
+<p>cors settings:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>[
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    {
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        &quot;AllowedHeaders&quot;: [
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>            &quot;*&quot;
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        ],
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        &quot;AllowedMethods&quot;: [
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>            &quot;PUT&quot;,
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>            &quot;HEAD&quot;,
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>            &quot;GET&quot;
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        ],
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        &quot;AllowedOrigins&quot;: [
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>            &quot;https://yourdomain.com&quot;
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        ],
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        &quot;ExposeHeaders&quot;: []
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    }
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>]
+</span></code></pre></div></p>
 <ul>
 <li>create access key:</li>
 <li>click right top username &gt; security credentials</li>
 <li>create user(permission: AWSS3FullAcces)</li>
 <li>create in the nakama server folder the file named "credentials"</li>
 </ul>
-<pre><code>[default] 
-aws_access_key_id = &quot;youracceskeyid&quot;
-aws_secret_access_key = &quot;youracceskey&quot;
-
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>[default] 
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>aws_access_key_id = &quot;youracceskeyid&quot;
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>aws_secret_access_key = &quot;youracceskey&quot;
+</span></code></pre></div>
 <ul>
 <li>update main.go</li>
 </ul>
-<pre><code>const (
-    AWS_S3_REGION = &quot;your region&quot;
-    AWS_S3_BUCKET = &quot;your bucket&quot;
-)
-
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>const (
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    AWS_S3_REGION = &quot;your region&quot;
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    AWS_S3_BUCKET = &quot;your bucket&quot;
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>)
+</span></code></pre></div>
 <h2 id="aws-image-converter">AWS image converter:</h2>
 <p>this is needed for converting images to the correct sizes incl. caching</p>
 <p>to setup:</p>
@@ -2784,7 +2779,7 @@ https://eu-central-1.console.aws.amazon.com/secretsmanager/home?region=eu-centra
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>

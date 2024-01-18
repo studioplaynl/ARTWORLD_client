@@ -270,6 +270,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#highlighting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Highlighting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#highlighting-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      Highlighting text
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sub-and-superscripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sub- and superscripts
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2697,6 +2724,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#highlighting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Highlighting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#highlighting-text" class="md-nav__link">
+    <span class="md-ellipsis">
+      Highlighting text
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sub-and-superscripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sub- and superscripts
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2751,11 +2805,72 @@
 <li><code>mkdocs -h</code> - Print help message and exit.</li>
 </ul>
 <h2 id="project-layout">Project layout</h2>
-<pre><code>mkdocs.yml    # The configuration file.
+<div class="language-text highlight"><pre><span></span><code>mkdocs.yml    # The configuration file.
 docs/
     index.md  # The documentation homepage.
     ...       # Other markdown pages, images and other files.
-</code></pre>
+</code></pre></div>
+<p><a href="https://squidfunk.github.io/mkdocs-material/reference/formatting/">Formatting</a></p>
+<h2 id="highlighting">Highlighting</h2>
+<p>When Critic is enabled, Critic Markup can be used, which adds the ability to highlight suggested changes, as well as add inline comments to a document:</p>
+<p>Text with suggested changes</p>
+<p>Text can be <del class="critic">deleted</del> and replacement text <ins class="critic">added</ins>. This can also be
+combined into <del class="critic">one</del><ins class="critic">a single</ins> operation. <mark class="critic">Highlighting</mark> is also
+possible <span class="critic comment">and comments can be added inline</span>.</p>
+<mark class="critic block">
+<p>Formatting can also be applied to blocks by putting the opening and closing
+tags on separate lines and adding new lines between the tags and the content.</p>
+</mark>
+<p>Text can be deleted and replacement text added. This can also be combined into onea single operation. Highlighting is also possible and comments can be added inline.</p>
+<p>Formatting can also be applied to blocks by putting the opening and closing tags on separate lines and adding new lines between the tags and the content.</p>
+<h2 id="highlighting-text">Highlighting text</h2>
+<p>When Caret, Mark &amp; Tilde are enabled, text can be highlighted with a simple syntax, which is more convenient that directly using the corresponding mark, ins and del HTML tags:</p>
+<p>Text with highlighting</p>
+<ul>
+<li><mark>This was marked</mark></li>
+<li><ins>This was inserted</ins></li>
+<li><del>This was deleted</del></li>
+</ul>
+<h2 id="sub-and-superscripts">Sub- and superscripts</h2>
+<p>When Caret &amp; Tilde are enabled, text can be sub- and superscripted with a simple syntax, which is more convenient than directly using the corresponding sub and sup HTML tags:</p>
+<p>Text with sub- and superscripts</p>
+<ul>
+<li>H<sub>2</sub>O</li>
+<li>A<sup>T</sup>A</li>
+</ul>
+<h1 id="diagrams"><a href="https://squidfunk.github.io/mkdocs-material/reference/diagrams/">Diagrams</a></h1>
+<h1 id="data-tables"><a href="https://squidfunk.github.io/mkdocs-material/reference/data-tables/">Data tables</a></h1>
+<div class="language-py highlight"><span class="filename">bubble_sort.py</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">bubble_sort</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)):</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">):</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>            <span class="k">if</span> <span class="n">items</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">items</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]:</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                <span class="n">items</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">items</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+</span></code></pre></div>
+<details class="note" open="open">
+<summary>Note</summary>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et euismod
+nulla. Curabitur feugiat, tortor non consequat finibus, justo purus auctor
+massa, nec semper lorem quam in massa.</p>
+</details>
+<details class="note">
+<summary>Note</summary>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et euismod
+nulla. Curabitur feugiat, tortor non consequat finibus, justo purus auctor
+massa, nec semper lorem quam in massa.</p>
+</details>
+<div class="admonition info inline end">
+<p class="admonition-title">Lorem ipsum</p>
+<p>Lorem ipsum dolor sit amet, consectetur
+adipiscing elit. Nulla et euismod nulla.
+Curabitur feugiat, tortor non consequat
+finibus, justo purus auctor massa, nec
+semper lorem quam in massa.</p>
+</div>
+<div class="admonition abstract">
+<p class="admonition-title">Samenvatting</p>
+<p>Dit is de samenvatting, hoe lang kan deze tekst zijn? Ik bedoel: hoe werkt de line formatting? Gaat dat vanzelf?</p>
+</div>
+<p>Ja dat gaat vanzelf!</p>
 
 
 
@@ -2802,7 +2917,7 @@ docs/
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": ["content.code.annotate"], "search": "assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="assets/javascripts/bundle.7389ff0e.min.js"></script>

@@ -3080,72 +3080,71 @@
 <p>this function: 
 - gets upload URL for json and png
 - uploads blobs to aws
-- send an object to nakama containing:</p>
-<pre><code>{
-  &quot;url&quot;: &quot;drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png&quot;,
-  &quot;json&quot;: &quot;drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.json&quot;,
-  &quot;version&quot;: 4,
-  &quot;displayname&quot;: &quot;blauwSpotlijster&quot;
-}
-</code></pre>
-<p>no response on succes</p>
+- send an object to nakama containing:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>{
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  &quot;url&quot;: &quot;drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png&quot;,
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  &quot;json&quot;: &quot;drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.json&quot;,
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  &quot;version&quot;: 4,
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  &quot;displayname&quot;: &quot;blauwSpotlijster&quot;
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>}
+</span></code></pre></div>
+no response on succes</p>
 <h2 id="getuploadurltype-name-filetypeversion">getUploadURL(type, name, filetype,version)</h2>
 <p>this function creates a signed upload url for file upload to AWS</p>
 <h3 id="usage-example">usage example</h3>
-<pre><code>var version = 1 
-var [jsonURL, jsonLocation] = await getUploadURL(&quot;home&quot;, &quot;current&quot;, &quot;json&quot;, version)
-// creates route on aws &quot;/home/user_id/1_current.json&quot;
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>var version = 1 
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>var [jsonURL, jsonLocation] = await getUploadURL(&quot;home&quot;, &quot;current&quot;, &quot;json&quot;, version)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>// creates route on aws &quot;/home/user_id/1_current.json&quot;
+</span></code></pre></div>
 <h2 id="updatetitlecollection-key-name-userid">updateTitle(collection, key, name, userID)</h2>
 <p>this function:
 - picks up object
 - updates object.value.displayname
 - pushes object back to server</p>
 <h3 id="example">example</h3>
-<pre><code>updateTitle(&quot;drawing&quot;, &quot;12345345_geelkoe&quot;, &quot;nieuwe naam&quot;, &quot;`1231hh3123dasda&quot;)
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>updateTitle(&quot;drawing&quot;, &quot;12345345_geelkoe&quot;, &quot;nieuwe naam&quot;, &quot;`1231hh3123dasda&quot;)
+</span></code></pre></div>
 <h2 id="updateobjecttype-name-value-pub-userid">updateObject(type, name, value, pub, userID)</h2>
 <p>userID is optional, only necessary for admin and moderator functions.</p>
 <h3 id="example-addressbook">Example (addressbook):</h3>
-<pre><code>const type = &quot;addressbook&quot;
-const name = type + &quot;_&quot; + ManageSession.userProfile.id
-const value = '{&quot;user_id&quot;: &quot;b9ae6807-1ce1-4b71-a8a3-f5958be4d340&quot;, &quot;posX&quot;: &quot;500&quot;, &quot;posY&quot;: &quot;110&quot;}'
-const pub = 2
-
-updateObject(type, name, value, pub)
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>const type = &quot;addressbook&quot;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>const name = type + &quot;_&quot; + ManageSession.userProfile.id
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>const value = &#39;{&quot;user_id&quot;: &quot;b9ae6807-1ce1-4b71-a8a3-f5958be4d340&quot;, &quot;posX&quot;: &quot;500&quot;, &quot;posY&quot;: &quot;110&quot;}&#39;
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>const pub = 2
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>updateObject(type, name, value, pub)
+</span></code></pre></div>
 <h2 id="getaccountid-avatar">getAccount(id, avatar)</h2>
-<pre><code>0:[
-{
-avatar_url: &quot;avatar/f42eb28f-9f4d-476c-9788-2240bac4cf48/current.png&quot;,
-create_time: &quot;2021-10-11T11:32:02Z&quot;,
-display_name: undefined,
-edge_count: 0,
-facebook_id: undefined,
-gamecenter_id: undefined,
-google_id: undefined,
-id: &quot;f42eb28f-9f4d-476c-9788-2240bac4cf48&quot;,
-lang_tag: &quot;en&quot;,
-location: undefined,
-metadata:{
-          azc: &quot;Amsterdam&quot;,
-          location: &quot;ArtworldAmsterdam&quot;,
-          posX: -122.62672,
-          posY: 22.468008,
-          role: &quot;speler&quot;,
-          user_id: &quot;&quot;,
-}
-online: true,
-steam_id: undefined,
-timezone: undefined,
-update_time: &quot;2022-02-08T13:02:37Z&quot;,
-url: &quot;https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/f42eb28f-9f4d-476c-9788-2240bac4cf48/current.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20220208%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20220208T130243Z&amp;X-Amz-Expires=86400&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=fbf4c90016829b9ad0376fd0b7c96b563a0dfd16d46f0d6289287a444fa8604c&quot;,
-username: &quot;user33&quot;,
-},
-]
-
-</code></pre>
-<p>The url is the actual avatar url, the url is called via getAccount, getUrl, but with a couple of await functions it takes a bit for the url to load via the getAccount function.</p>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>0:[
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>{
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>avatar_url: &quot;avatar/f42eb28f-9f4d-476c-9788-2240bac4cf48/current.png&quot;,
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>create_time: &quot;2021-10-11T11:32:02Z&quot;,
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>display_name: undefined,
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>edge_count: 0,
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>facebook_id: undefined,
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>gamecenter_id: undefined,
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>google_id: undefined,
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>id: &quot;f42eb28f-9f4d-476c-9788-2240bac4cf48&quot;,
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>lang_tag: &quot;en&quot;,
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>location: undefined,
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>metadata:{
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>          azc: &quot;Amsterdam&quot;,
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>          location: &quot;ArtworldAmsterdam&quot;,
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>          posX: -122.62672,
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>          posY: 22.468008,
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>          role: &quot;speler&quot;,
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>          user_id: &quot;&quot;,
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>}
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>online: true,
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>steam_id: undefined,
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>timezone: undefined,
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a>update_time: &quot;2022-02-08T13:02:37Z&quot;,
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>url: &quot;https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/f42eb28f-9f4d-476c-9788-2240bac4cf48/current.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAR7FDNFNP252ENA7M%2F20220208%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20220208T130243Z&amp;X-Amz-Expires=86400&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=fbf4c90016829b9ad0376fd0b7c96b563a0dfd16d46f0d6289287a444fa8604c&quot;,
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>username: &quot;user33&quot;,
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>},
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a>]
+</span></code></pre></div>
+The url is the actual avatar url, the url is called via getAccount, getUrl, but with a couple of await functions it takes a bit for the url to load via the getAccount function.</p>
 <h2 id="getavataravatar_url">getAvatar(avatar_url)</h2>
 <h2 id="uploadavatardata">uploadAvatar(data)</h2>
 <h2 id="deletefiletypefileuser">deleteFile(type,file,user)</h2>
@@ -3164,28 +3163,28 @@ pub: permission_read (pub)  </p>
 <p>page = index of limit(if limit = 100, index 0 = 1 - 100, index 1 = 101 -200, index 2 = 202 - 300 etc...)</p>
 <h3 id="examples">examples</h3>
 <p><em>getting a users home object</em></p>
-<pre><code>listObjects('home','5264dc23-a339-40db-bb84-e0849ded4e68')
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code>listObjects(&#39;home&#39;,&#39;5264dc23-a339-40db-bb84-e0849ded4e68&#39;)
+</code></pre></div>
 <p>returns the object:</p>
-<pre><code>[
-  {
-    &quot;collection&quot;: &quot;home&quot;,
-    &quot;key&quot;: &quot;Amsterdam&quot;,
-    &quot;permission_read&quot;: 2,
-    &quot;permission_write&quot;: 1,
-    &quot;value&quot;: {
-      &quot;url&quot;: &quot;home/5264dc23-a339-40db-bb84-e0849ded4e68/current.png&quot;,
-      &quot;posX&quot;: 228.16,
-      &quot;posY&quot;: 57.66,
-      &quot;userName&quot;: &quot;user11&quot;
-    },
-    &quot;version&quot;: &quot;d1be852d6a66654ec9faa878fcb41b7d&quot;,
-    &quot;user_id&quot;: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;,
-    &quot;create_time&quot;: &quot;2022-01-12T12:31:53Z&quot;,
-    &quot;update_time&quot;: &quot;2022-01-13T15:45:02Z&quot;
-  }
-]
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>[
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  {
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    &quot;collection&quot;: &quot;home&quot;,
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    &quot;key&quot;: &quot;Amsterdam&quot;,
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    &quot;permission_read&quot;: 2,
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    &quot;permission_write&quot;: 1,
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    &quot;value&quot;: {
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>      &quot;url&quot;: &quot;home/5264dc23-a339-40db-bb84-e0849ded4e68/current.png&quot;,
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>      &quot;posX&quot;: 228.16,
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>      &quot;posY&quot;: 57.66,
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>      &quot;userName&quot;: &quot;user11&quot;
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    },
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    &quot;version&quot;: &quot;d1be852d6a66654ec9faa878fcb41b7d&quot;,
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>    &quot;user_id&quot;: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;,
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    &quot;create_time&quot;: &quot;2022-01-12T12:31:53Z&quot;,
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    &quot;update_time&quot;: &quot;2022-01-13T15:45:02Z&quot;
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>  }
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>]
+</span></code></pre></div>
 <h2 id="convert-images">convert images</h2>
 <p><code>convertImage(path,size, format)</code></p>
 <p>output:</p>
@@ -3202,25 +3201,24 @@ https://docs.aws.amazon.com/solutions/latest/serverless-image-handler/thumbor-fi
 <code>limit</code> is the max number of objects you want to receive (either by page or in total)  <br />
 <code>cursor</code> is on the first call ```undefined```` (just empty), when supplied, it defines the next page of limit-number of objects. The cursor is the last objects update time, so: objects[limit - 1].update_time    </p>
 <p>Results come back within .objects array:    </p>
-<pre><code>[
-{
-collection: &quot;drawing&quot;
-downloaded: true
-key: &quot;2023-01-02T21_50_42_GeelAvoceta&quot;
-permission_read: 1
-read: 1
-update_time: &quot;2023-01-20T16:55:15.02286+01:00&quot;
-user_id: &quot;f011a5dc-901a-42c0-9589-587b389d1e3e&quot;
-username: &quot;user11&quot;
-value: 
-      displayname: &quot;bloem&quot;
-      url: &quot;drawing/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-01-02T21_50_42_GeelAvoceta.png&quot;
-      version: &quot;0&quot;
-},
-.....
-]
-
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>[
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>{
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>collection: &quot;drawing&quot;
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>downloaded: true
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>key: &quot;2023-01-02T21_50_42_GeelAvoceta&quot;
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>permission_read: 1
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>read: 1
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>update_time: &quot;2023-01-20T16:55:15.02286+01:00&quot;
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>user_id: &quot;f011a5dc-901a-42c0-9589-587b389d1e3e&quot;
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>username: &quot;user11&quot;
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>value: 
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>      displayname: &quot;bloem&quot;
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>      url: &quot;drawing/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-01-02T21_50_42_GeelAvoceta.png&quot;
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>      version: &quot;0&quot;
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>},
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>.....
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>]
+</span></code></pre></div>
 <p><code>update_time: "2023-01-20T16:55:15.02286+01:00"</code> of the last object is used as the cursor to get the next page of objects.</p>
 <h2 id="validatestringtypeinput">validate(string,type,input)</h2>
 <h3 id="types">types</h3>
@@ -3230,53 +3228,51 @@ value:
 <p>special - checks if the value contains no special characters</p>
 <h3 id="examples_1">examples:</h3>
 <p>can be used in 2 ways, inline, automatically sets border to red if fail</p>
-<pre><code>&lt;input
-    type=&quot;text&quot;
-    placeholder=&quot;Enter Username&quot;
-    name=&quot;username&quot;
-    id=&quot;username&quot;
-    bind:value={username}
-    on:keyup={async input =&gt; {await validate(username,&quot;special&quot;,input)}}
-    required
-/&gt;
-</code></pre>
-<p>or can used within a function as following:</p>
-<pre><code>if(await validate(email,&quot;email&quot;)){
-// run action if valid
-} else {
-// run if invalid
-)
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>&lt;input
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    type=&quot;text&quot;
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    placeholder=&quot;Enter Username&quot;
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    name=&quot;username&quot;
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    id=&quot;username&quot;
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    bind:value={username}
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    on:keyup={async input =&gt; {await validate(username,&quot;special&quot;,input)}}
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    required
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>/&gt;
+</span></code></pre></div>
+<p>or can used within a function as following:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>if(await validate(email,&quot;email&quot;)){
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>// run action if valid
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>} else {
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>// run if invalid
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>)
+</span></code></pre></div></p>
 <h1 id="setloaderstate">setLoader(state)</h1>
 <p><code>setLoader(true)</code> sets loading screen on</p>
 <p><code>setLoader(false)</code> sets loading screen off</p>
 <h1 id="getallhouseslocationuser_id">getAllHouses(location,user_id)</h1>
 <p>Gives you all the houses objects within the location, optionally add a user_id
-example result:</p>
-<pre><code>
-[
-  {
-    &quot;read&quot;: 2,
-    &quot;artworks&quot;: {
-      &quot;stopmotion&quot;: 1,
-      &quot;drawing&quot;: 3
-    },
-    &quot;username&quot;: &quot;user6&quot;,
-    &quot;key&quot;: &quot;Amsterdam&quot;,
-    &quot;collection&quot;: &quot;home&quot;,
-    &quot;update_time&quot;: &quot;2022-08-08T15:17:06.817697+02:00&quot;,
-    &quot;permission_read&quot;: 2,
-    &quot;value&quot;: {
-      &quot;username&quot;: &quot;user6&quot;,
-      &quot;url&quot;: &quot;home/fcbcc269-a109-4a4b-a570-5ccafc5308d8/5_current.png&quot;,
-      &quot;posX&quot;: -904.9999877562127,
-      &quot;posY&quot;: 72.49999139457941,
-      &quot;version&quot;: 5
-    },
-    &quot;user_id&quot;: &quot;fcbcc269-a109-4a4b-a570-5ccafc5308d8&quot;
-  },
-
-</code></pre>
+example result:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>[
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  {
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    &quot;read&quot;: 2,
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    &quot;artworks&quot;: {
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>      &quot;stopmotion&quot;: 1,
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>      &quot;drawing&quot;: 3
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    },
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    &quot;username&quot;: &quot;user6&quot;,
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>    &quot;key&quot;: &quot;Amsterdam&quot;,
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    &quot;collection&quot;: &quot;home&quot;,
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    &quot;update_time&quot;: &quot;2022-08-08T15:17:06.817697+02:00&quot;,
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>    &quot;permission_read&quot;: 2,
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    &quot;value&quot;: {
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>      &quot;username&quot;: &quot;user6&quot;,
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>      &quot;url&quot;: &quot;home/fcbcc269-a109-4a4b-a570-5ccafc5308d8/5_current.png&quot;,
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>      &quot;posX&quot;: -904.9999877562127,
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>      &quot;posY&quot;: 72.49999139457941,
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>      &quot;version&quot;: 5
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>    },
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>    &quot;user_id&quot;: &quot;fcbcc269-a109-4a4b-a570-5ccafc5308d8&quot;
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>  },
+</span></code></pre></div></p>
 
 
 
@@ -3323,7 +3319,7 @@ example result:</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>

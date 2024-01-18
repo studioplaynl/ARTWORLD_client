@@ -2607,14 +2607,14 @@
 <p>Extra fixes:</p>
 <p>I inadvertently deleted the homeObject of user19. FIX THAT!</p>
 <p>But also fix the error that the itemsBar cannot be opened to select a default homeObject</p>
-<pre><code>imagePicker.svelte:195 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'url')
-    at Object.create [as c] (imagePicker.svelte:195:31)
-    at Object.update [as p] (imagePicker.svelte:189:9)
-    at update$2 (index.mjs:1093:36)
-</code></pre>
-<pre><code>stopmotion.svelte:18 Uncaught TypeError: Cannot read properties of undefined (reading 'clientWidth')
-    at stopmotion.svelte:18:18
-</code></pre>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>imagePicker.svelte:195 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading &#39;url&#39;)
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    at Object.create [as c] (imagePicker.svelte:195:31)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    at Object.update [as p] (imagePicker.svelte:189:9)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    at update$2 (index.mjs:1093:36)
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>stopmotion.svelte:18 Uncaught TypeError: Cannot read properties of undefined (reading &#39;clientWidth&#39;)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    at stopmotion.svelte:18:18
+</span></code></pre></div>
 
 
 
@@ -2664,7 +2664,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>
