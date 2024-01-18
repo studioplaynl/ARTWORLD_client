@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Movement   player - ARTWORLD Documentation</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">ARTWORLD Documentation</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Welcome to MkDocs</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">0 implementation <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../Avatar/" class="dropdown-item">Avatar</a>
+</li>
+                                    
+<li>
+    <a href="../BetaWorld/" class="dropdown-item">domain names</a>
+</li>
+                                    
+<li>
+    <a href="../ChatMessageFunctionality/" class="dropdown-item">ChatMessageFunctionality</a>
+</li>
+                                    
+<li>
+    <a href="../CompressionTestsImages/" class="dropdown-item">CompressionTestsImages</a>
+</li>
+                                    
+<li>
+    <a href="../Conventions/" class="dropdown-item">Conventions</a>
+</li>
+                                    
+<li>
+    <a href="../CoordinateSystemConversion/" class="dropdown-item">CoordinateSystemConversion</a>
+</li>
+                                    
+<li>
+    <a href="../Create_and_update_SERVER_OBJECT_examples/" class="dropdown-item">Create and update SERVER OBJECT examples</a>
+</li>
+                                    
+<li>
+    <a href="../Depth_of_elements_in_game/" class="dropdown-item">Depth of elements in game</a>
+</li>
+                                    
+<li>
+    <a href="../HistoryTracker-and-the-Back-button/" class="dropdown-item">HistoryTracker and the Back button</a>
+</li>
+                                    
+<li>
+    <a href="../Home/" class="dropdown-item">Home</a>
+</li>
+                                    
+<li>
+    <a href="../How-to-deploy-artworld/" class="dropdown-item">needed</a>
+</li>
+                                    
+<li>
+    <a href="../Items-bar/" class="dropdown-item">Items bar</a>
+</li>
+                                    
+<li>
+    <a href="../LOG-release-notes/" class="dropdown-item">LOG release notes</a>
+</li>
+                                    
+<li>
+    <a href="../Last-Position-Players/" class="dropdown-item">Last Position Players</a>
+</li>
+                                    
+<li>
+    <a href="../Like%28Heart%29-Button-and-OBJECT/" class="dropdown-item">Like(Heart) Button and OBJECT</a>
+</li>
+                                    
+<li>
+    <a href="../Locations-OBJECT/" class="dropdown-item">Locations OBJECT</a>
+</li>
+                                    
+<li>
+    <a href="../Network-Flow-Client-Side/" class="dropdown-item">Network Flow Client Side</a>
+</li>
+                                    
+<li>
+    <a href="../Parsing-URL-Parameters---Phaser-onboarding/" class="dropdown-item">Parsing URL Parameters   Phaser onboarding</a>
+</li>
+                                    
+<li>
+    <a href="../Phaser_error_handling/" class="dropdown-item">Phaser error handling</a>
+</li>
+                                    
+<li>
+    <a href="../Phaser_event_system/" class="dropdown-item">Phaser event system</a>
+</li>
+                                    
+<li>
+    <a href="../RELEASE_LOG/" class="dropdown-item">RELEASE LOG</a>
+</li>
+                                    
+<li>
+    <a href="../SERVEROBJECT-achievements/" class="dropdown-item">SERVEROBJECT achievements</a>
+</li>
+                                    
+<li>
+    <a href="../SERVEROBJECT-addressbook/" class="dropdown-item">SERVEROBJECT addressbook</a>
+</li>
+                                    
+<li>
+    <a href="../SERVEROBJECT-liked/" class="dropdown-item">SERVEROBJECT liked</a>
+</li>
+                                    
+<li>
+    <a href="../ServerCallsFormat/" class="dropdown-item">ServerCallsFormat</a>
+</li>
+                                    
+<li>
+    <a href="../UI-scrollable-panels/" class="dropdown-item">UI scrollable panels</a>
+</li>
+                                    
+<li>
+    <a href="../create_onlinePlayers_diagram/" class="dropdown-item">create onlinePlayers diagram</a>
+</li>
+                                    
+<li>
+    <a href="../download_art_Images_flow/" class="dropdown-item">download art Images flow</a>
+</li>
+                                    
+<li>
+    <a href="../home-and-server-OBJECT/" class="dropdown-item">home and server OBJECT</a>
+</li>
+                                    
+<li>
+    <a href="../icons-and-svg-FREE/" class="dropdown-item">icons and svg FREE</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">Movement   player</a>
+</li>
+                                    
+<li>
+    <a href="../movement--onlinePlayer/" class="dropdown-item">movement  onlinePlayer</a>
+</li>
+                                    
+<li>
+    <a href="../png_Compression/" class="dropdown-item">png Compression</a>
+</li>
+                                    
+<li>
+    <a href="../storage.js/" class="dropdown-item">Storage.js</a>
+</li>
+                                    
+<li>
+    <a href="../svelte-spa-router-query-params-demo---refactoring/" class="dropdown-item">Svelte spa router query params demo   refactoring</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">1 research notes <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Phaser3</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../1-research_notes/phaser3/A-canvas-can-be-used-as-a-Texture/" class="dropdown-item">A canvas can be used as a Texture</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Add-a-plugin-to-a-scene/" class="dropdown-item">Add a plugin to a scene</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Background-image-repeating/" class="dropdown-item">Background image repeating</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Changing-the-collision-shape%2C-size%2C-mouse-input-events/" class="dropdown-item">Changing the collision shape, size, mouse input events</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/DOM-elements-in-phaser-and-as-input/" class="dropdown-item">DOM elements in phaser and as input</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Datamanager-system-registry/" class="dropdown-item">Datamanager system registry</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Disable-mouse-input-from-outside-the-canvas/" class="dropdown-item">Disable mouse input from outside the canvas</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Drag-containers-%28also-scenes%21%29/" class="dropdown-item">Drag containers (also scenes!)</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Drawing-ideas-and-examples-Phaser/" class="dropdown-item">Drawing ideas and examples Phaser</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Infinite-world/" class="dropdown-item">Infinite world</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/LoaderPlugin-feedback/" class="dropdown-item">LoaderPlugin feedback</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/No-Physics-possible-between-Scenes/" class="dropdown-item">No Physics possible between Scenes</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Phaser---timed-Events/" class="dropdown-item">Phaser   timed Events</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Separate-UI-with-a-overlay-Scene/" class="dropdown-item">Separate UI with a overlay Scene</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Speech-bubble-GRAPHIC-across-SCENES/" class="dropdown-item">Speech bubble GRAPHIC across SCENES</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/Starting-and-stopping-scenes/" class="dropdown-item">Starting and stopping scenes</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/TextureManager/" class="dropdown-item">TextureManager</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/add-3D-to-Phaser/" class="dropdown-item">add 3D to Phaser</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/add-scene-on-the-fly/" class="dropdown-item">Add scene on the fly</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/automatic-Scene-loading-flag/" class="dropdown-item">automatic Scene loading flag</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/camera-effects%2C-colors%2C-fade/" class="dropdown-item">Camera effects, colors, fade</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/camera-follow/" class="dropdown-item">Camera follow</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/change-Gravity-per-sce/" class="dropdown-item">change Gravity per sce</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/check-world-bounds/" class="dropdown-item">Check world bounds</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/dragging/" class="dropdown-item">Dragging</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/groups-vs-containers/" class="dropdown-item">Groups vs containers</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/loading-and-preloading/" class="dropdown-item">Loading and preloading</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/pause-and-resume-a-scene/" class="dropdown-item">Pause and resume a scene</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/physics---overlap/" class="dropdown-item">Physics   overlap</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/scaling-the-game---res-and-ppi/" class="dropdown-item">Scaling the game   res and ppi</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/sending-data-to-scenes/" class="dropdown-item">Sending data to scenes</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/using-classes-for-GameObjects-and-extending-Phaser-Classes/" class="dropdown-item">using classes for GameObjects and extending Phaser Classes</a>
+</li>
+            
+<li>
+    <a href="../../1-research_notes/phaser3/xperimenting-with-different-backgrounds/" class="dropdown-item">Xperimenting with different backgrounds</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../icons-and-svg-FREE/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../movement--onlinePlayer/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="2"><a href="#swipe-movement-works-really-well" class="nav-link">Swipe movement (works really well!)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p>Sending the movement over the network is now optimized: we send a moveTo command. With double tapping and swiping this is straight foreward: the player moves to a target. With keyboard moving this is not that obvious so keyboardmoving is not enabled at the moment.</p>
+<p>Because we don't want to move when we are painting on a Graffitiwall, we added a graphic in the background that detects mousePresses, everything that should disable playerMovement is above that layer.</p>
+<p>This layer sets ManageSession.playerMove to true</p>
+<hr />
+<p>Methods in our Move.js class</p>
+<p><strong>moveByCursor()</strong>  <br />
+Sets .cursorKeyIsDown to true or false when either one of the <strong>keyboard</strong> moving keys is down    </p>
+<p><strong>movingAnimation()</strong>  <br />
+Plays the appropiate animation according to the movement flag that is set <strong>maybe better with events!</strong>    </p>
+<p><strong>moveByKeyboard()</strong>  <br />
+moves player with keyboard commands    </p>
+<p><strong>MoveObjectToTarget()</strong>  <br />
+General method to move the player to a goal and detect when it has arrived    <br />
+<em>this.updatePositionHistory(scene)</em> // update the url and historyTracker  <br />
+<em>ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")</em> //set movement over network    </p>
+<p><strong>checkIfPlayerReachedMoveGoal</strong>  <br />
+stops the player when it reached the goal (with a tolerance that is speed dependent) <br />
+stops the player animation when the player reached  <br />
+also shaked the camera when the player reaches the end of the world   </p>
+<p><strong>updatePositionHistory</strong>  <br />
+update the url when the player moved  <br />
+update the position in the history tracker aswell    </p>
+<p><strong>moveBySwiping()</strong>  <br />
+move by swiping with mouse or finger   </p>
+<p><strong>moveByTapping()</strong>  <br />
+move by double tapping with finger or mouse    </p>
+<p><strong>sendMovement()</strong>  <br />
+send movement over the network    </p>
+<hr />
+<p>Links with information:</p>
+<p>physics.moveto example: https://phaser.io/examples/v3/view/physics/arcade/move-to</p>
+<p>scroll camera example: https://phaser.io/examples/v3/view/camera/scroll-view</p>
+<p>World Camera example: https://labs.phaser.io/edit.html?src=src/camera/world%20camera.js&amp;v=3.55.2</p>
+<ul>
+<li>config parameters for the camera (acceleration, drag, maxSpeed)</li>
+</ul>
+<p>Get world point from camera:
+http://labs.phaser.io/edit.html?src=src/camera/get%20world%20point.js</p>
+<p>Move And Stop At Position:
+https://phaser.io/examples/v3/view/physics/arcade/move-and-stop-at-position</p>
+<p>Virtual Joystick
+https://codepen.io/rexrainbow/pen/oyqvQY</p>
+<p>Swipe discussion
+https://www.html5gamedevs.com/topic/39661-creating-swiping-mechanism/</p>
+<p>Swipe example
+https://www.thepolyglotdeveloper.com/2020/09/include-touch-cursor-gesture-events-phaser-game/</p>
+<hr />
+<h2 id="swipe-movement-works-really-well">Swipe movement (works really well!)</h2>
+<pre><code>playerMovingBySwiping() {
+    if (!this.input.activePointer.isDown &amp;&amp; this.isClicking == true) {
+      const playerX = this.player.x
+      const playerY = this.player.y
+
+      const swipeX = this.input.activePointer.upX - this.input.activePointer.downX
+      const swipeY = this.input.activePointer.upY - this.input.activePointer.downY
+      // console.log(&quot;swipeX:&quot;)
+      // console.log(swipeX)
+      // console.log(&quot;swipeY:&quot;)
+      // console.log(swipeY)
+      this.swipeAmount.x = swipeX
+      this.swipeAmount.y = swipeY
+
+      const moveSpeed = this.swipeAmount.length()
+      console.log(&quot;moveSpeed:&quot;)
+      console.log(moveSpeed)
+
+      // console.log(&quot;this.swipeAmount:&quot;)
+      // console.log(this.swipeAmount.x)
+      // console.log(this.swipeAmount.y)
+      // console.log(&quot;&quot;)
+      //if (Math.abs(swipeX &gt; 10) || Math.abs(swipeY &gt; 10)) {
+      this.playerIsMovingByClicking = true; // trigger moving animation
+
+
+      this.target.x = playerX + swipeX
+      this.target.y = playerY + swipeY
+      this.physics.moveToObject(this.player, this.target, moveSpeed * 1.5);
+      this.isClicking = false;
+
+
+      //     if (this.input.activePointer.upY &lt; this.input.activePointer.downY) {
+      //       this.swipeDirection = &quot;up&quot;;
+      //     } else if (this.input.activePointer.upY &gt; this.input.activePointer.downY) {
+      //       this.swipeDirection = &quot;down&quot;;
+      //     }
+
+    } else if (this.input.activePointer.isDown &amp;&amp; this.isClicking == false) {
+      this.isClicking = true;
+    }
+    this.distance = Phaser.Math.Distance.Between(this.player.x, this.player.y, this.target.x, this.target.y);
+    //  4 is our distance tolerance, i.e. how close the source can get to the target
+    //  before it is considered as being there. The faster it moves, the more tolerance is required.
+    if (this.playerIsMovingByClicking) {
+      if (this.distance &lt; 10) {
+        this.player.body.reset(this.target.x, this.target.y);
+        this.playerIsMovingByClicking = false
+      } else {
+        this.sendPlayerMovement();
+      }
+    }
+  }
+
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/jquery-3.6.0.min.js"></script>
+        <script src="../../js/bootstrap.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
