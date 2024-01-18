@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Log: bug tracking 100% CPU usage - ARTWORLD Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Log: bug tracking 100% CPU usage";
+        var mkdocs_page_input_path = "4. bugs/fixed/Bug-tracking-100-cpu-usage.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> ARTWORLD Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Welcome to MkDocs</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">1. implementation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Avatar/">Avatar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/BetaWorld/">domain names</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Chat-Message-Functionality/">Chat Message Functionality</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Compression-Tests-Images/">Compression Tests Images</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Conventions/">Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Coordinate-System-Conversion/">Coordinate System Conversion</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Create_and_update_SERVER_OBJECT_examples/">Create and update SERVER OBJECT examples</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Create_onlinePlayers_diagram/">Create onlinePlayers diagram</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Depth_of_elements_in_game/">Depth of elements in game</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Download_art_Images_flow/">Download art Images flow</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/HistoryTracker-and-the-Back-button/">HistoryTracker and the Back button</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Home-and-server-OBJECT/">Home and server OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Home/">Home</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/How_to_deploy_artworld/">How to deploy ARTWORLD</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Items-bar/">Items bar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/LOG-release-notes/">LOG release notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Last-Position-Players/">Last Position Players</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Like%28Heart%29-Button-and-OBJECT/">Like(Heart) Button and OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Locations-OBJECT/">Locations OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Movement---player/">Movement   player</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Movement--onlinePlayer/">Movement  onlinePlayer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Network-Flow-Client-Side/">Network Flow Client Side</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/PNG_Compression_percentages/">PNG Compression percentages</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Parsing-URL-Parameters---Phaser-onboarding/">Parsing URL Parameters   Phaser onboarding</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Phaser_error_handling/">Phaser error handling</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Phaser_event_system/">Phaser event system</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/RELEASE_LOG/">RELEASE LOG</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/SERVEROBJECT-achievements/">SERVEROBJECT achievements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/SERVEROBJECT-addressbook/">SERVEROBJECT addressbook</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/SERVEROBJECT-liked/">SERVEROBJECT liked</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/ServerCallsFormat/">ServerCallsFormat</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Storage.js/">Storage.js</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Svelte-spa-router-query-params-demo---refactoring/">Svelte spa router query params demo   refactoring</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/UI-scrollable-panels/">UI scrollable panels</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">2. research notes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../2.%20research%20notes/Icons-and-svg-FREE/">Icons and svg FREE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Phaser3</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/A-canvas-can-be-used-as-a-Texture/">A canvas can be used as a Texture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Add-3D-to-Phaser/">Add 3D to Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Add-a-plugin-to-a-scene/">Add a plugin to a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Add-scene-on-the-fly/">Add scene on the fly</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Automatic-Scene-loading-flag/">Automatic Scene loading flag</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Background-image-repeating/">Background image repeating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Camera-effects%2C-colors%2C-fade/">Camera effects, colors, fade</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Camera-follow/">Camera follow</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Change-Gravity-per-sce/">Change Gravity per sce</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Changing-the-collision-shape%2C-size%2C-mouse-input-events/">Changing the collision shape, size, mouse input events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Check-world-bounds/">Check world bounds</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/DOM-elements-in-phaser-and-as-input/">DOM elements in phaser and as input</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Datamanager-system-registry/">Datamanager system registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Disable-mouse-input-from-outside-the-canvas/">Disable mouse input from outside the canvas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Drag-containers-%28also-scenes%21%29/">Drag containers (also scenes!)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Dragging/">Dragging</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Drawing-ideas-and-examples-Phaser/">Drawing ideas and examples Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Experimenting-with-different-backgrounds/">Experimenting with different backgrounds</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Groups-vs-containers/">Groups vs containers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/How-to-manage-lots-of-particle-emitter-managers/">Note: How to manage lots of Particle Emitter (Managers)?</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Infinite-world/">Infinite world</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/LoaderPlugin-feedback/">LoaderPlugin feedback</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Loading-and-preloading/">Loading and preloading</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/No-Physics-possible-between-Scenes/">No Physics possible between Scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Pause-and-resume-a-scene/">Pause and resume a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Pausing-game-engine/">Note:  Pausing game engine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Phaser---timed-Events/">Phaser   timed Events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Physics---overlap/">Physics   overlap</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Scaling-the-game---res-and-ppi/">Scaling the game   res and ppi</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Sending-data-to-scenes/">Sending data to scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Separate-UI-with-a-overlay-Scene/">Separate UI with a overlay Scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Speech-bubble-GRAPHIC-across-SCENES/">Speech bubble GRAPHIC across SCENES</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Starting-and-stopping-scenes/">Starting and stopping scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/TextureManager/">TextureManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Using-classes-for-GameObjects-and-extending-Phaser-Classes/">Using classes for GameObjects and extending Phaser Classes</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">3. features</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Done</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Download-flipbooks/">Feature: download FLIPBOOKS</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Illustrations-fire-world/">Illustrations Fire World</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Illustrations-robot-world/">Illustrations Robot World</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Implement-robotworld-2022-12-20/">Log: implement RobotWorld 2022.12.20</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Merging-2023-01-20/">Merging 2023-01-20</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Physics-debug-in-gameedit-mode/">Log: feature - physics debug in gameEdit mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Place-visitor-next-to-house/">Log: feature - place visitor next to house</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Save%20an%20ARTWORK%20as%20an%20other%20OBJECT/">Feature: save an ARTWORK as an other OBJECT</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/User-can-change-name/">Feature: user can change name</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Ideas</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/ideas/Bug-no-home-object/">Log: bug: no home Object</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Working on</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/working%20on/Update-phaser-from-3-55-to-3-70-0/">Log: update Phaser from 3.55 to 3.70.0</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">4. bugs</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Fixed</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../Bug-aanpassen-touch-targets-werelden-fixed/">BugFix: Aanpassen ‘touch targets’ werelden [fixed]</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Bug-cant-edit-avatar/">Log: Bug - can't edit AVATAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Bug-fix-players-are-lost-when-switching-location/">Log: bug Fix - players are lost when switching location</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Bug-load-assets-per-scene-with-error-handling/">BugFix: load assets per scene, with error handling</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="./">Log: bug tracking 100% CPU usage</a>
+    <ul class="current">
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Bugfix-drawing-over-the-edge/">Log: BugFix: Drawing over the edge</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Cors-error-on-retrieving-images/">Log: cors error on retrieving images</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Status-van-de-itemsbar-speler-en-moderator-werd-niet-goed-geupdate/">Log: status van de itemsbar (speler en moderator) werd niet goed geupdate</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Fixing</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../fixing/bug-fix-homes-of-turquoisetriangle-missing/">Bug Fix: homes of TurquoiseTriangle missing</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">ARTWORLD Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">4. bugs</li>
+          <li class="breadcrumb-item">Fixed</li>
+      <li class="breadcrumb-item active">Log: bug tracking 100% CPU usage</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p>Solution: graphics shouldn't be bigger then 1024x1024. For a gradient background the solution is quite easy: make a 1024 square image and scale it up to the appropriate size.</p>
+<p>For the dotted background: create a tilemap with the dot as a tile.</p>
+<hr />
+<p>100% CPU, also on older branch from july 2022</p>
+<hr />
+<p>disabling:</p>
+<pre><code>      fixedStep: true,
+      fps: 60,
+</code></pre>
+<p>No change</p>
+<hr />
+<p>Changing the world size to 1000x1000 from 6000x6000 dramatically reduces CPU usage</p>
+<hr />
+<p>Investigate further: is it maybe the input feel within the big world. So make the world 6000x6000 again but disable input graphic</p>
+<p>disable handlePlayerMovement() in artworld.js but keep it big: again 100% CPU</p>
+<hr />
+<h2 id="test-where-the-limit-of-the-world-size-is">Test where the limit of the world size is</h2>
+<p>2000 x 2000</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-22-16-58-44-1024x41.png" /></p>
+<hr />
+<p>3000 x 3000</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-22-17-00-17.png" /></p>
+<hr />
+<p>4000 x 4000</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-22-17-01-30.png" /></p>
+<hr />
+<p>5000 x 5000</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-22-17-02-56.png" /></p>
+<hr />
+<p>6000 x 6000</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-22-17-04-35.png" /></p>
+<hr />
+<p>So setting a max of 2000 x 2000 for the world (effectively reducing it with factor 3) will increase performance dramatically.</p>
+<p>All assets have to be loaded 3x times smaller</p>
+<p>And the x and y also needs to be divided by 3.</p>
+<hr />
+<h2 id="further-investigation-disabling-the-big-background-and-the-input-graphic">Further investigation: disabling the big background and the input graphic</h2>
+<p>6000 x 6000</p>
+<p>No background with dots, and no input graphic</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-22-17-29-38.png" /></p>
+<hr />
+<p>6000 x 6000</p>
+<p>No background, with input graphic</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-22-17-31-52.png" /></p>
+<p>The input graphic seems ok, because it is not visible, so it is not rendered.</p>
+<hr />
+<p>When I turn off the dots but keep the white background:</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-22-18-05-29.png" /></p>
+<p>With the dots the CPU is very high. I didn't expect that, as the dots are small images that are repeated many times</p>
+<hr />
+<p>when the background is a big rectangle:</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-22-18-06-01.png" /></p>
+<hr />
+<p>Optimizing worlds and backgrounds: tilemaps</p>
+<p>create tilemaps on the fly</p>
+<p><a href="https://labs.phaser.io/edit.html?src=src\tilemap\put%20tiles.js">https://labs.phaser.io/edit.html?src=src\tilemap\put%20tiles.js</a></p>
+<pre><code>// Creating a blank tilemap with the specified dimensions
+map = this.make.tilemap({ tileWidth: 16, tileHeight: 16, width: 25, height: 20});
+var tiles = map.addTilesetImage('tiles');
+
+var layer = map.createBlankLayer('layer1', tiles);
+layer.setScale(2);
+
+// Add a simple scene with some random element
+layer.fill(58, 0, 13, 25, 1); // Surface of the water
+layer.fill(77, 0, 14, 25, 5); // Body of the water
+layer.randomize(0, 0, 25, 13, [ 44, 45, 46, 47, 48 ]); // Wall above the water
+</code></pre>
+<pre><code> switch (objectToPlace) {
+            case 'flower':
+                // You can place an individal tile by index (or by passing in a Tile object)
+                map.putTileAt(15, pointerTileX, pointerTileY);
+                break;
+            case 'platform':
+                // You can place a row of tile indexes at a location
+                map.putTilesAt([ 104, 105, 106, 107 ], pointerTileX, pointerTileY);
+                break;
+            case 'tiki':
+                // You can also place a 2D array of tiles at a location
+                map.putTilesAt([
+                    [ 49, 50 ],
+                    [ 51, 52 ]
+                ], pointerTileX, pointerTileY);
+                break;
+            default:
+                break;
+        }
+</code></pre>
+<p>To make a background with this method, would be:</p>
+<ol>
+<li>
+<p>create an image you want to repeat</p>
+</li>
+<li>
+<p>create an empty tilemap with the dimensions of the image</p>
+</li>
+<li>
+<p>create a layer in the map</p>
+</li>
+<li>
+<p>layer.fill to fill the map with images</p>
+</li>
+</ol>
+<hr />
+<p>tilemaps with arrays</p>
+<p><a href="https://labs.phaser.io/edit.html?src=src\tilemap\create%20from%20array.js">https://labs.phaser.io/edit.html?src=src\tilemap\create%20from%20array.js</a></p>
+<hr />
+<p>All TileMap examples</p>
+<p><a href="https://labs.phaser.io/index.html?dir=tilemap/&amp;q=">https://labs.phaser.io/index.html?dir=tilemap/&amp;q=</a></p>
+<hr />
+<p>All the graphic elements where also a big problem: all the Houses had hit targets, name plates etc with graphics. So I refactored them to use prerendered images:</p>
+<p>To change to an image:</p>
+<p>base size rect: 256pix</p>
+<ul>
+<li>
+<p>enterArea (rectangle) - invisible</p>
+</li>
+<li>
+<p>debugRectXMargin (rect) - color1 0x7300ED</p>
+</li>
+<li>
+<p>debugRect(rect) - color2 - 0xE8E8E8</p>
+</li>
+<li>
+<p>namePlate (roundRect) - grey/beige 0xE8E8E8<br />
+    .fillRoundedRect(<br />
+    // 0 - (locationDescription.width + namePlateMargin) / 2,<br />
+    // width / 2 - textPlateOffset,<br />
+    // locationDescription.width + namePlateMargin, // text's width + 10 (to have space between border and text)<br />
+    // namePlateMargin * 2,<br />
+    // 10,<br />
+    // ).setDepth(31);</p>
+</li>
+</ul>
+<p>baseSize Circle: 64</p>
+<ul>
+<li>
+<p>numberBubble (circle) - grey/beige 0xE8E8E8</p>
+</li>
+<li>
+<p>entershadow (circle) - purple 0x7300ED</p>
+</li>
+</ul>
+<p>greyCircle_64<br />
+purpleCircle_64<br />
+greySquare_264<br />
+purpleSquare_264</p>
+<hr />
+<p>On Android devices there is now still a crash: the big backgrounds still cause a problem. So try: make an 1024 x 1024 image and then scale that to the appropriate size. This works!</p>
+<p>This is the best solution for gradient backGrounds</p>
+<hr />
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Bug-load-assets-per-scene-with-error-handling/" class="btn btn-neutral float-left" title="BugFix: load assets per scene, with error handling"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Bugfix-drawing-over-the-edge/" class="btn btn-neutral float-right" title="Log: BugFix: Drawing over the edge">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../Bug-load-assets-per-scene-with-error-handling/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Bugfix-drawing-over-the-edge/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

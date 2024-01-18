@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>Log: cors error on retrieving images - ARTWORLD Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Log: cors error on retrieving images";
+        var mkdocs_page_input_path = "4. bugs/fixed/Cors-error-on-retrieving-images.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/rust.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> ARTWORLD Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Welcome to MkDocs</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">1. implementation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Avatar/">Avatar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/BetaWorld/">domain names</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Chat-Message-Functionality/">Chat Message Functionality</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Compression-Tests-Images/">Compression Tests Images</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Conventions/">Conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Coordinate-System-Conversion/">Coordinate System Conversion</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Create_and_update_SERVER_OBJECT_examples/">Create and update SERVER OBJECT examples</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Create_onlinePlayers_diagram/">Create onlinePlayers diagram</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Depth_of_elements_in_game/">Depth of elements in game</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Download_art_Images_flow/">Download art Images flow</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/HistoryTracker-and-the-Back-button/">HistoryTracker and the Back button</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Home-and-server-OBJECT/">Home and server OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Home/">Home</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/How_to_deploy_artworld/">How to deploy ARTWORLD</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Items-bar/">Items bar</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/LOG-release-notes/">LOG release notes</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Last-Position-Players/">Last Position Players</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Like%28Heart%29-Button-and-OBJECT/">Like(Heart) Button and OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Locations-OBJECT/">Locations OBJECT</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Movement---player/">Movement   player</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Movement--onlinePlayer/">Movement  onlinePlayer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Network-Flow-Client-Side/">Network Flow Client Side</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/PNG_Compression_percentages/">PNG Compression percentages</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Parsing-URL-Parameters---Phaser-onboarding/">Parsing URL Parameters   Phaser onboarding</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Phaser_error_handling/">Phaser error handling</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Phaser_event_system/">Phaser event system</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/RELEASE_LOG/">RELEASE LOG</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/SERVEROBJECT-achievements/">SERVEROBJECT achievements</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/SERVEROBJECT-addressbook/">SERVEROBJECT addressbook</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/SERVEROBJECT-liked/">SERVEROBJECT liked</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/ServerCallsFormat/">ServerCallsFormat</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Storage.js/">Storage.js</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/Svelte-spa-router-query-params-demo---refactoring/">Svelte spa router query params demo   refactoring</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../1.%20implementation/UI-scrollable-panels/">UI scrollable panels</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">2. research notes</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../2.%20research%20notes/Icons-and-svg-FREE/">Icons and svg FREE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Phaser3</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/A-canvas-can-be-used-as-a-Texture/">A canvas can be used as a Texture</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Add-3D-to-Phaser/">Add 3D to Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Add-a-plugin-to-a-scene/">Add a plugin to a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Add-scene-on-the-fly/">Add scene on the fly</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Automatic-Scene-loading-flag/">Automatic Scene loading flag</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Background-image-repeating/">Background image repeating</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Camera-effects%2C-colors%2C-fade/">Camera effects, colors, fade</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Camera-follow/">Camera follow</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Change-Gravity-per-sce/">Change Gravity per sce</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Changing-the-collision-shape%2C-size%2C-mouse-input-events/">Changing the collision shape, size, mouse input events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Check-world-bounds/">Check world bounds</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/DOM-elements-in-phaser-and-as-input/">DOM elements in phaser and as input</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Datamanager-system-registry/">Datamanager system registry</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Disable-mouse-input-from-outside-the-canvas/">Disable mouse input from outside the canvas</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Drag-containers-%28also-scenes%21%29/">Drag containers (also scenes!)</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Dragging/">Dragging</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Drawing-ideas-and-examples-Phaser/">Drawing ideas and examples Phaser</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Experimenting-with-different-backgrounds/">Experimenting with different backgrounds</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Groups-vs-containers/">Groups vs containers</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/How-to-manage-lots-of-particle-emitter-managers/">Note: How to manage lots of Particle Emitter (Managers)?</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Infinite-world/">Infinite world</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/LoaderPlugin-feedback/">LoaderPlugin feedback</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Loading-and-preloading/">Loading and preloading</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/No-Physics-possible-between-Scenes/">No Physics possible between Scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Pause-and-resume-a-scene/">Pause and resume a scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Pausing-game-engine/">Note:  Pausing game engine</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Phaser---timed-Events/">Phaser   timed Events</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Physics---overlap/">Physics   overlap</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Scaling-the-game---res-and-ppi/">Scaling the game   res and ppi</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Sending-data-to-scenes/">Sending data to scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Separate-UI-with-a-overlay-Scene/">Separate UI with a overlay Scene</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Speech-bubble-GRAPHIC-across-SCENES/">Speech bubble GRAPHIC across SCENES</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Starting-and-stopping-scenes/">Starting and stopping scenes</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/TextureManager/">TextureManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../2.%20research%20notes/phaser3/Using-classes-for-GameObjects-and-extending-Phaser-Classes/">Using classes for GameObjects and extending Phaser Classes</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">3. features</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Done</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Download-flipbooks/">Feature: download FLIPBOOKS</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Illustrations-fire-world/">Illustrations Fire World</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Illustrations-robot-world/">Illustrations Robot World</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Implement-robotworld-2022-12-20/">Log: implement RobotWorld 2022.12.20</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Merging-2023-01-20/">Merging 2023-01-20</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Physics-debug-in-gameedit-mode/">Log: feature - physics debug in gameEdit mode</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Place-visitor-next-to-house/">Log: feature - place visitor next to house</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/Save%20an%20ARTWORK%20as%20an%20other%20OBJECT/">Feature: save an ARTWORK as an other OBJECT</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/done/User-can-change-name/">Feature: user can change name</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Ideas</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/ideas/Bug-no-home-object/">Log: bug: no home Object</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Working on</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../3.%20features/working%20on/Update-phaser-from-3-55-to-3-70-0/">Log: update Phaser from 3.55 to 3.70.0</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">4. bugs</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Fixed</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../Bug-aanpassen-touch-targets-werelden-fixed/">BugFix: Aanpassen ‘touch targets’ werelden [fixed]</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Bug-cant-edit-avatar/">Log: Bug - can't edit AVATAR</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Bug-fix-players-are-lost-when-switching-location/">Log: bug Fix - players are lost when switching location</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Bug-load-assets-per-scene-with-error-handling/">BugFix: load assets per scene, with error handling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Bug-tracking-100-cpu-usage/">Log: bug tracking 100% CPU usage</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Bugfix-drawing-over-the-edge/">Log: BugFix: Drawing over the edge</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="./">Log: cors error on retrieving images</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../Status-van-de-itemsbar-speler-en-moderator-werd-niet-goed-geupdate/">Log: status van de itemsbar (speler en moderator) werd niet goed geupdate</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Fixing</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../fixing/bug-fix-homes-of-turquoisetriangle-missing/">Bug Fix: homes of TurquoiseTriangle missing</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">ARTWORLD Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">4. bugs</li>
+          <li class="breadcrumb-item">Fixed</li>
+      <li class="breadcrumb-item active">Log: cors error on retrieving images</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p>Access to image at</p>
+<p>'https://artworld01.s3.eu-central-1.amazonaws.com/avatar/fcbcc269-a109-4a4b-a570-5ccafc5308d8/0_2022-12-28T14_17_06_GroenBaard.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA3VY3XUKP6SYAM4OK%2F20230104%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20230104T104203Z&amp;X-Amz-Expires=86400&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=a72c2f7bd20029e2546f5fc4965a8d378c9e1ef8977ef67e3be22d4300bd9476'</p>
+<p>from origin</p>
+<p>'https://artworld.vrolijkheid.nl'</p>
+<p>has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.</p>
+<p><a href="https://aws.amazon.com/premiumsupport/knowledge-center/no-access-control-allow-origin-error/">https://aws.amazon.com/premiumsupport/knowledge-center/no-access-control-allow-origin-error/</a></p>
+<pre><code>curl -H &quot;Origin: artworld.vrolijkheid.nl&quot; -v &quot;https://artworld01.s3.eu-central-1.amazonaws.com/avatar/fcbcc269-a109-4a4b-a570-5ccafc5308d8/0_2022-12-28T14_17_06_GroenBaard.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIA3VY3XUKP6SYAM4OK%2F20230104%2Feu-central-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20230104T104203Z&amp;X-Amz-Expires=86400&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=a72c2f7bd20029e2546f5fc4965a8d378c9e1ef8977ef67e3be22d4300bd9476&quot;
+</code></pre>
+<p>return:</p>
+<pre><code>Mark bundle as not supporting multiuse
+&lt; HTTP/1.1 200 OK
+&lt; x-amz-id-2: Z0a88pOWAFUgOmBCB/R0e3TPg66g7v7CeKtjwYeeshOYpLugd8NCFg5E3EdBudQlH8EuXhSLFnc=
+&lt; x-amz-request-id: HS542A220XJFVABR
+&lt; Date: Wed, 04 Jan 2023 10:48:29 GMT
+&lt; Access-Control-Allow-Origin: *
+&lt; Access-Control-Allow-Methods: PUT, HEAD, GET
+&lt; Vary: Origin, Access-Control-Request-Headers, Access-Control-Request-Method
+&lt; Last-Modified: Mon, 02 Jan 2023 14:25:35 GMT
+&lt; ETag: &quot;8e07129259d6e55599fb94b47714c078&quot;
+&lt; x-amz-version-id: cHPlJHGeZEB1.MaX7IRw7klhDe2Z3dj4
+&lt; Accept-Ranges: bytes
+&lt; Content-Type: multipart/form-data
+&lt; Server: AmazonS3
+&lt; Content-Length: 159817
+</code></pre>
+<p>cloudfront page</p>
+<p><a href="https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=eu-central-1#/originAccess/">https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=eu-central-1#/originAccess/</a></p>
+<hr />
+<p>hypothesis 1: the image is first retreived with an empty value. Because of the way displayName is updated.</p>
+<p>To test: go back to commit that does not have that code</p>
+<p>Result: going back didn't solve the issue.</p>
+<p>Test 2: go back further (to when it did work)</p>
+<p>With commit 8caa677c538f888220791e290224fdf533073b48 downloading and editing artworks works:</p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2023/01/Screenshot-from-2023-01-03-18-33-44-1024x686.png" /></p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2023/01/Screenshot-from-2023-01-03-18-31-32-1024x91.png" /></p>
+<p><img alt="" src="https://artworlddev.maartenvanderglas.com/wp-content/uploads/2023/01/Screenshot-from-2023-01-03-18-30-21-1-1024x346.png" /></p>
+<p>So we see above that even when it works there is a undefined asked from the server, with a 404 response.</p>
+<p>But in our case we also get a cors problem:</p>
+<hr />
+<p>git log of commits:</p>
+<p>d1735d059859cc3a968030f4825afbc8cd75da19 - when I tried to solve the drawing over the edge bug, but had not changed the displayName</p>
+<p>8118fd2da334d346657bc4e9b9968f462b79da78 - the commit with Eelkes code before I started to alter the drawing app</p>
+<p>8caa677c538f888220791e290224fdf533073b48 - before Eelke, working without cors</p>
+<pre><code> if (appType == &quot;avatar&quot;) {
+      lastImg = await convertImage($Profile.avatar_url, &quot;2048&quot;, &quot;10000&quot;);
+      isPreexistingArt = true;
+</code></pre>
+<p>then to put the image on the canvas:</p>
+<pre><code>    // put images on canvas
+    if (appType == &quot;avatar&quot; || appType == &quot;stopmotion&quot;) {
+      console.log(&quot;avatar&quot;);
+      let frameAmount;
+      var framebuffer = new Image();
+      framebuffer.src = lastImg;
+      framebuffer.onload = function () {
+        console.log(&quot;img&quot;, this.width);
+        lastWidth = this.width;
+        frameAmount = lastWidth / 2048;
+
+        FrameObject.src = lastImg;
+        FrameObject.width = lastWidth;
+        frames = [];
+        for (let i = 0; i &lt; frameAmount; i++) {
+          FrameObject.left = 0;
+          FrameObject.width = 2048;
+          FrameObject.cropX = i * 2048;
+          // FrameObject.clipTo = function (ctx) {
+          //   // origin is the center of the image
+          //   // var x = rectangle.left - image.getWidth() / 2;
+          //   // var y = rectangle.top - image.getHeight() / 2;
+          //   // ctx.rect(i * -2048, 2048, (i * -2048)+2048, 2048);
+          //   ctx.rect(0,-2048,2048,2048)
+          // };
+          // FrameObject.setCoords();
+          frames.push({
+            version: &quot;4.6.0&quot;,
+            objects: [{ ...FrameObject }],
+          });
+        }
+        frames = frames;
+        console.log(&quot;frames&quot;, frames);
+        currentFrame = 0;
+        canvas.loadFromJSON(frames[0], function () {
+          canvas.renderAll.bind(canvas);
+          // for (let i = 0; i &lt; frames.length; i++) {
+          //     updateFrame()
+          //     changeFrame(i)
+
+          // }
+        });
+      };
+    }
+</code></pre>
+<pre><code>  let FrameObject = {
+    type: &quot;image&quot;,
+    version: &quot;4.6.0&quot;,
+    originX: &quot;left&quot;,
+    originY: &quot;top&quot;,
+    left: -2048,
+    top: 0,
+    width: 0,
+    height: 2048,
+    fill: &quot;rgb(0,0,0)&quot;,
+    stroke: null,
+    strokeWidth: 0,
+    strokeDashArray: null,
+    strokeLineCap: &quot;butt&quot;,
+    strokeDashOffset: 0,
+    strokeLineJoin: &quot;miter&quot;,
+    strokeUniform: false,
+    strokeMiterLimit: 4,
+    scaleX: 1,
+    scaleY: 1,
+    angle: 0,
+    flipX: false,
+    flipY: false,
+    opacity: 1,
+    shadow: null,
+    visible: true,
+    backgroundColor: &quot;&quot;,
+    fillRule: &quot;nonzero&quot;,
+    paintFirst: &quot;fill&quot;,
+    globalCompositeOperation: &quot;source-over&quot;,
+    skewX: 0,
+    skewY: 0,
+    erasable: true,
+    cropX: 0,
+    cropY: 0,
+    src: &quot;&quot;,
+    crossOrigin: &quot;anonymous&quot;,
+    filters: [],
+  };
+</code></pre>
+<p>But here the avatar is loaded with the convertImage -&gt; that is wrong because then the quality of the avatar get worse over time!</p>
+<p>We need to get the image without conversion. Is that with the getFile api function?</p>
+<pre><code>export async function getFile(file_url) {
+  const payload = { &quot;url&quot;: file_url };
+  let url
+  const rpcid = &quot;download_file&quot;;
+  await client.rpc(Sess, rpcid, payload)
+    .then((fileurl) =&gt; {
+      url = fileurl.payload.url
+      //console.log(&quot;url&quot;)
+      //console.log(url)
+      return url
+    })
+    .catch(() =&gt; {
+      console.log('fail')
+      return ''
+    })
+  return url
+}
+</code></pre>
+<hr />
+<p>git log before Eelke:</p>
+<p>commit c87da81339cdc1e1831ed05675083846a7de6727<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Sun Jul 24 22:36:10 2022 +0200</p>
+<pre><code>removed multiplayer from animalGarden because of crash when someone joint the garden
+</code></pre>
+<p>commit 78aa5bfdc328443a51457b83d20fc03a6709ae00<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Sun Jul 24 21:11:38 2022 +0200</p>
+<pre><code>save stopmotions when adding a frame to prevent data loss
+</code></pre>
+<p>commit d218d7c78aafb15a24eb63634568b3aaa9c7ff6e<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Sun Jul 24 21:07:24 2022 +0200</p>
+<pre><code>save stopmotions when adding a frame to prevent data loss
+</code></pre>
+<p>commit e9735a9436badaaa7cd93f68e4d7b114752a4a34<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Sun Jul 24 14:36:11 2022 +0200</p>
+<pre><code>debug animalChallenge
+</code></pre>
+<p>commit a1742295a72c6cd77bd2cb1211079a3bb2f21e5d<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Sun Jul 24 14:32:15 2022 +0200</p>
+<pre><code>debug animalChallenge
+</code></pre>
+<p>commit 323dcdd4f66158ecfdb76b5046e0d93e10aa5030<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Sun Jul 24 14:22:10 2022 +0200</p>
+<pre><code>debugging animalChallenge fixed some issues, look into rest
+</code></pre>
+<p>commit bb99cc08bce849f1847dbde5f67e1c9d94f8c029<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Sun Jul 24 13:26:58 2022 +0200</p>
+<pre><code>halved the artwork resolution to 1024 to save resources on poor laptops
+</code></pre>
+<p>commit 45667ae850d5936f6f8134f5e6c423e61b721238<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Sun Jul 24 12:35:35 2022 +0200</p>
+<pre><code>console.log behind a boolean flag via nakama.svelte and ManageSession.js
+</code></pre>
+<p>commit 48eb228fe47457d876f04bbcb6f85baf63e41056<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Fri Jul 22 22:14:45 2022 +0200</p>
+<pre><code>made world 5500x5500
+</code></pre>
+<p>commit c938bddf63c2a46968c750628a2012432412c9a8<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Fri Jul 22 22:11:53 2022 +0200</p>
+<pre><code>made world 5000x5000
+</code></pre>
+<p>commit bf47e052c76fd0e3eb607b83ed03698605745efb<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Fri Jul 22 22:02:42 2022 +0200</p>
+<pre><code>made world 5500x5500
+</code></pre>
+<p>commit 854d1188b629fa9da97171e25d325633d05de619<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Thu Jul 21 18:32:18 2022 +0200</p>
+<pre><code>changed artworld size to 8000x8000
+</code></pre>
+<p>commit e51a8149be35cc214b369f0aaa252706603ea140<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Thu Jul 21 18:19:37 2022 +0200</p>
+<pre><code>increased artworld size
+</code></pre>
+<p>commit e5f5589b05c91525465bfaf314d7b58d4fd99343<br />
+Author: linjoe <a href="mailto:linjoe@localhost.localdomain">linjoe@localhost.localdomain</a><br />
+Date: Thu Jul 21 17:56:12 2022 +0200</p>
+<pre><code>add username to email in register
+</code></pre>
+<p>commit 4785a0cb0ac7216a53cda34d61fc7274c990aeba<br />
+Author: linjoe <a href="mailto:linjoe@localhost.localdomain">linjoe@localhost.localdomain</a><br />
+Date: Thu Jul 21 16:30:07 2022 +0200</p>
+<pre><code>qr fix
+</code></pre>
+<p>commit 9e1b18f0b70862058917d71849ddfe55c3dc2985<br />
+Author: linjoe <a href="mailto:linjoe@localhost.localdomain">linjoe@localhost.localdomain</a><br />
+Date: Thu Jul 21 14:22:59 2022 +0200</p>
+<pre><code>qr code and history bugfix
+</code></pre>
+<p>commit a018c848df473dba8dfec71400da1f730a453ebc<br />
+Author: maarten <a href="mailto:maartenvanderglas@gmail.com">maartenvanderglas@gmail.com</a><br />
+Date: Thu Jul 21 11:53:48 2022 +0200</p>
+<pre><code>fixed gl outline bug, plugin in sloading in artworld scene, should still load in global setup
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Bugfix-drawing-over-the-edge/" class="btn btn-neutral float-left" title="Log: BugFix: Drawing over the edge"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Status-van-de-itemsbar-speler-en-moderator-werd-niet-goed-geupdate/" class="btn btn-neutral float-right" title="Log: status van de itemsbar (speler en moderator) werd niet goed geupdate">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../Bugfix-drawing-over-the-edge/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Status-van-de-itemsbar-speler-en-moderator-werd-niet-goed-geupdate/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
