@@ -8,6 +8,17 @@ The update from 3.55 to 3.60 is actually the breaking update.
 broken
 
 Fabric
+UPGRADE PHASER with Fabric
+
+Fabric with eraser breaks
+
+Possible solution:
+
+- https://github.com/fabricjs/fabric.js/issues/7171
+
+- https://www.npmjs.com/package/fabric-with-erasing
+
+
 
 RexPlugins
 
