@@ -12,7 +12,7 @@
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Welcome to MkDocs";
+        var mkdocs_page_name = "Using MkDocs for ARTWORLD documentation";
         var mkdocs_page_input_path = "index.md";
         var mkdocs_page_url = null;
       </script>
@@ -42,13 +42,13 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href=".">Welcome to MkDocs</a>
+                <li class="toctree-l1 current"><a class="reference internal current" href=".">Using MkDocs for ARTWORLD documentation</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#what-is-in-the-docs">What is in the docs?</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#commands">Commands</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#project-layout">Project layout</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#artworld-documentation">ARTWORLD Documentation</a>
     </li>
     </ul>
                 </li>
@@ -285,7 +285,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Welcome to MkDocs</li>
+      <li class="breadcrumb-item active">Using MkDocs for ARTWORLD documentation</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -294,11 +294,32 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="welcome-to-mkdocs">Welcome to MkDocs</h1>
+                <h1 id="using-mkdocs-for-artworld-documentation">Using MkDocs for ARTWORLD documentation</h1>
+<p>Why MkDocs?</p>
+<p>Advantages:
+- Auto generation of navigation based on folder structure.
+- Easy theming
+- use of markdown and yml</p>
+<p>Small gotcha:
+- there is a docs_files_md folder that has the 'raw' md files and folders
+- the 'docs' folder is generated bij de 'mkdocs build' command
+- so editing takes place in VSCODE and not directly on Github, but this can also be seen as an advantage</p>
+<p>Todo: 
+- add 'mkdocs build' to the npm run dev script</p>
+<hr />
+<h2 id="what-is-in-the-docs">What is in the docs?</h2>
+<ol>
+<li>Implementation: notes about the implementation of functions</li>
+<li>Research notes: reminders on how to do things</li>
+<li>Features: ideas for new features, logs of features that are implemented</li>
+<li>Bug: found, fixing and done. Serves also as a log </li>
+</ol>
+<p>Todo:
+- Feature List per Release of ARTWORLD</p>
+<hr />
 <p>For full documentation visit <a href="https://www.mkdocs.org">mkdocs.org</a>.</p>
 <h2 id="commands">Commands</h2>
 <ul>
-<li><code>mkdocs new [dir-name]</code> - Create a new project.</li>
 <li><code>mkdocs serve</code> - Start the live-reloading docs server.</li>
 <li><code>mkdocs build</code> - Build the documentation site.</li>
 <li><code>mkdocs -h</code> - Print help message and exit.</li>
@@ -309,13 +330,6 @@ docs/
     index.md  # The documentation homepage.
     ...       # Other markdown pages, images and other files.
 </code></pre>
-<h2 id="artworld-documentation">ARTWORLD Documentation</h2>
-<p>Todo:
-- [ ] copy paste wordpress pages
-https://github.com/lonekorean/wordpress-export-to-markdown</p>
-<ul>
-<li>[ ] copy paste nextcloud pages</li>
-</ul>
               
             </div>
           </div><footer>
@@ -364,5 +378,5 @@ https://github.com/lonekorean/wordpress-export-to-markdown</p>
 
 <!--
 MkDocs version : 1.5.3
-Build Date UTC : 2024-01-18 16:28:55.284263+00:00
+Build Date UTC : 2024-01-18 16:39:45.278061+00:00
 -->
