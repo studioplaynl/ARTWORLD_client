@@ -1,5 +1,10 @@
 # Using MkDocs for ARTWORLD documentation
 
+The ARTWORLD project [repository] (https://github.com/studioplaynl/ARTWORLD_client/)
+
+
+1. [How to deploy ARTWORLD](1-implementation/How-to-deploy-artworld/)
+
 
 
 ## Why MkDocs?
@@ -8,7 +13,7 @@ Advantages:
 
 - Auto generation of navigation based on folder structure.
 - Easy theming
-- use of markdown and yml
+- Use of markdown and yml
 
 
 Small gotchas:
