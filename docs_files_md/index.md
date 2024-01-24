@@ -2,10 +2,7 @@
 
 The ARTWORLD project [repository] (https://github.com/studioplaynl/ARTWORLD_client/)
 
-
-1. [How to deploy ARTWORLD](1-implementation/How-to-deploy-artworld/)
-
-
+[How to deploy ARTWORLD](1-implementation/How-to-deploy-artworld/)
 
 ## Why MkDocs?
 
