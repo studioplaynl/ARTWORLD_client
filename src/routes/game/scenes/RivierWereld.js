@@ -55,14 +55,21 @@ export default class RivierWereld extends Phaser.Scene {
       }
     });
 
-    // BergenWereld
+    // assets
     this.localAssetsCheck = {};
 
-    const folderPath = './assets/world_flamengo/';
+    // assets names
+    this.backgroundImageName = `background_${this.scene.key}`;
+    this.portalImageName = `portal_${this.scene.key}`;
+
+    const folderPath = './assets/world_paarse_rivier/';
+
 
     const loadArray = [
-      { key: 'Portal_naarHuis_flamengo', path: `${folderPath}_Portaal_Flamingocity_naarHuis_small-fs8.png` },
-      { key: 'flamengeWereld_geheel', path: `${folderPath}geheel_Wereld18_FlamingoCity.jpg` },
+      {
+        key: this.portalImageName, path: `${folderPath}02a_portaal_River_naarHuis-fs8.png`,
+      },
+      { key: this.backgroundImageName, path: `${folderPath}01_wereld20_river_compressed.jpg` },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
@@ -206,7 +213,7 @@ export default class RivierWereld extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(-745, 692);
+    let locationVector = new Phaser.Math.Vector2(525, -263);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -219,11 +226,11 @@ export default class RivierWereld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Artworld',
-      locationImage: 'Portal_naarHuis_flamengo',
+      locationImage: this.portalImageName,
       enterButtonImage: 'enter_button',
       locationText: 'Paarse Cirkel Wereld',
       referenceName: 'this.purpleCircleLocation',
-      size: 183,
+      size: 380,
       fontColor: 0x8dcb0e,
     });
   }
@@ -233,7 +240,7 @@ export default class RivierWereld extends Phaser.Scene {
     PlaceElement.image({
       x: 0,
       y: 0,
-      file: 'flamengeWereld_geheel',
+      file: this.backgroundImageName,
       scale: 1,
       // rotation: -0.05,
       draggable: false,

@@ -8,11 +8,13 @@ Making a new world:
    a. jpeg for the background: 5000x5000pix, jpeg quality 60%, aim is 1.3Mb file size max.
    b. run the png [script for pngs](../PNG-Compression-percentages)
 1. make assets folder (world_xxx) in public>assets and place assets in folder
-1. put assets in world
-1. correct the keys for the assets in the scene file
+1. add the new portal to artworld.js
+   a. this.load.image for the portal
+   b. locationVector and new GenerateLocation
+   c. correct position and size of portal in artworld with gameEdit mode (shift alt e f)
+1. put assets in world, with the correct keys
 1. correct portal to artworld with gameEdit mode
-1. correct position of portal in artworld with gameEdit mode
-1. a. adding the scene to the gameconfig.js file
+1. a. make sure the scene is added to the gameconfig.js file
    b. make QR codes with the right nakama server
    c. paste users in google sheet
    d. save QR images

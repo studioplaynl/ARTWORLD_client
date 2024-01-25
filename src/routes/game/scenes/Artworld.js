@@ -122,6 +122,10 @@ export default class Artworld extends Phaser.Scene {
     this.load.image('prismaWorldPortal', './assets/world_prism/Portaal_Prisma_naar_PrismaCROP-fs8.png');
     this.load.image('jungleWorldPortal', './assets/world_jungle/portaal_naarJungle_crop-fs8.png');
     this.load.image('flamengoWorldPortal', './assets/world_flamengo/_Portaal_Flamingocity_naarMeteor_small-fs8.png');
+    this.load.image(
+      'paarseRivierWorldPortal',
+      './assets/world_paarse_rivier/02b_portaal_River_naarRivier-fs8.png',
+    );
 
     /** subscription to the loaderror event
     * strangely: if the more times the subscription is called, the more times the event is fired
@@ -1116,6 +1120,26 @@ export default class Artworld extends Phaser.Scene {
       size: 156,
     });
 
+    locationVector = new Phaser.Math.Vector2(2093, 306);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.rivierWorld = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'RivierWereld',
+      locationImage: 'paarseRivierWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Rivier Wereld',
+      referenceName: 'this.rivierWorld',
+      fontColor: 0x8dcb0e,
+      size: 231,
+    });
     // ---- Location 1 ----------------------
     locationVector = new Phaser.Math.Vector2(-1215, -589);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
