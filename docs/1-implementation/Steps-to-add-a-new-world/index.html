@@ -562,6 +562,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../GameEditMode/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GameEditMode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../HistoryTracker-and-the-Back-button/" class="md-nav__link">
         
   
@@ -2667,25 +2688,26 @@
 <p>Making a new world:</p>
 <ol>
 <li>CHECK THAT nakama.js is SET TO ARTWORLD SERVER!! on the register page it is visible on which server you are</li>
-<li>making a new scene file</li>
-<li>change the names inside the scene file</li>
-<li>adding the scene to the constans.js file</li>
 <li>make assets smaller (compress)
    a. jpeg for the background: 5000x5000pix, jpeg quality 60%, aim is 1.3Mb file size max.
    b. run the png <a href="../PNG-Compression-percentages">script for pngs</a></li>
 <li>make assets folder (world_xxx) in public&gt;assets and place assets in folder</li>
+<li>making a new scene file (duplicate previous world )</li>
+<li>change the names inside the scene file</li>
+<li>put assets in world, with the correct keys</li>
+<li>adding the scene to the constans.js file</li>
+<li>adding the scene to gameConfig.js</li>
 <li>add the new portal to artworld.js
    a. this.load.image for the portal
    b. locationVector and new GenerateLocation
    c. correct position and size of portal in artworld with gameEdit mode (shift alt e f)</li>
-<li>put assets in world, with the correct keys</li>
-<li>correct portal to artworld with gameEdit mode</li>
+<li>correct portal to artworld with <a href="../GameEditMode">gameEdit mode</a></li>
 <li>a. make sure the scene is added to the gameconfig.js file
    b. make QR codes with the right nakama server
    c. paste users in google sheet
    d. save QR images
    e. load QR sheets with 24 images</li>
-<li>place all houses in world with gameEdit mode, save with U key (nakama.js must be set to ARTWORLD otherwise the data is not saved in the right database!)</li>
+<li>place all houses in world with <a href="../GameEditMode">gameEdit mode</a>, save with U key (nakama.js must be set to ARTWORLD otherwise the data is not saved in the right database!)</li>
 <li>push new code to github</li>
 <li>deploy new code to server</li>
 </ol>

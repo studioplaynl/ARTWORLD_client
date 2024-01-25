@@ -14,12 +14,12 @@ Making a new world:
    a. this.load.image for the portal
    b. locationVector and new GenerateLocation
    c. correct position and size of portal in artworld with gameEdit mode (shift alt e f)
-1. correct portal to artworld with gameEdit mode
+1. correct portal to artworld with [gameEdit mode](../GameEditMode)
 1. a. make sure the scene is added to the gameconfig.js file
    b. make QR codes with the right nakama server
    c. paste users in google sheet
    d. save QR images
    e. load QR sheets with 24 images
-1. place all houses in world with gameEdit mode, save with U key (nakama.js must be set to ARTWORLD otherwise the data is not saved in the right database!)
+1. place all houses in world with [gameEdit mode](../GameEditMode), save with U key (nakama.js must be set to ARTWORLD otherwise the data is not saved in the right database!)
 1. push new code to github
 1. deploy new code to server
