@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../Network-Flow-Client-Side/">
+        <link rel="prev" href="../Coordinate-System-Conversion/">
       
       
-        <link rel="next" href="../Parsing-URL-Parameters---Phaser-onboarding/">
+        <link rel="next" href="../Create-onlinePlayers-diagram/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>PNG Compression percentages - ARTWORLD Documentation</title>
+        <title>Create and update SERVER OBJECT examples - ARTWORLD Documentation</title>
       
     
     
@@ -93,7 +93,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PNG Compression percentages
+              Create and update SERVER OBJECT examples
             
           </span>
         </div>
@@ -389,10 +389,17 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../Create_and_update_SERVER_OBJECT_examples/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -401,6 +408,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -413,7 +421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Create_onlinePlayers_diagram/" class="md-nav__link">
+      <a href="../Create-onlinePlayers-diagram/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -434,7 +442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Depth_of_elements_in_game/" class="md-nav__link">
+      <a href="../Depth-of-elements-in-game/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -455,11 +463,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../Download_art_Images_flow/" class="md-nav__link">
+      <a href="../Download-art-images-flow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Download art Images flow
+    Download art images flow
   </span>
   
 
@@ -539,7 +547,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../How_to_deploy_artworld/" class="md-nav__link">
+      <a href="../How-to-deploy-artworld/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -725,17 +733,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../PNG-Compression-percentages/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -744,7 +745,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -778,7 +778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Phaser_error_handling/" class="md-nav__link">
+      <a href="../Phaser-error-handling/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -799,7 +799,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Phaser_event_system/" class="md-nav__link">
+      <a href="../Phaser-event-system/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -820,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../RELEASE_LOG/" class="md-nav__link">
+      <a href="../RELEASE-LOG/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2061,7 +2061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../3-features/done/Save%20an%20ARTWORK%20as%20an%20other%20OBJECT/" class="md-nav__link">
+      <a href="../../3-features/done/Save-an-ARTWORK-as-an-other-OBJECT/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2597,33 +2597,37 @@
                   
 
 
-  <h1>PNG Compression percentages</h1>
+  <h1>Create and update SERVER OBJECT examples</h1>
 
-<p>to create the best looking, smallest png files with transparency:</p>
-<p>1-step
-1. pngquant:
-pngquant 64 --force  --skip-if-larger  *.png</p>
-<p>Total reduction: 70.67%</p>
-<p>2-step [No difference to 1-step, but documented...]
-1. pngcrush</p>
-<p>pngcrush is a PNG (Portable Network Graphics) file optimizer. It reduces the file size of the image by passing it through various compression methods and filters.</p>
-<p>Debian/Ubuntu users can run the following command for installation.</p>
-<p>sudo apt get install pngcrush
-Users of other Linux distributions can install it using their standard installation commands followed by pngcrush.</p>
-<p>After the installation is done, we can reduce the size of PNG file by running:</p>
-<p>pngcrush -brute <INPUT_FILE> <OUTPUT_FILE>
-Reduce Image Size Pngcrush
-Reducing PNG file size
-The '-brute' option takes the file through 114 filter/compression methods. The extended process consumes few seconds. Instead of applying the brute force approach, users can select filters, levels and strategies for optimization.</p>
-<p>The types of filters and other properties can be learnt through the manual pages - man pngcrush.</p>
-<p>-d [output dir]</p>
-<p>Average reduction in size: 18%</p>
-<ol>
-<li>After that reduce color with pngquant:
-pngquant 64 --force  --skip-if-larger  *.png</li>
-</ol>
-<p>Average reduction in size: 68.25%</p>
-<p>Total reduction: 70.67%</p>
+<p>To retreive objects (eg addressbook) from the server, works like this:</p>
+<div class="language-text highlight"><pre><span></span><code>listObjects(&quot;addressbook&quot;, ManageSession.userProfile.id, 10)
+</code></pre></div>
+<p>We get back an array of max 10 (in this case) objects that have "addressbook" as collection value. For example:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>0:
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  0: {collection: &#39;addressbook&#39;, key: &#39;address_f42eb28f-9f4d-476c-9788-2240bac4cf48&#39;, permission_read: 2, permission_write: 1, value: {…}, …}
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  1: {collection: &#39;addressbook&#39;, key: &#39;addressbook_5264dc23-a339-40db-bb84-e0849ded4e68&#39;, permi...
+</span></code></pre></div></p>
+<p>We have an array with an array of objects (because in this case we have multiple addressbooks, most of the time we have only one). Even if there is only one object coming back it will be in the form of:  <br />
+<code>[0][0]</code>  <br />
+The first array is standard, the second array is the array of objects we are looking for.         </p>
+<p>Inside the array we can query the values of the object with dot notation. In the case of retreiving the value:  <br />
+<code>[0][1].value</code></p>
+<p>The object ( on the [0][0] level) looks in detail like: </p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>{
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>collection: &quot;addressbook&quot;,
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>create_time: &quot;2021-12-23T13:20:46Z&quot;,
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>key: &quot;address_f42eb28f-9f4d-476c-9788-2240bac4cf48&quot;,
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>permission_read: 2,
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>permission_write: 1,
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>update_time: &quot;2021-12-23T16:09:10Z&quot;,
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>user_id: &quot;f42eb28f-9f4d-476c-9788-2240bac4cf48&quot;,
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>value: {user_id: &quot;5264dc23-a339-40db-bb84-e0849ded4e68&quot;, user_name: &quot;user11&quot;},
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>version: &quot;99914b932bd37a50b983c5e7c90ae93b&quot;
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>}
+</span></code></pre></div>
+<p>Examples</p>
+<p><a href="https://github.com/studioplaynl/ARTWORLD_client/wiki/Locations-OBJECT">Locations OBJECT</a>    </p>
+<p><a href="https://github.com/studioplaynl/ARTWORLD_client/wiki/Like%28Heart%29-Button-and-OBJECT/">Heart / Like button Object</a>    </p>
 
 
 

@@ -8,9 +8,13 @@ ARTWORLD is build on PHASER game engine and the NAKAMA game server, both excelle
 ARTWORLD is made in JavaScript, NODEJS and SVELTE. As a file storage backend we use AWS.
 
 ARTWORLD is conceived and financed by De Vrolijkheid foundation.
+
 ARTWORLD is designed, programmed and project managed by [Maarten van der Glas](https://github.com/mrmaarten) @ [Studio Play](https://studioplay.nl).
+
 Server development 1.0 - 1.5 and SVELTE programming by 1.0 - 1.4 by [Lindsey Schaap](https://github.com/linjoe2).
+
 SVELTE 1.4 - 1.5 overall, code refactoring and improvement and UI improvements by [Eelke Feenstra](https://github.com/eelke).
+
 UI concept and icons by design studio [Harris Blondman](https://www.harrisblondman.nl/)
 
 Ingame graphics are made by Max Holicki, and are not open source.

@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../Home/">
+        <link rel="prev" href="../Phaser-event-system/">
       
       
-        <link rel="next" href="../Items-bar/">
+        <link rel="next" href="../SERVEROBJECT-achievements/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>How to deploy ARTWORLD - ARTWORLD Documentation</title>
+        <title>RELEASE LOG - ARTWORLD Documentation</title>
       
     
     
@@ -61,11 +61,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#how-to-deploy-artworld" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -98,7 +93,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              How to deploy ARTWORLD
+              RELEASE LOG
             
           </span>
         </div>
@@ -397,7 +392,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Create_and_update_SERVER_OBJECT_examples/" class="md-nav__link">
+      <a href="../Create-and-update-SERVER-OBJECT-examples/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -418,7 +413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Create_onlinePlayers_diagram/" class="md-nav__link">
+      <a href="../Create-onlinePlayers-diagram/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -439,7 +434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Depth_of_elements_in_game/" class="md-nav__link">
+      <a href="../Depth-of-elements-in-game/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -460,11 +455,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../Download_art_Images_flow/" class="md-nav__link">
+      <a href="../Download-art-images-flow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Download art Images flow
+    Download art images flow
   </span>
   
 
@@ -541,19 +536,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../How-to-deploy-artworld/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -562,7 +548,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -743,7 +728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../PNG_Compression_percentages/" class="md-nav__link">
+      <a href="../PNG-Compression-percentages/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -785,7 +770,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Phaser_error_handling/" class="md-nav__link">
+      <a href="../Phaser-error-handling/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -806,7 +791,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Phaser_event_system/" class="md-nav__link">
+      <a href="../Phaser-event-system/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -824,10 +809,17 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../RELEASE_LOG/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -836,6 +828,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -2068,7 +2061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../3-features/done/Save%20an%20ARTWORK%20as%20an%20other%20OBJECT/" class="md-nav__link">
+      <a href="../../3-features/done/Save-an-ARTWORK-as-an-other-OBJECT/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2590,8 +2583,6 @@
   
   
   
-    
-  
   
 </nav>
                   </div>
@@ -2606,133 +2597,9 @@
                   
 
 
-<h1 id="how-to-deploy-artworld">How to deploy ARTWORLD</h1>
-<ul>
-<li>up to date Linux machine (with correct security in place!) (contabo/digital ocean)</li>
-<li>nginx</li>
-<li>docker</li>
-<li>golang</li>
-<li>basic linux experience</li>
-</ul>
-<h1 id="startup">startup</h1>
-<p><code>sudo apt-get install docker docker-compose nginx golang certbot node npm unzip</code></p>
-<h1 id="client-code">client code</h1>
-<ul>
-<li>clone ARTWORLD_client code to /var/www/artworld/</li>
-</ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir /var/www/artworld
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>cd /var/www/artworld
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>wget https://github.com/studioplaynl/ARTWORLD_client/archive/refs/heads/main.zip
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>unzip main
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>mv ARTWORLD_client-main/ ARTWORLD_client
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>cd ARTWORLD_client/
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>npm install
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>npm run build
-</span></code></pre></div>
-<p>-edit your server domain name in ./src/nakama.svelte</p>
-<h1 id="get-nginx-up-and-running">get nginx up and running:</h1>
-<ul>
-<li>start by editing /var/www/nginx with the correct domain and folder settings</li>
-</ul>
-<p><code>sudo cp /var/www/nginx /etc/nginx/sites-enabled/artworld</code></p>
-<p><code>sudo systemctl restart nginx</code></p>
-<ul>
-<li>
-<p>set your dns settings to point the domain to the correct IP adress</p>
-</li>
-<li>
-<p>get certbot for a certificate(as shown in the config example)</p>
-</li>
-<li>
-<p>now you can test the domain and see if the clientside code is up and running.</p>
-</li>
-</ul>
-<h1 id="server-code">server code</h1>
-<ul>
-<li>clone the artworld server code to your home directory</li>
-<li>edit config.yml if necessary</li>
-</ul>
-<p><code>go mod vendor</code></p>
-<p><code>npm run docker</code></p>
-<p>server should be live now.</p>
-<h1 id="clone-to-betaworld-server">clone to betaworld server</h1>
-<p>this has als9o been automated as a cron job, running at 1am each day</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo docker commit artworld_nakama_server_nakama_1 artworld_nakama
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sudo docker save artworld_nakama | gzip | ssh root@185.193.67.152 &#39;gunzip | docker load&#39;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sudo docker commit artworld_nakama_server_postgres_1 artworld_postgres
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sudo docker save artworld_postgres | gzip | ssh root@185.193.67.152 &#39;gunzip | docker load&#39;
-</span></code></pre></div>
-<h1 id="amazon-aws">Amazon AWS</h1>
-<ul>
-<li>Create a S3 bucket in Amazon AWS for storage of files.</li>
-<li>object ownership: ACLs enabled(object writer)</li>
-<li>block public acces: block all</li>
-<li>bucket versioning: disabled</li>
-<li>tag: none</li>
-<li>encryption: disabled</li>
-<li>advanced settings: disabled</li>
-</ul>
-<p>cors settings:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>[
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    {
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        &quot;AllowedHeaders&quot;: [
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>            &quot;*&quot;
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        ],
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        &quot;AllowedMethods&quot;: [
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>            &quot;PUT&quot;,
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>            &quot;HEAD&quot;,
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>            &quot;GET&quot;
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        ],
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        &quot;AllowedOrigins&quot;: [
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>            &quot;https://yourdomain.com&quot;
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        ],
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        &quot;ExposeHeaders&quot;: []
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    }
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>]
-</span></code></pre></div></p>
-<ul>
-<li>create access key:</li>
-<li>click right top username &gt; security credentials</li>
-<li>create user(permission: AWSS3FullAcces)</li>
-<li>create in the nakama server folder the file named "credentials"</li>
-</ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>[default] 
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>aws_access_key_id = &quot;youracceskeyid&quot;
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>aws_secret_access_key = &quot;youracceskey&quot;
-</span></code></pre></div>
-<ul>
-<li>update main.go</li>
-</ul>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>const (
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    AWS_S3_REGION = &quot;your region&quot;
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    AWS_S3_BUCKET = &quot;your bucket&quot;
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>)
-</span></code></pre></div>
-<h2 id="aws-image-converter">AWS image converter:</h2>
-<p>this is needed for converting images to the correct sizes incl. caching</p>
-<p>to setup:</p>
-<p>https://docs.aws.amazon.com/solutions/latest/serverless-image-handler/deployment.html
-  - press launch solution 
-  - choose correct location in top right!
-  - choose following settings:
-AutoWebP    No  -
-CorsEnabled Yes -
-CorsOrigin  https://yourwebsite.com -
-DeployDemoUI    No  -
-EnableDefaultFallbackImage  No  -
-EnableSignature Yes -
-FallbackImageS3Bucket   -   -
-FallbackImageS3Key  -   -
-LogRetentionPeriod  1   -
-SecretsManagerKey   your secret key -
-SecretsManagerSecret    your secret secret  -
-SourceBuckets   artworldstudioplay  - </p>
-<p>to create a secret go to: secretsmanager
-https://eu-central-1.console.aws.amazon.com/secretsmanager/home?region=eu-central-1#!/listSecrets/
-- other type of secret
-- fill in key and value</p>
-<h2 id="troubleshoot">troubleshoot</h2>
+  <h1>RELEASE LOG</h1>
+
+
 
 
 

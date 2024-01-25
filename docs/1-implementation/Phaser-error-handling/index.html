@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../Depth_of_elements_in_game/">
+        <link rel="prev" href="../Parsing-URL-Parameters---Phaser-onboarding/">
       
       
-        <link rel="next" href="../HistoryTracker-and-the-Back-button/">
+        <link rel="next" href="../Phaser-event-system/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>Download art Images flow - ARTWORLD Documentation</title>
+        <title>Phaser error handling - ARTWORLD Documentation</title>
       
     
     
@@ -93,7 +93,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Download art Images flow
+              Phaser error handling
             
           </span>
         </div>
@@ -392,7 +392,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Create_and_update_SERVER_OBJECT_examples/" class="md-nav__link">
+      <a href="../Create-and-update-SERVER-OBJECT-examples/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -413,7 +413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Create_onlinePlayers_diagram/" class="md-nav__link">
+      <a href="../Create-onlinePlayers-diagram/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -434,7 +434,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Depth_of_elements_in_game/" class="md-nav__link">
+      <a href="../Depth-of-elements-in-game/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -452,26 +452,18 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../Download-art-images-flow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Download art Images flow
+    Download art images flow
   </span>
   
 
       </a>
-      
     </li>
   
 
@@ -547,7 +539,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../How_to_deploy_artworld/" class="md-nav__link">
+      <a href="../How-to-deploy-artworld/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -736,7 +728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../PNG_Compression_percentages/" class="md-nav__link">
+      <a href="../PNG-Compression-percentages/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -775,10 +767,17 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../Phaser_error_handling/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -787,6 +786,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -799,7 +799,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Phaser_event_system/" class="md-nav__link">
+      <a href="../Phaser-event-system/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -820,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../RELEASE_LOG/" class="md-nav__link">
+      <a href="../RELEASE-LOG/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2061,7 +2061,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../3-features/done/Save%20an%20ARTWORK%20as%20an%20other%20OBJECT/" class="md-nav__link">
+      <a href="../../3-features/done/Save-an-ARTWORK-as-an-other-OBJECT/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2597,15 +2597,93 @@
                   
 
 
-  <h1>Download art Images flow</h1>
+  <h1>Phaser error handling</h1>
 
-<p>Eg a list of images to show in the billBoards, eg a rotating selection of liked images of the player.</p>
-<ol>
-<li>create an array of liked images in the array <strong>scene.AbriImages</strong></li>
-<li>A if the key doesn't exist: Download the image</li>
-<li>B if the image can't be downloaded, skip the item, remove it from the array</li>
-<li>create an array with the image keys and sizes</li>
-</ol>
+<p>Now I using a queue to load details about the function the file is loaded in:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>this.resolveErrorObjectArray = []
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    async getHomeImages(url, element, index, homeImageKey, scene) {
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        console.log(&quot;getHomeImages&quot;)
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        await convertImage(url, &quot;128&quot;, &quot;png&quot;)
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>            .then((rec) =&gt; {
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>                //console.log(&quot;rec&quot;, rec)
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>                // load all the images to phaser
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>                scene.load.image(homeImageKey, rec)
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>                    .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) =&gt; {
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>                        //delete from this.resolveErrorObjectArray
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>                        this.resolveErrorObjectArray = this.resolveErrorObjectArray.filter((obj) =&gt; obj.imageKey !== homeImageKey)
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>                        console.log(&quot;this.resolveErrorObjectArray&quot;, this.resolveErrorObjectArray)
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>                        //create the home
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>                        this.createHome(element, index, homeImageKey, scene)
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>                    }, this)
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>                // put the file in the loadErrorCache, incase it doesn&#39;t load
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>                this.resolveErrorObjectArray.push({ loadFunction: &quot;getHomeImage&quot;, element: element, index: index, imageKey: homeImageKey })
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>                scene.load.start() // start loading the image in memory
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>            })
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    }
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    resolveLoadError(offendingFile) {
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>        let resolveErrorObject = this.resolveErrorObjectArray.find(obj =&gt; obj.imageKey == offendingFile.key)
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>        let loadFunction = resolveErrorObject.loadFunction
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>        let element = resolveErrorObject.element
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>        let index = resolveErrorObject.index
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>        let imageKey = offendingFile.key
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>        let scene = ManageSession.currentScene
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>        switch (loadFunction) {
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>            case (&quot;getHomeImage&quot;):
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>                console.log(&quot;load offendingFile again&quot;, imageKey, offendingFile)
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>                scene.load.image(imageKey, &#39;./assets/ball_grey.png&#39;)
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>                    .on(`filecomplete-image-${imageKey}`, (imageKey) =&gt; {
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>                        //delete from this.resolveErrorObjectArray
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>                        this.resolveErrorObjectArray = this.resolveErrorObjectArray.filter((obj) =&gt; obj.imageKey !== imageKey)
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>                        console.log(&quot;this.resolveErrorObjectArray&quot;, this.resolveErrorObjectArray)
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>                        //create the home
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>                        this.createHome(element, index, imageKey, scene);
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>                    }, this)
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>                scene.load.start()
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>                break
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>            default:
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>                console.log(&quot;please state fom which function the loaderror occured!&quot;)
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>        }
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a>    }
+</span></code></pre></div>
+<hr />
+<p>Was using this:   </p>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>scene.load.image(homeImageKey, rec)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>                    .on(`filecomplete-image-${homeImageKey}`, (homeImageKey) =&gt; {
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>                        //create the home
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>                        this.createHome(element, index, homeImageKey, scene)
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>                    }, this)
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>                    .on(`loaderror`, (offendingFile) =&gt; { this.resolveLoadError(element, index, homeImageKey, offendingFile, scene) }, this)
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>                scene.load.start()
+</span></code></pre></div>
+But the .on('loaderror) callback is for the whole scene, so it is difficult to create a callback specific for a method.</p>
+<p>On way to do it maybe is to only add to the queue when a method is finished. So to use to load queue per loading method/ sequence...</p>
+<hr />
+<p>Async loader plugin: <br />
+<a href="https://pablo.gg/en/blog/games/how-to-load-assets-asynchronously-with-phaser-3/">https://pablo.gg/en/blog/games/how-to-load-assets-asynchronously-with-phaser-3/</a></p>
+<hr />
+<p>Maybe a useful methode:  <br />
+<a href="https://phaser.discourse.group/t/loading-audio/1306/4">https://phaser.discourse.group/t/loading-audio/1306/4</a></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>async create() {
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  const asyncLoader = loaderPlugin =&gt; {
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    return new Promise(resolve =&gt; {
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>      loaderPlugin.on(&#39;filecomplete&#39;, () =&gt; resolve()).on(&#39;loaderror&#39;, () =&gt; resolve())
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>      loaderPlugin.start()
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    })
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>  }
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  await asyncLoader(this.load.audio(&#39;song&#39;, [&#39;assets/sounds/0781.ogg&#39;]))
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>  this.sound.add(&#39;song&#39;).play()
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>}
+</span></code></pre></div>
 
 
 
