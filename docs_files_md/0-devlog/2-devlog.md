@@ -2,6 +2,8 @@
 
 ###2024-01-25
 - Add 3 worlds to /main
+TODO
+- after adding 3 new worlds main will be stored in /main1.6 branch
 
 ###2024-01-20
 - Last working branch is now /main branch.
@@ -10,7 +12,6 @@
 - Updates the README.md, also links to the docs.
 
 TODO:
-- after adding 3 new worlds main will be stored in /main1.6 branch
 - continue from Phaser 3.70.0
 
 ###2023-10-04 
