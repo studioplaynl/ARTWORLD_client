@@ -1,16 +1,37 @@
 to create the best looking, smallest png files with transparency:
 
-1-step
-1. [pngquant](https://pngquant.org/):
-pngquant 64 --force  --skip-if-larger  *.png
+###1-step
 
-Total reduction: 70.67%
+1. [pngquant](https://pngquant.org/):
+
+```
+pngquant 64 --force  --skip-if-larger  *.png
+```
+
+{==Total reduction: 70.67%==}
+
+Script to run in a folder:
+
+```
+#!/bin/bash
+
+# Check if pngquant is installed
+if ! command -v pngquant &> /dev/null
+then
+    echo "pngquant could not be found. Please install it first."
+    exit
+fi
+
+# Run pngquant command
+pngquant 64 --force --skip-if-larger *.png
+```
 
 ---
 
-No difference to 1-step, but added for documentation.
 
-2-step 
+
+###2-step  (no file size difference to 1-step, but added for documentation.)
+
 1. pngcrush
 
 pngcrush is a PNG (Portable Network Graphics) file optimizer. It reduces the file size of the image by passing it through various compression methods and filters.
@@ -38,7 +59,7 @@ pngquant 64 --force  --skip-if-larger  *.png
 
 Average reduction in size: 68.25%
 
-Total reduction: 70.67%
+{==Total reduction: 70.67%==}
 
 
 

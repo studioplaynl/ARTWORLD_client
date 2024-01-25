@@ -6,7 +6,7 @@ Making a new world:
 1. adding the scene to the constans.js file
 1. make assets smaller (compress)
    a. jpeg for the background: 5000x5000pix, jpeg quality 60%, aim is 1.3Mb file size max.
-   b. run the png [script for pngs](PNG-Compression-percentages)
+   b. run the png [script for pngs](../PNG-Compression-percentages)
 1. make assets folder (world_xxx) in public>assets and place assets in folder
 1. put assets in world
 1. correct the keys for the assets in the scene file
