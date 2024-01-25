@@ -1,5 +1,18 @@
 ## Dev log
 
+###2024-01-25
+- Add 3 worlds to /main
+
+###2024-01-20
+- Last working branch is now /main branch.
+- The /dev branch is the 'update phaser to 3.70.0' branch (under construction).
+- Added MkDocs and consolidated all documentation, notes and todo's in there.
+- Updates the README.md, also links to the docs.
+
+TODO:
+- after adding 3 new worlds main will be stored in /main1.6 branch
+- continue from Phaser 3.70.0
+
 ###2023-10-04 
 
 - Added animation to send button in sendTo to show user the last button.
@@ -11,7 +24,7 @@
 to create the best looking, smallest png files with transparency, in a terminal, in the correct directory:
 pngquant 64 --force --skip-if-larger *.png
 
-###Okt 2 2023
+###okt 2 2023
 - refactored downloadDrawingDefaultUserHome in serverCall with resolveLoadError name (type)
 - made flow for Liked
 

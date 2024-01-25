@@ -1,6 +1,6 @@
 # Using MkDocs for ARTWORLD documentation
 
-The ARTWORLD project [repository] (https://github.com/studioplaynl/ARTWORLD_client/)
+The ARTWORLD project [repository](https://github.com/studioplaynl/ARTWORLD_client/)
 
 [How to deploy ARTWORLD](1-implementation/How-to-deploy-artworld/)
 
