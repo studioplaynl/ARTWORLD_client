@@ -130,6 +130,10 @@ export default class Artworld extends Phaser.Scene {
       'swampWorldPortal',
       './assets/world_swamp/02a_portaal_swamp_naarSwamp400px-fs8.png',
     );
+    this.load.image(
+      'salamanderWorldPortal',
+      './assets/world_salamander/portaal_naarSalamanderWereld-fs8.png',
+    );
 
     /** subscription to the loaderror event
     * strangely: if the more times the subscription is called, the more times the event is fired
@@ -1151,7 +1155,7 @@ export default class Artworld extends Phaser.Scene {
       locationVector,
     );
 
-    locationVector = new Phaser.Math.Vector2(1930, 496);
+    locationVector = new Phaser.Math.Vector2(1307, 426);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -1168,6 +1172,33 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Moeras Wereld',
       referenceName: 'this.swampWorld',
+      fontColor: 0x8dcb0e,
+      size: 231,
+    });
+    // ---- Location 1 ----------------------
+    locationVector = new Phaser.Math.Vector2(-1215, -589);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    locationVector = new Phaser.Math.Vector2(1777, 616);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.salamanderWorld = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'SalamanderWereld',
+      locationImage: 'salamanderWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Salamander Wereld',
+      referenceName: 'this.salamanderWorld',
       fontColor: 0x8dcb0e,
       size: 231,
     });

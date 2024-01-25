@@ -192,6 +192,12 @@ export const SCENE_INFO = [
     sizeY: 5500,
     kind: 'homeArea',
   },
+  {
+    scene: 'SalamanderWereld',
+    sizeX: 5500,
+    sizeY: 5500,
+    kind: 'homeArea',
+  },
 
 ];
 
