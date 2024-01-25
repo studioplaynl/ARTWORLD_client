@@ -186,6 +186,13 @@ export const SCENE_INFO = [
     sizeY: 5500,
     kind: 'homeArea',
   },
+  {
+    scene: 'MoerasWereld',
+    sizeX: 5500,
+    sizeY: 5500,
+    kind: 'homeArea',
+  },
+
 ];
 
 export const STOCK_HOUSES = [

@@ -126,6 +126,10 @@ export default class Artworld extends Phaser.Scene {
       'paarseRivierWorldPortal',
       './assets/world_paarse_rivier/02b_portaal_River_naarRivier-fs8.png',
     );
+    this.load.image(
+      'swampWorldPortal',
+      './assets/world_swamp/02a_portaal_swamp_naarSwamp400px-fs8.png',
+    );
 
     /** subscription to the loaderror event
     * strangely: if the more times the subscription is called, the more times the event is fired
@@ -1137,6 +1141,33 @@ export default class Artworld extends Phaser.Scene {
       enterButtonImage: 'enter_button',
       locationText: 'Rivier Wereld',
       referenceName: 'this.rivierWorld',
+      fontColor: 0x8dcb0e,
+      size: 231,
+    });
+    // ---- Location 1 ----------------------
+    locationVector = new Phaser.Math.Vector2(-1215, -589);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    locationVector = new Phaser.Math.Vector2(1930, 496);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.swampWorld = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'MoerasWereld',
+      locationImage: 'swampWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Moeras Wereld',
+      referenceName: 'this.swampWorld',
       fontColor: 0x8dcb0e,
       size: 231,
     });
