@@ -1,13 +1,16 @@
 to create the best looking, smallest png files with transparency:
 
 1-step
-1. pngquant:
+1. [pngquant](https://pngquant.org/):
 pngquant 64 --force  --skip-if-larger  *.png
 
 Total reduction: 70.67%
 
+---
 
-2-step [No difference to 1-step, but documented...]
+No difference to 1-step, but added for documentation.
+
+2-step 
 1. pngcrush
 
 pngcrush is a PNG (Portable Network Graphics) file optimizer. It reduces the file size of the image by passing it through various compression methods and filters.

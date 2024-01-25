@@ -42,6 +42,7 @@ import BergenWereld from './scenes/BergenWereld';
 import PrismaWereld from './scenes/PrismaWereld';
 import JungleWereld from './scenes/JungleWereld';
 import FlamengoWereld from './scenes/FlamengoWereld';
+import RivierWereld from './scenes/RivierWereld';
 
 /** Phaser Plugins */
 
@@ -80,6 +81,7 @@ const SCENES = [
   PrismaWereld,
   JungleWereld,
   FlamengoWereld,
+  RivierWereld,
 ];
 
 import { CONFIG } from '../../constants';
