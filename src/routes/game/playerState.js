@@ -49,14 +49,14 @@ export const PlayerZoom = {
   },
   in: () => {
     const zoom = get(playerZoom);
-    const targetZoom = Math.round((zoom + ZOOM_STEP) * 100, 10) / 100;
+    const targetZoom = Math.round((zoom + ZOOM_STEP) * 100) / 100;
     if (targetZoom <= ZOOM_MAX) {
       playerZoom.set(targetZoom);
     }
   },
   out: () => {
     const zoom = get(playerZoom);
-    const targetZoom = Math.round((zoom - ZOOM_STEP) * 100, 10) / 100;
+    const targetZoom = Math.round((zoom - ZOOM_STEP) * 100) / 100;
     if (targetZoom >= ZOOM_MIN) {
       playerZoom.set(targetZoom);
     }

@@ -213,7 +213,7 @@ export default class Artworld extends Phaser.Scene {
     this.likedBalloonAnimation();
     // .......... end likes ............................................................................
 
-    //! Player.loadPlayerAvatar(this);
+    Player.loadPlayerAvatar(this);
   } // end create
 
   likedBalloonAnimation() {
