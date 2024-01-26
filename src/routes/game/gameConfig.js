@@ -41,6 +41,9 @@ import BergenWereld from './scenes/BergenWereld';
 import PrismaWereld from './scenes/PrismaWereld';
 import JungleWereld from './scenes/JungleWereld';
 import FlamengoWereld from './scenes/FlamengoWereld';
+import RivierWereld from './scenes/RivierWereld';
+import MoerasWereld from './scenes/MoerasWereld';
+import SalamanderWereld from './scenes/SalamanderWereld';
 
 /** Phaser Plugins */
 
@@ -79,6 +82,9 @@ const SCENES = [
   PrismaWereld,
   JungleWereld,
   FlamengoWereld,
+  RivierWereld,
+  MoerasWereld,
+  SalamanderWereld,
 ];
 
 import { CONFIG } from '../../constants';
@@ -88,7 +94,7 @@ export default {
 
   parent: 'phaserId',
 
-  type: Phaser.AUTO,
+  type: Phaser.WEBGL,
   transparent: true, // for 3d scene
 
   domCreateContainer: false,
