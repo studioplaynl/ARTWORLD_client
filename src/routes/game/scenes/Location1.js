@@ -14,9 +14,7 @@ import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
 import ServerCall from '../class/ServerCall';
 
-
 import * as Phaser from 'phaser';
-
 
 export default class Location1 extends Phaser.Scene {
   constructor() {
@@ -110,7 +108,6 @@ export default class Location1 extends Phaser.Scene {
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
       artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
-      ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 
 

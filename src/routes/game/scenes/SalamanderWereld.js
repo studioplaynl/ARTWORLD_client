@@ -99,20 +99,11 @@ export default class SalamanderWereld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    // Background.gradientStretchedToFitWorld({
-    //   scene: this,
-    //   tileMapName: 'WorldBackgroundTileMap',
-    //   gradientColor1: 0xf3f9ff,
-    //   gradientColor2: 0xc4d7e5,
-    //   tileWidth: 512,
-    // });
     handlePlayerMovement(this);
 
     const {
       artworldToPhaser2DX, artworldToPhaser2DY,
     } = CoordinatesTranslator;
-
-    // this.makeWorldElements();
 
     // .......  PLAYER ..........................................JA even ..........................................
     //* create default player and playerShadow
@@ -121,7 +112,6 @@ export default class SalamanderWereld extends Phaser.Scene {
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
       artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
-      ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -144,12 +134,12 @@ export default class SalamanderWereld extends Phaser.Scene {
 
     // create accessable locations
     this.makeWorldElements();
-    this.generateLocations();
+    //! this.generateLocations();
     // .......... end locations ............................................................................
 
-    this.loadAndPlaceLiked();
-    this.likedBalloonAnimation();
-    Player.loadPlayerAvatar(this);
+    // !this.loadAndPlaceLiked();
+    // !this.likedBalloonAnimation();
+    //! Player.loadPlayerAvatar(this);
   } // end create
 
   likedBalloonAnimation() {

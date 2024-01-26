@@ -4,11 +4,9 @@ import { ShowItemsBar } from '../../../session';
 
 import * as Phaser from 'phaser';
 
-
-//
 export default class PlayerDefault extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
-    super(scene, x, y, 'defaultPlayerAvatar');
+    super(scene, x, y, 'avatar1');
 
     // load the texture that is associated with the animation key 'stop'
     this.play('stop');

@@ -98,7 +98,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
       artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
-      ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow(
@@ -353,10 +352,4 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       // this.updateCurveGraphics()
     }
   } // update
-
-  updateCurveGraphics() {
-    this.curveGraphics.clear();
-    this.curveGraphics.lineStyle(60, 0xffff00, 1);
-    this.curve.draw(this.curveGraphics, 64);
-  }
 } // class
