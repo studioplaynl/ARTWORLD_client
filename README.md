@@ -6,17 +6,18 @@ ARTWORLD is a multi user game, so players see and can interact with each other.
 ARTWORLD want to support many art forms: drawing, stop motion animation, music, dance and poetry.
 ARTWORLD is also designed to work on any device: phone, tablet, computer. Also slower or older devices.
 
-![Alt text](public/assets/docs/gifs/change_house.gif)
+![Walk among art GIF](public/assets/docs/gifs/walk_arond_art.gif)
 
 ARTWORLD is build on [PHASER game engine](https://phaser.io/) and the [NAKAMA game server](https://heroiclabs.com/nakama/), both excellent open source projects.
 
-ARTWORLD is made in JavaScript, NODEJS and SVELTE. As a file storage backend we use AWS.
+![Alt text](public/assets/docs/gifs/change_house.gif)
 
-![Art in House GIF](public/assets/docs/gifs/art_in_house.gif)
+ARTWORLD is made in JavaScript, NODEJS and SVELTE. As a file storage backend we use AWS.
 
 ARTWORLD is conceived and financed by [De Vrolijkheid](https://vrolijkheid.nl/projecten/artworld)
 
-![Walk among art GIF](public/assets/docs/gifs/walk_arond_art.gif)
+![Art in House GIF](public/assets/docs/gifs/art_in_house.gif)
+
 
 ARTWORLD is designed, programmed and project managed by [Maarten van der Glas](https://github.com/mrmaarten) @ [Studio Play](https://studioplay.nl).
 
