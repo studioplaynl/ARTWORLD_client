@@ -3,9 +3,6 @@ ARTWORLD is a multi user game, so players see and can interact with each other.
 
 ![Walk animation](public/assets/docs/gifs/walk_arond_animation.gif)
 
-
-![walk among art GIF](public/assets/docs/gifs/walk_around_among_art.gif)
-
 ARTWORLD want to support many art forms: drawing, stop motion animation, music, dance and poetry.
 ARTWORLD is also designed to work on any device: phone, tablet, computer. Also slower or older devices.
 
@@ -18,6 +15,8 @@ ARTWORLD is made in JavaScript, NODEJS and SVELTE. As a file storage backend we 
 ![Alt text](public/assets/docs/gifs/art_in_house.gif)
 
 ARTWORLD is conceived and financed by [De Vrolijkheid](https://vrolijkheid.nl/projecten/artworld)
+
+![walk among art GIF](public/assets/docs/gifs/walk_among_art.gif)
 
 ARTWORLD is designed, programmed and project managed by [Maarten van der Glas](https://github.com/mrmaarten) @ [Studio Play](https://studioplay.nl).
 
