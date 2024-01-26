@@ -88,11 +88,9 @@ export default class SalamanderWereld extends Phaser.Scene {
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
-    //! this.worldSize.x = sceneInfo.sizeX;
-    //! this.worldSize.y = sceneInfo.sizeY;
-    //! using hard coded values to make it work DEBUGGING
-    this.worldSize.x = 5500;
-    this.worldSize.y = 5500;
+    this.worldSize.x = sceneInfo.sizeX;
+    this.worldSize.y = sceneInfo.sizeY;
+ 
 
     ManageSession.worldSize = this.worldSize;
     //!
@@ -134,12 +132,12 @@ export default class SalamanderWereld extends Phaser.Scene {
 
     // create accessable locations
     this.makeWorldElements();
-    //! this.generateLocations();
+    this.generateLocations();
     // .......... end locations ............................................................................
 
-    // !this.loadAndPlaceLiked();
-    // !this.likedBalloonAnimation();
-    //! Player.loadPlayerAvatar(this);
+    this.loadAndPlaceLiked();
+    this.likedBalloonAnimation();
+    Player.loadPlayerAvatar(this);
   } // end create
 
   likedBalloonAnimation() {

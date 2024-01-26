@@ -1,5 +1,11 @@
 ## Dev log
 ###2024-01-25
+- major breakthrough on updating phaser: game almost loads, now stuck on plugins!
+
+TODO
+- debug the phaser plugins
+
+
 - main stored in /main1.6 branch
 - update Phaser to 3.70.0 in develop branch
 - imported new docs and world is develop branch
