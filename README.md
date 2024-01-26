@@ -12,11 +12,11 @@ ARTWORLD is build on [PHASER game engine](https://phaser.io/) and the [NAKAMA ga
 
 ARTWORLD is made in JavaScript, NODEJS and SVELTE. As a file storage backend we use AWS.
 
-![Alt text](public/assets/docs/gifs/art_in_house.gif)
+![Art in House GIF](public/assets/docs/gifs/art_in_house.gif)
 
 ARTWORLD is conceived and financed by [De Vrolijkheid](https://vrolijkheid.nl/projecten/artworld)
 
-![walk among art GIF](public/assets/docs/gifs/walk_among_art.gif)
+![Walk among art GIF](public/assets/docs/gifs/walk_arond_art.gif)
 
 ARTWORLD is designed, programmed and project managed by [Maarten van der Glas](https://github.com/mrmaarten) @ [Studio Play](https://studioplay.nl).
 
