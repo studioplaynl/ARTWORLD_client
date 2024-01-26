@@ -15,7 +15,7 @@ import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
 // import PreloadScene from './PreloadScene';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
 
 export default class SalamanderWereld extends Phaser.Scene {
   constructor() {
@@ -88,8 +88,12 @@ export default class SalamanderWereld extends Phaser.Scene {
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
     const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
-    this.worldSize.x = sceneInfo.sizeX;
-    this.worldSize.y = sceneInfo.sizeY;
+    //! this.worldSize.x = sceneInfo.sizeX;
+    //! this.worldSize.y = sceneInfo.sizeY;
+    //! using hard coded values to make it work DEBUGGING
+    this.worldSize.x = 5500;
+    this.worldSize.y = 5500;
+
     ManageSession.worldSize = this.worldSize;
     //!
 

@@ -94,7 +94,7 @@ export default {
 
   parent: 'phaserId',
 
-  type: Phaser.AUTO,
+  type: Phaser.WEBGL,
   transparent: true, // for 3d scene
 
   domCreateContainer: false,

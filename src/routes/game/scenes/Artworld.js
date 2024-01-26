@@ -51,7 +51,6 @@ import ServerCall from '../class/ServerCall';
 
 import * as Phaser from 'phaser';
 
-
 export default class Artworld extends Phaser.Scene {
   constructor() {
     super('Artworld');

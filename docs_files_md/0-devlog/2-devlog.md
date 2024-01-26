@@ -1,18 +1,19 @@
 ## Dev log
+###2024-01-25
+- main stored in /main1.6 branch
+- update Phaser to 3.70.0 in develop branch
+- imported new docs and world is develop branch
+- updating artworld.js  {==import * as Phaser from 'phaser'; ==} to incorporate the new worlds 
+
 
 ###2024-01-25
 - Add 3 worlds to /main
-TODO
-- after adding 3 new worlds main will be stored in /main1.6 branch
 
 ###2024-01-20
 - Last working branch is now /main branch.
 - The /dev branch is the 'update phaser to 3.70.0' branch (under construction).
 - Added MkDocs and consolidated all documentation, notes and todo's in there.
 - Updates the README.md, also links to the docs.
-
-TODO:
-- continue from Phaser 3.70.0
 
 ###2023-10-04 
 

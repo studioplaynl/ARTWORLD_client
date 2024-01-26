@@ -15,7 +15,7 @@ import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
 // import PreloadScene from './PreloadScene';
 
-const { Phaser } = window;
+import * as Phaser from 'phaser';
 
 export default class RivierWereld extends Phaser.Scene {
   constructor() {
