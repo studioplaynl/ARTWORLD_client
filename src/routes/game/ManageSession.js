@@ -11,8 +11,6 @@ import {
   playerStreamID,
 } from './playerState';
 
-// import * as Phaser from 'phaser';
-
 import * as Phaser from 'phaser';
 
 /** Main utility class to share Game State between Phaser & Svelte  */

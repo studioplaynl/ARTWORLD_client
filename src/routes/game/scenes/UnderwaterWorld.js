@@ -135,7 +135,6 @@ export default class UnderwaterWorld extends Phaser.Scene {
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
       artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
-      ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({

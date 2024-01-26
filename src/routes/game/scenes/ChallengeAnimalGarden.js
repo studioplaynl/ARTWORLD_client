@@ -111,8 +111,8 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
         this.worldSize.y,
         get(PlayerPos).y,
       ),
-      ManageSession.playerAvatarPlaceholder,
     ).setDepth(201);
+    
     this.playerShadow = new PlayerDefaultShadow(
       {
         scene: this,
