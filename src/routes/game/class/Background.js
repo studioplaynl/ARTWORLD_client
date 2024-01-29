@@ -40,6 +40,11 @@ class Background {
     //   scene.borderRectArray[i].x = middleCoordinates.x;
     //   scene.borderRectArray[i].y = middleCoordinates.y;
     // }
+    
+    if (scene.textures.exists('dotWithBg')) {
+      scene.textures.remove('dotWithBg')
+    }
+
     const tileSize = 80;
     // dlog('scene, worldSize', scene, scene.worldSize);
     const mapWidth = scene.worldSize.x / tileSize;
@@ -151,6 +156,11 @@ class Background {
     const alpha = 1;
     const maxSize = 1024;
 
+        // check if the name already exists in the TextureManager
+    // if so, return
+    if (scene.textures.exists(tileMapName)) {
+      return;
+    }
     // create the square gradient: graphics
     const gradientTile = scene.add.graphics();
     gradientTile.fillGradientStyle(gradientColor2, gradientColor2, gradientColor1, gradientColor1, alpha);
@@ -199,6 +209,16 @@ class Background {
     const { tileMapName } = config;
     const alpha = 1;
 
+    // check if the name already exists in the TextureManager
+    // if so, return
+    if (scene.textures.exists(tileMapName)) {const bgGradient = scene.add.image(0, 0, tileMapName)
+      .setOrigin(0);
+
+    // strech the gradient image to the word size
+    bgGradient.displayWidth = scene.worldSize.x;
+    bgGradient.displayHeight = scene.worldSize.y;
+      return;
+    }
     // create the dot: graphics
     const gradientTile = scene.add.graphics();
     gradientTile.fillGradientStyle(gradientColor1, gradientColor1, gradientColor2, gradientColor2, alpha);
@@ -235,6 +255,13 @@ class Background {
     let { posX } = config;
     let { posY } = config;
 
+    // check if the name already exists in the TextureManager
+    // if so, return
+    if (scene.textures.exists(name)) {
+      scene[name] = scene.add.image(posX, posY, name).setOrigin(0.5).setScale(1);
+      scene[name].name = name;
+      return;
+    }
     // create graphic: a large rectangle
     // out of this rectangle we cut out a circle and with that frame we cut out a circle out of an other rectangle
     const rectangle = scene.add.graphics();
@@ -255,7 +282,7 @@ class Background {
     rt1.erase(eraser, size / 2, size / 2);
 
     // erase the rect with the cutout from the second rect, creating the circle with gradient
-    rt2.erase(rt1, 0, 0);
+    rt2.erase(rt1, size/2, size/2);
 
     // the center of the renderTexture has offset of (size / 2)
     if (imageOnly === true) {
@@ -299,6 +326,11 @@ class Background {
     const { setOrigin } = config;
     const { imageOnly } = config;
 
+    // check if the name already exists in the TextureManager
+    // if so, return
+    if (scene.textures.exists(name)) {
+      return;
+    }
     // const { worldSize } = scene;
     if (typeof alpha === 'undefined') {
       alpha = 1;
@@ -335,6 +367,13 @@ class Background {
     const { posY } = config;
     const { setOrigin } = config;
     const { imageOnly } = config;
+
+
+    // check if the name already exists in the TextureManager
+    // if so, return
+    if (scene.textures.exists(name)) {
+      return;
+    }
 
     // const { worldSize } = scene;
     const partWidth = width / 6;
@@ -379,6 +418,11 @@ class Background {
     const { imageOnly } = config;
     const { setOrigin } = config;
 
+    // check if the name already exists in the TextureManager
+    // if so, return
+    if (scene.textures.exists(name)) {
+      return;
+    }
     // default pos
     const { posX } = 0;
     const { posY } = 0;
@@ -418,6 +462,11 @@ class Background {
     const { spikes } = config;
 
 
+    // check if the name already exists in the TextureManager
+    // if so, return
+    if (scene.textures.exists(name)) {
+      return;
+    }
     // default pos
     // const { posX } = 0;
     // const { posY } = 0;
@@ -474,13 +523,11 @@ class Background {
     rt1.draw(graphics); // star
     rt2.draw(rectangle); // rect
 
-    // erase the circle from the first rect
-    rt2.erase(rt1, 0, 0);
+    // erase the star from the first rect
+    rt2.erase(rt1, size/2, size/2);
     rt1.draw(rectangle);
-    rt1.erase(rt2, 0, 0);
+    rt1.erase(rt2, size/2, size/2);
 
-    // erase the rect with the cutout from the second rect, creating the circle with gradient
-    // rt2.erase(rt1, 0, 0);
 
     // rt1.draw(graphics);
     rt1.saveTexture(name);

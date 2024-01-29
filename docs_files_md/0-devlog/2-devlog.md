@@ -1,10 +1,37 @@
 ## Dev log
+
+###2024-01-29
+fixed: 
+- player movement working again
+- gradient circles rendered wrong (origin is corner instead of center)
+- error when a key already exists
+Texture key already in use: touchBackgroundCheck
+So make first before making a renderTexture
+- outline around Enter Location
+
+TODO: Not working:
+- when loading stopmotion in a house:
+Uncaught TypeError: Cannot read properties of undefined (reading 'list')
+    at ServerCall.replaceLikedsInBalloonContainer (ServerCall.js:981:47)
+- Fabric with erase 
+
+
+Implement upgrade in 3.60:
+- .preFX.addCircle
+- .preFX.addShadow
+- .preFX.addGlow instead of outline??
+Example:
+```
+const player = this.add.sprite(x, y, texture);
+
+player.preFX.addGlow(0xff0000, 32);
+```
+
+- Dynamic Textures: before Phaser 3.60 this was known as a Render Texture. 
+
+
 ###2024-01-25
 - major breakthrough on updating phaser: game almost loads, now stuck on plugins!
-
-TODO
-- debug the phaser plugins
-
 
 - main stored in /main1.6 branch
 - update Phaser to 3.70.0 in develop branch

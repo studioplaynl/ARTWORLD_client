@@ -323,6 +323,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#2024-01-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      2024-01-29
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#2024-01-25" class="md-nav__link">
     <span class="md-ellipsis">
       2024-01-25
@@ -3047,6 +3056,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#2024-01-29" class="md-nav__link">
+    <span class="md-ellipsis">
+      2024-01-29
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#2024-01-25" class="md-nav__link">
     <span class="md-ellipsis">
       2024-01-25
@@ -3379,14 +3397,38 @@
 
 
 <h2 id="dev-log">Dev log</h2>
+<h3 id="2024-01-29">2024-01-29</h3>
+<p>fixed: 
+- player movement working again
+- gradient circles rendered wrong (origin is corner instead of center)
+- error when a key already exists
+Texture key already in use: touchBackgroundCheck
+So make first before making a renderTexture</p>
+<p>TODO: Not working:
+- when loading stopmotion in a house:
+Uncaught TypeError: Cannot read properties of undefined (reading 'list')
+    at ServerCall.replaceLikedsInBalloonContainer (ServerCall.js:981:47)
+- Fabric with erase </p>
+<p>Implement upgrade in 3.60:
+- .preFX.addCircle
+- .preFX.addShadow
+- .preFX.addGlow instead of outline??
+Example:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>const player = this.add.sprite(x, y, texture);
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>player.preFX.addGlow(0xff0000, 32);
+</span></code></pre></div></p>
+<ul>
+<li>Dynamic Textures: before Phaser 3.60 this was known as a Render Texture. </li>
+</ul>
 <h3 id="2024-01-25">2024-01-25</h3>
 <ul>
-<li>major breakthrough on updating phaser: game almost loads, now stuck on plugins!</li>
-</ul>
-<p>TODO
-- debug the phaser plugins</p>
-<ul>
-<li>main stored in /main1.6 branch</li>
+<li>
+<p>major breakthrough on updating phaser: game almost loads, now stuck on plugins!</p>
+</li>
+<li>
+<p>main stored in /main1.6 branch</p>
+</li>
 <li>update Phaser to 3.70.0 in develop branch</li>
 <li>imported new docs and world is develop branch</li>
 <li>updating artworld.js  <mark class="critic">import * as Phaser from 'phaser'; </mark> to incorporate the new worlds </li>
