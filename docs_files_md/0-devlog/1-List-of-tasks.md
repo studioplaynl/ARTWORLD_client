@@ -1,14 +1,4 @@
-UPGRADE PHASER with Fabric
 
-Fabric with eraser breaks
-
-Possible solution: 
-
-- https://github.com/fabricjs/fabric.js/issues/7171
-
-- https://www.npmjs.com/package/fabric-with-erasing
-
-* * *
 * * *
 826 van-der-glaskunstlab kinderen-4-t-m-12-amif 55210352 - KUNSTLAB DIGITAAL 
 

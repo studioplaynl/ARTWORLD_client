@@ -10,7 +10,7 @@
 
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
-  import { fabric } from 'fabric';
+  import { fabric } from 'fabric-with-erasing';
   import { setLoader } from '../../helpers/nakamaHelpers';
   import { Profile } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';

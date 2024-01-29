@@ -8,6 +8,10 @@ fixed:
 Texture key already in use: touchBackgroundCheck
 So make first before making a renderTexture
 - outline around Enter Location
+- Fabric with eraser breaks
+
+ solution: 
+https://www.npmjs.com/package/fabric-with-erasing
 
 TODO: Not working:
 - when loading stopmotion in a house:
