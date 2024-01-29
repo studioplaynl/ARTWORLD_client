@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import * as Phaser from 'phaser';
 
-import CircleMaskImagePlugin from 'phaser3-rex-plugins/plugins/circlemaskimage-plugin';
+// import CircleMaskImagePlugin from 'phaser3-rex-plugins/plugins/circlemaskimage-plugin';
 // import ScrollerPlugin from 'phaser3-rex-plugins/plugins/scroller-plugin';
 // import SpinnerPlugin from 'phaser3-rex-plugins/templates/spinner/spinner-plugin';
 import OutlinePipelinePlugin from 'phaser3-rex-plugins/plugins/outlinepipeline-plugin';
@@ -123,7 +123,7 @@ export default {
     ],
 
     global: [
-      //! {
+      //!  {
       //   key: 'rexCircleMaskImagePlugin',
       //   plugin: CircleMaskImagePlugin,
       //   start: true,
@@ -133,11 +133,11 @@ export default {
       //   plugin: ScrollerPlugin,
       //   start: true,
       // },
-      //! {
-      //   key: 'rexOutlinePipeline',
-      //   plugin: OutlinePipelinePlugin,
-      //   start: true,
-      // },
+      {
+      key: 'rexOutlinePipeline',
+        plugin: OutlinePipelinePlugin,
+        start: true,
+      },
 
     ],
   }, // end plugins
