@@ -1,6 +1,8 @@
 <script>
   import { onMount } from 'svelte';
-  import { fabric } from 'fabric/dist/fabric';
+  // import { fabric } from 'fabric/dist/fabric';
+  import { fabric } from 'fabric-with-erasing';
+
   import ManageSession from '../game/ManageSession';
   import { Session } from '../../session';
   import { dlog } from '../../helpers/debugLog';
