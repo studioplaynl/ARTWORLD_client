@@ -33,8 +33,8 @@
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
   const videoIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
-  console.log($Session);
-  let user = '',
+
+    let user = '',
     role = 'admin',
     avatar_url = '',
     house_url = '',
@@ -214,7 +214,7 @@
     const objects = await listAllObjects(SelectedApp, undefined, limit, cursor);
 
     if (move == 'next') {
-      if (objects.length >= limit - 1) {
+      if (Array.isArray(objects) && objects.length >= limit - 1) {
         cursor = objects[limit - 1].update_time;
         history.push(cursor);
       } else {
@@ -223,18 +223,22 @@
     }
     console.log(history);
 
-    objects.forEach(async (item, index) => {
-      if (item.value.json) item.url = item.value.json.split('.')[0];
-      if (item.value.url) item.url = item.value.url.split('.')[0];
-      item.permission_read = item.permission_read === PERMISSION_READ_PUBLIC;
-      item.value.previewUrl = await convertImage(item.value.url, '64', '64');
+    if (Array.isArray(objects)) {
+      objects.forEach(async (item, index) => {
+        if (item.value.json) item.url = item.value.json.split('.')[0];
+        if (item.value.url) item.url = item.value.url.split('.')[0];
+        item.permission_read = item.permission_read === PERMISSION_READ_PUBLIC;
+        item.value.previewUrl = await convertImage(item.value.url, '64', '64');
+  
+        if (item.value.status === 'trash') {
+          trash = [...trash, item];
+        } else {
+          art = [...art, item];
+        }
+      });
+      // });
+    }
 
-      if (item.value.status === 'trash') {
-        trash = [...trash, item];
-      } else {
-        art = [...art, item];
-      }
-    });
     console.log('hist', history.length);
     backActive = history.length <= 1;
   }

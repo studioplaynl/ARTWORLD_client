@@ -47,10 +47,19 @@
   let deleteCheck = null;
 
   let stockItems = [];
+  let houseUrl = '';
+
 
   onMount(async () => {
     if (dataType === 'house') stockItems = STOCK_HOUSES;
     else if (dataType === 'avatar') stockItems = STOCK_AVATARS;
+
+// if the user has a home image, use that, otherwise show a placeholder
+  if ($myHome.url) {
+    houseUrl = $myHome.url;
+  } else {
+    houseUrl = '/assets/SHB/portal/' + STOCK_HOUSES[1];
+  }
 
     getImages();
 
@@ -194,7 +203,7 @@
 <div
   class="item"
   class:selected="{(`/avatar/stock/${stockItem}` === $Profile.avatar_url && dataType === 'avatar') ||
-    ($myHome.value.url && `/home/stock/${stockItem}` === $myHome.value.url && dataType === 'house')}"
+    (houseUrl && `/home/stock/${stockItem}` === houseUrl && dataType === 'house')}"
 >
 
       <p

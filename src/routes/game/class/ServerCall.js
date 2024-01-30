@@ -31,7 +31,7 @@ import * as Phaser from 'phaser';
 class ServerCall {
   async getHomesFiltered(filter, _scene) {
     const scene = _scene;
-    // homes represented, to created homes in the scene
+    // homes represented, the images / gameObjects to represent homes in the scene
     scene.homesRepresented = [];
     scene.homes = [];
     // dlog('scene.homesRepresented.length before', scene.homesRepresented.length);

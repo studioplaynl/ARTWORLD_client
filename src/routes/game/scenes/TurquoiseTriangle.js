@@ -188,7 +188,7 @@ export default class TurquoiseTriangle extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(0, 0);
+    let locationVector = new Phaser.Math.Vector2(100, 1000);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
