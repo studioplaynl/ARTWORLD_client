@@ -323,6 +323,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#2024-01-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      2024-01-30
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#2024-01-29" class="md-nav__link">
     <span class="md-ellipsis">
       2024-01-29
@@ -3056,6 +3065,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#2024-01-30" class="md-nav__link">
+    <span class="md-ellipsis">
+      2024-01-30
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#2024-01-29" class="md-nav__link">
     <span class="md-ellipsis">
       2024-01-29
@@ -3397,8 +3415,19 @@
 
 
 <h2 id="dev-log">Dev log</h2>
+<p>TODO: Not working:
+- when loading stopmotion in a house:
+Uncaught TypeError: Cannot read properties of undefined (reading 'list')
+    at ServerCall.replaceLikedsInBalloonContainer (ServerCall.js:981:47)
+- CHECK workings of adminpage!
+- fix inconsistencies in new app / artwork creator view and UI</p>
+<h3 id="2024-01-30">2024-01-30</h3>
+<p>fixed:
+- when a user home url is missing, player can choose a home image
+- TurquoiseTriangle homes that were invisible</p>
+<p>Investigated
+- bug with SvelteTable, solution is not clear. Maybe use own layout solution, maybe use https://svelte-headless-table.bryanmylee.com/</p>
 <h3 id="2024-01-29">2024-01-29</h3>
-<p>TODO</p>
 <p>fixed: 
 - player movement working again
 - gradient circles rendered wrong (origin is corner instead of center)
@@ -3409,10 +3438,6 @@ So make first before making a renderTexture
 - Fabric with erase </p>
 <p>solution: 
 https://www.npmjs.com/package/fabric-with-erasing</p>
-<p>TODO: Not working:
-- when loading stopmotion in a house:
-Uncaught TypeError: Cannot read properties of undefined (reading 'list')
-    at ServerCall.replaceLikedsInBalloonContainer (ServerCall.js:981:47)</p>
 <p>Implement upgrade in 3.60:
 - .preFX.addCircle
 - .preFX.addShadow
@@ -3445,7 +3470,7 @@ Example:
 <ul>
 <li>Last working branch is now /main branch.</li>
 <li>The /dev branch is the 'update phaser to 3.70.0' branch (under construction).</li>
-<li>Added MkDocs and consolidated all documentation, notes and todo's in there.</li>
+<li>Added MkDocs and consolidated all documentation, notes and to-do's in there.</li>
 <li>Updates the README.md, also links to the docs.</li>
 </ul>
 <h3 id="2023-10-04">2023-10-04</h3>
@@ -3466,10 +3491,6 @@ pngquant 64 --force --skip-if-larger *.png</p>
 <li>refactored downloadDrawingDefaultUserHome in serverCall with resolveLoadError name (type)</li>
 <li>made flow for Liked</li>
 </ul>
-<p>Todo before LIVE
-- fix bug with moderator seeing artworks
-- add avatar and house to apps with a nice view
-- add music apps to </p>
 <hr />
 <p>bug restoring from trash: work is shown as visible but is not set to visible</p>
 <p>store.updateState(row, OBJECT_STATE_REGULAR);</p>
@@ -3496,8 +3517,7 @@ pngquant 64 --force --skip-if-larger *.png</p>
 </code></pre></div>
 <p>updateState is restoreFromTrash and  const pub = should be true</p>
 <p>Fixed.</p>
-<p>For now: visibilityToggle.svelte is used for inGame toggling, 
-TODO: CHECK workings of adminpage!</p>
+<p>For now: visibilityToggle.svelte is used for inGame toggling, </p>
 <hr />
 <p>Feature: direct participation in Challenge =&gt; a plus button</p>
 <ul>
