@@ -25,16 +25,26 @@
 
   import { myHome } from '../../storage';
   import ImagePicker from './imagePicker.svelte';
+  import { STOCK_HOUSES } from '../../constants';
+
 
   const avatarSize = 75;
 
   let showHistory = false;
+
+  // if the user has a home image, use that, otherwise show a placeholder
+  let houseUrl = '';
+  if ($myHome.url) {
+    houseUrl = $myHome.url;
+  } else {
+    houseUrl = '/assets/SHB/portal/' + STOCK_HOUSES[1];
+  }
 </script>
 
 <div class="homeContainer">
 <div class="homeImage" style="--avatar-size: {avatarSize}px;">
-    <img alt="My House" id="house" src="{$myHome.url}" />
-  </div>
+<img alt="My House" id="house" src={houseUrl} />
+</div>
 
 <div class="action">
   {#if showHistory}

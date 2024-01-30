@@ -1,7 +1,21 @@
 ## Dev log
+TODO: Not working:
+- when loading stopmotion in a house:
+Uncaught TypeError: Cannot read properties of undefined (reading 'list')
+    at ServerCall.replaceLikedsInBalloonContainer (ServerCall.js:981:47)
+- CHECK workings of adminpage!
+- fix inconsistencies in new app / artwork creator view and UI
+
+###2024-01-30
+fixed:
+- when a user home url is missing, player can choose a home image
+- TurquoiseTriangle homes that were invisible
+
+Investigated
+- bug with SvelteTable, solution is not clear. Maybe use own layout solution, maybe use https://svelte-headless-table.bryanmylee.com/
+
 
 ###2024-01-29
-TODO
 
 fixed: 
 - player movement working again
@@ -15,13 +29,6 @@ So make first before making a renderTexture
 
  solution: 
 https://www.npmjs.com/package/fabric-with-erasing
-
-TODO: Not working:
-- when loading stopmotion in a house:
-Uncaught TypeError: Cannot read properties of undefined (reading 'list')
-    at ServerCall.replaceLikedsInBalloonContainer (ServerCall.js:981:47)
-
-
 
 Implement upgrade in 3.60:
 - .preFX.addCircle
@@ -52,7 +59,7 @@ player.preFX.addGlow(0xff0000, 32);
 ###2024-01-20
 - Last working branch is now /main branch.
 - The /dev branch is the 'update phaser to 3.70.0' branch (under construction).
-- Added MkDocs and consolidated all documentation, notes and todo's in there.
+- Added MkDocs and consolidated all documentation, notes and to-do's in there.
 - Updates the README.md, also links to the docs.
 
 ###2023-10-04 
@@ -70,11 +77,6 @@ pngquant 64 --force --skip-if-larger *.png
 - refactored downloadDrawingDefaultUserHome in serverCall with resolveLoadError name (type)
 - made flow for Liked
 
-
-Todo before LIVE
-- fix bug with moderator seeing artworks
-- add avatar and house to apps with a nice view
-- add music apps to 
 ---------------------------------------------------------------------------------------------------
 bug restoring from trash: work is shown as visible but is not set to visible
 
@@ -107,7 +109,6 @@ Fixed.
 
 
 For now: visibilityToggle.svelte is used for inGame toggling, 
-TODO: CHECK workings of adminpage!
 
 ---------------------------------------------------------------------------------------------------
  Feature: direct participation in Challenge => a plus button

@@ -175,7 +175,6 @@ $: if (store.length) {
               alt="Trash can"
             /> -->
             <ArtworkLoader
-              class="cell "
               clickable="{false}"
               row="{row}"
             />
@@ -219,6 +218,7 @@ $: if (store.length) {
   padding: 10px 0;
 }
 .trash-action-buttons {
+  background-color: transparent;
   display: flex;
   flex-direction: row;
   justify-content: space-around;

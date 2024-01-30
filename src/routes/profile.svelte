@@ -29,6 +29,7 @@
   import { Session, Profile } from '../session';
   import { dlog } from '../helpers/debugLog';
 
+  import IconRenderer from './components/IconRenderer.svelte';
   import StatusComp from './components/visibilityToggle.svelte';
   import DeleteComp from './components/deleteButton.svelte';
   import postSend from './components/postSend.svelte';
@@ -102,32 +103,7 @@
     loader = false;
 
     columns = [
-      {
-        key: 'Soort',
-        title: '',
-        value: (v) => {
-          if (v.collection === 'drawing') {
-            return drawingIcon;
-          }
-          if (v.collection === 'stopmotion') {
-            return stopMotionIcon;
-          }
-          if (v.collection === 'audio') {
-            return AudioIcon;
-          }
-          if (v.collection === 'video') {
-            return videoIcon;
-          }
-          if (v.collection === 'animalchallenge') {
-            return animalChallengeIcon;
-          }
-          if (v.collection === 'flowerchallenge') {
-            return flowerChallengeIcon;
-          }
-          return null;
-        },
-        sortable: true,
-      },
+
       {
         key: 'voorbeeld',
         title: '',

@@ -718,6 +718,7 @@ export const myHome = {
   create: async (Home_url) => {
     const type = 'home';
     const profile = get(Profile);
+    console.log('profile', profile);
     const name = profile.meta.Azc;
     const object = await getObject(type, name);
     const makePublic = true;
@@ -738,7 +739,7 @@ export const myHome = {
   get: async () => {
     let localHome = get(myHomeStore);
     const profile = get(Profile);
-    dlog('profile: ', profile);
+    // dlog('profile: ', profile);
     const Sess = get(Session);
     if (!!localHome && localHome.length > 0) return localHome;
 
