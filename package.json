@@ -4,7 +4,7 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "dev": "node src/version.js && mkdocs build && vite",
+        "dev": "node src/version.js && vite",
         "build": "vite build",
         "preview": "vite preview"
     },
@@ -15,7 +15,6 @@
         "@rollup/plugin-replace": "^5.0.5",
         "@sveltejs/vite-plugin-svelte": "^3.0.1",
         "@types/node": "^20.0.0",
-        "husky": "^9.0.7",
         "phaser": "^3.70.0",
         "rollup-plugin-polyfill-node": "^0.13.0",
         "svelte": "^4.2.8",
