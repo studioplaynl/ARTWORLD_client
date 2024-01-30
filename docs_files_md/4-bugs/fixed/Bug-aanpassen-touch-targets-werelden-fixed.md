@@ -34,7 +34,7 @@ this.location.body height en width is de target tussen andere physics bodies
 
 \=================================================================  
 
-TODO: naambordjes correct plaatsen \[done\]
+naambordjes correct plaatsen \[done\]
 
 * * *
 

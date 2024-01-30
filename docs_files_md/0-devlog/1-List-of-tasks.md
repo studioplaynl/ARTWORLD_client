@@ -40,15 +40,6 @@
 |Meldingen kenbaar maken in itemsbar als je post of
 een like of vriendschapsverzoek hebt|20u|       
 
-| Update Phaser | uren |
-|--------|------|                                                   
-|update de game engine|10u| 
-
-| Divers | uren |
-|--------|------|
-|overleg en afstemming| 2u| 
-|documentatie en oplevering overleg|4u|
-
 * * *
 
 Toelichting op design: [docs.google](https://docs.google.com/document/d/1lKM1My2SL9BflOcgQuC4M7f7K9fjL4QHDbGDFGHt3y4)
