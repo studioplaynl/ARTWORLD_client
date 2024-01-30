@@ -306,7 +306,6 @@ class ManageSession {
   } // end createSocket
 
   /** Get ...
-   * @todo Extend documentation
    */
   async getStreamUsers(rpcCommand, location) {
     //* rpcCommand:

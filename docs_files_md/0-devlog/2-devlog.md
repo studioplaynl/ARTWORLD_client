@@ -1,6 +1,8 @@
 ## Dev log
 
 ###2024-01-29
+TODO
+
 fixed: 
 - player movement working again
 - gradient circles rendered wrong (origin is corner instead of center)
@@ -8,7 +10,8 @@ fixed:
 Texture key already in use: touchBackgroundCheck
 So make first before making a renderTexture
 - outline around Enter Location
-- Fabric with eraser breaks
+- Fabric with erase 
+
 
  solution: 
 https://www.npmjs.com/package/fabric-with-erasing
@@ -17,7 +20,7 @@ TODO: Not working:
 - when loading stopmotion in a house:
 Uncaught TypeError: Cannot read properties of undefined (reading 'list')
     at ServerCall.replaceLikedsInBalloonContainer (ServerCall.js:981:47)
-- Fabric with erase 
+
 
 
 Implement upgrade in 3.60:
