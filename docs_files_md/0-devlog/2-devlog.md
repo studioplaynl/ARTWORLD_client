@@ -1,9 +1,12 @@
 ## Dev log
 TODO: Not working:
+
 - when loading stopmotion in a house:
 Uncaught TypeError: Cannot read properties of undefined (reading 'list')
     at ServerCall.replaceLikedsInBalloonContainer (ServerCall.js:981:47)
+
 - CHECK workings of adminpage!
+
 - fix inconsistencies in new app / artwork creator view and UI
 
 ###2024-01-30

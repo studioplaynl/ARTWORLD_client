@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import { onMount } from 'svelte';
   import ErrorIcon from 'svelte-icons/md/MdErrorOutline.svelte';
   import SuccessIcon from 'svelte-icons/md/MdDone.svelte';
@@ -137,6 +139,7 @@
 {/if}
 
 {#if !!notification}
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
   <div class="snackbar" on:click="{message}">
     <div class="icon notification">
       {#if notificationCode === NOTIFICATION_MESSAGE_RECEIVED_WHILE_OFFLINE_OR_NOT_IN_CHANNEL}
