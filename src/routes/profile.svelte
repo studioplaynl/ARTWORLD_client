@@ -16,7 +16,6 @@
  */
 
   import SvelteTable from 'svelte-table';
-  // import { push } from 'svelte-spa-router';
 
   import { ArtworksStore, AvatarsStore } from '../storage';
   import {

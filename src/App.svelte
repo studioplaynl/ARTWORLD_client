@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
 /**
  * @file App.svelte
  * @author Lindsey, Eelke, Maarten
@@ -57,7 +59,7 @@ import * as Phaser from 'phaser';
   let title;
 
 
-  //* * disables right mouse click; better game experience for the kids */
+  //* disables right mouse click; better game experience for the kids */
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
     e.target.click();
@@ -88,7 +90,7 @@ import * as Phaser from 'phaser';
 
   $: {
     if (!isLoggedIn) {
-      console.log('NOT LOGGED IN');
+      dlog('NOT LOGGED IN');
       // we set Location to null to start fresh
       PlayerLocation.set({ scene: null });
       push('/login');
@@ -123,9 +125,7 @@ import * as Phaser from 'phaser';
 
   // Wait one tick to allow target div to become visible
   async function startGame() {
-    console.log("before tick")
     await tick();
-    console.log("after tick")
     game = new Phaser.Game(gameConfig);
   }
 
