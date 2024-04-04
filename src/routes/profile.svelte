@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   /**
  * @file profile.svelte
  * @author Lindsey, Maarten

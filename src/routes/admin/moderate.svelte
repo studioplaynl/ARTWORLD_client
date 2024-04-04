@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import { _ } from 'svelte-i18n';
   import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';

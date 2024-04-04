@@ -76,12 +76,11 @@ export default class RivierWereld extends Phaser.Scene {
 
     this.backgroundImageKey = 'paarse_rivier_background_';
     //  load 9 images in a for loop
-        for (let i = 0; i < 9; i++)
-        {
-            const key = 'image' + i;
-            const name = folderPath + "image_part_" + i + ".jpeg";
-            this.load.image(this.backgroundImageKey + i, name);
-        }
+    for (let i = 0; i < 9; i++) {
+      const key = `image${i}`;
+      const name = `${folderPath}image_part_${i}.jpeg`;
+      this.load.image(this.backgroundImageKey + i, name);
+    }
   }
 
   async create() {

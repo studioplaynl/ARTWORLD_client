@@ -74,14 +74,13 @@ export default class MoerasWereld extends Phaser.Scene {
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
 
-     this.backgroundImageKey = 'moeras_background_';
+    this.backgroundImageKey = 'moeras_background_';
     //  load 9 images in a for loop
-        for (let i = 0; i < 9; i++)
-        {
-            const key = 'image' + i;
-            const name = folderPath + "image_part_" + i + ".jpeg";
-            this.load.image(this.backgroundImageKey + i, name);
-        }
+    for (let i = 0; i < 9; i++) {
+      const key = 'image' + i;
+      const name = folderPath + "image_part_" + i + ".jpeg";
+      this.load.image(this.backgroundImageKey + i, name);
+    }
   }
 
   async create() {

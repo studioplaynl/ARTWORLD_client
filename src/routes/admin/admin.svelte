@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import { push } from 'svelte-spa-router';
 
   /** eslint-disable max-len */
