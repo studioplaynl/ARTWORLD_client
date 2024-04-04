@@ -6,7 +6,9 @@
     "scripts": {
         "dev": "node src/version.js && vite --host",
         "build": "vite build",
-        "preview": "vite preview"
+        "preview": "vite preview",
+        "lint": "eslint 'src/**/*.{html,js,svelte}'",
+        "lint:fix": "eslint --fix 'src/**/*.{html,js,svelte}'"
     },
     "devDependencies": {
         "@rollup/plugin-alias": "^5.1.0",
@@ -33,7 +35,7 @@
         "svelte-icons": "^2.1.0",
         "svelte-select": "^5.8.1",
         "svelte-spa-router": "^4.0.0",
-        "svelte-table": "^0.6.1",
+        "svelte-table": "^0.5.11",
         "swiper": "^11.0.5"
     }
 }
