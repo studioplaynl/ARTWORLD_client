@@ -1,4 +1,9 @@
 ## Dev log
+###2024-04-04
+fixed: bug with SvelteTable, by referting back to 0.5.11
+
+
+
 TODO: Not working:
 
 - when loading stopmotion in a house:

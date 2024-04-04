@@ -3,7 +3,7 @@ title: "Log: update Phaser from 3.55 to 3.70.0"
 date: "2024-01-04"
 ---
 
-The update from 3.55 to 3.60 is actually the breaking update.
+The update from 3.55 to 3.60 is actually a breaking update.
 
 broken
 
