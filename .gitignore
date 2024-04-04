@@ -1,7 +1,7 @@
 node_modules/
 public/build/
-package-lock.json
 src/version_dev.js
+package-lock.json
 
 .VSCodeCounter/
 .DS_Store
