@@ -67,6 +67,15 @@ export default class IjscoWereld extends Phaser.Scene {
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
+
+      this.backgroundImageKey = 'icecream_world_background_';
+    //  load 9 images in a for loop
+        for (let i = 0; i < 9; i++)
+        {
+            const key = 'image' + i;
+            const name = folderPath + "image_part_" + i + ".jpeg";
+            this.load.image(this.backgroundImageKey + i, name);
+        }
   }
 
   async create() {
@@ -247,14 +256,16 @@ export default class IjscoWereld extends Phaser.Scene {
 
   makeWorldElements() {
     // .........ijsco wereld geheel ............................................................
-    PlaceElement.image({
-      x: 0,
-      y: 0,
-      file: 'ijscowereld',
-      scale: 1,
-      draggable: false,
-      scene: this,
-    });
+    const partSize = 1833;
+    let beginImage = 0;
+
+    for (let j = 0; j < 3; j++) {
+      for (let i = 0; i < 3; i++){
+        this.add.image(partSize * j, partSize * i, this.backgroundImageKey + beginImage).setOrigin(0);
+        beginImage++;
+
+          }
+        }
   }
 
   update() {

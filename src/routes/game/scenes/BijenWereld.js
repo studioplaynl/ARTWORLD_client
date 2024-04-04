@@ -65,10 +65,19 @@ export default class BijenWereld extends Phaser.Scene {
     const loadArray = [
       { key: 'Portal_naarHuis_bijen', path: `${folderPath}02a_Portaal_bee_naar_home-fs8.png` },
 
-      { key: 'bijenwereld', path: `${folderPath}01_Wereld14_Beehive_geheel.jpg` },
+      // { key: 'bijenwereld', path: `${folderPath}01_Wereld14_Beehive_geheel.jpg` },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
+
+    this.backgroundImageKey = 'bee_background_';
+    //  load 9 images in a for loop
+        for (let i = 0; i < 9; i++)
+        {
+            const key = 'image' + i;
+            const name = folderPath + "image_part_" + i + ".jpeg";
+            this.load.image(this.backgroundImageKey + i, name);
+        }
   }
 
   async create() {
@@ -231,16 +240,16 @@ export default class BijenWereld extends Phaser.Scene {
   }
 
   makeWorldElements() {
-    // .........Ijswereld............................................................
-    PlaceElement.image({
-      x: 0,
-      y: 0,
-      file: 'bijenwereld',
-      scale: 1,
-      // rotation: -0.05,
-      draggable: false,
-      scene: this,
-    });
+    const partSize = 1833;
+    let beginImage = 0;
+
+    for (let j = 0; j < 3; j++) {
+      for (let i = 0; i < 3; i++){
+        this.add.image(partSize * j, partSize * i, this.backgroundImageKey + beginImage).setOrigin(0);
+        beginImage++;
+
+          }
+        }
   }
 
   update() {

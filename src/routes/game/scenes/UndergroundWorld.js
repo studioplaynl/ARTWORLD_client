@@ -60,13 +60,22 @@ export default class UndergroundWorld extends Phaser.Scene {
     const loadArray = [
       { key: 'Portal_naarHuis_underground', path: `${folderPath}Portal_naarHuis.png` },
 
-      { key: 'gras_metmieren', path: `${folderPath}gras_metAppel2.png` },
-      { key: 'geheel', path: `${folderPath}geheel_noPalettes-fs8.png` },
+      // { key: 'gras_metmieren', path: `${folderPath}gras_metAppel2.png` },
+      // { key: 'geheel', path: `${folderPath}geheel_noPalettes-fs8.png` },
       { key: 'mier02', path: `${folderPath}mier02.png` },
 
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
+
+    this.backgroundImageKey = 'undergroundWorld_background_';
+    //  load 9 images in a for loop
+        for (let i = 0; i < 9; i++)
+        {
+            const key = 'image' + i;
+            const name = folderPath + "image_part_" + i + ".jpeg";
+            this.load.image(this.backgroundImageKey + i, name);
+        }
   }
 
   async create() {
@@ -89,13 +98,13 @@ export default class UndergroundWorld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    Background.gradientStretchedToFitWorld({
-      scene: this,
-      tileMapName: 'WorldBackgroundTileMap',
-      gradientColor1: 0x4c3a2b,
-      gradientColor2: 0x4c3a2b,
-      tileWidth: 512,
-    });
+    // Background.gradientStretchedToFitWorld({
+    //   scene: this,
+    //   tileMapName: 'WorldBackgroundTileMap',
+    //   gradientColor1: 0x4c3a2b,
+    //   gradientColor2: 0x4c3a2b,
+    //   tileWidth: 512,
+    // });
     handlePlayerMovement(this);
 
     const {
@@ -231,25 +240,17 @@ export default class UndergroundWorld extends Phaser.Scene {
   }
 
   makeWorldElements() {
-    // .........gras_metmieren............................................................
-    PlaceElement.image({
-      x: 0,
-      y: 1963,
-      file: 'gras_metmieren',
-      scale: 1,
-      // rotation: -0.05,
-      scene: this,
-    });
+     // .........geheel............................................................
+    const partSize = 1833;
+    let beginImage = 0;
 
-    // .........geheel............................................................
-    PlaceElement.image({
-      x: -85,
-      y: -475,
-      file: 'geheel',
-      scale: 0.95,
-      // rotation: -0.05,
-      scene: this,
-    });
+    for (let j = 0; j < 3; j++) {
+      for (let i = 0; i < 3; i++){
+        this.add.image(partSize * j, partSize * i, this.backgroundImageKey + beginImage).setOrigin(0);
+        beginImage++;
+
+          }
+        }
 
     // .........mier02............................................................
     PlaceElement.image({
@@ -260,6 +261,7 @@ export default class UndergroundWorld extends Phaser.Scene {
       // rotation: -0.05,
       scene: this,
     });
+
   }
 
   update() {

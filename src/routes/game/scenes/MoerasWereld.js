@@ -73,6 +73,15 @@ export default class MoerasWereld extends Phaser.Scene {
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
+
+     this.backgroundImageKey = 'moeras_background_';
+    //  load 9 images in a for loop
+        for (let i = 0; i < 9; i++)
+        {
+            const key = 'image' + i;
+            const name = folderPath + "image_part_" + i + ".jpeg";
+            this.load.image(this.backgroundImageKey + i, name);
+        }
   }
 
   async create() {
@@ -95,13 +104,6 @@ export default class MoerasWereld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    // Background.gradientStretchedToFitWorld({
-    //   scene: this,
-    //   tileMapName: 'WorldBackgroundTileMap',
-    //   gradientColor1: 0xf3f9ff,
-    //   gradientColor2: 0xc4d7e5,
-    //   tileWidth: 512,
-    // });
     handlePlayerMovement(this);
 
     const {
@@ -212,7 +214,7 @@ export default class MoerasWereld extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(758, 250);
+    let locationVector = new Phaser.Math.Vector2(831,  273);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -235,16 +237,16 @@ export default class MoerasWereld extends Phaser.Scene {
   }
 
   makeWorldElements() {
-    // .........Ijswereld............................................................
-    PlaceElement.image({
-      x: 0,
-      y: 0,
-      file: this.backgroundImageName,
-      scale: 1,
-      // rotation: -0.05,
-      draggable: false,
-      scene: this,
-    });
+    const partSize = 1833;
+    let beginImage = 0;
+
+    for (let j = 0; j < 3; j++) {
+      for (let i = 0; i < 3; i++){
+        this.add.image(partSize * j, partSize * i, this.backgroundImageKey + beginImage).setOrigin(0);
+        beginImage++;
+
+          }
+        }
   }
 
   update() {
