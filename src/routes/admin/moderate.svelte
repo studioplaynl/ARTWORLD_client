@@ -427,6 +427,9 @@
 </div>
 
 <style>
+  button{
+    background-color: #7300ed;
+  }
   .app-close {
     position: absolute;
     right: 15px;

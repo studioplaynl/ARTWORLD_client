@@ -12,7 +12,7 @@ body {
 }
 
 body {
-  color: #7300EB;
+  color: #7300eb;
   margin: 0;
   padding: 0px;
   box-sizing: border-box;
@@ -23,7 +23,6 @@ body {
 .hide {
   display: none;
 }
-
 
 .show {
   display: block;
@@ -57,7 +56,7 @@ textarea {
   padding: 0.4em;
   margin: 0 0 0.5em 0;
   box-sizing: border-box;
-  border: 2px solid #7300EB;
+  border: 2px solid #7300eb;
   border-radius: 2px;
 }
 
@@ -66,7 +65,8 @@ input:disabled {
 }
 
 button {
-  background-color: #7300EB;
+  /* background-color: #7300eb; */
+  background-color: #fff;
   border-radius: 25px;
   color: white;
   padding: 10px 10px;
@@ -108,15 +108,14 @@ button:focus {
   width: fit-content;
   align-content: center;
   border-collapse: collapse;
-  border-bottom: 2px solid #7300EB;
+  border-bottom: 2px solid #7300eb;
   margin-bottom: 25px;
 }
-
 
 .profileTable,
 .profileTable a {
   text-align: center;
-  color: #7300EB;
+  color: #7300eb;
 }
 
 .link {
@@ -128,7 +127,7 @@ button:focus {
 }
 
 .profileTable td {
-  border-top: 2px solid #7300EB;
+  border-top: 2px solid #7300eb;
   padding: 5px;
   word-break: break-all;
 }
@@ -141,7 +140,7 @@ button:focus {
   margin: 0 auto;
 }
 
-.icon>svg {
+.icon > svg {
   height: 60%;
 }
 
@@ -152,10 +151,9 @@ button:focus {
 * {
   scrollbar-width: auto;
   /* "auto" or "thin" */
-  scrollbar-color: white #7300ED;
+  scrollbar-color: white #7300ed;
   /* scroll thumb and track */
 }
-
 
 /* Works on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
@@ -163,14 +161,14 @@ button:focus {
 }
 
 *::-webkit-scrollbar-track {
-  background: #7300ED;
+  background: #7300ed;
   border-radius: 10px;
 }
 
 *::-webkit-scrollbar-thumb {
   background-color: white;
   border-radius: 20px;
-  border: 2px solid #7300ED;
+  border: 2px solid #7300ed;
 }
 
 .online {
@@ -186,7 +184,6 @@ button:focus {
   height: 12px;
   border-radius: 50%;
 }
-
 
 .clear-button-styles {
   border: 0;

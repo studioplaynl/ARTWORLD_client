@@ -183,6 +183,7 @@
   }
 
   button {
+    background-color: #7300ed;
     float: right;
     margin: 5px;
   }
