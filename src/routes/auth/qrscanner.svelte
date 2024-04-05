@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import { onMount, onDestroy } from 'svelte';
   import jsQR from 'jsqr';
   import { login } from '../../helpers/nakamaHelpers';

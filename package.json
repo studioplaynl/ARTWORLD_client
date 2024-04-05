@@ -19,7 +19,7 @@
         "@types/node": "^20.0.0",
         "phaser": "^3.80.1",
         "rollup-plugin-polyfill-node": "^0.13.0",
-        "svelte": "^4.2.8",
+        "svelte": "^4.2.12",
         "vite": "^5.0.10"
     },
     "dependencies": {
@@ -36,6 +36,6 @@
         "svelte-select": "^5.8.1",
         "svelte-spa-router": "^4.0.0",
         "svelte-table": "^0.5.11",
-        "swiper": "^11.0.5"
+        "swiper": "^8.4.7"
     }
 }

@@ -2,12 +2,6 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import { get, writable } from 'svelte/store';
 
-  // import '@melloware/coloris/dist/coloris.css';
-  // import { coloris, init } from '@melloware/coloris';
-
-  // import ColorPicker from 'svelte-awesome-color-picker';
-  // import Picker from 'vanilla-picker';
-
   // Important: keep the eslint comment below intact!
   // eslint-disable-next-line import/no-relative-packages
   import { fabric } from 'fabric-with-erasing';
@@ -47,6 +41,7 @@
       }
     }
   }
+  // export let showStopMotionControls = false;
 
   export let file; // file is currentFile in the appLoader (synced)
   export let data;
@@ -148,6 +143,7 @@
       antiFlickerCanvas.setHeight(canvasHeight);
 
       antiFlickerCanvasRef = document.getElementById('antiFlickerCanvas');
+      // @ts-ignore
       antiFlickerCanvasContext = antiFlickerCanvasRef.getContext('2d');
 
       cursorCanvas.setWidth(canvasHeight);
@@ -423,8 +419,9 @@
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = (e) => {
-        frames = Math.floor(e.target.width / e.target.height);
-        createframeBuffer(img); // disabled looking for error
+        // @ts-ignore
+        frames = Math.floor(e.target.width / e.target.height); // is read correctly, frames is correct
+        createframeBuffer(img); 
       };
 
       img.src = file.url;
@@ -1084,8 +1081,8 @@
 
       </div>
     </div>
-    <!-- This is where the stopmotion controls get injected, but only if the slot gets used.. -->
-    {#if $$slots.stopmotion}
+    <!-- This is where the stopmotion controls get injected -->
+    {#if framesArray.length > 1}
       <div
         class="stopmotion-controls"
         style=" height: {controlsHeight};
@@ -1323,9 +1320,7 @@
       </div>
     </div>
   {/if}
-  <!-- DISABLED because this is not the desired behaviour:
-    we want to save the current drawing/ stopmotion then start a new drawing/ stopmotion -->
-  <!-- something along the lines of: saveData(andNew) in the appLoader -->
+
   {#if enableEditor}
     <div id="clear-canvas" on:click="{clearCanvas}">
       <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />

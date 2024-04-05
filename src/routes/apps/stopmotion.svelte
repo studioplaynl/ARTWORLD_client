@@ -1,8 +1,10 @@
 <script>
+// @ts-nocheck
+
   import { onMount } from 'svelte';
-  // import { Swiper, SwiperSlide } from 'swiper/svelte'; 
-  import Swiper from 'swiper';
-  import SwiperSlide from 'swiper';
+  import { Swiper, SwiperSlide } from 'swiper/svelte'; 
+  // import Swiper from 'swiper';
+  // import SwiperSlide from 'swiper';
   import Drawing from './drawing.svelte';
   import { dlog } from '../../helpers/debugLog';
   // eslint-disable-next-line no-unused-vars
@@ -22,7 +24,7 @@
   let framesArray;
   let currentFrame = 1;
   export let drawing = null;
-  let frames = null;
+  let frames = 1;
   let playPreviewInterval = null;
 
   let enableOnionSkinning = false;
@@ -128,6 +130,8 @@
 
     swiper.update();
   }
+  $: console.log($$slots.stopmotion);
+
 </script>
 
 {#if framesArray !== null}
@@ -165,7 +169,6 @@
           on:swiper="{onSwiper}"
           on:slideChange="{onSlideChange}"
         >
-          <!-- eslint-disable-next-line no-unused-vars -->
           {#each Array(frames + 1) as _, index (index)}
             {#if index}
               <SwiperSlide class="stopmotion__swiper__slide">

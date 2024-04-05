@@ -123,6 +123,11 @@
     height: 100%;
   }
 
+  button {
+    background-color: #7300eb;
+
+  }
+
   .register-form {
     max-width: 400px;
     display: flex;
