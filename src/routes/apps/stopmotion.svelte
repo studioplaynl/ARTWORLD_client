@@ -130,7 +130,7 @@
 
     swiper.update();
   }
-  $: console.log($$slots.stopmotion);
+  
 
 </script>
 
@@ -152,6 +152,7 @@
     on:clearCanvas="{onClearCanvas}"
   >
     <svelte:fragment slot="stopmotion">
+    <!-- <slot name="stopmotion"> -->
       <div class="stopmotion__frames">
         <Swiper
           class="stopmotion__swiper"
@@ -170,7 +171,7 @@
           on:slideChange="{onSlideChange}"
         >
           {#each Array(frames + 1) as _, index (index)}
-            {#if index}
+            {#if index && framesArray && framesArray[index - 1]}
               <SwiperSlide class="stopmotion__swiper__slide">
                 <div
                   class="{`stopmotion__frame ${
@@ -218,6 +219,8 @@
         </Swiper>
       </div>
     </svelte:fragment>
+    <!-- </slot> -->
+
   </Drawing>
 
   <div class="stopmotion__controls">

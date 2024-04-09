@@ -57,6 +57,7 @@
   export let framesArray = [];
   const drawingCanvasUndoArray = writable([]);
 
+$: { console.log('stopMotion', stopMotion);}
   // const drawingCanvasUndoArray = [];
   const drawingCanvasRedoArray = writable([]);
   const maxUndo = 10;
@@ -1082,7 +1083,7 @@
       </div>
     </div>
     <!-- This is where the stopmotion controls get injected -->
-    {#if framesArray.length > 1}
+    {#if framesArray.length >= 0 && stopMotion}
       <div
         class="stopmotion-controls"
         style=" height: {controlsHeight};
