@@ -1,7 +1,10 @@
-1.5.1
+1.5.5
 - updated Phaser to 3.80.1
 - added new worlds
 - big world backgrounds are segmented
+
+1.5.1
+- small updates on worlds
 
 1.5
 - Liked art is displayed with a floating balloon in the game
