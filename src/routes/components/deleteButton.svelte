@@ -1,10 +1,12 @@
 <script>
-  // import { Modal, Dialog, Button } from 'attractions';
+  import ModalDialog from './modalDialog.svelte';
   import { location } from 'svelte-spa-router';
   import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';
   // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
+
+  let open = false;
 
   export const col = null;
   export const rowIndex = null;
@@ -15,8 +17,9 @@
   export let moveToTrash = null;
   export let store;
 
+  $: {console.log('showModal: ', showModal);}
 
-  let modalOpen = false;
+  let showModal = false;
 
   const Trash = () => {
     // dlog('location', $location);
@@ -76,7 +79,7 @@
   };
 
   function Delete() {
-    modalOpen = false;
+    showModal = false;
     if (
       (role === 'admin' || role === 'moderator') &&
       $location === '/moderator'
@@ -88,7 +91,7 @@
   }
 
   function handleKeydown(evt) {
-    if (modalOpen && evt.type === 'keyup' && evt.key === 'Enter') {
+    if (showModal && evt.type === 'keyup' && evt.key === 'Enter') {
       Delete();
     }
   }
@@ -110,7 +113,7 @@
         <button
           class="clear-button-styles"
           on:click="{() => {
-            modalOpen = true;
+            showModal = true;
           }}"
         >
           <img
@@ -122,7 +125,19 @@
       {/if}
     {/if}
 
-  
+<ModalDialog bind:showModal>
+	<h2 slot="header">
+		⚠️ DELETE PERMANENTLY ⚠️
+	</h2>
+
+    <img slot="actionButton"
+      class="actionButton"
+      src="/assets/svg/icon/trashcan_red.svg"
+      alt="Permanently delete item"
+      on:click={() => {Delete(); showModal=false;}}
+    />
+
+</ModalDialog>
 </main>
 
 <style>
@@ -130,4 +145,14 @@
     width: 40px;
     cursor: pointer;
   }
+
+.actionButton {
+  background-color: white;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+}
+
+
+    
 </style>

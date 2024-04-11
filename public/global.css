@@ -86,7 +86,11 @@ button:not(:disabled):active {
 }
 
 button:focus {
-  border-color: #666;
+  /* border-color: #666; */
+}
+
+button:active {
+  background-color: #fff;
 }
 
 .icon {

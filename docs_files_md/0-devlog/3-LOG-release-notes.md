@@ -1,4 +1,4 @@
-1.5.5
+1.5.1
 - updated Phaser to 3.80.1
 - added new worlds
 - big world backgrounds are segmented

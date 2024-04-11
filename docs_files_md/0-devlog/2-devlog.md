@@ -1,4 +1,19 @@
 ## Dev log
+###2024-04-10
+added back button and on:click event to the delete button. Design should be improved. But I cannot spend more time on it now. Will do it when overhoaling the rest of the design.
+
+
+###2024-04-10
+fixed: permanently delete artwork, modal dialog was not coming up. The 'attractions' library was out of date.
+Tried: using svelte-material-ui, it didn't show a modal popping up, it was taking too much time to investigate.
+Solution: wrote a modalDialog.svelte component https://svelte.dev/examples/modal
+
+Still to do:
+icon for cancel (arrow back)
+icon for delelte (trash can)
+
+
+
 ###2024-04-04
 fixed: bug with SvelteTable, by referting back to 0.5.11
 

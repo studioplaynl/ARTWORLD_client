@@ -2597,7 +2597,7 @@
 
   <h1>Log: update Phaser from 3.55 to 3.70.0</h1>
 
-<p>The update from 3.55 to 3.60 is actually the breaking update.</p>
+<p>The update from 3.55 to 3.60 is actually a breaking update.</p>
 <p>broken</p>
 <p>Fabric
 UPGRADE PHASER with Fabric</p>
@@ -2616,7 +2616,6 @@ UPGRADE PHASER with Fabric</p>
 <hr />
 <p>Working:<br />
 Vite + Phaser 3.70.0</p>
-<hr />
 <p>Breaking point:  </p>
 <p>ManageSession.js:48 Uncaught TypeError: Cannot read properties of undefined (reading 'Math')<br />
 at new ManageSession (ManageSession.js:48:35)<br />
@@ -2628,22 +2627,16 @@ replaced<br />
 const { Phaser } = window;<br />
 in many files<br />
 import * as Phaser from 'phaser';</p>
-<hr />
 <p>Breaking point:  </p>
 <p>RegisterPostPipeline.js:4 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'renderer')<br />
 at RegisterPostPipeline (RegisterPostPipeline.js:4:17)</p>
 <p>Turned off Outliner plugin</p>
-<hr />
 <p>Breaking:  </p>
 <p>FlamengoWereld.js:85 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'sizeX')<br />
 at FlamengoWereld.create (FlamengoWereld.js:85:34)</p>
 <p>temp fix (<strong>hack</strong>):<br />
 this.worldSize.x = 5500;<br />
 this.worldSize.y = 5000;</p>
-<hr />
-<p>Breaking:</p>
-<p>TypeError: Cannot read properties of null (reading 'id')
-    at Player.loadPlayerAvatar (Player.js:63:21)</p>
 
 
 
