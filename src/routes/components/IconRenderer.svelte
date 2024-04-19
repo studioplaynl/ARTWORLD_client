@@ -12,7 +12,6 @@
     '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
   const animalChallengeIcon = '<img class="icon" src="/assets/svg/apps/animalChallenge-icon.svg" />';
   const flowerChallengeIcon = '<img class="icon" src="/assets/svg/apps/flowerChallenge-icon.svg" />';
-console.log('collection prop', collection);
   let icon;
   if (collection === 'drawing') {
     icon = drawingIcon;
@@ -27,7 +26,6 @@ console.log('collection prop', collection);
   } else if (collection === 'flowerchallenge') {
     icon = flowerChallengeIcon;
   }
-  console.log('icon', icon);
 </script>
 
 {@html icon}

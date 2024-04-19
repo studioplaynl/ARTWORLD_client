@@ -168,7 +168,6 @@
 
     for (let i = 0; i < art.length; i++) {
       if (!!art[i] && art[i].key === key) {
-        console.log(art[i]);
         trash.push(art[i]);
         art.splice(i, 1);
         i = art.length;
@@ -223,7 +222,6 @@
         cursor = undefined;
       }
     }
-    console.log(history);
 
     if (Array.isArray(objects)) {
       objects.forEach(async (item, index) => {
@@ -241,13 +239,11 @@
       // });
     }
 
-    console.log('hist', history.length);
     backActive = history.length <= 1;
   }
   const promise = getArt('next');
 
   function handeChange(e) {
-    console.log(e);
     SelectedApp = e;
     history = [];
     getArt('next');

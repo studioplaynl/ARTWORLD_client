@@ -160,7 +160,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     const reloadButton = this.add.image((this.worldSize.x / 2) - 300, -50, 'reloadSign').setDepth(200);
     reloadButton.setInteractive();
     reloadButton.on('pointerup', () => {
-      console.log('reloadButton clicked');
       // reload the animal garden to show new animals
       // setTimeout(() => { window.location.reload(); }, 300);
       this.scene.restart();
@@ -172,7 +171,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     const plusSign = this.add.image(this.worldSize.x / 2, -50, 'plusSign').setDepth(200);
     plusSign.setInteractive();
     plusSign.on('pointerup', () => {
-      console.log('plusSign clicked');
       /* Make a new artwork */
       // open the relevant app
       const value = '/animalchallenge';

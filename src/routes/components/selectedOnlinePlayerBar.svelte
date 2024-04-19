@@ -25,7 +25,6 @@
       if ($SelectedOnlinePlayer && 'id' in $SelectedOnlinePlayer) {
         try {
           enableclickOutsideListener = false;
-          console.log('$SelectedOnlinePlayer: ', $SelectedOnlinePlayer);
           // check for meta.azc because for a while there was a server bug that
           // would return azc and role instead of Azc and Role
           let profileAzc = '';

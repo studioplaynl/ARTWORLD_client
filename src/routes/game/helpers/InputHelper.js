@@ -13,7 +13,6 @@ import { ShowItemsBar } from '../../../session';
  */
 export function handleEditMode(scene) {
   scene.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-    console.log('dragging');
     if (ManageSession.gameEditMode) {
       gameObject.setPosition(dragX, dragY);
 
@@ -81,12 +80,10 @@ export function handlePlayerMovement(scene) {
 
   scene.swipeInput = scene.rexGestures.add.rotate()
     .on('drag1start', () => {
-      // console.log('drag1start');
       ManageSession.playerIsAllowedToMove = true;
       scene.input.manager.canvas.style.cursor = 'grabbing';
     })
     .on('drag1', (drag) => {
-      // console.log('drag1');
       if (ManageSession.playerIsAllowedToMove && !ManageSession.gameEditMode) {
         const dragX = drag.drag1Vector.x / get(PlayerZoom);
         const dragY = drag.drag1Vector.y / get(PlayerZoom);
@@ -125,12 +122,10 @@ export function handlePlayerMovement(scene) {
     // maxTaps: undefined,
   })
     .on('tap', () => {
-      // console.log('tap');
       // clickOutside is not working on iOS
       ShowItemsBar.set(false);
     }, scene)
     .on('tappingstart', () => {
-      // console.log('tappingstart');
     })
     .on('tapping', (tap) => {
       // dlog('tapping', tap.tapsCount);

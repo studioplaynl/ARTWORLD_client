@@ -1,4 +1,18 @@
 ## Dev log
+TODO before finishing 1.5.5 release:
+- fullfill all tests on all devices
+- remove warnings in console: check on production betaworld
+
+Open issues:
+- delete as admin does not delete things from AWS (server issue?)
+- delete as player does not delete item from AWS (server issue?)
+
+###2024-04-19
+Completed tests on Chrome Linux and Android tablet.
+Found some minor bugs and enhancements that will be dealt with in the next releases.
+
+Fixed drawing on Rendertexture: passing hexcolor.
+
 ###2024-04-10
 added back button and on:click event to the delete button. Design should be improved. But I cannot spend more time on it now. Will do it when overhoaling the rest of the design.
 

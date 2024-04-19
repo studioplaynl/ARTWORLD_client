@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="483"
+   height="483"
+   viewBox="0 0 127.79375 127.79376"
+   version="1.1"
+   id="svg994"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs991">
+    <style
+       id="style1084">.c{fill:#fff;}.d{stroke-miterlimit:10;}.d,.e{fill:none;stroke:#7300eb;stroke-linecap:round;stroke-width:4px;}.e{stroke-linejoin:round;}</style>
+  </defs>
+  <g
+     id="layer1">
+    <g
+       id="a"
+       transform="matrix(1.2337675,0,0,1.2337675,2.2085,2.2085)"
+       style="fill:#ffffff">
+      <circle
+         class="c"
+         cx="50"
+         cy="50"
+         r="50"
+         id="circle1088"
+         style="fill:#ffffff" />
+    </g>
+    <g
+       id="b"
+       transform="matrix(1.0309753,0,0,1.0309753,2.4550109,23.604268)">
+      <rect
+         class="e"
+         x="25"
+         y="25"
+         width="50"
+         height="50"
+         id="rect1091" />
+      <path
+         class="d"
+         d="m 43.34,37.33 c -7.63,7.63 -5.59,12.88 -3.69,14.79 4.9,4.9 13.77,-9.28 18.72,-4.33 3.95,3.95 -3.11,8.04 3.74,14.89"
+         id="path1093" />
+    </g>
+  </g>
+  <g
+     id="layer2">
+    <g
+       id="g6209"
+       transform="rotate(62.804354,48.440229,63.969284)">
+      <g
+         id="g5290"
+         transform="matrix(1.8950795,1.4525454,-1.4525454,1.8950795,9.0709364,-41.96903)"
+         style="stroke-width:2.23813;stroke-miterlimit:10;stroke-dasharray:none">
+        <line
+           x1="21.676376"
+           y1="9.0026665"
+           x2="14.807124"
+           y2="21.389778"
+           fill="none"
+           stroke="#7300eb"
+           stroke-linecap="round"
+           stroke-linejoin="round"
+           stroke-width="1.05833"
+           id="line6"
+           style="stroke-width:2.23813;stroke-miterlimit:10;stroke-dasharray:none" />
+        <line
+           x1="28.429552"
+           y1="25.270088"
+           x2="14.807124"
+           y2="21.389778"
+           fill="none"
+           stroke="#7300eb"
+           stroke-linecap="round"
+           stroke-linejoin="round"
+           stroke-width="1.05833"
+           id="line6-3"
+           style="stroke-width:2.23813;stroke-miterlimit:10;stroke-dasharray:none" />
+      </g>
+      <path
+         d="m 11.954162,21.634953 c 16.088328,-0.977655 31.181535,7.832388 38.24114,22.321685"
+         fill="none"
+         stroke="#7300eb"
+         stroke-linecap="round"
+         stroke-miterlimit="10"
+         stroke-width="5.63269"
+         id="path5498"
+         style="stroke-width:6.35;stroke-miterlimit:10;stroke-dasharray:none" />
+    </g>
+  </g>
+</svg>

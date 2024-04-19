@@ -177,7 +177,6 @@ export default class Location4 extends Phaser.Scene {
         onRepeat() {
           // Your callback logic here
           ServerCall.replaceLikedsInBalloonContainer();
-          // console.log('Tween repeated!');
         },
       });
     }

@@ -117,7 +117,6 @@ export const Liked = {
     if (Sess) {
       listAllObjects('liked', Sess.user_id).then((serverLikedArray) => {
         Liked.set(serverLikedArray);
-        // console.log('liked user', serverLikedArray);
         return serverLikedArray;
       });
     }
@@ -718,7 +717,6 @@ export const myHome = {
   create: async (Home_url) => {
     const type = 'home';
     const profile = get(Profile);
-    console.log('profile', profile);
     const name = profile.meta.Azc;
     const object = await getObject(type, name);
     const makePublic = true;

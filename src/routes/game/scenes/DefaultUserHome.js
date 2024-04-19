@@ -173,14 +173,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
     this.homeDrawingGroup = this.add.group();
-    // console.log(
-    //   'loadAndPlaceArtworks, type, userId, serverObjectsHandler, artSize, artMargin: ',
-    //   type,
-    //   userId,
-    //   serverObjectsHandler,
-    //   artSize,
-    //   artMargin,
-    // );
 
     ServerCall.downloadAndPlaceArtByType({
       type, userId, serverObjectsHandler, artSize, artMargin,
@@ -201,11 +193,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.playerShadow.x = this.player.x + this.playerShadowOffset;
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     // ........... end PLAYER SHADOW .........................................................................
-    // if (this.load.isLoading()) {
-    //   console.log('queue is loading');
-    // }
-    // if (this.load.isReady()) {
-    //   console.log('loading is ready');
-    // }
+
   } // update
 } // class

@@ -8,7 +8,7 @@
     deleteObjectAdmin,
     convertImage,
   } from '../../helpers/nakamaHelpers';
-  // import { writable } from "svelte/store";
+  import { dlog } from '../../helpers/debugLog';
 
   const verboseLogging = false;
   const socket = client.createSocket(SSL, verboseLogging);
@@ -20,12 +20,12 @@
 
   onMount(() => {
     id = $Profile.id;
-    console.log(id);
+    dlog(id);
   });
 
   async function chat() {
     const createStatus = true;
-    console.log($Profile);
+    dlog($Profile);
 
     await socket.connect($Session, createStatus);
 
@@ -36,25 +36,25 @@
     socket.onstreamdata = (streamdata) => {
       console.info('Received stream data:', streamdata);
       const data = JSON.parse(streamdata.data);
-      console.log(data);
+      dlog(data);
       for (const user of AllUsers) {
         if (user.user_id == data.user_id) {
-          console.log('test');
+          dlog('test');
           user.posX = data.posX;
           user.posY = data.posY;
         }
       }
-      console.log(AllUsers);
+      dlog(AllUsers);
       const newPos = AllUsers;
       AllUsers = newPos;
     };
     socket.onstreampresence = (streampresence) => {
-      console.log('Received presence event for stream: %o', streampresence);
+      dlog('Received presence event for stream: %o', streampresence);
 
-      console.log(`leaves:${streampresence.leaves}`);
+      dlog(`leaves:${streampresence.leaves}`);
       if (streampresence.leaves) {
         streampresence.leaves.forEach((left) => {
-          console.log('User left: %o', left.username);
+          dlog('User left: %o', left.username);
           AllUsers = AllUsers.filter((item) => item.name !== left.username);
         });
       }
@@ -63,8 +63,8 @@
           getUsers();
         });
       }
-      console.log('all user:');
-      console.log(AllUsers);
+      dlog('all user:');
+      dlog(AllUsers);
     };
 
     // current user array
@@ -80,16 +80,16 @@
               "posY": ${Math.floor(Math.random() * 100)},
               "location": "${selected}"
              }`;
-    console.log(data);
+    dlog(data);
     socket.rpc('move_position', data).then((rec) => {});
   }
 
   export async function join() {
     await socket.rpc('join', selected).then((rec) => {
       AllUsers = JSON.parse(rec.payload) || [];
-      console.log(`joined ${selected}`);
-      console.log('join users:');
-      console.log(AllUsers);
+      dlog(`joined ${selected}`);
+      dlog('join users:');
+      dlog(AllUsers);
       status = 'joined';
     });
   }
@@ -97,14 +97,14 @@
   export async function getUsers() {
     await socket.rpc('get_users', selected).then((rec) => {
       AllUsers = JSON.parse(rec.payload) || [];
-      console.log('all current users in home:');
-      console.log(AllUsers);
+      dlog('all current users in home:');
+      dlog(AllUsers);
     });
   }
 
   export async function leave() {
     await socket.rpc('leave', selected).then((rec) => {
-      console.log('left');
+      dlog('left');
       AllUsers = [];
       status = 'left';
     });
@@ -112,7 +112,7 @@
 
   export async function kill() {
     await socket.rpc('kill', selected).then((rec) => {
-      console.log('left');
+      dlog('left');
       AllUsers = [];
       status = 'left';
     });
@@ -141,7 +141,7 @@
     const type = where; // plaats hier de soort locatie
     const pub = true; // is het publiek zichtbaar of enkel voor de gebruiker die het creert
     // await updateObject(type, name, value, pub)
-    console.log(id + type + name + value + pub);
+    dlog(id + type + name + value + pub);
     await updateObjectAdmin(id, type, name, value, pub);
 
     getUserLocations();
@@ -152,11 +152,11 @@
 
   async function getUserLocations() {
     locationsList = await listAllObjects(whereList);
-    console.log(locationsList);
+    dlog(locationsList);
   }
 
   function renewObject(loc) {
-    console.log(loc);
+    dlog(loc);
     where = loc.collection;
     name = loc.key;
     value = JSON.stringify(loc.value);
@@ -172,7 +172,7 @@
 
   async function convert() {
     url = await convertImage(imgUrl, imgSize, imgSize, fileFormat);
-    console.log(url);
+    dlog(url);
   }
 </script>
 
@@ -180,7 +180,7 @@
   <h1>test</h1>
   <p>Status: {status}</p>
 
-  <select bind:value="{selected}" on:change="{() => console.log(selected)}">
+  <select bind:value="{selected}" on:change="{() => dlog(selected)}">
     {#each locations as location}
       <option value="{location}">
         {location}

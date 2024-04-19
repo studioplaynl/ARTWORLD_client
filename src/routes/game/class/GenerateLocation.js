@@ -483,19 +483,6 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     // on home click, we let the player to see the entrance arrow above the home
     this.location.on('pointerdown', () => {
       if (!this.showing && this.getData('enteringPossible') === 'true') {
-        // console.log('this.location.displayWidth: ', this.location.displayWidth);
-        // console.log('this.location.displayHeight: ', this.location.displayHeight);
-        // console.log(
-        //   'this.location.displayWidth/ this.location.displayHeight: ',
-        //   this.location.displayWidth / this.location.displayHeight,
-        // );
-        // console.log('width: ', this.width);
-        // console.log('this.location.width: ', this.location.width);
-        // console.log('this.location.height: ', this.location.height);
-        // console.log('this.location.width/ this.location.height: ', this.location.width / this.location.height);
-
-        // console.log('this.location.body: ', this.location.body);
-
         this.initConfirm();
         this.enterButton.setVisible(this.showing);
         this.enterShadow.setVisible(this.showing);

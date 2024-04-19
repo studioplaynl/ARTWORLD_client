@@ -186,7 +186,6 @@ class DebugFuntions {
         // dlog('scene.tweens.getAllTweens(): ', currentScene.tweens.getAllTweens());
 
         // print out all scenes that are active
-        // console.log(sceneNames);
         sceneNames.forEach((key) => {
           const isActive = scene.scene.isActive(key);
           if (isActive) {

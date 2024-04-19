@@ -34,7 +34,6 @@
       }
       if (messages.notifications[i].code === NOTIFICATION_ARTWORK_RECEIVED) {
         posts = [...posts, messages.notifications[i]];
-        console.log('posts: ', posts);
       }
     }
   });

@@ -60,7 +60,6 @@
       dlog(name);
       dlog(value);
       dlog(pub);
-      console.log('user', user);
       await updateObjectAdmin(user.user_id, type, name, value, pub);
       saving = false;
     } else {

@@ -33,8 +33,8 @@ class GraffitiWall {
     }
 
     const rt = scene.add.renderTexture(
-      -(width / 2),
-      -(height / 2),
+      0,
+      0,
       width,
       height,
     )
@@ -55,16 +55,16 @@ class GraffitiWall {
       ManageSession.graffitiDrawing = true;
       this.isClicking = true;
       ManageSession.playerIsAllowedToMove = false;
-      const hsv = Phaser.Display.Color.HSVColorWheel();
-      const i = color;
-      dlog('hsv[i].color', hsv[i].color);
+      
+      const hexColor = Phaser.Display.Color.HexStringToColor(color);
+      
 
       rt.draw(
         'brush',
         pointer.worldX - scene[name].x + (width / 2),
         pointer.worldY - scene[name].y + (height / 2),
         1,
-        hsv[i].color,
+        hexColor.color,
       );
     });
 
@@ -79,8 +79,7 @@ class GraffitiWall {
         ManageSession.graffitiDrawing = true;
         this.isClicking = true;
         ManageSession.playerIsAllowedToMove = false;
-        const hsv = Phaser.Display.Color.HSVColorWheel();
-        const i = color;
+        const hexColor = Phaser.Display.Color.HexStringToColor(color);
 
         previousPointer.push(
           new Phaser.Math.Vector2(pointer.worldX, pointer.worldY), // an array of Vec2 for worldX and worldY
@@ -110,7 +109,7 @@ class GraffitiWall {
             p.x - scene[name].x + (width / 2),
             p.y - scene[name].y + (height / 2),
             1,
-            hsv[i].color,
+            hexColor.color,
           );
         });
 
@@ -120,7 +119,7 @@ class GraffitiWall {
         //   pointer.worldX - scene[name].x + (width / 2),
         //   pointer.worldY - scene[name].y + (height / 2),
         //   1,
-        //   hsv[i].color,
+        //   hexColor.color,
         // );
       }
     });

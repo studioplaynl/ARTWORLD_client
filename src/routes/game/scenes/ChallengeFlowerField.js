@@ -131,7 +131,6 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     const plusSign = this.add.image(this.worldSize.x / 2, 250, 'plusSign').setDepth(200);
     plusSign.setInteractive();
     plusSign.on('pointerup', () => {
-      console.log('plusSign clicked');
       /* Make a new artwork */
       // open the relevant app
       const value = '/flowerchallenge';
@@ -144,7 +143,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     const reloadButton = this.add.image((this.worldSize.x / 2) - 300, 250, 'reloadSign').setDepth(200);
     reloadButton.setInteractive();
     reloadButton.on('pointerup', () => {
-      console.log('reloadButton clicked');
+      dlog('reloadButton clicked');
       // reload the flower field to show new flowers
       this.scene.restart();
     });

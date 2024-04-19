@@ -66,8 +66,6 @@ import * as Phaser from 'phaser';
   });
 
   onMount(async () => {
-    // console.log("mounted")
-    // console.log(window)
     document.getElementById('loader').classList.add('hide');
 
     // Attempt to restore a saved session

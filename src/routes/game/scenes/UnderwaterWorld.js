@@ -203,7 +203,6 @@ export default class UnderwaterWorld extends Phaser.Scene {
         onRepeat() {
           // Your callback logic here
           ServerCall.replaceLikedsInBalloonContainer();
-          // console.log('Tween repeated!');
         },
       });
     }

@@ -58,7 +58,6 @@
   // let value;
 
   onMount(() => {
-    // console.log('row: ', row);
     /* we want to show the app icon from where we send */
     sendFromAppIconUrl = returnAppIconUrl(row.collection, 'square');
     if (rowIndex) {
@@ -183,7 +182,6 @@
 
 
   function handleSendTo(sendToApp) {
-    // console.log('sendToApp: ', sendToApp);
     selectedSendTo = sendToApp;
     /* if we have send and select an other app we should
     * be able to send again

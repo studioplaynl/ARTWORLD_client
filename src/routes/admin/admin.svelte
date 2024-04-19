@@ -97,7 +97,6 @@
     });
     // dlog(list);
     users = list;
-    // console.log(users);
   });
 
   // location house

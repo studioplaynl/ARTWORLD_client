@@ -57,7 +57,6 @@
   export let framesArray = [];
   const drawingCanvasUndoArray = writable([]);
 
-$: { console.log('stopMotion', stopMotion);}
   // const drawingCanvasUndoArray = [];
   const drawingCanvasRedoArray = writable([]);
   const maxUndo = 10;

@@ -253,7 +253,6 @@ export default class Artworld extends Phaser.Scene {
         onRepeat() {
           // Your callback logic here
           ServerCall.replaceLikedsInBalloonContainer();
-          // console.log('Tween repeated!');
         },
       });
     }
@@ -373,7 +372,7 @@ export default class Artworld extends Phaser.Scene {
       800,
       400,
       'graffitiBrickWall',
-      0,
+      '0x39dba0',
       'brickWall',
     );
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -421,7 +420,7 @@ export default class Artworld extends Phaser.Scene {
         400,
         400,
         'sunDraw',
-        180,
+        '0xf5f245',
         'artFrame_512',
       );
       this.sunDraw.setVisible(false);
@@ -497,7 +496,7 @@ export default class Artworld extends Phaser.Scene {
         600,
         400,
         'cloudDraw',
-        2,
+        '0x45b1f5',
         'artFrame_512',
       );
       this.cloudDraw.setVisible(false);

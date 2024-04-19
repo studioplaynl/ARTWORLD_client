@@ -52,7 +52,6 @@
   onMount(() => {
     if (params.user) {
       getFullAccount(params.user).then((account) => {
-        console.log('account', account);
         username = account.name;
         role = account.meta.Role || 'speler';
         azc = account.meta.Azc;

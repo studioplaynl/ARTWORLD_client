@@ -32,7 +32,6 @@
         clearInterval(interval);
       }
     } else {
-      // console.log('image: ', image);
     }
   });
 
@@ -43,7 +42,6 @@
   // const dispatch = createEventDispatcher();
 
   // function submitClicked() {
-  //   console.log('row: ', row);
   //   dispatch('openPreview', row);
   // }
 
@@ -51,7 +49,6 @@
     // checks if we clicked 'voorbeeld' cell and if it has a value
     // opens the artwork with the appropriate app
 
-      // console.log('row: ', row);
 
       if (typeof row === 'undefined' || row === null) return;
 

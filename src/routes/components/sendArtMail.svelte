@@ -26,7 +26,6 @@
   let value;
 
   async function send() {
-    console.log('row: ', row);
     const data = {
       user_id: row.user_id,
       key: row.key,

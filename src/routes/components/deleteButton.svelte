@@ -17,8 +17,6 @@
   export let moveToTrash = null;
   export let store;
 
-  $: {console.log('showModal: ', showModal);}
-
   let showModal = false;
 
   const Trash = () => {
