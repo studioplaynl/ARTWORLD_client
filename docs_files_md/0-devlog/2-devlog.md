@@ -1,11 +1,20 @@
 ## Dev log
 TODO before finishing 1.5.5 release:
-- fullfill all tests on all devices
 - remove warnings in console: check on production betaworld
 
 Open issues:
 - delete as admin does not delete things from AWS (server issue?)
 - delete as player does not delete item from AWS (server issue?)
+
+###2024-04-22
+Tests for main on:
+- iPad: success
+- Slow Laptop: success
+- iPhone: success
+
+Fullfill all tests on all devices: passed.
+
+
 
 ###2024-04-19
 Completed tests on Chrome Linux and Android tablet.
