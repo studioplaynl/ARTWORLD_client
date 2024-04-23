@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "node src/version.js && vite --host",
-        "build": "vite build",
+        "build": "node src/version.js && vite build --outDir ./public/",
         "preview": "vite preview",
         "lint": "eslint 'src/**/*.{html,js,svelte}'",
         "lint:fix": "eslint --fix 'src/**/*.{html,js,svelte}'"

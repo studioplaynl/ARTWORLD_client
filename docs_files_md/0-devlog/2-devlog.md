@@ -1,10 +1,17 @@
 ## Dev log
 TODO before finishing 1.5.5 release:
 - remove warnings in console: check on production betaworld
+- add world and update main_1.5.5
 
 Open issues:
 - delete as admin does not delete things from AWS (server issue?)
 - delete as player does not delete item from AWS (server issue?)
+
+###2024-04-23
+Removed errors on vite build process.
+-> test and update betaworld build process
+-> update artworld build process 
+-> upgrade artworld to ensable build process 
 
 ###2024-04-22
 Tests for main on:
@@ -13,8 +20,6 @@ Tests for main on:
 - iPhone: success
 
 Fullfill all tests on all devices: passed.
-
-
 
 ###2024-04-19
 Completed tests on Chrome Linux and Android tablet.

@@ -2,6 +2,7 @@ node_modules/
 public/build/
 src/version_dev.js
 package-lock.json
+dist/
 
 .VSCodeCounter/
 .DS_Store
