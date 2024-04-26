@@ -167,18 +167,6 @@
     }
   }
 
-  // function print() {
-  //   QRUrl = `https://artworld.vrolijkheid.nl/#/login/${email}/${password}`;
-  //   setTimeout(() => {
-  //     const printArea = window.open();
-  //     printArea.document.write(printDiv.innerHTML);
-  //     printArea.document.close();
-  //     printArea.focus();
-  //     printArea.print();
-  //     printArea.close();
-  //   }, 1000);
-  // }
-
   function updateQrCanvas() {
     QRUrl = `https://artworld.vrolijkheid.nl/#/login/${email}/${password}`;
     // const qrCodeImage = document.getElementById('qrCodeImage').innerHTML;
@@ -339,7 +327,7 @@
   <p>{toUser - fromUser + 1} number of users</p>
 
   <!-- a button that, when clicked, sets registerNextUser to 0, then calls the batchUserGenerator fuction -->
-  <button
+  <button class="registerbtn"
     on:click="{() => {
       registerNextUser = 0;
       batchUserGenerator(registerNextUser);
@@ -349,7 +337,7 @@
   </button>
 
   <pre>{batchUserPasteBoard}</pre>
-  <button on:click="{copyToClipboard}">Copy user data to clipboard</button>
+  <button class="registerbtn" on:click="{copyToClipboard}">Copy user data to clipboard</button>
 
   <div
     class="app-close"

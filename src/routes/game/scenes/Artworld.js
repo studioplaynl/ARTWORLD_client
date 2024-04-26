@@ -12,6 +12,12 @@
  * Making a new world involves:
  * - CHECK THAT nakama.js is SET TO ARTWORLD SERVER!! on the register page it is visible on which server you are
  * - making a new scene file
+ * - make the background image 5500x5500 72 dpi
+ * - make assets smaller (compress)
+ * - make assets folder and upload assets to folder
+ * - put assets in world
+ * - correct the keys for the assets in the scene file
+ * - correct portal to artworld with gameEdit mode
  * - change the names inside the scene file
  * - adding the scene to the constans.js file
  * - adding the scene to the gameconfig.js file
@@ -19,11 +25,7 @@
  *  - paste users in google sheet
  *  - save QR images
  *  - load QR sheets with 24 images
- * - make assets smaller (compress)
- * - make assets folder and upload assets to folder
- * - put assets in world
- * - correct the keys for the assets in the scene file
- * - correct portal to artworld with gameEdit mode
+ * 
  * - correct position of portal in artworld with gameEdit mode
  *  - place all houses in world with gameEdit mode, save with U key
  * - push new code to github
@@ -133,6 +135,16 @@ export default class Artworld extends Phaser.Scene {
     this.load.image(
       'salamanderWorldPortal',
       './assets/world_salamander/portaal_naarSalamanderWereld-fs8.png',
+    );
+
+    this.load.image(
+      'dennenBosWorldPortal',
+      './assets/world_dennenbos/22_dennenbos_portaal-fs8.png',
+    );
+    
+        this.load.image(
+          'vliegendeEilandenPortal',
+      './assets/world_vliegendeEilanden/02b_Portale_w23_naarVliegendeEilanden-fs8.png',
     );
 
     /** subscription to the loaderror event
@@ -1201,6 +1213,50 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
       size: 231,
     });
+
+    locationVector = new Phaser.Math.Vector2(801, -95);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.vliegendeEilandenWereld = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'VliegendeEilandenWereld',
+      locationImage: 'vliegendeEilandenPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'VliegendeEilanden Wereld',
+      referenceName: 'this.vliegendeEilandenWereld',
+      fontColor: 0x8dcb0e,
+      size: 231,
+    });
+
+    locationVector = new Phaser.Math.Vector2(811,  -495);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
+
+    this.dennenBosWereld = new GenerateLocation({
+      scene: this,
+      type: 'image',
+      draggable: ManageSession.gameEditMode,
+      x: locationVector.x,
+      y: locationVector.y,
+      locationDestination: 'DennenbosWereld',
+      locationImage: 'dennenBosWorldPortal',
+      enterButtonImage: 'enter_button',
+      locationText: 'Dennenbos Wereld',
+      referenceName: 'this.dennenBosWereld',
+      fontColor: 0x8dcb0e,
+      size: 231,
+    });
+
+
     // ---- Location 1 ----------------------
     locationVector = new Phaser.Math.Vector2(-1215, -589);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(

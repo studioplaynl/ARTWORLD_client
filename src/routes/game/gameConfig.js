@@ -44,6 +44,8 @@ import FlamengoWereld from './scenes/FlamengoWereld';
 import RivierWereld from './scenes/RivierWereld';
 import MoerasWereld from './scenes/MoerasWereld';
 import SalamanderWereld from './scenes/SalamanderWereld';
+import VliegendeEilandenWereld from './scenes/VliegendeEilandenWereld';
+import DennenbosWereld from './scenes/DennenbosWereld';
 
 /** Phaser Plugins */
 
@@ -85,6 +87,8 @@ const SCENES = [
   RivierWereld,
   MoerasWereld,
   SalamanderWereld,
+  VliegendeEilandenWereld,
+  DennenbosWereld,
 ];
 
 import { CONFIG } from '../../constants';
