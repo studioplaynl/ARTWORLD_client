@@ -98,7 +98,7 @@ export default class Location1 extends Phaser.Scene {
     this.makeWoldElements();
 
     // graffiti walls
-    GraffitiWall.create(this, 2200, 600, 800, 600, 'graffitiBrickWall', 0x000000, 'brickWall');
+    GraffitiWall.create(this, 2200, 600, 800, 600, 'graffitiBrickWall', '0x000000', 'brickWall');
     // GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall", 0x000000)
 
     // .......  PLAYER ..........................................................................
@@ -220,7 +220,7 @@ export default class Location1 extends Phaser.Scene {
     // this.add.image(0, 200, "background4").setOrigin(0,0).setScale(1.3)
     // this.add.image(0, -300, "background5").setOrigin(0, 0).setScale(1)
 
-    this.add.rexCircleMaskImage(1400, 600, 'art1').setOrigin(0, 0).setScale(1); // stamp painting
+    //! this.add.rexCircleMaskImage(1400, 600, 'art1').setOrigin(0, 0).setScale(1); // stamp painting
     // this.add.image(300, 1200, "art2").setOrigin(0, 0).setScale(1.3) //keith harring
     this.add.image(800, 1200, 'art3').setOrigin(0, 0).setScale(1.5); // dog doodle
     // this.add.image(2400, 200, "art4").setOrigin(0, 0).setScale(1) // 30ties style graphic
