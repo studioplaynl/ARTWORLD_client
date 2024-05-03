@@ -92,6 +92,7 @@ const SCENES = [
 ];
 
 import { CONFIG } from '../../constants';
+import Background from './class/Background';
 
 
 export default {
@@ -99,7 +100,8 @@ export default {
   parent: 'phaserId',
 
   type: Phaser.WEBGL,
-  transparent: true, // for 3d scene
+  transparent: false, // true for 3d scene
+  backgroundColor: '#fff',
 
   domCreateContainer: false,
   input: {

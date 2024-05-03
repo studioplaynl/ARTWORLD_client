@@ -66,7 +66,7 @@ export default class BlueSail extends Phaser.Scene {
 
     handleEditMode(this);
 
-    Background.standardWithDots(this);
+    Background.diamondAlternatedDots(this);
 
     handlePlayerMovement(this);
 

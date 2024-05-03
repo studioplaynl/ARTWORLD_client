@@ -12,61 +12,63 @@ import * as Phaser from 'phaser';
 class Background {
   // constructor(config) {
   // }
-
   standardWithDots(scene) {
-    // const scene = ManageSession.currentScene;
-    // const { worldSize } = ManageSession.currentScene;
-
-    // this.repeatingDots({
-    //   scene,
-    //   gridOffset: 80,
-    //   dotWidth: 2,
-    //   dotColor: 0x7300ed,
-    //   backgroundColor: 0xffffff,
-    // });
-
-    // // make a repeating set of rectangles around the artworld canvas
-    // const middleCoordinates = new Phaser.Math.Vector2(
-    //   CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, 0),
-    //   CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, 0),
-    // );
-    // scene.borderRectArray = [];
-
-    // for (let i = 0; i < 3; i++) {
-    //   scene.borderRectArray[i] = scene.add.rectangle(0,
-    // 0, scene.worldSize.x + (80 * i), scene.worldSize.y + (80 * i));
-    //   scene.borderRectArray[i].setStrokeStyle(6 + (i * 2), 0x7300ed);
-
-    //   scene.borderRectArray[i].x = middleCoordinates.x;
-    //   scene.borderRectArray[i].y = middleCoordinates.y;
-    // }
-    
+    const tileSize = 80;
+    const dotWidth = 2;    
     if (scene.textures.exists('dotWithBg')) {
       scene.textures.remove('dotWithBg')
     }
 
-    const tileSize = 80;
-    // dlog('scene, worldSize', scene, scene.worldSize);
     const mapWidth = scene.worldSize.x / tileSize;
     const mapHeight = scene.worldSize.y / tileSize;
-    this.dotTile(scene);
+    this.dotTile(scene, tileSize, dotWidth);
+
     const map = scene.make.tilemap({
       tileWidth: 80, tileHeight: 80, width: mapWidth, height: mapHeight,
     });
     const tiles = map.addTilesetImage('dotWithBg');
 
     const layer = map.createBlankLayer('layer1', tiles);
-    // layer.setScale(2);
 
     // Add a simple scene with some random element
     layer.fill(0, 0, 0, mapWidth, mapHeight);
   }
 
-  dotTile(scene) {
-    // const scene = ManageSession.currentScene;
-
-    const tileWidth = 80;
+  diamondAlternatedDots(scene) {
+    const tileSize = 80;
     const dotWidth = 2;
+    
+    if (scene.textures.exists('dotWithBg')) {
+      scene.textures.remove('dotWithBg')
+    }
+
+    // dlog('scene, worldSize', scene, scene.worldSize);
+    const mapWidth = scene.worldSize.x / tileSize;
+    const mapHeight = scene.worldSize.y / tileSize;
+    this.dotTile(scene, tileSize, dotWidth);
+    const map = scene.make.tilemap({ width: mapWidth, height: mapHeight, tileWidth: tileSize, tileHeight: tileSize, key: 'map' });
+
+    const tileset1 = map.addTilesetImage('dotWithBg');
+    const tileset2 = map.addTilesetImage('dotWithBg2');
+
+    const layer1 = map.createBlankLayer('Layer1', tileset1);
+    const layer2 = map.createBlankLayer('Layer2', tileset2);
+
+    // Fill the map with alternating tiles
+    for (let y = 0; y < mapHeight; y++) {
+      for (let x = 0; x < mapWidth; x++) {
+        const tileIndex = (x + y) % 2; // Alternate between 0 and 1
+        if (tileIndex === 0) {
+          layer1.putTileAt(0, x, y); // Use tile index 0 from the first tileset
+        } else {
+          layer2.putTileAt(0, x, y); // Use tile index 0 from the second tileset
+        }
+      }
+    }
+
+  }
+
+  dotTile(scene, tileWidth, dotWidth) {
     const fillColor = 0xffffff;
     const dotColor = 0x7300ed;
 
@@ -75,22 +77,30 @@ class Background {
     dot.fillStyle(dotColor);
     dot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false);
 
-    const bgDot = scene.add.rectangle(0, 0, tileWidth, tileWidth, fillColor).setVisible(false);
-
+    const bgDot = scene.add.rectangle(tileWidth/2, tileWidth/2, tileWidth, tileWidth, fillColor).setVisible(false);
+    const bgDot2 = scene.add.rectangle(tileWidth/2, tileWidth/2, tileWidth, tileWidth, fillColor).setVisible(false);
     // create renderTexture to place the dot on
     const dotRendertexture = scene.add.renderTexture(0, 0, tileWidth, tileWidth);
+    const dotRendertexture2 = scene.add.renderTexture(0, 0, tileWidth, tileWidth);
 
     // draw the dot on the renderTexture
     dotRendertexture.draw(bgDot);
     dotRendertexture.draw(dot);
 
+    dotRendertexture2.draw(bgDot2);
+
     // save the rendertexture with a key ('dot')
     dotRendertexture.saveTexture('dotWithBg');
+    dotRendertexture2.saveTexture('dotWithBg2');
 
     // destroy the bgDot graphic and renderTexture, because we can reference the dot as 'dot' (prev step)
     bgDot.destroy();
     dot.destroy();
     dotRendertexture.destroy();
+
+    bgDot2.destroy();
+    // dot.destroy();
+    dotRendertexture2.destroy();
   }
 
   repeatingDots(config) {

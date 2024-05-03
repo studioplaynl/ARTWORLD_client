@@ -76,7 +76,7 @@ export default class YellowDiamond extends Phaser.Scene {
 
     handleEditMode(this);
 
-    Background.standardWithDots(this);
+    Background.diamondAlternatedDots(this);
 
     handlePlayerMovement(this);
 

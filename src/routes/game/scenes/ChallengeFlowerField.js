@@ -84,7 +84,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       artworldToPhaser2DX, artworldToPhaser2DY,
     } = CoordinatesTranslator;
 
-    Background.standardWithDots(this);
+    Background.diamondAlternatedDots(this);
 
     handlePlayerMovement(this);
 

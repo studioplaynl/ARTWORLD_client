@@ -134,7 +134,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     ManageSession.worldSize = this.worldSize;
     //!
 
-    Background.standardWithDots(this);
+    Background.diamondAlternatedDots(this);
 
     handlePlayerMovement(this);
 
