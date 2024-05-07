@@ -8,7 +8,9 @@ import Player from '../class/Player';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import { PlayerHistory, PlayerPos, PlayerZoom } from '../playerState';
-import { SCENE_INFO } from '../../../constants';
+    import {
+  SCENE_INFO,
+} from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';

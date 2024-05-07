@@ -15,8 +15,13 @@ class Background {
   standardWithDots(scene) {
     const tileSize = 80;
     const dotWidth = 2;    
+
     if (scene.textures.exists('dotWithBg')) {
       scene.textures.remove('dotWithBg')
+    }
+
+    if (scene.textures.exists('dotWithBg2')) {
+      scene.textures.remove('dotWithBg2')
     }
 
     const mapWidth = scene.worldSize.x / tileSize;
@@ -26,8 +31,8 @@ class Background {
     const map = scene.make.tilemap({
       tileWidth: 80, tileHeight: 80, width: mapWidth, height: mapHeight,
     });
-    const tiles = map.addTilesetImage('dotWithBg');
 
+    const tiles = map.addTilesetImage('dotWithBg');
     const layer = map.createBlankLayer('layer1', tiles);
 
     // Add a simple scene with some random element
@@ -35,24 +40,30 @@ class Background {
   }
 
   diamondAlternatedDots(scene) {
-    const tileSize = 80;
+    const tileSize = 60;
     const dotWidth = 2;
     
     if (scene.textures.exists('dotWithBg')) {
       scene.textures.remove('dotWithBg')
+
+    }
+
+    if (scene.textures.exists('dotWithBg2')) {
+      scene.textures.remove('dotWithBg2')
     }
 
     // dlog('scene, worldSize', scene, scene.worldSize);
     const mapWidth = scene.worldSize.x / tileSize;
     const mapHeight = scene.worldSize.y / tileSize;
     this.dotTile(scene, tileSize, dotWidth);
-    const map = scene.make.tilemap({ width: mapWidth, height: mapHeight, tileWidth: tileSize, tileHeight: tileSize, key: 'map' });
 
-    const tileset1 = map.addTilesetImage('dotWithBg');
-    const tileset2 = map.addTilesetImage('dotWithBg2');
+    const map1 = scene.make.tilemap({ width: mapWidth, height: mapHeight, tileWidth: tileSize, tileHeight: tileSize });
 
-    const layer1 = map.createBlankLayer('Layer1', tileset1);
-    const layer2 = map.createBlankLayer('Layer2', tileset2);
+    const tileset1 = map1.addTilesetImage('dotWithBg');
+    const tileset2 = map1.addTilesetImage('dotWithBg2');
+
+    const layer1 = map1.createBlankLayer('Layer1', tileset1);
+    const layer2 = map1.createBlankLayer('Layer2', tileset2);
 
     // Fill the map with alternating tiles
     for (let y = 0; y < mapHeight; y++) {
@@ -78,7 +89,8 @@ class Background {
     dot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false);
 
     const bgDot = scene.add.rectangle(tileWidth/2, tileWidth/2, tileWidth, tileWidth, fillColor).setVisible(false);
-    const bgDot2 = scene.add.rectangle(tileWidth/2, tileWidth/2, tileWidth, tileWidth, fillColor).setVisible(false);
+    const bgDot2 = scene.add.rectangle(tileWidth / 2, tileWidth / 2, tileWidth, tileWidth, fillColor).setVisible(false);
+    
     // create renderTexture to place the dot on
     const dotRendertexture = scene.add.renderTexture(0, 0, tileWidth, tileWidth);
     const dotRendertexture2 = scene.add.renderTexture(0, 0, tileWidth, tileWidth);
@@ -99,7 +111,6 @@ class Background {
     dotRendertexture.destroy();
 
     bgDot2.destroy();
-    // dot.destroy();
     dotRendertexture2.destroy();
   }
 

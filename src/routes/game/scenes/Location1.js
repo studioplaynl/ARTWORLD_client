@@ -8,7 +8,11 @@ import GraffitiWall from '../class/GraffitiWall';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import Background from '../class/Background';
-import { SCENE_INFO } from '../../../constants';
+import {
+  SCENE_INFO,
+  ART_DISPLAY_SIZE,
+  ART_OFFSET_BETWEEN
+ } from '../../../constants';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
@@ -20,7 +24,7 @@ export default class Location1 extends Phaser.Scene {
   constructor() {
     super('Location1');
 
-    this.worldSize = new Phaser.Math.Vector2(3000, 3000);
+    this.worldSize = new Phaser.Math.Vector2(0, 0);
 
     this.debug = false;
 
@@ -196,10 +200,9 @@ export default class Location1 extends Phaser.Scene {
   }
 
   async loadAndPlaceLiked() {
-    this.artIconSize = 64;
-    this.artPreviewSize = 128;
-    this.artDisplaySize = 256;
-    this.artMargin = 10;
+    //are accessed in Servercall.repositionContainers
+    this.artDisplaySize = ART_DISPLAY_SIZE;
+    this.artMargin = ART_OFFSET_BETWEEN;
 
     const type = 'downloadLikedDrawing';
     const serverObjectsHandler = ManageSession.likedStore;

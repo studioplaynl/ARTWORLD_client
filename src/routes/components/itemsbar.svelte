@@ -217,7 +217,7 @@
         on:click="{() => {
           goHome();
         }}"
-        class="avatar"
+        class="home"
       >
         <img src="{$myHome.url}" alt="My Home" />
       </button>
@@ -254,54 +254,6 @@
           alt="open app containter"
         />
       </button>
-
-      <!-- <button
-        on:click="{() => {
-          // toggleLiked();
-          const value = '/drawing';
-          push(value);
-          PlayerHistory.push(value);
-        }}"
-      >
-      <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-drawing.svg"
-          alt="Start drawing!"
-        />
-      </button>
-
-      <button
-        on:click="{() => {
-          const value = '/stopmotion';
-          push(value);
-          PlayerHistory.push(value);
-        }}"
-      >
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-animation.svg"
-          alt="Start stop motion!"
-        />
-      </button>
-
-      <button
-        on:click="{() => {
-          const url = 'https://minghai.github.io/MarioSequencer/';
-          const s = window.open(url, '_parent');
-
-          if (s && s.focus) {
-            s.focus();
-          } else if (!s) {
-            window.location.href = url;
-          }
-        }}"
-      >
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-sound.svg"
-          alt="Start mariosound!"
-        />
-      </button> -->
 
       <button on:click="{toggleLiked}">
         <img
@@ -362,7 +314,7 @@
     -o-transition: 0.01s all ease-in-out;
     transition: 0.01s all ease-in-out;
     /* pointer-events: none; */
-    max-height: 90vh;
+    max-height: 80vh;
     display: flex;
   }
 
@@ -392,8 +344,8 @@
   }
 
   .icon {
-    max-width: 50px;
-    height: 50px;
+    max-width: 40px;
+    height: 40px;
     float: left;
     margin-top: 5px;
   }
@@ -424,9 +376,17 @@
   }
 
   .avatar {
-    height: 50px;
-    width: 50px;
+    height: 40px;
+    width: 40px;
     overflow: hidden;
+    /* margin-top: 5px; */
+  }
+
+  .home {
+    height: 40px;
+    width: 40px;
+    overflow: hidden;
+    margin-bottom: 5px;
   }
 
   .avatar > img {

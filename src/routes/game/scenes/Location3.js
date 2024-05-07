@@ -5,7 +5,11 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import { PlayerPos, PlayerZoom } from '../playerState';
-import { SCENE_INFO } from '../../../constants';
+import {
+  SCENE_INFO,
+  ART_DISPLAY_SIZE,
+  ART_OFFSET_BETWEEN
+ } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
 import ServerCall from '../class/ServerCall';
@@ -56,7 +60,7 @@ export default class Location3 extends Phaser.Scene {
       './assets/tilesets/tuxmon-sample-32px-extruded.png',
     );
 
-    this.load.tilemapTiledJSON('map', './assets/tilemaps/tuxemon-town.json');
+    this.load.tilemapTiledJSON('mapLocation3', './assets/tilemaps/tuxemon-town.json');
     // end 1
   }
 
@@ -184,10 +188,9 @@ export default class Location3 extends Phaser.Scene {
   }
 
   async loadAndPlaceLiked() {
-    this.artIconSize = 64;
-    this.artPreviewSize = 128;
-    this.artDisplaySize = 256;
-    this.artMargin = 10;
+    //are accessed in Servercall.repositionContainers
+    this.artDisplaySize = ART_DISPLAY_SIZE;
+    this.artMargin = ART_OFFSET_BETWEEN;
 
     const type = 'downloadLikedDrawing';
     const serverObjectsHandler = ManageSession.likedStore;
@@ -206,7 +209,7 @@ export default class Location3 extends Phaser.Scene {
   generateTileMap() {
     // ....... TILEMAP .............................................................................
     // 2
-    const map = this.make.tilemap({ key: 'map' });
+    const map = this.make.tilemap({ key: 'mapLocation3' });
     // end 2
 
     // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in

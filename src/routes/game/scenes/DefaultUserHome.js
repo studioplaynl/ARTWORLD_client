@@ -32,7 +32,13 @@ import Background from '../class/Background';
 // import { PlayerPos, PlayerZoom } from '../playerState';
 import { PlayerZoom } from '../playerState';
 
-import { SCENE_INFO } from '../../../constants';
+import {
+  SCENE_INFO,
+  ART_ICON_SIZE,
+  ART_PREVIEW_SIZE,
+  ART_DISPLAY_SIZE_LARGE,
+  ART_OFFSET_BETWEEN,
+ } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
@@ -83,12 +89,10 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.progressStopmotion = [];
 
     // sizes for the artWorks
-    this.artIconSize = 64;
-    this.artPreviewSize = 128;
-    this.artDisplaySize = 512;
-    this.artMargin = 10;
-
-    this.artOffsetBetween = 20;
+    this.artIconSize = ART_ICON_SIZE;
+    this.artPreviewSize = ART_PREVIEW_SIZE;
+    this.artDisplaySize = ART_DISPLAY_SIZE_LARGE;
+    this.artMargin = ART_OFFSET_BETWEEN;
 
     this.location = '';
 

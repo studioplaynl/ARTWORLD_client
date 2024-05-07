@@ -10,7 +10,13 @@ import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
-import { SCENE_INFO } from '../../../constants';
+
+import {
+  SCENE_INFO,
+  ART_DISPLAY_SIZE,
+  ART_OFFSET_BETWEEN
+} from '../../../constants';
+
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
@@ -209,10 +215,9 @@ export default class UnderwaterWorld extends Phaser.Scene {
   }
 
   async loadAndPlaceLiked() {
-    this.artIconSize = 64;
-    this.artPreviewSize = 128;
-    this.artDisplaySize = 256;
-    this.artMargin = 10;
+    //are accessed in Servercall.repositionContainers
+    this.artDisplaySize = ART_DISPLAY_SIZE;
+    this.artMargin = ART_OFFSET_BETWEEN;
 
     const type = 'downloadLikedDrawing';
     const serverObjectsHandler = ManageSession.likedStore;

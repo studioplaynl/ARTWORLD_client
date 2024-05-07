@@ -266,6 +266,14 @@ export const STOPMOTION_BASE_SIZE = 1024;
 export const STOPMOTION_MAX_FRAMES = 12;
 export const STOPMOTION_FPS = 5;
 
+export const ART_ICON_SIZE = 64;
+export const ART_PREVIEW_SIZE = 128;
+export const ART_DISPLAY_SIZE = 256;
+export const ART_DISPLAY_SIZE_LARGE = 512;
+
+export const ART_OFFSET_BETWEEN = 10;
+
+
 
 /*
 0 Users are friends with each other.

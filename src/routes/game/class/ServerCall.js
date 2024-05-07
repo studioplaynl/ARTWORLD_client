@@ -20,7 +20,12 @@ import {
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkOptions from './ArtworkOptions';
-import { ART_FRAME_BORDER, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
+
+import {
+  ART_FRAME_BORDER,
+  AVATAR_SPRITESHEET_LOAD_SIZE,
+} from '../../../constants';
+
 import { dlog } from '../../../helpers/debugLog';
 import AnimalChallenge from './animalChallenge';
 import { myHomeStore, Liked, ModeratorLiked } from '../../../storage';

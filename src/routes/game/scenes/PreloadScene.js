@@ -4,8 +4,8 @@
  *
  *  What is this file for?
  *  ======================
- *  The file loads the assets for the game that are use anywhere.
- *  Per scene there are assets loaded that are only used in that scene.
+ *  Loads the assets for the game that are used through out.
+ *  Per scene assets are loaded that are only used in that scene.
  *
  *  We have a few functions to create assets, maybe move them to a separate file?
  */
@@ -15,7 +15,6 @@ import Preloader from '../class/Preloader';
 import ManageSession from '../ManageSession';
 import { ART_FRAME_BORDER } from '../../../constants';
 import Background from '../class/Background';
-// import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 
@@ -26,12 +25,6 @@ export default class PreloadScene extends Phaser.Scene {
   constructor() {
     super('PreloadScene');
     this.loadingDone = false;
-
-    // sizes for the artWorks
-    this.artIconSize = 64;
-    this.artPreviewSize = 128;
-    this.artDisplaySize = 512;
-    this.artOffsetBetween = 20;
   }
 
   preload() {

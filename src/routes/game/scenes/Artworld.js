@@ -46,7 +46,11 @@ import Exhibition from '../class/Exhibition';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
-import { SCENE_INFO } from '../../../constants';
+import {
+  SCENE_INFO,
+  ART_DISPLAY_SIZE,
+  ART_OFFSET_BETWEEN
+ } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 // import { Liked, ModeratorLiked } from '../../../storage';
@@ -78,11 +82,7 @@ export default class Artworld extends Phaser.Scene {
     // shadow
     this.playerShadowOffset = -8;
 
-    // sizes for the artWorks
-    this.artIconSize = 64;
-    this.artPreviewSize = 128;
-    this.artDisplaySize = 256;
-    this.artMargin = 10;
+ 
   }
 
   async preload() {
@@ -271,16 +271,15 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async loadAndPlaceLiked() {
-    this.artIconSize = 64;
-    this.artPreviewSize = 128;
-    this.artDisplaySize = 256;
-    this.artMargin = 10;
+    //are accessed in Servercall.repositionContainers
+    this.artDisplaySize = ART_DISPLAY_SIZE;
+    this.artMargin = ART_OFFSET_BETWEEN;
 
     const type = 'downloadLikedDrawing';
     const serverObjectsHandler = ManageSession.likedStore;
     const userId = '';
     // dlog('this.location', location);
-    const artSize = 256;
+    const artSize = ART_DISPLAY_SIZE;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
 

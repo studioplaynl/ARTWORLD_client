@@ -50,6 +50,7 @@
 </script>
 
 <div class="topbar">
+
   <button on:click="{goHome}">
     <img
       class="TopIcon"
@@ -134,8 +135,10 @@
   }
 
   .TopIcon {
-    width: 40px;
-    height: 40px;
+    width: 2rem;
+    height: 2rem;
+    max-width: 40px;
+    max-height: 40px;
     border-radius: 50%;
     background-color: white;
   }
