@@ -4,8 +4,7 @@ src/version_dev.js
 package-lock.json
 dist/
 .vscode/
-
 .VSCodeCounter/
 .DS_Store
 .env
-.vscode/settings.json
+
