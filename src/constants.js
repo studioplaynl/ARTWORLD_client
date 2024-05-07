@@ -233,7 +233,7 @@ export const STOCK_AVATARS = [
 ];
 
 export const ARTWORLD_IP = '193.187.129.8';
-export const BETAWORLD_IP = '185.193.67.152';
+export const BETAWORLD_IP = '128.140.42.65';
 
 // export const MODERATOR_LIKED_ID = '6a10eac1-35c9-4f47-acd7-2814e257574b'; /** test account! user4 */
 export const MODERATOR_LIKED_ID = '5264dc23-a339-40db-bb84-e0849ded4e68'; // user1 for deployment
