@@ -49,24 +49,21 @@
   let stockItems = [];
   let houseUrl = '';
 
+  let selectedItem = '';
+
 
   onMount(async () => {
     if (dataType === 'house') stockItems = STOCK_HOUSES;
     else if (dataType === 'avatar') stockItems = STOCK_AVATARS;
 
-// if the user has a home image, use that, otherwise show a placeholder
-  if ($myHome.url) {
-    houseUrl = $myHome.url;
-  } else {
-    houseUrl = '/assets/SHB/portal/' + STOCK_HOUSES[1];
-  }
+    // if the user has a home image, use that, otherwise show a placeholder
+    if ($myHome.url) {
+      houseUrl = $myHome.url;
+    } else {
+      houseUrl = '/assets/SHB/portal/' + STOCK_HOUSES[1];
+    }
 
-    getImages();
-
-    // get type avatar or house
-    // get list of objects
-    // listObjects(type, userID, lim)
-    // show objects
+      getImages();
   });
 
   async function getImages() {
@@ -87,25 +84,18 @@
     }
   }
 
-  async function save(object) {
+  async function save(object, item) {
     if (dataType === 'avatar') {
       setAvatar(object.value.url);
       $Profile.url = object.value.previewUrl;
+      selectedItem = item;
     }
     if (dataType === 'house') {
       myHome.create(object.value.url);
-      dlog('object.value.url', object.value.url);
-      //! hier moet set home nog komen
-
-      // await setHome(object.value.url);
-      // dlog(await getHome());
+      selectedItem = item;
     }
   }
-  // on click of image, saveChange
-  // if avatar -> save url to Profile
-  // setAvatar(avatar_url)
-  // if house -> save url to home object
-  //   updateObject(type, name, value, pub, userID)
+ 
 
   async function deleteObj(object) {
     for (let index = 0; index < objects.length; index++) {
@@ -202,18 +192,18 @@
   {#each stockItems as stockItem}
 <div
   class="item"
-  class:selected="{(`/avatar/stock/${stockItem}` === $Profile.avatar_url && dataType === 'avatar') ||
-    (houseUrl && `/home/stock/${stockItem}` === houseUrl && dataType === 'house')}"
+
+  class:selected="{stockItem === selectedItem}"
 >
 
       <p
         class="image"
         on:click="{() => {
           if (dataType === 'avatar') {
-            save({ value: { url: `/avatar/stock/${stockItem}` } });
+            save({ value: { url: `/avatar/stock/${stockItem}` } }, stockItem);
           }
           if (dataType === 'house') {
-            save({ value: { url: `/home/stock/${stockItem}` } });
+            save({ value: { url: `/home/stock/${stockItem}` } }, stockItem);
           }
         }}"
       >

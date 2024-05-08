@@ -389,6 +389,10 @@
     margin-bottom: 5px;
   }
 
+  .home > img {
+    height: 100%;
+  }
+
   .avatar > img {
     height: 100%;
   }

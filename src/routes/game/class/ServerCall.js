@@ -209,7 +209,8 @@ class ServerCall {
             // dlog('homeImageInGame: ', homeImageInGame);
             homeImageInGame.displayWidth = width;
             homeImageInGame.scaleY = homeImageInGame.scaleX;
-            const cropMargin = 1; // sometimes there is a little border visible on a drawn image
+            // sometimes there is a little border visible on a drawn image; we crop it off
+            const cropMargin = 1; 
             homeImageInGame.setCrop(
               cropMargin,
               cropMargin,
