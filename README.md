@@ -1,5 +1,8 @@
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 
+[Site](https://artworld.vrolijkheid.nl/) |
+[Docs](https://studioplaynl.github.io/ARTWORLD_client/) |
+[Code of Conduct](https://code-of-conduct.openjsf.org)
 
 This is the repo for ARTWORLD, a game for kids to make and exhibit art in. 
 ARTWORLD is a multi user game, so players see and can interact with each other.
