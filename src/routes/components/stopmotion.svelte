@@ -7,7 +7,6 @@
   export let row = null;
 
   export let clickable = false;
-  // const dispatch = createEventDispatcher();
 
   let image;
   let frame = 0;
@@ -39,28 +38,21 @@
     clearInterval(interval);
   });
 
-  // const dispatch = createEventDispatcher();
-
-  // function submitClicked() {
-  //   dispatch('openPreview', row);
-  // }
-
-    function handleOpenArtwork() {
+  function handleOpenArtwork() {
     // checks if we clicked 'voorbeeld' cell and if it has a value
     // opens the artwork with the appropriate app
 
+    if (typeof row === 'undefined' || row === null) return;
 
-      if (typeof row === 'undefined' || row === null) return;
 
+    if (row.value) {
+      push(
+        `/${row.collection}?userId=${row.user_id}&key=${row.key}`,
+      );
+    } else if (row.key) {
 
-      if (row.value) {
-        push(
-          `/${row.collection}?userId=${row.user_id}&key=${row.key}`,
-        );
-      } else if (row.key) {
-
-      }
     }
+  }
 </script>
 
 <div class="artPreview" style="--avatar-size: {avatarSize}px;"

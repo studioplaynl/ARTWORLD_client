@@ -43,9 +43,8 @@ import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
-// import Preloader from '../class/Preloader';
 
-// import CoordinatesTranslator from '../class/CoordinatesTranslator';
+import { listAllObjects } from '../../../helpers/nakamaHelpers';
 
 import * as Phaser from 'phaser';
 
@@ -105,7 +104,20 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   async preload() {
-    this.loadAndPlaceArtworks();
+    //! this.loadAndPlaceArtworks();
+    //! working on imageGallery
+    //! load all images
+    //TODO store in a Drawings Store
+    //! the list comes back ordered
+    //! listAllObjects has pagination server-side, but this is not needed
+    //! the pages can be loaded from local memory, when we come back on page 1
+    //! we could call listAllObjects again to get a refresh
+    
+    const allDrawings = await listAllObjects('drawing', this.location);
+    console.log('allDrawings: ', allDrawings);
+    // the list comes back ordered
+
+    
 
     /** subscription to the loaderror event
     * strangely: if the more times the subscription is called, the more times the event is fired

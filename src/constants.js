@@ -273,8 +273,6 @@ export const ART_DISPLAY_SIZE_LARGE = 512;
 
 export const ART_OFFSET_BETWEEN = 10;
 
-
-
 /*
 0 Users are friends with each other.
 1 User A has sent an invitation and pending acceptance from user B.
@@ -320,6 +318,11 @@ export const APPS = [
   { app: 'animalchallenge', artType: 'draw', multiFrameDraw: true },
   { app: 'flowerchallenge', artType: 'draw', multiFrameDraw: false },
   { app: 'mariosound', artType: 'sound', multiFrameDraw: null },
+  { app: 'achievement', artType: '', multiFrameDraw: null },
+  { app: 'likes', artType: '', multiFrameDraw: null },
+  { app: 'liked', artType: '', multiFrameDraw: null },
+  { app: 'addressbook', artType: '', multiFrameDraw: null },
+
 ];
 
 const APP_ICONS = [
@@ -349,7 +352,6 @@ const APP_ICONS = [
 export function returnAppIconUrl(appName, type) {
   const icon = APP_ICONS.find((iconFind) => iconFind.app === appName && iconFind.type === type);
   return icon ? icon.iconUrl : '';
-  // Return an empty string or a default path if not found
 }
 
 export function isValidApp(app) {

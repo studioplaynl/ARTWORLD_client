@@ -7,8 +7,6 @@
   import SvelteTable from 'svelte-table';
   import {
     ListAllUsers,
-    listAllObjects,
-    updateObjectAdmin,
   } from '../../helpers/nakamaHelpers';
   import { dlog } from '../../helpers/debugLog';
   import { SCENE_INFO } from '../../constants';
@@ -141,10 +139,10 @@
     width: 40px;
   }
 
-  @media only screen and (max-width: 640px) {
+  /* @media only screen and (max-width: 640px) {
     .app-close {
       top: unset;
       bottom: 120px;
     }
-  }
+  } */
 </style>

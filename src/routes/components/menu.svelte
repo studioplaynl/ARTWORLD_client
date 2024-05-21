@@ -167,6 +167,7 @@
     color: white;
     width: 100%;
   }
+
   @media screen and (min-width: 600px) {
     nav {
       position: fixed;
@@ -183,10 +184,11 @@
       float: right;
     }
   }
+
   @media screen and (max-width: 600px) {
     nav {
       position: fixed;
-      bottom: 0;
+      top: 0;
       z-index: 5;
       width: 100vw;
       pointer-events: none;
@@ -206,10 +208,11 @@
       background-color: white;
       box-shadow: -4px -2px #7300eb;
       position: absolute;
-      top: -55px;
+      top: 10px;
       right: 0;
     }
   }
+
   .menucontainer {
     pointer-events: all;
   }

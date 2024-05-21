@@ -1,7 +1,11 @@
 /* eslint-disable camelcase */
 import ManageSession from '../ManageSession';
 import {
-  getAccount, updateObject, listObjects, updateObjectAdmin,
+  getAccount,
+  updateObject,
+  listObjects,
+  updateObjectAdmin,
+  listAllObjects,
 } from '../../../helpers/nakamaHelpers';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import { dlog } from '../../../helpers/debugLog';
@@ -123,6 +127,22 @@ class DebugFuntions {
     }
   }
 
+  runPromise(type, userId, limit, rec, page) {
+    Promise.all([
+              listObjects(type, userId, limit, rec[0].cursor),
+              ])
+                .then((rec2) => {
+                  dlog(type, ' listObjects: ', rec2[0]);
+                  page = rec2[0].objects
+                    page.forEach((element)=> {
+                      console.log(element.create_time)
+                    })
+                  if (rec2[0].cursor != undefined) {
+                    this.runPromise(type, userId, limit, rec2)
+                  }
+                });
+  }
+
   debugUpKeys(scene, code) {
     // avoid E F -> already used for edit mode
 
@@ -198,21 +218,53 @@ class DebugFuntions {
       case 'Digit1':
         dlog(code);
 
+        const type = 'drawing';
+        const limit = 50;
+        const userId = null;
+        let cursor;
+
+        let page
         Promise.all([
-          listObjects('liked', userProfile.id, 10),
+          listObjects(type, userId, limit),
         ])
           .then((rec) => {
-            dlog('liked query', rec.objects[0]);
+            dlog(type, ' listObjects: ', rec[0]);
+
+            page = rec[0].objects
+            // page.forEach((element)=> {
+            //   console.log(element.update_time)
+            // })
+
+            if (rec[0].cursor != undefined) {
+            
+             // this.runPromise(type, userId, limit, rec, page)
+              
+          }
+
           });
+        
+        Promise.all([
+          listAllObjects(type, userId, limit, cursor),
+        ])
+          .then((rec) => {
+            dlog(type, ' listAllObjects: ', rec[0]);
+            page = rec[0]
+            page.forEach((element)=> {
+              console.log(element.update_time)
+            })
+
+          });
+        
+        
         // ManageSession.getStreamUsers("get_users", scene.location)
         // listObjects("addressbook", userProfile.id, 10)
 
-        Promise.all([
-          listObjects('addressbook', userProfile.id, 10),
-        ])
-          .then((rec) => {
-            dlog('addressbook query', rec.objects[0]);
-          });
+        // Promise.all([
+        //   listObjects('addressbook', userProfile.id, 10),
+        // ])
+        //   .then((rec) => {
+        //     dlog('addressbook query', rec.objects[0]);
+        //   });
         break;
 
       case 'Digit2':

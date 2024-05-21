@@ -269,10 +269,24 @@ export function createArtworksStore(type) {
       typePromises.push(new Promise((resolveType) => {
         // A promise to load objects from the server
         const loadPromise = new Promise((resolve) => {
+          //! BUG? 
+          //! if there is a limit, it is not used, if there is no limit it is used...
+          //! so it would always list all objects?
+          //! what does listObjects return?
+          //! make some test to test this!
+
           if (limit !== undefined) {
-            listAllObjects(type, id).then((loaded) => resolve(loaded));
+            console.log('limit: ', limit)
+            listAllObjects(type, id).then((loaded) => {
+              console.log('loaded: ', loaded)
+              resolve(loaded)
+          });
           } else {
-            listObjects(type, id, limit).then((loaded) => resolve(loaded.objects));
+            console.log('limit: ', limit)
+            listObjects(type, id, limit).then((loaded) => {
+              console.log('loaded.objects: ', loaded.objects)
+              resolve(loaded.objects)
+            });
           }
         });
 
@@ -476,6 +490,7 @@ export const ArtworksStore = {
    * @return {Promise} A Promise that resolves an updated array of artworks that includes the
   */
   updatePreviewUrls: (artworks) => new Promise((resolvePreviewUrls) => {
+    console.log('updatePreviewUrls')
     const artworksToUpdate = artworks;
     const existingArtworks = get(artworksStore);
     const updatePromises = [];
@@ -501,6 +516,7 @@ export const ArtworksStore = {
             DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
             'png',
           ).then((val) => {
+            console.log('updatePreviewUrls val: ', val) 
             // Set the previewUrl value, update the array
             artwork.value.previewUrl = val;
             artworksToUpdate[index] = artwork;
@@ -588,8 +604,6 @@ export const ArtworksStore = {
   },
 };
 
-
-
 const avatarsStore = writable([]);
 export const AvatarsStore = {
 
@@ -620,7 +634,6 @@ export const AvatarsStore = {
         });
       }
     });
-
 
     // Objects were loaded, so update the preview URLs
     loadPromise
@@ -706,7 +719,6 @@ export const AvatarsStore = {
 
 /** Contains the house object of current player */
 export const myHomeStore = writable({ url: '' });
-
 
 export const myHome = {
 

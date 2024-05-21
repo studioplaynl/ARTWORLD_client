@@ -78,12 +78,15 @@
     username = removeSpecialCharacters(username);
   }
 
+  // ART that is not in trash
   $: filteredArt = $ArtworksStore.filter(
     (el) =>
       // eslint-disable-next-line implicit-arrow-linebreak
       el.value.status === OBJECT_STATE_REGULAR ||
       el.value.status === OBJECT_STATE_UNDEFINED,
   );
+
+  // ART that is in trash
   $: deletedArt = $ArtworksStore.filter(
     (el) => el.value.status === OBJECT_STATE_IN_TRASH,
   );

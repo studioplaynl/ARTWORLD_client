@@ -64,7 +64,6 @@ export const logout = async () => {
   try {
     dlog('try logging out');
     await client.sessionLogout(get(Session)).then(() => {
-      //! hier komen we niet
       // Callback function after the promise is resolved
       dlog('Logout successful!');
       window.location.reload();
@@ -73,17 +72,11 @@ export const logout = async () => {
     dlog('Failed logging out on server!', err);
   } finally {
     dlog('finally: logging out');
-
     Profile.set(null);
     /** Setting Session to null automatically redirects you to login route */
     Session.set(null);
-
     localStorage.clear();
-
-    // alert('console messages');
     window.location.reload();
-
-    // document.location.reload(true);
   }
 };
 
@@ -248,49 +241,37 @@ export async function getUploadURL(type, name, filetype, version) {
  * @param {boolean} pub   Public read permission
  * @param {string} userID User ID
  */
-// export async function updateObject(type, name, value, pub, userID) {//! off: bug
 export async function updateObject(type, name, value, pub) {
   Success.set(null);
 
   const session = get(Session);
-  // const profile = get(Profile); //! off: bug
 
   // if user is admin/moderator and userID
-  // const uid = userID || session.user_id; //! off: bug
 
   // "2" refers to Public Read permission
   // "1" refers to Owner Write permission
   const permission = pub ? PERMISSION_READ_PUBLIC : PERMISSION_READ_PRIVATE;
 
   // Value to store
-  // const storeValue = typeof value === 'string' ? JSON.parse(value) : value; //! off: bug
 
-  //! off: bug
-  // if (profile.meta.Role === 'admin' || profile.meta.Role === 'moderator') {
-  //   await updateObjectAdmin(uid, type, name, storeValue, permission);
-  // } else {//! off: bug
+
   const object = {
     collection: type,
     key: name,
     value,
     permission_read: permission,
-    // "version": "*"
   };
-    // const objectIDs =
   client.writeStorageObjects(session, [object]);
   // console.info('Stored objects: %o', objectIDs);
   Success.set(true);
 
   return object;
-  // }//! off: bug
-  // return '';//! off: bug
 }
 
 export async function listObjects(type, userID, lim, curs) {
   const session = get(Session);
   const limit = lim || 100;
   const cursor = curs || null;
-  // TODO: Figure out why pagination does not work (cors issue?)
   // const offset = page * limit || null;
   const objects = await client.listStorageObjects(session, type, userID, limit, cursor); // , offset);
   // dlog('listObjects result: ', objects);
@@ -320,9 +301,7 @@ export async function listAllObjects(type, id, limit, cursor) {
   const rpcid = 'list_all_storage_object';
   const session = get(Session);
   const objects = await client.rpc(session, rpcid, payload);
-  // objects.payload.forEach(object => {
-  //   object.value = JSON.parse(object.value)
-  // });
+      
   return objects.payload;
 }
 
@@ -458,9 +437,6 @@ export async function setHome(Home_url) {
 }
 
 export async function getFile(file_url) {
-  // dlog('fileURL', file_url);
-  // const url = `https://artworld.vrolijkheid.nl/proxy/${file_url}`;
-
   const session = get(Session);
   const payload = { url: file_url };
   let url;

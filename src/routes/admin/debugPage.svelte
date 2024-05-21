@@ -70,7 +70,7 @@
     // current user array
   }
 
-  chat();
+  // chat();
 
   export function onclick() {
     const action = 'walk'; // stop, too, move
@@ -165,7 +165,7 @@
 
   /// /////////////////////// image converter /////////////////////////////
 
-  let imgUrl = 'drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg';
+  let imgUrl = 'drawing/72c773d8-365f-409b-ae51-ec6e81e94ff9/0_2024-05-20T12_37_13_GeelKogelvis.png';
   let imgSize = '64';
   let fileFormat = 'png';
   let url;
@@ -176,7 +176,7 @@
   }
 </script>
 
-<main>
+<div class="box">
   <h1>test</h1>
   <p>Status: {status}</p>
 
@@ -203,7 +203,6 @@
   {/each}
 
   <h2>Create objects, eg for locations</h2>
-  <!-- <label>where</label><input type="text" bind:value="{where}"> -->
 
   <label>select object</label>
   <select bind:value="{where}">
@@ -280,7 +279,7 @@
   <button on:click="{convert}">Convert</button>
 
   <img src="{url}" />
-</main>
+  </div>
 
 <style>
   .blueBack {
@@ -295,8 +294,13 @@
   }
 
   main {
+    z-index: 999;
     max-width: 500px;
     display: block;
     margin: 0 auto;
+  }
+
+    button{
+    background-color: #7300ed;
   }
 </style>

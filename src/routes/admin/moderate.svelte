@@ -4,16 +4,14 @@
   import { _ } from 'svelte-i18n';
   import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';
-  import Select from 'svelte-select';
   import { PERMISSION_READ_PUBLIC } from '../../constants';
   import {
-    getAccount,
     convertImage,
     listAllObjects,
     deleteObjectAdmin,
     updateObjectAdmin,
   } from '../../helpers/nakamaHelpers';
-  import { Session, Profile } from '../../session';
+  import { Profile } from '../../session';
   import StatusComp from '../components/statusbox.svelte';
   import DeleteComp from '../components/deleteButton.svelte';
   import DownloadComp from '../components/downloadButton.svelte';
@@ -27,6 +25,7 @@
   const limit = 50;
 
   let useraccount;
+
   const drawingIcon =
     '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
   const stopMotionIcon =
@@ -204,6 +203,9 @@
   }
 
   async function getArt(move) {
+    console.log('getArt start')
+    console.log("cursor: ", cursor) // undefined at this point
+    console.log("limit: ", limit) // 50
     art = [];
     trash = [];
     if (move == 'back') {
@@ -214,9 +216,11 @@
     //  let objects = await listObjects(SelectedApp, null, limit, cursor)
     const objects = await listAllObjects(SelectedApp, undefined, limit, cursor);
 
+    console.log('objects: ', objects)
     if (move == 'next') {
       if (Array.isArray(objects) && objects.length >= limit - 1) {
         cursor = objects[limit - 1].update_time;
+        console.log('cursor: ', cursor)
         history.push(cursor);
       } else {
         cursor = undefined;
@@ -241,9 +245,10 @@
 
     backActive = history.length <= 1;
   }
+
   const promise = getArt('next');
 
-  function handeChange(e) {
+  function handleChange(e) {
     SelectedApp = e;
     history = [];
     getArt('next');
@@ -264,7 +269,7 @@
     <button
       class:unactive="{SelectedApp !== 'drawing'}"
       on:click="{() => {
-        handeChange('drawing');
+        handleChange('drawing');
       }}"
     >
       Drawing
@@ -272,7 +277,7 @@
     <button
       class:unactive="{SelectedApp !== 'stopmotion'}"
       on:click="{() => {
-        handeChange('stopmotion');
+        handleChange('stopmotion');
       }}"
     >
       stopmotion
@@ -280,7 +285,7 @@
     <button
       class:unactive="{SelectedApp !== 'avatar'}"
       on:click="{() => {
-        handeChange('avatar');
+        handleChange('avatar');
       }}"
     >
       Avatar
@@ -288,7 +293,7 @@
     <button
       class:unactive="{SelectedApp !== 'house'}"
       on:click="{() => {
-        handeChange('house');
+        handleChange('house');
       }}"
     >
       House
@@ -317,7 +322,7 @@
       <button
         class:unactive="{SelectedApp !== 'drawing'}"
         on:click="{() => {
-          handeChange('drawing');
+          handleChange('drawing');
         }}"
       >
         Drawing
@@ -325,7 +330,7 @@
       <button
         class:unactive="{SelectedApp !== 'stopmotion'}"
         on:click="{() => {
-          handeChange('stopmotion');
+          handleChange('stopmotion');
         }}"
       >
         stopmotion
@@ -333,7 +338,7 @@
       <button
         class:unactive="{SelectedApp !== 'avatar'}"
         on:click="{() => {
-          handeChange('avatar');
+          handleChange('avatar');
         }}"
       >
         Avatar
@@ -341,7 +346,7 @@
       <button
         class:unactive="{SelectedApp !== 'house'}"
         on:click="{() => {
-          handeChange('house');
+          handleChange('house');
         }}"
       >
         House
@@ -375,7 +380,7 @@
     <button
       class:unactive="{SelectedApp !== 'drawing'}"
       on:click="{() => {
-        handeChange('drawing');
+        handleChange('drawing');
       }}"
     >
       Drawing
@@ -383,7 +388,7 @@
     <button
       class:unactive="{SelectedApp !== 'stopmotion'}"
       on:click="{() => {
-        handeChange('stopmotion');
+        handleChange('stopmotion');
       }}"
     >
       stopmotion
@@ -391,7 +396,7 @@
     <button
       class:unactive="{SelectedApp !== 'avatar'}"
       on:click="{() => {
-        handeChange('avatar');
+        handleChange('avatar');
       }}"
     >
       Avatar
@@ -399,7 +404,7 @@
     <button
       class:unactive="{SelectedApp !== 'house'}"
       on:click="{() => {
-        handeChange('house');
+        handleChange('house');
       }}"
     >
       House

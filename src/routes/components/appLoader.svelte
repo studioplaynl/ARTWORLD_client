@@ -41,6 +41,7 @@
   // for saving the stopmotion data in a promise
   let drawing;
   let parsedQuery = {};
+
   $: userIsOwner =
     $Profile !== null &&
     isValidQuery(parsedQuery) &&
@@ -51,6 +52,7 @@
   export let currentFile = {
     loaded: false,
   };
+
   let displayName = ''; // synced with drawing app; to be able to edit and store the name
 
   // Object containing the current Apps rendered data (whatever needs saving)
@@ -260,35 +262,6 @@
         });
     });
 
-    // const setHomePromise = new Promise((resolve, reject) => {
-    //   if (currentFile.new && currentFile.type === 'house') {
-    //     setHome(currentFile.uploadUrl)
-    //       .then(() => {
-    //         resolve();
-    //       })
-    //       .catch((error) => {
-    //         reject(error);
-    //       });
-    //   } else {
-    //     resolve();
-    //   }
-    // });
-
-    // const setAvatarPromise = new Promise((resolve, reject) => {
-    //   if (currentFile.new && currentFile.type === 'avatar') {
-    //     setAvatar(currentFile.uploadUrl)
-    //       .then(() => {
-    //         AvatarsStore.loadAvatars();
-    //         resolve();
-    //       })
-    //       .catch((error) => {
-    //         reject(error);
-    //       });
-    //   } else {
-    //     resolve();
-    //   }
-    // });
-
     // Saving should be able to succeed or fail
     Promise.all([uploadPromise]) // ,
       .then(() => {
@@ -300,17 +273,6 @@
         Error.set(error);
         setLoader(false);
       });
-  }
-
-  async function loadFile() {
-    currentFile.loaded = false;
-
-    const userId = parsedQuery?.userId ?? null;
-    const key = parsedQuery?.key ?? null;
-    const loadFromCollection = $CurrentApp;
-
-    currentFile = await getFileInformation(loadFromCollection, userId, key);
-    dlog('currentFile loaded: ', currentFile);
   }
 
   async function newFile() {
@@ -327,6 +289,18 @@
       status: PERMISSION_READ_PUBLIC,
     };
   }
+
+  async function loadFile() {
+    currentFile.loaded = false;
+
+    const userId = parsedQuery?.userId ?? null;
+    const key = parsedQuery?.key ?? null;
+    const loadFromCollection = $CurrentApp;
+
+    currentFile = await getFileInformation(loadFromCollection, userId, key);
+    dlog('currentFile loaded: ', currentFile);
+  }
+
 
   // Utility functions
 
