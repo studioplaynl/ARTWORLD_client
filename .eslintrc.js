@@ -7,13 +7,12 @@ module.exports = {
     'airbnb-base',
     'plugin:svelte/recommended',
   ],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2019,
     sourceType: 'module',
   },
   plugins: [
-    '@typescript-eslint', // add the TypeScript plugin
+    'svelte3'
   ],
   rules: {
     'linebreak-style': 0,
@@ -22,7 +21,7 @@ module.exports = {
     'no-multiple-empty-lines': 'off',
     'no-plusplus': 'off',
   },
-  overrides: [ // this stays the same
+  overrides: [
     {
       files: ['*.svelte'],
       parser: 'svelte-eslint-parser',
@@ -54,7 +53,4 @@ module.exports = {
       },
     },
   ],
-  settings: {
-    'svelte3/typescript': true, // load TypeScript as peer dependency
-  },
 };

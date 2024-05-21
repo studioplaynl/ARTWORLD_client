@@ -22,24 +22,35 @@
 /* eslint-disable class-methods-use-this */
 import { get } from 'svelte/store';
 import { parse, stringify } from 'qs';
+import { push, replace, location, querystring } from 'svelte-spa-router';
+
 import {
-  push, replace, location, querystring,
-} from 'svelte-spa-router';
-import {
-  PlayerPos, PlayerLocation, PlayerHistory, PlayerZoom, PlayerUpdate,
+  PlayerPos,
+  PlayerLocation,
+  PlayerHistory,
+  PlayerZoom,
+  PlayerUpdate,
 } from '../playerState';
+
 import { CurrentApp } from '../../../session';
+
 import {
-  DEFAULT_HOME, DEFAULT_ZOOM, SCENE_INFO, ZOOM_MAX, ZOOM_MIN, AVATAR_BASE_SIZE,
-  DEFAULT_APP, isValidApp,
+  DEFAULT_HOME,
+  DEFAULT_ZOOM,
+  SCENE_INFO,
+  ZOOM_MAX,
+  ZOOM_MIN,
+  AVATAR_BASE_SIZE,
+  DEFAULT_APP,
+  isValidApp,
 } from '../../../constants';
+
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ManageSession from '../ManageSession';
 
 import * as Phaser from 'phaser';
-
 
 let previousQuery = {};
 
@@ -54,7 +65,8 @@ export const checkIfSceneIsAllowed = (loc) => {
 /** Does this string look like a house name name?
  * @return {boolean} yes/no
  */
-export const checkIfLocationLooksLikeAHouse = (loc) => loc !== null && loc.split('-').length > 3;
+export const checkIfLocationLooksLikeAHouse = (loc) =>
+  loc !== null && loc.split('-').length > 3;
 
 export function returnPartsOfArtUrl(url) {
   const parts = url.split('/');
@@ -67,13 +79,15 @@ export function returnPartsOfArtUrl(url) {
     const artKey = fullArtUrl.split('_').slice(1).join('_').replace('.png', '');
 
     return {
-      userId, artType, fullArtUrl, artKey,
+      userId,
+      artType,
+      fullArtUrl,
+      artKey,
     };
   }
   dlog.log('String does not match the expected format.');
   return null;
 }
-
 
 /** Parse the URL and set currentApp accordingly */
 export function parseURL() {
@@ -122,10 +136,7 @@ export function parseURL() {
       // when the app just launched ManageSession.currentScene is null
       if (typeof ManageSession.currentScene === 'undefined') return;
 
-      SceneSwitcher.pauseSceneStartApp(
-        ManageSession.currentScene,
-        appName,
-      );
+      SceneSwitcher.pauseSceneStartApp(ManageSession.currentScene, appName);
     }
   }
 }
@@ -135,7 +146,6 @@ location.subscribe(() => {
   // dlog('location.subscribe')
   parseURL();
 });
-
 
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
@@ -147,19 +157,28 @@ export function parseQueryString() {
   const newPlayerLocation = {};
 
   if ('house' in query) {
-    if (checkIfLocationLooksLikeAHouse(query.house) && get(PlayerLocation).house !== query.house) {
+    if (
+      checkIfLocationLooksLikeAHouse(query.house) &&
+      get(PlayerLocation).house !== query.house
+    ) {
       newPlayerLocation.house = query.house;
     }
   }
 
   if ('location' in query) {
-    if (checkIfSceneIsAllowed(query.location) && get(PlayerLocation).scene !== query.location) {
+    if (
+      checkIfSceneIsAllowed(query.location) &&
+      get(PlayerLocation).scene !== query.location
+    ) {
       newPlayerLocation.scene = query.location;
     }
   }
 
   if ('zoom' in query) {
-    if (parseFloat(query.zoom) <= ZOOM_MAX && parseFloat(query.zoom) >= ZOOM_MIN) {
+    if (
+      parseFloat(query.zoom) <= ZOOM_MAX &&
+      parseFloat(query.zoom) >= ZOOM_MIN
+    ) {
       PlayerZoom.set(parseFloat(query.zoom));
     } else {
       PlayerZoom.set(DEFAULT_ZOOM);
@@ -179,24 +198,28 @@ export function parseQueryString() {
     PlayerLocation.set(newPlayerLocation);
   }
 
-
   if ('x' in query && 'y' in query) {
     // url gets parsed before scene is loaded, so there is no way of knowing the
     // scene size when onboarding the scene
     const currentLocation = get(PlayerLocation);
 
     // scene is not loaded, getting the info from SCENE_INFO
-    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === currentLocation.scene);
+    const sceneInfo = SCENE_INFO.find(
+      (obj) => obj.scene === currentLocation.scene,
+    );
 
     if (sceneInfo) {
       // dlog ("currentScene, sceneInfo", currentScene, sceneInfo)
-      const currentSceneSize = new Phaser.Math.Vector2(sceneInfo.sizeX, sceneInfo.sizeY);
+      const currentSceneSize = new Phaser.Math.Vector2(
+        sceneInfo.sizeX,
+        sceneInfo.sizeY,
+      );
 
       const avatarHalfSize = AVATAR_BASE_SIZE / 2;
       const minX = -(currentSceneSize.x / 2) + avatarHalfSize;
-      const maxX = (currentSceneSize.x / 2) - avatarHalfSize;
+      const maxX = currentSceneSize.x / 2 - avatarHalfSize;
       const minY = -(currentSceneSize.y / 2) + avatarHalfSize;
-      const maxY = (currentSceneSize.y / 2) - avatarHalfSize;
+      const maxY = currentSceneSize.y / 2 - avatarHalfSize;
 
       const queryX = parseInt(query.x, 10);
       const queryY = parseInt(query.y, 10);
@@ -244,11 +267,9 @@ querystring.subscribe(() => {
   parseQueryString();
 });
 
-
-
 /* Set the query parameter after updating stores, because we have set up a subscription to these.
-* Any value changes on PlayerPos & PlayerLocation make this function run
-* And subsequently update the query string in the URL of the browser */
+ * Any value changes on PlayerPos & PlayerLocation make this function run
+ * And subsequently update the query string in the URL of the browser */
 export function updateQueryString() {
   const { forceHistoryReplace } = get(PlayerUpdate);
   // dlog('forceHistoryReplace: ', forceHistoryReplace);
@@ -262,11 +283,13 @@ export function updateQueryString() {
   if (x !== null && y !== null && scene !== null) {
     const query = { ...parse(get(querystring)) };
 
-    const locationChanged = 'location' in previousQuery && scene !== previousQuery?.location;
-    const houseChanged = 'house' in previousQuery && house !== previousQuery?.house;
+    const locationChanged =
+      'location' in previousQuery && scene !== previousQuery?.location;
+    const houseChanged =
+      'house' in previousQuery && house !== previousQuery?.house;
     // dlog('houseChanged: ', houseChanged)
 
-    let method = (locationChanged || houseChanged) ? 'push' : 'replace';
+    let method = locationChanged || houseChanged ? 'push' : 'replace';
     // dlog('method: ', method)
     if (!forceHistoryReplace) {
       PlayerUpdate.set({ forceHistoryReplace: true });
@@ -313,10 +336,7 @@ export function updateQueryString() {
 /** Set up the subscriptions to stores that should update the querystring
  *  In other words: any changes to PlayerPos and PlayerLocation stores
  *  should become part of the browser location
-*/
+ */
 PlayerPos.subscribe(() => updateQueryString());
 PlayerZoom.subscribe(() => updateQueryString());
 PlayerLocation.subscribe(() => updateQueryString());
-
-
-
