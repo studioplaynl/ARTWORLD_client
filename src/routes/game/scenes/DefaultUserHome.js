@@ -25,6 +25,7 @@
 
 // import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
+import { Profile } from '../../../session';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
@@ -38,7 +39,7 @@ import {
   ART_PREVIEW_SIZE,
   ART_DISPLAY_SIZE_LARGE,
   ART_OFFSET_BETWEEN,
- } from '../../../constants';
+} from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
@@ -47,7 +48,6 @@ import { dlog } from '../../../helpers/debugLog';
 import { listAllObjects } from '../../../helpers/nakamaHelpers';
 
 import * as Phaser from 'phaser';
-
 
 export default class DefaultUserHome extends Phaser.Scene {
   constructor() {
@@ -105,6 +105,15 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async preload() {
     //! this.loadAndPlaceArtworks();
+
+    //! Check if this is home of player
+    // console.log($Profile);
+    // if ($Profile.id === this.location) this.selfHome = true;
+    // console.log('this.selfHome: ', this.selfHome);
+
+    //! 1. Check if there are homeElement objects on the server
+    // const allHomeElements = await listAllObjects('homeElements', this.location);
+
     //! working on imageGallery
     //! load all images
     //TODO store in a Drawings Store
@@ -112,25 +121,23 @@ export default class DefaultUserHome extends Phaser.Scene {
     //! listAllObjects has pagination server-side, but this is not needed
     //! the pages can be loaded from local memory, when we come back on page 1
     //! we could call listAllObjects again to get a refresh
-    
+
     const allDrawings = await listAllObjects('drawing', this.location);
     console.log('allDrawings: ', allDrawings);
     // the list comes back ordered
 
-    
-
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
         ServerCall.resolveLoadError(offendingFile);
       }
     });
-  }// end preload
+  } // end preload
 
   async create() {
     //!
@@ -157,14 +164,12 @@ export default class DefaultUserHome extends Phaser.Scene {
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default 0 ,0 artworldCoordinates
-    this.player = new PlayerDefault(
-      this,
-      null,
-      null,
-    ).setDepth(201);
+    this.player = new PlayerDefault(this, null, null).setDepth(201);
 
-    this.playerShadow = new PlayerDefaultShadow({ scene: this, texture: ManageSession.playerAvatarPlaceholder })
-      .setDepth(200);
+    this.playerShadow = new PlayerDefaultShadow({
+      scene: this,
+      texture: ManageSession.playerAvatarPlaceholder,
+    }).setDepth(200);
     // .......  end PLAYER ................................................................................
 
     // ....... PLAYER VS WORLD .............................................................................
@@ -179,7 +184,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     // ......... end PLAYER VS WORLD .......................................................................
 
     Player.loadPlayerAvatar(this);
-  }// end create
+  } // end create
 
   async loadAndPlaceArtworks() {
     let type = 'downloadDrawingDefaultUserHome';
@@ -191,7 +196,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.homeDrawingGroup = this.add.group();
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
 
     type = 'downloadStopmotionDefaultUserHome';
@@ -199,7 +208,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     serverObjectsHandler = this.userStopmotionServerList;
     this.homeStopmotionGroup = this.add.group();
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
 
@@ -209,6 +222,5 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.playerShadow.x = this.player.x + this.playerShadowOffset;
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     // ........... end PLAYER SHADOW .........................................................................
-
   } // update
 } // class
