@@ -7,11 +7,10 @@ import { PlayerLocation } from '../playerState';
 // import { PlayerLocation, playerStreamID, PlayerHistory } from '../playerState';
 
 import { DEFAULT_HOME } from '../../../constants';
-import { Error } from '../../../session';
+import { Error, ShowHomeEditBar } from '../../../session';
 import { setLoader } from '../../../helpers/nakamaHelpers';
 // import { ListFormat } from 'typescript';
 // import { push, querystring} from "svelte-spa-router";
-
 
 /** Keeps track of user locations, enables back button
  * @todo Refactor?
@@ -67,7 +66,14 @@ class SceneSwitcher {
       } else {
         targetSceneKey = targetScene;
       }
-      dlog('\u001b[31m switchScene: ', sceneKey, ' , targetScene: ', targetSceneKey, ' targetHouse: ', targetHouse);
+      dlog(
+        '\u001b[31m switchScene: ',
+        sceneKey,
+        ' , targetScene: ',
+        targetSceneKey,
+        ' targetHouse: ',
+        targetHouse,
+      );
     } else {
       // dlog(' scene: ', scene, ' targetScene: ', targetScene, ' targetHouse: ', targetHouse);
     }
@@ -90,7 +96,6 @@ class SceneSwitcher {
       return;
     }
 
-
     // dlog('SceneSwitcher: continue with doSwitchScene');
 
     setLoader(true);
@@ -100,6 +105,9 @@ class SceneSwitcher {
       // later we join the house id channel
       targetSceneKey = targetHouse;
     } else if (targetScene) {
+      // when we don't go to a home, set ShowHomeEditBar to false
+      ShowHomeEditBar.set(false);
+
       if (targetScene.scene !== null) {
         // dlog('start targetScene: ', targetScene);
         scene.scene.start(targetScene);
@@ -130,13 +138,15 @@ class SceneSwitcher {
     // we always get an App and a scene in the game
     if (!ManageSession.socket) return;
 
-
     //! check this
     dlog('start scene: ', scene);
     if (typeof scene.scene !== 'undefined') {
       scene.scene.start();
     } else {
-      dlog('ManageSession.currentScene.scene.key: ', ManageSession.currentScene.scene.key);
+      dlog(
+        'ManageSession.currentScene.scene.key: ',
+        ManageSession.currentScene.scene.key,
+      );
       ManageSession.currentScene.scene.start(scene);
     }
 
@@ -151,8 +161,8 @@ class SceneSwitcher {
 
   async switchStream(scene, targetScene) {
     /** in case of startSceneCloseApp the scene is a Phaser Scene Object
-    * in all other cases the scene is a scene key
-    * below we make the data consistent  */
+     * in all other cases the scene is a scene key
+     * below we make the data consistent  */
 
     // check the format of the arguments: either a scene or a key
     let sceneKey;
@@ -188,38 +198,42 @@ class SceneSwitcher {
       targetSceneKey = targetHouse;
     }
 
-    ManageSession.socket.rpc('leave', sceneKey).then((data) => {
-      if (data.id === 'leave' && data.payload === 'Success') {
-        dlog('leave socket succes: ', sceneKey);
+    ManageSession.socket
+      .rpc('leave', sceneKey)
+      .then((data) => {
+        if (data.id === 'leave' && data.payload === 'Success') {
+          dlog('leave socket succes: ', sceneKey);
 
-        // empty the connected user array when we leave a stream
-        ManageSession.allConnectedUsers.forEach((element) => {
-          element.destroy();
-        });
-        ManageSession.allConnectedUsers.length = 0;
-        dlog('ManageSession.allConnectedUsers', ManageSession.allConnectedUsers);
-        // WE LEFT THE SCENE SUCCESFULLY
-        // 1. we pause the leaving Scene
-        // 2. start the new scene
-
-        // dlog('targetScene', targetScene);
-        if (targetScene) {
-          //! 'join' wordt zonder target uitgevoerd
-          //! de target wordt uit playerStreanID gehaald
-
-          dlog('join targetScene: ', targetSceneKey);
-          ManageSession.getStreamUsers('join', targetSceneKey).then(() => {
-            dlog('join succes: targetScene', targetSceneKey);
-            setLoader(false);
+          // empty the connected user array when we leave a stream
+          ManageSession.allConnectedUsers.forEach((element) => {
+            element.destroy();
           });
+          ManageSession.allConnectedUsers.length = 0;
+          dlog(
+            'ManageSession.allConnectedUsers',
+            ManageSession.allConnectedUsers,
+          );
+          // WE LEFT THE SCENE SUCCESFULLY
+          // 1. we pause the leaving Scene
+          // 2. start the new scene
+
+          // dlog('targetScene', targetScene);
+          if (targetScene) {
+            //! 'join' wordt zonder target uitgevoerd
+            //! de target wordt uit playerStreanID gehaald
+
+            dlog('join targetScene: ', targetSceneKey);
+            ManageSession.getStreamUsers('join', targetSceneKey).then(() => {
+              dlog('join succes: targetScene', targetSceneKey);
+              setLoader(false);
+            });
+          }
         }
-      }
-    }).catch((...args) => {
-      Error.set('Something went wrong with the Socket', args);
-    });
+      })
+      .catch((...args) => {
+        Error.set('Something went wrong with the Socket', args);
+      });
   }
 }
-
-
 
 export default new SceneSwitcher();

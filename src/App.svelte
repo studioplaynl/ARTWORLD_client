@@ -49,6 +49,7 @@ import * as Phaser from 'phaser';
   import AchievementAnimation from './routes/components/achievement.svelte';
   import TutLoader from './routes/tutorials/tutLoader.svelte';
   import Notifications from './routes/components/notifications.svelte';
+  import EditHome from './routes/components/editHome.svelte';
 
   import gameConfig from './routes/game/gameConfig';
   import { PlayerPos, PlayerLocation } from './routes/game/playerState';
@@ -182,6 +183,7 @@ import * as Phaser from 'phaser';
   </main>
   <Itemsbar />
   <SelectedOnlinePlayerBar />
+  <EditHome />
   <AppLoader />
   <TopBar />
   <AchievementAnimation />

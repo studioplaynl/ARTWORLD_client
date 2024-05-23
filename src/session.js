@@ -39,7 +39,7 @@ Session.subscribe((value) => {
 /** User Profile contains the user name, posX, posY et cetera
  *
  * @alias $Profile
-*/
+ */
 export const Profile = writable(
   storedProfile ? JSON.parse(storedProfile) : null,
 );
@@ -84,6 +84,5 @@ export const SelectedOnlinePlayer = writable(null);
 /** The visibility state of the Itemsbar */
 export const ShowItemsBar = writable(false);
 
-
-
-
+/** The Visibility of the ShowHomeEditBar */
+export const ShowHomeEditBar = writable(false);

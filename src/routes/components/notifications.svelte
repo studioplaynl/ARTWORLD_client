@@ -216,13 +216,13 @@
   @media screen and (max-width: 600px) {
     .snackbar {
       right: 30px;
-      top: 30px;
+      top: 80px;
     }
   }
   @media screen and (min-width: 600px) {
     .snackbar {
       right: 30px;
-      bottom: 30px;
+      bottom: 80px;
     }
   }
 

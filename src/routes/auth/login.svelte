@@ -1,6 +1,7 @@
 <script>
   import { _ } from 'svelte-i18n';
   import { onMount } from 'svelte';
+  import { writable } from 'svelte/store';
   import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte';
   import { push, querystring } from 'svelte-spa-router';
   import { Session } from '../../session';
@@ -11,11 +12,23 @@
 
   export let params;
 
-  // dlog($Session);
   let email;
   let password;
   let qrscanState = false;
 
+  const isMobileDevice = /Mobi/i.test(window.navigator.userAgent);
+  const isMobile = !!isMobileDevice;
+
+  const showPassword = writable(false);
+
+  onMount(() => {
+    email = params.user || 'user1@vrolijkheid.nl';
+    password = params.password || 'somesupersecretpassword';
+    if ($Session?.token && checkLoginExpired() !== true) {
+      push(`/game?${$querystring}`);
+    }
+  });
+  
   async function onSubmit() {
     login(email, password).catch(() => {
       email = params.user || 'user1@vrolijkheid.nl';
@@ -23,26 +36,13 @@
     });
   }
 
-  const isMobileDevice = /Mobi/i.test(window.navigator.userAgent);
-  const isMobile = !!isMobileDevice;
+  function togglePasswordVisibility() {
+    showPassword.update(value => !value);
+  }
 
-  // dlog('isMobile', isMobile);
-  // dlog('navigator', navigator.userAgent);
-
-  onMount(() => {
-    // dlog(
-    //   'Login: am I logged in? ',
-    //   !!$Session?.token,
-    //   checkLoginExpired(),
-    // );
-    email = params.user || 'user1@vrolijkheid.nl';
-    password = params.password || 'somesupersecretpassword';
-    if ($Session?.token && checkLoginExpired() !== true) {
-      // Note: should a previous position of the user be available in Profile.meta,
-      // they will be redirected there after the push below
-      push(`/game?${$querystring}`);
-    }
-  });
+  function handleInput(event) {
+    password = event.target.value;
+  }
 </script>
 
 <svelte:head>
@@ -73,6 +73,7 @@
       <div class="container">
         <label for="email"><b>{$_('register.email')}</b></label>
         <input
+          class="input-field"
           type="text"
           placeholder="Enter Email"
           name="email"
@@ -82,14 +83,35 @@
         />
 
         <label for="psw"><b>{$_('register.password')}</b></label>
-        <input
-          type="password"
-          placeholder="Enter Password"
-          name="psw"
-          id="psw"
-          bind:value="{password}"
-          required
-        />
+
+        <div class="input-container">
+          {#if $showPassword}
+            <input
+              class="input-field password-field"
+              type="text"
+              placeholder="Enter Password"
+              name="psw"
+              id="psw-text"
+              bind:value={password}
+              on:input={handleInput}
+              required
+            />
+          {:else}
+            <input
+              class="input-field password-field"
+              type="password"
+              placeholder="Enter Password"
+              name="psw"
+              id="psw-password"
+              bind:value={password}
+              on:input={handleInput}
+              required
+            />
+          {/if}
+          <button class="toggle-visibility" type="button" on:click={togglePasswordVisibility}>
+            <img src={$showPassword ? './assets/SHB/svg/AW-icon-visible.svg' : './assets/SHB/svg/AW-icon-invisible.svg'} alt="Toggle password visibility" />
+          </button>
+        </div>
 
         <button type="submit" class="register-btn">{$_('login.login')}</button>
       </div>
@@ -125,7 +147,6 @@
 
   button {
     background-color: #7300eb;
-
   }
 
   .register-form {
@@ -141,13 +162,39 @@
   }
 
   /* Full-width input fields */
-  input[type='text'],
-  input[type='password'] {
+  .input-field {
     width: 100%;
     padding: 15px;
     margin: 5px 0 22px 0;
     display: inline-block;
     background: #f1f1f1;
+    box-sizing: border-box; /* Ensure the width includes padding */
+  }
+
+  .input-container {
+    display: flex;
+    align-items: center;
+    width: 100%; /* Ensure the input container takes full width */
+    position: relative;
+  }
+
+  .password-field {
+    flex: 1; /* Allow the input to grow and take up available space */
+  }
+
+  .toggle-visibility {
+    position: absolute;
+    right: -40px;
+    bottom: 30px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  .toggle-visibility img {
+    height: 20px;
+    width: 20px;
   }
 
   input[type='text']:focus,
@@ -155,12 +202,6 @@
     background-color: #ddd;
     outline: none;
   }
-
-  /* Overwrite default styles of hr */
-  /* hr {
-    border: 1px solid #f1f1f1;
-    margin-bottom: 25px;
-  } */
 
   /* Set a style for the submit/register button */
   .register-btn {

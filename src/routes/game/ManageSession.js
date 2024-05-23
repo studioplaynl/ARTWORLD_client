@@ -27,7 +27,6 @@ class ManageSession {
     this.addressbook = {};
     this.currentZoom = 1;
 
-
     this.client = null;
     this.socket = null;
     this.useSSL = SSL;
@@ -49,7 +48,6 @@ class ManageSession {
     this.distanceTolerance = 9;
     this.movingByDragging = false;
     // movement of the player variables .......
-
 
     this.playerAvatarPlaceholder = 'avatar1';
     this.avatarSize = 64;
@@ -73,7 +71,10 @@ class ManageSession {
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
     this.lastMoveCommand = {
-      action: 'stop', posX: 0, posY: 0, location: get(playerStreamID),
+      action: 'stop',
+      posX: 0,
+      posY: 0,
+      location: get(playerStreamID),
     };
 
     // .....................................................................
@@ -88,13 +89,11 @@ class ManageSession {
     this.selectedGameObjectStartPosition = new Phaser.Math.Vector2(0, 0);
     // .....................................................................
 
-    // this.gameStarted = false;
     this.launchLocation = 'Artworld'; // default
 
     // timers
     this.updateMovementTimer = 0;
     this.updateMovementInterval = 30; // 20 fps
-
 
     this.socketIsConnected = false;
 
@@ -107,7 +106,11 @@ class ManageSession {
 
   /** Create Socket connection and listen for incoming streaming data, presence and notifications */
   async createSocket() {
-    const { artworldVectorToPhaser2D, artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
+    const {
+      artworldVectorToPhaser2D,
+      artworldToPhaser2DX,
+      artworldToPhaser2DY,
+    } = CoordinatesTranslator;
 
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
     dlog('socket created with client');
@@ -121,7 +124,6 @@ class ManageSession {
       this.getStreamUsers('join');
       // dlog('Join:', get(PlayerLocation).scene);
     });
-
 
     // Streaming data containing movement data for the players in our allConnectedUsers array
     this.socket.onstreamdata = (streamdata) => {
@@ -149,15 +151,9 @@ class ManageSession {
               dlog('movingKey', movingKey);
               updateOnlinePlayer.anims.play(movingKey, true);
 
-              const moveToX = artworldToPhaser2DX(
-                scene.worldSize.x,
-                data.posX,
-              );
+              const moveToX = artworldToPhaser2DX(scene.worldSize.x, data.posX);
 
-              const moveToY = artworldToPhaser2DY(
-                scene.worldSize.y,
-                data.posY,
-              );
+              const moveToY = artworldToPhaser2DY(scene.worldSize.y, data.posY);
 
               // scale duration to distance
               const target = new Phaser.Math.Vector2(moveToX, moveToY);
@@ -173,7 +169,10 @@ class ManageSession {
                 onComplete() {
                   /** we stop the onlinePlayer's animation when the tween is finished,
                    * because we always get a moveTo command, and we are not sending a stop command over the network */
-                  updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);
+                  updateOnlinePlayer.anims.play(
+                    updateOnlinePlayer.getData('stopKey'),
+                    true,
+                  );
                 },
               });
             } else if (data.action === 'stop') {
@@ -201,7 +200,10 @@ class ManageSession {
               updateOnlinePlayer.posY = positionVector.y;
 
               // get the key for the stop animation of the player, and play it
-              updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);
+              updateOnlinePlayer.anims.play(
+                updateOnlinePlayer.getData('stopKey'),
+                true,
+              );
             } else if (data.action === 'physicsStop') {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
               // because there the scene context is known
@@ -246,7 +248,10 @@ class ManageSession {
               updateOnlinePlayer.y = positionVector.y;
 
               // get the key for the stop animation of the player, and play it
-              updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);
+              updateOnlinePlayer.anims.play(
+                updateOnlinePlayer.getData('stopKey'),
+                true,
+              );
             }
           }
         }

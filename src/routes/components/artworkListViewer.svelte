@@ -82,7 +82,7 @@ $: if (store.length) {
 
   async function loadArtworks() {
     store = createArtworksStore(dataType);
-    await store.loadArtworks(id, 1000);
+    await store.loadArtworks(id);
     // subscribe to the store after loading the artworks
     unsubscribe = store.subscribe((value) => {
       filteredArt = value.filter(

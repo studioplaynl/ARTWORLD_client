@@ -50,12 +50,5 @@
 </script>
 
 {#if artworkUrl}
-  {#if row.collection && row.collection === 'drawing'}
     <Stopmotion artwork="{artworkUrl}" clickable="{clickable}" row="{row}"/>
-  {:else if row.collection && row.collection === 'stopmotion'}
-    <Stopmotion artwork="{artworkUrl}" clickable="{clickable}" row="{row}"/>
-  {:else}
-    <!-- Friends avatars don't belong to a collection, but _can_ be stop-motion..  -->
-    <Stopmotion artwork="{artworkUrl}" clickable="{clickable}" row="{row}"/>
-  {/if}
 {/if}

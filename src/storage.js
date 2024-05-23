@@ -26,7 +26,6 @@ import { dlog } from './helpers/debugLog';
 const achievementsStore = writable([]);
 
 export const Achievements = {
-
   subscribe: achievementsStore.subscribe,
   set: achievementsStore.set,
   update: achievementsStore.update,
@@ -43,26 +42,27 @@ export const Achievements = {
   },
 
   // returns a promise that can be resolved with .then(result => { ... })
-  get: () => new Promise((resolve, reject) => {
-    const localAchievements = get(achievementsStore);
-    const Sess = get(Session);
+  get: () =>
+    new Promise((resolve, reject) => {
+      const localAchievements = get(achievementsStore);
+      const Sess = get(Session);
 
-    if (localAchievements && localAchievements.length > 0) {
-      resolve(localAchievements);
-      return;
-    }
+      if (localAchievements && localAchievements.length > 0) {
+        resolve(localAchievements);
+        return;
+      }
 
-    if (Sess) {
-      listAllObjects('achievements', Sess.user_id)
-        .then((serverAchievements) => {
-          achievementsStore.set(serverAchievements);
-          resolve(serverAchievements);
-        })
-        .catch((err) => reject(err));
-    } else {
-      reject(new Error('No session data available.'));
-    }
-  }),
+      if (Sess) {
+        listAllObjects('achievements', Sess.user_id)
+          .then((serverAchievements) => {
+            achievementsStore.set(serverAchievements);
+            resolve(serverAchievements);
+          })
+          .catch((err) => reject(err));
+      } else {
+        reject(new Error('No session data available.'));
+      }
+    }),
 
   find: (key) => {
     const localAchievements = get(achievementsStore);
@@ -73,12 +73,16 @@ export const Achievements = {
 
   delete: (key) => {
     achievementsStore.update((localAchievements) => {
-      const itemNum = localAchievements.findIndex((element) => element.key === key);
+      const itemNum = localAchievements.findIndex(
+        (element) => element.key === key,
+      );
       if (itemNum === -1) return localAchievements;
 
       deleteObject('achievements', key);
 
-      const updatedAchievements = localAchievements.filter((element) => element.key !== key);
+      const updatedAchievements = localAchievements.filter(
+        (element) => element.key !== key,
+      );
       return updatedAchievements;
     });
   },
@@ -88,7 +92,6 @@ export const Achievements = {
 const likedStore = writable([]);
 
 export const Liked = {
-
   subscribe: likedStore.subscribe,
   set: likedStore.set,
   update: likedStore.update,
@@ -147,7 +150,6 @@ export const Liked = {
 const moderatorLikedStore = writable([]);
 
 export const ModeratorLiked = {
-
   subscribe: likedStore.subscribe,
   set: moderatorLikedStore.set,
   get: async () => {
@@ -188,7 +190,10 @@ export const LikedSuccessDownloaded = {
 
       if (!exists) {
         items.push({
-          key, type, data, used: false,
+          key,
+          type,
+          data,
+          used: false,
         });
       }
 
@@ -211,7 +216,6 @@ export const LikedSuccessDownloaded = {
 const addressBookStore = writable([]);
 
 export const Addressbook = {
-
   subscribe: addressBookStore.subscribe,
   set: addressBookStore.set,
   update: addressBookStore.update,
@@ -224,10 +228,12 @@ export const Addressbook = {
       return localAddressbookArray;
     }
     if (Sess) {
-      listAllObjects('addressbook', Sess.user_id).then((serverAddressbookArray) => {
-        Addressbook.set(serverAddressbookArray);
-        return serverAddressbookArray;
-      });
+      listAllObjects('addressbook', Sess.user_id).then(
+        (serverAddressbookArray) => {
+          Addressbook.set(serverAddressbookArray);
+          return serverAddressbookArray;
+        },
+      );
     }
     return null;
   },
@@ -245,7 +251,9 @@ export const Addressbook = {
 
   delete: (key) => {
     Addressbook.update((addresses) => {
-      const itemNum = addresses.findIndex((element) => element.value.user_id === key);
+      const itemNum = addresses.findIndex(
+        (element) => element.value.user_id === key,
+      );
       if (itemNum === -1) return addresses;
       deleteObject('addressbook', key);
       return addresses.filter((element) => element.key !== key);
@@ -266,33 +274,29 @@ export function createArtworksStore(type) {
       let loadedArt = [];
 
       // One promise per type..
-      typePromises.push(new Promise((resolveType) => {
-        // A promise to load objects from the server
-        const loadPromise = new Promise((resolve) => {
-          //! BUG? 
-          //! if there is a limit, it is not used, if there is no limit it is used...
-          //! so it would always list all objects?
-          //! what does listObjects return?
-          //! make some test to test this!
-
-          if (limit !== undefined) {
-            console.log('limit: ', limit)
-            listAllObjects(type, id).then((loaded) => {
-              console.log('loaded: ', loaded)
-              resolve(loaded)
+      typePromises.push(
+        new Promise((resolveType) => {
+          // A promise to load objects from the server
+          const loadPromise = new Promise((resolve) => {
+            // if there is a limit, it is not used, if there is no limit it is used...
+            // so it would always list always all objects
+            if (limit !== undefined) {
+              console.log('limit: ', limit);
+              listAllObjects(type, id).then((loaded) => {
+                console.log('loaded: ', loaded);
+                resolve(loaded);
+              });
+            } else {
+              console.log('limit: ', limit);
+              listObjects(type, id, limit).then((loaded) => {
+                console.log('loaded.objects: ', loaded.objects);
+                resolve(loaded.objects);
+              });
+            }
           });
-          } else {
-            console.log('limit: ', limit)
-            listObjects(type, id, limit).then((loaded) => {
-              console.log('loaded.objects: ', loaded.objects)
-              resolve(loaded.objects)
-            });
-          }
-        });
 
-        // Objects were loaded, so update the preview URLs
-        loadPromise
-          .then(async (loaded) => {
+          // Objects were loaded, so update the preview URLs
+          loadPromise.then(async (loaded) => {
             // Execute a Promise in order to update preview URLS
             this.updatePreviewUrls(loaded).then((updatedLoaded) => {
               // Add the updated artworks to the loadedArt array
@@ -301,7 +305,8 @@ export function createArtworksStore(type) {
               resolveType();
             });
           });
-      }));
+        }),
+      );
 
       // After all typePromises fulfilled, set data into store
       Promise.all(typePromises).then(() => {
@@ -313,9 +318,7 @@ export function createArtworksStore(type) {
     getArtwork: (key) => store.find((artwork) => artwork.key === key),
 
     restoreFromTrash: (row, state) => {
-      const {
-        collection, key, value, user_id,
-      } = row;
+      const { collection, key, value, user_id } = row;
 
       // Update on server
       value.status = state;
@@ -336,11 +339,9 @@ export function createArtworksStore(type) {
     /** Update the public read status of an Artwork
      * @param row SvelteTable row
      * @param publicRead New read status
-    */
+     */
     updatePublicRead: async (row, publicRead) => {
-      const {
-        collection, key, value, user_id,
-      } = row;
+      const { collection, key, value, user_id } = row;
 
       // Update on server
       await updateObject(collection, key, value, publicRead, user_id);
@@ -348,7 +349,9 @@ export function createArtworksStore(type) {
       // Update on store
       store.update((artworks) => {
         const artworksToUpdate = artworks;
-        const artworkIndex = artworks.findIndex((artwork) => artwork.key === key);
+        const artworkIndex = artworks.findIndex(
+          (artwork) => artwork.key === key,
+        );
         if (artworkIndex > -1) {
           artworksToUpdate[artworkIndex].permission_read = publicRead;
         }
@@ -357,60 +360,66 @@ export function createArtworksStore(type) {
     },
 
     /** Update the Preview URLs for images that are new, or have been updated
-   * @param artworks Array of artworks (plain JS)
-   * @return {Promise} A Promise that resolves an updated array of artworks that includes the
-  */
-    updatePreviewUrls: (artworks) => new Promise((resolvePreviewUrls) => {
-      const artworksToUpdate = artworks;
-      const existingArtworks = get(store);
-      const updatePromises = [];
+     * @param artworks Array of artworks (plain JS)
+     * @return {Promise} A Promise that resolves an updated array of artworks that includes the
+     */
+    updatePreviewUrls: (artworks) =>
+      new Promise((resolvePreviewUrls) => {
+        const artworksToUpdate = artworks;
+        const existingArtworks = get(store);
+        const updatePromises = [];
 
-      artworksToUpdate.forEach(async (item, index) => {
-      // Check if artwork already existed, and if so, is it was outdated
-        const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
-        const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
-        const artwork = item;
-        artwork.permission_read = artwork.permission_read === PERMISSION_READ_PUBLIC;
+        artworksToUpdate.forEach(async (item, index) => {
+          // Check if artwork already existed, and if so, is it was outdated
+          const existingArtwork = existingArtworks.find(
+            (artwork) => artwork.key === item.key,
+          );
+          const outdatedArtwork =
+            !!existingArtwork &&
+            existingArtwork?.update_time !== item?.update_time;
+          const artwork = item;
+          artwork.permission_read =
+            artwork.permission_read === PERMISSION_READ_PUBLIC;
 
-        // Only get a fresh URL if no previewUrl is available or when it has been updated
-        if (!artwork.value.previewUrl || outdatedArtwork) {
-          if (artwork.value.url) {
-            artwork.url = artwork.value.url.split('.')[0];
+          // Only get a fresh URL if no previewUrl is available or when it has been updated
+          if (!artwork.value.previewUrl || outdatedArtwork) {
+            if (artwork.value.url) {
+              artwork.url = artwork.value.url.split('.')[0];
+            }
+
+            // Prepare a promise per update that resolves after setting the
+            updatePromises.push(
+              new Promise((resolveUpdatePromise) => {
+                convertImage(
+                  artwork.value.url,
+                  DEFAULT_PREVIEW_HEIGHT,
+                  DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+                  'png',
+                ).then((val) => {
+                  // Set the previewUrl value, update the array
+                  artwork.value.previewUrl = val;
+                  artworksToUpdate[index] = artwork;
+
+                  // Then resolve this updatePromise
+                  resolveUpdatePromise(val);
+                });
+              }),
+            );
           }
+        });
 
-          // Prepare a promise per update that resolves after setting the
-          updatePromises.push(new Promise((resolveUpdatePromise) => {
-            convertImage(
-              artwork.value.url,
-              DEFAULT_PREVIEW_HEIGHT,
-              DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
-              'png',
-            ).then((val) => {
-            // Set the previewUrl value, update the array
-              artwork.value.previewUrl = val;
-              artworksToUpdate[index] = artwork;
-
-              // Then resolve this updatePromise
-              resolveUpdatePromise(val);
-            });
-          }));
-        }
-      });
-
-      // Resolve all updatePromises and resolve the main Promise
-      // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
-      Promise.all(updatePromises).then(() => {
-        resolvePreviewUrls(artworksToUpdate);
-      });
-    }),
+        // Resolve all updatePromises and resolve the main Promise
+        // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
+        Promise.all(updatePromises).then(() => {
+          resolvePreviewUrls(artworksToUpdate);
+        });
+      }),
     /** Delete an Artwork
      * @param row SvelteTable row
      * @param {string} role User role
-    */
+     */
     delete: (row, role) => {
-      const {
-        collection, key, user_id,
-      } = row;
+      const { collection, key, user_id } = row;
 
       // Remove from server
       if (role === 'admin' || role === 'moderator') {
@@ -420,51 +429,85 @@ export function createArtworksStore(type) {
       }
 
       // Remove from store
-      store.update((artworks) => artworks.filter((artwork) => artwork.key !== key));
+      store.update((artworks) =>
+        artworks.filter((artwork) => artwork.key !== key),
+      );
     },
   };
 }
 
 // Usage example for creating different type-specific stores
-export const DrawingArtworksStore = createArtworksStore('drawing');
-export const VideoArtworksStore = createArtworksStore('video');
-export const AudioArtworksStore = createArtworksStore('audio');
+// export const DrawingArtworksStore = createArtworksStore('drawing');
+// export const VideoArtworksStore = createArtworksStore('video');
+// export const AudioArtworksStore = createArtworksStore('audio');
+
+// Create different Gallery Stores
+export function createGalleryStore(initialValue = []) {
+  const store = writable(initialValue);
+  return {
+    subscribe: store.subscribe,
+    set: store.set,
+    update: store.update,
+
+    add: (item) => {
+      store.update((items) => {
+        items.push(item);
+        return items;
+      });
+    },
+
+    remove: (key) => {
+      store.update((items) => items.filter((item) => item.key !== key));
+    },
+  };
+}
+
+// Store for visible drawing gallery
+export const visibleDrawingGalleryStore = writable([]);
 
 // Stores Artworks of user
 const artworksStore = writable([]);
 
 export const ArtworksStore = {
-
   subscribe: artworksStore.subscribe,
   set: artworksStore.set,
   update: artworksStore.update,
 
   /** Load artworks of a specific user
- * @param id User ID
- * @param limit Limit the results from the server
- */
+   * @param id User ID
+   * @param limit Limit the results from the server
+   */
   loadArtworks: async (id, limit) => {
     const typePromises = [];
     let loadedArt = [];
 
-    const types = ['drawing', 'video', 'audio', 'stopmotion', 'picture', 'animalchallenge', 'flowerchallenge'];
+    const types = [
+      'drawing',
+      'video',
+      'audio',
+      'stopmotion',
+      'picture',
+      'animalchallenge',
+      'flowerchallenge',
+    ];
 
     types.forEach(async (type) => {
       // One promise per type..
-      typePromises.push(new Promise((resolveType) => {
-        // A promise to load objects from the server
-        const loadPromise = new Promise((resolve) => {
-          if (limit !== undefined) {
-            listAllObjects(type, id).then((loaded) => resolve(loaded));
-          } else {
-            listObjects(type, id, limit).then((loaded) => resolve(loaded.objects));
-          }
-        });
+      typePromises.push(
+        new Promise((resolveType) => {
+          // A promise to load objects from the server
+          const loadPromise = new Promise((resolve) => {
+            if (limit !== undefined) {
+              listAllObjects(type, id).then((loaded) => resolve(loaded));
+            } else {
+              listObjects(type, id, limit).then((loaded) =>
+                resolve(loaded.objects),
+              );
+            }
+          });
 
-
-        // Objects were loaded, so update the preview URLs
-        loadPromise
-          .then(async (loaded) => {
+          // Objects were loaded, so update the preview URLs
+          loadPromise.then(async (loaded) => {
             // Execute a Promise in order to update preview URLS
             ArtworksStore.updatePreviewUrls(loaded).then((updatedLoaded) => {
               // Add the updated artworks to the loadedArt array
@@ -473,7 +516,8 @@ export const ArtworksStore = {
               resolveType();
             });
           });
-      }));
+        }),
+      );
     });
 
     // After all typePromises fulfilled, set data into store
@@ -488,61 +532,67 @@ export const ArtworksStore = {
   /** Update the Preview URLs for images that are new, or have been updated
    * @param artworks Array of artworks (plain JS)
    * @return {Promise} A Promise that resolves an updated array of artworks that includes the
-  */
-  updatePreviewUrls: (artworks) => new Promise((resolvePreviewUrls) => {
-    console.log('updatePreviewUrls')
-    const artworksToUpdate = artworks;
-    const existingArtworks = get(artworksStore);
-    const updatePromises = [];
+   */
+  updatePreviewUrls: (artworks) =>
+    new Promise((resolvePreviewUrls) => {
+      console.log('updatePreviewUrls');
+      const artworksToUpdate = artworks;
+      const existingArtworks = get(artworksStore);
+      const updatePromises = [];
 
-    artworksToUpdate.forEach(async (item, index) => {
-      // Check if artwork already existed, and if so, is it was outdated
-      const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
-      const outdatedArtwork = (!!existingArtwork && (existingArtwork?.update_time !== item?.update_time));
-      const artwork = item;
-      artwork.permission_read = artwork.permission_read === PERMISSION_READ_PUBLIC;
+      artworksToUpdate.forEach(async (item, index) => {
+        // Check if artwork already existed, and if so, is it was outdated
+        const existingArtwork = existingArtworks.find(
+          (artwork) => artwork.key === item.key,
+        );
+        const outdatedArtwork =
+          !!existingArtwork &&
+          existingArtwork?.update_time !== item?.update_time;
+        const artwork = item;
+        artwork.permission_read =
+          artwork.permission_read === PERMISSION_READ_PUBLIC;
 
-      // Only get a fresh URL if no previewUrl is available or when it has been updated
-      if (!artwork.value.previewUrl || outdatedArtwork) {
-        if (artwork.value.url) {
-          artwork.url = artwork.value.url.split('.')[0];
+        // Only get a fresh URL if no previewUrl is available or when it has been updated
+        if (!artwork.value.previewUrl || outdatedArtwork) {
+          if (artwork.value.url) {
+            artwork.url = artwork.value.url.split('.')[0];
+          }
+
+          // Prepare a promise per update that resolves after setting the
+          updatePromises.push(
+            new Promise((resolveUpdatePromise) => {
+              convertImage(
+                artwork.value.url,
+                DEFAULT_PREVIEW_HEIGHT,
+                DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+                'png',
+              ).then((val) => {
+                console.log('updatePreviewUrls val: ', val);
+                // Set the previewUrl value, update the array
+                artwork.value.previewUrl = val;
+                artworksToUpdate[index] = artwork;
+
+                // Then resolve this updatePromise
+                resolveUpdatePromise(val);
+              });
+            }),
+          );
         }
+      });
 
-        // Prepare a promise per update that resolves after setting the
-        updatePromises.push(new Promise((resolveUpdatePromise) => {
-          convertImage(
-            artwork.value.url,
-            DEFAULT_PREVIEW_HEIGHT,
-            DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
-            'png',
-          ).then((val) => {
-            console.log('updatePreviewUrls val: ', val) 
-            // Set the previewUrl value, update the array
-            artwork.value.previewUrl = val;
-            artworksToUpdate[index] = artwork;
-
-            // Then resolve this updatePromise
-            resolveUpdatePromise(val);
-          });
-        }));
-      }
-    });
-
-    // Resolve all updatePromises and resolve the main Promise
-    // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
-    Promise.all(updatePromises).then(() => {
-      resolvePreviewUrls(artworksToUpdate);
-    });
-  }),
+      // Resolve all updatePromises and resolve the main Promise
+      // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
+      Promise.all(updatePromises).then(() => {
+        resolvePreviewUrls(artworksToUpdate);
+      });
+    }),
 
   /** Update the state (trashed/regular) of an Artwork
    * @param row SvelteTable row
    * @param state
-  */
+   */
   restoreFromTrash: (row, state) => {
-    const {
-      collection, key, value, user_id,
-    } = row;
+    const { collection, key, value, user_id } = row;
 
     // Update on server
     value.status = state;
@@ -563,11 +613,9 @@ export const ArtworksStore = {
   /** Update the public read status of an Artwork
    * @param row SvelteTable row
    * @param publicRead New read status
-  */
+   */
   updatePublicRead: async (row, publicRead) => {
-    const {
-      collection, key, value, user_id,
-    } = row;
+    const { collection, key, value, user_id } = row;
 
     // Update on server
     await updateObject(collection, key, value, publicRead, user_id);
@@ -586,11 +634,9 @@ export const ArtworksStore = {
   /** Delete an Artwork
    * @param row SvelteTable row
    * @param {string} role User role
-  */
+   */
   delete: (row, role) => {
-    const {
-      collection, key, user_id,
-    } = row;
+    const { collection, key, user_id } = row;
 
     // Remove from server
     if (role === 'admin' || role === 'moderator') {
@@ -600,13 +646,14 @@ export const ArtworksStore = {
     }
 
     // Remove from store
-    artworksStore.update((artworks) => artworks.filter((artwork) => artwork.key !== key));
+    artworksStore.update((artworks) =>
+      artworks.filter((artwork) => artwork.key !== key),
+    );
   },
 };
 
 const avatarsStore = writable([]);
 export const AvatarsStore = {
-
   subscribe: avatarsStore.subscribe,
   set: avatarsStore.set,
   update: avatarsStore.update,
@@ -616,7 +663,9 @@ export const AvatarsStore = {
   getCurrent: () => {
     const allAvatars = get(avatarsStore);
     const currentAvatar = get(Profile).avatar_url;
-    const current = allAvatars.find((avatar) => avatar.value.url === currentAvatar);
+    const current = allAvatars.find(
+      (avatar) => avatar.value.url === currentAvatar,
+    );
     // dlog('current avatar: ', current);
     return current;
   },
@@ -636,72 +685,74 @@ export const AvatarsStore = {
     });
 
     // Objects were loaded, so update the preview URLs
-    loadPromise
-      .then(async (loaded) => {
-        // Execute a Promise in order to update preview URLS
-        AvatarsStore.updatePreviewUrls(loaded).then((updatedLoaded) => {
-          // Add the updated artworks to the loadedArt array
-          avatarsStore.set(updatedLoaded);
-        });
+    loadPromise.then(async (loaded) => {
+      // Execute a Promise in order to update preview URLS
+      AvatarsStore.updatePreviewUrls(loaded).then((updatedLoaded) => {
+        // Add the updated artworks to the loadedArt array
+        avatarsStore.set(updatedLoaded);
       });
+    });
   },
 
   /** Update the Preview URLs for images that are new, or have been updated
    * @param artworks Array of artworks (plain JS)
    * @return {Promise} A Promise that resolves an updated array of artworks that includes the
-  */
-  updatePreviewUrls: (avatars) => new Promise((resolvePreviewUrls) => {
-    const avatarsToUpdate = avatars;
-    const existingAvatars = get(avatarsStore);
-    const updatePromises = [];
+   */
+  updatePreviewUrls: (avatars) =>
+    new Promise((resolvePreviewUrls) => {
+      const avatarsToUpdate = avatars;
+      const existingAvatars = get(avatarsStore);
+      const updatePromises = [];
 
-    avatarsToUpdate.forEach(async (item, index) => {
-      // Check if avatar already existed, and if so, is it was outdated
-      const existingAvatar = existingAvatars.find((avatar) => avatar.key === item.key);
-      const outdatedAvatar = (!!existingAvatar && (existingAvatar?.update_time !== item?.update_time));
-      const avatar = item;
+      avatarsToUpdate.forEach(async (item, index) => {
+        // Check if avatar already existed, and if so, is it was outdated
+        const existingAvatar = existingAvatars.find(
+          (avatar) => avatar.key === item.key,
+        );
+        const outdatedAvatar =
+          !!existingAvatar && existingAvatar?.update_time !== item?.update_time;
+        const avatar = item;
 
-      // Only get a fresh URL if no previewUrl is available or when it has been updated
-      if (!avatar.value.previewUrl || outdatedAvatar) {
-        if (avatar.value.url) {
-          avatar.url = avatar.value.url.split('.')[0];
+        // Only get a fresh URL if no previewUrl is available or when it has been updated
+        if (!avatar.value.previewUrl || outdatedAvatar) {
+          if (avatar.value.url) {
+            avatar.url = avatar.value.url.split('.')[0];
+          }
+
+          // Prepare a promise per update that resolves after setting the
+          updatePromises.push(
+            new Promise((resolveUpdatePromise) => {
+              convertImage(
+                avatar.value.url,
+                DEFAULT_PREVIEW_HEIGHT,
+                DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+                'png',
+              ).then((val) => {
+                // Set the previewUrl value, update the array
+                avatar.value.previewUrl = val;
+                avatarsToUpdate[index] = avatar;
+
+                // Then resolve this updatePromise
+                resolveUpdatePromise(val);
+              });
+            }),
+          );
         }
+      });
 
-        // Prepare a promise per update that resolves after setting the
-        updatePromises.push(new Promise((resolveUpdatePromise) => {
-          convertImage(
-            avatar.value.url,
-            DEFAULT_PREVIEW_HEIGHT,
-            DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
-            'png',
-          ).then((val) => {
-            // Set the previewUrl value, update the array
-            avatar.value.previewUrl = val;
-            avatarsToUpdate[index] = avatar;
-
-            // Then resolve this updatePromise
-            resolveUpdatePromise(val);
-          });
-        }));
-      }
-    });
-
-    // Resolve all updatePromises and resolve the main Promise
-    // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
-    Promise.all(updatePromises).then(() => {
-      resolvePreviewUrls(avatarsToUpdate);
-    });
-  }),
-
+      // Resolve all updatePromises and resolve the main Promise
+      // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
+      Promise.all(updatePromises).then(() => {
+        resolvePreviewUrls(avatarsToUpdate);
+      });
+    }),
 
   /** Delete an Avatar
    * @param row SvelteTable row
    * @param {string} role User role
-  */
+   */
   delete: (row, role) => {
-    const {
-      collection, key, user_id,
-    } = row;
+    const { collection, key, user_id } = row;
 
     // Remove from server
     if (role === 'admin' || role === 'moderator') {
@@ -711,17 +762,16 @@ export const AvatarsStore = {
     }
 
     // Remove from store
-    avatarsStore.update((avatars) => avatars.filter((avatar) => avatar.key !== key));
+    avatarsStore.update((avatars) =>
+      avatars.filter((avatar) => avatar.key !== key),
+    );
   },
 };
-
-
 
 /** Contains the house object of current player */
 export const myHomeStore = writable({ url: '' });
 
 export const myHome = {
-
   subscribe: myHomeStore.subscribe,
   set: myHomeStore.set,
   update: myHomeStore.update,
@@ -740,7 +790,11 @@ export const myHome = {
     // get object
     // dlog('value', value);
     const returnedObject = await updateObject(type, name, value, makePublic);
-    returnedObject.url = await convertImage(returnedObject.value.url, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_HEIGHT);
+    returnedObject.url = await convertImage(
+      returnedObject.value.url,
+      DEFAULT_PREVIEW_HEIGHT,
+      DEFAULT_PREVIEW_HEIGHT,
+    );
 
     myHome.set(returnedObject);
     return value.url;
@@ -767,19 +821,20 @@ export const myHome = {
         }
         // dlog('profileAzc: ', profileAzc);
 
-        localHome = await getObject(
-          'home',
-          profileAzc,
-          Sess.user_id,
-        );
+        localHome = await getObject('home', profileAzc, Sess.user_id);
       } catch (err) {
         dlog('cannot get home: ', err); // TypeError: failed to fetch
       }
       // dlog('getting the localHome.url', localHome);
-      localHome.url = await convertImage(localHome.value.url, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_HEIGHT);
+      localHome.url = await convertImage(
+        localHome.value.url,
+        DEFAULT_PREVIEW_HEIGHT,
+        DEFAULT_PREVIEW_HEIGHT,
+      );
       // dlog('localHome', localHome);
 
       myHome.set(localHome);
-    } return localHome;
+    }
+    return localHome;
   },
 };

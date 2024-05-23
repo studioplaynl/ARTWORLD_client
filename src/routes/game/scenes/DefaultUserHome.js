@@ -25,6 +25,7 @@
 
 // import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
+import { get } from 'svelte/store';
 import { Profile } from '../../../session';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
@@ -107,12 +108,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     //! this.loadAndPlaceArtworks();
 
     //! Check if this is home of player
-    // console.log($Profile);
-    // if ($Profile.id === this.location) this.selfHome = true;
-    // console.log('this.selfHome: ', this.selfHome);
+    const selfHome = await ServerCall.checkIfHomeSelf(this.location);
+    console.log('selfHome defaultUserHome: ', selfHome);
 
     //! 1. Check if there are homeElement objects on the server
-    // const allHomeElements = await listAllObjects('homeElements', this.location);
+    ServerCall.getHomeElements(this.location);
 
     //! working on imageGallery
     //! load all images
