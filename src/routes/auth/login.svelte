@@ -12,6 +12,7 @@
 
   export let params;
 
+  // dlog($Session);
   let email;
   let password;
   let qrscanState = false;
@@ -25,6 +26,8 @@
     email = params.user || 'user1@vrolijkheid.nl';
     password = params.password || 'somesupersecretpassword';
     if ($Session?.token && checkLoginExpired() !== true) {
+      // Note: should a previous position of the user be available in Profile.meta,
+      // they will be redirected there after the push below
       push(`/game?${$querystring}`);
     }
   });
@@ -43,6 +46,7 @@
   function handleInput(event) {
     password = event.target.value;
   }
+
 </script>
 
 <svelte:head>
@@ -82,36 +86,36 @@
           required
         />
 
-        <label for="psw"><b>{$_('register.password')}</b></label>
-
-        <div class="input-container">
-          {#if $showPassword}
-            <input
-              class="input-field password-field"
-              type="text"
-              placeholder="Enter Password"
-              name="psw"
-              id="psw-text"
-              bind:value={password}
-              on:input={handleInput}
-              required
-            />
-          {:else}
-            <input
-              class="input-field password-field"
-              type="password"
-              placeholder="Enter Password"
-              name="psw"
-              id="psw-password"
-              bind:value={password}
-              on:input={handleInput}
-              required
-            />
-          {/if}
+        <div class="password-container">
+          <label for="psw"><b>{$_('register.password')}</b></label>
           <button class="toggle-visibility" type="button" on:click={togglePasswordVisibility}>
             <img src={$showPassword ? './assets/SHB/svg/AW-icon-visible.svg' : './assets/SHB/svg/AW-icon-invisible.svg'} alt="Toggle password visibility" />
           </button>
         </div>
+
+        {#if $showPassword}
+          <input
+            class="input-field"
+            type="text"
+            placeholder="Enter Password"
+            name="psw"
+            id="psw"
+            bind:value={password}
+            on:input={handleInput}
+            required
+          />
+        {:else}
+          <input
+            class="input-field"
+            type="password"
+            placeholder="Enter Password"
+            name="psw"
+            id="psw"
+            bind:value={password}
+            on:input={handleInput}
+            required
+          />
+        {/if}
 
         <button type="submit" class="register-btn">{$_('login.login')}</button>
       </div>
@@ -168,33 +172,23 @@
     margin: 5px 0 22px 0;
     display: inline-block;
     background: #f1f1f1;
-    box-sizing: border-box; /* Ensure the width includes padding */
   }
 
-  .input-container {
+  .password-container {
     display: flex;
     align-items: center;
-    width: 100%; /* Ensure the input container takes full width */
-    position: relative;
-  }
-
-  .password-field {
-    flex: 1; /* Allow the input to grow and take up available space */
   }
 
   .toggle-visibility {
-    position: absolute;
-    right: -40px;
-    bottom: 30px;
     padding: 0;
     border: none;
     background: none;
     cursor: pointer;
+    margin-left: 10px;
   }
 
   .toggle-visibility img {
     height: 20px;
-    width: 20px;
   }
 
   input[type='text']:focus,
