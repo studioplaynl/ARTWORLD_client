@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 import ManageSession from '../ManageSession';
 import {
   getAccount,
@@ -46,7 +45,7 @@ class DebugFuntions {
           this.debugUpKeys(scene, event.code);
         }
       },
-      this,
+      this
     );
 
     // only activate debug functions when in edit mode
@@ -59,16 +58,12 @@ class DebugFuntions {
           this.debugDownKeys(scene, event.code);
         }
       },
-      this,
+      this
     );
   }
 
   debugDownKeys(scene, code) {
-    const {
-      selectedGameObject,
-      selectedGameObject_startScale,
-      selectedGameObject_startPosition,
-    } = ManageSession;
+    const { selectedGameObject, selectedGameObject_startScale, selectedGameObject_startPosition } = ManageSession;
     let rotation;
 
     switch (code) {
@@ -103,10 +98,7 @@ class DebugFuntions {
           selectedGameObject.setScale(scale);
           // dlog("scale", scale)
         } else {
-          selectedGameObject.setPosition(
-            selectedGameObject_startPosition.x,
-            selectedGameObject_startPosition.y,
-          );
+          selectedGameObject.setPosition(selectedGameObject_startPosition.x, selectedGameObject_startPosition.y);
         }
         break;
 
@@ -131,18 +123,16 @@ class DebugFuntions {
   }
 
   runPromise(type, userId, limit, rec, page) {
-    Promise.all([listObjects(type, userId, limit, rec[0].cursor)]).then(
-      (rec2) => {
-        dlog(type, ' listObjects: ', rec2[0]);
-        page = rec2[0].objects;
-        page.forEach((element) => {
-          console.log(element.create_time);
-        });
-        if (rec2[0].cursor != undefined) {
-          this.runPromise(type, userId, limit, rec2);
-        }
-      },
-    );
+    Promise.all([listObjects(type, userId, limit, rec[0].cursor)]).then((rec2) => {
+      dlog(type, ' listObjects: ', rec2[0]);
+      page = rec2[0].objects;
+      page.forEach((element) => {
+        console.log(element.create_time);
+      });
+      if (rec2[0].cursor != undefined) {
+        this.runPromise(type, userId, limit, rec2);
+      }
+    });
   }
 
   debugUpKeys(scene, code) {
@@ -155,13 +145,7 @@ class DebugFuntions {
     // keyCode: 18, 83, 49
     //! keyU reserved for updating homes as ADMIN
 
-    const {
-      currentScene,
-      userProfile,
-      createOnlinePlayers,
-      allConnectedUsers,
-      selectedGameObject,
-    } = ManageSession;
+    const { currentScene, userProfile, createOnlinePlayers, allConnectedUsers, selectedGameObject } = ManageSession;
 
     const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
 
@@ -175,6 +159,12 @@ class DebugFuntions {
     sceneNames.push('GameOnboarding');
     sceneNames.push('PreloadScene');
     sceneNames.push('UIScene');
+
+    let type = 'drawing';
+    let limit = 50;
+    let userId = null;
+    let cursor;
+    let page;
 
     switch (code) {
       case 'ArrowRight':
@@ -219,12 +209,12 @@ class DebugFuntions {
       case 'Digit1':
         dlog(code);
 
-        const type = 'drawing';
-        const limit = 50;
-        const userId = null;
-        let cursor;
+        type = 'drawing';
+        limit = 50;
+        userId = null;
+        cursor;
+        page;
 
-        let page;
         Promise.all([listObjects(type, userId, limit)]).then((rec) => {
           dlog(type, ' listObjects: ', rec[0]);
 
@@ -238,15 +228,13 @@ class DebugFuntions {
           }
         });
 
-        Promise.all([listAllObjects(type, userId, limit, cursor)]).then(
-          (rec) => {
-            dlog(type, ' listAllObjects: ', rec[0]);
-            page = rec[0];
-            page.forEach((element) => {
-              console.log(element.update_time);
-            });
-          },
-        );
+        Promise.all([listAllObjects(type, userId, limit, cursor)]).then((rec) => {
+          dlog(type, ' listAllObjects: ', rec[0]);
+          page = rec[0];
+          page.forEach((element) => {
+            console.log(element.update_time);
+          });
+        });
 
         // ManageSession.getStreamUsers("get_users", scene.location)
         // listObjects("addressbook", userProfile.id, 10)
@@ -269,14 +257,8 @@ class DebugFuntions {
       case 'Digit3':
         dlog(code);
 
-        dlog(
-          'offending scene.userStopmotionServerList.array',
-          currentScene.userStopmotionServerList.array,
-        );
-        dlog(
-          'offending ManageSession.resolveErrorObjectArray',
-          ManageSession.resolveErrorObjectArray,
-        );
+        dlog('offending scene.userStopmotionServerList.array', currentScene.userStopmotionServerList.array);
+        dlog('offending ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
 
         break;
 
@@ -287,9 +269,7 @@ class DebugFuntions {
         dlog(currentScene.textures.list);
 
         // Return an array listing the events for which the emitter has registered listeners.
-        dlog(
-          'Return an array listing the events for which the emitter has registered listeners: ',
-        );
+        dlog('Return an array listing the events for which the emitter has registered listeners: ');
         dlog(currentScene.textures.eventNames());
 
         dlog(currentScene.children); // get the whole DisplayList
@@ -300,10 +280,7 @@ class DebugFuntions {
         dlog(code);
         dlog('scene.onlinePlayers: ', currentScene.onlinePlayers);
         dlog('ManageSession.allConnectedUsers: ', allConnectedUsers);
-        dlog(
-          'onlinePlayerGroup Children: ',
-          currentScene.onlinePlayersGroup.getChildren(),
-        );
+        dlog('onlinePlayerGroup Children: ', currentScene.onlinePlayersGroup.getChildren());
         dlog('scene.player: ', currentScene.player);
 
         break;
@@ -363,13 +340,13 @@ class DebugFuntions {
         if (selectedGameObject.locationDestination === 'DefaultUserHome') {
           const updatedPosition = new Phaser.Math.Vector2(
             Phaser2DToArtworldX(currentScene.worldSize.x, selectedGameObject.x),
-            Phaser2DToArtworldY(currentScene.worldSize.y, selectedGameObject.y),
+            Phaser2DToArtworldY(currentScene.worldSize.y, selectedGameObject.y)
           );
 
           dlog('updated position = ', updatedPosition);
           // dlog('scene.homes', currentScene.homes);
           const selectedHomeObject = currentScene.homes.find(
-            (element) => element.user_id === selectedGameObject.userHome,
+            (element) => element.user_id === selectedGameObject.userHome
           );
           dlog('selectedHomeObject ', selectedHomeObject);
 
@@ -385,13 +362,7 @@ class DebugFuntions {
           const valueObject = selectedHomeObject.value;
           const pubObject = 2;
 
-          updateObjectAdmin(
-            idObject,
-            typeObject,
-            nameObject,
-            valueObject,
-            pubObject,
-          );
+          updateObjectAdmin(idObject, typeObject, nameObject, valueObject, pubObject);
         } else {
           dlog('The selected gameObject is not a user Home');
         }
@@ -406,21 +377,11 @@ class DebugFuntions {
       case 'KeyI':
         dlog(code);
         dlog('Display Mouse coordinates');
-        dlog(
-          'World Coordinates: ',
-          currentScene.input.mousePointer.worldX,
-          currentScene.input.mousePointer.worldY,
-        );
+        dlog('World Coordinates: ', currentScene.input.mousePointer.worldX, currentScene.input.mousePointer.worldY);
         dlog(
           'artworldCoordinates: ',
-          Phaser2DToArtworldX(
-            currentScene.worldSize.x,
-            scene.input.activePointer.worldX,
-          ),
-          Phaser2DToArtworldX(
-            currentScene.worldSize.y,
-            scene.input.activePointer.worldY,
-          ),
+          Phaser2DToArtworldX(currentScene.worldSize.x, scene.input.activePointer.worldX),
+          Phaser2DToArtworldX(currentScene.worldSize.y, scene.input.activePointer.worldY)
         );
 
         break;
@@ -432,7 +393,7 @@ class DebugFuntions {
             `editMode info scale: ${selectedGameObject.scale}`,
             `width*scale: ${Math.round(selectedGameObject.width * selectedGameObject.scale)}`,
             `height*scale: ${Math.round(selectedGameObject.height * selectedGameObject.scale)}`,
-            `name:${selectedGameObject.name}`,
+            `name:${selectedGameObject.name}`
           );
         }
         break;

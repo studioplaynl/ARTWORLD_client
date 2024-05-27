@@ -36,6 +36,7 @@
     "@heroiclabs/nakama-js": "^2.7.1",
     "animejs": "^3.2.2",
     "fabric-with-erasing": "^1.0.1",
+    "globals": "^15.3.0",
     "i18next": "^23.7.12",
     "jsqr": "^1.4.0",
     "phaser3-rex-plugins": "^1.60.8",

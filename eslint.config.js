@@ -2,6 +2,7 @@ import js from '@eslint/js';
 import svelte3 from 'eslint-plugin-svelte3';
 import airbnbBase from 'eslint-config-airbnb-base';
 import importPlugin from 'eslint-plugin-import';
+import globals from 'globals';
 
 const airbnbBaseConfig = airbnbBase;
 
@@ -29,9 +30,9 @@ export default [
     },
     languageOptions: {
       globals: {
-        browser: true,
-        node: true,
-        es6: true,
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2020,
       },
       ecmaVersion: 2020,
       sourceType: 'module',

@@ -23,7 +23,6 @@
  *      - load and place artworks of the home owner
  */
 
-// import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { get } from 'svelte/store';
 import { Profile } from '../../../session';
@@ -43,7 +42,7 @@ import {
 } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
-// eslint-disable-next-line no-unused-vars
+
 import { dlog } from '../../../helpers/debugLog';
 
 import { listAllObjects } from '../../../helpers/nakamaHelpers';

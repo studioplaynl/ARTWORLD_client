@@ -33,7 +33,7 @@ i18next.init({
 let latestValue = null;
 
 export default class UIScene extends Phaser.Scene {
-  currentLanguage;
+  // currentLanguage;
 
   constructor() {
     super('UIScene');
@@ -83,16 +83,13 @@ export default class UIScene extends Phaser.Scene {
     DebugFuntions.keyboard(this);
     // ......... end DEBUG FUNCTIONS .......................................................................
 
-    this.camUI = this.cameras.main
-      .setSize(this.sys.game.canvas.width, this.sys.game.canvas.height)
-      .setName('camMain');
+    this.camUI = this.cameras.main.setSize(this.sys.game.canvas.width, this.sys.game.canvas.height).setName('camMain');
     this.camUI.zoom = 1;
 
     // to make the UI scene always on top of other scenes
     this.scene.bringToTop();
   } // create
 
-  // eslint-disable-next-line class-methods-use-this
   editElementsScene(arg) {
     const scene = ManageSession.currentScene;
     dlog('editElementsScene arg:', arg);
@@ -125,9 +122,7 @@ export default class UIScene extends Phaser.Scene {
         this.gameEditModeSignGraphic.fillStyle(0xff0000, 1);
         //  32px radius on the corners
         this.gameEditModeSignGraphic.fillRoundedRect(width / 2, 20, 100, 40, 8);
-        this.gameEditModeSignText = this.add
-          .text(width / 2 + 50, 20 + 20, 'edit mode')
-          .setOrigin(0.5);
+        this.gameEditModeSignText = this.add.text(width / 2 + 50, 20 + 20, 'edit mode').setOrigin(0.5);
         break;
 
       case 'off':

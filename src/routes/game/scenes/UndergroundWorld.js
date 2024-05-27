@@ -6,15 +6,11 @@ import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
-// eslint-disable-next-line no-unused-vars
+
 import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
 
-import {
-  SCENE_INFO,
-  ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN,
-} from '../../../constants';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
@@ -76,7 +72,6 @@ export default class UndergroundWorld extends Phaser.Scene {
     this.backgroundImageKey = 'undergroundWorld_background_';
     //  load 9 images in a for loop
     for (let i = 0; i < 9; i++) {
-      const key = 'image' + i;
       const name = folderPath + 'image_part_' + i + '.jpeg';
       this.load.image(this.backgroundImageKey + i, name);
     }
@@ -121,7 +116,7 @@ export default class UndergroundWorld extends Phaser.Scene {
     this.player = new PlayerDefault(
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -165,11 +160,8 @@ export default class UndergroundWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        this.worldSize.x / 1.5,
-      ),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, this.worldSize.x / 1.5),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200)
     );
     this.balloonContainer.setDepth(602);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -219,10 +211,7 @@ export default class UndergroundWorld extends Phaser.Scene {
     // we set draggable on restart scene with a global flag
 
     let locationVector = new Phaser.Math.Vector2(-1145, 2305);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
 
     this.purpleCircleLocation = new GenerateLocation({
       scene: this,
@@ -247,13 +236,7 @@ export default class UndergroundWorld extends Phaser.Scene {
 
     for (let j = 0; j < 3; j++) {
       for (let i = 0; i < 3; i++) {
-        this.add
-          .image(
-            partSize * j,
-            partSize * i,
-            this.backgroundImageKey + beginImage,
-          )
-          .setOrigin(0);
+        this.add.image(partSize * j, partSize * i, this.backgroundImageKey + beginImage).setOrigin(0);
         beginImage++;
       }
     }

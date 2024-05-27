@@ -2,7 +2,6 @@ import { writable } from 'svelte/store';
 import { push } from 'svelte-spa-router';
 import { Session as NakamaSession } from '@heroiclabs/nakama-js';
 import { dwarn } from './helpers/debugLog';
-import { localStorage } from 'window';
 
 /** Session from localStorage */
 let storedSession = localStorage.getItem('Session');
@@ -49,7 +48,7 @@ Profile.subscribe((value) => {
 export const Error = writable();
 Error.subscribe((err) => {
   if (err) {
-    console.error('Error Store received following error:', err);
+    dwarn.error('Error Store received following error:', err);
   }
 });
 

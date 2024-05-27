@@ -1,28 +1,17 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable no-console */
 import { get } from 'svelte/store';
 import { Profile } from '../../../session';
 import ManageSession from '../ManageSession';
 import { listObjects } from '../../../helpers/nakamaHelpers';
 import { DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
 import { PlayerPos, PlayerLocation, PlayerHistory } from '../playerState';
-import {
-  Addressbook,
-  Liked,
-  Achievements,
-  ModeratorLiked,
-} from '../../../storage';
+import { Addressbook, Liked, Achievements, ModeratorLiked } from '../../../storage';
 import { dlog } from '../../../helpers/debugLog';
-import {
-  parseQueryString,
-  checkIfSceneIsAllowed,
-  checkIfLocationLooksLikeAHouse,
-} from '../helpers/UrlHelpers';
+import { parseQueryString, checkIfSceneIsAllowed, checkIfLocationLooksLikeAHouse } from '../helpers/UrlHelpers';
 
 import * as Phaser from 'phaser';
 
 export default class GameOnboarding extends Phaser.Scene {
-  debug = false;
+  // debug = false;
 
   constructor() {
     super('GameOnboarding');
@@ -47,18 +36,12 @@ export default class GameOnboarding extends Phaser.Scene {
           y: Math.round(profile.meta.PosY),
         });
       }
-      if (
-        profile.meta?.Location &&
-        checkIfLocationLooksLikeAHouse(profile.meta.Location)
-      ) {
+      if (profile.meta?.Location && checkIfLocationLooksLikeAHouse(profile.meta.Location)) {
         PlayerLocation.set({
           scene: DEFAULT_HOME,
           house: profile.meta.Location,
         });
-      } else if (
-        profile.meta?.Location &&
-        checkIfSceneIsAllowed(profile.meta.Location)
-      ) {
+      } else if (profile.meta?.Location && checkIfSceneIsAllowed(profile.meta.Location)) {
         PlayerLocation.set({
           scene: profile.meta.Location,
           house: null,
@@ -92,9 +75,7 @@ export default class GameOnboarding extends Phaser.Scene {
       listObjects('home', targetHouse, 1)
         .catch(() => {
           // No objects found for this ID, switch to default scene
-          dlog(
-            `This ID (${targetHouse}) has no objects, switching to default scene`,
-          );
+          dlog(`This ID (${targetHouse}) has no objects, switching to default scene`);
           PlayerLocation.set({
             scene: DEFAULT_SCENE,
             house: null,

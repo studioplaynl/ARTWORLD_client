@@ -1,4 +1,4 @@
-/* eslint-disable no-param-reassign */
+// eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
 
@@ -19,20 +19,13 @@ class GraffitiWall {
 
     // checking if a drawing wall has a front image
     if (imageFile) {
-      const graffitiWall = scene.add
-        .image(0, 0, imageFile)
-        .setOrigin(0.5)
-        .setDepth(198);
+      const graffitiWall = scene.add.image(0, 0, imageFile).setOrigin(0.5).setDepth(198);
       graffitiWall.displayWidth = width;
       graffitiWall.displayHeight = height;
       scene[name].add(graffitiWall);
     }
 
-    const rt = scene.add
-      .renderTexture(0, 0, width, height)
-      .setInteractive()
-      .setDepth(199)
-      .setName(name);
+    const rt = scene.add.renderTexture(0, 0, width, height).setInteractive().setDepth(199).setName(name);
 
     scene[name].add(rt);
     scene[name].setSize(width + 40, height + 40);
@@ -55,7 +48,7 @@ class GraffitiWall {
         pointer.worldX - scene[name].x + width / 2,
         pointer.worldY - scene[name].y + height / 2,
         1,
-        hexColor.color,
+        hexColor.color
       );
     });
 
@@ -73,7 +66,7 @@ class GraffitiWall {
         const hexColor = Phaser.Display.Color.HexStringToColor(color);
 
         previousPointer.push(
-          new Phaser.Math.Vector2(pointer.worldX, pointer.worldY), // an array of Vec2 for worldX and worldY
+          new Phaser.Math.Vector2(pointer.worldX, pointer.worldY) // an array of Vec2 for worldX and worldY
         );
 
         if (previousPointer.length > 1) {
@@ -95,13 +88,7 @@ class GraffitiWall {
 
         points.forEach((p) => {
           // dlog("p", p)
-          rt.draw(
-            'brush',
-            p.x - scene[name].x + width / 2,
-            p.y - scene[name].y + height / 2,
-            1,
-            hexColor.color,
-          );
+          rt.draw('brush', p.x - scene[name].x + width / 2, p.y - scene[name].y + height / 2, 1, hexColor.color);
         });
 
         // // old drawing - without interpolation
@@ -137,7 +124,7 @@ class GraffitiWall {
         //   uploadImage(name, type, json, blobData, status, version, displayName)
         // })
       },
-      this,
+      this
     );
 
     scene[name].x = x;
