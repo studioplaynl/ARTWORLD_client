@@ -10,15 +10,14 @@ import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
-    import {
+import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
+  ART_OFFSET_BETWEEN,
 } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
-
 
 export default class TurquoiseTriangle extends Phaser.Scene {
   constructor() {
@@ -47,10 +46,10 @@ export default class TurquoiseTriangle extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -83,9 +82,7 @@ export default class TurquoiseTriangle extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -105,7 +102,6 @@ export default class TurquoiseTriangle extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -130,11 +126,7 @@ export default class TurquoiseTriangle extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -143,7 +135,10 @@ export default class TurquoiseTriangle extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -182,10 +177,13 @@ export default class TurquoiseTriangle extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
-
 
   generateLocations() {
     // we set draggable on restart scene with a global flag

@@ -1,15 +1,12 @@
 <script>
-  import { location,
-    // push
-  } from 'svelte-spa-router';
+  import { location } from 'svelte-spa-router';
   import { onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
   import {
     convertImage,
     getAccount,
     getObject,
-    logout,
-  } from '../../helpers/nakamaHelpers';
+    logout } from '../../helpers/nakamaHelpers';
   import ProfilePage from '../profile.svelte';
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
@@ -20,11 +17,9 @@
   import { Addressbook, myHome } from '../../storage';
   import { clickOutside } from '../../helpers/clickOutside';
   import {
-    // PlayerHistory,
     PlayerPos,
     PlayerLocation,
-    PlayerUpdate,
-  } from '../game/playerState';
+    PlayerUpdate } from '../game/playerState';
 
   // TODO: current moet een store worden
   // zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties of vanuit de game)
@@ -34,6 +29,7 @@
 
   let addressbookList = [];
   let lastLengthAddressbook = 0;
+  // eslint-disable-next-line no-unused-vars
   let addressbookImages = [];
   let enableclickOutsideListener = false;
 
@@ -89,30 +85,17 @@
       addressbookImages = [];
       addressbookList = value;
       if (addressbookList.length > 0) {
-        const tempArray = [];
-        addressbookList.forEach(async (element) => {
-          tempArray.push(
-            await getObject(
-              'home',
-              element.value.meta?.Azc,
-              element.value.user_id,
-            ),
-          );
+        const tempArray = await Promise.all(addressbookList.map(
+          (element) => getObject('home', element.value.meta?.Azc, element.value.user_id),
+        ));
 
-          if (addressbookList.length === tempArray.length) {
-            tempArray.forEach(async (address) => {
-              addressbookImages = [
-                ...addressbookImages,
-                {
-                  name: address.value.username,
-                  id: address.user_id,
-                  url: await convertImage(address.value.url, '50', '50'),
-                },
-              ];
-              // addressbookImages = addressbookImages;
-            });
-          }
-        });
+        const addressbookImagesPromises = tempArray.map(async (address) => ({
+          name: address.value.username,
+          id: address.user_id,
+          url: await convertImage(address.value.url, '50', '50'),
+        }));
+
+        addressbookImages = await Promise.all(addressbookImagesPromises);
       }
     }
   });
@@ -213,14 +196,7 @@
       </button>
 
       <!-- first item above avatar: home image, takes user next to the house -->
-      <button
-        on:click="{() => {
-          goHome();
-        }}"
-        class="home"
-      >
-        <img src="{$myHome.url}" alt="My Home" />
-      </button>
+      <button on:click="{() => { goHome(); }}" class="home"> <img src="{$myHome.url}" alt="My Home" /> </button>
 
       <button on:click="{toggleAwards}">
         <img

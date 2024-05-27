@@ -8,20 +8,19 @@ import ManageSession from '../ManageSession';
 // eslint-disable-next-line no-unused-vars
 import * as Phaser from 'phaser';
 
-
 class Background {
   // constructor(config) {
   // }
   standardWithDots(scene) {
     const tileSize = 80;
-    const dotWidth = 2;    
+    const dotWidth = 2;
 
     if (scene.textures.exists('dotWithBg')) {
-      scene.textures.remove('dotWithBg')
+      scene.textures.remove('dotWithBg');
     }
 
     if (scene.textures.exists('dotWithBg2')) {
-      scene.textures.remove('dotWithBg2')
+      scene.textures.remove('dotWithBg2');
     }
 
     const mapWidth = scene.worldSize.x / tileSize;
@@ -29,7 +28,10 @@ class Background {
     this.dotTile(scene, tileSize, dotWidth);
 
     const map = scene.make.tilemap({
-      tileWidth: 80, tileHeight: 80, width: mapWidth, height: mapHeight,
+      tileWidth: 80,
+      tileHeight: 80,
+      width: mapWidth,
+      height: mapHeight,
     });
 
     const tiles = map.addTilesetImage('dotWithBg');
@@ -42,14 +44,13 @@ class Background {
   diamondAlternatedDots(scene) {
     const tileSize = 60;
     const dotWidth = 2;
-    
-    if (scene.textures.exists('dotWithBg')) {
-      scene.textures.remove('dotWithBg')
 
+    if (scene.textures.exists('dotWithBg')) {
+      scene.textures.remove('dotWithBg');
     }
 
     if (scene.textures.exists('dotWithBg2')) {
-      scene.textures.remove('dotWithBg2')
+      scene.textures.remove('dotWithBg2');
     }
 
     // dlog('scene, worldSize', scene, scene.worldSize);
@@ -57,7 +58,12 @@ class Background {
     const mapHeight = scene.worldSize.y / tileSize;
     this.dotTile(scene, tileSize, dotWidth);
 
-    const map1 = scene.make.tilemap({ width: mapWidth, height: mapHeight, tileWidth: tileSize, tileHeight: tileSize });
+    const map1 = scene.make.tilemap({
+      width: mapWidth,
+      height: mapHeight,
+      tileWidth: tileSize,
+      tileHeight: tileSize,
+    });
 
     const tileset1 = map1.addTilesetImage('dotWithBg');
     const tileset2 = map1.addTilesetImage('dotWithBg2');
@@ -76,7 +82,6 @@ class Background {
         }
       }
     }
-
   }
 
   dotTile(scene, tileWidth, dotWidth) {
@@ -88,12 +93,26 @@ class Background {
     dot.fillStyle(dotColor);
     dot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false);
 
-    const bgDot = scene.add.rectangle(tileWidth/2, tileWidth/2, tileWidth, tileWidth, fillColor).setVisible(false);
-    const bgDot2 = scene.add.rectangle(tileWidth / 2, tileWidth / 2, tileWidth, tileWidth, fillColor).setVisible(false);
-    
+    const bgDot = scene.add
+      .rectangle(tileWidth / 2, tileWidth / 2, tileWidth, tileWidth, fillColor)
+      .setVisible(false);
+    const bgDot2 = scene.add
+      .rectangle(tileWidth / 2, tileWidth / 2, tileWidth, tileWidth, fillColor)
+      .setVisible(false);
+
     // create renderTexture to place the dot on
-    const dotRendertexture = scene.add.renderTexture(0, 0, tileWidth, tileWidth);
-    const dotRendertexture2 = scene.add.renderTexture(0, 0, tileWidth, tileWidth);
+    const dotRendertexture = scene.add.renderTexture(
+      0,
+      0,
+      tileWidth,
+      tileWidth,
+    );
+    const dotRendertexture2 = scene.add.renderTexture(
+      0,
+      0,
+      tileWidth,
+      tileWidth,
+    );
 
     // draw the dot on the renderTexture
     dotRendertexture.draw(bgDot);
@@ -140,7 +159,12 @@ class Background {
     bgDot.fillCircle(dotWidth, dotWidth, dotWidth).setVisible(false);
 
     // create renderTexture to place the dot on
-    const bgDotRendertexture = scene.add.renderTexture(0, 0, dotWidth * 2, dotWidth * 2);
+    const bgDotRendertexture = scene.add.renderTexture(
+      0,
+      0,
+      dotWidth * 2,
+      dotWidth * 2,
+    );
 
     // draw the dot on the renderTexture
     bgDotRendertexture.draw(bgDot);
@@ -160,7 +184,9 @@ class Background {
         if (j % 2 === 0) {
           scene.add.image(i * offset, j * offsetY, 'dot').setOrigin(0);
         } else {
-          scene.add.image((i * offset) + (offset / 2), j * offsetY, 'dot').setOrigin(0);
+          scene.add
+            .image(i * offset + offset / 2, j * offsetY, 'dot')
+            .setOrigin(0);
         }
       }
     }
@@ -177,14 +203,20 @@ class Background {
     const alpha = 1;
     const maxSize = 1024;
 
-        // check if the name already exists in the TextureManager
+    // check if the name already exists in the TextureManager
     // if so, return
     if (scene.textures.exists(tileMapName)) {
       return;
     }
     // create the square gradient: graphics
     const gradientTile = scene.add.graphics();
-    gradientTile.fillGradientStyle(gradientColor2, gradientColor2, gradientColor1, gradientColor1, alpha);
+    gradientTile.fillGradientStyle(
+      gradientColor2,
+      gradientColor2,
+      gradientColor1,
+      gradientColor1,
+      alpha,
+    );
     // gradientTile.fillRect(0, 0, tileWidth, sceneHeight / 4);
     gradientTile.fillRect(0, 0, tileWidth, sceneHeight / 4);
 
@@ -207,7 +239,10 @@ class Background {
     //   tileWidth, tileHeight: tileWidth, width: mapWidth, height: mapHeight,
     // });
     const map = scene.make.tilemap({
-      tileWidth, tileHeight: tileWidth, width: maxSize, height: maxSize,
+      tileWidth,
+      tileHeight: tileWidth,
+      width: maxSize,
+      height: maxSize,
     });
 
     const tiles = map.addTilesetImage(tileMapName);
@@ -232,17 +267,23 @@ class Background {
 
     // check if the name already exists in the TextureManager
     // if so, return
-    if (scene.textures.exists(tileMapName)) {const bgGradient = scene.add.image(0, 0, tileMapName)
-      .setOrigin(0);
+    if (scene.textures.exists(tileMapName)) {
+      const bgGradient = scene.add.image(0, 0, tileMapName).setOrigin(0);
 
-    // strech the gradient image to the word size
-    bgGradient.displayWidth = scene.worldSize.x;
-    bgGradient.displayHeight = scene.worldSize.y;
+      // strech the gradient image to the word size
+      bgGradient.displayWidth = scene.worldSize.x;
+      bgGradient.displayHeight = scene.worldSize.y;
       return;
     }
     // create the dot: graphics
     const gradientTile = scene.add.graphics();
-    gradientTile.fillGradientStyle(gradientColor1, gradientColor1, gradientColor2, gradientColor2, alpha);
+    gradientTile.fillGradientStyle(
+      gradientColor1,
+      gradientColor1,
+      gradientColor2,
+      gradientColor2,
+      alpha,
+    );
     gradientTile.fillRect(0, 0, tileWidth, tileWidth);
 
     // const rt1 = scene.add.renderTexture(0, 0, worldSize.x, worldSize.y);
@@ -255,8 +296,7 @@ class Background {
 
     gradientTile.destroy();
 
-    const bgGradient = scene.add.image(0, 0, tileMapName)
-      .setOrigin(0);
+    const bgGradient = scene.add.image(0, 0, tileMapName).setOrigin(0);
 
     // strech the gradient image to the word size
     bgGradient.displayWidth = scene.worldSize.x;
@@ -279,7 +319,10 @@ class Background {
     // check if the name already exists in the TextureManager
     // if so, return
     if (scene.textures.exists(name)) {
-      scene[name] = scene.add.image(posX, posY, name).setOrigin(0.5).setScale(1);
+      scene[name] = scene.add
+        .image(posX, posY, name)
+        .setOrigin(0.5)
+        .setScale(1);
       scene[name].name = name;
       return;
     }
@@ -303,16 +346,15 @@ class Background {
     rt1.erase(eraser, size / 2, size / 2);
 
     // erase the rect with the cutout from the second rect, creating the circle with gradient
-    rt2.erase(rt1, size/2, size/2);
+    rt2.erase(rt1, size / 2, size / 2);
 
     // the center of the renderTexture has offset of (size / 2)
     if (imageOnly === true) {
       posX = 0;
       posY = 0;
     }
-    rt2.x = posX - (size / 2);
-    rt2.y = posY - (size / 2);
-
+    rt2.x = posX - size / 2;
+    rt2.y = posY - size / 2;
 
     // save the rendertexture with a key
     // and as this.[name] on scene level
@@ -322,7 +364,10 @@ class Background {
 
     // with imageOnly we don't place it into the scene with a name and reference
     if (typeof imageOnly === 'undefined' || imageOnly === false) {
-      scene[name] = scene.add.image(posX, posY, name).setOrigin(0.5).setScale(1);
+      scene[name] = scene.add
+        .image(posX, posY, name)
+        .setOrigin(0.5)
+        .setScale(1);
       scene[name].name = name;
     }
 
@@ -357,7 +402,13 @@ class Background {
       alpha = 1;
     }
     const rectangle = scene.add.graphics();
-    rectangle.fillGradientStyle(gradient1, gradient2, gradient3, gradient4, alpha);
+    rectangle.fillGradientStyle(
+      gradient1,
+      gradient2,
+      gradient3,
+      gradient4,
+      alpha,
+    );
     rectangle.fillRect(0, 0, width, height);
 
     // const rt1 = scene.add.renderTexture(0, 0, worldSize.x, worldSize.y);
@@ -372,7 +423,10 @@ class Background {
 
     // with imageOnly we don't place it into the scene with a name and reference
     if (typeof imageOnly === 'undefined' || imageOnly === false) {
-      scene[name] = scene.add.image(posX, posY, name).setOrigin(setOrigin).setScale(1);
+      scene[name] = scene.add
+        .image(posX, posY, name)
+        .setOrigin(setOrigin)
+        .setScale(1);
       scene[name].name = name;
     }
   }
@@ -389,7 +443,6 @@ class Background {
     const { setOrigin } = config;
     const { imageOnly } = config;
 
-
     // check if the name already exists in the TextureManager
     // if so, return
     if (scene.textures.exists(name)) {
@@ -401,7 +454,14 @@ class Background {
     const partHeight = height / 6;
     // dlog("width, partWidth, height, partHeight", width, partWidth, height, partHeight)
 
-    const rectangle = scene.add.rectangle(0, 0, partWidth, partHeight, color, alpha);
+    const rectangle = scene.add.rectangle(
+      0,
+      0,
+      partWidth,
+      partHeight,
+      color,
+      alpha,
+    );
 
     const rt1 = scene.add.renderTexture(0, 0, partWidth, partWidth);
 
@@ -414,7 +474,11 @@ class Background {
 
     // with imageOnly we don't place it into the scene with a name and reference
     if (typeof imageOnly === 'undefined' || imageOnly === false) {
-      const square1 = scene.add.image(posX, posY, name).setOrigin(setOrigin).setScale(12).setInteractive()
+      const square1 = scene.add
+        .image(posX, posY, name)
+        .setOrigin(setOrigin)
+        .setScale(12)
+        .setInteractive()
         .on('pointerdown', () => {
           ManageSession.playerIsAllowedToMove = true;
         })
@@ -450,7 +514,13 @@ class Background {
 
     const graphics = scene.add.graphics();
 
-    graphics.fillGradientStyle(gradient1, gradient2, gradient3, gradient4, alpha);
+    graphics.fillGradientStyle(
+      gradient1,
+      gradient2,
+      gradient3,
+      gradient4,
+      alpha,
+    );
     // 0 0 is upper left corner
     // p1 = left down = + size / 0
     // p2 = middle up = 0 / + 1/2size
@@ -464,7 +534,10 @@ class Background {
 
     // with imageOnly we don't place it into the scene with a name and reference
     if (typeof imageOnly === 'undefined' || imageOnly === false) {
-      scene[name] = scene.add.image(posX, posY, name).setOrigin(setOrigin).setScale(1);
+      scene[name] = scene.add
+        .image(posX, posY, name)
+        .setOrigin(setOrigin)
+        .setScale(1);
       scene[name].name = name;
     }
 
@@ -482,7 +555,6 @@ class Background {
 
     const { spikes } = config;
 
-
     // check if the name already exists in the TextureManager
     // if so, return
     if (scene.textures.exists(name)) {
@@ -499,10 +571,30 @@ class Background {
     const rectangle = scene.add.graphics();
     const rt2 = scene.add.renderTexture(0, 0, size * 2, size * 2);
 
-    this.drawStar(graphics, rt1, rt2, rectangle, name, spikes, size, gradient1, gradient2);
+    this.drawStar(
+      graphics,
+      rt1,
+      rt2,
+      rectangle,
+      name,
+      spikes,
+      size,
+      gradient1,
+      gradient2,
+    );
   }
 
-  drawStar(graphics, rt1, rt2, rectangle, name, spikes, outerRadius, color, lineColor) {
+  drawStar(
+    graphics,
+    rt1,
+    rt2,
+    rectangle,
+    name,
+    spikes,
+    outerRadius,
+    color,
+    lineColor,
+  ) {
     const innerRadius = outerRadius / 2;
     const cx = outerRadius;
     const cy = outerRadius;
@@ -534,8 +626,6 @@ class Background {
     graphics.fillPath();
     graphics.strokePath();
 
-
-
     // rectangle.setVisible(false);
     const size = outerRadius * 2;
     rectangle.fillGradientStyle(color, color, lineColor, lineColor, 1);
@@ -545,10 +635,9 @@ class Background {
     rt2.draw(rectangle); // rect
 
     // erase the star from the first rect
-    rt2.erase(rt1, size/2, size/2);
+    rt2.erase(rt1, size / 2, size / 2);
     rt1.draw(rectangle);
-    rt1.erase(rt2, size/2, size/2);
-
+    rt1.erase(rt2, size / 2, size / 2);
 
     // rt1.draw(graphics);
     rt1.saveTexture(name);

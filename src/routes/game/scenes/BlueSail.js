@@ -13,12 +13,11 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
-
 
 export default class BlueSail extends Phaser.Scene {
   constructor() {
@@ -74,9 +73,7 @@ export default class BlueSail extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -96,7 +93,6 @@ export default class BlueSail extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -121,11 +117,7 @@ export default class BlueSail extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -134,7 +126,10 @@ export default class BlueSail extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -163,7 +158,7 @@ export default class BlueSail extends Phaser.Scene {
     //are accessed in Servercall.repositionContainers
     this.artDisplaySize = ART_DISPLAY_SIZE;
     this.artMargin = ART_OFFSET_BETWEEN;
-    
+
     const type = 'downloadLikedDrawing';
     const serverObjectsHandler = ManageSession.likedStore;
     const userId = '';
@@ -173,7 +168,11 @@ export default class BlueSail extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
 

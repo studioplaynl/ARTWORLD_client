@@ -5,7 +5,6 @@ import ManageSession from '../ManageSession';
 
 import * as Phaser from 'phaser';
 
-
 export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
   constructor(scene, element, artSize) {
     if (scene === null) {
@@ -34,7 +33,7 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
       const avatarFrames = Math.round(avatarWidth / avatarHeight);
       let setFrameRate = 0;
       if (avatarFrames > 1) {
-        setFrameRate = (avatarFrames * 2) + 2;
+        setFrameRate = avatarFrames * 2 + 2;
       } else {
         setFrameRate = 0;
       }
@@ -42,7 +41,10 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
       // set names for the moving and stop animations
       scene.anims.create({
         key: `moving_${avatarKey}`,
-        frames: scene.anims.generateFrameNumbers(avatarKey, { start: 0, end: avatarFrames - 1 }),
+        frames: scene.anims.generateFrameNumbers(avatarKey, {
+          start: 0,
+          end: avatarFrames - 1,
+        }),
         frameRate: setFrameRate,
         repeat: -1,
         yoyo: true,
@@ -50,14 +52,23 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
 
       scene.anims.create({
         key: `stop_${avatarKey}`,
-        frames: scene.anims.generateFrameNumbers(avatarKey, { start: 0, end: 0 }),
-      // frameRate: 8,
-      // repeat: -1,
-      // yoyo: true
+        frames: scene.anims.generateFrameNumbers(avatarKey, {
+          start: 0,
+          end: 0,
+        }),
+        // frameRate: 8,
+        // repeat: -1,
+        // yoyo: true
       });
 
-      const tempX = Phaser.Math.Between((this.artSize * 2), scene.worldSize.x - (this.artSize * 2));
-      const tempY = Phaser.Math.Between((this.artSize * 2), scene.worldSize.y - (this.artSize * 2));
+      const tempX = Phaser.Math.Between(
+        this.artSize * 2,
+        scene.worldSize.x - this.artSize * 2,
+      );
+      const tempY = Phaser.Math.Between(
+        this.artSize * 2,
+        scene.worldSize.y - this.artSize * 2,
+      );
 
       // dlog('tempX, tempY', tempX, tempY);
       this.animal = scene.physics.add.sprite(tempX, tempY, 'avatar1');
@@ -74,19 +85,29 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
 
       this.animal.name = 'dier';
 
-      this.animal.setVelocity(Phaser.Math.Between(-300, 401), Phaser.Math.Between(-200, 400));
+      this.animal.setVelocity(
+        Phaser.Math.Between(-300, 401),
+        Phaser.Math.Between(-200, 400),
+      );
 
       // this.animal.setInteractive()
       this.animal.setDepth(200);
       // dlog('this.animal', this.animal);
       const tempDelay = Phaser.Math.Between(1000, 20000);
       scene.time.addEvent({
-        delay: tempDelay, callback: this.stopAnimalMovement, args: [this.animal], callbackScope: this, loop: false,
+        delay: tempDelay,
+        callback: this.stopAnimalMovement,
+        args: [this.animal],
+        callbackScope: this,
+        loop: false,
       });
     } catch (error) {
-      console.error('An error occurred while adding the object to the scene:', error);
+      console.error(
+        'An error occurred while adding the object to the scene:',
+        error,
+      );
     }
-  }// end constructor
+  } // end constructor
 
   preUpdate(time, delta) {
     // time and delta are essential to make animations work within the class!
@@ -94,29 +115,45 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
     if (typeof this.animal.body === 'undefined') return;
     this.lastVelocity = this.animal.body.velocity;
 
-    if (this.animal.x < (0 + (this.artSize / 2))) {
+    if (this.animal.x < 0 + this.artSize / 2) {
       let newVelocityX = this.lastVelocity.x;
-      const newVelocityY = Phaser.Math.Between((this.lastVelocity.y * 0.4), (this.lastVelocity.y * 1.6)) + 10;
+      const newVelocityY =
+        Phaser.Math.Between(
+          this.lastVelocity.y * 0.4,
+          this.lastVelocity.y * 1.6,
+        ) + 10;
       newVelocityX = Math.abs(this.lastVelocity.x);
       this.animal.body.setVelocity(newVelocityX, newVelocityY);
     }
 
-    if (this.animal.x > (this.animal.scene.worldSize.x - (this.artSize / 2))) {
+    if (this.animal.x > this.animal.scene.worldSize.x - this.artSize / 2) {
       let newVelocityX = this.lastVelocity.x;
-      const newVelocityY = Phaser.Math.Between((this.lastVelocity.y * 0.4), (this.lastVelocity.y * 1.6)) + 10;
+      const newVelocityY =
+        Phaser.Math.Between(
+          this.lastVelocity.y * 0.4,
+          this.lastVelocity.y * 1.6,
+        ) + 10;
       newVelocityX = Math.abs(this.lastVelocity.x) * -1;
       this.animal.body.setVelocity(newVelocityX, newVelocityY);
     }
 
-    if (this.animal.y < (0 + (this.artSize / 2))) {
-      const newVelocityX = Phaser.Math.Between((this.lastVelocity.x * 0.4), (this.lastVelocity.x * 1.8)) + 10;
+    if (this.animal.y < 0 + this.artSize / 2) {
+      const newVelocityX =
+        Phaser.Math.Between(
+          this.lastVelocity.x * 0.4,
+          this.lastVelocity.x * 1.8,
+        ) + 10;
       let newVelocityY = this.lastVelocity.y;
       newVelocityY = Math.abs(this.lastVelocity.y);
       this.animal.body.setVelocity(newVelocityX, newVelocityY);
     }
 
-    if (this.animal.y > (this.animal.scene.worldSize.y - (this.artSize / 2))) {
-      const newVelocityX = Phaser.Math.Between((this.lastVelocity.x * 0.4), (this.lastVelocity.x * 1.8)) + 10;
+    if (this.animal.y > this.animal.scene.worldSize.y - this.artSize / 2) {
+      const newVelocityX =
+        Phaser.Math.Between(
+          this.lastVelocity.x * 0.4,
+          this.lastVelocity.x * 1.8,
+        ) + 10;
       let newVelocityY = this.lastVelocity.y;
       newVelocityY = Math.abs(this.lastVelocity.y) * -1;
       this.animal.body.setVelocity(newVelocityX, newVelocityY);
@@ -143,19 +180,30 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
       gameobject.play(tempAnim);
       const tempDelay = Phaser.Math.Between(1000, 5000);
       this.scene.time.addEvent({
-        delay: tempDelay, callback: this.resumeAnimalMovement, args: [gameobject], callbackScope: this, loop: false,
+        delay: tempDelay,
+        callback: this.resumeAnimalMovement,
+        args: [gameobject],
+        callbackScope: this,
+        loop: false,
       });
     }
   }
 
   resumeAnimalMovement(gameobject) {
     const tempAnim = gameobject.getData('moveAnim');
-    gameobject.body.setVelocity(Phaser.Math.Between(30, 350), Phaser.Math.Between(-30, -500));
+    gameobject.body.setVelocity(
+      Phaser.Math.Between(30, 350),
+      Phaser.Math.Between(-30, -500),
+    );
     gameobject.play(tempAnim);
 
     const tempDelay = Phaser.Math.Between(1000, 20000);
     this.scene.time.addEvent({
-      delay: tempDelay, callback: this.stopAnimalMovement, args: [gameobject], callbackScope: this, loop: false,
+      delay: tempDelay,
+      callback: this.stopAnimalMovement,
+      args: [gameobject],
+      callbackScope: this,
+      loop: false,
     });
   }
 } // end class

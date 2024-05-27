@@ -6,13 +6,15 @@ Children of the group can’t be moved with the grouping
 Containers can be used to move members.
 
 does not work:
-* this.getChildren()
-* this.scene.getChildren()
-* this.Scene.getChildren()
-Works:
-* Group.getChildren()
+
+- this.getChildren()
+- this.scene.getChildren()
+- this.Scene.getChildren()
+  Works:
+- Group.getChildren()
 
 ---
+
 ```
 group.create(400, 300, ‘phaser’);
 //  The above is a short-cut for:
@@ -21,6 +23,7 @@ group.create(400, 300, ‘phaser’);
 ```
 
 ---
+
 Sprite pool example
 
 https://phaser.io/examples/v3/view/game-objects/group/sprite-pool

@@ -24,7 +24,7 @@ this.resolveErrorObjectArray = []
     }
 
     resolveLoadError(offendingFile) {
-      
+
         let resolveErrorObject = this.resolveErrorObjectArray.find(obj => obj.imageKey == offendingFile.key)
 
         let loadFunction = resolveErrorObject.loadFunction
@@ -55,9 +55,9 @@ this.resolveErrorObjectArray = []
     }
 ```
 
-***
+---
 
-Was using this:   
+Was using this:
 
 ```
 scene.load.image(homeImageKey, rec)
@@ -68,18 +68,19 @@ scene.load.image(homeImageKey, rec)
                     .on(`loaderror`, (offendingFile) => { this.resolveLoadError(element, index, homeImageKey, offendingFile, scene) }, this)
                 scene.load.start()
 ```
+
 But the .on('loaderror) callback is for the whole scene, so it is difficult to create a callback specific for a method.
 
 On way to do it maybe is to only add to the queue when a method is finished. So to use to load queue per loading method/ sequence...
 
-***
+---
 
-Async loader plugin:   
+Async loader plugin:  
 [https://pablo.gg/en/blog/games/how-to-load-assets-asynchronously-with-phaser-3/](https://pablo.gg/en/blog/games/how-to-load-assets-asynchronously-with-phaser-3/)
 
+---
 
-***
-Maybe a useful methode:    
+Maybe a useful methode:  
 [https://phaser.discourse.group/t/loading-audio/1306/4](https://phaser.discourse.group/t/loading-audio/1306/4)
 
 ```

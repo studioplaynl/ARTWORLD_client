@@ -13,7 +13,6 @@ import { SCENE_INFO } from '../../../constants';
 
 import * as Phaser from 'phaser';
 
-
 class DebugFuntions {
   constructor() {
     this.shiftDown = false;
@@ -39,21 +38,29 @@ class DebugFuntions {
 
     // check all key up events
     // only activate debug functions when in edit mode
-    scene.input.keyboard.on('keyup', (event) => {
-      if (ManageSession.gameEditMode) {
-        // dlog(event)
-        this.debugUpKeys(scene, event.code);
-      }
-    }, this);
+    scene.input.keyboard.on(
+      'keyup',
+      (event) => {
+        if (ManageSession.gameEditMode) {
+          // dlog(event)
+          this.debugUpKeys(scene, event.code);
+        }
+      },
+      this,
+    );
 
     // only activate debug functions when in edit mode
-    scene.input.keyboard.on('keydown', (event) => {
-      // events for gameEdit mode, like scaling a selected object
-      if (ManageSession.gameEditMode) {
-        // dlog(event)
-        this.debugDownKeys(scene, event.code);
-      }
-    }, this);
+    scene.input.keyboard.on(
+      'keydown',
+      (event) => {
+        // events for gameEdit mode, like scaling a selected object
+        if (ManageSession.gameEditMode) {
+          // dlog(event)
+          this.debugDownKeys(scene, event.code);
+        }
+      },
+      this,
+    );
   }
 
   debugDownKeys(scene, code) {
@@ -106,18 +113,14 @@ class DebugFuntions {
       case 'KeyR':
         rotation = selectedGameObject.rotation;
         rotation += 0.05;
-        selectedGameObject.setRotation(
-          rotation,
-        );
+        selectedGameObject.setRotation(rotation);
 
         break;
 
       case 'KeyT':
         rotation = selectedGameObject.rotation;
         rotation -= 0.05;
-        selectedGameObject.setRotation(
-          rotation,
-        );
+        selectedGameObject.setRotation(rotation);
 
         break;
 
@@ -128,19 +131,18 @@ class DebugFuntions {
   }
 
   runPromise(type, userId, limit, rec, page) {
-    Promise.all([
-              listObjects(type, userId, limit, rec[0].cursor),
-              ])
-                .then((rec2) => {
-                  dlog(type, ' listObjects: ', rec2[0]);
-                  page = rec2[0].objects
-                    page.forEach((element)=> {
-                      console.log(element.create_time)
-                    })
-                  if (rec2[0].cursor != undefined) {
-                    this.runPromise(type, userId, limit, rec2)
-                  }
-                });
+    Promise.all([listObjects(type, userId, limit, rec[0].cursor)]).then(
+      (rec2) => {
+        dlog(type, ' listObjects: ', rec2[0]);
+        page = rec2[0].objects;
+        page.forEach((element) => {
+          console.log(element.create_time);
+        });
+        if (rec2[0].cursor != undefined) {
+          this.runPromise(type, userId, limit, rec2);
+        }
+      },
+    );
   }
 
   debugUpKeys(scene, code) {
@@ -174,27 +176,26 @@ class DebugFuntions {
     sceneNames.push('PreloadScene');
     sceneNames.push('UIScene');
 
-
     switch (code) {
-      case ('ArrowRight'):
+      case 'ArrowRight':
         // reserverd for moving the camera in EditMode
         currentScene.player.x += 50;
         currentScene.playerShadow.x += 50;
         break;
 
-      case ('ArrowLeft'):
+      case 'ArrowLeft':
         // reserverd for moving the camera in EditMode
         currentScene.player.x -= 50;
         currentScene.playerShadow.x -= 50;
         break;
 
-      case ('ArrowUp'):
+      case 'ArrowUp':
         // reserverd for moving the camera in EditMode
         currentScene.player.y -= 50;
         currentScene.playerShadow.y -= 50;
         break;
 
-      case ('ArrowDown'):
+      case 'ArrowDown':
         // reserverd for moving the camera in EditMode
         currentScene.player.y += 50;
         currentScene.playerShadow.y += 50;
@@ -223,39 +224,30 @@ class DebugFuntions {
         const userId = null;
         let cursor;
 
-        let page
-        Promise.all([
-          listObjects(type, userId, limit),
-        ])
-          .then((rec) => {
-            dlog(type, ' listObjects: ', rec[0]);
+        let page;
+        Promise.all([listObjects(type, userId, limit)]).then((rec) => {
+          dlog(type, ' listObjects: ', rec[0]);
 
-            page = rec[0].objects
-            // page.forEach((element)=> {
-            //   console.log(element.update_time)
-            // })
+          page = rec[0].objects;
+          // page.forEach((element)=> {
+          //   console.log(element.update_time)
+          // })
 
-            if (rec[0].cursor != undefined) {
-            
-             // this.runPromise(type, userId, limit, rec, page)
-              
+          if (rec[0].cursor != undefined) {
+            // this.runPromise(type, userId, limit, rec, page)
           }
+        });
 
-          });
-        
-        Promise.all([
-          listAllObjects(type, userId, limit, cursor),
-        ])
-          .then((rec) => {
+        Promise.all([listAllObjects(type, userId, limit, cursor)]).then(
+          (rec) => {
             dlog(type, ' listAllObjects: ', rec[0]);
-            page = rec[0]
-            page.forEach((element)=> {
-              console.log(element.update_time)
-            })
+            page = rec[0];
+            page.forEach((element) => {
+              console.log(element.update_time);
+            });
+          },
+        );
 
-          });
-        
-        
         // ManageSession.getStreamUsers("get_users", scene.location)
         // listObjects("addressbook", userProfile.id, 10)
 
@@ -277,11 +269,16 @@ class DebugFuntions {
       case 'Digit3':
         dlog(code);
 
-        dlog('offending scene.userStopmotionServerList.array', currentScene.userStopmotionServerList.array);
-        dlog('offending ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
+        dlog(
+          'offending scene.userStopmotionServerList.array',
+          currentScene.userStopmotionServerList.array,
+        );
+        dlog(
+          'offending ManageSession.resolveErrorObjectArray',
+          ManageSession.resolveErrorObjectArray,
+        );
 
         break;
-
 
       case 'KeyD':
         dlog(code);
@@ -290,7 +287,9 @@ class DebugFuntions {
         dlog(currentScene.textures.list);
 
         // Return an array listing the events for which the emitter has registered listeners.
-        dlog('Return an array listing the events for which the emitter has registered listeners: ');
+        dlog(
+          'Return an array listing the events for which the emitter has registered listeners: ',
+        );
         dlog(currentScene.textures.eventNames());
 
         dlog(currentScene.children); // get the whole DisplayList
@@ -301,7 +300,10 @@ class DebugFuntions {
         dlog(code);
         dlog('scene.onlinePlayers: ', currentScene.onlinePlayers);
         dlog('ManageSession.allConnectedUsers: ', allConnectedUsers);
-        dlog('onlinePlayerGroup Children: ', currentScene.onlinePlayersGroup.getChildren());
+        dlog(
+          'onlinePlayerGroup Children: ',
+          currentScene.onlinePlayersGroup.getChildren(),
+        );
         dlog('scene.player: ', currentScene.player);
 
         break;
@@ -354,7 +356,6 @@ class DebugFuntions {
         //! reserved for updating homes as ADMIN
         dlog(code);
 
-
         dlog('a selected home will be saved server side');
         dlog('selectedGameObject container:', selectedGameObject);
 
@@ -384,7 +385,13 @@ class DebugFuntions {
           const valueObject = selectedHomeObject.value;
           const pubObject = 2;
 
-          updateObjectAdmin(idObject, typeObject, nameObject, valueObject, pubObject);
+          updateObjectAdmin(
+            idObject,
+            typeObject,
+            nameObject,
+            valueObject,
+            pubObject,
+          );
         } else {
           dlog('The selected gameObject is not a user Home');
         }
@@ -406,13 +413,17 @@ class DebugFuntions {
         );
         dlog(
           'artworldCoordinates: ',
-          Phaser2DToArtworldX(currentScene.worldSize.x, scene.input.activePointer.worldX),
-          Phaser2DToArtworldX(currentScene.worldSize.y, scene.input.activePointer.worldY),
+          Phaser2DToArtworldX(
+            currentScene.worldSize.x,
+            scene.input.activePointer.worldX,
+          ),
+          Phaser2DToArtworldX(
+            currentScene.worldSize.y,
+            scene.input.activePointer.worldY,
+          ),
         );
 
         break;
-
-
 
       case 'Equal':
       case 'Minus':

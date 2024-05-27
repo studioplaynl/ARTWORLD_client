@@ -11,14 +11,11 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import { PlayerHistory, PlayerPos, PlayerZoom } from '../playerState';
-    import {
-  SCENE_INFO,
- } from '../../../constants';
+import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 
 import * as Phaser from 'phaser';
-
 
 export default class ChallengeAnimalGarden extends Phaser.Scene {
   constructor() {
@@ -60,10 +57,10 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -90,9 +87,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     ManageSession.worldSize = this.worldSize;
     //!
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     Background.diamondAlternatedDots(this);
 
@@ -105,22 +100,14 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      artworldToPhaser2DX(
-        this.worldSize.x,
-        get(PlayerPos).x,
-      ),
-      artworldToPhaser2DY(
-        this.worldSize.y,
-        get(PlayerPos).y,
-      ),
+      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
     ).setDepth(201);
-    
-    this.playerShadow = new PlayerDefaultShadow(
-      {
-        scene: this,
-        texture: ManageSession.playerAvatarPlaceholder,
-      },
-    ).setDepth(200);
+
+    this.playerShadow = new PlayerDefaultShadow({
+      scene: this,
+      texture: ManageSession.playerAvatarPlaceholder,
+    }).setDepth(200);
     // for back button, has to be done after player is created for the history tracking!
 
     // ....... PLAYER VS WORLD .............................................................................
@@ -145,7 +132,6 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.reloadButton();
   } // end create
 
-
   getAnimals(serverObjectsHandler) {
     const type = 'dier';
     const userId = null; // to get all users' artworks
@@ -153,13 +139,17 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
     });
   }
 
-
   reloadButton() {
-    const reloadButton = this.add.image((this.worldSize.x / 2) - 300, -50, 'reloadSign').setDepth(200);
+    const reloadButton = this.add
+      .image(this.worldSize.x / 2 - 300, -50, 'reloadSign')
+      .setDepth(200);
     reloadButton.setInteractive();
     reloadButton.on('pointerup', () => {
       // reload the animal garden to show new animals
@@ -170,7 +160,9 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
   makeNewAnimalButton() {
     // add the plussign button to the scene
-    const plusSign = this.add.image(this.worldSize.x / 2, -50, 'plusSign').setDepth(200);
+    const plusSign = this.add
+      .image(this.worldSize.x / 2, -50, 'plusSign')
+      .setDepth(200);
     plusSign.setInteractive();
     plusSign.on('pointerup', () => {
       /* Make a new artwork */

@@ -13,14 +13,13 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
 // import PreloadScene from './PreloadScene';
 
 import * as Phaser from 'phaser';
-
 
 export default class BijenWereld extends Phaser.Scene {
   constructor() {
@@ -49,10 +48,10 @@ export default class BijenWereld extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -65,9 +64,11 @@ export default class BijenWereld extends Phaser.Scene {
 
     const folderPath = './assets/world_bees/';
 
-
     const loadArray = [
-      { key: 'Portal_naarHuis_bijen', path: `${folderPath}02a_Portaal_bee_naar_home-fs8.png` },
+      {
+        key: 'Portal_naarHuis_bijen',
+        path: `${folderPath}02a_Portaal_bee_naar_home-fs8.png`,
+      },
 
       // { key: 'bijenwereld', path: `${folderPath}01_Wereld14_Beehive_geheel.jpg` },
     ];
@@ -76,12 +77,11 @@ export default class BijenWereld extends Phaser.Scene {
 
     this.backgroundImageKey = 'bee_background_';
     //  load 9 images in a for loop
-        for (let i = 0; i < 9; i++)
-        {
-            const key = 'image' + i;
-            const name = folderPath + "image_part_" + i + ".jpeg";
-            this.load.image(this.backgroundImageKey + i, name);
-        }
+    for (let i = 0; i < 9; i++) {
+      const key = 'image' + i;
+      const name = folderPath + 'image_part_' + i + '.jpeg';
+      this.load.image(this.backgroundImageKey + i, name);
+    }
   }
 
   async create() {
@@ -113,9 +113,7 @@ export default class BijenWereld extends Phaser.Scene {
     // });
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -135,7 +133,6 @@ export default class BijenWereld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -160,11 +157,7 @@ export default class BijenWereld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -173,7 +166,10 @@ export default class BijenWereld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -212,7 +208,11 @@ export default class BijenWereld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
 
@@ -246,12 +246,17 @@ export default class BijenWereld extends Phaser.Scene {
     let beginImage = 0;
 
     for (let j = 0; j < 3; j++) {
-      for (let i = 0; i < 3; i++){
-        this.add.image(partSize * j, partSize * i, this.backgroundImageKey + beginImage).setOrigin(0);
+      for (let i = 0; i < 3; i++) {
+        this.add
+          .image(
+            partSize * j,
+            partSize * i,
+            this.backgroundImageKey + beginImage,
+          )
+          .setOrigin(0);
         beginImage++;
-
-          }
-        }
+      }
+    }
   }
 
   update() {

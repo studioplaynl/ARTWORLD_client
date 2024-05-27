@@ -1,47 +1,34 @@
 ---
-title: "Log: feature - place visitor next to house"
-date: "2023-01-10"
+title: 'Log: feature - place visitor next to house'
+date: '2023-01-10'
 ---
 
 current user -> profile:
 
-1. _{id: 'f011a5dc-901a-42c0-9589-587b389d1e3e', username: 'user11', avatar\_url: 'avatar/f011a5dc-901a-42c0-9589-587b389d1e3e/0\_2023-01-03T21\_08\_17\_WitKaaiman.png', lang\_tag: 'en', metadata: '{"Azc": "GreenSquare", "PosX": -1635, "PosY": 749,…eAnimalGarden", "TotalPlayTime": 398437367465947}', …}_
-    1. **avatar\_url**: "avatar/f011a5dc-901a-42c0-9589-587b389d1e3e/0\_2023-01-03T21\_08\_17\_WitKaaiman.png"
-    
-    3. **create\_time**: "2022-05-11T12:18:13Z"
-    
-    5. **edge\_count**: 2
-    
-    7. **id**: "f011a5dc-901a-42c0-9589-587b389d1e3e"
-    
-    9. **lang\_tag**: "en"
-    
-    11. **meta**:
-        1. **Azc**: "GreenSquare"
-        
-        3. **Location**: "ChallengeAnimalGarden"
-        
-        5. **PosX**: -1635
-        
-        7. **PosY**: 749
-        
-        9. **Role**: "speler"
-        
-        11. **TotalPlayTime**: 398437367465947
-        
-        13. **User\_id**: ""
-        
-        15. \[\[Prototype\]\]: Object
-    
-    13. **metadata**: "{\\"Azc\\": \\"GreenSquare\\", \\"PosX\\": -1635, \\"PosY\\": 749, \\"Role\\": \\"speler\\", \\"User\_id\\": \\"\\", \\"Location\\": \\"ChallengeAnimalGarden\\", \\"TotalPlayTime\\": 398437367465947}"
-    
-    15. **update\_time**: "2023-01-09T14:39:58Z"
-    
-    17. **url**: "https://d1p8yo0yov6nht.cloudfront.net/fit-in/1800x150/filters:format(png)/avatar/f011a5dc-901a-42c0-9589-587b389d1e3e/0\_2023-01-03T21\_08\_17\_WitKaaiman.png?signature=67efc42a243ded09f3acde439217b6d4abf81f6f71694dd4bfd4dd23b4e8a547"
-    
-    19. **username**: "user11"
+1. _{id: 'f011a5dc-901a-42c0-9589-587b389d1e3e', username: 'user11', avatar_url: 'avatar/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-01-03T21_08_17_WitKaaiman.png', lang_tag: 'en', metadata: '{"Azc": "GreenSquare", "PosX": -1635, "PosY": 749,…eAnimalGarden", "TotalPlayTime": 398437367465947}', …}_
 
-* * *
+   1. **avatar_url**: "avatar/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-01-03T21_08_17_WitKaaiman.png"
+   2. **create_time**: "2022-05-11T12:18:13Z"
+   3. **edge_count**: 2
+   4. **id**: "f011a5dc-901a-42c0-9589-587b389d1e3e"
+   5. **lang_tag**: "en"
+   6. **meta**:
+
+      1. **Azc**: "GreenSquare"
+      2. **Location**: "ChallengeAnimalGarden"
+      3. **PosX**: -1635
+      4. **PosY**: 749
+      5. **Role**: "speler"
+      6. **TotalPlayTime**: 398437367465947
+      7. **User_id**: ""
+      8. \[\[Prototype\]\]: Object
+
+   7. **metadata**: "{\\"Azc\\": \\"GreenSquare\\", \\"PosX\\": -1635, \\"PosY\\": 749, \\"Role\\": \\"speler\\", \\"User_id\\": \\"\\", \\"Location\\": \\"ChallengeAnimalGarden\\", \\"TotalPlayTime\\": 398437367465947}"
+   8. **update_time**: "2023-01-09T14:39:58Z"
+   9. **url**: "https://d1p8yo0yov6nht.cloudfront.net/fit-in/1800x150/filters:format(png)/avatar/f011a5dc-901a-42c0-9589-587b389d1e3e/0\_2023-01-03T21\_08\_17\_WitKaaiman.png?signature=67efc42a243ded09f3acde439217b6d4abf81f6f71694dd4bfd4dd23b4e8a547"
+   10. **username**: "user11"
+
+---
 
 'Other' user: nakama object house with user id
 
@@ -53,15 +40,15 @@ $SelectedOnlinePlayer.meta.PosY = -30
 
 In selectedOnlinePlayerBar.svelte
 
-* * *
+---
 
 **Cases where we click on a house and want to be taken next to house**
 
 1. itemsBar currentPlayer, left, house icon
 
-3. itemsBar selectedOnlinePlayer, house icon
+2. itemsBar selectedOnlinePlayer, house icon
 
-* * *
+---
 
 Case 1: current player
 
@@ -116,10 +103,10 @@ userHouseObject = {
     "user_id": "f011a5dc-901a-42c0-9589-587b389d1e3e",
     "create_time": "2022-08-07T09:20:32Z",
     "update_time": "2023-01-03T21:09:04Z"
-} 
+}
 ```
 
-* * *
+---
 
 There is a bug in switching user from location to location that has to be fixed first
 

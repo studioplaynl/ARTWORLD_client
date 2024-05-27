@@ -3,7 +3,6 @@ Locations is being stored as an object in the database, with a collection name(t
 That means you can have multiple locations, within the same collection and with the same key, but from a different user.
 This for instance makes it possible to search for all "userhouses" in "locationA".
 
-
 ## list Locations
 
 `listObjects(type, userID, limit)`
@@ -28,6 +27,7 @@ response example:
     ]
 
 ## create/update locations
+
 if you are admin(this gives you the possibility to create locations for other users):
 
 `updateObjectAdmin(id, type, name, value, pub)`
@@ -37,6 +37,7 @@ if not admin:
 `updateObject(type, name, value, pub)`
 
 ## delete object
+
 if admin:
 
 `deleteObjectAdmin(id, type, name);`

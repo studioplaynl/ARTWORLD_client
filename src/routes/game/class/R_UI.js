@@ -5,10 +5,11 @@
 
 class R_UI {
   createPanel(scene, data) {
-    const sizer = scene.rexUI.add.sizer({
-      orientation: 'y',
-      space: { item: 10 },
-    })
+    const sizer = scene.rexUI.add
+      .sizer({
+        orientation: 'y',
+        space: { item: 10 },
+      })
       .add(
         this.createTable(scene, data, 'artworks', 1), // child
         { expand: true }, // the black border in the Table
@@ -28,9 +29,10 @@ class R_UI {
       name: key, // Search this name to get table back
     });
 
-    let item; let r; let
-      c;
-    const iconSize = (columns === 1) ? 80 : 40;
+    let item;
+    let r;
+    let c;
+    const iconSize = columns === 1 ? 80 : 40;
     for (let i = 0; i < items.length; i += 1) {
       item = items[i];
       c = i % columns;
@@ -45,14 +47,21 @@ class R_UI {
       );
     }
 
-    return scene.rexUI.add.sizer({
-      orientation: 'y',
-      space: {
-        left: 10, right: 10, top: 10, bottom: 10, item: 10,
-      },
-    })
+    return scene.rexUI.add
+      .sizer({
+        orientation: 'y',
+        space: {
+          left: 10,
+          right: 10,
+          top: 10,
+          bottom: 10,
+          item: 10,
+        },
+      })
       .addBackground(
-        scene.rexUI.add.roundRectangle(0, 0, 0, 0, 0, undefined).setStrokeStyle(4, 0x000000, 1),
+        scene.rexUI.add
+          .roundRectangle(0, 0, 0, 0, 0, undefined)
+          .setStrokeStyle(4, 0x000000, 1),
       )
       .add(
         table, // child

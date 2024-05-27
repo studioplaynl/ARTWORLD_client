@@ -3,7 +3,6 @@ import CoordinatesTranslator from './CoordinatesTranslator';
 
 import * as Phaser from 'phaser';
 
-
 /** Create a curve with handles in edit mode
  * @todo Work in progress! */
 export default class CurveWithHandles {
@@ -16,11 +15,16 @@ export default class CurveWithHandles {
     this.y = config.y;
 
     this.curve = new Phaser.Curves.Spline([
-      artworldToPhaser2DX(this.worldSize.x, -977), artworldToPhaser2DY(this.worldSize.y, 598),
-      artworldToPhaser2DX(this.worldSize.x, -604), artworldToPhaser2DY(this.worldSize.y, 526),
-      artworldToPhaser2DX(this.worldSize.x, -608), artworldToPhaser2DY(this.worldSize.y, 92),
-      artworldToPhaser2DX(this.worldSize.x, 339), artworldToPhaser2DY(this.worldSize.y, 202),
-      artworldToPhaser2DX(this.worldSize.x, 616), artworldToPhaser2DY(this.worldSize.y, 972),
+      artworldToPhaser2DX(this.worldSize.x, -977),
+      artworldToPhaser2DY(this.worldSize.y, 598),
+      artworldToPhaser2DX(this.worldSize.x, -604),
+      artworldToPhaser2DY(this.worldSize.y, 526),
+      artworldToPhaser2DX(this.worldSize.x, -608),
+      artworldToPhaser2DY(this.worldSize.y, 92),
+      artworldToPhaser2DX(this.worldSize.x, 339),
+      artworldToPhaser2DY(this.worldSize.y, 202),
+      artworldToPhaser2DX(this.worldSize.x, 616),
+      artworldToPhaser2DY(this.worldSize.y, 972),
     ]);
 
     const { points } = this.curve;
@@ -30,7 +34,11 @@ export default class CurveWithHandles {
       for (let i = 0; i < points.length; i += 1) {
         const point = points[i];
 
-        this.handle = this.add.image(point.x, point.y, 'ball', 0).setScale(0.1).setInteractive().setDepth(40);
+        this.handle = this.add
+          .image(point.x, point.y, 'ball', 0)
+          .setScale(0.1)
+          .setInteractive()
+          .setDepth(40);
         this.handle.name = 'handle';
 
         this.handle.setData('vector', point);

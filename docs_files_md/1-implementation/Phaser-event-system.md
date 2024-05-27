@@ -1,22 +1,21 @@
-subscribe to the event:    
+subscribe to the event:  
 `this.events.on('gameEditMode', this.gameEditModeSign, this)`
 
-send the event with arguments:    
+send the event with arguments:  
 `scene.events.emit('gameEditMode', 'off')`
 
-callbackFunction with arguments:    
+callbackFunction with arguments:  
 `gameEditModeSign(arg) {`
-   `console.log("gameEditMode received", arg)`
+`console.log("gameEditMode received", arg)`
 `}`
 
-
-***
+---
 
 Use case: doubble click -> move player to specific location, an other object should also be able to subscribe on that moveTo
 
 If you move a GameObject with a tween, then the progression of the tween event can be 'read', and calledback.
 
-***
+---
 
 ### Scene event senders and listeners
 
@@ -71,10 +70,9 @@ This handler will only be called once, no matter how many times the event fires
 
         this.events.once('addImage', this.handler, this)
 
+---
 
-***
 background info:
-
 
 [Events dispatch class ](https://www.youtube.com/watch?v=vjlXPXLy5KU&ab_channel=WClarkson)
 

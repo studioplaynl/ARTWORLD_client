@@ -41,6 +41,7 @@
   }
 
   function zoomReset() {
+
     PlayerZoom.reset();
   }
 

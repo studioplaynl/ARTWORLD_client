@@ -94,9 +94,7 @@ const SCENES = [
 import { CONFIG } from '../../constants';
 import Background from './class/Background';
 
-
 export default {
-
   parent: 'phaserId',
 
   type: Phaser.WEBGL,
@@ -140,11 +138,10 @@ export default {
       //   start: true,
       // },
       {
-      key: 'rexOutlinePipeline',
+        key: 'rexOutlinePipeline',
         plugin: OutlinePipelinePlugin,
         start: true,
       },
-
     ],
   }, // end plugins
 
@@ -159,6 +156,4 @@ export default {
   },
 
   scene: SCENES, // scenes defined above
-
 };
-

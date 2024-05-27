@@ -1,4 +1,5 @@
 Fade camera out from color:
+
 ```
 this.cameras.main.fadeFrom(2000, Phaser.Math.Between(50, 255), Phaser.Math.Between(50, 255), Phaser.Math.Between(50, 255));
 
@@ -8,6 +9,7 @@ this.cameras.main.fadeFrom(2000, Phaser.Math.Between(50, 255), Phaser.Math.Betwe
 
     }, this);
 ```
+
 Fade camera in to color:
 
 ```

@@ -8,7 +8,6 @@ import { dlog } from '../../../helpers/debugLog';
 
 import * as Phaser from 'phaser';
 
-
 export default class TestCoordinates extends Phaser.Scene {
   constructor() {
     super('TestCoordinates');
@@ -40,17 +39,25 @@ export default class TestCoordinates extends Phaser.Scene {
     ManageSession.updateMovementInterval = 60; // 1000 / frames =  millisec
 
     Background.repeatingDots({
-      scene: this, gridOffset: 50, dotWidth: 2, dotColor: 0x909090, backgroundColor: 0xFFFFFF,
+      scene: this,
+      gridOffset: 50,
+      dotWidth: 2,
+      dotColor: 0x909090,
+      backgroundColor: 0xffffff,
     });
 
     // .......  PLAYER ....................................................................................
     //* create deafult player and playerShadow
     // create draggable player
-    this.player = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
-      'ui_eye',
-    ).setScale(0.6).setDepth(101).setInteractive();
+    this.player = this.add
+      .image(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
+        'ui_eye',
+      )
+      .setScale(0.6)
+      .setDepth(101)
+      .setInteractive();
 
     this.input.setDraggable(this.player);
     this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
@@ -85,7 +92,10 @@ export default class TestCoordinates extends Phaser.Scene {
     let location1Vector = new Phaser.Math.Vector2(-100, -100);
     // dlog(location1Vector)
 
-    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, location1Vector);
+    location1Vector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      location1Vector,
+    );
     // dlog(location1Vector)
 
     // eslint-disable-next-line no-unused-vars
@@ -127,8 +137,14 @@ export default class TestCoordinates extends Phaser.Scene {
 
     const pointer = this.input.activePointer;
 
-    const toARTWORLDx = CoordinatesTranslator.Phaser2DToArtworldX(this.worldSize.x, pointer.worldX);
-    const toARTWORLDy = CoordinatesTranslator.Phaser2DToArtworldY(this.worldSize.y, pointer.worldY);
+    const toARTWORLDx = CoordinatesTranslator.Phaser2DToArtworldX(
+      this.worldSize.x,
+      pointer.worldX,
+    );
+    const toARTWORLDy = CoordinatesTranslator.Phaser2DToArtworldY(
+      this.worldSize.y,
+      pointer.worldY,
+    );
 
     this.text1.setText([
       `x: ${pointer.worldX}`,

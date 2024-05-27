@@ -10,7 +10,8 @@
 
 [https://simpleicons.org/](https://simpleicons.org/)
 
-***
+---
+
 ## Payed
 
 [https://www.flaticon.com/](https://www.flaticon.com/)

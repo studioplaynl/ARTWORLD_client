@@ -1,6 +1,6 @@
 ---
-title: "Illustrations Fire World"
-date: "2022-12-27"
+title: 'Illustrations Fire World'
+date: '2022-12-27'
 ---
 
 hier zijn de illustraties voor de vuurwereld.  

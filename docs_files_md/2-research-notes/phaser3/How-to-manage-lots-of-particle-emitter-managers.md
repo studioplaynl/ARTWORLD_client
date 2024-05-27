@@ -1,6 +1,6 @@
 ---
-title: "Note: How to manage lots of Particle Emitter (Managers)?"
-date: "2022-12-27"
+title: 'Note: How to manage lots of Particle Emitter (Managers)?'
+date: '2022-12-27'
 ---
 
 [https://phaser.discourse.group/t/how-to-manage-lots-of-particle-emitter-managers/12654](https://phaser.discourse.group/t/how-to-manage-lots-of-particle-emitter-managers/12654)

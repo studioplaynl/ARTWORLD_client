@@ -23,7 +23,12 @@ class Player {
         this.subscribedToProfile = true;
         // update the Profile also in ManageSession
         ManageSession.userProfile = get(Profile);
-        this.loadPlayerAvatar(ManageSession.currentScene, undefined, undefined, value);
+        this.loadPlayerAvatar(
+          ManageSession.currentScene,
+          undefined,
+          undefined,
+          value,
+        );
       }
     });
   }
@@ -59,7 +64,7 @@ class Player {
     //        role: "speler"
     //        user_id: ""
 
-        // check if account info is loaded
+    // check if account info is loaded
     if (userprofile.id == null) {
       dlog('(userprofile.id == null)');
       Player.reloadDefaultAvatar();
@@ -94,10 +99,10 @@ class Player {
     // otherwise place it within worldBounds
     // a random number between -150 and 150
     if (lastPosX > scene.worldSize.x / 2 || lastPosX < -scene.worldSize.x / 2) {
-      lastPosX = Math.floor((Math.random() * 300) - 150);
+      lastPosX = Math.floor(Math.random() * 300 - 150);
     }
     if (lastPosY > scene.worldSize.y / 2 || lastPosY < -scene.worldSize.y / 2) {
-      lastPosY = Math.floor((Math.random() * 300) - 150);
+      lastPosY = Math.floor(Math.random() * 300 - 150);
     }
     // dlog('lastPosX, lastPosY', lastPosX, lastPosY);
     // dlog();
@@ -134,21 +139,22 @@ class Player {
 
       // convert the avatar url to a converted png url
 
-      scene.load.spritesheet(
-        fileNameCheck,
-        userprofile.url,
-        {
+      scene.load
+        .spritesheet(fileNameCheck, userprofile.url, {
           frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
           frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
-        },
-      )
-        .on(`filecomplete-spritesheet-${fileNameCheck}`, () => {
-          // dlog('filecomplete-spritesheet scene.playerAvatarKey', scene.playerAvatarKey);
-          if (this.subscribedToProfile !== true) {
-            this.subscribeToProfile();
-          }
-          Player.attachAvatarToPlayer(scene, fileNameCheck);
-        }, scene);
+        })
+        .on(
+          `filecomplete-spritesheet-${fileNameCheck}`,
+          () => {
+            // dlog('filecomplete-spritesheet scene.playerAvatarKey', scene.playerAvatarKey);
+            if (this.subscribedToProfile !== true) {
+              this.subscribeToProfile();
+            }
+            Player.attachAvatarToPlayer(scene, fileNameCheck);
+          },
+          scene,
+        );
       scene.load.start(); // start loading the image in memory
     } else {
       // else reload the old (already in memory avatar)
@@ -222,7 +228,12 @@ class Player {
     scene.player.body.setCircle(width / 1.1, width / 5, width / 5);
 
     // send the current player position over the network
-    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
+    ManageSession.sendMoveMessage(
+      scene,
+      scene.player.x,
+      scene.player.y,
+      'stop',
+    );
   } // end attachAvatarToPlayer
 
   static reloadDefaultAvatar(scene) {
@@ -243,9 +254,10 @@ class Player {
         });
 
         // new onlineplayer is removed from the newOnlinePlayer array, once we call more data on it
-        ManageSession.createOnlinePlayerArray = ManageSession.createOnlinePlayerArray.filter(
-          (obj) => obj.user_id !== onlinePlayer.user_id,
-        );
+        ManageSession.createOnlinePlayerArray =
+          ManageSession.createOnlinePlayerArray.filter(
+            (obj) => obj.user_id !== onlinePlayer.user_id,
+          );
       });
     }
   }
@@ -253,7 +265,9 @@ class Player {
   createOnlinePlayer(scene, onlinePlayer) {
     // check if onlinePlayer exists already
     // dlog(onlinePlayer)
-    const exists = ManageSession.allConnectedUsers.some((element) => element.user_id === onlinePlayer.user_id);
+    const exists = ManageSession.allConnectedUsers.some(
+      (element) => element.user_id === onlinePlayer.user_id,
+    );
     // if player does not exists yet
     if (!exists) {
       // create new onlinePlayer with default avatar
@@ -278,7 +292,12 @@ class Player {
        */
       onlinePlayer.setInteractive({ useHandCursor: true });
       // hit area of onlinePlayer
-      onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50);
+      onlinePlayer.input.hitArea.setTo(
+        -10,
+        -10,
+        onlinePlayer.width + 50,
+        onlinePlayer.height + 50,
+      );
       onlinePlayer.on('pointerup', () => {
         // pass on values to itemsbar.svelte & selectedPlayerBar.svelte
         SelectedOnlinePlayer.set(onlinePlayer);
@@ -326,16 +345,18 @@ class Player {
       if (!scene.textures.exists(avatarKey)) {
         // dlog('scene.textures.exists(avatarKey)', scene.textures.exists(avatarKey));
         // add it to loading queue
-        scene.load.spritesheet(avatarKey, onlinePlayer.url, {
-          frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
-          frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
-        }).on(
-          `filecomplete-spritesheet-${avatarKey}`,
-          () => {
-            this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey);
-          },
-          scene,
-        );
+        scene.load
+          .spritesheet(avatarKey, onlinePlayer.url, {
+            frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
+            frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
+          })
+          .on(
+            `filecomplete-spritesheet-${avatarKey}`,
+            () => {
+              this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey);
+            },
+            scene,
+          );
         // when file is finished loading the attachToAvatar function is called
         scene.load.start(); // start loading the image in memory
       } else {
@@ -365,7 +386,9 @@ class Player {
     // dlog('onlinePlayer avatarFrames', avatarFrames);
 
     let setFrameRate = 0;
-    if (avatarFrames > 1) { setFrameRate = ((avatarFrames + 2) * 2); } else {
+    if (avatarFrames > 1) {
+      setFrameRate = (avatarFrames + 2) * 2;
+    } else {
       setFrameRate = 0;
     }
     // if (avatarFrames > 1) {

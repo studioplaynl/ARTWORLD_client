@@ -13,12 +13,11 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
-
 
 export default class RobotWorld extends Phaser.Scene {
   constructor() {
@@ -48,10 +47,10 @@ export default class RobotWorld extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -60,15 +59,42 @@ export default class RobotWorld extends Phaser.Scene {
     });
 
     // RobotWorld
-    this.load.image('artWorldPortal', './assets/world_robot_torquoise/portaal_robot_terug.png');
-    this.load.image('robot_treeC_01', './assets/world_robot_torquoise/treeC_01.png');
-    this.load.image('robot_treeC_02', './assets/world_robot_torquoise/treeC_02.png');
-    this.load.image('robot_treeC_03', './assets/world_robot_torquoise/treeC_03.png');
-    this.load.image('robot_treeC_04', './assets/world_robot_torquoise/treeC_04.png');
-    this.load.image('robothuis3_ms', './assets/world_robot_torquoise/robothuis3_ms.png');
-    this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
-    this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
-    this.load.image('Robot_Clap_NoAnimation', './assets/world_robot_torquoise/_Robot_Clap_NoAnimation.png');
+    this.load.image(
+      'artWorldPortal',
+      './assets/world_robot_torquoise/portaal_robot_terug.png',
+    );
+    this.load.image(
+      'robot_treeC_01',
+      './assets/world_robot_torquoise/treeC_01.png',
+    );
+    this.load.image(
+      'robot_treeC_02',
+      './assets/world_robot_torquoise/treeC_02.png',
+    );
+    this.load.image(
+      'robot_treeC_03',
+      './assets/world_robot_torquoise/treeC_03.png',
+    );
+    this.load.image(
+      'robot_treeC_04',
+      './assets/world_robot_torquoise/treeC_04.png',
+    );
+    this.load.image(
+      'robothuis3_ms',
+      './assets/world_robot_torquoise/robothuis3_ms.png',
+    );
+    this.load.image(
+      'robothuis1_ms',
+      './assets/world_robot_torquoise/robohuis01metschadow.png',
+    );
+    this.load.image(
+      'robothuis1_ms',
+      './assets/world_robot_torquoise/robohuis01metschadow.png',
+    );
+    this.load.image(
+      'Robot_Clap_NoAnimation',
+      './assets/world_robot_torquoise/_Robot_Clap_NoAnimation.png',
+    );
   }
 
   async create() {
@@ -101,9 +127,7 @@ export default class RobotWorld extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -123,7 +147,6 @@ export default class RobotWorld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -149,11 +172,7 @@ export default class RobotWorld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -162,7 +181,10 @@ export default class RobotWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -201,10 +223,13 @@ export default class RobotWorld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
-
 
   generateLocations() {
     // we set draggable on restart scene with a global flag
@@ -293,7 +318,6 @@ export default class RobotWorld extends Phaser.Scene {
       this.robot_treeC_01_2.setInteractive({ draggable: true });
     }
 
-
     this.robot_treeC_02_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 985),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1196),
@@ -373,97 +397,129 @@ export default class RobotWorld extends Phaser.Scene {
     }
 
     // paths for the houses
-    this.pointsCurve1 = [new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 187),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2367),
-    ),
-    new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -841),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 846),
-    )];
-
-    this.createCurveWithHandles({
-      color1: '0x2e4043', points: this.pointsCurve1, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '1',
-    });
-
-
-    this.pointsCurve2 = [new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -867),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1570),
-    ),
-    new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2709),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -599),
-    ),
+    this.pointsCurve1 = [
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 187),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2367),
+      ),
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -841),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 846),
+      ),
     ];
 
     this.createCurveWithHandles({
-      color1: '0x2e4043', points: this.pointsCurve2, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '2',
+      color1: '0x2e4043',
+      points: this.pointsCurve1,
+      lineWidth: 60,
+      lineAlpha: 1,
+      lineResolution: 11,
+      name: '1',
     });
 
-
-    this.pointsCurve3 = [new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2661),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1987),
-    ),
-    new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1431),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -604),
-    ),
+    this.pointsCurve2 = [
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -867),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1570),
+      ),
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2709),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -599),
+      ),
     ];
 
     this.createCurveWithHandles({
-      color1: '0x2e4043', points: this.pointsCurve3, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '3',
+      color1: '0x2e4043',
+      points: this.pointsCurve2,
+      lineWidth: 60,
+      lineAlpha: 1,
+      lineResolution: 11,
+      name: '2',
     });
 
-
-    this.pointsCurve4 = [new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -454),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 560),
-    ),
-    new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2584),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2544),
-    ),
+    this.pointsCurve3 = [
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2661),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1987),
+      ),
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1431),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -604),
+      ),
     ];
 
     this.createCurveWithHandles({
-      color1: '0x2e4043', points: this.pointsCurve4, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '4',
+      color1: '0x2e4043',
+      points: this.pointsCurve3,
+      lineWidth: 60,
+      lineAlpha: 1,
+      lineResolution: 11,
+      name: '3',
     });
 
-
-    this.pointsCurve5 = [new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -454),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1),
-    ),
-    new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2719),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1),
-    ),
+    this.pointsCurve4 = [
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -454),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 560),
+      ),
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2584),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2544),
+      ),
     ];
 
     this.createCurveWithHandles({
-      color1: '0x2e4043', points: this.pointsCurve5, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '5',
+      color1: '0x2e4043',
+      points: this.pointsCurve4,
+      lineWidth: 60,
+      lineAlpha: 1,
+      lineResolution: 11,
+      name: '4',
     });
 
-    this.pointsCurve6 = [new Phaser.Math.Vector2(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1199),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 391),
-    ),
-    new Phaser.Math.Vector2(
-
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -649),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2561),
-    ),
+    this.pointsCurve5 = [
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -454),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1),
+      ),
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2719),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1),
+      ),
     ];
 
     this.createCurveWithHandles({
-      color1: '0x2e4043', points: this.pointsCurve6, lineWidth: 60, lineAlpha: 1, lineResolution: 11, name: '6',
+      color1: '0x2e4043',
+      points: this.pointsCurve5,
+      lineWidth: 60,
+      lineAlpha: 1,
+      lineResolution: 11,
+      name: '5',
+    });
+
+    this.pointsCurve6 = [
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1199),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 391),
+      ),
+      new Phaser.Math.Vector2(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -649),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2561),
+      ),
+    ];
+
+    this.createCurveWithHandles({
+      color1: '0x2e4043',
+      points: this.pointsCurve6,
+      lineWidth: 60,
+      lineAlpha: 1,
+      lineResolution: 11,
+      name: '6',
     });
   }
 
   /** Create a curve with handles in edit mode
- * @todo Work in progress, replace with CurveWithHandles class? */
+   * @todo Work in progress, replace with CurveWithHandles class? */
   createCurveWithHandles(config) {
     const { color1 } = config;
     // const { color2 } = config;
@@ -483,7 +539,11 @@ export default class RobotWorld extends Phaser.Scene {
         const curveHandleName = `curveHandle${name}_${i}`;
         // const point = this[curveHandleName].getData('vector');
 
-        this[curveHandleName] = this.add.image(point.x, point.y, 'ball', 0).setScale(0.1).setInteractive().setDepth(40);
+        this[curveHandleName] = this.add
+          .image(point.x, point.y, 'ball', 0)
+          .setScale(0.1)
+          .setInteractive()
+          .setDepth(40);
         this[curveHandleName].setName(`handle_${curveHandleName}`);
 
         this[curveHandleName].setData('vector', point);
@@ -519,7 +579,6 @@ export default class RobotWorld extends Phaser.Scene {
       this.updateCurveGraphics({ name: '6' });
     }
   } // update
-
 
   updateCurveGraphics(config) {
     const { name } = config;

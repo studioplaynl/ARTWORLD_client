@@ -10,10 +10,12 @@ Visit betaworld:
 
     https://betaworld.toekomst.school
 
-# log out / in 
+# log out / in
+
 when switching from nakama.toekomst.school to betanakama.toekomst.school
 
 # current VPS
+
 Contabo VPS S
 
 4 vCPU Cores

@@ -1,32 +1,32 @@
 ---
-title: "Feature: download FLIPBOOKS"
-date: "2023-08-21"
-categories: 
-  - "feature"
+title: 'Feature: download FLIPBOOKS'
+date: '2023-08-21'
+categories:
+  - 'feature'
 ---
 
-* * *
+---
 
 1. download stopmotion
 
-3. put stopmotion in memory
+2. put stopmotion in memory
 
-5. cut stopmotion in frames
+3. cut stopmotion in frames
 
-7. repeat the frames at least until 24 total, and finish the last remainder  
-    (24/x ) round up = pages
+4. repeat the frames at least until 24 total, and finish the last remainder  
+   (24/x ) round up = pages
 
-9. per frame indicate sheet no / cell no with dots also
+5. per frame indicate sheet no / cell no with dots also
 
-11. make a sheet per 8
+6. make a sheet per 8
 
-13. download all sheets
+7. download all sheets
 
-* * *
+---
 
 flipbook calculations
 
-[https://docs.google.com/spreadsheets/d/1VdhPDLWH2CBSFVM77cHzO1YU78DRSl\_G1FIJza1O4qE/edit#gid=0](https://docs.google.com/spreadsheets/d/1VdhPDLWH2CBSFVM77cHzO1YU78DRSl_G1FIJza1O4qE/edit#gid=0)
+[https://docs.google.com/spreadsheets/d/1VdhPDLWH2CBSFVM77cHzO1YU78DRSl_G1FIJza1O4qE/edit#gid=0](https://docs.google.com/spreadsheets/d/1VdhPDLWH2CBSFVM77cHzO1YU78DRSl_G1FIJza1O4qE/edit#gid=0)
 
 old version, new version below:
 
@@ -45,7 +45,7 @@ old version, new version below:
       filename += `_${file.key}_${displayName}.png`;
 
       await saveFlipbookHandler(filename);
-    } 
+    }
 
 export async function saveFlipbookHandler(filename) {
     const flipbookCanvasWidth = 2480;
@@ -163,7 +163,7 @@ export async function saveFlipbookHandler(filename) {
   }
 ```
 
-* * *
+---
 
 New version:
 
@@ -182,7 +182,7 @@ New version:
       filename += `_${file.key}_${displayName}.png`;
 
       await saveFlipbookHandler(filename);
-    } 
+    }
 
 export async function saveFlipbookHandler(filename) {
     const flipbookCanvasWidth = 2480;

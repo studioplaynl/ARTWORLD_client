@@ -42,4 +42,3 @@ GameObject.setTexture(KeyName)
 ```
 
 https://blog.ourcade.co/posts/2020/phaser3-load-images-dynamically/
-

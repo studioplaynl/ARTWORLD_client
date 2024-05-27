@@ -1,17 +1,17 @@
 ---
-title: "Bug Fix: homes of TurquoiseTriangle missing"
-date: "2023-08-28"
+title: 'Bug Fix: homes of TurquoiseTriangle missing'
+date: '2023-08-28'
 ---
 
 A lot of homes of TurquoiseTriangle are missing. I made a mistake naming the Azc Torquoise, so the Azc and the homeObject are spelled wrong.
 
-* * *
+---
 
 Fix: user Azc
 
 Fix: user homeObjects
 
-* * *
+---
 
 Extra fixes:
 

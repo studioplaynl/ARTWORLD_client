@@ -13,10 +13,13 @@ class CoordinatesTranslator {
     // output is a Vector
     const worldSizeX = worldSize.x;
     const worldSizeY = worldSize.y;
-    const positionVector = new Phaser.Math.Vector2(_positionVector.x, _positionVector.y);
+    const positionVector = new Phaser.Math.Vector2(
+      _positionVector.x,
+      _positionVector.y,
+    );
 
-    positionVector.x += (worldSizeX / 2); //* correct
-    positionVector.y = (worldSizeY / 2) - positionVector.y; //* correct
+    positionVector.x += worldSizeX / 2; //* correct
+    positionVector.y = worldSizeY / 2 - positionVector.y; //* correct
     return positionVector;
   }
 
@@ -24,14 +27,14 @@ class CoordinatesTranslator {
   artworldToPhaser2DX(worldAxis, a) {
     // usage: ONLY FOR X!
     // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
-    return a + (worldAxis / 2); //* correct
+    return a + worldAxis / 2; //* correct
   }
 
   // single value calculation
   artworldToPhaser2DY(worldAxis, a) {
     // usage: ONLY FOR Y!
     // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
-    return (worldAxis / 2) - a; //* correct
+    return worldAxis / 2 - a; //* correct
   }
 
   // ..........................................................................................................
@@ -42,10 +45,13 @@ class CoordinatesTranslator {
     // output is a Vector
     const worldSizeX = worldSize.x;
     const worldSizeY = worldSize.y;
-    const positionVector = new Phaser.Math.Vector2(_positionVector.x, _positionVector.y);
+    const positionVector = new Phaser.Math.Vector2(
+      _positionVector.x,
+      _positionVector.y,
+    );
 
-    positionVector.x -= (worldSizeX / 2); //* correct
-    positionVector.y = -(positionVector.y - (worldSizeY / 2)); //* correct
+    positionVector.x -= worldSizeX / 2; //* correct
+    positionVector.y = -(positionVector.y - worldSizeY / 2); //* correct
     return positionVector;
   }
 
@@ -54,14 +60,14 @@ class CoordinatesTranslator {
     // usage: ONLY X!
     // pass the this.worldSize.x or worldSize.y and the coordinate you want to do the calculation on
 
-    return a - (worldAxis / 2); //* correct
+    return a - worldAxis / 2; //* correct
   }
 
   // single value calculation
   Phaser2DToArtworldY(worldAxis, a) {
     // usage: ONLY Y!
     // pass the worldSize.x or worldSize.y and the coordinate you want to do the calculation on
-    return -(a - (worldAxis / 2)); //* correct
+    return -(a - worldAxis / 2); //* correct
   }
 }
 

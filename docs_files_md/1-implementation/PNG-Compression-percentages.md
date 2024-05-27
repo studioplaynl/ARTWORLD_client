@@ -28,9 +28,7 @@ pngquant 64 --force --skip-if-larger *.png
 
 ---
 
-
-
-###2-step  (no file size difference to 1-step, but added for documentation.)
+###2-step (no file size difference to 1-step, but added for documentation.)
 
 1. pngcrush
 
@@ -55,11 +53,8 @@ The types of filters and other properties can be learnt through the manual pages
 Average reduction in size: 18%
 
 2. After that reduce color with pngquant:
-pngquant 64 --force  --skip-if-larger  *.png
+   pngquant 64 --force --skip-if-larger \*.png
 
 Average reduction in size: 68.25%
 
 {==Total reduction: 70.67%==}
-
-
-

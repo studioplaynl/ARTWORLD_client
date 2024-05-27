@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.4">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.25">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6543a935.min.css">
       
       
 
@@ -214,10 +214,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
@@ -321,10 +319,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
@@ -1081,10 +1077,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
@@ -1141,10 +1135,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
@@ -2018,10 +2010,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
@@ -2055,10 +2045,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
@@ -2310,10 +2298,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
@@ -2383,10 +2369,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
@@ -2420,10 +2404,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
@@ -2756,23 +2738,23 @@
 <hr />
 <h2 id="dot-repeating-with-grid-methods">Dot repeating with grid methods</h2>
 <p><img alt="" src="https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-21-16-41-47.png" /></p>
-<p><div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>let group = this.add.group({ key: &#39;dot&#39;, repeat: 8000, setX: { x: 0, y: 0, stepX: 64 } });
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>let group = this.add.group({ key: &#39;dot&#39;, repeat: 8000, setX: { x: 0, y: 0, stepX: 64 } });
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Phaser.Actions.GridAlign(group.getChildren(), { width: 100, height: 200, cellWidth: 64, cellHeight: 64, x: 16, y: 16 });
 </span></code></pre></div>
-There is not a sharpness advantage, because the SVG is being converted to an image when loading. You can preload the SVG scaled, that will actually create a scaled up image.
+<p>There is not a sharpness advantage, because the SVG is being converted to an image when loading. You can preload the SVG scaled, that will actually create a scaled up image.
 See: https://phaser.io/examples/v3/view/loader/svg/load-svg-with-scale</p>
 <hr />
 <h2 id="graphics-elements">graphics elements</h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>let circles = [] &lt;br&gt;&lt;br&gt;const graphics = this.add.graphics();&lt;br&gt;&lt;br&gt;graphics.fillStyle(0xffffff); &lt;br&gt;graphics.fillRect(0, 0, 3000, 3000);&lt;br&gt;&lt;br&gt;graphics.fillStyle(color, alpha);
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>const offset = 50 &lt;br&gt;for (let i = 0; i &amp;lt; 2000; i += offset) { &lt;br&gt;for (let j = 0; j &amp;lt; 2000; j += offset) { &lt;br&gt;circles[i] = graphics.fillCircle(i, j, 2); 
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>const offset = 50 &lt;br&gt;for (let i = 0; i &amp;lt; 2000; i += offset) { &lt;br&gt;for (let j = 0; j &amp;lt; 2000; j += offset) { &lt;br&gt;circles[i] = graphics.fillCircle(i, j, 2);
 </span></code></pre></div>
 <p>This works but there is slowness when loading the array, and when the player is moving accross the field the graphics scrolling is not smooth</p>
 <hr />
 <h2 id="this-works-really-well">This works really well:</h2>
 <h2 id="here-is-a-way-to-generate-patterns-on-a-texture-with-an-array">Here is a way to generate patterns on a texture with an array:</h2>
-<p><div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>et cross = [
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>et cross = [
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>&#39;.....&#39;,
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a> &#39;..1..&#39;,
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a> &#39;.111.&#39;,
@@ -2780,18 +2762,18 @@ See: https://phaser.io/examples/v3/view/loader/svg/load-svg-with-scale</p>
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a> &#39;.....&#39;,
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a> ]
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>//generate the texture from the array 
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>//generate the texture from the array
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>this.textures.generate(&#39;cross&#39;, { data: cross, pixelWidth: 4 });
 </span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>//display the texture on an image 
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>//display the texture on an image
 </span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>const gridWidth = 4000 
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>const gridWidth = 4000
 </span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>const offset = 40
 </span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
 </span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>for (let i=0;i&lt; gridWidth; i += offset){ for (let j=0;j&lt; gridWidth; j += offset){ this.add.image(i, j, &#39;cross&#39;).setOrigin(0, 1); } }
 </span></code></pre></div>
-<img alt="" src="https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-24-15-35-59.png" /></p>
+<p><img alt="" src="https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-24-15-35-59.png" /></p>
 <hr />
 <p>Draw a shape to a texture, and repeat it there.</p>
 <p>Slow to generate, but fast after that.</p>
@@ -2927,10 +2909,10 @@ See: https://phaser.io/examples/v3/view/loader/svg/load-svg-with-scale</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.annotate"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.081f42fc.min.js"></script>
       
     
   </body>

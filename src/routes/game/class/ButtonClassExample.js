@@ -11,15 +11,10 @@ export default class Button extends Phaser.GameObjects.Container {
     this.x = x;
     this.y = y;
 
-    const button = scene.add.image(
-      x,
-      y,
-      key1,
-    ).setInteractive();
+    const button = scene.add.image(x, y, key1).setInteractive();
 
     const buttonText = scene.add.text(x, y, text, {
-      fontSize:
-        '18px',
+      fontSize: '18px',
       color: fontColor,
     });
 

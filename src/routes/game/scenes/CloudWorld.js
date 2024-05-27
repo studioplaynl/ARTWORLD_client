@@ -13,13 +13,12 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
 
 import * as Phaser from 'phaser';
-
 
 export default class CloudWorld extends Phaser.Scene {
   constructor() {
@@ -62,17 +61,41 @@ export default class CloudWorld extends Phaser.Scene {
 
     const folderPath = './assets/world_clouds/';
     const loadArray = [
-      { key: 'artWorldPortalCloud', path: `${folderPath}cloud_portal_naarHome.png` },
+      {
+        key: 'artWorldPortalCloud',
+        path: `${folderPath}cloud_portal_naarHome.png`,
+      },
 
-      { key: 'cloud_ballonpeople_1b', path: `${folderPath}cloud_ballonpeople_1b.png` },
-      { key: 'cloud_ballonpeople_2', path: `${folderPath}cloud_ballonpeople_2.png` },
-      { key: 'cloud_ballonpeople_3', path: `${folderPath}cloud_ballonpeople_3.png` },
-      { key: 'cloud_ballonpeople_4', path: `${folderPath}cloud_ballonpeople_4.png` },
+      {
+        key: 'cloud_ballonpeople_1b',
+        path: `${folderPath}cloud_ballonpeople_1b.png`,
+      },
+      {
+        key: 'cloud_ballonpeople_2',
+        path: `${folderPath}cloud_ballonpeople_2.png`,
+      },
+      {
+        key: 'cloud_ballonpeople_3',
+        path: `${folderPath}cloud_ballonpeople_3.png`,
+      },
+      {
+        key: 'cloud_ballonpeople_4',
+        path: `${folderPath}cloud_ballonpeople_4.png`,
+      },
       { key: 'cloud_berg1', path: `${folderPath}cloud_berg1.png` },
-      { key: 'cloud_berg1_tweekeer', path: `${folderPath}cloud_berg1_tweekeer.png` },
-      { key: 'cloud_berg2_metCloud_achtergrond', path: `${folderPath}cloud_berg2_metCloud_achtergrond.png` },
+      {
+        key: 'cloud_berg1_tweekeer',
+        path: `${folderPath}cloud_berg1_tweekeer.png`,
+      },
+      {
+        key: 'cloud_berg2_metCloud_achtergrond',
+        path: `${folderPath}cloud_berg2_metCloud_achtergrond.png`,
+      },
       { key: 'cloud_berg3', path: `${folderPath}cloud_berg3.png` },
-      { key: 'cloud_berg3_mitWolken', path: `${folderPath}cloud_berg3_mitWolken.png` },
+      {
+        key: 'cloud_berg3_mitWolken',
+        path: `${folderPath}cloud_berg3_mitWolken.png`,
+      },
       { key: 'cloud_brug_1', path: `${folderPath}cloud_brug_1.png` },
       { key: 'cloud_brug_2', path: `${folderPath}cloud_brug_2.png` },
       { key: 'cloud_C1', path: `${folderPath}cloud_C1.png` },
@@ -80,7 +103,10 @@ export default class CloudWorld extends Phaser.Scene {
       { key: 'cloud_C3', path: `${folderPath}cloud_C3.png` },
       { key: 'cloud_C4', path: `${folderPath}cloud_C4.png` },
       { key: 'cloud_C5', path: `${folderPath}cloud_C5.png` },
-      { key: 'cloud_C5_achtergrond', path: `${folderPath}cloud_C5_achtergrond.png` },
+      {
+        key: 'cloud_C5_achtergrond',
+        path: `${folderPath}cloud_C5_achtergrond.png`,
+      },
       { key: 'cloud_huis_1', path: `${folderPath}cloud_huis_1.png` },
       { key: 'cloud_huis_2', path: `${folderPath}cloud_huis_2.png` },
       { key: 'cloud_huis_3', path: `${folderPath}cloud_huis_3.png` },
@@ -118,9 +144,7 @@ export default class CloudWorld extends Phaser.Scene {
     });
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -140,7 +164,6 @@ export default class CloudWorld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -166,11 +189,7 @@ export default class CloudWorld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -179,7 +198,10 @@ export default class CloudWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -218,7 +240,11 @@ export default class CloudWorld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
 
@@ -306,7 +332,6 @@ export default class CloudWorld extends Phaser.Scene {
 
     // .........cloud_berg3_mitWolken............................................................
     PlaceElement.image({
-
       x: -1791,
       y: -1633,
       file: 'cloud_berg3_mitWolken',

@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.4">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.25">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6543a935.min.css">
       
       
 
@@ -214,10 +214,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
@@ -323,10 +321,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
@@ -1126,10 +1122,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
@@ -1184,10 +1178,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
@@ -1971,10 +1963,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
@@ -2008,10 +1998,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
@@ -2263,10 +2251,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
@@ -2336,10 +2322,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
@@ -2373,10 +2357,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
@@ -2657,7 +2639,7 @@
 <p>Coordinate system Conversion</p>
 <p>ARTWORLD needs to be able to grow from time to time. It is better to have worlds where 0, 0 is the center, because then coordinates remain valid when worlds become bigger. 0 , 0 is still the center etc</p>
 <p>This means that there needs to be a conversion between what I call ARTWORLDcoordinates (0, 0 is center) and phaser2Dcoordinates(0,0 is top left)</p>
-<p>It is a simple conversion when we know the worldSize. </p>
+<p>It is a simple conversion when we know the worldSize.</p>
 <div class="language-text highlight"><pre><span></span><code>artworldVectorToPhaser2D(worldSize, positionVector) {
     const worldSizeX = worldSize.x
     const worldSizeY = worldSize.y
@@ -2668,7 +2650,7 @@
 }
 
 Phaser2DVectorToArtworld(worldSize, x, y) {
-    // usage: 
+    // usage:
     // pass the worldSize and the coordinates you want to do the calculation on
     // output is a Vector
 
@@ -2685,12 +2667,12 @@ Phaser2DVectorToArtworld(worldSize, x, y) {
 <hr />
 <h3 id="conventions-to-make-this-system-work">Conventions to make this system work</h3>
 <ul>
-<li>In Phaser everything works with Phaser2Dcoordinates   </li>
-<li>We design worlds with ARTWORLDcoordinates  </li>
-<li>On the server we store everything in ARTWROLDcoordinates, so that everything is placed as designed, also when the world has grown in each direction  </li>
+<li>In Phaser everything works with Phaser2Dcoordinates</li>
+<li>We design worlds with ARTWORLDcoordinates</li>
+<li>On the server we store everything in ARTWROLDcoordinates, so that everything is placed as designed, also when the world has grown in each direction</li>
 </ul>
-<p>That means that coordinates only have to be converted when sending it over the network, and when receiving coordinates over the networks. 
- Also when we place Locations we do it with ARTWORLDcoordinates, and we convert them to Phaser2Dcoordinates when passing arguments.  Then Phaser just deals with them as Phaser2Dcoordinates  </p>
+<p>That means that coordinates only have to be converted when sending it over the network, and when receiving coordinates over the networks.
+Also when we place Locations we do it with ARTWORLDcoordinates, and we convert them to Phaser2Dcoordinates when passing arguments. Then Phaser just deals with them as Phaser2Dcoordinates</p>
 <p>In practice what we have to do when making a scene:</p>
 <ul>
 <li>
@@ -2709,42 +2691,42 @@ Phaser2DVectorToArtworld(worldSize, x, y) {
 <li>When the player avatar is loaded from the server, the last know position is also retreived</li>
 </ul>
 <blockquote>
-<p>in Player.js attachAvatarToPlayer <br />
-//*place the player in the last known position <br />
-scene.player.x = translateCoordinates.artworldToPhaser2D(this.worldSize.x, this.player.posX) <br />
-scene.player.y = translateCoordinates.artworldToPhaser2D(this.worldSize.y, this.player.posY)   </p>
+<p>in Player.js attachAvatarToPlayer<br />
+//*place the player in the last known position<br />
+scene.player.x = translateCoordinates.artworldToPhaser2D(this.worldSize.x, this.player.posX)<br />
+scene.player.y = translateCoordinates.artworldToPhaser2D(this.worldSize.y, this.player.posY)</p>
 </blockquote>
 <ul>
 <li>When we send Player movement over the network<br />
-It is not yet converted in the Player.js, but it will be converted in ManageSession.sendMoveMessage, so we pass scene, to know worldSize later on.   </li>
+  It is not yet converted in the Player.js, but it will be converted in ManageSession.sendMoveMessage, so we pass scene, to know worldSize later on.</li>
 </ul>
 <blockquote>
 <p>in Player.js<br />
 sendMovement(scene) {<br />
-   if (scene.createdPlayer) {<br />
-     if (<br />
-      ManageSession.updateMovementTimer &gt; ManageSession.updateMovementInterval<br />
-     ) {<br />
-       //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server<br />
-       ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)<br />
-       ManageSession.updateMovementTimer = 0<br />
-     }<br />
-   }
+ if (scene.createdPlayer) {<br />
+ if (<br />
+ ManageSession.updateMovementTimer &gt; ManageSession.updateMovementInterval<br />
+ ) {<br />
+ //send the player position as artworldCoordinates, because we store in artworldCoordinates on the server<br />
+ ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y)<br />
+ ManageSession.updateMovementTimer = 0<br />
+ }<br />
+ }
 }</p>
 </blockquote>
-<p>In ManageSession.sendMoveMessage   </p>
+<p>In ManageSession.sendMoveMessage</p>
 <p>`sendMoveMessage(scene, posX, posY) {
-    //transpose phaser coordinates to artworld coordinates
-    //console.log(scene)
-    posX = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.x, posX)
-    posY = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.y, posY)</p>
+//transpose phaser coordinates to artworld coordinates
+//console.log(scene)
+posX = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.x, posX)
+posY = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.y, posY)</p>
 <div class="language-text highlight"><pre><span></span><code>var opCode = 1;
 var data =
   &#39;{ &quot;posX&quot;: &#39; + posX + &#39;, &quot;posY&quot;: &#39; + posY + &#39;, &quot;location&quot;: &quot;&#39; + this.location + &#39;&quot; }&#39;
 
 this.socket.rpc(&quot;move_position&quot;, data)
 </code></pre></div>
-<p>}` </p>
+<p>}`</p>
 
 
 
@@ -2791,10 +2773,10 @@ this.socket.rpc(&quot;move_position&quot;, data)
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.081f42fc.min.js"></script>
       
     
   </body>

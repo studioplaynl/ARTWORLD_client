@@ -12,7 +12,6 @@ import { dlog } from '../../../helpers/debugLog';
 
 import * as Phaser from 'phaser';
 
-
 i18next.init({
   lng: 'nl',
   resources: {
@@ -80,7 +79,6 @@ export default class UIScene extends Phaser.Scene {
     // const isLoading = scene.load.isLoading();
     // dlog('loader isLoading', isLoading);
 
-
     // keyboard events caught for debug functions, edit mode
     DebugFuntions.keyboard(this);
     // ......... end DEBUG FUNCTIONS .......................................................................
@@ -121,14 +119,15 @@ export default class UIScene extends Phaser.Scene {
     const { width } = this.sys.game.canvas;
     // let height = this.sys.game.canvas.height
 
-
     switch (arg) {
       case 'on':
         this.gameEditModeSignGraphic = this.add.graphics();
         this.gameEditModeSignGraphic.fillStyle(0xff0000, 1);
         //  32px radius on the corners
         this.gameEditModeSignGraphic.fillRoundedRect(width / 2, 20, 100, 40, 8);
-        this.gameEditModeSignText = this.add.text(width / 2 + 50, 20 + 20, 'edit mode').setOrigin(0.5);
+        this.gameEditModeSignText = this.add
+          .text(width / 2 + 50, 20 + 20, 'edit mode')
+          .setOrigin(0.5);
         break;
 
       case 'off':
@@ -138,7 +137,6 @@ export default class UIScene extends Phaser.Scene {
         break;
 
       default:
-
         break;
     }
   } // end gameEditModeSign

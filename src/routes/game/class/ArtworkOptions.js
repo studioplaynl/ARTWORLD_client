@@ -50,21 +50,15 @@ class ArtworkOptions {
     // keyImgUrl = mediaObject.value.url
 
     // place heartButton under the artwork, make them interactive
-    const currentHeart = scene.add.image(
-      x,
-      y,
-      'heart',
-    )
+    const currentHeart = scene.add
+      .image(x, y, 'heart')
       .setOrigin(0)
       .setScale(1)
       .setInteractive()
       .setData('toggle', true) // true, not liked state
-      .on(
-        'pointerup',
-        () => {
-          ArtworkOptions.heartButtonToggle(mediaObject, currentHeart);
-        },
-      );
+      .on('pointerup', () => {
+        ArtworkOptions.heartButtonToggle(mediaObject, currentHeart);
+      });
 
     artContainer.add(currentHeart);
 
@@ -95,11 +89,12 @@ class ArtworkOptions {
     // const artFrame = scene.textures.get('artFrame_512');
     const marginY = 16;
 
-    const playButton = scene.add.image(
-      x - (marginY * 6), // - artFrame.height
-      y,
-      'play',
-    )
+    const playButton = scene.add
+      .image(
+        x - marginY * 6, // - artFrame.height
+        y,
+        'play',
+      )
       .setOrigin(0)
       // const playPause = scene.add.image(
       //   x - artFrame.height + marginY,
@@ -109,12 +104,9 @@ class ArtworkOptions {
       .setScale(0.7)
       .setInteractive()
       .setData('togglePlay', true) // true, not liked state
-      .on(
-        'pointerup',
-        () => {
-          ArtworkOptions.playPauseButtonToggle(playButton);
-        },
-      );
+      .on('pointerup', () => {
+        ArtworkOptions.playPauseButtonToggle(playButton);
+      });
 
     // const playButton = scene.add.circle(
     //   x - (marginY * 2), // - artFrame.height
@@ -135,9 +127,6 @@ class ArtworkOptions {
 
     artContainer.add(playButton);
     // artContainer.add(playPause);
-
-
-
 
     // if (playing) {
     //   // changing to red, liked

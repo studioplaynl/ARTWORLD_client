@@ -1,22 +1,19 @@
 /* eslint-disable class-methods-use-this */
 class Exhibition {
   AbriBig(config) {
-    const {
-      scene, posX, posY, name,
-    } = config;
+    const { scene, posX, posY, name } = config;
 
     // the container with the name of the config
     scene[name] = scene.add.container();
     scene[name].name = name;
 
     const billBoardName = `${name}_billBoard`;
-    scene[billBoardName] = scene.add.image(
-      0,
-      0,
-      'exhibit_outdoor_big',
-    ); // the image of the billBoard svg
+    scene[billBoardName] = scene.add.image(0, 0, 'exhibit_outdoor_big'); // the image of the billBoard svg
 
-    scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height);
+    scene[name].setSize(
+      scene[billBoardName].width,
+      scene[billBoardName].height,
+    );
 
     // 1. TopLeft
     // 2. TopRight
@@ -32,12 +29,7 @@ class Exhibition {
       0.08, -0.143,
     ];
 
-    const uvs = [
-      0, 0,
-      1, 0,
-      0, 1,
-      1, 1,
-    ];
+    const uvs = [0, 0, 1, 0, 0, 1, 1, 1];
 
     const indicies = [0, 2, 1, 2, 3, 1];
 
@@ -56,7 +48,11 @@ class Exhibition {
 
     // placing the artWork in perspective works with the perspective cam of the mesh
     // this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
-    scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60);
+    scene[meshName].setPerspective(
+      scene.sys.game.canvas.width,
+      scene.sys.game.canvas.height,
+      60,
+    );
 
     // the 'zoom' is dependent on the screen size, this formula works well
     const meshPanZ = (scene.sys.game.canvas.height / 1000) * 2;
@@ -82,22 +78,19 @@ class Exhibition {
   }
 
   AbriSmall1(config) {
-    const {
-      scene, posX, posY, name,
-    } = config;
+    const { scene, posX, posY, name } = config;
 
     // the container with the name of the config
     scene[name] = scene.add.container();
     scene[name].name = name;
 
     const billBoardName = `${name}_billBoard`;
-    scene[billBoardName] = scene.add.image(
-      0,
-      0,
-      'exhibit_outdoor_small1',
-    );
+    scene[billBoardName] = scene.add.image(0, 0, 'exhibit_outdoor_small1');
 
-    scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height);
+    scene[name].setSize(
+      scene[billBoardName].width,
+      scene[billBoardName].height,
+    );
 
     // 1. TopLeft
     // 2. TopRight
@@ -113,12 +106,7 @@ class Exhibition {
       0.08, -0.143,
     ];
 
-    const uvs = [
-      0, 0,
-      1, 0,
-      0, 1,
-      1, 1,
-    ];
+    const uvs = [0, 0, 1, 0, 0, 1, 1, 1];
 
     const indicies = [0, 2, 1, 2, 3, 1];
 
@@ -137,7 +125,11 @@ class Exhibition {
 
     // placing the artWork in perspective works with the perspective cam of the mesh
     // this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
-    scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60);
+    scene[meshName].setPerspective(
+      scene.sys.game.canvas.width,
+      scene.sys.game.canvas.height,
+      60,
+    );
 
     // the 'zoom' is dependent on the screen size, this formula works well
     const meshPanZ = (scene.sys.game.canvas.height / 1000) * 2;
@@ -153,21 +145,18 @@ class Exhibition {
   }
 
   AbriSmall2(config) {
-    const {
-      scene, posX, posY, name,
-    } = config;
+    const { scene, posX, posY, name } = config;
     // the container with the name of the config
     scene[name] = scene.add.container();
     scene[name].name = name;
 
     const billBoardName = `${name}_billBoard`;
-    scene[billBoardName] = scene.add.image(
-      0,
-      0,
-      'exhibit_outdoor_small2',
-    ); // the image of the billBoard svg
+    scene[billBoardName] = scene.add.image(0, 0, 'exhibit_outdoor_small2'); // the image of the billBoard svg
 
-    scene[name].setSize(scene[billBoardName].width, scene[billBoardName].height);
+    scene[name].setSize(
+      scene[billBoardName].width,
+      scene[billBoardName].height,
+    );
 
     // 1. TopLeft
     // 2. TopRight
@@ -183,12 +172,7 @@ class Exhibition {
       0.051, -0.145,
     ];
 
-    const uvs = [
-      0, 0,
-      1, 0,
-      0, 1,
-      1, 1,
-    ];
+    const uvs = [0, 0, 1, 0, 0, 1, 1, 1];
 
     const indicies = [0, 2, 1, 2, 3, 1];
 
@@ -207,7 +191,11 @@ class Exhibition {
 
     // placing the artWork in perspective works with the perspective cam of the mesh
     // this.mesh.setOrtho(orthoRatio, 1) // zooming with neshPanZ doesn't work with Ortho
-    scene[meshName].setPerspective(scene.sys.game.canvas.width, scene.sys.game.canvas.height, 60);
+    scene[meshName].setPerspective(
+      scene.sys.game.canvas.width,
+      scene.sys.game.canvas.height,
+      60,
+    );
 
     // the 'zoom' is dependent on the screen size, this formula works well
     const meshPanZ = (scene.sys.game.canvas.height / 1000) * 2;

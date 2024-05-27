@@ -1,7 +1,7 @@
 Camera follows player with:
 
 ```
-this.gameCam = this.cameras.main; 
+this.gameCam = this.cameras.main;
 
 this.gameCam.startFollow(this.player);
 ```

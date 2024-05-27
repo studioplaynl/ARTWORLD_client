@@ -13,14 +13,13 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
 // import PreloadScene from './PreloadScene';
 
 import * as Phaser from 'phaser';
-
 
 export default class FlamengoWereld extends Phaser.Scene {
   constructor() {
@@ -49,10 +48,10 @@ export default class FlamengoWereld extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -66,20 +65,25 @@ export default class FlamengoWereld extends Phaser.Scene {
     const folderPath = './assets/world_flamengo/';
 
     const loadArray = [
-      { key: 'Portal_naarHuis_flamengo', path: `${folderPath}_Portaal_Flamingocity_naarHuis_small-fs8.png` },
-      { key: 'flamengeWereld_geheel', path: `${folderPath}geheel_Wereld18_FlamingoCity.jpg` },
+      {
+        key: 'Portal_naarHuis_flamengo',
+        path: `${folderPath}_Portaal_Flamingocity_naarHuis_small-fs8.png`,
+      },
+      {
+        key: 'flamengeWereld_geheel',
+        path: `${folderPath}geheel_Wereld18_FlamingoCity.jpg`,
+      },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
 
     this.backgroundImageKey = 'flamengo_background_';
     //  load 9 images in a for loop
-        for (let i = 0; i < 9; i++)
-        {
-            const key = 'image' + i;
-            const name = folderPath + "image_part_" + i + ".jpeg";
-            this.load.image(this.backgroundImageKey + i, name);
-        }
+    for (let i = 0; i < 9; i++) {
+      const key = 'image' + i;
+      const name = folderPath + 'image_part_' + i + '.jpeg';
+      this.load.image(this.backgroundImageKey + i, name);
+    }
   }
 
   async create() {
@@ -104,9 +108,7 @@ export default class FlamengoWereld extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -126,7 +128,6 @@ export default class FlamengoWereld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -150,11 +151,7 @@ export default class FlamengoWereld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -163,7 +160,10 @@ export default class FlamengoWereld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -202,7 +202,11 @@ export default class FlamengoWereld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
 
@@ -236,12 +240,17 @@ export default class FlamengoWereld extends Phaser.Scene {
     let beginImage = 0;
 
     for (let j = 0; j < 3; j++) {
-      for (let i = 0; i < 3; i++){
-        this.add.image(partSize * j, partSize * i, this.backgroundImageKey + beginImage).setOrigin(0);
+      for (let i = 0; i < 3; i++) {
+        this.add
+          .image(
+            partSize * j,
+            partSize * i,
+            this.backgroundImageKey + beginImage,
+          )
+          .setOrigin(0);
         beginImage++;
-
-          }
-        }
+      }
+    }
   }
 
   update() {

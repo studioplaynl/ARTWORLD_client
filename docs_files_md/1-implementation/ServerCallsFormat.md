@@ -1,8 +1,11 @@
 ## uploadImage(name, type, json, img, status,version, displayName)
-this function: 
+
+this function:
+
 - gets upload URL for json and png
 - uploads blobs to aws
 - send an object to nakama containing:
+
 ```
 {
   "url": "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png",
@@ -11,35 +14,34 @@ this function:
   "displayname": "blauwSpotlijster"
 }
 ```
+
 no response on succes
 
-
-
 ## getUploadURL(type, name, filetype,version)
-this function creates a signed upload url for file upload to AWS
 
+this function creates a signed upload url for file upload to AWS
 
 ### usage example
 
 ```
-var version = 1 
+var version = 1
 var [jsonURL, jsonLocation] = await getUploadURL("home", "current", "json", version)
 // creates route on aws "/home/user_id/1_current.json"
 ```
 
-
 ## updateTitle(collection, key, name, userID)
+
 this function:
+
 - picks up object
 - updates object.value.displayname
 - pushes object back to server
 
 ### example
+
 ```
 updateTitle("drawing", "12345345_geelkoe", "nieuwe naam", "`1231hh3123dasda")
 ```
-
-
 
 ## updateObject(type, name, value, pub, userID)
 
@@ -56,8 +58,8 @@ const pub = 2
 updateObject(type, name, value, pub)
 ```
 
-
 ## getAccount(id, avatar)
+
 ```
 0:[
 {
@@ -89,6 +91,7 @@ username: "user33",
 ]
 
 ```
+
 The url is the actual avatar url, the url is called via getAccount, getUrl, but with a couple of await functions it takes a bit for the url to load via the getAccount function.
 
 ## getAvatar(avatar_url)
@@ -97,18 +100,17 @@ The url is the actual avatar url, the url is called via getAccount, getUrl, but 
 
 ## deleteFile(type,file,user)
 
-
 ## adding data (eg locations) to the backend
+
 `function updateObject(type, name, value, pub)`
 
 Example:  
 type: "home" (collection)  
 name = "hansjes huisje" (key)  
 value = object with keys (value)  
-pub: permission_read (pub)  
+pub: permission_read (pub)
 
 updateObject("location", name, value, true)
-
 
 ## listObjects(type, userID, limit, page)
 
@@ -120,8 +122,8 @@ limit = how many you want to get(standard 100)
 
 page = index of limit(if limit = 100, index 0 = 1 - 100, index 1 = 101 -200, index 2 = 202 - 300 etc...)
 
+### examples
 
-### examples 
 _getting a users home object_
 
     listObjects('home','5264dc23-a339-40db-bb84-e0849ded4e68')
@@ -149,7 +151,6 @@ returns the object:
 ]
 ```
 
-
 ## convert images
 
 `convertImage(path,size, format)`
@@ -162,7 +163,7 @@ output:
 size and format at not both required to work, either one or both will also function
 for example:
 
-`convertImage(path,, format)` 
+`convertImage(path,, format)`
 
 This is a replacement for getAvatar()
 
@@ -170,12 +171,13 @@ if needed more filters can be added in the future, see:
 https://docs.aws.amazon.com/solutions/latest/serverless-image-handler/thumbor-filters.html
 
 ## listAllObjects(type, id, limit, cursor)
-```type``` is eg drawing, location, etc ...    
-```id``` is userID(or ```undefined```, but not ```null``` or ```""```)    
-```limit``` is the max number of objects you want to receive (either by page or in total)    
-```cursor``` is on the first call ```undefined```` (just empty), when supplied, it defines the next page of limit-number of objects. The cursor is the last objects update time, so: objects[limit - 1].update_time    
 
-Results come back within .objects array:    
+`type` is eg drawing, location, etc ...  
+`id` is userID(or `undefined`, but not `null` or `""`)  
+`limit` is the max number of objects you want to receive (either by page or in total)  
+`cursor` is on the first call ```undefined```` (just empty), when supplied, it defines the next page of limit-number of objects. The cursor is the last objects update time, so: objects[limit - 1].update_time
+
+Results come back within .objects array:
 
 ```
 [
@@ -188,7 +190,7 @@ read: 1
 update_time: "2023-01-20T16:55:15.02286+01:00"
 user_id: "f011a5dc-901a-42c0-9589-587b389d1e3e"
 username: "user11"
-value: 
+value:
       displayname: "bloem"
       url: "drawing/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-01-02T21_50_42_GeelAvoceta.png"
       version: "0"
@@ -198,7 +200,7 @@ value:
 
 ```
 
-```update_time: "2023-01-20T16:55:15.02286+01:00"``` of the last object is used as the cursor to get the next page of objects.
+`update_time: "2023-01-20T16:55:15.02286+01:00"` of the last object is used as the cursor to get the next page of objects.
 
 ## validate(string,type,input)
 
@@ -213,6 +215,7 @@ repeat password - checks if password and repeat password are identical
 special - checks if the value contains no special characters
 
 ### examples:
+
 can be used in 2 ways, inline, automatically sets border to red if fail
 
 ```
@@ -228,6 +231,7 @@ can be used in 2 ways, inline, automatically sets border to red if fail
 ```
 
 or can used within a function as following:
+
 ```
 if(await validate(email,"email")){
 // run action if valid
@@ -236,18 +240,17 @@ if(await validate(email,"email")){
 )
 ```
 
-
 # setLoader(state)
 
 `setLoader(true)` sets loading screen on
 
 `setLoader(false)` sets loading screen off
 
-
-
 # getAllHouses(location,user_id)
+
 Gives you all the houses objects within the location, optionally add a user_id
 example result:
+
 ```
 
 [

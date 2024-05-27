@@ -5,30 +5,33 @@
 
 // First, check the parameters to get MAGNIFY
 var OPTS = {};
-window.location.search.substr(1).split('&').forEach(function (s) {
-  var tmp = s.split('=');
-  OPTS[tmp[0]] = tmp[1];
-});
+window.location.search
+  .substr(1)
+  .split('&')
+  .forEach(function (s) {
+    var tmp = s.split('=');
+    OPTS[tmp[0]] = tmp[1];
+  });
 
 // GLOBAL VARIABLES
 //   Constants: Full capital letters
 //   Variables: CamelCase
-AC = (window.AudioContext) ? new AudioContext() : new webkitAudioContext();
-SEMITONERATIO = Math.pow(2, 1/12);
+AC = window.AudioContext ? new AudioContext() : new webkitAudioContext();
+SEMITONERATIO = Math.pow(2, 1 / 12);
 MAGNIFY = OPTS.mag || OPTS.magnify || 3;
 CHARSIZE = 16 * MAGNIFY;
 HALFCHARSIZE = Math.floor(CHARSIZE / 2);
 BUTTONS = [];
 MouseX = 0;
 MouseY = 0;
-CONSOLE = document.getElementById("console");
-ORGWIDTH  = 256;
+CONSOLE = document.getElementById('console');
+ORGWIDTH = 256;
 ORGHEIGHT = 224;
 SCRHEIGHT = 152;
-CONSOLE.style.width  = ORGWIDTH  * MAGNIFY + "px";
-CONSOLE.style.height = ORGHEIGHT * MAGNIFY + "px";
+CONSOLE.style.width = ORGWIDTH * MAGNIFY + 'px';
+CONSOLE.style.height = ORGHEIGHT * MAGNIFY + 'px';
 OFFSETLEFT = CONSOLE.offsetLeft;
-OFFSETTOP  = CONSOLE.offsetTop;
+OFFSETTOP = CONSOLE.offsetTop;
 CurChar = 0;
 CurPos = 0;
 CurSong = undefined; // For Embedded Songs
@@ -38,9 +41,9 @@ DEFAULTTEMPO = 100;
 CurMaxBars = DEFAULTMAXBARS;
 Mario = null; // Mamma Mia!
 AnimeID = 0; // ID for cancel animation
-PsedoSheet = null // CSSRules for manipulating pseudo elements
-RepeatMark = null // For Score
-EndMark    = null
+PsedoSheet = null; // CSSRules for manipulating pseudo elements
+RepeatMark = null; // For Score
+EndMark = null;
 
 /*
  * GameStatus: Game mode
@@ -52,15 +55,17 @@ EndMark    = null
 GameStatus = 0;
 
 // shim layer with setTimeout fallback
-window.requestAnimFrame = (function(){
-return  window.requestAnimationFrame ||
-  window.webkitRequestAnimationFrame ||
-  window.mozRequestAnimationFrame    ||
-  window.oRequestAnimationFrame      ||
-  window.msRequestAnimationFrame     ||
-  function( callback ){
-  window.setTimeout(callback, 1000 / 60);
-};
+window.requestAnimFrame = (function () {
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function (callback) {
+      window.setTimeout(callback, 1000 / 60);
+    }
+  );
 })();
 
 // SoundEntity#constructor
@@ -74,9 +79,9 @@ function SoundEntity(path) {
 // SoundEntity#play
 // The all wav files are recorded in the tone F.
 // You should choose correct playback rate to play a music.
-SoundEntity.prototype.play = function(scale, delay) {
+SoundEntity.prototype.play = function (scale, delay) {
   var source = AC.createBufferSource();
-  var tmps = scale & 0x0F;
+  var tmps = scale & 0x0f;
   var semitone = this.diff[tmps];
   if ((scale & 0x80) != 0) semitone++;
   else if ((scale & 0x40) != 0) semitone--;
@@ -97,7 +102,7 @@ SoundEntity.prototype.play = function(scale, delay) {
 //   Long note like Yoshi can be canceled often
 //   BufferSource.stop won't throw an error even if the
 //   previous note has already ended.
-SoundEntity.prototype.playChord = function(noteList, delay) {
+SoundEntity.prototype.playChord = function (noteList, delay) {
   // Cancel previous chord first
   for (var i = 0; i < this.prevChord.length; i++) {
     this.prevChord[i].stop();
@@ -107,7 +112,7 @@ SoundEntity.prototype.playChord = function(noteList, delay) {
   // I heard that Array#map is slower than for loop because of costs of calling methods.
   for (var i = 0; i < noteList.length; i++) {
     var source = AC.createBufferSource();
-    var scale = (noteList[i] & 0x0F);
+    var scale = noteList[i] & 0x0f;
     var semitone = this.diff[scale];
     if ((noteList[i] & 0x80) != 0) semitone++;
     else if ((noteList[i] & 0x40) != 0) semitone--;
@@ -122,35 +127,35 @@ SoundEntity.prototype.playChord = function(noteList, delay) {
     source.start(delay);
     this.prevChord.push(source);
   }
-}
+};
 
-SoundEntity.prototype.load = function() {
+SoundEntity.prototype.load = function () {
   var filepath = this.path;
   return new Promise(function (resolve, reject) {
     // Load buffer asynchronously
     var request = new XMLHttpRequest();
-    request.open("GET", filepath, true);
-    request.responseType = "arraybuffer";
+    request.open('GET', filepath, true);
+    request.responseType = 'arraybuffer';
 
-    request.onload = function() {
+    request.onload = function () {
       // Asynchronously decode the audio file data in request.response
       AC.decodeAudioData(
         request.response,
-        function(buffer) {
+        function (buffer) {
           if (!buffer) {
             reject('error decoding file data: ' + url);
           }
           resolve(buffer);
         },
-        function(error) {
+        function (error) {
           reject('decodeAudioData error:' + error);
-        }
+        },
       );
-    }
+    };
 
-    request.onerror = function() {
+    request.onerror = function () {
       reject('BufferLoader: XHR error');
-    }
+    };
 
     request.send();
   });
@@ -159,27 +164,27 @@ SoundEntity.prototype.load = function() {
 // It's me, Mario!
 function MarioClass() {
   this.offset = -16; // offset in X
-  this.scroll = 0;   // Scroll amount in dots
-  this.x = -16;      // X-position in dots.
+  this.scroll = 0; // Scroll amount in dots
+  this.x = -16; // X-position in dots.
   this.images = null;
-  this.pos = 0;      // position in bar number
+  this.pos = 0; // position in bar number
 }
 
-MarioClass.prototype.init = function() {
+MarioClass.prototype.init = function () {
   this.x = -16;
   this.pos = 0;
   this.start = 0;
   this.state = 0;
   this.scroll = 0;
   this.offset = -16;
-  this.timer = new easyTimer(100, function(timer) {
-    Mario.state = (Mario.state == 1) ? 0 : 1;
+  this.timer = new easyTimer(100, function (timer) {
+    Mario.state = Mario.state == 1 ? 0 : 1;
   });
   this.timer.switch = true; // forever true;
   this.isJumping = false;
 };
 
-MarioClass.prototype.enter = function(timeStamp) {
+MarioClass.prototype.enter = function (timeStamp) {
   if (this.start == 0) this.start = timeStamp;
 
   var diff = timeStamp - this.start;
@@ -193,7 +198,7 @@ MarioClass.prototype.enter = function(timeStamp) {
   this.draw();
 };
 
-MarioClass.prototype.init4leaving = function() {
+MarioClass.prototype.init4leaving = function () {
   this.offset = this.x;
   this.start = 0;
   this.isJumping = false;
@@ -227,7 +232,7 @@ MarioClass.prototype.init4leaving = function() {
  * Mario should jump from one bar before the next bar which has the note(s)
  *
  */
-MarioClass.prototype.init4playing = function(timeStamp) {
+MarioClass.prototype.init4playing = function (timeStamp) {
   this.lastTime = timeStamp;
   this.offset = this.x;
   this.scroll = 0;
@@ -236,17 +241,16 @@ MarioClass.prototype.init4playing = function(timeStamp) {
   this.checkMarioShouldJump();
 };
 
-MarioClass.prototype.checkMarioShouldJump = function() {
+MarioClass.prototype.checkMarioShouldJump = function () {
   var notes = CurScore.notes[this.pos - 1];
   if (notes == undefined || notes.length == 0) {
     this.isJumping = false;
   } else if (notes.length == 1) {
-    this.isJumping = (typeof notes[0] != 'string');
-  } else
-    this.isJumping = true;
+    this.isJumping = typeof notes[0] != 'string';
+  } else this.isJumping = true;
 };
 
-MarioClass.prototype.play = function(timeStamp) {
+MarioClass.prototype.play = function (timeStamp) {
   // function for setting a chord to SoundEntities and playing it
   function scheduleAndPlay(notes, time) {
     if (time < 0) time = 0;
@@ -256,16 +260,16 @@ MarioClass.prototype.play = function(timeStamp) {
       var note = notes[i];
 
       // Dynamic tempo change
-      if (typeof note == "string") {
-        var tempo = note.split("=")[1];
+      if (typeof note == 'string') {
+        var tempo = note.split('=')[1];
         CurScore.tempo = tempo;
-        document.getElementById("tempo").value = tempo;
+        document.getElementById('tempo').value = tempo;
         continue;
       }
 
       var num = note >> 8;
-      var scale = note & 0xFF;
-      if  (!dic[num]) dic[num] = [scale];
+      var scale = note & 0xff;
+      if (!dic[num]) dic[num] = [scale];
       else dic[num].push(scale);
     }
     for (var i in dic) {
@@ -273,17 +277,18 @@ MarioClass.prototype.play = function(timeStamp) {
     }
   }
 
-  var tempo = CurScore.tempo
+  var tempo = CurScore.tempo;
   var diff = timeStamp - this.lastTime; // both are [ms]
   if (diff > 32) diff = 16; // When user hide the tag, force it
   this.lastTime = timeStamp;
-  var step = 32 * diff * tempo / 60000; // (60[sec] * 1000)[msec]
+  var step = (32 * diff * tempo) / 60000; // (60[sec] * 1000)[msec]
 
   this.timer.checkAndFire(timeStamp);
   var scroll = document.getElementById('scroll');
 
-  var nextBar = (16 + 32 * (this.pos - CurPos + 1) - 8);
-  if (Mario.x < 120) { // Mario still has to run
+  var nextBar = 16 + 32 * (this.pos - CurPos + 1) - 8;
+  if (Mario.x < 120) {
+    // Mario still has to run
     this.x += step;
     // If this step crosses the bar
     if (this.x >= nextBar) {
@@ -297,9 +302,10 @@ MarioClass.prototype.play = function(timeStamp) {
         this.x = 120;
       }
     }
-  } else if (CurPos <= CurScore.end - 6) { // Scroll
+  } else if (CurPos <= CurScore.end - 6) {
+    // Scroll
     this.x = 120;
-    if (this.scroll < 16 && (this.scroll + step) > 16) {
+    if (this.scroll < 16 && this.scroll + step > 16) {
       this.pos++;
       this.scroll += step;
       scheduleAndPlay(CurScore.notes[this.pos - 2], 0); // Ignore error
@@ -310,9 +316,9 @@ MarioClass.prototype.play = function(timeStamp) {
         this.scroll -= 32;
         CurPos++;
         scroll.value = CurPos;
-        if (CurPos > (CurScore.end - 6)) {
+        if (CurPos > CurScore.end - 6) {
           this.x += this.scroll;
-          this.scroll = 0
+          this.scroll = 0;
         }
       }
     }
@@ -330,23 +336,27 @@ MarioClass.prototype.play = function(timeStamp) {
 };
 
 // Mario Jump
-MarioClass.prototype.jump = function(x) {
-  var h = [0, 2, 4, 6, 8, 10, 12, 13, 14, 15, 16, 17, 18, 18, 19, 19, 19,
-           19, 19, 18, 18, 17, 16, 15, 14, 13, 12, 10, 8, 6, 4, 2, 0];
+MarioClass.prototype.jump = function (x) {
+  var h = [
+    0, 2, 4, 6, 8, 10, 12, 13, 14, 15, 16, 17, 18, 18, 19, 19, 19, 19, 19, 18,
+    18, 17, 16, 15, 14, 13, 12, 10, 8, 6, 4, 2, 0,
+  ];
   return h[Math.round(x) % 32];
-}
+};
 
-MarioClass.prototype.draw = function() {
-  var y = (41 - 22);
-  var state = this.state
+MarioClass.prototype.draw = function () {
+  var y = 41 - 22;
+  var state = this.state;
   if (this.isJumping) {
     state = 2;
-    if (this.x == 120) { // In scroll mode
+    if (this.x == 120) {
+      // In scroll mode
       // (scroll == 16) is just on the bar, 0 and 32 is on the center of between bars
       if (this.scroll != 16) {
         y -= this.jump(this.scroll > 16 ? this.scroll - 16 : this.scroll + 16);
       } /* if scroll == 16 then Mario should be on the ground */
-    } else { // Running to the center, or leaving to the goal
+    } else {
+      // Running to the center, or leaving to the goal
       y -= this.jump(Math.round((this.x - 8) % 32));
     }
   }
@@ -354,7 +364,7 @@ MarioClass.prototype.draw = function() {
   L2C.drawImage(this.images[state], this.x * MAGNIFY, y * MAGNIFY);
 };
 
-MarioClass.prototype.leave = function(timeStamp) {
+MarioClass.prototype.leave = function (timeStamp) {
   if (this.start == 0) this.start = timeStamp;
 
   var diff = timeStamp - this.start;
@@ -365,17 +375,23 @@ MarioClass.prototype.leave = function(timeStamp) {
       this.scroll = 0;
       CurPos++;
     }
-  } else
-    this.x = Math.floor(diff / 4) + this.offset;
+  } else this.x = Math.floor(diff / 4) + this.offset;
   if (Math.floor(diff / 100) % 2 == 0) {
-    this.state =  8;
+    this.state = 8;
     this.draw();
     var w = sweatimg.width;
     var h = sweatimg.height;
-    L2C.drawImage(sweatimg,
-        0, 0, w, h,
-        (this.x - (w + 1)) * MAGNIFY, (41 - 22) * MAGNIFY,
-        w * MAGNIFY, h * MAGNIFY);
+    L2C.drawImage(
+      sweatimg,
+      0,
+      0,
+      w,
+      h,
+      (this.x - (w + 1)) * MAGNIFY,
+      (41 - 22) * MAGNIFY,
+      w * MAGNIFY,
+      h * MAGNIFY,
+    );
   } else {
     this.state = 9;
     this.draw();
@@ -390,7 +406,7 @@ function easyTimer(time, func) {
   this.switch = false;
 }
 
-easyTimer.prototype.checkAndFire = function(time) {
+easyTimer.prototype.checkAndFire = function (time) {
   if (this.switch && time - this.lastTime > this.time) {
     this.func(this);
     this.lastTime = time;
@@ -402,31 +418,31 @@ SOUNDS = [];
 for (i = 1; i < 21; i++) {
   var tmp = '0';
   tmp += i.toString();
-  var file = "MarioSequencer/wav/sound" + tmp.substr(-2) + ".wav";
+  var file = 'MarioSequencer/wav/sound' + tmp.substr(-2) + '.wav';
   var e = new SoundEntity(file);
-  SOUNDS[i-1] = e;
+  SOUNDS[i - 1] = e;
 }
 
 // Prepare Mat
-MAT = document.getElementById("layer1");
-MAT.width  = ORGWIDTH  * MAGNIFY;
+MAT = document.getElementById('layer1');
+MAT.width = ORGWIDTH * MAGNIFY;
 MAT.height = ORGHEIGHT * MAGNIFY;
 L1C = MAT.getContext('2d');
 L1C.imageSmoothingEnabled = false;
 var mi = new Image();
-mi.src = "MarioSequencer/image/mat.png";
-mi.onload = function() {
+mi.src = 'MarioSequencer/image/mat.png';
+mi.onload = function () {
   L1C.drawImage(mi, 0, 0, mi.width * MAGNIFY, mi.height * MAGNIFY);
 };
 
 // Prepare Characters
 char_sheet = new Image();
-char_sheet.src = "MarioSequencer/image/character_sheet.png";
+char_sheet.src = 'MarioSequencer/image/character_sheet.png';
 
 // Prepare the Bomb!
-BOMBS = []
+BOMBS = [];
 bombimg = new Image();
-bombimg.src = "MarioSequencer/image/bomb.png";
+bombimg.src = 'MarioSequencer/image/bomb.png';
 bombTimer = new easyTimer(150, drawBomb);
 bombTimer.switch = true; // always true for the bomb
 bombTimer.currentFrame = 0;
@@ -448,59 +464,59 @@ function drawBomb(mySelf) {
   }
   if (CurSong == undefined || GameStatus != 2) return;
   CurSong.style.backgroundImage =
-    "url(" + CurSong.images[mySelf.currentFrame + 1].src + ")";
+    'url(' + CurSong.images[mySelf.currentFrame + 1].src + ')';
 }
 
 // Prepare the G-Clef. (x, y) = (9, 48)
 GClef = new Image();
-GClef.src = "MarioSequencer/image/G_Clef.png";
+GClef.src = 'MarioSequencer/image/G_Clef.png';
 
 // Prepare the numbers
 numimg = new Image();
-numimg.src = "MarioSequencer/image/numbers.png";
+numimg.src = 'MarioSequencer/image/numbers.png';
 
 // Prepare the Mario images
 marioimg = new Image();
-marioimg.src = "MarioSequencer/image/Mario.png";
+marioimg.src = 'MarioSequencer/image/Mario.png';
 
 sweatimg = new Image();
-sweatimg.src = "MarioSequencer/image/mario_sweat.png";
+sweatimg.src = 'MarioSequencer/image/mario_sweat.png';
 
 // Prepare the Play button
 playbtnimg = new Image();
-playbtnimg.src = "MarioSequencer/image/play_button.png";
+playbtnimg.src = 'MarioSequencer/image/play_button.png';
 
 // Prepare the Stop button
 stopbtnimg = new Image();
-stopbtnimg.src = "MarioSequencer/image/stop_button.png";
+stopbtnimg.src = 'MarioSequencer/image/stop_button.png';
 
 // Prepare the CLEAR button
 clearimg = new Image();
-clearimg.src = "MarioSequencer/image/clear_button.png";
+clearimg.src = 'MarioSequencer/image/clear_button.png';
 
 // Prepare tempo range slider thumb image
 thumbimg = new Image();
-thumbimg.src = "MarioSequencer/image/slider_thumb.png";
+thumbimg.src = 'MarioSequencer/image/slider_thumb.png';
 
 // Prepare beat button
 beatimg = new Image();
-beatimg.src = "MarioSequencer/image/beat_button.png";
+beatimg.src = 'MarioSequencer/image/beat_button.png';
 
 // Prepare Song buttons
 songimg = new Image();
-songimg.src = "MarioSequencer/image/song_buttons.png";
+songimg.src = 'MarioSequencer/image/song_buttons.png';
 
 // Prepare End Mark
 endimg = new Image();
-endimg.src = "MarioSequencer/image/end_mark.png";
+endimg.src = 'MarioSequencer/image/end_mark.png';
 
 // Prepare Semitone
 semitoneimg = new Image();
-semitoneimg.src = "MarioSequencer/image/semitone.png";
+semitoneimg.src = 'MarioSequencer/image/semitone.png';
 
 // Prepare the repeat marks
 repeatimg = new Image();
-repeatimg.src = "MarioSequencer/image/repeat_head.png";
+repeatimg.src = 'MarioSequencer/image/repeat_head.png';
 
 function drawRepeatHead(x) {
   var w = RepeatMarks[0].width;
@@ -533,9 +549,17 @@ function drawScore(pos, notes, scroll) {
     var w = GClef.width;
     var h = GClef.height;
     // GClef image is NOT magnified yet.
-    L2C.drawImage(GClef,
-      0, 0, w, h,
-      (9 - scroll) * MAGNIFY, 48 * MAGNIFY, w * MAGNIFY, h * MAGNIFY);
+    L2C.drawImage(
+      GClef,
+      0,
+      0,
+      w,
+      h,
+      (9 - scroll) * MAGNIFY,
+      48 * MAGNIFY,
+      w * MAGNIFY,
+      h * MAGNIFY,
+    );
 
     if (CurScore.loop) {
       drawRepeatHead(41 - scroll);
@@ -548,8 +572,8 @@ function drawScore(pos, notes, scroll) {
   var beats = CurScore.beats;
   // orange = 2, 1, 0, 3, 2, 1, 0, 3, ..... (if beats = 4)
   //        = 2, 1, 0, 2, 1, 0, 2, 1, ..... (if beats = 3)
-  var orange = (beats == 4) ? 3 - ((pos + 1) % 4) : 2 - ((pos + 3) % 3);
-  var i = (pos < 2) ? (2 - pos) : 0;
+  var orange = beats == 4 ? 3 - ((pos + 1) % 4) : 2 - ((pos + 3) % 3);
+  var i = pos < 2 ? 2 - pos : 0;
   for (; i < 9; i++) {
     var xorg = 16 + 32 * i - scroll;
     var x = xorg * MAGNIFY;
@@ -569,7 +593,7 @@ function drawScore(pos, notes, scroll) {
     } else {
       L2C.strokeStyle = '#A0C0B0';
     }
-    L2C.moveTo(x,  41 * MAGNIFY);
+    L2C.moveTo(x, 41 * MAGNIFY);
     L2C.lineTo(x, 148 * MAGNIFY);
     L2C.stroke();
 
@@ -578,36 +602,48 @@ function drawScore(pos, notes, scroll) {
 
     // Get notes down
     var delta = 0;
-    if (GameStatus == 2  && Mario.pos - 2 == barnum) {
+    if (GameStatus == 2 && Mario.pos - 2 == barnum) {
       var idx;
       if (Mario.x == 120) {
-        idx = (Mario.scroll >= 16) ? Mario.scroll - 16 : Mario.scroll + 16;
+        idx = Mario.scroll >= 16 ? Mario.scroll - 16 : Mario.scroll + 16;
       } else {
         idx = Mario.x + 8 - xorg;
       }
-      var tbl = [0, 1, 2, 3, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 8, 8,
-                 8, 8, 8, 8, 8, 7, 7, 6, 6, 5, 5, 4, 3, 3, 2, 1, 0];
+      var tbl = [
+        0, 1, 2, 3, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 6,
+        6, 5, 5, 4, 3, 3, 2, 1, 0,
+      ];
       delta = tbl[Math.round(idx)];
     }
     var hflag = false;
     for (var j = 0; j < b.length; j++) {
-      if (typeof b[j] == "string") continue; // for dynamic TEMPO
+      if (typeof b[j] == 'string') continue; // for dynamic TEMPO
 
       var sndnum = b[j] >> 8;
-      var scale  = b[j] & 0x0F;
+      var scale = b[j] & 0x0f;
       // When CurChar is eraser, and the mouse cursor is on the note,
       // an Image of note blinks.
-      if (CurChar == 16 && g != false && i == gridX && scale == gridY &&
-          eraserTimer.currentFrame == 1) {continue;}
+      if (
+        CurChar == 16 &&
+        g != false &&
+        i == gridX &&
+        scale == gridY &&
+        eraserTimer.currentFrame == 1
+      ) {
+        continue;
+      }
 
-      if (!hflag && (scale >= 11)) {
+      if (!hflag && scale >= 11) {
         hflag = true;
         drawHorizontalBar(i, scroll);
       }
-      L2C.drawImage(SOUNDS[sndnum].image, x - HALFCHARSIZE,
-        (40 + scale * 8 + delta) * MAGNIFY);
+      L2C.drawImage(
+        SOUNDS[sndnum].image,
+        x - HALFCHARSIZE,
+        (40 + scale * 8 + delta) * MAGNIFY,
+      );
 
-      var x2 = (x - 13 * MAGNIFY);
+      var x2 = x - 13 * MAGNIFY;
       var y = (44 + scale * 8 + delta) * MAGNIFY;
       if ((b[j] & 0x80) != 0) {
         L2C.drawImage(Semitones[0], x2, y);
@@ -621,7 +657,7 @@ function drawScore(pos, notes, scroll) {
     L2C.setLineDash([7 * MAGNIFY, 2 * MAGNIFY, 7 * MAGNIFY, 0]);
     L2C.lineWidth = MAGNIFY;
     L2C.strokeStyle = '#F00';
-    var xorg = (16 + 32 * gridX - 8);
+    var xorg = 16 + 32 * gridX - 8;
     var x = xorg * MAGNIFY;
     var y = (40 + gridY * 8) * MAGNIFY;
     L2C.rect(x, y, CHARSIZE, CHARSIZE);
@@ -633,9 +669,12 @@ function drawScore(pos, notes, scroll) {
 // X is the x of vertical bar (in grid)
 function drawHorizontalBar(gridX, scroll) {
   var width = 24 * MAGNIFY;
-  L2C.fillRect((4 + 32 * gridX - scroll) * MAGNIFY,
+  L2C.fillRect(
+    (4 + 32 * gridX - scroll) * MAGNIFY,
     (38 + 11 * 8) * MAGNIFY + HALFCHARSIZE,
-    width, 2 * MAGNIFY);
+    width,
+    2 * MAGNIFY,
+  );
 }
 
 function drawBarNumber(gridX, barnum) {
@@ -650,14 +689,21 @@ function drawBarNumber(gridX, barnum) {
   if (len == 1) x += 2 * MAGNIFY;
   while (nums.length > 0) {
     var n = nums.pop();
-    var width = (n == 4) ? 5 : 4;
+    var width = n == 4 ? 5 : 4;
     L2C.drawImage(NUMBERS[n], x, y, 5 * MAGNIFY, 7 * MAGNIFY);
     x += width * MAGNIFY;
   }
 }
 
 function changeCursor(num) {
-  SCREEN.style.cursor = 'url(' + SOUNDS[num].image.src + ')' + HALFCHARSIZE +' '+ HALFCHARSIZE + ', auto';
+  SCREEN.style.cursor =
+    'url(' +
+    SOUNDS[num].image.src +
+    ')' +
+    HALFCHARSIZE +
+    ' ' +
+    HALFCHARSIZE +
+    ', auto';
 }
 
 function drawCurChar(image) {
@@ -685,12 +731,16 @@ function drawEraserIcon() {
 }
 
 function toGrid(realX, realY) {
-  var gridLeft   = (8   + 0) * MAGNIFY;
-  var gridTop    = (41     ) * MAGNIFY;
-  var gridRight  = (247 - 4) * MAGNIFY;
+  var gridLeft = (8 + 0) * MAGNIFY;
+  var gridTop = 41 * MAGNIFY;
+  var gridRight = (247 - 4) * MAGNIFY;
   var gridBottom = (148 - 4) * MAGNIFY;
-  if (realX < gridLeft || realX > gridRight ||
-      realY < gridTop  || realY > gridBottom)
+  if (
+    realX < gridLeft ||
+    realX > gridRight ||
+    realY < gridTop ||
+    realY > gridBottom
+  )
     return false;
 
   var gridX = Math.floor((realX - gridLeft) / CHARSIZE);
@@ -699,16 +749,14 @@ function toGrid(realX, realY) {
   var gridY = Math.floor((realY - gridTop) / HALFCHARSIZE);
 
   // Consider G-Clef and repeat head area
-  if (CurPos == 0 && gridX < 2 || CurPos == 1 && gridX == 0)
-    return false;
-  else
-    return [gridX, gridY];
+  if ((CurPos == 0 && gridX < 2) || (CurPos == 1 && gridX == 0)) return false;
+  else return [gridX, gridY];
 }
 
-SCREEN = document.getElementById("layer2");
+SCREEN = document.getElementById('layer2');
 // You should not use .style.width(or height) here.
 // You must not append "px" here.
-SCREEN.width  = ORGWIDTH  * MAGNIFY;
+SCREEN.width = ORGWIDTH * MAGNIFY;
 SCREEN.height = SCRHEIGHT * MAGNIFY;
 L2C = SCREEN.getContext('2d');
 L2C.imageSmoothingEnabled = false;
@@ -717,10 +765,10 @@ L2C.imageSmoothingEnabled = false;
 // Low priority? No milestone?
 // I'm outta here. #IAmGoogle
 // https://code.google.com/p/chromium/issues/detail?id=276941
-SCREEN.addEventListener("contextmenu", mouseClickListener);
+SCREEN.addEventListener('contextmenu', mouseClickListener);
 
 // ClipRect (8, 41) to (247, 148)
-SCREEN.addEventListener("click", mouseClickListener);
+SCREEN.addEventListener('click', mouseClickListener);
 
 function mouseClickListener(e) {
   if (GameStatus != 0) return;
@@ -750,7 +798,7 @@ function mouseClickListener(e) {
   if (CurChar == 16 || e.button == 2) {
     // Delete Top of the stack
     for (var i = notes.length - 1; i >= 0; i--) {
-      if ((notes[i] & 0x3F) == gridY) {
+      if ((notes[i] & 0x3f) == gridY) {
         notes.splice(i, 1);
         CurScore.notes[b] = notes;
         SOUNDS[17].play(8);
@@ -765,14 +813,14 @@ function mouseClickListener(e) {
   //
   // Handle semitone
   if (e.shiftKey) gridY |= 0x80;
-  if (e.ctrlKey ) gridY |= 0x40;
+  if (e.ctrlKey) gridY |= 0x40;
   SOUNDS[CurChar].play(gridY);
   note = (CurChar << 8) | gridY;
   notes.push(note);
   CurScore['notes'][b] = notes;
 }
 
-SCREEN.addEventListener("mousemove", function(e) {
+SCREEN.addEventListener('mousemove', function (e) {
   MouseX = e.clientX;
   MouseY = e.clientY;
 });
@@ -780,7 +828,7 @@ SCREEN.addEventListener("mousemove", function(e) {
 // Read MSQ File
 // You really need this "dragover" event listener.
 // Check StackOverflow: http://bit.ly/1hHEINZ
-SCREEN.addEventListener("dragover", function(e) {
+SCREEN.addEventListener('dragover', function (e) {
   e.preventDefault();
   return false;
 });
@@ -789,7 +837,7 @@ SCREEN.addEventListener("dragover", function(e) {
 // But you might want to download files parallel.
 // In such a case, Promise is very convinient utility.
 // http://www.html5rocks.com/en/tutorials/es6/promises/
-SCREEN.addEventListener("drop", function(e) {
+SCREEN.addEventListener('drop', function (e) {
   e.preventDefault();
   clearSongButtons();
   fullInitScore();
@@ -797,10 +845,10 @@ SCREEN.addEventListener("drop", function(e) {
   // Input is a instance of a File object.
   // Returns a instance of a Promise.
   function readFile(file) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       var reader = new FileReader();
       reader.name = file.name;
-      reader.addEventListener("load", function(e) {
+      reader.addEventListener('load', function (e) {
         resolve(e.target);
       });
       reader.readAsText(file, 'shift-jis');
@@ -812,7 +860,7 @@ SCREEN.addEventListener("drop", function(e) {
   // Support Mr.Phenix's files. He numbered files with decimal numbers :-)
   // http://music.geocities.jp/msq_phenix/
   // For example, suite15.5.msq must be after the suite15.msq
-  files.sort(function(a,b) {
+  files.sort(function (a, b) {
     var n1 = a.name;
     var n2 = b.name;
     function strip(name) {
@@ -823,22 +871,27 @@ SCREEN.addEventListener("drop", function(e) {
     }
     return strip(n1) - strip(n2);
   });
-  files.map(readFile).reduce(function(chain, fp, idx) {
-    return chain.then(function() {
-      return fp;
-    }).then(function(fileReader) {
-      var ext = fileReader.name.slice(-3);
-      if (ext == "msq") {
-        addMSQ(fileReader.result);
-      } else {
-        addJSON(fileReader.result);
-      }
-    }).catch(function(err) {
-      alert("Loading MSQ failed: " + err.message);
-      console.log(err);
-    });
-  }, Promise.resolve())
-  .then(closing);
+  files
+    .map(readFile)
+    .reduce(function (chain, fp, idx) {
+      return chain
+        .then(function () {
+          return fp;
+        })
+        .then(function (fileReader) {
+          var ext = fileReader.name.slice(-3);
+          if (ext == 'msq') {
+            addMSQ(fileReader.result);
+          } else {
+            addJSON(fileReader.result);
+          }
+        })
+        .catch(function (err) {
+          alert('Loading MSQ failed: ' + err.message);
+          console.log(err);
+        });
+    }, Promise.resolve())
+    .then(closing);
 
   return false;
 });
@@ -848,7 +901,7 @@ SCREEN.addEventListener("drop", function(e) {
 function closing() {
   // Finally, after reducing, set parameters to Score
   var b = document.getElementById(CurScore.beats == 3 ? '3beats' : '4beats');
-  var e = new Event("click");
+  var e = new Event('click');
   e.soundOff = true;
   b.dispatchEvent(e);
 
@@ -859,37 +912,37 @@ function closing() {
   CurPos = 0;
 
   var tempo = CurScore.notes[0][0];
-  if (typeof tempo == "string" && tempo.substr(0, 5) == "TEMPO") {
-    tempo = tempo.split("=")[1];
+  if (typeof tempo == 'string' && tempo.substr(0, 5) == 'TEMPO') {
+    tempo = tempo.split('=')[1];
     CurScore.tempo = tempo;
-    document.getElementById("tempo").value = tempo;
+    document.getElementById('tempo').value = tempo;
   }
 }
 
 function addMSQ(text) {
   lines = text.split(/\r\n|\r|\n/);
-  keyword = ["SCORE", "TEMPO", "LOOP", "END", "TIME44"];
+  keyword = ['SCORE', 'TEMPO', 'LOOP', 'END', 'TIME44'];
   var values = {};
-  lines.forEach(function(line, i) {
-    if (line === "") return;
-    var kv = line.split("=");
+  lines.forEach(function (line, i) {
+    if (line === '') return;
+    var kv = line.split('=');
     var k = kv[0];
     var v = kv[1];
     if (i < keyword.length && k !== keyword[i]) {
-      throw new Error("Line " + i + " must start with '" + keyword[i] + "'");
+      throw new Error('Line ' + i + " must start with '" + keyword[i] + "'");
     }
     this[k] = v;
   }, values);
 
   var oldEnd = CurScore.end;
   var s = values.SCORE;
-  var i = 0, count = CurScore.end;
+  var i = 0,
+    count = CurScore.end;
   // MSQ format is variable length string.
-  out:
-  while (i < s.length) {
+  out: while (i < s.length) {
     var bar = [];
     for (var j = 0; j < 3; j++) {
-      if (s[i] === "\r" || s[i] == undefined) break out;
+      if (s[i] === '\r' || s[i] == undefined) break out;
       var scale = parseInt(s[i++], 16);
       if (scale !== 0) {
         scale -= 1;
@@ -901,15 +954,15 @@ function addMSQ(text) {
     CurScore.notes[count++] = bar;
   }
 
-  CurScore.end  += parseInt(values.END) - 1;
+  CurScore.end += parseInt(values.END) - 1;
   if (CurScore.tempo != values.TEMPO)
-    CurScore.notes[oldEnd].splice(0, 0, "TEMPO=" + values.TEMPO);
+    CurScore.notes[oldEnd].splice(0, 0, 'TEMPO=' + values.TEMPO);
   CurScore.tempo = values.TEMPO;
-  var beats = (values.TIME44 == "TRUE") ? 4 : 3;
+  var beats = values.TIME44 == 'TRUE' ? 4 : 3;
   CurScore.beats = beats;
   // click listener will set CurScore.loop
-  b = document.getElementById("loop");
-  (values.LOOP == "TRUE") ? b.set() : b.reset();
+  b = document.getElementById('loop');
+  values.LOOP == 'TRUE' ? b.set() : b.reset();
 }
 
 // addJSON
@@ -919,22 +972,22 @@ function addMSQ(text) {
 //   This means you can use any object with result.
 function addJSON(text) {
   var json = JSON.parse(text);
-  for (var i = 0; i < json.end; i++)
-    CurScore.notes.push(json.notes[i]);
+  for (var i = 0; i < json.end; i++) CurScore.notes.push(json.notes[i]);
 
   var notes = CurScore.notes[CurScore.end];
   if (CurScore.tempo != json.tempo && notes.length != 0) {
     var tempostr = notes[0];
-    if (typeof tempostr != "string") {
-      notes.splice(0, 0, "TEMPO=" + json.tempo);
+    if (typeof tempostr != 'string') {
+      notes.splice(0, 0, 'TEMPO=' + json.tempo);
     }
   }
   CurScore.tempo = json.tempo;
 
   CurScore.end += json.end;
 
-  b = document.getElementById("loop");
-  if (CurScore.loop) b.set; else b.reset();
+  b = document.getElementById('loop');
+  if (CurScore.loop) b.set;
+  else b.reset();
 }
 
 function doAnimation(time) {
@@ -951,34 +1004,34 @@ function doAnimation(time) {
 }
 
 function makeButton(x, y, w, h) {
-  var b = document.createElement("button");
-  b.className = "game";
+  var b = document.createElement('button');
+  b.className = 'game';
   b.style.position = 'absolute';
   moveDOM(b, x, y);
   resizeDOM(b, w, h);
   b.style['z-index'] = 3;
-  b.style.background = "rgba(0,0,0,0)";
+  b.style.background = 'rgba(0,0,0,0)';
 
   // Save position and size for later use
   b.originalX = x;
   b.originalY = y;
   b.originalW = w;
   b.originalH = h;
-  b.redraw = function() {
+  b.redraw = function () {
     moveDOM(this, this.originalX, this.originalY);
     resizeDOM(this, this.originalW, this.originalH);
-  }
+  };
   return b;
 }
 
 function resizeDOM(b, w, h) {
-  b.style.width =  w * MAGNIFY + "px";
-  b.style.height = h * MAGNIFY + "px";
+  b.style.width = w * MAGNIFY + 'px';
+  b.style.height = h * MAGNIFY + 'px';
 }
 
 function moveDOM(b, x, y) {
-  b.style.left =   x * MAGNIFY + "px";
-  b.style.top =    y * MAGNIFY + "px";
+  b.style.left = x * MAGNIFY + 'px';
+  b.style.top = y * MAGNIFY + 'px';
 }
 
 // Select Listener
@@ -995,20 +1048,20 @@ function resizeScreen() {
   CHARSIZE = 16 * MAGNIFY;
   HALFCHARSIZE = Math.floor(CHARSIZE / 2);
 
-  CONSOLE.style.width  = ORGWIDTH  * MAGNIFY + "px";
-  CONSOLE.style.height = ORGHEIGHT * MAGNIFY + "px";
+  CONSOLE.style.width = ORGWIDTH * MAGNIFY + 'px';
+  CONSOLE.style.height = ORGHEIGHT * MAGNIFY + 'px';
   OFFSETLEFT = CONSOLE.offsetLeft;
-  OFFSETTOP  = CONSOLE.offsetTop;
+  OFFSETTOP = CONSOLE.offsetTop;
 
   BOMBS = sliceImage(bombimg, 14, 18);
   Mario.images = sliceImage(marioimg, 16, 22);
   Semitones = sliceImage(semitoneimg, 5, 12);
 
-  MAT.width  = ORGWIDTH  * MAGNIFY;
+  MAT.width = ORGWIDTH * MAGNIFY;
   MAT.height = ORGHEIGHT * MAGNIFY;
   L1C.drawImage(mi, 0, 0, mi.width * MAGNIFY, mi.height * MAGNIFY);
 
-  SCREEN.width  = ORGWIDTH  * MAGNIFY;
+  SCREEN.width = ORGWIDTH * MAGNIFY;
   SCREEN.height = SCRHEIGHT * MAGNIFY;
 
   var imgs = sliceImage(char_sheet, 16, 16);
@@ -1023,96 +1076,99 @@ function resizeScreen() {
   // Endmark Cursor (= 15) will be redrawn by its animation
   // Eraser (= 16) will be redrawn later below
   if (CurChar < 15) {
-   changeCursor(CurChar);
+    changeCursor(CurChar);
   }
 
-  if (CurChar == 15)
-    drawEndMarkIcon(BUTTONS[15].images[0]);
-  else if (CurChar == 16)
-    drawEraserIcon();
-  else
-    drawCurChar(SOUNDS[CurChar].image);
+  if (CurChar == 15) drawEndMarkIcon(BUTTONS[15].images[0]);
+  else if (CurChar == 16) drawEraserIcon();
+  else drawCurChar(SOUNDS[CurChar].image);
 
-  var b = document.getElementById("play");
+  var b = document.getElementById('play');
   b.redraw();
   b.images = sliceImage(playbtnimg, 12, 15);
   var num = b.disabled ? 1 : 0;
-  b.style.backgroundImage = "url(" + b.images[num].src + ")";
+  b.style.backgroundImage = 'url(' + b.images[num].src + ')';
 
-  var b = document.getElementById("stop");
+  var b = document.getElementById('stop');
   b.redraw();
   var imgs = sliceImage(stopbtnimg, 16, 15);
   b.images = [imgs[0], imgs[1]];
-  b.style.backgroundImage = "url(" + b.images[1 - num].src + ")";
+  b.style.backgroundImage = 'url(' + b.images[1 - num].src + ')';
 
-  var b = document.getElementById("loop");
+  var b = document.getElementById('loop');
   b.redraw();
   b.images = [imgs[2], imgs[3]]; // made in Stop button (above)
   var num = CurScore.loop ? 1 : 0;
-  b.style.backgroundImage = "url(" + b.images[num].src + ")";
+  b.style.backgroundImage = 'url(' + b.images[num].src + ')';
 
   // Prepare Repeat (global!)
   RepeatMarks = sliceImage(repeatimg, 13, 62);
   EndMark = RepeatMarks[2];
 
-  var b = document.getElementById("scroll");
+  var b = document.getElementById('scroll');
   moveDOM(b, b.originalX, b.originalY);
   resizeDOM(b, b.originalW, b.originalH);
   var rules = PseudoSheet.cssRules;
   for (var i = 0; i < rules.length; i++) {
-    if (rules[i].selectorText == "#scroll::-webkit-slider-thumb") {
+    if (rules[i].selectorText == '#scroll::-webkit-slider-thumb') {
       PseudoSheet.deleteRule(i);
-      PseudoSheet.insertRule('#scroll::-webkit-slider-thumb {' +
-        "-webkit-appearance: none !important;" +
-        "border-radius: 0px;" +
-        "background-color: #A870D0;" +
-        "box-shadow:inset 0 0 0px;" +
-        "border: 0px;" +
-        "width: " + 5 * MAGNIFY + "px;" +
-        "height:" + 7 * MAGNIFY + 'px;}', 0
+      PseudoSheet.insertRule(
+        '#scroll::-webkit-slider-thumb {' +
+          '-webkit-appearance: none !important;' +
+          'border-radius: 0px;' +
+          'background-color: #A870D0;' +
+          'box-shadow:inset 0 0 0px;' +
+          'border: 0px;' +
+          'width: ' +
+          5 * MAGNIFY +
+          'px;' +
+          'height:' +
+          7 * MAGNIFY +
+          'px;}',
+        0,
       );
     }
   }
-  var b = document.getElementById("toLeft");
+  var b = document.getElementById('toLeft');
   b.redraw();
-  var b = document.getElementById("toRight");
+  var b = document.getElementById('toRight');
   b.redraw();
-  var b = document.getElementById("clear");
+  var b = document.getElementById('clear');
   b.redraw();
   b.images = sliceImage(clearimg, 34, 16);
-  b.style.backgroundImage = "url(" + b.images[0].src + ")";
+  b.style.backgroundImage = 'url(' + b.images[0].src + ')';
 
   // Make number images from the number sheet
   NUMBERS = sliceImage(numimg, 5, 7);
 
-  var b = document.getElementById("3beats");
+  var b = document.getElementById('3beats');
   b.redraw();
   var imgs = sliceImage(beatimg, 14, 15);
   b.images = [imgs[0], imgs[1]];
-  var num = (CurScore.beats == 3) ? 1 : 0;
-  b.style.backgroundImage = "url(" + b.images[num].src + ")";
-  var b = document.getElementById("4beats");
+  var num = CurScore.beats == 3 ? 1 : 0;
+  b.style.backgroundImage = 'url(' + b.images[num].src + ')';
+  var b = document.getElementById('4beats');
   b.redraw();
   b.images = [imgs[2], imgs[3]];
-  b.style.backgroundImage = "url(" + b.images[1 - num].src + ")";
+  b.style.backgroundImage = 'url(' + b.images[1 - num].src + ')';
 
-  var b = document.getElementById("frog");
+  var b = document.getElementById('frog');
   b.redraw();
   var imgs = sliceImage(songimg, 15, 17);
   b.images = [imgs[0], imgs[1], imgs[2]];
-  var num = (CurSong === b) ? 1 : 0;
-  b.style.backgroundImage = "url(" + b.images[num].src + ")";
-  var b = document.getElementById("beak");
+  var num = CurSong === b ? 1 : 0;
+  b.style.backgroundImage = 'url(' + b.images[num].src + ')';
+  var b = document.getElementById('beak');
   b.redraw();
   b.images = [imgs[3], imgs[4], imgs[5]];
-  var num = (CurSong === b) ? 1 : 0;
-  b.style.backgroundImage = "url(" + b.images[num].src + ")";
-  var b = document.getElementById("1up");
+  var num = CurSong === b ? 1 : 0;
+  b.style.backgroundImage = 'url(' + b.images[num].src + ')';
+  var b = document.getElementById('1up');
   b.redraw();
   b.images = [imgs[6], imgs[7], imgs[8]];
-  var num = (CurSong === b) ? 1 : 0;
-  b.style.backgroundImage = "url(" + b.images[num].src + ")";
-  var b = document.getElementById("eraser");
+  var num = CurSong === b ? 1 : 0;
+  b.style.backgroundImage = 'url(' + b.images[num].src + ')';
+  var b = document.getElementById('eraser');
   b.redraw();
   b.images = [imgs[9], imgs[10], imgs[11]];
   var num;
@@ -1122,30 +1178,38 @@ function resizeScreen() {
   } else {
     num = 0;
   }
-  b.style.backgroundImage = "url(" + b.images[num].src + ")";
+  b.style.backgroundImage = 'url(' + b.images[num].src + ')';
 
-  var b = document.getElementById("tempo");
+  var b = document.getElementById('tempo');
   moveDOM(b, b.originalX, b.originalY);
   resizeDOM(b, b.originalW, b.originalH);
   var rules = PseudoSheet.cssRules;
   for (var i = 0; i < rules.length; i++) {
-    if (rules[i].selectorText == "#tempo::-webkit-slider-thumb") {
+    if (rules[i].selectorText == '#tempo::-webkit-slider-thumb') {
       PseudoSheet.deleteRule(i);
-      PseudoSheet.insertRule('#tempo::-webkit-slider-thumb {' +
-        "-webkit-appearance: none !important;" +
-        "background-image: url('" + b.image.src + "');" +
-        "background-repeat: no-repeat;" +
-        "background-size: 100% 100%;" +
-        "border: 0px;" +
-        "width: " + 5 * MAGNIFY + "px;" +
-        "height:" + 8 * MAGNIFY + 'px;}', 0
+      PseudoSheet.insertRule(
+        '#tempo::-webkit-slider-thumb {' +
+          '-webkit-appearance: none !important;' +
+          "background-image: url('" +
+          b.image.src +
+          "');" +
+          'background-repeat: no-repeat;' +
+          'background-size: 100% 100%;' +
+          'border: 0px;' +
+          'width: ' +
+          5 * MAGNIFY +
+          'px;' +
+          'height:' +
+          8 * MAGNIFY +
+          'px;}',
+        0,
       );
     }
   }
 }
 
 // INIT routine
-window.addEventListener("load", onload);
+window.addEventListener('load', onload);
 function onload() {
   // Make buttons for changing a kind of notes.
   //   1st mario:   x=24, y=8, width=13, height=14
@@ -1153,11 +1217,11 @@ function onload() {
   //   and so on...
   var bimgs = sliceImage(char_sheet, 16, 16);
   for (var i = 0; i < 15; i++) {
-    var b = makeButton((24 + 14 * i), 8, 13, 14);
+    var b = makeButton(24 + 14 * i, 8, 13, 14);
     b.num = i;
     b.se = SOUNDS[i];
     b.se.image = bimgs[i];
-    b.addEventListener("click", function() {
+    b.addEventListener('click', function () {
       this.se.play(8); // Note F
       CurChar = this.num;
       clearEraserButton();
@@ -1177,13 +1241,19 @@ function onload() {
       self.switch = false;
       return;
     }
-    self.currentFrame = (self.currentFrame == 0) ? 1 : 0;
-    SCREEN.style.cursor = 'url(' + self.images[self.currentFrame].src + ')' +
-      7 * MAGNIFY +' '+ 7 * MAGNIFY + ', auto';
+    self.currentFrame = self.currentFrame == 0 ? 1 : 0;
+    SCREEN.style.cursor =
+      'url(' +
+      self.images[self.currentFrame].src +
+      ')' +
+      7 * MAGNIFY +
+      ' ' +
+      7 * MAGNIFY +
+      ', auto';
   });
   endMarkTimer.images = b.images;
   endMarkTimer.currentFrame = 0;
-  b.addEventListener("click", function() {
+  b.addEventListener('click', function () {
     endMarkTimer.switch = true;
     CurChar = 15;
     SOUNDS[15].play(8);
@@ -1194,7 +1264,7 @@ function onload() {
   BUTTONS[15] = b;
 
   // For inserting pseudo elements' styles
-  var s = document.createElement("style");
+  var s = document.createElement('style');
   document.head.appendChild(s);
   PseudoSheet = s.sheet;
 
@@ -1202,8 +1272,8 @@ function onload() {
   var b = makeButton(55, 168, 12, 15);
   b.id = 'play';
   b.images = sliceImage(playbtnimg, 12, 15);
-  b.style.backgroundImage = "url(" + b.images[0].src + ")";
-  b.addEventListener("click", playListener);
+  b.style.backgroundImage = 'url(' + b.images[0].src + ')';
+  b.addEventListener('click', playListener);
   s.sheet.insertRule('#play:focus {outline: none !important;}', 0);
   CONSOLE.appendChild(b);
 
@@ -1214,8 +1284,8 @@ function onload() {
   // stopbtn image including loop button (next)
   var imgs = sliceImage(stopbtnimg, 16, 15);
   b.images = [imgs[0], imgs[1]];
-  b.style.backgroundImage = "url(" + b.images[1].src + ")";
-  b.addEventListener("click", stopListener);
+  b.style.backgroundImage = 'url(' + b.images[1].src + ')';
+  b.addEventListener('click', stopListener);
   s.sheet.insertRule('#stop:focus {outline: none !important;}', 0);
   CONSOLE.appendChild(b);
 
@@ -1223,9 +1293,9 @@ function onload() {
   var b = makeButton(85, 168, 16, 15);
   b.id = 'loop';
   b.images = [imgs[2], imgs[3]]; // made in Stop button (above)
-  b.style.backgroundImage = "url(" + b.images[0].src + ")";
+  b.style.backgroundImage = 'url(' + b.images[0].src + ')';
   CurScore.loop = false;
-  b.addEventListener("click", function(e) {
+  b.addEventListener('click', function (e) {
     var num;
     if (CurScore.loop) {
       CurScore.loop = false;
@@ -1234,17 +1304,17 @@ function onload() {
       CurScore.loop = true;
       num = 1;
     }
-    this.style.backgroundImage = "url(" + this.images[num].src + ")";
+    this.style.backgroundImage = 'url(' + this.images[num].src + ')';
     SOUNDS[17].play(8);
   });
   b.reset = function () {
     CurScore.loop = false;
-    this.style.backgroundImage = "url(" + this.images[0].src + ")";
+    this.style.backgroundImage = 'url(' + this.images[0].src + ')';
   };
-  b.set   = function () {
+  b.set = function () {
     CurScore.loop = true;
-    this.style.backgroundImage = "url(" + this.images[1].src + ")";
-  }
+    this.style.backgroundImage = 'url(' + this.images[1].src + ')';
+  };
   s.sheet.insertRule('#loop:focus {outline: none !important;}', 0);
   CONSOLE.appendChild(b);
 
@@ -1260,7 +1330,7 @@ function onload() {
   r.max = CurMaxBars - 6;
   r.min = 0;
   r.step = 1;
-  r.style['-webkit-appearance']='none';
+  r.style['-webkit-appearance'] = 'none';
   r.style['border-radius'] = '0px';
   r.style['background-color'] = '#F8F8F8';
   r.style['box-shadow'] = 'inset 0 0 0 #000';
@@ -1273,21 +1343,27 @@ function onload() {
   r.originalH = 7;
   moveDOM(r, r.originalX, r.originalY);
   resizeDOM(r, r.originalW, r.originalH);
-  r.addEventListener("input", function(e) {
+  r.addEventListener('input', function (e) {
     CurPos = parseInt(this.value);
   });
   CONSOLE.appendChild(r);
 
   // It's very hard to set values to a pseudo element with JS.
   // http://pankajparashar.com/posts/modify-pseudo-elements-css/
-  s.sheet.insertRule('#scroll::-webkit-slider-thumb {' +
-    "-webkit-appearance: none !important;" +
-    "border-radius: 0px;" +
-    "background-color: #A870D0;" +
-    "box-shadow:inset 0 0 0px;" +
-    "border: 0px;" +
-    "width: " + 5 * MAGNIFY + "px;" +
-    "height:" + 7 * MAGNIFY + "px;}", 0
+  s.sheet.insertRule(
+    '#scroll::-webkit-slider-thumb {' +
+      '-webkit-appearance: none !important;' +
+      'border-radius: 0px;' +
+      'background-color: #A870D0;' +
+      'box-shadow:inset 0 0 0px;' +
+      'border: 0px;' +
+      'width: ' +
+      5 * MAGNIFY +
+      'px;' +
+      'height:' +
+      7 * MAGNIFY +
+      'px;}',
+    0,
   );
   s.sheet.insertRule('#scroll:focus {outline: none !important;}', 0);
 
@@ -1305,14 +1381,14 @@ function onload() {
     clone.splice(num, 1); // Remove No.i element
     var theOthers = clone;
 
-    return function(e) {
+    return function (e) {
       // Sound Off for file loading
       if (!e.soundOff) SOUNDS[17].play(8);
       self.disabled = true;
-      self.style.backgroundImage = "url(" + self.images[1].src + ")";
+      self.style.backgroundImage = 'url(' + self.images[1].src + ')';
       theOthers.map(function (x) {
         x.disabled = false;
-        x.style.backgroundImage = "url(" + x.images[0].src + ")";
+        x.style.backgroundImage = 'url(' + x.images[0].src + ')';
       });
       success(self);
     };
@@ -1323,68 +1399,71 @@ function onload() {
   b1.id = '3beats';
   b1.beats = 3;
   b1.images = [imgs[0], imgs[1]];
-  b1.style.backgroundImage = "url(" + b1.images[0].src + ")";
+  b1.style.backgroundImage = 'url(' + b1.images[0].src + ')';
   b1.disabled = false;
   CONSOLE.appendChild(b1);
   var b2 = makeButton(96, 203, 14, 15);
   b2.id = '4beats';
   b2.beats = 4;
   b2.images = [imgs[2], imgs[3]];
-  b2.style.backgroundImage = "url(" + b2.images[1].src + ")";
+  b2.style.backgroundImage = 'url(' + b2.images[1].src + ')';
   b2.disabled = true;
   CONSOLE.appendChild(b2);
-  var func = function(self) {CurScore.beats = self.beats};
-  b1.addEventListener("click", makeExclusiveFunction([b1, b2], 0, func));
-  b2.addEventListener("click", makeExclusiveFunction([b1, b2], 1, func));
+  var func = function (self) {
+    CurScore.beats = self.beats;
+  };
+  b1.addEventListener('click', makeExclusiveFunction([b1, b2], 0, func));
+  b2.addEventListener('click', makeExclusiveFunction([b1, b2], 1, func));
 
   // Preapre Song Buttons (136, 202) 15x17, 160 - 136 = 24
   var imgs = sliceImage(songimg, 15, 17);
-  var b = ['frog','beak','1up'].map(function (id, idx) {
+  var b = ['frog', 'beak', '1up'].map(function (id, idx) {
     var b = makeButton(136 + 24 * idx, 202, 15, 17);
     b.id = id;
     b.num = idx;
     b.images = imgs.slice(idx * 3, idx * 3 + 3);
-    b.style.backgroundImage = "url(" + b.images[0].src + ")";
+    b.style.backgroundImage = 'url(' + b.images[0].src + ')';
     b.disabled = false;
     CONSOLE.appendChild(b);
     return b;
   });
   var func = function (self) {
     CurScore = clone(EmbeddedSong[self.num]);
-    document.getElementById("tempo").value = CurScore.tempo;
-    var b = document.getElementById("loop");
-    if (CurScore.loop) b.set(); else b.reset();
-    var s = document.getElementById("scroll");
+    document.getElementById('tempo').value = CurScore.tempo;
+    var b = document.getElementById('loop');
+    if (CurScore.loop) b.set();
+    else b.reset();
+    var s = document.getElementById('scroll');
     s.max = CurScore.end - 5;
     s.value = 0;
     CurPos = 0;
     CurSong = self;
   };
-  b[0].addEventListener("click", makeExclusiveFunction(b, 0, func));
-  b[1].addEventListener("click", makeExclusiveFunction(b, 1, func));
-  b[2].addEventListener("click", makeExclusiveFunction(b, 2, func));
+  b[0].addEventListener('click', makeExclusiveFunction(b, 0, func));
+  b[1].addEventListener('click', makeExclusiveFunction(b, 1, func));
+  b[2].addEventListener('click', makeExclusiveFunction(b, 2, func));
 
   // Prepare Eraser (Warning: Depends on the Song button images)
   b = makeButton(40, 202, 15, 17);
   b.id = 'eraser';
   b.images = [imgs[9], imgs[10], imgs[11]]; // In the Song button images
-  b.style.backgroundImage = "url(" + b.images[0].src + ")";
+  b.style.backgroundImage = 'url(' + b.images[0].src + ')';
   eraserTimer = new easyTimer(200, function (self) {
     // If current is not end mark, just return;
     if (CurChar != 16) {
       self.switch = false;
       return;
     }
-    self.currentFrame = (self.currentFrame == 0) ? 1 : 0;
+    self.currentFrame = self.currentFrame == 0 ? 1 : 0;
   });
   eraserTimer.currentFrame = 0;
-  b.addEventListener("click", function() {
+  b.addEventListener('click', function () {
     eraserTimer.switch = true;
     CurChar = 16;
     SOUNDS[17].play(8);
     drawEraserIcon();
     clearSongButtons();
-    this.style.backgroundImage = "url(" + this.images[1].src + ")";
+    this.style.backgroundImage = 'url(' + this.images[1].src + ')';
     SCREEN.style.cursor = 'url(' + this.images[2].src + ')' + ' 0 0, auto';
   });
   CONSOLE.appendChild(b);
@@ -1398,7 +1477,7 @@ function onload() {
   r.max = 1000;
   r.min = 50;
   r.step = 1;
-  r.style['-webkit-appearance']='none';
+  r.style['-webkit-appearance'] = 'none';
   r.style['border-radius'] = '0px';
   r.style['background-color'] = 'rgba(0, 0, 0, 0.0)';
   r.style['box-shadow'] = 'inset 0 0 0 #000';
@@ -1411,7 +1490,7 @@ function onload() {
   r.originalH = 8;
   moveDOM(r, r.originalX, r.originalY);
   resizeDOM(r, r.originalW, r.originalH);
-  r.addEventListener("input", function(e) {
+  r.addEventListener('input', function (e) {
     CurScore.tempo = parseInt(this.value);
   });
   CONSOLE.appendChild(r);
@@ -1420,21 +1499,29 @@ function onload() {
   r.image = t;
   // It's very hard to set values to a pseudo element with JS.
   // http://pankajparashar.com/posts/modify-pseudo-elements-css/
-  s.sheet.insertRule('#tempo::-webkit-slider-thumb {' +
-    "-webkit-appearance: none !important;" +
-    "background-image: url('" + t.src + "');" +
-    "background-repeat: no-repeat;" +
-    "background-size: 100% 100%;" +
-    "border: 0px;" +
-    "width: " + 5 * MAGNIFY + "px;" +
-    "height:" + 8 * MAGNIFY + 'px;}', 0
+  s.sheet.insertRule(
+    '#tempo::-webkit-slider-thumb {' +
+      '-webkit-appearance: none !important;' +
+      "background-image: url('" +
+      t.src +
+      "');" +
+      'background-repeat: no-repeat;' +
+      'background-size: 100% 100%;' +
+      'border: 0px;' +
+      'width: ' +
+      5 * MAGNIFY +
+      'px;' +
+      'height:' +
+      8 * MAGNIFY +
+      'px;}',
+    0,
   );
   s.sheet.insertRule('#tempo:focus {outline: none !important;}', 0);
 
   // Prepare range's side buttons for inc/decrements
   var b = makeButton(184, 158, 7, 9);
   b.id = 'toLeft';
-  b.addEventListener("click", function (e) {
+  b.addEventListener('click', function (e) {
     var r = document.getElementById('scroll');
     if (r.value > 0) {
       CurPos = --r.value;
@@ -1444,7 +1531,7 @@ function onload() {
 
   var b = makeButton(241, 158, 7, 9);
   b.id = 'toRight';
-  b.addEventListener("click", function (e) {
+  b.addEventListener('click', function (e) {
     var r = document.getElementById('scroll');
     if (r.value < CurMaxBars - 6) {
       CurPos = ++r.value;
@@ -1456,8 +1543,8 @@ function onload() {
   var b = makeButton(200, 176, 34, 16);
   b.id = 'clear';
   b.images = sliceImage(clearimg, 34, 16);
-  b.style.backgroundImage = "url(" + b.images[0].src + ")";
-  b.addEventListener("click", clearListener);
+  b.style.backgroundImage = 'url(' + b.images[0].src + ')';
+  b.addEventListener('click', clearListener);
   CONSOLE.appendChild(b);
   s.sheet.insertRule('#clear:focus {outline: none !important;}', 0);
 
@@ -1482,88 +1569,107 @@ function onload() {
   Semitones = sliceImage(semitoneimg, 5, 12);
 
   // Load Sound Files
-  Promise.all(SOUNDS.map(function (s) {return s.load()})).then(function (all) {
-    all.map(function (buffer, i) {
-      SOUNDS[i].buffer = buffer;
-    });
+  Promise.all(
+    SOUNDS.map(function (s) {
+      return s.load();
+    }),
+  )
+    .then(function (all) {
+      all.map(function (buffer, i) {
+        SOUNDS[i].buffer = buffer;
+      });
 
-    CONSOLE.removeChild(document.getElementById("spinner"));
+      CONSOLE.removeChild(document.getElementById('spinner'));
 
-    if (Object.keys(OPTS).length == 0) return;
+      if (Object.keys(OPTS).length == 0) return;
 
-    if (OPTS['url'] != undefined) {
-      fullInitScore();
-      var url = OPTS['url'];
-      new Promise(function (resolve, reject) {
-        var req = new XMLHttpRequest();
-        req.open('GET', url);
-        req.onload = function() {
-          if (req.status == 200) {
-            resolve(req.response);
-          } else {
-            reject(Error(req.statusText));
-          }
-        };
+      if (OPTS['url'] != undefined) {
+        fullInitScore();
+        var url = OPTS['url'];
+        new Promise(function (resolve, reject) {
+          var req = new XMLHttpRequest();
+          req.open('GET', url);
+          req.onload = function () {
+            if (req.status == 200) {
+              resolve(req.response);
+            } else {
+              reject(Error(req.statusText));
+            }
+          };
 
-        req.onerror = function() {
-          reject(Error("Network Error"));
-        };
+          req.onerror = function () {
+            reject(Error('Network Error'));
+          };
 
-        req.send();
-      }).then(function(response) {
-        var msq = false;
-        if (url.slice(-3) == "msq")
-          addMSQ(response);
-        else
-          addJSON(response);
+          req.send();
+        })
+          .then(function (response) {
+            var msq = false;
+            if (url.slice(-3) == 'msq') addMSQ(response);
+            else addJSON(response);
 
+            closing();
+
+            autoPlayIfDemanded(OPTS);
+          })
+          .catch(function (err) {
+            alert('Downloading File: ' + url + ' failed :' + err);
+            console.error('Downloading File: ' + url + ' failed :' + err.stack);
+          });
+      } else if (OPTS.S != undefined || OPTS.SCORE != undefined) {
+        var score = OPTS.SCORE || OPTS.S;
+        var tempo = OPTS.TEMPO || OPTS.T;
+        var loop = OPTS.LOOP || OPTS.L;
+        var end = OPTS.END || OPTS.E;
+        var beats = OPTS.TIME44 || OPTS.B;
+
+        if (
+          tempo == undefined ||
+          loop == undefined ||
+          end == undefined ||
+          beats == undefined
+        ) {
+          throw new Error('Not enough parameters');
+        }
+
+        loop = loop.toUpperCase();
+        beats = beats.toUpperCase();
+
+        var text =
+          'SCORE=' +
+          score +
+          '\n' +
+          'TEMPO=' +
+          tempo +
+          '\n' +
+          'LOOP=' +
+          (loop == 'T' || loop == 'TRUE' ? 'TRUE' : 'FALSE') +
+          '\n' +
+          'END=' +
+          end +
+          '\n' +
+          'TIME44=' +
+          (beats == 'T' || beats == 'TRUE' ? 'TRUE' : 'FALSE');
+        fullInitScore();
+        addMSQ(text);
         closing();
 
         autoPlayIfDemanded(OPTS);
-
-      }).catch(function (err) {
-        alert("Downloading File: " + url + " failed :" + err);
-        console.error("Downloading File: " + url + " failed :" + err.stack);
-      })
-    } else if (OPTS.S != undefined || OPTS.SCORE != undefined) {
-      var score = OPTS.SCORE || OPTS.S;
-      var tempo = OPTS.TEMPO || OPTS.T;
-      var loop  = (OPTS.LOOP  || OPTS.L);
-      var end   = OPTS.END   || OPTS.E;
-      var beats = (OPTS.TIME44 || OPTS.B);
-
-      if (tempo == undefined || loop == undefined || end == undefined ||
-          beats == undefined) {
-        throw new Error("Not enough parameters");
       }
+    })
+    .catch(function (err) {
+      alert('Invalid GET parameter :' + err);
+      console.error('Invalid GET parameter :' + err.stack);
+    });
 
-      loop  = loop.toUpperCase();
-      beats = beats.toUpperCase();
-
-      var text = "SCORE=" + score + "\n" +
-                 "TEMPO=" + tempo + "\n" +
-                 "LOOP=" + ((loop == "T" || loop == "TRUE") ? "TRUE" : "FALSE") + "\n" +
-                 "END=" + end + "\n" +
-                 "TIME44=" + ((beats == "T" || beats == "TRUE") ? "TRUE" : "FALSE");
-      fullInitScore();
-      addMSQ(text);
-      closing();
-
-      autoPlayIfDemanded(OPTS);
-    }
-  }).catch(function (err) {
-    alert("Invalid GET parameter :" + err);
-    console.error("Invalid GET parameter :" + err.stack);
-  });
-
-  document.addEventListener('keydown',function(e) {
+  document.addEventListener('keydown', function (e) {
     switch (e.keyCode) {
       case 32: // space -> play/stop or restart with shift
         var playBtn = document.getElementById('play');
         if (playBtn.disabled == false || e.shiftKey) {
-          playListener.call(playBtn,e);
+          playListener.call(playBtn, e);
         } else {
-          stopListener.call(document.getElementById('stop'),e);
+          stopListener.call(document.getElementById('stop'), e);
         }
         e.preventDefault();
         break;
@@ -1584,69 +1690,75 @@ function onload() {
 
   requestAnimFrame(doAnimation);
 
-  var b = document.getElementById("magnify");
-  b.addEventListener("change", selectListener);
+  var b = document.getElementById('magnify');
+  b.addEventListener('change', selectListener);
 }
 
 function autoPlayIfDemanded(opts) {
   var auto = opts['a'] || opts['auto'];
   if (auto != undefined) {
     auto = auto.toUpperCase();
-    if (auto == "T" || auto == "TRUE")
-      document.getElementById("play").dispatchEvent(new Event("click"));
+    if (auto == 'T' || auto == 'TRUE')
+      document.getElementById('play').dispatchEvent(new Event('click'));
   }
 }
 // Clear Button Listener
 function clearListener(e) {
-  this.style.backgroundImage = "url(" + this.images[1].src + ")";
+  this.style.backgroundImage = 'url(' + this.images[1].src + ')';
   SOUNDS[19].play(8);
   var self = this;
   function makePromise(num) {
-    return new Promise(function(resolve, reject) {
-      setTimeout(function() {
-        self.style.backgroundImage = "url(" + self.images[num].src + ")";
-        resolve()
+    return new Promise(function (resolve, reject) {
+      setTimeout(function () {
+        self.style.backgroundImage = 'url(' + self.images[num].src + ')';
+        resolve();
       }, 150);
     });
   }
 
-  makePromise(2).then(function () {
-    return makePromise(1);
-  }).then(function () {
-    return makePromise(0);
-  }).then(function () {
-    initScore();
-    CurPos = 0;
-  });
+  makePromise(2)
+    .then(function () {
+      return makePromise(1);
+    })
+    .then(function () {
+      return makePromise(0);
+    })
+    .then(function () {
+      initScore();
+      CurPos = 0;
+    });
 
   clearSongButtons();
 }
 
 // Play Button Listener
 function playListener(e) {
-  this.style.backgroundImage = "url(" + this.images[1].src + ")";
+  this.style.backgroundImage = 'url(' + this.images[1].src + ')';
   SOUNDS[17].play(8);
-  var b = document.getElementById("stop");
-  b.style.backgroundImage = "url(" + b.images[0].src + ")";
+  var b = document.getElementById('stop');
+  b.style.backgroundImage = 'url(' + b.images[0].src + ')';
   b.disabled = false;
   this.disabled = true; // Would be unlocked by stop button
 
-  ["toLeft", "toRight", "scroll", "clear", "frog", "beak", "1up"].
-    map(function (id) {document.getElementById(id).disabled = true;});
+  ['toLeft', 'toRight', 'scroll', 'clear', 'frog', 'beak', '1up'].map(
+    function (id) {
+      document.getElementById(id).disabled = true;
+    },
+  );
 
   GameStatus = 1; // Mario Entering the stage
-  CurPos = 0;     // doAnimation will draw POS 0 and stop
+  CurPos = 0; // doAnimation will draw POS 0 and stop
   Mario.init();
   requestAnimFrame(doMarioEnter);
 }
 
 // Stop Button Listener
 function stopListener(e) {
-  this.style.backgroundImage = "url(" + this.images[1].src + ")";
+  this.style.backgroundImage = 'url(' + this.images[1].src + ')';
   // Sound ON: click , OFF: called by doMarioPlay
   if (e != undefined) SOUNDS[17].play(8);
-  var b = document.getElementById("play");
-  b.style.backgroundImage = "url(" + b.images[0].src + ")";
+  var b = document.getElementById('play');
+  b.style.backgroundImage = 'url(' + b.images[0].src + ')';
   //b.disabled = false; // Do after Mario left the stage
   this.disabled = true; // Would be unlocked by play button
 
@@ -1702,10 +1814,11 @@ function doMarioLeave(timeStamp) {
   } else {
     GameStatus = 0;
 
-    ["toLeft", "toRight", "scroll", "play", "clear", "frog", "beak", "1up"].
-      map(function (id) {
+    ['toLeft', 'toRight', 'scroll', 'play', 'clear', 'frog', 'beak', '1up'].map(
+      function (id) {
         document.getElementById(id).disabled = false;
-      });
+      },
+    );
 
     requestAnimFrame(doAnimation);
   }
@@ -1713,10 +1826,10 @@ function doMarioLeave(timeStamp) {
 
 // Clear Song Buttons
 function clearSongButtons() {
-  ['frog','beak','1up'].map(function (id, idx) {
+  ['frog', 'beak', '1up'].map(function (id, idx) {
     var b = document.getElementById(id);
     b.disabled = false;
-    b.style.backgroundImage = "url(" + b.images[0].src + ")";
+    b.style.backgroundImage = 'url(' + b.images[0].src + ')';
   });
   CurSong = undefined;
 }
@@ -1724,7 +1837,7 @@ function clearSongButtons() {
 // Clear Eraser Button
 function clearEraserButton() {
   var b = document.getElementById('eraser');
-  b.style.backgroundImage = "url(" + b.images[0].src + ")";
+  b.style.backgroundImage = 'url(' + b.images[0].src + ')';
   eraserTimer.switch = false;
 }
 
@@ -1746,18 +1859,18 @@ function initScore() {
   for (var i = 0; i < DEFAULTMAXBARS; i++) tmpa[i] = [];
   CurScore.notes = tmpa;
   CurMaxBars = DEFAULTMAXBARS;
-  var s = document.getElementById("scroll");
+  var s = document.getElementById('scroll');
   s.max = DEFAULTMAXBARS - 6;
   s.value = 0;
   CurScore.loop = false;
-  document.getElementById("loop").reset();
+  document.getElementById('loop').reset();
   CurScore.end = DEFAULTMAXBARS - 1;
   CurScore.tempo = DEFAULTTEMPO;
-  document.getElementById("tempo").value = DEFAULTTEMPO;
+  document.getElementById('tempo').value = DEFAULTTEMPO;
   CurScore.beats = 4;
-  var e = new Event("click");
+  var e = new Event('click');
   e.soundOff = true;
-  document.getElementById("4beats").dispatchEvent(e);
+  document.getElementById('4beats').dispatchEvent(e);
 }
 
 // Easiest and Fastest way to clone
@@ -1779,14 +1892,22 @@ function sliceImage(img, width, height) {
   var charh = height * MAGNIFY;
 
   for (var i = 0; i < all; i++) {
-    var tmpcan = document.createElement("canvas");
-    tmpcan.width  = charw;
+    var tmpcan = document.createElement('canvas');
+    tmpcan.width = charw;
     tmpcan.height = charh;
     var tmpctx = tmpcan.getContext('2d');
     tmpctx.imageSmoothingEnabled = false;
-    tmpctx.drawImage(img,
-      (i % num) * width, Math.floor(i / num) * height,
-      width, height, 0, 0, charw, charh);
+    tmpctx.drawImage(
+      img,
+      (i % num) * width,
+      Math.floor(i / num) * height,
+      width,
+      height,
+      0,
+      0,
+      charw,
+      charh,
+    );
     var charimg = new Image();
     charimg.src = tmpcan.toDataURL();
     result[i] = charimg;
@@ -1797,59 +1918,329 @@ function sliceImage(img, width, height) {
 // Download Score as JSON
 //   http://jsfiddle.net/koldev/cW7W5/
 function download() {
-  var link = document.createElement("a");
+  var link = document.createElement('a');
   link.download = 'MSQ_Data.json';
   var json = JSON.stringify(CurScore);
-  var blob = new Blob([json], {type: "octet/stream"});
+  var blob = new Blob([json], { type: 'octet/stream' });
   var url = window.URL.createObjectURL(blob);
   link.href = url;
   link.click();
 }
 
 EmbeddedSong = [];
-EmbeddedSong[0] = {"notes":[[1026,2313],[1026,2313],[],[1026,2313],
-  [],[1028,2315],[1026,2313],[],[1024,2311],[],[],[],[517,3591,265],
-  [],[],[],[2818,2820,267],[],[3072,3595],[3072,2818,3595],
-  [2817,2820,267],[],[3072,3592],[3072,2817,3591],[2816,2819,267],[],
-  [3072,3591],[2816,1287,3595],[2817,1286,1288],[262,1288,1290],
-  [1286,3591,1288],[1285,1287,266],[2,3595,3084],[],[256],[257,3595],
-  [4,3593,3084],[],[256],[257,7,3593],[6,3592,3084],[4],[256,3592],
-  [257,4,3590],[3084],[256],[],[257,6,3591],[7,3084],[3591],
-  [256,4,3592],[257],[4,3593,3084],[],[0,3594],[257],[2,3591],[1031],
-  [256,1030],[3,1029,3592],[1028],[1027,262],[1026],[1025,263],
-  [1026,266,3595],[7],[2050,4],[7,266,3595],[1028,3593,266],[7],
-  [2050,4],[5,1031,3593],[1030,3592,266],[1028,6,2568],[4],
-  [1,1028,3590],[264],[2049,2,260],[3,260],[261,1030],[1031,266],
-  [3584,2,7],[1028],[1,5,7],[1025,3591],[1026],[1027],[],[1028],
-  [258,3588],[],[260,3595],[261,3595],[],[261,267],[],[]],
-  "beats":4,"loop":false,"end":96,"tempo":"370"};
+EmbeddedSong[0] = {
+  notes: [
+    [1026, 2313],
+    [1026, 2313],
+    [],
+    [1026, 2313],
+    [],
+    [1028, 2315],
+    [1026, 2313],
+    [],
+    [1024, 2311],
+    [],
+    [],
+    [],
+    [517, 3591, 265],
+    [],
+    [],
+    [],
+    [2818, 2820, 267],
+    [],
+    [3072, 3595],
+    [3072, 2818, 3595],
+    [2817, 2820, 267],
+    [],
+    [3072, 3592],
+    [3072, 2817, 3591],
+    [2816, 2819, 267],
+    [],
+    [3072, 3591],
+    [2816, 1287, 3595],
+    [2817, 1286, 1288],
+    [262, 1288, 1290],
+    [1286, 3591, 1288],
+    [1285, 1287, 266],
+    [2, 3595, 3084],
+    [],
+    [256],
+    [257, 3595],
+    [4, 3593, 3084],
+    [],
+    [256],
+    [257, 7, 3593],
+    [6, 3592, 3084],
+    [4],
+    [256, 3592],
+    [257, 4, 3590],
+    [3084],
+    [256],
+    [],
+    [257, 6, 3591],
+    [7, 3084],
+    [3591],
+    [256, 4, 3592],
+    [257],
+    [4, 3593, 3084],
+    [],
+    [0, 3594],
+    [257],
+    [2, 3591],
+    [1031],
+    [256, 1030],
+    [3, 1029, 3592],
+    [1028],
+    [1027, 262],
+    [1026],
+    [1025, 263],
+    [1026, 266, 3595],
+    [7],
+    [2050, 4],
+    [7, 266, 3595],
+    [1028, 3593, 266],
+    [7],
+    [2050, 4],
+    [5, 1031, 3593],
+    [1030, 3592, 266],
+    [1028, 6, 2568],
+    [4],
+    [1, 1028, 3590],
+    [264],
+    [2049, 2, 260],
+    [3, 260],
+    [261, 1030],
+    [1031, 266],
+    [3584, 2, 7],
+    [1028],
+    [1, 5, 7],
+    [1025, 3591],
+    [1026],
+    [1027],
+    [],
+    [1028],
+    [258, 3588],
+    [],
+    [260, 3595],
+    [261, 3595],
+    [],
+    [261, 267],
+    [],
+    [],
+  ],
+  beats: 4,
+  loop: false,
+  end: 96,
+  tempo: '370',
+};
 
-EmbeddedSong[1] = {"notes":[[772,779],[768],[770,779],[768],[772,775],
-  [768],[770,775],[768],[772,774],[769],[772,774],[769],[768,770,775],
-  [],[],[],[769,774,776],[772],[769,774,776],[772],[770,775,777],
-  [772],[770,775,777],[772],[771,773,778],[775],[771,778],[773],
-  [771,777,779],[],[],[],[775,777],[768],[775,777],[768],[776,778],
-  [768],[776,778],[768],[777,779],[768],[777,779],[768],[778,780],
-  [],[],[],[775],[768,772],[775],[768,772],[776],[768,772],[776],
-  [768,772],[777],[768,772],[777],[768,772],[771,773,778],[],[],[],
-  [777,779],[779],[777,779],[779],[775,777],[777],[775,777],[777],
-  [774,776],[776],[774,776],[776],[768,775,777],[],[],[],[774,776],
-  [776],[774,776],[773],[772,777],[775],[772,777],[],[771,775,778],
-  [],[771,775,778],[],[772,777,779],[],[],[],[]],
-  "beats":4,"loop":true,"end":96,"tempo":"178"};
+EmbeddedSong[1] = {
+  notes: [
+    [772, 779],
+    [768],
+    [770, 779],
+    [768],
+    [772, 775],
+    [768],
+    [770, 775],
+    [768],
+    [772, 774],
+    [769],
+    [772, 774],
+    [769],
+    [768, 770, 775],
+    [],
+    [],
+    [],
+    [769, 774, 776],
+    [772],
+    [769, 774, 776],
+    [772],
+    [770, 775, 777],
+    [772],
+    [770, 775, 777],
+    [772],
+    [771, 773, 778],
+    [775],
+    [771, 778],
+    [773],
+    [771, 777, 779],
+    [],
+    [],
+    [],
+    [775, 777],
+    [768],
+    [775, 777],
+    [768],
+    [776, 778],
+    [768],
+    [776, 778],
+    [768],
+    [777, 779],
+    [768],
+    [777, 779],
+    [768],
+    [778, 780],
+    [],
+    [],
+    [],
+    [775],
+    [768, 772],
+    [775],
+    [768, 772],
+    [776],
+    [768, 772],
+    [776],
+    [768, 772],
+    [777],
+    [768, 772],
+    [777],
+    [768, 772],
+    [771, 773, 778],
+    [],
+    [],
+    [],
+    [777, 779],
+    [779],
+    [777, 779],
+    [779],
+    [775, 777],
+    [777],
+    [775, 777],
+    [777],
+    [774, 776],
+    [776],
+    [774, 776],
+    [776],
+    [768, 775, 777],
+    [],
+    [],
+    [],
+    [774, 776],
+    [776],
+    [774, 776],
+    [773],
+    [772, 777],
+    [775],
+    [772, 777],
+    [],
+    [771, 775, 778],
+    [],
+    [771, 775, 778],
+    [],
+    [772, 777, 779],
+    [],
+    [],
+    [],
+    [],
+  ],
+  beats: 4,
+  loop: true,
+  end: 96,
+  tempo: '178',
+};
 
-EmbeddedSong[2] = {"notes":[[266,3595],[3072,2,7],[3591,3081],[3072,2,7],
-  [2305,3590,266],[2305,2,7],[1,2307,3594],[3078],[266,3595],[3072,2,7],
-  [3591,3081],[3072,2,7],[2305,3590,266],[2305,3,7],[1,2307,3594],[],
-  [1028,3079,3595],[3072,2,7],[1028,3078,3591],[1026,261,7],[1024,267],
-  [],[1543],[],[1281,3594],[1,6],[1281,3590],[1282,6],[1283],[],[1798],
-  [],[1027,3079,3594],[3072,1,6],[1027,3590,3082],[1025,261,6],[1030,267],
-  [],[2055,2059],[],[1280,1285,3595],[2,7],[1280,1285,3591],[1281,2,1286],
-  [1282,1287,266],[2571],[],[],[1287,779],[775],[1287,777],[772,1287],
-  [1284,775,264],[2306,3077],[2306,264],[2308,3077],[1286,2826],[2822],
-  [1286,2824],[2819,1286],[1284,2822,264],[2305,3077],[2305,264],
-  [2307,3077],[1285,3335,264],[3331],[1285,3335],[3329,1285],
-  [1283,1029,264],[],[519],[],[2304,1282,1028],[2304,1282,1028],
-  [2304,1282,1028],[2305,1283,1029],[2306,1284,1030],[],[2304,1282,1028],
-  [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
-  "beats":4,"loop":true,"end":80,"tempo":"287"};
+EmbeddedSong[2] = {
+  notes: [
+    [266, 3595],
+    [3072, 2, 7],
+    [3591, 3081],
+    [3072, 2, 7],
+    [2305, 3590, 266],
+    [2305, 2, 7],
+    [1, 2307, 3594],
+    [3078],
+    [266, 3595],
+    [3072, 2, 7],
+    [3591, 3081],
+    [3072, 2, 7],
+    [2305, 3590, 266],
+    [2305, 3, 7],
+    [1, 2307, 3594],
+    [],
+    [1028, 3079, 3595],
+    [3072, 2, 7],
+    [1028, 3078, 3591],
+    [1026, 261, 7],
+    [1024, 267],
+    [],
+    [1543],
+    [],
+    [1281, 3594],
+    [1, 6],
+    [1281, 3590],
+    [1282, 6],
+    [1283],
+    [],
+    [1798],
+    [],
+    [1027, 3079, 3594],
+    [3072, 1, 6],
+    [1027, 3590, 3082],
+    [1025, 261, 6],
+    [1030, 267],
+    [],
+    [2055, 2059],
+    [],
+    [1280, 1285, 3595],
+    [2, 7],
+    [1280, 1285, 3591],
+    [1281, 2, 1286],
+    [1282, 1287, 266],
+    [2571],
+    [],
+    [],
+    [1287, 779],
+    [775],
+    [1287, 777],
+    [772, 1287],
+    [1284, 775, 264],
+    [2306, 3077],
+    [2306, 264],
+    [2308, 3077],
+    [1286, 2826],
+    [2822],
+    [1286, 2824],
+    [2819, 1286],
+    [1284, 2822, 264],
+    [2305, 3077],
+    [2305, 264],
+    [2307, 3077],
+    [1285, 3335, 264],
+    [3331],
+    [1285, 3335],
+    [3329, 1285],
+    [1283, 1029, 264],
+    [],
+    [519],
+    [],
+    [2304, 1282, 1028],
+    [2304, 1282, 1028],
+    [2304, 1282, 1028],
+    [2305, 1283, 1029],
+    [2306, 1284, 1030],
+    [],
+    [2304, 1282, 1028],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ],
+  beats: 4,
+  loop: true,
+  end: 80,
+  tempo: '287',
+};

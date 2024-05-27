@@ -1,9 +1,9 @@
 ---
-title: "Log: bug: no home Object"
-date: "2023-01-17"
-categories: 
-  - "bug"
-  - "update"
+title: 'Log: bug: no home Object'
+date: '2023-01-17'
+categories:
+  - 'bug'
+  - 'update'
 ---
 
 When there is no home object to load, then there is no home image to show.

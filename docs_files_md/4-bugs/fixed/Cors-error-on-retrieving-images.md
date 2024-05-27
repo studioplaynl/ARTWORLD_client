@@ -1,6 +1,6 @@
 ---
-title: "Log: cors error on retrieving images"
-date: "2023-01-03"
+title: 'Log: cors error on retrieving images'
+date: '2023-01-03'
 ---
 
 Access to image at
@@ -43,7 +43,7 @@ cloudfront page
 
 [https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=eu-central-1#/originAccess/](https://us-east-1.console.aws.amazon.com/cloudfront/v3/home?region=eu-central-1#/originAccess/)
 
-* * *
+---
 
 hypothesis 1: the image is first retreived with an empty value. Because of the way displayName is updated.
 
@@ -65,7 +65,7 @@ So we see above that even when it works there is a undefined asked from the serv
 
 But in our case we also get a cors problem:
 
-* * *
+---
 
 git log of commits:
 
@@ -196,7 +196,7 @@ export async function getFile(file_url) {
 }
 ```
 
-* * *
+---
 
 git log before Eelke:
 

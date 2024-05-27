@@ -4,47 +4,43 @@ Because we don't want to move when we are painting on a Graffitiwall, we added a
 
 This layer sets ManageSession.playerMove to true
 
-***
+---
 
 Methods in our Move.js class
 
-**moveByCursor()**    
-Sets .cursorKeyIsDown to true or false when either one of the **keyboard** moving keys is down    
+**moveByCursor()**  
+Sets .cursorKeyIsDown to true or false when either one of the **keyboard** moving keys is down
 
+**movingAnimation()**  
+Plays the appropiate animation according to the movement flag that is set **maybe better with events!**
 
-**movingAnimation()**    
-Plays the appropiate animation according to the movement flag that is set **maybe better with events!**    
+**moveByKeyboard()**  
+moves player with keyboard commands
 
-**moveByKeyboard()**    
-moves player with keyboard commands    
+**MoveObjectToTarget()**  
+General method to move the player to a goal and detect when it has arrived  
+_this.updatePositionHistory(scene)_ // update the url and historyTracker  
+_ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")_ //set movement over network
 
-**MoveObjectToTarget()**    
-General method to move the player to a goal and detect when it has arrived      
-_this.updatePositionHistory(scene)_ // update the url and historyTracker    
-_ManageSession.sendMoveMessage(scene, target.x, target.y, "moveTo")_ //set movement over network    
+**checkIfPlayerReachedMoveGoal**  
+stops the player when it reached the goal (with a tolerance that is speed dependent)  
+stops the player animation when the player reached  
+also shaked the camera when the player reaches the end of the world
 
-**checkIfPlayerReachedMoveGoal**    
-stops the player when it reached the goal (with a tolerance that is speed dependent)   
-stops the player animation when the player reached    
-also shaked the camera when the player reaches the end of the world   
+**updatePositionHistory**  
+update the url when the player moved  
+update the position in the history tracker aswell
 
-**updatePositionHistory**    
-update the url when the player moved    
-update the position in the history tracker aswell    
+**moveBySwiping()**  
+move by swiping with mouse or finger
 
-**moveBySwiping()**    
-move by swiping with mouse or finger   
+**moveByTapping()**  
+move by double tapping with finger or mouse
 
-**moveByTapping()**    
-move by double tapping with finger or mouse    
- 
+**sendMovement()**  
+send movement over the network
 
-**sendMovement()**    
-send movement over the network    
-
-
-***
-
+---
 
 Links with information:
 
@@ -54,7 +50,7 @@ scroll camera example: https://phaser.io/examples/v3/view/camera/scroll-view
 
 World Camera example: https://labs.phaser.io/edit.html?src=src/camera/world%20camera.js&v=3.55.2
 
-* config parameters for the camera (acceleration, drag, maxSpeed)
+- config parameters for the camera (acceleration, drag, maxSpeed)
 
 Get world point from camera:
 http://labs.phaser.io/edit.html?src=src/camera/get%20world%20point.js
@@ -72,7 +68,9 @@ Swipe example
 https://www.thepolyglotdeveloper.com/2020/09/include-touch-cursor-gesture-events-phaser-game/
 
 ---
+
 ## Swipe movement (works really well!)
+
 ```
 playerMovingBySwiping() {
     if (!this.input.activePointer.isDown && this.isClicking == true) {

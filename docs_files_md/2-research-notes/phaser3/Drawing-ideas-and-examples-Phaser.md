@@ -24,7 +24,6 @@ A Render Texture is a special texture that allows any number of Game Objects to 
 
 Note that under WebGL a FrameBuffer, which is what the Render Texture uses internally, cannot be anti-aliased. This means that when drawing objects such as Shapes to a Render Texture they will appear to be drawn with no aliasing, however this is a technical limitation of WebGL. To get around it, create your shape as a texture in an art package, then draw that to the Render Texture.
 
-
 https://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.RenderTexture.htmlhttps://photonstorm.github.io/phaser3-docs/Phaser.GameObjects.RenderTexture.html
 
 Example:

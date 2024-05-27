@@ -25,7 +25,7 @@
  *  - paste users in google sheet
  *  - save QR images
  *  - load QR sheets with 24 images
- * 
+ *
  * - correct position of portal in artworld with gameEdit mode
  *  - place all houses in world with gameEdit mode, save with U key
  * - push new code to github
@@ -49,8 +49,8 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 // import { Liked, ModeratorLiked } from '../../../storage';
@@ -81,18 +81,21 @@ export default class Artworld extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
-
- 
   }
 
   async preload() {
     // artworld elements
     this.load.image('drawn_cloud', './assets/drawn_cloud.png');
     this.load.svg('sunglass_stripes', 'assets/svg/sunglass_stripes.svg');
-    this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', { scale: 2.4 });
+    this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', {
+      scale: 2.4,
+    });
     this.load.svg('tree_palm', './assets/svg/tree_palm.svg');
     this.load.svg('mario_star', 'assets/svg/mario_star.svg');
-    this.load.svg('music_quarter_note', 'assets/svg/music_note_quarter_note.svg');
+    this.load.svg(
+      'music_quarter_note',
+      'assets/svg/music_note_quarter_note.svg',
+    );
     this.load.svg('metro_train_grey', 'assets/svg/metro_train_grey.svg');
     this.load.svg('yellow_diamond_location_image', 'assets/svg/geleRuit.svg');
     this.load.svg('blue_sail_location_image', 'assets/svg/blauwZeil.svg');
@@ -101,29 +104,82 @@ export default class Artworld extends Phaser.Scene {
     this.load.image('melodymaker', './assets/apps/melodymaker.png');
     this.load.image('kandinsky', './assets/apps/kandinsky.png');
 
-
     // world portals in Artworld
-    this.load.image('robotWorldPortal', './assets/world_robot_torquoise/portaal_robot_zonderAnimatie.png');
-    this.load.image('artWorldPortalMoon', './assets/world_moon/maan_portalRaket_naarMaan.png');
-    this.load.image('artWorldPortalPizza', './assets/world_pizza/Portal_naarPizza_pizza.png');
-    this.load.image('seaWorldPortal', './assets/world_seaworld/zee_ship_Portaal_naarZEE.png');
-    this.load.image('marsWorldPortal', './assets/world_mars_red/portal_gotoMars_mars.png');
-    this.load.image('fireWorldPortal', './assets/world_fireworld/Portal_vuur_Naartoe_zonderAnimatie.png');
-    this.load.image('underwaterWorldPortal', './assets/world_underwater_blue/Portaal_naarWater_water.png');
-    this.load.image('slimeWorldPortal', './assets/world_slime_world/Portal_goSlime_slime.png');
+    this.load.image(
+      'robotWorldPortal',
+      './assets/world_robot_torquoise/portaal_robot_zonderAnimatie.png',
+    );
+    this.load.image(
+      'artWorldPortalMoon',
+      './assets/world_moon/maan_portalRaket_naarMaan.png',
+    );
+    this.load.image(
+      'artWorldPortalPizza',
+      './assets/world_pizza/Portal_naarPizza_pizza.png',
+    );
+    this.load.image(
+      'seaWorldPortal',
+      './assets/world_seaworld/zee_ship_Portaal_naarZEE.png',
+    );
+    this.load.image(
+      'marsWorldPortal',
+      './assets/world_mars_red/portal_gotoMars_mars.png',
+    );
+    this.load.image(
+      'fireWorldPortal',
+      './assets/world_fireworld/Portal_vuur_Naartoe_zonderAnimatie.png',
+    );
+    this.load.image(
+      'underwaterWorldPortal',
+      './assets/world_underwater_blue/Portaal_naarWater_water.png',
+    );
+    this.load.image(
+      'slimeWorldPortal',
+      './assets/world_slime_world/Portal_goSlime_slime.png',
+    );
 
-    this.load.image('artWorldPortalUnderground', './assets/world_underground/Portal_naarOndergrond.png');
-    this.load.image('artWorldPortalWoestijn', './assets/world_woestijn/Portal_woestijn_naarWoestijn-fs8.png');
-    this.load.image('artWorldPortalIjs', './assets/world_ice/Portaal_Naar_Ice-fs8.png');
+    this.load.image(
+      'artWorldPortalUnderground',
+      './assets/world_underground/Portal_naarOndergrond.png',
+    );
+    this.load.image(
+      'artWorldPortalWoestijn',
+      './assets/world_woestijn/Portal_woestijn_naarWoestijn-fs8.png',
+    );
+    this.load.image(
+      'artWorldPortalIjs',
+      './assets/world_ice/Portaal_Naar_Ice-fs8.png',
+    );
 
-    this.load.image('artWorldPortalIjsco', './assets/world_ijsco/Portaal_vanHOMEnaarICECREAM_corr-fs8.png');
+    this.load.image(
+      'artWorldPortalIjsco',
+      './assets/world_ijsco/Portaal_vanHOMEnaarICECREAM_corr-fs8.png',
+    );
 
-    this.load.image('cloudWorldPortal', './assets/world_clouds/cloud_portal_naarCloud.png');
-    this.load.image('beeWorldPortal', './assets/world_bees/02b_Portaal_home_naar_bee-fs8.png');
-    this.load.image('bergenWorldPortal', './assets/world_bergen/Portaal2_NaarBergen_CROP-fs8.png');
-    this.load.image('prismaWorldPortal', './assets/world_prism/Portaal_Prisma_naar_PrismaCROP-fs8.png');
-    this.load.image('jungleWorldPortal', './assets/world_jungle/portaal_naarJungle_crop-fs8.png');
-    this.load.image('flamengoWorldPortal', './assets/world_flamengo/_Portaal_Flamingocity_naarMeteor_small-fs8.png');
+    this.load.image(
+      'cloudWorldPortal',
+      './assets/world_clouds/cloud_portal_naarCloud.png',
+    );
+    this.load.image(
+      'beeWorldPortal',
+      './assets/world_bees/02b_Portaal_home_naar_bee-fs8.png',
+    );
+    this.load.image(
+      'bergenWorldPortal',
+      './assets/world_bergen/Portaal2_NaarBergen_CROP-fs8.png',
+    );
+    this.load.image(
+      'prismaWorldPortal',
+      './assets/world_prism/Portaal_Prisma_naar_PrismaCROP-fs8.png',
+    );
+    this.load.image(
+      'jungleWorldPortal',
+      './assets/world_jungle/portaal_naarJungle_crop-fs8.png',
+    );
+    this.load.image(
+      'flamengoWorldPortal',
+      './assets/world_flamengo/_Portaal_Flamingocity_naarMeteor_small-fs8.png',
+    );
     this.load.image(
       'paarseRivierWorldPortal',
       './assets/world_paarse_rivier/02b_portaal_River_naarRivier-fs8.png',
@@ -141,17 +197,17 @@ export default class Artworld extends Phaser.Scene {
       'dennenBosWorldPortal',
       './assets/world_dennenbos/22_dennenbos_portaal-fs8.png',
     );
-    
-        this.load.image(
-          'vliegendeEilandenPortal',
+
+    this.load.image(
+      'vliegendeEilandenPortal',
       './assets/world_vliegendeEilanden/02b_Portale_w23_naarVliegendeEilanden-fs8.png',
     );
 
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -184,9 +240,7 @@ export default class Artworld extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     this.makeWorldElements();
 
@@ -232,11 +286,7 @@ export default class Artworld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -245,7 +295,10 @@ export default class Artworld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -284,7 +337,11 @@ export default class Artworld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
 
@@ -299,7 +356,9 @@ export default class Artworld extends Phaser.Scene {
       gradient2: 0xff01ff,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.gradientAmsterdam1.setInteractive({ draggable: true }); }
+    if (ManageSession.gameEditMode) {
+      this.gradientAmsterdam1.setInteractive({ draggable: true });
+    }
 
     Background.circle({
       scene: this,
@@ -311,7 +370,9 @@ export default class Artworld extends Phaser.Scene {
       gradient2: 0x85feff,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.gradientAmsterdam2.setInteractive({ draggable: true }); }
+    if (ManageSession.gameEditMode) {
+      this.gradientAmsterdam2.setInteractive({ draggable: true });
+    }
 
     Background.circle({
       scene: this,
@@ -319,11 +380,13 @@ export default class Artworld extends Phaser.Scene {
       posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
       posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
       size: 558,
-      gradient1: 0x7300EB,
+      gradient1: 0x7300eb,
       gradient2: 0x3a4bba,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.purple_circle.setInteractive({ draggable: true }); }
+    if (ManageSession.gameEditMode) {
+      this.purple_circle.setInteractive({ draggable: true });
+    }
 
     // ............................................... homes area .....................................
     // grass background for houses
@@ -337,7 +400,9 @@ export default class Artworld extends Phaser.Scene {
       gradient2: 0x2b8042,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.gradientGrass1.setInteractive({ draggable: true }); }
+    if (ManageSession.gameEditMode) {
+      this.gradientGrass1.setInteractive({ draggable: true });
+    }
 
     // paths for the houses
     this.createCurveWithHandles();
@@ -350,7 +415,9 @@ export default class Artworld extends Phaser.Scene {
     );
     this.sunglasses_stripes.name = 'sunglass_stripes';
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.sunglasses_stripes.setInteractive({ draggable: true }); }
+    if (ManageSession.gameEditMode) {
+      this.sunglasses_stripes.setInteractive({ draggable: true });
+    }
 
     this.train = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 652),
@@ -374,7 +441,6 @@ export default class Artworld extends Phaser.Scene {
       });
     }
 
-
     // create(scene, x, y, width, height, name, color, imageFile = null) {
     GraffitiWall.create(
       this,
@@ -387,7 +453,9 @@ export default class Artworld extends Phaser.Scene {
       'brickWall',
     );
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.graffitiBrickWall.setInteractive({ draggable: true }); }
+    if (ManageSession.gameEditMode) {
+      this.graffitiBrickWall.setInteractive({ draggable: true });
+    }
 
     // ...................................................................................................
     // DRAW A SUN
@@ -416,13 +484,12 @@ export default class Artworld extends Phaser.Scene {
         ease: 'Sine.easeInOut',
       });
 
-      this.sunDrawingExample.setInteractive()
-        .on('pointerup', () => {
-          this.sunDraw.setVisible(true);
-          this.sunDrawCloseButton.setVisible(true);
-          this.sunDrawSaveButton.setVisible(true);
-          this.physics.pause();
-        });
+      this.sunDrawingExample.setInteractive().on('pointerup', () => {
+        this.sunDraw.setVisible(true);
+        this.sunDrawCloseButton.setVisible(true);
+        this.sunDrawSaveButton.setVisible(true);
+        this.physics.pause();
+      });
 
       GraffitiWall.create(
         this,
@@ -436,34 +503,31 @@ export default class Artworld extends Phaser.Scene {
       );
       this.sunDraw.setVisible(false);
 
-
       this.sunDrawCloseButton = this.add.image(
-        this.sunDraw.x + (this.sunDraw.width / 1.8),
-        this.sunDraw.y - (this.sunDraw.width / 2),
+        this.sunDraw.x + this.sunDraw.width / 1.8,
+        this.sunDraw.y - this.sunDraw.width / 2,
 
         'close',
       );
-      this.sunDrawCloseButton.setInteractive()
-        .on('pointerup', () => {
-          this.sunDraw.setVisible(false);
-          this.sunDrawCloseButton.setVisible(false);
-          this.sunDrawSaveButton.setVisible(false);
-          this.physics.resume();
-        });
+      this.sunDrawCloseButton.setInteractive().on('pointerup', () => {
+        this.sunDraw.setVisible(false);
+        this.sunDrawCloseButton.setVisible(false);
+        this.sunDrawSaveButton.setVisible(false);
+        this.physics.resume();
+      });
       this.sunDrawCloseButton.setVisible(false);
 
       this.sunDrawSaveButton = this.add.image(
         this.sunDrawCloseButton.x,
-        this.sunDrawCloseButton.y + (this.sunDrawCloseButton.width * 1.1),
+        this.sunDrawCloseButton.y + this.sunDrawCloseButton.width * 1.1,
 
         'save',
       );
-      this.sunDrawSaveButton.setInteractive()
-        .on('pointerup', () => {
-          const RT = this.sunDraw.getByName('sunDraw');
-          RT.saveTexture('DrawnSun');
-          this.sunDrawingExample.setTexture('DrawnSun');
-        });
+      this.sunDrawSaveButton.setInteractive().on('pointerup', () => {
+        const RT = this.sunDraw.getByName('sunDraw');
+        RT.saveTexture('DrawnSun');
+        this.sunDrawingExample.setTexture('DrawnSun');
+      });
       this.sunDrawSaveButton.setVisible(false);
     }
     // end DRAW A SUN
@@ -493,12 +557,11 @@ export default class Artworld extends Phaser.Scene {
         ease: 'Sine.easeInOut',
       });
 
-      this.cloudDrawingExample.setInteractive()
-        .on('pointerup', () => {
-          this.cloudDraw.setVisible(true);
-          this.cloudDrawCloseButton.setVisible(true);
-          this.cloudDrawSaveButton.setVisible(true);
-        });
+      this.cloudDrawingExample.setInteractive().on('pointerup', () => {
+        this.cloudDraw.setVisible(true);
+        this.cloudDrawCloseButton.setVisible(true);
+        this.cloudDrawSaveButton.setVisible(true);
+      });
 
       GraffitiWall.create(
         this,
@@ -513,47 +576,48 @@ export default class Artworld extends Phaser.Scene {
       this.cloudDraw.setVisible(false);
 
       this.cloudDrawCloseButton = this.add.image(
-        this.cloudDraw.x + (this.cloudDraw.width / 1.8),
-        this.cloudDraw.y - (this.cloudDraw.width / 1.8),
+        this.cloudDraw.x + this.cloudDraw.width / 1.8,
+        this.cloudDraw.y - this.cloudDraw.width / 1.8,
 
         'close',
       );
-      this.cloudDrawCloseButton.setInteractive()
-        .on('pointerup', () => {
-          this.cloudDraw.setVisible(false);
-          this.cloudDrawCloseButton.setVisible(false);
-          this.cloudDrawSaveButton.setVisible(false);
-        });
+      this.cloudDrawCloseButton.setInteractive().on('pointerup', () => {
+        this.cloudDraw.setVisible(false);
+        this.cloudDrawCloseButton.setVisible(false);
+        this.cloudDrawSaveButton.setVisible(false);
+      });
       this.cloudDrawCloseButton.setVisible(false);
 
       this.cloudDrawSaveButton = this.add.image(
         this.cloudDrawCloseButton.x,
-        this.cloudDrawCloseButton.y + (this.cloudDrawCloseButton.width * 1.1),
+        this.cloudDrawCloseButton.y + this.cloudDrawCloseButton.width * 1.1,
 
         'save',
       );
-      this.cloudDrawSaveButton.setInteractive()
-        .on('pointerup', () => {
-          const RT = this.cloudDraw.getByName('cloudDraw');
-          RT.saveTexture('DrawnCloud');
-          this.cloudDrawingExample.setTexture('DrawnCloud');
-        });
+      this.cloudDrawSaveButton.setInteractive().on('pointerup', () => {
+        const RT = this.cloudDraw.getByName('cloudDraw');
+        RT.saveTexture('DrawnCloud');
+        this.cloudDrawingExample.setTexture('DrawnCloud');
+      });
       this.cloudDrawSaveButton.setVisible(false);
     }
     // end DRAW A CLOUD
     // ...................................................................................................
 
-
     // ...................................................................................................
-    this.photo_camera = this.add.image(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 662),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1377),
+    this.photo_camera = this.add
+      .image(
+        CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 662),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1377),
 
-      'photo_camera',
-    ).setFlip(true, false);
+        'photo_camera',
+      )
+      .setFlip(true, false);
     this.photo_camera.name = 'photo_camera';
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.photo_camera.setInteractive({ draggable: true }); }
+    if (ManageSession.gameEditMode) {
+      this.photo_camera.setInteractive({ draggable: true });
+    }
 
     this.tree_palm = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 992),
@@ -562,7 +626,9 @@ export default class Artworld extends Phaser.Scene {
     );
     this.tree_palm.name = 'tree_palm';
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.tree_palm.setInteractive({ draggable: true }); }
+    if (ManageSession.gameEditMode) {
+      this.tree_palm.setInteractive({ draggable: true });
+    }
 
     Exhibition.AbriBig({
       scene: this,
@@ -572,8 +638,9 @@ export default class Artworld extends Phaser.Scene {
       size: 564,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.exhibit_outdoor_big1.setInteractive({ draggable: true }); }
-
+    if (ManageSession.gameEditMode) {
+      this.exhibit_outdoor_big1.setInteractive({ draggable: true });
+    }
 
     Exhibition.AbriSmall2({
       scene: this,
@@ -583,11 +650,13 @@ export default class Artworld extends Phaser.Scene {
       size: 564,
     });
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    if (ManageSession.gameEditMode) { this.exhibit_outdoor_small2_1.setInteractive({ draggable: true }); }
+    if (ManageSession.gameEditMode) {
+      this.exhibit_outdoor_small2_1.setInteractive({ draggable: true });
+    }
   }
 
   /** Create a curve with handles in edit mode
- * @todo Work in progress, replace with CurveWithHandles class? */
+   * @todo Work in progress, replace with CurveWithHandles class? */
   createCurveWithHandles() {
     // const path = { t: 0, vec: new Phaser.Math.Vector2() };
 
@@ -611,7 +680,11 @@ export default class Artworld extends Phaser.Scene {
       for (let i = 0; i < points.length; i++) {
         const point = points[i];
 
-        this.handle = this.add.image(point.x, point.y, 'ball', 0).setScale(0.1).setInteractive().setDepth(40);
+        this.handle = this.add
+          .image(point.x, point.y, 'ball', 0)
+          .setScale(0.1)
+          .setInteractive()
+          .setDepth(40);
         this.handle.name = 'handle';
 
         this.handle.setData('vector', point);
@@ -730,10 +803,10 @@ export default class Artworld extends Phaser.Scene {
       // setOrigin: 0,
       posX: locationVector.x,
       posY: locationVector.y,
-      gradient1: 0x40E0D0,
-      gradient2: 0x40E0D0,
-      gradient3: 0x39C9BB,
-      gradient4: 0x39C9BB,
+      gradient1: 0x40e0d0,
+      gradient2: 0x40e0d0,
+      gradient3: 0x39c9bb,
+      gradient4: 0x39c9bb,
       alpha: 1,
       size: 200,
       imageOnly: true,
@@ -762,8 +835,8 @@ export default class Artworld extends Phaser.Scene {
     Background.star({
       scene: this,
       name: 'red_star_location_image',
-      gradient1: 0xE50000,
-      gradient2: 0xE50000,
+      gradient1: 0xe50000,
+      gradient2: 0xe50000,
       alpha: 1,
       size: 200,
       imageOnly: true,
@@ -866,7 +939,6 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
     });
 
-
     locationVector = new Phaser.Math.Vector2(-935, 45);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
@@ -927,7 +999,6 @@ export default class Artworld extends Phaser.Scene {
       referenceName: 'this.moonWorldLocation',
       fontColor: 0x8dcb0e,
     });
-
 
     locationVector = new Phaser.Math.Vector2(-1418, -52);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
@@ -1116,7 +1187,6 @@ export default class Artworld extends Phaser.Scene {
       size: 310,
     });
 
-
     locationVector = new Phaser.Math.Vector2(2127, -161);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
@@ -1234,7 +1304,7 @@ export default class Artworld extends Phaser.Scene {
       size: 231,
     });
 
-    locationVector = new Phaser.Math.Vector2(811,  -495);
+    locationVector = new Phaser.Math.Vector2(811, -495);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
       this.worldSize,
       locationVector,
@@ -1254,7 +1324,6 @@ export default class Artworld extends Phaser.Scene {
       fontColor: 0x8dcb0e,
       size: 231,
     });
-
 
     // ---- Location 1 ----------------------
     locationVector = new Phaser.Math.Vector2(-1215, -589);
@@ -1278,7 +1347,6 @@ export default class Artworld extends Phaser.Scene {
       color2: 0xf2a022,
       color3: 0xf8d80b,
     });
-
 
     //* set the particle first on 0,0 so they are below the mario_star
     //* later move them relative to the mario_star
@@ -1371,8 +1439,6 @@ export default class Artworld extends Phaser.Scene {
     });
     this.Kandinsky.setDepth(140);
     // music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
-
-
 
     locationVector = new Phaser.Math.Vector2(143, -1056);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(

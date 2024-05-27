@@ -1,9 +1,9 @@
-### Data structure    
+### Data structure
+
 {id: "user_id", art_url: "art_url"}
 
-We are storing the object as:   
-```collectionName.value.collectionName = [ {}, {} ]```    
-
+We are storing the object as:  
+`collectionName.value.collectionName = [ {}, {} ]`
 
 ```
 collection: "liked"
@@ -25,7 +25,7 @@ value:
            url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png",
            previewURl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/stopmotion/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png?signature=c8c1aba753e01a6f06fd321a5a01a46fc18a483bb618ca1e2478283028a077f8",
            },
-     
+
           1:
           {
            user_id: "e0849c23-a339-40db-bb84-e0849ded4e68",
@@ -40,11 +40,11 @@ value:
 
 ### The functionality can be found in the class ArtworkList.js
 
-We do the first check in the NetworkBoot scene. We then have the latest liked array, each time a like is added of deleted we update the local and the server array, so the array is already in the updates state when clicking the liked button 
+We do the first check in the NetworkBoot scene. We then have the latest liked array, each time a like is added of deleted we update the local and the server array, so the array is already in the updates state when clicking the liked button
 
-1.a check if it exists on the server    
-1.b If the Liked object does not exists, create the object    
-1.c if the object exists, parse it to local array (ManageSession.allLiked)    
+1.a check if it exists on the server  
+1.b If the Liked object does not exists, create the object  
+1.c if the object exists, parse it to local array (ManageSession.allLiked)
 
 We get a server Object with
 
@@ -81,7 +81,7 @@ async getServerObject(collection, userID, maxItems) {
               console.log("ManageSession." + collection, ManageSession[collection])
             } else {
               //when the right addressbook does not exist: make an empty one
-              //addressbook_userid.value exists but .addressbook  
+              //addressbook_userid.value exists but .addressbook
               this.createEmptyServerObject(collection)
             }
 
@@ -103,8 +103,6 @@ async getServerObject(collection, userID, maxItems) {
 This is a promise, so we use Promise.all() to resolve a async/ await function inline.
 Promise.all is easier to use then Promise, because it gives the result in one line
 
-    
-
 If the Liked Object does not exists, we make an empty object with an empty array, in the correct form:
 
 ```
@@ -123,6 +121,7 @@ async createEmptyServerObject(collection) {
     updateObject(type, name, value, pub)
   }
 ```
+
 ### Data structure of liked
 
 If the Liked Object has content, then the Object in inside a one element array. Like so:
@@ -134,8 +133,8 @@ If the Liked Object has content, then the Object in inside a one element array. 
     permission_write: 1
     update_time: "2022-01-13T15:45:02Z"
     user_id: "5264dc23-a339-40db-bb84-e0849ded4e68"
-    value: 
-        liked: [ 
+    value:
+        liked: [
               {
                user_id: "e0849c23-a339-40db-bb84-e0849ded4e68",
                collection: "drawing",
@@ -143,11 +142,10 @@ If the Liked Object has content, then the Object in inside a one element array. 
                version: 1,
                url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png",
                previewURl: "https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/stopmotion/5264dc23-a339-40db-bb84-e0849ded4e68/1_1642771303290_limoenWalrus.png?signature=c8c1aba753e01a6f06fd321a5a01a46fc18a483bb618ca1e2478283028a077f8",
-               
+
                },
                ]
     version: "d1be852d6a66654ec9faa878fcb41b7d"
-
 
 url and previewURl is of the latest version, if we want to latest-latest version we would have to query for url and convert that url.
 
@@ -175,7 +173,8 @@ Called with `listImages("drawing", this.location, 100)`
         }
 ```
 
-***
+---
+
 ### Final Code
 
 ```
@@ -207,7 +206,7 @@ Called with `listImages("drawing", this.location, 100)`
               console.log("ManageSession." + collection, ManageSession[collection])
             } else {
               //when the right addressbook does not exist: make an empty one
-              //addressbook_userid.value exists but .addressbook  
+              //addressbook_userid.value exists but .addressbook
               this.createEmptyServerObject(collection)
             }
 

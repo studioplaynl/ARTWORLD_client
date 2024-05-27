@@ -1,4 +1,5 @@
-home object:    
+home object:
+
 ```
 collection: "home"
 create_time: "2022-01-19T16:31:43Z"
@@ -7,7 +8,7 @@ permission_read: 2
 permission_write: 1
 update_time: "2022-01-19T16:32:27Z"
 user_id: "4c0003f0-3e3f-4b49-8aad-10db98f2d3dc"
-value:    
+value:
     posX: 184.83
     posY: 312.66
     url: "home/stock/portalBlauw.png"
@@ -17,13 +18,13 @@ value:
 version: "0579e989a16f3e228a10d49d13dc3da6"
 ```
 
-1. Get array of home objects => create home array **scene.homes** //  **scene.homesRepresented = []**
+1. Get array of home objects => create home array **scene.homes** // **scene.homesRepresented = []**
 2. filter by key = location (eg Amsterdam) => **scene.homes**
 3. A download the images
-3. B if image can't be downloaded, use a placeholder (should we also send a noticifation to admin?)
-4. create the home in an array **scene.homesRepresented** and in the scene with the image key, and posX posY from scene.homes, with the class **GenerateLocation**
+4. B if image can't be downloaded, use a placeholder (should we also send a noticifation to admin?)
+5. create the home in an array **scene.homesRepresented** and in the scene with the image key, and posX posY from scene.homes, with the class **GenerateLocation**
 
-***
+---
 
 In Phaser we get a global download error event, so we are handling that in a special way:
 
@@ -48,9 +49,10 @@ In Phaser we get a global download error event, so we are handling that in a spe
             })
 ```
 
-We push the element we want to download into a global resolveErrorObjectArray with all the relevant information:    
+We push the element we want to download into a global resolveErrorObjectArray with all the relevant information:
+
 1. the element (object)
-2. the index of the array it is being handled in 
+2. the index of the array it is being handled in
 3. the imageKey that is already generated in the context
 4. the scene it is being used in
 5. the loadFunction
@@ -92,4 +94,3 @@ resolveLoadError(offendingFile) {
         }
     }
 ```
-

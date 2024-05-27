@@ -36,10 +36,9 @@ function subLoadCompleted ()
     console.log('Load Complete')
 }
 ```
- 
 
+Feedback about the download progress of a **specific file**
 
-Feedback about the download progress of  a **specific file**
 ```
  this.load.on('fileprogress', function (file, value) {
 
@@ -57,6 +56,7 @@ Feedback about the download progress of  a **specific file**
         progress.destroy()
     })
 ```
+
 ### Get filecomplete on a specific file name!!!
 
 ```
@@ -78,14 +78,12 @@ this.load.on('filecomplete-spritesheet-GAMEOVERExplosion', function (key, type, 
 
 [Phaser.Loader.Events FILE_COMPLETE](https://photonstorm.github.io/phaser3-docs/Phaser.Loader.Events.html#event:FILE_COMPLETE__anchor)
 
-
 [https://phaser.io/examples/v3/view/loader/loader-events/file-complete-event-with-key](https://phaser.io/examples/v3/view/loader/loader-events/file-complete-event-with-key)
 
 [https://phaser.io/examples/v3/view/loader/loader-events/file-complete-event#](https://phaser.io/examples/v3/view/loader/loader-events/file-complete-event#)
 
+---
 
-
-***
 ### Loader key object
 
 ```

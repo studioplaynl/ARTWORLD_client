@@ -1,7 +1,7 @@
 <script>
-  import { ShowHomeEditBar } from '../../session'
   import { fly } from 'svelte/transition';
   import { writable } from 'svelte/store';
+  import { ShowHomeEditBar } from '../../session';
 
   const isExpanded = writable(false);
 
@@ -11,23 +11,34 @@
   }
 
   function toggleExpand() {
-    isExpanded.update(value => !value);
+    isExpanded.update((value) => !value);
+  }
+
+  function handleKeyDown(event) {
+    // handle keydown event here
+    if (event.key === 'Enter' || event.key === ' ') {
+      toggleExpand();
+    }
   }
 </script>
 
 {#if $ShowHomeEditBar}
-  <div class="menu-icon" id="editHome" on:clickoutside={closeEditHome} on:click={toggleExpand}
-   transition:fly|local="{{
-      delay: 50,
-      duration: 160,
-      opacity: 0,
-      y: 200,
-    }}">
+<div class="edit-home-menu" on:clickoutside={closeEditHome}>
+
+  <button class="menu-icon" id="editHome"
+     on:click={toggleExpand} on:keydown={handleKeyDown}
+  transition:fly|local="{{
+    duration: 160,
+    opacity: 0,
+    y: 100,
+  }}" aria-label="Edit Home">
     {#if $isExpanded}
-      <img src="/assets/SHB/svg/AW-icon-plus.svg" alt="Expand" />
+    <img src="/assets/SHB/svg/AW-icon-plus.svg" alt="Expand" />
     {/if}
     <img src="/assets/SHB/svg/AW-icon-pen.svg" alt="Edit Home" />
-  </div>
+  </button>
+
+</div>
 {/if}
 
 <style>
@@ -40,7 +51,7 @@
   .menu-icon img {
     height: 50px;
   }
-  
+
   #editHome {
     background-color: white;
     text-align: center;

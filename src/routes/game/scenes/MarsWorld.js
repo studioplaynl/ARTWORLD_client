@@ -13,12 +13,11 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
-
 
 export default class MarsWorld extends Phaser.Scene {
   constructor() {
@@ -48,10 +47,10 @@ export default class MarsWorld extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -60,7 +59,10 @@ export default class MarsWorld extends Phaser.Scene {
     });
 
     // MarsWorld
-    this.load.image('artWorldPortalMars', './assets/world_mars_red/portal_goHome_mars.png');
+    this.load.image(
+      'artWorldPortalMars',
+      './assets/world_mars_red/portal_goHome_mars.png',
+    );
     this.load.image('krater_mars', './assets/world_mars_red/krater_mars.png');
     this.load.image('rots1_mars', './assets/world_mars_red/rots1_mars.png');
     this.load.image('rots2_mars', './assets/world_mars_red/rots2_mars.png');
@@ -68,9 +70,18 @@ export default class MarsWorld extends Phaser.Scene {
     this.load.image('rots4_mars', './assets/world_mars_red/rots4_mars.png');
     this.load.image('rots5_mars', './assets/world_mars_red/rots5_mars.png');
     this.load.image('rots6_mars', './assets/world_mars_red/rots6_mars.png');
-    this.load.image('rover_all_one_layer_mars', './assets/world_mars_red/rover_all_one_layer_mars.png');
-    this.load.image('ufo_atwork1_mars', './assets/world_mars_red/ufo_atwork1_mars.png');
-    this.load.image('ufo_slapend_vloer_mars', './assets/world_mars_red/ufo_slapend_vloer_mars.png');
+    this.load.image(
+      'rover_all_one_layer_mars',
+      './assets/world_mars_red/rover_all_one_layer_mars.png',
+    );
+    this.load.image(
+      'ufo_atwork1_mars',
+      './assets/world_mars_red/ufo_atwork1_mars.png',
+    );
+    this.load.image(
+      'ufo_slapend_vloer_mars',
+      './assets/world_mars_red/ufo_slapend_vloer_mars.png',
+    );
   }
 
   async create() {
@@ -103,9 +114,7 @@ export default class MarsWorld extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -125,7 +134,6 @@ export default class MarsWorld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -151,11 +159,7 @@ export default class MarsWorld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -164,7 +168,10 @@ export default class MarsWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -203,10 +210,13 @@ export default class MarsWorld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
-
 
   generateLocations() {
     // we set draggable on restart scene with a global flag
@@ -259,7 +269,6 @@ export default class MarsWorld extends Phaser.Scene {
     if (ManageSession.gameEditMode) {
       this.rots1_mars_1.setInteractive({ draggable: true });
     }
-
 
     // .........rots2_mars_1............................................................
     this.rots2_mars_1 = this.add.image(
@@ -317,7 +326,6 @@ export default class MarsWorld extends Phaser.Scene {
       this.rots4_mars_1.setInteractive({ draggable: true });
     }
 
-
     // .........rots5_mars_1............................................................
     this.rots5_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 615),
@@ -370,7 +378,6 @@ export default class MarsWorld extends Phaser.Scene {
     if (ManageSession.gameEditMode) {
       this.rots2_mars_3.setInteractive({ draggable: true });
     }
-
 
     // .........ufo_atwork1_mars_1............................................................
     this.ufo_atwork1_mars_1 = this.add.image(

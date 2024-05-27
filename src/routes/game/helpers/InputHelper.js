@@ -12,49 +12,76 @@ import { ShowItemsBar } from '../../../session';
  *    scene context is passed on
  */
 export function handleEditMode(scene) {
-  scene.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-    if (ManageSession.gameEditMode) {
-      gameObject.setPosition(dragX, dragY);
+  scene.input.on(
+    'drag',
+    (pointer, gameObject, dragX, dragY) => {
+      if (ManageSession.gameEditMode) {
+        gameObject.setPosition(dragX, dragY);
 
-      const splitGameObjectName = gameObject.name.split('_');
-      if (splitGameObjectName[0] === 'handle') {
-        gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
+        const splitGameObjectName = gameObject.name.split('_');
+        if (splitGameObjectName[0] === 'handle') {
+          gameObject.data.get('vector').set(dragX, dragY); // get the vector data for curve handle objects
+        }
       }
-    }
-  }, scene);
+    },
+    scene,
+  );
 
-  scene.input.on('dragend', (pointer, gameObject) => {
-    if (ManageSession.gameEditMode) {
-      const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, gameObject.x));
-      const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, gameObject.y));
-      // store the original scale when selecting the gameObject for the first time
-      if (ManageSession.selectedGameObject !== gameObject) {
-        ManageSession.selectedGameObject = gameObject;
-        ManageSession.selectedGameObjectStartScale = gameObject.scale;
-        ManageSession.selectedGameObjectStartPosition.x = gameObject.x;
-        ManageSession.selectedGameObjectStartPosition.y = gameObject.y;
-        dlog('editMode info startScale:', ManageSession.selectedGameObjectStartScale);
+  scene.input.on(
+    'dragend',
+    (pointer, gameObject) => {
+      if (ManageSession.gameEditMode) {
+        const worldX = Math.round(
+          CoordinatesTranslator.Phaser2DToArtworldX(
+            scene.worldSize.x,
+            gameObject.x,
+          ),
+        );
+        const worldY = Math.round(
+          CoordinatesTranslator.Phaser2DToArtworldY(
+            scene.worldSize.y,
+            gameObject.y,
+          ),
+        );
+        // store the original scale when selecting the gameObject for the first time
+        if (ManageSession.selectedGameObject !== gameObject) {
+          ManageSession.selectedGameObject = gameObject;
+          ManageSession.selectedGameObjectStartScale = gameObject.scale;
+          ManageSession.selectedGameObjectStartPosition.x = gameObject.x;
+          ManageSession.selectedGameObjectStartPosition.y = gameObject.y;
+          dlog(
+            'editMode info startScale:',
+            ManageSession.selectedGameObjectStartScale,
+          );
+        }
+        // ManageSession.selectedGameObject = gameObject
+        dlog('editMode info ');
+        dlog(
+          'posX posY: ',
+          worldX,
+          ', ',
+          worldY,
+          'scale:',
+          ManageSession.selectedGameObject.scale,
+          'rotation:',
+          ManageSession.selectedGameObject.rotation,
+          'width*scale:',
+          Math.round(
+            ManageSession.selectedGameObject.width *
+              ManageSession.selectedGameObject.scale,
+          ),
+          'height*scale:',
+          Math.round(
+            ManageSession.selectedGameObject.height *
+              ManageSession.selectedGameObject.scale,
+          ),
+          'name:',
+          ManageSession.selectedGameObject.name,
+        );
       }
-      // ManageSession.selectedGameObject = gameObject
-      dlog('editMode info ');
-      dlog(
-        'posX posY: ',
-        worldX,
-        ', ',
-        worldY,
-        'scale:',
-        ManageSession.selectedGameObject.scale,
-        'rotation:',
-        ManageSession.selectedGameObject.rotation,
-        'width*scale:',
-        Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale),
-        'height*scale:',
-        Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale),
-        'name:',
-        ManageSession.selectedGameObject.name,
-      );
-    }
-  }, scene);
+    },
+    scene,
+  );
 }
 
 /**   handles player movement; dragging and double tapping
@@ -78,7 +105,8 @@ export function handlePlayerMovement(scene) {
     setOrigin: 0,
   });
 
-  scene.swipeInput = scene.rexGestures.add.rotate()
+  scene.swipeInput = scene.rexGestures.add
+    .rotate()
     .on('drag1start', () => {
       ManageSession.playerIsAllowedToMove = true;
       scene.input.manager.canvas.style.cursor = 'grabbing';
@@ -110,23 +138,27 @@ export function handlePlayerMovement(scene) {
   // end DETECT dragging and mouseDown on rectangle
 
   // DoubleClick for moveByTapping
-  scene.tapInput = scene.rexGestures.add.tap({
-    enable: true,
-    // bounds: undefined,
-    time: 250,
-    tapInterval: 350,
-    // threshold: 9,
-    // tapOffset: 10,
-    // taps: undefined,
-    // minTaps: undefined,
-    // maxTaps: undefined,
-  })
-    .on('tap', () => {
-      // clickOutside is not working on iOS
-      ShowItemsBar.set(false);
-    }, scene)
-    .on('tappingstart', () => {
+  scene.tapInput = scene.rexGestures.add
+    .tap({
+      enable: true,
+      // bounds: undefined,
+      time: 250,
+      tapInterval: 350,
+      // threshold: 9,
+      // tapOffset: 10,
+      // taps: undefined,
+      // minTaps: undefined,
+      // maxTaps: undefined,
     })
+    .on(
+      'tap',
+      () => {
+        // clickOutside is not working on iOS
+        ShowItemsBar.set(false);
+      },
+      scene,
+    )
+    .on('tappingstart', () => {})
     .on('tapping', (tap) => {
       // dlog('tapping', tap.tapsCount);
       if (tap.tapsCount === 2) {
@@ -141,11 +173,9 @@ export function handlePlayerMovement(scene) {
   const pinch = scene.rexGestures.add.pinch({
     // enable: true,
     // bounds: undefined,
-
     // threshold: 0,
     /* threshold : Fire pinch events after dragging distances
     of catched pointers are larger than this threshold. */
-
   });
 
   pinch.on('pinch', (dragScale) => {
@@ -153,4 +183,3 @@ export function handlePlayerMovement(scene) {
     PlayerZoom.pinch(scaleFactor);
   });
 }
-

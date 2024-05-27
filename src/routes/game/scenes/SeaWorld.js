@@ -10,15 +10,14 @@ import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos, PlayerZoom } from '../playerState';
-    import {
+import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
+  ART_OFFSET_BETWEEN,
 } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
-
 
 export default class SeaWorld extends Phaser.Scene {
   constructor() {
@@ -48,10 +47,10 @@ export default class SeaWorld extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -60,14 +59,35 @@ export default class SeaWorld extends Phaser.Scene {
     });
 
     // seaWorld
-    this.load.image('artWorldPortalSea', './assets/world_seaworld/zee_ship_Portaal_naarhuis.png');
+    this.load.image(
+      'artWorldPortalSea',
+      './assets/world_seaworld/zee_ship_Portaal_naarhuis.png',
+    );
     this.load.image('floating_egg', './assets/world_seaworld/Ei_land_a.png');
-    this.load.image('Zeeslang_head', './assets/world_seaworld/Z1_Zeeslang_head.png');
-    this.load.image('Zeeslang_tail_B', './assets/world_seaworld/Z2_Zeeslang_midden_B1.png');
-    this.load.image('Zeeslang_tail_A', './assets/world_seaworld/Z3_Zeeslang_midden_A2.png');
-    this.load.image('Zeeslang_tail_curveB', './assets/world_seaworld/Z4_zeeslang_curve_richtingB.png');
-    this.load.image('Zeeslang_tail_curveA', './assets/world_seaworld/Z8_zeeslang_curve_richtingA.png');
-    this.load.image('Zeeslang_tail', './assets/world_seaworld/Z10_Zeeslang_start.png');
+    this.load.image(
+      'Zeeslang_head',
+      './assets/world_seaworld/Z1_Zeeslang_head.png',
+    );
+    this.load.image(
+      'Zeeslang_tail_B',
+      './assets/world_seaworld/Z2_Zeeslang_midden_B1.png',
+    );
+    this.load.image(
+      'Zeeslang_tail_A',
+      './assets/world_seaworld/Z3_Zeeslang_midden_A2.png',
+    );
+    this.load.image(
+      'Zeeslang_tail_curveB',
+      './assets/world_seaworld/Z4_zeeslang_curve_richtingB.png',
+    );
+    this.load.image(
+      'Zeeslang_tail_curveA',
+      './assets/world_seaworld/Z8_zeeslang_curve_richtingA.png',
+    );
+    this.load.image(
+      'Zeeslang_tail',
+      './assets/world_seaworld/Z10_Zeeslang_start.png',
+    );
     this.load.image('zeeRif_1', './assets/world_seaworld/zeeRif_1.png');
     this.load.image('zeeRif_2', './assets/world_seaworld/zeeRif_2.png');
     this.load.image('zeeRif_3', './assets/world_seaworld/zeeRif_3.png');
@@ -103,9 +123,7 @@ export default class SeaWorld extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -125,7 +143,6 @@ export default class SeaWorld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -151,11 +168,7 @@ export default class SeaWorld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -164,7 +177,10 @@ export default class SeaWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -203,10 +219,13 @@ export default class SeaWorld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
-
 
   generateLocations() {
     // we set draggable on restart scene with a global flag
@@ -353,7 +372,6 @@ export default class SeaWorld extends Phaser.Scene {
       this.zeeRif_3_2.setInteractive({ draggable: true });
     }
 
-
     // .........zeeRif_3_3............................................................
     this.zeeRif_3_3 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1740),
@@ -450,7 +468,6 @@ export default class SeaWorld extends Phaser.Scene {
     if (ManageSession.gameEditMode) {
       this.Zeeslang_tail_B_flip.setInteractive({ draggable: true });
     }
-
 
     // .........Zeeslang_tail_curveA............................................................
     this.Zeeslang_tail_curveA = this.add.image(

@@ -30,7 +30,7 @@ I need to see if my method is save enough; I set a flag when the player is creat
 
 Maybe it is saver to first create a general player, and then when the avatar is loaded, replace the image or sprite with this.player.setTexture(key, frame)
 
-heart1.setTexture(key [, frame]) 
+heart1.setTexture(key [, frame])
 
 https://www.html5gamedevs.com/topic/41170-how-can-i-change-the-image-of-a-sprite-during-update-function/
 

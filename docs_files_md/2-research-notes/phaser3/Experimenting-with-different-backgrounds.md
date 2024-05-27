@@ -23,23 +23,26 @@ let group = this.add.group({ key: 'dot', repeat: 8000, setX: { x: 0, y: 0, stepX
 
 Phaser.Actions.GridAlign(group.getChildren(), { width: 100, height: 200, cellWidth: 64, cellHeight: 64, x: 16, y: 16 });
 ```
+
 There is not a sharpness advantage, because the SVG is being converted to an image when loading. You can preload the SVG scaled, that will actually create a scaled up image.
 See: https://phaser.io/examples/v3/view/loader/svg/load-svg-with-scale
 
 ---
+
 ##graphics elements
 
 ```
 
 let circles = [] <br><br>const graphics = this.add.graphics();<br><br>graphics.fillStyle(0xffffff); <br>graphics.fillRect(0, 0, 3000, 3000);<br><br>graphics.fillStyle(color, alpha);
 
-const offset = 50 <br>for (let i = 0; i &lt; 2000; i += offset) { <br>for (let j = 0; j &lt; 2000; j += offset) { <br>circles[i] = graphics.fillCircle(i, j, 2); 
+const offset = 50 <br>for (let i = 0; i &lt; 2000; i += offset) { <br>for (let j = 0; j &lt; 2000; j += offset) { <br>circles[i] = graphics.fillCircle(i, j, 2);
 
 ```
 
 This works but there is slowness when loading the array, and when the player is moving accross the field the graphics scrolling is not smooth
 
 ---
+
 ##This works really well:
 
 ##Here is a way to generate patterns on a texture with an array:
@@ -53,20 +56,22 @@ et cross = [
  '.....',
  ]
 
-//generate the texture from the array 
+//generate the texture from the array
 
 this.textures.generate('cross', { data: cross, pixelWidth: 4 });
 
-//display the texture on an image 
+//display the texture on an image
 
-const gridWidth = 4000 
+const gridWidth = 4000
 const offset = 40
 
 for (let i=0;i< gridWidth; i += offset){ for (let j=0;j< gridWidth; j += offset){ this.add.image(i, j, 'cross').setOrigin(0, 1); } }
 ```
+
 ![](https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-24-15-35-59.png)
 
 ---
+
 Draw a shape to a texture, and repeat it there.
 
 Slow to generate, but fast after that.
@@ -88,6 +93,7 @@ Slow to generate, but fast after that.
 ```
 
 ---
+
 ![](https://maartenvanderglas.com/NOTPRIV/artworld/wp-content/uploads/sites/7/2021/09/Screenshot-from-2021-09-27-13-40-23.png)
 
 ```
@@ -139,7 +145,7 @@ let cross = [
       graphics.strokePath();
     }
 
-  
+
 
     let rectangle = this.add.graphics();
     rectangle.setVisible(false);
@@ -164,4 +170,3 @@ let cross = [
 ```
 
 ---
-

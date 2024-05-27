@@ -13,13 +13,12 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
 
 import * as Phaser from 'phaser';
-
 
 export default class MoonWorld extends Phaser.Scene {
   constructor() {
@@ -49,10 +48,10 @@ export default class MoonWorld extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -71,10 +70,19 @@ export default class MoonWorld extends Phaser.Scene {
         path: `${folderPath}maan_KORR_portalRaket_naarHUIS_alleDelen.png`,
       },
       { key: 'maan_MAAN_a', path: `${folderPath}maan_MAAN_a.png` },
-      { key: 'maan_meteoor_metStaart', path: `${folderPath}maan_meteoor_metStaart.png` },
-      { key: 'maan_portalRaket_naarHUIS_A', path: `${folderPath}maan_portalRaket_naarHUIS_A.png` },
+      {
+        key: 'maan_meteoor_metStaart',
+        path: `${folderPath}maan_meteoor_metStaart.png`,
+      },
+      {
+        key: 'maan_portalRaket_naarHUIS_A',
+        path: `${folderPath}maan_portalRaket_naarHUIS_A.png`,
+      },
       { key: 'maan_spaceBubble', path: `${folderPath}maan_spaceBubble.png` },
-      { key: 'maan_sputnik_metStaart', path: `${folderPath}maan_sputnik_metStaart.png` },
+      {
+        key: 'maan_sputnik_metStaart',
+        path: `${folderPath}maan_sputnik_metStaart.png`,
+      },
       { key: 'maan_steren', path: `${folderPath}maan_steren.png` },
     ];
 
@@ -110,9 +118,7 @@ export default class MoonWorld extends Phaser.Scene {
     });
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -132,7 +138,6 @@ export default class MoonWorld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -158,11 +163,7 @@ export default class MoonWorld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -171,7 +172,10 @@ export default class MoonWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -210,10 +214,13 @@ export default class MoonWorld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
-
 
   generateLocations() {
     // we set draggable on restart scene with a global flag
@@ -311,7 +318,6 @@ export default class MoonWorld extends Phaser.Scene {
       scale: 3,
       scene: this,
     });
-
 
     // .........maan_steren_2............................................................
     PlaceElement.image({

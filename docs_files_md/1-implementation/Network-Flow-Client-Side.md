@@ -1,10 +1,13 @@
 ### Graphical flow of the network:
+
 ### [Figma: network flow client](https://www.figma.com/file/v1VYHMOh1OW8Gy0bhY1g7K/artworld-network-architecture?node-id=0%3A1)
 
-## 1. App.Svelte Is the Session empty? 
+## 1. App.Svelte Is the Session empty?
+
 session (https) -> token, expiration
 
 ## 2. yes, the Session is empty:
+
 login.Svelte
 session.js
 
@@ -38,9 +41,11 @@ client.authenticateEmail(email, password, create)
     .then((response)=> {  Session.set(session)
 getAccount()}
 ```
+
 ### Session object:
+
 ```
-Session$1 
+Session$1
 {
 created_at: “1636024979”,
 
@@ -57,6 +62,7 @@ vars: undefined
 ```
 
 ### Profile Object **without URL**
+
 ```
 $Profile
 {
@@ -71,7 +77,9 @@ update_time: "2021-11-03T16:00:14Z"
 username: "user11"
 }
 ```
+
 ### Profile Object **WITH URL**
+
 ```
 $Profile
 {
@@ -87,6 +95,7 @@ url: "https://artworldstudioplay.s3.eu-central-1.amazonaws.com/avatar/5264dc23-a
 username: "user11"
 }
 ```
+
 ## 3. No the Session is not empty -> MainMenu.js
 
 ```
@@ -94,7 +103,7 @@ username: "user11"
     if (typeof (manageSession.userProfile.meta.location) != "undefined") {
       this.launchLocation = manageSession.userProfile.meta.location + "_Scene"
       console.log(this.launchLocation)
-      
+
       this.checkSceneExistence()
     } else {
       getAccount("", true)
@@ -124,9 +133,10 @@ username: "user11"
 ```
 
 ## 4A. networkBoot_Scene.js
+
 ```
 manageSession.createPlayer = true
-    
+
  await manageSession.createSocket()
       .then(rec => {
         console.log(manageSession.launchLocation)
@@ -150,7 +160,7 @@ socket.onstreampresence
 
 ```
 manageSession.createPlayer = true
- 
+
 loadAndCreatePlayerAvatar()
 attachtAvatarToPlayer()
 
@@ -159,7 +169,9 @@ attachtAvatarToOnlinePlayer(player, preExisting)
 ```
 
 ## 6. CHANGE LOCATIONS
+
 **LocationA:**
+
 ```
 manageSession.socket.rpc("leave", locationA)
 
@@ -171,10 +183,12 @@ manageSession.socket.rpc("leave", locationA)
       this.scene.start(locationScene)
     }, 1000)
 ```
+
 **LocationB:**
+
 ```
 manageSession.createPlayer = true
- 
+
 loadAndCreatePlayerAvatar()
 attachtAvatarToPlayer()
 

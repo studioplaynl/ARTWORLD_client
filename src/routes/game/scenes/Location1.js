@@ -11,8 +11,8 @@ import Background from '../class/Background';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { PlayerPos, PlayerZoom } from '../playerState';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
@@ -50,10 +50,10 @@ export default class Location1 extends Phaser.Scene {
   async preload() {
     //!
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -63,10 +63,22 @@ export default class Location1 extends Phaser.Scene {
     //!
 
     // .... PRELOADER VISUALISER ..........................
-    this.load.image('art1', './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg');
-    this.load.image('art2', './assets/art_styles/drawing_painting/f7f2e083a0c70b97e459f2966bc8c3ae.jpg');
-    this.load.image('art3', './assets/art_styles/drawing_painting/doodle_dogman.png');
-    this.load.image('art5', './assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg');
+    this.load.image(
+      'art1',
+      './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg',
+    );
+    this.load.image(
+      'art2',
+      './assets/art_styles/drawing_painting/f7f2e083a0c70b97e459f2966bc8c3ae.jpg',
+    );
+    this.load.image(
+      'art3',
+      './assets/art_styles/drawing_painting/doodle_dogman.png',
+    );
+    this.load.image(
+      'art5',
+      './assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg',
+    );
     // .... end PRELOADER VISUALISER .......................
   }
 
@@ -88,10 +100,7 @@ export default class Location1 extends Phaser.Scene {
     ManageSession.worldSize = this.worldSize;
     //!
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
-
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     handleEditMode(this);
 
@@ -102,7 +111,16 @@ export default class Location1 extends Phaser.Scene {
     this.makeWoldElements();
 
     // graffiti walls
-    GraffitiWall.create(this, 2200, 600, 800, 600, 'graffitiBrickWall', '0x000000', 'brickWall');
+    GraffitiWall.create(
+      this,
+      2200,
+      600,
+      800,
+      600,
+      'graffitiBrickWall',
+      '0x000000',
+      'brickWall',
+    );
     // GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall", 0x000000)
 
     // .......  PLAYER ..........................................................................
@@ -113,7 +131,6 @@ export default class Location1 extends Phaser.Scene {
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
       artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
     ).setDepth(201);
-
 
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
@@ -161,11 +178,7 @@ export default class Location1 extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -174,7 +187,10 @@ export default class Location1 extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -213,10 +229,13 @@ export default class Location1 extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
-
 
   makeWoldElements() {
     //* .......... scattered art works for the demo .....................................................
@@ -239,7 +258,7 @@ export default class Location1 extends Phaser.Scene {
     graphics.fillCircle(800, 300, 200);
 
     for (let i = 0; i < 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
+      graphics.lineStyle(5, 0xff00ff, 1.0);
       graphics.beginPath();
       graphics.moveTo(800, 200 + i);
       graphics.lineTo(1200, 200 + i);
@@ -248,7 +267,7 @@ export default class Location1 extends Phaser.Scene {
     }
 
     for (let i = 0; i < 250; i += 60) {
-      graphics.lineStyle(5, 0xFF00FF, 1.0);
+      graphics.lineStyle(5, 0xff00ff, 1.0);
       graphics.beginPath();
       graphics.moveTo(900 + i, 150);
       graphics.lineTo(900 + i, 550);
@@ -283,7 +302,10 @@ export default class Location1 extends Phaser.Scene {
   generateLocations() {
     const { gameEditMode } = ManageSession;
     let locationVector = new Phaser.Math.Vector2(-200, -200);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
     // eslint-disable-next-line no-unused-vars
     const location3 = new GenerateLocation({
       scene: this,
@@ -300,7 +322,10 @@ export default class Location1 extends Phaser.Scene {
     });
 
     locationVector = new Phaser.Math.Vector2(200, 200);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize,
+      locationVector,
+    );
     // eslint-disable-next-line no-unused-vars
     const location4 = new GenerateLocation({
       scene: this,

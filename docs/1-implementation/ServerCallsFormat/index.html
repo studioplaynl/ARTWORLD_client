@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.4">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.25">
     
     
       
@@ -24,7 +24,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6543a935.min.css">
       
       
 
@@ -214,10 +214,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
@@ -323,10 +321,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
@@ -1336,10 +1332,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
@@ -1394,10 +1388,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
@@ -2181,10 +2173,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
@@ -2218,10 +2208,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
@@ -2473,10 +2461,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
@@ -2546,10 +2532,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
@@ -2583,10 +2567,8 @@
     
     
     
-    
     <li class="md-nav__item md-nav__item--nested">
       
-        
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
@@ -3073,10 +3055,12 @@
 
 
 <h2 id="uploadimagename-type-json-img-statusversion-displayname">uploadImage(name, type, json, img, status,version, displayName)</h2>
-<p>this function: 
-- gets upload URL for json and png
-- uploads blobs to aws
-- send an object to nakama containing:
+<p>this function:</p>
+<ul>
+<li>gets upload URL for json and png</li>
+<li>uploads blobs to aws</li>
+<li>send an object to nakama containing:</li>
+</ul>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>{
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  &quot;url&quot;: &quot;drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.png&quot;,
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  &quot;json&quot;: &quot;drawing/5264dc23-a339-40db-bb84-e0849ded4e68/4_blauwSpotlijster.json&quot;,
@@ -3084,19 +3068,21 @@
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  &quot;displayname&quot;: &quot;blauwSpotlijster&quot;
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>}
 </span></code></pre></div>
-no response on succes</p>
+<p>no response on succes</p>
 <h2 id="getuploadurltype-name-filetypeversion">getUploadURL(type, name, filetype,version)</h2>
 <p>this function creates a signed upload url for file upload to AWS</p>
 <h3 id="usage-example">usage example</h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>var version = 1 
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>var version = 1
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>var [jsonURL, jsonLocation] = await getUploadURL(&quot;home&quot;, &quot;current&quot;, &quot;json&quot;, version)
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>// creates route on aws &quot;/home/user_id/1_current.json&quot;
 </span></code></pre></div>
 <h2 id="updatetitlecollection-key-name-userid">updateTitle(collection, key, name, userID)</h2>
-<p>this function:
-- picks up object
-- updates object.value.displayname
-- pushes object back to server</p>
+<p>this function:</p>
+<ul>
+<li>picks up object</li>
+<li>updates object.value.displayname</li>
+<li>pushes object back to server</li>
+</ul>
 <h3 id="example">example</h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>updateTitle(&quot;drawing&quot;, &quot;12345345_geelkoe&quot;, &quot;nieuwe naam&quot;, &quot;`1231hh3123dasda&quot;)
 </span></code></pre></div>
@@ -3111,7 +3097,7 @@ no response on succes</p>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>updateObject(type, name, value, pub)
 </span></code></pre></div>
 <h2 id="getaccountid-avatar">getAccount(id, avatar)</h2>
-<p><div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>0:[
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>0:[
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>{
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>avatar_url: &quot;avatar/f42eb28f-9f4d-476c-9788-2240bac4cf48/current.png&quot;,
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>create_time: &quot;2021-10-11T11:32:02Z&quot;,
@@ -3140,7 +3126,7 @@ no response on succes</p>
 </span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>},
 </span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a>]
 </span></code></pre></div>
-The url is the actual avatar url, the url is called via getAccount, getUrl, but with a couple of await functions it takes a bit for the url to load via the getAccount function.</p>
+<p>The url is the actual avatar url, the url is called via getAccount, getUrl, but with a couple of await functions it takes a bit for the url to load via the getAccount function.</p>
 <h2 id="getavataravatar_url">getAvatar(avatar_url)</h2>
 <h2 id="uploadavatardata">uploadAvatar(data)</h2>
 <h2 id="deletefiletypefileuser">deleteFile(type,file,user)</h2>
@@ -3150,7 +3136,7 @@ The url is the actual avatar url, the url is called via getAccount, getUrl, but 
 type: "home" (collection)<br />
 name = "hansjes huisje" (key)<br />
 value = object with keys (value)<br />
-pub: permission_read (pub)  </p>
+pub: permission_read (pub)</p>
 <p>updateObject("location", name, value, true)</p>
 <h2 id="listobjectstype-userid-limit-page">listObjects(type, userID, limit, page)</h2>
 <p>type = "location"</p>
@@ -3187,16 +3173,16 @@ pub: permission_read (pub)  </p>
 <p><code>"https://d3hkghsa3z4n1z.cloudfront.net/fit-in/64x64/filters:trim()/avatar/4ced8bff-d79c-4842-b2bd-39e9d9aa597e/current.png?signature=cbda2578e5612c70c009ebc6e0424e9025078aa94517543b310bf01eedefb167"</code></p>
 <p>size and format at not both required to work, either one or both will also function
 for example:</p>
-<p><code>convertImage(path,, format)</code> </p>
+<p><code>convertImage(path,, format)</code></p>
 <p>This is a replacement for getAvatar()</p>
 <p>if needed more filters can be added in the future, see:
 https://docs.aws.amazon.com/solutions/latest/serverless-image-handler/thumbor-filters.html</p>
 <h2 id="listallobjectstype-id-limit-cursor">listAllObjects(type, id, limit, cursor)</h2>
-<p><code>type</code> is eg drawing, location, etc ...  <br />
-<code>id</code> is userID(or <code>undefined</code>, but not <code>null</code> or <code>""</code>)  <br />
-<code>limit</code> is the max number of objects you want to receive (either by page or in total)  <br />
-<code>cursor</code> is on the first call ```undefined```` (just empty), when supplied, it defines the next page of limit-number of objects. The cursor is the last objects update time, so: objects[limit - 1].update_time    </p>
-<p>Results come back within .objects array:    </p>
+<p><code>type</code> is eg drawing, location, etc ...<br />
+<code>id</code> is userID(or <code>undefined</code>, but not <code>null</code> or <code>""</code>)<br />
+<code>limit</code> is the max number of objects you want to receive (either by page or in total)<br />
+<code>cursor</code> is on the first call ```undefined```` (just empty), when supplied, it defines the next page of limit-number of objects. The cursor is the last objects update time, so: objects[limit - 1].update_time</p>
+<p>Results come back within .objects array:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>[
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>{
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>collection: &quot;drawing&quot;
@@ -3207,7 +3193,7 @@ https://docs.aws.amazon.com/solutions/latest/serverless-image-handler/thumbor-fi
 </span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>update_time: &quot;2023-01-20T16:55:15.02286+01:00&quot;
 </span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>user_id: &quot;f011a5dc-901a-42c0-9589-587b389d1e3e&quot;
 </span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>username: &quot;user11&quot;
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>value: 
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>value:
 </span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>      displayname: &quot;bloem&quot;
 </span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>      url: &quot;drawing/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-01-02T21_50_42_GeelAvoceta.png&quot;
 </span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>      version: &quot;0&quot;
@@ -3234,19 +3220,19 @@ https://docs.aws.amazon.com/solutions/latest/serverless-image-handler/thumbor-fi
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    required
 </span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>/&gt;
 </span></code></pre></div>
-<p>or can used within a function as following:
+<p>or can used within a function as following:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>if(await validate(email,&quot;email&quot;)){
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>// run action if valid
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>} else {
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>// run if invalid
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>)
-</span></code></pre></div></p>
+</span></code></pre></div>
 <h1 id="setloaderstate">setLoader(state)</h1>
 <p><code>setLoader(true)</code> sets loading screen on</p>
 <p><code>setLoader(false)</code> sets loading screen off</p>
 <h1 id="getallhouseslocationuser_id">getAllHouses(location,user_id)</h1>
 <p>Gives you all the houses objects within the location, optionally add a user_id
-example result:
+example result:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>[
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  {
 </span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    &quot;read&quot;: 2,
@@ -3268,7 +3254,7 @@ example result:
 </span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>    },
 </span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>    &quot;user_id&quot;: &quot;fcbcc269-a109-4a4b-a570-5ccafc5308d8&quot;
 </span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>  },
-</span></code></pre></div></p>
+</span></code></pre></div>
 
 
 
@@ -3315,10 +3301,10 @@ example result:
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.7389ff0e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.081f42fc.min.js"></script>
       
     
   </body>

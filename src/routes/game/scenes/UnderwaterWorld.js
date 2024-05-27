@@ -14,13 +14,12 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
+  ART_OFFSET_BETWEEN,
 } from '../../../constants';
 
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
-
 
 export default class UnderwaterWorld extends Phaser.Scene {
   constructor() {
@@ -50,10 +49,10 @@ export default class UnderwaterWorld extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -62,17 +61,50 @@ export default class UnderwaterWorld extends Phaser.Scene {
     });
 
     // underwaterworld
-    this.load.image('artWorldPortalUnderwater', './assets/world_underwater_blue/Portaal_naarhuis_water.png');
-    this.load.image('bubbles_1_water', './assets/world_underwater_blue/bubbles_1_water.png');
-    this.load.image('cloud01_water', './assets/world_underwater_blue/cloud01_water.png');
-    this.load.image('Inkvis_water', './assets/world_underwater_blue/Inkvis_water.png');
-    this.load.image('jellyvis1_water', './assets/world_underwater_blue/jellyvis1_water.png');
-    this.load.image('koral_water_01', './assets/world_underwater_blue/koral_water_01.png');
-    this.load.image('koral_water_02', './assets/world_underwater_blue/koral_water_02.png');
-    this.load.image('koral_water_03', './assets/world_underwater_blue/koral_water_03.png');
-    this.load.image('koral_water_04', './assets/world_underwater_blue/koral_water_04.png');
-    this.load.image('light1_water', './assets/world_underwater_blue/light1_water.png');
-    this.load.image('light_2_water', './assets/world_underwater_blue/light_2_water.png');
+    this.load.image(
+      'artWorldPortalUnderwater',
+      './assets/world_underwater_blue/Portaal_naarhuis_water.png',
+    );
+    this.load.image(
+      'bubbles_1_water',
+      './assets/world_underwater_blue/bubbles_1_water.png',
+    );
+    this.load.image(
+      'cloud01_water',
+      './assets/world_underwater_blue/cloud01_water.png',
+    );
+    this.load.image(
+      'Inkvis_water',
+      './assets/world_underwater_blue/Inkvis_water.png',
+    );
+    this.load.image(
+      'jellyvis1_water',
+      './assets/world_underwater_blue/jellyvis1_water.png',
+    );
+    this.load.image(
+      'koral_water_01',
+      './assets/world_underwater_blue/koral_water_01.png',
+    );
+    this.load.image(
+      'koral_water_02',
+      './assets/world_underwater_blue/koral_water_02.png',
+    );
+    this.load.image(
+      'koral_water_03',
+      './assets/world_underwater_blue/koral_water_03.png',
+    );
+    this.load.image(
+      'koral_water_04',
+      './assets/world_underwater_blue/koral_water_04.png',
+    );
+    this.load.image(
+      'light1_water',
+      './assets/world_underwater_blue/light1_water.png',
+    );
+    this.load.image(
+      'light_2_water',
+      './assets/world_underwater_blue/light_2_water.png',
+    );
     this.load.image('Rif_1_a', './assets/world_underwater_blue/Rif_1_a.png');
     this.load.image('Rif_1_b', './assets/world_underwater_blue/Rif_1_b.png');
     this.load.image('Rif_1_c', './assets/world_underwater_blue/Rif_1_c.png');
@@ -100,9 +132,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     Background.gradientStretchedToFitWorld({
       scene: this,
@@ -130,8 +160,6 @@ export default class UnderwaterWorld extends Phaser.Scene {
     this.backgroundSky.displayHeight = 760 * 2;
     handlePlayerMovement(this);
 
-
-
     // this.makeWorldElements();
 
     // .......  PLAYER ..........................................JA even ..........................................
@@ -150,7 +178,6 @@ export default class UnderwaterWorld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -176,11 +203,7 @@ export default class UnderwaterWorld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -189,7 +212,10 @@ export default class UnderwaterWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1800),
     );
     this.balloonContainer.setDepth(602);
@@ -228,10 +254,13 @@ export default class UnderwaterWorld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
-
 
   generateLocations() {
     // we set draggable on restart scene with a global flag
@@ -335,7 +364,6 @@ export default class UnderwaterWorld extends Phaser.Scene {
     if (ManageSession.gameEditMode) {
       this.Rif_1_c.setInteractive({ draggable: true });
     }
-
 
     // .........Rif_2_a............................................................
     this.Rif_2_a = this.add.image(

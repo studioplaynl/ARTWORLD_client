@@ -1,11 +1,11 @@
 ---
-title: "Note:  Pausing game engine"
-date: "2023-01-25"
-categories: 
-  - "notes"
-tags: 
-  - "game"
-  - "pause"
+title: 'Note:  Pausing game engine'
+date: '2023-01-25'
+categories:
+  - 'notes'
+tags:
+  - 'game'
+  - 'pause'
 ---
 
 The closest would be

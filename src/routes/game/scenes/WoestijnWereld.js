@@ -13,7 +13,7 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
+  ART_OFFSET_BETWEEN,
 } from '../../../constants';
 
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
@@ -21,7 +21,6 @@ import PlaceElement from '../class/PlaceElement';
 // import PreloadScene from './PreloadScene';
 
 import * as Phaser from 'phaser';
-
 
 export default class WoestijnWereld extends Phaser.Scene {
   constructor() {
@@ -50,10 +49,10 @@ export default class WoestijnWereld extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -68,11 +67,16 @@ export default class WoestijnWereld extends Phaser.Scene {
 
     const folderPath = './assets/world_woestijn/';
 
-
     const loadArray = [
-      { key: 'Portal_naarHuis_woestijn', path: `${folderPath}Portal_woestijn_naarHuis-fs8.png` },
+      {
+        key: 'Portal_naarHuis_woestijn',
+        path: `${folderPath}Portal_woestijn_naarHuis-fs8.png`,
+      },
 
-      { key: 'oasis_blauw_01_ring', path: `${folderPath}oasis_blauw 01_ring-fs8.png` },
+      {
+        key: 'oasis_blauw_01_ring',
+        path: `${folderPath}oasis_blauw 01_ring-fs8.png`,
+      },
       { key: 'oasis_blauw_01', path: `${folderPath}oasis_blauw 01-fs8.png` },
       { key: 'oasis_blauw_02', path: `${folderPath}oasis_blauw_02-fs8.png` },
 
@@ -81,7 +85,10 @@ export default class WoestijnWereld extends Phaser.Scene {
       { key: 'pyradmide_01', path: `${folderPath}pyradmide_01-fs8.png` },
       { key: 'pyradmide_02', path: `${folderPath}pyradmide_02-fs8.png` },
       { key: 'pyradmide_03', path: `${folderPath}pyradmide_03-fs8.png` },
-      { key: 'pyradmide_GodofWater', path: `${folderPath}pyradmide_GodofWater-fs8.png` },
+      {
+        key: 'pyradmide_GodofWater',
+        path: `${folderPath}pyradmide_GodofWater-fs8.png`,
+      },
     ];
 
     ServerCall.loadAssetArray(this, loadArray, 'localImage');
@@ -116,9 +123,7 @@ export default class WoestijnWereld extends Phaser.Scene {
     });
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -138,7 +143,6 @@ export default class WoestijnWereld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -164,11 +168,7 @@ export default class WoestijnWereld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -177,7 +177,10 @@ export default class WoestijnWereld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -216,10 +219,13 @@ export default class WoestijnWereld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
-
 
   generateLocations() {
     // we set draggable on restart scene with a global flag
@@ -286,7 +292,6 @@ export default class WoestijnWereld extends Phaser.Scene {
       // rotation: -0.05,
       scene: this,
     });
-
 
     // .........pyradmide_01............................................................
     PlaceElement.image({

@@ -6,10 +6,10 @@ theme:
   features:
     - content.code.annotate
   shortcuts:
-    help: 191    # ?
-    next: 78     # n
+    help: 191 # ?
+    next: 78 # n
     previous: 80 # p
-    search: 83   # s
+    search: 83 # s
 markdown_extensions:
   - pymdownx.critic
   - pymdownx.caret

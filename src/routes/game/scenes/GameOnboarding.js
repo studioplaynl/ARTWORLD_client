@@ -5,18 +5,21 @@ import { Profile } from '../../../session';
 import ManageSession from '../ManageSession';
 import { listObjects } from '../../../helpers/nakamaHelpers';
 import { DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
+import { PlayerPos, PlayerLocation, PlayerHistory } from '../playerState';
 import {
-  PlayerPos, PlayerLocation, PlayerHistory,
-} from '../playerState';
-import {
-  Addressbook, Liked, Achievements, ModeratorLiked,
+  Addressbook,
+  Liked,
+  Achievements,
+  ModeratorLiked,
 } from '../../../storage';
 import { dlog } from '../../../helpers/debugLog';
-import { parseQueryString, checkIfSceneIsAllowed, checkIfLocationLooksLikeAHouse } from '../helpers/UrlHelpers';
+import {
+  parseQueryString,
+  checkIfSceneIsAllowed,
+  checkIfLocationLooksLikeAHouse,
+} from '../helpers/UrlHelpers';
 
 import * as Phaser from 'phaser';
-
-
 
 export default class GameOnboarding extends Phaser.Scene {
   debug = false;
@@ -44,14 +47,17 @@ export default class GameOnboarding extends Phaser.Scene {
           y: Math.round(profile.meta.PosY),
         });
       }
-      if (profile.meta?.Location
-        && checkIfLocationLooksLikeAHouse(profile.meta.Location)) {
+      if (
+        profile.meta?.Location &&
+        checkIfLocationLooksLikeAHouse(profile.meta.Location)
+      ) {
         PlayerLocation.set({
           scene: DEFAULT_HOME,
           house: profile.meta.Location,
         });
-      } else if (profile.meta?.Location
-        && checkIfSceneIsAllowed(profile.meta.Location)
+      } else if (
+        profile.meta?.Location &&
+        checkIfSceneIsAllowed(profile.meta.Location)
       ) {
         PlayerLocation.set({
           scene: profile.meta.Location,
@@ -63,8 +69,8 @@ export default class GameOnboarding extends Phaser.Scene {
     // If a position is null, randomise it..
     if (get(PlayerPos).x === null && get(PlayerPos).y === null) {
       PlayerPos.set({
-        x: Math.floor((Math.random() * 300) - 150),
-        y: Math.floor((Math.random() * 300) - 150),
+        x: Math.floor(Math.random() * 300 - 150),
+        y: Math.floor(Math.random() * 300 - 150),
       });
     }
 
@@ -83,20 +89,24 @@ export default class GameOnboarding extends Phaser.Scene {
     }
 
     if (targetHouse && checkIfLocationLooksLikeAHouse(targetHouse)) {
-      listObjects('home', targetHouse, 1).catch(() => {
-        // No objects found for this ID, switch to default scene
-        dlog(`This ID (${targetHouse}) has no objects, switching to default scene`);
-        PlayerLocation.set({
-          scene: DEFAULT_SCENE,
-          house: null,
+      listObjects('home', targetHouse, 1)
+        .catch(() => {
+          // No objects found for this ID, switch to default scene
+          dlog(
+            `This ID (${targetHouse}) has no objects, switching to default scene`,
+          );
+          PlayerLocation.set({
+            scene: DEFAULT_SCENE,
+            house: null,
+          });
+          // Don't store this change in scene in the history..
+          PlayerHistory.pop();
+          this.launchGame();
+        })
+        .then(() => {
+          // Objects were found, so we continue to launch
+          this.launchGame();
         });
-        // Don't store this change in scene in the history..
-        PlayerHistory.pop();
-        this.launchGame();
-      }).then(() => {
-        // Objects were found, so we continue to launch
-        this.launchGame();
-      });
     } else {
       // Launch in DEFAULT_SCENE
       this.launchGame();
@@ -107,22 +117,20 @@ export default class GameOnboarding extends Phaser.Scene {
     const targetScene = get(PlayerLocation).scene;
     const targetHouse = get(PlayerLocation).house;
 
-
     dlog('Launch: ', targetScene, targetHouse);
 
     // we launch the player last location when we have a socket with the server
-    await ManageSession.createSocket()
-      .then(async () => {
-        // get server object so that the data is Initialized
-        Liked.get();
-        ModeratorLiked.get();
-        Addressbook.get();
-        Achievements.get();
+    await ManageSession.createSocket().then(async () => {
+      // get server object so that the data is Initialized
+      Liked.get();
+      ModeratorLiked.get();
+      Addressbook.get();
+      Achievements.get();
 
-        // launch leaves the current scene running
-        // start stops the current (GameOnboarding) scene
-        this.scene.start(targetScene, { user_id: targetHouse });
-        this.scene.launch('UIScene');
-      });
+      // launch leaves the current scene running
+      // start stops the current (GameOnboarding) scene
+      this.scene.start(targetScene, { user_id: targetHouse });
+      this.scene.launch('UIScene');
+    });
   }
 }

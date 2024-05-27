@@ -13,14 +13,13 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
 // import PreloadScene from './PreloadScene';
 
 import * as Phaser from 'phaser';
-
 
 export default class PizzaWorld extends Phaser.Scene {
   constructor() {
@@ -49,10 +48,10 @@ export default class PizzaWorld extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -64,22 +63,47 @@ export default class PizzaWorld extends Phaser.Scene {
     const folderPath = './assets/world_pizza/';
     this.localAssetsCheck = {};
 
-
     const loadArray = [
-      { key: 'Portal_naarHuis_pizza', path: `${folderPath}Portal_naarHuis_pizza.png` },
+      {
+        key: 'Portal_naarHuis_pizza',
+        path: `${folderPath}Portal_naarHuis_pizza.png`,
+      },
 
-      { key: 'kaasbrugg_01_pizza', path: `${folderPath}03c_bruggcorrectie_6_6_23.png` },
-      { key: 'kaasbrugg_02_pizza', path: `${folderPath}03b_bruggcorrectie_6_6_23.png` },
-      { key: 'kaasbrugg_03_pizza', path: `${folderPath}03a_bruggcorrectie_6_6_23.png` },
+      {
+        key: 'kaasbrugg_01_pizza',
+        path: `${folderPath}03c_bruggcorrectie_6_6_23.png`,
+      },
+      {
+        key: 'kaasbrugg_02_pizza',
+        path: `${folderPath}03b_bruggcorrectie_6_6_23.png`,
+      },
+      {
+        key: 'kaasbrugg_03_pizza',
+        path: `${folderPath}03a_bruggcorrectie_6_6_23.png`,
+      },
 
+      {
+        key: 'Slice_Caprese_metTomaatpeople',
+        path: `${folderPath}Slice_Caprese_metTomaatpeople.png`,
+      },
 
-      { key: 'Slice_Caprese_metTomaatpeople', path: `${folderPath}Slice_Caprese_metTomaatpeople.png` },
+      {
+        key: 'pizza_margarita',
+        path: `${folderPath}margarita_00_corr_6_6_23.png`,
+      },
+      {
+        key: 'pizza_margarita2',
+        path: `${folderPath}margarita_02_correctie_6_6_23.png`,
+      },
+      {
+        key: 'pizza_margarita3',
+        path: `${folderPath}margarita_01_correctie_6_6_23.png`,
+      },
 
-      { key: 'pizza_margarita', path: `${folderPath}margarita_00_corr_6_6_23.png` },
-      { key: 'pizza_margarita2', path: `${folderPath}margarita_02_correctie_6_6_23.png` },
-      { key: 'pizza_margarita3', path: `${folderPath}margarita_01_correctie_6_6_23.png` },
-
-      { key: 'ananasguy', path: `${folderPath}ananasGuy_04_correctie_6_6_23.png` },
+      {
+        key: 'ananasguy',
+        path: `${folderPath}ananasGuy_04_correctie_6_6_23.png`,
+      },
       { key: 'basil_2a', path: `${folderPath}basil_2a.png` },
       { key: 'paprika_g1', path: `${folderPath}paprika_g1.png` },
       { key: 'paprika_y1', path: `${folderPath}paprika_y1.png` },
@@ -119,9 +143,7 @@ export default class PizzaWorld extends Phaser.Scene {
     });
     handlePlayerMovement(this);
 
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     // this.makeWorldElements();
 
@@ -141,7 +163,6 @@ export default class PizzaWorld extends Phaser.Scene {
 
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
-
 
     PlayerZoom.subscribe((zoom) => {
       this.gameCam.zoom = zoom;
@@ -169,11 +190,7 @@ export default class PizzaWorld extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -182,7 +199,10 @@ export default class PizzaWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -221,7 +241,11 @@ export default class PizzaWorld extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
 
@@ -260,7 +284,6 @@ export default class PizzaWorld extends Phaser.Scene {
       rotation: -0.05,
       scene: this,
     });
-
 
     // .........pizza_margarita2............................................................
     PlaceElement.image({

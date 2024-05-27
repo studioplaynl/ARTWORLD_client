@@ -8,7 +8,6 @@
 |AVIF|10|30%|
 |WEBP|32|97%|
 
-
 Based on the doodle picture from location1 **e13…ff2.jpg**
 |Format|Size of image (KB)|Size respectively to the jpg file|
 |-|:-:|-:|
@@ -16,7 +15,6 @@ Based on the doodle picture from location1 **e13…ff2.jpg**
 |HEIC|19|58%|
 |AVIF|31|94%|
 |WEBP|25|76%|
-
 
 Based on **museum.png** from location1
 |Format|Size of image (KB)|Size respectively to the png file|
@@ -27,6 +25,7 @@ Based on **museum.png** from location1
 |WEBP|27|108%|
 
 ## We get the following results on rendering in location1
+
 **Heic**
 https://user-images.githubusercontent.com/71214731/145584124-cbe05ea9-e995-4e2c-bfff-1a33017d28e8.png
 No image is rendered.
@@ -42,8 +41,7 @@ All images are displayed as they are supposed.
 ### This format can be used to be able to load an image from several alternative formats according to browser support
 
 "this.load.image('museum', [
-    'museum.webp',
-    'museum.avif',
-    'museum.png'
+'museum.webp',
+'museum.avif',
+'museum.png'
 ]);"
-

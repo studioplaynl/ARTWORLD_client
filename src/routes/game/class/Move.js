@@ -9,7 +9,6 @@ import { AVATAR_BASE_SIZE } from '../../../constants';
 
 import * as Phaser from 'phaser';
 
-
 class Move {
   constructor() {
     PlayerPos.subscribe((pos) => {
@@ -25,26 +24,20 @@ class Move {
 
     const scene = ManageSession.currentScene;
     if (scene && pos.x !== null) {
-      scene.player.x = artworldToPhaser2DX(
-        scene.worldSize.x,
-        pos.x,
-      );
+      scene.player.x = artworldToPhaser2DX(scene.worldSize.x, pos.x);
     }
     if (scene && pos.y !== null) {
-      scene.player.y = artworldToPhaser2DY(
-        scene.worldSize.y,
-        pos.y,
-      );
+      scene.player.y = artworldToPhaser2DY(scene.worldSize.y, pos.y);
     }
   }
 
   // checks if we are moving with keyboard arrowKeys
   moveByCursor(scene) {
     if (
-      scene.cursors.up.isDown
-      || scene.cursors.down.isDown
-      || scene.cursors.left.isDown
-      || scene.cursors.right.isDown
+      scene.cursors.up.isDown ||
+      scene.cursors.down.isDown ||
+      scene.cursors.left.isDown ||
+      scene.cursors.right.isDown
     ) {
       ManageSession.cursorKeyIsDown = true;
     } else {
@@ -176,10 +169,13 @@ class Move {
     this.movingAnimation(scene, 'stop');
   }
 
-
   moveBySwiping(scene) {
     if (scene.input.activePointer.downX !== scene.input.activePointer.upX) {
-      if (scene.input.activePointer.isDown && !ManageSession.isClicking && ManageSession.playerIsAllowedToMove) {
+      if (
+        scene.input.activePointer.isDown &&
+        !ManageSession.isClicking &&
+        ManageSession.playerIsAllowedToMove
+      ) {
         ManageSession.isClicking = true;
       }
       if (!scene.input.activePointer.isDown && ManageSession.isClicking) {
@@ -190,8 +186,10 @@ class Move {
         const playerX = scene.player.x;
         const playerY = scene.player.y;
 
-        let swipeX = scene.input.activePointer.upX - scene.input.activePointer.downX;
-        let swipeY = scene.input.activePointer.upY - scene.input.activePointer.downY;
+        let swipeX =
+          scene.input.activePointer.upX - scene.input.activePointer.downX;
+        let swipeY =
+          scene.input.activePointer.upY - scene.input.activePointer.downY;
 
         ManageSession.swipeAmount.x = swipeX;
         ManageSession.swipeAmount.y = swipeY;
@@ -219,7 +217,12 @@ class Move {
         ManageSession.target.y = playerY + swipeY;
 
         // generalized moving method
-        this.moveObjectToTarget(scene, scene.player, ManageSession.target, moveSpeed);
+        this.moveObjectToTarget(
+          scene,
+          scene.player,
+          ManageSession.target,
+          moveSpeed,
+        );
         ManageSession.playerIsAllowedToMove = false;
         ManageSession.isClicking = false;
       }
@@ -266,9 +269,11 @@ class Move {
       // keep player within world bounds
       const halfAvatarSize = AVATAR_BASE_SIZE / 2;
 
-      if (scene.player.x > scene.worldSize.x - halfAvatarSize) scene.player.x = scene.worldSize.x - halfAvatarSize;
+      if (scene.player.x > scene.worldSize.x - halfAvatarSize)
+        scene.player.x = scene.worldSize.x - halfAvatarSize;
       if (scene.player.x < 0 + halfAvatarSize) scene.player.x = halfAvatarSize;
-      if (scene.player.y > scene.worldSize.y - halfAvatarSize) scene.player.y = scene.worldSize.y - halfAvatarSize;
+      if (scene.player.y > scene.worldSize.y - halfAvatarSize)
+        scene.player.y = scene.worldSize.y - halfAvatarSize;
       if (scene.player.y < 0 + halfAvatarSize) scene.player.y = halfAvatarSize;
     }
   }
@@ -306,11 +311,7 @@ class Move {
   sendMovement(scene) {
     // send the player position as artworldCoordinates, because we store in artworldCoordinates on the server
     // moveTo or Stop
-    ManageSession.sendMoveMessage(
-      scene,
-      scene.player.x,
-      scene.player.y,
-    );
+    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
     // dlog(this.player.x)
     ManageSession.updateMovementTimer = 0;
   }

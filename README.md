@@ -1,7 +1,6 @@
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 
-
-This is the repo for ARTWORLD, a game for kids to make and exhibit art in. 
+This is the repo for ARTWORLD, a game for kids to make and exhibit art in.
 ARTWORLD is a multi user game, so players see and can interact with each other.
 
 ![Walk animation](public/assets/docs/gifs/walk_arond_animation.gif)
@@ -20,7 +19,6 @@ ARTWORLD is made in JavaScript, NODEJS and SVELTE. As a file storage backend we 
 ARTWORLD is conceived and financed by [De Vrolijkheid](https://vrolijkheid.nl/projecten/artworld)
 
 ![Art in House GIF](public/assets/docs/gifs/art_in_house.gif)
-
 
 ARTWORLD is designed, programmed and project managed by [Maarten van der Glas](https://github.com/mrmaarten) @ [Studio Play](https://studioplay.nl).
 

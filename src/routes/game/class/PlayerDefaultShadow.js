@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser';
 
-
 export default class PlayerDefaultShadow extends Phaser.GameObjects.Sprite {
   constructor(config) {
     super(config.scene, config.texture);

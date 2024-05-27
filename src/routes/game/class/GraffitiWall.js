@@ -4,7 +4,6 @@ import ManageSession from '../ManageSession';
 
 import * as Phaser from 'phaser';
 
-
 class GraffitiWall {
   create(scene, x, y, width, height, name, color, imageFile = null) {
     // we name the container as this.[name] so we can reference it later
@@ -20,11 +19,8 @@ class GraffitiWall {
 
     // checking if a drawing wall has a front image
     if (imageFile) {
-      const graffitiWall = scene.add.image(
-        0,
-        0,
-        imageFile,
-      )
+      const graffitiWall = scene.add
+        .image(0, 0, imageFile)
         .setOrigin(0.5)
         .setDepth(198);
       graffitiWall.displayWidth = width;
@@ -32,12 +28,8 @@ class GraffitiWall {
       scene[name].add(graffitiWall);
     }
 
-    const rt = scene.add.renderTexture(
-      0,
-      0,
-      width,
-      height,
-    )
+    const rt = scene.add
+      .renderTexture(0, 0, width, height)
       .setInteractive()
       .setDepth(199)
       .setName(name);
@@ -55,14 +47,13 @@ class GraffitiWall {
       ManageSession.graffitiDrawing = true;
       this.isClicking = true;
       ManageSession.playerIsAllowedToMove = false;
-      
+
       const hexColor = Phaser.Display.Color.HexStringToColor(color);
-      
 
       rt.draw(
         'brush',
-        pointer.worldX - scene[name].x + (width / 2),
-        pointer.worldY - scene[name].y + (height / 2),
+        pointer.worldX - scene[name].x + width / 2,
+        pointer.worldY - scene[name].y + height / 2,
         1,
         hexColor.color,
       );
@@ -90,12 +81,12 @@ class GraffitiWall {
           // deleting the first and second entries
 
           // create a line of previousPointer[0] and previousPointer[1]
-          const line1 = new Phaser.Curves.Line(
-            [previousPointer[0].x,
+          const line1 = new Phaser.Curves.Line([
+            previousPointer[0].x,
             previousPointer[0].y,
             previousPointer[1].x,
-            previousPointer[1].y],
-          );
+            previousPointer[1].y,
+          ]);
           previousPointer.splice(0, 1);
 
           // get the interpolated points on the line, with interpolation factor
@@ -106,8 +97,8 @@ class GraffitiWall {
           // dlog("p", p)
           rt.draw(
             'brush',
-            p.x - scene[name].x + (width / 2),
-            p.y - scene[name].y + (height / 2),
+            p.x - scene[name].x + width / 2,
+            p.y - scene[name].y + height / 2,
             1,
             hexColor.color,
           );
@@ -124,26 +115,30 @@ class GraffitiWall {
       }
     });
 
-    rt.on('pointerup', () => {
-      ManageSession.graffitiDrawing = false;
+    rt.on(
+      'pointerup',
+      () => {
+        ManageSession.graffitiDrawing = false;
 
-      // empty the array of previous point when lifting the pointer
-      previousPointer = [];
-      points = [];
-      // rt.snapshot(async (image) => {
+        // empty the array of previous point when lifting the pointer
+        previousPointer = [];
+        points = [];
+        // rt.snapshot(async (image) => {
 
-      //   const displayName = "testRenderTexture"
-      //   const name = displayName
-      //   const type = "drawing"
-      //   const json = ""
-      //   const status = true
-      //   const version = 1
-      //   dlog("image", image.src)
+        //   const displayName = "testRenderTexture"
+        //   const name = displayName
+        //   const type = "drawing"
+        //   const json = ""
+        //   const status = true
+        //   const version = 1
+        //   dlog("image", image.src)
 
-      //   var blobData = await dataURItoBlob(image.src)
-      //   uploadImage(name, type, json, blobData, status, version, displayName)
-      // })
-    }, this);
+        //   var blobData = await dataURItoBlob(image.src)
+        //   uploadImage(name, type, json, blobData, status, version, displayName)
+        // })
+      },
+      this,
+    );
 
     scene[name].x = x;
     scene[name].y = y;

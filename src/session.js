@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 import { push } from 'svelte-spa-router';
 import { Session as NakamaSession } from '@heroiclabs/nakama-js';
 import { dwarn } from './helpers/debugLog';
+import { localStorage } from 'window';
 
 /** Session from localStorage */
 let storedSession = localStorage.getItem('Session');
@@ -13,11 +14,7 @@ const storedProfile = localStorage.getItem('Profile');
 // If stored & expired, remove and forward to login..
 if (storedSession) {
   storedSession = JSON.parse(storedSession);
-  storedSessionObject = new NakamaSession(
-    storedSession.token,
-    storedSession.refresh_token,
-    storedSession.created,
-  );
+  storedSessionObject = new NakamaSession(storedSession.token, storedSession.refresh_token, storedSession.created);
   // dlog('restoring session from localstorage:', storedSessionObject);
 }
 
@@ -40,9 +37,7 @@ Session.subscribe((value) => {
  *
  * @alias $Profile
  */
-export const Profile = writable(
-  storedProfile ? JSON.parse(storedProfile) : null,
-);
+export const Profile = writable(storedProfile ? JSON.parse(storedProfile) : null);
 Profile.subscribe((value) => {
   if (value) {
     localStorage.setItem('Profile', JSON.stringify(value));
@@ -59,7 +54,8 @@ Error.subscribe((err) => {
 });
 
 /** Contains the Session Notifications
- * @todo Remove or extend to multiple messages array? */
+ * @todo Remove or extend to multiple messages ar
+ * ray? */
 export const Notification = writable();
 
 /** Contains Success messages

@@ -8,14 +8,13 @@ import { PlayerPos, PlayerZoom } from '../playerState';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
 import ServerCall from '../class/ServerCall';
 
 import * as Phaser from 'phaser';
-
 
 export default class Location3 extends Phaser.Scene {
   constructor() {
@@ -43,10 +42,10 @@ export default class Location3 extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -60,7 +59,10 @@ export default class Location3 extends Phaser.Scene {
       './assets/tilesets/tuxmon-sample-32px-extruded.png',
     );
 
-    this.load.tilemapTiledJSON('mapLocation3', './assets/tilemaps/tuxemon-town.json');
+    this.load.tilemapTiledJSON(
+      'mapLocation3',
+      './assets/tilemaps/tuxemon-town.json',
+    );
     // end 1
   }
 
@@ -103,13 +105,11 @@ export default class Location3 extends Phaser.Scene {
         get(PlayerPos).y,
       ),
     ).setDepth(201);
-    
-    this.playerShadow = new PlayerDefaultShadow(
-      {
-        scene: this,
-        texture: ManageSession.playerAvatarPlaceholder,
-      },
-    ).setDepth(200);
+
+    this.playerShadow = new PlayerDefaultShadow({
+      scene: this,
+      texture: ManageSession.playerAvatarPlaceholder,
+    }).setDepth(200);
 
     // .......  end PLAYER .............................................................................
 
@@ -149,11 +149,7 @@ export default class Location3 extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -162,8 +158,14 @@ export default class Location3 extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, this.worldSize.y / 2),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
+      CoordinatesTranslator.artworldToPhaser2DY(
+        this.worldSize.y,
+        this.worldSize.y / 2,
+      ),
     );
     this.balloonContainer.setDepth(602);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -201,10 +203,13 @@ export default class Location3 extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
-
 
   generateTileMap() {
     // ....... TILEMAP .............................................................................

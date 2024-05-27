@@ -1,6 +1,6 @@
 ---
-title: "BugFix: Aanpassen ‘touch targets’ werelden [fixed]"
-date: "2023-08-10"
+title: 'BugFix: Aanpassen ‘touch targets’ werelden [fixed]'
+date: '2023-08-10'
 ---
 
 this.location. width & height => de width & height van het originele plaatje  
@@ -32,11 +32,11 @@ if (hitAreaWidth !== hitAreaheight) {
 
 this.location.body height en width is de target tussen andere physics bodies
 
-\=================================================================  
+\=================================================================
 
 naambordjes correct plaatsen \[done\]
 
-* * *
+---
 
 this.location.displayWidth: 300  
 this.location.width: 1141  
@@ -45,7 +45,7 @@ this.location.height: 629
 
 ![](https://artworlddev.maartenvanderglas.com/wp-content/uploads/2023/08/Screenshot-from-2023-08-10-15-16-08.png)
 
-* * *
+---
 
 this.location.displayWidth: 200  
 this.location.width: 720  
@@ -54,7 +54,7 @@ this.location.height: 720
 
 ![](https://artworlddev.maartenvanderglas.com/wp-content/uploads/2023/08/Screenshot-from-2023-08-10-15-17-30.png)
 
-* * *
+---
 
 this.location.displayWidth: 200.00000000000003  
 this.location.width: 699  
@@ -63,7 +63,7 @@ this.location.height: 860
 
 ![](https://artworlddev.maartenvanderglas.com/wp-content/uploads/2023/08/Screenshot-from-2023-08-10-15-18-33.png)
 
-* * *
+---
 
 this.location.displayWidth: 200  
 this.location.width: 482  
@@ -72,7 +72,7 @@ this.location.height: 755
 
 ![](https://artworlddev.maartenvanderglas.com/wp-content/uploads/2023/08/Screenshot-from-2023-08-10-15-20-55.png)
 
-* * *
+---
 
 this.location.displayWidth: 200  
 this.location.width: 200  

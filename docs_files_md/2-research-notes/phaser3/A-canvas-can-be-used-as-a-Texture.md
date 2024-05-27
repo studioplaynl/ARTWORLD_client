@@ -6,10 +6,10 @@ Creates a new Canvas Texture object from an existing Canvas element and adds it 
 
 **Parameters:**
 
-Name	Type	Argument	Default	Description
-key	string			The unique string-based key of the Texture.
-source	HTMLCanvasElement			The Canvas element to form the base of the new Texture.
-skipCache	boolean	<optional>	false	Skip adding this Texture into the Cache?
+Name Type Argument Default Description
+key string The unique string-based key of the Texture.
+source HTMLCanvasElement The Canvas element to form the base of the new Texture.
+skipCache boolean <optional> false Skip adding this Texture into the Cache?
 Example: https://phaser.io/examples/v3/view/textures/create-canvas
 
 ---
@@ -30,7 +30,7 @@ This is a WebGL only feature.
 
 Adds a new Texture to the Texture Manager created from the given Image element.
 
-dataSource	HTMLImageElement | HTMLCanvasElement
+dataSource HTMLImageElement | HTMLCanvasElement
 
 ---
 
@@ -38,4 +38,4 @@ dataSource	HTMLImageElement | HTMLCanvasElement
 
 Adds a Render Texture to the Texture Manager using the given key. This allows you to then use the Render Texture as a normal texture for texture based Game Objects like Sprites.
 
-renderTexture	Phaser.GameObjects.RenderTexture
+renderTexture Phaser.GameObjects.RenderTexture

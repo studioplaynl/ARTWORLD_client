@@ -1,15 +1,15 @@
 ---
-title: "Feature: user can change name"
-date: "2023-08-15"
+title: 'Feature: user can change name'
+date: '2023-08-15'
 ---
 
-user\_name cannot be changed, but display\_name can
+user_name cannot be changed, but display_name can
 
-User can change display\_name once, if there is a mistake admin or moderator can change it to "", then the user can set it's display\_name again
+User can change display_name once, if there is a mistake admin or moderator can change it to "", then the user can set it's display_name again
 
-* * *
+---
 
-display\_name shown in:
+display_name shown in:
 
 - itemsBar > profile.svelte
 
@@ -19,7 +19,7 @@ display\_name shown in:
 
 - in the friends list
 
-* * *
+---
 
 ## Update account
 
@@ -31,7 +31,7 @@ CLIENT
 
 <table><tbody><tr><td><code>1 2 3 4 5</code></td><td><code><strong>await</strong> client<strong>.</strong>updateAccount<strong>(</strong>session<strong>,</strong> <strong>{</strong> display_name<strong>:</strong> "My new name"<strong>,</strong> avatar_url<strong>:</strong> "http://graph.facebook.com/avatar_url"<strong>,</strong> location<strong>:</strong> "San Francisco" <strong>});</strong></code></td></tr></tbody></table>
 
-* * *
+---
 
 Example code:
 
@@ -63,7 +63,7 @@ export async function setDisplayName(display_name) {
   await client.updateAccount(session, {
     display_name,
   });
-  
+
   getAccount();
   Success.set(true);
   setLoader(false);
@@ -72,27 +72,27 @@ export async function setDisplayName(display_name) {
 
 Location of the code: profile.svelte
 
-I implemented if account.display\_name is empty string, then the user can set the display\_name.
+I implemented if account.display_name is empty string, then the user can set the display_name.
 
-If a user has set a display\_name, the display\_name cannot be changed.
+If a user has set a display_name, the display_name cannot be changed.
 
-* * *
+---
 
-nakamaHelpers.js > getAllHouses includes user\_displayname
+nakamaHelpers.js > getAllHouses includes user_displayname
 
-* * *
+---
 
-friends.svelte addFriend also with display\_name -> not possible without rewriting the search function, so the search is removed for now
+friends.svelte addFriend also with display_name -> not possible without rewriting the search function, so the search is removed for now
 
-* * *
+---
 
 getAccount(id) krijgt nu meta en metadata terug, is dat nieuw? Voorheen was het altijd meta....
 
 ![](https://artworlddev.maartenvanderglas.com/wp-content/uploads/2023/08/Screenshot-from-2023-08-28-14-52-49.png)
 
-* * *
+---
 
-**friends.svelte friends are listed with display\_name or username**
+**friends.svelte friends are listed with display_name or username**
 
 ```
   const columns = [
@@ -133,4 +133,4 @@ getAccount(id) krijgt nu meta en metadata terug, is dat nieuw? Voorheen was het 
   ];
 ```
 
-* * *
+---

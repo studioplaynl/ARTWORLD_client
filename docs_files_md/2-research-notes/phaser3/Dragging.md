@@ -1,6 +1,5 @@
 ## Via general purpose this.input.on(‘drag’
 
-
     var container = this.add.container(400, 300, [ bg, text ]);
 
     container.setSize(bg.width, bg.height);
@@ -16,9 +15,7 @@
 
     });
 
-
 ## 2. Via per object .setInteractive( { draggable: true })
-
 
     this.mario_star.setInteractive({ draggable: true })
 
@@ -37,11 +34,9 @@
 
         })
 
-
 ## 3. Via general input check but with with checking, turning on/off listeners
 
 **[https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson](https://www.youtube.com/watch?v=t56DvozbZX4&ab_channel=WClarkson)**
-
 
     var dot = this.add.image(xx, yy, "dot" +i
     dot.setInteractive()

@@ -8,7 +8,17 @@ class PlaceElement {
   // eslint-disable-next-line class-methods-use-this
   image(config) {
     const {
-      x, y, file, scale, rotation, alpha, tint, scene, flipX, draggable, depth,
+      x,
+      y,
+      file,
+      scale,
+      rotation,
+      alpha,
+      tint,
+      scene,
+      flipX,
+      draggable,
+      depth,
     } = config;
 
     let { name } = config;

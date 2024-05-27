@@ -5,9 +5,7 @@ import { get } from 'svelte/store';
 import { push, querystring } from 'svelte-spa-router';
 import { client } from '../nakama.svelte';
 
-import {
-  Success, Session, Profile, Error,
-} from '../session';
+import { Success, Session, Profile, Error } from '../session';
 import {
   PERMISSION_READ_PRIVATE,
   PERMISSION_READ_PUBLIC,
@@ -39,8 +37,8 @@ export async function login(email, _password) {
       })
       .catch((err) => {
         if (
-          parseInt(err.status, 10) === 404
-          || parseInt(err.status, 10) === 401
+          parseInt(err.status, 10) === 404 ||
+          parseInt(err.status, 10) === 401
         ) {
           Error.set('invalid username');
           push(`/login?${get(querystring)}`);
@@ -55,7 +53,6 @@ export async function login(email, _password) {
   });
   return loginPromise;
 }
-
 
 /**
  * Log out user, clear Profile, Session and reload window
@@ -254,7 +251,6 @@ export async function updateObject(type, name, value, pub) {
 
   // Value to store
 
-
   const object = {
     collection: type,
     key: name,
@@ -273,7 +269,13 @@ export async function listObjects(type, userID, lim, curs) {
   const limit = lim || 100;
   const cursor = curs || null;
   // const offset = page * limit || null;
-  const objects = await client.listStorageObjects(session, type, userID, limit, cursor); // , offset);
+  const objects = await client.listStorageObjects(
+    session,
+    type,
+    userID,
+    limit,
+    cursor,
+  ); // , offset);
   // dlog('listObjects result: ', objects);
   return objects;
 }
@@ -296,12 +298,15 @@ export async function getObject(collection, key, userID) {
 
 export async function listAllObjects(type, id, limit, cursor) {
   const payload = {
-    type, id, limit, cursor,
+    type,
+    id,
+    limit,
+    cursor,
   };
   const rpcid = 'list_all_storage_object';
   const session = get(Session);
   const objects = await client.rpc(session, rpcid, payload);
-      
+
   return objects.payload;
 }
 
@@ -315,7 +320,10 @@ export async function getAccount(id) {
 
     if (!user.metadata) return user; // If metadata doesn't exist, return early
 
-    user.meta = typeof user.metadata === 'string' ? JSON.parse(user.metadata) : user.metadata;
+    user.meta =
+      typeof user.metadata === 'string'
+        ? JSON.parse(user.metadata)
+        : user.metadata;
     if (user.avatar_url) {
       user.url = await convertImage(
         user.avatar_url,
@@ -331,7 +339,10 @@ export async function getAccount(id) {
 
     if (!user.metadata) return user; // If metadata doesn't exist, return early
 
-    user.meta = typeof user.metadata === 'string' ? JSON.parse(user.metadata) : user.metadata;
+    user.meta =
+      typeof user.metadata === 'string'
+        ? JSON.parse(user.metadata)
+        : user.metadata;
     if (user.avatar_url) {
       user.url = await convertImage(
         user.avatar_url,
@@ -344,7 +355,6 @@ export async function getAccount(id) {
 
   return user;
 }
-
 
 export async function getFullAccount(id) {
   const rpcid = 'get_full_account';
@@ -360,7 +370,13 @@ export async function getFullAccount(id) {
   return user.payload;
 }
 
-export async function setFullAccount(id, username, display_name, email, metadata) {
+export async function setFullAccount(
+  id,
+  username,
+  display_name,
+  email,
+  metadata,
+) {
   const session = get(Session);
   const payload = {
     id,
@@ -459,7 +475,8 @@ export async function getFile(file_url) {
 export async function uploadAvatar(data) {
   const profile = get(Profile);
   setLoader(true);
-  let avatarVersion = Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
+  let avatarVersion =
+    Number(profile.avatar_url.split('/')[2].split('_')[0]) + 1;
   if (!avatarVersion) avatarVersion = 0;
   const [jpegURL, jpegLocation] = await getUploadURL(
     'avatar',
@@ -654,8 +671,12 @@ export async function deleteObjectAdmin(id, type, name) {
 export async function convertImage(path, height, width, format) {
   const session = get(Session);
 
-  const payloadHeight = typeof height === 'undefined' ? DEFAULT_PREVIEW_HEIGHT.toString() : height.toString();
-  const payloadWidth = typeof width === 'undefined' ? payloadHeight : width.toString();
+  const payloadHeight =
+    typeof height === 'undefined'
+      ? DEFAULT_PREVIEW_HEIGHT.toString()
+      : height.toString();
+  const payloadWidth =
+    typeof width === 'undefined' ? payloadHeight : width.toString();
   const payloadFormat = typeof format === 'undefined' ? 'png' : format;
   const payload = {
     path,
@@ -713,7 +734,6 @@ export async function listAllNotifications() {
   return result;
 }
 
-
 export async function resetPasswordAdmin(id, email, password) {
   const session = get(Session);
   const payload = {
@@ -735,7 +755,6 @@ export async function getAllHouses(location, user_id) {
   return object.payload;
 }
 
-
 export async function createAccountAdmin(payload) {
   const Sess = get(Session);
   const rpcid = 'create_account_admin';
@@ -745,5 +764,3 @@ export async function createAccountAdmin(payload) {
   Success.set(true);
   return user.payload;
 }
-
-

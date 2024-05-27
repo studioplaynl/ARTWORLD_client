@@ -28,4 +28,3 @@ export function isValidApp(app) {
 }
 
 export const DEFAULT_APP = 'game';
-

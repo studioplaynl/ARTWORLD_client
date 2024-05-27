@@ -1,6 +1,6 @@
 ---
-title: "Feature: save an ARTWORK as an other OBJECT"
-date: "2023-09-05"
+title: 'Feature: save an ARTWORK as an other OBJECT'
+date: '2023-09-05'
 ---
 
 For example:
@@ -17,7 +17,7 @@ For example:
 
 There should be a concept about what is a drawing and what is a stopmotion
 
-* * *
+---
 
 stopmotion object example
 
@@ -37,7 +37,7 @@ value: {
 }
 ```
 
-* * *
+---
 
 drawing object example
 
@@ -46,7 +46,7 @@ userID: f011a5dc-901a-42c0-9589-587b389d1e3e
 
 key:2023-02-15T11_50_40_GroenVleermuis
 
-value: 
+value:
 {"url":"drawing/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-02-15T11_50_40_GroenVleermuis.png",
 
 "version":0,
@@ -57,7 +57,7 @@ value:
 }
 ```
 
-* * *
+---
 
 house object example (the image for a home)
 
@@ -66,7 +66,7 @@ userID: f011a5dc-901a-42c0-9589-587b389d1e3e
 
 key:2023-02-17T10_31_38_toren
 
-value: 
+value:
 {
 "url":"house/f011a5dc-901a-42c0-9589-587b389d1e3e/0_2023-02-17T10_31_38_toren.png",
 "version":0,
@@ -74,7 +74,7 @@ value:
 }
 ```
 
-* * *
+---
 
 avatar object example
 
@@ -92,7 +92,7 @@ value: {
 }
 ```
 
-* * *
+---
 
 drawing and stopmotion have a preview-url. When and where is that generated?
 
@@ -100,9 +100,9 @@ clean way to transfer:
 
 1. get the image data (raw, largest)
 
-3. save it with a new key, with same display name
+2. save it with a new key, with same display name
 
-5. do the url's get generated?
+3. do the url's get generated?
 
 In Apploader.svelte loading and making new files is handled
 
@@ -154,7 +154,7 @@ if (
   }
 ```
 
-* * *
+---
 
 in drawing.svelte the image data is loaded
 
@@ -202,7 +202,7 @@ We don't need to create a frameBuffer (we don't need to devide the stopmotion in
       frames = 1;
       setLoader(false);
     }
-    
+
 function createframeBuffer(img) {
     dlog('baseSize: ', baseSize);
 loadCanvas.width = baseSize;
@@ -220,7 +220,7 @@ loadCanvas.width = baseSize;
         baseSize,
         baseSize,
       );
-  
+
     }
 
     // clear the loadingCanvas

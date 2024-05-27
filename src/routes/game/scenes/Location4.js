@@ -9,8 +9,8 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import {
   SCENE_INFO,
   ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN
- } from '../../../constants';
+  ART_OFFSET_BETWEEN,
+} from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
 import ServerCall from '../class/ServerCall';
@@ -46,10 +46,10 @@ export default class Location4 extends Phaser.Scene {
 
   async preload() {
     /** subscription to the loaderror event
-    * strangely: if the more times the subscription is called, the more times the event is fired
-    * so we subscribe here only once in the scene
-    * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
+     * strangely: if the more times the subscription is called, the more times the event is fired
+     * so we subscribe here only once in the scene
+     * so we don't have to remember to subribe to it when we download something that needs error handling
+     */
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -59,11 +59,23 @@ export default class Location4 extends Phaser.Scene {
 
     // ....... IMAGES ......................................................................
     // exhibition
-    this.load.image('exhibit1', './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg');
+    this.load.image(
+      'exhibit1',
+      './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg',
+    );
     // this.load.image("exhibit1", "./assets/art_styles/people/04b49a9aa5f7ada5d8d96deba709c9d4.jpg")
-    this.load.image('exhibit2', './assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg');
-    this.load.image('exhibit3', './assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg');
-    this.load.image('exhibit4', './assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg');
+    this.load.image(
+      'exhibit2',
+      './assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg',
+    );
+    this.load.image(
+      'exhibit3',
+      './assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg',
+    );
+    this.load.image(
+      'exhibit4',
+      './assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg',
+    );
 
     this.load.image('ground', 'assets/platform.png');
   }
@@ -85,9 +97,7 @@ export default class Location4 extends Phaser.Scene {
     this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
     //!
-    const {
-      artworldToPhaser2DX, artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     this.generateBackground();
 
@@ -148,11 +158,7 @@ export default class Location4 extends Phaser.Scene {
   likedBalloonAnimation() {
     this.balloonContainer = this.add.container(0, 0);
 
-    this.likedBalloon = this.add.image(
-      0,
-      0,
-      'likedBalloon',
-    );
+    this.likedBalloon = this.add.image(0, 0, 'likedBalloon');
     this.likedBalloon.name = 'likedBalloon';
 
     // CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 4000),
@@ -161,7 +167,10 @@ export default class Location4 extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, (this.worldSize.x / 1.5)),
+      CoordinatesTranslator.artworldToPhaser2DX(
+        this.worldSize.x,
+        this.worldSize.x / 1.5,
+      ),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
     );
     this.balloonContainer.setDepth(602);
@@ -200,23 +209,19 @@ export default class Location4 extends Phaser.Scene {
     this.artMargin = artMargin;
 
     ServerCall.downloadAndPlaceArtByType({
-      type, userId, serverObjectsHandler, artSize, artMargin,
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
 
-
   generateBackground() {
     // fill in textures
-    this.add.rectangle(0, 0, 6000, 6000, 0xFFFFFF);
+    this.add.rectangle(0, 0, 6000, 6000, 0xffffff);
 
-    const cross = [
-      '.....',
-      '..1..',
-      '.111.',
-      '..1..',
-      '.....',
-
-    ];
+    const cross = ['.....', '..1..', '.111.', '..1..', '.....'];
 
     // generate the texture from the array
     this.textures.generate('cross', { data: cross, pixelWidth: 3 });

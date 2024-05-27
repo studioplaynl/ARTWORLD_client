@@ -15,13 +15,14 @@ https://enable3d.io/examples/shape-showcase.html
 https://enable3d.io/examples/fbx-loader-and-animations.html
 
 ---
-discussion: 
+
+discussion:
 https://phaser.discourse.group/t/phaser-in-3d-with-physics-yes-it-works-using-enable3d/4610/35
 
 ---
+
 Sync 2D to 3D
 https://enable3d.io/examples/sync-2d-to-3d.html
 
 Sync 3D to 2D
 https://enable3d.io/examples/sync-3d-to-2d.html
-

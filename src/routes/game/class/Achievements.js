@@ -1,9 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 class Achievements {
   // constructor() {
-
   // }
-
   // list of achievements
   // onBoardApp   || Did user ever log in? || Loging 1x
   // onBoardAvatar || Did user go through avatar tutoral || inGame Clicking or session of Avatar App

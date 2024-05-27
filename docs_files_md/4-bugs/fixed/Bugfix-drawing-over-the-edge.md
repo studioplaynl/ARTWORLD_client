@@ -1,6 +1,6 @@
 ---
-title: "Log: BugFix: Drawing over the edge"
-date: "2022-12-26"
+title: 'Log: BugFix: Drawing over the edge'
+date: '2022-12-26'
 ---
 
 WE DONT HAVE ENOUGH TIME TO REFACTOR TO PAINTERRO
@@ -9,11 +9,11 @@ so I am trying to implement a new solution:
 
 1. DrawingCanvas
 
-3. SaveCanvas
+2. SaveCanvas
 
 This workes and is done, after this is it still good to refactor to Painterro, because performance is lacking on an iPad for instance.
 
-* * *
+---
 
 Working code so far:
 
@@ -34,43 +34,43 @@ canvas2.freeDrawingBrush.color = '#ffaeff';
 canvas.on('path:created', function(e) {
   e.path.set();
   canvas.renderAll();
-  
+
   const preview = canvas.toDataURL({
         format: 'png',
         height: 400,
         width: 400,
       });
-  
-   fabric.Image.fromURL(preview, (img) => {      
+
+   fabric.Image.fromURL(preview, (img) => {
     canvas3.add(img.set({ left: 0, top: 0, height: 400,
         width: 400 }))
  },{ crossOrigin: 'anonymous' },
 );
-  
+
 });
 
 canvas2.on('path:created', function(e) {
   e.path.set();
   canvas2.renderAll();
-  
+
   const preview2 = canvas2.toDataURL({
         format: 'png',
         height: 400,
         width: 400,
       });
-  
-   fabric.Image.fromURL(preview2, (img) => {      
+
+   fabric.Image.fromURL(preview2, (img) => {
     canvas3.add(img.set({ left: 400, top: 0, height: 400,
         width: 400 }))
  },{ crossOrigin: 'anonymous' },
 );
-  
+
 });
 ```
 
 ![](https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-29-16-32-27.png)
 
-* * *
+---
 
 code with 2 canvas and filtering out the last drawing (other wise fabric adds an image each time when having drawn, in effect creating an undo /redo stack!
 
@@ -105,16 +105,16 @@ const previewCanvasObjects = canvas3.getObjects();
         canvas3.remove(element);
       }
     })
- 
+
   const leftOffset = frameNumber * 400
-  
+
   const preview = _canvas.toDataURL({
         format: 'png',
         height: 400,
         width: 400,
       });
-  
-   fabric.Image.fromURL(preview, (img) => {      
+
+   fabric.Image.fromURL(preview, (img) => {
     canvas3.add(img.set({ left: leftOffset, top: 0, height: 400,
         width: 400, frame: frameNumber}))
  },{ crossOrigin: 'anonymous' },
@@ -127,20 +127,20 @@ const previewCanvasObjects = canvas3.getObjects();
 canvas.on('path:created', function(e) {
   e.path.set();
   canvas.renderAll();
-  
+
   pushCanvasToPreview(canvas, 0)
-  
+
 });
 
 canvas2.on('path:created', function(e) {
   e.path.set();
   canvas2.renderAll();
-  
+
   pushCanvasToPreview(canvas2, 1);
 });
 ```
 
-* * *
+---
 
 Select between drawing canvas:
 
@@ -162,22 +162,22 @@ canvas.freeDrawingBrush.color = '#00aeff';
 canvas.on('path:created', function(e) {
   e.path.set();
   canvas.renderAll();
-  
+
   pushCanvasToPreview(canvas, selectedCanvas)
-  
+
 });
 
 clearCanvas.onclick = function() { canvas.clear(); pushCanvasToPreview(canvas, selectedCanvas);
 };
 
 selectedCanvas1.onclick = function () {
-  selectedCanvas = 0; 
+  selectedCanvas = 0;
   canvas.clear();
 };
 
 selectedCanvas2.onclick = function () {
-  selectedCanvas = 1; 
-  canvas.clear();                
+  selectedCanvas = 1;
+  canvas.clear();
 };
 
 
@@ -190,16 +190,16 @@ function pushCanvasToPreview(_canvas, frameNumber) {
         canvas3.remove(element);
       }
     })
- 
+
   const leftOffset = frameNumber * 400
-  
+
   const preview = _canvas.toDataURL({
         format: 'png',
         height: 400,
         width: 400,
       });
-  
-   fabric.Image.fromURL(preview, (img) => {      
+
+   fabric.Image.fromURL(preview, (img) => {
     canvas3.add(img.set({ left: leftOffset, top: 0, height: 400,
         width: 400, frame: frameNumber}))
  },{ crossOrigin: 'anonymous' },
@@ -210,7 +210,7 @@ function pushCanvasToPreview(_canvas, frameNumber) {
 }
 ```
 
-* * *
+---
 
 Working code for drawing canvas, SaveCanvas, can switch between canvas and keep drawing. Undo is disabled (filtered out), but could be turned on again
 
@@ -235,20 +235,20 @@ canvas.on('path:created', function(e) {
   pushCanvasToPreview(canvas, selectedCanvas)
 });
 
-clearCanvas.onclick = function() { 
-  canvas.clear(); 
+clearCanvas.onclick = function() {
+  canvas.clear();
   pushCanvasToPreview(canvas, selectedCanvas);
 };
 
 selectedCanvas1.onclick = function () {
-  selectedCanvas = 0; 
+  selectedCanvas = 0;
   canvas.clear();
   // get the object for frame1 of the renderCanvas
   pushImageFromSaveCanvasToDrawingCanvas()
 };
 
 selectedCanvas2.onclick = function () {
-  selectedCanvas = 1; 
+  selectedCanvas = 1;
   canvas.clear();
   // get the object for frame1 of the renderCanvas
   pushImageFromSaveCanvasToDrawingCanvas()
@@ -262,7 +262,7 @@ function pushImageFromSaveCanvasToDrawingCanvas(){
       if (element.frame === selectedCanvas){
         const cloned = canvas3.clone(element);
         canvas.add(element.set({ left: 0, top: 0, height: 400,
-        width: 400}))                    
+        width: 400}))
       }
     })
 }
@@ -275,7 +275,7 @@ function getCroppedImageFromCanvas(ToCanvas, frameNumber){
         width: 400,
         height: 400
     });
-  fabric.Image.fromURL(preview, (img) => {      
+  fabric.Image.fromURL(preview, (img) => {
     ToCanvas.add(img.set({ left: 0, top: 0, height: 400,
         width: 400}))
  },{ crossOrigin: 'anonymous' });
@@ -291,16 +291,16 @@ function pushCanvasToPreview(_canvas, frameNumber) {
         canvas3.remove(element);
       }
     })
- 
+
   const leftOffset = frameNumber * 400
-  
+
   const preview = _canvas.toDataURL({
         format: 'png',
         height: 400,
         width: 400,
       });
-  
-   fabric.Image.fromURL(preview, (img) => {      
+
+   fabric.Image.fromURL(preview, (img) => {
     canvas3.add(img.set({ left: leftOffset, top: 0, height: 400,
         width: 400, frame: frameNumber}))
  },{ crossOrigin: 'anonymous' }
@@ -337,13 +337,13 @@ canvas.on('path:created', function(e) {
   pushCanvasToPreview(canvas, selectedCanvas)
 });
 
-clearCanvas.onclick = function() { 
-  canvas.clear(); 
+clearCanvas.onclick = function() {
+  canvas.clear();
   pushCanvasToPreview(canvas, selectedCanvas);
 };
 
 selectedCanvas1.onclick = function () {
-  selectedCanvas = 0; 
+  selectedCanvas = 0;
   canvas.clear();
   // get the object for frame1 of the renderCanvas
   // pushImageFromSaveCanvasToDrawingCanvas()
@@ -351,7 +351,7 @@ selectedCanvas1.onclick = function () {
 };
 
 selectedCanvas2.onclick = function () {
-  selectedCanvas = 1; 
+  selectedCanvas = 1;
   canvas.clear();
   // get the object for frame1 of the renderCanvas
   // pushImageFromSaveCanvasToDrawingCanvas()
@@ -366,7 +366,7 @@ function pushImageFromSaveCanvasToDrawingCanvas(){
       if (element.frame === selectedCanvas){
         const cloned = saveCanvas.clone(element);
         canvas.add(element.set({ left: 0, top: 0, height: 400,
-        width: 400}))                    
+        width: 400}))
       }
     })
 }
@@ -380,7 +380,7 @@ function getCroppedImageFromCanvas(ToCanvas, frameNumber){
         width: 400,
         height: 400
     });
-  fabric.Image.fromURL(cropped, (img) => {      
+  fabric.Image.fromURL(cropped, (img) => {
     ToCanvas.add(img.set({ left: 0, top: 0, height: 400,
         width: 400}))
  },{ crossOrigin: 'anonymous' });
@@ -396,16 +396,16 @@ function pushCanvasToPreview(_canvas, frameNumber) {
         saveCanvas.remove(element);
       }
     })
- 
+
   const leftOffset = frameNumber * 400
-  
+
   const preview = _canvas.toDataURL({
         format: 'png',
         height: 400,
         width: 400,
       });
-  
-   fabric.Image.fromURL(preview, (img) => {      
+
+   fabric.Image.fromURL(preview, (img) => {
     saveCanvas.add(img.set({ left: leftOffset, top: 0, height: 400,
         width: 400, frame: frameNumber}))
  },{ crossOrigin: 'anonymous' }
@@ -430,7 +430,7 @@ HTML:
 
 This version works with cropping the SaveCanvas back to the DrawingCanvas: this should work with loaded images and the like;
 
-* * *
+---
 
 Konva was pretty slow, so not a good replacement.
 
@@ -442,7 +442,7 @@ Painterro is also an option:
 
 [https://github.com/devforth/painterro](https://github.com/devforth/painterro)
 
-* * *
+---
 
 ![](https://artworlddev.maartenvanderglas.com/wp-content/uploads/2022/12/Screenshot-from-2022-12-15-16-32-27.png)
 
@@ -464,30 +464,30 @@ let currentTab = null; make this pencil so we don't have to click twice in the b
 let applyBrush; where / for what is this used?  
 let selectedBrush = 'Pencil';
 
-* * *
+---
 
 ## Alternative ideas
 
 Wat als je een verse clippath maakt nadat de eraser bezig is geweest? Dus bij het selecteren van een brush
 
 - - Dus: er is een clipPath en alles, er wordt geerased.
-    
+
     - Er wordt weer getekend: de clipPath wordt weer vers aangemaakt
-        - en op alle lijnen weer toegepast?
+      - en op alle lijnen weer toegepast?
 
 Werkt niet, want: erasen over de clipPath, in het eerste frame wordt er sowieso een groot deel van de linkerbovenhoek af geknipt
 
 Dus dan zou de clipPath eerst op null gezet moeten worden als er erased wordt...
 
-* * *
+---
 
 Andere methode: esare = bush en die deel uit laten maken van clipPath group: https://jsfiddle.net/almozdmr/yjmx6751/
 
-* * *
+---
 
 Deze mask methode? https://jsfiddle.net/Fidel90/md6rwg4b/
 
-* * *
+---
 
 This does not work:
 
@@ -497,7 +497,7 @@ canvas.freeDrawingBrush.limitedToCanvasSize = true;
 
 Because the canvas is spread across frames.
 
-* * *
+---
 
 Alternatief voor de erase tool?
 
@@ -533,7 +533,7 @@ canvas.requestRenderAll();
 
 });
 
-* * *
+---
 
 Trying to implement the eraser as a special brush:
 
@@ -542,7 +542,7 @@ Trying to implement the eraser as a special brush:
     canvas.on('path:created', (e) => {
       const idx = canvas.getObjects().length - 1;
       const index = currentFrame - 1;
-      
+
       // is e and the last item the same? - no; e is the path of the item
       console.log("canvas.item(idx), e", canvas.item(idx), e)
       const obj = e.path;
@@ -573,7 +573,7 @@ Trying to implement the eraser as a special brush:
       //   perPixelTargetFind: true,
       // });
       // canvas.add(newObj);
-        
+
       // const allCanvasObjects = canvas.getObjects()
       // console.log("allCanvasObjects", allCanvasObjects)
       // allCanvasObjects.forEach((element) => {
@@ -684,45 +684,45 @@ Trying to implement the eraser as a special brush:
     });
 ```
 
-* * *
+---
 
 \- perPixelTargetFind: true ?
 
-* * *
+---
 
 An other framework that has an eraser implemented: KONVA
 
 [https://konvajs.org/docs/index.html](https://konvajs.org/docs/index.html)
 
-Free drawing with erase: [https://konvajs.org/docs/sandbox/Free\_Drawing.html](https://konvajs.org/docs/sandbox/Free_Drawing.html)
+Free drawing with erase: [https://konvajs.org/docs/sandbox/Free_Drawing.html](https://konvajs.org/docs/sandbox/Free_Drawing.html)
 
-undo /redo : [https://codesandbox.io/s/0o9xmkno0](https://codesandbox.io/s/0o9xmkno0)  
+undo /redo : [https://codesandbox.io/s/0o9xmkno0](https://codesandbox.io/s/0o9xmkno0)
 
-Transparent layers/ groups: [https://konvajs.org/docs/sandbox/Transparent\_Group.html](https://konvajs.org/docs/sandbox/Transparent_Group.html)
+Transparent layers/ groups: [https://konvajs.org/docs/sandbox/Transparent_Group.html](https://konvajs.org/docs/sandbox/Transparent_Group.html)
 
 Zooming the stage
 
 https://longviewcoder.com/2021/07/12/konva-zooming-the-stage-under-the-mouse/
 
-[https://konvajs.org/docs/sandbox/Zooming\_Relative\_To\_Pointer.html](https://konvajs.org/docs/sandbox/Zooming_Relative_To_Pointer.html)
+[https://konvajs.org/docs/sandbox/Zooming_Relative_To_Pointer.html](https://konvajs.org/docs/sandbox/Zooming_Relative_To_Pointer.html)
 
-[https://konvajs.org/docs/sandbox/Responsive\_Canvas.html](https://konvajs.org/docs/sandbox/Responsive_Canvas.html)
+[https://konvajs.org/docs/sandbox/Responsive_Canvas.html](https://konvajs.org/docs/sandbox/Responsive_Canvas.html)
 
-* * *
+---
 
 ## Flood Fill and Line Tool for HTML Canvas (also color picker)
 
 [https://cantwell-tom.medium.com/flood-fill-and-line-tool-for-html-canvas-65e08e31aec6](https://cantwell-tom.medium.com/flood-fill-and-line-tool-for-html-canvas-65e08e31aec6)
 
-* * *
+---
 
 https://ben.akrin.com/an-html5-canvas-flood-fill-that-doesnt-kill-the-browser/
 
-* * *
+---
 
 [http://www.williammalone.com/projects/html5-canvas-javascript-drawing-app-with-bucket-tool/](http://www.williammalone.com/projects/html5-canvas-javascript-drawing-app-with-bucket-tool/)
 
-* * *
+---
 
 ## Color picker in svelte
 
@@ -730,7 +730,7 @@ https://ben.akrin.com/an-html5-canvas-flood-fill-that-doesnt-kill-the-browser/
 
 [https://svelte.dev/repl/8b00804d417b4fe89f42f90d6ed485e7?version=3.47.0](https://svelte.dev/repl/8b00804d417b4fe89f42f90d6ed485e7?version=3.47.0)
 
-* * *
+---
 
 Chips oude implementatie van de stopmotion/ drawing app:
 
@@ -2326,7 +2326,7 @@ git checkout 4d3f4a6be6e1659aa6175415e530fafb6fc9c5d4
             drawingColorEl.click();
           }}
         >
-          
+
         </div> -->
           <input
             type="color"
@@ -3111,7 +3111,7 @@ Het gaat vooral om deze componenten:
     crossOrigin: "anonymous",
     filters: [],
   };
-  
+
   const updateFrame = () => {
     frames[currentFrame] = canvas.toJSON();
     console.log("currentFrame", currentFrame)
@@ -3120,11 +3120,11 @@ Het gaat vooral om deze componenten:
     backgroundFrames[currentFrame] = canvas.toDataURL("image/png", 1);
     backgroundFrames = backgroundFrames;
   };
-  
-  
+
+
   lastImg = await convertImage(Object.value.url); // dit moet ingeladen worden zonder convertImage, maar met de raw versie
       isPreexistingArt = true;
-  
+
   let frameAmount;
       var framebuffer = new Image();
       framebuffer.src = lastImg;

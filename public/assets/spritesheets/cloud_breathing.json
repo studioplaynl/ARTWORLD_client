@@ -1,209 +1,209 @@
 {
-	"textures": [
-		{
-			"image": "asterix_circle.png",
-			"format": "RGBA8888",
-			"size": {
-				"w": 207,
-				"h": 204
-			},
-			"scale": 1,
-			"frames": [
-				{
-					"filename": "cloud_breathing0001.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 69,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					},
-					"frame": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					}
-				},
-				{
-					"filename": "cloud_breathing0002.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 69,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					},
-					"frame": {
-						"x": 69,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					}
-				},
-				{
-					"filename": "cloud_breathing0003.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 69,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					},
-					"frame": {
-						"x": 138,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					}
-				},
-				{
-					"filename": "cloud_breathing0004.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 69,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					},
-					"frame": {
-						"x": 0,
-						"y": 68,
-						"w": 69,
-						"h": 68
-					}
-				},
-				{
-					"filename": "cloud_breathing0005.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 69,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					},
-					"frame": {
-						"x": 69,
-						"y": 68,
-						"w": 69,
-						"h": 68
-					}
-				},
-				{
-					"filename": "cloud_breathing0006.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 69,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					},
-					"frame": {
-						"x": 138,
-						"y": 68,
-						"w": 69,
-						"h": 68
-					}
-				},
-				{
-					"filename": "cloud_breathing0007.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 69,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					},
-					"frame": {
-						"x": 0,
-						"y": 136,
-						"w": 69,
-						"h": 68
-					}
-				},
-				{
-					"filename": "cloud_breathing0008.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 69,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					},
-					"frame": {
-						"x": 69,
-						"y": 136,
-						"w": 69,
-						"h": 68
-					}
-				},
-				{
-					"filename": "cloud_breathing0009.png",
-					"rotated": false,
-					"trimmed": false,
-					"sourceSize": {
-						"w": 69,
-						"h": 68
-					},
-					"spriteSourceSize": {
-						"x": 0,
-						"y": 0,
-						"w": 69,
-						"h": 68
-					},
-					"frame": {
-						"x": 138,
-						"y": 136,
-						"w": 69,
-						"h": 68
-					}
-				}
-			]
-		}
-	],
-	"meta": {
-		"app": "https://www.codeandweb.com/texturepacker",
-		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:e46eec6caa6b53f1c0f485ba10e2bddc:31216c263d94572fcd4c3deeca0fe02b:86fd9c7501b33db01c30ff92ce00b940$"
-	}
+  "textures": [
+    {
+      "image": "asterix_circle.png",
+      "format": "RGBA8888",
+      "size": {
+        "w": 207,
+        "h": 204
+      },
+      "scale": 1,
+      "frames": [
+        {
+          "filename": "cloud_breathing0001.png",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 69,
+            "h": 68
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "frame": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "filename": "cloud_breathing0002.png",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 69,
+            "h": 68
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "frame": {
+            "x": 69,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "filename": "cloud_breathing0003.png",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 69,
+            "h": 68
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "frame": {
+            "x": 138,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "filename": "cloud_breathing0004.png",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 69,
+            "h": 68
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "frame": {
+            "x": 0,
+            "y": 68,
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "filename": "cloud_breathing0005.png",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 69,
+            "h": 68
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "frame": {
+            "x": 69,
+            "y": 68,
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "filename": "cloud_breathing0006.png",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 69,
+            "h": 68
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "frame": {
+            "x": 138,
+            "y": 68,
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "filename": "cloud_breathing0007.png",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 69,
+            "h": 68
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "frame": {
+            "x": 0,
+            "y": 136,
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "filename": "cloud_breathing0008.png",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 69,
+            "h": 68
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "frame": {
+            "x": 69,
+            "y": 136,
+            "w": 69,
+            "h": 68
+          }
+        },
+        {
+          "filename": "cloud_breathing0009.png",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 69,
+            "h": 68
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 69,
+            "h": 68
+          },
+          "frame": {
+            "x": 138,
+            "y": 136,
+            "w": 69,
+            "h": 68
+          }
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "app": "https://www.codeandweb.com/texturepacker",
+    "version": "3.0",
+    "smartupdate": "$TexturePacker:SmartUpdate:e46eec6caa6b53f1c0f485ba10e2bddc:31216c263d94572fcd4c3deeca0fe02b:86fd9c7501b33db01c30ff92ce00b940$"
+  }
 }
