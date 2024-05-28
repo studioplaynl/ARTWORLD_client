@@ -12,17 +12,17 @@
   import LikedPage from '../liked.svelte';
   import MailPage from '../mail.svelte';
   import AppsGroup from './appsGroup.svelte';
-  import { Profile, ShowItemsBar } from '../../session';
+  import { Profile, ShowItemsBar, ItemsBarCurrentView } from '../../session';
   import Awards from '../awards.svelte';
-  import { Addressbook, myHome, itemsBarCurrentView } from '../../storage';
+  import { Addressbook, myHome } from '../../storage';
   import { clickOutside } from '../../helpers/clickOutside';
   import {
     PlayerPos,
     PlayerLocation,
     PlayerUpdate } from '../game/playerState';
 
-  // itemsBarCurrentView is a store that holds the current view of the itemsbar
-  
+  // ItemsBarCurrentView is a store that holds the current view of the itemsbar
+
   let userHouseUrl;
   let userHouseObject;
 
@@ -106,7 +106,7 @@
 
   // toggle opens the itemsbar panel to reveal more functionality, the app is passed as a prop
   function toggleView(view) {
-    $itemsBarCurrentView = $itemsBarCurrentView === view ? null : view;
+    $ItemsBarCurrentView = $ItemsBarCurrentView === view ? null : view;
   }
 
   function clickOutsideUser() {
@@ -139,7 +139,7 @@
   }
 
   async function doLogout() {
-    itemsBarCurrentView.set('');
+    ItemsBarCurrentView.set('');
     await logout();
   }
 </script>
@@ -226,19 +226,19 @@
       </button>
     </div>
     <div class="right-column-itemsbar">
-      {#if $itemsBarCurrentView === 'liked'}
+      {#if $ItemsBarCurrentView === 'liked'}
         <div>
           <LikedPage />
         </div>
-      {:else if $itemsBarCurrentView === 'mail'}
+      {:else if $ItemsBarCurrentView === 'mail'}
         <MailPage />
-      {:else if $itemsBarCurrentView === 'profilePage'}
+      {:else if $ItemsBarCurrentView === 'profilePage'}
         <ProfilePage />
-      {:else if $itemsBarCurrentView === 'friends'}
+      {:else if $ItemsBarCurrentView === 'friends'}
         <FriendsPage />
-      {:else if $itemsBarCurrentView === 'awards'}
+      {:else if $ItemsBarCurrentView === 'awards'}
         <Awards />
-      {:else if $itemsBarCurrentView === 'appsGroup'}
+      {:else if $ItemsBarCurrentView === 'appsGroup'}
         <AppsGroup />
       {/if}
     </div>

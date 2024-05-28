@@ -61,7 +61,7 @@ export const Notification = writable();
  * @todo Remove or extend to multiple messages array? */
 export const Success = writable();
 
-/** Contains current artApp that was loaded */
+/** Contains current artApp that was loaded in the url*/
 export const CurrentApp = writable(null);
 
 /** Contains multiple steps of (the current) Tutorial
@@ -76,8 +76,12 @@ export const History = writable([]);
  */
 export const SelectedOnlinePlayer = writable(null);
 
+//which page is open in the itemsbar
+export const ItemsBarCurrentView = writable(null);
+
 /** The visibility state of the Itemsbar */
 export const ShowItemsBar = writable(false);
 
 /** The Visibility of the ShowHomeEditBar */
 export const ShowHomeEditBar = writable(false);
+export const HomeEditBarExpanded = writable(false);

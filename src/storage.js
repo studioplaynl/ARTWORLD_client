@@ -15,9 +15,6 @@ import {
 import { PERMISSION_READ_PUBLIC, MODERATOR_LIKED_ID, STOPMOTION_MAX_FRAMES, DEFAULT_PREVIEW_HEIGHT } from './constants';
 import { dlog } from './helpers/debugLog';
 
-//state of the itemsBar
-export const itemsBarCurrentView = writable(null);
-
 //  Achievements of a user
 const achievementsStore = writable([]);
 
@@ -271,13 +268,11 @@ export function createArtworksStore(type) {
             if (limit !== undefined) {
               console.log('limit: ', limit);
               listAllObjects(type, id).then((loaded) => {
-                console.log('loaded: ', loaded);
                 resolve(loaded);
               });
             } else {
               console.log('limit: ', limit);
               listObjects(type, id, limit).then((loaded) => {
-                console.log('loaded.objects: ', loaded.objects);
                 resolve(loaded.objects);
               });
             }

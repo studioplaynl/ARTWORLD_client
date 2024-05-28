@@ -1,21 +1,19 @@
 <script>
   // import { fly } from 'svelte/transition';
-  import { writable } from 'svelte/store';
-  import { ShowHomeEditBar } from '../../session';
+  import { ShowHomeEditBar, HomeEditBarExpanded } from '../../session';
   import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
 
-  const isExpanded = writable(false);
   let currentView;
 
   function closeEditHome() {
     ShowHomeEditBar.set(true);
-    isExpanded.set(false);
+    HomeEditBarExpanded.set(false);
   }
 
-  function toggleExpand() {
+  function editHomeMenuToggle() {
     console.log('toggleExpand');
-    isExpanded.update((value) => !value);
+    HomeEditBarExpanded.update((value) => !value);
   }
 
   function handleKeyDown(event) {
@@ -35,16 +33,16 @@
   }
 </script>
 
-{#if $ShowHomeEditBar && !$isExpanded}
+{#if $ShowHomeEditBar && !$HomeEditBarExpanded}
   <div id="itemsButton">
-    <button on:click="{toggleExpand}" class="avatar">
+    <button on:click="{editHomeMenuToggle}" class="avatar">
       <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
     </button>
   </div>
 {/if}
 
 <!-- open and close the itemsbar -->
-{#if $ShowHomeEditBar && $isExpanded}
+{#if $ShowHomeEditBar && $HomeEditBarExpanded}
   <div
     class="itemsbar"
     id="currentUser"
@@ -57,7 +55,7 @@
     <div class="left-column-itemsbar">
 
       <!-- opens panel with edit avatar, edit home, see all artworks -->
-      <button on:click={() => toggleView('profilePage')} class="avatar">
+      <button on:click={editHomeMenuToggle} class="avatar">
         <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
       </button>
 

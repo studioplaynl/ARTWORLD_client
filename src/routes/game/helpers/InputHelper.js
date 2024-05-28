@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
@@ -6,7 +5,7 @@ import Move from '../class/Move';
 import { PlayerZoom } from '../playerState';
 import Background from '../class/Background';
 import { dlog } from '../../../helpers/debugLog';
-import { ShowItemsBar } from '../../../session';
+import { ShowItemsBar, HomeEditBarExpanded } from '../../../session';
 
 /**   needed for EDITMODE: dragging objects and getting info about them in console
  *    scene context is passed on
@@ -24,35 +23,22 @@ export function handleEditMode(scene) {
         }
       }
     },
-    scene,
+    scene
   );
 
   scene.input.on(
     'dragend',
     (pointer, gameObject) => {
       if (ManageSession.gameEditMode) {
-        const worldX = Math.round(
-          CoordinatesTranslator.Phaser2DToArtworldX(
-            scene.worldSize.x,
-            gameObject.x,
-          ),
-        );
-        const worldY = Math.round(
-          CoordinatesTranslator.Phaser2DToArtworldY(
-            scene.worldSize.y,
-            gameObject.y,
-          ),
-        );
+        const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, gameObject.x));
+        const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, gameObject.y));
         // store the original scale when selecting the gameObject for the first time
         if (ManageSession.selectedGameObject !== gameObject) {
           ManageSession.selectedGameObject = gameObject;
           ManageSession.selectedGameObjectStartScale = gameObject.scale;
           ManageSession.selectedGameObjectStartPosition.x = gameObject.x;
           ManageSession.selectedGameObjectStartPosition.y = gameObject.y;
-          dlog(
-            'editMode info startScale:',
-            ManageSession.selectedGameObjectStartScale,
-          );
+          dlog('editMode info startScale:', ManageSession.selectedGameObjectStartScale);
         }
         // ManageSession.selectedGameObject = gameObject
         dlog('editMode info ');
@@ -66,21 +52,15 @@ export function handleEditMode(scene) {
           'rotation:',
           ManageSession.selectedGameObject.rotation,
           'width*scale:',
-          Math.round(
-            ManageSession.selectedGameObject.width *
-              ManageSession.selectedGameObject.scale,
-          ),
+          Math.round(ManageSession.selectedGameObject.width * ManageSession.selectedGameObject.scale),
           'height*scale:',
-          Math.round(
-            ManageSession.selectedGameObject.height *
-              ManageSession.selectedGameObject.scale,
-          ),
+          Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale),
           'name:',
-          ManageSession.selectedGameObject.name,
+          ManageSession.selectedGameObject.name
         );
       }
     },
-    scene,
+    scene
   );
 }
 
@@ -108,6 +88,7 @@ export function handlePlayerMovement(scene) {
   scene.swipeInput = scene.rexGestures.add
     .rotate()
     .on('drag1start', () => {
+      closeRelevantMenus();
       ManageSession.playerIsAllowedToMove = true;
       scene.input.manager.canvas.style.cursor = 'grabbing';
     })
@@ -154,15 +135,18 @@ export function handlePlayerMovement(scene) {
       'tap',
       () => {
         // clickOutside is not working on iOS
-        ShowItemsBar.set(false);
+        closeRelevantMenus();
       },
-      scene,
+      scene
     )
-    .on('tappingstart', () => {})
+    .on('tappingstart', () => {
+      closeRelevantMenus();
+    })
     .on('tapping', (tap) => {
       // dlog('tapping', tap.tapsCount);
       if (tap.tapsCount === 2) {
         if (ManageSession.playerIsAllowedToMove) {
+          closeRelevantMenus();
           Move.moveByTapping(scene);
         }
       }
@@ -180,6 +164,12 @@ export function handlePlayerMovement(scene) {
 
   pinch.on('pinch', (dragScale) => {
     const { scaleFactor } = dragScale;
+    closeRelevantMenus();
     PlayerZoom.pinch(scaleFactor);
   });
+}
+
+function closeRelevantMenus() {
+  ShowItemsBar.set(false);
+  HomeEditBarExpanded.set(false);
 }

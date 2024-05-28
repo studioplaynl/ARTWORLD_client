@@ -1,5 +1,3 @@
-/** Dispatch event on click outside of node */
-// eslint-disable-next-line import/prefer-default-export
 export function clickOutside(node) {
   const handleClick = (event) => {
     // dlog(node, event.target);
