@@ -1,16 +1,20 @@
 <script>
-  import { fly } from 'svelte/transition';
+  // import { fly } from 'svelte/transition';
   import { writable } from 'svelte/store';
   import { ShowHomeEditBar } from '../../session';
+  import { clickOutside } from '../../helpers/clickOutside';
+  import { fade } from 'svelte/transition';
 
   const isExpanded = writable(false);
+  let currentView;
 
   function closeEditHome() {
-    ShowHomeEditBar.set(false);
+    ShowHomeEditBar.set(true);
     isExpanded.set(false);
   }
 
   function toggleExpand() {
+    console.log('toggleExpand');
     isExpanded.update((value) => !value);
   }
 
@@ -20,68 +24,196 @@
       toggleExpand();
     }
   }
+
+  function openPage() {
+    // open page here
+  }
+
+  // toggle opens the itemsbar panel to reveal more functionality, the app is passed as a prop
+  function toggleView(view) {
+    currentView = currentView === view ? null : view;
+  }
 </script>
 
-{#if $ShowHomeEditBar}
-<div class="edit-home-menu" on:clickoutside={closeEditHome}>
+{#if $ShowHomeEditBar && !$isExpanded}
+  <div id="itemsButton">
+    <button on:click="{toggleExpand}" class="avatar">
+      <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
+    </button>
+  </div>
+{/if}
 
-  <button class="menu-icon" id="editHome"
-     on:click={toggleExpand} on:keydown={handleKeyDown}
-  transition:fly|local="{{
-    duration: 160,
-    opacity: 0,
-    y: 100,
-  }}" aria-label="Edit Home">
-    {#if $isExpanded}
-    <img src="/assets/SHB/svg/AW-icon-plus.svg" alt="Expand" />
-    {/if}
-    <img src="/assets/SHB/svg/AW-icon-pen.svg" alt="Edit Home" />
-  </button>
+<!-- open and close the itemsbar -->
+{#if $ShowHomeEditBar && $isExpanded}
+  <div
+    class="itemsbar"
+    id="currentUser"
+    use:clickOutside
+    on:click_outside="{closeEditHome}"
+    transition:fade="{{ duration: 40 }}"
+  >
 
-</div>
+    <!-- the left part of the items bar, either folds out or opens an app -->
+    <div class="left-column-itemsbar">
+
+      <!-- opens panel with edit avatar, edit home, see all artworks -->
+      <button on:click={() => toggleView('profilePage')} class="avatar">
+        <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
+      </button>
+
+      <button on:click={() => toggleView('awards')}>
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-achievement.svg"
+          alt="Toggle Awards"
+        />
+      </button>
+
+      <button on:click={() => toggleView('mail')}>
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-post.svg"
+          alt="Toggle mailbox"
+        />
+      </button>
+
+      <button on:click={() => toggleView('friends')}>
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-friend.svg"
+          alt="Toggle Friends"
+        />
+      </button>
+
+      <button
+       on:click={() => toggleView('appsGroup')}>
+      <img
+          class="icon"
+          src="/assets/svg/apps/appsgroup-icon-round2.svg"
+          alt="open app containter"
+        />
+      </button>
+
+      <button on:click={() => toggleView('liked')}>
+        <img
+          class="icon"
+          src="assets/SHB/svg/AW-icon-plus.svg"
+          alt="Toggle liked"
+        />
+      </button>
+
+    </div>
+    <div class="right-column-itemsbar">
+      {#if currentView === 'liked'}
+        <div>
+          <!-- <LikedPage /> -->
+        </div>
+      {:else if currentView === 'mail'}
+        <!-- <MailPage /> -->
+      {:else if currentView === 'profilePage'}
+        <!-- <ProfilePage /> -->
+      {:else if currentView === 'friends'}
+        <!-- <FriendsPage /> -->
+      {:else if currentView === 'awards'}
+        <!-- <Awards /> -->
+      {:else if currentView === 'appsGroup'}
+        <!-- <AppsGroup /> -->
+      {/if}
+    </div>
+  </div>
 {/if}
 
 <style>
-  .menu-icon {
-    height: 50px;
-    width: 50px;
-    overflow: hidden;
+  * {
+    user-select: none;
   }
 
-  .menu-icon img {
-    height: 50px;
-  }
-
-  #editHome {
+  .itemsbar,
+  #itemsButton {
     background-color: white;
     text-align: center;
-    border-radius: 50px;
+    border-radius: 40px;
     box-shadow: 5px 5px 0px #7300ed;
     padding: 14px 14px 14px 18px;
     position: fixed;
     z-index: 10;
     transition: 0.01s all ease-in-out;
-    max-height: 90vh;
+    max-height: 80vh;
     display: flex;
+  }
+
+  #itemsButton {
+    border-radius: 50%;
+  }
+
+  #currentUser,
+  #itemsButton {
     right: 16px;
     bottom: 16px;
   }
 
-  #editHome:active {
-    max-height: 90%;
+  button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 0;
+    appearance: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
   }
 
-  @media screen and (max-width: 600px) {
-    #editHome {
-    right: 16px;
-    bottom: 16px;
-    }
+  button:active {
+    /* background-color: white; */
+    background-color: #7300ed;
+    border-radius: 50%;
+    /* border: 2px solid #7300ed; */
+    /* box-sizing: border-box; */
+    /* box-shadow: 5px 5px 0px #7300ed; */
   }
 
-  @media screen and (min-width: 600px) {
-    #editHome {
-    right: 16px;
-    bottom: 16px;
-    }
+  .icon {
+    max-width: 40px;
+    height: 40px;
+    float: left;
+    margin-top: 5px;
+  }
+
+  #itemsButton button,
+  .avatar,
+  .home {
+    height: 40px;
+    width: 40px;
+    overflow: hidden;
+  }
+
+  #itemsButton img {
+    height: 40px;
+    width: auto;
+  }
+
+  .left-column-itemsbar {
+    display: flex;
+    flex-wrap: nowrap;
+    float: left;
+    margin-right: 5px;
+    justify-content: flex-start;
+    flex-direction: column-reverse;
+  }
+
+  .right-column-itemsbar {
+    float: left;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin: 20px 0px;
+  }
+
+  .home {
+    margin-bottom: 5px;
+  }
+
+  .home > img,
+  .avatar > img {
+    height: 100%;
   }
 </style>

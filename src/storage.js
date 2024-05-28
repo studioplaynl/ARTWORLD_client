@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-/* eslint-disable prefer-destructuring */
 // Storage & communcatie tussen Server en App
 
 import { get, writable } from 'svelte/store';
@@ -14,13 +12,11 @@ import {
   deleteFile,
   getObject,
 } from './helpers/nakamaHelpers';
-import {
-  PERMISSION_READ_PUBLIC,
-  MODERATOR_LIKED_ID,
-  STOPMOTION_MAX_FRAMES,
-  DEFAULT_PREVIEW_HEIGHT,
-} from './constants';
+import { PERMISSION_READ_PUBLIC, MODERATOR_LIKED_ID, STOPMOTION_MAX_FRAMES, DEFAULT_PREVIEW_HEIGHT } from './constants';
 import { dlog } from './helpers/debugLog';
+
+//state of the itemsBar
+export const itemsBarCurrentView = writable(null);
 
 //  Achievements of a user
 const achievementsStore = writable([]);
@@ -73,16 +69,12 @@ export const Achievements = {
 
   delete: (key) => {
     achievementsStore.update((localAchievements) => {
-      const itemNum = localAchievements.findIndex(
-        (element) => element.key === key,
-      );
+      const itemNum = localAchievements.findIndex((element) => element.key === key);
       if (itemNum === -1) return localAchievements;
 
       deleteObject('achievements', key);
 
-      const updatedAchievements = localAchievements.filter(
-        (element) => element.key !== key,
-      );
+      const updatedAchievements = localAchievements.filter((element) => element.key !== key);
       return updatedAchievements;
     });
   },
@@ -228,12 +220,10 @@ export const Addressbook = {
       return localAddressbookArray;
     }
     if (Sess) {
-      listAllObjects('addressbook', Sess.user_id).then(
-        (serverAddressbookArray) => {
-          Addressbook.set(serverAddressbookArray);
-          return serverAddressbookArray;
-        },
-      );
+      listAllObjects('addressbook', Sess.user_id).then((serverAddressbookArray) => {
+        Addressbook.set(serverAddressbookArray);
+        return serverAddressbookArray;
+      });
     }
     return null;
   },
@@ -251,9 +241,7 @@ export const Addressbook = {
 
   delete: (key) => {
     Addressbook.update((addresses) => {
-      const itemNum = addresses.findIndex(
-        (element) => element.value.user_id === key,
-      );
+      const itemNum = addresses.findIndex((element) => element.value.user_id === key);
       if (itemNum === -1) return addresses;
       deleteObject('addressbook', key);
       return addresses.filter((element) => element.key !== key);
@@ -305,7 +293,7 @@ export function createArtworksStore(type) {
               resolveType();
             });
           });
-        }),
+        })
       );
 
       // After all typePromises fulfilled, set data into store
@@ -349,9 +337,7 @@ export function createArtworksStore(type) {
       // Update on store
       store.update((artworks) => {
         const artworksToUpdate = artworks;
-        const artworkIndex = artworks.findIndex(
-          (artwork) => artwork.key === key,
-        );
+        const artworkIndex = artworks.findIndex((artwork) => artwork.key === key);
         if (artworkIndex > -1) {
           artworksToUpdate[artworkIndex].permission_read = publicRead;
         }
@@ -371,15 +357,10 @@ export function createArtworksStore(type) {
 
         artworksToUpdate.forEach(async (item, index) => {
           // Check if artwork already existed, and if so, is it was outdated
-          const existingArtwork = existingArtworks.find(
-            (artwork) => artwork.key === item.key,
-          );
-          const outdatedArtwork =
-            !!existingArtwork &&
-            existingArtwork?.update_time !== item?.update_time;
+          const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
+          const outdatedArtwork = !!existingArtwork && existingArtwork?.update_time !== item?.update_time;
           const artwork = item;
-          artwork.permission_read =
-            artwork.permission_read === PERMISSION_READ_PUBLIC;
+          artwork.permission_read = artwork.permission_read === PERMISSION_READ_PUBLIC;
 
           // Only get a fresh URL if no previewUrl is available or when it has been updated
           if (!artwork.value.previewUrl || outdatedArtwork) {
@@ -394,7 +375,7 @@ export function createArtworksStore(type) {
                   artwork.value.url,
                   DEFAULT_PREVIEW_HEIGHT,
                   DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
-                  'png',
+                  'png'
                 ).then((val) => {
                   // Set the previewUrl value, update the array
                   artwork.value.previewUrl = val;
@@ -403,7 +384,7 @@ export function createArtworksStore(type) {
                   // Then resolve this updatePromise
                   resolveUpdatePromise(val);
                 });
-              }),
+              })
             );
           }
         });
@@ -429,9 +410,7 @@ export function createArtworksStore(type) {
       }
 
       // Remove from store
-      store.update((artworks) =>
-        artworks.filter((artwork) => artwork.key !== key),
-      );
+      store.update((artworks) => artworks.filter((artwork) => artwork.key !== key));
     },
   };
 }
@@ -481,15 +460,7 @@ export const ArtworksStore = {
     const typePromises = [];
     let loadedArt = [];
 
-    const types = [
-      'drawing',
-      'video',
-      'audio',
-      'stopmotion',
-      'picture',
-      'animalchallenge',
-      'flowerchallenge',
-    ];
+    const types = ['drawing', 'video', 'audio', 'stopmotion', 'picture', 'animalchallenge', 'flowerchallenge'];
 
     types.forEach(async (type) => {
       // One promise per type..
@@ -500,9 +471,7 @@ export const ArtworksStore = {
             if (limit !== undefined) {
               listAllObjects(type, id).then((loaded) => resolve(loaded));
             } else {
-              listObjects(type, id, limit).then((loaded) =>
-                resolve(loaded.objects),
-              );
+              listObjects(type, id, limit).then((loaded) => resolve(loaded.objects));
             }
           });
 
@@ -516,7 +485,7 @@ export const ArtworksStore = {
               resolveType();
             });
           });
-        }),
+        })
       );
     });
 
@@ -542,15 +511,10 @@ export const ArtworksStore = {
 
       artworksToUpdate.forEach(async (item, index) => {
         // Check if artwork already existed, and if so, is it was outdated
-        const existingArtwork = existingArtworks.find(
-          (artwork) => artwork.key === item.key,
-        );
-        const outdatedArtwork =
-          !!existingArtwork &&
-          existingArtwork?.update_time !== item?.update_time;
+        const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
+        const outdatedArtwork = !!existingArtwork && existingArtwork?.update_time !== item?.update_time;
         const artwork = item;
-        artwork.permission_read =
-          artwork.permission_read === PERMISSION_READ_PUBLIC;
+        artwork.permission_read = artwork.permission_read === PERMISSION_READ_PUBLIC;
 
         // Only get a fresh URL if no previewUrl is available or when it has been updated
         if (!artwork.value.previewUrl || outdatedArtwork) {
@@ -565,7 +529,7 @@ export const ArtworksStore = {
                 artwork.value.url,
                 DEFAULT_PREVIEW_HEIGHT,
                 DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
-                'png',
+                'png'
               ).then((val) => {
                 console.log('updatePreviewUrls val: ', val);
                 // Set the previewUrl value, update the array
@@ -575,7 +539,7 @@ export const ArtworksStore = {
                 // Then resolve this updatePromise
                 resolveUpdatePromise(val);
               });
-            }),
+            })
           );
         }
       });
@@ -646,9 +610,7 @@ export const ArtworksStore = {
     }
 
     // Remove from store
-    artworksStore.update((artworks) =>
-      artworks.filter((artwork) => artwork.key !== key),
-    );
+    artworksStore.update((artworks) => artworks.filter((artwork) => artwork.key !== key));
   },
 };
 
@@ -663,9 +625,7 @@ export const AvatarsStore = {
   getCurrent: () => {
     const allAvatars = get(avatarsStore);
     const currentAvatar = get(Profile).avatar_url;
-    const current = allAvatars.find(
-      (avatar) => avatar.value.url === currentAvatar,
-    );
+    const current = allAvatars.find((avatar) => avatar.value.url === currentAvatar);
     // dlog('current avatar: ', current);
     return current;
   },
@@ -706,11 +666,8 @@ export const AvatarsStore = {
 
       avatarsToUpdate.forEach(async (item, index) => {
         // Check if avatar already existed, and if so, is it was outdated
-        const existingAvatar = existingAvatars.find(
-          (avatar) => avatar.key === item.key,
-        );
-        const outdatedAvatar =
-          !!existingAvatar && existingAvatar?.update_time !== item?.update_time;
+        const existingAvatar = existingAvatars.find((avatar) => avatar.key === item.key);
+        const outdatedAvatar = !!existingAvatar && existingAvatar?.update_time !== item?.update_time;
         const avatar = item;
 
         // Only get a fresh URL if no previewUrl is available or when it has been updated
@@ -726,7 +683,7 @@ export const AvatarsStore = {
                 avatar.value.url,
                 DEFAULT_PREVIEW_HEIGHT,
                 DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
-                'png',
+                'png'
               ).then((val) => {
                 // Set the previewUrl value, update the array
                 avatar.value.previewUrl = val;
@@ -735,7 +692,7 @@ export const AvatarsStore = {
                 // Then resolve this updatePromise
                 resolveUpdatePromise(val);
               });
-            }),
+            })
           );
         }
       });
@@ -762,9 +719,7 @@ export const AvatarsStore = {
     }
 
     // Remove from store
-    avatarsStore.update((avatars) =>
-      avatars.filter((avatar) => avatar.key !== key),
-    );
+    avatarsStore.update((avatars) => avatars.filter((avatar) => avatar.key !== key));
   },
 };
 
@@ -783,18 +738,13 @@ export const myHome = {
     const object = await getObject(type, name);
     const makePublic = true;
 
-    // eslint-disable-next-line prefer-const
     let value = !object ? {} : object.value;
 
     value.url = Home_url;
     // get object
     // dlog('value', value);
     const returnedObject = await updateObject(type, name, value, makePublic);
-    returnedObject.url = await convertImage(
-      returnedObject.value.url,
-      DEFAULT_PREVIEW_HEIGHT,
-      DEFAULT_PREVIEW_HEIGHT,
-    );
+    returnedObject.url = await convertImage(returnedObject.value.url, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_HEIGHT);
 
     myHome.set(returnedObject);
     return value.url;
@@ -826,11 +776,7 @@ export const myHome = {
         dlog('cannot get home: ', err); // TypeError: failed to fetch
       }
       // dlog('getting the localHome.url', localHome);
-      localHome.url = await convertImage(
-        localHome.value.url,
-        DEFAULT_PREVIEW_HEIGHT,
-        DEFAULT_PREVIEW_HEIGHT,
-      );
+      localHome.url = await convertImage(localHome.value.url, DEFAULT_PREVIEW_HEIGHT, DEFAULT_PREVIEW_HEIGHT);
       // dlog('localHome', localHome);
 
       myHome.set(localHome);

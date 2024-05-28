@@ -14,16 +14,15 @@
   import AppsGroup from './appsGroup.svelte';
   import { Profile, ShowItemsBar } from '../../session';
   import Awards from '../awards.svelte';
-  import { Addressbook, myHome } from '../../storage';
+  import { Addressbook, myHome, itemsBarCurrentView } from '../../storage';
   import { clickOutside } from '../../helpers/clickOutside';
   import {
     PlayerPos,
     PlayerLocation,
     PlayerUpdate } from '../game/playerState';
 
-  // TODO: current moet een store worden
-  // zodat de state van de itemsbar extern kan worden aangestuurd (bijvoorbeeld vanuit notificaties of vanuit de game)
-  let current;
+  // itemsBarCurrentView is a store that holds the current view of the itemsbar
+  
   let userHouseUrl;
   let userHouseObject;
 
@@ -105,32 +104,9 @@
     unsubscribeAddressBook();
   });
 
-  // toggle opens the itemsbar panel to reveal more functionality
-  function toggleLiked() {
-    current = current === 'liked' ? null : 'liked';
-  }
-
-  function toggleFriends() {
-    current = current === 'friends' ? null : 'friends';
-  }
-
-  function toggleMailbox() {
-    current = current === 'mail' ? null : 'mail';
-  }
-
-  // first item in the items bar on the bottom
-  // opens the panel where the user can edit it's avatar, home and
-  // see all its artworks
-  function toggleProfilePage() {
-    current = current === 'profilePage' ? null : 'profilePage';
-  }
-
-  function toggleAwards() {
-    current = current === 'awards' ? null : 'awards';
-  }
-
-  function toggleAppGroup() {
-    current = current === 'appsGroup' ? null : 'appsGroup';
+  // toggle opens the itemsbar panel to reveal more functionality, the app is passed as a prop
+  function toggleView(view) {
+    $itemsBarCurrentView = $itemsBarCurrentView === view ? null : view;
   }
 
   function clickOutsideUser() {
@@ -163,7 +139,7 @@
   }
 
   async function doLogout() {
-    current = '';
+    itemsBarCurrentView.set('');
     await logout();
   }
 </script>
@@ -191,14 +167,14 @@
     <div class="left-column-itemsbar">
 
       <!-- opens panel with edit avatar, edit home, see all artworks -->
-      <button on:click="{toggleProfilePage}" class="avatar">
+      <button on:click={() => toggleView('profilePage')} class="avatar">
         <img src="{$Profile.url}" alt="{$Profile.username}" />
       </button>
 
       <!-- first item above avatar: home image, takes user next to the house -->
       <button on:click="{() => { goHome(); }}" class="home"> <img src="{$myHome.url}" alt="My Home" /> </button>
 
-      <button on:click="{toggleAwards}">
+      <button on:click={() => toggleView('awards')}>
         <img
           class="icon"
           src="assets/SHB/svg/AW-icon-achievement.svg"
@@ -206,7 +182,7 @@
         />
       </button>
 
-      <button on:click="{toggleMailbox}">
+      <button on:click={() => toggleView('mail')}>
         <img
           class="icon"
           src="assets/SHB/svg/AW-icon-post.svg"
@@ -214,7 +190,7 @@
         />
       </button>
 
-      <button on:click="{toggleFriends}">
+      <button on:click={() => toggleView('friends')}>
         <img
           class="icon"
           src="assets/SHB/svg/AW-icon-friend.svg"
@@ -223,7 +199,7 @@
       </button>
 
       <button
-       on:click="{toggleAppGroup}">
+       on:click={() => toggleView('appsGroup')}>
       <img
           class="icon"
           src="/assets/svg/apps/appsgroup-icon-round2.svg"
@@ -231,7 +207,7 @@
         />
       </button>
 
-      <button on:click="{toggleLiked}">
+      <button on:click={() => toggleView('liked')}>
         <img
           class="icon"
           src="assets/SHB/svg/AW-icon-heart-full-red.svg"
@@ -250,19 +226,19 @@
       </button>
     </div>
     <div class="right-column-itemsbar">
-      {#if current === 'liked'}
+      {#if $itemsBarCurrentView === 'liked'}
         <div>
           <LikedPage />
         </div>
-      {:else if current === 'mail'}
+      {:else if $itemsBarCurrentView === 'mail'}
         <MailPage />
-      {:else if current === 'profilePage'}
+      {:else if $itemsBarCurrentView === 'profilePage'}
         <ProfilePage />
-      {:else if current === 'friends'}
+      {:else if $itemsBarCurrentView === 'friends'}
         <FriendsPage />
-      {:else if current === 'awards'}
+      {:else if $itemsBarCurrentView === 'awards'}
         <Awards />
-      {:else if current === 'appsGroup'}
+      {:else if $itemsBarCurrentView === 'appsGroup'}
         <AppsGroup />
       {/if}
     </div>
@@ -271,11 +247,9 @@
 
 <style>
   * {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
   }
+
   .itemsbar,
   #itemsButton {
     background-color: white;
@@ -285,17 +259,12 @@
     padding: 14px 14px 14px 18px;
     position: fixed;
     z-index: 10;
-    -webkit-transition: 0.01s all ease-in-out;
-    -moz-transition: 0.01s all ease-in-out;
-    -o-transition: 0.01s all ease-in-out;
     transition: 0.01s all ease-in-out;
-    /* pointer-events: none; */
     max-height: 80vh;
     display: flex;
   }
 
   #itemsButton {
-    /* Force circle */
     border-radius: 50%;
   }
 
@@ -305,16 +274,12 @@
     bottom: 16px;
   }
 
-  /* Clear button styling */
   button {
     border: 0;
     background: transparent;
     cursor: pointer;
     border-radius: 0;
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    border-radius: 0;
     padding: 0;
     margin: 0;
   }
@@ -326,10 +291,20 @@
     margin-top: 5px;
   }
 
-  #itemsButton button {
+  #itemsButton button,
+  .avatar,
+  .home {
     height: 40px;
     width: 40px;
+    overflow: hidden;
   }
+
+  button:active {
+    background-color: #7300ed;
+    border-radius: 50%;
+    /* box-shadow: 5px 5px 0px #7300ed; */
+  }
+
   #itemsButton img {
     height: 40px;
     width: auto;
@@ -351,24 +326,11 @@
     margin: 20px 0px;
   }
 
-  .avatar {
-    height: 40px;
-    width: 40px;
-    overflow: hidden;
-    /* margin-top: 5px; */
-  }
-
   .home {
-    height: 40px;
-    width: 40px;
-    overflow: hidden;
     margin-bottom: 5px;
   }
 
-  .home > img {
-    height: 100%;
-  }
-
+  .home > img,
   .avatar > img {
     height: 100%;
   }
