@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { Swiper, SwiperSlide } from 'swiper/svelte'; 
-  import Drawing from './drawing.svelte';
+  import Drawing from './DrawingApp.svelte';
   import { dlog } from '../../helpers/debugLog';
   import {
     STOPMOTION_MAX_FRAMES,

@@ -8,7 +8,7 @@ session (https) -> token, expiration
 
 ## 2. yes, the Session is empty:
 
-login.Svelte
+Login.svelte
 session.js
 
 ```

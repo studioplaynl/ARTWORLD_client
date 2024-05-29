@@ -156,7 +156,7 @@ if (
 
 ---
 
-in drawing.svelte the image data is loaded
+in DrawingApp.svelte the image data is loaded
 
 ```
 function createframeBuffer(img) {

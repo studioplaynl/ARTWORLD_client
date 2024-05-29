@@ -3,9 +3,9 @@
   import { parse } from 'qs';
   import { get } from 'svelte/store';
   import { pop, push, querystring, loc } from 'svelte-spa-router';
-  import Drawing from '../apps/drawing.svelte';
-  import Stopmotion from '../apps/stopmotion.svelte';
-  import Mariosound from '../apps/marioSequencer.svelte';
+  import Drawing from '../apps/DrawingApp.svelte';
+  import Stopmotion from '../apps/StopMotionApp.svelte';
+  import Mariosound from '../apps/MarioSequencer.svelte';
   import { CurrentApp, Profile, Error } from '../../session';
   import { AvatarsStore, myHome } from '../../storage';
   import ManageSession from '../game/ManageSession';
@@ -27,7 +27,7 @@
   import { DEFAULT_SCENE, PERMISSION_READ_PUBLIC, isValidApp, DEFAULT_APP } from '../../constants';
 
   import AppContainer from './AppContainer.svelte';
-  import Preview from '../apps/preview.svelte';
+  import Preview from '../apps/Preview.svelte';
 
   /**
    * - Check userId === $Profile.userId : edit; preview only

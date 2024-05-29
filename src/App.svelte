@@ -33,7 +33,7 @@ import * as Phaser from 'phaser';
   import RegisterPage from './routes/auth/register.svelte';
   import PrintQrCodesSheet from './routes/auth/printQrCodesSheet.svelte';
   import UsersPage from './routes/users.svelte';
-  import LoginPage from './routes/auth/login.svelte';
+  import LoginPage from './routes/auth/Login.svelte';
   import ProfilePage from './routes/admin/ProfileWrapper.svelte';
   import DebugPage from './routes/admin/DebugPage.svelte';
   import FriendsPage from './routes/friends.svelte';

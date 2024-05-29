@@ -27,6 +27,6 @@ ImagePicker.svelte:195 Uncaught (in promise) TypeError: Cannot read properties o
 ```
 
 ```
-stopmotion.svelte:18 Uncaught TypeError: Cannot read properties of undefined (reading 'clientWidth')
-    at stopmotion.svelte:18:18
+StopMotionApp.svelte:18 Uncaught TypeError: Cannot read properties of undefined (reading 'clientWidth')
+    at StopMotionApp.svelte:18:18
 ```
