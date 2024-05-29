@@ -31,7 +31,6 @@
     OBJECT_STATE_UNDEFINED,
   } from '../../constants';
   import ArtworkLoader from './ArtworkLoader.svelte';
-  // import postSend from './postSend.svelte';
 
 
   export let dataType = '';

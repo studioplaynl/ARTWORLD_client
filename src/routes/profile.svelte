@@ -30,10 +30,10 @@
   import { Session, Profile } from '../session';
   import { dlog } from '../helpers/debugLog';
 
-  import IconRenderer from './components/IconRenderer.svelte';
+  // import IconRenderer from './components/IconRenderer.svelte';
   import StatusComp from './components/visibilityToggle.svelte';
   import DeleteComp from './components/DeleteButton.svelte';
-  import postSend from './components/postSend.svelte';
+  import PostSend from './components/PostSend.svelte';
   import AvatarSelector from './components/AvatarSelector.svelte';
   import ArtworkLoader from './components/ArtworkLoader.svelte';
   import HomeSelector from './components/HomeSelector.svelte';
@@ -128,7 +128,7 @@
         key: 'post',
         title: '',
         renderComponent: {
-          component: postSend,
+          component: PostSend,
           props: {
             isCurrentUser,
           },
