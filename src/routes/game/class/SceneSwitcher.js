@@ -1,5 +1,3 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable max-len */
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog, dwarn } from '../../../helpers/debugLog';
@@ -66,14 +64,7 @@ class SceneSwitcher {
       } else {
         targetSceneKey = targetScene;
       }
-      dlog(
-        '\u001b[31m switchScene: ',
-        sceneKey,
-        ' , targetScene: ',
-        targetSceneKey,
-        ' targetHouse: ',
-        targetHouse,
-      );
+      dlog('\u001b[31m switchScene: ', sceneKey, ' , targetScene: ', targetSceneKey, ' targetHouse: ', targetHouse);
     } else {
       // dlog(' scene: ', scene, ' targetScene: ', targetScene, ' targetHouse: ', targetHouse);
     }
@@ -143,10 +134,7 @@ class SceneSwitcher {
     if (typeof scene.scene !== 'undefined') {
       scene.scene.start();
     } else {
-      dlog(
-        'ManageSession.currentScene.scene.key: ',
-        ManageSession.currentScene.scene.key,
-      );
+      dlog('ManageSession.currentScene.scene.key: ', ManageSession.currentScene.scene.key);
       ManageSession.currentScene.scene.start(scene);
     }
 
@@ -169,6 +157,8 @@ class SceneSwitcher {
     let targetSceneKey;
 
     // making the data / arguments consistent
+    if (scene === null) return;
+
     if (scene.scene != null) {
       sceneKey = scene.scene.key;
     } else {
@@ -209,10 +199,7 @@ class SceneSwitcher {
             element.destroy();
           });
           ManageSession.allConnectedUsers.length = 0;
-          dlog(
-            'ManageSession.allConnectedUsers',
-            ManageSession.allConnectedUsers,
-          );
+          dlog('ManageSession.allConnectedUsers', ManageSession.allConnectedUsers);
           // WE LEFT THE SCENE SUCCESFULLY
           // 1. we pause the leaving Scene
           // 2. start the new scene

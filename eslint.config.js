@@ -24,6 +24,10 @@ export default [
     rules: {
       'max-len': ['error', { code: 120 }],
       'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+      'import/first': 0,
+      'no-multiple-empty-lines': 'off',
+      'no-plusplus': 'off',
+      'no-unused-vars': 'warn',
     },
     settings: {
       'svelte3/ignore-styles': () => true,

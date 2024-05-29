@@ -10,7 +10,7 @@
     updateObjectAdmin,
   } from '../../helpers/nakamaHelpers';
   import { Profile } from '../../session';
-  import StatusComp from '../components/statusbox.svelte';
+  import StatusComp from '../components/StatusBox.svelte';
   import DeleteComp from '../components/DeleteButton.svelte';
   import DownloadComp from '../components/DownloadButton.svelte';
   import NameEdit from '../components/NameEdit.svelte';

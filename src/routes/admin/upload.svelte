@@ -1,9 +1,8 @@
 <script>
-  /** eslint-disable prefer-destructuring */
   import { pop } from 'svelte-spa-router';
   import { getUploadURL, updateObjectAdmin } from '../../helpers/nakamaHelpers';
   import SaveAnimation from '../components/SaveAnimation.svelte';
-  import UserSelect from '../components/userSelect.svelte';
+  import UserSelect from '../components/UserSelect.svelte';
   import { dlog } from '../../helpers/debugLog';
 
   let filesVar;
@@ -37,7 +36,6 @@
   async function upload() {
     saving = true;
     dlog(filesVar);
-    // eslint-disable-next-line prefer-destructuring
     filetype = filesVar[0].name.split('.')[1];
     if (checkFileType()) {
       const url = await getUploadURL(type, name, filetype);
@@ -89,14 +87,15 @@
     <button on:click="{upload}">Upload</button>
   </div>
 
-  <div
+  <button
     class="app-close"
     on:click="{() => {
       pop();
     }}"
+    aria-label="Close"
   >
     <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
-  </div>
+  </button>
 </div>
 
 <SaveAnimation saving="{saving}" />
