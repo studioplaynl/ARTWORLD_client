@@ -8,7 +8,7 @@
  *  What is this file for?
  *  ======================
  *  App.svelte is the main file of the app. It contains the router and the game.
- *  It also contains the menu and the notifications.
+ *  It also contains the AdminMenu and the notifications.
  *  It also contains the admin pages.
  *
  */
@@ -29,7 +29,7 @@ import * as Phaser from 'phaser';
 
   /** Admin pages */
   import Admin from './routes/admin/admin.svelte';
-  import Menu from './routes/components/Menu.svelte';
+  import AdminMenu from './routes/components/AdminMenu.svelte';
   import RegisterPage from './routes/auth/register.svelte';
   import PrintQrCodesSheet from './routes/auth/printQrCodesSheet.svelte';
   import UsersPage from './routes/users.svelte';
@@ -191,7 +191,7 @@ import * as Phaser from 'phaser';
 {/if}
 
 <!-- Routes go on top of Game -->
-<Menu />
+<AdminMenu />
 
 <Router routes="{routes}" />
 

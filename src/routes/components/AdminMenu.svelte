@@ -11,7 +11,7 @@
 
   // import { dlog } from '../../helpers/debugLog';
 
-  let MenuToggle = false;
+  let adminMenuToggle = false;
 
   addMessages('NL', nl);
   addMessages('EN', en);
@@ -38,7 +38,7 @@
 </script>
 
 <nav>
-  {#if MenuToggle}
+  {#if adminMenuToggle}
     <div class="menucontainer" transition:fly="{transition}">
       <div class="nav">
         <select bind:value="{$locale}">
@@ -70,7 +70,7 @@
       
         <button
           on:click="{() => {
-            MenuToggle = false;
+            adminMenuToggle = false;
           }}"
           class="closeicon"
           aria-label="Close menu"
@@ -101,7 +101,7 @@
   <!-- <div class="open-button"> -->
     <button
       on:click="{() => {
-        MenuToggle = true;
+        adminMenuToggle = true;
       }}"
       class="open-button"
       aria-label="Open menu"
