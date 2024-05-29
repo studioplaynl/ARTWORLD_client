@@ -34,11 +34,11 @@ import * as Phaser from 'phaser';
   import PrintQrCodesSheet from './routes/auth/printQrCodesSheet.svelte';
   import UsersPage from './routes/users.svelte';
   import LoginPage from './routes/auth/login.svelte';
-  import ProfilePage from './routes/admin/profileWrapper.svelte';
-  import DebugPage from './routes/admin/debugPage.svelte';
+  import ProfilePage from './routes/admin/ProfileWrapper.svelte';
+  import DebugPage from './routes/admin/DebugPage.svelte';
   import FriendsPage from './routes/friends.svelte';
   import UpdatePage from './routes/auth/update.svelte';
-  import UploadPage from './routes/admin/upload.svelte';
+  import UploadPage from './routes/admin/Upload.svelte';
   import ModeratePage from './routes/admin/Moderate.svelte';
 
   /** Game components */
