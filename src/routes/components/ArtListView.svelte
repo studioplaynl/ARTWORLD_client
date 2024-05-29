@@ -20,7 +20,7 @@
   import { Profile } from '../../session';
   // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
-  import StatusComp from './visibilityToggle.svelte';
+  import StatusComp from './VisibilityToggle.svelte';
   import DeleteComp from './DeleteButton.svelte';
   import SendTo from './SendTo.svelte';
   import {

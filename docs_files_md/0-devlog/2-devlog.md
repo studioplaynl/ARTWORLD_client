@@ -167,7 +167,7 @@ updateState is restoreFromTrash and const pub = should be true
 
 Fixed.
 
-For now: visibilityToggle.svelte is used for inGame toggling,
+For now: VisibilityToggle.svelte is used for inGame toggling,
 
 ---
 

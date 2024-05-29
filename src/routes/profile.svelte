@@ -31,7 +31,7 @@
   import { dlog } from '../helpers/debugLog';
 
   // import IconRenderer from './components/IconRenderer.svelte';
-  import StatusComp from './components/visibilityToggle.svelte';
+  import StatusComp from './components/VisibilityToggle.svelte';
   import DeleteComp from './components/DeleteButton.svelte';
   import PostSend from './components/PostSend.svelte';
   import AvatarSelector from './components/AvatarSelector.svelte';
