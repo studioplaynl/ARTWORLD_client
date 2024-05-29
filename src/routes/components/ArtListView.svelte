@@ -22,7 +22,7 @@
   import { dlog } from '../../helpers/debugLog';
   import StatusComp from './visibilityToggle.svelte';
   import DeleteComp from './DeleteButton.svelte';
-  import SendTo from './sendTo.svelte';
+  import SendTo from './SendTo.svelte';
   import {
     // STOPMOTION_MAX_FRAMES,
     // DEFAULT_PREVIEW_HEIGHT,
