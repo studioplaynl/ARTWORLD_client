@@ -1,5 +1,5 @@
 <script>
-  import ModalDialog from './modalDialog.svelte';
+  import ModalDialog from './ModalDialog.svelte';
   import { location } from 'svelte-spa-router';
   import { Profile } from '../../session';
   import { OBJECT_STATE_IN_TRASH } from '../../constants';

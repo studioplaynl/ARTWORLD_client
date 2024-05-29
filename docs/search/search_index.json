@@ -86,7 +86,7 @@
     {
       "location": "0-devlog/2-devlog/#2024-04-10_1",
       "title": "2024-04-10",
-      "text": "<p>fixed: permanently delete artwork, modal dialog was not coming up. The 'attractions' library was out of date. Tried: using svelte-material-ui, it didn't show a modal popping up, it was taking too much time to investigate. Solution: wrote a modalDialog.svelte component https://svelte.dev/examples/modal</p> <p>Still to do: icon for cancel (arrow back) icon for delelte (trash can)</p>"
+      "text": "<p>fixed: permanently delete artwork, modal dialog was not coming up. The 'attractions' library was out of date. Tried: using svelte-material-ui, it didn't show a modal popping up, it was taking too much time to investigate. Solution: wrote a ModalDialog.svelte component https://svelte.dev/examples/modal</p> <p>Still to do: icon for cancel (arrow back) icon for delelte (trash can)</p>"
     },
     {
       "location": "0-devlog/2-devlog/#2024-04-04",
