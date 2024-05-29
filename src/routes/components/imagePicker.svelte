@@ -32,7 +32,7 @@
     STOCK_HOUSES,
     STOCK_AVATARS,
   } from '../../constants';
-  import Stopmotion from './stopmotion.svelte';
+  import ArtPreviewer from './ArtPreviewer.svelte';
   import {
     listObjects,
     deleteObject,
@@ -142,7 +142,7 @@
           save(object);
         }}"
       >
-        <Stopmotion artwork="{object.value.previewUrl}" />
+        <ArtPreviewer artwork="{object.value.previewUrl}" />
       </p>
 
       <!-- show delete button -->
@@ -208,9 +208,9 @@
         }}"
       >
         {#if dataType === 'house'}
-          <Stopmotion artwork="assets/SHB/portal/{stockItem}" />
+          <ArtPreviewer artwork="assets/SHB/portal/{stockItem}" />
         {:else if dataType === 'avatar'}
-          <Stopmotion artwork="assets/SHB/avatar/{stockItem}" />
+          <ArtPreviewer artwork="assets/SHB/avatar/{stockItem}" />
         {/if}
         <!--
         avatar: `/avatar/stock/${avatar}`,

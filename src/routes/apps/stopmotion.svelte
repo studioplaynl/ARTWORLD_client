@@ -1,19 +1,12 @@
 <script>
-// @ts-nocheck
-
   import { onMount } from 'svelte';
   import { Swiper, SwiperSlide } from 'swiper/svelte'; 
-  // import Swiper from 'swiper';
-  // import SwiperSlide from 'swiper';
   import Drawing from './drawing.svelte';
   import { dlog } from '../../helpers/debugLog';
-  // eslint-disable-next-line no-unused-vars
   import {
     STOPMOTION_MAX_FRAMES,
     STOPMOTION_FPS,
-    // STOPMOTION_BASE_SIZE,
   } from '../../constants';
-  // eslint-disable-next-line import/no-unresolved
   import 'swiper/css';
 
   export let file;

@@ -3,7 +3,7 @@
   import { beforeUpdate, onDestroy } from 'svelte';
   import { Liked } from '../storage';
   import { PlayerPos, PlayerLocation, PlayerUpdate } from './game/playerState';
-  // import FriendAction from './components/friendaction.svelte';
+  // import FriendAction from './components/FriendAction.svelte';
   import ArtworkLoader from './components/ArtworkLoader.svelte';
   import ToggleLikeButton from './components/toggleLikeButton.svelte';
   import {

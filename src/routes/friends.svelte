@@ -2,7 +2,7 @@
   import SvelteTable from 'svelte-table';
   // import MdSearch from 'svelte-icons/md/MdSearch.svelte';
   import { PlayerPos, PlayerLocation, PlayerUpdate } from './game/playerState';
-  import FriendAction from './components/friendaction.svelte';
+  import FriendAction from './components/FriendAction.svelte';
   import ArtworkLoader from './components/ArtworkLoader.svelte';
   import {
     ListFriends,

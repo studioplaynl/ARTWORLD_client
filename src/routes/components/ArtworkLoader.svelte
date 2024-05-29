@@ -9,15 +9,13 @@
  *  it opens the artwork in the drawing app, but now there is no on:clicked handler
  *
  *  Opening is handled in the parent component with the on:clickCell="{goTo}" method
- *  (handling the clicked event from Stopmotion and Drawing components)
+ *  (handling the clicked event from Previewer component)
  *  these components names should be changed because they are confusion and nondescriptive
  *
  *  It is used in the frieds, liked, profile page
  */
 
-  import Stopmotion from './stopmotion.svelte';
-  // import Drawing from './drawing.svelte';
-  // eslint-disable-next-line no-unused-vars
+  import Previewer from './ArtPreviewer.svelte';
   import { dlog } from '../../helpers/debugLog';
 
   export let row = null;
@@ -26,11 +24,9 @@
 
   let artworkUrl;
 
-  // eslint-disable-next-line no-unused-vars
   function handleArtworkClicked(artworkData) {
     // Handle the artwork data
     dlog('Artwork clicked:', artworkData);
-
     // Perform any desired actions with the artwork data
   }
 
@@ -51,5 +47,5 @@
 </script>
 
 {#if artworkUrl}
-    <Stopmotion artwork="{artworkUrl}" clickable="{clickable}" row="{row}"/>
+    <Previewer artwork="{artworkUrl}" clickable="{clickable}" row="{row}"/>
 {/if}

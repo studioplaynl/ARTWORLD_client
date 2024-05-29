@@ -11,7 +11,7 @@
     AVATAR_BASE_SIZE,
   } from '../constants';
   import { dlog } from '../helpers/debugLog';
-  import Stopmotion from './components/stopmotion.svelte';
+  import ArtPreviewer from './components/ArtPreviewer.svelte';
 
   let messages = {
     notifications: [],
@@ -82,7 +82,7 @@
         <p on:click="{goHome(notification.sender_id)}">
           {notification.content.username}
         </p>
-          <Stopmotion
+          <ArtPreviewer
           row={notification.content}
           artwork="{notification.content.previewUrl}"
           clickable={true}
@@ -111,7 +111,7 @@
         <p on:click="{goHome(notification.sender_id)}">
           {notification.content.username}
         </p>
-          <Stopmotion artwork="{notification.previewUrl}" clickable={true} on:clicked={goHome(notification.sender_id)}/>
+          <ArtPreviewer artwork="{notification.previewUrl}" clickable={true} on:clicked={goHome(notification.sender_id)}/>
       </div>
     {/each}
   </div>
