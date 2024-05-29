@@ -5,7 +5,7 @@
   import { PlayerPos, PlayerLocation, PlayerUpdate } from './game/playerState';
   // import FriendAction from './components/FriendAction.svelte';
   import ArtworkLoader from './components/ArtworkLoader.svelte';
-  import ToggleLikeButton from './components/toggleLikeButton.svelte';
+  import ToggleLikeButton from './components/ToggleLikeButton.svelte';
   import {
     // ListFriends,
     // addFriend,
