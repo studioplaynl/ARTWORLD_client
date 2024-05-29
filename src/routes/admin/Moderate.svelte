@@ -417,14 +417,15 @@
       &gt;
     </button>
   </div>
-  <div
+  <button
     class="app-close"
     on:click="{() => {
       push('/');
     }}"
+    aria-label="Close"
   >
     <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
-  </div>
+  </button>
 </div>
 
 <style>
