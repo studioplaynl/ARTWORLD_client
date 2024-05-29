@@ -13,7 +13,7 @@
   } from '../../helpers/nakamaHelpers';
   import { Profile } from '../../session';
   import StatusComp from '../components/statusbox.svelte';
-  import DeleteComp from '../components/deleteButton.svelte';
+  import DeleteComp from '../components/DeleteButton.svelte';
   import DownloadComp from '../components/downloadButton.svelte';
   import NameEdit from '../components/nameEdit.svelte';
 

@@ -32,7 +32,7 @@
 
   import IconRenderer from './components/IconRenderer.svelte';
   import StatusComp from './components/visibilityToggle.svelte';
-  import DeleteComp from './components/deleteButton.svelte';
+  import DeleteComp from './components/DeleteButton.svelte';
   import postSend from './components/postSend.svelte';
   import AvatarSelector from './components/AvatarSelector.svelte';
   import ArtworkLoader from './components/ArtworkLoader.svelte';

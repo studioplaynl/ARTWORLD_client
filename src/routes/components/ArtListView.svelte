@@ -21,7 +21,7 @@
   // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
   import StatusComp from './visibilityToggle.svelte';
-  import DeleteComp from './deleteButton.svelte';
+  import DeleteComp from './DeleteButton.svelte';
   import SendTo from './sendTo.svelte';
   import {
     // STOPMOTION_MAX_FRAMES,
