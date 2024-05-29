@@ -2,7 +2,7 @@
   /** eslint-disable prefer-destructuring */
   import { pop } from 'svelte-spa-router';
   import { getUploadURL, updateObjectAdmin } from '../../helpers/nakamaHelpers';
-  import SaveAnimation from '../components/saveAnimation.svelte';
+  import SaveAnimation from '../components/SaveAnimation.svelte';
   import UserSelect from '../components/userSelect.svelte';
   import { dlog } from '../../helpers/debugLog';
 
