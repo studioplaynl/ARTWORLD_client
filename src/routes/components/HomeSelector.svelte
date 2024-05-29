@@ -6,7 +6,7 @@
  *  What is this file for?
  *  ======================
  *  house.svelte implements selecting and editing a home image
- *  in the items bar, more specifically the profile.svelte page
+ *  in the items bar, more specifically the ProfilePage.svelte page
  *
  *  The overall structure is:
  *  ItemsBar.svelte > click avatar icon > unfolds left side of itemsBar

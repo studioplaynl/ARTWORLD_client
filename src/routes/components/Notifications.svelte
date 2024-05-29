@@ -6,7 +6,7 @@
   import SuccessIcon from 'svelte-icons/md/MdDone.svelte';
 
   // notification icons
-  import NotificationIcon from 'svelte-icons/md/MdEmail.svelte';
+  import NotificationIcon from 'svelte-icons/md/MdEMail.svelte';
   import UserAddIcon from 'svelte-icons/md/MdPersonAdd.svelte';
   import GroupAddIcon from 'svelte-icons/md/MdGroupAdd.svelte';
   import PersonIcon from 'svelte-icons/md/MdPerson.svelte';

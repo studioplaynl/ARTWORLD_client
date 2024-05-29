@@ -36,7 +36,7 @@ import * as Phaser from 'phaser';
   import LoginPage from './routes/auth/Login.svelte';
   import ProfilePage from './routes/admin/ProfileWrapper.svelte';
   import DebugPage from './routes/admin/DebugPage.svelte';
-  import FriendsPage from './routes/friends.svelte';
+  import FriendsPage from './routes/Friends.svelte';
   import UpdatePage from './routes/auth/Update.svelte';
   import UploadPage from './routes/admin/Upload.svelte';
   import ModeratePage from './routes/admin/Moderate.svelte';
@@ -47,7 +47,7 @@ import * as Phaser from 'phaser';
   import AppLoader from './routes/components/AppLoader.svelte';
   import TopBar from './routes/components/TopBar.svelte';
   import AchievementAnimation from './routes/components/AchievementAnimation.svelte';
-  import TutLoader from './routes/tutorials/tutLoader.svelte';
+  import TutLoader from './routes/tutorials/TutLoader.svelte';
   import Notifications from './routes/components/Notifications.svelte';
   import EditHome from './routes/components/EditHome.svelte';
 

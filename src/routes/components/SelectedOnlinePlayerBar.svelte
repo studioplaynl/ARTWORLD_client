@@ -6,7 +6,7 @@
     getObject,
     addFriend,
   } from '../../helpers/nakamaHelpers';
-  import LikedPage from '../liked.svelte';
+  import LikedPage from '../Liked.svelte';
   import { SelectedOnlinePlayer } from '../../session';
   import { Addressbook } from '../../storage';
   // import ManageSession from '../game/ManageSession';

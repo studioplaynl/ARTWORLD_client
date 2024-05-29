@@ -9,7 +9,7 @@
  *  it shows the available avatars and houses
  *  the player can choose one, or make a new one
  *
- *  it resides in the items bar, more specifically the profile.svelte page
+ *  it resides in the items bar, more specifically the ProfilePage.svelte page
  *
  *  The overall structure is:
  *  ItemsBar.svelte > click avatar icon > unfolds left side of itemsBar

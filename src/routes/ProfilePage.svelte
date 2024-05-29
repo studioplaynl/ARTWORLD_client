@@ -2,13 +2,13 @@
 // @ts-nocheck
 
   /**
- * @file profile.svelte
+ * @file ProfilePage.svelte
  * @author Lindsey, Maarten
  *
  *  What is this file for?
  *  ======================
- *  profile.svelte displays to the user:
- *  in the items bar, more specifically the profile.svelte page
+ *  ProfilePage.svelte displays to the user:
+ *  in the items bar, more specifically the ProfilePage.svelte page
  *  username, AvatarSelector.svelte (edit avatar), HomeSelector.svelte (edit home image), list of artworks
  *
  *  The over all structure is:

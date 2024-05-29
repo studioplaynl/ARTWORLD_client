@@ -1,6 +1,6 @@
 <script>
   import { pop } from 'svelte-spa-router';
-  import Profile from '../profile.svelte';
+  import Profile from '../ProfilePage.svelte';
 
   export let params = {};
 </script>

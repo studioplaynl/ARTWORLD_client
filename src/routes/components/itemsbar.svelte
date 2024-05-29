@@ -7,13 +7,13 @@
     getAccount,
     getObject,
     logout } from '../../helpers/nakamaHelpers';
-  import ProfilePage from '../profile.svelte';
-  import FriendsPage from '../friends.svelte';
-  import LikedPage from '../liked.svelte';
-  import MailPage from '../mail.svelte';
+  import ProfilePage from '../ProfilePage.svelte';
+  import FriendsPage from '../Friends.svelte';
+  import LikedPage from '../Liked.svelte';
+  import MailPage from '../Mail.svelte';
   import AppGroup from './AppGroup.svelte';
   import { Profile, ShowItemsBar, ItemsBarCurrentView } from '../../session';
-  import Awards from '../awards.svelte';
+  import Awards from '../Awards.svelte';
   import { Addressbook, myHome } from '../../storage';
   import { clickOutside } from '../../helpers/clickOutside';
   import {

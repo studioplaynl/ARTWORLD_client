@@ -23,7 +23,7 @@
     // dlog('location', $location);
     /* want to get deletebottom working in case of:
     * AppGroup.svelte
-    * profile.svelte
+    * ProfilePage.svelte
     * moderator.svelte
     *
     * It is working in case of AppGroup.svelte (the first part: of putting the item in the trash)
@@ -47,7 +47,7 @@
 
 
 
-     * in profile.svelte the row is:
+     * in ProfilePage.svelte the row is:
      $sortOn: ""
       collection: "flowerchallenge"
       create_time: "2023-09-16T13:55:10Z"

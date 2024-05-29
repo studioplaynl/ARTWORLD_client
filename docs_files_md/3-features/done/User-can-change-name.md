@@ -11,7 +11,7 @@ User can change display_name once, if there is a mistake admin or moderator can 
 
 display_name shown in:
 
-- itemsBar > profile.svelte
+- itemsBar > ProfilePage.svelte
 
 - in the game: the home discriptor
 
@@ -70,7 +70,7 @@ export async function setDisplayName(display_name) {
 }
 ```
 
-Location of the code: profile.svelte
+Location of the code: ProfilePage.svelte
 
 I implemented if account.display_name is empty string, then the user can set the display_name.
 
@@ -82,7 +82,7 @@ nakamaHelpers.js > getAllHouses includes user_displayname
 
 ---
 
-friends.svelte addFriend also with display_name -> not possible without rewriting the search function, so the search is removed for now
+Friends.svelte addFriend also with display_name -> not possible without rewriting the search function, so the search is removed for now
 
 ---
 
@@ -92,7 +92,7 @@ getAccount(id) krijgt nu meta en metadata terug, is dat nieuw? Voorheen was het 
 
 ---
 
-**friends.svelte friends are listed with display_name or username**
+**Friends.svelte friends are listed with display_name or username**
 
 ```
   const columns = [
