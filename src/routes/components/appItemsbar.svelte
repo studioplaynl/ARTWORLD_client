@@ -8,7 +8,6 @@
  *  AppItemsBar.svelte implements make a new and editing existing drawings/stopmotion etc
  *  in the items bar
  */
-ImagePicker.svelte
 import { push } from 'svelte-spa-router';
 import ArtListView from './ArtListView.svelte';
 import { returnAppIconUrl } from '../../constants';
@@ -17,14 +16,14 @@ import { PlayerHistory } from '../game/playerState';
 let showHistory = false;
 export let appName = '';
 export let showAddNew = true;
-  //show or hide components in ArtListView
-  export let showStatusComp = false;
-  export let showDeleteComp = false;
-  export let showSendTo = false;
-  export let showDeletedArtContainer = false;
-  export let showPlaceInHome = false;
-  // Destructure the props
-  let props = { showStatusComp, showDeleteComp, showSendTo, showDeletedArtContainer, showPlaceInHome };
+//show or hide components in ArtListView
+export let showStatusComp = false;
+export let showDeleteComp = false;
+export let showSendTo = false;
+export let showDeletedArtContainer = false;
+export let showPlaceInHome = false;
+// Destructure the props
+let props = { showStatusComp, showDeleteComp, showSendTo, showDeletedArtContainer, showPlaceInHome };
 
 /* Make a new artwork */
 function addNew() {

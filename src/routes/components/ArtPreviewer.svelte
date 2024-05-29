@@ -41,9 +41,7 @@
   function handleOpenArtwork() {
     // checks if we clicked 'voorbeeld' cell and if it has a value
     // opens the artwork with the appropriate app
-
     if (typeof row === 'undefined' || row === null) return;
-
 
     if (row.value) {
       push(

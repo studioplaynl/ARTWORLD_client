@@ -11,7 +11,7 @@
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
   import MailPage from '../mail.svelte';
-  import AppsGroup from './AppGroup.svelte';
+  import AppGroup from './AppGroup.svelte';
   import { Profile, ShowItemsBar, ItemsBarCurrentView } from '../../session';
   import Awards from '../awards.svelte';
   import { Addressbook, myHome } from '../../storage';
@@ -106,6 +106,7 @@
 
   // toggle opens the itemsbar panel to reveal more functionality, the app is passed as a prop
   function toggleView(view) {
+    console.log('toggleView', view);
     $ItemsBarCurrentView = $ItemsBarCurrentView === view ? null : view;
   }
 
@@ -198,7 +199,7 @@
       </button>
 
       <button
-       on:click={() => toggleView('appsGroup')}>
+       on:click={() => toggleView('appGroup')}>
       <img
           class="icon"
           src="/assets/svg/apps/appsgroup-icon-round2.svg"
@@ -237,8 +238,8 @@
         <FriendsPage />
       {:else if $ItemsBarCurrentView === 'awards'}
         <Awards />
-      {:else if $ItemsBarCurrentView === 'appsGroup'}
-        <AppsGroup />
+      {:else if $ItemsBarCurrentView === 'appGroup'}
+        <AppGroup />
       {/if}
     </div>
   </div>
