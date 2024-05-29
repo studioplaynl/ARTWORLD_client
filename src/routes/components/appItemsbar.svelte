@@ -14,7 +14,7 @@
  *
  */
 import { push } from 'svelte-spa-router';
-import ArtListView from './ArtListView.svelte
+import ArtListView from './ArtListView.svelte';
 import { returnAppIconUrl } from '../../constants';
 import { PlayerHistory } from '../game/playerState';
 
