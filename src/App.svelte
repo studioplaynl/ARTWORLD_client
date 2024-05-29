@@ -48,7 +48,7 @@ import * as Phaser from 'phaser';
   import TopBar from './routes/components/topbar.svelte';
   import AchievementAnimation from './routes/components/AchievementAnimation.svelte';
   import TutLoader from './routes/tutorials/tutLoader.svelte';
-  import Notifications from './routes/components/notifications.svelte';
+  import Notifications from './routes/components/Notifications.svelte';
   import EditHome from './routes/components/EditHome.svelte';
 
   import gameConfig from './routes/game/gameConfig';
