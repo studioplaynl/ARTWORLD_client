@@ -54,7 +54,7 @@
     <!-- the left part of the items bar, either folds out or opens an app -->
     <div class="left-column-itemsbar">
 
-      <!-- opens panel with edit avatar, edit home, see all artworks -->
+      <!-- open and close the itemsbar -->
       <button on:click={editHomeMenuToggle} class="avatar">
         <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
       </button>

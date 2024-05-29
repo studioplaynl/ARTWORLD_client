@@ -11,7 +11,7 @@
   import FriendsPage from '../friends.svelte';
   import LikedPage from '../liked.svelte';
   import MailPage from '../mail.svelte';
-  import AppsGroup from './appsGroup.svelte';
+  import AppsGroup from './AppGroup.svelte';
   import { Profile, ShowItemsBar, ItemsBarCurrentView } from '../../session';
   import Awards from '../awards.svelte';
   import { Addressbook, myHome } from '../../storage';

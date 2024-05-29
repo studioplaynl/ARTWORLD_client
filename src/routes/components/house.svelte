@@ -11,7 +11,7 @@
  *  The overall structure is:
  *  itemsBar.svelte > click avatar icon > unfolds left side of itemsBar
  *  click avatar icon again > unfolds right side of itemsBar with:
- *  username, avatar.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ *  username, ArtworkLoader.svelte (edit avatar), house.svelte (edit home image), list of artworks
  *
  *  The default is the closed state, in which a 'history' icon is present
  *  When unfolded the user can add a home drawing or select one from the list

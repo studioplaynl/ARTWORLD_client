@@ -9,12 +9,12 @@
  *  ======================
  *  profile.svelte displays to the user:
  *  in the items bar, more specifically the profile.svelte page
- *  username, avatar.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ *  username, AvatarSelector.svelte (edit avatar), house.svelte (edit home image), list of artworks
  *
  *  The over all structure is:
  *  itemsBar.svelte > click avatar icon > unfolds left side of itemsBar
  *  click avatar icon again > unfolds right side of itemsBar with:
- *  username, avatar.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ *  username, AvatarSelector.svelte (edit avatar), house.svelte (edit home image), list of artworks
  */
 
   import SvelteTable from 'svelte-table';
@@ -34,8 +34,8 @@
   import StatusComp from './components/visibilityToggle.svelte';
   import DeleteComp from './components/deleteButton.svelte';
   import postSend from './components/postSend.svelte';
-  import Avatar from './components/avatar.svelte';
-  import ArtworkLoader from './components/artworkLoader.svelte';
+  import AvatarSelector from './components/AvatarSelector.svelte';
+  import ArtworkLoader from './components/ArtworkLoader.svelte';
   import House from './components/house.svelte';
   import {
     OBJECT_STATE_IN_TRASH,
@@ -324,7 +324,7 @@
         {#if CurrentUser}
           <span class="splitter"></span>
           <br />
-          <Avatar showHistory="{true}" />
+          <AvatarSelector showHistory="{true}" />
           <span class="splitter"></span>
           <br />
           <House />

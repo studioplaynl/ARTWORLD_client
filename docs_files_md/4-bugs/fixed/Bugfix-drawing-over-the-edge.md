@@ -756,7 +756,7 @@ git checkout 4d3f4a6be6e1659aa6175415e530fafb6fc9c5d4
   import { Achievements } from "../../storage";
   import NameGenerator from "../components/nameGenerator.svelte";
   import MouseIcon from "svelte-icons/fa/FaMousePointer.svelte";
-  import Avatar from "../components/avatar.svelte";
+  import Avatar from "../components/ArtworkLoader.svelte";
   import ManageSession from "../game/ManageSession";
 
   let scaleRatio, lastImg, lastValue, lastWidth;

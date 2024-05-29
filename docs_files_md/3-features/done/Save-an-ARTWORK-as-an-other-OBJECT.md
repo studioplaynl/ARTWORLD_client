@@ -104,7 +104,7 @@ clean way to transfer:
 
 3. do the url's get generated?
 
-In Apploader.svelte loading and making new files is handled
+In AppLoader.svelte loading and making new files is handled
 
 A new function/ state should be defined: **transferFile()**
 

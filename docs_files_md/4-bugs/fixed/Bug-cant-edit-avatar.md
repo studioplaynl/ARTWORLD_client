@@ -27,9 +27,9 @@ _When Saving and Edit should be: save under a new name_
 
 When making a new avatar:
 
-Avatar saveData Upload currentFile.key, currentFile.type, currentFile.status, currentFile.displayName,: 2022-12-23T10_09_00_CyaanFregata avatar true CyaanFregata **appLoader.svelte:141**
+Avatar saveData Upload currentFile.key, currentFile.type, currentFile.status, currentFile.displayName,: 2022-12-23T10_09_00_CyaanFregata avatar true CyaanFregata **AppLoader.svelte:141**
 
-Avatar saveData Upload result: avatar/fcbcc269-a109-4a4b-a570-5ccafc5308d8/0_2022-12-23T10_09_00_CyaanFregata.png **appLoader.svelte:143**
+Avatar saveData Upload result: avatar/fcbcc269-a109-4a4b-a570-5ccafc5308d8/0_2022-12-23T10_09_00_CyaanFregata.png **AppLoader.svelte:143**
 
 A NEW AVATAR is overwriting the previous AVATAR!!
 
@@ -107,7 +107,7 @@ The problem is that the upload URL is not generated the first time
 
 Let's look how a successful save happens
 
-Apploader.svelte
+AppLoader.svelte
 
 saveData()
 

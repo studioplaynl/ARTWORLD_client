@@ -216,7 +216,7 @@ Option 5: Loading as before but when it already exists check update_time
 --
 Try Option 1
 
-#####Apploader.svelte
+#####AppLoader.svelte
 
     if (andClose) {
             if (currentFile.loaded) {

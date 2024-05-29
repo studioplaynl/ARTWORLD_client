@@ -5,7 +5,7 @@
  *
  *  What is this file for?
  *  ======================
- *  avatar.svelte implements selecting and editing a avatar stopmotion
+ *  AvatarSelector.svelte implements selecting and editing a avatar stopmotion
  *  it resides in the items bar, more specifically the profile.svelte page
  *
  *  The overall structure is:

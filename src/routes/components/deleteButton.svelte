@@ -22,11 +22,11 @@
   const Trash = () => {
     // dlog('location', $location);
     /* want to get deletebottom working in case of:
-    * appsGroup.svelte
+    * AppGroup.svelte
     * profile.svelte
     * moderator.svelte
     *
-    * It is working in case of appsGroup.svelte (the first part: of putting the item in the trash)
+    * It is working in case of AppGroup.svelte (the first part: of putting the item in the trash)
     *
       SendToIsOpen: false
       collection: "drawing"

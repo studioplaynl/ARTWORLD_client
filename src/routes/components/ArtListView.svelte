@@ -30,11 +30,18 @@
     OBJECT_STATE_REGULAR,
     OBJECT_STATE_UNDEFINED,
   } from '../../constants';
-  import ArtworkLoader from './artworkLoader.svelte';
+  import ArtworkLoader from './ArtworkLoader.svelte';
   // import postSend from './postSend.svelte';
 
 
   export let dataType = '';
+
+  //show or hide components in artworkListViewer
+  export let showStatusComp = false;
+  export let showDeleteComp = false;
+  export let showSendTo = false;
+  export let showDeletedArtContainer = false;
+  export let showPlaceInHome = false;
 
   // const deleteCheck = null;
   // eslint-disable-next-line no-unused-vars
@@ -131,21 +138,26 @@ $: if (store.length) {
       </div>
     <div class="cell action-buttons" id={`row-${index}`}>
       <div class="buttons {row.SendToIsOpen ? 'hidden' : ''}">
+       {#if showStatusComp} 
         <StatusComp
           store="{store}"
           isCurrentUser="{isCurrentUser}"
           row="{row}"
           rowIndex="{index}"
         />
+        {/if}
 
+        {#if showDeleteComp}
         <DeleteComp
           store="{store}"
           isCurrentUser="{isCurrentUser}"
           row="{row}"
           rowIndex="{index}"
         />
+        {/if}
       </div>
 
+      {#if showSendTo}
       <div class={row && row.SendToIsOpen ? 'send-to-open' : ''}>
       <SendTo
         store="{store}"
@@ -155,12 +167,13 @@ $: if (store.length) {
         row="{row}"
       />
       </div>
+      {/if}
     </div>
   </div>
   {/each}
 
   <!-- if there is deletedArt -->
-  {#if deletedArt.length}
+  {#if showDeletedArtContainer && deletedArt.length}
   <div class="deleted-art-container">
     <img
       class="trash-icon"
@@ -199,6 +212,7 @@ $: if (store.length) {
 
 </div>   <!-- end class="art-app-container" -->
 <style>
+  
 .deleted-art-container{
   margin-top: 20px;
   /* box-shadow: 2px 2px rgb(255, 0, 0); */

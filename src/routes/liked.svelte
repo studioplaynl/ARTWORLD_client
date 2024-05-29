@@ -4,7 +4,7 @@
   import { Liked } from '../storage';
   import { PlayerPos, PlayerLocation, PlayerUpdate } from './game/playerState';
   // import FriendAction from './components/friendaction.svelte';
-  import ArtworkLoader from './components/artworkLoader.svelte';
+  import ArtworkLoader from './components/ArtworkLoader.svelte';
   import ToggleLikeButton from './components/toggleLikeButton.svelte';
   import {
     // ListFriends,
