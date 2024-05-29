@@ -32,7 +32,7 @@ import * as Phaser from 'phaser';
   import AdminMenu from './routes/components/AdminMenu.svelte';
   import RegisterPage from './routes/auth/Register.svelte';
   import PrintQrCodesSheet from './routes/auth/PrintQrCodesSheet.svelte';
-  import UsersPage from './routes/users.svelte';
+  import UsersPage from './routes/Users.svelte';
   import LoginPage from './routes/auth/Login.svelte';
   import ProfilePage from './routes/admin/ProfileWrapper.svelte';
   import DebugPage from './routes/admin/DebugPage.svelte';
