@@ -8,7 +8,7 @@
   import { setLoader } from '../../helpers/nakamaHelpers';
   import { Profile } from '../../session';
   import { IMAGE_BASE_SIZE, STOPMOTION_BASE_SIZE } from '../../constants';
-  // import NameGenerator from '../components/nameGenerator.svelte';
+  // import NameGenerator from '../components/NameGenerator.svelte';
   import {
     hasSpecialCharacter,
     removeSpecialCharacters,
