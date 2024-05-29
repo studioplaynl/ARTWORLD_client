@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
   import { dlog } from '../../helpers/debugLog';
-  import SendArtMail from './sendArtMail.svelte';
+  import SendArtMail from './SendArtMail.svelte';
   import { returnSameTypeApps, returnAppIconUrl, PERMISSION_READ_PUBLIC } from '../../constants';
   import { getRandomName,
     uploadImage,
