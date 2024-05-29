@@ -13,7 +13,7 @@
   import StatusComp from '../components/statusbox.svelte';
   import DeleteComp from '../components/DeleteButton.svelte';
   import DownloadComp from '../components/DownloadButton.svelte';
-  import NameEdit from '../components/nameEdit.svelte';
+  import NameEdit from '../components/NameEdit.svelte';
 
   // const APPS = ['drawing', 'stopmotion', 'avatar', 'house'];
 
