@@ -39,7 +39,7 @@ import * as Phaser from 'phaser';
   import FriendsPage from './routes/friends.svelte';
   import UpdatePage from './routes/auth/update.svelte';
   import UploadPage from './routes/admin/upload.svelte';
-  import ModeratePage from './routes/admin/moderate.svelte';
+  import ModeratePage from './routes/admin/Moderate.svelte';
 
   /** Game components */
   import Itemsbar from './routes/components/itemsbar.svelte';
