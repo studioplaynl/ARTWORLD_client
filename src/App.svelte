@@ -43,7 +43,7 @@ import * as Phaser from 'phaser';
 
   /** Game components */
   import Itemsbar from './routes/components/ItemsBar.svelte';
-  import SelectedOnlinePlayerBar from './routes/components/selectedOnlinePlayerBar.svelte';
+  import SelectedOnlinePlayerBar from './routes/components/SelectedOnlinePlayerBar.svelte';
   import AppLoader from './routes/components/AppLoader.svelte';
   import TopBar from './routes/components/topbar.svelte';
   import AchievementAnimation from './routes/components/AchievementAnimation.svelte';

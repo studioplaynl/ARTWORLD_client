@@ -38,7 +38,7 @@ $SelectedOnlinePlayer.meta.Azc = 'Greensquare'
 $SelectedOnlinePlayer.meta.PosX = 10  
 $SelectedOnlinePlayer.meta.PosY = -30
 
-In selectedOnlinePlayerBar.svelte
+In SelectedOnlinePlayerBar.svelte
 
 ---
 
