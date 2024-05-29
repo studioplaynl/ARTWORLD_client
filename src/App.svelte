@@ -45,7 +45,7 @@ import * as Phaser from 'phaser';
   import Itemsbar from './routes/components/ItemsBar.svelte';
   import SelectedOnlinePlayerBar from './routes/components/SelectedOnlinePlayerBar.svelte';
   import AppLoader from './routes/components/AppLoader.svelte';
-  import TopBar from './routes/components/topbar.svelte';
+  import TopBar from './routes/components/TopBar.svelte';
   import AchievementAnimation from './routes/components/AchievementAnimation.svelte';
   import TutLoader from './routes/tutorials/tutLoader.svelte';
   import Notifications from './routes/components/Notifications.svelte';
