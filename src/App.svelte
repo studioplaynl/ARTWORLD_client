@@ -28,16 +28,16 @@ import * as Phaser from 'phaser';
   import { dlog } from './helpers/debugLog';
 
   /** Admin pages */
-  import Admin from './routes/admin/admin.svelte';
+  import Admin from './routes/admin/Admin.svelte';
   import AdminMenu from './routes/components/AdminMenu.svelte';
-  import RegisterPage from './routes/auth/register.svelte';
-  import PrintQrCodesSheet from './routes/auth/printQrCodesSheet.svelte';
+  import RegisterPage from './routes/auth/Register.svelte';
+  import PrintQrCodesSheet from './routes/auth/PrintQrCodesSheet.svelte';
   import UsersPage from './routes/users.svelte';
   import LoginPage from './routes/auth/Login.svelte';
   import ProfilePage from './routes/admin/ProfileWrapper.svelte';
   import DebugPage from './routes/admin/DebugPage.svelte';
   import FriendsPage from './routes/friends.svelte';
-  import UpdatePage from './routes/auth/update.svelte';
+  import UpdatePage from './routes/auth/Update.svelte';
   import UploadPage from './routes/admin/Upload.svelte';
   import ModeratePage from './routes/admin/Moderate.svelte';
 

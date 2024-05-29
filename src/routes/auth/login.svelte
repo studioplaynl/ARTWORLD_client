@@ -6,7 +6,7 @@
   import { push, querystring } from 'svelte-spa-router';
   import { Session } from '../../session';
   import { login, checkLoginExpired } from '../../helpers/nakamaHelpers';
-  import QRscanner from './qrscanner.svelte';
+  import QRscanner from './QRScanner.svelte';
   // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
 
