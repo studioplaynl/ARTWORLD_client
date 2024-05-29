@@ -9,7 +9,7 @@
  *  it resides in the items bar, more specifically the profile.svelte page
  *
  *  The overall structure is:
- *  itemsBar.svelte > click avatar icon > unfolds left side of itemsBar
+ *  ItemsBar.svelte > click avatar icon > unfolds left side of itemsBar
  *  click avatar icon again > unfolds right side of itemsBar with:
  *  username, avatar.svelte (edit avatar), HomeSelector.svelte (edit home image), list of artworks
  *

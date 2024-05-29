@@ -42,7 +42,7 @@ import * as Phaser from 'phaser';
   import ModeratePage from './routes/admin/Moderate.svelte';
 
   /** Game components */
-  import Itemsbar from './routes/components/itemsbar.svelte';
+  import Itemsbar from './routes/components/ItemsBar.svelte';
   import SelectedOnlinePlayerBar from './routes/components/selectedOnlinePlayerBar.svelte';
   import AppLoader from './routes/components/AppLoader.svelte';
   import TopBar from './routes/components/topbar.svelte';

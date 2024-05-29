@@ -52,7 +52,7 @@ In selectedOnlinePlayerBar.svelte
 
 Case 1: current player
 
-itemsbar.svelte
+ItemsBar.svelte
 
 ```
      <button

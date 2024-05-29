@@ -7,10 +7,7 @@ import { getAccount } from '../../../helpers/nakamaHelpers';
 import { Profile, SelectedOnlinePlayer, ShowItemsBar } from '../../../session';
 import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos } from '../playerState';
-import {
-  AVATAR_BASE_SIZE,
-  AVATAR_SPRITESHEET_LOAD_SIZE,
-} from '../../../constants';
+import { AVATAR_BASE_SIZE, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
 
 class Player {
   subscribeToProfile() {
@@ -23,12 +20,7 @@ class Player {
         this.subscribedToProfile = true;
         // update the Profile also in ManageSession
         ManageSession.userProfile = get(Profile);
-        this.loadPlayerAvatar(
-          ManageSession.currentScene,
-          undefined,
-          undefined,
-          value,
-        );
+        this.loadPlayerAvatar(ManageSession.currentScene, undefined, undefined, value);
       }
     });
   }
@@ -153,7 +145,7 @@ class Player {
             }
             Player.attachAvatarToPlayer(scene, fileNameCheck);
           },
-          scene,
+          scene
         );
       scene.load.start(); // start loading the image in memory
     } else {
@@ -228,12 +220,7 @@ class Player {
     scene.player.body.setCircle(width / 1.1, width / 5, width / 5);
 
     // send the current player position over the network
-    ManageSession.sendMoveMessage(
-      scene,
-      scene.player.x,
-      scene.player.y,
-      'stop',
-    );
+    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y, 'stop');
   } // end attachAvatarToPlayer
 
   static reloadDefaultAvatar(scene) {
@@ -254,10 +241,9 @@ class Player {
         });
 
         // new onlineplayer is removed from the newOnlinePlayer array, once we call more data on it
-        ManageSession.createOnlinePlayerArray =
-          ManageSession.createOnlinePlayerArray.filter(
-            (obj) => obj.user_id !== onlinePlayer.user_id,
-          );
+        ManageSession.createOnlinePlayerArray = ManageSession.createOnlinePlayerArray.filter(
+          (obj) => obj.user_id !== onlinePlayer.user_id
+        );
       });
     }
   }
@@ -265,9 +251,7 @@ class Player {
   createOnlinePlayer(scene, onlinePlayer) {
     // check if onlinePlayer exists already
     // dlog(onlinePlayer)
-    const exists = ManageSession.allConnectedUsers.some(
-      (element) => element.user_id === onlinePlayer.user_id,
-    );
+    const exists = ManageSession.allConnectedUsers.some((element) => element.user_id === onlinePlayer.user_id);
     // if player does not exists yet
     if (!exists) {
       // create new onlinePlayer with default avatar
@@ -275,15 +259,9 @@ class Player {
       // dlog("createOnlinePlayer scene", scene)
       onlinePlayer = scene.add
         .sprite(
-          CoordinatesTranslator.artworldToPhaser2DX(
-            scene.worldSize.x,
-            onlinePlayerCopy.meta.PosX,
-          ),
-          CoordinatesTranslator.artworldToPhaser2DY(
-            scene.worldSize.y,
-            onlinePlayerCopy.meta.PosY,
-          ),
-          ManageSession.playerAvatarPlaceholder,
+          CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, onlinePlayerCopy.meta.PosX),
+          CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, onlinePlayerCopy.meta.PosY),
+          ManageSession.playerAvatarPlaceholder
         )
 
         .setDepth(200);
@@ -292,14 +270,9 @@ class Player {
        */
       onlinePlayer.setInteractive({ useHandCursor: true });
       // hit area of onlinePlayer
-      onlinePlayer.input.hitArea.setTo(
-        -10,
-        -10,
-        onlinePlayer.width + 50,
-        onlinePlayer.height + 50,
-      );
+      onlinePlayer.input.hitArea.setTo(-10, -10, onlinePlayer.width + 50, onlinePlayer.height + 50);
       onlinePlayer.on('pointerup', () => {
-        // pass on values to itemsbar.svelte & selectedPlayerBar.svelte
+        // pass on values to ItemsBar.svelte & selectedPlayerBar.svelte
         SelectedOnlinePlayer.set(onlinePlayer);
         ShowItemsBar.set(false);
       });
@@ -310,10 +283,7 @@ class Player {
       // create default animation for moving
       scene.anims.create({
         key: onlinePlayer.getData('movingKey'),
-        frames: scene.anims.generateFrameNumbers(
-          ManageSession.playerAvatarPlaceholder,
-          { start: 0, end: 8 },
-        ),
+        frames: scene.anims.generateFrameNumbers(ManageSession.playerAvatarPlaceholder, { start: 0, end: 8 }),
         frameRate: 20,
         repeat: -1,
       });
@@ -321,10 +291,7 @@ class Player {
       // create default animation for stop
       scene.anims.create({
         key: onlinePlayer.getData('stopKey'),
-        frames: scene.anims.generateFrameNumbers(
-          ManageSession.playerAvatarPlaceholder,
-          { start: 4, end: 4 },
-        ),
+        frames: scene.anims.generateFrameNumbers(ManageSession.playerAvatarPlaceholder, { start: 4, end: 4 }),
       });
 
       // add all data from elementCopy to element; like prev Position, Location, UserID
@@ -355,7 +322,7 @@ class Player {
             () => {
               this.attachAvatarToOnlinePlayer(scene, onlinePlayer, avatarKey);
             },
-            scene,
+            scene
           );
         // when file is finished loading the attachToAvatar function is called
         scene.load.start(); // start loading the image in memory

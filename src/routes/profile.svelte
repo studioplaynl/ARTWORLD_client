@@ -12,7 +12,7 @@
  *  username, AvatarSelector.svelte (edit avatar), HomeSelector.svelte (edit home image), list of artworks
  *
  *  The over all structure is:
- *  itemsBar.svelte > click avatar icon > unfolds left side of itemsBar
+ *  ItemsBar.svelte > click avatar icon > unfolds left side of itemsBar
  *  click avatar icon again > unfolds right side of itemsBar with:
  *  username, AvatarSelector.svelte (edit avatar), HomeSelector.svelte (edit home image), list of artworks
  */
