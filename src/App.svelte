@@ -29,7 +29,7 @@ import * as Phaser from 'phaser';
 
   /** Admin pages */
   import Admin from './routes/admin/admin.svelte';
-  import Menu from './routes/components/menu.svelte';
+  import Menu from './routes/components/Menu.svelte';
   import RegisterPage from './routes/auth/register.svelte';
   import PrintQrCodesSheet from './routes/auth/printQrCodesSheet.svelte';
   import UsersPage from './routes/users.svelte';
