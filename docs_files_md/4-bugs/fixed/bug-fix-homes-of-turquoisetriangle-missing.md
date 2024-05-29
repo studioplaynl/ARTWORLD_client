@@ -20,9 +20,9 @@ I inadvertently deleted the homeObject of user19. FIX THAT!
 But also fix the error that the itemsBar cannot be opened to select a default homeObject
 
 ```
-imagePicker.svelte:195 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'url')
-    at Object.create [as c] (imagePicker.svelte:195:31)
-    at Object.update [as p] (imagePicker.svelte:189:9)
+ImagePicker.svelte:195 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'url')
+    at Object.create [as c] (ImagePicker.svelte:195:31)
+    at Object.update [as p] (ImagePicker.svelte:189:9)
     at update$2 (index.mjs:1093:36)
 ```
 

@@ -11,14 +11,14 @@
  *  The overall structure is:
  *  itemsBar.svelte > click avatar icon > unfolds left side of itemsBar
  *  click avatar icon again > unfolds right side of itemsBar with:
- *  username, avatar.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ *  username, avatar.svelte (edit avatar), HomeSelector.svelte (edit home image), list of artworks
  *
  *  The default is the closed state, in which a 'history' icon is present
  *  When unfolded the user can add a avatar drawing or select one from the list
  *  All edits to existing drawings are stored as a new drawing
  *  The user can delete drawings from the list, except default avatars
  *
- * imagePicker.svelte is used to list and interact with existing avatars and homes
+ * ImagePicker.svelte is used to list and interact with existing avatars and homes
  * imagePicker dataType="house" is used for homes
  * imagePicker dataType='avatar' is used for avatars
  */
@@ -27,7 +27,7 @@
   import { onDestroy, onMount } from 'svelte';
   import { Profile } from '../../session';
   import { AvatarsStore } from '../../storage';
-  import ImagePicker from './imagePicker.svelte';
+  import ImagePicker from './ImagePicker.svelte';
   import { STOPMOTION_FPS } from '../../constants';
 
   export let showHistory = false;

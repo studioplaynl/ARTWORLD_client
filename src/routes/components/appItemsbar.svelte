@@ -7,12 +7,8 @@
  *  ======================
  *  AppItemsBar.svelte implements make a new and editing existing drawings/stopmotion etc
  *  in the items bar
- *
- * imagePicker.svelte is used to list and interact with existing drawings
- * imagePicker dataType="drawing" is used for drawings
- * imagePicker dataType="stopmotion" is used for stopmtion
- *
  */
+ImagePicker.svelte
 import { push } from 'svelte-spa-router';
 import ArtListView from './ArtListView.svelte';
 import { returnAppIconUrl } from '../../constants';

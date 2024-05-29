@@ -18,13 +18,13 @@
  *  All edits to existing drawings are stored as a new drawing
  *  The user can delete drawings from the list, except default homes
  *
- * imagePicker.svelte is used to list and interact with existing avatars and homes
+ * ImagePicker.svelte is used to list and interact with existing avatars and homes
  * imagePicker dataType="house" is used for homes
  * imagePicker dataType='avatar' is used for avatars
  */
 
   import { myHome } from '../../storage';
-  import ImagePicker from './imagePicker.svelte';
+  import ImagePicker from './ImagePicker.svelte';
   import { STOCK_HOUSES } from '../../constants';
 
 

@@ -9,12 +9,12 @@
  *  ======================
  *  profile.svelte displays to the user:
  *  in the items bar, more specifically the profile.svelte page
- *  username, AvatarSelector.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ *  username, AvatarSelector.svelte (edit avatar), HomeSelector.svelte (edit home image), list of artworks
  *
  *  The over all structure is:
  *  itemsBar.svelte > click avatar icon > unfolds left side of itemsBar
  *  click avatar icon again > unfolds right side of itemsBar with:
- *  username, AvatarSelector.svelte (edit avatar), house.svelte (edit home image), list of artworks
+ *  username, AvatarSelector.svelte (edit avatar), HomeSelector.svelte (edit home image), list of artworks
  */
 
   import SvelteTable from 'svelte-table';
@@ -36,7 +36,7 @@
   import postSend from './components/postSend.svelte';
   import AvatarSelector from './components/AvatarSelector.svelte';
   import ArtworkLoader from './components/ArtworkLoader.svelte';
-  import House from './components/house.svelte';
+  import HomeSelector from './components/HomeSelector.svelte';
   import {
     OBJECT_STATE_IN_TRASH,
     OBJECT_STATE_REGULAR,
@@ -327,7 +327,7 @@
           <AvatarSelector showHistory="{true}" />
           <span class="splitter"></span>
           <br />
-          <House />
+          <HomeSelector />
         {:else}
           <span class="splitter"></span>
           <img src="{avatar}" alt="avatar" />

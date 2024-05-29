@@ -14,7 +14,7 @@
  */
 
 import AvatarSelector from './AvatarSelector.svelte';
-import House from './house.svelte';
+import House from './HomeSelector.svelte';
 import AppItemsbar from './AppItemsBar.svelte';
 </script>
 
