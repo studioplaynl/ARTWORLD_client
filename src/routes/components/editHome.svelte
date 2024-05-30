@@ -3,7 +3,8 @@
   import { ShowHomeEditBar, HomeEditBarExpanded } from '../../session';
   import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
-
+  import AppGroup from './AppGroup.svelte';
+  
   let currentView;
 
   function closeEditHome() {
@@ -33,180 +34,146 @@
   }
 </script>
 
+<!-- the EditHome icon is visivle, the page is closed-->
+<!-- toggle menu open button -->
 {#if $ShowHomeEditBar && !$HomeEditBarExpanded}
   <div id="itemsButton">
-    <button on:click="{editHomeMenuToggle}" class="avatar">
+    <button on:click="{editHomeMenuToggle}" id="clear" class="icon">
       <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
     </button>
   </div>
 {/if}
 
-<!-- open and close the itemsbar -->
+<!-- the EditHome icon is visivle, the page is open-->
+<!-- a div with a clickoutside event-->
 {#if $ShowHomeEditBar && $HomeEditBarExpanded}
   <div
-    class="itemsbar"
+    class="edit-home-menu"
     id="currentUser"
     use:clickOutside
     on:click_outside="{closeEditHome}"
     transition:fade="{{ duration: 40 }}"
   >
+    <div class="menu-content">
+      <!-- the right part of the EditHome, icons and buttons -->
+      <div class="right-column-itemsbar">
+        <!-- close the EditHome page -->
+        <button on:click={editHomeMenuToggle} >
+          <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
+        </button>
+        <button on:click={() => toggleView('addHomeElement')}>
+          <img
+            src="assets/SHB/svg/AW-icon-plus.svg"
+            alt="Toggle liked"
+          />
+        </button>
+      </div>
 
-    <!-- the left part of the items bar, either folds out or opens an app -->
-    <div class="left-column-itemsbar">
-
-      <!-- open and close the itemsbar -->
-      <button on:click={editHomeMenuToggle} class="avatar">
-        <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
-      </button>
-
-      <button on:click={() => toggleView('awards')}>
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-achievement.svg"
-          alt="Toggle Awards"
-        />
-      </button>
-
-      <button on:click={() => toggleView('mail')}>
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-post.svg"
-          alt="Toggle mailbox"
-        />
-      </button>
-
-      <button on:click={() => toggleView('friends')}>
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-friend.svg"
-          alt="Toggle Friends"
-        />
-      </button>
-
-      <button
-       on:click={() => toggleView('appsGroup')}>
-      <img
-          class="icon"
-          src="/assets/svg/apps/appsgroup-icon-round2.svg"
-          alt="open app containter"
-        />
-      </button>
-
-      <button on:click={() => toggleView('liked')}>
-        <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-plus.svg"
-          alt="Toggle liked"
-        />
-      </button>
-
-    </div>
-    <div class="right-column-itemsbar">
-      {#if currentView === 'liked'}
-        <div>
-          <!-- <LikedPage /> -->
-        </div>
-      {:else if currentView === 'mail'}
-        <!-- <MailPage /> -->
-      {:else if currentView === 'profilePage'}
-        <!-- <ProfilePage /> -->
-      {:else if currentView === 'friends'}
-        <!-- <FriendsPage /> -->
-      {:else if currentView === 'awards'}
-        <!-- <Awards /> -->
-      {:else if currentView === 'appsGroup'}
-        <!-- <AppsGroup /> -->
-      {/if}
+      <!-- the left part of the EditHome, content area -->
+      <div class="left-column-itemsbar">
+        {#if currentView === 'liked'}
+          <div>
+            <!-- <LikedPage /> -->
+          </div>
+        {:else if currentView === 'addHomeElement'}
+          <AppGroup showAvatarSelector={false} showHomeSelector={false} showAddNew={false} showVisibilityToggle={false} showDeleteButton={false} showSendTo={false} showDeletedArtContainer={false} showPlaceHomeElement={true}/>
+        {:else if currentView === 'profilePage'}
+          <!-- <ProfilePage /> -->
+        {:else if currentView === 'friends'}
+          <!-- <FriendsPage /> -->
+        {:else if currentView === 'awards'}
+          <!-- <Awards /> -->
+        {:else if currentView === 'appsGroup'}
+          <!-- <AppsGroup /> -->
+        {/if}
+      </div>
     </div>
   </div>
 {/if}
-
 <style>
-  * {
-    user-select: none;
-  }
-
-  .itemsbar,
-  #itemsButton {
-    background-color: white;
-    text-align: center;
-    border-radius: 40px;
-    box-shadow: 5px 5px 0px #7300ed;
-    padding: 14px 14px 14px 18px;
-    position: fixed;
-    z-index: 10;
-    transition: 0.01s all ease-in-out;
-    max-height: 80vh;
-    display: flex;
-  }
-
-  #itemsButton {
-    border-radius: 50%;
-  }
-
-  #currentUser,
-  #itemsButton {
-    right: 16px;
-    bottom: 16px;
-  }
-
-  button {
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    border-radius: 0;
-    appearance: none;
-    padding: 0;
+  #clear {
     margin: 0;
-    box-sizing: border-box;
+    padding:0;
+    
   }
+/* Position the itemsButton in the bottom right corner */
+ img {
+  width: 50px;
+  height: 50px;
+}
 
-  button:active {
-    /* background-color: white; */
-    background-color: #7300ed;
-    border-radius: 50%;
-    /* border: 2px solid #7300ed; */
-    /* box-sizing: border-box; */
-    /* box-shadow: 5px 5px 0px #7300ed; */
-  }
+ .icon {
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  height: auto;
+}
 
-  .icon {
-    max-width: 40px;
-    height: 40px;
-    float: left;
-    margin-top: 5px;
-  }
+#itemsButton {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  bottom: 20px;
+  right: 20px;
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 5px 5px 0px #7300ed;
+  z-index: 1000;
+  background-color: #fff;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
 
-  #itemsButton button,
-  .avatar
-   {
-    height: 40px;
-    width: 40px;
-    overflow: hidden;
-  }
+/* Styles for the expanded edit-home-menu */
+.edit-home-menu {
+  position: fixed;
+  bottom: 20px; /* Adjust if needed to ensure it's above the fixed button */
+  right: 20px;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 40px;
+  box-shadow: 5px 5px 0px #7300ed;
+  z-index: 999;
+}
 
-  #itemsButton img {
-    height: 40px;
-    width: auto;
-  }
+/* Container for the right and left columns */
+.menu-content {
+  display: flex;
+  flex-direction: row-reverse; /* Right column on the right */
+}
 
-  .left-column-itemsbar {
-    display: flex;
-    flex-wrap: nowrap;
-    float: left;
-    margin-right: 5px;
-    justify-content: flex-start;
-    flex-direction: column-reverse;
-  }
+/* Styles for the right-column-itemsbar */
+.right-column-itemsbar {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
 
-  .right-column-itemsbar {
-    float: left;
-    overflow-x: hidden;
-    overflow-y: auto;
-    margin: 20px 0px;
-  }
+.right-column-itemsbar .icon,
+.right-column-itemsbar button {
+  background-color: #fff;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  margin: 5px 0;
+  padding: 10px;
+}
 
-  .avatar > img {
-    height: 100%;
-  }
+.right-column-itemsbar .icon img,
+.right-column-itemsbar button img {
+  width: 50px;
+  height: 50px;
+}
+
+/* Styles for the left-column-itemsbar */
+.left-column-itemsbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 20px; /* Space between the right and left columns */
+}
 </style>

@@ -380,13 +380,6 @@
     }
     return new Blob([new Uint8Array(array)], { type: 'image/png' });
   }
-
-  // function getDateMillis() {
-  //   const dateMillis = new Date();
-  //   const dateIsoString = dateMillis.toISOString();
-  //   const dateReplaced1 = dateIsoString.replace(/:/g, '_');
-  //   return dateReplaced1.split('.')[0];
-  // }
 </script>
 
 <AppContainer
@@ -418,7 +411,7 @@
     {:else if $CurrentApp === 'mariosound'}
       <Mariosound />
     {/if}
-    <!-- if the file is loaded but the player is not the owner then we se a big preview -->
+    <!-- if the file is loaded but the player is not the owner then we see a big preview -->
   {:else if currentFile.loaded}
     <Preview file="{currentFile}" />
   {/if}

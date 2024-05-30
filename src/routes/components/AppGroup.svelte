@@ -10,27 +10,45 @@
  *  it opens a panel with all the works in that categorie, and
  *  allows the player to start a new work
  * 
- *  We pass on props to the appItemsbar and ArtListView component
+ *  We pass on props to the AppItem and ArtListView component
  */
 
 import AvatarSelector from './AvatarSelector.svelte';
-import House from './HomeSelector.svelte';
-import AppItemsbar from './AppItemsBar.svelte';
+import HomeSelector from './HomeSelector.svelte';
+import AppItem from './AppItem.svelte';
+
+export let showAvatarSelector = false;
+export let showHomeSelector = false;
+
+//show or hide components in ArtListView
+export let showAddNew = false;
+export let showVisibilityToggle = false;
+export let showDeleteButton = false;
+export let showSendTo = false;
+export let showDeletedArtContainer = false;
+export let showPlaceHomeElement = false;
+
 </script>
 
 <div class="appsGroupContainer">
 
+    {#if showAvatarSelector}
     <AvatarSelector showHistory="{true}" />
         <br />
-    <House />
+    {/if}
+    
+    {#if showHomeSelector}
+    <HomeSelector />
         <br />
-    <AppItemsbar appName = 'drawing' showAddNew={true} showStatusComp={true} showDeleteComp={true} showSendTo={true} showDeletedArtContainer={true}/>
+    {/if}
+
+    <AppItem appName = 'drawing' showAddNew={showAddNew} showVisibilityToggle={showVisibilityToggle} showDeleteButton={showDeleteButton} showSendTo={showSendTo} showDeletedArtContainer={showDeletedArtContainer} showPlaceHomeElement={showPlaceHomeElement}/>
         <br />
-    <AppItemsbar appName = 'stopmotion' showAddNew={true} showStatusComp={true} showDeleteComp={true} showSendTo={true} showDeletedArtContainer={true}/>
+    <AppItem appName = 'stopmotion' showAddNew={showAddNew} showVisibilityToggle={showVisibilityToggle} showDeleteButton={showDeleteButton} showSendTo={showSendTo} showDeletedArtContainer={showDeletedArtContainer} showPlaceHomeElement={showPlaceHomeElement}/>
         <br />
-    <AppItemsbar appName = 'animalchallenge' showAddNew={true} showStatusComp={true} showDeleteComp={true} showSendTo={true} showDeletedArtContainer={true}/>
-        <br />
-    <AppItemsbar appName = 'flowerchallenge' showAddNew={true} showStatusComp={true} showDeleteComp={true} showSendTo={true} showDeletedArtContainer={true}/>
+    <AppItem appName = 'animalchallenge' showAddNew={showAddNew} showVisibilityToggle={showVisibilityToggle} showDeleteButton={showDeleteButton} showSendTo={showSendTo} showDeletedArtContainer={showDeletedArtContainer} showPlaceHomeElement={showPlaceHomeElement}/>
+        <br /> 
+    <AppItem appName = 'flowerchallenge' showAddNew={showAddNew} showVisibilityToggle={showVisibilityToggle} showDeleteButton={showDeleteButton} showSendTo={showSendTo} showDeletedArtContainer={showDeletedArtContainer} showPlaceHomeElement={showPlaceHomeElement}/>
 
 </div>
 

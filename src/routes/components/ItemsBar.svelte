@@ -239,7 +239,7 @@
       {:else if $ItemsBarCurrentView === 'awards'}
         <Awards />
       {:else if $ItemsBarCurrentView === 'appGroup'}
-        <AppGroup />
+        <AppGroup showAvatarSelector={true} showHomeSelector={true} showAddNew={true} showVisibilityToggle={true} showDeleteButton={true} showSendTo={true} showDeletedArtContainer={true} showPlaceInHome={false}/>
       {/if}
     </div>
   </div>

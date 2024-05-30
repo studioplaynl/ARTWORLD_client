@@ -15,12 +15,12 @@
  *  It is used in the frieds, liked, profile page
  */
 
-  import Previewer from './ArtPreviewer.svelte';
+  import ArtPreviewer from './ArtPreviewer.svelte';
   import { dlog } from '../../helpers/debugLog';
 
   export let row = null;
   export const col = null;
-  export let clickable = false;
+  export let artClickable = false;
 
   let artworkUrl;
 
@@ -47,5 +47,5 @@
 </script>
 
 {#if artworkUrl}
-    <Previewer artwork="{artworkUrl}" clickable="{clickable}" row="{row}"/>
+    <ArtPreviewer artwork="{artworkUrl}" clickable="{artClickable}" row="{row}"/>
 {/if}

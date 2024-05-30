@@ -12,16 +12,13 @@
  *  artworks can be send to friends or other artwork categories
  */
 
-  // import { onMount } from 'svelte';
-  // import SvelteTable from 'svelte-table';
-
   import { onDestroy } from 'svelte';
   import { createArtworksStore } from '../../storage';
   import { Profile } from '../../session';
   // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
-  import StatusComp from './VisibilityToggle.svelte';
-  import DeleteComp from './DeleteButton.svelte';
+  import VisibilityToggle from './VisibilityToggle.svelte';
+  import DeleteButton from './DeleteButton.svelte';
   import SendTo from './SendTo.svelte';
   import {
     // STOPMOTION_MAX_FRAMES,
@@ -31,19 +28,19 @@
     OBJECT_STATE_UNDEFINED,
   } from '../../constants';
   import ArtworkLoader from './ArtworkLoader.svelte';
-
+  import PlaceHomeElement from './PlaceHomeElement.svelte';
 
   export let dataType = '';
 
   //show or hide components in artworkListViewer
-  export let showStatusComp = false;
-  export let showDeleteComp = false;
+  export let showVisibilityToggle = false;
+  export let showDeleteButton = false;
   export let showSendTo = false;
   export let showDeletedArtContainer = false;
-  export let showPlaceInHome = false;
+  export let showPlaceHomeElement = false;
 
-  // const deleteCheck = null;
-  // eslint-disable-next-line no-unused-vars
+  export let artClickable = true;
+
   let useraccount; // used in other components
   let filteredArt = [];
   let deletedArt = [];
@@ -97,7 +94,6 @@ $: if (store.length) {
       );
       filteredArt = [...filteredArt];
 
-
       deletedArt = value.filter(
         (el) => el.value.status === OBJECT_STATE_IN_TRASH,
       );
@@ -114,31 +110,30 @@ $: if (store.length) {
     CurrentUser = true;
     id = $Profile.id;
     useraccount = $Profile;
-
     await loadArtworks();
   }
 
   getUser();
-
 </script>
 
 <div class="art-app-container">
 
  {#each filteredArt as row, index (row.key)}
 
-  <div class="artworkListViewer-flex-row">
+  <!-- we reverse the icon order if the menu is PlaceHomeElement because the menu is on the right side of the screen -->
+  <div class="artworkListViewer-flex-row" style="flex-direction: {showPlaceHomeElement ? 'row-reverse' : 'row'};">
       <div class="padding">
         <div class="cell">
           <ArtworkLoader
-          clickable="{true}"
+          clickable="{artClickable}"
           row="{row}"
           />
         </div>
       </div>
     <div class="cell action-buttons" id={`row-${index}`}>
       <div class="buttons {row.SendToIsOpen ? 'hidden' : ''}">
-       {#if showStatusComp} 
-        <StatusComp
+       {#if showVisibilityToggle} 
+        <VisibilityToggle
           store="{store}"
           isCurrentUser="{isCurrentUser}"
           row="{row}"
@@ -146,8 +141,8 @@ $: if (store.length) {
         />
         {/if}
 
-        {#if showDeleteComp}
-        <DeleteComp
+        {#if showDeleteButton}
+        <DeleteButton
           store="{store}"
           isCurrentUser="{isCurrentUser}"
           row="{row}"
@@ -168,6 +163,14 @@ $: if (store.length) {
       </div>
       {/if}
     </div>
+
+    {#if showPlaceHomeElement}
+    <PlaceHomeElement
+      store="{store}"
+      isCurrentUser="{isCurrentUser}"
+      row="{row}"
+      rowIndex="{index}"/>
+    {/if}
   </div>
   {/each}
 
@@ -181,23 +184,18 @@ $: if (store.length) {
     />
       {#each deletedArt as row, index (row.key)}
         <div class="artworkListViewer-trash-flex-row">
-            <!-- <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-trashcan.svg"
-              alt="Trash can"
-            /> -->
             <ArtworkLoader
               clickable="{false}"
               row="{row}"
             />
           <div class="cell trash-action-buttons" id={`row-${index}`}>
-            <StatusComp
+            <VisibilityToggle
               store="{store}"
               isCurrentUser="{isCurrentUser}"
               row="{row}"
               rowIndex="{index}"
             />
-            <DeleteComp
+            <DeleteButton
               store="{store}"
               isCurrentUser="{isCurrentUser}"
               row="{row}"
@@ -249,24 +247,16 @@ $: if (store.length) {
 
 .artworkListViewer-flex-row{
   display: flex;
+  flex-direction: row-reverse;
   justify-content: space-evenly;
+  align-items: center;
   border-bottom: dashed 1px #7300eb;
-  padding: 4px 0 4px 0;
 }
 
 
 .cell {
   flex: 1;
   min-width: 0;
-}
-
-/* .rounded{
-  border: 1px solid;
-  border-radius: 8px;
-} */
-
-.padding{
-  /* padding: 4px; */
 }
 
 .action-buttons {

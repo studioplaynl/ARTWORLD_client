@@ -9,8 +9,6 @@
   import ru from '../../language/ru/ru.json';
   import ar from '../../language/ar/ar.json';
 
-  // import { dlog } from '../../helpers/debugLog';
-
   let adminMenuToggle = false;
 
   addMessages('NL', nl);
@@ -27,7 +25,6 @@
   if ($Profile == null) {
     role = null;
   } else if ('meta' in $Profile) {
-    // eslint-disable-next-line no-unused-vars
     role = $Profile.meta.Role;
   }
 
@@ -67,54 +64,35 @@
           {/if}
         </div>
       </div>
-      
         <button
           on:click="{() => {
             adminMenuToggle = false;
           }}"
-          class="closeicon"
-          aria-label="Close menu"
-          >
-          <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24px"
-          height="24px"
-          viewBox="0 0 24 24"
-          fill="none"
-          >
-            <path
-            d="M6.22566 4.81096C5.83514 4.42044 5.20197 4.42044 4.81145 4.81096C4.42092
-            5.20148 4.42092 5.83465 4.81145 6.22517L10.5862 11.9999L4.81151 17.7746C4.42098
-            18.1651 4.42098 18.7983 4.81151 19.1888C5.20203 19.5793 5.8352 19.5793 6.22572
-            19.1888L12.0004 13.4141L17.7751 19.1888C18.1656 19.5793 18.7988 19.5793 19.1893
-            19.1888C19.5798 18.7983 19.5798 18.1651 19.1893 17.7746L13.4146 11.9999L19.1893
-            6.22517C19.5799 5.83465 19.5799 5.20148 19.1893 4.81096C18.7988 4.42044 18.1657
-            4.42044 17.7751 4.81096L12.0004 10.5857L6.22566 4.81096Z"
-            fill="#7300eb">
-            </path>
-          </svg>
-      
-      
+          class="close-button"
+          aria-label="Close menu">
+          <img src="/assets/SHB/svg/AW-icon-cross.svg" alt="close admin menu" class="icon" />
         </button>
     </div>
   {:else if !!$Profile && 'meta' in $Profile && ($Profile.meta.Role === 'admin' || $Profile.meta.Role === 'moderator')}
-  <!-- <div class="open-button"> -->
     <button
       on:click="{() => {
         adminMenuToggle = true;
       }}"
       class="open-button"
-      aria-label="Open menu"
-    >
-      <div class="hamburger"></div>
-      <div class="hamburger"></div>
-      <div class="hamburger"></div>
+      aria-label="open admin menu">
+          <img src="/assets/SHB/svg/AW-icon-menu.svg" alt="open admin menu" class="icon"/>
     </button>
-    <!-- </div> -->
   {/if}
 </nav>
 
 <style>
+  .icon{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
+  }
+
   button {
     /* border: 2px solid #7300eb; */
     /* background: transparent; */
@@ -139,25 +117,18 @@
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
+    box-shadow: 4px 4px #7300eb;
   }
 
-  .closeicon {
+  .close-button {
+    width: 40px;
+    height: 40px;
     cursor: pointer;
-    padding: 10px 15px;
     float: right;
-    margin: 10px -1px 0 0;
     border-radius: 45% 0 0 45%;
     background-color: white;
     box-shadow: -4px 4px #7300eb;
     color: 7300eb;
-  }
-
-  .hamburger {
-    width: 30px;
-    height: 4px;
-    background-color: #7300eb;
-    margin: 4px 0;
-    box-shadow: 0px 0px 10px white;
   }
 
   ul {

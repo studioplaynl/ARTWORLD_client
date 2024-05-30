@@ -1,21 +1,15 @@
 <script>
-  // eslint-disable-next-line no-unused-vars
-  import { dlog } from '../../helpers/debugLog';
-
   import {
-    // PERMISSION_READ_PUBLIC,
     OBJECT_STATE_IN_TRASH,
     OBJECT_STATE_REGULAR,
   } from '../../constants';
   import { Profile } from '../../session';
-  // import { ArtworksStore } from '../../storage';
 
   const role = $Profile.meta.Role; // ;
   export let row;
   export const col = null;
   export const rowIndex = null;
   export let isCurrentUser;
-  // export let moveToArt = null;
   export let store;
   const currentUser = isCurrentUser(); // Bool? Of user object?
 

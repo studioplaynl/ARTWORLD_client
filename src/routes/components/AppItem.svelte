@@ -1,11 +1,11 @@
  <script>
   /**
- * @file AppItemsBar.svelte
+ * @file AppItem.svelte
  * @author Maarten
  *
  *  What is this file for?
  *  ======================
- *  AppItemsBar.svelte implements make a new and editing existing drawings/stopmotion etc
+ *  AppItem.svelte implements make a new and editing existing drawings/stopmotion etc
  *  in the items bar
  */
 import { push } from 'svelte-spa-router';
@@ -13,17 +13,18 @@ import ArtListView from './ArtListView.svelte';
 import { returnAppIconUrl } from '../../constants';
 import { PlayerHistory } from '../game/playerState';
 
+// local props
 let showHistory = false;
 export let appName = '';
 export let showAddNew = true;
-//show or hide components in ArtListView
-export let showStatusComp = false;
-export let showDeleteComp = false;
+// passed on props: show or hide components in ArtListView
+export let showVisibilityToggle = false;
+export let showDeleteButton = false;
 export let showSendTo = false;
 export let showDeletedArtContainer = false;
-export let showPlaceInHome = false;
+export let showPlaceHomeElement = false;
 // Destructure the props
-let props = { showStatusComp, showDeleteComp, showSendTo, showDeletedArtContainer, showPlaceInHome };
+let props = { showVisibilityToggle, showDeleteButton, showSendTo, showDeletedArtContainer, showPlaceHomeElement };
 
 /* Make a new artwork */
 function addNew() {
@@ -34,8 +35,9 @@ function addNew() {
 }
 
 </script>
-<div class="appItemsbarBorder">
-  <div class="appItemsbarContainer">
+<div class="AppItemBorder">
+    <!-- we reverse the icon order if the menu is PlaceHomeElement because the menu is on the right side of the screen -->
+  <div class="AppItemContainer" style="flex-direction: {showPlaceHomeElement ? 'row-reverse' : 'row'};">
 
 <!-- get the appropreate app icon from the function returnAppIconUrl -->
 <button on:click="{() => {
@@ -54,29 +56,29 @@ function addNew() {
     </div>
 {/if}
 
-    {#if showHistory}
-    <button on:click="{() => {showHistory = !showHistory;}}">
+{#if showHistory}
+<button on:click="{() => {showHistory = !showHistory;}}">
+  <img
+    alt="close"
+    class="icon_medium flex-row"
+    src="/assets/SHB/svg/AW-icon-cross.svg"
+  />
+</button>
+  {:else}
+  <button on:click="{() => {showHistory = !showHistory;}}">
       <img
-        alt="close"
-        class="icon_medium flex-row"
-        src="/assets/SHB/svg/AW-icon-cross.svg"
-      />
-    </button>
-      {:else}
-      <button on:click="{() => {showHistory = !showHistory;}}">
-          <img
-        alt="unfold options"
-        class="icon_medium flex-row"
-        src="/assets/SHB/svg/AW-icon-enter.svg"
-      />
-      </button>
-    {/if}
-  </div> <!-- appItemsbarContainer -->
+    alt="unfold options"
+    class="icon_medium flex-row"
+    src="/assets/SHB/svg/AW-icon-enter.svg"
+  />
+  </button>
+{/if}
+</div> <!-- AppItemContainer -->
 
-  {#if showHistory}
-      <ArtListView dataType={appName} {...props} />
-  {/if}
-</div> <!-- appItemsbarBorder -->
+{#if showHistory}
+    <ArtListView dataType={appName} {...props} />
+{/if}
+</div> <!-- AppItemBorder -->
 
 <style>
 
@@ -100,7 +102,7 @@ function addNew() {
     /* box-shadow: 5px 5px 0px #7300ed; */
   }
 
-  .appItemsbarBorder{
+  .AppItemBorder{
     /* border: 1px solid #7300eb; */
     border-radius: 25px;
     padding: 6px;
@@ -126,7 +128,8 @@ function addNew() {
   display: flex;
   justify-content: space-evenly;
 }
-.appItemsbarContainer {
+
+.AppItemContainer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
