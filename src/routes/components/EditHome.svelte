@@ -76,7 +76,7 @@
             <!-- <LikedPage /> -->
           </div>
         {:else if currentView === 'addHomeElement'}
-          <AppGroup showAvatarSelector={false} showHomeSelector={false} showAddNew={false} showVisibilityToggle={false} showDeleteButton={false} showSendTo={false} showDeletedArtContainer={false} showPlaceHomeElement={true}/>
+          <AppGroup showAvatarSelector={false} showHomeSelector={false} showAddNew={false} showVisibilityToggle={false} showDeleteButton={false} showSendTo={false} showDeletedArtContainer={false} showPlaceHomeElement={true} artClickable={false}/>
         {:else if currentView === 'profilePage'}
           <!-- <ProfilePage /> -->
         {:else if currentView === 'friends'}
@@ -153,7 +153,7 @@
   align-items: center;
 }
 
-.right-column-itemsbar .icon,
+.right-column-itemsbar,
 .right-column-itemsbar button {
   background-color: #fff;
   border-radius: 50%;

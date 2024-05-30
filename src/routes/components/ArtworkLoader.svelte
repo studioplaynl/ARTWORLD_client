@@ -16,19 +16,12 @@
  */
 
   import ArtPreviewer from './ArtPreviewer.svelte';
-  import { dlog } from '../../helpers/debugLog';
 
   export let row = null;
   export const col = null;
   export let artClickable = false;
 
   let artworkUrl;
-
-  function handleArtworkClicked(artworkData) {
-    // Handle the artwork data
-    dlog('Artwork clicked:', artworkData);
-    // Perform any desired actions with the artwork data
-  }
 
   $: {
     if (row) {
@@ -47,5 +40,5 @@
 </script>
 
 {#if artworkUrl}
-    <ArtPreviewer artwork="{artworkUrl}" clickable="{artClickable}" row="{row}"/>
+    <ArtPreviewer artwork="{artworkUrl}" artClickable="{artClickable}" row="{row}"/>
 {/if}

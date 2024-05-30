@@ -6,7 +6,7 @@
   export let artwork;
   export let row = null;
 
-  export let clickable = false;
+  export let artClickable = true;
 
   let image;
   let frame = 0;
@@ -26,7 +26,7 @@
         }
       }, 1000 / STOPMOTION_FPS);
 
-      // Don't animate if this (assumed) stop-motion is square
+      // Don't animate if this (assumed) artwork is square
       if (image && image.clientWidth > 0 && image.clientWidth === image.clientHeight) {
         clearInterval(interval);
       }
@@ -39,6 +39,7 @@
   });
 
   function handleOpenArtwork() {
+    if (!artClickable) return;
     // checks if we clicked 'voorbeeld' cell and if it has a value
     // opens the artwork with the appropriate app
     if (typeof row === 'undefined' || row === null) return;
@@ -53,10 +54,11 @@
   }
 </script>
 
-<div class="artPreview" style="--avatar-size: {avatarSize}px;"
-  on:click="{handleOpenArtwork}" class:clickable="{clickable}">
+<button class="artPreview" on:click="{handleOpenArtwork}" id="{artClickable ? 'clickable' : 'notClickable'}">
+  <div class="artPreview" style="--avatar-size: {avatarSize}px;">
   <img bind:this="{image}" src="{artwork}" alt="artwork" />
 </div>
+</button>
 
 <style>
   .artPreview {
@@ -64,13 +66,21 @@
     width: var(--avatar-size);
     overflow: hidden;
     position: relative;
+    border: none;
+    border-radius: 0;
   }
-  .clickable {
+  #clickable {
     cursor: pointer;
   }
 
-  .clickable:hover {
+  #clickable:hover {
     opacity: 0.75;
+  }
+
+  #notClickable {
+    /* cursor: not-allowed; */
+    padding: 0;
+    cursor: default;
   }
 
   .artPreview > img {

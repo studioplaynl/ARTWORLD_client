@@ -23,8 +23,10 @@ export let showDeleteButton = false;
 export let showSendTo = false;
 export let showDeletedArtContainer = false;
 export let showPlaceHomeElement = false;
+export let artClickable = true;
+
 // Destructure the props
-let props = { showVisibilityToggle, showDeleteButton, showSendTo, showDeletedArtContainer, showPlaceHomeElement };
+let props = { showVisibilityToggle, showDeleteButton, showSendTo, showDeletedArtContainer, showPlaceHomeElement, artClickable};
 
 /* Make a new artwork */
 function addNew() {

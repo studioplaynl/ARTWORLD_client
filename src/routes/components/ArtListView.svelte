@@ -32,13 +32,12 @@
 
   export let dataType = '';
 
-  //show or hide components in artworkListViewer
+  //show or hide components in ArtworkListViewer
   export let showVisibilityToggle = false;
   export let showDeleteButton = false;
   export let showSendTo = false;
   export let showDeletedArtContainer = false;
   export let showPlaceHomeElement = false;
-
   export let artClickable = true;
 
   let useraccount; // used in other components
@@ -125,7 +124,7 @@ $: if (store.length) {
       <div class="padding">
         <div class="cell">
           <ArtworkLoader
-          clickable="{artClickable}"
+          artClickable="{artClickable}"
           row="{row}"
           />
         </div>
