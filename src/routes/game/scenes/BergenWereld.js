@@ -9,7 +9,7 @@ import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
 
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerPos, PlayerZoom } from '../playerState';
+import { PlayerPos } from '../playerState';
 import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 // import PreloadScene from './PreloadScene';
