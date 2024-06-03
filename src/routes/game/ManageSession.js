@@ -298,7 +298,7 @@ class ManageSession {
 
     const streamUsersPromise = new Promise((resolve) => {
       this.socket.rpc(rpcCommand, location).then((rec) => {
-        //! the server reports all users in location except self_user
+        // the server reports all users in location except self_user
         dlog('rpcCommand: ', rpcCommand, ' location: ', location);
         // get all online players = serverArray
         // create array for newUsers and create array for deleteUsers

@@ -375,9 +375,10 @@
     align-items: center;
   }
 
-  .userName{
+  /* .userName{ */
     /* float: right; */
-  }
+  /* } */
+
   .icon {
     max-width: 4rem;
     height: 4rem;

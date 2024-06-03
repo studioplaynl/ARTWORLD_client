@@ -68,6 +68,7 @@
   button.sendButton {
     width: 4rem;
     border-radius: 1px;
+    color: #7300ED;
   }
   .selectBox {
     width: 15rem;

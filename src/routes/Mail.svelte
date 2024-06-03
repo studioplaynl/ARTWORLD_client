@@ -79,13 +79,13 @@
             alt="Someone sent you an artwork"
           />
         </div>
-        <p on:click="{goHome(notification.sender_id)}">
+        <button class="font-size"  on:click="{() => goHome(notification.sender_id)}">
           {notification.content.username}
-        </p>
+        </button>
           <ArtPreviewer
           row={notification.content}
           artwork="{notification.content.previewUrl}"
-          clickable={true}
+          artClickable={false}
           on:clicked={goHome(notification.sender_id)}/>
       </div>
     {/each}
@@ -108,10 +108,10 @@
             alt="Someone liked your artwork"
           />
         </div>
-        <p on:click="{goHome(notification.sender_id)}">
+        <button class="font-size" type="button" on:click="{() => goHome(notification.sender_id)}">
           {notification.content.username}
-        </p>
-          <ArtPreviewer artwork="{notification.previewUrl}" clickable={true} on:clicked={goHome(notification.sender_id)}/>
+        </button>
+          <ArtPreviewer artwork="{notification.previewUrl}" artClickable={false} on:clicked={goHome(notification.sender_id)}/>
       </div>
     {/each}
   </div>
@@ -137,5 +137,19 @@
 
   .icon.header {
     margin: 0 auto;
+  }
+
+  button {
+    /*  purple */
+    color: #7300ed;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    margin: 0 10px;
+  }
+
+  .font-size {
+    font-size: 1em;
   }
 </style>

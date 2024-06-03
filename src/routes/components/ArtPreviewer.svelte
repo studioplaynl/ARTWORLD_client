@@ -39,17 +39,24 @@
   });
 
   function handleOpenArtwork() {
+    console.log('handleOpenArtwork row', row);
     if (!artClickable) return;
     // checks if we clicked 'voorbeeld' cell and if it has a value
     // opens the artwork with the appropriate app
     if (typeof row === 'undefined' || row === null) return;
 
     if (row.value) {
+      // case: from self
       push(
         `/${row.collection}?userId=${row.user_id}&key=${row.key}`,
       );
     } else if (row.key) {
-
+      artClickable = false;
+      //case: from others
+      //! not working reliably, so off for now
+      // push(
+      //   `/${row.collection}?userId=${row.userId}&key=${row.key}`,
+      // );
     }
   }
 </script>
