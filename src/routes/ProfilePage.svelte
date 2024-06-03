@@ -115,7 +115,7 @@
         renderComponent: {
           component: ArtworkLoader,
           props: {
-            clickable: true,
+            artClickable: true,
           },
         },
       },
