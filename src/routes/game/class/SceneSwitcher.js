@@ -2,29 +2,28 @@ import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog, dwarn } from '../../../helpers/debugLog';
 import { PlayerLocation } from '../playerState';
-// import { PlayerLocation, playerStreamID, PlayerHistory } from '../playerState';
-
 import { DEFAULT_HOME } from '../../../constants';
 import { Error, ShowHomeEditBar } from '../../../session';
 import { setLoader } from '../../../helpers/nakamaHelpers';
-// import { ListFormat } from 'typescript';
-// import { push, querystring} from "svelte-spa-router";
 
 /** Keeps track of user locations, enables back button
- * @todo Refactor?
- */
+ * In this file I switch phaser scenes and change the nakama stream subscription. There are a few cases:
+* 1. go from phaser scene to phaser scene we leave first nakama stream and join the next this s
+* stops the first phaser scene and start the next (.start does this)
+
+* 2. go from phaser scene to app we leave first nakama stream 
+* and join the next we pause the phaser scene and start an app
+
+* 3. we go from app to phaser scene we leave first nakama stream 
+* and join the next we resume phaser scene and leave the app
+*/
+
 class SceneSwitcher {
   constructor() {
-    // this.tempHistoryArray = [];
-
     this.unsubscribeScene = PlayerLocation.subscribe(() => {
-      // dlog('HistoryBug: SceneSwitcher: PlayerLocation changed, SceneSwitcher reacts, value = ', JSON.stringify(val));
       // dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
-      // check if we are going from the same world to the same world;
-      // then don't switch scenes
       // dlog('\u001b[31m playerStreamID', get(playerStreamID));
       // const history = get(PlayerHistory);
-      // dlog('SceneSwitcher playerHistory: ', history);
       this.doSwitchScene();
     });
     // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {

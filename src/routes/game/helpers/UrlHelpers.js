@@ -19,18 +19,11 @@
  *    methods rehydrate the stores with the information found in the window.location
  */
 
-/* eslint-disable class-methods-use-this */
 import { get } from 'svelte/store';
 import { parse, stringify } from 'qs';
 import { push, replace, location, querystring } from 'svelte-spa-router';
 
-import {
-  PlayerPos,
-  PlayerLocation,
-  PlayerHistory,
-  PlayerZoom,
-  PlayerUpdate,
-} from '../playerState';
+import { PlayerPos, PlayerLocation, PlayerHistory, PlayerZoom, PlayerUpdate } from '../playerState';
 
 import { CurrentApp } from '../../../session';
 
@@ -45,7 +38,6 @@ import {
   isValidApp,
 } from '../../../constants';
 
-// eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import SceneSwitcher from '../class/SceneSwitcher';
 import ManageSession from '../ManageSession';
@@ -65,8 +57,7 @@ export const checkIfSceneIsAllowed = (loc) => {
 /** Does this string look like a house name name?
  * @return {boolean} yes/no
  */
-export const checkIfLocationLooksLikeAHouse = (loc) =>
-  loc !== null && loc.split('-').length > 3;
+export const checkIfLocationLooksLikeAHouse = (loc) => loc !== null && loc.split('-').length > 3;
 
 export function returnPartsOfArtUrl(url) {
   const parts = url.split('/');
@@ -100,7 +91,7 @@ export function parseURL() {
 
   let appName = parts[1].toString().toLowerCase();
   const previousAppName = get(CurrentApp);
-  // dlog("appName: ", appName, " previousAppName: ", previousAppName)
+  dlog('appName: ', appName, ' previousAppName: ', previousAppName);
 
   // An empty appName is no longer supported, /game is default
   if (appName === '') {
@@ -128,10 +119,7 @@ export function parseURL() {
       // going from game to game does not make sense
       if (previousAppName === 'game') return;
 
-      SceneSwitcher.startSceneCloseApp(
-        previousAppName,
-        ManageSession.currentScene.scene.key,
-      );
+      SceneSwitcher.startSceneCloseApp(previousAppName, ManageSession.currentScene.scene.key);
     } else {
       // when the app just launched ManageSession.currentScene is null
       if (typeof ManageSession.currentScene === 'undefined') return;
@@ -157,28 +145,19 @@ export function parseQueryString() {
   const newPlayerLocation = {};
 
   if ('house' in query) {
-    if (
-      checkIfLocationLooksLikeAHouse(query.house) &&
-      get(PlayerLocation).house !== query.house
-    ) {
+    if (checkIfLocationLooksLikeAHouse(query.house) && get(PlayerLocation).house !== query.house) {
       newPlayerLocation.house = query.house;
     }
   }
 
   if ('location' in query) {
-    if (
-      checkIfSceneIsAllowed(query.location) &&
-      get(PlayerLocation).scene !== query.location
-    ) {
+    if (checkIfSceneIsAllowed(query.location) && get(PlayerLocation).scene !== query.location) {
       newPlayerLocation.scene = query.location;
     }
   }
 
   if ('zoom' in query) {
-    if (
-      parseFloat(query.zoom) <= ZOOM_MAX &&
-      parseFloat(query.zoom) >= ZOOM_MIN
-    ) {
+    if (parseFloat(query.zoom) <= ZOOM_MAX && parseFloat(query.zoom) >= ZOOM_MIN) {
       PlayerZoom.set(parseFloat(query.zoom));
     } else {
       PlayerZoom.set(DEFAULT_ZOOM);
@@ -204,16 +183,11 @@ export function parseQueryString() {
     const currentLocation = get(PlayerLocation);
 
     // scene is not loaded, getting the info from SCENE_INFO
-    const sceneInfo = SCENE_INFO.find(
-      (obj) => obj.scene === currentLocation.scene,
-    );
+    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === currentLocation.scene);
 
     if (sceneInfo) {
       // dlog ("currentScene, sceneInfo", currentScene, sceneInfo)
-      const currentSceneSize = new Phaser.Math.Vector2(
-        sceneInfo.sizeX,
-        sceneInfo.sizeY,
-      );
+      const currentSceneSize = new Phaser.Math.Vector2(sceneInfo.sizeX, sceneInfo.sizeY);
 
       const avatarHalfSize = AVATAR_BASE_SIZE / 2;
       const minX = -(currentSceneSize.x / 2) + avatarHalfSize;
@@ -283,10 +257,8 @@ export function updateQueryString() {
   if (x !== null && y !== null && scene !== null) {
     const query = { ...parse(get(querystring)) };
 
-    const locationChanged =
-      'location' in previousQuery && scene !== previousQuery?.location;
-    const houseChanged =
-      'house' in previousQuery && house !== previousQuery?.house;
+    const locationChanged = 'location' in previousQuery && scene !== previousQuery?.location;
+    const houseChanged = 'house' in previousQuery && house !== previousQuery?.house;
     // dlog('houseChanged: ', houseChanged)
 
     let method = locationChanged || houseChanged ? 'push' : 'replace';

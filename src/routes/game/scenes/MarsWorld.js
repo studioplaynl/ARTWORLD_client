@@ -7,14 +7,10 @@ import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
-// eslint-disable-next-line no-unused-vars
+
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerPos, PlayerZoom } from '../playerState';
-import {
-  SCENE_INFO,
-  ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN,
-} from '../../../constants';
+import { PlayerPos } from '../playerState';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
@@ -59,10 +55,7 @@ export default class MarsWorld extends Phaser.Scene {
     });
 
     // MarsWorld
-    this.load.image(
-      'artWorldPortalMars',
-      './assets/world_mars_red/portal_goHome_mars.png',
-    );
+    this.load.image('artWorldPortalMars', './assets/world_mars_red/portal_goHome_mars.png');
     this.load.image('krater_mars', './assets/world_mars_red/krater_mars.png');
     this.load.image('rots1_mars', './assets/world_mars_red/rots1_mars.png');
     this.load.image('rots2_mars', './assets/world_mars_red/rots2_mars.png');
@@ -70,18 +63,9 @@ export default class MarsWorld extends Phaser.Scene {
     this.load.image('rots4_mars', './assets/world_mars_red/rots4_mars.png');
     this.load.image('rots5_mars', './assets/world_mars_red/rots5_mars.png');
     this.load.image('rots6_mars', './assets/world_mars_red/rots6_mars.png');
-    this.load.image(
-      'rover_all_one_layer_mars',
-      './assets/world_mars_red/rover_all_one_layer_mars.png',
-    );
-    this.load.image(
-      'ufo_atwork1_mars',
-      './assets/world_mars_red/ufo_atwork1_mars.png',
-    );
-    this.load.image(
-      'ufo_slapend_vloer_mars',
-      './assets/world_mars_red/ufo_slapend_vloer_mars.png',
-    );
+    this.load.image('rover_all_one_layer_mars', './assets/world_mars_red/rover_all_one_layer_mars.png');
+    this.load.image('ufo_atwork1_mars', './assets/world_mars_red/ufo_atwork1_mars.png');
+    this.load.image('ufo_slapend_vloer_mars', './assets/world_mars_red/ufo_slapend_vloer_mars.png');
   }
 
   async create() {
@@ -124,7 +108,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.player = new PlayerDefault(
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -135,9 +119,8 @@ export default class MarsWorld extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     // ......... end PLAYER VS WORLD .......................................................................
@@ -168,11 +151,8 @@ export default class MarsWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        this.worldSize.x / 1.5,
-      ),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, this.worldSize.x / 1.5),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200)
     );
     this.balloonContainer.setDepth(602);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -222,10 +202,7 @@ export default class MarsWorld extends Phaser.Scene {
     // we set draggable on restart scene with a global flag
 
     let locationVector = new Phaser.Math.Vector2(162, 109);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
 
     this.purpleCircleLocation = new GenerateLocation({
       scene: this,
@@ -248,7 +225,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.krater_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1142),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -52),
-      'krater_mars',
+      'krater_mars'
     );
     this.krater_mars_1.name = 'krater_mars_1';
     this.krater_mars_1.setScale(0.94);
@@ -261,7 +238,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.rots1_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2077),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1657),
-      'rots1_mars',
+      'rots1_mars'
     );
     this.rots1_mars_1.name = 'rots1_mars_1';
     this.rots1_mars_1.setScale(1.98);
@@ -274,7 +251,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.rots2_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1913),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 395),
-      'rots2_mars',
+      'rots2_mars'
     );
     this.rots2_mars_1.name = 'rots2_mars_1';
     this.rots2_mars_1.setScale(1.98);
@@ -289,7 +266,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.rots2_mars_2 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1673),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2160),
-      'rots2_mars',
+      'rots2_mars'
     );
     this.rots2_mars_2.name = 'rots2_mars_2';
     this.rots2_mars_2.setScale(1.5);
@@ -304,7 +281,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.rots3_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2042),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 870),
-      'rots3_mars',
+      'rots3_mars'
     );
     this.rots3_mars_1.name = 'rots3_mars_1';
     this.rots3_mars_1.setScale(1.66);
@@ -317,7 +294,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.rots4_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -252),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1540),
-      'rots4_mars',
+      'rots4_mars'
     );
     this.rots4_mars_1.name = 'rots4_mars_1';
     this.rots4_mars_1.setScale(1.08);
@@ -330,7 +307,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.rots5_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 615),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2120),
-      'rots5_mars',
+      'rots5_mars'
     );
     this.rots5_mars_1.name = 'rots5_mars_1';
     this.rots5_mars_1.setScale(1.46);
@@ -343,7 +320,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.rots6_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1420),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2185),
-      'rots6_mars',
+      'rots6_mars'
     );
     this.rots6_mars_1.name = 'rots6_mars_1';
     this.rots6_mars_1.setScale(1.44);
@@ -356,7 +333,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.rover_all_one_layer_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -380),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1265),
-      'rover_all_one_layer_mars',
+      'rover_all_one_layer_mars'
     );
     this.rover_all_one_layer_mars_1.name = 'rover_all_one_layer_mars_1';
     this.rover_all_one_layer_mars_1.setScale(0.98);
@@ -368,7 +345,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.rots2_mars_3 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -722),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1520),
-      'rots2_mars',
+      'rots2_mars'
     );
     this.rots2_mars_3.name = 'rots2_mars_3';
     this.rots2_mars_3.setScale(1.5);
@@ -383,7 +360,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.ufo_atwork1_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1430),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1327),
-      'ufo_atwork1_mars',
+      'ufo_atwork1_mars'
     );
     this.ufo_atwork1_mars_1.name = 'ufo_atwork1_mars_1';
     this.ufo_atwork1_mars_1.setScale(2);
@@ -396,7 +373,7 @@ export default class MarsWorld extends Phaser.Scene {
     this.ufo_slapend_vloer_mars_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2195),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2085),
-      'ufo_slapend_vloer_mars',
+      'ufo_slapend_vloer_mars'
     );
     this.ufo_slapend_vloer_mars_1.name = 'ufo_slapend_vloer_mars_1';
     this.ufo_slapend_vloer_mars_1.setScale(1.46);

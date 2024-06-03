@@ -3,14 +3,10 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-import { PlayerPos, PlayerZoom } from '../playerState';
+import { PlayerPos } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
-import {
-  SCENE_INFO,
-  ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN,
-} from '../../../constants';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
 import ServerCall from '../class/ServerCall';
@@ -59,23 +55,11 @@ export default class Location4 extends Phaser.Scene {
 
     // ....... IMAGES ......................................................................
     // exhibition
-    this.load.image(
-      'exhibit1',
-      './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg',
-    );
+    this.load.image('exhibit1', './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg');
     // this.load.image("exhibit1", "./assets/art_styles/people/04b49a9aa5f7ada5d8d96deba709c9d4.jpg")
-    this.load.image(
-      'exhibit2',
-      './assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg',
-    );
-    this.load.image(
-      'exhibit3',
-      './assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg',
-    );
-    this.load.image(
-      'exhibit4',
-      './assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg',
-    );
+    this.load.image('exhibit2', './assets/art_styles/repetition/4c15d943b5b4993b42917fbfb5996c1f.jpg');
+    this.load.image('exhibit3', './assets/art_styles/repetition/dd5315e5a77ff9601259325341a0bca9.jpg');
+    this.load.image('exhibit4', './assets/art_styles/people/28bc857da206c33c5f97bfbcf40e9970.jpg');
 
     this.load.image('ground', 'assets/platform.png');
   }
@@ -111,7 +95,7 @@ export default class Location4 extends Phaser.Scene {
     this.player = new PlayerDefault(
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -125,9 +109,8 @@ export default class Location4 extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
@@ -167,11 +150,8 @@ export default class Location4 extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        this.worldSize.x / 1.5,
-      ),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, this.worldSize.x / 1.5),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200)
     );
     this.balloonContainer.setDepth(602);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag

@@ -7,14 +7,10 @@ import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
-// eslint-disable-next-line no-unused-vars
+
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerPos, PlayerZoom } from '../playerState';
-import {
-  SCENE_INFO,
-  ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN,
-} from '../../../constants';
+import { PlayerPos } from '../playerState';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
@@ -59,51 +55,18 @@ export default class SlimeWorld extends Phaser.Scene {
     });
 
     // SlimeWorld
-    this.load.image(
-      'bubbleface1_slime',
-      './assets/world_slime_world/bubbleface1_slime.png',
-    );
-    this.load.image(
-      'bubbleplant1_slime',
-      './assets/world_slime_world/bubbleplant1_slime.png',
-    );
-    this.load.image(
-      'bubbleplant2_slime',
-      './assets/world_slime_world/bubbleplant2_slime.png',
-    );
-    this.load.image(
-      'cantarella_tree_1_slime',
-      './assets/world_slime_world/cantarella_tree_1_slime.png',
-    );
-    this.load.image(
-      'cantarella_tree_2_slime',
-      './assets/world_slime_world/cantarella_tree_2_slime.png',
-    );
-    this.load.image(
-      'cantarella_tree_3_slime',
-      './assets/world_slime_world/cantarella_tree_3_slime.png',
-    );
-    this.load.image(
-      'cantarella_tree_4_slime',
-      './assets/world_slime_world/cantarella_tree_4_slime.png',
-    );
-    this.load.image(
-      'cantarella_tree_6_slime',
-      './assets/world_slime_world/cantarella_tree_6_slime.png',
-    );
-    this.load.image(
-      'cantarella_tree_7_slime',
-      './assets/world_slime_world/cantarella_tree_7_slime.png',
-    );
+    this.load.image('bubbleface1_slime', './assets/world_slime_world/bubbleface1_slime.png');
+    this.load.image('bubbleplant1_slime', './assets/world_slime_world/bubbleplant1_slime.png');
+    this.load.image('bubbleplant2_slime', './assets/world_slime_world/bubbleplant2_slime.png');
+    this.load.image('cantarella_tree_1_slime', './assets/world_slime_world/cantarella_tree_1_slime.png');
+    this.load.image('cantarella_tree_2_slime', './assets/world_slime_world/cantarella_tree_2_slime.png');
+    this.load.image('cantarella_tree_3_slime', './assets/world_slime_world/cantarella_tree_3_slime.png');
+    this.load.image('cantarella_tree_4_slime', './assets/world_slime_world/cantarella_tree_4_slime.png');
+    this.load.image('cantarella_tree_6_slime', './assets/world_slime_world/cantarella_tree_6_slime.png');
+    this.load.image('cantarella_tree_7_slime', './assets/world_slime_world/cantarella_tree_7_slime.png');
     this.load.image('rups_slime', './assets/world_slime_world/rups_slime.png');
-    this.load.image(
-      'slimepool_1_slime',
-      './assets/world_slime_world/slimepool_1_slime.png',
-    );
-    this.load.image(
-      'artWorldPortalSlime',
-      './assets/world_slime_world/Portal_goHome_slime.png',
-    );
+    this.load.image('slimepool_1_slime', './assets/world_slime_world/slimepool_1_slime.png');
+    this.load.image('artWorldPortalSlime', './assets/world_slime_world/Portal_goHome_slime.png');
   }
 
   async create() {
@@ -146,7 +109,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.player = new PlayerDefault(
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -157,9 +120,8 @@ export default class SlimeWorld extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     // ......... end PLAYER VS WORLD .......................................................................
@@ -190,11 +152,8 @@ export default class SlimeWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        this.worldSize.x / 1.5,
-      ),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, this.worldSize.x / 1.5),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200)
     );
     this.balloonContainer.setDepth(602);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -244,10 +203,7 @@ export default class SlimeWorld extends Phaser.Scene {
     // we set draggable on restart scene with a global flag
 
     let locationVector = new Phaser.Math.Vector2(0, 0);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
 
     this.purpleCircleLocation = new GenerateLocation({
       scene: this,
@@ -270,7 +226,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.bubbleface1_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1989),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1853),
-      'bubbleface1_slime',
+      'bubbleface1_slime'
     );
     this.bubbleface1_slime.name = 'bubbleface1_slime';
     this.bubbleface1_slime.setScale(1.8);
@@ -283,7 +239,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.bubbleplant1_1_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -590),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1040),
-      'bubbleplant1_slime',
+      'bubbleplant1_slime'
     );
     this.bubbleplant1_1_slime.name = 'bubbleplant1_1_slime';
     this.bubbleplant1_1_slime.setScale(1.29);
@@ -296,7 +252,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.bubbleplant1_2_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 593),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2043),
-      'bubbleplant1_slime',
+      'bubbleplant1_slime'
     );
     this.bubbleplant1_2_slime.name = 'bubbleplant1_1_slime';
     this.bubbleplant1_2_slime.setScale(1.98);
@@ -309,7 +265,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.bubbleplant2_1_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1573),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 18),
-      'bubbleplant2_slime',
+      'bubbleplant2_slime'
     );
     this.bubbleplant2_1_slime.name = 'bubbleplant2_1_slime';
     this.bubbleplant2_1_slime.setScale(1.48);
@@ -324,7 +280,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.bubbleplant2_2_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2366),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 68),
-      'bubbleplant2_slime',
+      'bubbleplant2_slime'
     );
     this.bubbleplant2_2_slime.name = 'bubbleplant2_2_slime';
     this.bubbleplant2_2_slime.setScale(0.97);
@@ -339,7 +295,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.cantarella_tree_1_1_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -517),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2215),
-      'cantarella_tree_1_slime',
+      'cantarella_tree_1_slime'
     );
     this.cantarella_tree_1_1_slime.name = 'cantarella_tree_1_1_slime';
     this.cantarella_tree_1_1_slime.setScale(1.4);
@@ -352,7 +308,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.cantarella_tree_1_2_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1067),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1942),
-      'cantarella_tree_1_slime',
+      'cantarella_tree_1_slime'
     );
     this.cantarella_tree_1_2_slime.name = 'cantarella_tree_1_2_slime';
     this.cantarella_tree_1_2_slime.setScale(0.87);
@@ -366,7 +322,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.cantarella_tree_2_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1957),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 695),
-      'cantarella_tree_2_slime',
+      'cantarella_tree_2_slime'
     );
     this.cantarella_tree_2_slime.name = 'cantarella_tree_2_slime';
     this.cantarella_tree_2_slime.setScale(2.3);
@@ -379,7 +335,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.cantarella_tree_3_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2122),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2015),
-      'cantarella_tree_3_slime',
+      'cantarella_tree_3_slime'
     );
     this.cantarella_tree_3_slime.name = 'cantarella_tree_3_slime';
     this.cantarella_tree_3_slime.setScale(1.8);
@@ -392,7 +348,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.cantarella_tree_4_1_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 342),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 55),
-      'cantarella_tree_4_slime',
+      'cantarella_tree_4_slime'
     );
     this.cantarella_tree_4_1_slime.name = 'cantarella_tree_4_1_slime';
     this.cantarella_tree_4_1_slime.setScale(1.46);
@@ -405,7 +361,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.cantarella_tree_4_2_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1091),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -88),
-      'cantarella_tree_4_slime',
+      'cantarella_tree_4_slime'
     );
     this.cantarella_tree_4_2_slime.name = 'cantarella_tree_4_2_slime';
     this.cantarella_tree_4_2_slime.setScale(1.24);
@@ -419,7 +375,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.cantarella_tree_6_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1340),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 490),
-      'cantarella_tree_6_slime',
+      'cantarella_tree_6_slime'
     );
     this.cantarella_tree_6_slime.name = 'cantarella_tree_6_slime';
     this.cantarella_tree_6_slime.setScale(1.67);
@@ -432,7 +388,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.cantarella_tree_7_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -363),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -214),
-      'cantarella_tree_7_slime',
+      'cantarella_tree_7_slime'
     );
     this.cantarella_tree_7_slime.name = 'cantarella_tree_7_slime';
     this.cantarella_tree_7_slime.setScale(1.24);
@@ -445,7 +401,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.rups_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1730),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1700),
-      'rups_slime',
+      'rups_slime'
     );
     this.rups_slime.name = 'rups_slime';
     this.rups_slime.setScale(1.9);
@@ -458,7 +414,7 @@ export default class SlimeWorld extends Phaser.Scene {
     this.slimepool_1_slime = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1390),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1305),
-      'slimepool_1_slime',
+      'slimepool_1_slime'
     );
     this.slimepool_1_slime.name = 'slimepool_1_slime';
     this.slimepool_1_slime.setScale(2.83);

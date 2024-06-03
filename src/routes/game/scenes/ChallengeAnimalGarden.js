@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { get } from 'svelte/store';
 import { push } from 'svelte-spa-router';
 import ManageSession from '../ManageSession';
@@ -8,9 +7,9 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-// eslint-disable-next-line no-unused-vars
+
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerHistory, PlayerPos, PlayerZoom } from '../playerState';
+import { PlayerHistory, PlayerPos } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
@@ -101,7 +100,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     this.player = new PlayerDefault(
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -113,9 +112,8 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     // this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
@@ -147,9 +145,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   }
 
   reloadButton() {
-    const reloadButton = this.add
-      .image(this.worldSize.x / 2 - 300, -50, 'reloadSign')
-      .setDepth(200);
+    const reloadButton = this.add.image(this.worldSize.x / 2 - 300, -50, 'reloadSign').setDepth(200);
     reloadButton.setInteractive();
     reloadButton.on('pointerup', () => {
       // reload the animal garden to show new animals
@@ -160,9 +156,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
 
   makeNewAnimalButton() {
     // add the plussign button to the scene
-    const plusSign = this.add
-      .image(this.worldSize.x / 2, -50, 'plusSign')
-      .setDepth(200);
+    const plusSign = this.add.image(this.worldSize.x / 2, -50, 'plusSign').setDepth(200);
     plusSign.setInteractive();
     plusSign.on('pointerup', () => {
       /* Make a new artwork */

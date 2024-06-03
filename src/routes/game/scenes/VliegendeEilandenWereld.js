@@ -9,7 +9,7 @@ import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
 
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerPos, PlayerZoom } from '../playerState';
+import { PlayerPos } from '../playerState';
 
 import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 
@@ -125,9 +125,8 @@ export default class VliegendeEilandenWereld extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     // ......... end PLAYER VS WORLD .......................................................................

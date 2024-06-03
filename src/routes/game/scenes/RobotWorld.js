@@ -7,14 +7,10 @@ import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
-// eslint-disable-next-line no-unused-vars
+
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerPos, PlayerZoom } from '../playerState';
-import {
-  SCENE_INFO,
-  ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN,
-} from '../../../constants';
+import { PlayerPos } from '../playerState';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
@@ -59,42 +55,15 @@ export default class RobotWorld extends Phaser.Scene {
     });
 
     // RobotWorld
-    this.load.image(
-      'artWorldPortal',
-      './assets/world_robot_torquoise/portaal_robot_terug.png',
-    );
-    this.load.image(
-      'robot_treeC_01',
-      './assets/world_robot_torquoise/treeC_01.png',
-    );
-    this.load.image(
-      'robot_treeC_02',
-      './assets/world_robot_torquoise/treeC_02.png',
-    );
-    this.load.image(
-      'robot_treeC_03',
-      './assets/world_robot_torquoise/treeC_03.png',
-    );
-    this.load.image(
-      'robot_treeC_04',
-      './assets/world_robot_torquoise/treeC_04.png',
-    );
-    this.load.image(
-      'robothuis3_ms',
-      './assets/world_robot_torquoise/robothuis3_ms.png',
-    );
-    this.load.image(
-      'robothuis1_ms',
-      './assets/world_robot_torquoise/robohuis01metschadow.png',
-    );
-    this.load.image(
-      'robothuis1_ms',
-      './assets/world_robot_torquoise/robohuis01metschadow.png',
-    );
-    this.load.image(
-      'Robot_Clap_NoAnimation',
-      './assets/world_robot_torquoise/_Robot_Clap_NoAnimation.png',
-    );
+    this.load.image('artWorldPortal', './assets/world_robot_torquoise/portaal_robot_terug.png');
+    this.load.image('robot_treeC_01', './assets/world_robot_torquoise/treeC_01.png');
+    this.load.image('robot_treeC_02', './assets/world_robot_torquoise/treeC_02.png');
+    this.load.image('robot_treeC_03', './assets/world_robot_torquoise/treeC_03.png');
+    this.load.image('robot_treeC_04', './assets/world_robot_torquoise/treeC_04.png');
+    this.load.image('robothuis3_ms', './assets/world_robot_torquoise/robothuis3_ms.png');
+    this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
+    this.load.image('robothuis1_ms', './assets/world_robot_torquoise/robohuis01metschadow.png');
+    this.load.image('Robot_Clap_NoAnimation', './assets/world_robot_torquoise/_Robot_Clap_NoAnimation.png');
   }
 
   async create() {
@@ -137,7 +106,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.player = new PlayerDefault(
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -148,9 +117,8 @@ export default class RobotWorld extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     // ......... end PLAYER VS WORLD .......................................................................
@@ -181,11 +149,8 @@ export default class RobotWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        this.worldSize.x / 1.5,
-      ),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, this.worldSize.x / 1.5),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200)
     );
     this.balloonContainer.setDepth(602);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -235,10 +200,7 @@ export default class RobotWorld extends Phaser.Scene {
     // we set draggable on restart scene with a global flag
 
     let locationVector = new Phaser.Math.Vector2(0, 0);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
 
     this.purpleCircleLocation = new GenerateLocation({
       scene: this,
@@ -260,7 +222,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.Robot_Clap_NoAnimation = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1693),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -847),
-      'Robot_Clap_NoAnimation',
+      'Robot_Clap_NoAnimation'
     );
     this.Robot_Clap_NoAnimation.name = 'Robot_Clap_NoAnimation';
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -271,7 +233,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robothuis1_ms = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1193),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 600),
-      'robothuis1_ms',
+      'robothuis1_ms'
     );
     this.robothuis1_ms.name = 'robothuis1_ms';
     this.robothuis1_ms.setScale(0.5);
@@ -283,7 +245,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robothuis3_ms = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -990),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1770),
-      'robothuis3_ms',
+      'robothuis3_ms'
     );
     this.robothuis3_ms.name = 'robothuis3_ms';
     this.robothuis3_ms.setScale(0.5);
@@ -295,7 +257,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robot_treeC_01_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -752),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 523),
-      'robot_treeC_01',
+      'robot_treeC_01'
     );
     this.robot_treeC_01_1.setScale(0.4);
     this.robot_treeC_01_1.setDepth(202);
@@ -308,7 +270,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robot_treeC_01_2 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2372),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 578),
-      'robot_treeC_01',
+      'robot_treeC_01'
     );
     this.robot_treeC_01_2.setScale(0.74);
     this.robot_treeC_01_2.setDepth(202);
@@ -321,7 +283,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robot_treeC_02_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 985),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1196),
-      'robot_treeC_02',
+      'robot_treeC_02'
     );
     this.robot_treeC_02_1.setDepth(202);
     this.robot_treeC_02_1.setScale(0.5);
@@ -334,7 +296,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robot_treeC_02_2 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1965),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -856),
-      'robot_treeC_02',
+      'robot_treeC_02'
     );
     this.robot_treeC_02_2.setDepth(202);
     this.robot_treeC_02_2.setScale(0.5);
@@ -347,7 +309,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robot_treeC_03_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -580),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1014),
-      'robot_treeC_03',
+      'robot_treeC_03'
     );
     this.robot_treeC_03_1.setDepth(202);
     this.robot_treeC_03_1.setScale(0.5);
@@ -360,7 +322,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robot_treeC_03_2 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 205),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2559),
-      'robot_treeC_03',
+      'robot_treeC_03'
     );
     this.robot_treeC_03_2.setDepth(202);
     this.robot_treeC_03_2.setScale(0.5);
@@ -373,7 +335,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robot_treeC_04_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -375),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 684),
-      'robot_treeC_04',
+      'robot_treeC_04'
     );
     this.robot_treeC_04_1.setDepth(202);
     this.robot_treeC_04_1.setScale(0.6);
@@ -386,7 +348,7 @@ export default class RobotWorld extends Phaser.Scene {
     this.robot_treeC_04_2 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2115),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1071),
-      'robot_treeC_04',
+      'robot_treeC_04'
     );
     this.robot_treeC_04_2.setDepth(202);
     this.robot_treeC_04_2.setScale(0.6);
@@ -400,11 +362,11 @@ export default class RobotWorld extends Phaser.Scene {
     this.pointsCurve1 = [
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 187),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2367),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2367)
       ),
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -841),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 846),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 846)
       ),
     ];
 
@@ -420,11 +382,11 @@ export default class RobotWorld extends Phaser.Scene {
     this.pointsCurve2 = [
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -867),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1570),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1570)
       ),
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2709),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -599),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -599)
       ),
     ];
 
@@ -440,11 +402,11 @@ export default class RobotWorld extends Phaser.Scene {
     this.pointsCurve3 = [
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2661),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1987),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1987)
       ),
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1431),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -604),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -604)
       ),
     ];
 
@@ -460,11 +422,11 @@ export default class RobotWorld extends Phaser.Scene {
     this.pointsCurve4 = [
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -454),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 560),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 560)
       ),
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2584),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2544),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2544)
       ),
     ];
 
@@ -480,11 +442,11 @@ export default class RobotWorld extends Phaser.Scene {
     this.pointsCurve5 = [
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -454),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1)
       ),
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2719),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1)
       ),
     ];
 
@@ -500,11 +462,11 @@ export default class RobotWorld extends Phaser.Scene {
     this.pointsCurve6 = [
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1199),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 391),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 391)
       ),
       new Phaser.Math.Vector2(
         CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -649),
-        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2561),
+        CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -2561)
       ),
     ];
 
@@ -539,11 +501,7 @@ export default class RobotWorld extends Phaser.Scene {
         const curveHandleName = `curveHandle${name}_${i}`;
         // const point = this[curveHandleName].getData('vector');
 
-        this[curveHandleName] = this.add
-          .image(point.x, point.y, 'ball', 0)
-          .setScale(0.1)
-          .setInteractive()
-          .setDepth(40);
+        this[curveHandleName] = this.add.image(point.x, point.y, 'ball', 0).setScale(0.1).setInteractive().setDepth(40);
         this[curveHandleName].setName(`handle_${curveHandleName}`);
 
         this[curveHandleName].setData('vector', point);

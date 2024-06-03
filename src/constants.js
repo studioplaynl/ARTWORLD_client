@@ -304,12 +304,7 @@ export const NOTIFICATION_ARTWORK_RECEIVED = 2;
 export const NOTIFICATION_INVITE_RECEIVED = 3;
 
 /** art apps */
-export const ARTWORK_TYPES = [
-  'stopmotion',
-  'drawing',
-  'animalchallenge',
-  'flowerchallenge',
-];
+export const ARTWORK_TYPES = ['stopmotion', 'drawing', 'animalchallenge', 'flowerchallenge'];
 
 /** valid apps and some details about them
  *  used for send to
@@ -398,9 +393,7 @@ const APP_ICONS = [
 ];
 
 export function returnAppIconUrl(appName, type) {
-  const icon = APP_ICONS.find(
-    (iconFind) => iconFind.app === appName && iconFind.type === type,
-  );
+  const icon = APP_ICONS.find((iconFind) => iconFind.app === appName && iconFind.type === type);
   return icon ? icon.iconUrl : '';
 }
 
@@ -420,9 +413,7 @@ export function returnSameTypeApps(targetApp) {
   // Filter and return the similar apps
   return APPS.filter(
     (app) =>
-      app.artType === appDetails.artType &&
-      app.multiFrameDraw === appDetails.multiFrameDraw &&
-      app.app !== targetApp,
+      app.artType === appDetails.artType && app.multiFrameDraw === appDetails.multiFrameDraw && app.app !== targetApp
   ).map((app) => app.app); // returning only the app names
 }
 

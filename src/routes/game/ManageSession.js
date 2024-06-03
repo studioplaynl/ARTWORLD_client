@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import { get } from 'svelte/store';
 import { client, SSL } from '../../nakama.svelte';
 // translate from artworld coordinates to Phaser 2D screen coordinates
@@ -106,11 +105,7 @@ class ManageSession {
 
   /** Create Socket connection and listen for incoming streaming data, presence and notifications */
   async createSocket() {
-    const {
-      artworldVectorToPhaser2D,
-      artworldToPhaser2DX,
-      artworldToPhaser2DY,
-    } = CoordinatesTranslator;
+    const { artworldVectorToPhaser2D, artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     this.socket = await client.createSocket(this.useSSL, this.verboseLogging);
     dlog('socket created with client');
@@ -131,7 +126,6 @@ class ManageSession {
 
       // parse the movement data for the players in our allConnectedUsers array
       this.allConnectedUsers.forEach((onlinePlayer, index) => {
-        // eslint-disable-next-line prefer-const
         let updateOnlinePlayer = onlinePlayer;
 
         if (updateOnlinePlayer.scene) {
@@ -169,10 +163,7 @@ class ManageSession {
                 onComplete() {
                   /** we stop the onlinePlayer's animation when the tween is finished,
                    * because we always get a moveTo command, and we are not sending a stop command over the network */
-                  updateOnlinePlayer.anims.play(
-                    updateOnlinePlayer.getData('stopKey'),
-                    true,
-                  );
+                  updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);
                 },
               });
             } else if (data.action === 'stop') {
@@ -184,41 +175,26 @@ class ManageSession {
               //   this[updateOnlinePlayer].stop();
               // }
 
-              let positionVector = new Phaser.Math.Vector2(
-                data.posX,
-                data.posY,
-              );
+              let positionVector = new Phaser.Math.Vector2(data.posX, data.posY);
 
               // dlog('positionVector', positionVector);
 
-              positionVector = artworldVectorToPhaser2D(
-                scene.worldSize,
-                positionVector,
-              );
+              positionVector = artworldVectorToPhaser2D(scene.worldSize, positionVector);
 
               updateOnlinePlayer.posX = positionVector.x;
               updateOnlinePlayer.posY = positionVector.y;
 
               // get the key for the stop animation of the player, and play it
-              updateOnlinePlayer.anims.play(
-                updateOnlinePlayer.getData('stopKey'),
-                true,
-              );
+              updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);
             } else if (data.action === 'physicsStop') {
               // position data from online player, is converted in Player.js class receiveOnlinePlayersMovement
               // because there the scene context is known
 
-              let positionVector = new Phaser.Math.Vector2(
-                data.posX,
-                data.posY,
-              );
+              let positionVector = new Phaser.Math.Vector2(data.posX, data.posY);
 
               // dlog('positionVector', positionVector);
 
-              positionVector = artworldVectorToPhaser2D(
-                scene.worldSize,
-                positionVector,
-              );
+              positionVector = artworldVectorToPhaser2D(scene.worldSize, positionVector);
 
               // set the position on the player for the server side storing
               updateOnlinePlayer.posX = positionVector.x;
@@ -248,10 +224,7 @@ class ManageSession {
               updateOnlinePlayer.y = positionVector.y;
 
               // get the key for the stop animation of the player, and play it
-              updateOnlinePlayer.anims.play(
-                updateOnlinePlayer.getData('stopKey'),
-                true,
-              );
+              updateOnlinePlayer.anims.play(updateOnlinePlayer.getData('stopKey'), true);
             }
           }
         }
@@ -318,7 +291,6 @@ class ManageSession {
     //* get_users" = after joined, get the online users, except self
 
     if (typeof location === 'undefined') {
-      // eslint-disable-next-line no-param-reassign
       location = get(playerStreamID);
     }
 
@@ -334,9 +306,7 @@ class ManageSession {
         // dlog('serverArray', serverArray, 'currentScene', this.currentScene);
 
         serverArray.forEach((newPlayer) => {
-          const exists = this.allConnectedUsers.some(
-            (element) => element.user_id === newPlayer.user_id,
-          );
+          const exists = this.allConnectedUsers.some((element) => element.user_id === newPlayer.user_id);
           if (!exists) {
             this.createOnlinePlayerArray.push(newPlayer);
             // dlog('newPlayer', newPlayer);
@@ -345,9 +315,7 @@ class ManageSession {
 
         // allConnectedUsers had id, serverArray has user_id
         this.allConnectedUsers.forEach((onlinePlayer) => {
-          const exists = serverArray.some(
-            (element) => element.user_id === onlinePlayer.user_id,
-          );
+          const exists = serverArray.some((element) => element.user_id === onlinePlayer.user_id);
           if (!exists) {
             this.deleteOnlinePlayer(onlinePlayer);
             dlog('remove onlinePlayer', onlinePlayer);
@@ -371,9 +339,7 @@ class ManageSession {
     // dlog("this.allConnectedUsers", this.allConnectedUsers)
 
     // destroy the user if it exists in the array
-    const removeUser = this.allConnectedUsers.filter(
-      (obj) => obj.user_id === onlinePlayer.user_id,
-    );
+    const removeUser = this.allConnectedUsers.filter((obj) => obj.user_id === onlinePlayer.user_id);
     dlog('removeUser', removeUser);
 
     removeUser.forEach((element) => {
@@ -381,9 +347,7 @@ class ManageSession {
     });
 
     // remove oldPlayer from allConnectedUsers
-    this.allConnectedUsers = this.allConnectedUsers.filter(
-      (obj) => obj.user_id !== onlinePlayer.user_id,
-    );
+    this.allConnectedUsers = this.allConnectedUsers.filter((obj) => obj.user_id !== onlinePlayer.user_id);
 
     dlog('this.allConnectedUsers', this.allConnectedUsers);
   }

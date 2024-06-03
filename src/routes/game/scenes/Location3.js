@@ -4,12 +4,8 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import { PlayerPos, PlayerZoom } from '../playerState';
-import {
-  SCENE_INFO,
-  ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN,
-} from '../../../constants';
+import { PlayerPos } from '../playerState';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
 import ServerCall from '../class/ServerCall';
@@ -54,15 +50,9 @@ export default class Location3 extends Phaser.Scene {
     });
     // ....... TILEMAP .........................................................................
     // 1
-    this.load.image(
-      'tiles',
-      './assets/tilesets/tuxmon-sample-32px-extruded.png',
-    );
+    this.load.image('tiles', './assets/tilesets/tuxmon-sample-32px-extruded.png');
 
-    this.load.tilemapTiledJSON(
-      'mapLocation3',
-      './assets/tilemaps/tuxemon-town.json',
-    );
+    this.load.tilemapTiledJSON('mapLocation3', './assets/tilemaps/tuxemon-town.json');
     // end 1
   }
 
@@ -96,14 +86,8 @@ export default class Location3 extends Phaser.Scene {
     //* create player in center with artworldCoordinates
     this.player = new PlayerDefault(
       this,
-      CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        get(PlayerPos).x,
-      ),
-      CoordinatesTranslator.artworldToPhaser2DY(
-        this.worldSize.y,
-        get(PlayerPos).y,
-      ),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -122,9 +106,8 @@ export default class Location3 extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
@@ -158,14 +141,8 @@ export default class Location3 extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        this.worldSize.x / 1.5,
-      ),
-      CoordinatesTranslator.artworldToPhaser2DY(
-        this.worldSize.y,
-        this.worldSize.y / 2,
-      ),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, this.worldSize.x / 1.5),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, this.worldSize.y / 2)
     );
     this.balloonContainer.setDepth(602);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag

@@ -135,7 +135,7 @@ export const Liked = {
   },
 };
 
-// Stores whatever a user has liked
+// Stores What a moderator has liked, shows up in the game eg behind the balloon
 const moderatorLikedStore = writable([]);
 
 export const ModeratorLiked = {
@@ -162,42 +162,6 @@ export const ModeratorLiked = {
     const i = likedArray.findIndex((element) => element.key === key);
     if (i > -1) return likedArray[i].value;
     return undefined;
-  },
-};
-
-const likedSuccessDownloadStore = writable([]);
-
-export const LikedSuccessDownloaded = {
-  subscribe: likedSuccessDownloadStore.subscribe,
-  set: likedSuccessDownloadStore.set,
-  update: likedSuccessDownloadStore.update,
-
-  add: (key, type, data) => {
-    likedSuccessDownloadStore.update((items) => {
-      // Check if the asset is already in the store
-      const exists = items.some((item) => item.key === key);
-
-      if (!exists) {
-        items.push({
-          key,
-          type,
-          data,
-          used: false,
-        });
-      }
-
-      return items;
-    });
-  },
-
-  markUsed: (key) => {
-    likedSuccessDownloadStore.update((items) => {
-      const item = items.find((_item) => _item.key === key);
-      if (item) {
-        item.used = true;
-      }
-      return items;
-    });
   },
 };
 
@@ -411,7 +375,10 @@ export function createArtworksStore(type) {
 }
 
 // Usage example for creating different type-specific stores
-// export const DrawingArtworksStore = createArtworksStore('drawing');
+export const DrawingArtworksStore = createArtworksStore('drawing');
+export const StopmotionArtworksStore = createArtworksStore('stopmotion');
+export const HomeElementsStore = createArtworksStore('homeElements');
+
 // export const VideoArtworksStore = createArtworksStore('video');
 // export const AudioArtworksStore = createArtworksStore('audio');
 

@@ -9,12 +9,8 @@ import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerPos, PlayerZoom } from '../playerState';
-import {
-  SCENE_INFO,
-  ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN,
-} from '../../../constants';
+import { PlayerPos } from '../playerState';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 
 import * as Phaser from 'phaser';
@@ -49,35 +45,14 @@ export default class FireWorld extends Phaser.Scene {
     ManageSession.currentScene = this.scene; // getting a central scene context
 
     // FireWorld
-    this.load.image(
-      'artWorldPortalFire',
-      './assets/world_fireworld/Portal_vuur_Terug.png',
-    );
-    this.load.image(
-      'lavafall_boy',
-      './assets/world_fireworld/lavafall_boy.png',
-    );
-    this.load.image(
-      'tree1_vuur_licht',
-      './assets/world_fireworld/tree1_vuur_licht.png',
-    );
-    this.load.image(
-      'tree2_vuur_licht',
-      './assets/world_fireworld/tree2_vuur_licht.png',
-    );
-    this.load.image(
-      'tree3_vuur_licht',
-      './assets/world_fireworld/tree3_vuur_licht.png',
-    );
-    this.load.image(
-      'vulcano1_kleur_helder',
-      './assets/world_fireworld/vulcano1_kleur_helder.png',
-    );
+    this.load.image('artWorldPortalFire', './assets/world_fireworld/Portal_vuur_Terug.png');
+    this.load.image('lavafall_boy', './assets/world_fireworld/lavafall_boy.png');
+    this.load.image('tree1_vuur_licht', './assets/world_fireworld/tree1_vuur_licht.png');
+    this.load.image('tree2_vuur_licht', './assets/world_fireworld/tree2_vuur_licht.png');
+    this.load.image('tree3_vuur_licht', './assets/world_fireworld/tree3_vuur_licht.png');
+    this.load.image('vulcano1_kleur_helder', './assets/world_fireworld/vulcano1_kleur_helder.png');
     this.load.image('vulkan2', './assets/world_fireworld/vulkan2.png');
-    this.load.image(
-      'vuur_wereld_Lavameer01',
-      './assets/world_fireworld/vuur_wereld_Lavameer01.png',
-    );
+    this.load.image('vuur_wereld_Lavameer01', './assets/world_fireworld/vuur_wereld_Lavameer01.png');
   }
 
   async create() {
@@ -120,7 +95,7 @@ export default class FireWorld extends Phaser.Scene {
     this.player = new PlayerDefault(
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -131,9 +106,8 @@ export default class FireWorld extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     // ......... end PLAYER VS WORLD .......................................................................
@@ -164,11 +138,8 @@ export default class FireWorld extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        this.worldSize.x / 1.5,
-      ),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, this.worldSize.x / 1.5),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200)
     );
     this.balloonContainer.setDepth(602);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -218,10 +189,7 @@ export default class FireWorld extends Phaser.Scene {
     // we set draggable on restart scene with a global flag
 
     let locationVector = new Phaser.Math.Vector2(0, 0);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
 
     this.purpleCircleLocation = new GenerateLocation({
       scene: this,
@@ -244,7 +212,7 @@ export default class FireWorld extends Phaser.Scene {
     this.vulcano1_bright_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1787),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1538),
-      'vulcano1_kleur_helder',
+      'vulcano1_kleur_helder'
     );
     this.vulcano1_bright_1.name = 'vulcano1_bright_1';
     this.vulcano1_bright_1.setScale(1.91);
@@ -257,7 +225,7 @@ export default class FireWorld extends Phaser.Scene {
     this.vuur_wereld_Lavameer01_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -602),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1203),
-      'vuur_wereld_Lavameer01',
+      'vuur_wereld_Lavameer01'
     );
     this.vuur_wereld_Lavameer01_1.name = 'vuur_wereld_Lavameer01_1';
     this.vuur_wereld_Lavameer01_1.setScale(1.98);
@@ -270,7 +238,7 @@ export default class FireWorld extends Phaser.Scene {
     this.lavafall_boy_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1513),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 335),
-      'lavafall_boy',
+      'lavafall_boy'
     );
     this.lavafall_boy_1.name = 'lavafall_boy_1';
     this.lavafall_boy_1.setScale(1.98);
@@ -286,7 +254,7 @@ export default class FireWorld extends Phaser.Scene {
     this.vuur_wereld_Lavameer01_2 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1737),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -435),
-      'vuur_wereld_Lavameer01',
+      'vuur_wereld_Lavameer01'
     );
     this.vuur_wereld_Lavameer01_2.name = 'vuur_wereld_Lavameer01_2';
     this.vuur_wereld_Lavameer01_2.setScale(1.46);
@@ -298,7 +266,7 @@ export default class FireWorld extends Phaser.Scene {
     this.vulkan2_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -947),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -165),
-      'vulkan2',
+      'vulkan2'
     );
     this.vulkan2_1.name = 'vulkan2_1';
     this.vulkan2_1.setScale(2.3);
@@ -311,7 +279,7 @@ export default class FireWorld extends Phaser.Scene {
     this.vuur_wereld_Lavameer01_3 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1003),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1090),
-      'vuur_wereld_Lavameer01',
+      'vuur_wereld_Lavameer01'
     );
     this.vuur_wereld_Lavameer01_3.name = 'vuur_wereld_Lavameer01_3';
     this.vuur_wereld_Lavameer01_3.setScale(1.26);
@@ -324,7 +292,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree1_vuur_licht_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -245),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -805),
-      'tree1_vuur_licht',
+      'tree1_vuur_licht'
     );
     this.tree1_vuur_licht_1.name = 'tree1_vuur_licht_1';
     this.tree1_vuur_licht_1.setScale(1.46);
@@ -337,7 +305,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree1_vuur_licht_2 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 405),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -830),
-      'tree1_vuur_licht',
+      'tree1_vuur_licht'
     );
     this.tree1_vuur_licht_2.name = 'tree1_vuur_licht_2';
     this.tree1_vuur_licht_2.setScale(1.24);
@@ -350,7 +318,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree1_vuur_licht_3 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1740),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1890),
-      'tree1_vuur_licht',
+      'tree1_vuur_licht'
     );
     this.tree1_vuur_licht_3.name = 'tree1_vuur_licht_3';
     this.tree1_vuur_licht_3.setScale(2.44);
@@ -363,7 +331,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree1_vuur_licht_4 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -795),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1797),
-      'tree1_vuur_licht',
+      'tree1_vuur_licht'
     );
     this.tree1_vuur_licht_4.name = 'tree1_vuur_licht_4';
     this.tree1_vuur_licht_4.setScale(2);
@@ -376,7 +344,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree2_vuur_licht_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 305),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 20),
-      'tree2_vuur_licht',
+      'tree2_vuur_licht'
     );
     this.tree2_vuur_licht_1.name = 'tree2_vuur_licht_1';
     this.tree2_vuur_licht_1.setScale(1.46);
@@ -389,7 +357,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree2_vuur_licht_2 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -515),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -670),
-      'tree2_vuur_licht',
+      'tree2_vuur_licht'
     );
     this.tree2_vuur_licht_2.name = 'tree2_vuur_licht_2';
     this.tree2_vuur_licht_2.setScale(1.46);
@@ -402,7 +370,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree2_vuur_licht_3 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1592),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1565),
-      'tree2_vuur_licht',
+      'tree2_vuur_licht'
     );
     this.tree2_vuur_licht_3.name = 'tree2_vuur_licht_3';
     this.tree2_vuur_licht_3.setScale(1.46);
@@ -415,7 +383,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree3_vuur_licht_1 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 55),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -760),
-      'tree3_vuur_licht',
+      'tree3_vuur_licht'
     );
     this.tree3_vuur_licht_1.name = 'tree3_vuur_licht_1';
     this.tree3_vuur_licht_1.setScale(1.46);
@@ -428,7 +396,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree3_vuur_licht_2 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -355),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 140),
-      'tree3_vuur_licht',
+      'tree3_vuur_licht'
     );
     this.tree3_vuur_licht_2.name = 'tree3_vuur_licht_2';
     this.tree3_vuur_licht_2.setScale(1.46);
@@ -441,7 +409,7 @@ export default class FireWorld extends Phaser.Scene {
     this.tree3_vuur_licht_3 = this.add.image(
       CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -410),
       CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -1850),
-      'tree3_vuur_licht',
+      'tree3_vuur_licht'
     );
     this.tree3_vuur_licht_3.name = 'tree3_vuur_licht_3';
     this.tree3_vuur_licht_3.setScale(2.3);

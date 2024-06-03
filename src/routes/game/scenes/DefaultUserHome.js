@@ -30,8 +30,6 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
-// import { PlayerPos, PlayerZoom } from '../playerState';
-import { PlayerZoom } from '../playerState';
 
 import {
   SCENE_INFO,
@@ -174,9 +172,8 @@ export default class DefaultUserHome extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);

@@ -10,6 +10,8 @@ import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
 
+import { PlayerZoom } from '../playerState';
+
 import * as Phaser from 'phaser';
 
 i18next.init({
@@ -85,6 +87,14 @@ export default class UIScene extends Phaser.Scene {
 
     this.camUI = this.cameras.main.setSize(this.sys.game.canvas.width, this.sys.game.canvas.height).setName('camMain');
     this.camUI.zoom = 1;
+
+    //subscribe to zoom changes and pass it on the the current scene
+    PlayerZoom.subscribe((zoom) => {
+      ManageSession.currentZoom = zoom;
+      if (ManageSession.currentScene) {
+        ManageSession.currentScene.gameCam.zoom = zoom;
+      }
+    });
 
     // to make the UI scene always on top of other scenes
     this.scene.bringToTop();

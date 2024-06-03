@@ -7,7 +7,7 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
-import { PlayerHistory, PlayerPos, PlayerZoom } from '../playerState';
+import { PlayerHistory, PlayerPos } from '../playerState';
 import { SCENE_INFO } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
@@ -94,7 +94,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.player = new PlayerDefault(
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -105,9 +105,8 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
@@ -123,9 +122,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
   makeNewFlowerButton() {
     // add the plussign button to the scene
-    const plusSign = this.add
-      .image(this.worldSize.x / 2, 250, 'plusSign')
-      .setDepth(200);
+    const plusSign = this.add.image(this.worldSize.x / 2, 250, 'plusSign').setDepth(200);
     plusSign.setInteractive();
     plusSign.on('pointerup', () => {
       /* Make a new artwork */
@@ -137,9 +134,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
   }
 
   reloadButton() {
-    const reloadButton = this.add
-      .image(this.worldSize.x / 2 - 300, 250, 'reloadSign')
-      .setDepth(200);
+    const reloadButton = this.add.image(this.worldSize.x / 2 - 300, 250, 'reloadSign').setDepth(200);
     reloadButton.setInteractive();
     reloadButton.on('pointerup', () => {
       dlog('reloadButton clicked');
@@ -155,30 +150,14 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     // this.backgroundFlowerFieldFloor.fillGradientStyle(0xffff00, 0xffff00, 0x704d15, 0x704d15, 1)
     this.backgroundFlowerFieldFloor
       .fillGradientStyle(0x704d15, 0x704d15, 0x5c370c, 0x5c370c, 1)
-      .fillRect(
-        0,
-        this.worldSize.y / 3,
-        this.worldSize.x,
-        this.worldSize.y - this.worldSize.y / 3,
-      )
+      .fillRect(0, this.worldSize.y / 3, this.worldSize.x, this.worldSize.y - this.worldSize.y / 3)
       .setVisible(false);
 
     // make sky for flowers
     this.backgroundFlowerFieldSky = this.add.graphics();
     // this.backgroundFlowerFieldSky.fillGradientStyle(0x3c93b5, 0x488fab, 0xd7f9fc, 0xa4eef5, 1)
-    this.backgroundFlowerFieldSky.fillGradientStyle(
-      0x083457,
-      0x083457,
-      0x0e4e80,
-      0x0e4e80,
-      1,
-    );
-    this.backgroundFlowerFieldSky.fillRect(
-      0,
-      0,
-      this.worldSize.x,
-      this.worldSize.y / 3,
-    );
+    this.backgroundFlowerFieldSky.fillGradientStyle(0x083457, 0x083457, 0x0e4e80, 0x0e4e80, 1);
+    this.backgroundFlowerFieldSky.fillRect(0, 0, this.worldSize.x, this.worldSize.y / 3);
     this.backgroundFlowerFieldSky.setVisible(false);
 
     this.fliedFloorSky = this.add
@@ -188,9 +167,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       .setDepth(500);
     this.fliedFloorSky.on('pointerup', () => {
       // toggle the visibility of this.backgroundFlowerFieldFloor
-      this.backgroundFlowerFieldSky.setVisible(
-        !this.backgroundFlowerFieldSky.visible,
-      );
+      this.backgroundFlowerFieldSky.setVisible(!this.backgroundFlowerFieldSky.visible);
     });
 
     this.fliefFloorButton = this.add
@@ -200,9 +177,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
       .setDepth(500);
     this.fliefFloorButton.on('pointerup', () => {
       // toggle the visibility of this.backgroundFlowerFieldFloor
-      this.backgroundFlowerFieldFloor.setVisible(
-        !this.backgroundFlowerFieldFloor.visible,
-      );
+      this.backgroundFlowerFieldFloor.setVisible(!this.backgroundFlowerFieldFloor.visible);
     });
 
     this.flowerScaleFactor = 0.4;
@@ -244,23 +219,17 @@ export default class ChallengeFlowerField extends Phaser.Scene {
 
   makeFlowerRow(flowerRowY) {
     // get a new flower key from the array, randomly
-    let flowerKey =
-      this.flowerKeyArray[
-        Phaser.Math.Between(0, this.flowerKeyArray.length - 1)
-      ];
+    let flowerKey = this.flowerKeyArray[Phaser.Math.Between(0, this.flowerKeyArray.length - 1)];
 
     // dlog("flowerRowY", flowerRowY)
     for (let i = 0; i < this.amountOfFlowers; i++) {
       this.flowerScale = Phaser.Math.FloatBetween(
         this.flowerScaleFactor - this.flowerScaleFactor / 12,
-        this.flowerScaleFactor + this.flowerScaleFactor / 12,
+        this.flowerScaleFactor + this.flowerScaleFactor / 12
       );
       // scale around 0.5 (0.4 - 0.6)
       // get a new flower key from the array, randomly
-      flowerKey =
-        this.flowerKeyArray[
-          Phaser.Math.Between(0, this.flowerKeyArray.length - 1)
-        ];
+      flowerKey = this.flowerKeyArray[Phaser.Math.Between(0, this.flowerKeyArray.length - 1)];
       // dlog("flowerKey", flowerKey)
       const flowerY = Phaser.Math.Between(flowerRowY - 35, flowerRowY + 35);
       // dlog("flowerY", flowerY)
@@ -269,7 +238,7 @@ export default class ChallengeFlowerField extends Phaser.Scene {
           i * (this.flowerSize * this.flowerAmountOfOverlapX),
           flowerY,
 
-          flowerKey,
+          flowerKey
         )
         .setScale(this.flowerScale)
         .setOrigin(0.5, 1);
@@ -316,49 +285,37 @@ export default class ChallengeFlowerField extends Phaser.Scene {
     this.flowerScaleFactor = 0.1;
     this.flowerSize = 512 * this.flowerScaleFactor;
 
-    this.amountOfFlowers = Math.ceil(
-      this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX),
-    );
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
     this.makeFlowerRow(flowerRowY);
 
     this.flowerScaleFactor = 0.2;
     this.flowerSize = 512 * this.flowerScaleFactor;
     flowerRowY += this.flowerSize;
-    this.amountOfFlowers = Math.ceil(
-      this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX),
-    );
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
     this.makeFlowerRow(flowerRowY);
 
     this.flowerScaleFactor = 0.3;
     this.flowerSize = 512 * this.flowerScaleFactor;
     flowerRowY += this.flowerSize;
-    this.amountOfFlowers = Math.ceil(
-      this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX),
-    );
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
     this.makeFlowerRow(flowerRowY);
 
     this.flowerScaleFactor = 0.5;
     this.flowerSize = 512 * this.flowerScaleFactor;
     flowerRowY += this.flowerSize;
-    this.amountOfFlowers = Math.ceil(
-      this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX),
-    );
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
     this.makeFlowerRow(flowerRowY);
 
     this.flowerScaleFactor = 0.7;
     this.flowerSize = 512 * this.flowerScaleFactor;
     flowerRowY += this.flowerSize;
-    this.amountOfFlowers = Math.ceil(
-      this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX),
-    );
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
     this.makeFlowerRow(flowerRowY);
 
     this.flowerScaleFactor = 1;
     this.flowerSize = 512 * this.flowerScaleFactor;
     flowerRowY += this.flowerSize;
-    this.amountOfFlowers = Math.ceil(
-      this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX),
-    );
+    this.amountOfFlowers = Math.ceil(this.worldSize.x / (this.flowerSize * this.flowerAmountOfOverlapX));
     this.makeFlowerRow(flowerRowY);
   }
 

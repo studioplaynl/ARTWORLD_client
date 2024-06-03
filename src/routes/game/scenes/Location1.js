@@ -8,12 +8,8 @@ import GraffitiWall from '../class/GraffitiWall';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import Background from '../class/Background';
-import {
-  SCENE_INFO,
-  ART_DISPLAY_SIZE,
-  ART_OFFSET_BETWEEN,
-} from '../../../constants';
-import { PlayerPos, PlayerZoom } from '../playerState';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
+import { PlayerPos } from '../playerState';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import { dlog } from '../../../helpers/debugLog';
 import ServerCall from '../class/ServerCall';
@@ -63,22 +59,10 @@ export default class Location1 extends Phaser.Scene {
     //!
 
     // .... PRELOADER VISUALISER ..........................
-    this.load.image(
-      'art1',
-      './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg',
-    );
-    this.load.image(
-      'art2',
-      './assets/art_styles/drawing_painting/f7f2e083a0c70b97e459f2966bc8c3ae.jpg',
-    );
-    this.load.image(
-      'art3',
-      './assets/art_styles/drawing_painting/doodle_dogman.png',
-    );
-    this.load.image(
-      'art5',
-      './assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg',
-    );
+    this.load.image('art1', './assets/art_styles/drawing_painting/699f77a8e723a41f0cfbec5434e7ac5c.jpg');
+    this.load.image('art2', './assets/art_styles/drawing_painting/f7f2e083a0c70b97e459f2966bc8c3ae.jpg');
+    this.load.image('art3', './assets/art_styles/drawing_painting/doodle_dogman.png');
+    this.load.image('art5', './assets/art_styles/drawing_painting/e13ad7758c0241352ffe203feffd6ff2.jpg');
     // .... end PRELOADER VISUALISER .......................
   }
 
@@ -111,16 +95,7 @@ export default class Location1 extends Phaser.Scene {
     this.makeWoldElements();
 
     // graffiti walls
-    GraffitiWall.create(
-      this,
-      2200,
-      600,
-      800,
-      600,
-      'graffitiBrickWall',
-      '0x000000',
-      'brickWall',
-    );
+    GraffitiWall.create(this, 2200, 600, 800, 600, 'graffitiBrickWall', '0x000000', 'brickWall');
     // GraffitiWall.create(this, 600, 1200, 600, 1200, "graffitiDotWall", 0x000000)
 
     // .......  PLAYER ..........................................................................
@@ -129,7 +104,7 @@ export default class Location1 extends Phaser.Scene {
     this.player = new PlayerDefault(
       this,
       artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
-      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y)
     ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
@@ -147,9 +122,8 @@ export default class Location1 extends Phaser.Scene {
     // ....... PLAYER VS WORLD ..........................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    PlayerZoom.subscribe((zoom) => {
-      this.gameCam.zoom = zoom;
-    });
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
     this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
@@ -187,11 +161,8 @@ export default class Location1 extends Phaser.Scene {
     this.balloonContainer.add(this.likedBalloon);
 
     this.balloonContainer.setPosition(
-      CoordinatesTranslator.artworldToPhaser2DX(
-        this.worldSize.x,
-        this.worldSize.x / 1.5,
-      ),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200),
+      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, this.worldSize.x / 1.5),
+      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1200)
     );
     this.balloonContainer.setDepth(602);
     // we set elements draggable for edit mode by restarting the scene and checking for a flag
@@ -302,10 +273,7 @@ export default class Location1 extends Phaser.Scene {
   generateLocations() {
     const { gameEditMode } = ManageSession;
     let locationVector = new Phaser.Math.Vector2(-200, -200);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
     // eslint-disable-next-line no-unused-vars
     const location3 = new GenerateLocation({
       scene: this,
@@ -322,10 +290,7 @@ export default class Location1 extends Phaser.Scene {
     });
 
     locationVector = new Phaser.Math.Vector2(200, 200);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
     // eslint-disable-next-line no-unused-vars
     const location4 = new GenerateLocation({
       scene: this,
@@ -343,10 +308,7 @@ export default class Location1 extends Phaser.Scene {
     });
 
     locationVector = new Phaser.Math.Vector2(544, -477);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
-      this.worldSize,
-      locationVector,
-    );
+    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
 
     Background.circle({
       scene: this,
