@@ -234,7 +234,7 @@ class ManageSession {
       });
     };
 
-    // Another user has joined or left the stream
+    // Another user (also SELF) has joined or left the stream
     this.socket.onstreampresence = (streampresence) => {
       // dlog('this.socket.onstreampresence');
 

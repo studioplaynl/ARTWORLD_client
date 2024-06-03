@@ -10,27 +10,16 @@
  *
  */
 
-/* eslint-disable no-new */
-/* eslint-disable prefer-destructuring */
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import {
-  convertImage,
-  getAllHouses,
-  listAllObjects,
-  getAccount,
-  getObject,
-} from '../../../helpers/nakamaHelpers';
+import { convertImage, getAllHouses, listAllObjects, getAccount, getObject } from '../../../helpers/nakamaHelpers';
 import { Profile, ShowHomeEditBar } from '../../../session';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkOptions from './ArtworkOptions';
 import { createGalleryStore } from '../../../storage';
 
-import {
-  ART_FRAME_BORDER,
-  AVATAR_SPRITESHEET_LOAD_SIZE,
-} from '../../../constants';
+import { ART_FRAME_BORDER, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
 
 import { dlog } from '../../../helpers/debugLog';
 import AnimalChallenge from './animalChallenge';
@@ -66,9 +55,7 @@ class ServerCall {
       // 1.
       const allDrawings = await listAllObjects('drawing', _location);
       // 2.
-      const visibleDrawingsStore = createGalleryStore(
-        allDrawings.filter((drawing) => drawing.permission_read === 2),
-      );
+      const visibleDrawingsStore = createGalleryStore(allDrawings.filter((drawing) => drawing.permission_read === 2));
 
       console.log('visibleDrawingsStore: ', get(visibleDrawingsStore));
     }
@@ -134,14 +121,13 @@ class ServerCall {
           `filecomplete-image-${homeImageKey}`,
           () => {
             // delete from ManageSession.resolveErrorObjectArray
-            ManageSession.resolveErrorObjectArray =
-              ManageSession.resolveErrorObjectArray.filter(
-                (obj) => obj.imageKey !== homeImageKey,
-              );
+            ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+              (obj) => obj.imageKey !== homeImageKey
+            );
 
             ServerCall.createHome(element, index, homeImageKey, scene);
           },
-          this,
+          this
         );
         // put the file in the loadErrorCache, in case it doesn't load
         // it get's removed from loadErrorCache when it is loaded successfully
@@ -188,14 +174,8 @@ class ServerCall {
       userHome: element.user_id,
       draggable: ManageSession.gameEditMode,
       type: 'image',
-      x: CoordinatesTranslator.artworldToPhaser2DX(
-        scene.worldSize.x,
-        element.value.posX,
-      ),
-      y: CoordinatesTranslator.artworldToPhaser2DY(
-        scene.worldSize.y,
-        element.value.posY,
-      ),
+      x: CoordinatesTranslator.artworldToPhaser2DX(scene.worldSize.x, element.value.posX),
+      y: CoordinatesTranslator.artworldToPhaser2DY(scene.worldSize.y, element.value.posY),
       locationDestination: 'DefaultUserHome',
       numberOfArtworks,
       locationText: locationDescription,
@@ -226,13 +206,9 @@ class ServerCall {
 
       myHomeStore.subscribe((value) => {
         // dlog('previousHome, value: ', previousHome, value);
-        if (
-          value.value.url !== '' &&
-          previousHome.value.url !== value.value.url
-        ) {
+        if (value.value.url !== '' && previousHome.value.url !== value.value.url) {
           // find the image in the container by name
-          const homeImageInGame =
-            ManageSession.playerHomeContainer.getByName('location');
+          const homeImageInGame = ManageSession.playerHomeContainer.getByName('location');
           // dlog('homeImageInGame: ', homeImageInGame);
           dlog('user home image updated');
           previousHome = value;
@@ -250,7 +226,7 @@ class ServerCall {
                   homeImageInGame.setTexture(value.url);
                 }
               },
-              this,
+              this
             );
             scene.load.start(); // start loading the image in memory
           }
@@ -264,12 +240,7 @@ class ServerCall {
             homeImageInGame.scaleY = homeImageInGame.scaleX;
             // sometimes there is a little border visible on a drawn image; we crop it off
             const cropMargin = 1;
-            homeImageInGame.setCrop(
-              cropMargin,
-              cropMargin,
-              width - cropMargin,
-              width - cropMargin,
-            );
+            homeImageInGame.setCrop(cropMargin, cropMargin, width - cropMargin, width - cropMargin);
           }
         }
       });
@@ -277,40 +248,31 @@ class ServerCall {
 
     scene.homesRepresented[index].setDepth(30);
 
-    if (
-      scene.homesRepresented[index].numberOfArtworks < 1 ||
-      ManageSession.gameEditMode
-    ) {
+    if (scene.homesRepresented[index].numberOfArtworks < 1 || ManageSession.gameEditMode) {
       scene.homesRepresented[index].numberArt.setVisible(false);
       scene.homesRepresented[index].numberBubble.setVisible(false);
       scene.homesRepresented[index].setData('enteringPossible', 'false');
     }
   }
 
-  static async filterFellowHomeAreaObjects(
-    userHomeArea,
-    user,
-    serverObjectsHandler,
-  ) {
+  static async filterFellowHomeAreaObjects(userHomeArea, user, serverObjectsHandler) {
     // get all homes from the server with userHome in the name, with the function getAllHouse
     const homesRec = await getAllHouses(userHomeArea, null);
     // dlog('homesRec: ', homesRec);
     // from homesRec filter out the key 'name' and put it in an array
-    const namesInHomeAreaWithoutUser = homesRec
-      .map((i) => i.username)
-      .filter((i) => i !== user);
+    const namesInHomeAreaWithoutUser = homesRec.map((i) => i.username).filter((i) => i !== user);
     // dlog('homesNames: ', namesInHomeAreaWithoutUser);
     // dlog('serverObjectsHandler: ', serverObjectsHandler);
 
     // Filter serverObjectsHandler for objects whose username exists in namesInHomeAreaWithoutUser
     const objectsOfFellowsOfUser = serverObjectsHandler.filter((obj) =>
-      namesInHomeAreaWithoutUser.includes(obj.username),
+      namesInHomeAreaWithoutUser.includes(obj.username)
     );
 
     // dlog('objectsOfFellowsOfUser: ', objectsOfFellowsOfUser);
     // Filter serverObjectsHandler for objects whose username doesn't exist in namesInHomeAreaWithoutUser
     const remainingItemsArray = serverObjectsHandler.filter(
-      (obj) => !namesInHomeAreaWithoutUser.includes(obj.username),
+      (obj) => !namesInHomeAreaWithoutUser.includes(obj.username)
     );
 
     // dlog('remainingItemsArray: ', remainingItemsArray);
@@ -322,10 +284,7 @@ class ServerCall {
     const randomElements = [];
     const usedIndexes = new Set(); // To keep track of already selected indexes
 
-    while (
-      randomElements.length < count &&
-      randomElements.length < arr.length
-    ) {
+    while (randomElements.length < count && randomElements.length < arr.length) {
       const randomIndex = Math.floor(Math.random() * arr.length);
 
       if (!usedIndexes.has(randomIndex)) {
@@ -341,14 +300,8 @@ class ServerCall {
    *  it filters out the objects that are not in the trash
    *  then it sends the array to the function handleServerArray
    */
-  // eslint-disable-next-line class-methods-use-this
-  async downloadAndPlaceArtByType({
-    type,
-    userId,
-    serverObjectsHandler,
-    artSize,
-    artMargin,
-  }) {
+
+  async downloadAndPlaceArtByType({ type, userId, serverObjectsHandler, artSize, artMargin }) {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
       let allFoundAnimals;
@@ -362,17 +315,13 @@ class ServerCall {
 
       // filter out all stopmotion with displayname 'dier and who are not in the trash
       allFoundAnimals = recStopmotion.filter(
-        (obj) =>
-          obj.value.displayname.toLowerCase() === type &&
-          obj.value.status !== 'trash',
+        (obj) => obj.value.displayname.toLowerCase() === type && obj.value.status !== 'trash'
       );
       // dlog('allFoundAnimals', allFoundAnimals);
 
       // Adding animalchallenge results to foundAnimals
       // exclude animals that are in the trash
-      const filteredRecAnimalChallenge = recAnimalChallenge.filter(
-        (obj) => obj.value.status !== 'trash',
-      );
+      const filteredRecAnimalChallenge = recAnimalChallenge.filter((obj) => obj.value.status !== 'trash');
       allFoundAnimals = allFoundAnimals.concat(filteredRecAnimalChallenge);
 
       // dlog('allFoundAnimals', allFoundAnimals);
@@ -398,7 +347,7 @@ class ServerCall {
             }
             return acc;
           },
-          { animalsOfUser: [], allAnimalNotOfUser: [] },
+          { animalsOfUser: [], allAnimalNotOfUser: [] }
         );
 
         animalsOfUser = results.animalsOfUser;
@@ -406,12 +355,11 @@ class ServerCall {
 
         // dlog('animalsOfUser: ', animalsOfUser);
 
-        const { objectsOfFellowsOfUser, remainingItemsArray } =
-          await ServerCall.filterFellowHomeAreaObjects(
-            userHomeArea,
-            user,
-            allAnimalNotOfUser,
-          );
+        const { objectsOfFellowsOfUser, remainingItemsArray } = await ServerCall.filterFellowHomeAreaObjects(
+          userHomeArea,
+          user,
+          allAnimalNotOfUser
+        );
 
         // dlog('objectsOfFellowsOfUser: ', objectsOfFellowsOfUser);
         // dlog('remainingItemsArray: ', remainingItemsArray);
@@ -423,19 +371,15 @@ class ServerCall {
         dlog('userAnimals: ', userAnimals);
         const fellowAnimals = objectsOfFellowsOfUser.slice(0, 20);
 
-        const remainingLength =
-          40 - (userAnimals.length + fellowAnimals.length);
+        const remainingLength = 40 - (userAnimals.length + fellowAnimals.length);
 
-        const shuffledOtherAnimals = ServerCall.shuffleArray([
-          ...remainingItemsArray,
-        ]); // Create a copy and shuffle it
+        const shuffledOtherAnimals = ServerCall.shuffleArray([...remainingItemsArray]); // Create a copy and shuffle it
         const otherAnimals = shuffledOtherAnimals.slice(0, remainingLength);
 
         // const otherAnimals = allOtherAnimals.slice(0, remainingLength);
 
         const animalArray = [...userAnimals, ...fellowAnimals, ...otherAnimals];
 
-        // eslint-disable-next-line no-param-reassign
         serverObjectsHandler.array = animalArray;
         ServerCall.handleServerArray({
           type,
@@ -445,7 +389,7 @@ class ServerCall {
         });
       } else {
         // we use all available animals
-        // eslint-disable-next-line no-param-reassign
+
         serverObjectsHandler.array = allFoundAnimals;
         // dlog('serverObjectsHandler', serverObjectsHandler);
 
@@ -467,17 +411,13 @@ class ServerCall {
       // dlog('recAnimalChallenge : ', recAnimalChallenge);
       // filter out all stopmotion with displayname 'dier and who are not in the trash
       allFoundFlowers = recDrawing.filter(
-        (obj) =>
-          obj.value.displayname.toLowerCase() === type &&
-          obj.value.status !== 'trash',
+        (obj) => obj.value.displayname.toLowerCase() === type && obj.value.status !== 'trash'
       );
       // dlog('allFoundAnimals', allFoundAnimals);
 
       // Adding animalchallenge results to foundAnimals
       // exclude animals that are in the trash
-      const filteredRecFlowerChallenge = recFlowerChallenge.filter(
-        (obj) => obj.value.status !== 'trash',
-      );
+      const filteredRecFlowerChallenge = recFlowerChallenge.filter((obj) => obj.value.status !== 'trash');
       allFoundFlowers = allFoundFlowers.concat(filteredRecFlowerChallenge);
 
       // dlog('allFoundAnimals', allFoundAnimals);
@@ -503,7 +443,7 @@ class ServerCall {
             }
             return acc;
           },
-          { flowersOfUser: [], allFlowersNotOfUser: [] },
+          { flowersOfUser: [], allFlowersNotOfUser: [] }
         );
 
         flowersOfUser = results.flowersOfUser;
@@ -511,12 +451,11 @@ class ServerCall {
 
         // dlog('animalsOfUser: ', animalsOfUser);
 
-        const { objectsOfFellowsOfUser, remainingItemsArray } =
-          await ServerCall.filterFellowHomeAreaObjects(
-            userHomeArea,
-            user,
-            allFlowersNotOfUser,
-          );
+        const { objectsOfFellowsOfUser, remainingItemsArray } = await ServerCall.filterFellowHomeAreaObjects(
+          userHomeArea,
+          user,
+          allFlowersNotOfUser
+        );
 
         // dlog('objectsOfFellowsOfUser: ', objectsOfFellowsOfUser);
         // dlog('remainingItemsArray: ', remainingItemsArray);
@@ -527,27 +466,18 @@ class ServerCall {
         const amountOfFlowersOfUser = 3;
         const userFlowers = flowersOfUser.slice(0, amountOfFlowersOfUser);
         dlog('userFlowers: ', userFlowers);
-        const maxAmauntOfFellowFlowers =
-          Math.floor(maxDifferentFlowersInGarden - userFlowers.length) / 2;
-        const fellowFlowers = objectsOfFellowsOfUser.slice(
-          0,
-          maxAmauntOfFellowFlowers,
-        );
+        const maxAmauntOfFellowFlowers = Math.floor(maxDifferentFlowersInGarden - userFlowers.length) / 2;
+        const fellowFlowers = objectsOfFellowsOfUser.slice(0, maxAmauntOfFellowFlowers);
 
-        const remainingLength =
-          maxDifferentFlowersInGarden -
-          (userFlowers.length + fellowFlowers.length);
+        const remainingLength = maxDifferentFlowersInGarden - (userFlowers.length + fellowFlowers.length);
 
-        const shuffledOtherFlowers = ServerCall.shuffleArray([
-          ...remainingItemsArray,
-        ]); // Create a copy and shuffle it
+        const shuffledOtherFlowers = ServerCall.shuffleArray([...remainingItemsArray]); // Create a copy and shuffle it
         const otherFlowers = shuffledOtherFlowers.slice(0, remainingLength);
 
         // const otherAnimals = allOtherAnimals.slice(0, remainingLength);
 
         const animalArray = [...userFlowers, ...fellowFlowers, ...otherFlowers];
 
-        // eslint-disable-next-line no-param-reassign
         serverObjectsHandler.array = animalArray;
         ServerCall.handleServerArray({
           type,
@@ -557,20 +487,14 @@ class ServerCall {
         });
       } else {
         // we use all available flowers
-        // eslint-disable-next-line no-param-reassign
+
         serverObjectsHandler.array = allFoundFlowers;
-        ServerCall.handleServerArray(
-          type,
-          serverObjectsHandler,
-          artSize,
-          artMargin,
-        );
+        ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
       } // end of bloem
     } else if (type === 'downloadLikedDrawing') {
       // async get the liked stores and handle the data when they are loaded
       ServerCall.getLikedStores({ serverObjectsHandler })
         .then((randomLiked) => {
-          // eslint-disable-next-line no-param-reassign
           serverObjectsHandler.array = randomLiked;
           /** randomLiked.array has that data
            *  so it is passed on to serverObjectsHandler.array
@@ -593,7 +517,7 @@ class ServerCall {
 
       await listAllObjects('drawing', userId).then((rec) => {
         dlog('type rec: ', type, rec);
-        // eslint-disable-next-line no-param-reassign
+
         serverObjectsHandler.array = rec
           .filter((obj) => obj.permission_read === 2)
           .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
@@ -614,7 +538,7 @@ class ServerCall {
 
       await listAllObjects('stopmotion', userId).then((rec) => {
         dlog('type rec: ', type, rec);
-        // eslint-disable-next-line no-param-reassign
+
         serverObjectsHandler.array = rec
           .filter((obj) => obj.permission_read === 2)
           .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
@@ -640,25 +564,17 @@ class ServerCall {
       throw new Error('Data from stores is not in the expected format');
     }
 
-    ManageSession.likedStore.allLikedArt = [
-      ...userLikedArt,
-      ...moderatorLikedArt,
-    ];
+    ManageSession.likedStore.allLikedArt = [...userLikedArt, ...moderatorLikedArt];
 
-    ManageSession.likedStore.stopmotionLiked =
-      ManageSession.likedStore.allLikedArt.filter(
-        (art) => art.value.collection === 'stopmotion',
-      );
-
-    ManageSession.likedStore.drawingLiked =
-      ManageSession.likedStore.allLikedArt.filter(
-        (art) => art.value.collection === 'drawing',
-      );
-
-    const randomLiked = ServerCall.getRandomElements(
-      ManageSession.likedStore.drawingLiked,
-      4,
+    ManageSession.likedStore.stopmotionLiked = ManageSession.likedStore.allLikedArt.filter(
+      (art) => art.value.collection === 'stopmotion'
     );
+
+    ManageSession.likedStore.drawingLiked = ManageSession.likedStore.allLikedArt.filter(
+      (art) => art.value.collection === 'drawing'
+    );
+
+    const randomLiked = ServerCall.getRandomElements(ManageSession.likedStore.drawingLiked, 4);
 
     return randomLiked;
   }
@@ -672,14 +588,7 @@ class ServerCall {
     return array;
   }
 
-  static serverHandleFlowerArray(
-    foundFlowers,
-    serverObjectsHandler,
-    type,
-    artSize,
-    artMargin,
-  ) {
-    // eslint-disable-next-line no-param-reassign
+  static serverHandleFlowerArray(foundFlowers, serverObjectsHandler, type, artSize, artMargin) {
     serverObjectsHandler.array = foundFlowers;
     // remove the flower placeholder from the array
     serverObjectsHandler.shift();
@@ -701,14 +610,10 @@ class ServerCall {
    *  or we remove the item from the array (we skip a media that does exist)
    * */
   static handleServerArray({ type, serverObjectsHandler, artSize, artMargin }) {
-    dlog(
-      'serverObjectsHandler.array.length: ',
-      serverObjectsHandler.array.length,
-    );
+    dlog('serverObjectsHandler.array.length: ', serverObjectsHandler.array.length);
     // dlog('serverObjectsHandler: ', serverObjectsHandler);
 
     if (serverObjectsHandler.array.length > 0) {
-      // eslint-disable-next-line no-param-reassign
       serverObjectsHandler.startLength = serverObjectsHandler.array.length;
       /** itemsDownloadCompleted = success or failure
        * we handle the fails in the resolveError function
@@ -720,14 +625,14 @@ class ServerCall {
        * downloading a house image will be replaced with a placeholder
        * downloading a drawing will be skipped
        */
-      // eslint-disable-next-line no-param-reassign
+
       serverObjectsHandler.itemsDownloadCompleted = 0;
 
       // add to serverObjectsHandler artSize
-      // eslint-disable-next-line no-param-reassign
+
       serverObjectsHandler.artSize = artSize;
       // add to serverObjectsHandler artMargin
-      // eslint-disable-next-line no-param-reassign
+
       serverObjectsHandler.artMargin = artMargin;
 
       serverObjectsHandler.array.forEach((element, index) => {
@@ -744,7 +649,6 @@ class ServerCall {
   }
 
   async loadAssetArray(scene, array, type) {
-    // eslint-disable-next-line no-param-reassign
     scene.localAssetsCheck.startLength = array.length;
     dlog('array.length: ', array.length);
     array.forEach((element, index) => {
@@ -753,7 +657,6 @@ class ServerCall {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async loadAsset(scene, element, index, type) {
     if (type === 'localImage') {
       // const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
@@ -773,15 +676,14 @@ class ServerCall {
         () => {
           // dlog('filecomplete-image-$ element.key: ,', element.key);
           // delete from ManageSession.resolveErrorObjectArray because of successful download
-          ManageSession.resolveErrorObjectArray =
-            ManageSession.resolveErrorObjectArray.filter(
-              (obj) => obj.imageKey !== element.key,
-            );
-          // eslint-disable-next-line no-param-reassign
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== element.key
+          );
+
           element.downloaded = true;
           // ServerCall.createDrawingContainer(element, index, artSize, artMargin);
         },
-        scene,
+        scene
       );
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       // ManageSession.resolveErrorObjectArray.push({
@@ -796,7 +698,7 @@ class ServerCall {
         let downloadCompleted = scene.localAssetsCheck.itemsDownloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
         downloadCompleted += 1;
-        // eslint-disable-next-line no-param-reassign
+
         scene.localAssetsCheck.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
@@ -817,54 +719,40 @@ class ServerCall {
     if (scene.textures.exists(imageKeyUrl)) {
       // if the artwork has already been downloaded
       if (type === 'downloadDrawingDefaultUserHome') {
-        // eslint-disable-next-line no-param-reassign
         element.downloaded = true;
         ServerCall.createDrawingContainer(element, index, artSize, artMargin);
 
         const startLength = scene.userHomeDrawingServerList.startLength;
-        let downloadCompleted =
-          scene.userHomeDrawingServerList.itemsDownloadCompleted;
+        let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
         downloadCompleted += 1;
-        scene.userHomeDrawingServerList.itemsDownloadCompleted =
-          downloadCompleted;
+        scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('load DRAWING COMPLETE');
           ServerCall.repositionContainers(type);
         }
       } else if (type === 'downloadStopmotionDefaultUserHome') {
-        // eslint-disable-next-line no-param-reassign
         element.downloaded = true;
-        ServerCall.createStopmotionContainer(
-          element,
-          index,
-          artSize,
-          artMargin,
-        );
+        ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
 
         const startLength = scene.userStopmotionServerList.startLength;
-        let downloadCompleted =
-          scene.userStopmotionServerList.itemsDownloadCompleted;
+        let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
         downloadCompleted += 1;
-        scene.userStopmotionServerList.itemsDownloadCompleted =
-          downloadCompleted;
+        scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('load downloadStopmotionDefaultUserHome COMPLETE');
           ServerCall.repositionContainers(type);
         }
       } else if (type === 'dier') {
-        // eslint-disable-next-line no-new
         // dlog('element, index', element, index);
         new AnimalChallenge(scene, element, artSize);
       } else if (type === 'bloem') {
-        // eslint-disable-next-line no-new
         // dlog('element, index', element, index);
         // push het element in flowerKeyArray
         scene.flowerKeyArray.push(imageKeyUrl);
         // scene.flowerFliedStartMaking = true;
       } else if (type === 'downloadLikedDrawing') {
-        // eslint-disable-next-line no-param-reassign
         element.downloaded = true;
         ServerCall.createdownloadLikedDrawingContainer(element, index);
 
@@ -889,28 +777,21 @@ class ServerCall {
         scene,
         resolved: false,
       });
-      const convertedImage = await convertImage(
-        imageKeyUrl,
-        imgSize,
-        imgSize,
-        fileFormat,
-      );
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
 
       scene.load.image(imageKeyUrl, convertedImage).on(
         `filecomplete-image-${imageKeyUrl}`,
         () => {
           // delete from ManageSession.resolveErrorObjectArray because of successful download
-          ManageSession.resolveErrorObjectArray =
-            ManageSession.resolveErrorObjectArray.filter(
-              (obj) => obj.imageKey !== imageKeyUrl,
-            );
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl
+          );
 
-          // eslint-disable-next-line no-param-reassign
           element.downloaded = true;
 
           ServerCall.createDrawingContainer(element, index, artSize, artMargin);
         },
-        scene,
+        scene
       );
 
       scene.load.start(); // start the load queue to get the image in memory
@@ -922,11 +803,9 @@ class ServerCall {
        *   */
       scene.load.on('complete', () => {
         const startLength = scene.userHomeDrawingServerList.startLength;
-        let downloadCompleted =
-          scene.userHomeDrawingServerList.itemsDownloadCompleted;
+        let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
         downloadCompleted += 1;
-        scene.userHomeDrawingServerList.itemsDownloadCompleted =
-          downloadCompleted;
+        scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('download downloadDrawingDefaultUserHome COMPLETE');
@@ -934,12 +813,7 @@ class ServerCall {
         }
       });
     } else if (type === 'downloadStopmotionDefaultUserHome') {
-      const convertedImage = await convertImage(
-        imageKeyUrl,
-        imgSize,
-        getImageWidth,
-        fileFormat,
-      );
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
 
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
@@ -957,17 +831,11 @@ class ServerCall {
         })
         .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
           // remove the file from the error-resolve-queue
-          ManageSession.resolveErrorObjectArray =
-            ManageSession.resolveErrorObjectArray.filter(
-              (obj) => obj.imageKey !== imageKeyUrl,
-            );
-
-          ServerCall.createStopmotionContainer(
-            element,
-            index,
-            artSize,
-            artMargin,
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl
           );
+
+          ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
         });
       // dlog('stopmotion', imageKeyUrl);
       scene.load.start(); // start the load queue to get the image in memory
@@ -976,12 +844,10 @@ class ServerCall {
       scene.load.on('complete', () => {
         // dlog('loader STOPMOTION is complete');
         const startLength = scene.userStopmotionServerList.startLength;
-        let downloadCompleted =
-          scene.userStopmotionServerList.itemsDownloadCompleted;
+        let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
         downloadCompleted += 1;
-        scene.userStopmotionServerList.itemsDownloadCompleted =
-          downloadCompleted;
+        scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('download STOPMOTION COMPLETE');
@@ -990,12 +856,7 @@ class ServerCall {
       });
     } else if (type === 'dier') {
       // dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
-      const convertedImage = await convertImage(
-        imageKeyUrl,
-        imgSize,
-        getImageWidth,
-        fileFormat,
-      );
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
       // const convertedImage = element.value.previewUrl
       // dlog('dier convertedImage', convertedImage);
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
@@ -1014,23 +875,17 @@ class ServerCall {
         })
         .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
           // remove the file from the error-resolve-queue
-          ManageSession.resolveErrorObjectArray =
-            ManageSession.resolveErrorObjectArray.filter(
-              (obj) => obj.imageKey !== imageKeyUrl,
-            );
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl
+          );
 
           // dlog('imageKeyUrl', imageKeyUrl);
-          // eslint-disable-next-line no-new
+
           new AnimalChallenge(scene, element, artSize);
         });
       scene.load.start(); // start the load queue to get the image in memory
     } else if (type === 'avatar') {
-      const convertedImage = await convertImage(
-        imageKeyUrl,
-        imgSize,
-        getImageWidth,
-        fileFormat,
-      );
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
 
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
@@ -1048,10 +903,9 @@ class ServerCall {
         })
         .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
           // remove the file from the error-resolve-queue
-          ManageSession.resolveErrorObjectArray =
-            ManageSession.resolveErrorObjectArray.filter(
-              (obj) => obj.imageKey !== imageKeyUrl,
-            );
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl
+          );
 
           scene.events.emit('avatarConverted', imageKeyUrl);
         });
@@ -1059,12 +913,7 @@ class ServerCall {
       scene.load.start(); // start the load queue to get the image in memory
     } else if (type === 'bloem') {
       // dlog('imageKeyUrl, element, index', imageKeyUrl, element, index);
-      const convertedImage = await convertImage(
-        imageKeyUrl,
-        imgSize,
-        getImageWidth,
-        fileFormat,
-      );
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, getImageWidth, fileFormat);
       // const convertedImage = element.value.previewUrl
       // dlog('convertedImage', convertedImage);
 
@@ -1081,11 +930,10 @@ class ServerCall {
         `filecomplete-image-${imageKeyUrl}`,
         () => {
           // delete from ManageSession.resolveErrorObjectArray because of successful download
-          ManageSession.resolveErrorObjectArray =
-            ManageSession.resolveErrorObjectArray.filter(
-              (obj) => obj.imageKey !== imageKeyUrl,
-            );
-          // eslint-disable-next-line no-param-reassign
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl
+          );
+
           element.downloaded = true;
 
           // push het element in flowerKeyArray
@@ -1093,16 +941,11 @@ class ServerCall {
           scene.flowerKeyArray.push(imageKeyUrl);
           // scene.flowerFliedStartMaking = true;
         },
-        this,
+        this
       );
       scene.load.start(); // start the load queue to get the image in memory
     } else if (type === 'downloadLikedDrawing') {
-      const convertedImage = await convertImage(
-        imageKeyUrl,
-        imgSize,
-        imgSize,
-        fileFormat,
-      );
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
 
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
@@ -1118,10 +961,9 @@ class ServerCall {
         `filecomplete-image-${imageKeyUrl}`,
         () => {
           // delete from ManageSession.resolveErrorObjectArray because of successful download
-          ManageSession.resolveErrorObjectArray =
-            ManageSession.resolveErrorObjectArray.filter(
-              (obj) => obj.imageKey !== imageKeyUrl,
-            );
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl
+          );
 
           const newElement = { ...element }; // create a new object with the same properties as element
           newElement.downloaded = true; // modify the downloaded property of the new object
@@ -1130,14 +972,13 @@ class ServerCall {
           /** add the successfully downloaded liked to the ManageSession.likedStore */
           // add the newElement to the ManageSession.likedStore.successfulDownload array,
           //  check first if ManageSession.likedStore.successfulDownload array exists, make it otherwise
-          ManageSession.likedStore.successfulDownload = ManageSession.likedStore
-            .successfulDownload
+          ManageSession.likedStore.successfulDownload = ManageSession.likedStore.successfulDownload
             ? [...ManageSession.likedStore.successfulDownload, newElement]
             : [newElement];
 
           ServerCall.createdownloadLikedDrawingContainer(newElement, index);
         },
-        scene,
+        scene
       );
       scene.load.start(); // start the load queue to get the image in memory
 
@@ -1185,9 +1026,7 @@ class ServerCall {
   static async loadUserAndSpritesheet(element, scene) {
     const user = await getAccount(element.user_id);
     if (!user || !user.url) {
-      console.error(
-        "Failed to fetch user data or user's avatar URL is missing",
-      );
+      console.error("Failed to fetch user data or user's avatar URL is missing");
       return;
     }
     // 2. Load the Spritesheet
@@ -1198,26 +1037,27 @@ class ServerCall {
   static loadSpritesheetForUser(user, scene) {
     const fileNameCheck = `${user.id}_${user.update_time}`;
 
-    convertImage(
-      user.avatar_url,
-      AVATAR_SPRITESHEET_LOAD_SIZE,
-      AVATAR_SPRITESHEET_LOAD_SIZE * 100,
-      'png',
-    ).then((url) => {
-      scene.load
-        .spritesheet(fileNameCheck, url, {
-          frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
-          frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
-        })
-        .on(`filecomplete-spritesheet-${fileNameCheck}`, () => fileNameCheck);
-      scene.load.start(); // start loading the image in memory
-    });
+    convertImage(user.avatar_url, AVATAR_SPRITESHEET_LOAD_SIZE, AVATAR_SPRITESHEET_LOAD_SIZE * 100, 'png').then(
+      (url) => {
+        scene.load
+          .spritesheet(fileNameCheck, url, {
+            frameWidth: AVATAR_SPRITESHEET_LOAD_SIZE,
+            frameHeight: AVATAR_SPRITESHEET_LOAD_SIZE,
+          })
+          .on(`filecomplete-spritesheet-${fileNameCheck}`, () => fileNameCheck);
+        scene.load.start(); // start loading the image in memory
+      }
+    );
   }
 
-  // eslint-disable-next-line class-methods-use-this
   replaceLikedsInBalloonContainer() {
     const scene = ManageSession.currentScene;
     const containers = scene.balloonContainer.list;
+
+    if (!containers) {
+      console.log('No containers found in the balloonContainer');
+      return;
+    }
 
     // delete the liked drawings from the balloonContainer, not the balloon itself
     containers.slice().forEach((child) => {
@@ -1227,10 +1067,7 @@ class ServerCall {
     });
 
     // get 4 likes from the drawings
-    const randomLiked = ServerCall.getRandomElements(
-      ManageSession.likedStore.drawingLiked,
-      4,
-    );
+    const randomLiked = ServerCall.getRandomElements(ManageSession.likedStore.drawingLiked, 4);
 
     // put the 4 random liked drawings in the likedStore.array
     ManageSession.likedStore.array = [];
@@ -1278,18 +1115,13 @@ class ServerCall {
     let imageWidth = scene.textures.get('artFrame_512').getSourceImage().width;
     // add the background artFrame and set the image width to 256
     let image = scene.add.image(0, 0, 'artFrame_512').setOrigin(0);
-    image.setScale(
-      (desiredWidth + ART_FRAME_BORDER) / imageWidth,
-      (desiredWidth + ART_FRAME_BORDER) / imageWidth,
-    );
+    image.setScale((desiredWidth + ART_FRAME_BORDER) / imageWidth, (desiredWidth + ART_FRAME_BORDER) / imageWidth);
     // put an artFrame in the container as a background and frame
     imageContainer.add(image);
 
     imageWidth = scene.textures.get(imageKeyUrl).getSourceImage().width;
     // adds the image to the container, on top of the artFrame
-    image = scene.add
-      .image(0 + ART_FRAME_BORDER / 2, 0 + ART_FRAME_BORDER / 2, imageKeyUrl)
-      .setOrigin(0);
+    image = scene.add.image(0 + ART_FRAME_BORDER / 2, 0 + ART_FRAME_BORDER / 2, imageKeyUrl).setOrigin(0);
     image.setScale(desiredWidth / imageWidth, desiredWidth / imageWidth);
 
     // make image interactive so that we can goto the user's home
@@ -1303,18 +1135,14 @@ class ServerCall {
     imageContainer.add(image);
 
     // create the button shadow
-    const buttonShadow = scene.add
-      .image(imageWidth - 70, imageWidth, 'purpleCircle_128')
-      .setDepth(500);
+    const buttonShadow = scene.add.image(imageWidth - 70, imageWidth, 'purpleCircle_128').setDepth(500);
     buttonShadow.displayWidth = 60;
     buttonShadow.displayHeight = 60;
     buttonShadow.setVisible(false);
     imageContainer.add(buttonShadow);
 
     // create the button image
-    const buttonImage = scene.add
-      .image(imageWidth - 70, imageWidth, 'enter')
-      .setDepth(500);
+    const buttonImage = scene.add.image(imageWidth - 70, imageWidth, 'enter').setDepth(500);
     buttonImage.rotation = -1.5708;
     buttonImage.displayWidth = 60;
     buttonImage.displayHeight = 60;
@@ -1381,10 +1209,7 @@ class ServerCall {
     });
 
     // check if there is posX and posY from the home object
-    if (
-      typeof friendHome.value.posX !== 'undefined' &&
-      typeof friendHome.value.posY !== 'undefined'
-    ) {
+    if (typeof friendHome.value.posX !== 'undefined' && typeof friendHome.value.posY !== 'undefined') {
       // place user next to nameplate of home
       const playerPosX = friendHome.value.posX - 80;
       const playerPosY = friendHome.value.posY - 100;
@@ -1415,8 +1240,7 @@ class ServerCall {
 
     const artStart = 38; // start the art on the left side
 
-    const coordX =
-      index === 0 ? artStart : artStart + index * (artSize + artMargin);
+    const coordX = index === 0 ? artStart : artStart + index * (artSize + artMargin);
     // dlog('image coordX, index', coordX, index);
     const imageContainer = scene.add.container(0, 0).setDepth(100);
 
@@ -1441,9 +1265,7 @@ class ServerCall {
     imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
 
     // adds the image to the container, on top of the artFrame
-    const setImage = scene.add
-      .image(0 + artBorder, 0 + artBorder, imageKeyUrl)
-      .setOrigin(0);
+    const setImage = scene.add.image(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0);
     // explicitly set the size of the image incase the image has a non standard size
     setImage.displayWidth = artSize;
     setImage.displayHeight = artSize;
@@ -1453,14 +1275,7 @@ class ServerCall {
     const containerSize = artSize + artBorder;
     const tempX = containerSize - artMargin;
     const tempY = containerSize + artBorder;
-    ArtworkOptions.placeHeartButton(
-      scene,
-      tempX,
-      tempY,
-      imageKeyUrl,
-      element,
-      imageContainer,
-    );
+    ArtworkOptions.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     imageContainer.setPosition(coordX, y);
     imageContainer.setSize(containerSize, containerSize);
 
@@ -1482,21 +1297,17 @@ class ServerCall {
 
     const artStart = 38; // start the art on the left side
 
-    const coordX =
-      index === 0 ? artStart : artStart + index * (artSize + artMargin);
+    const coordX = index === 0 ? artStart : artStart + index * (artSize + artMargin);
     const imageContainer = scene.add.container(0, 0).setDepth(100);
     imageContainer.nakamaData = { ...element };
-    imageContainer.add(
-      scene.add.image(0, 0, 'artFrame_512').setOrigin(0).setName('frame'),
-    );
+    imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0).setName('frame'));
 
     // dlog('STOPMOTION element, index, artSize, artMargin', element, index, artSize, artMargin);
     const avatar = scene.textures.get(imageKeyUrl);
-    // eslint-disable-next-line no-underscore-dangle
+
     const avatarWidth = avatar.frames.__BASE.width;
     // dlog('stopmotion width: ', avatarWidth);
 
-    // eslint-disable-next-line no-underscore-dangle
     const avatarHeight = avatar.frames.__BASE.height;
     // dlog(`stopmotion Height: ${avatarHeight}`);
 
@@ -1531,14 +1342,9 @@ class ServerCall {
     // . end animation for the stopmotion ......................
 
     // adds the image to the container
-    const completedImage = scene.add
-      .sprite(0 + artBorder, 0 + artBorder, imageKeyUrl)
-      .setOrigin(0);
+    const completedImage = scene.add.sprite(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0);
     // set the size of the stopmotion to artSize explicitly
-    completedImage.setScale(
-      artSize / completedImage.width,
-      artSize / completedImage.height,
-    );
+    completedImage.setScale(artSize / completedImage.width, artSize / completedImage.height);
     completedImage.setName('stopmotion');
     imageContainer.add(completedImage);
 
@@ -1551,22 +1357,8 @@ class ServerCall {
     const containerSize = artSize + artBorder;
     const tempX = containerSize - artMargin;
     const tempY = containerSize + artBorder;
-    ArtworkOptions.placeHeartButton(
-      scene,
-      tempX,
-      tempY,
-      imageKeyUrl,
-      element,
-      imageContainer,
-    );
-    ArtworkOptions.placePlayPauseButton(
-      scene,
-      tempX,
-      tempY,
-      imageKeyUrl,
-      element,
-      imageContainer,
-    );
+    ArtworkOptions.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
+    ArtworkOptions.placePlayPauseButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     imageContainer.setPosition(coordX, y);
     imageContainer.setSize(containerSize, containerSize);
     if (!imageContainer) return;
@@ -1607,8 +1399,7 @@ class ServerCall {
     // give each container a position according to the place in the index
     const artStart = 38; // start the art on the left side
     containers.forEach((element, index) => {
-      const coordX =
-        index === 0 ? artStart : artStart + index * (artSize + artMargin);
+      const coordX = index === 0 ? artStart : artStart + index * (artSize + artMargin);
       element.setX(coordX);
     });
   }
@@ -1618,9 +1409,7 @@ class ServerCall {
     // element, index, homeImageKey, offendingFile, scene
     // ManageSession.resolveErrorObjectArray; // all loading images
     // dlog('offendingFile', offendingFile);
-    const resolveErrorObject = ManageSession.resolveErrorObjectArray.find(
-      (o) => o.imageKey === offendingFile.key,
-    );
+    const resolveErrorObject = ManageSession.resolveErrorObjectArray.find((o) => o.imageKey === offendingFile.key);
 
     if (!resolveErrorObject) {
       return;
@@ -1651,19 +1440,15 @@ class ServerCall {
           `filecomplete-image-${imageKey}`,
           () => {
             // delete from ManageSession.resolveErrorObjectArray
-            ManageSession.resolveErrorObjectArray =
-              ManageSession.resolveErrorObjectArray.filter(
-                (obj) => obj.imageKey !== imageKey,
-              );
-            dlog(
-              'ManageSession.resolveErrorObjectArray',
-              ManageSession.resolveErrorObjectArray,
+            ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+              (obj) => obj.imageKey !== imageKey
             );
+            dlog('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
 
             // create the home with the placeholder imageKey
             ServerCall.createHome(element, index, imageKey, scene);
           },
-          this,
+          this
         );
         scene.load.start();
         break;
@@ -1671,17 +1456,15 @@ class ServerCall {
         dlog('offending drawing loading failed, removing from array', imageKey);
 
         // delete from scene.userHomeDrawingServerList
-        // eslint-disable-next-line max-len
-        scene.userHomeDrawingServerList.array =
-          scene.userHomeDrawingServerList.array.filter(
-            (obj) => obj.value.url !== imageKey,
-          );
+
+        scene.userHomeDrawingServerList.array = scene.userHomeDrawingServerList.array.filter(
+          (obj) => obj.value.url !== imageKey
+        );
 
         // delete from ManageSession.resolveErrorObjectArray
-        ManageSession.resolveErrorObjectArray =
-          ManageSession.resolveErrorObjectArray.filter(
-            (obj) => obj.imageKey !== imageKey,
-          );
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey
+        );
 
         // dlog('ManageSession.resolveErrorObjectArray', ManageSession.resolveErrorObjectArray);
 
@@ -1692,15 +1475,12 @@ class ServerCall {
         const userStopmotionServerList = scene.userStopmotionServerList;
         // delete from scene.userStopmotionServerList
 
-        userStopmotionServerList.array = userStopmotionServerList.array.filter(
-          (obj) => obj.value.url !== imageKey,
-        );
+        userStopmotionServerList.array = userStopmotionServerList.array.filter((obj) => obj.value.url !== imageKey);
 
         // delete from ManageSession.resolveErrorObjectArray
-        ManageSession.resolveErrorObjectArray =
-          ManageSession.resolveErrorObjectArray.filter(
-            (obj) => obj.imageKey !== imageKey,
-          );
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey
+        );
 
         break;
       case 'downloadAnimalChallenge':
@@ -1709,23 +1489,19 @@ class ServerCall {
         const userServerList = scene.animalArray;
 
         // delete from scene.userStopmotionServerList
-        userServerList.array = userServerList.array.filter(
-          (obj) => obj.value.url !== imageKey,
-        );
+        userServerList.array = userServerList.array.filter((obj) => obj.value.url !== imageKey);
 
         // delete from ManageSession.resolveErrorObjectArray
-        ManageSession.resolveErrorObjectArray =
-          ManageSession.resolveErrorObjectArray.filter(
-            (obj) => obj.imageKey !== imageKey,
-          );
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey
+        );
 
         break;
       case 'downloadAvatarKey':
         dlog('loading avatar conversion failed');
-        ManageSession.resolveErrorObjectArray =
-          ManageSession.resolveErrorObjectArray.filter(
-            (obj) => obj.imageKey !== imageKey,
-          );
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey
+        );
         break;
       case 'downloadFlowerChallenge':
         dlog('loading flower for FlowerFlieldChallenge failed');
@@ -1734,23 +1510,19 @@ class ServerCall {
         flowerKeyArray = scene.flowerKeyArray;
 
         // delete from scene.userStopmotionServerList
-        flowerKeyArray.array = flowerKeyArray.array.filter(
-          (obj) => obj.value.url !== imageKey,
-        );
+        flowerKeyArray.array = flowerKeyArray.array.filter((obj) => obj.value.url !== imageKey);
 
-        ManageSession.resolveErrorObjectArray =
-          ManageSession.resolveErrorObjectArray.filter(
-            (obj) => obj.imageKey !== imageKey,
-          );
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey
+        );
         break;
       case 'localImage':
         dlog('loading localImage failed');
 
         // delete from ManageSession.resolveErrorObjectArray
-        ManageSession.resolveErrorObjectArray =
-          ManageSession.resolveErrorObjectArray.filter(
-            (obj) => obj.imageKey !== imageKey,
-          );
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey
+        );
 
         break;
       case 'downloadLikedDrawing':
@@ -1759,37 +1531,29 @@ class ServerCall {
         dlog('ManageSession.likedStore: ', ManageSession.likedStore);
 
         // delete from ManageSession.resolveErrorObjectArray
-        ManageSession.resolveErrorObjectArray =
-          ManageSession.resolveErrorObjectArray.filter(
-            (obj) => obj.imageKey !== imageKey,
-          );
+        ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+          (obj) => obj.imageKey !== imageKey
+        );
 
         // delete the element from the ManageSession.likedStore.array
-        ManageSession.likedStore.array = ManageSession.likedStore.array.filter(
-          (obj) => obj.value.url !== imageKey,
-        );
+        ManageSession.likedStore.array = ManageSession.likedStore.array.filter((obj) => obj.value.url !== imageKey);
 
         // delete the element from the ManageSession.likedStore.allLikedArt
         // so we can't get it again later
-        ManageSession.likedStore.allLikedArt =
-          ManageSession.likedStore.allLikedArt.filter(
-            (obj) => obj.value.url !== imageKey,
-          );
+        ManageSession.likedStore.allLikedArt = ManageSession.likedStore.allLikedArt.filter(
+          (obj) => obj.value.url !== imageKey
+        );
 
         // delete the element from the ManageSession.likedStore.drawingLiked
         // so we can't get it again later
-        ManageSession.likedStore.drawingLiked =
-          ManageSession.likedStore.drawingLiked.filter(
-            (obj) => obj.value.url !== imageKey,
-          );
+        ManageSession.likedStore.drawingLiked = ManageSession.likedStore.drawingLiked.filter(
+          (obj) => obj.value.url !== imageKey
+        );
 
         containers = scene.balloonContainer.list;
         if (containers.length < 4) {
           // get a new random liked drawing
-          randomLiked = ServerCall.getRandomElements(
-            ManageSession.likedStore.drawingLiked,
-            1,
-          );
+          randomLiked = ServerCall.getRandomElements(ManageSession.likedStore.drawingLiked, 1);
           // dlog('ManageSession.likedStore.drawingLiked: ', ManageSession.likedStore.drawingLiked);
           // dlog('randomLiked', randomLiked);
 
