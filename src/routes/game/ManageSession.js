@@ -52,6 +52,7 @@ class ManageSession {
     this.avatarSize = 64;
     this.cameraShake = false;
     this.playerHomeContainer = null; // container with home of self -> used for live updating the image
+    this.userHomeLocation; // used to check if we are in the user home location where the home image can be updated
 
     this.createOnlinePlayers = false;
     this.updateOnlinePlayers = false;

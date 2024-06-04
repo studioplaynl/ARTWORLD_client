@@ -29,11 +29,30 @@ import { PlayerLocation, PlayerUpdate, PlayerPos } from '../playerState';
 import * as Phaser from 'phaser';
 
 class ServerCall {
+  constructor() {
+    this.storeSubscriptions = [];
+    this.myHomeStoreSubscription;
+  }
+
   async checkIfHomeSelf(_location) {
     let profile = get(Profile);
 
     ShowHomeEditBar.set(profile.id === _location);
     return get(ShowHomeEditBar);
+  }
+
+  unsubscribeStores() {
+    console.log('unsubscribeStores in ServerCall');
+
+    if (this.myHomeStoreSubscription) {
+      this.myHomeStoreSubscription();
+    }
+
+    if (!this.storeSubscriptions) return;
+    if (this.storeSubscriptions.length === 0) return;
+    this.storeSubscriptions.forEach((unsubscribe) => {
+      unsubscribe();
+    });
   }
 
   async getHomeElements(_location) {
@@ -94,7 +113,8 @@ class ServerCall {
         usersWithAHome += `${element.username}\n`;
 
         // dlog(element, index)
-        const homeImageKey = `homeKey_${element.user_id}`;
+        //unique key for home image also when updated
+        const homeImageKey = `homeKey_${element.user_id}_${element.update_time}`;
         // get a image url for each home
         // get converted image from AWS
         const { url } = element.value;
@@ -202,48 +222,6 @@ class ServerCall {
       // dlog('ManageSession.playerHomeContainer: ', ManageSession.playerHomeContainer);
       // dlog('ManageSession.playerHomeContainer.getAll(): ', ManageSession.playerHomeContainer.getAll());
       // subscribe to myHome if the location is the home
-      let previousHome = { value: { url: '' } };
-
-      myHomeStore.subscribe((value) => {
-        // dlog('previousHome, value: ', previousHome, value);
-        if (value.value.url !== '' && previousHome.value.url !== value.value.url) {
-          // find the image in the container by name
-          const homeImageInGame = ManageSession.playerHomeContainer.getByName('location');
-          // dlog('homeImageInGame: ', homeImageInGame);
-          dlog('user home image updated');
-          previousHome = value;
-          // dlog('value', value);
-          // dlog('value.url', value.url);
-          if (scene.textures.exists(value.url)) {
-            homeImageInGame.setTexture(value.url);
-          } else {
-            scene.load.image(value.url, value.url).on(
-              `filecomplete-image-${value.url}`,
-              () => {
-                dlog('done loading new home image');
-                if (homeImageInGame !== null) {
-                  // dlog('homeImageInGame: ', homeImageInGame);
-                  homeImageInGame.setTexture(value.url);
-                }
-              },
-              this
-            );
-            scene.load.start(); // start loading the image in memory
-          }
-
-          // dlog('ManageSession.playerHomeContainer.list[2]', ManageSession.playerHomeContainer.list[2]);
-          // set the right size
-          const width = 140;
-          if (homeImageInGame !== null) {
-            // dlog('homeImageInGame: ', homeImageInGame);
-            homeImageInGame.displayWidth = width;
-            homeImageInGame.scaleY = homeImageInGame.scaleX;
-            // sometimes there is a little border visible on a drawn image; we crop it off
-            const cropMargin = 1;
-            homeImageInGame.setCrop(cropMargin, cropMargin, width - cropMargin, width - cropMargin);
-          }
-        }
-      });
     }
 
     scene.homesRepresented[index].setDepth(30);
@@ -278,6 +256,52 @@ class ServerCall {
     // dlog('remainingItemsArray: ', remainingItemsArray);
 
     return { objectsOfFellowsOfUser, remainingItemsArray };
+  }
+
+  updateHomeImage(scene, value) {
+    let previousHome = { value: { url: '' } };
+
+    //! tried to move this to a central place (UIscene, but it didn't work reliably)
+    //TODO instead of subscription, event listener?
+    console.log('subscribing to myHomeStore servercall');
+
+    // dlog('previousHome, value: ', previousHome, value);
+    if (value.value.url !== '' && previousHome.value.url !== value.value.url) {
+      // find the image in the container by name
+      if (!ManageSession.playerHomeContainer) return;
+      const homeImageInGame = ManageSession.playerHomeContainer.getByName('location');
+      // dlog('homeImageInGame: ', homeImageInGame);
+      dlog('user home image updated');
+      previousHome = value;
+      // dlog('value', value);
+      // dlog('value.url', value.url);
+      if (scene.textures.exists(value.url)) {
+        homeImageInGame.setTexture(value.url);
+      } else {
+        scene.load.image(value.url, value.url).on(
+          `filecomplete-image-${value.url}`,
+          () => {
+            dlog('done loading new home image');
+            if (homeImageInGame !== null) {
+              // dlog('homeImageInGame: ', homeImageInGame);
+              homeImageInGame.setTexture(value.url);
+            }
+          },
+          this
+        );
+        scene.load.start(); // start loading the image in memory
+      }
+
+      // set the right size
+      const width = 140;
+      if (!homeImageInGame) return;
+      // dlog('homeImageInGame: ', homeImageInGame);
+      homeImageInGame.displayWidth = width;
+      homeImageInGame.scaleY = homeImageInGame.scaleX;
+      // // sometimes there is a little border visible on a drawn image; we crop it off
+      // const cropMargin = 1;
+      // homeImageInGame.setCrop(cropMargin, cropMargin, width - cropMargin, width - cropMargin);
+    }
   }
 
   static getRandomElements(arr, count) {

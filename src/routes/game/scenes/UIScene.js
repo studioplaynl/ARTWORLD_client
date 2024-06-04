@@ -9,6 +9,9 @@ import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
+import { myHomeStore } from '../../../storage';
+import ServerCall from '../class/ServerCall';
+import { Profile } from '../../../session';
 
 import { PlayerZoom } from '../playerState';
 
@@ -90,10 +93,28 @@ export default class UIScene extends Phaser.Scene {
 
     //subscribe to zoom changes and pass it on the the current scene
     PlayerZoom.subscribe((zoom) => {
+      console.log('zoom', zoom);
+      if (!zoom) return;
+      if (zoom === undefined) return;
+
+      if (!ManageSession.currentScene) return;
+      if (ManageSession.currentScene.gameCam === undefined) return;
+
       ManageSession.currentZoom = zoom;
       if (ManageSession.currentScene) {
         ManageSession.currentScene.gameCam.zoom = zoom;
       }
+    });
+    Profile.subscribe((value) => {
+      if (!value) return;
+      ManageSession.userHomeLocation = value.meta.Azc;
+    });
+
+    // Live update of the home image when we select an other homeImage in the UI
+    myHomeStore.subscribe((value) => {
+      if (!ManageSession.currentScene) return;
+      if (ManageSession.userHomeLocation !== ManageSession.currentScene.scene.key) return;
+      ServerCall.updateHomeImage(ManageSession.currentScene, value);
     });
 
     // to make the UI scene always on top of other scenes

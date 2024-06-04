@@ -1,11 +1,21 @@
 <script>
   // import { fly } from 'svelte/transition';
+  import { onMount, onDestroy } from 'svelte';
   import { ShowHomeEditBar, HomeEditBarExpanded } from '../../session';
   import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
   import AppGroup from './AppGroup.svelte';
   
   let currentView;
+
+  onMount(() => {
+    // console.log('mounted');
+    
+  });
+
+  onDestroy(() => {
+    // console.log('destroyed');
+  });
 
   function closeEditHome() {
     ShowHomeEditBar.set(true);
@@ -22,10 +32,6 @@
     if (event.key === 'Enter' || event.key === ' ') {
       toggleExpand();
     }
-  }
-
-  function openPage() {
-    // open page here
   }
 
   // toggle opens the itemsbar panel to reveal more functionality, the app is passed as a prop

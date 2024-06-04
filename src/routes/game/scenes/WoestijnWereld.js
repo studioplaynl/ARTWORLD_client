@@ -92,6 +92,9 @@ export default class WoestijnWereld extends Phaser.Scene {
 
   async create() {
     //!
+    //listen to this even to unsubscribe stores when leaving a scene
+    this.events.on('unsubscribeStores', this.unsubscribeStores, this);
+
     // show physics debug boundaries in gameEditMode
     if (ManageSession.gameEditMode) {
       this.physics.world.drawDebug = true;
@@ -146,7 +149,7 @@ export default class WoestijnWereld extends Phaser.Scene {
     this.gameCam.startFollow(this.player);
     // ......... end PLAYER VS WORLD .......................................................................
 
-    ServerCall.getHomesFiltered(this.scene.key, this);
+    await ServerCall.getHomesFiltered(this.scene.key, this);
 
     // create accessable locations
     this.makeWorldElements();
@@ -335,4 +338,16 @@ export default class WoestijnWereld extends Phaser.Scene {
       // ........... end PLAYER SHADOW .........................................................................
     }
   } // update
+
+  unsubscribeStores() {
+    console.log('unsubscribeStores in ', this.scene.key);
+    ServerCall.unsubscribeStores();
+
+    if (!this.storeSubscriptions) return;
+    if (this.storeSubscriptions.length === 0) return;
+
+    this.storeSubscriptions.forEach((subscription) => {
+      subscription();
+    });
+  }
 } // class

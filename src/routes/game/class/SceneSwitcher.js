@@ -64,8 +64,6 @@ class SceneSwitcher {
         targetSceneKey = targetScene;
       }
       dlog('\u001b[31m switchScene: ', sceneKey, ' , targetScene: ', targetSceneKey, ' targetHouse: ', targetHouse);
-    } else {
-      // dlog(' scene: ', scene, ' targetScene: ', targetScene, ' targetHouse: ', targetHouse);
     }
 
     if (targetScene === 'logout') {
@@ -90,7 +88,9 @@ class SceneSwitcher {
 
     setLoader(true);
 
+    // HERE WE FINALLY START AN OTHER SCENE, which stops the current scene
     if (targetHouse !== null && targetScene === DEFAULT_HOME) {
+      this.unsubScribeSceneFromStores(scene);
       scene.scene.start(targetScene, { user_id: targetHouse });
       // later we join the house id channel
       targetSceneKey = targetHouse;
@@ -99,6 +99,7 @@ class SceneSwitcher {
       ShowHomeEditBar.set(false);
 
       if (targetScene.scene !== null) {
+        this.unsubScribeSceneFromStores(scene);
         // dlog('start targetScene: ', targetScene);
         scene.scene.start(targetScene);
       }
@@ -107,8 +108,13 @@ class SceneSwitcher {
     this.switchStream(scene, targetScene);
   }
 
+  unsubScribeSceneFromStores(scene) {
+    // Emit an event that the scene can listen for
+    scene.events.emit('unsubscribeStores');
+  }
+
   async pauseSceneStartApp(scene, app) {
-    //! pause scene needs the 'real' scene object, not just the key
+    // pause scene needs the 'real' scene object, not just the key
     if (scene) {
       //! check this
       scene.physics.pause();
@@ -116,12 +122,7 @@ class SceneSwitcher {
 
       // scene.scene.stop();
       this.switchStream(scene, app);
-
-      // await ManageSession.socket.rpc('leave', get(playerStreamID));
-      // await ManageSession.socket.rpc('join', app);
     }
-    // ManageSession.getStreamUsers("join", app)
-    // open app
   }
 
   async startSceneCloseApp(app, scene) {
@@ -136,14 +137,8 @@ class SceneSwitcher {
       dlog('ManageSession.currentScene.scene.key: ', ManageSession.currentScene.scene.key);
       ManageSession.currentScene.scene.start(scene);
     }
-
+    // setLoader(true);
     this.switchStream(app, scene);
-    // await ManageSession.socket.rpc('leave', app);
-    // await ManageSession.getStreamUsers('join');
-
-    // scene.scene.resume();
-    // scene.physics.resume();
-    // close app
   }
 
   async switchStream(scene, targetScene) {
@@ -187,6 +182,7 @@ class SceneSwitcher {
       targetSceneKey = targetHouse;
     }
 
+    // setLoader(true);
     ManageSession.socket
       .rpc('leave', sceneKey)
       .then((data) => {

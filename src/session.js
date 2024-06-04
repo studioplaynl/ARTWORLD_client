@@ -48,7 +48,7 @@ Profile.subscribe((value) => {
 export const Error = writable();
 Error.subscribe((err) => {
   if (err) {
-    dwarn.error('Error Store received following error:', err);
+    dwarn('Error Store received following error:', err);
   }
 });
 
