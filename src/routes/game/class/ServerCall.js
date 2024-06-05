@@ -17,7 +17,7 @@ import { Profile, ShowHomeEditBar } from '../../../session';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkOptions from './ArtworkOptions';
-import { createGalleryStore } from '../../../storage';
+import { createGalleryStore, HomeElements } from '../../../storage';
 
 import { ART_FRAME_BORDER, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
 
@@ -42,26 +42,20 @@ class ServerCall {
   }
 
   unsubscribeStores() {
-    console.log('unsubscribeStores in ServerCall');
-
-    if (this.myHomeStoreSubscription) {
-      this.myHomeStoreSubscription();
-    }
-
-    if (!this.storeSubscriptions) return;
-    if (this.storeSubscriptions.length === 0) return;
-    this.storeSubscriptions.forEach((unsubscribe) => {
-      unsubscribe();
-    });
+    //! we dont subscribe to anything in this class
+    //! we do it in UI scene
+    //! remove this reference
   }
 
   async getHomeElements(_location) {
-    const allHomeElements = await listAllObjects('homeElements', _location);
-
+    await HomeElements.get(_location);
+    console.log('ManageSession.homeElements: ', ManageSession.homeElements);
     // if there are no homeElements the home is still old version
     // we load a standard drawingGallery and stopMotionGallery
     // these consist of
-    if (allHomeElements.length == 0) {
+
+    // if there are no homeElements
+    if (!ManageSession.homeElements || ManageSession.homeElements.length === 0) {
       /** this mean there are no homeElements and the home is of an old type
        * What we do in that case: we load a default drawingGallery and a default stopmotionGallery
        *
@@ -77,6 +71,21 @@ class ServerCall {
       const visibleDrawingsStore = createGalleryStore(allDrawings.filter((drawing) => drawing.permission_read === 2));
 
       console.log('visibleDrawingsStore: ', get(visibleDrawingsStore));
+    } else {
+      // if there are homeElements we load them
+      ManageSession.homeElements.forEach((element) => {
+        console.log('element: ', element);
+        // make a Phaser gameobject container for each element
+        // the container contains the image and an icon in each corner of the container
+        // top lef is move icon, top right is rotate icon, bottom left is 'more' icon, bottom right is scale icon
+        // the container is draggable
+        // the container is resizable
+        // the container is rotatable
+        // the container is deletable
+        // the container is editable
+        // the container is clickable
+        // the container is a homeElement
+      });
     }
   }
 
@@ -259,11 +268,10 @@ class ServerCall {
   }
 
   updateHomeImage(scene, value) {
+    // this is called from UIScene which is subscribed to $myHomeStore
     let previousHome = { value: { url: '' } };
 
-    //! tried to move this to a central place (UIscene, but it didn't work reliably)
-    //TODO instead of subscription, event listener?
-    console.log('subscribing to myHomeStore servercall');
+    dlog('ServerCall.updateHomeImage');
 
     // dlog('previousHome, value: ', previousHome, value);
     if (value.value.url !== '' && previousHome.value.url !== value.value.url) {

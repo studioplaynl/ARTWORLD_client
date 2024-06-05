@@ -9,7 +9,7 @@ import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
-import { myHomeStore } from '../../../storage';
+import { myHomeStore, HomeElements, Liked } from '../../../storage';
 import ServerCall from '../class/ServerCall';
 import { Profile } from '../../../session';
 
@@ -105,6 +105,8 @@ export default class UIScene extends Phaser.Scene {
         ManageSession.currentScene.gameCam.zoom = zoom;
       }
     });
+
+    // to see the home location of the current user
     Profile.subscribe((value) => {
       if (!value) return;
       ManageSession.userHomeLocation = value.meta.Azc;
@@ -116,6 +118,20 @@ export default class UIScene extends Phaser.Scene {
       if (ManageSession.userHomeLocation !== ManageSession.currentScene.scene.key) return;
       ServerCall.updateHomeImage(ManageSession.currentScene, value);
     });
+
+    // Store HomeElements in ManageSession for central access
+    // ServerCall does a .get and then references ManageSession.homeElements
+    HomeElements.subscribe((value) => {
+      if (!ManageSession.currentScene) return;
+      ManageSession.homeElements = value;
+    });
+
+    // Central Phaser Liked subscription
+    // stored in ManageSession.lkedStore for central access
+    Liked.subscribe((value) => {
+      ManageSession.likedStore = value;
+    });
+    Liked.get();
 
     // to make the UI scene always on top of other scenes
     this.scene.bringToTop();

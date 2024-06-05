@@ -102,6 +102,9 @@ class ManageSession {
 
     this.worldSize = new Phaser.Math.Vector2(0, 0);
     this.userProfile = null;
+
+    this.likedStore = [];
+    this.homeElements = [];
   }
 
   /** Create Socket connection and listen for incoming streaming data, presence and notifications */

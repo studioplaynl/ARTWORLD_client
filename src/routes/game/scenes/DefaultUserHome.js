@@ -102,15 +102,15 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   async preload() {
-    //! this.loadAndPlaceArtworks();
+    this.loadAndPlaceArtworks();
 
     //! Check if this is home of player
     const selfHome = await ServerCall.checkIfHomeSelf(this.location);
     console.log('selfHome defaultUserHome: ', selfHome);
 
     //! 1. Check if there are homeElement objects on the server
-    ServerCall.getHomeElements(this.location);
-
+    const homeElements = await ServerCall.getHomeElements(this.location);
+    // console.log('homeElements: ', homeElements);
     //! working on imageGallery
     //! load all images
     //TODO store in a Drawings Store
@@ -119,8 +119,8 @@ export default class DefaultUserHome extends Phaser.Scene {
     //! the pages can be loaded from local memory, when we come back on page 1
     //! we could call listAllObjects again to get a refresh
 
-    const allDrawings = await listAllObjects('drawing', this.location);
-    console.log('allDrawings: ', allDrawings);
+    // const allDrawings = await listAllObjects('drawing', this.location);
+    // console.log('allDrawings: ', allDrawings);
     // the list comes back ordered
 
     /** subscription to the loaderror event

@@ -1,21 +1,42 @@
 <script>
   // import { fly } from 'svelte/transition';
+  import { get } from 'svelte/store';
   import { onMount, onDestroy } from 'svelte';
   import { ShowHomeEditBar, HomeEditBarExpanded } from '../../session';
   import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
   import AppGroup from './AppGroup.svelte';
+  import { HomeElements } from '../../storage';
+  import { Profile } from '../../session';
+    import ArtworkLoader from './ArtworkLoader.svelte';
   
   let currentView;
-
-  onMount(() => {
-    // console.log('mounted');
-    
+  let user_id = get(Profile).id;
+  let homeElementsArray;
+  let homeStore;
+  
+  const unsubscribe = HomeElements.subscribe(async (value) => {
+    // console.log('HomeElements 2', value);
+    homeElementsArray = value;
   });
+  
+  onMount(() => {
+    getHomeElements(); //update the store with the right user_id
+  });
+
 
   onDestroy(() => {
-    // console.log('destroyed');
+    unsubscribe();
   });
+
+  async function getHomeElements() {
+    HomeElements.get(user_id).then( (value) => {
+      homeElementsArray = value;
+    });
+  }
+
+ 
+
 
   function closeEditHome() {
     ShowHomeEditBar.set(true);
@@ -67,6 +88,9 @@
         <button on:click={editHomeMenuToggle} >
           <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
         </button>
+        {#each homeElementsArray as row, index (row.key)}
+          <ArtworkLoader artClickable={false} row={row} />
+          {/each}
         <button on:click={() => toggleView('addHomeElement')}>
           <img
             src="assets/SHB/svg/AW-icon-plus.svg"
@@ -92,7 +116,8 @@
         {:else if currentView === 'appsGroup'}
           <!-- <AppsGroup /> -->
         {/if}
-      </div>
+
+        </div>
     </div>
   </div>
 {/if}

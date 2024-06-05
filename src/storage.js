@@ -86,9 +86,11 @@ export const Liked = {
   update: likedStore.update,
 
   create: (key, value) => {
+    dlog('create like: ', key);
     const likedArray = get(likedStore);
 
     // If a user already liked something, don't like it again
+    dlog('key already exists: ', key, value);
     if (likedArray.find((element) => element.key === key)) return;
 
     const obj = { key, value };
@@ -135,6 +137,56 @@ export const Liked = {
   },
 };
 
+// Stores whatever a user has liked
+const homeElementsStore = writable([]);
+
+export const HomeElements = {
+  subscribe: homeElementsStore.subscribe,
+  set: homeElementsStore.set,
+  update: homeElementsStore.update,
+
+  create: (key, value) => {
+    const homeElementsArray = get(homeElementsStore);
+
+    // If key already exists, it cannot be created
+    dlog('key already exists: ', key, value);
+    if (homeElementsArray.find((element) => element.key === key)) return;
+
+    const obj = { key, value };
+    updateObject('homeElement', key, value, true).then(() => {
+      const newArray = [...homeElementsArray, obj]; // Create new array reference
+      HomeElements.set(newArray);
+      return newArray;
+    });
+  },
+
+  get: async (key) => {
+    const serverHomeElementsArray = await listAllObjects('homeElement', key);
+    HomeElements.set([...serverHomeElementsArray]); // Ensure new array reference
+    return serverHomeElementsArray;
+  },
+
+  find: (key) => {
+    const homeElementsArray = get(homeElementsStore);
+    const i = homeElementsArray.findIndex((element) => element.key === key);
+    if (i > -1) return homeElementsArray[i].value;
+    return undefined;
+  },
+
+  delete: (key) => {
+    dlog('delete: ', key);
+    homeElementsStore.update((homeElementsItems) => {
+      const itemNum = homeElementsItems.findIndex((element) => element.key === key);
+      if (itemNum === -1) return homeElementsItems;
+
+      deleteObject('homeElement', key);
+
+      const newArray = homeElementsItems.filter((element) => element.key !== key);
+      return newArray; // Return new array reference
+    });
+  },
+};
+
 // Stores What a moderator has liked, shows up in the game eg behind the balloon
 const moderatorLikedStore = writable([]);
 
@@ -150,6 +202,7 @@ export const ModeratorLiked = {
 
     // Use await to handle the asynchronous server call
     const serverLikedArray = await listAllObjects('liked', MODERATOR_LIKED_ID);
+    // console.log('serverLikedArray: ', serverLikedArray);
     // Now that we have the result from the server, set it to the store
     ModeratorLiked.set(serverLikedArray);
 

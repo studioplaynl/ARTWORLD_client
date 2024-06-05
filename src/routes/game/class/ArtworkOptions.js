@@ -12,26 +12,18 @@
  */
 
 import { Liked } from '../../../storage';
+import ManageSession from '../ManageSession';
+
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 
 class ArtworkOptions {
   constructor() {
+    // ManageSession.likedStore has a subscription via UIScene on Liked
     this.heartArray = [];
-    this.heartArrayLastValue = 0;
   }
 
-  subscribeToLiked() {
-    Liked.subscribe((value) => {
-      this.alreadySubscribedToLiked = true;
-      this.heartArray = value;
-      if (this.heartArrayLastValue !== this.heartArray.length) {
-        this.heartArrayLastValue = this.heartArray.length;
-      }
-    });
-  }
-
-  placeHeartButton(scene, x, y, keyImgUrl, mediaObject, artContainer) {
+  async placeHeartButton(scene, x, y, keyImgUrl, mediaObject, artContainer) {
     // we get the mediaObject passed along:
     // collection: "drawing"
     // create_time: "2022-01-27T16:46:00Z"
@@ -47,7 +39,9 @@ class ArtworkOptions {
     //      url: "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/0_1643301959176_cyaanConejo.png"
     // version: 0
 
-    // keyImgUrl = mediaObject.value.url
+    // ManageSession.likedStore has a subscription via UIScene on Liked
+    // LikedStore is filled in Onboarding
+    this.heartArray = ManageSession.likedStore;
 
     // place heartButton under the artwork, make them interactive
     const currentHeart = scene.add
@@ -62,16 +56,10 @@ class ArtworkOptions {
 
     artContainer.add(currentHeart);
 
-    // subscribe once to the Liked store
-    if (this.alreadySubscribedToLiked !== true) {
-      this.subscribeToLiked();
-    }
-
     // dlog("this.heartArray", this.heartArray)
-    const exists = this.heartArray.some(
-      (element) => element.value.url === keyImgUrl,
-    );
+    const exists = this.heartArray.some((element) => element.value.url === keyImgUrl);
     if (exists) {
+      console.log('exists ', exists);
       // changing to red, liked
       currentHeart.setTexture('heart');
       currentHeart.setData('toggle', false);
@@ -82,7 +70,6 @@ class ArtworkOptions {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   placePlayPauseButton(scene, x, y, imageurl, mediaObject, artContainer) {
     // scene, x, y, keyImgUrl, mediaObject, artContainer
     // place heartButton under the artwork, make them interactive
@@ -93,7 +80,7 @@ class ArtworkOptions {
       .image(
         x - marginY * 6, // - artFrame.height
         y,
-        'play',
+        'play'
       )
       .setOrigin(0)
       // const playPause = scene.add.image(
@@ -108,35 +95,7 @@ class ArtworkOptions {
         ArtworkOptions.playPauseButtonToggle(playButton);
       });
 
-    // const playButton = scene.add.circle(
-    //   x - (marginY * 2), // - artFrame.height
-    //   y + marginY,
-
-    //   20,
-    //   0x000000,
-    // )
-    //   .setOrigin(0)
-    //   .setInteractive()
-    //   .setData('togglePlay', true) // true, not liked state
-    //   .on(
-    //     'pointerup',
-    //     () => {
-    //       ArtworkList.playPauseButtonToggle(playButton);
-    //     },
-    //   );
-
     artContainer.add(playButton);
-    // artContainer.add(playPause);
-
-    // if (playing) {
-    //   // changing to red, liked
-    //   currentHeart.setTexture('play');
-    //   currentHeart.setData('togglePlay', false);
-    // } else {
-    //   // changing to blank, not liked
-    //   currentHeart.setTexture('pause');
-    //   currentHeart.setData('togglePlay', true);
-    // }
   }
 
   static async heartButtonToggle(mediaObject, button) {
