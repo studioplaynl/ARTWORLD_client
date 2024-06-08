@@ -9,7 +9,7 @@ import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
-import { myHomeStore, HomeElements, Liked } from '../../../storage';
+import { myHomeStore, HomeElements, homeElementSelected, Liked } from '../../../storage';
 import ServerCall from '../class/ServerCall';
 import { Profile } from '../../../session';
 
@@ -124,6 +124,17 @@ export default class UIScene extends Phaser.Scene {
     HomeElements.subscribe((value) => {
       if (!ManageSession.currentScene) return;
       ManageSession.homeElements = value;
+    });
+
+    // this is the selected homeElement in homeEdit svelte Menu
+    // when an image is selected we highlight the container in the scene
+    // and make the container draggable etc
+    homeElementSelected.subscribe((value) => {
+      if (!ManageSession.currentScene) return;
+
+      ManageSession.homeElementSelected = value;
+      // we emit a phaser game event
+      this.game.events.emit('homeElementSelected', value);
     });
 
     // Central Phaser Liked subscription

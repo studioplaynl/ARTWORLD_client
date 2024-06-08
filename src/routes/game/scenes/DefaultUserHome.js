@@ -37,13 +37,14 @@ import {
   ART_PREVIEW_SIZE,
   ART_DISPLAY_SIZE_LARGE,
   ART_OFFSET_BETWEEN,
+  IMAGE_BASE_SIZE,
 } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 
 import { dlog } from '../../../helpers/debugLog';
 
-import { listAllObjects } from '../../../helpers/nakamaHelpers';
+// import { listAllObjects } from '../../../helpers/nakamaHelpers';
 
 import * as Phaser from 'phaser';
 
@@ -76,6 +77,9 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.drawingGroup = null;
     this.stopmotionGroup = null;
 
+    this.drawingHomeElementServerList = {};
+    this.homeElementsDrawing_Group = null;
+
     this.allUserArt = [];
     this.userArtServerList = [];
     this.userArtDisplayList = [];
@@ -102,14 +106,30 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   async preload() {
-    this.loadAndPlaceArtworks();
-
+    // this.loadAndPlaceArtworks();
     //! Check if this is home of player
     const selfHome = await ServerCall.checkIfHomeSelf(this.location);
     console.log('selfHome defaultUserHome: ', selfHome);
 
     //! 1. Check if there are homeElement objects on the server
-    const homeElements = await ServerCall.getHomeElements(this.location);
+    this.homeElements = await ServerCall.getHomeElements(this.location);
+
+    let type = 'drawingHomeElement';
+    let serverObjectsHandler = this.drawingHomeElementServerList;
+    const userId = this.location;
+    const artSize = IMAGE_BASE_SIZE;
+    const artMargin = 52;
+    this.artMargin = artMargin;
+    this.homeElementsDrawing_Group = this.add.group();
+
+    ServerCall.downloadAndPlaceArtByType({
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
+    });
+
     // console.log('homeElements: ', homeElements);
     //! working on imageGallery
     //! load all images
@@ -159,7 +179,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     Background.diamondAlternatedDots(this);
 
-    handlePlayerMovement(this);
+    // handlePlayerMovement(this);
 
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow

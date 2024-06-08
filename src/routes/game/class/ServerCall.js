@@ -73,19 +73,6 @@ class ServerCall {
       console.log('visibleDrawingsStore: ', get(visibleDrawingsStore));
     } else {
       // if there are homeElements we load them
-      ManageSession.homeElements.forEach((element) => {
-        console.log('element: ', element);
-        // make a Phaser gameobject container for each element
-        // the container contains the image and an icon in each corner of the container
-        // top lef is move icon, top right is rotate icon, bottom left is 'more' icon, bottom right is scale icon
-        // the container is draggable
-        // the container is resizable
-        // the container is rotatable
-        // the container is deletable
-        // the container is editable
-        // the container is clickable
-        // the container is a homeElement
-      });
     }
   }
 
@@ -584,6 +571,31 @@ class ServerCall {
           artMargin,
         });
       });
+    } else if (type === 'drawingHomeElement') {
+      console.log('type: ', type);
+      /** type === 'drawingHomeElement'
+       *  is for downloading all home elements of type drawing
+       */
+
+      // const homeElements = await HomeElements.get(ManageSession.currentScene.location);
+
+      // we already have the homeElements in ManageSession via UIScene subscription
+      //TODO is this also correct for other users then self?
+      //serverObjectsHandler is in the scene calling it (DefaultUserHome)
+      // it is used to keep track of success and fails of the download
+      serverObjectsHandler.array = ManageSession.homeElements;
+      dlog(' drawingHomeElement serverObjectsHandler.array: ', serverObjectsHandler.array);
+      // .filter((obj) => obj.permission_read === 2)
+      // .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
+      // sorting by update_time in descending order
+
+      // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
+      ServerCall.handleServerArray({
+        type,
+        serverObjectsHandler,
+        artSize,
+        artMargin,
+      });
     }
   }
 
@@ -638,7 +650,7 @@ class ServerCall {
    *  we keep stats on the array before we begin downloading media
    *  we note how many media are being asked to be downloaded
    *  We then mark the success of fail with a download completed counter
-   *  Depending on the kind of download we present a placeholder in case of  a fail
+   *  Depending on the kind of download we present a placeholder in case of a fail
    *  or we remove the item from the array (we skip a media that does exist)
    * */
   static handleServerArray({ type, serverObjectsHandler, artSize, artMargin }) {
@@ -740,11 +752,94 @@ class ServerCall {
     }
   }
 
+  static createDrawingHomeElement_Container(element, index, artSize, artMargin) {
+    const scene = ManageSession.currentScene;
+    const worldSize = scene.worldSize;
+
+    if (!scene) return;
+    if (!element) return;
+    const artSizeSaved = element.value.height;
+
+    const imageKeyUrl = element.key + `_imagesize${element.value.height}`;
+    const y = CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, element.value.posY);
+    const coordX = CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, element.value.posX);
+
+    const artBorder = ART_FRAME_BORDER;
+
+    const imageContainer = scene.add.container(0, 0).setDepth(100);
+    // dlog('image coordX, index', coordX, index);
+
+    /**  copy over the data from the element to the container
+       so we can do sorting on the container later (eg order on date)
+       collection: "drawing"
+        downloaded: true
+        key: "1658759573357_groenblauwKogelvis"
+        permission_read: 2
+        read: 2
+        update_time: "2022-07-25T17:16:47.504205+02:00"
+        user_id: "8f0a26fc-f51a-4a05-ab67-638b37a2a979"
+        username: "user52"
+        value:
+          displayname: "groenblauwKogelvis"
+          url: "drawing/8f0a26fc-f51a-4a05-ab67-638b37a2a979/5_1658759573357_groenblauwKogelvis.png"
+          version: 5
+    */
+    imageContainer.nakamaData = { ...element };
+
+    // put an artFrame in the container as a background and frame
+    // imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
+
+    // adds the image to the container, on top of the artFrame
+    const setImage = scene.add.image(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0);
+    // explicitly set the size of the image incase the image has a non standard size
+    setImage.displayWidth = artSizeSaved;
+    setImage.displayHeight = artSizeSaved;
+
+    imageContainer.add(setImage);
+
+    const containerSize = artSizeSaved + artBorder;
+    // const tempX = containerSize - artMargin;
+    // const tempY = containerSize + artBorder;
+    //ArtworkOptions.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
+    imageContainer.setPosition(coordX, y);
+    imageContainer.setSize(containerSize, containerSize);
+
+    imageContainer.setInteractive();
+    imageContainer.on('pointerdown', () => {
+      ManageSession.playerIsAllowedToMove = false;
+    });
+    imageContainer.on('pointerup', () => {
+      ManageSession.playerIsAllowedToMove = true;
+    });
+
+    imageContainer.on('drag', (p) => {
+      imageContainer.setX(p.worldX);
+      imageContainer.setY(p.worldY);
+    });
+
+    scene.input.setDraggable(imageContainer);
+    /** this check prevent errors
+     * when we go out of the scene when things are still loading and being created  */
+    if (!scene.homeDrawingGroup) return;
+
+    scene.homeDrawingGroup.add(imageContainer);
+    // dlog('scene.homeDrawingGroup.getChildren()', scene.homeDrawingGroup.getChildren());
+  }
+
   static async downloadArtwork({ element, index, type, artSize, artMargin }) {
     const scene = ManageSession.currentScene;
 
-    const imageKeyUrl = element.value.url;
-    const imgSize = artSize.toString();
+    let imageKeyUrl = element.value.url;
+    // for homeElements we download in size that is stored in the element
+    // in Phaser we would redownload if the stored size changes
+    // in svelte we have the key of the element
+    // in phaser we can search for the key in all the objects in the group, all the origional
+    // data is attached to the objects
+    if (type === 'drawingHomeElement' || type === 'stopmotionHomeElement') {
+      imageKeyUrl = element.key + `_imagesize${element.value.height}`;
+    }
+
+    let imgSize = artSize.toString();
     const fileFormat = 'png';
     const getImageWidth = (artSize * 100).toString();
 
@@ -796,6 +891,19 @@ class ServerCall {
         if (downloadCompleted === startLength) {
           dlog('load LIKED COMPLETE');
           ServerCall.repositionContainers(type);
+        }
+      } else if (type === 'drawingHomeElement') {
+        element.downloaded = true;
+        ServerCall.createDrawingHomeElement_Container(element, index, artSize, artMargin);
+
+        const startLength = scene.drawingHomeElementServerList.startLength;
+        let downloadCompleted = scene.drawingHomeElementServerList.itemsDownloadCompleted;
+        downloadCompleted += 1;
+        scene.drawingHomeElementServerList.itemsDownloadCompleted = downloadCompleted;
+        // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        if (downloadCompleted === startLength) {
+          dlog('load drawingHomeElement COMPLETE');
+          //ServerCall.repositionContainers(type);
         }
       }
       // if the artwork is not already downloaded
@@ -1024,6 +1132,57 @@ class ServerCall {
         if (downloadCompleted === startLength) {
           // dlog('load LIKED COMPLETE');
           ServerCall.repositionContainers(type);
+        }
+      });
+    } else if (type === 'drawingHomeElement') {
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      ManageSession.resolveErrorObjectArray.push({
+        loadFunction: 'download_DrawingHomeElement',
+        element,
+        index,
+        imageKey: imageKeyUrl,
+        scene,
+        resolved: false,
+      });
+      // we take the url from the element
+      const imageUrl = element.value.url;
+      console.log('imageKeyUrlParsed: ', imageUrl);
+      console.log('imageKeyUrl: ', imageKeyUrl);
+      // we resize the image to the size that is stored in the element
+      imgSize = element.value.height.toString();
+      const convertedImage = await convertImage(imageUrl, imgSize, imgSize, fileFormat);
+      scene.load.image(imageKeyUrl, convertedImage).on(
+        `filecomplete-image-${imageKeyUrl}`,
+        () => {
+          dlog('filecomplete-image-$ element.key: ,', imageKeyUrl);
+          // delete from ManageSession.resolveErrorObjectArray because of successful download
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl
+          );
+
+          element.downloaded = true;
+
+          ServerCall.createDrawingHomeElement_Container(element, index, artSize, artMargin);
+        },
+        scene
+      );
+
+      scene.load.start(); // start the load queue to get the image in memory
+
+      /** this is fired when the queue is finished downloading
+       * the phaser download queue reports downloads and failed download equaly
+       * but 'complete' does not say which file failed
+       * the on.('loaderror') event does report which file failed
+       *   */
+      scene.load.on('complete', () => {
+        const startLength = scene.userHomeDrawingServerList.startLength;
+        let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
+        downloadCompleted += 1;
+        scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
+        // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
+        if (downloadCompleted === startLength) {
+          dlog('download downloadDrawingDefaultUserHome COMPLETE');
+          //ServerCall.repositionContainers(type);
         }
       });
     }
@@ -1314,6 +1473,7 @@ class ServerCall {
     /** this check prevent errors
      * when we go out of the scene when things are still loading and being created  */
     if (!scene.homeDrawingGroup) return;
+
     scene.homeDrawingGroup.add(imageContainer);
     // dlog('scene.homeDrawingGroup.getChildren()', scene.homeDrawingGroup.getChildren());
   }

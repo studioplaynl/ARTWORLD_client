@@ -139,6 +139,7 @@ export const Liked = {
 
 // Stores whatever a user has liked
 const homeElementsStore = writable([]);
+export const homeElementSelected = writable({});
 
 export const HomeElements = {
   subscribe: homeElementsStore.subscribe,

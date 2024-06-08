@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable no-param-reassign */
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import CoordinatesTranslator from './CoordinatesTranslator';
@@ -45,7 +43,7 @@ class Player {
 
     //* data model userAccount:
     // avatar_url: "avatar/stock/avatarRood.png"
-    // eslint-disable-next-line max-len
+
     // url: "https://..."
     // username: "user11"
     // metadata:
@@ -130,6 +128,7 @@ class Player {
       const fileNameCheck = scene.playerAvatarKey;
 
       // convert the avatar url to a converted png url
+      console.log('userprofile.url', userprofile.url);
 
       scene.load
         .spritesheet(fileNameCheck, userprofile.url, {
@@ -149,7 +148,7 @@ class Player {
         );
       scene.load.start(); // start loading the image in memory
     } else {
-      // else reload the old (already in memory avatar)
+      // else reload the already in memory avatar
       // dlog('existed already: scene.textures.exists(scene.playerAvatarKey)');
       Player.attachAvatarToPlayer(scene);
     }
@@ -338,7 +337,6 @@ class Player {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   attachAvatarToOnlinePlayer(scene, onlinePlayer, tempAvatarName) {
     // dlog("player, tempAvatarName", onlinePlayer, tempAvatarName)
 

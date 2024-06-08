@@ -105,6 +105,7 @@ class ManageSession {
 
     this.likedStore = [];
     this.homeElements = [];
+    this.homeElementSelected = {};
   }
 
   /** Create Socket connection and listen for incoming streaming data, presence and notifications */

@@ -2,6 +2,7 @@
   import { onDestroy, beforeUpdate } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { STOPMOTION_FPS } from '../../constants';
+  import { homeElementSelected } from '../../storage';
 
   export let artwork;
   export let row = null;
@@ -40,6 +41,12 @@
 
   function handleOpenArtwork() {
     console.log('handleOpenArtwork row', row);
+
+    if (row.collection === 'homeElement') {
+      // we want to make this selected in editHome menu
+      // and Phaser
+      homeElementSelected.set(row);
+    }
     if (!artClickable) return;
     // checks if we clicked 'voorbeeld' cell and if it has a value
     // opens the artwork with the appropriate app
@@ -52,7 +59,7 @@
       );
     } else if (row.key) {
       artClickable = false;
-      //case: from others
+      //case: art from others, open in drawing but without editing
       //! not working reliably, so off for now
       // push(
       //   `/${row.collection}?userId=${row.userId}&key=${row.key}`,

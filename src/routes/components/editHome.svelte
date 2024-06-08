@@ -6,9 +6,9 @@
   import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
   import AppGroup from './AppGroup.svelte';
-  import { HomeElements } from '../../storage';
+  import { HomeElements, homeElementSelected } from '../../storage';
   import { Profile } from '../../session';
-    import ArtworkLoader from './ArtworkLoader.svelte';
+  import ArtworkLoader from './ArtworkLoader.svelte';
   
   let currentView;
   let user_id = get(Profile).id;
@@ -35,7 +35,7 @@
     });
   }
 
- 
+ $: console.log('homeElementSelected', $homeElementSelected);
 
 
   function closeEditHome() {
@@ -89,8 +89,10 @@
           <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
         </button>
         {#each homeElementsArray as row, index (row.key)}
+        <div id={row.key == $homeElementSelected.key ? 'selectedHomeElement' : ''}>
           <ArtworkLoader artClickable={false} row={row} />
-          {/each}
+        </div>
+        {/each}
         <button on:click={() => toggleView('addHomeElement')}>
           <img
             src="assets/SHB/svg/AW-icon-plus.svg"
@@ -133,6 +135,12 @@
   height: 50px;
 }
 
+#selectedHomeElement {
+  border: 2px solid #7300ed;
+  border-radius: 15px;
+  padding: 5px;
+  margin: 5px;
+}
  .icon {
   background-color: #fff;
   border: none;
