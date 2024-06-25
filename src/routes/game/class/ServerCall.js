@@ -12,7 +12,14 @@
 
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import { convertImage, getAllHouses, listAllObjects, getAccount, getObject } from '../../../helpers/nakamaHelpers';
+import {
+  convertImage,
+  getAllHouses,
+  listAllObjects,
+  getAccount,
+  getObject,
+  updateObject,
+} from '../../../helpers/nakamaHelpers';
 import { Profile, ShowHomeEditBar } from '../../../session';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
@@ -790,7 +797,7 @@ class ServerCall {
     // imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
 
     // adds the image to the container, on top of the artFrame
-    const setImage = scene.add.image(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0);
+    const setImage = scene.add.image(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0.5);
     // explicitly set the size of the image incase the image has a non standard size
     setImage.displayWidth = artSizeSaved;
     setImage.displayHeight = artSizeSaved;
@@ -817,12 +824,45 @@ class ServerCall {
       imageContainer.setY(p.worldY);
     });
 
+    // save homeElement on dragend
+    imageContainer.on('dragend', () => {
+      const x = CoordinatesTranslator.Phaser2DToArtworldX(worldSize.x, imageContainer.x);
+      const y = CoordinatesTranslator.Phaser2DToArtworldY(worldSize.y, imageContainer.y);
+
+      // get rotation of the container
+      const rotation = imageContainer.rotation;
+
+      // get the width and height of the container
+      const width = imageContainer.width;
+      const height = imageContainer.height;
+
+      // get the scale of the container
+      const scale = imageContainer.scale;
+
+      // get the permission_read of the element
+      const pub = element.permission_read;
+
+      dlog('element', element);
+
+      const type = element.collection;
+      const name = element.key;
+      let value = element.value;
+      value.posX = x;
+      value.posY = y;
+      value.height = height;
+      value.width = width;
+      value.rotation = rotation;
+      value.scale = scale;
+      dlog('value', value);
+      updateObject(type, name, value, pub);
+    });
+
     scene.input.setDraggable(imageContainer);
     /** this check prevent errors
      * when we go out of the scene when things are still loading and being created  */
-    if (!scene.homeDrawingGroup) return;
+    if (!scene.homeElementsDrawing_Group) return;
 
-    scene.homeDrawingGroup.add(imageContainer);
+    scene.homeElementsDrawing_Group.add(imageContainer);
     // dlog('scene.homeDrawingGroup.getChildren()', scene.homeDrawingGroup.getChildren());
   }
 
