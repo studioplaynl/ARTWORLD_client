@@ -90,7 +90,6 @@ class SceneSwitcher {
 
     // HERE WE FINALLY START AN OTHER SCENE, which stops the current scene
     if (targetHouse !== null && targetScene === DEFAULT_HOME) {
-      this.unsubScribeSceneFromStores(scene);
       scene.scene.start(targetScene, { user_id: targetHouse });
       // later we join the house id channel
       targetSceneKey = targetHouse;
@@ -99,7 +98,6 @@ class SceneSwitcher {
       ShowHomeEditBar.set(false);
 
       if (targetScene.scene !== null) {
-        this.unsubScribeSceneFromStores(scene);
         // dlog('start targetScene: ', targetScene);
         scene.scene.start(targetScene);
       }
@@ -108,10 +106,6 @@ class SceneSwitcher {
     this.switchStream(scene, targetScene);
   }
 
-  unsubScribeSceneFromStores(scene) {
-    // Emit an event that the scene can listen for
-    scene.events.emit('unsubscribeStores');
-  }
 
   async pauseSceneStartApp(scene, app) {
     // pause scene needs the 'real' scene object, not just the key

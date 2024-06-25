@@ -43,13 +43,42 @@ export let artClickable = true;
         <br />
     {/if}
 
-    <AppItem appName = 'drawing' showAddNew={showAddNew} showVisibilityToggle={showVisibilityToggle} showDeleteButton={showDeleteButton} showSendTo={showSendTo} showDeletedArtContainer={showDeletedArtContainer} showPlaceHomeElement={showPlaceHomeElement} artClickable={artClickable}/>
+    <AppItem 
+    appName = 'drawing' 
+    showAddNew={showAddNew} 
+    showVisibilityToggle={showVisibilityToggle} 
+    showDeleteButton={showDeleteButton} 
+    showSendTo={showSendTo} 
+    showDeletedArtContainer={showDeletedArtContainer} 
+    showPlaceHomeElement={showPlaceHomeElement} 
+    artClickable={artClickable}/>
         <br />
-    <AppItem appName = 'stopmotion' showAddNew={showAddNew} showVisibilityToggle={showVisibilityToggle} showDeleteButton={showDeleteButton} showSendTo={showSendTo} showDeletedArtContainer={showDeletedArtContainer} showPlaceHomeElement={showPlaceHomeElement} artClickable={artClickable}/>
+    <AppItem appName = 'stopmotion' 
+    showAddNew={showAddNew} 
+    showVisibilityToggle={showVisibilityToggle} 
+    showDeleteButton={showDeleteButton} 
+    showSendTo={showSendTo} 
+    showDeletedArtContainer={showDeletedArtContainer} 
+    showPlaceHomeElement={showPlaceHomeElement} 
+    artClickable={artClickable}/>
         <br />
-    <AppItem appName = 'animalchallenge' showAddNew={showAddNew} showVisibilityToggle={showVisibilityToggle} showDeleteButton={showDeleteButton} showSendTo={showSendTo} showDeletedArtContainer={showDeletedArtContainer} showPlaceHomeElement={showPlaceHomeElement} artClickable={artClickable}/>
+    <AppItem appName = 'animalchallenge' 
+    showAddNew={showAddNew} 
+    showVisibilityToggle={showVisibilityToggle} 
+    showDeleteButton={showDeleteButton} 
+    showSendTo={showSendTo} 
+    showDeletedArtContainer={showDeletedArtContainer} 
+    showPlaceHomeElement={showPlaceHomeElement} 
+    artClickable={artClickable}/>
         <br /> 
-    <AppItem appName = 'flowerchallenge' showAddNew={showAddNew} showVisibilityToggle={showVisibilityToggle} showDeleteButton={showDeleteButton} showSendTo={showSendTo} showDeletedArtContainer={showDeletedArtContainer} showPlaceHomeElement={showPlaceHomeElement} artClickable={artClickable}/>
+    <AppItem appName = 'flowerchallenge' 
+    showAddNew={showAddNew} 
+    showVisibilityToggle={showVisibilityToggle} 
+    showDeleteButton={showDeleteButton} 
+    showSendTo={showSendTo} 
+    showDeletedArtContainer={showDeletedArtContainer} 
+    showPlaceHomeElement={showPlaceHomeElement} 
+    artClickable={artClickable}/>
 
 </div>
 

@@ -2,7 +2,7 @@
   import { onDestroy, beforeUpdate } from 'svelte';
   import { push } from 'svelte-spa-router';
   import { STOPMOTION_FPS } from '../../constants';
-  import { homeElementSelected } from '../../storage';
+  import { homeElement_Selected } from '../../storage';
 
   export let artwork;
   export let row = null;
@@ -45,7 +45,7 @@
     if (row.collection === 'homeElement') {
       // we want to make this selected in editHome menu
       // and Phaser
-      homeElementSelected.set(row);
+      homeElement_Selected.set(row);
     }
     if (!artClickable) return;
     // checks if we clicked 'voorbeeld' cell and if it has a value

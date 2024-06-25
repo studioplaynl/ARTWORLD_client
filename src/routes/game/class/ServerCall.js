@@ -48,12 +48,6 @@ class ServerCall {
     return get(ShowHomeEditBar);
   }
 
-  unsubscribeStores() {
-    //! we dont subscribe to anything in this class
-    //! we do it in UI scene
-    //! remove this reference
-  }
-
   async getHomeElements(_location) {
     await HomeElements.get(_location);
     console.log('ManageSession.homeElements: ', ManageSession.homeElements);
@@ -407,7 +401,7 @@ class ServerCall {
         const animalArray = [...userAnimals, ...fellowAnimals, ...otherAnimals];
 
         serverObjectsHandler.array = animalArray;
-        ServerCall.handleServerArray({
+        this.handleServerArray({
           type,
           serverObjectsHandler,
           artSize,
@@ -419,7 +413,7 @@ class ServerCall {
         serverObjectsHandler.array = allFoundAnimals;
         // dlog('serverObjectsHandler', serverObjectsHandler);
 
-        ServerCall.handleServerArray({
+        this.handleServerArray({
           type,
           serverObjectsHandler,
           artSize,
@@ -505,7 +499,7 @@ class ServerCall {
         const animalArray = [...userFlowers, ...fellowFlowers, ...otherFlowers];
 
         serverObjectsHandler.array = animalArray;
-        ServerCall.handleServerArray({
+        this.handleServerArray({
           type,
           serverObjectsHandler,
           artSize,
@@ -515,7 +509,7 @@ class ServerCall {
         // we use all available flowers
 
         serverObjectsHandler.array = allFoundFlowers;
-        ServerCall.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
+        this.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
       } // end of bloem
     } else if (type === 'downloadLikedDrawing') {
       // async get the liked stores and handle the data when they are loaded
@@ -526,7 +520,7 @@ class ServerCall {
            *  so it is passed on to serverObjectsHandler.array
            */
 
-          ServerCall.handleServerArray({
+          this.handleServerArray({
             type,
             serverObjectsHandler,
             artSize,
@@ -550,7 +544,7 @@ class ServerCall {
         // sorting by update_time in descending order
 
         // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-        ServerCall.handleServerArray({
+        this.handleServerArray({
           type,
           serverObjectsHandler,
           artSize,
@@ -571,7 +565,7 @@ class ServerCall {
         // sorting by update_time in descending order
 
         // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-        ServerCall.handleServerArray({
+        this.handleServerArray({
           type,
           serverObjectsHandler,
           artSize,
@@ -597,7 +591,7 @@ class ServerCall {
       // sorting by update_time in descending order
 
       // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-      ServerCall.handleServerArray({
+      this.handleServerArray({
         type,
         serverObjectsHandler,
         artSize,
@@ -645,7 +639,7 @@ class ServerCall {
     serverObjectsHandler.shift();
     // dlog('foundFlowers: ', foundFlowers);
     // dlog('serverObjectsHandler: ', serverObjectsHandler);
-    ServerCall.handleServerArray({
+    this.handleServerArray({
       type,
       serverObjectsHandler,
       artSize,
@@ -660,7 +654,7 @@ class ServerCall {
    *  Depending on the kind of download we present a placeholder in case of a fail
    *  or we remove the item from the array (we skip a media that does exist)
    * */
-  static handleServerArray({ type, serverObjectsHandler, artSize, artMargin }) {
+  handleServerArray({ type, serverObjectsHandler, artSize, artMargin }) {
     dlog('serverObjectsHandler.array.length: ', serverObjectsHandler.array.length);
     // dlog('serverObjectsHandler: ', serverObjectsHandler);
 
@@ -688,7 +682,7 @@ class ServerCall {
 
       serverObjectsHandler.array.forEach((element, index) => {
         // dlog('element', element);
-        ServerCall.downloadArtwork({
+        this.downloadArtwork({
           element,
           index,
           type,
@@ -759,12 +753,14 @@ class ServerCall {
     }
   }
 
-  static createDrawingHomeElement_Container(element, index, artSize, artMargin) {
+  createDrawingHomeElement_Container(element, index, artSize, artMargin) {
     const scene = ManageSession.currentScene;
     const worldSize = scene.worldSize;
 
     if (!scene) return;
     if (!element) return;
+    if (!scene.homeElementsDrawing_Group) return;
+
     const artSizeSaved = element.value.height;
 
     const imageKeyUrl = element.key + `_imagesize${element.value.height}`;
@@ -866,7 +862,7 @@ class ServerCall {
     // dlog('scene.homeDrawingGroup.getChildren()', scene.homeDrawingGroup.getChildren());
   }
 
-  static async downloadArtwork({ element, index, type, artSize, artMargin }) {
+  async downloadArtwork({ element, index, type, artSize, artMargin }) {
     const scene = ManageSession.currentScene;
 
     let imageKeyUrl = element.value.url;
@@ -934,7 +930,7 @@ class ServerCall {
         }
       } else if (type === 'drawingHomeElement') {
         element.downloaded = true;
-        ServerCall.createDrawingHomeElement_Container(element, index, artSize, artMargin);
+        this.createDrawingHomeElement_Container(element, index, artSize, artMargin);
 
         const startLength = scene.drawingHomeElementServerList.startLength;
         let downloadCompleted = scene.drawingHomeElementServerList.itemsDownloadCompleted;
@@ -1202,7 +1198,7 @@ class ServerCall {
 
           element.downloaded = true;
 
-          ServerCall.createDrawingHomeElement_Container(element, index, artSize, artMargin);
+          this.createDrawingHomeElement_Container(element, index, artSize, artMargin);
         },
         scene
       );
@@ -1309,7 +1305,7 @@ class ServerCall {
     const artMargin = ManageSession.likedStore.artMargin;
     const serverObjectsHandler = ManageSession.likedStore;
 
-    ServerCall.handleServerArray({
+    this.handleServerArray({
       type,
       serverObjectsHandler,
       artSize,
@@ -1799,7 +1795,7 @@ class ServerCall {
           artSize = ManageSession.likedStore.artSize;
           artMargin = ManageSession.likedStore.artMargin;
           serverObjectsHandler = ManageSession.likedStore;
-          ServerCall.handleServerArray({
+          this.handleServerArray({
             type,
             serverObjectsHandler,
             artSize,

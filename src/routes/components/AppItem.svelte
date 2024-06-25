@@ -41,7 +41,7 @@ function addNew() {
     <!-- we reverse the icon order if the menu is PlaceHomeElement because the menu is on the right side of the screen -->
   <div class="AppItemContainer" style="flex-direction: {showPlaceHomeElement ? 'row-reverse' : 'row'};">
 
-<!-- get the appropreate app icon from the function returnAppIconUrl -->
+<!-- get the appropriate app icon from the function returnAppIconUrl -->
 <button on:click="{() => {
   showHistory = !showHistory;
 }}">

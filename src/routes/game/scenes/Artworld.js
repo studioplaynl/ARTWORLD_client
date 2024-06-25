@@ -38,11 +38,11 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 // import Preloader from '../class/Preloader';
-import GraffitiWall from '../class/GraffitiWall';
+// import GraffitiWall from '../class/GraffitiWall';
 import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
-import Exhibition from '../class/Exhibition';
+// import Exhibition from '../class/Exhibition';
 
 import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos } from '../playerState';
@@ -156,9 +156,6 @@ export default class Artworld extends Phaser.Scene {
 
   async create() {
     //!
-    //listen to this even to unsubscribe stores when leaving a scene
-    this.events.on('unsubscribeStores', this.unsubscribeStores, this);
-
     // show physics debug boundaries in gameEditMode
     if (ManageSession.gameEditMode) {
       this.physics.world.drawDebug = true;
@@ -1357,16 +1354,5 @@ export default class Artworld extends Phaser.Scene {
     this.curveGraphics.clear();
     this.curveGraphics.lineStyle(60, 0xffff00, 1);
     this.curve.draw(this.curveGraphics, 64);
-  }
-
-  unsubscribeStores() {
-    console.log('unsubscribeStores in ', this.scene.key);
-    ServerCall.unsubscribeStores();
-    if (!this.storeSubscriptions) return;
-    if (this.storeSubscriptions.length === 0) return;
-
-    this.storeSubscriptions.forEach((subscription) => {
-      subscription();
-    });
   }
 } // class

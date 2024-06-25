@@ -138,16 +138,16 @@ export const Liked = {
 };
 
 // Stores whatever a user has liked
-const homeElementsStore = writable([]);
-export const homeElementSelected = writable({});
+export const homeElements_Store = writable([]);
+export const homeElement_Selected = writable({});
 
 export const HomeElements = {
-  subscribe: homeElementsStore.subscribe,
-  set: homeElementsStore.set,
-  update: homeElementsStore.update,
+  subscribe: homeElements_Store.subscribe,
+  set: homeElements_Store.set,
+  update: homeElements_Store.update,
 
   create: (key, value) => {
-    const homeElementsArray = get(homeElementsStore);
+    const homeElementsArray = get(homeElements_Store);
 
     // If key already exists, it cannot be created
     dlog('key already exists: ', key, value);
@@ -168,7 +168,7 @@ export const HomeElements = {
   },
 
   find: (key) => {
-    const homeElementsArray = get(homeElementsStore);
+    const homeElementsArray = get(homeElements_Store);
     const i = homeElementsArray.findIndex((element) => element.key === key);
     if (i > -1) return homeElementsArray[i].value;
     return undefined;
@@ -176,7 +176,7 @@ export const HomeElements = {
 
   delete: (key) => {
     dlog('delete: ', key);
-    homeElementsStore.update((homeElementsItems) => {
+    homeElements_Store.update((homeElementsItems) => {
       const itemNum = homeElementsItems.findIndex((element) => element.key === key);
       if (itemNum === -1) return homeElementsItems;
 
@@ -431,7 +431,6 @@ export function createArtworksStore(type) {
 // Usage example for creating different type-specific stores
 export const DrawingArtworksStore = createArtworksStore('drawing');
 export const StopmotionArtworksStore = createArtworksStore('stopmotion');
-export const HomeElementsStore = createArtworksStore('homeElements');
 
 // export const VideoArtworksStore = createArtworksStore('video');
 // export const AudioArtworksStore = createArtworksStore('audio');

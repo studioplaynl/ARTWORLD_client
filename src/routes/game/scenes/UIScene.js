@@ -9,9 +9,11 @@ import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
-import { myHomeStore, HomeElements, homeElementSelected, Liked } from '../../../storage';
+import { myHomeStore, HomeElements, homeElement_Selected, Liked } from '../../../storage';
 import ServerCall from '../class/ServerCall';
 import { Profile } from '../../../session';
+
+import { IMAGE_BASE_SIZE } from '../../../constants';
 
 import { PlayerZoom } from '../playerState';
 
@@ -123,18 +125,42 @@ export default class UIScene extends Phaser.Scene {
     // ServerCall does a .get and then references ManageSession.homeElements
     HomeElements.subscribe((value) => {
       if (!ManageSession.currentScene) return;
+      if (value === undefined || value.length < 1) return;
+
+      const prev_HomeElements = ManageSession.homeElements;
+      console.log('HomeElements', value);
       ManageSession.homeElements = value;
+      // compare the previous HomeElements with the new HomeElements and get the unique elements
+      // this way we can update only the new elements in the scene
+      const newElements = value.filter((el) => !prev_HomeElements.includes(el));
+      
+        console.log('HomeElements', newElements);
+
+        const type = 'drawingHomeElement';
+        // ManageSession.currentScene.drawingHomeElementServerList = [];
+        const serverObjectsHandler = newElements;
+        const userId = ManageSession.currentScene.location;
+        const artSize = IMAGE_BASE_SIZE;
+        const artMargin = 52;
+
+        ServerCall.downloadAndPlaceArtByType({
+          type,
+          userId,
+          serverObjectsHandler,
+          artSize,
+          artMargin,
+        });
     });
 
     // this is the selected homeElement in homeEdit svelte Menu
     // when an image is selected we highlight the container in the scene
     // and make the container draggable etc
-    homeElementSelected.subscribe((value) => {
+    homeElement_Selected.subscribe((value) => {
       if (!ManageSession.currentScene) return;
 
-      ManageSession.homeElementSelected = value;
+      ManageSession.homeElement_Selected = value;
       // we emit a phaser game event
-      this.game.events.emit('homeElementSelected', value);
+      this.game.events.emit('homeElement_Selected', value);
     });
 
     // Central Phaser Liked subscription

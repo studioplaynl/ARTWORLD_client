@@ -6,7 +6,7 @@
   import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
   import AppGroup from './AppGroup.svelte';
-  import { HomeElements, homeElementSelected } from '../../storage';
+  import { HomeElements, homeElement_Selected } from '../../storage';
   import { Profile } from '../../session';
   import ArtworkLoader from './ArtworkLoader.svelte';
   
@@ -35,7 +35,7 @@
     });
   }
 
- $: console.log('homeElementSelected', $homeElementSelected);
+ $: console.log('homeElement_Selected', $homeElement_Selected);
 
 
   function closeEditHome() {
@@ -89,7 +89,7 @@
           <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
         </button>
         {#each homeElementsArray as row, index (row.key)}
-        <div id={row.key == $homeElementSelected.key ? 'selectedHomeElement' : ''}>
+        <div id={row.key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
           <ArtworkLoader artClickable={false} row={row} />
         </div>
         {/each}
@@ -108,15 +108,16 @@
             <!-- <LikedPage /> -->
           </div>
         {:else if currentView === 'addHomeElement'}
-          <AppGroup showAvatarSelector={false} showHomeSelector={false} showAddNew={false} showVisibilityToggle={false} showDeleteButton={false} showSendTo={false} showDeletedArtContainer={false} showPlaceHomeElement={true} artClickable={false}/>
-        {:else if currentView === 'profilePage'}
-          <!-- <ProfilePage /> -->
-        {:else if currentView === 'friends'}
-          <!-- <FriendsPage /> -->
-        {:else if currentView === 'awards'}
-          <!-- <Awards /> -->
-        {:else if currentView === 'appsGroup'}
-          <!-- <AppsGroup /> -->
+          <AppGroup 
+          showAvatarSelector={false} 
+          showHomeSelector={false} 
+          showAddNew={false} 
+          showVisibilityToggle={false} 
+          showDeleteButton={false} 
+          showSendTo={false} 
+          showDeletedArtContainer={false} 
+          showPlaceHomeElement={true} 
+          artClickable={false}/>
         {/if}
 
         </div>

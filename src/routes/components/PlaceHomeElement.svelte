@@ -19,7 +19,7 @@
       posX: playerPos.x,
       posY: playerPos.y,
       rotation: 0,
-      scale: 0.25,
+      scale: 1,
       width: 512,
       height: 512
     }
