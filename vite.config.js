@@ -1,12 +1,16 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import replace from '@rollup/plugin-replace';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
-    outDir: 'public', // output to public folder
+    outDir: path.resolve(__dirname, 'public'), // output to public folder
     emptyOutDir: false, // don't delete existing files
+    rollupOptions: {
+      external: ['svelte-icons/md/MdEMail.svelte'],
+    },
   },
   plugins: [
     svelte(),

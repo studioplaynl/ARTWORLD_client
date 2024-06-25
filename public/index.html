@@ -1,322 +1,326 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1, user-scalable=no"
-    />
 
-    <title>ArtWorld</title>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1, user-scalable=no'>
 
-    <link rel="icon" type="image/png" href="./favicon.svg" />
-  </head>
+  <title>ArtWorld</title>
 
-  <body>
-    <div id="loader">
-      <h1 class="bottom">
-        <div class="word">
-          <span>A</span>
-          <span>R</span>
-          <span>T</span>
-        </div>
-        <div class="word">
-          <span>W</span>
-          <span>O</span>
-          <span>R</span>
-          <span>L</span>
-          <span>D</span>
-        </div>
-      </h1>
+  <link rel='icon' type='image/png' href='./favicon.svg'>
+  <script type="module" crossorigin src="/assets/index-CVbAzryA.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B6S-GBTq.css">
+</head>
 
-      <h2 class="reload">
-        <button id="button">↻</button>
-      </h2>
-    </div>
+<body>
+  <div id="loader">
+    <h1 class="bottom">
+      <div class="word">
+        <span>A</span>
+        <span>R</span>
+        <span>T</span>
+      </div>
+      <div class="word">
+        <span>W</span>
+        <span>O</span>
+        <span>R</span>
+        <span>L</span>
+        <span>D</span>
+      </div>
+    </h1>
+    </br>
+    <h2 class="reload">
+      <button id="button">↻</button>
+    </h2>
+  </div>
 
-    <script>
-      setTimeout(function () {
-        document.getElementById('button').classList.add('visible');
-      }, 5000);
+  <script>
+    setTimeout(function () {
+      document.getElementById("button").classList.add("visible");
+    }, 5000);
 
-      document.getElementById('button').onclick = function () {
-        window.location.reload(true);
-      };
-    </script>
-  </body>
-  <style>
-    .hide {
-      display: none;
+    document.getElementById("button").onclick = function () {
+      window.location.reload(true);
+    };
+  </script>
+</body>
+<style>
+  .hide {
+    display: none;
+  }
+
+  #loader.hide {
+    display: none !important;
+  }
+
+  .word {
+    display: inline-block;
+  }
+
+  #loader {
+    z-index: 50;
+    height: 100vh;
+    position: fixed;
+    width: 100vw;
+    display: flex;
+    /* Added flex */
+    align-items: center;
+    /* Center children vertically */
+    justify-content: center;
+    /* Center children horizontally */
+  }
+
+
+  #loader h1 {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    /* Ensure text within this container is centered */
+  }
+
+
+  #loader h1 .word>span {
+    font-size: 2rem;
+    width: 3rem;
+    height: 3rem;
+    line-height: 3rem;
+  }
+
+  #loader h1 .word>span {
+    display: inline-block;
+
+    font-family: Arial, sans-serif;
+    font-size: 2rem;
+    width: 3rem;
+    height: 3rem;
+    text-align: center;
+    line-height: 3rem;
+    /* This should be equal to the height of the span */
+    background: white;
+    /* box-shadow: 5px 5px rgb(115 0 235); */
+    color: rgb(115, 0, 235);
+    border-radius: 50%;
+    padding: 0;
+    padding-top: 0.1rem;
+    margin: 4px -5px;
+    vertical-align: middle;
+  }
+
+  #button {
+    display: none;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    position: fixed;
+    bottom: 25vh;
+    left: 50vw;
+    transform: translate(-50%, -50%);
+
+    font-family: Arial, sans-serif;
+    font-size: 2rem;
+    width: 3rem;
+    height: 3rem;
+    line-height: 3rem;
+    background: white;
+    /* box-shadow: 5px 5px rgb(115 0 235); */
+    color: rgb(115, 0, 235);
+    border-radius: 50%;
+    padding: 0;
+    margin: 4px -5px;
+  }
+
+  #button.visible {
+    display: inline-block;
+  }
+
+
+  .bottom>span {
+    -webkit-animation: bounce 15s linear infinite alternate;
+    animation: bounce 15s linear out infinite alternate;
+  }
+
+  .bottom .word>span {
+    -webkit-animation: bounce 15s linear infinite alternate;
+    animation: bounce 15s linear out infinite alternate;
+  }
+
+  /* ART */
+  .bottom .word:nth-child(1)>span:nth-child(1) {
+    -webkit-animation-delay: .1s;
+    animation-delay: .1s;
+  }
+
+  .bottom .word:nth-child(1)>span:nth-child(2) {
+    -webkit-animation-delay: .2s;
+    animation-delay: .2s;
+  }
+
+  .bottom .word:nth-child(1)>span:nth-child(3) {
+    -webkit-animation-delay: .3s;
+    animation-delay: .3s;
+  }
+
+  /* WORLD */
+  .bottom .word:nth-child(2)>span:nth-child(1) {
+    -webkit-animation-delay: .4s;
+    animation-delay: .4s;
+  }
+
+  .bottom .word:nth-child(2)>span:nth-child(2) {
+    -webkit-animation-delay: .5s;
+    animation-delay: .5s;
+  }
+
+  .bottom .word:nth-child(2)>span:nth-child(3) {
+    -webkit-animation-delay: .6s;
+    animation-delay: .6s;
+  }
+
+  .bottom .word:nth-child(2)>span:nth-child(4) {
+    -webkit-animation-delay: .7s;
+    animation-delay: .7s;
+  }
+
+  .bottom .word:nth-child(2)>span:nth-child(5) {
+    -webkit-animation-delay: .8s;
+    animation-delay: .8s;
+  }
+
+  span#break {
+    width: 0px !important;
+    height: 0px !important;
+  }
+
+  @media screen and (max-width: 700px) {
+    span#break {
+      display: block !important;
+    }
+  }
+
+
+  @media screen and (max-width: 400px) {
+    #loader h1 .word {
+      display: block;
+      /* Stack the words vertically */
     }
 
-    #loader.hide {
-      display: none !important;
+    #loader>h1>span {
+      font-size: 1.8rem;
+      width: 2.8rem;
+      height: 2.8rem;
+      line-height: 2.8rem;
     }
+  }
 
-    .word {
-      display: inline-block;
-    }
-
-    #loader {
-      z-index: 50;
-      height: 100vh;
-      position: fixed;
-      width: 100vw;
-      display: flex;
-      /* Added flex */
-      align-items: center;
-      /* Center children vertically */
-      justify-content: center;
-      /* Center children horizontally */
-    }
-
+  @media screen and (min-width: 768px) {
     #loader h1 {
       flex-direction: column;
+      /* Stack the words vertically */
       align-items: center;
-      text-align: center;
-      /* Ensure text within this container is centered */
+      /* Center align items */
     }
 
-    #loader h1 .word > span {
-      font-size: 2rem;
-      width: 3rem;
-      height: 3rem;
-      line-height: 3rem;
-    }
-
-    #loader h1 .word > span {
-      display: inline-block;
-
-      font-family: Arial, sans-serif;
-      font-size: 2rem;
-      width: 3rem;
-      height: 3rem;
-      text-align: center;
-      line-height: 3rem;
-      /* This should be equal to the height of the span */
-      background: white;
-      /* box-shadow: 5px 5px rgb(115 0 235); */
-      color: rgb(115, 0, 235);
-      border-radius: 50%;
-      padding: 0;
-      padding-top: 0.1rem;
-      margin: 4px -5px;
-      vertical-align: middle;
+    #loader h1 .word>span {
+      font-size: 3rem;
+      width: 4.5rem;
+      height: 4.5rem;
+      line-height: 4.5rem;
     }
 
     #button {
-      display: none;
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto;
-      position: fixed;
-      bottom: 25vh;
-      left: 50vw;
-      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      width: 4.5rem;
+      height: 4.5rem;
+      line-height: 4.5rem;
+    }
+  }
 
-      font-family: Arial, sans-serif;
-      font-size: 2rem;
-      width: 3rem;
-      height: 3rem;
-      line-height: 3rem;
-      background: white;
-      /* box-shadow: 5px 5px rgb(115 0 235); */
-      color: rgb(115, 0, 235);
-      border-radius: 50%;
-      padding: 0;
-      margin: 4px -5px;
+
+  @media screen and (min-width: 1200px) {
+    #loader h1 .word>span {
+      font-size: 4rem;
+      width: 6rem;
+      height: 6rem;
+      line-height: 6rem;
     }
 
-    #button.visible {
-      display: inline-block;
+    #button {
+      font-size: 4rem;
+      width: 6rem;
+      height: 6rem;
+      line-height: 6rem;
+    }
+  }
+
+  @-webkit-keyframes bounce {
+    12% {
+      box-shadow: 0px 0px rgb(115 0 235);
     }
 
-    .bottom > span {
-      -webkit-animation: bounce 15s linear infinite alternate;
-      animation: bounce 15s linear out infinite alternate;
+    25% {
+      box-shadow: -1rem 1rem rgb(115 0 235);
     }
 
-    .bottom .word > span {
-      -webkit-animation: bounce 15s linear infinite alternate;
-      animation: bounce 15s linear out infinite alternate;
+    37% {
+      box-shadow: 0px 0px rgb(115 0 235);
     }
 
-    /* ART */
-    .bottom .word:nth-child(1) > span:nth-child(1) {
-      -webkit-animation-delay: 0.1s;
-      animation-delay: 0.1s;
+    50% {
+      box-shadow: -1rem -1rem rgb(115 0 235);
     }
 
-    .bottom .word:nth-child(1) > span:nth-child(2) {
-      -webkit-animation-delay: 0.2s;
-      animation-delay: 0.2s;
+    62% {
+      box-shadow: 0px 0px rgb(115 0 235);
     }
 
-    .bottom .word:nth-child(1) > span:nth-child(3) {
-      -webkit-animation-delay: 0.3s;
-      animation-delay: 0.3s;
+    75% {
+      box-shadow: 1rem -1rem rgb(115 0 235);
     }
 
-    /* WORLD */
-    .bottom .word:nth-child(2) > span:nth-child(1) {
-      -webkit-animation-delay: 0.4s;
-      animation-delay: 0.4s;
+    82% {
+      box-shadow: 0px 0px rgb(115 0 235);
     }
 
-    .bottom .word:nth-child(2) > span:nth-child(2) {
-      -webkit-animation-delay: 0.5s;
-      animation-delay: 0.5s;
+    100% {
+      box-shadow: 1rem 1rem rgb(115 0 235);
+    }
+  }
+
+  @keyframes bounce {
+    12% {
+      box-shadow: 0px 0px rgb(115 0 235);
     }
 
-    .bottom .word:nth-child(2) > span:nth-child(3) {
-      -webkit-animation-delay: 0.6s;
-      animation-delay: 0.6s;
+    25% {
+      box-shadow: -1rem 1rem rgb(115 0 235);
     }
 
-    .bottom .word:nth-child(2) > span:nth-child(4) {
-      -webkit-animation-delay: 0.7s;
-      animation-delay: 0.7s;
+    37% {
+      box-shadow: 0px 0px rgb(115 0 235);
     }
 
-    .bottom .word:nth-child(2) > span:nth-child(5) {
-      -webkit-animation-delay: 0.8s;
-      animation-delay: 0.8s;
+    50% {
+      box-shadow: -1rem -1rem rgb(115 0 235);
     }
 
-    span#break {
-      width: 0px !important;
-      height: 0px !important;
+    62% {
+      box-shadow: 0px 0px rgb(115 0 235);
     }
 
-    @media screen and (max-width: 700px) {
-      span#break {
-        display: block !important;
-      }
+    75% {
+      box-shadow: 1rem -1rem rgb(115 0 235);
     }
 
-    @media screen and (max-width: 400px) {
-      #loader h1 .word {
-        display: block;
-        /* Stack the words vertically */
-      }
-
-      #loader > h1 > span {
-        font-size: 1.8rem;
-        width: 2.8rem;
-        height: 2.8rem;
-        line-height: 2.8rem;
-      }
+    82% {
+      box-shadow: 0px 0px rgb(115 0 235);
     }
 
-    @media screen and (min-width: 768px) {
-      #loader h1 {
-        flex-direction: column;
-        /* Stack the words vertically */
-        align-items: center;
-        /* Center align items */
-      }
-
-      #loader h1 .word > span {
-        font-size: 3rem;
-        width: 4.5rem;
-        height: 4.5rem;
-        line-height: 4.5rem;
-      }
-
-      #button {
-        font-size: 3rem;
-        width: 4.5rem;
-        height: 4.5rem;
-        line-height: 4.5rem;
-      }
+    100% {
+      box-shadow: 1rem 1rem rgb(115 0 235);
     }
+  }
+</style>
+<link rel='stylesheet' href='./global.css'>
 
-    @media screen and (min-width: 1200px) {
-      #loader h1 .word > span {
-        font-size: 4rem;
-        width: 6rem;
-        height: 6rem;
-        line-height: 6rem;
-      }
 
-      #button {
-        font-size: 4rem;
-        width: 6rem;
-        height: 6rem;
-        line-height: 6rem;
-      }
-    }
-
-    @-webkit-keyframes bounce {
-      12% {
-        box-shadow: 0px 0px rgb(115 0 235);
-      }
-
-      25% {
-        box-shadow: -1rem 1rem rgb(115 0 235);
-      }
-
-      37% {
-        box-shadow: 0px 0px rgb(115 0 235);
-      }
-
-      50% {
-        box-shadow: -1rem -1rem rgb(115 0 235);
-      }
-
-      62% {
-        box-shadow: 0px 0px rgb(115 0 235);
-      }
-
-      75% {
-        box-shadow: 1rem -1rem rgb(115 0 235);
-      }
-
-      82% {
-        box-shadow: 0px 0px rgb(115 0 235);
-      }
-
-      100% {
-        box-shadow: 1rem 1rem rgb(115 0 235);
-      }
-    }
-
-    @keyframes bounce {
-      12% {
-        box-shadow: 0px 0px rgb(115 0 235);
-      }
-
-      25% {
-        box-shadow: -1rem 1rem rgb(115 0 235);
-      }
-
-      37% {
-        box-shadow: 0px 0px rgb(115 0 235);
-      }
-
-      50% {
-        box-shadow: -1rem -1rem rgb(115 0 235);
-      }
-
-      62% {
-        box-shadow: 0px 0px rgb(115 0 235);
-      }
-
-      75% {
-        box-shadow: 1rem -1rem rgb(115 0 235);
-      }
-
-      82% {
-        box-shadow: 0px 0px rgb(115 0 235);
-      }
-
-      100% {
-        box-shadow: 1rem 1rem rgb(115 0 235);
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="./global.css" />
-  <link rel="stylesheet" href="./build/bundle.css" />
-
-  <script defer src="./build/bundle.js"></script>
 </html>
