@@ -121,6 +121,7 @@ export default class UIScene extends Phaser.Scene {
       ServerCall.updateHomeImage(ManageSession.currentScene, value);
     });
 
+    // reactivity on MomeElements, eg in DefaultUserHome
     // Store HomeElements in ManageSession for central access
     // ServerCall does a .get and then references ManageSession.homeElements
     HomeElements.subscribe((value) => {

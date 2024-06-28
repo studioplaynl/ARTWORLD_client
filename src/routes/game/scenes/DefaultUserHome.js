@@ -112,7 +112,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     console.log('selfHome defaultUserHome: ', selfHome);
 
     //! 1. Check if there are homeElement objects on the server
-    this.homeElements = await ServerCall.getHomeElements(this.location);
+    await ServerCall.getHomeElements(this.location);
 
     let type = 'drawingHomeElement';
     let serverObjectsHandler = this.drawingHomeElementServerList;

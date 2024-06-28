@@ -49,7 +49,7 @@ class ServerCall {
   }
 
   async getHomeElements(_location) {
-    await HomeElements.get(_location);
+    await HomeElements.getFromServer(_location);
     console.log('ManageSession.homeElements: ', ManageSession.homeElements);
     // if there are no homeElements the home is still old version
     // we load a standard drawingGallery and stopMotionGallery
@@ -578,7 +578,7 @@ class ServerCall {
        *  is for downloading all home elements of type drawing
        */
 
-      // const homeElements = await HomeElements.get(ManageSession.currentScene.location);
+      // const homeElements = await HomeElements.getFromServer(ManageSession.currentScene.location);
 
       // we already have the homeElements in ManageSession via UIScene subscription
       //TODO is this also correct for other users then self?

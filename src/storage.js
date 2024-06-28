@@ -161,10 +161,16 @@ export const HomeElements = {
     });
   },
 
-  get: async (key) => {
+  getFromServer: async (key) => {
     const serverHomeElementsArray = await listAllObjects('homeElement', key);
     HomeElements.set([...serverHomeElementsArray]); // Ensure new array reference
     return serverHomeElementsArray;
+  },
+
+  showContent: () => {
+    const homeElementsArray = get(homeElements_Store);
+    console.log('Current Home Elements:', homeElementsArray);
+    return homeElementsArray; // Optionally return the array if needed elsewhere
   },
 
   find: (key) => {

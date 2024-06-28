@@ -30,7 +30,7 @@
   });
 
   async function getHomeElements() {
-    HomeElements.get(user_id).then( (value) => {
+    HomeElements.getFromServer(user_id).then( (value) => {
       homeElementsArray = value;
     });
   }
