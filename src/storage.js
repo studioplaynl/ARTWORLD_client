@@ -168,9 +168,8 @@ export const HomeElements = {
   },
 
   showContent: () => {
-    const homeElementsArray = get(homeElements_Store);
-    console.log('Current Home Elements:', homeElementsArray);
-    return homeElementsArray; // Optionally return the array if needed elsewhere
+    // const homeElementsArray = get(homeElements_Store);
+    return get(homeElements_Store);
   },
 
   find: (key) => {

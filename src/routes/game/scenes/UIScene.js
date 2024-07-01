@@ -126,31 +126,22 @@ export default class UIScene extends Phaser.Scene {
     // ServerCall does a .get and then references ManageSession.homeElements
     HomeElements.subscribe((value) => {
       if (!ManageSession.currentScene) return;
-      if (value === undefined || value.length < 1) return;
+      if (value === undefined) return;
 
-      const prev_HomeElements = ManageSession.homeElements;
-      console.log('HomeElements', value);
-      ManageSession.homeElements = value;
-      // compare the previous HomeElements with the new HomeElements and get the unique elements
-      // this way we can update only the new elements in the scene
-      const newElements = value.filter((el) => !prev_HomeElements.includes(el));
-      
-        console.log('HomeElements', newElements);
+      console.log('UIScene reactivity HomeElements', value);
+      console.log('UIScene reactivity value.length', value.length);
 
-        const type = 'drawingHomeElement';
-        // ManageSession.currentScene.drawingHomeElementServerList = [];
-        const serverObjectsHandler = newElements;
-        const userId = ManageSession.currentScene.location;
-        const artSize = IMAGE_BASE_SIZE;
-        const artMargin = 52;
+      // if there are no homeElements, load default imageGallery and stopmotionGallery in DefaultUserHome
+      // if (value.length === 0) {
+      //   this.game.events.emit('homeElements_show');
+      //   return
+      // }
 
-        ServerCall.downloadAndPlaceArtByType({
-          type,
-          userId,
-          serverObjectsHandler,
-          artSize,
-          artMargin,
-        });
+      console.log('UIScene emit homeElements_show');
+
+      this.game.events.emit('homeElements_show', value);
+      // check each value key if it already exists in homeElement_Group
+
     });
 
     // this is the selected homeElement in homeEdit svelte Menu

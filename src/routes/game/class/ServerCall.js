@@ -49,32 +49,12 @@ class ServerCall {
   }
 
   async getHomeElements(_location) {
+    // stores serverobject in homeElements_Store
     await HomeElements.getFromServer(_location);
-    console.log('ManageSession.homeElements: ', ManageSession.homeElements);
     // if there are no homeElements the home is still old version
     // we load a standard drawingGallery and stopMotionGallery
-    // these consist of
+    // we do this reactively in UIScene
 
-    // if there are no homeElements
-    if (!ManageSession.homeElements || ManageSession.homeElements.length === 0) {
-      /** this mean there are no homeElements and the home is of an old type
-       * What we do in that case: we load a default drawingGallery and a default stopmotionGallery
-       *
-       * 1. load drawings and stopmotion data in to a drawing store and stopmotion store
-       * 2. we filter out only the visible items in the store, and make a second store
-       * 3. we keep track on which page we are, we start on page 0, each page contains 4 items
-       * 4. we load the previews of the items on the page, if an item does not download we delete it from the store
-       */
-
-      // 1.
-      const allDrawings = await listAllObjects('drawing', _location);
-      // 2.
-      const visibleDrawingsStore = createGalleryStore(allDrawings.filter((drawing) => drawing.permission_read === 2));
-
-      console.log('visibleDrawingsStore: ', get(visibleDrawingsStore));
-    } else {
-      // if there are homeElements we load them
-    }
   }
 
   async getHomesFiltered(filter, _scene) {

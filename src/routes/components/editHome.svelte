@@ -1,42 +1,26 @@
 <script>
   // import { fly } from 'svelte/transition';
-  import { get } from 'svelte/store';
-  import { onMount, onDestroy } from 'svelte';
   import { ShowHomeEditBar, HomeEditBarExpanded } from '../../session';
   import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
   import AppGroup from './AppGroup.svelte';
-  import { HomeElements, homeElement_Selected } from '../../storage';
+  import { HomeElements, homeElement_Selected, homeElements_Store } from '../../storage';
   import { Profile } from '../../session';
   import ArtworkLoader from './ArtworkLoader.svelte';
   
   let currentView;
-  let user_id = get(Profile).id;
-  let homeElementsArray;
+  let user_id = $Profile.id;
+  // let homeElementsArray;
   let homeStore;
-  
-  const unsubscribe = HomeElements.subscribe(async (value) => {
-    // console.log('HomeElements 2', value);
-    homeElementsArray = value;
-  });
-  
-  onMount(() => {
-    getHomeElements(); //update the store with the right user_id
-  });
-
-
-  onDestroy(() => {
-    unsubscribe();
-  });
 
   async function getHomeElements() {
     HomeElements.getFromServer(user_id).then( (value) => {
-      homeElementsArray = value;
+      // homeElementsArray = value;
     });
   }
 
- $: console.log('homeElement_Selected', $homeElement_Selected);
-
+  $: console.log('homeElement_Selected', $homeElement_Selected);
+  $: console.log('homeElements_Store', $homeElements_Store);
 
   function closeEditHome() {
     ShowHomeEditBar.set(true);
@@ -88,7 +72,7 @@
         <button on:click={editHomeMenuToggle} >
           <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
         </button>
-        {#each homeElementsArray as row, index (row.key)}
+        {#each $homeElements_Store as row, index (row.key)}
         <div id={row.key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
           <ArtworkLoader artClickable={false} row={row} />
         </div>

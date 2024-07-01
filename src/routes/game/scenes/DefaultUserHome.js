@@ -5,7 +5,7 @@
  *  What is this file for?
  *  ======================
  *  This is a scene that acts as a template for a players home
- *  The differentiater is the user ID, this is parced in init(data) and passed on by SceneSwitcher
+ *  The differentiator is the user ID, this is parced in init(data) and passed on by SceneSwitcher
  *
  *  In general it works like this:
  *  - We start a loading animation that ends when all art works have been loaded
@@ -110,27 +110,10 @@ export default class DefaultUserHome extends Phaser.Scene {
     //! Check if this is home of player
     const selfHome = await ServerCall.checkIfHomeSelf(this.location);
     console.log('selfHome defaultUserHome: ', selfHome);
-
-    //! 1. Check if there are homeElement objects on the server
+    
+    // this has to be before the subscription to the event that fires when homeElements_Store changes
     await ServerCall.getHomeElements(this.location);
-
-    let type = 'drawingHomeElement';
-    let serverObjectsHandler = this.drawingHomeElementServerList;
-    const userId = this.location;
-    const artSize = IMAGE_BASE_SIZE;
-    const artMargin = 52;
-    this.artMargin = artMargin;
-    this.homeElementsDrawing_Group = this.add.group();
-
-    ServerCall.downloadAndPlaceArtByType({
-      type,
-      userId,
-      serverObjectsHandler,
-      artSize,
-      artMargin,
-    });
-
-    // console.log('homeElements: ', homeElements);
+    
     //! working on imageGallery
     //! load all images
     //TODO store in a Drawings Store
@@ -138,25 +121,30 @@ export default class DefaultUserHome extends Phaser.Scene {
     //! listAllObjects has pagination server-side, but this is not needed
     //! the pages can be loaded from local memory, when we come back on page 1
     //! we could call listAllObjects again to get a refresh
-
+    
     // const allDrawings = await listAllObjects('drawing', this.location);
     // console.log('allDrawings: ', allDrawings);
     // the list comes back ordered
-
+    
     /** subscription to the loaderror event
      * strangely: if the more times the subscription is called, the more times the event is fired
      * so we subscribe here only once in the scene
      * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
+    */
+   this.load.on('loaderror', (offendingFile) => {
+     dlog('loaderror', offendingFile);
+     if (typeof offendingFile !== 'undefined') {
+       ServerCall.resolveLoadError(offendingFile);
       }
     });
   } // end preload
-
+  
   async create() {
+    // this.events.on('homeElements_show', this.loadAndPlaceHomeElements, this);
+    this.game.events.on('homeElements_show', this.loadAndPlaceHomeElements, this);
+
+    //! 1. Check if there are homeElement objects on the server
+    // await ServerCall.getHomeElements(this.location);
     //!
     // show physics debug boundaries in gameEditMode
     if (ManageSession.gameEditMode) {
@@ -230,6 +218,20 @@ export default class DefaultUserHome extends Phaser.Scene {
       artSize,
       artMargin,
     });
+  }
+
+  async loadAndPlaceHomeElements(value){
+    console.log('loadAndPlaceHomeElements value', value);
+
+    // check if there are no homeElements
+    if (value.length === 0) return;
+
+    // const userId = this.location;
+    // this.homeElementsDrawing_Group = this.add.group();
+
+    // ServerCall.downloadAndPlaceHomeElements({
+    //   userId
+    // });
   }
 
   update() {
