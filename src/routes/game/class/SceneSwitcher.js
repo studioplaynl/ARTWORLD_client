@@ -21,7 +21,7 @@ import { setLoader } from '../../../helpers/nakamaHelpers';
 class SceneSwitcher {
   constructor() {
     this.unsubscribeScene = PlayerLocation.subscribe(() => {
-      // dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
+      dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
       // dlog('\u001b[31m playerStreamID', get(playerStreamID));
       // const history = get(PlayerHistory);
       this.doSwitchScene();

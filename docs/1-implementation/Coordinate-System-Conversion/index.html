@@ -2718,8 +2718,8 @@ sendMovement(scene) {<br />
 <p>`sendMoveMessage(scene, posX, posY) {
 //transpose phaser coordinates to artworld coordinates
 //console.log(scene)
-posX = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.x, posX)
-posY = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.y, posY)</p>
+posX = CoordinatesTranslator.phaser2DToArtworld(scene.worldSize.x, posX)
+posY = CoordinatesTranslator.phaser2DToArtworld(scene.worldSize.y, posY)</p>
 <div class="language-text highlight"><pre><span></span><code>var opCode = 1;
 var data =
   &#39;{ &quot;posX&quot;: &#39; + posX + &#39;, &quot;posY&quot;: &#39; + posY + &#39;, &quot;location&quot;: &quot;&#39; + this.location + &#39;&quot; }&#39;

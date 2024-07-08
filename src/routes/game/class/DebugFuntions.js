@@ -147,7 +147,7 @@ class DebugFuntions {
 
     const { currentScene, userProfile, createOnlinePlayers, allConnectedUsers, selectedGameObject } = ManageSession;
 
-    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
+    const { phaser2DToArtworldX, phaser2DToArtworldY } = CoordinatesTranslator;
 
     // get all the scenes for printing out the active ones when a key is used in edit mode
     // these scenes have to be added to the list:
@@ -339,8 +339,8 @@ class DebugFuntions {
         // we check if the selected gameObject is a Home by looking if it has .locationDestination = "DefaultUserHome"
         if (selectedGameObject.locationDestination === 'DefaultUserHome') {
           const updatedPosition = new Phaser.Math.Vector2(
-            Phaser2DToArtworldX(currentScene.worldSize.x, selectedGameObject.x),
-            Phaser2DToArtworldY(currentScene.worldSize.y, selectedGameObject.y)
+            phaser2DToArtworldX(currentScene.worldSize.x, selectedGameObject.x),
+            phaser2DToArtworldY(currentScene.worldSize.y, selectedGameObject.y)
           );
 
           dlog('updated position = ', updatedPosition);
@@ -380,8 +380,8 @@ class DebugFuntions {
         dlog('World Coordinates: ', currentScene.input.mousePointer.worldX, currentScene.input.mousePointer.worldY);
         dlog(
           'artworldCoordinates: ',
-          Phaser2DToArtworldX(currentScene.worldSize.x, scene.input.activePointer.worldX),
-          Phaser2DToArtworldX(currentScene.worldSize.y, scene.input.activePointer.worldY)
+          phaser2DToArtworldX(currentScene.worldSize.x, scene.input.activePointer.worldX),
+          phaser2DToArtworldX(currentScene.worldSize.y, scene.input.activePointer.worldY)
         );
 
         break;

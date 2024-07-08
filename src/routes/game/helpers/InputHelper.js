@@ -30,8 +30,8 @@ export function handleEditMode(scene) {
     'dragend',
     (pointer, gameObject) => {
       if (ManageSession.gameEditMode) {
-        const worldX = Math.round(CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, gameObject.x));
-        const worldY = Math.round(CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, gameObject.y));
+        const worldX = Math.round(CoordinatesTranslator.phaser2DToArtworldX(scene.worldSize.x, gameObject.x));
+        const worldY = Math.round(CoordinatesTranslator.phaser2DToArtworldY(scene.worldSize.y, gameObject.y));
         // store the original scale when selecting the gameObject for the first time
         if (ManageSession.selectedGameObject !== gameObject) {
           ManageSession.selectedGameObject = gameObject;
@@ -171,5 +171,5 @@ export function handlePlayerMovement(scene) {
 
 function closeRelevantMenus() {
   ShowItemsBar.set(false);
-  HomeEditBarExpanded.set(false);
+  // HomeEditBarExpanded.set(false);
 }

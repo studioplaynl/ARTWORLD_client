@@ -30,6 +30,7 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
+import { HomeElements, homeElements_Store } from '../../../storage';
 
 import {
   SCENE_INFO,
@@ -108,15 +109,27 @@ export default class DefaultUserHome extends Phaser.Scene {
   async preload() {
     // this.loadAndPlaceArtworks();
     //! Check if this is home of player
+    
+    this.homeElements_Drawing_Group = this.add.group();
+    this.homeElements_Stopmotion_Group = this.add.group();
+    this.homeElements_Animal_Group = this.add.group();
+    this.homeElements_Flower_Group = this.add.group();
+    
     const selfHome = await ServerCall.checkIfHomeSelf(this.location);
     console.log('selfHome defaultUserHome: ', selfHome);
     
+
+
+
+
+    // console.log('userHome: await ServerCall.getHomeElements(this.location)');
     // this has to be before the subscription to the event that fires when homeElements_Store changes
-    await ServerCall.getHomeElements(this.location);
+    // await ServerCall.getHomeElements(this.location);
+    // console.log('FINISHED userHome: await ServerCall.getHomeElements(this.location)');
     
     //! working on imageGallery
     //! load all images
-    //TODO store in a Drawings Store
+    // TODO store in a Drawings Store
     //! the list comes back ordered
     //! listAllObjects has pagination server-side, but this is not needed
     //! the pages can be loaded from local memory, when we come back on page 1
@@ -140,12 +153,12 @@ export default class DefaultUserHome extends Phaser.Scene {
   } // end preload
   
   async create() {
-    // this.events.on('homeElements_show', this.loadAndPlaceHomeElements, this);
-    this.game.events.on('homeElements_show', this.loadAndPlaceHomeElements, this);
+    // subscribe to event to show homeElements when the store changes
+    this.homeElements_show_listener = this.game.events.on('homeElements_show', this.loadAndPlaceHomeElements, this);
 
-    //! 1. Check if there are homeElement objects on the server
-    // await ServerCall.getHomeElements(this.location);
-    //!
+    await HomeElements.getFromServer(this.location);
+
+
     // show physics debug boundaries in gameEditMode
     if (ManageSession.gameEditMode) {
       this.physics.world.drawDebug = true;
@@ -164,7 +177,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     Background.diamondAlternatedDots(this);
 
-    // handlePlayerMovement(this);
+    handlePlayerMovement(this);
 
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
@@ -188,6 +201,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     // ......... end PLAYER VS WORLD .......................................................................
 
     Player.loadPlayerAvatar(this);
+
+    this.loadAndPlaceHomeElements();
+    // setTimeout(() => this.loadAndPlaceHomeElements(), 3000);
+
+
   } // end create
 
   async loadAndPlaceArtworks() {
@@ -220,18 +238,24 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
   }
 
-  async loadAndPlaceHomeElements(value){
-    console.log('loadAndPlaceHomeElements value', value);
+  async loadAndPlaceHomeElements(){
+    console.log('userHome: loadAndPlaceHomeElements');
+    const value = get(homeElements_Store);
+    console.log('userHome: homeElements_Store: ', value);
+    console.log('userHome: homeElements_Store length: ', value.length);
+
 
     // check if there are no homeElements
-    if (value.length === 0) return;
+    if (value.length === 0) {
+      dlog('loadAndPlaceHomeElements no homeElements: ', value);
+      // setTimeout(() => this.loadAndPlaceHomeElements(), 100);
+      
+      return;
+    }
 
-    // const userId = this.location;
-    // this.homeElementsDrawing_Group = this.add.group();
-
-    // ServerCall.downloadAndPlaceHomeElements({
-    //   userId
-    // });
+    ServerCall.downloadAndPlaceHomeElements({
+      value
+    });
   }
 
   update() {
@@ -241,4 +265,10 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.playerShadow.y = this.player.y + this.playerShadowOffset;
     // ........... end PLAYER SHADOW .........................................................................
   } // update
+
+  shutdown() {
+    if (this.homeElements_show_listener) this.homeElements_show_listener.remove();
+    if (this.homeElement_Selected) this.homeElement_Selected.remove();
+    if (this.toggleHomeElement_Controls) this.toggleHomeElement_Controls.remove();
+  }
 } // class

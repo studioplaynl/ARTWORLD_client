@@ -20,11 +20,11 @@ import {
   getObject,
   updateObject,
 } from '../../../helpers/nakamaHelpers';
-import { Profile, ShowHomeEditBar } from '../../../session';
+import { HomeEditBarExpanded, Profile, ShowHomeEditBar } from '../../../session';
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkOptions from './ArtworkOptions';
-import { createGalleryStore, HomeElements } from '../../../storage';
+import { createGalleryStore, HomeElements, homeElement_Selected } from '../../../storage';
 
 import { ART_FRAME_BORDER, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
 
@@ -37,8 +37,7 @@ import * as Phaser from 'phaser';
 
 class ServerCall {
   constructor() {
-    this.storeSubscriptions = [];
-    this.myHomeStoreSubscription;
+
   }
 
   async checkIfHomeSelf(_location) {
@@ -51,6 +50,8 @@ class ServerCall {
   async getHomeElements(_location) {
     // stores serverobject in homeElements_Store
     await HomeElements.getFromServer(_location);
+    console.log('FINISHED servercall: await ServerCall.getHomeElements(this.location)');
+
     // if there are no homeElements the home is still old version
     // we load a standard drawingGallery and stopMotionGallery
     // we do this reactively in UIScene
@@ -552,9 +553,9 @@ class ServerCall {
           artMargin,
         });
       });
-    } else if (type === 'drawingHomeElement') {
+    } else if (type === 'drawing_HomeElement') {
       console.log('type: ', type);
-      /** type === 'drawingHomeElement'
+      /** type === 'drawing_HomeElement'
        *  is for downloading all home elements of type drawing
        */
 
@@ -565,7 +566,7 @@ class ServerCall {
       //serverObjectsHandler is in the scene calling it (DefaultUserHome)
       // it is used to keep track of success and fails of the download
       serverObjectsHandler.array = ManageSession.homeElements;
-      dlog(' drawingHomeElement serverObjectsHandler.array: ', serverObjectsHandler.array);
+      dlog(' drawing_HomeElement serverObjectsHandler.array: ', serverObjectsHandler.array);
       // .filter((obj) => obj.permission_read === 2)
       // .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
       // sorting by update_time in descending order
@@ -706,7 +707,7 @@ class ServerCall {
           );
 
           element.downloaded = true;
-          // ServerCall.createDrawingContainer(element, index, artSize, artMargin);
+          // ServerCall.createDrawing_Container(element, index, artSize, artMargin);
         },
         scene
       );
@@ -733,21 +734,45 @@ class ServerCall {
     }
   }
 
-  createDrawingHomeElement_Container(element, index, artSize, artMargin) {
+  downloadAndPlaceHomeElements(array){
+    // console.log("Downloading and placing home elements, array: ", array);
+    // sort per type of element
+    let homeElements_Drawings = array.value.filter((elm) => elm.value.collection === 'drawing');
+
+    homeElements_Drawings.forEach((element, index) => {
+      const type = 'drawing_HomeElement';
+      const artSize = element.value.height;
+      const artMargin = (artSize / 10);
+      this.downloadArtwork({ element, index, type, artSize, artMargin })
+    });
+  }
+
+  createHomeElement_Drawing_Container(element) {
     const scene = ManageSession.currentScene;
     const worldSize = scene.worldSize;
 
     if (!scene) return;
     if (!element) return;
-    if (!scene.homeElementsDrawing_Group) return;
+    if (!scene.homeElements_Drawing_Group) return;
 
+    const imageKeyUrl = element.value.url;
+
+    //check if there is already a home element of this type in the group,
+    // if so skip
+    const existingHomeElement_Group = scene.homeElements_Drawing_Group.getChildren()
+
+    // Check if the container should already exist
+    // checking in the array of objects existingHomeElement_Group is an object with .nakamaData.key === element.key
+    if (existingHomeElement_Group.some(obj => obj.nakamaData && obj.nakamaData.key === element.key))
+      {
+          // dlog(`Skipping creation of drawing home element with key: ${element.key}`);
+          return;
+      }
+  
     const artSizeSaved = element.value.height;
 
-    const imageKeyUrl = element.key + `_imagesize${element.value.height}`;
-    const y = CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, element.value.posY);
-    const coordX = CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, element.value.posX);
-
-    const artBorder = ART_FRAME_BORDER;
+    const posY_Phaser = CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, element.value.posY);
+    const posX_Phaser = CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, element.value.posX);
 
     const imageContainer = scene.add.container(0, 0).setDepth(100);
     // dlog('image coordX, index', coordX, index);
@@ -773,87 +798,301 @@ class ServerCall {
     // imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
 
     // adds the image to the container, on top of the artFrame
-    const setImage = scene.add.image(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0.5);
+    const setImage = scene.add.image(0, 0, imageKeyUrl).setOrigin(0.5);
+
+    const topLeft = new Phaser.Math.Vector2(-artSizeSaved / 2, -artSizeSaved / 2);
+    const topRight = new Phaser.Math.Vector2(artSizeSaved / 2, -artSizeSaved / 2);
+    const bottomRight = new Phaser.Math.Vector2(artSizeSaved / 2, artSizeSaved / 2);
+    const bottomLeft = new Phaser.Math.Vector2(-artSizeSaved / 2, artSizeSaved / 2);
+
+    // define the icons that will be used to manipulate the homeElement
+    const icon = {
+      scale: {},
+      move: {},
+      rotate: {},
+      more: {}
+    };
+
+    // set the image for the icons
+    icon.scale = scene.add.image(bottomRight.x, bottomRight.y, 'full-screen').setOrigin(0.5)
+    .setTint(0xf2f2f2); // This sets the tint to grey
+    icon.move = scene.add.image(topLeft.x, topLeft.y, 'moveIcon').setOrigin(0.5)
+    .setTint(0xf2f2f2); // This sets the tint to grey
+    icon.rotate = scene.add.image(topRight.x, topRight.y, 'reloadSign').setOrigin(0.5).setScale(0.3)
+    .setTint(0xf2f2f2); // This sets the tint to grey
+    icon.more = scene.add.image(bottomLeft.x, bottomLeft.y, 'moreOptions').setOrigin(0.5)
+    .setTint(0xf2f2f2); // This sets the tint to grey
+
     // explicitly set the size of the image incase the image has a non standard size
     setImage.displayWidth = artSizeSaved;
     setImage.displayHeight = artSizeSaved;
 
-    imageContainer.add(setImage);
+    // Make icon.move draggable
+    icon.move.setInteractive({ draggable: true });
+    icon.rotate.setInteractive({ draggable: true });
+    icon.scale.setInteractive({ draggable: true });
+    icon.more.setInteractive({ draggable: true });
 
-    const containerSize = artSizeSaved + artBorder;
-    // const tempX = containerSize - artMargin;
-    // const tempY = containerSize + artBorder;
-    //ArtworkOptions.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
-    imageContainer.setPosition(coordX, y);
-    imageContainer.setSize(containerSize, containerSize);
-
-    imageContainer.setInteractive();
-    imageContainer.on('pointerdown', () => {
+    // scale the container when dragging the icon.scale
+    icon.scale.on('pointerdown', () => {
       ManageSession.playerIsAllowedToMove = false;
     });
-    imageContainer.on('pointerup', () => {
+    icon.scale.on('pointerup', () => {
       ManageSession.playerIsAllowedToMove = true;
     });
 
-    imageContainer.on('drag', (p) => {
-      imageContainer.setX(p.worldX);
-      imageContainer.setY(p.worldY);
+    // scale the container when dragging the icon.scale
+    let startPointerDistance;
+    let startScale;
+
+    icon.scale.on('dragstart', (pointer) => {
+        startPointerDistance = Phaser.Math.Distance.Between(
+            imageContainer.x, imageContainer.y,
+            pointer.worldX, pointer.worldY
+        );
+        startScale = imageContainer.scale;
     });
 
-    // save homeElement on dragend
-    imageContainer.on('dragend', () => {
-      const x = CoordinatesTranslator.Phaser2DToArtworldX(worldSize.x, imageContainer.x);
-      const y = CoordinatesTranslator.Phaser2DToArtworldY(worldSize.y, imageContainer.y);
+    icon.scale.on('drag', (pointer) => {
+      ManageSession.playerIsAllowedToMove = false;
+        const currentPointerDistance = Phaser.Math.Distance.Between(
+            imageContainer.x, imageContainer.y,
+            pointer.worldX, pointer.worldY
+        );
 
-      // get rotation of the container
-      const rotation = imageContainer.rotation;
+        const scaleFactor = currentPointerDistance / startPointerDistance;
+        const newScale = startScale * scaleFactor;
 
-      // get the width and height of the container
-      const width = imageContainer.width;
-      const height = imageContainer.height;
+        // You might want to set min and max scale limits
+        const minScale = 0.1;
+        const maxScale = 3;
+        const clampedScale = Phaser.Math.Clamp(newScale, minScale, maxScale);
 
-      // get the scale of the container
-      const scale = imageContainer.scale;
+        imageContainer.setScale(clampedScale);
 
-      // get the permission_read of the element
-      const pub = element.permission_read;
-
-      dlog('element', element);
-
-      const type = element.collection;
-      const name = element.key;
-      let value = element.value;
-      value.posX = x;
-      value.posY = y;
-      value.height = height;
-      value.width = width;
-      value.rotation = rotation;
-      value.scale = scale;
-      dlog('value', value);
-      updateObject(type, name, value, pub);
+        // Update width and height
+        imageContainer.width = artSizeSaved * clampedScale;
+        imageContainer.height = artSizeSaved * clampedScale;
     });
 
-    scene.input.setDraggable(imageContainer);
+    icon.scale.on('dragend', () => {
+        this.handleDragEnd(imageContainer, element, worldSize);
+    });
+
+
+    // Listen for drag events on icon.move to move the imageContainer
+    icon.move.on('pointerdown', () => {
+      ManageSession.playerIsAllowedToMove = false;
+    });
+    icon.move.on('pointerup', () => {
+      ManageSession.playerIsAllowedToMove = true;
+    });
+
+    icon.move.on('drag', (pointer) => {
+      ManageSession.playerIsAllowedToMove = false;
+      // Calculate location of the dragIcon relative to the container center
+      const deltaX = pointer.position.x - pointer.prevPosition.x;
+      const deltaY = pointer.position.y - pointer.prevPosition.y;
+
+      // camera zoom factor seems to influence the drag distance
+      // for now it looks like a feature, not a bug
+
+      // Move the container
+      imageContainer.setX(imageContainer.x + deltaX);
+      imageContainer.setY(imageContainer.y + deltaY);
+    });
+
+    icon.move.on('dragend', () => {
+      this.handleDragEnd(imageContainer, element, worldSize);
+    });
+
+    // Variable to store the initial angle when rotation starts
+    let startAngle = 0;
+    icon.rotate.on('pointerdown', () => {
+      ManageSession.playerIsAllowedToMove = false;
+    });
+    icon.rotate.on('pointerup', () => {
+      ManageSession.playerIsAllowedToMove = true;
+    });
+    icon.rotate.on('dragstart', (pointer) => {
+      
+        startAngle = this.angleBetweenPoints(
+            imageContainer.x, 
+            imageContainer.y, 
+            pointer.worldX, 
+            pointer.worldY
+        );
+    });
+
+    icon.rotate.on('drag', (pointer) => {
+
+      ManageSession.playerIsAllowedToMove = false;
+
+        const currentAngle = this.angleBetweenPoints(
+            imageContainer.x, 
+            imageContainer.y, 
+            pointer.worldX, 
+            pointer.worldY
+        );
+        
+        // Calculate the change in angle
+        const deltaAngle = currentAngle - startAngle;
+        
+        // Rotate the container
+        imageContainer.setRotation(imageContainer.rotation + deltaAngle);
+        
+        // Update the start angle for the next drag event
+        startAngle = currentAngle;
+    });
+
+    // Modify the dragend event to include rotation
+    icon.rotate.on('dragend', () => {
+      this.handleDragEnd(imageContainer, element, worldSize);
+    });
+
+    // Create a red border around the container/ image
+    const containerBackground = scene.add.graphics();
+    
+    // Set the line style (color, width)
+    // border.lineStyle(2, 0xFF0000); // 2 pixel width, red color
+    containerBackground.fillStyle(0xf2f2f2, 0.5); // grey with 50% opacity
+    
+    // Draw the rectangle (x, y, width, height)
+    containerBackground.fillRect(
+      -element.value.width/2, 
+      -element.value.height/2, 
+      element.value.width, 
+      element.value.height
+    );
+    
+    const editBorder = scene.add.graphics();
+    editBorder.lineStyle(4, 0xFF0000); // 2 pixel width, red color
+    editBorder.strokeRect(
+      -element.value.width/2, 
+      -element.value.height/2, 
+      element.value.width, 
+      element.value.height
+    );
+    editBorder.setVisible(false);
+
+    // Add the border to the container
+    imageContainer.add(containerBackground); 
+    imageContainer.add(setImage);
+    imageContainer.add(editBorder);
+
+    imageContainer.add(icon.scale);
+    imageContainer.add(icon.move);
+    imageContainer.add(icon.rotate);
+    imageContainer.add(icon.more);
+
+    imageContainer.setSize(artSizeSaved, artSizeSaved);
+    imageContainer.setPosition(posX_Phaser, posY_Phaser);
+    imageContainer.setRotation(element.value.rotation);
+
+    imageContainer.setName(element.key);
+
+    // event listener for the edit mode of all the home elements
+    scene.game.events.on('toggleHomeElement_Controls', (value) => {
+      // we first show the border if there is one selected 
+      // for when the editHomeBar is opened while an element is selected
+      const selected = get(homeElement_Selected);
+      this.toggleHomeElement_Selected_Handler(icon, editBorder, element, selected);
+
+      // when the editHomeBar is closed we also hide the editBorder in the toggleHomeElement_Controls_Handler
+      this.toggleHomeElement_Controls_Handler(icon, containerBackground, editBorder, value);
+    }, scene);
+
+    // Set the initial state of the home element controls based on if Edithome menu is open
+    this.toggleHomeElement_Controls_Handler(icon, containerBackground, editBorder, get(HomeEditBarExpanded))
+
+    scene.homeElement_Selected = scene.game.events.on('homeElement_Selected', (value) => {
+      this.toggleHomeElement_Selected_Handler(icon, editBorder, element, value)
+    }, this);
+
+    // check if an element is selected
+    this.toggleHomeElement_Selected_Handler(icon, editBorder, element, get(homeElement_Selected))
+
     /** this check prevent errors
      * when we go out of the scene when things are still loading and being created  */
-    if (!scene.homeElementsDrawing_Group) return;
+    if (!scene.homeElements_Drawing_Group) return;
 
-    scene.homeElementsDrawing_Group.add(imageContainer);
-    // dlog('scene.homeDrawingGroup.getChildren()', scene.homeDrawingGroup.getChildren());
+    scene.homeElements_Drawing_Group.add(imageContainer);
+    // dlog('scene.homeElements_Drawing_Group.getChildren()', scene.homeElements_Drawing_Group.getChildren());
   }
+
+  toggleHomeElement_Selected_Handler(icon, editBorder, element, value) {
+    // turn off the border for all elements
+    Object.values(icon).forEach(() => {
+      editBorder.setVisible(false);
+    });
+
+    if (value.key === element.key) {
+      editBorder.setVisible(true);
+    }
+  }
+
+  toggleHomeElement_Controls_Handler(icon, containerBackground, editBorder, show) {
+    Object.values(icon).forEach(iconX => {
+      iconX.setVisible(show);
+      iconX.setInteractive(show ? { draggable: true } : false);
+    });
+    containerBackground.setVisible(show);
+    if (!show) {
+      editBorder.setVisible(false);
+    }
+    // ManageSession.currentScene.scene.sys.game.renderer.refresh();
+  }
+  
+  handleDragEnd(container, element, worldSize) {
+    const x = CoordinatesTranslator.phaser2DToArtworldX(worldSize.x, container.x);
+    const y = CoordinatesTranslator.phaser2DToArtworldY(worldSize.y, container.y);
+
+    // dlog('handleDragEnd element: ', element);
+    // dlog('handleDragEnd container: ', container);  
+    // dlog('handleDragEnd x, y: ', x, y);
+
+    const rotation = container.rotation;
+    const width = container.width;
+    const height = container.height;
+    const scale = container.scale;
+
+    const pub = element.permission_read;
+    const type = element.collection;
+    const name = element.key;
+    let newValue = {...element.value};  // Create a copy of the value object
+    
+    newValue.posX = x;
+    newValue.posY = y;
+    newValue.height = height;
+    newValue.width = width;
+    newValue.rotation = rotation;
+    newValue.scale = scale;
+
+    // dragend also happens when pointer went from down to up without moving
+    // so we check if there is a change
+    const areEqual = JSON.stringify(element.value) === JSON.stringify(newValue);
+    if (areEqual) {
+      console.log('No changes detected');
+      return;
+    }
+
+    // update store without reactivity
+    HomeElements.updateStoreSilently(element.key, newValue);
+    // update on the server
+    updateObject(type, name, newValue, pub);
+  }
+
+  // calculate the angle between two points
+  angleBetweenPoints(x1, y1, x2, y2) {
+    return Math.atan2(y2 - y1, x2 - x1).toFixed(4);
+  }
+
+
 
   async downloadArtwork({ element, index, type, artSize, artMargin }) {
     const scene = ManageSession.currentScene;
 
     let imageKeyUrl = element.value.url;
-    // for homeElements we download in size that is stored in the element
-    // in Phaser we would redownload if the stored size changes
-    // in svelte we have the key of the element
-    // in phaser we can search for the key in all the objects in the group, all the origional
-    // data is attached to the objects
-    if (type === 'drawingHomeElement' || type === 'stopmotionHomeElement') {
-      imageKeyUrl = element.key + `_imagesize${element.value.height}`;
-    }
 
     let imgSize = artSize.toString();
     const fileFormat = 'png';
@@ -863,7 +1102,7 @@ class ServerCall {
       // if the artwork has already been downloaded
       if (type === 'downloadDrawingDefaultUserHome') {
         element.downloaded = true;
-        ServerCall.createDrawingContainer(element, index, artSize, artMargin);
+        ServerCall.createDrawing_Container(element, index, artSize, artMargin);
 
         const startLength = scene.userHomeDrawingServerList.startLength;
         let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
@@ -876,7 +1115,7 @@ class ServerCall {
         }
       } else if (type === 'downloadStopmotionDefaultUserHome') {
         element.downloaded = true;
-        ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
+        ServerCall.createStopmotion_Container(element, index, artSize, artMargin);
 
         const startLength = scene.userStopmotionServerList.startLength;
         let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
@@ -897,7 +1136,7 @@ class ServerCall {
         // scene.flowerFliedStartMaking = true;
       } else if (type === 'downloadLikedDrawing') {
         element.downloaded = true;
-        ServerCall.createdownloadLikedDrawingContainer(element, index);
+        ServerCall.createdownloadLiked_Drawing_Container(element, index);
 
         const startLength = ManageSession.likedStore.startLength;
         let downloadCompleted = ManageSession.likedStore.itemsDownloadCompleted;
@@ -908,19 +1147,19 @@ class ServerCall {
           dlog('load LIKED COMPLETE');
           ServerCall.repositionContainers(type);
         }
-      } else if (type === 'drawingHomeElement') {
-        element.downloaded = true;
-        this.createDrawingHomeElement_Container(element, index, artSize, artMargin);
+      } else if (type === 'drawing_HomeElement') {
+        // element.downloaded = true;
+        // console.log('imageKeyUrl already exists: ', imageKeyUrl)
+        this.createHomeElement_Drawing_Container(element, index, artSize, artMargin);
 
-        const startLength = scene.drawingHomeElementServerList.startLength;
-        let downloadCompleted = scene.drawingHomeElementServerList.itemsDownloadCompleted;
-        downloadCompleted += 1;
-        scene.drawingHomeElementServerList.itemsDownloadCompleted = downloadCompleted;
+        // const startLength = scene.drawing_HomeElementServerList.startLength;
+        // let downloadCompleted = scene.drawing_HomeElementServerList.itemsDownloadCompleted;
+        // downloadCompleted += 1;
+        // scene.drawing_HomeElementServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
-        if (downloadCompleted === startLength) {
-          dlog('load drawingHomeElement COMPLETE');
-          //ServerCall.repositionContainers(type);
-        }
+        // if (downloadCompleted === startLength) {
+          // dlog('load drawing_HomeElement COMPLETE');
+        // }
       }
       // if the artwork is not already downloaded
     } else if (type === 'downloadDrawingDefaultUserHome') {
@@ -945,7 +1184,7 @@ class ServerCall {
 
           element.downloaded = true;
 
-          ServerCall.createDrawingContainer(element, index, artSize, artMargin);
+          ServerCall.createDrawing_Container(element, index, artSize, artMargin);
         },
         scene
       );
@@ -991,7 +1230,7 @@ class ServerCall {
             (obj) => obj.imageKey !== imageKeyUrl
           );
 
-          ServerCall.createStopmotionContainer(element, index, artSize, artMargin);
+          ServerCall.createStopmotion_Container(element, index, artSize, artMargin);
         });
       // dlog('stopmotion', imageKeyUrl);
       scene.load.start(); // start the load queue to get the image in memory
@@ -1132,7 +1371,7 @@ class ServerCall {
             ? [...ManageSession.likedStore.successfulDownload, newElement]
             : [newElement];
 
-          ServerCall.createdownloadLikedDrawingContainer(newElement, index);
+          ServerCall.createdownloadLiked_Drawing_Container(newElement, index);
         },
         scene
       );
@@ -1150,27 +1389,28 @@ class ServerCall {
           ServerCall.repositionContainers(type);
         }
       });
-    } else if (type === 'drawingHomeElement') {
+    } else if (type === 'drawing_HomeElement') {
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
-      ManageSession.resolveErrorObjectArray.push({
-        loadFunction: 'download_DrawingHomeElement',
-        element,
-        index,
-        imageKey: imageKeyUrl,
-        scene,
-        resolved: false,
-      });
-      // we take the url from the element
-      const imageUrl = element.value.url;
-      console.log('imageKeyUrlParsed: ', imageUrl);
-      console.log('imageKeyUrl: ', imageKeyUrl);
-      // we resize the image to the size that is stored in the element
-      imgSize = element.value.height.toString();
-      const convertedImage = await convertImage(imageUrl, imgSize, imgSize, fileFormat);
+      // ManageSession.resolveErrorObjectArray.push({
+      //   loadFunction: 'download_DrawingHomeElement',
+      //   element,
+      //   index,
+      //   imageKey: imageKeyUrl,
+      //   scene,
+      //   resolved: false,
+      // });
+
+      //! we resize the image to the size that is stored in the element
+      // We actually load 1 size for all copies of this image
+      // fance would be to check first which size is the biggest and load that one
+      // more realistic is to load half of max size
+      imgSize = Math.round(element.value.height).toString();
+
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
       scene.load.image(imageKeyUrl, convertedImage).on(
         `filecomplete-image-${imageKeyUrl}`,
         () => {
-          dlog('filecomplete-image-$ element.key: ,', imageKeyUrl);
+          // dlog('filecomplete-image-$ element.key: ,', imageKeyUrl);
           // delete from ManageSession.resolveErrorObjectArray because of successful download
           ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
             (obj) => obj.imageKey !== imageKeyUrl
@@ -1178,7 +1418,7 @@ class ServerCall {
 
           element.downloaded = true;
 
-          this.createDrawingHomeElement_Container(element, index, artSize, artMargin);
+          this.createHomeElement_Drawing_Container(element, index, artSize, artMargin);
         },
         scene
       );
@@ -1196,6 +1436,11 @@ class ServerCall {
         downloadCompleted += 1;
         scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
+
+        // if multiple homeElements have the same key, the second one will not be loaded
+        // because the first is not downloaded yet, so we reload when an item is downloaded
+        // ManageSession.currentScene.game.events.emit('homeElements_reload');
+
         if (downloadCompleted === startLength) {
           dlog('download downloadDrawingDefaultUserHome COMPLETE');
           //ServerCall.repositionContainers(type);
@@ -1293,7 +1538,7 @@ class ServerCall {
     });
   }
 
-  static createdownloadLikedDrawingContainer(element, index) {
+  static createdownloadLiked_Drawing_Container(element, index) {
     const scene = ManageSession.currentScene;
     if (!scene) return;
     if (!element) return;
@@ -1436,7 +1681,7 @@ class ServerCall {
     }
   }
 
-  static createDrawingContainer(element, index, artSize, artMargin) {
+  static createDrawing_Container(element, index, artSize, artMargin) {
     const scene = ManageSession.currentScene;
     if (!scene) return;
     if (!element) return;
@@ -1494,7 +1739,7 @@ class ServerCall {
     // dlog('scene.homeDrawingGroup.getChildren()', scene.homeDrawingGroup.getChildren());
   }
 
-  static createStopmotionContainer(element, index, artSize, artMargin) {
+  static createStopmotion_Container(element, index, artSize, artMargin) {
     const scene = ManageSession.currentScene;
     if (!scene) return;
     if (!element) return;

@@ -1,7 +1,7 @@
 <script>
   // import { fly } from 'svelte/transition';
   import { ShowHomeEditBar, HomeEditBarExpanded } from '../../session';
-  import { clickOutside } from '../../helpers/clickOutside';
+  // import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
   import AppGroup from './AppGroup.svelte';
   import { HomeElements, homeElement_Selected, homeElements_Store } from '../../storage';
@@ -13,14 +13,8 @@
   // let homeElementsArray;
   let homeStore;
 
-  async function getHomeElements() {
-    HomeElements.getFromServer(user_id).then( (value) => {
-      // homeElementsArray = value;
-    });
-  }
-
-  $: console.log('homeElement_Selected', $homeElement_Selected);
-  $: console.log('homeElements_Store', $homeElements_Store);
+  // $: console.log('homeElement_Selected', $homeElement_Selected);
+  // $: console.log('homeElements_Store', $homeElements_Store);
 
   function closeEditHome() {
     ShowHomeEditBar.set(true);
@@ -56,15 +50,19 @@
 {/if}
 
 <!-- the EditHome icon is visivle, the page is open-->
-<!-- a div with a clickoutside event-->
 {#if $ShowHomeEditBar && $HomeEditBarExpanded}
-  <div
+  <!-- a div with a clickoutside event--> 
+  <!-- <div
     class="edit-home-menu"
     id="currentUser"
     use:clickOutside
     on:click_outside="{closeEditHome}"
     transition:fade="{{ duration: 40 }}"
-  >
+  > -->
+  <div
+    class="edit-home-menu"
+    id="currentUser"
+  > 
     <div class="menu-content">
       <!-- the right part of the EditHome, icons and buttons -->
       <div class="right-column-itemsbar">

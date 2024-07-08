@@ -27,6 +27,9 @@ class Player {
   loadPlayerAvatar(scene, placePlayerX, placePlayerY, userprofile) {
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
+    // set this.scene in ManageSession.currentScene
+    ManageSession.currentScene = scene;
+
     if (!userprofile) userprofile = ManageSession.userProfile;
     // dlog('loadPlayerAvatar');
 
@@ -101,15 +104,15 @@ class Player {
     scene.player.x = artworldToPhaser2DX(scene.worldSize.x, lastPosX);
     scene.player.y = artworldToPhaser2DY(scene.worldSize.y, lastPosY);
 
+    // pass this position to network
+    ManageSession.sendMoveMessage(scene, scene.player.x, scene.player.y);
+
     // dlog("scene.player.x, scene.player.y", scene.player.x, scene.player.y)
     // set url param's to player pos and scene key, url params are in artworldCoords lastPosX lastPosY is artworldCoords
     // setUrl(scene.location, lastPosX, lastPosY);
     // updateQueryString();
 
     // store the current position of player in ManageSession.lastMoveCommand
-    // set this.scene in ManageSession.currentScene
-    ManageSession.currentScene = scene;
-
     // ManageSession.lastMoveCommand.posX = scene.player.x;
     // ManageSession.lastMoveCommand.posY = scene.player.y;
     // ManageSession.lastMoveCommand.action = 'stop';
@@ -128,7 +131,7 @@ class Player {
       const fileNameCheck = scene.playerAvatarKey;
 
       // convert the avatar url to a converted png url
-      console.log('userprofile.url', userprofile.url);
+      // console.log('userprofile.url', userprofile.url);
 
       scene.load
         .spritesheet(fileNameCheck, userprofile.url, {

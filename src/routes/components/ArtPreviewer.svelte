@@ -40,7 +40,7 @@
   });
 
   function handleOpenArtwork() {
-    console.log('handleOpenArtwork row', row);
+    // console.log('handleOpenArtwork row', row);
 
     if (row.collection === 'homeElement') {
       // we want to make this selected in editHome menu

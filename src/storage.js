@@ -11,6 +11,7 @@ import {
   deleteObjectAdmin,
   deleteFile,
   getObject,
+  getDateAndTimeFormatted,
 } from './helpers/nakamaHelpers';
 import { PERMISSION_READ_PUBLIC, MODERATOR_LIKED_ID, STOPMOTION_MAX_FRAMES, DEFAULT_PREVIEW_HEIGHT } from './constants';
 import { dlog } from './helpers/debugLog';
@@ -149,15 +150,29 @@ export const HomeElements = {
   create: (key, value) => {
     const homeElementsArray = get(homeElements_Store);
 
-    // If key already exists, it cannot be created
-    dlog('key already exists: ', key, value);
-    if (homeElementsArray.find((element) => element.key === key)) return;
+    const datePostFix = getDateAndTimeFormatted();
+    const newKey = key + `_${datePostFix}`;
 
-    const obj = { key, value };
-    updateObject('homeElement', key, value, true).then(() => {
-      const newArray = [...homeElementsArray, obj]; // Create new array reference
-      HomeElements.set(newArray);
-      return newArray;
+    const obj = { newKey, value };
+    const newArray = [...homeElementsArray, obj]; // Create new array reference
+    HomeElements.set(newArray);
+    updateObject('homeElement', newKey, value, true).then(() => {
+    });
+    return newArray;
+  },
+
+  updateStoreSilently: (key, newValue) => {
+    homeElements_Store.update(currentElements => {
+      const index = currentElements.findIndex(element => element.key === key);
+      if (index !== -1) {
+        // Create a new object reference for the updated element
+        const updatedElement = { ...currentElements[index], value: newValue };
+        
+        // Replace the old element with the updated one without creating a new array
+        currentElements[index] = updatedElement;
+      }
+      // Return the same array reference to avoid triggering reactivity
+      return currentElements;
     });
   },
 

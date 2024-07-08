@@ -105,7 +105,6 @@ class ManageSession {
 
     this.likedStore = [];
     this.homeElements = [];
-    this.homeElement_Selected = {};
   }
 
   /** Create Socket connection and listen for incoming streaming data, presence and notifications */
@@ -361,8 +360,8 @@ class ManageSession {
   sendMoveMessage(scene, posX, posY, action) {
     const data = {
       action,
-      posX: CoordinatesTranslator.Phaser2DToArtworldX(scene.worldSize.x, posX),
-      posY: CoordinatesTranslator.Phaser2DToArtworldY(scene.worldSize.y, posY),
+      posX: CoordinatesTranslator.phaser2DToArtworldX(scene.worldSize.x, posX),
+      posY: CoordinatesTranslator.phaser2DToArtworldY(scene.worldSize.y, posY),
       location: get(playerStreamID),
     };
 

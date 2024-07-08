@@ -4,16 +4,16 @@ import nl from '../../../language/nl/ui.json';
 import en from '../../../language/en/ui.json';
 import ru from '../../../language/ru/ui.json';
 import ar from '../../../language/ar/ui.json';
-
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
-import { myHomeStore, HomeElements, homeElement_Selected, Liked } from '../../../storage';
+import { myHomeStore, HomeElements, homeElements_Store, homeElement_Selected, Liked } from '../../../storage';
 import ServerCall from '../class/ServerCall';
-import { Profile } from '../../../session';
+import { Profile, ShowHomeEditBar, HomeEditBarExpanded } from '../../../session';
 
-import { IMAGE_BASE_SIZE } from '../../../constants';
+// import { IMAGE_BASE_SIZE } from '../../../constants';
 
 import { PlayerZoom } from '../playerState';
 
@@ -79,6 +79,8 @@ export default class UIScene extends Phaser.Scene {
     this.events.on('gameEditMode', this.gameEditModeSign, this); // show edit mode indicator
     this.events.on('gameEditMode', this.editElementsScene, this); // make elements editable
 
+    this.game.events.on('homeElements_reload', this.reloadHomeElements, this);
+
     // const eventNames = scene.load.eventNames();
     // dlog('eventNames', eventNames);
     // const isReady = scene.load.isReady();
@@ -95,7 +97,6 @@ export default class UIScene extends Phaser.Scene {
 
     //subscribe to zoom changes and pass it on the the current scene
     PlayerZoom.subscribe((zoom) => {
-      console.log('zoom', zoom);
       if (!zoom) return;
       if (zoom === undefined) return;
 
@@ -116,20 +117,51 @@ export default class UIScene extends Phaser.Scene {
 
     // Live update of the home image when we select an other homeImage in the UI
     myHomeStore.subscribe((value) => {
-      if (!ManageSession.currentScene) return;
-      if (ManageSession.userHomeLocation !== ManageSession.currentScene.scene.key) return;
-      ServerCall.updateHomeImage(ManageSession.currentScene, value);
+      if (!scene) return;
+      if (ManageSession.userHomeLocation !== scene.scene.key) return;
+      ServerCall.updateHomeImage(scene, value);
     });
+
+    // //subscribe to event system
+    // this.events.on('toggleHomeElement_Controls', (value) => {
+    //   console.log('toggleHomeElement_Controls event received in UIScene with value:', value);
+    // }, this);
+
+    // //! see if ShowHomeEditBar is open
+    // HomeEditBarExpanded.subscribe((value) => {
+    //   console.log('ShowHomeEditBar subscribe', value);
+    //   if (!scene) return;
+    //   if (value === undefined) return;
+    //   // const toggleHomeElementControlsEvent = new CustomEvent('toggleHomeElementControls', { detail: value });
+    //   // window.dispatchEvent(toggleHomeElementControlsEvent);
+
+    //   this.events.emit('toggleHomeElement_Controls', value);
+    // });
+
+    // Event Listener
+    this.game.events.on('toggleHomeElement_Controls', (value) => {
+      console.log('toggleHomeElement_Controls event received in UIScene with value:', value);
+    }, this);
+
+    // Subscription and Event Emitter
+    HomeEditBarExpanded.subscribe((value) => {
+      console.log('HomeEditBarExpanded changed:', value);
+      if (!this.scene || value === undefined) return;
+      
+      console.log('Emitting toggleHomeElement_Controls event with value:', value);
+      this.game.events.emit('toggleHomeElement_Controls', value);
+    });
+
 
     // reactivity on MomeElements, eg in DefaultUserHome
     // Store HomeElements in ManageSession for central access
     // ServerCall does a .get and then references ManageSession.homeElements
     HomeElements.subscribe((value) => {
-      if (!ManageSession.currentScene) return;
+      if (!scene) return;
       if (value === undefined) return;
 
-      console.log('UIScene reactivity HomeElements', value);
-      console.log('UIScene reactivity value.length', value.length);
+      dlog('UIScene reactivity HomeElements', value);
+      dlog('UIScene reactivity value.length', value.length);
 
       // if there are no homeElements, load default imageGallery and stopmotionGallery in DefaultUserHome
       // if (value.length === 0) {
@@ -137,9 +169,9 @@ export default class UIScene extends Phaser.Scene {
       //   return
       // }
 
-      console.log('UIScene emit homeElements_show');
+      // dlog('UIScene emit homeElements_show');
 
-      this.game.events.emit('homeElements_show', value);
+      this.game.events.emit('homeElements_show');
       // check each value key if it already exists in homeElement_Group
 
     });
@@ -150,7 +182,6 @@ export default class UIScene extends Phaser.Scene {
     homeElement_Selected.subscribe((value) => {
       if (!ManageSession.currentScene) return;
 
-      ManageSession.homeElement_Selected = value;
       // we emit a phaser game event
       this.game.events.emit('homeElement_Selected', value);
     });
@@ -186,6 +217,13 @@ export default class UIScene extends Phaser.Scene {
       default:
         break;
     }
+  }
+
+  reloadHomeElements(){
+    console.log('reload homeElements')
+    // const value = get(homeElements_Store);
+
+   this.game.events.emit('homeElements_show');
   }
 
   gameEditModeSign(arg) {

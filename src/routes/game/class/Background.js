@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable class-methods-use-this */
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';

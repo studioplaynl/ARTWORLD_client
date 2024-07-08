@@ -137,11 +137,11 @@ export default class TestCoordinates extends Phaser.Scene {
 
     const pointer = this.input.activePointer;
 
-    const toARTWORLDx = CoordinatesTranslator.Phaser2DToArtworldX(
+    const toARTWORLDx = CoordinatesTranslator.phaser2DToArtworldX(
       this.worldSize.x,
       pointer.worldX,
     );
-    const toARTWORLDy = CoordinatesTranslator.Phaser2DToArtworldY(
+    const toARTWORLDy = CoordinatesTranslator.phaser2DToArtworldY(
       this.worldSize.y,
       pointer.worldY,
     );

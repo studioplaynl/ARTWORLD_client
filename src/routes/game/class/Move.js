@@ -23,12 +23,17 @@ class Move {
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
 
     const scene = ManageSession.currentScene;
-    if (scene && pos.x !== null) {
+    if (!scene) return;
+    if (pos.x !== null) {
       scene.player.x = artworldToPhaser2DX(scene.worldSize.x, pos.x);
     }
-    if (scene && pos.y !== null) {
+    if (pos.y !== null) {
       scene.player.y = artworldToPhaser2DY(scene.worldSize.y, pos.y);
     }
+    //! is this why we didn't see first position of network player?
+    // Not working yet 100%, server side last position is not stored? Or
+    // that position is not parsed in onlinePlayers?
+    this.sendMovement(scene);
   }
 
   // checks if we are moving with keyboard arrowKeys
@@ -139,7 +144,7 @@ class Move {
 
   playerMovementTweenEnd() {
     const scene = ManageSession.currentScene;
-    const { Phaser2DToArtworldX, Phaser2DToArtworldY } = CoordinatesTranslator;
+    const { phaser2DToArtworldX, phaser2DToArtworldY } = CoordinatesTranslator;
     // dlog('this.playerMovementTweenEnd');
     if (ManageSession.cameraShake) {
       // camera shake when player walks into bounds of world
@@ -161,8 +166,8 @@ class Move {
     // dlog('ManageSession.sendMoveMessage', scene.player.x, scene.player.y, 'stop');
     // update last player position in PlayerPos for when the player is reloaded inbetween scenes
     PlayerPos.set({
-      x: Math.round(Phaser2DToArtworldX(scene.worldSize.x, scene.player.x)),
-      y: Math.round(Phaser2DToArtworldY(scene.worldSize.y, scene.player.y)),
+      x: Math.round(phaser2DToArtworldX(scene.worldSize.x, scene.player.x)),
+      y: Math.round(phaser2DToArtworldY(scene.worldSize.y, scene.player.y)),
     });
 
     // play "stop" animation

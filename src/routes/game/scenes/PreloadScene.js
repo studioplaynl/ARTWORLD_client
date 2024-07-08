@@ -123,19 +123,21 @@ export default class PreloadScene extends Phaser.Scene {
     });
     this.load.svg('save', './assets/SHB/svg/AW-icon-save.svg', { scale: 0.6 });
 
+    // full screen or scale icon
+    this.load.svg('full-screen', './assets/SHB/svg/AW-icon-fullscreen.svg', { scale: 0.6 });
+  
+    // move image icon
+    this.load.svg('moveIcon', './assets/svg/icon-move.svg', { scale: 0.6 });
+
+    // full screen or scale icon
+    this.load.svg('moreOptions', './assets/SHB/svg/AW-icon-more.svg', { scale: 0.6 });
+
     // this.load.svg('abstract1', './assets/svg/abstract1.svg');
     this.load.svg('pencil', './assets/svg/pencil.svg', { scale: 2 });
 
     // animal for animalGarden Challenge
     this.load.image('dinoA', './assets/DinoA_01.png');
-    // animation png sequence
-    // this.load.image('animation_png_animal_henk_00001', './assets/animation_png_animal_henk/animation_png_animal_henk_00001.png');
-    // this.load.image('animation_png_animal_henk_00002', './assets/animation_png_animal_henk/animation_png_animal_henk_00002.png');
-    // this.load.image('animation_png_animal_henk_00003', './assets/animation_png_animal_henk/animation_png_animal_henk_00003.png');
-    // this.load.image('animation_png_animal_henk_00004', './assets/animation_png_animal_henk/animation_png_animal_henk_00004.png');
-    // this.load.image('animation_png_animal_henk_00005', './assets/animation_png_animal_henk/animation_png_animal_henk_00005.png');
-    // this.load.image('animation_png_animal_henk_00006', './assets/animation_png_animal_henk/animation_png_animal_henk_00006.png');
-    // this.load.image('animation_png_animal_henk_00007', './assets/animation_png_animal_henk/animation_png_animal_henk_00007.png');
+
     // flower for the flowerField Challenge
     this.load.image('flower', './assets/flower.png');
     // this.load.spritesheet('testdier', './assets/test_dier.png', { frameWidth: 128, frameHeight: 128 });
@@ -188,8 +190,9 @@ export default class PreloadScene extends Phaser.Scene {
     this.createArtFrame(128);
     this.createArtFrame(32);
 
-    // make a white square as a background for liked images that appear in the workd (image are transparent)
+    // make a white square as a background for liked images that appear in the world (image are transparent)
     this.createWhiteSquare(256);
+
     // debug test image square
     this.load.svg(
       'test_image_square',
@@ -203,10 +206,12 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.svg('plusSign', './assets/SHB/svg/AW-icon-plus.svg', {
       scale: 2,
     });
+
     // reloadSign for reloading challenge artworks inGame
     this.load.svg('reloadSign', './assets/SHB/svg/AW-icon-reset.svg', {
       scale: 2,
     });
+
     // arrow to the right without stem
     this.load.svg('enter', './assets/SHB/svg/AW-icon-enter.svg', { scale: 2 });
   }

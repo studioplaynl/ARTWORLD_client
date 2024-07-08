@@ -83,8 +83,8 @@ In ManageSession.sendMoveMessage
 `sendMoveMessage(scene, posX, posY) {
 //transpose phaser coordinates to artworld coordinates
 //console.log(scene)
-posX = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.x, posX)
-posY = CoordinatesTranslator.Phaser2DToArtworld(scene.worldSize.y, posY)
+posX = CoordinatesTranslator.phaser2DToArtworld(scene.worldSize.x, posX)
+posY = CoordinatesTranslator.phaser2DToArtworld(scene.worldSize.y, posY)
 
     var opCode = 1;
     var data =
