@@ -148,15 +148,18 @@ export const HomeElements = {
   update: homeElements_Store.update,
 
   create: (key, value) => {
+    // console.log('HomeElements.create called', key, value);
     const homeElementsArray = get(homeElements_Store);
 
     const datePostFix = getDateAndTimeFormatted();
     const newKey = key + `_${datePostFix}`;
-
-    const obj = { newKey, value };
-    const newArray = [...homeElementsArray, obj]; // Create new array reference
+    // console.log('newKey: ', newKey); 
+    const obj = { key: newKey, collection: 'homeElement', value };
+    const newArray = [...homeElementsArray, obj]; 
     HomeElements.set(newArray);
     updateObject('homeElement', newKey, value, true).then(() => {
+      console.log('HomeElements.create server side done ');
+      homeElement_Selected.set(obj);
     });
     return newArray;
   },

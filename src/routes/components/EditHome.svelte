@@ -1,5 +1,7 @@
 <script>
   // import { fly } from 'svelte/transition';
+  import { createEventDispatcher } from 'svelte';
+
   import { ShowHomeEditBar, HomeEditBarExpanded } from '../../session';
   // import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
@@ -8,13 +10,15 @@
   import { Profile } from '../../session';
   import ArtworkLoader from './ArtworkLoader.svelte';
   
+  const dispatch = createEventDispatcher(); // sends a custom event to the parent component (EditHome.svelte) delete event
+
   let currentView;
   let user_id = $Profile.id;
   // let homeElementsArray;
   let homeStore;
 
   // $: console.log('homeElement_Selected', $homeElement_Selected);
-  // $: console.log('homeElements_Store', $homeElements_Store);
+  $: console.log('homeElements_Store', $homeElements_Store);
 
   function closeEditHome() {
     ShowHomeEditBar.set(true);
@@ -36,6 +40,21 @@
   // toggle opens the itemsbar panel to reveal more functionality, the app is passed as a prop
   function toggleView(view) {
     currentView = currentView === view ? null : view;
+  }
+
+  function handleDelete(row) {
+    // Implement your delete logic here
+    console.log('Deleting:', row);
+    HomeElements.delete(row.key);
+    dispatch('delete', row);
+    // For example:
+    // homeElements_Store.update(elements => elements.filter(el => el.key !== row.key));
+    // You might also want to call a function to delete the item from the server
+  }
+
+  function handleArtClicked(event) {
+    console.log('handleArtClicked', event);
+    // homeElement_Selected.set(event);
   }
 </script>
 
@@ -72,7 +91,7 @@
         </button>
         {#each $homeElements_Store as row, index (row.key)}
         <div id={row.key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-          <ArtworkLoader artClickable={false} row={row} />
+          <ArtworkLoader artClickable={false} row={row} deleteIcon={true} previewSize = {50} on:delete={(event) => handleDelete(event.detail)} on:artClicked={(event) => handleArtClicked(event)}/>
         </div>
         {/each}
         <button on:click={() => toggleView('addHomeElement')}>
@@ -107,13 +126,12 @@
   </div>
 {/if}
 <style>
-  #clear {
-    margin: 0;
-    padding:0;
-    
-  }
-/* Position the itemsButton in the bottom right corner */
- img {
+#clear {
+  margin: 0;
+  padding: 0;
+}
+
+img {
   width: 50px;
   height: 50px;
 }
@@ -124,7 +142,8 @@
   padding: 5px;
   margin: 5px;
 }
- .icon {
+
+.icon {
   background-color: #fff;
   border: none;
   cursor: pointer;
@@ -142,37 +161,37 @@
   border-radius: 50%;
   box-shadow: 5px 5px 0px #7300ed;
   z-index: 1000;
-  background-color: #fff;
-  border-radius: 50%;
-  border: none;
   cursor: pointer;
   padding: 10px;
 }
 
-/* Styles for the expanded edit-home-menu */
 .edit-home-menu {
   position: fixed;
-  bottom: 20px; /* Adjust if needed to ensure it's above the fixed button */
+  bottom: 20px;
   right: 20px;
-  display: flex;
-  align-items: center;
   background-color: #fff;
   border-radius: 40px;
   box-shadow: 5px 5px 0px #7300ed;
   z-index: 999;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Container for the right and left columns */
 .menu-content {
   display: flex;
-  flex-direction: row-reverse; /* Right column on the right */
+  flex-direction: row-reverse;
+  height: 100%;
+  overflow: hidden;
 }
 
-/* Styles for the right-column-itemsbar */
 .right-column-itemsbar {
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
+  overflow-y: auto;
+  padding-right: 10px;
+  max-height: 90vh;
 }
 
 .right-column-itemsbar,
@@ -191,11 +210,30 @@
   height: 50px;
 }
 
-/* Styles for the left-column-itemsbar */
 .left-column-itemsbar {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-left: 20px; /* Space between the right and left columns */
+  margin-left: 20px;
+  overflow-y: auto;
+  max-height: 90vh;
 }
+
+/* Scrollbar styles */
+.right-column-itemsbar::-webkit-scrollbar,
+.left-column-itemsbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.right-column-itemsbar::-webkit-scrollbar-thumb,
+.left-column-itemsbar::-webkit-scrollbar-thumb {
+  background-color: #7300ed;
+  border-radius: 3px;
+}
+
+.right-column-itemsbar::-webkit-scrollbar-track,
+.left-column-itemsbar::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
 </style>

@@ -7,8 +7,10 @@
 
   function placeHomeElement() {
     console.log('placeHomeElement row: ', row);
+    //the row is not yet of collection homeElement, it is of collection drawing, stopmotion, animalchallenge etc
+
     const playerPos = get(PlayerPos);
-    console.log('placeHomeElement playerPos: ', playerPos);
+    // console.log('placeHomeElement playerPos: ', playerPos);
     const value = {
       collection: row.collection,
       key: row.key,
@@ -23,7 +25,7 @@
       width: 512,
       height: 512
     }
-    console.log('placeHomeElement value: ', value);
+    // console.log('placeHomeElement value: ', value);
     const key = row.key;
     HomeElements.create(key, value);
   }

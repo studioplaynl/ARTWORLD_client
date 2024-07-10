@@ -7,8 +7,8 @@ export const CONFIG = {
 export const SCENE_INFO = [
   {
     scene: 'DefaultUserHome',
-    sizeX: 6000,
-    sizeY: 2000,
+    sizeX: 5500,
+    sizeY: 5500,
   },
   {
     scene: 'Location1',

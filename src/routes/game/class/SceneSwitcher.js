@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { dlog, dwarn } from '../../../helpers/debugLog';
-import { PlayerLocation } from '../playerState';
+import { PlayerLocation, PlayerPos } from '../playerState';
 import { DEFAULT_HOME } from '../../../constants';
 import { Error, ShowHomeEditBar } from '../../../session';
 import { setLoader } from '../../../helpers/nakamaHelpers';
@@ -22,6 +22,8 @@ class SceneSwitcher {
   constructor() {
     this.unsubscribeScene = PlayerLocation.subscribe(() => {
       dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
+      dlog('\u001b[31m PlayerPos', get(PlayerPos));
+
       // dlog('\u001b[31m playerStreamID', get(playerStreamID));
       // const history = get(PlayerHistory);
       this.doSwitchScene();

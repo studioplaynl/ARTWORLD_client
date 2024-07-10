@@ -11,7 +11,8 @@
     AVATAR_BASE_SIZE,
   } from '../constants';
   import { dlog } from '../helpers/debugLog';
-  import ArtPreviewer from './components/ArtPreviewer.svelte';
+  import ArtworkLoader from './components/ArtworkLoader.svelte';
+
 
   let messages = {
     notifications: [],
@@ -59,6 +60,10 @@
       y: 0,
     });
   }
+
+  function handleArtworkClick(notification) {
+    goHome(notification.sender_id);
+  }
 </script>
 
 <div>
@@ -79,14 +84,18 @@
             alt="Someone sent you an artwork"
           />
         </div>
-        <button class="font-size"  on:click="{() => goHome(notification.sender_id)}">
+        <button class="font-size" on:click={() => goHome(notification.sender_id)}>
           {notification.content.username}
         </button>
-          <ArtPreviewer
-          row={notification.content}
-          artwork="{notification.content.previewUrl}"
-          artClickable={false}
-          on:clicked={goHome(notification.sender_id)}/>
+        <ArtworkLoader
+          row={{
+            value: { previewUrl: notification.content.previewUrl },
+            user_id: notification.sender_id,
+            collection: 'notification'
+          }}
+          artClickable={true}
+          on:click={() => handleArtworkClick(notification)}
+        />
       </div>
     {/each}
   </div>
@@ -108,10 +117,18 @@
             alt="Someone liked your artwork"
           />
         </div>
-        <button class="font-size" type="button" on:click="{() => goHome(notification.sender_id)}">
+        <button class="font-size" type="button" on:click={() => goHome(notification.sender_id)}>
           {notification.content.username}
         </button>
-          <ArtPreviewer artwork="{notification.previewUrl}" artClickable={false} on:clicked={goHome(notification.sender_id)}/>
+        <ArtworkLoader
+          row={{
+            value: { previewUrl: notification.previewUrl },
+            user_id: notification.sender_id,
+            collection: 'notification'
+          }}
+          artClickable={true}
+          on:click={() => handleArtworkClick(notification)}
+        />
       </div>
     {/each}
   </div>

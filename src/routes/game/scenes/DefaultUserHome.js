@@ -26,6 +26,8 @@
 import ManageSession from '../ManageSession';
 import { get } from 'svelte/store';
 import { Profile } from '../../../session';
+import { PlayerPos } from '../playerState';
+import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
@@ -117,10 +119,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     
     const selfHome = await ServerCall.checkIfHomeSelf(this.location);
     console.log('selfHome defaultUserHome: ', selfHome);
-    
-
-
-
 
     // console.log('userHome: await ServerCall.getHomeElements(this.location)');
     // this has to be before the subscription to the event that fires when homeElements_Store changes
@@ -158,7 +156,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     await HomeElements.getFromServer(this.location);
 
-
     // show physics debug boundaries in gameEditMode
     if (ManageSession.gameEditMode) {
       this.physics.world.drawDebug = true;
@@ -179,10 +176,18 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     handlePlayerMovement(this);
 
+    const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
+    console.log('targetLocation HOME PlayerPos: ', get(PlayerPos));
+
     // .......  PLAYER ....................................................................................
     //* create default player and playerShadow
     //* create player in center with Default 0 ,0 artworldCoordinates
-    this.player = new PlayerDefault(this, null, null).setDepth(201);
+    this.player = new PlayerDefault(
+      this,
+      artworldToPhaser2DX(this.worldSize.x, get(PlayerPos).x),
+      artworldToPhaser2DY(this.worldSize.y, get(PlayerPos).y),
+      ManageSession.playerAvatarPlaceholder
+    ).setDepth(201);
 
     this.playerShadow = new PlayerDefaultShadow({
       scene: this,
@@ -203,9 +208,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     Player.loadPlayerAvatar(this);
 
     this.loadAndPlaceHomeElements();
-    // setTimeout(() => this.loadAndPlaceHomeElements(), 3000);
-
-
   } // end create
 
   async loadAndPlaceArtworks() {
@@ -240,19 +242,18 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async loadAndPlaceHomeElements(){
     console.log('userHome: loadAndPlaceHomeElements');
+    
     const value = get(homeElements_Store);
+    
     console.log('userHome: homeElements_Store: ', value);
-    console.log('userHome: homeElements_Store length: ', value.length);
-
 
     // check if there are no homeElements
     if (value.length === 0) {
       dlog('loadAndPlaceHomeElements no homeElements: ', value);
-      // setTimeout(() => this.loadAndPlaceHomeElements(), 100);
-      
       return;
     }
 
+    const prevStore = value;
     ServerCall.downloadAndPlaceHomeElements({
       value
     });

@@ -32,7 +32,7 @@
     STOCK_HOUSES,
     STOCK_AVATARS,
   } from '../../constants';
-  import ArtPreviewer from './ArtPreviewer.svelte';
+  import ArtworkLoader from './ArtworkLoader.svelte';
   import {
     listObjects,
     deleteObject,
@@ -147,7 +147,16 @@
           }
         }}"
       >
-        <ArtPreviewer artwork="{object.value.previewUrl}" />
+      <ArtworkLoader 
+      row={{
+        value: { previewUrl: object.value.previewUrl },
+        collection: dataType,
+        user_id: $Profile.id,
+        key: object.key
+      }}
+      artClickable={false}
+    />
+    
       </button>
 
       <!-- show delete button -->
@@ -223,11 +232,27 @@
           }
         }}"
       >
-        {#if dataType === 'house'}
-          <ArtPreviewer artwork="assets/SHB/portal/{stockItem}" />
-        {:else if dataType === 'avatar'}
-          <ArtPreviewer artwork="assets/SHB/avatar/{stockItem}" />
-        {/if}
+      {#if dataType === 'house'}
+      <ArtworkLoader 
+        row={{
+          value: { previewUrl: `assets/SHB/portal/${stockItem}` },
+          collection: 'house',
+          user_id: $Profile.id,
+          key: stockItem
+        }}
+        artClickable={false}
+      />
+    {:else if dataType === 'avatar'}
+      <ArtworkLoader 
+        row={{
+          value: { previewUrl: `assets/SHB/avatar/${stockItem}` },
+          collection: 'avatar',
+          user_id: $Profile.id,
+          key: stockItem
+        }}
+        artClickable={false}
+      />
+    {/if}
     </div>
   {/each}
 </div>

@@ -833,128 +833,18 @@ class ServerCall {
     icon.scale.setInteractive({ draggable: true });
     icon.more.setInteractive({ draggable: true });
 
-    // scale the container when dragging the icon.scale
-    icon.scale.on('pointerdown', () => {
-      ManageSession.playerIsAllowedToMove = false;
-    });
-    icon.scale.on('pointerup', () => {
-      ManageSession.playerIsAllowedToMove = true;
-    });
+    // Set the scale icon functionality
+    this.setScaleIconFunctionality(icon, imageContainer, element, artSizeSaved, worldSize)
 
-    // scale the container when dragging the icon.scale
-    let startPointerDistance;
-    let startScale;
+    // Set the move icon functionality
+    this.setMoveIconFunctionality(icon, imageContainer, element, worldSize)
 
-    icon.scale.on('dragstart', (pointer) => {
-        startPointerDistance = Phaser.Math.Distance.Between(
-            imageContainer.x, imageContainer.y,
-            pointer.worldX, pointer.worldY
-        );
-        startScale = imageContainer.scale;
-    });
-
-    icon.scale.on('drag', (pointer) => {
-      ManageSession.playerIsAllowedToMove = false;
-        const currentPointerDistance = Phaser.Math.Distance.Between(
-            imageContainer.x, imageContainer.y,
-            pointer.worldX, pointer.worldY
-        );
-
-        const scaleFactor = currentPointerDistance / startPointerDistance;
-        const newScale = startScale * scaleFactor;
-
-        // You might want to set min and max scale limits
-        const minScale = 0.1;
-        const maxScale = 3;
-        const clampedScale = Phaser.Math.Clamp(newScale, minScale, maxScale);
-
-        imageContainer.setScale(clampedScale);
-
-        // Update width and height
-        imageContainer.width = artSizeSaved * clampedScale;
-        imageContainer.height = artSizeSaved * clampedScale;
-    });
-
-    icon.scale.on('dragend', () => {
-        this.handleDragEnd(imageContainer, element, worldSize);
-    });
-
-
-    // Listen for drag events on icon.move to move the imageContainer
-    icon.move.on('pointerdown', () => {
-      ManageSession.playerIsAllowedToMove = false;
-    });
-    icon.move.on('pointerup', () => {
-      ManageSession.playerIsAllowedToMove = true;
-    });
-
-    icon.move.on('drag', (pointer) => {
-      ManageSession.playerIsAllowedToMove = false;
-      // Calculate location of the dragIcon relative to the container center
-      const deltaX = pointer.position.x - pointer.prevPosition.x;
-      const deltaY = pointer.position.y - pointer.prevPosition.y;
-
-      // camera zoom factor seems to influence the drag distance
-      // for now it looks like a feature, not a bug
-
-      // Move the container
-      imageContainer.setX(imageContainer.x + deltaX);
-      imageContainer.setY(imageContainer.y + deltaY);
-    });
-
-    icon.move.on('dragend', () => {
-      this.handleDragEnd(imageContainer, element, worldSize);
-    });
-
-    // Variable to store the initial angle when rotation starts
-    let startAngle = 0;
-    icon.rotate.on('pointerdown', () => {
-      ManageSession.playerIsAllowedToMove = false;
-    });
-    icon.rotate.on('pointerup', () => {
-      ManageSession.playerIsAllowedToMove = true;
-    });
-    icon.rotate.on('dragstart', (pointer) => {
-      
-        startAngle = this.angleBetweenPoints(
-            imageContainer.x, 
-            imageContainer.y, 
-            pointer.worldX, 
-            pointer.worldY
-        );
-    });
-
-    icon.rotate.on('drag', (pointer) => {
-
-      ManageSession.playerIsAllowedToMove = false;
-
-        const currentAngle = this.angleBetweenPoints(
-            imageContainer.x, 
-            imageContainer.y, 
-            pointer.worldX, 
-            pointer.worldY
-        );
-        
-        // Calculate the change in angle
-        const deltaAngle = currentAngle - startAngle;
-        
-        // Rotate the container
-        imageContainer.setRotation(imageContainer.rotation + deltaAngle);
-        
-        // Update the start angle for the next drag event
-        startAngle = currentAngle;
-    });
-
-    // Modify the dragend event to include rotation
-    icon.rotate.on('dragend', () => {
-      this.handleDragEnd(imageContainer, element, worldSize);
-    });
+    // Set the rotate icon functionality
+    this.setRotateIconFunctionality(icon, imageContainer, element, worldSize)
 
     // Create a red border around the container/ image
+    // this also makes the container clickable, and set the selected homeElement
     const containerBackground = scene.add.graphics();
-    
-    // Set the line style (color, width)
-    // border.lineStyle(2, 0xFF0000); // 2 pixel width, red color
     containerBackground.fillStyle(0xf2f2f2, 0.5); // grey with 50% opacity
     
     // Draw the rectangle (x, y, width, height)
@@ -964,6 +854,8 @@ class ServerCall {
       element.value.width, 
       element.value.height
     );
+    // this.setBackgroundImageFunctionality(scene, containerBackground, imageContainer, element)
+
     
     const editBorder = scene.add.graphics();
     editBorder.lineStyle(4, 0xFF0000); // 2 pixel width, red color
@@ -1005,11 +897,12 @@ class ServerCall {
     // Set the initial state of the home element controls based on if Edithome menu is open
     this.toggleHomeElement_Controls_Handler(icon, containerBackground, editBorder, get(HomeEditBarExpanded))
 
+    // event listener for the selected home element
     scene.homeElement_Selected = scene.game.events.on('homeElement_Selected', (value) => {
       this.toggleHomeElement_Selected_Handler(icon, editBorder, element, value)
     }, this);
 
-    // check if an element is selected
+    // check if an element is already selected
     this.toggleHomeElement_Selected_Handler(icon, editBorder, element, get(homeElement_Selected))
 
     /** this check prevent errors
@@ -1017,8 +910,179 @@ class ServerCall {
     if (!scene.homeElements_Drawing_Group) return;
 
     scene.homeElements_Drawing_Group.add(imageContainer);
-    // dlog('scene.homeElements_Drawing_Group.getChildren()', scene.homeElements_Drawing_Group.getChildren());
+
+    //react on phaser event, delete the container with the event.key as name
+
+    scene.game.events.on('homeElemetDeleted', (event) => {
+      dlog('homeElemetDeleted event: ', event);
+      const containers = scene.homeElements_Drawing_Group.getChildren();
+      
+      const deleteContainer = containers.find((container) => container.name === event.key);
+      // dlog('container: ', container);
+      if (deleteContainer) {
+      // set all buttons in the container to not interactive
+      deleteContainer.list.forEach((element) => {
+        element.disableInteractive();
+      });
+        deleteContainer.destroy();
+      }
+    });
   }
+
+  hanglePrioriotizedSelection(pointer) {
+        // Get all objects under the pointer
+        const hitObjects = this.input.hitTestPointer(pointer);
+        console.log('hitObjects: ', hitObjects);
+  }
+
+  setRotateIconFunctionality(icon, imageContainer, element, worldSize) {
+    // Variable to store the initial angle when rotation starts
+    let startAngle = 0;
+    icon.rotate.on('pointerdown', () => {
+      ManageSession.playerIsAllowedToMove = false;
+    });
+    icon.rotate.on('pointerup', () => {
+      ManageSession.playerIsAllowedToMove = true;
+    });
+    icon.rotate.on('dragstart', (pointer) => {
+      
+        startAngle = this.angleBetweenPoints(
+            imageContainer.x, 
+            imageContainer.y, 
+            pointer.worldX, 
+            pointer.worldY
+        );
+    });
+
+    icon.rotate.on('drag', (pointer) => {
+      ManageSession.playerIsAllowedToMove = false;
+
+        const currentAngle = this.angleBetweenPoints(
+            imageContainer.x, 
+            imageContainer.y, 
+            pointer.worldX, 
+            pointer.worldY
+        );
+        
+        // Calculate the change in angle
+        const deltaAngle = currentAngle - startAngle;
+        
+        // Rotate the container
+        imageContainer.setRotation(imageContainer.rotation + deltaAngle);
+        
+        // Update the start angle for the next drag event
+        startAngle = currentAngle;
+    });
+
+    // Modify the dragend event to include rotation
+    icon.rotate.on('dragend', () => {
+      this.handleDragEnd(imageContainer, element, worldSize);
+    });
+  }
+
+  setBackgroundImageFunctionality(scene, containerBackground, imageContainer, element) {
+    // Set the line style (color, width)
+    // border.lineStyle(2, 0xFF0000); // 2 pixel width, red color
+    containerBackground.fillStyle(0xf2f2f2, 0.5); // grey with 50% opacity
+    
+    // Draw the rectangle (x, y, width, height)
+    containerBackground.fillRect(
+      -element.value.width/2, 
+      -element.value.height/2, 
+      element.value.width, 
+      element.value.height
+    );
+    // Make it interactive
+    containerBackground.setInteractive(new Phaser.Geom.Rectangle(
+      -element.value.width/2, 
+      -element.value.height/2, 
+      element.value.width, 
+      element.value.height
+    ), Phaser.Geom.Rectangle.Contains);
+
+    containerBackground.on('pointerup', () => {
+      // dlog('containerBackground clicked: ', element);
+      // scene.game.events.emit('homeElement_Selected', element.key);
+      homeElement_Selected.set(element);
+    });
+  }
+
+  setMoveIconFunctionality(icon, imageContainer, element, worldSize) {
+
+    // Listen for drag events on icon.move to move the imageContainer
+    icon.move.on('pointerdown', () => {
+      ManageSession.playerIsAllowedToMove = false;
+    });
+    icon.move.on('pointerup', () => {
+      ManageSession.playerIsAllowedToMove = true;
+    });
+
+    icon.move.on('drag', (pointer) => {
+      ManageSession.playerIsAllowedToMove = false;
+      // Calculate location of the dragIcon relative to the container center
+      const deltaX = pointer.position.x - pointer.prevPosition.x;
+      const deltaY = pointer.position.y - pointer.prevPosition.y;
+
+      // camera zoom factor seems to influence the drag distance
+      // for now it looks like a feature, not a bug
+
+      // Move the container
+      imageContainer.setX(imageContainer.x + deltaX);
+      imageContainer.setY(imageContainer.y + deltaY);
+    });
+
+    icon.move.on('dragend', () => {
+      this.handleDragEnd(imageContainer, element, worldSize);
+    });
+  }
+
+  setScaleIconFunctionality(icon, imageContainer, element, artSizeSaved, worldSize) {
+        // scale the container when dragging the icon.scale
+        icon.scale.on('pointerdown', () => {
+          ManageSession.playerIsAllowedToMove = false;
+        });
+        icon.scale.on('pointerup', () => {
+          ManageSession.playerIsAllowedToMove = true;
+        });
+    
+        // scale the container when dragging the icon.scale
+        let startPointerDistance;
+        let startScale;
+    
+        icon.scale.on('dragstart', (pointer) => {
+            startPointerDistance = Phaser.Math.Distance.Between(
+                imageContainer.x, imageContainer.y,
+                pointer.worldX, pointer.worldY
+            );
+            startScale = imageContainer.scale;
+        });
+    
+        icon.scale.on('drag', (pointer) => {
+          ManageSession.playerIsAllowedToMove = false;
+            const currentPointerDistance = Phaser.Math.Distance.Between(
+                imageContainer.x, imageContainer.y,
+                pointer.worldX, pointer.worldY
+            );
+    
+            const scaleFactor = currentPointerDistance / startPointerDistance;
+            const newScale = startScale * scaleFactor;
+    
+            // You might want to set min and max scale limits
+            const minScale = 0.1;
+            const maxScale = 3;
+            const clampedScale = Phaser.Math.Clamp(newScale, minScale, maxScale);
+    
+            imageContainer.setScale(clampedScale);
+    
+            // Update width and height
+            imageContainer.width = artSizeSaved * clampedScale;
+            imageContainer.height = artSizeSaved * clampedScale;
+        });
+    
+        icon.scale.on('dragend', () => {
+            this.handleDragEnd(imageContainer, element, worldSize);
+        });
+      }
 
   toggleHomeElement_Selected_Handler(icon, editBorder, element, value) {
     // turn off the border for all elements
@@ -1032,7 +1096,10 @@ class ServerCall {
   }
 
   toggleHomeElement_Controls_Handler(icon, containerBackground, editBorder, show) {
+    console.log("show: ", show);
+ 
     Object.values(icon).forEach(iconX => {
+      if (!iconX.active) return;
       iconX.setVisible(show);
       iconX.setInteractive(show ? { draggable: true } : false);
     });
@@ -1040,10 +1107,12 @@ class ServerCall {
     if (!show) {
       editBorder.setVisible(false);
     }
-    // ManageSession.currentScene.scene.sys.game.renderer.refresh();
   }
   
   handleDragEnd(container, element, worldSize) {
+    console.log('handleDragEnd container: ', element, container);
+    homeElement_Selected.set(element);
+
     const x = CoordinatesTranslator.phaser2DToArtworldX(worldSize.x, container.x);
     const y = CoordinatesTranslator.phaser2DToArtworldY(worldSize.y, container.y);
 
@@ -1417,7 +1486,6 @@ class ServerCall {
           );
 
           element.downloaded = true;
-
           this.createHomeElement_Drawing_Container(element, index, artSize, artMargin);
         },
         scene

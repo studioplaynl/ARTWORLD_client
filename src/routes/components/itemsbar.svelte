@@ -123,8 +123,8 @@
   async function goHome() {
     if ($ShowItemsBar) {
       // place user next to nameplate of home
-      const playerPosX = userHouseObject.value.posX - 80;
-      const playerPosY = userHouseObject.value.posY - 100;
+      const playerPosX = userHouseObject.value.posX - 40;
+      const playerPosY = userHouseObject.value.posY - 50;
 
       PlayerLocation.set({
         scene: userHouseObject.key,

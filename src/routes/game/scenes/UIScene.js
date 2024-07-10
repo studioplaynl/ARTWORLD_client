@@ -122,58 +122,23 @@ export default class UIScene extends Phaser.Scene {
       ServerCall.updateHomeImage(scene, value);
     });
 
-    // //subscribe to event system
-    // this.events.on('toggleHomeElement_Controls', (value) => {
-    //   console.log('toggleHomeElement_Controls event received in UIScene with value:', value);
-    // }, this);
-
-    // //! see if ShowHomeEditBar is open
-    // HomeEditBarExpanded.subscribe((value) => {
-    //   console.log('ShowHomeEditBar subscribe', value);
-    //   if (!scene) return;
-    //   if (value === undefined) return;
-    //   // const toggleHomeElementControlsEvent = new CustomEvent('toggleHomeElementControls', { detail: value });
-    //   // window.dispatchEvent(toggleHomeElementControlsEvent);
-
-    //   this.events.emit('toggleHomeElement_Controls', value);
-    // });
-
-    // Event Listener
-    this.game.events.on('toggleHomeElement_Controls', (value) => {
-      console.log('toggleHomeElement_Controls event received in UIScene with value:', value);
-    }, this);
-
     // Subscription and Event Emitter
     HomeEditBarExpanded.subscribe((value) => {
-      console.log('HomeEditBarExpanded changed:', value);
       if (!this.scene || value === undefined) return;
       
-      console.log('Emitting toggleHomeElement_Controls event with value:', value);
       this.game.events.emit('toggleHomeElement_Controls', value);
     });
 
-
-    // reactivity on MomeElements, eg in DefaultUserHome
+    // reactivity on HomeElements, eg in DefaultUserHome
     // Store HomeElements in ManageSession for central access
     // ServerCall does a .get and then references ManageSession.homeElements
     HomeElements.subscribe((value) => {
-      if (!scene) return;
+      if (!ManageSession.currentScene) return;
       if (value === undefined) return;
 
       dlog('UIScene reactivity HomeElements', value);
-      dlog('UIScene reactivity value.length', value.length);
-
-      // if there are no homeElements, load default imageGallery and stopmotionGallery in DefaultUserHome
-      // if (value.length === 0) {
-      //   this.game.events.emit('homeElements_show');
-      //   return
-      // }
-
-      // dlog('UIScene emit homeElements_show');
 
       this.game.events.emit('homeElements_show');
-      // check each value key if it already exists in homeElement_Group
-
     });
 
     // this is the selected homeElement in homeEdit svelte Menu
@@ -220,7 +185,6 @@ export default class UIScene extends Phaser.Scene {
   }
 
   reloadHomeElements(){
-    console.log('reload homeElements')
     // const value = get(homeElements_Store);
 
    this.game.events.emit('homeElements_show');

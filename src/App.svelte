@@ -122,6 +122,13 @@ import * as Phaser from 'phaser';
     title = t;
   }
 
+  function handleDelete(event) {
+    console.log('handleDelete', event.detail);
+    if (game && game.events) {
+      game.events.emit('homeElemetDeleted', event.detail);
+    }
+  }
+
   // Wait one tick to allow target div to become visible
   async function startGame() {
     await tick();
@@ -183,7 +190,7 @@ import * as Phaser from 'phaser';
   </main>
   <Itemsbar />
   <SelectedOnlinePlayerBar />
-  <EditHome />
+  <EditHome on:delete={handleDelete}/>
   <AppLoader />
   <TopBar />
   <AchievementAnimation />
