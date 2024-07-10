@@ -12,201 +12,156 @@
  *  artworks can be send to friends or other artwork categories
  */
 
-  import { onDestroy } from 'svelte';
-  import { createArtworksStore } from '../../storage';
-  import { Profile } from '../../session';
-  // eslint-disable-next-line no-unused-vars
-  import { dlog } from '../../helpers/debugLog';
-  import VisibilityToggle from './VisibilityToggle.svelte';
-  import DeleteButton from './DeleteButton.svelte';
-  import SendTo from './SendTo.svelte';
-  import {
-    // STOPMOTION_MAX_FRAMES,
-    // DEFAULT_PREVIEW_HEIGHT,
-    OBJECT_STATE_IN_TRASH,
-    OBJECT_STATE_REGULAR,
-    OBJECT_STATE_UNDEFINED,
-  } from '../../constants';
-  import ArtworkLoader from './ArtworkLoader.svelte';
-  import PlaceHomeElement from './PlaceHomeElement.svelte';
+ import { onDestroy } from 'svelte';
+import { useFilteredArtworksStore } from '../../storage';
+import { Profile } from '../../session';
+import { dlog } from '../../helpers/debugLog';
+import VisibilityToggle from './VisibilityToggle.svelte';
+import DeleteButton from './DeleteButton.svelte';
+import SendTo from './SendTo.svelte';
+import {
+  OBJECT_STATE_IN_TRASH,
+  OBJECT_STATE_REGULAR,
+  OBJECT_STATE_UNDEFINED,
+} from '../../constants';
+import ArtworkLoader from './ArtworkLoader.svelte';
+import PlaceHomeElement from './PlaceHomeElement.svelte';
 
-  export let dataType = '';
+export let dataType = '';
+export let showVisibilityToggle = false;
+export let showDeleteButton = false;
+export let showSendTo = false;
+export let showDeletedArtContainer = false;
+export let showPlaceHomeElement = false;
+export let artClickable = true;
 
-  //show or hide components in ArtworkListViewer
-  export let showVisibilityToggle = false;
-  export let showDeleteButton = false;
-  export let showSendTo = false;
-  export let showDeletedArtContainer = false;
-  export let showPlaceHomeElement = false;
-  export let artClickable = true;
+let useraccount;
+let id = null;
+let CurrentUser;
 
-  let useraccount; // used in other components
-  let filteredArt = [];
-  let deletedArt = [];
-  let id = null;
-  let CurrentUser;
-  export const params = {};
-  export const userID = null;
-  let store;
-  let unsubscribe;
-  export const col = null;
+$: console.log($store);
+$: console.log('dataType: ', dataType);
+
+const { 
+    store, 
+    filteredArt, 
+    deletedArt 
+} = useFilteredArtworksStore(dataType);
 
 function toggleSendTo(e) {
   if (e.detail) {
     const { rowIndex, toggleMode } = e.detail;
-    if (filteredArt[rowIndex].SendToIsOpen) {
-      filteredArt[rowIndex].SendToIsOpen = !toggleMode;
-    } else {
-      // eslint-disable-next-line no-unused-expressions
-      filteredArt[rowIndex].SendToIsOpen;
-      filteredArt[rowIndex].SendToIsOpen = !toggleMode;
-    }
-    filteredArt = [...filteredArt];
-  }
-}
-
- $: if (store.length) {
-   filteredArt = store.filter(
-     (el) => el.value.status === OBJECT_STATE_REGULAR ||
-            el.value.status === OBJECT_STATE_UNDEFINED,
-   );
-   filteredArt = [...filteredArt];
- }
-
-$: if (store.length) {
-  deletedArt = store.filter(
-    (el) => el.value.status === OBJECT_STATE_IN_TRASH,
-  );
-}
-  function isCurrentUser() {
-    return CurrentUser;
-  }
-
-  async function loadArtworks() {
-    store = createArtworksStore(dataType);
-    await store.loadArtworks(id);
-    // subscribe to the store after loading the artworks
-    unsubscribe = store.subscribe((value) => {
-      filteredArt = value.filter(
-        (el) => el.value.status === OBJECT_STATE_REGULAR ||
-        el.value.status === OBJECT_STATE_UNDEFINED,
-      );
-      filteredArt = [...filteredArt];
-
-      deletedArt = value.filter(
-        (el) => el.value.status === OBJECT_STATE_IN_TRASH,
-      );
+    store.update(currentStore => {
+      return currentStore.map((art, index) => {
+        if (index === rowIndex) {
+          return { ...art, SendToIsOpen: !toggleMode };
+        }
+        return art;
+      });
     });
   }
+}
 
-  onDestroy(() => {
-    if (unsubscribe) unsubscribe();
-  });
+function isCurrentUser() {
+  return CurrentUser;
+}
 
-  async function getUser() {
-    // we get the user NAME AVATAR and HOME
-    // if display_name = '' or null then the user can set the NAME
-    CurrentUser = true;
-    id = $Profile.id;
-    useraccount = $Profile;
-    await loadArtworks();
-  }
+async function getUser() {
+  CurrentUser = true;
+  id = $Profile.id;
+  useraccount = $Profile;
+  await store.loadArtworks(id);
+}
 
-  getUser();
+getUser();
 </script>
 
 <div class="art-app-container">
-
- {#each filteredArt as row, index (row.key)}
-
-  <!-- we reverse the icon order if the menu is PlaceHomeElement because the menu is on the right side of the screen -->
-  <div class="artworkListViewer-flex-row" style="flex-direction: {showPlaceHomeElement ? 'row-reverse' : 'row'};">
+  {#each $filteredArt as row, index (row.key)}
+    <div class="artworkListViewer-flex-row" style="flex-direction: {showPlaceHomeElement ? 'row-reverse' : 'row'};">
       <div class="padding">
         <div class="cell">
           <ArtworkLoader
-          artClickable="{artClickable}"
-          row="{row}"
+            artClickable={artClickable}
+            row={row}
           />
         </div>
       </div>
-    <div class="cell action-buttons" id={`row-${index}`}>
-      <div class="buttons {row.SendToIsOpen ? 'hidden' : ''}">
-       {#if showVisibilityToggle} 
-        <VisibilityToggle
-          store="{store}"
-          isCurrentUser="{isCurrentUser}"
-          row="{row}"
-          rowIndex="{index}"
-        />
-        {/if}
-
-        {#if showDeleteButton}
-        <DeleteButton
-          store="{store}"
-          isCurrentUser="{isCurrentUser}"
-          row="{row}"
-          rowIndex="{index}"
-        />
+      <div class="cell action-buttons" id={`row-${index}`}>
+        <div class="buttons {row.SendToIsOpen ? 'hidden' : ''}">
+          {#if showVisibilityToggle}
+            <VisibilityToggle
+              {store}
+              isCurrentUser={isCurrentUser}
+              {row}
+              rowIndex={index}
+            />
+          {/if}
+          {#if showDeleteButton}
+            <DeleteButton
+              {store}
+              isCurrentUser={isCurrentUser}
+              {row}
+              rowIndex={index}
+            />
+          {/if}
+        </div>
+        {#if showSendTo}
+          <div class={row && row.SendToIsOpen ? 'send-to-open' : ''}>
+            <SendTo
+              {store}
+              isCurrentUser={isCurrentUser}
+              rowIndex={index}
+              on:toggleComponents={toggleSendTo}
+              {row}
+            />
+          </div>
         {/if}
       </div>
-
-      {#if showSendTo}
-      <div class={row && row.SendToIsOpen ? 'send-to-open' : ''}>
-      <SendTo
-        store="{store}"
-        isCurrentUser="{isCurrentUser}"
-        rowIndex="{index}"
-        on:toggleComponents="{toggleSendTo}"
-        row="{row}"
-      />
-      </div>
+      {#if showPlaceHomeElement}
+        <PlaceHomeElement
+          {store}
+          isCurrentUser={isCurrentUser}
+          {row}
+          rowIndex={index}
+        />
       {/if}
     </div>
-
-    {#if showPlaceHomeElement}
-    <PlaceHomeElement
-      store="{store}"
-      isCurrentUser="{isCurrentUser}"
-      row="{row}"
-      rowIndex="{index}"/>
-    {/if}
-  </div>
   {/each}
 
-  <!-- if there is deletedArt -->
-  {#if showDeletedArtContainer && deletedArt.length}
-  <div class="deleted-art-container">
-    <img
-      class="trash-icon"
-      src="assets/SHB/svg/AW-icon-trashcan.svg"
-      alt="Trash can"
-    />
-      {#each deletedArt as row, index (row.key)}
+  {#if showDeletedArtContainer && $deletedArt.length}
+    <div class="deleted-art-container">
+      <img
+        class="trash-icon"
+        src="assets/SHB/svg/AW-icon-trashcan.svg"
+        alt="Trash can"
+      />
+      {#each $deletedArt as row, index (row.key)}
         <div class="artworkListViewer-trash-flex-row">
-            <ArtworkLoader
-              clickable="{false}"
-              row="{row}"
-            />
+          <ArtworkLoader
+            clickable={false}
+            {row}
+          />
           <div class="cell trash-action-buttons" id={`row-${index}`}>
             <VisibilityToggle
-              store="{store}"
-              isCurrentUser="{isCurrentUser}"
-              row="{row}"
-              rowIndex="{index}"
+              {store}
+              isCurrentUser={isCurrentUser}
+              {row}
+              rowIndex={index}
             />
             <DeleteButton
-              store="{store}"
-              isCurrentUser="{isCurrentUser}"
-              row="{row}"
-              rowIndex="{index}"
+              {store}
+              isCurrentUser={isCurrentUser}
+              {row}
+              rowIndex={index}
             />
-          </div> <!-- cell action-buttons -->
-        </div> <!-- artworkListViewer-flex-row -->
+          </div>
+        </div>
       {/each}
-  </div> <!-- deleted-art-container -->
+    </div>
   {/if}
+</div>
 
-</div>   <!-- end class="art-app-container" -->
 <style>
   
 .deleted-art-container{

@@ -11,6 +11,7 @@ import {
   PERMISSION_READ_PUBLIC,
   STOPMOTION_MAX_FRAMES,
   DEFAULT_PREVIEW_HEIGHT,
+  DEFAULT_AVATAR_HEIGHT,
 } from '../constants';
 import { dlog } from './debugLog';
 // import ManageSession from './routes/game/ManageSession';
@@ -327,8 +328,8 @@ export async function getAccount(id) {
     if (user.avatar_url) {
       user.url = await convertImage(
         user.avatar_url,
-        DEFAULT_PREVIEW_HEIGHT,
-        DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+        DEFAULT_AVATAR_HEIGHT,
+        DEFAULT_AVATAR_HEIGHT * STOPMOTION_MAX_FRAMES,
         'png',
       );
     }
@@ -346,8 +347,8 @@ export async function getAccount(id) {
     if (user.avatar_url) {
       user.url = await convertImage(
         user.avatar_url,
-        DEFAULT_PREVIEW_HEIGHT,
-        DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+        DEFAULT_AVATAR_HEIGHT,
+        DEFAULT_AVATAR_HEIGHT * STOPMOTION_MAX_FRAMES,
         'png',
       );
     }

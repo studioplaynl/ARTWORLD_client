@@ -9,6 +9,7 @@
     getFile,
     getObject,
   } from '../../helpers/nakamaHelpers';
+  import { useFilteredArtworksStore } from '../../storage';
 
   export let row = null;
   export const col = null;
@@ -174,6 +175,14 @@
     /* the object associated with the uploaded file
     *  is created in the uploadImage function
     */
+
+    // Get the store for the destination app type
+    const { type, store: destinationStore } = useFilteredArtworksStore(selectedSendTo);
+    // Add a delay, the server returns the url but somehow the whole object is not yet available
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Update the destination store, so it creates reactivity in the UI
+    await destinationStore.loadArtworks(row.user_id);
 
     hasSent = true;
     // Close the modal or panel

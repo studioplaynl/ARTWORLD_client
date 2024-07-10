@@ -1,6 +1,6 @@
 // Storage & communcatie tussen Server en App
 
-import { get, writable } from 'svelte/store';
+import { get, writable, derived } from 'svelte/store';
 import { Session, Profile } from './session';
 import {
   deleteObject,
@@ -13,7 +13,17 @@ import {
   getObject,
   getDateAndTimeFormatted,
 } from './helpers/nakamaHelpers';
-import { PERMISSION_READ_PUBLIC, MODERATOR_LIKED_ID, STOPMOTION_MAX_FRAMES, DEFAULT_PREVIEW_HEIGHT } from './constants';
+
+import { 
+  PERMISSION_READ_PUBLIC, 
+  MODERATOR_LIKED_ID, 
+  STOPMOTION_MAX_FRAMES, 
+  DEFAULT_PREVIEW_HEIGHT,
+  OBJECT_STATE_REGULAR,
+  OBJECT_STATE_UNDEFINED,
+  OBJECT_STATE_IN_TRASH
+ } from './constants';
+
 import { dlog } from './helpers/debugLog';
 
 //  Achievements of a user
@@ -287,6 +297,56 @@ export const Addressbook = {
   },
 };
 
+// all the stores, can be referenced as object, so there no data duplication
+const stores = {};
+
+/* check if a store exists, give the reference to it otherwise create it
+    this is a factory function
+    there is no data duplication, because the store is created only once 
+*/
+export function useArtworksStore(type) {
+    if (!stores[type]) {
+        stores[type] = createArtworksStore(type);
+    }
+    return stores[type];
+}
+
+/* reactive derived art stores that filter the artworks if it is in the trash 
+    in a svelte component the store can be used like this:
+    const { 
+      store: drawingStore, 
+      usableArt: usableDrawings, 
+      deletedArt: deletedDrawings 
+    } = useFilteredArtworksStore('drawing');
+
+    To use the stores
+    $: totalDrawings = $drawingStore.length;
+    $: activeDrawings = $usableDrawings.length;
+    $: trashDrawings = $deletedDrawings.length;
+
+    or directly in the HTML with:
+    {#each $usableDrawings as drawing}
+    {#each $deletedDrawings as drawing}
+*/
+export function useFilteredArtworksStore(type) {
+  const store = useArtworksStore(type);
+  
+  const filteredArt = derived(store, $store => 
+      $store.filter(el => 
+          el.value.status === OBJECT_STATE_REGULAR || 
+          el.value.status === OBJECT_STATE_UNDEFINED
+      )
+  );
+
+  const deletedArt = derived(store, $store => 
+      $store.filter(el => 
+          el.value.status === OBJECT_STATE_IN_TRASH
+      )
+  );
+
+  return { type, store, filteredArt, deletedArt };
+}
+
 // Stores one type of Artwork
 export function createArtworksStore(type) {
   const store = writable([]);
@@ -296,46 +356,37 @@ export function createArtworksStore(type) {
     update: store.update,
 
     async loadArtworks(id, limit) {
-      const typePromises = [];
       let loadedArt = [];
-
-      // One promise per type..
-      typePromises.push(
-        new Promise((resolveType) => {
-          // A promise to load objects from the server
-          const loadPromise = new Promise((resolve) => {
-            // if there is a limit, it is not used, if there is no limit it is used...
-            // so it would always list always all objects
-            if (limit !== undefined) {
-              console.log('limit: ', limit);
-              listAllObjects(type, id).then((loaded) => {
-                resolve(loaded);
-              });
-            } else {
-              console.log('limit: ', limit);
-              listObjects(type, id, limit).then((loaded) => {
-                resolve(loaded.objects);
-              });
-            }
-          });
-
-          // Objects were loaded, so update the preview URLs
-          loadPromise.then(async (loaded) => {
-            // Execute a Promise in order to update preview URLS
-            this.updatePreviewUrls(loaded).then((updatedLoaded) => {
-              // Add the updated artworks to the loadedArt array
-              loadedArt = [...loadedArt, ...updatedLoaded];
-              // Resolve the Promise for this type
-              resolveType();
-            });
-          });
-        })
-      );
-
-      // After all typePromises fulfilled, set data into store
-      Promise.all(typePromises).then(() => {
+    
+      try {
+        // Load objects from the server
+        const loaded = await this.fetchObjects(type, id, limit);
+    
+        // Update preview URLs
+        const updatedLoaded = await this.updatePreviewUrls(loaded);
+        loadedArt = [...updatedLoaded];
+    
+        // Set data into store
         store.set(loadedArt);
-      });
+    
+        return loadedArt;
+      } catch (error) {
+        console.error('Error loading artworks:', error);
+        return [];
+      }
+    },
+    
+    // Helper method to fetch objects
+    async fetchObjects(type, id, limit) {
+      if (limit !== undefined) {
+        console.log('type:', type, 'limit:', limit);
+        return listAllObjects(type, id);
+      } else {
+        console.log('type:', type, 'limit:', limit);
+        const result = await listObjects(type, id, limit);
+        console.log('result: ', result);
+        return result.objects;
+      }
     },
 
     /** Get a single Artwork by Key */

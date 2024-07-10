@@ -261,7 +261,8 @@ export const AVATAR_SPRITESHEET_LOAD_SIZE = 150;
 /** Base size used for artworks */
 export const IMAGE_BASE_SIZE = 2048;
 
-export const DEFAULT_PREVIEW_HEIGHT = 150;
+export const DEFAULT_PREVIEW_HEIGHT = 80;
+export const DEFAULT_AVATAR_HEIGHT = 150;
 export const STOPMOTION_BASE_SIZE = 1024;
 export const STOPMOTION_MAX_FRAMES = 12;
 export const STOPMOTION_FPS = 5;
