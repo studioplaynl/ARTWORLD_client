@@ -253,7 +253,6 @@ export default class DefaultUserHome extends Phaser.Scene {
       return;
     }
 
-    const prevStore = value;
     ServerCall.downloadAndPlaceHomeElements({
       value
     });

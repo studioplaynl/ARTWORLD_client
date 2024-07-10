@@ -503,8 +503,8 @@ export function createArtworksStore(type) {
 }
 
 // Usage example for creating different type-specific stores
-export const DrawingArtworksStore = createArtworksStore('drawing');
-export const StopmotionArtworksStore = createArtworksStore('stopmotion');
+// export const DrawingArtworksStore = createArtworksStore('drawing');
+// export const StopmotionArtworksStore = createArtworksStore('stopmotion');
 
 // export const VideoArtworksStore = createArtworksStore('video');
 // export const AudioArtworksStore = createArtworksStore('audio');
