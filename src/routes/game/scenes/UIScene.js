@@ -4,14 +4,14 @@ import nl from '../../../language/nl/ui.json';
 import en from '../../../language/en/ui.json';
 import ru from '../../../language/ru/ui.json';
 import ar from '../../../language/ar/ui.json';
-import { get } from 'svelte/store';
+// import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
-import { myHomeStore, HomeElements, homeElements_Store, homeElement_Selected, Liked } from '../../../storage';
+import { myHomeStore, HomeElements, homeGalleryStore, homeElement_Selected, Liked } from '../../../storage';
 import ServerCall from '../class/ServerCall';
-import { Profile, ShowHomeEditBar, HomeEditBarExpanded } from '../../../session';
+import { Profile, HomeEditBarExpanded } from '../../../session';
 
 // import { IMAGE_BASE_SIZE } from '../../../constants';
 
@@ -137,7 +137,7 @@ export default class UIScene extends Phaser.Scene {
       if (value === undefined) return;
 
       dlog('UIScene reactivity HomeElements', value);
-
+      
       this.game.events.emit('homeElements_show');
     });
 

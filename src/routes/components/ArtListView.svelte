@@ -39,13 +39,11 @@ let useraccount;
 let id = null;
 let CurrentUser;
 
-$: console.log($store);
-$: console.log('dataType: ', dataType);
-
 const { 
     store, 
     filteredArt, 
-    deletedArt 
+    deletedArt,
+    visibleArt
 } = useFilteredArtworksStore(dataType);
 
 function toggleSendTo(e) {
@@ -206,7 +204,6 @@ getUser();
   align-items: center;
   border-bottom: dashed 1px #7300eb;
 }
-
 
 .cell {
   flex: 1;

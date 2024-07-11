@@ -25,7 +25,6 @@
 
 import ManageSession from '../ManageSession';
 import { get } from 'svelte/store';
-import { Profile } from '../../../session';
 import { PlayerPos } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import PlayerDefault from '../class/PlayerDefault';
@@ -40,7 +39,6 @@ import {
   ART_PREVIEW_SIZE,
   ART_DISPLAY_SIZE_LARGE,
   ART_OFFSET_BETWEEN,
-  IMAGE_BASE_SIZE,
 } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
@@ -75,7 +73,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.homesRepreseneted = [];
     this.homesGenerate = false;
 
-    this.userStopmotionServerList = {};
+    this.userHomeStopmotionServerList = {};
     this.userHomeDrawingServerList = {};
     this.drawingGroup = null;
     this.stopmotionGroup = null;
@@ -154,6 +152,9 @@ export default class DefaultUserHome extends Phaser.Scene {
     // subscribe to event to show homeElements when the store changes
     this.homeElements_show_listener = this.game.events.on('homeElements_show', this.loadAndPlaceHomeElements, this);
 
+    this.homeElements_show_listener = this.game.events
+    .on('drawing_homeGallery_show', this.loadAndPlaceGalleries, this);
+
     await HomeElements.getFromServer(this.location);
 
     // show physics debug boundaries in gameEditMode
@@ -228,8 +229,8 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
 
     type = 'downloadStopmotionDefaultUserHome';
-    // this.userStopmotionServerList = [];
-    serverObjectsHandler = this.userStopmotionServerList;
+    // this.userHomeStopmotionServerList = [];
+    serverObjectsHandler = this.userHomeStopmotionServerList;
     this.homeStopmotionGroup = this.add.group();
     ServerCall.downloadAndPlaceArtByType({
       type,
@@ -246,15 +247,262 @@ export default class DefaultUserHome extends Phaser.Scene {
     const value = get(homeElements_Store);
     
     console.log('userHome: homeElements_Store: ', value);
+    this.loadAndPlaceGalleries();
 
     // check if there are no homeElements
     if (value.length === 0) {
       dlog('loadAndPlaceHomeElements no homeElements: ', value);
       return;
     }
-
+    
     ServerCall.downloadAndPlaceHomeElements({
       value
+    });
+  }
+
+  async loadAndPlaceGalleries(){
+    let type = 'downloadDrawingDefaultUserHome';
+    let serverObjectsHandler = this.userHomeDrawingServerList;
+    const userId = this.location;
+    const artSize = this.artDisplaySize;
+    const artMargin = artSize / 10;
+    this.artMargin = artMargin;
+    this.homeDrawingGroup = this.add.group();
+
+    // initial values for the homeGallery
+    this.homeGallery_drawing_CurrentPage = 1;
+    this.homeGallery_drawing_PageSize = 3;
+    this.homeGallery_drawing_TotalPages = 1;
+    this.homeGallery_drawing_ArtOnCurrentPage = {};
+
+    const totalWidth = this.homeGallery_drawing_PageSize * (artSize + artMargin);
+    this.parentContainer_homeDrawingGroup = this.add.container(artMargin/2, artMargin/2)
+    .setSize(totalWidth+(artMargin*2), artSize+(artMargin*4))
+    .setName('ParentContainer');
+
+    // create background graphics for ParentContainer
+    const graphic = this.add.graphics();
+    graphic.fillStyle(0xa9a9a9); //dark grey
+    graphic.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*5)); 
+    this.parentContainer_homeDrawingGroup.add(graphic);
+    
+    const graphic2 = this.add.graphics();
+    graphic2.fillStyle(0xf2f2f2); 
+    graphic2.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*3)); 
+    this.parentContainer_homeDrawingGroup.add(graphic2);
+
+    // add button to ParentContainer
+    const backButton = this.add.image(totalWidth/2, artSize + (artMargin*3) + 50, 'back_button').setDepth(500);
+    backButton.displayWidth = 60;
+    backButton.displayHeight = 60;
+    // make button interactive
+    backButton.setInteractive();
+    // add event listener to button
+    backButton.on('pointerup', () => {
+      const currentPage = this.homeGallery_drawing_CurrentPage;
+      const totalPages = this.homeGallery_drawing_TotalPages;
+      
+      if (currentPage > 1 && currentPage <= totalPages) {
+        this.homeGallery_drawing_CurrentPage -= 1;
+
+        const children = this.parentContainer_homeDrawingGroup.getAll('type', 'Container');
+        console.log('back button clicked');
+        
+        // Filter for containers and remove them
+        children.forEach(child => {
+          console.log('child: ', child);
+          this.parentContainer_homeDrawingGroup.remove(child);
+          child.destroy(); // This will also destroy all of the container's children
+      });
+
+        this.loadAndPlaceGalleries_Again();
+      }
+    });
+    this.parentContainer_homeDrawingGroup.add(backButton);
+
+    const nextButton = this.add.image(totalWidth/2 + (artMargin*2) , artSize + (artMargin*3) + 50, 'back_button')
+    .setDepth(500);
+    //rotate button 180 degrees
+    nextButton.rotation = 3.14159;
+    nextButton.displayWidth = 60;
+    nextButton.displayHeight = 60;
+    // make button interactive
+    nextButton.setInteractive();
+    // add event listener to button
+    nextButton.on('pointerup', () => {
+      console.log('nextButton button clicked');
+      // get current page
+      // get total pages
+      const currentPage = this.homeGallery_drawing_CurrentPage;
+      const totalPages = this.homeGallery_drawing_TotalPages;
+
+      if (currentPage < totalPages) {
+        this.homeGallery_drawing_CurrentPage += 1;
+        // delete all containers in parent container
+        // Get all children of the parentContainer
+        const children = this.parentContainer_homeDrawingGroup.getAll('type', 'Container');
+
+        // Filter for containers and remove them
+        children.forEach(child => {
+          console.log('child: ', child);
+          this.parentContainer_homeDrawingGroup.remove(child);
+          child.destroy(); // This will also destroy all of the container's children
+      });
+
+        this.loadAndPlaceGalleries_Again();
+      }
+
+    });
+    this.parentContainer_homeDrawingGroup.add(nextButton);
+
+    this.homeDrawingGroup.add(this.parentContainer_homeDrawingGroup);
+
+    ServerCall.downloadAndPlaceArtByType({
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
+    });
+    
+    // ---------------------------------- STOPMOTION GALLERY ------------------------------- //
+    type = 'downloadStopmotionDefaultUserHome';
+    serverObjectsHandler = this.userHomeStopmotionServerList;
+    
+    // initial values for the homeGallery
+    this.homeGallery_stopmotion_CurrentPage = 1;
+    this.homeGallery_stopmotion_PageSize = 3;
+    this.homeGallery_stopmotion_TotalPages = 1;
+    this.homeGallery_stopmotion_ArtOnCurrentPage = {};
+    this.homeStopmotionGroup = this.add.group();
+
+
+    const totalWidth_stopmotion = this.homeGallery_stopmotion_PageSize * (artSize + artMargin);
+    this.parentContainer_homeStopmotionGroup = this.add.container(artMargin/2, artMargin/2)
+    .setSize(totalWidth_stopmotion+(artMargin*2), artSize+(artMargin*4))
+    .setName('ParentContainer');
+
+    // create background graphics for ParentContainer
+    const graphic_stopmotion = this.add.graphics();
+    graphic_stopmotion.fillStyle(0xa9a9a9); //dark grey
+    graphic_stopmotion.fillRect(0, 0, totalWidth_stopmotion+(artMargin), artSize+(artMargin*5)); 
+    this.parentContainer_homeStopmotionGroup.add(graphic_stopmotion);
+    
+    const graphic2_stopmotion = this.add.graphics();
+    graphic2_stopmotion.fillStyle(0xf2f2f2); 
+    graphic2_stopmotion.fillRect(0, 0, totalWidth_stopmotion+(artMargin), artSize+(artMargin*3)); 
+    this.parentContainer_homeStopmotionGroup.add(graphic2_stopmotion);
+
+    // add button to ParentContainer
+    const backButton_stopmotion = this.add.image(totalWidth/2, 
+      artSize + (artMargin*3) + 50, 'back_button').setDepth(500);
+    backButton_stopmotion.displayWidth = 60;
+    backButton_stopmotion.displayHeight = 60;
+    // make button interactive
+    backButton_stopmotion.setInteractive();
+    // add eve-nt listener to button
+    backButton_stopmotion.on('pointerup', () => {
+      const currentPage = this.homeGallery_stopmotion_CurrentPage;
+      const totalPages = this.homeGallery_stopmotion_TotalPages;
+      
+      if (currentPage > 1 && currentPage <= totalPages) {
+        this.homeGallery_stopmotion_CurrentPage -= 1;
+
+        const children = this.parentContainer_homeStopmotionGroup.getAll('type', 'Container');
+        console.log('back button stopmotion clicked');
+        
+        // Filter for containers and remove them
+        children.forEach(child => {
+          console.log('child: ', child);
+          this.parentContainer_homeStopmotionGroup.remove(child);
+          child.destroy(); // This will also destroy all of the container's children
+      });
+
+        this.loadAndPlaceGalleries_Again();
+      }
+    });
+    this.parentContainer_homeStopmotionGroup.add(backButton_stopmotion);
+
+    const nextButton_stopmotion = this.add.image(totalWidth/2 + (artMargin*2),
+      artSize + (artMargin*3) + 50, 'back_button')
+    .setDepth(500);
+    //rotate button 180 degrees
+    nextButton_stopmotion.rotation = 3.14159;
+    nextButton_stopmotion.displayWidth = 60;
+    nextButton_stopmotion.displayHeight = 60;
+    // make button interactive
+    nextButton_stopmotion.setInteractive();
+    // add event listener to button
+    nextButton_stopmotion.on('pointerup', () => {
+      console.log('nextButton button clicked');
+      // get current page
+      // get total pages
+      const currentPage = this.homeGallery_stopmotion_CurrentPage;
+      const totalPages = this.homeGallery_stopmotion_TotalPages;
+
+      if (currentPage < totalPages) {
+        this.homeGallery_stopmotion_CurrentPage += 1;
+        // delete all containers in parent container
+        // Get all children of the parentContainer
+        const children = this.parentContainer_homeStopmotionGroup.getAll('type', 'Container');
+
+        // Filter for containers and remove them
+        children.forEach(child => {
+          console.log('child: ', child);
+          this.parentContainer_homeStopmotionGroup.remove(child);
+          child.destroy(); // This will also destroy all of the container's children
+      });
+
+        this.loadAndPlaceGalleries_Again();
+      }
+
+    });
+    this.parentContainer_homeStopmotionGroup.add(nextButton_stopmotion);
+
+    this.parentContainer_homeStopmotionGroup.setPosition(artMargin, 1200);
+
+
+    this.homeStopmotionGroup.add(this.parentContainer_homeStopmotionGroup);
+
+    console.log('userHome: loadAndPlaceGalleries');
+    ServerCall.downloadAndPlaceArtByType({
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
+    });
+    
+  }
+
+  async loadAndPlaceGalleries_Again(){
+    let type = 'downloadDrawingDefaultUserHome';
+    let serverObjectsHandler = this.userHomeDrawingServerList;
+    const userId = this.location;
+    const artSize = this.artDisplaySize;
+    const artMargin = artSize / 10;
+    this.artMargin = artMargin;
+
+    // initial values are set in loadAndPlaceGalleries
+    console.log('userHome: loadAndPlaceGalleries');
+    ServerCall.downloadAndPlaceArtByType({
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
+    });
+
+     type = 'downloadStopmotionDefaultUserHome';
+     serverObjectsHandler = this.userHomeStopmotionServerList;
+
+     // initial values are set in loadAndPlaceGalleries
+    ServerCall.downloadAndPlaceArtByType({
+      type,
+      userId,
+      serverObjectsHandler,
+      artSize,
+      artMargin,
     });
   }
 

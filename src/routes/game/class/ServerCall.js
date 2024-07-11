@@ -24,7 +24,7 @@ import { HomeEditBarExpanded, Profile, ShowHomeEditBar } from '../../../session'
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkOptions from './ArtworkOptions';
-import { createGalleryStore, HomeElements, homeElement_Selected } from '../../../storage';
+import { homeGalleryStore, HomeElements, homeElement_Selected } from '../../../storage';
 
 import { ART_FRAME_BORDER, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
 
@@ -515,44 +515,78 @@ class ServerCall {
       /** type === 'downloadDrawingDefaultUserHome'
        *  is for downloading all the drawings from a user's home
        */
+      const scene = ManageSession.currentScene;
 
-      await listAllObjects('drawing', userId).then((rec) => {
-        dlog('type rec: ', type, rec);
+      // make a new drawingGallery store
+      const drawingGallery = homeGalleryStore('drawing');
 
-        serverObjectsHandler.array = rec
-          .filter((obj) => obj.permission_read === 2)
-          .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
-        // sorting by update_time in descending order
+      // set the pageSize of the gallery
+      drawingGallery.setHomeGalleryPageSize(scene.homeGallery_drawing_PageSize);
+      // set the currrent page of the gallery
+      drawingGallery.setHomeGalleryCurrentPage(scene.homeGallery_drawing_CurrentPage);
 
-        // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-        this.handleServerArray({
-          type,
-          serverObjectsHandler,
-          artSize,
-          artMargin,
-        });
+      await drawingGallery.loadArtworks(userId);
+  
+      // Get total pages
+      const totalPages = get(drawingGallery.homeGalleryTotalPages);
+      scene.homeGallery_drawing_TotalPages = totalPages;
+      
+      console.log('Total pages:', totalPages);
+  
+      // Get current paginated artworks
+      const currentImages = get(drawingGallery.homeGalleryPaginatedArt);
+      scene.homeGallery_drawing_ArtOnCurrentPage = currentImages;
+
+      console.log('Current paginated artworks:', currentImages);
+
+      serverObjectsHandler.array = currentImages;
+       
+      // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
+      this.handleServerArray({
+        type,
+        serverObjectsHandler,
+        artSize,
+        artMargin,
       });
+      
     } else if (type === 'downloadStopmotionDefaultUserHome') {
       /** type === 'downloadStopmotionDefaultUserHome'
        *  is for downloading all the stopmotions from a user's home
        */
+      const scene = ManageSession.currentScene;
 
-      await listAllObjects('stopmotion', userId).then((rec) => {
-        dlog('type rec: ', type, rec);
+      // make a new drawingGallery store
+      const stopmotiongGallery = homeGalleryStore('stopmotion');
 
-        serverObjectsHandler.array = rec
-          .filter((obj) => obj.permission_read === 2)
-          .sort((a, b) => new Date(a.update_time) - new Date(b.update_time));
-        // sorting by update_time in descending order
+      // set the pageSize of the gallery
+      stopmotiongGallery.setHomeGalleryPageSize(scene.homeGallery_stopmotion_PageSize);
+      // set the currrent page of the gallery
+      stopmotiongGallery.setHomeGalleryCurrentPage(scene.homeGallery_stopmotion_CurrentPage);
 
-        // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-        this.handleServerArray({
-          type,
-          serverObjectsHandler,
-          artSize,
-          artMargin,
-        });
+      await stopmotiongGallery.loadArtworks(userId);
+  
+      // Get total pages
+      const totalPages = get(stopmotiongGallery.homeGalleryTotalPages);
+      scene.homeGallery_stopmotion_TotalPages = totalPages;
+      
+      console.log('Total pages:', totalPages);
+  
+      // Get current paginated artworks
+      const currentImages = get(stopmotiongGallery.homeGalleryPaginatedArt);
+      scene.homeGallery_stopmotion_ArtOnCurrentPage = currentImages;
+
+      console.log('Current paginated artworks stopmotion:', currentImages);
+
+      serverObjectsHandler.array = currentImages;
+
+      // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
+      this.handleServerArray({
+        type,
+        serverObjectsHandler,
+        artSize,
+        artMargin,
       });
+      
     } else if (type === 'drawing_HomeElement') {
       console.log('type: ', type);
       /** type === 'drawing_HomeElement'
@@ -732,6 +766,24 @@ class ServerCall {
         }
       });
     }
+  }
+
+  async downloadAndPlaceGalleries(userId){
+    const drawingGallery = homeGalleryStore('drawing');
+    await drawingGallery.loadArtworks(userId);
+
+    console.log('Loaded artworks:', get(drawingGallery));
+    // Get total pages
+    const totalPages = get(drawingGallery.homeGalleryTotalPages);
+    console.log('Total pages:', totalPages);
+
+    // Get current paginated artworks
+    const currentImages = get(drawingGallery.homeGalleryPaginatedArt);
+    console.log('Current paginated artworks:', currentImages);
+
+    // make an image gallery with the currentImages and pass the current page number
+    // to the function that creates the gallery
+
   }
 
   downloadAndPlaceHomeElements(array){
@@ -1186,10 +1238,10 @@ class ServerCall {
         element.downloaded = true;
         ServerCall.createStopmotion_Container(element, index, artSize, artMargin);
 
-        const startLength = scene.userStopmotionServerList.startLength;
-        let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
+        const startLength = scene.userHomeStopmotionServerList.startLength;
+        let downloadCompleted = scene.userHomeStopmotionServerList.itemsDownloadCompleted;
         downloadCompleted += 1;
-        scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
+        scene.userHomeStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('load downloadStopmotionDefaultUserHome COMPLETE');
@@ -1307,11 +1359,11 @@ class ServerCall {
       // this is fired each time a file is finished downloading (or failing)
       scene.load.on('complete', () => {
         // dlog('loader STOPMOTION is complete');
-        const startLength = scene.userStopmotionServerList.startLength;
-        let downloadCompleted = scene.userStopmotionServerList.itemsDownloadCompleted;
+        const startLength = scene.userHomeStopmotionServerList.startLength;
+        let downloadCompleted = scene.userHomeStopmotionServerList.itemsDownloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
         downloadCompleted += 1;
-        scene.userStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
+        scene.userHomeStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('download STOPMOTION COMPLETE');
@@ -1803,8 +1855,8 @@ class ServerCall {
      * when we go out of the scene when things are still loading and being created  */
     if (!scene.homeDrawingGroup) return;
 
-    scene.homeDrawingGroup.add(imageContainer);
-    // dlog('scene.homeDrawingGroup.getChildren()', scene.homeDrawingGroup.getChildren());
+    // scene.homeDrawingGroup.add(imageContainer);
+    scene.parentContainer_homeDrawingGroup.add(imageContainer);
   }
 
   static createStopmotion_Container(element, index, artSize, artMargin) {
@@ -1813,7 +1865,7 @@ class ServerCall {
     if (!element) return;
 
     const imageKeyUrl = element.value.url;
-    const y = artSize * 1.5;
+    const y = artMargin;
     const artBorder = ART_FRAME_BORDER;
 
     const artStart = 38; // start the art on the left side
@@ -1885,45 +1937,45 @@ class ServerCall {
     if (!imageContainer) return;
     if (!scene) return;
     if (!scene.homeStopmotionGroup) return;
-    scene.homeStopmotionGroup.add(imageContainer);
+    scene.parentContainer_homeStopmotionGroup.add(imageContainer);
   }
 
-  static repositionContainers(type) {
-    // if there are images that didn't download, reorder the containers
-    // get the children of the stopmotion group
-    const scene = ManageSession.currentScene;
-    let containers = {};
+static repositionContainers(type) {
+  const scene = ManageSession.currentScene;
+  let containers = [];
 
-    if (type === 'downloadDrawingDefaultUserHome') {
-      if (!scene.homeDrawingGroup) return;
-      containers = scene.homeDrawingGroup.getChildren();
-    } else if (type === 'downloadStopmotionDefaultUserHome') {
-      if (!scene.homeStopmotionGroup) return;
-      containers = scene.homeStopmotionGroup.getChildren();
-    } else if (type === 'downloadLikedDrawing') {
-      containers = scene.balloonContainer.list;
-    }
+  if (type === 'downloadDrawingDefaultUserHome') {
+    if (!scene.homeDrawingGroup) return;
+    containers = scene.homeDrawingGroup.getChildren();
+    console.log('containers', containers);
+  } else if (type === 'downloadStopmotionDefaultUserHome') {
+    if (!scene.homeStopmotionGroup) return;
+    containers = scene.homeStopmotionGroup.getChildren();
+  } else if (type === 'downloadLikedDrawing') {
+    containers = scene.balloonContainer.list;
+  }
 
-    if (type !== 'downloadLikedDrawing') {
-      // Sorting the containers based on element.data.update_time
-      containers.sort((a, b) => {
-        const timeA = new Date(a.nakamaData.update_time).getTime();
-        const timeB = new Date(b.nakamaData.update_time).getTime();
-        return timeA - timeB; // For ascending order. Use timeB - timeA for descending.
-      });
-    }
+  const artSize = scene.artDisplaySize;
+  const artMargin = scene.artMargin;
+  const artStart = 38;
 
-    const artSize = scene.artDisplaySize;
-    const artMargin = scene.artMargin;
-    // const artBorder = ART_FRAME_BORDER;
-
-    // give each container a position according to the place in the index
-    const artStart = 38; // start the art on the left side
+  if (type === 'downloadDrawingDefaultUserHome' || type === 'downloadStopmotionDefaultUserHome') {
+    // Reposition containers within ParentContainer
+    // containers.forEach((element, index) => {
+    //   const coordX = index * (artSize + artMargin);
+    //   element.setPosition(coordX, 0);
+    //   parentContainer.add(element);
+    // });
+    
+  } else {
+    // For downloadLikedDrawing, keep the original positioning logic
     containers.forEach((element, index) => {
       const coordX = index === 0 ? artStart : artStart + index * (artSize + artMargin);
       element.setX(coordX);
     });
   }
+}
+
 
   /** Provide detailed information on a file loading error in Phaser, and provide fallback */
   resolveLoadError(offendingFile) {
@@ -1993,10 +2045,11 @@ class ServerCall {
       case 'downloadStopmotionDefaultUserHome':
         dlog('offending stopmotion loading failed, removing from array');
         // eslint-disable-next-line no-case-declarations
-        const userStopmotionServerList = scene.userStopmotionServerList;
-        // delete from scene.userStopmotionServerList
+        const userHomeStopmotionServerList = scene.userHomeStopmotionServerList;
+        // delete from scene.userHomeStopmotionServerList
 
-        userStopmotionServerList.array = userStopmotionServerList.array.filter((obj) => obj.value.url !== imageKey);
+        userHomeStopmotionServerList.array = userHomeStopmotionServerList.array.filter(
+          (obj) => obj.value.url !== imageKey);
 
         // delete from ManageSession.resolveErrorObjectArray
         ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
@@ -2009,7 +2062,7 @@ class ServerCall {
         // eslint-disable-next-line no-case-declarations
         const userServerList = scene.animalArray;
 
-        // delete from scene.userStopmotionServerList
+        // delete from scene.userHomeStopmotionServerList
         userServerList.array = userServerList.array.filter((obj) => obj.value.url !== imageKey);
 
         // delete from ManageSession.resolveErrorObjectArray
@@ -2030,7 +2083,7 @@ class ServerCall {
         dlog(`remove ${imageKey} from flowerKeyArray`);
         flowerKeyArray = scene.flowerKeyArray;
 
-        // delete from scene.userStopmotionServerList
+        // delete from scene.userHomeStopmotionServerList
         flowerKeyArray.array = flowerKeyArray.array.filter((obj) => obj.value.url !== imageKey);
 
         ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
