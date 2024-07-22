@@ -8,9 +8,11 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, 'public'), // output to public folder
     emptyOutDir: false, // don't delete existing files
-    rollupOptions: {
-      external: ['svelte-icons/md/MdEMail.svelte'],
-    },
+  },
+  resolve: {
+    alias: {
+      'svelte-icons': path.resolve(__dirname, 'node_modules/svelte-icons')
+    }
   },
   plugins: [
     svelte(),

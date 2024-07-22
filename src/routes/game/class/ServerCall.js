@@ -790,9 +790,17 @@ class ServerCall {
     // console.log("Downloading and placing home elements, array: ", array);
     // sort per type of element
     let homeElements_Drawings = array.value.filter((elm) => elm.value.collection === 'drawing');
+    let homeElements_Stopmotions = array.value.filter((elm) => elm.value.collection === 'stopmotion');
 
     homeElements_Drawings.forEach((element, index) => {
       const type = 'drawing_HomeElement';
+      const artSize = element.value.height;
+      const artMargin = (artSize / 10);
+      this.downloadArtwork({ element, index, type, artSize, artMargin })
+    });
+
+    homeElements_Stopmotions.forEach((element, index) => {
+      const type = 'stopmotion_HomeElement';
       const artSize = element.value.height;
       const artMargin = (artSize / 10);
       this.downloadArtwork({ element, index, type, artSize, artMargin })
@@ -980,6 +988,233 @@ class ServerCall {
       }
     });
   }
+
+  createHomeElement_Stopmotion_Container(element) {
+    const scene = ManageSession.currentScene;
+    const worldSize = scene.worldSize;
+
+    if (!scene) return;
+    if (!element) return;
+    if (!scene.homeElements_Stopmotion_Group) return;
+
+    const imageKeyUrl = element.value.url;
+
+    //check if there is already a home element of this type in the group,
+    // if so skip
+    const existingHomeElement_Group = scene.homeElements_Stopmotion_Group.getChildren()
+
+    // Check if the container should already exist
+    // checking in the array of objects existingHomeElement_Group is an object with .nakamaData.key === element.key
+    if (existingHomeElement_Group.some(obj => obj.nakamaData && obj.nakamaData.key === element.key))
+      {
+          // dlog(`Skipping creation of drawing home element with key: ${element.key}`);
+          return;
+      }
+  
+    const artSizeSaved = element.value.height;
+
+    const posY_Phaser = CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, element.value.posY);
+    const posX_Phaser = CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, element.value.posX);
+
+    const imageContainer = scene.add.container(0, 0).setDepth(100);
+    // dlog('image coordX, index', coordX, index);
+
+    /**  copy over the data from the element to the container
+       so we can do sorting on the container later (eg order on date)
+       collection: "drawing"
+        downloaded: true
+        key: "1658759573357_groenblauwKogelvis"
+        permission_read: 2
+        read: 2
+        update_time: "2022-07-25T17:16:47.504205+02:00"
+        user_id: "8f0a26fc-f51a-4a05-ab67-638b37a2a979"
+        username: "user52"
+        value:
+          displayname: "groenblauwKogelvis"
+          url: "drawing/8f0a26fc-f51a-4a05-ab67-638b37a2a979/5_1658759573357_groenblauwKogelvis.png"
+          version: 5
+    */
+    imageContainer.nakamaData = { ...element };
+
+    // put an artFrame in the container as a background and frame
+    // imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
+
+    // adds the image to the container, on top of the artFrame
+    const avatar = scene.textures.get(imageKeyUrl);
+
+    const avatarWidth = avatar.frames.__BASE.width;
+    // dlog('stopmotion width: ', avatarWidth);
+
+    const avatarHeight = avatar.frames.__BASE.height;
+    // dlog(`stopmotion Height: ${avatarHeight}`);
+
+    const avatarFrames = Math.round(avatarWidth / avatarHeight);
+    let setFrameRate = 0;
+    if (avatarFrames > 1) {
+      setFrameRate = avatarFrames;
+    } else {
+      setFrameRate = 0;
+    }
+    // dlog(`stopmotion Frames: ${avatarFrames}`);
+
+    // animation for the stopmotion .........................
+    scene.anims.create({
+      key: `moving_${imageKeyUrl}`,
+      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+        start: 0,
+        end: avatarFrames - 1,
+      }),
+      frameRate: setFrameRate,
+      repeat: -1,
+      yoyo: false,
+    });
+
+    scene.anims.create({
+      key: `stop_${imageKeyUrl}`,
+      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+        start: 0,
+        end: 0,
+      }),
+    });
+    // . end animation for the stopmotion ......................
+
+    // adds the image to the container
+    const setImage  = scene.add.sprite(0 , 0, imageKeyUrl).setOrigin(0.5);
+
+    setImage.setData('playAnim', `moving_${imageKeyUrl}`);
+    setImage.setData('stopAnim', `stop_${imageKeyUrl}`);
+    if (avatarFrames > 1) {
+      setImage.play(`moving_${imageKeyUrl}`);
+    }
+    const topLeft = new Phaser.Math.Vector2(-artSizeSaved / 2, -artSizeSaved / 2);
+    const topRight = new Phaser.Math.Vector2(artSizeSaved / 2, -artSizeSaved / 2);
+    const bottomRight = new Phaser.Math.Vector2(artSizeSaved / 2, artSizeSaved / 2);
+    const bottomLeft = new Phaser.Math.Vector2(-artSizeSaved / 2, artSizeSaved / 2);
+
+    // define the icons that will be used to manipulate the homeElement
+    const icon = {
+      scale: {},
+      move: {},
+      rotate: {},
+      more: {}
+    };
+
+    // set the image for the icons
+    icon.scale = scene.add.image(bottomRight.x, bottomRight.y, 'full-screen').setOrigin(0.5)
+    .setTint(0xf2f2f2); // This sets the tint to grey
+    icon.move = scene.add.image(topLeft.x, topLeft.y, 'moveIcon').setOrigin(0.5)
+    .setTint(0xf2f2f2); // This sets the tint to grey
+    icon.rotate = scene.add.image(topRight.x, topRight.y, 'reloadSign').setOrigin(0.5).setScale(0.3)
+    .setTint(0xf2f2f2); // This sets the tint to grey
+    icon.more = scene.add.image(bottomLeft.x, bottomLeft.y, 'moreOptions').setOrigin(0.5)
+    .setTint(0xf2f2f2); // This sets the tint to grey
+
+    // explicitly set the size of the image incase the image has a non standard size
+    setImage.displayWidth = artSizeSaved;
+    setImage.displayHeight = artSizeSaved;
+
+    // Make icon.move draggable
+    icon.move.setInteractive({ draggable: true });
+    icon.rotate.setInteractive({ draggable: true });
+    icon.scale.setInteractive({ draggable: true });
+    icon.more.setInteractive({ draggable: true });
+
+    // Set the scale icon functionality
+    this.setScaleIconFunctionality(icon, imageContainer, element, artSizeSaved, worldSize)
+
+    // Set the move icon functionality
+    this.setMoveIconFunctionality(icon, imageContainer, element, worldSize)
+
+    // Set the rotate icon functionality
+    this.setRotateIconFunctionality(icon, imageContainer, element, worldSize)
+
+    // Create a red border around the container/ image
+    // this also makes the container clickable, and set the selected homeElement
+    const containerBackground = scene.add.graphics();
+    containerBackground.fillStyle(0xf2f2f2, 0.5); // grey with 50% opacity
+    
+    // Draw the rectangle (x, y, width, height)
+    containerBackground.fillRect(
+      -element.value.width/2, 
+      -element.value.height/2, 
+      element.value.width, 
+      element.value.height
+    );
+    // this.setBackgroundImageFunctionality(scene, containerBackground, imageContainer, element)
+
+    
+    const editBorder = scene.add.graphics();
+    editBorder.lineStyle(4, 0xFF0000); // 2 pixel width, red color
+    editBorder.strokeRect(
+      -element.value.width/2, 
+      -element.value.height/2, 
+      element.value.width, 
+      element.value.height
+    );
+    editBorder.setVisible(false);
+
+    // Add the border to the container
+    imageContainer.add(containerBackground); 
+    imageContainer.add(setImage);
+    imageContainer.add(editBorder);
+
+    imageContainer.add(icon.scale);
+    imageContainer.add(icon.move);
+    imageContainer.add(icon.rotate);
+    imageContainer.add(icon.more);
+
+    imageContainer.setSize(artSizeSaved, artSizeSaved);
+    imageContainer.setPosition(posX_Phaser, posY_Phaser);
+    imageContainer.setRotation(element.value.rotation);
+
+    imageContainer.setName(element.key);
+
+    // event listener for the edit mode of all the home elements
+    scene.game.events.on('toggleHomeElement_Controls', (value) => {
+      // we first show the border if there is one selected 
+      // for when the editHomeBar is opened while an element is selected
+      const selected = get(homeElement_Selected);
+      this.toggleHomeElement_Selected_Handler(icon, editBorder, element, selected);
+
+      // when the editHomeBar is closed we also hide the editBorder in the toggleHomeElement_Controls_Handler
+      this.toggleHomeElement_Controls_Handler(icon, containerBackground, editBorder, value);
+    }, scene);
+
+    // Set the initial state of the home element controls based on if Edithome menu is open
+    this.toggleHomeElement_Controls_Handler(icon, containerBackground, editBorder, get(HomeEditBarExpanded))
+
+    // event listener for the selected home element
+    scene.homeElement_Selected = scene.game.events.on('homeElement_Selected', (value) => {
+      this.toggleHomeElement_Selected_Handler(icon, editBorder, element, value)
+    }, this);
+
+    // check if an element is already selected
+    this.toggleHomeElement_Selected_Handler(icon, editBorder, element, get(homeElement_Selected))
+
+    /** this check prevent errors
+     * when we go out of the scene when things are still loading and being created  */
+    if (!scene.homeElements_Stopmotion_Group) return;
+
+    scene.homeElements_Stopmotion_Group.add(imageContainer);
+
+    //react on phaser event, delete the container with the event.key as name
+
+    scene.game.events.on('homeElemetDeleted', (event) => {
+      dlog('homeElemetDeleted event: ', event);
+      const containers = scene.homeElements_Stopmotion_Group.getChildren();
+      
+      const deleteContainer = containers.find((container) => container.name === event.key);
+      // dlog('container: ', container);
+      if (deleteContainer) {
+      // set all buttons in the container to not interactive
+      deleteContainer.list.forEach((element) => {
+        element.disableInteractive();
+      });
+        deleteContainer.destroy();
+      }
+    });
+  }
+
 
   hanglePrioriotizedSelection(pointer) {
         // Get all objects under the pointer
@@ -1281,8 +1516,11 @@ class ServerCall {
         // if (downloadCompleted === startLength) {
           // dlog('load drawing_HomeElement COMPLETE');
         // }
+      } else if (type === 'stopmotion_HomeElement') {
+        this.createHomeElement_Stopmotion_Container(element, index, artSize, artMargin);
       }
-      // if the artwork is not already downloaded
+      
+    // if the artwork is not already downloaded
     } else if (type === 'downloadDrawingDefaultUserHome') {
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       ManageSession.resolveErrorObjectArray.push({
@@ -1550,22 +1788,55 @@ class ServerCall {
        * but 'complete' does not say which file failed
        * the on.('loaderror') event does report which file failed
        *   */
-      scene.load.on('complete', () => {
-        const startLength = scene.userHomeDrawingServerList.startLength;
-        let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
-        downloadCompleted += 1;
-        scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
-        // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
+      // scene.load.on('complete', () => {
+      //   const startLength = scene.userHomeDrawingServerList.startLength;
+      //   let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
+      //   downloadCompleted += 1;
+      //   scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
+      //   // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
 
-        // if multiple homeElements have the same key, the second one will not be loaded
-        // because the first is not downloaded yet, so we reload when an item is downloaded
-        // ManageSession.currentScene.game.events.emit('homeElements_reload');
+      //   // if multiple homeElements have the same key, the second one will not be loaded
+      //   // because the first is not downloaded yet, so we reload when an item is downloaded
+      //   // ManageSession.currentScene.game.events.emit('homeElements_reload');
 
-        if (downloadCompleted === startLength) {
-          dlog('download downloadDrawingDefaultUserHome COMPLETE');
-          //ServerCall.repositionContainers(type);
-        }
-      });
+      //   if (downloadCompleted === startLength) {
+      //     dlog('download downloadDrawingDefaultUserHome COMPLETE');
+      //     //ServerCall.repositionContainers(type);
+      //   }
+      // });
+    } else if (type === 'stopmotion_HomeElement') {
+      // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
+      // ManageSession.resolveErrorObjectArray.push({
+      //   loadFunction: 'download_DrawingHomeElement',
+      //   element,
+      //   index,
+      //   imageKey: imageKeyUrl,
+      //   scene,
+      //   resolved: false,
+      // });
+
+      //! we resize the image to the size that is stored in the element
+      // We actually load 1 size for all copies of this image
+      // fance would be to check first which size is the biggest and load that one
+      // more realistic is to load half of max size
+      imgSize = Math.round(element.value.width).toString();
+      const imgWidth = Math.round((element.value.height)*200).toString();
+
+      const convertedImage = await convertImage(imageKeyUrl, imgSize, imgWidth, fileFormat);
+      scene.load
+        .spritesheet(imageKeyUrl, convertedImage, {
+          frameWidth: artSize,
+          frameHeight: artSize,
+        })
+        .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
+          // remove the file from the error-resolve-queue
+          ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
+            (obj) => obj.imageKey !== imageKeyUrl
+          );
+          this.createHomeElement_Stopmotion_Container(element, index, artSize, artMargin);
+
+        });
+      scene.load.start(); // start the load queue to get the image in memory
     }
   }
 
