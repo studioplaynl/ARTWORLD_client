@@ -46,19 +46,23 @@
     //  with PlayerUpdate.set({ forceHistoryReplace: false });
     */
     dlog('id: ', id);
-    const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
-    const PosX = -(targetScene.sizeX / 2) + (AVATAR_BASE_SIZE * 2);
+    // this was used to place the user in a certain position in the home
+    // but we want to place the last place it was in the home
+    
+    // const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+
+    // const PosX = -(targetScene.sizeX / 2) + (AVATAR_BASE_SIZE * 2);
 
     PlayerLocation.set({
       scene: DEFAULT_HOME,
       house: id,
     });
 
-    PlayerUpdate.set({ forceHistoryReplace: false });
-    PlayerPos.set({
-      x: PosX,
-      y: 0,
-    });
+    // PlayerUpdate.set({ forceHistoryReplace: false });
+    // PlayerPos.set({
+    //   x: PosX,
+    //   y: 0,
+    // });
   }
 
   function handleArtworkClick(notification) {

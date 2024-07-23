@@ -73,7 +73,24 @@
     }
   });
 
-  const Locaties = SCENE_INFO.map((i) => i.scene);
+  // lists all the scenes in the SCENE_INFO object
+  // it has an option of lowercase: true to return all the scenes in lowercase
+  function getAllScenes(obj, options = {}) {
+    let scenes = [];
+    
+    for (let key in obj) {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        if (obj[key].scene) {
+          scenes.push(options.lowercase ? obj[key].scene.toLowerCase() : obj[key].scene);
+        }
+        scenes = scenes.concat(getAllScenes(obj[key], options));
+      }
+    }
+    
+    return scenes;
+  }
+
+  const Locaties = getAllScenes(SCENE_INFO);
 
   async function update() {
     // get metadata

@@ -155,7 +155,25 @@ class DebugFuntions {
     // GameOnboarding
     // UIScene
 
-    const sceneNames = SCENE_INFO.map((obj) => obj.scene);
+    // lists all the scenes in the SCENE_INFO object
+    // it has an option of lowercase: true to return all the scenes in lowercase
+    function getAllScenes(obj, options = {}) {
+      let scenes = [];
+      
+      for (let key in obj) {
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          if (obj[key].scene) {
+            scenes.push(options.lowercase ? obj[key].scene.toLowerCase() : obj[key].scene);
+          }
+          scenes = scenes.concat(getAllScenes(obj[key], options));
+        }
+      }
+      
+      return scenes;
+    }
+  
+    const sceneNames = getAllScenes(SCENE_INFO);
+      
     sceneNames.push('GameOnboarding');
     sceneNames.push('PreloadScene');
     sceneNames.push('UIScene');

@@ -50,9 +50,24 @@ let previousQuery = {};
  * @return {boolean} Exists yes/no
  */
 export const checkIfSceneIsAllowed = (loc) => {
-  const lowercaseScenes = SCENE_INFO.map((obj) => obj.scene.toLowerCase());
+  const lowercaseScenes = getAllScenes(SCENE_INFO, { lowercase: true });
   return loc && lowercaseScenes.indexOf(loc.toLowerCase()) > -1;
 };
+
+function getAllScenes(obj, options = {}) {
+  let scenes = [];
+  
+  for (let key in obj) {
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      if (obj[key].scene) {
+        scenes.push(options.lowercase ? obj[key].scene.toLowerCase() : obj[key].scene);
+      }
+      scenes = scenes.concat(getAllScenes(obj[key], options));
+    }
+  }
+  
+  return scenes;
+}
 
 /** Does this string look like a house name name?
  * @return {boolean} yes/no
@@ -135,6 +150,19 @@ location.subscribe(() => {
   parseURL();
 });
 
+export function findSceneInfo(obj, targetScene) {
+  for (let key in obj) {
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      if (obj[key].scene === targetScene) {
+        return obj[key];
+      }
+      const nestedResult = findSceneInfo(obj[key], targetScene);
+      if (nestedResult) return nestedResult;
+    }
+  }
+  return null;
+}
+
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
   // console.time('parseQueryString');
@@ -183,7 +211,7 @@ export function parseQueryString() {
     const currentLocation = get(PlayerLocation);
 
     // scene is not loaded, getting the info from SCENE_INFO
-    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === currentLocation.scene);
+    const sceneInfo = findSceneInfo(SCENE_INFO, currentLocation.scene);
 
     if (sceneInfo) {
       // dlog ("currentScene, sceneInfo", currentScene, sceneInfo)

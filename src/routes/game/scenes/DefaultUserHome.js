@@ -42,6 +42,7 @@ import {
 } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
+import { findSceneInfo } from '../helpers/UrlHelpers';
 
 import { dlog } from '../../../helpers/debugLog';
 
@@ -167,7 +168,8 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     /** get scene size from SCENE_INFO constants
      * copy worldSize over to ManageSession, so that positionTranslation can be done there  */
-    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === this.scene.key);
+    const sceneInfo = findSceneInfo(SCENE_INFO, this.scene.key);
+
     this.worldSize.x = sceneInfo.sizeX;
     this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
