@@ -45,11 +45,11 @@ import GenerateLocation from '../class/GenerateLocation';
 // import Exhibition from '../class/Exhibition';
 
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerPos } from '../playerState';
-import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
+import { PlayerPos, PlayerZoom } from '../playerState';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN, MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
-import { findSceneInfo } from '../helpers/UrlHelpers';
+import { getSceneInfo } from '../helpers/UrlHelpers';
 
 
 import * as Phaser from 'phaser';
@@ -168,7 +168,7 @@ export default class Artworld extends Phaser.Scene {
 
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
-    const sceneInfo = findSceneInfo(SCENE_INFO, this.scene.key);
+    const sceneInfo = getSceneInfo(SCENE_INFO, this.scene.key);
     
     this.worldSize.x = sceneInfo.sizeX;
     this.worldSize.y = sceneInfo.sizeY;
@@ -183,8 +183,6 @@ export default class Artworld extends Phaser.Scene {
     handlePlayerMovement(this);
 
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
-
-    this.makeWorldElements();
 
     // .......  PLAYER ..........................................JA even ..........................................
     //* create default player and playerShadow
@@ -206,6 +204,7 @@ export default class Artworld extends Phaser.Scene {
 
     // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
     this.gameCam.zoom = ManageSession.currentZoom;
+    // this.gameCam.zoom = get(PlayerZoom);
 
     this.gameCam.startFollow(this.player);
     // this.physics.world.setBounds(0, 0, this.worldSize.x, this.worldSize.y);
@@ -222,7 +221,60 @@ export default class Artworld extends Phaser.Scene {
     // .......... end likes ............................................................................
 
     Player.loadPlayerAvatar(this);
+
+    // this.createMinimap(); 
   } // end create
+
+  createMinimap() {
+    // Create a new camera for the minimap
+    const topRight = new Phaser.Math.Vector2(this.scale.width - MINIMAP_SIZE - MINIMAP_MARGIN, 
+    MINIMAP_MARGIN);
+    // const topLeft = new Phaser.Math.Vector2((MINIMAP_SIZE / 2) + MINIMAP_MARGIN,
+    // (MINIMAP_SIZE / 2) + MINIMAP_MARGIN);
+    this.minimapCamera = this.cameras.add(
+      topRight.x, topRight.y, MINIMAP_SIZE, MINIMAP_SIZE).setName('minimap');
+
+    const worldView = this.cameras.main.worldView;
+    console.log('worldView', worldView);
+    console.log('this.minimapCamera', this.minimapCamera);
+    // Calculate zoom to fit the entire world
+    const zoomX = MINIMAP_SIZE / this.worldSize.x;
+    const zoomY = MINIMAP_SIZE / this.worldSize.y;
+    const zoom = Math.min(zoomX, zoomY);
+    console.log('zoom', zoom);
+    
+    this.minimapCamera.setZoom(zoom);
+    this.minimapCamera.setScroll(0, 0);
+    this.minimapCamera.setBackgroundColor(0x00);
+    this.minimapCamera.setBounds(0, 0,
+      this.worldSize.x, this.worldSize.y);
+
+    // Create a rectangle to represent the current view
+    this.minimapFrame = this.add.rectangle(topRight.x + MINIMAP_SIZE/2,
+      topRight.y + MINIMAP_SIZE/2, MINIMAP_SIZE, MINIMAP_SIZE, 0xff0000, 0);
+    this.minimapFrame.setStrokeStyle(3, 0xff0000);
+    // .setScrollFactor(0); means it will stay in the same position on the screen
+    this.minimapFrame.setScrollFactor(0);
+    this.minimapFrame.setDepth(1001);
+
+    // Create a red dot to represent the player
+    this.playerDot = this.add.circle(topRight.x + MINIMAP_SIZE, topRight.y + MINIMAP_SIZE , 15, 0xff0000);
+    this.playerDot.setScrollFactor(0);
+    this.playerDot.setDepth(1002); // Ensure it's above the minimap frame
+
+    // Create a tween for the pulsating effect
+    this.tweens.add({
+      targets: this.playerDot,
+      scale: { from: 0.5, to: 1 },
+      duration: 600,
+      yoyo: true,
+      repeat: -1
+    });
+
+    this.scene.scene.scale.on('resize', (gameSize) => {
+      console.log('gameSize', gameSize);
+    });
+  }
 
   loadBackgroundImageArray() {
     const partSize = 1535;
@@ -295,325 +347,6 @@ export default class Artworld extends Phaser.Scene {
       artSize,
       artMargin,
     });
-  }
-
-  makeWorldElements() {
-    // Background.circle({
-    //   scene: this,
-    //   name: 'gradientAmsterdam1',
-    //   posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1743),
-    //   posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -634),
-    //   size: 810,
-    //   gradient1: 0x85feff,
-    //   gradient2: 0xff01ff,
-    // });
-    // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.gradientAmsterdam1.setInteractive({ draggable: true });
-    // }
-    // Background.circle({
-    //   scene: this,
-    //   name: 'gradientAmsterdam2',
-    //   posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2093),
-    //   posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1011),
-    //   size: 564,
-    //   gradient1: 0xfbff00,
-    //   gradient2: 0x85feff,
-    // });
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.gradientAmsterdam2.setInteractive({ draggable: true });
-    // }
-    // Background.circle({
-    //   scene: this,
-    //   name: 'purple_circle',
-    //   posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 0),
-    //   posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 0),
-    //   size: 558,
-    //   gradient1: 0x7300eb,
-    //   gradient2: 0x3a4bba,
-    // });
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.purple_circle.setInteractive({ draggable: true });
-    // }
-    // ............................................... homes area .....................................
-    // grass background for houses
-    // Background.circle({
-    //   scene: this,
-    //   name: 'gradientGrass1',
-    //   posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2107),
-    //   posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 120),
-    //   size: 920,
-    //   gradient1: 0x15d64a,
-    //   gradient2: 0x2b8042,
-    // });
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.gradientGrass1.setInteractive({ draggable: true });
-    // }
-    // // paths for the houses
-    // this.createCurveWithHandles();
-    // // sunglass_stripes
-    // this.sunglasses_stripes = this.add.image(
-    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -893),
-    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1129),
-    //   'sunglass_stripes'
-    // );
-    // this.sunglasses_stripes.name = 'sunglass_stripes';
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.sunglasses_stripes.setInteractive({ draggable: true });
-    // }
-    // this.train = this.add.image(
-    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 652),
-    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1357),
-    //   'metro_train_grey'
-    // );
-    // this.train.name = 'train';
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.train.setInteractive({ draggable: true });
-    // } else {
-    //   // when not in edit mode add animation tween
-    //   this.tweens.add({
-    //     targets: this.train,
-    //     duration: 3000,
-    //     x: '+=1750',
-    //     yoyo: false,
-    //     repeat: -1,
-    //     repeatDelay: 8000,
-    //     // ease: 'Sine.easeInOut'
-    //   });
-    // }
-    // // create(scene, x, y, width, height, name, color, imageFile = null) {
-    // GraffitiWall.create(
-    //   this,
-    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 2345),
-    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1306),
-    //   800,
-    //   400,
-    //   'graffitiBrickWall',
-    //   '0x39dba0',
-    //   'brickWall'
-    // );
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.graffitiBrickWall.setInteractive({ draggable: true });
-    // }
-    // // ...................................................................................................
-    // // DRAW A SUN
-    // Background.circle({
-    //   scene: this,
-    //   name: 'sunDrawingExample',
-    //   posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1269),
-    //   posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2200),
-    //   size: 400,
-    //   gradient1: 0xffdf87,
-    //   gradient2: 0xf7f76f,
-    // });
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.sunDrawingExample.setInteractive({ draggable: true });
-    // } else {
-    //   // when we are not in edit mode
-    //   this.tweens.add({
-    //     targets: this.sunDrawingExample,
-    //     duration: 3000,
-    //     scaleX: 1.8,
-    //     scaleY: 1.8,
-    //     yoyo: true,
-    //     repeat: -1,
-    //     ease: 'Sine.easeInOut',
-    //   });
-    //   this.sunDrawingExample.setInteractive().on('pointerup', () => {
-    //     this.sunDraw.setVisible(true);
-    //     this.sunDrawCloseButton.setVisible(true);
-    //     this.sunDrawSaveButton.setVisible(true);
-    //     this.physics.pause();
-    //   });
-    //   GraffitiWall.create(
-    //     this,
-    //     CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1383),
-    //     CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1600),
-    //     400,
-    //     400,
-    //     'sunDraw',
-    //     '0xf5f245',
-    //     'artFrame_512'
-    //   );
-    //   this.sunDraw.setVisible(false);
-    //   this.sunDrawCloseButton = this.add.image(
-    //     this.sunDraw.x + this.sunDraw.width / 1.8,
-    //     this.sunDraw.y - this.sunDraw.width / 2,
-    //     'close'
-    //   );
-    //   this.sunDrawCloseButton.setInteractive().on('pointerup', () => {
-    //     this.sunDraw.setVisible(false);
-    //     this.sunDrawCloseButton.setVisible(false);
-    //     this.sunDrawSaveButton.setVisible(false);
-    //     this.physics.resume();
-    //   });
-    //   this.sunDrawCloseButton.setVisible(false);
-    //   this.sunDrawSaveButton = this.add.image(
-    //     this.sunDrawCloseButton.x,
-    //     this.sunDrawCloseButton.y + this.sunDrawCloseButton.width * 1.1,
-    //     'save'
-    //   );
-    //   this.sunDrawSaveButton.setInteractive().on('pointerup', () => {
-    //     const RT = this.sunDraw.getByName('sunDraw');
-    //     RT.saveTexture('DrawnSun');
-    //     this.sunDrawingExample.setTexture('DrawnSun');
-    //   });
-    //   this.sunDrawSaveButton.setVisible(false);
-    // }
-    // // end DRAW A SUN
-    // // ......................................................................................
-    // // ...............................................
-    // // DRAW A CLOUD
-    // this.cloudDrawingExample = this.add.image(
-    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1200),
-    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 2050),
-    //   'drawn_cloud'
-    // );
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // this.cloudDrawingExample.name = 'cloudDrawingExample';
-    // if (ManageSession.gameEditMode) {
-    //   this.cloudDrawingExample.setInteractive({ draggable: true });
-    // } else {
-    //   this.tweens.add({
-    //     targets: this.cloudDrawingExample,
-    //     duration: 8000,
-    //     x: '-=1600',
-    //     // scaleY: 1.8,
-    //     yoyo: true,
-    //     repeat: -1,
-    //     ease: 'Sine.easeInOut',
-    //   });
-    //   this.cloudDrawingExample.setInteractive().on('pointerup', () => {
-    //     this.cloudDraw.setVisible(true);
-    //     this.cloudDrawCloseButton.setVisible(true);
-    //     this.cloudDrawSaveButton.setVisible(true);
-    //   });
-    //   GraffitiWall.create(
-    //     this,
-    //     CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1200),
-    //     CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1500),
-    //     600,
-    //     400,
-    //     'cloudDraw',
-    //     '0x45b1f5',
-    //     'artFrame_512'
-    //   );
-    //   this.cloudDraw.setVisible(false);
-    //   this.cloudDrawCloseButton = this.add.image(
-    //     this.cloudDraw.x + this.cloudDraw.width / 1.8,
-    //     this.cloudDraw.y - this.cloudDraw.width / 1.8,
-    //     'close'
-    //   );
-    //   this.cloudDrawCloseButton.setInteractive().on('pointerup', () => {
-    //     this.cloudDraw.setVisible(false);
-    //     this.cloudDrawCloseButton.setVisible(false);
-    //     this.cloudDrawSaveButton.setVisible(false);
-    //   });
-    //   this.cloudDrawCloseButton.setVisible(false);
-    //   this.cloudDrawSaveButton = this.add.image(
-    //     this.cloudDrawCloseButton.x,
-    //     this.cloudDrawCloseButton.y + this.cloudDrawCloseButton.width * 1.1,
-    //     'save'
-    //   );
-    //   this.cloudDrawSaveButton.setInteractive().on('pointerup', () => {
-    //     const RT = this.cloudDraw.getByName('cloudDraw');
-    //     RT.saveTexture('DrawnCloud');
-    //     this.cloudDrawingExample.setTexture('DrawnCloud');
-    //   });
-    //   this.cloudDrawSaveButton.setVisible(false);
-    // }
-    // // end DRAW A CLOUD
-    // // ...................................................................................................
-    // // ...................................................................................................
-    // this.photo_camera = this.add
-    //   .image(
-    //     CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 662),
-    //     CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1377),
-    //     'photo_camera'
-    //   )
-    //   .setFlip(true, false);
-    // this.photo_camera.name = 'photo_camera';
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.photo_camera.setInteractive({ draggable: true });
-    // }
-    // this.tree_palm = this.add.image(
-    //   CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 992),
-    //   CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 772),
-    //   'tree_palm'
-    // );
-    // this.tree_palm.name = 'tree_palm';
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.tree_palm.setInteractive({ draggable: true });
-    // }
-    // Exhibition.AbriBig({
-    //   scene: this,
-    //   name: 'exhibit_outdoor_big1',
-    //   posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -300),
-    //   posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 1262),
-    //   size: 564,
-    // });
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.exhibit_outdoor_big1.setInteractive({ draggable: true });
-    // }
-    // Exhibition.AbriSmall2({
-    //   scene: this,
-    //   name: 'exhibit_outdoor_small2_1',
-    //   posX: CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, 1659),
-    //   posY: CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 287),
-    //   size: 564,
-    // });
-    // // we set elements draggable for edit mode by restarting the scene and checking for a flag
-    // if (ManageSession.gameEditMode) {
-    //   this.exhibit_outdoor_small2_1.setInteractive({ draggable: true });
-    // }
-  }
-
-  /** Create a curve with handles in edit mode
-   * @todo Work in progress, replace with CurveWithHandles class? */
-  createCurveWithHandles() {
-    // const path = { t: 0, vec: new Phaser.Math.Vector2() };
-
-    this.curve = new Phaser.Curves.Spline([
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2497),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 328),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2254),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 146),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -2128),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -173),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1806),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, -3),
-      CoordinatesTranslator.artworldToPhaser2DX(this.worldSize.x, -1849),
-      CoordinatesTranslator.artworldToPhaser2DY(this.worldSize.y, 467),
-    ]);
-
-    const { points } = this.curve;
-
-    //  Create drag-handles for each point
-    if (ManageSession.gameEditMode) {
-      for (let i = 0; i < points.length; i++) {
-        const point = points[i];
-
-        this.handle = this.add.image(point.x, point.y, 'ball', 0).setScale(0.1).setInteractive().setDepth(40);
-        this.handle.name = 'handle';
-
-        this.handle.setData('vector', point);
-
-        this.input.setDraggable(this.handle);
-      }
-    }
-    this.curveGraphics = this.add.graphics();
-    this.curveGraphics.lineStyle(60, 0xffff00, 1);
-    this.curve.draw(this.curveGraphics, 64);
   }
 
   generateLocations() {
@@ -1349,13 +1082,6 @@ export default class Artworld extends Phaser.Scene {
       // ........... end PLAYER SHADOW .........................................................................
     } else {
       // when in edit mode
-      // this.updateCurveGraphics();
     }
   } // update
-
-  updateCurveGraphics() {
-    this.curveGraphics.clear();
-    this.curveGraphics.lineStyle(60, 0xffff00, 1);
-    this.curve.draw(this.curveGraphics, 64);
-  }
 } // class

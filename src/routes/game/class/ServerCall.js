@@ -165,10 +165,10 @@ class ServerCall {
     // } else {
     //   numberOfArtworks = element.artWorks.length;
     // }
-
     scene.homesRepresented[index] = new GenerateLocation({
       scene,
       size: 140,
+      parentScene: scene.scene.key,
       userHome: element.user_id,
       draggable: ManageSession.gameEditMode,
       type: 'image',
@@ -1446,6 +1446,10 @@ class ServerCall {
 
 
   async downloadArtwork({ element, index, type, artSize, artMargin }) {
+    if (!ManageSession.currentScene) return;
+    if (!artSize) return;
+    if (!element) return;
+
     const scene = ManageSession.currentScene;
 
     let imageKeyUrl = element.value.url;

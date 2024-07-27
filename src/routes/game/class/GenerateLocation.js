@@ -23,6 +23,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
     this.fontColor = config.fontColor;
     this.locationDestination = config.locationDestination;
 
+    this.parentScene = config.parentScene;
+
     this.enterButton = {};
 
     this.showing = false;
@@ -401,6 +403,8 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         // } else {
           targetLocation.scene = this.locationDestination;
           targetLocation.house = this.userHome;
+          // we add parent scene so we can show bread crumb navigation buttons
+          targetLocation.parent = this.parentScene;
 
           PlayerLocation.set(targetLocation);
         // }

@@ -39,6 +39,7 @@ Session.subscribe((value) => {
 export const Profile = writable(storedProfile ? JSON.parse(storedProfile) : null);
 Profile.subscribe((value) => {
   if (value) {
+    console.log('Profile received value:', value);
     localStorage.setItem('Profile', JSON.stringify(value));
   } else localStorage.removeItem('Profile'); // for logout
 });

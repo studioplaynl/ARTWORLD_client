@@ -304,6 +304,7 @@ class ManageSession {
       this.socket.rpc(rpcCommand, location).then((rec) => {
         // the server reports all users in location except self_user
         dlog('rpcCommand: ', rpcCommand, ' location: ', location);
+
         // get all online players = serverArray
         // create array for newUsers and create array for deleteUsers
         const serverArray = JSON.parse(rec.payload) || [];

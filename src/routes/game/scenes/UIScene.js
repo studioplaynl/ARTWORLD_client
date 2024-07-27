@@ -4,20 +4,21 @@ import nl from '../../../language/nl/ui.json';
 import en from '../../../language/en/ui.json';
 import ru from '../../../language/ru/ui.json';
 import ar from '../../../language/ar/ui.json';
-// import { get } from 'svelte/store';
+import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
-import { myHomeStore, HomeElements, homeGalleryStore, homeElement_Selected, Liked } from '../../../storage';
+import { myHomeStore, HomeElements, homeElement_Selected, Liked } from '../../../storage';
 import ServerCall from '../class/ServerCall';
 import { Profile, HomeEditBarExpanded } from '../../../session';
+import { MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
 
-// import { IMAGE_BASE_SIZE } from '../../../constants';
-
-import { PlayerZoom } from '../playerState';
+import { PlayerZoom, PlayerLocation, PlayerPos } from '../playerState';
+import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
 import * as Phaser from 'phaser';
+import Player from '../class/Player';
 
 i18next.init({
   lng: 'nl',
@@ -50,6 +51,7 @@ export default class UIScene extends Phaser.Scene {
     this.debugText = '';
     this.debugTextField = {};
     this.gameEditModeSignGraphic = {};
+    this.worldSize = new Phaser.Math.Vector2(0, 0);
   }
 
   async create() {
@@ -92,7 +94,8 @@ export default class UIScene extends Phaser.Scene {
     DebugFuntions.keyboard(this);
     // ......... end DEBUG FUNCTIONS .......................................................................
 
-    this.camUI = this.cameras.main.setSize(this.sys.game.canvas.width, this.sys.game.canvas.height).setName('camMain');
+    this.camUI = this.cameras.main.setSize(this.sys.game.canvas.width, this.sys.game.canvas.height).setName('UICam');
+    // zoom has to be 1 for the UI to be correct (miniMap, etc)
     this.camUI.zoom = 1;
 
     //subscribe to zoom changes and pass it on the the current scene
@@ -158,9 +161,24 @@ export default class UIScene extends Phaser.Scene {
     });
     Liked.get();
 
+    PlayerLocation.subscribe((value) => {
+      if (!value) return;
+      if (!ManageSession.currentScene) return;
+
+      console.log('PlayerLocation', value);
+        this.createMinimap();
+    });
+
+    PlayerPos.subscribe((value) => {
+      this.updatePlayerDotPosition();
+      this.updateMinimapFrame();
+    });
+
+    this.createMinimap();
     // to make the UI scene always on top of other scenes
     this.scene.bringToTop();
   } // create
+
 
   editElementsScene(arg) {
     const scene = ManageSession.currentScene;
@@ -188,6 +206,143 @@ export default class UIScene extends Phaser.Scene {
     // const value = get(homeElements_Store);
 
    this.game.events.emit('homeElements_show');
+  }
+
+  createMinimap() {
+    const checkAndCreateMinimap = () => {
+      // Check if the current scene is fully initialized with camera 
+      if (ManageSession.currentScene && ManageSession.currentScene.cameras && ManageSession.currentScene.scale) {
+        console.log('Creating minimap');
+        
+        try {
+          this.worldSize = ManageSession.currentScene.worldSize;
+
+          const topRight = new Phaser.Math.Vector2(
+            ManageSession.currentScene.scale.width - MINIMAP_SIZE - MINIMAP_MARGIN, 
+            MINIMAP_MARGIN);
+          // Create a new camera for the minimap
+          this.minimapCamera = ManageSession.currentScene.cameras.add(
+            topRight.x, topRight.y, MINIMAP_SIZE, MINIMAP_SIZE).setName('minimap');
+
+          const worldView = ManageSession.currentScene.cameras.main.worldView;
+          console.log('worldView', worldView);
+          console.log('this.minimapCamera', this.minimapCamera);
+          // Calculate zoom to fit the entire world
+          const zoomX = MINIMAP_SIZE / ManageSession.currentScene.worldSize.x;
+          const zoomY = MINIMAP_SIZE / ManageSession.currentScene.worldSize.y;
+          const zoom = Math.min(zoomX, zoomY);
+          console.log('zoom', zoom);
+          
+          this.minimapCamera.setZoom(zoom);
+          this.minimapCamera.setScroll(0, 0);
+          this.minimapCamera.setBackgroundColor(0x00);
+          this.minimapCamera.setBounds(0, 0,
+            ManageSession.currentScene.worldSize.x, ManageSession.currentScene.worldSize.y);
+        
+          const windowSize = this.scene.scene.scale.displaySize;
+          console.log('UIScene windowSize', windowSize);
+          // console.log('ARTWORLD windowSize', ManageSession.currentScene.scene.scale.displaySize);
+          this.scene.scene.scale.on('resize', (gameSize) => {
+            console.log('gameSize', gameSize);
+          });
+
+          // Create a rectangle to represent the current view
+          this.minimap_ReferenceFrame = this.add.rectangle(windowSize.width - (MINIMAP_SIZE / 2) - MINIMAP_MARGIN,
+             + (MINIMAP_SIZE / 2) + MINIMAP_MARGIN, MINIMAP_SIZE, MINIMAP_SIZE, 0xff0000, 1)
+             .setVisible(false);
+          this.minimapFrame = this.add.rectangle(windowSize.width - (MINIMAP_SIZE / 2) - MINIMAP_MARGIN,
+             + (MINIMAP_SIZE / 2) + MINIMAP_MARGIN, MINIMAP_SIZE, MINIMAP_SIZE, 0xff0000, 0);
+          this.minimapFrame.setStrokeStyle(2, 0xff0000);
+          this.minimapFrame.setScrollFactor(0);
+          this.minimapFrame.setDepth(1001);
+
+          // Create a small circle to represent the player
+          this.playerDot = this.add.circle(MINIMAP_MARGIN, MINIMAP_MARGIN, 4, 0xff0000);
+          this.playerDot.setScrollFactor(0);
+          this.playerDot.setDepth(1002); // Ensure it's above the minimap frame
+
+          // Create a tween for the pulsating effect
+          this.tweens.add({
+            targets: this.playerDot,
+            scale: { from: 0.2, to: 1 },
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+          });
+          // Update the player dot position initially
+          this.updatePlayerDotPosition();
+          
+          // Update minimap frame
+          this.updateMinimapFrame();
+          // Add an update listener to continuously update the minimap bounds
+          // ManageSession.currentScene.events.on('update', this.updateMinimapBounds, this);
+
+          // Update function to adjust the minimap frame
+          console.log('Minimap created successfully');
+        } catch (error) {
+          console.error('Error creating minimap:', error);
+          // If there's an error, we'll try again after a delay
+          this.minimapTimeout = setTimeout(checkAndCreateMinimap, 100);
+        }
+
+        // now we can also set the zoom of the child scene 
+        ManageSession.currentScene.gameCam.zoom = get(PlayerZoom);
+
+      } else {
+        dlog('Waiting for ManageSession.currentScene to be fully initialized...');
+        // If currentScene or its properties are not available, try again after a delay
+        this.minimapTimeout = setTimeout(checkAndCreateMinimap, 100);
+      }
+    };
+  
+    // Start the process
+    checkAndCreateMinimap();
+  }
+
+  updatePlayerDotPosition() {
+    if (!this.playerDot || !ManageSession.currentScene ) return;
+  
+    const playerPos = get(PlayerPos);
+    const worldSize = ManageSession.currentScene.worldSize;
+  
+    // Scale the player's position to the minimap size
+    const scaledX = (CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, playerPos.x) / worldSize.x) * MINIMAP_SIZE;
+    const scaledY = (CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, playerPos.y)  / worldSize.y) * MINIMAP_SIZE;
+  
+    // Position the dot on the minimap
+    this.playerDot.setPosition(
+      (this.minimap_ReferenceFrame.x - MINIMAP_SIZE / 2) + scaledX,
+      (this.minimap_ReferenceFrame.y - MINIMAP_SIZE / 2) + scaledY
+    );
+  }
+
+  updateMinimapFrame() {
+    if (!this.minimapFrame || !this.playerDot || !ManageSession.currentScene) return;
+    
+    const mainCamera = ManageSession.currentScene.cameras.main;
+    const worldSize = ManageSession.currentScene.worldSize;
+    const zoom = get(PlayerZoom);
+  
+    if (mainCamera) {
+  
+      // Calculate the visible area in the world coordinates
+      const visibleWorldWidth = mainCamera.width / zoom;
+      const visibleWorldHeight = mainCamera.height / zoom;
+  
+      // Calculate the size of the frame on the minimap
+      const frameWidth = (visibleWorldWidth / worldSize.x) * MINIMAP_SIZE;
+      const frameHeight = (visibleWorldHeight / worldSize.y) * MINIMAP_SIZE;
+  
+     
+      // there I want to delete the this.minimapFrame and create a new one
+      this.minimapFrame.destroy();
+      this.minimapFrame = this.add.rectangle(this.playerDot.x, 
+        this.playerDot.y, frameWidth, frameHeight, 0xff0000, 0);
+      this.minimapFrame.setStrokeStyle(2, 0xff0000);
+      this.minimapFrame.setScrollFactor(0);
+      this.minimapFrame.setDepth(1001);
+
+    }
   }
 
   gameEditModeSign(arg) {

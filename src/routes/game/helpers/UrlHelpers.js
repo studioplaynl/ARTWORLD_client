@@ -54,7 +54,8 @@ export const checkIfSceneIsAllowed = (loc) => {
   return loc && lowercaseScenes.indexOf(loc.toLowerCase()) > -1;
 };
 
-function getAllScenes(obj, options = {}) {
+// Get all scenes from the SCENE_INFO object
+export function getAllScenes(obj, options = {}) {
   let scenes = [];
   
   for (let key in obj) {
@@ -67,6 +68,36 @@ function getAllScenes(obj, options = {}) {
   }
   
   return scenes;
+}
+
+// get info back about a specific scene from the SCENE_INFO object
+export function getSceneInfo(obj, targetScene) {
+  for (let key in obj) {
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      if (obj[key].scene === targetScene) {
+        return obj[key];
+      }
+      const nestedResult = getSceneInfo(obj[key], targetScene);
+      if (nestedResult) return nestedResult;
+    }
+  }
+  return null;
+}
+
+// find all parent scenes of a specific scene in the SCENE_INFO object
+export function findParentScenes(location, scenes, parents = []) {
+  for (const scene of scenes) {
+    if (scene.scene === location) {
+      return parents;
+    }
+    if (scene.children) {
+      const result = findParentScenes(location, scene.children, [...parents, scene.scene]);
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return [];
 }
 
 /** Does this string look like a house name name?
@@ -150,19 +181,6 @@ location.subscribe(() => {
   parseURL();
 });
 
-export function findSceneInfo(obj, targetScene) {
-  for (let key in obj) {
-    if (typeof obj[key] === 'object' && obj[key] !== null) {
-      if (obj[key].scene === targetScene) {
-        return obj[key];
-      }
-      const nestedResult = findSceneInfo(obj[key], targetScene);
-      if (nestedResult) return nestedResult;
-    }
-  }
-  return null;
-}
-
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
   // console.time('parseQueryString');
@@ -184,9 +202,16 @@ export function parseQueryString() {
     }
   }
 
+  if ('parent' in query) {
+    if (checkIfSceneIsAllowed(query.location) && get(PlayerLocation).scene !== query.location) {
+      newPlayerLocation.parent = query.parent;
+    }
+  }
+
   if ('zoom' in query) {
-    if (parseFloat(query.zoom) <= ZOOM_MAX && parseFloat(query.zoom) >= ZOOM_MIN) {
-      PlayerZoom.set(parseFloat(query.zoom));
+    const zoomValue = parseFloat(query.zoom);
+    if (zoomValue <= ZOOM_MAX && zoomValue >= ZOOM_MIN) {
+      PlayerZoom.set(zoomValue);
     } else {
       PlayerZoom.set(DEFAULT_ZOOM);
     }
@@ -211,7 +236,7 @@ export function parseQueryString() {
     const currentLocation = get(PlayerLocation);
 
     // scene is not loaded, getting the info from SCENE_INFO
-    const sceneInfo = findSceneInfo(SCENE_INFO, currentLocation.scene);
+    const sceneInfo = getSceneInfo(SCENE_INFO, currentLocation.scene);
 
     if (sceneInfo) {
       // dlog ("currentScene, sceneInfo", currentScene, sceneInfo)
@@ -275,11 +300,8 @@ querystring.subscribe(() => {
 export function updateQueryString() {
   const { forceHistoryReplace } = get(PlayerUpdate);
   // dlog('forceHistoryReplace: ', forceHistoryReplace);
-
-  // console.time(`updateQueryString for ${reason}`);
-
   const { x, y } = get(PlayerPos);
-  const { scene, house } = get(PlayerLocation);
+  const { scene, house, parent } = get(PlayerLocation);
   const zoom = get(PlayerZoom);
 
   if (x !== null && y !== null && scene !== null) {
@@ -309,6 +331,12 @@ export function updateQueryString() {
       delete query.house;
     } else {
       query.house = house;
+    }
+
+    if (parent) { // Add parent to query if it exists
+      query.parent = parent;
+    } else {
+      delete query.parent;
     }
 
     if (stringify(previousQuery) !== stringify(query)) {

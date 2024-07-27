@@ -13,7 +13,7 @@ import { PlayerPos } from '../playerState';
 import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import PlaceElement from '../class/PlaceElement';
-import { findSceneInfo } from '../helpers/UrlHelpers';
+import { getSceneInfo } from '../helpers/UrlHelpers';
 
 import * as Phaser from 'phaser';
 
@@ -98,7 +98,7 @@ export default class MoonWorld extends Phaser.Scene {
 
     // get scene size from SCENE_INFO constants
     // copy worldSize over to ManageSession, so that positionTranslation can be done there
-    const sceneInfo = findSceneInfo(SCENE_INFO, this.scene.key);
+    const sceneInfo = getSceneInfo(SCENE_INFO, this.scene.key);
 
     this.worldSize.x = sceneInfo.sizeX;
     this.worldSize.y = sceneInfo.sizeY;

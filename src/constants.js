@@ -32,8 +32,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
       },
-      {
-        scene: 'GreenSquare',
+      {scene: 'GreenSquare',
         sizeX: 5500,
         sizeY: 5500,
         kind: 'homeArea',
@@ -217,6 +216,9 @@ export const STOCK_AVATARS = [
   'avatarRood.png',
   'avatarRoze.png',
 ];
+
+export const MINIMAP_SIZE = 100;
+export const MINIMAP_MARGIN = 10;
 
 export const ARTWORLD_IP = '193.187.129.8';
 export const BETAWORLD_IP = '128.140.42.65';

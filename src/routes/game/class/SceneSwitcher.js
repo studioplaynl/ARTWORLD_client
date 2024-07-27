@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import { dlog, dwarn } from '../../../helpers/debugLog';
+import { dlog } from '../../../helpers/debugLog';
 import { PlayerLocation, PlayerPos } from '../playerState';
 import { DEFAULT_HOME } from '../../../constants';
 import { Error, ShowHomeEditBar } from '../../../session';
@@ -33,10 +33,10 @@ class SceneSwitcher {
     // });
   }
 
-  pushLocation(scene) {
-    dwarn('pushLocation is deprecated!');
-    dlog(scene);
-  }
+  // pushLocation(scene) {
+  //   dwarn('pushLocation is deprecated!');
+  //   dlog(scene);
+  // }
 
   doSwitchScene() {
     // dlog('HistoryBug: doSwitchScene called');
@@ -192,13 +192,11 @@ class SceneSwitcher {
           ManageSession.allConnectedUsers.length = 0;
           dlog('ManageSession.allConnectedUsers', ManageSession.allConnectedUsers);
           // WE LEFT THE SCENE SUCCESFULLY
-          // 1. we pause the leaving Scene
-          // 2. start the new scene
 
           // dlog('targetScene', targetScene);
           if (targetScene) {
-            //! 'join' wordt zonder target uitgevoerd
-            //! de target wordt uit playerStreanID gehaald
+            //! if 'join' gets called without target
+            //! then the target will be read from Profile
 
             dlog('join targetScene: ', targetSceneKey);
             ManageSession.getStreamUsers('join', targetSceneKey).then(() => {
