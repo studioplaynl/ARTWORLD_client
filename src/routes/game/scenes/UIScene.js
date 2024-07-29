@@ -18,7 +18,6 @@ import { PlayerZoom, PlayerLocation, PlayerPos } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
 import * as Phaser from 'phaser';
-import Player from '../class/Player';
 
 i18next.init({
   lng: 'nl',
@@ -109,6 +108,7 @@ export default class UIScene extends Phaser.Scene {
       ManageSession.currentZoom = zoom;
       if (ManageSession.currentScene) {
         ManageSession.currentScene.gameCam.zoom = zoom;
+        this.updateMinimapFrame();
       }
     });
 
@@ -166,10 +166,14 @@ export default class UIScene extends Phaser.Scene {
       if (!ManageSession.currentScene) return;
 
       console.log('PlayerLocation', value);
-        this.createMinimap();
+      console.log('create minimap PlayerLocation subscribe')
+      this.createMinimap();
+      // this.updatePlayerDotPosition();
+      // this.updateMinimapFrame();
+
     });
 
-    PlayerPos.subscribe((value) => {
+    PlayerPos.subscribe(() => {
       this.updatePlayerDotPosition();
       this.updateMinimapFrame();
     });
@@ -210,17 +214,61 @@ export default class UIScene extends Phaser.Scene {
 
   createMinimap() {
     const checkAndCreateMinimap = () => {
-      // Check if the current scene is fully initialized with camera 
       if (ManageSession.currentScene && ManageSession.currentScene.cameras && ManageSession.currentScene.scale) {
         console.log('Creating minimap');
         
-        try {
+        const removeOldMinimap = () => {
+          return new Promise((resolve) => {
+            const checkRemoval = () => {
+              if (this.minimapCamera) {
+                console.log('Attempting to remove old minimap camera');
+                console.log('this.minimapCamera', this.minimapCamera);
+                if (ManageSession.currentScene.cameras && ManageSession.currentScene.cameras.remove) {
+                console.log('REMOVING old minimap camera');
+                  ManageSession.currentScene.cameras.remove(this.minimapCamera, true);
+                  this.minimapCamera = null;
+                }
+                // Check again after a short delay
+                setTimeout(checkRemoval, 100);
+              } else {
+                console.log('Old minimap camera removed successfully');
+                resolve();
+              }
+            };
+            checkRemoval();
+          });
+        };
+  
+        removeOldMinimap().then(() => {
+          try {
+            // Clean up other related objects
+            if (this.minimap_ReferenceFrame) {
+              this.minimap_ReferenceFrame.destroy();
+              this.minimap_ReferenceFrame = null;
+            }
+            if (this.minimapFrame) {
+              this.minimapFrame.destroy();
+              this.minimapFrame = null;
+            }
+            if (this.playerDot) {
+              this.playerDot.destroy();
+              this.playerDot = null;
+            }
           this.worldSize = ManageSession.currentScene.worldSize;
 
           const topRight = new Phaser.Math.Vector2(
             ManageSession.currentScene.scale.width - MINIMAP_SIZE - MINIMAP_MARGIN, 
             MINIMAP_MARGIN);
           // Create a new camera for the minimap
+          if (this.minimapCamera) {
+            console.log('Removing old minimap camera');
+            if (ManageSession.currentScene.cameras && ManageSession.currentScene.cameras.remove) {
+              ManageSession.currentScene.cameras.remove(this.minimapCamera);
+              console.log('this.minimapCamera destroyed: ', this.minimapCamera);
+            }
+          }
+
+
           this.minimapCamera = ManageSession.currentScene.cameras.add(
             topRight.x, topRight.y, MINIMAP_SIZE, MINIMAP_SIZE).setName('minimap');
 
@@ -240,12 +288,6 @@ export default class UIScene extends Phaser.Scene {
             ManageSession.currentScene.worldSize.x, ManageSession.currentScene.worldSize.y);
         
           const windowSize = this.scene.scene.scale.displaySize;
-          console.log('UIScene windowSize', windowSize);
-          // console.log('ARTWORLD windowSize', ManageSession.currentScene.scene.scale.displaySize);
-          this.scene.scene.scale.on('resize', (gameSize) => {
-            console.log('gameSize', gameSize);
-          });
-
           // Create a rectangle to represent the current view
           this.minimap_ReferenceFrame = this.add.rectangle(windowSize.width - (MINIMAP_SIZE / 2) - MINIMAP_MARGIN,
              + (MINIMAP_SIZE / 2) + MINIMAP_MARGIN, MINIMAP_SIZE, MINIMAP_SIZE, 0xff0000, 1)
@@ -274,10 +316,10 @@ export default class UIScene extends Phaser.Scene {
           
           // Update minimap frame
           this.updateMinimapFrame();
-          // Add an update listener to continuously update the minimap bounds
-          // ManageSession.currentScene.events.on('update', this.updateMinimapBounds, this);
 
-          // Update function to adjust the minimap frame
+          // Add resize event listener
+          this.scale.on('resize', this.positionMinimap, this);
+
           console.log('Minimap created successfully');
         } catch (error) {
           console.error('Error creating minimap:', error);
@@ -287,7 +329,7 @@ export default class UIScene extends Phaser.Scene {
 
         // now we can also set the zoom of the child scene 
         ManageSession.currentScene.gameCam.zoom = get(PlayerZoom);
-
+      });
       } else {
         dlog('Waiting for ManageSession.currentScene to be fully initialized...');
         // If currentScene or its properties are not available, try again after a delay
@@ -297,6 +339,34 @@ export default class UIScene extends Phaser.Scene {
   
     // Start the process
     checkAndCreateMinimap();
+  }
+
+  positionMinimap() {
+    if (!this.minimapCamera || !this.minimap_ReferenceFrame || !this.minimapFrame) return;
+
+    const topRight = new Phaser.Math.Vector2(
+      this.scale.width - MINIMAP_SIZE - MINIMAP_MARGIN, 
+      MINIMAP_MARGIN
+    );
+
+    // Update minimap camera position
+    this.minimapCamera.setPosition(topRight.x, topRight.y);
+
+    // Update reference frame position
+    this.minimap_ReferenceFrame.setPosition(
+      this.scale.width - (MINIMAP_SIZE / 2) - MINIMAP_MARGIN,
+      (MINIMAP_SIZE / 2) + MINIMAP_MARGIN
+    );
+
+    // Update frame position
+    this.minimapFrame.setPosition(
+      this.scale.width - (MINIMAP_SIZE / 2) - MINIMAP_MARGIN,
+      (MINIMAP_SIZE / 2) + MINIMAP_MARGIN
+    );
+
+    // Update player dot position
+    this.updatePlayerDotPosition();
+    this.updateMinimapFrame();
   }
 
   updatePlayerDotPosition() {
