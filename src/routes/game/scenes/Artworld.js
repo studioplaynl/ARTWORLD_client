@@ -45,8 +45,8 @@ import GenerateLocation from '../class/GenerateLocation';
 // import Exhibition from '../class/Exhibition';
 
 import { dlog } from '../../../helpers/debugLog';
-import { PlayerPos, PlayerZoom } from '../playerState';
-import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN, MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
+import { PlayerPos } from '../playerState';
+import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 import { getSceneInfo } from '../helpers/UrlHelpers';
@@ -221,60 +221,7 @@ export default class Artworld extends Phaser.Scene {
     // .......... end likes ............................................................................
 
     Player.loadPlayerAvatar(this);
-
-    // this.createMinimap(); 
   } // end create
-
-  createMinimap() {
-    // Create a new camera for the minimap
-    const topRight = new Phaser.Math.Vector2(this.scale.width - MINIMAP_SIZE - MINIMAP_MARGIN, 
-    MINIMAP_MARGIN);
-    // const topLeft = new Phaser.Math.Vector2((MINIMAP_SIZE / 2) + MINIMAP_MARGIN,
-    // (MINIMAP_SIZE / 2) + MINIMAP_MARGIN);
-    this.minimapCamera = this.cameras.add(
-      topRight.x, topRight.y, MINIMAP_SIZE, MINIMAP_SIZE).setName('minimap');
-
-    const worldView = this.cameras.main.worldView;
-    console.log('worldView', worldView);
-    console.log('this.minimapCamera', this.minimapCamera);
-    // Calculate zoom to fit the entire world
-    const zoomX = MINIMAP_SIZE / this.worldSize.x;
-    const zoomY = MINIMAP_SIZE / this.worldSize.y;
-    const zoom = Math.min(zoomX, zoomY);
-    console.log('zoom', zoom);
-    
-    this.minimapCamera.setZoom(zoom);
-    this.minimapCamera.setScroll(0, 0);
-    this.minimapCamera.setBackgroundColor(0x00);
-    this.minimapCamera.setBounds(0, 0,
-      this.worldSize.x, this.worldSize.y);
-
-    // Create a rectangle to represent the current view
-    this.minimapFrame = this.add.rectangle(topRight.x + MINIMAP_SIZE/2,
-      topRight.y + MINIMAP_SIZE/2, MINIMAP_SIZE, MINIMAP_SIZE, 0xff0000, 0);
-    this.minimapFrame.setStrokeStyle(3, 0xff0000);
-    // .setScrollFactor(0); means it will stay in the same position on the screen
-    this.minimapFrame.setScrollFactor(0);
-    this.minimapFrame.setDepth(1001);
-
-    // Create a red dot to represent the player
-    this.playerDot = this.add.circle(topRight.x + MINIMAP_SIZE, topRight.y + MINIMAP_SIZE , 15, 0xff0000);
-    this.playerDot.setScrollFactor(0);
-    this.playerDot.setDepth(1002); // Ensure it's above the minimap frame
-
-    // Create a tween for the pulsating effect
-    this.tweens.add({
-      targets: this.playerDot,
-      scale: { from: 0.5, to: 1 },
-      duration: 600,
-      yoyo: true,
-      repeat: -1
-    });
-
-    this.scene.scene.scale.on('resize', (gameSize) => {
-      console.log('gameSize', gameSize);
-    });
-  }
 
   loadBackgroundImageArray() {
     const partSize = 1535;

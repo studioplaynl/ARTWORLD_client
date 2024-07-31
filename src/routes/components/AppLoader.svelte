@@ -7,7 +7,7 @@
   import Stopmotion from '../apps/StopMotionApp.svelte';
   import Mariosound from '../apps/MarioSequencer.svelte';
   import { CurrentApp, Profile, Error } from '../../session';
-  import { AvatarsStore, myHome } from '../../storage';
+  import { AvatarsStore, myHome, useArtworksStore } from '../../storage';
   import ManageSession from '../game/ManageSession';
   import { dlog } from '../../helpers/debugLog';
   import {
@@ -107,6 +107,9 @@
 
     // Reset local variables
     currentFile = { loaded: false };
+
+
+
     data = null;
     changes = 0;
 
@@ -216,6 +219,8 @@
         .then((url) => {
           currentFile.uploadUrl = url;
           resolve(url);
+          dlog('currentFile after upload: ', currentFile);
+          const updatedCurrentFile = { ...currentFile };
 
           // eslint-disable-next-line no-unused-vars
           const setHomePromise = new Promise(
@@ -255,6 +260,18 @@
               }
             },
           );
+
+          // eslint-disable-next-line no-unused-vars
+          const otherTypePromise = new Promise((resolve) => {
+            if (updatedCurrentFile.type !== 'avatar' && updatedCurrentFile.type !== 'house') {
+              setTimeout(async () => {
+                const store = useArtworksStore(updatedCurrentFile.type);
+                await store.loadArtworks($Profile.id);
+                }, 150);
+              resolve();
+            }
+          });
+          
         })
         .catch((error) => {
           dlog('Upload ERROR:', error);
@@ -266,6 +283,7 @@
     Promise.all([uploadPromise]) // ,
       .then(() => {
         dlog('artwork saved:', currentFile);
+
         setLoader(false);
         if (andClose) closeApp();
       })

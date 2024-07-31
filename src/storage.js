@@ -26,6 +26,8 @@ import {
 
 import { dlog } from './helpers/debugLog';
 
+export const miniMapDimensions = writable({x: 0, y: 0});
+
 //  Achievements of a user
 const achievementsStore = writable([]);
 
@@ -355,135 +357,6 @@ export function useFilteredArtworksStore(type) {
   return { type, store, filteredArt, deletedArt, visibleArt };
 }
 
-// from ART stored a derived store that show paginated art
-// for use in a gallery
-export function homeGalleryStore(type) {
-  const store = writable([]);
-
-  const defaultPageSize = 3;
-  const homeGalleryPageSize = writable(defaultPageSize); 
-  const homeGalleryCurrentPage = writable(1);
-  
-  const homeGalleryVisibleArt = derived(store, $store =>
-      $store.filter(el =>
-          el.permission_read === 2 || el.permission_read === true
-      )
-  );
-
-  const homeGalleryPaginatedArt = derived(
-    [homeGalleryVisibleArt, homeGalleryPageSize, homeGalleryCurrentPage],
-    ([$visibleArt, $homeGalleryPageSize, $homeGalleryCurrentPage]) => {
-      const startIndex = ($homeGalleryCurrentPage - 1) * $homeGalleryPageSize;
-      const endIndex = startIndex + $homeGalleryPageSize;
-      return $visibleArt.slice(startIndex, endIndex);
-    }
-  );
-
-  const homeGalleryTotalPages = derived(
-    [homeGalleryVisibleArt, homeGalleryPageSize],
-    ([$visibleArt, $homeGalleryPageSize]) => Math.ceil($visibleArt.length / $homeGalleryPageSize)
-  );
-
-  return {
-    subscribe: store.subscribe,
-
-    async loadArtworks(userId, limit) {
-      let loadedArt = [];
-    
-      try {
-        // Load objects from the server
-        const loaded = await this.fetchObjects(type, userId, limit);
-    
-        // Update preview URLs
-        const updatedLoaded = await this.updatePreviewUrls(loaded);
-        loadedArt = [...updatedLoaded];
-    
-        // Set data into store
-        store.set(loadedArt);
-    
-        return loadedArt;
-      } catch (error) {
-        console.error('Error loading artworks:', error);
-        return [];
-      }
-    },
-    
-    // Helper method to fetch objects
-    async fetchObjects(type, userId, limit) {
-      if (limit !== undefined) {
-        // console.log('type:', type, 'limit:', limit);
-        return listAllObjects(type, userId);
-      } else {
-        // console.log('type:', type, 'limit:', limit);
-        const result = await listObjects(type, userId, limit);
-        // console.log('result: ', result);
-        return result.objects;
-      }
-    },
-
-    /** Get a single Artwork by Key */
-    getArtwork: (key) => get(store).find((artwork) => artwork.key === key),
-
-    updatePreviewUrls: (artworks) =>
-      new Promise((resolvePreviewUrls) => {
-        const artworksToUpdate = artworks;
-        const existingArtworks = get(store);
-        const updatePromises = [];
-
-        artworksToUpdate.forEach(async (item, index) => {
-          // Check if artwork already existed, and if so, is it was outdated
-          const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
-          const outdatedArtwork = !!existingArtwork && existingArtwork?.update_time !== item?.update_time;
-          const artwork = item;
-          artwork.permission_read = artwork.permission_read === PERMISSION_READ_PUBLIC;
-
-          // Only get a fresh URL if no previewUrl is available or when it has been updated
-          if (!artwork.value.previewUrl || outdatedArtwork) {
-            if (artwork.value.url) {
-              artwork.url = artwork.value.url.split('.')[0];
-            }
-
-            // Prepare a promise per update that resolves after setting the
-            updatePromises.push(
-              new Promise((resolveUpdatePromise) => {
-                convertImage(
-                  artwork.value.url,
-                  DEFAULT_PREVIEW_HEIGHT,
-                  DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
-                  'png'
-                ).then((val) => {
-                  // Set the previewUrl value, update the array
-                  artwork.value.previewUrl = val;
-                  artworksToUpdate[index] = artwork;
-
-                  // Then resolve this updatePromise
-                  resolveUpdatePromise(val);
-                });
-              })
-            );
-          }
-        });
-
-        // Resolve all updatePromises and resolve the main Promise
-        // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
-        Promise.all(updatePromises).then(() => {
-          resolvePreviewUrls(artworksToUpdate);
-        });
-      }),
-
-    homeGalleryVisibleArt,
-    homeGalleryPaginatedArt,
-    homeGalleryPageSize,
-    homeGalleryCurrentPage,
-    homeGalleryTotalPages,
-    setHomeGalleryPageSize: (size) => homeGalleryPageSize.set(size),
-    setHomeGalleryCurrentPage: (page) => homeGalleryCurrentPage.set(page),
-    nextHomeGalleryPage: () => homeGalleryCurrentPage.update(n => Math.min(n + 1, get(homeGalleryTotalPages))),
-    prevHomeGalleryPage: () => homeGalleryCurrentPage.update(n => Math.max(n - 1, 1)),
-  };
-}
-
-
 // Stores one type of Artwork
 export function createArtworksStore(type) {
   const store = writable([]);
@@ -515,6 +388,7 @@ export function createArtworksStore(type) {
     
     // Helper method to fetch objects
     async fetchObjects(type, id, limit) {
+      console.log("fetchObjects: ", type, id, limit);
       if (limit !== undefined) {
         console.log('type:', type, 'limit:', limit);
         return listAllObjects(type, id);
@@ -638,6 +512,142 @@ export function createArtworksStore(type) {
     },
   };
 }
+
+// from ART stored a derived store that show paginated art
+// for use in a gallery
+export function homeGalleryStore(type, isSelfHome = false) {
+  const store = isSelfHome ? useFilteredArtworksStore(type) : writable([]);
+
+  const defaultPageSize = 3;
+  const homeGalleryPageSize = writable(defaultPageSize); 
+  const homeGalleryCurrentPage = writable(1);
+  
+  const homeGalleryVisibleArt = derived(store, $store =>
+      $store.filter(el =>
+          el.permission_read === 2 || el.permission_read === true
+      )
+  );
+
+  const homeGalleryPaginatedArt = derived(
+    [homeGalleryVisibleArt, homeGalleryPageSize, homeGalleryCurrentPage],
+    ([$visibleArt, $homeGalleryPageSize, $homeGalleryCurrentPage]) => {
+      const startIndex = ($homeGalleryCurrentPage - 1) * $homeGalleryPageSize;
+      const endIndex = startIndex + $homeGalleryPageSize;
+      return $visibleArt.slice(startIndex, endIndex);
+    }
+  );
+
+  const homeGalleryTotalPages = derived(
+    [homeGalleryVisibleArt, homeGalleryPageSize],
+    ([$visibleArt, $homeGalleryPageSize]) => Math.ceil($visibleArt.length / $homeGalleryPageSize)
+  );
+
+  return {
+    subscribe: store.subscribe,
+
+    async loadArtworks(userId, limit) {
+
+      if (isSelfHome) {
+        // If it's the user's own home, load artworks from the 'drawing' store
+        const drawingStore = useFilteredArtworksStore(type);
+        return get(drawingStore);
+        // return get(store);
+      }
+      let loadedArt = [];
+      try {
+        // Load objects from the server
+        const loaded = await this.fetchObjects(type, userId, limit);
+    
+        // Update preview URLs
+        const updatedLoaded = await this.updatePreviewUrls(loaded);
+        loadedArt = [...updatedLoaded];
+    
+        // Set data into store
+        store.set(loadedArt);
+    
+        return loadedArt;
+      } catch (error) {
+        console.error('Error loading artworks:', error);
+        return [];
+      }
+    },
+    
+    // Helper method to fetch objects
+    async fetchObjects(type, userId, limit) {
+      if (limit !== undefined) {
+        // console.log('type:', type, 'limit:', limit);
+        return listAllObjects(type, userId);
+      } else {
+        // console.log('type:', type, 'limit:', limit);
+        const result = await listObjects(type, userId, limit);
+        // console.log('result: ', result);
+        return result.objects;
+      }
+    },
+
+    /** Get a single Artwork by Key */
+    getArtwork: (key) => get(store).find((artwork) => artwork.key === key),
+
+    updatePreviewUrls: (artworks) =>
+      new Promise((resolvePreviewUrls) => {
+        const artworksToUpdate = artworks;
+        const existingArtworks = get(store);
+        const updatePromises = [];
+
+        artworksToUpdate.forEach(async (item, index) => {
+          // Check if artwork already existed, and if so, is it was outdated
+          const existingArtwork = existingArtworks.find((artwork) => artwork.key === item.key);
+          const outdatedArtwork = !!existingArtwork && existingArtwork?.update_time !== item?.update_time;
+          const artwork = item;
+          artwork.permission_read = artwork.permission_read === PERMISSION_READ_PUBLIC;
+
+          // Only get a fresh URL if no previewUrl is available or when it has been updated
+          if (!artwork.value.previewUrl || outdatedArtwork) {
+            if (artwork.value.url) {
+              artwork.url = artwork.value.url.split('.')[0];
+            }
+
+            // Prepare a promise per update that resolves after setting the
+            updatePromises.push(
+              new Promise((resolveUpdatePromise) => {
+                convertImage(
+                  artwork.value.url,
+                  DEFAULT_PREVIEW_HEIGHT,
+                  DEFAULT_PREVIEW_HEIGHT * STOPMOTION_MAX_FRAMES,
+                  'png'
+                ).then((val) => {
+                  // Set the previewUrl value, update the array
+                  artwork.value.previewUrl = val;
+                  artworksToUpdate[index] = artwork;
+
+                  // Then resolve this updatePromise
+                  resolveUpdatePromise(val);
+                });
+              })
+            );
+          }
+        });
+
+        // Resolve all updatePromises and resolve the main Promise
+        // Note: updatePromises may be an empty array too, in that case the Promise gets resolved immediately
+        Promise.all(updatePromises).then(() => {
+          resolvePreviewUrls(artworksToUpdate);
+        });
+      }),
+
+    homeGalleryVisibleArt,
+    homeGalleryPaginatedArt,
+    homeGalleryPageSize,
+    homeGalleryCurrentPage,
+    homeGalleryTotalPages,
+    setHomeGalleryPageSize: (size) => homeGalleryPageSize.set(size),
+    setHomeGalleryCurrentPage: (page) => homeGalleryCurrentPage.set(page),
+    nextHomeGalleryPage: () => homeGalleryCurrentPage.update(n => Math.min(n + 1, get(homeGalleryTotalPages))),
+    prevHomeGalleryPage: () => homeGalleryCurrentPage.update(n => Math.max(n - 1, 1)),
+  };
+}
+
+
 
 // Usage example for creating different type-specific stores
 // export const DrawingArtworksStore = createArtworksStore('drawing');

@@ -12,7 +12,8 @@
  *  artworks can be send to friends or other artwork categories
  */
 
- import { onDestroy } from 'svelte';
+import { onDestroy } from 'svelte';
+import { push } from 'svelte-spa-router';
 import { useFilteredArtworksStore } from '../../storage';
 import { Profile } from '../../session';
 import { dlog } from '../../helpers/debugLog';
@@ -26,6 +27,7 @@ import {
 } from '../../constants';
 import ArtworkLoader from './ArtworkLoader.svelte';
 import PlaceHomeElement from './PlaceHomeElement.svelte';
+import { PlayerHistory } from '../game/playerState';
 
 export let dataType = '';
 export let showVisibilityToggle = false;
@@ -45,6 +47,14 @@ const {
     deletedArt,
     visibleArt
 } = useFilteredArtworksStore(dataType);
+
+/* Make a new artwork */
+function addNew() {
+  // open the relevant app
+  const value = `/${dataType}`;
+  push(value);
+  PlayerHistory.push(value);
+}
 
 function toggleSendTo(e) {
   if (e.detail) {
@@ -75,6 +85,11 @@ getUser();
 </script>
 
 <div class="art-app-container">
+  {#if showPlaceHomeElement}
+    <button on:click={() => addNew( )} class="add-new-button">
+      <img class="icon_medium" src="/assets/SHB/svg/AW-icon-plus.svg" alt="add new" />
+    </button>
+  {/if}
   {#each $filteredArt as row, index (row.key)}
     <div class="artworkListViewer-flex-row" style="flex-direction: {showPlaceHomeElement ? 'row-reverse' : 'row'};">
       <div class="padding">
@@ -161,7 +176,17 @@ getUser();
 </div>
 
 <style>
-  
+  .add-new-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .deleted-art-container{
   margin-top: 20px;
   /* box-shadow: 2px 2px rgb(255, 0, 0); */

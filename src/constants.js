@@ -7,8 +7,8 @@ export const CONFIG = {
 export const SCENE_INFO = [
   {
     scene: 'DefaultUserHome',
-    sizeX: 5500,
-    sizeY: 5500,
+    sizeX: 4000,
+    sizeY: 3000,
   },
   {
     scene: 'Artworld',
@@ -218,7 +218,7 @@ export const STOCK_AVATARS = [
 ];
 
 export const MINIMAP_SIZE = 100;
-export const MINIMAP_MARGIN = 10;
+export const MINIMAP_MARGIN = 20;
 
 export const ARTWORLD_IP = '193.187.129.8';
 export const BETAWORLD_IP = '128.140.42.65';

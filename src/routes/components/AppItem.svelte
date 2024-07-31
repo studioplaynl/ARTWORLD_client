@@ -1,152 +1,141 @@
- <script>
+<script>
   /**
- * @file AppItem.svelte
- * @author Maarten
- *
- *  What is this file for?
- *  ======================
- *  AppItem.svelte implements make a new and editing existing drawings/stopmotion etc
- *  in the items bar
- */
-import { push } from 'svelte-spa-router';
-import ArtListView from './ArtListView.svelte';
-import { returnAppIconUrl } from '../../constants';
-import { PlayerHistory } from '../game/playerState';
+   * @file AppItem.svelte
+   * @author Maarten
+   *
+   *  What is this file for?
+   *  ======================
+   *  AppItem.svelte implements make a new and editing existing drawings/stopmotion etc
+   *  in the items bar
+   */
+  import { push } from 'svelte-spa-router';
+  import { onMount } from 'svelte';
+  import { Profile } from '../../session';
+  import ArtListView from './ArtListView.svelte';
+  import { returnAppIconUrl } from '../../constants';
+  import { PlayerHistory } from '../game/playerState';
+  import { useFilteredArtworksStore } from '../../storage';
 
-// local props
-let showHistory = false;
-export let appName = '';
-export let showAddNew = true;
-// passed on props: show or hide components in ArtListView
-export let showVisibilityToggle = false;
-export let showDeleteButton = false;
-export let showSendTo = false;
-export let showDeletedArtContainer = false;
-export let showPlaceHomeElement = false;
-export let artClickable = true;
+  // local props
+  let showHistory = false;
+  export let appName = '';
+  export let showAddNew = true;
+  // passed on props: show or hide components in ArtListView
+  export let showVisibilityToggle = false;
+  export let showDeleteButton = false;
+  export let showSendTo = false;
+  export let showDeletedArtContainer = false;
+  export let showPlaceHomeElement = false;
+  export let artClickable = true;
 
-// Destructure the props
-let props = { showVisibilityToggle, showDeleteButton, showSendTo, showDeletedArtContainer, showPlaceHomeElement, artClickable};
+  // Destructure the props
+  let props = { showVisibilityToggle, showDeleteButton, showSendTo, showDeletedArtContainer, showPlaceHomeElement, artClickable };
 
-/* Make a new artwork */
-function addNew() {
-  // open the relevant app
-  const value = `/${appName}`;
-  push(value);
-  PlayerHistory.push(value);
-}
+  const { 
+    store, 
+    filteredArt, 
+    deletedArt,
+    visibleArt
+  } = useFilteredArtworksStore(appName);
 
+  // Function to check if the store has any items
+  $: hasStoreItems = $filteredArt.length > 0 || $deletedArt.length > 0;
+
+
+  onMount(async () => {
+    const id = $Profile.id;
+    const useraccount = $Profile;
+    await store.loadArtworks(id);
+  });
+  
+  /* Make a new artwork */
+  function addNew() {
+    // open the relevant app
+    const value = `/${appName}`;
+    push(value);
+    PlayerHistory.push(value);
+  }
 </script>
+
 <div class="AppItemBorder">
-    <!-- we reverse the icon order if the menu is PlaceHomeElement because the menu is on the right side of the screen -->
   <div class="AppItemContainer" style="flex-direction: {showPlaceHomeElement ? 'row-reverse' : 'row'};">
-
-<!-- get the appropriate app icon from the function returnAppIconUrl -->
-<button on:click="{() => {
-  showHistory = !showHistory;
-}}">
-<img class="icon_big flex-row" src={returnAppIconUrl(appName, 'square')} alt={appName}
-      />
+    <div class="icon-group" style="flex-direction: {showPlaceHomeElement ? 'row-reverse' : 'row'};">
+      <button on:click="{() => {
+        if (hasStoreItems) {
+          showHistory = !showHistory;
+        }
+      }}">
+        <img class="icon_big" src={returnAppIconUrl(appName, 'square')} alt={appName} />
       </button>
-
-{#if showAddNew}
-    <div class="addNew flex-row" >
-      <button on:click="{addNew}">
-      <img class="icon_medium flex-row" src="/assets/SHB/svg/AW-icon-plus.svg" alt="make new"
-      />
-      </button>
+      
+      {#if showAddNew && (!showPlaceHomeElement || !hasStoreItems)}
+        <button on:click="{addNew}" class="add-new-button">
+          <img class="icon_medium" src="/assets/SHB/svg/AW-icon-plus.svg" alt="make new" />
+        </button>
+      {/if}
     </div>
-{/if}
 
-{#if showHistory}
-<button on:click="{() => {showHistory = !showHistory;}}">
-  <img
-    alt="close"
-    class="icon_medium flex-row"
-    src="/assets/SHB/svg/AW-icon-cross.svg"
-  />
-</button>
-  {:else}
-  <button on:click="{() => {showHistory = !showHistory;}}">
-      <img
-    alt="unfold options"
-    class="icon_medium flex-row"
-    src="/assets/SHB/svg/AW-icon-enter.svg"
-  />
-  </button>
-{/if}
-</div> <!-- AppItemContainer -->
+    {#if hasStoreItems}
+      <button on:click="{() => {showHistory = !showHistory;}}" class="history-toggle">
+        <img
+          alt={showHistory ? "close" : "unfold options"}
+          class="icon_medium"
+          src={showHistory ? "/assets/SHB/svg/AW-icon-cross.svg" : "/assets/SHB/svg/AW-icon-enter.svg"}
+        />
+      </button>
+    {/if}
+  </div>
 
-{#if showHistory}
+  {#if showHistory && hasStoreItems}
     <ArtListView dataType={appName} {...props} />
-{/if}
-</div> <!-- AppItemBorder -->
+  {/if}
+</div>
 
 <style>
-
-  button {
-    border: 0;
-    background: white;
-    cursor: pointer;
-    border-radius: 0;
-    appearance: none;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-  }
-
-  button:active {
-    /* background-color: white; */
-    background-color: #7300ed;
-    border-radius: 50%;
-    /* border: 2px solid #7300ed; */
-    /* box-sizing: border-box; */
-    /* box-shadow: 5px 5px 0px #7300ed; */
-  }
-
-  .AppItemBorder{
-    /* border: 1px solid #7300eb; */
+  .AppItemBorder {
     border-radius: 25px;
-    padding: 6px;
+    padding: 10px 15px;
     box-shadow: 2px 2px #7300EC;
     overflow: auto;
   }
 
-.icon_big {
+  .AppItemContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .icon-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  button {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+  }
+
+  .icon_big {
     width: 60px;
     height: 60px;
-    margin: 5px;
-    cursor: pointer;
-}
+  }
 
-.icon_medium {
+  .icon_medium {
     width: 40px;
     height: 40px;
-    margin: 5px;
-    cursor: pointer;
-}
+  }
 
-.flex-row{
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.AppItemContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    align-items: center;
-    /* border-bottom: 1px solid #7300eb; */
-}
-
-.addNew {
+  .add-new-button {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 50px;
-    border-radius: 10px;
-    background-color: #f0f0f0;
-    cursor: pointer;
+  }
+
+  .history-toggle {
+    margin-left: auto;
   }
 </style>

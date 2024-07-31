@@ -112,7 +112,7 @@
           <AppGroup 
           showAvatarSelector={false} 
           showHomeSelector={false} 
-          showAddNew={false} 
+          showAddNew={true} 
           showVisibilityToggle={false} 
           showDeleteButton={false} 
           showSendTo={false} 

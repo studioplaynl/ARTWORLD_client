@@ -109,13 +109,13 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async preload() {
     // this.loadAndPlaceArtworks();
-    //! Check if this is home of player
     
     this.homeElements_Drawing_Group = this.add.group();
     this.homeElements_Stopmotion_Group = this.add.group();
     this.homeElements_Animal_Group = this.add.group();
     this.homeElements_Flower_Group = this.add.group();
     
+    //! Check if this is home of player
     const selfHome = await ServerCall.checkIfHomeSelf(this.location);
     console.log('selfHome defaultUserHome: ', selfHome);
 
@@ -273,8 +273,8 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     // initial values for the homeGallery
     this.homeGallery_drawing_CurrentPage = 1;
-    this.homeGallery_drawing_PageSize = 3;
     this.homeGallery_drawing_TotalPages = 1;
+    this.homeGallery_drawing_PageSize = 3;
     this.homeGallery_drawing_ArtOnCurrentPage = {};
 
     const totalWidth = this.homeGallery_drawing_PageSize * (artSize + artMargin);
@@ -294,7 +294,9 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.parentContainer_homeDrawingGroup.add(graphic2);
 
     // add button to ParentContainer
-    const backButton = this.add.image(totalWidth/2, artSize + (artMargin*3) + 50, 'back_button').setDepth(500);
+    const backButton = this.add.image(totalWidth/2, artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
+    .setVisible(true).setName('backButton');
+
     backButton.displayWidth = 60;
     backButton.displayHeight = 60;
     // make button interactive
@@ -322,8 +324,10 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
     this.parentContainer_homeDrawingGroup.add(backButton);
 
-    const nextButton = this.add.image(totalWidth/2 + (artMargin*2) , artSize + (artMargin*3) + 50, 'back_button')
-    .setDepth(500);
+    const nextButton = this.add.image(totalWidth/2 + (artMargin*2) , artSize + (artMargin * 3) + 50, 'back_button')
+    .setDepth(500)
+    .setVisible(true).setName('nextButton');
+
     //rotate button 180 degrees
     nextButton.rotation = 3.14159;
     nextButton.displayWidth = 60;
@@ -338,24 +342,25 @@ export default class DefaultUserHome extends Phaser.Scene {
       const currentPage = this.homeGallery_drawing_CurrentPage;
       const totalPages = this.homeGallery_drawing_TotalPages;
 
+      console.log('nextButton button clicked: ', currentPage, totalPages);
+
       if (currentPage < totalPages) {
         this.homeGallery_drawing_CurrentPage += 1;
         // delete all containers in parent container
         // Get all children of the parentContainer
         const children = this.parentContainer_homeDrawingGroup.getAll('type', 'Container');
-
+        
         // Filter for containers and remove them
         children.forEach(child => {
-          console.log('child: ', child);
           this.parentContainer_homeDrawingGroup.remove(child);
           child.destroy(); // This will also destroy all of the container's children
-      });
-
+        });
         this.loadAndPlaceGalleries_Again();
       }
-
     });
+
     this.parentContainer_homeDrawingGroup.add(nextButton);
+    // this.updateGalleryButtonsVisibility('drawing');
 
     this.homeDrawingGroup.add(this.parentContainer_homeDrawingGroup);
 
@@ -397,7 +402,9 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     // add button to ParentContainer
     const backButton_stopmotion = this.add.image(totalWidth/2, 
-      artSize + (artMargin*3) + 50, 'back_button').setDepth(500);
+      artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
+    .setVisible(true).setName('backButton');
+
     backButton_stopmotion.displayWidth = 60;
     backButton_stopmotion.displayHeight = 60;
     // make button interactive
@@ -427,7 +434,10 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     const nextButton_stopmotion = this.add.image(totalWidth/2 + (artMargin*2),
       artSize + (artMargin*3) + 50, 'back_button')
-    .setDepth(500);
+    .setDepth(500)
+    .setVisible(true)
+    .setName('nextButton');
+
     //rotate button 180 degrees
     nextButton_stopmotion.rotation = 3.14159;
     nextButton_stopmotion.displayWidth = 60;
@@ -460,6 +470,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     });
     this.parentContainer_homeStopmotionGroup.add(nextButton_stopmotion);
+    // this.updateGalleryButtonsVisibility('stopmotion');
 
     this.parentContainer_homeStopmotionGroup.setPosition(artMargin, 1200);
 
@@ -475,6 +486,26 @@ export default class DefaultUserHome extends Phaser.Scene {
       artMargin,
     });
     
+  }
+
+  updateGalleryButtonsVisibility(type) {
+    const currentPage = this[`homeGallery_${type}_CurrentPage`];
+    const totalPages = this[`homeGallery_${type}_TotalPages`];
+
+    console.log('updateGalleryButtonsVisibility: ', type, currentPage, totalPages);
+    
+    const parentContainer = type === 'drawing' 
+    ? this.parentContainer_homeDrawingGroup : this.parentContainer_homeStopmotionGroup;
+    const backButton = parentContainer.getByName('backButton');
+    const nextButton = parentContainer.getByName('nextButton');
+    
+    if (backButton && nextButton) {
+      backButton.setVisible(currentPage > 1);
+      nextButton.setVisible(currentPage < totalPages);
+      console.log('updateGalleryButtonsVisibility buttons: ', backButton, nextButton);
+    } else {
+      console.warn(`Buttons not found for ${type} gallery`);
+    }
   }
 
   async loadAndPlaceGalleries_Again(){
@@ -495,6 +526,10 @@ export default class DefaultUserHome extends Phaser.Scene {
       artMargin,
     });
 
+    console.log('updateGalleryButtonsVisibility _AGAIN: ', this.homeGallery_drawing_CurrentPage, this.homeGallery_drawing_TotalPages);
+
+    // this.updateGalleryButtonsVisibility('drawing');
+
      type = 'downloadStopmotionDefaultUserHome';
      serverObjectsHandler = this.userHomeStopmotionServerList;
 
@@ -506,6 +541,8 @@ export default class DefaultUserHome extends Phaser.Scene {
       artSize,
       artMargin,
     });
+
+    // this.updateGalleryButtonsVisibility('stopmotion');
   }
 
   update() {

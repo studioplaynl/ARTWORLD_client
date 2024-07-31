@@ -8,14 +8,18 @@
     PlayerPos,
     PlayerUpdate,
   } from '../game/playerState';
-  import { DEFAULT_SCENE, SCENE_INFO } from '../../constants';
+  import { miniMapDimensions } from '../../storage';
+  import { DEFAULT_SCENE, SCENE_INFO, MINIMAP_MARGIN } from '../../constants';
   import { getFullAccount } from '../../helpers/nakamaHelpers';
   import { findParentScenes } from '../game/helpers/UrlHelpers';
   // import { dlog } from '../game/helpers/debugLog';
 
   let currentLocation = '';
-  let userInfo;
+  let userInfo = null;
+  let homeImageUrl = '';
+  let avatarUrl = '';
   let parentScenes = [];
+  let miniMap = {x: MINIMAP_MARGIN, y: MINIMAP_MARGIN};
 
   onMount(async () => {
     PlayerLocation.subscribe(async (value) => {
@@ -28,36 +32,47 @@
          because the Artworld button is always visible, and is the root scene
       */
       parentScenes = parentScenes.filter(scene => scene !== 'Artworld');
-
+      console.log('filter out artworld parentScenes', parentScenes);
+      
       if (parentScenes.length > 0) {
         console.log('currentLocation parentScenes', parentScenes);
         // simple case where we have parent scenes
         currentLocation = {scene: value.scene};
       } else {
-        // no parent scenes
+        /* no parent scenes, case can be:
+        1. Artworld
+        2. DefaultUserHome
+        */
         console.log(`currentLocation ${currentLocation} has no parent scenes`);
 
         if (currentLocation.scene === DEFAULT_SCENE) {
-          // no parent scenes, we are in Artworld scene
+          // we are in Artworld scene
           currentLocation = {scene: value.scene};
 
         } else if (currentLocation.scene === 'DefaultUserHome') {
-          console.log('currentLocation Player is in DefaultUserHome');
-          /* no parent scenes, we are in DefaultUserHome scene
+          // console.log('currentLocation Player is in DefaultUserHome');
+          /* we are in DefaultUserHome scene
              we have to find the parent scene of the house
              by fetching the user info 
           */
             try {
               console.log('currentLocation we have to fetch the user info to find the parent scene of the house');
               userInfo = await getFullAccount(currentLocation.house);
-              console.log('currentLocation userInfo', userInfo.meta.Azc);
-              
+              console.log('currentLocation userInfo', userInfo);
+              parentScenes.push(userInfo.meta.Azc);
+              // console.log('userInfo.meta.Azc parentScenes', parentScenes);
+
               // userInfo.meta.Azc is the parent scene of the house
               // now we seach for the parent scene of userInfo.meta.Azc
-              parentScenes = findParentScenes(userInfo.meta.Azc, SCENE_INFO);
+              const tempParentScenes = findParentScenes(userInfo.meta.Azc, SCENE_INFO);
+              //filter out artworld
+              const tempParentScenes2 = tempParentScenes.filter(scene => scene !== 'Artworld');
+              // parentScenes.push(...tempParentScenes);
+              parentScenes.push(...tempParentScenes2);
+
               console.log('currentLocation parentScenes', parentScenes);
 
-              currentLocation = {house: value.house};
+              currentLocation = {scene: 'DefaultUserHome', house: value.house};
             } catch (error) {
               console.error('Error fetching user info:', error);
               currentLocation = {house: value.house};
@@ -69,7 +84,20 @@
         }
       }
     });
+
+    miniMapDimensions.subscribe((value) => {
+      miniMap = value;
+    });
   });
+
+  $: zoomButtonsStyle = `
+    position: absolute;
+    right: ${0}px;
+    top: ${miniMap.y + MINIMAP_MARGIN}px;
+  `;
+
+  $: console.log('parentScenes', parentScenes);
+  $: console.log('currentLocation', currentLocation);
 
   /** We send the player to the middle of artworld so there is a fixed orientation point
   //  We set the Position after the Location
@@ -97,6 +125,21 @@
     }
   }
 
+  function goToScene(scene) {
+    const historyIndex = $PlayerHistory.findIndex(entry => entry.scene === scene);
+    if (historyIndex !== -1) {
+      // Scene is in history, go back to that point
+      while ($PlayerHistory.length > historyIndex + 1) {
+        PlayerHistory.pop();
+        pop();
+      }
+    } else {
+      // Scene is not in history, navigate to it
+      PlayerLocation.set({ scene });
+      push(`/${scene}`);
+    }
+  }
+ 
   async function zoomIn() {
     PlayerZoom.in();
   }
@@ -112,6 +155,17 @@
 </script>
 
 <div class="topbar">
+  <!-- go back in history button -->
+  <button on:click="{goBack}" class="back-button" class:hidden="{$PlayerHistory.length <= 1}">
+    <img
+      class="TopIcon"
+      id="back"
+      src="/assets/SHB/svg/AW-icon-previous.svg"
+      alt="Go back"
+    />
+  </button>
+
+  <!-- go back to artworld 0,0 button -->
   <button on:click="{goHome}">
     <img
       class="TopIcon"
@@ -121,44 +175,34 @@
     />
   </button>
 
-  <button on:click="{goBack}">
-    <img
-      class="TopIcon"
-      id="back"
-      class:showBack="{$PlayerHistory.length > 1}"
-      src="/assets/SHB/svg/AW-icon-previous.svg"
-      alt="Go back"
-    />
-  </button>
+  <!-- a scene below the current one, styled as pill text
+  clickable, takes us to that scene, if it is present in the history, it takes that position-->
 
-  {#each parentScenes as scene, index}
-    <button>
-      <img
-        class="TopIcon"
-        id="logo"
-        src={`assets/SHB/svg/AW-icon-logo-A.svg`}
-        alt="{scene}"
-      />
-    </button>
-    {#if index < parentScenes.length - 1}
-      <span class="divider">&gt;</span>
-    {/if}
-  {/each}
-  
+  {#if parentScenes.length > 0}
+    {#each parentScenes as scene}
+      <button class="pill-button" on:click={() => goToScene(scene)}>
+        <span class="pill-button-text">{scene}</span>
+      </button>
+    {/each}
+{/if}
   <!-- dont show artworld icon, because that is visible by default-->
   {#if currentLocation.scene !== DEFAULT_SCENE}
-    {#if parentScenes.length > 0}
-      <span class="divider">&gt;</span>
-    {/if}
-    {#if currentLocation.house}
-      <button class="pill-button">
+    {#if currentLocation.scene === 'DefaultUserHome'}
+      <div class="pill-container">
         <img
           class="pill-button-icon"
-          src={`assets/SHB/svg/AW-icon-logo-A.svg`}
+          src={homeImageUrl || 'assets/SHB/svg/AW-icon-logo-A.svg'}
           alt="House"
         />
-        <span class="pill-button-text">{currentLocation.scene}</span>
-      </button>
+        <img
+          class="pill-button-icon avatar"
+          src={avatarUrl || 'assets/SHB/svg/AW-icon-logo-A.svg'}
+          alt="Avatar"
+        />
+        {#if userInfo}
+          <span class="pill-button-text">{userInfo.display_name || userInfo.name}</span>
+        {/if}
+      </div>
     {:else}
       <div class="pill-text">
         <span class="pill-button-text">{currentLocation.scene}</span>
@@ -167,7 +211,7 @@
   {/if}
 </div>
 
-<div class="topbar-second">
+<div class="topbar-second" style="{zoomButtonsStyle}">
   <button on:click="{zoomOut}" id="zoomOut">
     <img
       class="TopIcon"
@@ -248,8 +292,12 @@
     margin-left: 6px;
   }
 
-  .pill-button {
+  .pill-button-icon.avatar {
+    margin-left: 4px;
+    border-radius: 50%;
+  }
 
+  .pill-button {
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
@@ -266,10 +314,32 @@
     line-height: 1;
   }
 
+  .pill-container {
+    border-radius: 9999px;
+    padding: 0.5em 1em;
+    background-color: #d8c7eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    margin-left: 6px;
+  }
+
   .pill-button-icon {
     width: 20px;
     height: 20px;
     margin-right: 8px;
+  }
+
+  .pill-button-icon.avatar {
+    margin-left: 4px;
+    border-radius: 50%;
+  }
+
+  .pill-button-text {
+    color: #7300ed;
+    font-size: 14px;
+    line-height: 1;
   }
 
   /* Adjust the existing button styles */
@@ -285,16 +355,10 @@
     margin-right: 0;
   }
 
-  .divider {
-    margin: 0 6px;
-    color: #7300ed;
-    font-weight: bold;
-  }
-
   .topbar-second {
-    position: fixed;
+    /* position: fixed;
     left: 0;
-    top: calc(2rem + 32px); 
+    top: calc(2rem + 32px);  */
     margin: 16px;
     display: flex; /* Add this to align items horizontally */
     align-items: center; /* This will vertically center the buttons and dividers */
@@ -317,12 +381,18 @@
     margin-bottom: 2px;
   }
 
-  #back {
-    visibility: hidden;
+  .back-button {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 6px;
+    transition: width 0.3s ease, margin-right 0.3s ease, opacity 0.3s ease;
   }
 
-  .showBack {
-    visibility: visible !important;
+  .back-button.hidden {
+    width: 0;
+    margin-right: 0;
+    opacity: 0;
+    pointer-events: none;
   }
   /* .debug {
   } */

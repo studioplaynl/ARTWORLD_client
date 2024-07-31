@@ -768,24 +768,6 @@ class ServerCall {
     }
   }
 
-  async downloadAndPlaceGalleries(userId){
-    const drawingGallery = homeGalleryStore('drawing');
-    await drawingGallery.loadArtworks(userId);
-
-    console.log('Loaded artworks:', get(drawingGallery));
-    // Get total pages
-    const totalPages = get(drawingGallery.homeGalleryTotalPages);
-    console.log('Total pages:', totalPages);
-
-    // Get current paginated artworks
-    const currentImages = get(drawingGallery.homeGalleryPaginatedArt);
-    console.log('Current paginated artworks:', currentImages);
-
-    // make an image gallery with the currentImages and pass the current page number
-    // to the function that creates the gallery
-
-  }
-
   downloadAndPlaceHomeElements(array){
     // console.log("Downloading and placing home elements, array: ", array);
     // sort per type of element
