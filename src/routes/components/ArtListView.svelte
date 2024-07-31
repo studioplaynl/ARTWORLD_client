@@ -15,7 +15,6 @@
 import { onDestroy } from 'svelte';
 import { push } from 'svelte-spa-router';
 import { useFilteredArtworksStore } from '../../storage';
-import { Profile } from '../../session';
 import { dlog } from '../../helpers/debugLog';
 import VisibilityToggle from './VisibilityToggle.svelte';
 import DeleteButton from './DeleteButton.svelte';
@@ -76,9 +75,7 @@ function isCurrentUser() {
 
 async function getUser() {
   CurrentUser = true;
-  id = $Profile.id;
-  useraccount = $Profile;
-  await store.loadArtworks(id);
+  await store.loadArtworks();
 }
 
 getUser();

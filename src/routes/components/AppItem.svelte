@@ -10,7 +10,6 @@
    */
   import { push } from 'svelte-spa-router';
   import { onMount } from 'svelte';
-  import { Profile } from '../../session';
   import ArtListView from './ArtListView.svelte';
   import { returnAppIconUrl } from '../../constants';
   import { PlayerHistory } from '../game/playerState';
@@ -43,9 +42,8 @@
 
 
   onMount(async () => {
-    const id = $Profile.id;
-    const useraccount = $Profile;
-    await store.loadArtworks(id);
+    // load the artworks of player, if no id is given, the id of player is used
+    await store.loadArtworks();
   });
   
   /* Make a new artwork */

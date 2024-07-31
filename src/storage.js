@@ -313,8 +313,12 @@ export function useArtworksStore(type) {
     return stores[type];
 }
 
-/* reactive derived art stores that filter the artworks if it is in the trash 
+/* reactive derived art stores 
+it is a derived store from useArtworksStore
+
+that filters the artworks if it is in the trash 
     in a svelte component the store can be used like this:
+
     const { 
       store: drawingStore, 
       usableArt: usableDrawings, 
@@ -330,6 +334,18 @@ export function useArtworksStore(type) {
     or directly in the HTML with:
     {#each $usableDrawings as drawing}
     {#each $deletedDrawings as drawing}
+
+    ==== OR IN A ABSTRACT WAY: ================
+    const { 
+        store, 
+        filteredArt, 
+        deletedArt,
+        visibleArt
+    } = useFilteredArtworksStore(dataType);
+
+    ---- then get the content of the store ---
+    await store.loadArtworks();
+    ==========================================
 */
 export function useFilteredArtworksStore(type) {
   const store = useArtworksStore(type);
@@ -366,6 +382,11 @@ export function createArtworksStore(type) {
     update: store.update,
 
     async loadArtworks(id, limit) {
+      // if no id is given, the id of player is used
+      if (!id) {
+        id = get(Profile).id;
+      }
+
       let loadedArt = [];
     
       try {
