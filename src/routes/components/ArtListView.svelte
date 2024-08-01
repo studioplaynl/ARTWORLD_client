@@ -40,6 +40,8 @@ let useraccount;
 let id = null;
 let CurrentUser;
 
+$: console.log('UIScene debug ARTLISTVIER filteredArt: ', $store);
+
 const { 
     store, 
     filteredArt, 

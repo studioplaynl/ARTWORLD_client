@@ -350,6 +350,10 @@ that filters the artworks if it is in the trash
 export function useFilteredArtworksStore(type) {
   const store = useArtworksStore(type);
   
+  // This derived store filters artworks based on their status
+  // OBJECT_STATE_REGULAR: Represents a normal, active artwork
+  // OBJECT_STATE_UNDEFINED: Represents an artwork with an unspecified status
+  // Both of these statuses indicate that the artwork should be included in the filtered list
   const filteredArt = derived(store, $store => 
       $store.filter(el => 
           el.value.status === OBJECT_STATE_REGULAR || 
@@ -363,14 +367,23 @@ export function useFilteredArtworksStore(type) {
       )
   );
 
-  // Add this new derived store
   const visibleArt = derived(store, $store =>
       $store.filter(el =>
           el.permission_read === 2 || el.permission_read === true
       )
   );
 
-  return { type, store, filteredArt, deletedArt, visibleArt };
+  const filteredAndVisibleArt = derived(
+    store,
+    $store =>
+      $store.filter(el => 
+        (el.value.status === OBJECT_STATE_REGULAR || 
+         el.value.status === OBJECT_STATE_UNDEFINED) &&
+        (el.permission_read === 2 || el.permission_read === true)
+      )
+  );
+
+  return { type, store, filteredArt, deletedArt, visibleArt, filteredAndVisibleArt };
 }
 
 // Stores one type of Artwork
@@ -392,6 +405,9 @@ export function createArtworksStore(type) {
       try {
         // Load objects from the server
         const loaded = await this.fetchObjects(type, id, limit);
+
+        // we sort the objects coming back from the server by update_time, so the most recent ones are on top
+        loaded.sort((a, b) => new Date(b.update_time) - new Date(a.update_time));
     
         // Update preview URLs
         const updatedLoaded = await this.updatePreviewUrls(loaded);
@@ -534,10 +550,17 @@ export function createArtworksStore(type) {
   };
 }
 
-// from ART stored a derived store that show paginated art
+// from ART store a derived store that show paginated art
 // for use in a gallery
 export function homeGalleryStore(type, isSelfHome = false) {
-  const store = isSelfHome ? useFilteredArtworksStore(type) : writable([]);
+  console.log('changed homeGalleryStore: ', type, isSelfHome);
+  let store;
+  if (isSelfHome) {
+    const { filteredAndVisibleArt } = useFilteredArtworksStore(type);
+    store = filteredAndVisibleArt;
+  } else {
+    store = writable([]);
+  }
 
   const defaultPageSize = 3;
   const homeGalleryPageSize = writable(defaultPageSize); 
@@ -570,15 +593,23 @@ export function homeGalleryStore(type, isSelfHome = false) {
 
       if (isSelfHome) {
         // If it's the user's own home, load artworks from the 'drawing' store
-        const drawingStore = useFilteredArtworksStore(type);
-        return get(drawingStore);
+        const { 
+          store, 
+        } = useFilteredArtworksStore(type);
+        const storeContent = await store.loadArtworks();
+        // const store = useFilteredArtworksStore(type);
         // return get(store);
+        return storeContent;
       }
+
       let loadedArt = [];
       try {
         // Load objects from the server
         const loaded = await this.fetchObjects(type, userId, limit);
     
+        // sort the objects coming from the server new
+        loaded.sort((a, b) => new Date(b.update_time) - new Date(a.update_time));
+
         // Update preview URLs
         const updatedLoaded = await this.updatePreviewUrls(loaded);
         loadedArt = [...updatedLoaded];

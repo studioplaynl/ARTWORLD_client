@@ -302,7 +302,7 @@ class ServerCall {
    *  then it sends the array to the function handleServerArray
    */
 
-  async downloadAndPlaceArtByType({ type, userId, serverObjectsHandler, artSize, artMargin }) {
+  async downloadAndPlaceArtByType({ type, userId, serverObjectsHandler, artSize, artMargin, selfHome }) {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
       let allFoundAnimals;
@@ -516,9 +516,9 @@ class ServerCall {
        *  is for downloading all the drawings from a user's home
        */
       const scene = ManageSession.currentScene;
-
+      
       // make a new drawingGallery store
-      const drawingGallery = homeGalleryStore('drawing');
+      const drawingGallery = homeGalleryStore('drawing', selfHome);
 
       // set the pageSize of the gallery
       drawingGallery.setHomeGalleryPageSize(scene.homeGallery_drawing_PageSize);
@@ -556,7 +556,7 @@ class ServerCall {
       const scene = ManageSession.currentScene;
 
       // make a new drawingGallery store
-      const stopmotiongGallery = homeGalleryStore('stopmotion');
+      const stopmotiongGallery = homeGalleryStore('stopmotion', selfHome);
 
       // set the pageSize of the gallery
       stopmotiongGallery.setHomeGalleryPageSize(scene.homeGallery_stopmotion_PageSize);

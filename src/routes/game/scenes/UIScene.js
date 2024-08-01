@@ -9,7 +9,14 @@ import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
-import { myHomeStore, HomeElements, homeElement_Selected, Liked, miniMapDimensions } from '../../../storage';
+import { myHomeStore, 
+  HomeElements, 
+  homeElement_Selected, 
+  Liked, 
+  miniMapDimensions, 
+  homeGalleryStore,
+  useFilteredArtworksStore 
+} from '../../../storage';
 import ServerCall from '../class/ServerCall';
 import { Profile, HomeEditBarExpanded } from '../../../session';
 import { MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
@@ -51,6 +58,7 @@ export default class UIScene extends Phaser.Scene {
     this.debugTextField = {};
     this.gameEditModeSignGraphic = {};
     this.worldSize = new Phaser.Math.Vector2(0, 0);
+    this.previousDrawingStore = [];
   }
 
   async create() {
@@ -154,6 +162,35 @@ export default class UIScene extends Phaser.Scene {
       this.game.events.emit('homeElement_Selected', value);
     });
 
+    const { 
+      store: drawingStore, 
+    } = useFilteredArtworksStore('drawing');
+
+    drawingStore.subscribe((value) => {
+      // Check if the value has actually changed
+      if (!this.previousDrawingStore || JSON.stringify(this.previousDrawingStore) !== JSON.stringify(value)) {
+        this.previousDrawingStore = JSON.parse(JSON.stringify(value));
+        
+        // Emit the event only if there's a change
+        this.game.events.emit('homeGallery_drawing_update');
+      } 
+    });
+    
+    const { 
+      store: stopMotionStore, 
+    } = useFilteredArtworksStore('stopmotion');
+
+    stopMotionStore.subscribe((value) => {
+      // Check if the value has actually changed
+      if (!this.stopMotionStore || JSON.stringify(this.previousDrawingStore) !== JSON.stringify(value)) {
+        this.stopMotionStore = JSON.parse(JSON.stringify(value));
+        
+        // Emit the event only if there's a change
+        this.game.events.emit('stopMotionStore_drawing_update');
+      }
+    });   
+
+    
     // Central Phaser Liked subscription
     // stored in ManageSession.lkedStore for central access
     Liked.subscribe((value) => {

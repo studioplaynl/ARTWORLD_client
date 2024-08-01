@@ -85,6 +85,7 @@
       removeFromTrash(row);
     } else {
       store.delete(row, role);
+      console.log('Delete store: ', store);
     }
   }
 

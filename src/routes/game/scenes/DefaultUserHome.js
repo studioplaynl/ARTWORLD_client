@@ -116,8 +116,8 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.homeElements_Flower_Group = this.add.group();
     
     //! Check if this is home of player
-    const selfHome = await ServerCall.checkIfHomeSelf(this.location);
-    console.log('selfHome defaultUserHome: ', selfHome);
+    this.selfHome = await ServerCall.checkIfHomeSelf(this.location);
+    console.log('selfHome defaultUserHome: ', this.selfHome);
 
     // console.log('userHome: await ServerCall.getHomeElements(this.location)');
     // this has to be before the subscription to the event that fires when homeElements_Store changes
@@ -152,6 +152,10 @@ export default class DefaultUserHome extends Phaser.Scene {
   async create() {
     // subscribe to event to show homeElements when the store changes
     this.homeElements_show_listener = this.game.events.on('homeElements_show', this.loadAndPlaceHomeElements, this);
+    this.homegallery_drawing_show_listener = this.game.events.on('homeGallery_drawing_update', 
+      this.loadAndPlace_drawing_Gallery, this);
+    this.homegallery_stopmotion_show_listener = this.game.events.on('homeGallery_stopmotion_update', 
+        this.loadAndPlace_stopmotion_Gallery, this);
 
     this.homeElements_show_listener = this.game.events
     .on('drawing_homeGallery_show', this.loadAndPlaceGalleries, this);
@@ -263,12 +267,24 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   async loadAndPlaceGalleries(){
+    this.loadAndPlace_drawing_Gallery();
+    this.loadAndPlace_stopmotion_Gallery();
+  }
+
+  async loadAndPlace_drawing_Gallery(){
     let type = 'downloadDrawingDefaultUserHome';
+    this.userHomeDrawingServerList = []; // make empty in case it is reloaded
     let serverObjectsHandler = this.userHomeDrawingServerList;
     const userId = this.location;
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
+    
+    // Destroy existing members of the group if any
+    if (this.homeDrawingGroup && this.homeDrawingGroup.children.length > 0) {
+      console.log('homeDrawingGroup: ', this.homeDrawingGroup);
+      this.homeDrawingGroup.clear(true, true);
+    }
     this.homeDrawingGroup = this.add.group();
 
     // initial values for the homeGallery
@@ -278,6 +294,15 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.homeGallery_drawing_ArtOnCurrentPage = {};
 
     const totalWidth = this.homeGallery_drawing_PageSize * (artSize + artMargin);
+
+    // Destroy existing children of the parent container if any
+    if (this.parentContainer_homeDrawingGroup) {
+      const children = this.parentContainer_homeDrawingGroup.getAll();
+      children.forEach(child => {
+        this.parentContainer_homeDrawingGroup.remove(child);
+        child.destroy();
+      });
+    }
     this.parentContainer_homeDrawingGroup = this.add.container(artMargin/2, artMargin/2)
     .setSize(totalWidth+(artMargin*2), artSize+(artMargin*4))
     .setName('ParentContainer');
@@ -370,21 +395,44 @@ export default class DefaultUserHome extends Phaser.Scene {
       serverObjectsHandler,
       artSize,
       artMargin,
+      selfHome: this.selfHome
     });
+  }
+
+  async loadAndPlace_stopmotion_Gallery(){
+    let type = 'downloadStopmotionDefaultUserHome';
+    this.userHomeStopmotionServerList = []; // make empty in case it is reloaded
+    let serverObjectsHandler = this.userHomeStopmotionServerList;
+    const userId = this.location;
+    const artSize = this.artDisplaySize;
+    const artMargin = artSize / 10;
+    this.artMargin = artMargin;
     
-    // ---------------------------------- STOPMOTION GALLERY ------------------------------- //
-    type = 'downloadStopmotionDefaultUserHome';
-    serverObjectsHandler = this.userHomeStopmotionServerList;
+
     
     // initial values for the homeGallery
     this.homeGallery_stopmotion_CurrentPage = 1;
     this.homeGallery_stopmotion_PageSize = 3;
     this.homeGallery_stopmotion_TotalPages = 1;
     this.homeGallery_stopmotion_ArtOnCurrentPage = {};
+
+    // Destroy existing members of the group if any
+    if (this.homeStopmotionGroup && this.homeDrawingGroup.children.length > 0) {
+      console.log('homeDrawingGroup: ', this.homeDrawingGroup);
+      this.homeStopmotionGroup.clear(true, true);
+    }
     this.homeStopmotionGroup = this.add.group();
 
-
     const totalWidth_stopmotion = this.homeGallery_stopmotion_PageSize * (artSize + artMargin);
+
+    // Destroy existing children of the parent container if any
+    if (this.parentContainer_homeStopmotionGroup) {
+      const children = this.parentContainer_homeStopmotionGroup.getAll();
+      children.forEach(child => {
+        this.parentContainer_homeStopmotionGroup.remove(child);
+        child.destroy();
+      });
+    }
     this.parentContainer_homeStopmotionGroup = this.add.container(artMargin/2, artMargin/2)
     .setSize(totalWidth_stopmotion+(artMargin*2), artSize+(artMargin*4))
     .setName('ParentContainer');
@@ -401,7 +449,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.parentContainer_homeStopmotionGroup.add(graphic2_stopmotion);
 
     // add button to ParentContainer
-    const backButton_stopmotion = this.add.image(totalWidth/2, 
+    const backButton_stopmotion = this.add.image(totalWidth_stopmotion/2, 
       artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
     .setVisible(true).setName('backButton');
 
@@ -432,7 +480,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
     this.parentContainer_homeStopmotionGroup.add(backButton_stopmotion);
 
-    const nextButton_stopmotion = this.add.image(totalWidth/2 + (artMargin*2),
+    const nextButton_stopmotion = this.add.image(totalWidth_stopmotion/2 + (artMargin*2),
       artSize + (artMargin*3) + 50, 'back_button')
     .setDepth(500)
     .setVisible(true)
@@ -484,8 +532,8 @@ export default class DefaultUserHome extends Phaser.Scene {
       serverObjectsHandler,
       artSize,
       artMargin,
+      selfHome: this.selfHome
     });
-    
   }
 
   updateGalleryButtonsVisibility(type) {
@@ -526,7 +574,8 @@ export default class DefaultUserHome extends Phaser.Scene {
       artMargin,
     });
 
-    console.log('updateGalleryButtonsVisibility _AGAIN: ', this.homeGallery_drawing_CurrentPage, this.homeGallery_drawing_TotalPages);
+    console.log('updateGalleryButtonsVisibility _AGAIN: ', 
+      this.homeGallery_drawing_CurrentPage, this.homeGallery_drawing_TotalPages);
 
     // this.updateGalleryButtonsVisibility('drawing');
 
