@@ -86,3 +86,5 @@ export const ShowItemsBar = writable(false);
 /** The Visibility of the ShowHomeEditBar */
 export const ShowHomeEditBar = writable(false);
 export const HomeEditBarExpanded = writable(false);
+
+export const homeIsOfSelf = writable(false);

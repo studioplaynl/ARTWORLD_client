@@ -133,11 +133,22 @@
 
 {#if artworkUrl}
   <div class="artwork-container">
-    <button class="artPreview" on:click="{handleOpenArtwork}" id="{artClickable ? 'clickable' : 'notClickable'}">
-      <div class="artPreview" style="--avatar-size: {previewSize}px;">
+    {#if artClickable}
+      <button 
+        class="artPreview clickable" 
+        on:click="{handleOpenArtwork}" 
+        style="--avatar-size: {previewSize}px;"
+      >
+        <img bind:this="{image}" src="{artworkUrl}" alt="artwork" />
+      </button>
+    {:else}
+      <div 
+        class="artPreview" 
+        style="--avatar-size: {previewSize}px;"
+      >
         <img bind:this="{image}" src="{artworkUrl}" alt="artwork" />
       </div>
-    </button>
+    {/if}
     {#if deleteIcon}
       <button bind:this={deleteButton} class="icon delete-button" on:click={handleDelete}>
         {#if deleteCheck}
@@ -163,15 +174,11 @@
     border: none;
     border-radius: 0;
   }
-  #clickable {
+  .clickable {
     cursor: pointer;
   }
-  #clickable:hover {
+  .clickable:hover {
     opacity: 0.75;
-  }
-  #notClickable {
-    padding: 0;
-    cursor: default;
   }
   .artPreview > img {
     height: var(--avatar-size);

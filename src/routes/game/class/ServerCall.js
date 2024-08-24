@@ -78,7 +78,7 @@ class ServerCall {
 
   async generateHomes(scene) {
     // check if server query is finished, then make the home from the list
-    if (scene.homes != null) {
+    if (scene.homes === null) return;
       // dlog('generate homes!');
       // dlog('scene.homes', scene.homes);
 
@@ -104,7 +104,7 @@ class ServerCall {
         dlog('usersWithAHome:');
         dlog(usersWithAHome);
       }
-    }
+    
   }
 
   async getHomeImages(url, element, index, homeImageKey, scene) {
@@ -512,42 +512,53 @@ class ServerCall {
           console.error('Error:', error);
         });
     } else if (type === 'downloadDrawingDefaultUserHome') {
-      /** type === 'downloadDrawingDefaultUserHome'
+
+      return new Promise( (resolve) => {
+        // Existing code...
+          /** type === 'downloadDrawingDefaultUserHome'
        *  is for downloading all the drawings from a user's home
        */
-      const scene = ManageSession.currentScene;
+          const scene = ManageSession.currentScene;
       
-      // make a new drawingGallery store
-      const drawingGallery = homeGalleryStore('drawing', selfHome);
-
-      // set the pageSize of the gallery
-      drawingGallery.setHomeGalleryPageSize(scene.homeGallery_drawing_PageSize);
-      // set the currrent page of the gallery
-      drawingGallery.setHomeGalleryCurrentPage(scene.homeGallery_drawing_CurrentPage);
-
-      await drawingGallery.loadArtworks(userId);
-  
-      // Get total pages
-      const totalPages = get(drawingGallery.homeGalleryTotalPages);
-      scene.homeGallery_drawing_TotalPages = totalPages;
+          // make a new drawingGallery store
+          const drawingGallery = homeGalleryStore('drawing', selfHome);
+    
+          // set the pageSize of the gallery
+          drawingGallery.setHomeGalleryPageSize(scene.homeGallery_drawing_PageSize);
+          // set the currrent page of the gallery
+          drawingGallery.setHomeGalleryCurrentPage(scene.homeGallery_drawing_CurrentPage);
+    
+          (async () => {
+              await drawingGallery.loadArtworks(userId);
       
-      console.log('Total pages:', totalPages);
-  
-      // Get current paginated artworks
-      const currentImages = get(drawingGallery.homeGalleryPaginatedArt);
-      scene.homeGallery_drawing_ArtOnCurrentPage = currentImages;
+          // Get total pages
+          const totalPages = get(drawingGallery.homeGalleryTotalPages);
+          scene.homeGallery_drawing_TotalPages = totalPages;
+          
+          console.log('Total pages:', totalPages);
+      
+          // Get current paginated artworks
+          const currentImages = get(drawingGallery.homeGalleryPaginatedArt);
+          scene.homeGallery_drawing_ArtOnCurrentPage = currentImages;
+    
+          console.log('Current paginated artworks:', currentImages);
+    
+          serverObjectsHandler.array = currentImages;
+           
+          // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
+          this.handleServerArray({
+            type,
+            serverObjectsHandler,
+            artSize,
+            artMargin,
+          });
 
-      console.log('Current paginated artworks:', currentImages);
-
-      serverObjectsHandler.array = currentImages;
-       
-      // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-      this.handleServerArray({
-        type,
-        serverObjectsHandler,
-        artSize,
-        artMargin,
+        // After all art is placed and processed
+        resolve();
+      })();
       });
+
+
       
     } else if (type === 'downloadStopmotionDefaultUserHome') {
       /** type === 'downloadStopmotionDefaultUserHome'

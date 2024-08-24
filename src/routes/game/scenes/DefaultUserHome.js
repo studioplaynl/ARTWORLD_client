@@ -31,7 +31,8 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
-import { HomeElements, homeElements_Store } from '../../../storage';
+import { HomeElements, homeElements_Store, homeElement_Selected } from '../../../storage';
+import { homeIsOfSelf } from '../../../session';
 
 import {
   SCENE_INFO,
@@ -108,8 +109,9 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   async preload() {
-    // this.loadAndPlaceArtworks();
-    
+    // set homeElement_Selected to empty so there is nothing selected when we enter a home
+    homeElement_Selected.set("");
+
     this.homeElements_Drawing_Group = this.add.group();
     this.homeElements_Stopmotion_Group = this.add.group();
     this.homeElements_Animal_Group = this.add.group();
@@ -118,6 +120,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     //! Check if this is home of player
     this.selfHome = await ServerCall.checkIfHomeSelf(this.location);
     console.log('selfHome defaultUserHome: ', this.selfHome);
+    /* set homeIsOfSelf to true if this is the home of the player
+      this is used to determine if the player can edit the homeElements
+      we reference it also in topbar to show icons of the avatar and the home
+    */
+    homeIsOfSelf.set(this.selfHome);
 
     // console.log('userHome: await ServerCall.getHomeElements(this.location)');
     // this has to be before the subscription to the event that fires when homeElements_Store changes
@@ -281,7 +288,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.artMargin = artMargin;
     
     // Destroy existing members of the group if any
-    if (this.homeDrawingGroup && this.homeDrawingGroup.children.length > 0) {
+    if (this.homeDrawingGroup && this.homeDrawingGroup.children && this.homeDrawingGroup.children.length > 0) {
       console.log('homeDrawingGroup: ', this.homeDrawingGroup);
       this.homeDrawingGroup.clear(true, true);
     }
@@ -318,8 +325,25 @@ export default class DefaultUserHome extends Phaser.Scene {
     graphic2.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*3)); 
     this.parentContainer_homeDrawingGroup.add(graphic2);
 
+    // ------ info page
+    // Add page information text
+    const pageInfoText = this.add.text(totalWidth/2 + 40, artSize + (artMargin*3) + 50, '', {
+      font: '24px Arial',
+      fill: '#000000'
+    }).setOrigin(0.5);
+    this.parentContainer_homeDrawingGroup.add(pageInfoText);
+
+    // Update page info text
+    const updatePageInfo = () => {
+      pageInfoText.setText(`${this.homeGallery_drawing_CurrentPage} / ${this.homeGallery_drawing_TotalPages}`);
+    };
+
+    // Call updatePageInfo initially and after loading artworks
+    updatePageInfo();
+    // -- end info page
+
     // add button to ParentContainer
-    const backButton = this.add.image(totalWidth/2, artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
+    const backButton = this.add.image(totalWidth/2 - 20, artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
     .setVisible(true).setName('backButton');
 
     backButton.displayWidth = 60;
@@ -343,13 +367,13 @@ export default class DefaultUserHome extends Phaser.Scene {
           this.parentContainer_homeDrawingGroup.remove(child);
           child.destroy(); // This will also destroy all of the container's children
       });
-
+        updatePageInfo();
         this.loadAndPlaceGalleries_Again();
       }
     });
     this.parentContainer_homeDrawingGroup.add(backButton);
 
-    const nextButton = this.add.image(totalWidth/2 + (artMargin*2) , artSize + (artMargin * 3) + 50, 'back_button')
+    const nextButton = this.add.image(totalWidth/2 + (artMargin*2), artSize + (artMargin * 3) + 50, 'back_button')
     .setDepth(500)
     .setVisible(true).setName('nextButton');
 
@@ -381,6 +405,7 @@ export default class DefaultUserHome extends Phaser.Scene {
           child.destroy(); // This will also destroy all of the container's children
         });
         this.loadAndPlaceGalleries_Again();
+        updatePageInfo();
       }
     });
 
@@ -395,7 +420,10 @@ export default class DefaultUserHome extends Phaser.Scene {
       serverObjectsHandler,
       artSize,
       artMargin,
-      selfHome: this.selfHome
+      selfHome: this.selfHome,
+      onComplete: () => {
+        updatePageInfo(); // Update page info after artworks are loaded
+      }
     });
   }
 
@@ -417,9 +445,10 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.homeGallery_stopmotion_ArtOnCurrentPage = {};
 
     // Destroy existing members of the group if any
-    if (this.homeStopmotionGroup && this.homeDrawingGroup.children.length > 0) {
-      console.log('homeDrawingGroup: ', this.homeDrawingGroup);
+    if (this.homeStopmotionGroup && this.homeDrawingGroup.children && this.homeDrawingGroup.children.length > 0) {
       this.homeStopmotionGroup.clear(true, true);
+      console.log('homeDrawingGroup: ', this.homeDrawingGroup);
+      this.homeDrawingGroup = null;
     }
     this.homeStopmotionGroup = this.add.group();
 

@@ -14,7 +14,6 @@ import { myHomeStore,
   homeElement_Selected, 
   Liked, 
   miniMapDimensions, 
-  homeGalleryStore,
   useFilteredArtworksStore 
 } from '../../../storage';
 import ServerCall from '../class/ServerCall';

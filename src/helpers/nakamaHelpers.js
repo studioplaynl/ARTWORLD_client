@@ -668,7 +668,6 @@ export async function deleteObjectAdmin(id, type, name) {
 // path = "drawing/5264dc23-a339-40db-bb84-e0849ded4e68/blauwslang.jpeg"
 // width = "64"
 // format = "png"
-
 export async function convertImage(path, height, width, format) {
   const session = get(Session);
 

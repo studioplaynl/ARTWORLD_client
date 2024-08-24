@@ -1,5 +1,5 @@
 <script>
-  import { pop } from 'svelte-spa-router';
+  import { pop, push } from 'svelte-spa-router';
   import { onMount } from 'svelte';
   import {
     PlayerHistory,
@@ -10,8 +10,11 @@
   } from '../game/playerState';
   import { miniMapDimensions } from '../../storage';
   import { DEFAULT_SCENE, SCENE_INFO, MINIMAP_MARGIN } from '../../constants';
-  import { getFullAccount } from '../../helpers/nakamaHelpers';
+  import { getAvatar, getAccount, getObject, convertImage, addFriend } from '../../helpers/nakamaHelpers';
   import { findParentScenes } from '../game/helpers/UrlHelpers';
+  import { homeIsOfSelf } from '../../session';
+  import ArtworkLoader from './ArtworkLoader.svelte';
+
   // import { dlog } from '../game/helpers/debugLog';
 
   let currentLocation = '';
@@ -57,8 +60,8 @@
           */
             try {
               console.log('currentLocation we have to fetch the user info to find the parent scene of the house');
-              userInfo = await getFullAccount(currentLocation.house);
-              console.log('currentLocation userInfo', userInfo);
+              userInfo = await getAccount(currentLocation.house);
+              console.log('info userInfo', userInfo);
               parentScenes.push(userInfo.meta.Azc);
               // console.log('userInfo.meta.Azc parentScenes', parentScenes);
 
@@ -73,6 +76,19 @@
               console.log('currentLocation parentScenes', parentScenes);
 
               currentLocation = {scene: 'DefaultUserHome', house: value.house};
+              if (userInfo.url) {
+                // avatarUrl = await getAvatar(userInfo.avatar_url);
+                avatarUrl = userInfo.url;
+                console.log('info Avatar URL:', avatarUrl);
+              }
+
+             const userHouseObject = await getObject(
+            'home',
+            userInfo.meta.Azc,
+            userInfo.id,);
+          // dlog('userHouseObject', userHouseObject);
+          // dlog('$SelectedOnlinePlayer', $SelectedOnlinePlayer);
+          homeImageUrl = await convertImage(userHouseObject.value.url, '50', '50');
             } catch (error) {
               console.error('Error fetching user info:', error);
               currentLocation = {house: value.house};
@@ -189,18 +205,30 @@
   {#if currentLocation.scene !== DEFAULT_SCENE}
     {#if currentLocation.scene === 'DefaultUserHome'}
       <div class="pill-container">
-        <img
-          class="pill-button-icon"
-          src={homeImageUrl || 'assets/SHB/svg/AW-icon-logo-A.svg'}
-          alt="House"
-        />
-        <img
-          class="pill-button-icon avatar"
-          src={avatarUrl || 'assets/SHB/svg/AW-icon-logo-A.svg'}
-          alt="Avatar"
-        />
+        {#if homeImageUrl}
+        <div class="avatar-wrapper">
+          <div class="avatar-container">
+            <img
+              class="pill-button-icon"
+              src={homeImageUrl}
+              alt="House"
+            />
+          </div>
+        </div>
+        {/if}
+        {#if avatarUrl}
+        <div class="avatar-wrapper">
+          <div class="avatar-container">
+            <ArtworkLoader
+              row={{ img: avatarUrl }}
+              artClickable={false}
+              previewSize={24}
+            />
+          </div>
+        </div>
+      {/if}
         {#if userInfo}
-          <span class="pill-button-text">{userInfo.display_name || userInfo.name}</span>
+          <span class="pill-button-text">{userInfo.display_name || userInfo.username}</span>
         {/if}
       </div>
     {:else}
@@ -209,6 +237,17 @@
       </div>
     {/if}
   {/if}
+  <button
+          on:click="{() => {
+            
+          }}"
+        >
+        <img
+          alt="Add friend"
+          class="icon"
+          src="assets/SHB/svg/AW-icon-addressbook-vert-2.svg"
+        />
+      </button>
 </div>
 
 <div class="topbar-second" style="{zoomButtonsStyle}">
@@ -292,9 +331,29 @@
     margin-left: 6px;
   }
 
-  .pill-button-icon.avatar {
-    margin-left: 4px;
+  .avatar-wrapper {
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+    background-color: white;
     border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .avatar-container {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .pill-container {
+    /* ... existing styles ... */
+    padding: 0.25em 1em;
+    display: flex;
+    align-items: center;
   }
 
   .pill-button {
