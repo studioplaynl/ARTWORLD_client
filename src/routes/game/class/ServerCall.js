@@ -302,7 +302,7 @@ class ServerCall {
    *  then it sends the array to the function handleServerArray
    */
 
-  async downloadAndPlaceArtByType({ type, userId, serverObjectsHandler, artSize, artMargin, selfHome }) {
+  async downloadAndPlaceArtByType({ type, serverObjectsHandler, artSize, artMargin }) {
     // const scene = ManageSession.currentScene;
     if (type === 'dier') {
       let allFoundAnimals;
@@ -511,51 +511,7 @@ class ServerCall {
         .catch((error) => {
           console.error('Error:', error);
         });
-    } else if (type === 'downloadDrawingDefaultUserHome') {
-
-        // Existing code...
-          /** type === 'downloadDrawingDefaultUserHome'
-       *  is for downloading all the drawings from a user's home
-       */
-          const scene = ManageSession.currentScene;
-      
-          // make a new drawingGallery store
-          // const drawingGallery = homeGalleryStore('drawing', selfHome);
-    
-          // set the pageSize of the gallery
-          // drawingGallery.setHomeGalleryPageSize(scene.homeGallery_drawing_PageSize);
-          // set the currrent page of the gallery
-          // drawingGallery.setHomeGalleryCurrentPage(scene.homeGallery_drawing_CurrentPage);
-    
-          // (async () => {
-          //     await drawingGallery.loadArtworks(userId);
-      
-          // // Get total pages
-          // const totalPages = get(drawingGallery.homeGalleryTotalPages);
-          // scene.homeGallery_drawing_TotalPages = totalPages;
-          
-          // console.log('Total pages:', totalPages);
-      
-          // // Get current paginated artworks
-          // const currentImages = get(drawingGallery.homeGalleryPaginatedArt);
-          // scene.homeGallery_drawing_ArtOnCurrentPage = currentImages;
-    
-          // console.log('Current paginated artworks:', currentImages);
-    
-          // serverObjectsHandler.array = currentImages;
-           
-          // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-          this.handleServerArray({
-            type,
-            serverObjectsHandler,
-            artSize,
-            artMargin,
-          });
-
-
-        // })();
-
-      
+  
     } else if (type === 'downloadStopmotionDefaultUserHome') {
       /** type === 'downloadStopmotionDefaultUserHome'
        *  is for downloading all the stopmotions from a user's home
@@ -1453,10 +1409,10 @@ class ServerCall {
         element.downloaded = true;
         ServerCall.createDrawing_Container(element, index, artSize, artMargin);
 
-        const startLength = scene.userHomeDrawingServerList.startLength;
-        let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
+        const startLength = scene.drawing_ServerList.startLength;
+        let downloadCompleted = scene.drawing_ServerList.itemsDownloadCompleted;
         downloadCompleted += 1;
-        scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
+        scene.drawing_ServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('load DRAWING COMPLETE');
@@ -1466,10 +1422,10 @@ class ServerCall {
         element.downloaded = true;
         ServerCall.createStopmotion_Container(element, index, artSize, artMargin);
 
-        const startLength = scene.userHomeStopmotionServerList.startLength;
-        let downloadCompleted = scene.userHomeStopmotionServerList.itemsDownloadCompleted;
+        const startLength = scene.stopmotion_ServerList.startLength;
+        let downloadCompleted = scene.stopmotion_ServerList.itemsDownloadCompleted;
         downloadCompleted += 1;
-        scene.userHomeStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
+        scene.stopmotion_ServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('load downloadStopmotionDefaultUserHome COMPLETE');
@@ -1549,10 +1505,10 @@ class ServerCall {
        * the on.('loaderror') event does report which file failed
        *   */
       scene.load.on('complete', () => {
-        const startLength = scene.userHomeDrawingServerList.startLength;
-        let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
+        const startLength = scene.drawing_ServerList.startLength;
+        let downloadCompleted = scene.drawing_ServerList.itemsDownloadCompleted;
         downloadCompleted += 1;
-        scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
+        scene.drawing_ServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('download downloadDrawingDefaultUserHome COMPLETE');
@@ -1590,11 +1546,11 @@ class ServerCall {
       // this is fired each time a file is finished downloading (or failing)
       scene.load.on('complete', () => {
         // dlog('loader STOPMOTION is complete');
-        const startLength = scene.userHomeStopmotionServerList.startLength;
-        let downloadCompleted = scene.userHomeStopmotionServerList.itemsDownloadCompleted;
+        const startLength = scene.stopmotion_ServerList.startLength;
+        let downloadCompleted = scene.stopmotion_ServerList.itemsDownloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);
         downloadCompleted += 1;
-        scene.userHomeStopmotionServerList.itemsDownloadCompleted = downloadCompleted;
+        scene.stopmotion_ServerList.itemsDownloadCompleted = downloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted after, startLength', downloadCompleted, startLength);
         if (downloadCompleted === startLength) {
           dlog('download STOPMOTION COMPLETE');
@@ -1782,10 +1738,10 @@ class ServerCall {
        * the on.('loaderror') event does report which file failed
        *   */
       // scene.load.on('complete', () => {
-      //   const startLength = scene.userHomeDrawingServerList.startLength;
-      //   let downloadCompleted = scene.userHomeDrawingServerList.itemsDownloadCompleted;
+      //   const startLength = scene.drawing_ServerList.startLength;
+      //   let downloadCompleted = scene.drawing_ServerList.itemsDownloadCompleted;
       //   downloadCompleted += 1;
-      //   scene.userHomeDrawingServerList.itemsDownloadCompleted = downloadCompleted;
+      //   scene.drawing_ServerList.itemsDownloadCompleted = downloadCompleted;
       //   // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
 
       //   // if multiple homeElements have the same key, the second one will not be loaded
@@ -2292,9 +2248,9 @@ static repositionContainers(type) {
       case 'downloadDrawingDefaultUserHome':
         dlog('offending drawing loading failed, removing from array', imageKey);
 
-        // delete from scene.userHomeDrawingServerList
+        // delete from scene.drawing_ServerList
 
-        scene.userHomeDrawingServerList.array = scene.userHomeDrawingServerList.array.filter(
+        scene.drawing_ServerList.array = scene.drawing_ServerList.array.filter(
           (obj) => obj.value.url !== imageKey
         );
 
@@ -2309,10 +2265,10 @@ static repositionContainers(type) {
       case 'downloadStopmotionDefaultUserHome':
         dlog('offending stopmotion loading failed, removing from array');
         // eslint-disable-next-line no-case-declarations
-        const userHomeStopmotionServerList = scene.userHomeStopmotionServerList;
-        // delete from scene.userHomeStopmotionServerList
+        const stopmotion_ServerList = scene.stopmotion_ServerList;
+        // delete from scene.stopmotion_ServerList
 
-        userHomeStopmotionServerList.array = userHomeStopmotionServerList.array.filter(
+        stopmotion_ServerList.array = stopmotion_ServerList.array.filter(
           (obj) => obj.value.url !== imageKey);
 
         // delete from ManageSession.resolveErrorObjectArray
@@ -2326,7 +2282,7 @@ static repositionContainers(type) {
         // eslint-disable-next-line no-case-declarations
         const userServerList = scene.animalArray;
 
-        // delete from scene.userHomeStopmotionServerList
+        // delete from scene.stopmotion_ServerList
         userServerList.array = userServerList.array.filter((obj) => obj.value.url !== imageKey);
 
         // delete from ManageSession.resolveErrorObjectArray
@@ -2347,7 +2303,7 @@ static repositionContainers(type) {
         dlog(`remove ${imageKey} from flowerKeyArray`);
         flowerKeyArray = scene.flowerKeyArray;
 
-        // delete from scene.userHomeStopmotionServerList
+        // delete from scene.stopmotion_ServerList
         flowerKeyArray.array = flowerKeyArray.array.filter((obj) => obj.value.url !== imageKey);
 
         ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(

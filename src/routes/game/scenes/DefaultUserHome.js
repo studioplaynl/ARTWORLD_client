@@ -35,8 +35,6 @@ import {
   HomeElements, 
   homeElements_Store, 
   homeElement_Selected, 
-  homeGalleryStore,
-  useFilteredArtworksStore,
   My_drawing_GalleryStore,
   My_stopmotion_GalleryStore,
   Other_drawing_GalleryStore,
@@ -86,7 +84,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.homesGenerate = false;
 
     this.userHomeStopmotionServerList = {};
-    this.userHomeDrawingServerList = {};
+    this.userHomedrawing_ServerList = {};
     this.drawingGroup = null;
     this.stopmotionGroup = null;
 
@@ -114,15 +112,25 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.playerShadowOffset = -8;
 
     this.unsubscribe_HomeElements = null;
+
     this.unsubscribe_drawing_GalleryStore = null;
     this.drawing_Store = null;
-    this.drawingServerList = {};
+    // ServerCall add some data to the drawing_ServerList (success of download).
+    // The images we want to load we put in .array of drawing_ServerList
+    this.drawing_ServerList = {};
     this.previousDrawingStore = null;
     this.homeGallery_drawing_PageSize = 3;
     this.homeGallery_drawing_CurrentPage = 1;
     this.homeGallery_drawing_TotalPages = 1;
-    this.homeGallery_drawing_ArtOnCurrentPage = {};
 
+    this.stopmotion_Store = null;
+    // ServerCall add some data to the drawing_ServerList (success of download).
+    // The images we want to load we put in .array of drawing_ServerList
+    this.stopmotion_ServerList = {};
+    this.previousStopmotionStore = null;
+    this.homeGallery_stopmotion_PageSize = 3;
+    this.homeGallery_stopmotion_CurrentPage = 1;
+    this.homeGallery_stopmotion_TotalPages = 1;
     this.unsubscribe_stopmotion_GalleryStore = null;
     this.previousStopMotionStore = null;
   }
@@ -152,7 +160,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     //for some reason this has to happen in preload, in create this.selfHome is undefined
     if (this.selfHome) {
       // for the drawing gallery 
-      this.initializeDrawingStore(My_drawing_GalleryStore);
+      this.initialize_Gallery_Store(My_drawing_GalleryStore, 'drawing');
 
       // for the stopmotion gallery
       this.stopmotion_Store = My_stopmotion_GalleryStore;
@@ -171,8 +179,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         }
       });   
     } else {
-      this.initializeDrawingStore(Other_drawing_GalleryStore);
-
+      this.initialize_Gallery_Store(Other_drawing_GalleryStore, 'drawing');
 
       this.stopmotion_Store = Other_stopmotion_GalleryStore;
       this.unsubscribe_stopmotion_GalleryStore = this.stopmotion_Store.subscribe((value) => {
@@ -226,7 +233,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     // get homeElements from server
     await HomeElements.getFromServer(this.location);
 
-    
     this.unsubscribe_HomeElements = HomeElements.subscribe((value) => {
       if (value === undefined) return;
 
@@ -308,35 +314,45 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
   }
 
-  async initializeDrawingStore(store) {
-    this.drawing_Store = store;
+  async update_Gallery_Store(store){
+    // 3. set the right pageSize on the store
     store.setHomeGalleryPageSize(this.homeGallery_drawing_PageSize);
+
+    // 4. set the current page of the gallery, on the store
     store.setHomeGalleryCurrentPage(this.homeGallery_drawing_CurrentPage);
     
-    await store.loadArtworks(this.location);
+    // 5. get the total pages of the gallery, from the store
     this.homeGallery_drawing_TotalPages = get(store.homeGalleryTotalPages);
 
-    this.homeGallery_drawing_ArtOnCurrentPage = get(store.homeGalleryPaginatedArt);
-    this.drawingServerList.array = get(store.homeGalleryPaginatedArt);
+    // Get the images we want to displlay
+    // The .array is the page we want to load
+    // ServerCall add some data to the drawing_ServerList (success of download).
+    this.drawing_ServerList.array = get(store.homeGalleryPaginatedArt);
+  }
 
-    //subscribe to the drawing gallery store
-    this.unsubscribe_drawing_GalleryStore = this.drawing_Store.subscribe((value) => {
-      // Check if the value has actually changed
-      if (!this.previousDrawingStore || JSON.stringify(this.previousDrawingStore) !== JSON.stringify(value)) {
-        this.previousDrawingStore = JSON.parse(JSON.stringify(value));
-        
-        // what to do when the drawing gallery is updated
-        //! here we set the same things as above
-        //! so do it in a function
-        this.homeGallery_drawing_TotalPages = get(store.homeGalleryTotalPages);
-        this.homeGallery_drawing_ArtOnCurrentPage = get(store.homeGalleryPaginatedArt);
-        this.drawingServerList.array = get(store.homeGalleryPaginatedArt);
-        // this.userHomeDrawingServerList = [];
-        this.loadAndPlace_drawing_Gallery();
+  async initialize_Gallery_Store(store, type) {
+    if (type === 'drawing') {
+      // 1. set the right Store
+      this.drawing_Store = store;
 
-        console.log('homeGallery_drawing_update');
-      } 
-    });
+      // 2. load the artworks from the server on the store
+      await store.loadArtworks(this.location);
+
+      this.update_Gallery_Store(store);
+      //subscribe to the drawing gallery store
+      this.unsubscribe_drawing_GalleryStore = this.drawing_Store.subscribe((value) => {
+        // Check if the value has actually changed
+        if (!this.previousDrawingStore || JSON.stringify(this.previousDrawingStore) !== JSON.stringify(value)) {
+          this.previousDrawingStore = JSON.parse(JSON.stringify(value));
+
+          this.update_Gallery_Store(store);
+
+          this.loadAndPlace_drawing_Gallery();
+
+          console.log('homeGallery_drawing_update');
+        } 
+      });
+    }
   }
 
   async loadAndPlaceGalleries(){
@@ -346,7 +362,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async loadAndPlace_drawing_Gallery(){
     let type = 'downloadDrawingDefaultUserHome';
-    let serverObjectsHandler = this.drawingServerList;
+    let serverObjectsHandler = this.drawing_ServerList;
     serverObjectsHandler.array = get(My_drawing_GalleryStore.homeGalleryPaginatedArt);
     const userId = this.location;
     const artSize = this.artDisplaySize;
@@ -438,7 +454,8 @@ export default class DefaultUserHome extends Phaser.Scene {
           child.destroy(); // This will also destroy all of the container's children
       });
         updatePageInfo();
-        this.loadAndPlaceGalleries_Again();
+        this.update_Gallery_Store(this.drawing_Store);
+        this.loadAndPlace_drawing_Gallery();
       }
     });
     this.parentContainer_homeDrawingGroup.add(backButton);
@@ -475,25 +492,23 @@ export default class DefaultUserHome extends Phaser.Scene {
           child.destroy(); // This will also destroy all of the container's children
         });
         updatePageInfo();
-        this.loadAndPlaceGalleries_Again();
+        this.update_Gallery_Store(this.drawing_Store);
+        this.loadAndPlace_drawing_Gallery();
       }
     });
 
     this.parentContainer_homeDrawingGroup.add(nextButton);
-    // this.updateGalleryButtonsVisibility('drawing');
 
     updatePageInfo();
 
     this.homeDrawingGroup.add(this.parentContainer_homeDrawingGroup);
 
-    ServerCall.downloadAndPlaceArtByType({
+    ServerCall.handleServerArray({
       type,
       userId,
       serverObjectsHandler,
       artSize,
       artMargin,
-      selfHome: this.selfHome,
-     
     });
   }
 
@@ -657,29 +672,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async loadAndPlaceGalleries_Again(){
 
-    this.drawing_Store.setHomeGalleryCurrentPage(this.homeGallery_drawing_CurrentPage);
-    this.homeGallery_drawing_ArtOnCurrentPage = get(this.drawing_Store.homeGalleryPaginatedArt);
-    let type = 'downloadDrawingDefaultUserHome';
-    let serverObjectsHandler = this.drawingServerList;
-    serverObjectsHandler.array = this.homeGallery_drawing_ArtOnCurrentPage;
-    const userId = this.location;
-    const artSize = this.artDisplaySize;
-    const artMargin = artSize / 10;
-    this.artMargin = artMargin;
-
-    // // initial values are set in loadAndPlaceGalleries
-    console.log('userHome: loadAndPlaceGalleries');
-    ServerCall.downloadAndPlaceArtByType({
-      type,
-      userId,
-      serverObjectsHandler,
-      artSize,
-      artMargin,
-    });
-
-    console.log('updateGalleryButtonsVisibility _AGAIN: ', 
-      this.homeGallery_drawing_CurrentPage, this.homeGallery_drawing_TotalPages);
-
+    
     // this.updateGalleryButtonsVisibility('drawing');
 
     //  type = 'downloadStopmotionDefaultUserHome';
