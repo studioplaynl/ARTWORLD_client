@@ -31,7 +31,17 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
-import { HomeElements, homeElements_Store, homeElement_Selected } from '../../../storage';
+import { 
+  HomeElements, 
+  homeElements_Store, 
+  homeElement_Selected, 
+  homeGalleryStore,
+  useFilteredArtworksStore,
+  My_drawing_GalleryStore,
+  My_stopmotion_GalleryStore,
+  Other_drawing_GalleryStore,
+  Other_stopmotion_GalleryStore,
+ } from '../../../storage';
 import { homeIsOfSelf } from '../../../session';
 
 import {
@@ -102,6 +112,19 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     // shadow
     this.playerShadowOffset = -8;
+
+    this.unsubscribe_HomeElements = null;
+    this.unsubscribe_drawing_GalleryStore = null;
+    this.drawing_Store = null;
+    this.drawingServerList = {};
+    this.previousDrawingStore = null;
+    this.homeGallery_drawing_PageSize = 3;
+    this.homeGallery_drawing_CurrentPage = 1;
+    this.homeGallery_drawing_TotalPages = 1;
+    this.homeGallery_drawing_ArtOnCurrentPage = {};
+
+    this.unsubscribe_stopmotion_GalleryStore = null;
+    this.previousStopMotionStore = null;
   }
 
   init(data) {
@@ -109,7 +132,7 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   async preload() {
-    // set homeElement_Selected to empty so there is nothing selected when we enter a home
+    // set homeElement_Selected store to empty so there is nothing selected when we enter a home
     homeElement_Selected.set("");
 
     this.homeElements_Drawing_Group = this.add.group();
@@ -125,6 +148,46 @@ export default class DefaultUserHome extends Phaser.Scene {
       we reference it also in topbar to show icons of the avatar and the home
     */
     homeIsOfSelf.set(this.selfHome);
+
+    //for some reason this has to happen in preload, in create this.selfHome is undefined
+    if (this.selfHome) {
+      // for the drawing gallery 
+      this.initializeDrawingStore(My_drawing_GalleryStore);
+
+      // for the stopmotion gallery
+      this.stopmotion_Store = My_stopmotion_GalleryStore;
+
+      this.unsubscribe_stopmotion_GalleryStore = this.stopmotion_Store.subscribe((value) => {
+        // Check if the value has actually changed
+        if (!this.previousStopMotionStore || JSON.stringify(this.previousStopMotionStore) !== JSON.stringify(value)) {
+          this.previousStopMotionStore = JSON.parse(JSON.stringify(value));
+          
+          // what to do when the stopmotion gallery is updated
+          //! here we need to set some things
+          //! but we do it in a function
+          this.loadAndPlace_stopmotion_Gallery();
+          console.log('homeGallery_stopmotion_update');
+
+        }
+      });   
+    } else {
+      this.initializeDrawingStore(Other_drawing_GalleryStore);
+
+
+      this.stopmotion_Store = Other_stopmotion_GalleryStore;
+      this.unsubscribe_stopmotion_GalleryStore = this.stopmotion_Store.subscribe((value) => {
+        // Check if the value has actually changed
+        if (!this.previousStopMotionStore || JSON.stringify(this.previousStopMotionStore) !== JSON.stringify(value)) {
+          this.previousStopMotionStore = JSON.parse(JSON.stringify(value));
+          
+          // what to do when the stopmotion gallery is updated
+          //! here we need to set some things
+          //! but we do it in a function
+          this.loadAndPlace_stopmotion_Gallery();
+          console.log('homeGallery_stopmotion_update');
+        }
+      });   
+    }
 
     // console.log('userHome: await ServerCall.getHomeElements(this.location)');
     // this has to be before the subscription to the event that fires when homeElements_Store changes
@@ -157,17 +220,19 @@ export default class DefaultUserHome extends Phaser.Scene {
   } // end preload
   
   async create() {
-    // subscribe to event to show homeElements when the store changes
-    this.homeElements_show_listener = this.game.events.on('homeElements_show', this.loadAndPlaceHomeElements, this);
-    this.homegallery_drawing_show_listener = this.game.events.on('homeGallery_drawing_update', 
-      this.loadAndPlace_drawing_Gallery, this);
-    this.homegallery_stopmotion_show_listener = this.game.events.on('homeGallery_stopmotion_update', 
-        this.loadAndPlace_stopmotion_Gallery, this);
+    // Listen for the shutdown event, this works!
+    this.events.on('shutdown', this.onShutdown, this);
 
-    this.homeElements_show_listener = this.game.events
-    .on('drawing_homeGallery_show', this.loadAndPlaceGalleries, this);
-
+    // get homeElements from server
     await HomeElements.getFromServer(this.location);
+
+    
+    this.unsubscribe_HomeElements = HomeElements.subscribe((value) => {
+      if (value === undefined) return;
+
+      dlog('UIScene reactivity HomeElements', value);
+      this.loadAndPlaceHomeElements();
+    });
 
     // show physics debug boundaries in gameEditMode
     if (ManageSession.gameEditMode) {
@@ -224,36 +289,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.loadAndPlaceHomeElements();
   } // end create
 
-  async loadAndPlaceArtworks() {
-    let type = 'downloadDrawingDefaultUserHome';
-    let serverObjectsHandler = this.userHomeDrawingServerList;
-    const userId = this.location;
-    const artSize = this.artDisplaySize;
-    const artMargin = artSize / 10;
-    this.artMargin = artMargin;
-    this.homeDrawingGroup = this.add.group();
-
-    ServerCall.downloadAndPlaceArtByType({
-      type,
-      userId,
-      serverObjectsHandler,
-      artSize,
-      artMargin,
-    });
-
-    type = 'downloadStopmotionDefaultUserHome';
-    // this.userHomeStopmotionServerList = [];
-    serverObjectsHandler = this.userHomeStopmotionServerList;
-    this.homeStopmotionGroup = this.add.group();
-    ServerCall.downloadAndPlaceArtByType({
-      type,
-      userId,
-      serverObjectsHandler,
-      artSize,
-      artMargin,
-    });
-  }
-
   async loadAndPlaceHomeElements(){
     console.log('userHome: loadAndPlaceHomeElements');
     
@@ -273,15 +308,46 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
   }
 
+  async initializeDrawingStore(store) {
+    this.drawing_Store = store;
+    store.setHomeGalleryPageSize(this.homeGallery_drawing_PageSize);
+    store.setHomeGalleryCurrentPage(this.homeGallery_drawing_CurrentPage);
+    
+    await store.loadArtworks(this.location);
+    this.homeGallery_drawing_TotalPages = get(store.homeGalleryTotalPages);
+
+    this.homeGallery_drawing_ArtOnCurrentPage = get(store.homeGalleryPaginatedArt);
+    this.drawingServerList.array = get(store.homeGalleryPaginatedArt);
+
+    //subscribe to the drawing gallery store
+    this.unsubscribe_drawing_GalleryStore = this.drawing_Store.subscribe((value) => {
+      // Check if the value has actually changed
+      if (!this.previousDrawingStore || JSON.stringify(this.previousDrawingStore) !== JSON.stringify(value)) {
+        this.previousDrawingStore = JSON.parse(JSON.stringify(value));
+        
+        // what to do when the drawing gallery is updated
+        //! here we set the same things as above
+        //! so do it in a function
+        this.homeGallery_drawing_TotalPages = get(store.homeGalleryTotalPages);
+        this.homeGallery_drawing_ArtOnCurrentPage = get(store.homeGalleryPaginatedArt);
+        this.drawingServerList.array = get(store.homeGalleryPaginatedArt);
+        // this.userHomeDrawingServerList = [];
+        this.loadAndPlace_drawing_Gallery();
+
+        console.log('homeGallery_drawing_update');
+      } 
+    });
+  }
+
   async loadAndPlaceGalleries(){
     this.loadAndPlace_drawing_Gallery();
-    this.loadAndPlace_stopmotion_Gallery();
+    // this.loadAndPlace_stopmotion_Gallery();
   }
 
   async loadAndPlace_drawing_Gallery(){
     let type = 'downloadDrawingDefaultUserHome';
-    this.userHomeDrawingServerList = []; // make empty in case it is reloaded
-    let serverObjectsHandler = this.userHomeDrawingServerList;
+    let serverObjectsHandler = this.drawingServerList;
+    serverObjectsHandler.array = get(My_drawing_GalleryStore.homeGalleryPaginatedArt);
     const userId = this.location;
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
@@ -293,12 +359,6 @@ export default class DefaultUserHome extends Phaser.Scene {
       this.homeDrawingGroup.clear(true, true);
     }
     this.homeDrawingGroup = this.add.group();
-
-    // initial values for the homeGallery
-    this.homeGallery_drawing_CurrentPage = 1;
-    this.homeGallery_drawing_TotalPages = 1;
-    this.homeGallery_drawing_PageSize = 3;
-    this.homeGallery_drawing_ArtOnCurrentPage = {};
 
     const totalWidth = this.homeGallery_drawing_PageSize * (artSize + artMargin);
 
@@ -336,26 +396,36 @@ export default class DefaultUserHome extends Phaser.Scene {
     // Update page info text
     const updatePageInfo = () => {
       pageInfoText.setText(`${this.homeGallery_drawing_CurrentPage} / ${this.homeGallery_drawing_TotalPages}`);
-    };
 
-    // Call updatePageInfo initially and after loading artworks
-    updatePageInfo();
+      if (!backButton) return;
+      //set the back button to be visible if the current page is greater than 1
+      if (this.homeGallery_drawing_CurrentPage > 1) {
+        backButton.setVisible(true);
+      } else {
+        backButton.setVisible(false);
+      }
+      //set the next button to be visible if the current page is less than the total pages
+      if (this.homeGallery_drawing_CurrentPage < this.homeGallery_drawing_TotalPages) {
+        nextButton.setVisible(true);
+      } else {
+        nextButton.setVisible(false);
+      }
+    };
     // -- end info page
 
     // add button to ParentContainer
-    const backButton = this.add.image(totalWidth/2 - 20, artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
+    const backButton = this.add.image(totalWidth/2 - 80, 
+    artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
     .setVisible(true).setName('backButton');
 
-    backButton.displayWidth = 60;
-    backButton.displayHeight = 60;
+    backButton.displayWidth = 80;
+    backButton.displayHeight = 80;
     // make button interactive
     backButton.setInteractive();
     // add event listener to button
     backButton.on('pointerup', () => {
-      const currentPage = this.homeGallery_drawing_CurrentPage;
-      const totalPages = this.homeGallery_drawing_TotalPages;
-      
-      if (currentPage > 1 && currentPage <= totalPages) {
+      if (this.homeGallery_drawing_CurrentPage > 1 
+        && this.homeGallery_drawing_CurrentPage <= this.homeGallery_drawing_TotalPages) {
         this.homeGallery_drawing_CurrentPage -= 1;
 
         const children = this.parentContainer_homeDrawingGroup.getAll('type', 'Container');
@@ -373,14 +443,14 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
     this.parentContainer_homeDrawingGroup.add(backButton);
 
-    const nextButton = this.add.image(totalWidth/2 + (artMargin*2), artSize + (artMargin * 3) + 50, 'back_button')
+    const nextButton = this.add.image(totalWidth/2 + (artMargin*3.2), artSize + (artMargin * 3) + 50, 'back_button')
     .setDepth(500)
     .setVisible(true).setName('nextButton');
 
     //rotate button 180 degrees
     nextButton.rotation = 3.14159;
-    nextButton.displayWidth = 60;
-    nextButton.displayHeight = 60;
+    nextButton.displayWidth = 80;
+    nextButton.displayHeight = 80;
     // make button interactive
     nextButton.setInteractive();
     // add event listener to button
@@ -404,13 +474,15 @@ export default class DefaultUserHome extends Phaser.Scene {
           this.parentContainer_homeDrawingGroup.remove(child);
           child.destroy(); // This will also destroy all of the container's children
         });
-        this.loadAndPlaceGalleries_Again();
         updatePageInfo();
+        this.loadAndPlaceGalleries_Again();
       }
     });
 
     this.parentContainer_homeDrawingGroup.add(nextButton);
     // this.updateGalleryButtonsVisibility('drawing');
+
+    updatePageInfo();
 
     this.homeDrawingGroup.add(this.parentContainer_homeDrawingGroup);
 
@@ -421,9 +493,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       artSize,
       artMargin,
       selfHome: this.selfHome,
-      onComplete: () => {
-        updatePageInfo(); // Update page info after artworks are loaded
-      }
+     
     });
   }
 
@@ -586,14 +656,18 @@ export default class DefaultUserHome extends Phaser.Scene {
   }
 
   async loadAndPlaceGalleries_Again(){
+
+    this.drawing_Store.setHomeGalleryCurrentPage(this.homeGallery_drawing_CurrentPage);
+    this.homeGallery_drawing_ArtOnCurrentPage = get(this.drawing_Store.homeGalleryPaginatedArt);
     let type = 'downloadDrawingDefaultUserHome';
-    let serverObjectsHandler = this.userHomeDrawingServerList;
+    let serverObjectsHandler = this.drawingServerList;
+    serverObjectsHandler.array = this.homeGallery_drawing_ArtOnCurrentPage;
     const userId = this.location;
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
 
-    // initial values are set in loadAndPlaceGalleries
+    // // initial values are set in loadAndPlaceGalleries
     console.log('userHome: loadAndPlaceGalleries');
     ServerCall.downloadAndPlaceArtByType({
       type,
@@ -608,17 +682,17 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     // this.updateGalleryButtonsVisibility('drawing');
 
-     type = 'downloadStopmotionDefaultUserHome';
-     serverObjectsHandler = this.userHomeStopmotionServerList;
+    //  type = 'downloadStopmotionDefaultUserHome';
+    //  serverObjectsHandler = this.userHomeStopmotionServerList;
 
-     // initial values are set in loadAndPlaceGalleries
-    ServerCall.downloadAndPlaceArtByType({
-      type,
-      userId,
-      serverObjectsHandler,
-      artSize,
-      artMargin,
-    });
+    //  // initial values are set in loadAndPlaceGalleries
+    // ServerCall.downloadAndPlaceArtByType({
+    //   type,
+    //   userId,
+    //   serverObjectsHandler,
+    //   artSize,
+    //   artMargin,
+    // });
 
     // this.updateGalleryButtonsVisibility('stopmotion');
   }
@@ -631,9 +705,30 @@ export default class DefaultUserHome extends Phaser.Scene {
     // ........... end PLAYER SHADOW .........................................................................
   } // update
 
-  shutdown() {
-    if (this.homeElements_show_listener) this.homeElements_show_listener.remove();
-    if (this.homeElement_Selected) this.homeElement_Selected.remove();
-    if (this.toggleHomeElement_Controls) this.toggleHomeElement_Controls.remove();
+
+  onShutdown() {
+    // this is called when the scene is shut down, works!
+    console.log('subscribe GameScene shutting down');
+  
+    // Unsubscribe from all events
+
+    // Unsubscribe when the scene is shut down
+    if (this.unsubscribe_drawing_GalleryStore) {
+        this.unsubscribe_drawing_GalleryStore();
+        this.unsubscribe_drawing_GalleryStore = null;
+    }
+
+    if (this.unsubscribe_stopmotion_GalleryStore) {
+      this.unsubscribe_stopmotion_GalleryStore();
+      this.unsubscribe_stopmotion_GalleryStore = null;
   }
+
+    if (this.unsubscribe_HomeElements) {
+      this.unsubscribe_HomeElements();
+      this.unsubscribe_HomeElements = null;
+    }
+
+    // Remove the event listener
+    this.events.off('shutdown', this.onShutdown, this);
+}
 } // class

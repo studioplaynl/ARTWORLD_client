@@ -9,8 +9,7 @@ import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 // import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
-import { myHomeStore, 
-  HomeElements, 
+import { myHomeStore,  
   homeElement_Selected, 
   Liked, 
   miniMapDimensions, 
@@ -139,18 +138,6 @@ export default class UIScene extends Phaser.Scene {
       this.game.events.emit('toggleHomeElement_Controls', value);
     });
 
-    // reactivity on HomeElements, eg in DefaultUserHome
-    // Store HomeElements in ManageSession for central access
-    // ServerCall does a .get and then references ManageSession.homeElements
-    HomeElements.subscribe((value) => {
-      if (!ManageSession.currentScene) return;
-      if (value === undefined) return;
-
-      dlog('UIScene reactivity HomeElements', value);
-      
-      this.game.events.emit('homeElements_show');
-    });
-
     // this is the selected homeElement in homeEdit svelte Menu
     // when an image is selected we highlight the container in the scene
     // and make the container draggable etc
@@ -160,35 +147,6 @@ export default class UIScene extends Phaser.Scene {
       // we emit a phaser game event
       this.game.events.emit('homeElement_Selected', value);
     });
-
-    const { 
-      store: drawingStore, 
-    } = useFilteredArtworksStore('drawing');
-
-    drawingStore.subscribe((value) => {
-      // Check if the value has actually changed
-      if (!this.previousDrawingStore || JSON.stringify(this.previousDrawingStore) !== JSON.stringify(value)) {
-        this.previousDrawingStore = JSON.parse(JSON.stringify(value));
-        
-        // Emit the event only if there's a change
-        this.game.events.emit('homeGallery_drawing_update');
-      } 
-    });
-    
-    const { 
-      store: stopMotionStore, 
-    } = useFilteredArtworksStore('stopmotion');
-
-    stopMotionStore.subscribe((value) => {
-      // Check if the value has actually changed
-      if (!this.stopMotionStore || JSON.stringify(this.previousDrawingStore) !== JSON.stringify(value)) {
-        this.stopMotionStore = JSON.parse(JSON.stringify(value));
-        
-        // Emit the event only if there's a change
-        this.game.events.emit('stopMotionStore_drawing_update');
-      }
-    });   
-
     
     // Central Phaser Liked subscription
     // stored in ManageSession.lkedStore for central access

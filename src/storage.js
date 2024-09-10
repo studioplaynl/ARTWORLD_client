@@ -150,8 +150,9 @@ export const Liked = {
   },
 };
 
-// Stores whatever a user has liked
+// All HomeElements of a Home
 export const homeElements_Store = writable([]);
+// The selected homeElement in Home of Self
 export const homeElement_Selected = writable({});
 
 export const HomeElements = {
@@ -699,14 +700,27 @@ export function homeGalleryStore(type, isSelfHome = false) {
   };
 }
 
+// export concrete instances of Gallery stores, used when visiting a home
+// we make one for our own home, and one for other homes
+// we make here a central store for reference
+// we use it in DefaultUserHome.js and from there in ServerCall.js
+
+export const My_drawing_GalleryStore = homeGalleryStore('drawing', true);
+export const Other_drawing_GalleryStore = homeGalleryStore('drawing', false);
+
+export const My_stopmotion_GalleryStore = homeGalleryStore('stopmotion', true);
+export const Other_stopmotion_GalleryStore = homeGalleryStore('stopmotion', false);
+
+export const My_bloem_GalleryStore = homeGalleryStore('bloem', true);
+export const Other_bloem_GalleryStore = homeGalleryStore('bloem', false);
+
+export const My_dier_GalleryStore = homeGalleryStore('dier', true);
+export const Other_dier_GalleryStore = homeGalleryStore('dier', false);
 
 
 // Usage example for creating different type-specific stores
 // export const DrawingArtworksStore = createArtworksStore('drawing');
 // export const StopmotionArtworksStore = createArtworksStore('stopmotion');
-
-// export const VideoArtworksStore = createArtworksStore('video');
-// export const AudioArtworksStore = createArtworksStore('audio');
 
 // Stores Artworks of user
 const artworksStore = writable([]);

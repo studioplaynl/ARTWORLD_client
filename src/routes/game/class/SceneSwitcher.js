@@ -100,8 +100,15 @@ class SceneSwitcher {
       ShowHomeEditBar.set(false);
 
       if (targetScene.scene !== null) {
-        // dlog('start targetScene: ', targetScene);
+        dlog('start targetScene: ', targetScene);
+        // const pastScene = scene;
+        // console.log('subscribed start targetScene: ', targetScene);
+
+        // stop the current scene
         scene.scene.start(targetScene);
+        // console.log('subscribed start targetScene: ', pastScene.scene.key);
+
+        // pastScene.scene.stop();
       }
     }
 

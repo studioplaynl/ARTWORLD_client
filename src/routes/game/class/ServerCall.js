@@ -513,7 +513,6 @@ class ServerCall {
         });
     } else if (type === 'downloadDrawingDefaultUserHome') {
 
-      return new Promise( (resolve) => {
         // Existing code...
           /** type === 'downloadDrawingDefaultUserHome'
        *  is for downloading all the drawings from a user's home
@@ -521,29 +520,29 @@ class ServerCall {
           const scene = ManageSession.currentScene;
       
           // make a new drawingGallery store
-          const drawingGallery = homeGalleryStore('drawing', selfHome);
+          // const drawingGallery = homeGalleryStore('drawing', selfHome);
     
           // set the pageSize of the gallery
-          drawingGallery.setHomeGalleryPageSize(scene.homeGallery_drawing_PageSize);
+          // drawingGallery.setHomeGalleryPageSize(scene.homeGallery_drawing_PageSize);
           // set the currrent page of the gallery
-          drawingGallery.setHomeGalleryCurrentPage(scene.homeGallery_drawing_CurrentPage);
+          // drawingGallery.setHomeGalleryCurrentPage(scene.homeGallery_drawing_CurrentPage);
     
-          (async () => {
-              await drawingGallery.loadArtworks(userId);
+          // (async () => {
+          //     await drawingGallery.loadArtworks(userId);
       
-          // Get total pages
-          const totalPages = get(drawingGallery.homeGalleryTotalPages);
-          scene.homeGallery_drawing_TotalPages = totalPages;
+          // // Get total pages
+          // const totalPages = get(drawingGallery.homeGalleryTotalPages);
+          // scene.homeGallery_drawing_TotalPages = totalPages;
           
-          console.log('Total pages:', totalPages);
+          // console.log('Total pages:', totalPages);
       
-          // Get current paginated artworks
-          const currentImages = get(drawingGallery.homeGalleryPaginatedArt);
-          scene.homeGallery_drawing_ArtOnCurrentPage = currentImages;
+          // // Get current paginated artworks
+          // const currentImages = get(drawingGallery.homeGalleryPaginatedArt);
+          // scene.homeGallery_drawing_ArtOnCurrentPage = currentImages;
     
-          console.log('Current paginated artworks:', currentImages);
+          // console.log('Current paginated artworks:', currentImages);
     
-          serverObjectsHandler.array = currentImages;
+          // serverObjectsHandler.array = currentImages;
            
           // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
           this.handleServerArray({
@@ -553,50 +552,47 @@ class ServerCall {
             artMargin,
           });
 
-        // After all art is placed and processed
-        resolve();
-      })();
-      });
 
+        // })();
 
       
     } else if (type === 'downloadStopmotionDefaultUserHome') {
       /** type === 'downloadStopmotionDefaultUserHome'
        *  is for downloading all the stopmotions from a user's home
        */
-      const scene = ManageSession.currentScene;
+      // const scene = ManageSession.currentScene;
 
-      // make a new drawingGallery store
-      const stopmotiongGallery = homeGalleryStore('stopmotion', selfHome);
+      // // make a new drawingGallery store
+      // const stopmotiongGallery = homeGalleryStore('stopmotion', selfHome);
 
-      // set the pageSize of the gallery
-      stopmotiongGallery.setHomeGalleryPageSize(scene.homeGallery_stopmotion_PageSize);
-      // set the currrent page of the gallery
-      stopmotiongGallery.setHomeGalleryCurrentPage(scene.homeGallery_stopmotion_CurrentPage);
+      // // set the pageSize of the gallery
+      // stopmotiongGallery.setHomeGalleryPageSize(scene.homeGallery_stopmotion_PageSize);
+      // // set the currrent page of the gallery
+      // stopmotiongGallery.setHomeGalleryCurrentPage(scene.homeGallery_stopmotion_CurrentPage);
 
-      await stopmotiongGallery.loadArtworks(userId);
+      // await stopmotiongGallery.loadArtworks(userId);
   
-      // Get total pages
-      const totalPages = get(stopmotiongGallery.homeGalleryTotalPages);
-      scene.homeGallery_stopmotion_TotalPages = totalPages;
+      // // Get total pages
+      // const totalPages = get(stopmotiongGallery.homeGalleryTotalPages);
+      // scene.homeGallery_stopmotion_TotalPages = totalPages;
       
-      console.log('Total pages:', totalPages);
+      // console.log('Total pages:', totalPages);
   
-      // Get current paginated artworks
-      const currentImages = get(stopmotiongGallery.homeGalleryPaginatedArt);
-      scene.homeGallery_stopmotion_ArtOnCurrentPage = currentImages;
+      // // Get current paginated artworks
+      // const currentImages = get(stopmotiongGallery.homeGalleryPaginatedArt);
+      // scene.homeGallery_stopmotion_ArtOnCurrentPage = currentImages;
 
-      console.log('Current paginated artworks stopmotion:', currentImages);
+      // console.log('Current paginated artworks stopmotion:', currentImages);
 
-      serverObjectsHandler.array = currentImages;
+      // serverObjectsHandler.array = currentImages;
 
       // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-      this.handleServerArray({
-        type,
-        serverObjectsHandler,
-        artSize,
-        artMargin,
-      });
+      // this.handleServerArray({
+      //   type,
+      //   serverObjectsHandler,
+      //   artSize,
+      //   artMargin,
+      // });
       
     } else if (type === 'drawing_HomeElement') {
       console.log('type: ', type);
