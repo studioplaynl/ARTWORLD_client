@@ -161,39 +161,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     if (this.selfHome) {
       // for the drawing gallery 
       this.initialize_Gallery_Store(My_drawing_GalleryStore, 'drawing');
-
       // for the stopmotion gallery
-      this.stopmotion_Store = My_stopmotion_GalleryStore;
-
-      this.unsubscribe_stopmotion_GalleryStore = this.stopmotion_Store.subscribe((value) => {
-        // Check if the value has actually changed
-        if (!this.previousStopMotionStore || JSON.stringify(this.previousStopMotionStore) !== JSON.stringify(value)) {
-          this.previousStopMotionStore = JSON.parse(JSON.stringify(value));
-          
-          // what to do when the stopmotion gallery is updated
-          //! here we need to set some things
-          //! but we do it in a function
-          this.loadAndPlace_stopmotion_Gallery();
-          console.log('homeGallery_stopmotion_update');
-
-        }
-      });   
+      this.initialize_Gallery_Store(My_stopmotion_GalleryStore, 'stopmotion'); 
     } else {
       this.initialize_Gallery_Store(Other_drawing_GalleryStore, 'drawing');
-
-      this.stopmotion_Store = Other_stopmotion_GalleryStore;
-      this.unsubscribe_stopmotion_GalleryStore = this.stopmotion_Store.subscribe((value) => {
-        // Check if the value has actually changed
-        if (!this.previousStopMotionStore || JSON.stringify(this.previousStopMotionStore) !== JSON.stringify(value)) {
-          this.previousStopMotionStore = JSON.parse(JSON.stringify(value));
-          
-          // what to do when the stopmotion gallery is updated
-          //! here we need to set some things
-          //! but we do it in a function
-          this.loadAndPlace_stopmotion_Gallery();
-          console.log('homeGallery_stopmotion_update');
-        }
-      });   
+      this.initialize_Gallery_Store(Other_stopmotion_GalleryStore, 'stopmotion');
     }
 
     // console.log('userHome: await ServerCall.getHomeElements(this.location)');
@@ -314,13 +286,13 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
   }
 
-  async update_Gallery_Store(store){
+  async update_Gallery_Store(store, type){
+    if (type === 'drawing') {
     // 3. set the right pageSize on the store
     store.setHomeGalleryPageSize(this.homeGallery_drawing_PageSize);
 
     // 4. set the current page of the gallery, on the store
     store.setHomeGalleryCurrentPage(this.homeGallery_drawing_CurrentPage);
-    
     // 5. get the total pages of the gallery, from the store
     this.homeGallery_drawing_TotalPages = get(store.homeGalleryTotalPages);
 
@@ -328,6 +300,20 @@ export default class DefaultUserHome extends Phaser.Scene {
     // The .array is the page we want to load
     // ServerCall add some data to the drawing_ServerList (success of download).
     this.drawing_ServerList.array = get(store.homeGalleryPaginatedArt);
+    } else if (type === 'stopmotion') {
+    // 3. set the right pageSize on the store
+    store.setHomeGalleryPageSize(this.homeGallery_stopmotion_PageSize);
+
+    // 4. set the current page of the gallery, on the store
+    store.setHomeGalleryCurrentPage(this.homeGallery_stopmotion_CurrentPage);
+    // 5. get the total pages of the gallery, from the store
+    this.homeGallery_stopmotion_TotalPages = get(store.homeGalleryTotalPages);
+
+    // Get the images we want to displlay
+    // The .array is the page we want to load
+    // ServerCall add some data to the drawing_ServerList (success of download).
+      this.stopmotion_ServerList.array = get(store.homeGalleryPaginatedArt);
+    }
   }
 
   async initialize_Gallery_Store(store, type) {
@@ -338,18 +324,34 @@ export default class DefaultUserHome extends Phaser.Scene {
       // 2. load the artworks from the server on the store
       await store.loadArtworks(this.location);
 
-      this.update_Gallery_Store(store);
+      this.update_Gallery_Store(store, type);
       //subscribe to the drawing gallery store
       this.unsubscribe_drawing_GalleryStore = this.drawing_Store.subscribe((value) => {
         // Check if the value has actually changed
         if (!this.previousDrawingStore || JSON.stringify(this.previousDrawingStore) !== JSON.stringify(value)) {
           this.previousDrawingStore = JSON.parse(JSON.stringify(value));
 
-          this.update_Gallery_Store(store);
+          this.update_Gallery_Store(store, type);
 
           this.loadAndPlace_drawing_Gallery();
+        } 
+      });
+    } else if (type === 'stopmotion') {
+      this.stopmotion_Store = store;
 
-          console.log('homeGallery_drawing_update');
+      // 2. load the artworks from the server on the store
+      await store.loadArtworks(this.location);
+
+      this.update_Gallery_Store(store, type);
+      //subscribe to the drawing gallery store
+      this.unsubscribe_stopmotion_GalleryStore = this.stopmotion_Store.subscribe((value) => {
+        // Check if the value has actually changed
+        if (!this.previousStopmotionStore || JSON.stringify(this.previousStopmotionStore) !== JSON.stringify(value)) {
+          this.previousStopmotionStore = JSON.parse(JSON.stringify(value));
+
+          this.update_Gallery_Store(store, type);
+
+          this.loadAndPlace_stopmotion_Gallery();
         } 
       });
     }
@@ -357,13 +359,13 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async loadAndPlaceGalleries(){
     this.loadAndPlace_drawing_Gallery();
-    // this.loadAndPlace_stopmotion_Gallery();
+    this.loadAndPlace_stopmotion_Gallery();
   }
 
   async loadAndPlace_drawing_Gallery(){
     let type = 'downloadDrawingDefaultUserHome';
     let serverObjectsHandler = this.drawing_ServerList;
-    serverObjectsHandler.array = get(My_drawing_GalleryStore.homeGalleryPaginatedArt);
+    serverObjectsHandler.array = get(this.drawing_Store.homeGalleryPaginatedArt);
     const userId = this.location;
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
@@ -454,7 +456,7 @@ export default class DefaultUserHome extends Phaser.Scene {
           child.destroy(); // This will also destroy all of the container's children
       });
         updatePageInfo();
-        this.update_Gallery_Store(this.drawing_Store);
+        this.update_Gallery_Store(this.drawing_Store, 'drawing');
         this.loadAndPlace_drawing_Gallery();
       }
     });
@@ -492,7 +494,7 @@ export default class DefaultUserHome extends Phaser.Scene {
           child.destroy(); // This will also destroy all of the container's children
         });
         updatePageInfo();
-        this.update_Gallery_Store(this.drawing_Store);
+        this.update_Gallery_Store(this.drawing_Store, 'drawing');
         this.loadAndPlace_drawing_Gallery();
       }
     });
@@ -514,21 +516,13 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async loadAndPlace_stopmotion_Gallery(){
     let type = 'downloadStopmotionDefaultUserHome';
-    this.userHomeStopmotionServerList = []; // make empty in case it is reloaded
-    let serverObjectsHandler = this.userHomeStopmotionServerList;
+    let serverObjectsHandler = this.stopmotion_ServerList;
+    serverObjectsHandler.array = get(this.stopmotion_Store.homeGalleryPaginatedArt);
     const userId = this.location;
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
-    
-
-    
-    // initial values for the homeGallery
-    this.homeGallery_stopmotion_CurrentPage = 1;
-    this.homeGallery_stopmotion_PageSize = 3;
-    this.homeGallery_stopmotion_TotalPages = 1;
-    this.homeGallery_stopmotion_ArtOnCurrentPage = {};
-
+  
     // Destroy existing members of the group if any
     if (this.homeStopmotionGroup && this.homeDrawingGroup.children && this.homeDrawingGroup.children.length > 0) {
       this.homeStopmotionGroup.clear(true, true);
@@ -537,7 +531,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     }
     this.homeStopmotionGroup = this.add.group();
 
-    const totalWidth_stopmotion = this.homeGallery_stopmotion_PageSize * (artSize + artMargin);
+    const totalWidth = this.homeGallery_stopmotion_PageSize * (artSize + artMargin);
 
     // Destroy existing children of the parent container if any
     if (this.parentContainer_homeStopmotionGroup) {
@@ -548,31 +542,58 @@ export default class DefaultUserHome extends Phaser.Scene {
       });
     }
     this.parentContainer_homeStopmotionGroup = this.add.container(artMargin/2, artMargin/2)
-    .setSize(totalWidth_stopmotion+(artMargin*2), artSize+(artMargin*4))
+    .setSize(totalWidth+(artMargin*2), artSize+(artMargin*4))
     .setName('ParentContainer');
 
     // create background graphics for ParentContainer
     const graphic_stopmotion = this.add.graphics();
     graphic_stopmotion.fillStyle(0xa9a9a9); //dark grey
-    graphic_stopmotion.fillRect(0, 0, totalWidth_stopmotion+(artMargin), artSize+(artMargin*5)); 
+    graphic_stopmotion.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*5)); 
     this.parentContainer_homeStopmotionGroup.add(graphic_stopmotion);
     
     const graphic2_stopmotion = this.add.graphics();
     graphic2_stopmotion.fillStyle(0xf2f2f2); 
-    graphic2_stopmotion.fillRect(0, 0, totalWidth_stopmotion+(artMargin), artSize+(artMargin*3)); 
+    graphic2_stopmotion.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*3)); 
     this.parentContainer_homeStopmotionGroup.add(graphic2_stopmotion);
 
-    // add button to ParentContainer
-    const backButton_stopmotion = this.add.image(totalWidth_stopmotion/2, 
-      artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
-    .setVisible(true).setName('backButton');
+    // ------ info page
+    // Add page information text
+    const pageInfoText = this.add.text(totalWidth/2 + 40, artSize + (artMargin*3) + 50, '', {
+      font: '24px Arial',
+      fill: '#000000'
+    }).setOrigin(0.5);
+    this.parentContainer_homeStopmotionGroup.add(pageInfoText);
 
-    backButton_stopmotion.displayWidth = 60;
-    backButton_stopmotion.displayHeight = 60;
+    // Update page info text
+    const updatePageInfo = () => {
+      pageInfoText.setText(`${this.homeGallery_stopmotion_CurrentPage} / ${this.homeGallery_stopmotion_TotalPages}`);
+
+      if (!backButton) return;
+      //set the back button to be visible if the current page is greater than 1
+      if (this.homeGallery_stopmotion_CurrentPage > 1) {
+        backButton.setVisible(true);
+      } else {
+        backButton.setVisible(false);
+      }
+      //set the next button to be visible if the current page is less than the total pages
+      if (this.homeGallery_stopmotion_CurrentPage < this.homeGallery_stopmotion_TotalPages) {
+        nextButton.setVisible(true);
+      } else {
+        nextButton.setVisible(false);
+      }
+    };
+    // -- end info page
+    // add button to ParentContainer
+    const backButton = this.add.image(totalWidth/2 - 80, 
+      artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
+      .setVisible(true).setName('backButton');
+
+    backButton.displayWidth = 80;
+    backButton.displayHeight = 80;
     // make button interactive
-    backButton_stopmotion.setInteractive();
+    backButton.setInteractive();
     // add eve-nt listener to button
-    backButton_stopmotion.on('pointerup', () => {
+    backButton.on('pointerup', () => {
       const currentPage = this.homeGallery_stopmotion_CurrentPage;
       const totalPages = this.homeGallery_stopmotion_TotalPages;
       
@@ -588,26 +609,24 @@ export default class DefaultUserHome extends Phaser.Scene {
           this.parentContainer_homeStopmotionGroup.remove(child);
           child.destroy(); // This will also destroy all of the container's children
       });
-
-        this.loadAndPlaceGalleries_Again();
-      }
+      updatePageInfo();
+      this.update_Gallery_Store(this.stopmotion_Store, 'stopmotion');
+      this.loadAndPlace_stopmotion_Gallery();      }
     });
-    this.parentContainer_homeStopmotionGroup.add(backButton_stopmotion);
+    this.parentContainer_homeStopmotionGroup.add(backButton);
 
-    const nextButton_stopmotion = this.add.image(totalWidth_stopmotion/2 + (artMargin*2),
-      artSize + (artMargin*3) + 50, 'back_button')
+    const nextButton = this.add.image(totalWidth/2 + (artMargin*3.2), artSize + (artMargin * 3) + 50, 'back_button')
     .setDepth(500)
-    .setVisible(true)
-    .setName('nextButton');
+    .setVisible(true).setName('nextButton');
 
     //rotate button 180 degrees
-    nextButton_stopmotion.rotation = 3.14159;
-    nextButton_stopmotion.displayWidth = 60;
-    nextButton_stopmotion.displayHeight = 60;
+    nextButton.rotation = 3.14159;
+    nextButton.displayWidth = 60;
+    nextButton.displayHeight = 60;
     // make button interactive
-    nextButton_stopmotion.setInteractive();
+    nextButton.setInteractive();
     // add event listener to button
-    nextButton_stopmotion.on('pointerup', () => {
+    nextButton.on('pointerup', () => {
       console.log('nextButton button clicked');
       // get current page
       // get total pages
@@ -626,27 +645,27 @@ export default class DefaultUserHome extends Phaser.Scene {
           this.parentContainer_homeStopmotionGroup.remove(child);
           child.destroy(); // This will also destroy all of the container's children
       });
-
-        this.loadAndPlaceGalleries_Again();
+      updatePageInfo();
+      this.update_Gallery_Store(this.stopmotion_Store, 'stopmotion');
+      this.loadAndPlace_stopmotion_Gallery();  
       }
 
     });
-    this.parentContainer_homeStopmotionGroup.add(nextButton_stopmotion);
+    this.parentContainer_homeStopmotionGroup.add(nextButton);
     // this.updateGalleryButtonsVisibility('stopmotion');
 
     this.parentContainer_homeStopmotionGroup.setPosition(artMargin, 1200);
 
+    updatePageInfo();
 
     this.homeStopmotionGroup.add(this.parentContainer_homeStopmotionGroup);
 
-    console.log('userHome: loadAndPlaceGalleries');
-    ServerCall.downloadAndPlaceArtByType({
+    ServerCall.handleServerArray({
       type,
       userId,
       serverObjectsHandler,
       artSize,
       artMargin,
-      selfHome: this.selfHome
     });
   }
 
@@ -668,26 +687,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     } else {
       console.warn(`Buttons not found for ${type} gallery`);
     }
-  }
-
-  async loadAndPlaceGalleries_Again(){
-
-    
-    // this.updateGalleryButtonsVisibility('drawing');
-
-    //  type = 'downloadStopmotionDefaultUserHome';
-    //  serverObjectsHandler = this.userHomeStopmotionServerList;
-
-    //  // initial values are set in loadAndPlaceGalleries
-    // ServerCall.downloadAndPlaceArtByType({
-    //   type,
-    //   userId,
-    //   serverObjectsHandler,
-    //   artSize,
-    //   artMargin,
-    // });
-
-    // this.updateGalleryButtonsVisibility('stopmotion');
   }
 
   update() {
