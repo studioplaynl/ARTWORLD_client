@@ -43,6 +43,10 @@ import {
 import { homeIsOfSelf } from '../../../session';
 
 import {
+  updateObject,
+} from '../../../helpers/nakamaHelpers';
+
+import {
   SCENE_INFO,
   ART_ICON_SIZE,
   ART_PREVIEW_SIZE,
@@ -255,7 +259,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     // ....... PLAYER VS WORLD .............................................................................
     this.gameCam = this.cameras.main; // .setBackgroundColor(0xFFFFFF);
 
-    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentScene
+    // UI scene is subscribed to zoom changes and passes it on to the current scene via ManageSession.currentZoom
     this.gameCam.zoom = ManageSession.currentZoom;
 
     this.gameCam.startFollow(this.player);
@@ -268,13 +272,8 @@ export default class DefaultUserHome extends Phaser.Scene {
   } // end create
 
   async loadAndPlaceHomeElements(){
-    console.log('userHome: loadAndPlaceHomeElements');
-    
     const value = get(homeElements_Store);
     
-    console.log('userHome: homeElements_Store: ', value);
-    this.loadAndPlaceGalleries();
-
     // check if there are no homeElements
     if (value.length === 0) {
       dlog('loadAndPlaceHomeElements no homeElements: ', value);
@@ -286,407 +285,255 @@ export default class DefaultUserHome extends Phaser.Scene {
     });
   }
 
-  async update_Gallery_Store(store, type){
-    if (type === 'drawing') {
+  async update_Gallery_Store(store, type) {
     // 3. set the right pageSize on the store
-    store.setHomeGalleryPageSize(this.homeGallery_drawing_PageSize);
-
+    store.setHomeGalleryPageSize(this[`homeGallery_${type}_PageSize`]);
+  
     // 4. set the current page of the gallery, on the store
-    store.setHomeGalleryCurrentPage(this.homeGallery_drawing_CurrentPage);
+    store.setHomeGalleryCurrentPage(this[`homeGallery_${type}_CurrentPage`]);
+  
     // 5. get the total pages of the gallery, from the store
-    this.homeGallery_drawing_TotalPages = get(store.homeGalleryTotalPages);
-
-    // Get the images we want to displlay
+    this[`homeGallery_${type}_TotalPages`] = get(store.homeGalleryTotalPages);
+  
+    // Get the images we want to display
     // The .array is the page we want to load
-    // ServerCall add some data to the drawing_ServerList (success of download).
-    this.drawing_ServerList.array = get(store.homeGalleryPaginatedArt);
-    } else if (type === 'stopmotion') {
-    // 3. set the right pageSize on the store
-    store.setHomeGalleryPageSize(this.homeGallery_stopmotion_PageSize);
-
-    // 4. set the current page of the gallery, on the store
-    store.setHomeGalleryCurrentPage(this.homeGallery_stopmotion_CurrentPage);
-    // 5. get the total pages of the gallery, from the store
-    this.homeGallery_stopmotion_TotalPages = get(store.homeGalleryTotalPages);
-
-    // Get the images we want to displlay
-    // The .array is the page we want to load
-    // ServerCall add some data to the drawing_ServerList (success of download).
-      this.stopmotion_ServerList.array = get(store.homeGalleryPaginatedArt);
-    }
+    // ServerCall add some data to the *_ServerList (success of download).
+    this[`${type}_ServerList`].array = get(store.homeGalleryPaginatedArt);
   }
 
   async initialize_Gallery_Store(store, type) {
-    if (type === 'drawing') {
-      // 1. set the right Store
-      this.drawing_Store = store;
-
-      // 2. load the artworks from the server on the store
-      await store.loadArtworks(this.location);
-
-      this.update_Gallery_Store(store, type);
-      //subscribe to the drawing gallery store
-      this.unsubscribe_drawing_GalleryStore = this.drawing_Store.subscribe((value) => {
-        // Check if the value has actually changed
-        if (!this.previousDrawingStore || JSON.stringify(this.previousDrawingStore) !== JSON.stringify(value)) {
-          this.previousDrawingStore = JSON.parse(JSON.stringify(value));
-
-          this.update_Gallery_Store(store, type);
-
-          this.loadAndPlace_drawing_Gallery();
-        } 
-      });
-    } else if (type === 'stopmotion') {
-      this.stopmotion_Store = store;
-
-      // 2. load the artworks from the server on the store
-      await store.loadArtworks(this.location);
-
-      this.update_Gallery_Store(store, type);
-      //subscribe to the drawing gallery store
-      this.unsubscribe_stopmotion_GalleryStore = this.stopmotion_Store.subscribe((value) => {
-        // Check if the value has actually changed
-        if (!this.previousStopmotionStore || JSON.stringify(this.previousStopmotionStore) !== JSON.stringify(value)) {
-          this.previousStopmotionStore = JSON.parse(JSON.stringify(value));
-
-          this.update_Gallery_Store(store, type);
-
-          this.loadAndPlace_stopmotion_Gallery();
-        } 
-      });
-    }
-  }
-
-  async loadAndPlaceGalleries(){
-    this.loadAndPlace_drawing_Gallery();
-    this.loadAndPlace_stopmotion_Gallery();
-  }
-
-  async loadAndPlace_drawing_Gallery(){
-    let type = 'downloadDrawingDefaultUserHome';
-    let serverObjectsHandler = this.drawing_ServerList;
-    serverObjectsHandler.array = get(this.drawing_Store.homeGalleryPaginatedArt);
-    const userId = this.location;
-    const artSize = this.artDisplaySize;
-    const artMargin = artSize / 10;
-    this.artMargin = artMargin;
-    
-    // Destroy existing members of the group if any
-    if (this.homeDrawingGroup && this.homeDrawingGroup.children && this.homeDrawingGroup.children.length > 0) {
-      console.log('homeDrawingGroup: ', this.homeDrawingGroup);
-      this.homeDrawingGroup.clear(true, true);
-    }
-    this.homeDrawingGroup = this.add.group();
-
-    const totalWidth = this.homeGallery_drawing_PageSize * (artSize + artMargin);
-
-    // Destroy existing children of the parent container if any
-    if (this.parentContainer_homeDrawingGroup) {
-      const children = this.parentContainer_homeDrawingGroup.getAll();
-      children.forEach(child => {
-        this.parentContainer_homeDrawingGroup.remove(child);
-        child.destroy();
-      });
-    }
-    this.parentContainer_homeDrawingGroup = this.add.container(artMargin/2, artMargin/2)
-    .setSize(totalWidth+(artMargin*2), artSize+(artMargin*4))
-    .setName('ParentContainer');
-
-    // create background graphics for ParentContainer
-    const graphic = this.add.graphics();
-    graphic.fillStyle(0xa9a9a9); //dark grey
-    graphic.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*5)); 
-    this.parentContainer_homeDrawingGroup.add(graphic);
-    
-    const graphic2 = this.add.graphics();
-    graphic2.fillStyle(0xf2f2f2); 
-    graphic2.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*3)); 
-    this.parentContainer_homeDrawingGroup.add(graphic2);
-
-    // ------ info page
-    // Add page information text
-    const pageInfoText = this.add.text(totalWidth/2 + 40, artSize + (artMargin*3) + 50, '', {
-      font: '24px Arial',
-      fill: '#000000'
-    }).setOrigin(0.5);
-    this.parentContainer_homeDrawingGroup.add(pageInfoText);
-
-    // Update page info text
-    const updatePageInfo = () => {
-      pageInfoText.setText(`${this.homeGallery_drawing_CurrentPage} / ${this.homeGallery_drawing_TotalPages}`);
-
-      if (!backButton) return;
-      //set the back button to be visible if the current page is greater than 1
-      if (this.homeGallery_drawing_CurrentPage > 1) {
-        backButton.setVisible(true);
-      } else {
-        backButton.setVisible(false);
-      }
-      //set the next button to be visible if the current page is less than the total pages
-      if (this.homeGallery_drawing_CurrentPage < this.homeGallery_drawing_TotalPages) {
-        nextButton.setVisible(true);
-      } else {
-        nextButton.setVisible(false);
-      }
-    };
-    // -- end info page
-
-    // add button to ParentContainer
-    const backButton = this.add.image(totalWidth/2 - 80, 
-    artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
-    .setVisible(true).setName('backButton');
-
-    backButton.displayWidth = 80;
-    backButton.displayHeight = 80;
-    // make button interactive
-    backButton.setInteractive();
-    // add event listener to button
-    backButton.on('pointerup', () => {
-      if (this.homeGallery_drawing_CurrentPage > 1 
-        && this.homeGallery_drawing_CurrentPage <= this.homeGallery_drawing_TotalPages) {
-        this.homeGallery_drawing_CurrentPage -= 1;
-
-        const children = this.parentContainer_homeDrawingGroup.getAll('type', 'Container');
-        console.log('back button clicked');
-        
-        // Filter for containers and remove them
-        children.forEach(child => {
-          console.log('child: ', child);
-          this.parentContainer_homeDrawingGroup.remove(child);
-          child.destroy(); // This will also destroy all of the container's children
-      });
-        updatePageInfo();
-        this.update_Gallery_Store(this.drawing_Store, 'drawing');
-        this.loadAndPlace_drawing_Gallery();
-      }
-    });
-    this.parentContainer_homeDrawingGroup.add(backButton);
-
-    const nextButton = this.add.image(totalWidth/2 + (artMargin*3.2), artSize + (artMargin * 3) + 50, 'back_button')
-    .setDepth(500)
-    .setVisible(true).setName('nextButton');
-
-    //rotate button 180 degrees
-    nextButton.rotation = 3.14159;
-    nextButton.displayWidth = 80;
-    nextButton.displayHeight = 80;
-    // make button interactive
-    nextButton.setInteractive();
-    // add event listener to button
-    nextButton.on('pointerup', () => {
-      console.log('nextButton button clicked');
-      // get current page
-      // get total pages
-      const currentPage = this.homeGallery_drawing_CurrentPage;
-      const totalPages = this.homeGallery_drawing_TotalPages;
-
-      console.log('nextButton button clicked: ', currentPage, totalPages);
-
-      if (currentPage < totalPages) {
-        this.homeGallery_drawing_CurrentPage += 1;
-        // delete all containers in parent container
-        // Get all children of the parentContainer
-        const children = this.parentContainer_homeDrawingGroup.getAll('type', 'Container');
-        
-        // Filter for containers and remove them
-        children.forEach(child => {
-          this.parentContainer_homeDrawingGroup.remove(child);
-          child.destroy(); // This will also destroy all of the container's children
-        });
-        updatePageInfo();
-        this.update_Gallery_Store(this.drawing_Store, 'drawing');
-        this.loadAndPlace_drawing_Gallery();
-      }
-    });
-
-    this.parentContainer_homeDrawingGroup.add(nextButton);
-
-    updatePageInfo();
-
-    this.homeDrawingGroup.add(this.parentContainer_homeDrawingGroup);
-
-    ServerCall.handleServerArray({
-      type,
-      userId,
-      serverObjectsHandler,
-      artSize,
-      artMargin,
+    // 1. set the right Store
+    this[`${type}_Store`] = store;
+  
+    // 2. load the artworks from the server on the store
+    await store.loadArtworks(this.location);
+  
+    this.update_Gallery_Store(store, type);
+  
+    // Subscribe to the gallery store
+    this[`unsubscribe_${type}_GalleryStore`] = this[`${type}_Store`].subscribe((value) => {
+      // Check if the value has actually changed
+      if (!this[`previous${type.charAt(0).toUpperCase() + type.slice(1)}Store`] || 
+          JSON.stringify(this[`previous${type.charAt(0)
+            .toUpperCase() + type.slice(1)}Store`]) !== JSON.stringify(value)) {
+        this[`previous${type.charAt(0).toUpperCase() + type.slice(1)}Store`] = JSON.parse(JSON.stringify(value));
+  
+        this.update_Gallery_Store(store, type);
+  
+        this.loadAndPlace_Gallery(type);
+      } 
     });
   }
 
-  async loadAndPlace_stopmotion_Gallery(){
-    let type = 'downloadStopmotionDefaultUserHome';
-    let serverObjectsHandler = this.stopmotion_ServerList;
-    serverObjectsHandler.array = get(this.stopmotion_Store.homeGalleryPaginatedArt);
+  async loadAndPlace_Gallery(type) {
+    const serverObjectsHandler = this[`${type}_ServerList`];
+    serverObjectsHandler.array = get(this[`${type}_Store`].homeGalleryPaginatedArt);
     const userId = this.location;
     const artSize = this.artDisplaySize;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
   
     // Destroy existing members of the group if any
-    if (this.homeStopmotionGroup && this.homeDrawingGroup.children && this.homeDrawingGroup.children.length > 0) {
-      this.homeStopmotionGroup.clear(true, true);
-      console.log('homeDrawingGroup: ', this.homeDrawingGroup);
-      this.homeDrawingGroup = null;
+    if (this[`home${type.charAt(0).toUpperCase() + type.slice(1)}Group`]) {
+      this[`home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].clear(true, true);
     }
-    this.homeStopmotionGroup = this.add.group();
-
-    const totalWidth = this.homeGallery_stopmotion_PageSize * (artSize + artMargin);
-
+    this[`home${type.charAt(0).toUpperCase() + type.slice(1)}Group`] = this.add.group();
+  
+    const totalWidth = this[`homeGallery_${type}_PageSize`] * (artSize + artMargin);
+  
     // Destroy existing children of the parent container if any
-    if (this.parentContainer_homeStopmotionGroup) {
-      const children = this.parentContainer_homeStopmotionGroup.getAll();
+    if (this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`]) {
+      const children = this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].getAll();
       children.forEach(child => {
-        this.parentContainer_homeStopmotionGroup.remove(child);
+        this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].remove(child);
         child.destroy();
       });
     }
-    this.parentContainer_homeStopmotionGroup = this.add.container(artMargin/2, artMargin/2)
-    .setSize(totalWidth+(artMargin*2), artSize+(artMargin*4))
-    .setName('ParentContainer');
-
+  
+    // if the array is empty, don't create the gallery
+    if (serverObjectsHandler.array.length === 0) {
+      console.log(`userHome: loadAndPlace_${type}_Gallery: no artworks to display`);
+      return;
+    }
+  
+    // Check if there's a gallery object in the homeElements store
+    const homeElements = get(homeElements_Store);
+    let galleryElement = homeElements.find(element => element.value.collection === `gallery_${type}`);
+  
+    if (!galleryElement && this.selfHome) {
+      // Create a new gallery homeElement
+      const value = {
+        collection: `gallery_${type}`,
+        pageSize: this[`homeGallery_${type}_PageSize`],
+        posX: 100,
+        posY: type === 'drawing' ? 100 : 1200, // Adjust Y position based on type
+        rotation: 0,
+        scale: 1,
+      }
+  
+      const key = `gallery_${type}_1`;
+      await HomeElements.create(key, value);
+      console.log(`userHome: loadAndPlace_${type}_Gallery: created new gallery_${type} element: `, value);
+      // Refresh the homeElements after creating the new element
+      galleryElement = get(homeElements_Store).find(element => element.value.collection === `gallery_${type}`);
+    }
+  
+    // Use the position from the Gallery element if it exists, otherwise use default values
+    const galleryX = galleryElement && galleryElement.value.posX !== undefined 
+      ? galleryElement.value.posX 
+      : artMargin/2;
+    const galleryY = galleryElement && galleryElement.value.posY !== undefined 
+      ? galleryElement.value.posY 
+      : (type === 'drawing' ? artMargin/2 : 1200);
+  
+    this[`parentContainer_home${type.charAt(0)
+      .toUpperCase() + type.slice(1)}Group`] = this.add.container(galleryX, galleryY)
+      .setSize(totalWidth+(artMargin*2), artSize+(artMargin*4))
+      .setName('ParentContainer');
+  
     // create background graphics for ParentContainer
-    const graphic_stopmotion = this.add.graphics();
-    graphic_stopmotion.fillStyle(0xa9a9a9); //dark grey
-    graphic_stopmotion.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*5)); 
-    this.parentContainer_homeStopmotionGroup.add(graphic_stopmotion);
+    const graphic = this.add.graphics();
+    graphic.fillStyle(0xa9a9a9); //dark grey
+    graphic.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*5)); 
+    this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].add(graphic);
     
-    const graphic2_stopmotion = this.add.graphics();
-    graphic2_stopmotion.fillStyle(0xf2f2f2); 
-    graphic2_stopmotion.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*3)); 
-    this.parentContainer_homeStopmotionGroup.add(graphic2_stopmotion);
-
-    // ------ info page
+    const graphic2 = this.add.graphics();
+    graphic2.fillStyle(0xf2f2f2); 
+    graphic2.fillRect(0, 0, totalWidth+(artMargin), artSize+(artMargin*3)); 
+    this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].add(graphic2);
+  
     // Add page information text
     const pageInfoText = this.add.text(totalWidth/2 + 40, artSize + (artMargin*3) + 50, '', {
       font: '24px Arial',
       fill: '#000000'
     }).setOrigin(0.5);
-    this.parentContainer_homeStopmotionGroup.add(pageInfoText);
-
+    this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].add(pageInfoText);
+  
     // Update page info text
     const updatePageInfo = () => {
-      pageInfoText.setText(`${this.homeGallery_stopmotion_CurrentPage} / ${this.homeGallery_stopmotion_TotalPages}`);
-
-      if (!backButton) return;
-      //set the back button to be visible if the current page is greater than 1
-      if (this.homeGallery_stopmotion_CurrentPage > 1) {
-        backButton.setVisible(true);
-      } else {
-        backButton.setVisible(false);
-      }
-      //set the next button to be visible if the current page is less than the total pages
-      if (this.homeGallery_stopmotion_CurrentPage < this.homeGallery_stopmotion_TotalPages) {
-        nextButton.setVisible(true);
-      } else {
-        nextButton.setVisible(false);
+      pageInfoText.setText(`${this[`homeGallery_${type}_CurrentPage`]} / ${this[`homeGallery_${type}_TotalPages`]}`);
+      if (backButton && nextButton) {
+        backButton.setVisible(this[`homeGallery_${type}_CurrentPage`] > 1);
+        nextButton.setVisible(this[`homeGallery_${type}_CurrentPage`] < this[`homeGallery_${type}_TotalPages`]);
       }
     };
-    // -- end info page
-    // add button to ParentContainer
-    const backButton = this.add.image(totalWidth/2 - 80, 
-      artSize + (artMargin*3) + 50, 'back_button').setDepth(500)
-      .setVisible(true).setName('backButton');
-
-    backButton.displayWidth = 80;
-    backButton.displayHeight = 80;
-    // make button interactive
-    backButton.setInteractive();
-    // add eve-nt listener to button
-    backButton.on('pointerup', () => {
-      const currentPage = this.homeGallery_stopmotion_CurrentPage;
-      const totalPages = this.homeGallery_stopmotion_TotalPages;
-      
-      if (currentPage > 1 && currentPage <= totalPages) {
-        this.homeGallery_stopmotion_CurrentPage -= 1;
-
-        const children = this.parentContainer_homeStopmotionGroup.getAll('type', 'Container');
-        console.log('back button stopmotion clicked');
-        
-        // Filter for containers and remove them
-        children.forEach(child => {
-          console.log('child: ', child);
-          this.parentContainer_homeStopmotionGroup.remove(child);
-          child.destroy(); // This will also destroy all of the container's children
-      });
-      updatePageInfo();
-      this.update_Gallery_Store(this.stopmotion_Store, 'stopmotion');
-      this.loadAndPlace_stopmotion_Gallery();      }
-    });
-    this.parentContainer_homeStopmotionGroup.add(backButton);
-
-    const nextButton = this.add.image(totalWidth/2 + (artMargin*3.2), artSize + (artMargin * 3) + 50, 'back_button')
-    .setDepth(500)
-    .setVisible(true).setName('nextButton');
-
-    //rotate button 180 degrees
-    nextButton.rotation = 3.14159;
-    nextButton.displayWidth = 60;
-    nextButton.displayHeight = 60;
-    // make button interactive
-    nextButton.setInteractive();
-    // add event listener to button
-    nextButton.on('pointerup', () => {
-      console.log('nextButton button clicked');
-      // get current page
-      // get total pages
-      const currentPage = this.homeGallery_stopmotion_CurrentPage;
-      const totalPages = this.homeGallery_stopmotion_TotalPages;
-
-      if (currentPage < totalPages) {
-        this.homeGallery_stopmotion_CurrentPage += 1;
-        // delete all containers in parent container
-        // Get all children of the parentContainer
-        const children = this.parentContainer_homeStopmotionGroup.getAll('type', 'Container');
-
-        // Filter for containers and remove them
-        children.forEach(child => {
-          console.log('child: ', child);
-          this.parentContainer_homeStopmotionGroup.remove(child);
-          child.destroy(); // This will also destroy all of the container's children
-      });
-      updatePageInfo();
-      this.update_Gallery_Store(this.stopmotion_Store, 'stopmotion');
-      this.loadAndPlace_stopmotion_Gallery();  
-      }
-
-    });
-    this.parentContainer_homeStopmotionGroup.add(nextButton);
-    // this.updateGalleryButtonsVisibility('stopmotion');
-
-    this.parentContainer_homeStopmotionGroup.setPosition(artMargin, 1200);
-
+  
+    // Add move button
+    const moveIcon = this.add.image(totalWidth - artMargin*3, artSize + 235, 'moveIcon')
+      .setOrigin(1, 1)
+      .setScale(1)
+      .setInteractive({ draggable: true })
+      .setTint(0xf2f2f2);
+  
+    // Set up drag functionality for the move button
+    this.setupMoveIconDrag(moveIcon, type);
+  
+    this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].add(moveIcon);
+  
+    // add navigation buttons
+    const backButton = this.createNavigationButton(totalWidth/2 - 80, 
+      artSize + (artMargin*3) + 50, 'back_button', -1, type, updatePageInfo);
+    const nextButton = this.createNavigationButton(totalWidth/2 + (artMargin*3.2), 
+    artSize + (artMargin * 3) + 50, 'back_button', 1, type, updatePageInfo);
+  
+    this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].add(backButton);
+    this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].add(nextButton);
+  
     updatePageInfo();
-
-    this.homeStopmotionGroup.add(this.parentContainer_homeStopmotionGroup);
-
+  
+    this[`home${type.charAt(0).toUpperCase() + type.slice(1)}Group`]
+    .add(this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`]);
+  
     ServerCall.handleServerArray({
-      type,
+      type: `download${type.charAt(0).toUpperCase() + type.slice(1)}DefaultUserHome`,
       userId,
       serverObjectsHandler,
       artSize,
       artMargin,
     });
   }
-
-  updateGalleryButtonsVisibility(type) {
-    const currentPage = this[`homeGallery_${type}_CurrentPage`];
-    const totalPages = this[`homeGallery_${type}_TotalPages`];
-
-    console.log('updateGalleryButtonsVisibility: ', type, currentPage, totalPages);
-    
-    const parentContainer = type === 'drawing' 
-    ? this.parentContainer_homeDrawingGroup : this.parentContainer_homeStopmotionGroup;
-    const backButton = parentContainer.getByName('backButton');
-    const nextButton = parentContainer.getByName('nextButton');
-    
-    if (backButton && nextButton) {
-      backButton.setVisible(currentPage > 1);
-      nextButton.setVisible(currentPage < totalPages);
-      console.log('updateGalleryButtonsVisibility buttons: ', backButton, nextButton);
-    } else {
-      console.warn(`Buttons not found for ${type} gallery`);
+  
+  // Helper methods for the galleries
+  setupMoveIconDrag(moveIcon, type) {
+    moveIcon.on('pointerdown', () => ManageSession.playerIsAllowedToMove = false);
+    moveIcon.on('pointerup', () => ManageSession.playerIsAllowedToMove = true);
+  
+    moveIcon.on('drag', (pointer) => {
+      ManageSession.playerIsAllowedToMove = false;
+      const deltaX = pointer.x - pointer.prevPosition.x;
+      const deltaY = pointer.y - pointer.prevPosition.y;
+      this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].x += deltaX;
+      this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].y += deltaY;
+    });
+  
+    moveIcon.on('dragend', () => {
+      this.updateGalleryPosition(type);
+    });
+  }
+  
+  updateGalleryPosition(type) {
+    const homeElements = get(homeElements_Store);
+    const galleryElement = homeElements.find(element => element.value.collection === `gallery_${type}`);
+  
+    if (galleryElement) {
+      homeElement_Selected.set(galleryElement);
+      const x = this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].x;
+      const y = this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].y;
+      const { rotation, width, height, scale } = this[`parentContainer_home${type
+        .charAt(0).toUpperCase() + type.slice(1)}Group`];
+      
+      const newValue = {
+        ...galleryElement.value,
+        posX: x,
+        posY: y,
+        height,
+        width,
+        rotation,
+        scale
+      };
+  
+      if (JSON.stringify(galleryElement.value) !== JSON.stringify(newValue)) {
+        HomeElements.updateStoreSilently(galleryElement.key, newValue);
+        updateObject(galleryElement.collection, galleryElement.key, newValue, galleryElement.permission_read);
+      }
     }
+  }
+  
+  createNavigationButton(x, y, texture, direction, type, updatePageInfo) {
+    const button = this.add.image(x, y, texture)
+      .setDepth(500)
+      .setVisible(true)
+      .setName(direction === -1 ? 'backButton' : 'nextButton');
+  
+    if (direction === 1) {
+      button.rotation = Math.PI;
+    }
+  
+    button.displayWidth = 80;
+    button.displayHeight = 80;
+    button.setInteractive();
+  
+    button.on('pointerup', () => {
+      const currentPage = this[`homeGallery_${type}_CurrentPage`];
+      const totalPages = this[`homeGallery_${type}_TotalPages`];
+  
+      if ((direction === -1 && currentPage > 1) || (direction === 1 && currentPage < totalPages)) {
+        this[`homeGallery_${type}_CurrentPage`] += direction;
+  
+        const children = this[`parentContainer_home${type.charAt(0)
+          .toUpperCase() + type.slice(1)}Group`].getAll('type', 'Container');
+        children.forEach(child => {
+          this[`parentContainer_home${type.charAt(0).toUpperCase() + type.slice(1)}Group`].remove(child);
+          child.destroy();
+        });
+  
+        updatePageInfo();
+        this.update_Gallery_Store(this[`${type}_Store`], type);
+        this.loadAndPlace_Gallery(type);
+      }
+    });
+  
+    return button;
   }
 
   update() {
@@ -705,15 +552,17 @@ export default class DefaultUserHome extends Phaser.Scene {
     // Unsubscribe from all events
 
     // Unsubscribe when the scene is shut down
-    if (this.unsubscribe_drawing_GalleryStore) {
-        this.unsubscribe_drawing_GalleryStore();
-        this.unsubscribe_drawing_GalleryStore = null;
-    }
+    // Define an array of all gallery types
+    const galleryTypes = ['drawing', 'stopmotion'];
 
-    if (this.unsubscribe_stopmotion_GalleryStore) {
-      this.unsubscribe_stopmotion_GalleryStore();
-      this.unsubscribe_stopmotion_GalleryStore = null;
-  }
+    // Unsubscribe from all gallery stores
+    galleryTypes.forEach(type => {
+      const unsubscribeKey = `unsubscribe_${type}_GalleryStore`;
+      if (this[unsubscribeKey]) {
+        this[unsubscribeKey]();
+        this[unsubscribeKey] = null;
+      }
+    });
 
     if (this.unsubscribe_HomeElements) {
       this.unsubscribe_HomeElements();

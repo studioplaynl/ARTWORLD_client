@@ -25,7 +25,7 @@
       width: 512,
       height: 512
     }
-    // console.log('placeHomeElement value: ', value);
+    console.log('placeHomeElement value: ', value);
     const key = row.key;
     HomeElements.create(key, value);
   }

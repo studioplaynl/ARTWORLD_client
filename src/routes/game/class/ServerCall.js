@@ -1342,7 +1342,6 @@ class ServerCall {
   }
   
   handleDragEnd(container, element, worldSize) {
-    console.log('handleDragEnd container: ', element, container);
     homeElement_Selected.set(element);
 
     const x = CoordinatesTranslator.phaser2DToArtworldX(worldSize.x, container.x);
@@ -1409,6 +1408,8 @@ class ServerCall {
         element.downloaded = true;
         ServerCall.createDrawing_Container(element, index, artSize, artMargin);
 
+        if (!scene.drawing_ServerList || !scene.drawing_ServerList.startLength) return;
+
         const startLength = scene.drawing_ServerList.startLength;
         let downloadCompleted = scene.drawing_ServerList.itemsDownloadCompleted;
         downloadCompleted += 1;
@@ -1422,6 +1423,8 @@ class ServerCall {
         element.downloaded = true;
         ServerCall.createStopmotion_Container(element, index, artSize, artMargin);
 
+        if (!scene.stopmotion_ServerList || !scene.stopmotion_ServerList.startLength) return;
+        console.log('scene.stopmotion_ServerList: ', scene.stopmotion_ServerList);
         const startLength = scene.stopmotion_ServerList.startLength;
         let downloadCompleted = scene.stopmotion_ServerList.itemsDownloadCompleted;
         downloadCompleted += 1;
@@ -1505,6 +1508,7 @@ class ServerCall {
        * the on.('loaderror') event does report which file failed
        *   */
       scene.load.on('complete', () => {
+        if (!scene.drawing_ServerList || !scene.drawing_ServerList.startLength) return;
         const startLength = scene.drawing_ServerList.startLength;
         let downloadCompleted = scene.drawing_ServerList.itemsDownloadCompleted;
         downloadCompleted += 1;

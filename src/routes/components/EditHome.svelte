@@ -52,9 +52,9 @@
     // You might also want to call a function to delete the item from the server
   }
 
-  function handleArtClicked(event) {
-    console.log('handleArtClicked', event);
-    // homeElement_Selected.set(event);
+  function handleArtClicked(element) {
+    console.log('handleArtClicked', element);
+    homeElement_Selected.set(element);
   }
 </script>
 
@@ -90,9 +90,22 @@
           <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
         </button>
         {#each $homeElements_Store as row, index (row.key)}
-        <div id={row.key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-          <ArtworkLoader artClickable={false} row={row} deleteIcon={true} previewSize = {50} on:delete={(event) => handleDelete(event.detail)} on:artClicked={(event) => handleArtClicked(event)}/>
-        </div>
+          <div id={row.key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
+            {#if row.key.startsWith('gallery_drawing') || row.value.collection === 'gallery_drawing'}
+              <button class="gallery-drawing-icon" on:click={() => handleArtClicked(row)}>
+                <img src="./assets/SHB/svg/AW-icon-addressbook.svg" alt="Gallery Drawing" />
+              </button>
+            {:else}
+              <ArtworkLoader 
+                artClickable={true} 
+                row={row} 
+                deleteIcon={true} 
+                previewSize={50} 
+                on:delete={(event) => handleDelete(event.detail)} 
+                on:artClicked={() => handleArtClicked(row)}
+              />
+            {/if}
+          </div>
         {/each}
         <button on:click={() => toggleView('addHomeElement')}>
           <img
@@ -236,4 +249,15 @@ img {
   background-color: #f1f1f1;
 }
 
+.gallery-drawing-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.gallery-drawing-icon img {
+  width: 50px;
+  height: 50px;
+}
 </style>
