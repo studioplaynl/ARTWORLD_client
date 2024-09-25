@@ -35,12 +35,9 @@ import {
   HomeElements, 
   homeElements_Store, 
   homeElement_Selected, 
-  My_drawing_GalleryStore,
-  My_stopmotion_GalleryStore,
-  Other_drawing_GalleryStore,
-  Other_stopmotion_GalleryStore,
  } from '../../../storage';
 import { homeIsOfSelf } from '../../../session';
+import GalleryManager from '../class/GalleryManager';
 
 import {
   updateObject,
@@ -100,14 +97,9 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.userArtDisplayList = [];
     this.artUrl = [];
 
-    // track for progress and completion of artworks
-    this.progress = [];
-    this.progressStopmotion = [];
-
     // sizes for the artWorks
     this.artIconSize = ART_ICON_SIZE;
     this.artPreviewSize = ART_PREVIEW_SIZE;
-    this.artDisplaySize = ART_DISPLAY_SIZE_LARGE;
     this.artMargin = ART_OFFSET_BETWEEN;
 
     this.location = '';
@@ -124,8 +116,8 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.drawing_ServerList = {};
     this.previousDrawingStore = null;
     this.homeGallery_drawing_PageSize = 3;
-    this.homeGallery_drawing_CurrentPage = 1;
-    this.homeGallery_drawing_TotalPages = 1;
+    this.homeGallery_drawing_CurrentPage = 1; 
+    this.homeGallery_drawing_TotalPages = 1; 
 
     this.stopmotion_Store = null;
     // ServerCall add some data to the drawing_ServerList (success of download).
@@ -161,33 +153,38 @@ export default class DefaultUserHome extends Phaser.Scene {
     */
     homeIsOfSelf.set(this.selfHome);
 
-    //for some reason this has to happen in preload, in create this.selfHome is undefined
-    if (this.selfHome) {
-      // for the drawing gallery 
-      this.initialize_Gallery_Store(My_drawing_GalleryStore, 'drawing');
-      // for the stopmotion gallery
-      this.initialize_Gallery_Store(My_stopmotion_GalleryStore, 'stopmotion'); 
-    } else {
-      this.initialize_Gallery_Store(Other_drawing_GalleryStore, 'drawing');
-      this.initialize_Gallery_Store(Other_stopmotion_GalleryStore, 'stopmotion');
-    }
+    // //for some reason this has to happen in preload, in create this.selfHome is undefined
+    // if (this.selfHome) {
+    //   // for the drawing gallery 
+    //   this.initialize_Gallery_Store(My_drawing_GalleryStore, 'drawing');
+    //   // for the stopmotion gallery
+    //   this.initialize_Gallery_Store(My_stopmotion_GalleryStore, 'stopmotion'); 
+    // } else {
+    //   this.initialize_Gallery_Store(Other_drawing_GalleryStore, 'drawing');
+    //   this.initialize_Gallery_Store(Other_stopmotion_GalleryStore, 'stopmotion');
+    // }
+    this.drawingGalleryManager = new GalleryManager({
+      scene: this,
+      type: 'drawing',
+      pageSize: 3,
+      CurrentPage: 1, 
+      selfHome: this.selfHome,
+      location: this.location
+    });
 
-    // console.log('userHome: await ServerCall.getHomeElements(this.location)');
-    // this has to be before the subscription to the event that fires when homeElements_Store changes
-    // await ServerCall.getHomeElements(this.location);
-    // console.log('FINISHED userHome: await ServerCall.getHomeElements(this.location)');
-    
-    //! working on imageGallery
-    //! load all images
-    // TODO store in a Drawings Store
-    //! the list comes back ordered
-    //! listAllObjects has pagination server-side, but this is not needed
-    //! the pages can be loaded from local memory, when we come back on page 1
-    //! we could call listAllObjects again to get a refresh
-    
-    // const allDrawings = await listAllObjects('drawing', this.location);
-    // console.log('allDrawings: ', allDrawings);
-    // the list comes back ordered
+    this.stopmotionGalleryManager = new GalleryManager({
+      scene: this,
+      type: 'stopmotion',
+      pageSize: 3,
+      CurrentPage: 1, 
+      selfHome: this.selfHome,
+      location: this.location
+    });
+
+    await this.drawingGalleryManager.initializeGalleries();
+    await this.stopmotionGalleryManager.initializeGalleries();
+
+
     
     /** subscription to the loaderror event
      * strangely: if the more times the subscription is called, the more times the event is fired
@@ -231,7 +228,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.worldSize.x = sceneInfo.sizeX;
     this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
-    //!
+    // ------------------------------- //
 
     Background.diamondAlternatedDots(this);
 
@@ -320,18 +317,17 @@ export default class DefaultUserHome extends Phaser.Scene {
   
         this.update_Gallery_Store(store, type);
   
-        this.loadAndPlace_Gallery(type);
+        this.downloadAndCreate_Gallery(type);
       } 
     });
   }
 
-  async loadAndPlace_Gallery(type) {
+  async downloadAndCreate_Gallery(type) {
     const serverObjectsHandler = this[`${type}_ServerList`];
     serverObjectsHandler.array = get(this[`${type}_Store`].homeGalleryPaginatedArt);
     const userId = this.location;
-    const artSize = this.artDisplaySize;
+    const artSize = ART_DISPLAY_SIZE_LARGE;
     const artMargin = artSize / 10;
-    this.artMargin = artMargin;
   
     // Destroy existing members of the group if any
     if (this[`home${type.charAt(0).toUpperCase() + type.slice(1)}Group`]) {
@@ -529,7 +525,7 @@ export default class DefaultUserHome extends Phaser.Scene {
   
         updatePageInfo();
         this.update_Gallery_Store(this[`${type}_Store`], type);
-        this.loadAndPlace_Gallery(type);
+        this.downloadAndCreate_Gallery(type);
       }
     });
   

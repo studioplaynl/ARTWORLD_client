@@ -24,7 +24,7 @@ import { HomeEditBarExpanded, Profile, ShowHomeEditBar } from '../../../session'
 import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkOptions from './ArtworkOptions';
-import { homeGalleryStore, HomeElements, homeElement_Selected } from '../../../storage';
+import { HomeElements, homeElement_Selected } from '../../../storage';
 
 import { ART_FRAME_BORDER, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
 
@@ -1160,7 +1160,6 @@ class ServerCall {
     });
   }
 
-
   hanglePrioriotizedSelection(pointer) {
         // Get all objects under the pointer
         const hitObjects = this.input.hitTestPointer(pointer);
@@ -1386,8 +1385,6 @@ class ServerCall {
   angleBetweenPoints(x1, y1, x2, y2) {
     return Math.atan2(y2 - y1, x2 - x1).toFixed(4);
   }
-
-
 
   async downloadArtwork({ element, index, type, artSize, artMargin }) {
     if (!ManageSession.currentScene) return;
@@ -2031,7 +2028,7 @@ class ServerCall {
     if (!element) return;
 
     const imageKeyUrl = element.value.url;
-    const y = 60;
+    const y = artMargin;
     const artBorder = ART_FRAME_BORDER;
 
     const artStart = 38; // start the art on the left side
@@ -2077,10 +2074,13 @@ class ServerCall {
 
     /** this check prevent errors
      * when we go out of the scene when things are still loading and being created  */
-    if (!scene.homeDrawingGroup) return;
+    const homeGroup = scene[`homeGroup_drawing`];
+    const parentContainer = scene.children.getByName(`ParentContainer_drawing`);
 
-    // scene.homeDrawingGroup.add(imageContainer);
-    scene.parentContainer_homeDrawingGroup.add(imageContainer);
+    if (!homeGroup) return;
+
+    homeGroup.add(imageContainer);
+    parentContainer.add(imageContainer);
   }
 
   static createStopmotion_Container(element, index, artSize, artMargin) {
@@ -2160,8 +2160,15 @@ class ServerCall {
     imageContainer.setSize(containerSize, containerSize);
     if (!imageContainer) return;
     if (!scene) return;
-    if (!scene.homeStopmotionGroup) return;
-    scene.parentContainer_homeStopmotionGroup.add(imageContainer);
+
+    
+    const homeGroup = scene[`homeGroup_stopmotion`];
+    const parentContainer = scene.children.getByName(`ParentContainer_stopmotion`);
+
+    if (!homeGroup) return;
+
+    homeGroup.add(imageContainer);
+    parentContainer.add(imageContainer);
   }
 
 static repositionContainers(type) {
