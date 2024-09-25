@@ -17,16 +17,12 @@
   // let homeElementsArray;
   let homeStore;
 
-  // $: console.log('homeElement_Selected', $homeElement_Selected);
-  $: console.log('homeElements_Store', $homeElements_Store);
-
   function closeEditHome() {
     ShowHomeEditBar.set(true);
     HomeEditBarExpanded.set(false);
   }
 
   function editHomeMenuToggle() {
-    console.log('toggleExpand');
     HomeEditBarExpanded.update((value) => !value);
   }
 
@@ -44,7 +40,6 @@
 
   function handleDelete(row) {
     // Implement your delete logic here
-    console.log('Deleting:', row);
     HomeElements.delete(row.key);
     dispatch('delete', row);
     // For example:
@@ -53,7 +48,6 @@
   }
 
   function handleArtClicked(element) {
-    console.log('handleArtClicked', element);
     homeElement_Selected.set(element);
   }
 </script>

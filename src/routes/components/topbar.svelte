@@ -27,7 +27,7 @@
   onMount(async () => {
     PlayerLocation.subscribe(async (value) => {
       currentLocation = value;
-      console.log('currentLocation', currentLocation);
+      // console.log('currentLocation', currentLocation);
 
       parentScenes = findParentScenes(currentLocation.scene, SCENE_INFO);
       
@@ -35,10 +35,10 @@
          because the Artworld button is always visible, and is the root scene
       */
       parentScenes = parentScenes.filter(scene => scene !== 'Artworld');
-      console.log('filter out artworld parentScenes', parentScenes);
+      // console.log('filter out artworld parentScenes', parentScenes);
       
       if (parentScenes.length > 0) {
-        console.log('currentLocation parentScenes', parentScenes);
+        // console.log('currentLocation parentScenes', parentScenes);
         // simple case where we have parent scenes
         currentLocation = {scene: value.scene};
       } else {
@@ -46,7 +46,7 @@
         1. Artworld
         2. DefaultUserHome
         */
-        console.log(`currentLocation ${currentLocation} has no parent scenes`);
+        // console.log(`currentLocation ${currentLocation} has no parent scenes`);
 
         if (currentLocation.scene === DEFAULT_SCENE) {
           // we are in Artworld scene
@@ -59,9 +59,9 @@
              by fetching the user info 
           */
             try {
-              console.log('currentLocation we have to fetch the user info to find the parent scene of the house');
+              // console.log('currentLocation we have to fetch the user info to find the parent scene of the house');
               userInfo = await getAccount(currentLocation.house);
-              console.log('info userInfo', userInfo);
+              // console.log('info userInfo', userInfo);
               parentScenes.push(userInfo.meta.Azc);
               // console.log('userInfo.meta.Azc parentScenes', parentScenes);
 
@@ -73,13 +73,13 @@
               // parentScenes.push(...tempParentScenes);
               parentScenes.push(...tempParentScenes2);
 
-              console.log('currentLocation parentScenes', parentScenes);
+              // console.log('currentLocation parentScenes', parentScenes);
 
               currentLocation = {scene: 'DefaultUserHome', house: value.house};
               if (userInfo.url) {
                 // avatarUrl = await getAvatar(userInfo.avatar_url);
                 avatarUrl = userInfo.url;
-                console.log('info Avatar URL:', avatarUrl);
+                // console.log('info Avatar URL:', avatarUrl);
               }
 
              const userHouseObject = await getObject(
@@ -111,9 +111,6 @@
     right: ${0}px;
     top: ${miniMap.y + MINIMAP_MARGIN}px;
   `;
-
-  $: console.log('parentScenes', parentScenes);
-  $: console.log('currentLocation', currentLocation);
 
   /** We send the player to the middle of artworld so there is a fixed orientation point
   //  We set the Position after the Location

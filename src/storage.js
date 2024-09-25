@@ -426,14 +426,10 @@ export function createArtworksStore(type) {
     
     // Helper method to fetch objects
     async fetchObjects(type, id, limit) {
-      console.log("fetchObjects: ", type, id, limit);
       if (limit !== undefined) {
-        console.log('type:', type, 'limit:', limit);
         return listAllObjects(type, id);
       } else {
-        console.log('type:', type, 'limit:', limit);
         const result = await listObjects(type, id, limit);
-        console.log('result: ', result);
         return result.objects;
       }
     },

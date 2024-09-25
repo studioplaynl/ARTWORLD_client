@@ -633,7 +633,6 @@ class ServerCall {
    *  or we remove the item from the array (we skip a media that does exist)
    * */
   handleServerArray({ type, serverObjectsHandler, artSize, artMargin }) {
-    dlog('serverObjectsHandler.array.length: ', serverObjectsHandler.array.length);
     // dlog('serverObjectsHandler: ', serverObjectsHandler);
 
     if (serverObjectsHandler.array.length > 0) {
@@ -1327,8 +1326,6 @@ class ServerCall {
   }
 
   toggleHomeElement_Controls_Handler(icon, containerBackground, editBorder, show) {
-    console.log("show: ", show);
- 
     Object.values(icon).forEach(iconX => {
       if (!iconX.active) return;
       iconX.setVisible(show);
@@ -1547,6 +1544,8 @@ class ServerCall {
       // this is fired each time a file is finished downloading (or failing)
       scene.load.on('complete', () => {
         // dlog('loader STOPMOTION is complete');
+        if (!scene.stopmotion_ServerList || !scene.stopmotion_ServerList.startLength) return;
+        
         const startLength = scene.stopmotion_ServerList.startLength;
         let downloadCompleted = scene.stopmotion_ServerList.itemsDownloadCompleted;
         // dlog('STOPMOTION loader downloadCompleted before, startLength', downloadCompleted, startLength);

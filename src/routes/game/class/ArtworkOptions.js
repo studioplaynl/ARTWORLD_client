@@ -59,7 +59,6 @@ class ArtworkOptions {
     // dlog("this.heartArray", this.heartArray)
     const exists = this.heartArray.some((element) => element.value.url === keyImgUrl);
     if (exists) {
-      console.log('exists ', exists);
       // changing to red, liked
       currentHeart.setTexture('heart');
       currentHeart.setData('toggle', false);

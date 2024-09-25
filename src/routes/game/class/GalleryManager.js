@@ -34,10 +34,6 @@ export default class GalleryManager {
       `My_${this.type}_GalleryStore` :
       `Other_${this.type}_GalleryStore`;
 
-    // Log the module and storeKey for debugging
-    console.log('Module keys:', Object.keys(module));
-    console.log('StoreKey:', storeKey);
-
     if (!module[storeKey]) {
       console.error(`Gallery store not found: ${storeKey}`);
       return;
@@ -58,7 +54,6 @@ export default class GalleryManager {
   
     // Subscribe to the gallery store
     this.unsubscribe = this.store.subscribe((value) => {
-        console.log('value updated', value);
       // Check if the value has actually changed
       if (!this.previousStore || JSON.stringify(this.previousStore) !== JSON.stringify(value)) {
         this.previousStore = JSON.parse(JSON.stringify(value));
@@ -73,7 +68,6 @@ export default class GalleryManager {
 
   update_Gallery_Store() {
     const storeValue = get(this.store);
-    console.log('Store value:', storeValue);
 
     if (storeValue) {
       // 3. set the right pageSize on the store
@@ -88,8 +82,6 @@ export default class GalleryManager {
       // Get the images we want to display
       this.serverList.array = get(this.store.homeGalleryPaginatedArt);
       
-      console.log('homeGallery_TotalPages', this.homeGallery_TotalPages);
-      console.log('serverList.array:', this.serverList.array);
     } else {
       console.error('Store value is undefined');
     }
@@ -122,7 +114,6 @@ export default class GalleryManager {
 
     // if the array is empty, don't create the gallery
     if (serverObjectsHandler.array.length === 0) {
-      console.log(`userHome: loadAndPlace_${this.type}_Gallery: no artworks to display`);
       return;
     }
 
@@ -143,7 +134,6 @@ export default class GalleryManager {
 
       const key = `gallery_${this.type}_1`;
       await HomeElements.create(key, value);
-      console.log(`userHome: loadAndPlace_${this.type}_Gallery: created new gallery_${this.type} element: `, value);
       // Refresh the homeElements after creating the new element
       galleryElement = get(homeElements_Store).find(element => element.value.collection === `gallery_${this.type}`);
     }
@@ -187,9 +177,10 @@ export default class GalleryManager {
       }
     };
 
-    // Add move button
-    const moveIcon = this.scene.add.image(totalWidth - artMargin*3, artSize + 235, 'moveIcon')
-      .setOrigin(1, 1)
+    // Add move button if we are in this.selfHome
+    if (this.selfHome) {
+      const moveIcon = this.scene.add.image(totalWidth - artMargin*3, artSize + 235, 'moveIcon')
+        .setOrigin(1, 1)
       .setScale(1)
       .setInteractive({ draggable: true })
       .setTint(0xf2f2f2);
@@ -197,7 +188,8 @@ export default class GalleryManager {
     // Set up drag functionality for the move button
     this.setupMoveIconDrag(moveIcon);
 
-    this.parentContainer.add(moveIcon);
+      this.parentContainer.add(moveIcon);
+    }
 
     // add navigation buttons
     const backButton = this.createNavigationButton(totalWidth/2 - 80, 
@@ -223,7 +215,6 @@ export default class GalleryManager {
         .setInteractive();
 
       // Add any additional properties or event listeners to the image here
-      console.log('image:', image);
       this.parentContainer.add(image);
     }
 
