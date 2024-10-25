@@ -1,5 +1,5 @@
 <script>
-/**
+  /**
  * @file ArtworkLoader.svelte
  * @author Lindsey, Maarten
  *
@@ -34,6 +34,9 @@
   let deleteCheck = false;
   let deleteButton; // check if delete button is clicked
 
+  let isStopmotion = false;
+  let frameCount = 1;
+
   $: {
     // console.log('row', row);
     if (row) {
@@ -44,6 +47,8 @@
       } else if (row.img) {
         artworkUrl = row.img;
       }
+      // Determine if it's a stopmotion based on image dimensions
+      isStopmotion = false;
     }
   }
 
@@ -54,21 +59,16 @@
   beforeUpdate(async () => {
     if (image) {
       clearInterval(interval);
-      interval = setInterval(() => {
-        frame++;
-        if (frame >= Math.floor(image.clientWidth / previewSize)) {
-          frame = 0;
-          image.style.left = '0px';
-        } else {
-          image.style.left = `-${frame * previewSize}px`;
-        }
-      }, 1000 / STOPMOTION_FPS);
-
-      // Don't animate if this (assumed) artwork is square
-      if (image && image.clientWidth > 0 && image.clientWidth === image.clientHeight) {
-        clearInterval(interval);
+      // Check if it's a stopmotion after the image has loaded
+      isStopmotion = image.naturalWidth > image.naturalHeight;
+      
+      if (isStopmotion) {
+        frameCount = Math.floor(image.naturalWidth / image.naturalHeight);
+        interval = setInterval(() => {
+          frame = (frame + 1) % frameCount;
+          image.style.transform = `translateX(-${frame * 100 / frameCount}%)`;
+        }, 1000 / STOPMOTION_FPS);
       }
-    } else {
     }
   });
 
@@ -139,14 +139,14 @@
         on:click="{handleOpenArtwork}" 
         style="--avatar-size: {previewSize}px;"
       >
-        <img bind:this="{image}" src="{artworkUrl}" alt="artwork" />
+        <img bind:this="{image}" src="{artworkUrl}" alt="artwork" class:stopmotion={isStopmotion} style="--frame-count: {frameCount};" />
       </button>
     {:else}
       <div 
         class="artPreview" 
         style="--avatar-size: {previewSize}px;"
       >
-        <img bind:this="{image}" src="{artworkUrl}" alt="artwork" />
+        <img bind:this="{image}" src="{artworkUrl}" alt="artwork" class:stopmotion={isStopmotion} style="--frame-count: {frameCount};" />
       </div>
     {/if}
     {#if deleteIcon}
@@ -181,9 +181,14 @@
     opacity: 0.75;
   }
   .artPreview > img {
-    width: 100%;
     height: 100%;
-    object-fit: contain;
+    width: 100%;
+    object-fit: cover;
+  }
+  .artPreview > img.stopmotion {
+    width: calc(100% * var(--frame-count, 1));
+    height: 100%;
+    max-width: none;
     position: absolute;
     left: 0;
     top: 0;

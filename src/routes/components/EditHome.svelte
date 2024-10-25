@@ -62,7 +62,7 @@
   }
 </script>
 
-<!-- the EditHome icon is visivle, the page is closed-->
+<!-- the EditHome icon is visible, the page is closed-->
 <!-- toggle menu open button -->
 {#if $ShowHomeEditBar && !$HomeEditBarExpanded}
   <div id="itemsButton">
@@ -95,11 +95,11 @@
         </button>
         {#each $homeElements_Store as row, index (row.key)}
           <div id={row.key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-            {#if row.key.startsWith('gallery_drawing') || row.value.collection === 'gallery_drawing'}
-              <button class="gallery-drawing-icon" on:click={() => handleArtClicked(row)}>
-                <img src="./assets/SHB/svg/AW-icon-addressbook.svg" alt="Gallery Drawing" />
-              </button>
-            {:else}
+            <!-- {#if row.key.startsWith('gallery_drawing') || row.value.collection === 'gallery_drawing'} -->
+              <!-- <button class="gallery-drawing-icon" on:click={() => handleArtClicked(row)}> -->
+                <!-- <img src="./assets/SHB/svg/AW-icon-addressbook.svg" alt="Gallery Drawing" /> -->
+              <!-- </button> -->
+            <!-- {:else} -->
               <ArtworkLoader 
                 artClickable={true} 
                 row={row} 
@@ -108,7 +108,7 @@
                 on:delete={(event) => handleDelete(event.detail)} 
                 on:artClicked={() => handleArtClicked(row)}
               />
-            {/if}
+            <!-- {/if} -->
           </div>
         {/each}
         <button on:click={() => toggleView('addHomeElement')}>
