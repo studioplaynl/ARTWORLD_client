@@ -1,5 +1,16 @@
 <script>
-  // import { fly } from 'svelte/transition';
+/**
+ * @file EditHome.svelte
+ * @author Maarten
+ *
+ *  What is this file for?
+ *  ======================
+ *  This component is to customize the players Home
+ *  When a player is in their home the  edit home icon is visible.
+ *  When clicked the EditHome component the player can add artworks to their home
+ *  The artworks are stored in the HomeElements storage
+ */
+  
   import { createEventDispatcher } from 'svelte';
 
   import { ShowHomeEditBar, HomeEditBarExpanded } from '../../session';
@@ -14,7 +25,6 @@
 
   let currentView;
   let user_id = $Profile.id;
-  // let homeElementsArray;
   let homeStore;
 
   function closeEditHome() {
@@ -104,7 +114,7 @@
         <button on:click={() => toggleView('addHomeElement')}>
           <img
             src="assets/SHB/svg/AW-icon-plus.svg"
-            alt="Toggle liked"
+            alt="open art drawer"
           />
         </button>
       </div>

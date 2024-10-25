@@ -1,5 +1,5 @@
 <script>
-  /**
+/**
  * @file ArtworkLoader.svelte
  * @author Lindsey, Maarten
  *
@@ -181,9 +181,12 @@
     opacity: 0.75;
   }
   .artPreview > img {
-    height: var(--avatar-size);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     position: absolute;
-    left: 0px;
+    left: 0;
+    top: 0;
   }
   .icon {
     background-color: transparent;

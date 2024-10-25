@@ -8,6 +8,7 @@
    *  AppItem.svelte implements make a new and editing existing drawings/stopmotion etc
    *  in the items bar
    */
+  
   import { push } from 'svelte-spa-router';
   import { onMount } from 'svelte';
   import ArtListView from './ArtListView.svelte';
