@@ -29,6 +29,11 @@ export let showDeletedArtContainer = false;
 export let showPlaceHomeElement = false;
 export let artClickable = true;
 
+export let showDrawingApp = true;
+export let showStopmotionApp = true;
+export let showAnimalChallengeApp = true;
+export let showFlowerChallengeApp = true;
+
 </script>
 
 <div class="appsGroupContainer">
@@ -43,6 +48,7 @@ export let artClickable = true;
         <br />
     {/if}
 
+    {#if showDrawingApp}
     <AppItem 
     appName = 'drawing' 
     showAddNew={showAddNew} 
@@ -53,6 +59,9 @@ export let artClickable = true;
     showPlaceHomeElement={showPlaceHomeElement} 
     artClickable={artClickable}/>
         <br />
+    {/if}
+
+    {#if showStopmotionApp}
     <AppItem appName = 'stopmotion' 
     showAddNew={showAddNew} 
     showVisibilityToggle={showVisibilityToggle} 
@@ -62,6 +71,9 @@ export let artClickable = true;
     showPlaceHomeElement={showPlaceHomeElement} 
     artClickable={artClickable}/>
         <br />
+    {/if}
+
+    {#if showAnimalChallengeApp}
     <AppItem appName = 'animalchallenge' 
     showAddNew={showAddNew} 
     showVisibilityToggle={showVisibilityToggle} 
@@ -71,6 +83,9 @@ export let artClickable = true;
     showPlaceHomeElement={showPlaceHomeElement} 
     artClickable={artClickable}/>
         <br /> 
+    {/if}
+
+    {#if showFlowerChallengeApp}
     <AppItem appName = 'flowerchallenge' 
     showAddNew={showAddNew} 
     showVisibilityToggle={showVisibilityToggle} 
@@ -79,6 +94,8 @@ export let artClickable = true;
     showDeletedArtContainer={showDeletedArtContainer} 
     showPlaceHomeElement={showPlaceHomeElement} 
     artClickable={artClickable}/>
+        <br />
+    {/if}
 
 </div>
 

@@ -60,6 +60,31 @@
   function handleArtClicked(element) {
     homeElement_Selected.set(element);
   }
+
+  // Reactive declarations to count elements by category
+  $: drawingCount = $homeElements_Store.filter(el => el.value.collection === 'drawing').length;
+  $: stopmotionCount = $homeElements_Store.filter(el => el.value.collection === 'stopmotion').length;
+  $: flowerChallengeCount = $homeElements_Store.filter(el => el.value.collection === 'flowerchallenge').length;
+  $: animalChallengeCount = $homeElements_Store.filter(el => el.value.collection === 'animalchallenge').length;
+
+  // Determine if each app should be shown, based on the counts
+  $: showDrawingApp = drawingCount < 4;
+  $: showStopmotionApp = stopmotionCount < 4;
+  $: showFlowerChallengeApp = flowerChallengeCount < 4;
+  $: showAnimalChallengeApp = animalChallengeCount < 4;
+
+  // Add an onMount function to ensure the component is rendered
+  import { onMount } from 'svelte';
+  onMount(() => {
+    console.log('EditHome component mounted');
+  });
+
+  $: console.log('drawingCount', drawingCount);
+  $: console.log('stopmotionCount', stopmotionCount);
+  $: console.log('flowerChallengeCount', flowerChallengeCount);
+  $: console.log('animalChallengeCount', animalChallengeCount);
+
+
 </script>
 
 <!-- the EditHome icon is visible, the page is closed-->
@@ -135,7 +160,12 @@
           showSendTo={false} 
           showDeletedArtContainer={false} 
           showPlaceHomeElement={true} 
-          artClickable={false}/>
+          artClickable={false}
+          {showDrawingApp}
+          {showStopmotionApp}
+          {showFlowerChallengeApp}
+          {showAnimalChallengeApp}
+          />
         {/if}
 
         </div>
