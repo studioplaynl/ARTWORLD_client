@@ -5,11 +5,15 @@
  *
  *  What is this file for?
  *  ======================
- *  artworkListViewer.svelte shows exisitign artworks in a certain category
+ *  artworkListViewer.svelte shows exisiting artworks in a certain category
  *  artworks are associated with apps, users can make a new artwork in that category
  *
  *  the player can adjust visibility of the artwork, trash the artwork, or send the artwork
  *  artworks can be send to friends or other artwork categories
+ * 
+ * This list view is also used in the EditHome component to show the artworks in the player's home
+ * EditHome functions pertain to HomeElements, and is toggles by the showPlaceHomeElement boolean
+ * delete and duplicate functionality are handled in ArtListView
  */
 
 import { onDestroy } from 'svelte';
@@ -40,7 +44,7 @@ let useraccount;
 let id = null;
 let CurrentUser;
 
-$: console.log('UIScene debug ARTLISTVIER filteredArt: ', $store);
+$: console.log('UIScene debug ARTLISTVIEW filteredArt: ', $store);
 
 const { 
     store, 

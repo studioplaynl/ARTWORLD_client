@@ -11,7 +11,6 @@ import {
   deleteObjectAdmin,
   deleteFile,
   getObject,
-  getDateAndTimeFormatted,
 } from './helpers/nakamaHelpers';
 
 import { 
@@ -164,9 +163,7 @@ export const HomeElements = {
     // console.log('HomeElements.create called', key, value);
     const homeElementsArray = get(homeElements_Store);
 
-    const datePostFix = getDateAndTimeFormatted();
-    const newKey = key + `_${datePostFix}`;
-    // console.log('newKey: ', newKey); 
+    const newKey = key + '_' + new Date().getTime();
     const obj = { key: newKey, collection: 'homeElement', value };
     const newArray = [...homeElementsArray, obj]; 
     HomeElements.set(newArray);

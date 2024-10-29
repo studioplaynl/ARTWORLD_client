@@ -217,6 +217,11 @@ export const STOCK_AVATARS = [
   'avatarRoze.png',
 ];
 
+export const MAX_COUNT_HOME_ELEMENTS_DRAWING = 4;
+export const MAX_COUNT_HOME_ELEMENTS_STOPMOTION = 4;
+export const MAX_COUNT_HOME_ELEMENTS_ANIMAL_CHALLENGE = 4;
+export const MAX_COUNT_HOME_ELEMENTS_FLOWER_CHALLENGE = 4;
+
 export const MINIMAP_SIZE = 100;
 export const MINIMAP_MARGIN = 20;
 
@@ -228,7 +233,7 @@ export const MODERATOR_LIKED_ID = '5264dc23-a339-40db-bb84-e0849ded4e68'; // use
 export const DEFAULT_SCENE = 'Artworld';
 export const DEFAULT_HOME = 'DefaultUserHome';
 export const DEFAULT_ZOOM = 0.8;
-export const ZOOM_MIN = 0.2;
+export const ZOOM_MIN = 0.3;
 export const ZOOM_MAX = 3.0;
 export const ZOOM_STEP = 0.1;
 

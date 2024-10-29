@@ -9,10 +9,12 @@
  *  When a player is in their home the  edit home icon is visible.
  *  When clicked the EditHome component the player can add artworks to their home
  *  The artworks are stored in the HomeElements storage
+ *  EditHome has a left column with artwork categories, and a right column with the list of HomeElements
+ *  left column: EditHome> AppGroup> AppItem> ArtlistView> PlaceHomeElement
+ *  right column: EditHome> ArtworkLoader
  */
   
   import { createEventDispatcher } from 'svelte';
-
   import { ShowHomeEditBar, HomeEditBarExpanded } from '../../session';
   // import { clickOutside } from '../../helpers/clickOutside';
   import { fade } from 'svelte/transition';
@@ -20,8 +22,10 @@
   import { HomeElements, homeElement_Selected, homeElements_Store } from '../../storage';
   import { Profile } from '../../session';
   import ArtworkLoader from './ArtworkLoader.svelte';
-  
-  const dispatch = createEventDispatcher(); // sends a custom event to the parent component (EditHome.svelte) delete event
+  import { MAX_COUNT_HOME_ELEMENTS_DRAWING, MAX_COUNT_HOME_ELEMENTS_STOPMOTION, MAX_COUNT_HOME_ELEMENTS_ANIMAL_CHALLENGE, MAX_COUNT_HOME_ELEMENTS_FLOWER_CHALLENGE } from '../../constants';
+
+
+  const dispatch = createEventDispatcher();
 
   let currentView;
   let user_id = $Profile.id;
@@ -48,13 +52,33 @@
     currentView = currentView === view ? null : view;
   }
 
-  function handleDelete(row) {
-    // Implement your delete logic here
+  function handleDeleteHomeElement(row) {
     HomeElements.delete(row.key);
-    dispatch('delete', row);
-    // For example:
-    // homeElements_Store.update(elements => elements.filter(el => el.key !== row.key));
-    // You might also want to call a function to delete the item from the server
+    // delete HomeElement also in Phaser 
+    // by sending this event to App.svelte
+    dispatch('deleteHomeElementPhaser', row);
+  }
+
+  function handleDuplicateHomeElement(row) {
+    // duplicate HomeElement
+    console.log('handleDuplicateHomeElement row', row);
+    const posX = row.value.posX + 10;
+    const posY = row.value.posY + 10;
+    const value = {
+      collection: row.value.collection,
+      key: row.value.key,
+      displayName: row.value.displayName,
+      previewUrl: row.value.previewUrl,
+      url: row.value.url,
+      version: row.value.version,
+      posX,
+      posY,
+      rotation: 0,
+      scale: 1,
+      width: 512,
+      height: 512
+    };
+    HomeElements.create(value.key, value);
   }
 
   function handleArtClicked(element) {
@@ -62,35 +86,64 @@
   }
 
   // Reactive declarations to count elements by category
-  $: drawingCount = $homeElements_Store.filter(el => el.value.collection === 'drawing').length;
-  $: stopmotionCount = $homeElements_Store.filter(el => el.value.collection === 'stopmotion').length;
-  $: flowerChallengeCount = $homeElements_Store.filter(el => el.value.collection === 'flowerchallenge').length;
-  $: animalChallengeCount = $homeElements_Store.filter(el => el.value.collection === 'animalchallenge').length;
+  $: drawingCount = new Set($homeElements_Store
+    .filter(el => el.value.collection === 'drawing')
+    .map(el => el.value.key)
+  ).size;
+
+  $: stopmotionCount = new Set($homeElements_Store
+    .filter(el => el.value.collection === 'stopmotion')
+    .map(el => el.value.key)
+  ).size;
+
+  $: flowerChallengeCount = new Set($homeElements_Store
+    .filter(el => el.value.collection === 'flowerchallenge')
+    .map(el => el.value.key)
+  ).size;
+
+  $: animalChallengeCount = new Set($homeElements_Store
+    .filter(el => el.value.collection === 'animalchallenge')
+    .map(el => el.value.key)
+  ).size;
 
   // Determine if each app should be shown, based on the counts
-  $: showDrawingApp = drawingCount < 4;
-  $: showStopmotionApp = stopmotionCount < 4;
-  $: showFlowerChallengeApp = flowerChallengeCount < 4;
-  $: showAnimalChallengeApp = animalChallengeCount < 4;
+  $: showDrawingApp = drawingCount < MAX_COUNT_HOME_ELEMENTS_DRAWING;
+  $: showStopmotionApp = stopmotionCount < MAX_COUNT_HOME_ELEMENTS_STOPMOTION;
+  $: showFlowerChallengeApp = flowerChallengeCount < MAX_COUNT_HOME_ELEMENTS_FLOWER_CHALLENGE;
+  $: showAnimalChallengeApp = animalChallengeCount < MAX_COUNT_HOME_ELEMENTS_ANIMAL_CHALLENGE;
 
-  // Add an onMount function to ensure the component is rendered
-  import { onMount } from 'svelte';
-  onMount(() => {
-    console.log('EditHome component mounted');
+  $: sortedHomeElements = [...$homeElements_Store].sort((a, b) => {
+    if (a.value.key < b.value.key) return -1;
+    if (a.value.key > b.value.key) return 1;
+    return 0;
   });
 
-  $: console.log('drawingCount', drawingCount);
-  $: console.log('stopmotionCount', stopmotionCount);
-  $: console.log('flowerChallengeCount', flowerChallengeCount);
-  $: console.log('animalChallengeCount', animalChallengeCount);
 
+  let groupedElements = {};
+  let foldedState = {};
 
+  $: {
+    // Group elements by their unique keys
+    groupedElements = $homeElements_Store.reduce((acc, row) => {
+      const key = row.value.key;
+      if (!acc[key]) {
+        acc[key] = [];
+        foldedState[key] = false; // Initialize folded state for each group
+      }
+      acc[key].push(row);
+      return acc;
+    }, {});
+  }
+
+  function toggleFold(key) {
+    foldedState[key] = !foldedState[key];
+  }
 </script>
 
 <!-- the EditHome icon is visible, the page is closed-->
 <!-- toggle menu open button -->
 {#if $ShowHomeEditBar && !$HomeEditBarExpanded}
-  <div id="itemsButton">
+  <div id="editHomeOpenButton">
     <button on:click="{editHomeMenuToggle}" id="clear" class="icon">
       <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
     </button>
@@ -112,30 +165,55 @@
     id="currentUser"
   > 
     <div class="menu-content">
-      <!-- the right part of the EditHome, icons and buttons -->
+      <!-- the right part of the EditHome: list of HomeElements -->
       <div class="right-column-itemsbar">
         <!-- close the EditHome page -->
         <button on:click={editHomeMenuToggle} >
           <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
         </button>
-        {#each $homeElements_Store as row, index (row.key)}
-          <div id={row.key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-            <!-- {#if row.key.startsWith('gallery_drawing') || row.value.collection === 'gallery_drawing'} -->
-              <!-- <button class="gallery-drawing-icon" on:click={() => handleArtClicked(row)}> -->
-                <!-- <img src="./assets/SHB/svg/AW-icon-addressbook.svg" alt="Gallery Drawing" /> -->
-              <!-- </button> -->
-            <!-- {:else} -->
-              <ArtworkLoader 
-                artClickable={true} 
-                row={row} 
-                deleteIcon={true} 
-                previewSize={50} 
-                on:delete={(event) => handleDelete(event.detail)} 
-                on:artClicked={() => handleArtClicked(row)}
-              />
-            <!-- {/if} -->
-          </div>
+        {#each Object.entries(groupedElements) as [key, rows]}
+          {#if rows.length > 0} <!-- Ensure there is at least one element in the group -->
+            <div>
+              <div id={rows[0].key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
+                <!-- Render the first element with a toggle button only if there are multiple elements -->
+                <!-- {#if rows.length > 1} -->
+                  <!-- <button on:click={() => toggleFold(key)}> -->
+                    <!-- <img src="public/assets/SHB/svg/AW-icon-enter.svg" alt="Toggle" style="transform: rotate({foldedState[key] ? 90 : 0}deg);" /> -->
+                  <!-- </button> -->
+                <!-- {/if} -->
+                <ArtworkLoader 
+                  artClickable={true} 
+                  row={rows[0]} 
+                  deleteIcon={true}
+                  duplicateIcon={true}
+                  previewSize={50} 
+                  on:deleteArtworkInContext={(event) => handleDeleteHomeElement(event.detail)} 
+                  on:artClicked={() => handleArtClicked(rows[0])}
+                  on:duplicateArtworkInContext={(event) => handleDuplicateHomeElement(event.detail)}
+                />
+              </div>
+
+              <!-- Render the rest of the elements indented, only if unfolded -->
+              {#if rows.length > 1 && !foldedState[key]}
+                {#each rows.slice(1) as row}
+                  <div style="margin-left: 20px;" id={row.key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
+                    <ArtworkLoader 
+                      artClickable={true} 
+                      row={row} 
+                      deleteIcon={true}
+                      duplicateIcon={true}
+                      previewSize={50} 
+                      on:deleteArtworkInContext={(event) => handleDeleteHomeElement(event.detail)} 
+                      on:artClicked={() => handleArtClicked(row)}
+                      on:duplicateArtworkInContext={(event) => handleDuplicateHomeElement(event.detail)}
+                    />
+                  </div>
+                {/each}
+              {/if}
+            </div>
+          {/if}
         {/each}
+        <!-- show/hide artwork categories -->
         <button on:click={() => toggleView('addHomeElement')}>
           <img
             src="assets/SHB/svg/AW-icon-plus.svg"
@@ -144,13 +222,10 @@
         </button>
       </div>
 
-      <!-- the left part of the EditHome, content area -->
-      <div class="left-column-itemsbar">
-        {#if currentView === 'liked'}
-          <div>
-            <!-- <LikedPage /> -->
-          </div>
-        {:else if currentView === 'addHomeElement'}
+      <!-- the left part of the EditHome: artwork categories -->
+      <div class="left-column-editHome">
+        
+        {#if currentView === 'addHomeElement'}
           <AppGroup 
           showAvatarSelector={false} 
           showHomeSelector={false} 
@@ -167,7 +242,6 @@
           {showAnimalChallengeApp}
           />
         {/if}
-
         </div>
     </div>
   </div>
@@ -198,7 +272,7 @@ img {
   height: auto;
 }
 
-#itemsButton {
+#editHomeOpenButton {
   position: fixed;
   width: 50px;
   height: 50px;
@@ -257,7 +331,7 @@ img {
   height: 50px;
 }
 
-.left-column-itemsbar {
+.left-column-editHome {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -268,18 +342,18 @@ img {
 
 /* Scrollbar styles */
 .right-column-itemsbar::-webkit-scrollbar,
-.left-column-itemsbar::-webkit-scrollbar {
+.left-column-editHome::-webkit-scrollbar {
   width: 6px;
 }
 
 .right-column-itemsbar::-webkit-scrollbar-thumb,
-.left-column-itemsbar::-webkit-scrollbar-thumb {
+.left-column-editHome::-webkit-scrollbar-thumb {
   background-color: #7300ed;
   border-radius: 3px;
 }
 
 .right-column-itemsbar::-webkit-scrollbar-track,
-.left-column-itemsbar::-webkit-scrollbar-track {
+.left-column-editHome::-webkit-scrollbar-track {
   background-color: #f1f1f1;
 }
 
@@ -295,3 +369,6 @@ img {
   height: 50px;
 }
 </style>
+
+
+

@@ -26,6 +26,7 @@
   export let artClickable = true;
   export let deleteIcon = false;  
   export let previewSize = 75;
+  export let duplicateIcon = false;
 
   let image;
   let frame = 0;
@@ -53,6 +54,7 @@
   }
 
   onMount(() => {
+    // for cancelling delete
     window.addEventListener('click', handleClickOutsideDeleteButton);
   });
 
@@ -93,7 +95,6 @@
     if (row.collection === 'homeElement') {
       // we want to make this selected in editHome menu
       // and Phaser
-      console.log('homeElement_Selected', row);
       homeElement_Selected.set(row);
     }
     if (!artClickable) return;
@@ -118,16 +119,18 @@
 
   function handleDelete(event) {
     event.stopPropagation();  // Prevent the click from triggering handleOpenArtwork
-    // Implement delete logic here
-    // You might want to emit an event here for the parent component to handle the deletion
-    // For example: dispatch('delete', row);
     if (deleteCheck) {
-      console.log('Delete clicked for:', row);
-
-      dispatch('delete', row);
+      //where is delete handled?
+      dispatch('deleteArtworkInContext', row);
     } else {
       deleteCheck = true;
     }
+  }
+
+  function handleDuplicate() {
+    event.stopPropagation();  // Prevent the click from triggering handleOpenArtwork
+    dispatch('duplicateArtworkInContext', row);
+    console.log('handleDuplicate row', row);
   }
 </script>
 
@@ -149,15 +152,22 @@
         <img bind:this="{image}" src="{artworkUrl}" alt="artwork" class:stopmotion={isStopmotion} style="--frame-count: {frameCount};" />
       </div>
     {/if}
-    {#if deleteIcon}
-      <button bind:this={deleteButton} class="icon delete-button" on:click={handleDelete}>
-        {#if deleteCheck}
-          <img alt="delete" src="/assets/SHB/svg/AW-icon-trash.svg" />
-        {:else}
-          <img alt="sure you want to delete?" src="/assets/SHB/svg/AW-icon-cross.svg" />
-        {/if}
+    <div class="artwork-actions">
+      {#if duplicateIcon}
+      <button class="icon duplicate-button" on:click={handleDuplicate}>
+        <img alt="duplicate HomeElement" src="/assets/SHB/svg/AW-icon-copy.svg" />
       </button>
-    {/if}
+      {/if}
+      {#if deleteIcon}
+        <button bind:this={deleteButton} class="icon delete-button" on:click={handleDelete}>
+          {#if deleteCheck}
+            <img alt="delete intent" src="/assets/SHB/svg/AW-icon-trash.svg" />
+          {:else}
+            <img alt="delete for sure" src="/assets/SHB/svg/AW-icon-cross.svg" />
+          {/if}
+        </button>
+      {/if}
+    </div>
   </div>
 {/if}
 
@@ -192,6 +202,12 @@
     position: absolute;
     left: 0;
     top: 0;
+  }
+  .artwork-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 10px; /* Add some space between the image and actions */
   }
   .icon {
     background-color: transparent;

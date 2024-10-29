@@ -122,9 +122,10 @@ import * as Phaser from 'phaser';
     title = t;
   }
 
-  function handleDelete(event) {
-    console.log('handleDelete', event.detail);
+  //delete HomeElement also in Phaser
+  function handleDeleteHomeElementPhaser(event) {
     if (game && game.events) {
+      //delete HomeElement also in Phaser
       game.events.emit('homeElemetDeleted', event.detail);
     }
   }
@@ -190,7 +191,7 @@ import * as Phaser from 'phaser';
   </main>
   <Itemsbar />
   <SelectedOnlinePlayerBar />
-  <EditHome on:delete={handleDelete}/>
+  <EditHome on:deleteHomeElementPhaser={handleDeleteHomeElementPhaser}/>
   <AppLoader />
   <TopBar />
   <AchievementAnimation />
