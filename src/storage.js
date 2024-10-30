@@ -197,14 +197,27 @@ export const HomeElements = {
 
   create: (key, value) => {
     const newKey = key + '_' + new Date().getTime();
-    const obj = { key: newKey, collection: 'homeElement', value };
+    const obj = { key: newKey, collection: value.collection, value };
 
     homeElements_Store.update((currentState) => {
+      // Determine which collection this belongs to (drawing or stopmotion)
       const collection = value.collection;
+
+      // Initialize collection if it doesn't exist
       if (!currentState[collection]) {
         currentState[collection] = { byKey: {} };
       }
-      currentState[collection].byKey[newKey] = [obj];
+
+      // Find the group this should belong to (based on value.key)
+      const groupKey = value.key;
+
+      // If group exists, add to it; if not, create new group
+      if (currentState[collection].byKey[groupKey]) {
+        currentState[collection].byKey[groupKey].push(obj);
+      } else {
+        currentState[collection].byKey[groupKey] = [obj];
+      }
+
       return currentState;
     });
 
@@ -256,13 +269,33 @@ export const HomeElements = {
   delete: (key) => {
     dlog('delete: ', key);
     homeElements_Store.update((currentState) => {
-      // Search and remove in both collections
-      for (const collection of ['drawing', 'stopmotion']) {
-        if (currentState[collection]?.byKey[key]) {
-          delete currentState[collection].byKey[key];
+      // Search through all collections
+      for (const collection of Object.keys(currentState)) {
+        const byKey = currentState[collection].byKey;
+
+        // Search through all groups
+        for (const groupKey of Object.keys(byKey)) {
+          // Find the element in the group
+          const group = byKey[groupKey];
+          const elementIndex = group.findIndex((element) => element.key === key);
+
+          if (elementIndex !== -1) {
+            // Remove the element from the group
+            group.splice(elementIndex, 1);
+
+            // If group is empty, remove the group
+            if (group.length === 0) {
+              delete byKey[groupKey];
+            }
+
+            // Delete from server
+            deleteObject('homeElement', key);
+
+            // Force a new reference to trigger reactivity
+            return { ...currentState };
+          }
         }
       }
-      deleteObject('homeElement', key);
       return currentState;
     });
   },

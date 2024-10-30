@@ -59,14 +59,10 @@
 
   function handleDeleteHomeElement(row) {
     HomeElements.delete(row.key);
-    // delete HomeElement also in Phaser 
-    // by sending this event to App.svelte
     dispatch('deleteHomeElementPhaser', row);
   }
 
   function handleDuplicateHomeElement(row) {
-    // duplicate HomeElement
-    console.log('handleDuplicateHomeElement row', row);
     const posX = row.value.posX + 10;
     const posY = row.value.posY + 10;
     const value = {
@@ -159,47 +155,77 @@
         
         <!-- Render drawings -->
         {#if $homeElements_Store.drawing?.byKey}
-          {#each Object.entries($homeElements_Store.drawing.byKey) as [key, group]}
-            <div>
-              <!-- Render unique element -->
-              <div id={group[0].key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-                <ArtworkLoader 
-                  artClickable={true} 
-                  row={group[0]} 
-                  deleteIcon={true}
-                  duplicateIcon={true}
-                  previewSize={50} 
-                  on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
-                  on:artClicked={() => handleArtClicked(group[0])}
-                  on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
-                />
-              </div>
-
-              <!-- Render duplicates if any -->
-              {#if group.length > 1 && !foldedState[key]}
-                {#each group.slice(1) as duplicate}
-                  <div style="margin-left: 20px;" id={duplicate.key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
+          {#each Object.entries($homeElements_Store.drawing.byKey) as [valueKey, group]}
+            <!-- Unique element (group leader) -->
+            <div class="element-group">
+                <div class="unique-element" id={group[0].key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
                     <ArtworkLoader 
-                      artClickable={true} 
-                      row={duplicate} 
-                      deleteIcon={true}
-                      duplicateIcon={true}
-                      previewSize={50} 
-                      on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
-                      on:artClicked={() => handleArtClicked(duplicate)}
-                      on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}
+                        artClickable={true} 
+                        row={group[0]} 
+                        deleteIcon={true}
+                        duplicateIcon={true}
+                        previewSize={50} 
+                        on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
+                        on:artClicked={() => handleArtClicked(group[0])}
+                        on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
                     />
-                  </div>
-                {/each}
-              {/if}
+                </div>
+
+                <!-- Duplicates -->
+                {#if group.length > 1}
+                    {#each group.slice(1) as duplicate}
+                        <div class="duplicate-element" id={duplicate.key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
+                            <ArtworkLoader 
+                                artClickable={true} 
+                                row={duplicate} 
+                                deleteIcon={true}
+                                duplicateIcon={true}
+                                previewSize={50} 
+                                on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
+                                on:artClicked={() => handleArtClicked(duplicate)}
+                                on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}
+                            />
+                        </div>
+                    {/each}
+                {/if}
             </div>
           {/each}
         {/if}
 
         <!-- Render stopmotions - same structure as drawings -->
         {#if $homeElements_Store.stopmotion?.byKey}
-          {#each Object.entries($homeElements_Store.stopmotion.byKey) as [key, group]}
-            <!-- Same structure as drawings above -->
+          {#each Object.entries($homeElements_Store.stopmotion.byKey) as [valueKey, group]}
+            <div class="element-group">
+                <div class="unique-element" id={group[0].key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
+                    <ArtworkLoader 
+                        artClickable={true} 
+                        row={group[0]} 
+                        deleteIcon={true}
+                        duplicateIcon={true}
+                        previewSize={50} 
+                        on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
+                        on:artClicked={() => handleArtClicked(group[0])}
+                        on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
+                    />
+                </div>
+
+                {#if group.length > 1}
+                    {#each group.slice(1) as duplicate}
+                        <div class="duplicate-element" id={duplicate.key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
+                            <ArtworkLoader 
+                                artClickable={true} 
+                                row={duplicate} 
+                                deleteIcon={true}
+                                duplicateIcon={true}
+                                previewSize={50} 
+                                on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
+                                on:artClicked={() => handleArtClicked(duplicate)}
+                                on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}
+                            />
+                        </div>
+                    {/each}
+                {/if}
+            </div>
           {/each}
         {/if}
 
@@ -347,16 +373,19 @@ img {
   background-color: #f1f1f1;
 }
 
-.gallery-drawing-icon {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+.element-group {
+  margin: 10px 0;
 }
 
-.gallery-drawing-icon img {
-  width: 50px;
-  height: 50px;
+.unique-element {
+  padding-left: 0px;
+}
+
+.duplicate-element {
+  /* Styles for duplicates */
+  margin-left: 20px;
+  padding-left: 0px;
+
 }
 </style>
 
