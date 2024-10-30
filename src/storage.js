@@ -13,19 +13,19 @@ import {
   getObject,
 } from './helpers/nakamaHelpers';
 
-import { 
-  PERMISSION_READ_PUBLIC, 
-  MODERATOR_LIKED_ID, 
-  STOPMOTION_MAX_FRAMES, 
+import {
+  PERMISSION_READ_PUBLIC,
+  MODERATOR_LIKED_ID,
+  STOPMOTION_MAX_FRAMES,
   DEFAULT_PREVIEW_HEIGHT,
   OBJECT_STATE_REGULAR,
   OBJECT_STATE_UNDEFINED,
-  OBJECT_STATE_IN_TRASH
- } from './constants';
+  OBJECT_STATE_IN_TRASH,
+} from './constants';
 
 import { dlog } from './helpers/debugLog';
 
-export const miniMapDimensions = writable({x: 0, y: 0});
+export const miniMapDimensions = writable({ x: 0, y: 0 });
 
 //  Achievements of a user
 const achievementsStore = writable([]);
@@ -150,74 +150,155 @@ export const Liked = {
 };
 
 // All HomeElements of a Home
-export const homeElements_Store = writable([]);
+export const homeElements_Store = writable({
+  drawing: {
+    byKey: {}, // e.g., { "key1": [element1, element2, element3], "key2": [element4, element5] }
+  },
+  stopmotion: {
+    byKey: {},
+  },
+});
+
 // The selected homeElement in Home of Self
 export const homeElement_Selected = writable({});
 
 export const HomeElements = {
   subscribe: homeElements_Store.subscribe,
-  set: homeElements_Store.set,
-  update: homeElements_Store.update,
+
+  set: (elements) => {
+    const organized = elements.reduce(
+      (acc, element) => {
+        const collection = element.value.collection;
+        const key = element.value.key;
+
+        // Initialize collection if it doesn't exist
+        if (!acc[collection]) {
+          acc[collection] = { byKey: {} };
+        }
+
+        // Initialize key array if it doesn't exist
+        if (!acc[collection].byKey[key]) {
+          acc[collection].byKey[key] = [];
+        }
+
+        // Add element to its key group
+        acc[collection].byKey[key].push(element);
+
+        return acc;
+      },
+      {
+        drawing: { byKey: {} },
+        stopmotion: { byKey: {} },
+      }
+    );
+
+    homeElements_Store.set(organized);
+  },
 
   create: (key, value) => {
-    // console.log('HomeElements.create called', key, value);
-    const homeElementsArray = get(homeElements_Store);
-
     const newKey = key + '_' + new Date().getTime();
     const obj = { key: newKey, collection: 'homeElement', value };
-    const newArray = [...homeElementsArray, obj]; 
-    HomeElements.set(newArray);
+
+    homeElements_Store.update((currentState) => {
+      const collection = value.collection;
+      if (!currentState[collection]) {
+        currentState[collection] = { byKey: {} };
+      }
+      currentState[collection].byKey[newKey] = [obj];
+      return currentState;
+    });
+
     updateObject('homeElement', newKey, value, true).then(() => {
       console.log('HomeElements.create server side done ');
       homeElement_Selected.set(obj);
     });
-    return newArray;
+
+    return obj;
   },
 
   updateStoreSilently: (key, newValue) => {
-    homeElements_Store.update(currentElements => {
-      const index = currentElements.findIndex(element => element.key === key);
-      if (index !== -1) {
-        // Create a new object reference for the updated element
-        const updatedElement = { ...currentElements[index], value: newValue };
-        
-        // Replace the old element with the updated one without creating a new array
-        currentElements[index] = updatedElement;
+    homeElements_Store.update((currentState) => {
+      // Search in both collections
+      for (const collection of ['drawing', 'stopmotion']) {
+        const keyGroup = currentState[collection]?.byKey[key];
+        if (keyGroup) {
+          // Update all instances of this key
+          keyGroup.forEach((element, index) => {
+            keyGroup[index] = { ...element, value: newValue };
+          });
+        }
       }
-      // Return the same array reference to avoid triggering reactivity
-      return currentElements;
+      return currentState;
     });
   },
 
   getFromServer: async (key) => {
     const serverHomeElementsArray = await listAllObjects('homeElement', key);
-    HomeElements.set([...serverHomeElementsArray]); // Ensure new array reference
+    HomeElements.set([...serverHomeElementsArray]);
     return serverHomeElementsArray;
   },
 
   showContent: () => {
-    // const homeElementsArray = get(homeElements_Store);
     return get(homeElements_Store);
   },
 
   find: (key) => {
-    const homeElementsArray = get(homeElements_Store);
-    const i = homeElementsArray.findIndex((element) => element.key === key);
-    if (i > -1) return homeElementsArray[i].value;
+    const store = get(homeElements_Store);
+    for (const collection of ['drawing', 'stopmotion']) {
+      const keyGroup = store[collection]?.byKey[key];
+      if (keyGroup?.[0]) {
+        return keyGroup[0].value;
+      }
+    }
     return undefined;
   },
 
   delete: (key) => {
     dlog('delete: ', key);
-    homeElements_Store.update((homeElementsItems) => {
-      const itemNum = homeElementsItems.findIndex((element) => element.key === key);
-      if (itemNum === -1) return homeElementsItems;
-
+    homeElements_Store.update((currentState) => {
+      // Search and remove in both collections
+      for (const collection of ['drawing', 'stopmotion']) {
+        if (currentState[collection]?.byKey[key]) {
+          delete currentState[collection].byKey[key];
+        }
+      }
       deleteObject('homeElement', key);
-
-      const newArray = homeElementsItems.filter((element) => element.key !== key);
-      return newArray; // Return new array reference
+      return currentState;
     });
+  },
+
+  // Helper methods for accessing organized data
+  getUnique: (collection) => {
+    const store = get(homeElements_Store);
+    return Object.values(store[collection]?.byKey || {}).map((group) => group[0]);
+  },
+
+  getDuplicates: (collection) => {
+    const store = get(homeElements_Store);
+    return Object.values(store[collection]?.byKey || {}).flatMap((group) => group.slice(1));
+  },
+
+  getDuplicatesByKey: (collection, key) => {
+    const store = get(homeElements_Store);
+    const keyGroup = store[collection]?.byKey[key];
+    return keyGroup ? keyGroup.slice(1) : [];
+  },
+
+  getUniqueByKey: (collection, key) => {
+    const store = get(homeElements_Store);
+    const keyGroup = store[collection]?.byKey[key];
+    return keyGroup ? keyGroup[0] : null;
+  },
+
+  getGroupByKey: (collection, key) => {
+    const store = get(homeElements_Store);
+    return store[collection]?.byKey[key] || [];
+  },
+
+  // Helper to get all elements as flat array if needed
+  getAllFlat: () => {
+    const store = get(homeElements_Store);
+    return Object.values(store).flatMap((collection) => Object.values(collection.byKey).flat());
   },
 };
 
@@ -305,10 +386,10 @@ const stores = {};
     there is no data duplication, because the store is created only once 
 */
 export function useArtworksStore(type) {
-    if (!stores[type]) {
-        stores[type] = createArtworksStore(type);
-    }
-    return stores[type];
+  if (!stores[type]) {
+    stores[type] = createArtworksStore(type);
+  }
+  return stores[type];
 }
 
 /* reactive derived art stores 
@@ -347,38 +428,27 @@ that filters the artworks if it is in the trash
 */
 export function useFilteredArtworksStore(type) {
   const store = useArtworksStore(type);
-  
+
   // This derived store filters artworks based on their status
   // OBJECT_STATE_REGULAR: Represents a normal, active artwork
   // OBJECT_STATE_UNDEFINED: Represents an artwork with an unspecified status
   // Both of these statuses indicate that the artwork should be included in the filtered list
-  const filteredArt = derived(store, $store => 
-      $store.filter(el => 
-          el.value.status === OBJECT_STATE_REGULAR || 
-          el.value.status === OBJECT_STATE_UNDEFINED
-      )
+  const filteredArt = derived(store, ($store) =>
+    $store.filter((el) => el.value.status === OBJECT_STATE_REGULAR || el.value.status === OBJECT_STATE_UNDEFINED)
   );
 
-  const deletedArt = derived(store, $store => 
-      $store.filter(el => 
-          el.value.status === OBJECT_STATE_IN_TRASH
-      )
+  const deletedArt = derived(store, ($store) => $store.filter((el) => el.value.status === OBJECT_STATE_IN_TRASH));
+
+  const visibleArt = derived(store, ($store) =>
+    $store.filter((el) => el.permission_read === 2 || el.permission_read === true)
   );
 
-  const visibleArt = derived(store, $store =>
-      $store.filter(el =>
-          el.permission_read === 2 || el.permission_read === true
-      )
-  );
-
-  const filteredAndVisibleArt = derived(
-    store,
-    $store =>
-      $store.filter(el => 
-        (el.value.status === OBJECT_STATE_REGULAR || 
-         el.value.status === OBJECT_STATE_UNDEFINED) &&
+  const filteredAndVisibleArt = derived(store, ($store) =>
+    $store.filter(
+      (el) =>
+        (el.value.status === OBJECT_STATE_REGULAR || el.value.status === OBJECT_STATE_UNDEFINED) &&
         (el.permission_read === 2 || el.permission_read === true)
-      )
+    )
   );
 
   return { type, store, filteredArt, deletedArt, visibleArt, filteredAndVisibleArt };
@@ -399,28 +469,28 @@ export function createArtworksStore(type) {
       }
 
       let loadedArt = [];
-    
+
       try {
         // Load objects from the server
         const loaded = await this.fetchObjects(type, id, limit);
 
         // we sort the objects coming back from the server by update_time, so the most recent ones are on top
         loaded.sort((a, b) => new Date(b.update_time) - new Date(a.update_time));
-    
+
         // Update preview URLs
         const updatedLoaded = await this.updatePreviewUrls(loaded);
         loadedArt = [...updatedLoaded];
-    
+
         // Set data into store
         store.set(loadedArt);
-    
+
         return loadedArt;
       } catch (error) {
         console.error('Error loading artworks:', error);
         return [];
       }
     },
-    
+
     // Helper method to fetch objects
     async fetchObjects(type, id, limit) {
       if (limit !== undefined) {
@@ -557,13 +627,11 @@ export function homeGalleryStore(type, isSelfHome = false) {
   }
 
   const defaultPageSize = 3;
-  const homeGalleryPageSize = writable(defaultPageSize); 
+  const homeGalleryPageSize = writable(defaultPageSize);
   const homeGalleryCurrentPage = writable(1);
-  
-  const homeGalleryVisibleArt = derived(store, $store =>
-      $store.filter(el =>
-          el.permission_read === 2 || el.permission_read === true
-      )
+
+  const homeGalleryVisibleArt = derived(store, ($store) =>
+    $store.filter((el) => el.permission_read === 2 || el.permission_read === true)
   );
 
   const homeGalleryPaginatedArt = derived(
@@ -584,12 +652,9 @@ export function homeGalleryStore(type, isSelfHome = false) {
     subscribe: store.subscribe,
 
     async loadArtworks(userId, limit) {
-
       if (isSelfHome) {
         // If it's the user's own home, load artworks from the 'drawing' store
-        const { 
-          store, 
-        } = useFilteredArtworksStore(type);
+        const { store } = useFilteredArtworksStore(type);
         const storeContent = await store.loadArtworks();
         // const store = useFilteredArtworksStore(type);
         // return get(store);
@@ -600,24 +665,24 @@ export function homeGalleryStore(type, isSelfHome = false) {
       try {
         // Load objects from the server
         const loaded = await this.fetchObjects(type, userId, limit);
-    
+
         // sort the objects coming from the server new
         loaded.sort((a, b) => new Date(b.update_time) - new Date(a.update_time));
 
         // Update preview URLs
         const updatedLoaded = await this.updatePreviewUrls(loaded);
         loadedArt = [...updatedLoaded];
-    
+
         // Set data into store
         store.set(loadedArt);
-    
+
         return loadedArt;
       } catch (error) {
         console.error('Error loading artworks:', error);
         return [];
       }
     },
-    
+
     // Helper method to fetch objects
     async fetchObjects(type, userId, limit) {
       if (limit !== undefined) {
@@ -688,8 +753,8 @@ export function homeGalleryStore(type, isSelfHome = false) {
     homeGalleryTotalPages,
     setHomeGalleryPageSize: (size) => homeGalleryPageSize.set(size),
     setHomeGalleryCurrentPage: (page) => homeGalleryCurrentPage.set(page),
-    nextHomeGalleryPage: () => homeGalleryCurrentPage.update(n => Math.min(n + 1, get(homeGalleryTotalPages))),
-    prevHomeGalleryPage: () => homeGalleryCurrentPage.update(n => Math.max(n - 1, 1)),
+    nextHomeGalleryPage: () => homeGalleryCurrentPage.update((n) => Math.min(n + 1, get(homeGalleryTotalPages))),
+    prevHomeGalleryPage: () => homeGalleryCurrentPage.update((n) => Math.max(n - 1, 1)),
   };
 }
 
@@ -709,7 +774,6 @@ export const Other_bloem_GalleryStore = homeGalleryStore('bloem', false);
 
 export const My_dier_GalleryStore = homeGalleryStore('dier', true);
 export const Other_dier_GalleryStore = homeGalleryStore('dier', false);
-
 
 // Usage example for creating different type-specific stores
 // export const DrawingArtworksStore = createArtworksStore('drawing');

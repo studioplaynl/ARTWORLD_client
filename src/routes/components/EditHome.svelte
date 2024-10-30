@@ -22,7 +22,12 @@
   import { HomeElements, homeElement_Selected, homeElements_Store } from '../../storage';
   import { Profile } from '../../session';
   import ArtworkLoader from './ArtworkLoader.svelte';
-  import { MAX_COUNT_HOME_ELEMENTS_DRAWING, MAX_COUNT_HOME_ELEMENTS_STOPMOTION, MAX_COUNT_HOME_ELEMENTS_ANIMAL_CHALLENGE, MAX_COUNT_HOME_ELEMENTS_FLOWER_CHALLENGE } from '../../constants';
+  import { 
+    MAX_COUNT_HOME_ELEMENTS_DRAWING, 
+    MAX_COUNT_HOME_ELEMENTS_STOPMOTION, 
+    MAX_COUNT_HOME_ELEMENTS_ANIMAL_CHALLENGE, 
+    MAX_COUNT_HOME_ELEMENTS_FLOWER_CHALLENGE 
+  } from '../../constants';
 
 
   const dispatch = createEventDispatcher();
@@ -86,57 +91,37 @@
   }
 
   // Reactive declarations to count elements by category
-  $: drawingCount = new Set($homeElements_Store
-    .filter(el => el.value.collection === 'drawing')
-    .map(el => el.value.key)
-  ).size;
-
-  $: stopmotionCount = new Set($homeElements_Store
-    .filter(el => el.value.collection === 'stopmotion')
-    .map(el => el.value.key)
-  ).size;
-
-  $: flowerChallengeCount = new Set($homeElements_Store
-    .filter(el => el.value.collection === 'flowerchallenge')
-    .map(el => el.value.key)
-  ).size;
-
-  $: animalChallengeCount = new Set($homeElements_Store
-    .filter(el => el.value.collection === 'animalchallenge')
-    .map(el => el.value.key)
-  ).size;
+  $: drawingCount = Object.keys($homeElements_Store.drawing?.byKey || {}).length;
+  $: stopmotionCount = Object.keys($homeElements_Store.stopmotion?.byKey || {}).length;
+  $: flowerChallengeCount = 0; // Update when implemented
+  $: animalChallengeCount = 0;  // Update when implemented
 
   // Determine if each app should be shown, based on the counts
   $: showDrawingApp = drawingCount < MAX_COUNT_HOME_ELEMENTS_DRAWING;
   $: showStopmotionApp = stopmotionCount < MAX_COUNT_HOME_ELEMENTS_STOPMOTION;
-  $: showFlowerChallengeApp = flowerChallengeCount < MAX_COUNT_HOME_ELEMENTS_FLOWER_CHALLENGE;
-  $: showAnimalChallengeApp = animalChallengeCount < MAX_COUNT_HOME_ELEMENTS_ANIMAL_CHALLENGE;
 
-  $: sortedHomeElements = [...$homeElements_Store].sort((a, b) => {
-    if (a.value.key < b.value.key) return -1;
-    if (a.value.key > b.value.key) return 1;
-    return 0;
-  });
+  // flower and animal challenge apps are not available yet
+  const showFlowerChallengeApp = false;
+  const showAnimalChallengeApp = false;
 
-
-  let groupedElements = {};
   let foldedState = {};
 
+  // Initialize fold state for all groups
   $: {
-    // Group elements by their unique keys
-    groupedElements = $homeElements_Store.reduce((acc, row) => {
-      const key = row.value.key;
-      if (!acc[key]) {
-        acc[key] = [];
-        foldedState[key] = false; // Initialize folded state for each group
-      }
-      acc[key].push(row);
-      return acc;
-    }, {});
-  }
-
-  function toggleFold(key) {
-    foldedState[key] = !foldedState[key];
+    if ($homeElements_Store.drawing?.byKey) {
+      Object.keys($homeElements_Store.drawing.byKey).forEach(key => {
+        if (!(key in foldedState)) {
+          foldedState[key] = false;
+        }
+      });
+    }
+    if ($homeElements_Store.stopmotion?.byKey) {
+      Object.keys($homeElements_Store.stopmotion.byKey).forEach(key => {
+        if (!(key in foldedState)) {
+          foldedState[key] = false;
+        }
+      });
+    }
   }
 </script>
 
@@ -171,48 +156,53 @@
         <button on:click={editHomeMenuToggle} >
           <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
         </button>
-        {#each Object.entries(groupedElements) as [key, rows]}
-          {#if rows.length > 0} <!-- Ensure there is at least one element in the group -->
+        
+        <!-- Render drawings -->
+        {#if $homeElements_Store.drawing?.byKey}
+          {#each Object.entries($homeElements_Store.drawing.byKey) as [key, group]}
             <div>
-              <div id={rows[0].key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-                <!-- Render the first element with a toggle button only if there are multiple elements -->
-                <!-- {#if rows.length > 1} -->
-                  <!-- <button on:click={() => toggleFold(key)}> -->
-                    <!-- <img src="public/assets/SHB/svg/AW-icon-enter.svg" alt="Toggle" style="transform: rotate({foldedState[key] ? 90 : 0}deg);" /> -->
-                  <!-- </button> -->
-                <!-- {/if} -->
+              <!-- Render unique element -->
+              <div id={group[0].key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
                 <ArtworkLoader 
                   artClickable={true} 
-                  row={rows[0]} 
+                  row={group[0]} 
                   deleteIcon={true}
                   duplicateIcon={true}
                   previewSize={50} 
-                  on:deleteArtworkInContext={(event) => handleDeleteHomeElement(event.detail)} 
-                  on:artClicked={() => handleArtClicked(rows[0])}
-                  on:duplicateArtworkInContext={(event) => handleDuplicateHomeElement(event.detail)}
+                  on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
+                  on:artClicked={() => handleArtClicked(group[0])}
+                  on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
                 />
               </div>
 
-              <!-- Render the rest of the elements indented, only if unfolded -->
-              {#if rows.length > 1 && !foldedState[key]}
-                {#each rows.slice(1) as row}
-                  <div style="margin-left: 20px;" id={row.key == $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
+              <!-- Render duplicates if any -->
+              {#if group.length > 1 && !foldedState[key]}
+                {#each group.slice(1) as duplicate}
+                  <div style="margin-left: 20px;" id={duplicate.key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
                     <ArtworkLoader 
                       artClickable={true} 
-                      row={row} 
+                      row={duplicate} 
                       deleteIcon={true}
                       duplicateIcon={true}
                       previewSize={50} 
-                      on:deleteArtworkInContext={(event) => handleDeleteHomeElement(event.detail)} 
-                      on:artClicked={() => handleArtClicked(row)}
-                      on:duplicateArtworkInContext={(event) => handleDuplicateHomeElement(event.detail)}
+                      on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
+                      on:artClicked={() => handleArtClicked(duplicate)}
+                      on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}
                     />
                   </div>
                 {/each}
               {/if}
             </div>
-          {/if}
-        {/each}
+          {/each}
+        {/if}
+
+        <!-- Render stopmotions - same structure as drawings -->
+        {#if $homeElements_Store.stopmotion?.byKey}
+          {#each Object.entries($homeElements_Store.stopmotion.byKey) as [key, group]}
+            <!-- Same structure as drawings above -->
+          {/each}
+        {/if}
+
         <!-- show/hide artwork categories -->
         <button on:click={() => toggleView('addHomeElement')}>
           <img

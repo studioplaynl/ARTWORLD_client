@@ -31,19 +31,10 @@ import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 import Background from '../class/Background';
-import { 
-  HomeElements, 
-  homeElements_Store, 
-  homeElement_Selected, 
- } from '../../../storage';
+import { HomeElements, homeElement_Selected } from '../../../storage';
 import { homeIsOfSelf } from '../../../session';
 import GalleryManager from '../class/GalleryManager';
-import {
-  SCENE_INFO,
-  ART_ICON_SIZE,
-  ART_PREVIEW_SIZE,
-  ART_OFFSET_BETWEEN,
-} from '../../../constants';
+import { SCENE_INFO, ART_ICON_SIZE, ART_PREVIEW_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handlePlayerMovement } from '../helpers/InputHelper';
 import ServerCall from '../class/ServerCall';
 import { getSceneInfo } from '../helpers/UrlHelpers';
@@ -102,13 +93,13 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   async preload() {
     // set homeElement_Selected store to empty so there is nothing selected when we enter a home
-    homeElement_Selected.set("");
+    homeElement_Selected.set('');
 
     this.homeElements_Drawing_Group = this.add.group();
     this.homeElements_Stopmotion_Group = this.add.group();
     this.homeElements_Animal_Group = this.add.group();
     this.homeElements_Flower_Group = this.add.group();
-    
+
     //! Check if this is home of player
     this.selfHome = await ServerCall.checkIfHomeSelf(this.location);
     /* set homeIsOfSelf to true if this is the home of the player
@@ -121,18 +112,18 @@ export default class DefaultUserHome extends Phaser.Scene {
       scene: this,
       type: 'drawing',
       pageSize: 3,
-      CurrentPage: 1, 
+      CurrentPage: 1,
       selfHome: this.selfHome,
-      location: this.location
+      location: this.location,
     });
 
     this.stopmotionGalleryManager = new GalleryManager({
       scene: this,
       type: 'stopmotion',
       pageSize: 3,
-      CurrentPage: 1, 
+      CurrentPage: 1,
       selfHome: this.selfHome,
-      location: this.location
+      location: this.location,
     });
 
     await this.drawingGalleryManager.initializeGalleries();
@@ -142,20 +133,20 @@ export default class DefaultUserHome extends Phaser.Scene {
      * strangely: if the more times the subscription is called, the more times the event is fired
      * so we subscribe here only once in the scene
      * so we don't have to remember to subribe to it when we download something that needs error handling
-    */
-   this.load.on('loaderror', (offendingFile) => {
-     dlog('loaderror', offendingFile);
-     if (typeof offendingFile !== 'undefined') {
-       ServerCall.resolveLoadError(offendingFile);
+     */
+    this.load.on('loaderror', (offendingFile) => {
+      dlog('loaderror', offendingFile);
+      if (typeof offendingFile !== 'undefined') {
+        ServerCall.resolveLoadError(offendingFile);
       }
     });
   } // end preload
-  
+
   async create() {
     // Listen for the shutdown event, this works!
     this.events.on('shutdown', this.onShutdown, this);
 
-    // get homeElements from server
+    // get homeElements from server and subscribe to the store
     await HomeElements.getFromServer(this.location);
 
     this.unsubscribe_HomeElements = HomeElements.subscribe((value) => {
@@ -219,18 +210,10 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.loadAndPlaceHomeElements();
   } // end create
 
-  async loadAndPlaceHomeElements(){
-    const value = get(homeElements_Store);
-    
-    // check if there are no homeElements
-    if (value.length === 0) {
-      dlog('loadAndPlaceHomeElements no homeElements: ', value);
-      return;
-    }
-    
-    ServerCall.downloadAndPlaceHomeElements({
-      value
-    });
+  async loadAndPlaceHomeElements() {
+    const store = HomeElements.showContent();
+    //if there are no homeElements ServerCall will take care of that
+    ServerCall.downloadAndPlaceHomeElements(store);
   }
 
   update() {
@@ -243,7 +226,7 @@ export default class DefaultUserHome extends Phaser.Scene {
 
   onShutdown() {
     // this is called when the scene is shut down, works!
-  
+
     // Unsubscribe from all events
 
     // Unsubscribe when the scene is shut down
@@ -257,5 +240,5 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     // Remove the event listener
     this.events.off('shutdown', this.onShutdown, this);
-}
+  }
 } // class
