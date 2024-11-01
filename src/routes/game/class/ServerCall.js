@@ -715,71 +715,96 @@ class ServerCall {
     }
   }
 
-  downloadAndPlaceHomeElements(store) {
-    // Process drawings
+  async downloadAndPlaceHomeElements(store) {
+    const uniqueDownloads = [];
+    const duplicateDownloads = [];
+
+    // Collect drawing downloads
     if (store.drawing?.byKey) {
-      // First process unique elements
       Object.values(store.drawing.byKey).forEach((group, index) => {
-        const uniqueElement = group[0]; // First element is unique
-        if (uniqueElement) {
-          const artSize = uniqueElement.value.height;
-          const artMargin = artSize / 10;
-          this.downloadArtwork({
-            element: uniqueElement,
-            index,
-            type: 'drawing_HomeElement',
-            artSize,
-            artMargin,
-            isUnique: true,
-          });
-        }
-
-        // Then process duplicates
-        group.slice(1).forEach((duplicate, dupIndex) => {
-          const artSize = duplicate.value.height;
-          const artMargin = artSize / 10;
-          this.downloadArtwork({
-            element: duplicate,
-            index: dupIndex,
-            type: 'drawing_HomeElement',
-            artSize,
-            artMargin,
-            isDuplicate: true,
-          });
-        });
-      });
-    }
-
-    // Process stopmotions
-    if (store.stopmotion?.byKey) {
-      Object.values(store.stopmotion.byKey).forEach((group, index) => {
+        // Queue unique elements
         const uniqueElement = group[0];
         if (uniqueElement) {
           const artSize = uniqueElement.value.height;
           const artMargin = artSize / 10;
-          this.downloadArtwork({
-            element: uniqueElement,
-            index,
-            type: 'stopmotion_HomeElement',
-            artSize,
-            artMargin,
-            isUnique: true,
-          });
+          uniqueDownloads.push(
+            this.downloadArtwork({
+              element: uniqueElement,
+              index,
+              type: 'drawing_HomeElement',
+              artSize,
+              artMargin,
+              isUnique: true,
+            })
+          );
         }
 
+        // Queue duplicates
         group.slice(1).forEach((duplicate, dupIndex) => {
           const artSize = duplicate.value.height;
           const artMargin = artSize / 10;
-          this.downloadArtwork({
-            element: duplicate,
-            index: dupIndex,
-            type: 'stopmotion_HomeElement',
-            artSize,
-            artMargin,
-            isDuplicate: true,
-          });
+          duplicateDownloads.push(
+            this.downloadArtwork({
+              element: duplicate,
+              index: dupIndex,
+              type: 'drawing_HomeElement',
+              artSize,
+              artMargin,
+              isDuplicate: true,
+            })
+          );
         });
       });
+    }
+
+    // Collect stopmotion downloads
+    if (store.stopmotion?.byKey) {
+      Object.values(store.stopmotion.byKey).forEach((group, index) => {
+        // Queue unique elements
+        const uniqueElement = group[0];
+        if (uniqueElement) {
+          const artSize = uniqueElement.value.height;
+          const artMargin = artSize / 10;
+          uniqueDownloads.push(
+            this.downloadArtwork({
+              element: uniqueElement,
+              index,
+              type: 'stopmotion_HomeElement',
+              artSize,
+              artMargin,
+              isUnique: true,
+            })
+          );
+        }
+
+        // Queue duplicates
+        group.slice(1).forEach((duplicate, dupIndex) => {
+          const artSize = duplicate.value.height;
+          const artMargin = artSize / 10;
+          duplicateDownloads.push(
+            this.downloadArtwork({
+              element: duplicate,
+              index: dupIndex,
+              type: 'stopmotion_HomeElement',
+              artSize,
+              artMargin,
+              isDuplicate: true,
+            })
+          );
+        });
+      });
+    }
+
+    try {
+      // First download all unique elements
+      await Promise.all(uniqueDownloads);
+      console.log('All unique elements downloaded');
+
+      // Then download all duplicates
+      await Promise.all(duplicateDownloads);
+      console.log('All duplicate elements downloaded');
+    } catch (error) {
+      console.error('Error downloading elements:', error);
     }
   }
 

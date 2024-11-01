@@ -165,7 +165,7 @@ export const homeElement_Selected = writable({});
 export const HomeElements = {
   subscribe: homeElements_Store.subscribe,
   set: homeElements_Store.set,
-  organize: (elements) => {
+  organize: (elements, updateStore = true) => {
     const organized = elements.reduce(
       (acc, element) => {
         const collection = element.value.collection;
@@ -194,24 +194,16 @@ export const HomeElements = {
 
     // Sort elements within each collection's key groups by update_time
     Object.keys(organized).forEach((collection) => {
-      // console.log('Collection:', collection);
       Object.keys(organized[collection].byKey).forEach((key) => {
-        // console.log('\nKey group:', key);
-        // console.log('Elements before sorting:', JSON.stringify(organized[collection].byKey[key], null, 2));
-
-        organized[collection].byKey[key].sort((a, b) => {
-          // console.log('\nComparing:');
-          // console.log('a:', JSON.stringify(a, null, 2));
-          // console.log('b:', JSON.stringify(b, null, 2));
-          // console.log('update_times:', new Date(b.update_time), '-', new Date(a.update_time));
-          return new Date(b.update_time) - new Date(a.update_time);
-        });
-
-        // console.log('Elements after sorting:', JSON.stringify(organized[collection].byKey[key], null, 2));
+        organized[collection].byKey[key].sort((a, b) => new Date(b.update_time) - new Date(a.update_time));
       });
     });
 
-    homeElements_Store.set(organized);
+    if (updateStore) {
+      homeElements_Store.set(organized);
+    }
+
+    return organized;
   },
 
   create: (key, value) => {
@@ -239,7 +231,10 @@ export const HomeElements = {
         element.value = newValue;
       }
     });
-    HomeElements.organize(currentElements);
+    // Call organize with updateStore = false
+    HomeElements.organize(currentElements, false);
+    // Update store directly without triggering subscribers
+    // homeElements_Store.set(organized, false);
   },
 
   getFromServer: async (key) => {
