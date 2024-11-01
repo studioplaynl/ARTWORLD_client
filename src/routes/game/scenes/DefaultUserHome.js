@@ -153,7 +153,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       if (value === undefined) return;
 
       dlog('reactivity HomeElements', value);
-      this.loadAndPlaceHomeElements();
+      this.loadAndPlaceHomeElements(value);
     });
 
     // show physics debug boundaries in gameEditMode
@@ -210,10 +210,15 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.loadAndPlaceHomeElements();
   } // end create
 
-  async loadAndPlaceHomeElements() {
+  async loadAndPlaceHomeElements(value) {
     const store = HomeElements.showContent();
+    console.log('loadAndPlaceHomeElements', store, value);
     //if there are no homeElements ServerCall will take care of that
-    ServerCall.downloadAndPlaceHomeElements(store);
+    if (value) {
+      ServerCall.downloadAndPlaceHomeElements(value);
+    } else {
+      ServerCall.downloadAndPlaceHomeElements(store);
+    }
   }
 
   update() {

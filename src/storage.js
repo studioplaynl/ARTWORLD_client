@@ -231,10 +231,19 @@ export const HomeElements = {
         element.value = newValue;
       }
     });
-    // Call organize with updateStore = false
+    // Call organize with updateStore = false, so that the update is not triggering reactivity
     HomeElements.organize(currentElements, false);
-    // Update store directly without triggering subscribers
-    // homeElements_Store.set(organized, false);
+  },
+
+  updateStoreReactively: (key, newValue) => {
+    const currentElements = HomeElements.getAllFlat();
+    currentElements.forEach((element) => {
+      if (element.key === key) {
+        element.value = newValue;
+      }
+    });
+    // Call organize with updateStore = true, so that the update is triggering reactivity
+    HomeElements.organize(currentElements, true);
   },
 
   getFromServer: async (key) => {

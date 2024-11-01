@@ -716,95 +716,108 @@ class ServerCall {
   }
 
   async downloadAndPlaceHomeElements(store) {
-    const uniqueDownloads = [];
-    const duplicateDownloads = [];
+    const scene = ManageSession.currentScene;
 
-    // Collect drawing downloads
+    // Safety check for scene
+    if (!scene) {
+      return;
+    }
+
+    // Safety check for loader
+    if (!scene.load) {
+      return;
+    }
+
+    // Process drawings first
     if (store.drawing?.byKey) {
-      Object.values(store.drawing.byKey).forEach((group, index) => {
-        // Queue unique elements
+      for (const [key, group] of Object.entries(store.drawing.byKey)) {
+        // Process unique element (first of group)
         const uniqueElement = group[0];
         if (uniqueElement) {
           const artSize = uniqueElement.value.height;
           const artMargin = artSize / 10;
-          uniqueDownloads.push(
-            this.downloadArtwork({
-              element: uniqueElement,
-              index,
-              type: 'drawing_HomeElement',
-              artSize,
-              artMargin,
-              isUnique: true,
-            })
-          );
-        }
+          const imageKey = uniqueElement.value.url;
 
-        // Queue duplicates
-        group.slice(1).forEach((duplicate, dupIndex) => {
-          const artSize = duplicate.value.height;
-          const artMargin = artSize / 10;
-          duplicateDownloads.push(
-            this.downloadArtwork({
-              element: duplicate,
-              index: dupIndex,
-              type: 'drawing_HomeElement',
-              artSize,
-              artMargin,
-              isDuplicate: true,
-            })
-          );
-        });
-      });
+          // Set up listener for unique element completion
+          scene.load.on(`filecomplete-image-${imageKey}`, () => {
+            // this.createHomeElement_Drawing_Container(uniqueElement);
+
+            // Process duplicates for this key after unique is done
+            group.slice(1).forEach((duplicate) => {
+              const artSize = duplicate.value.height;
+              const artMargin = artSize / 10;
+              const imageKey = duplicate.value.url;
+
+              scene.load.on(`filecomplete-image-${imageKey}`, () => {
+                // this.createHomeElement_Drawing_Container(duplicate);
+              });
+
+              this.downloadArtwork({
+                element: duplicate,
+                type: 'drawing_HomeElement',
+                artSize,
+                artMargin,
+                isDuplicate: true,
+              });
+            });
+          });
+
+          // Start download of unique element
+          this.downloadArtwork({
+            element: uniqueElement,
+            type: 'drawing_HomeElement',
+            artSize,
+            artMargin,
+            isUnique: true,
+          });
+        }
+      }
     }
 
-    // Collect stopmotion downloads
+    // Then process stopmotions
     if (store.stopmotion?.byKey) {
-      Object.values(store.stopmotion.byKey).forEach((group, index) => {
-        // Queue unique elements
+      for (const [key, group] of Object.entries(store.stopmotion.byKey)) {
+        // Process unique element (first of group)
         const uniqueElement = group[0];
         if (uniqueElement) {
           const artSize = uniqueElement.value.height;
           const artMargin = artSize / 10;
-          uniqueDownloads.push(
-            this.downloadArtwork({
-              element: uniqueElement,
-              index,
-              type: 'stopmotion_HomeElement',
-              artSize,
-              artMargin,
-              isUnique: true,
-            })
-          );
+          const imageKey = uniqueElement.value.url;
+
+          // Set up listener for unique element completion
+          scene.load.on(`filecomplete-spritesheet-${imageKey}`, () => {
+            // this.createHomeElement_Stopmotion_Container(uniqueElement);
+
+            // Process duplicates for this key after unique is done
+            group.slice(1).forEach((duplicate) => {
+              const artSize = duplicate.value.height;
+              const artMargin = artSize / 10;
+              const imageKey = duplicate.value.url;
+
+              scene.load.on(`filecomplete-spritesheet-${imageKey}`, () => {
+                // this.createHomeElement_Stopmotion_Container(duplicate);
+              });
+
+              this.downloadArtwork({
+                element: duplicate,
+                type: 'stopmotion_HomeElement',
+                artSize,
+                artMargin,
+                isDuplicate: true,
+              });
+            });
+          });
+
+          // Start download of unique element
+          this.downloadArtwork({
+            element: uniqueElement,
+            type: 'stopmotion_HomeElement',
+            artSize,
+            artMargin,
+            isUnique: true,
+          });
         }
-
-        // Queue duplicates
-        group.slice(1).forEach((duplicate, dupIndex) => {
-          const artSize = duplicate.value.height;
-          const artMargin = artSize / 10;
-          duplicateDownloads.push(
-            this.downloadArtwork({
-              element: duplicate,
-              index: dupIndex,
-              type: 'stopmotion_HomeElement',
-              artSize,
-              artMargin,
-              isDuplicate: true,
-            })
-          );
-        });
-      });
-    }
-
-    try {
-      // First download all unique elements
-      await Promise.all(uniqueDownloads);
-      console.log('All unique elements downloaded');
-
-      // Then download all duplicates
-      await Promise.all(duplicateDownloads);
-      console.log('All duplicate elements downloaded');
-    } catch (error) {
-      console.error('Error downloading elements:', error);
+      }
     }
   }
 
