@@ -63,6 +63,7 @@
   }
 
   function handleDuplicateHomeElement(row) {
+    console.log('handleDuplicateHomeElement', row);
     const posX = row.value.posX + 10;
     const posY = row.value.posY + 10;
     const value = {
@@ -83,6 +84,7 @@
   }
 
   function handleArtClicked(element) {
+    console.log('handleArtClicked', element);
     homeElement_Selected.set(element);
   }
 
@@ -154,80 +156,57 @@
         </button>
         
         <!-- Render drawings -->
-        {#if $homeElements_Store.drawing?.byKey}
-          {#each Object.entries($homeElements_Store.drawing.byKey) as [valueKey, group]}
-            <!-- Unique element (group leader) -->
-            <div class="element-group">
-                <div class="unique-element" id={group[0].key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-                    <ArtworkLoader 
-                        artClickable={true} 
-                        row={group[0]} 
-                        deleteIcon={true}
-                        duplicateIcon={true}
-                        previewSize={50} 
-                        on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
-                        on:artClicked={() => handleArtClicked(group[0])}
-                        on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
-                    />
-                </div>
-
-                <!-- Duplicates -->
-                {#if group.length > 1}
-                    {#each group.slice(1) as duplicate}
-                        <div class="duplicate-element" id={duplicate.key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-                            <ArtworkLoader 
-                                artClickable={true} 
-                                row={duplicate} 
-                                deleteIcon={true}
-                                duplicateIcon={true}
-                                previewSize={50} 
-                                on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
-                                on:artClicked={() => handleArtClicked(duplicate)}
-                                on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}
-                            />
-                        </div>
-                    {/each}
-                {/if}
-            </div>
-          {/each}
-        {/if}
-
-        <!-- Render stopmotions - same structure as drawings -->
-        {#if $homeElements_Store.stopmotion?.byKey}
-          {#each Object.entries($homeElements_Store.stopmotion.byKey) as [valueKey, group]}
-            <div class="element-group">
-                <div class="unique-element" id={group[0].key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-                    <ArtworkLoader 
-                        artClickable={true} 
-                        row={group[0]} 
-                        deleteIcon={true}
-                        duplicateIcon={true}
-                        previewSize={50} 
-                        on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
-                        on:artClicked={() => handleArtClicked(group[0])}
-                        on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
-                    />
+        {#each Object.keys($homeElements_Store) as artType}
+          {#if $homeElements_Store[artType]?.byKey}
+            {#each Object.entries($homeElements_Store[artType].byKey) as [valueKey, group]}
+              <div class="element-group">
+                <div 
+                  class="unique-element" 
+                  id={group[0].key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}
+                  on:click={() => handleArtClicked(group[0])}
+                  on:keydown={(e) => e.key === 'Enter' && handleArtClicked(group[0])}
+                  role="button"
+                  tabindex="0"
+                >
+                  <ArtworkLoader 
+                    artClickable={false} 
+                    row={group[0]} 
+                    deleteIcon={true}
+                    duplicateIcon={true}
+                    previewSize={50} 
+                    on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
+                    on:artClicked={() => handleArtClicked(group[0])}
+                    on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
+                  />
                 </div>
 
                 {#if group.length > 1}
-                    {#each group.slice(1) as duplicate}
-                        <div class="duplicate-element" id={duplicate.key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}>
-                            <ArtworkLoader 
-                                artClickable={true} 
-                                row={duplicate} 
-                                deleteIcon={true}
-                                duplicateIcon={true}
-                                previewSize={50} 
-                                on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
-                                on:artClicked={() => handleArtClicked(duplicate)}
-                                on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}
-                            />
-                        </div>
-                    {/each}
+                  {#each group.slice(1) as duplicate}
+                    <div 
+                      class="duplicate-element" 
+                      id={duplicate.key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}
+                      on:click={() => handleArtClicked(duplicate)}
+                      on:keydown={(e) => e.key === 'Enter' && handleArtClicked(duplicate)}
+                      role="button"
+                      tabindex="0"
+                    >
+                      <ArtworkLoader 
+                        artClickable={false} 
+                        row={duplicate} 
+                        deleteIcon={true}
+                        duplicateIcon={true}
+                        previewSize={50} 
+                        on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
+                        on:artClicked={() => handleArtClicked(duplicate)}
+                        on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}
+                      />
+                    </div>
+                  {/each}
                 {/if}
-            </div>
-          {/each}
-        {/if}
+              </div>
+            {/each}
+          {/if}
+        {/each}
 
         <!-- show/hide artwork categories -->
         <button on:click={() => toggleView('addHomeElement')}>

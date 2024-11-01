@@ -145,12 +145,13 @@
         <img bind:this="{image}" src="{artworkUrl}" alt="artwork" class:stopmotion={isStopmotion} style="--frame-count: {frameCount};" />
       </button>
     {:else}
-      <div 
+      <button 
         class="artPreview" 
+        on:click
         style="--avatar-size: {previewSize}px;"
       >
         <img bind:this="{image}" src="{artworkUrl}" alt="artwork" class:stopmotion={isStopmotion} style="--frame-count: {frameCount};" />
-      </div>
+      </button>
     {/if}
     <div class="artwork-actions">
       {#if duplicateIcon}

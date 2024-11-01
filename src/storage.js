@@ -164,8 +164,8 @@ export const homeElement_Selected = writable({});
 
 export const HomeElements = {
   subscribe: homeElements_Store.subscribe,
-
-  set: (elements) => {
+  set: homeElements_Store.set,
+  organize: (elements) => {
     const organized = elements.reduce(
       (acc, element) => {
         const collection = element.value.collection;
@@ -192,37 +192,40 @@ export const HomeElements = {
       }
     );
 
+    // Sort elements within each collection's key groups by update_time
+    Object.keys(organized).forEach((collection) => {
+      // console.log('Collection:', collection);
+      Object.keys(organized[collection].byKey).forEach((key) => {
+        // console.log('\nKey group:', key);
+        // console.log('Elements before sorting:', JSON.stringify(organized[collection].byKey[key], null, 2));
+
+        organized[collection].byKey[key].sort((a, b) => {
+          // console.log('\nComparing:');
+          // console.log('a:', JSON.stringify(a, null, 2));
+          // console.log('b:', JSON.stringify(b, null, 2));
+          // console.log('update_times:', new Date(b.update_time), '-', new Date(a.update_time));
+          return new Date(b.update_time) - new Date(a.update_time);
+        });
+
+        // console.log('Elements after sorting:', JSON.stringify(organized[collection].byKey[key], null, 2));
+      });
+    });
+
     homeElements_Store.set(organized);
   },
 
   create: (key, value) => {
     const newKey = key + '_' + new Date().getTime();
-    const obj = { key: newKey, collection: value.collection, value };
+    const obj = { key: newKey, collection: 'homeElement', value };
 
-    homeElements_Store.update((currentState) => {
-      // Determine which collection this belongs to (drawing or stopmotion)
-      const collection = value.collection;
+    // Add to store
+    const currentElements = HomeElements.getAllFlat();
+    currentElements.push(obj);
+    HomeElements.organize(currentElements);
 
-      // Initialize collection if it doesn't exist
-      if (!currentState[collection]) {
-        currentState[collection] = { byKey: {} };
-      }
-
-      // Find the group this should belong to (based on value.key)
-      const groupKey = value.key;
-
-      // If group exists, add to it; if not, create new group
-      if (currentState[collection].byKey[groupKey]) {
-        currentState[collection].byKey[groupKey].push(obj);
-      } else {
-        currentState[collection].byKey[groupKey] = [obj];
-      }
-
-      return currentState;
-    });
-
+    // Update server
     updateObject('homeElement', newKey, value, true).then(() => {
-      console.log('HomeElements.create server side done ');
+      dlog('HomeElements.create server side done ');
       homeElement_Selected.set(obj);
     });
 
@@ -230,24 +233,18 @@ export const HomeElements = {
   },
 
   updateStoreSilently: (key, newValue) => {
-    homeElements_Store.update((currentState) => {
-      // Search in both collections
-      for (const collection of ['drawing', 'stopmotion']) {
-        const keyGroup = currentState[collection]?.byKey[key];
-        if (keyGroup) {
-          // Update all instances of this key
-          keyGroup.forEach((element, index) => {
-            keyGroup[index] = { ...element, value: newValue };
-          });
-        }
+    const currentElements = HomeElements.getAllFlat();
+    currentElements.forEach((element) => {
+      if (element.key === key) {
+        element.value = newValue;
       }
-      return currentState;
     });
+    HomeElements.organize(currentElements);
   },
 
   getFromServer: async (key) => {
     const serverHomeElementsArray = await listAllObjects('homeElement', key);
-    HomeElements.set([...serverHomeElementsArray]);
+    HomeElements.organize(serverHomeElementsArray);
     return serverHomeElementsArray;
   },
 
@@ -268,36 +265,13 @@ export const HomeElements = {
 
   delete: (key) => {
     dlog('delete: ', key);
-    homeElements_Store.update((currentState) => {
-      // Search through all collections
-      for (const collection of Object.keys(currentState)) {
-        const byKey = currentState[collection].byKey;
+    const currentElements = HomeElements.getAllFlat();
+    const filteredElements = currentElements.filter((element) => element.key !== key);
 
-        // Search through all groups
-        for (const groupKey of Object.keys(byKey)) {
-          // Find the element in the group
-          const group = byKey[groupKey];
-          const elementIndex = group.findIndex((element) => element.key === key);
-
-          if (elementIndex !== -1) {
-            // Remove the element from the group
-            group.splice(elementIndex, 1);
-
-            // If group is empty, remove the group
-            if (group.length === 0) {
-              delete byKey[groupKey];
-            }
-
-            // Delete from server
-            deleteObject('homeElement', key);
-
-            // Force a new reference to trigger reactivity
-            return { ...currentState };
-          }
-        }
-      }
-      return currentState;
-    });
+    if (currentElements.length !== filteredElements.length) {
+      deleteObject('homeElement', key);
+      HomeElements.organize(filteredElements);
+    }
   },
 
   // Helper methods for accessing organized data
