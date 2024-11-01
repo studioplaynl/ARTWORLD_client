@@ -115,8 +115,8 @@ class SceneSwitcher {
     this.switchStream(scene, targetScene);
   }
 
-
   async pauseSceneStartApp(scene, app) {
+    // console.log('pauseSceneStartApp', scene, app);
     // pause scene needs the 'real' scene object, not just the key
     if (scene) {
       //! check this
@@ -129,6 +129,7 @@ class SceneSwitcher {
   }
 
   async startSceneCloseApp(app, scene) {
+    // console.log('startSceneCloseApp', app, scene);
     // we always get an App and a scene in the game
     if (!ManageSession.socket) return;
 

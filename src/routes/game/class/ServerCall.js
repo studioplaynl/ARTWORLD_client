@@ -716,6 +716,8 @@ class ServerCall {
   }
 
   async downloadAndPlaceHomeElements(store) {
+    console.log('downloadAndPlaceHomeElements store:', store);
+
     const scene = ManageSession.currentScene;
 
     // Safety check for scene
@@ -731,6 +733,7 @@ class ServerCall {
     // Process drawings first
     if (store.drawing?.byKey) {
       for (const [key, group] of Object.entries(store.drawing.byKey)) {
+        console.log('Processing drawing group:', key, group);
         // Process unique element (first of group)
         const uniqueElement = group[0];
         if (uniqueElement) {
@@ -822,6 +825,14 @@ class ServerCall {
   }
 
   createHomeElement_Drawing_Container(element) {
+    console.log('createHomeElement_Drawing_Container called:', {
+      element,
+      key: element.key,
+      position: {
+        x: element.value.posX,
+        y: element.value.posY,
+      },
+    });
     const scene = ManageSession.currentScene;
     const worldSize = scene.worldSize;
 
@@ -830,17 +841,6 @@ class ServerCall {
     if (!scene.homeElements_Drawing_Group) return;
 
     const imageKeyUrl = element.value.url;
-
-    //check if there is already a home element of this type in the group,
-    // if so skip
-    const existingHomeElement_Group = scene.homeElements_Drawing_Group.getChildren();
-
-    // Check if the container should already exist
-    // checking in the array of objects existingHomeElement_Group is an object with .nakamaData.key === element.key
-    if (existingHomeElement_Group.some((obj) => obj.nakamaData && obj.nakamaData.key === element.key)) {
-      // dlog(`Skipping creation of drawing home element with key: ${element.key}`);
-      return;
-    }
 
     const artSizeSaved = element.value.height;
 
@@ -1016,17 +1016,6 @@ class ServerCall {
     if (!scene.homeElements_Stopmotion_Group) return;
 
     const imageKeyUrl = element.value.url;
-
-    //check if there is already a home element of this type in the group,
-    // if so skip
-    const existingHomeElement_Group = scene.homeElements_Stopmotion_Group.getChildren();
-
-    // Check if the container should already exist
-    // checking in the array of objects existingHomeElement_Group is an object with .nakamaData.key === element.key
-    if (existingHomeElement_Group.some((obj) => obj.nakamaData && obj.nakamaData.key === element.key)) {
-      // dlog(`Skipping creation of drawing home element with key: ${element.key}`);
-      return;
-    }
 
     const artSizeSaved = element.value.height;
 
@@ -1461,7 +1450,14 @@ class ServerCall {
     return Math.atan2(y2 - y1, x2 - x1).toFixed(4);
   }
 
-  async downloadArtwork({ element, index, type, artSize, artMargin }) {
+  async downloadArtwork({ element, index, type, artSize, artMargin, isDuplicate }) {
+    console.log('downloadArtwork called:', {
+      element,
+      type,
+      artSize,
+      isDuplicate,
+      url: element.value.url,
+    });
     if (!ManageSession.currentScene) return;
     if (!artSize) return;
     if (!element) return;
