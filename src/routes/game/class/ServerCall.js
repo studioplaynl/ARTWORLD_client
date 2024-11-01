@@ -1036,25 +1036,30 @@ class ServerCall {
     }
     // dlog(`stopmotion Frames: ${avatarFrames}`);
 
-    // animation for the stopmotion .........................
-    scene.anims.create({
-      key: `moving_${imageKeyUrl}`,
-      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
-        start: 0,
-        end: avatarFrames - 1,
-      }),
-      frameRate: setFrameRate,
-      repeat: -1,
-      yoyo: false,
-    });
+    // Check if animations don't already exist before creating them
+    if (!scene.anims.exists(`moving_${imageKeyUrl}`)) {
+      scene.anims.create({
+        key: `moving_${imageKeyUrl}`,
+        frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+          start: 0,
+          end: avatarFrames - 1,
+        }),
+        frameRate: setFrameRate,
+        repeat: -1,
+        yoyo: false,
+      });
+    }
 
-    scene.anims.create({
-      key: `stop_${imageKeyUrl}`,
-      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
-        start: 0,
-        end: 0,
-      }),
-    });
+    if (!scene.anims.exists(`stop_${imageKeyUrl}`)) {
+      scene.anims.create({
+        key: `stop_${imageKeyUrl}`,
+        frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+          start: 0,
+          end: 0,
+        }),
+      });
+    }
+
     // . end animation for the stopmotion ......................
 
     // adds the image to the container
@@ -2150,25 +2155,43 @@ class ServerCall {
     }
     // dlog(`stopmotion Frames: ${avatarFrames}`);
 
-    // animation for the stopmotion .........................
-    scene.anims.create({
-      key: `moving_${imageKeyUrl}`,
-      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
-        start: 0,
-        end: avatarFrames - 1,
-      }),
-      frameRate: setFrameRate,
-      repeat: -1,
-      yoyo: false,
-    });
+    // Check if animations don't already exist before creating them
+    if (!scene.anims.exists(`moving_${imageKeyUrl}`)) {
+      scene.anims.create({
+        key: `moving_${imageKeyUrl}`,
+        frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+          start: 0,
+          end: avatarFrames - 1,
+        }),
+        frameRate: setFrameRate,
+        repeat: -1,
+        yoyo: false,
+      });
+    }
 
-    scene.anims.create({
-      key: `stop_${imageKeyUrl}`,
-      frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
-        start: 0,
-        end: 0,
-      }),
-    });
+    // animation for the stopmotion .........................
+    if (!scene.anims.exists(`moving_${imageKeyUrl}`)) {
+      scene.anims.create({
+        key: `moving_${imageKeyUrl}`,
+        frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+          start: 0,
+          end: avatarFrames - 1,
+        }),
+        frameRate: setFrameRate,
+        repeat: -1,
+        yoyo: false,
+      });
+    }
+
+    if (!scene.anims.exists(`stop_${imageKeyUrl}`)) {
+      scene.anims.create({
+        key: `stop_${imageKeyUrl}`,
+        frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+          start: 0,
+          end: 0,
+        }),
+      });
+    }
     // . end animation for the stopmotion ......................
 
     // adds the image to the container
