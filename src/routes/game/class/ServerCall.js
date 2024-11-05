@@ -312,7 +312,7 @@ class ServerCall {
 
       // filter out all stopmotion with displayname 'dier and who are not in the trash
       allFoundAnimals = recStopmotion.filter(
-        (obj) => obj.value.displayname.toLowerCase() === type && obj.value.status !== 'trash'
+        (obj) => obj.value.displayname && obj.value.displayname.toLowerCase() === type && obj.value.status !== 'trash'
       );
       // dlog('allFoundAnimals', allFoundAnimals);
 
