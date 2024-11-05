@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node src/version.js && vite --host",
-    "build": "node src/version.js && vite build",
+    "dev": "node src/version.js && node manageNpmScripts.js dev && vite --host",
+    "build": "node src/version.js && node manageNpmScripts.js build && vite build",
     "preview": "vite preview",
     "lint": "eslint --config eslint.config.js 'src/**/*.{html,js,svelte}'",
     "lint:fix": "eslint --config eslint.config.js 'src/**/*.{html,js,svelte}' --fix"
