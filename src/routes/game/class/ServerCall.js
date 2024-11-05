@@ -730,6 +730,10 @@ class ServerCall {
       return;
     }
 
+    if (!store) {
+      return;
+    }
+
     // Process drawings first
     if (store.drawing?.byKey) {
       for (const [key, group] of Object.entries(store.drawing.byKey)) {
@@ -737,42 +741,51 @@ class ServerCall {
         // Process unique element (first of group)
         const uniqueElement = group[0];
         if (uniqueElement) {
-          const artSize = uniqueElement.value.height;
-          const artMargin = artSize / 10;
-          const imageKey = uniqueElement.value.url;
-
-          // Set up listener for unique element completion
-          scene.load.on(`filecomplete-image-${imageKey}`, () => {
-            // this.createHomeElement_Drawing_Container(uniqueElement);
-
-            // Process duplicates for this key after unique is done
+          if (uniqueElement.value.url && scene.textures.exists(uniqueElement.value.url)) {
+            console.log('imageKeyUrl already exists: ', uniqueElement.value.url);
+            this.createHomeElement_Drawing_Container(uniqueElement);
             group.slice(1).forEach((duplicate) => {
-              const artSize = duplicate.value.height;
-              const artMargin = artSize / 10;
-              const imageKey = duplicate.value.url;
+              this.createHomeElement_Drawing_Container(duplicate);
+            });
+            } else {
 
-              scene.load.on(`filecomplete-image-${imageKey}`, () => {
-                // this.createHomeElement_Drawing_Container(duplicate);
-              });
+            const artSize = uniqueElement.value.height;
+            const artMargin = artSize / 10;
+            const imageKey = uniqueElement.value.url;
 
-              this.downloadArtwork({
-                element: duplicate,
-                type: 'drawing_HomeElement',
-                artSize,
-                artMargin,
-                isDuplicate: true,
+            // Set up listener for unique element completion
+            scene.load.on(`filecomplete-image-${imageKey}`, () => {
+              // this.createHomeElement_Drawing_Container(uniqueElement);
+
+              // Process duplicates for this key after unique is done
+              group.slice(1).forEach((duplicate) => {
+                const artSize = duplicate.value.height;
+                const artMargin = artSize / 10;
+                const imageKey = duplicate.value.url;
+
+                scene.load.on(`filecomplete-image-${imageKey}`, () => {
+                  // this.createHomeElement_Drawing_Container(duplicate);
+                });
+
+                this.downloadArtwork({
+                  element: duplicate,
+                  type: 'drawing_HomeElement',
+                  artSize,
+                  artMargin,
+                });
               });
             });
-          });
 
-          // Start download of unique element
-          this.downloadArtwork({
-            element: uniqueElement,
-            type: 'drawing_HomeElement',
-            artSize,
-            artMargin,
-            isUnique: true,
-          });
+
+            // Start download of unique element
+            this.downloadArtwork({
+              element: uniqueElement,
+              type: 'drawing_HomeElement',
+              artSize,
+              artMargin,
+              isUnique: true,
+            });
+          }
         }
       }
     }
@@ -783,42 +796,48 @@ class ServerCall {
         // Process unique element (first of group)
         const uniqueElement = group[0];
         if (uniqueElement) {
-          const artSize = uniqueElement.value.height;
-          const artMargin = artSize / 10;
-          const imageKey = uniqueElement.value.url;
-
-          // Set up listener for unique element completion
-          scene.load.on(`filecomplete-spritesheet-${imageKey}`, () => {
-            // this.createHomeElement_Stopmotion_Container(uniqueElement);
-
-            // Process duplicates for this key after unique is done
+          if (uniqueElement.value.url && scene.textures.exists(uniqueElement.value.url)) {
+            this.createHomeElement_Stopmotion_Container(uniqueElement);
             group.slice(1).forEach((duplicate) => {
-              const artSize = duplicate.value.height;
+              this.createHomeElement_Stopmotion_Container(duplicate);
+            });
+            } else {
+              const artSize = uniqueElement.value.height;
               const artMargin = artSize / 10;
-              const imageKey = duplicate.value.url;
+              const imageKey = uniqueElement.value.url;
 
-              scene.load.on(`filecomplete-spritesheet-${imageKey}`, () => {
-                // this.createHomeElement_Stopmotion_Container(duplicate);
-              });
+            // Set up listener for unique element completion
+            scene.load.on(`filecomplete-spritesheet-${imageKey}`, () => {
+              // this.createHomeElement_Stopmotion_Container(uniqueElement);
 
-              this.downloadArtwork({
-                element: duplicate,
-                type: 'stopmotion_HomeElement',
-                artSize,
-                artMargin,
-                isDuplicate: true,
+              // Process duplicates for this key after unique is done
+              group.slice(1).forEach((duplicate) => {
+                const artSize = duplicate.value.height;
+                const artMargin = artSize / 10;
+                const imageKey = duplicate.value.url;
+
+                scene.load.on(`filecomplete-spritesheet-${imageKey}`, () => {
+                  // this.createHomeElement_Stopmotion_Container(duplicate);
+                });
+
+                this.downloadArtwork({
+                  element: duplicate,
+                  type: 'stopmotion_HomeElement',
+                  artSize,
+                  artMargin,
+                });
               });
             });
-          });
 
-          // Start download of unique element
-          this.downloadArtwork({
-            element: uniqueElement,
-            type: 'stopmotion_HomeElement',
-            artSize,
-            artMargin,
-            isUnique: true,
-          });
+            // Start download of unique element
+            this.downloadArtwork({
+              element: uniqueElement,
+              type: 'stopmotion_HomeElement',
+              artSize,
+              artMargin,
+              isUnique: true,
+            });
+          }
         }
       }
     }
@@ -1450,12 +1469,11 @@ class ServerCall {
     return Math.atan2(y2 - y1, x2 - x1).toFixed(4);
   }
 
-  async downloadArtwork({ element, index, type, artSize, artMargin, isDuplicate }) {
+  async downloadArtwork({ element, index, type, artSize, artMargin }) {
     console.log('downloadArtwork called:', {
       element,
       type,
       artSize,
-      isDuplicate,
       url: element.value.url,
     });
     if (!ManageSession.currentScene) return;
