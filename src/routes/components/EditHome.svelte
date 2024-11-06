@@ -174,6 +174,7 @@
                     deleteIcon={true}
                     duplicateIcon={true}
                     previewSize={50} 
+                    animateStopmotion={true}
                     on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
                     on:artClicked={() => handleArtClicked(group[0])}
                     on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
@@ -196,6 +197,7 @@
                         deleteIcon={true}
                         duplicateIcon={true}
                         previewSize={50} 
+                        animateStopmotion={true}
                         on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
                         on:artClicked={() => handleArtClicked(duplicate)}
                         on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}

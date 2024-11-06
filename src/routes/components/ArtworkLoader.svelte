@@ -27,6 +27,7 @@
   export let deleteIcon = false;  
   export let previewSize = 75;
   export let duplicateIcon = false;
+  export let animateStopmotion = true;
 
   let image;
   let frame = 0;
@@ -66,10 +67,16 @@
       
       if (isStopmotion) {
         frameCount = Math.floor(image.naturalWidth / image.naturalHeight);
-        interval = setInterval(() => {
-          frame = (frame + 1) % frameCount;
-          image.style.transform = `translateX(-${frame * 100 / frameCount}%)`;
-        }, 1000 / STOPMOTION_FPS);
+        if (animateStopmotion) {
+          interval = setInterval(() => {
+            frame = (frame + 1) % frameCount;
+            image.style.transform = `translateX(-${frame * 100 / frameCount}%)`;
+          }, 1000 / STOPMOTION_FPS);
+        } else {
+          // For non-animated stopmotions, ensure we show the first frame (position 0)
+          frame = 0;
+          image.style.transform = 'translateX(0)';
+        }
       }
     }
   });
