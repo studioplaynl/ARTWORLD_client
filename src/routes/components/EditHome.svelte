@@ -312,7 +312,6 @@ img {
   max-height: 90vh;
 }
 
-.right-column-itemsbar,
 .right-column-itemsbar button {
   background-color: #fff;
   border-radius: 50%;
