@@ -25,6 +25,8 @@ import {
 
 import { dlog } from './helpers/debugLog';
 
+export const activeDeleteButtonId = writable(null);
+
 export const miniMapDimensions = writable({ x: 0, y: 0 });
 
 //  Achievements of a user

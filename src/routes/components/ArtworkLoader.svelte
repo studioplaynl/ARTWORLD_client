@@ -18,10 +18,12 @@
   import { push } from 'svelte-spa-router';
   import { STOPMOTION_FPS } from '../../constants';
   import { homeElement_Selected } from '../../storage';
+  import { writable } from 'svelte/store';
+  import { activeDeleteButtonId } from '../../storage';
 
-  const dispatch = createEventDispatcher(); // sends a custom event to the parent component (EditHome.svelte) delete event
+  // sends a custom event to the parent component (EditHome.svelte) delete event
+  const dispatch = createEventDispatcher(); 
 
-  
   export let row = null;
   export let artClickable = true;
   export let deleteIcon = false;  
@@ -38,6 +40,19 @@
 
   let isStopmotion = false;
   let frameCount = 1;
+
+  // Generate a unique ID for this instance
+  const instanceId = Math.random().toString(36).substr(2, 9);
+
+  // Subscribe to the store
+  let currentActiveId;
+  activeDeleteButtonId.subscribe(value => {
+    if (value !== instanceId && deleteCheck) {
+      // Reset this instance's deleteCheck if another button becomes active
+      deleteCheck = false;
+    }
+    currentActiveId = value;
+  });
 
   $: {
     // console.log('row', row);
@@ -84,11 +99,19 @@
   onDestroy(() => {
     clearInterval(interval);
     window.removeEventListener('click', handleClickOutsideDeleteButton);
+    // Clean up if this was the active delete button
+    if (currentActiveId === instanceId) {
+      activeDeleteButtonId.set(null);
+    }
   });
 
 
-  function handleClickOutsideDeleteButton (event) {
+  function handleClickOutsideDeleteButton(event) {
+    // Reset all delete checks when clicking outside
+    if (!deleteButton?.contains(event.target)) {
       deleteCheck = false;
+      activeDeleteButtonId.set(null);
+    }
   }
 
 
@@ -124,11 +147,13 @@
 
   function handleDelete(event) {
     event.stopPropagation();  // Prevent the click from triggering handleOpenArtwork
+    
     if (deleteCheck) {
-      //where is delete handled?
       dispatch('deleteArtworkInContext', row);
+      activeDeleteButtonId.set(null);
     } else {
       deleteCheck = true;
+      activeDeleteButtonId.set(instanceId);
     }
   }
 
@@ -136,6 +161,27 @@
     event.stopPropagation();  // Prevent the click from triggering handleOpenArtwork
     dispatch('duplicateArtworkInContext', row);
     console.log('handleDuplicate row', row);
+  }
+
+  function handleImageLoad() {
+    if (image) {
+      isStopmotion = image.naturalWidth > image.naturalHeight;
+      
+      if (isStopmotion) {
+        frameCount = Math.floor(image.naturalWidth / image.naturalHeight);
+        if (animateStopmotion) {
+          clearInterval(interval);
+          interval = setInterval(() => {
+            frame = (frame + 1) % frameCount;
+            image.style.transform = `translateX(-${frame * 100 / frameCount}%)`;
+          }, 1000 / STOPMOTION_FPS);
+        } else {
+          // For non-animated stopmotions, ensure we show the first frame
+          frame = 0;
+          image.style.transform = 'translateX(0)';
+        }
+      }
+    }
   }
 </script>
 
@@ -147,7 +193,14 @@
         on:click="{handleOpenArtwork}" 
         style="--avatar-size: {previewSize}px;"
       >
-        <img bind:this="{image}" src="{artworkUrl}" alt="artwork" class:stopmotion={isStopmotion} style="--frame-count: {frameCount};" />
+        <img 
+          bind:this="{image}" 
+          src="{artworkUrl}" 
+          alt="artwork" 
+          class:stopmotion={isStopmotion} 
+          style="--frame-count: {frameCount};" 
+          on:load={handleImageLoad}
+        />
       </button>
     {:else}
       <button 
@@ -155,7 +208,14 @@
         on:click
         style="--avatar-size: {previewSize}px;"
       >
-        <img bind:this="{image}" src="{artworkUrl}" alt="artwork" class:stopmotion={isStopmotion} style="--frame-count: {frameCount};" />
+        <img 
+          bind:this="{image}" 
+          src="{artworkUrl}" 
+          alt="artwork" 
+          class:stopmotion={isStopmotion} 
+          style="--frame-count: {frameCount};" 
+          on:load={handleImageLoad}
+        />
       </button>
     {/if}
     <div class="artwork-actions">
