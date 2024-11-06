@@ -276,7 +276,7 @@ img {
   background-color: #fff;
   border-radius: 50%;
   box-shadow: 5px 5px 0px #7300ed;
-  z-index: 1000;
+  z-index: 5;
   cursor: pointer;
   padding: 10px;
 }
@@ -288,7 +288,7 @@ img {
   background-color: #fff;
   border-radius: 40px;
   box-shadow: 5px 5px 0px #7300ed;
-  z-index: 999;
+  z-index: 4;
   max-height: 90vh;
   display: flex;
   flex-direction: column;

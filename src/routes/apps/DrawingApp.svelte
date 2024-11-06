@@ -1405,6 +1405,7 @@
     position: absolute;
     top: 0;
     right: 50px;
+    z-index: 20;
   }
 
   .tab.tab--draw {
@@ -1419,7 +1420,7 @@
   .tab.tab--save {
     min-width: 160px;
     bottom: 50px;
-    z-index: 1;
+    z-index: 10;
   }
 
   .tab.tab--save > * {
@@ -1436,6 +1437,7 @@
     flex-direction: column;
     flex-wrap: wrap;
     /* transition: all 0.5s ease-in-out; */
+    z-index: 10;
   }
 
   .icon {
@@ -1590,7 +1592,7 @@
     position: fixed;
     left: 72px;
     top: 16px;
-    z-index: 13;
+    z-index: 30;
     box-shadow: 5px 5px 0px #7300ed;
     cursor: pointer;
     padding: 0;
