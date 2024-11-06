@@ -256,9 +256,7 @@ img {
 
 #selectedHomeElement {
   border: 2px solid #7300ed;
-  border-radius: 15px;
-  padding: 5px;
-  margin: 5px;
+  border-radius: 8px;
 }
 
 .icon {
