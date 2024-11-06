@@ -151,7 +151,6 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     this.unsubscribe_HomeElements = HomeElements.subscribe((value) => {
       if (value === undefined) return;
-
       dlog('reactivity HomeElements', value);
       this.loadAndPlaceHomeElements(value);
     });
