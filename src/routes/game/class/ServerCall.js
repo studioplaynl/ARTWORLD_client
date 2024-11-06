@@ -849,8 +849,8 @@ class ServerCall {
     if (!element) return;
     if (!scene.homeElements_Drawing_Group) return;
 
-    //check if there is already a home element of this type in the group,
-    // if so skip
+    // re-create all HomeElements_Drawing_Containers
+    // delete the existing ones
     const existingHomeElement_Group = scene.homeElements_Drawing_Group.getChildren()
 
     // Check if the container should already exist
@@ -1036,8 +1036,8 @@ class ServerCall {
     if (!element) return;
     if (!scene.homeElements_Stopmotion_Group) return;
 
-    //check if there is already a home element of this type in the group,
-    // if so skip
+    // re-create all HomeElements_Stopmotion_Containers
+    // delete the existing ones
     const existingHomeElement_Group = scene.homeElements_Stopmotion_Group.getChildren()
 
     // Check if the container should already exist
@@ -1047,7 +1047,7 @@ class ServerCall {
           // dlog(`Skipping creation of drawing home element with key: ${element.key}`);
           return;
       }
-      
+
     const imageKeyUrl = element.value.url;
 
     const artSizeSaved = element.value.height;

@@ -75,10 +75,10 @@
       version: row.value.version,
       posX,
       posY,
-      rotation: 0,
-      scale: 1,
-      width: 512,
-      height: 512
+      rotation: row.value.rotation,
+      scale: row.value.scale,
+      width: row.value.width,
+      height: row.value.height
     };
     HomeElements.create(value.key, value);
   }

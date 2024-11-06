@@ -81,9 +81,7 @@
 
 
   function handleClickOutsideDeleteButton (event) {
-    if (deleteButton && !deleteButton.contains(event.target)) {
       deleteCheck = false;
-    }
   }
 
 
