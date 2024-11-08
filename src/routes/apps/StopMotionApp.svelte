@@ -1,50 +1,37 @@
 <script>
   import { onMount } from 'svelte';
-  import { Swiper, SwiperSlide } from 'swiper/svelte'; 
   import Drawing from './DrawingApp.svelte';
   import { dlog } from '../../helpers/debugLog';
   import {
     STOPMOTION_MAX_FRAMES,
     STOPMOTION_FPS,
   } from '../../constants';
-  import 'swiper/css';
 
   export let file;
   export let data;
   export let changes;
   export let displayName;
 
-  let framesArray;
-  let currentFrame = 1;
   export let drawing = null;
   let frames = 1;
+  let currentFrame = 1;
+  let framesArray = [];
   let playPreviewInterval = null;
 
   let enableOnionSkinning = false;
   $: enableEditor = playPreviewInterval === null;
 
-  let swiper;
-  $: {
-    if (swiper && currentFrame && frames) {
-      setTimeout(() => {
-        swiper.slideTo(currentFrame - 1);
-      }, 100);
+  export const saveHandler = async () => {
+    if (drawing) {
+      return drawing.saveHandler();
     }
-  }
+  };
 
   onMount(() => {
-    // Was there an image to load?
-    // If so, load it and retrieve frame count from dimensions.
-    // if (file?.url) {
-    dlog('load file url stopmotion');
-    //   const img = new Image();
-    //   img.onload = (e) => {
-    //     frames = Math.floor(e.target.width / e.target.height);
-    //   };
-    //   img.src = file.url;
-    // } else {
-    frames = 1;
-    // }
+    // Initialize first frame with empty canvas
+    if (drawing) {
+      framesArray[0] = drawing.getEmptyFrameData();
+    }
   });
 
   function switchFrame(frameNumber) {
@@ -52,47 +39,34 @@
   }
 
   function addFrame() {
-    drawing.putDrawingCanvasIntoFramesArray(currentFrame);
-    setTimeout(() => {
+    if (drawing) {
+      // Save current frame before adding new one
+      drawing.putDrawingCanvasIntoFramesArray(currentFrame);
+      
+      // Add empty frame
+      const emptyFrameData = drawing.getEmptyFrameData();
+      framesArray[frames] = emptyFrameData;
+      
       if (frames < STOPMOTION_MAX_FRAMES) {
         frames++;
         currentFrame = frames;
       }
-    }, 100);
+    }
   }
 
   function deleteFrame(deleteableFrame) {
     const deleteframe = deleteableFrame - 1;
-    dlog('deleteFrame, currentFrame', deleteframe, currentFrame);
-
+    
     if (deleteframe >= 0 && deleteframe < framesArray.length) {
-      // Remove the nth element from the array
       framesArray.splice(deleteframe, 1);
-
+      framesArray = [...framesArray]; // Trigger reactivity
+      
       // update drawingCanvas with currentFrame
       drawing.getImageFromFramesArray(currentFrame - 1);
     }
 
     onFrameContentDeleted();
   }
-
-  // Set up swiper as reference to Swiper.js instance
-  const onSwiper = (e) => {
-    [swiper] = e.detail;
-  };
-
-  // Set up binding between slide index and currentFrame
-  const onSlideChange = () => {
-    // Don't change currentFrame when activating the [+] slide
-    if (swiper.activeIndex === frames) {
-      swiper.slideTo(frames - 1);
-      // dlog('onSlideChange() currentFrame', currentFrame);
-      // currentFrame = frames;
-    } else {
-      // when adding a frame with the [+]; view is going to the added frame
-      currentFrame = swiper.activeIndex + 1;
-    }
-  };
 
   function toggleOnionSkinning() {
     enableOnionSkinning = !enableOnionSkinning;
@@ -120,8 +94,6 @@
   function onFrameContentDeleted() {
     frames = Math.max(1, frames - 1);
     if (currentFrame > frames) currentFrame = frames;
-
-    swiper.update();
   }
   
 
@@ -147,69 +119,48 @@
     <svelte:fragment slot="stopmotion">
     <!-- <slot name="stopmotion"> -->
       <div class="stopmotion__frames">
-        <Swiper
-          class="stopmotion__swiper"
-          spaceBetween="{8}"
-          slidesPerView="auto"
-          observer="{true}"
-          centeredSlides="{true}"
-          direction="horizontal"
-          breakpoints="{{
-            601: {
-              direction: 'vertical',
-              spaceBetween: 0,
-            },
-          }}"
-          on:swiper="{onSwiper}"
-          on:slideChange="{onSlideChange}"
-        >
-          {#each Array(frames + 1) as _, index (index)}
-            {#if index && framesArray && framesArray[index - 1]}
-              <SwiperSlide class="stopmotion__swiper__slide">
+        <div class="frames-list">
+          {#each Array(frames) as _, index}
+            <button 
+              type="button"
+              class="stopmotion__frame {currentFrame === index + 1 ? 'selected' : ''}"
+              on:click={() => switchFrame(index + 1)}
+              on:keydown={(e) => e.key === 'Enter' && switchFrame(index + 1)}
+            >
+              {#if framesArray[index]}
                 <div
-                  class="{`stopmotion__frame ${
-                    currentFrame === index ? 'selected' : ''
-                  }`}"
-                  id="stopmotion-frame-{index}"
-                  on:click="{() => {
-                    switchFrame(index);
-                  }}"
-                >
-                  <div
-                    class="stopmotion__frame__background"
-                    style="
-              background-image: url({framesArray[index - 1]});
-              "
-                  ></div>
-                  <div class="stopmotion__frame__index">
-                    {index}
-                  </div>
-                </div>
-                {#if currentFrame === index && frames > 1}
-                  <button
-                    class="clear-button-styles stopmotion__delete"
-                    on:click="{() => {
-                      deleteFrame(index);
-                      // update changes to trigger save
-                      changes++;
-                    }}">&times;</button
-                  >
-                {/if}
-              </SwiperSlide>
-            {/if}
-          {/each}
-          {#if frames < STOPMOTION_MAX_FRAMES && playPreviewInterval === null}
-            <SwiperSlide class="stopmotion__swiper__slide">
-              <div
-                class="stopmotion__frame"
-                id="stopmotion-frame-new"
-                on:click="{addFrame}"
-              >
-                <div class="stopmotion__frame__index">+</div>
+                  class="stopmotion__frame__background"
+                  style="background-image: url({framesArray[index]});"
+                />
+              {/if}
+              <div class="stopmotion__frame__index">
+                {index + 1}
               </div>
-            </SwiperSlide>
+              {#if currentFrame === index + 1 && frames > 1}
+                <button
+                  class="clear-button-styles stopmotion__delete"
+                  on:click={() => {
+                    deleteFrame(index + 1);
+                    changes++;
+                  }}
+                >
+                  &times;
+                </button>
+              {/if}
+            </button>
+          {/each}
+
+          {#if frames < STOPMOTION_MAX_FRAMES && playPreviewInterval === null}
+            <button
+              type="button"
+              class="stopmotion__frame"
+              on:click={addFrame}
+              on:keydown={(e) => e.key === 'Enter' && addFrame()}
+            >
+              <div class="stopmotion__frame__index">+</div>
+            </button>
           {/if}
-        </Swiper>
+        </div>
       </div>
     </svelte:fragment>
     <!-- </slot> -->
@@ -398,5 +349,21 @@
 
   .stopmotion__button img {
     width: 40px;
+  }
+
+  .frames-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .frames-list {
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
   }
 </style>

@@ -1033,6 +1033,19 @@
   function disableColorPicker() {
     eyeDropper = false;
   }
+
+  export function getEmptyFrameData() {
+    const emptyCanvas = new fabric.Canvas(null, {
+      width: baseSize,
+      height: baseSize
+    });
+    return emptyCanvas.toDataURL({
+      format: 'png',
+      width: baseSize,
+      height: baseSize,
+      crossOrigin: 'anonymous'
+    });
+  }
 </script>
 
 <svelte:window
