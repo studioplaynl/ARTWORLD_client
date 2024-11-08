@@ -247,10 +247,9 @@
   }
 
   .stopmotion__frame.selected {
-    transform: scale(1.05);
     border-width: 4px;
-    margin-left: 2px;
-    transform-origin: center;
+    transform: none;
+    margin: 4px;
   }
 
   .stopmotion__frame__background {
@@ -434,5 +433,45 @@
     .add-frame-container {
       padding: 8px 4px;
     }
+  }
+
+  .add-frame-container .stopmotion__frame {
+    border: none;
+  }
+
+  /* Make selected state more specific to ensure it applies */
+  .frames-list .stopmotion__frame.selected {
+    border-width: 4px;
+  }
+
+  /* Only remove border from add button */
+  .add-frame-container .stopmotion__frame {
+    border: none;
+  }
+
+  /* Base frame styles */
+  .frames-list .stopmotion__frame {
+    display: block;
+    width: 48px;
+    min-height: 48px;
+    margin: 4px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border: 2px solid #7300eb;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  /* Selected frame */
+  .frames-list .stopmotion__frame.selected {
+    border-width: 4px;
+  }
+
+  /* Only remove border from add button */
+  .add-frame-container .stopmotion__frame {
+    border: none;
   }
 </style>
