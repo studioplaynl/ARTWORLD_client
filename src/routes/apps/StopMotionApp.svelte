@@ -66,6 +66,10 @@
     }
 
     onFrameContentDeleted();
+    // Only increment changes if we're working with a loaded file
+    if (file.loaded) {
+      changes = Math.max(0, changes + 1);
+    }
   }
 
   function toggleOnionSkinning() {
@@ -169,7 +173,6 @@
                       class="clear-button-styles stopmotion__delete"
                       on:click={() => {
                         deleteFrame(index + 1);
-                        changes++;
                       }}
                     >
                       &times;
