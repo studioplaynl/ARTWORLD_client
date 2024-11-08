@@ -1,3 +1,8 @@
+/* script that sets up the environment for the development or production version
+ * it also copies the appropriate svelte file to the src folder
+ * and sets the timeout for the reload button in the development version
+ */
+
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -5,38 +10,33 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function setupEnvironment(envFile, svelteFile) {
-  const nakamaPath = path.join(__dirname, 'src', 'nakama.svelte');
-  const targetSvelteFile = path.join(__dirname, 'src', svelteFile);
+const nakamaPath = path.join(__dirname, 'src', 'nakama.svelte');
+const envPath = path.join(__dirname, '.env');
 
-  // Delete existing nakama.svelte if it exists
-  if (fs.existsSync(nakamaPath)) {
-    fs.unlinkSync(nakamaPath);
-  }
-
-  // Copy the appropriate svelte file
-  fs.copyFileSync(targetSvelteFile, nakamaPath);
-
-  // Set the environment file
-  process.env.ENV_FILE = envFile;
-
-  // Only modify the timeout in public/index.html during build
-  if (mode === 'build') {
-    const publicIndexPath = path.join(__dirname, 'public', 'index.html');
-    if (fs.existsSync(publicIndexPath)) {
-      let indexContent = fs.readFileSync(publicIndexPath, 'utf8');
-      indexContent = indexContent.replace(/__LOADER_TIMEOUT__/g, '25000');
-      fs.writeFileSync(publicIndexPath, indexContent);
-    }
-  }
+// Clean up existing files
+if (fs.existsSync(nakamaPath)) {
+  fs.unlinkSync(nakamaPath);
+}
+if (fs.existsSync(envPath)) {
+  fs.unlinkSync(envPath);
 }
 
 const mode = process.argv[2];
 
 if (mode === 'dev') {
-  setupEnvironment('.env', 'nakama_dev.svelte');
+  // Development mode setup
+  const devSvelteFile = path.join(__dirname, 'src', 'nakama_dev.svelte');
+  fs.copyFileSync(devSvelteFile, nakamaPath);
+  fs.copyFileSync(path.join(__dirname, '.env.dev'), envPath);
+  process.env.ENV_FILE = '.env.dev';
+
 } else if (mode === 'build') {
-  setupEnvironment('.env.build', 'nakama_production.svelte');
+  // Production build setup
+  const prodSvelteFile = path.join(__dirname, 'src', 'nakama_production.svelte');
+  fs.copyFileSync(prodSvelteFile, nakamaPath);
+  fs.copyFileSync(path.join(__dirname, '.env.build'), envPath);
+  process.env.ENV_FILE = '.env.build';
+
 } else {
   console.error('Invalid mode specified. Use "dev" or "build".');
   process.exit(1);

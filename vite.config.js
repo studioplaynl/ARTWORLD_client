@@ -27,6 +27,6 @@ export default defineConfig({
     }),
   ],
   define: {
-    __LOADER_TIMEOUT__: '1000'  // This will be used during development
+    __LOADER_TIMEOUT__: 1000  // set the timeout for the reload button in dev mode
   },
 });

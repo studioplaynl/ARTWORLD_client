@@ -8,4 +8,5 @@ dist/
 .DS_Store
 .env
 .env.build
+.env.dev
 
