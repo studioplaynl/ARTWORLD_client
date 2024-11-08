@@ -19,6 +19,16 @@ function setupEnvironment(envFile, svelteFile) {
 
   // Set the environment file
   process.env.ENV_FILE = envFile;
+
+  // Only modify the timeout in public/index.html during build
+  if (mode === 'build') {
+    const publicIndexPath = path.join(__dirname, 'public', 'index.html');
+    if (fs.existsSync(publicIndexPath)) {
+      let indexContent = fs.readFileSync(publicIndexPath, 'utf8');
+      indexContent = indexContent.replace(/__LOADER_TIMEOUT__/g, '25000');
+      fs.writeFileSync(publicIndexPath, indexContent);
+    }
+  }
 }
 
 const mode = process.argv[2];

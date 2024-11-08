@@ -26,4 +26,7 @@ export default defineConfig({
       'typeof FEATURE_SOUND': "'true'",
     }),
   ],
+  define: {
+    __LOADER_TIMEOUT__: '1000'  // This will be used during development
+  },
 });
