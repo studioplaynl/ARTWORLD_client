@@ -151,8 +151,8 @@
       <!-- the right part of the EditHome: list of HomeElements -->
       <div class="right-column-itemsbar">
         <!-- close the EditHome page -->
-        <button on:click={editHomeMenuToggle} >
-          <img src="./assets/SHB/svg/AW-icon-pen.svg" alt="edit home elements" />
+        <button on:click={editHomeMenuToggle} class="align-right">
+          <img src="./assets/SHB/svg/AW-icon-enter.svg" alt="close edit home" />
         </button>
         
         <!-- Render drawings -->
@@ -213,8 +213,11 @@
         <!-- show/hide artwork categories -->
         <button on:click={() => toggleView('addHomeElement')}>
           <img
-            src="assets/SHB/svg/AW-icon-plus.svg"
-            alt="open art drawer"
+            src={currentView === 'addHomeElement' 
+              ? "assets/SHB/svg/AW-icon-enter.svg" 
+              : "assets/SHB/svg/AW-icon-plus.svg"}
+            alt={currentView === 'addHomeElement' ? "close art drawer" : "open art drawer"}
+            class={currentView === 'addHomeElement' ? "rotate-90" : ""}
           />
         </button>
       </div>
@@ -364,6 +367,14 @@ img {
   margin-left: 20px;
   padding-left: 0px;
 
+}
+
+.align-right {
+  margin-left: auto;
+}
+
+.rotate-90 {
+  transform: rotate(270deg);
 }
 </style>
 
