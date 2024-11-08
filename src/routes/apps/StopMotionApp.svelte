@@ -168,27 +168,29 @@
   </Drawing>
 
   <div class="stopmotion__controls">
-    <div
+    <button
+      type="button"
       id="playPause"
       class="stopmotion__button button--play-pause"
-      on:click="{() => {
-        togglePlayPreview();
-      }}"
+      on:click="{() => togglePlayPreview()}"
+      on:keydown={(e) => e.key === 'Enter' && togglePlayPreview()}
     >
       {#if playPreviewInterval}
         <img src="assets/SHB/svg/AW-icon-pause.svg" alt="Pause" />
       {:else}
         <img src="assets/SHB/svg/AW-icon-play.svg" alt="Play" />
       {/if}
-    </div>
+    </button>
 
-    <div
+    <button
+      type="button"
       on:click="{toggleOnionSkinning}"
+      on:keydown={(e) => e.key === 'Enter' && toggleOnionSkinning()}
       class="stopmotion__button button--toggle-onion-skinning status"
       class:status--on="{enableOnionSkinning}"
     >
       <img src="assets/SHB/svg/AW-icon-onion.svg" alt="Hide background" />
-    </div>
+    </button>
   </div>
 {/if}
 
@@ -231,6 +233,11 @@
     position: relative;
     border: 2px solid #7300eb;
     cursor: pointer;
+    border-radius: 8px;
+  }
+
+  .stopmotion__frame:last-child {
+    border: none;
   }
 
   .stopmotion__frame.selected {
