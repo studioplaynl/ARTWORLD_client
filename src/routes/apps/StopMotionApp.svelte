@@ -119,79 +119,85 @@
     <svelte:fragment slot="stopmotion">
     <!-- <slot name="stopmotion"> -->
       <div class="stopmotion__frames">
-        <div class="frames-list">
-          {#each Array(frames) as _, index}
-            <button 
-              type="button"
-              class="stopmotion__frame {currentFrame === index + 1 ? 'selected' : ''}"
-              on:click={() => switchFrame(index + 1)}
-              on:keydown={(e) => e.key === 'Enter' && switchFrame(index + 1)}
-            >
-              {#if framesArray[index]}
-                <div
-                  class="stopmotion__frame__background"
-                  style="background-image: url({framesArray[index]});"
-                />
-              {/if}
-              <div class="stopmotion__frame__index">
-                {index + 1}
-              </div>
-              {#if currentFrame === index + 1 && frames > 1}
-                <button
-                  class="clear-button-styles stopmotion__delete"
-                  on:click={() => {
-                    deleteFrame(index + 1);
-                    changes++;
-                  }}
-                >
-                  &times;
-                </button>
-              {/if}
-            </button>
-          {/each}
-
-          {#if frames < STOPMOTION_MAX_FRAMES && playPreviewInterval === null}
+        <div class="frames-container">
+          <div class="frames-controls">
             <button
               type="button"
-              class="stopmotion__frame"
-              on:click={addFrame}
-              on:keydown={(e) => e.key === 'Enter' && addFrame()}
+              id="playPause"
+              class="stopmotion__button button--play-pause"
+              on:click="{() => togglePlayPreview()}"
+              on:keydown={(e) => e.key === 'Enter' && togglePlayPreview()}
             >
-              <div class="stopmotion__frame__index">+</div>
+              {#if playPreviewInterval}
+                <img src="assets/SHB/svg/AW-icon-pause.svg" alt="Pause" />
+              {:else}
+                <img src="assets/SHB/svg/AW-icon-play.svg" alt="Play" />
+              {/if}
             </button>
-          {/if}
+
+            <button
+              type="button"
+              on:click="{toggleOnionSkinning}"
+              on:keydown={(e) => e.key === 'Enter' && toggleOnionSkinning()}
+              class="stopmotion__button button--toggle-onion-skinning status"
+              class:status--on="{enableOnionSkinning}"
+            >
+              <img src="assets/SHB/svg/AW-icon-onion.svg" alt="Hide background" />
+            </button>
+          </div>
+          
+          <div class="frames-scroll-container">
+            <div class="frames-list">
+              {#each Array(frames) as _, index}
+                <button 
+                  type="button"
+                  class="stopmotion__frame {currentFrame === index + 1 ? 'selected' : ''}"
+                  on:click={() => switchFrame(index + 1)}
+                  on:keydown={(e) => e.key === 'Enter' && switchFrame(index + 1)}
+                >
+                  {#if framesArray[index]}
+                    <div
+                      class="stopmotion__frame__background"
+                      style="background-image: url({framesArray[index]});"
+                    />
+                  {/if}
+                  <div class="stopmotion__frame__index">
+                    {index + 1}
+                  </div>
+                  {#if currentFrame === index + 1 && frames > 1}
+                    <button
+                      class="clear-button-styles stopmotion__delete"
+                      on:click={() => {
+                        deleteFrame(index + 1);
+                        changes++;
+                      }}
+                    >
+                      &times;
+                    </button>
+                  {/if}
+                </button>
+              {/each}
+            </div>
+
+            {#if frames < STOPMOTION_MAX_FRAMES && playPreviewInterval === null}
+              <div class="add-frame-container">
+                <button
+                  type="button"
+                  class="stopmotion__frame"
+                  on:click={addFrame}
+                  on:keydown={(e) => e.key === 'Enter' && addFrame()}
+                >
+                  <div class="stopmotion__frame__index">+</div>
+                </button>
+              </div>
+            {/if}
+          </div>
         </div>
       </div>
     </svelte:fragment>
     <!-- </slot> -->
 
   </Drawing>
-
-  <div class="stopmotion__controls">
-    <button
-      type="button"
-      id="playPause"
-      class="stopmotion__button button--play-pause"
-      on:click="{() => togglePlayPreview()}"
-      on:keydown={(e) => e.key === 'Enter' && togglePlayPreview()}
-    >
-      {#if playPreviewInterval}
-        <img src="assets/SHB/svg/AW-icon-pause.svg" alt="Pause" />
-      {:else}
-        <img src="assets/SHB/svg/AW-icon-play.svg" alt="Play" />
-      {/if}
-    </button>
-
-    <button
-      type="button"
-      on:click="{toggleOnionSkinning}"
-      on:keydown={(e) => e.key === 'Enter' && toggleOnionSkinning()}
-      class="stopmotion__button button--toggle-onion-skinning status"
-      class:status--on="{enableOnionSkinning}"
-    >
-      <img src="assets/SHB/svg/AW-icon-onion.svg" alt="Hide background" />
-    </button>
-  </div>
 {/if}
 
 <style>
@@ -362,8 +368,8 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    height: 100%;
     overflow-y: auto;
+    padding: 0 8px;
   }
 
   @media only screen and (max-width: 600px) {
@@ -371,6 +377,62 @@
       flex-direction: row;
       overflow-x: auto;
       overflow-y: hidden;
+    }
+  }
+
+  .frames-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .frames-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .frames-scroll-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0; /* Important for proper scrolling */
+  }
+
+  .add-frame-container {
+    padding: 8px;
+    flex-shrink: 0; /* Prevents the add button from shrinking */
+  }
+
+  /* Update mobile styles */
+  @media only screen and (max-width: 600px) {
+    .frames-container {
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+    }
+
+    .frames-controls {
+      padding: 8px 4px;
+    }
+
+    .frames-scroll-container {
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .frames-list {
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 8px 0;
+    }
+
+    .add-frame-container {
+      padding: 8px 4px;
     }
   }
 </style>
