@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node manageNpmScripts.js dev && vite",
+    "dev": "node manageNpmScripts.js dev && vite --host",
     "build": "node manageNpmScripts.js build && vite build && node postbuild.js",
     "preview": "vite preview",
     "lint": "eslint --config eslint.config.js 'src/**/*.{html,js,svelte}'",

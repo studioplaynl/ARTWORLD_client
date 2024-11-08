@@ -905,6 +905,7 @@ class ServerCall {
       move: {},
       rotate: {},
       more: {},
+      flipX: {} // Add flipX icon
     };
 
     // set the image for the icons
@@ -914,6 +915,23 @@ class ServerCall {
     icon.move = scene.add.image(topLeft.x, topLeft.y, 'moveIcon').setOrigin(0.5).setTint(greyTint);
     icon.rotate = scene.add.image(topRight.x, topRight.y, 'reloadSign').setOrigin(0.5).setScale(0.3).setTint(greyTint);
     icon.more = scene.add.image(bottomLeft.x, bottomLeft.y, 'moreOptions').setOrigin(0.5).setTint(greyTint);
+    icon.flipX = scene.add.image(bottomLeft.x + 40, bottomLeft.y, 'full-screen')
+      .setOrigin(0.5)
+      .setTint(greyTint)
+      .setVisible(false); // Initially hidden
+
+    // Add click handler for more options button
+    icon.more.setInteractive();
+    icon.more.on('pointerdown', () => {
+      // Toggle flipX button visibility
+      icon.flipX.setVisible(!icon.flipX.visible);
+      // Make it interactive when visible
+      if (icon.flipX.visible) {
+        icon.flipX.setInteractive();
+      } else {
+        icon.flipX.disableInteractive();
+      }
+    });
 
     // explicitly set the size of the image incase the image has a non standard size
     setImage.displayWidth = artSizeSaved;
@@ -967,7 +985,12 @@ class ServerCall {
     imageContainer.add(icon.move);
     imageContainer.add(icon.rotate);
     imageContainer.add(icon.more);
+    imageContainer.add(icon.flipX);
 
+    // Add flipX functionality here, after all icons are added to container
+    this.setFlipXIconFunctionality(icon, imageContainer);
+
+    // Then continue with the rest of the container setup
     imageContainer.setSize(artSizeSaved, artSizeSaved);
     imageContainer.setPosition(posX_Phaser, posY_Phaser);
     imageContainer.setRotation(element.value.rotation);
@@ -1141,6 +1164,7 @@ class ServerCall {
       move: {},
       rotate: {},
       more: {},
+      flipX: {} // Add flipX icon
     };
 
     // set the image for the icons
@@ -1150,6 +1174,23 @@ class ServerCall {
     icon.move = scene.add.image(topLeft.x, topLeft.y, 'moveIcon').setOrigin(0.5).setTint(greyTint);
     icon.rotate = scene.add.image(topRight.x, topRight.y, 'reloadSign').setOrigin(0.5).setScale(0.3).setTint(greyTint);
     icon.more = scene.add.image(bottomLeft.x, bottomLeft.y, 'moreOptions').setOrigin(0.5).setTint(greyTint);
+    icon.flipX = scene.add.image(bottomLeft.x + 40, bottomLeft.y, 'full-screen')
+      .setOrigin(0.5)
+      .setTint(greyTint)
+      .setVisible(false); // Initially hidden
+
+    // Add click handler for more options button
+    icon.more.setInteractive();
+    icon.more.on('pointerdown', () => {
+      // Toggle flipX button visibility
+      icon.flipX.setVisible(!icon.flipX.visible);
+      // Make it interactive when visible
+      if (icon.flipX.visible) {
+        icon.flipX.setInteractive();
+      } else {
+        icon.flipX.disableInteractive();
+      }
+    });
 
     // explicitly set the size of the image incase the image has a non standard size
     setImage.displayWidth = artSizeSaved;
@@ -1203,7 +1244,12 @@ class ServerCall {
     imageContainer.add(icon.move);
     imageContainer.add(icon.rotate);
     imageContainer.add(icon.more);
+    imageContainer.add(icon.flipX);
 
+    // Add flipX functionality here, after all icons are added to container
+    this.setFlipXIconFunctionality(icon, imageContainer);
+
+    // Then continue with the rest of the container setup
     imageContainer.setSize(artSizeSaved, artSizeSaved);
     imageContainer.setPosition(posX_Phaser, posY_Phaser);
     imageContainer.setRotation(element.value.rotation);
@@ -1428,7 +1474,12 @@ class ServerCall {
   toggleHomeElement_Controls_Handler(icon, containerBackground, editBorder, show) {
     Object.values(icon).forEach((iconX) => {
       if (!iconX.active) return;
-      iconX.setVisible(show);
+      // Don't show flipX button when showing controls initially
+      if (iconX === icon.flipX) {
+        iconX.setVisible(false);
+      } else {
+        iconX.setVisible(show);
+      }
       iconX.setInteractive(show ? { draggable: true } : false);
     });
     containerBackground.setVisible(show);
@@ -2544,6 +2595,37 @@ class ServerCall {
       default:
         dlog('please state fom which function the loaderror occured!');
     }
+  }
+
+  setFlipXIconFunctionality(icon, imageContainer) {
+    if (!icon.flipX || !imageContainer) return;
+
+    icon.flipX.setInteractive();
+    icon.flipX.on('pointerdown', () => {
+      // Find the image/sprite in the container
+      const image = imageContainer.list.find(item => {
+        return (item instanceof Phaser.GameObjects.Image || 
+                item instanceof Phaser.GameObjects.Sprite) &&
+                item !== icon.flipX && 
+                item !== icon.scale && 
+                item !== icon.move && 
+                item !== icon.rotate && 
+                item !== icon.more;
+      });
+      
+      if (image) {
+        // Toggle the flipX property
+        image.setFlipX(!image.flipX);
+        
+        // If this is a sprite with animations, we need to update the flipX for animations too
+        if (image instanceof Phaser.GameObjects.Sprite) {
+          const currentAnim = image.anims.currentAnim;
+          if (currentAnim) {
+            image.anims.play(currentAnim.key);
+          }
+        }
+      }
+    });
   }
 } // end ServerCall
 
