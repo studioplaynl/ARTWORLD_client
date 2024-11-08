@@ -422,10 +422,10 @@
         // @ts-ignore
         frames = Math.floor(e.target.width / e.target.height); // is read correctly, frames is correct
         createframeBuffer(img); 
+        setLoader(false);
       };
 
       img.src = file.url;
-      setLoader(false);
     } else {
       // new image
       frames = 1;
