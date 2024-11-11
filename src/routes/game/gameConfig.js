@@ -30,6 +30,7 @@ import MarsWorld from './scenes/MarsWorld';
 import UnderwaterWorld from './scenes/UnderwaterWorld';
 import SeaWorld from './scenes/SeaWorld';
 import CloudWorld from './scenes/CloudWorld';
+import WolkenWereld from './scenes/WolkenWereld';
 import MoonWorld from './scenes/MoonWorld';
 import PizzaWorld from './scenes/PizzaWorld';
 import UndergroundWorld from './scenes/UndergroundWorld';
@@ -41,6 +42,7 @@ import BergenWereld from './scenes/BergenWereld';
 import PrismaWereld from './scenes/PrismaWereld';
 import JungleWereld from './scenes/JungleWereld';
 import FlamengoWereld from './scenes/FlamengoWereld';
+import FlamingoWereld from './scenes/FlamingoWereld';
 import RivierWereld from './scenes/RivierWereld';
 import MoerasWereld from './scenes/MoerasWereld';
 import SalamanderWereld from './scenes/SalamanderWereld';
@@ -73,6 +75,7 @@ const SCENES = [
   UnderwaterWorld,
   SeaWorld,
   CloudWorld,
+  WolkenWereld,
   MoonWorld,
   PizzaWorld,
   UndergroundWorld,
@@ -84,6 +87,7 @@ const SCENES = [
   PrismaWereld,
   JungleWereld,
   FlamengoWereld,
+  FlamingoWereld,
   RivierWereld,
   MoerasWereld,
   SalamanderWereld,

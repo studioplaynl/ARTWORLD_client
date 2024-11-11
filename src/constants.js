@@ -115,6 +115,12 @@ export const SCENE_INFO = [
     kind: 'homeArea',
   },
   {
+    scene: 'WolkenWereld',
+    sizeX: 5500,
+    sizeY: 5500,
+    kind: 'homeArea',
+  },
+  {
     scene: 'MoonWorld',
     sizeX: 5500,
     sizeY: 5500,
@@ -176,6 +182,12 @@ export const SCENE_INFO = [
   },
   {
     scene: 'FlamengoWereld',
+    sizeX: 5500,
+    sizeY: 5500,
+    kind: 'homeArea',
+  },
+  {
+    scene: 'FlamingoWereld',
     sizeX: 5500,
     sizeY: 5500,
     kind: 'homeArea',
