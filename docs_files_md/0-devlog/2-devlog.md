@@ -7,6 +7,10 @@ Open issues:
 - delete as admin does not delete things from AWS (server issue?)
 - delete as player does not delete item from AWS (server issue?)
 
+###2024-11-12
+- added redirect system for spelling mistakes or translated worlds
+- clean build process for index.js, index.css, index.html
+
 ###2024-04-23
 Removed errors on vite build process.
 -> test and update betaworld build process

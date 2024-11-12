@@ -7,6 +7,12 @@
 This is the repo for ARTWORLD, a game for kids to make and exhibit art in. 
 ARTWORLD is a multi user game, so players see and can interact with each other.
 
+Version 1.5.1
+Svelte 4.2.12
+Phaser 3.80.1
+Nakama 2.7.1
+Vite 5.0.10
+
 ![Walk animation](public/assets/docs/gifs/walk_arond_animation.gif)
 
 ARTWORLD want to support many art forms: drawing, stop motion animation, music, dance and poetry.

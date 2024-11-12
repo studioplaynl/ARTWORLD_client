@@ -24,7 +24,7 @@
   let toUser = 0;
   let batchCreation = false;
   const server = client.host;
-  let serverName = 'ARTWORLD';
+  let serverName = 'server xxx';
 
   onMount(async () => {
     // check if server is artworld or betaworld, so that we not make new accounts on the wrong server.
@@ -52,7 +52,13 @@
     }
   }
 
-  const Locaties = SCENE_INFO.map((i) => i.scene);
+  const Locaties = SCENE_INFO
+    .filter(i => i.kind === 'homeArea')
+    .map(i => ({
+      scene: i.scene,
+      displayName: i.displayName || i.scene // fallback to scene name if displayName isn't set
+    }))
+    .sort((a, b) => a.displayName.localeCompare(b.displayName)); // sort alphabetically by displayName
 
   let house = STOCK_HOUSES[Math.floor(STOCK_HOUSES.length * Math.random())];
 
@@ -196,8 +202,13 @@
         ctx.fillText('Wachtwoord:', startTextX, 85);
         ctx.font = 'bold 18px arial';
         ctx.fillText(password, startTextX, 110);
+
+        // Find the display name for the selected azc
+        const selectedLocation = Locaties.find(loc => loc.scene === azc);
+        const displayName = selectedLocation ? selectedLocation.displayName : azc;
+
         ctx.font = 'oblique 14px arial';
-        ctx.fillText(azc, startTextX, 156);
+        ctx.fillText(displayName, startTextX, 156);
       })
       .catch((err) => {
         console.error(err);
@@ -291,7 +302,7 @@
         <select name="AZC" bind:value="{azc}" required>
           <option value="null">{$_('register.none')}</option>
           {#each Locaties as locatie}
-            <option value="{locatie}">{locatie}</option>
+            <option value={locatie.scene}>{locatie.displayName}</option>
           {/each}
         </select>
         <label for="avatar"><b>avatar</b></label>
