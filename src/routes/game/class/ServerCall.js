@@ -1475,13 +1475,18 @@ class ServerCall {
   }
 
   toggleHomeElement_Selected_Handler(icon, editBorder, element, value) {
-    // turn off the border for all elements
-    Object.values(icon).forEach(() => {
-      editBorder.setVisible(false);
+    // Set all icons to depth 20
+    Object.values(icon).forEach((iconElement) => {
+        iconElement.parentContainer.setDepth(20);
+        editBorder.setVisible(false);
     });
 
+    // If the current element is selected, bring its icons to depth 30
     if (value.key === element.key) {
-      editBorder.setVisible(true);
+        Object.values(icon).forEach((iconElement) => {
+            iconElement.parentContainer.setDepth(30);
+        });
+        editBorder.setVisible(true);
     }
   }
 
