@@ -7,6 +7,13 @@ export default defineConfig({
   build: {
     outDir: 'public', // output to public folder
     emptyOutDir: false, // don't delete existing files
+    rollupOptions: {
+      output: {
+        entryFileNames: 'index.js',
+        chunkFileNames: '[name].js',
+        assetFileNames: 'index.[ext]'
+      }
+    }
   },
   plugins: [
     svelte(),
