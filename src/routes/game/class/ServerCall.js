@@ -1513,16 +1513,6 @@ class ServerCall {
     const height = container.height;
     const scale = container.scale;
 
-    // Find the image/sprite in the container to get flipX state
-    // const image = container.list.find(item => {
-    //     return (item instanceof Phaser.GameObjects.Image || 
-    //             item instanceof Phaser.GameObjects.Sprite) &&
-    //             !item.texture.key.includes('full-screen') && 
-    //             !item.texture.key.includes('moveIcon') && 
-    //             !item.texture.key.includes('reloadSign') && 
-    //             !item.texture.key.includes('moreOptions');
-    // });
-
     // find the artwork in the container, needed for the flipX value
     const image = container.list.find(item => item.name === 'homeElement-artwork');
     if (!image) return;
