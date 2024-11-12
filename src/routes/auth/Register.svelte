@@ -24,7 +24,7 @@
   let toUser = 0;
   let batchCreation = false;
   const server = client.host;
-  let serverName = 'ARTWORLD';
+  let serverName = 'server xxx';
 
   onMount(async () => {
     // check if server is artworld or betaworld, so that we not make new accounts on the wrong server.
@@ -60,12 +60,19 @@
     
     for (let key in obj) {
       if (typeof obj[key] === 'object' && obj[key] !== null) {
-        if (obj[key].scene) {
-          scenes.push(options.lowercase ? obj[key].scene.toLowerCase() : obj[key].scene);
+        // Only add scenes that are homeAreas and have both scene and displayName
+        if (obj[key].scene && obj[key].kind === 'homeArea' && obj[key].displayName) {
+          scenes.push({
+            value: obj[key].scene,
+            label: obj[key].displayName
+          });
         }
         scenes = scenes.concat(getAllScenes(obj[key], options));
       }
     }
+    
+    // Sort scenes alphabetically by displayName
+    scenes.sort((a, b) => a.label.localeCompare(b.label));
     
     return scenes;
   }
@@ -76,9 +83,13 @@
 
   let avatar = STOCK_AVATARS[Math.floor(STOCK_AVATARS.length * Math.random())];
 
+  // Add a helper function to find display name
+  function getDisplayName(sceneValue) {
+    const location = Locaties.find(loc => loc.value === sceneValue);
+    return location ? location.label : sceneValue;
+  }
+
   async function register() {
-    // update the email from the username
-    // email = `${username}@vrolijkheid.nl`;
     dlog('email: ', email);
     dlog('password: ', password);
     const data = {
@@ -91,7 +102,6 @@
       avatar: `/avatar/stock/${avatar}`,
       home: `/home/stock/${house}`,
     };
-    // dlog('data', data);
     createAccountAdmin(data);
   }
 
@@ -187,12 +197,9 @@
 
   function updateQrCanvas() {
     QRUrl = `https://artworld.vrolijkheid.nl/#/login/${email}/${password}`;
-    // const qrCodeImage = document.getElementById('qrCodeImage').innerHTML;
 
     QRCode.toDataURL(QRUrl)
       .then((qrCodeImage) => {
-        // dlog(qrCodeImage);
-
         const startTextX = 176;
         const canvas = document.getElementById('qrCanvas');
         const ctx = canvas.getContext('2d');
@@ -200,7 +207,7 @@
 
         const img = new Image();
         img.onload = function () {
-          ctx.drawImage(img, -5, -5); // Or at whatever offset you like
+          ctx.drawImage(img, -5, -5);
         };
         img.src = qrCodeImage;
 
@@ -215,7 +222,8 @@
         ctx.font = 'bold 18px arial';
         ctx.fillText(password, startTextX, 110);
         ctx.font = 'oblique 14px arial';
-        ctx.fillText(azc, startTextX, 156);
+        // Show the display name on the canvas instead of the scene value
+        ctx.fillText(azc ? getDisplayName(azc) : '', startTextX, 156);
       })
       .catch((err) => {
         console.error(err);
@@ -306,10 +314,10 @@
         </select>
 
         <label for="AZC"><b>{$_('register.location')}</b></label>
-        <select name="AZC" bind:value="{azc}" required>
+        <select name="AZC" bind:value={azc} required>
           <option value="null">{$_('register.none')}</option>
           {#each Locaties as locatie}
-            <option value="{locatie}">{locatie}</option>
+            <option value={locatie.value}>{locatie.label}</option>
           {/each}
         </select>
         <label for="avatar"><b>avatar</b></label>
