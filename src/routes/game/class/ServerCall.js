@@ -892,7 +892,14 @@ class ServerCall {
     // imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
 
     // adds the image to the container, on top of the artFrame
-    const setImage = scene.add.image(0, 0, imageKeyUrl).setOrigin(0.5);
+    const setImage = scene.add.image(0, 0, imageKeyUrl)
+      .setOrigin(0.5)
+    .setName('homeElement-artwork');
+
+    // Add this line to apply flipX if it exists in the element's value
+    if (element.value.flipX) {
+      setImage.setFlipX(element.value.flipX);
+    }
 
     const topLeft = new Phaser.Math.Vector2(-artSizeSaved / 2, -artSizeSaved / 2);
     const topRight = new Phaser.Math.Vector2(artSizeSaved / 2, -artSizeSaved / 2);
@@ -988,7 +995,7 @@ class ServerCall {
     imageContainer.add(icon.flipX);
 
     // Add flipX functionality here, after all icons are added to container
-    this.setFlipXIconFunctionality(icon, imageContainer);
+    this.setFlipXIconFunctionality(icon, imageContainer, element, worldSize);
 
     // Then continue with the rest of the container setup
     imageContainer.setSize(artSizeSaved, artSizeSaved);
@@ -1146,7 +1153,14 @@ class ServerCall {
     // . end animation for the stopmotion ......................
 
     // adds the image to the container
-    const setImage = scene.add.sprite(0, 0, imageKeyUrl).setOrigin(0.5);
+    const setImage = scene.add.sprite(0, 0, imageKeyUrl)
+      .setOrigin(0.5)
+      .setName('homeElement-artwork');
+
+    // Add this line to apply flipX if it exists in the element's value
+    if (element.value.flipX) {
+      setImage.setFlipX(element.value.flipX);
+    }
 
     setImage.setData('playAnim', `moving_${imageKeyUrl}`);
     setImage.setData('stopAnim', `stop_${imageKeyUrl}`);
@@ -1247,7 +1261,7 @@ class ServerCall {
     imageContainer.add(icon.flipX);
 
     // Add flipX functionality here, after all icons are added to container
-    this.setFlipXIconFunctionality(icon, imageContainer);
+    this.setFlipXIconFunctionality(icon, imageContainer, element, worldSize);
 
     // Then continue with the rest of the container setup
     imageContainer.setSize(artSizeSaved, artSizeSaved);
@@ -1494,14 +1508,24 @@ class ServerCall {
     const x = CoordinatesTranslator.phaser2DToArtworldX(worldSize.x, container.x);
     const y = CoordinatesTranslator.phaser2DToArtworldY(worldSize.y, container.y);
 
-    // dlog('handleDragEnd element: ', element);
-    // dlog('handleDragEnd container: ', container);
-    // dlog('handleDragEnd x, y: ', x, y);
-
     const rotation = container.rotation;
     const width = container.width;
     const height = container.height;
     const scale = container.scale;
+
+    // Find the image/sprite in the container to get flipX state
+    // const image = container.list.find(item => {
+    //     return (item instanceof Phaser.GameObjects.Image || 
+    //             item instanceof Phaser.GameObjects.Sprite) &&
+    //             !item.texture.key.includes('full-screen') && 
+    //             !item.texture.key.includes('moveIcon') && 
+    //             !item.texture.key.includes('reloadSign') && 
+    //             !item.texture.key.includes('moreOptions');
+    // });
+
+    // find the artwork in the container, needed for the flipX value
+    const image = container.list.find(item => item.name === 'homeElement-artwork');
+    if (!image) return;
 
     const pub = element.permission_read;
     const type = element.collection;
@@ -1514,13 +1538,14 @@ class ServerCall {
     newValue.width = width;
     newValue.rotation = rotation;
     newValue.scale = scale;
+    newValue.flipX = image ? image.flipX : false; // Add flipX state
 
     // dragend also happens when pointer went from down to up without moving
     // so we check if there is a change
     const areEqual = JSON.stringify(element.value) === JSON.stringify(newValue);
     if (areEqual) {
-      console.log('No changes detected');
-      return;
+        console.log('No changes detected');
+        return;
     }
 
     // update store without reactivity
@@ -2597,34 +2622,27 @@ class ServerCall {
     }
   }
 
-  setFlipXIconFunctionality(icon, imageContainer) {
+  setFlipXIconFunctionality(icon, imageContainer, element, worldSize) {
     if (!icon.flipX || !imageContainer) return;
 
     icon.flipX.setInteractive();
     icon.flipX.on('pointerdown', () => {
-      // Find the image/sprite in the container
-      const image = imageContainer.list.find(item => {
-        return (item instanceof Phaser.GameObjects.Image || 
-                item instanceof Phaser.GameObjects.Sprite) &&
-                item !== icon.flipX && 
-                item !== icon.scale && 
-                item !== icon.move && 
-                item !== icon.rotate && 
-                item !== icon.more;
-      });
-      
-      if (image) {
-        // Toggle the flipX property
-        image.setFlipX(!image.flipX);
+        // Find the artwork using the name
+        const artwork = imageContainer.list.find(item => item.name === 'homeElement-artwork');
         
-        // If this is a sprite with animations, we need to update the flipX for animations too
-        if (image instanceof Phaser.GameObjects.Sprite) {
-          const currentAnim = image.anims.currentAnim;
-          if (currentAnim) {
-            image.anims.play(currentAnim.key);
-          }
+        if (artwork) {
+            // Toggle the flipX property
+            artwork.setFlipX(!artwork.flipX);
+            
+            // If this is a sprite with animations, update the animations
+            if (artwork instanceof Phaser.GameObjects.Sprite) {
+                const currentAnim = artwork.anims.currentAnim;
+                if (currentAnim) {
+                    artwork.anims.play(currentAnim.key);
+                }
+            }
+            this.handleDragEnd(imageContainer, element, worldSize);
         }
-      }
     });
   }
 } // end ServerCall
