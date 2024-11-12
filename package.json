@@ -17,7 +17,7 @@
     "@rollup/plugin-replace": "^5.0.5",
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "@types/node": "^20.0.0",
-    "eslint": "^9.3.0",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-node": "^0.3.9",
@@ -46,7 +46,6 @@
     "svelte-icons": "^2.1.0",
     "svelte-select": "^5.8.3",
     "svelte-spa-router": "^4.0.0",
-    "svelte-table": "^0.5.11",
-    "swiper": "^8.4.7"
+    "svelte-table": "^0.5.11"
   }
 }
