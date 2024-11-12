@@ -8,6 +8,13 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, 'public'), // output to public folder
     emptyOutDir: false, // don't delete existing files
+    rollupOptions: {
+      output: {
+        entryFileNames: 'index.js',
+        chunkFileNames: '[name].js',
+        assetFileNames: 'index.[ext]'
+      }
+    }
   },
   resolve: {
     alias: {
