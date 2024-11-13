@@ -165,6 +165,22 @@
   function zoomOut() {
     PlayerZoom.out();
   }
+
+  function findSceneDisplayName(sceneName) {
+    // First check root level
+    if (SCENE_INFO.find(s => s.scene === sceneName)?.displayName) {
+      return SCENE_INFO.find(s => s.scene === sceneName).displayName;
+    }
+    
+    // Then check children
+    const artworld = SCENE_INFO.find(s => s.scene === 'Artworld');
+    if (artworld?.children) {
+      const child = artworld.children.find(c => c.scene === sceneName);
+      return child?.displayName;
+    }
+    
+    return null;
+  }
 </script>
 
 <div class="topbar">
@@ -194,7 +210,9 @@
   {#if parentScenes.length > 0}
     {#each parentScenes as scene}
       <button class="pill-button" on:click={() => goToScene(scene)}>
-        <span class="pill-button-text">{scene}</span>
+        <span class="pill-button-text">
+          {findSceneDisplayName(scene) || scene}
+        </span>
       </button>
     {/each}
 {/if}
@@ -230,7 +248,9 @@
       </div>
     {:else}
       <div class="pill-text">
-        <span class="pill-button-text">{currentLocation.scene}</span>
+        <span class="pill-button-text">
+          {findSceneDisplayName(currentLocation.scene) || currentLocation.scene}
+        </span>
       </div>
     {/if}
   {/if}
