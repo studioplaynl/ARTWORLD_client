@@ -1060,6 +1060,22 @@ class ServerCall {
 
   createHomeElement_Stopmotion_Container(element) {
     const scene = ManageSession.currentScene;
+    if (!scene || !element || !element.value) return;
+
+    // Verify texture exists before proceeding
+    const imageKeyUrl = element.value.url;
+    if (!scene.textures.exists(imageKeyUrl)) {
+      dlog('Texture not found for stopmotion:', imageKeyUrl);
+      return;
+    }
+
+    // Get texture dimensions
+    const texture = scene.textures.get(imageKeyUrl);
+    if (!texture || !texture.frames.__BASE) {
+      dlog('Invalid texture for stopmotion:', imageKeyUrl);
+      return;
+    }
+
     const worldSize = scene.worldSize;
 
     if (!scene) return;
@@ -1077,8 +1093,6 @@ class ServerCall {
           // dlog(`Skipping creation of drawing home element with key: ${element.key}`);
           return;
       }
-
-    const imageKeyUrl = element.value.url;
 
     const artSizeSaved = element.value.height;
 
