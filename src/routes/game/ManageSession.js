@@ -369,6 +369,24 @@ class ManageSession {
     this.lastMoveCommand = { ...data };
     this.socket.rpc('move_position', JSON.stringify(data));
   }
+
+  async waitForConnection(timeout = 10000) {
+    if (this.socketIsConnected) return true;
+
+    return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            reject(new Error('Socket connection timeout'));
+        }, timeout);
+
+        const checkConnection = setInterval(() => {
+            if (this.socketIsConnected) {
+                clearInterval(checkConnection);
+                clearTimeout(timeoutId);
+                resolve(true);
+            }
+        }, 100);
+    });
+  }
 } // end class
 
 export default new ManageSession();

@@ -100,18 +100,26 @@ export default class GameOnboarding extends Phaser.Scene {
 
     dlog('Launch: ', targetScene, targetHouse);
 
-    // we launch the player last location when we have a socket with the server
-    await ManageSession.createSocket().then(async () => {
-      // get server object so that the data is Initialized
-      Liked.get();
-      ModeratorLiked.get();
-      Addressbook.get();
-      Achievements.get();
+    try {
+        // Create socket and wait for connection
+        await ManageSession.createSocket();
+        await ManageSession.waitForConnection();
 
-      // launch leaves the current scene running
-      // start stops the current (GameOnboarding) scene
-      this.scene.start(targetScene, { user_id: targetHouse });
-      this.scene.launch('UIScene');
-    });
+        // Initialize server data
+        await Promise.all([
+            Liked.get(),
+            ModeratorLiked.get(),
+            Addressbook.get(),
+            Achievements.get()
+        ]);
+
+        // Launch scenes
+        this.scene.start(targetScene, { user_id: targetHouse });
+        this.scene.launch('UIScene');
+
+    } catch (error) {
+        dlog('Failed to launch game:', error);
+        throw error;
+    }
   }
 }
