@@ -126,14 +126,14 @@ export default class DefaultUserHome extends Phaser.Scene {
       location: this.location,
     });
 
+    // First load HomeElements
+    await HomeElements.getFromServer(this.location);
+    
+    // Then initialize galleries sequentially
     await this.drawingGalleryManager.initializeGalleries();
     await this.stopmotionGalleryManager.initializeGalleries();
 
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
+    // Set up error handling last
     this.load.on('loaderror', (offendingFile) => {
       dlog('loaderror', offendingFile);
       if (typeof offendingFile !== 'undefined') {
@@ -147,8 +147,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     this.events.on('shutdown', this.onShutdown, this);
 
     // get homeElements from server and subscribe to the store
-    await HomeElements.getFromServer(this.location);
-
     this.unsubscribe_HomeElements = HomeElements.subscribe((value) => {
       if (value === undefined) return;
       dlog('reactivity HomeElements', value);
