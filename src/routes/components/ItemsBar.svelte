@@ -14,7 +14,7 @@
   import AppGroup from './AppGroup.svelte';
   import { Profile, ShowItemsBar, ItemsBarCurrentView } from '../../session';
   import Awards from '../Awards.svelte';
-  import { Addressbook, myHome } from '../../storage';
+  import { Addressbook, myHome, Liked, ModeratorLiked, Achievements } from '../../storage';
   import { clickOutside } from '../../helpers/clickOutside';
   import {
     PlayerPos,
@@ -33,6 +33,12 @@
   let enableclickOutsideListener = false;
 
   getAccount();
+  // Initialize server data
+  Liked.get()
+  ModeratorLiked.get();
+  // Addressbook.get();
+  Achievements.get();
+
   myHome.get();
   // check if player is clicked
   const unsubscribeItemsBar = ShowItemsBar.subscribe(async () => {

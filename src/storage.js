@@ -355,7 +355,7 @@ export const Addressbook = {
   update: addressBookStore.update,
 
   get: () => {
-    const localAddressbookArray = get(Addressbook);
+    const localAddressbookArray = get(addressBookStore);
 
     const Sess = get(Session);
     if (!!localAddressbookArray && localAddressbookArray.length > 0) {

@@ -101,17 +101,10 @@ export default class GameOnboarding extends Phaser.Scene {
     dlog('Launch: ', targetScene, targetHouse);
 
     try {
+      dlog('START CREATE SOCKET');
         // Create socket and wait for connection
         await ManageSession.createSocket();
         await ManageSession.waitForConnection();
-
-        // Initialize server data
-        await Promise.all([
-            Liked.get(),
-            ModeratorLiked.get(),
-            Addressbook.get(),
-            Achievements.get()
-        ]);
 
         // Launch scenes
         this.scene.start(targetScene, { user_id: targetHouse });
