@@ -150,76 +150,82 @@
     <div class="menu-content">
       <!-- the right part of the EditHome: list of HomeElements -->
       <div class="right-column-itemsbar">
-        <!-- close the EditHome page -->
-        <button on:click={editHomeMenuToggle} class="align-right">
-          <img src="./assets/SHB/svg/AW-icon-enter.svg" alt="close edit home" />
-        </button>
-        
-        <!-- Render drawings -->
-        {#each Object.keys($homeElements_Store) as artType}
-          {#if $homeElements_Store[artType]?.byKey}
-            {#each Object.entries($homeElements_Store[artType].byKey) as [valueKey, group]}
-              <div class="element-group">
-                <div 
-                  class="unique-element" 
-                  id={group[0].key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}
-                  on:click={() => handleArtClicked(group[0])}
-                  on:keydown={(e) => e.key === 'Enter' && handleArtClicked(group[0])}
-                  role="button"
-                  tabindex="0"
-                >
-                  <ArtworkLoader 
-                    artClickable={false} 
-                    row={group[0]} 
-                    deleteIcon={true}
-                    duplicateIcon={true}
-                    previewSize={50} 
-                    animateStopmotion={false}
-                    on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
-                    on:artClicked={() => handleArtClicked(group[0])}
-                    on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
-                  />
+        <!-- Fixed top section -->
+        <div class="fixed-top">
+          <button on:click={() => toggleView('addHomeElement')}>
+            <img
+              src={currentView === 'addHomeElement' 
+                ? "assets/SHB/svg/AW-icon-enter.svg" 
+                : "assets/SHB/svg/AW-icon-plus.svg"}
+              alt={currentView === 'addHomeElement' ? "close art drawer" : "open art drawer"}
+              class={currentView === 'addHomeElement' ? "rotate-90" : ""}
+            />
+          </button>
+        </div>
+
+        <!-- Scrollable content -->
+        <div class="scrollable-content">
+          {#each Object.keys($homeElements_Store) as artType}
+            {#if $homeElements_Store[artType]?.byKey}
+              {#each Object.entries($homeElements_Store[artType].byKey) as [valueKey, group]}
+                <div class="element-group">
+                  <div 
+                    class="unique-element" 
+                    id={group[0].key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}
+                    on:click={() => handleArtClicked(group[0])}
+                    on:keydown={(e) => e.key === 'Enter' && handleArtClicked(group[0])}
+                    role="button"
+                    tabindex="0"
+                  >
+                    <ArtworkLoader 
+                      artClickable={false} 
+                      row={group[0]} 
+                      deleteIcon={true}
+                      duplicateIcon={true}
+                      previewSize={50} 
+                      animateStopmotion={false}
+                      on:deleteArtworkInContext={() => handleDeleteHomeElement(group[0])} 
+                      on:artClicked={() => handleArtClicked(group[0])}
+                      on:duplicateArtworkInContext={() => handleDuplicateHomeElement(group[0])}
+                    />
+                  </div>
+
+                  {#if group.length > 1}
+                    {#each group.slice(1) as duplicate}
+                      <div 
+                        class="duplicate-element" 
+                        id={duplicate.key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}
+                        on:click={() => handleArtClicked(duplicate)}
+                        on:keydown={(e) => e.key === 'Enter' && handleArtClicked(duplicate)}
+                        role="button"
+                        tabindex="0"
+                      >
+                        <ArtworkLoader 
+                          artClickable={false} 
+                          row={duplicate} 
+                          deleteIcon={true}
+                          duplicateIcon={true}
+                          previewSize={50} 
+                          animateStopmotion={false}
+                          on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
+                          on:artClicked={() => handleArtClicked(duplicate)}
+                          on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}
+                        />
+                      </div>
+                    {/each}
+                  {/if}
                 </div>
+              {/each}
+            {/if}
+          {/each}
+        </div>
 
-                {#if group.length > 1}
-                  {#each group.slice(1) as duplicate}
-                    <div 
-                      class="duplicate-element" 
-                      id={duplicate.key === $homeElement_Selected.key ? 'selectedHomeElement' : ''}
-                      on:click={() => handleArtClicked(duplicate)}
-                      on:keydown={(e) => e.key === 'Enter' && handleArtClicked(duplicate)}
-                      role="button"
-                      tabindex="0"
-                    >
-                      <ArtworkLoader 
-                        artClickable={false} 
-                        row={duplicate} 
-                        deleteIcon={true}
-                        duplicateIcon={true}
-                        previewSize={50} 
-                        animateStopmotion={false}
-                        on:deleteArtworkInContext={() => handleDeleteHomeElement(duplicate)} 
-                        on:artClicked={() => handleArtClicked(duplicate)}
-                        on:duplicateArtworkInContext={() => handleDuplicateHomeElement(duplicate)}
-                      />
-                    </div>
-                  {/each}
-                {/if}
-              </div>
-            {/each}
-          {/if}
-        {/each}
-
-        <!-- show/hide artwork categories -->
-        <button on:click={() => toggleView('addHomeElement')}>
-          <img
-            src={currentView === 'addHomeElement' 
-              ? "assets/SHB/svg/AW-icon-enter.svg" 
-              : "assets/SHB/svg/AW-icon-plus.svg"}
-            alt={currentView === 'addHomeElement' ? "close art drawer" : "open art drawer"}
-            class={currentView === 'addHomeElement' ? "rotate-90" : ""}
-          />
-        </button>
+        <!-- Fixed bottom section -->
+        <div class="fixed-bottom">
+          <button on:click={editHomeMenuToggle} class="align-right">
+            <img src="./assets/SHB/svg/AW-icon-enter.svg" alt="close edit home" />
+          </button>
+        </div>
       </div>
 
       <!-- the left part of the EditHome: artwork categories -->
@@ -306,11 +312,33 @@ img {
 
 .right-column-itemsbar {
   display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
-  overflow-y: auto;
+  flex-direction: column;
+  height: 100%;
   padding-right: 10px;
   max-height: 90vh;
+  position: relative;
+}
+
+.fixed-top {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  padding: 10px 0;
+  z-index: 2;
+}
+
+.fixed-bottom {
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
+  padding: 10px 0;
+  z-index: 2;
+}
+
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 0;
 }
 
 .right-column-itemsbar button {
@@ -338,19 +366,16 @@ img {
 }
 
 /* Scrollbar styles */
-.right-column-itemsbar::-webkit-scrollbar,
-.left-column-editHome::-webkit-scrollbar {
+.scrollable-content::-webkit-scrollbar {
   width: 6px;
 }
 
-.right-column-itemsbar::-webkit-scrollbar-thumb,
-.left-column-editHome::-webkit-scrollbar-thumb {
+.scrollable-content::-webkit-scrollbar-thumb {
   background-color: #7300ed;
   border-radius: 3px;
 }
 
-.right-column-itemsbar::-webkit-scrollbar-track,
-.left-column-editHome::-webkit-scrollbar-track {
+.scrollable-content::-webkit-scrollbar-track {
   background-color: #f1f1f1;
 }
 
