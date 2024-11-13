@@ -13,7 +13,6 @@ import { myHomeStore,
   homeElement_Selected, 
   Liked, 
   miniMapDimensions, 
-  useFilteredArtworksStore 
 } from '../../../storage';
 import ServerCall from '../class/ServerCall';
 import { Profile, HomeEditBarExpanded } from '../../../session';
