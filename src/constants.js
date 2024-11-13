@@ -68,6 +68,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Vuur Wereld',
+        portalImage: './assets/world_fireworld/Portal_vuur_Naartoe_zonderAnimatie.png'
       },
       {
         scene: 'RobotWorld',
@@ -75,6 +76,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Robot Wereld',
+        portalImage: './assets/world_robot_torquoise/portaal_robot_zonderAnimatie.png'
       },
       {
         scene: 'SlimeWorld',
@@ -82,6 +84,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Slime Wereld',
+        portalImage: './assets/world_slime_world/Portal_goSlime_slime.png'
       },
       {
         scene: 'MarsWorld',
@@ -89,6 +92,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Mars Wereld',
+        portalImage: './assets/world_mars_red/portal_gotoMars_mars.png'
       },
       {
         scene: 'UnderwaterWorld',
@@ -96,6 +100,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Water Wereld',
+        portalImage: './assets/world_underwater_blue/Portaal_naarWater_water.png'
       },
       {
         scene: 'SeaWorld',
@@ -103,6 +108,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Zee Wereld',
+        portalImage: './assets/world_seaworld/zee_ship_Portaal_naarZEE.png'
       },
       {
         scene: 'CloudWorld',
@@ -110,6 +116,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Wolken Wereld',
+        portalImage: './assets/world_clouds/cloud_portal_naarCloud.png'
       },
       {
         scene: 'MoonWorld',
@@ -117,6 +124,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Maan Wereld',
+        portalImage: './assets/world_moon/maan_portalRaket_naarMaan.png'
       },
       {
         scene: 'PizzaWorld',
@@ -124,6 +132,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Pizza Wereld',
+        portalImage: './assets/world_pizza/Portal_naarPizza_pizza.png'
       },
       {
         scene: 'UndergroundWorld',
@@ -131,6 +140,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Ondergrondse Wereld',
+        portalImage: './assets/world_underground/Portal_naarOndergrond.png'
       },
       {
         scene: 'WoestijnWereld',
@@ -138,6 +148,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Woestijn Wereld',
+        portalImage: './assets/world_woestijn/Portal_woestijn_naarWoestijn-fs8.png'
       },
       {
         scene: 'IjscoWereld',
@@ -145,6 +156,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Ijsco Wereld',
+        portalImage: './assets/world_ijsco/Portaal_vanHOMEnaarICECREAM_corr-fs8.png'
       },
       {
         scene: 'IjsWereld',
@@ -152,6 +164,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Ijs Wereld',
+        portalImage: './assets/world_ice/Portaal_Naar_Ice-fs8.png'
       },
       {
         scene: 'BijenWereld',
@@ -159,6 +172,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Bijen Wereld',
+        portalImage: './assets/world_bees/02b_Portaal_home_naar_bee-fs8.png'
       },
       {
         scene: 'BergenWereld',
@@ -166,6 +180,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Bergen Wereld',
+        portalImage: './assets/world_bergen/Portaal2_NaarBergen_CROP-fs8.png'
       },
       {
         scene: 'PrismaWereld',
@@ -173,6 +188,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Prisma Wereld',
+        portalImage: './assets/world_prism/Portaal_Prisma_naar_PrismaCROP-fs8.png'
       },
       {
         scene: 'JungleWereld',
@@ -180,6 +196,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Jungle Wereld',
+        portalImage: './assets/world_jungle/portaal_naarJungle_crop-fs8.png'
       },
       {
         scene: 'FlamengoWereld',
@@ -187,6 +204,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Flamingo Wereld',
+        portalImage: './assets/world_flamengo/_Portaal_Flamingocity_naarMeteor_small-fs8.png'
       },
       {
         scene: 'RivierWereld',
@@ -194,6 +212,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Rivier Wereld',
+        portalImage: './assets/world_paarse_rivier/02b_portaal_River_naarRivier-fs8.png'
       },
       {
         scene: 'MoerasWereld',
@@ -201,6 +220,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Moeras Wereld',
+        portalImage: './assets/world_swamp/02a_portaal_swamp_naarSwamp400px-fs8.png'
       },
       {
         scene: 'SalamanderWereld',
@@ -208,6 +228,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Salamander Wereld',
+        portalImage: './assets/world_salamander/portaal_naarSalamanderWereld-fs8.png'
       },
       {
         scene: 'DennenbosWereld',
@@ -215,6 +236,7 @@ export const SCENE_INFO = [
         sizeY: 5500,
         kind: 'homeArea',
         displayName: 'Dennenbos Wereld',
+        portalImage: './assets/world_dennenbos/22_dennenbos_portaal-fs8.png'
       },
       {
         scene: 'VliegendeEilandenWereld',

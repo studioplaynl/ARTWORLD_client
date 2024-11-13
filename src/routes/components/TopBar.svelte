@@ -181,6 +181,22 @@
     
     return null;
   }
+
+  function findScenePortalImage(sceneName) {
+    // First check root level
+    if (SCENE_INFO.find(s => s.scene === sceneName)?.portalImage) {
+      return SCENE_INFO.find(s => s.scene === sceneName).portalImage;
+    }
+    
+    // Then check children
+    const artworld = SCENE_INFO.find(s => s.scene === 'Artworld');
+    if (artworld?.children) {
+      const child = artworld.children.find(c => c.scene === sceneName);
+      return child?.portalImage;
+    }
+    
+    return null;
+  }
 </script>
 
 <div class="topbar">
@@ -248,6 +264,17 @@
       </div>
     {:else}
       <div class="pill-text">
+        {#if findScenePortalImage(currentLocation.scene)}
+          <div class="avatar-wrapper">
+            <div class="avatar-container">
+              <img
+                class="pill-button-icon"
+                src={findScenePortalImage(currentLocation.scene)}
+                alt="Scene Portal"
+              />
+            </div>
+          </div>
+        {/if}
         <span class="pill-button-text">
           {findSceneDisplayName(currentLocation.scene) || currentLocation.scene}
         </span>
