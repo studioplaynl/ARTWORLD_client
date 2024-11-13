@@ -317,22 +317,34 @@ img {
   padding-right: 10px;
   max-height: 90vh;
   position: relative;
+  padding-bottom: 10px;
 }
 
 .fixed-top {
   position: sticky;
   top: 0;
-  background-color: #fff;
-  padding: 10px 0;
+  padding: 10px;
+  padding-left: 20px;
   z-index: 2;
+  width: 100%;
+  border-top-right-radius: 40px;
+  border-top-left-radius: 40px;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .fixed-bottom {
   position: sticky;
   bottom: 0;
-  background-color: #fff;
-  padding: 10px 0;
+  background-color: transparent;
+  padding: 0;
+  margin-top: 10px;
   z-index: 2;
+  width: 100%;
+  border-bottom-right-radius: 120px;
+  border-bottom-left-radius: 60px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .scrollable-content {
@@ -346,14 +358,19 @@ img {
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  margin: 5px 0;
-  padding: 10px;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
 }
 
 .right-column-itemsbar .icon img,
 .right-column-itemsbar button img {
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
 }
 
 .left-column-editHome {
@@ -376,7 +393,7 @@ img {
 }
 
 .scrollable-content::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
+  background-color: #ffffff;
 }
 
 .element-group {
@@ -400,6 +417,19 @@ img {
 
 .rotate-90 {
   transform: rotate(270deg);
+}
+
+.fixed-top, .fixed-bottom {
+  padding: 10px;
+  display: flex;
+}
+
+.fixed-top {
+  justify-content: flex-start;
+}
+
+.fixed-bottom {
+  justify-content: flex-end;
 }
 </style>
 
