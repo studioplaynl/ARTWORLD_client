@@ -1354,6 +1354,7 @@ class ServerCall {
     // Variable to store the initial angle when rotation starts
     let startAngle = 0;
     icon.rotate.on('pointerdown', () => {
+      homeElement_Selected.set(element);
       ManageSession.playerIsAllowedToMove = false;
     });
     icon.rotate.on('pointerup', () => {
@@ -1407,7 +1408,7 @@ class ServerCall {
       Phaser.Geom.Rectangle.Contains
     );
 
-    containerBackground.on('pointerup', () => {
+    containerBackground.on('pointerdown', () => {
       // dlog('containerBackground clicked: ', element);
       // scene.game.events.emit('homeElement_Selected', element.key);
       homeElement_Selected.set(element);
@@ -1417,6 +1418,7 @@ class ServerCall {
   setMoveIconFunctionality(icon, imageContainer, element, worldSize) {
     // Listen for drag events on icon.move to move the imageContainer
     icon.move.on('pointerdown', () => {
+      homeElement_Selected.set(element);
       ManageSession.playerIsAllowedToMove = false;
     });
     icon.move.on('pointerup', () => {
@@ -1445,6 +1447,7 @@ class ServerCall {
   setScaleIconFunctionality(icon, imageContainer, element, artSizeSaved, worldSize) {
     // scale the container when dragging the icon.scale
     icon.scale.on('pointerdown', () => {
+      homeElement_Selected.set(element);
       ManageSession.playerIsAllowedToMove = false;
     });
     icon.scale.on('pointerup', () => {
@@ -1537,8 +1540,6 @@ class ServerCall {
   }
 
   handleDragEnd(container, element, worldSize) {
-    homeElement_Selected.set(element);
-
     const x = CoordinatesTranslator.phaser2DToArtworldX(worldSize.x, container.x);
     const y = CoordinatesTranslator.phaser2DToArtworldY(worldSize.y, container.y);
 
@@ -2651,6 +2652,7 @@ class ServerCall {
 
     icon.flipX.setInteractive();
     icon.flipX.on('pointerdown', () => {
+      homeElement_Selected.set(element);
         // Find the artwork using the name
         const artwork = imageContainer.list.find(item => item.name === 'homeElement-artwork');
         
