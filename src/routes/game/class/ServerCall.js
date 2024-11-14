@@ -922,7 +922,7 @@ class ServerCall {
     icon.move = scene.add.image(topLeft.x, topLeft.y, 'moveIcon').setOrigin(0.5).setTint(greyTint);
     icon.rotate = scene.add.image(topRight.x, topRight.y, 'reloadSign').setOrigin(0.5).setScale(0.3).setTint(greyTint);
     icon.more = scene.add.image(bottomLeft.x, bottomLeft.y, 'moreOptions').setOrigin(0.5).setTint(greyTint);
-    icon.flipX = scene.add.image(bottomLeft.x + 40, bottomLeft.y, 'full-screen')
+    icon.flipX = scene.add.image(bottomLeft.x + 50, bottomLeft.y + 40, 'full-screen')
       .setOrigin(0.5)
       .setTint(greyTint)
       .setVisible(false); // Initially hidden
@@ -1202,7 +1202,7 @@ class ServerCall {
     icon.move = scene.add.image(topLeft.x, topLeft.y, 'moveIcon').setOrigin(0.5).setTint(greyTint);
     icon.rotate = scene.add.image(topRight.x, topRight.y, 'reloadSign').setOrigin(0.5).setScale(0.3).setTint(greyTint);
     icon.more = scene.add.image(bottomLeft.x, bottomLeft.y, 'moreOptions').setOrigin(0.5).setTint(greyTint);
-    icon.flipX = scene.add.image(bottomLeft.x + 40, bottomLeft.y, 'full-screen')
+    icon.flipX = scene.add.image(bottomLeft.x + 50, bottomLeft.y + 40, 'full-screen')
       .setOrigin(0.5)
       .setTint(greyTint)
       .setVisible(false); // Initially hidden
