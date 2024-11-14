@@ -39,7 +39,6 @@ import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
 // import Preloader from '../class/Preloader';
 // import GraffitiWall from '../class/GraffitiWall';
-import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 // import Exhibition from '../class/Exhibition';
@@ -94,6 +93,9 @@ export default class Artworld extends Phaser.Scene {
     this.load.svg('mario_star', 'assets/svg/mario_star.svg');
     this.load.svg('yellow_diamond_location_image', 'assets/svg/geleRuit.svg');
     this.load.svg('blue_sail_location_image', 'assets/svg/blauwZeil.svg');
+    this.load.svg('green_square_location_image', 'assets/svg/greensquare.svg');
+    this.load.svg('red_star_location_image', 'assets/svg/redstar.svg');
+    this.load.svg('turquoise_triangle_location_image', 'assets/svg/turquoisetriangle.svg');
     // app icons; sound apps
     this.load.image('songmaker', './assets/apps/songmaker.png');
     this.load.image('melodymaker', './assets/apps/melodymaker.png');
@@ -212,7 +214,6 @@ export default class Artworld extends Phaser.Scene {
     // ......... end PLAYER VS WORLD .......................................................................
 
     // .......... locations ................................................................................
-    // ServerCall.getHomesFiltered('GreenSquare', this);
     this.generateLocations();
     // .......... end locations ............................................................................
 
@@ -300,19 +301,6 @@ export default class Artworld extends Phaser.Scene {
     let locationVector = new Phaser.Math.Vector2(2447, 2547);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
 
-    Background.rectangle({
-      scene: this,
-      name: 'green_square_location_image',
-      gradient1: 0x15d64a,
-      gradient2: 0x15d64a,
-      gradient3: 0x2b8042,
-      gradient4: 0x2b8042,
-      alpha: 1,
-      width: 140,
-      height: 140,
-      imageOnly: true,
-    });
-
     this.greenSquareLocation = new GenerateLocation({
       scene: this,
       type: 'image',
@@ -381,21 +369,6 @@ export default class Artworld extends Phaser.Scene {
     locationVector = new Phaser.Math.Vector2(2172, 2806);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
 
-    Background.triangle({
-      scene: this,
-      name: 'turquoise_triangle_location_image',
-      // setOrigin: 0,
-      posX: locationVector.x,
-      posY: locationVector.y,
-      gradient1: 0x40e0d0,
-      gradient2: 0x40e0d0,
-      gradient3: 0x39c9bb,
-      gradient4: 0x39c9bb,
-      alpha: 1,
-      size: 200,
-      imageOnly: true,
-    });
-
     this.turquoiseTriangle = new GenerateLocation({
       scene: this,
       type: 'image',
@@ -412,17 +385,6 @@ export default class Artworld extends Phaser.Scene {
 
     locationVector = new Phaser.Math.Vector2(2846, 2114);
     locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    Background.star({
-      scene: this,
-      name: 'red_star_location_image',
-      gradient1: 0xe50000,
-      gradient2: 0xe50000,
-      alpha: 1,
-      size: 200,
-      imageOnly: true,
-      spikes: 5,
-    });
 
     this.redStar = new GenerateLocation({
       scene: this,

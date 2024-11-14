@@ -184,15 +184,15 @@
 
   function findScenePortalImage(sceneName) {
     // First check root level
-    if (SCENE_INFO.find(s => s.scene === sceneName)?.portalImage) {
-      return SCENE_INFO.find(s => s.scene === sceneName).portalImage;
+    if (SCENE_INFO.find(s => s.scene === sceneName)?.locationImage) {
+      return SCENE_INFO.find(s => s.scene === sceneName).locationImage;
     }
     
     // Then check children
     const artworld = SCENE_INFO.find(s => s.scene === 'Artworld');
     if (artworld?.children) {
       const child = artworld.children.find(c => c.scene === sceneName);
-      return child?.portalImage;
+      return child?.locationImage;
     }
     
     return null;
@@ -384,13 +384,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 2px;
   }
 
   .avatar-container {
-    width: 24px;
-    height: 24px;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .pill-container {
@@ -429,9 +433,11 @@
   }
 
   .pill-button-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 8px;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: cover;
   }
 
   .pill-button-icon.avatar {
