@@ -1982,28 +1982,6 @@ class ServerCall {
       );
 
       scene.load.start(); // start the load queue to get the image in memory
-
-      /** this is fired when the queue is finished downloading
-       * the phaser download queue reports downloads and failed download equaly
-       * but 'complete' does not say which file failed
-       * the on.('loaderror') event does report which file failed
-       *   */
-      // scene.load.on('complete', () => {
-      //   const startLength = scene.drawing_ServerList.startLength;
-      //   let downloadCompleted = scene.drawing_ServerList.itemsDownloadCompleted;
-      //   downloadCompleted += 1;
-      //   scene.drawing_ServerList.itemsDownloadCompleted = downloadCompleted;
-      //   // dlog('DRAWING loader downloadCompleted after, startLength', downloadCompleted, startLength);
-
-      //   // if multiple homeElements have the same key, the second one will not be loaded
-      //   // because the first is not downloaded yet, so we reload when an item is downloaded
-      //   // ManageSession.currentScene.game.events.emit('homeElements_reload');
-
-      //   if (downloadCompleted === startLength) {
-      //     dlog('download downloadDrawingDefaultUserHome COMPLETE');
-      //     //ServerCall.repositionContainers(type);
-      //   }
-      // });
     } else if (type === 'stopmotion_HomeElement') {
       // put the file in the loadErrorCache, in case it doesn't load, it get's removed when it is loaded successfully
       // ManageSession.resolveErrorObjectArray.push({

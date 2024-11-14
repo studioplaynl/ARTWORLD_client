@@ -85,8 +85,6 @@ export default class UIScene extends Phaser.Scene {
     this.events.on('gameEditMode', this.gameEditModeSign, this); // show edit mode indicator
     this.events.on('gameEditMode', this.editElementsScene, this); // make elements editable
 
-    this.game.events.on('homeElements_reload', this.reloadHomeElements, this);
-
     // const eventNames = scene.load.eventNames();
     // dlog('eventNames', eventNames);
     // const isReady = scene.load.isReady();
