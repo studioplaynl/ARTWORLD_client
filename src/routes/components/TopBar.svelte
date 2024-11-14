@@ -226,6 +226,17 @@
   {#if parentScenes.length > 0}
     {#each parentScenes as scene}
       <button class="pill-button" on:click={() => goToScene(scene)}>
+        {#if findScenePortalImage(scene)}
+          <div class="avatar-wrapper">
+            <div class="avatar-container">
+              <img
+                class="pill-button-icon"
+                src={findScenePortalImage(scene)}
+                alt="Scene Portal"
+              />
+            </div>
+          </div>
+        {/if}
         <span class="pill-button-text">
           {findSceneDisplayName(scene) || scene}
         </span>
@@ -398,7 +409,6 @@
   }
 
   .pill-container {
-    /* ... existing styles ... */
     padding: 0.25em 1em;
     display: flex;
     align-items: center;
@@ -459,15 +469,11 @@
     margin-right: 6px;
   }
 
-  /* Remove the margin-right from the last button */
   button:last-child {
     margin-right: 0;
   }
 
   .topbar-second {
-    /* position: fixed;
-    left: 0;
-    top: calc(2rem + 32px);  */
     margin: 16px;
     display: flex; /* Add this to align items horizontally */
     align-items: center; /* This will vertically center the buttons and dividers */
@@ -484,8 +490,6 @@
 
   #logo {
     box-shadow: 5px 5px 0px #7300ed;
-
-    /* fix ios logo cut-off */
     margin-right: 6px;
     margin-bottom: 2px;
   }
@@ -503,6 +507,4 @@
     opacity: 0;
     pointer-events: none;
   }
-  /* .debug {
-  } */
 </style>
