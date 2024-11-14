@@ -927,22 +927,6 @@ class ServerCall {
       .setTint(greyTint)
       .setVisible(false); // Initially hidden
 
-    // Add click handler for more options button
-    icon.more.setInteractive();
-    icon.more.on('pointerdown', () => {
-      // Toggle flipX button visibility
-      icon.flipX.setVisible(!icon.flipX.visible);
-      // Make it interactive when visible
-      if (icon.flipX.visible) {
-        icon.flipX.setInteractive();
-      } else {
-        icon.flipX.disableInteractive();
-      }
-      
-      // Set this element as the selected HomeElement
-      homeElement_Selected.set(element);
-    });
-
     // explicitly set the size of the image incase the image has a non standard size
     setImage.displayWidth = artSizeSaved;
     setImage.displayHeight = artSizeSaved;
@@ -953,6 +937,7 @@ class ServerCall {
     icon.scale.setInteractive({ draggable: true });
     icon.more.setInteractive({ draggable: true });
 
+    this.setMoreIconFunctionality(icon, imageContainer, element);
     // Set the scale icon functionality
     this.setScaleIconFunctionality(icon, imageContainer, element, artSizeSaved, worldSize);
 
@@ -1210,22 +1195,6 @@ class ServerCall {
       .setTint(greyTint)
       .setVisible(false); // Initially hidden
 
-    // Add click handler for more options button
-    icon.more.setInteractive();
-    icon.more.on('pointerdown', () => {
-      // Toggle flipX button visibility
-      icon.flipX.setVisible(!icon.flipX.visible);
-      // Make it interactive when visible
-      if (icon.flipX.visible) {
-        icon.flipX.setInteractive();
-      } else {
-        icon.flipX.disableInteractive();
-      }
-      
-      // Set this element as the selected HomeElement
-      homeElement_Selected.set(element);
-    });
-
     // explicitly set the size of the image incase the image has a non standard size
     setImage.displayWidth = artSizeSaved;
     setImage.displayHeight = artSizeSaved;
@@ -1235,6 +1204,8 @@ class ServerCall {
     icon.rotate.setInteractive({ draggable: true });
     icon.scale.setInteractive({ draggable: true });
     icon.more.setInteractive({ draggable: true });
+
+    this.setMoreIconFunctionality(icon, imageContainer, element);
 
     // Set the scale icon functionality
     this.setScaleIconFunctionality(icon, imageContainer, element, artSizeSaved, worldSize);
@@ -1409,10 +1380,24 @@ class ServerCall {
     );
 
     containerBackground.on('pointerdown', () => {
-      // dlog('containerBackground clicked: ', element);
-      // scene.game.events.emit('homeElement_Selected', element.key);
       homeElement_Selected.set(element);
     });
+  }
+
+  setMoreIconFunctionality(icon, imageContainer, element) {
+    // Listen for drag events on icon.move to move the imageContainer
+    icon.more.on('pointerdown', () => {
+      // Toggle flipX button visibility
+      icon.flipX.setVisible(!icon.flipX.visible);
+      // Make it interactive when visible
+        if (icon.flipX.visible) {
+            icon.flipX.setInteractive();
+          } else {
+            icon.flipX.disableInteractive();
+          }
+          // Set this element as the selected HomeElement
+          homeElement_Selected.set(element);
+        });
   }
 
   setMoveIconFunctionality(icon, imageContainer, element, worldSize) {
@@ -2649,46 +2634,6 @@ class ServerCall {
                 }
             }
             this.handleDragEnd(imageContainer, element, worldSize);
-        }
-    });
-  }
-
-  createMoreButtonGroup(scene, icon, bottomLeft) {
-    const greyTint = 0x808080; // Standard grey color in hexadecimal
-    // Create the more button
-    icon.more = scene.add.image(bottomLeft.x, bottomLeft.y, 'moreOptions')
-        .setOrigin(0.5)
-        .setTint(greyTint)
-        .setInteractive();
-
-    // Create the group of additional buttons
-    icon.moreGroup = scene.add.container(0, 0);
-    
-    // Add flip button to the group
-    icon.flipX = scene.add.image(bottomLeft.x + 50, bottomLeft.y + 40, 'full-screen')
-        .setOrigin(0.5)
-        .setTint(greyTint)
-        .setVisible(false)
-        .setInteractive();
-    
-    icon.moreGroup.add(icon.flipX);
-
-    // Toggle more options on click
-    icon.more.on('pointerdown', (pointer) => {
-        pointer.event.stopPropagation(); // Prevent click from propagating
-        icon.moreGroup.list.forEach(button => button.setVisible(true));
-    });
-
-    // Hide more options when clicking anywhere else
-    scene.input.on('pointerdown', (pointer) => {
-        // Don't hide if clicking on a button in the group
-        const clickedOnMoreButton = pointer.targetObject === icon.more;
-        const clickedOnGroupButton = icon.moreGroup.list.some(button => 
-            pointer.targetObject === button
-        );
-
-        if (!clickedOnMoreButton && !clickedOnGroupButton) {
-            icon.moreGroup.list.forEach(button => button.setVisible(false));
         }
     });
   }
