@@ -1490,18 +1490,24 @@ class ServerCall {
 
   toggleHomeElement_Selected_Handler(icon, editBorder, element, value) {
     const scene = ManageSession.currentScene;
-  if (!scene || !scene.homeElements_Drawing_Group || !scene.homeElements_Stopmotion_Group) return;
+    if (!scene || !scene.homeElements_Drawing_Group || !scene.homeElements_Stopmotion_Group) return;
 
     // Set all icons to depth 20
     Object.values(icon).forEach((iconElement) => {
-        iconElement.parentContainer.setDepth(20);
-        editBorder.setVisible(false);
+        // Check if iconElement and its parentContainer exist before setting depth
+        if (iconElement && iconElement.parentContainer) {
+            iconElement.parentContainer.setDepth(20);
+            editBorder.setVisible(false);
+        }
     });
 
     // If the current element is selected, bring its icons to depth 30
     if (value.key === element.key) {
         Object.values(icon).forEach((iconElement) => {
-            iconElement.parentContainer.setDepth(30);
+            // Check if iconElement and its parentContainer exist before setting depth
+            if (iconElement && iconElement.parentContainer) {
+                iconElement.parentContainer.setDepth(30);
+            }
         });
         editBorder.setVisible(true);
     }
