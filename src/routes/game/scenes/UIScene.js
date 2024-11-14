@@ -7,7 +7,6 @@ import ar from '../../../language/ar/ui.json';
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
-// import ServerCall from '../class/ServerCall';
 import { dlog } from '../../../helpers/debugLog';
 import { myHomeStore,  
   homeElement_Selected, 

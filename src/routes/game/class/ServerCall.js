@@ -1428,8 +1428,11 @@ class ServerCall {
     icon.move.on('drag', (pointer) => {
       ManageSession.playerIsAllowedToMove = false;
       // Calculate location of the dragIcon relative to the container center
-      const deltaX = pointer.position.x - pointer.prevPosition.x;
-      const deltaY = pointer.position.y - pointer.prevPosition.y;
+      // Adjust delta by the inverse of the zoom factor
+      const zoomFactor = ManageSession.currentZoom || 1;
+      const deltaX = (pointer.position.x - pointer.prevPosition.x) / zoomFactor;
+      const deltaY = (pointer.position.y - pointer.prevPosition.y) / zoomFactor;
+
 
       // camera zoom factor seems to influence the drag distance
       // for now it looks like a feature, not a bug
