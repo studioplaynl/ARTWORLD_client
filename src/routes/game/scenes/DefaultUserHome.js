@@ -148,8 +148,9 @@ export default class DefaultUserHome extends Phaser.Scene {
 
     // get homeElements from server and subscribe to the store
     this.unsubscribe_HomeElements = HomeElements.subscribe((value) => {
-      if (value === undefined) return;
+      // if (value === undefined) return; // this is never true because of how the store is set up
       dlog('reactivity HomeElements', value);
+      this.cleanupHomeElements();
       this.loadAndPlaceHomeElements(value);
     });
 
@@ -208,8 +209,12 @@ export default class DefaultUserHome extends Phaser.Scene {
   } // end create
 
   async loadAndPlaceHomeElements(value) {
+    // Clean up existing elements first
+    await this.cleanupHomeElements();
+    
     const store = HomeElements.showContent();
     console.log('loadAndPlaceHomeElements', store, value);
+    
     //if there are no homeElements ServerCall will take care of that
     if (value) {
       ServerCall.downloadAndPlaceHomeElements(value);
@@ -226,12 +231,11 @@ export default class DefaultUserHome extends Phaser.Scene {
     // ........... end PLAYER SHADOW .........................................................................
   } // update
 
-  onShutdown() {
-    // this is called when the scene is shut down, works!
+  async onShutdown() {
+    // Clean up elements first
+    await this.cleanupHomeElements();
 
-    // Unsubscribe from all events
-
-    // Unsubscribe when the scene is shut down
+    // Then continue with other cleanup...
     this.drawingGalleryManager.unsubscribe();
     this.stopmotionGalleryManager.unsubscribe();
 
@@ -240,7 +244,44 @@ export default class DefaultUserHome extends Phaser.Scene {
       this.unsubscribe_HomeElements = null;
     }
 
-    // Remove the event listener
     this.events.off('shutdown', this.onShutdown, this);
+  }
+
+  async cleanupHomeElements() {
+    try {
+      // Clear Drawing Group
+      if (this.homeElements_Drawing_Group?.getChildren) {
+        const drawingContainers = this.homeElements_Drawing_Group.getChildren();
+        drawingContainers?.forEach((element) => {
+          if (element?.destroy) element.destroy();
+        });
+      }
+
+      // Clear Stopmotion Group
+      if (this.homeElements_Stopmotion_Group?.getChildren) {
+        const stopmotionContainers = this.homeElements_Stopmotion_Group.getChildren();
+        stopmotionContainers?.forEach((element) => {
+          if (element?.destroy) element.destroy();
+        });
+      }
+
+      // Clear Animal Group
+      if (this.homeElements_Animal_Group?.getChildren) {
+        const animalContainers = this.homeElements_Animal_Group.getChildren();
+        animalContainers?.forEach((element) => {
+          if (element?.destroy) element.destroy();
+        });
+      }
+
+      // Clear Flower Group
+      if (this.homeElements_Flower_Group?.getChildren) {
+        const flowerContainers = this.homeElements_Flower_Group.getChildren();
+        flowerContainers?.forEach((element) => {
+          if (element?.destroy) element.destroy();
+        });
+      }
+    } catch (error) {
+      console.warn('Error during cleanup:', error);
+    }
   }
 } // class

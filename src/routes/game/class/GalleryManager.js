@@ -83,206 +83,215 @@ export default class GalleryManager {
   }
 
   async loadAndPlaceGallery() {
-    const serverObjectsHandler = this.serverList;
-    serverObjectsHandler.array = get(this.store.homeGalleryPaginatedArt);
-    const userId = this.location;
-    const artSize = ART_DISPLAY_SIZE_LARGE;
-    const artMargin = artSize / 10;
-
-    // Clear existing members of the group
-    if (this.homeGroup) {
-      this.homeGroup.clear(true, true);
-    }
-    this.homeGroup = this.scene.add.group();
-
-    const totalWidth = this.homeGallery_PageSize * (artSize + artMargin);
-
-    // Destroy existing children of the parent container if any
-    if (this.parentContainer) {
-      const children = this.parentContainer.getAll();
-      children.forEach((child) => {
-        this.parentContainer.remove(child);
-        child.destroy();
-      });
-    }
-
-    // if the array is empty, don't create the gallery
-    if (serverObjectsHandler.array.length === 0) {
-      return;
-    }
-
-    // Check if there's a gallery object in the homeElements store
-    const store = get(homeElements_Store);
-    const galleryCollection = `gallery_${this.type}`;
-    let galleryElement = null;
-
-    // Search through all collections for gallery elements
-    for (const collection in store) {
-      if (store[collection]?.byKey) {
-        // Look for the first element that matches our gallery type
-        const galleryGroup = Object.values(store[collection].byKey).find(
-          (group) => group[0]?.value.collection === galleryCollection
-        );
-        if (galleryGroup) {
-          galleryElement = galleryGroup[0];
-          break;
-        }
+    try {
+      // Safety check for group before clearing
+      if (this.group?.clear) {
+        this.group.clear(true, true);
       }
-    }
 
-    if (!galleryElement && this.selfHome) {
-      // Create a new gallery homeElement
-      const value = {
-        collection: galleryCollection,
-        pageSize: this.homeGallery_PageSize,
-        posX: 100,
-        posY: this.type === 'drawing' ? 100 : 1200,
-        rotation: 0,
-        scale: 1,
-      };
+      const serverObjectsHandler = this.serverList;
+      serverObjectsHandler.array = get(this.store.homeGalleryPaginatedArt);
+      const userId = this.location;
+      const artSize = ART_DISPLAY_SIZE_LARGE;
+      const artMargin = artSize / 10;
 
-      const key = `gallery_${this.type}_1`;
-      await HomeElements.create(key, value);
+      // Clear existing members of the group
+      if (this.homeGroup) {
+        this.homeGroup.clear(true, true);
+      }
+      this.homeGroup = this.scene.add.group();
 
-      // Refresh and find the newly created element
-      const updatedStore = get(homeElements_Store);
-      for (const collection in updatedStore) {
-        if (updatedStore[collection]?.byKey) {
-          const newGalleryGroup = Object.values(updatedStore[collection].byKey).find(
+      const totalWidth = this.homeGallery_PageSize * (artSize + artMargin);
+
+      // Destroy existing children of the parent container if any
+      if (this.parentContainer) {
+        const children = this.parentContainer.getAll();
+        children.forEach((child) => {
+          this.parentContainer.remove(child);
+          child.destroy();
+        });
+      }
+
+      // if the array is empty, don't create the gallery
+      if (serverObjectsHandler.array.length === 0) {
+        return;
+      }
+
+      // Check if there's a gallery object in the homeElements store
+      const store = get(homeElements_Store);
+      const galleryCollection = `gallery_${this.type}`;
+      let galleryElement = null;
+
+      // Search through all collections for gallery elements
+      for (const collection in store) {
+        if (store[collection]?.byKey) {
+          // Look for the first element that matches our gallery type
+          const galleryGroup = Object.values(store[collection].byKey).find(
             (group) => group[0]?.value.collection === galleryCollection
           );
-          if (newGalleryGroup) {
-            galleryElement = newGalleryGroup[0];
+          if (galleryGroup) {
+            galleryElement = galleryGroup[0];
             break;
           }
         }
       }
-    }
 
-    // Use the position from the Gallery element if it exists, otherwise use default values
-    const galleryX =
-      galleryElement && galleryElement.value.posX !== undefined ? galleryElement.value.posX : artMargin / 2;
-    const galleryY =
-      galleryElement && galleryElement.value.posY !== undefined
-        ? galleryElement.value.posY
-        : this.type === 'drawing'
-          ? artMargin / 2
-          : 1200;
+      if (!galleryElement && this.selfHome) {
+        // Create a new gallery homeElement
+        const value = {
+          collection: galleryCollection,
+          pageSize: this.homeGallery_PageSize,
+          posX: 100,
+          posY: this.type === 'drawing' ? 100 : 1200,
+          rotation: 0,
+          scale: 1,
+        };
 
-    this.parentContainer = this.scene.add
-      .container(galleryX, galleryY)
-      .setSize(totalWidth + artMargin * 2, artSize + artMargin * 4)
-      .setName(`ParentContainer_${this.type}`);
+        const key = `gallery_${this.type}_1`;
+        await HomeElements.create(key, value);
 
-    // create background graphics for ParentContainer
-    const graphic = this.scene.add.graphics();
-    graphic.fillStyle(0xa9a9a9); //dark grey
-    graphic.fillRect(0, 0, totalWidth + artMargin, artSize + artMargin * 5);
-    this.parentContainer.add(graphic);
-
-    const graphic2 = this.scene.add.graphics();
-    graphic2.fillStyle(0xf2f2f2);
-    graphic2.fillRect(0, 0, totalWidth + artMargin, artSize + artMargin * 3);
-    this.parentContainer.add(graphic2);
-
-    // Add page information text
-    const pageInfoText = this.scene.add
-      .text(totalWidth / 2 + 40, artSize + artMargin * 3 + 50, '', {
-        font: '24px Arial',
-        fill: '#000000',
-      })
-      .setOrigin(0.5);
-    this.parentContainer.add(pageInfoText);
-
-    // Update page info text
-    const updatePageInfo = () => {
-      pageInfoText.setText(`${this.homeGallery_CurrentPage} / ${this.homeGallery_TotalPages}`);
-      if (backButton && nextButton) {
-        backButton.setVisible(this.homeGallery_CurrentPage > 1);
-        nextButton.setVisible(this.homeGallery_CurrentPage < this.homeGallery_TotalPages);
+        // Refresh and find the newly created element
+        const updatedStore = get(homeElements_Store);
+        for (const collection in updatedStore) {
+          if (updatedStore[collection]?.byKey) {
+            const newGalleryGroup = Object.values(updatedStore[collection].byKey).find(
+              (group) => group[0]?.value.collection === galleryCollection
+            );
+            if (newGalleryGroup) {
+              galleryElement = newGalleryGroup[0];
+              break;
+            }
+          }
+        }
       }
-    };
 
-    // Add move button if we are in this.selfHome
-    if (this.selfHome) {
-      const moveIcon = this.scene.add
-        .image(totalWidth - artMargin * 3, artSize + 235, 'moveIcon')
-        .setOrigin(1, 1)
-        .setScale(1)
-        .setInteractive({ draggable: true })
-        .setTint(0xf2f2f2)
-        .setVisible(get(HomeEditBarExpanded));
+      // Use the position from the Gallery element if it exists, otherwise use default values
+      const galleryX =
+        galleryElement && galleryElement.value.posX !== undefined ? galleryElement.value.posX : artMargin / 2;
+      const galleryY =
+        galleryElement && galleryElement.value.posY !== undefined
+          ? galleryElement.value.posY
+          : this.type === 'drawing'
+            ? artMargin / 2
+            : 1200;
 
-      // Set up drag functionality for the move button
-      this.setupMoveIconDrag(moveIcon);
+      this.parentContainer = this.scene.add
+        .container(galleryX, galleryY)
+        .setSize(totalWidth + artMargin * 2, artSize + artMargin * 4)
+        .setName(`ParentContainer_${this.type}`);
 
-      // Subscribe to HomeEditBarExpanded changes
-      HomeEditBarExpanded.subscribe((value) => {
-        moveIcon.setVisible(value);
-        moveIcon.setInteractive(value ? { draggable: true } : false);
+      // create background graphics for ParentContainer
+      const graphic = this.scene.add.graphics();
+      graphic.fillStyle(0xa9a9a9); //dark grey
+      graphic.fillRect(0, 0, totalWidth + artMargin, artSize + artMargin * 5);
+      this.parentContainer.add(graphic);
+
+      const graphic2 = this.scene.add.graphics();
+      graphic2.fillStyle(0xf2f2f2);
+      graphic2.fillRect(0, 0, totalWidth + artMargin, artSize + artMargin * 3);
+      this.parentContainer.add(graphic2);
+
+      // Add page information text
+      const pageInfoText = this.scene.add
+        .text(totalWidth / 2 + 40, artSize + artMargin * 3 + 50, '', {
+          font: '24px Arial',
+          fill: '#000000',
+        })
+        .setOrigin(0.5);
+      this.parentContainer.add(pageInfoText);
+
+      // Update page info text
+      const updatePageInfo = () => {
+        pageInfoText.setText(`${this.homeGallery_CurrentPage} / ${this.homeGallery_TotalPages}`);
+        if (backButton && nextButton) {
+          backButton.setVisible(this.homeGallery_CurrentPage > 1);
+          nextButton.setVisible(this.homeGallery_CurrentPage < this.homeGallery_TotalPages);
+        }
+      };
+
+      // Add move button if we are in this.selfHome
+      if (this.selfHome) {
+        const moveIcon = this.scene.add
+          .image(totalWidth - artMargin * 3, artSize + 235, 'moveIcon')
+          .setOrigin(1, 1)
+          .setScale(1)
+          .setInteractive({ draggable: true })
+          .setTint(0xf2f2f2)
+          .setVisible(get(HomeEditBarExpanded));
+
+        // Set up drag functionality for the move button
+        this.setupMoveIconDrag(moveIcon);
+
+        // Subscribe to HomeEditBarExpanded changes
+        HomeEditBarExpanded.subscribe((value) => {
+          moveIcon.setVisible(value);
+          moveIcon.setInteractive(value ? { draggable: true } : false);
+        });
+
+        this.parentContainer.add(moveIcon);
+      }
+
+      // add navigation buttons
+      const backButton = this.createNavigationButton(
+        totalWidth / 2 - 80,
+        artSize + artMargin * 3 + 50,
+        'back_button',
+        -1,
+        updatePageInfo
+      );
+      const nextButton = this.createNavigationButton(
+        totalWidth / 2 + artMargin * 3.2,
+        artSize + artMargin * 3 + 50,
+        'back_button',
+        1,
+        updatePageInfo
+      );
+
+      this.parentContainer.add(backButton);
+      this.parentContainer.add(nextButton);
+
+      updatePageInfo();
+
+      this.homeGroup.add(this.parentContainer);
+
+      // Create and add images to the container
+      for (let i = 0; i < serverObjectsHandler.array.length; i++) {
+        const artwork = serverObjectsHandler.array[i];
+        const x = (i % this.homeGallery_PageSize) * (artSize + artMargin) + artSize / 2 + artMargin;
+        const y = artSize / 2 + artMargin;
+
+        const image = this.scene.add.image(x, y, artwork.key).setDisplaySize(artSize, artSize).setInteractive();
+
+        // Add any additional properties or event listeners to the image here
+        this.parentContainer.add(image);
+      }
+
+      // Call ServerCall.handleServerArray without the callback
+      ServerCall.handleServerArray({
+        type: `download${this.type.charAt(0).toUpperCase() + this.type.slice(1)}DefaultUserHome`,
+        userId,
+        serverObjectsHandler,
+        artSize,
+        artMargin,
       });
 
-      this.parentContainer.add(moveIcon);
+      // Add app icon on the left side
+      const appIcon = this.scene.add
+        .image(artMargin * 2, artSize + artMargin * 3 + 50, 'appIcon')
+        .setOrigin(0.5)
+        .setScale(0.6);
+
+      // Set the correct icon texture based on gallery type
+      if (this.type === 'drawing') {
+        appIcon.setTexture('drawing-icon');
+      } else if (this.type === 'stopmotion') {
+        appIcon.setTexture('animation-icon'); 
+      }
+
+      this.parentContainer.add(appIcon);
+    } catch (error) {
+      console.warn('Error in loadAndPlaceGallery:', error);
     }
-
-    // add navigation buttons
-    const backButton = this.createNavigationButton(
-      totalWidth / 2 - 80,
-      artSize + artMargin * 3 + 50,
-      'back_button',
-      -1,
-      updatePageInfo
-    );
-    const nextButton = this.createNavigationButton(
-      totalWidth / 2 + artMargin * 3.2,
-      artSize + artMargin * 3 + 50,
-      'back_button',
-      1,
-      updatePageInfo
-    );
-
-    this.parentContainer.add(backButton);
-    this.parentContainer.add(nextButton);
-
-    updatePageInfo();
-
-    this.homeGroup.add(this.parentContainer);
-
-    // Create and add images to the container
-    for (let i = 0; i < serverObjectsHandler.array.length; i++) {
-      const artwork = serverObjectsHandler.array[i];
-      const x = (i % this.homeGallery_PageSize) * (artSize + artMargin) + artSize / 2 + artMargin;
-      const y = artSize / 2 + artMargin;
-
-      const image = this.scene.add.image(x, y, artwork.key).setDisplaySize(artSize, artSize).setInteractive();
-
-      // Add any additional properties or event listeners to the image here
-      this.parentContainer.add(image);
-    }
-
-    // Call ServerCall.handleServerArray without the callback
-    ServerCall.handleServerArray({
-      type: `download${this.type.charAt(0).toUpperCase() + this.type.slice(1)}DefaultUserHome`,
-      userId,
-      serverObjectsHandler,
-      artSize,
-      artMargin,
-    });
-
-    // Add app icon on the left side
-    const appIcon = this.scene.add
-      .image(artMargin * 2, artSize + artMargin * 3 + 50, 'appIcon')
-      .setOrigin(0.5)
-      .setScale(0.6);
-
-    // Set the correct icon texture based on gallery type
-    if (this.type === 'drawing') {
-      appIcon.setTexture('drawing-icon');
-    } else if (this.type === 'stopmotion') {
-      appIcon.setTexture('animation-icon'); 
-    }
-
-    this.parentContainer.add(appIcon);
   }
 
   setupMoveIconDrag(moveIcon) {

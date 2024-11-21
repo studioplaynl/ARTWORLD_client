@@ -2248,6 +2248,14 @@ class ServerCall {
     if (!scene) return;
     if (!element) return;
 
+    // Add check for required groups
+    const homeGroup = scene[`homeGroup_drawing`];
+    const parentContainer = scene.children.getByName(`ParentContainer_drawing`);
+    if (!homeGroup || !parentContainer) {
+      console.warn('Required groups not found for drawing container');
+      return;
+    }
+
     const imageKeyUrl = element.value.url;
     const y = artMargin;
     const artBorder = ART_FRAME_BORDER;
@@ -2295,10 +2303,7 @@ class ServerCall {
 
     /** this check prevent errors
      * when we go out of the scene when things are still loading and being created  */
-    const homeGroup = scene[`homeGroup_drawing`];
-    const parentContainer = scene.children.getByName(`ParentContainer_drawing`);
-
-    if (!homeGroup) return;
+    if (!homeGroup || !parentContainer) return;
 
     homeGroup.add(imageContainer);
     parentContainer.add(imageContainer);
@@ -2308,6 +2313,14 @@ class ServerCall {
     const scene = ManageSession.currentScene;
     if (!scene) return;
     if (!element) return;
+
+    // Add check for required groups
+    const homeGroup = scene[`homeGroup_stopmotion`];
+    const parentContainer = scene.children.getByName(`ParentContainer_stopmotion`);
+    if (!homeGroup || !parentContainer) {
+      console.warn('Required groups not found for stopmotion container');
+      return;
+    }
 
     const imageKeyUrl = element.value.url;
     const y = artMargin;
@@ -2400,10 +2413,7 @@ class ServerCall {
     if (!imageContainer) return;
     if (!scene) return;
 
-    const homeGroup = scene[`homeGroup_stopmotion`];
-    const parentContainer = scene.children.getByName(`ParentContainer_stopmotion`);
-
-    if (!homeGroup) return;
+    if (!homeGroup || !parentContainer) return;
 
     homeGroup.add(imageContainer);
     parentContainer.add(imageContainer);
