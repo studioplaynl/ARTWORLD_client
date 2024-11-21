@@ -281,7 +281,7 @@ export default class DefaultUserHome extends Phaser.Scene {
         });
       }
     } catch (error) {
-      console.warn('Error during cleanup:', error);
+      // console.warn('Error during cleanup:', error);
     }
   }
 } // class

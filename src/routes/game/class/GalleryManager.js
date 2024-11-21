@@ -290,7 +290,7 @@ export default class GalleryManager {
 
       this.parentContainer.add(appIcon);
     } catch (error) {
-      console.warn('Error in loadAndPlaceGallery:', error);
+      // console.warn('Error in loadAndPlaceGallery:', error);
     }
   }
 
