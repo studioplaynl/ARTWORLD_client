@@ -1470,7 +1470,7 @@ class ServerCall {
 
       // You might want to set min and max scale limits
       const minScale = 0.1;
-      const maxScale = 3;
+      const maxScale = 10;
       const clampedScale = Phaser.Math.Clamp(newScale, minScale, maxScale);
 
       imageContainer.setScale(clampedScale);
