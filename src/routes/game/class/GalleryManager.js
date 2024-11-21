@@ -1,6 +1,7 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import { ART_DISPLAY_SIZE_LARGE } from '../../../constants';
+import { HomeEditBarExpanded } from '../../../session';
 
 import { HomeElements, homeElements_Store, homeElement_Selected } from '../../../storage';
 import { updateObject } from '../../../helpers/nakamaHelpers';
@@ -209,10 +210,17 @@ export default class GalleryManager {
         .setOrigin(1, 1)
         .setScale(1)
         .setInteractive({ draggable: true })
-        .setTint(0xf2f2f2);
+        .setTint(0xf2f2f2)
+        .setVisible(get(HomeEditBarExpanded));
 
       // Set up drag functionality for the move button
       this.setupMoveIconDrag(moveIcon);
+
+      // Subscribe to HomeEditBarExpanded changes
+      HomeEditBarExpanded.subscribe((value) => {
+        moveIcon.setVisible(value);
+        moveIcon.setInteractive(value ? { draggable: true } : false);
+      });
 
       this.parentContainer.add(moveIcon);
     }
