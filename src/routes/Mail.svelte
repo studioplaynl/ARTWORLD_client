@@ -13,7 +13,6 @@
   import { dlog } from '../helpers/debugLog';
   import ArtworkLoader from './components/ArtworkLoader.svelte';
 
-
   let messages = {
     notifications: [],
   };
@@ -64,10 +63,6 @@
     //   y: 0,
     // });
   }
-
-  function handleArtworkClick(notification) {
-    goHome(notification.sender_id);
-  }
 </script>
 
 <div>
@@ -97,8 +92,7 @@
             user_id: notification.sender_id,
             collection: 'notification'
           }}
-          artClickable={true}
-          on:click={() => handleArtworkClick(notification)}
+          artClickable={false}
         />
       </div>
     {/each}
@@ -130,8 +124,7 @@
             user_id: notification.sender_id,
             collection: 'notification'
           }}
-          artClickable={true}
-          on:click={() => handleArtworkClick(notification)}
+          artClickable={false}
         />
       </div>
     {/each}

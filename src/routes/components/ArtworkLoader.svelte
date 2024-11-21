@@ -203,9 +203,8 @@
         />
       </button>
     {:else}
-      <button 
+      <div 
         class="artPreview" 
-        on:click
         style="--avatar-size: {previewSize}px;"
       >
         <img 
@@ -216,7 +215,7 @@
           style="--frame-count: {frameCount};" 
           on:load={handleImageLoad}
         />
-      </button>
+      </div>
     {/if}
     <div class="artwork-actions">
       {#if duplicateIcon}
