@@ -77,6 +77,9 @@ export default class PreloadScene extends Phaser.Scene {
       // posY: 0,
     });
 
+    this.load.image('drawing-icon', '/assets/SHB/svg/AW-icon-square-drawing.svg');
+this.load.image('animation-icon', '/assets/SHB/svg/AW-icon-square-animation.svg');
+
     // general UI assets
     this.load.svg('ui_magnifier_minus', './assets/SHB/svg/AW-icon-minus.svg', {
       scale: 3,

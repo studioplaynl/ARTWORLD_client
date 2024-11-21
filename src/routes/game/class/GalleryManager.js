@@ -268,6 +268,21 @@ export default class GalleryManager {
       artSize,
       artMargin,
     });
+
+    // Add app icon on the left side
+    const appIcon = this.scene.add
+      .image(artMargin * 2, artSize + artMargin * 3 + 50, 'appIcon')
+      .setOrigin(0.5)
+      .setScale(0.6);
+
+    // Set the correct icon texture based on gallery type
+    if (this.type === 'drawing') {
+      appIcon.setTexture('drawing-icon');
+    } else if (this.type === 'stopmotion') {
+      appIcon.setTexture('animation-icon'); 
+    }
+
+    this.parentContainer.add(appIcon);
   }
 
   setupMoveIconDrag(moveIcon) {
