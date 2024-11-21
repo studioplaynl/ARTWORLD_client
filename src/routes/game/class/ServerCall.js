@@ -26,7 +26,11 @@ import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkOptions from './ArtworkOptions';
 import { HomeElements, homeElement_Selected } from '../../../storage';
 
-import { ART_FRAME_BORDER, AVATAR_SPRITESHEET_LOAD_SIZE } from '../../../constants';
+import { 
+  ART_FRAME_BORDER, 
+  AVATAR_SPRITESHEET_LOAD_SIZE, 
+  IMAGE_BASE_SIZE, 
+  STOPMOTION_BASE_SIZE } from '../../../constants';
 
 import { dlog } from '../../../helpers/debugLog';
 import AnimalChallenge from './animalChallenge';
@@ -1951,8 +1955,8 @@ class ServerCall {
       // We actually load 1 size for all copies of this image
       // fance would be to check first which size is the biggest and load that one
       // more realistic is to load half of max size
-      imgSize = Math.round(element.value.height).toString();
-
+      // imgSize = Math.round(element.value.height).toString();
+      imgSize = Math.min(Math.round(element.value.height), IMAGE_BASE_SIZE).toString();
       const convertedImage = await convertImage(imageKeyUrl, imgSize, imgSize, fileFormat);
       scene.load.image(imageKeyUrl, convertedImage).on(
         `filecomplete-image-${imageKeyUrl}`,
@@ -1985,7 +1989,9 @@ class ServerCall {
       // We actually load 1 size for all copies of this image
       // fance would be to check first which size is the biggest and load that one
       // more realistic is to load half of max size
-      imgSize = Math.round(element.value.width).toString();
+      
+      // imgSize = Math.round(element.value.width).toString();
+      imgSize = Math.min(Math.round(element.value.height), STOPMOTION_BASE_SIZE).toString();
       const imgWidth = Math.round(element.value.height * 200).toString();
 
       const convertedImage = await convertImage(imageKeyUrl, imgSize, imgWidth, fileFormat);
