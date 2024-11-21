@@ -163,6 +163,7 @@
       {#if deleteCheck === i}
         <button
           class="icon"
+          style="background-image: url('/assets/SHB/svg/AW-icon-trash.svg')"
           on:click="{() => {
             deleteObj(object);
           }}"
@@ -171,12 +172,12 @@
               deleteObj(object);
             }
           }}"
-        >
-          <img alt="delete" src="/assets/SHB/svg/AW-icon-trash.svg" />
-        </button>
+          aria-label="delete"
+        ></button>
       {:else}
         <button
           class="icon"
+          style="background-image: url('/assets/SHB/svg/AW-icon-cross.svg')"
           on:click="{() => {
             deleteCheck = i;
           }}"
@@ -185,18 +186,17 @@
               deleteCheck = i;
             }
           }}"
-        >
-          <img alt="shure you want to delete?" src="/assets/SHB/svg/AW-icon-cross.svg" />
-        </button>
+          aria-label="confirm delete"
+        ></button>
       {/if}
 
       <!-- show edit button -->
       <button
         class="icon"
+        style="background-image: url('/assets/SHB/svg/AW-icon-pen.svg')"
         aria-label="Edit"
         on:click="{() => {
           dlog('home', $myHome);
-          // push('/house');
           if (dataType === 'house') {
             const value = `/house?userId=${$Profile.id}&key=${object.key}`;
             push(value);
@@ -208,9 +208,7 @@
             PlayerHistory.push(value);
           }
         }}"
-      >
-       <img alt="edit" src="/assets/SHB/svg/AW-icon-pen.svg" />
-      </button>
+      ></button>
     </div> <!-- end of items list div class='item' -->
   {/each}
 
@@ -265,6 +263,9 @@
 
   .item {
     display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
   }
 
   .selected {
@@ -288,23 +289,23 @@
     cursor: pointer;
   }
 
-  button {
+  button.icon {
     border: 0;
-    background: transparent;
+    background-color: transparent;
+    background-size: 30px 30px;
+    background-position: center;
+    background-repeat: no-repeat;
     cursor: pointer;
-    border-radius: 0;
-    appearance: none;
-    /* padding: 0; */
-    /* margin: 0; */
-    box-sizing: border-box;
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    transition: transform 0.1s ease;
+    border-radius: 50%;
   }
 
-  button:active {
-    /* background-color: white; */
-    background-color: #7300ed;
-    border-radius: 50%;
-    /* border: 2px solid #7300ed; */
-    /* box-sizing: border-box; */
-    /* box-shadow: 5px 5px 0px #7300ed; */
+  button.icon:active {
+    transform: scale(0.9);
+    border: 2px solid #7300ed;
   }
+
 </style>
