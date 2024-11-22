@@ -15,6 +15,7 @@
   import { findParentScenes } from '../game/helpers/UrlHelpers';
   import { homeIsOfSelf } from '../../session';
   import ArtworkLoader from './ArtworkLoader.svelte';
+  import ManageSession from '../game/ManageSession';
 
   // import { dlog } from '../game/helpers/debugLog';
 
@@ -163,8 +164,14 @@
    *   PlayerHistory.pop() is to reflect the state there
   */
   async function goBack() {
+    // First check if we're currently switching scenes
+    if (ManageSession.currentScene?.isTransitioning) {
+      console.log('Scene transition in progress, please wait...');
+      return;
+    }
+
     if ($PlayerHistory.length > 1) {
-      const previousState = $PlayerHistory[$PlayerHistory.length - 2]; // Get previous state before popping
+      const previousState = $PlayerHistory[$PlayerHistory.length - 2];
       console.log('previousState', previousState);
       PlayerHistory.pop();
       

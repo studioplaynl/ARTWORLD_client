@@ -20,6 +20,7 @@ import { setLoader } from '../../../helpers/nakamaHelpers';
 
 class SceneSwitcher {
   constructor() {
+    this.isTransitioning = false;
     this.unsubscribeScene = PlayerLocation.subscribe(() => {
       dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
       dlog('\u001b[31m PlayerPos', get(PlayerPos));
@@ -38,91 +39,113 @@ class SceneSwitcher {
   //   dlog(scene);
   // }
 
-  doSwitchScene() {
-    // dlog('HistoryBug: doSwitchScene called');
-    const scene = ManageSession.currentScene;
-    const targetScene = get(PlayerLocation).scene;
-    const targetHouse = get(PlayerLocation).house;
-
-    // debugging
-    let sceneKey;
-    let targetSceneKey;
-
-    if (targetScene === null) {
-      dlog('PlayerLocation was null, we return');
-      return;
-    }
-    // scene is null when the game has just booted, and there is not yet a currentScene in ManageSession
-    if (scene != null) {
-      if (scene.scene != null) {
-        sceneKey = scene.scene.key;
-      } else {
-        sceneKey = scene;
-      }
-
-      if (targetScene.scene != null) {
-        targetSceneKey = targetScene.scene.key;
-      } else {
-        targetSceneKey = targetScene;
-      }
-      dlog('\u001b[31m switchScene: ', sceneKey, ' , targetScene: ', targetSceneKey, ' targetHouse: ', targetHouse);
-    }
-
-    if (targetScene === 'logout') {
-      // PlayerLocation.set({ scene: 'logout', house: null });
+  async doSwitchScene() {
+    if (this.isTransitioning) {
+      console.log('Scene transition already in progress');
       return;
     }
 
-    if (targetScene === DEFAULT_HOME && targetHouse === null) {
-      return;
-    }
-
-    if (!scene || !scene?.player) return;
-
-    // we can't go from the same scene to the same scene
-    // except when it is a house with a different user_id
-    if (scene.scene.key === targetScene) {
-      if (targetScene === DEFAULT_HOME) {
-        if (scene.location !== targetHouse) {
-          dlog('SceneSwitcher: going to a different house in a home scene: ', scene.location, targetHouse);
-          // Continue with scene switch
-        } else {
-          dlog('SceneSwitcher: same home, do nothing');
-          return;
-        }
-      } else {
-        dlog('SceneSwitcher: same non-home scene, do nothing');
+    try {
+      this.isTransitioning = true;
+      const scene = ManageSession.currentScene;
+      
+      if (!scene) {
+        console.log('No current scene found');
         return;
       }
-    }
 
-    // dlog('SceneSwitcher: continue with doSwitchScene');
+      scene.isTransitioning = true;  // Add flag to scene instance
+      
+      const targetScene = get(PlayerLocation).scene;
+      const targetHouse = get(PlayerLocation).house;
 
-    setLoader(true);
+      // debugging
+      let sceneKey;
+      let targetSceneKey;
 
-    // HERE WE FINALLY START AN OTHER SCENE, which stops the current scene
-    if (targetHouse !== null && targetScene === DEFAULT_HOME) {
-      scene.scene.start(targetScene, { user_id: targetHouse });
-      // later we join the house id channel
-      targetSceneKey = targetHouse;
-    } else if (targetScene) {
-      // when we don't go to a home, set ShowHomeEditBar to false
-      ShowHomeEditBar.set(false);
+      if (targetScene === null) {
+        dlog('PlayerLocation was null, we return');
+        return;
+      }
+      // scene is null when the game has just booted, and there is not yet a currentScene in ManageSession
+      if (scene != null) {
+        if (scene.scene != null) {
+          sceneKey = scene.scene.key;
+        } else {
+          sceneKey = scene;
+        }
 
-      if (targetScene.scene !== null) {
-        dlog('start targetScene: ', targetScene);
-        // const pastScene = scene;
-        // console.log('subscribed start targetScene: ', targetScene);
+        if (targetScene.scene != null) {
+          targetSceneKey = targetScene.scene.key;
+        } else {
+          targetSceneKey = targetScene;
+        }
+        dlog('\u001b[31m switchScene: ', sceneKey, ' , targetScene: ', targetSceneKey, ' targetHouse: ', targetHouse);
+      }
 
-        // stop the current scene
-        scene.scene.start(targetScene);
-        // console.log('subscribed start targetScene: ', pastScene.scene.key);
+      if (targetScene === 'logout') {
+        // PlayerLocation.set({ scene: 'logout', house: null });
+        return;
+      }
 
-        // pastScene.scene.stop();
+      if (targetScene === DEFAULT_HOME && targetHouse === null) {
+        return;
+      }
+
+      if (!scene || !scene?.player) return;
+
+      // we can't go from the same scene to the same scene
+      // except when it is a house with a different user_id
+      if (scene.scene.key === targetScene) {
+        if (targetScene === DEFAULT_HOME) {
+          if (scene.location !== targetHouse) {
+            dlog('SceneSwitcher: going to a different house in a home scene: ', scene.location, targetHouse);
+            // Continue with scene switch
+          } else {
+            dlog('SceneSwitcher: same home, do nothing');
+            return;
+          }
+        } else {
+          dlog('SceneSwitcher: same non-home scene, do nothing');
+          return;
+        }
+      }
+
+      // dlog('SceneSwitcher: continue with doSwitchScene');
+
+      setLoader(true);
+
+      // HERE WE FINALLY START AN OTHER SCENE, which stops the current scene
+      if (targetHouse !== null && targetScene === DEFAULT_HOME) {
+        scene.scene.start(targetScene, { user_id: targetHouse });
+        // later we join the house id channel
+        targetSceneKey = targetHouse;
+      } else if (targetScene) {
+        // when we don't go to a home, set ShowHomeEditBar to false
+        ShowHomeEditBar.set(false);
+
+        if (targetScene.scene !== null) {
+          dlog('start targetScene: ', targetScene);
+          // const pastScene = scene;
+          // console.log('subscribed start targetScene: ', targetScene);
+
+          // stop the current scene
+          scene.scene.start(targetScene);
+          // console.log('subscribed start targetScene: ', pastScene.scene.key);
+
+          // pastScene.scene.stop();
+        }
+      }
+
+      this.switchStream(scene, targetScene);
+    } catch (error) {
+      console.error('Scene switch failed:', error);
+    } finally {
+      this.isTransitioning = false;
+      if (ManageSession.currentScene) {
+        ManageSession.currentScene.isTransitioning = false;
       }
     }
-
-    this.switchStream(scene, targetScene);
   }
 
   async pauseSceneStartApp(scene, app) {
