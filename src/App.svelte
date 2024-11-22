@@ -80,6 +80,7 @@ import * as Phaser from 'phaser';
     } else {
       mounted = true;
     }
+
   });
 
   $: isLoggedIn = $Session !== null && $Profile && $Profile?.username;

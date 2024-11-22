@@ -57,11 +57,11 @@
       house: id,
     });
 
-    // PlayerUpdate.set({ forceHistoryReplace: false });
-    // PlayerPos.set({
-    //   x: PosX,
-    //   y: 0,
-    // });
+    PlayerUpdate.set({ forceHistoryReplace: false });
+    PlayerPos.set({
+      x: -1500,
+      y: 70,
+    });
   }
 </script>
 

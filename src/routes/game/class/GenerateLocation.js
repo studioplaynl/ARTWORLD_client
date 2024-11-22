@@ -380,34 +380,34 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
           house: this.userHome,
         };
 
-        // // When we go into a house, we place the player left, in the middle
-        // if (this.locationDestination === DEFAULT_HOME) {
-        //   /** We send the player to the left side of the user's home so that the artworks can be seen
-        //   //  We set the Position after the Location
-        //   //  when we set the position we force the urlparser to do a replace on the history and url,
-        //   //  with PlayerUpdate.set({ forceHistoryReplace: false });
-        //   */
-        // //  console.log('targetLocation', targetLocation);
+        // When we go into a house, we place the player left, in the middle
+        if (this.locationDestination === DEFAULT_HOME) {
+          /** We send the player to the left side of the user's home so that the artworks can be seen
+          //  We set the Position after the Location
+          //  when we set the position we force the urlparser to do a replace on the history and url,
+          //  with PlayerUpdate.set({ forceHistoryReplace: false });
+          */
+        //  console.log('targetLocation', targetLocation);
 
-        //   PlayerLocation.set(targetLocation);
+          PlayerLocation.set(targetLocation);
 
-        //   // const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
-        //   // const PosX = -(targetScene.sizeX / 2) + AVATAR_BASE_SIZE * 2;
+          const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+          const PosX = -(targetScene.sizeX / 2) + AVATAR_BASE_SIZE * 2;
 
-        //   // PlayerUpdate.set({ forceHistoryReplace: false });
-        //   // PlayerPos.set({
-        //   //   x: PosX,
-        //   //   y: 0,
-        //   // });
+          PlayerUpdate.set({ forceHistoryReplace: false });
+          PlayerPos.set({
+            x: PosX,
+            y: 0,
+          });
 
-        // } else {
+        } else {
           targetLocation.scene = this.locationDestination;
           targetLocation.house = this.userHome;
           // we add parent scene so we can show bread crumb navigation buttons
           targetLocation.parent = this.parentScene;
 
           PlayerLocation.set(targetLocation);
-        // }
+        }
       }
     });
 

@@ -62,33 +62,33 @@
               // console.log('currentLocation we have to fetch the user info to find the parent scene of the house');
               userInfo = await getAccount(currentLocation.house);
               // console.log('info userInfo', userInfo);
-              parentScenes.push(userInfo.meta.Azc);
-              // console.log('userInfo.meta.Azc parentScenes', parentScenes);
-
-              // userInfo.meta.Azc is the parent scene of the house
-              // now we seach for the parent scene of userInfo.meta.Azc
-              const tempParentScenes = findParentScenes(userInfo.meta.Azc, SCENE_INFO);
-              //filter out artworld
+              
+              // Handle both Azc and azc cases, including when meta might be undefined
+              let userAzc = 'GreenSquare';  // Default value
+              if (userInfo && userInfo.meta) {
+                if (userInfo.meta.Azc) {
+                  userAzc = userInfo.meta.Azc;
+                } else if (userInfo.meta.azc) {
+                  userAzc = userInfo.meta.azc;
+                }
+              }
+              
+              parentScenes.push(userAzc);
+              
+              const tempParentScenes = findParentScenes(userAzc, SCENE_INFO);
               const tempParentScenes2 = tempParentScenes.filter(scene => scene !== 'Artworld');
-              // parentScenes.push(...tempParentScenes);
               parentScenes.push(...tempParentScenes2);
 
-              // console.log('currentLocation parentScenes', parentScenes);
-
               currentLocation = {scene: 'DefaultUserHome', house: value.house};
-              if (userInfo.url) {
-                // avatarUrl = await getAvatar(userInfo.avatar_url);
+              if (userInfo && userInfo.url) {
                 avatarUrl = userInfo.url;
-                // console.log('info Avatar URL:', avatarUrl);
               }
 
-             const userHouseObject = await getObject(
-            'home',
-            userInfo.meta.Azc,
-            userInfo.id,);
-          // dlog('userHouseObject', userHouseObject);
-          // dlog('$SelectedOnlinePlayer', $SelectedOnlinePlayer);
-          homeImageUrl = await convertImage(userHouseObject.value.url, '50', '50');
+              const userHouseObject = await getObject(
+                'home',
+                userAzc,
+                userInfo.id);
+              homeImageUrl = await convertImage(userHouseObject.value.url, '50', '50');
             } catch (error) {
               console.error('Error fetching user info:', error);
               currentLocation = {house: value.house};
@@ -121,6 +121,7 @@
     PlayerLocation.set({
       scene: DEFAULT_SCENE,
     });
+    
     PlayerUpdate.set({ forceHistoryReplace: false });
     PlayerPos.set({
       x: 0,
@@ -270,7 +271,9 @@
         </div>
       {/if}
         {#if userInfo}
-          <span class="pill-button-text">{userInfo.display_name || userInfo.username}</span>
+          <span class="pill-button-text">
+            {userInfo.display_name || userInfo.username}
+          </span>
         {/if}
       </div>
     {:else}
