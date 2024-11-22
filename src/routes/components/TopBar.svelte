@@ -139,21 +139,51 @@
     }
   }
 
-  function goToScene(scene) {
+  async function goToScene(scene) {
     const historyIndex = $PlayerHistory.findIndex(entry => entry.scene === scene);
-    if (historyIndex !== -1) {
-      // Scene is in history, go back to that point
-      while ($PlayerHistory.length > historyIndex + 1) {
-        PlayerHistory.pop();
-        pop();
+    
+    if (currentLocation.scene === 'DefaultUserHome') {
+      // Get the house object to find its position
+      try {
+        const userHouseObject = await getObject(
+          'home',
+          scene,
+          currentLocation.house
+        );
+
+        PlayerLocation.set({ scene });
+
+        // Place player next to the house if position exists
+        if (typeof userHouseObject.value.posX !== 'undefined' && 
+            typeof userHouseObject.value.posY !== 'undefined') {
+          const playerPosX = userHouseObject.value.posX - 80;
+          const playerPosY = userHouseObject.value.posY - 100;
+
+          PlayerUpdate.set({ forceHistoryReplace: false });
+          PlayerPos.set({
+            x: playerPosX,
+            y: playerPosY,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching house position:', error);
+        // Fallback to just scene navigation
+        PlayerLocation.set({ scene });
       }
     } else {
-      // Scene is not in history, navigate to it
-      PlayerLocation.set({ scene });
-      push(`/${scene}`);
+      // Original history-based navigation logic
+      if (historyIndex !== -1) {
+        while ($PlayerHistory.length > historyIndex + 1) {
+          PlayerHistory.pop();
+          pop();
+        }
+      } else {
+        PlayerLocation.set({ scene });
+        push(`/${scene}`);
+      }
     }
   }
- 
+
   async function zoomIn() {
     PlayerZoom.in();
   }
