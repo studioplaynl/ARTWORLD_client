@@ -200,6 +200,18 @@ class ServerCall {
       // dlog('ManageSession.playerHomeContainer: ', ManageSession.playerHomeContainer);
       // dlog('ManageSession.playerHomeContainer.getAll(): ', ManageSession.playerHomeContainer.getAll());
       // subscribe to myHome if the location is the home
+      myHomeStore.subscribe((value) => {
+        if (!value || !value.value || !value.value.url) return;
+        if (!ManageSession.playerHomeContainer) return;
+        
+        const homeImageInGame = ManageSession.playerHomeContainer.getByName('location');
+        if (!homeImageInGame) return;
+  
+        // Only update if the URL has changed
+        if (value.value.url !== homeImageInGame.texture.key) {
+          ServerCall.updateHomeImage(scene, value);
+        }
+      });
     }
 
     scene.homesRepresented[index].setDepth(30);
@@ -236,7 +248,7 @@ class ServerCall {
     return { objectsOfFellowsOfUser, remainingItemsArray };
   }
 
-  updateHomeImage(scene, value) {
+  static updateHomeImage(scene, value) {
     // this is called from UIScene which is subscribed to $myHomeStore
     let previousHome = { value: { url: '' } };
 

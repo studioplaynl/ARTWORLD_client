@@ -121,11 +121,11 @@ export default class UIScene extends Phaser.Scene {
     });
 
     // Live update of the home image when we select an other homeImage in the UI
-    myHomeStore.subscribe((value) => {
-      if (!scene) return;
-      if (ManageSession.userHomeLocation !== scene.scene.key) return;
-      ServerCall.updateHomeImage(scene, value);
-    });
+    // myHomeStore.subscribe((value) => {
+    //   if (!scene) return;
+    //   if (ManageSession.userHomeLocation !== scene.scene.key) return;
+    //   ServerCall.updateHomeImage(scene, value);
+    // });
 
     // Subscription and Event Emitter
     HomeEditBarExpanded.subscribe((value) => {
