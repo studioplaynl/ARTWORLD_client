@@ -371,8 +371,19 @@ export const Addressbook = {
   },
 
   create: (key, value) => {
-    const addressbookArray = get(Addressbook);
-    if (addressbookArray.find((element) => element.key === key)) return;
+    const addressbookArray = get(addressBookStore);
+    
+    // Check if scene already exists by checking both key and scene name
+    const exists = addressbookArray.some(entry => 
+      entry.key === key || 
+      (entry.value && entry.value.scene === value.scene)
+    );
+    
+    if (exists) {
+      console.log('Scene already exists in addressbook:', key);
+      return;
+    }
+
     const obj = { key, value };
     updateObject('addressbook', key, value, true).then(() => {
       addressbookArray.push(obj);
@@ -1132,3 +1143,4 @@ export const myHome = {
     return localHome;
   },
 };
+

@@ -1,6 +1,7 @@
 <script>
+  import { fade } from 'svelte/transition';
   import { pop, push } from 'svelte-spa-router';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import {
     PlayerHistory,
     PlayerZoom,
@@ -8,7 +9,7 @@
     PlayerPos,
     PlayerUpdate,
   } from '../game/playerState';
-  import { miniMapDimensions } from '../../storage';
+  import { miniMapDimensions, Addressbook } from '../../storage';
   import { DEFAULT_SCENE, SCENE_INFO, MINIMAP_MARGIN } from '../../constants';
   import { getAvatar, getAccount, getObject, convertImage, addFriend } from '../../helpers/nakamaHelpers';
   import { findParentScenes } from '../game/helpers/UrlHelpers';
@@ -23,6 +24,15 @@
   let avatarUrl = '';
   let parentScenes = [];
   let miniMap = {x: MINIMAP_MARGIN, y: MINIMAP_MARGIN};
+  let addressbookEntries = [];
+  let showAddressbook = false;
+  let addressbookContainer;
+
+  function handleClickOutside(event) {
+    if (addressbookContainer && !addressbookContainer.contains(event.target) && showAddressbook) {
+      showAddressbook = false;
+    }
+  }
 
   onMount(async () => {
     PlayerLocation.subscribe(async (value) => {
@@ -99,11 +109,31 @@
           console.log('currentLocation Player is in an unknown location without parent');
         }
       }
+
+      // Add scene to addressbook if applicable
+      addToAddressbook();
     });
 
     miniMapDimensions.subscribe((value) => {
       miniMap = value;
     });
+
+    Addressbook.subscribe(entries => {
+      console.log('Addressbook entries updated:', entries);
+      addressbookEntries = entries;
+    });
+    
+    // Initial load of addressbook
+    const initialEntries = await Addressbook.get();
+    console.log('Initial addressbook load:', initialEntries);
+
+    // Add click listener for closing addressbook
+    document.addEventListener('click', handleClickOutside);
+  });
+
+  onDestroy(() => {
+    // Clean up click listener
+    document.removeEventListener('click', handleClickOutside);
   });
 
   $: zoomButtonsStyle = `
@@ -140,8 +170,6 @@
   }
 
   async function goToScene(scene) {
-    const historyIndex = $PlayerHistory.findIndex(entry => entry.scene === scene);
-    
     if (currentLocation.scene === 'DefaultUserHome') {
       // Get the house object to find its position
       try {
@@ -171,16 +199,8 @@
         PlayerLocation.set({ scene });
       }
     } else {
-      // Original history-based navigation logic
-      if (historyIndex !== -1) {
-        while ($PlayerHistory.length > historyIndex + 1) {
-          PlayerHistory.pop();
-          pop();
-        }
-      } else {
-        PlayerLocation.set({ scene });
-        push(`/${scene}`);
-      }
+      // Simple scene navigation
+      PlayerLocation.set({ scene });
     }
   }
 
@@ -227,6 +247,36 @@
     }
     
     return null;
+  }
+
+  async function addToAddressbook() {
+    console.log('Attempting to add scene to addressbook:', currentLocation.scene);
+    
+    if (currentLocation.scene !== 'DefaultUserHome' && 
+        currentLocation.scene !== DEFAULT_SCENE && 
+        currentLocation.scene !== 'undefined') {
+      const sceneInfo = {
+        scene: currentLocation.scene,
+        displayName: findSceneDisplayName(currentLocation.scene),
+        portalImage: findScenePortalImage(currentLocation.scene)
+      };
+      
+      console.log('Adding scene info to addressbook:', sceneInfo);
+      // Use the scene name as the key
+      Addressbook.create(currentLocation.scene, sceneInfo);
+    }
+  }
+
+  // Filter out undefined entries when displaying
+  $: filteredAddressbookEntries = addressbookEntries.filter(entry => 
+    entry?.value?.scene && 
+    entry.value.scene !== 'undefined' && 
+    (entry.value.displayName || entry.value.scene !== 'undefined')
+  );
+
+  function toggleAddressbook() {
+    showAddressbook = !showAddressbook;
+    console.log('Toggling addressbook dropdown:', showAddressbook);
   }
 </script>
 
@@ -325,17 +375,48 @@
       </div>
     {/if}
   {/if}
-  <button
-          on:click="{() => {
-            
-          }}"
-        >
-        <img
-          alt="Add friend"
-          class="icon"
-          src="assets/SHB/svg/AW-icon-addressbook-vert-2.svg"
-        />
-      </button>
+  <!-- Move the addressbook container here -->
+  <div class="addressbook-container">
+    <button on:click={toggleAddressbook}>
+      <img
+        alt="Addressbook"
+        class="icon"
+        src="assets/SHB/svg/AW-icon-addressbook-vert-2.svg"
+      />
+    </button>
+    
+    {#if showAddressbook}
+      <div class="addressbook-dropdown" transition:fade>
+        {#if filteredAddressbookEntries.length === 0}
+          <div class="empty-state">
+            <p>No saved locations yet</p>
+          </div>
+        {:else}
+          {#each filteredAddressbookEntries as entry}
+            <button class="pill-button" on:click={() => {
+              PlayerLocation.set({ scene: entry.value.scene });
+              showAddressbook = false;  // Close dropdown after selection
+            }}>
+              {#if entry.value.portalImage}
+                <div class="avatar-wrapper">
+                  <div class="avatar-container">
+                    <img
+                      class="pill-button-icon"
+                      src={entry.value.portalImage}
+                      alt="Scene Portal"
+                    />
+                  </div>
+                </div>
+              {/if}
+              <span class="pill-button-text">
+                {entry.value.displayName || entry.value.scene}
+              </span>
+            </button>
+          {/each}
+        {/if}
+      </div>
+    {/if}
+  </div>
 </div>
 
 <div class="topbar-second" style="{zoomButtonsStyle}">
@@ -362,7 +443,6 @@
   </button>
 
 </div>
-
 
 <style>
 
@@ -539,5 +619,53 @@
     margin-right: 0;
     opacity: 0;
     pointer-events: none;
+  }
+
+  .addressbook-container {
+    position: relative;
+  }
+  
+  .addressbook-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 200px;
+    max-width: 300px;
+    z-index: 1000;
+  }
+  
+  .addressbook-dropdown .pill-button {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .empty-state {
+    padding: 16px;
+    text-align: center;
+    color: #666;
+  }
+
+  .debug-info {
+    font-size: 10px;
+    color: #666;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  /* Add media query for small screens or when near screen edge */
+  @media (max-width: 768px) {
+    .addressbook-dropdown {
+      left: auto;
+      right: 0;
+      transform: none;
+    }
   }
 </style>

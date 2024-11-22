@@ -36,7 +36,6 @@
   // Initialize server data
   Liked.get()
   ModeratorLiked.get();
-  // Addressbook.get();
   Achievements.get();
 
   myHome.get();
@@ -84,30 +83,8 @@
     }
   });
 
-  const unsubscribeAddressBook = Addressbook.subscribe(async (value) => {
-    if (lastLengthAddressbook !== value.length) {
-      lastLengthAddressbook = value.length;
-      addressbookImages = [];
-      addressbookList = value;
-      if (addressbookList.length > 0) {
-        const tempArray = await Promise.all(addressbookList.map(
-          (element) => getObject('home', element.value.meta?.Azc, element.value.user_id),
-        ));
-
-        const addressbookImagesPromises = tempArray.map(async (address) => ({
-          name: address.value.username,
-          id: address.user_id,
-          url: await convertImage(address.value.url, '50', '50'),
-        }));
-
-        addressbookImages = await Promise.all(addressbookImagesPromises);
-      }
-    }
-  });
-
   onDestroy(() => {
     unsubscribeItemsBar();
-    unsubscribeAddressBook();
   });
 
   // toggle opens the itemsbar panel to reveal more functionality, the app is passed as a prop
