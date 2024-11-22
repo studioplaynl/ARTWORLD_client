@@ -4,9 +4,14 @@ import ManageSession from '../ManageSession';
 import { listObjects } from '../../../helpers/nakamaHelpers';
 import { DEFAULT_SCENE, DEFAULT_HOME } from '../../../constants';
 import { PlayerPos, PlayerLocation, PlayerHistory } from '../playerState';
-import { Addressbook, Liked, Achievements, ModeratorLiked } from '../../../storage';
+// import { Addressbook, Liked, Achievements, ModeratorLiked } from '../../../storage';
 import { dlog } from '../../../helpers/debugLog';
-import { parseQueryString, checkIfSceneIsAllowed, checkIfLocationLooksLikeAHouse } from '../helpers/UrlHelpers';
+import { 
+  parseQueryString, 
+  checkIfSceneIsAllowed, 
+  checkIfLocationLooksLikeAHouse, 
+  updateLastValidState 
+} from '../helpers/UrlHelpers';
 
 import * as Phaser from 'phaser';
 
@@ -92,6 +97,8 @@ export default class GameOnboarding extends Phaser.Scene {
       // Launch in DEFAULT_SCENE
       this.launchGame();
     }
+
+    updateLastValidState(); // Store initial valid state
   }
 
   async launchGame() {

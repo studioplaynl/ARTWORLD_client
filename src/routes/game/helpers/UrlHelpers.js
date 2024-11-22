@@ -46,6 +46,24 @@ import * as Phaser from 'phaser';
 
 let previousQuery = {};
 
+let lastValidState = {
+  scene: null,
+  house: null,
+  x: null, 
+  y: null,
+  zoom: null
+};
+
+export function updateLastValidState() {
+  lastValidState = {
+    scene: get(PlayerLocation).scene,
+    house: get(PlayerLocation).house,
+    x: get(PlayerPos).x,
+    y: get(PlayerPos).y,
+    zoom: get(PlayerZoom)
+  };
+}
+
 /** Does this string exist as a scene name?
  * @return {boolean} Exists yes/no
  */
@@ -183,9 +201,26 @@ location.subscribe(() => {
 
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
-  // console.time('parseQueryString');
-
   const query = parse(get(querystring));
+  
+  // Validate location first
+  if ('location' in query) {
+    if (!checkIfSceneIsAllowed(query.location)) {
+      // Invalid scene - revert to last known good state
+      revertToLastValidState();
+      return;
+    }
+  }
+
+  // Validate house if present  
+  if ('house' in query) {
+    if (!checkIfLocationLooksLikeAHouse(query.house)) {
+      revertToLastValidState();
+      return;
+    }
+  }
+
+  // Continue with regular parsing...
   const pos = get(PlayerPos);
   const newPlayerPosition = { x: pos.x, y: pos.y };
   const newPlayerLocation = {};
@@ -281,7 +316,27 @@ export function parseQueryString() {
     previousQuery = { ...query };
     // dlog('previousQuery: ', previousQuery);
   }
-  // console.timeEnd('parseQueryString');
+
+  // If we got here, update last valid state
+  updateLastValidState();
+}
+
+function revertToLastValidState() {
+  // Replace current URL with last known good state
+  const query = {
+    location: lastValidState.scene,
+    x: lastValidState.x,
+    y: lastValidState.y,
+    zoom: lastValidState.zoom
+  };
+  
+  if (lastValidState.house) {
+    query.house = lastValidState.house;
+  }
+
+  // Replace URL without adding to history
+  replace(`${get(location)}?${stringify(query)}`);
+  PlayerHistory.replace(`${get(location)}?${stringify(query)}`);
 }
 
 /** Set up a subscription to the querystring (from svelte-spa-router)
