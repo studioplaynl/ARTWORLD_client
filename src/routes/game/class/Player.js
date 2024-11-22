@@ -282,19 +282,22 @@ class Player {
       onlinePlayer.setData('movingKey', 'moving');
       onlinePlayer.setData('stopKey', 'stop');
 
-      // create default animation for moving
-      scene.anims.create({
-        key: onlinePlayer.getData('movingKey'),
-        frames: scene.anims.generateFrameNumbers(ManageSession.playerAvatarPlaceholder, { start: 0, end: 8 }),
-        frameRate: 20,
-        repeat: -1,
-      });
+      // Only create animations if they don't already exist
+      if (!scene.anims.exists('moving')) {
+        scene.anims.create({
+          key: 'moving',
+          frames: scene.anims.generateFrameNumbers(ManageSession.playerAvatarPlaceholder, { start: 0, end: 8 }),
+          frameRate: 20,
+          repeat: -1,
+        });
+      }
 
-      // create default animation for stop
-      scene.anims.create({
-        key: onlinePlayer.getData('stopKey'),
-        frames: scene.anims.generateFrameNumbers(ManageSession.playerAvatarPlaceholder, { start: 4, end: 4 }),
-      });
+      if (!scene.anims.exists('stop')) {
+        scene.anims.create({
+          key: 'stop',
+          frames: scene.anims.generateFrameNumbers(ManageSession.playerAvatarPlaceholder, { start: 4, end: 4 }),
+        });
+      }
 
       // add all data from elementCopy to element; like prev Position, Location, UserID
       Object.assign(onlinePlayer, onlinePlayerCopy);

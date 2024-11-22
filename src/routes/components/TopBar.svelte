@@ -152,7 +152,7 @@
       scene: DEFAULT_SCENE,
     });
     
-    PlayerUpdate.set({ forceHistoryReplace: false });
+    PlayerUpdate.set({ forceHistoryReplace: true });
     PlayerPos.set({
       x: 0,
       y: 0,
@@ -164,7 +164,19 @@
   */
   async function goBack() {
     if ($PlayerHistory.length > 1) {
+      const previousState = $PlayerHistory[$PlayerHistory.length - 2]; // Get previous state before popping
+      console.log('previousState', previousState);
       PlayerHistory.pop();
+      
+      // If returning to Artworld, ensure position is preserved
+      if (previousState.scene === DEFAULT_SCENE) {
+        PlayerUpdate.set({ forceHistoryReplace: false });
+        PlayerPos.set({
+          x: previousState.x || 0,
+          y: previousState.y || 0,
+        });
+      }
+      
       pop();
     }
   }
