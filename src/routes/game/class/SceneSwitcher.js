@@ -32,6 +32,8 @@ class SceneSwitcher {
     // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {
     //   this.doSwitchScene();
     // });
+    this.pausedSceneKey = null;
+    this.pausedScene = null;
   }
 
   // pushLocation(scene) {
@@ -149,33 +151,63 @@ class SceneSwitcher {
   }
 
   async pauseSceneStartApp(scene, app) {
-    // console.log('pauseSceneStartApp', scene, app);
-    // pause scene needs the 'real' scene object, not just the key
-    if (scene) {
-      //! check this
-      scene.physics.pause();
-      scene.scene.pause();
+    if (!scene) return;
 
-      // scene.scene.stop();
-      this.switchStream(scene, app);
-    }
+    // Store both scene key and scene instance
+    this.pausedSceneKey = scene.scene.key;
+    this.pausedScene = scene;
+    
+    dlog('Pausing scene:', this.pausedSceneKey);
+    
+    // Pause all systems
+    scene.game.loop.sleep();
+    scene.physics.pause();
+    scene.scene.pause();
+    
+    await this.switchStream(scene, app);
   }
 
-  async startSceneCloseApp(app, scene) {
-    // console.log('startSceneCloseApp', app, scene);
-    // we always get an App and a scene in the game
+  async startSceneCloseApp(app) {
     if (!ManageSession.socket) return;
 
-    //! check this
-    dlog('start scene: ', scene);
-    if (typeof scene.scene !== 'undefined') {
-      scene.scene.start();
-    } else {
-      dlog('ManageSession.currentScene.scene.key: ', ManageSession.currentScene.scene.key);
-      ManageSession.currentScene.scene.start(scene);
+    dlog('Attempting to resume scene. Stored key:', this.pausedSceneKey);
+    
+    // Try multiple ways to get the scene
+    let sceneToResume = this.pausedScene || 
+                        ManageSession.currentScene || 
+                        (this.pausedSceneKey && ManageSession.game.scene.getScene(this.pausedSceneKey));
+
+    if (!sceneToResume) {
+      console.error('Failed to find scene to resume', {
+        storedScene: this.pausedScene,
+        currentScene: ManageSession.currentScene,
+        pausedKey: this.pausedSceneKey
+      });
+      return;
     }
-    // setLoader(true);
-    this.switchStream(app, scene);
+
+    dlog('Resuming scene:', sceneToResume.scene.key);
+
+    // Resume the game loop first
+    sceneToResume.game.loop.wake();
+    
+    // If scene is paused, resume it
+    if (sceneToResume.scene.isPaused()) {
+      sceneToResume.scene.resume();
+    } else {
+      // If not paused, might need to restart
+      sceneToResume.scene.restart();
+    }
+    
+    // Resume physics and input after scene is active
+    sceneToResume.physics.resume();
+    sceneToResume.input.enabled = true;
+
+    await this.switchStream(app, sceneToResume);
+    
+    // Clear stored references
+    this.pausedScene = null;
+    this.pausedSceneKey = null;
   }
 
   async switchStream(scene, targetScene) {
