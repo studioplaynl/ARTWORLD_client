@@ -1075,6 +1075,7 @@ class ServerCall {
 
     // Get texture dimensions
     const texture = scene.textures.get(imageKeyUrl);
+    console.log('debug texture', texture);
     if (!texture || !texture.frames.__BASE) {
       dlog('Invalid texture for stopmotion:', imageKeyUrl);
       return;
@@ -1123,9 +1124,6 @@ class ServerCall {
     */
     imageContainer.nakamaData = { ...element };
 
-    // put an artFrame in the container as a background and frame
-    // imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
-
     // adds the image to the container, on top of the artFrame
     const avatar = scene.textures.get(imageKeyUrl);
 
@@ -1134,8 +1132,12 @@ class ServerCall {
 
     const avatarHeight = avatar.frames.__BASE.height;
     // dlog(`stopmotion Height: ${avatarHeight}`);
-
+    
+    // dlog(`stopmotion Frames: ${avatarFrames}`);
+    
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
+    console.log('debug imageKeyUrl, avatarWidth, avatarHeight, avatarFrames '
+      , imageKeyUrl, avatarWidth, avatarHeight, avatarFrames);
     let setFrameRate = 0;
     if (avatarFrames > 1) {
       setFrameRate = avatarFrames;
@@ -1145,17 +1147,24 @@ class ServerCall {
     // dlog(`stopmotion Frames: ${avatarFrames}`);
 
     // Check if animations don't already exist before creating them
-    if (!scene.anims.exists(`moving_${imageKeyUrl}`)) {
-      scene.anims.create({
-        key: `moving_${imageKeyUrl}`,
-        frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
-          start: 0,
-          end: avatarFrames - 1,
-        }),
-        frameRate: setFrameRate,
-        repeat: -1,
-        yoyo: false,
-      });
+    if (avatarFrames > 1) {
+      if (!scene.anims.exists(`moving_${imageKeyUrl}`)) {
+        try {
+          const config = {
+            key: `moving_${imageKeyUrl}`,
+            frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
+              start: 0,
+              end: avatarFrames - 1
+            }),
+            frameRate: setFrameRate,
+            repeat: -1,
+            yoyo: false
+          };
+          scene.anims.create(config);
+        } catch (error) {
+          console.error('Failed to create animation:', error);
+        }
+      }
     }
 
     if (!scene.anims.exists(`stop_${imageKeyUrl}`)) {
@@ -1718,7 +1727,7 @@ class ServerCall {
         // dlog('load drawing_HomeElement COMPLETE');
         // }
       } else if (type === 'stopmotion_HomeElement') {
-        this.createHomeElement_Stopmotion_Container(element, index, artSize, artMargin);
+        this.createHomeElement_Stopmotion_Container(element);
       }
 
       // if the artwork is not already downloaded
@@ -2004,20 +2013,33 @@ class ServerCall {
       
       // imgSize = Math.round(element.value.width).toString();
       imgSize = Math.min(Math.round(element.value.height), STOPMOTION_BASE_SIZE).toString();
-      const imgWidth = Math.round(element.value.height * 200).toString();
-
+      const imgWidth = Math.round(element.value.height * 20).toString();
+      
       const convertedImage = await convertImage(imageKeyUrl, imgSize, imgWidth, fileFormat);
+      
+      // Calculate frame dimensions based on the actual image size
       scene.load
         .spritesheet(imageKeyUrl, convertedImage, {
-          frameWidth: artSize,
-          frameHeight: artSize,
+          frameWidth: parseInt(imgSize),   // Width of each frame
+          frameHeight: parseInt(imgSize),  // Height of each frame
+          spacing: 0,                      // Spacing between frames
+          margin: 0                        // Margin around frames
         })
         .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
-          // remove the file from the error-resolve-queue
+          // Log the loaded texture info
+          const texture = scene.textures.get(imageKeyUrl);
+          console.log('Loaded texture info:', {
+            frameWidth: parseInt(imgSize),
+            frameHeight: parseInt(imgSize),
+            totalWidth: texture.frames.__BASE.width,
+            totalHeight: texture.frames.__BASE.height,
+            expectedFrames: Math.floor(texture.frames.__BASE.width / parseInt(imgSize))
+          });
+          
           ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
             (obj) => obj.imageKey !== imageKeyUrl
           );
-          this.createHomeElement_Stopmotion_Container(element, index, artSize, artMargin);
+          this.createHomeElement_Stopmotion_Container(element);
         });
       scene.load.start(); // start the load queue to get the image in memory
     }
@@ -2364,20 +2386,6 @@ class ServerCall {
     // dlog(`stopmotion Frames: ${avatarFrames}`);
 
     // Check if animations don't already exist before creating them
-    if (!scene.anims.exists(`moving_${imageKeyUrl}`)) {
-      scene.anims.create({
-        key: `moving_${imageKeyUrl}`,
-        frames: scene.anims.generateFrameNumbers(imageKeyUrl, {
-          start: 0,
-          end: avatarFrames - 1,
-        }),
-        frameRate: setFrameRate,
-        repeat: -1,
-        yoyo: false,
-      });
-    }
-
-    // animation for the stopmotion .........................
     if (!scene.anims.exists(`moving_${imageKeyUrl}`)) {
       scene.anims.create({
         key: `moving_${imageKeyUrl}`,
