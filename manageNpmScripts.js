@@ -37,6 +37,20 @@ if (mode === 'dev') {
   fs.copyFileSync(path.join(__dirname, '.env.build'), envPath);
   process.env.ENV_FILE = '.env.build';
 
+  // Delete build files before new build
+  const filesToDelete = [
+    path.join(__dirname, 'public', 'index.html'),
+    path.join(__dirname, 'public', 'index.js'),
+    path.join(__dirname, 'public', 'index.css')
+  ];
+
+  filesToDelete.forEach(file => {
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file);
+      console.log(`Deleted: ${file}`);
+    }
+  });
+
 } else {
   console.error('Invalid mode specified. Use "dev" or "build".');
   process.exit(1);

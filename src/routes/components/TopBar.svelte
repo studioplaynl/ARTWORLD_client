@@ -112,30 +112,32 @@
       }
 
       // Add scene to addressbook if applicable
-      addToAddressbook();
+      // addToAddressbook();
     });
 
     miniMapDimensions.subscribe((value) => {
       miniMap = value;
     });
 
-    Addressbook.subscribe(entries => {
-      console.log('Addressbook entries updated:', entries);
-      addressbookEntries = entries;
-    });
+    //! turned off addressbook
+    // Addressbook.subscribe(entries => {
+    //   console.log('Addressbook entries updated:', entries);
+    //   addressbookEntries = entries;
+    // });
     
-    // Initial load of addressbook
-    const initialEntries = await Addressbook.get();
-    console.log('Initial addressbook load:', initialEntries);
+    //! Initial load of addressbook
+    // const initialEntries = await Addressbook.get();
+    // console.log('Initial addressbook load:', initialEntries);
 
-    // Add click listener for closing addressbook
-    document.addEventListener('click', handleClickOutside);
+    //! Add click listener for closing addressbook
+    // document.addEventListener('click', handleClickOutside);
   });
 
-  onDestroy(() => {
-    // Clean up click listener
-    document.removeEventListener('click', handleClickOutside);
-  });
+  //! addressbook
+  // onDestroy(() => {
+  //   // Clean up click listener
+  //   document.removeEventListener('click', handleClickOutside);
+  // });
 
   $: zoomButtonsStyle = `
     position: absolute;
@@ -149,42 +151,41 @@
   //  with PlayerUpdate.set({ forceHistoryReplace: false });
   */
   async function goHome() {
-    PlayerLocation.set({
-      scene: DEFAULT_SCENE,
-    });
-    
-    PlayerUpdate.set({ forceHistoryReplace: true });
-    PlayerPos.set({
-      x: 0,
-      y: 0,
-    });
+    // this seems to fix an issue on android tablet where the loading would get stuck
+    setTimeout(() => {
+            PlayerLocation.set({
+              scene: DEFAULT_SCENE,
+            });
+            
+            PlayerUpdate.set({ forceHistoryReplace: true });
+            PlayerPos.set({
+              x: 0,
+              y: 0,
+            });
+        }, 400);
+        
   }
 
   /**  pop() sets off a reaction where the url is parsed, and the player is taken back
    *   PlayerHistory.pop() is to reflect the state there
   */
   async function goBack() {
-    // First check if we're currently switching scenes
-    if (ManageSession.currentScene?.isTransitioning) {
-      console.log('Scene transition in progress, please wait...');
-      return;
-    }
-
     if ($PlayerHistory.length > 1) {
       const previousState = $PlayerHistory[$PlayerHistory.length - 2];
       console.log('previousState', previousState);
-      PlayerHistory.pop();
       
-      // If returning to Artworld, ensure position is preserved
-      if (previousState.scene === DEFAULT_SCENE) {
-        PlayerUpdate.set({ forceHistoryReplace: false });
-        PlayerPos.set({
-          x: previousState.x || 0,
-          y: previousState.y || 0,
-        });
-      }
+      // If returning to Artworld, ensure scene loads first
+      // if (previousState.scene === DEFAULT_SCENE) {
+        // First set location without position
+        
+        // this seems to fix an issue on android tablet where the loading would get stuck
+         setTimeout(() => {
+            PlayerHistory.pop();
+            pop();
+        }, 100);
+        
+      // }
       
-      pop();
     }
   }
 
@@ -268,35 +269,35 @@
     return null;
   }
 
-  async function addToAddressbook() {
-    console.log('Attempting to add scene to addressbook:', currentLocation.scene);
+  //! async function addToAddressbook() {
+  //   console.log('Attempting to add scene to addressbook:', currentLocation.scene);
     
-    if (currentLocation.scene !== 'DefaultUserHome' && 
-        currentLocation.scene !== DEFAULT_SCENE && 
-        currentLocation.scene !== 'undefined') {
-      const sceneInfo = {
-        scene: currentLocation.scene,
-        displayName: findSceneDisplayName(currentLocation.scene),
-        portalImage: findScenePortalImage(currentLocation.scene)
-      };
+  //   if (currentLocation.scene !== 'DefaultUserHome' && 
+  //       currentLocation.scene !== DEFAULT_SCENE && 
+  //       currentLocation.scene !== 'undefined') {
+  //     const sceneInfo = {
+  //       scene: currentLocation.scene,
+  //       displayName: findSceneDisplayName(currentLocation.scene),
+  //       portalImage: findScenePortalImage(currentLocation.scene)
+  //     };
       
-      console.log('Adding scene info to addressbook:', sceneInfo);
-      // Use the scene name as the key
-      Addressbook.create(currentLocation.scene, sceneInfo);
-    }
-  }
+  //     console.log('Adding scene info to addressbook:', sceneInfo);
+  //     // Use the scene name as the key
+  //     Addressbook.create(currentLocation.scene, sceneInfo);
+  //   }
+  // }
 
-  // Filter out undefined entries when displaying
-  $: filteredAddressbookEntries = addressbookEntries.filter(entry => 
-    entry?.value?.scene && 
-    entry.value.scene !== 'undefined' && 
-    (entry.value.displayName || entry.value.scene !== 'undefined')
-  );
+  // // Filter out undefined entries when displaying
+  // $: filteredAddressbookEntries = addressbookEntries.filter(entry => 
+  //   entry?.value?.scene && 
+  //   entry.value.scene !== 'undefined' && 
+  //   (entry.value.displayName || entry.value.scene !== 'undefined')
+  // );
 
-  function toggleAddressbook() {
-    showAddressbook = !showAddressbook;
-    console.log('Toggling addressbook dropdown:', showAddressbook);
-  }
+  // function toggleAddressbook() {
+  //   showAddressbook = !showAddressbook;
+  //   console.log('Toggling addressbook dropdown:', showAddressbook);
+  // }
 </script>
 
 <div class="topbar">
@@ -395,7 +396,7 @@
     {/if}
   {/if}
   <!-- Move the addressbook container here -->
-  <div class="addressbook-container">
+  <!-- <div class="addressbook-container">
     <button on:click={toggleAddressbook}>
       <img
         alt="Addressbook"
@@ -435,7 +436,7 @@
         {/if}
       </div>
     {/if}
-  </div>
+  </div> -->
 </div>
 
 <div class="topbar-second" style="{zoomButtonsStyle}">
