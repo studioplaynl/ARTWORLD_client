@@ -12,6 +12,7 @@ import {
   homeElement_Selected, 
   Liked, 
   miniMapDimensions, 
+  miniMapPosition,
 } from '../../../storage';
 import { Profile, HomeEditBarExpanded } from '../../../session';
 import { MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
@@ -371,6 +372,15 @@ export default class UIScene extends Phaser.Scene {
     // Update player dot position
     this.updatePlayerDotPosition();
     this.updateMinimapFrame();
+
+    // Update the store with current minimap position and dimensions
+    miniMapPosition.set({
+      x: this.scale.width - (this.miniMapDimensions.x) - MINIMAP_MARGIN,
+      y: MINIMAP_MARGIN,
+      width: this.miniMapDimensions.x,
+      height: this.miniMapDimensions.y,
+      bottom: MINIMAP_MARGIN + this.miniMapDimensions.y // This is what we'll use for the buttons
+    });
   }
 
   updatePlayerDotPosition() {

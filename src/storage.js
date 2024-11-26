@@ -29,6 +29,8 @@ export const activeDeleteButtonId = writable(null);
 
 export const miniMapDimensions = writable({ x: 0, y: 0 });
 
+export const miniMapPosition = writable(1);
+
 //  Achievements of a user
 const achievementsStore = writable([]);
 

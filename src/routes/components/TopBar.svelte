@@ -9,14 +9,13 @@
     PlayerPos,
     PlayerUpdate,
   } from '../game/playerState';
-  import { miniMapDimensions, Addressbook } from '../../storage';
+  import { miniMapDimensions, miniMapPosition, Addressbook } from '../../storage';
   import { DEFAULT_SCENE, SCENE_INFO, MINIMAP_MARGIN } from '../../constants';
   import { getAvatar, getAccount, getObject, convertImage, addFriend } from '../../helpers/nakamaHelpers';
   import { findParentScenes } from '../game/helpers/UrlHelpers';
   import { homeIsOfSelf } from '../../session';
   import ArtworkLoader from './ArtworkLoader.svelte';
   import ManageSession from '../game/ManageSession';
-
   // import { dlog } from '../game/helpers/debugLog';
 
   let currentLocation = '';
@@ -139,11 +138,17 @@
   //   document.removeEventListener('click', handleClickOutside);
   // });
 
-  $: zoomButtonsStyle = `
+  $: zoomButtonsStyle = ($miniMapPosition && $miniMapDimensions) ? `
     position: absolute;
-    right: ${0}px;
-    top: ${miniMap.y + MINIMAP_MARGIN}px;
-  `;
+    right: ${MINIMAP_MARGIN}px;
+    top: ${MINIMAP_MARGIN + $miniMapDimensions.y + 10}px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 5px;
+    z-index: 1000;
+    width: ${$miniMapDimensions.x}px;
+  ` : '';
 
   /** We send the player to the middle of artworld so there is a fixed orientation point
   //  We set the Position after the Location
@@ -442,21 +447,21 @@
 <div class="topbar-second" style="{zoomButtonsStyle}">
   <button on:click="{zoomOut}" id="zoomOut">
     <img
-      class="TopIcon"
+      class="TopIcon2"
       src="/assets/SHB/svg/AW-icon-minus.svg"
       alt="Zoom out"
     />
   </button>
   <button on:click="{zoomReset}" id="zoomReset">
     <img
-      class="TopIcon"
+      class="TopIcon2"
       src="assets/SHB/svg/AW-icon-zoom-reset.svg"
       alt="Reset zoom"
     />
   </button>
   <button on:click="{zoomIn}" id="zoomIn">
     <img
-      class="TopIcon"
+      class="TopIcon2"
       src="./assets/SHB/svg/AW-icon-plus.svg"
       alt="Zoom in"
     />
@@ -607,9 +612,26 @@
   }
 
   .topbar-second {
-    margin: 16px;
-    display: flex; /* Add this to align items horizontally */
-    align-items: center; /* This will vertically center the buttons and dividers */
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+  }
+
+  /* Update button styles to work better in vertical layout */
+  .topbar-second button {
+    margin: 0;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .topbar-second .TopIcon2{
+    width: 2rem;
+    height: 2rem;
+    max-width: 32px; /* Slightly smaller for vertical layout */
+    max-height: 32px;
   }
 
   .TopIcon {
