@@ -16,6 +16,7 @@
   import { homeIsOfSelf } from '../../session';
   import ArtworkLoader from './ArtworkLoader.svelte';
   import ManageSession from '../game/ManageSession';
+  import { getDeviceType } from '../../helpers/deviceDetection';
   // import { dlog } from '../game/helpers/debugLog';
 
   let currentLocation = '';
@@ -138,11 +139,13 @@
   //   document.removeEventListener('click', handleClickOutside);
   // });
 
+  $: showZoomButtons = getDeviceType() === 'desktop';
+
   $: zoomButtonsStyle = ($miniMapPosition && $miniMapDimensions) ? `
     position: absolute;
     right: ${MINIMAP_MARGIN}px;
     top: ${MINIMAP_MARGIN + $miniMapDimensions.y + 10}px;
-    display: flex;
+    display: ${showZoomButtons ? 'flex' : 'none'};
     flex-direction: row;
     justify-content: center;
     gap: 5px;
