@@ -15,7 +15,7 @@ import {
 } from '../../../storage';
 import { Profile, HomeEditBarExpanded } from '../../../session';
 import { MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
-
+import { getDeviceType } from '../../../helpers/deviceDetection';
 import { PlayerZoom, PlayerLocation, PlayerPos } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
@@ -195,57 +195,48 @@ export default class UIScene extends Phaser.Scene {
    this.game.events.emit('homeElements_show');
   }
 
-  createMinimap() {
-    const checkAndCreateMinimap = () => {
-      if (ManageSession.currentScene && ManageSession.currentScene.cameras && ManageSession.currentScene.scale) {
-        // console.log('Creating minimap');
-        
-        const removeOldMinimap = () => {
-          return new Promise((resolve) => {
-            const checkRemoval = () => {
-              if (this.minimapCamera) {
-                console.log('Attempting to remove old minimap camera');
-                // console.log('this.minimapCamera', this.minimapCamera);
-                if (ManageSession.currentScene.cameras) {
-                  console.log('REMOVING old minimap camera');
-                  // console.log('exists removeCamera: ', removeCamera);
+  async removeOldMinimap() {
+    return new Promise((resolve) => {
+      const checkRemoval = () => {
+        if (this.minimapCamera) {
+          if (ManageSession.currentScene.cameras) {
+            console.log('REMOVING old minimap camera');
+            ManageSession.currentScene.cameras.remove(this.minimapCamera, true);
+            this.minimapCamera = null;
+          }
+          setTimeout(checkRemoval, 500);
+        } else {
+          resolve();
+        }
+      };
+      checkRemoval();
+    });
+  }
 
-                  ManageSession.currentScene.cameras.remove(this.minimapCamera, true);
-                  // console.log('REMOVING removeCamera: ', removeCamera);
+  cleanupMinimapObjects() {
+    if (this.minimap_ReferenceFrame) {
+      this.minimap_ReferenceFrame.destroy();
+      this.minimap_ReferenceFrame = null;
+    }
+    if (this.minimapFrame) {
+      this.minimapFrame.destroy();
+      this.minimapFrame = null;
+    }
+    if (this.playerDot) {
+      this.playerDot.destroy();
+      this.playerDot = null;
+    }
+    if (this.minimapWorldBorder) {
+      this.minimapWorldBorder.destroy();
+      this.minimapWorldBorder = null;
+    }
+  }
 
-                  this.minimapCamera = null;
-                }
-                // Check again after a short delay
-                setTimeout(checkRemoval, 500);
-              } else {
-                // console.log('Old minimap camera removed successfully');
-                resolve();
-              }
-            };
-            checkRemoval();
-          });
-        };
-  
-        removeOldMinimap().then(() => {
-          try {
-          // Clean up other related objects
-          if (this.minimap_ReferenceFrame) {
-            this.minimap_ReferenceFrame.destroy();
-            this.minimap_ReferenceFrame = null;
-          }
-          if (this.minimapFrame) {
-            this.minimapFrame.destroy();
-            this.minimapFrame = null;
-          }
-          if (this.playerDot) {
-            this.playerDot.destroy();
-            this.playerDot = null;
-          }
-          if (this.minimapWorldBorder) {
-            this.minimapWorldBorder.destroy();
-            this.minimapWorldBorder = null;
-          }
-
+  checkAndCreateMinimap() {
+    if (ManageSession.currentScene && ManageSession.currentScene.cameras && ManageSession.currentScene.scale) {
+      this.removeOldMinimap().then(() => {
+        try {
+          this.cleanupMinimapObjects();
           this.worldSize = ManageSession.currentScene.worldSize;
           this.miniMapDimensions = new Phaser.Math.Vector2(MINIMAP_SIZE, MINIMAP_SIZE);
 
@@ -333,22 +324,17 @@ export default class UIScene extends Phaser.Scene {
           // console.log('Minimap created successfully');
         } catch (error) {
           dlog('Error creating minimap:', error);
-          // If there's an error, we'll try again after a delay
-          this.minimapTimeout = setTimeout(checkAndCreateMinimap, 100);
+          this.minimapTimeout = setTimeout(() => this.checkAndCreateMinimap(), 100);
         }
-
-        // now we can also set the zoom of the child scene 
-        ManageSession.currentScene.gameCam.zoom = get(PlayerZoom);
       });
-      } else {
-        dlog('Waiting for ManageSession.currentScene to be fully initialized...');
-        // If currentScene or its properties are not available, try again after a delay
-        this.minimapTimeout = setTimeout(checkAndCreateMinimap, 100);
-      }
-    };
-  
-    // Start the process
-    checkAndCreateMinimap();
+    } else {
+      dlog('Waiting for ManageSession.currentScene to be fully initialized...');
+      this.minimapTimeout = setTimeout(() => this.checkAndCreateMinimap(), 100);
+    }
+  }
+
+  createMinimap() {
+    this.checkAndCreateMinimap();
   }
 
   positionMinimap() {
@@ -450,4 +436,9 @@ export default class UIScene extends Phaser.Scene {
         break;
     }
   } // end gameEditModeSign
+
+  isSmallScreen() {
+    const deviceType = getDeviceType();
+    return deviceType === 'mobile' || deviceType === 'tablet';
+  }
 }
