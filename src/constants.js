@@ -12,8 +12,8 @@ export const SCENE_INFO = [
   },
   {
     scene: 'Artworld',
-    sizeX: 6000,
-    sizeY: 6000,
+    sizeX: 6144,
+    sizeY: 6144,
     kind: 'landingScene',
     children: [
       {

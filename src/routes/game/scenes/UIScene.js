@@ -8,12 +8,11 @@ import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
 import DebugFuntions from '../class/DebugFuntions';
 import { dlog } from '../../../helpers/debugLog';
-import { myHomeStore,  
+import {  
   homeElement_Selected, 
   Liked, 
   miniMapDimensions, 
 } from '../../../storage';
-import ServerCall from '../class/ServerCall';
 import { Profile, HomeEditBarExpanded } from '../../../session';
 import { MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
 

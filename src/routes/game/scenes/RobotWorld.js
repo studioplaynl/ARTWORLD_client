@@ -43,18 +43,6 @@ export default class RobotWorld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
     // RobotWorld
     this.load.image('artWorldPortal', './assets/world_robot_torquoise/portaal_robot_terug.png');
     this.load.image('robot_treeC_01', './assets/world_robot_torquoise/treeC_01.png');

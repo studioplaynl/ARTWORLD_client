@@ -81,15 +81,6 @@ export default class Artworld extends Phaser.Scene {
 
   async preload() {
     // artworld elements
-    // this.load.image('drawn_cloud', './assets/drawn_cloud.png');
-    // this.load.svg('sunglass_stripes', 'assets/svg/sunglass_stripes.svg');
-    // this.load.svg('photo_camera', 'assets/svg/photo_camera.svg', {
-    //   scale: 2.4,
-    // });
-    // this.load.svg('tree_palm', './assets/svg/tree_palm.svg');
-    // this.load.svg('music_quarter_note', 'assets/svg/music_note_quarter_note.svg');
-    // this.load.svg('metro_train_grey', 'assets/svg/metro_train_grey.svg');
-
     this.load.svg('mario_star', 'assets/svg/mario_star.svg');
     this.load.svg('yellow_diamond_location_image', 'assets/svg/geleRuit.svg');
     this.load.svg('blue_sail_location_image', 'assets/svg/blauwZeil.svg');
@@ -134,32 +125,18 @@ export default class Artworld extends Phaser.Scene {
       './assets/world_vliegendeEilanden/02b_Portale_w23_naarVliegendeEilanden-fs8.png'
     );
 
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
     // background image array
     const folderPath = './assets/world_artworld/';
 
     this.backgroundImageKey = 'artworld_background_';
-    //  load 9 images in a for loop
-    for (let i = 0; i < 16; i++) {
-      // const key = 'image' + i;
+    const totalImages = 49;
+    for (let i = 0; i < totalImages; i++) {
       const name = folderPath + 'image_part_' + i + '.jpeg';
       this.load.image(this.backgroundImageKey + i, name);
     }
   }
 
   async create() {
-    //!
     // show physics debug boundaries in gameEditMode
     if (ManageSession.gameEditMode) {
       this.physics.world.drawDebug = true;
@@ -175,7 +152,6 @@ export default class Artworld extends Phaser.Scene {
     this.worldSize.x = sceneInfo.sizeX;
     this.worldSize.y = sceneInfo.sizeY;
     ManageSession.worldSize = this.worldSize;
-    //!
 
     handleEditMode(this);
 
@@ -225,14 +201,16 @@ export default class Artworld extends Phaser.Scene {
   } // end create
 
   loadBackgroundImageArray() {
-    const partSize = 1535;
+    const partSize = 877;
     let beginImage = 0;
 
-    const grid = 4;
+    const grid = 7;
 
     for (let j = 0; j < grid; j++) {
       for (let i = 0; i < grid; i++) {
-        this.add.image(partSize * j, partSize * i, this.backgroundImageKey + beginImage).setOrigin(0);
+        const xPosition = partSize * j; 
+        const yPosition = partSize * i; 
+        this.add.image(xPosition, yPosition, this.backgroundImageKey + beginImage).setOrigin(0);
         beginImage++;
       }
     }

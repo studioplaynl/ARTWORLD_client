@@ -43,18 +43,6 @@ export default class SlimeWorld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
     // SlimeWorld
     this.load.image('bubbleface1_slime', './assets/world_slime_world/bubbleface1_slime.png');
     this.load.image('bubbleplant1_slime', './assets/world_slime_world/bubbleplant1_slime.png');

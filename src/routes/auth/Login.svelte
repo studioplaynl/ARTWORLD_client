@@ -9,6 +9,7 @@
   import QRscanner from './QRScanner.svelte';
   // eslint-disable-next-line no-unused-vars
   import { dlog } from '../../helpers/debugLog';
+  import { getDeviceType } from '../../helpers/deviceDetection';
 
   export let params;
 
@@ -17,8 +18,9 @@
   let password;
   let qrscanState = false;
 
-  const isMobileDevice = /Mobi/i.test(window.navigator.userAgent);
-  const isMobile = !!isMobileDevice;
+
+  const deviceType = getDeviceType();
+  const isMobile = deviceType === 'mobile' || deviceType === 'tablet';
 
   const showPassword = writable(false);
 
@@ -55,14 +57,24 @@
 
 <main>
   <div class="device-type">
-    {#if isMobile}
+    {#if deviceType === 'mobile'}
       <img
         alt="Mobile phone"
         class="icon"
         src="assets/device_type/mobile.png"
       />
+    {:else if deviceType === 'tablet'}
+      <img
+        alt="Tablet"
+        class="icon"
+        src="assets/device_type/mobile.png"
+      />
     {:else}
-      <img alt="Laptop" class="icon" src="assets/device_type/laptop.png" />
+      <img 
+        alt="Laptop" 
+        class="icon" 
+        src="assets/device_type/laptop.png" 
+      />
     {/if}
   </div>
 

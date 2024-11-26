@@ -44,46 +44,17 @@ export default class MoonWorld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
-    // Preloader.Loading(this); // .... PRELOADER VISUALISER
     // Moonworld
-    this.localAssetsCheck = {};
     const folderPath = './assets/world_moon/';
 
-    const loadArray = [
-      {
-        key: 'maan_KORR_portalRaket_naarHUIS_alleDelen',
-        path: `${folderPath}maan_KORR_portalRaket_naarHUIS_alleDelen.png`,
-      },
-      { key: 'maan_MAAN_a', path: `${folderPath}maan_MAAN_a.png` },
-      {
-        key: 'maan_meteoor_metStaart',
-        path: `${folderPath}maan_meteoor_metStaart.png`,
-      },
-      {
-        key: 'maan_portalRaket_naarHUIS_A',
-        path: `${folderPath}maan_portalRaket_naarHUIS_A.png`,
-      },
-      { key: 'maan_spaceBubble', path: `${folderPath}maan_spaceBubble.png` },
-      {
-        key: 'maan_sputnik_metStaart',
-        path: `${folderPath}maan_sputnik_metStaart.png`,
-      },
-      { key: 'maan_steren', path: `${folderPath}maan_steren.png` },
-    ];
-
-    ServerCall.loadAssetArray(this, loadArray, 'localImage');
+    this.load.image('maan_KORR_portalRaket_naarHUIS_alleDelen',
+       `${folderPath}maan_KORR_portalRaket_naarHUIS_alleDelen.png`);
+    this.load.image('maan_MAAN_a', `${folderPath}maan_MAAN_a.png`);
+    this.load.image('maan_meteoor_metStaart', `${folderPath}maan_meteoor_metStaart.png`);
+    this.load.image('maan_portalRaket_naarHUIS_A', `${folderPath}maan_portalRaket_naarHUIS_A.png`);
+    this.load.image('maan_spaceBubble', `${folderPath}maan_spaceBubble.png`);
+    this.load.image('maan_sputnik_metStaart', `${folderPath}maan_sputnik_metStaart.png`);
+    this.load.image('maan_steren', `${folderPath}maan_steren.png`);
   }
 
   async create() {

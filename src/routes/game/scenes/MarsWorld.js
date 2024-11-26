@@ -43,18 +43,6 @@ export default class MarsWorld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
     // MarsWorld
     this.load.image('artWorldPortalMars', './assets/world_mars_red/portal_goHome_mars.png');
     this.load.image('krater_mars', './assets/world_mars_red/krater_mars.png');

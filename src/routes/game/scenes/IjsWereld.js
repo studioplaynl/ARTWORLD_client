@@ -3,7 +3,6 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-// import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
@@ -42,40 +41,12 @@ export default class IjscoWereld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-    // Ijs
     this.localAssetsCheck = {};
 
     const folderPath = './assets/world_ice/';
 
-    const loadArray = [
-      {
-        key: 'Portal_naarHuis_ijs',
-        path: `${folderPath}Portaal_ice_naarHUIS-fs8.png`,
-      },
-      {
-        key: 'Portaal_vanIjs_naarIjsco',
-        path: `${folderPath}Portaal_vanIce_naarIceCream-fs8.png`,
-      },
-
-      { key: 'ijswereld', path: `${folderPath}ijs_wereld.jpg` },
-    ];
-
-    ServerCall.loadAssetArray(this, loadArray, 'localImage');
-
     this.backgroundImageKey = 'iceworld_background_';
-    //  load 9 images in a for loop
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 36; i++) {
       const name = folderPath + 'image_part_' + i + '.jpeg';
       this.load.image(this.backgroundImageKey + i, name);
     }
@@ -102,13 +73,6 @@ export default class IjscoWereld extends Phaser.Scene {
 
     handleEditMode(this);
 
-    // Background.gradientStretchedToFitWorld({
-    //   scene: this,
-    //   tileMapName: 'WorldBackgroundTileMap',
-    //   gradientColor1: 0xf3f9ff,
-    //   gradientColor2: 0xc4d7e5,
-    //   tileWidth: 512,
-    // });
     handlePlayerMovement(this);
 
     const { artworldToPhaser2DX, artworldToPhaser2DY } = CoordinatesTranslator;
@@ -253,11 +217,12 @@ export default class IjscoWereld extends Phaser.Scene {
 
   makeWorldElements() {
     // .........Ijswereld............................................................
-    const partSize = 1833;
+    const partSize = 917;
     let beginImage = 0;
+    const parts = 6;
 
-    for (let j = 0; j < 3; j++) {
-      for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < parts; j++) {
+      for (let i = 0; i < parts; i++) {
         this.add.image(partSize * j, partSize * i, this.backgroundImageKey + beginImage).setOrigin(0);
         beginImage++;
       }

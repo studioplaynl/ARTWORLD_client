@@ -42,36 +42,10 @@ export default class IjscoWereld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
-    // Ijsco
-    this.localAssetsCheck = {};
-
     const folderPath = './assets/world_ijsco/';
 
-    const loadArray = [
-      {
-        key: 'Portaal_vanafIcecream_naarIce',
-        path: `${folderPath}k_Portaal_vanafIcecream_naarIce-fs8.png`,
-      },
-      {
-        key: 'Portaal_vanICECREAMnaarHOME',
-        path: `${folderPath}k_Portaal_vanICECREAMnaarHOME_corr-fs8.png`,
-      },
-      { key: 'ijscowereld', path: `${folderPath}ijscowereld.jpg` },
-    ];
-
-    ServerCall.loadAssetArray(this, loadArray, 'localImage');
+    this.load.image('Portaal_vanafIcecream_naarIce', `${folderPath}k_Portaal_vanafIcecream_naarIce-fs8.png`);
+    this.load.image('Portaal_vanICECREAMnaarHOME', `${folderPath}k_Portaal_vanICECREAMnaarHOME_corr-fs8.png`);
 
     this.backgroundImageKey = 'icecream_world_background_';
     //  load 9 images in a for loop

@@ -42,35 +42,10 @@ export default class FlamengoWereld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
-    // BergenWereld
-    this.localAssetsCheck = {};
-
     const folderPath = './assets/world_flamengo/';
 
-    const loadArray = [
-      {
-        key: 'Portal_naarHuis_flamengo',
-        path: `${folderPath}_Portaal_Flamingocity_naarHuis_small-fs8.png`,
-      },
-      {
-        key: 'flamengeWereld_geheel',
-        path: `${folderPath}geheel_Wereld18_FlamingoCity.jpg`,
-      },
-    ];
-
-    ServerCall.loadAssetArray(this, loadArray, 'localImage');
+    // Portal
+    this.load.image('Portal_naarHuis_flamengo', `${folderPath}_Portaal_Flamingocity_naarHuis_small-fs8.png`);
 
     this.backgroundImageKey = 'flamengo_background_';
     //  load 9 images in a for loop

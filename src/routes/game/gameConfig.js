@@ -95,7 +95,10 @@ const SCENES = [
 ];
 
 import { CONFIG } from '../../constants';
-import Background from './class/Background';
+import { getDeviceType } from '../../helpers/deviceDetection';
+
+const deviceType = getDeviceType();
+const isMobileOrTablet = deviceType === 'mobile' || deviceType === 'tablet';
 
 export default {
   parent: 'phaserId',
@@ -110,18 +113,17 @@ export default {
   },
 
   scale: {
-    mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
     width: CONFIG.WIDTH,
     height: CONFIG.HEIGHT,
+    zoom: window.devicePixelRatio || 1,
+    parent: 'phaserId',
+    expandParent: true,
+    //fixes scaling on mobile and keeps resizing on desktop
+    mode: isMobileOrTablet ? Phaser.Scale.FIT : Phaser.Scale.RESIZE, 
+    autoCenter: Phaser.Scale.CENTER_BOTH
   },
   plugins: {
     scene: [
-      // {
-      //   key: 'rexSpinner',
-      //   plugin: SpinnerPlugin,
-      //   mapping: 'rexSpinner',
-      // },
       {
         key: 'rexGestures',
         plugin: GesturesPlugin,
@@ -130,16 +132,6 @@ export default {
     ],
 
     global: [
-      //!  {
-      //   key: 'rexCircleMaskImagePlugin',
-      //   plugin: CircleMaskImagePlugin,
-      //   start: true,
-      // },
-      // {
-      //   key: 'rexScroller',
-      //   plugin: ScrollerPlugin,
-      //   start: true,
-      // },
       {
         key: 'rexOutlinePipeline',
         plugin: OutlinePipelinePlugin,

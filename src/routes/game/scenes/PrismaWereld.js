@@ -43,37 +43,11 @@ export default class PrismaWereld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
     // BergenWereld
-    this.localAssetsCheck = {};
-
     const folderPath = './assets/world_prism/';
 
-    const loadArray = [
-      {
-        key: 'Portal_naarHuis_prisma',
-        path: `${folderPath}Portaal_Prisma_naar_huisCROP-fs8.png`,
-      },
-
-      // { key: 'prismawereld', path: `${folderPath}Prisma_no_beams_geheel.jpg` },
-      {
-        key: 'prismawereld_beams',
-        path: `${folderPath}rainBow_Layer_Only-fs8.png`,
-      },
-    ];
-
-    ServerCall.loadAssetArray(this, loadArray, 'localImage');
+    this.load.image('Portal_naarHuis_prisma', `${folderPath}Portaal_Prisma_naar_huisCROP-fs8.png`);
+    this.load.image('prismawereld_beams', `${folderPath}rainBow_Layer_Only-fs8.png`);
 
     this.backgroundImageKey = 'prisma_background_';
     //  load 9 images in a for loop

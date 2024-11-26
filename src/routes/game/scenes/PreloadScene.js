@@ -220,13 +220,7 @@ this.load.image('animation-icon', '/assets/SHB/svg/AW-icon-square-animation.svg'
   }
 
   async create() {
-    // this.load.on('loaderror', (offendingFile) => {
-    //   dlog('loaderror', offendingFile);
-    //   if (typeof offendingFile !== 'undefined') {
-    //     ServerCall.resolveLoadError(offendingFile);
-    //     // this.resolveLoadError(offendingFile);
-    //   }
-    // });
+
     this.playerMovingKey = 'moving';
     this.playerStopKey = 'stop';
 

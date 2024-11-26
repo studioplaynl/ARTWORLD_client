@@ -42,39 +42,13 @@ export default class MoerasWereld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
-    // assets
-    this.localAssetsCheck = {};
-
     // assets names
     this.backgroundImageName = `background_${this.scene.key}`;
     this.portalImageName = `portal_${this.scene.key}`;
 
     const folderPath = './assets/world_swamp/';
 
-    const loadArray = [
-      {
-        key: this.portalImageName,
-        path: `${folderPath}02b_portaal_swamp_naarPaarsemainworld_400px-fs8.png`,
-      },
-      {
-        key: this.backgroundImageName,
-        path: `${folderPath}swamp_wereld_total.jpg`,
-      },
-    ];
-
-    ServerCall.loadAssetArray(this, loadArray, 'localImage');
+    this.load.image(this.portalImageName, `${folderPath}02b_portaal_swamp_naarPaarsemainworld_400px-fs8.png`);
 
     this.backgroundImageKey = 'moeras_background_';
     //  load 9 images in a for loop

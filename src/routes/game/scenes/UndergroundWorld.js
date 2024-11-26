@@ -44,30 +44,11 @@ export default class UndergroundWorld extends Phaser.Scene {
   }
 
   async preload() {
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
-    this.localAssetsCheck = {};
     // Underground
     const folderPath = './assets/world_underground/';
-    this.localAssetsCheck = {};
 
-    const loadArray = [
-      {
-        key: 'Portal_naarHuis_underground',
-        path: `${folderPath}Portal_naarHuis.png`,
-      },
-
-      // { key: 'gras_metmieren', path: `${folderPath}gras_metAppel2.png` },
-      // { key: 'geheel', path: `${folderPath}geheel_noPalettes-fs8.png` },
-      { key: 'mier02', path: `${folderPath}mier02.png` },
-    ];
-
-    ServerCall.loadAssetArray(this, loadArray, 'localImage');
+    this.load.image('Portal_naarHuis_underground', `${folderPath}Portal_naarHuis.png`);
+    this.load.image('mier02', `${folderPath}mier02.png`);
 
     this.backgroundImageKey = 'undergroundWorld_background_';
     //  load 9 images in a for loop

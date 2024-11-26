@@ -43,71 +43,22 @@ export default class PizzaWorld extends Phaser.Scene {
   }
 
   async preload() {
-    /** subscription to the loaderror event
-     * strangely: if the more times the subscription is called, the more times the event is fired
-     * so we subscribe here only once in the scene
-     * so we don't have to remember to subribe to it when we download something that needs error handling
-     */
-    this.load.on('loaderror', (offendingFile) => {
-      dlog('loaderror', offendingFile);
-      if (typeof offendingFile !== 'undefined') {
-        ServerCall.resolveLoadError(offendingFile);
-      }
-    });
-
     // Pizzaworld
     const folderPath = './assets/world_pizza/';
-    this.localAssetsCheck = {};
-
-    const loadArray = [
-      {
-        key: 'Portal_naarHuis_pizza',
-        path: `${folderPath}Portal_naarHuis_pizza.png`,
-      },
-
-      {
-        key: 'kaasbrugg_01_pizza',
-        path: `${folderPath}03c_bruggcorrectie_6_6_23.png`,
-      },
-      {
-        key: 'kaasbrugg_02_pizza',
-        path: `${folderPath}03b_bruggcorrectie_6_6_23.png`,
-      },
-      {
-        key: 'kaasbrugg_03_pizza',
-        path: `${folderPath}03a_bruggcorrectie_6_6_23.png`,
-      },
-
-      {
-        key: 'Slice_Caprese_metTomaatpeople',
-        path: `${folderPath}Slice_Caprese_metTomaatpeople.png`,
-      },
-
-      {
-        key: 'pizza_margarita',
-        path: `${folderPath}margarita_00_corr_6_6_23.png`,
-      },
-      {
-        key: 'pizza_margarita2',
-        path: `${folderPath}margarita_02_correctie_6_6_23.png`,
-      },
-      {
-        key: 'pizza_margarita3',
-        path: `${folderPath}margarita_01_correctie_6_6_23.png`,
-      },
-
-      {
-        key: 'ananasguy',
-        path: `${folderPath}ananasGuy_04_correctie_6_6_23.png`,
-      },
-      { key: 'basil_2a', path: `${folderPath}basil_2a.png` },
-      { key: 'paprika_g1', path: `${folderPath}paprika_g1.png` },
-      { key: 'paprika_y1', path: `${folderPath}paprika_y1.png` },
-      { key: 'korr_tomaat03_b', path: `${folderPath}korr_tomaat03_b.png` },
-    ];
-
-    ServerCall.loadAssetArray(this, loadArray, 'localImage');
-    // this.load.image('Portal_naarHuis_pizza', `${folderPath}Portal_naarHuis_pizza.png`);
+    
+    this.load.image('Portal_naarHuis_pizza', `${folderPath}Portal_naarHuis_pizza.png`);
+    this.load.image('kaasbrugg_01_pizza', `${folderPath}03c_bruggcorrectie_6_6_23.png`);
+    this.load.image('kaasbrugg_02_pizza', `${folderPath}03b_bruggcorrectie_6_6_23.png`);
+    this.load.image('kaasbrugg_03_pizza', `${folderPath}03a_bruggcorrectie_6_6_23.png`);
+    this.load.image('Slice_Caprese_metTomaatpeople', `${folderPath}Slice_Caprese_metTomaatpeople.png`);
+    this.load.image('pizza_margarita', `${folderPath}margarita_00_corr_6_6_23.png`);
+    this.load.image('pizza_margarita2', `${folderPath}margarita_02_correctie_6_6_23.png`);
+    this.load.image('pizza_margarita3', `${folderPath}margarita_01_correctie_6_6_23.png`);
+    this.load.image('ananasguy', `${folderPath}ananasGuy_04_correctie_6_6_23.png`);
+    this.load.image('basil_2a', `${folderPath}basil_2a.png`);
+    this.load.image('paprika_g1', `${folderPath}paprika_g1.png`);
+    this.load.image('paprika_y1', `${folderPath}paprika_y1.png`);
+    this.load.image('korr_tomaat03_b', `${folderPath}korr_tomaat03_b.png`);
   }
 
   async create() {
