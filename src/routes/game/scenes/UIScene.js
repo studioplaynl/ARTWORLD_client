@@ -15,7 +15,7 @@ import {
 } from '../../../storage';
 import { Profile, HomeEditBarExpanded } from '../../../session';
 import { MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
-import { getDeviceType } from '../../../helpers/deviceDetection';
+import { getDeviceType, getScreenDimensions } from '../../../helpers/deviceDetection';
 import { PlayerZoom, PlayerLocation, PlayerPos } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 
@@ -273,7 +273,10 @@ export default class UIScene extends Phaser.Scene {
           this.minimapCamera.setBounds(0, 0,
             ManageSession.currentScene.worldSize.x, ManageSession.currentScene.worldSize.y);
         
-          const windowSize = this.scene.scene.scale.displaySize;
+          const windowSize = getScreenDimensions(MINIMAP_SIZE, MINIMAP_SIZE);
+          console.log('windowSize: ', windowSize)
+          const scaledDimensions = getScreenDimensions(MINIMAP_SIZE, MINIMAP_SIZE);
+          console.log('windowSize getScreenDimensions: ', scaledDimensions);
           // Create a rectangle to represent the current view
           this.minimap_ReferenceFrame = this.add.rectangle(
             windowSize.width - (this.miniMapDimensions.x / 2) - MINIMAP_MARGIN,
