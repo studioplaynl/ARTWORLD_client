@@ -1,6 +1,5 @@
 <script>
   import { _ } from 'svelte-i18n';
-  import SvelteTable from 'svelte-table';
   import { push } from 'svelte-spa-router';
   import { PERMISSION_READ_PUBLIC } from '../../constants';
   import {
@@ -50,93 +49,34 @@
     backActive;
 
   const columns = [
-    {
-      key: 'Soort',
-      title: 'Soort',
-      value: (v) => {
-        if (v.collection == 'drawing') {
-          return drawingIcon;
-        }
-        if (v.collection == 'stopmotion') {
-          return stopMotionIcon;
-        }
-        if (v.collection == 'audio') {
-          return AudioIcon;
-        }
-        if (v.collection == 'video') {
-          return videoIcon;
-        }
-      },
-      sortable: true,
-    },
-    {
-      key: 'voorbeeld',
-      title: 'voorbeeld',
-      value: (v) => `<img src="${v.value.previewUrl}">`,
-    },
-    {
-      key: 'title',
-      title: 'Title',
-      renderComponent: {
-        component: NameEdit,
-        props: {
-          isCurrentUser,
-        },
-      },
-    },
-    {
-      key: 'Datum',
-      title: 'Datum',
-      value: (v) => v.update_time,
-      filterValue: (v) => v.update_time,
-      renderValue: (v) => {
-        const d = new Date(v.update_time);
-        return `${d.getHours()}:${
-          d.getMinutes() < 10 ? '0' : ''
-        }${d.getMinutes()} ${d.getDate() < 10 ? '0' : ''}${d.getDate()}/${
-          d.getMonth() + 1
-        }/${d.getFullYear()}`;
-      },
-      sortable: true,
-    },
-    {
-      key: 'Username',
-      title: 'Username',
-      value: (v) => `<a >${v.username}</a>`, // href="/#/profile/${v.user_id}"
-      sortable: true,
-    },
-    {
-      key: 'Status',
-      title: 'Status',
-      class: 'iconWidth',
-      renderComponent: {
-        component: StatusComp,
-        props: {
-          moveToArt,
-          isCurrentUser,
-        },
-      },
-    },
-    {
-      key: 'Download',
-      title: 'Download',
-      renderComponent: {
-        component: DownloadComp,
-      },
-    },
-    {
-      key: 'Delete',
-      title: 'Delete',
-      renderComponent: {
-        component: DeleteComp,
-        props: {
-          removeFromTrash,
-          moveToTrash,
-          isCurrentUser,
-        },
-      },
-    },
+    'Type',
+    'Preview',
+    'Title',
+    'Date',
+    'Username',
+    'Status',
+    'Download',
+    'Delete'
   ];
+
+  function formatDate(timestamp) {
+    const d = new Date(timestamp);
+    return `${d.getHours()}:${
+      d.getMinutes() < 10 ? '0' : ''
+    }${d.getMinutes()} ${d.getDate() < 10 ? '0' : ''}${d.getDate()}/${
+      d.getMonth() + 1
+    }/${d.getFullYear()}`;
+  }
+
+  function getTypeIcon(collection) {
+    switch(collection) {
+      case 'drawing': return drawingIcon;
+      case 'stopmotion': return stopMotionIcon;
+      case 'audio': return AudioIcon;
+      case 'video': return videoIcon;
+      default: return '';
+    }
+  }
 
   function removeFromTrash(row) {
     deleteObjectAdmin(row.user_id, row.collection, row.key);
@@ -306,66 +246,108 @@
       &gt;
     </button>
   </div>
-  <SvelteTable columns="{columns}" rows="{art}" classNameTable="profileTable" />
-  {#if CurrentUser || $Profile.meta.Role == 'moderator' || $Profile.meta.Role == 'admin'}
-    <div class="buttonbox">
-      <button
-        class:unactive="{backActive}"
-        on:click="{() => {
-          if (history.length > 1) getArt('back');
-        }}"
-      >
-        &lt;
-      </button>
-      <button
-        class:unactive="{SelectedApp !== 'drawing'}"
-        on:click="{() => {
-          handleChange('drawing');
-        }}"
-      >
-        Drawing
-      </button>
-      <button
-        class:unactive="{SelectedApp !== 'stopmotion'}"
-        on:click="{() => {
-          handleChange('stopmotion');
-        }}"
-      >
-        stopmotion
-      </button>
-      <button
-        class:unactive="{SelectedApp !== 'avatar'}"
-        on:click="{() => {
-          handleChange('avatar');
-        }}"
-      >
-        Avatar
-      </button>
-      <button
-        class:unactive="{SelectedApp !== 'house'}"
-        on:click="{() => {
-          handleChange('house');
-        }}"
-      >
-        House
-      </button>
 
-      <button
-        class:unactive="{cursor == undefined}"
-        on:click="{() => {
-          if (cursor != undefined) getArt('next');
-        }}"
-      >
-        &gt;
-      </button>
+  <div class="art-list">
+    <div class="header">
+      {#each columns as column}
+        <span>{column}</span>
+      {/each}
     </div>
+
+    {#each art as item}
+      <div class="art-row">
+        <span class="type-icon">
+          {@html getTypeIcon(item.collection)}
+        </span>
+        <span class="preview">
+          <img src={item.value.previewUrl} alt="Preview" />
+        </span>
+        <span class="title">
+          <NameEdit 
+            row={item} 
+            isCurrentUser={isCurrentUser} 
+          />
+        </span>
+        <span class="date">
+          {formatDate(item.update_time)}
+        </span>
+        <span class="username">
+          <a href="/#/profile/{item.user_id}">{item.username}</a>
+        </span>
+        <span class="status">
+          <StatusComp 
+            row={item} 
+            moveToArt={moveToArt}
+            isCurrentUser={isCurrentUser}
+          />
+        </span>
+        <span class="download">
+          <DownloadComp row={item} />
+        </span>
+        <span class="delete">
+          <DeleteComp 
+            row={item}
+            removeFromTrash={removeFromTrash}
+            moveToTrash={moveToTrash}
+            isCurrentUser={isCurrentUser}
+          />
+        </span>
+      </div>
+    {/each}
+  </div>
+
+  {#if CurrentUser || $Profile.meta.Role == 'moderator' || $Profile.meta.Role == 'admin'}
     <h1>Prullenmand</h1>
-    <SvelteTable
-      columns="{columns}"
-      rows="{trash}"
-      classNameTable="profileTable"
-    />
+    <div class="art-list">
+      <div class="header">
+        {#each columns as column}
+          <span>{column}</span>
+        {/each}
+      </div>
+
+      {#each trash as item}
+        <div class="art-row">
+          <span class="type-icon">
+            {@html getTypeIcon(item.collection)}
+          </span>
+          <span class="preview">
+            <img src={item.value.previewUrl} alt="Preview" />
+          </span>
+          <span class="title">
+            <NameEdit 
+              row={item} 
+              isCurrentUser={isCurrentUser} 
+            />
+          </span>
+          <span class="date">
+            {formatDate(item.update_time)}
+          </span>
+          <span class="username">
+            <a href="/#/profile/{item.user_id}">{item.username}</a>
+          </span>
+          <span class="status">
+            <StatusComp 
+              row={item} 
+              moveToArt={moveToArt}
+              isCurrentUser={isCurrentUser}
+            />
+          </span>
+          <span class="download">
+            <DownloadComp row={item} />
+          </span>
+          <span class="delete">
+            <DeleteComp 
+              row={item}
+              removeFromTrash={removeFromTrash}
+              moveToTrash={moveToTrash}
+              isCurrentUser={isCurrentUser}
+            />
+          </span>
+        </div>
+      {/each}
+    </div>
   {/if}
+
   <div class="buttonbox">
     <button
       class:unactive="{backActive}"
@@ -429,6 +411,55 @@
 </div>
 
 <style>
+  .art-list {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 1rem 0;
+  }
+
+  .header {
+    display: grid;
+    grid-template-columns: 40px 64px 200px 150px 150px 80px 80px 80px;
+    padding: 0.5rem;
+    background: #f5f5f5;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    gap: 0.5rem;
+  }
+
+  .art-row {
+    display: grid;
+    grid-template-columns: 40px 64px 200px 150px 150px 80px 80px 80px;
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid #eee;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .art-row:hover {
+    background: #f9f9f9;
+  }
+
+  .preview img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
+  .type-icon img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .art-row span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
   button{
     background-color: #7300ed;
   }
@@ -460,6 +491,8 @@
   .buttonbox {
     display: flex;
     flex-direction: row;
+    gap: 0.5rem;
+    margin: 1rem 0;
   }
 
   button.unactive {

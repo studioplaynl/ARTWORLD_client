@@ -1,15 +1,16 @@
 <script>
   import { push } from 'svelte-spa-router';
-  import SvelteTable from 'svelte-table';
   import {
     ListAllUsers,
   } from '../../helpers/nakamaHelpers';
   import { dlog } from '../../helpers/debugLog';
   import { SCENE_INFO } from '../../constants';
 
-  // const groups = [];
   let users = [];
   let Locaties = [];
+  let searchTerm = '';
+  let selectedRole = '';
+  let selectedLocation = '';
 
   const drawingIcon =
     // eslint-disable-next-line max-len
@@ -18,7 +19,6 @@
   ListAllUsers().then((list) => {
     list.shift();
     list.forEach((user) => {
-      // eslint-disable-next-line no-param-reassign
       if (!user.meta.Azc) user.meta.Azc = 'Unknown';
       if (user.meta.azc || user.meta.role) {
         dlog('Incorrect Profile formatting!!! ', user);
@@ -28,12 +28,6 @@
     users = list;
   });
 
-  // location house
-  // edit user
-  // create user
-  
-  // lists all the scenes in the SCENE_INFO object
-  // it has an option of lowercase: true to return all the scenes in lowercase
   function getAllScenes(obj, options = {}) {
     let scenes = [];
     
@@ -49,72 +43,76 @@
     return scenes;
   }
 
-
   const roles = ['admin', 'speler', 'kunstenaar', 'moderator'];
-  // const groupColumns = [];
-  const userColumns = [
-    {
-      key: 'Username',
-      title: 'Username',
-      value: (v) => `<a >${v.name}<a>`, // href="/#/profile/${v.user_id}"
-      sortable: true,
-      searchValue: (v) => v.name,
-    },
-    // {
-    //   key: 'User ID',
-    //   title: 'User ID',
-    //   value: (v) => v.user_id,
-    //   sortable: true,
-    //   searchValue: (v) => v.user_id,
-    // },
-    {
-      key: 'Locatie',
-      title: 'Huis locatie',
-      value: (v) => v.meta.Azc,
-      sortable: true,
-      filterOptions: Locaties,
-    },
-    {
-      key: 'Last location',
-      title: 'Laatste locatie',
-      value: (v) => v.meta.Location,
-    },
-    {
-      key: 'rol',
-      title: 'Rol',
-      value: (v) => v.meta.Role,
-      filterOptions: roles,
-    },
-    {
-      key: 'Edit',
-      title: 'Edit',
-      value: (v) => ` <a href="/#/update/${v.user_id}">${drawingIcon}</a>`,
-    },
-  ];
+
+  $: filteredUsers = users.filter(user => {
+    const matchesSearch = searchTerm === '' || 
+      user.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = selectedRole === '' || 
+      user.meta.Role === selectedRole;
+    const matchesLocation = selectedLocation === '' || 
+      user.meta.Azc === selectedLocation;
+    
+    return matchesSearch && matchesRole && matchesLocation;
+  });
 </script>
 
 <div class="box">
   <h1>All Users</h1>
-  <a href="/#/register"><button>Add new user</button></a>
-  <a href="/#/printSheet"><button>Print QR Code Sheet</button></a>
-  <SvelteTable
-    columns="{userColumns}"
-    rows="{users}"
-    classNameTable="profileTable"
-  />
+  
+  <div class="top-controls">
+    <div class="buttons">
+      <a href="/#/register"><button>Add new user</button></a>
+      <a href="/#/printSheet"><button>Print QR Code Sheet</button></a>
+    </div>
 
-  <!-- <h1>All Groeps</h1>
-  <a href="/#/group"><button>Add new group</button></a>
-  <SvelteTable
-    columns="{groupColumns}"
-    rows="{groups}"
-    classNameTable="profileTable"
-  /> -->
+    <div class="filters">
+      <input
+        type="text"
+        placeholder="Search by username..."
+        bind:value={searchTerm}
+      />
+      <select bind:value={selectedRole}>
+        <option value="">All Roles</option>
+        {#each roles as role}
+          <option value={role}>{role}</option>
+        {/each}
+      </select>
+      <select bind:value={selectedLocation}>
+        <option value="">All Locations</option>
+        {#each Locaties as location}
+          <option value={location}>{location}</option>
+        {/each}
+      </select>
+    </div>
+  </div>
+
+  <div class="user-list">
+    <div class="header">
+      <span>Username</span>
+      <span>House Location</span>
+      <span>Last Location</span>
+      <span>Role</span>
+      <span>Edit</span>
+    </div>
+    {#each filteredUsers as user}
+      <div class="user-row">
+        <span title={user.name}>{user.name}</span>
+        <span title={user.meta.Azc}>{user.meta.Azc}</span>
+        <span title={user.meta.Location || '-'}>{user.meta.Location || '-'}</span>
+        <span title={user.meta.Role || '-'}>{user.meta.Role || '-'}</span>
+        <span>
+          <a href="/#/update/{user.user_id}">
+            {@html drawingIcon}
+          </a>
+        </span>
+      </div>
+    {/each}
+  </div>
+
   <div
     class="app-close"
-    on:click="{() => {
-      push('/');
-    }}"
+    on:click={() => push('/')}
   >
     <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
   </div>
@@ -159,4 +157,109 @@
       bottom: 120px;
     }
   } */
+
+  .top-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
+
+  .buttons button {
+    background-color: #7300ed;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .filters {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .filters input,
+  .filters select {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .user-list {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .header {
+    display: grid;
+    grid-template-columns: 150px 150px 150px 100px 40px;
+    padding: 0.5rem;
+    background: #f5f5f5;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    gap: 0.5rem;
+  }
+
+  .user-row {
+    display: grid;
+    grid-template-columns: 150px 150px 150px 100px 40px;
+    padding: 0.35rem 0.5rem;
+    border-bottom: 1px solid #eee;
+    gap: 0.5rem;
+  }
+
+  .user-row:hover {
+    background: #f9f9f9;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    fill: #7300ed;
+  }
+
+  .user-row span, .header span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    justify-self: start;
+    line-height: 1.2;
+    position: relative;
+    cursor: default;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .user-row span:hover::before {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: white;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: normal;
+    max-width: 200px;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .user-row span {
+    user-select: text;
+  }
+
+  .user-row span:first-child, .header span:first-child {
+    color: #7300ed;
+  }
 </style>

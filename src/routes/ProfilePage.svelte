@@ -16,9 +16,6 @@
  *  click avatar icon again > unfolds right side of itemsBar with:
  *  username, AvatarSelector.svelte (edit avatar), HomeSelector.svelte (edit home image), list of artworks
  */
-
-  import SvelteTable from 'svelte-table';
-
   import { ArtworksStore, AvatarsStore } from '../storage';
   import {
     getAccount,
@@ -338,25 +335,52 @@
 
 <!-- list of artworks, and trash can -->
       <div class="profilePage-bottom">
-        <!-- list of artworks with send mail, visibility and delete buttons -->
-        <SvelteTable
-          columns="{columns}"
-          rows="{filteredArt}"
-          classNameTable="profileTable"
-        />
-        <!-- artworks in the trash -->
+        <!-- Regular artworks -->
+        <div class="artworks-container">
+          {#each filteredArt as artwork}
+            <div class="artwork-row">
+              <ArtworkLoader
+                row={artwork}
+                artClickable={true}
+              />
+              
+              <div class="artwork-actions">
+                <PostSend row={artwork} />
+                <StatusComp row={artwork} store={store} isCurrentUser={isCurrentUser} />
+                <DeleteComp row={artwork} store={store} isCurrentUser={isCurrentUser} />
+              </div>
+            </div>
+          {/each}
+        </div>
+
+        <!-- Deleted artworks -->
         {#if CurrentUser && deletedArt.length}
-          <img
-            class="icon"
-            src="assets/SHB/svg/AW-icon-trashcan.svg"
-            alt="Trash can"
-          />
-          <SvelteTable
-            columns="{columns}"
-            rows="{deletedArt}"
-            classNameTable="profileTable deletedTable"
-          />
+          <div class="trash-section">
+            <img
+              class="icon"
+              src="assets/SHB/svg/AW-icon-trashcan.svg"
+              alt="Trash can"
+            />
+            
+            <div class="artworks-container deleted">
+              {#each deletedArt as artwork}
+                <div class="artwork-row">
+                  <ArtworkLoader
+                    row={artwork}
+                    artClickable={true}
+                  />
+                  
+                  <div class="artwork-actions">
+                    <PostSend row={artwork} />
+                    <StatusComp row={artwork} store={store} isCurrentUser={isCurrentUser} />
+                    <DeleteComp row={artwork} store={store} isCurrentUser={isCurrentUser} />
+                  </div>
+                </div>
+              {/each}
+            </div>
+          </div>
         {/if}
+
         <p>{APP_VERSION}</p>
       </div>
     </div>
@@ -405,9 +429,46 @@
   } */
 
   .profilePage-bottom {
-    margin: 0 auto;
-    display: block;
-    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .artworks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .artwork-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+
+  .artwork-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .trash-section {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .trash-section .icon {
+    max-width: 4rem;
+    height: 4rem;
+    align-self: flex-start;
+  }
+
+  .deleted .artwork-row {
+    border: 2px solid #ffcdd2;
+    border-radius: 10px;
   }
 
   .profilePage-top {

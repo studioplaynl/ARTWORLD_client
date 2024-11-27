@@ -6,29 +6,30 @@
     FRIENDSTATE_INVITATION_RECEIVED,
   } from '../../constants';
 
-  export let row;
+  export let friend;
   export let load;
 
   async function accept() {
-    // dlog(row.user.id)
-    addFriend(row.user.id).then(() => load());
+    await addFriend(friend.user.id);
+    load();
   }
+  
   async function cancel() {
-    // dlog('cancel clicked');
-    removeFriend(row.user.id).then(() => load());
+    await removeFriend(friend.user.id);
+    load();
   }
 
-  $: canAccept = row.state === FRIENDSTATE_INVITATION_RECEIVED;
+  $: canAccept = friend.state === FRIENDSTATE_INVITATION_RECEIVED;
 
   $: canCancel =
-    row.state === FRIENDSTATE_FRIENDS ||
-    row.state === FRIENDSTATE_INVITATION_SENT ||
-    row.state === FRIENDSTATE_INVITATION_RECEIVED;
+    friend.state === FRIENDSTATE_FRIENDS ||
+    friend.state === FRIENDSTATE_INVITATION_SENT ||
+    friend.state === FRIENDSTATE_INVITATION_RECEIVED;
 </script>
 
 <main>
   {#if canAccept}
-    <button class="accept" on:click="{accept}">
+    <button class="accept" on:click={accept}>
       <img
         class="icon"
         src="/assets/SHB/svg/AW-icon-check.svg"
@@ -37,7 +38,7 @@
     </button>
   {/if}
   {#if canCancel}
-    <button class="cancel" on:click="{cancel}">
+    <button class="cancel" on:click={cancel}>
       <img
         class="icon"
         src="/assets/SHB/svg/AW-icon-trash.svg"

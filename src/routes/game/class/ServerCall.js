@@ -30,7 +30,9 @@ import {
   ART_FRAME_BORDER, 
   AVATAR_SPRITESHEET_LOAD_SIZE, 
   IMAGE_BASE_SIZE, 
-  STOPMOTION_BASE_SIZE } from '../../../constants';
+  STOPMOTION_BASE_SIZE,
+  ART_DISPLAY_SIZE_MEDIUM
+} from '../../../constants';
 
 import { dlog } from '../../../helpers/debugLog';
 import AnimalChallenge from './animalChallenge';
@@ -315,7 +317,10 @@ class ServerCall {
    */
 
   async downloadAndPlaceArtByType({ type, serverObjectsHandler, artSize, artMargin }) {
-    // const scene = ManageSession.currentScene;
+    // Replace artSize parameter with ART_DISPLAY_SIZE_MEDIUM for all types
+    const standardArtSize = ART_DISPLAY_SIZE_MEDIUM;
+    const standardArtMargin = standardArtSize / 10;
+
     if (type === 'dier') {
       let allFoundAnimals;
       let animalsOfUser;
@@ -397,8 +402,8 @@ class ServerCall {
         this.handleServerArray({
           type,
           serverObjectsHandler,
-          artSize,
-          artMargin,
+          artSize: standardArtSize,
+          artMargin: standardArtMargin,
         });
       } else {
         // we use all available animals
@@ -409,8 +414,8 @@ class ServerCall {
         this.handleServerArray({
           type,
           serverObjectsHandler,
-          artSize,
-          artMargin,
+          artSize: standardArtSize,
+          artMargin: standardArtMargin,
         });
       } // end of dier
     } else if (type === 'bloem') {
@@ -495,14 +500,19 @@ class ServerCall {
         this.handleServerArray({
           type,
           serverObjectsHandler,
-          artSize,
-          artMargin,
+          artSize: standardArtSize,
+          artMargin: standardArtMargin,
         });
       } else {
         // we use all available flowers
 
         serverObjectsHandler.array = allFoundFlowers;
-        this.handleServerArray(type, serverObjectsHandler, artSize, artMargin);
+        this.handleServerArray({
+          type,
+          serverObjectsHandler,
+          artSize: standardArtSize,
+          artMargin: standardArtMargin,
+        });
       } // end of bloem
     } else if (type === 'downloadLikedDrawing') {
       // async get the liked stores and handle the data when they are loaded
@@ -516,41 +526,13 @@ class ServerCall {
           this.handleServerArray({
             type,
             serverObjectsHandler,
-            artSize,
-            artMargin,
+            artSize: standardArtSize,
+            artMargin: standardArtMargin,
           });
         })
         .catch((error) => {
           console.error('Error:', error);
         });
-    } else if (type === 'downloadStopmotionDefaultUserHome') {
-      /** type === 'downloadStopmotionDefaultUserHome'
-       *  is for downloading all the stopmotions from a user's home
-       */
-      // const scene = ManageSession.currentScene;
-      // // make a new drawingGallery store
-      // const stopmotiongGallery = homeGalleryStore('stopmotion', selfHome);
-      // // set the pageSize of the gallery
-      // stopmotiongGallery.setHomeGalleryPageSize(scene.homeGallery_stopmotion_PageSize);
-      // // set the currrent page of the gallery
-      // stopmotiongGallery.setHomeGalleryCurrentPage(scene.homeGallery_stopmotion_CurrentPage);
-      // await stopmotiongGallery.loadArtworks(userId);
-      // // Get total pages
-      // const totalPages = get(stopmotiongGallery.homeGalleryTotalPages);
-      // scene.homeGallery_stopmotion_TotalPages = totalPages;
-      // console.log('Total pages:', totalPages);
-      // // Get current paginated artworks
-      // const currentImages = get(stopmotiongGallery.homeGalleryPaginatedArt);
-      // scene.homeGallery_stopmotion_ArtOnCurrentPage = currentImages;
-      // console.log('Current paginated artworks stopmotion:', currentImages);
-      // serverObjectsHandler.array = currentImages;
-      // dlog('serverObjectsHandler: ', type, userId, serverObjectsHandler);
-      // this.handleServerArray({
-      //   type,
-      //   serverObjectsHandler,
-      //   artSize,
-      //   artMargin,
-      // });
     } else if (type === 'drawing_HomeElement') {
       console.log('type: ', type);
       /** type === 'drawing_HomeElement'
@@ -573,8 +555,8 @@ class ServerCall {
       this.handleServerArray({
         type,
         serverObjectsHandler,
-        artSize,
-        artMargin,
+        artSize: standardArtSize,
+        artMargin: standardArtMargin,
       });
     }
   }
@@ -791,6 +773,7 @@ class ServerCall {
             });
 
 
+
             // Start download of unique element
             this.downloadArtwork({
               element: uniqueElement,
@@ -879,8 +862,9 @@ class ServerCall {
 
     const imageKeyUrl = element.value.url;
 
-    const artSizeSaved = element.value.height;
-
+    // Use medium size instead of large
+    const artSizeSaved = ART_DISPLAY_SIZE_MEDIUM;
+    
     const posY_Phaser = CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, element.value.posY);
     const posX_Phaser = CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, element.value.posX);
 
@@ -912,6 +896,10 @@ class ServerCall {
       .setOrigin(0.5)
     .setName('homeElement-artwork');
 
+    // Explicitly set the size to medium
+    setImage.displayWidth = artSizeSaved;
+    setImage.displayHeight = artSizeSaved;
+
     // Add this line to apply flipX if it exists in the element's value
     if (element.value.flipX) {
       setImage.setFlipX(element.value.flipX);
@@ -942,10 +930,6 @@ class ServerCall {
       .setOrigin(0.5)
       .setTint(greyTint)
       .setVisible(false); // Initially hidden
-
-    // explicitly set the size of the image incase the image has a non standard size
-    setImage.displayWidth = artSizeSaved;
-    setImage.displayHeight = artSizeSaved;
 
     // Make icon.move draggable
     icon.move.setInteractive({ draggable: true });

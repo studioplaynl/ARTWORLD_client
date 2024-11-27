@@ -1,35 +1,19 @@
 <script>
-  import SvelteTable from 'svelte-table';
   import { beforeUpdate, onDestroy } from 'svelte';
   import { Liked } from '../storage';
   import { PlayerPos, PlayerLocation, PlayerUpdate } from './game/playerState';
-  // import FriendAction from './components/FriendAction.svelte';
   import ArtworkLoader from './components/ArtworkLoader.svelte';
   import ToggleLikeButton from './components/ToggleLikeButton.svelte';
   import {
-    // ListFriends,
-    // addFriend,
-    // setLoader,
     convertImage,
     getAccount,
     getObject,
   } from '../helpers/nakamaHelpers';
-  // import { convertImage } from '../helpers/nakamaHelpers';
   import { DEFAULT_PREVIEW_HEIGHT } from '../constants';
-  // import { dlog } from '../helpers/debugLog';
   import { returnPartsOfArtUrl } from './game/helpers/UrlHelpers';
 
-  // const drawingIcon =
-  //   '<img class="icon" src="assets/SHB/svg/AW-icon-square-drawing.svg" />';
-  // const stopMotionIcon =
-  //   '<img class="icon" src="assets/SHB/svg/AW-icon-square-animation.svg" />';
-  // const AudioIcon =
-  //   '<img class="icon" src="assets/SHB/svg/AW-icon-square-music.svg.svg" />';
-  // const videoIcon =
-  //   '<img class="icon" src="assets/SHB/svg/AW-icon-play.svg" />';
   let alreadysubbed = false;
   let unsubscribe;
-
   let lastLengthArtworks;
   let likedArtworks;
   let images = [];
@@ -48,8 +32,6 @@
 
       if (lastLengthArtworks !== value.length) {
         lastLengthArtworks = value.length;
-
-        // clear the images list
         images = [];
         likedArtworks = value;
 
@@ -76,100 +58,87 @@
     });
   }
 
-  async function handleEvents(event) {
-    const { row } = event.detail;
-    // dlog('event: ', event);
-    if (event.detail.key === 'voorbeeld') {
-      // We send the player to the left side of the user's home
-      const likedArtUrl = row.url;
-      const parts = returnPartsOfArtUrl(likedArtUrl);
+  async function handleArtworkClick(row) {
+    const likedArtUrl = row.url;
+    const parts = returnPartsOfArtUrl(likedArtUrl);
 
-      if (parts === null) return;
+    if (parts === null) return;
 
-      const { userId } = parts;
+    const { userId } = parts;
+    const friendAccount = await getAccount(userId);
+    const friendHomeLocation = friendAccount.meta.Azc;
+    const friendHome = await getObject('home', friendHomeLocation, userId);
 
-      // get user account
-      const friendAccount = await getAccount(userId);
-      // in the friendAccount.meta:
-      // metadata.Azc
-      const friendHomeLocation = friendAccount.meta.Azc;
+    PlayerLocation.set({
+      scene: friendHomeLocation,
+    });
 
-      // get home object of friend to get pos of that home
-      const friendHome = await getObject('home', friendHomeLocation, userId);
+    if (typeof friendHome.value.posX !== 'undefined' && typeof friendHome.value.posY !== 'undefined') {
+      const playerPosX = friendHome.value.posX - 80;
+      const playerPosY = friendHome.value.posY - 100;
 
-      PlayerLocation.set({
-        scene: friendHomeLocation,
+      PlayerUpdate.set({ forceHistoryReplace: false });
+      PlayerPos.set({
+        x: playerPosX,
+        y: playerPosY,
       });
-
-      // check if there is posX and posY from the home object
-      if (typeof friendHome.value.posX !== 'undefined' && typeof friendHome.value.posY !== 'undefined') {
-        // place user next to nameplate of home
-        const playerPosX = friendHome.value.posX - 80;
-        const playerPosY = friendHome.value.posY - 100;
-
-        PlayerUpdate.set({ forceHistoryReplace: false });
-        PlayerPos.set({
-          x: playerPosX,
-          y: playerPosY,
-        });
-      } else {
-        // if there was no posX and y from home object
-        PlayerUpdate.set({ forceHistoryReplace: false });
-        PlayerPos.set({
-          x: -80,
-          y: -100,
-        });
-      }
+    } else {
+      PlayerUpdate.set({ forceHistoryReplace: false });
+      PlayerPos.set({
+        x: -80,
+        y: -100,
+      });
     }
   }
-
-  const columns = [
-  // {
-  //   key: 'Soort',
-  //   title: '',
-  //   value: (v) => {
-  //     if (v.collection === 'drawing') {
-  //       return drawingIcon;
-  //     }
-  //     if (v.collection === 'stopmotion') {
-  //       return stopMotionIcon;
-  //     }
-  //     if (v.collection === 'audio') {
-  //       return AudioIcon;
-  //     }
-  //     if (v.collection === 'video') {
-  //       return videoIcon;
-  //     }
-  //     return null;
-  //   },
-  //   sortable: true,
-  // },
-    {
-      key: 'voorbeeld',
-      title: '',
-      renderComponent: {
-        component: ArtworkLoader,
-        props: {},
-      },
-    },
-    {
-      key: 'unlike',
-      title: '',
-      renderComponent: {
-        component: ToggleLikeButton,
-        props: {
-
-        },
-      },
-    },
-
-  ];
-
 </script>
 
-<SvelteTable
-  columns="{columns}"
-  rows="{images}"
-  on:clickCell="{handleEvents}"
-  classNameTable="profileTable"
-/>
+<div class="liked-container">
+  {#each images as artwork}
+    <div class="artwork-row">
+      <button 
+        type="button"
+        class="artwork-preview"
+        on:click={() => handleArtworkClick(artwork)}
+        on:keydown={(e) => e.key === 'Enter' && handleArtworkClick(artwork)}
+      >
+        <ArtworkLoader
+          row={artwork}
+          artClickable={false}
+        />
+      </button>
+      
+      <ToggleLikeButton row={artwork} />
+    </div>
+  {/each}
+</div>
+
+<style>
+  .liked-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .artwork-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    border: 2px solid lightgrey;
+    border-radius: 10px;
+  }
+
+  .artwork-preview {
+    flex-grow: 1;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .artwork-preview:focus {
+    outline: 2px solid #7300ed;
+    outline-offset: -2px;
+  }
+</style>

@@ -1,6 +1,4 @@
 <script>
-  import SvelteTable from 'svelte-table';
-  // import MdSearch from 'svelte-icons/md/MdSearch.svelte';
   import { PlayerPos, PlayerLocation, PlayerUpdate } from './game/playerState';
   import FriendAction from './components/FriendAction.svelte';
   import ArtworkLoader from './components/ArtworkLoader.svelte';
@@ -20,9 +18,6 @@
     FRIENDSTATE_INVITATION_RECEIVED,
     STOPMOTION_MAX_FRAMES,
     DEFAULT_PREVIEW_HEIGHT,
-    // DEFAULT_HOME,
-    // SCENE_INFO,
-    // AVATAR_BASE_SIZE,
   } from '../constants';
 
   let friends = [];
@@ -65,19 +60,14 @@
 
   load();
 
-  async function goTo(event) {
-    const { row } = event.detail;
-    if (event.detail.key === 'action') return;
-
-    // We send the player to the left side of the user's home
-
+  async function goTo(friend) {
     // get user account
-    const friendAccount = await getAccount(row.user.id);
+    const friendAccount = await getAccount(friend.user.id);
     // in the friendAccount.meta:
     // metadata.Azc
     const friendHomeLocation = friendAccount.metadata.Azc;
     // get home object of friend to get pos of that home
-    const friendHome = await getObject('home', friendHomeLocation, row.user.id);
+    const friendHome = await getObject('home', friendHomeLocation, friend.user.id);
 
     PlayerLocation.set({
       scene: friendHomeLocation,
@@ -103,99 +93,144 @@
       });
     }
   }
-
-  const columns = [
-    {
-      key: 'status',
-      title: '',
-      value: (v) => {
-        if (v.user.online) {
-          return '<div class="online"/>';
-        }
-        return '<div class="offline"/>';
-      },
-    },
-    {
-      key: 'avatar',
-      title: '',
-      renderComponent: {
-        component: ArtworkLoader,
-        props: {},
-      },
-    },
-    {
-      key: 'Username',
-      title: 'Username',
-      value: (v) => `<p class="link">${v.user.display_name || v.user.username}<p>`,
-      sortable: true,
-    },
-    {
-      key: 'action',
-      title: '',
-      renderComponent: {
-        component: FriendAction,
-        props: {
-          load,
-        },
-      },
-    },
-  ];
 </script>
 
-<!-- searching for friends on the server stopped working
-we also want to be able to search on display_name
-which is not possible out of the box so we would have to write our own search -->
-<!-- <img
-  src="/assets/SHB/svg/AW-icon-add-friend.svg"
-  class="headerIcon"
-  alt="Add friend"
-/>
-<br />
-<div class="search">
-  <input bind:value="{Username}" />
-  <button
-    on:click="{() => {
-      addFriend(ID, Username).then(() => {
-        load();
-      });
-    }}"
-  >
-    <MdSearch />
-  </button>
-</div> -->
+<div class="friends-container">
+  {#if friendRequests.length > 0}
+    <div class="section">
+      <img
+        src="/assets/SHB/svg/AW-icon-friend-request.svg"
+        class="headerIcon"
+        alt="Friend requests"
+      />
+      
+      {#each friendRequests as friend}
+        <button 
+          type="button"
+          class="friend-row"
+          on:click={() => goTo(friend)}
+          on:keydown={(e) => e.key === 'Enter' && goTo(friend)}
+        >
+          <div class="status">
+            {#if friend.user.online}
+              <div class="online" role="status" aria-label="Online"/>
+            {:else}
+              <div class="offline" role="status" aria-label="Offline"/>
+            {/if}
+          </div>
+          
+          <ArtworkLoader
+            row={friend}
+            artClickable={false}
+          />
+          
+          <p class="username">{friend.user.display_name || friend.user.username}</p>
+          
+          <FriendAction {friend} {load} />
+        </button>
+      {/each}
+    </div>
+  {/if}
 
-{#if friendRequests.length > 0}
-  <img
-    src="/assets/SHB/svg/AW-icon-friend-request.svg"
-    class="headerIcon"
-    alt="Friend requests"
-  />
-  <SvelteTable
-    columns="{columns}"
-    rows="{friendRequests}"
-    classNameTable="profileTable"
-  />
-{/if}
+  <div class="section">
+    <img
+      src="/assets/SHB/svg/AW-icon-friend.svg"
+      class="headerIcon"
+      alt="All friends"
+    />
+    
+    {#each friends as friend}
+      <button 
+        type="button"
+        class="friend-row"
+        on:click={() => goTo(friend)}
+        on:keydown={(e) => e.key === 'Enter' && goTo(friend)}
+      >
+        <div class="status">
+          {#if friend.user.online}
+            <div class="online" role="status" aria-label="Online"/>
+          {:else}
+            <div class="offline" role="status" aria-label="Offline"/>
+          {/if}
+        </div>
+        
+        <ArtworkLoader
+          row={friend}
+          artClickable={false}
+        />
+        
+        <p class="username">{friend.user.display_name || friend.user.username}</p>
+        
+        <FriendAction {friend} {load} />
+      </button>
+    {/each}
+  </div>
+</div>
 
-<img
-  src="/assets/SHB/svg/AW-icon-friend.svg"
-  class="headerIcon"
-  alt="All friend"
-/>
-<SvelteTable
-  columns="{columns}"
-  rows="{friends}"
-  on:clickCell="{goTo}"
-  classNameTable="profileTable"
-/>
-
-<!-- <h1>Pending friend requests</h1>
-  <SvelteTable columns="{columns}" rows="{friendRequestsPending}" classNameTable="profileTable"></SvelteTable> -->
 <style>
-  /* .search > button {
-    width: 25px;
-    padding: 3px 3px;
-    margin: 0px 0;
-    border-radius: 7px;
-  } */
+  .friends-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .friend-row {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    gap: 1rem;
+    border: 2px solid lightgrey;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    background: none;
+    text-align: left;
+  }
+
+  .friend-row:hover {
+    background-color: #f5f5f5;
+  }
+
+  .status {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .online {
+    background-color: #4CAF50;
+  }
+
+  .offline {
+    background-color: #9e9e9e;
+  }
+
+  .username {
+    color: #7300ed;
+    font-size: 1em;
+    margin: 0;
+  }
+
+  .headerIcon {
+    width: 50px;
+    max-width: 50px;
+    margin: 0 auto;
+  }
+
+  /* Add these button-specific resets */
+  button {
+    font: inherit;
+    color: inherit;
+  }
+
+  button:focus {
+    outline: 2px solid #7300ed;
+    outline-offset: -2px;
+  }
 </style>
