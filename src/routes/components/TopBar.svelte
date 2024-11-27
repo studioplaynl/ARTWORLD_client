@@ -514,29 +514,39 @@
     margin: 16px;
     display: flex;
     align-items: center;
+    max-width: calc(100vw - 32px);
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding-bottom: 8px;
   }
 
-  .pill-button, .pill-text {
+  .topbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pill-button, .pill-text, .pill-container {
     border-radius: 9999px;
     padding: 0.5em 1em;
-    background-color: #d8c7eb;
+    background-color: white;
+    border: 2px solid #7300ed;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     height: 40px;
-    margin-left: 6px;
+    margin-left: 0;
+    flex: 1;
+    min-width: 0;
+    max-width: max-content;
   }
 
   .avatar-wrapper {
     width: 28px;
     height: 28px;
     margin-right: 8px;
-    background-color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2px;
+    flex-shrink: 0;
   }
 
   .avatar-container {
@@ -549,12 +559,6 @@
     justify-content: center;
   }
 
-  .pill-container {
-    padding: 0.25em 1em;
-    display: flex;
-    align-items: center;
-  }
-
   .pill-button {
     cursor: pointer;
     appearance: none;
@@ -563,24 +567,25 @@
   }
 
   .pill-text {
-    border: none;
-  }
-
-  .pill-button-text {
-    color: #7300ed;
-    font-size: 14px;
-    line-height: 1;
-  }
-
-  .pill-container {
     border-radius: 9999px;
     padding: 0.5em 1em;
-    background-color: #d8c7eb;
+    background-color: white;
+    border: 2px solid #7300ed;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     height: 40px;
-    margin-left: 6px;
+    margin-left: 0;
+  }
+
+  .pill-button-text {
+    color: #7300ed;
+    font-size: clamp(11px, 1.5vw, 14px);
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .pill-button-icon {
