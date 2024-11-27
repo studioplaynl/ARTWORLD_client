@@ -35,6 +35,30 @@
     }
   }
 
+  const updatePillPosition = () => {
+    const allPills = document.querySelectorAll('.pill-button, .pill-text, .pill-container');
+    const topbar = document.querySelector('.topbar');
+    
+    console.log('Total pills found:', allPills.length);
+    
+    allPills.forEach((pill, index) => {
+      console.log(`Pill ${index + 1}:`, {
+        class: pill.className,
+        offsetLeft: pill.offsetLeft,
+        offsetWidth: pill.offsetWidth,
+        percentagePosition: (pill.offsetLeft / topbar.offsetWidth * 100).toFixed(2) + '%',
+        rightEdge: ((pill.offsetLeft + pill.offsetWidth) / topbar.offsetWidth * 100).toFixed(2) + '%'
+      });
+    });
+
+    const lastPill = allPills[allPills.length - 1];
+    if (lastPill) {
+      const position = lastPill.offsetLeft / topbar.offsetWidth * 100;
+      console.log('Setting last pill position:', position + '%');
+      topbar.style.setProperty('--last-pill-position', `${position}%`);
+    }
+  };
+
   onMount(async () => {
     PlayerLocation.subscribe(async (value) => {
       currentLocation = value;
@@ -117,6 +141,7 @@
 
     miniMapDimensions.subscribe((value) => {
       miniMap = value;
+      setTimeout(updatePillPosition, 0);
     });
 
     //! turned off addressbook
@@ -131,7 +156,29 @@
 
     //! Add click listener for closing addressbook
     // document.addEventListener('click', handleClickOutside);
+
+    // Initial measurements
+    setTimeout(updatePillPosition, 0);
+    setTimeout(updatePillPosition, 100);
+    setTimeout(updatePillPosition, 500);
+
+    // Update on resize
+    window.addEventListener('resize', updatePillPosition);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', updatePillPosition);
+    };
   });
+
+  // Add more reactive triggers
+  $: if (parentScenes) {
+    setTimeout(updatePillPosition, 0);
+  }
+
+  $: if (currentLocation) {
+    setTimeout(updatePillPosition, 0);
+  }
 
   //! addressbook
   // onDestroy(() => {
@@ -170,8 +217,7 @@
               x: 0,
               y: 0,
             });
-        }, 400);
-        
+        }, 400);  
   }
 
   /**  pop() sets off a reaction where the url is parsed, and the player is taken back
@@ -478,14 +524,18 @@
     border: 0;
     background: transparent;
     cursor: pointer;
-    border-radius: 0;
+    border-radius: 50%;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    display: inline-block;
-    width: auto;
-    transform-origin: center;
-    transform: scale(1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    position: relative;
+    z-index: 2;
   }
   button:active,
   button:not(:disabled):active {
@@ -515,12 +565,10 @@
     display: flex;
     align-items: center;
     max-width: calc(100vw - 32px);
-    flex-wrap: nowrap;
+    flex-wrap: nowrap;  
     gap: 6px;
-    overflow-x: auto;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    padding-bottom: 8px;
+    position: relative;
+    min-height: 40px;
   }
 
   .topbar::-webkit-scrollbar {
@@ -536,10 +584,8 @@
     align-items: center;
     justify-content: center;
     height: 40px;
-    margin-left: 0;
-    flex: 1;
-    min-width: 0;
-    max-width: max-content;
+    line-height: 40px;
+    margin: 0;
   }
 
   .avatar-wrapper {
@@ -643,12 +689,11 @@
   }
 
   .TopIcon {
-    width: 2rem;
-    height: 2rem;
+    width: 100%;
+    height: 100%;
     max-width: 40px;
     max-height: 40px;
     border-radius: 50%;
-    background-color: white;
   }
 
   #logo {
@@ -717,5 +762,54 @@
       right: 0;
       transform: none;
     }
+  }
+
+  /* Adjust the connecting line */
+  .topbar:has(.pill-button, .pill-text, .pill-container)::before {
+    content: '';
+    position: absolute;
+    left: 46px;
+    right: calc(100% - var(--last-pill-position, 80%));
+    top: 20px;
+    height: 3px;
+    background-color: #7300ed;
+    z-index: 1;
+  }
+
+  /* Ensure buttons and pills are above the line, including their active states */
+  .topbar > button,
+  .pill-button,
+  .pill-text,
+  .pill-container,
+  .topbar > button:active,
+  .pill-button:active {
+    position: relative;
+    z-index: 2;
+    background-color: white; /* Ensure background is opaque */
+  }
+
+  button:active,
+  button:not(:disabled):active,
+  .pill-button:active {
+    position: relative;
+    z-index: 2;
+    outline: none;
+    background: white; /* Ensure background stays white */
+    transform: scale(1.05);
+  }
+
+  /* Add this to help visualize where pills end */
+  .pill-button:last-of-type {
+    position: relative;
+  }
+
+  /* Debug outline to see where the topbar is */
+  /* .topbar > * {
+    outline: 1px solid blue;
+  } */
+
+  button:has(#logo) {
+    background: transparent;
+    box-shadow: none;
   }
 </style>
