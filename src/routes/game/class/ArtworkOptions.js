@@ -13,9 +13,9 @@
 
 import { Liked } from '../../../storage';
 import ManageSession from '../ManageSession';
-
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
+import { ART_DISPLAY_SIZE_LARGE } from '../../../constants';
 
 class ArtworkOptions {
   constructor() {
@@ -44,10 +44,13 @@ class ArtworkOptions {
     this.heartArray = ManageSession.likedStore;
 
     // place heartButton under the artwork, make them interactive
+    
+    const heartSize = artContainer.width / ART_DISPLAY_SIZE_LARGE;
+    console.log('heartSize', heartSize);
     const currentHeart = scene.add
       .image(x, y, 'heart')
       .setOrigin(0)
-      .setScale(1)
+      .setScale(heartSize)
       .setInteractive()
       .setData('toggle', true) // true, not liked state
       .on('pointerup', () => {

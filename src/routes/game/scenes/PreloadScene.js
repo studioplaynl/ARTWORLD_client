@@ -188,11 +188,6 @@ this.load.image('animation-icon', '/assets/SHB/svg/AW-icon-square-animation.svg'
     // create a hitArea for locations, as an image with key 'enterButtonHitArea', 128x128pix
     this.createHitAreaLocations();
 
-    // create a generic artFrame for later use wit image key eg "artFrame_512"
-    this.createArtFrame(512);
-    this.createArtFrame(128);
-    this.createArtFrame(32);
-
     // make a white square as a background for liked images that appear in the world (image are transparent)
     this.createWhiteSquare(256);
 
@@ -256,45 +251,6 @@ this.load.image('animation-icon', '/assets/SHB/svg/AW-icon-square-animation.svg'
     rt.saveTexture('enterButtonHitArea');
     enterButtonHitArea.destroy();
     rt.destroy();
-  }
-
-  createArtFrame(postFix) {
-    const frameBorderSize = ART_FRAME_BORDER;
-    const frame = this.add.graphics();
-    // create a black square size of art + 20pix
-    frame.fillStyle(0x000000);
-    frame
-      .fillRect(
-        0,
-        0,
-        postFix + frameBorderSize * 2,
-        postFix + frameBorderSize * 2,
-      )
-      .setVisible(false);
-    frame.fillStyle(0xffffff);
-    frame
-      .fillRect(frameBorderSize, frameBorderSize, postFix, postFix)
-      .setVisible(false);
-
-    // create renderTexture to place the dot on
-    const artFrameRendertexture = this.add
-      .renderTexture(
-        0,
-        0,
-        postFix + frameBorderSize * 2,
-        postFix + frameBorderSize * 2,
-      )
-      .setVisible(false);
-
-    // draw the dot on the renderTexture
-    artFrameRendertexture.draw(frame);
-
-    // save the rendertexture with a key ('dot'), basically making an image out of it
-    artFrameRendertexture.saveTexture(`artFrame_${postFix}`);
-    // this.add.image(0, 0, 'artFrame_512').setVisible(false) // .setOrigin(0)
-
-    frame.destroy();
-    artFrameRendertexture.destroy();
   }
 
   createWhiteSquare(postFix) {

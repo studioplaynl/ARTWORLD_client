@@ -25,13 +25,15 @@ import GenerateLocation from './GenerateLocation';
 import CoordinatesTranslator from './CoordinatesTranslator';
 import ArtworkOptions from './ArtworkOptions';
 import { HomeElements, homeElement_Selected } from '../../../storage';
+import Background from './Background';
 
 import { 
   ART_FRAME_BORDER, 
   AVATAR_SPRITESHEET_LOAD_SIZE, 
   IMAGE_BASE_SIZE, 
   STOPMOTION_BASE_SIZE,
-  ART_DISPLAY_SIZE_MEDIUM
+  STOPMOTION_MAX_FRAMES,
+  ART_DISPLAY_SIZE,
 } from '../../../constants';
 
 import { dlog } from '../../../helpers/debugLog';
@@ -317,8 +319,8 @@ class ServerCall {
    */
 
   async downloadAndPlaceArtByType({ type, serverObjectsHandler, artSize, artMargin }) {
-    // Replace artSize parameter with ART_DISPLAY_SIZE_MEDIUM for all types
-    const standardArtSize = ART_DISPLAY_SIZE_MEDIUM;
+    // Replace artSize parameter with ART_DISPLAY_SIZE for all types
+    const standardArtSize = ART_DISPLAY_SIZE;
     const standardArtMargin = standardArtSize / 10;
 
     if (type === 'dier') {
@@ -862,8 +864,7 @@ class ServerCall {
 
     const imageKeyUrl = element.value.url;
 
-    // Use medium size instead of large
-    const artSizeSaved = ART_DISPLAY_SIZE_MEDIUM;
+    const artSizeSaved = ART_DISPLAY_SIZE;
     
     const posY_Phaser = CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, element.value.posY);
     const posX_Phaser = CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, element.value.posX);
@@ -888,15 +889,11 @@ class ServerCall {
     */
     imageContainer.nakamaData = { ...element };
 
-    // put an artFrame in the container as a background and frame
-    // imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
-
     // adds the image to the container, on top of the artFrame
     const setImage = scene.add.image(0, 0, imageKeyUrl)
       .setOrigin(0.5)
     .setName('homeElement-artwork');
 
-    // Explicitly set the size to medium
     setImage.displayWidth = artSizeSaved;
     setImage.displayHeight = artSizeSaved;
 
@@ -1059,7 +1056,6 @@ class ServerCall {
 
     // Get texture dimensions
     const texture = scene.textures.get(imageKeyUrl);
-    console.log('debug texture', texture);
     if (!texture || !texture.frames.__BASE) {
       dlog('Invalid texture for stopmotion:', imageKeyUrl);
       return;
@@ -1120,8 +1116,7 @@ class ServerCall {
     // dlog(`stopmotion Frames: ${avatarFrames}`);
     
     const avatarFrames = Math.round(avatarWidth / avatarHeight);
-    console.log('debug imageKeyUrl, avatarWidth, avatarHeight, avatarFrames '
-      , imageKeyUrl, avatarWidth, avatarHeight, avatarFrames);
+
     let setFrameRate = 0;
     if (avatarFrames > 1) {
       setFrameRate = avatarFrames;
@@ -1637,12 +1632,11 @@ class ServerCall {
     if (!artSize) return;
     if (!element) return;
 
-
     let imageKeyUrl = element.value.url;
 
     let imgSize = artSize.toString();
     const fileFormat = 'png';
-    const getImageWidth = (artSize * 100).toString();
+    const getImageWidth = (artSize * STOPMOTION_MAX_FRAMES).toString();
 
     if (scene.textures.exists(imageKeyUrl)) {
       // if the artwork has already been downloaded
@@ -2011,15 +2005,6 @@ class ServerCall {
         })
         .on(`filecomplete-spritesheet-${imageKeyUrl}`, () => {
           // Log the loaded texture info
-          const texture = scene.textures.get(imageKeyUrl);
-          console.log('Loaded texture info:', {
-            frameWidth: parseInt(imgSize),
-            frameHeight: parseInt(imgSize),
-            totalWidth: texture.frames.__BASE.width,
-            totalHeight: texture.frames.__BASE.height,
-            expectedFrames: Math.floor(texture.frames.__BASE.width / parseInt(imgSize))
-          });
-          
           ManageSession.resolveErrorObjectArray = ManageSession.resolveErrorObjectArray.filter(
             (obj) => obj.imageKey !== imageKeyUrl
           );
@@ -2119,13 +2104,14 @@ class ServerCall {
   }
 
   static createdownloadLiked_Drawing_Container(element, index) {
+    // art for the liked balloon
     const scene = ManageSession.currentScene;
     if (!scene) return;
     if (!element) return;
     if (scene.balloonContainer.list.length > 5) return;
 
     const { width } = ServerCall.getContainerBounds(scene.balloonContainer);
-
+    
     let placeX;
     // let placeY;
     if (index === 0) {
@@ -2144,6 +2130,7 @@ class ServerCall {
     const desiredWidth = 256;
 
     // get the width and height of the original image
+    Background.createArtFrame(512);
     let imageWidth = scene.textures.get('artFrame_512').getSourceImage().width;
     // add the background artFrame and set the image width to 256
     let image = scene.add.image(0, 0, 'artFrame_512').setOrigin(0);
@@ -2273,15 +2260,12 @@ class ServerCall {
       console.warn('Required groups not found for drawing container');
       return;
     }
-
     const imageKeyUrl = element.value.url;
     const y = artMargin;
-    const artBorder = ART_FRAME_BORDER;
-
-    const artStart = 38; // start the art on the left side
-
-    const coordX = index === 0 ? artStart : artStart + index * (artSize + artMargin);
-    // dlog('image coordX, index', coordX, index);
+    const artBorder = artSize / 30;
+    const artStart = artMargin; // start the art on the left side
+    const xOffset = artSize + (artBorder * 2) + artMargin;
+    const coordX = artStart + (index * xOffset);
     const imageContainer = scene.add.container(0, 0).setDepth(100);
 
     /**  copy over the data from the element to the container
@@ -2302,7 +2286,8 @@ class ServerCall {
     imageContainer.nakamaData = { ...element };
 
     // put an artFrame in the container as a background and frame
-    imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0));
+    Background.createArtFrame(artSize);
+    imageContainer.add(scene.add.image(0, 0, `artFrame_${artSize}`).setOrigin(0));
 
     // adds the image to the container, on top of the artFrame
     const setImage = scene.add.image(0 + artBorder, 0 + artBorder, imageKeyUrl).setOrigin(0);
@@ -2311,13 +2296,14 @@ class ServerCall {
     setImage.displayHeight = artSize;
 
     imageContainer.add(setImage);
-
-    const containerSize = artSize + artBorder;
-    const tempX = containerSize - artMargin;
-    const tempY = containerSize + artBorder;
+    
+    const containerSize = artSize + (artBorder * 2);
+    imageContainer.setSize(containerSize, containerSize);
+    
+    const tempX = containerSize - (artBorder * 4);
+    const tempY = containerSize + (artBorder/2);
     ArtworkOptions.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     imageContainer.setPosition(coordX, y);
-    imageContainer.setSize(containerSize, containerSize);
 
     /** this check prevent errors
      * when we go out of the scene when things are still loading and being created  */
@@ -2339,7 +2325,7 @@ class ServerCall {
       console.warn('Required groups not found for stopmotion container');
       return;
     }
-
+    
     const imageKeyUrl = element.value.url;
     const y = artMargin;
     const artBorder = ART_FRAME_BORDER;
@@ -2349,7 +2335,9 @@ class ServerCall {
     const coordX = index === 0 ? artStart : artStart + index * (artSize + artMargin);
     const imageContainer = scene.add.container(0, 0).setDepth(100);
     imageContainer.nakamaData = { ...element };
-    imageContainer.add(scene.add.image(0, 0, 'artFrame_512').setOrigin(0).setName('frame'));
+
+    Background.createArtFrame(artSize);
+    imageContainer.add(scene.add.image(0, 0, `artFrame_${artSize}`).setOrigin(0).setName('frame'));
 
     // dlog('STOPMOTION element, index, artSize, artMargin', element, index, artSize, artMargin);
     const avatar = scene.textures.get(imageKeyUrl);

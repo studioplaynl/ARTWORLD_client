@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import { ART_DISPLAY_SIZE_LARGE } from '../../../constants';
+import { ART_DISPLAY_SIZE_LARGE, ART_DISPLAY_SIZE } from '../../../constants';
 import { HomeEditBarExpanded } from '../../../session';
 
 import { HomeElements, homeElements_Store, homeElement_Selected } from '../../../storage';
@@ -92,7 +92,8 @@ export default class GalleryManager {
       const serverObjectsHandler = this.serverList;
       serverObjectsHandler.array = get(this.store.homeGalleryPaginatedArt);
       const userId = this.location;
-      const artSize = ART_DISPLAY_SIZE_LARGE;
+      const artSize = 200;
+      const frameBorderSize = artSize / 30;
       const artMargin = artSize / 10;
 
       // Clear existing members of the group
@@ -101,7 +102,9 @@ export default class GalleryManager {
       }
       this.homeGroup = this.scene.add.group();
 
-      const totalWidth = this.homeGallery_PageSize * (artSize + artMargin);
+      const imagePlusBorders = artSize + (frameBorderSize * 2);
+      const imagePlusBordersPlusMargin = imagePlusBorders + artMargin;
+      const totalWidth = (this.homeGallery_PageSize * imagePlusBordersPlusMargin) + artMargin;
 
       // Destroy existing children of the parent container if any
       if (this.parentContainer) {
@@ -175,26 +178,34 @@ export default class GalleryManager {
             ? artMargin / 2
             : 1200;
 
+      const parentContainerWidth = totalWidth;
+      const parentContainerHeight = artSize + artMargin * 5;
+
       this.parentContainer = this.scene.add
         .container(galleryX, galleryY)
-        .setSize(totalWidth + artMargin * 2, artSize + artMargin * 4)
+        .setSize(parentContainerWidth, parentContainerHeight)
         .setName(`ParentContainer_${this.type}`);
 
       // create background graphics for ParentContainer
       const graphic = this.scene.add.graphics();
       graphic.fillStyle(0xa9a9a9); //dark grey
-      graphic.fillRect(0, 0, totalWidth + artMargin, artSize + artMargin * 5);
+      graphic.fillRect(0, 0, parentContainerWidth, parentContainerHeight);
       this.parentContainer.add(graphic);
 
+      const graphic2Height = parentContainerHeight / 1.115;
       const graphic2 = this.scene.add.graphics();
       graphic2.fillStyle(0xf2f2f2);
-      graphic2.fillRect(0, 0, totalWidth + artMargin, artSize + artMargin * 3);
+      graphic2.fillRect(0, 0, totalWidth, graphic2Height);
       this.parentContainer.add(graphic2);
-
+      
+      const toolBarHeight = parentContainerHeight - (parentContainerHeight / 1.115);
+      const textSize = Math.ceil(toolBarHeight / 2);
       // Add page information text
+      const textX = totalWidth / 2 + (totalWidth / 20);
+      const textY = parentContainerHeight * 0.95;
       const pageInfoText = this.scene.add
-        .text(totalWidth / 2 + 40, artSize + artMargin * 3 + 50, '', {
-          font: '24px Arial',
+        .text(textX, textY, '', {
+          font: `${textSize}px Arial`,
           fill: '#000000',
         })
         .setOrigin(0.5);
@@ -211,13 +222,15 @@ export default class GalleryManager {
 
       // Add move button if we are in this.selfHome
       if (this.selfHome) {
+        const moveIconX = parentContainerWidth - (artMargin * 2);
         const moveIcon = this.scene.add
-          .image(totalWidth - artMargin * 3, artSize + 235, 'moveIcon')
-          .setOrigin(1, 1)
-          .setScale(1)
+          .image(moveIconX, textY, 'moveIcon')
+          .setOrigin(0.5)
           .setInteractive({ draggable: true })
           .setTint(0xf2f2f2)
           .setVisible(get(HomeEditBarExpanded));
+        moveIcon.displayWidth = toolBarHeight * 0.8;
+        moveIcon.displayHeight = toolBarHeight * 0.8;
 
         // Set up drag functionality for the move button
         this.setupMoveIconDrag(moveIcon);
@@ -233,53 +246,33 @@ export default class GalleryManager {
 
       // add navigation buttons
       const backButton = this.createNavigationButton(
-        totalWidth / 2 - 80,
-        artSize + artMargin * 3 + 50,
+        totalWidth / 2 - (toolBarHeight*0.3),
+        parentContainerHeight  - (toolBarHeight / 2),
         'back_button',
         -1,
-        updatePageInfo
+        updatePageInfo, 
+        toolBarHeight * 0.8
       );
       const nextButton = this.createNavigationButton(
-        totalWidth / 2 + artMargin * 3.2,
-        artSize + artMargin * 3 + 50,
+        totalWidth / 2 + (toolBarHeight * 2.3),
+        parentContainerHeight  - (toolBarHeight / 2),
         'back_button',
         1,
-        updatePageInfo
+        updatePageInfo,
+        toolBarHeight * 0.8
       );
 
       this.parentContainer.add(backButton);
       this.parentContainer.add(nextButton);
 
-      updatePageInfo();
-
-      this.homeGroup.add(this.parentContainer);
-
-      // Create and add images to the container
-      for (let i = 0; i < serverObjectsHandler.array.length; i++) {
-        const artwork = serverObjectsHandler.array[i];
-        const x = (i % this.homeGallery_PageSize) * (artSize + artMargin) + artSize / 2 + artMargin;
-        const y = artSize / 2 + artMargin;
-
-        const image = this.scene.add.image(x, y, artwork.key).setDisplaySize(artSize, artSize).setInteractive();
-
-        // Add any additional properties or event listeners to the image here
-        this.parentContainer.add(image);
-      }
-
-      // Call ServerCall.handleServerArray without the callback
-      ServerCall.handleServerArray({
-        type: `download${this.type.charAt(0).toUpperCase() + this.type.slice(1)}DefaultUserHome`,
-        userId,
-        serverObjectsHandler,
-        artSize,
-        artMargin,
-      });
 
       // Add app icon on the left side
       const appIcon = this.scene.add
-        .image(artMargin * 2, artSize + artMargin * 3 + 50, 'appIcon')
+        .image(artMargin * 2, textY, 'appIcon')
         .setOrigin(0.5)
-        .setScale(0.6);
+        .setTint(0xf2f2f2);
+      appIcon.displayWidth = toolBarHeight * 0.2;
+      appIcon.displayHeight = toolBarHeight * 0.2;
 
       // Set the correct icon texture based on gallery type
       if (this.type === 'drawing') {
@@ -289,6 +282,19 @@ export default class GalleryManager {
       }
 
       this.parentContainer.add(appIcon);
+
+      updatePageInfo();
+
+      this.homeGroup.add(this.parentContainer);
+
+      // Call ServerCall.handleServerArray without the callback
+      ServerCall.handleServerArray({
+        type: `download${this.type.charAt(0).toUpperCase() + this.type.slice(1)}DefaultUserHome`,
+        userId,
+        serverObjectsHandler,
+        artSize,
+        artMargin,
+      });
     } catch (error) {
       // console.warn('Error in loadAndPlaceGallery:', error);
     }
@@ -352,7 +358,7 @@ export default class GalleryManager {
     }
   }
 
-  createNavigationButton(x, y, texture, direction, updatePageInfo) {
+  createNavigationButton(x, y, texture, direction, updatePageInfo, toolBarHeight ) {
     const button = this.scene.add
       .image(x, y, texture)
       .setDepth(500)
@@ -363,8 +369,8 @@ export default class GalleryManager {
       button.rotation = Math.PI;
     }
 
-    button.displayWidth = 80;
-    button.displayHeight = 80;
+    button.displayWidth = toolBarHeight;
+    button.displayHeight = toolBarHeight;
     button.setInteractive();
 
     button.on('pointerup', () => {

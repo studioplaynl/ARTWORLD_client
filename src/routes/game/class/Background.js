@@ -1,8 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
-// import CoordinatesTranslator from './CoordinatesTranslator';
-
+import { ART_FRAME_BORDER } from '../../../constants';
 // eslint-disable-next-line no-unused-vars
 import * as Phaser from 'phaser';
 
@@ -644,6 +643,51 @@ class Background {
     rt2.destroy();
     graphics.destroy();
     rectangle.destroy();
+  }
+
+  createArtFrame(postFix) {
+    const scene = ManageSession.currentScene;
+    if (!scene) return;
+
+    if (scene.textures.exists(`artFrame_${postFix}`)) {
+        return;
+    }
+    
+    const frameBorderSize = postFix / 30;
+    const frame = scene.add.graphics();
+    // create a black square size of art + 20pix
+    frame.fillStyle(0x000000);
+    frame
+      .fillRect(
+        0,
+        0,
+        postFix + frameBorderSize * 2,
+        postFix + frameBorderSize * 2,
+      )
+      .setVisible(false);
+    frame.fillStyle(0xffffff);
+    frame
+      .fillRect(frameBorderSize, frameBorderSize, postFix, postFix)
+      .setVisible(false);
+
+    // create renderTexture to place the dot on
+    const artFrameRendertexture = scene.add
+      .renderTexture(
+        0,
+        0,
+        postFix + frameBorderSize * 2,
+        postFix + frameBorderSize * 2,
+      )
+      .setVisible(false);
+
+    // draw the dot on the renderTexture
+    artFrameRendertexture.draw(frame);
+
+    // save the rendertexture, making an image with a keyout of it
+    artFrameRendertexture.saveTexture(`artFrame_${postFix}`);
+
+    frame.destroy();
+    artFrameRendertexture.destroy();
   }
 }
 

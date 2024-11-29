@@ -41,9 +41,6 @@ class Exhibition {
       'play',
     );
 
-    // play
-    // artFrame_512
-
     scene[meshName].addVertices(vertices, uvs, indicies);
 
     // placing the artWork in perspective works with the perspective cam of the mesh
@@ -118,9 +115,6 @@ class Exhibition {
       'play',
     );
 
-    // play
-    // artFrame_512
-
     scene[meshName].addVertices(vertices, uvs, indicies);
 
     // placing the artWork in perspective works with the perspective cam of the mesh
@@ -183,9 +177,6 @@ class Exhibition {
 
       'play',
     );
-
-    // play
-    // artFrame_512
 
     scene[meshName].addVertices(vertices, uvs, indicies);
 

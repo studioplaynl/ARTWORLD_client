@@ -124,7 +124,7 @@ export default class DefaultUserHome extends Phaser.Scene {
       CurrentPage: 1,
       selfHome: this.selfHome,
       location: this.location,
-    });
+    }); 
 
     // First load HomeElements
     await HomeElements.getFromServer(this.location);
