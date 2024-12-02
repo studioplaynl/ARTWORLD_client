@@ -43,7 +43,7 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 // import Exhibition from '../class/Exhibition';
 
-import { dlog } from '../../../helpers/debugLog';
+// import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos } from '../playerState';
 import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
@@ -80,50 +80,57 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async preload() {
-    // artworld elements
-    this.load.svg('mario_star', 'assets/svg/mario_star.svg');
-    this.load.svg('yellow_diamond_location_image', 'assets/svg/geleRuit.svg');
-    this.load.svg('blue_sail_location_image', 'assets/svg/blauwZeil.svg');
-    this.load.svg('green_square_location_image', 'assets/svg/greensquare.svg');
-    this.load.svg('red_star_location_image', 'assets/svg/redstar.svg');
-    this.load.svg('turquoise_triangle_location_image', 'assets/svg/turquoisetriangle.svg');
-    // app icons; sound apps
-    this.load.image('songmaker', './assets/apps/songmaker.png');
-    this.load.image('melodymaker', './assets/apps/melodymaker.png');
-    this.load.image('kandinsky', './assets/apps/kandinsky.png');
+    const locations = [
+      'ChallengeAnimalGarden',
+      'ChallengeFlowerField',
+      'BlueSail',
+      'GreenSquare',
+      'RedStar',
+      'TurquoiseTriangle',
+      'YellowDiamond',
+      'FireWorld',
+      'RobotWorld',
+      'SlimeWorld',
+      'MarsWorld',
+      'UnderwaterWorld',
+      'SeaWorld',
+      'CloudWorld',
+      'MoonWorld',
+      'PizzaWorld',
+      'UndergroundWorld',
+      'WoestijnWereld',
+      'IjsWereld',
+      'IjscoWereld',
+      'BijenWereld',
+      'BergenWereld',
+      'PrismaWereld',
+      'JungleWereld',
+      'FlamengoWereld',
+      'RivierWereld',
+      'MoerasWereld',
+      'SalamanderWereld',
+      'VliegendeEilandenWereld',
+      'DennenbosWereld',
+      'MarioSound',
+      'SongMaker', 
+      'Kandinsky',
+      'MelodyMaker'
+    ];
 
-    // world portals in Artworld
-    this.load.image('robotWorldPortal', './assets/world_robot_torquoise/portaal_robot_zonderAnimatie.png');
-    this.load.image('artWorldPortalMoon', './assets/world_moon/maan_portalRaket_naarMaan.png');
-    this.load.image('artWorldPortalPizza', './assets/world_pizza/Portal_naarPizza_pizza.png');
-    this.load.image('seaWorldPortal', './assets/world_seaworld/zee_ship_Portaal_naarZEE.png');
-    this.load.image('marsWorldPortal', './assets/world_mars_red/portal_gotoMars_mars.png');
-    this.load.image('fireWorldPortal', './assets/world_fireworld/Portal_vuur_Naartoe_zonderAnimatie.png');
-    this.load.image('underwaterWorldPortal', './assets/world_underwater_blue/Portaal_naarWater_water.png');
-    this.load.image('slimeWorldPortal', './assets/world_slime_world/Portal_goSlime_slime.png');
-
-    this.load.image('artWorldPortalUnderground', './assets/world_underground/Portal_naarOndergrond.png');
-    this.load.image('artWorldPortalWoestijn', './assets/world_woestijn/Portal_woestijn_naarWoestijn-fs8.png');
-    this.load.image('artWorldPortalIjs', './assets/world_ice/Portaal_Naar_Ice-fs8.png');
-
-    this.load.image('artWorldPortalIjsco', './assets/world_ijsco/Portaal_vanHOMEnaarICECREAM_corr-fs8.png');
-
-    this.load.image('cloudWorldPortal', './assets/world_clouds/cloud_portal_naarCloud.png');
-    this.load.image('beeWorldPortal', './assets/world_bees/02b_Portaal_home_naar_bee-fs8.png');
-    this.load.image('bergenWorldPortal', './assets/world_bergen/Portaal2_NaarBergen_CROP-fs8.png');
-    this.load.image('prismaWorldPortal', './assets/world_prism/Portaal_Prisma_naar_PrismaCROP-fs8.png');
-    this.load.image('jungleWorldPortal', './assets/world_jungle/portaal_naarJungle_crop-fs8.png');
-    this.load.image('flamengoWorldPortal', './assets/world_flamengo/_Portaal_Flamingocity_naarMeteor_small-fs8.png');
-    this.load.image('paarseRivierWorldPortal', './assets/world_paarse_rivier/02b_portaal_River_naarRivier-fs8.png');
-    this.load.image('swampWorldPortal', './assets/world_swamp/02a_portaal_swamp_naarSwamp400px-fs8.png');
-    this.load.image('salamanderWorldPortal', './assets/world_salamander/portaal_naarSalamanderWereld-fs8.png');
-
-    this.load.image('dennenBosWorldPortal', './assets/world_dennenbos/22_dennenbos_portaal-fs8.png');
-
-    this.load.image(
-      'vliegendeEilandenPortal',
-      './assets/world_vliegendeEilanden/02b_Portale_w23_naarVliegendeEilanden-fs8.png'
-    );
+    // Load portal images based on SCENE_INFO
+    const artworld = SCENE_INFO.find(info => info.scene === 'Artworld');
+    if (artworld && artworld.children) {
+      artworld.children.forEach(child => {
+        const imageKey = child.scene ? `${child.scene}_image` : `${child.scene_external}_image`;
+        const imagePath = child.locationImage;
+        
+        if (imagePath.endsWith('.svg')) {
+          this.load.svg(imageKey, imagePath);
+        } else if (imagePath.match(/\.(png|jpg|jpeg)$/i)) {
+          this.load.image(imageKey, imagePath);
+        }
+      });
+    }
 
     // background image array
     const folderPath = './assets/world_artworld/';
@@ -134,6 +141,7 @@ export default class Artworld extends Phaser.Scene {
       const name = folderPath + 'image_part_' + i + '.jpeg';
       this.load.image(this.backgroundImageKey + i, name);
     }
+
   }
 
   async create() {
@@ -276,684 +284,31 @@ export default class Artworld extends Phaser.Scene {
   }
 
   generateLocations() {
-    let locationVector = new Phaser.Math.Vector2(2447, 2547);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.greenSquareLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'GreenSquare',
-      locationImage: 'green_square_location_image',
-      enterButtonImage: 'enter_button',
-      locationText: 'Groene Vierkant Wereld',
-      referenceName: 'this.greenSquareLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-118, 1960);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.fireWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'FireWorld',
-      locationImage: 'fireWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Vuur Wereld',
-      referenceName: 'this.fireWorldLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(2794, 2427);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.yellowDiamondLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'YellowDiamond',
-      locationImage: 'yellow_diamond_location_image',
-      enterButtonImage: 'enter_button',
-      locationText: 'Gele Diamant Wereld',
-      referenceName: 'this.yellowDiamondLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(1812, 2829);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.blueSailLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'BlueSail',
-      locationImage: 'blue_sail_location_image',
-      enterButtonImage: 'enter_button',
-      locationText: 'Blauwe Zeil Wereld',
-      referenceName: 'this.blueSailLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(2172, 2806);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.turquoiseTriangle = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'TurquoiseTriangle',
-      locationImage: 'turquoise_triangle_location_image',
-      enterButtonImage: 'enter_button',
-      locationText: 'Turquoise Driehoek Wereld',
-      referenceName: 'this.turquoiseTriangle',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(2846, 2114);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.redStar = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'RedStar',
-      locationImage: 'red_star_location_image',
-      enterButtonImage: 'enter_button',
-      locationText: 'Rode Ster Wereld',
-      referenceName: 'this.redStar',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-7, -843);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.robotWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'RobotWorld',
-      locationImage: 'robotWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Robot Wereld',
-      referenceName: 'this.robotWorldLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(1431, -729);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.slimeWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'SlimeWorld',
-      locationImage: 'slimeWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Slijm Wereld',
-      referenceName: 'this.slimeWorldLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(1234, 1135);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.marsWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'MarsWorld',
-      locationImage: 'marsWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Mars Wereld',
-      referenceName: 'this.marsWorldLocation',
-      size: 226,
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-1231, -1287);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.underwaterWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'UnderwaterWorld',
-      locationImage: 'underwaterWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Onderwater Wereld',
-      referenceName: 'this.underwaterWorldLocation',
-      size: 354,
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-265, -1312);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.seaWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'SeaWorld',
-      locationImage: 'seaWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Zee Wereld',
-      referenceName: 'this.seaWorldLocation',
-      size: 354,
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-951, -902);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.cloudWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'CloudWorld',
-      locationImage: 'cloudWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Wolken Wereld',
-      referenceName: 'this.cloudWorldLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-1985, 419);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.moonWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'MoonWorld',
-      locationImage: 'artWorldPortalMoon',
-      enterButtonImage: 'enter_button',
-      locationText: 'Maan Wereld',
-      referenceName: 'this.moonWorldLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(1782, 398);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.pizzaWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'PizzaWorld',
-      locationImage: 'artWorldPortalPizza',
-      enterButtonImage: 'enter_button',
-      locationText: 'Pizza Wereld',
-      referenceName: 'this.pizzaWorldLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(2187, -58);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.underrgoundWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'UndergroundWorld',
-      locationImage: 'artWorldPortalUnderground',
-      enterButtonImage: 'enter_button',
-      locationText: 'Ondergrond Wereld',
-      referenceName: 'this.underrgoundWorldLocation',
-      fontColor: 0x8dcb0e,
-    });
-
-    locationVector = new Phaser.Math.Vector2(686, 12);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.woestijnWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'WoestijnWereld',
-      locationImage: 'artWorldPortalWoestijn',
-      enterButtonImage: 'enter_button',
-      locationText: 'Woestijn Wereld',
-      referenceName: 'this.woestijnWorldLocation',
-      fontColor: 0x8dcb0e,
-      size: 354,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-322, -192);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.ijsWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'IjsWereld',
-      locationImage: 'artWorldPortalIjs',
-      enterButtonImage: 'enter_button',
-      locationText: 'Ijs Wereld',
-      referenceName: 'this.ijsWorldLocation',
-      fontColor: 0x8dcb0e,
-      size: 354,
-    });
-
-    locationVector = new Phaser.Math.Vector2(77, 542);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.ijscoWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'IjscoWereld',
-      locationImage: 'artWorldPortalIjsco',
-      enterButtonImage: 'enter_button',
-      locationText: 'Ijsco Wereld',
-      referenceName: 'this.ijscoWorldLocation',
-      fontColor: 0x8dcb0e,
-      size: 354,
-    });
-
-    locationVector = new Phaser.Math.Vector2(1418, -110);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.bijenWorldLocation = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'BijenWereld',
-      locationImage: 'beeWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Bijen Wereld',
-      referenceName: 'this.bijenWorldLocation',
-      fontColor: 0x8dcb0e,
-      size: 238,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-1215, 1500);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.bergenWorldPortal = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'BergenWereld',
-      locationImage: 'bergenWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Bergen Wereld',
-      referenceName: 'this.bergenWorldPortal',
-      fontColor: 0x8dcb0e,
-      size: 240,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-1452, 809);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.prismaWorldPortal = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'PrismaWereld',
-      locationImage: 'prismaWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Prisma Wereld',
-      referenceName: 'this.prismaWorldPortal',
-      fontColor: 0x8dcb0e,
-      size: 340,
-    });
-
-    locationVector = new Phaser.Math.Vector2(1429, -1570);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.jungleWorldPortal = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'JungleWereld',
-      locationImage: 'jungleWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Jungle Wereld',
-      referenceName: 'this.jungleWorldPortal',
-      fontColor: 0x8dcb0e,
-      size: 310,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-333, 919);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.flamengoWorld = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'FlamengoWereld',
-      locationImage: 'flamengoWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Flamengo Wereld',
-      referenceName: 'this.flamengoWorld',
-      fontColor: 0x8dcb0e,
-      size: 156,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-830, 459);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.rivierWorld = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'RivierWereld',
-      locationImage: 'paarseRivierWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Rivier Wereld',
-      referenceName: 'this.rivierWorld',
-      fontColor: 0x8dcb0e,
-      size: 231,
-    });
-
-    locationVector = new Phaser.Math.Vector2(440, 1043);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.swampWorld = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'MoerasWereld',
-      locationImage: 'swampWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Moeras Wereld',
-      referenceName: 'this.swampWorld',
-      fontColor: 0x8dcb0e,
-      size: 231,
-    });
-
-    locationVector = new Phaser.Math.Vector2(-700, -1851);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.salamanderWorld = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'SalamanderWereld',
-      locationImage: 'salamanderWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Salamander Wereld',
-      referenceName: 'this.salamanderWorld',
-      fontColor: 0x8dcb0e,
-      size: 231,
-    });
-
-    locationVector = new Phaser.Math.Vector2(1124, 1835);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.vliegendeEilandenWereld = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'VliegendeEilandenWereld',
-      locationImage: 'vliegendeEilandenPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'VliegendeEilanden Wereld',
-      referenceName: 'this.vliegendeEilandenWereld',
-      fontColor: 0x8dcb0e,
-      size: 231,
-    });
-
-    locationVector = new Phaser.Math.Vector2(331, -1995);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.dennenBosWereld = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'DennenbosWereld',
-      locationImage: 'dennenBosWorldPortal',
-      enterButtonImage: 'enter_button',
-      locationText: 'Dennenbos Wereld',
-      referenceName: 'this.dennenBosWereld',
-      fontColor: 0x8dcb0e,
-      size: 231,
-    });
-
-    // ---- Location 1 ----------------------
-    // locationVector = new Phaser.Math.Vector2(-1215, -589);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    // this.location1 = new GenerateLocation({
-    //   scene: this,
-    //   type: 'isoBox',
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   locationDestination: 'Location1',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'Location 1',
-    //   referenceName: 'Location1',
-    //   fontColor: 0x8dcb0e,
-    //   color1: 0xffe31f,
-    //   color2: 0xf2a022,
-    //   color3: 0xf8d80b,
-    // });
-
-    //* set the particle first on 0,0 so they are below the mario_star
-    //* later move them relative to the mario_star
-    // var particles = this.add.particles('music_quarter_note').setDepth(139)
-
-    // var music_emitter = particles.createEmitter({
-    //   x: 0,
-    //   y: 0,
-    //   lifespan: { min: 2000, max: 8000 },
-    //   speed: { min: 80, max: 120 },
-    //   angle: { min: 270, max: 360 },
-    //   gravityY: -50,
-    //   gravityX: 50,
-    //   scale: { start: 1, end: 0 },
-    //   quantity: 1,
-    //   frequency: 1600,
-    // })
-
-    // sound apps ............................................................
-
-    locationVector = new Phaser.Math.Vector2(-2477, 1824);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.mario_star = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      externalUrl: 'https://minghai.github.io/MarioSequencer/',
-      locationImage: 'mario_star',
-      enterButtonImage: 'enter_button',
-      locationText: 'Mario Sound',
-      referenceName: 'MarioSound',
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-    this.mario_star.setDepth(140);
-
-    locationVector = new Phaser.Math.Vector2(-1630, -2628);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.songMaker = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      externalUrl: 'https://musiclab.chromeexperiments.com/Song-Maker/',
-      locationImage: 'songmaker',
-      enterButtonImage: 'enter_button',
-      locationText: 'Song Maker',
-      referenceName: 'songmaker',
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-    this.songMaker.setDepth(140);
-
-    locationVector = new Phaser.Math.Vector2(-2588, -1908);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.Kandinsky = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      externalUrl: 'https://musiclab.chromeexperiments.com/Kandinsky/',
-      locationImage: 'kandinsky',
-      enterButtonImage: 'enter_button',
-      locationText: 'Kandinsky Sound',
-      referenceName: 'kandinsky',
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-    this.Kandinsky.setDepth(140);
-    // music_emitter.setPosition(this.mario_star.x + 15, this.mario_star.y - 20)
-
-    locationVector = new Phaser.Math.Vector2(-2427, -2236);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.MelodyMaker = new GenerateLocation({
-      scene: this,
-      type: 'image',
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      externalUrl: 'https://musiclab.chromeexperiments.com/Melody-Maker/',
-      locationImage: 'melodymaker',
-      enterButtonImage: 'enter_button',
-      locationText: 'Melody Maker',
-      referenceName: 'melodymaker',
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-    this.MelodyMaker.setDepth(140);
-
-    // locationVector = new Phaser.Math.Vector2(-2125, 1017);
-    // locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-    // // end sound apps ............................................................
-    // this.pencil = new GenerateLocation({
-    //   scene: this,
-    //   type: 'image',
-
-    //   draggable: ManageSession.gameEditMode,
-    //   x: locationVector.x,
-    //   y: locationVector.y,
-    //   appUrl: 'drawing',
-    //   locationImage: 'pencil',
-    //   enterButtonImage: 'enter_button',
-    //   locationText: 'drawingApp',
-    //   referenceName: 'drawingApp',
-    //   fontColor: 0x8dcb0e,
-    //   color1: 0x8dcb0e,
-    //   color2: 0x3f8403,
-    //   color3: 0x63a505,
-    // });
-    // this.pencil.rotation = 0.12;
-
-    locationVector = new Phaser.Math.Vector2(1048, 592);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.animalGardenChallenge = new GenerateLocation({
-      scene: this,
-      type: 'image',
-
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'ChallengeAnimalGarden',
-      locationImage: 'dinoA',
-      enterButtonImage: 'enter_button',
-      locationText: 'animal Garden',
-      referenceName: 'animalGardenChallenge',
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
-    });
-
-    locationVector = new Phaser.Math.Vector2(794, -761);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
-
-    this.flowerFieldChallenge = new GenerateLocation({
-      scene: this,
-      type: 'image',
-
-      draggable: ManageSession.gameEditMode,
-      x: locationVector.x,
-      y: locationVector.y,
-      locationDestination: 'ChallengeFlowerField',
-      locationImage: 'flower',
-      enterButtonImage: 'enter_button',
-      locationText: 'bloemen Veld',
-      referenceName: 'flowerFieldChallenge',
-      fontColor: 0x8dcb0e,
-      color1: 0x8dcb0e,
-      color2: 0x3f8403,
-      color3: 0x63a505,
+    const artworld = SCENE_INFO.find(info => info.scene === 'Artworld');
+    if (!artworld || !artworld.children) return;
+
+    artworld.children.forEach(child => {
+        const locationVector = new Phaser.Math.Vector2(child.position.x, child.position.y);
+        const translatedVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
+
+        const locationName = child.scene || child.scene_external;
+        const imageKey = `${locationName}_image`;
+        
+        this[`${locationName}Location`] = new GenerateLocation({
+            scene: this,
+            type: 'image',
+            draggable: ManageSession.gameEditMode,
+            x: translatedVector.x,
+            y: translatedVector.y,
+            locationDestination: child.scene || null,
+            externalUrl: child.externalUrl || null,
+            locationImage: imageKey,
+            enterButtonImage: 'enter_button',
+            locationText: child.displayName,
+            referenceName: `this.${locationName}Location`,
+            fontColor: 0x8dcb0e,
+            size: child.size || 200
+        });
     });
   }
 

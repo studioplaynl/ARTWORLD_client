@@ -343,7 +343,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
       }
 
       // Check if it is an external URL
-      if (typeof this.externalUrl !== 'undefined') {
+      if (typeof this.externalUrl !== 'undefined' && this.externalUrl !== null) {
         this.scene.scene.pause();
 
         const url = this.externalUrl;
@@ -354,6 +354,21 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
         } else if (!s) {
           window.location.href = url;
         }
+      } else if (typeof this.locationDestination !== 'undefined') {
+        // Update player history when there is a locationDestination
+        PlayerLocation.set({
+          scene: this.locationDestination,
+          house: this.userHome,
+          parent: this.parentScene,
+        });
+
+        // Handle scene switching logic
+        const targetLocation = {
+          scene: this.locationDestination,
+          house: this.userHome,
+        };
+
+        PlayerLocation.set(targetLocation);
       }
 
       //

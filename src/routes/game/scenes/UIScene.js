@@ -19,6 +19,8 @@ import { MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
 import { getDeviceType, getScreenDimensions } from '../../../helpers/deviceDetection';
 import { PlayerZoom, PlayerLocation, PlayerPos } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
+import { setLoader } from '../../../helpers/nakamaHelpers';
+
 
 import * as Phaser from 'phaser';
 
@@ -237,6 +239,7 @@ export default class UIScene extends Phaser.Scene {
     if (ManageSession.currentScene && ManageSession.currentScene.cameras && ManageSession.currentScene.scale) {
       this.removeOldMinimap().then(() => {
         try {
+          setLoader(false);
           this.cleanupMinimapObjects();
           this.worldSize = ManageSession.currentScene.worldSize;
           this.miniMapDimensions = new Phaser.Math.Vector2(MINIMAP_SIZE, MINIMAP_SIZE);

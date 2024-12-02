@@ -274,7 +274,7 @@ class SceneSwitcher {
             dlog('join targetScene: ', targetSceneKey);
             ManageSession.getStreamUsers('join', targetSceneKey).then(() => {
               dlog('join succes: targetScene', targetSceneKey);
-              setLoader(false);
+              // setLoader(false);
             });
           }
         }
