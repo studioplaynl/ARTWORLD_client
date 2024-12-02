@@ -256,12 +256,33 @@ export default class UIScene extends Phaser.Scene {
             y: this.miniMapDimensions.y
           });
 
-          const topRight = new Phaser.Math.Vector2(
-            ManageSession.currentScene.scale.width - this.miniMapDimensions.x - MINIMAP_MARGIN, 
-            MINIMAP_MARGIN);
+          const screenWidth = this.scale.width;
+          const minimapCenterX = screenWidth - (this.miniMapDimensions.x / 2) - MINIMAP_MARGIN;
+          const minimapCenterY = (this.miniMapDimensions.y / 2) + MINIMAP_MARGIN;
 
+          // Update reference frame position to use actual screen coordinates
+          this.minimap_ReferenceFrame = this.add.rectangle(
+            minimapCenterX,
+            minimapCenterY, 
+            this.miniMapDimensions.x, 
+            this.miniMapDimensions.y, 
+            0xff0000, 1
+          ).setVisible(false);
+
+          console.log('Minimap Positions:', {
+            screenWidth,
+            miniMapDimensions: this.miniMapDimensions,
+            minimapCenterX,
+            minimapCenterY
+          });
+
+          // Ensure camera is created with correct dimensions
           this.minimapCamera = ManageSession.currentScene.cameras.add(
-            topRight.x, topRight.y, MINIMAP_SIZE, MINIMAP_SIZE).setName('minimap');
+            minimapCenterX - (this.miniMapDimensions.x / 2), 
+            minimapCenterY - (this.miniMapDimensions.y / 2), 
+            this.miniMapDimensions.x, 
+            this.miniMapDimensions.y
+          ).setName('minimap');
           
           // Calculate zoom to fit the entire world
           const zoomX = MINIMAP_SIZE / ManageSession.currentScene.worldSize.x;
@@ -270,7 +291,6 @@ export default class UIScene extends Phaser.Scene {
           
           this.minimapCamera.setZoom(zoom);
           this.minimapCamera.setScroll(0, 0);
-          // this.minimapCamera.setBackgroundColor(0xff);
           this.minimapCamera.setBounds(0, 0,
             ManageSession.currentScene.worldSize.x, ManageSession.currentScene.worldSize.y);
         
@@ -279,43 +299,44 @@ export default class UIScene extends Phaser.Scene {
           const scaledDimensions = getScreenDimensions(MINIMAP_SIZE, MINIMAP_SIZE);
           console.log('windowSize getScreenDimensions: ', scaledDimensions);
           // Create a rectangle to represent the current view
-          this.minimap_ReferenceFrame = this.add.rectangle(
-            windowSize.width - (this.miniMapDimensions.x / 2) - MINIMAP_MARGIN,
-            this.miniMapDimensions.y / 2 + MINIMAP_MARGIN, 
-            this.miniMapDimensions.x, this.miniMapDimensions.y, 
-            0xff0000, 1
-          ).setVisible(false);
-
-          this.minimapWorldBorder = this.add.rectangle(windowSize.width 
-            - (this.miniMapDimensions.x / 2) - MINIMAP_MARGIN,
-              + (this.miniMapDimensions.y / 2) + MINIMAP_MARGIN, 
-              this.miniMapDimensions.x, this.miniMapDimensions.y, 
-              0xff0000, 0);
+          this.minimapWorldBorder = this.add.rectangle(
+            minimapCenterX,
+            minimapCenterY, 
+            this.miniMapDimensions.x, 
+            this.miniMapDimensions.y, 
+            0xff0000, 0
+          );
           this.minimapWorldBorder.setStrokeStyle(2, 0x7300EB);
           this.minimapWorldBorder.setScrollFactor(0);
           this.minimapWorldBorder.setDepth(1001);
              
-          this.minimapFrame = this.add.rectangle(windowSize.width - (this.miniMapDimensions.x / 2) - MINIMAP_MARGIN,
-             + (this.miniMapDimensions.y / 2) + MINIMAP_MARGIN, 
-             this.miniMapDimensions.x, this.miniMapDimensions.y, 
-             0xff0000, 0);
-          this.minimapFrame.setStrokeStyle(2, 0xff0000);
+          this.minimapFrame = this.add.rectangle(
+            minimapCenterX,
+            minimapCenterY, 
+            this.miniMapDimensions.x, 
+            this.miniMapDimensions.y, 
+            0xff0000, 0.1
+          );
+          this.minimapFrame.setStrokeStyle(3, 0xff0000);
           this.minimapFrame.setScrollFactor(0);
           this.minimapFrame.setDepth(1001);
 
-          // Create a small circle to represent the player
-          this.playerDot = this.add.circle(MINIMAP_MARGIN, MINIMAP_MARGIN, 4, 0xff0000);
+          // Make the player dot more visible
+          this.playerDot = this.add.circle(MINIMAP_MARGIN, MINIMAP_MARGIN, 6, 0xff0000);
           this.playerDot.setScrollFactor(0);
-          this.playerDot.setDepth(1002); 
+          this.playerDot.setDepth(1002);
+          this.playerDot.setAlpha(0.8); // Make it slightly more opaque
 
-          // Create a tween for the pulsating effect
+          // Enhance the pulsating effect
           this.tweens.add({
             targets: this.playerDot,
-            scale: { from: 0.2, to: 1 },
-            duration: 1000,
+            scale: { from: 0.8, to: 1.2 }, // Increased scale range
+            alpha: { from: 0.4, to: 1 }, // Add alpha pulsing
+            duration: 800,
             yoyo: true,
             repeat: -1
           });
+
           // Update the player dot position initially
           this.updatePlayerDotPosition();
           
@@ -326,6 +347,25 @@ export default class UIScene extends Phaser.Scene {
           this.scale.on('resize', this.positionMinimap, this);
 
           // console.log('Minimap created successfully');
+
+          // Log player dot position after creation
+          console.log('Player Dot Position:', {
+            x: this.playerDot.x,
+            y: this.playerDot.y,
+            visible: this.playerDot.visible,
+            alpha: this.playerDot.alpha
+          });
+
+          // Log frame position after creation
+          console.log('Minimap Frame Position:', {
+            x: this.minimapFrame.x,
+            y: this.minimapFrame.y,
+            width: this.minimapFrame.width,
+            height: this.minimapFrame.height,
+            visible: this.minimapFrame.visible,
+            alpha: this.minimapFrame.alpha
+          });
+
         } catch (error) {
           dlog('Error creating minimap:', error);
           this.minimapTimeout = setTimeout(() => this.checkAndCreateMinimap(), 100);
@@ -388,16 +428,31 @@ export default class UIScene extends Phaser.Scene {
   
     const playerPos = get(PlayerPos);
     const worldSize = ManageSession.currentScene.worldSize;
-  
+    const screenWidth = this.scale.width;
+    
+    // Calculate the minimap's top-left corner
+    const minimapLeft = screenWidth - this.miniMapDimensions.x - MINIMAP_MARGIN;
+    
     // Scale the player's position to the minimap size
-    const scaledX = (CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, playerPos.x) / worldSize.x) * MINIMAP_SIZE;
-    const scaledY = (CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, playerPos.y)  / worldSize.y) * MINIMAP_SIZE;
+    const scaledX = (CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, playerPos.x) 
+    / worldSize.x) * this.miniMapDimensions.x;
+    const scaledY = (CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, playerPos.y) 
+    / worldSize.y) * this.miniMapDimensions.y;
   
-    // Position the dot on the minimap
-    this.playerDot.setPosition(
-      (this.minimap_ReferenceFrame.x - MINIMAP_SIZE / 2) + scaledX,
-      (this.minimap_ReferenceFrame.y - MINIMAP_SIZE / 2) + scaledY
-    );
+    // Position relative to minimap's top-left corner
+    const newX = minimapLeft + scaledX;
+    const newY = MINIMAP_MARGIN + scaledY;
+
+    console.log('Player Dot Update:', {
+      minimapLeft,
+      scaledX,
+      scaledY,
+      newX,
+      newY,
+      screenWidth
+    });
+  
+    this.playerDot.setPosition(newX, newY);
   }
 
   updateMinimapFrame() {
@@ -408,19 +463,32 @@ export default class UIScene extends Phaser.Scene {
     const zoom = get(PlayerZoom);
   
     if (mainCamera) {
-      // Calculate the visible area in the world coordinates
       const visibleWorldWidth = mainCamera.width / zoom;
       const visibleWorldHeight = mainCamera.height / zoom;
 
-      // Calculate the size of the frame on the minimap
-      let frameWidth = (visibleWorldWidth / worldSize.x) * this.miniMapDimensions.x;
-      let frameHeight = (visibleWorldHeight / worldSize.y) * this.miniMapDimensions.y;
-     
-      // there I want to delete the this.minimapFrame and create a new one
+      const frameWidth = (visibleWorldWidth / worldSize.x) * this.miniMapDimensions.x;
+      const frameHeight = (visibleWorldHeight / worldSize.y) * this.miniMapDimensions.y;
+
+      // Use the player dot's position as the center for the frame
+      const frameCenterX = this.playerDot.x;
+      const frameCenterY = this.playerDot.y;
+      
+      console.log('Frame Update:', {
+        playerDotPos: { x: this.playerDot.x, y: this.playerDot.y },
+        frameCenter: { x: frameCenterX, y: frameCenterY },
+        dimensions: { width: frameWidth, height: frameHeight }
+      });
+
       this.minimapFrame.destroy();
-      this.minimapFrame = this.add.rectangle(this.playerDot.x, 
-        this.playerDot.y, frameWidth, frameHeight, 0xff0000, 0);
-      this.minimapFrame.setStrokeStyle(2, 0xff0000);
+      this.minimapFrame = this.add.rectangle(
+        frameCenterX,
+        frameCenterY, 
+        frameWidth, 
+        frameHeight, 
+        0xff0000, 
+        0.1
+      );
+      this.minimapFrame.setStrokeStyle(3, 0xff0000);
       this.minimapFrame.setScrollFactor(0);
       this.minimapFrame.setDepth(1001);
     }

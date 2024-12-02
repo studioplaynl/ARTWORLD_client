@@ -813,4 +813,20 @@
     background: transparent;
     box-shadow: none;
   }
+
+  /* Add new style for icon-only pills */
+  .pill-button:first-child:not(:only-child) {
+    padding: 0;  /* Remove padding */
+    width: 40px; /* Make it perfectly round */
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pill-button:first-child:not(:only-child) .avatar-wrapper {
+    margin: 0;  /* Remove margin */
+    width: 28px;
+    height: 28px;
+  }
 </style>
