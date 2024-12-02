@@ -41,6 +41,12 @@
     
     console.log('Total pills found:', allPills.length);
     
+    if (allPills.length === 0) {
+      topbar.classList.add('no-pills');
+    } else {
+      topbar.classList.remove('no-pills');
+    }
+    
     allPills.forEach((pill, index) => {
       console.log(`Pill ${index + 1}:`, {
         class: pill.className,
@@ -828,5 +834,9 @@
     margin: 0;  /* Remove margin */
     width: 28px;
     height: 28px;
+  }
+
+  .topbar.no-pills::before {
+    display: none;
   }
 </style>
