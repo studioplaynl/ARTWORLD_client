@@ -380,22 +380,24 @@
 
   {#if parentScenes.length > 0}
     {#each parentScenes as scene}
-      <button class="pill-button" on:click={() => goToScene(scene)}>
-        {#if findScenePortalImage(scene)}
-          <div class="avatar-wrapper">
-            <div class="avatar-container">
-              <img
-                class="pill-button-icon"
-                src={findScenePortalImage(scene)}
-                alt="Scene Portal"
-              />
+      {#if scene}
+        <button class="pill-button" on:click={() => goToScene(scene)}>
+          {#if findScenePortalImage(scene)}
+            <div class="avatar-wrapper">
+              <div class="avatar-container">
+                <img
+                  class="pill-button-icon"
+                  src={findScenePortalImage(scene)}
+                  alt="Scene Portal"
+                />
+              </div>
             </div>
-          </div>
-        {/if}
-        <span class="pill-button-text">
-          {findSceneDisplayName(scene) || scene}
-        </span>
-      </button>
+          {/if}
+          <span class="pill-button-text">
+            {findSceneDisplayName(scene) || scene}
+          </span>
+        </button>
+      {/if}
     {/each}
 {/if}
   <!-- dont show artworld icon, because that is visible by default-->
@@ -598,7 +600,6 @@
   .avatar-container {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
     overflow: hidden;
     display: flex;
     align-items: center;
