@@ -201,7 +201,7 @@ export default class UIScene extends Phaser.Scene {
       const checkRemoval = () => {
         if (this.minimapCamera) {
           if (ManageSession.currentScene.cameras) {
-            console.log('REMOVING old minimap camera');
+            // console.log('REMOVING old minimap camera');
             ManageSession.currentScene.cameras.remove(this.minimapCamera, true);
             this.minimapCamera = null;
           }
@@ -269,12 +269,12 @@ export default class UIScene extends Phaser.Scene {
             0xff0000, 1
           ).setVisible(false);
 
-          console.log('Minimap Positions:', {
-            screenWidth,
-            miniMapDimensions: this.miniMapDimensions,
-            minimapCenterX,
-            minimapCenterY
-          });
+          // console.log('Minimap Positions:', {
+          //   screenWidth,
+          //   miniMapDimensions: this.miniMapDimensions,
+          //   minimapCenterX,
+          //   minimapCenterY
+          // });
 
           // Ensure camera is created with correct dimensions
           this.minimapCamera = ManageSession.currentScene.cameras.add(
@@ -295,9 +295,9 @@ export default class UIScene extends Phaser.Scene {
             ManageSession.currentScene.worldSize.x, ManageSession.currentScene.worldSize.y);
         
           const windowSize = getScreenDimensions(MINIMAP_SIZE, MINIMAP_SIZE);
-          console.log('windowSize: ', windowSize)
+          // console.log('windowSize: ', windowSize)
           const scaledDimensions = getScreenDimensions(MINIMAP_SIZE, MINIMAP_SIZE);
-          console.log('windowSize getScreenDimensions: ', scaledDimensions);
+          // console.log('windowSize getScreenDimensions: ', scaledDimensions);
           // Create a rectangle to represent the current view
           this.minimapWorldBorder = this.add.rectangle(
             minimapCenterX,
@@ -349,22 +349,22 @@ export default class UIScene extends Phaser.Scene {
           // console.log('Minimap created successfully');
 
           // Log player dot position after creation
-          console.log('Player Dot Position:', {
-            x: this.playerDot.x,
-            y: this.playerDot.y,
-            visible: this.playerDot.visible,
-            alpha: this.playerDot.alpha
-          });
+          // console.log('Player Dot Position:', {
+          //   x: this.playerDot.x,
+          //   y: this.playerDot.y,
+          //   visible: this.playerDot.visible,
+          //   alpha: this.playerDot.alpha
+          // });
 
           // Log frame position after creation
-          console.log('Minimap Frame Position:', {
-            x: this.minimapFrame.x,
-            y: this.minimapFrame.y,
-            width: this.minimapFrame.width,
-            height: this.minimapFrame.height,
-            visible: this.minimapFrame.visible,
-            alpha: this.minimapFrame.alpha
-          });
+          // console.log('Minimap Frame Position:', {
+          //   x: this.minimapFrame.x,
+          //   y: this.minimapFrame.y,
+          //   width: this.minimapFrame.width,
+          //   height: this.minimapFrame.height,
+          //   visible: this.minimapFrame.visible,
+          //   alpha: this.minimapFrame.alpha
+          // });
 
         } catch (error) {
           dlog('Error creating minimap:', error);
@@ -443,14 +443,14 @@ export default class UIScene extends Phaser.Scene {
     const newX = minimapLeft + scaledX;
     const newY = MINIMAP_MARGIN + scaledY;
 
-    console.log('Player Dot Update:', {
-      minimapLeft,
-      scaledX,
-      scaledY,
-      newX,
-      newY,
-      screenWidth
-    });
+    // console.log('Player Dot Update:', {
+    //   minimapLeft,
+    //   scaledX,
+    //   scaledY,
+    //   newX,
+    //   newY,
+    //   screenWidth
+    // });
   
     this.playerDot.setPosition(newX, newY);
   }
@@ -473,11 +473,11 @@ export default class UIScene extends Phaser.Scene {
       const frameCenterX = this.playerDot.x;
       const frameCenterY = this.playerDot.y;
       
-      console.log('Frame Update:', {
-        playerDotPos: { x: this.playerDot.x, y: this.playerDot.y },
-        frameCenter: { x: frameCenterX, y: frameCenterY },
-        dimensions: { width: frameWidth, height: frameHeight }
-      });
+      // console.log('Frame Update:', {
+      //   playerDotPos: { x: this.playerDot.x, y: this.playerDot.y },
+      //   frameCenter: { x: frameCenterX, y: frameCenterY },
+      //   dimensions: { width: frameWidth, height: frameHeight }
+      // });
 
       this.minimapFrame.destroy();
       this.minimapFrame = this.add.rectangle(

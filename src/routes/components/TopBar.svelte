@@ -39,7 +39,6 @@
     const allPills = document.querySelectorAll('.pill-button, .pill-text, .pill-container');
     const topbar = document.querySelector('.topbar');
     
-    console.log('Total pills found:', allPills.length);
     
     if (allPills.length === 0) {
       topbar.classList.add('no-pills');
@@ -47,20 +46,11 @@
       topbar.classList.remove('no-pills');
     }
     
-    allPills.forEach((pill, index) => {
-      console.log(`Pill ${index + 1}:`, {
-        class: pill.className,
-        offsetLeft: pill.offsetLeft,
-        offsetWidth: pill.offsetWidth,
-        percentagePosition: (pill.offsetLeft / topbar.offsetWidth * 100).toFixed(2) + '%',
-        rightEdge: ((pill.offsetLeft + pill.offsetWidth) / topbar.offsetWidth * 100).toFixed(2) + '%'
-      });
-    });
+
 
     const lastPill = allPills[allPills.length - 1];
     if (lastPill) {
       const position = lastPill.offsetLeft / topbar.offsetWidth * 100;
-      console.log('Setting last pill position:', position + '%');
       topbar.style.setProperty('--last-pill-position', `${position}%`);
     }
   };
@@ -68,7 +58,6 @@
   onMount(async () => {
     PlayerLocation.subscribe(async (value) => {
       currentLocation = value;
-      // console.log('currentLocation', currentLocation);
 
       parentScenes = findParentScenes(currentLocation.scene, SCENE_INFO);
       
@@ -76,10 +65,8 @@
          because the Artworld button is always visible, and is the root scene
       */
       parentScenes = parentScenes.filter(scene => scene !== 'Artworld');
-      // console.log('filter out artworld parentScenes', parentScenes);
       
       if (parentScenes.length > 0) {
-        // console.log('currentLocation parentScenes', parentScenes);
         // simple case where we have parent scenes
         currentLocation = {scene: value.scene};
       } else {
@@ -87,22 +74,18 @@
         1. Artworld
         2. DefaultUserHome
         */
-        // console.log(`currentLocation ${currentLocation} has no parent scenes`);
 
         if (currentLocation.scene === DEFAULT_SCENE) {
           // we are in Artworld scene
           currentLocation = {scene: value.scene};
 
         } else if (currentLocation.scene === 'DefaultUserHome') {
-          // console.log('currentLocation Player is in DefaultUserHome');
           /* we are in DefaultUserHome scene
              we have to find the parent scene of the house
              by fetching the user info 
           */
             try {
-              // console.log('currentLocation we have to fetch the user info to find the parent scene of the house');
               userInfo = await getAccount(currentLocation.house);
-              // console.log('info userInfo', userInfo);
               
               // Handle both Azc and azc cases, including when meta might be undefined
               let userAzc = 'GreenSquare';  // Default value
@@ -131,7 +114,6 @@
                 userInfo.id);
               homeImageUrl = await convertImage(userHouseObject.value.url, '50', '50');
             } catch (error) {
-              console.error('Error fetching user info:', error);
               currentLocation = {house: value.house};
 
             }
@@ -232,7 +214,6 @@
   async function goBack() {
     if ($PlayerHistory.length > 1) {
       const previousState = $PlayerHistory[$PlayerHistory.length - 2];
-      console.log('previousState', previousState);
       
       // If returning to Artworld, ensure scene loads first
       // if (previousState.scene === DEFAULT_SCENE) {
