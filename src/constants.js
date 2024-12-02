@@ -92,7 +92,20 @@ export const SCENE_INFO = [
         displayName: 'Vuur Wereld',
         locationImage: './assets/world_fireworld/Portal_vuur_Naartoe_zonderAnimatie.png',
         position: { x: -135, y: 2067 },
-        size: 200
+        size: 200,
+        artworldPortal: {
+          path:'./assets/world_fireworld/Portal_vuur_Terug.png',
+          position: { x: 0, y: 0 },
+        },
+        background_assets: {
+          lavafall_boy: './assets/world_fireworld/lavafall_boy.png',
+          tree1_vuur_licht: './assets/world_fireworld/tree1_vuur_licht.png',
+          tree2_vuur_licht: './assets/world_fireworld/tree2_vuur_licht.png',
+          tree3_vuur_licht: './assets/world_fireworld/tree3_vuur_licht.png',
+          vulcano1_kleur_helder: './assets/world_fireworld/vulcano1_kleur_helder.png',
+          vulkan2: './assets/world_fireworld/vulkan2.png',
+          vuur_wereld_Lavameer01: './assets/world_fireworld/vuur_wereld_Lavameer01.png'
+        }
       },
       {
         scene: 'RobotWorld',

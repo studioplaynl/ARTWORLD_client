@@ -16,6 +16,21 @@ import { getSceneInfo } from '../helpers/UrlHelpers';
 
 import * as Phaser from 'phaser';
 
+function findSceneInfo(sceneKey, scenes) {
+  for (const scene of scenes) {
+    if (scene.scene === sceneKey) {
+      return scene;
+    }
+    if (scene.children) {
+      const found = findSceneInfo(sceneKey, scene.children);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return null;
+}
+
 export default class FireWorld extends Phaser.Scene {
   constructor() {
     super('FireWorld');
@@ -45,15 +60,15 @@ export default class FireWorld extends Phaser.Scene {
   async preload() {
     ManageSession.currentScene = this.scene; // getting a central scene context
 
-    // FireWorld
-    this.load.image('artWorldPortalFire', './assets/world_fireworld/Portal_vuur_Terug.png');
-    this.load.image('lavafall_boy', './assets/world_fireworld/lavafall_boy.png');
-    this.load.image('tree1_vuur_licht', './assets/world_fireworld/tree1_vuur_licht.png');
-    this.load.image('tree2_vuur_licht', './assets/world_fireworld/tree2_vuur_licht.png');
-    this.load.image('tree3_vuur_licht', './assets/world_fireworld/tree3_vuur_licht.png');
-    this.load.image('vulcano1_kleur_helder', './assets/world_fireworld/vulcano1_kleur_helder.png');
-    this.load.image('vulkan2', './assets/world_fireworld/vulkan2.png');
-    this.load.image('vuur_wereld_Lavameer01', './assets/world_fireworld/vuur_wereld_Lavameer01.png');
+    // Get scene info from constants
+    this.sceneInfo = findSceneInfo(this.scene.key, SCENE_INFO);
+    // Load portal
+    this.load.image(`artworldPortal_${this.scene.key}`, this.sceneInfo.artworldPortal.path);
+    
+    // Load background assets
+    Object.entries(this.sceneInfo.background_assets).forEach(([key, path]) => {
+      this.load.image(key, path);
+    });
   }
 
   async create() {
@@ -190,8 +205,11 @@ export default class FireWorld extends Phaser.Scene {
   generateLocations() {
     // we set draggable on restart scene with a global flag
 
-    let locationVector = new Phaser.Math.Vector2(0, 0);
-    locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(this.worldSize, locationVector);
+    // Convert portal position to Phaser coordinates
+    const locationVector = CoordinatesTranslator.artworldVectorToPhaser2D(
+      this.worldSize, 
+      new Phaser.Math.Vector2(this.sceneInfo.artworldPortal.position.x, this.sceneInfo.artworldPortal.position.y)
+    );
 
     this.purpleCircleLocation = new GenerateLocation({
       scene: this,
@@ -200,9 +218,9 @@ export default class FireWorld extends Phaser.Scene {
       x: locationVector.x,
       y: locationVector.y,
       locationDestination: 'Artworld',
-      locationImage: 'artWorldPortalFire',
+      locationImage: `artworldPortal_${this.scene.key}`,
       enterButtonImage: 'enter_button',
-      locationText: 'Paarse Cirkel Wereld',
+      locationText: 'Paarse Circel Wereld',
       referenceName: 'this.purpleCircleLocation',
       fontColor: 0x8dcb0e,
     });
