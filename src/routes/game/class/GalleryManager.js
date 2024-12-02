@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import ManageSession from '../ManageSession';
-import { ART_DISPLAY_SIZE_LARGE, ART_DISPLAY_SIZE } from '../../../constants';
+import { ART_DISPLAY_SIZE } from '../../../constants';
 import { HomeEditBarExpanded } from '../../../session';
 
 import { HomeElements, homeElements_Store, homeElement_Selected } from '../../../storage';
@@ -92,7 +92,7 @@ export default class GalleryManager {
       const serverObjectsHandler = this.serverList;
       serverObjectsHandler.array = get(this.store.homeGalleryPaginatedArt);
       const userId = this.location;
-      const artSize = 200;
+      const artSize = ART_DISPLAY_SIZE;
       const frameBorderSize = artSize / 30;
       const artMargin = artSize / 10;
 
@@ -175,8 +175,8 @@ export default class GalleryManager {
         galleryElement && galleryElement.value.posY !== undefined
           ? galleryElement.value.posY
           : this.type === 'drawing'
-            ? artMargin / 2
-            : 1200;
+            ? ART_DISPLAY_SIZE
+            : ART_DISPLAY_SIZE * 2.7;
 
       const parentContainerWidth = totalWidth;
       const parentContainerHeight = artSize + artMargin * 5;

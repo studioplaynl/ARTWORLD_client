@@ -12,7 +12,7 @@
  *  It also contains the admin pages.
  *
  */
-import * as Phaser from 'phaser';
+  import * as Phaser from 'phaser';
 
   import Router, { push } from 'svelte-spa-router';
   import { onMount, tick } from 'svelte';

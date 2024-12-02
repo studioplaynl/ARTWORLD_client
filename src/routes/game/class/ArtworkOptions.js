@@ -46,7 +46,6 @@ class ArtworkOptions {
     // place heartButton under the artwork, make them interactive
     
     const heartSize = artContainer.width / ART_DISPLAY_SIZE_LARGE;
-    console.log('heartSize', heartSize);
     const currentHeart = scene.add
       .image(x, y, 'heart')
       .setOrigin(0)
@@ -76,11 +75,12 @@ class ArtworkOptions {
     // scene, x, y, keyImgUrl, mediaObject, artContainer
     // place heartButton under the artwork, make them interactive
     // const artFrame = scene.textures.get('artFrame_512');
-    const marginY = 16;
+    const marginY = artContainer.width / 5;
+    const buttonSize = (artContainer.width / ART_DISPLAY_SIZE_LARGE) * 0.7;
 
     const playButton = scene.add
       .image(
-        x - marginY * 6, // - artFrame.height
+        x - marginY, // - artFrame.height
         y,
         'play'
       )
@@ -90,7 +90,7 @@ class ArtworkOptions {
       //   y + (artFrame.height / 2) + marginY,
       //   'play',
       // )
-      .setScale(0.7)
+      .setScale(buttonSize)
       .setInteractive()
       .setData('togglePlay', true) // true, not liked state
       .on('pointerup', () => {

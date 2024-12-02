@@ -1,12 +1,12 @@
 /* eslint-disable brace-style */
 import { push } from 'svelte-spa-router';
-import { get } from 'svelte/store';
+// import { get } from 'svelte/store';
 // import SceneSwitcher from './SceneSwitcher';
 import { dlog } from '../../../helpers/debugLog';
 import ManageSession from '../ManageSession';
 import { DEFAULT_HOME, SCENE_INFO, AVATAR_BASE_SIZE } from '../../../constants';
 import { PlayerPos, PlayerLocation, PlayerUpdate } from '../playerState';
-
+import { ART_DISPLAY_SIZE } from '../../../constants';
 import * as Phaser from 'phaser';
 
 export default class GenerateLocation extends Phaser.GameObjects.Container {
@@ -397,7 +397,7 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
           PlayerUpdate.set({ forceHistoryReplace: false });
           PlayerPos.set({
             x: PosX,
-            y: 0,
+            y: ART_DISPLAY_SIZE / 2,
           });
 
         } else {

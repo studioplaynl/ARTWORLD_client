@@ -115,12 +115,10 @@ export default {
   scale: {
     width: CONFIG.WIDTH,
     height: CONFIG.HEIGHT,
-    zoom: window.devicePixelRatio || 1,
+    zoom: 1,
     parent: 'phaserId',
-    expandParent: true,
     //fixes scaling on mobile and keeps resizing on desktop
     mode: isMobileOrTablet ? Phaser.Scale.FIT : Phaser.Scale.RESIZE, 
-    autoCenter: Phaser.Scale.CENTER_BOTH
   },
   plugins: {
     scene: [

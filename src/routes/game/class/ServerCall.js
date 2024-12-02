@@ -2328,12 +2328,12 @@ class ServerCall {
     
     const imageKeyUrl = element.value.url;
     const y = artMargin;
-    const artBorder = ART_FRAME_BORDER;
-
-    const artStart = 38; // start the art on the left side
-
-    const coordX = index === 0 ? artStart : artStart + index * (artSize + artMargin);
+    const artBorder = artSize / 30;
+    const artStart = artMargin; // start the art on the left side
+    const xOffset = artSize + (artBorder * 2) + artMargin;
+    const coordX = artStart + (index * xOffset);
     const imageContainer = scene.add.container(0, 0).setDepth(100);
+
     imageContainer.nakamaData = { ...element };
 
     Background.createArtFrame(artSize);
@@ -2389,15 +2389,17 @@ class ServerCall {
     completedImage.setName('stopmotion');
     imageContainer.add(completedImage);
 
+    const containerSize = artSize + (artBorder * 2);
+    imageContainer.setSize(containerSize, containerSize);
+    
     completedImage.setData('playAnim', `moving_${imageKeyUrl}`);
     completedImage.setData('stopAnim', `stop_${imageKeyUrl}`);
     if (avatarFrames > 1) {
       completedImage.play(`moving_${imageKeyUrl}`);
     }
 
-    const containerSize = artSize + artBorder;
-    const tempX = containerSize - artMargin;
-    const tempY = containerSize + artBorder;
+    const tempX = containerSize - (artBorder * 4);
+    const tempY = containerSize + (artBorder/2);
     ArtworkOptions.placeHeartButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     ArtworkOptions.placePlayPauseButton(scene, tempX, tempY, imageKeyUrl, element, imageContainer);
     imageContainer.setPosition(coordX, y);
