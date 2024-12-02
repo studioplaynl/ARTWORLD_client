@@ -241,7 +241,7 @@ export const SCENE_INFO = [
         kind: 'homeArea',
         displayName: 'Prisma Wereld',
         locationImage: './assets/world_prism/Portaal_Prisma_naar_PrismaCROP-fs8.png',
-        position: { x: -1452, y: 809 },
+        position: { x: -1485, y: 899 },
         size: 340
       },
       {

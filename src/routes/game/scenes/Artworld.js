@@ -80,43 +80,6 @@ export default class Artworld extends Phaser.Scene {
   }
 
   async preload() {
-    const locations = [
-      'ChallengeAnimalGarden',
-      'ChallengeFlowerField',
-      'BlueSail',
-      'GreenSquare',
-      'RedStar',
-      'TurquoiseTriangle',
-      'YellowDiamond',
-      'FireWorld',
-      'RobotWorld',
-      'SlimeWorld',
-      'MarsWorld',
-      'UnderwaterWorld',
-      'SeaWorld',
-      'CloudWorld',
-      'MoonWorld',
-      'PizzaWorld',
-      'UndergroundWorld',
-      'WoestijnWereld',
-      'IjsWereld',
-      'IjscoWereld',
-      'BijenWereld',
-      'BergenWereld',
-      'PrismaWereld',
-      'JungleWereld',
-      'FlamengoWereld',
-      'RivierWereld',
-      'MoerasWereld',
-      'SalamanderWereld',
-      'VliegendeEilandenWereld',
-      'DennenbosWereld',
-      'MarioSound',
-      'SongMaker', 
-      'Kandinsky',
-      'MelodyMaker'
-    ];
-
     // Load portal images based on SCENE_INFO
     const artworld = SCENE_INFO.find(info => info.scene === 'Artworld');
     if (artworld && artworld.children) {

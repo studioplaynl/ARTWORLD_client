@@ -5,7 +5,7 @@ import Move from '../class/Move';
 import { PlayerZoom } from '../playerState';
 import Background from '../class/Background';
 import { dlog } from '../../../helpers/debugLog';
-import { ShowItemsBar, HomeEditBarExpanded } from '../../../session';
+import { ShowItemsBar } from '../../../session';
 
 /**   needed for EDITMODE: dragging objects and getting info about them in console
  *    scene context is passed on
@@ -43,10 +43,9 @@ export function handleEditMode(scene) {
         // ManageSession.selectedGameObject = gameObject
         dlog('editMode info ');
         dlog(
-          'posX posY: ',
-          worldX,
-          ', ',
-          worldY,
+          'scene:',
+          ManageSession.selectedGameObject.locationDestination,
+          `position: { x: ${worldX}, y: ${worldY} }`,
           'scale:',
           ManageSession.selectedGameObject.scale,
           'rotation:',
@@ -56,7 +55,7 @@ export function handleEditMode(scene) {
           'height*scale:',
           Math.round(ManageSession.selectedGameObject.height * ManageSession.selectedGameObject.scale),
           'name:',
-          ManageSession.selectedGameObject.name
+          ManageSession.selectedGameObject.name,
         );
       }
     },
