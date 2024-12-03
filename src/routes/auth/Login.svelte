@@ -195,14 +195,14 @@
     
     {#if showMoreOptions}
       <div class="utility-buttons">
-        <button class="utility-btn" on:click={clearCache}>
+        <!-- <button class="utility-btn" on:click={clearCache}>
           <img src="./assets/SHB/svg/AW-icon-reset.svg" alt="Clear cache" />
           {$_('clearCache')}
-        </button>
-        <!-- <button class="utility-btn" on:click={toggleFullscreen}>
+        </button> -->
+        <button class="utility-btn" on:click={toggleFullscreen}>
           <img src="./assets/SHB/svg/AW-icon-fullscreen.svg" alt="Toggle fullscreen" />
           {$_('fullscreen')}
-        </button> -->
+        </button>
       </div>
     {/if}
   </div>

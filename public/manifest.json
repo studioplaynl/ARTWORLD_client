@@ -1,21 +1,26 @@
 {
   "name": "Artworld",
   "short_name": "Artworld",
+  "description": "Explore and create art in a virtual world",
   "start_url": "/",
-  "display": "fullscreen",
+  "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#7300eb",
   "orientation": "landscape",
+  "categories": ["games", "art", "social"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

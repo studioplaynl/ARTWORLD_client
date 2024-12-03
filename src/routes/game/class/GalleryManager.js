@@ -293,7 +293,7 @@ export default class GalleryManager {
         artMargin,
       });
     } catch (error) {
-      // console.warn('Error in loadAndPlaceGallery:', error);
+      console.warn('Error in loadAndPlaceGallery:', error);
     }
   }
 
