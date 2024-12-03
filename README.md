@@ -5,7 +5,7 @@ ARTWORLD is a multi user game, so players see and can interact with each other.
 
 ![Walk animation](public/assets/docs/gifs/walk_arond_animation.gif)
 
-ARTWORLD want to support many art forms: drawing, stop motion animation, music, dance and poetry.
+ARTWORLD wants to support many art forms: drawing, stop motion animation, music, dance and poetry.
 ARTWORLD is also designed to work on any device: phone, tablet, computer. Also slower or older devices.
 
 ![Walk among art GIF](public/assets/docs/gifs/walk_arond_art.gif)

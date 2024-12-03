@@ -10,6 +10,10 @@ Open issues:
 - delete as admin does not delete things from AWS (server issue?)
 - delete as player does not delete item from AWS (server issue?)
 
+###2024-12-03
+implemented PWA, not yet final, but working. See [PWA.md](../1-implementation/PWA.md)
+
+
 ###2024-05-20
 Fixed loading convertImage issue where it was serving old versions of the image after the image was updated.
 Fix involved updating Cloudfront settings and having the server request a version based on modification date.

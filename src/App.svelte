@@ -69,6 +69,16 @@
   onMount(async () => {
     document.getElementById('loader').classList.add('hide');
 
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.register('/service-worker.js');
+        console.log('ServiceWorker registration successful');
+      } catch (err) {
+        console.log('ServiceWorker registration failed: ', err);
+      }
+    }
+
     // Attempt to restore a saved session
     await restoreSession();
 
