@@ -49,14 +49,11 @@ export default class GalleryManager {
     this.update_Gallery_Store();
 
     // Subscribe to the gallery store
-    this.unsubscribe = this.store.subscribe((value) => {
+    this.unsubscribeStore = this.store.subscribe((value) => {
       // Check if the value has actually changed
       if (!this.previousStore || JSON.stringify(this.previousStore) !== JSON.stringify(value)) {
         this.previousStore = JSON.parse(JSON.stringify(value));
-
         this.update_Gallery_Store();
-
-        // You might need to implement this method or adjust it based on your needs
         this.loadAndPlaceGallery();
       }
     });
@@ -396,9 +393,9 @@ export default class GalleryManager {
   }
 
   unsubscribe() {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-      this.unsubscribe = null;
+    if (typeof this.unsubscribeStore === 'function') {
+      this.unsubscribeStore();
+      this.unsubscribeStore = null;
     }
   }
 }
