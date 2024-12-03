@@ -62,6 +62,11 @@ export default class UIScene extends Phaser.Scene {
   async create() {
     const scene = ManageSession.currentScene;
 
+    // we scale the game to the screen size in case we are on mobile
+    // there we use .FIT scale mode but when we do fullscreen we resize the game to fill the screen
+    const screenDimensions = getScreenDimensions() 
+    this.scale.setGameSize(screenDimensions.cssWidth, screenDimensions.cssHeight);
+
     let countDisplay = 0;
     locale.subscribe((value) => {
       if (countDisplay === 0) {
@@ -85,13 +90,6 @@ export default class UIScene extends Phaser.Scene {
     // ......... DEBUG FUNCTIONS ...........................................................................
     this.events.on('gameEditMode', this.gameEditModeSign, this); // show edit mode indicator
     this.events.on('gameEditMode', this.editElementsScene, this); // make elements editable
-
-    // const eventNames = scene.load.eventNames();
-    // dlog('eventNames', eventNames);
-    // const isReady = scene.load.isReady();
-    // dlog('loader isReady', isReady);
-    // const isLoading = scene.load.isLoading();
-    // dlog('loader isLoading', isLoading);
 
     // keyboard events caught for debug functions, edit mode
     DebugFuntions.keyboard(this);
@@ -122,17 +120,9 @@ export default class UIScene extends Phaser.Scene {
       ManageSession.userHomeLocation = value.meta.Azc;
     });
 
-    // Live update of the home image when we select an other homeImage in the UI
-    // myHomeStore.subscribe((value) => {
-    //   if (!scene) return;
-    //   if (ManageSession.userHomeLocation !== scene.scene.key) return;
-    //   ServerCall.updateHomeImage(scene, value);
-    // });
-
     // Subscription and Event Emitter
     HomeEditBarExpanded.subscribe((value) => {
       if (!this.scene || value === undefined) return;
-      
       this.game.events.emit('toggleHomeElement_Controls', value);
     });
 
@@ -194,8 +184,7 @@ export default class UIScene extends Phaser.Scene {
 
   reloadHomeElements(){
     // const value = get(homeElements_Store);
-
-   this.game.events.emit('homeElements_show');
+    this.game.events.emit('homeElements_show');
   }
 
   async removeOldMinimap() {
@@ -271,7 +260,6 @@ export default class UIScene extends Phaser.Scene {
             this.miniMapDimensions.y, 
             0xff0000, 1
           ).setVisible(false);
-
           // console.log('Minimap Positions:', {
           //   screenWidth,
           //   miniMapDimensions: this.miniMapDimensions,
@@ -297,9 +285,9 @@ export default class UIScene extends Phaser.Scene {
           this.minimapCamera.setBounds(0, 0,
             ManageSession.currentScene.worldSize.x, ManageSession.currentScene.worldSize.y);
         
-          const windowSize = getScreenDimensions(MINIMAP_SIZE, MINIMAP_SIZE);
+          // const windowSize = getScreenDimensions(MINIMAP_SIZE, MINIMAP_SIZE);
           // console.log('windowSize: ', windowSize)
-          const scaledDimensions = getScreenDimensions(MINIMAP_SIZE, MINIMAP_SIZE);
+          // const scaledDimensions = getScreenDimensions(MINIMAP_SIZE, MINIMAP_SIZE);
           // console.log('windowSize getScreenDimensions: ', scaledDimensions);
           // Create a rectangle to represent the current view
           this.minimapWorldBorder = this.add.rectangle(

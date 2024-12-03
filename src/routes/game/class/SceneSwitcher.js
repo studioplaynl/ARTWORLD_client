@@ -21,12 +21,18 @@ import { setLoader } from '../../../helpers/nakamaHelpers';
 class SceneSwitcher {
   constructor() {
     this.isTransitioning = false;
+    this.lastTransition = null;
     this.unsubscribeScene = PlayerLocation.subscribe(() => {
-      dlog('\u001b[31m PlayerLocation', get(PlayerLocation));
-      dlog('\u001b[31m PlayerPos', get(PlayerPos));
-
-      // dlog('\u001b[31m playerStreamID', get(playerStreamID));
-      // const history = get(PlayerHistory);
+      const currentLocation = get(PlayerLocation);
+      
+      // Prevent duplicate transitions
+      if (this.lastTransition && 
+          this.lastTransition.scene === currentLocation.scene && 
+          this.lastTransition.house === currentLocation.house) {
+        return;
+      }
+      
+      this.lastTransition = currentLocation;
       this.doSwitchScene();
     });
     // this.unsubscribeHouse = PlayerLocationHouse.subscribe(() => {

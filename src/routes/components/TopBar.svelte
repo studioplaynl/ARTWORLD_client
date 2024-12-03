@@ -184,7 +184,7 @@
   //  with PlayerUpdate.set({ forceHistoryReplace: false });
   */
   async function goHome() {
-    // this seems to fix an issue on android tablet where the loading would get stuck
+    parentScenes = [];
     setTimeout(() => {
       PlayerLocation.set({
         scene: DEFAULT_SCENE,

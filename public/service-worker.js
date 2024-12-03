@@ -1,7 +1,5 @@
 const CACHE_NAME = 'artworld-cache-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/manifest.json',
  '/',
   '/manifest.json',
   '/icons/icon-192x192.png',
