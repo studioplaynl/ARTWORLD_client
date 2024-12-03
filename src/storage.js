@@ -643,7 +643,6 @@ export function createArtworksStore(type) {
 // from ART store a derived store that show paginated art
 // for use in a gallery
 export function homeGalleryStore(type, isSelfHome = false) {
-  console.log('changed homeGalleryStore: ', type, isSelfHome);
   let store;
   if (isSelfHome) {
     const { filteredAndVisibleArt } = useFilteredArtworksStore(type);

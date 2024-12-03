@@ -263,7 +263,7 @@ class SceneSwitcher {
             element.destroy();
           });
           ManageSession.allConnectedUsers.length = 0;
-          dlog('ManageSession.allConnectedUsers', ManageSession.allConnectedUsers);
+          // dlog('ManageSession.allConnectedUsers', ManageSession.allConnectedUsers);
           // WE LEFT THE SCENE SUCCESFULLY
 
           // dlog('targetScene', targetScene);

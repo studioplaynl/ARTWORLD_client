@@ -149,7 +149,7 @@ export default class DefaultUserHome extends Phaser.Scene {
     // get homeElements from server and subscribe to the store
     this.unsubscribe_HomeElements = HomeElements.subscribe((value) => {
       // if (value === undefined) return; // this is never true because of how the store is set up
-      dlog('reactivity HomeElements', value);
+      // dlog('reactivity HomeElements', value);
       this.cleanupHomeElements();
       this.loadAndPlaceHomeElements(value);
     });
@@ -213,7 +213,6 @@ export default class DefaultUserHome extends Phaser.Scene {
     await this.cleanupHomeElements();
     
     const store = HomeElements.showContent();
-    console.log('loadAndPlaceHomeElements', store, value);
     
     //if there are no homeElements ServerCall will take care of that
     if (value) {

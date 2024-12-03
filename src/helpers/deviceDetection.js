@@ -1,14 +1,5 @@
 export const getDeviceType = () => {
     const ua = navigator.userAgent;
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    
-    console.log('Screen dimensions:', {
-      innerWidth: width,
-      innerHeight: height,
-      devicePixelRatio: window.devicePixelRatio,
-      userAgent: ua
-    });
   
     if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
       return 'tablet';
