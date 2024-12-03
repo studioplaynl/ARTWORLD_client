@@ -7,7 +7,7 @@ import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
 
-import { dlog } from '../../../helpers/debugLog';
+// import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos } from '../playerState';
 import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
@@ -41,7 +41,8 @@ export default class IjscoWereld extends Phaser.Scene {
   }
 
   async preload() {
-    this.localAssetsCheck = {};
+    this.load.image('Portal_naarHuis_ijs', './assets/world_ice/Portaal_ice_naarHUIS-fs8.png');
+    this.load.image('Portaal_vanIjs_naarIjsco', './assets/world_ice/Portaal_vanIce_naarIceCream-fs8.png');
 
     const folderPath = './assets/world_ice/';
 

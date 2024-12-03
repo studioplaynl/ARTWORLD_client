@@ -46,6 +46,10 @@ export default class BergenWereld extends Phaser.Scene {
   }
 
   async preload() {
+    // load Portal_naarHuis_bergen
+    this.load.image('Portal_naarHuis_bergen', './assets/world_bergen/Portaal01_Bergen_naar_huis_CROP-fs8.png');
+
+    // load Portal_naarHuis_bergen
     const folderPath = './assets/world_bergen/';
 
     this.backgroundImageKey = 'bergen_background_';

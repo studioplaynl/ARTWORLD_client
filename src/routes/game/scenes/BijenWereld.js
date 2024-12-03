@@ -3,12 +3,11 @@ import ManageSession from '../ManageSession';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
 import Player from '../class/Player';
-// import Background from '../class/Background';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import GenerateLocation from '../class/GenerateLocation';
 import ServerCall from '../class/ServerCall';
 
-import { dlog } from '../../../helpers/debugLog';
+// import { dlog } from '../../../helpers/debugLog';
 import { PlayerPos } from '../playerState';
 import { SCENE_INFO, ART_DISPLAY_SIZE, ART_OFFSET_BETWEEN } from '../../../constants';
 import { handleEditMode, handlePlayerMovement } from '../helpers/InputHelper';
@@ -46,6 +45,9 @@ export default class BijenWereld extends Phaser.Scene {
   }
 
   async preload() {
+    // load 'Portal_naarHuis_bijen'
+    this.load.image('Portal_naarHuis_bijen', './assets/world_bees/02a_Portaal_bee_naar_home-fs8.png');
+    
     const folderPath = './assets/world_bees/';
 
     this.backgroundImageKey = 'bee_background_';
