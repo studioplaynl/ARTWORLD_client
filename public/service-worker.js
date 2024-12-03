@@ -2,7 +2,7 @@ const CACHE_NAME = 'artworld-cache-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json',
-  '/assets/world_artworld/',
+  '/assets/',
   // Add paths to your critical assets here
 ];
 

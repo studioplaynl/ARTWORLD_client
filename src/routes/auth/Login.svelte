@@ -2,7 +2,6 @@
   import { _ } from 'svelte-i18n';
   import { onMount } from 'svelte';
   import { writable } from 'svelte/store';
-  import CameraIcon from 'svelte-icons/fa/FaQrcode.svelte';
   import { push, querystring } from 'svelte-spa-router';
   import { Session } from '../../session';
   import { login, checkLoginExpired } from '../../helpers/nakamaHelpers';
@@ -17,7 +16,7 @@
   let email;
   let password;
   let qrscanState = false;
-
+  let showMoreOptions = false;
 
   const deviceType = getDeviceType();
   const isMobile = deviceType === 'mobile' || deviceType === 'tablet';
@@ -47,6 +46,32 @@
 
   function handleInput(event) {
     password = event.target.value;
+  }
+
+  async function clearCache() {
+    if ('caches' in window) {
+      try {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(key => caches.delete(key)));
+        window.location.reload(true);
+      } catch (err) {
+        console.error('Error clearing cache:', err);
+      }
+    }
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error('Error attempting to enable fullscreen:', err);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  function toggleMoreOptions() {
+    showMoreOptions = !showMoreOptions;
   }
 
 </script>
@@ -138,8 +163,48 @@
         qrscanState = !qrscanState;
       }}"
     >
-      <CameraIcon />
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        viewBox="0 0 30 30" 
+        width="80" 
+        height="80"
+      >
+        <circle cx="15" cy="15" r="14" fill="white" stroke="#7300eb" stroke-width="2"/>
+        <path 
+          fill="#7300eb" 
+          d="M20 11h-2l-1.5-1.5h-3L12 11h-2c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-6c0-1.1-.9-2-2-2zm-5 7c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3z"
+        />
+        <circle 
+          cx="15" 
+          cy="15" 
+          r="1.5" 
+          fill="#7300eb"
+        />
+      </svg>
     </button>
+  </div>
+
+  <div class="more-menu">
+    <button class="more-btn" on:click={toggleMoreOptions}>
+      <img 
+        src="./assets/SHB/svg/AW-icon-more.svg" 
+        alt="More options" 
+        class="more-icon"
+      />
+    </button>
+    
+    {#if showMoreOptions}
+      <div class="utility-buttons">
+        <button class="utility-btn" on:click={clearCache}>
+          <img src="./assets/SHB/svg/AW-icon-reset.svg" alt="Clear cache" />
+          {$_('clearCache')}
+        </button>
+        <button class="utility-btn" on:click={toggleFullscreen}>
+          <img src="./assets/SHB/svg/AW-icon-fullscreen.svg" alt="Toggle fullscreen" />
+          {$_('fullscreen')}
+        </button>
+      </div>
+    {/if}
   </div>
 </main>
 
@@ -244,9 +309,93 @@
   }
 
   .qr-btn {
-    max-height: 50px;
-    padding: 5px;
-    margin: 0 auto;
+    max-height: 80px;
     max-width: 80px;
+    padding: 0;
+    margin: 0 auto;
+    background: none;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .qr-btn svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .qr-btn:hover svg path,
+  .qr-btn:hover svg circle:last-child {
+    fill: #8f33f5;
+  }
+
+  .more-menu {
+    position: relative;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .more-btn {
+    background-color: #7300eb;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.9;
+  }
+
+  .more-btn:hover {
+    opacity: 1;
+  }
+
+  .more-icon {
+    transform: rotate(90deg);
+    width: 26px;
+    height: 26px;
+  }
+
+  .utility-buttons {
+    position: absolute;
+    top: 100%;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .utility-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #7300eb;
+    border-radius: 25px;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.9;
+    white-space: nowrap;
+  }
+
+  .utility-btn:hover {
+    opacity: 1;
+  }
+
+  .utility-btn img {
+    width: 20px;
+    height: 20px;
   }
 </style>
