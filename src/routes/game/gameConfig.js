@@ -119,6 +119,9 @@ export default {
     parent: 'phaserId',
     //fixes scaling on mobile and keeps resizing on desktop
     mode: isMobileOrTablet ? Phaser.Scale.FIT : Phaser.Scale.RESIZE, 
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    fullscreenTarget: 'phaserId',
+    expandParent: true,
   },
   plugins: {
     scene: [
