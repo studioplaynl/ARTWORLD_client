@@ -58,8 +58,6 @@ export default class FireWorld extends Phaser.Scene {
   }
 
   async preload() {
-    ManageSession.currentScene = this.scene; // getting a central scene context
-
     // Get scene info from constants
     this.sceneInfo = findSceneInfo(this.scene.key, SCENE_INFO);
     // Load portal

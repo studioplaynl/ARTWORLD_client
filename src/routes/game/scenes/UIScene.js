@@ -149,7 +149,9 @@ export default class UIScene extends Phaser.Scene {
       this.createMinimap();
     });
 
-    PlayerPos.subscribe(() => {
+    PlayerPos.subscribe((value) => {
+      if (!value) return;
+      if (!ManageSession.currentScene) return;
       this.updatePlayerDotPosition();
       this.updateMinimapFrame();
     });

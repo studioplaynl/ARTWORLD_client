@@ -64,42 +64,21 @@
         try {
           // Get the house owner's info to find their Azc
           userInfo = await getAccount(currentLocation.house);
-          console.log('DefaultUserHome - House owner details:', {
-            id: userInfo.id,
-            username: userInfo.username,
-            display_name: userInfo.display_name,
-            meta: userInfo.meta,
-            url: userInfo.avatar_url  // Log the avatar URL
-          });
           
           // Handle both Azc and azc cases, including when meta might be undefined
           let userAzc = 'GreenSquare';  // Default value
           if (userInfo && userInfo.meta) {
             if (userInfo.meta.Azc) {
               userAzc = userInfo.meta.Azc;
-              console.log('Found Azc in meta.Azc:', userAzc);
             } else if (userInfo.meta.azc) {
               userAzc = userInfo.meta.azc;
-              console.log('Found Azc in meta.azc:', userAzc);
             } else {
-              console.log('No Azc found in meta, using default:', userAzc);
             }
           } else {
-            console.log('No meta data found for user, using default Azc:', userAzc);
           }
           
           // Normalize Azc value for storage key
           const storageKey = userAzc.replace('Wereld', '');
-          console.log('Storage key for house object:', storageKey);
-          
-          console.log('Final house location resolution:', {
-            scene: 'DefaultUserHome',
-            house: currentLocation.house,
-            userAzc: userAzc,
-            storageKey: storageKey,
-            username: userInfo.username,
-            display_name: userInfo.display_name
-          });
           
           // Set parent scenes: [Azc, DefaultUserHome]
           parentScenes = [userAzc];
@@ -107,7 +86,6 @@
 
           if (userInfo && userInfo.url) {
             avatarUrl = userInfo.url;
-            console.log('Avatar URL:', avatarUrl);
           }
 
           // Use normalized storage key for getObject
@@ -116,14 +94,10 @@
             storageKey,
             userInfo.id
           );
-          console.log('Retrieved house object:', userHouseObject);
           
           if (userHouseObject && userHouseObject.value) {
-            console.log('House image URL:', userHouseObject.value.url);
             homeImageUrl = await convertImage(userHouseObject.value.url, '50', '50');
-            console.log('Converted house image URL:', homeImageUrl);
           } else {
-            console.log('Using stock house - no custom house object found');
             // Here we could handle stock house URL if needed
           }
         } catch (error) {

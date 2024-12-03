@@ -104,27 +104,27 @@ export function getSceneInfo(obj, targetScene) {
 
 // find all parent scenes of a specific scene in the SCENE_INFO object
 export function findParentScenes(location, scenes, parents = []) {
-  console.log('Finding parents for location:', location);
-  console.log('Current parents array:', parents);
+  // console.log('Finding parents for location:', location);
+  // console.log('Current parents array:', parents);
 
   for (const scene of scenes) {
-    console.log('Checking scene:', scene);
+    // console.log('Checking scene:', scene);
     
     if (scene.scene === location) {
-      console.log('Found exact match! Returning parents:', parents);
+      // console.log('Found exact match! Returning parents:', parents);
       return parents;
     }
     if (scene.children) {
-      console.log('Checking children of scene:', scene.scene);
+      // console.log('Checking children of scene:', scene.scene);
       const result = findParentScenes(location, scene.children, [...parents, scene.scene]);
       if (result) {
-        console.log('Found result in children! Result:', result);
+        // console.log('Found result in children! Result:', result);
         return result;
       }
     }
   }
   
-  console.log('No match found in this branch');
+  // console.log('No match found in this branch');
   return [];
 }
 

@@ -43,7 +43,6 @@ export default class BlueSail extends Phaser.Scene {
   }
 
   async preload() {
-    ManageSession.currentScene = this.scene; // getting a central scene context
   }
 
   async create() {
