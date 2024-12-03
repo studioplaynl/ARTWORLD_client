@@ -48,21 +48,22 @@ class SceneSwitcher {
   // }
 
   async doSwitchScene() {
-    if (this.isTransitioning) {
-      console.log('Scene transition already in progress');
-      return;
-    }
-
     try {
+      if (this.isTransitioning) {
+        console.log('Scene transition already in progress');
+        return;
+      }
+
       this.isTransitioning = true;
       const scene = ManageSession.currentScene;
       
       if (!scene) {
         console.log('No current scene found');
+        this.isTransitioning = false; // Reset flag
         return;
       }
 
-      scene.isTransitioning = true;  // Add flag to scene instance
+      scene.isTransitioning = true;
       
       const targetScene = get(PlayerLocation).scene;
       const targetHouse = get(PlayerLocation).house;
@@ -147,12 +148,10 @@ class SceneSwitcher {
 
       this.switchStream(scene, targetScene);
     } catch (error) {
-      console.error('Scene switch failed:', error);
+      console.error('Scene transition failed:', error);
     } finally {
       this.isTransitioning = false;
-      if (ManageSession.currentScene) {
-        ManageSession.currentScene.isTransitioning = false;
-      }
+     
     }
   }
 
