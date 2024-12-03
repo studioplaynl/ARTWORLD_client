@@ -404,8 +404,8 @@ class ServerCall {
         this.handleServerArray({
           type,
           serverObjectsHandler,
-          artSize: standardArtSize,
-          artMargin: standardArtMargin,
+          artSize: artSize,
+          artMargin: artMargin,
         });
       } else {
         // we use all available animals

@@ -59,68 +59,58 @@
     PlayerLocation.subscribe(async (value) => {
       currentLocation = value;
 
-      parentScenes = findParentScenes(currentLocation.scene, SCENE_INFO);
+      // First get all parent scenes including Artworld
+      const allParentScenes = findParentScenes(currentLocation.scene, SCENE_INFO);
       
-      /* Remove 'Artworld' from parentScenes if present
-         because the Artworld button is always visible, and is the root scene
-      */
-      parentScenes = parentScenes.filter(scene => scene !== 'Artworld');
-      
-      if (parentScenes.length > 0) {
-        // simple case where we have parent scenes
+      if (allParentScenes.length > 0) {
+        // Scene exists in SCENE_INFO, now filter out Artworld for display purposes
+        parentScenes = allParentScenes.filter(scene => scene !== 'Artworld');
         currentLocation = {scene: value.scene};
-      } else {
-        /* no parent scenes, case can be:
-        1. Artworld
-        2. DefaultUserHome
+      } else if (currentLocation.scene === DEFAULT_SCENE) {
+        // Handle Artworld case
+        currentLocation = {scene: value.scene};
+      } else if (currentLocation.scene === 'DefaultUserHome') {
+        /* we are in DefaultUserHome scene
+           we have to find the parent scene of the house
+           by fetching the user info 
         */
-
-        if (currentLocation.scene === DEFAULT_SCENE) {
-          // we are in Artworld scene
-          currentLocation = {scene: value.scene};
-
-        } else if (currentLocation.scene === 'DefaultUserHome') {
-          /* we are in DefaultUserHome scene
-             we have to find the parent scene of the house
-             by fetching the user info 
-          */
-            try {
-              userInfo = await getAccount(currentLocation.house);
-              
-              // Handle both Azc and azc cases, including when meta might be undefined
-              let userAzc = 'GreenSquare';  // Default value
-              if (userInfo && userInfo.meta) {
-                if (userInfo.meta.Azc) {
-                  userAzc = userInfo.meta.Azc;
-                } else if (userInfo.meta.azc) {
-                  userAzc = userInfo.meta.azc;
-                }
+          try {
+            userInfo = await getAccount(currentLocation.house);
+            
+            // Handle both Azc and azc cases, including when meta might be undefined
+            let userAzc = 'GreenSquare';  // Default value
+            if (userInfo && userInfo.meta) {
+              if (userInfo.meta.Azc) {
+                userAzc = userInfo.meta.Azc;
+              } else if (userInfo.meta.azc) {
+                userAzc = userInfo.meta.azc;
               }
-              
-              parentScenes.push(userAzc);
-              
-              const tempParentScenes = findParentScenes(userAzc, SCENE_INFO);
-              const tempParentScenes2 = tempParentScenes.filter(scene => scene !== 'Artworld');
-              parentScenes.push(...tempParentScenes2);
-
-              currentLocation = {scene: 'DefaultUserHome', house: value.house};
-              if (userInfo && userInfo.url) {
-                avatarUrl = userInfo.url;
-              }
-
-              const userHouseObject = await getObject(
-                'home',
-                userAzc,
-                userInfo.id);
-              homeImageUrl = await convertImage(userHouseObject.value.url, '50', '50');
-            } catch (error) {
-              currentLocation = {house: value.house};
-
             }
             
-        } else {
-          console.log('currentLocation Player is in an unknown location without parent');
-        }
+            parentScenes.push(userAzc);
+            
+            const tempParentScenes = findParentScenes(userAzc, SCENE_INFO);
+            const tempParentScenes2 = tempParentScenes.filter(scene => scene !== 'Artworld');
+            parentScenes.push(...tempParentScenes2);
+
+            currentLocation = {scene: 'DefaultUserHome', house: value.house};
+            if (userInfo && userInfo.url) {
+              avatarUrl = userInfo.url;
+            }
+
+            const userHouseObject = await getObject(
+              'home',
+              userAzc,
+              userInfo.id);
+            homeImageUrl = await convertImage(userHouseObject.value.url, '50', '50');
+          } catch (error) {
+            currentLocation = {house: value.house};
+
+          }
+            
+      } else {
+        // Only log unknown location if truly not found in SCENE_INFO
+        console.log('Scene not found in SCENE_INFO:', currentLocation.scene);
       }
 
       // Add scene to addressbook if applicable
@@ -196,16 +186,16 @@
   async function goHome() {
     // this seems to fix an issue on android tablet where the loading would get stuck
     setTimeout(() => {
-            PlayerLocation.set({
-              scene: DEFAULT_SCENE,
-            });
-            
-            PlayerUpdate.set({ forceHistoryReplace: true });
-            PlayerPos.set({
-              x: 0,
-              y: 0,
-            });
-        }, 400);  
+      PlayerLocation.set({
+        scene: DEFAULT_SCENE,
+      });
+      
+      PlayerUpdate.set({ forceHistoryReplace: false });
+      PlayerPos.set({
+        x: 0,
+        y: 0,
+      });
+    }, 200);  
   }
 
   /**  pop() sets off a reaction where the url is parsed, and the player is taken back

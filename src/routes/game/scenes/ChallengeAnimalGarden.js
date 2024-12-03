@@ -135,7 +135,7 @@ export default class ChallengeAnimalGarden extends Phaser.Scene {
   getAnimals(serverObjectsHandler) {
     const type = 'dier';
     const userId = null; // to get all users' artworks
-    const artSize = 256;
+    const artSize = 128;
     const artMargin = artSize / 10;
     this.artMargin = artMargin;
     ServerCall.downloadAndPlaceArtByType({

@@ -33,33 +33,37 @@ export default class AnimalChallenge extends Phaser.GameObjects.Sprite {
       const avatarFrames = Math.round(avatarWidth / avatarHeight);
       let setFrameRate = 0;
       if (avatarFrames > 1) {
-        setFrameRate = avatarFrames * 2 + 2;
+        setFrameRate = Math.round(avatarFrames * 1.2 + 2);
       } else {
         setFrameRate = 0;
       }
 
-      // set names for the moving and stop animations
-      scene.anims.create({
-        key: `moving_${avatarKey}`,
-        frames: scene.anims.generateFrameNumbers(avatarKey, {
-          start: 0,
-          end: avatarFrames - 1,
-        }),
-        frameRate: setFrameRate,
-        repeat: -1,
-        yoyo: true,
-      });
+      // Check if animations don't already exist before creating them
+      if (!scene.anims.exists(`moving_${avatarKey}`)) {
+        scene.anims.create({
+          key: `moving_${avatarKey}`,
+          frames: scene.anims.generateFrameNumbers(avatarKey, {
+            start: 0,
+            end: avatarFrames - 1,
+          }),
+          frameRate: setFrameRate,
+          repeat: -1,
+          yoyo: true,
+        });
+      }
 
-      scene.anims.create({
-        key: `stop_${avatarKey}`,
-        frames: scene.anims.generateFrameNumbers(avatarKey, {
-          start: 0,
-          end: 0,
-        }),
-        // frameRate: 8,
-        // repeat: -1,
-        // yoyo: true
-      });
+      if (!scene.anims.exists(`stop_${avatarKey}`)) {
+        scene.anims.create({
+          key: `stop_${avatarKey}`,
+          frames: scene.anims.generateFrameNumbers(avatarKey, {
+            start: 0,
+            end: 0,
+          }),
+          // frameRate: 8,
+          // repeat: -1,
+          // yoyo: true
+        });
+      }
 
       const tempX = Phaser.Math.Between(
         this.artSize * 2,
