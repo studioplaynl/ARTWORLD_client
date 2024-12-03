@@ -57,60 +57,92 @@
 
   onMount(async () => {
     PlayerLocation.subscribe(async (value) => {
+      console.log('PlayerLocation value:', value);
       currentLocation = value;
 
-      // First get all parent scenes including Artworld
-      const allParentScenes = findParentScenes(currentLocation.scene, SCENE_INFO);
-      
-      if (allParentScenes.length > 0) {
-        // Scene exists in SCENE_INFO, now filter out Artworld for display purposes
-        parentScenes = allParentScenes.filter(scene => scene !== 'Artworld');
-        currentLocation = {scene: value.scene};
-      } else if (currentLocation.scene === DEFAULT_SCENE) {
-        // Handle Artworld case
-        currentLocation = {scene: value.scene};
-      } else if (currentLocation.scene === 'DefaultUserHome') {
-        /* we are in DefaultUserHome scene
-           we have to find the parent scene of the house
-           by fetching the user info 
-        */
-          try {
-            userInfo = await getAccount(currentLocation.house);
-            
-            // Handle both Azc and azc cases, including when meta might be undefined
-            let userAzc = 'GreenSquare';  // Default value
-            if (userInfo && userInfo.meta) {
-              if (userInfo.meta.Azc) {
-                userAzc = userInfo.meta.Azc;
-              } else if (userInfo.meta.azc) {
-                userAzc = userInfo.meta.azc;
-              }
+      if (currentLocation.scene === 'DefaultUserHome' && currentLocation.house) {
+        try {
+          // Get the house owner's info to find their Azc
+          userInfo = await getAccount(currentLocation.house);
+          console.log('DefaultUserHome - House owner details:', {
+            id: userInfo.id,
+            username: userInfo.username,
+            display_name: userInfo.display_name,
+            meta: userInfo.meta,
+            url: userInfo.avatar_url  // Log the avatar URL
+          });
+          
+          // Handle both Azc and azc cases, including when meta might be undefined
+          let userAzc = 'GreenSquare';  // Default value
+          if (userInfo && userInfo.meta) {
+            if (userInfo.meta.Azc) {
+              userAzc = userInfo.meta.Azc;
+              console.log('Found Azc in meta.Azc:', userAzc);
+            } else if (userInfo.meta.azc) {
+              userAzc = userInfo.meta.azc;
+              console.log('Found Azc in meta.azc:', userAzc);
+            } else {
+              console.log('No Azc found in meta, using default:', userAzc);
             }
-            
-            parentScenes.push(userAzc);
-            
-            const tempParentScenes = findParentScenes(userAzc, SCENE_INFO);
-            const tempParentScenes2 = tempParentScenes.filter(scene => scene !== 'Artworld');
-            parentScenes.push(...tempParentScenes2);
-
-            currentLocation = {scene: 'DefaultUserHome', house: value.house};
-            if (userInfo && userInfo.url) {
-              avatarUrl = userInfo.url;
-            }
-
-            const userHouseObject = await getObject(
-              'home',
-              userAzc,
-              userInfo.id);
-            homeImageUrl = await convertImage(userHouseObject.value.url, '50', '50');
-          } catch (error) {
-            currentLocation = {house: value.house};
-
+          } else {
+            console.log('No meta data found for user, using default Azc:', userAzc);
           }
-            
+          
+          // Normalize Azc value for storage key
+          const storageKey = userAzc.replace('Wereld', '');
+          console.log('Storage key for house object:', storageKey);
+          
+          console.log('Final house location resolution:', {
+            scene: 'DefaultUserHome',
+            house: currentLocation.house,
+            userAzc: userAzc,
+            storageKey: storageKey,
+            username: userInfo.username,
+            display_name: userInfo.display_name
+          });
+          
+          // Set parent scenes: [Azc, DefaultUserHome]
+          parentScenes = [userAzc];
+          currentLocation = {scene: value.scene, house: value.house};
+
+          if (userInfo && userInfo.url) {
+            avatarUrl = userInfo.url;
+            console.log('Avatar URL:', avatarUrl);
+          }
+
+          // Use normalized storage key for getObject
+          const userHouseObject = await getObject(
+            'home',
+            storageKey,
+            userInfo.id
+          );
+          console.log('Retrieved house object:', userHouseObject);
+          
+          if (userHouseObject && userHouseObject.value) {
+            console.log('House image URL:', userHouseObject.value.url);
+            homeImageUrl = await convertImage(userHouseObject.value.url, '50', '50');
+            console.log('Converted house image URL:', homeImageUrl);
+          } else {
+            console.log('Using stock house - no custom house object found');
+            // Here we could handle stock house URL if needed
+          }
+        } catch (error) {
+          console.error('Error getting house owner info:', error, {
+            house: currentLocation.house,
+            userAzc: userAzc,
+            storageKey: storageKey
+          });
+          currentLocation = {house: value.house};
+        }
       } else {
-        // Only log unknown location if truly not found in SCENE_INFO
-        console.log('Scene not found in SCENE_INFO:', currentLocation.scene);
+        // Handle regular scenes (non-DefaultUserHome)
+        const allParentScenes = findParentScenes(currentLocation.scene, SCENE_INFO);
+        if (allParentScenes.length > 0) {
+          parentScenes = allParentScenes.filter(scene => scene !== 'Artworld');
+          currentLocation = {scene: value.scene};
+        } else if (currentLocation.scene === DEFAULT_SCENE) {
+          currentLocation = {scene: value.scene};
+        }
       }
 
       // Add scene to addressbook if applicable
