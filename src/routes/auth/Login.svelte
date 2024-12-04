@@ -103,6 +103,11 @@
     {/if}
   </div>
 
+  <button class="utility-btn" on:click={toggleFullscreen}>
+    <img src="./assets/SHB/svg/AW-icon-fullscreen.svg" alt="Toggle fullscreen" />
+    {$_('fullscreen')}
+  </button>
+
   <div class="qrModal">
     {#if qrscanState}
       <QRscanner bind:email="{email}" bind:password="{password}" />
@@ -184,6 +189,7 @@
     </button>
   </div>
 
+  <!--
   <div class="more-menu">
     <button class="more-btn" on:click={toggleMoreOptions}>
       <img 
@@ -195,10 +201,6 @@
     
     {#if showMoreOptions}
       <div class="utility-buttons">
-        <!-- <button class="utility-btn" on:click={clearCache}>
-          <img src="./assets/SHB/svg/AW-icon-reset.svg" alt="Clear cache" />
-          {$_('clearCache')}
-        </button> -->
         <button class="utility-btn" on:click={toggleFullscreen}>
           <img src="./assets/SHB/svg/AW-icon-fullscreen.svg" alt="Toggle fullscreen" />
           {$_('fullscreen')}
@@ -206,6 +208,7 @@
       </div>
     {/if}
   </div>
+  -->
 </main>
 
 <style>
@@ -330,50 +333,6 @@
   .qr-btn:hover svg path,
   .qr-btn:hover svg circle:last-child {
     fill: #8f33f5;
-  }
-
-  .more-menu {
-    position: relative;
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-  }
-
-  .more-btn {
-    background-color: #7300eb;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.9;
-  }
-
-  .more-btn:hover {
-    opacity: 1;
-  }
-
-  .more-icon {
-    transform: rotate(90deg);
-    width: 26px;
-    height: 26px;
-  }
-
-  .utility-buttons {
-    position: absolute;
-    top: 100%;
-    margin-top: 10px;
-    background: white;
-    border-radius: 8px;
-    padding: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 100;
   }
 
   .utility-btn {
