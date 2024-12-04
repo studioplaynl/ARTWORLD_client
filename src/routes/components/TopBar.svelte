@@ -464,31 +464,31 @@
       </div>
     {/if}
   </div> -->
-</div>
 
-<div class="topbar-second" style="{zoomButtonsStyle}">
-  <button on:click="{zoomOut}" id="zoomOut">
-    <img
-      class="TopIcon2"
-      src="/assets/SHB/svg/AW-icon-minus.svg"
-      alt="Zoom out"
-    />
-  </button>
-  <button on:click="{zoomReset}" id="zoomReset">
-    <img
-      class="TopIcon2"
-      src="assets/SHB/svg/AW-icon-zoom-reset.svg"
-      alt="Reset zoom"
-    />
-  </button>
-  <button on:click="{zoomIn}" id="zoomIn">
-    <img
-      class="TopIcon2"
-      src="./assets/SHB/svg/AW-icon-plus.svg"
-      alt="Zoom in"
-    />
-  </button>
-
+  <!-- Add zoom buttons -->
+  <div class="zoom-buttons">
+    <button on:click="{zoomOut}" id="zoomOut">
+      <img
+        class="TopIcon"
+        src="/assets/SHB/svg/AW-icon-minus.svg"
+        alt="Zoom out"
+      />
+    </button>
+    <button on:click="{zoomReset}" id="zoomReset">
+      <img
+        class="TopIcon"
+        src="assets/SHB/svg/AW-icon-zoom-reset.svg"
+        alt="Reset zoom"
+      />
+    </button>
+    <button on:click="{zoomIn}" id="zoomIn">
+      <img
+        class="TopIcon"
+        src="./assets/SHB/svg/AW-icon-plus.svg"
+        alt="Zoom in"
+      />
+    </button>
+  </div>
 </div>
 
 <style>
@@ -803,5 +803,36 @@
 
   .topbar.no-pills::before {
     display: none;
+  }
+
+  .zoom-buttons {
+    position: absolute;
+    right: 6%;
+    top: 0;
+    display: flex;
+    gap: 5px;
+  }
+
+  .zoom-buttons button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .zoom-buttons img {
+    width: 100%;
+    height: 100%;
+    max-width: 40px;
+    max-height: 40px;
+  }
+
+  /* Ensure the zoom buttons are on the same y-axis as the topbar */
+  .topbar {
+    position: relative;
   }
 </style>
