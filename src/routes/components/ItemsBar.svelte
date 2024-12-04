@@ -14,12 +14,13 @@
   import AppGroup from './AppGroup.svelte';
   import { Profile, ShowItemsBar, ItemsBarCurrentView } from '../../session';
   import Awards from '../Awards.svelte';
-  import { Addressbook, myHome, Liked, ModeratorLiked, Achievements } from '../../storage';
+  import { Addressbook, myHome, Liked, ModeratorLiked, Achievements, isFullscreen } from '../../storage';
   import { clickOutside } from '../../helpers/clickOutside';
   import {
     PlayerPos,
     PlayerLocation,
     PlayerUpdate } from '../game/playerState';
+  import { _ } from 'svelte-i18n';
 
   // ItemsBarCurrentView is a store that holds the current view of the itemsbar
 
@@ -126,6 +127,20 @@
     ItemsBarCurrentView.set('');
     await logout();
   }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        isFullscreen.set(true); // Update the store
+      }).catch(err => {
+        console.error('Error attempting to enable fullscreen:', err);
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        isFullscreen.set(false); // Update the store
+      });
+    }
+  }
 </script>
 
 <!-- the itemsbar with the avatar as the image -->
@@ -199,14 +214,22 @@
       </button>
 
       <span>-</span>
-
+      
       <button on:click="{doLogout}">
         <img
-          class="icon"
-          src="assets/SHB/svg/AW-icon-exit.svg"
-          alt="Log out!"
+        class="icon"
+        src="assets/SHB/svg/AW-icon-exit.svg"
+        alt="Log out!"
         />
       </button>
+      
+            <button on:click={toggleFullscreen}>
+              <img
+                class="icon"
+                src="assets/SHB/svg/AW-icon-fullscreen.svg"
+                alt="Toggle fullscreen"
+              />
+            </button>
     </div>
     <div class="right-column-itemsbar">
       {#if $ItemsBarCurrentView === 'liked'}

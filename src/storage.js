@@ -31,6 +31,7 @@ export const miniMapDimensions = writable({ x: 0, y: 0 });
 
 export const miniMapPosition = writable(1);
 
+export const isFullscreen = writable(false);
 //  Achievements of a user
 const achievementsStore = writable([]);
 

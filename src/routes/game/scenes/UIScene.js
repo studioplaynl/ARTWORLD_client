@@ -13,6 +13,7 @@ import {
   Liked, 
   miniMapDimensions, 
   miniMapPosition,
+  isFullscreen,
 } from '../../../storage';
 import { Profile, HomeEditBarExpanded } from '../../../session';
 import { MINIMAP_MARGIN, MINIMAP_SIZE } from '../../../constants';
@@ -66,7 +67,15 @@ export default class UIScene extends Phaser.Scene {
     // there we use .FIT scale mode but when we do fullscreen we resize the game to fill the screen
     const screenDimensions = getScreenDimensions() 
     this.scale.setGameSize(screenDimensions.cssWidth, screenDimensions.cssHeight);
-
+    isFullscreen.subscribe((fullscreen) => {
+      let timeout = null;
+      if (fullscreen) { timeout = 300; } else { timeout = 700; }
+        // Add a timeout to delay the resizing
+        setTimeout(() => {
+          const screenDimensions = getScreenDimensions();
+          this.scale.setGameSize(screenDimensions.cssWidth, screenDimensions.cssHeight);
+        }, timeout); // Adjust the timeout duration as needed
+    });
     let countDisplay = 0;
     locale.subscribe((value) => {
       if (countDisplay === 0) {
