@@ -110,7 +110,7 @@ export default class UIScene extends Phaser.Scene {
       ManageSession.currentZoom = zoom;
       if (ManageSession.currentScene) {
         ManageSession.currentScene.gameCam.zoom = zoom;
-        this.updateMinimapFrame();
+        // this.updateMinimapFrame();
       }
     });
 
@@ -131,7 +131,6 @@ export default class UIScene extends Phaser.Scene {
     // and make the container draggable etc
     homeElement_Selected.subscribe((value) => {
       if (!ManageSession.currentScene) return;
-
       // we emit a phaser game event
       this.game.events.emit('homeElement_Selected', value);
     });
@@ -146,15 +145,17 @@ export default class UIScene extends Phaser.Scene {
     PlayerLocation.subscribe((value) => {
       if (!value) return;
       if (!ManageSession.currentScene) return;
-      this.createMinimap();
+      // this.createMinimap();
+      setLoader(false);
+
     });
 
-    PlayerPos.subscribe((value) => {
-      if (!value) return;
-      if (!ManageSession.currentScene) return;
-      this.updatePlayerDotPosition();
-      this.updateMinimapFrame();
-    });
+    // PlayerPos.subscribe((value) => {
+    //   if (value && ManageSession.currentScene) {
+    //     this.updatePlayerDotPosition();
+    //     this.updateMinimapFrame();
+    //   }
+    // });
 
     this.createMinimap();
     // to make the UI scene always on top of other scenes
@@ -371,7 +372,7 @@ export default class UIScene extends Phaser.Scene {
   }
 
   createMinimap() {
-    this.checkAndCreateMinimap();
+    // this.checkAndCreateMinimap();
   }
 
   positionMinimap() {

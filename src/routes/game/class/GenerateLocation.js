@@ -7,7 +7,9 @@ import ManageSession from '../ManageSession';
 import { DEFAULT_HOME, SCENE_INFO, AVATAR_BASE_SIZE } from '../../../constants';
 import { PlayerPos, PlayerLocation, PlayerUpdate } from '../playerState';
 import { ART_DISPLAY_SIZE } from '../../../constants';
+import { PlayerHistory } from '../playerState';
 import * as Phaser from 'phaser';
+import { get } from 'svelte/store';
 
 export default class GenerateLocation extends Phaser.GameObjects.Container {
   constructor(config) {
@@ -397,24 +399,22 @@ export default class GenerateLocation extends Phaser.GameObjects.Container {
 
         // When we go into a house, we place the player left, in the middle
         if (this.locationDestination === DEFAULT_HOME) {
-          /** We send the player to the left side of the user's home so that the artworks can be seen
-          //  We set the Position after the Location
-          //  when we set the position we force the urlparser to do a replace on the history and url,
-          //  with PlayerUpdate.set({ forceHistoryReplace: false });
-          */
-        //  console.log('targetLocation', targetLocation);
+          console.log('Entering DEFAULT_HOME - Current History:', get(PlayerHistory));
+          console.log('Setting target location:', targetLocation);
 
           PlayerLocation.set(targetLocation);
+          console.log('After PlayerLocation.set - History:',  get(PlayerHistory));
 
-          const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
-          const PosX = -(targetScene.sizeX / 2) + AVATAR_BASE_SIZE * 2;
-
-          PlayerUpdate.set({ forceHistoryReplace: false });
-          PlayerPos.set({
-            x: PosX,
-            y: ART_DISPLAY_SIZE / 2,
-          });
-
+          // const targetScene = SCENE_INFO.find((i) => i.scene === DEFAULT_HOME);
+          // const PosX = -(targetScene.sizeX / 2) + AVATAR_BASE_SIZE * 2;
+          
+          // PlayerUpdate.set({ forceHistoryReplace: false });
+          // console.log('Setting PlayerPos with forceHistoryReplace:false');
+          // PlayerPos.set({
+          //   x: PosX, 
+          //   y: ART_DISPLAY_SIZE / 2,
+          // });
+          // console.log('After PlayerPos.set - History:',  get(PlayerHistory));
         } else {
           targetLocation.scene = this.locationDestination;
           targetLocation.house = this.userHome;

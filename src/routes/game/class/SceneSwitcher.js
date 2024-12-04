@@ -48,6 +48,7 @@ class SceneSwitcher {
   // }
 
   async doSwitchScene() {
+    console.log('doSwitchScene: ', get(PlayerLocation));
     try {
       if (this.isTransitioning) {
         console.log('Scene transition already in progress');
@@ -58,7 +59,6 @@ class SceneSwitcher {
       const scene = ManageSession.currentScene;
       
       if (!scene) {
-        console.log('No current scene found');
         this.isTransitioning = false; // Reset flag
         return;
       }

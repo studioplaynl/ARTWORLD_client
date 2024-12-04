@@ -78,8 +78,12 @@ function createHistory() {
     update: PlayerHistoryStore.update,
 
     push: (path) => {
-      PlayerHistoryStore.update((hist) => [...hist, path]);
-      // dlog('push history =', get(PlayerHistoryStore));
+      PlayerHistoryStore.update((hist) => {
+        if (hist.length === 0 || hist[hist.length - 1] !== path) {
+          return [...hist, path];
+        }
+        return hist;
+      });
     },
 
     replace: (path) => {
@@ -90,12 +94,10 @@ function createHistory() {
         }
         return updatedHistory;
       });
-      // dlog('replace history =', get(PlayerHistoryStore));
     },
 
     pop: () => {
       PlayerHistoryStore.update((hist) => hist.slice(0, -1));
-      // dlog('pop history =', get(PlayerHistoryStore));
     },
 
     previous: () => {
@@ -107,11 +109,8 @@ function createHistory() {
       return null;
     },
 
-    // Search for most recent visit to page (by string, for instance: getAt('Artworld'))
     getAt: (page) => {
-      const filtered = get(PlayerHistoryStore)
-        .reverse()
-        .filter((el) => el.indexOf(page) > -1);
+      const filtered = get(PlayerHistoryStore).reverse().filter((el) => el.indexOf(page) > -1);
       if (filtered.length > 0) return filtered[0];
       return null;
     },

@@ -39,15 +39,12 @@
     const allPills = document.querySelectorAll('.pill-button, .pill-text, .pill-container');
     const topbar = document.querySelector('.topbar');
     
-    
     if (allPills.length === 0) {
       topbar.classList.add('no-pills');
     } else {
       topbar.classList.remove('no-pills');
     }
     
-
-
     const lastPill = allPills[allPills.length - 1];
     if (lastPill) {
       const position = lastPill.offsetLeft / topbar.offsetWidth * 100;
@@ -191,10 +188,10 @@
   */
   async function goHome() {
     parentScenes = [];
+    PlayerLocation.set({
+      scene: DEFAULT_SCENE,
+    });
     setTimeout(() => {
-      PlayerLocation.set({
-        scene: DEFAULT_SCENE,
-      });
       
       PlayerUpdate.set({ forceHistoryReplace: false });
       PlayerPos.set({
@@ -208,21 +205,13 @@
    *   PlayerHistory.pop() is to reflect the state there
   */
   async function goBack() {
+    console.log('goBack - Current PlayerHistory:', $PlayerHistory);
     if ($PlayerHistory.length > 1) {
-      const previousState = $PlayerHistory[$PlayerHistory.length - 2];
-      
-      // If returning to Artworld, ensure scene loads first
-      // if (previousState.scene === DEFAULT_SCENE) {
-        // First set location without position
-        
-        // this seems to fix an issue on android tablet where the loading would get stuck
-         setTimeout(() => {
-            PlayerHistory.pop();
-            pop();
-        }, 100);
-        
-      // }
-      
+      console.log('goBack - Before pop:', $PlayerHistory);
+      PlayerHistory.pop();
+      console.log('goBack - After pop:', $PlayerHistory); 
+      pop();
+      console.log('goBack - After URL pop:', window.location.href);
     }
   }
 
@@ -266,7 +255,6 @@
   }
 
   function zoomReset() {
-
     PlayerZoom.reset();
   }
 

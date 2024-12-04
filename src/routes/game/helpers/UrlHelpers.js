@@ -165,7 +165,7 @@ export function parseURL() {
 
   let appName = parts[1].toString().toLowerCase();
   const previousAppName = get(CurrentApp);
-  dlog('appName: ', appName, ' previousAppName: ', previousAppName);
+  // dlog("appName: ", appName, " previousAppName: ", previousAppName)
 
   // An empty appName is no longer supported, /game is default
   if (appName === '') {
@@ -193,12 +193,18 @@ export function parseURL() {
       // going from game to game does not make sense
       if (previousAppName === 'game') return;
 
-      SceneSwitcher.startSceneCloseApp(previousAppName, ManageSession.currentScene.scene.key);
+      SceneSwitcher.startSceneCloseApp(
+        previousAppName,
+        ManageSession.currentScene.scene.key,
+      );
     } else {
       // when the app just launched ManageSession.currentScene is null
       if (typeof ManageSession.currentScene === 'undefined') return;
 
-      SceneSwitcher.pauseSceneStartApp(ManageSession.currentScene, appName);
+      SceneSwitcher.pauseSceneStartApp(
+        ManageSession.currentScene,
+        appName,
+      );
     }
   }
 }
@@ -211,26 +217,9 @@ location.subscribe(() => {
 
 /** Parse the Querystring and rehydrate Stores */
 export function parseQueryString() {
+  // console.time('parseQueryString');
+
   const query = parse(get(querystring));
-  
-  // Validate location first
-  if ('location' in query) {
-    if (!checkIfSceneIsAllowed(query.location)) {
-      // Invalid scene - revert to last known good state
-      revertToLastValidState();
-      return;
-    }
-  }
-
-  // Validate house if present  
-  if ('house' in query) {
-    if (!checkIfLocationLooksLikeAHouse(query.house)) {
-      revertToLastValidState();
-      return;
-    }
-  }
-
-  // Continue with regular parsing...
   const pos = get(PlayerPos);
   const newPlayerPosition = { x: pos.x, y: pos.y };
   const newPlayerLocation = {};
@@ -247,16 +236,9 @@ export function parseQueryString() {
     }
   }
 
-  if ('parent' in query) {
-    if (checkIfSceneIsAllowed(query.location) && get(PlayerLocation).scene !== query.location) {
-      newPlayerLocation.parent = query.parent;
-    }
-  }
-
   if ('zoom' in query) {
-    const zoomValue = parseFloat(query.zoom);
-    if (zoomValue <= ZOOM_MAX && zoomValue >= ZOOM_MIN) {
-      PlayerZoom.set(zoomValue);
+    if (parseFloat(query.zoom) <= ZOOM_MAX && parseFloat(query.zoom) >= ZOOM_MIN) {
+      PlayerZoom.set(parseFloat(query.zoom));
     } else {
       PlayerZoom.set(DEFAULT_ZOOM);
     }
@@ -275,13 +257,14 @@ export function parseQueryString() {
     PlayerLocation.set(newPlayerLocation);
   }
 
+
   if ('x' in query && 'y' in query) {
     // url gets parsed before scene is loaded, so there is no way of knowing the
     // scene size when onboarding the scene
     const currentLocation = get(PlayerLocation);
 
     // scene is not loaded, getting the info from SCENE_INFO
-    const sceneInfo = getSceneInfo(SCENE_INFO, currentLocation.scene);
+    const sceneInfo = SCENE_INFO.find((obj) => obj.scene === currentLocation.scene);
 
     if (sceneInfo) {
       // dlog ("currentScene, sceneInfo", currentScene, sceneInfo)
@@ -289,9 +272,9 @@ export function parseQueryString() {
 
       const avatarHalfSize = AVATAR_BASE_SIZE / 2;
       const minX = -(currentSceneSize.x / 2) + avatarHalfSize;
-      const maxX = currentSceneSize.x / 2 - avatarHalfSize;
+      const maxX = (currentSceneSize.x / 2) - avatarHalfSize;
       const minY = -(currentSceneSize.y / 2) + avatarHalfSize;
-      const maxY = currentSceneSize.y / 2 - avatarHalfSize;
+      const maxY = (currentSceneSize.y / 2) - avatarHalfSize;
 
       const queryX = parseInt(query.x, 10);
       const queryY = parseInt(query.y, 10);
@@ -326,27 +309,7 @@ export function parseQueryString() {
     previousQuery = { ...query };
     // dlog('previousQuery: ', previousQuery);
   }
-
-  // If we got here, update last valid state
-  updateLastValidState();
-}
-
-function revertToLastValidState() {
-  // Replace current URL with last known good state
-  const query = {
-    location: lastValidState.scene,
-    x: lastValidState.x,
-    y: lastValidState.y,
-    zoom: lastValidState.zoom
-  };
-  
-  if (lastValidState.house) {
-    query.house = lastValidState.house;
-  }
-
-  // Replace URL without adding to history
-  replace(`${get(location)}?${stringify(query)}`);
-  PlayerHistory.replace(`${get(location)}?${stringify(query)}`);
+  // console.timeEnd('parseQueryString');
 }
 
 /** Set up a subscription to the querystring (from svelte-spa-router)
@@ -358,6 +321,8 @@ function revertToLastValidState() {
 querystring.subscribe(() => {
   parseQueryString();
 });
+
+
 
 /* Set the query parameter after updating stores, because we have set up a subscription to these.
  * Any value changes on PlayerPos & PlayerLocation make this function run
