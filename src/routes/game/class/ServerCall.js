@@ -863,39 +863,30 @@ class ServerCall {
       }
 
     const imageKeyUrl = element.value.url;
-
-    const artSizeSaved = ART_DISPLAY_SIZE;
+    
+    // Use the saved height from element if it exists, otherwise use default
+    const artSizeSaved = element.value.height || ART_DISPLAY_SIZE;
     
     const posY_Phaser = CoordinatesTranslator.artworldToPhaser2DY(worldSize.y, element.value.posY);
     const posX_Phaser = CoordinatesTranslator.artworldToPhaser2DX(worldSize.x, element.value.posX);
 
     const imageContainer = scene.add.container(0, 0).setDepth(100);
-    // dlog('image coordX, index', coordX, index);
-
-    /**  copy over the data from the element to the container
-       so we can do sorting on the container later (eg order on date)
-       collection: "drawing"
-        downloaded: true
-        key: "1658759573357_groenblauwKogelvis"
-        permission_read: 2
-        read: 2
-        update_time: "2022-07-25T17:16:47.504205+02:00"
-        user_id: "8f0a26fc-f51a-4a05-ab67-638b37a2a979"
-        username: "user52"
-        value:
-          displayname: "groenblauwKogelvis"
-          url: "drawing/8f0a26fc-f51a-4a05-ab67-638b37a2a979/5_1658759573357_groenblauwKogelvis.png"
-          version: 5
-    */
+    
     imageContainer.nakamaData = { ...element };
 
     // adds the image to the container, on top of the artFrame
     const setImage = scene.add.image(0, 0, imageKeyUrl)
       .setOrigin(0.5)
-    .setName('homeElement-artwork');
+      .setName('homeElement-artwork');
 
+    // explicitly set the size of the image using saved values
     setImage.displayWidth = artSizeSaved;
     setImage.displayHeight = artSizeSaved;
+
+    // Apply saved scale if it exists
+    if (element.value.scale) {
+        imageContainer.setScale(element.value.scale);
+    }
 
     // Add this line to apply flipX if it exists in the element's value
     if (element.value.flipX) {
@@ -1155,7 +1146,6 @@ class ServerCall {
         }),
       });
     }
-
     // . end animation for the stopmotion ......................
 
     // adds the image to the container
@@ -1556,7 +1546,7 @@ class ServerCall {
     newValue.rotation = rotation;
     newValue.scale = scale;
     newValue.flipX = image ? image.flipX : false; // Add flipX state
-
+    console.log('newValue', newValue);
     // dragend also happens when pointer went from down to up without moving
     // so we check if there is a change
     const areEqual = JSON.stringify(element.value) === JSON.stringify(newValue);
