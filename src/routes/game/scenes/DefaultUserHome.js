@@ -25,7 +25,7 @@
 
 import ManageSession from '../ManageSession';
 import { get } from 'svelte/store';
-import { PlayerPos } from '../playerState';
+import { PlayerPos, PlayerUpdate } from '../playerState';
 import CoordinatesTranslator from '../class/CoordinatesTranslator';
 import PlayerDefault from '../class/PlayerDefault';
 import PlayerDefaultShadow from '../class/PlayerDefaultShadow';
@@ -206,6 +206,12 @@ export default class DefaultUserHome extends Phaser.Scene {
     Player.loadPlayerAvatar(this);
 
     this.loadAndPlaceHomeElements();
+
+    PlayerUpdate.set({ forceHistoryReplace: false });
+      PlayerPos.set({
+        x: -1640,
+        y: 800,
+      });
   } // end create
 
   async loadAndPlaceHomeElements(value) {
