@@ -21,7 +21,6 @@
     >
       <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
     </div>
-
     <div class="app">
       <slot />
     </div>
