@@ -50,7 +50,6 @@
   import TutLoader from './routes/tutorials/TutLoader.svelte';
   import Notifications from './routes/components/Notifications.svelte';
   import EditHome from './routes/components/EditHome.svelte';
-
   import gameConfig from './routes/game/gameConfig';
   import { PlayerPos, PlayerLocation } from './routes/game/playerState';
   import { DEFAULT_APP } from './constants';
@@ -70,14 +69,14 @@
     document.getElementById('loader').classList.add('hide');
 
     // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      try {
-        const registration = await navigator.serviceWorker.register('/service-worker.js');
-        console.log('ServiceWorker registration successful');
-      } catch (err) {
-        console.log('ServiceWorker registration failed: ', err);
-      }
-    }
+    // if ('serviceWorker' in navigator) {
+    //   try {
+    //     const registration = await navigator.serviceWorker.register('/service-worker.js');
+    //     console.log('ServiceWorker registration successful');
+    //   } catch (err) {
+    //     console.log('ServiceWorker registration failed: ', err);
+    //   }
+    // }
 
     // Attempt to restore a saved session
     await restoreSession();
