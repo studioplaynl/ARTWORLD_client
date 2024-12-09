@@ -398,6 +398,9 @@
     }
     return new Blob([new Uint8Array(array)], { type: 'image/png' });
   }
+  async function clearCanvas() {
+    drawing.clearCanvas();
+  }
 </script>
 
 <AppContainer
@@ -406,6 +409,7 @@
     isValidApp($CurrentApp)}"
   on:close="{() => saveData(true)}"
   on:saveToFile="{() => saveToFile()}"
+  on:clearCanvasBegin="{() => clearCanvas()}"
 >
   {#if (userIsOwner && currentFile.loaded) || currentFile.new}
     {#if $CurrentApp === 'drawing' || $CurrentApp === 'house' || $CurrentApp === 'flowerchallenge'}

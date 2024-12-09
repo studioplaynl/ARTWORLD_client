@@ -93,6 +93,9 @@
   function onClearCanvas() {
     currentFrame = 1;
     frames = 1;
+    if (drawing) {
+    drawing.putDrawingCanvasIntoFramesArray(1);
+  }
   }
 
   function onFrameContentDeleted() {

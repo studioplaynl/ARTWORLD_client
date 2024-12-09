@@ -177,7 +177,7 @@
   let lineWidth = 100;
   let drawingColor = hex;
   let currentTab = 'draw';
-  let showOptionbox = false;
+  let showOptionbox = true;
 
   // declaring the variable to be available globally, onMount assinging a function to it
   let applyBrush;
@@ -968,7 +968,7 @@
     }
   }
 
-  function clearCanvas() {
+ export function clearCanvas() {
     drawingCanvas.clear();
     changes = 0;
     // saveCanvas.clear();
@@ -1046,6 +1046,8 @@
       crossOrigin: 'anonymous'
     });
   }
+
+
 </script>
 
 <svelte:window
@@ -1334,11 +1336,13 @@
     </div>
   {/if}
 
-  {#if enableEditor}
+
+  <!-- {#if enableEditor}
     <div id="clear-canvas" on:click="{clearCanvas}">
       <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
     </div>
-  {/if}
+  {/if} -->
+
 </div>
 
 <style>
@@ -1357,22 +1361,11 @@
   }
   .main-container {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-
     height: 100vh;
     width: 100vw;
     background-color: rgb(115, 0, 237, 0.15);
   }
-
-  .saveCanvas {
-    /* position: fixed;
-    top: 10px;
-    left: 500px;
-    width: 1024px;
-    border: 3px solid #73AD21; */
-  }
+  
   .cursor-canvas {
     pointer-events: none !important;
     width: 100vw;
@@ -1706,5 +1699,192 @@
 
   button:disabled {
     opacity: 0.3;
+  }
+
+  /* Update icon sizing and spacing */
+  .icon {
+    min-width: 50px;
+    height: 50px;
+    /* ... existing icon styles ... */
+  }
+
+  /* Add responsive icon sizing */
+  @media only screen and (max-width: 600px) {
+    .icon {
+      min-width: 40px; /* Smaller on mobile */
+      height: 40px;
+      margin: 0 12px 0 3px;
+    }
+
+    .iconImage {
+      min-width: 32px;
+      height: 40px;
+      margin: 0 0 0 6px;
+    }
+
+    #clear-canvas {
+      left: 16px;
+      top: 16px;
+      width: 32px;
+      height: 32px;
+    }
+
+    #clear-canvas > img {
+      width: 32px;
+    }
+
+    /* Adjust canvas positioning */
+    .main-container {
+      flex-direction: column;
+      padding-top: 64px; /* Space for top buttons */
+    }
+
+    .canvas-frame-container {
+      margin-top: 16px;
+    }
+
+    /* Adjust toolbar sizing */
+    .optionbox-container {
+      height: 240px; /* Slightly smaller on mobile */
+    }
+
+    .optionbar {
+      height: 180px;
+      padding: 8px;
+    }
+
+    .iconbox {
+      height: 48px;
+    }
+
+    .currentSelected {
+      height: 48px;
+      width: 50px;
+    }
+
+    /* Adjust spacing for drawing options */
+    .drawing-options-container {
+      gap: 8px;
+      padding: 8px 0;
+    }
+
+    .range-container {
+      margin: 24px 0;
+    }
+  }
+
+  /* Add medium breakpoint adjustments */
+  @media only screen and (min-width: 601px) and (max-width: 1024px) {
+    .icon {
+      min-width: 45px;
+      height: 45px;
+    }
+
+    .iconImage {
+      min-width: 36px;
+      height: 45px;
+    }
+
+    #clear-canvas {
+      width: 36px;
+      height: 36px;
+    }
+
+    #clear-canvas > img {
+      width: 36px;
+    }
+  }
+
+  /* Portrait mode (height > width) */
+  @media screen and (orientation: portrait) {
+    .main-container {
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding-top: 64px;
+    }
+
+    .canvas-frame-container {
+      margin-top: 16px;
+    }
+
+    /* Mobile portrait adjustments */
+    @media only screen and (max-width: 600px) {
+      /* ... existing mobile styles ... */
+    }
+  }
+
+  /* Landscape mode (width > height) */
+  @media screen and (orientation: landscape) {
+    .main-container {
+      flex-direction: row;
+      align-items: center;
+      justify-content: end;
+      padding-left: 64px;
+      padding-right: 16px;
+    }
+
+    .canvas-frame-container {
+      margin-left: 16px;
+    }
+
+    /* Mobile landscape adjustments */
+    @media only screen and (max-width: 600px) {
+      .optionbox-container {
+        left: 0;
+        bottom: 0;
+        height: 100%;
+      }
+
+      .optionbox {
+        flex-direction: column;
+      }
+
+      .optionbar {
+        height: 100vh;
+        width: 220px;
+      }
+    }
+  }
+
+  .top-controls {
+    position: fixed;
+    left: 16px;
+    top: 16px;
+    display: flex;
+    gap: 16px;
+    z-index: 30;
+  }
+
+  #clear-canvas {
+    box-shadow: 5px 5px 0px #7300ed;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    background-color: white;
+  }
+
+  #clear-canvas > img {
+    width: 40px;
+    padding: 8px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    #clear-canvas {
+      width: 32px;
+      height: 32px;
+    }
+
+    #clear-canvas > img {
+      width: 32px;
+      padding: 6px;
+    }
+  }
+
+  .canvas-container {
+    background-color: white;
   }
 </style>

@@ -13,13 +13,21 @@
     in:fly="{{ y: 100, duration: 280, opacity: 0 }}"
     out:fly="{{ y: 100, duration: 200, opacity: 0 }}"
   >
-    <div
-      class="app-close"
-      on:click="{() => {
-        dispatch('close');
-      }}"
-    >
-      <img alt="Close" src="assets/SHB/svg/AW-icon-cross.svg" />
+    <div class="top-controls">
+      <button
+        class="control-button"
+        on:click="{() => {
+          dispatch('close');
+        }}"
+      >
+        <img alt="Close" src="assets/SHB/svg/AW-icon-check.svg" />
+      </button>
+      <button 
+        class="control-button"
+        on:click={() => dispatch('clearCanvasBegin')}
+      >
+        <img alt="Clear canvas" src="assets/SHB/svg/AW-icon-trashcan.svg" class="red-icon" />
+      </button>
     </div>
     <div class="app">
       <slot />
@@ -53,21 +61,46 @@
     background-color: white;
   }
 
-  .app-close {
+  .top-controls {
     position: fixed;
     left: 16px;
     top: 16px;
+    display: flex;
+    gap: 16px;
     z-index: 13;
+  }
+
+  .control-button {
+    width: 40px;
+    height: 40px;
     box-shadow: 5px 5px 0px #7300ed;
     cursor: pointer;
     padding: 0;
     margin: 0;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    background: white;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .app-close > img {
-    width: 40px;
+  .control-button > img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+    display: block;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .control-button {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+    }
+  }
+
+  .red-icon {
+    filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
   }
 </style>
