@@ -207,32 +207,13 @@
 {/if}
 
 <style>
-  :global(.swiper.stopmotion__swiper) {
-    width: auto;
-    height: 100%;
-  }
-  :global(.swiper-slide.stopmotion__swiper__slide) {
-    width: auto;
-    height: auto;
-  }
+
   .stopmotion__frames {
-    /* display: flex; */
-    /* flex-direction: column; */
-    /* max-height: 80vh; */
-    /* TODO REPLACE MAX_HEIGHT logic */
-    /* overflow-y: auto;
-    overscroll-behavior-y: contain;
-    scroll-snap-type: y proximity; */
-    /* overflow: hidden; */
-    /* position: absolute; */
-    /* right: 0; */
-    /* top: 50%; */
-    /* transform: translateY(-50%); */
     height: 100%;
     justify-content: center;
     align-items: center;
-    /* width: 64px; */
   }
+
   .stopmotion__frame {
     display: block;
     width: 48px;
@@ -270,37 +251,6 @@
     background-size: cover;
   }
 
-  @media only screen and (max-width: 600px) {
-    :global(.swiper.stopmotion__swiper) {
-      height: auto;
-      width: 100%;
-    }
-
-    .stopmotion__frames {
-      max-height: unset;
-      top: unset;
-      /* flex-direction: row; */
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100vw;
-      justify-content: center;
-      align-items: center;
-      height: 48px;
-      bottom: 0;
-      position: relative;
-    }
-
-    .stopmotion__frame {
-      width: 32px;
-      min-height: 32px;
-    }
-
-    .stopmotion__frame__background {
-      width: 32px;
-      height: 32px !important;
-    }
-  }
-
   .stopmotion__frame__index {
     font-size: 16px;
     color: #7300eb;
@@ -308,6 +258,7 @@
     display: inline-block;
     z-index: 1;
   }
+
   .stopmotion__delete {
     display: block;
     position: absolute;
@@ -328,13 +279,6 @@
 
   .stopmotion__delete:hover {
     background: red;
-  }
-  .stopmotion__controls {
-    position: fixed;
-    right: 16px;
-    top: 16px;
-    display: flex;
-    flex-direction: row;
   }
 
   .stopmotion__button {
@@ -377,14 +321,6 @@
     padding: 0 8px;
   }
 
-  @media only screen and (max-width: 600px) {
-    .frames-list {
-      flex-direction: row;
-      overflow-x: auto;
-      overflow-y: hidden;
-    }
-  }
-
   .frames-container {
     display: flex;
     flex-direction: column;
@@ -397,6 +333,7 @@
     align-items: center;
     gap: 8px;
     padding: 8px;
+    width: 50%;
   }
 
   .frames-scroll-container {
@@ -412,21 +349,63 @@
   }
 
   /* Update mobile styles */
-  @media only screen and (max-width: 600px) {
+  @media only screen and (orientation: portrait) {
+    .stopmotion__frames {
+      max-height: unset;
+      top: unset;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      justify-content: flex-start;
+      align-items: center;
+      height: 48px;
+      bottom: 0;
+      position: relative;
+    }
+
     .frames-container {
       flex-direction: row;
       align-items: center;
       width: 100%;
+      position: relative;
     }
 
     .frames-controls {
-      padding: 8px 4px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      width: auto;
+      flex-shrink: 0;
     }
 
     .frames-scroll-container {
       flex-direction: row;
       overflow-x: auto;
       overflow-y: hidden;
+      width: 0;
+      flex-grow: 1;
+      scrollbar-width: thin;
+      scrollbar-color: #7300ed #e0c1ff;
+    }
+
+    .frames-scroll-container::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .frames-scroll-container::-webkit-scrollbar-track {
+      background: #e0c1ff;
+      border-radius: 4px;
+    }
+
+    .frames-scroll-container::-webkit-scrollbar-thumb {
+      background: #7300ed;
+      border-radius: 4px;
+    }
+
+    .frames-scroll-container::-webkit-scrollbar-thumb:hover {
+      background: #5b00bc;
     }
 
     .frames-list {
@@ -434,10 +413,27 @@
       overflow-x: auto;
       overflow-y: hidden;
       padding: 8px 0;
+      flex-shrink: 0;
     }
 
     .add-frame-container {
       padding: 8px 4px;
+      position: sticky;
+      right: 0;
+      background-color: #e0c1ff;
+      flex-shrink: 0;
+    }
+
+    .stopmotion__frame {
+      width: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      flex-shrink: 0;
+    }
+
+    .stopmotion__frame__background {
+      width: 32px;
+      height: 32px !important;
     }
   }
 

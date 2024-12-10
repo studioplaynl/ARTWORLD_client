@@ -976,16 +976,6 @@
   }
   /// //////////// select functions end //////////////////
 
-  // function rgbaToHex(r, g, b, a) {
-  //   const hexR = r.toString(16).padStart(2, '0');
-  //   const hexG = g.toString(16).padStart(2, '0');
-  //   const hexB = b.toString(16).padStart(2, '0');
-  //   const hexA = Math.round(a * 255)
-  //     .toString(16)
-  //     .padStart(2, '0');
-  //   return `#${hexR}${hexG}${hexB}${hexA}`;
-  // }
-
   function rgbToHex(r, g, b) {
     const hexR = r.toString(16).padStart(2, '0');
     const hexG = g.toString(16).padStart(2, '0');
@@ -1108,7 +1098,7 @@
     {/if}
   </div>
   {#if enableEditor}
-    <div class="optionbox-container" class:open="{showOptionbox}">
+    <div class="toolbox-container" class:open="{showOptionbox}">
       <div class="optionbox">
         <div class="optionbar">
           {#if currentTab === 'draw'}
@@ -1143,11 +1133,6 @@
                   alt="Use pattern"
                 />
               </div>
-
-              <!-- <ColorPicker bind:hex /> -->
-              <!-- <div class="color-picker-parent">
-    <div id="colorPicker" bind:this={picker}></div>
-  </div> -->
 
               <div class="range-container">
                 <div class="circle-box-small"></div>
@@ -1359,6 +1344,7 @@
   .drawing-app {
     position: relative;
   }
+
   .main-container {
     display: flex;
     height: 100vh;
@@ -1382,7 +1368,7 @@
     box-shadow: 3px 3px #7300ed;
   }
 
-  .optionbox-container {
+  .toolbox-container {
     margin: 0 10px 0 0;
     position: fixed;
     left: 0;
@@ -1392,7 +1378,7 @@
     display: flex;
   }
 
-  .optionbox-container.open {
+  .toolbox-container.open {
     transform: translateX(280px);
   }
 
@@ -1420,9 +1406,6 @@
     align-items: center;
   }
 
-  .tab.tab--erase {
-  }
-
   .tab.tab--save {
     min-width: 160px;
     bottom: 50px;
@@ -1434,6 +1417,7 @@
     text-decoration: none;
     display: block;
   }
+
   .iconbox {
     width: 50px;
     position: relative;
@@ -1458,6 +1442,7 @@
     margin: 0 24px 0 6px;
     /*outline: 1px solid #7300ed2e; */
   }
+
   .iconImage {
     min-width: 40px;
     height: 50px;
@@ -1468,6 +1453,7 @@
     margin: 0 0px 0 12px;
     /*outline: 1px solid #7300ed2e; */
   }
+
   #pointer-cursor {
     cursor: pointer;
   }
@@ -1477,6 +1463,7 @@
     justify-content: flex-start;
     width: 100%;
   }
+
   #eyeDropper {
     min-width: 50px;
     height: 50px;
@@ -1540,7 +1527,6 @@
   }
 
   input[type='range'] {
-    -webkit-appearance: none;
     -moz-apperance: none;
     border-radius: 6px;
     border: 4px solid #7300ed;
@@ -1556,13 +1542,6 @@
     height: 15px;
     width: 15px;
   }
-
-  /* .colorIcon {
-    width: 32px;
-    position: absolute;
-    right: 5px;
-    bottom: 5px;
-  } */
 
   .canvas-frame-container {
     background-color: white;
@@ -1594,91 +1573,10 @@
     box-shadow: 5px 5px 0px #7300ed;
   }
 
-  #clear-canvas {
-    position: fixed;
-    left: 72px;
-    top: 16px;
-    z-index: 30;
-    box-shadow: 5px 5px 0px #7300ed;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-  }
-
-  #clear-canvas > img {
-    width: 40px;
-  }
-
-  @media only screen and (min-width: 600px) and (max-width: 1024px) and (min-aspect-ratio: 3/2) {
-    .iconbox {
-      justify-content: flex-end;
-    }
-  }
-
-  /* @media only screen and (min-width: 300px) and (max-width: 500px) {
-    .iconbox {
-      justify-content: flex-start;
-    }
-  } */
-
   .drawing-options-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-  }
-
-  /* small */
-  @media only screen and (max-width: 600px) {
-    .main-container {
-      flex-direction: column;
-    }
-    .optionbox-container {
-      left: 0;
-      bottom: -220px;
-      width: 100%;
-      height: 280px;
-      transform: translateY(0);
-    }
-
-    .optionbox-container.open {
-      transform: translateY(-220px);
-    }
-    .optionbox {
-      flex-direction: row;
-      width: 100%;
-    }
-
-    .optionbar {
-      height: 220px;
-      width: 100%;
-      top: unset;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      box-shadow: 4px 4px #7300ed;
-      z-index: 2;
-    }
-
-    .iconbox {
-      flex-direction: row;
-      width: 100%;
-      height: 60px;
-      z-index: 1;
-    }
-
-    .currentSelected {
-      box-shadow: 4px 4px #7300ed;
-      border-radius: 50% 50% 0 0;
-      height: 60px;
-      width: 62px;
-      display: block;
-      padding: 0px;
-      background-color: white;
-      margin-left: -5px;
-    }
   }
 
   button {
@@ -1703,115 +1601,9 @@
 
   /* Update icon sizing and spacing */
   .icon {
-    min-width: 50px;
-    height: 50px;
+    max-width: 50px;
+    height: 2.6rem;
     /* ... existing icon styles ... */
-  }
-
-  /* Add responsive icon sizing */
-  @media only screen and (max-width: 600px) {
-    .icon {
-      min-width: 40px; /* Smaller on mobile */
-      height: 40px;
-      margin: 0 12px 0 3px;
-    }
-
-    .iconImage {
-      min-width: 32px;
-      height: 40px;
-      margin: 0 0 0 6px;
-    }
-
-    #clear-canvas {
-      left: 16px;
-      top: 16px;
-      width: 32px;
-      height: 32px;
-    }
-
-    #clear-canvas > img {
-      width: 32px;
-    }
-
-    /* Adjust canvas positioning */
-    .main-container {
-      flex-direction: column;
-      padding-top: 64px; /* Space for top buttons */
-    }
-
-    .canvas-frame-container {
-      margin-top: 16px;
-    }
-
-    /* Adjust toolbar sizing */
-    .optionbox-container {
-      height: 240px; /* Slightly smaller on mobile */
-    }
-
-    .optionbar {
-      height: 180px;
-      padding: 8px;
-    }
-
-    .iconbox {
-      height: 48px;
-    }
-
-    .currentSelected {
-      height: 48px;
-      width: 50px;
-    }
-
-    /* Adjust spacing for drawing options */
-    .drawing-options-container {
-      gap: 8px;
-      padding: 8px 0;
-    }
-
-    .range-container {
-      margin: 24px 0;
-    }
-  }
-
-  /* Add medium breakpoint adjustments */
-  @media only screen and (min-width: 601px) and (max-width: 1024px) {
-    .icon {
-      min-width: 45px;
-      height: 45px;
-    }
-
-    .iconImage {
-      min-width: 36px;
-      height: 45px;
-    }
-
-    #clear-canvas {
-      width: 36px;
-      height: 36px;
-    }
-
-    #clear-canvas > img {
-      width: 36px;
-    }
-  }
-
-  /* Portrait mode (height > width) */
-  @media screen and (orientation: portrait) {
-    .main-container {
-      flex-direction: column;
-      align-items: center;
-      justify-content: start;
-      padding-top: 64px;
-    }
-
-    .canvas-frame-container {
-      margin-top: 16px;
-    }
-
-    /* Mobile portrait adjustments */
-    @media only screen and (max-width: 600px) {
-      /* ... existing mobile styles ... */
-    }
   }
 
   /* Landscape mode (width > height) */
@@ -1828,9 +1620,42 @@
       margin-left: 16px;
     }
 
+    .toolbox-container {
+      margin: 0 10px 0 0;
+      left: 0;
+      bottom: 0;
+      height: 100%;
+      transform: translateX(0);
+    }
+
+    .toolbox-container.open {
+      transform: translateX(260px);
+    }
+
+    .optionbox {
+      flex-direction: column;
+    }
+
+    .optionbar {
+      height: 100vh;
+      width: 280px;
+      border-right: 2px solid #7300ed;
+      border-top: none;
+    }
+
+    .iconbox {
+      flex-direction: column;
+    }
+
+    .currentSelected {
+      border-radius: 0% 50% 50% 0;
+      margin-left: -24px;
+      margin-top: 0;
+    }
+
     /* Mobile landscape adjustments */
     @media only screen and (max-width: 600px) {
-      .optionbox-container {
+      .toolbox-container {
         left: 0;
         bottom: 0;
         height: 100%;
@@ -1847,44 +1672,58 @@
     }
   }
 
-  .top-controls {
-    position: fixed;
-    left: 16px;
-    top: 16px;
-    display: flex;
-    gap: 16px;
-    z-index: 30;
-  }
-
-  #clear-canvas {
-    box-shadow: 5px 5px 0px #7300ed;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    background-color: white;
-  }
-
-  #clear-canvas > img {
-    width: 40px;
-    padding: 8px;
-  }
-
-  @media only screen and (max-width: 600px) {
-    #clear-canvas {
-      width: 32px;
-      height: 32px;
+  @media screen and (orientation: portrait) {
+    .main-container {
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      padding-top: 64px;
     }
 
-    #clear-canvas > img {
-      width: 32px;
-      padding: 6px;
+    .canvas-frame-container {
+      margin-top: 16px;
     }
-  }
+    
+    .toolbox-container {
+      left: 0;
+      bottom: -220px;
+      width: 100%;
+      height: 280px;
+      transform: translateY(0);
+    }
 
-  .canvas-container {
-    background-color: white;
+    .toolbox-container.open {
+      transform: translateY(-220px);
+    }
+
+    .optionbox {
+      flex-direction: row;
+      width: 100%;
+    }
+
+    .optionbar {
+      height: 220px;
+      width: 100%;
+      top: unset;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      box-shadow: 4px 4px #7300ed;
+      z-index: 2;
+      border-right: none;
+      border-top: 2px solid #7300ed;
+    }
+
+    .iconbox {
+      flex-direction: row;
+      width: 100%;
+      height: 60px;
+      z-index: 1;
+    }
+
+    .currentSelected {
+      box-shadow: 4px 4px #7300ed;
+      border-radius: 50% 50% 0 0;
+    }
   }
 </style>
