@@ -1048,62 +1048,64 @@
 
 <div class="drawing-app">
   <div class="main-container">
-    <div
-      class="canvas-frame-container"
-      style="width: {canvasHeight}px; height: {canvasHeight}px; "
-    >
-      {#if enableOnionSkinning}
+    <div class="canvas-controls-container">
+      <div
+        class="canvas-frame-container"
+        style="width: {canvasHeight}px; height: {canvasHeight}px; "
+      >
+        {#if enableOnionSkinning}
+          <div
+            class="canvas-onion"
+            style="
+              background-image: url({framesArray[currentFrame - 2]});
+              "
+          ></div>
+        {/if}
+
         <div
-          class="canvas-onion"
+          class="canvas-box"
           style="
-            background-image: url({framesArray[currentFrame - 2]});
+            left: 0px;
+            pointer-events: {enableEditor ? 'all' : 'none'};
             "
-        ></div>
+        >
+          <canvas
+            hidden
+            bind:this="{antiFlickerCanvasEl}"
+            class="drawingCanvasEl"
+            id="antiFlickerCanvas"></canvas>
+
+          <canvas bind:this="{drawingCanvasEl}" class="drawingCanvasEl"></canvas>
+          <!-- <canvas bind:this="{drawingCanvasEl}" class="canvas"> </canvas> -->
+
+          <canvas
+            bind:this="{cursorCanvasEl}"
+            class="cursor-canvas"
+            style:visibility="{enableEditor ? 'visible' : 'hidden'}"></canvas>
+          <canvas hidden bind:this="{saveCanvas}" class="saveCanvas"></canvas>
+          <canvas hidden bind:this="{loadCanvas}"></canvas>
+
+        </div>
+      </div>
+      
+      {#if framesArray.length >= 0 && stopMotion}
+        <div
+          class="stopmotion-controls"
+          style=" height: {controlsHeight};
+                width: {controlsWidth};"
+        >
+          <slot name="stopmotion" />
+        </div>
       {/if}
-
-      <div
-        class="canvas-box"
-        style="
-          left: 0px;
-          pointer-events: {enableEditor ? 'all' : 'none'};
-          "
-      >
-        <canvas
-          hidden
-          bind:this="{antiFlickerCanvasEl}"
-          class="drawingCanvasEl"
-          id="antiFlickerCanvas"></canvas>
-
-        <canvas bind:this="{drawingCanvasEl}" class="drawingCanvasEl"></canvas>
-        <!-- <canvas bind:this="{drawingCanvasEl}" class="canvas"> </canvas> -->
-
-        <canvas
-          bind:this="{cursorCanvasEl}"
-          class="cursor-canvas"
-          style:visibility="{enableEditor ? 'visible' : 'hidden'}"></canvas>
-        <canvas hidden bind:this="{saveCanvas}" class="saveCanvas"></canvas>
-        <canvas hidden bind:this="{loadCanvas}"></canvas>
-
-      </div>
     </div>
-    <!-- This is where the stopmotion controls get injected -->
-    {#if framesArray.length >= 0 && stopMotion}
-      <div
-        class="stopmotion-controls"
-        style=" height: {controlsHeight};
-              width: {controlsWidth};"
-      >
-        <slot name="stopmotion" />
-      </div>
-    {/if}
   </div>
   {#if enableEditor}
-    <div class="toolbox-container" class:open="{showOptionbox}">
+    <div class="toolbox-container">
       <div class="optionbox">
-        <div class="optionbar">
+        <div class="toolbox-content">
           {#if currentTab === 'draw'}
-            <div class="tab tab--draw">
-              <div class="drawing-options-container">
+            <div class="toolbox-tab-content">
+              <div class="brush-options-container">
                 <img
                   on:click="{() => applyBrush('Pencil')}"
                   class="icon"
@@ -1167,7 +1169,7 @@
               </div>
             </div>
           {:else if currentTab === 'erase'}
-            <div class="tab tab--erase">
+            <div class="toolbox-tab-content">
               <div class="range-container">
                 <div class="circle-box-small"></div>
 
@@ -1185,10 +1187,8 @@
           <!-- {:else if currentTab === 'select'} -->
 
           {:else if currentTab === 'save'}
-            <div class="tab tab--save">
-              <!-- {#if appType != "avatar" && appType != "house"} -->
+            <div class="toolbox-tab-content">
               <label for="title">displayName</label>
-
               <input type="text" bind:value="{displayName}" />
               <div class="icon-group">
                 <br>
@@ -1230,7 +1230,7 @@
           {/if}
         </div>
 
-        <div class="iconbox">
+        <div class="toolbox-navbar">
           <!-- <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
             <img
               class="icon"
@@ -1369,22 +1369,15 @@
   }
 
   .toolbox-container {
-    margin: 0 10px 0 0;
+    margin: 0;
     position: fixed;
     left: 0;
     bottom: 0;
-    height: 100%;
-    transition: transform 200ms ease-in-out;
-    display: flex;
   }
 
-  .toolbox-container.open {
-    transform: translateX(280px);
-  }
-
-  .optionbar {
+  .toolbox-content {
     border-right: 2px solid #7300ed;
-    height: 100vh;
+    height: 98vh;
     background-color: white;
     width: fit-content;
     padding: 15px;
@@ -1418,16 +1411,15 @@
     display: block;
   }
 
-  .iconbox {
-    width: 50px;
+  .toolbox-navbar {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     flex-wrap: wrap;
-    /* transition: all 0.5s ease-in-out; */
     z-index: 10;
+    margin-top: 0.5rem;
   }
 
   .icon {
@@ -1439,8 +1431,7 @@
     cursor: pointer;
     object-fit: contain;
     flex: 1 1 auto;
-    margin: 0 24px 0 6px;
-    /*outline: 1px solid #7300ed2e; */
+    margin: 0 20px 0 6px;
   }
 
   .iconImage {
@@ -1451,7 +1442,6 @@
     object-fit: contain;
     flex: 1 1 auto;
     margin: 0 0px 0 12px;
-    /*outline: 1px solid #7300ed2e; */
   }
 
   #pointer-cursor {
@@ -1476,7 +1466,7 @@
     margin-left: 8px;
   }
 
-  .iconbox button {
+  .toolbox-navbar button {
     opacity: 1;
   }
 
@@ -1573,7 +1563,7 @@
     box-shadow: 5px 5px 0px #7300ed;
   }
 
-  .drawing-options-container {
+  .brush-options-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -1612,63 +1602,49 @@
       flex-direction: row;
       align-items: center;
       justify-content: end;
-      padding-left: 64px;
-      padding-right: 16px;
+      padding-right: 8px;
     }
-
+    
     .canvas-frame-container {
-      margin-left: 16px;
+      margin: 0;
     }
 
     .toolbox-container {
-      margin: 0 10px 0 0;
+      margin: 0;
       left: 0;
       bottom: 0;
       height: 100%;
-      transform: translateX(0);
+      width: 35vw; 
+      position: fixed;
+      display: flex;
     }
 
-    .toolbox-container.open {
-      transform: translateX(260px);
+    .toolbox-navbar {
+      position: absolute;
+      left: 170px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      flex-wrap: wrap;
+      z-index: 10;
     }
 
     .optionbox {
       flex-direction: column;
     }
 
-    .optionbar {
+    .toolbox-content {
       height: 100vh;
-      width: 280px;
+      width: 29vw;
       border-right: 2px solid #7300ed;
       border-top: none;
     }
 
-    .iconbox {
-      flex-direction: column;
-    }
-
     .currentSelected {
       border-radius: 0% 50% 50% 0;
-      margin-left: -24px;
+      /* margin-left: -24px; */
       margin-top: 0;
-    }
-
-    /* Mobile landscape adjustments */
-    @media only screen and (max-width: 600px) {
-      .toolbox-container {
-        left: 0;
-        bottom: 0;
-        height: 100%;
-      }
-
-      .optionbox {
-        flex-direction: column;
-      }
-
-      .optionbar {
-        height: 100vh;
-        width: 220px;
-      }
     }
   }
 
@@ -1677,23 +1653,21 @@
       flex-direction: column;
       align-items: center;
       justify-content: start;
-      padding-top: 64px;
+      padding-top: 3rem;
     }
 
     .canvas-frame-container {
-      margin-top: 16px;
+      margin: 0;
     }
     
     .toolbox-container {
+      margin: 0;
       left: 0;
-      bottom: -220px;
+      bottom: 0;
       width: 100%;
-      height: 280px;
-      transform: translateY(0);
-    }
-
-    .toolbox-container.open {
-      transform: translateY(-220px);
+      height: 32vh;
+      position: fixed;
+      display: flex;
     }
 
     .optionbox {
@@ -1701,20 +1675,19 @@
       width: 100%;
     }
 
-    .optionbar {
-      height: 220px;
-      width: 100%;
+    .toolbox-content {
+      height: 40vw;
+      width: 100vw;
       top: unset;
       left: 0;
       right: 0;
       bottom: 0;
-      box-shadow: 4px 4px #7300ed;
       z-index: 2;
       border-right: none;
       border-top: 2px solid #7300ed;
     }
 
-    .iconbox {
+    .toolbox-navbar {
       flex-direction: row;
       width: 100%;
       height: 60px;
@@ -1724,6 +1697,20 @@
     .currentSelected {
       box-shadow: 4px 4px #7300ed;
       border-radius: 50% 50% 0 0;
+    }
+  }
+
+  .canvas-controls-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Update media queries to handle new container */
+  @media screen and (orientation: portrait) {
+    .canvas-controls-container {
+      flex-direction: column;
     }
   }
 </style>

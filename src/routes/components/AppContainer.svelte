@@ -63,17 +63,19 @@
 
   .top-controls {
     position: fixed;
-    left: 16px;
-    top: 16px;
+    left: 0.5rem;
+    top: 0.5rem;
     display: flex;
-    gap: 16px;
+    gap: 1rem;
     z-index: 13;
   }
 
   .control-button {
-    width: 40px;
-    height: 40px;
-    box-shadow: 5px 5px 0px #7300ed;
+    max-width: 60px;
+    max-height: 60pix;
+    width: 2rem;
+    height: 2rem;
+    box-shadow: 3px 3px 0px #7300ed;
     cursor: pointer;
     padding: 0;
     margin: 0;
@@ -86,18 +88,12 @@
   }
 
   .control-button > img {
+    max-width: 50px;
+    max-height: 50px;
     width: 70%;
     height: 70%;
     object-fit: contain;
     display: block;
-  }
-
-  @media only screen and (max-width: 600px) {
-    .control-button {
-      width: 32px;
-      height: 32px;
-      padding: 0;
-    }
   }
 
   .red-icon {
