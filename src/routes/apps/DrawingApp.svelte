@@ -122,22 +122,20 @@
   $: {
     // Respond to changes in window size
     if (innerWidth && innerHeight) {
-      let canvasEdge = 240;
+      let canvasEdge = 32; // Reduced edge spacing
 
-      // Mobile landscape
-      if (innerWidth <= 600 && windowRatio <= 0.8) {
-        canvasEdge = 32;
-      }
-      // Mobile portrait
-      if (innerHeight <= 600 && windowRatio >= 1.5) {
-        canvasEdge = 32;
+      // Calculate available space considering orientation
+      if (window.matchMedia("(orientation: landscape)").matches) {
+        // In landscape, use height as the limiting factor
+        canvasHeight = Math.min(innerHeight * 0.95, innerWidth * 0.7);
+      } else {
+        // In portrait, use width as the limiting factor
+        canvasHeight = innerWidth * 0.95 - canvasEdge;
       }
 
-      // here canvas size on screen is set
-      canvasHeight = canvasSize - canvasEdge;
-      // canvasHeight = baseSize;
+      // Set canvas dimensions
       drawingCanvas.setWidth(canvasHeight);
-      drawingCanvas.setHeight(canvasHeight); // keep the drawing Canvas square
+      drawingCanvas.setHeight(canvasHeight);
 
       antiFlickerCanvas.setWidth(canvasHeight);
       antiFlickerCanvas.setHeight(canvasHeight);
@@ -585,8 +583,6 @@
       img.src = frame;
     }));
     const images = await Promise.all(imgPromises);
-
-    // const mainContainer = document.querySelector('.drawing-app');
 
     // iterate of the flipbook sheets/ canvases
     for (let i = 0; i < totalCanvases; i++) {
@@ -1046,9 +1042,8 @@
   on:keydown="{handleKeydown}"
 />
 
-<div class="drawing-app">
-  <div class="main-container">
-    <div class="canvas-controls-container">
+  <div class="drawing-app-main-container">
+    <div class="canvas-with-controls-container">
       <div
         class="canvas-frame-container"
         style="width: {canvasHeight}px; height: {canvasHeight}px; "
@@ -1098,237 +1093,191 @@
         </div>
       {/if}
     </div>
-  </div>
-  {#if enableEditor}
-    <div class="toolbox-container">
-      <div class="optionbox">
-        <div class="toolbox-content">
-          {#if currentTab === 'draw'}
-            <div class="toolbox-tab-content">
-              <div class="brush-options-container">
-                <img
-                  on:click="{() => applyBrush('Pencil')}"
-                  class="icon"
-                  class:selected="{selectedBrush === 'Pencil'}"
-                  src="assets/svg/drawing_pencil2.svg"
-                  alt="Draw with pencil"
-                />
-                <img
-                  on:click="{() => applyBrush('Circle')}"
-                  class="icon"
-                  class:selected="{selectedBrush === 'Circle'}"
-                  src="assets/svg/drawing_circle2.svg"
-                  alt="Paint dots"
-                />
-                <img
-                  on:click="{() => applyBrush('Spray')}"
-                  class="icon"
-                  class:selected="{selectedBrush === 'Spray'}"
-                  src="assets/svg/drawing_spray.svg"
-                  alt="Paint with spraycan"
-                />
-                <img
-                  on:click="{() => applyBrush('Pattern')}"
-                  class="icon"
-                  class:selected="{selectedBrush === 'Pattern'}"
-                  src="assets/svg/drawing_pattern.svg"
-                  alt="Use pattern"
-                />
-              </div>
-
-              <div class="range-container">
-                <div class="circle-box-small"></div>
-                <input
-                  type="range"
-                  min="{brushSliderMin}"
-                  max="{brushSliderMax}"
-                  id="drawing-line-width"
-                  title="Set drawing thickness"
-                  bind:value="{lineWidth}"
-                  on:input="{disableColorPicker}"
-                  on:focus="{disableColorPicker}"
-                  on:blur="{disableColorPicker}"
-                />
-                <div class="circle-box-big"></div>
-              </div>
-
-              <div class="colorSection">
-                <button on:click="{() => toggleEyedropperState() }">
-                  <img id="eyeDropper" alt="eyeDropper" src="assets/svg/eyeDropper.svg" />
-                </button>
-
-                <input
-                  type="color"
-                  bind:value="{drawingColor}"
-                  id="drawing-color"
-                  title="Pick drawing color"
-                  on:input="{disableColorPicker}"
-                  on:focus="{disableColorPicker}"
-                  on:blur="{disableColorPicker}"
-                />
-              </div>
-            </div>
-          {:else if currentTab === 'erase'}
-            <div class="toolbox-tab-content">
-              <div class="range-container">
-                <div class="circle-box-small"></div>
-
-                <input
-                  type="range"
-                  min="{brushSliderMin}"
-                  max="{brushSliderMax}"
-                  id="erase-line-width"
-                  title="Set erase thickness"
-                  bind:value="{lineWidth}"
-                />
-                <div class="circle-box-big"></div>
-              </div>
-            </div>
-          <!-- {:else if currentTab === 'select'} -->
-
-          {:else if currentTab === 'save'}
-            <div class="toolbox-tab-content">
-              <label for="title">displayName</label>
-              <input type="text" bind:value="{displayName}" />
-              <div class="icon-group">
-                <br>
-              <img
-                on:click="{downloadImage}"
-                class="iconImage"
-                id="pointer-cursor"
-                src="{stopMotion ? 'assets/svg/icon/3strip_straight.svg' : 'assets/svg/icon/single_frame.svg' }"
-                alt="Download Artwork"
-              />
-              <img
-                on:click="{downloadImage}"
-                class="icon"
-                src="assets/SHB/svg/AW-icon-save.svg"
-                alt="Download Artwork"
-              />
-              </div>
-              <div class="icon-group">
-                <!-- only show flipbook download if stopMotion -->
-                {#if stopMotion}
-                  <br>
+    {#if enableEditor}
+      <div class="tools-container">
+          <div class="tools-content">
+            {#if currentTab === 'draw'}
+                <div class="brush-options-container">
                   <img
-                    on:click="{downloadFlipbook}"
-                    class="iconImage"
-                    id="pointer-cursor"
-                    src="assets/svg/icon/3stack_straight.svg"
-                    alt="Download Flipbook"
-                  />
-                  <img
-                    on:click="{downloadFlipbook}"
+                    on:click="{() => applyBrush('Pencil')}"
                     class="icon"
-                    src="assets/SHB/svg/AW-icon-save.svg"
-                    alt="Download Flipbook"
+                    class:selected="{selectedBrush === 'Pencil'}"
+                    src="assets/svg/drawing_pencil2.svg"
+                    alt="Draw with pencil"
                   />
-                {/if}
-              </div>
+                  <img
+                    on:click="{() => applyBrush('Circle')}"
+                    class="icon"
+                    class:selected="{selectedBrush === 'Circle'}"
+                    src="assets/svg/drawing_circle2.svg"
+                    alt="Paint dots"
+                  />
+                  <img
+                    on:click="{() => applyBrush('Spray')}"
+                    class="icon"
+                    class:selected="{selectedBrush === 'Spray'}"
+                    src="assets/svg/drawing_spray.svg"
+                    alt="Paint with spraycan"
+                  />
+                  <img
+                    on:click="{() => applyBrush('Pattern')}"
+                    class="icon"
+                    class:selected="{selectedBrush === 'Pattern'}"
+                    src="assets/svg/drawing_pattern.svg"
+                    alt="Use pattern"
+                  />
+                </div>
 
-            </div>
-          {/if}
-        </div>
+                <div class="range-selector-container">
+                  <div class="circle-box-small"></div>
+                  <input
+                    type="range"
+                    min="{brushSliderMin}"
+                    max="{brushSliderMax}"
+                    id="drawing-line-width"
+                    title="Set drawing thickness"
+                    bind:value="{lineWidth}"
+                    on:input="{disableColorPicker}"
+                    on:focus="{disableColorPicker}"
+                    on:blur="{disableColorPicker}"
+                  />
+                  <div class="circle-box-big"></div>
+                </div>
 
-        <div class="toolbox-navbar">
-          <!-- <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
-              alt="Undo"
-            />
-          </button>
-          <button
-            on:click="{redoState}"
-            disabled="{$futureStates.length === 0}"
-          >
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-rotate-CW.svg"
-              alt="Redo"
-            />
-          </button> -->
-          <button
-            on:click="{undoDrawingCanvas}"
-            disabled="{$drawingCanvasUndoArray.length < 1}"
-          >
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
-              alt="Undo"
-            />
-          </button>
-          <button
-            on:click="{redoDrawingCanvas}"
-            disabled="{$drawingCanvasRedoArray.length < 1}"
-          >
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-rotate-CW.svg"
-              alt="Redo"
-            />
-          </button>
-          <button
-            id="drawing-mode"
-            on:click="{() => {
-              switchMode('draw');
-              applyBrush();
-            }}"
-            class:currentSelected="{currentTab === 'draw' ||
-              currentTab === null}"
-          >
-            <img class="icon" src="assets/SHB/svg/AW-icon-pen.svg" alt="Draw" />
-          </button>
-          <!-- bind:this="{eraseModeEl}" -->
-          <button
-            on:click="{() => switchMode('erase')}"
-            id="erase-mode"
-            class:currentSelected="{currentTab === 'erase'}"
-          >
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-erase.svg"
-              alt="Erase"
-            />
-          </button>
+                <div class="color-selection">
+                  <button on:click="{() => toggleEyedropperState() }">
+                    <img id="eyeDropper" alt="eyeDropper" src="assets/svg/eyeDropper.svg" />
+                  </button>
 
-          <!-- <button
-            id="select-mode"
-            on:click="{() => switchMode('select')}"
-            class:currentSelected="{currentTab === 'select'}"
-          >
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-pointer.svg"
-              alt="Select"
-            />
-          </button> -->
+                  <input
+                    type="color"
+                    bind:value="{drawingColor}"
+                    id="drawing-color"
+                    title="Pick drawing color"
+                    on:input="{disableColorPicker}"
+                    on:focus="{disableColorPicker}"
+                    on:blur="{disableColorPicker}"
+                  />
+                </div>
+            {:else if currentTab === 'erase'}
+                <div class="range-selector-container">
+                  <div class="circle-box-small"></div>
 
-          <button
-            class:currentSelected="{currentTab === 'save'}"
-            on:click="{() => {
-              switchMode('save');
-            }}"
-          >
-            <img
-              class="icon"
-              src="assets/SHB/svg/AW-icon-save.svg"
-              alt="Save"
-            />
-          </button>
-        </div>
+                  <input
+                    type="range"
+                    min="{brushSliderMin}"
+                    max="{brushSliderMax}"
+                    id="erase-line-width"
+                    title="Set erase thickness"
+                    bind:value="{lineWidth}"
+                  />
+                  <div class="circle-box-big"></div>
+                </div>
+            <!-- {:else if currentTab === 'select'} -->
+
+            {:else if currentTab === 'save'}
+                <label for="title">displayName</label>
+                <input type="text" bind:value="{displayName}" />
+                <div class="icon-group">
+                  <br>
+                <img
+                  on:click="{downloadImage}"
+                  class="iconImage"
+                  id="pointer-cursor"
+                  src="{stopMotion ? 'assets/svg/icon/3strip_straight.svg' : 'assets/svg/icon/single_frame.svg' }"
+                  alt="Download Artwork"
+                />
+                <img
+                  on:click="{downloadImage}"
+                  class="icon"
+                  src="assets/SHB/svg/AW-icon-save.svg"
+                  alt="Download Artwork"
+                />
+                </div>
+                <div class="icon-group">
+                  <!-- only show flipbook download if stopMotion -->
+                  {#if stopMotion}
+                    <br>
+                    <img
+                      on:click="{downloadFlipbook}"
+                      class="iconImage"
+                      id="pointer-cursor"
+                      src="assets/svg/icon/3stack_straight.svg"
+                      alt="Download Flipbook"
+                    />
+                    <img
+                      on:click="{downloadFlipbook}"
+                      class="icon"
+                      src="assets/SHB/svg/AW-icon-save.svg"
+                      alt="Download Flipbook"
+                    />
+                  {/if}
+                </div>
+            {/if}
+          </div>
+
+          <div class="tools-navbar">
+            <!-- <button on:click="{undoState}" disabled="{$pastStates.length < 1}">
+              <img
+                class="icon"
+                src="assets/SHB/svg/AW-icon-rotate-CCW.svg"
+                alt="Undo"
+              />
+            </button>
+            <button
+              on:click="{redoState}"
+              disabled="{$futureStates.length === 0}"
+            >
+              <img
+                class="icon"
+                src="assets/SHB/svg/AW-icon-rotate-CW.svg"
+                alt="Redo"
+              />
+            </button> -->
+            <button
+              on:click="{undoDrawingCanvas}"
+              disabled="{$drawingCanvasUndoArray.length < 1}"
+              style="background-image: url('assets/SHB/svg/AW-icon-rotate-CCW.svg');"
+            >
+            </button>
+            <button
+              on:click="{redoDrawingCanvas}"
+              disabled="{$drawingCanvasRedoArray.length < 1}"
+              style="background-image: url('assets/SHB/svg/AW-icon-rotate-CW.svg');"
+            >
+            </button>
+            <button
+              id="drawing-mode"
+              on:click="{() => {
+                switchMode('draw');
+                applyBrush();
+              }}"
+              class:currentSelected="{currentTab === 'draw' ||
+                currentTab === null}"
+              style="background-image: url('assets/SHB/svg/AW-icon-pen.svg');"
+            >
+            </button>
+            <!-- bind:this="{eraseModeEl}" -->
+            <button
+              on:click="{() => switchMode('erase')}"
+              id="erase-mode"
+              class:currentSelected="{currentTab === 'erase'}"
+              style="background-image: url('assets/SHB/svg/AW-icon-erase.svg');"
+            >
+            </button>
+
+            <button
+              class:currentSelected="{currentTab === 'save'}"
+              on:click="{() => {
+                switchMode('save');
+              }}"
+              style="background-image: url('assets/SHB/svg/AW-icon-save.svg');"
+            >
+            </button>
+          </div>
       </div>
-    </div>
-  {/if}
-
-
-  <!-- {#if enableEditor}
-    <div id="clear-canvas" on:click="{clearCanvas}">
-      <img src="assets/SHB/svg/AW-icon-reset.svg" alt="Clear canvas" />
-    </div>
-  {/if} -->
-
-</div>
+    {/if}
+  </div>
 
 <style>
   * {
@@ -1341,11 +1290,7 @@
     user-select: none;
   }
 
-  .drawing-app {
-    position: relative;
-  }
-
-  .main-container {
+  .drawing-app-main-container {
     display: flex;
     height: 100vh;
     width: 100vw;
@@ -1356,152 +1301,102 @@
     pointer-events: none !important;
     width: 100vw;
     height: 100vw;
-    margin: 0px;
     position: absolute;
-    user-select: none;
-    top: 0px;
-    left: 0px;
-    pointer-events: none;
+    top: 0;
+    left: 0;
   }
 
   .selected {
     box-shadow: 3px 3px #7300ed;
   }
 
-  .toolbox-container {
-    margin: 0;
-    position: fixed;
-    left: 0;
-    bottom: 0;
+  .tools-container {
+    display: flex;
+    background-color: #e0c1ff;
   }
 
-  .toolbox-content {
+  .tools-content {
     border-right: 2px solid #7300ed;
-    height: 98vh;
     background-color: white;
-    width: fit-content;
-    padding: 15px;
-    width: 280px;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
     flex-wrap: wrap;
-    position: absolute;
-    top: 0;
-    right: 50px;
     z-index: 20;
-  }
-
-  .tab.tab--draw {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .tab.tab--save {
+    max-width: 280px;
     min-width: 160px;
-    bottom: 50px;
-    z-index: 10;
   }
 
-  .tab.tab--save > * {
-    padding: 0px 0px;
-    text-decoration: none;
-    display: block;
-  }
-
-  .toolbox-navbar {
+  .tools-navbar {
     position: relative;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    flex-wrap: wrap;
     z-index: 10;
-    margin-top: 0.5rem;
   }
 
-  .icon {
-    min-width: 50px;
-    height: 50px;
+  .icon,
+  .tools-navbar button {
+    min-width: 32px;
+    width: calc(33.33% - 8px);
+    max-width: 50px;
+    height: auto;
+    aspect-ratio: 1;
+    padding: 2px;
     border-radius: 50%;
-    box-sizing: border-box;
-    padding: 4px;
     cursor: pointer;
     object-fit: contain;
-    flex: 1 1 auto;
-    margin: 0 20px 0 6px;
+    background-color: white;
   }
 
   .iconImage {
     min-width: 40px;
     height: 50px;
-    box-sizing: border-box;
     padding: 4px;
     object-fit: contain;
     flex: 1 1 auto;
-    margin: 0 0px 0 12px;
   }
 
   #pointer-cursor {
     cursor: pointer;
   }
 
-  .colorSection {
+  .color-selection {
     display: flex;
     justify-content: flex-start;
     width: 100%;
   }
 
   #eyeDropper {
-    min-width: 50px;
-    height: 50px;
+    min-width: 32px;
+    width: 40px;
+    max-width: 50px;
+    height: auto;
+    aspect-ratio: 1;
+    padding: 2px;
     border-radius: 50%;
-    box-sizing: border-box;
     border: 5px solid black;
     cursor: pointer;
     object-fit: contain;
-    padding: 4px;
-    margin-left: 8px;
-  }
-
-  .toolbox-navbar button {
-    opacity: 1;
+    background-color: white;
   }
 
   #drawing-color {
     width: 50%;
-    padding: 0px;
     display: block;
-    margin: 16px auto;
-  }
-
-  .optionbox {
-    width: fit-content;
-    display: flex;
+    margin: 8px auto;
   }
 
   .currentSelected {
-    box-shadow: 0px 4px #7300ed;
-    border-radius: 0% 50% 50% 0;
-    /* horizontal: height, vertical: width */
-    height: 60px;
-    width: 62px;
-    box-sizing: border-box;
-    object-fit: scale-down;
-    padding: 0px;
-    background-color: white;
-    margin-left: -24px; /* horizontal offset */
+    box-shadow: 3px 3px #7300ed;
+    border-radius: 50%;
+    padding: 0;
   }
 
-  .range-container {
+  .range-selector-container {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
     align-items: center;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin-top: 30px;
+    margin-bottom: 30px;
   }
 
   .circle-box-small {
@@ -1517,7 +1412,7 @@
   }
 
   input[type='range'] {
-    -moz-apperance: none;
+    -moz-appearance: none;
     border-radius: 6px;
     border: 4px solid #7300ed;
     height: 4px;
@@ -1535,7 +1430,6 @@
 
   .canvas-frame-container {
     background-color: white;
-    /* border: 2px solid #7300ed; */
     position: relative;
     overflow: hidden;
     box-shadow: 5px 5px 0px #7300ed;
@@ -1561,12 +1455,12 @@
     overflow: hidden;
     padding: 4px;
     box-shadow: 5px 5px 0px #7300ed;
-  }
-
-  .brush-options-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    width: fit-content;
+    height: fit-content;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: auto;
   }
 
   button {
@@ -1575,8 +1469,6 @@
     cursor: pointer;
     border-radius: 0;
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
     display: inline-block;
     width: auto;
     transform-origin: center;
@@ -1589,128 +1481,349 @@
     opacity: 0.3;
   }
 
-  /* Update icon sizing and spacing */
-  .icon {
-    max-width: 50px;
-    height: 2.6rem;
-    /* ... existing icon styles ... */
+  .brush-options-container,
+  .range-selector-container,
+  .color-selection {
+    width: 100%;
+    padding: 8px;
   }
-
+  
   /* Landscape mode (width > height) */
   @media screen and (orientation: landscape) {
-    .main-container {
+    .drawing-app-main-container {
       flex-direction: row;
       align-items: center;
       justify-content: end;
       padding-right: 8px;
-    }
-    
-    .canvas-frame-container {
-      margin: 0;
-    }
-
-    .toolbox-container {
-      margin: 0;
-      left: 0;
-      bottom: 0;
-      height: 100%;
-      width: 35vw; 
-      position: fixed;
-      display: flex;
-    }
-
-    .toolbox-navbar {
-      position: absolute;
-      left: 170px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      flex-wrap: wrap;
-      z-index: 10;
-    }
-
-    .optionbox {
-      flex-direction: column;
-    }
-
-    .toolbox-content {
       height: 100vh;
-      width: 29vw;
+    }
+
+    .canvas-with-controls-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-direction: row;
+      order: 2;
+      height: 100vh;
+    }
+
+    .canvas-frame-container {
+      height: 95vh; 
+      width: auto; 
+      margin: 0;
+    }
+
+    .stopmotion-controls {
+      height: fit-content;
+    }
+      
+    .tools-container {
+      margin: 0;
+      display: flex;
+      order: 1;
+      align-self: flex-end; /* this makes the tools container stay at the bottom of the screen */
+    }
+
+    .tools-navbar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      height: 86vh;
+      min-width: 45px;
+      max-width: 60px;
+      padding: 16px 0; /* Add padding top/bottom to prevent cutoff */
+      overflow-y: auto; /* Allow scrolling if needed */
+    }
+
+    .tools-navbar button {
+      flex-shrink: 0; /* Prevent icon shrinking */
+    }
+
+    .tools-content {
       border-right: 2px solid #7300ed;
       border-top: none;
+      flex-direction: column;
+      padding: 16px 8px;
+      overflow-y: auto;
+      height: 86vh; /* Match navbar height */
+      margin-right: -0.8rem;
+      background-color: #e0c1ff;
     }
 
     .currentSelected {
       border-radius: 0% 50% 50% 0;
-      /* margin-left: -24px; */
       margin-top: 0;
+    }
+
+    .brush-options-container {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      align-items: start;
+      flex-wrap: wrap;
+    }
+
+    .range-selector-container {
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .color-selection {
+      flex-direction: row;
+      align-items: center;
     }
   }
 
   @media screen and (orientation: portrait) {
-    .main-container {
+    .drawing-app-main-container {
       flex-direction: column;
       align-items: center;
       justify-content: start;
       padding-top: 3rem;
+      width: 100%;
+    }
+
+    .canvas-with-controls-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      order: 1;
+      width: 100%; /* Full width to allow children to expand */
+    }
+
+    .stopmotion-controls {
+      position: relative;
+      background-color: #e0c1ff;
+      box-shadow: 5px 5px 0px #7300ed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 91vw; 
+      max-width: 92vw; 
+      max-height: min-content; 
+      padding: 4px;
+      margin: 0 auto;
     }
 
     .canvas-frame-container {
-      margin: 0;
+      width: 95vw; /* Use viewport width */
+      max-width: 95vw; /* Ensure it doesn't exceed viewport */
+      order: 2;
+      margin: 0 auto;
     }
-    
-    .toolbox-container {
+
+    .tools-container {
       margin: 0;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 32vh;
-      position: fixed;
+      margin-top: 0.4rem;
       display: flex;
+      order: 2;
+      flex-direction: column;
+      height: 100%;
     }
 
-    .optionbox {
-      flex-direction: row;
-      width: 100%;
-    }
-
-    .toolbox-content {
-      height: 40vw;
-      width: 100vw;
-      top: unset;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 2;
+    .tools-content {
       border-right: none;
       border-top: 2px solid #7300ed;
+      background-color: #e0c1ff;
+      justify-content: space-around;
+      order: 2;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
-    .toolbox-navbar {
+    .tools-navbar {
       flex-direction: row;
-      width: 100%;
-      height: 60px;
-      z-index: 1;
+      order: 1;
+      background-color: rgb(115, 0, 237, 0.15);
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
     }
 
     .currentSelected {
       box-shadow: 4px 4px #7300ed;
       border-radius: 50% 50% 0 0;
     }
+
+    .brush-options-container {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .range-selector-container {
+      padding: 2px;
+      gap: 4px;
+      margin: 0;
+      margin-top: 12px;
+      margin-bottom: 8px;
+    }
+
+    .color-selection {
+      padding: 2px;
+      gap: 4px;
+      margin: 0;
+      margin-top: 12px;
+      margin-bottom: 8px;
+    }
   }
 
-  .canvas-controls-container {
+  .brush-options-container {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 4px;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: start;
+    padding: 8px;
+    width: 100%;
   }
 
-  /* Update media queries to handle new container */
+  .brush-options-container .icon {
+    min-width: 32px;
+    width: calc(33.33% - 8px);
+    max-width: 50px;
+    height: auto;
+    aspect-ratio: 1;
+    padding: 2px;
+    margin: 0;
+  }
+
+  .range-selector-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  input[type='range'] {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .color-selection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  #eyeDropper {
+    min-width: 32px;
+    width: 40px;
+    max-width: 50px;
+    height: auto;
+    aspect-ratio: 1;
+    padding: 2px;
+  }
+
+  #drawing-color {
+    flex: 1;
+    min-width: 80px;
+    margin: 0;
+  }
+
+  .tools-navbar button {
+    border: 0;
+    cursor: pointer;
+    border-radius: 50%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: transparent;
+  }
+
+  .currentSelected {
+    box-shadow: 3px 3px #7300ed;
+  }
+
   @media screen and (orientation: portrait) {
-    .canvas-controls-container {
+    .tools-content {
+      padding: 8px 4px;
+      display: flex;
       flex-direction: column;
+      gap: 8px; /* Reduce gap between sections */
+    }
+/* 
+    .brush-options-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px; 
+      padding: 4px;
+      justify-content: center;
+    } */
+
+    .brush-options-container .icon {
+      min-width: 22px; /* Make icons smaller */
+      max-width: 32px;
+      width: calc(25% - 4px); /* 4 icons per row with small gap */
+      height: auto;
+      padding: 2px;
+    }
+
+    .brush-options-container {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .range-selector-container {
+      padding: 2px;
+      gap: 4px;
+      margin: 0;
+      margin-top: 12px;
+      margin-bottom: 8px;
+    }
+
+    .color-selection {
+      padding: 2px;
+      gap: 4px;
+      margin: 0;
+      margin-top: 12px;
+      margin-bottom: 8px;
+    }
+
+    .range-selector-container {
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .color-selection {
+      padding: 4px;
+      gap: 4px;
+    }
+
+    #eyeDropper {
+      min-width: 28px; /* Match brush icon size */
+      width: 28px;
+      height: 28px;
+    }
+
+    .circle-box-small {
+      padding: 3px; /* Smaller circle indicators */
+    }
+
+    .circle-box-big {
+      padding: 8px;
     }
   }
 </style>
