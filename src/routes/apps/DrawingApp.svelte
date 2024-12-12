@@ -14,6 +14,9 @@
     removeSpecialCharacters,
   } from '../../validations';
   import { dlog } from '../../helpers/debugLog';
+  import ColorPicker from '../components/ColorPicker.svelte';
+
+  // src/routes/components/ColorPicker.svelte
 
   let hex = '#000000';
 
@@ -1144,14 +1147,12 @@
                     <img id="eyeDropper" alt="eyeDropper" src="assets/svg/eyeDropper.svg" />
                   </button>
 
-                  <input
-                    type="color"
-                    bind:value="{drawingColor}"
-                    id="drawing-color"
-                    title="Pick drawing color"
-                    on:input="{disableColorPicker}"
-                    on:focus="{disableColorPicker}"
-                    on:blur="{disableColorPicker}"
+                  <ColorPicker 
+                    bind:color={drawingColor}
+                    on:colorChange={({detail}) => {
+                      drawingColor = detail.color;
+                      hex = detail.color;
+                    }}
                   />
                 </div>
             {:else if currentTab === 'erase'}
