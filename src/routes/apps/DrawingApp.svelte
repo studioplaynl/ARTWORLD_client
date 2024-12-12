@@ -1525,13 +1525,6 @@
       height: fit-content;
     }
 
-    .tools-container {
-      margin: 0;
-      display: flex;
-      order: 1;
-      align-self: flex-end;
-    }
-
     .tools-navbar {
       flex-direction: column;
       align-items: center;
@@ -1544,6 +1537,13 @@
       overflow-y: auto;
     }
 
+    .tools-container {
+      margin: 0;
+      display: flex;
+      order: 1;
+      align-self: flex-end;
+    }
+
     .tools-content {
       border-right: 2px solid #7300ed;
       border-top: none;
@@ -1551,7 +1551,7 @@
       padding: 16px 8px;
       overflow-y: auto;
       height: 86vh;
-      margin-right: -0.8rem;
+      margin-right: 0; 
       background-color: #e0c1ff;
     }
 
@@ -1563,9 +1563,16 @@
     .brush-options-container {
       display: flex;
       flex-direction: row;
-      gap: 10px;
-      align-items: start;
       flex-wrap: wrap;
+      gap: clamp(4px, 1vw, 16px);
+      justify-content: end;
+    }
+
+    .brush-options-container .icon {
+      width: clamp(28px, 5vw, 60px);
+      height: auto;
+      aspect-ratio: 1;
+      padding: 2px;
     }
 
     .range-selector-container {
@@ -1657,9 +1664,18 @@
     .brush-options-container {
       display: flex;
       flex-direction: row;
-      gap: 4px;
       flex-wrap: wrap;
+      gap: clamp(4px, 3vw, 16px);
+      padding: 8px;
+      width: 100%;
       justify-content: center;
+    }
+
+    .brush-options-container .icon {
+      width: clamp(28px, 10vw, 60px);
+      height: auto;
+      aspect-ratio: 1;
+      padding: 2px;
     }
 
     .range-selector-container {
@@ -1676,14 +1692,6 @@
       margin: 0;
       margin-top: 12px;
       margin-bottom: 8px;
-    }
-
-    .brush-options-container .icon {
-      min-width: 22px;
-      max-width: 32px;
-      width: calc(25% - 4px);
-      height: auto;
-      padding: 2px;
     }
 
     #eyeDropper {
